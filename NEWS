@@ -2,6 +2,13 @@
 
 1.0.2 (10/19/2004):
 
+	Stu: I'm new around here. I tried to reduce the number of bugs in the bug
+	tracker, but it turns out that the only way to achieve that is to actually
+	_fix_ the bugs. So I fixed a couple, and then sneaked some patches out of
+	the patch tracker to fix some others. Sadly the bug tracker was not
+	significantly affected, maybe if I learn C I'll be able to make more of an
+	impact.
+
 1.0.1 (10/07/2004):
 	Congratulations to Tim & Kim on their wedding!
 
