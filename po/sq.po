@@ -2,15 +2,15 @@
 # translation of gaim.po to Albanian
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
-# Besnik Bleta <besnik@spymac.com>, 2004.
+# Besnik Bleta <besnik@spymac.com>, 2004, 2005.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim_sq\n"
 "POT-Creation-Date: 2004-08-05 23:27-0400\n"
-"PO-Revision-Date: 2004-12-16 03:58+0200\n"
+"PO-Revision-Date: 2005-01-17 01:31+0200\n"
 "Last-Translator: Besnik Bleta <besnik@spymac.com>\n"
-"Language-Team: Albanian <besnik@spymac.com>\n"
+"Language-Team: Albanian <translation-team-sq@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -167,7 +167,7 @@ msgstr "Bashkoju një Fjalosjeje..."
 
 #: plugins/docklet/docklet.c:176
 msgid "New..."
-msgstr "I Ri..."
+msgstr "I ri..."
 
 #: plugins/docklet/docklet.c:184
 #: src/gtkprefs.c:1812
@@ -706,7 +706,7 @@ msgstr "Ju lejon të formësoni dorazi sa gjatë keni qenë i plogësht"
 #. *< type
 #: plugins/ipc-test-client.c:87
 msgid "IPC Test Client"
-msgstr ""
+msgstr "Klient Prove IPC"
 
 #  *< name
 #  *< version
@@ -786,7 +786,7 @@ msgstr "Mënyra Njoftimi"
 
 #: plugins/notify.c:634
 msgid "Prepend _string into window title:"
-msgstr ""
+msgstr "Parafut _string në titull dritareje:"
 
 #. Count method button
 #: plugins/notify.c:653
@@ -797,7 +797,7 @@ msgstr "Fut nu_mërim mesazhesh të rinj në titull dritareje"
 #. Urgent method button
 #: plugins/notify.c:661
 msgid "Set window manager \"_URGENT\" hint"
-msgstr ""
+msgstr "Rregullo ndihmëzën \"_URGENT\" e administruesit të dritareve"
 
 #  ---------- "Notification Removals" ----------
 #. ---------- "Notification Removals" ----------
@@ -1940,11 +1940,11 @@ msgstr "Përdor Rregullime Mjedisi"
 
 #: src/gtkaccount.c:1153
 msgid "you can see the butterflies mating"
-msgstr ""
+msgstr "you can see the butterflies mating"
 
 #: src/gtkaccount.c:1157
 msgid "If you look real closely"
-msgstr ""
+msgstr "If you look real closely"
 
 #: src/gtkaccount.c:1173
 msgid "Proxy Options"
@@ -2734,7 +2734,7 @@ msgstr "Ruaj Ikonë"
 
 #: src/gtkconv.c:2674
 msgid "Animate"
-msgstr ""
+msgstr "Animizo"
 
 #: src/gtkconv.c:2679
 msgid "Hide Icon"
@@ -3353,7 +3353,7 @@ msgid ""
 "\n"
 "This will increase %s's warning level and he or she will be subject to harsher rate limiting.\n"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Të sinjalozoj %s?</span>\n"
+"<span weight=\"bold\" size=\"larger\">Të sinjalizoj %s?</span>\n"
 "\n"
 "Kjo do të rrisë shkallë sinjalizimi për %s dhe ai ose ajo do të jenë subjekt kufizimesh më të ashpra.\n"
 
@@ -4010,7 +4010,7 @@ msgstr "_Escape e mbyll dritaren"
 
 #: src/gtkprefs.c:923
 msgid "Insertions"
-msgstr ""
+msgstr "Futje"
 
 #: src/gtkprefs.c:924
 msgid "Control-{B/I/U} changes _formatting"
@@ -5510,7 +5510,7 @@ msgstr "I lidhur që prej"
 
 #: src/protocols/irc/msgs.c:217
 msgid "<br><b>Defining adjective:</b> Glorious<br>"
-msgstr ""
+msgstr "<br><b>Mbiemër përcaktues:</b> I lavdishëm<br>"
 
 #: src/protocols/irc/msgs.c:224
 #, c-format
@@ -7632,7 +7632,7 @@ msgstr "Titullin Vetjak"
 
 #: src/protocols/novell/novell.c:1453
 msgid "Mailstop"
-msgstr ""
+msgstr "Mailstop"
 
 #: src/protocols/novell/novell.c:1455
 #: src/protocols/oscar/oscar.c:5025
@@ -7925,7 +7925,7 @@ msgstr "Mohues"
 
 #: src/protocols/oscar/oscar.c:616
 msgid "ICQ Server Relay"
-msgstr ""
+msgstr "ICQ Server Relay"
 
 #: src/protocols/oscar/oscar.c:619
 msgid "Old ICQ UTF8"
@@ -7941,7 +7941,7 @@ msgstr "ICQ UTF8"
 
 #: src/protocols/oscar/oscar.c:628
 msgid "Hiptop"
-msgstr ""
+msgstr "Hiptop"
 
 #: src/protocols/oscar/oscar.c:631
 msgid "Security Enabled"
@@ -8282,11 +8282,11 @@ msgstr[0] "Humbët %hu mesazh prej %s sepse qe shumë i madh."
 msgstr[1] "Humbët %hu mesazhe prej %s sepse qenë shumë të mëdhenj."
 
 #: src/protocols/oscar/oscar.c:3887
-#, fuzzy, c-format
+#, c-format
 msgid "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Humbët %hu mesazh prej %s sepse është tejkaluar niveli kufi."
+msgstr[1] "Humbët %hu mesazhe prej %s sepse është tejkaluar niveli kufi"
 
 #: src/protocols/oscar/oscar.c:3896
 #, c-format
@@ -8306,7 +8306,7 @@ msgstr[1] "Humbët %hu mesazhe prej %s ngaqë jeni goxha i/e keq(e)."
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
-msgstr[0] "Humbët %hu mesazh(e) prej %s për një arsye të panjohur."
+msgstr[0] "Humbët %hu mesazh prej %s për një arsye të panjohur."
 msgstr[1] "Humbët %hu mesazhe prej %s për një arsye të panjohur."
 
 #: src/protocols/oscar/oscar.c:3968
@@ -8379,7 +8379,7 @@ msgstr "[I pazoti të shfaq mesazh prej këtij përdoruesi sepse përmbante shen
 
 #: src/protocols/oscar/oscar.c:4657
 msgid "Rate limiting error."
-msgstr ""
+msgstr "Gabim kufizimi niveli"
 
 #: src/protocols/oscar/oscar.c:4658
 msgid "The last action you attempted could not be performed because you are over the rate limit. Please wait 10 seconds and try again."
@@ -9287,7 +9287,7 @@ msgstr "Ju lutem jepni emër grupi vetjak dhe dhe parullë kanali %s."
 
 #: src/protocols/silc/chat.c:592
 msgid "Add Channel Private Group"
-msgstr "Shto Grup Vetjak Kanali  "
+msgstr "Shto Grup Vetiak Kanali  "
 
 #: src/protocols/silc/chat.c:719
 msgid "User Limit"
@@ -9311,11 +9311,11 @@ msgstr "Listë Ndalimesh"
 
 #: src/protocols/silc/chat.c:880
 msgid "Add Private Group"
-msgstr "Shto Grup Vetjak"
+msgstr "Shto Grup Vetiak"
 
 #: src/protocols/silc/chat.c:891
 msgid "Reset Permanent"
-msgstr ""
+msgstr "Ricaktojeni të Përhershëm"
 
 #: src/protocols/silc/chat.c:895
 msgid "Set Permanent"
@@ -9366,7 +9366,7 @@ msgstr "Duhet të futeni në kanalin %s para se të mundni t'i bashkoheni një g
 
 #: src/protocols/silc/chat.c:1058
 msgid "Join Private Group"
-msgstr "Bashkoju Grupi Vetjak"
+msgstr "Bashkoju Grupi Vetiak"
 
 #: src/protocols/silc/chat.c:1059
 msgid "Cannot join private group"
@@ -9499,7 +9499,7 @@ msgstr "Vend Pune"
 
 #: src/protocols/silc/ops.c:832
 msgid "Job Role"
-msgstr ""
+msgstr "Post Pune"
 
 #: src/protocols/silc/ops.c:836
 msgid "Organization"
@@ -10042,7 +10042,7 @@ msgstr "Kyç SILC Publik"
 
 #: src/protocols/silc/silc.c:1471
 msgid "SILC Private Key"
-msgstr "Kyç SILC Vetjak "
+msgstr "Kyç SILC Vetiak "
 
 #  *< api_version
 #  *< type
@@ -10075,7 +10075,7 @@ msgstr "Kartelë Kyçi Publik"
 
 #: src/protocols/silc/silc.c:1602
 msgid "Private Key File"
-msgstr "Kartelë Kyçi Vetjak"
+msgstr "Kartelë Kyçi Vetiak"
 
 #: src/protocols/silc/silc.c:1607
 msgid "Reject watching by other users"
@@ -10245,7 +10245,7 @@ msgstr "Shumë përputhje."
 
 #: src/protocols/toc/toc.c:516
 msgid "Need more qualifiers."
-msgstr "Lipse më tepër cilësues."
+msgstr "Lipsen më tepër cilësues."
 
 #: src/protocols/toc/toc.c:519
 msgid "Dir service temporarily unavailable."
@@ -10300,7 +10300,7 @@ msgstr "Ndodhi një gabim i panjohur, %d.  Të dhëna: %s"
 
 #: src/protocols/toc/toc.c:576
 msgid "Connection Closed"
-msgstr "Lidhje u Mbyll"
+msgstr "Lidhja u Mbyll"
 
 #: src/protocols/toc/toc.c:616
 msgid "Waiting for reply..."
@@ -10875,7 +10875,7 @@ msgstr "_Klasë:"
 
 #: src/protocols/zephyr/zephyr.c:2162
 msgid "_Instance:"
-msgstr ""
+msgstr "_Instancë:"
 
 #: src/protocols/zephyr/zephyr.c:2168
 msgid "_Recipient:"
@@ -10988,7 +10988,7 @@ msgstr "Ose emri i strehës, ose numri i portës së treguar për tipin tuaj të
 #. * Custom away message.
 #: src/prpl.h:180
 msgid "Custom"
-msgstr "Vetjake"
+msgstr "Vetiake"
 
 #  *
 #  * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
