@@ -190,7 +190,7 @@ msgstr "Zurück"
 
 #: plugins/docklet/docklet.c:195
 msgid "Mute Sounds"
-msgstr "Klänge"
+msgstr "Stummschalten"
 
 #: plugins/docklet/docklet.c:200 src/gtkft.c:628
 msgid "File Transfers"
