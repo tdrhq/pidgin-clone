@@ -587,6 +587,8 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					purdy ? purdy : "");
 			if(purdy)
 				g_free(purdy);
+			if(res)
+				g_free(res);
 		}
 	}
 
