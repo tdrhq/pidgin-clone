@@ -182,7 +182,7 @@ msn_import_html(const char *html, char **attributes, char **message)
 
 	memset(fontcolor, 0, sizeof(fontcolor));
 	strcat(fontcolor, "0");
-	memset(fonteffect, 0, sizeof(fontcolor));
+	memset(fonteffect, 0, sizeof(fonteffect));
 
 	for (c = html; *c != '\0';)
 	{
