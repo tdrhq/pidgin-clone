@@ -711,7 +711,7 @@ typedef struct aim_mpmsg_section_s {
 } aim_mpmsg_section_t;
 
 typedef struct aim_mpmsg_s {
-	int numparts;
+	unsigned int numparts;
 	aim_mpmsg_section_t *parts;
 } aim_mpmsg_t;
 
@@ -746,8 +746,8 @@ struct aim_sendimext_args {
 	fu32_t iconsum;
 
 	/* Only used if AIM_IMFLAGS_CUSTOMFEATURES is set */
+	fu16_t featureslen;
 	fu8_t *features;
-	fu8_t featureslen;
 
 	/* Only used if AIM_IMFLAGS_CUSTOMCHARSET is set and mpmsg not used */
 	fu16_t charset;
