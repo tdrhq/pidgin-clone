@@ -1,6 +1,6 @@
 #!/bin/sh
 
-(gettextize --version) < /dev/null > /dev/null 2>&1 || {
+(./setup-gettext --gettext-tool) < /dev/null > /dev/null 2>&1 || {
 	echo;
 	echo "You must have gettext installed to compile Gaim";
 	echo;
@@ -42,7 +42,7 @@ echo "Generating configuration files for Gaim, please wait...."
 echo;
 
 echo "Running gettextize, please ignore non-fatal messages...."
-echo n | gettextize --copy --force || exit;
+./setup-gettext
 echo "Running libtoolize, please ignore non-fatal messages...."
 echo n | libtoolize --copy --force || exit;
 
