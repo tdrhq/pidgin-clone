@@ -3,6 +3,11 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 1.0.4:
 	Bug Fixes:
 	* Fix crashes when removing buddies in certain situations (Andrew Hart)
+	* Eliminate MSN switchboard errors (Felipe Contreras)
+	* Fix MSN buddy icon syncronization (Felipe Contreras)
+	* Correctly display file transfer dialogs for filenames containing &, < or >
+	* Correctly display MSN authorization dialogs for friendly names containing
+	  &, < or >
 
 version 1.0.3 (11/11/2004):
 	Bug Fixes:

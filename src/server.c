@@ -1128,7 +1128,7 @@ remove_idle_buddy(GaimBuddy *buddy)
 {
 	idle_buddies = g_list_remove(idle_buddies, buddy);
 
-	if (idle_buddies == NULL)
+	if ((idle_buddies == NULL) && (idle_buddy_timeout_id > 0))
 	{
 		gaim_timeout_remove(idle_buddy_timeout_id);
 		idle_buddy_timeout_id = 0;

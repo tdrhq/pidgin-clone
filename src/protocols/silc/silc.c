@@ -55,10 +55,14 @@ silcgaim_away_states(GaimConnection *gc)
 static void
 silcgaim_set_away(GaimConnection *gc, const char *state, const char *msg)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcGaim sg;
 	SilcUInt32 mode;
 	SilcBuffer idp;
 	unsigned char mb[4];
+
+	g_return_if_fail(gc != NULL);
+
+	sg = gc->proto_data;
 
 	if (!state)
 		return;

@@ -107,7 +107,10 @@ msn_act_id(GaimConnection *gc, const char *entry)
 	cmdproc = session->notification->cmdproc;
 	account = gaim_connection_get_account(gc);
 
-	alias = (entry && *entry) ? entry : "";
+	if (entry && strlen(entry))
+		alias = gaim_url_encode(entry);
+	else
+		alias = "";
 
 	if (strlen(alias) > BUDDY_ALIAS_MAXLEN)
 	{
@@ -118,7 +121,7 @@ msn_act_id(GaimConnection *gc, const char *entry)
 
 	msn_cmdproc_send(cmdproc, "REA", "%s %s",
 					 gaim_account_get_username(account),
-					 gaim_url_encode(alias));
+					 alias);
 }
 
 static void
@@ -189,7 +192,7 @@ send_to_mobile(GaimConnection *gc, const char *who, const char *entry)
 
 	payload = msn_page_gen_payload(page, &payload_len);
 
-	trans = msn_transaction_new("PGD", "%s 1 %d", who, payload_len);
+	trans = msn_transaction_new(cmdproc, "PGD", "%s 1 %d", who, payload_len);
 
 	msn_transaction_set_payload(trans, payload, payload_len);
 
@@ -752,7 +755,7 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 	if (!swboard->user_joined)
 		return 0;
 
-	msg = msn_message_new();
+	msg = msn_message_new(MSN_MSG_TYPING);
 	msn_message_set_content_type(msg, "text/x-msmsgscontrol");
 	msn_message_set_flag(msg, 'U');
 	msn_message_set_attr(msg, "TypingUser",
