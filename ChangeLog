@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 1.1.0:
+version 1.1.0 (12/02/2004):
 	New Features:
 	* Binary relocable. Gaim will find its files even if it's installed
 	  in a location other than the --prefix it was ./configured with.

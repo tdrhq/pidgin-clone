@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 1.1.0:
+version 1.1.0 (12/02/2004):
 	* Added: gaim_utf8_salvage
 	* Added: binary relocation support in prefix.h
 	         WARNING: If your plugin uses anything inside the
