@@ -69,6 +69,7 @@ static struct developer developers[] = {
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), NULL},
+	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -258,7 +259,6 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 					"  Benjamin Miller<BR>"
 					"  Etan 'deryni' Reisner<BR>"
 					"  Kevin 'SimGuy' Stange<BR>"
-					"  Stu 'nosnilmot' Tomlinson<BR>"
 					"<BR>");
 
 	/* Retired Developers */
