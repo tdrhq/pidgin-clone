@@ -10,7 +10,8 @@ version 1.0.2:
 	* Fixed a crash viewing certain MSN user profiles (Evan Schoenberg)
 	* Fixed a crash sending a file on MSN when the file is unreadable
 	* Fixed a crash deleting accounts (Andrew Hart)
-	* Fixed a bug in Yahoo privacy handling (bleeter)
+	* Fixed a crash inviting to chats (Andrew Hart)
+	* Fixed a bug in Yahoo privacy handling (Peter Lawler)
 
 version 1.0.1 (10/07/2004):
 	New Features:
