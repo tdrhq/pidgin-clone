@@ -96,8 +96,10 @@ rm -r $RPM_BUILD_ROOT
 
 %changelog
 * Sat Sep 14 2002 Rob Flynn <rob@marko.net> (0.59.3 release)
-- Reversed Arun's patch that accidentally caused Yahoo not to connect--for implimentation reasons
+- Reversed patch that accidentally caused Yahoo not to connect--for implementation reasons
 - Changed "color" binding to Ctrl-K.
+- Unaliaising a person in the "Online" tab will show up in the "Edit" tab as well (Thanks, Jason Willis)
+- Internationalization fixes, esp. with UTF-8 locales (Thanks Matt Wilson and Ethan Blanton)
 
 * Mon Sep 09 2002 Rob Flynn <rob@marko.net> (0.59.2 release)
 - Japanese translation updated (Thanks, Junichi Uekawa)
