@@ -23,6 +23,9 @@ version 0.59.2
 	  Walp)
 	* Fixed a possible segfault when signing off Jabber (Thanks
 	  Craig Boston)
+	* Word-wrapping on mail notification text (Thanks, Andrew Molloy)
+	* Strip trailing and leading spaces from MSN/Yahoo names (Thanks,
+	  Arun Tharuvai)
 
 version 0.59.1 (08/25/2002)
 	* Created a gtk1-stable branch for GTK+ 1.2 bugfix releases.

@@ -968,6 +968,7 @@ static void yahoo_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 
+	g_snprintf(gc->username, sizeof(gc->username), "%s", g_strstrip(gc->username));
 	set_login_progress(gc, 1, "Connecting");
 
 	yd->fd = -1;
@@ -1184,7 +1185,7 @@ static int yahoo_send_im(struct gaim_connection *gc, char *who, char *what, int 
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
-
+	
 	return 1;
 }
 
