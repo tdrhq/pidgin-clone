@@ -1392,7 +1392,7 @@ gaim_accounts_sync(void)
 		GList *l;
 
 		fprintf(fp, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
-		fprintf(fp, "<accounts>\n");
+		fprintf(fp, "<accounts version='1.0'>\n");
 
 		for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
 			gaim_accounts_write(fp, l->data);
