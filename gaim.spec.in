@@ -94,6 +94,9 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Mon Oct 14 2002 Rob Flynn <rob@marko.net> (0.59.5 release)
+- Fixed a Yahoo! segfault (Thanks, Craig Metz)
+
 * Sun Oct 06 2002 Rob Flynn <rob@marko.net> (0.59.4 release)
 - Removed color keybinnding altogether.
 - Added a horizontal scrollbar to Edit page of buddy list. (Thanks, David Fallon)

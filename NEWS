@@ -1,5 +1,13 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+0.59.5 (10/14/2002):
+	Rob: There's not much to this release. It fixes the segfault that
+	happened due to a protocol change by Yahoo!.  Enjoy.
+
+	George: Ok.
+
+	Sean: ...
+
 0.59.4 (10/06/2002):
 	Rob: Well, it has been some time since we made our last release. This
 	version has a few minor bug fixes.  We hope that this will keep everyone
