@@ -660,16 +660,16 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 	{
 		g_string_append_printf(str, "%u ", msg->msnslp_header.session_id);
 		g_string_append_printf(str, "%u ", msg->msnslp_header.id);
-		g_string_append_printf(str, "%llu ", msg->msnslp_header.offset);
+		g_string_append_printf(str, "%" G_GUINT64_FORMAT " ", msg->msnslp_header.offset);
 		g_string_append(str, "\r\n");
-		g_string_append_printf(str, "%llu ",
+		g_string_append_printf(str, "%" G_GUINT64_FORMAT " ",
 							   msg->msnslp_header.total_size);
 		g_string_append_printf(str, "%u ", msg->msnslp_header.length);
 		g_string_append_printf(str, "%u ", msg->msnslp_header.flags);
 		g_string_append(str, "\r\n");
 		g_string_append_printf(str, "%u ", msg->msnslp_header.ack_id);
 		g_string_append_printf(str, "%u ", msg->msnslp_header.ack_sub_id);
-		g_string_append_printf(str, "%lld ", msg->msnslp_header.ack_size);
+		g_string_append_printf(str, "%" G_GUINT64_FORMAT " ", msg->msnslp_header.ack_size);
 		g_string_append(str, "\r\n");
 
 		if (body != NULL)

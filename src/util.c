@@ -2618,7 +2618,7 @@ parse_content_len(const char *data, size_t data_len)
 	 * if we make sure that there is indeed a \n in our header.
 	 */
 	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
-		sscanf(p, "Content-Length: %u", &content_len);
+		sscanf(p, "Content-Length: %zu", &content_len);
 		gaim_debug_misc("parse_content_len", "parsed %u\n", content_len);
 	}
 

@@ -490,7 +490,7 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu1
 
 static void
 gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *destsn, const gchar *from,
-										   gchar **msg, int *msglen,
+										   gchar **msg, gsize *msglen,
 										   fu16_t *charset, fu16_t *charsubset)
 {
 	OscarData *od = gc->proto_data;
@@ -5330,6 +5330,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	} else {
 		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
+		gsize tmpmsglen;
 		struct stat st;
 		gsize len;
 		GaimConversation *conv = gaim_find_conversation_with_account(name, gaim_connection_get_account(gc));
@@ -5424,7 +5425,8 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		}
 		len = strlen(tmpmsg);
 
-		gaim_plugin_oscar_convert_to_best_encoding(gc, name, tmpmsg, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
+		gaim_plugin_oscar_convert_to_best_encoding(gc, name, tmpmsg, (char **)&args.msg, &tmpmsglen, &args.charset, &args.charsubset);
+		args.msglen = tmpmsglen;
 		gaim_debug_info("oscar", "Sending IM, charset=0x%04hx, charsubset=0x%04hx, length=%d\n",
 						args.charset, args.charsubset, args.msglen);
 		ret = aim_im_sendch1_ext(od->sess, &args);
