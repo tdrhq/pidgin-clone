@@ -2365,7 +2365,7 @@ gaim_str_size_to_units(size_t size)
 		}
 
 		if (size_index == 0) {
-			return g_strdup_printf("%d %s", size, size_str[size_index]);
+			return g_strdup_printf("%zd %s", size, size_str[size_index]);
 		} else {
 			return g_strdup_printf("%.2f %s", size_mag, size_str[size_index]);
 		}
