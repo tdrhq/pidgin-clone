@@ -21,6 +21,8 @@ version 0.59.2
 	  Ka-Hing Cheung)
 	* Fixed a bug with regard to Jabber resources (Thanks Nathan
 	  Walp)
+	* Fixed a possible segfault when signing off Jabber (Thanks
+	  Craig Boston)
 
 version 0.59.1 (08/25/2002)
 	* Created a gtk1-stable branch for GTK+ 1.2 bugfix releases.
