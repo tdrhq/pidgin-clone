@@ -755,13 +755,16 @@ static void
 write_action_parameter(gpointer key, gpointer value, gpointer user_data)
 {
 	const char *name, *param_value;
+	char *escaped;
 	FILE *fp;
 
 	param_value = (const char *)value;
 	name        = (const char *)key;
 	fp          = (FILE *)user_data;
 
-	fprintf(fp, "    <param name='%s'>%s</param>\n", name, param_value);
+	escaped = g_markup_escape_text(param_value, -1);
+	fprintf(fp, "    <param name='%s'>%s</param>\n", name, escaped);
+	g_free(escaped);
 }
 
 static void
