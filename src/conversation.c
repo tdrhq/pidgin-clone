@@ -92,7 +92,7 @@ static void update_checkbox(struct conversation *);
 static void remove_checkbox(struct conversation *);
 
 static void update_smilies(struct conversation *c);
-
+static void update_fontmode(struct conversation *c);
 
 /*------------------------------------------------------------------------*/
 /*  Helpers                                                               */
@@ -193,6 +193,7 @@ struct conversation *new_conversation(char *name)
 	update_icon(c);
 	update_checkbox(c);
 	update_smilies(c);
+	update_fontmode(c);
 	plugin_event(event_new_conversation, name, 0, 0, 0);
 	return c;
 }
@@ -1766,6 +1767,12 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char buf2[BUF_LONG];
 	char mdate[64];
 	int unhighlight = 0;
+	int timesize;
+
+	if (c->gc && c->gc->prpl->options & OPT_PROTO_USE_POINT_SIZE)
+		timesize = 10;
+	else
+		timesize = 2;
 	
 	if (c->is_chat && (!c->gc || !g_slist_find(c->gc->buddy_chats, c)))
 		return;
@@ -1819,11 +1826,11 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 
 	if (flags & WFLAG_SYSTEM) {
 		if (convo_options & OPT_CONVO_SHOW_TIME)
-			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s) </FONT><B>%s</B>", mdate, what);
+			g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"%d\">(%s) </FONT><B>%s</B>", timesize, mdate, what);
 		else
 			g_snprintf(buf, BUF_LONG, "<B>%s</B>", what);
-		g_snprintf(buf2, sizeof(buf2), "<FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B><BR>",
-			   mdate, what);
+		g_snprintf(buf2, sizeof(buf2), "<FONT SIZE=\"%d\"><!--(%s) --></FONT><B>%s</B><BR>",
+			   timesize, mdate, what);
 
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, -1, 0);
 
@@ -1905,12 +1912,12 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 		}
 
 		if (convo_options & OPT_CONVO_SHOW_TIME)
-			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"2\">(%s) </FONT>"
-				   "<B>%s</B></FONT> ", colour, mdate, str);
+			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"%d\">(%s) </FONT>"
+				   "<B>%s</B></FONT> ", colour, timesize, mdate, str);
 		else
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s</B></FONT> ", colour, str);
-		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"2\"><!--(%s) --></FONT>"
-			   "<B>%s</B></FONT> ", colour, mdate, str);
+		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"%d\"><!--(%s) --></FONT>"
+			   "<B>%s</B></FONT> ", colour, timesize, mdate, str);
 
 		g_free(str);
 
@@ -2328,6 +2335,7 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 	update_icon(cnv);
 	update_checkbox(cnv);
 	update_smilies(cnv);
+	update_fontmode(cnv);
 	gaim_setup_imhtml_smileys(cnv->text);
 }
 
@@ -2487,6 +2495,7 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 	update_icon(c);
 	update_checkbox(c);
 	update_smilies(c);
+	update_fontmode(c);
 	gaim_setup_imhtml_smileys(c->text);
 }
 
@@ -3526,6 +3535,15 @@ void remove_icon(struct conversation *c)
 	c->icon_timer = 0;
 	c->frame = 0;
 #endif
+}
+
+void update_fontmode(struct conversation *c)
+{
+	if (!c || !c->gc)
+		return;
+	
+	gtk_imhtml_set_use_pointsize(GTK_IMHTML(c->text),
+			c->gc->prpl->options & OPT_PROTO_USE_POINT_SIZE);
 }
 
 void update_smilies(struct conversation *c)

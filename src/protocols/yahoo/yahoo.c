@@ -1431,7 +1431,7 @@ static struct prpl *my_protocol = NULL;
 
 void yahoo_init(struct prpl *ret) {
 	ret->protocol = PROTO_YAHOO;
-	ret->options = OPT_PROTO_MAIL_CHECK;
+	ret->options = OPT_PROTO_MAIL_CHECK | OPT_PROTO_USE_POINT_SIZE;
 	ret->name = yahoo_name;
 	ret->user_opts = yahoo_user_opts;
 	ret->login = yahoo_login;

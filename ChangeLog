@@ -16,6 +16,9 @@ version 0.59.2
 	* Prevent a possible crash in unhide_buddy_list() (Thanks Ari
 	  Pollak)
 	* Fixed a compilation problem on systems without iconv.
+	* GtkIMHtml can be set to render font sizes as point size
+	  or AIMish relative sizes -- no more huge Yahoo fonts. (Thanks
+	  Ka-Hing Cheung)
 
 version 0.59.1 (08/25/2002)
 	* Created a gtk1-stable branch for GTK+ 1.2 bugfix releases.

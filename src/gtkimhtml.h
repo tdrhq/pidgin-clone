@@ -79,7 +79,8 @@ struct _GtkIMHtml {
 
 	gboolean smileys;
 	gboolean comments;
-
+	gboolean use_pointsize;
+	
 	GtkSmileyTree *smiley_data;
 };
 
@@ -132,6 +133,9 @@ void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,
 
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 					gboolean          show);
+
+void	   gtk_imhtml_set_use_pointsize(GtkIMHtml	*imhtml,
+					gboolean	point);
 
 GString*   gtk_imhtml_append_text      (GtkIMHtml        *imhtml,
 					const gchar      *text,

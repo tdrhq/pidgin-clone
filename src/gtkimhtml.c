@@ -69,7 +69,8 @@
 
 #define MAX_FONT_SIZE 7
 
-#define POINT_SIZE(x) (_point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
+#define POINT_SIZE(x) (imhtml->use_pointsize ? x * 10 : \
+		_point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
 static gint _point_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
 
 #define DEFAULT_PRE_FACE "courier"
@@ -260,6 +261,11 @@ gtk_imhtml_reset_smileys (GtkIMHtml *imhtml)
 	gtk_imhtml_init_smileys (imhtml);
 }
 	
+void
+gtk_imhtml_set_use_pointsize (GtkIMHtml *imhtml, gboolean point)
+{
+	imhtml->use_pointsize = point;
+}
 
 struct im_image {
 	gchar *filename;

@@ -3769,7 +3769,9 @@ void jabber_init(struct prpl *ret)
 {
 	/* the NULL's aren't required but they're nice to have */
 	ret->protocol = PROTO_JABBER;
-	ret->options = OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_CHAT_TOPIC;
+	ret->options = OPT_PROTO_UNIQUE_CHATNAME | 
+		       OPT_PROTO_CHAT_TOPIC | 
+		       OPT_PROTO_USE_POINT_SIZE;
 	ret->name = jabber_name;
 	ret->list_icon = jabber_list_icon;
 	ret->away_states = jabber_away_states;

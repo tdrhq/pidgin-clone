@@ -72,6 +72,8 @@
 #define OPT_PROTO_BUDDY_ICON      0x00000040
 /* Oscar lets you send images in direct IMs */
 #define OPT_PROTO_IM_IMAGE        0x00000080
+/* Oscar doesn't use point size, Yahoo and Jabber do */
+#define OPT_PROTO_USE_POINT_SIZE  0x00000100
 
 #define GAIM_AWAY_CUSTOM "Custom"
 
