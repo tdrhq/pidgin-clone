@@ -125,12 +125,9 @@ wgaim_gettimeofday( timeval, timezone )
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
 
-#if !GLIB_CHECK_VERSION(2,6,0)
-/* I think that this can probably go away, in favor of g_rename() */
 extern int wgaim_rename(const char *oldname, const char *newname);
 #define rename( oldname, newname ) \
 wgaim_rename( oldname, newname )
-#endif
 
 /* sys/stat.h */
 

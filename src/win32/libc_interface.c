@@ -35,9 +35,6 @@
 #include "debug.h"
 #include "libc_internal.h"
 
-#if !GLIB_CHECK_VERSION(2,6,0)
-#	define g_remove remove
-#endif
 /*
  *  PROTOS
  */
@@ -312,7 +309,6 @@ int wgaim_gettimeofday(struct timeval *p, struct timezone *z) {
 
 /* stdio.h */
 
-#if !GLIB_CHECK_VERSION(2,6,0)
 int wgaim_rename (const char *oldname, const char *newname) {
 	struct _stat oldstat, newstat;
 
@@ -343,7 +339,7 @@ int wgaim_rename (const char *oldname, const char *newname) {
 				}
 				/* newname is not a dir */
 				else {
-					g_remove(newname);
+					remove(newname);
 					return rename(oldname, newname);
 				}
 			}
@@ -359,7 +355,6 @@ int wgaim_rename (const char *oldname, const char *newname) {
 	}
 
 }
-#endif
 
 /* time.h */
 
