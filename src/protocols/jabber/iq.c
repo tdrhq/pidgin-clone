@@ -190,8 +190,12 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 
 		strftime(buf, sizeof(buf), "%Y%m%dT%T", now);
 		xmlnode_insert_data(xmlnode_new_child(query, "utc"), buf, -1);
+
 		strftime(buf, sizeof(buf), "%Z", now);
-		xmlnode_insert_data(xmlnode_new_child(query, "tz"), buf, -1);
+		if((utf8 = gaim_utf8_try_convert(buf))) {
+			xmlnode_insert_data(xmlnode_new_child(query, "tz"), utf8, -1);
+			g_free(utf8);
+		}
 
 		strftime(buf, sizeof(buf), "%d %b %Y %T", now);
 		if((utf8 = gaim_utf8_try_convert(buf))) {
