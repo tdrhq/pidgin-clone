@@ -74,7 +74,7 @@ jabber_si_xfer_find(JabberStream *js, const char *sid, const char *from)
 	for(xfers = js->file_transfers; xfers; xfers = xfers->next) {
 		GaimXfer *xfer = xfers->data;
 		JabberSIXfer *jsx = xfer->data;
-		if(jsx->stream_id && xfer->who &&
+		if(jsx && jsx->stream_id && xfer->who &&
 				!strcmp(jsx->stream_id, sid) && !strcmp(xfer->who, from))
 			return xfer;
 	}
