@@ -368,10 +368,15 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 #else
 	g_string_append(str, "NSS:  Disabled<br/>");
 #endif
-#ifdef HAVE_TK
-	g_string_append(str, "TK:  Yes<br/>");
+#ifdef HAVE_TCL
+	g_string_append(str, "Tcl: Yes<br/>");
 #else
-	g_string_append(str, "TK:  No<br/>");
+	g_string_append(str, "Tcl: No<br/>");
+#endif
+#ifdef HAVE_TK
+	g_string_append(str, "Tk:  Yes<br/>");
+#else
+	g_string_append(str, "Tk:  No<br/>");
 #endif
 #ifdef LIBZEPHYR_EXT
 	g_string_append(str, "External libzephyr:  Yes<br/>");
