@@ -192,7 +192,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 		return FALSE;
 	}
 
-	cur = buf;
+	next = buf;
 	do {
 		if (Tcl_ParseCommand(interp, next, len, 0, &parse) == TCL_ERROR) {
 			gaim_debug(GAIM_DEBUG_ERROR, "tcl", "parse error in %s: %s\n", plugin->path,
