@@ -2986,6 +2986,10 @@ msgid "Danish"
 msgstr "Danois"
 
 #: src/gtkdialogs.c:90
+msgid "Australian English"
+msgstr "Anglais australien"
+
+#: src/gtkdialogs.c:90
 msgid "British English"
 msgstr "Anglais britannique"
 
