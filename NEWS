@@ -6,6 +6,12 @@
 	it has been much requested and should make a number of users very
 	happy. See the Changelog for details on other fixes.
 
+	Stu: Much thanks to Miah Gregory and Felipe Contreras, a bunch of memory
+	leaks have been fixed. Felipe also fixed a good number of other MSN bugs.
+	I didn't do much except apply these guys fixes. It's good to see fixes from
+	Gary coming in again too ;-). I like the docklet adjustments Christian made.
+	Btw, we have a new MSN protocol icon, and I think you'll love it.
+
 1.0.3 (11/11/2004):
 	Luke: Not much to see here, some bug fixes that you all will enjoy as
 	the semester draws to a close and everyone still in school gets bogged
