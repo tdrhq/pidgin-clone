@@ -2921,7 +2921,8 @@ gray_stuff_out(GaimConversation *conv)
 		window_icon = get_tab_icon(conv, FALSE);
 	}
 	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), window_icon);
-	g_object_unref(G_OBJECT(window_icon));
+	if (window_icon != NULL)
+		g_object_unref(G_OBJECT(window_icon));
 }
 
 static void
