@@ -125,7 +125,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	yahoo_packet_hash(pkt, 5, xfer->who);
 	yahoo_packet_hash(pkt, 14, "");
 	filename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
-	yahoo_packet_hash(pkt, 27, filename);
+	yahoo_packet_hash(pkt, 27, gaim_url_encode(filename));
 	yahoo_packet_hash(pkt, 28, size);
 
 	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
