@@ -1946,7 +1946,7 @@ static void parse_group(xmlnode *groupnode)
 
 static gboolean gaim_blist_read(const char *filename)
 {
-	GError *error;
+	GError *error = NULL;
 	gchar *contents = NULL;
 	gsize length;
 	xmlnode *gaim, *blist, *privacy;
