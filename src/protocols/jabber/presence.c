@@ -179,6 +179,8 @@ static void authorize_add_cb(struct _jabber_add_permit *jap)
 				gaim_account_request_add(jap->gc->account, NULL, jap->who, NULL, NULL);
 			else
 				gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
+		} else {
+			gaim_account_request_add(jap->gc->account, NULL, jap->who, NULL, NULL);
 		}
 	}
 
