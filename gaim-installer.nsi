@@ -568,8 +568,121 @@ Section Uninstall
     ; Remove Language preference info
     DeleteRegKey HKCU ${GAIM_REG_KEY} ;${MUI_LANGDLL_REGISTRY_ROOT} ${MUI_LANGDLL_REGISTRY_KEY}
 
-    RMDir /r "$INSTDIR\locale"
-    RMDir /r "$INSTDIR\pixmaps"
+    ; translations
+    ; loop through locale dirs and try to delete any gaim translations
+    ClearErrors
+    FindFirst $R1 $R2 "$INSTDIR\locale\*"
+    IfErrors doneFindingTranslations
+
+    processCurrentTranslationDir:
+      ;Ignore "." and ".."
+      StrCmp $R2 "." readNextTranslationDir
+      StrCmp $R2 ".." readNextTranslationDir
+      IfFileExists "$INSTDIR\locale\$R2\LC_MESSAGES\gaim.mo" +1 readNextTranslationDir
+      Delete "$INSTDIR\locale\$R2\LC_MESSAGES\gaim.mo"
+      RMDir  "$INSTDIR\locale\$R2\LC_MESSAGES"
+      RMDir  "$INSTDIR\locale\$R2"
+      ClearErrors
+    readNextTranslationDir:
+      FindNext $R1 $R2
+    IfErrors doneFindingTranslations processCurrentTranslationDir
+
+    doneFindingTranslations:
+    FindClose $R1
+    RMDir  "$INSTDIR\locale"
+
+    Delete "$INSTDIR\pixmaps\gaim\buttons\about_menu.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\accounts.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\change-bgcolor-small.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\change-fgcolor-small.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\edit.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\insert-image-small.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\insert-link-small.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\insert-smiley-small.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\pause.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\text_bigger.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\text_normal.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\text_smaller.png"
+    Delete "$INSTDIR\pixmaps\gaim\buttons\send-im.png"
+    RMDir "$INSTDIR\pixmaps\gaim\buttons"
+
+    Delete "$INSTDIR\pixmaps\gaim\dialogs\gaim_error.png"
+    Delete "$INSTDIR\pixmaps\gaim\dialogs\gaim_info.png"
+    Delete "$INSTDIR\pixmaps\gaim\dialogs\gaim_question.png"
+    Delete "$INSTDIR\pixmaps\gaim\dialogs\gaim_warning.png"
+    Delete "$INSTDIR\pixmaps\gaim\dialogs\gaim_cool.png"
+    Delete "$INSTDIR\pixmaps\gaim\dialogs\gaim_auth.png"
+    RMDir "$INSTDIR\pixmaps\gaim\dialogs"
+
+    Delete "$INSTDIR\pixmaps\gaim\icons\away.png"
+    Delete "$INSTDIR\pixmaps\gaim\icons\connect.png"
+    Delete "$INSTDIR\pixmaps\gaim\icons\msgpend.png"
+    Delete "$INSTDIR\pixmaps\gaim\icons\offline.png"
+    Delete "$INSTDIR\pixmaps\gaim\icons\online.png"
+    Delete "$INSTDIR\pixmaps\gaim\icons\msgunread.png"
+    Delete "$INSTDIR\pixmaps\gaim\icons\info.png"
+    RMDir "$INSTDIR\pixmaps\gaim\icons"
+
+    RMDir /r "$INSTDIR\pixmaps\gaim\smileys\default"
+    RMDir /r "$INSTDIR\pixmaps\gaim\smileys\none"
+    RMDir "$INSTDIR\pixmaps\gaim\smileys"
+
+    Delete "$INSTDIR\pixmaps\gaim\status\default\activebuddy.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\admin.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\aim.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\aol.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\away.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\dnd.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\extendedaway.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\female.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\founder.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\freeforchat.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\gadu-gadu.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\game.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\halfop.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\hiptop.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\icq.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\ignored.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\invisible.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\irc.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\jabber.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\login.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\logout.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\male.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\msn.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\na.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\napster.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\notauthorized.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\novell.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\occupied.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\offline.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\op.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\rendezvous.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\secure.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\silc.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\trepia.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\voice.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\wireless.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\yahoo.png"
+    Delete "$INSTDIR\pixmaps\gaim\status\default\zephyr.png"
+    RMDir "$INSTDIR\pixmaps\gaim\status\default"
+    RMDir "$INSTDIR\pixmaps\gaim\status"
+
+    Delete "$INSTDIR\pixmaps\gaim\logo.png"
+    Delete "$INSTDIR\pixmaps\gaim\tb_drag_arrow_down.png"
+    Delete "$INSTDIR\pixmaps\gaim\tb_drag_arrow_down.xpm"
+    Delete "$INSTDIR\pixmaps\gaim\tb_drag_arrow_left.png"
+    Delete "$INSTDIR\pixmaps\gaim\tb_drag_arrow_left.xpm"
+    Delete "$INSTDIR\pixmaps\gaim\tb_drag_arrow_right.png"
+    Delete "$INSTDIR\pixmaps\gaim\tb_drag_arrow_right.xpm"
+    Delete "$INSTDIR\pixmaps\gaim\tb_drag_arrow_up.png"
+    Delete "$INSTDIR\pixmaps\gaim\tb_drag_arrow_up.xpm"
+    Delete "$INSTDIR\pixmaps\gaim\typed.png"
+    Delete "$INSTDIR\pixmaps\gaim\typing.png"
+    RMDir "$INSTDIR\pixmaps\gaim"
+    Delete "$INSTDIR\pixmaps\gaim.png"
+    RMDir "$INSTDIR\pixmaps"
+
     RMDir /r "$INSTDIR\perlmod"
     Delete "$INSTDIR\plugins\autorecon.dll"
     Delete "$INSTDIR\plugins\docklet.dll"
@@ -625,7 +738,9 @@ Section Uninstall
     RMDir "$INSTDIR"
 
     ; Shortcuts..
-    RMDir /r "$SMPROGRAMS\Gaim"
+    Delete "$SMPROGRAMS\Gaim\Gaim.lnk"
+    Delete "$SMPROGRAMS\Gaim\Uninstall.lnk"
+    RMDir "$SMPROGRAMS\Gaim"
     Delete "$DESKTOP\Gaim.lnk"
 
     Goto done
@@ -1045,6 +1160,7 @@ Function .onInit
 FunctionEnd
 
 Function un.onInit
+  StrCpy $name "Gaim ${GAIM_VERSION}"
 
   ; Get stored language prefrence
   ReadRegStr $LANGUAGE HKCU ${GAIM_REG_KEY} "${GAIM_REG_LANG}"
