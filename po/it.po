@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.53\n"
-"POT-Creation-Date: 2002-08-25 22:01-0400\n"
+"POT-Creation-Date: 2002-12-29 02:41-0500\n"
 "PO-Revision-Date: 2002-03-13 19:26+0100\n"
 "Last-Translator: Salvatore di Maggio <titanicus@libero.it>\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -23,11 +23,11 @@ msgstr "Ciatta con Contatto"
 msgid "Gaim Chat"
 msgstr "Gaim - Chat"
 
-#: plugins/chatlist.c:339 src/about.c:165 src/aim.c:320 src/buddy.c:2716
-#: src/buddy_chat.c:1322 src/buddy_chat.c:1419 src/buddy_chat.c:1449
-#: src/conversation.c:2864 src/dialogs.c:567 src/dialogs.c:3899
-#: src/multi.c:1069 src/plugins.c:277 src/prefs.c:2547 src/prpl.c:438
-#: src/prpl.c:685 src/server.c:1072
+#: plugins/chatlist.c:339 src/about.c:165 src/aim.c:322 src/buddy.c:2718
+#: src/buddy_chat.c:1323 src/buddy_chat.c:1420 src/buddy_chat.c:1450
+#: src/conversation.c:2868 src/dialogs.c:567 src/dialogs.c:3899
+#: src/multi.c:1069 src/plugins.c:277 src/prefs.c:2547 src/prpl.c:439
+#: src/prpl.c:692 src/server.c:1072
 msgid "Close"
 msgstr "Chiudi"
 
@@ -41,15 +41,15 @@ msgid "Refresh"
 msgstr ""
 
 #. Put the buttons in the box
-#: plugins/chatlist.c:364 src/buddy.c:492 src/buddy.c:2827
-#: src/buddy_chat.c:1454 src/conversation.c:2389 src/conversation.c:2879
+#: plugins/chatlist.c:364 src/buddy.c:492 src/buddy.c:2829
+#: src/buddy_chat.c:1455 src/conversation.c:2392 src/conversation.c:2883
 #: src/dialogs.c:932 src/dialogs.c:1114 src/dialogs.c:2095 src/multi.c:1053
 #: src/prefs.c:2041 src/prefs.c:2383 src/prefs.c:2417
 msgid "Add"
 msgstr "Aggiungi"
 
-#: plugins/chatlist.c:365 src/buddy.c:494 src/buddy.c:2829
-#: src/buddy_chat.c:1456 src/conversation.c:2375 src/conversation.c:2876
+#: plugins/chatlist.c:365 src/buddy.c:494 src/buddy.c:2831
+#: src/buddy_chat.c:1457 src/conversation.c:2378 src/conversation.c:2880
 #: src/prefs.c:2055 src/prefs.c:2387 src/prefs.c:2421
 msgid "Remove"
 msgstr "Elimina"
@@ -93,7 +93,7 @@ msgstr "No"
 msgid "Change"
 msgstr "Canale:"
 
-#: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1919
+#: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1921
 msgid "Available"
 msgstr "Presente"
 
@@ -101,8 +101,8 @@ msgstr "Presente"
 msgid "Available for friends only"
 msgstr "Presente solo per gli amici"
 
-#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1118
-#: src/applet.c:197 src/buddy.c:497 src/buddy.c:2582 src/buddy.c:2727
+#: src/applet.c:197 src/buddy.c:497 src/buddy.c:2584 src/buddy.c:2729
+#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1129
 msgid "Away"
 msgstr "Assente"
 
@@ -118,7 +118,7 @@ msgstr "Invisibile"
 msgid "Invisible for friends only"
 msgstr "Invisibile solo per gli amici"
 
-#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1114
+#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1125
 msgid "Unavailable"
 msgstr "Occupato"
 
@@ -152,7 +152,7 @@ msgstr "Autentificazione fallita."
 msgid "Unknown Error Code."
 msgstr "Codice di errore sconosciuto."
 
-#: src/protocols/gg/gg.c:302 src/protocols/msn/msn.c:2050
+#: src/protocols/gg/gg.c:302 src/protocols/msn/msn.c:2052
 #, c-format
 msgid "Status: %s"
 msgstr "Stato: %s"
@@ -279,7 +279,7 @@ msgid "Sex"
 msgstr "Sesso :9"
 
 #. Line 5
-#: src/protocols/gg/gg.c:729 src/dialogs.c:1624 src/dialogs.c:2332
+#: src/dialogs.c:1624 src/dialogs.c:2332 src/protocols/gg/gg.c:729
 msgid "City"
 msgstr "Città"
 
@@ -362,9 +362,8 @@ msgstr "Cerca directory"
 #. } else if (!strcmp(act, _("Set Dir Info"))) {
 #. show_set_dir(gc);
 #.
-#: src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
-#: src/protocols/jabber/jabber.c:3748 src/protocols/jabber/jabber.c:3761
-#: src/dialogs.c:1741
+#: src/dialogs.c:1741 src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
+#: src/protocols/jabber/jabber.c:3759 src/protocols/jabber/jabber.c:3772
 msgid "Change Password"
 msgstr "Cambia password"
 
@@ -385,7 +384,7 @@ msgid "Send message through server"
 msgstr "Spedisci il messaggio attraverso il server"
 
 #: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:1851
-#: src/protocols/jabber/jabber.c:2860 src/protocols/oscar/oscar.c:3593
+#: src/protocols/jabber/jabber.c:2871 src/protocols/oscar/oscar.c:3613
 #: src/protocols/toc/toc.c:1219
 msgid "Get Info"
 msgstr "Prendi informazioni"
@@ -451,7 +450,7 @@ msgstr "Parte IRC"
 msgid "Channel:"
 msgstr "Canale:"
 
-#: src/protocols/irc/irc.c:1675 src/multi.c:549
+#: src/multi.c:549 src/protocols/irc/irc.c:1675
 msgid "Password:"
 msgstr "Password:"
 
@@ -473,35 +472,35 @@ msgstr "Gaim - Cambio password"
 msgid "New password same as old password! Password NOT Changed!"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1092
+#: src/protocols/jabber/jabber.c:1103
 #, fuzzy
 msgid "Unknown"
 msgstr "ICQ sconosciuto"
 
-#: src/protocols/jabber/jabber.c:1120 src/protocols/jabber/jabber.c:1138
-#: src/buddy.c:2887
+#: src/buddy.c:2889 src/protocols/jabber/jabber.c:1131
+#: src/protocols/jabber/jabber.c:1149
 msgid "Online"
 msgstr "Presente"
 
-#: src/protocols/jabber/jabber.c:1122
+#: src/protocols/jabber/jabber.c:1133
 msgid "Extended Away"
 msgstr "Assente ovunque"
 
-#: src/protocols/jabber/jabber.c:1124
+#: src/protocols/jabber/jabber.c:1135
 msgid "Do Not Disturb"
 msgstr "Non disturbare"
 
-#: src/protocols/jabber/jabber.c:1434
+#: src/protocols/jabber/jabber.c:1445
 #, c-format
 msgid "Error %s: %s"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1437
+#: src/protocols/jabber/jabber.c:1448
 #, fuzzy
 msgid "Unknown Error in presence"
 msgstr "Codice di errore sconosciuto."
 
-#: src/protocols/jabber/jabber.c:1607
+#: src/protocols/jabber/jabber.c:1618
 #, fuzzy, c-format
 msgid "The user %s wants to add you to their buddy list."
 msgstr ""
@@ -509,179 +508,179 @@ msgstr ""
 "\n"
 "Vuoi aggiungerli alla tua lista dei contatti?"
 
-#: src/protocols/jabber/jabber.c:1632
+#: src/protocols/jabber/jabber.c:1643
 #, fuzzy
 msgid "No such user"
 msgstr "Il server non esiste"
 
-#: src/protocols/jabber/jabber.c:1634 src/protocols/jabber/jabber.c:2341
-#: src/protocols/jabber/jabber.c:2506
+#: src/protocols/jabber/jabber.c:1645 src/protocols/jabber/jabber.c:2352
+#: src/protocols/jabber/jabber.c:2517
 #, fuzzy
 msgid "Jabber Error"
 msgstr "Errore messaggio"
 
-#: src/protocols/jabber/jabber.c:1719 src/protocols/msn/msn.c:1110
-#: src/dialogs.c:887
+#: src/dialogs.c:887 src/protocols/jabber/jabber.c:1730
+#: src/protocols/msn/msn.c:1110
 msgid "Buddies"
 msgstr "Contatti"
 
-#: src/protocols/jabber/jabber.c:1782
+#: src/protocols/jabber/jabber.c:1793
 msgid "Authenticating"
 msgstr "Autentificazione"
 
-#: src/protocols/jabber/jabber.c:1819
+#: src/protocols/jabber/jabber.c:1830
 msgid "Unknown login error"
 msgstr "Errore di login sconosciuto"
 
-#: src/protocols/jabber/jabber.c:2010
+#: src/protocols/jabber/jabber.c:2021
 #, fuzzy
 msgid "Password successfully changed."
 msgstr "Password cambiata!"
 
-#: src/protocols/jabber/jabber.c:2012
+#: src/protocols/jabber/jabber.c:2023
 #, fuzzy
 msgid "Password Change"
 msgstr "Gaim - Cambio password"
 
-#: src/protocols/jabber/jabber.c:2054 src/protocols/jabber/jabber.c:3676
+#: src/protocols/jabber/jabber.c:2065 src/protocols/jabber/jabber.c:3687
 #, fuzzy
 msgid "Connection lost"
 msgstr "Connessione chiusa."
 
-#: src/protocols/jabber/jabber.c:2056 src/protocols/jabber/jabber.c:2088
-#: src/protocols/jabber/jabber.c:3678 src/protocols/jabber/jabber.c:3724
-#: src/protocols/msn/msn.c:1741 src/protocols/msn/msn.c:1770
+#: src/protocols/jabber/jabber.c:2067 src/protocols/jabber/jabber.c:2099
+#: src/protocols/jabber/jabber.c:3689 src/protocols/jabber/jabber.c:3735
+#: src/protocols/msn/msn.c:1743 src/protocols/msn/msn.c:1772
 msgid "Unable to connect"
 msgstr "Impossibile connettersi"
 
-#: src/protocols/jabber/jabber.c:2062
+#: src/protocols/jabber/jabber.c:2073
 msgid "Connected"
 msgstr "Connesso"
 
-#: src/protocols/jabber/jabber.c:2065
+#: src/protocols/jabber/jabber.c:2076
 msgid "Requesting Authentication Method"
 msgstr "Richiesta metodo autentificazione in corso"
 
 #. we have no chats yet
-#: src/protocols/jabber/jabber.c:2083 src/protocols/msn/msn.c:1762
+#: src/protocols/jabber/jabber.c:2094 src/protocols/msn/msn.c:1764
 msgid "Connecting"
 msgstr "Connessione in corso"
 
-#: src/protocols/jabber/jabber.c:2340 src/protocols/jabber/jabber.c:2505
+#: src/protocols/jabber/jabber.c:2351 src/protocols/jabber/jabber.c:2516
 #, fuzzy
 msgid "Invalid Jabber I.D."
 msgstr "Nome non valido"
 
-#: src/protocols/jabber/jabber.c:2473
+#: src/protocols/jabber/jabber.c:2484
 msgid "Room:"
 msgstr "Stanza:"
 
-#: src/protocols/jabber/jabber.c:2477
+#: src/protocols/jabber/jabber.c:2488
 msgid "Server:"
 msgstr "Server:"
 
-#: src/protocols/jabber/jabber.c:2482
+#: src/protocols/jabber/jabber.c:2493
 msgid "Handle:"
 msgstr "Gestisci:"
 
-#: src/protocols/jabber/jabber.c:2539
+#: src/protocols/jabber/jabber.c:2550
 #, fuzzy
 msgid "Chats"
 msgstr "Chat"
 
-#: src/protocols/jabber/jabber.c:2854
+#: src/protocols/jabber/jabber.c:2865
 #, fuzzy
 msgid "View Error Msg"
 msgstr "Vedi i log"
 
-#: src/protocols/jabber/jabber.c:2865 src/protocols/oscar/oscar.c:3606
-#: src/buddy_chat.c:886
+#: src/buddy_chat.c:886 src/protocols/jabber/jabber.c:2876
+#: src/protocols/oscar/oscar.c:3626
 msgid "Get Away Msg"
 msgstr "Prendi messaggio di Assente"
 
-#: src/protocols/jabber/jabber.c:2882
+#: src/protocols/jabber/jabber.c:2893
 msgid "Remove From Roster"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:3076
+#: src/protocols/jabber/jabber.c:3087
 msgid "Full Name"
 msgstr "Nome al secolo"
 
-#: src/protocols/jabber/jabber.c:3077
+#: src/protocols/jabber/jabber.c:3088
 msgid "Family Name"
 msgstr "Cognome"
 
-#: src/protocols/jabber/jabber.c:3078
+#: src/protocols/jabber/jabber.c:3089
 msgid "Given Name"
 msgstr "Nome assegnato"
 
-#: src/protocols/jabber/jabber.c:3079
+#: src/protocols/jabber/jabber.c:3090
 msgid "Nickname"
 msgstr "Soprannome"
 
-#: src/protocols/jabber/jabber.c:3080 src/dialogs.c:2525
+#: src/dialogs.c:2525 src/protocols/jabber/jabber.c:3091
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/jabber.c:3081
+#: src/protocols/jabber/jabber.c:3092
 msgid "Street Address"
 msgstr "Indirizzo"
 
-#: src/protocols/jabber/jabber.c:3082
+#: src/protocols/jabber/jabber.c:3093
 msgid "Extended Address"
 msgstr "Indirizzo per esteso"
 
-#: src/protocols/jabber/jabber.c:3083
+#: src/protocols/jabber/jabber.c:3094
 msgid "Locality"
 msgstr "Località"
 
-#: src/protocols/jabber/jabber.c:3084
+#: src/protocols/jabber/jabber.c:3095
 msgid "Region"
 msgstr "Regione"
 
-#: src/protocols/jabber/jabber.c:3085
+#: src/protocols/jabber/jabber.c:3096
 msgid "Postal Code"
 msgstr "Codice Postale"
 
 #. Line 7
-#: src/protocols/jabber/jabber.c:3086 src/dialogs.c:1646 src/dialogs.c:2354
+#: src/dialogs.c:1646 src/dialogs.c:2354 src/protocols/jabber/jabber.c:3097
 msgid "Country"
 msgstr "Paese"
 
-#: src/protocols/jabber/jabber.c:3087
+#: src/protocols/jabber/jabber.c:3098
 msgid "Telephone"
 msgstr "Telefono"
 
-#: src/protocols/jabber/jabber.c:3088 src/dialogs.c:2430
+#: src/dialogs.c:2430 src/protocols/jabber/jabber.c:3099
 msgid "Email"
 msgstr "E-mail"
 
-#: src/protocols/jabber/jabber.c:3089
+#: src/protocols/jabber/jabber.c:3100
 msgid "Organization Name"
 msgstr "Nome dell'organizzazione"
 
-#: src/protocols/jabber/jabber.c:3090
+#: src/protocols/jabber/jabber.c:3101
 msgid "Organization Unit"
 msgstr "Divisione"
 
-#: src/protocols/jabber/jabber.c:3091 src/prefs.c:2000
+#: src/prefs.c:2000 src/protocols/jabber/jabber.c:3102
 msgid "Title"
 msgstr "Titolo"
 
-#: src/protocols/jabber/jabber.c:3092
+#: src/protocols/jabber/jabber.c:3103
 msgid "Role"
 msgstr "Posizione"
 
-#: src/protocols/jabber/jabber.c:3093
+#: src/protocols/jabber/jabber.c:3104
 msgid "Birthday"
 msgstr "Compleanno"
 
 #. Right side: frame with description and the filepath of plugin
-#: src/protocols/jabber/jabber.c:3094 src/dialogs.c:2533 src/plugins.c:211
+#: src/dialogs.c:2533 src/plugins.c:211 src/protocols/jabber/jabber.c:3105
 msgid "Description"
 msgstr "Descrizione"
 
-#: src/protocols/jabber/jabber.c:3119
+#: src/protocols/jabber/jabber.c:3130
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
@@ -689,23 +688,23 @@ msgstr ""
 "Tutti i dati qui sotto sono opzionali. Inserisci solo le informazioni che "
 "ritieni opportune"
 
-#: src/protocols/jabber/jabber.c:3120
+#: src/protocols/jabber/jabber.c:3131
 msgid "User Identity"
 msgstr "Identità"
 
-#: src/protocols/jabber/jabber.c:3532
+#: src/protocols/jabber/jabber.c:3543
 msgid "Gaim - Edit Jabber vCard"
 msgstr "Gaim - Edita la vCard Jabber"
 
-#: src/protocols/jabber/jabber.c:3606
+#: src/protocols/jabber/jabber.c:3617
 msgid "Server Registration successful!"
 msgstr "Sei stato registrato sul server!"
 
-#: src/protocols/jabber/jabber.c:3633
+#: src/protocols/jabber/jabber.c:3644
 msgid "Unknown registration error"
 msgstr "Errore di registrazione sconosciuto"
 
-#: src/protocols/jabber/jabber.c:3742 src/protocols/jabber/jabber.c:3757
+#: src/protocols/jabber/jabber.c:3753 src/protocols/jabber/jabber.c:3768
 msgid "Set User Info"
 msgstr "Imposta informazioni utente"
 
@@ -874,8 +873,8 @@ msgid "Unknown Error Code"
 msgstr "Codice di errore sconosciuto."
 
 #: src/protocols/msn/msn.c:351 src/protocols/msn/msn.c:558
-#: src/protocols/msn/msn.c:813 src/protocols/msn/msn.c:2114
-#: src/protocols/msn/msn.c:2283 src/protocols/msn/msn.c:2336
+#: src/protocols/msn/msn.c:813 src/protocols/msn/msn.c:2119
+#: src/protocols/msn/msn.c:2288 src/protocols/msn/msn.c:2341
 msgid "MSN Error"
 msgstr "Errore MSN"
 
@@ -901,177 +900,177 @@ msgstr ""
 msgid "You have been disconnected. You have signed on from another location."
 msgstr "Sei stato disconnesso. Ti sei già connesso da un'altra locazione."
 
-#: src/protocols/msn/msn.c:1435 src/protocols/msn/msn.c:1679
+#: src/protocols/msn/msn.c:1437 src/protocols/msn/msn.c:1681
 #, fuzzy
 msgid "Error reading from server"
 msgstr "Errore di lettura dal socket."
 
-#: src/protocols/msn/msn.c:1568
+#: src/protocols/msn/msn.c:1570
 msgid "Requesting to send password"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1618
+#: src/protocols/msn/msn.c:1620
 #, fuzzy
 msgid "Unable to send password"
 msgstr "Non riesco a leggere il socket"
 
-#: src/protocols/msn/msn.c:1623
+#: src/protocols/msn/msn.c:1625
 #, fuzzy
 msgid "Password sent"
 msgstr "Password: "
 
-#: src/protocols/msn/msn.c:1748
+#: src/protocols/msn/msn.c:1750
 #, fuzzy
 msgid "Unable to write to server"
 msgstr "Non riesco a collegarmi al server"
 
-#: src/protocols/msn/msn.c:1754
+#: src/protocols/msn/msn.c:1756
 #, fuzzy
 msgid "Synching with server"
 msgstr "Registro dal server"
 
-#: src/protocols/msn/msn.c:1920
+#: src/protocols/msn/msn.c:1922
 msgid "Away From Computer"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1921
+#: src/protocols/msn/msn.c:1923
 msgid "Be Right Back"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1922
+#: src/protocols/msn/msn.c:1924
 #, fuzzy
 msgid "Busy"
 msgstr "Contatto"
 
-#: src/protocols/msn/msn.c:1923
+#: src/protocols/msn/msn.c:1925
 msgid "On The Phone"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1924
+#: src/protocols/msn/msn.c:1926
 msgid "Out To Lunch"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1925
+#: src/protocols/msn/msn.c:1927
 #, fuzzy
 msgid "Hidden"
 msgstr "Nascondi icona"
 
-#: src/protocols/msn/msn.c:2041
+#: src/protocols/msn/msn.c:2043
 msgid "Reset friendly name"
 msgstr ""
 
-#: src/protocols/msn/msn.c:2114
+#: src/protocols/msn/msn.c:2119
 msgid "Friendly name too long."
 msgstr ""
 
-#: src/protocols/msn/msn.c:2129 src/protocols/msn/msn.c:2150
+#: src/protocols/msn/msn.c:2134 src/protocols/msn/msn.c:2155
 #, fuzzy
 msgid "Set Friendly Name"
 msgstr "Cognome"
 
-#: src/protocols/msn/msn.c:2130
+#: src/protocols/msn/msn.c:2135
 #, fuzzy
 msgid "Set Friendly Name:"
 msgstr "Account: "
 
-#: src/protocols/msn/msn.c:2131
+#: src/protocols/msn/msn.c:2136
 msgid "Reset All Friendly Names"
 msgstr ""
 
-#: src/protocols/msn/msn.c:2283 src/protocols/msn/msn.c:2336
+#: src/protocols/msn/msn.c:2288 src/protocols/msn/msn.c:2341
 msgid "Invalid name"
 msgstr "Nome non valido"
 
-#: src/protocols/napster/napster.c:457 src/protocols/oscar/oscar.c:3209
+#: src/protocols/napster/napster.c:457 src/protocols/oscar/oscar.c:3229
 #: src/protocols/toc/toc.c:1104
 msgid "Join what group:"
 msgstr "Con quale gruppo vuoi ciattare:"
 
-#: src/protocols/oscar/oscar.c:330
+#: src/protocols/oscar/oscar.c:335
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "È stato chiuso il canale diretto con %s"
 
-#: src/protocols/oscar/oscar.c:332
+#: src/protocols/oscar/oscar.c:337
 #, fuzzy, c-format
 msgid "Direct IM with %s failed"
 msgstr "È stato chiuso il canale diretto con %s"
 
-#: src/protocols/oscar/oscar.c:370
+#: src/protocols/oscar/oscar.c:375
 msgid "connection error (rend)\n"
 msgstr "errore di connessione (rend?)\n"
 
-#: src/protocols/oscar/oscar.c:381
+#: src/protocols/oscar/oscar.c:386
 msgid "major connection error\n"
 msgstr "grave errore di connessione\n"
 
-#: src/protocols/oscar/oscar.c:382 src/protocols/toc/toc.c:511
+#: src/protocols/oscar/oscar.c:387 src/protocols/toc/toc.c:511
 #: src/protocols/toc/toc.c:524 src/protocols/toc/toc.c:590
 msgid "Disconnected."
 msgstr "Disconnesso."
 
-#: src/protocols/oscar/oscar.c:394 src/protocols/toc/toc.c:761
+#: src/protocols/oscar/oscar.c:399 src/protocols/toc/toc.c:761
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Sei stato disconnesso dalla chat room %s."
 
-#: src/protocols/oscar/oscar.c:395
+#: src/protocols/oscar/oscar.c:400
 msgid "Chat Error!"
 msgstr "Errore di chat!"
 
-#: src/protocols/oscar/oscar.c:407
+#: src/protocols/oscar/oscar.c:412
 msgid "Chat is currently unavailable"
 msgstr "La chat al momento non è disponibile"
 
-#: src/protocols/oscar/oscar.c:408
+#: src/protocols/oscar/oscar.c:413
 msgid "Gaim - Chat"
 msgstr "Gaim - Chat"
 
-#: src/protocols/oscar/oscar.c:467 src/protocols/oscar/oscar.c:527
+#: src/protocols/oscar/oscar.c:472 src/protocols/oscar/oscar.c:532
 msgid "Couldn't connect to host"
 msgstr "Impossibile connettersi all'host"
 
-#: src/protocols/oscar/oscar.c:475
+#: src/protocols/oscar/oscar.c:480
 msgid "Password sent, waiting for response\n"
 msgstr "Password inviata; attendo la risposta\n"
 
-#: src/protocols/oscar/oscar.c:508
+#: src/protocols/oscar/oscar.c:513
 msgid "internal connection error\n"
 msgstr "errore interno di connessione\n"
 
-#: src/protocols/oscar/oscar.c:509
+#: src/protocols/oscar/oscar.c:514
 msgid "Unable to login to AIM"
 msgstr "Impossibile entrare in AIM"
 
-#: src/protocols/oscar/oscar.c:514
+#: src/protocols/oscar/oscar.c:519
 #, c-format
 msgid "Signon: %s"
 msgstr "Collegato: %s"
 
-#: src/protocols/oscar/oscar.c:586
+#: src/protocols/oscar/oscar.c:591
 msgid "Signed off.\n"
 msgstr "Scollegato.\n"
 
-#: src/protocols/oscar/oscar.c:605 src/protocols/oscar/oscar.c:730
+#: src/protocols/oscar/oscar.c:610 src/protocols/oscar/oscar.c:735
 msgid "Could Not Connect"
 msgstr "Impossibile connettersi"
 
-#: src/protocols/oscar/oscar.c:613
+#: src/protocols/oscar/oscar.c:618
 msgid "Connection established, cookie sent"
 msgstr "Connessione effettuata: spedito il cookie"
 
 #. Incorrect nick/password
-#: src/protocols/oscar/oscar.c:639 src/protocols/toc/toc.c:459
+#: src/protocols/oscar/oscar.c:644 src/protocols/toc/toc.c:459
 msgid "Incorrect nickname or password."
 msgstr "Soprannome o password sbagliati."
 
 #. Suspended account
-#: src/protocols/oscar/oscar.c:644
+#: src/protocols/oscar/oscar.c:649
 msgid "Your account is currently suspended."
 msgstr "Il tuo account al momento è sospeso"
 
 #. connecting too frequently
-#: src/protocols/oscar/oscar.c:648
+#: src/protocols/oscar/oscar.c:653
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -1080,26 +1079,26 @@ msgstr ""
 "dopo riprova. Se continui, dovrai aspettare anche più a lungo."
 
 #. client too old
-#: src/protocols/oscar/oscar.c:653
+#: src/protocols/oscar/oscar.c:658
 msgid "The client version you are using is too old. Please upgrade at "
 msgstr ""
 "La versione del client che stai usando è troppo vecchia. Aggiornalo alla "
 "versione "
 
-#: src/protocols/oscar/oscar.c:657 src/protocols/toc/toc.c:542
+#: src/protocols/oscar/oscar.c:662 src/protocols/toc/toc.c:542
 msgid "Authentication Failed"
 msgstr "Autentificazione fallita"
 
-#: src/protocols/oscar/oscar.c:679
+#: src/protocols/oscar/oscar.c:684
 msgid "Internal Error"
 msgstr "Errore interno"
 
-#: src/protocols/oscar/oscar.c:1248 src/protocols/oscar/oscar.c:3420
+#: src/protocols/oscar/oscar.c:1253 src/protocols/oscar/oscar.c:3440
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Aperto il canale diretto con %s"
 
-#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
+#: src/protocols/oscar/oscar.c:1524 src/protocols/oscar/oscar.c:2476
 #, c-format
 msgid ""
 "The user %lu has denied your request to add them to your contact list for "
@@ -1107,52 +1106,52 @@ msgid ""
 "%s"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
+#: src/protocols/oscar/oscar.c:1524 src/protocols/oscar/oscar.c:2476
 #, fuzzy
 msgid "No reason given."
 msgstr "Nessun soprannome dato"
 
-#: src/protocols/oscar/oscar.c:1505 src/protocols/oscar/oscar.c:2457
+#: src/protocols/oscar/oscar.c:1525 src/protocols/oscar/oscar.c:2477
 msgid "Gaim - ICQ Authorization Denied"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1511 src/protocols/oscar/oscar.c:2463
+#: src/protocols/oscar/oscar.c:1531 src/protocols/oscar/oscar.c:2483
 #, c-format
 msgid "The user %lu has granted your request to add them to your contact list."
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1512 src/protocols/oscar/oscar.c:2464
+#: src/protocols/oscar/oscar.c:1532 src/protocols/oscar/oscar.c:2484
 msgid "Gaim - ICQ Authorization Granted"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1585
+#: src/protocols/oscar/oscar.c:1605
 #, c-format
 msgid "You missed %d message from %s because it was invalid."
 msgstr "Hai perso %d messaggio da %s perché non valido."
 
-#: src/protocols/oscar/oscar.c:1586
+#: src/protocols/oscar/oscar.c:1606
 #, c-format
 msgid "You missed %d messages from %s because they were invalid."
 msgstr "Hai perso %d messaggi da %s perché non validi."
 
-#: src/protocols/oscar/oscar.c:1595
+#: src/protocols/oscar/oscar.c:1615
 #, c-format
 msgid "You missed %d message from %s because it was too large."
 msgstr "Hai perso %d messaggio da %s perché era troppo lungo."
 
-#: src/protocols/oscar/oscar.c:1596
+#: src/protocols/oscar/oscar.c:1616
 #, c-format
 msgid "You missed %d messages from %s because they were too large."
 msgstr "Hai perso %d messaggi da %s perché troppo lunghi."
 
-#: src/protocols/oscar/oscar.c:1605
+#: src/protocols/oscar/oscar.c:1625
 #, c-format
 msgid "You missed %d message from %s because the rate limit has been exceeded."
 msgstr ""
 "Hai perso %d messaggio da %s perché è stato superata la frequenza massima "
 "dei messaggi."
 
-#: src/protocols/oscar/oscar.c:1606
+#: src/protocols/oscar/oscar.c:1626
 #, c-format
 msgid ""
 "You missed %d messages from %s because the rate limit has been exceeded."
@@ -1160,141 +1159,141 @@ msgstr ""
 "Hai perso %d messaggi da %s perché è stato superata la frequenza massima di "
 "messaggi."
 
-#: src/protocols/oscar/oscar.c:1615
+#: src/protocols/oscar/oscar.c:1635
 #, c-format
 msgid "You missed %d message from %s because it was too evil."
 msgstr "Hai perso %d messaggio da %s perché era troppo cattivo."
 
-#: src/protocols/oscar/oscar.c:1616
+#: src/protocols/oscar/oscar.c:1636
 #, c-format
 msgid "You missed %d messages from %s because they are too evil."
 msgstr "Hai perso %d messaggi da %s perché erano troppo cattivi."
 
-#: src/protocols/oscar/oscar.c:1625
+#: src/protocols/oscar/oscar.c:1645
 #, c-format
 msgid "You missed %d message from %s because you are too evil."
 msgstr "Hai perso %d messaggio da %s perché sei troppo molesto."
 
-#: src/protocols/oscar/oscar.c:1626
+#: src/protocols/oscar/oscar.c:1646
 #, c-format
 msgid "You missed %d messages from %s because you are too evil."
 msgstr "Hai perso %d messaggi da %s perché volevo farti i dispetti."
 
-#: src/protocols/oscar/oscar.c:1634
+#: src/protocols/oscar/oscar.c:1654
 #, c-format
 msgid "You missed %d message from %s for unknown reasons."
 msgstr "Hai perso %d messaggio da %s: non chiedermi perché, non lo so."
 
-#: src/protocols/oscar/oscar.c:1635
+#: src/protocols/oscar/oscar.c:1655
 #, c-format
 msgid "You missed %d messages from %s for unknown reasons."
 msgstr "Non è Winzozz, però hai perso %d messaggi da %s e non so il perché."
 
-#: src/protocols/oscar/oscar.c:1640 src/protocols/oscar/oscar.c:1755
-#: src/protocols/oscar/oscar.c:1773 src/protocols/oscar/oscar.c:2226
-#: src/protocols/yahoo/yahoo.c:594 src/dialogs.c:3076 src/dialogs.c:3082
+#: src/dialogs.c:3076 src/dialogs.c:3082 src/protocols/oscar/oscar.c:1660
+#: src/protocols/oscar/oscar.c:1775 src/protocols/oscar/oscar.c:1793
+#: src/protocols/oscar/oscar.c:2246 src/protocols/yahoo/yahoo.c:605
 msgid "Gaim - Error"
 msgstr "Gaim - Errore"
 
-#: src/protocols/oscar/oscar.c:1703
+#: src/protocols/oscar/oscar.c:1723
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR>%s<BR>"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1705
+#: src/protocols/oscar/oscar.c:1725
 #, c-format
 msgid "<B>Status:</B> %s<BR><HR><BR>%s<BR>"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1734
+#: src/protocols/oscar/oscar.c:1754
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC ha inviato un errore: %s\n"
 
-#: src/protocols/oscar/oscar.c:1736
+#: src/protocols/oscar/oscar.c:1756
 msgid "Gaim - Oscar SNAC Error"
 msgstr "Gaim - Errore SNAC di Oscar"
 
-#: src/protocols/oscar/oscar.c:1753
+#: src/protocols/oscar/oscar.c:1773
 #, c-format
 msgid "Your message to %s did not get sent: %s"
 msgstr "Il tuo messaggio a %s non è stato spedito: %s"
 
-#: src/protocols/oscar/oscar.c:1754 src/protocols/oscar/oscar.c:1772
+#: src/protocols/oscar/oscar.c:1774 src/protocols/oscar/oscar.c:1792
 msgid "Reason unknown"
 msgstr "Motivo sconosciuto."
 
-#: src/protocols/oscar/oscar.c:1771
+#: src/protocols/oscar/oscar.c:1791
 #, c-format
 msgid "User information for %s unavailable: %s"
 msgstr "Le informazioni dell'utente %s non sono disponibili: %s"
 
-#: src/protocols/oscar/oscar.c:1802 src/buddy.c:2131
+#: src/buddy.c:2132 src/protocols/oscar/oscar.c:1822
 msgid "Buddy Icon"
 msgstr "Icona della persona"
 
-#: src/protocols/oscar/oscar.c:1805 src/buddy.c:2134
+#: src/buddy.c:2135 src/protocols/oscar/oscar.c:1825
 msgid "Voice"
 msgstr "Voce"
 
-#: src/protocols/oscar/oscar.c:1808 src/buddy.c:2137
+#: src/buddy.c:2138 src/protocols/oscar/oscar.c:1828
 msgid "IM Image"
 msgstr "Immagine di IM"
 
-#: src/protocols/oscar/oscar.c:1811 src/buddy.c:498 src/buddy.c:2140
-#: src/buddy.c:2581 src/prefs.c:2926
+#: src/buddy.c:498 src/buddy.c:2141 src/buddy.c:2583 src/prefs.c:2926
+#: src/protocols/oscar/oscar.c:1831
 msgid "Chat"
 msgstr "Chat"
 
-#: src/protocols/oscar/oscar.c:1814 src/buddy.c:2143
+#: src/buddy.c:2144 src/protocols/oscar/oscar.c:1834
 msgid "Get File"
 msgstr "Prendi file"
 
-#: src/protocols/oscar/oscar.c:1817 src/buddy.c:2146
+#: src/buddy.c:2147 src/protocols/oscar/oscar.c:1837
 msgid "Send File"
 msgstr "Invia file"
 
-#: src/protocols/oscar/oscar.c:1821 src/buddy.c:2150
+#: src/buddy.c:2151 src/protocols/oscar/oscar.c:1841
 msgid "Games"
 msgstr "Giochi"
 
-#: src/protocols/oscar/oscar.c:1824 src/buddy.c:2153
+#: src/buddy.c:2154 src/protocols/oscar/oscar.c:1844
 msgid "Stocks"
 msgstr "Scorte"
 
-#: src/protocols/oscar/oscar.c:1827 src/buddy.c:2156
+#: src/buddy.c:2157 src/protocols/oscar/oscar.c:1847
 msgid "Send Buddy List"
 msgstr "Invia lista contatti"
 
-#: src/protocols/oscar/oscar.c:1830 src/buddy.c:2159
+#: src/buddy.c:2160 src/protocols/oscar/oscar.c:1850
 msgid "EveryBuddy Bug"
 msgstr "Baco di EveryBuddy"
 
-#: src/protocols/oscar/oscar.c:1833 src/buddy.c:2162
+#: src/buddy.c:2163 src/protocols/oscar/oscar.c:1853
 msgid "AP User"
 msgstr "Utente AP"
 
-#: src/protocols/oscar/oscar.c:1836 src/buddy.c:2165
+#: src/buddy.c:2166 src/protocols/oscar/oscar.c:1856
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/protocols/oscar/oscar.c:1839 src/buddy.c:2168
+#: src/buddy.c:2169 src/protocols/oscar/oscar.c:1859
 msgid "Nihilist"
 msgstr "Nichilista"
 
-#: src/protocols/oscar/oscar.c:1842 src/buddy.c:2171
+#: src/buddy.c:2172 src/protocols/oscar/oscar.c:1862
 msgid "ICQ Server Relay"
 msgstr "Trasmissione al server ICQ"
 
-#: src/protocols/oscar/oscar.c:1845 src/buddy.c:2174
+#: src/buddy.c:2175 src/protocols/oscar/oscar.c:1865
 msgid "ICQ Unknown"
 msgstr "ICQ sconosciuto"
 
-#: src/protocols/oscar/oscar.c:1848 src/buddy.c:2177
+#: src/buddy.c:2178 src/protocols/oscar/oscar.c:1868
 msgid "Trillian Encryption"
 msgstr "Criptaggio trilliano (?)"
 
-#: src/protocols/oscar/oscar.c:1886
+#: src/protocols/oscar/oscar.c:1906
 #, fuzzy
 msgid ""
 "<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif"
@@ -1309,7 +1308,7 @@ msgstr ""
 "\"admin_icon.gif\"> : Amministratore <br><IMG SRC=\"ab_icon.gif\"> : Agente "
 "Interattivo ActiveBuddy<br>"
 
-#: src/protocols/oscar/oscar.c:1914
+#: src/protocols/oscar/oscar.c:1934
 #, c-format
 msgid ""
 "Username : <B>%s</B>  %s <BR>\n"
@@ -1322,27 +1321,27 @@ msgstr ""
 "%s%s%s<BR>\n"
 "<HR><BR>\n"
 
-#: src/protocols/oscar/oscar.c:1946
+#: src/protocols/oscar/oscar.c:1966
 msgid "<i>User has no away message</i>"
 msgstr "<i>L'utente non ha messaggio di Assente</i>"
 
-#: src/protocols/oscar/oscar.c:1958
+#: src/protocols/oscar/oscar.c:1978
 msgid "Client Capabilities: "
 msgstr "Potenzialità del client: "
 
-#: src/protocols/oscar/oscar.c:1966
+#: src/protocols/oscar/oscar.c:1986
 msgid "<i>No Information Provided</i>"
 msgstr "<i>Nessuna informazione fornita</i>"
 
-#: src/protocols/oscar/oscar.c:1989
+#: src/protocols/oscar/oscar.c:2009
 msgid "Your connection may be lost."
 msgstr "La connessione potrebbe essersi interrotta."
 
-#: src/protocols/oscar/oscar.c:1990
+#: src/protocols/oscar/oscar.c:2010
 msgid "AOL error"
 msgstr "Errore AOL"
 
-#: src/protocols/oscar/oscar.c:2225
+#: src/protocols/oscar/oscar.c:2245
 msgid ""
 "The last message was not sent because you are over the rate limit. Please "
 "wait 10 seconds and try again."
@@ -1350,35 +1349,35 @@ msgstr ""
 "L'ultimo messaggio non è stato inviato perché ne hai spediti con troppa "
 "frequenza. Aspetta 10 secondi e riprova."
 
-#: src/protocols/oscar/oscar.c:2589 src/protocols/oscar/oscar.c:3541
-#: src/protocols/toc/toc.c:1564 src/protocols/toc/toc.c:1581
-#: src/protocols/toc/toc.c:1641 src/protocols/toc/toc.c:1683
-#: src/protocols/toc/toc.c:1802 src/protocols/toc/toc.c:1832
-#: src/protocols/toc/toc.c:1888 src/dialogs.c:3604
+#: src/dialogs.c:3604 src/protocols/oscar/oscar.c:2609
+#: src/protocols/oscar/oscar.c:3561 src/protocols/toc/toc.c:1564
+#: src/protocols/toc/toc.c:1581 src/protocols/toc/toc.c:1641
+#: src/protocols/toc/toc.c:1683 src/protocols/toc/toc.c:1802
+#: src/protocols/toc/toc.c:1832 src/protocols/toc/toc.c:1888
 msgid "Error"
 msgstr "Errore"
 
-#: src/protocols/oscar/oscar.c:3192
+#: src/protocols/oscar/oscar.c:3212
 #, c-format
 msgid ""
 "The maximum number of buddies allowed in your buddy list is %d, and you have "
 "%d.  Until you are below the limit, some buddies will not show up as online."
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:3195
+#: src/protocols/oscar/oscar.c:3215
 #, fuzzy
 msgid "Gaim - Warning"
 msgstr "Gaim - Avvisa l'utente?"
 
-#: src/protocols/oscar/oscar.c:3213 src/protocols/toc/toc.c:1108
+#: src/protocols/oscar/oscar.c:3233 src/protocols/toc/toc.c:1108
 msgid "Exchange:"
 msgstr "Scambia:"
 
-#: src/protocols/oscar/oscar.c:3541
+#: src/protocols/oscar/oscar.c:3561
 msgid "Unable to open Direct IM"
 msgstr "Impossibile aprire un canale diretto di IM"
 
-#: src/protocols/oscar/oscar.c:3551
+#: src/protocols/oscar/oscar.c:3571
 #, c-format
 msgid ""
 "You have selected to open a Direct IM connection with %s. Doing this will "
@@ -1389,30 +1388,30 @@ msgstr ""
 "permetterai di vedere il tuo indirizzo IP, rischiando per la sicurezza del "
 "tuo sistema. Vuoi continuare?"
 
-#: src/protocols/oscar/oscar.c:3568
+#: src/protocols/oscar/oscar.c:3588
 #, c-format
 msgid ""
 "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not "
 "support sending status messages.</I><BR>"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:3575
+#: src/protocols/oscar/oscar.c:3595
 #, c-format
 msgid ""
 "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message."
 "</I><BR>"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:3600
+#: src/protocols/oscar/oscar.c:3620
 #, fuzzy
 msgid "Get Status Msg"
 msgstr "Prendi messaggio di Assente"
 
-#: src/protocols/oscar/oscar.c:3613
+#: src/protocols/oscar/oscar.c:3633
 msgid "Direct IM"
 msgstr "IM diretto"
 
-#: src/protocols/oscar/oscar.c:3621
+#: src/protocols/oscar/oscar.c:3641
 msgid "Get Capabilities"
 msgstr "Prendi le potenzialità"
 
@@ -1560,7 +1559,7 @@ msgstr "Errore di chat"
 msgid "Password Change Successful"
 msgstr "Cambio password effettuato"
 
-#: src/protocols/toc/toc.c:782 src/dialogs.c:1730
+#: src/dialogs.c:1730 src/protocols/toc/toc.c:782
 msgid "Gaim - Password Change"
 msgstr "Gaim - Cambio password"
 
@@ -1611,7 +1610,7 @@ msgstr "%s chiede a %s di accettare %d file: %s (%.2f %s)%s%s"
 msgid "%s requests you to send them a file"
 msgstr "%s ti chiede di mandargli un file"
 
-#: src/protocols/yahoo/yahoo.c:594
+#: src/protocols/yahoo/yahoo.c:605
 msgid "Your message did not get sent."
 msgstr "Il tuo messaggio non è stato inviato."
 
@@ -1708,59 +1707,59 @@ msgstr ""
 msgid "Web Site"
 msgstr "Sito Web"
 
-#: src/aim.c:153 src/buddy.c:2709
+#: src/aim.c:155 src/buddy.c:2711
 msgid "Signoff"
 msgstr "Abbandona"
 
-#: src/aim.c:165
+#: src/aim.c:167
 msgid "Please enter your logon"
 msgstr "Inserisci il tuo account"
 
-#: src/aim.c:165 src/multi.c:1400 src/server.c:55
+#: src/aim.c:167 src/multi.c:1400 src/server.c:55
 msgid "Signon Error"
 msgstr "Errore di iscrizione"
 
-#: src/aim.c:263
+#: src/aim.c:265
 msgid "Gaim - Login"
 msgstr "Gaim - Login"
 
-#: src/aim.c:281
+#: src/aim.c:283
 msgid "Screen Name: "
 msgstr "Account: "
 
-#: src/aim.c:297
+#: src/aim.c:299
 msgid "Password: "
 msgstr "Password: "
 
-#: src/aim.c:318 src/buddy.c:2713
+#: src/aim.c:320 src/buddy.c:2715
 msgid "Quit"
 msgstr "Esci"
 
-#: src/aim.c:323 src/aim.c:831 src/buddy.c:2739
+#: src/aim.c:325 src/aim.c:833 src/buddy.c:2741
 msgid "Accounts"
 msgstr "Accounts"
 
-#: src/aim.c:325 src/multi.c:915
+#: src/aim.c:327 src/multi.c:915
 msgid "Signon"
 msgstr "Entra"
 
-#: src/aim.c:357
+#: src/aim.c:359
 msgid "About"
 msgstr "Informazioni"
 
-#: src/aim.c:358 src/prefs.c:1633 src/prefs.c:1905
+#: src/aim.c:360 src/prefs.c:1633 src/prefs.c:1905
 msgid "Options"
 msgstr "Opzioni"
 
-#: src/aim.c:360 src/aim.c:834 src/buddy.c:2757
+#: src/aim.c:362 src/aim.c:836 src/buddy.c:2759
 msgid "Plugins"
 msgstr "Plugins"
 
-#: src/aim.c:828 src/buddy.c:2749
+#: src/aim.c:830 src/buddy.c:2751
 msgid "Preferences"
 msgstr "Preferenze"
 
-#: src/aim.c:838 src/multi.c:1472
+#: src/aim.c:840 src/multi.c:1472
 #, fuzzy
 msgid "Auto-login"
 msgstr "Auto Login"
@@ -1814,74 +1813,74 @@ msgstr "Rimuovi msg di Assente"
 msgid "Set All Away"
 msgstr "Tutti come Assente"
 
-#: src/buddy.c:493 src/buddy.c:2828 src/dialogs.c:942 src/dialogs.c:1089
+#: src/buddy.c:493 src/buddy.c:2830 src/dialogs.c:942 src/dialogs.c:1089
 msgid "Group"
 msgstr "Gruppo"
 
-#: src/buddy.c:499 src/buddy.c:664 src/buddy.c:834 src/buddy.c:2579
-#: src/buddy_chat.c:861 src/buddy_chat.c:1278
+#: src/buddy.c:499 src/buddy.c:664 src/buddy.c:830 src/buddy.c:2581
+#: src/buddy_chat.c:861 src/buddy_chat.c:1279
 msgid "IM"
 msgstr "IM"
 
-#: src/buddy.c:500 src/buddy.c:2580 src/buddy_chat.c:877 src/buddy_chat.c:1286
-#: src/buddy_chat.c:1462 src/conversation.c:2897
+#: src/buddy.c:500 src/buddy.c:2582 src/buddy_chat.c:877 src/buddy_chat.c:1287
+#: src/buddy_chat.c:1463 src/conversation.c:2901
 msgid "Info"
 msgstr "Informazioni"
 
 #. Put the buttons in the box
-#: src/buddy.c:669 src/buddy.c:839 src/dialogs.c:1081 src/dialogs.c:3458
+#: src/buddy.c:669 src/buddy.c:835 src/dialogs.c:1081 src/dialogs.c:3458
 #: src/dialogs.c:3473
 msgid "Alias"
 msgstr "Alias"
 
-#: src/buddy.c:674 src/buddy.c:858
+#: src/buddy.c:674 src/buddy.c:854
 msgid "Add Buddy Pounce"
 msgstr "Aggiungi salto a Contatto"
 
-#: src/buddy.c:681 src/buddy.c:864
+#: src/buddy.c:681 src/buddy.c:860
 msgid "View Log"
 msgstr "Vedi i log"
 
-#: src/buddy.c:821 src/buddy.c:852
+#: src/buddy.c:817 src/buddy.c:848
 msgid "Rename"
 msgstr "Rinomina"
 
-#: src/buddy.c:846
+#: src/buddy.c:842
 msgid "Un-Alias"
 msgstr "Cancella Alias"
 
-#: src/buddy.c:1645 src/buddy.c:2732
+#: src/buddy.c:1641 src/buddy.c:2734
 msgid "Buddy Pounce"
 msgstr "Salto a Contatto"
 
-#: src/buddy.c:1725
+#: src/buddy.c:1721
 msgid "New Buddy Pounce"
 msgstr "Nuovo salto a Contatto"
 
-#: src/buddy.c:1743
+#: src/buddy.c:1739
 msgid "Remove Buddy Pounce"
 msgstr "Rimuovi salto a Contatto"
 
-#: src/buddy.c:1771
+#: src/buddy.c:1767
 msgid "[Click to edit]"
 msgstr "[Clicca per modificare]"
 
-#: src/buddy.c:2254
+#: src/buddy.c:2256
 #, c-format
 msgid "Logged in: %s\n"
 msgstr "Entrato in: %s\n"
 
-#: src/buddy.c:2266
+#: src/buddy.c:2268
 #, c-format
 msgid "Warnings: %d%%\n"
 msgstr "Avvisi: %d%%\n"
 
-#: src/buddy.c:2278
+#: src/buddy.c:2280
 #, c-format
 msgid "Capabilities: %s\n"
 msgstr "Potenzialità: %s\n"
 
-#: src/buddy.c:2282
+#: src/buddy.c:2284
 #, c-format
 msgid ""
 "Alias: %s               \n"
@@ -1892,127 +1891,127 @@ msgstr ""
 "Account: %s\n"
 "%s%s%s%s%s%s"
 
-#: src/buddy.c:2286
+#: src/buddy.c:2288
 msgid "Idle: "
 msgstr "A riposo: "
 
-#: src/buddy.c:2359 src/buddy.c:2364
+#: src/buddy.c:2361 src/buddy.c:2366
 #, c-format
 msgid "%s logged in."
 msgstr "%s entrato."
 
-#: src/buddy.c:2424 src/buddy.c:2429
+#: src/buddy.c:2426 src/buddy.c:2431
 #, c-format
 msgid "%s logged out."
 msgstr "%s uscito."
 
-#: src/buddy.c:2614
+#: src/buddy.c:2616
 msgid "Information on selected Buddy"
 msgstr "Informazioni Contatto selezionato."
 
-#: src/buddy.c:2615 src/dialogs.c:697
+#: src/buddy.c:2617 src/dialogs.c:697
 msgid "Send Instant Message"
 msgstr "Invia un messaggio"
 
-#: src/buddy.c:2616
+#: src/buddy.c:2618
 msgid "Start/join a Buddy Chat"
 msgstr "Inizia/unisciti a chat con Contatto"
 
-#: src/buddy.c:2617
+#: src/buddy.c:2619
 msgid "Activate Away Message"
 msgstr "Attiva messaggio di Assente"
 
-#: src/buddy.c:2689
+#: src/buddy.c:2691
 msgid "File"
 msgstr "File"
 
-#: src/buddy.c:2693
+#: src/buddy.c:2695
 msgid "Add A Buddy"
 msgstr "Aggiungi Contatto"
 
-#: src/buddy.c:2695
+#: src/buddy.c:2697
 msgid "Join A Chat"
 msgstr "Unisciti a una chat"
 
-#: src/buddy.c:2697
+#: src/buddy.c:2699
 msgid "New Instant Message"
 msgstr "Nuovo messaggio"
 
-#: src/buddy.c:2699 src/dialogs.c:759
+#: src/buddy.c:2701 src/dialogs.c:759
 msgid "Get User Info"
 msgstr "Vedi info utente"
 
-#: src/buddy.c:2704
+#: src/buddy.c:2706
 msgid "Import Buddy List"
 msgstr "Importa lista contatti"
 
-#: src/buddy.c:2722
+#: src/buddy.c:2724
 msgid "Tools"
 msgstr "Strumenti"
 
-#: src/buddy.c:2745
+#: src/buddy.c:2747
 msgid "Protocol Actions"
 msgstr "Azioni protocollo"
 
-#: src/buddy.c:2751
+#: src/buddy.c:2753
 msgid "View System Log"
 msgstr "Vedi log di sistema"
 
-#: src/buddy.c:2763
+#: src/buddy.c:2765
 msgid "Perl"
 msgstr "Perl"
 
-#: src/buddy.c:2766
+#: src/buddy.c:2768
 msgid "Load Script"
 msgstr "Esegui script"
 
-#: src/buddy.c:2770
+#: src/buddy.c:2772
 msgid "Unload All Scripts"
 msgstr "Anunulla tutti gli script"
 
-#: src/buddy.c:2774
+#: src/buddy.c:2776
 msgid "List Scripts"
 msgstr "Elenco script"
 
-#: src/buddy.c:2782
+#: src/buddy.c:2784
 msgid "Help"
 msgstr "Aiuto"
 
-#: src/buddy.c:2787
+#: src/buddy.c:2789
 #, fuzzy
 msgid "Online Help"
 msgstr "Presente"
 
-#: src/buddy.c:2788
+#: src/buddy.c:2790
 #, fuzzy
 msgid "Debug Window"
 msgstr "Mostra finestra debug"
 
-#: src/buddy.c:2789
+#: src/buddy.c:2791
 msgid "About Gaim"
 msgstr "Informazioni su Gaim"
 
-#: src/buddy.c:2807 src/prefs.c:2905
+#: src/buddy.c:2809 src/prefs.c:2905
 msgid "Buddy List"
 msgstr "Lista contatti"
 
-#: src/buddy.c:2860
+#: src/buddy.c:2862
 msgid "Add a new Buddy"
 msgstr "Aggiungi nuovo contatto"
 
-#: src/buddy.c:2861
+#: src/buddy.c:2863
 msgid "Add a new Group"
 msgstr "Aggiungio nuovo gruppo"
 
-#: src/buddy.c:2862
+#: src/buddy.c:2864
 msgid "Remove selected Buddy/Group"
 msgstr "Elimina Contatto/Gruppo selezionato"
 
-#: src/buddy.c:2889
+#: src/buddy.c:2891
 msgid "Edit Buddies"
 msgstr "Modifica Contatti"
 
-#: src/buddy.c:2932
+#: src/buddy.c:2934
 msgid "Gaim - Buddy List"
 msgstr "Gaim - Lista Contatti"
 
@@ -2038,8 +2037,8 @@ msgstr "Annulla"
 msgid "Join"
 msgstr "Inserisciti"
 
-#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1328
-#: src/buddy_chat.c:1418
+#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1329
+#: src/buddy_chat.c:1419
 msgid "Invite"
 msgstr "Invita"
 
@@ -2059,13 +2058,13 @@ msgstr "Gaim - Invita Contatto nella stanza di chat"
 msgid "Un-Ignore"
 msgstr "Rimuovi Ignora"
 
-#: src/buddy_chat.c:870 src/buddy_chat.c:1282
+#: src/buddy_chat.c:870 src/buddy_chat.c:1283
 msgid "Ignore"
 msgstr "Ignora"
 
 #. don't remove them from ignored in case they re-enter
-#: src/buddy_chat.c:933 src/buddy_chat.c:1045 src/buddy_chat.c:1508
-#: src/buddy_chat.c:1541
+#: src/buddy_chat.c:933 src/buddy_chat.c:1045 src/buddy_chat.c:1509
+#: src/buddy_chat.c:1542
 #, c-format
 msgid "%d %s in room"
 msgstr "%d %s nella stanza"
@@ -2098,211 +2097,211 @@ msgstr "Gaim - Chat in gruppo"
 msgid "Topic:"
 msgstr "Argomento:"
 
-#: src/buddy_chat.c:1259
+#: src/buddy_chat.c:1260
 msgid "0 people in room"
 msgstr "Nessuno in stanza"
 
-#: src/buddy_chat.c:1333 src/buddy_chat.c:1417
+#: src/buddy_chat.c:1334 src/buddy_chat.c:1418
 msgid "Whisper"
 msgstr "Msg privato"
 
-#: src/buddy_chat.c:1338 src/buddy_chat.c:1415 src/buddy_chat.c:1464
-#: src/conversation.c:2908
+#: src/buddy_chat.c:1339 src/buddy_chat.c:1416 src/buddy_chat.c:1465
+#: src/conversation.c:2912
 msgid "Send"
 msgstr "Invia"
 
-#: src/buddy_chat.c:1458 src/conversation.c:2885
+#: src/buddy_chat.c:1459 src/conversation.c:2889
 msgid "Block"
 msgstr "Blocca"
 
-#: src/buddy_chat.c:1460 src/conversation.c:2891 src/dialogs.c:424
+#: src/buddy_chat.c:1461 src/conversation.c:2895 src/dialogs.c:424
 #: src/dialogs.c:453
 msgid "Warn"
 msgstr "Avviso"
 
-#: src/conversation.c:431
+#: src/conversation.c:432
 msgid "Gaim - Save Conversation"
 msgstr "Gaim - Salva la conversazione"
 
-#: src/conversation.c:492
+#: src/conversation.c:493
 #, fuzzy
 msgid "Gaim - Insert Image"
 msgstr "Gaim - Utente IM"
 
-#: src/conversation.c:1336
+#: src/conversation.c:1332
 msgid "Unable to send message: too large"
 msgstr "Messaggio non spedito: troppo lungo"
 
-#: src/conversation.c:1336 src/conversation.c:1340
+#: src/conversation.c:1332 src/conversation.c:1336
 msgid "Message Error"
 msgstr "Errore messaggio"
 
-#: src/conversation.c:1340
+#: src/conversation.c:1336
 msgid "Unable to send message: Unknown reason"
 msgstr "Impossibile spedire messaggio: motivo sconosciuto."
 
-#: src/conversation.c:1559
+#: src/conversation.c:1555
 #, c-format
 msgid "Currently at %d, "
 msgstr "Al momento a %d, "
 
-#: src/conversation.c:1567
+#: src/conversation.c:1563
 #, c-format
 msgid "Setting position to %d\n"
 msgstr "Imposta posizione a %d\n"
 
-#: src/conversation.c:2170 src/prefs.c:1308
+#: src/conversation.c:2172 src/prefs.c:1308
 msgid "Bold Text"
 msgstr "Testo Grassetto"
 
-#: src/conversation.c:2170
+#: src/conversation.c:2172
 msgid "Bold"
 msgstr "Grassetto"
 
-#: src/conversation.c:2174
+#: src/conversation.c:2176
 msgid "Italics Text"
 msgstr "Testo Corsivo"
 
-#: src/conversation.c:2175
+#: src/conversation.c:2177
 msgid "Italics"
 msgstr "Corsivo"
 
-#: src/conversation.c:2178 src/prefs.c:1320
+#: src/conversation.c:2180 src/prefs.c:1320
 msgid "Underline Text"
 msgstr "Testo Sottolineato"
 
-#: src/conversation.c:2179
+#: src/conversation.c:2181
 msgid "Underline"
 msgstr "Sottolineato"
 
-#: src/conversation.c:2183 src/prefs.c:1326
+#: src/conversation.c:2185 src/prefs.c:1326
 msgid "Strike through Text"
 msgstr "Testo barrato"
 
-#: src/conversation.c:2183
+#: src/conversation.c:2185
 msgid "Strike"
 msgstr "Barrato"
 
-#: src/conversation.c:2189
+#: src/conversation.c:2191
 msgid "Decrease font size"
 msgstr "Riduci font"
 
-#: src/conversation.c:2189
+#: src/conversation.c:2191
 msgid "Small"
 msgstr "Piccolo"
 
-#: src/conversation.c:2192
+#: src/conversation.c:2194
 msgid "Normal font size"
 msgstr "Font normale"
 
-#: src/conversation.c:2192
+#: src/conversation.c:2194
 msgid "Normal"
 msgstr "Normale"
 
-#: src/conversation.c:2195
+#: src/conversation.c:2197
 msgid "Increase font size"
 msgstr "Ingrandisci font"
 
-#: src/conversation.c:2195
+#: src/conversation.c:2197
 msgid "Big"
 msgstr "Grande"
 
-#: src/conversation.c:2202 src/dialogs.c:2883 src/dialogs.c:2907
+#: src/conversation.c:2204 src/dialogs.c:2883 src/dialogs.c:2907
 msgid "Select Font"
 msgstr "Seleziona font"
 
-#: src/conversation.c:2203
+#: src/conversation.c:2205
 msgid "Font"
 msgstr "Font"
 
-#: src/conversation.c:2206 src/prefs.c:1356
+#: src/conversation.c:2208 src/prefs.c:1356
 msgid "Text Color"
 msgstr "Colore testo"
 
-#: src/conversation.c:2207 src/conversation.c:2211
+#: src/conversation.c:2209 src/conversation.c:2213
 msgid "Color"
 msgstr "Colore"
 
-#: src/conversation.c:2211 src/prefs.c:1374
+#: src/conversation.c:2213 src/prefs.c:1374
 msgid "Background Color"
 msgstr "Colore sfondo"
 
-#: src/conversation.c:2218 src/dialogs.c:2506
+#: src/conversation.c:2220 src/dialogs.c:2506
 msgid "Insert Link"
 msgstr "Inserisci link"
 
-#: src/conversation.c:2219
+#: src/conversation.c:2221
 msgid "Link"
 msgstr "Link"
 
-#: src/conversation.c:2222
+#: src/conversation.c:2224
 msgid "Insert smiley face"
 msgstr "Inserisci faccina"
 
-#: src/conversation.c:2222
+#: src/conversation.c:2224
 msgid "Smiley"
 msgstr "Faccine"
 
-#: src/conversation.c:2225
+#: src/conversation.c:2227
 #, fuzzy
 msgid "Insert IM Image"
 msgstr "Immagine di IM"
 
-#: src/conversation.c:2225
+#: src/conversation.c:2227
 #, fuzzy
 msgid "Image"
 msgstr "Immagine di IM"
 
-#: src/conversation.c:2232
+#: src/conversation.c:2234
 msgid "Enable logging"
 msgstr "Abilita i log"
 
-#: src/conversation.c:2233 src/prefs.c:254
+#: src/conversation.c:2235 src/prefs.c:254
 msgid "Logging"
 msgstr "Log"
 
-#: src/conversation.c:2242
+#: src/conversation.c:2244
 msgid "Save Conversation"
 msgstr "Salva la conversazione"
 
-#: src/conversation.c:2243 src/dialogs.c:1682 src/dialogs.c:1866
+#: src/conversation.c:2245 src/dialogs.c:1682 src/dialogs.c:1866
 #: src/dialogs.c:3220 src/dialogs.c:3908 src/dialogs.c:4785
 msgid "Save"
 msgstr "Salva"
 
-#: src/conversation.c:2247
+#: src/conversation.c:2249
 msgid "Toggle Sound"
 msgstr ""
 
-#: src/conversation.c:2248
+#: src/conversation.c:2250
 msgid "Sound"
 msgstr "Suoni"
 
-#: src/conversation.c:2729
+#: src/conversation.c:2733
 msgid "Gaim - Conversations"
 msgstr "Gaim - Conversazioni"
 
-#: src/conversation.c:2816
+#: src/conversation.c:2820
 msgid "Send message as: "
 msgstr "Manda messaggio come: "
 
-#: src/conversation.c:3453
+#: src/conversation.c:3457
 msgid "Gaim - Save Icon"
 msgstr "Gaim - Salva icona"
 
-#: src/conversation.c:3487
+#: src/conversation.c:3491
 msgid "Disable Animation"
 msgstr "Disabilita animazione"
 
-#: src/conversation.c:3492
+#: src/conversation.c:3496
 msgid "Enable Animation"
 msgstr "Abilita animazione"
 
-#: src/conversation.c:3498
+#: src/conversation.c:3502
 msgid "Hide Icon"
 msgstr "Nascondi icona"
 
-#: src/conversation.c:3504
+#: src/conversation.c:3508
 msgid "Save Icon As..."
 msgstr "Salva icona come..."
 
@@ -2696,12 +2695,12 @@ msgstr "Rinomina Contatto"
 msgid "Gaim - Select Perl Script"
 msgstr "Gaim - Seleziona script Perl"
 
-#: src/gaimrc.c:1235
+#: src/gaimrc.c:1250
 #, c-format
 msgid "Could not open config file %s."
 msgstr "File di configurazione %s non aperto."
 
-#: src/gaimrc.c:1236
+#: src/gaimrc.c:1251
 msgid "Preferences Error"
 msgstr "Errore di Preferenze"
 
@@ -2845,7 +2844,7 @@ msgstr "%s non riesce a entrare"
 msgid "Connection Error"
 msgstr "Connessione chiusa."
 
-#: src/perl.c:879
+#: src/perl.c:881
 msgid "Perl Scripts"
 msgstr "Script Perl"
 
@@ -3549,16 +3548,16 @@ msgstr "Gaim - Prompt"
 msgid "Gaim - New Mail"
 msgstr "Gaim - Nuova mail"
 
-#: src/prpl.c:445
+#: src/prpl.c:446
 msgid "Open Mail"
 msgstr "Apri la mail"
 
-#: src/prpl.c:570
+#: src/prpl.c:577
 #, fuzzy, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s ha fatto %s il loro contatto %s%s%s"
 
-#: src/prpl.c:578
+#: src/prpl.c:585
 #, fuzzy
 msgid ""
 "\n"
@@ -3569,7 +3568,7 @@ msgstr ""
 "\n"
 "Vuoi aggiungerli alla tua lista dei contatti?"
 
-#: src/prpl.c:621
+#: src/prpl.c:628
 msgid ""
 "You do not currently have any protocols available that are able to register "
 "new accounts."
@@ -3577,15 +3576,15 @@ msgstr ""
 "Attualmente c'è nessun protocollo che ti permetta di registrarti con nuovi "
 "account."
 
-#: src/prpl.c:658
+#: src/prpl.c:665
 msgid "Gaim - Registration"
 msgstr "Gaim - Registrazione"
 
-#: src/prpl.c:673
+#: src/prpl.c:680
 msgid "Registration Information"
 msgstr "Informazioni sulla registrazione"
 
-#: src/prpl.c:690
+#: src/prpl.c:697
 msgid "Register"
 msgstr "Registra"
 
