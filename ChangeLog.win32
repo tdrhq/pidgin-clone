@@ -5,7 +5,10 @@ version 1.0.4:
 	  to avoid HOME env variables intended for cygwin (using unix style
 	  path).
 	* Both the installer and gaim now perform checks to see if an instance
-	  of gaim is already running.
+	  of gaim is already running. Definition of GAIM_MULTI_INST env
+	  variable turns this check off.
+	* Asynchronous host name resolution (Fixes unresponsive UI during slow
+	  or unresponsive host name resolution).
 
 version 1.0.3 (11/11/2004):
 	* Updated GTK+ to 2.4.13 (rev a)
