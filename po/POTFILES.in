@@ -13,6 +13,7 @@ plugins/gevolution/assoc-buddy.c
 plugins/gevolution/gevo-util.c
 plugins/gevolution/gevolution.c
 plugins/gevolution/new_person_dialog.c
+plugins/gtk-signals-test.c
 plugins/history.c
 plugins/iconaway.c
 plugins/idle.c
@@ -85,6 +86,7 @@ src/protocols/jabber/si.c
 src/protocols/jabber/xdata.c
 src/protocols/msn/cmdproc.c
 src/protocols/msn/command.c
+src/protocols/msn/dialog.c
 src/protocols/msn/directconn.c
 src/protocols/msn/error.c
 src/protocols/msn/group.c
@@ -131,6 +133,7 @@ src/protocols/yahoo/yahoochat.c
 src/protocols/yahoo/ycht.c
 src/protocols/zephyr/zephyr.c
 src/proxy.c
+src/prpl.c
 src/prpl.h
 src/request.h
 src/server.c
