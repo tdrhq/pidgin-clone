@@ -51,7 +51,8 @@ echo n | libtoolize --copy --force || exit;
 # brokennesses ...  Obviously the real answer is for them to fix it
 # themselves, but for Luke's sake we have this.
 for dir in "/usr/local/share/aclocal" \
-           "/opt/gnome-1.4/share/aclocal"
+           "/opt/gnome-1.4/share/aclocal" \
+           "/sw/share/aclocal"
 do
 	if test -d $dir ; then
 		ACLOCAL_FLAGS="$ACLOCAL_FLAGS -I $dir"
