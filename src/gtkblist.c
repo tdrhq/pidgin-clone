@@ -185,7 +185,9 @@ const double top_left_corner[25] = {
 
 static gboolean xcomposite_is_present()
 {
-	static gboolean known = FALSE, result = FALSE;
+	static gboolean result = FALSE;
+#ifndef _WIN32
+	static gboolean known = FALSE;
 	int i, j, k;
 
 	if (!known) {
@@ -194,6 +196,7 @@ static gboolean xcomposite_is_present()
 			result = TRUE;
 		known = TRUE;
 	}
+#endif
 
 	return result;
 }
