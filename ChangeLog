@@ -4,7 +4,7 @@ version 0.59.4
 	* Removed color keybinnding altogether.
 	* Added a horizontal scrollbar to Edit page of
 	  buddy list. (Thanks, David Fallon)
-	* bug fixes. (Thanks to (in no particular order):
+	* bug fixes. (Thanks to (in no particular order)
 	  Ethan Blanton, Mark Doliner, Luke Schierer)
 
 version 0.59.3 (09/14/2002):
@@ -17,7 +17,7 @@ version 0.59.3 (09/14/2002):
 	  (Thanks Matt Wilson and Ethan Blanton)
 
 version 0.59.2 (09/09/2002):
-        * Japanese translation updated (Thanks, Junichi Uekawa)
+	* Japanese translation updated (Thanks, Junichi Uekawa)
 	* Won't crash when you set your MSN Friendly name to an
 	  empty string.
 	* Default manual browser command changed to reflect the
