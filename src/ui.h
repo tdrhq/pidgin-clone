@@ -37,19 +37,10 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #endif
 
-#if GTK_CHECK_VERSION(1,3,0)
-#define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_TOPLEVEL); \
-			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
-#define GdkWindowPrivate GdkWindowObject
-#define gtk_toolbar_new(x,y) gtk_toolbar_new()
-#define gtk_accel_group_attach(x, y) _gtk_accel_group_attach(x, y)
-#define gtk_widget_lock_accelerators(x)
-#else
 #define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_DIALOG)
 #define GTK_OLD_EDITABLE(x) GTK_EDITABLE(x)
 #define gtk_style_get_font(style) (style)->font
 #define gtk_style_set_font(s, f) (s)->font = f
-#endif
 
 #define DEFAULT_FONT_XFLD "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 #define DEFAULT_FONT_FACE "helvetica"

@@ -2843,14 +2843,12 @@ void show_conv(struct conversation *c)
 	gtk_text_set_editable(GTK_TEXT(entry), TRUE);
 	gtk_text_set_word_wrap(GTK_TEXT(entry), TRUE);
 
-#if !GTK_CHECK_VERSION(1,3,0) /* This gtk bug should be fixed in gtk2 */
 	/* I hate hackish workarounds.  According to Ari Pollak, a gtk bug causes Gaim to loop
 	 * infinitely if the entry is smaller than the text height.  This is a hackish workaround */ 
 	gtk_widget_set_usize(entry, conv_size.width - 20, 
 			     MAX(conv_size.entry_height, 
 				 gdk_char_height(gtk_widget_get_default_style()->font, '0') +
 				 gtk_widget_get_default_style()->font->ascent + 1));
-#endif
 
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
