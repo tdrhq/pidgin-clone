@@ -4,6 +4,7 @@ version 0.59.9
 	* Updated zh_TW.po file (Thanks breeze833)
 	* Fix an oscar bug that caused some messages from 
 	  AOL 8.0 to be dropped (Thanks Mark Doliner)
+	* Changed "openprojects" to "freenode" in irc.c
 
 version 0.59.8 (01/06/2003):
 	* Ripped out all gtk2 support (Thanks Nathan Walp).
