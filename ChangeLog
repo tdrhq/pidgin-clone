@@ -3,6 +3,8 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 1.2.1:
 	* URL escaping now works with UTF-8 text. This may break some old log
 	 files.
+	* Fix signing on ICQ accounts with passwords greater than 8 characters
+	  (Peter Ajamian)
 
 version 1.2.0 (3/17/2005):
 	* Yahoo file receiving and buddy icon receiving work again.
