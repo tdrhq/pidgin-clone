@@ -7164,10 +7164,6 @@ msgstr ""
 msgid "Message could not be sent for an unknown reason"
 msgstr "Die Nachricht konnte aus einem unbekannten Grund nicht gesendet werden"
 
-#: src/protocols/msn/switchboard.c:487
-msgid "Message could not be sent for an unknown reason"
-msgstr "Die Nachricht konnte aus einem unbekannten Grund nicht gesendet werden"
-
 #: src/protocols/msn/switchboard.c:492
 #, c-format
 msgid ""
