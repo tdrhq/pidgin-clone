@@ -130,8 +130,7 @@ typedef enum
 	GAIM_CBFLAGS_VOICE         = 0x0001, /**< Voiced user or "Participant" */
 	GAIM_CBFLAGS_HALFOP        = 0x0002, /**< Half-op                      */
 	GAIM_CBFLAGS_OP            = 0x0004, /**< Channel Op or Moderator      */
-	GAIM_CBFLAGS_FOUNDER       = 0x0008, /**< Channel Founder              */
-	GAIM_CBFLAGS_TYPING        = 0x0010, /**< Currently typing             */
+	GAIM_CBFLAGS_FOUNDER       = 0x0008  /**< Channel Founder              */
 } GaimConvChatBuddyFlags;
 
 #include "account.h"
