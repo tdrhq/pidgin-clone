@@ -773,8 +773,21 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 
 void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	gaim_connection_error(gaim_account_get_connection(irc->account),
-			      _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
+	GaimConnection *gc = gaim_account_get_connection(irc->account);
+	char *escaped, *msg;
+
+	if (gc && gaim_connection_get_state(gc) == GAIM_CONNECTED) {
+		escaped = g_markup_escape_text(args[1], -1);
+		msg = g_strdup_printf(_("Invalid nickname '%s'"), escaped);
+		gaim_notify_error(irc->account, _("Invalid nickname"),
+				  msg,
+				  _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
+		g_free(escaped);
+		g_free(msg);
+	} else {
+		gaim_connection_error(gc,
+				      _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
+	}
 }
 
 void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, char **args)
