@@ -10,6 +10,7 @@ plugins/gaiminc.c
 plugins/gestures/gestures.c
 plugins/gevolution/add_buddy_dialog.c
 plugins/gevolution/assoc-buddy.c
+plugins/gevolution/eds-utils.c
 plugins/gevolution/gevo-util.c
 plugins/gevolution/gevolution.c
 plugins/gevolution/new_person_dialog.c
