@@ -636,7 +636,7 @@ gint gaim_sort_smileys (GtkTreeModel	*model,
 						gpointer		userdata)
 {
 	gint ret = 0;
-	gchar *name1, *name2;
+	gchar *name1 = NULL, *name2 = NULL;
 
 	gtk_tree_model_get(model, a, 3, &name1, -1);
 	gtk_tree_model_get(model, b, 3, &name2, -1);
@@ -645,8 +645,11 @@ gint gaim_sort_smileys (GtkTreeModel	*model,
 		if (!(name1 == NULL && name2 == NULL))
 			ret = (name1 == NULL) ? -1: 1;
 	} else if (!g_ascii_strcasecmp(name1, "none")) {
-		/* Sort name1 first */
-		ret = -1;
+		if (!g_utf8_collate(name1, name2))
+			ret = 0;
+		else
+			/* Sort name1 first */
+			ret = -1;
 	} else if (!g_ascii_strcasecmp(name2, "none")) {
 		/* Sort name2 first */
 		ret = 1;
