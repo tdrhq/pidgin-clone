@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-05 15:49+0200\n"
-"PO-Revision-Date: 2004-10-05 23:33+0200\n"
+"POT-Creation-Date: 2004-10-10 02:07+0200\n"
+"PO-Revision-Date: 2004-10-10 02:25+0200\n"
 "Last-Translator: Vincent van Adrighem <adrighem@gnome.org>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -444,62 +444,49 @@ msgstr ""
 "Sleep naar boven en dan naar links om naar het vorige gesprek te gaan.\n"
 "Sleep naar boven en dan naar rechts om naar het volgende gesprek te gaan."
 
-#: plugins/gevolution/add_buddy_dialog.c:134
-#: plugins/gevolution/assoc-buddy.c:72
-msgid "Local Addressbook"
-msgstr "Lokaal adresboek"
-
-#: plugins/gevolution/add_buddy_dialog.c:144
-#: plugins/gevolution/add_buddy_dialog.c:155
-#: plugins/gevolution/assoc-buddy.c:82 plugins/gevolution/assoc-buddy.c:93
-#: src/gtkblist.c:3080 src/gtkprefs.c:959 src/gtkprefs.c:1011
-#: src/gtkprefs.c:1823 src/protocols/jabber/jabber.c:925
-msgid "None"
-msgstr "Niet"
-
-#: plugins/gevolution/add_buddy_dialog.c:188
-#: plugins/gevolution/assoc-buddy.c:176 src/gtkprefs.c:2164
+#: plugins/gevolution/add_buddy_dialog.c:132
+#: plugins/gevolution/assoc-buddy.c:120 src/gtkprefs.c:2164
 #: src/gtkroomlist.c:553 src/protocols/jabber/jabber.c:599
 #: src/protocols/msn/msn.c:1394 src/protocols/trepia/trepia.c:399
 msgid "Name"
 msgstr "Naam"
 
-#: plugins/gevolution/add_buddy_dialog.c:199
+#: plugins/gevolution/add_buddy_dialog.c:143
 msgid "Instant Messaging"
 msgstr "Expresberichten"
 
 #. Add the label.
-#: plugins/gevolution/add_buddy_dialog.c:480
+#: plugins/gevolution/add_buddy_dialog.c:455
 msgid "Select a person from your address book below, or add a new person."
 msgstr ""
 "Kies een persoon uit het hieronder weergegeven adresboek, of voeg een nieuw "
 "persoon toe."
 
 #. "Search"
-#: plugins/gevolution/add_buddy_dialog.c:493
-#: plugins/gevolution/assoc-buddy.c:381 src/protocols/oscar/oscar.c:7093
+#: plugins/gevolution/add_buddy_dialog.c:468
+#: plugins/gevolution/assoc-buddy.c:354 src/protocols/oscar/oscar.c:7093
 msgid "Search"
 msgstr "Zoeken"
 
-#: plugins/gevolution/add_buddy_dialog.c:564
-#: plugins/gevolution/new_person_dialog.c:308 src/gtkblist.c:4120
+#: plugins/gevolution/add_buddy_dialog.c:549
+#: plugins/gevolution/new_person_dialog.c:304 src/gtkblist.c:4120
 #: src/gtkblist.c:4465
 msgid "Group:"
 msgstr "Groep:"
 
 #. "New Person" button
-#: plugins/gevolution/add_buddy_dialog.c:590
-#: plugins/gevolution/assoc-buddy.c:484
+#: plugins/gevolution/add_buddy_dialog.c:575
+#: plugins/gevolution/assoc-buddy.c:466
 msgid "New Person"
 msgstr "Nieuw persoon"
 
 #. "Select Buddy" button
-#: plugins/gevolution/add_buddy_dialog.c:607
+#: plugins/gevolution/add_buddy_dialog.c:592
 msgid "Select Buddy"
 msgstr "Contact selecteren"
 
 #. Add the label.
-#: plugins/gevolution/assoc-buddy.c:368
+#: plugins/gevolution/assoc-buddy.c:341
 msgid ""
 "Select a person from your address book to add this buddy to, or create a new "
 "person."
@@ -508,20 +495,20 @@ msgstr ""
 "een nieuw persoon aan."
 
 #. Add the disclosure
-#: plugins/gevolution/assoc-buddy.c:447
+#: plugins/gevolution/assoc-buddy.c:429
 msgid "Show user details"
 msgstr "Gebruikerdetails weergeven"
 
-#: plugins/gevolution/assoc-buddy.c:448
+#: plugins/gevolution/assoc-buddy.c:430
 msgid "Hide user details"
 msgstr "Gebruikerdetails verbergen"
 
 #. "Associate Buddy" button
-#: plugins/gevolution/assoc-buddy.c:501
+#: plugins/gevolution/assoc-buddy.c:483
 msgid "_Associate Buddy"
 msgstr "Contact _associëren"
 
-#: plugins/gevolution/gevo-util.c:65 plugins/gevolution/gevolution.c:90
+#: plugins/gevolution/gevo-util.c:64 plugins/gevolution/gevolution.c:90
 #: src/blist.c:774 src/blist.c:981 src/blist.c:1917 src/gtkblist.c:3939
 #: src/protocols/jabber/roster.c:66
 msgid "Buddies"
@@ -565,42 +552,42 @@ msgstr "Integratie met Evolution"
 msgid "Provides integration with Ximian Evolution."
 msgstr "Verzorgt de integratie met Ximian Evolution."
 
-#: plugins/gevolution/new_person_dialog.c:268
+#: plugins/gevolution/new_person_dialog.c:264
 msgid "Please enter the person's information below."
 msgstr "Vul hieronder de persoonsgegevens in."
 
-#: plugins/gevolution/new_person_dialog.c:272
+#: plugins/gevolution/new_person_dialog.c:268
 msgid "Please enter the buddy's screen name and account type below."
 msgstr "Vul hieronder de gebruikersnaam en accounttype van uw contact in."
 
-#: plugins/gevolution/new_person_dialog.c:292
+#: plugins/gevolution/new_person_dialog.c:288
 msgid "Account type:"
 msgstr "Accounttype:"
 
-#: plugins/gevolution/new_person_dialog.c:296
+#: plugins/gevolution/new_person_dialog.c:292
 msgid "Screenname:"
 msgstr "Gebruikersnaam:"
 
 #. Optional Information section
-#: plugins/gevolution/new_person_dialog.c:316
+#: plugins/gevolution/new_person_dialog.c:312
 msgid "Optional information:"
 msgstr "Optionele informatie:"
 
 #. Label
-#: plugins/gevolution/new_person_dialog.c:339 src/gtkaccount.c:372
+#: plugins/gevolution/new_person_dialog.c:335 src/gtkaccount.c:372
 #: src/gtkaccount.c:402 src/protocols/oscar/oscar.c:576
 msgid "Buddy Icon"
 msgstr "Contactplaatje"
 
-#: plugins/gevolution/new_person_dialog.c:351
+#: plugins/gevolution/new_person_dialog.c:347
 msgid "First name:"
 msgstr "Voornaam:"
 
-#: plugins/gevolution/new_person_dialog.c:363
+#: plugins/gevolution/new_person_dialog.c:359
 msgid "Last name:"
 msgstr "Achternaam:"
 
-#: plugins/gevolution/new_person_dialog.c:383
+#: plugins/gevolution/new_person_dialog.c:379
 msgid "E-mail:"
 msgstr "E-mail:"
 
@@ -1295,7 +1282,7 @@ msgstr "Geef uw oude wachtwoord en nieuwe wachtwoord."
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
 #: src/account.c:342 src/connection.c:198 src/gtkblist.c:2452
-#: src/gtkdialogs.c:386 src/gtkdialogs.c:528 src/gtkdialogs.c:582
+#: src/gtkdialogs.c:390 src/gtkdialogs.c:532 src/gtkdialogs.c:586
 #: src/gtkrequest.c:242 src/protocols/jabber/jabber.c:1049
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:227
 #: src/protocols/msn/msn.c:242 src/protocols/msn/msn.c:257
@@ -1313,10 +1300,10 @@ msgstr "OK"
 
 #: src/account.c:343 src/account.c:381 src/away.c:367 src/connection.c:199
 #: src/gtkaccount.c:2010 src/gtkaccount.c:2506 src/gtkblist.c:2453
-#: src/gtkblist.c:4503 src/gtkconn.c:169 src/gtkdialogs.c:387
-#: src/gtkdialogs.c:529 src/gtkdialogs.c:583 src/gtkdialogs.c:681
-#: src/gtkdialogs.c:703 src/gtkdialogs.c:723 src/gtkdialogs.c:760
-#: src/gtkdialogs.c:820 src/gtkdialogs.c:863 src/gtkdialogs.c:898
+#: src/gtkblist.c:4503 src/gtkconn.c:169 src/gtkdialogs.c:391
+#: src/gtkdialogs.c:533 src/gtkdialogs.c:587 src/gtkdialogs.c:685
+#: src/gtkdialogs.c:707 src/gtkdialogs.c:727 src/gtkdialogs.c:764
+#: src/gtkdialogs.c:824 src/gtkdialogs.c:867 src/gtkdialogs.c:902
 #: src/gtkimhtmltoolbar.c:420 src/gtkprivacy.c:586 src/gtkprivacy.c:599
 #: src/gtkprivacy.c:624 src/gtkprivacy.c:635 src/gtkrequest.c:243
 #: src/protocols/icq/gaim_icq.c:276 src/protocols/jabber/buddy.c:515
@@ -1394,7 +1381,9 @@ msgstr "U kunt geen afwezigheidsbericht opslaan zonder titel"
 
 #: src/away.c:761
 msgid "Please give the message a title, or choose \"Use\" to use without saving."
-msgstr "Geef het bericht een titel, of kies \"Gebruiken\" om te gebruiken zonder op te slaan."
+msgstr ""
+"Geef het bericht een titel, of kies \"Gebruiken\" om te gebruiken zonder op "
+"te slaan."
 
 #: src/away.c:771
 msgid "You cannot create an empty away message"
@@ -1984,11 +1973,11 @@ msgstr "Contact ver_wijderen"
 
 #: src/gtkblist.c:1195
 msgid "Alias Contact..."
-msgstr "Alias voor contact..."
+msgstr "Alias voor contactgroep..."
 
-#: src/gtkblist.c:1198 src/gtkdialogs.c:757 src/gtkdialogs.c:759
+#: src/gtkblist.c:1198 src/gtkdialogs.c:761 src/gtkdialogs.c:763
 msgid "Remove Contact"
-msgstr "Contact verwijderen"
+msgstr "Contactgroep verwijderen"
 
 #: src/gtkblist.c:1202 src/gtkblist.c:1286 src/gtkblist.c:1300
 msgid "_Alias..."
@@ -2295,6 +2284,11 @@ msgstr "/Extra/Lijst van ruimtes"
 #: src/gtkblist.c:3000
 msgid "/Tools/Privacy"
 msgstr "/Extra/Privacy"
+
+#: src/gtkblist.c:3080 src/gtkprefs.c:959 src/gtkprefs.c:1011
+#: src/gtkprefs.c:1823 src/protocols/jabber/jabber.c:925
+msgid "None"
+msgstr "Niet"
 
 #: src/gtkblist.c:3082
 msgid "Alphabetical"
@@ -2798,7 +2792,7 @@ msgstr "Gebruiker blokkeren"
 
 #: src/gtkconv.c:3851
 msgid "Send a file to the user"
-msgstr "Een bestand aan de gebruiker verzenden"
+msgstr "Een bestand verzenden"
 
 #: src/gtkconv.c:3858
 msgid "Add the user to your buddy list"
@@ -3126,69 +3120,69 @@ msgstr ""
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim op irc.freenode.net<BR><BR>"
 
-#: src/gtkdialogs.c:231
+#: src/gtkdialogs.c:235
 msgid "Active Developers"
 msgstr "Huidige ontwikkelaars"
 
-#: src/gtkdialogs.c:246
+#: src/gtkdialogs.c:250
 msgid "Crazy Patch Writers"
 msgstr "Gestoorde patch-schrijvers"
 
-#: src/gtkdialogs.c:262
+#: src/gtkdialogs.c:266
 msgid "Retired Developers"
 msgstr "Ex-ontwikkelaars"
 
-#: src/gtkdialogs.c:277
+#: src/gtkdialogs.c:281
 msgid "Current Translators"
 msgstr "Huidige vertalers"
 
-#: src/gtkdialogs.c:297
+#: src/gtkdialogs.c:301
 msgid "Past Translators"
 msgstr "Ex-vertalers"
 
-#: src/gtkdialogs.c:368 src/gtkdialogs.c:510 src/gtkdialogs.c:563
+#: src/gtkdialogs.c:372 src/gtkdialogs.c:514 src/gtkdialogs.c:567
 msgid "_Screen name"
 msgstr "_Gebruikersnaam"
 
-#: src/gtkdialogs.c:374 src/gtkdialogs.c:516 src/gtkdialogs.c:569
+#: src/gtkdialogs.c:378 src/gtkdialogs.c:520 src/gtkdialogs.c:573
 msgid "_Account"
 msgstr "_Account"
 
-#: src/gtkdialogs.c:381
+#: src/gtkdialogs.c:385
 msgid "New Instant Message"
 msgstr "Nieuw express-bericht"
 
-#: src/gtkdialogs.c:383
+#: src/gtkdialogs.c:387
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr ""
 "Geef alstublieft de gebruikersnaam van de persoon aan wie u een bericht zou "
 "willen sturen."
 
-#: src/gtkdialogs.c:523
+#: src/gtkdialogs.c:527
 msgid "Get User Info"
 msgstr "Gebruikersinfo"
 
-#: src/gtkdialogs.c:525
+#: src/gtkdialogs.c:529
 msgid "Please enter the screen name of the person whose info you would like to view."
 msgstr ""
 "Geef alstublieft de gebruikersnaam van de persoon waarvan u de informatie "
 "wilt opvragen."
 
-#: src/gtkdialogs.c:577
+#: src/gtkdialogs.c:581
 msgid "Get User Log"
 msgstr "Gebruikerslogboek opvragen"
 
-#: src/gtkdialogs.c:579
+#: src/gtkdialogs.c:583
 msgid "Please enter the screen name of the person whose log you would like to view."
 msgstr ""
 "Geef alstublieft de gebruikersnaam van de persoon waarvan u het logboek wilt "
 "opvragen."
 
-#: src/gtkdialogs.c:619
+#: src/gtkdialogs.c:623
 msgid "Warn User"
 msgstr "Gebruiker waarschuwen"
 
-#: src/gtkdialogs.c:640
+#: src/gtkdialogs.c:644
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -3201,45 +3195,45 @@ msgstr ""
 "Dit zal %s zijn/haar waarschuwingsniveau verhogen en strengere regels zullen "
 "worden toegepast.\n"
 
-#: src/gtkdialogs.c:649
+#: src/gtkdialogs.c:653
 msgid "Warn _anonymously?"
 msgstr "_Anoniem waarschuwen?"
 
-#: src/gtkdialogs.c:656
+#: src/gtkdialogs.c:660
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Anonieme waarschuwingen zijn minder erg.</b>"
 
-#: src/gtkdialogs.c:677
+#: src/gtkdialogs.c:681
 msgid "Alias Contact"
 msgstr "Alias contact"
 
-#: src/gtkdialogs.c:678
+#: src/gtkdialogs.c:682
 msgid "Enter an alias for this contact."
 msgstr "Geef een alias voor deze persoon."
 
-#: src/gtkdialogs.c:680 src/gtkdialogs.c:702 src/gtkdialogs.c:722
+#: src/gtkdialogs.c:684 src/gtkdialogs.c:706 src/gtkdialogs.c:726
 #: src/gtkrequest.c:250 src/protocols/silc/chat.c:584
 msgid "Alias"
 msgstr "Alias"
 
-#: src/gtkdialogs.c:698
+#: src/gtkdialogs.c:702
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Geef een alias voor %s."
 
-#: src/gtkdialogs.c:700
+#: src/gtkdialogs.c:704
 msgid "Alias Buddy"
 msgstr "Alias voor contact"
 
-#: src/gtkdialogs.c:719
+#: src/gtkdialogs.c:723
 msgid "Alias Chat"
 msgstr "Alias chat"
 
-#: src/gtkdialogs.c:720
+#: src/gtkdialogs.c:724
 msgid "Enter an alias for this chat."
 msgstr "Geef een alias voor deze chat."
 
-#: src/gtkdialogs.c:754
+#: src/gtkdialogs.c:758
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -3248,7 +3242,7 @@ msgstr ""
 "U staat op het punt om het contact die %s bevat en %d andere contacten van "
 "uw contactenlijst te verwijderen. Wilt u doorgaan?"
 
-#: src/gtkdialogs.c:815
+#: src/gtkdialogs.c:819
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -3257,22 +3251,22 @@ msgstr ""
 "U staat op het punt om de groep %s en alle contacten in die groep van uw "
 "contactenlijst te verwijderen. Wilt u doorgaan?"
 
-#: src/gtkdialogs.c:818 src/gtkdialogs.c:819
+#: src/gtkdialogs.c:822 src/gtkdialogs.c:823
 msgid "Remove Group"
 msgstr "Groep verwijderen"
 
-#: src/gtkdialogs.c:857
+#: src/gtkdialogs.c:861
 #, c-format
 msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr ""
 "U staat op het punt om %s van uw contactenlijst te verwijderen. Wilt u "
 "doorgaan?"
 
-#: src/gtkdialogs.c:860 src/gtkdialogs.c:862
+#: src/gtkdialogs.c:864 src/gtkdialogs.c:866
 msgid "Remove Buddy"
 msgstr "Contact verwijderen"
 
-#: src/gtkdialogs.c:892
+#: src/gtkdialogs.c:896
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
@@ -3281,7 +3275,7 @@ msgstr ""
 "U staat op het punt om de chatruimte %s van uw contactenlijst te "
 "verwijderen. Wilt u doorgaan?"
 
-#: src/gtkdialogs.c:896 src/gtkdialogs.c:897
+#: src/gtkdialogs.c:900 src/gtkdialogs.c:901
 msgid "Remove Chat"
 msgstr "Chat verwijderen"
 
@@ -3899,7 +3893,7 @@ msgstr "Contactenlijst"
 
 #: src/gtkprefs.c:965 src/gtkprefs.c:1027
 msgid "Show buddy _icons"
-msgstr "Protocolt_ype weergeven"
+msgstr "Contact_plaatjes weergeven"
 
 #: src/gtkprefs.c:967
 msgid "Show _warning levels"
@@ -3911,7 +3905,7 @@ msgstr "Afwezigheidstijd _weergeven"
 
 #: src/gtkprefs.c:971
 msgid "Dim i_dle buddies"
-msgstr "Afwezige contacten _uitgrijzen"
+msgstr "Afwezige contacten in grijs weergeven"
 
 #: src/gtkprefs.c:973
 msgid "_Automatically expand contacts"
@@ -6471,14 +6465,14 @@ msgstr "Synchronisatieprobleem in contactenlijst van %s (%s)"
 msgid ""
 "%s on the local list is inside the group \"%s\" but not on the server list. "
 "Do you want this buddy to be added?"
-msgstr ""
+msgstr "%s is op de lokale lijst in de groep \"%s\", maar niet op de serverlijst. Wilt u deze toevoegen?"
 
 #: src/protocols/msn/dialog.c:105
 #, c-format
 msgid ""
 "%s is on the local list but not on the server list. Do you want this buddy "
 "to be added?"
-msgstr ""
+msgstr "%s is op de lokale lijst, maar niet op de serverlijst. Wilt u deze toevoegen?"
 
 #: src/protocols/msn/error.c:35
 msgid "Unable to parse message"
@@ -6730,15 +6724,13 @@ msgstr "Mobiel telefoonnummer instellen."
 
 #: src/protocols/msn/msn.c:283
 msgid "Allow MSN Mobile pages?"
-msgstr "MSN-mobile pagina's toestaan?"
+msgstr "MSN-mobile oproepen toestaan?"
 
 #: src/protocols/msn/msn.c:284
 msgid ""
 "Do you want to allow or disallow people on your buddy list to send you MSN "
 "Mobile pages to your cell phone or other mobile device?"
-msgstr ""
-"Wilt u dat mensen op uw contactenlijst MSN-mobile pagina's kunnen sturen "
-"naar uw mobiele telefoon of ander mobiel apparaat?"
+msgstr "Wilt u dat mensen op uw contactenlijst MSN-mobile oproepen kunnen sturen naar uw mobiele telefoon of ander mobiel apparaat?"
 
 #: src/protocols/msn/msn.c:288
 msgid "Allow"
@@ -6768,7 +6760,7 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:446
 msgid "Has you"
-msgstr ""
+msgstr "Heeft u"
 
 #: src/protocols/msn/msn.c:459 src/protocols/msn/msn.c:747
 #: src/protocols/msn/state.c:34
@@ -6829,7 +6821,7 @@ msgstr "Mobiele apparaten inschakelen/uitschakelen"
 
 #: src/protocols/msn/msn.c:499
 msgid "Allow/Disallow Mobile Pages"
-msgstr "MSN-mobile pagina's toestaan/weigeren"
+msgstr "MSN-mobile oproepen toestaan/weigeren"
 
 #: src/protocols/msn/msn.c:522
 msgid "Send to Mobile"
@@ -9922,7 +9914,7 @@ msgstr "Bestand voor privésleutel"
 
 #: src/protocols/silc/silc.c:1607
 msgid "Reject watching by other users"
-msgstr ""
+msgstr "Anderen mogen u niet in de gaten houden"
 
 #: src/protocols/silc/silc.c:1610
 msgid "Block invites"
@@ -9934,7 +9926,7 @@ msgstr "Berichten zonder sleuteluitwisseling blokkeren"
 
 #: src/protocols/silc/silc.c:1616
 msgid "Reject online status attribute requests"
-msgstr ""
+msgstr "Opvragen van uw on-line status weigeren"
 
 #: src/protocols/silc/util.c:202 src/protocols/silc/util.c:227
 msgid "Creating SILC key pair..."
@@ -9995,20 +9987,21 @@ msgstr ""
 "\n"
 
 #: src/protocols/silc/util.c:325
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Public Key Babbleprint:\n"
 "%s"
-msgstr "Profielinformatie"
+msgstr ""
+"Babbleprint van openbare sleutel:\n"
+"%s"
 
 #: src/protocols/silc/util.c:329 src/protocols/silc/util.c:330
 msgid "Public Key Information"
 msgstr "Informatie over openbare sleutel"
 
 #: src/protocols/silc/util.c:512
-#, fuzzy
 msgid "Paging"
-msgstr "Logboek"
+msgstr "Semafoon"
 
 #: src/protocols/silc/util.c:536
 msgid "Computer"
@@ -10527,9 +10520,8 @@ msgid "Pager host"
 msgstr "semafoon host"
 
 #: src/protocols/yahoo/yahoo.c:3386
-#, fuzzy
 msgid "Japan Pager host"
-msgstr "semafoon host"
+msgstr "Japanse semafoon host"
 
 #: src/protocols/yahoo/yahoo.c:3389
 msgid "Pager port"
@@ -10540,9 +10532,8 @@ msgid "File transfer host"
 msgstr "Bestandsoverdracht computer"
 
 #: src/protocols/yahoo/yahoo.c:3395
-#, fuzzy
 msgid "Japan File transfer host"
-msgstr "Bestandsoverdracht computer"
+msgstr "Japanse server voor bestandsoverdrachten"
 
 #: src/protocols/yahoo/yahoo.c:3398
 msgid "File transfer port"
@@ -10574,9 +10565,8 @@ msgid "<b>IP Address:</b> %s<br>"
 msgstr "<b>IP-adres:</b> %s<br>"
 
 #: src/protocols/yahoo/yahoo_profile.c:749
-#, fuzzy
 msgid "Yahoo! Japan Profile"
-msgstr "Yahoo"
+msgstr "Profiel van Yahoo! Japan"
 
 #: src/protocols/yahoo/yahoo_profile.c:750
 msgid "Yahoo! Profile"
@@ -10644,14 +10634,14 @@ msgstr "Helaas worden profielen in deze taal op dit moment nog niet ondersteund.
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
 "server-side problem. Please try again later."
-msgstr ""
+msgstr "Kan gebruikersprofiel niet ophalen. Dit is waarschijnlijk een tijdelijk serverprobleem. Probeert u het later nogmaals."
 
 #: src/protocols/yahoo/yahoo_profile.c:1155
 msgid ""
 "Could not retrieve the user's profile. This most likely means that the user "
 "does not exist; however, Yahoo! sometimes does fail to find a user's "
 "profile. If you know that the user exists, please try again later."
-msgstr ""
+msgstr "Kan gebruikersprofiel niet ophalen. Dit betekent waarschijnlijk dat de gebruiker niet bestaat. Soms kan Yahoo! ten onrechte een gebruiker niet vinde. Als u er zeker van bent dat de gebruiker bestaat, probeert u het dan later nogmaals."
 
 #: src/protocols/yahoo/yahoo_profile.c:1163
 msgid "The user's profile is empty."
@@ -10716,12 +10706,11 @@ msgid "Connection problem with the YCHT server."
 msgstr "Verbindingprobleem met de YCHT-server."
 
 #: src/protocols/zephyr/zephyr.c:328
-#, fuzzy
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
 msgstr ""
-"(Er is een fout opgetreden bij het converteren van het bericht. Controleer "
+"(Er is een fout opgetreden bij het converteren van het bericht.\t Controleer "
 "de optie 'Codering' in het account)"
 
 #: src/protocols/zephyr/zephyr.c:676
@@ -10762,7 +10751,7 @@ msgstr "_Ontvanger:"
 #: src/protocols/zephyr/zephyr.c:2179
 #, c-format
 msgid "Attempt to subscribe to %s,%s,%s failed"
-msgstr ""
+msgstr "Poging om te abonneren op %s,%s,%s mislukt"
 
 #: src/protocols/zephyr/zephyr.c:2484
 msgid "zlocate &lt;nick&gt;: Locate user"
@@ -10944,24 +10933,26 @@ msgid ""
 "%s has just been warned by %s.\n"
 "Your new warning level is %d%%"
 msgstr ""
+"%s is zojuist gewaarschuwd door %s.\n"
+"Uw nieuwe waarschuwingsniveau is %d%%"
 
 #: src/server.c:1349
 msgid "an anonymous person"
 msgstr "een anoniem persoon"
 
 #: src/server.c:1459
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s has invited %s to the chat room %s:\n"
 "<b>%s</b>"
 msgstr ""
-"De gebruiker '%s' nodigt %s uit in de chatruimte '%s'\n"
-"%s"
+"%s nodigt %s uit in de chatruimte %s\n"
+"<b>%s</b>"
 
 #: src/server.c:1463
-#, fuzzy, c-format
+#, c-format
 msgid "%s has invited %s to the chat room %s\n"
-msgstr "De gebruiker '%s' nodigt %s uit in de chatruimte '%s'\n"
+msgstr "%s nodigt %s uit in de chatruimte %s\n"
 
 #: src/server.c:1469
 msgid "Accept chat invitation?"
