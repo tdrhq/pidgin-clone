@@ -4,6 +4,10 @@
 	Luke: Yet another bug fix release, many thanks to everyone who has
 	helped to make gaim more stable!
 
+	Stu: I fixed too many Yahoo HTTP proxy bugs, I should just go and
+	write some core HTTP support that works better. A good all round
+	bug fix release otherwise.
+
 1.1.2 (1/20/2005):
 	Luke: Another Bug fix release. This one featuring a fix to the HTTP
 	Method for MSN users and other MSN fixes. A big thanks to Stu and
