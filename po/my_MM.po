@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gaim 0.73\n"
+"Project-Id-Version: Gaim 1.1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-09-17 18:04-0400\n"
 "PO-Revision-Date: 2004-01-14 12:26+0000\n"
