@@ -219,7 +219,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 		return -EINVAL;
 
 	/* If we're signing on an ICQ account then use the older, XOR login method */
-	if (0 && isdigit(sn[0]))
+	if (isdigit(sn[0]))
 		return goddamnicq2(sess, conn, sn, password, ci);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
@@ -230,19 +230,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 
 	aim_tlvlist_add_raw(&tl, 0x0001, strlen(sn), sn);
 
-	/* Truncated ICQ passwords, if necessary */
-	if (isdigit(sn[0]) && (strlen(password) > MAXICQPASSLEN))
-	{
-		char truncated[MAXICQPASSLEN + 1];
-		strncpy(truncated, password, MAXICQPASSLEN);
-		truncated[MAXICQPASSLEN] = 0;
-		aim_encode_password_md5(truncated, key, digest);
-	}
-	else
-	{
-		aim_encode_password_md5(password, key, digest);
-	}
-
+	aim_encode_password_md5(password, key, digest);
 	aim_tlvlist_add_raw(&tl, 0x0025, 16, digest);
 
 #ifndef USE_OLD_MD5
@@ -475,7 +463,7 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
-	if (0 && isdigit(sn[0]))
+	if (isdigit(sn[0]))
 		return goddamnicq(sess, conn, sn);
 
 	aim_sendflapver(sess, conn);
