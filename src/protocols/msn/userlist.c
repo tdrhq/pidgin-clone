@@ -98,7 +98,7 @@ got_new_entry(GaimConnection *gc, const char *passport,
 				   passport, gaim_account_get_username(gc->account));
 	}
 
-	gaim_request_action(gc, NULL, msg, NULL, 
+	gaim_request_action(gc, NULL, msg, NULL,
 						GAIM_DEFAULT_ACTION_NONE, pa, 2,
 						_("Authorize"), G_CALLBACK(msn_accept_add_cb),
 						_("Deny"), G_CALLBACK(msn_cancel_add_cb));
