@@ -1121,48 +1121,86 @@ void system_log(enum log_event what, struct gaim_connection *gc, struct buddy *w
 	fclose(fd);
 }
 
-char *convert_string(char *str, const char *destset, const char *srcset)
+char *convert_string(const char *in, const char *destset, const char *srcset)
 {
 #ifdef HAVE_ICONV
-	char *buf;
-	iconv_t cd;
-	size_t insize = 0;
-	size_t outsize = 0;
-	size_t nconv = 0;
-	char *inptr;
-	char *outptr;
-	char *ret;
+	int n = 0, i = 0;
+	int inlen;
+	char *result;
+	iconv_t cd1, cd2; /* cd1: srcset->UCS-4, cd2: UCS-4->destset */
+	size_t outleft, ucs4_outleft;
+	size_t old_inlen, old_outleft;
+	size_t tmp;
+	char *result_ptr;
+	char *ucs4_result;
+	char *ucs4_result_ptr;
 
-	if (!str) 
-		return NULL; 
-	buf = g_malloc(strlen(str)*4);
-	insize = strlen(str);
-	inptr = str;
-	outsize = strlen(str)*4;
-	outptr = buf;
+	if (!in)
+		return NULL;
 
-	cd = iconv_open(destset, srcset);
-	if (cd == (iconv_t) -1) {
-		g_free(buf);
+	cd1 = iconv_open("UCS-4", srcset);
+	cd2 = iconv_open(destset, "UCS-4");
+
+	if (cd1 == (iconv_t) -1 || cd2 == (iconv_t) -1) {
+		if ( cd1 != (iconv_t)-1 ) {
+			iconv_close(cd1);
+		}
+		else if ( cd2 != (iconv_t)-1 ) {
+			iconv_close(cd2);
+		}
 		debug_printf("iconv_open(%s, %s) Error\n",destset, srcset);
-		return g_strdup(str);
+		return g_strdup(in);
 	}
 
-	nconv = iconv(cd, &inptr, &insize, &outptr, &outsize);
-	if (nconv == (size_t) -1) {
-		debug_printf("iconv Error\n");
-		g_free(buf);
-		return g_strdup(str);
+	/* use iconv to convert srcset to destset */
+	/* we will convert srcset to UCS-4 and convert it again to destset
+	   one character by one because iconv doesn't convert whole string
+	   when it encountered a character which doesn't exist in the
+	   target encoding charset. */
+
+	inlen = strlen(in);
+	if ( inlen <= 0 ) { /* no need to process an empty string. */
+		result = g_malloc(1);
+		result[0] = '\0';
+		return result;
 	}
-	*outptr = '\0';
-	iconv_close(cd);
+	outleft = inlen * 6; /* in maximum, one character will occupy 6 bytes in srcset */
+	result = g_malloc(outleft + 1);
+	ucs4_outleft = inlen * 4;
+	ucs4_result = g_malloc(ucs4_outleft); /* ucs4 conversion buffer */
+	
+	result_ptr = ucs4_result;
+	tmp = ucs4_outleft;
+	iconv(cd1, &in, &inlen, &result_ptr, &ucs4_outleft);
+	n = (tmp - ucs4_outleft) / 4; /* 'n' will indicate the number of chars */
+	debug_printf("ucs4_bytes: %d", (tmp-ucs4_outleft));
 
-	ret = g_strdup(buf);
-	g_free(buf);
-
-	return ret;
+	result_ptr = result;
+	ucs4_result_ptr = ucs4_result;
+	tmp = outleft; /* remember last buffer remainder */
+	for ( i = 0; i < n; i ++ ) {
+		inlen = 4;
+		iconv(cd2, &ucs4_result_ptr, &inlen, &result_ptr, &outleft);
+		if ( tmp == outleft ) {
+			/* if nothing has ben converted, add '?' symbol */
+			*(result_ptr++) = '?';
+			outleft --;
+			ucs4_result_ptr += 4;
+		}
+			
+		tmp = outleft; /* remember last buffer remainder */
+	}
+	
+	iconv_close(cd2);
+	iconv_close(cd1);
+	
+	*result_ptr = '\0';
+		
+	g_free(ucs4_result);
+		
+	return result;
 #else
-	return g_strdup(str);
+	return g_strdup(in);
 #endif
 }
 
