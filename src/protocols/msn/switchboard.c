@@ -350,9 +350,8 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 
 	if (msg->type == MSN_MSG_TEXT)
 	{
-		const char *format;
+		const char *format, *str_reason;
 		char *body_str, *body_enc, *pre, *post;
-		const char *str_reason;
 
 #if 0
 		if (swboard->conv == NULL)
