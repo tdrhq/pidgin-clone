@@ -24,12 +24,16 @@
 # així com les resolucions del Termcat quant als neologismes:
 # http://www.termcat.net/cercaterm/
 #
+# NOTE: adjectives in catalan go always to the end, for inscance:
+# NOTA: els adjectius en català sempre van al final, per exemple:
+#   "New file" --> "Fitxer nou"
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: tradgnome@softcatala.net\n"
 "POT-Creation-Date: 2005-01-17 09:39+0100\n"
-"PO-Revision-Date: 2005-01-19 16:03+0100\n"
+"PO-Revision-Date: 2005-02-16 02:02+0100\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep@imatge-sintetica.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -175,7 +179,7 @@ msgstr "Connexió automàtica"
 
 #: plugins/docklet/docklet.c:139
 msgid "New Message..."
-msgstr "Nou missatge..."
+msgstr "Missatge nou..."
 
 #: plugins/docklet/docklet.c:140
 msgid "Join A Chat..."
@@ -233,7 +237,7 @@ msgstr "Configuració de la icona d'estat"
 
 #: plugins/docklet/docklet.c:537
 msgid "_Hide new messages until tray icon is clicked"
-msgstr "_Oculta nous missatges fins que no es faci clic a la icona d'estat"
+msgstr "_Oculta missatges nous fins que no es faci clic a la icona d'estat"
 
 #. *< type
 #. *< ui_requirement
@@ -753,7 +757,7 @@ msgstr "Comprova si hi ha correu nou a la màquina local."
 #: plugins/mailchk.c:163
 msgid "Adds a small box to the buddy list that shows if you have new mail."
 msgstr ""
-"Afegeix una caixeta a la llista d'amics que indica si teniu nous correus."
+"Afegeix una caixeta a la llista d'amics que indica si teniu correus nous."
 
 #. ---------- "Notify For" ----------
 #: plugins/notify.c:604
@@ -1264,7 +1268,7 @@ msgstr "Converses"
 
 #: plugins/win32/winprefs/winprefs.c:383
 msgid "_Flash Window when messages are received"
-msgstr "_Fes que la finestra faci pampallugues quan hi arribin missatges"
+msgstr "_Fes que la finestra faci un flaix quan hi arribin missatges"
 
 #: plugins/win32/winprefs/winprefs.c:407
 msgid "WinGaim Options"
@@ -1355,7 +1359,7 @@ msgstr "Cancel·la"
 #: src/account.c:372
 #, c-format
 msgid "Change user information for %s"
-msgstr "Canvia la informació de l'usuari per a %s"
+msgstr "Canvia la informació d'usuari de %s"
 
 #: src/account.c:380 src/gtkrequest.c:249 src/protocols/jabber/buddy.c:514
 #: src/protocols/trepia/trepia.c:347
@@ -1396,7 +1400,7 @@ msgstr "Suprimeix"
 
 #: src/away.c:436
 msgid "New Away Message"
-msgstr "Nou missatge d'absència"
+msgstr "Missatge d'absència nou"
 
 #: src/away.c:652
 msgid "Set All Away"
@@ -1419,7 +1423,7 @@ msgstr "No es pot crear un missatge d'absència buit"
 
 #: src/away.c:836
 msgid "New away message"
-msgstr "Nou missatge d'absència"
+msgstr "Missatge d'absència nou"
 
 #: src/away.c:851
 msgid "Away title: "
@@ -1684,11 +1688,11 @@ msgstr "S'ha avortat la transferència del fitxer de %s.\n"
 
 #: src/gaim-disclosure.c:253
 msgid "Expander Size"
-msgstr "Tamany de l'expansor"
+msgstr "Mida de l'expansor"
 
 #: src/gaim-disclosure.c:254
 msgid "Size of the expander arrow"
-msgstr "Tamany de la fletxa d'expansió"
+msgstr "Mida de la fletxa d'expansió"
 
 #: src/gaim-remote.c:108
 #, c-format
@@ -1791,7 +1795,7 @@ msgid ""
 "Set all accounts as not away.\n"
 msgstr ""
 "\n"
-"Posa tots els comptes com a no absent.\n"
+"Treu el missatge d'absència de tots els comptes.\n"
 
 #: src/gtkaccount.c:325
 #, c-format
@@ -1801,8 +1805,8 @@ msgid ""
 "<b>Image size:</b> %dx%d"
 msgstr ""
 "<b>Fitxer:</b> %s\n"
-"<b>Tamany del fitxer:</b> %s\n"
-"<b>Tamany de la imatge:</b> %dx%d"
+"<b>Mida del fitxer:</b> %s\n"
+"<b>Mida de la imatge:</b> %dx%d"
 
 #. Build the login options frame.
 #: src/gtkaccount.c:625
@@ -2096,7 +2100,7 @@ msgstr "/_Amics"
 
 #: src/gtkblist.c:2402
 msgid "/Buddies/New Instant _Message..."
-msgstr "/Amics/Nou missatge _instantani..."
+msgstr "/Amics/Missatge _instantani nou..."
 
 #: src/gtkblist.c:2403
 msgid "/Buddies/Join a _Chat..."
@@ -2206,7 +2210,7 @@ msgstr "Reanomena el grup"
 
 #: src/gtkblist.c:2453
 msgid "New group name"
-msgstr "Nou nom de grup"
+msgstr "Nom de grup nou"
 
 #: src/gtkblist.c:2454
 msgid "Please enter a new name for the selected group."
@@ -2356,7 +2360,7 @@ msgstr "Per estat"
 
 #: src/gtkblist.c:3088
 msgid "By log size"
-msgstr "Pel tamany del registre"
+msgstr "Per la mida del registre"
 
 #: src/gtkblist.c:3154
 msgid "/Tools/Away"
@@ -2407,7 +2411,7 @@ msgstr "_Absent"
 
 #: src/gtkblist.c:3307
 msgid "Set an away message"
-msgstr "Posa un missatge d'absència"
+msgstr "Estableix un missatge d'absència"
 
 #: src/gtkblist.c:4070 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:989 src/protocols/silc/buddy.c:1034
@@ -2673,7 +2677,7 @@ msgstr "/_Conversa"
 
 #: src/gtkconv.c:3627
 msgid "/Conversation/New Instant _Message..."
-msgstr "/Conversa/Nou _missatge instantani..."
+msgstr "/Conversa/_Missatge instantani nou..."
 
 #: src/gtkconv.c:3632
 msgid "/Conversation/_Find..."
@@ -3092,9 +3096,9 @@ msgstr "Holandès; Flamenc"
 msgid "Macedonian"
 msgstr "Macedoni"
 
-##: src/gtkdialogs.c:121
-#msgid "Burmese"
-#msgstr "Birm� "
+#: src/gtkdialogs.c:121
+msgid "Burmese"
+msgstr "Birmà"
 
 #: src/gtkdialogs.c:122
 msgid "Norwegian"
@@ -3221,7 +3225,7 @@ msgstr "_Compte"
 
 #: src/gtkdialogs.c:479
 msgid "New Instant Message"
-msgstr "Nou missatge instantani"
+msgstr "Missatge instantani nou"
 
 #: src/gtkdialogs.c:481
 msgid "Please enter the screen name of the person you would like to IM."
@@ -3398,7 +3402,7 @@ msgstr "Nom del fitxer"
 
 #: src/gtkft.c:517
 msgid "Size"
-msgstr "Tamany"
+msgstr "Mida"
 
 #: src/gtkft.c:524
 msgid "Remaining"
@@ -3685,7 +3689,7 @@ msgstr "Introduïu un amic a qui avisar."
 #. "New Buddy Pounce"
 #: src/gtkpounce.c:391 src/gtkpounce.c:895
 msgid "New Buddy Pounce"
-msgstr "Nou avís per a l'amic"
+msgstr "Avís nou per a l'amic"
 
 #: src/gtkpounce.c:391
 msgid "Edit Buddy Pounce"
@@ -3841,7 +3845,7 @@ msgid ""
 "themes can be installed by dragging and dropping them onto the theme list."
 msgstr ""
 "Seleccioneu un tema d'emoticones de la llista següent. Es poden instal·lar "
-"nous temes arrosegant-los i deixant-los anar a la llista de temes."
+"temes nous arrosegant-los i deixant-los anar a la llista de temes."
 
 #: src/gtkprefs.c:721
 msgid "Icon"
@@ -3874,7 +3878,7 @@ msgstr "Ignora _tipus de lletra"
 
 #: src/gtkprefs.c:836
 msgid "Ignore font si_zes"
-msgstr "Ignora _tamany de la lletra"
+msgstr "Ignora la _mida de la lletra"
 
 #: src/gtkprefs.c:839
 msgid "Default Formatting"
@@ -4456,7 +4460,7 @@ msgstr "Els canvis en les opcions de privadesa es realitzen immediatament."
 #. "Set privacy for:" label
 #: src/gtkprivacy.c:411
 msgid "Set privacy for:"
-msgstr "Posar la privadesa a:"
+msgstr "Estableix la privadesa de:"
 
 #: src/gtkprivacy.c:580 src/gtkprivacy.c:596
 msgid "Permit User"
@@ -4486,7 +4490,7 @@ msgstr "Esteu segur que voleu permetre que %s us pugui contactar?"
 
 #: src/gtkprivacy.c:619 src/gtkprivacy.c:632
 msgid "Block User"
-msgstr "Bloca usuari"
+msgstr "Bloca un usuari"
 
 #: src/gtkprivacy.c:620
 msgid "Type a user to block."
@@ -5570,7 +5574,7 @@ msgstr "names [canal]:  Llista els usuaris connectats al canal."
 
 #: src/protocols/irc/parse.c:123 src/protocols/jabber/jabber.c:1423
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
-msgstr "nick &lt;nou sobrenom&gt;:  Canvia el vostre sobrenom."
+msgstr "nick &lt;sobrenom nou&gt;:  Canvia el vostre sobrenom."
 
 #: src/protocols/irc/parse.c:124
 msgid ""
@@ -5630,7 +5634,7 @@ msgstr ""
 
 #: src/protocols/irc/parse.c:132
 msgid "topic [new topic]:  View or change the channel topic."
-msgstr "topic [nou tema]: Visualitza o canvia el tema del canal."
+msgstr "topic [tema nou]: Visualitza o canvia el tema del canal."
 
 #: src/protocols/irc/parse.c:133
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
@@ -6051,11 +6055,11 @@ msgstr "Data"
 
 #: src/protocols/jabber/jabber.c:670
 msgid "Please fill out the information below to register your new account."
-msgstr "Empleneu els camps següents per registrar un nou compte."
+msgstr "Empleneu els camps següents per registrar un compte nou."
 
 #: src/protocols/jabber/jabber.c:673 src/protocols/jabber/jabber.c:674
 msgid "Register New Jabber Account"
-msgstr "Registra un nou compte Jabber"
+msgstr "Registra un compte Jabber nou"
 
 #: src/protocols/jabber/jabber.c:757
 msgid "Logged out"
@@ -6377,7 +6381,7 @@ msgstr "register:  Registra a una sala de xat."
 
 #: src/protocols/jabber/jabber.c:1439
 msgid "topic [new topic]:  View or change the topic."
-msgstr "topic [nou tema]:  Mostra o canvia el tema."
+msgstr "topic [tema nou]:  Mostra o canvia el tema."
 
 #: src/protocols/jabber/jabber.c:1445
 msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
@@ -6743,7 +6747,7 @@ msgstr "No està permès mentre estigueu fora de línia"
 
 #: src/protocols/msn/error.c:209
 msgid "Not accepting new users"
-msgstr "No s'accepten nous usuaris"
+msgstr "No s'accepten usuaris nous"
 
 #: src/protocols/msn/error.c:213
 msgid "Kids Passport without parental consent"
@@ -6769,7 +6773,7 @@ msgstr "Error d'MSN: %s\n"
 
 #: src/protocols/msn/msn.c:114
 msgid "Your new MSN friendly name is too long."
-msgstr "El vostre nou nom amistós d'MSN és massa llarg."
+msgstr "El vostre nom amistós nou d'MSN és massa llarg."
 
 #: src/protocols/msn/msn.c:222
 msgid "Set your friendly name."
@@ -7021,7 +7025,7 @@ msgstr "URL del perfil"
 
 #: src/protocols/msn/msn.c:1775
 msgid "Display conversation closed notices"
-msgstr ""
+msgstr "Mostra notícies tancades de la conversa"
 
 #: src/protocols/msn/msn.c:1780
 msgid "Display timeout notices"
@@ -7271,7 +7275,7 @@ msgstr ""
 #: src/protocols/napster/napster.c:318
 #, c-format
 msgid "users: %s, files: %s, size: %sGB"
-msgstr "usuaris: %s, fitxers: %s, tamany: %sGB"
+msgstr "usuaris: %s, fitxers: %s, mida: %sGB"
 
 #. MSG_SERVER_HOTLIST_ERROR
 #: src/protocols/napster/napster.c:329
@@ -8560,10 +8564,10 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr[0] ""
-"S'ha excedit el límit màxim per al tamany del perfil d'%d octet. El Gaim "
-"l'ha retallat."
+"S'ha excedit el límit màxim per la mida del perfil d'%d octet. El Gaim l'ha "
+"retallat."
 msgstr[1] ""
-"S'ha excedit el límit màxim per al tamany del perfil de %d octets. El Gaim "
+"S'ha excedit el límit màxim per la mida del perfil de %d octets. El Gaim "
 "l'ha retallat."
 
 #: src/protocols/oscar/oscar.c:5564
@@ -8758,7 +8762,7 @@ msgstr "Torna a demanar l'autorització"
 
 #: src/protocols/oscar/oscar.c:7015
 msgid "The new formatting is invalid."
-msgstr "El nou format no és vàlid."
+msgstr "El format nou no és vàlid."
 
 #: src/protocols/oscar/oscar.c:7016
 msgid "Screen name formatting can change only capitalization and whitespace."
@@ -8768,7 +8772,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:7023
 msgid "New screen name formatting:"
-msgstr "Nou format del nom d'usuari:"
+msgstr "Format nou del nom d'usuari:"
 
 #: src/protocols/oscar/oscar.c:7075
 msgid "Change Address To:"
@@ -9246,7 +9250,7 @@ msgstr "<br><b>Empremta de la clau del fundador:</b><br>%s"
 #: src/protocols/silc/chat.c:163
 #, c-format
 msgid "<br><b>Founder Key Babbleprint:</b><br>%s"
-msgstr ""
+msgstr "<br><b>Empremta babble de la clau del fundador:</b><br>%s"
 
 #: src/protocols/silc/chat.c:233
 msgid "Add Channel Public Key"
@@ -9255,7 +9259,7 @@ msgstr "Afegeix clau pública del canal"
 #. Add new public key
 #: src/protocols/silc/chat.c:288
 msgid "Open Public Key..."
-msgstr "Obre la clau pública..."
+msgstr "Obre una clau pública..."
 
 #: src/protocols/silc/chat.c:397
 msgid "Channel Passphrase"
@@ -9273,11 +9277,11 @@ msgid ""
 "channel public keys are set then only users whose public keys are listed are "
 "able to join."
 msgstr ""
-"L'autenticació del canal es fa servir per evitar l'accés no autoritzat al "
-"canal. L'autenticació es pot passar com a frase clau o signatures. Si s'ha "
-"establert una frase clau, aquesta és necessària per a poder-hi entrar. Si "
-"s'han establert claus públiques del canal, només els usuaris que tinguin les "
-"seves claus públiques llistades al canal hi podran entrar."
+"L'autenticació del canal es fa servir per evitar-ne l'accés no autoritzat. "
+"L'autenticació es pot basar en frases clau i signatures. Si s'ha establert "
+"una frase clau, serà necessària per a poder-hi entrar. Si s'han establert "
+"claus públiques del canal, només els usuaris que tinguin les seves claus "
+"públiques llistades al canal hi podran entrar."
 
 #: src/protocols/silc/chat.c:418 src/protocols/silc/chat.c:419
 #: src/protocols/silc/chat.c:456 src/protocols/silc/chat.c:457
@@ -9338,7 +9342,7 @@ msgstr "Reiniciació permanent"
 
 #: src/protocols/silc/chat.c:895
 msgid "Set Permanent"
-msgstr "Posa a permanent"
+msgstr "Estableix a permanent"
 
 #: src/protocols/silc/chat.c:902
 msgid "Set User Limit"
@@ -9350,7 +9354,7 @@ msgstr "Reinicia la restricció del tema"
 
 #: src/protocols/silc/chat.c:911
 msgid "Set Topic Restriction"
-msgstr "Posa restricció del tema"
+msgstr "Estableix restricció del tema"
 
 #: src/protocols/silc/chat.c:917
 msgid "Reset Private Channel"
@@ -9358,7 +9362,7 @@ msgstr "Reinicia el canal privat"
 
 #: src/protocols/silc/chat.c:921
 msgid "Set Private Channel"
-msgstr "Posa canal privat"
+msgstr "Estableix canal privat"
 
 #: src/protocols/silc/chat.c:927
 msgid "Reset Secret Channel"
@@ -9536,7 +9540,7 @@ msgstr "Emprenta de la clau pública"
 
 #: src/protocols/silc/ops.c:1069 src/protocols/silc/ops.c:1140
 msgid "Public Key Babbleprint"
-msgstr ""
+msgstr "Empremta babble de la clau pública"
 
 #: src/protocols/silc/ops.c:1082
 msgid "More..."
@@ -9744,6 +9748,10 @@ msgid ""
 "%s\n"
 "%s\n"
 msgstr ""
+"L'empremta i l'empremta babble per a la clau %s són:\n"
+"\n"
+"%s\n"
+"%s\n"
 
 #: src/protocols/silc/pk.c:115 src/protocols/silc/pk.c:140
 msgid "Verify Public Key"
@@ -9913,7 +9921,7 @@ msgstr "leave [canal]:  Surt del xat"
 
 #: src/protocols/silc/silc.c:1323
 msgid "topic [&lt;new topic&gt;]:  View or change the topic"
-msgstr "topic [&lt;nou tema&gt;]:  Mostra o canvia el tema"
+msgstr "topic [&lt;tema nou&gt;]:  Mostra o canvia el tema"
 
 #: src/protocols/silc/silc.c:1328
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
@@ -9962,7 +9970,7 @@ msgstr "kill &lt;sobrenom&gt; [-pubkey|&lt;motiu&gt;]:  Mata un sobrenom"
 
 #: src/protocols/silc/silc.c:1370
 msgid "nick &lt;newnick&gt;:  Change your nickname"
-msgstr "nick &lt;nou sobrenom&gt;:  Canvia de sobrenom"
+msgstr "nick &lt;sobrenom nou&gt;:  Canvia de sobrenom"
 
 #: src/protocols/silc/silc.c:1374
 msgid "whowas &lt;nick&gt;:  View nick's information"
@@ -10186,6 +10194,8 @@ msgid ""
 "Public Key Babbleprint:\n"
 "%s"
 msgstr ""
+"Empremta babble de la clau pública:\n"
+"%s"
 
 #: src/protocols/silc/util.c:329 src/protocols/silc/util.c:330
 msgid "Public Key Information"
@@ -10875,7 +10885,7 @@ msgstr "No s'ha pogut entrar al xat de l'amic."
 
 #: src/protocols/yahoo/yahoochat.c:580
 msgid "Maybe they're not in a chat?"
-msgstr "Potser no estan en un xat?"
+msgstr "Potser no estan en cap xat?"
 
 #: src/protocols/yahoo/yahoochat.c:1357
 msgid "Fetching the room list failed."
@@ -10972,7 +10982,8 @@ msgstr ""
 #: src/protocols/zephyr/zephyr.c:2504
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
 msgstr ""
-"sub &lt;classe&gt; &lt;instància&gt; &lt;destinatari&gt;: Entra a un nou xat"
+"sub &lt;classe&gt; &lt;instància&gt; &lt;destinatari&gt;: Entra a un altre "
+"xat"
 
 #: src/protocols/zephyr/zephyr.c:2509
 msgid ""
