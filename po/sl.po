@@ -1,4 +1,4 @@
-﻿# Translation of gaim.0.83.po to Slovenščina
+# Translation of gaim.0.83.po to Slovenščina
 # Copyright (C) 2004.
 # This file is distributed under the same license as the Gaim package.
 # Jure Čuhalev <gandalf@owca.info>, 2003.
