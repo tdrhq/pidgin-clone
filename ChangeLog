@@ -5,6 +5,7 @@ version 1.1.2:
 	* Better handling of MSN's Individuals group and buddy status updates
 	  (Felipe Contreras)
 	* Fix a crash inviting MSN user to a chat when they're already there
+	* AIM SecurID login support
 
 version 1.1.1 (12/28/2004):
 	* Allow SILC authentication via public key if your key is password

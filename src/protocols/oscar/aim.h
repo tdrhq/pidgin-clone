@@ -553,6 +553,8 @@ faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn);
 faim_export int aim_send_login(aim_session_t *, aim_conn_t *, const char *, const char *, struct client_info_s *, const char *key);
+/* 0x000b */ faim_export int aim_auth_securid_send(aim_session_t *sess, const char *securid);
+
 faim_export void aim_purge_rxqueue(aim_session_t *);
 faim_export void aim_cleansnacs(aim_session_t *, int maxage);
 
