@@ -1369,7 +1369,7 @@ gaim_markup_strip_html(const char *str)
 	return str2;
 }
 
-static gint
+static gboolean
 badchar(char c)
 {
 	switch (c) {
@@ -1381,10 +1381,21 @@ badchar(char c)
 	case '>':
 	case '"':
 	case '\'':
-		return 1;
+		return TRUE;
 	default:
-		return 0;
+		return FALSE;
 	}
+}
+
+static gboolean
+badentity(const char *c)
+{
+	if (!g_ascii_strncasecmp(c, "&lt;", 4) ||
+		!g_ascii_strncasecmp(c, "&gt;", 4) ||
+		!g_ascii_strncasecmp(c, "&quot;", 6)) {
+		return TRUE;
+	}
+	return FALSE;
 }
 
 char *
@@ -1435,7 +1446,7 @@ gaim_markup_linkify(const char *text)
 					(!g_ascii_strncasecmp(c, "https://", 8)))) {
 			t = c;
 			while (1) {
-				if (badchar(*t)) {
+				if (badchar(*t) || badentity(t)) {
 
 					if (*(t) == ',' && (*(t + 1) != ' ')) {
 						t++;
@@ -1447,8 +1458,7 @@ gaim_markup_linkify(const char *text)
 					if ((*(t - 1) == ')' && (inside_paren > 0))) {
 						t--;
 					}
-					if (!g_ascii_strncasecmp(t - 6, "&quot;", 6))
-						t -= 6;
+
 					strncpy(url_buf, c, t - c);
 					url_buf[t - c] = 0;
 					tmpurlbuf = gaim_unescape_html(url_buf);
@@ -1467,7 +1477,7 @@ gaim_markup_linkify(const char *text)
 			if (c[4] != '.') {
 				t = c;
 				while (1) {
-					if (badchar(*t)) {
+					if (badchar(*t) || badentity(t)) {
 						if (t - c == 4) {
 							break;
 						}
@@ -1500,7 +1510,7 @@ gaim_markup_linkify(const char *text)
 		} else if (!g_ascii_strncasecmp(c, "ftp://", 6)) {
 			t = c;
 			while (1) {
-				if (badchar(*t)) {
+				if (badchar(*t) || badentity(t)) {
 					if (*(t - 1) == '.')
 						t--;
 					if ((*(t - 1) == ')' && (inside_paren > 0))) {
@@ -1524,7 +1534,7 @@ gaim_markup_linkify(const char *text)
 			if (c[4] != '.') {
 				t = c;
 				while (1) {
-					if (badchar(*t)) {
+					if (badchar(*t) || badentity(t)) {
 						if (t - c == 4) {
 							break;
 						}
@@ -1551,7 +1561,7 @@ gaim_markup_linkify(const char *text)
 		} else if (!g_ascii_strncasecmp(c, "mailto:", 7)) {
 			t = c;
 			while (1) {
-				if (badchar(*t)) {
+				if (badchar(*t) || badentity(t)) {
 					if (*(t - 1) == '.')
 						t--;
 					strncpy(url_buf, c, t - c);
@@ -1605,8 +1615,7 @@ gaim_markup_linkify(const char *text)
 			while (flag) {
 				/* iterate forwards grabbing the domain part of an email address */
 				g = g_utf8_get_char(t);
-				if (badchar(*t) || (g >= 127) || (*t == ')') ||
-						((*t == '&') && !g_ascii_strncasecmp(t, "&gt;", 4))) {
+				if (badchar(*t) || (g >= 127) || (*t == ')') || badentity(t)) {
 					char *d;
 
 					strcpy(url_buf, gurl_buf->str);
