@@ -1,5 +1,8 @@
+version 1.1.1:
+	* No changes
+
 version 1.1.0: (12/02/2004)
-	* Silc protocol plugin added.
+	* SILC protocol plugin added.
 	* Now checking GAIMLANG and GAIMHOME instead of LANG and HOME env
 	  variables, to avoid conflicts with other apps that use them and
 	  to avoid HOME env variables intended for cygwin (using unix style
