@@ -95,6 +95,10 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Sat Sep 14 2002 Rob Flynn <rob@marko.net> (0.59.3 release)
+- Reversed Arun's patch that accidentally caused Yahoo not to connect--for implimentation reasons
+- Changed "color" binding to Ctrl-K.
+
 * Mon Sep 09 2002 Rob Flynn <rob@marko.net> (0.59.2 release)
 - Japanese translation updated (Thanks, Junichi Uekawa)
 - Won't crash when you set your MSN Friendly name to an empty string.
