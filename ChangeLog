@@ -8,6 +8,7 @@ version 1.1.2:
 	* AIM SecurID login support
 	* Fix configuration of Jabber chat rooms on some servers
 	* More MSN bug fixes (Felipe Contreras)
+	* Fix queue messages to Docklet when not globally away (Robert McQueen)
 
 version 1.1.1 (12/28/2004):
 	* Allow SILC authentication via public key if your key is password

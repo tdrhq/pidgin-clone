@@ -836,6 +836,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 {
 	GaimConversation *cnv;
 	GaimMessageFlags msgflags;
+	gboolean queue_to_away, queue_to_docklet;
 	char *message, *name;
 	char *angel, *buffy;
 	int plugin_return;
@@ -889,6 +890,25 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	if (imflags & GAIM_CONV_IM_AUTO_RESP)
 		msgflags |= GAIM_MESSAGE_AUTO_RESP;
 
+	/* queue to the docklet instead of writing to a conversation window if:
+	 *  - there is a docklet
+	 *  - there is no conversation window
+	 *  - the evil hack of a pref is enabled
+	 *
+	 * queue to away instead of writing to a conversation window if:
+	 *  - we are away
+	 *  - there is no conversation window
+	 *  - there *is* a global away window
+	 *  - away queueing is enabled
+	 *
+	 * Robot101 won't fix this any further because the code is already gone
+	 * in HEAD. Queue code however... :)
+	 */
+	queue_to_away    = (gc->away && !cnv && awayqueue &&
+			    gaim_prefs_get_bool("/gaim/gtk/away/queue_messages"));
+	queue_to_docklet = (docklet_count && !cnv &&
+			    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages"));
+
 	/*
 	 * Alright. Two cases for how to handle this. Either we're away or
 	 * we're not. If we're not, then it's easy. If we are, then there
@@ -913,17 +933,14 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * this to be queued properly, we have to make sure that the
 		 * imaway dialog actually exists, first.
 		 */
-		if (!cnv && awayqueue &&
-			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
+		if (queue_to_away || queue_to_docklet) {
 			/*
 			 * Alright, so we're going to queue it. Neat, eh? :)
 			 * So first we create something to store the message, and add
 			 * it to our queue. Then we update the away dialog to indicate
-			 * that we've queued something.
+			 * that we've queued something, unless we queued it to the docklet
 			 */
 			struct queued_message *qm;
-			GtkTreeIter iter;
-			gchar path[10];
 
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
@@ -933,31 +950,38 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			qm->account = gc->account;
 			qm->tm = mtime;
 			qm->flags = msgflags;
-			message_queue = g_slist_append(message_queue, qm);
 
-			row = find_queue_row_by_name(qm->name);
-			if (row >= 0) {
-				char number[32];
-				int qtotal;
+			if (queue_to_away) {
+				GtkTreeIter iter;
+				gchar path[10];
 
-				qtotal = find_queue_total_by_name(qm->name);
-				g_snprintf(number, 32, ngettext("(%d message)",
-						   "(%d messages)", qtotal), qtotal);
-				g_snprintf(path, 10, "%d", row);
-				gtk_tree_model_get_iter_from_string(
-								GTK_TREE_MODEL(awayqueuestore), &iter, path);
-				gtk_list_store_set(awayqueuestore, &iter,
-								2, number, -1);
-			} else {
-				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore),
-								&iter);
-				gtk_list_store_append(awayqueuestore, &iter);
-				gtk_list_store_set(awayqueuestore, &iter,
-								0, qm->name,
-								1, qm->alias,
-								2, _("(1 message)"),
-								-1);
-			}
+				message_queue = g_slist_append(message_queue, qm);
+
+				row = find_queue_row_by_name(qm->name);
+				if (row >= 0) {
+					char number[32];
+					int qtotal;
+
+					qtotal = find_queue_total_by_name(qm->name);
+					g_snprintf(number, 32, ngettext("(%d message)",
+							   "(%d messages)", qtotal), qtotal);
+					g_snprintf(path, 10, "%d", row);
+					gtk_tree_model_get_iter_from_string(
+									GTK_TREE_MODEL(awayqueuestore), &iter, path);
+					gtk_list_store_set(awayqueuestore, &iter,
+									2, number, -1);
+				} else {
+					gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore),
+									&iter);
+					gtk_list_store_append(awayqueuestore, &iter);
+					gtk_list_store_set(awayqueuestore, &iter,
+									0, qm->name,
+									1, qm->alias,
+									2, _("(1 message)"),
+									-1);
+				}
+			} else /* queue_to_docklet */
+				unread_message_queue = g_slist_append(unread_message_queue, qm);
 		} else {
 			/*
 			 * Make sure the conversation
@@ -1018,54 +1042,46 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		/* Move this to oscar.c! */
 		buffy = gaim_str_sub_away_formatters(tmpmsg, alias);
 		serv_send_im(gc, name, buffy, GAIM_CONV_IM_AUTO_RESP);
-		g_free(buffy);
 
-		if (!cnv && awayqueue &&
-			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
-
+		if (queue_to_away || queue_to_docklet) {
 			struct queued_message *qm;
 
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
-			qm->message = g_strdup(gaim_str_sub_away_formatters(tmpmsg, alias));
+			qm->message = g_strdup(buffy);
 			qm->account = gc->account;
 			qm->tm = mtime;
 			qm->flags = GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP;
-			message_queue = g_slist_append(message_queue, qm);
+
+			if (queue_to_away)
+				message_queue = g_slist_append(message_queue, qm);
+			else /* queue_to_docklet */
+				unread_message_queue = g_slist_append(unread_message_queue, qm);
 		} else if (cnv != NULL)
-			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, gaim_str_sub_away_formatters(tmpmsg, alias),
+			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, buffy,
 						  GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP, mtime);
 
+		g_free(buffy);
 		g_free(tmpmsg);
 	} else {
 		/*
-		 * We're not away. This is easy. If the convo window doesn't
-		 * exist, create and update it (if it does exist it was updated
-		 * earlier), then play a sound indicating we've received it and
-		 * then display it. Easy.
+		 * We're not away. This is easy. Queue it to the docklet if we're
+		 * doing that, or if the convo window doesn't exist, create it,
+		 * then display the message.
 		 */
 
-		/* XXX UGLY HACK OF THE YEAR
-		 * Robot101 will fix this after his exams. honest.
-		 * I guess he didn't specify WHICH exams, exactly...
-		 */
-		if (docklet_count &&
-		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages") &&
-		    !gaim_find_conversation_with_account(name, gc->account)) {
-			/*
-			 * We're gonna queue it up and wait for the user to ask for
-			 * it... probably by clicking the docklet or windows tray icon.
-			 */
+		if (queue_to_docklet) {
 			struct queued_message *qm;
+
 			qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
 			qm->message = g_strdup(message);
 			qm->account = gc->account;
 			qm->tm = mtime;
 			qm->flags = msgflags;
+
 			unread_message_queue = g_slist_append(unread_message_queue, qm);
-		}
-		else {
+		} else {
 			if (cnv == NULL)
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
