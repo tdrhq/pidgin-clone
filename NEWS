@@ -4,7 +4,12 @@
 	Rob: Hmm. The last version had a bug. That sucks.
 
 	George: It was my fault.
-	
+
+	Sean: Yeah--that was a bad bug.  Good thing George fixed it.
+	Thanks, George.  These 0.59.x bugfix releases just keep getting 
+	more and more boring.  I prefer spontaneous trips to Providence and
+	our GTK2 CVS branch.
+
 0.59.5 (10/14/2002):
 	Rob: There's not much to this release. It fixes the segfault that
 	happened due to a protocol change by Yahoo!.  Enjoy.
