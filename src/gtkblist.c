@@ -4676,6 +4676,8 @@ create_prpl_icon(GaimAccount *account)
 	const char *protoname = NULL;
 	char buf[256];
 
+	g_return_val_if_fail( account != NULL, NULL);
+	
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
 	if (prpl != NULL) {
