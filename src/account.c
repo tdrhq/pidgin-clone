@@ -248,8 +248,8 @@ gaim_account_disconnect(GaimAccount *account)
 
 void
 gaim_account_notify_added(GaimAccount *account, const char *id,
-						  const char *remote_user, const char *alias,
-						  const char *message)
+                          const char *remote_user, const char *alias,
+                          const char *message, gboolean request_add)
 {
 	GaimAccountUiOps *ui_ops;
 
@@ -259,7 +259,8 @@ gaim_account_notify_added(GaimAccount *account, const char *id,
 	ui_ops = gaim_accounts_get_ui_ops();
 
 	if (ui_ops != NULL && ui_ops->notify_added != NULL)
-		ui_ops->notify_added(account, remote_user, id, alias, message);
+		ui_ops->notify_added(account, remote_user, id, alias,
+		                     message, request_add);
 }
 
 static void

@@ -1002,7 +1002,7 @@ static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 	if (id) {
 		if (msg)
 			tmpmsg = yahoo_string_decode(gc, msg, FALSE);
-		gaim_account_notify_added(gc->account, id, who, NULL, tmpmsg);
+		gaim_account_notify_added(gc->account, id, who, NULL, tmpmsg, TRUE);
 		if (tmpmsg)
 			g_free(tmpmsg);
 	}

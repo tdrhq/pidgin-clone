@@ -3660,7 +3660,7 @@ static void gaim_auth_grant(struct name_data *data) {
 		message = 0;
 		buddy = gaim_find_buddy(gc->account, data->name);
 		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
-		gaim_account_notify_added(gc->account, NULL, data->name, (buddy ? gaim_buddy_get_alias_only(buddy) : NULL), NULL);
+		gaim_account_notify_added(gc->account, NULL, data->name, (buddy ? gaim_buddy_get_alias_only(buddy) : NULL), NULL, TRUE);
 #else
 		aim_ssi_sendauthreply(od->sess, data->name, 0x01, NULL);
 #endif
@@ -6401,7 +6401,7 @@ static int gaim_ssi_gotadded(aim_session_t *sess, aim_frame_t *fr, ...) {
 	buddy = gaim_find_buddy(gc->account, sn);
 	gaim_debug_info("oscar",
 			   "ssi: %s added you to their buddy list\n", sn);
-	gaim_account_notify_added(gc->account, NULL, sn, (buddy ? gaim_buddy_get_alias_only(buddy) : NULL), NULL);
+	gaim_account_notify_added(gc->account, NULL, sn, (buddy ? gaim_buddy_get_alias_only(buddy) : NULL), NULL, TRUE);
 
 	return 1;
 }

@@ -2511,8 +2511,8 @@ add_user_cb(GaimGtkAccountAddUserData *data)
 
 static void
 gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
-							   const char *id, const char *alias,
-							   const char *msg)
+                               const char *id, const char *alias,
+                               const char *msg, gboolean request_add)
 {
 	char *buffer;
 	GaimConnection *gc;
@@ -2544,7 +2544,7 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 		 ? ""
 		 : _("\n\nDo you wish to add him or her to your buddy list?")));
 
-	if (buddy != NULL)
+	if (!request_add)
 	{
 		gaim_notify_info(NULL, NULL, _("Information"), buffer);
 	}

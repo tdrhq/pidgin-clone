@@ -47,7 +47,7 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
 
 		/* TODO: This ask for the alias, right? */
-		gaim_account_notify_added(pa->gc->account, NULL, pa->who, NULL, NULL);
+		gaim_account_notify_added(pa->gc->account, NULL, pa->who, NULL, NULL, TRUE);
 	}
 
 	g_free(pa->who);
