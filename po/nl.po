@@ -880,10 +880,6 @@ msgstr "Afwezig %d hangend"
 msgid "Away."
 msgstr "Afwezig"
 
-#: src/applet.c:291 src/buddy.c:478 src/buddy.c:2278 src/buddy.c:2414
-msgid "Away"
-msgstr "Afwezig"
-
 #: src/applet.c:294 src/away.c:387
 msgid "New Away Message"
 msgstr "Nieuw Afwezigheidsbericht"
@@ -1591,10 +1587,6 @@ msgstr "Achternaam"
 msgid "Maiden Name"
 msgstr "Meisjesnaam"
 
-#: src/dialogs.c:1384 src/dialogs.c:2065
-msgid "City"
-msgstr "Stad"
-
 #: src/dialogs.c:1395 src/dialogs.c:2076
 msgid "State"
 msgstr "Staat"
@@ -1614,10 +1606,6 @@ msgstr "Gaim - Fout bij wachtwoord hernoemen"
 #: src/dialogs.c:1465
 msgid "Fill out all fields completely"
 msgstr "Vul alle velden voledig in"
-
-#: src/dialogs.c:1490
-msgid "Gaim - Password Change"
-msgstr "Gaim - Wachtwoord veranderen"
 
 #: src/dialogs.c:1501
 msgid "Change Password"
@@ -1711,10 +1699,6 @@ msgstr "Gaim - Importeer Buddylijst"
 msgid "You cannot create an away message with a blank title"
 msgstr "U moet iets invullen"
 
-#: src/dialogs.c:2805 src/dialogs.c:2811
-msgid "Gaim - Error"
-msgstr "Gaim - Fout"
-
 #: src/dialogs.c:2811
 msgid "You cannot create an empty away message"
 msgstr "U kunt geen leeg bericht maken"
@@ -1759,10 +1743,6 @@ msgstr "Gaim - Logboek opslaan"
 #, c-format
 msgid "Unable to remove file %s - %s"
 msgstr "Kan %s - %s niet verwijderen."
-
-#: src/dialogs.c:3338
-msgid "Error"
-msgstr "Fout"
 
 #: src/dialogs.c:3365
 msgid "Really clear log?"
@@ -1849,10 +1829,6 @@ msgstr "Wissen"
 #: src/multi.c:497
 msgid "Screenname:"
 msgstr "Gebruikersnaam:"
-
-#: src/multi.c:506
-msgid "Password:"
-msgstr "Wachtwoord:"
 
 #: src/multi.c:517
 msgid "Protocol:"

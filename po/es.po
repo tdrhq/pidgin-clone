@@ -641,14 +641,6 @@ msgstr "El usuario %s (%s) quiere añadirle a su lista de amigos"
 msgid "Friendly name too long."
 msgstr "Nombre demasiado largo"
 
-#: src/protocols/msn/msn.c:1111
-msgid "Buddies"
-msgstr "Amigos"
-
-#: src/protocols/msn/msn.c:1739 src/protocols/msn/msn.c:1766
-msgid "Unable to connect"
-msgstr "No se puede conectar"
-
 #: src/protocols/msn/msn.c:1746
 msgid "Unable to write to server"
 msgstr "No se puede escribir al servidor"
@@ -669,18 +661,10 @@ msgstr "Contraseña enviada"
 msgid "Unable to send password"
 msgstr "No se puede enviar la contraseña"
 
-#: src/protocols/msn/msn.c:1760
-msgid "Connecting"
-msgstr "Conectando"
-
 #: src/protocols/msn/msn.c:1569
 msgid "Requesting to send password"
 msgstr "Enviando contraseña"
 
-#: src/protocols/msn/msn.c:2046
-msgid "Status: %s"
-msgstr "Estado: %s"
- 
 #: src/protocols/msn/msn.c:2123 src/protocols/msn/msn.c:2143
 msgid "Reset All Friendly Names"
 msgstr "Actualizar todos los nombres"
@@ -3317,9 +3301,6 @@ msgstr "No"
 msgid "More Info"
 msgstr "Más Información"
 
-#~ msgid "Available"
-#~ msgstr "Disponible"
-
 #~ msgid "Available for friends only"
 #~ msgstr "Disponible sólo para los amigos"
 
@@ -3603,9 +3584,6 @@ msgstr "Más Información"
 
 #~ msgid "Remove buddy from permit/deny"
 #~ msgstr "Quitar amigo de autorizar/negar"
-
-#~ msgid "Idle"
-#~ msgstr "Inactivo"
 
 #~ msgid "Raise chat windows when people speak"
 #~ msgstr "Alzar ventana de conversación cuando alguien hable"
