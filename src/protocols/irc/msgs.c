@@ -110,7 +110,7 @@ void irc_msg_banned(struct irc_conn *irc, const char *name, const char *from, ch
 	g_free(buf);
 }
 
-void irc_msg_banfull(struct irc_conn *irc, const char *name, const char *from, const char **args)
+void irc_msg_banfull(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConversation *convo;
 	char *buf, *nick;
