@@ -180,9 +180,14 @@ static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) 
 }
 
 static char *extract_name(const char *name) {
-	char *tmp;
+	char *tmp, *x;
 	int i, j;
-	char *x = strchr(name, '-');
+
+	if (!name)
+		return NULL;
+	
+	x = strchr(name, '-');
+
 	if (!x) return NULL;
 	x = strchr(++x, '-');
 	if (!x) return NULL;
@@ -1321,6 +1326,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		struct icon_req *ir = NULL;
 		GSList *h = od->hasicons;
 		char *who = normalize(userinfo->sn);
+
+		if (!args->iconlen || !args->iconsum || !args->iconstamp)
+		    return 1;
+		    
 		debug_printf("%s has an icon\n", userinfo->sn);
 		while (h) {
 			ir = h->data;
@@ -1397,15 +1406,23 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args) {
 	struct gaim_connection *gc = sess->aux_data;
 
+	if (!args)
+		return 0;
+
 	debug_printf("rendezvous status %d (%s)\n", args->status, userinfo->sn);
 
 	if (args->status != AIM_RENDEZVOUS_PROPOSE)
 		return 1;
 
 	if (args->reqclass & AIM_CAPS_CHAT) {
-		char *name = extract_name(args->info.chat.roominfo.name);
-		int *exch = g_new0(int, 1);
+		char *name;
+		int *exch;
 		GList *m = NULL;
+		
+		if (!args->info.chat.roominfo.name || !args->info.chat.roominfo.exchange || !args->msg)
+			return 1;
+		name = extract_name(args->info.chat.roominfo.name);
+		exch = g_new0(int, 1);
 		m = g_list_append(m, g_strdup(name ? name : args->info.chat.roominfo.name));
 		*exch = args->info.chat.roominfo.exchange;
 		m = g_list_append(m, exch);
@@ -1483,6 +1500,9 @@ static void gaim_icq_authask(struct gaim_connection *gc, fu32_t uin, char *msg) 
 
 static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args) {
 	struct gaim_connection *gc = sess->aux_data;
+
+	if (!args->type || !args->msg || !args->uin)
+		return 1;
 
 	switch (args->type) {
 		case 0x0001: { /* An almost-normal instant message.  Mac ICQ sends this.  It's peculiar. */
