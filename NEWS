@@ -1,5 +1,12 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+1.0.3 (11/11/2004):
+	Luke: Not much to see here, some bug fixes that you all will enjoy as
+	the semester draws to a close and everyone still in school gets bogged
+	down with projects, papers, and exams. Enjoy! Oh, and if you are interested
+	in the perl or gadu-gadu functionality, please step up to help write
+	patches, as both of these code blocks are currently unmaintained.
+
 1.0.2 (10/19/2004):
 	Stu: I'm new around here. I tried to reduce the number of bugs in the bug
 	tracker, but it turns out that the only way to achieve that is to actually
