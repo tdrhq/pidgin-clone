@@ -525,6 +525,9 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 		l = l->next;
 	}
 	
+	if (!msg)
+		return;
+	
 	if (!g_strncasecmp(msg, "TYPING", strlen("TYPING"))) {
 		if (*stat == '1')
 			serv_got_typing(gc, from, 0);
