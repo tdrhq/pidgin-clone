@@ -284,7 +284,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 	GaimConnection *gc;
 	char *msg;
 
-	gc = session->account->gc;
+	gc = gaim_account_get_connection(session->account);
 
 	switch (error)
 	{
@@ -301,6 +301,11 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 		case MSN_ERROR_SIGN_OTHER:
 			gc->wants_to_die = TRUE;
 			msg = g_strdup(_("You have signed on from another location."));
+			break;
+		case MSN_ERROR_SERV_UNAVAILABLE:
+			msg = g_strdup(_("The MSN servers are temporarily "
+							 "unavailable. Please wait and try "
+							 "again."));
 			break;
 		case MSN_ERROR_SERV_DOWN:
 			msg = g_strdup(_("The MSN servers are going down "
