@@ -26,6 +26,7 @@ use Locale::Language;
 $lang{en_AU} = "English (Australian)";
 $lang{en_CA} = "English (Canadian)";
 $lang{en_GB} = "English (British)";
+$lang{my_MM} = "Burmese (Myanmar)";
 $lang{pt_BR} = "Portuguese (Brazilian)";
 $lang{'sr@Latn'} = "Serbian (Latin)";
 $lang{zh_CN} = "Chinese (Simplified)";
