@@ -452,13 +452,15 @@ msn_list_emblems(GaimBuddy *b, char **se, char **sw,
 	{
 		emblems[0] = "offline";
 	}
-	else if (user->mobile)
-		emblems[i++] = "wireless";
-
-	if (user->list_op & (1 << MSN_LIST_BL))
-		emblems[i++] = "blocked";
-	if (!(user->list_op & (1 << MSN_LIST_RL)))
-		emblems[i++] = "nr";
+	else
+	{
+		if (user->mobile)
+			emblems[i++] = "wireless";
+		if (user->list_op & (1 << MSN_LIST_BL))
+			emblems[i++] = "blocked";
+		if (!(user->list_op & (1 << MSN_LIST_RL)))
+			emblems[i++] = "nr";
+	}
 
 	*se = emblems[0];
 	*sw = emblems[1];
