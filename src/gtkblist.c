@@ -4016,7 +4016,7 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 			gaim_blist_add_group(g, NULL);
 		}
 
-		if(!gaim_find_buddy_in_group(who, data->account, g)) {
+		if(!gaim_find_buddy_in_group(data->account, who, g)) {
 			b = gaim_buddy_new(data->account, who, whoalias);
 			gaim_blist_add_buddy(b, NULL, g, NULL);
 			serv_add_buddy(gaim_account_get_connection(data->account), b);
