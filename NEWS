@@ -12,6 +12,13 @@
 	Gary coming in again too ;-). I like the docklet adjustments Christian made.
 	Btw, we have a new MSN protocol icon, and I think you'll love it.
 
+	Tim: I made Gaim binary relocatable this release, so Gaim can find itself if
+	it gets lost, and I'm going to try to make autopackages for this release, if
+	the autopackage guys release their new version soon like they're talking.
+	I also "fixed" a scrolling bug, by realizing it was all Gentoo's fault.
+	The IRC encoding thing Ethan did is pretty nice, no more encoding error
+	messages!
+
 1.0.3 (11/11/2004):
 	Luke: Not much to see here, some bug fixes that you all will enjoy as
 	the semester draws to a close and everyone still in school gets bogged
