@@ -9,7 +9,8 @@ version 1.0.2:
 	* Fixed some memory leaks in the MSN plugin (Evan Schoenberg)
 	* Fixed a crash viewing certain MSN user profiles (Evan Schoenberg)
 	* Fixed a crash sending a file on MSN when the file is unreadable
-        * Fixed a bug in Yahoo privacy handling (bleeter)
+	* Fixed a crash deleting accounts (Andrew Hart)
+	* Fixed a bug in Yahoo privacy handling (bleeter)
 
 version 1.0.1 (10/07/2004):
 	New Features:
