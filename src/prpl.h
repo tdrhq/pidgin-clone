@@ -172,7 +172,14 @@ typedef enum
 	 *
 	 * Probably just Jabber and Y!M
 	 */
-	OPT_PROTO_USE_POINTSIZE = 0x00000200
+	OPT_PROTO_USE_POINTSIZE = 0x00000200,
+
+	/**
+	 * Don't normalize buddy names for conversations
+	 *
+	 * Probably just Jabber (so resources don't get stripped)
+	 */
+	OPT_PROTO_NO_NORMALIZE_CONV = 0x00000400
 
 } GaimProtocolOptions;
 

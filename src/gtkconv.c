@@ -2361,17 +2361,16 @@ static GdkPixbuf *
 get_tab_icon(GaimConversation *conv, gboolean small_icon)
 {
 	GaimAccount *account = NULL;
-	const char *name = NULL;
+	char *name = NULL;
 	GdkPixbuf *status = NULL;
 
 	g_return_val_if_fail( conv != NULL, NULL);
 
 	account = gaim_conversation_get_account(conv);
-	name = gaim_conversation_get_name(conv);
-
 	g_return_val_if_fail( account != NULL, NULL);
-	g_return_val_if_fail( name != NULL, NULL);
 
+	name = g_strdup(gaim_normalize(account, gaim_conversation_get_name(conv)));
+	g_return_val_if_fail( name != NULL, NULL);
 
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
@@ -2395,6 +2394,7 @@ get_tab_icon(GaimConversation *conv, gboolean small_icon)
 		else
 			status = pixbuf;
 	}
+	g_free(name);
 	return status;
 }
 

@@ -1515,7 +1515,7 @@ static GaimPluginUiInfo prefs_info = {
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_NO_NORMALIZE_CONV,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
 	NO_BUDDY_ICONS,					/* icon_spec */

@@ -1387,17 +1387,32 @@ gaim_find_conversation_with_account(const char *name,
 	GaimConversation *c = NULL;
 	char *cuser;
 	GList *cnv;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	cuser = g_strdup(gaim_normalize(account, name));
+	if(account && account->gc && account->gc->prpl) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	}
+
+	if(prpl_info && prpl_info->options & OPT_PROTO_NO_NORMALIZE_CONV) {
+		cuser = g_strdup(name);
+	} else {
+		cuser = g_strdup(gaim_normalize(account, name));
+	}
 
 	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
+		const char *cmp;
 		c = (GaimConversation *)cnv->data;
 
-		if (!gaim_utf8_strcasecmp(cuser,
-								  gaim_normalize(account, gaim_conversation_get_name(c))) &&
-			account == gaim_conversation_get_account(c)) {
+		if(prpl_info && prpl_info->options & OPT_PROTO_NO_NORMALIZE_CONV) {
+			cmp = gaim_conversation_get_name(c);
+		} else {
+			cmp = gaim_normalize(account, gaim_conversation_get_name(c));
+		}
+
+		if (!gaim_utf8_strcasecmp(cuser, cmp) &&
+				account == gaim_conversation_get_account(c)) {
 
 			break;
 		}
