@@ -182,7 +182,7 @@ const double top_left_corner[25] = {
   .941, .847, .698, .521, .215
 };
 
-
+#ifdef WANT_DROP_SHADOW
 static gboolean xcomposite_is_present()
 {
 	static gboolean result = FALSE;
@@ -200,6 +200,7 @@ static gboolean xcomposite_is_present()
 
 	return result;
 }
+#endif /* WANT_DROP_SHADOW */
 
 static GdkPixbuf *
 get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
