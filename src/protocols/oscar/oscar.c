@@ -297,8 +297,6 @@ static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const 
 static void oscar_set_info(GaimConnection *gc, const char *text);
 static void oscar_set_away(GaimConnection *gc, const char *state, const char *message);
 
-static void recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data);
-
 static void oscar_free_name_data(struct name_data *data) {
 	g_free(data->name);
 	g_free(data->nick);
@@ -1719,9 +1717,6 @@ static void oscar_login(GaimAccount *account) {
 	aim_tx_setenqueue(sess, AIM_TX_IMMEDIATE, NULL);
 	od->sess = sess;
 	sess->aux_data = gc;
-
-	/* Connect to core Gaim signals */
-	gaim_prefs_connect_callback("/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
 
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
 	if (conn == NULL) {
@@ -7289,42 +7284,6 @@ static void oscar_convo_closed(GaimConnection *gc, const char *who)
 	oscar_direct_im_destroy(od, dim);
 }
 
-static void
-recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data)
-{
-	GaimConnection *gc = data;
-	OscarData *od = gc->proto_data;
-	aim_session_t *sess = od->sess;
-	fu32_t presence;
-
-	presence = aim_ssi_getpresence(sess->ssi.local);
-
-	if (value) {
-		presence |= 0x00400000;
-		aim_ssi_setpresence(sess, presence);
-	} else {
-		presence &= ~0x00400000;
-		aim_ssi_setpresence(sess, presence);
-	}
-}
-
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin)
-{
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
-
-	frame = gaim_plugin_pref_frame_new();
-
-	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/recent_buddies", _("Use recent buddies group"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/show_idle", _("Show how long you have been idle"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	return frame;
-}
-
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
@@ -7393,10 +7352,6 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_send_file			/* send_file */
 };
 
-static GaimPluginUiInfo prefs_info = {
-	get_plugin_pref_frame
-};
-
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_MAGIC,
@@ -7424,7 +7379,7 @@ static GaimPluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
-	&prefs_info,                                      /**< prefs_info     */
+	NULL,                                             /**< prefs_info     */
 	oscar_actions
 };
 
@@ -7443,10 +7398,6 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;
-
-	gaim_prefs_add_none("/plugins/prpl/oscar");
-	gaim_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
-	gaim_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);
 }
 
 GAIM_INIT_PLUGIN(oscar, init_plugin, info);
