@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 1.2.1:
+version 1.2.1 (4/3/2005):
 	* URL escaping now works with UTF-8 text. This may break some old log
 	 files.
 	* Revert to XOR auth for ICQ as the md5 is not fully functional
