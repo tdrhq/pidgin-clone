@@ -445,6 +445,18 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 
     perl_done:
 
+    ; If this is under NT4, delete the SILC support stuff
+    ; there is a bug that will prevent any account from connecting
+    ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
+    Call GetWindowsVersion
+    Pop $R2
+    StrCmp $R2 "NT 4.0" 0 nt4_done
+    Delete "$INSTDIR\plugins\libsilc.dll"
+    Delete "$INSTDIR\silcclient.dll"
+    Delete "$INSTDIR\silc.dll"
+
+    nt4_done:
+
     CreateDirectory "$SMPROGRAMS\Gaim"
     CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
     CreateShortCut "$DESKTOP\Gaim.lnk" "$INSTDIR\gaim.exe"
@@ -1251,7 +1263,7 @@ Function GetParameters
  
 FunctionEnd
 
-; StrStr
+ ; StrStr
  ; input, top of stack = string to search for
  ;        top of stack-1 = string to search in
  ; output, top of stack (replaces with the portion of the string remaining)
@@ -1264,8 +1276,8 @@ FunctionEnd
  ;   Pop $R0
  ;  ($R0 at this point is "ass string")
 
- Function StrStr
- Exch $R1 ; st=haystack,old$R1, $R1=needle
+Function StrStr
+   Exch $R1 ; st=haystack,old$R1, $R1=needle
    Exch    ; st=old$R1,haystack
    Exch $R2 ; st=old$R1,old$R2, $R2=haystack
    Push $R3
@@ -1284,14 +1296,14 @@ FunctionEnd
      StrCmp $R5 "" done
      IntOp $R4 $R4 + 1
      Goto loop
- done:
+   done:
    StrCpy $R1 $R2 "" $R4
    Pop $R5
    Pop $R4
    Pop $R3
    Pop $R2
    Exch $R1
- FunctionEnd
+FunctionEnd
 
 ;
 ; Parse the Command line
@@ -1308,9 +1320,95 @@ Function ParseParameters
   Call StrStr
   Pop $R1
   StrCmp $R1 "" next
-    StrCpy $R1 $R1 4 2 ; Strip first 2 chars of string
-    StrCpy $LANGUAGE $R1
-    IntOp $LANG_IS_SET 0 + 1
+  StrCpy $R1 $R1 4 2 ; Strip first 2 chars of string
+  StrCpy $LANGUAGE $R1
+  IntOp $LANG_IS_SET 0 + 1
   next:
+FunctionEnd
+
+; GetWindowsVersion
+;
+; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
+; Updated by Joost Verburg
+;
+; Returns on top of stack
+;
+; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003)
+; or
+; '' (Unknown Windows Version)
+;
+; Usage:
+;   Call GetWindowsVersion
+;   Pop $R0
+;
+; at this point $R0 is "NT 4.0" or whatnot
+Function GetWindowsVersion
+
+  Push $R0
+  Push $R1
+
+  ReadRegStr $R0 HKLM \
+  "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+
+  IfErrors 0 lbl_winnt
+
+  ; we are not NT
+  ReadRegStr $R0 HKLM \
+  "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
+
+  StrCpy $R1 $R0 1
+  StrCmp $R1 '4' 0 lbl_error
+
+  StrCpy $R1 $R0 3
+
+  StrCmp $R1 '4.0' lbl_win32_95
+  StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
+
+  lbl_win32_95:
+    StrCpy $R0 '95'
+  Goto lbl_done
+
+  lbl_win32_98:
+    StrCpy $R0 '98'
+  Goto lbl_done
+
+  lbl_win32_ME:
+    StrCpy $R0 'ME'
+  Goto lbl_done
+
+  lbl_winnt:
+    StrCpy $R1 $R0 1
+
+    StrCmp $R1 '3' lbl_winnt_x
+    StrCmp $R1 '4' lbl_winnt_x
+
+    StrCpy $R1 $R0 3
+
+    StrCmp $R1 '5.0' lbl_winnt_2000
+    StrCmp $R1 '5.1' lbl_winnt_XP
+    StrCmp $R1 '5.2' lbl_winnt_2003 lbl_error
+
+  lbl_winnt_x:
+    StrCpy $R0 "NT $R0" 6
+  Goto lbl_done
+
+  lbl_winnt_2000:
+    Strcpy $R0 '2000'
+  Goto lbl_done
+
+  lbl_winnt_XP:
+    Strcpy $R0 'XP'
+  Goto lbl_done
+
+  lbl_winnt_2003:
+    Strcpy $R0 '2003'
+  Goto lbl_done
+
+  lbl_error:
+    Strcpy $R0 ''
+  lbl_done:
+ 
+  Pop $R1
+  Exch $R0
 FunctionEnd
 
