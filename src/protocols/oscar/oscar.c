@@ -387,7 +387,7 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 
 	} else if (strcmp(encoding, "us-ascii") && strcmp(encoding, "utf-8")) {
 		gaim_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
-						   "attempting to convert to UTF-8 anyway\n");
+						   "attempting to convert to UTF-8 anyway\n", encoding);
 		utf8 = g_convert(text, textlen, "UTF-8", encoding, NULL, NULL, NULL);
 	}
 
@@ -500,8 +500,8 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	const gchar *charsetstr;
 
 	/* Attempt to send as ASCII */
-	*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, msglen, NULL);
-	if (*msg != NULL) {
+	if (oscar_charset_check(from) == AIM_CHARSET_ASCII) {
+		*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, msglen, NULL);
 		*charset = AIM_CHARSET_ASCII;
 		*charsubset = 0x0000;
 		return;
