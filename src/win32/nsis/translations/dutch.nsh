@@ -7,9 +7,11 @@
 ;;  Author: Vincent van Adrighem <vincent@dirck.mine.nu>
 ;;  Version 2
 ;;
-
-; Startup GTK+ check
+; Startup Checks
+!define INSTALLER_IS_RUNNING			"Er is al een installatie actief."
+!define GAIM_IS_RUNNING			"Gaim wordt op dit moment uitgevoerd. Sluit Gaim af en start de installatie opnieuw."
 !define GTK_INSTALLER_NEEDED			"De GTK+ runtime-omgeving is niet aanwezig of moet vernieuwd worden.$\rInstalleer v${GTK_VERSION} of nieuwer van de GTK+ runtime-omgeving"
+
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Volgende >"
@@ -50,5 +52,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"U heeft geen toestemming om een GTK+ thema te installeren."
 
 ; Uninstall Section Prompts
-!define un.GAIM_UNINSTALL_ERROR_1         "De uninstaller kon geen register-ingangen voor Gaim vinden.$\rWaarschijnlijk heeft een andere gebruiker het programma geïnstalleerd."
+!define un.GAIM_UNINSTALL_ERROR_1         "Het verwijderingsprogramma voor Gaim kon geen register-ingangen voor Gaim vinden.$\rWaarschijnlijk heeft een andere gebruiker het programma geïnstalleerd."
 !define un.GAIM_UNINSTALL_ERROR_2         "U mag dit programma niet verwijderen."

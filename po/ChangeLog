@@ -1,7 +1,19 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 1.2.0:
+	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Danish translation updated (Morten (mbrix) Brix Pedersen)
+	* Dutch translation updated (Vincent van Adrighem)
+	* English (British) translation updated (Luke (lukeross) Ross)
+	* French translation updated (Eric Boumaour)
+	* Italian translation update (Claudio Satriano)
+	* Japanese translation updated (Takeshi Aihana)
+	* Portuguese translation updated (Duarte Serrano Goncalves Henriques)
 	* Slovenian translation updated (Martin Srebotnjak)
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Ukrainian translation updated (Maxim V. Dziumanenko)
+	* Dutch win32 installer translation updated (Vincent van Adrighem)
 	* Slovenian win32 installer translation updated (Martin Srebotnjak)
 
 version 1.1.4 (2/24/2005):
