@@ -219,7 +219,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 		return -EINVAL;
 
 	/* If we're signing on an ICQ account then use the older, XOR login method */
-	if (isdigit(sn[0]))
+	if (0 && isdigit(sn[0]))
 		return goddamnicq2(sess, conn, sn, password, ci);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
@@ -463,7 +463,7 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
-	if (isdigit(sn[0]))
+	if (0 && isdigit(sn[0]))
 		return goddamnicq(sess, conn, sn);
 
 	aim_sendflapver(sess, conn);
