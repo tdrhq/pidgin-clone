@@ -6,18 +6,24 @@
 	it has been much requested and should make a number of users very
 	happy. See the ChangeLog for details on other fixes.
 
-	Stu: Much thanks to Miah Gregory and Felipe Contreras, a bunch of memory
-	leaks have been fixed. Felipe also fixed a good number of other MSN bugs.
-	I didn't do much except apply these guys fixes. It's good to see fixes from
-	Gary coming in again too ;-). I like the docklet adjustments Christian made.
-	Btw, we have a new MSN protocol icon, and I think you'll love it.
+	Stu: Much thanks to Miah Gregory and Felipe Contreras, a bunch of
+        memory leaks have been fixed. Felipe also fixed a good number of
+        other MSN bugs. I didn't do much except apply these guys fixes. It's
+        good to see fixes from Gary coming in again too ;-). I like the
+        docklet adjustments Christian made. Btw, we have a new MSN protocol
+        icon, and I think you'll love it.
 
-	Tim: I made Gaim binary relocatable this release, so Gaim can find itself if
-	it gets lost, and I'm going to try to make autopackages for this release, if
-	the autopackage guys release their new version soon like they're talking.
-	I also "fixed" a scrolling bug, by realizing it was all Gentoo's fault.
-	The IRC encoding thing Ethan did is pretty nice, no more encoding error
-	messages!
+	Tim: I made Gaim binary relocatable this release, so Gaim can find
+        itself if it gets lost, and I'm going to try to make autopackages
+        for this release, if the autopackage guys release their new version
+        soon like they're talking. I also "fixed" a scrolling bug, by
+        realizing it was all Gentoo's fault. The IRC encoding thing Ethan
+        did is pretty nice, no more encoding error messages!
+
+	Ethan: Rumor has it that I did some work this release, but it's just
+	that, a rumor.  I think Luke started it.  I did lay the hammer  down
+	on  bogus  word  wrapping in the NEWS, so you can thank me for that.
+	Keep your powder dry.
 
 1.0.3 (11/11/2004):
 	Luke: Not much to see here, some bug fixes that you all will enjoy as
