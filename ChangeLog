@@ -2,7 +2,7 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 1.0.4:
 	Bug Fixes:
-	* Fix a crash when removing the last buddy in a contact (Andrew Hart)
+	* Fix crashes when removing buddies in certain situations (Andrew Hart)
 
 version 1.0.3 (11/11/2004):
 	Bug Fixes:

@@ -3517,6 +3517,8 @@ void gaim_gtk_blist_update_toolbar() {
 
 static void gaim_gtk_blist_remove(GaimBuddyList *list, GaimBlistNode *node)
 {
+	gaim_request_close_with_handle(node);
+
 	gaim_gtk_blist_hide_node(list, node);
 
 	if(node->parent)
