@@ -178,14 +178,15 @@ void perl_autoload()
 {
 	DIR *dir;
 	struct dirent *ent;
-	struct dirent dirent_buf;
+	struct dirent *dirent_buf;
 	char *buf;
 	char *path;
 
 	path = gaim_user_dir();
 	dir = opendir(path);
 	if (dir) {
-		while ((readdir_r(dir,&dirent_buf,&ent),ent)) {
+		dirent_buf = g_malloc(sizeof(struct dirent) + NAME_MAX);
+		while ((readdir_r(dir,dirent_buf,&ent),ent)) {
 			if (strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")) {
 				if (is_pl_file(ent->d_name)) {
 					buf = g_malloc(strlen(path) + strlen(ent->d_name) + 2);
@@ -196,6 +197,7 @@ void perl_autoload()
 			}
 		}
 		closedir(dir);
+		g_free(dirent_buf);
 	}
 	g_free(path);
 }
