@@ -1,12 +1,14 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.59.1
-	* Fixed a security bug in the manual browser setting
+	* Fixed a security bug in the manual browser setting (Thanks
+	  Robert McQueen)
 	* Now using libiconv for better i18n support (Thanks Junichi
 	  Uekawa)
 	* Will work with Perl 5.8 (thanks, Timothy Lee and Dan 
 	  Colascione)
 	* Fix for HTTP proxies (thanks, Ethan Blanton)	
+	* Read proxy environment variables. (thanks, Christian Hammond)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
