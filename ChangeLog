@@ -1,5 +1,8 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.59.9
+	* Updated zh_TW.po file (thanks breeze833)
+
 version 0.59.8 (01/06/2003):
 	* Ripped out all gtk2 support (Thanks Nathan Walp).
 	* Fixed smiley related segfault (Thanks Robert McQueen)

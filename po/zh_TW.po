@@ -4,7 +4,7 @@
 #
 # Updated by Rocky S. Lee <rocky@gnuchina.org>, Jan 2002
 # 
-# ��������������ӣ����£��칦����û����������ά������л
+# �����������ӣ����£��칦����û���������ά������л
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.1 for gaim-0.5.7\n"
@@ -655,8 +655,8 @@ msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
 msgstr ""
-"以下所有的欄位都是選擇性的。您只要輸入您想輸入您想�"
-"�入的訊息即可"
+"以下所有的欄位都是選擇性的。您只要輸入您想輸入您想"
+"輸入的訊息即可"
 
 #: src/protocols/jabber/jabber.c:3131
 msgid "User Identity"
@@ -1051,9 +1051,9 @@ msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
-"您的連線／斷線動作太過頻繁。請等待十分鐘後再行重試�"
-"�如果您依然繼續嘗試著連線，那麼您的等待時間將會更加�"
-"��延長。"
+"您的連線／斷線動作太過頻繁。請等待十分鐘後再行重試"
+"如果您依然繼續嘗試著連線，那麼您的等待時間將會更加"
+"延長。"
 
 #. client too old
 #: src/protocols/oscar/oscar.c:653
@@ -1329,8 +1329,8 @@ msgid ""
 "The last message was not sent because you are over the rate limit. Please "
 "wait 10 seconds and try again."
 msgstr ""
-"訊息並未送出，因為您已經達到發送訊息速率的上限。請�"
-"�待十秒後再試一次。"
+"訊息並未送出，因為您已經達到發送訊息速率的上限。請"
+"等待十秒後再試一次。"
 
 #: src/dialogs.c:3604 src/protocols/oscar/oscar.c:2589
 #: src/protocols/oscar/oscar.c:3541 src/protocols/toc/toc.c:1564
@@ -1502,9 +1502,9 @@ msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
 msgstr ""
-"您的連線／斷線動作太過頻繁。請等待十分鐘後再行重試�"
-"�如果您依然繼續嘗試著連線，那麼您的等待時間將會更加�"
-"��延長。"
+"您的連線／斷線動作太過頻繁。請等待十分鐘後再行重試"
+"如果您依然繼續嘗試著連線，那麼您的等待時間將會更加"
+"延長。"
 
 #: src/protocols/toc/toc.c:471
 #, c-format
@@ -2723,8 +2723,8 @@ msgid ""
 "You cannot log this account in; you do not have the protocol it uses loaded, "
 "or the protocol does not have a login function."
 msgstr ""
-"您無法使用這個帳號來登入；您可能沒有設定這個帳號所�"
-"�用的 Protocol，或者這個 Protocol 並沒有提供登入的功能。"
+"您無法使用這個帳號來登入；您可能沒有設定這個帳號所使"
+"用的 Protocol，或者這個 Protocol 並沒有提供登入的功能。"
 
 #: src/multi.c:949
 msgid "Login Error"
@@ -2968,8 +2968,8 @@ msgid ""
 "Not all protocols can use these proxy options. Please see the README file "
 "for details."
 msgstr ""
-"並不是所有的通訊協定都可以使用這些代理伺服器的選項�"
-"�\n"
+"並不是所有的通訊協定都可以使用這些代理伺服器的選項"
+"\n"
 "請參考 README 來獲得更進一步的資訊。"
 
 #: src/prefs.c:393
@@ -3218,7 +3218,7 @@ msgstr ""
 
 #: src/prefs.c:970
 msgid "Hide window on send"
-msgstr "送出訊息後關閉視穿"
+msgstr "送出訊息後關閉視窗"
 
 #: src/prefs.c:972 src/prefs.c:1122
 msgid "Window Sizes"
@@ -3610,3 +3610,4 @@ msgstr ""
 
 #~ msgid "Manual"
 #~ msgstr "自定"
+
