@@ -1,4 +1,4 @@
-version 0.83:
+version 1.0.0:
 	* The "Start Gaim on Windows starup" setting is preserved
 	  when Gaim is reinstalled (Daniel Atallah)
 
