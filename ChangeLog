@@ -7,6 +7,7 @@ version 1.1.0:
 	  Pass --disable-binreloc to ./configure to disable.
 	* IRC now has fallback encodings, and tries harder to display
 	  something useful during an encoding error.
+
 	Bug Fixes:
 	* Fix crashes when removing buddies in certain situations (Andrew Hart)
 	* Eliminate MSN switchboard errors (Felipe Contreras)
@@ -14,6 +15,8 @@ version 1.1.0:
 	* Correctly display file transfer dialogs for filenames containing &, < or >
 	* Correctly display MSN authorization dialogs for friendly names containing
 	  &, < or >
+	* Properly align the right-click docklet menu with the docklet icon in
+	  *nix.
 
 version 1.0.3 (11/11/2004):
 	Bug Fixes:
