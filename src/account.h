@@ -44,6 +44,9 @@ struct _GaimAccountUiOps
 	void (*notify_added)(GaimAccount *account, const char *remote_user,
 						 const char *id, const char *alias,
 						 const char *message);
+	void (*request_add)(GaimAccount *account, const char *remote_user,
+						 const char *id, const char *alias,
+						 const char *message);
 };
 
 struct _GaimAccount
@@ -143,6 +146,25 @@ void gaim_account_disconnect(GaimAccount *account);
 void gaim_account_notify_added(GaimAccount *account, const char *remote_user,
 							   const char *id, const char *alias,
 							   const char *message);
+
+/**
+ * Notifies the user that the account was added to a remote user's
+ * buddy list and asks the user if they want to add the remote user to their
+ * buddy list.
+ *
+ * This will present a dialog informing the local user that the remote user
+ * added them to the remote users buddy list and will ask if they want to add
+ * the remote user to the local buddy list.
+ *
+ * @param account The account that was added.
+ * @param remote_user The name of the user that added this account.
+ * @param id          The optional ID of the local account. Rarely used.
+ * @param alias       The optional alias of the user.
+ * @param message     The optional message sent from the user adding you.
+ */
+void gaim_account_request_add(GaimAccount *account, const char *remote_user,
+                              const char *id, const char *alias,
+                              const char *message);
 
 /**
  * Requests information from the user to change the account's password.

@@ -14,6 +14,10 @@ version 1.2.0:
 	   (Christopher O'Brien)
 	* Added: GAIM_CBFLAGS_TYPING to GaimConvChatBuddyFlags
 	   (Christopher O'Brien)
+	* Added: gaim_account_request_add which takes the same arguments as
+	*  gaim_account_notify_added but always asks the user if they want to add
+	*  the buddy to the buddy list
+	* Added: An accompanying request_add GaimAccountUiOp
 
 version 1.1.4 (2/24/2005):
 	* No changes

@@ -156,6 +156,7 @@ xmlnode *jabber_presence_create(const char *state, const char *msg)
 }
 
 struct _jabber_add_permit {
+	JabberStream *js;
 	GaimConnection *gc;
 	char *who;
 };
@@ -163,11 +164,22 @@ struct _jabber_add_permit {
 static void authorize_add_cb(struct _jabber_add_permit *jap)
 {
 	if(g_list_find(gaim_connections_get_all(), jap->gc)) {
+		GaimBuddy *buddy = NULL;
 		jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
 				"subscribed");
 
-		if(!gaim_find_buddy(jap->gc->account, jap->who))
-			gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
+		buddy = gaim_find_buddy(jap->gc->account, jap->who);
+
+		if (buddy) {
+			JabberBuddy *jb = NULL;
+
+			jb = jabber_buddy_find(jap->js, jap->who, TRUE);
+
+			if ((jb->subscription & JABBER_SUB_TO) == 0)
+				gaim_account_request_add(jap->gc->account, NULL, jap->who, NULL, NULL);
+			else
+				gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
+		}
 	}
 
 	g_free(jap->who);
@@ -242,6 +254,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		char *msg = g_strdup_printf(_("The user %s wants to add you to their buddy list."), from);
 		jap->gc = js->gc;
 		jap->who = g_strdup(from);
+		jap->js = js;
 
 		gaim_request_action(js->gc, NULL, msg, NULL, GAIM_DEFAULT_ACTION_NONE, 
 				jap, 2,
