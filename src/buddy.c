@@ -2231,9 +2231,7 @@ static void update_idle_time(struct buddy_show *bs)
 	if (blist_options & OPT_BLIST_SHOW_IDLETIME)
 		gtk_widget_show(bs->idle);
 
-	style = gtk_style_new();
-	gdk_font_unref(gtk_style_get_font(style));
-	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(bs->label->style)));
+	style = gtk_style_copy( gtk_rc_get_style(bs->label) );
 	for (i = 0; i < 5; i++)
 		style->fg[i] = bs->idle->style->fg[i];
 	if ((blist_options & OPT_BLIST_GREY_IDLERS) && (b->idle)) {
