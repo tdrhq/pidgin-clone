@@ -2,6 +2,8 @@ Gaim: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.59.7
 	* Yahoo i18n fix (Thanks Ethan Blanton).
+	* Fixed a bug in escaping saved passwords (Thanks
+	  Eric Timme)
 
 version 0.59.6 (11/07/2002):
 	* Fixed a segfault introduced in 0.59.5 when gtk
