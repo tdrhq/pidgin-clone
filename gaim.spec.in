@@ -96,7 +96,7 @@ rm -r $RPM_BUILD_ROOT
 %changelog
 * Mon Jan 06 2003 Rob Flynn <rob@marko.net> (0.59.8 release)
 - Ripped out all gtk2 support (Thanks Nathan Walp).
-- if the gc is null, or the smiley list is null, do the default smileys otherwise you segfault (Thanks Robert McQueen).
+- Fixed smiley related segfault (Thanks Robert McQueen)
 - Yahoo! can connect again
 
 * Sat Dec 21 2002 Rob Flynn <rob@marko.net> (0.59.7 release)

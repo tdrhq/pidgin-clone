@@ -2,8 +2,7 @@ Gaim: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.59.8 (01/06/2003):
 	* Ripped out all gtk2 support (Thanks Nathan Walp).
-	* if the gc is null, or the smiley list is null, do the default smileys
-	  otherwise you segfault (Thanks Robert McQueen).
+	* Fixed smiley related segfault (Thanks Robert McQueen)
 	* Yahoo! can connect again
 
 version 0.59.7 (12/21/2002):
