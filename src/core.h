@@ -26,6 +26,14 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ICONV
+#include <iconv.h>
+#endif
+
+#ifdef HAVE_LANGINFO_CODESET
+#include <langinfo.h>
+#endif
+
 #include <stdio.h>
 #include <time.h>
 #include <glib.h>
@@ -47,6 +55,7 @@ struct aim_user {
 	char password[32];
 	char user_info[2048];
 	int options;
+
 	int protocol;
 	/* prpls can use this to save information about the user,
 	 * like which server to connect to, etc */
