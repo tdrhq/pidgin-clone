@@ -1,4 +1,5 @@
 version 1.1.2 (01/20/2005):
+	* Updated GTK+ to 2.4.14 (rev a)
 	* Much prettier System Tray icons for Windows XP and greater.
 	  (Thanks Jérôme Poulin and Alex Converse)
 	* Docking now works with multiple monitors.
