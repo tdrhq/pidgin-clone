@@ -52,14 +52,6 @@ msn_directconn_send_handshake(MsnDirectConn *directconn)
 		guint16 t4;
 		guint64 t5;
 
-		/* ugly ugly ugly */
-#ifndef G_GINT64_MODIFIER
-#	if GLIB_SIZEOF_LONG == 8
-#		define G_GINT64_MODIFIER "l"
-#	else
-#		define G_GINT64_MODIFIER "ll"
-#	endif
-#endif
 		sscanf (directconn->nonce,
 				"%08X-%04hX-%04hX-%04hX-%012" G_GINT64_MODIFIER "X",
 				&t1, &t2, &t3, &t4, &t5);
