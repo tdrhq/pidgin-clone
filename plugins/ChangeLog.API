@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 1.0.0 (09/16/2004):
+version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
 	* Changed: gaim_blist_update_buddy_presence(), presence changed to
 		type gboolean

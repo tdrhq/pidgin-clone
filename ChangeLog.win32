@@ -1,4 +1,4 @@
-version 1.0.0 (09/16/2004):
+version 1.0.0 (09/17/2004):
 	* The "Start Gaim on Windows startup" setting is preserved
 	  when Gaim is reinstalled (Daniel Atallah)
 	* Pasting HTML no longer adds linewrapping where it shouldn't
