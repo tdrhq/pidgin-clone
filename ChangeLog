@@ -4,7 +4,7 @@ version 0.59.2
         * Japanese translation updated (Thanks, Junichi Uekawa)
 	* Won't crash when you set your MSN Friendly name to an
 	  empty string.
-	* Default manual browser commandn changed to reflect the
+	* Default manual browser command changed to reflect the
 	  fix in 0.59.1
 	* Fixed the non-manual browser settings which were broke in
 	  0.59.1 (Thanks, Chris Blizzard)
