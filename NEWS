@@ -8,6 +8,13 @@
 	developers.  Yahoo users should also thank Tim and Bleeter for
 	their efforts.
 
+	Etan: I'm going to NEWS since I actually did something this time.
+	Jabber will allow you to unsubscribe to someone's presence
+	without logging out and in again, this does break seeing yourself
+	on your buddy list, but hopefully we'll fix that again for the
+	next release. We should also be able to correctly add buddies
+	when on a jabber server running ejabberd now.
+
 1.1.4 (2/24/2005):
 	Sean: Another bug fix release. A big thanks to Rob McQueen, Ari
 	Pollak, Don Seiler, and Warren Togami: some packagers who helped
