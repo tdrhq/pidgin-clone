@@ -651,12 +651,12 @@ open_socket(char **error)
 {
 	struct sockaddr_un saddr;
 	gint fd;
-	
+
 	while (gaim_remote_session_exists(gaim_session))
 		gaim_session++;
-	
+
 	gaim_debug(GAIM_DEBUG_MISC, "cui", "Session: %d\n", gaim_session);
-	
+
 	if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
 		mode_t m = umask(0177);
 		saddr.sun_family = AF_UNIX;
@@ -666,11 +666,13 @@ open_socket(char **error)
 		if (bind(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
 			listen(fd, 100);
 		else {
+			char *tmp = g_locale_to_utf8(strerror(errno), -1, NULL, NULL, NULL);
 			*error = g_strdup_printf(_("Failed to assign %s to a socket:\n%s"),
-					   saddr.sun_path, strerror(errno));
+					   saddr.sun_path, tmp);
 			g_log(NULL, G_LOG_LEVEL_CRITICAL,
-			      "Failed to assign %s to a socket (Error: %s)",	
-			      saddr.sun_path, strerror(errno));
+			      "Failed to assign %s to a socket (Error: %s)",
+			      saddr.sun_path, tmp);
+			g_free(tmp);
 			umask(m);
 			return -1;
 		}
