@@ -3329,7 +3329,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	/* setup buttons */
 
 	/* pack buttons */
-	if (c->gc->prpl->smiley_list == NULL) {
+	if (if c->gc == NULL || c->gc->prpl->smiley_list == NULL) {
 		smiley_box = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
 		gtk_box_pack_start(GTK_BOX(vbox), smiley_box, TRUE, TRUE, 0);
 		
