@@ -94,6 +94,13 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Sat Mar 01 2003 Rob Flynn <rob@marko.net> (0.59.9 release)
+- Updated zh_TW.po file (Thanks breeze833)
+- Fix an oscar bug that caused some messages from  AOL 8.0 to be dropped (Thanks Mark Doliner)
+- Changed "openprojects" to "freenode" in irc.c
+- Fixed charset conversion on systems which use a BOM for UCS-4  (Thanks, Alfredo Pen~a, Ethan Blanton)
+- Fixed a typo in the man page (Thanks Eric S. Raymond)
+
 * Mon Jan 06 2003 Rob Flynn <rob@marko.net> (0.59.8 release)
 - Ripped out all gtk2 support (Thanks Nathan Walp).
 - Fixed smiley related segfault (Thanks Robert McQueen)
