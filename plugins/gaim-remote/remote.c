@@ -663,6 +663,9 @@ open_socket(char **error)
 
 		g_snprintf(saddr.sun_path, sizeof(saddr.sun_path), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d",
 				g_get_tmp_dir(), g_get_user_name(), gaim_session);
+		/* Unlink any existing socket for this session */
+		unlink (saddr.sun_path);
+
 		if (bind(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
 			listen(fd, 100);
 		else {
