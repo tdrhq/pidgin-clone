@@ -3084,6 +3084,70 @@ gaim_utf8_ncr_decode(const char *in)
 	return g_string_free(out, FALSE);
 }
 
+char *
+gaim_utf8_newline_htmlify(const char *in, gboolean collapse_multiple_newlines_p)
+{
+	GString *out = g_string_new("");
+	const char *p;
+	gboolean last_char_is_newline_p = FALSE;
+
+	g_return_val_if_fail(in != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(in, -1, NULL), NULL);
+
+	/* This is a stupid algorithm */
+	for (p = in; p && *p; p = g_utf8_find_next_char(p, NULL)) {
+		int adj = 0;
+		if (g_ascii_strncasecmp("<br>", p, 4) == 0) {
+			adj = 3;
+		} else if (g_ascii_strncasecmp("<br/>", p, 5) == 0) {
+			adj = 4;
+		}
+		if (*p != '\n' && adj == 0) {
+			g_string_append_unichar(out, g_utf8_get_char(p));
+			last_char_is_newline_p = FALSE;
+		} else if (collapse_multiple_newlines_p && last_char_is_newline_p) {
+			;
+		} else {
+			g_string_append(out, "<br>");
+			last_char_is_newline_p = TRUE;
+			p += adj;
+		}
+	}
+	return g_string_free(out, FALSE);
+}
+
+char *
+gaim_utf8_newline_htmlify(const char *in, gboolean collapse_multiple_newlines_p)
+{
+	GString *out = g_string_new("");
+	const char *p;
+	gboolean last_char_is_newline_p = FALSE;
+
+	g_return_val_if_fail(in != NULL, NULL);
+	g_return_val_if_fail(g_utf8_validate(in, -1, NULL), NULL);
+
+	/* This is a stupid algorithm */
+	for (p = in; p && *p; p = g_utf8_find_next_char(p, NULL)) {
+		int adj = 0;
+		if (g_ascii_strncasecmp("<br>", p, 4) == 0) {
+			adj = 3;
+		} else if (g_ascii_strncasecmp("<br/>", p, 5) == 0) {
+			adj = 4;
+		}
+		if (*p != '\n' && adj == 0) {
+			g_string_append_unichar(out, g_utf8_get_char(p));
+			last_char_is_newline_p = FALSE;
+		} else if (collapse_multiple_newlines_p && last_char_is_newline_p) {
+			;
+		} else {
+			g_string_append(out, "<br>");
+			last_char_is_newline_p = TRUE;
+			p += adj;
+		}
+	}
+	return g_string_free(out, FALSE);
+}
+
 int
 gaim_utf8_strcasecmp(const char *a, const char *b)
 {
