@@ -1,5 +1,11 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+1.1.0 (12/02/2004):
+	Luke: Another in our series of bug fix releases, with a slight twist.
+	Everyone thank Ethan for implementing a fall back encodign for irc,
+	it has been much requested and should make a number of users very
+	happy. See the Changelog for details on other fixes.
+
 1.0.3 (11/11/2004):
 	Luke: Not much to see here, some bug fixes that you all will enjoy as
 	the semester draws to a close and everyone still in school gets bogged
