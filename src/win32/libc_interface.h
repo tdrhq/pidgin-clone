@@ -129,6 +129,16 @@ extern int wgaim_rename(const char *oldname, const char *newname);
 #define rename( oldname, newname ) \
 wgaim_rename( oldname, newname )
 
+#if GLIB_CHECK_VERSION(2,6,0)
+#ifdef g_rename
+# undef g_rename
+#endif
+/* This is necessary because we want rename on win32 to be able to overwrite an existing file, it is done in internal.h if GLib < 2.6*/
+#define g_rename(oldname, newname) \
+wgaim_rename(oldname, newname)
+#endif
+
+
 /* sys/stat.h */
 
 #if !GLIB_CHECK_VERSION(2,6,0)
