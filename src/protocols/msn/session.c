@@ -198,6 +198,8 @@ msn_session_sync_users(MsnSession *session)
 {
 	GList *l;
 
+	g_return_if_fail(session->sync_userlist != NULL);
+
 	l = session->sync_userlist->users;
 
 	while (l != NULL)
