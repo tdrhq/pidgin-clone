@@ -229,6 +229,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 
 	text = gtk_imhtml_new(NULL, NULL);
 	gtk_container_add(GTK_CONTAINER(sw), text);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(text), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
 	gaim_setup_imhtml(text);
 
 	str = g_string_sized_new(4096);
