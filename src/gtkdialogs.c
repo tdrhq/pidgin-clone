@@ -97,7 +97,7 @@ static struct developer retired_developers[] = {
 };
 
 static struct translator current_translators[] = {
-	{N_("Albanian"),            "sq", "Programe Shqip", ""},
+	{N_("Albanian"),            "sq", "Programe Shqip", "besnik@spymac.com"},
 	{N_("Bulgarian"),			"bg", "Alexander Shopov", "al_shopov@users.sf.net"},
 	{N_("Catalan"),				"ca", "Josep Puigdemont", "tradgnome@softcatala.org"},
 	{N_("Czech"),				"cs", "Miloslav Trmac", "mitr@volny.cz"},
@@ -118,7 +118,7 @@ static struct translator current_translators[] = {
 	{N_("Korean"),				"ko", "Kyung-uk Son", "vvs740@chol.com"},
 	{N_("Dutch; Flemish"),		"nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Macedonian"),			"mk", "Tomislav Markovski", "herrera@users.sf.net"},
-	{N_("Myanmar"),             "my_MM", "Minn Myat Soe", ""},
+	{N_("Myanmar"),             "my_MM", "Minn Myat Soe", "mmyatsoe@gmail.com"},
 	{N_("Norwegian"),			"no", "Petter Johan Olsen", "petter.olsen@cc.uit.no"},
 	{N_("Polish"),				"pl", "Krzysztof Foltman, Emil Nowak", "krzysztof@foltman.com;emil5@go2.pl"},
 	{N_("Portuguese"),			"pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
@@ -127,7 +127,7 @@ static struct translator current_translators[] = {
 	{N_("Russian"),				"ru", "Dmitry Beloglazov", "dmaa@users.sf.net"},
 	{N_("Serbian"),				"sr", "Danilo Šegan, Aleksandar Urosevic", "dsegan@gmx.net;urke@users.sourceforge.net"},
 	{N_("Slovenian"),			"sl", "Martin Srebotnjak", "miles@filmsi.net"},
-	{N_("Swedish"),				"sv", "Kalle Kotte", "xake@telia.com"},
+	{N_("Swedish"),				"sv", "Peter Hjalmarsson", "xake@telia.com"},
 	{N_("Turkish"),             "tr", "Onur Kucuktunc", "onurcc@gmail.com"},
 	{N_("Ukrainian"),           "uk", "Maxim V. Dziumanenko", "mvd@mylinux.com.ua"},
 	{N_("Vietnamese"),			"vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
