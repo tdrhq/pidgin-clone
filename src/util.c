@@ -2147,6 +2147,8 @@ gaim_str_sub_away_formatters(const char *str, const char *name)
 				default:
 					cpy[cnt++] = *c;
 				}
+			} else {
+				cpy[cnt++] = *c;
 			}
 			break;
 		default:
