@@ -97,7 +97,7 @@ static struct developer retired_developers[] = {
 };
 
 static struct translator current_translators[] = {
-	{N_("Bulgarian"),			"bg", "Alexander Shopov", "al_shopov@users.sf.net"},
+	{N_("Bulgarian"),			"bg", N_("Vladimira Girginova and Vladimir (Kaladan) Petkov", "missing@here.is,vpetkov@i-space.org"},
 	{N_("Catalan"),				"ca", "Josep Puigdemont", "tradgnome@softcatala.org"},
 	{N_("Czech"),				"cs", "Miloslav Trmac", "mitr@volny.cz"},
 	{N_("Danish"),				"da", "Morten Brix Pedersen", "morten@wtf.dk"},
