@@ -4,6 +4,10 @@ version 1.1.5:
 	* Yahoo file receiving and buddy icon receiving work again.
 	* Limit animated buddy icon frame rates to 10 frames per second
 	  (Nathan Conrad)
+	* Fix a bug where portions of your account configuration would
+	  fail to be read correctly if you set a proxy user name or
+	  password containing invalid XML characters such as < and >
+	  (Bastien Durel)
 
 version 1.1.4 (2/24/2005):
 	* Fixed a bug where Yahoo! would lose messages (and any other packet

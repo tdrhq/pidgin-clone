@@ -1340,16 +1340,19 @@ gaim_accounts_write(FILE *fp, GaimAccount *account)
 			proxy_type != GAIM_PROXY_NONE &&
 			proxy_type != GAIM_PROXY_USE_ENVVAR) {
 			if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
-				fprintf(fp, "   <host>%s</host>\n", value);
+				fprintf(fp, "   <host>%s</host>\n",
+						g_markup_escape_text(value, -1));
 
 			if ((int_value = gaim_proxy_info_get_port(proxy_info)) != 0)
 				fprintf(fp, "   <port>%d</port>\n", int_value);
 
 			if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
-				fprintf(fp, "   <username>%s</username>\n", value);
+				fprintf(fp, "   <username>%s</username>\n",
+						g_markup_escape_text(value, -1));
 
 			if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
-				fprintf(fp, "   <password>%s</password>\n", value);
+				fprintf(fp, "   <password>%s</password>\n",
+						g_markup_escape_text(value, -1));
 		}
 
 		fprintf(fp, "  </proxy>\n");
