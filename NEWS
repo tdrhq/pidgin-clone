@@ -1,5 +1,13 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+1.2.0 (3/17/2005):
+	Luke: Happy St. Patrick's Day all.  Sean scheduled a release for
+	today, we'll see if we can pull it off. :-)  This release
+	features somewhat more than just bug fixes, some improvements
+	have been made to the conversation API which may affect plugin
+	developers.  Yahoo users should also thank Tim and Bleeter for
+	their efforts.
+
 1.1.4 (2/24/2005):
 	Sean: Another bug fix release. A big thanks to Rob McQueen, Ari
 	Pollak, Don Seiler, and Warren Togami: some packagers who helped
