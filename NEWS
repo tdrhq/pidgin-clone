@@ -9,6 +9,10 @@
 	make it into Debian and Fedora before freezes. Expect further bug
 	fix only releases to come at longer intervals, at Mark's request.
 
+	Daniel: This is my first NEWS! (YaY) I didn't really do too much for
+	this release.  There are a few bugfixes, mostly wingaim stuff. Oh, and 
+	I like the new XP System Tray icons.
+
 1.1.1:
 	Luke: This bug fix release features msn improvements, drag and drop
 	improvements, and some translation stuff. Thanks for everone who has

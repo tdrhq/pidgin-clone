@@ -1,4 +1,4 @@
-version 1.1.2:
+version 1.1.2 (01/20/2005):
 	* Much prettier System Tray icons for Windows XP and greater.
 	  (Thanks Jérôme Poulin and Alex Converse)
 	* Docking now works with multiple monitors.
