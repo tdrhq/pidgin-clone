@@ -3337,9 +3337,10 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	tmp = g_string_free(message, FALSE);
 
 	/*
-	 * If the message is being received by an ICQ user then escape any HTML,
+	 * If the message is from an ICQ user and to an ICQ user then escape any HTML,
 	 * because HTML is not sent over ICQ as a means to format a message.
-	 * so any HTML we receive is intended to be displayed
+	 * So any HTML we receive is intended to be displayed.  Also, \r\n must be
+	 * replaced with <br>
 	 *
 	 * Note: There *may* be some clients which send messages as HTML formatted -
 	 *       they need to be special-cased somehow.
@@ -3347,6 +3348,9 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	if (isdigit(gaim_account_get_username(account)[0]) && isdigit(userinfo->sn[0])) {
 		/* being recevied by ICQ from ICQ - escape HTML so it is displayed as sent */
 		gchar *tmp2 = gaim_escape_html(tmp);
+		g_free(tmp);
+		tmp = tmp2;
+		tmp2 = gaim_strreplace(tmp, "\r\n", "<br>");
 		g_free(tmp);
 		tmp = tmp2;
 	}
@@ -5407,7 +5411,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	struct oscar_direct_im *dim = oscar_direct_im_find(od, name);
 	int ret = 0;
 	const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
-	char *tmpmsg = NULL, *tmpmsg2 = NULL;
+	char *tmpmsg = NULL;
 
 	if (dim && dim->connected) {
 		/* If we're directly connected, send a direct IM */
@@ -5486,27 +5490,19 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		args.destsn = name;
 
 		/*
-		 * If we're IMing an ICQ user then send newlines as CR/LF and
-		 * strip all HTML
+		 * If we're IMing an ICQ user from an ICQ account, then strip HTML
+		 * and use \r\n as the newline character.
 		 */
-		if (isdigit(name[0]) ) {
-			/* being sent to an ICQ user */
-			if (!isdigit(gaim_account_get_username(gc->account)[0])) {
-				/* from an AIM user - ICQ receiving from AIM *expects the messsage to be HTML formatted* */
-				tmpmsg = gaim_str_add_cr(message);
-			} else {
-				/* from an ICQ user - do nothing */
+		if ((isdigit(gaim_account_get_username(gc->account)[0]))) {
+			if (isdigit(name[0]))
+				/* From ICQ to ICQ */
 				tmpmsg = g_strdup(message);
-			}
+			else
+				/* From ICQ to AIM */
+				tmpmsg = gaim_escape_html(message);
 		} else {
-			/* being sent to an AIM user */
-			if (isdigit(gaim_account_get_username(gc->account)[0])) {
-				/* from an ICQ user */
-				tmpmsg2 = gaim_strdup_withhtml(message);
-				tmpmsg = gaim_escape_html(tmpmsg2);
-				g_free(tmpmsg2);
-			} else
-				tmpmsg = gaim_strdup_withhtml(message);
+			/* From AIM to AIM and AIM to ICQ */
+			tmpmsg = g_strdup(message);
 		}
 		len = strlen(tmpmsg);
 
