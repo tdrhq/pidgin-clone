@@ -572,14 +572,17 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	} else {
 		for(resources = jb->resources; resources; resources = resources->next) {
 			char *purdy = NULL;
+			char *res = NULL;
+
 			jbr = resources->data;
 			if(jbr->status)
 				purdy = gaim_strdup_withhtml(jbr->status);
 			if(jbr->name)
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Resource"), jbr->name);
-			g_string_append_printf(info_text, "<b>%s:</b> %s%s%s<br/><br/>",
-					_("Status"), jabber_get_state_string(jbr->state),
+				res = g_strdup_printf(" (%s)", jbr->name);
+			g_string_append_printf(info_text, "<b>%s%s:</b> %s%s%s<br/><br/>",
+					_("Status"),
+					res ? res : "",
+					jabber_get_state_string(jbr->state),
 					purdy ? ": " : "",
 					purdy ? purdy : "");
 			if(purdy)

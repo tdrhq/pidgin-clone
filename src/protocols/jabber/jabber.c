@@ -914,13 +914,23 @@ static char *jabber_status_text(GaimBuddy *b)
 
 static char *jabber_tooltip_text(GaimBuddy *b)
 {
-	JabberBuddy *jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
+	JabberBuddy *jb;
+	GString *ret;
+
+	g_return_val_if_fail(b != NULL, NULL);
+	g_return_val_if_fail(b->account != NULL, NULL);
+	g_return_val_if_fail(b->account->gc != NULL, NULL);
+	g_return_val_if_fail(b->account->gc->proto_data != NULL, NULL);
+
+	jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
 			FALSE);
-	GString *ret = g_string_new("");
+	ret = g_string_new("");
 
 	if(jb) {
 		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, NULL);
 		const char *sub;
+		GList *l = NULL;
+
 		if(jb->subscription & JABBER_SUB_FROM) {
 			if(jb->subscription & JABBER_SUB_TO)
 				sub = _("Both");
@@ -938,8 +948,12 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 		}
 		g_string_append_printf(ret, "\n<b>%s:</b> %s", _("Subscription"), sub);
 
-		if(jbr) {
+		for(l=jb->resources; l; l = l->next) {
 			char *text = NULL;
+			char *res = NULL;
+
+			jbr = l->data;
+
 			if(jbr->status) {
 				char *stripped;
 				stripped = gaim_markup_strip_html(jbr->status);
@@ -947,14 +961,23 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 				g_free(stripped);
 			}
 
-			g_string_append_printf(ret, "\n<b>%s:</b> %s%s%s",
+			if(jb->resources->next && jbr->name) {
+				res = g_strdup_printf(" (%s)", jbr->name);
+			}
+
+			g_string_append_printf(ret, "\n<b>%s%s:</b> %s%s%s",
 					_("Status"),
+					res ? res : "",
 					jabber_get_state_string(jbr->state),
 					text ? ": " : "",
 					text ? text : "");
 			if(text)
 				g_free(text);
-		} else if(!GAIM_BUDDY_IS_ONLINE(b) && jb->error_msg) {
+			if(res)
+				g_free(res);
+		}
+
+		if(!jb->resources && jb->error_msg) {
 			g_string_append_printf(ret, "\n<b>%s:</b> %s",
 					_("Error"), jb->error_msg);
 		}

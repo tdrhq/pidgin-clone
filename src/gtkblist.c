@@ -4016,26 +4016,30 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 			gaim_blist_add_group(g, NULL);
 		}
 
-		b = gaim_buddy_new(data->account, who, whoalias);
-		gaim_blist_add_buddy(b, NULL, g, NULL);
-		serv_add_buddy(gaim_account_get_connection(data->account), b);
+		if(!gaim_find_buddy_in_group(who, data->account, g)) {
+			b = gaim_buddy_new(data->account, who, whoalias);
+			gaim_blist_add_buddy(b, NULL, g, NULL);
+			serv_add_buddy(gaim_account_get_connection(data->account), b);
 
-		/*
-		 * XXX
-		 * It really seems like it would be better if the call to serv_add_buddy()
-		 * and gaim_conversation_update() were done in blist.c, possibly in the
-		 * gaim_blist_add_buddy() function.  Maybe serv_add_buddy() should be
-		 * renamed to gaim_blist_add_new_buddy() or something, and have it call
-		 * gaim_blist_add_buddy() after it creates it.  --Mark
-		 *
-		 * No that's not good.  blist.c should only deal with adding nodes to the
-		 * local list.  We need a new, non-gtk file that calls both serv_add_buddy
-		 * and gaim_blist_add_buddy().  Or something.  --Mark
-		 */
+			/*
+			 * XXX
+			 * It really seems like it would be better if the call to serv_add_buddy()
+			 * and gaim_conversation_update() were done in blist.c, possibly in the
+			 * gaim_blist_add_buddy() function.  Maybe serv_add_buddy() should be
+			 * renamed to gaim_blist_add_new_buddy() or something, and have it call
+			 * gaim_blist_add_buddy() after it creates it.  --Mark
+			 *
+			 * No that's not good.  blist.c should only deal with adding nodes to the
+			 * local list.  We need a new, non-gtk file that calls both serv_add_buddy
+			 * and gaim_blist_add_buddy().  Or something.  --Mark
+			 */
 
-		if (c != NULL) {
-			gaim_buddy_icon_update(gaim_conv_im_get_icon(GAIM_CONV_IM(c)));
-			gaim_conversation_update(c, GAIM_CONV_UPDATE_ADD);
+			if (c != NULL) {
+				gaim_buddy_icon_update(gaim_conv_im_get_icon(GAIM_CONV_IM(c)));
+				gaim_conversation_update(c, GAIM_CONV_UPDATE_ADD);
+			}
+		} else {
+			/* XXX pop up a dialog reminding the user they already have this buddy in the group */
 		}
 	}
 

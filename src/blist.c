@@ -1827,6 +1827,9 @@ static void parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
 	if (!name)
 		return;
 
+	if(gaim_find_buddy_in_group(account, name, group))
+		return;
+
 	if ((x = xmlnode_get_child(bnode, "alias")))
 		alias = xmlnode_get_data(x);
 

@@ -54,13 +54,14 @@ static void remove_gaim_buddies(JabberStream *js, const char *jid)
 static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
-	GSList *buddies, *g2, *l;
+	GSList *buddies, *g2;
 	int present =0, idle=0, state=0;
 
 	buddies = gaim_find_buddies(js->gc->account, jid);
 
 	g2 = groups;
 
+	/* if there were no groups, we'll just put them in the "Buddies" group for now */
 	if(!groups) {
 		if(!buddies)
 			g2 = g_slist_append(g2, g_strdup(_("Buddies")));
@@ -68,53 +69,52 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 			return;
 	}
 
+	/* if we already have a buddy, and info about them, remmeber it. */
 	if(buddies) {
 		present = ((GaimBuddy*)buddies->data)->present;
 		idle = ((GaimBuddy*)buddies->data)->idle;
 		state = ((GaimBuddy*)buddies->data)->uc;
 	}
 
-	while(buddies) {
-		GaimBuddy *b = buddies->data;
-		GaimGroup *g = gaim_find_buddys_group(b);
-
-		buddies = g_slist_remove(buddies, b);
-
-		if((l = g_slist_find_custom(g2, g->name, (GCompareFunc)strcmp))) {
-			const char *servernick;
-
-			if((servernick = gaim_blist_node_get_string((GaimBlistNode*)b, "servernick")))
-				serv_got_alias(js->gc, jid, servernick);
-
-			if(alias && (!b->alias || strcmp(b->alias, alias)))
-				gaim_blist_alias_buddy(b, alias);
-			g_free(l->data);
-			g2 = g_slist_delete_link(g2, l);
-		} else {
-			gaim_blist_remove_buddy(b);
-		}
-	}
-
+	/* for every group, if we don't already have a buddy, create one, and give it
+	 * all the info from the existing one */
 	while(g2) {
-		GaimBuddy *b = gaim_buddy_new(js->gc->account, jid, alias);
 		GaimGroup *g = gaim_find_group(g2->data);
+		GaimBuddy *b;
 
 		if(!g) {
 			g = gaim_group_new(g2->data);
 			gaim_blist_add_group(g, NULL);
 		}
 
-		b->present = present;
-		b->idle = idle;
-		b->uc = state;
+		if(!(b = gaim_find_buddy_in_group(js->gc->account, jid, g))) {
+			b = gaim_buddy_new(js->gc->account, jid, alias);
+			b->present = present;
+			b->idle = idle;
+			b->uc = state;
+			gaim_blist_add_buddy(b, NULL, g, NULL);
+			gaim_blist_alias_buddy(b, alias);
+		} else {
+			const char *servernick;
 
-		gaim_blist_add_buddy(b, NULL, g, NULL);
-		gaim_blist_alias_buddy(b, alias);
+			if((servernick = gaim_blist_node_get_string((GaimBlistNode*)b, "servernick")))
+				serv_got_alias(js->gc, jid, servernick);
+			if(alias && (!b->alias || strcmp(b->alias, alias)))
+				gaim_blist_alias_buddy(b, alias);
+
+			/* remember that we've processed this one */
+			buddies = g_slist_remove(buddies, b);
+		}
+
 		g_free(g2->data);
 		g2 = g_slist_delete_link(g2, g2);
 	}
 
-	g_slist_free(buddies);
+	/* any we didn't find above obviously don't belong, so get rid of them */
+	while(buddies) {
+		gaim_blist_remove_buddy((GaimBuddy*)buddies->data);
+		buddies = g_slist_delete_link(buddies, buddies);
+	}
 }
 
 void jabber_roster_parse(JabberStream *js, xmlnode *packet)
