@@ -1138,8 +1138,11 @@ char *convert_string(const char *in, const char *destset, const char *srcset)
 	if (!in)
 		return NULL;
 
-	cd1 = iconv_open("UCS-4", srcset);
-	cd2 = iconv_open(destset, "UCS-4");
+        /* We're using UCS-4BE here because, on some systems, apparently
+         * UCS-4 without an endianness specifier includes a troublesome
+         * BOM */
+	cd1 = iconv_open("UCS-4BE", srcset);
+	cd2 = iconv_open(destset, "UCS-4BE");
 
 	if (cd1 == (iconv_t) -1 || cd2 == (iconv_t) -1) {
 		if ( cd1 != (iconv_t)-1 ) {
