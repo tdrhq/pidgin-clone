@@ -2108,7 +2108,10 @@ static void msn_act_id(gpointer data, char *entry)
 	char buf[MSN_BUF_LEN];
 	char *alias;
 
-	alias = str_to_utf8(url_encode(entry));
+	if (!entry || *entry == 0)
+		alias = g_strdup("");
+	else
+		alias = str_to_utf8(url_encode(entry));
 	
 	if (strlen(alias) >= BUDDY_ALIAS_MAXLEN) {
 		do_error_dialog(_("Friendly name too long."), _("MSN Error"));

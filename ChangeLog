@@ -1,5 +1,9 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.59.2
+	* Won't crash when you set your MSN Friendly name to an
+	  empty string.
+
 version 0.59.1 (08/25/2002)
 	* Created a gtk1-stable branch for GTK+ 1.2 bugfix releases.
 	  Development will continue in our main branch in GTK+ 2 only.
