@@ -1467,7 +1467,7 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 	cid->components = data;
 
 	gaim_request_accept_cancel(gc, NULL, _("Accept chat invitation?"),
-							   buf2, 0, cid,
+							   buf2, GAIM_DEFAULT_ACTION_NONE, cid,
 							   G_CALLBACK(chat_invite_accept),
 							   G_CALLBACK(chat_invite_reject));
 }

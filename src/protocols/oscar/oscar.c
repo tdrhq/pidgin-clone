@@ -3780,7 +3780,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					gaim_request_action(gc, NULL, message,
 										_("Do you want to add this buddy "
 										  "to your buddy list?"),
-										0, data, 2,
+										GAIM_DEFAULT_ACTION_NONE, data, 2,
 										_("Add"), G_CALLBACK(gaim_icq_buddyadd),
 										_("Decline"), G_CALLBACK(oscar_free_name_data));
 					g_free(message);
@@ -6219,7 +6219,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->nick = NULL;
 
 	gaim_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
-						0, data,
+						GAIM_DEFAULT_ACTION_NONE, data,
 						G_CALLBACK(gaim_icq_buddyadd),
 						G_CALLBACK(oscar_free_name_data));
 
@@ -6258,7 +6258,7 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	data->nick = NULL;
 
 	gaim_request_action(gc, NULL, _("Authorization Request"), dialog_msg,
-						0, data, 2,
+						GAIM_DEFAULT_ACTION_NONE, data, 2,
 						_("Authorize"), G_CALLBACK(gaim_auth_grant),
 						_("Deny"), G_CALLBACK(gaim_auth_dontgrant_msgprompt));
 
