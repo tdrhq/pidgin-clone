@@ -206,7 +206,7 @@ static void irc_login(GaimAccount *account)
 {
 	GaimConnection *gc;
 	struct irc_conn *irc;
-	char *buf, **userparts;
+	char **userparts;
 	const char *username = gaim_account_get_username(account);
 	int err;
 
@@ -233,9 +233,7 @@ static void irc_login(GaimAccount *account)
 	irc->msgs = g_hash_table_new(g_str_hash, g_str_equal);
 	irc_msg_table_build(irc);
 
-	buf = g_strdup_printf(_("Signon: %s"), username);
-	gaim_connection_update_progress(gc, buf, 1, 2);
-	g_free(buf);
+	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
 
 	err = gaim_proxy_connect(account, irc->server, 
 				 gaim_account_get_int(account, "port", IRC_DEFAULT_PORT),
