@@ -1363,11 +1363,14 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 static void
 file_yes_no_cb(GaimGtkRequestData *data, gint id)
 {
-	if (data->cbs[id] != NULL)
-		((GaimRequestFileCb)data->cbs[id])(data->user_data, data->u.file.name);
-
-	if (id == 1)
+	/* Only call the callback if yes was selected, otherwise the request
+	 * (eg. file transfer) will be cancelled, then when a new filename is chosen
+	 * things go BOOM */
+	if (id == 1) {
+		if (data->cbs[1] != NULL)
+			((GaimRequestFileCb)data->cbs[1])(data->user_data, data->u.file.name);
 		gaim_request_close(GAIM_REQUEST_FILE, data);
+	}
 }
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
