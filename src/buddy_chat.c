@@ -1249,6 +1249,7 @@ void show_new_buddy_chat(struct conversation *b)
 	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	if (convo_options & OPT_CONVO_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
+	gtk_imhtml_set_use_pointsize(GTK_IMHTML(text), b->gc->prpl->options & OPT_PROTO_USE_POINT_SIZE);
 	gaim_setup_imhtml(text);
 	gtk_widget_show(text);
 
