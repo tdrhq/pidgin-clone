@@ -3103,48 +3103,52 @@ msgstr "Serbisch"
 msgid "Slovenian"
 msgstr "Slowenisch"
 
-#: src/gtkdialogs.c:115 src/gtkdialogs.c:140
+#: src/gtkdialogs.c:115 src/gtkdialogs.c:141
 msgid "Swedish"
 msgstr "Schwedisch"
 
 #: src/gtkdialogs.c:116
+msgid "Turkish"
+msgstr "Türkisch"
+
+#: src/gtkdialogs.c:117
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-#: src/gtkdialogs.c:116
+#: src/gtkdialogs.c:117
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh und das Gnome-Vi Team"
 
-#: src/gtkdialogs.c:117
+#: src/gtkdialogs.c:118
 msgid "Simplified Chinese"
 msgstr "Vereinfachtes Chinesisch"
 
-#: src/gtkdialogs.c:118
+#: src/gtkdialogs.c:119
 msgid "Traditional Chinese"
 msgstr "Traditionelles Chinesisch"
 
-#: src/gtkdialogs.c:124
+#: src/gtkdialogs.c:125
 msgid "Amharic"
 msgstr "Amharisch"
 
-#: src/gtkdialogs.c:139
+#: src/gtkdialogs.c:140
 msgid "Slovak"
 msgstr "Slowakisch"
 
-#: src/gtkdialogs.c:141
+#: src/gtkdialogs.c:142
 msgid "Chinese"
 msgstr "Chinesisch"
 
-#: src/gtkdialogs.c:183
+#: src/gtkdialogs.c:184
 msgid "About Gaim"
 msgstr "Über Gaim"
 
-#: src/gtkdialogs.c:198
+#: src/gtkdialogs.c:199
 #, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 
-#: src/gtkdialogs.c:219
+#: src/gtkdialogs.c:220
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "

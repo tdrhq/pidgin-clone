@@ -112,7 +112,7 @@ static struct translator current_translators[] = {
 	{N_("Russian"),				"ru", "Dmitry Beloglazov", "dmaa@users.sf.net"},
 	{N_("Serbian"),				"sr", "Danilo Šegan, Aleksandar Urosevic", "dsegan@gmx.net;urke@users.sourceforge.net"},
 	{N_("Slovenian"),			"sl", "Martin Srebotnjak", "miles@filmsi.net"},
-	{N_("Swedish"),				"sv", "Tore Lundqvist", "tlt@mima.x.se"},
+	{N_("Swedish"),				"sv", "Kalle Kotte", "xake@telia.com"},
 	{N_("Turkish"),             "tr", "Onur Kucuktunc", "onurcc@gmail.com"},
 	{N_("Vietnamese"),			"vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
 	{N_("Simplified Chinese"),	"zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
@@ -138,6 +138,7 @@ static struct translator past_translators[] = {
 	{N_("Russian"),				"ru", "Sergey Volozhanin", NULL},
 	{N_("Russian"),				"ru", "Alexandre Prokoudine", NULL},
 	{N_("Slovak"),				"sk", "Daniel Režný", NULL},
+	{N_("Swedish"),				"sv", "Tore Lundqvist", "tlt@mima.x.se"},
 	{N_("Swedish"),				"sv", "Christian Rose", NULL},
 	{N_("Chinese"),				"zh_CN, zh_TW", "Hashao, Rocky S. Lee", NULL},
 	{NULL, NULL, NULL, NULL}

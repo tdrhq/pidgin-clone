@@ -9,11 +9,11 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-11-28 00:03-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2004-11-30 23:34+MET\n"
+"Last-Translator: Onur KUCUKTUNC <onurcc@gmail.com>\n"
+"Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=iso-8859-9\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
@@ -2436,11 +2436,11 @@ msgstr "Bilgi"
 
 #: src/gtkconv.c:1488
 msgid "Get Away Msg"
-msgstr ""
+msgstr "Dýþarýda Mesajýný Oku"
 
 #: src/gtkconv.c:2623
 msgid "Unable to save icon file to disk."
-msgstr ""
+msgstr "Ýkon diske kaydedilemedi"
 
 #: src/gtkconv.c:2644
 msgid "Save Icon"
@@ -2469,184 +2469,184 @@ msgstr "Kullanýcý bir þeyler yazdý ve durdu"
 #. Build the Send As menu
 #: src/gtkconv.c:3166
 msgid "_Send As"
-msgstr ""
+msgstr "_Farklý Kaydet"
 
 #. Conversation menu
 #: src/gtkconv.c:3619
 msgid "/_Conversation"
-msgstr ""
+msgstr "/_Tartýþma"
 
 #: src/gtkconv.c:3621
 msgid "/Conversation/New Instant _Message..."
-msgstr ""
+msgstr "/_Tartýþma/Yeni _Mesaj"
 
 #: src/gtkconv.c:3626
 msgid "/Conversation/_Find..."
-msgstr ""
+msgstr "/_Tartýþma/_Bul..."
 
 #: src/gtkconv.c:3628
 msgid "/Conversation/View _Log"
-msgstr ""
+msgstr "/_Tartýþma/Kayýtlarý Göster"
 
 #: src/gtkconv.c:3629
 msgid "/Conversation/_Save As..."
-msgstr ""
+msgstr "/_Tartýþma/_Farklý Kaydet"
 
 #: src/gtkconv.c:3631
 msgid "/Conversation/Clear"
-msgstr ""
+msgstr "/_Tartýþma/Temizle"
 
 #: src/gtkconv.c:3635
 msgid "/Conversation/Se_nd File..."
-msgstr ""
+msgstr "/_Tartýþma/_Dosya Gönder"
 
 #: src/gtkconv.c:3636
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr ""
+msgstr "/_Tartýþma/Yeni ???"
 
 #: src/gtkconv.c:3638
 msgid "/Conversation/_Get Info"
-msgstr ""
+msgstr "/_Tartýþma/_Bilgileri Oku"
 
 #: src/gtkconv.c:3640
 msgid "/Conversation/_Warn..."
-msgstr ""
+msgstr "/_Tartýþma/_Uyar"
 
 #: src/gtkconv.c:3642
 msgid "/Conversation/In_vite..."
-msgstr ""
+msgstr "/_Tartýþma/Davet _Et"
 
 #: src/gtkconv.c:3647
 msgid "/Conversation/A_lias..."
-msgstr ""
+msgstr "/_Tartýþma/_Ýsmi Deðiþtir"
 
 #: src/gtkconv.c:3649
 msgid "/Conversation/_Block..."
-msgstr ""
+msgstr "/_Tartýþma/_Yoksay"
 
 #: src/gtkconv.c:3651
 msgid "/Conversation/_Add..."
-msgstr ""
+msgstr "/_Tartýþma/_Ekle"
 
 #: src/gtkconv.c:3653
 msgid "/Conversation/_Remove..."
-msgstr ""
+msgstr "/_Tartýþma/_Kaldýr"
 
 #: src/gtkconv.c:3658
 msgid "/Conversation/Insert Lin_k..."
-msgstr ""
+msgstr "/_Tartýþma/Baðlantý Ekle..."
 
 #: src/gtkconv.c:3660
 msgid "/Conversation/Insert Imag_e..."
-msgstr ""
+msgstr "/_Tartýþma/_Resim Ekle..."
 
 #: src/gtkconv.c:3665
 msgid "/Conversation/_Close"
-msgstr ""
+msgstr "/_Tartýþma/Kapat"
 
 #. Options
 #: src/gtkconv.c:3669
 msgid "/_Options"
-msgstr ""
+msgstr "/_Seçenekler"
 
 #: src/gtkconv.c:3670
 msgid "/Options/Enable _Logging"
-msgstr ""
+msgstr "/_Seçenekler/Kayýt Tut"
 
 #: src/gtkconv.c:3671
 msgid "/Options/Enable _Sounds"
-msgstr ""
+msgstr "/_Seçenekler/_Sesi Aç"
 
 #: src/gtkconv.c:3672
 msgid "/Options/Show Formatting _Toolbar"
-msgstr ""
+msgstr "/_Seçenekler/_Biçimleme Çubuðunu Göster"
 
 #: src/gtkconv.c:3673
 msgid "/Options/Show T_imestamps"
-msgstr ""
+msgstr "/_Seçenekler/_Zamaný Göster"
 
 #: src/gtkconv.c:3715
 msgid "/Conversation/View Log"
-msgstr ""
+msgstr "/_Tartýþma/Kayýtlarý Göster"
 
 #: src/gtkconv.c:3720
 msgid "/Conversation/Send File..."
-msgstr ""
+msgstr "/_Tartýþma/Dosya Gönder"
 
 #: src/gtkconv.c:3724
 msgid "/Conversation/Add Buddy Pounce..."
-msgstr ""
+msgstr "/_Tartýþma/Yeni ???"
 
 #: src/gtkconv.c:3730
 msgid "/Conversation/Get Info"
-msgstr ""
+msgstr "/_Tartýþma/Bilgileri Oku"
 
 #: src/gtkconv.c:3734
 msgid "/Conversation/Warn..."
-msgstr ""
+msgstr "/_Tartýþma/Uyar..."
 
 #: src/gtkconv.c:3738
 msgid "/Conversation/Invite..."
-msgstr ""
+msgstr "/_Tartýþma/Davet Et..."
 
 #: src/gtkconv.c:3744
 msgid "/Conversation/Alias..."
-msgstr ""
+msgstr "/_Tartýþma/Ýsmi Deðiþtir..."
 
 #: src/gtkconv.c:3748
 msgid "/Conversation/Block..."
-msgstr ""
+msgstr "/_Tartýþma/Yoksay..."
 
 #: src/gtkconv.c:3752
 msgid "/Conversation/Add..."
-msgstr ""
+msgstr "/_Tartýþma/Ekle..."
 
 #: src/gtkconv.c:3756
 msgid "/Conversation/Remove..."
-msgstr ""
+msgstr "/_Tartýþma/Kaldýr..."
 
 #: src/gtkconv.c:3762
 msgid "/Conversation/Insert Link..."
-msgstr ""
+msgstr "/_Tartýþma/Baðlantý Ekle..."
 
 #: src/gtkconv.c:3766
 msgid "/Conversation/Insert Image..."
-msgstr ""
+msgstr "/_Tartýþma/Resim Ekle..."
 
 #: src/gtkconv.c:3772
 msgid "/Options/Enable Logging"
-msgstr ""
+msgstr "/_Tartýþma/Kayýt Tut"
 
 #: src/gtkconv.c:3775
 msgid "/Options/Enable Sounds"
-msgstr ""
+msgstr "/_Tartýþma/Sesi Aç"
 
 #: src/gtkconv.c:3778
 msgid "/Options/Show Formatting Toolbar"
-msgstr ""
+msgstr "/_Tartýþma/Biçimlendirme Çubuðunu Göster"
 
 #: src/gtkconv.c:3781
 msgid "/Options/Show Timestamps"
-msgstr ""
+msgstr "/_Tartýþma/Zamaný Göster"
 
 #. The buttons, from left to right
 #. Warn button
 #: src/gtkconv.c:3835
 msgid "Warn"
-msgstr ""
+msgstr "Uyar"
 
 #: src/gtkconv.c:3836
 msgid "Warn the user"
-msgstr ""
+msgstr "Kullanýcýyý uyar"
 
 #. Block button
 #: src/gtkconv.c:3842 src/gtkprivacy.c:623 src/gtkprivacy.c:634
 msgid "Block"
-msgstr ""
+msgstr "Blokla"
 
 #: src/gtkconv.c:3843
 msgid "Block the user"
-msgstr ""
+msgstr "Kullanýcýyý blokla"
 
 #: src/gtkconv.c:3850
 msgid "Send a file to the user"
@@ -2654,15 +2654,15 @@ msgstr "Kullanýcýya dosya gönder"
 
 #: src/gtkconv.c:3857
 msgid "Add the user to your buddy list"
-msgstr ""
+msgstr "Kullanýcýyý listene ekle"
 
 #: src/gtkconv.c:3864
 msgid "Remove the user from your buddy list"
-msgstr ""
+msgstr "Kullanýcýyý listeden çýkar"
 
 #: src/gtkconv.c:3871 src/gtkconv.c:4206
 msgid "Get the user's information"
-msgstr ""
+msgstr "Kullanýcýnýn bilgisini al"
 
 #. Send button
 #: src/gtkconv.c:3877 src/gtkconv.c:3941
@@ -2681,15 +2681,15 @@ msgstr "Davet Et"
 
 #: src/gtkconv.c:3921
 msgid "Invite a user"
-msgstr ""
+msgstr "Kullanýcýyý davet et"
 
 #: src/gtkconv.c:3928
 msgid "Add the chat to your buddy list"
-msgstr ""
+msgstr "Sohbeti listeye ekle"
 
 #: src/gtkconv.c:3935
 msgid "Remove the chat from your buddy list"
-msgstr ""
+msgstr "Sohbeti listeden çýkar"
 
 #: src/gtkconv.c:4059
 msgid "Topic:"
@@ -2710,18 +2710,18 @@ msgstr "Kullanýcýyý yoksay"
 
 #: src/gtkconv.c:4790
 msgid "Close conversation"
-msgstr ""
+msgstr "Tartýþmayý kapat"
 
 #: src/gtkconv.c:5323 src/gtkconv.c:5352 src/gtkconv.c:5448 src/gtkconv.c:5506
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d kiþi odada"
+msgstr[1] "%d kiþi odada"
 
 #: src/gtkconv.c:6079 src/gtkconv.c:6082
 msgid "<main>/Conversation/Close"
-msgstr ""
+msgstr "<main>/Tartýþma/Kapat"
 
 #: src/gtkconv.c:6454
 msgid ""
@@ -2757,28 +2757,28 @@ msgstr "Durakla"
 
 #: src/gtkdebug.c:294
 msgid "Timestamps"
-msgstr ""
+msgstr "Zaman"
 
 #: src/gtkdialogs.c:63
 msgid "maintainer"
-msgstr ""
+msgstr "ilgili"
 
 #: src/gtkdialogs.c:64
 msgid "lead developer"
-msgstr ""
+msgstr "geliþtirici"
 
 #: src/gtkdialogs.c:65
 msgid "developer & webmaster"
-msgstr ""
+msgstr "geliþtirici & sitesahibi"
 
 #: src/gtkdialogs.c:66
 msgid "win32 port"
-msgstr ""
+msgstr "win32 pot"
 
 #: src/gtkdialogs.c:67 src/gtkdialogs.c:68 src/gtkdialogs.c:69
 #: src/gtkdialogs.c:70 src/gtkdialogs.c:72
 msgid "developer"
-msgstr ""
+msgstr "geliþtirici"
 
 #: src/gtkdialogs.c:71
 msgid "support"
@@ -3131,31 +3131,31 @@ msgstr "Vazgeçildi"
 
 #: src/gtkft.c:167 src/gtkft.c:848
 msgid "Waiting for transfer to begin"
-msgstr ""
+msgstr "Transferin baþlamasý bekleniyor"
 
 #: src/gtkft.c:220
 msgid "<b>Receiving As:</b>"
-msgstr ""
+msgstr "Alýnan:"
 
 #: src/gtkft.c:222
 msgid "<b>Receiving From:</b>"
-msgstr ""
+msgstr "Gönderen:"
 
 #: src/gtkft.c:226
 msgid "<b>Sending To:</b>"
-msgstr ""
+msgstr "Kime:"
 
 #: src/gtkft.c:228
 msgid "<b>Sending As:</b>"
-msgstr ""
+msgstr "Gönderilen:"
 
 #: src/gtkft.c:407
 msgid "There is no application configured to open this type of file."
-msgstr ""
+msgstr "Bu dosyayý açmak için uygulama belirtilmemiþ."
 
 #: src/gtkft.c:412
 msgid "An error occurred while opening the file."
-msgstr ""
+msgstr "Dosyayý açarken bir hata oluþtu."
 
 #: src/gtkft.c:503
 msgid "Progress"
@@ -3234,19 +3234,19 @@ msgstr "Baðlantý rengi"
 
 #: src/gtkimhtml.c:1048
 msgid "Color to draw hyperlinks."
-msgstr ""
+msgstr "Baðlantýlarý renklendir."
 
 #: src/gtkimhtml.c:1254
 msgid "_Copy E-Mail Address"
-msgstr ""
+msgstr "Email Adresini _Kopyala"
 
 #: src/gtkimhtml.c:1266
 msgid "_Copy Link Location"
-msgstr ""
+msgstr "Email Adresini _Kopyala"
 
 #: src/gtkimhtml.c:1276
 msgid "_Open Link in Browser"
-msgstr ""
+msgstr "Baðlantýyý Aç"
 
 #: src/gtkimhtml.c:2846
 msgid ""
@@ -3257,143 +3257,144 @@ msgstr ""
 #: src/gtkimhtml.c:2854
 #, c-format
 msgid "Error saving image: %s"
-msgstr ""
+msgstr "Resmi kaydederken hata: %s"
 
 #: src/gtkimhtml.c:2931 src/gtkimhtml.c:2943
 msgid "Save Image"
-msgstr ""
+msgstr "Resmi Kaydet"
 
 #: src/gtkimhtml.c:2971
 msgid "_Save Image..."
-msgstr ""
+msgstr "Resmi _Kaydet..."
 
 #: src/gtkimhtmltoolbar.c:164
 msgid "Select Font"
-msgstr ""
+msgstr "Yazýtipi Seç"
 
 #: src/gtkimhtmltoolbar.c:239
 msgid "Select Text Color"
-msgstr ""
+msgstr "Yazý Rengini Seç"
 
 #: src/gtkimhtmltoolbar.c:312
 msgid "Select Background Color"
-msgstr ""
+msgstr "Arkaplan Rengini Seç"
 
 #: src/gtkimhtmltoolbar.c:395
 msgid "_URL"
-msgstr ""
+msgstr "_URL"
 
 #: src/gtkimhtmltoolbar.c:403
 msgid "_Description"
-msgstr ""
+msgstr "_Açýklama"
 
 #: src/gtkimhtmltoolbar.c:406
 msgid ""
 "Please enter the URL and description of the link that you want to insert. "
 "The description is optional."
-msgstr ""
+msgstr "Lütfen eklemek istediðiniz baðlantýyý ve açýklamasýný girin. "
+"Açýklama zorunlu deðildir."
 
 #: src/gtkimhtmltoolbar.c:410
 msgid "Please enter the URL of the link that you want to insert."
-msgstr ""
+msgstr "Lütfen eklemek istediðiniz baðlantýyý girin."
 
 #: src/gtkimhtmltoolbar.c:415
 msgid "Insert Link"
-msgstr ""
+msgstr "Baðlantý Ekle"
 
 #: src/gtkimhtmltoolbar.c:419
 msgid "_Insert"
-msgstr ""
+msgstr "_Ekle"
 
 #: src/gtkimhtmltoolbar.c:488
 #, c-format
 msgid "Failed to store image: %s\n"
-msgstr ""
+msgstr "Resim kaydedilemedi: %s\n"
 
 #: src/gtkimhtmltoolbar.c:514 src/gtkimhtmltoolbar.c:524
 msgid "Insert Image"
-msgstr ""
+msgstr "Resim Ekle"
 
 #: src/gtkimhtmltoolbar.c:662
 msgid "This theme has no available smileys."
-msgstr ""
+msgstr "Bu tema gülenyüz içermiyor."
 
 #. show everything
 #: src/gtkimhtmltoolbar.c:677
 msgid "Smile!"
-msgstr ""
+msgstr "Gülenyüz!"
 
 #: src/gtkimhtmltoolbar.c:895
 msgid "Bold"
-msgstr ""
+msgstr "Kalýn"
 
 #: src/gtkimhtmltoolbar.c:906
 msgid "Italic"
-msgstr ""
+msgstr "Ýtalik"
 
 #: src/gtkimhtmltoolbar.c:917
 msgid "Underline"
-msgstr ""
+msgstr "Altçizgili"
 
 #: src/gtkimhtmltoolbar.c:933
 msgid "Larger font size"
-msgstr ""
+msgstr "Büyük yazý boyutu"
 
 #: src/gtkimhtmltoolbar.c:945
 msgid "Smaller font size"
-msgstr ""
+msgstr "Ufak yazý boyutu"
 
 #: src/gtkimhtmltoolbar.c:962
 msgid "Font Face"
-msgstr ""
+msgstr "Font"
 
 #: src/gtkimhtmltoolbar.c:974
 msgid "Foreground font color"
-msgstr ""
+msgstr "Yazý rengi"
 
 #: src/gtkimhtmltoolbar.c:986
 msgid "Background color"
-msgstr ""
+msgstr "Arkaplan rengi"
 
 #: src/gtkimhtmltoolbar.c:1001
 msgid "Insert link"
-msgstr ""
+msgstr "Baðlantý Ekle"
 
 #: src/gtkimhtmltoolbar.c:1011
 msgid "Insert image"
-msgstr ""
+msgstr "Resim ekle"
 
 #: src/gtkimhtmltoolbar.c:1022
 msgid "Insert smiley"
-msgstr ""
+msgstr "Gülenyüz ekle"
 
 #: src/gtklog.c:302
 #, c-format
 msgid "Conversations with %s"
-msgstr ""
+msgstr "%s ile konuþma"
 
 #. Window **********
 #: src/gtklog.c:395 src/gtklog.c:411
 msgid "System Log"
-msgstr ""
+msgstr "Sistem Kayýtlarý"
 
 #. Descriptive label
 #: src/gtknotify.c:216
 #, c-format
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%s, %d yeni mesaj."
+msgstr[1] "%s, %d yeni mesaj."
 
 #: src/gtknotify.c:230
 #, c-format
 msgid "<span weight=\"bold\">From:</span> %s\n"
-msgstr ""
+msgstr "<span weight=\"bold\">Kimden:</span> %s\n"
 
 #: src/gtknotify.c:239
 #, c-format
 msgid "<span weight=\"bold\">Subject:</span> %s\n"
-msgstr ""
+msgstr "<span weight=\"bold\">Konu:</span> %s\n"
 
 #: src/gtknotify.c:244
 #, c-format
@@ -3402,6 +3403,9 @@ msgid ""
 "\n"
 "%s%s%s%s"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">Mesajýnýz Var!</span>\n"
+"\n"
+"%s%s%s%s"
 
 #: src/gtknotify.c:260
 #, c-format
@@ -3410,30 +3414,33 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"<span weight=\"bold\" size=\"larger\">Mesajýnýz Var!</span>\n"
+"\n"
+"%s"
 
 #: src/gtknotify.c:430
 #, c-format
 msgid "The browser command <b>%s</b> is invalid."
-msgstr ""
+msgstr "Browser komutu <b>%s</b> geçersiz."
 
 #: src/gtknotify.c:432 src/gtknotify.c:444 src/gtknotify.c:457
 #: src/gtknotify.c:581
 msgid "Unable to open URL"
-msgstr ""
+msgstr "Baðlantý açýlamýyor"
 
 #: src/gtknotify.c:442 src/gtknotify.c:455
 #, c-format
 msgid "Error launching <b>%s</b>: %s"
-msgstr ""
+msgstr "Çalýþtýrma hatasý <b>%s</b>: %s"
 
 #: src/gtknotify.c:582
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
-msgstr ""
+msgstr "'El ile ayarla' browser komutu seçildi, ama hiçbir komut yazýlmadý."
 
 #: src/gtkpounce.c:130
 msgid "Select a file"
-msgstr ""
+msgstr "Dosyayý seçin"
 
 #: src/gtkpounce.c:161
 msgid "Please enter a buddy to pounce."
@@ -3464,23 +3471,23 @@ msgstr ""
 
 #: src/gtkpounce.c:467
 msgid "Si_gn on"
-msgstr ""
+msgstr "Giriþte"
 
 #: src/gtkpounce.c:469
 msgid "Sign _off"
-msgstr ""
+msgstr "Çýkýþta"
 
 #: src/gtkpounce.c:471
 msgid "A_way"
-msgstr ""
+msgstr "Gidince"
 
 #: src/gtkpounce.c:473
 msgid "_Return from away"
-msgstr ""
+msgstr "Dönünce"
 
 #: src/gtkpounce.c:475
 msgid "_Idle"
-msgstr ""
+msgstr "Hazýr olunca"
 
 #: src/gtkpounce.c:477
 msgid "Retur_n from idle"
@@ -3488,7 +3495,7 @@ msgstr ""
 
 #: src/gtkpounce.c:479
 msgid "Buddy starts _typing"
-msgstr ""
+msgstr "Yazmaya baþlayýnca"
 
 #: src/gtkpounce.c:481
 msgid "Buddy stops t_yping"
@@ -3501,7 +3508,7 @@ msgstr ""
 
 #: src/gtkpounce.c:518
 msgid "Op_en an IM window"
-msgstr ""
+msgstr "IM penceresi aç"
 
 #: src/gtkpounce.c:520
 msgid "_Popup notification"
@@ -3509,27 +3516,27 @@ msgstr ""
 
 #: src/gtkpounce.c:522
 msgid "Send a _message"
-msgstr ""
+msgstr "Mesaj gönder"
 
 #: src/gtkpounce.c:524
 msgid "E_xecute a command"
-msgstr ""
+msgstr "Komut çalýþtýr"
 
 #: src/gtkpounce.c:526
 msgid "P_lay a sound"
-msgstr ""
+msgstr "Ses çal"
 
 #: src/gtkpounce.c:530
 msgid "B_rowse..."
-msgstr ""
+msgstr "Gözat..."
 
 #: src/gtkpounce.c:532
 msgid "Bro_wse..."
-msgstr ""
+msgstr "Gözat..."
 
 #: src/gtkpounce.c:533
 msgid "Pre_view"
-msgstr ""
+msgstr "Önizleme"
 
 #: src/gtkpounce.c:616
 msgid "Sav_e this pounce after activation"
@@ -3543,12 +3550,12 @@ msgstr ""
 #: src/gtkpounce.c:961
 #, c-format
 msgid "%s has started typing to you (%s)"
-msgstr ""
+msgstr "%s size yazýyor (%s)"
 
 #: src/gtkpounce.c:963
 #, c-format
 msgid "%s has signed on (%s)"
-msgstr ""
+msgstr "%s baðlandý (%s)"
 
 #: src/gtkpounce.c:965
 #, c-format
@@ -3568,7 +3575,7 @@ msgstr ""
 #: src/gtkpounce.c:971
 #, c-format
 msgid "%s has signed off (%s)"
-msgstr ""
+msgstr "%s çýktý (%s)"
 
 #: src/gtkpounce.c:973
 #, c-format
@@ -3600,94 +3607,95 @@ msgstr ""
 
 #: src/gtkprefs.c:721
 msgid "Icon"
-msgstr ""
+msgstr "Ýkon"
 
 #: src/gtkprefs.c:728 src/gtkprefs.c:2204 src/protocols/jabber/buddy.c:264
 #: src/protocols/jabber/buddy.c:748 src/protocols/jabber/chat.c:741
 msgid "Description"
-msgstr ""
+msgstr "Açýklama"
 
 #: src/gtkprefs.c:824
 msgid "Display"
-msgstr ""
+msgstr "Görünüm"
 
 #: src/gtkprefs.c:825
 msgid "Show _timestamp on messages"
-msgstr ""
+msgstr "Mesajlarda zamaný göster"
 
 #: src/gtkprefs.c:828
 msgid "_Highlight misspelled words"
-msgstr ""
+msgstr "Yanlýþ yazýlmýþ sözcükleri vurgula"
 
 #: src/gtkprefs.c:832
 msgid "Ignore c_olors"
-msgstr ""
+msgstr "Renkleri yoksay"
 
 #: src/gtkprefs.c:834
 msgid "Ignore font _faces"
-msgstr ""
+msgstr "Yazýtipini yoksay"
 
 #: src/gtkprefs.c:836
 msgid "Ignore font si_zes"
-msgstr ""
+msgstr "Yazý boyutunu yoksay"
 
 #: src/gtkprefs.c:839
 msgid "Default Formatting"
-msgstr ""
+msgstr "Varsayýlan Biçim"
 
 #: src/gtkprefs.c:841
 msgid "_Send default formatting with outgoing messages"
-msgstr ""
+msgstr "Giden mesajý varsayýlan biçimlerle gönder"
 
 #: src/gtkprefs.c:873
 msgid ""
 "This is how your outgoing message text will appear when you use protocols "
 "that support formatting. :)"
-msgstr ""
+msgstr "Bu mesaj, biçimlendirmeyi destekleyen protokollerde gönderdiðiniz "
+"mesajýn nasýl görüneceðini gösterir. :)"
 
 #: src/gtkprefs.c:876
 msgid "_Clear Formatting"
-msgstr ""
+msgstr "Biçimlemeyi Temizle"
 
 #: src/gtkprefs.c:913
 msgid "Send Message"
-msgstr ""
+msgstr "Mesaj Gönderme Seçenekleri"
 
 #: src/gtkprefs.c:914
 msgid "Enter _sends message"
-msgstr ""
+msgstr "Enter gönderir"
 
 #: src/gtkprefs.c:916
 msgid "C_ontrol-Enter sends message"
-msgstr ""
+msgstr "C_ontrol-Enter gönderir"
 
 #: src/gtkprefs.c:919
 msgid "Window Closing"
-msgstr ""
+msgstr "Pencereyi Kapatma Seçenekleri"
 
 #: src/gtkprefs.c:920
 msgid "_Escape closes window"
-msgstr ""
+msgstr "_Escape kapatýr"
 
 #: src/gtkprefs.c:923
 msgid "Insertions"
-msgstr ""
+msgstr "Eklemeler"
 
 #: src/gtkprefs.c:924
 msgid "Control-{B/I/U} changes _formatting"
-msgstr ""
+msgstr "Control-{B/I/U} yazý biçimini deðiþtirir"
 
 #: src/gtkprefs.c:926
 msgid "Control-(number) _inserts smileys"
-msgstr ""
+msgstr "Control-(sayý) _güleryüz ekler"
 
 #: src/gtkprefs.c:942
 msgid "Buddy List Sorting"
-msgstr ""
+msgstr "Liste"
 
 #: src/gtkprefs.c:951
 msgid "_Sorting:"
-msgstr ""
+msgstr "Sýralama"
 
 #: src/gtkprefs.c:957 src/gtkprefs.c:1009
 msgid "Show _buttons as:"
@@ -3695,19 +3703,19 @@ msgstr ""
 
 #: src/gtkprefs.c:959 src/gtkprefs.c:1011
 msgid "Pictures"
-msgstr ""
+msgstr "Resimler"
 
 #: src/gtkprefs.c:960 src/gtkprefs.c:1012
 msgid "Text"
-msgstr ""
+msgstr "Yazý"
 
 #: src/gtkprefs.c:961 src/gtkprefs.c:1013
 msgid "Pictures and text"
-msgstr ""
+msgstr "Resimler ve Yazý"
 
 #: src/gtkprefs.c:964
 msgid "_Raise window on events"
-msgstr ""
+msgstr "Olaylarda pencereyi göster"
 
 #: src/gtkprefs.c:967
 msgid "Buddy Display"
@@ -3788,19 +3796,19 @@ msgstr ""
 
 #: src/gtkprefs.c:1067
 msgid "Top"
-msgstr ""
+msgstr "Üst"
 
 #: src/gtkprefs.c:1068
 msgid "Bottom"
-msgstr ""
+msgstr "Alt"
 
 #: src/gtkprefs.c:1069
 msgid "Left"
-msgstr ""
+msgstr "Sol"
 
 #: src/gtkprefs.c:1070
 msgid "Right"
-msgstr ""
+msgstr "Sað"
 
 #: src/gtkprefs.c:1076
 msgid "New conversation _placement:"
@@ -3809,19 +3817,19 @@ msgstr ""
 #: src/gtkprefs.c:1127 src/protocols/oscar/oscar.c:734
 #: src/protocols/oscar/oscar.c:5019
 msgid "IP Address"
-msgstr ""
+msgstr "IP Adresi"
 
 #: src/gtkprefs.c:1129
 msgid "_Autodetect IP Address"
-msgstr ""
+msgstr "IP Adresini Otomatik Al"
 
 #: src/gtkprefs.c:1138
 msgid "Public _IP:"
-msgstr ""
+msgstr "Yerel _IP:"
 
 #: src/gtkprefs.c:1162
 msgid "Ports"
-msgstr ""
+msgstr "Portlar"
 
 #: src/gtkprefs.c:1165
 msgid "_Manually specify range of ports to listen on"
@@ -3829,87 +3837,87 @@ msgstr ""
 
 #: src/gtkprefs.c:1168
 msgid "_Start Port:"
-msgstr ""
+msgstr "Baþlangýç Portu:"
 
 #: src/gtkprefs.c:1175
 msgid "_End Port:"
-msgstr ""
+msgstr "Bitiþ Portu:"
 
 #: src/gtkprefs.c:1182
 msgid "Proxy Server"
-msgstr ""
+msgstr "Proxy Sunucusu"
 
 #: src/gtkprefs.c:1186
 msgid "No proxy"
-msgstr ""
+msgstr "Proxy yok"
 
 #: src/gtkprefs.c:1248
 msgid "_User:"
-msgstr ""
+msgstr "_Kullanýcý"
 
 #: src/gtkprefs.c:1304
 msgid "Epiphany"
-msgstr ""
+msgstr "Epiphany"
 
 #: src/gtkprefs.c:1305
 msgid "Firebird"
-msgstr ""
+msgstr "Firebird"
 
 #: src/gtkprefs.c:1306
 msgid "Firefox"
-msgstr ""
+msgstr "Firefox"
 
 #: src/gtkprefs.c:1307
 msgid "Galeon"
-msgstr ""
+msgstr "Galeon"
 
 #: src/gtkprefs.c:1308
 msgid "Gnome Default"
-msgstr ""
+msgstr "Gnome Varsayýlan"
 
 #: src/gtkprefs.c:1309
 msgid "Konqueror"
-msgstr ""
+msgstr "Konqueror"
 
 #: src/gtkprefs.c:1310
 msgid "Mozilla"
-msgstr ""
+msgstr "Mozilla"
 
 #: src/gtkprefs.c:1311
 msgid "Netscape"
-msgstr ""
+msgstr "Netscape"
 
 #: src/gtkprefs.c:1312
 msgid "Opera"
-msgstr ""
+msgstr "Opera"
 
 #: src/gtkprefs.c:1321
 msgid "Manual"
-msgstr ""
+msgstr "El ile ayarla"
 
 #: src/gtkprefs.c:1372
 msgid "Browser Selection"
-msgstr ""
+msgstr "Browser Seçimi"
 
 #: src/gtkprefs.c:1376
 msgid "_Browser:"
-msgstr ""
+msgstr "_Browser"
 
 #: src/gtkprefs.c:1383
 msgid "_Open link in:"
-msgstr ""
+msgstr "Baðlantýyý aç:"
 
 #: src/gtkprefs.c:1385
 msgid "Browser default"
-msgstr ""
+msgstr "Varsayýlan Browser"
 
 #: src/gtkprefs.c:1386
 msgid "Existing window"
-msgstr ""
+msgstr "Varolan pencere"
 
 #: src/gtkprefs.c:1388
 msgid "New tab"
-msgstr ""
+msgstr "Yeni sekme"
 
 #: src/gtkprefs.c:1402
 #, c-format
@@ -3917,34 +3925,36 @@ msgid ""
 "_Manual:\n"
 "(%s for URL)"
 msgstr ""
+"_El ile ayarla:\n"
+"(Baðlantý için %s)"
 
 #: src/gtkprefs.c:1439
 msgid "Message Logs"
-msgstr ""
+msgstr "Mesaj Kayýtlarý"
 
 #: src/gtkprefs.c:1442
 msgid "Log _Format:"
-msgstr ""
+msgstr "Kayýt Biçimi"
 
 #: src/gtkprefs.c:1445
 msgid "_Log all instant messages"
-msgstr ""
+msgstr "Tüm mesajlarý tut"
 
 #: src/gtkprefs.c:1447
 msgid "Log all c_hats"
-msgstr ""
+msgstr "Tüm sohbetleri tut"
 
 #: src/gtkprefs.c:1450
 msgid "System Logs"
-msgstr ""
+msgstr "Sistem Kayýtlarý"
 
 #: src/gtkprefs.c:1452
 msgid "_Enable system log"
-msgstr ""
+msgstr "Sistem kayýtlarýný aktifleþtir"
 
 #: src/gtkprefs.c:1455
 msgid "Log when buddies _sign on/sign off"
-msgstr ""
+msgstr "Kullanýcý giriþ/çýkýþlarýný tut"
 
 #: src/gtkprefs.c:1461
 msgid "Log when buddies become _idle/un-idle"
@@ -3960,19 +3970,19 @@ msgstr ""
 
 #: src/gtkprefs.c:1599
 msgid "Sound Selection"
-msgstr ""
+msgstr "Ses Seçimi"
 
 #: src/gtkprefs.c:1650
 msgid "Sound Options"
-msgstr ""
+msgstr "Ses Seçenekleri"
 
 #: src/gtkprefs.c:1651
 msgid "Sounds when conversation has _focus"
-msgstr ""
+msgstr "Tartýþma aktifken ses açýk"
 
 #: src/gtkprefs.c:1653
 msgid "_Sounds while away"
-msgstr ""
+msgstr "Dýþarýda!yken ses açýk"
 
 #: src/gtkprefs.c:1657
 msgid "Sound Method"
@@ -4837,6 +4847,10 @@ msgstr "Yetki Ver"
 msgid "Deny"
 msgstr "Ýzin Verme"
 
+#: src/protocols/icq/gaim_icq.c:309
+msgid "Send message through server"
+msgstr "Mesajý server üzerinden yolla"
+
 #: src/protocols/icq/gaim_icq.c:351
 msgid "Connecting..."
 msgstr "Baðlanýlýyor..."
@@ -4874,19 +4888,19 @@ msgstr "Dosya Transferinden Vazgeçildi"
 
 #: src/protocols/irc/dcc_send.c:273
 msgid "Gaim could not open a listening port."
-msgstr ""
+msgstr "Gaim bir dinleme portu açamadý"
 
 #: src/protocols/irc/irc.c:75
 msgid "Error displaying MOTD"
-msgstr ""
+msgstr "MOTD görüntülenirken hata"
 
 #: src/protocols/irc/irc.c:75
 msgid "No MOTD available"
-msgstr ""
+msgstr "MOTD mevcut deðil"
 
 #: src/protocols/irc/irc.c:76
 msgid "There is no MOTD associated with this connection."
-msgstr ""
+msgstr "Baðlantýyla temas halinde bir MOTD bulunmamaktadýr"
 
 #: src/protocols/irc/irc.c:79
 #, c-format
@@ -4895,41 +4909,41 @@ msgstr ""
 
 #: src/protocols/irc/irc.c:93 src/protocols/irc/irc.c:401
 msgid "Server has disconnected"
-msgstr ""
+msgstr "Sunucu baðlantýsý kesildi"
 
 #: src/protocols/irc/irc.c:158
 msgid "View MOTD"
-msgstr ""
+msgstr "MOTD'yi göster"
 
 #: src/protocols/irc/irc.c:180 src/protocols/silc/chat.c:32
 msgid "_Channel:"
-msgstr ""
+msgstr "_Kanal"
 
 #: src/protocols/irc/irc.c:185 src/protocols/jabber/chat.c:56
 msgid "_Password:"
-msgstr ""
+msgstr "Þ_ifre"
 
 #: src/protocols/irc/irc.c:217
 msgid "IRC nicks may not contain whitespace"
-msgstr ""
+msgstr "IRC isimler boþluk karakteri içeremez"
 
 #: src/protocols/irc/irc.c:236 src/protocols/toc/toc.c:198
 #, c-format
 msgid "Signon: %s"
-msgstr ""
+msgstr "Baðlan: %s"
 
 #: src/protocols/irc/irc.c:245
 msgid "Couldn't create socket"
-msgstr ""
+msgstr "Soket yaratýlamadý"
 
 #: src/protocols/irc/irc.c:260 src/protocols/jabber/jabber.c:298
 #: src/protocols/oscar/oscar.c:1673 src/protocols/oscar/oscar.c:1737
 msgid "Couldn't connect to host"
-msgstr ""
+msgstr "Ana bilgisayara baðlanýlamadý"
 
 #: src/protocols/irc/irc.c:398 src/protocols/trepia/trepia.c:927
 msgid "Read error"
-msgstr ""
+msgstr "Okuma hatasý"
 
 #: src/protocols/irc/irc.c:553 src/protocols/silc/chat.c:1373
 #: src/protocols/yahoo/yahoochat.c:1398
@@ -4972,7 +4986,7 @@ msgstr "Port"
 
 #: src/protocols/irc/irc.c:689
 msgid "Encodings"
-msgstr ""
+msgstr "Kodlamalar"
 
 #: src/protocols/irc/irc.c:692 src/protocols/irc/msgs.c:195
 #: src/protocols/jabber/jabber.c:589 src/protocols/silc/buddy.c:1445
@@ -4987,37 +5001,37 @@ msgstr "Gerçek Ad"
 
 #: src/protocols/irc/msgs.c:97
 msgid "Bad mode"
-msgstr ""
+msgstr "Kötü mod"
 
 #: src/protocols/irc/msgs.c:108
 #, c-format
 msgid "You are banned from %s."
-msgstr ""
+msgstr "%s tarafýndan yasaklandýnýz."
 
 #: src/protocols/irc/msgs.c:109
 msgid "Banned"
-msgstr ""
+msgstr "Yasaklý"
 
 #: src/protocols/irc/msgs.c:182 src/protocols/irc/msgs.c:201
 #: src/protocols/irc/msgs.c:214
 #, c-format
 msgid "<b>%s:</b> %s"
-msgstr ""
+msgstr "<b>%s:</b> %s"
 
 #: src/protocols/irc/msgs.c:184
 msgid " <i>(ircop)</i>"
-msgstr ""
+msgstr "<i>(ircop)</i>"
 
 #: src/protocols/irc/msgs.c:185
 msgid " <i>(identified)</i>"
-msgstr ""
+msgstr "<i>(tanýmlandý)</i>"
 
 #: src/protocols/irc/msgs.c:189 src/protocols/irc/msgs.c:195
 #: src/protocols/irc/msgs.c:196 src/protocols/irc/msgs.c:207
 #: src/protocols/msn/msn.c:1312 src/protocols/yahoo/yahoo_profile.c:664
 #, c-format
 msgid "<b>%s:</b> %s<br>"
-msgstr ""
+msgstr "<b>%s:</b> %s<br>"
 
 #: src/protocols/irc/msgs.c:196 src/protocols/silc/ops.c:967
 #: src/protocols/silc/ops.c:1117 src/protocols/yahoo/yahoo_profile.c:1005
@@ -5026,35 +5040,35 @@ msgstr "Gerçek Ad"
 
 #: src/protocols/irc/msgs.c:207 src/protocols/silc/ops.c:1039
 msgid "Currently on"
-msgstr ""
+msgstr "Þu anda açýk"
 
 #: src/protocols/irc/msgs.c:212
 #, c-format
 msgid "<b>Idle for:</b> %s<br>"
-msgstr ""
+msgstr "<b>Hazýr:</b> %s<br>"
 
 #: src/protocols/irc/msgs.c:214
 msgid "Online since"
-msgstr ""
+msgstr "Baðlý olduðu süre:"
 
 #: src/protocols/irc/msgs.c:217
 msgid "<br><b>Defining adjective:</b> Glorious<br>"
-msgstr ""
+msgstr "<br><b>Belirleyici sýfat:</b> Mükemmel<br>"
 
 #: src/protocols/irc/msgs.c:224
 #, c-format
 msgid "Buddy Information for %s"
-msgstr ""
+msgstr "%s için Bilgi"
 
 #: src/protocols/irc/msgs.c:286
 #, c-format
 msgid "%s has changed the topic to: %s"
-msgstr ""
+msgstr "%s konuyu deðiþtirdi: %s"
 
 #: src/protocols/irc/msgs.c:291
 #, c-format
 msgid "The topic for %s is: %s"
-msgstr ""
+msgstr "%s için konu: %s"
 
 #: src/protocols/irc/msgs.c:308
 #, c-format
@@ -5067,7 +5081,7 @@ msgstr "Bilinmeyen mesaj"
 
 #: src/protocols/irc/msgs.c:309
 msgid "Gaim has sent a message the IRC server did not understand."
-msgstr ""
+msgstr "Gaim'in gönderdiði mesaj IRC sunucusu tarafýndan algýlanamadý."
 
 #: src/protocols/irc/msgs.c:332
 #, c-format
@@ -5076,12 +5090,12 @@ msgstr ""
 
 #: src/protocols/irc/msgs.c:426
 msgid "No such channel"
-msgstr ""
+msgstr "Böyle bir kanal yok"
 
 #. does this happen?
 #: src/protocols/irc/msgs.c:437
 msgid "no such channel"
-msgstr ""
+msgstr "böyle bir kanal yok"
 
 #: src/protocols/irc/msgs.c:440
 msgid "User is not logged in"
@@ -5098,21 +5112,21 @@ msgstr "Gönderilemedi"
 #: src/protocols/irc/msgs.c:521
 #, c-format
 msgid "Joining %s requires an invitation."
-msgstr ""
+msgstr "%s katýlýmý davet gerektiriyor."
 
 #: src/protocols/irc/msgs.c:522
 msgid "Invitation only"
-msgstr ""
+msgstr "Sadece davetliler"
 
 #: src/protocols/irc/msgs.c:625
 #, c-format
 msgid "You have been kicked by %s: (%s)"
-msgstr ""
+msgstr "%s tarafýndan atýldýnýz: (%s)"
 
 #: src/protocols/irc/msgs.c:630
 #, c-format
 msgid "Kicked by %s (%s)"
-msgstr ""
+msgstr "%s tarafýndan atýldýnýz (%s)"
 
 #: src/protocols/irc/msgs.c:651
 #, c-format
@@ -5121,11 +5135,11 @@ msgstr ""
 
 #: src/protocols/irc/msgs.c:760
 msgid "Could not change nick"
-msgstr ""
+msgstr "Kullanýcý adý deðiþtirilemiyor"
 
 #: src/protocols/irc/msgs.c:761
 msgid "Cannot change nick"
-msgstr ""
+msgstr "Kullanýcý adý deðiþtirilemiyor"
 
 #: src/protocols/irc/msgs.c:782
 #, c-format
@@ -5134,21 +5148,21 @@ msgstr ""
 
 #: src/protocols/irc/msgs.c:822
 msgid "Error: invalid PONG from server"
-msgstr ""
+msgstr "Hata: sunucudan geçersiz cevap (PONG)"
 
 #: src/protocols/irc/msgs.c:824
 #, c-format
 msgid "PING reply -- Lag: %lu seconds"
-msgstr ""
+msgstr "PING cevabý -- Gecikme: %lu saniye"
 
 #: src/protocols/irc/msgs.c:899
 #, c-format
 msgid "Cannot join %s:"
-msgstr ""
+msgstr "%s'e katýlýnamýyor:"
 
 #: src/protocols/irc/msgs.c:900 src/protocols/silc/ops.c:912
 msgid "Cannot join channel"
-msgstr ""
+msgstr "Kanal katýlýnamýyor"
 
 #: src/protocols/irc/msgs.c:936
 #, c-format
@@ -5164,12 +5178,15 @@ msgid ""
 "away [message]:  Set an away message, or use no message to return from being "
 "away."
 msgstr ""
+"Dýþarýda! [mesaj]:  Dýþarýda! mesajýnýzý yazýn, ya da Dýþarda! olduðunuzda "
+"boþ mesaj kullanýn."
 
 #: src/protocols/irc/parse.c:112
 msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
 "someone. You must be a channel operator to do this."
-msgstr ""
+msgstr "deop &lt;nick1&gt; [nick2] ...:  Bir kanal operatöründen durumunu "
+"almak için bir kanal operatörü olmak zorundasýnýz."
 
 #: src/protocols/irc/parse.c:113
 msgid ""
@@ -6771,7 +6788,7 @@ msgid "Message could not be sent because a connection error occured"
 msgstr ""
 
 #: src/protocols/msn/switchboard.c:487
-msgid "Message could not be sent for an unknown reason"
+msgid "Message could not be sent for an unkwnown reason"
 msgstr ""
 
 #: src/protocols/msn/switchboard.c:492
