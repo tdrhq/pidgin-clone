@@ -17,6 +17,7 @@ version 1.1.0:
 	  &, < or >
 	* Properly align the right-click docklet menu with the docklet icon in
 	  *nix.
+	* Fix a crash if the MSN buddy list is not available
 
 version 1.0.3 (11/11/2004):
 	Bug Fixes:
