@@ -3092,9 +3092,9 @@ msgstr "Holand√®s; Flamenc"
 msgid "Macedonian"
 msgstr "Macedoni"
 
-#: src/gtkdialogs.c:121
-msgid "Burmese"
-msgstr "Birm√ "
+##: src/gtkdialogs.c:121
+#msgid "Burmese"
+#msgstr "Birm√ "
 
 #: src/gtkdialogs.c:122
 msgid "Norwegian"
