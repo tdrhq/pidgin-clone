@@ -14,7 +14,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 	2.2  Why is gaim crashing when somebody sends me an IM?
 
 3  Features
-	3.1  How do I use MSN, Yahoo, IRC, Gadu-Gadu, Napster, or Zephyr?
+	3.1  How do I use MSN, Yahoo, Jabber, IRC, Gadu-Gadu, Napster, or Zephyr?
 	3.2  Can Gaim send files?
 	3.3  When will file transfer be supported? Is it being worked on?
 	3.4  How come there's no Export Buddy List?
@@ -39,6 +39,11 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 	7.2  How do I change my Jabber resource to be other than the
 	     default of "/GAIM"?
 	7.3  How do I register a new Jabber account?
+	7.4  How do I use invisibility?
+	7.5  I've a buddy that I keep removing from my buddy list, but
+	     he keeps coming back!  How can I stop this?
+	7.6  What does "Remove From Roster" do?
+	7.7  What does "Cancel Presence Notification" do?
 
 8  Scripts and Plugins
 	8.1  Where can I find documentation on writing plugins and
@@ -47,9 +52,10 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 9  Development
 	9.1  Where should I report bugs?
-	9.2  Did you guys reverse engineer it?
-	9.3  Will Gaim be ported to Windows 95/98/Me/2000/XP?
-	9.4  Will there be a QT dock app?
+	9.2  Where should I submit patches?
+	9.3  Did you guys reverse engineer it?
+	9.4  Will Gaim be ported to Windows 95/98/Me/2000/XP?
+	9.5  Will there be a QT dock app?
 
 10  Misc. Questions
 	10.1  Does AOL's attempts at blocking Trillian affect Gaim?
@@ -103,10 +109,17 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 1.4  I can't compile Gaim CVS.
 
-  Make sure you have gettext <= 0.10.40, autoconf 2.11 or 2.53, and
-  automake 1.4px. If you are still having problems, make sure that your
-  gettext package includes the program gettextize. If it does not, look for
+  Make sure you have gettext <= 0.10.40 or gettext >= 0.11.3, autoconf 2.11
+  or 2.53, and automake 1.4px. If you are still having problems, make sure
+  that your gettext package includes the program gettextize (for gettext <=
+  0.10.40) or autopoint (for gettext >= 0.11.3). If it does not, look for
   another package.
+
+  We don't support gettext 0.11.0 through 0.11.2. It may work for you, but
+  we make no promises.
+
+  If you are using autoconf 2.50+, do not use a version of gettext lower
+  than 0.10.39. You will get errors in the po/ directory. 
 
   If you have Slackware, you need to get non-slack packages for autoconf,
   automake, gettext, and libtool. You also have to copy the contents of
@@ -156,7 +169,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 | 3  Features
 +--------------------------------------------------------------------------
 
-3.1  How do I use MSN, Yahoo, IRC, Gadu-Gadu, Napster, or Zephyr?
+3.1  How do I use MSN, Yahoo, Jabber, IRC, Gadu-Gadu, Napster, or Zephyr?
 
   First load the plugin. Protocol plugins come with Gaim, so just go to the
   Plugins dialog (Tools->Plugins, or the Plugins button on the start
@@ -322,6 +335,65 @@ mv ~/.gaim/SCREENNAME.0.blist ~/
         you're hosed.
 
 
+7.4  How do I use invisibility?
+
+  Jabber invisibility support is available in Gaim version 0.60 and later.
+
+  There are two ways to use Jabber invisibility: on a per-buddy and on a
+  per-server basis.
+
+  To use per-buddy invisibility: right-click on the buddy on the Online
+  buddy list and select "Temporarily Hide From."  You will appear to that
+  buddy to be off-line.  To make yourself seen by that buddy again:
+  right-click on the buddy and select "Un-hide From."  Note that the menu
+  changes based on whether you're currently invisible to that buddy or
+  not.
+
+    The "Temporarily" part is a dead give-away.  Your invisibility to
+    that buddy will last only until the next time you log on or until
+    you set server invisibility (discussed next) on and off.
+
+  To use per-server invisibility: click "Tools -> Away," select the Jabber
+  server login for the server upon which you wish to become invisible (if
+  necessary) and select "Invisible."  To become visible again: select
+  anything else from that same menu (such as "Online"), or set your away
+  status or log off the server and back on again.
+
+  You can set yourself invisible per-server and subsequently make yourself
+  visible to selected buddies only.
+
+  Gaim currently does not retain invisibility settings between logins,
+  just as it doesn't currently retain "away" status.
+
+
+7.5  I've a buddy that I keep removing from my buddy list but the entry
+     keeps coming back every time I log in again!  How can I stop this?
+
+  As of Gaim version 0.59 and later: Select the Edit Buddies tab, right-
+  click on the offending entry, and select "Remove From Roster."
+
+
+7.6  Can I remove a buddy from my Jabber roster entirely?
+
+  As of Gaim version 0.59 and later: yes.  In the Edit Buddies tab, right-
+  click on a buddy and Select "Remove From Roster."
+
+  The buddy will disappear from your buddy list and also will no longer
+  receive presence notifications from you.
+
+
+7.7  What does "Cancel Presence Notification" do?
+
+  This selection, available in Gaim version 0.60 and later, and found by
+  right-clicking on a buddy entry in the Edit Buddies tab, prevents that
+  Jabber I.D. from receiving future presence notifications when you log on
+  to the server.
+
+  After you do this, that buddy will have to re-request a subscription to
+  your presence (and you will have to approve it) for them to again see you
+  on-line.
+
+
 +--------------------------------------------------------------------------
 | 8  Scripts and Plugins
 +--------------------------------------------------------------------------
@@ -383,21 +455,26 @@ mv ~/.gaim/SCREENNAME.0.blist ~/
   http://gaim.sf.net/bug.php
 
 
-9.2  Did you guys reverse engineer it?
+9.2  Where should I submit patches?
+
+  http://gaim.sf.net/patches.php
+
+
+9.3  Did you guys reverse engineer it?
 
   TOC, Jabber, MSN, Napster, and IRC are published protocols, so we didn't
   have to reverse engineer those. Oscar, ICQ, and Yahoo are not published,
   and were reverse engineered by other people.
 
 
-9.3  Will Gaim be ported to Windows 95/98/Me/2000/XP?
+9.4  Will Gaim be ported to Windows 95/98/Me/2000/XP?
 
   When GTK+ 2.0 comes out and compiles well against Cygwin, and Gaim has
   been ported to it, Gaim should work. It will not happen before GTK+ 2.0
   is ported to Windows, though.
 
 
-9.4  Will there be a QT dock app?
+9.5  Will there be a QT dock app?
 
   Right now Gaim, is done entirely in C and GTK+, so a QT dock app is not
   in planned. You can either write a patch to do this yourself, or wait
