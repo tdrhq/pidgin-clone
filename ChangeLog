@@ -14,6 +14,8 @@ version 1.0.0:
 	Bug Fixes:
 	* Compile with gtk 2.5.x (Gary Kramlich)
 	* Escape invalid characters in log names (Daniel Atallah)
+	* Fix for clicking add in an msn chat with 2 or more people in your buddy
+	  list (Daniel Atallah)
 
 version 0.82.1 (08/27/2004):
 	Bug Fixes:

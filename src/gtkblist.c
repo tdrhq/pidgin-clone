@@ -665,7 +665,7 @@ static void
 rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 {
 	GaimConnection *gc;
-	GList *list, *tmp;
+	GList *list = NULL, *tmp = NULL;
 	GHashTable *defaults = NULL;
 	struct proto_chat_entry *pce;
 	gboolean focus = TRUE;
@@ -683,7 +683,8 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 
 	data->entries = NULL;
 
-	list = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
+	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info == NULL)
+		list = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
 
 	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
 		defaults = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, NULL);
@@ -2433,13 +2434,14 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		GaimChat *chat = (GaimChat *)node;
 		char *name = NULL;
 		struct proto_chat_entry *pce;
-		GList *parts, *tmp;
+		GList *parts = NULL, *tmp = NULL;
 		GString *parts_text = g_string_new("");
 
 		prpl = gaim_find_prpl(gaim_account_get_protocol_id(chat->account));
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
-		parts = prpl_info->chat_info(chat->account->gc);
+		if (prpl_info->chat_info != NULL)
+			parts = prpl_info->chat_info(chat->account->gc);
 
 		name = g_markup_escape_text(gaim_chat_get_name(chat), -1);
 
@@ -4203,7 +4205,7 @@ static void
 rebuild_addchat_entries(GaimGtkAddChatData *data)
 {
 	GaimConnection *gc;
-	GList *list, *tmp;
+	GList *list = NULL, *tmp = NULL;
 	GHashTable *defaults = NULL;
 	struct proto_chat_entry *pce;
 	gboolean focus = TRUE;
@@ -4221,7 +4223,8 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 
 	data->entries = NULL;
 
-	list = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
+	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
+		list = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
 
 	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
 		defaults = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc,
@@ -4311,6 +4314,7 @@ add_chat_select_account_cb(GObject *w, GaimAccount *account,
 	}
 }
 
+/* XXX this does exactly the same thing as joinchat_account_filter_func() */
 static gboolean
 add_chat_check_account_func(GaimAccount *account)
 {
