@@ -4,6 +4,16 @@ version 1.2.0:
 	* You can use gaim_signal_connect_priority() and
 	  gaim_signal_connect_priority_vargs() to connect to
 	  Gaim signals with a given priority (Will Gorman)
+	* Added: gaim_conversation_set_features
+		 gaim_conversation_get_features
+	  These allow plugins (notable prpls) to change the
+	  formatting capabilities of an existing conversation.
+	  This comes with a new "features" field in
+	  GaimConversation (Christopher O'Brien)
+	* Added: GAIM_CONNECTION_NO_IMAGES to GaimConectionFlags
+	   (Christopher O'Brien)
+	* Added: GAIM_CBFLAGS_TYPING to GaimConvChatBuddyFlags
+	   (Christopher O'Brien)
 
 version 1.1.4 (2/24/2005):
 	* No changes
