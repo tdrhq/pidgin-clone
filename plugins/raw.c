@@ -1,3 +1,5 @@
+#include "internal.h"
+
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"

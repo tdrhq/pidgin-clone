@@ -564,6 +564,12 @@ static void jabber_si_xfer_cancel_recv(GaimXfer *xfer)
 	gaim_debug(GAIM_DEBUG_INFO, "jabber", "in jabber_si_xfer_cancel_recv\n");
 }
 
+static void jabber_si_xfer_request_denied(GaimXfer *xfer)
+{
+	/* XXX: let the other side know */
+	jabber_si_xfer_free(xfer);
+}
+
 
 static void jabber_si_xfer_end(GaimXfer *xfer)
 {
@@ -663,6 +669,7 @@ void jabber_si_xfer_send(GaimConnection *gc, const char *who, const char *file)
 
 	gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
 	gaim_xfer_set_cancel_send_fnc(xfer, jabber_si_xfer_cancel_send);
+	gaim_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
 	gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
@@ -678,7 +685,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	JabberSIXfer *jsx;
 	GaimXfer *xfer;
 	xmlnode *si, *file, *feature, *x, *field, *option, *value;
-	const char *stream_id, *filename, *filesize_c, *profile;
+	const char *stream_id, *filename, *filesize_c, *profile, *from;
 	size_t filesize = 0;
 
 	if(!(si = xmlnode_get_child(packet, "si")))
@@ -704,6 +711,15 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 		return;
 
 	if(!(x = xmlnode_get_child_with_namespace(feature, "x", "jabber:x:data")))
+		return;
+
+	if(!(from = xmlnode_get_attrib(packet, "from")))
+		return;
+
+	/* if they've already sent us this file transfer with the same damn id
+	 * then we're gonna ignore it, until I think of something better to do
+	 * with it */
+	if((xfer = jabber_si_xfer_find(js, stream_id, from)))
 		return;
 
 	jsx = g_new0(JabberSIXfer, 1);
@@ -739,8 +755,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	jsx->stream_id = g_strdup(stream_id);
 	jsx->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
-	xfer = gaim_xfer_new(js->gc->account, GAIM_XFER_RECEIVE,
-			xmlnode_get_attrib(packet, "from"));
+	xfer = gaim_xfer_new(js->gc->account, GAIM_XFER_RECEIVE, from);
 	xfer->data = jsx;
 
 	gaim_xfer_set_filename(xfer, filename);
@@ -749,6 +764,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 
 	gaim_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
 	gaim_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
+	gaim_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
 	gaim_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
 	js->file_transfers = g_list_append(js->file_transfers, xfer);
