@@ -1,3 +1,7 @@
+version 1.1.2:
+	* Much prettier System Tray icons
+	  (Thanks Jérôme Poulin and Alex Converse)
+
 version 1.1.1 (12/28/2004):
 	* No changes
 
@@ -37,7 +41,7 @@ version 0.82.1 (08/27/2004):
 
 version 0.82 (08/26/2004):
 	* Selecting away messages using the system tray icon works
-	  (Thanks Fran�ois Gagn�)
+	  (Thanks François Gagné)
 	* Transparency plugin will save your settings again (Kevin Stange)
 	* Updated gtk-wimp to 0.6.2
 	* Updated libpng to 1.2.6 (major security update)
