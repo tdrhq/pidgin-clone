@@ -1252,7 +1252,8 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 		if (statustext)
 		{
 			char *tmp;
-			tmp = gaim_strreplace(statustext, "\n", "<br>");
+			tmp = gaim_strreplace((*statustext == '\n' ? statustext + 1 : statustext),
+								  "\n", "<br>");
 			g_free(statustext);
 			g_string_append_printf(s, "%s<br>", tmp);
 			g_free(tmp);
