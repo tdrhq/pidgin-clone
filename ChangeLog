@@ -5,6 +5,9 @@ version 1.0.2:
 	* MSN file transfers work on big endian machines (Jean-Francois Roy and
 	  Evan Schoenberg)
 	* Fixed the MSN signon crash with Miranda users in the buddy list
+	* Fixed sending messages to MSN Web Messenger users (Damien Ayers)
+	* Fixed some memory leaks in the MSN plugin (Evan Schoenberg)
+	* Fixed a potential crash viewing MSN user profiles (Evan Schoenberg)
 
 version 1.0.1 (10/07/2004):
 	New Features:

@@ -443,9 +443,12 @@ msn_tooltip_text(GaimBuddy *b)
 
 	user = b->proto_data;
 
-	g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
-						   (user->list_op & (1 << MSN_LIST_RL)) ?
-						   _("Yes") : _("No"));
+	if (user != NULL)
+	{
+		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
+							   (user->list_op & (1 << MSN_LIST_RL)) ?
+							   _("Yes") : _("No"));
+	}
 
 	return g_string_free(s, FALSE);
 }
