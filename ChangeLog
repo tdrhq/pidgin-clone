@@ -5,6 +5,8 @@ version 1.1.1:
 	  protected (Michele Baldessari)
 	* More MSN bug fixes (Felipe Contreras)
 	* Drag-and-drop to conversation window file transfers work again
+	* Disable the delete button on pounces that aren't saved yet anyway
+	  (Kevin Stange)
 
 version 1.1.0 (12/02/2004):
 	New Features:
