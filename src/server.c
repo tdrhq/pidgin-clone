@@ -127,6 +127,7 @@ void serv_close(GaimConnection *gc)
 			(prpl_info->close)(gc);
 	}
 
+	/* Is this a stray? I don't understand the purpose of it */
 	prpl = gc->prpl;
 }
 
