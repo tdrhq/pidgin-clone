@@ -341,10 +341,13 @@ void yahoo_process_chat_logout(GaimConnection *gc, struct yahoo_packet *pkt)
 
 void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
 	GaimConversation *c = NULL;
 	GSList *l;
 	GList *members = NULL;
+	GList *roomies = NULL;
+	GaimConversationUiOps *ops;
 	char *room = NULL;
 	char *topic = NULL;
 	char *someid, *someotherid, *somebase64orhashosomething, *somenegativenumber;
@@ -443,10 +446,8 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
 	}
 
-	GList *roomies=NULL;
-	GaimConversationUiOps *ops;
 	ops = gaim_conversation_get_ui_ops(c);
-	GaimAccount *account = gaim_connection_get_account(gc);
+
 	for (l = account->deny; l != NULL; l = l->next) {
 		for (roomies = members; roomies; roomies = roomies->next) {
 			if (!gaim_utf8_strcasecmp((char *)l->data, roomies->data)) {
