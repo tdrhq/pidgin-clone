@@ -4837,10 +4837,6 @@ msgstr "Yetki Ver"
 msgid "Deny"
 msgstr "Ýzin Verme"
 
-#: src/protocols/icq/gaim_icq.c:309
-msgid "Send message through server"
-msgstr Mesajý server üzerinden yolla""
-
 #: src/protocols/icq/gaim_icq.c:351
 msgid "Connecting..."
 msgstr "Baðlanýlýyor..."
