@@ -1,9 +1,8 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.59.3:
-	* Yahoo can connect again. Oops!
+version 0.59.3 (09/14/2002):
 	* Reversed Arun's patch that accidentally caused Yahoo
-	  not to connect--for implimeentation reasons
+	  not to connect--for implimentation reasons
 	* Changed "color" binding to Ctrl-K.
 
 version 0.59.2 (09/09/2002):
