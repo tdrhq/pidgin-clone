@@ -770,7 +770,7 @@ version 0.9.13 (03/27/2000):
 	* Fixed URL Right Click Menus
 	* Conversation Loggin now shows Full Date and Time
 	* Internal Change to Buddy List
- 
+
 version 0.9.12 (03/25/2000):
 	* Segfault fix for PPC/Alpha/etc machines with log(0)
 	  Thanks to Todd Cohen for this one.
@@ -814,7 +814,7 @@ version 0.9.9  (10/31/1999):
 	* Widget table support, dir info looks nicer
 	* Info box looks nicer (thanks to Decklin Foster)
 	* Client now 'corrects' time values from the server for accurate
-          login times.
+	  login times.
 	* Lag-O-Meter (ala Drunken Jim)
 	* IDLE Preferences
 
@@ -835,14 +835,15 @@ version 0.9.8  (10/04/1999):
 
 version 0.9.7  (08/08/1999):
 	* Preliminary Oscar Support
-        * Fixed bad network bug
-        * Fixed some bad text rendering bugs in the HTML widget
-        * log all conversation names are now normalized.
-        * Fixed another bad network bug :)
-        * Multiple browser support, some Netscape buggies fixed.
+	* Fixed bad network bug
+	* Fixed some bad text rendering bugs in the HTML widget
+	* log all conversation names are now normalized.
+	* Fixed another bad network bug :)
+	* Multiple browser support, some Netscape buggies fixed.
 	* Permit/Deny preferences moved to 'Permit' pane on buddylist.
 	* Fixed problem with _, ', and \ in passwords
-	  
+
+
 version 0.9.6  (08/01/1999):
 	* Fixed 'log all conversation' segfault
 	* Added NAS support
