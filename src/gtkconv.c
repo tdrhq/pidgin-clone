@@ -2515,7 +2515,9 @@ redraw_icon(gpointer data)
 		g_object_unref(G_OBJECT(bm));
 
 	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter);
-	if (delay <= 0)
+
+	/* Limit animations to at most 10 frames per second */
+	if (delay < 100)
 		delay = 100;
 
 	gtkconv->u.im->icon_timer = g_timeout_add(delay, redraw_icon, conv);
@@ -2543,9 +2545,13 @@ start_anim(GtkObject *obj, GaimConversation *conv)
 	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim))
 		return;
 
-	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter) / 10;
+	delay = gdk_pixbuf_animation_iter_get_delay_time(gtkconv->u.im->iter);
 
-    gtkconv->u.im->icon_timer = g_timeout_add(delay * 10, redraw_icon, conv);
+	/* Limit animations to at most 10 frames per second */
+	if (delay < 100)
+		delay = 100;
+
+    gtkconv->u.im->icon_timer = g_timeout_add(delay, redraw_icon, conv);
 }
 
 static void
