@@ -274,8 +274,10 @@ gaim_account_request_add(GaimAccount *account, const char *id,
 
 	ui_ops = gaim_accounts_get_ui_ops();
 
+	/*
 	if (ui_ops != NULL && ui_ops->notify_added != NULL)
 		ui_ops->request_add(account, remote_user, id, alias, message);
+		*/
 }
 
 static void
