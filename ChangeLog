@@ -1,5 +1,9 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 1.0.1cvs
+	Bug Fixes:
+	* Send-As menu duplicates less work (Dave West)
+
 version 1.0.0 (09/17/2004):
 	New Features:
 	* Drag-and-drop buddy support for the Invite dialog (Stu Tomlinson)
