@@ -1,5 +1,10 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 1.0.2:
+	Bug Fixes:
+	* MSN file transfers work on big endian machines (Jean-Francois Roy and
+	  Evan Schoenberg)
+
 version 1.0.1 (10/07/2004):
 	New Features:
 	* Use the GNOME default browser when opening links if you're running GNOME
