@@ -6,6 +6,11 @@
 	debug a nasty glib 2.6 problem. Also thanks to our own Stu who
 	found and destroyed an MSN crash and an HTML parsing error
 
+	Luke: Early release to handle the MSN and HTML crashes, as well 
+	as the glib crash.  Maybe that makes up for having had a 4 week 
+	period before the last release.  This one should be the nice 
+	stable release we meant 1.1.3 to be. Enjoy!
+
 1.1.3 (2/17/2005):
 	Luke: Yet another bug fix release, many thanks to everyone who has
 	helped to make gaim more stable!
