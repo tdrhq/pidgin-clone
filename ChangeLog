@@ -4,6 +4,7 @@ version 1.0.2:
 	Bug Fixes:
 	* MSN file transfers work on big endian machines (Jean-Francois Roy and
 	  Evan Schoenberg)
+	* Fixed the MSN signon crash with Miranda users in the buddy list
 
 version 1.0.1 (10/07/2004):
 	New Features:
