@@ -46,6 +46,7 @@ msn_table_new()
 	table->errors = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 
 	table->async = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
+	table->fallback = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 
 	return table;
 }
@@ -60,6 +61,7 @@ msn_table_destroy(MsnTable *table)
 	g_hash_table_destroy(table->errors);
 
 	g_hash_table_destroy(table->async);
+	g_hash_table_destroy(table->fallback);
 
 	g_free(table);
 }
