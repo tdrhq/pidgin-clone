@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "gtkgaim.h"
 
+#include "blist.h"
 #include "connection.h"
 #include "debug.h"
 #include "privacy.h"
@@ -238,6 +239,10 @@ select_account_cb(GtkWidget *dropdown, GaimAccount *account,
 	rebuild_block_list(dialog);
 }
 
+/*
+ * TODO: Setting the permit/deny setting needs to go through privacy.c.
+ *       Even better: the privacy API needs to not suck.
+ */
 static void
 type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 {
@@ -260,6 +265,8 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
 	}
+
+	gaim_schedule_blist_save();
 }
 
 static void

@@ -717,13 +717,9 @@ int gaim_blist_get_group_online_count(GaimGroup *group);
 void gaim_blist_sync();
 
 /**
- * Parses the toc-style buddy list used in older versions of Gaim and for SSI in toc.c
- *
- * @param account  This is the account that the buddies and groups from config will get added to
- * @param config   This is the toc-style buddy list data
+ * Schedule a save of the buddy list.
  */
-void gaim_blist_parse_toc_buddy_list(GaimAccount *account, char *config);
-
+void gaim_schedule_blist_save();
 
 /**
  * Loads the buddy list from ~/.gaim/blist.xml.
