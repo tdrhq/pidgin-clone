@@ -101,7 +101,7 @@ struct _parse_tree {
 
 parse_tree null_parse_tree = { 
 	"", 
-	{}, 
+	{NULL}, 
 	0,
 };
 
