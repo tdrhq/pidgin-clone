@@ -1228,16 +1228,8 @@ msn_convo_closed(GaimConnection *gc, const char *who)
 
 	cmdproc = swboard->servconn->cmdproc;
 
-#if 0
-	if (swboard->current_users == 1)
-	{
-		msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
-		msn_switchboard_destroy(swboard);
-	}
-#else
 	msn_cmdproc_send_quick(cmdproc, "OUT", NULL, NULL);
 	msn_switchboard_destroy(swboard);
-#endif
 }
 
 static void
