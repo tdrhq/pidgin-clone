@@ -160,6 +160,14 @@ static gboolean destroy_syslog_cb(GtkWidget *w, gint resp, void *cb)
 	return TRUE;
 }
 #endif
+
+static void log_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, GaimGtkLogViewer *viewer) {
+	if (gtk_tree_view_row_expanded(tv, path))
+		gtk_tree_view_collapse_row(tv, path);
+	else
+		gtk_tree_view_expand_row(tv, path, FALSE);
+}
+
 static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	GtkTreeIter   iter;
 	GValue val = { 0, };
@@ -334,6 +342,9 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (lv->treeview));
 	g_signal_connect (G_OBJECT (sel), "changed",
 			  G_CALLBACK (log_select_cb),
+			  lv);
+	g_signal_connect (G_OBJECT(lv->treeview), "row-activated",
+			  G_CALLBACK(log_row_activated_cb),
 			  lv);
 
 	/* Viewer ************/
