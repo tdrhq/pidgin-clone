@@ -129,18 +129,12 @@ gevo_load_addressbook(const gchar* uri, EBook **book, GError **error)
 
 	g_return_val_if_fail(book != NULL, FALSE);
 
-#if EBOOK_CHECK_VERSION(0, 0, 94)
 	if (uri == NULL)
 		*book = e_book_new_system_addressbook(NULL);
 	else
 		*book = e_book_new_from_uri(uri, error);
 
 	result = e_book_open(*book, FALSE, NULL);
-#else
-	*book = e_book_new();
-
-	result = e_book_load_local_addressbook(*book, error);
-#endif
 
 	if (!result && *book != NULL)
 	{
