@@ -98,23 +98,28 @@ void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_badmode(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
+	char *escaped;
 
 	if (!args || !args[1] || !gc)
 		return;
 
-	gaim_notify_error(gc, NULL, _("Bad mode"), args[1]);
+	escaped = g_markup_escape_text(args[1], -1);
+	gaim_notify_error(gc, NULL, _("Bad mode"), escaped);
+	g_free(escaped);
 }
 
 void irc_msg_banned(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
-	char *buf;
+	char *buf, *escaped;
 
 	if (!args || !args[1] || !gc)
 		return;
 
-	buf = g_strdup_printf(_("You are banned from %s."), args[1]);
+	escaped = g_markup_escape_text(args[1], -1);
+	buf = g_strdup_printf(_("You are banned from %s."), escaped);
 	gaim_notify_error(gc, _("Banned"), _("Banned"), buf);
+	g_free(escaped);
 	g_free(buf);
 }
 
