@@ -525,9 +525,15 @@ void remove_icon_data(struct gaim_connection *gc)
 
 void *get_icon_data(struct gaim_connection *gc, char *who, int *len)
 {
-	struct icon_data tmp = { gc, normalize(who), NULL, 0 };
-	GList *l = g_list_find_custom(icons, &tmp, find_icon_data);
-	struct icon_data *id = l ? l->data : NULL;
+	struct icon_data tmp;
+	GList *l;
+	struct icon_data *id;
+	tmp.gc   = gc;
+	tmp.who  = normalize(who);
+	tmp.data = NULL;
+	tmp.len  = 0;
+	l = g_list_find_custom(icons, &tmp, find_icon_data);
+	id = l ? l->data : NULL;
 
 	if (id) {
 		*len = id->len;

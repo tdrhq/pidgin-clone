@@ -54,7 +54,7 @@ typedef fu16_t flap_seqnum_t;
 #define gethostbyname(x) gethostbyname2(x, AF_INET) 
 #endif
 
-#if defined(_WIN32) || defined(STRICT_ANSI)
+#if defined(_WIN32) || defined(STRICT_ANSI) || defined(__sgi)
 #define faim_shortfunc
 #else
 #define faim_shortfunc inline

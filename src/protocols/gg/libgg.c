@@ -1,4 +1,4 @@
-/* $Id: libgg.c 2859 2001-12-05 09:48:56Z warmenhoven $ */
+/* $Id: libgg.c 4286 2002-12-14 02:52:10Z seanegan $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -57,7 +57,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 2859 2001-12-05 09:48:56Z warmenhoven $";
+= "$Id: libgg.c 4286 2002-12-14 02:52:10Z seanegan $";
 
 #endif 
 
@@ -720,7 +720,7 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 		return -1;
 	}
 
-	p = (void*) h + sizeof(struct gg_header);
+	p = (char*) h + sizeof(struct gg_header);
 	
 	if (h->type == GG_RECV_MSG) {
 		struct gg_recv_msg *r = p;
@@ -1089,7 +1089,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				break;
 			}
 	
-			w = (void*) h + sizeof(struct gg_header);
+			w = (char*) h + sizeof(struct gg_header);
 			w->key = fix32(w->key);
 
 			for (hash = 1; *password; password++)

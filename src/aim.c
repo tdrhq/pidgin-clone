@@ -82,6 +82,8 @@ int opt_away = 0;
 char *opt_away_arg = NULL;
 char *opt_rcfile_arg = NULL;
 int opt_debug = 0;
+int opt_acct = 0;
+char *opt_user_arg = NULL;
 
 void BuddyTickerCreateWindow(void);
 
@@ -552,8 +554,8 @@ static void set_first_user(char *name)
 /* FUCKING GET ME A TOWEL! */
 int main(int argc, char *argv[])
 {
-	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_login = 0, do_login_ret = -1;
-	char *opt_user_arg = NULL, *opt_login_arg = NULL;
+	int opt_help = 0, opt_version = 0, opt_login = 0, do_login_ret = -1;
+	char *opt_login_arg = NULL;
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;

@@ -11,10 +11,6 @@ extern GtkWidget *blist;
 extern GtkWidget *all_chats;
 extern GtkWidget *all_convos;
 
-#ifdef USE_APPLET
-extern void applet_destroy_buddy();
-#endif
-
 void iconify_windows(struct gaim_connection *gc, char *state, char *message, void *data) {
 	if (!imaway || !gc->away)
 		return;
