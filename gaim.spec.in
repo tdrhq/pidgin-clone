@@ -15,8 +15,13 @@ Requires:   gtk+2.0 >= 2.0.0, libnss3
 BuildRequires: libao-devel, libgtk+2.0_0-devel, libtool, audiofile-devel, pkgconfig, libnss3-devel, perl-devel
 Provides:   libgaim-remote0
 %else
+%if "%{_vendor}" == "suse"
+Requires:   gtk2 >= 2.0.0, gnutls, audiofile, libao
+BuildRequires: libao-devel, gtk2-devel, libtool, audiofile-devel, pkgconfig, gnutls-devel
+%else
 Requires:   gtk2 >= 2.0.0, mozilla-nss, audiofile, libao
 BuildRequires: libao-devel, gtk2-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
+%endif
 %endif
 %{?_with_silc:BuildRequires: libsilc-devel}
 %{?_with_tcl:BuildRequires: tcl, tk}
@@ -161,6 +166,9 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/gaim.pc
 
 %changelog
+* Mon Oct 11 2004 John Jolly <john.jolly@gmail.com>
+- Added if "%{_vendor}" == "suse" to handle GnuTLS libraries for SuSE
+
 * Sat Oct  2 2004 Stu Tomlinson <stu@nosnilmot.com>
 - If --with tcl or silc are not specified, make sure the plugins don't
   exist to prevent RPM complaining about unpackaged files
