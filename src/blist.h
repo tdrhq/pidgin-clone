@@ -717,11 +717,6 @@ int gaim_blist_get_group_online_count(GaimGroup *group);
 void gaim_blist_sync();
 
 /**
- * Schedule a save of the buddy list.
- */
-void gaim_schedule_blist_save();
-
-/**
  * Loads the buddy list from ~/.gaim/blist.xml.
  */
 void gaim_blist_load();

@@ -266,7 +266,7 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 		dialog->in_allow_list = FALSE;
 	}
 
-	gaim_schedule_blist_save();
+	gaim_blist_sync();
 }
 
 static void
