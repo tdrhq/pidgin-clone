@@ -2567,6 +2567,7 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 	g_free(buffer);
 }
 
+#if 0
 static void
 gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
                               const char *id, const char *alias,
@@ -2595,7 +2596,7 @@ gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
 	
 	g_free(buffer);
 }
-
+#endif
 
 static GaimAccountUiOps ui_ops =
 {
