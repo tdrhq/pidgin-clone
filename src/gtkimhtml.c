@@ -1590,7 +1590,7 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 
 		while (click) {
 			uw = (struct clickable *) click->data;
-			if ((x > uw->x) && (x < uw->x + uw->width) &&
+			if ((uw->bit->url) && (x > uw->x) && (x < uw->x + uw->width) &&
 			    (y > uw->y) && (y < uw->y + uw->height) &&
 			    (uw->bit->url || uw->bit->img)) {
 				if (imhtml->tip_bit != uw->bit) {

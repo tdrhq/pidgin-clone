@@ -10,6 +10,10 @@ version 0.59.2
 	* Improved MSN internationalization (Thanks A Lee)
 	* Smiley lookup will search for longest match for smilies
 	  like :-(( (Thanks Eric Melski)
+	* When an IM image is clicked, don't open the browser (Thanks
+	  Ari Pollak)
+	* Prevent a possible crash in unhide_buddy_list() (Thanks Ari
+	  Pollak)
 
 version 0.59.1 (08/25/2002)
 	* Created a gtk1-stable branch for GTK+ 1.2 bugfix releases.

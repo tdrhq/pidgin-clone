@@ -2033,23 +2033,28 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 }
 
 void hide_buddy_list() {
+	if(blist) {
 #ifdef USE_APPLET
-	applet_destroy_buddy(NULL, NULL, NULL);
+		applet_destroy_buddy(NULL, NULL, NULL);
 #else
-	XIconifyWindow(GDK_DISPLAY(),
+		XIconifyWindow(GDK_DISPLAY(),
 			GDK_WINDOW_XWINDOW(blist->window),
 			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
 #endif
+	}
 }
 
 void unhide_buddy_list() {
+	if(blist) {
 #ifdef USE_APPLET
-	if (!applet_buddy_show) {
-		applet_buddy_show = TRUE;
-		createOnlinePopup();
-	}
+		if (!applet_buddy_show) {
+			applet_buddy_show = TRUE;
+			createOnlinePopup();
+		}
 #endif /* USE_APPLET */
-	gdk_window_show(blist->window);
+		if(blist)
+			gdk_window_show(blist->window);
+	}
 }
 
 static gint log_timeout(struct buddy_show *b)

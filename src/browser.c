@@ -585,7 +585,7 @@ void open_url(GtkWidget *w, char *url)
 			/* args will be allocated below but we don't bother
 			 * freeing it since we're just going to exec and
 			 * exit */
-			char **args;
+			char **args = NULL;
 			char command[1024];
 
 			if (web_browser == BROWSER_OPERA) {
