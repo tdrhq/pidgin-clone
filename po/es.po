@@ -1735,7 +1735,7 @@ msgid ""
 "\n"
 "Send instant message\n"
 msgstr ""
-"\\n\n"
+"\n"
 "Enviar un mensaje instantáneo\n"
 
 #: src/gtkaccount.c:325
