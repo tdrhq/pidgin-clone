@@ -6097,9 +6097,9 @@ close_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		if (value)
-			gtk_widget_show(gtkconv->close);
+			gtk_widget_show_all(gtkconv->close);
 		else
-			gtk_widget_hide(gtkconv->close);
+			gtk_widget_hide_all(gtkconv->close);
 	}
 }
 
