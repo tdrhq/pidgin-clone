@@ -1,3 +1,8 @@
+version 1.0.3 (11/11/2004):
+	* Updated GTK+ to 2.4.13 (rev a)
+	  Includes fix for pango bug affecting some character sets, such as
+	  Chinese.
+
 version 1.0.2: (10/20/2004)
 	* Updated GTK+ to 2.4.10 (rev b)
 	  This revision updates glib to 2.4.7 and pango to 1.6.0, fixing the
@@ -29,7 +34,7 @@ version 0.82 (08/26/2004):
 version 0.81 (08/05/2004):
 	* Napster joins binary release (Thanks Kevin)
 	* Gaim's gtkspell build now makes use of pango's squigly underline
-		(Thanks Nathan Fredrickson and Daniel Atallah)
+	  (Thanks Nathan Fredrickson and Daniel Atallah)
 
 version 0.80 (07/15/2004):
 	* idletrack.dll now unloads properly when you quit Gaim in Windows
