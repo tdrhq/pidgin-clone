@@ -7,6 +7,7 @@ version 1.1.0:
 	  Pass --disable-binreloc to ./configure to disable.
 	* IRC now has fallback encodings, and tries harder to display
 	  something useful during an encoding error.
+	* New MSN buddy icon (Felipe Contreras)
 
 	Bug Fixes:
 	* Fix some leaks (Miah Gregory, Felipe Contreras)
