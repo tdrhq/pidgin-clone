@@ -219,7 +219,7 @@ void gaim_status_sync()
 		GSList *l;
 
 		fprintf(fp, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
-		fprintf(fp, "<statuses>\n");
+		fprintf(fp, "<statuses version=\"1\">\n");
 
 		for (l = away_messages; l != NULL; l = l->next)
 			gaim_status_write(fp, l->data);
