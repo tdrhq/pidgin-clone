@@ -808,11 +808,6 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		yd->tmp_serv_ilist = NULL;
 	}
 
-	if (got_serv_list) {
-		gc->account->perm_deny = 4;
-		serv_set_permit_deny(gc);
-	}
-
 	if (got_serv_list &&
 		((gc->account->perm_deny != GAIM_PRIVACY_ALLOW_BUDDYLIST) &&
 		(gc->account->perm_deny != GAIM_PRIVACY_DENY_ALL) &&
