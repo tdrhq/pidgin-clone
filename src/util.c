@@ -32,7 +32,9 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <ctype.h>
+#ifdef HAVE_ICONV
 #include <iconv.h>
+#endif
 #include <math.h>
 #include "gaim.h"
 #include "prpl.h"
