@@ -8,6 +8,7 @@ version 1.0.3:
 	* Fix a crash when dragging a buddy to the conversation entry area
 	* Fix a crash removing chats from the buddy list
 	* Correctly display buddy pounces for aliases with &, < or > in them
+	* Correctly follow the per-conversation logging option
 
 version 1.0.2 (10/19/2004):
 	Bug Fixes:
