@@ -10,6 +10,12 @@ Gaim is an IM client that supports many protocols, including AIM, ICQ,
 MSN, IRC, and Jabber. Gaim is NOT endorsed by, nor affiliated with,
 AOL nor any other company in ANY way.
 
+0.59.x
+======
+This version of Gaim is a stable branch.  These releases are bugfix 
+releases for GTK+ 1.2.  Development will continue on our main branch
+in GTK+ 2 only.
+
 
 BUILD
 =====

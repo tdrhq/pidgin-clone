@@ -1,6 +1,8 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.59.1
+	* Created a gtk1-stable branch for GTK+ 1.2 bugfix releases.
+	  Development will continue in our main branch in GTK+ 2 only.
 	* Fixed a security bug in the manual browser setting (Thanks
 	  Robert McQueen)
 	* Now using libiconv for better i18n support (Thanks Junichi
@@ -9,6 +11,7 @@ version 0.59.1
 	  Colascione)
 	* Fix for HTTP proxies (thanks, Ethan Blanton)	
 	* Read proxy environment variables. (thanks, Christian Hammond)
+	* Use the pretty gaim.png for our menu entry.
 	* Added support for gettext 0.11.x.
 
 version 0.59 (06/24/2002):
