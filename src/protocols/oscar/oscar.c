@@ -1928,9 +1928,16 @@ static void oscar_xfer_end(GaimXfer *xfer)
 
 static void oscar_xfer_init_recv(GaimXfer *xfer)
 {
-	struct aim_oft_info *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
-	OscarData *od = gc->proto_data;
+	struct aim_oft_info *oft_info;
+	GaimConnection *gc;
+	OscarData *od;
+
+	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(xfer->data != NULL);
+
+	oft_info = xfer->data;
+	gc = oft_info->sess->aux_data;
+	od = gc->proto_data;
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_recv_init\n");
 
