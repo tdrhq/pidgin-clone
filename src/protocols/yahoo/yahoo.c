@@ -70,14 +70,18 @@ yahoo_rem_permit(GaimConnection *gc, const char *who)
 	gaim_privacy_permit_remove(gc->account,who,TRUE);
 }
 
-gboolean yahoo_check_privacy
-	(GaimConnection *gc, const char *who)
+gboolean yahoo_check_privacy(GaimConnection *gc, const char *who)
 {
 	/* returns TRUE if allowed through, FALSE otherwise */
 	GSList *list;
 	gboolean permitted=FALSE;
 
-	switch ( gc->account->perm_deny ) {
+	switch (gc->account->perm_deny) {
+                               /* it would appear somewhere inside gaim, GAIM_PRIVACY can end up
+                                * being set to 0 */
+		case 0:
+			permitted = TRUE;
+			break;
 		case GAIM_PRIVACY_ALLOW_ALL:
 			permitted = TRUE;
 			break;
