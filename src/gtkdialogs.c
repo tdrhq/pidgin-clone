@@ -87,6 +87,7 @@ static struct translator current_translators[] = {
 	{N_("Catalan"),				"ca", "Robert Millan", "zeratul2@wanadoo.es"},
 	{N_("Czech"),				"cs", "Miloslav Trmac", "mitr@volny.cz"},
 	{N_("Danish"),				"da", "Morten Brix Pedersen", "morten@wtf.dk"},
+	{N_("Austrailian English"), "en_AU", "Peter (Bleeter) Lawler", "trans@six-by-nine.com.au"},
 	{N_("British English"),		"en_GB", "Luke Ross", "lukeross@sys3175.co.uk"},
 	{N_("Canadian English"),	"en_CA", "Adam Weinberger", "adamw@gnome.org"},
 	{N_("German"),				"de", "Björn Voigt", "bjoern@cs.tu-berlin.de"},
