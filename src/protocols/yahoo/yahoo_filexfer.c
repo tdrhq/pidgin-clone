@@ -165,11 +165,12 @@ static void yahoo_xfer_init(GaimXfer *xfer)
 	account = gaim_connection_get_account(gc);
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
-		if (gaim_xfer_get_size(xfer) >= 1048577) {
-			gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
-			                  _("Gaim cannot send files over Yahoo! that are bigger than "
-			                    "One Megabyte (1,048,576 bytes)."));
+		if (0 && gaim_xfer_get_size(xfer) > 10485760) {
+			char *tmp = g_strdup_printf(_("Gaim cannot send files over Yahoo! that are bigger than "
+			                              "%d megabytes (%d bytes)."), 10, 10485760);
+			gaim_notify_error(gc, NULL, _("File Transfer Aborted"), tmp);
 			gaim_xfer_cancel_local(xfer);
+			g_free(tmp);
 		} else {
 			if (yd->jp) {
 				if (gaim_proxy_connect(account, gaim_account_get_string(account, "xferjp_host",  YAHOOJP_XFER_HOST),
