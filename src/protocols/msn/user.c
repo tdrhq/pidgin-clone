@@ -86,6 +86,52 @@ msn_user_destroy(MsnUser *user)
 }
 
 void
+msn_user_update(MsnUser *user)
+{
+	GaimConnection *gc;
+
+	gc = user->userlist->session->account->gc;
+
+	if (user->online)
+		serv_got_update(gc, user->passport, TRUE, 0, 0, user->idle, user->status);
+	else
+		serv_got_update(gc, user->passport, FALSE, 0, 0, 0, 0);
+}
+
+void
+msn_user_set_state(MsnUser *user, const char *state)
+{
+	GaimConnection *gc;
+	int status = 0;
+	int idle = 0;
+	GaimBuddy *b;
+
+	gc = user->userlist->session->account->gc;
+
+	if ((b = gaim_find_buddy(gc->account, user->passport)) != NULL)
+		status |= ((((b->uc) >> 1) & 0xF0) << 1);
+
+	if (!g_ascii_strcasecmp(state, "BSY"))
+		status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
+	else if (!g_ascii_strcasecmp(state, "IDL"))
+	{
+		status |= UC_UNAVAILABLE | (MSN_IDLE << 1);
+		idle = -1;
+	}
+	else if (!g_ascii_strcasecmp(state, "BRB"))
+		status |= UC_UNAVAILABLE | (MSN_BRB << 1);
+	else if (!g_ascii_strcasecmp(state, "AWY"))
+		status |= UC_UNAVAILABLE | (MSN_AWAY << 1);
+	else if (!g_ascii_strcasecmp(state, "PHN"))
+		status |= UC_UNAVAILABLE | (MSN_PHONE << 1);
+	else if (!g_ascii_strcasecmp(state, "LUN"))
+		status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
+
+	user->status = status;
+	user->idle = idle;
+}
+
+void
 msn_user_set_passport(MsnUser *user, const char *passport)
 {
 	g_return_if_fail(user != NULL);
@@ -221,6 +267,12 @@ msn_user_add_group_id(MsnUser *user, int id)
 	group_name = msn_userlist_find_group_name(userlist, id);
 
 	g = gaim_find_group(group_name);
+
+	if ((id == 0) && (g == NULL))
+	{
+		g = gaim_group_new(group_name);
+		gaim_blist_add_group(g, NULL);
+	}
 
 	b = gaim_find_buddy_in_group(account, passport, g);
 

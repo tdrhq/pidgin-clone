@@ -37,6 +37,50 @@
 static MsnTable *cbs_table;
 
 /**************************************************************************
+ * Util
+ **************************************************************************/
+
+static void
+group_error_helper(MsnSession *session, const char *msg, int group_id, int error)
+{
+	GaimAccount *account;
+	GaimConnection *gc;
+	char *reason = NULL;
+	char *title = NULL;
+
+	account = session->account;
+	gc = gaim_account_get_connection(account);
+
+	if (error == 224)
+	{
+		if (group_id == 0)
+		{
+			return;
+		}
+		else
+		{
+			const char *group_name;
+			group_name =
+				msn_userlist_find_group_name(session->userlist,
+											 group_id);
+			reason = g_strdup_printf(_("%s is not a valid group."),
+									 group_name);
+		}
+	}
+	else
+	{
+		reason = g_strdup(_("Unknown error."));
+	}
+
+	title = g_strdup_printf(_("%s on %s (%s)"), msg,
+						  gaim_account_get_username(account),
+						  gaim_account_get_protocol_name(account));
+	gaim_notify_error(gc, NULL, title, reason);
+	g_free(title);
+	g_free(reason);
+}
+
+/**************************************************************************
  * Login
  **************************************************************************/
 
@@ -331,6 +375,7 @@ add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		group_id = -1;
 
 	msn_got_add_user(session, user, list_id, group_id);
+	msn_user_update(user);
 }
 
 static void
@@ -353,15 +398,15 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	passport = params[1];
 
 	if (!strcmp(list, "FL"))
-		msg = g_strdup_printf("Unable to add user on %s (%s)",
+		msg = g_strdup_printf(_("Unable to add user on %s (%s)"),
 							  gaim_account_get_username(account),
 							  gaim_account_get_protocol_name(account));
 	else if (!strcmp(list, "BL"))
-		msg = g_strdup_printf("Unable to block user on %s (%s)",
+		msg = g_strdup_printf(_("Unable to block user on %s (%s)"),
 							  gaim_account_get_username(account),
 							  gaim_account_get_protocol_name(account));
 	else if (!strcmp(list, "AL"))
-		msg = g_strdup_printf("Unable to permit user on %s (%s)",
+		msg = g_strdup_printf(_("Unable to permit user on %s (%s)"),
 							  gaim_account_get_username(account),
 							  gaim_account_get_protocol_name(account));
 
@@ -369,8 +414,8 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	{
 		if (error == 210)
 		{
-			reason = g_strdup_printf("%s could not be added because "
-									 "your buddy list is full.", passport);
+			reason = g_strdup_printf(_("%s could not be added because "
+									   "your buddy list is full."), passport);
 		}
 	}
 
@@ -378,12 +423,12 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	{
 		if (error == 208)
 		{
-			reason = g_strdup_printf("%s is not a valid passport account.",
+			reason = g_strdup_printf(_("%s is not a valid passport account."),
 									 passport);
 		}
 		else
 		{
-			reason = g_strdup_printf("Unknown error.");
+			reason = g_strdup_printf(_("Unknown error."));
 		}
 	}
 
@@ -446,12 +491,13 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	GaimConnection *gc;
 	MsnSlpLink *slplink;
+	MsnUser *user;
 
-	gc = cmdproc->session->account->gc;
+	user = msn_userlist_find_user(cmdproc->session->userlist, cmd->params[0]);
 
-	serv_got_update(gc, cmd->params[0], FALSE, 0, 0, 0, 0);
+	user->online = FALSE;
+	msn_user_update(user);
 
 	slplink = msn_session_find_slplink(cmdproc->session, cmd->params[0]);
 
@@ -466,10 +512,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	GaimConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
-	int status = 0;
-	int idle = 0;
 	const char *state, *passport, *friendly;
-	GaimBuddy *b;
 
 	session = cmdproc->session;
 	gc = session->account->gc;
@@ -480,7 +523,6 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	user = msn_userlist_find_user(session->userlist, passport);
 
-	/* serv_got_nick(gc, passport, friendly); */
 	serv_got_alias(gc, passport, friendly);
 
 	msn_user_set_friendly_name(user, friendly);
@@ -491,26 +533,9 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_user_set_object(user, msnobj);
 	}
 
-	if ((b = gaim_find_buddy(gc->account, passport)) != NULL)
-		status |= ((((b->uc) >> 1) & 0xF0) << 1);
-
-	if (!g_ascii_strcasecmp(state, "BSY"))
-		status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
-	else if (!g_ascii_strcasecmp(state, "IDL"))
-	{
-		status |= UC_UNAVAILABLE | (MSN_IDLE << 1);
-		idle = -1;
-	}
-	else if (!g_ascii_strcasecmp(state, "BRB"))
-		status |= UC_UNAVAILABLE | (MSN_BRB << 1);
-	else if (!g_ascii_strcasecmp(state, "AWY"))
-		status |= UC_UNAVAILABLE | (MSN_AWAY << 1);
-	else if (!g_ascii_strcasecmp(state, "PHN"))
-		status |= UC_UNAVAILABLE | (MSN_PHONE << 1);
-	else if (!g_ascii_strcasecmp(state, "LUN"))
-		status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
-
-	serv_got_update(gc, passport, TRUE, 0, 0, idle, status);
+	user->online = TRUE;
+	msn_user_set_state(user, state);
+	msn_user_update(user);
 }
 
 static void
@@ -538,8 +563,6 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *state;
 	const char *passport;
 	const char *friendly;
-	int status = 0;
-	int idle = 0;
 
 	session = cmdproc->session;
 	gc = session->account->gc;
@@ -550,7 +573,6 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	user = msn_userlist_find_user(session->userlist, passport);
 
-	/* serv_got_nick(gc, passport, friendly); */
 	serv_got_alias(gc, passport, friendly);
 
 	msn_user_set_friendly_name(user, friendly);
@@ -569,23 +591,9 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		}
 	}
 
-	if (!g_ascii_strcasecmp(state, "BSY"))
-		status |= UC_UNAVAILABLE | (MSN_BUSY << 1);
-	else if (!g_ascii_strcasecmp(state, "IDL"))
-	{
-		status |= UC_UNAVAILABLE | (MSN_IDLE << 1);
-		idle = -1;
-	}
-	else if (!g_ascii_strcasecmp(state, "BRB"))
-		status |= UC_UNAVAILABLE | (MSN_BRB << 1);
-	else if (!g_ascii_strcasecmp(state, "AWY"))
-		status |= UC_UNAVAILABLE | (MSN_AWAY << 1);
-	else if (!g_ascii_strcasecmp(state, "PHN"))
-		status |= UC_UNAVAILABLE | (MSN_PHONE << 1);
-	else if (!g_ascii_strcasecmp(state, "LUN"))
-		status |= UC_UNAVAILABLE | (MSN_LUNCH << 1);
-
-	serv_got_update(gc, passport, TRUE, 0, 0, idle, status);
+	user->online = TRUE;
+	msn_user_set_state(user, state);
+	msn_user_update(user);
 }
 
 static void
@@ -634,7 +642,7 @@ not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	/* TODO: This might be with us too */
+	/* TODO: This might be for us too */
 
 	MsnSession *session;
 	GaimConnection *gc;
@@ -662,6 +670,21 @@ reg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+reg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	int group_id;
+	char **params;
+
+	params = g_strsplit(trans->params, " ", 0);
+
+	group_id = atoi(params[0]);
+
+	group_error_helper(cmdproc->session, _("Unable to rename group"), group_id, error);
+
+	g_strfreev(params);
+}
+
+static void
 rem_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
@@ -686,6 +709,7 @@ rem_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		group_id = -1;
 
 	msn_got_rem_user(session, user, list_id, group_id);
+	msn_user_update(user);
 }
 
 static void
@@ -698,6 +722,21 @@ rmg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	group_id = atoi(cmd->params[2]);
 
 	msn_userlist_remove_group_id(session->userlist, group_id);
+}
+
+static void
+rmg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	int group_id;
+	char **params;
+
+	params = g_strsplit(trans->params, " ", 0);
+
+	group_id = atoi(params[0]);
+
+	group_error_helper(cmdproc->session, "Unable to delete group", group_id, error);
+
+	g_strfreev(params);
 }
 
 static void
@@ -1264,6 +1303,8 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "fallback", "XFR", xfr_cmd);
 
 	msn_table_add_error(cbs_table, "ADD", add_error);
+	msn_table_add_error(cbs_table, "REG", reg_error);
+	msn_table_add_error(cbs_table, "RMG", rmg_error);
 	/* msn_table_add_error(cbs_table, "REA", rea_error); */
 
 	/* I received a '500' error from the notification server just now.

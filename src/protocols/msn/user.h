@@ -45,6 +45,10 @@ struct _MsnUser
 	char *store_name;       /**< The name stored in the server. */
 	char *friendly_name;    /**< The friendly name.             */
 
+	gboolean online;        /**< The User is online.            */
+	int status;             /**< The state of the user.         */
+	int idle;               /**< The idle state of the user.    */
+
 	struct
 	{
 		char *home;         /**< Home phone number.             */
@@ -88,6 +92,24 @@ MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
  * @param user The user to destroy.
  */
 void msn_user_destroy(MsnUser *user);
+
+
+/**
+ * Updates the user.
+ *
+ * Communicates with the core to update the ui, etc.
+ *
+ * @param user The user to update.
+ */
+void msn_user_update(MsnUser *user);
+
+/**
+ * Sets the new state of user.
+ *
+ * @param user The user.
+ * @param state The state string.
+ */
+void msn_user_set_state(MsnUser *user, const char *state);
 
 /**
  * Sets the passport account for a user.
