@@ -2215,7 +2215,6 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		if (default_font->type == GDK_FONT_FONT) 
 			ret_font = gdk_font_load (tmp); 
 		else {
-			/* For some reason, fontsets must end with a single * as an xlfd */
 			ret_font = gdk_fontset_load (tmp); 
 		}
 		/* If the font didn't load, we change some of the xlfds one by one
