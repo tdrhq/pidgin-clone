@@ -338,7 +338,9 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	/* The following primarly intented for user/developer interaction and thus
 	   ought not be translated */
 	g_string_append(str, "<b>Gaim was compiled with the following:</b><br/>");
+#ifdef CONFIG_ARGS /* win32 build doesn't use configure */
 	g_string_append(str, "Arguments to <i>./configure</i>:  " CONFIG_ARGS "<br/>");
+#endif
 #ifdef DEBUG
 	g_string_append(str, "Print debugging messages:  Yes<br/>");
 #else
