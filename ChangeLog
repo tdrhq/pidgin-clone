@@ -1,5 +1,9 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 1.0.4:
+	Buf Fixes:
+	* Fix a crash when removing the last buddy in a contact (Andrew Hart)
+
 version 1.0.3 (11/11/2004):
 	Bug Fixes:
 	* Jabber authentication fixes (Michael Plump)
