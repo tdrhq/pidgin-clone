@@ -12,8 +12,7 @@
 	Jabber will allow you to unsubscribe to someone's presence
 	without logging out and in again, this does break seeing yourself
 	on your buddy list, but hopefully we'll fix that again for the
-	next release. We should also be able to correctly add buddies
-	when on a jabber server running ejabberd now.
+	next release.
 
 	Stu: Happy St. Guinness^wPatrick's day.
 
