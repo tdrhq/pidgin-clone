@@ -2188,6 +2188,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		 * happened, and the mouse might not still be in the buddy list */
 		if(!gtkblist->timeout) {
 			gaim_gtk_blist_collapse_contact_cb(NULL, node);
+			gtk_tree_path_free(path);
 			return FALSE;
 		}
 

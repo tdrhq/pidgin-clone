@@ -58,8 +58,6 @@
 #define OSCAR_CONNECT_STEPS 6
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"
 
-static GaimPlugin *my_protocol = NULL;
-
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
 static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
 
@@ -7473,8 +7471,6 @@ init_plugin(GaimPlugin *plugin)
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	my_protocol = plugin;
 }
 
 GAIM_INIT_PLUGIN(oscar, init_plugin, info);
