@@ -4108,7 +4108,7 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gaim_debug_error("oscar",
-			   "Message error with data %s and reason %hu\n", data, reason);
+			   "Message error with data %s and reason %hu\n", data ? data : "(null)", reason);
 
 /* BBB */
 #if 0
