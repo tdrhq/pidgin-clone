@@ -691,6 +691,8 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 	struct proto_chat_entry *pce;
 	gboolean focus = TRUE;
 
+	g_return_if_fail(data->account != NULL);
+
 	gc = gaim_account_get_connection(data->account);
 
 	while (GTK_BOX(data->entries_box)->children)
@@ -4238,6 +4240,8 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 	GHashTable *defaults = NULL;
 	struct proto_chat_entry *pce;
 	gboolean focus = TRUE;
+
+	g_return_if_fail(data->account != NULL);
 
 	gc = gaim_account_get_connection(data->account);
 

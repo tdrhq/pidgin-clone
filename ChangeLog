@@ -12,6 +12,8 @@ version 1.0.2:
 	* Fixed a crash deleting accounts (Andrew Hart)
 	* Fixed a crash inviting to chats (Andrew Hart)
 	* Fixed a bug in Yahoo privacy handling (Peter Lawler)
+	* Fixed a crash trying to join a chat from the docklet when not signed in
+	  to a chat-capable account (Daniel Atallah)
 
 version 1.0.1 (10/07/2004):
 	New Features:
