@@ -1,6 +1,14 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
-0.59.1 (08/25/3002)
+0.69.2 (09/09/2002):
+	Rob: This time Sean couldn't be with us.  I finally got my linux box
+	some what back in order.  Life has been extremely hectic for both Sean
+	and myself lately, I think.  Sean will have his cable connection soon
+	and my linux box should be completely happy again soon.  Thanks to
+	everyone that kept the patches coming in and organized while we 
+	were busy (chip, luke, robot, etc.)
+
+0.59.1 (08/25/2002):
 	Sean: We've decided to create a stable branch for GTK+ 1.2 bugfixes
 	and start developing CVS HEAD in GTK+ 2 only.  GTK+ 1.2 releases
 	will be in the 0.59.x branch and GTK+ 2 releases will follow our

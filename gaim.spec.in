@@ -95,6 +95,32 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Mon Sep 09 2002 Rob Flynn <rob@marko.net> (0.59.2 release)
+- Japanese translation updated (Thanks, Junichi Uekawa)
+- Won't crash when you set your MSN Friendly name to an empty string.
+- Default manual browser command changed to reflect the fix in 0.59.1
+- Fixed the non-manual browser settings which were broke in 0.59.1 (Thanks, Chris Blizzard)
+- Improved MSN internationalization (Thanks A Lee)
+- Smiley lookup will search for longest match for smilies like :-(( (Thanks Eric Melski)
+- When an IM image is clicked, don't open the browser (Thanks Ari Pollak)
+- Prevent a possible crash in unhide_buddy_list() (Thanks Ari Pollak)
+- Fixed a compilation problem on systems without iconv.
+- GtkIMHtml can be set to render font sizes as point size or AIMish relative sizes -- no more huge Yahoo fonts. (Thanks Ka-Hing Cheung)
+- Fixed a bug with regard to Jabber resources (Thanks Nathan Walp)
+- Fixed a possible segfault when signing off Jabber (Thanks Craig Boston)
+- Word-wrapping on mail notification text (Thanks, Andrew Molloy)
+- Strip trailing and leading spaces from MSN/Yahoo names (Thanks, Arun Tharuvai)
+
+* Sat Aug 25 2002 Rob Flynn <rob@marko.net> (0.59.1 release)
+- Created a gtk1-stable branch for GTK+ 1.2 bugfix releases. Development will continue in our main branch in GTK+ 2 only.
+- Fixed a security bug in the manual browser setting (Thanks Robert McQueen)
+- Now using libiconv for better i18n support (Thanks Junichi Uekawa)
+- Will work with Perl 5.8 (thanks, Timothy Lee and Dan  Colascione)
+- Fix for HTTP proxies (thanks, Ethan Blanton)	
+- Read proxy environment variables. (thanks, Christian Hammond)
+- Use the pretty gaim.png for our menu entry.
+- Added support for gettext 0.11.x.
+
 * Mon Jun 24 2002 Rob Flynn <rob@marko.net> (0.59 release)
 - Hungarian translation added (Thanks, Sutto Zoltan)
 - Swedish translation updated (Thanks, Christian Rose)
