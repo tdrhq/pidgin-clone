@@ -840,8 +840,8 @@ static void msn_accept_add(gpointer w, struct msn_add_permit *map)
 	char buf[MSN_BUF_LEN];
 	char *srvfriend;
 	
-	srvfriend = str_to_utf8(url_encode(map->friend));
-	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, map->user, srvfriend);
+	srvfriend = str_to_utf8(map->friend);
+	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\r\n", ++md->trId, map->user, url_encode(srvfriend));
 	g_free(srvfriend);
 	
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
@@ -859,10 +859,10 @@ static void msn_cancel_add(gpointer w, struct msn_add_permit *map)
 {
 	struct msn_data *md = map->gc->proto_data;
 	char buf[MSN_BUF_LEN];
-	char *srvfriend = str_to_utf8(url_encode(map->friend));
+	char *srvfriend = str_to_utf8(map->friend);
 
 	if (*(map->user)) {
-		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, srvfriend);
+		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trId, map->user, url_encode(srvfriend));
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 			hide_login_progress(map->gc, "Write error");
 			signoff(map->gc);
@@ -1187,7 +1187,9 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
 		GET_NEXT(tmp);
-		friend = utf8_to_str(tmp);
+
+		friend = url_decode(tmp);
+		friend = utf8_to_str(friend);
 
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
 		g_free(friend);
@@ -2111,14 +2113,14 @@ static void msn_act_id(gpointer data, char *entry)
 	if (!entry || *entry == 0)
 		alias = g_strdup("");
 	else
-		alias = str_to_utf8(url_encode(entry));
+		alias = str_to_utf8(entry);
 	
 	if (strlen(alias) >= BUDDY_ALIAS_MAXLEN) {
 		do_error_dialog(_("Friendly name too long."), _("MSN Error"));
 		return;
 	}
 	
-	g_snprintf(buf, sizeof(buf), "REA %d %s %s\r\n", ++md->trId, gc->username, alias);
+	g_snprintf(buf, sizeof(buf), "REA %d %s %s\r\n", ++md->trId, gc->username, url_encode(alias));
 	g_free(alias);
 	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
