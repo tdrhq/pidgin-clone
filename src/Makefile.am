@@ -119,7 +119,7 @@ gaim_coreheaders = \
 	plugin.h \
 	pluginpref.h \
 	pounce.h \
-	prefix.h
+	prefix.h \
 	prefs.h \
 	privacy.h \
 	proxy.h \
