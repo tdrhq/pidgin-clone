@@ -1,8 +1,4 @@
 version 1.1.4 (2/24/2005):
-	* Updated GTK+ to 2.6.2 (rev b)
-	  Includes glib patch by Daniel to fix crashes on Win98 (introduced
-	  by the new 'g_' stdio funcs). Refer to gnome bugzilla bug report
-	  #168341.
 
 version 1.1.3 (2/17/2005):
 	* SILC is currently no longer installed on Windows NT 4 systems.  There
