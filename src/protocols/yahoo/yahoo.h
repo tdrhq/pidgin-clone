@@ -267,4 +267,14 @@ char *yahoo_tooltip_text(GaimBuddy *b);
 /* yahoo_profile.c */
 void yahoo_get_info(GaimConnection *gc, const char *name);
 
+/**
+ * Check to see whether the sender is permitted to send
+ *
+ * @param gc The gc handle.
+ * @param who The sender of the packet to check
+ * @param need_reply TRUE if a reply may be required, otherwise FALSE
+*/
+gboolean yahoo_check_privacy
+	(GaimConnection *gc, const char *who);
+
 #endif /* _YAHOO_H_ */

@@ -8,6 +8,7 @@ version 1.2.0:
 	  fail to be read correctly if you set a proxy user name or
 	  password containing invalid XML characters such as < and >
 	  (Bastien Durel)
+	* Yahoo! privacy improvements (Bleeter)
 
 version 1.1.4 (2/24/2005):
 	* Fixed a bug where Yahoo! would lose messages (and any other packet

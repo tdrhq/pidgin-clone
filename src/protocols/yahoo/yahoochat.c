@@ -32,6 +32,7 @@
 
 #include "debug.h"
 #include "prpl.h"
+#include "privacy.h"
 
 #include "conversation.h"
 #include "notify.h"
@@ -156,6 +157,11 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 	g_hash_table_replace(components, g_strdup("type"), g_strdup("Conference"));
 	if (members) {
 		g_hash_table_replace(components, g_strdup("members"), g_strdup(members->str));
+	}
+	if (!yahoo_check_privacy(gc, who)) {
+		gaim_debug_info("yahoo",
+		    "Invite to conference %s from %s has been dropped.\n", room, who);
+		return;
 	}
 	serv_got_chat_invite(gc, room, who, msg, components);
 
@@ -437,6 +443,20 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
 	}
 
+	GList *roomies=NULL;
+	GaimConversationUiOps *ops;
+	ops = gaim_conversation_get_ui_ops(c);
+	GaimAccount *account = gaim_connection_get_account(gc);
+	for (l = account->deny; l != NULL; l = l->next) {
+		for (roomies = members; roomies; roomies = roomies->next) {
+			if (!gaim_utf8_strcasecmp((char *)l->data, roomies->data)) {
+				gaim_debug_info("yahoo", "Ignoring room member %s in room %s\n" ,roomies->data, room);
+				gaim_conv_chat_ignore(GAIM_CONV_CHAT(c),roomies->data);
+				ops->chat_update_user((c), roomies->data);
+			}
+		}
+	}
+	g_list_free(roomies);
 	g_list_free(members);
 	g_free(room);
 	if (topic)
@@ -565,6 +585,11 @@ void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 		g_hash_table_replace(components, g_strdup("room"), g_strdup(room));
+		if (!yahoo_check_privacy(gc, who)) {
+			gaim_debug_info("yahoo",
+			"Invite to room %s from %s has been dropped.\n", room, who);
+			return;
+		}
 		serv_got_chat_invite(gc, room, who, msg, components);
 	}
 	if (room)
