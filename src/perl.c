@@ -177,6 +177,7 @@ static int is_pl_file(char *filename)
 void perl_autoload()
 {
 	DIR *dir;
+	struct dirent *ent;
 	struct dirent dirent_buf;
 	char *buf;
 	char *path;
