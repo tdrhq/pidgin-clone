@@ -20,6 +20,7 @@ version 1.1.0:
 	* Properly align the right-click docklet menu with the docklet icon in
 	  *nix.
 	* Fix a crash if the MSN buddy list is not available
+	* Fix a bug in the request api (Gary Kramlich)
 
 version 1.0.3 (11/11/2004):
 	Bug Fixes:
@@ -128,7 +129,6 @@ version 0.82 (08/26/2004):
 	* All users are shown when joining a Yahoo! conference (Bleeter Yaluser)
 	* You now leave all Yahoo! conferences when you log out of Yahoo!
 	* Buddy Icon updating bug fixed (Felipe Contreras)
-	* Fix a bug in the request api (Gary Kramlich)
 
 version 0.81 (08/05/2004):
 	New Features:
