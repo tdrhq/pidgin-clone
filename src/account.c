@@ -1379,16 +1379,16 @@ gaim_accounts_sync(void)
 
 	gaim_debug(GAIM_DEBUG_INFO, "accounts", "Writing accounts to disk.\n");
 
-	fp = fopen(user_dir, "r");
+	fp = g_fopen(user_dir, "r");
 
 	if (fp == NULL)
-		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	else
 		fclose(fp);
 
 	filename = g_build_filename(user_dir, "accounts.xml.save", NULL);
 
-	if ((fp = fopen(filename, "w")) != NULL) {
+	if ((fp = g_fopen(filename, "w")) != NULL) {
 		GList *l;
 
 		fprintf(fp, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
@@ -1409,16 +1409,16 @@ gaim_accounts_sync(void)
 		return;
 	}
 
-	if (stat(filename, &st) || (st.st_size == 0)) {
+	if (g_stat(filename, &st) || (st.st_size == 0)) {
 		gaim_debug_error("accounts", "Failed to save accounts\n");
-		unlink(filename);
+		g_unlink(filename);
 		g_free(filename);
 		return;
 	}
 
 	filename_real = g_build_filename(user_dir, "accounts.xml", NULL);
 
-	if (rename(filename, filename_real) < 0) {
+	if (g_rename(filename, filename_real) < 0) {
 		gaim_debug(GAIM_DEBUG_ERROR, "accounts", "Error renaming %s to %s\n",
 				   filename, filename_real);
 	}

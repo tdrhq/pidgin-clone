@@ -901,7 +901,7 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	FILE *fp;
 	const char *name;
 
-	if ((fp = fopen(filename, "w+")) == NULL) {
+	if ((fp = g_fopen(filename, "w+")) == NULL) {
 		gaim_notify_error(conv, NULL, _("Unable to open file."), NULL);
 		return;
 	}
@@ -2616,7 +2616,7 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 	const void *data;
 	size_t len;
 
-	if ((fp = fopen(filename, "wb")) == NULL) {
+	if ((fp = g_fopen(filename, "wb")) == NULL) {
 		gaim_notify_error(conv, NULL, _("Unable to open file."), NULL);
 		return;
 	}
@@ -5817,7 +5817,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 			"%s" G_DIR_SEPARATOR_S "gaimicon-%s.%d",
 			g_get_tmp_dir(), gaim_conversation_get_name(conv), getpid());
 
-	if (!(file = fopen(filename, "wb")))
+	if (!(file = g_fopen(filename, "wb")))
 		return;
 
 	fwrite(data, 1, len, file);
@@ -5825,7 +5825,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 
 	gtkconv->u.im->anim = gdk_pixbuf_animation_new_from_file(filename, &err);
 	/* make sure we remove the file as soon as possible */
-	unlink(filename);
+	g_unlink(filename);
 
 	if (err) {
 		gaim_debug(GAIM_DEBUG_ERROR, "gtkconv",

@@ -173,7 +173,7 @@ DLL_LIBS =		-lgtk-win32-2.0 \
 			-lws2_32 \
 			-liberty \
 			-lwinmm \
-			-lzdll \
+			-lz \
 			-lidletrack \
 			-lnss3 \
 			-lnspr4 \
@@ -202,7 +202,7 @@ EXE_LIBS =
 
 all: $(TARGET).exe $(TARGET).dll
 
-install:
+install: all
 	cp $(GAIM_SRC)/gaim.exe $(GAIM_SRC)/gaim.dll $(GAIM_INSTALL_DIR)
 
 $(IDLETRACK_TOP)/idletrack.dll:

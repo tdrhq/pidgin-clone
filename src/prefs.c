@@ -784,15 +784,15 @@ void gaim_prefs_sync() {
 
 	gaim_debug(GAIM_DEBUG_INFO, "prefs", "writing prefs out to disk.\n");
 
-	file = fopen(user_dir, "r");
+	file = g_fopen(user_dir, "r");
 	if(!file)
-		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	else
 		fclose(file);
 
 	filename = g_build_filename(user_dir, "prefs.xml.save", NULL);
 
-	if((file = fopen(filename, "w"))) {
+	if((file = g_fopen(filename, "w"))) {
 		gaim_prefs_write(file, NULL, 0);
 		fclose(file);
 		chmod(filename, S_IRUSR | S_IWUSR);
@@ -803,15 +803,15 @@ void gaim_prefs_sync() {
 		return;
 	}
 
-	if (stat(filename, &st) || (st.st_size == 0)) {
+	if (g_stat(filename, &st) || (st.st_size == 0)) {
 		gaim_debug_error("prefs", "Failed to save prefs\n");
-		unlink(filename);
+		g_unlink(filename);
 		g_free(filename);
 		return;
 	}
 
 	filename_real = g_build_filename(user_dir, "prefs.xml", NULL);
-	if(rename(filename, filename_real) < 0)
+	if(g_rename(filename, filename_real) < 0)
 		gaim_debug(GAIM_DEBUG_ERROR, "prefs", "Error renaming %s to %s\n",
 				filename, filename_real);
 

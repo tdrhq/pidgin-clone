@@ -914,7 +914,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (session->passport_info.file != NULL)
 	{
-		unlink(session->passport_info.file);
+		g_unlink(session->passport_info.file);
 		g_free(session->passport_info.file);
 	}
 
@@ -967,7 +967,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 							 "Error closing temp passport file: %s\n",
 							 strerror(errno));
 
-			unlink(session->passport_info.file);
+			g_unlink(session->passport_info.file);
 			g_free(session->passport_info.file);
 			session->passport_info.file = NULL;
 		}

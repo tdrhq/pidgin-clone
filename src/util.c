@@ -1927,7 +1927,7 @@ int gaim_build_dir (const char *path, int mode)
 			return -1;
 		}
 
-		if (mkdir(dir, mode) < 0) {
+		if (g_mkdir(dir, mode) < 0) {
 			gaim_debug_warning("build_dir", "mkdir: %s\n", strerror(errno));
 			g_strfreev(components);
 			g_free(dir);
@@ -1972,7 +1972,7 @@ gaim_mkstemp(char **fpath)
 						   "Problem creating the template\n");
 			else
 			{
-				if( (fp = fopen( result, "w+" )) == NULL ) {
+				if( (fp = g_fopen( result, "w+" )) == NULL ) {
 					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
 							   "Couldn't fopen() %s\n", result);
 				}

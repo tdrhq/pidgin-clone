@@ -1969,7 +1969,7 @@ static gboolean gaim_blist_read(const char *filename)
 				filename);
 		name = g_build_filename(gaim_user_dir(), "blist.xml~", NULL);
 
-		if ((backup = fopen(name, "w"))) {
+		if ((backup = g_fopen(name, "w"))) {
 			fwrite(contents, length, 1, backup);
 			fclose(backup);
 			chmod(name, S_IRUSR | S_IWUSR);
@@ -2399,15 +2399,15 @@ void gaim_blist_sync()
 		return;
 	}
 
-	file = fopen(user_dir, "r");
+	file = g_fopen(user_dir, "r");
 	if (!file)
-		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	else
 		fclose(file);
 
 	filename = g_build_filename(user_dir, "blist.xml.save", NULL);
 
-	if ((file = fopen(filename, "w"))) {
+	if ((file = g_fopen(filename, "w"))) {
 		gaim_blist_write(file, NULL);
 		fclose(file);
 		chmod(filename, S_IRUSR | S_IWUSR);
@@ -2418,16 +2418,16 @@ void gaim_blist_sync()
 		return;
 	}
 
-	if (stat(filename, &st) || (st.st_size == 0)) {
+	if (g_stat(filename, &st) || (st.st_size == 0)) {
 		gaim_debug_error("blist", "Failed to save blist\n");
-		unlink(filename);
+		g_unlink(filename);
 		g_free(filename);
 		return;
 	}
 
 	filename_real = g_build_filename(user_dir, "blist.xml", NULL);
 
-	if (rename(filename, filename_real) < 0)
+	if (g_rename(filename, filename_real) < 0)
 		gaim_debug(GAIM_DEBUG_ERROR, "blist save",
 				   "Error renaming %s to %s\n", filename, filename_real);
 

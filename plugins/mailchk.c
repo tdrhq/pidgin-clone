@@ -33,7 +33,7 @@ static gint check_mail()
 	if (!filename)
 		filename = g_strconcat("/var/spool/mail/", g_get_user_name(), NULL);
 
-	if (stat(filename, &s) < 0) {
+	if (g_stat(filename, &s) < 0) {
 		g_free(filename);
 		return -1;
 	}

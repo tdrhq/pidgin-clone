@@ -206,16 +206,16 @@ void gaim_status_sync()
 
 	gaim_debug(GAIM_DEBUG_INFO, "status", "Saving statuses to disk\n");
 
-	fp = fopen(user_dir, "r");
+	fp = g_fopen(user_dir, "r");
 
 	if (fp == NULL)
-		mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	else
 		fclose(fp);
 
 	filename = g_build_filename(user_dir, "status.xml.save", NULL);
 
-	if ((fp = fopen(filename, "w")) != NULL) {
+	if ((fp = g_fopen(filename, "w")) != NULL) {
 		GSList *l;
 
 		fprintf(fp, "<?xml version='1.0' encoding='UTF-8' ?>\n\n");
@@ -238,7 +238,7 @@ void gaim_status_sync()
 
 	filename_real = g_build_filename(user_dir, "status.xml", NULL);
 
-	if (rename(filename, filename_real) < 0) {
+	if (g_rename(filename, filename_real) < 0) {
 		gaim_debug(GAIM_DEBUG_ERROR, "status", "Error renaming %s to %s\n",
 				   filename, filename_real);
 	}
