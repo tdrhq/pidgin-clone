@@ -2171,7 +2171,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 			 * are you trying to pull? */
 			guchar *start;
 
-			gaim_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!");
+			gaim_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!\n");
 
 			start = memchr(yd->rxqueue + 1, 'Y', yd->rxlen - 1);
 			if (start) {
