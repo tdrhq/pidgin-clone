@@ -9,6 +9,7 @@ version 1.1.0:
 	  something useful during an encoding error.
 
 	Bug Fixes:
+	* Fix some leaks (Miah Gregory, Felipe Contreras)
 	* Fix crashes when removing buddies in certain situations (Andrew Hart)
 	* Eliminate MSN switchboard errors (Felipe Contreras)
 	* Fix MSN buddy icon syncronization (Felipe Contreras)
