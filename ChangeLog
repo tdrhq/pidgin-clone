@@ -10,6 +10,7 @@ version 1.0.0:
 	  windows (Dave West)
 	* Display file transfer messages when someone sends you a file
 	  over AIM (Dave West)
+	* Handle MSN buddy lists more sanely (Felipe Contreras)
 
 	Bug Fixes:
 	* Work around window manager stupidity with new dialog windows (Dave West)
