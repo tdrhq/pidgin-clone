@@ -315,31 +315,30 @@ void show_login()
 
 }
 
+#if HAVE_SIGNAL_H
 static void
 clean_pid(void)
 {
-#ifndef _WIN32
 	int status;
 	pid_t pid;
 
 	do {
 		pid = waitpid(-1, &status, WNOHANG);
 	} while (pid != 0 && pid != (pid_t)-1);
-	if(pid == (pid_t)-1 && errno != ECHILD) {
+
+	if ((pid == (pid_t) - 1) && (errno != ECHILD)) {
 		char errmsg[BUFSIZ];
 		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
 		perror(errmsg);
 	}
-#endif
 }
 
-#if HAVE_SIGNAL_H
-void sighandler(int sig)
+void
+sighandler(int sig)
 {
 	switch (sig) {
 	case SIGHUP:
-		gaim_debug(GAIM_DEBUG_WARNING, "sighandler",
-				   "Caught signal %d\n", sig);
+		gaim_debug_warning("sighandler", "Caught signal %d\n", sig);
 		gaim_connections_disconnect_all();
 		break;
 	case SIGSEGV:
@@ -348,7 +347,7 @@ void sighandler(int sig)
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
 			"It is possible that this bug is already fixed in CVS.\n"
-			"If you can reproduce the crash, please notify the gaim\n" 
+			"If you can reproduce the crash, please notify the gaim\n"
 			"maintainers by reporting a bug at\n"
 			GAIM_WEBSITE "bug.php\n\n"
 			"Please make sure to specify what you were doing at the time,\n"
@@ -370,13 +369,10 @@ void sighandler(int sig)
 		break;
 	case SIGCHLD:
 		clean_pid();
-#if HAVE_SIGNAL_H
 		signal(SIGCHLD, sighandler);    /* restore signal catching on this one! */
-#endif
 		break;
 	default:
-		gaim_debug(GAIM_DEBUG_WARNING, "sighandler",
-				   "Caught signal %d\n", sig);
+		gaim_debug_warning("sighandler", "Caught signal %d\n", sig);
 		gaim_connections_disconnect_all();
 
 		gaim_plugins_unload_all();
