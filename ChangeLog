@@ -3,6 +3,8 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 1.1.1:
 	* Allow SILC authentication via public key if your key is password
 	  protected (Michele Baldessari)
+	* More MSN bug fixes (Felipe Contreras)
+	* Drag-and-drop to conversation window file transfers work again
 
 version 1.1.0 (12/02/2004):
 	New Features:
@@ -17,7 +19,7 @@ version 1.1.0 (12/02/2004):
 	* Fix some leaks (Miah Gregory, Felipe Contreras)
 	* Fix crashes when removing buddies in certain situations (Andrew Hart)
 	* Eliminate MSN switchboard errors (Felipe Contreras)
-	* Fix MSN buddy icon syncronization (Felipe Contreras)
+	* Fix MSN buddy icon synchronization (Felipe Contreras)
 	* Correctly display file transfer dialogs for filenames containing &, < or >
 	* Correctly display MSN authorization dialogs for friendly names containing
 	  &, < or >
