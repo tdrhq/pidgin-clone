@@ -352,7 +352,7 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 	{
 		const char *format;
 		char *body_str, *body_enc, *pre, *post;
-		char *str_reason;
+		const char *str_reason;
 
 #if 0
 		if (swboard->conv == NULL)
@@ -651,7 +651,10 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		}
 
 		if (str != NULL)
+		{
 			msn_switchboard_report_user(swboard, GAIM_MESSAGE_SYSTEM, str);
+			g_free(str);
+		}
 
 		msn_switchboard_destroy(swboard);
 	}

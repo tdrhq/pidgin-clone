@@ -1372,6 +1372,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 					return;
 				}
 			}
+			g_strfreev(links);
 			break;
 		case GTK_IMHTML_DRAG_HTML:
 			{
@@ -2359,6 +2360,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							ws[0] = '\0'; wpos = 0;
 							gtk_imhtml_toggle_link(imhtml, href);
 						}
+						if (href)
+							g_free(href);
 					}
 					break;
 				case 46:	/* IMG (opt) */

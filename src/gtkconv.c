@@ -1336,7 +1336,7 @@ ignore_cb(GtkWidget *w, GaimConversation *conv)
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *sel;
-	const char *name;
+	char *name;
 
 	chat    = GAIM_CONV_CHAT(conv);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -1358,6 +1358,7 @@ ignore_cb(GtkWidget *w, GaimConversation *conv)
 		gaim_conv_chat_ignore(chat, name);
 
 	add_chat_buddy_common(conv, name);
+	g_free(name);
 }
 
 static void
@@ -1432,7 +1433,7 @@ menu_chat_add_remove_cb(GtkWidget *w, GaimConversation *conv)
 }
 
 static GtkWidget *
-create_chat_menu(GaimConversation *conv, gchar *who,
+create_chat_menu(GaimConversation *conv, const char *who,
 				 GaimPluginProtocolInfo *prpl_info, GaimConnection *gc)
 {
 	static GtkWidget *menu = NULL;
@@ -1450,7 +1451,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 	button = gtk_menu_item_new_with_label(_("IM"));
 	g_signal_connect(G_OBJECT(button), "activate",
 						 G_CALLBACK(menu_chat_im_cb), conv);
-	g_object_set_data(G_OBJECT(button), "user_data", who);
+	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
@@ -1459,7 +1460,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 		button = gtk_menu_item_new_with_label(_("Send File"));
 		g_signal_connect(G_OBJECT(button), "activate",
 						 G_CALLBACK(menu_chat_send_file_cb), conv);
-		g_object_set_data(G_OBJECT(button), "user_data", who);
+		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
@@ -1471,7 +1472,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 
 	g_signal_connect(G_OBJECT(button), "activate",
 						 G_CALLBACK(ignore_cb), conv);
-	g_object_set_data(G_OBJECT(button), "user_data", who);
+	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 	gtk_widget_show(button);
 
@@ -1479,7 +1480,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 		button = gtk_menu_item_new_with_label(_("Info"));
 		g_signal_connect(G_OBJECT(button), "activate",
 							 G_CALLBACK(menu_chat_info_cb), conv);
-		g_object_set_data(G_OBJECT(button), "user_data", who);
+		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
@@ -1488,7 +1489,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 		button = gtk_menu_item_new_with_label(_("Get Away Msg"));
 		g_signal_connect(G_OBJECT(button), "activate",
 							 G_CALLBACK(menu_chat_get_away_cb), conv);
-		g_object_set_data(G_OBJECT(button), "user_data", who);
+		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
@@ -1504,7 +1505,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 		g_signal_connect(G_OBJECT(button), "activate",
 				 G_CALLBACK(menu_chat_add_remove_cb), conv);
 
-		g_object_set_data(G_OBJECT(button), "user_data", who);
+		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
 		gtk_widget_show(button);
 	}
@@ -1547,6 +1548,7 @@ gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimConversation *conv)
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
 				   gaim_gtk_treeview_popup_menu_position_func, widget,
 				   0, GDK_CURRENT_TIME);
+	g_free(who);
 
 	return TRUE;
 }
@@ -1592,12 +1594,14 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		chat_do_im(conv, who);
-		g_free(who);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GtkWidget *menu = create_chat_menu (conv, who, prpl_info, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 					   event->button, event->time);
 	}
+
+	g_free(who);
+	gtk_tree_path_free(path);
 
 	return TRUE;
 }
@@ -2421,7 +2425,8 @@ update_tab_icon(GaimConversation *conv)
 		g_object_unref(status);
 
 	if (gaim_conv_window_get_active_conversation(win) == conv &&
-		gtkconv->u.im->anim == NULL)
+		(gaim_conversation_get_type(conv) != GAIM_CONV_IM ||
+		 gtkconv->u.im->anim == NULL))
 	{
 		status = get_tab_icon(conv, FALSE);
 
@@ -5197,7 +5202,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			str = g_malloc(1024);
 
 			/* If we're whispering, it's not an autoresponse. */
-			if (gaim_message_meify(new_message, length)) {
+			if (gaim_message_meify(new_message, -1)) {
 				g_snprintf(str, 1024, "***%s", who_escaped);
 				strcpy(color, "#6C2585");
 			}
@@ -5207,7 +5212,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			}
 		}
 		else {
-			if (gaim_message_meify(new_message, length)) {
+			if (gaim_message_meify(new_message, -1)) {
 				str = g_malloc(1024);
 
 				if (flags & GAIM_MESSAGE_AUTO_RESP)

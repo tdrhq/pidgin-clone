@@ -314,6 +314,7 @@ static void irc_close(GaimConnection *gc)
 		gaim_timeout_remove(irc->timer);
 	g_hash_table_destroy(irc->cmds);
 	g_hash_table_destroy(irc->msgs);
+	g_hash_table_destroy(irc->buddies);
 	if (irc->motd)
 		g_string_free(irc->motd, TRUE);
 	g_free(irc->server);
