@@ -193,6 +193,7 @@ gaim_plugin_probe(const char *filename)
 	plugin = gaim_plugin_new(is_so_file(filename, PLUGIN_EXT), filename);
 
 	if (plugin->native_plugin) {
+		gpointer pgaim_init_plugin;
 		const char *error;
 		plugin->handle = g_module_open(filename, 0);
 
@@ -207,7 +208,7 @@ gaim_plugin_probe(const char *filename)
 		}
 
 		if (!g_module_symbol(plugin->handle, "gaim_init_plugin",
-							 (gpointer *)&gaim_init_plugin)) {
+							 &pgaim_init_plugin)) {
 			g_module_close(plugin->handle);
 			plugin->handle = NULL;
 
@@ -219,6 +220,7 @@ gaim_plugin_probe(const char *filename)
 
 			return NULL;
 		}
+		gaim_init_plugin = pgaim_init_plugin;
 	}
 	else {
 		loader = find_loader_for_plugin(plugin);
