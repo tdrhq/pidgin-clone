@@ -128,6 +128,7 @@ version 0.82 (08/26/2004):
 	* All users are shown when joining a Yahoo! conference (Bleeter Yaluser)
 	* You now leave all Yahoo! conferences when you log out of Yahoo!
 	* Buddy Icon updating bug fixed (Felipe Contreras)
+	* Fix a bug in the request api (Gary Kramlich)
 
 version 0.81 (08/05/2004):
 	New Features:
