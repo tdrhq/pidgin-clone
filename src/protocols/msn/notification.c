@@ -30,6 +30,7 @@
 
 #include "userlist.h"
 #include "sync.h"
+#include "slplink.h"
 
 #define BUDDY_ALIAS_MAXLEN 388
 
@@ -446,10 +447,16 @@ static void
 fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	GaimConnection *gc;
+	MsnSlpLink *slplink;
 
 	gc = cmdproc->session->account->gc;
 
 	serv_got_update(gc, cmd->params[0], FALSE, 0, 0, 0, 0);
+
+	slplink = msn_session_find_slplink(cmdproc->session, cmd->params[0]);
+
+	if (slplink != NULL)
+		msn_slplink_destroy(slplink);
 }
 
 static void
@@ -1133,21 +1140,17 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 static void
 connect_cb(MsnServConn *servconn)
 {
-	MsnNotification *notification;
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
 	GaimAccount *account;
-	GaimConnection *gc;
 	char **a, **c, *vers;
 	int i;
 
 	g_return_if_fail(servconn != NULL);
 
-	notification = servconn->data;
 	cmdproc = servconn->cmdproc;
 	session = servconn->session;
 	account = session->account;
-	gc = gaim_account_get_connection(account);
 
 	/* Allocate an array for CVR0, NULL, and all the versions */
 	a = c = g_new0(char *, session->protocol_ver - 8 + 3);
@@ -1170,11 +1173,6 @@ connect_cb(MsnServConn *servconn)
 	if (session->user == NULL)
 		session->user = msn_user_new(session->userlist,
 									 gaim_account_get_username(account), NULL);
-
-#if 0
-	gaim_connection_update_progress(gc, _("Syncing with server"),
-									4, MSN_CONNECT_STEPS);
-#endif
 }
 
 void
