@@ -1,6 +1,7 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.59.2
+        * Japanese translation updated (Thanks, Junichi Uekawa)
 	* Won't crash when you set your MSN Friendly name to an
 	  empty string.
 	* Default manual browser commandn changed to reflect the
