@@ -94,6 +94,12 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Sun Oct 06 2002 Rob Flynn <rob@marko.net> (0.59.4 release)
+- Removed color keybinnding altogether.
+- Added a horizontal scrollbar to Edit page of buddy list. (Thanks, David Fallon)
+- Various bug fixes ((Thanks to (in no particular order) Ethan Blanton, Mark Doliner, Luke Schierer)
+- i18n fixes (thanks, A Lee)
+
 * Sat Sep 14 2002 Rob Flynn <rob@marko.net> (0.59.3 release)
 - Reversed patch that accidentally caused Yahoo not to connect--for implementation reasons
 - Changed "color" binding to Ctrl-K.
