@@ -42,8 +42,8 @@ typedef gboolean (*GaimFilterAccountFunc)(GaimAccount *account);
 struct _GaimAccountUiOps
 {
 	void (*notify_added)(GaimAccount *account, const char *remote_user,
-	                     const char *id, const char *alias,
-	                     const char *message, gboolean request_add);
+						 const char *id, const char *alias,
+						 const char *message);
 };
 
 struct _GaimAccount
@@ -131,7 +131,7 @@ void gaim_account_disconnect(GaimAccount *account);
  * Notifies the user that the account was added to a remote user's
  * buddy list.
  *
- * This can present a dialog so that the local user can add the buddy,
+ * This will present a dialog so that the local user can add the buddy,
  * if not already added.
  *
  * @param account The account that was added.
@@ -139,11 +139,10 @@ void gaim_account_disconnect(GaimAccount *account);
  * @param id          The optional ID of the local account. Rarely used.
  * @param alias       The optional alias of the user.
  * @param message     The optional message sent from the user adding you.
- * @param request_add Whether to ask about adding the buddy to the buddy list.
  */
 void gaim_account_notify_added(GaimAccount *account, const char *remote_user,
-                               const char *id, const char *alias,
-                               const char *message, gboolean request_add);
+							   const char *id, const char *alias,
+							   const char *message);
 
 /**
  * Requests information from the user to change the account's password.
