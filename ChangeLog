@@ -6,6 +6,7 @@ version 1.2.1:
 	* Fix signing on ICQ accounts with passwords greater than 8 characters
 	  (Peter Ajamian)
 	* Fix bug with going away while in a jabber chat
+	* MSN bug fixes (Felipe Contreras)
 
 version 1.2.0 (3/17/2005):
 	* Yahoo file receiving and buddy icon receiving work again.

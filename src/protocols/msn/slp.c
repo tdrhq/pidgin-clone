@@ -31,9 +31,6 @@
 #include "user.h"
 #include "switchboard.h"
 
-/* #include "slplink.h" */
-/* #include "directconn.h" */
-
 static void send_ok(MsnSlpCall *slpcall, const char *branch,
 					const char *type, const char *content);
 
@@ -124,6 +121,8 @@ msn_xfer_cancel(GaimXfer *xfer)
 
 			g_free(content);
 			msn_slplink_unleash(slpcall->slplink);
+
+			msn_slp_call_destroy(slpcall);
 		}
 	}
 }
@@ -746,7 +745,9 @@ void
 got_emoticon(MsnSlpCall *slpcall,
 			 const char *data, long long size)
 {
+#ifdef MSN_DEBUG_UD
 	gaim_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
+#endif
 
 #if 0
 	serv_got_smiley(slpcall->slplink->session->account->gc, 
@@ -825,7 +826,9 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 
 	g_return_if_fail(userlist != NULL);
 
+#ifdef MSN_DEBUG_UD
 	gaim_debug_info("msn", "Releasing buddy icon request\n");
+#endif
 
 	while (userlist->buddy_icon_window > 0)
 	{
@@ -846,8 +849,10 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 		msn_request_user_display(user);
 		userlist->buddy_icon_window--;
 
+#ifdef MSN_DEBUG_UD
 		gaim_debug_info("msn", "buddy_icon_window=%d\n",
 						userlist->buddy_icon_window);
+#endif
 	}
 }
 
@@ -890,13 +895,17 @@ msn_queue_buddy_icon_request(MsnUser *user)
 		userlist = user->userlist;
 		queue = userlist->buddy_icon_requests;
 
+#ifdef MSN_DEBUG_UD
 		gaim_debug_info("msn", "Queueing buddy icon request: %s\n",
 						user->passport);
+#endif
 
 		g_queue_push_tail(queue, user);
 
+#ifdef MSN_DEBUG_UD
 		gaim_debug_info("msn", "buddy_icon_window=%d\n",
 						userlist->buddy_icon_window);
+#endif
 
 		if (userlist->buddy_icon_window > 0)
 			msn_release_buddy_icon_request(userlist);
@@ -915,7 +924,9 @@ got_user_display(MsnSlpCall *slpcall,
 	g_return_if_fail(slpcall != NULL);
 
 	info = slpcall->data_info;
+#ifdef MSN_DEBUG_UD
 	gaim_debug_info("msn", "Got User Display: %s\n", info);
+#endif
 
 	userlist = slpcall->slplink->session->userlist;
 	account = slpcall->slplink->session->account;
@@ -950,7 +961,13 @@ end_user_display(MsnSlpCall *slpcall)
 
 	g_return_if_fail(slpcall != NULL);
 
+#ifdef MSN_DEBUG_UD
 	gaim_debug_info("msn", "End User Display\n");
+#endif
+
+	/* Maybe the slplink was destroyed. */
+	if (slpcall->slplink == NULL)
+		return;
 
 	userlist = slpcall->slplink->session->userlist;
 
@@ -961,8 +978,10 @@ end_user_display(MsnSlpCall *slpcall)
 	/* Free one window slot */
 	userlist->buddy_icon_window++;
 
+#ifdef MSN_DEBUG_UD
 	gaim_debug_info("msn", "buddy_icon_window=%d\n",
 					userlist->buddy_icon_window);
+#endif
 
 	msn_release_buddy_icon_request(userlist);
 }
@@ -1000,7 +1019,9 @@ msn_request_user_display(MsnUser *user)
 		const char *my_info = NULL;
 		GSList *sl;
 
+#ifdef MSN_DEBUG_UD
 		gaim_debug_info("msn", "Requesting our own user display\n");
+#endif
 
 		my_obj = msn_user_get_object(session->user);
 
@@ -1028,8 +1049,10 @@ msn_request_user_display(MsnUser *user)
 		/* Free one window slot */
 		session->userlist->buddy_icon_window++;
 
+#ifdef MSN_DEBUG_UD
 		gaim_debug_info("msn", "buddy_icon_window=%d\n",
 						session->userlist->buddy_icon_window);
+#endif
 
 		msn_release_buddy_icon_request(session->userlist);
 	}
