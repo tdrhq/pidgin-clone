@@ -2961,7 +2961,7 @@ static void yahoo_set_away(GaimConnection *gc, const char *state, const char *ms
 
 	if ((yd->current_status == YAHOO_STATUS_CUSTOM) && gc->away) {
 		conv_msg = yahoo_string_encode(gc, gc->away, NULL);
-		conv_msg2 = gaim_unescape_html(conv_msg);
+		conv_msg2 = gaim_markup_strip_html(conv_msg);
 		yahoo_packet_hash(pkt, 19, conv_msg2);
 	}
 
