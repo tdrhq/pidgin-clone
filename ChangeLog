@@ -1,10 +1,21 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 1.0.1cvs
+	New Features:
+	* Use the GNOME default browser when opening links if you're running GNOME
+	  (Alex Duggan)
+
 	Bug Fixes:
 	* Send-As menu duplicates less work (Dave West)
 	* Can now see your own MSN buddy icon (Felipe Contreras)
-	* Misc other fixes that weren't noted here
+	* Jabber roomlist fetches work again
+	* Close buttons on tabs in existing conversations correctly reflect the
+	  "show close buttons on tabs" preference (Nathan Fredrickson)
+	* Fix to make the get_signon(buddy) perl plugin function work (Gregory C.
+	  Harfst)
+	* Fix crashes when reloading the gevolution plugin (Henry Jen)
+	* Wrap at character boundaries if there is not enough space for a full word
+	* 64 bit compile warning fixes
 
 version 1.0.0 (09/17/2004):
 	New Features:
