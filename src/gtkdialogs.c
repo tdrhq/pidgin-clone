@@ -245,7 +245,12 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 					GAIM_WEBSITE "\">" GAIM_WEBSITE "</A><BR/><BR/>");
 
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#gaim on irc.freenode.net<BR><BR>"));
+#ifdef _WIN32
+						   "#wingaim"
+#else
+						   "#gaim"
+#endif
+						   " on irc.freenode.net<BR><BR>"));
 
 	/* Active Developers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
