@@ -34,6 +34,10 @@
 	a couple of easy bug fixes from the bug tracker. Hopefully Ethan will get
 	well soon, so he can get back to merging patches and fixing things.
 
+	Nathan: I think I made some Jabber fixes, at least one of which is
+	ChangeLog'd.  I will continue to make empty promises about new features,
+	especially for 2.0.0.  Until then, welcome Daniel!
+
 1.1.1:
 	Luke: This bug fix release features msn improvements, drag and drop
 	improvements, and some translation stuff. Thanks for everone who has
