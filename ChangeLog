@@ -12,6 +12,8 @@ version 1.1.3 (2/17/2005):
 	* Fix some leaks
 	* Fix "Find" in the log viewer so that it finds in all logs
 	* Smileys not appearing at the end of lines has been fixed
+	* Closing conversation windows no longer cancels active file transfers on
+	  MSN (Felipe Contreras)
 
 version 1.1.2 (1/20/2005):
 	* MSN 'HTTP Method' fixed (Felipe Contreras)
