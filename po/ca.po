@@ -7123,7 +7123,7 @@ msgstr ""
 "No s'ha pogut enviar el missatge perquè s'ha produït un error en la connexió"
 
 #: src/protocols/msn/switchboard.c:487
-msgid "Message could not be sent for an unkwnown reason"
+msgid "Message could not be sent for an unknown reason"
 msgstr "No se sap el motiu pel qual no s'ha pogut enviar el missatge"
 
 # Gnome_2.6_Extras [rhythmbox.HEAD.ca.po]

@@ -7101,7 +7101,7 @@ msgid "Message could not be sent because a connection error occured"
 msgstr "Besked kunne ikke sendes på grund af en forbindelsesfejl"
 
 #: src/protocols/msn/switchboard.c:487
-msgid "Message could not be sent for an unkwnown reason"
+msgid "Message could not be sent for an unknown reason"
 msgstr "Besked kunne ikke sende af en ukendt årsag"
 
 #: src/protocols/msn/switchboard.c:492

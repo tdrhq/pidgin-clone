@@ -7142,7 +7142,7 @@ msgid "Message could not be sent because a connection error occured"
 msgstr "Poruka se ne može poslati zbog greške u vezi."
 
 #: src/protocols/msn/switchboard.c:487
-msgid "Message could not be sent for an unkwnown reason"
+msgid "Message could not be sent for an unknown reason"
 msgstr "Poruka se ne može poslati iz nepoznatih razloga."
 
 #: src/protocols/msn/switchboard.c:492

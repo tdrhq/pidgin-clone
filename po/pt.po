@@ -7122,7 +7122,7 @@ msgid "Message could not be sent because a connection error occured"
 msgstr "A mensagem não pôde ser enviada porque ocorreu um erro de ligação"
 
 #: src/protocols/msn/switchboard.c:487
-msgid "Message could not be sent for an unkwnown reason"
+msgid "Message could not be sent for an unknown reason"
 msgstr "A mensagem não pôde ser enviada por uma razão desconhecida"
 
 #: src/protocols/msn/switchboard.c:492

@@ -7087,7 +7087,7 @@ msgid "Message could not be sent because a connection error occured"
 msgstr "メッセージを送信できませんでした (接続エラーが発生しました)"
 
 #: src/protocols/msn/switchboard.c:487
-msgid "Message could not be sent for an unkwnown reason"
+msgid "Message could not be sent for an unknown reason"
 msgstr "メッセージを送信できませんでした (原因は不明です)"
 
 #: src/protocols/msn/switchboard.c:492
