@@ -4,6 +4,8 @@ version 0.59.1
 	* Fixed a security bug in the manual browser setting
 	* Now using libiconv for better i18n support (Thanks Junichi
 	  Uekawa)
+	* Will work with Perl 5.8 (thanks, Timothy Lee and Dan 
+	  Colascione)
 
 version 0.59 (06/24/2002):
 	* Hungarian translation added (Thanks, Sutto Zoltan)
