@@ -2,6 +2,8 @@ Gaim: The Pimpin' Penguin IM Clone thats good for the soul!
 
 version 0.59.3:
 	* Yahoo can connect again. Oops!
+	* Reversed Arun's patch that accidentally caused Yahoo
+	  not to connect--for implimeentation reasons
 
 version 0.59.2 (09/09/2002):
         * Japanese translation updated (Thanks, Junichi Uekawa)
