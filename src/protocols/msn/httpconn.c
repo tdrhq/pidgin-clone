@@ -381,7 +381,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	servconn->processing = FALSE;
 
 	if (servconn->wasted)
-		/* msn_servconn_destroy(servconn)*/;
+		msn_servconn_destroy(servconn);
 
 	g_free(old_rx_buf);
 }
