@@ -217,7 +217,7 @@ faim_internal void faimdprintf(aim_session_t *sess, int dlevel, const char *form
 #ifndef FAIM_INTERNAL_INSANE
 #undef printf()
 #define printf() printf called inside libfaim
-#undef printf()
+#undef sprintf()
 #define sprintf() unbounded sprintf used inside libfaim
 #endif
 
