@@ -2200,7 +2200,7 @@ static void update_idle_time(struct buddy_show *bs)
 	time_t t;
 	int ihrs, imin;
 	struct buddy *b;
-	GtkStyle *style;
+	GtkStyle *style = NULL;
 
 	char infotip[2048];
 	char warn[256];
@@ -2231,10 +2231,13 @@ static void update_idle_time(struct buddy_show *bs)
 	if (blist_options & OPT_BLIST_SHOW_IDLETIME)
 		gtk_widget_show(bs->idle);
 
-	style = gtk_style_copy( gtk_rc_get_style(bs->label) );
-	for (i = 0; i < 5; i++)
-		style->fg[i] = bs->idle->style->fg[i];
+	if(gtk_rc_get_style(bs->label))
+		style = gtk_style_copy( gtk_rc_get_style(bs->label) );
+	if(!style)
+		style = gtk_style_new();
 	if ((blist_options & OPT_BLIST_GREY_IDLERS) && (b->idle)) {
+		for (i = 0; i < 5; i++)
+			style->fg[i] = bs->idle->style->fg[i];
 		style->fg[GTK_STATE_NORMAL].red =
 		  (style->fg[GTK_STATE_NORMAL].red / 2) + (style->base[GTK_STATE_NORMAL].red / 2);
 		style->fg[GTK_STATE_NORMAL].green = 
