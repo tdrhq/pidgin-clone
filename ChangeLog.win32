@@ -1,7 +1,10 @@
-version 1.1.3 :
+version 1.1.3 (2/17/2005):
 	* SILC is currently no longer installed on Windows NT 4 systems.  There
 	  is an outstanding bug that causes no account to be able to connect.
 	  Thanks to Lorne Nicol for helping track the issue down.
+	* Updated GTK+ to 2.6.2 (rev a)
+	  GLib 2.6 introduces wrappers for stdio functions (fix to handle
+	  non-ascii paths).
 
 version 1.1.2 (01/20/2005):
 	* Updated GTK+ to 2.4.14 (rev a)
@@ -10,7 +13,6 @@ version 1.1.2 (01/20/2005):
 	* Docking now works with multiple monitors.
 
 version 1.1.1 (12/28/2004):
-	* No changes
 
 version 1.1.0 (12/02/2004):
 	* SILC protocol plugin added.
