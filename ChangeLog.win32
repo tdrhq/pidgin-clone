@@ -4,6 +4,8 @@ version 1.0.4:
 	  variables, to avoid conflicts with other apps that use them and
 	  to avoid HOME env variables intended for cygwin (using unix style
 	  path).
+	* Both the installer and gaim now perform checks to see if an instance
+	  of gaim is already running.
 
 version 1.0.3 (11/11/2004):
 	* Updated GTK+ to 2.4.13 (rev a)
