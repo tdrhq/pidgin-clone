@@ -3,6 +3,12 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 1.1.0:
 	* Added: gaim_utf8_salvage
 	* Added: binary relocation support in prefix.h
+	         WARNING: If your plugin uses anything inside the
+		 #ifdef ENABLE_BINRELOC from prefix.h, it won't be
+		 loadable on a copy of Gaim compiled without binreloc
+		 support. In particular, watch out for the autoconf-like
+		 macros, and accidently including them through internal.h,
+		 which you probably shouldn't be including anyway.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
