@@ -34,7 +34,7 @@
 # - Nickname o Nick: Apodo
 # - Smileys: emoticonos (no «caras gráficas»)
 # - Screenname: Nombre de usuario
-# - System Tray: Barra de tareas del sistema
+# - System Tray: Area de notificación del sistema
 # - Screen Name: Nombre de usuario (en pantalla)
 # - Plugin: Complemento
 # - Key Exchange: Intercambio de claves
@@ -44,8 +44,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-09-09 00:00-0400\n"
-"PO-Revision-Date: 2004-09-09 20:09+0200\n"
+"POT-Creation-Date: 2004-09-14 00:01-0400\n"
+"PO-Revision-Date: 2004-09-14 23:42+0200\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -228,7 +228,7 @@ msgstr "Sin sonido"
 
 #: plugins/docklet/docklet.c:200 src/gtkft.c:628
 msgid "File Transfers"
-msgstr "Transferencia de ficheros"
+msgstr "Transferencia de archivos"
 
 #: plugins/docklet/docklet.c:201 src/gtkaccount.c:2341
 msgid "Accounts"
@@ -248,19 +248,12 @@ msgstr "Salir"
 
 #: plugins/docklet/docklet.c:517
 msgid "Tray Icon Configuration"
-msgstr "Configuración del icono de la barra del sistema"
+msgstr "Configuración del icono del área de notificación del sistema"
 
 #: plugins/docklet/docklet.c:521
 msgid "_Hide new messages until tray icon is clicked"
-msgstr ""
-"_Ocultar mensajes nuevos hasta que se pulsa en el icono de la barra del "
-"sistema"
+msgstr "_Ocultar mensajes nuevos hasta que se pulsa en el icono del área de notificación del sistema"
 
-# Es pulsar, no clickear y 'icono' no lleva acento - jfs
-#  Me pareció que "bandeja" no suen bien todavía, no es común. Veremos si se
-#  populariza esa traducción en el resto de Gnome. nl.
-# "System Tray" se ha traducido como "Barra del sistema"
-# (previamente como "panel de notificación" pero no es aplicable)
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -269,14 +262,14 @@ msgstr ""
 #. *< id
 #: plugins/docklet/docklet.c:547
 msgid "System Tray Icon"
-msgstr "Icono de la barra del sistema"
+msgstr "Icono del área de notificación del sistema"
 
 #. *< name
 #. *< version
 #. *  summary
 #: plugins/docklet/docklet.c:550
 msgid "Displays an icon for Gaim in the system tray."
-msgstr "Muestra un icono para Gaim en la barra del sistema."
+msgstr "Muestra un icono para Gaim en el área de notificación del sistema."
 
 #. *  description
 #: plugins/docklet/docklet.c:552
@@ -285,12 +278,7 @@ msgid ""
 "the current status of Gaim, allow fast access to commonly used functions, "
 "and to toggle display of the buddy list or login window. Also allows "
 "messages to be queued until the icon is clicked, similar to ICQ."
-msgstr ""
-"Muestra un icono en la barra del sistema (por ejemplo en Gnome, KDE o "
-"Windows) para mostrar el estado actual de Gaim. Permite un acceso rápido a "
-"las funciones más comunes, indicar si se debe mostrar la lista de de amigos "
-"o la ventana de conexión. También permite encolar los mensajes hasta que se "
-"pulse el icono, similar a cómo se hace en ICQ."
+msgstr "Muestra un icono en el área de notificación del sistema (por ejemplo en Gnome, KDE o Windows) para mostrar el estado actual de Gaim. Permite un acceso rápido a las funciones más comunes, indicar si se debe mostrar la lista de de amigos o la ventana de conexión. También permite encolar los mensajes hasta que se pulse el icono, similar a cómo se hace en ICQ."
 
 #: plugins/extplacement.c:77
 msgid "By conversation count"
@@ -342,7 +330,7 @@ msgstr ""
 #. *< id
 #: plugins/filectl.c:224
 msgid "Gaim File Control"
-msgstr "Control de ficheros de Gaim"
+msgstr "Control de archivos de Gaim"
 
 #. *< name
 #. *< version
@@ -350,7 +338,7 @@ msgstr "Control de ficheros de Gaim"
 #. *  description
 #: plugins/filectl.c:227 plugins/filectl.c:229
 msgid "Allows you to control Gaim by entering commands in a file."
-msgstr "Permite controlar Gaim introduciendo órdenes en un fichero."
+msgstr "Permite controlar Gaim introduciendo órdenes en un archivo."
 
 #: plugins/gaim-remote/remote.c:91
 msgid "Not connected to AIM"
@@ -499,7 +487,7 @@ msgstr "Agenda local"
 #: plugins/gevolution/add_buddy_dialog.c:144
 #: plugins/gevolution/add_buddy_dialog.c:155
 #: plugins/gevolution/assoc-buddy.c:82 plugins/gevolution/assoc-buddy.c:93
-#: src/gtkblist.c:3051 src/gtkprefs.c:959 src/gtkprefs.c:1011
+#: src/gtkblist.c:3080 src/gtkprefs.c:959 src/gtkprefs.c:1011
 #: src/gtkprefs.c:1823 src/protocols/jabber/jabber.c:925
 msgid "None"
 msgstr "Ninguno"
@@ -507,7 +495,7 @@ msgstr "Ninguno"
 #: plugins/gevolution/add_buddy_dialog.c:188
 #: plugins/gevolution/assoc-buddy.c:176 src/gtkprefs.c:2164
 #: src/gtkroomlist.c:553 src/protocols/jabber/jabber.c:599
-#: src/protocols/msn/msn.c:1394 src/protocols/trepia/trepia.c:399
+#: src/protocols/msn/msn.c:1393 src/protocols/trepia/trepia.c:399
 msgid "Name"
 msgstr "Nombre"
 
@@ -529,8 +517,8 @@ msgid "Search"
 msgstr "Buscar"
 
 #: plugins/gevolution/add_buddy_dialog.c:564
-#: plugins/gevolution/new_person_dialog.c:308 src/gtkblist.c:4091
-#: src/gtkblist.c:4436
+#: plugins/gevolution/new_person_dialog.c:308 src/gtkblist.c:4120
+#: src/gtkblist.c:4465
 msgid "Group:"
 msgstr "Grupo:"
 
@@ -569,7 +557,7 @@ msgid "_Associate Buddy"
 msgstr "_Asociar amigo"
 
 #: plugins/gevolution/gevo-util.c:65 plugins/gevolution/gevolution.c:90
-#: src/blist.c:774 src/blist.c:981 src/blist.c:1917 src/gtkblist.c:3910
+#: src/blist.c:774 src/blist.c:981 src/blist.c:1917 src/gtkblist.c:3939
 #: src/protocols/jabber/roster.c:66
 msgid "Buddies"
 msgstr "Amigos"
@@ -651,6 +639,24 @@ msgstr "Apellidos:"
 #: plugins/gevolution/new_person_dialog.c:383
 msgid "E-mail:"
 msgstr "Correo electrónico:"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/gtk-signals-test.c:102
+msgid "GTK Signals Test"
+msgstr "Prueba de señales GTK"
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#: plugins/gtk-signals-test.c:105 plugins/gtk-signals-test.c:107
+msgid "Test to see that all ui signals are working properly."
+msgstr "Probar para ver si todas las señales de la interfaz de usuario funcionan correctamente."
 
 #: plugins/history.c:92
 msgid "History"
@@ -894,7 +900,7 @@ msgid ""
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Le permite enviar datos en bruto a protocolos basados en texto (Jabber, MSN, "
-"IRC,  TOC). Pulse «Enter» en la caja de entrada para enviarlo. Observe la "
+"IRC,  TOC). Pulse «Intro» en la caja de entrada para enviarlo. Observe la "
 "ventana de depuración."
 
 #: plugins/relnot.c:63
@@ -1264,7 +1270,7 @@ msgid "_Start Gaim on Windows startup"
 msgstr "_Iniciar Gaim al iniciar Windows"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3096
+#: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3125
 #: src/gtkprefs.c:2416
 msgid "Buddy List"
 msgstr "Lista de amigos"
@@ -1286,7 +1292,7 @@ msgstr "_Mantener la ventana de amigos por encima del resto"
 
 #. Conversations
 #: plugins/win32/winprefs/winprefs.c:382 src/gtkprefs.c:1004
-#: src/gtkprefs.c:2417 src/protocols/msn/msn.c:1731
+#: src/gtkprefs.c:2417 src/protocols/msn/msn.c:1730
 msgid "Conversations"
 msgstr "Conversaciones"
 
@@ -1334,7 +1340,7 @@ msgstr "Introduzca su contraseña actual y la contraseña nueva."
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:342 src/connection.c:198 src/gtkblist.c:2423
+#: src/account.c:342 src/connection.c:198 src/gtkblist.c:2452
 #: src/gtkdialogs.c:385 src/gtkdialogs.c:527 src/gtkdialogs.c:581
 #: src/gtkrequest.c:242 src/protocols/jabber/jabber.c:1049
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:227
@@ -1352,8 +1358,8 @@ msgid "OK"
 msgstr "Aceptar"
 
 #: src/account.c:343 src/account.c:381 src/away.c:367 src/connection.c:199
-#: src/gtkaccount.c:2010 src/gtkaccount.c:2506 src/gtkblist.c:2424
-#: src/gtkblist.c:4474 src/gtkconn.c:169 src/gtkdialogs.c:386
+#: src/gtkaccount.c:2010 src/gtkaccount.c:2506 src/gtkblist.c:2453
+#: src/gtkblist.c:4503 src/gtkconn.c:169 src/gtkdialogs.c:386
 #: src/gtkdialogs.c:528 src/gtkdialogs.c:582 src/gtkdialogs.c:680
 #: src/gtkdialogs.c:702 src/gtkdialogs.c:722 src/gtkdialogs.c:759
 #: src/gtkdialogs.c:819 src/gtkdialogs.c:862 src/gtkdialogs.c:897
@@ -1490,7 +1496,9 @@ msgstr "Grupo no eliminado"
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded, "
 "and the old file has moved to blist.xml~."
-msgstr "Se ha encontrado un error al interpretar la lista de amigos. No se ha cargado y el fichero antiguo ha sido movido a blist.xml~."
+msgstr ""
+"Se ha encontrado un error al interpretar la lista de amigos. No se ha "
+"cargado y el archivo antiguo ha sido movido a blist.xml~."
 
 #: src/blist.c:2051
 msgid "Buddy List Error"
@@ -1611,7 +1619,7 @@ msgstr ""
 
 #: src/ft.c:187
 msgid "Cannot send a file of 0 bytes."
-msgstr "No se puede enviar un fichero de 0 bytes."
+msgstr "No se puede enviar un archivo de 0 bytes."
 
 #: src/ft.c:197
 msgid "Cannot send a directory."
@@ -1620,7 +1628,7 @@ msgstr "No se puede enviar un directorio."
 #: src/ft.c:204
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
-msgstr "%s no es un fichero normal. No se sobreescribirá.\n"
+msgstr "%s no es un archivo normal. No se sobreescribirá.\n"
 
 #: src/ft.c:258
 #, c-format
@@ -1630,7 +1638,7 @@ msgstr "%s quiere enviarle %s (%s)"
 #: src/ft.c:298
 #, c-format
 msgid "Accept file transfer request from %s?"
-msgstr "¿Aceptar solicitud de transferencia de fichero de %s?"
+msgstr "¿Aceptar solicitud de transferencia de archivo de %s?"
 
 #: src/ft.c:302
 #, c-format
@@ -1639,14 +1647,14 @@ msgid ""
 "Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
-"Hay un fichero disponible a descargar desde:\n"
+"Hay un archivo disponible a descargar desde:\n"
 "Servidor remoto: %s\n"
 "Puerto remoto: %d"
 
 #: src/ft.c:354
 #, c-format
 msgid "%s is not a valid filename.\n"
-msgstr "%s no es un nombre de fichero válido.\n"
+msgstr "%s no es un nombre de archivo válido.\n"
 
 #: src/ft.c:372
 #, c-format
@@ -1671,12 +1679,12 @@ msgstr "%s canceló la transferencia de %s"
 #: src/ft.c:1010
 #, c-format
 msgid "File transfer to %s aborted.\n"
-msgstr "Transferencia de fichero a %s abortada.\n"
+msgstr "Transferencia de archivo a %s abortada.\n"
 
 #: src/ft.c:1012
 #, c-format
 msgid "File transfer from %s aborted.\n"
-msgstr "Transferencia de fichero de %s abortada.\n"
+msgstr "Transferencia de archivo de %s abortada.\n"
 
 #: src/gaim-disclosure.c:253
 msgid "Expander Size"
@@ -1705,7 +1713,8 @@ msgstr ""
 "\n"
 "    ÓRDENES:\n"
 "       uri                      Usar URI de AIM\n"
-"       away                     Activa el mensaje de ausencia con el valor por omisión\n"
+"       away                     Activa el mensaje de ausencia con el valor "
+"por omisión\n"
 "       back                     Elimina el mensaje de ausencia\n"
 "       quit                     Cerrar copia de Gaim en ejecución\n"
 "\n"
@@ -1797,7 +1806,7 @@ msgid ""
 "<b>Image size:</b> %dx%d"
 msgstr ""
 "<b>Fichero:</b> %s\n"
-"<b>Tamaño de fichero:</b> %s\n"
+"<b>Tamaño de archivo:</b> %s\n"
 "<b>Tamaño de imagen:</b> %dx%d"
 
 #. Build the login options frame.
@@ -1809,7 +1818,7 @@ msgstr "Opciones de conexión"
 msgid "Protocol:"
 msgstr "Protocolo:"
 
-#: src/gtkaccount.c:647 src/gtkblist.c:4063
+#: src/gtkaccount.c:647 src/gtkblist.c:4092
 msgid "Screen Name:"
 msgstr "Nombre de usuario:"
 
@@ -1817,7 +1826,7 @@ msgstr "Nombre de usuario:"
 msgid "Password:"
 msgstr "Contraseña:"
 
-#: src/gtkaccount.c:725 src/gtkblist.c:4077 src/gtkblist.c:4422
+#: src/gtkaccount.c:725 src/gtkblist.c:4106 src/gtkblist.c:4451
 msgid "Alias:"
 msgstr "Apodo:"
 
@@ -1977,235 +1986,235 @@ msgid "Add buddy to your list?"
 msgstr "¿Desea añadir el amigo a su lista?"
 
 #. Add button
-#: src/gtkaccount.c:2505 src/gtkblist.c:4473 src/gtkconv.c:1505
+#: src/gtkaccount.c:2505 src/gtkblist.c:4502 src/gtkconv.c:1505
 #: src/gtkconv.c:3840 src/gtkconv.c:3911 src/gtkrequest.c:247
 #: src/protocols/icq/gaim_icq.c:276 src/protocols/oscar/oscar.c:3784
 #: src/protocols/silc/chat.c:593
 msgid "Add"
 msgstr "Añadir"
 
-#: src/gtkblist.c:816
+#: src/gtkblist.c:837
 msgid "Join a Chat"
 msgstr "Unirse a un chat"
 
-#: src/gtkblist.c:837
+#: src/gtkblist.c:858
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr "Introduzca la información apropiada del chat al que desearía unirse.\n"
 
-#: src/gtkblist.c:848 src/gtkpounce.c:415 src/gtkroomlist.c:354
+#: src/gtkblist.c:869 src/gtkpounce.c:415 src/gtkroomlist.c:354
 msgid "_Account:"
 msgstr "_Cuenta:"
 
-#: src/gtkblist.c:1143 src/gtkblist.c:3249
+#: src/gtkblist.c:1164 src/gtkblist.c:3278
 msgid "Get _Info"
 msgstr "Obtener _información"
 
-#: src/gtkblist.c:1146 src/gtkblist.c:3239
+#: src/gtkblist.c:1167 src/gtkblist.c:3268
 msgid "I_M"
 msgstr "_MI"
 
-#: src/gtkblist.c:1152
+#: src/gtkblist.c:1173
 msgid "_Send File"
-msgstr "_Enviar fichero"
+msgstr "_Enviar archivo"
 
-#: src/gtkblist.c:1158
+#: src/gtkblist.c:1179
 msgid "Add Buddy _Pounce"
 msgstr "Añadir _aviso de amigo"
 
-#: src/gtkblist.c:1160 src/gtkblist.c:1257
+#: src/gtkblist.c:1181 src/gtkblist.c:1278
 msgid "View _Log"
 msgstr "Ver _registro"
 
-#: src/gtkblist.c:1170
+#: src/gtkblist.c:1191
 msgid "_Alias Buddy..."
 msgstr "_Apodo de amigo..."
 
-#: src/gtkblist.c:1172
+#: src/gtkblist.c:1193
 msgid "_Remove Buddy"
 msgstr "_Eliminar amigo"
 
-#: src/gtkblist.c:1174
+#: src/gtkblist.c:1195
 msgid "Alias Contact..."
 msgstr "Apodo para contacto..."
 
-#: src/gtkblist.c:1177 src/gtkdialogs.c:756 src/gtkdialogs.c:758
+#: src/gtkblist.c:1198 src/gtkdialogs.c:756 src/gtkdialogs.c:758
 msgid "Remove Contact"
 msgstr "Eliminar contacto"
 
-#: src/gtkblist.c:1181 src/gtkblist.c:1265 src/gtkblist.c:1279
+#: src/gtkblist.c:1202 src/gtkblist.c:1286 src/gtkblist.c:1300
 msgid "_Alias..."
 msgstr "_Apodo..."
 
-#: src/gtkblist.c:1183 src/gtkblist.c:1267 src/gtkblist.c:1284
+#: src/gtkblist.c:1204 src/gtkblist.c:1288 src/gtkblist.c:1305
 #: src/gtkconn.c:361
 msgid "_Remove"
 msgstr "Elimina_r"
 
-#: src/gtkblist.c:1229
+#: src/gtkblist.c:1250
 msgid "Add a _Buddy"
 msgstr "Añadir un _amigo"
 
-#: src/gtkblist.c:1231
+#: src/gtkblist.c:1252
 msgid "Add a C_hat"
 msgstr "Añadir un _chat"
 
-#: src/gtkblist.c:1233
+#: src/gtkblist.c:1254
 msgid "_Delete Group"
 msgstr "_Eliminar grupo"
 
-#: src/gtkblist.c:1235
+#: src/gtkblist.c:1256
 msgid "_Rename"
 msgstr "_Renombrar"
 
 #. join button
-#: src/gtkblist.c:1253 src/gtkroomlist.c:264 src/gtkroomlist.c:409
+#: src/gtkblist.c:1274 src/gtkroomlist.c:264 src/gtkroomlist.c:409
 #: src/stock.c:88
 msgid "_Join"
 msgstr "_Unirse"
 
-#: src/gtkblist.c:1255
+#: src/gtkblist.c:1276
 msgid "Auto-Join"
 msgstr "Conectarse automáticamente"
 
-#: src/gtkblist.c:1281 src/gtkblist.c:1306
+#: src/gtkblist.c:1302 src/gtkblist.c:1327
 msgid "_Collapse"
 msgstr "_Contraer"
 
-#: src/gtkblist.c:1311
+#: src/gtkblist.c:1332
 msgid "_Expand"
 msgstr "_Expandir"
 
-#: src/gtkblist.c:1958 src/gtkconv.c:4483 src/gtkpounce.c:316
+#: src/gtkblist.c:1979 src/gtkconv.c:4483 src/gtkpounce.c:316
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr "No está conectado con ninguna cuenta que pueda añadir a ese amigo."
 
 #. Buddies menu
-#: src/gtkblist.c:2368
+#: src/gtkblist.c:2397
 msgid "/_Buddies"
 msgstr "/_Amigos"
 
-#: src/gtkblist.c:2369
+#: src/gtkblist.c:2398
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Amigos/Mensaje _instantáneo nuevo..."
 
-#: src/gtkblist.c:2370
+#: src/gtkblist.c:2399
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Amigos/Unirse a un _chat..."
 
-#: src/gtkblist.c:2371
+#: src/gtkblist.c:2400
 msgid "/Buddies/Get User _Info..."
 msgstr "/Amigos/Obtener _información del usuario..."
 
-#: src/gtkblist.c:2372
+#: src/gtkblist.c:2401
 msgid "/Buddies/View User _Log..."
 msgstr "/Amigos/Ver _registro del usuario..."
 
-#: src/gtkblist.c:2374
+#: src/gtkblist.c:2403
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Amigos/Mostrar amigos _desconectados"
 
-#: src/gtkblist.c:2375
+#: src/gtkblist.c:2404
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Amigos/Mostrar grupos _vacíos"
 
-#: src/gtkblist.c:2376
+#: src/gtkblist.c:2405
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Amigos/_Añadir un amigo..."
 
-#: src/gtkblist.c:2377
+#: src/gtkblist.c:2406
 msgid "/Buddies/Add C_hat..."
 msgstr "/Amigos/Añadir un _chat..."
 
-#: src/gtkblist.c:2378
+#: src/gtkblist.c:2407
 msgid "/Buddies/Add _Group..."
 msgstr "/Amigos/Añadir _grupo..."
 
-#: src/gtkblist.c:2380
+#: src/gtkblist.c:2409
 msgid "/Buddies/_Signoff"
 msgstr "/Amigos/_Desconectar"
 
-#: src/gtkblist.c:2381
+#: src/gtkblist.c:2410
 msgid "/Buddies/_Quit"
 msgstr "/Amigos/_Salir"
 
 #. Tools
-#: src/gtkblist.c:2384
+#: src/gtkblist.c:2413
 msgid "/_Tools"
 msgstr "/_Herramientas"
 
-#: src/gtkblist.c:2385
+#: src/gtkblist.c:2414
 msgid "/Tools/_Away"
 msgstr "/Herramientas/_Ausentarse"
 
-#: src/gtkblist.c:2386
+#: src/gtkblist.c:2415
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Herramientas/_Aviso de amigo"
 
-#: src/gtkblist.c:2387
+#: src/gtkblist.c:2416
 msgid "/Tools/Account Ac_tions"
 msgstr "/Herramientas/Acc_iones"
 
-#: src/gtkblist.c:2388
+#: src/gtkblist.c:2417
 msgid "/Tools/Pl_ugin Actions"
 msgstr "/Herramientas/Acciones del com_plemento"
 
-#: src/gtkblist.c:2390
+#: src/gtkblist.c:2419
 msgid "/Tools/A_ccounts"
 msgstr "/Herramientas/_Cuentas"
 
-#: src/gtkblist.c:2391
+#: src/gtkblist.c:2420
 msgid "/Tools/_File Transfers"
-msgstr "/Herramientas/Transferencias de _ficheros"
+msgstr "/Herramientas/_Transferencias de archivos"
 
-#: src/gtkblist.c:2392
+#: src/gtkblist.c:2421
 msgid "/Tools/R_oom List"
 msgstr "/Herramientas/Lista de _salas"
 
-#: src/gtkblist.c:2393
+#: src/gtkblist.c:2422
 msgid "/Tools/Pr_eferences"
 msgstr "/Herramientas/Pr_eferencias"
 
-#: src/gtkblist.c:2394
+#: src/gtkblist.c:2423
 msgid "/Tools/Pr_ivacy"
 msgstr "/Herramientas/Pr_ivacidad"
 
-#: src/gtkblist.c:2396
+#: src/gtkblist.c:2425
 msgid "/Tools/View System _Log"
 msgstr "/Herramientas/_Ver registro del sistema"
 
 #. Help
-#: src/gtkblist.c:2399
+#: src/gtkblist.c:2428
 msgid "/_Help"
 msgstr "/_Ayuda"
 
-#: src/gtkblist.c:2400
+#: src/gtkblist.c:2429
 msgid "/Help/Online _Help"
 msgstr "/Ayuda/Ayuda en _línea"
 
-#: src/gtkblist.c:2401
+#: src/gtkblist.c:2430
 msgid "/Help/_Debug Window"
 msgstr "/Ayuda/Ventana de _depuración"
 
-#: src/gtkblist.c:2402
+#: src/gtkblist.c:2431
 msgid "/Help/_About"
 msgstr "/Ayuda/_Acerca de"
 
-#: src/gtkblist.c:2420
+#: src/gtkblist.c:2449
 msgid "Rename Group"
 msgstr "Renombrar grupo"
 
-#: src/gtkblist.c:2420
+#: src/gtkblist.c:2449
 msgid "New group name"
 msgstr "Nuevo nombre de grupo"
 
-#: src/gtkblist.c:2421
+#: src/gtkblist.c:2450
 msgid "Please enter a new name for the selected group."
 msgstr "Introduzca un nombre para el grupo seleccionado."
 
-#: src/gtkblist.c:2450
+#: src/gtkblist.c:2479
 #, c-format
 msgid ""
 "\n"
@@ -2214,7 +2223,7 @@ msgstr ""
 "\n"
 "<b>Cuenta:</b> %s"
 
-#: src/gtkblist.c:2514
+#: src/gtkblist.c:2543
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
@@ -2222,12 +2231,12 @@ msgstr ""
 "\n"
 "<b>Estado:</b> Desconectado"
 
-#: src/gtkblist.c:2529
+#: src/gtkblist.c:2558
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:2545
+#: src/gtkblist.c:2574
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2235,7 +2244,7 @@ msgstr ""
 "\n"
 "<b>Cuenta:</b>"
 
-#: src/gtkblist.c:2546
+#: src/gtkblist.c:2575
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
@@ -2243,7 +2252,7 @@ msgstr ""
 "\n"
 "<b>Apodo del contacto:</b>"
 
-#: src/gtkblist.c:2547
+#: src/gtkblist.c:2576
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2251,7 +2260,7 @@ msgstr ""
 "\n"
 "<b>Apodo:</b>"
 
-#: src/gtkblist.c:2548
+#: src/gtkblist.c:2577
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2259,7 +2268,7 @@ msgstr ""
 "\n"
 "<b>Apodo:</b>"
 
-#: src/gtkblist.c:2549
+#: src/gtkblist.c:2578
 msgid ""
 "\n"
 "<b>Logged In:</b>"
@@ -2267,7 +2276,7 @@ msgstr ""
 "\n"
 "<b>Conectado:</b>"
 
-#: src/gtkblist.c:2550
+#: src/gtkblist.c:2579
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2275,7 +2284,7 @@ msgstr ""
 "\n"
 "<b>Ausente:</b>"
 
-#: src/gtkblist.c:2551
+#: src/gtkblist.c:2580
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2283,7 +2292,7 @@ msgstr ""
 "\n"
 "<b>Avisado:</b>"
 
-#: src/gtkblist.c:2553
+#: src/gtkblist.c:2582
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2291,7 +2300,7 @@ msgstr ""
 "\n"
 "<b>Descripción:</b> Terrorífica"
 
-#: src/gtkblist.c:2554
+#: src/gtkblist.c:2583
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2299,7 +2308,7 @@ msgstr ""
 "\n"
 "<b>Estado:</b> Genial "
 
-#: src/gtkblist.c:2555
+#: src/gtkblist.c:2584
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2307,108 +2316,108 @@ msgstr ""
 "\n"
 "<b>Estado:</b> Rock & roll "
 
-#: src/gtkblist.c:2837
+#: src/gtkblist.c:2866
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Ausente (%dh%02dm) "
 
-#: src/gtkblist.c:2839
+#: src/gtkblist.c:2868
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Ausente (%dm)"
 
-#: src/gtkblist.c:2844
+#: src/gtkblist.c:2873
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Avisado (%d%%) "
 
-#: src/gtkblist.c:2847
+#: src/gtkblist.c:2876
 msgid "Offline "
 msgstr "Desconectado "
 
 #. Make menu items sensitive/insensitive where appropriate
-#: src/gtkblist.c:2965
+#: src/gtkblist.c:2994
 msgid "/Buddies/Join a Chat..."
 msgstr "/Amigos/Unirse a un chat..."
 
-#: src/gtkblist.c:2968
+#: src/gtkblist.c:2997
 msgid "/Tools/Room List"
 msgstr "/Herramientas/Lista de salas"
 
-#: src/gtkblist.c:2971
+#: src/gtkblist.c:3000
 msgid "/Tools/Privacy"
 msgstr "/Herramientas/Privacidad"
 
-#: src/gtkblist.c:3053
+#: src/gtkblist.c:3082
 msgid "Alphabetical"
 msgstr "Alfabético"
 
-#: src/gtkblist.c:3054
+#: src/gtkblist.c:3083
 msgid "By status"
 msgstr "Por estado"
 
-#: src/gtkblist.c:3055
+#: src/gtkblist.c:3084
 msgid "By log size"
 msgstr "Por tamaño de registro"
 
-#: src/gtkblist.c:3121
+#: src/gtkblist.c:3150
 msgid "/Tools/Away"
 msgstr "/Herramientas/Ausencia"
 
-#: src/gtkblist.c:3124
+#: src/gtkblist.c:3153
 msgid "/Tools/Buddy Pounce"
 msgstr "/Herramientas/Aviso de amigo"
 
-#: src/gtkblist.c:3127
+#: src/gtkblist.c:3156
 msgid "/Tools/Account Actions"
 msgstr "/Herramientas/Acciones de cuentas"
 
-#: src/gtkblist.c:3130
+#: src/gtkblist.c:3159
 msgid "/Tools/Plugin Actions"
 msgstr "/Herramientas/Acciones de complemento"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:3218
+#: src/gtkblist.c:3247
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Amigos/Mostrar amigos desconectados"
 
-#: src/gtkblist.c:3220
+#: src/gtkblist.c:3249
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Amigos/Mostrar grupos vacíos"
 
-#: src/gtkblist.c:3245
+#: src/gtkblist.c:3274
 msgid "Send a message to the selected buddy"
 msgstr "Enviar un mensaje al amigo seleccionado"
 
-#: src/gtkblist.c:3255
+#: src/gtkblist.c:3284
 msgid "Get information on the selected buddy"
 msgstr "Obtener información sobre el amigo seleccionado"
 
-#: src/gtkblist.c:3259
+#: src/gtkblist.c:3288
 msgid "_Chat"
 msgstr "_Charlar"
 
-#: src/gtkblist.c:3264
+#: src/gtkblist.c:3293
 msgid "Join a chat room"
 msgstr "Unirse a una sala de chat"
 
-#: src/gtkblist.c:3269
+#: src/gtkblist.c:3298
 msgid "_Away"
 msgstr "_Ausente"
 
-#: src/gtkblist.c:3274
+#: src/gtkblist.c:3303
 msgid "Set an away message"
 msgstr "Poner un mensaje de ausencia"
 
-#: src/gtkblist.c:4017 src/protocols/silc/buddy.c:731
+#: src/gtkblist.c:4046 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:989 src/protocols/silc/buddy.c:1034
 #: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2741
 msgid "Add Buddy"
 msgstr "Añadir amigo"
 
-#: src/gtkblist.c:4041
+#: src/gtkblist.c:4070
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2420,15 +2429,15 @@ msgstr ""
 "posible.\n"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:4101 src/gtkblist.c:4402
+#: src/gtkblist.c:4130 src/gtkblist.c:4431
 msgid "Account:"
 msgstr "Cuenta:"
 
-#: src/gtkblist.c:4335
+#: src/gtkblist.c:4364
 msgid "This protocol does not support chat rooms."
 msgstr "Este protocolo no está soportado en las habitaciones de chats."
 
-#: src/gtkblist.c:4351
+#: src/gtkblist.c:4380
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -2436,25 +2445,27 @@ msgstr ""
 "No está conectado con ninguna cuenta que tenga la capacidad de acceder a "
 "chats."
 
-#: src/gtkblist.c:4368
+#: src/gtkblist.c:4397
 msgid "Add Chat"
 msgstr "Añadir chat"
 
-#: src/gtkblist.c:4392
+#: src/gtkblist.c:4421
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
-msgstr "Introduzca el apodo, y la información que crea conveniente del chat que desearía añadir en la lista de amigos.\n"
+msgstr ""
+"Introduzca el apodo, y la información que crea conveniente del chat que "
+"desearía añadir en la lista de amigos.\n"
 
-#: src/gtkblist.c:4470
+#: src/gtkblist.c:4499
 msgid "Add Group"
 msgstr "Añadir grupo"
 
-#: src/gtkblist.c:4471
+#: src/gtkblist.c:4500
 msgid "Please enter the name of the group to be added."
 msgstr "Introduzca el nombre del grupo a añadir."
 
-#: src/gtkblist.c:5038 src/gtkblist.c:5135
+#: src/gtkblist.c:5067 src/gtkblist.c:5164
 msgid "No actions available"
 msgstr "No hay acciones disponibles"
 
@@ -2556,7 +2567,8 @@ msgstr "Ese amigo no utiliza el mismo protocolo que este chat"
 #: src/gtkconv.c:727
 msgid ""
 "You are not currently signed on with an account that can invite that buddy."
-msgstr "No está conectado con ninguna cuenta con la que pueda invitar a ese amigo."
+msgstr ""
+"No está conectado con ninguna cuenta con la que pueda invitar a ese amigo."
 
 #: src/gtkconv.c:781
 msgid "Invite Buddy Into Chat Room"
@@ -2581,7 +2593,7 @@ msgstr "_Mensaje:"
 
 #: src/gtkconv.c:908 src/gtkconv.c:2601 src/gtkdebug.c:182
 msgid "Unable to open file."
-msgstr "No se pudo leer el fichero."
+msgstr "No se pudo leer el archivo."
 
 #: src/gtkconv.c:913
 #, c-format
@@ -2607,7 +2619,7 @@ msgstr "MI"
 #. Send File button
 #: src/gtkconv.c:1462 src/gtkconv.c:3833 src/protocols/oscar/oscar.c:591
 msgid "Send File"
-msgstr "Enviar fichero"
+msgstr "Enviar archivo"
 
 #: src/gtkconv.c:1471
 msgid "Un-Ignore"
@@ -2628,7 +2640,7 @@ msgstr "Mensaje de ausencia"
 
 #: src/gtkconv.c:2609
 msgid "Unable to save icon file to disk."
-msgstr "No se pudo salvar el fichero de iconos al disco."
+msgstr "No se pudo salvar el archivo de iconos al disco."
 
 #: src/gtkconv.c:2630
 msgid "Save Icon"
@@ -2686,7 +2698,7 @@ msgstr "/Conversación/Limpiar"
 
 #: src/gtkconv.c:3619
 msgid "/Conversation/Se_nd File..."
-msgstr "/Conversación/_Enviar fichero..."
+msgstr "/Conversación/_Enviar archivo..."
 
 #: src/gtkconv.c:3620
 msgid "/Conversation/Add Buddy _Pounce..."
@@ -2759,7 +2771,7 @@ msgstr "/Conversación/Ver registro"
 
 #: src/gtkconv.c:3704
 msgid "/Conversation/Send File..."
-msgstr "/Conversación/Enviar fichero..."
+msgstr "/Conversación/Enviar archivo..."
 
 #: src/gtkconv.c:3708
 msgid "/Conversation/Add Buddy Pounce..."
@@ -2838,7 +2850,7 @@ msgstr "Bloquear al usuario"
 
 #: src/gtkconv.c:3834
 msgid "Send a file to the user"
-msgstr "Enviar un fichero al usuario"
+msgstr "Enviar un archivo al usuario"
 
 #: src/gtkconv.c:3841
 msgid "Add the user to your buddy list"
@@ -3221,7 +3233,9 @@ msgstr "Obtener registro de usuario"
 #: src/gtkdialogs.c:578
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
-msgstr "Introduzca el nombre de usuario de la persona de la cual quiere ver información de registro."
+msgstr ""
+"Introduzca el nombre de usuario de la persona de la cual quiere ver "
+"información de registro."
 
 #: src/gtkdialogs.c:618
 msgid "Warn User"
@@ -3325,7 +3339,7 @@ msgstr "Eliminar chat"
 #: src/gtkft.c:140
 #, c-format
 msgid "%.2f KB/s"
-msgstr "%.2f KB/s"
+msgstr "%.2f KiB/s"
 
 #: src/gtkft.c:161 src/gtkft.c:978
 msgid "Finished"
@@ -3358,11 +3372,11 @@ msgstr "<b>Enviando como:</b>"
 #: src/gtkft.c:407
 msgid "There is no application configured to open this type of file."
 msgstr ""
-"No se ha configurado ninguna aplicación para abrir este tipo de fichero."
+"No se ha configurado ninguna aplicación para abrir este tipo de archivo."
 
 #: src/gtkft.c:412
 msgid "An error occurred while opening the file."
-msgstr "Se produjo un error al abrir el fichero."
+msgstr "Se produjo un error al abrir el archivo."
 
 #: src/gtkft.c:503
 msgid "Progress"
@@ -3370,7 +3384,7 @@ msgstr "Progreso"
 
 #: src/gtkft.c:510
 msgid "Filename"
-msgstr "Nombre de fichero"
+msgstr "Nombre de archivo"
 
 #: src/gtkft.c:517
 msgid "Size"
@@ -3382,7 +3396,7 @@ msgstr "Restante"
 
 #: src/gtkft.c:556
 msgid "Filename:"
-msgstr "Nombre de fichero:"
+msgstr "Nombre de archivo:"
 
 #: src/gtkft.c:557
 msgid "Status:"
@@ -3431,48 +3445,48 @@ msgstr "_Continuar"
 msgid "Failed"
 msgstr "Falló"
 
-#: src/gtkimhtml.c:602
+#: src/gtkimhtml.c:617
 msgid "Pa_ste As Text"
 msgstr "Pe_gar como texto"
 
-#: src/gtkimhtml.c:1047
+#: src/gtkimhtml.c:1062
 msgid "Hyperlink color"
 msgstr "Color de hiperenlace"
 
-#: src/gtkimhtml.c:1048
+#: src/gtkimhtml.c:1063
 msgid "Color to draw hyperlinks."
 msgstr "Color para dibujar hiperenlaces."
 
-#: src/gtkimhtml.c:1253
+#: src/gtkimhtml.c:1268
 msgid "_Copy E-Mail Address"
 msgstr "_Copiar dirección de correo electrónico"
 
-#: src/gtkimhtml.c:1265
+#: src/gtkimhtml.c:1280
 msgid "_Copy Link Location"
 msgstr "_Copiar destino del enlace"
 
-#: src/gtkimhtml.c:1275
+#: src/gtkimhtml.c:1290
 msgid "_Open Link in Browser"
 msgstr "_Abrir enlace en navegador"
 
-#: src/gtkimhtml.c:2825
+#: src/gtkimhtml.c:2840
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
 msgstr ""
 "Gaim no ha podido deducir el tipo de imagen a partir de la extensión del "
-"fichero. Tomando PNG por omisión."
+"archivo. Tomando PNG por omisión."
 
-#: src/gtkimhtml.c:2833
+#: src/gtkimhtml.c:2848
 #, c-format
 msgid "Error saving image: %s"
 msgstr "Error guardando imagen: %s"
 
-#: src/gtkimhtml.c:2910 src/gtkimhtml.c:2922
+#: src/gtkimhtml.c:2925 src/gtkimhtml.c:2937
 msgid "Save Image"
 msgstr "Guardar imagen"
 
-#: src/gtkimhtml.c:2950
+#: src/gtkimhtml.c:2965
 msgid "_Save Image..."
 msgstr "_Guardar imagen..."
 
@@ -3653,7 +3667,7 @@ msgstr ""
 
 #: src/gtkpounce.c:130
 msgid "Select a file"
-msgstr "Seleccione un fichero"
+msgstr "Seleccione un archivo"
 
 #: src/gtkpounce.c:161
 msgid "Please enter a buddy to pounce."
@@ -4229,7 +4243,7 @@ msgid ""
 "(%s for filename)"
 msgstr ""
 "_Comando para sonido:\n"
-"(%s para nombre de fichero)"
+"(%s para nombre de archivo)"
 
 #: src/gtkprefs.c:1701
 msgid "Sound Events"
@@ -4327,7 +4341,7 @@ msgstr ""
 "\n"
 "<span weight=\"bold\">Escrito por:</span>\t%s\n"
 "<span weight=\"bold\">Sitio Web:</span>\t\t%s\n"
-"<span weight=\"bold\">Nombre del fichero:</span>\t%s"
+"<span weight=\"bold\">Nombre del archivo:</span>\t%s"
 
 #: src/gtkprefs.c:1924
 #, c-format
@@ -4342,7 +4356,7 @@ msgstr ""
 "\n"
 "<span weight=\"bold\">Escrito por:</span>  %s\n"
 "<span weight=\"bold\">URL:</span>  %s\n"
-"<span weight=\"bold\">Nombre del fichero:</span>  %s"
+"<span weight=\"bold\">Nombre del archivo:</span>  %s"
 
 #: src/gtkprefs.c:2157
 msgid "Load"
@@ -4492,12 +4506,14 @@ msgstr "¿Está seguro de que quiere bloquear a %s?"
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
 #: src/gtkrequest.c:240 src/protocols/gg/gg.c:950
+#: src/protocols/msn/dialog.c:112 src/protocols/msn/msn.c:448
 #: src/protocols/novell/novell.c:1891 src/protocols/silc/buddy.c:307
 #: src/protocols/silc/pk.c:116 src/request.h:1236
 msgid "Yes"
 msgstr "Sí"
 
 #: src/gtkrequest.c:241 src/protocols/gg/gg.c:950
+#: src/protocols/msn/dialog.c:113 src/protocols/msn/msn.c:448
 #: src/protocols/novell/novell.c:1892 src/protocols/silc/buddy.c:308
 #: src/protocols/silc/pk.c:117 src/request.h:1236
 msgid "No"
@@ -4514,7 +4530,7 @@ msgstr "Cerrar"
 
 #: src/gtkrequest.c:1398
 msgid "That file already exists"
-msgstr "Ese fichero ya existe"
+msgstr "Ese archivo ya existe"
 
 #: src/gtkrequest.c:1399
 msgid "Would you like to overwrite it?"
@@ -4522,11 +4538,11 @@ msgstr "¿Quiere sobreescribirlo?"
 
 #: src/gtkrequest.c:1437 src/gtkrequest.c:1458
 msgid "Save File..."
-msgstr "Enviar fichero.."
+msgstr "Enviar archivo.."
 
 #: src/gtkrequest.c:1438 src/gtkrequest.c:1459
 msgid "Open File..."
-msgstr "Abrir fichero..."
+msgstr "Abrir archivo..."
 
 #: src/gtkroomlist.c:331
 msgid "Room List"
@@ -4580,24 +4596,20 @@ msgstr "Alguien menciona su nombre en el chat"
 #: src/gtksound.c:158
 #, c-format
 msgid "Unable to play sound because the chosen file (%s) does not exist."
-msgstr "Imposible reproducir el sonido porque el fichero elegido (%s) no existe."
+msgstr "No fue posible reproducir el sonido porque el archivo elegido (%s) no existe."
 
 #: src/gtksound.c:174
 msgid ""
 "Unable to play sound because the 'Command' sound method has been chosen, but "
 "no command has been set."
-msgstr ""
-"Imposible reproducir el sonido porque se ha escogido el método de «Orden», "
-"pero no se ha especificado la orden."
+msgstr "No fue posible reproducir el sonido porque se ha escogido el método de «Orden», pero no se ha especificado la orden."
 
 #: src/gtksound.c:186
 #, c-format
 msgid ""
 "Unable to play sound because the configured sound command could not be "
 "launched: %s"
-msgstr ""
-"Imposible reproducir sonido porque el comando de sonido establecido no se ha "
-"podido lanzar: %s"
+msgstr "No fue posible reproducir el sonido porque el comando de sonido establecido no se ha podido lanzar: %s"
 
 #: src/log.c:109
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
@@ -4634,7 +4646,7 @@ msgstr ""
 #: src/log.c:658 src/log.c:790
 #, c-format
 msgid "<font color=\"red\"><b>Could not read file: %s</b></font>"
-msgstr "<font color=\"red\"><b>No se pudo leer el fichero: %s</b></font>"
+msgstr "<font color=\"red\"><b>No se pudo leer el archivo: %s</b></font>"
 
 #: src/log.c:662
 msgid "HTML"
@@ -4701,14 +4713,18 @@ msgstr ""
 "Modo de uso: %s [OPCIÓN]...\n"
 "\n"
 "  -a, --acct          muestra la ventana de edición de cuentas\n"
-"  -w, --away[=MENS]   marca como no disponible al conectar (el valor opcional\n"
-"                      MENS especifica el nombre del mensaje de no disponibilidad\n"
+"  -w, --away[=MENS]   marca como no disponible al conectar (el valor "
+"opcional\n"
+"                      MENS especifica el nombre del mensaje de no "
+"disponibilidad\n"
 "                      a usar)\n"
-"  -l, --login[=NOMBR] conexión automática (el argumento opcional NOMBRE especifica \n"
+"  -l, --login[=NOMBR] conexión automática (el argumento opcional NOMBRE "
+"especifica \n"
 "                      la/s cuenta/s a utilizar, separadas por comas)\n"
-"  -n, --loginwin      no conectarse automáticamente, mostrar ventana de conexión\n"
+"  -n, --loginwin      no conectarse automáticamente, mostrar ventana de "
+"conexión\n"
 "  -u, --user=NOMBRE   utilizar cuenta NOMBRE\n"
-"  -c, --config=DIR    utilizar DIR para los ficheros de configuración\n"
+"  -c, --config=DIR    utilizar DIR para los archivos de configuración\n"
 "  -d, --debug         mostrar mensajes de depuración en salida estándar\n"
 "  -v, --version       mostrar la versión actual y salir\n"
 "  -h, --help          mostrar esta ayuda y salir\n"
@@ -4728,7 +4744,10 @@ msgid ""
 "Gaim was not able to load your preferences because they are stored in an old "
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
-msgstr "Gaim no pudo cargar sus preferencias porque están almacenadas en un formato antiguo que ya no se utiliza. Por favor, reconfigure sus preferencias utilizando la ventana de Preferencias."
+msgstr ""
+"Gaim no pudo cargar sus preferencias porque están almacenadas en un formato "
+"antiguo que ya no se utiliza. Por favor, reconfigure sus preferencias "
+"utilizando la ventana de Preferencias."
 
 #: src/plugin.c:289
 #, c-format
@@ -5078,7 +5097,10 @@ msgstr "No se pudo acceder al perfil del usuario."
 msgid ""
 "Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
-msgstr "Gaim no pudo acceder al perfil de este usuario debido a un error al intentar conectarse al servidor de directorio. Por favor, inténtelo de nuevo más tarde."
+msgstr ""
+"Gaim no pudo acceder al perfil de este usuario debido a un error al intentar "
+"conectarse al servidor de directorio. Por favor, inténtelo de nuevo más "
+"tarde."
 
 #. *< type
 #. *< ui_requirement
@@ -5152,7 +5174,7 @@ msgstr "No hay tema establecido"
 #: src/protocols/yahoo/yahoo_filexfer.c:188
 #: src/protocols/yahoo/yahoo_filexfer.c:198
 msgid "File Transfer Aborted"
-msgstr "Transferencia de fichero abortada"
+msgstr "Transferencia de archivo abortada"
 
 #: src/protocols/irc/dcc_send.c:273
 msgid "Gaim could not open a listening port."
@@ -5175,7 +5197,7 @@ msgstr "No hay MOTD asociado con esta conexión."
 msgid "MOTD for %s"
 msgstr "MOTD para %s"
 
-#: src/protocols/irc/irc.c:93 src/protocols/irc/irc.c:400
+#: src/protocols/irc/irc.c:93 src/protocols/irc/irc.c:401
 msgid "Server has disconnected"
 msgstr "El servidor se ha desconectado"
 
@@ -5209,16 +5231,16 @@ msgstr "No se pudo crear el socket"
 msgid "Couldn't connect to host"
 msgstr "No se pudo conectar al servidor"
 
-#: src/protocols/irc/irc.c:397 src/protocols/trepia/trepia.c:927
+#: src/protocols/irc/irc.c:398 src/protocols/trepia/trepia.c:927
 msgid "Read error"
 msgstr "Error de lectura"
 
-#: src/protocols/irc/irc.c:552 src/protocols/silc/chat.c:1373
+#: src/protocols/irc/irc.c:553 src/protocols/silc/chat.c:1373
 #: src/protocols/yahoo/yahoochat.c:1398
 msgid "Users"
 msgstr "Usuarios"
 
-#: src/protocols/irc/irc.c:555 src/protocols/silc/chat.c:1376
+#: src/protocols/irc/irc.c:556 src/protocols/silc/chat.c:1376
 #: src/protocols/silc/ops.c:1166 src/protocols/yahoo/yahoochat.c:1407
 msgid "Topic"
 msgstr "Tema"
@@ -5231,38 +5253,42 @@ msgstr "Tema"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:662
+#: src/protocols/irc/irc.c:663
 msgid "IRC Protocol Plugin"
 msgstr "Complemento de protocolo IRC"
 
 #. *  summary
-#: src/protocols/irc/irc.c:663
+#: src/protocols/irc/irc.c:664
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Complemento de protocolo IRC menos malo"
 
-#: src/protocols/irc/irc.c:682 src/protocols/irc/msgs.c:201
+#: src/protocols/irc/irc.c:683 src/protocols/irc/msgs.c:201
 #: src/protocols/jabber/jabber.c:1580 src/protocols/napster/napster.c:670
 #: src/protocols/silc/ops.c:1026 src/protocols/silc/ops.c:1129
 msgid "Server"
 msgstr "Servidor"
 
-#: src/protocols/irc/irc.c:685 src/protocols/jabber/jabber.c:1601
-#: src/protocols/msn/msn.c:1854 src/protocols/napster/napster.c:675
+#: src/protocols/irc/irc.c:686 src/protocols/jabber/jabber.c:1601
+#: src/protocols/msn/msn.c:1853 src/protocols/napster/napster.c:675
 #: src/protocols/silc/silc.c:1589 src/protocols/trepia/trepia.c:1301
 msgid "Port"
 msgstr "Puerto"
 
-#: src/protocols/irc/irc.c:688 src/protocols/oscar/oscar.c:7397
+#: src/protocols/irc/irc.c:689 src/protocols/oscar/oscar.c:7397
 #: src/protocols/zephyr/zephyr.c:2760
 msgid "Encoding"
 msgstr "Codificación"
 
-#: src/protocols/irc/irc.c:691 src/protocols/irc/msgs.c:195
+#: src/protocols/irc/irc.c:692 src/protocols/irc/msgs.c:195
 #: src/protocols/jabber/jabber.c:589 src/protocols/silc/buddy.c:1445
 #: src/protocols/silc/ops.c:973 src/protocols/silc/ops.c:975
 #: src/protocols/silc/ops.c:1123 src/protocols/silc/ops.c:1125
 msgid "Username"
 msgstr "Nombre de usuario"
+
+#: src/protocols/irc/irc.c:695
+msgid "Real name"
+msgstr "Nombre real"
 
 #: src/protocols/irc/msgs.c:97
 msgid "Bad mode"
@@ -5294,8 +5320,7 @@ msgstr " <i>(identificado)</i>"
 
 #: src/protocols/irc/msgs.c:189 src/protocols/irc/msgs.c:195
 #: src/protocols/irc/msgs.c:196 src/protocols/irc/msgs.c:207
-#: src/protocols/msn/msn.c:1247 src/protocols/msn/msn.c:1260
-#: src/protocols/yahoo/yahoo_profile.c:664
+#: src/protocols/msn/msn.c:1247 src/protocols/yahoo/yahoo_profile.c:664
 #, c-format
 msgid "<b>%s:</b> %s<br>"
 msgstr "<b>%s:</b> %s<br>"
@@ -5539,7 +5564,9 @@ msgstr "nick &lt;nuevo apodo&gt;:  Cambia su apodo."
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
 "must be a channel operator to do this."
-msgstr "op &lt;apodo1&gt; [apodo2] ...:  Dar estado de operador de canal a otra persona. Sólo lo puede hacer un operador de canal."
+msgstr ""
+"op &lt;apodo1&gt; [apodo2] ...:  Dar estado de operador de canal a otra "
+"persona. Sólo lo puede hacer un operador de canal."
 
 #: src/protocols/irc/parse.c:124
 msgid ""
@@ -6482,12 +6509,12 @@ msgstr "Error al unirse al chat %s"
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
-"No se pudo enviar el fichero a %s, el usuario no soporta transferencias de "
-"ficheros"
+"No se pudo enviar el archivo a %s, el usuario no soporta transferencias de "
+"archivos"
 
 #: src/protocols/jabber/si.c:583 src/protocols/jabber/si.c:584
 msgid "File Send Failed"
-msgstr "Fallo en el envío del fichero"
+msgstr "Fallo en el envío del archivo"
 
 #: src/protocols/msn/cmdproc.c:342
 msgid "Miscellaneous error"
@@ -6500,6 +6527,25 @@ msgstr "Ha conectado desde otra ubicación."
 #: src/protocols/msn/cmdproc.c:347
 msgid "The MSN servers are going down temporarily."
 msgstr "Los servidores de MSN van a sufrir un apagado temporal."
+
+#: src/protocols/msn/dialog.c:91
+#, c-format
+msgid "Buddy list syncronization issue in %s (%s)"
+msgstr "Problema de sincronización de la lista de amigos en %s (%s)"
+
+#: src/protocols/msn/dialog.c:97
+#, c-format
+msgid ""
+"%s on the local list is inside the group \"%s\" but not on the server list. "
+"Do you want this buddy to be added?"
+msgstr "%s está en la lista local dentro del grupo «%s» pero no está en la lista del servidor. ¿Desea añadir a este amigo?"
+
+#: src/protocols/msn/dialog.c:105
+#, c-format
+msgid ""
+"%s is on the local list but not on the server list. Do you want this buddy "
+"to be added?"
+msgstr "%s está en la lista local pero no está en la lista del servidor. ¿Desea añadir a este amigo?"
 
 #: src/protocols/msn/error.c:35
 msgid "Unable to parse message"
@@ -6615,7 +6661,7 @@ msgstr "Orden deshabilitada"
 
 #: src/protocols/msn/error.c:125
 msgid "File operation error"
-msgstr "Error de operación de ficheros"
+msgstr "Error de operación de archivos"
 
 #: src/protocols/msn/error.c:128
 msgid "Memory allocation error"
@@ -6791,7 +6837,7 @@ msgstr ""
 "\n"
 "<b>%s:</b> %s"
 
-#: src/protocols/msn/msn.c:446 src/protocols/msn/msn.c:1260
+#: src/protocols/msn/msn.c:446
 msgid "Has you"
 msgstr "Le tiene"
 
@@ -6879,84 +6925,84 @@ msgid "<b>Alias:</b> %s<br>"
 msgstr "<B>Apodo:</b> %s<br>"
 
 #. put a link to the actual profile URL
-#: src/protocols/msn/msn.c:1237 src/protocols/msn/msn.c:1595
+#: src/protocols/msn/msn.c:1237 src/protocols/msn/msn.c:1594
 #: src/protocols/yahoo/yahoo_profile.c:1168 src/util.c:782
 #, c-format
 msgid "<b>%s:</b> "
 msgstr "<b>%s:</b>"
 
-#: src/protocols/msn/msn.c:1325
+#: src/protocols/msn/msn.c:1324
 msgid "MSN Profile"
 msgstr "Perfil MSN"
 
-#: src/protocols/msn/msn.c:1330 src/protocols/msn/msn.c:1582
+#: src/protocols/msn/msn.c:1329 src/protocols/msn/msn.c:1581
 #: src/protocols/yahoo/yahoo_profile.c:761
 msgid "Error retrieving profile"
 msgstr "Error al obtener el perfil"
 
 #. Age
-#: src/protocols/msn/msn.c:1401 src/protocols/oscar/oscar.c:5050
+#: src/protocols/msn/msn.c:1400 src/protocols/oscar/oscar.c:5050
 #: src/protocols/trepia/trepia.c:286 src/protocols/trepia/trepia.c:405
 #: src/protocols/yahoo/yahoo_profile.c:1015
 msgid "Age"
 msgstr "Edad"
 
 #. Gender
-#: src/protocols/msn/msn.c:1408 src/protocols/oscar/oscar.c:5036
+#: src/protocols/msn/msn.c:1407 src/protocols/oscar/oscar.c:5036
 #: src/protocols/trepia/trepia.c:280 src/protocols/trepia/trepia.c:407
 #: src/protocols/yahoo/yahoo_profile.c:1025
 msgid "Gender"
 msgstr "Sexo"
 
-#: src/protocols/msn/msn.c:1417 src/protocols/yahoo/yahoo_profile.c:1020
+#: src/protocols/msn/msn.c:1416 src/protocols/yahoo/yahoo_profile.c:1020
 msgid "Marital Status"
 msgstr "Estado civil"
 
-#: src/protocols/msn/msn.c:1424 src/protocols/novell/novell.c:1445
+#: src/protocols/msn/msn.c:1423 src/protocols/novell/novell.c:1445
 #: src/protocols/yahoo/yahoo_profile.c:1010
 msgid "Location"
 msgstr "Ubicación"
 
-#: src/protocols/msn/msn.c:1432 src/protocols/yahoo/yahoo_profile.c:1030
+#: src/protocols/msn/msn.c:1431 src/protocols/yahoo/yahoo_profile.c:1030
 msgid "Occupation"
 msgstr "Ocupación"
 
-#: src/protocols/msn/msn.c:1449 src/protocols/msn/msn.c:1455
-#: src/protocols/msn/msn.c:1462 src/protocols/msn/msn.c:1470
-#: src/protocols/msn/msn.c:1477
+#: src/protocols/msn/msn.c:1448 src/protocols/msn/msn.c:1454
+#: src/protocols/msn/msn.c:1461 src/protocols/msn/msn.c:1469
+#: src/protocols/msn/msn.c:1476
 msgid "A Little About Me"
 msgstr "Un poco sobre mí"
 
-#: src/protocols/msn/msn.c:1486 src/protocols/msn/msn.c:1492
-#: src/protocols/msn/msn.c:1499 src/protocols/msn/msn.c:1506
+#: src/protocols/msn/msn.c:1485 src/protocols/msn/msn.c:1491
+#: src/protocols/msn/msn.c:1498 src/protocols/msn/msn.c:1505
 msgid "Favorite Things"
 msgstr "Cosas preferidas"
 
-#: src/protocols/msn/msn.c:1515 src/protocols/msn/msn.c:1521
-#: src/protocols/msn/msn.c:1528
+#: src/protocols/msn/msn.c:1514 src/protocols/msn/msn.c:1520
+#: src/protocols/msn/msn.c:1527
 msgid "Hobbies and Interests"
 msgstr "Aficiones e intereses"
 
-#: src/protocols/msn/msn.c:1537 src/protocols/msn/msn.c:1543
+#: src/protocols/msn/msn.c:1536 src/protocols/msn/msn.c:1542
 #: src/protocols/yahoo/yahoo_profile.c:1072
 msgid "Favorite Quote"
 msgstr "Cita preferida"
 
-#: src/protocols/msn/msn.c:1551 src/protocols/yahoo/yahoo_profile.c:1123
+#: src/protocols/msn/msn.c:1550 src/protocols/yahoo/yahoo_profile.c:1123
 msgid "Last Updated"
 msgstr "Actualizado por última vez"
 
 #. Homepage
-#: src/protocols/msn/msn.c:1562 src/protocols/silc/ops.c:844
+#: src/protocols/msn/msn.c:1561 src/protocols/silc/ops.c:844
 #: src/protocols/trepia/trepia.c:290 src/protocols/trepia/trepia.c:420
 msgid "Homepage"
 msgstr "Página personal"
 
-#: src/protocols/msn/msn.c:1584
+#: src/protocols/msn/msn.c:1583
 msgid "The user has not created a public profile."
 msgstr "El usuario no ha creado un perfil público."
 
-#: src/protocols/msn/msn.c:1585
+#: src/protocols/msn/msn.c:1584
 msgid ""
 "MSN reported not being able to find the user's profile. This either means "
 "that the user does not exist, or that the user exists but has not created a "
@@ -6966,7 +7012,7 @@ msgstr ""
 "que o bien el usuario no existe o que el usuario existe pero no ha creado un "
 "perfil público."
 
-#: src/protocols/msn/msn.c:1589
+#: src/protocols/msn/msn.c:1588
 msgid ""
 "Gaim could not find any information in the user's profile. The user most "
 "likely does not exist."
@@ -6974,15 +7020,15 @@ msgstr ""
 "Gaim no pudo encontrar información en el perfil de usuario. Es probable que "
 "el usuario no exista."
 
-#: src/protocols/msn/msn.c:1595 src/protocols/yahoo/yahoo_profile.c:1168
+#: src/protocols/msn/msn.c:1594 src/protocols/yahoo/yahoo_profile.c:1168
 msgid "Profile URL"
 msgstr "URL del perfil"
 
-#: src/protocols/msn/msn.c:1736
+#: src/protocols/msn/msn.c:1735
 msgid "Display conversation closed notices"
 msgstr "Mostrar los avisos de cierre de conversación"
 
-#: src/protocols/msn/msn.c:1741
+#: src/protocols/msn/msn.c:1740
 msgid "Display timeout notices"
 msgstr "Mostrar avisos de expiración"
 
@@ -6996,15 +7042,15 @@ msgstr "Mostrar avisos de expiración"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/msn/msn.c:1828 src/protocols/msn/msn.c:1830
+#: src/protocols/msn/msn.c:1827 src/protocols/msn/msn.c:1829
 msgid "MSN Protocol Plugin"
 msgstr "Complemento de protocolo MSN"
 
-#: src/protocols/msn/msn.c:1849 src/protocols/trepia/trepia.c:1296
+#: src/protocols/msn/msn.c:1848 src/protocols/trepia/trepia.c:1296
 msgid "Login server"
 msgstr "Servidor de conexión"
 
-#: src/protocols/msn/msn.c:1858
+#: src/protocols/msn/msn.c:1857
 msgid "Use HTTP Method"
 msgstr "Usar método HTTP"
 
@@ -7128,7 +7174,7 @@ msgstr ""
 #: src/protocols/napster/napster.c:318
 #, c-format
 msgid "users: %s, files: %s, size: %sGB"
-msgstr "usuarios: %s, ficheros: %s, tamaño: %s GB"
+msgstr "usuarios: %s, archivos: %s, tamaño: %s GiB"
 
 #. MSG_SERVER_HOTLIST_ERROR
 #: src/protocols/napster/napster.c:329
@@ -7248,7 +7294,7 @@ msgstr "No se puede añadir uno mismo"
 
 #: src/protocols/novell/nmuser.c:1922
 msgid "Master archive is misconfigured"
-msgstr "El fichero maestro no está bien configurado"
+msgstr "El archivo maestro no está bien configurado"
 
 #: src/protocols/novell/nmuser.c:1926
 msgid "Invalid username or password"
@@ -7661,7 +7707,9 @@ msgstr "No mientras esté en AOL"
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking to "
 "most likely has a buggy client.)"
-msgstr "(Se produjo un error al recibir este mensaje. Es posible que el amigo con el que está hablando tiene un cliente defectuoso.)"
+msgstr ""
+"(Se produjo un error al recibir este mensaje. Es posible que el amigo con el "
+"que está hablando tiene un cliente defectuoso.)"
 
 #: src/protocols/oscar/oscar.c:579
 msgid "Voice"
@@ -7678,7 +7726,7 @@ msgstr "Charlar"
 
 #: src/protocols/oscar/oscar.c:588 src/protocols/oscar/oscar.c:6917
 msgid "Get File"
-msgstr "Recibir fichero"
+msgstr "Recibir archivo"
 
 #: src/protocols/oscar/oscar.c:595
 msgid "Games"
@@ -7802,7 +7850,8 @@ msgstr "Intentando conectarse a %s en %s:%hu para IM directo."
 #: src/protocols/oscar/oscar.c:1468
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
-msgstr "Solicitando a %s que se conecte con nosotros en %s:%hu para MI directo."
+msgstr ""
+"Solicitando a %s que se conecte con nosotros en %s:%hu para MI directo."
 
 #: src/protocols/oscar/oscar.c:1473
 msgid "Unable to open Direct IM"
@@ -7844,7 +7893,10 @@ msgid ""
 "Unable to login: Could not sign on as %s because the screen name is "
 "invalid.  Screen names must either start with a letter and contain only "
 "letters, numbers and spaces, or contain only numbers."
-msgstr "Incapaz de conectar: No pudo conectarse como %s porque el nombre de usuario no es válido. Los nombres de usuario deben empezar con letras y sólo pueden contener letras, números y espacios, o contener sólo números."
+msgstr ""
+"Incapaz de conectar: No pudo conectarse como %s porque el nombre de usuario "
+"no es válido. Los nombres de usuario deben empezar con letras y sólo pueden "
+"contener letras, números y espacios, o contener sólo números."
 
 #: src/protocols/oscar/oscar.c:1725
 msgid "Unable to login to AIM"
@@ -7862,7 +7914,7 @@ msgstr "Conexión establecida, cookie enviada"
 #: src/protocols/yahoo/yahoo_filexfer.c:189
 #: src/protocols/yahoo/yahoo_filexfer.c:199
 msgid "Unable to establish file descriptor."
-msgstr "No se pudo establecer el descriptor de fichero."
+msgstr "No se pudo establecer el descriptor de archivo."
 
 #: src/protocols/oscar/oscar.c:1952
 msgid "Unable to create new connection."
@@ -8459,7 +8511,10 @@ msgid ""
 "Could not add the buddy %s because the screen name is invalid.  Screen names "
 "must either start with a letter and contain only letters, numbers and "
 "spaces, or contain only numbers."
-msgstr "No se pudo añadir al amigo %s porque el nombre de usuario no es válido. Los nombres de usuario deben empezar con letras y sólo pueden contener letras, números y espacios, o contener sólo números."
+msgstr ""
+"No se pudo añadir al amigo %s porque el nombre de usuario no es válido. Los "
+"nombres de usuario deben empezar con letras y sólo pueden contener letras, "
+"números y espacios, o contener sólo números."
 
 #: src/protocols/oscar/oscar.c:5667 src/protocols/oscar/oscar.c:6116
 #: src/protocols/oscar/oscar.c:6130
@@ -8871,9 +8926,7 @@ msgstr "No se encuentra al amigo %s en la red"
 msgid ""
 "To add the buddy you must import his/her public key. Press Import to import "
 "a public key."
-msgstr ""
-"Para añadir al amigo debe importar su clave pública. Pulse Importar para "
-"importar una clave pública."
+msgstr "Para añadir al amigo debe importar su clave pública. Pulse «Importar» para importar una clave pública."
 
 #: src/protocols/silc/buddy.c:1038
 msgid "Import..."
@@ -8887,7 +8940,9 @@ msgstr "Seleccione el usuario correcto"
 msgid ""
 "More than one user was found with the same public key. Select the correct "
 "user from the list to add to the buddy list."
-msgstr "Se ha encontrado más de un usuario con la misma clave pública. Seleccione el usuario que desea añadirr a su lista de amigos de la lista mostrada."
+msgstr ""
+"Se ha encontrado más de un usuario con la misma clave pública. Seleccione el "
+"usuario que desea añadirr a su lista de amigos de la lista mostrada."
 
 #: src/protocols/silc/buddy.c:1129
 msgid ""
@@ -9113,7 +9168,12 @@ msgid ""
 "signatures. If passphrase is set, it is required to be able to join. If "
 "channel public keys are set then only users whose public keys are listed are "
 "able to join."
-msgstr "Se utiliza La autenticación de canal para prevenir el acceso no autorizado. La autenticación puede estar basada en una contraseña o en firmas digitales. Se necesita la contraseña del canal si ésta se ha establecido. Sólo podrán conectarse los usuarios que estén en la lista de claves públicas si se utilizan claves públicas para el acceso."
+msgstr ""
+"Se utiliza La autenticación de canal para prevenir el acceso no autorizado. "
+"La autenticación puede estar basada en una contraseña o en firmas digitales. "
+"Se necesita la contraseña del canal si ésta se ha establecido. Sólo podrán "
+"conectarse los usuarios que estén en la lista de claves públicas si se "
+"utilizan claves públicas para el acceso."
 
 #: src/protocols/silc/chat.c:418 src/protocols/silc/chat.c:419
 #: src/protocols/silc/chat.c:456 src/protocols/silc/chat.c:457
@@ -9245,13 +9305,13 @@ msgstr "Orden desconocida"
 #: src/protocols/silc/ft.c:210 src/protocols/silc/ft.c:215
 #: src/protocols/silc/ft.c:221 src/protocols/silc/ft.c:340
 msgid "Secure File Transfer"
-msgstr "Transferencia segura de ficheros"
+msgstr "Transferencia segura de archivos"
 
 #: src/protocols/silc/ft.c:90 src/protocols/silc/ft.c:93
 #: src/protocols/silc/ft.c:97 src/protocols/silc/ft.c:101
 #: src/protocols/silc/ft.c:105
 msgid "Error during file transfer"
-msgstr "Se produjo un error durante la transferencia de ficheros"
+msgstr "Se produjo un error durante la transferencia de archivos"
 
 #: src/protocols/silc/ft.c:94
 msgid "Permission denied"
@@ -9263,29 +9323,29 @@ msgstr "Falló el acuerdo de claves"
 
 #: src/protocols/silc/ft.c:102
 msgid "File transfer sessions does not exist"
-msgstr "No existen sesiones de transferencia de ficheros"
+msgstr "No existen sesiones de transferencia de archivos"
 
 #: src/protocols/silc/ft.c:206
 msgid "No file transfer session active"
-msgstr "No hay ninguna sesión de transferencia de ficheros activa"
+msgstr "No hay ninguna sesión de transferencia de archivos activa"
 
 #: src/protocols/silc/ft.c:211
 msgid "File transfer already started"
-msgstr "Ya se ha iniciado la transferencia de ficheros"
+msgstr "Ya se ha iniciado la transferencia de archivos"
 
 #: src/protocols/silc/ft.c:216
 msgid "Could not perform key agreement for file transfer"
 msgstr ""
 "No se pudo realizar el acuerdo de claves para realizar la transferencia de "
-"ficheros."
+"archivos."
 
 #: src/protocols/silc/ft.c:222
 msgid "Could not start the file transfer"
-msgstr "No se pudo comenzar la transferencia de ficheros."
+msgstr "No se pudo comenzar la transferencia de archivos."
 
 #: src/protocols/silc/ft.c:341
 msgid "Cannot send file"
-msgstr "No se puede enviar el fichero."
+msgstr "No se puede enviar el archivo."
 
 #: src/protocols/silc/ops.c:339 src/protocols/silc/ops.c:348
 #: src/protocols/silc/ops.c:357
@@ -9497,9 +9557,7 @@ msgstr "Falló el intercambio de claves"
 #: src/protocols/silc/ops.c:1505
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
-msgstr ""
-"Se produjo un fallo al retomar la sesión desligada. Pulse Reconectar para "
-"crear una nueva conexión."
+msgstr "Se produjo un fallo al retomar la sesión desligada. Pulse «Reconectar» para crear una nueva conexión."
 
 #: src/protocols/silc/ops.c:1540
 msgid "Disconnected by server"
@@ -9524,7 +9582,9 @@ msgstr "Se necesita una contraseña"
 
 #: src/protocols/silc/ops.c:1719
 msgid "Failure: Version mismatch, upgrade your client"
-msgstr "Fallo: Existe una diferencia en las versiones, por favor, actualice su cliente"
+msgstr ""
+"Fallo: Existe una diferencia en las versiones, por favor, actualice su "
+"cliente"
 
 #: src/protocols/silc/ops.c:1722
 msgid "Failure: Remote does not trust/support your public key"
@@ -9669,7 +9729,7 @@ msgstr "Permitir que otros consulten qué ordenador está utilizando"
 
 #: src/protocols/silc/silc.c:680
 msgid "Your VCard File"
-msgstr "Su fichero VCard"
+msgstr "Su archivo VCard"
 
 #: src/protocols/silc/silc.c:693 src/protocols/silc/silc.c:694
 msgid "User Online Status Attributes"
@@ -10062,12 +10122,12 @@ msgstr "Buscando %s"
 #: src/protocols/toc/toc.c:480
 #, c-format
 msgid "Unable to write file %s."
-msgstr "No se pudo escribir el fichero %s."
+msgstr "No se pudo escribir el archivo %s."
 
 #: src/protocols/toc/toc.c:483
 #, c-format
 msgid "Unable to read file %s."
-msgstr "No se pudo leer el fichero %s."
+msgstr "No se pudo leer el archivo %s."
 
 #: src/protocols/toc/toc.c:486
 #, c-format
@@ -10224,7 +10284,7 @@ msgstr "¡No se pudo abrir %s para escritura!"
 #: src/protocols/toc/toc.c:1717
 msgid "File transfer failed; other side probably canceled."
 msgstr ""
-"Se produjo un fallo en la transferencia del fichero; posiblemente fue "
+"Se produjo un fallo en la transferencia del archivo; posiblemente fue "
 "cancelado por el otro extremo."
 
 #: src/protocols/toc/toc.c:1762 src/protocols/toc/toc.c:1802
@@ -10234,7 +10294,8 @@ msgstr "No se pudo conectar para realizar la transferencia."
 
 #: src/protocols/toc/toc.c:1959
 msgid "Could not write file header.  The file will not be transferred."
-msgstr "No se pudo escribir la cabecera de fichero.  El fichero no será transferido."
+msgstr ""
+"No se pudo escribir la cabecera de archivo.  El archivo no será transferido."
 
 #: src/protocols/toc/toc.c:2059
 msgid "Gaim - Save As..."
@@ -10244,13 +10305,13 @@ msgstr "Gaim - Guardar como..."
 #, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] "%s solicita %s para aceptar %d fichero: %s (%.2f %s)%s%s"
-msgstr[1] "%s solicita %s para aceptar %d ficheros: %s (%.2f %s)%s%s"
+msgstr[0] "%s solicita %s para aceptar %d archivo: %s (%.2f %s)%s%s"
+msgstr[1] "%s solicita %s para aceptar %d archivos: %s (%.2f %s)%s%s"
 
 #: src/protocols/toc/toc.c:2100
 #, c-format
 msgid "%s requests you to send them a file"
-msgstr "%s le solicita que le mande un fichero"
+msgstr "%s le solicita que le mande un archivo"
 
 #. *< type
 #. *< ui_requirement
@@ -10570,15 +10631,15 @@ msgstr "Puerto del buscapersonas"
 
 #: src/protocols/yahoo/yahoo.c:3392
 msgid "File transfer host"
-msgstr "Servidor de transferencia de ficheros"
+msgstr "Servidor de transferencia de archivos"
 
 #: src/protocols/yahoo/yahoo.c:3395
 msgid "Japan File transfer host"
-msgstr "Servidor de transferencia de ficheros japonés"
+msgstr "Servidor de transferencia de archivos japonés"
 
 #: src/protocols/yahoo/yahoo.c:3398
 msgid "File transfer port"
-msgstr "Puerto de transferencia de ficheros"
+msgstr "Puerto de transferencia de archivos"
 
 #: src/protocols/yahoo/yahoo.c:3401
 msgid "Chat Room List Url"
@@ -10596,7 +10657,9 @@ msgstr "Puerto YCHT"
 msgid ""
 "Gaim cannot send files over Yahoo! that are bigger than One Megabyte "
 "(1,048,576 bytes)."
-msgstr "Gaim no puede enviar ficheros más grandes que un megabyte (1.408.576 bytes) a través de Yahoo!"
+msgstr ""
+"Gaim no puede enviar archivos más grandes que un megabyte (1.408.576 bytes) "
+"a través de Yahoo!"
 
 #: src/protocols/yahoo/yahoo_profile.c:675
 #, c-format
@@ -10754,7 +10817,9 @@ msgstr "Se produjo un problema al conectarse con el servidor YCHT."
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
-msgstr "(Hubo un error convirtiendo este mensaje.\\t Verifique la opción «Codificación» en el Editor de cuentas)"
+msgstr ""
+"(Hubo un error convirtiendo este mensaje.\\t Verifique la opción "
+"«Codificación» en el Editor de cuentas)"
 
 #: src/protocols/zephyr/zephyr.c:676
 #, c-format
@@ -11103,7 +11168,7 @@ msgstr "Notificación"
 #~ msgstr "(Hubo un error recibiendo este mensaje)"
 
 #~ msgid "That file does not exist."
-#~ msgstr "Ese fichero no existe."
+#~ msgstr "Ese archivo no existe."
 
 #~ msgid "%s was not found.\n"
 #~ msgstr "%s no se ha podido encontrar.\n"
@@ -11168,10 +11233,10 @@ msgstr "Notificación"
 #~ "múltiples cuentas de éste cuando se conecta como el mismo usuario."
 
 #~ msgid "Invalid file name."
-#~ msgstr "Nombre de fichero no válido."
+#~ msgstr "Nombre de archivo no válido."
 
 #~ msgid "That file already exists."
-#~ msgstr "Ese fichero ya existe."
+#~ msgstr "Ese archivo ya existe."
 
 #~ msgid "Save As..."
 #~ msgstr "Guardar como..."
@@ -11500,7 +11565,7 @@ msgstr "Notificación"
 #~ msgstr "Ausencia: <b>Activo</b>"
 
 #~ msgid "Could not open config file %s."
-#~ msgstr "No se pudo abrir el fichero de configuración %s."
+#~ msgstr "No se pudo abrir el archivo de configuración %s."
 
 #~ msgid "Invalid Parameter (probably a Gaim bug)"
 #~ msgstr "Parámetro inválido (probablemente un error de Gaim)"
@@ -11658,21 +11723,21 @@ msgstr "Notificación"
 #~ msgstr "No se pudo escribir en %s."
 
 #~ msgid "Save Log File"
-#~ msgstr "Guardar fichero de registro"
+#~ msgstr "Guardar archivo de registro"
 
 #~ msgid "Couldn't remove file %s."
-#~ msgstr "No se pudo borrar el fichero %s."
+#~ msgstr "No se pudo borrar el archivo %s."
 
 #~ msgid ""
 #~ "You are about to remove the log file for %s.  Do you want to continue?"
 #~ msgstr ""
-#~ "Está a punto de borrar el fichero de registro de %s. ¿Desea continuar?"
+#~ "Está a punto de borrar el archivo de registro de %s. ¿Desea continuar?"
 
 #~ msgid "Remove Log"
 #~ msgstr "Eliminar registro"
 
 #~ msgid "Couldn't open log file %s."
-#~ msgstr "No se pudo abrir el fichero de registro %s."
+#~ msgstr "No se pudo abrir el archivo de registro %s."
 
 #~ msgid "Log"
 #~ msgstr "Histórico"
@@ -11704,7 +11769,7 @@ msgstr "Notificación"
 #~ msgstr "Eliminar _HTML de los registros"
 
 #~ msgid "I_ndividual log file for each buddy's signons"
-#~ msgstr "Un fichero de registro _individual para la conexión de cada amigo"
+#~ msgstr "Un archivo de registro _individual para la conexión de cada amigo"
 
 #~ msgid "Error in specifying buddy conversation."
 #~ msgstr "Error al especificar la conversación del amigo."
@@ -11713,7 +11778,7 @@ msgstr "Notificación"
 #~ msgstr "No se pudo encontrar un registro de conversación."
 
 #~ msgid "Unable to make directory %s for logging"
-#~ msgstr "Imposible crear el directorio %s para el registro"
+#~ msgstr "No fue posible crear el directorio %s para el registro"
 
 #~ msgid "IM Sessions with %s\n"
 #~ msgstr "Sesiones de MI con %s\n"
@@ -11940,7 +12005,7 @@ msgstr "Notificación"
 #~ msgstr "Prueba de evento"
 
 #~ msgid "Unable to write to config file"
-#~ msgstr "No se pudo escribir el fichero de configuración."
+#~ msgstr "No se pudo escribir el archivo de configuración."
 
 #~ msgid "Appl_y"
 #~ msgstr "_Aplicar"
@@ -12142,7 +12207,7 @@ msgstr "Notificación"
 #~ msgstr "Denegar Añadir"
 
 #~ msgid "Couldn't open log file %s"
-#~ msgstr "No se pudo abrir el fichero de registro %s"
+#~ msgstr "No se pudo abrir el archivo de registro %s"
 
 #~ msgid "_Raise windows on events"
 #~ msgstr "Al_zar ventanas cuando se reciba un evento"
@@ -12160,7 +12225,7 @@ msgstr "Notificación"
 #~ msgstr "El plugin %s no devolvió información de plugin válida"
 
 #~ msgid "File Transfers..."
-#~ msgstr "Transferencia de ficheros..."
+#~ msgstr "Transferencia de archivos..."
 
 #~ msgid "Accounts..."
 #~ msgstr "Cuentas..."
