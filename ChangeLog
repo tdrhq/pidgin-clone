@@ -3,9 +3,10 @@ Gaim: The Pimpin' Penguin IM Clone thats good for the soul!
 version 0.59.4
 	* Removed color keybinnding altogether.
 	* Added a horizontal scrollbar to Edit page of
-	  buddy list. (Thanks, David Fallon)
-	* Bug fixes. (Thanks to (in no particular order)
+	   buddy list. (Thanks, David Fallon)
+	* Various bug fixes ((Thanks to (in no particular order)
 	  Ethan Blanton, Mark Doliner, Luke Schierer)
+	* i18n fixes (thanks, A Lee)
 
 version 0.59.3 (09/14/2002):
 	* Reversed patch that accidentally caused Yahoo
