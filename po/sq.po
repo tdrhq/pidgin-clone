@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim_sq\n"
 "POT-Creation-Date: 2004-08-05 23:27-0400\n"
-"PO-Revision-Date: 2005-01-17 01:31+0200\n"
+"PO-Revision-Date: 2005-01-19 16:11+0200\n"
 "Last-Translator: Besnik Bleta <besnik@spymac.com>\n"
 "Language-Team: Albanian <translation-team-sq@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -250,8 +250,9 @@ msgid "Displays a system tray icon (in GNOME, KDE or Windows for example) to sho
 msgstr "Shfaq një ikonë shtylle sistemi (në GNOME, KDE ose Windows për shembull) për të treguar gjendjen e çastit të Gaim-it, për të mundësuar hyrje të shpejtë në funksionet e përdorur zakonisht, dhe për të këmbyer shfaqjen e listës së shokëve me dritare hyrjeje. Lejon gjithashtu të vihen në pritje mesazhe deri sa të klikohet ikona, e ngjashme me ICQ."
 
 #: plugins/extplacement.c:77
+#, fuzzy
 msgid "By conversation count"
-msgstr ""
+msgstr "Sipas numrit të bashkëbisedimit"
 
 #: plugins/extplacement.c:98
 msgid "Conversation Placement"
@@ -413,7 +414,7 @@ msgstr "Buton djathtas i miut"
 #. "Visual gesture display" checkbox
 #: plugins/gestures/gestures.c:245
 msgid "_Visual gesture display"
-msgstr ""
+msgstr "_Shfaqje pamore gjestesh"
 
 #  *< api_version
 #  *< type
@@ -3668,7 +3669,7 @@ msgstr "Madhësi më e vogël gërmash"
 
 #: src/gtkimhtmltoolbar.c:962
 msgid "Font Face"
-msgstr ""
+msgstr "Emër Gërmash"
 
 #: src/gtkimhtmltoolbar.c:974
 msgid "Foreground font color"
@@ -5010,7 +5011,7 @@ msgstr "Po lexoj të dhëna"
 
 #: src/protocols/gg/gg.c:694
 msgid "Balancer handshake"
-msgstr ""
+msgstr "Shtrëngim duarsh me barazpeshuesin"
 
 #: src/protocols/gg/gg.c:697
 msgid "Reading server key"
@@ -6003,7 +6004,7 @@ msgstr "_Shërbyes:"
 
 #: src/protocols/jabber/chat.c:51
 msgid "_Handle:"
-msgstr ""
+msgstr "_Nofkë:"
 
 #: src/protocols/jabber/chat.c:212
 #, c-format
@@ -6027,12 +6028,12 @@ msgstr "Emër i Pavlefshëm Shërbyesi"
 #: src/protocols/jabber/chat.c:224
 #, c-format
 msgid "%s is not a valid room handle"
-msgstr ""
+msgstr "%s nuk është një nofkë e vlefshme dhome"
 
 #: src/protocols/jabber/chat.c:225
 #: src/protocols/jabber/chat.c:226
 msgid "Invalid Room Handle"
-msgstr ""
+msgstr "Nofkë e Pavlefshme Dhome"
 
 #: src/protocols/jabber/chat.c:377
 msgid "Configuration error"
@@ -6999,7 +7000,7 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:490
 msgid "Has you"
-msgstr ""
+msgstr "Ju ka"
 
 #: src/protocols/msn/msn.c:504
 #: src/protocols/msn/msn.c:792
@@ -9027,7 +9028,7 @@ msgstr "Shkëputur"
 #: src/protocols/silc/silc.c:49
 #: src/protocols/silc/silc.c:81
 msgid "Indisposed"
-msgstr ""
+msgstr "Pa qejf"
 
 #: src/protocols/silc/buddy.c:1385
 #: src/protocols/silc/silc.c:50
@@ -9200,7 +9201,7 @@ msgstr "<b>Emër Kanal:</b> %s"
 #: src/protocols/silc/chat.c:120
 #, c-format
 msgid "<br><b>User Count:</b> %d"
-msgstr ""
+msgstr "<br><b>Numërim Përdoruesish:</b> %d"
 
 #: src/protocols/silc/chat.c:127
 #, c-format
@@ -10083,7 +10084,7 @@ msgstr "Hidhni poshtë parjen nga përdorues të tjerë"
 
 #: src/protocols/silc/silc.c:1610
 msgid "Block invites"
-msgstr ""
+msgstr "Blloko ftesa"
 
 #: src/protocols/silc/silc.c:1613
 msgid "Block IMs without Key Exchange"
@@ -10167,7 +10168,7 @@ msgstr "Të dhëna Kyçi Publik"
 
 #: src/protocols/silc/util.c:512
 msgid "Paging"
-msgstr ""
+msgstr "Nr. faquesi"
 
 #: src/protocols/silc/util.c:536
 msgid "Computer"
