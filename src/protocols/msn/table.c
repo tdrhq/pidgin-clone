@@ -79,6 +79,10 @@ msn_table_add_cmd(MsnTable *table,
 	{
 		cbs = table->async;
 	}
+	else if (strcmp(command, "fallback") == 0)
+	{
+		cbs = table->fallback;
+	}
 	else
 	{
 		cbs = g_hash_table_lookup(table->cmds, command);
