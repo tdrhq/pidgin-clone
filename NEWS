@@ -18,6 +18,16 @@
 	David and welcome him to the team. I'd also like to thank Steven
 	and Nathan from Silverorange who redid the webpage.
 
+	Tim: Another bug fix release. I didn't really fix any bugs, so
+	I didn't exactly do much for this one. The autopackage will now
+	work with mozilla-nss, if anyone has that, and not gnutls11. (It
+	works with either gnutls11 or mozilla-nss, but not gnutls10)
+	I started working on Gaim-vv again though, and I merged someone's
+	custom msn smiley patch into the 2.0.0 tree, so expect good things
+	whenever that's released (no, don't try it now, you won't like it).
+	Oh and welcome to the team Daniel. Of course, he was already on my
+	Gaim-vv team.
+
 1.1.1:
 	Luke: This bug fix release features msn improvements, drag and drop
 	improvements, and some translation stuff. Thanks for everone who has
