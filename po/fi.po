@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: gaim 1.1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-11-29 11:24+0200\n"
-"PO-Revision-Date: 2004-12-20 23:49+0200\n"
+"PO-Revision-Date: 2004-12-22 06:25+0200\n"
 "Last-Translator: Arto Alakulju <arto@alakulju.net>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -2999,7 +2999,7 @@ msgstr "Makedonia"
 
 #: src/gtkdialogs.c:121
 msgid "Myanmar"
-msgstr "Malesia"
+msgstr "Myanmar"
 
 # NOTE source: netscape
 #: src/gtkdialogs.c:122
