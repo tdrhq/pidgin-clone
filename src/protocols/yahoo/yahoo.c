@@ -390,9 +390,11 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				f->away = 1;
 			else
 				f->away = 0;
-			if (f->status == YAHOO_STATUS_IDLE)
-				f->idle = time(NULL);
-			else
+			if (f->status == YAHOO_STATUS_IDLE) {
+				/* Idle may have already been set in a more precise way in case 137 */
+				if (f->idle == 0)
+					f->idle = time(NULL);
+			} else
 				f->idle = 0;
 			if (f->status != YAHOO_STATUS_CUSTOM)
 				yahoo_friend_set_status_message(f, NULL);
@@ -416,10 +418,15 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			 * mean idle. */
 			if (f->status == YAHOO_STATUS_AVAILABLE)
 				break;
+
 			f->away = strtol(pair->value, NULL, 10);
-			if (f->away == 2)
-				f->idle = time(NULL);
-			break;
+			if (f->away == 2) {
+				/* Idle may have already been set in a more precise way in case 137 */
+				if (f->idle == 0)
+ 					f->idle = time(NULL);
+			}
+
+ 			break;
 		case 138: /* either we're not idle, or we are but won't say how long */
 			if (!f)
 				break;
