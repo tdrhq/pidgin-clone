@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([gaim], [1.0.4cvs], [gaim-devel@lists.sourceforge.net])
+AC_INIT([gaim], [1.1.0cvs], [gaim-devel@lists.sourceforge.net])
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
@@ -1121,6 +1121,7 @@ if test "$zephyr" != "no" ; then
 	LDFLAGS="$orig_LDFLAGS"
 fi
 
+AM_BINRELOC
 
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)

@@ -1,6 +1,12 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 1.0.4:
+version 1.1.0:
+	New Features:
+	* Binary relocable. Gaim will find its files even if it's installed
+	  in a location other than the --prefix it was ./configured with.
+	  Pass --disable-binreloc to ./configure to disable.
+	* IRC now has fallback encodings, and tries harder to display
+	  something useful during an encoding error.
 	Bug Fixes:
 	* Fix crashes when removing buddies in certain situations (Andrew Hart)
 	* Eliminate MSN switchboard errors (Felipe Contreras)
