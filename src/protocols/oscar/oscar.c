@@ -4785,8 +4785,8 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug_info("oscar",
-			   "Disconnected.  Code is 0x%04x and msg is %s\n", code, msg);
+	gaim_debug_info("oscar", "Disconnected.  Code is 0x%04x and msg is %s\n",
+					code, (msg != NULL ? msg : ""));
 	if ((fr) && (fr->conn) && (fr->conn->type == AIM_CONN_TYPE_BOS)) {
 		if (code == 0x0001) {
 			gc->wants_to_die = TRUE;
