@@ -247,10 +247,6 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 						   "#gaim on irc.freenode.net<BR><BR>"));
 
 	/* Active Developers */
-
-	/* Congratulations */
-	g_string_append(str, "<b>Congratulations to Tim and Kim Ringenbach on the occasion of their marriage!</b><br>");
-
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
 						   _("Active Developers"));
 	for (i = 0; developers[i].name != NULL; i++) {
