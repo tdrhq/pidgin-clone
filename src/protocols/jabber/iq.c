@@ -21,6 +21,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "prefs.h"
+#include "util.h"
 
 #include "buddy.h"
 #include "disco.h"
@@ -179,6 +180,7 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 	id = xmlnode_get_attrib(packet, "id");
 
 	if(type && !strcmp(type, "get")) {
+		char *utf8;
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:time");
 		jabber_iq_set_id(iq, id);
@@ -190,8 +192,12 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 		xmlnode_insert_data(xmlnode_new_child(query, "utc"), buf, -1);
 		strftime(buf, sizeof(buf), "%Z", now);
 		xmlnode_insert_data(xmlnode_new_child(query, "tz"), buf, -1);
+
 		strftime(buf, sizeof(buf), "%d %b %Y %T", now);
-		xmlnode_insert_data(xmlnode_new_child(query, "display"), buf, -1);
+		if((utf8 = gaim_utf8_try_convert(buf))) {
+			xmlnode_insert_data(xmlnode_new_child(query, "display"), utf8, -1);
+			g_free(utf8);
+		}
 
 		jabber_iq_send(iq);
 	}
