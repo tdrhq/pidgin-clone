@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: gaim 1.0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-04-02 23:49-0500\n"
-"PO-Revision-Date: 2004-11-29 11:46+0100\n"
+"PO-Revision-Date: 2005-04-05 10:52+0200\n"
 "Last-Translator: Филип Милетић <f.miletic@ewi.tudelft.nl>\n"
 "Language-Team: Serbian (sr) <gnom@prevod.org>\n"
 "MIME-Version: 1.0\n"
@@ -1591,9 +1591,9 @@ msgid "%s wants to send you %s (%s)"
 msgstr "%s жели да Вам пошаље %s (%s)"
 
 #: src/ft.c:268
-#, fuzzy, c-format
+#, c-format
 msgid "%s wants to send you a file"
-msgstr "%s жели да Вам пошаље %s (%s)"
+msgstr "%s жели да вам пошаље датотеку"
 
 #: src/ft.c:306
 #, c-format
@@ -1622,14 +1622,13 @@ msgid "Offering to send %s to %s"
 msgstr "Понуда слања %s за %s"
 
 #: src/ft.c:874
-#, fuzzy, c-format
+#, c-format
 msgid "Transfer of file %s complete"
-msgstr "Пренос %s завршен"
+msgstr "Пренос датотеке %s завршен"
 
 #: src/ft.c:877
-#, fuzzy
 msgid "File transfer complete"
-msgstr "Домаћин за пренос датотека"
+msgstr "Пренос датотеке завршен"
 
 #: src/ft.c:926
 #, c-format
@@ -1637,9 +1636,8 @@ msgid "You canceled the transfer of %s"
 msgstr "Обуставили сте пренос %s"
 
 #: src/ft.c:932
-#, fuzzy
 msgid "File transfer cancelled"
-msgstr "Пренос датотеке је већ почео"
+msgstr "Обустављен је пренос"
 
 #: src/ft.c:985
 #, c-format
@@ -1647,9 +1645,9 @@ msgid "%s canceled the transfer of %s"
 msgstr "%s обустави пренос %s"
 
 #: src/ft.c:991
-#, fuzzy, c-format
+#, c-format
 msgid "%s canceled the file transfer"
-msgstr "%s обустави пренос %s"
+msgstr "%s обустави пренос датотеке"
 
 #: src/ft.c:1040
 #, c-format
@@ -3018,9 +3016,8 @@ msgid "Spanish"
 msgstr "шпански"
 
 #: src/gtkdialogs.c:109
-#, fuzzy
 msgid "Estonian"
-msgstr "румунски"
+msgstr "естонски"
 
 #: src/gtkdialogs.c:110 src/gtkdialogs.c:149
 msgid "Finnish"
@@ -3062,9 +3059,10 @@ msgstr "литвански"
 msgid "Macedonian"
 msgstr "македонски"
 
+# хм, хм... ово смо имали нешто баш наше
 #: src/gtkdialogs.c:120
 msgid "Burmese"
-msgstr ""
+msgstr "бурмски"
 
 #: src/gtkdialogs.c:121
 msgid "Dutch; Flemish"
@@ -3099,9 +3097,8 @@ msgid "Slovenian"
 msgstr "словеначки"
 
 #: src/gtkdialogs.c:129
-#, fuzzy
 msgid "Albanian"
-msgstr "румунски"
+msgstr "албански"
 
 #: src/gtkdialogs.c:130
 msgid "Serbian"
@@ -3113,11 +3110,11 @@ msgstr "шведски"
 
 #: src/gtkdialogs.c:132
 msgid "Turkish"
-msgstr ""
+msgstr "турски"
 
 #: src/gtkdialogs.c:133
 msgid "Ukrainian"
-msgstr ""
+msgstr "украјински"
 
 #: src/gtkdialogs.c:134
 msgid "Vietnamese"
@@ -3167,9 +3164,8 @@ msgstr ""
 "помоћу Гтк+ и лиценциран под Гнуовом Општом јавном лиценцом (GPL).<BR><BR>"
 
 #: src/gtkdialogs.c:250
-#, fuzzy
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">ИРЦ:</FONT> #gaim на irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 
 #: src/gtkdialogs.c:253
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
@@ -5298,7 +5294,7 @@ msgstr "Избачени"
 #: src/protocols/irc/msgs.c:139
 #, c-format
 msgid "Cannot ban %s: banlist is full"
-msgstr ""
+msgstr "Не могу да забраним %s: списак забрана је попуњен"
 
 #: src/protocols/irc/msgs.c:219 src/protocols/irc/msgs.c:239
 #: src/protocols/irc/msgs.c:252
@@ -5377,13 +5373,12 @@ msgid "Users on %s: %s"
 msgstr "Корисника на %s: %s"
 
 #: src/protocols/irc/msgs.c:473
-#, fuzzy
 msgid "Time Response"
-msgstr "Вр. зона"
+msgstr "Одговор са временом"
 
 #: src/protocols/irc/msgs.c:474
 msgid "The IRC server's local time is:"
-msgstr ""
+msgstr "Локално време IRC сервера је:"
 
 #: src/protocols/irc/msgs.c:488
 msgid "No such channel"
@@ -5431,20 +5426,19 @@ msgid "mode (%s %s) by %s"
 msgstr "мод (%s %s) од стране %s"
 
 #: src/protocols/irc/msgs.c:808
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid nickname '%s'"
-msgstr "Неисправно корисничко име"
+msgstr "Неисправан надимак „%s“"
 
 #: src/protocols/irc/msgs.c:809
-#, fuzzy
 msgid "Invalid nickname"
-msgstr "Неисправно корисничко име"
+msgstr "Неисправан надимак"
 
 #: src/protocols/irc/msgs.c:811 src/protocols/irc/msgs.c:816
 msgid ""
 "Your selected account name was rejected by the server.  It probably contains "
 "invalid characters."
-msgstr ""
+msgstr "Изабрали сте име налога које је сервер одбио. Вероватно садржи недозвољене знаке."
 
 #: src/protocols/irc/msgs.c:858
 msgid "Cannot change nick"
@@ -5557,13 +5551,10 @@ msgid "me &lt;action to perform&gt;:  Perform an action."
 msgstr "me &lt;радња&gt;:  Изврши радњу."
 
 #: src/protocols/irc/parse.c:123
-#, fuzzy
 msgid ""
 "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Set or unset a channel "
 "or user mode."
-msgstr ""
-"mode &lt;надимак|канал&gt; &lt;+|-&gt;&lt;A-Za-z&gt;:  Постави или укини "
-"начим приступа за канал или за корисника."
+msgstr "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;надимак|канал&gt;:  Постави или укини начин приступа за канал или за корисника."
 
 #: src/protocols/irc/parse.c:124
 msgid ""
@@ -5640,7 +5631,7 @@ msgstr ""
 
 #: src/protocols/irc/parse.c:135
 msgid "time: Displays the current local time at the IRC server."
-msgstr ""
+msgstr "time: Приказује текуће локално време на IRC серверу."
 
 #: src/protocols/irc/parse.c:136
 msgid "topic [new topic]:  View or change the channel topic."
@@ -5667,9 +5658,8 @@ msgstr ""
 "не можете да је користите."
 
 #: src/protocols/irc/parse.c:140
-#, fuzzy
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
-msgstr "whois &lt;надимак&gt;:  Узми податке о кориснику."
+msgstr "whois [сервер] &lt;надимак&gt;:  Узми податке о кориснику."
 
 #: src/protocols/irc/parse.c:421
 #, c-format
@@ -5695,12 +5685,11 @@ msgstr "Веза је прекинута."
 msgid ""
 "Server requires TLS/SSL for login.  Select \"Use TLS if available\" in "
 "account properties"
-msgstr ""
+msgstr "Сервер захтева TLS/ССЛ за пријаву. Изаберите „Користи TLS ако је доступан“ у особинама налога"
 
 #: src/protocols/jabber/auth.c:54
-#, fuzzy
 msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
-msgstr "Сервер захтева ССЛ за пријаву"
+msgstr "Сервер захтева TLS/ССЛ за пријаву. Није нађена подршка за ТЛС/ССЛ."
 
 #: src/protocols/jabber/auth.c:115
 msgid "Server requires plaintext authentication over an unencrypted stream"
@@ -6936,7 +6925,6 @@ msgstr ""
 "gaim.sf.net/faq-ssl.php"
 
 #: src/protocols/msn/msn.c:650
-#, fuzzy
 msgid "Failed to connect to server."
 msgstr "Не могу да се повежем на сервер."
 
@@ -7081,55 +7069,52 @@ msgid "Unable to connect"
 msgstr "Немогуће повезивање"
 
 #: src/protocols/msn/notification.c:178
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a valid group."
-msgstr "%s није исправан назив собе"
+msgstr "%s није дозвољена група."
 
 #: src/protocols/msn/notification.c:184 src/protocols/msn/notification.c:522
 #: src/protocols/msn/session.c:349
-#, fuzzy
 msgid "Unknown error."
-msgstr "Непозната грешка"
+msgstr "Непозната грешка."
 
 #: src/protocols/msn/notification.c:187
-#, fuzzy, c-format
+#, c-format
 msgid "%s on %s (%s)"
-msgstr "Корисника на %s: %s"
+msgstr "%s на %s (%s)"
 
 #: src/protocols/msn/notification.c:492
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to add user on %s (%s)"
-msgstr "Не могу да додам корисника у лични списак (%s)."
+msgstr "Не могу да додам корисника на %s (%s)"
 
 #: src/protocols/msn/notification.c:496
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to block user on %s (%s)"
-msgstr "Не могу да одстраним корисника %s"
+msgstr "Не могу да одстраним корисника на %s (%s)"
 
 #: src/protocols/msn/notification.c:500
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to permit user on %s (%s)"
-msgstr "Не могу да позовем корисника (%s)."
+msgstr "Не могу да дозволим корисника на %s (%s)"
 
 #: src/protocols/msn/notification.c:508
-#, fuzzy, c-format
+#, c-format
 msgid "%s could not be added because your buddy list is full."
-msgstr "Порука се не може послати пошто је корисник неповезан."
+msgstr "%s се не може додати пошто вам је списак другара попуњен."
 
 #: src/protocols/msn/notification.c:517
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a valid passport account."
-msgstr "%s није исправан назив сервера"
+msgstr "%s није исправан налог пасоша."
 
 #: src/protocols/msn/notification.c:773
-#, fuzzy
 msgid "Unable to rename group"
-msgstr "Не могу да пишем"
+msgstr "Не могу да преименујем групу"
 
 #: src/protocols/msn/notification.c:828
-#, fuzzy
 msgid "Unable to delete group"
-msgstr "Не могу начинити сокет"
+msgstr "Не могу да уклоним групу"
 
 #: src/protocols/msn/notification.c:1255
 #, c-format
@@ -7164,12 +7149,10 @@ msgstr[2] ""
 "Након што се одржавање заврши, моћи ћете се поново пријавити."
 
 #: src/protocols/msn/servconn.c:129
-#, fuzzy
 msgid "Writing error"
 msgstr "Грешка при писању"
 
 #: src/protocols/msn/servconn.c:131
-#, fuzzy
 msgid "Reading error"
 msgstr "Грешка при читању"
 
@@ -7179,107 +7162,92 @@ msgid "Unknown error"
 msgstr "Непозната грешка"
 
 #: src/protocols/msn/servconn.c:136
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Connection error from %s server (%s):\n"
 "%s"
-msgstr "Грешка није препозната са сервера: %s"
+msgstr ""
+"Грешка при повезивању са сервера %s (%s):\n"
+"%s"
 
 #: src/protocols/msn/session.c:319
-#, fuzzy
 msgid "Our protocol is not supported by the server."
-msgstr "Ово издање протокола не подржава собе за разговор."
+msgstr "Наш протокол није подржан на серверу."
 
 #: src/protocols/msn/session.c:323
-#, fuzzy
 msgid "Error parsing HTTP."
-msgstr "Грешка при приказивању поруке дана"
+msgstr "Грешка при обради HTTP-а."
 
 #: src/protocols/msn/session.c:327
 msgid "You have signed on from another location."
 msgstr "Пријавили сте се са неког другог места."
 
 #: src/protocols/msn/session.c:330
-#, fuzzy
 msgid "The MSN servers are temporarily unavailable. Please wait and try again."
-msgstr ""
-"Ваша листа МСН другара за %s је привремено недоступна. Сачекајте мало па "
-"покушајте поново."
+msgstr "МСН сервери су привремено недоступни. Сачекајте мало па покушајте поново."
 
 #: src/protocols/msn/session.c:335
 msgid "The MSN servers are going down temporarily."
 msgstr "Веза Вам је прекинута. Привремено се гасе МСН сервери."
 
 #: src/protocols/msn/session.c:339
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to authenticate: %s"
-msgstr "Не могу да пошаљем поруку: %s"
+msgstr "Не могу да идентификујем: %s"
 
 #: src/protocols/msn/session.c:344
-#, fuzzy
 msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr ""
-"Ваша листа МСН другара за %s је привремено недоступна. Сачекајте мало па "
-"покушајте поново."
+msgstr "Ваш списак МСН другара је привремено недоступан. Сачекајте мало па покушајте поново."
 
 #: src/protocols/msn/session.c:365 src/protocols/msn/session.c:367
 msgid "Handshaking"
-msgstr ""
+msgstr "Руковање"
 
 #: src/protocols/msn/session.c:366
-#, fuzzy
 msgid "Transferring"
-msgstr "Преноси датотека"
+msgstr "Преносим"
 
 #: src/protocols/msn/session.c:368
-#, fuzzy
 msgid "Starting authentication"
-msgstr "Идентификација обичним текстом"
+msgstr "Почињем идентификацију"
 
 #: src/protocols/msn/session.c:369
 msgid "Getting cookie"
-msgstr ""
+msgstr "Примам колачић"
 
 #: src/protocols/msn/session.c:371
-#, fuzzy
 msgid "Sending cookie"
-msgstr "Пошаљи на мобилни"
+msgstr "Шаљем колачић"
 
 #: src/protocols/msn/session.c:372 src/protocols/trepia/trepia.c:636
 msgid "Retrieving buddy list"
 msgstr "Преузимам списак другара"
 
 #: src/protocols/msn/switchboard.c:403
-#, fuzzy
 msgid "Message may have not been sent because a timeout occurred:"
-msgstr "Порука се не може послати због грешке у вези."
+msgstr "Порука можда није послата зато што је истекао рок:"
 
 #: src/protocols/msn/switchboard.c:411
-#, fuzzy
 msgid "Message could not be sent, not allowed while invisible:"
-msgstr "Порука се не може послати пошто то није могуће док сте невидљиви."
+msgstr "Порука се не може послати пошто то није могуће док сте невидљиви:"
 
 #: src/protocols/msn/switchboard.c:415
-#, fuzzy
 msgid "Message could not be sent because the user is offline:"
-msgstr "Порука се не може послати пошто је корисник неповезан."
+msgstr "Порука се не може послати пошто је корисник неповезан:"
 
 #: src/protocols/msn/switchboard.c:419
-#, fuzzy
 msgid "Message could not be sent because a connection error occurred:"
-msgstr "Порука се не може послати због грешке у вези."
+msgstr "Порука се не може послати због грешке у вези:"
 
 #: src/protocols/msn/switchboard.c:423
-#, fuzzy
 msgid ""
 "Message could not be sent because an error with the switchboard occurred:"
-msgstr "Порука се не може послати због грешке у вези."
+msgstr "Порука се не може послати због грешке са пребацивачем:"
 
 #: src/protocols/msn/switchboard.c:431
-#, fuzzy
 msgid "Message may have not been sent because an unknown error occurred:"
-msgstr "Порука се не може послати због грешке у вези."
+msgstr "Порука можда није послата зато што је дошло до непознате грешке:"
 
 #: src/protocols/msn/switchboard.c:680
 msgid "The conversation has become inactive and timed out."
@@ -8091,15 +8059,15 @@ msgstr "Примио овлашћење"
 
 #: src/protocols/oscar/oscar.c:2316
 msgid "The SecurID key entered is invalid."
-msgstr ""
+msgstr "Унети SecurID кључ је неисправан."
 
 #: src/protocols/oscar/oscar.c:2330
 msgid "Enter SecurID"
-msgstr ""
+msgstr "Унесите SecurID"
 
 #: src/protocols/oscar/oscar.c:2331
 msgid "Enter the 6 digit number from the digital display."
-msgstr ""
+msgstr "Унесите шестоцифрени број са дигиталног екрана."
 
 # Da li je "shortly" ovde "uskoro", ili "na kratko"? Pravilno je "uskoro", ali ostalo mi se ne slaze sa time!
 #: src/protocols/oscar/oscar.c:2371 src/protocols/oscar/oscar.c:2401
