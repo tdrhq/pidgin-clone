@@ -77,19 +77,22 @@ gboolean yahoo_check_privacy(GaimConnection *gc, const char *who)
 	gboolean permitted=FALSE;
 
 	switch (gc->account->perm_deny) {
-                               /* it would appear somewhere inside gaim, GAIM_PRIVACY can end up
-                                * being set to 0 */
 		case 0:
+			gaim_debug_warning("yahoo", "Privacy setting was 0.  If you can "
+							   "reproduce this, please file a bug report.\n");
 			permitted = TRUE;
 			break;
+
 		case GAIM_PRIVACY_ALLOW_ALL:
 			permitted = TRUE;
 			break;
+
 		case GAIM_PRIVACY_DENY_ALL:
 			gaim_debug_info("yahoo",
 			    "%s blocked data received from %s (GAIM_PRIVACY_DENY_ALL)\n",
 			    gc->account->username,who);
 			break;
+
 		case GAIM_PRIVACY_ALLOW_USERS:
 			for( list=gc->account->permit; list!=NULL; list=list->next ) {
 				if ( !gaim_utf8_strcasecmp(who, gaim_normalize(gc->account, (char *)list->data)) ) {
@@ -101,6 +104,7 @@ gboolean yahoo_check_privacy(GaimConnection *gc, const char *who)
 				}
 			}
 			break;
+
 		case GAIM_PRIVACY_DENY_USERS:
 			/* seeing we're letting everyone through, except the deny list*/
 			permitted=TRUE;
@@ -114,6 +118,7 @@ gboolean yahoo_check_privacy(GaimConnection *gc, const char *who)
 				break;
 			}
 			break;
+
 		case GAIM_PRIVACY_ALLOW_BUDDYLIST:
 			if ( gaim_find_buddy(gc->account,who) != NULL ) {
 				permitted = TRUE;
@@ -123,13 +128,15 @@ gboolean yahoo_check_privacy(GaimConnection *gc, const char *who)
 				    gc->account->username,who);
 			}
 		break;
-	default:
-		gaim_debug(GAIM_DEBUG_INFO, "yahoo",
-		    "Default privacy dropthrough - we should never see this. Please report yahoo privacy bug to http://gaim.sf.net\n");
-		permitted = FALSE;
-		break;
+
+		default:
+			gaim_debug_warning("yahoo", "Privacy setting was unknown.  If you can "
+							   "reproduce this, please file a bug report.\n");
+			permitted = FALSE;
+			break;
 	}
-return permitted;
+
+	return permitted;
 }
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
@@ -805,6 +812,16 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		gc->account->perm_deny = 4;
 		serv_set_permit_deny(gc);
 	}
+
+	if (got_serv_list &&
+		((gc->account->perm_deny != GAIM_PRIVACY_ALLOW_BUDDYLIST) &&
+		(gc->account->perm_deny != GAIM_PRIVACY_DENY_ALL) &&
+		(gc->account->perm_deny != GAIM_PRIVACY_ALLOW_USERS)))
+	{
+		gc->account->perm_deny = GAIM_PRIVACY_DENY_USERS;
+		gaim_debug_info("yahoo", "Privacy defaulting to GAIM_PRIVACY_DENY_USERS.\n", gc->account->username);
+	}
+
 }
 
 static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
