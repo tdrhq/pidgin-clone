@@ -6489,7 +6489,7 @@ msgstr "MSN-palvelimet ajetaan alas väliaikaisesti."
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
-msgid "Buddy list syncronization issue in %s (%s)"
+msgid "Buddy list synchronization issue in %s (%s)"
 msgstr "Tuttavalistan synkronisointiongelma käyttäjätilillä %s (%s)"
 
 #: src/protocols/msn/dialog.c:97

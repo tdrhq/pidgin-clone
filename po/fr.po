@@ -6482,7 +6482,7 @@ msgstr "Les serveurs MSN sont coupés temporairement."
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
-msgid "Buddy list syncronization issue in %s (%s)"
+msgid "Buddy list synchronization issue in %s (%s)"
 msgstr "Problème de synchronisation de la liste de contact avec %s (%s)"
 
 #: src/protocols/msn/dialog.c:97

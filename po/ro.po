@@ -6455,7 +6455,7 @@ msgstr "Serverele MSN vor fi oprite momentan."
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
-msgid "Buddy list syncronization issue in %s (%s)"
+msgid "Buddy list synchronization issue in %s (%s)"
 msgstr "Probleme de sincronizare a liste de contacte în %s (%s)"
 
 #: src/protocols/msn/dialog.c:97

@@ -6452,7 +6452,7 @@ msgstr "Strežniki MSN se bodo začasno zaustavili."
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
-msgid "Buddy list syncronization issue in %s (%s)"
+msgid "Buddy list synchronization issue in %s (%s)"
 msgstr "Težava sinhronizacije seznama prijateljev pri %s (%s)"
 
 #: src/protocols/msn/dialog.c:97

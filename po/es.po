@@ -6543,7 +6543,7 @@ msgstr "Los servidores de MSN van a sufrir un apagado temporal."
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
-msgid "Buddy list syncronization issue in %s (%s)"
+msgid "Buddy list synchronization issue in %s (%s)"
 msgstr "Problema de sincronización de la lista de amigos en %s (%s)"
 
 #: src/protocols/msn/dialog.c:97

@@ -6464,7 +6464,7 @@ msgstr "MSN serverne lukkes midlertidigt."
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
-msgid "Buddy list syncronization issue in %s (%s)"
+msgid "Buddy list synchronization issue in %s (%s)"
 msgstr "Problemer med synkronisering af venneliste i %s (%s)"
 
 #: src/protocols/msn/dialog.c:97

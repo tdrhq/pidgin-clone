@@ -6518,7 +6518,7 @@ msgstr "Die MSN-Server werden kurzzeitig heruntergefahren."
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
-msgid "Buddy list syncronization issue in %s (%s)"
+msgid "Buddy list synchronization issue in %s (%s)"
 msgstr "Fehler bei der Kontaktlisten-Synchronisation bei %s (%s)"
 
 #: src/protocols/msn/dialog.c:97

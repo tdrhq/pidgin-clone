@@ -6501,7 +6501,7 @@ msgstr "Веза Вам је прекинута. Привремено се га�
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
-msgid "Buddy list syncronization issue in %s (%s)"
+msgid "Buddy list synchronization issue in %s (%s)"
 msgstr "Неприлике при усклађивању списка другара за %s (%s)"
 
 #: src/protocols/msn/dialog.c:97

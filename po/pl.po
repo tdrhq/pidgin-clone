@@ -6480,7 +6480,7 @@ msgstr "Serwery MSN s± w³a¶nie tymczasowo wy³±czane."
 
 #: src/protocols/msn/dialog.c:91
 #, c-format
-msgid "Buddy list syncronization issue in %s (%s)"
+msgid "Buddy list synchronization issue in %s (%s)"
 msgstr ""
 
 #: src/protocols/msn/dialog.c:97
