@@ -122,6 +122,7 @@ struct _GtkIMHtml {
 
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
+	guint scroll_src;
 };
 
 struct _GtkIMHtmlClass {
