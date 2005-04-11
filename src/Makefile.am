@@ -26,6 +26,7 @@ EXTRA_DIST = \
 		win32/mingw_plus/winuser_extra.h \
 		win32/nsis/gaim-header.bmp \
 		win32/nsis/gaim-intro.bmp \
+		win32/nsis/gaim-plugin.nsh \
 		win32/nsis/langmacros.nsh \
 		win32/nsis/translations/albanian.nsh \
 		win32/nsis/translations/bulgarian.nsh \

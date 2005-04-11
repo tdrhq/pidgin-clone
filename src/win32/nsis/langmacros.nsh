@@ -6,7 +6,7 @@
   !ifndef "${LABEL}"
     !define "${LABEL}" "${VALUE}"
     !ifdef INSERT_DEFAULT
-      !warning "${LANG} lang file mising ${LABEL}, using default.."
+      !warning "${LANG} lang file missing ${LABEL}, using default..."
     !endif
   !endif
 !macroend
