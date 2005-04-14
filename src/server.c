@@ -575,22 +575,33 @@ void serv_rename_group(GaimConnection *gc, const char *old_name,
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && old_name && group && strcmp(old_name, group->name)) {
+		GList *l, *buddies = NULL;
+		/* Iterate through the list of buddies to move, and build a list
+		 * of the ones that belong to us.
+		 */
+		for(l = moved_buddies; l; l = l->next) {
+			GaimBuddy *buddy = (GaimBuddy *)l->data;
+
+			if(buddy && buddy->account == gc->account)
+				buddies = g_list_append(buddies, (GaimBlistNode *)buddy);
+		}
+
 		if (prpl_info->rename_group) {
 			/* prpl's might need to check if the group already
 			 * exists or not, and handle that differently */
-			prpl_info->rename_group(gc, old_name, group, moved_buddies);
+			prpl_info->rename_group(gc, old_name, group, buddies);
 		} else {
 			GList *cur, *groups = NULL;
 
 			/* Make a list of what the groups each buddy is in */
-			for (cur = moved_buddies; cur != NULL; cur = cur->next) {
+			for (cur = buddies; cur != NULL; cur = cur->next) {
 				GaimBlistNode *node = cur->data;
 				groups = g_list_append(groups, node->parent->parent);
 			}
 
-			serv_remove_buddies(gc, moved_buddies, groups);
+			serv_remove_buddies(gc, buddies, groups);
 			g_list_free(groups);
-			serv_add_buddies(gc, moved_buddies);
+			serv_add_buddies(gc, buddies);
 		}
 	}
 }
