@@ -603,8 +603,8 @@ void serv_rename_group(GaimConnection *gc, const char *old_name,
 			g_list_free(groups);
 			serv_add_buddies(gc, buddies);
 		}
+		g_list_free(buddies);
 	}
-	g_list_free(buddies);
 }
 
 void serv_add_permit(GaimConnection *g, const char *name)
