@@ -1493,9 +1493,13 @@ create_chat_menu(GaimConversation *conv, const char *who,
 		gtk_widget_show(button);
 	}
 
-	/* XXX: jabber can only add buddies from here in certain circumstances */
 	/* Added by Jonas <jonas@birme.se> */
-	if (gc) {
+	/* XXX: jabber can add here sometimes, but we have to assume not
+	 * so we don't confuse anyone.  we'll need to do a prpl-specific add
+	 * or some way to ask the prpl for the "real" buddy name for someone
+	 * in a chat when the prpl has UNIQUE_CHATNAME set
+	 */
+	if (gc && prpl_info && !(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		if (gaim_find_buddy(gc->account, who))
 			button = gtk_menu_item_new_with_label(_("Remove"));
 		else
