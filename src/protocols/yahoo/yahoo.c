@@ -3380,6 +3380,7 @@ static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
 
+#if 0
 	/* Step 2:  Remove buddy from old group */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
@@ -3387,6 +3388,7 @@ static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
 	yahoo_packet_hash(pkt, 65, gpo);
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
+#endif
 	g_free(gpn);
 	g_free(gpo);
 }
