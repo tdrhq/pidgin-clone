@@ -13,6 +13,9 @@ version 1.2.1 (4/3/2005):
 	* Fix bug with going away while in a jabber chat
 	* MSN bug fixes (Felipe Contreras)
 	* Escape things properly in IRC
+	* Docklet fixes: fix the "1 pixel-wide icon" bug, fix problems with Gaim
+	  crashing when the tray manager dies, and work correctly with multi-headed
+	  displays where the tray isn't on the primary screen (Robert McQueen)
 
 version 1.2.0 (3/17/2005):
 	* Yahoo file receiving and buddy icon receiving work again.
