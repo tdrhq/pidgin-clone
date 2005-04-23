@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: sl\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-09-08 00:02-0400\n"
-"PO-Revision-Date: 2005-04-07 00:36+0100\n"
+"PO-Revision-Date: 2005-04-21 19:59+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: LUGOS <sl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -543,7 +543,7 @@ msgid "None"
 msgstr "brez"
 
 #: plugins/gevolution/gevo-util.c:64
-#: plugins/gevolution/gevolution.c:90
+#: plugins/gevolution/gevolution.c:93
 #: src/blist.c:775
 #: src/blist.c:982
 #: src/blist.c:1932
@@ -552,21 +552,21 @@ msgstr "brez"
 msgid "Buddies"
 msgstr "Prijatelji"
 
-#: plugins/gevolution/gevolution.c:221
+#: plugins/gevolution/gevolution.c:225
 msgid "Add to Address Book"
 msgstr "Dodaj v imenik"
 
 #. Configuration frame
-#: plugins/gevolution/gevolution.c:344
+#: plugins/gevolution/gevolution.c:348
 msgid "Evolution Integration Configuration"
 msgstr "Nastavitve integracije z Evolutionom"
 
 #. Label
-#: plugins/gevolution/gevolution.c:347
+#: plugins/gevolution/gevolution.c:351
 msgid "Select all accounts that buddies should be auto-added to."
 msgstr "Izberite vse račune, katerim naj se samodejno dodajo prijatelji."
 
-#: plugins/gevolution/gevolution.c:377
+#: plugins/gevolution/gevolution.c:381
 #: plugins/idle.c:52
 #: src/gtkconn.c:621
 msgid "Account"
@@ -578,7 +578,7 @@ msgstr "Račun"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/gevolution/gevolution.c:460
+#: plugins/gevolution/gevolution.c:464
 msgid "Evolution Integration"
 msgstr "Integracija z Evolutionom"
 
@@ -586,8 +586,8 @@ msgstr "Integracija z Evolutionom"
 #. *< version
 #. *  summary
 #. *  description
-#: plugins/gevolution/gevolution.c:463
-#: plugins/gevolution/gevolution.c:465
+#: plugins/gevolution/gevolution.c:467
+#: plugins/gevolution/gevolution.c:469
 msgid "Provides integration with Ximian Evolution."
 msgstr "Omogoča integracijo s Ximian Evolutionom."
 
@@ -1339,9 +1339,9 @@ msgstr "Vnesite svoje obstoječe in novo geslo."
 #: src/account.c:360
 #: src/connection.c:198
 #: src/gtkblist.c:2457
-#: src/gtkdialogs.c:497
-#: src/gtkdialogs.c:639
-#: src/gtkdialogs.c:693
+#: src/gtkdialogs.c:498
+#: src/gtkdialogs.c:640
+#: src/gtkdialogs.c:694
 #: src/gtkrequest.c:242
 #: src/protocols/jabber/jabber.c:1084
 #: src/protocols/jabber/xdata.c:337
@@ -1362,8 +1362,8 @@ msgstr "Vnesite svoje obstoječe in novo geslo."
 #: src/protocols/silc/chat.c:459
 #: src/protocols/silc/chat.c:722
 #: src/protocols/silc/ops.c:1081
-#: src/protocols/silc/ops.c:1691
-#: src/protocols/silc/silc.c:703
+#: src/protocols/silc/ops.c:1699
+#: src/protocols/silc/silc.c:709
 #: src/protocols/yahoo/yahoo.c:2942
 #: src/protocols/yahoo/yahoo.c:2951
 #: src/request.h:1245
@@ -1380,17 +1380,17 @@ msgstr "V redu"
 #: src/gtkblist.c:2458
 #: src/gtkblist.c:4531
 #: src/gtkconn.c:169
-#: src/gtkdialogs.c:498
-#: src/gtkdialogs.c:640
-#: src/gtkdialogs.c:694
-#: src/gtkdialogs.c:792
-#: src/gtkdialogs.c:814
-#: src/gtkdialogs.c:834
-#: src/gtkdialogs.c:871
-#: src/gtkdialogs.c:931
-#: src/gtkdialogs.c:974
-#: src/gtkdialogs.c:1012
-#: src/gtkimhtmltoolbar.c:423
+#: src/gtkdialogs.c:499
+#: src/gtkdialogs.c:641
+#: src/gtkdialogs.c:695
+#: src/gtkdialogs.c:793
+#: src/gtkdialogs.c:815
+#: src/gtkdialogs.c:835
+#: src/gtkdialogs.c:872
+#: src/gtkdialogs.c:932
+#: src/gtkdialogs.c:975
+#: src/gtkdialogs.c:1013
+#: src/gtkimhtmltoolbar.c:437
 #: src/gtkprivacy.c:593
 #: src/gtkprivacy.c:606
 #: src/gtkprivacy.c:631
@@ -1423,8 +1423,8 @@ msgstr "V redu"
 #: src/protocols/silc/buddy.c:1133
 #: src/protocols/silc/chat.c:594
 #: src/protocols/silc/chat.c:723
-#: src/protocols/silc/ops.c:1692
-#: src/protocols/silc/silc.c:704
+#: src/protocols/silc/ops.c:1700
+#: src/protocols/silc/silc.c:710
 #: src/protocols/trepia/trepia.c:348
 #: src/protocols/yahoo/yahoo.c:2943
 #: src/protocols/yahoo/yahoo.c:2952
@@ -1586,64 +1586,64 @@ msgstr "Sporočilo je preveliko."
 msgid "Unable to send message."
 msgstr "Sporočila ni bilo moč poslati."
 
-#: src/conversation.c:2022
+#: src/conversation.c:2037
 #, c-format
 msgid "%s entered the room."
 msgstr "%s se nam pridružuje."
 
-#: src/conversation.c:2025
+#: src/conversation.c:2040
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] se nam pridružuje."
 
-#: src/conversation.c:2121
+#: src/conversation.c:2136
 #, c-format
 msgid "You are now known as %s"
 msgstr "Zdaj ste znani kot %s"
 
-#: src/conversation.c:2124
+#: src/conversation.c:2139
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s je zdaj poznan kot %s"
 
-#: src/conversation.c:2165
+#: src/conversation.c:2180
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s nas je zapustil (%s)."
 
-#: src/conversation.c:2167
+#: src/conversation.c:2182
 #, c-format
 msgid "%s left the room."
 msgstr "%s nas je zapustil."
 
-#: src/conversation.c:2236
+#: src/conversation.c:2251
 #, c-format
 msgid "(+%d more)"
 msgstr "(+%d več)"
 
-#: src/conversation.c:2238
+#: src/conversation.c:2253
 #, c-format
 msgid " left the room (%s)."
 msgstr " nas je zapustil (%s)."
 
-#: src/conversation.c:2643
+#: src/conversation.c:2658
 msgid "Last created window"
 msgstr "zadnje odprto okno"
 
-#: src/conversation.c:2645
+#: src/conversation.c:2660
 msgid "Separate IM and Chat windows"
 msgstr "loči okna za klepet in zasebni pomenek"
 
-#: src/conversation.c:2647
+#: src/conversation.c:2662
 #: src/gtkprefs.c:1387
 msgid "New window"
 msgstr "novo okno"
 
-#: src/conversation.c:2649
+#: src/conversation.c:2664
 msgid "By group"
 msgstr "po skupinah"
 
-#: src/conversation.c:2651
+#: src/conversation.c:2666
 msgid "By account"
 msgstr "po vrsti računa"
 
@@ -2144,8 +2144,8 @@ msgid "Alias Contact..."
 msgstr "Psevdonim stika ..."
 
 #: src/gtkblist.c:1200
-#: src/gtkdialogs.c:868
-#: src/gtkdialogs.c:870
+#: src/gtkdialogs.c:869
+#: src/gtkdialogs.c:871
 msgid "Remove Contact"
 msgstr "Odstrani stik"
 
@@ -2701,7 +2701,7 @@ msgstr "Datoteke ni bilo mogoče odprti."
 #: src/gtkconv.c:909
 #, c-format
 msgid "<h1>Conversation with %s</h1>\n"
-msgstr "<h1>Pogovori s/z %s</h1>\n"
+msgstr "<h1>Pogovor z %s</h1>\n"
 
 #: src/gtkconv.c:923
 msgid "Save Conversation"
@@ -3130,18 +3130,22 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "heker in uradni vodja [lenoba]"
 
 #: src/gtkdialogs.c:100
-#: src/gtkdialogs.c:143
+#: src/gtkdialogs.c:144
 msgid "Bulgarian"
 msgstr "bolgarsko"
 
+#: src/gtkdialogs.c:100
+msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
+msgstr "Vladimira Girginova in Vladimir (Kaladan) Petkov"
+
 #: src/gtkdialogs.c:101
-#: src/gtkdialogs.c:144
 #: src/gtkdialogs.c:145
+#: src/gtkdialogs.c:146
 msgid "Catalan"
 msgstr "katalonsko"
 
 #: src/gtkdialogs.c:102
-#: src/gtkdialogs.c:146
+#: src/gtkdialogs.c:147
 msgid "Czech"
 msgstr "češko"
 
@@ -3150,7 +3154,7 @@ msgid "Danish"
 msgstr "dansko"
 
 #: src/gtkdialogs.c:104
-#: src/gtkdialogs.c:147
+#: src/gtkdialogs.c:148
 msgid "German"
 msgstr "nemško"
 
@@ -3167,7 +3171,7 @@ msgid "British English"
 msgstr "britansko-angleško"
 
 #: src/gtkdialogs.c:108
-#: src/gtkdialogs.c:148
+#: src/gtkdialogs.c:149
 msgid "Spanish"
 msgstr "špansko"
 
@@ -3176,12 +3180,12 @@ msgid "Estonian"
 msgstr "estonsko"
 
 #: src/gtkdialogs.c:110
-#: src/gtkdialogs.c:149
+#: src/gtkdialogs.c:150
 msgid "Finnish"
 msgstr "finsko"
 
 #: src/gtkdialogs.c:111
-#: src/gtkdialogs.c:150
+#: src/gtkdialogs.c:151
 msgid "French"
 msgstr "francosko"
 
@@ -3198,200 +3202,204 @@ msgid "Hungarian"
 msgstr "madžarsko"
 
 #: src/gtkdialogs.c:115
-#: src/gtkdialogs.c:151
+#: src/gtkdialogs.c:152
 msgid "Italian"
 msgstr "italijansko"
 
 #: src/gtkdialogs.c:116
-#: src/gtkdialogs.c:152
+#: src/gtkdialogs.c:153
 msgid "Japanese"
 msgstr "japonsko"
 
 #: src/gtkdialogs.c:117
-#: src/gtkdialogs.c:153
+msgid "Georgian"
+msgstr "gruzijsko"
+
+#: src/gtkdialogs.c:118
+#: src/gtkdialogs.c:154
 msgid "Korean"
 msgstr "korejsko"
 
-#: src/gtkdialogs.c:118
+#: src/gtkdialogs.c:119
 msgid "Lithuanian"
 msgstr "litvansko"
 
-#: src/gtkdialogs.c:119
+#: src/gtkdialogs.c:120
 msgid "Macedonian"
 msgstr "makedonsko"
 
-#: src/gtkdialogs.c:120
+#: src/gtkdialogs.c:121
 msgid "Burmese"
 msgstr "burmanščina"
 
-#: src/gtkdialogs.c:121
+#: src/gtkdialogs.c:122
 msgid "Dutch; Flemish"
 msgstr "nizozemsko, flamsko"
 
-#: src/gtkdialogs.c:122
-#: src/gtkdialogs.c:154
+#: src/gtkdialogs.c:123
+#: src/gtkdialogs.c:155
 msgid "Norwegian"
 msgstr "norveško"
 
-#: src/gtkdialogs.c:123
-#: src/gtkdialogs.c:155
+#: src/gtkdialogs.c:124
+#: src/gtkdialogs.c:156
 msgid "Polish"
 msgstr "poljsko"
 
-#: src/gtkdialogs.c:124
+#: src/gtkdialogs.c:125
 msgid "Portuguese"
 msgstr "portugalsko"
 
-#: src/gtkdialogs.c:125
+#: src/gtkdialogs.c:126
 msgid "Portuguese-Brazil"
 msgstr "portugalsko (Brazilija)"
 
-#: src/gtkdialogs.c:126
+#: src/gtkdialogs.c:127
 msgid "Romanian"
 msgstr "romunsko"
 
-#: src/gtkdialogs.c:127
-#: src/gtkdialogs.c:156
+#: src/gtkdialogs.c:128
 #: src/gtkdialogs.c:157
+#: src/gtkdialogs.c:158
 msgid "Russian"
 msgstr "rusko"
 
-#: src/gtkdialogs.c:128
+#: src/gtkdialogs.c:129
 msgid "Slovenian"
 msgstr "slovensko"
 
-#: src/gtkdialogs.c:129
+#: src/gtkdialogs.c:130
 msgid "Albanian"
 msgstr "albansko"
 
-#: src/gtkdialogs.c:130
+#: src/gtkdialogs.c:131
 msgid "Serbian"
 msgstr "srbsko"
 
-#: src/gtkdialogs.c:131
-#: src/gtkdialogs.c:159
+#: src/gtkdialogs.c:132
 #: src/gtkdialogs.c:160
+#: src/gtkdialogs.c:161
 msgid "Swedish"
 msgstr "švedsko"
 
-#: src/gtkdialogs.c:132
+#: src/gtkdialogs.c:133
 msgid "Turkish"
 msgstr "turško"
 
-#: src/gtkdialogs.c:133
+#: src/gtkdialogs.c:134
 msgid "Ukrainian"
 msgstr "ukrajinsko"
 
-#: src/gtkdialogs.c:134
+#: src/gtkdialogs.c:135
 msgid "Vietnamese"
 msgstr "vietnamsko"
 
-#: src/gtkdialogs.c:134
+#: src/gtkdialogs.c:135
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh in ekipa Gnome-Vi"
 
-#: src/gtkdialogs.c:135
+#: src/gtkdialogs.c:136
 msgid "Simplified Chinese"
 msgstr "poenostavljeno kitajsko"
 
-#: src/gtkdialogs.c:136
+#: src/gtkdialogs.c:137
 msgid "Traditional Chinese"
 msgstr "tradicionalno kitajsko"
 
-#: src/gtkdialogs.c:142
+#: src/gtkdialogs.c:143
 msgid "Amharic"
 msgstr "amharsko"
 
-#: src/gtkdialogs.c:158
+#: src/gtkdialogs.c:159
 msgid "Slovak"
 msgstr "slovaško"
 
-#: src/gtkdialogs.c:161
+#: src/gtkdialogs.c:162
 msgid "Chinese"
 msgstr "kitajsko"
 
-#: src/gtkdialogs.c:203
+#: src/gtkdialogs.c:204
 msgid "About Gaim"
 msgstr "O programu Gaim"
 
-#: src/gtkdialogs.c:218
+#: src/gtkdialogs.c:219
 #, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 
-#: src/gtkdialogs.c:240
+#: src/gtkdialogs.c:241
 msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr "Gaim je modularen odjemalec za neposredna sporočila, ki lahko hkrati sodeluje s protokoli AIM, ICQ, Yahoo!, MSN, IRC, Jabber, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu. Uporablja Gtk+ in je objavljen pod licenco GPL.<BR><BR>"
 
-#: src/gtkdialogs.c:250
+#: src/gtkdialogs.c:251
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim na irc.freenode.net<BR><BR>"
 
-#: src/gtkdialogs.c:253
+#: src/gtkdialogs.c:254
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim na irc.freenode.net<BR><BR>"
 
-#: src/gtkdialogs.c:259
+#: src/gtkdialogs.c:260
 msgid "Active Developers"
 msgstr "Aktivni razvijalci"
 
-#: src/gtkdialogs.c:274
+#: src/gtkdialogs.c:275
 msgid "Crazy Patch Writers"
 msgstr "Nori razvijalci obližev"
 
-#: src/gtkdialogs.c:289
+#: src/gtkdialogs.c:290
 msgid "Retired Developers"
 msgstr "Upokojeni razvijalci"
 
-#: src/gtkdialogs.c:304
+#: src/gtkdialogs.c:305
 msgid "Current Translators"
 msgstr "Trenutni prevajalci"
 
-#: src/gtkdialogs.c:324
+#: src/gtkdialogs.c:325
 msgid "Past Translators"
 msgstr "Nekdanji prevajalci"
 
-#: src/gtkdialogs.c:479
-#: src/gtkdialogs.c:621
-#: src/gtkdialogs.c:674
+#: src/gtkdialogs.c:480
+#: src/gtkdialogs.c:622
+#: src/gtkdialogs.c:675
 msgid "_Screen name"
 msgstr "_Vzdevek"
 
-#: src/gtkdialogs.c:485
-#: src/gtkdialogs.c:627
-#: src/gtkdialogs.c:680
+#: src/gtkdialogs.c:486
+#: src/gtkdialogs.c:628
+#: src/gtkdialogs.c:681
 msgid "_Account"
 msgstr "_Račun"
 
-#: src/gtkdialogs.c:492
+#: src/gtkdialogs.c:493
 msgid "New Instant Message"
 msgstr "Novo neposredno sporočilo"
 
-#: src/gtkdialogs.c:494
+#: src/gtkdialogs.c:495
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr "Vnesite vzdevek osebe, ki ji želite poslati neposredno sporočilo."
 
-#: src/gtkdialogs.c:634
+#: src/gtkdialogs.c:635
 msgid "Get User Info"
 msgstr "Informacije o uporabniku"
 
-#: src/gtkdialogs.c:636
+#: src/gtkdialogs.c:637
 msgid "Please enter the screen name of the person whose info you would like to view."
 msgstr "Vnesite vzdevek osebe, katere dnevnik želite pridobiti."
 
-#: src/gtkdialogs.c:688
+#: src/gtkdialogs.c:689
 msgid "Get User Log"
 msgstr "Dobi uporabnikov dnevnik"
 
-#: src/gtkdialogs.c:690
+#: src/gtkdialogs.c:691
 msgid "Please enter the screen name of the person whose log you would like to view."
 msgstr "Vnesite vzdevek osebe, o kateri želite pridobiti dnevnik."
 
-#: src/gtkdialogs.c:730
+#: src/gtkdialogs.c:731
 msgid "Warn User"
 msgstr "Opozori uporabnika"
 
-#: src/gtkdialogs.c:751
+#: src/gtkdialogs.c:752
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -3402,79 +3410,79 @@ msgstr ""
 "\n"
 "To bo zvišalo raven opozoril uporabniku %s. Nadzorovana bo tudi primernost besedišča.\n"
 
-#: src/gtkdialogs.c:760
+#: src/gtkdialogs.c:761
 msgid "Warn _anonymously?"
 msgstr "Opozori _anonimno?"
 
-#: src/gtkdialogs.c:767
+#: src/gtkdialogs.c:768
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Anonimna opozorila imajo manjši učinek.</b>"
 
-#: src/gtkdialogs.c:788
+#: src/gtkdialogs.c:789
 msgid "Alias Contact"
 msgstr "Psevdonim stika"
 
-#: src/gtkdialogs.c:789
+#: src/gtkdialogs.c:790
 msgid "Enter an alias for this contact."
 msgstr "Vnesite psevdonim za ta pomenek."
 
-#: src/gtkdialogs.c:791
-#: src/gtkdialogs.c:813
-#: src/gtkdialogs.c:833
+#: src/gtkdialogs.c:792
+#: src/gtkdialogs.c:814
+#: src/gtkdialogs.c:834
 #: src/gtkrequest.c:250
 #: src/protocols/silc/chat.c:584
 msgid "Alias"
 msgstr "Psevdonim"
 
-#: src/gtkdialogs.c:809
+#: src/gtkdialogs.c:810
 #, c-format
 msgid "Enter an alias for %s."
-msgstr "Vnesite psevdonim za %s"
+msgstr "Vnesite psevdonim za %s."
 
-#: src/gtkdialogs.c:811
+#: src/gtkdialogs.c:812
 msgid "Alias Buddy"
 msgstr "Psevdonim prijatelja"
 
-#: src/gtkdialogs.c:830
+#: src/gtkdialogs.c:831
 msgid "Alias Chat"
 msgstr "Psevdonim pomenka"
 
-#: src/gtkdialogs.c:831
+#: src/gtkdialogs.c:832
 msgid "Enter an alias for this chat."
 msgstr "Vnesite psevdonim za ta pomenek."
 
-#: src/gtkdialogs.c:865
+#: src/gtkdialogs.c:866
 #, c-format
 msgid "You are about to remove the contact containing %s and %d other buddies from your buddy list.  Do you want to continue?"
 msgstr "S seznama prijateljev boste odstranili stik, ki vsebuje %s in %d drugih prijateljev. Ali želite nadaljevati?"
 
-#: src/gtkdialogs.c:926
+#: src/gtkdialogs.c:927
 #, c-format
 msgid "You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"
 msgstr "S seznama prijateljev boste odstranili skupino %s. Ali želite nadaljevati?"
 
-#: src/gtkdialogs.c:929
 #: src/gtkdialogs.c:930
+#: src/gtkdialogs.c:931
 msgid "Remove Group"
 msgstr "Odstrani skupino"
 
-#: src/gtkdialogs.c:968
+#: src/gtkdialogs.c:969
 #, c-format
 msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Odstranili boste %s s seznama prijateljev. Ali želite nadaljevati?"
 
-#: src/gtkdialogs.c:971
-#: src/gtkdialogs.c:973
+#: src/gtkdialogs.c:972
+#: src/gtkdialogs.c:974
 msgid "Remove Buddy"
 msgstr "Odstrani prijatelja"
 
-#: src/gtkdialogs.c:1006
+#: src/gtkdialogs.c:1007
 #, c-format
 msgid "You are about to remove the chat %s from your buddy list.  Do you want to continue?"
 msgstr "S seznama prijateljev boste odstranili pomenek %s. Ali želite nadaljevati?"
 
-#: src/gtkdialogs.c:1010
 #: src/gtkdialogs.c:1011
+#: src/gtkdialogs.c:1012
 msgid "Remove Chat"
 msgstr "Odstrani pomenek"
 
@@ -3594,140 +3602,140 @@ msgstr "Neuspeh"
 msgid "Pa_ste As Text"
 msgstr "Prilepi kot be_sedilo"
 
-#: src/gtkimhtml.c:1049
+#: src/gtkimhtml.c:1052
 msgid "Hyperlink color"
 msgstr "Barva povezave"
 
-#: src/gtkimhtml.c:1050
+#: src/gtkimhtml.c:1053
 msgid "Color to draw hyperlinks."
 msgstr "Barva za risanje povezav."
 
-#: src/gtkimhtml.c:1256
+#: src/gtkimhtml.c:1259
 msgid "_Copy E-Mail Address"
 msgstr "_Kopiraj naslov e-pošte"
 
-#: src/gtkimhtml.c:1268
+#: src/gtkimhtml.c:1271
 msgid "_Copy Link Location"
 msgstr "_Kopiraj lokacijo povezave"
 
-#: src/gtkimhtml.c:1278
+#: src/gtkimhtml.c:1281
 msgid "_Open Link in Browser"
 msgstr "_Odpri povezavo v brskalniku"
 
-#: src/gtkimhtml.c:2866
+#: src/gtkimhtml.c:2862
 msgid "Unable to guess the image type based on the file extension supplied.  Defaulting to PNG."
 msgstr "Gaim ni prepoznal končnice datoteke, ki ste jo izbrali. Privzeta vrednost je PNG."
 
-#: src/gtkimhtml.c:2874
+#: src/gtkimhtml.c:2870
 #, c-format
 msgid "Error saving image: %s"
 msgstr "Napaka pri shranjevanju slike: %s"
 
-#: src/gtkimhtml.c:2951
-#: src/gtkimhtml.c:2963
+#: src/gtkimhtml.c:2947
+#: src/gtkimhtml.c:2959
 msgid "Save Image"
 msgstr "Shrani sliko"
 
-#: src/gtkimhtml.c:2991
+#: src/gtkimhtml.c:2987
 msgid "_Save Image..."
 msgstr "_Shrani sliko ..."
 
-#: src/gtkimhtmltoolbar.c:164
+#: src/gtkimhtmltoolbar.c:176
 msgid "Select Font"
 msgstr "Nastavi pisavo"
 
-#: src/gtkimhtmltoolbar.c:240
+#: src/gtkimhtmltoolbar.c:254
 msgid "Select Text Color"
 msgstr "Nastavi barvo besedila"
 
-#: src/gtkimhtmltoolbar.c:314
+#: src/gtkimhtmltoolbar.c:328
 msgid "Select Background Color"
 msgstr "Nastavi barvo ozadja"
 
-#: src/gtkimhtmltoolbar.c:398
+#: src/gtkimhtmltoolbar.c:412
 msgid "_URL"
 msgstr "_URL"
 
-#: src/gtkimhtmltoolbar.c:406
+#: src/gtkimhtmltoolbar.c:420
 msgid "_Description"
 msgstr "_Opis"
 
-#: src/gtkimhtmltoolbar.c:409
+#: src/gtkimhtmltoolbar.c:423
 msgid "Please enter the URL and description of the link that you want to insert. The description is optional."
 msgstr "Vnesite URL in opis povezave, ki jo želite vstaviti. Opis ni obvezen."
 
-#: src/gtkimhtmltoolbar.c:413
+#: src/gtkimhtmltoolbar.c:427
 msgid "Please enter the URL of the link that you want to insert."
 msgstr "Vnesite URL povezave, ki jo želite vstaviti."
 
-#: src/gtkimhtmltoolbar.c:418
+#: src/gtkimhtmltoolbar.c:432
 msgid "Insert Link"
 msgstr "Vstavi povezavo"
 
-#: src/gtkimhtmltoolbar.c:422
+#: src/gtkimhtmltoolbar.c:436
 msgid "_Insert"
 msgstr "_Vstavi"
 
-#: src/gtkimhtmltoolbar.c:491
+#: src/gtkimhtmltoolbar.c:505
 #, c-format
 msgid "Failed to store image: %s\n"
 msgstr "Slike: %s ni mogoče shraniti.\n"
 
-#: src/gtkimhtmltoolbar.c:517
-#: src/gtkimhtmltoolbar.c:527
+#: src/gtkimhtmltoolbar.c:531
+#: src/gtkimhtmltoolbar.c:541
 msgid "Insert Image"
 msgstr "Vstavi sliko"
 
-#: src/gtkimhtmltoolbar.c:665
+#: src/gtkimhtmltoolbar.c:679
 msgid "This theme has no available smileys."
 msgstr "Ta tema nima smeškov."
 
 #. show everything
-#: src/gtkimhtmltoolbar.c:680
+#: src/gtkimhtmltoolbar.c:694
 msgid "Smile!"
 msgstr "Nasmeh!"
 
-#: src/gtkimhtmltoolbar.c:898
+#: src/gtkimhtmltoolbar.c:912
 msgid "Bold"
 msgstr "Krepko"
 
-#: src/gtkimhtmltoolbar.c:909
+#: src/gtkimhtmltoolbar.c:923
 msgid "Italic"
 msgstr "Ležeče"
 
-#: src/gtkimhtmltoolbar.c:920
+#: src/gtkimhtmltoolbar.c:934
 msgid "Underline"
 msgstr "Podčrtano"
 
-#: src/gtkimhtmltoolbar.c:936
+#: src/gtkimhtmltoolbar.c:950
 msgid "Larger font size"
 msgstr "Povečaj pisavo"
 
-#: src/gtkimhtmltoolbar.c:948
+#: src/gtkimhtmltoolbar.c:962
 msgid "Smaller font size"
 msgstr "Manjša pisava"
 
-#: src/gtkimhtmltoolbar.c:965
+#: src/gtkimhtmltoolbar.c:979
 msgid "Font Face"
 msgstr "Tip pisave"
 
-#: src/gtkimhtmltoolbar.c:977
+#: src/gtkimhtmltoolbar.c:991
 msgid "Foreground font color"
 msgstr "Barva pisave"
 
-#: src/gtkimhtmltoolbar.c:989
+#: src/gtkimhtmltoolbar.c:1003
 msgid "Background color"
 msgstr "Barva ozadja"
 
-#: src/gtkimhtmltoolbar.c:1004
+#: src/gtkimhtmltoolbar.c:1018
 msgid "Insert link"
 msgstr "Vstavi povezavo"
 
-#: src/gtkimhtmltoolbar.c:1014
+#: src/gtkimhtmltoolbar.c:1028
 msgid "Insert image"
 msgstr "Vstavi sliko"
 
-#: src/gtkimhtmltoolbar.c:1025
+#: src/gtkimhtmltoolbar.c:1039
 msgid "Insert smiley"
 msgstr "Vstavi smeškota"
 
@@ -4539,6 +4547,7 @@ msgid "Sounds"
 msgstr "Zvoki"
 
 #: src/gtkprefs.c:2426
+#: src/protocols/silc/silc.c:1586
 msgid "Network"
 msgstr "Omrežje"
 
@@ -4680,7 +4689,7 @@ msgstr "Uporabi"
 
 #: src/gtkrequest.c:245
 #: src/protocols/msn/msn.c:314
-#: src/protocols/silc/util.c:332
+#: src/protocols/silc/util.c:335
 msgid "Close"
 msgstr "Zapri"
 
@@ -5311,21 +5320,21 @@ msgid "Gaim User"
 msgstr "Uporabnik Gaima"
 
 #: src/protocols/irc/cmds.c:43
-#: src/protocols/silc/silc.c:1299
+#: src/protocols/silc/silc.c:1309
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Neznan ukaz: %s"
 
 #: src/protocols/irc/cmds.c:461
 #: src/protocols/jabber/chat.c:576
-#: src/protocols/silc/silc.c:1007
+#: src/protocols/silc/silc.c:1017
 #, c-format
 msgid "current topic is: %s"
 msgstr "trenutna tema je: %s"
 
 #: src/protocols/irc/cmds.c:465
 #: src/protocols/jabber/chat.c:580
-#: src/protocols/silc/silc.c:1011
+#: src/protocols/silc/silc.c:1021
 msgid "No topic is set"
 msgstr "Ni teme"
 
@@ -5452,7 +5461,7 @@ msgstr "Strežnik"
 #: src/protocols/jabber/jabber.c:1636
 #: src/protocols/msn/msn.c:1933
 #: src/protocols/napster/napster.c:675
-#: src/protocols/silc/silc.c:1593
+#: src/protocols/silc/silc.c:1594
 #: src/protocols/trepia/trepia.c:1301
 msgid "Port"
 msgstr "Vrata"
@@ -5927,8 +5936,8 @@ msgstr "Telefon"
 #: src/protocols/jabber/buddy.c:258
 #: src/protocols/jabber/buddy.c:715
 #: src/protocols/jabber/buddy.c:723
-#: src/protocols/silc/silc.c:648
-#: src/protocols/silc/util.c:508
+#: src/protocols/silc/silc.c:654
+#: src/protocols/silc/util.c:511
 #: src/protocols/yahoo/yahoo_profile.c:995
 msgid "Email"
 msgstr "Elektronska pošta"
@@ -6223,8 +6232,8 @@ msgstr "Zvezna država"
 
 #: src/protocols/jabber/jabber.c:652
 #: src/protocols/silc/ops.c:853
-#: src/protocols/silc/silc.c:650
-#: src/protocols/silc/util.c:510
+#: src/protocols/silc/silc.c:656
+#: src/protocols/silc/util.c:513
 msgid "Phone"
 msgstr "Telefon"
 
@@ -6468,7 +6477,7 @@ msgid "Resource Conflict"
 msgstr "Spor vira"
 
 #: src/protocols/jabber/jabber.c:1251
-#: src/protocols/silc/ops.c:1511
+#: src/protocols/silc/ops.c:1519
 msgid "Connection Timeout"
 msgstr "Časovna omejitev povezave potekla"
 
@@ -6635,7 +6644,7 @@ msgstr "Dovoli overovitev z navadnim besedilom preko nešifriranih toka"
 
 #. Account options
 #: src/protocols/jabber/jabber.c:1640
-#: src/protocols/silc/silc.c:1589
+#: src/protocols/silc/silc.c:1590
 msgid "Connect server"
 msgstr "Poveži se na strežnik"
 
@@ -6927,7 +6936,7 @@ msgstr "Strežnik preveč zaposlen"
 
 #: src/protocols/msn/error.c:198
 #: src/protocols/oscar/oscar.c:2192
-#: src/protocols/silc/ops.c:1500
+#: src/protocols/silc/ops.c:1508
 #: src/protocols/toc/toc.c:630
 msgid "Authentication failed"
 msgstr "Overovitev ni uspela"
@@ -7323,15 +7332,15 @@ msgstr "%s ni mogoče dodati, saj je vaš seznam prijateljev poln."
 msgid "%s is not a valid passport account."
 msgstr "%s ni veljaven račun potnega lista."
 
-#: src/protocols/msn/notification.c:773
+#: src/protocols/msn/notification.c:804
 msgid "Unable to rename group"
 msgstr "Skupine ni mogoče preimenovati"
 
-#: src/protocols/msn/notification.c:828
+#: src/protocols/msn/notification.c:859
 msgid "Unable to delete group"
 msgstr "Skupine ni mogoče izbrisati"
 
-#: src/protocols/msn/notification.c:1255
+#: src/protocols/msn/notification.c:1286
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will automatically be signed out at that time.  Please finish any conversations in progress.\n"
@@ -7437,35 +7446,35 @@ msgstr "Pošljanje piškotka"
 msgid "Retrieving buddy list"
 msgstr "Prejemanje seznama prijateljev"
 
-#: src/protocols/msn/switchboard.c:403
+#: src/protocols/msn/switchboard.c:401
 msgid "Message may have not been sent because a timeout occurred:"
 msgstr "Sporočila morda ni bilo poslano, ker je prišlo do časovne prekoračitve:"
 
-#: src/protocols/msn/switchboard.c:411
+#: src/protocols/msn/switchboard.c:409
 msgid "Message could not be sent, not allowed while invisible:"
 msgstr "Sporočila ni mogoče poslati, saj ni dovoljeno v nevidnem stanju:"
 
-#: src/protocols/msn/switchboard.c:415
+#: src/protocols/msn/switchboard.c:413
 msgid "Message could not be sent because the user is offline:"
 msgstr "Sporočila ni mogoče poslati, saj uporabnik ni na zvezi:"
 
-#: src/protocols/msn/switchboard.c:419
+#: src/protocols/msn/switchboard.c:417
 msgid "Message could not be sent because a connection error occurred:"
 msgstr "Sporočilo ni bilo poslano, ker je prišlo do napake v povezavi:"
 
-#: src/protocols/msn/switchboard.c:423
+#: src/protocols/msn/switchboard.c:421
 msgid "Message could not be sent because an error with the switchboard occurred:"
 msgstr "Sporočila ni bilo poslano, ker je prišlo do napake v stikalni plošči:"
 
-#: src/protocols/msn/switchboard.c:431
+#: src/protocols/msn/switchboard.c:429
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "Sporočila morda ni bilo poslano, ker je prišlo do neznane napake:"
 
-#: src/protocols/msn/switchboard.c:680
+#: src/protocols/msn/switchboard.c:678
 msgid "The conversation has become inactive and timed out."
 msgstr "Pogovor je postal neaktiven in se je zato iztekel."
 
-#: src/protocols/msn/switchboard.c:699
+#: src/protocols/msn/switchboard.c:697
 #, c-format
 msgid "%s has closed the conversation window."
 msgstr "%s je zaprl pogovorno okno."
@@ -8011,8 +8020,8 @@ msgid "AIM Direct IM"
 msgstr "Neposredni pogovor AIM"
 
 #: src/protocols/oscar/oscar.c:594
-#: src/protocols/silc/silc.c:646
-#: src/protocols/silc/util.c:506
+#: src/protocols/silc/silc.c:652
+#: src/protocols/silc/util.c:509
 msgid "Chat"
 msgstr "Pomenek"
 
@@ -8539,7 +8548,7 @@ msgid "Finalizing connection"
 msgstr "Dokončujem povezavo"
 
 #: src/protocols/oscar/oscar.c:5124
-#: src/protocols/silc/util.c:538
+#: src/protocols/silc/util.c:541
 msgid "Mobile Phone"
 msgstr "Mobilni telefon"
 
@@ -8917,7 +8926,7 @@ msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr "Imam delo in upam na razvedrilo -- kontaktiraj me!"
 
 #: src/protocols/oscar/oscar.c:7267
-#: src/protocols/silc/silc.c:800
+#: src/protocols/silc/silc.c:810
 msgid "Set User Info..."
 msgstr "Nastavi informacije o uporabniku ..."
 
@@ -8930,7 +8939,7 @@ msgid "Set Available Message..."
 msgstr "Nastavi sporočilo o dostopnosti ..."
 
 #: src/protocols/oscar/oscar.c:7283
-#: src/protocols/silc/silc.c:796
+#: src/protocols/silc/silc.c:806
 msgid "Change Password..."
 msgstr "Spremeni geslo ..."
 
@@ -9088,14 +9097,14 @@ msgstr "Nastavi geslo IM"
 
 #: src/protocols/silc/buddy.c:506
 #: src/protocols/silc/buddy.c:541
-#: src/protocols/silc/ops.c:1276
-#: src/protocols/silc/ops.c:1287
+#: src/protocols/silc/ops.c:1284
+#: src/protocols/silc/ops.c:1295
 msgid "Get Public Key"
 msgstr "Dobi javni ključ"
 
 #: src/protocols/silc/buddy.c:542
-#: src/protocols/silc/ops.c:1277
-#: src/protocols/silc/ops.c:1288
+#: src/protocols/silc/ops.c:1285
+#: src/protocols/silc/ops.c:1296
 msgid "Cannot fetch the public key"
 msgstr "Javnega ključa ni mogoče dobiti"
 
@@ -9191,68 +9200,68 @@ msgid "Robot"
 msgstr "Robot"
 
 #: src/protocols/silc/buddy.c:1405
-#: src/protocols/silc/silc.c:621
-#: src/protocols/silc/util.c:469
+#: src/protocols/silc/silc.c:627
+#: src/protocols/silc/util.c:472
 msgid "Happy"
 msgstr "Vesel"
 
 #: src/protocols/silc/buddy.c:1407
-#: src/protocols/silc/silc.c:623
-#: src/protocols/silc/util.c:471
+#: src/protocols/silc/silc.c:629
+#: src/protocols/silc/util.c:474
 msgid "Sad"
 msgstr "Žalosten"
 
 #: src/protocols/silc/buddy.c:1409
-#: src/protocols/silc/silc.c:625
-#: src/protocols/silc/util.c:473
+#: src/protocols/silc/silc.c:631
+#: src/protocols/silc/util.c:476
 msgid "Angry"
 msgstr "Jezen"
 
 #: src/protocols/silc/buddy.c:1411
-#: src/protocols/silc/silc.c:627
-#: src/protocols/silc/util.c:475
+#: src/protocols/silc/silc.c:633
+#: src/protocols/silc/util.c:478
 msgid "Jealous"
 msgstr "Ljubosumen"
 
 #: src/protocols/silc/buddy.c:1413
-#: src/protocols/silc/silc.c:629
-#: src/protocols/silc/util.c:477
+#: src/protocols/silc/silc.c:635
+#: src/protocols/silc/util.c:480
 msgid "Ashamed"
 msgstr "Osramočen"
 
 #: src/protocols/silc/buddy.c:1415
-#: src/protocols/silc/silc.c:631
-#: src/protocols/silc/util.c:479
+#: src/protocols/silc/silc.c:637
+#: src/protocols/silc/util.c:482
 msgid "Invincible"
 msgstr "Nepremagljiv"
 
 #: src/protocols/silc/buddy.c:1417
-#: src/protocols/silc/silc.c:633
-#: src/protocols/silc/util.c:481
+#: src/protocols/silc/silc.c:639
+#: src/protocols/silc/util.c:484
 msgid "In Love"
 msgstr "Zaljubljen"
 
 #: src/protocols/silc/buddy.c:1419
-#: src/protocols/silc/silc.c:635
-#: src/protocols/silc/util.c:483
+#: src/protocols/silc/silc.c:641
+#: src/protocols/silc/util.c:486
 msgid "Sleepy"
 msgstr "Zaspan"
 
 #: src/protocols/silc/buddy.c:1421
-#: src/protocols/silc/silc.c:637
-#: src/protocols/silc/util.c:485
+#: src/protocols/silc/silc.c:643
+#: src/protocols/silc/util.c:488
 msgid "Bored"
 msgstr "Zdolgočasen"
 
 #: src/protocols/silc/buddy.c:1423
-#: src/protocols/silc/silc.c:639
-#: src/protocols/silc/util.c:487
+#: src/protocols/silc/silc.c:645
+#: src/protocols/silc/util.c:490
 msgid "Excited"
 msgstr "Razburjen"
 
 #: src/protocols/silc/buddy.c:1425
-#: src/protocols/silc/silc.c:641
-#: src/protocols/silc/util.c:489
+#: src/protocols/silc/silc.c:647
+#: src/protocols/silc/util.c:492
 msgid "Anxious"
 msgstr "Vznemirjen"
 
@@ -9288,8 +9297,8 @@ msgstr "Naprava"
 
 #: src/protocols/silc/buddy.c:1490
 #: src/protocols/silc/ops.c:1016
-#: src/protocols/silc/silc.c:689
-#: src/protocols/silc/silc.c:691
+#: src/protocols/silc/silc.c:695
+#: src/protocols/silc/silc.c:697
 msgid "Timezone"
 msgstr "Časovni pas"
 
@@ -9315,7 +9324,7 @@ msgid "Get Public Key..."
 msgstr "Dobi javni ključ ..."
 
 #: src/protocols/silc/buddy.c:1564
-#: src/protocols/silc/ops.c:1409
+#: src/protocols/silc/ops.c:1417
 msgid "Kill User"
 msgstr "Ubij uporabnika"
 
@@ -9420,7 +9429,7 @@ msgid "Group Name"
 msgstr "Ime skupine"
 
 #: src/protocols/silc/chat.c:579
-#: src/protocols/silc/ops.c:1689
+#: src/protocols/silc/ops.c:1697
 msgid "Passphrase"
 msgstr "Geslo"
 
@@ -9517,12 +9526,12 @@ msgid "Cannot join private group"
 msgstr "Ni se mogoče pridružiti zasebni skupini"
 
 #: src/protocols/silc/chat.c:1252
-#: src/protocols/silc/silc.c:899
+#: src/protocols/silc/silc.c:909
 msgid "Cannot call command"
 msgstr "Ni mogoče klicati ukaza"
 
 #: src/protocols/silc/chat.c:1253
-#: src/protocols/silc/silc.c:900
+#: src/protocols/silc/silc.c:910
 msgid "Unknown command"
 msgstr "Neznan ukaz"
 
@@ -9680,7 +9689,7 @@ msgid "More..."
 msgstr "Več ..."
 
 #: src/protocols/silc/ops.c:1155
-#: src/protocols/silc/silc.c:788
+#: src/protocols/silc/silc.c:798
 msgid "Detach From Server"
 msgstr "Odpni se od strežnika"
 
@@ -9697,40 +9706,42 @@ msgid "Failed to change nickname"
 msgstr "Vzdevka ni bilo moč spremeniti"
 
 #: src/protocols/silc/ops.c:1241
+#: src/protocols/silc/ops.c:1252
 msgid "Roomlist"
 msgstr "Seznam sob"
 
 #: src/protocols/silc/ops.c:1241
+#: src/protocols/silc/ops.c:1252
 msgid "Cannot get room list"
 msgstr "Ni mogoče dobiti seznama sob"
 
-#: src/protocols/silc/ops.c:1289
+#: src/protocols/silc/ops.c:1297
 msgid "No public key was received"
 msgstr "Javni ključ ni bil sprejet"
 
-#: src/protocols/silc/ops.c:1302
-#: src/protocols/silc/ops.c:1316
+#: src/protocols/silc/ops.c:1310
+#: src/protocols/silc/ops.c:1324
 msgid "Server Information"
 msgstr "Informacije o strežniku"
 
-#: src/protocols/silc/ops.c:1303
+#: src/protocols/silc/ops.c:1311
 msgid "Cannot get server information"
 msgstr "Ni moč dobiti informacij o strežniku"
 
-#: src/protocols/silc/ops.c:1334
-#: src/protocols/silc/ops.c:1343
+#: src/protocols/silc/ops.c:1342
+#: src/protocols/silc/ops.c:1351
 msgid "Server Statistics"
 msgstr "Statistika strežnika"
 
-#: src/protocols/silc/ops.c:1335
+#: src/protocols/silc/ops.c:1343
 msgid "Cannot get server statistics"
 msgstr "Ni moč dobiti statistike strežnika"
 
-#: src/protocols/silc/ops.c:1344
+#: src/protocols/silc/ops.c:1352
 msgid "No server statistics available"
 msgstr "Statistika strežnika ni na voljo."
 
-#: src/protocols/silc/ops.c:1366
+#: src/protocols/silc/ops.c:1374
 #, c-format
 msgid ""
 "Local server start time: %s\n"
@@ -9765,98 +9776,98 @@ msgstr ""
 "Vseh operaterjev strežnikov: %d\n"
 "Vseh operaterjev usmerjevalnikov: %d\n"
 
-#: src/protocols/silc/ops.c:1389
+#: src/protocols/silc/ops.c:1397
 msgid "Network Statistics"
 msgstr "Statistika omrežja"
 
-#: src/protocols/silc/ops.c:1397
-#: src/protocols/silc/ops.c:1402
+#: src/protocols/silc/ops.c:1405
+#: src/protocols/silc/ops.c:1410
 msgid "Ping"
 msgstr "Ping"
 
-#: src/protocols/silc/ops.c:1397
+#: src/protocols/silc/ops.c:1405
 msgid "Ping failed"
 msgstr "Ping ni uspel"
 
-#: src/protocols/silc/ops.c:1402
+#: src/protocols/silc/ops.c:1410
 msgid "Ping reply received from server"
 msgstr "Odgovor ping sprejet od strežnika"
 
-#: src/protocols/silc/ops.c:1410
+#: src/protocols/silc/ops.c:1418
 msgid "Could not kill user"
 msgstr "Ni bilo mogoče ubiti uporabnika"
 
-#: src/protocols/silc/ops.c:1491
+#: src/protocols/silc/ops.c:1499
 msgid "Error during connecting to SILC Server"
 msgstr "Napaka pri povezovanju s strežnikom SILC"
 
-#: src/protocols/silc/ops.c:1496
+#: src/protocols/silc/ops.c:1504
 msgid "Key Exchange failed"
 msgstr "Izmenjava ključa ni uspela"
 
-#: src/protocols/silc/ops.c:1505
+#: src/protocols/silc/ops.c:1513
 msgid "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr "Nadaljevalna odpeta seja ni uspela. Pritisnite ponovna povezava za ustvarjanje nove povezave."
 
-#: src/protocols/silc/ops.c:1540
+#: src/protocols/silc/ops.c:1548
 msgid "Disconnected by server"
 msgstr "Strežnik je prekinil povezavo"
 
-#: src/protocols/silc/ops.c:1600
-#: src/protocols/silc/ops.c:1647
+#: src/protocols/silc/ops.c:1608
+#: src/protocols/silc/ops.c:1655
 #: src/protocols/silc/silc.c:178
 msgid "Resuming session"
 msgstr "Nadaljevalna seja"
 
-#: src/protocols/silc/ops.c:1602
+#: src/protocols/silc/ops.c:1610
 msgid "Authenticating connection"
 msgstr "Overovljanje povezave"
 
-#: src/protocols/silc/ops.c:1649
+#: src/protocols/silc/ops.c:1657
 msgid "Verifying server public key"
 msgstr "Preverjanje javnega ključa strežnika"
 
-#: src/protocols/silc/ops.c:1690
+#: src/protocols/silc/ops.c:1698
 msgid "Passphrase required"
 msgstr "Zahtevano geslo"
 
-#: src/protocols/silc/ops.c:1719
+#: src/protocols/silc/ops.c:1727
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "Napaka: Neustrezna različica, nadgradite svojega odjemalca"
 
-#: src/protocols/silc/ops.c:1722
+#: src/protocols/silc/ops.c:1730
 msgid "Failure: Remote does not trust/support your public key"
 msgstr "Napaka: Oddaljeni ne podpira vašega ključa ali mu ne zaupa"
 
-#: src/protocols/silc/ops.c:1725
+#: src/protocols/silc/ops.c:1733
 msgid "Failure: Remote does not support proposed KE group"
 msgstr "Napaka: Oddaljeni ne podpira predlagane skupine KE"
 
-#: src/protocols/silc/ops.c:1728
+#: src/protocols/silc/ops.c:1736
 msgid "Failure: Remote does not support proposed cipher"
 msgstr "Napaka: Oddaljeni ne podpira predlagane cifre"
 
-#: src/protocols/silc/ops.c:1731
+#: src/protocols/silc/ops.c:1739
 msgid "Failure: Remote does not support proposed PKCS"
 msgstr "Napaka: Oddaljeni ne podpira predlaganega PKCS"
 
-#: src/protocols/silc/ops.c:1734
+#: src/protocols/silc/ops.c:1742
 msgid "Failure: Remote does not support proposed hash function"
 msgstr "Napaka: Oddaljeni ne podpira predlagane razpršene možnosti"
 
-#: src/protocols/silc/ops.c:1737
+#: src/protocols/silc/ops.c:1745
 msgid "Failure: Remote does not support proposed HMAC"
 msgstr "Napaka: Oddaljeni ne podpira predlaganega HMAC"
 
-#: src/protocols/silc/ops.c:1739
+#: src/protocols/silc/ops.c:1747
 msgid "Failure: Incorrect signature"
 msgstr "Napaka: Napačen podpis"
 
-#: src/protocols/silc/ops.c:1741
+#: src/protocols/silc/ops.c:1749
 msgid "Failure: Invalid cookie"
 msgstr "Napaka: Napačen piškot"
 
-#: src/protocols/silc/ops.c:1752
+#: src/protocols/silc/ops.c:1760
 msgid "Failure: Authentication failed"
 msgstr "Napaka: Overovitev ni uspela"
 
@@ -9908,24 +9919,24 @@ msgstr "Ni moč začeti povezave odjemalca SILC"
 msgid "Performing key exchange"
 msgstr "Izvajanje izmenjave ključev"
 
-#: src/protocols/silc/silc.c:253
+#: src/protocols/silc/silc.c:254
 msgid "Out of memory"
 msgstr "Zmanjkalo je pomnilnika"
 
 #. Progress
-#: src/protocols/silc/silc.c:287
+#: src/protocols/silc/silc.c:291
 msgid "Connecting to SILC Server"
 msgstr "Povezovanjes strežnikom SILC"
 
-#: src/protocols/silc/silc.c:617
+#: src/protocols/silc/silc.c:623
 msgid "Your Current Mood"
 msgstr "Vaše trenutno razpoloženje"
 
-#: src/protocols/silc/silc.c:619
+#: src/protocols/silc/silc.c:625
 msgid "Normal"
 msgstr "Navadno"
 
-#: src/protocols/silc/silc.c:644
+#: src/protocols/silc/silc.c:650
 msgid ""
 "\n"
 "Your Preferred Contact Methods"
@@ -9933,263 +9944,251 @@ msgstr ""
 "\n"
 "Vaša priljubljena metoda stikov"
 
-#: src/protocols/silc/silc.c:652
-#: src/protocols/silc/util.c:514
+#: src/protocols/silc/silc.c:658
+#: src/protocols/silc/util.c:517
 msgid "SMS"
 msgstr "SMS"
 
-#: src/protocols/silc/silc.c:654
-#: src/protocols/silc/util.c:516
+#: src/protocols/silc/silc.c:660
+#: src/protocols/silc/util.c:519
 msgid "MMS"
 msgstr "MMS"
 
-#: src/protocols/silc/silc.c:656
-#: src/protocols/silc/util.c:518
+#: src/protocols/silc/silc.c:662
+#: src/protocols/silc/util.c:521
 msgid "Video Conferencing"
 msgstr "Video-konferenca"
 
-#: src/protocols/silc/silc.c:661
+#: src/protocols/silc/silc.c:667
 msgid "Your Current Status"
 msgstr "Vaše trenutno stanje"
 
-#: src/protocols/silc/silc.c:668
+#: src/protocols/silc/silc.c:674
 msgid "Online Services"
 msgstr "Storitve na zvezi"
 
-#: src/protocols/silc/silc.c:671
+#: src/protocols/silc/silc.c:677
 msgid "Let others see what services you are using"
 msgstr "Naj ostali vidijo, katere storitve uporabljate"
 
-#: src/protocols/silc/silc.c:677
+#: src/protocols/silc/silc.c:683
 msgid "Let others see what computer you are using"
 msgstr "Naj ostali vidijo, kakšen računalnik uporabljate"
 
-#: src/protocols/silc/silc.c:684
+#: src/protocols/silc/silc.c:690
 msgid "Your VCard File"
 msgstr "Vaša datoteka VCard"
 
-#: src/protocols/silc/silc.c:697
-#: src/protocols/silc/silc.c:698
+#: src/protocols/silc/silc.c:703
+#: src/protocols/silc/silc.c:704
 msgid "User Online Status Attributes"
 msgstr "Atributi stanja uporabnika na zvezi"
 
-#: src/protocols/silc/silc.c:699
+#: src/protocols/silc/silc.c:705
 msgid "You can let other users see your online status information and your personal information. Please fill the information you would like other users to see about yourself."
 msgstr "Ostalim uporabnikom lahko dovolite ogled informacij o vašem stanju na zvezi in osebnih informacij. Izpolnite informacije, ki jih želite pokazati ostalim uporabnikom."
 
-#: src/protocols/silc/silc.c:739
 #: src/protocols/silc/silc.c:745
-#: src/protocols/silc/silc.c:1148
+#: src/protocols/silc/silc.c:751
+#: src/protocols/silc/silc.c:1158
 msgid "Message of the Day"
 msgstr "Sporočilo dneva"
 
-#: src/protocols/silc/silc.c:739
+#: src/protocols/silc/silc.c:745
 msgid "No Message of the Day available"
 msgstr "Sporočilo dneva ni na voljo"
 
-#: src/protocols/silc/silc.c:740
-#: src/protocols/silc/silc.c:1143
+#: src/protocols/silc/silc.c:746
+#: src/protocols/silc/silc.c:1153
 msgid "There is no Message of the Day associated with this connection"
 msgstr "S to povezavo ni povezano nobeno sporočilo dneva"
 
-#: src/protocols/silc/silc.c:783
+#: src/protocols/silc/silc.c:793
 msgid "Online Status"
 msgstr "Stanje na zvezi"
 
-#: src/protocols/silc/silc.c:792
+#: src/protocols/silc/silc.c:802
 msgid "View Message of the Day"
 msgstr "Ogled sporočila dneva"
 
-#: src/protocols/silc/silc.c:864
+#: src/protocols/silc/silc.c:874
 #, c-format
 msgid "User <I>%s</I> is not present in the network"
 msgstr "Uporabnik <I>%s</I> ni prisoten v omrežju"
 
-#: src/protocols/silc/silc.c:973
+#: src/protocols/silc/silc.c:983
 msgid "Failed to leave channel"
 msgstr "Kanala se ni dalo zapustiti"
 
-#: src/protocols/silc/silc.c:1019
+#: src/protocols/silc/silc.c:1029
 msgid "Topic too long"
 msgstr "Temal je predolga."
 
-#: src/protocols/silc/silc.c:1100
+#: src/protocols/silc/silc.c:1110
 msgid "You must specify a nick"
 msgstr "Določiti morate vzdevek"
 
-#: src/protocols/silc/silc.c:1202
+#: src/protocols/silc/silc.c:1212
 #, c-format
 msgid "channel %s not found"
 msgstr "kanala %s ni mogoče najti"
 
-#: src/protocols/silc/silc.c:1207
+#: src/protocols/silc/silc.c:1217
 #, c-format
 msgid "channel modes for %s: %s"
 msgstr "načini kanala za %s: %s"
 
-#: src/protocols/silc/silc.c:1209
+#: src/protocols/silc/silc.c:1219
 #, c-format
 msgid "no channel modes are set on %s"
 msgstr "načini kanala za %s niso nastavljeni"
 
-#: src/protocols/silc/silc.c:1222
+#: src/protocols/silc/silc.c:1232
 #, c-format
 msgid "Failed to set cmodes for %s"
 msgstr "Ni mogoče nastaviti načinov za %s"
 
-#: src/protocols/silc/silc.c:1252
+#: src/protocols/silc/silc.c:1262
 #, c-format
 msgid "Unknown command: %s, (may be a Gaim bug)"
 msgstr "Neznan ukaz: %s, (morda hrošč v Gaimu)"
 
-#: src/protocols/silc/silc.c:1315
+#: src/protocols/silc/silc.c:1325
 msgid "part [channel]:  Leave the chat"
 msgstr "part [kanal]:  Zapusti klepet"
 
-#: src/protocols/silc/silc.c:1319
+#: src/protocols/silc/silc.c:1329
 msgid "leave [channel]:  Leave the chat"
 msgstr "leave [kanal]:  Zapusti klepet"
 
-#: src/protocols/silc/silc.c:1323
+#: src/protocols/silc/silc.c:1333
 msgid "topic [&lt;new topic&gt;]:  View or change the topic"
 msgstr "topic [&lt;nova tema&gt;]:  Ogled ali sprememba teme"
 
-#: src/protocols/silc/silc.c:1328
+#: src/protocols/silc/silc.c:1338
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
 msgstr "join &lt;kanal&gt; [&lt;geslo&gt;]:  Pridruži se klepetu na tem omrežju"
 
-#: src/protocols/silc/silc.c:1332
+#: src/protocols/silc/silc.c:1342
 msgid "list:  List channels on this network"
 msgstr "list:  Seznam kanalov na tem omrežju"
 
-#: src/protocols/silc/silc.c:1336
+#: src/protocols/silc/silc.c:1346
 msgid "whois &lt;nick&gt;:  View nick's information"
 msgstr "whois &lt;vzdevek&gt;:  Oglej si informacije vzdevka"
 
-#: src/protocols/silc/silc.c:1340
+#: src/protocols/silc/silc.c:1350
 #: src/protocols/zephyr/zephyr.c:2478
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
 msgstr "msg &lt;vzdevek&gt; &lt;sporočilo&gt;:  Pošlji zasebno sporočilo uporabniku"
 
-#: src/protocols/silc/silc.c:1344
+#: src/protocols/silc/silc.c:1354
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
 msgstr "query &lt;vzdevek&gt; [&lt;sporočilo&gt;]:  Pošlji zasebno sporočilo uporabniku"
 
-#: src/protocols/silc/silc.c:1348
+#: src/protocols/silc/silc.c:1358
 msgid "motd:  View the server's Message Of The Day"
 msgstr "motd:  Ogled sporočila dneva na strežniku"
 
-#: src/protocols/silc/silc.c:1352
+#: src/protocols/silc/silc.c:1362
 msgid "detach:  Detach this session"
 msgstr "odpni:  Odpni to sejo"
 
-#: src/protocols/silc/silc.c:1356
+#: src/protocols/silc/silc.c:1366
 msgid "quit [message]:  Disconnect from the server, with an optional message"
 msgstr "quit [sporočilo]:  Prekini povezavo s strežnikom z možnostjo sporočila"
 
-#: src/protocols/silc/silc.c:1360
+#: src/protocols/silc/silc.c:1370
 msgid "call &lt;command&gt;:  Call any silc client command"
 msgstr "pomoč &lt;ukaz&gt;:  Pomoč o določenem ukazu"
 
-#: src/protocols/silc/silc.c:1366
+#: src/protocols/silc/silc.c:1376
 msgid "kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"
 msgstr "kill &lt;vzdevek&gt; [-javniključ|&lt;razlog&gt;]:  Ubij vzdevek"
 
-#: src/protocols/silc/silc.c:1370
+#: src/protocols/silc/silc.c:1380
 msgid "nick &lt;newnick&gt;:  Change your nickname"
 msgstr "nick &lt;novvzdevek&gt;:  Spremenite vaš vzdevek"
 
-#: src/protocols/silc/silc.c:1374
+#: src/protocols/silc/silc.c:1384
 msgid "whowas &lt;nick&gt;:  View nick's information"
 msgstr "whowas &lt;vzdevek&gt;:  Ogled informacij o vzdevku"
 
-#: src/protocols/silc/silc.c:1378
+#: src/protocols/silc/silc.c:1388
 msgid "cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display channel modes"
 msgstr "cmode &lt;kanall&gt; [+|-&lt;načini&gt;] [argumenti]:  Spremeni ali prikaži načine kanala"
 
-#: src/protocols/silc/silc.c:1382
+#: src/protocols/silc/silc.c:1392
 msgid "cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes on channel"
 msgstr "cumode &lt;kanal&gt; +|-&lt;načini&gt; &lt;vzdevek&gt;:  Spremeni načine vzdevka na kanalu"
 
-#: src/protocols/silc/silc.c:1386
+#: src/protocols/silc/silc.c:1396
 msgid "umode &lt;usermodes&gt;:  Set your modes in the network"
 msgstr "umode &lt;načiniuporabnika&gt;:  Nastavite vaše načine v omrežju"
 
-#: src/protocols/silc/silc.c:1390
+#: src/protocols/silc/silc.c:1400
 msgid "oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"
 msgstr "oper &lt;vzdevek&gt; [-javniključ]:  Dodeli pravice operaterju strežnika"
 
-#: src/protocols/silc/silc.c:1394
+#: src/protocols/silc/silc.c:1404
 msgid "invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from channel invite list"
 msgstr "invite &lt;kanal&gt; [-|+]&lt;vzdevek&gt;:  povabi vzdevek ali dodaj/odstrani iz seznama povabljenih na kanal"
 
-#: src/protocols/silc/silc.c:1398
+#: src/protocols/silc/silc.c:1408
 msgid "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
 msgstr "kick &lt;kanal&gt; &lt;vzdevek&gt; [komentar]:  Brcni odjemalca s kanala"
 
-#: src/protocols/silc/silc.c:1402
+#: src/protocols/silc/silc.c:1412
 msgid "info [server]:  View server administrative details"
 msgstr "info [strežnik]:  Ogled nadzorniških podrobnosti strežnika"
 
-#: src/protocols/silc/silc.c:1406
+#: src/protocols/silc/silc.c:1416
 msgid "ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"
 msgstr "ban [&lt;kanal&gt; +|-&lt;vzdevek&gt;]:  Prepovaj odjemalca na kanalu"
 
-#: src/protocols/silc/silc.c:1410
+#: src/protocols/silc/silc.c:1420
 msgid "getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"
 msgstr "getkey &lt;vzdevek|strežnik&gt;:  Pridobi javni ključ odjemalca ali strežnika"
 
-#: src/protocols/silc/silc.c:1414
+#: src/protocols/silc/silc.c:1424
 msgid "stats:  View server and network statistics"
 msgstr "stats:  Ogled statistike omrežja in strežnika"
 
-#: src/protocols/silc/silc.c:1418
+#: src/protocols/silc/silc.c:1428
 msgid "ping:  Send PING to the connected server"
 msgstr "ping:  Pošlji PING povezanemu strežniku"
 
-#: src/protocols/silc/silc.c:1423
+#: src/protocols/silc/silc.c:1433
 msgid "users &lt;channel&gt;:  List users in channel"
 msgstr "users &lt;kanal&gt;:  Navedi uporabnike v kanalu"
 
-#: src/protocols/silc/silc.c:1427
+#: src/protocols/silc/silc.c:1437
 msgid "names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List specific users in channel(s)"
 msgstr "names [-št|-op|-polop|-glas|-navadni] &lt;kanal(i)&gt;:  Seznam določenih uporabnikov na kanalu(ih)"
 
-#: src/protocols/silc/silc.c:1439
+#: src/protocols/silc/silc.c:1449
 msgid "Instant Messages"
 msgstr "Neposredna sporočila"
 
-#: src/protocols/silc/silc.c:1444
+#: src/protocols/silc/silc.c:1454
 msgid "Digitally sign all IM messages"
 msgstr "Digitalno podpiši vsa vsa neposredna sporočila"
 
-#: src/protocols/silc/silc.c:1449
+#: src/protocols/silc/silc.c:1459
 msgid "Verify all IM message signatures"
 msgstr "Preveri podpise vseh neposrednih sporočil"
 
-#: src/protocols/silc/silc.c:1452
+#: src/protocols/silc/silc.c:1462
 msgid "Channel Messages"
 msgstr "Sporočila kanala"
 
-#: src/protocols/silc/silc.c:1457
+#: src/protocols/silc/silc.c:1467
 msgid "Digitally sign all channel messages"
 msgstr "Digitalno podpiši vsa sporočila kanala"
 
-#: src/protocols/silc/silc.c:1462
+#: src/protocols/silc/silc.c:1472
 msgid "Verify all channel message signatures"
 msgstr "Preveri podpise vseh sporočil kanala"
-
-#: src/protocols/silc/silc.c:1465
-msgid "Default SILC Key Pair"
-msgstr "Privzet par ključev SILC"
-
-#: src/protocols/silc/silc.c:1470
-msgid "SILC Public Key"
-msgstr "Javni ključ SILC"
-
-#: src/protocols/silc/silc.c:1475
-msgid "SILC Private Key"
-msgstr "Zasebni ključ SILC"
 
 #. *< type
 #. *< ui_requirement
@@ -10200,92 +10199,92 @@ msgstr "Zasebni ključ SILC"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/silc/silc.c:1564
+#: src/protocols/silc/silc.c:1561
 msgid "SILC Protocol Plugin"
 msgstr "Vstavek za protokol SILC"
 
 #. *  description
-#: src/protocols/silc/silc.c:1566
+#: src/protocols/silc/silc.c:1563
 msgid "Secure Internet Live Conferencing (SILC) Protocol"
 msgstr "Protokol SILC (Varen internetni konferenčni sistem v živo)"
 
-#: src/protocols/silc/silc.c:1596
+#: src/protocols/silc/silc.c:1597
+msgid "Public Key file"
+msgstr "Datoteka z javnim ključem"
+
+#: src/protocols/silc/silc.c:1601
+msgid "Private Key file"
+msgstr "Datoteka z zasebnim ključem"
+
+#: src/protocols/silc/silc.c:1604
 msgid "Public key authentication"
 msgstr "Overovitev javnega ključa"
 
-#: src/protocols/silc/silc.c:1602
-msgid "Public Key File"
-msgstr "Datoteka z javnim ključem"
-
-#: src/protocols/silc/silc.c:1606
-msgid "Private Key File"
-msgstr "Datoteka z zasebnim ključem"
-
-#: src/protocols/silc/silc.c:1611
+#: src/protocols/silc/silc.c:1608
 msgid "Reject watching by other users"
 msgstr "Zavrni ogledovanje drugih uporabnikov"
 
-#: src/protocols/silc/silc.c:1614
+#: src/protocols/silc/silc.c:1611
 msgid "Block invites"
 msgstr "Zavrni povabljene"
 
-#: src/protocols/silc/silc.c:1617
+#: src/protocols/silc/silc.c:1614
 msgid "Block IMs without Key Exchange"
 msgstr "Zavrni neposredno sporočanje brez izmenjave ključev"
 
-#: src/protocols/silc/silc.c:1620
+#: src/protocols/silc/silc.c:1617
 msgid "Reject online status attribute requests"
 msgstr "Zavrni zahtevke atributov stanja uporabnikov na zvezi"
 
-#: src/protocols/silc/util.c:202
-#: src/protocols/silc/util.c:227
+#: src/protocols/silc/util.c:205
+#: src/protocols/silc/util.c:230
 msgid "Creating SILC key pair..."
 msgstr "Ustvarjanje para ključev SILC ..."
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
 #. sum: 3 tabs or 24 characters)
-#: src/protocols/silc/util.c:310
+#: src/protocols/silc/util.c:313
 #, c-format
 msgid "Real Name: \t%s\n"
 msgstr "Pravo ime: \t%s\n"
 
-#: src/protocols/silc/util.c:312
+#: src/protocols/silc/util.c:315
 #, c-format
 msgid "User Name: \t%s\n"
 msgstr "Uporabniško ime: \t%s\n"
 
-#: src/protocols/silc/util.c:314
+#: src/protocols/silc/util.c:317
 #, c-format
 msgid "EMail: \t\t%s\n"
 msgstr "E-pošta: \t\t%s\n"
 
-#: src/protocols/silc/util.c:316
+#: src/protocols/silc/util.c:319
 #, c-format
 msgid "Host Name: \t%s\n"
 msgstr "Ime gostitelja: \t%s\n"
 
-#: src/protocols/silc/util.c:318
+#: src/protocols/silc/util.c:321
 #, c-format
 msgid "Organization: \t%s\n"
 msgstr "Organizacija: \t%s\n"
 
-#: src/protocols/silc/util.c:320
+#: src/protocols/silc/util.c:323
 #, c-format
 msgid "Country: \t%s\n"
 msgstr "Država: \t%s\n"
 
-#: src/protocols/silc/util.c:321
+#: src/protocols/silc/util.c:324
 #, c-format
 msgid "Algorithm: \t%s\n"
 msgstr "Algoritem: \t%s\n"
 
-#: src/protocols/silc/util.c:322
+#: src/protocols/silc/util.c:325
 #, c-format
 msgid "Key Length: \t%d bits\n"
 msgstr "Dolžina ključa: \t%d bitov\n"
 
-#: src/protocols/silc/util.c:324
+#: src/protocols/silc/util.c:327
 #, c-format
 msgid ""
 "Public Key Fingerprint:\n"
@@ -10296,7 +10295,7 @@ msgstr ""
 "%s\n"
 "\n"
 
-#: src/protocols/silc/util.c:325
+#: src/protocols/silc/util.c:328
 #, c-format
 msgid ""
 "Public Key Babbleprint:\n"
@@ -10305,24 +10304,24 @@ msgstr ""
 "Odtis javnega ključa:\n"
 "%s"
 
-#: src/protocols/silc/util.c:329
-#: src/protocols/silc/util.c:330
+#: src/protocols/silc/util.c:332
+#: src/protocols/silc/util.c:333
 msgid "Public Key Information"
 msgstr "Informacije o javnem ključu"
 
-#: src/protocols/silc/util.c:512
+#: src/protocols/silc/util.c:515
 msgid "Paging"
 msgstr "Ostranjevanje"
 
-#: src/protocols/silc/util.c:536
+#: src/protocols/silc/util.c:539
 msgid "Computer"
 msgstr "Računalnik"
 
-#: src/protocols/silc/util.c:540
+#: src/protocols/silc/util.c:543
 msgid "PDA"
 msgstr "PDA"
 
-#: src/protocols/silc/util.c:542
+#: src/protocols/silc/util.c:545
 msgid "Terminal"
 msgstr "Terminal"
 
@@ -11092,26 +11091,26 @@ msgstr "Izpostavljanje"
 
 #. XXX: why in the hell are we calling gaim_connection_error() here?
 #. Forbidden
-#: src/proxy.c:956
+#: src/proxy.c:958
 #, c-format
 msgid "Access denied: proxy server forbids port %d tunnelling."
 msgstr "Dostop zavrnjen: strežnik proxy ne dovoljuje tuneliranja vrat %d."
 
-#: src/proxy.c:960
+#: src/proxy.c:962
 #, c-format
 msgid "Proxy connection error %d"
 msgstr "Napaka pri povezavi strežnika proxy %d"
 
-#: src/proxy.c:1782
+#: src/proxy.c:1784
 msgid "Invalid proxy settings"
 msgstr "Neveljavne proxy nastavitve"
 
-#: src/proxy.c:1782
+#: src/proxy.c:1784
 msgid "Either the host name or port number specified for your given proxy type is invalid."
 msgstr "Bodisi ime strežnika bodisi vrata, ki ste ju navedli za proxy, so neveljavna."
 
 #. * Custom away message.
-#: src/prpl.h:180
+#: src/prpl.h:187
 msgid "Custom"
 msgstr "Prikrojeno"
 
@@ -11131,7 +11130,7 @@ msgstr "Prosim vpišite svoje geslo"
 msgid "%s is now known as %s.\n"
 msgstr "%s je zdaj poznan kot %s.\n"
 
-#: src/server.c:966
+#: src/server.c:978
 #, c-format
 msgid "(%d message)"
 msgid_plural "(%d messages)"
@@ -11140,53 +11139,53 @@ msgstr[1] "(%d sporočilo)"
 msgstr[2] "(%d sporočili)"
 msgstr[3] "(%d sporočila)"
 
-#: src/server.c:980
+#: src/server.c:992
 msgid "(1 message)"
 msgstr "(%d sporočil)"
 
-#: src/server.c:1203
-#: src/server.c:1212
+#: src/server.c:1215
+#: src/server.c:1224
 #, c-format
 msgid "%s logged in."
 msgstr "%s se je prijavil."
 
-#: src/server.c:1224
+#: src/server.c:1236
 #, c-format
 msgid "%s signed on"
 msgstr "%s se je prijavil"
 
-#: src/server.c:1239
+#: src/server.c:1251
 #, c-format
 msgid "%s came back"
 msgstr "%s se je vrnil"
 
-#: src/server.c:1241
+#: src/server.c:1253
 #, c-format
 msgid "%s went away"
 msgstr "%s je postal odsoten"
 
-#: src/server.c:1255
+#: src/server.c:1267
 #, c-format
 msgid "%s became idle"
 msgstr "%s je postal nedejaven"
 
-#: src/server.c:1266
+#: src/server.c:1278
 #, c-format
 msgid "%s became unidle"
 msgstr "%s je postal dejaven"
 
-#: src/server.c:1276
-#: src/server.c:1283
+#: src/server.c:1288
+#: src/server.c:1295
 #, c-format
 msgid "%s logged out."
 msgstr "%s se je odjavil."
 
-#: src/server.c:1296
+#: src/server.c:1308
 #, c-format
 msgid "%s signed off"
 msgstr "%s se je odjavil"
 
-#: src/server.c:1358
+#: src/server.c:1370
 #, c-format
 msgid ""
 "%s has just been warned by %s.\n"
@@ -11195,11 +11194,11 @@ msgstr ""
 "%s je pravkar posvarjen od %s.\n"
 "Vaše novo stanje opozoril je %d%%"
 
-#: src/server.c:1361
+#: src/server.c:1373
 msgid "an anonymous person"
 msgstr "neznana oseba"
 
-#: src/server.c:1475
+#: src/server.c:1487
 #, c-format
 msgid ""
 "%s has invited %s to the chat room %s:\n"
@@ -11208,12 +11207,12 @@ msgstr ""
 "Uporabnik %s vabi %s v sobo %s na pomenek:\n"
 "<b>%s</b>"
 
-#: src/server.c:1481
+#: src/server.c:1493
 #, c-format
 msgid "%s has invited %s to the chat room %s\n"
 msgstr "Uporabnik %s vabi %s na pomenek v sobo %s\n"
 
-#: src/server.c:1490
+#: src/server.c:1502
 msgid "Accept chat invitation?"
 msgstr "Sprejmi povabilo na pomenek?"
 
