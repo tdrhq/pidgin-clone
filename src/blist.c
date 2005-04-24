@@ -165,8 +165,8 @@ static gboolean blist_save_callback(gpointer data)
 	return FALSE;
 }
 
-static void
-schedule_blist_save()
+void
+gaim_blist_schedule_save()
 {
 	if (blist_save_timer != 0)
 		gaim_timeout_remove(blist_save_timer);
@@ -406,7 +406,7 @@ void gaim_blist_rename_buddy(GaimBuddy *buddy, const char *name)
 	g_free(buddy->name);
 	buddy->name = g_strdup(name);
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
@@ -424,7 +424,7 @@ void gaim_blist_alias_chat(GaimChat *chat, const char *alias)
 	else
 		chat->alias = NULL;
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)chat);
@@ -443,7 +443,7 @@ void gaim_blist_alias_buddy(GaimBuddy *buddy, const char *alias)
 	else
 		buddy->alias = NULL;
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
@@ -466,7 +466,7 @@ void gaim_blist_server_alias_buddy(GaimBuddy *buddy, const char *alias)
 	else
 		buddy->server_alias = NULL;
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
@@ -549,7 +549,7 @@ void gaim_blist_rename_group(GaimGroup *source, const char *new_name)
 	}
 
 	/* Save our changes */
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	/* Update the UI */
 	if (ops && ops->update)
@@ -655,7 +655,7 @@ gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
 	else
 		gaim_blist_node_remove_setting((GaimBlistNode *)buddy, "buddy_icon");
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	gaim_blist_update_buddy_icon(buddy);
 }
@@ -708,7 +708,7 @@ void gaim_blist_add_chat(GaimChat *chat, GaimGroup *group, GaimBlistNode *node)
 
 		ops->remove(gaimbuddylist, cnode);
 
-		schedule_blist_save();
+		gaim_blist_schedule_save();
 	}
 
 	if (node != NULL) {
@@ -737,7 +737,7 @@ void gaim_blist_add_chat(GaimChat *chat, GaimGroup *group, GaimBlistNode *node)
 		}
 	}
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)cnode);
@@ -809,7 +809,7 @@ void gaim_blist_add_buddy(GaimBuddy *buddy, GaimContact *contact, GaimGroup *gro
 
 		ops->remove(gaimbuddylist, bnode);
 
-		schedule_blist_save();
+		gaim_blist_schedule_save();
 
 		if (bnode->parent->parent != (GaimBlistNode*)g) {
 			hb = g_new(struct _gaim_hbuddy, 1);
@@ -866,7 +866,7 @@ void gaim_blist_add_buddy(GaimBuddy *buddy, GaimContact *contact, GaimGroup *gro
 
 	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
@@ -903,7 +903,7 @@ void gaim_contact_set_alias(GaimContact *contact, const char *alias)
 	else
 		contact->alias = NULL;
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode*)contact);
@@ -1046,7 +1046,7 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 
 		ops->remove(gaimbuddylist, cnode);
 
-		schedule_blist_save();
+		gaim_blist_schedule_save();
 	}
 
 	if (node && (GAIM_BLIST_NODE_IS_CONTACT(node) ||
@@ -1072,7 +1072,7 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 		g->currentsize++;
 	g->totalsize++;
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	if (ops && cnode->child)
 		ops->update(gaimbuddylist, cnode);
@@ -1163,7 +1163,7 @@ void gaim_blist_add_group(GaimGroup *group, GaimBlistNode *node)
 		gaimbuddylist->root = gnode;
 	}
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	if (ops && ops->update) {
 		ops->update(gaimbuddylist, gnode);
@@ -1206,7 +1206,7 @@ void gaim_blist_remove_contact(GaimContact *contact)
 		if (node->next)
 			node->next->prev = node->prev;
 
-		schedule_blist_save();
+		gaim_blist_schedule_save();
 
 		/* Update the UI */
 		if (ops && ops->remove)
@@ -1255,7 +1255,7 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	}
 	contact->totalsize--;
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	/* Re-sort the contact */
 	if (contact->priority == buddy) {
@@ -1318,7 +1318,7 @@ void gaim_blist_remove_chat(GaimChat *chat)
 	}
 	group->totalsize--;
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	/* Update the UI */
 	if (ops && ops->remove)
@@ -1372,7 +1372,7 @@ void gaim_blist_remove_group(GaimGroup *group)
 	if (node->next)
 		node->next->prev = node->prev;
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 
 	/* Update the UI */
 	if (ops && ops->remove)
@@ -2469,7 +2469,7 @@ void gaim_blist_node_remove_setting(GaimBlistNode *node, const char *key)
 
 	g_hash_table_remove(node->settings, key);
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 }
 
 
@@ -2487,7 +2487,7 @@ void gaim_blist_node_set_bool(GaimBlistNode* node, const char *key, gboolean val
 
 	g_hash_table_replace(node->settings, g_strdup(key), setting);
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 }
 
 gboolean gaim_blist_node_get_bool(GaimBlistNode* node, const char *key)
@@ -2522,7 +2522,7 @@ void gaim_blist_node_set_int(GaimBlistNode* node, const char *key, int value)
 
 	g_hash_table_replace(node->settings, g_strdup(key), setting);
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 }
 
 int gaim_blist_node_get_int(GaimBlistNode* node, const char *key)
@@ -2558,7 +2558,7 @@ void gaim_blist_node_set_string(GaimBlistNode* node, const char *key,
 
 	g_hash_table_replace(node->settings, g_strdup(key), setting);
 
-	schedule_blist_save();
+	gaim_blist_schedule_save();
 }
 
 const char *gaim_blist_node_get_string(GaimBlistNode* node, const char *key)

@@ -722,6 +722,15 @@ void gaim_blist_sync();
 void gaim_blist_load();
 
 /**
+ * Schedule a save of the blist.xml file.  This is used by the privacy
+ * API whenever the privacy settings are changed.  If you make a change
+ * to blist.xml using one of the functions in the buddy list API, then
+ * the buddy list is saved automatically, so you should not need to
+ * call this.
+ */
+void gaim_blist_schedule_save();
+
+/**
  * Requests from the user information needed to add a buddy to the
  * buddy list.
  *
