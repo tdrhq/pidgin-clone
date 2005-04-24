@@ -70,7 +70,7 @@ yahoo_rem_permit(GaimConnection *gc, const char *who)
 	gaim_privacy_permit_remove(gc->account,who,TRUE);
 }
 
-gboolean yahoo_check_privacy(GaimConnection *gc, const char *who)
+gboolean yahoo_privacy_check(GaimConnection *gc, const char *who)
 {
 	/* returns TRUE if allowed through, FALSE otherwise */
 	GSList *list;
@@ -845,7 +845,7 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 		return;
 
 	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))
-		&& (yahoo_check_privacy(gc, from)))  {
+		&& (yahoo_privacy_check(gc, from)))  {
 		if (*stat == '1')
 			serv_got_typing(gc, from, 0, GAIM_TYPING);
 		else
@@ -927,7 +927,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 			continue;
 		}
 
-		if (!yahoo_check_privacy(gc, im->from)) {
+		if (!yahoo_privacy_check(gc, im->from)) {
 			gaim_debug_info("yahoo", "Message from %s dropped.\n", im->from);
 			continue;
 		}
@@ -2119,7 +2119,10 @@ static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
 		gaim_debug_misc("yahoo", "Warning, nonutf8 audible, ignoring!\n");
 		return;
 	}
-
+	if (!yahoo_privacy_check(gc, who)) {
+		gaim_debug_misc("yahoo", "Audible message from %s for %s dropped!\n", gc->account->username, who);
+		return;
+	}
 	serv_got_im(gc, who, msg, 0, time(NULL));
 }
 

@@ -158,7 +158,7 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 	if (members) {
 		g_hash_table_replace(components, g_strdup("members"), g_strdup(members->str));
 	}
-	if (!yahoo_check_privacy(gc, who)) {
+	if (!yahoo_privacy_check(gc, who)) {
 		gaim_debug_info("yahoo",
 		    "Invite to conference %s from %s has been dropped.\n", room, who);
 		return;
@@ -586,7 +586,7 @@ void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 		g_hash_table_replace(components, g_strdup("room"), g_strdup(room));
-		if (!yahoo_check_privacy(gc, who)) {
+		if (!yahoo_privacy_check(gc, who)) {
 			gaim_debug_info("yahoo",
 			"Invite to room %s from %s has been dropped.\n", room, who);
 			return;
