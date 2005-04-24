@@ -131,6 +131,21 @@ static void gaim_gtk_sound_shutdown(void)
 	sound_initialized = FALSE;
 }
 
+#ifdef USE_NAS_AUDIO
+static gboolean play_file_nas(const char *filename)
+{
+	AuServer *nas_serv;
+	gboolean ret = FALSE;
+
+	if((nas_serv = AuOpenServer(NULL, 0, NULL, 0, NULL, NULL))) {
+		ret = AuSoundPlaySynchronousFromFile(nas_serv, filename, 100);
+		AuCloseServer(nas_serv);
+	}
+
+	return ret;
+}
+#endif /* USE_NAS_AUDIO */
+
 static void gaim_gtk_sound_play_file(const char *filename)
 {
 	const char *method;
@@ -347,22 +362,6 @@ static void _pref_sound_method_changed(const char *name, GaimPrefType type,
 				   "Sound output driver loaded: NAS output\n");
 #endif /* USE_NAS */
 }
-
-#ifdef USE_NAS_AUDIO
-static gboolean play_file_nas(const char *filename)
-{
-	AuServer *nas_serv;
-	gboolean ret = FALSE;
-
-	if((nas_serv = AuOpenServer(NULL, 0, NULL, 0, NULL, NULL))) {
-		ret = AuSoundPlaySynchronousFromFile(nas_serv, filename, 100);
-		AuCloseServer(nas_serv);
-	}
-
-	return ret;
-}
-
-#endif /* USE_NAS_AUDIO */
 
 void gaim_gtk_sound_set_mute(gboolean mute)
 {
