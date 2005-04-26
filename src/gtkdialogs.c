@@ -71,6 +71,7 @@ static struct developer developers[] = {
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), NULL},
 	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
+	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -78,7 +79,6 @@ static struct developer patch_writers[] = {
 	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
-	{"Gary 'grim' Kramlich",		NULL,	NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
 	{"Benjamin Miller",				NULL,	NULL},
 	{"Kevin 'SimGuy' Stange",		NULL,	NULL},
