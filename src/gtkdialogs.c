@@ -1003,10 +1003,13 @@ gaim_gtkdialogs_remove_chat_cb(GaimChat *chat)
 void
 gaim_gtkdialogs_remove_chat(GaimChat *chat)
 {
-	gchar *name = gaim_chat_get_display_name(chat);
-	gchar *text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"), name);
+	gchar *name, *text;
 
 	g_return_if_fail(chat != NULL);
+
+	name = gaim_chat_get_display_name(chat);
+	text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"),
+			name ? name : "");
 
 	gaim_request_action(chat, NULL, _("Remove Chat"), text, 0, chat, 2,
 						_("Remove Chat"), G_CALLBACK(gaim_gtkdialogs_remove_chat_cb),
