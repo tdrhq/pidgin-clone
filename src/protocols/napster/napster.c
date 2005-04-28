@@ -528,6 +528,8 @@ static void nap_close(GaimConnection *gc)
 	if (!ndata)
 		return;
 
+	close(ndata->fd);
+
 	g_free(ndata->email);
 	g_free(ndata);
 }
