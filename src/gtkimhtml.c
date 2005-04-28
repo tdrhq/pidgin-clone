@@ -2026,7 +2026,6 @@ gboolean scroll_idle_cb(gpointer data)
 	GtkTextView *imhtml = data;
 	GtkAdjustment *adj;
 
-	gaim_debug_info("gtkimhtml", "in scroll_idle_cb\n");
 	adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
 	gtk_adjustment_set_value(adj, adj->upper - adj->page_size);
 
