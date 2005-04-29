@@ -332,7 +332,7 @@ AC_ARG_ENABLE(gevolution, [  --disable-gevolution    compile without the Gaim-Ev
 if test "x$enable_gevolution" = "xyes"; then
 	evo_deps="libxml-2.0 libebook-1.2 libedata-book-1.2"
 	PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, build_gevo=yes, build_gevo=no)
-	if test "x$build_evo" = "xno"; then
+	if test "x$build_gevo" = "xno"; then
 		evo_deps="libxml-2.0 libebook-1.0 libedata-book-1.0"
 		PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, build_gevo=yes, build_gevo=no)
 	fi
