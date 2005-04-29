@@ -48,7 +48,7 @@ OSCARSOURCES = \
 
 AM_CFLAGS = $(st)
 
-liboscar_la_LDFLAGS = -module -avoid-version
+liboscar_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_OSCAR
 
