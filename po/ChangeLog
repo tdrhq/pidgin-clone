@@ -1,9 +1,11 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 1.3.0cvs:
+	* Albanian translation updated (Programe Shqip)
 	* Catalan translation updated (Josep Puigdemont)
 	* Estonian translation updated. this was added last release but missed in
 	  the changelog (Ivar Smolin)
+	* Finnish translation updated (Arto Alakulju)
 	* Georgian translation added (Temuri Doghonadze)
 	* Hungarian translation for gaim.desktop file added (Laszlo Dvornik)
 	* Japanese translation updated (Takeshi Aihana)

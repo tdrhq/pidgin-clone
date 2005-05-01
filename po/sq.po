@@ -1,4 +1,3 @@
-# translation of gaim_sq.po to Albanian
 # translation of gaim.po to Albanian
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
@@ -33,7 +32,7 @@ msgstr "Fshih Gabime Hyrjeje"
 
 #: plugins/autorecon.c:246
 msgid "Restore Away State On Reconnect"
-msgstr ""
+msgstr "Rikthe Gjendje Largimi Gjatë Rilidhjeje"
 
 #  *< api_version
 #  *< type
@@ -228,9 +227,8 @@ msgid "Preferences"
 msgstr "Parapëlqime"
 
 #: plugins/docklet/docklet.c:214
-#, fuzzy
 msgid "Signoff"
-msgstr "_Çnënshkruani"
+msgstr "Çnënshkruani"
 
 #: plugins/docklet/docklet.c:218
 msgid "Quit"
@@ -701,9 +699,8 @@ msgstr "E-mail:"
 #. *< priority
 #. *< id
 #: plugins/gtk-signals-test.c:102
-#, fuzzy
 msgid "GTK Signals Test"
-msgstr "Provë Sinjalesh"
+msgstr "Provë Sinjalesh GTK"
 
 #  *< name
 #  *< version
@@ -714,9 +711,8 @@ msgstr "Provë Sinjalesh"
 #. *  summary
 #. *  description
 #: plugins/gtk-signals-test.c:105 plugins/gtk-signals-test.c:107
-#, fuzzy
 msgid "Test to see that all ui signals are working properly."
-msgstr "Provo për të parë që tërë sinjalet punojnë në rregull."
+msgstr "Provo për të parë që tërë sinjalet ui punojnë në rregull."
 
 #: plugins/history.c:92
 msgid "History"
@@ -874,7 +870,7 @@ msgstr ""
 #. ---------- "Notify For" ----------
 #: plugins/notify.c:604
 msgid "Notify For"
-msgstr "Njoftim Pë"
+msgstr "Njoftim Për"
 
 #: plugins/notify.c:608
 msgid "_IM windows"
@@ -1161,7 +1157,7 @@ msgstr "Zëvendësim Teksti"
 #: plugins/spellchk.c:541 plugins/spellchk.c:542
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr ""
-"Zëvendëso tekst në mesazhe që dërgohen, bazuar në rregulla të përcaktuar nga "
+"Zëvendëson tekst në mesazhe që dërgohen, bazuar në rregulla të përcaktuar nga "
 "përdoruesi."
 
 #  *< api_version
@@ -1313,7 +1309,7 @@ msgid ""
 "Notifies in a conversation window when a buddy goes or returns from away or "
 "idle."
 msgstr ""
-"Njofton në dritare bashkëbsedimi kur një shok largohet ose kthehet prej "
+"Njofton në dritare bashkëbisedimi kur një shok largohet ose kthehet prej "
 "plogështimi ose largimi."
 
 #: plugins/tcl/tcl.c:363
@@ -1609,30 +1605,26 @@ msgid "Unknown"
 msgstr "E panjohur"
 
 #: src/away.c:233
-#, fuzzy
 msgid "Away!"
-msgstr "Larguar"
+msgstr "Larguar!"
 
 #: src/away.c:303
-#, fuzzy
 msgid "Edit This Message"
-msgstr "Dërgoje si  mesazh"
+msgstr "Përpunoni Këtë Mesazh"
 
 #  else...
 #: src/away.c:308
-#, fuzzy
 msgid "I'm Back!"
-msgstr "Prapa"
+msgstr "U ktheva!"
 
 #: src/away.c:362
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure you want to remove the away message \"%s\"?"
-msgstr "jeni të sigurtë se doni të fshini %s?"
+msgstr "Jeni të sigurtë se doni të hiqni mesazhin e largimit \"%s\"?"
 
 #: src/away.c:364 src/away.c:456
-#, fuzzy
 msgid "Remove Away Message"
-msgstr "Mesazh Largimi"
+msgstr "Hiq Mesazh Largimi"
 
 #. Remove button
 #: src/away.c:366 src/gtkconv.c:1500 src/gtkconv.c:3876 src/gtkconv.c:3947
@@ -1641,50 +1633,45 @@ msgid "Remove"
 msgstr "Hiq"
 
 #: src/away.c:436
-#, fuzzy
 msgid "New Away Message"
-msgstr "Mesazh Largimi"
+msgstr "Mesazh i Ri Largimi"
 
 #: src/away.c:652
 msgid "Set All Away"
-msgstr ""
+msgstr "Vëri të Tërë si të Larguar"
 
 #: src/away.c:759
 msgid "You cannot save an away message with a blank title"
-msgstr ""
+msgstr "Nuk mund të ruani një mesazh largimi me një titull bosh"
 
 #: src/away.c:761
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
-msgstr ""
+msgstr "Ju lutemi vërini një titull mesazhit, ose zgjidhni \"Përdor\" për ta përdorur pa e ruajtur."
 
 #: src/away.c:771
 msgid "You cannot create an empty away message"
-msgstr ""
+msgstr "Nuk mund të krijoni një mesazh largimi bosh"
 
 #: src/away.c:836
-#, fuzzy
 msgid "New away message"
-msgstr "Mesazh Largimi"
+msgstr "Mesazh i ri largimi"
 
 #: src/away.c:851
-#, fuzzy
 msgid "Away title: "
-msgstr "Larguar / I plogësht"
+msgstr "Titull largimi:"
 
 #: src/away.c:899
-#, fuzzy
 msgid "_Save"
-msgstr "Ruaj"
+msgstr "_Ruaj"
 
 #: src/away.c:903
 msgid "Sa_ve & Use"
-msgstr ""
+msgstr "Rua_j & Përdor"
 
 #: src/away.c:907
-#, fuzzy
 msgid "_Use"
-msgstr "_Përdorues:"
+msgstr "_Përdor"
 
 #: src/blist.c:681
 msgid "Chats"
@@ -1710,18 +1697,16 @@ msgid "Group not removed"
 msgstr "Grup i pahequr"
 
 #: src/blist.c:2063
-#, fuzzy
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded, "
 "and the old file has moved to blist.xml~."
 msgstr ""
-"U has një gabim gjatë leximit të %s.  Nuk janë ngarkuar, dhe kartela e "
-"vjetër është riemërtuar si %s~."
+"U has një gabim gjatë përtypjes së listës tuaj të shokëve.  E cila nuk u ngarkua, "
+"dhe kartela e vjetër është kaluar te blist.xml~."
 
 #: src/blist.c:2066
-#, fuzzy
 msgid "Buddy List Error"
-msgstr "Listë Shokësh"
+msgstr "Gabim Liste Shokësh"
 
 #: src/connection.c:118 src/connection.c:169
 #, c-format
@@ -1742,9 +1727,8 @@ msgid "Enter password for %s (%s)"
 msgstr "Jepni fjalëkalim për %s (%s) "
 
 #: src/conversation.c:233
-#, fuzzy
 msgid "Unable to send message. The message is too large."
-msgstr "I pazoti të dërgoj mesazh: Mesazhi është shumë i madh."
+msgstr "I pazoti të dërgoj mesazh. Mesazhi është shumë i madh."
 
 #  TODO: Improve this! message to who or for what conference?
 #: src/conversation.c:237 src/conversation.c:251
@@ -1945,7 +1929,6 @@ msgid "Size of the expander arrow"
 msgstr "Madhësi e shigjetës së zgjeruesit"
 
 #: src/gaim-remote.c:108
-#, fuzzy, c-format
 msgid ""
 "Usage: %s command [OPTIONS] [URI]\n"
 "\n"
@@ -1962,30 +1945,21 @@ msgstr ""
 "Përdorimi: %s urdhër [MUNDËSI] [URI]\n"
 "\n"
 "    URDHRA:\n"
-"       send                     Dërgo mesazh\n"
 "       uri                      Trajto AIM: URI\n"
 "       away                     Shfaq dialogun e largimit me mesazhin "
 "parazgjedhje\n"
 "       back                     Hiq dialogun e largimit\n"
-"       logout                   Dil prej tërë llogarive\n"
 "       quit                     Mbyll kopjen xhiruese të Gaim-it\n"
 "\n"
 "    MUNDËSI:\n"
-"       -m, --message=MESG       Mesazh për t'u dërguar ose shfaqur në "
-"dritare bashkëbisedimi\n"
-"       -t, --to=SCREENNAME      Përzgjidh një objektiv për urdhrin\n"
-"       -p, --protocol=PROTO     Përcakto protokollin për t'u përdorur\n"
-"       -f, --from=SCREENNAME    Përcakto emër në ekrani për t'u përdorur\n"
-"       -s, --session=SESSION    Përcakto cilin sesion Gaim të përdoret\n"
 "       -h, --help [urdhër]     Shfaq ndihmë për urdhër\n"
 
 #: src/gaim-remote.c:185 src/gaim-remote.c:203
-#, fuzzy
 msgid ""
 "Gaim not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
 msgstr ""
-"Gaim-i nuk po xhiron (në sesionin %d)\n"
+"Gaim-i nuk po xhiron (në sesionin 0)\n"
 "A është e ngarkuar shtojca \"Kontroll Së largëti\"?\n"
 
 #: src/gaim-remote.c:219
@@ -2418,9 +2392,8 @@ msgid "/_Tools"
 msgstr "/_Mjete"
 
 #: src/gtkblist.c:2419
-#, fuzzy
 msgid "/Tools/_Away"
-msgstr "/Mjete/Vetës_i"
+msgstr "/Mjete/i _Larguar"
 
 #: src/gtkblist.c:2420
 msgid "/Tools/Buddy _Pounce"
@@ -2510,67 +2483,60 @@ msgid "%d%%"
 msgstr "%d%%"
 
 #: src/gtkblist.c:2579
-#, fuzzy
 msgid ""
 "\n"
 "<b>Account:</b>"
 msgstr ""
 "\n"
-"<b>Llogari:</b> %s"
+"<b>Llogari:</b>"
 
 #: src/gtkblist.c:2580
-#, fuzzy
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
 msgstr ""
 "\n"
-"<b>Alias Kontakti:</b> %s"
+"<b>Alias Kontakti:</b>"
 
 #: src/gtkblist.c:2581
-#, fuzzy
 msgid ""
 "\n"
 "<b>Alias:</b>"
 msgstr ""
 "\n"
-"<b>Alias:</b> %s"
+"<b>Alias:</b>"
 
 #: src/gtkblist.c:2582
-#, fuzzy
 msgid ""
 "\n"
 "<b>Nickname:</b>"
 msgstr ""
 "\n"
-"<b>Nofkë:</b> %s"
+"<b>Nofkë:</b>"
 
 #: src/gtkblist.c:2583
-#, fuzzy
 msgid ""
 "\n"
 "<b>Logged In:</b>"
 msgstr ""
 "\n"
-"<b>Futur:</b> %s "
+"<b>Futur:</b>"
 
 #: src/gtkblist.c:2584
-#, fuzzy
 msgid ""
 "\n"
 "<b>Idle:</b>"
 msgstr ""
 "\n"
-"<b>I plogësht</b>"
+"<b>I plogësht:</b>"
 
 #: src/gtkblist.c:2585
-#, fuzzy
 msgid ""
 "\n"
 "<b>Warned:</b>"
 msgstr ""
 "\n"
-"<b>I sinjalizuar:</b> %s"
+"<b>I sinjalizuar:</b>"
 
 #: src/gtkblist.c:2587
 msgid ""
@@ -2643,9 +2609,8 @@ msgid "By log size"
 msgstr "Sipas madhësie regjistrimi"
 
 #: src/gtkblist.c:3155
-#, fuzzy
 msgid "/Tools/Away"
-msgstr "/Mjete/Vetësi"
+msgstr "/Mjete/Larguar"
 
 #: src/gtkblist.c:3158
 msgid "/Tools/Buddy Pounce"
@@ -2671,33 +2636,28 @@ msgid "/Buddies/Show Empty Groups"
 msgstr "/Shokë/Shfaq Grupe Bosh"
 
 #: src/gtkblist.c:3279
-#, fuzzy
 msgid "Send a message to the selected buddy"
-msgstr "Ju lutem jepni emër të ri për grupin e përzgjedhur."
+msgstr "Dërgo një mesazh për shokun e përzgjedhur."
 
 #: src/gtkblist.c:3289
 msgid "Get information on the selected buddy"
-msgstr ""
+msgstr "Ki të dhëna mbi shokun e përzgjedhur"
 
 #: src/gtkblist.c:3293
-#, fuzzy
 msgid "_Chat"
-msgstr "Fjalosje"
+msgstr "_Fjalosje"
 
 #: src/gtkblist.c:3298
-#, fuzzy
 msgid "Join a chat room"
-msgstr "Bashkoju një Fjalosjeje"
+msgstr "Bashkoju një dhome fjalosjeje"
 
 #: src/gtkblist.c:3303
-#, fuzzy
 msgid "_Away"
-msgstr "Larguar"
+msgstr "_Larguar"
 
 #: src/gtkblist.c:3308
-#, fuzzy
 msgid "Set an away message"
-msgstr "Dërgo një mesa_zh"
+msgstr "Dërgo një mesazh largimi"
 
 #: src/gtkblist.c:4071 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:989 src/protocols/silc/buddy.c:1034
@@ -2756,24 +2716,20 @@ msgid "No actions available"
 msgstr "Pa veprime të mundshëm"
 
 #: src/gtkconn.c:79 src/gtkconn.c:250 src/gtkconn.c:261
-#, fuzzy
 msgid "Done."
-msgstr "Asnjë"
+msgstr "Kryer"
 
 #: src/gtkconn.c:158
-#, fuzzy
 msgid "Signon: "
-msgstr "Nënshkrim: %s"
+msgstr "Nënshkrim:"
 
 #: src/gtkconn.c:204
-#, fuzzy
 msgid "Signon"
 msgstr "Nënshkruani"
 
 #: src/gtkconn.c:216
-#, fuzzy
 msgid "Cancel All"
-msgstr "Anulo"
+msgstr "Anulo Tërë"
 
 #: src/gtkconn.c:361 src/gtkconn.c:594
 msgid "_Reconnect"
@@ -2925,7 +2881,6 @@ msgid "Info"
 msgstr "Të dhëna"
 
 #: src/gtkconv.c:1488
-#, fuzzy
 msgid "Get Away Msg"
 msgstr "Mesazh Largimi"
 
@@ -3051,9 +3006,8 @@ msgid "/Options/Enable _Sounds"
 msgstr "/Mundësi/Aktivizo _Tinguj"
 
 #: src/gtkconv.c:3685
-#, fuzzy
 msgid "/Options/Show Formatting _Toolbar"
-msgstr "/Mundësi/Shfaq _Panele Formatimi"
+msgstr "/Mundësi/Shfaq _Panel Formatimi"
 
 #: src/gtkconv.c:3686
 msgid "/Options/Show T_imestamps"
@@ -3116,9 +3070,8 @@ msgid "/Options/Enable Sounds"
 msgstr "/Mundësi/Aktivizo Tinguj"
 
 #: src/gtkconv.c:3791
-#, fuzzy
 msgid "/Options/Show Formatting Toolbar"
-msgstr "/Mundësi/Shfaq Panele Formatimi"
+msgstr "/Mundësi/Shfaq Panel Formatimi"
 
 #: src/gtkconv.c:3794
 msgid "/Options/Show Timestamps"
@@ -3127,14 +3080,12 @@ msgstr "/Mundësi/Shfaq Vula kohore"
 #. The buttons, from left to right
 #. Warn button
 #: src/gtkconv.c:3848
-#, fuzzy
 msgid "Warn"
-msgstr "_Sinjalizo"
+msgstr "Sinjalizo"
 
 #: src/gtkconv.c:3849
-#, fuzzy
 msgid "Warn the user"
-msgstr "IM përdoruesin"
+msgstr "Sinjalizo përdoruesin"
 
 #  Block button
 #. Block button
@@ -3143,24 +3094,20 @@ msgid "Block"
 msgstr "Blloko"
 
 #: src/gtkconv.c:3856
-#, fuzzy
 msgid "Block the user"
-msgstr "Blloko tërë përdoruesit"
+msgstr "Blloko përdoruesin"
 
 #: src/gtkconv.c:3863
-#, fuzzy
 msgid "Send a file to the user"
-msgstr "Dërgo një mesazh celulari."
+msgstr "Dërgo një kartelë te përdoruesi."
 
 #: src/gtkconv.c:3870
-#, fuzzy
 msgid "Add the user to your buddy list"
-msgstr "Lejo vetëm përdoruesit në listën time të shokëve"
+msgstr "Shto përdoruesin te lista juaj e shokëve"
 
 #: src/gtkconv.c:3877
-#, fuzzy
 msgid "Remove the user from your buddy list"
-msgstr "Lejo vetëm përdoruesit në listën time të shokëve"
+msgstr "Hiq përdoruesin prej listës suaj të shokëve"
 
 #: src/gtkconv.c:3884 src/gtkconv.c:4219
 msgid "Get the user's information"
@@ -3168,36 +3115,31 @@ msgstr "Ki të dhëna përdoruesi"
 
 #. Send button
 #: src/gtkconv.c:3890 src/gtkconv.c:3954
-#, fuzzy
 msgid "Send"
-msgstr "_Dërgo Si"
+msgstr "Dërgo"
 
 #: src/gtkconv.c:3891 src/gtkconv.c:3955
-#, fuzzy
 msgid "Send message"
-msgstr "Dërgo një mesa_zh"
+msgstr "Dërgo mesazh"
 
 #  Invite
 #. The buttons, from left to right
 #. Invite
 #: src/gtkconv.c:3933
-#, fuzzy
 msgid "Invite"
-msgstr "_Ftoni"
+msgstr "Fto"
 
 #: src/gtkconv.c:3934
-#, fuzzy
 msgid "Invite a user"
-msgstr "IM përdoruesin"
+msgstr "Fto një përdorues"
 
 #: src/gtkconv.c:3941
-#, fuzzy
 msgid "Add the chat to your buddy list"
-msgstr "I pazoti të shtoj %s te listë juaja shokësh (%s)."
+msgstr "Shto fjalosjen te listë juaja shokësh"
 
 #: src/gtkconv.c:3948
 msgid "Remove the chat from your buddy list"
-msgstr ""
+msgstr "Hiq fjalosjen prej listës suaj të shokëve"
 
 #: src/gtkconv.c:4072
 msgid "Topic:"
@@ -3230,9 +3172,8 @@ msgstr[0] "%d person në dhomë"
 msgstr[1] "%d vetë në dhomë"
 
 #: src/gtkconv.c:6096 src/gtkconv.c:6099
-#, fuzzy
 msgid "<main>/Conversation/Close"
-msgstr "/Bashkëbisedim/_Mbyll"
+msgstr "<main>/Bashkëbisedim/Mbyll"
 
 #: src/gtkconv.c:6471
 msgid ""
@@ -3363,9 +3304,8 @@ msgid "Spanish"
 msgstr "Spanjolle"
 
 #: src/gtkdialogs.c:109
-#, fuzzy
 msgid "Estonian"
-msgstr "Rumune"
+msgstr "Estonishte"
 
 #: src/gtkdialogs.c:110 src/gtkdialogs.c:149
 msgid "Finnish"
@@ -3409,7 +3349,7 @@ msgstr "Maqedone"
 
 #: src/gtkdialogs.c:120
 msgid "Burmese"
-msgstr ""
+msgstr "Burmeze"
 
 #: src/gtkdialogs.c:121
 msgid "Dutch; Flemish"
@@ -3444,9 +3384,8 @@ msgid "Slovenian"
 msgstr "Slovene"
 
 #: src/gtkdialogs.c:129
-#, fuzzy
 msgid "Albanian"
-msgstr "Rumune"
+msgstr "Shqipe"
 
 #: src/gtkdialogs.c:130
 msgid "Serbian"
@@ -3458,11 +3397,11 @@ msgstr "Suedeze"
 
 #: src/gtkdialogs.c:132
 msgid "Turkish"
-msgstr ""
+msgstr "Turke"
 
 #: src/gtkdialogs.c:133
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrainase"
 
 #: src/gtkdialogs.c:134
 msgid "Vietnamese"
@@ -3497,12 +3436,10 @@ msgid "About Gaim"
 msgstr "Rreth Gaim"
 
 #: src/gtkdialogs.c:218
-#, fuzzy, c-format
+#, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Ka postë për ju!</span>\n"
-"\n"
-"%s"
+"<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 
 #: src/gtkdialogs.c:240
 msgid ""
@@ -3637,12 +3574,12 @@ msgid "Enter an alias for this chat."
 msgstr "Jepni një alias për këtë fjalosje."
 
 #: src/gtkdialogs.c:865
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
 "your buddy list.  Do you want to continue?"
 msgstr ""
-"Jeni duke hequr kontaktin që përmban %s dhe %d shok tjetër prej listës suaj "
+"Jeni duke hequr kontaktin që përmban %s dhe %d shokë të tjerë prej listës suaj "
 "të shokëve.  Doni të vazhdohet?"
 
 #: src/gtkdialogs.c:926
@@ -4170,13 +4107,12 @@ msgid "Unknown pounce event. Please report this!"
 msgstr "Akt i panjohur cytjeje. Ju lutem njoftojeni këtë!"
 
 #: src/gtkprefs.c:447
-#, fuzzy
 msgid "Interface Options"
-msgstr "Mundësi Përdoruesi"
+msgstr "Mundësi Ndërfaqeje"
 
 #: src/gtkprefs.c:449
 msgid "D_isplay remote nicknames if no alias is set"
-msgstr ""
+msgstr "Sh_faq nofka të largëta nëse nuk ka aliase të caktuar"
 
 #: src/gtkprefs.c:681
 msgid ""
@@ -4201,28 +4137,24 @@ msgid "Display"
 msgstr "Shfaq"
 
 #: src/gtkprefs.c:825
-#, fuzzy
 msgid "Show _timestamp on messages"
-msgstr "_Regjistro tërë mesazhet e atypëratyshëm"
+msgstr "Shfaq _vulë kohore te mesazhet"
 
 #: src/gtkprefs.c:828
 msgid "_Highlight misspelled words"
 msgstr "_Thekso fjalë të keqshqiptuara"
 
 #: src/gtkprefs.c:832
-#, fuzzy
 msgid "Ignore c_olors"
-msgstr "Shpërfill _formatim"
+msgstr "Shpërfill n_gjyra"
 
 #: src/gtkprefs.c:834
-#, fuzzy
 msgid "Ignore font _faces"
-msgstr "Shpërfill përdoruesin"
+msgstr "Shpërfill ti_pe gërmash"
 
 #: src/gtkprefs.c:836
-#, fuzzy
 msgid "Ignore font si_zes"
-msgstr "Madhësi më e madhe gërmash"
+msgstr "Shpërfill _madhësi gërmash"
 
 #: src/gtkprefs.c:839
 msgid "Default Formatting"
@@ -4245,41 +4177,36 @@ msgid "_Clear Formatting"
 msgstr "_Pastro Formatim"
 
 #: src/gtkprefs.c:913
-#, fuzzy
 msgid "Send Message"
-msgstr "Dërgo një mesa_zh"
+msgstr "Dërgo Mesazh"
 
 #: src/gtkprefs.c:914
-#, fuzzy
 msgid "Enter _sends message"
-msgstr "Fut në mesazh"
+msgstr "Enter _dërgon mesazh"
 
 #: src/gtkprefs.c:916
-#, fuzzy
 msgid "C_ontrol-Enter sends message"
-msgstr "I pazoti të dërgoj mesazh."
+msgstr "C_ontrol-Enter dërgon mesazh."
 
 #: src/gtkprefs.c:919
-#, fuzzy
 msgid "Window Closing"
-msgstr "përdorim në Windows"
+msgstr "Mbyllje Dritareje"
 
 #: src/gtkprefs.c:920
 msgid "_Escape closes window"
-msgstr ""
+msgstr "_Escape mbyll dritare"
 
 #: src/gtkprefs.c:923
-#, fuzzy
 msgid "Insertions"
-msgstr "Fut Lidhje"
+msgstr "Futje"
 
 #: src/gtkprefs.c:924
 msgid "Control-{B/I/U} changes _formatting"
-msgstr ""
+msgstr "Control-{B/I/U} ndryshon _formatim"
 
 #: src/gtkprefs.c:926
 msgid "Control-(number) _inserts smileys"
-msgstr ""
+msgstr "Control-(number) _fut surretër"
 
 #: src/gtkprefs.c:942
 msgid "Buddy List Sorting"
@@ -4290,26 +4217,24 @@ msgid "_Sorting:"
 msgstr "_Po rendis:"
 
 #: src/gtkprefs.c:957 src/gtkprefs.c:1009
-#, fuzzy
 msgid "Show _buttons as:"
-msgstr "Shfaq buton _mbyll në skeda"
+msgstr "Shfaq _butona si:"
 
 #: src/gtkprefs.c:959 src/gtkprefs.c:1011
 msgid "Pictures"
-msgstr ""
+msgstr "Pamje"
 
 #: src/gtkprefs.c:960 src/gtkprefs.c:1012
-#, fuzzy
 msgid "Text"
-msgstr "Provoni"
+msgstr "Tekst"
 
 #: src/gtkprefs.c:961 src/gtkprefs.c:1013
 msgid "Pictures and text"
-msgstr ""
+msgstr "Pamje dhe tekst"
 
 #: src/gtkprefs.c:964
 msgid "_Raise window on events"
-msgstr ""
+msgstr "_Ngri dritare në rast ngjarjesh"
 
 #: src/gtkprefs.c:967
 msgid "Buddy Display"
@@ -4320,39 +4245,36 @@ msgid "Show buddy _icons"
 msgstr "Shfaq _ikona shokësh"
 
 #: src/gtkprefs.c:970
-#, fuzzy
 msgid "Show _warning levels"
-msgstr "Shkallë Sinjalizimi"
+msgstr "Shfaq shkallë _sinjalizimi"
 
 #: src/gtkprefs.c:972
-#, fuzzy
 msgid "Show idle _times"
-msgstr "Shfaq hollësi përdoruesi"
+msgstr "Shfaq _kohë plogështie"
 
 #: src/gtkprefs.c:974
 msgid "Dim i_dle buddies"
-msgstr ""
+msgstr "Zbeh shokë të _plogësht"
 
 #: src/gtkprefs.c:976
 msgid "_Automatically expand contacts"
-msgstr ""
+msgstr "Zgjero _automatikisht kontakte"
 
 #: src/gtkprefs.c:1020
 msgid "Enable \"_slash\" commands"
-msgstr ""
+msgstr "Aktivizo urdhra \"_slash\""
 
 #: src/gtkprefs.c:1023
 msgid "Send unknown \"_slash\" commands as messages"
 msgstr "Dërgo si mesazhe urdhra të panjohur \"_slash\""
 
 #: src/gtkprefs.c:1026
-#, fuzzy
 msgid "Show _formatting toolbar"
-msgstr "/Mundësi/Shfaq Panele Formatimi"
+msgstr "Shfaq panel _formatimi"
 
 #: src/gtkprefs.c:1028
 msgid "Show _aliases in tabs/titles"
-msgstr ""
+msgstr "Shfaq _aliase në skeda/tituj"
 
 #: src/gtkprefs.c:1032
 msgid "Enable buddy ic_on animation"
@@ -4364,15 +4286,15 @@ msgstr "_Njofto shokë që po shtypni për ta"
 
 #: src/gtkprefs.c:1036
 msgid "_Raise IM window on events"
-msgstr ""
+msgstr "_Ngri dritare IM gjatë ngjarjesh"
 
 #: src/gtkprefs.c:1039
 msgid "Raise chat _window on events"
-msgstr ""
+msgstr "Ngri _dritare fjalosjeje gjatë ngjarjesh"
 
 #: src/gtkprefs.c:1041
 msgid "Use _multi-colored screen names in chats"
-msgstr ""
+msgstr "Përdor emra _shumëngjyrësh ekrani në fjalosje"
 
 #  All the tab options!
 #. All the tab options!
@@ -4551,9 +4473,8 @@ msgid "_Enable system log"
 msgstr "_Mundëso regjistrim sistemi"
 
 #: src/gtkprefs.c:1455
-#, fuzzy
 msgid "Log when buddies _sign on/sign off"
-msgstr "Regjistro kur shokët hyjnë/_dalin"
+msgstr "Regjistro kur shokët _hyjnë/dalin"
 
 #: src/gtkprefs.c:1461
 msgid "Log when buddies become _idle/un-idle"
@@ -4564,9 +4485,8 @@ msgid "Log when buddies go away/come _back"
 msgstr "Regjistro kur shokët largohen/kthehe_n"
 
 #: src/gtkprefs.c:1473
-#, fuzzy
 msgid "Log your _own signons/idleness/awayness"
-msgstr "Regjistroni _nënshkrimet/plogështinë/largimet tuaj"
+msgstr "Regjistroni nënshkrimet/plogështinë/largimet _tuaj"
 
 #: src/gtkprefs.c:1599
 msgid "Sound Selection"
@@ -4740,12 +4660,11 @@ msgstr "Hollësi"
 
 #: src/gtkprefs.c:2383
 msgid "_Edit"
-msgstr ""
+msgstr "_Përpunoni"
 
 #: src/gtkprefs.c:2419
-#, fuzzy
 msgid "Interface"
-msgstr "_Instancë:"
+msgstr "Ndërfaqe"
 
 #: src/gtkprefs.c:2422
 msgid "Message Text"
@@ -4753,7 +4672,7 @@ msgstr "Tekst Mesazhi"
 
 #: src/gtkprefs.c:2423
 msgid "Shortcuts"
-msgstr ""
+msgstr "Shkurtprerje"
 
 #: src/gtkprefs.c:2424
 msgid "Smiley Themes"
@@ -4781,9 +4700,8 @@ msgid "Away / Idle"
 msgstr "Larguar / I plogësht"
 
 #: src/gtkprefs.c:2436
-#, fuzzy
 msgid "Away Messages"
-msgstr "Mesazh për i Larguar "
+msgstr "Mesazhe për i Larguar "
 
 #: src/gtkprefs.c:2439
 msgid "Plugins"
@@ -5038,42 +4956,34 @@ msgid "Plain text"
 msgstr "Tekst i thjeshtë"
 
 #: src/main.c:150
-#, fuzzy
 msgid "Please create an account."
-msgstr "Ju lutem jepni një shok për ta cytur."
+msgstr "Ju lutem krijoni një llogari."
 
 #: src/main.c:232
-#, fuzzy
 msgid "Login"
 msgstr "Hyrje"
 
 #: src/main.c:248
-#, fuzzy
 msgid "<b>_Account:</b>"
 msgstr ""
-"\n"
-"<b>Llogari:</b> %s"
+"<b>_Llogari:</b>"
 
 #: src/main.c:262
-#, fuzzy
 msgid "<b>_Password:</b>"
-msgstr "_Fjalëkalim:"
+msgstr "_Fjalëkalim:</b>"
 
 #. And now for the buttons
 #: src/main.c:279
-#, fuzzy
 msgid "A_ccounts"
 msgstr "Llogari"
 
 #: src/main.c:285
-#, fuzzy
 msgid "P_references"
-msgstr "Parapëlqime"
+msgstr "P_arapëlqime"
 
 #: src/main.c:291
-#, fuzzy
 msgid "_Sign on"
-msgstr "Nënshkruani"
+msgstr "_Nënshkruani"
 
 #. full help text
 #: src/main.c:513
@@ -5094,6 +5004,20 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 "  -h, --help          display this help and exit\n"
 msgstr ""
+"Gaim %s\n"
+"Përdorimi: %s [MUNDËSI]...\n"
+"\n"
+"  -a, --acct          shfaq dritare përpunuesi llogarish\n"
+"  -w, --away[=MESG]   gjatë nënshkrimit bëje të larguar (argumenti opsional MESG përcakton\n"
+"                      emrin e mesazhit të largimit që duhet përdorur)\n"
+"  -l, --login[=NAME]  hyr automatikisht (argumenti opsional NAME përcakton\n"
+"                      llogarinë(të) për t'u përdorur, ndarë me presje)\n"
+"  -n, --loginwin      mos hyr automatikisht; shfaq dritare hyrjeje\n"
+"  -u, --user=NAME     përdor llogarinë NAME\n"
+"  -c, --config=DIR    përdor DIR për kartela formësimi\n"
+"  -d, --debug         shtyp mesazhe diagnostikimi tek stdout\n"
+"  -v, --version       shfaq versionin e tanishëm dhe dil\n"
+"  -h, --help          shfaq këtë ndihmë dhe dil\n"
 
 #  short message
 #. short message
@@ -5500,14 +5424,13 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Shtojcë Protokolli Gadu-Gadu"
 
 #: src/protocols/icq/gaim_icq.c:223
-#, fuzzy
 msgid "Gaim encountered an error communicating with the ICQ server."
-msgstr "Gabim gjatë komunikimit me shërbyesin"
+msgstr "Gabim hasi një gabim gjatë komunikimit me shërbyesin ICQ."
 
 #: src/protocols/icq/gaim_icq.c:293
-#, fuzzy, c-format
+#, c-format
 msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
-msgstr "Përdoruesi %s (%s) don të shtojë %s te listë e tij shokësh."
+msgstr "Përdoruesi %s (%s%s%s%s%s) don që ju ti autorizoni ata."
 
 #: src/protocols/icq/gaim_icq.c:296 src/protocols/jabber/presence.c:266
 #: src/protocols/msn/userlist.c:103 src/protocols/oscar/oscar.c:3795
@@ -5522,25 +5445,21 @@ msgid "Deny"
 msgstr "Moho"
 
 #: src/protocols/icq/gaim_icq.c:309
-#, fuzzy
 msgid "Send message through server"
-msgstr "Përgjigje e pavlefshme prej shërbyesit."
+msgstr "Dërgo përgjigje përmes shërbyesit."
 
 #  connect to the server
 #: src/protocols/icq/gaim_icq.c:351
-#, fuzzy
 msgid "Connecting..."
-msgstr "Po lidhem"
+msgstr "Po lidhem..."
 
 #: src/protocols/icq/gaim_icq.c:497
-#, fuzzy
 msgid "Nick:"
-msgstr "Nofkë"
+msgstr "Nofkë:"
 
 #: src/protocols/icq/gaim_icq.c:498
-#, fuzzy
 msgid "Gaim User"
-msgstr "Përdorim Gaim-i"
+msgstr "Përdorues Gaim-i"
 
 #: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1299
 #, c-format
@@ -5708,7 +5627,7 @@ msgstr "I ndaluar"
 #: src/protocols/irc/msgs.c:139
 #, c-format
 msgid "Cannot ban %s: banlist is full"
-msgstr ""
+msgstr "Nuk mund të ndaloj %s: lista e ndalimeve është plot"
 
 #: src/protocols/irc/msgs.c:219 src/protocols/irc/msgs.c:239
 #: src/protocols/irc/msgs.c:252
@@ -5841,21 +5760,20 @@ msgid "mode (%s %s) by %s"
 msgstr "mënyrë (%s %s) prej %s"
 
 #: src/protocols/irc/msgs.c:808
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid nickname '%s'"
-msgstr "Emër përdoruesi i Pavlefshëm"
+msgstr "Nofkë '%s' e pavlefshme"
 
 #: src/protocols/irc/msgs.c:809
-#, fuzzy
 msgid "Invalid nickname"
-msgstr "Emër përdoruesi i Pavlefshëm"
+msgstr "Nofkë e pavlefshme"
 
 #: src/protocols/irc/msgs.c:811 src/protocols/irc/msgs.c:816
 msgid ""
 "Your selected account name was rejected by the server.  It probably contains "
 "invalid characters."
-msgstr ""
-
+msgstr "Emri i llogarisë përzgjedhur prej jush u hodh tej nga shërbyesi. Ka të "
+"ngjarë përmban shenja të pavlefshme."
 #: src/protocols/irc/msgs.c:858
 msgid "Cannot change nick"
 msgstr "S'ndryshoj dot nofkë"
@@ -5969,12 +5887,11 @@ msgid "me &lt;action to perform&gt;:  Perform an action."
 msgstr "me &lt;veprim për t'u kryer&gt;:  Kryej një veprim."
 
 #: src/protocols/irc/parse.c:123
-#, fuzzy
 msgid ""
 "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Set or unset a channel "
 "or user mode."
 msgstr ""
-"mode &lt;nofkë|kanal&gt; &lt;+|-&gt;&lt;A-Za-z&gt;: Vër ose hiq mënyrë për "
+"mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Vër ose hiq mënyrë për "
 "kanal ose përdorues."
 
 #: src/protocols/irc/parse.c:124
@@ -6078,9 +5995,8 @@ msgstr ""
 "wallops &lt;mesazh&gt;:  Nëse nuk dini ç'është kjo, mbase nuk e përdorni dot."
 
 #: src/protocols/irc/parse.c:140
-#, fuzzy
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
-msgstr "whois &lt;nofkë&gt;:  Merr të dhëna mbi një përdorues."
+msgstr "whois [server] &lt;nick&gt;: Merr të dhëna mbi një përdorues."
 
 #: src/protocols/irc/parse.c:421
 #, c-format
@@ -6372,12 +6288,10 @@ msgid "Nick changing not supported in non-MUC chatrooms"
 msgstr "Ndryshim nofke jo i mbuluar në dhoma fjalosjeje jo-MUC"
 
 #: src/protocols/jabber/chat.c:651 src/protocols/jabber/chat.c:662
-#, fuzzy
 msgid "Roomlist Error"
-msgstr "Gabim Formësimi Dhome "
+msgstr "Gabim Liste Dhome "
 
 #: src/protocols/jabber/chat.c:652 src/protocols/jabber/chat.c:663
-#, fuzzy
 msgid "Error retreiving roomlist"
 msgstr "Gabim në marrje liste dhome"
 
@@ -6490,7 +6404,6 @@ msgid "Register New Jabber Account"
 msgstr "Regjistro Llogari të Re Jabber"
 
 #: src/protocols/jabber/jabber.c:757
-#, fuzzy
 msgid "Logged out"
 msgstr "Dalë"
 
@@ -6837,7 +6750,7 @@ msgstr ""
 
 #: src/protocols/jabber/jabber.c:1506
 msgid "Hide Operating System"
-msgstr ""
+msgstr "Fshi Sistemim Operativ"
 
 #  *< api_version
 #  *< type
@@ -7478,13 +7391,12 @@ msgid "Profile URL"
 msgstr "URL Profili"
 
 #: src/protocols/msn/msn.c:1815
-#, fuzzy
 msgid "Display conversation closed notices"
-msgstr "Sipas numrit të bashkëbisedimit"
+msgstr "Shfaq njoftime mbylljeje bashkëbisedimesh"
 
 #: src/protocols/msn/msn.c:1820
 msgid "Display timeout notices"
-msgstr ""
+msgstr "Shfaq njoftime mbarimi kohe"
 
 #  *< api_version
 #  *< type
@@ -8206,11 +8118,11 @@ msgstr "SNAC i pavlefshëm"
 
 #: src/protocols/oscar/oscar.c:186
 msgid "Rate to host"
-msgstr ""
+msgstr "Klasifiko sipas strehe"
 
 #: src/protocols/oscar/oscar.c:187
 msgid "Rate to client"
-msgstr ""
+msgstr "Klasifiko sipas klienti"
 
 #: src/protocols/oscar/oscar.c:189
 msgid "Service unavailable"
@@ -8858,9 +8770,8 @@ msgid "Mobile Phone"
 msgstr "Telefon Celular"
 
 #: src/protocols/oscar/oscar.c:5121
-#, fuzzy
 msgid "Not specified"
-msgstr "I papritur"
+msgstr "I papërcaktuar"
 
 #: src/protocols/oscar/oscar.c:5122 src/protocols/trepia/trepia.c:282
 #: src/protocols/trepia/trepia.c:408
@@ -9066,9 +8977,8 @@ msgid "Profile too long."
 msgstr "Profil shumë i gjatë."
 
 #: src/protocols/oscar/oscar.c:5610 src/protocols/oscar/oscar.c:6900
-#, fuzzy
 msgid "Visible"
-msgstr "I padukshëm"
+msgstr "I dukshëm"
 
 #: src/protocols/oscar/oscar.c:5628
 msgid "Unable to set AIM away message."
@@ -9303,9 +9213,8 @@ msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "Shtypni vendndodhjen e-mail të shokut që po kërkoni."
 
 #: src/protocols/oscar/oscar.c:7189
-#, fuzzy
 msgid "Available Message:"
-msgstr "I mundshëm"
+msgstr "Mesazh i Mundshëm:"
 
 #: src/protocols/oscar/oscar.c:7190
 msgid "I'm doing work and hoping for a distraction--IM me!"
@@ -9320,9 +9229,8 @@ msgid "Set User Info (URL)..."
 msgstr "Caktoni Të dhëna Përdoruesi (URL)..."
 
 #: src/protocols/oscar/oscar.c:7282
-#, fuzzy
 msgid "Set Available Message..."
-msgstr "Dërgo një mesazh celulari."
+msgstr "Cakto Mesazh për i Gatshëm..."
 
 #: src/protocols/oscar/oscar.c:7287 src/protocols/silc/silc.c:796
 msgid "Change Password..."
@@ -9941,9 +9849,8 @@ msgid "Key agreement failed"
 msgstr "Marrëveshja e kyçave dështoi"
 
 #: src/protocols/silc/ft.c:102
-#, fuzzy
 msgid "File transfer sessions does not exist"
-msgstr "Nu ka sesion shpërngulje kartelash"
+msgstr "Nuk ka sesione shpërngulje kartelash"
 
 #: src/protocols/silc/ft.c:206
 msgid "No file transfer session active"
@@ -10082,9 +9989,8 @@ msgid "Roomlist"
 msgstr "Listë Dhomash"
 
 #: src/protocols/silc/ops.c:1241
-#, fuzzy
 msgid "Cannot get room list"
-msgstr "S'caktoj dot temë"
+msgstr "S'marr dot listë dhome"
 
 #: src/protocols/silc/ops.c:1289
 msgid "No public key was received"
@@ -10391,9 +10297,8 @@ msgid "User <I>%s</I> is not present in the network"
 msgstr "Përdoruesi <I>%s</I> nuk është i pranishëm në rrjet"
 
 #: src/protocols/silc/silc.c:973
-#, fuzzy
 msgid "Failed to leave channel"
-msgstr "Dështova në ngarkim pamjeje"
+msgstr "Dështova të lë kanalin"
 
 #: src/protocols/silc/silc.c:1019
 msgid "Topic too long"
@@ -11648,9 +11553,8 @@ msgstr ""
 
 #. * Custom away message.
 #: src/prpl.h:180
-#, fuzzy
 msgid "Custom"
-msgstr "Gjendje vetjake"
+msgstr "Vetjake"
 
 #  *
 #  * A wrapper for gaim_request_action() that uses Accept and Cancel buttons.
@@ -11682,14 +11586,14 @@ msgid "(1 message)"
 msgstr "(1 mesazh)"
 
 #: src/server.c:1203 src/server.c:1212
-#, fuzzy, c-format
+#, c-format
 msgid "%s logged in."
-msgstr "Jo i futur."
+msgstr "%s u fut."
 
 #: src/server.c:1224
-#, fuzzy, c-format
+#, c-format
 msgid "%s signed on"
-msgstr "%s ka nënshkruar (%s)"
+msgstr "%s nënshkroi"
 
 #: src/server.c:1239
 #, c-format
@@ -11714,12 +11618,12 @@ msgstr "%s u gjallërua"
 #: src/server.c:1276 src/server.c:1283
 #, c-format
 msgid "%s logged out."
-msgstr ""
+msgstr "%s doli."
 
 #: src/server.c:1296
-#, fuzzy, c-format
+#, c-format
 msgid "%s signed off"
-msgstr "%s ka çnënshkruar (%s)"
+msgstr "%s çnënshkroi"
 
 #: src/server.c:1358
 #, c-format
@@ -11729,9 +11633,8 @@ msgid ""
 msgstr ""
 
 #: src/server.c:1361
-#, fuzzy
 msgid "an anonymous person"
-msgstr "Ta njoftoj _anonimisht?"
+msgstr "dikush i paemërt"
 
 #: src/server.c:1475
 #, c-format
@@ -11756,7 +11659,7 @@ msgstr "Të pranoj ftesë fjalosjeje?"
 #. * makes it slightly less boring ;)
 #: src/status.c:36
 msgid "Sorry, I ran out for a bit!"
-msgstr ""
+msgstr "Më ndjeni, dola për pak!"
 
 #: src/stock.c:87
 msgid "_Alias"
@@ -11814,340 +11717,3 @@ msgstr[1] "minuta."
 #: src/util.c:2856
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Gabim në hapje lidhjeje.\n"
-
-#~ msgid "Hide Reconnecting Dialog"
-#~ msgstr "Fshih Dialog Rilidhjeje"
-
-#~ msgid "Cursor Color"
-#~ msgstr "Njgjyrë Kursori"
-
-#~ msgid "Secondary Cursor Color"
-#~ msgstr "Ngjyrë e Dytë Kursori"
-
-#~ msgid "Hyperlink Color"
-#~ msgstr "Ngjyrë Tejlidhjeje"
-
-#~ msgid "GtkTreeView Expander Size"
-#~ msgstr "Madhësi Zgjeruesi Pamjeje GtkTree"
-
-#  Conversations
-#~ msgid "Conversation Entry"
-#~ msgstr "Zë Bashkëbisedimi"
-
-#  Conversations
-#~ msgid "Conversation History"
-#~ msgstr "Histori Bashkëbisedimi"
-
-#~ msgid "Log Viewer"
-#~ msgstr "Parës Regjistrimesh"
-
-#~ msgid "Request Dialog"
-#~ msgstr "Dialog Kërkese"
-
-#  ---------- "Notify For" ----------
-#~ msgid "Notify Dialog"
-#~ msgstr "Dialog Njoftimi"
-
-#~ msgid "Select Color for %s"
-#~ msgstr "Përzgjidhni Ngjyrë për %s"
-
-#~ msgid "Select Color"
-#~ msgstr "Përzgjidhni Ngjyrë"
-
-#~ msgid "Select Font for %s"
-#~ msgstr "Përzgjidhni Gërma për %s"
-
-#~ msgid "Select Interface Font"
-#~ msgstr "Përzgjidhni Gërma Ndërfaqe"
-
-#~ msgid "Gtk interface font"
-#~ msgstr "Përzgjidhni gërma ndërfaqeje"
-
-#  *< api_version
-#  *< type
-#  *< ui_requirement
-#  *< flags
-#  *< dependencies
-#  *< priority
-#  *< id
-#~ msgid "Gaim GTK+ Theme Control"
-#~ msgstr "kontroll Gaim Teme GTK+"
-
-#~ msgid "Provides access to commonly used gtkrc settings."
-#~ msgstr "Ofron hyrje te rregullimet gtkrc e përdorur zakonisht ."
-
-#~ msgid "accounts"
-#~ msgstr "llogari"
-
-#~ msgid "buddy list"
-#~ msgstr "listë shokësh"
-
-#  if (js->protocol_options & CHANGE_PASSWORD) {
-#~ msgid "Enter Password"
-#~ msgstr "Jepni Fjalëkalim"
-
-#  TODO: Improve this! message to who or for what conference?
-#~ msgid "Unable to send message to %s."
-#~ msgstr "I pazoti të dërgoj mesazh te %s."
-
-#  TODO: Improve this! message to who or for what conference?
-#~ msgid "Unable to send messge to %s."
-#~ msgstr "I pazoti të dërgoj mesazh te %s."
-
-#~ msgid ""
-#~ "Insufficient arguments (-t, -f, -p, & -m are all required) or arguments "
-#~ "greater than 9999 chars\n"
-#~ msgstr ""
-#~ "Argumenta të pamjaftueshëm (-t, -f, -p, & -m lipsen të tërë) ose "
-#~ "argumente më të mëdhenj se 9999 shenja\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Log out all accounts\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Dil nga tërë llogaritë\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Send instant message\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Dërgo mesazh të atypëratyshëm\n"
-
-#~ msgid "Enabled"
-#~ msgstr "Veprues"
-
-#~ msgid "/Tools/Mute Sounds"
-#~ msgstr "/Mjete/Mbyll Tingujt"
-
-#~ msgid "/Buddies/_Log Out"
-#~ msgstr "/Shokë/_Dalë"
-
-#~ msgid "/Tools/_Statuses"
-#~ msgstr "/Mjete/_Gjendje"
-
-#~ msgid "/Tools/Mute _Sounds"
-#~ msgstr "/Mundësi/Mbyll _Tinguj"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Idle:</b> %s"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>I plogësht:</b> %s"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Last Seen:</b> %s ago"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Parë së Fundmi:</b> %s më parë"
-
-#~ msgid "Idle "
-#~ msgstr "I plogësht"
-
-#~ msgid "/Buddies/New Instant Message..."
-#~ msgstr "/Shokë/Mesazh i Atypëratyshëm i Ri..."
-
-#~ msgid "/Buddies/Get User Info..."
-#~ msgstr "/Shokë/Merr Të dhëna Përdoruesi..."
-
-#~ msgid "/Buddies/Add Buddy..."
-#~ msgstr "/Shokë/Shto Shokë..."
-
-#~ msgid "/Buddies/Add Chat..."
-#~ msgstr "/Shokë/Shto Fjalosje..."
-
-#~ msgid "/Buddies/Add Group..."
-#~ msgstr "/Shokë/Shto Grup..."
-
-#~ msgid "/Buddies/Log Out"
-#~ msgstr "/Shokë/Dil"
-
-#~ msgid "Disconnected"
-#~ msgstr "I shkëputur"
-
-#~ msgid "/Options/Show Buddy _Icon"
-#~ msgstr "/Mundësi/Shfaq _Ikonë Shokësh"
-
-#~ msgid "/Options/Show Buddy Icon"
-#~ msgstr "/Mundësi/Shfaq Ikonë Shoku"
-
-#~ msgid ""
-#~ "Gaim %s\n"
-#~ "Usage: %s [OPTION]...\n"
-#~ "\n"
-#~ "  -a, --acct          display account editor window\n"
-#~ "  -c, --config=DIR    use DIR for config files\n"
-#~ "  -d, --debug         print debugging messages to stdout\n"
-#~ "  -h, --help          display this help and exit\n"
-#~ "  -n, --nologin       don't automatically login\n"
-#~ "  -l, --login[=NAME]  automatically login (optional argument NAME "
-#~ "specifies\n"
-#~ "                      account(s) to use, seperated by commas)\n"
-#~ "  -v, --version       display the current version and exit\n"
-#~ msgstr ""
-#~ "Gaim %s\n"
-#~ "Përdorimi: %s [MUNDËSI]...\n"
-#~ "\n"
-#~ "  -a, --acct          shfaq dritare përpunuesi llogarish\n"
-#~ "  -c, --config=DIR    përdor DIR për kartela formësimesh\n"
-#~ "  -d, --debug         kaloji stdout-it mesazhe diagnostikimi\n"
-#~ "  -h, --help          shfaq këtë ndihmë dhe dil\n"
-#~ "  -n, --nologin       mos hyr automatikisht\n"
-#~ "  -l, --login[=NAME]  hyr automatikisht (argumenti opsional NAME tregon\n"
-#~ "                      llogari për përdorim, të ndara me presje)\n"
-#~ "  -v, --version       shfaq versionin e tanishëm dhe dil\n"
-
-#~ msgid "Show more buddy details"
-#~ msgstr "Shfaq më tepër hollësi përdoruesi"
-
-#~ msgid "No sounds"
-#~ msgstr "Pa tinguj"
-
-#~ msgid "Type"
-#~ msgstr "Tip"
-
-#~ msgid "Saved Statuses"
-#~ msgstr "Gjendje të Ruajtura"
-
-#~ msgid "Title already in use.  You must choose a unique title."
-#~ msgstr "Titull tashmë në përdorim.  Duhet të zgjidhni një titull unik."
-
-#~ msgid "_Title:"
-#~ msgstr "_Titull:"
-
-#~ msgid "Out of the office"
-#~ msgstr "Jashtë zyre"
-
-#~ msgid "_Status:"
-#~ msgstr "_Gjendje:"
-
-#~ msgid "Use a different status for some accounts"
-#~ msgstr "Përdor gjendje tjetër për disa llogari"
-
-#~ msgid "New Status"
-#~ msgstr "Gjendje e Re"
-
-#~ msgid "The following error has occurred loading %s: %s"
-#~ msgstr "Ndodhi gabimi vijues gjatë ngarkimit të %s: %s"
-
-#~ msgid "Cannot send folder %s."
-#~ msgstr "S'dërgoj dot kartelë %s."
-
-#~ msgid ""
-#~ "Gaim cannot transfer a folder. You will need to send the files within "
-#~ "individually"
-#~ msgstr ""
-#~ "Gaim-i nuk mund të shpërngulë një dosje. Lipset t'i dërgoni kartelat "
-#~ "brenda saj një e nga një"
-
-#~ msgid "You have dragged an image"
-#~ msgstr "Keni tërhequr një pamje"
-
-#~ msgid ""
-#~ "You can send this image as a file transfer, embed it into this message, "
-#~ "or use it as the buddy icon for this user."
-#~ msgstr ""
-#~ "Mund ta dërgoni këtë pamje si një shpërngulje kartele, ta trupëzoni në "
-#~ "këtë mesazh, ose përdorni si ikonë shoku për këtë përdorues."
-
-#~ msgid "Set as buddy icon"
-#~ msgstr "Vëre si ikonë shoku"
-
-#~ msgid "Send image file"
-#~ msgstr "Dërgo kartelë pamjeje"
-
-#~ msgid "Would you like to set it as the buddy icon for this user?"
-#~ msgstr "Do të donit ta vini si ikonë shoku për këtë përdorues?"
-
-#~ msgid ""
-#~ "You can send this image as a file transfer orembed it into this message, "
-#~ "or use it as the buddy icon for this user."
-#~ msgstr ""
-#~ "Mund ta dërgoni këtë pamje si një shpërngulje kartele ose trupëzoni në "
-#~ "këtë mesazh, ose përdorni si ikonë shoku për këtë përdorues."
-
-#~ msgid ""
-#~ "You can insert this image into this message, or use it as the buddy icon "
-#~ "for this user"
-#~ msgstr ""
-#~ "Mund ta fusni këtë pamje te ky mesazh, ose përdorni si ikonë shoku për "
-#~ "këtë përdorues."
-
-#~ msgid "Cannot send launcher"
-#~ msgstr "S'dërgoj dot nisës"
-
-#~ msgid ""
-#~ "You dragged a desktop launcher. Most likely you wanted to send whatever "
-#~ "this launcher points to instead of this launcher itself."
-#~ msgstr ""
-#~ "Hoqët zvarrë një nisës desktopi. Ka shumë të ngjarë që donit të dërgonit "
-#~ "atë ku shpie ky nisës dhe jo vetë nisësin."
-
-#  *< api_version
-#  *< type
-#  *< ui_requirement
-#  *< flags
-#  *< dependencies
-#  *< priority
-#  *< id
-#~ msgid "Use SSL"
-#~ msgstr "Përdor SSL"
-
-#~ msgid "Priority"
-#~ msgstr "Përparësi"
-
-#~ msgid "You have lost your connection to chat room %s."
-#~ msgstr "Keni humbur lidhjen me dhomë fjalosjesh %s."
-
-#~ msgid "Require authorization"
-#~ msgstr "Kërko autorizim"
-
-#~ msgid "Hide IP address"
-#~ msgstr "Fshih vendndodhje IP"
-
-#~ msgid "Web aware"
-#~ msgstr "Përshtatur për Web"
-
-#~ msgid "ICQ Privacy Options"
-#~ msgstr "Mundësi Vetësie ICQ"
-
-#~ msgid "Show privacy options..."
-#~ msgstr "Shfaq mundësi vetësie..."
-
-#~ msgid "Use recent buddies group"
-#~ msgstr "Përdor grup të fundit shokësh"
-
-#~ msgid "Show how long you have been idle"
-#~ msgstr "Shfaq sa gjatë keni qenë i plogësht"
-
-#~ msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
-#~ msgstr "join: &lt;dhomë&gt;:  Bashkoju një dhome fjalosjeje te rrjeti Yahoo"
-
-#~ msgid "buzz: Buzz a contact to get their attention"
-#~ msgstr "buzz: Zukat një kontak për të pasur vëmendjen e tyre"
-
-#~ msgid ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than One Megabyte "
-#~ "(1,048,576 bytes)."
-#~ msgstr ""
-#~ "Gaim-i s'dërgon dot përmes Yahoo! kartela që janë më të mëdhaja se Një "
-#~ "Megabajt (1,048,576 bajt)."
-
-#~ msgid "topic &lt;instance&gt;: Set the instance to be used on this class"
-#~ msgstr ""
-#~ "topic &lt;instancë&gt;: Caktoni instancën për t'u përdorur në këtë klasë"
-
-#~ msgid "Import from .anyone"
-#~ msgstr "Importo prej .anyone:"
-
-#~ msgid "Import from .zephyr.subs"
-#~ msgstr "Importo prej .zephyr.subs"
-
-#~ msgid "Realm"
-#~ msgstr "Emër i vërtetë"
-
-#~ msgid "Error Reading %s"
-#~ msgstr "Gabim në Leximin e %s"
