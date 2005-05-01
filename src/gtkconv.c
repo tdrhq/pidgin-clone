@@ -5261,11 +5261,15 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				}
 				else if (flags & GAIM_MESSAGE_SEND)
 					strcpy(color, SEND_COLOR);
+				else {
+					gaim_debug_error("gtkconv", "message missing flags\n");
+					strcpy(color, "#000000");
+				}
 			}
-
-			if(who_escaped)
-				g_free(who_escaped);
 		}
+
+		if(who_escaped)
+			g_free(who_escaped);
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"))
 			g_snprintf(buf, BUF_LONG,
