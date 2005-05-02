@@ -2,7 +2,7 @@
 
 1.3.0cvs:
 	Luke: This release fixes silc for multiple accounts.  HOWEVER, you
-	may loose your buddy list (For SILC only) upgrading.  This is
+	may lose your buddy list (for SILC only) upgrading.  This is
 	rather unavoidable as the previous code did not keep track of
 	which account each buddy belonged to.
 
