@@ -1,7 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 1.3.0:
-	* Chatting with multiple Jabber resources works
 	* Removed parts of the font selection dialog that were not respected
 	* Fix being invited to a multi user chat on MSN
 	* Multiple SILC accounts should work now (Pekka Riikonen)
@@ -9,6 +8,7 @@ version 1.3.0:
 	* Fix gevolution plugin to compile with e-d-s 1.0 or 1.2
 	* Fix gevolution plugin to remember buddy name when someone added you
 	  and you then add them
+	* Formatting in jabber chats works
 
 version 1.2.1 (4/3/2005):
 	* URL escaping now works with UTF-8 text. This may break some old log

@@ -433,6 +433,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				chat->muc = muc;
 				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
 				gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), chat->handle);
+
+				jabber_chat_disco_traffic(chat);
 			}
 
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
