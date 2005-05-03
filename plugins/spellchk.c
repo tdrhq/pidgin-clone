@@ -302,24 +302,24 @@ static void list_delete()
 static void save_list()
 {
 	FILE *f;
-	char *name;
+	char *name, *tempfilename;
 	GtkTreeIter iter;
-	char tempfilename[BUF_LONG];
 	int fd;
 
 	name = g_build_filename(gaim_user_dir(), "dict", NULL);
-	strcpy(tempfilename, name);
-	strcat(tempfilename,".XXXXXX");
+	tempfilename = g_strdup_printf("%s.XXXXXX", name);
 	fd = g_mkstemp(tempfilename);
 	if(fd<0) {
 		perror(tempfilename);
 		g_free(name);
+		g_free(tempfilename);
 		return;
 	}
 	if (!(f = fdopen(fd, "w"))) {
 		perror("fdopen");
 		close(fd);
 		g_free(name);
+		g_free(tempfilename);
 		return;
 	}
 
@@ -342,10 +342,12 @@ static void save_list()
 				   "Error writing to %s: %m\n", tempfilename);
 		g_unlink(tempfilename);
 		g_free(name);
+		g_free(tempfilename);
 		return;
 	}
 	g_rename(tempfilename, name);
 	g_free(name);
+	g_free(tempfilename);
 }
 
 static void
