@@ -3209,7 +3209,7 @@ static void _recalculate_font_sizes(GtkTextTag *tag, gpointer imhtml)
 		int size;
 
 		size = strtol(tag->name + 10, NULL, 10);
-		if(size > 0 && size < (sizeof(_point_sizes) / sizeof(_point_sizes[0])))
+		if(size >= 0 && size < (sizeof(_point_sizes) / sizeof(_point_sizes[0])))
 		{
 			g_object_set(G_OBJECT(tag), "size",
 			             (gint) (GTK_IMHTML(imhtml)->original_fsize *
