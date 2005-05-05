@@ -161,6 +161,40 @@ struct _jabber_add_permit {
 	char *who;
 };
 
+
+typedef struct
+{
+	GaimAccount *account;
+	char *username;
+	char *alias;
+
+} GaimGtkAccountAddUserData;
+
+static void
+free_add_user_data(GaimGtkAccountAddUserData *data)
+{
+	g_free(data->username);
+
+	if (data->alias != NULL)
+		g_free(data->alias);
+
+	g_free(data);
+}
+
+static void
+add_user_cb(GaimGtkAccountAddUserData *data)
+{
+	GaimConnection *gc = gaim_account_get_connection(data->account);
+
+	if (g_list_find(gaim_connections_get_all(), gc))
+	{
+		gaim_blist_request_add_buddy(data->account, data->username,
+		                             NULL, data->alias);
+	}
+	
+	free_add_user_data(data);
+}
+
 static void authorize_add_cb(struct _jabber_add_permit *jap)
 {
 	if(g_list_find(gaim_connections_get_all(), jap->gc)) {
@@ -175,15 +209,45 @@ static void authorize_add_cb(struct _jabber_add_permit *jap)
 
 			jb = jabber_buddy_find(jap->js, jap->who, TRUE);
 
-			if ((jb->subscription & JABBER_SUB_TO) == 0)
-				/*
-				gaim_account_request_add(jap->gc->account, NULL, jap->who, NULL, NULL);
-				*/
-				gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
-			else
+			if ((jb->subscription & JABBER_SUB_TO) == 0) {
+				GaimGtkAccountAddUserData *data;
+				char *buffer = NULL;
+				char *id = jap->who;
+				char *alias = NULL;
+				char *msg = NULL;
+
+				data = g_new0(GaimGtkAccountAddUserData, 1);
+				data->account = jap->gc->account;
+				data->username = NULL;
+				data->alias = NULL;
+
+				buffer = g_strdup_printf(_("%s%s%s%s has made %s his or her buddy%s%s%s"),
+				                         jap->who,
+				                         (alias != NULL ? " (" : ""),
+				                         (alias != NULL ? alias : ""),
+				                         (alias != NULL ? ")"   : ""),
+				                         (id != NULL
+				                          ? id
+				                          : (gaim_connection_get_display_name(jap->gc) != NULL
+				                             ? gaim_connection_get_display_name(jap->gc)
+				                             : gaim_account_get_username(jap->gc->account))),
+				                         (msg != NULL ? ": " : "."),
+				                         (msg != NULL ? msg  : ""),
+				                         (buddy != NULL
+				                          ? ""
+				                          : _("\n\nDo you wish to add him or her to your buddy list?")));
+
+				gaim_request_action(NULL, NULL, _("Add buddy to your list?"),
+				                    buffer, GAIM_DEFAULT_ACTION_NONE, data, 2,
+				                    _("Add"),    G_CALLBACK(add_user_cb),
+				                    _("Cancel"), G_CALLBACK(free_add_user_data));
+
+				g_free(buffer);
+
+			} else
 				gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
 		} else {
-			gaim_account_request_add(jap->gc->account, NULL, jap->who, NULL, NULL);
+			gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
 		}
 	}
 
