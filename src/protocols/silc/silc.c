@@ -865,7 +865,7 @@ silcgaim_send_im_resolved(SilcClient client,
 	silc_client_send_private_message(client, conn, client_entry, im->flags,
 					 im->message, im->message_len, TRUE);
 	gaim_conv_im_write(GAIM_CONV_IM(convo), conn->local_entry->nickname,
-			   im->message, 0, time(NULL));
+			   im->message, GAIM_MESSAGE_SEND, time(NULL));
 
 	goto out;
 

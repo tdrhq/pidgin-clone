@@ -349,7 +349,8 @@ msn_notification_close(MsnNotification *notification)
 	if (!notification->in_use)
 		return;
 
-	msn_cmdproc_send_quick(notification->cmdproc, "OUT", NULL, NULL);
+	if (notification->session->connected)
+		msn_cmdproc_send_quick(notification->cmdproc, "OUT", NULL, NULL);
 
 	msn_notification_disconnect(notification);
 }

@@ -91,10 +91,9 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data);
 static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *selection_data, gpointer data);
 static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *text, gpointer data);
 
-/* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
- * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
+/* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
-#define POINT_SIZE(x) (options & GTK_IMHTML_USE_POINTSIZE ? x : _point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
+#define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SIZE) - 1])
 static gdouble _point_sizes [] = { .69444444, .8333333, 1, 1.2, 1.44, 1.728, 2.0736};
 
 enum { 
@@ -3209,12 +3208,9 @@ static void _recalculate_font_sizes(GtkTextTag *tag, gpointer imhtml)
 		int size;
 
 		size = strtol(tag->name + 10, NULL, 10);
-		if(size >= 0 && size < (sizeof(_point_sizes) / sizeof(_point_sizes[0])))
-		{
-			g_object_set(G_OBJECT(tag), "size",
-			             (gint) (GTK_IMHTML(imhtml)->original_fsize *
-			             ((double) _point_sizes[size-1] * GTK_IMHTML(imhtml)->zoom)), NULL);
-		}
+		g_object_set(G_OBJECT(tag), "size",
+		             (gint) (GTK_IMHTML(imhtml)->original_fsize *
+		             ((double) POINT_SIZE(size) * GTK_IMHTML(imhtml)->zoom)), NULL);
 	}
 }
 
@@ -3257,7 +3253,7 @@ static GtkTextTag *find_font_size_tag(GtkIMHtml *imhtml, int size)
 		 */
 		tag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "size",
 		                                 (gint) (imhtml->original_fsize *
-		                                 ((double) _point_sizes[size-1] * imhtml->zoom)), NULL);
+		                                 ((double) POINT_SIZE(size) * imhtml->zoom)), NULL);
 	}
 
 	return tag;
