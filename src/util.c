@@ -1410,8 +1410,7 @@ char *
 gaim_markup_linkify(const char *text)
 {
 	const char *c, *t, *q = NULL;
-	char *tmp, *tmpurlbuf;
-	char url_buf[BUF_LEN * 4];
+	char *tmp, *tmpurlbuf, *url_buf;
 	gunichar g;
 	gboolean inside_html = FALSE;
 	int inside_paren = 0;
@@ -1467,11 +1466,11 @@ gaim_markup_linkify(const char *text)
 						t--;
 					}
 
-					strncpy(url_buf, c, t - c);
-					url_buf[t - c] = 0;
+					url_buf = g_strndup(c, t - c);
 					tmpurlbuf = gaim_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
 							tmpurlbuf, url_buf);
+					g_free(url_buf);
 					g_free(tmpurlbuf);
 					c = t;
 					break;
@@ -1500,12 +1499,12 @@ gaim_markup_linkify(const char *text)
 						if ((*(t - 1) == ')' && (inside_paren > 0))) {
 							t--;
 						}
-						strncpy(url_buf, c, t - c);
-						url_buf[t - c] = 0;
+						url_buf = g_strndup(c, t - c);
 						tmpurlbuf = gaim_unescape_html(url_buf);
 						g_string_append_printf(ret,
 								"<A HREF=\"http://%s\">%s</A>", tmpurlbuf,
 								url_buf);
+						g_free(url_buf);
 						g_free(tmpurlbuf);
 						c = t;
 						break;
@@ -1524,11 +1523,11 @@ gaim_markup_linkify(const char *text)
 					if ((*(t - 1) == ')' && (inside_paren > 0))) {
 						t--;
 					}
-					strncpy(url_buf, c, t - c);
-					url_buf[t - c] = 0;
+					g_strndup(c, t - c);
 					tmpurlbuf = gaim_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
 							tmpurlbuf, url_buf);
+					g_free(url_buf);
 					g_free(tmpurlbuf);
 					c = t;
 					break;
@@ -1551,12 +1550,12 @@ gaim_markup_linkify(const char *text)
 						if ((*(t - 1) == ')' && (inside_paren > 0))) {
 							t--;
 						}
-						strncpy(url_buf, c, t - c);
-						url_buf[t - c] = 0;
+						url_buf = g_strndup(c, t - c);
 						tmpurlbuf = gaim_unescape_html(url_buf);
 						g_string_append_printf(ret,
 								"<A HREF=\"ftp://%s\">%s</A>", tmpurlbuf,
 								url_buf);
+						g_free(url_buf);
 						g_free(tmpurlbuf);
 						c = t;
 						break;
@@ -1572,11 +1571,11 @@ gaim_markup_linkify(const char *text)
 				if (badchar(*t) || badentity(t)) {
 					if (*(t - 1) == '.')
 						t--;
-					strncpy(url_buf, c, t - c);
-					url_buf[t - c] = 0;
+					url_buf = g_strndup(c, t - c);
 					tmpurlbuf = gaim_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
 							  tmpurlbuf, url_buf);
+					g_free(url_buf);
 					g_free(tmpurlbuf);
 					c = t;
 					break;
@@ -1590,15 +1589,15 @@ gaim_markup_linkify(const char *text)
 			int flag;
 			GString *gurl_buf;
 			const char illegal_chars[] = "!@#$%^&*()[]{}/|\\<>\":;\r\n \0";
-			url_buf[0] = 0;
 
 			if (strchr(illegal_chars,*(c - 1)) || strchr(illegal_chars, *(c + 1)))
 				flag = 0;
-			else
+			else {
 				flag = 1;
+				gurl_buf = g_string_new("");
+			}
 
 			t = c;
-			gurl_buf = g_string_new("");
 			while (flag) {
 				/* iterate backwards grabbing the local part of an email address */
 				g = g_utf8_get_char(t);
@@ -1626,11 +1625,13 @@ gaim_markup_linkify(const char *text)
 				if (badchar(*t) || (g >= 127) || (*t == ')') || badentity(t)) {
 					char *d;
 
-					strcpy(url_buf, gurl_buf->str);
+					url_buf = g_string_free(gurl_buf, FALSE);
 
 					/* strip off trailing periods */
-					for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
-						*d = '\0';
+					if (strlen(url_buf) > 0) {
+						for (d = url_buf + strlen(url_buf) - 1; *d == '.'; d--, t--)
+							*d = '\0';
+					}
 
 					tmpurlbuf = gaim_unescape_html(url_buf);
 					if (gaim_email_is_valid(tmpurlbuf)) {
@@ -1639,6 +1640,7 @@ gaim_markup_linkify(const char *text)
 					} else {
 						g_string_append(ret, url_buf);
 					}
+					g_free(url_buf);
 					g_free(tmpurlbuf);
 					c = t;
 
@@ -1648,7 +1650,6 @@ gaim_markup_linkify(const char *text)
 					t = g_utf8_find_next_char(t, NULL);
 				}
 			}
-			g_string_free(gurl_buf, TRUE);
 		}
 
 		if(*c == ')' && !inside_html) {
