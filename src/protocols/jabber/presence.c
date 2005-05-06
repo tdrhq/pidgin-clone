@@ -161,38 +161,21 @@ struct _jabber_add_permit {
 	char *who;
 };
 
-
-typedef struct
+static void free_jabber_add_permit(struct _jabber_add_permit *jap)
 {
-	GaimAccount *account;
-	char *username;
-	char *alias;
-
-} GaimGtkAccountAddUserData;
-
-static void
-free_add_user_data(GaimGtkAccountAddUserData *data)
-{
-	g_free(data->username);
-
-	if (data->alias != NULL)
-		g_free(data->alias);
-
-	g_free(data);
+	g_free(jap->who);
+	g_free(jap);
 }
 
-static void
-add_user_cb(GaimGtkAccountAddUserData *data)
+static void add_user_cb(struct _jabber_add_permit *jap)
 {
-	GaimConnection *gc = gaim_account_get_connection(data->account);
-
-	if (g_list_find(gaim_connections_get_all(), gc))
+	if (g_list_find(gaim_connections_get_all(), jap->gc))
 	{
-		gaim_blist_request_add_buddy(data->account, data->username,
-		                             NULL, data->alias);
+		gaim_blist_request_add_buddy(jap->gc->account, jap->who,
+		                             NULL, NULL);
 	}
-	
-	free_add_user_data(data);
+
+	free_jabber_add_permit(jap);
 }
 
 static void authorize_add_cb(struct _jabber_add_permit *jap)
@@ -210,37 +193,24 @@ static void authorize_add_cb(struct _jabber_add_permit *jap)
 			jb = jabber_buddy_find(jap->js, jap->who, TRUE);
 
 			if ((jb->subscription & JABBER_SUB_TO) == 0) {
-				GaimGtkAccountAddUserData *data;
 				char *buffer = NULL;
-				char *id = jap->who;
-				char *alias = NULL;
-				char *msg = NULL;
+				struct _jabber_add_permit *jap2 = g_new0(struct _jabber_add_permit, 1);
+				jap2->gc = jap->gc;
+				jap2->who = g_strdup(jap->who);
 
-				data = g_new0(GaimGtkAccountAddUserData, 1);
-				data->account = jap->gc->account;
-				data->username = NULL;
-				data->alias = NULL;
-
+				/* XXX: Tidy this up when not in string freeze */
 				buffer = g_strdup_printf(_("%s%s%s%s has made %s his or her buddy%s%s%s"),
-				                         jap->who,
-				                         (alias != NULL ? " (" : ""),
-				                         (alias != NULL ? alias : ""),
-				                         (alias != NULL ? ")"   : ""),
-				                         (id != NULL
-				                          ? id
-				                          : (gaim_connection_get_display_name(jap->gc) != NULL
-				                             ? gaim_connection_get_display_name(jap->gc)
-				                             : gaim_account_get_username(jap->gc->account))),
-				                         (msg != NULL ? ": " : "."),
-				                         (msg != NULL ? msg  : ""),
-				                         (buddy != NULL
-				                          ? ""
-				                          : _("\n\nDo you wish to add him or her to your buddy list?")));
+				                         jap->who, "", "", "",
+				                         (gaim_connection_get_display_name(jap->gc) != NULL
+				                            ? gaim_connection_get_display_name(jap->gc)
+				                            : gaim_account_get_username(jap->gc->account)),
+				                         ".", "",
+				                         _("\n\nDo you wish to add him or her to your buddy list?"));
 
 				gaim_request_action(NULL, NULL, _("Add buddy to your list?"),
-				                    buffer, GAIM_DEFAULT_ACTION_NONE, data, 2,
+				                    buffer, GAIM_DEFAULT_ACTION_NONE, jap2, 2,
 				                    _("Add"),    G_CALLBACK(add_user_cb),
-				                    _("Cancel"), G_CALLBACK(free_add_user_data));
+				                    _("Cancel"), G_CALLBACK(free_jabber_add_permit));
 
 				g_free(buffer);
 
