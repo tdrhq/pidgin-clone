@@ -32,8 +32,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-23 18:57+0200\n"
-"PO-Revision-Date: 2005-04-23 18:58+0200\n"
+"POT-Creation-Date: 2005-05-02 21:03+0200\n"
+"PO-Revision-Date: 2005-05-02 21:07+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -158,21 +158,6 @@ msgstr ""
 "Us permet canviar els valors dels estats inactiu, absent i desconnectat pel "
 "càlcul de la prioritat dels amics."
 
-#.
-#. *  DEFINES, MACROS & DATA TYPES
-#.
-#: ../plugins/docklet/docklet-win32.c:44
-msgid "Gaim"
-msgstr "Gaim"
-
-#: ../plugins/docklet/docklet-win32.c:45
-msgid "Gaim - Signed off"
-msgstr "Gaim - Desconnectat"
-
-#: ../plugins/docklet/docklet-win32.c:46
-msgid "Gaim - Away"
-msgstr "Gaim - Absent"
-
 #: ../plugins/docklet/docklet.c:136 ../src/gtkaccount.c:751
 #: ../src/gtkaccount.c:2179
 msgid "Auto-login"
@@ -204,7 +189,7 @@ msgid "Away"
 msgstr "Absent"
 
 #. else...
-#: ../plugins/docklet/docklet.c:190 ../src/away.c:584
+#: ../plugins/docklet/docklet.c:190 ../src/away.c:595
 #: ../src/protocols/oscar/oscar.c:5614 ../src/protocols/oscar/oscar.c:6895
 msgid "Back"
 msgstr "De tornada"
@@ -272,6 +257,29 @@ msgstr ""
 "posar en cua els missatges fins que es faci clic a la icona, de forma "
 "similar a l'ICQ."
 
+#.
+#. *  DEFINES, MACROS & DATA TYPES
+#.
+#: ../plugins/docklet/docklet-win32.c:44
+msgid "Gaim"
+msgstr "Gaim"
+
+#: ../plugins/docklet/docklet-win32.c:45
+msgid "Gaim - Signed off"
+msgstr "Gaim - Desconnectat"
+
+#: ../plugins/docklet/docklet-win32.c:46
+msgid "Gaim - Away"
+msgstr "Gaim - Absent"
+
+#: ../plugins/docklet/eggtrayicon.c:122
+msgid "Orientation"
+msgstr "Orientació"
+
+#: ../plugins/docklet/eggtrayicon.c:123
+msgid "The orientation of the tray."
+msgstr "Orientació de l'àrea de notificació."
+
 #: ../plugins/extplacement.c:77
 msgid "By conversation count"
 msgstr "Pel nombre de converses"
@@ -332,6 +340,37 @@ msgstr "Control de fitxers del Gaim"
 msgid "Allows you to control Gaim by entering commands in a file."
 msgstr "Us permet controlar el Gaim entrant ordres en un fitxer."
 
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: ../plugins/gaiminc.c:90
+msgid "Gaim Demonstration Plugin"
+msgstr "Connector de demostració del Gaim"
+
+#. *< name
+#. *< version
+#. *  summary
+#: ../plugins/gaiminc.c:93
+msgid "An example plugin that does stuff - see the description."
+msgstr "Un connector d'exemple que fa coses - vegeu-ne la descripció."
+
+#. *  description
+#: ../plugins/gaiminc.c:95
+msgid ""
+"This is a really cool plugin that does a lot of stuff:\n"
+"- It tells you who wrote the program when you log in\n"
+"- It reverses all incoming text\n"
+"- It sends a message to people on your list immediately when they sign on"
+msgstr ""
+"Aquest és un connector realment interessant que fa moltes coses:\n"
+"- mostra qui ha escrit el programa quan us connecteu\n"
+"- escriu a l'inrevés tots els missatges rebuts\n"
+"- envia un missatge a tots els amics immediatament després de que es "
+"connectin"
+
 #: ../plugins/gaim-remote/remote.c:91
 msgid "Not connected to AIM"
 msgstr "No esteu connectat a l'AIM"
@@ -386,37 +425,6 @@ msgid ""
 msgstr ""
 "Permet controlar el Gaim remotament a través d'aplicacions externes o a "
 "través de l'eina gaim-remote."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#: ../plugins/gaiminc.c:90
-msgid "Gaim Demonstration Plugin"
-msgstr "Connector de demostració del Gaim"
-
-#. *< name
-#. *< version
-#. *  summary
-#: ../plugins/gaiminc.c:93
-msgid "An example plugin that does stuff - see the description."
-msgstr "Un connector d'exemple que fa coses - vegeu-ne la descripció."
-
-#. *  description
-#: ../plugins/gaiminc.c:95
-msgid ""
-"This is a really cool plugin that does a lot of stuff:\n"
-"- It tells you who wrote the program when you log in\n"
-"- It reverses all incoming text\n"
-"- It sends a message to people on your list immediately when they sign on"
-msgstr ""
-"Aquest és un connector realment interessant que fa moltes coses:\n"
-"- mostra qui ha escrit el programa quan us connecteu\n"
-"- escriu a l'inrevés tots els missatges rebuts\n"
-"- envia un missatge a tots els amics immediatament després de que es "
-"connectin"
 
 #. Configuration frame
 #: ../plugins/gestures/gestures.c:221
@@ -540,7 +548,7 @@ msgstr "_Associa amic"
 msgid "None"
 msgstr "Cap"
 
-#: ../plugins/gevolution/gevo-util.c:64 ../plugins/gevolution/gevolution.c:93
+#: ../plugins/gevolution/gevolution.c:93 ../plugins/gevolution/gevo-util.c:64
 #: ../src/blist.c:775 ../src/blist.c:982 ../src/blist.c:1932
 #: ../src/gtkblist.c:3960 ../src/protocols/jabber/roster.c:67
 msgid "Buddies"
@@ -694,7 +702,7 @@ msgstr "Especifiqueu el temps inactiu per al compte"
 msgid "_Set"
 msgstr "E_specifica"
 
-#: ../plugins/idle.c:68 ../src/away.c:911
+#: ../plugins/idle.c:68 ../src/away.c:922
 msgid "_Cancel"
 msgstr "_Cancel·la"
 
@@ -1012,6 +1020,24 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
+#: ../plugins/ssl/ssl.c:94
+msgid "SSL"
+msgstr "SSL"
+
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#: ../plugins/ssl/ssl.c:97 ../plugins/ssl/ssl.c:99
+msgid "Provides a wrapper around SSL support libraries."
+msgstr "Proporciona una interfície per a les biblioteques de suport d'SSL."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
 #: ../plugins/ssl/ssl-gnutls.c:226
 msgid "GNUTLS"
 msgstr "GNUTLS"
@@ -1041,24 +1067,6 @@ msgstr "NSS"
 #: ../plugins/ssl/ssl-nss.c:321 ../plugins/ssl/ssl-nss.c:323
 msgid "Provides SSL support through Mozilla NSS."
 msgstr "Proporciona suport per a SSL a través de la biblioteca NSS de Mozilla."
-
-#. *< type
-#. *< ui_requirement
-#. *< flags
-#. *< dependencies
-#. *< priority
-#. *< id
-#: ../plugins/ssl/ssl.c:94
-msgid "SSL"
-msgstr "SSL"
-
-#. *< name
-#. *< version
-#. *  summary
-#. *  description
-#: ../plugins/ssl/ssl.c:97 ../plugins/ssl/ssl.c:99
-msgid "Provides a wrapper around SSL support libraries."
-msgstr "Proporciona una interfície per a les biblioteques de suport d'SSL."
 
 #: ../plugins/statenotify.c:41
 #, c-format
@@ -1329,7 +1337,7 @@ msgstr "Introduïu la contrasenya actual, i la nova."
 #: ../src/protocols/silc/chat.c:421 ../src/protocols/silc/chat.c:459
 #: ../src/protocols/silc/chat.c:722 ../src/protocols/silc/ops.c:1081
 #: ../src/protocols/silc/ops.c:1699 ../src/protocols/silc/silc.c:709
-#: ../src/protocols/yahoo/yahoo.c:2942 ../src/protocols/yahoo/yahoo.c:2951
+#: ../src/protocols/yahoo/yahoo.c:2945 ../src/protocols/yahoo/yahoo.c:2954
 #: ../src/request.h:1245
 msgid "OK"
 msgstr "D'acord"
@@ -1340,7 +1348,7 @@ msgstr "D'acord"
 #: ../src/gtkconn.c:169 ../src/gtkdialogs.c:499 ../src/gtkdialogs.c:641
 #: ../src/gtkdialogs.c:695 ../src/gtkdialogs.c:793 ../src/gtkdialogs.c:815
 #: ../src/gtkdialogs.c:835 ../src/gtkdialogs.c:872 ../src/gtkdialogs.c:932
-#: ../src/gtkdialogs.c:975 ../src/gtkdialogs.c:1013
+#: ../src/gtkdialogs.c:975 ../src/gtkdialogs.c:1016
 #: ../src/gtkimhtmltoolbar.c:437 ../src/gtkprivacy.c:593
 #: ../src/gtkprivacy.c:606 ../src/gtkprivacy.c:631 ../src/gtkprivacy.c:642
 #: ../src/gtkrequest.c:243 ../src/protocols/icq/gaim_icq.c:276
@@ -1358,8 +1366,8 @@ msgstr "D'acord"
 #: ../src/protocols/silc/buddy.c:1037 ../src/protocols/silc/buddy.c:1133
 #: ../src/protocols/silc/chat.c:594 ../src/protocols/silc/chat.c:723
 #: ../src/protocols/silc/ops.c:1700 ../src/protocols/silc/silc.c:710
-#: ../src/protocols/trepia/trepia.c:348 ../src/protocols/yahoo/yahoo.c:2943
-#: ../src/protocols/yahoo/yahoo.c:2952 ../src/request.h:1245
+#: ../src/protocols/trepia/trepia.c:348 ../src/protocols/yahoo/yahoo.c:2946
+#: ../src/protocols/yahoo/yahoo.c:2955 ../src/request.h:1245
 #: ../src/request.h:1255
 msgid "Cancel"
 msgstr "Cancel·la"
@@ -1396,7 +1404,7 @@ msgstr "He tornat."
 msgid "Are you sure you want to remove the away message \"%s\"?"
 msgstr "Esteu segur que voleu suprimir el missatge d'absència \"%s\"?"
 
-#: ../src/away.c:364 ../src/away.c:456
+#: ../src/away.c:364 ../src/away.c:442
 msgid "Remove Away Message"
 msgstr "Suprimeix el missatge d'absència"
 
@@ -1410,42 +1418,42 @@ msgstr "Suprimeix"
 msgid "New Away Message"
 msgstr "Missatge d'absència nou"
 
-#: ../src/away.c:652
+#: ../src/away.c:663
 msgid "Set All Away"
 msgstr "Passa'ls tots a absent"
 
-#: ../src/away.c:759
+#: ../src/away.c:770
 msgid "You cannot save an away message with a blank title"
 msgstr "No es pot desar un missatge d'absència amb un títol en blanc"
 
-#: ../src/away.c:761
+#: ../src/away.c:772
 msgid ""
 "Please give the message a title, or choose \"Use\" to use without saving."
 msgstr ""
 "Indiqueu un títol per al missatge, o escolliu \"Usa\" per usar-lo sense "
 "desar."
 
-#: ../src/away.c:771
+#: ../src/away.c:782
 msgid "You cannot create an empty away message"
 msgstr "No es pot crear un missatge d'absència buit"
 
-#: ../src/away.c:836
+#: ../src/away.c:847
 msgid "New away message"
 msgstr "Missatge d'absència nou"
 
-#: ../src/away.c:851
+#: ../src/away.c:862
 msgid "Away title: "
 msgstr "Motiu de l'absència: "
 
-#: ../src/away.c:899
+#: ../src/away.c:910
 msgid "_Save"
 msgstr "De_sa"
 
-#: ../src/away.c:903
+#: ../src/away.c:914
 msgid "Sa_ve & Use"
 msgstr "Desa i _fes servir"
 
-#: ../src/away.c:907
+#: ../src/away.c:918
 msgid "_Use"
 msgstr "_Usa"
 
@@ -1961,7 +1969,7 @@ msgstr "Nom d'usuari"
 #: ../src/gtkaccount.c:2166 ../src/protocols/jabber/jabber.c:994
 #: ../src/protocols/oscar/oscar.c:685 ../src/protocols/oscar/oscar.c:5694
 #: ../src/protocols/oscar/oscar.c:6886 ../src/protocols/silc/silc.c:45
-#: ../src/protocols/yahoo/yahoo.c:2705 ../src/protocols/zephyr/zephyr.c:2122
+#: ../src/protocols/yahoo/yahoo.c:2708 ../src/protocols/zephyr/zephyr.c:2122
 #: ../src/protocols/zephyr/zephyr.c:2141
 msgid "Online"
 msgstr "En línia"
@@ -2423,7 +2431,7 @@ msgstr "Estableix un missatge d'absència"
 
 #: ../src/gtkblist.c:4071 ../src/protocols/silc/buddy.c:731
 #: ../src/protocols/silc/buddy.c:989 ../src/protocols/silc/buddy.c:1034
-#: ../src/protocols/silc/buddy.c:1124 ../src/protocols/yahoo/yahoo.c:2872
+#: ../src/protocols/silc/buddy.c:1124 ../src/protocols/yahoo/yahoo.c:2875
 msgid "Add Buddy"
 msgstr "Afegeix un amic"
 
@@ -2920,19 +2928,19 @@ msgstr "Ignora l'usuari"
 msgid "Close conversation"
 msgstr "Tanca la conversa"
 
-#: ../src/gtkconv.c:5340 ../src/gtkconv.c:5369 ../src/gtkconv.c:5465
-#: ../src/gtkconv.c:5523
+#: ../src/gtkconv.c:5344 ../src/gtkconv.c:5373 ../src/gtkconv.c:5469
+#: ../src/gtkconv.c:5527
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d persona a la sala"
 msgstr[1] "%d persones a la sala"
 
-#: ../src/gtkconv.c:6100 ../src/gtkconv.c:6103
+#: ../src/gtkconv.c:6104 ../src/gtkconv.c:6107
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Conversa/Tanca"
 
-#: ../src/gtkconv.c:6475
+#: ../src/gtkconv.c:6479
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
@@ -2940,11 +2948,11 @@ msgstr ""
 "say &lt;missatge&gt;: Envia un missatge normalment com si no fessiu servir "
 "cap ordre."
 
-#: ../src/gtkconv.c:6478
+#: ../src/gtkconv.c:6482
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr "me &lt;acció&gt;: Envia una acció a l'estil IRC a un amic o xat."
 
-#: ../src/gtkconv.c:6481
+#: ../src/gtkconv.c:6485
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
@@ -2952,7 +2960,7 @@ msgstr ""
 "debug &lt;opció&gt;: Envia informació de depuració diversa a la conversa "
 "actual."
 
-#: ../src/gtkconv.c:6485
+#: ../src/gtkconv.c:6489
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;ordre&gt;: Ajuda específica quant a l'ordre."
 
@@ -2978,7 +2986,7 @@ msgstr "desenvolupador principal"
 
 #: ../src/gtkdialogs.c:64 ../src/gtkdialogs.c:67 ../src/gtkdialogs.c:68
 #: ../src/gtkdialogs.c:69 ../src/gtkdialogs.c:70 ../src/gtkdialogs.c:71
-#: ../src/gtkdialogs.c:73
+#: ../src/gtkdialogs.c:73 ../src/gtkdialogs.c:74
 msgid "developer"
 msgstr "desenvolupador"
 
@@ -3367,14 +3375,14 @@ msgstr "Esteu segur que voleu suprimir %s de la llista d'amics?"
 msgid "Remove Buddy"
 msgstr "Suprimeix l'amic"
 
-#: ../src/gtkdialogs.c:1007
+#: ../src/gtkdialogs.c:1011
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "Esteu segur que voleu suprimir el xat %s de la llista d'amics?"
 
-#: ../src/gtkdialogs.c:1011 ../src/gtkdialogs.c:1012
+#: ../src/gtkdialogs.c:1014 ../src/gtkdialogs.c:1015
 msgid "Remove Chat"
 msgstr "Suprimeix el Xat"
 
@@ -3510,7 +3518,7 @@ msgstr "_Copia la ubicació de l'enllaç"
 msgid "_Open Link in Browser"
 msgstr "_Obre l'enllaç en el navegador"
 
-#: ../src/gtkimhtml.c:2862
+#: ../src/gtkimhtml.c:2877
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
@@ -3518,16 +3526,16 @@ msgstr ""
 "No ha estat possible descobrir el tipus d'imatge a partir de l'extensió del "
 "fitxer. S'agafarà PNG com a predeterminat."
 
-#: ../src/gtkimhtml.c:2870
+#: ../src/gtkimhtml.c:2885
 #, c-format
 msgid "Error saving image: %s"
 msgstr "S'ha produït un error en desar la imatge: %s"
 
-#: ../src/gtkimhtml.c:2947 ../src/gtkimhtml.c:2959
+#: ../src/gtkimhtml.c:2962 ../src/gtkimhtml.c:2974
 msgid "Save Image"
 msgstr "Desa imatge"
 
-#: ../src/gtkimhtml.c:2987
+#: ../src/gtkimhtml.c:3002
 msgid "_Save Image..."
 msgstr "_Desa imatge..."
 
@@ -4330,7 +4338,7 @@ msgstr "En estar absent i inactiu"
 
 #: ../src/gtkprefs.c:1823 ../src/protocols/msn/msn.c:1326
 #: ../src/protocols/msn/state.c:32 ../src/protocols/novell/novell.c:2806
-#: ../src/protocols/oscar/oscar.c:4259 ../src/protocols/yahoo/yahoo.c:2701
+#: ../src/protocols/oscar/oscar.c:4259 ../src/protocols/yahoo/yahoo.c:2704
 #: ../src/protocols/yahoo/yahoo_profile.c:664
 msgid "Idle"
 msgstr "Inactiu"
@@ -4541,7 +4549,7 @@ msgstr "Esteu segur que voleu blocar %s?"
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: ../src/gtkrequest.c:240 ../src/protocols/gg/gg.c:949
+#: ../src/gtkrequest.c:240 ../src/protocols/gg/gg.c:951
 #: ../src/protocols/msn/dialog.c:113 ../src/protocols/msn/msn.c:499
 #: ../src/protocols/msn/msn.c:502 ../src/protocols/novell/novell.c:1892
 #: ../src/protocols/silc/buddy.c:307 ../src/protocols/silc/pk.c:117
@@ -4549,7 +4557,7 @@ msgstr "Esteu segur que voleu blocar %s?"
 msgid "Yes"
 msgstr "Sí"
 
-#: ../src/gtkrequest.c:241 ../src/protocols/gg/gg.c:949
+#: ../src/gtkrequest.c:241 ../src/protocols/gg/gg.c:951
 #: ../src/protocols/msn/dialog.c:114 ../src/protocols/msn/msn.c:499
 #: ../src/protocols/msn/msn.c:502 ../src/protocols/novell/novell.c:1893
 #: ../src/protocols/silc/buddy.c:308 ../src/protocols/silc/pk.c:118
@@ -4631,13 +4639,13 @@ msgstr "Altres parlen en un xat"
 msgid "Someone says your name in chat"
 msgstr "Algú diu el vostre nom en un xat"
 
-#: ../src/gtksound.c:158
+#: ../src/gtksound.c:173
 #, c-format
 msgid "Unable to play sound because the chosen file (%s) does not exist."
 msgstr ""
 "No s'ha pogut reproduir el so perquè el fitxer seleccionat (%s) no existeix."
 
-#: ../src/gtksound.c:174
+#: ../src/gtksound.c:189
 msgid ""
 "Unable to play sound because the 'Command' sound method has been chosen, but "
 "no command has been set."
@@ -4645,7 +4653,7 @@ msgstr ""
 "No s'ha pogut reproduir el so perquè s'ha escollit 'ordre' per reproduir el "
 "so, però no se n'ha indicat cap."
 
-#: ../src/gtksound.c:186
+#: ../src/gtksound.c:201
 #, c-format
 msgid ""
 "Unable to play sound because the configured sound command could not be "
@@ -4818,8 +4826,8 @@ msgstr "Opció per defecte lleugerament menys avorrida"
 #: ../src/protocols/msn/state.c:30 ../src/protocols/msn/state.c:37
 #: ../src/protocols/msn/state.c:38 ../src/protocols/novell/novell.c:2797
 #: ../src/protocols/novell/novell.c:2916 ../src/protocols/novell/novell.c:2967
-#: ../src/protocols/oscar/oscar.c:765 ../src/protocols/yahoo/yahoo.c:3046
-#: ../src/protocols/yahoo/yahoo.c:3162
+#: ../src/protocols/oscar/oscar.c:765 ../src/protocols/yahoo/yahoo.c:3049
+#: ../src/protocols/yahoo/yahoo.c:3165
 msgid "Available"
 msgstr "Disponible"
 
@@ -4835,8 +4843,8 @@ msgstr "Només absent per als amics"
 #: ../src/protocols/jabber/presence.c:139 ../src/protocols/oscar/oscar.c:683
 #: ../src/protocols/oscar/oscar.c:5609 ../src/protocols/oscar/oscar.c:5687
 #: ../src/protocols/oscar/oscar.c:5711 ../src/protocols/oscar/oscar.c:6892
-#: ../src/protocols/oscar/oscar.c:6897 ../src/protocols/yahoo/yahoo.c:2699
-#: ../src/protocols/yahoo/yahoo.c:3066 ../src/protocols/yahoo/yahoo.c:3174
+#: ../src/protocols/oscar/oscar.c:6897 ../src/protocols/yahoo/yahoo.c:2702
+#: ../src/protocols/yahoo/yahoo.c:3069 ../src/protocols/yahoo/yahoo.c:3177
 msgid "Invisible"
 msgstr "Invisible"
 
@@ -4886,7 +4894,7 @@ msgstr "<B>UIN:</B> %s<BR><B>Estat:</B> %s<HR>%s"
 
 #. res[0] == username
 #. XXX this should use gaim_notify_userinfo, but it is unclear to me what should be passed for 'who'
-#: ../src/protocols/gg/gg.c:244 ../src/protocols/gg/gg.c:1011
+#: ../src/protocols/gg/gg.c:244 ../src/protocols/gg/gg.c:1013
 #: ../src/protocols/napster/napster.c:404 ../src/protocols/oscar/oscar.c:4064
 #: ../src/protocols/oscar/oscar.c:4288 ../src/protocols/silc/ops.c:1086
 #: ../src/protocols/silc/ops.c:1148 ../src/protocols/toc/toc.c:468
@@ -4911,8 +4919,8 @@ msgstr "No s'ha pogut llegir el sòcol"
 #: ../src/protocols/gg/gg.c:674 ../src/protocols/icq/gaim_icq.c:343
 #: ../src/protocols/napster/napster.c:486
 #: ../src/protocols/napster/napster.c:517 ../src/protocols/toc/toc.c:170
-#: ../src/protocols/yahoo/yahoo.c:2337 ../src/protocols/yahoo/yahoo.c:2366
-#: ../src/protocols/yahoo/yahoo.c:2429
+#: ../src/protocols/yahoo/yahoo.c:2340 ../src/protocols/yahoo/yahoo.c:2369
+#: ../src/protocols/yahoo/yahoo.c:2432
 #: ../src/protocols/yahoo/yahoo_filexfer.c:68
 #: ../src/protocols/yahoo/yahoo_filexfer.c:111
 #: ../src/protocols/yahoo/ycht.c:482
@@ -4971,99 +4979,99 @@ msgstr "S'està cercant el servidor GG"
 msgid "Invalid Gadu-Gadu UIN specified"
 msgstr "La UIN de Gadu-Gadu especificada no és vàlida"
 
-#: ../src/protocols/gg/gg.c:842
+#: ../src/protocols/gg/gg.c:841
 msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
 msgstr "Esteu intentant enviar un missatge a una UIN de Gadu-Gadu invàlida."
 
-#: ../src/protocols/gg/gg.c:917
+#: ../src/protocols/gg/gg.c:919
 msgid "Couldn't get search results"
 msgstr "No s'han pogut obtenir els resultats de la cerca"
 
-#: ../src/protocols/gg/gg.c:922
+#: ../src/protocols/gg/gg.c:924
 msgid "Gadu-Gadu Search Engine"
 msgstr "Cercador de Gadu-Gadu"
 
-#: ../src/protocols/gg/gg.c:948
+#: ../src/protocols/gg/gg.c:950
 msgid "Active"
 msgstr "Actiu"
 
-#: ../src/protocols/gg/gg.c:953 ../src/protocols/oscar/oscar.c:5098
+#: ../src/protocols/gg/gg.c:955 ../src/protocols/oscar/oscar.c:5098
 msgid "UIN"
 msgstr "UIN"
 
 #. First Name
-#: ../src/protocols/gg/gg.c:957 ../src/protocols/jabber/jabber.c:622
+#: ../src/protocols/gg/gg.c:959 ../src/protocols/jabber/jabber.c:622
 #: ../src/protocols/oscar/oscar.c:5109 ../src/protocols/silc/ops.c:808
 #: ../src/protocols/trepia/trepia.c:268
 msgid "First Name"
 msgstr "Nom"
 
 #. Last Name
-#: ../src/protocols/gg/gg.c:962 ../src/protocols/jabber/jabber.c:627
+#: ../src/protocols/gg/gg.c:964 ../src/protocols/jabber/jabber.c:627
 #: ../src/protocols/oscar/oscar.c:5110 ../src/protocols/trepia/trepia.c:275
 msgid "Last Name"
 msgstr "Cognoms"
 
-#: ../src/protocols/gg/gg.c:966 ../src/protocols/gg/gg.c:1710
+#: ../src/protocols/gg/gg.c:968 ../src/protocols/gg/gg.c:1712
 #: ../src/protocols/irc/msgs.c:219 ../src/protocols/oscar/oscar.c:5099
 #: ../src/protocols/silc/ops.c:1204
 msgid "Nick"
 msgstr "Sobrenom"
 
-#: ../src/protocols/gg/gg.c:973 ../src/protocols/gg/gg.c:976
+#: ../src/protocols/gg/gg.c:975 ../src/protocols/gg/gg.c:978
 msgid "Birth Year"
 msgstr "Data de naixement"
 
-#: ../src/protocols/gg/gg.c:982 ../src/protocols/gg/gg.c:984
-#: ../src/protocols/gg/gg.c:986
+#: ../src/protocols/gg/gg.c:984 ../src/protocols/gg/gg.c:986
+#: ../src/protocols/gg/gg.c:988
 msgid "Sex"
 msgstr "Sexe"
 
 #. City
-#: ../src/protocols/gg/gg.c:990 ../src/protocols/jabber/jabber.c:637
+#: ../src/protocols/gg/gg.c:992 ../src/protocols/jabber/jabber.c:637
 #: ../src/protocols/oscar/oscar.c:5153 ../src/protocols/oscar/oscar.c:5161
 #: ../src/protocols/trepia/trepia.c:332 ../src/protocols/trepia/trepia.c:411
 msgid "City"
 msgstr "Ciutat"
 
-#: ../src/protocols/gg/gg.c:1033
+#: ../src/protocols/gg/gg.c:1035
 msgid "There is no Buddy List stored on the Gadu-Gadu server."
 msgstr "No hi ha cap llista d'amics al servidor Gadu-Gadu."
 
-#: ../src/protocols/gg/gg.c:1041
+#: ../src/protocols/gg/gg.c:1043
 msgid "Couldn't Import Buddy List from Server"
 msgstr "No s'ha pogut importar la llista d'amics del servidor"
 
-#: ../src/protocols/gg/gg.c:1103
+#: ../src/protocols/gg/gg.c:1105
 msgid "Buddy List successfully transferred to Gadu-Gadu server"
 msgstr "S'ha enviat satisfactòriament la llista d'amics al servidor Gadu-Gadu"
 
-#: ../src/protocols/gg/gg.c:1111
+#: ../src/protocols/gg/gg.c:1113
 msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
 msgstr "No s'ha pogut transmetre la llista d'amics al servidor Gadu-Gadu"
 
-#: ../src/protocols/gg/gg.c:1119
+#: ../src/protocols/gg/gg.c:1121
 msgid "Buddy List successfully deleted from Gadu-Gadu server"
 msgstr ""
 "S'ha suprimt satisfactòriament la llista d'amics del servidor Gadu-Gadu"
 
-#: ../src/protocols/gg/gg.c:1127
+#: ../src/protocols/gg/gg.c:1129
 msgid "Couldn't delete Buddy List from Gadu-Gadu server"
 msgstr "No s'ha pogut suprimir la llista d'amics del servidor Gadu-Gadu"
 
-#: ../src/protocols/gg/gg.c:1136
+#: ../src/protocols/gg/gg.c:1138
 msgid "Password changed successfully"
 msgstr "S'ha canviat la contrasenya"
 
-#: ../src/protocols/gg/gg.c:1143
+#: ../src/protocols/gg/gg.c:1145
 msgid "Password couldn't be changed"
 msgstr "No s'ha pogut canviar la contrasenya"
 
-#: ../src/protocols/gg/gg.c:1262
+#: ../src/protocols/gg/gg.c:1264
 msgid "Error communicating with Gadu-Gadu server"
 msgstr "S'ha produït un error en comunicar amb el servidor Gadu-Gadu"
 
-#: ../src/protocols/gg/gg.c:1263
+#: ../src/protocols/gg/gg.c:1265
 msgid ""
 "Gaim was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
@@ -5072,11 +5080,11 @@ msgstr ""
 "problema en la comunicació amb el servidor HTTP Gadu-Gadu. Torneu-ho a "
 "intentar més tard."
 
-#: ../src/protocols/gg/gg.c:1292
+#: ../src/protocols/gg/gg.c:1294
 msgid "Unable to import Gadu-Gadu buddy list"
 msgstr "No s'ha pogut importar la llista d'amics de Gadu-Gadu"
 
-#: ../src/protocols/gg/gg.c:1293
+#: ../src/protocols/gg/gg.c:1295
 msgid ""
 "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
@@ -5084,26 +5092,26 @@ msgstr ""
 "El Gaim no ha pogut connectar-se al servidor de llistes d'amics del Gadu-"
 "Gadu. Torneu-ho a intentar més tard."
 
-#: ../src/protocols/gg/gg.c:1366
+#: ../src/protocols/gg/gg.c:1368
 msgid "Couldn't export buddy list"
 msgstr "No s'ha pogut exportar la llista d'amics"
 
-#: ../src/protocols/gg/gg.c:1367 ../src/protocols/gg/gg.c:1390
+#: ../src/protocols/gg/gg.c:1369 ../src/protocols/gg/gg.c:1392
 msgid ""
 "Gaim was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
 "El Gaim no s'ha pogut connectar al servidor de llistes d'amics. Torneu-ho a "
 "intentar més tard."
 
-#: ../src/protocols/gg/gg.c:1389
+#: ../src/protocols/gg/gg.c:1391
 msgid "Unable to delete Gadu-Gadu buddy list"
 msgstr "No s'ha pogut suprimir la llista d'amics de Gadu-Gadu"
 
-#: ../src/protocols/gg/gg.c:1440
+#: ../src/protocols/gg/gg.c:1442
 msgid "Unable to access directory"
 msgstr "No s'ha pogut accedir al directori"
 
-#: ../src/protocols/gg/gg.c:1441
+#: ../src/protocols/gg/gg.c:1443
 msgid ""
 "Gaim was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
@@ -5111,11 +5119,11 @@ msgstr ""
 "El Gaim no ha pogut cercar al directori perquè no s'hi ha pogut connectar. "
 "Torneu-ho a intentar més tard."
 
-#: ../src/protocols/gg/gg.c:1475
+#: ../src/protocols/gg/gg.c:1477
 msgid "Unable to change Gadu-Gadu password"
 msgstr "No s'ha pogut canviar la contrasenya per al Gadu-Gadu"
 
-#: ../src/protocols/gg/gg.c:1476
+#: ../src/protocols/gg/gg.c:1478
 msgid ""
 "Gaim was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
@@ -5123,33 +5131,33 @@ msgstr ""
 "El Gaim no ha pogut canviar la contrasenya degut a un error mentre es "
 "comunicava amb el servidor Gadu-Gadu. Torneu-ho a intentar més tard."
 
-#: ../src/protocols/gg/gg.c:1492
+#: ../src/protocols/gg/gg.c:1494
 msgid "Directory Search"
 msgstr "Cerca al directori"
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
-#: ../src/protocols/gg/gg.c:1497 ../src/protocols/jabber/jabber.c:1098
+#: ../src/protocols/gg/gg.c:1499 ../src/protocols/jabber/jabber.c:1098
 #: ../src/protocols/toc/toc.c:1564
 msgid "Change Password"
 msgstr "Canvia la contrasenya"
 
-#: ../src/protocols/gg/gg.c:1501
+#: ../src/protocols/gg/gg.c:1503
 msgid "Import Buddy List from Server"
 msgstr "Importa la llista d'amics del servidor"
 
-#: ../src/protocols/gg/gg.c:1505
+#: ../src/protocols/gg/gg.c:1507
 msgid "Export Buddy List to Server"
 msgstr "Exporta la llista d'amics al servidor"
 
-#: ../src/protocols/gg/gg.c:1509
+#: ../src/protocols/gg/gg.c:1511
 msgid "Delete Buddy List from Server"
 msgstr "Suprimeix la llista d'amics del servidor"
 
-#: ../src/protocols/gg/gg.c:1542
+#: ../src/protocols/gg/gg.c:1544
 msgid "Unable to access user profile."
 msgstr "No s'ha pogut accedir al perfil de l'usuari."
 
-#: ../src/protocols/gg/gg.c:1543
+#: ../src/protocols/gg/gg.c:1545
 msgid ""
 "Gaim was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
@@ -5168,7 +5176,7 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: ../src/protocols/gg/gg.c:1689 ../src/protocols/gg/gg.c:1691
+#: ../src/protocols/gg/gg.c:1691 ../src/protocols/gg/gg.c:1693
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Connector per al protocol Gadu-Gadu"
 
@@ -5277,7 +5285,7 @@ msgstr "Els sobrenoms d'IRC no poden contenir espais en blanc"
 #: ../src/protocols/irc/irc.c:236 ../src/protocols/jabber/jabber.c:796
 #: ../src/protocols/msn/session.c:364 ../src/protocols/napster/napster.c:510
 #: ../src/protocols/novell/novell.c:2152 ../src/protocols/oscar/oscar.c:1754
-#: ../src/protocols/trepia/trepia.c:1065 ../src/protocols/yahoo/yahoo.c:2560
+#: ../src/protocols/trepia/trepia.c:1065 ../src/protocols/yahoo/yahoo.c:2563
 #: ../src/protocols/zephyr/zephyr.c:1452
 msgid "Connecting"
 msgstr "S'està connectant"
@@ -5324,13 +5332,13 @@ msgstr "El connector per al protocol d'IRC que és menys dolent"
 
 #: ../src/protocols/irc/irc.c:683 ../src/protocols/irc/msgs.c:239
 #: ../src/protocols/jabber/jabber.c:1615
-#: ../src/protocols/napster/napster.c:670 ../src/protocols/silc/ops.c:1026
+#: ../src/protocols/napster/napster.c:672 ../src/protocols/silc/ops.c:1026
 #: ../src/protocols/silc/ops.c:1129
 msgid "Server"
 msgstr "Servidor"
 
 #: ../src/protocols/irc/irc.c:686 ../src/protocols/jabber/jabber.c:1636
-#: ../src/protocols/msn/msn.c:1933 ../src/protocols/napster/napster.c:675
+#: ../src/protocols/msn/msn.c:1933 ../src/protocols/napster/napster.c:677
 #: ../src/protocols/silc/silc.c:1594 ../src/protocols/trepia/trepia.c:1301
 msgid "Port"
 msgstr "Port"
@@ -5903,7 +5911,7 @@ msgstr "ID per al Jabber"
 #: ../src/protocols/msn/msn.c:489 ../src/protocols/novell/novell.c:2819
 #: ../src/protocols/novell/novell.c:2823 ../src/protocols/oscar/oscar.c:725
 #: ../src/protocols/oscar/oscar.c:731 ../src/protocols/oscar/oscar.c:733
-#: ../src/protocols/yahoo/yahoo.c:2824
+#: ../src/protocols/yahoo/yahoo.c:2827
 msgid "Status"
 msgstr "Estat"
 
@@ -6019,7 +6027,7 @@ msgstr "S'ha produït un error en el registre"
 
 #: ../src/protocols/jabber/chat.c:607
 msgid "Nick changing not supported in non-MUC chatrooms"
-msgstr "El canvi de sobrenom no està suportat en sales de xat no-MUC"
+msgstr "El canvi de sobrenom no està permès en sales de xat no-MUC"
 
 #: ../src/protocols/jabber/chat.c:651 ../src/protocols/jabber/chat.c:662
 msgid "Roomlist Error"
@@ -6410,15 +6418,15 @@ msgstr "Condició no definida"
 
 #: ../src/protocols/jabber/jabber.c:1285
 msgid "Unsupported Encoding"
-msgstr "Codificació no suportada"
+msgstr "La codificació no està implementada"
 
 #: ../src/protocols/jabber/jabber.c:1287
 msgid "Unsupported Stanza Type"
-msgstr "Tipus de permanència no suportat"
+msgstr "El tipus de permanència no està implementada"
 
 #: ../src/protocols/jabber/jabber.c:1289
 msgid "Unsupported Version"
-msgstr "Versió no suportada"
+msgstr "Aquesta versió no està implementada"
 
 #: ../src/protocols/jabber/jabber.c:1291
 msgid "XML Not Well Formed"
@@ -6593,14 +6601,14 @@ msgstr "S'ha produït un error en el xat %s"
 msgid "Error joining chat %s"
 msgstr "S'ha produït un error en entrar al xat %s"
 
-#: ../src/protocols/jabber/si.c:588
+#: ../src/protocols/jabber/si.c:594
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
 "No s'ha pogut enviar el fitxer a %s, atès que l'usuari no permet la "
 "transferència de fitxers"
 
-#: ../src/protocols/jabber/si.c:589 ../src/protocols/jabber/si.c:590
+#: ../src/protocols/jabber/si.c:595 ../src/protocols/jabber/si.c:596
 msgid "File Send Failed"
 msgstr "Ha fallat la transferència del fitxer"
 
@@ -6904,7 +6912,7 @@ msgid "Page"
 msgstr "Pàgina"
 
 #: ../src/protocols/msn/msn.c:489 ../src/protocols/msn/msn.c:497
-#: ../src/protocols/msn/msn.c:500 ../src/protocols/yahoo/yahoo.c:2824
+#: ../src/protocols/msn/msn.c:500 ../src/protocols/yahoo/yahoo.c:2827
 #, c-format
 msgid ""
 "\n"
@@ -6927,8 +6935,8 @@ msgid "Away From Computer"
 msgstr "Lluny de l'ordinador"
 
 #: ../src/protocols/msn/msn.c:515 ../src/protocols/msn/msn.c:802
-#: ../src/protocols/msn/state.c:33 ../src/protocols/yahoo/yahoo.c:2681
-#: ../src/protocols/yahoo/yahoo.c:3048 ../src/protocols/yahoo/yahoo.c:3164
+#: ../src/protocols/msn/state.c:33 ../src/protocols/yahoo/yahoo.c:2684
+#: ../src/protocols/yahoo/yahoo.c:3051 ../src/protocols/yahoo/yahoo.c:3167
 msgid "Be Right Back"
 msgstr "Tornaré de seguida"
 
@@ -6936,20 +6944,20 @@ msgstr "Tornaré de seguida"
 #: ../src/protocols/msn/state.c:31 ../src/protocols/novell/novell.c:2803
 #: ../src/protocols/novell/novell.c:2918 ../src/protocols/novell/novell.c:2972
 #: ../src/protocols/silc/buddy.c:1392 ../src/protocols/silc/silc.c:48
-#: ../src/protocols/silc/silc.c:83 ../src/protocols/yahoo/yahoo.c:2683
-#: ../src/protocols/yahoo/yahoo.c:3050 ../src/protocols/yahoo/yahoo.c:3165
+#: ../src/protocols/silc/silc.c:83 ../src/protocols/yahoo/yahoo.c:2686
+#: ../src/protocols/yahoo/yahoo.c:3053 ../src/protocols/yahoo/yahoo.c:3168
 msgid "Busy"
 msgstr "Ocupat"
 
 #: ../src/protocols/msn/msn.c:517 ../src/protocols/msn/msn.c:806
-#: ../src/protocols/msn/state.c:35 ../src/protocols/yahoo/yahoo.c:2691
-#: ../src/protocols/yahoo/yahoo.c:3058 ../src/protocols/yahoo/yahoo.c:3169
+#: ../src/protocols/msn/state.c:35 ../src/protocols/yahoo/yahoo.c:2694
+#: ../src/protocols/yahoo/yahoo.c:3061 ../src/protocols/yahoo/yahoo.c:3172
 msgid "On The Phone"
 msgstr "Al telèfon"
 
 #: ../src/protocols/msn/msn.c:518 ../src/protocols/msn/msn.c:808
-#: ../src/protocols/msn/state.c:36 ../src/protocols/yahoo/yahoo.c:2695
-#: ../src/protocols/yahoo/yahoo.c:3062 ../src/protocols/yahoo/yahoo.c:3171
+#: ../src/protocols/msn/state.c:36 ../src/protocols/yahoo/yahoo.c:2698
+#: ../src/protocols/yahoo/yahoo.c:3065 ../src/protocols/yahoo/yahoo.c:3174
 msgid "Out To Lunch"
 msgstr "Fora esmorzant"
 
@@ -7010,7 +7018,7 @@ msgstr "<b>Àlies:</b> %s<br>"
 
 #. put a link to the actual profile URL
 #: ../src/protocols/msn/msn.c:1316 ../src/protocols/msn/msn.c:1674
-#: ../src/protocols/yahoo/yahoo_profile.c:1168 ../src/util.c:782
+#: ../src/protocols/yahoo/yahoo_profile.c:1168 ../src/util.c:784
 #, c-format
 msgid "<b>%s:</b> "
 msgstr "<b>%s:</b> "
@@ -7395,7 +7403,7 @@ msgstr ""
 msgid "%s requested a PING"
 msgstr "%s ha sol·licitat un PING"
 
-#: ../src/protocols/napster/napster.c:552 ../src/protocols/toc/toc.c:1268
+#: ../src/protocols/napster/napster.c:554 ../src/protocols/toc/toc.c:1268
 msgid "_Group:"
 msgstr "_Grup:"
 
@@ -7409,8 +7417,8 @@ msgstr "_Grup:"
 #. *< version
 #. *  summary
 #. *  description
-#: ../src/protocols/napster/napster.c:650
 #: ../src/protocols/napster/napster.c:652
+#: ../src/protocols/napster/napster.c:654
 msgid "NAPSTER Protocol Plugin"
 msgstr "Connector per al protocol Napster"
 
@@ -7766,7 +7774,7 @@ msgid "This conference has been closed. No more messages can be sent."
 msgstr "S'ha tancat aquesta conferència. No s'hi poden enviar més missatges."
 
 #: ../src/protocols/novell/novell.c:2809 ../src/protocols/oscar/oscar.c:733
-#: ../src/protocols/oscar/oscar.c:6697 ../src/protocols/yahoo/yahoo.c:2703
+#: ../src/protocols/oscar/oscar.c:6697 ../src/protocols/yahoo/yahoo.c:2706
 msgid "Offline"
 msgstr "Fora de línia"
 
@@ -7830,11 +7838,11 @@ msgstr "SNAC obsolet"
 
 #: ../src/protocols/oscar/oscar.c:192
 msgid "Not supported by host"
-msgstr "No està suportat pel servidor"
+msgstr "El servidor no ho permet"
 
 #: ../src/protocols/oscar/oscar.c:193
 msgid "Not supported by client"
-msgstr "No està suportat pel client"
+msgstr "El client no ho permet"
 
 #: ../src/protocols/oscar/oscar.c:194
 msgid "Refused by client"
@@ -10721,68 +10729,68 @@ msgstr ""
 msgid "Could not add buddy to server list"
 msgstr "No s'ha pogut afegir l'amic a la llista del servidor"
 
-#: ../src/protocols/yahoo/yahoo.c:2249 ../src/protocols/yahoo/yahoo.c:2397
+#: ../src/protocols/yahoo/yahoo.c:2252 ../src/protocols/yahoo/yahoo.c:2400
 #: ../src/protocols/yahoo/ycht.c:414
 msgid "Unable to read"
 msgstr "No s'ha pogut llegir"
 
-#: ../src/protocols/yahoo/yahoo.c:2419 ../src/protocols/yahoo/yahoo.c:2529
-#: ../src/protocols/yahoo/yahoo.c:2579 ../src/protocols/yahoo/yahoo.c:2589
+#: ../src/protocols/yahoo/yahoo.c:2422 ../src/protocols/yahoo/yahoo.c:2532
+#: ../src/protocols/yahoo/yahoo.c:2582 ../src/protocols/yahoo/yahoo.c:2592
 #: ../src/protocols/yahoo/yahoochat.c:1443
 #: ../src/protocols/yahoo/yahoochat.c:1504 ../src/protocols/yahoo/ycht.c:518
 msgid "Connection problem"
 msgstr "Hi ha un problema de connexió"
 
-#: ../src/protocols/yahoo/yahoo.c:2685 ../src/protocols/yahoo/yahoo.c:3052
-#: ../src/protocols/yahoo/yahoo.c:3166
+#: ../src/protocols/yahoo/yahoo.c:2688 ../src/protocols/yahoo/yahoo.c:3055
+#: ../src/protocols/yahoo/yahoo.c:3169
 msgid "Not At Home"
 msgstr "Fora de casa"
 
-#: ../src/protocols/yahoo/yahoo.c:2687 ../src/protocols/yahoo/yahoo.c:3054
-#: ../src/protocols/yahoo/yahoo.c:3167
+#: ../src/protocols/yahoo/yahoo.c:2690 ../src/protocols/yahoo/yahoo.c:3057
+#: ../src/protocols/yahoo/yahoo.c:3170
 msgid "Not At Desk"
 msgstr "Fora de l'escriptori"
 
-#: ../src/protocols/yahoo/yahoo.c:2689 ../src/protocols/yahoo/yahoo.c:3056
-#: ../src/protocols/yahoo/yahoo.c:3168
+#: ../src/protocols/yahoo/yahoo.c:2692 ../src/protocols/yahoo/yahoo.c:3059
+#: ../src/protocols/yahoo/yahoo.c:3171
 msgid "Not In Office"
 msgstr "Fora de l'oficina"
 
-#: ../src/protocols/yahoo/yahoo.c:2693 ../src/protocols/yahoo/yahoo.c:3060
-#: ../src/protocols/yahoo/yahoo.c:3170
+#: ../src/protocols/yahoo/yahoo.c:2696 ../src/protocols/yahoo/yahoo.c:3063
+#: ../src/protocols/yahoo/yahoo.c:3173
 msgid "On Vacation"
 msgstr "De vacances"
 
-#: ../src/protocols/yahoo/yahoo.c:2697 ../src/protocols/yahoo/yahoo.c:3064
-#: ../src/protocols/yahoo/yahoo.c:3172
+#: ../src/protocols/yahoo/yahoo.c:2700 ../src/protocols/yahoo/yahoo.c:3067
+#: ../src/protocols/yahoo/yahoo.c:3175
 msgid "Stepped Out"
 msgstr "Ha marxat"
 
-#: ../src/protocols/yahoo/yahoo.c:2778 ../src/protocols/yahoo/yahoo.c:2804
+#: ../src/protocols/yahoo/yahoo.c:2781 ../src/protocols/yahoo/yahoo.c:2807
 msgid "Not on server list"
 msgstr "No és a la llista del servidor"
 
-#: ../src/protocols/yahoo/yahoo.c:2883
+#: ../src/protocols/yahoo/yahoo.c:2886
 msgid "Join in Chat"
 msgstr "Entra a un xat"
 
-#: ../src/protocols/yahoo/yahoo.c:2888
+#: ../src/protocols/yahoo/yahoo.c:2891
 msgid "Initiate Conference"
 msgstr "Inicia una conferència"
 
-#: ../src/protocols/yahoo/yahoo.c:2940
+#: ../src/protocols/yahoo/yahoo.c:2943
 msgid "Active which ID?"
 msgstr "Quin ID activar?"
 
-#: ../src/protocols/yahoo/yahoo.c:2949
+#: ../src/protocols/yahoo/yahoo.c:2952
 msgid "Join who in chat?"
 msgstr "A qui us voleu unir al xat?"
 
-#: ../src/protocols/yahoo/yahoo.c:2959
+#: ../src/protocols/yahoo/yahoo.c:2962
 msgid "Activate ID..."
 msgstr "Activa l'ID..."
 
-#: ../src/protocols/yahoo/yahoo.c:2963
+#: ../src/protocols/yahoo/yahoo.c:2966
 msgid "Join user in chat..."
 msgstr "Entra a un xat d'usuari..."
 
@@ -10796,49 +10804,102 @@ msgstr "Entra a un xat d'usuari..."
 #. *< version
 #. *  summary
 #. *  description
-#: ../src/protocols/yahoo/yahoo.c:3498 ../src/protocols/yahoo/yahoo.c:3500
+#: ../src/protocols/yahoo/yahoo.c:3503 ../src/protocols/yahoo/yahoo.c:3505
 msgid "Yahoo Protocol Plugin"
 msgstr "Connector per al protocol Yahoo"
 
-#: ../src/protocols/yahoo/yahoo.c:3519
+#: ../src/protocols/yahoo/yahoo.c:3524
 msgid "Yahoo Japan"
 msgstr "Yahoo Japó"
 
-#: ../src/protocols/yahoo/yahoo.c:3522
+#: ../src/protocols/yahoo/yahoo.c:3527
 msgid "Pager host"
 msgstr "Ordinador del cercapersones"
 
-#: ../src/protocols/yahoo/yahoo.c:3525
+#: ../src/protocols/yahoo/yahoo.c:3530
 msgid "Japan Pager host"
 msgstr "Ordinador del cercapersones del Japó"
 
-#: ../src/protocols/yahoo/yahoo.c:3528
+#: ../src/protocols/yahoo/yahoo.c:3533
 msgid "Pager port"
 msgstr "Port per al cercapersones"
 
-#: ../src/protocols/yahoo/yahoo.c:3531
+#: ../src/protocols/yahoo/yahoo.c:3536
 msgid "File transfer host"
 msgstr "Ordinador per transferència de fitxers"
 
-#: ../src/protocols/yahoo/yahoo.c:3534
+#: ../src/protocols/yahoo/yahoo.c:3539
 msgid "Japan File transfer host"
 msgstr "Port per transferència de fitxers pel Japó"
 
-#: ../src/protocols/yahoo/yahoo.c:3537
+#: ../src/protocols/yahoo/yahoo.c:3542
 msgid "File transfer port"
 msgstr "Port per transferència de fitxers"
 
-#: ../src/protocols/yahoo/yahoo.c:3540
+#: ../src/protocols/yahoo/yahoo.c:3545
 msgid "Chat Room List Url"
 msgstr "URL de la llista de sales de xat"
 
-#: ../src/protocols/yahoo/yahoo.c:3543
+#: ../src/protocols/yahoo/yahoo.c:3548
 msgid "YCHT Host"
 msgstr "Ordinador YCHT"
 
-#: ../src/protocols/yahoo/yahoo.c:3546
+#: ../src/protocols/yahoo/yahoo.c:3551
 msgid "YCHT Port"
 msgstr "Port YCHT"
+
+#: ../src/protocols/yahoo/yahoochat.c:199
+#, c-format
+msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
+msgstr ""
+"%s no ha acceptat la vostra invitació a unir-se a la sala \"%s\" perquè \"%s"
+"\"."
+
+#: ../src/protocols/yahoo/yahoochat.c:201
+msgid "Invitation Rejected"
+msgstr "S'ha rebutjat la invitació"
+
+#: ../src/protocols/yahoo/yahoochat.c:356
+msgid "Failed to join chat"
+msgstr "No s'ha pogut unir al xat"
+
+#: ../src/protocols/yahoo/yahoochat.c:356
+msgid "Maybe the room is full?"
+msgstr "Pot ser que la sala estigui plena?"
+
+#: ../src/protocols/yahoo/yahoochat.c:434
+#, c-format
+msgid "You are now chatting in %s."
+msgstr "Esteu fent un xat a %s."
+
+#: ../src/protocols/yahoo/yahoochat.c:605
+msgid "Failed to join buddy in chat"
+msgstr "No s'ha pogut entrar al xat de l'amic."
+
+#: ../src/protocols/yahoo/yahoochat.c:606
+msgid "Maybe they're not in a chat?"
+msgstr "Potser no estan en cap xat?"
+
+#: ../src/protocols/yahoo/yahoochat.c:1383
+msgid "Fetching the room list failed."
+msgstr "No s'ha pogut obtenir la llista de sales."
+
+#: ../src/protocols/yahoo/yahoochat.c:1429
+msgid "Voices"
+msgstr "Veus"
+
+#: ../src/protocols/yahoo/yahoochat.c:1432
+msgid "Webcams"
+msgstr "Càmeres web"
+
+#: ../src/protocols/yahoo/yahoochat.c:1443
+#: ../src/protocols/yahoo/yahoochat.c:1504
+msgid "Unable to fetch room list."
+msgstr "No s'ha pogut obtenir la llista de sales."
+
+#: ../src/protocols/yahoo/yahoochat.c:1497
+msgid "User Rooms"
+msgstr "Sales d'usuari"
 
 #: ../src/protocols/yahoo/yahoo_profile.c:675
 #, c-format
@@ -10934,59 +10995,6 @@ msgstr ""
 #: ../src/protocols/yahoo/yahoo_profile.c:1163
 msgid "The user's profile is empty."
 msgstr "El perfil d'usuari està buit."
-
-#: ../src/protocols/yahoo/yahoochat.c:199
-#, c-format
-msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr ""
-"%s no ha acceptat la vostra invitació a unir-se a la sala \"%s\" perquè \"%s"
-"\"."
-
-#: ../src/protocols/yahoo/yahoochat.c:201
-msgid "Invitation Rejected"
-msgstr "S'ha rebutjat la invitació"
-
-#: ../src/protocols/yahoo/yahoochat.c:356
-msgid "Failed to join chat"
-msgstr "No s'ha pogut unir al xat"
-
-#: ../src/protocols/yahoo/yahoochat.c:356
-msgid "Maybe the room is full?"
-msgstr "Pot ser que la sala estigui plena?"
-
-#: ../src/protocols/yahoo/yahoochat.c:434
-#, c-format
-msgid "You are now chatting in %s."
-msgstr "Esteu fent un xat a %s."
-
-#: ../src/protocols/yahoo/yahoochat.c:605
-msgid "Failed to join buddy in chat"
-msgstr "No s'ha pogut entrar al xat de l'amic."
-
-#: ../src/protocols/yahoo/yahoochat.c:606
-msgid "Maybe they're not in a chat?"
-msgstr "Potser no estan en cap xat?"
-
-#: ../src/protocols/yahoo/yahoochat.c:1383
-msgid "Fetching the room list failed."
-msgstr "No s'ha pogut obtenir la llista de sales."
-
-#: ../src/protocols/yahoo/yahoochat.c:1429
-msgid "Voices"
-msgstr "Veus"
-
-#: ../src/protocols/yahoo/yahoochat.c:1432
-msgid "Webcams"
-msgstr "Càmeres web"
-
-#: ../src/protocols/yahoo/yahoochat.c:1443
-#: ../src/protocols/yahoo/yahoochat.c:1504
-msgid "Unable to fetch room list."
-msgstr "No s'ha pogut obtenir la llista de sales."
-
-#: ../src/protocols/yahoo/yahoochat.c:1497
-msgid "User Rooms"
-msgstr "Sales d'usuari"
 
 #: ../src/protocols/yahoo/ycht.c:401
 msgid "Connection problem with the YCHT server."
@@ -11291,39 +11299,39 @@ msgstr "_Obre el correu"
 msgid "_Warn"
 msgstr "_Avisa"
 
-#: ../src/util.c:2373
+#: ../src/util.c:2375
 msgid "Calculating..."
 msgstr "S'està calculant..."
 
-#: ../src/util.c:2376
+#: ../src/util.c:2378
 msgid "Unknown."
 msgstr "Desconegut."
 
-#: ../src/util.c:2406
+#: ../src/util.c:2408
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "segon"
 msgstr[1] "segons"
 
-#: ../src/util.c:2420
+#: ../src/util.c:2422
 msgid "day"
 msgid_plural "days"
 msgstr[0] "dia"
 msgstr[1] "dies"
 
-#: ../src/util.c:2428
+#: ../src/util.c:2430
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "hora"
 msgstr[1] "hores"
 
-#: ../src/util.c:2436
+#: ../src/util.c:2438
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "minut"
 msgstr[1] "minuts"
 
-#: ../src/util.c:2856
+#: ../src/util.c:2858
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Error en obrir la connexió.\n"
 
