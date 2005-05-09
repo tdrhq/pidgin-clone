@@ -90,21 +90,22 @@ static struct developer retired_developers[] = {
 	{"Adam Fritzler",		N_("former libfaim maintainer"), NULL},
 	{"Eric Warmenhoven",	N_("former lead developer"), "warmenhoven@yahoo.com"},
 	{"Jim Duchek",			N_("former maintainer"), NULL},
-	{"Jim Seymour",			N_("former Jabber developer"), NULL},
+    {"Jim Seymour",         N_("former Jabber developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
 	{NULL, NULL, NULL}
 };
 
 static struct translator current_translators[] = {
-	{N_("Bulgarian"),			"bg", N_("Vladimira Girginova and Vladimir (Kaladan) Petkov"), "missing@here.is,vpetkov@i-space.org"},
+	{N_("Azerbaijani"),			"az", N_("Metin Amiroff"), "metin@karegen.com"},
+    {N_("Bulgarian"),           "bg", N_("Vladimira Girginova and Vladimir (Kaladan) Petkov"), "missing@here.is,vpetkov@i-space.org"},
 	{N_("Catalan"),				"ca", "Josep Puigdemont", "tradgnome@softcatala.org"},
 	{N_("Czech"),				"cs", "Miloslav Trmac", "mitr@volny.cz"},
-	{N_("Danish"),				"da", "Morten Brix Pedersen", "morten@wtf.dk"},
+    {N_("Danish"),              "da", "Morten Brix Pedersen", "morten@wtf.dk"},
 	{N_("German"),				"de", "Björn Voigt", "bjoern@cs.tu-berlin.de"},
 	{N_("Australian English"),	"en_AU", "Peter Lawler", "trans -at- six-by-nine.com.au"},
 	{N_("Canadian English"),	"en_CA", "Adam Weinberger", "adamw@gnome.org"},
-	{N_("British English"),		"en_GB", "Luke Ross", "lukeross@sys3175.co.uk"},
+    {N_("British English"),     "en_GB", "Luke Ross", "lukeross@sys3175.co.uk"},
 	{N_("Spanish"),				"es", "Javier Fernández-Sanguino Peña", "jfs@debian.org"},
 	{N_("Estonian"),            "et", "Ivar Smolin", "okul@users.sf.net"},
 	{N_("Finnish"),				"fi", "Arto Alakulju", "arto@alakulju.net"},
