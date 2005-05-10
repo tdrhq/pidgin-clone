@@ -817,10 +817,10 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			jabber_stream_init(js);
 			break;
 		case JABBER_STREAM_CONNECTED:
-			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
 			jabber_roster_request(js);
 			jabber_presence_send(js->gc, js->gc->away_state, js->gc->away);
 			jabber_disco_items_server(js);
+			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
 			serv_finish_login(js->gc);
 			break;
 	}
