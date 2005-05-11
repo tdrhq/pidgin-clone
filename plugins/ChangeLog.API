@@ -1,7 +1,15 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 1.3.0 (5/10/2005):
-	* No changes
+	* Added: gaim_blist_schedule_save()
+	  This should be used instead of gaim_blist_sync when you
+	  want the blist.xml file to be written to disk.  There
+	  should not be many occasions when you want to do this,
+	  as the functions in the blist API that modify the buddy
+	  list will normally call it for you.
+	* Added: OPT_PROTO_NO_NORMALIZE_CONV
+	  Tells the conversation API to not normalize screen names
+	  in conversations.  This is used by the Jabber PRPL.
 
 version 1.2.1 (4/3/2005):
 	* No changes
