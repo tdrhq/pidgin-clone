@@ -12,6 +12,7 @@ version 1.3.0 (5/10/2005):
 	* Fix to prevent MSN disconnecting if you change status while connecting
 	* Fixes for two remotely exploitable crash bugs.  See
 	  http://gaim.sourceforge.net/security/ for more information.
+	* Change to correctly handle adding jabber buddies on ejabberd servers
 
 version 1.2.1 (4/3/2005):
 	* URL escaping now works with UTF-8 text. This may break some old log
