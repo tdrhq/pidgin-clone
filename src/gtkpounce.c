@@ -1015,11 +1015,13 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	if (gaim_pounce_action_is_enabled(pounce, "execute-command"))
 	{
 		const char *command;
+		char *localecmd;
 
 		command = gaim_pounce_action_get_attribute(pounce, "execute-command",
 												   "command");
+		localecmd = g_locale_from_utf8(command, -1, NULL, NULL, NULL);
 
-		if (command != NULL)
+		if (localecmd != NULL)
 		{
 #ifndef _WIN32
 			int pid = fork();
@@ -1029,7 +1031,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 				args[0] = "sh";
 				args[1] = "-c";
-				args[2] = (char *)command;
+				args[2] = (char *)localecmd;
 				args[3] = NULL;
 
 				execvp(args[0], args);
@@ -1050,6 +1052,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 							command);
 #endif /* !_WIN32 */
 		}
+		g_free(localecmd);
 	}
 
 	if (gaim_pounce_action_is_enabled(pounce, "play-sound"))
