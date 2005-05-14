@@ -1270,7 +1270,7 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 						   current_time, tmp);
 			g_free(tmp);
 		}
-	} else if (old_idle && !idle) {
+	} else if (old_idle && !idle && !signing_off) {
 		if(gaim_prefs_get_bool("/core/logging/log_system") &&
 		   gaim_prefs_get_bool("/core/logging/log_idle_state")) {
 			GaimAccount *account = gaim_connection_get_account(gc);
@@ -1318,6 +1318,7 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 	gaim_blist_update_buddy_signon(b, signon);
 	gaim_blist_update_buddy_idle(b, idle);
 	gaim_blist_update_buddy_evil(b, evil);
+	gaim_blist_update_buddy_presence(b, loggedin);
 	gaim_blist_update_buddy_status(b, type);
 
 	if (!old_idle && idle)
@@ -1328,15 +1329,14 @@ void serv_got_update(GaimConnection *gc, const char *name, gboolean loggedin,
 	}
 	else if (old_idle && !idle)
 	{
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
+		if (!signing_off)
+			gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
 
 		remove_idle_buddy(b);
 	}
 
 	if (c != NULL)
 		gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);
-
-	gaim_blist_update_buddy_presence(b, loggedin);
 
 	for (buddies = gaim_find_buddies(account, name); buddies; buddies = g_slist_remove(buddies, buddies->data)) {
 		b = buddies->data;

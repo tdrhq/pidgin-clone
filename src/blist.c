@@ -247,7 +247,8 @@ void gaim_blist_update_buddy_status(GaimBuddy *buddy, int status)
 		buddy->uc = status;
 		gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
 
-		if ((status & UC_UNAVAILABLE) != (old_status & UC_UNAVAILABLE)) {
+		if ((buddy->present != GAIM_BUDDY_SIGNING_OFF) && (buddy->present != GAIM_BUDDY_OFFLINE) &&
+			((status & UC_UNAVAILABLE) != (old_status & UC_UNAVAILABLE))) {
 			if (status & UC_UNAVAILABLE)
 				gaim_signal_emit(gaim_blist_get_handle(), "buddy-away", buddy);
 			else
