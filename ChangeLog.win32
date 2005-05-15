@@ -5,7 +5,7 @@ version 1.3.1 :
 
 version 1.3.0 (5/10/2005):
 	* Updated to GTK+ 2.6.7 (rev a).  This restores functionality on Windows
-	  98/ME/N4.
+	  98/ME/NT4.
 
 version 1.2.1 (4/3/2005):
 	* No changes
