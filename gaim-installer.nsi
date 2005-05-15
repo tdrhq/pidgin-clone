@@ -1,7 +1,7 @@
 ; Installer script for win32 Gaim
 ; Herman Bloggs <hermanator12002@yahoo.com>
 
-; NOTE: this .NSI script is intended for NSIS 2.0 (finale release).
+; NOTE: this .NSI script is intended for NSIS 2.0 (final release).
 ;
 
 ;--------------------------------
@@ -457,14 +457,10 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 
     nt4_done:
 
-    CreateDirectory "$SMPROGRAMS\Gaim"
-    CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
-    CreateShortCut "$DESKTOP\Gaim.lnk" "$INSTDIR\gaim.exe"
     SetOutPath "$INSTDIR"
 
     ; If we don't have install rights.. we're done
     StrCmp $R0 "NONE" done
-    CreateShortCut "$SMPROGRAMS\Gaim\Uninstall.lnk" "$INSTDIR\${GAIM_UNINST_EXE}"
     SetOverwrite off
 
     ; Write out installer language
@@ -483,6 +479,23 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 
   done:
 SectionEnd ; end of default Gaim section
+
+;--------------------------------
+;Shortcuts
+
+SubSection /e $(GAIM_SHORTCUTS_SECTION_TITLE) SecShortcuts
+  Section /o $(GAIM_DESKTOP_SHORTCUT_SECTION_TITLE) SecDesktopShortcut
+    SetOverwrite on
+    CreateShortCut "$DESKTOP\Gaim.lnk" "$INSTDIR\gaim.exe"
+    SetOverwrite off
+  SectionEnd
+  Section $(GAIM_STARTMENU_SHORTCUT_SECTION_TITLE) SecStartMenuShortcut
+    SetOverwrite on
+    CreateDirectory "$SMPROGRAMS\Gaim"
+    CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
+    SetOverwrite off
+  SectionEnd
+SubSectionEnd
 
 ;--------------------------------
 ;GTK+ Themes
@@ -670,7 +683,7 @@ SectionEnd ; end of uninstall section
 	$(GTK_SECTION_DESCRIPTION)
 !endif
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkThemes} \
-	$(GTK_THEMES_SECTION_DESCRIPTION)
+        $(GTK_THEMES_SECTION_DESCRIPTION)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkNone} \
         $(GTK_NO_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkWimp} \
@@ -679,6 +692,14 @@ SectionEnd ; end of uninstall section
         $(GTK_BLUECURVE_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkLighthouseblue} \
         $(GTK_LIGHTHOUSEBLUE_THEME_DESC)
+
+
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} \
+        $(GAIM_SHORTCUTS_SECTION_DESCRIPTION)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDesktopShortcut} \
+        $(GAIM_DESKTOP_SHORTCUT_DESC)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecStartMenuShortcut} \
+        $(GAIM_STARTMENU_SHORTCUT_DESC)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
