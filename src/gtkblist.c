@@ -3799,10 +3799,11 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 
 	buddy = (GaimBuddy*)node;
 	contact = (GaimContact*)node->parent;
-	gtkparentnode = (struct _gaim_gtk_blist_node *)node->parent->ui_data;
 
 	/* First things first, update the contact */
 	gaim_gtk_blist_update_contact(list, node->parent);
+
+	gtkparentnode = (struct _gaim_gtk_blist_node *)node->parent->ui_data;
 
 	if(gtkparentnode->contact_expanded &&
 			(buddy->present != GAIM_BUDDY_OFFLINE ||
