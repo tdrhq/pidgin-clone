@@ -2498,7 +2498,9 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 				value = g_markup_escape_text(g_hash_table_lookup(chat->components,
 							pce->identifier), -1);
 
-				g_string_append_printf(parts_text, "\n<b>%s</b> %s", label, value);
+				g_string_append_printf(parts_text, "\n<b>%s</b> %s",
+							label ? label : "",
+							value ? value : "");
 				g_free(label);
 				g_free(value);
 			}
