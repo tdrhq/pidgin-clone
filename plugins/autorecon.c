@@ -138,15 +138,23 @@ static void save_state(GaimAccount *account, const char *state, const char *mess
 
 static void restore_state(GaimConnection *gc, void *m) {
 	/* Restore the state to what it was before the disconnect */
-	GaimAwayState *info;
+	GaimAwayState *state;
 	GaimAccount *account;
+	GaimAutoRecon *recon;
 
-	g_return_if_fail(gc != NULL && gaim_prefs_get_bool(OPT_RESTORE_STATE));
 	account = gaim_connection_get_account(gc);
 
-	info = g_hash_table_lookup(awayStates, account);
-	if (info)
-		serv_set_away(gc, info->state, info->message);
+	/* only restore the state if the user says so */
+	if(gaim_prefs_get_bool(OPT_RESTORE_STATE)) {
+		state = g_hash_table_lookup(awayStates, account);
+		if (state)
+			serv_set_away(gc, state->state, state->message);
+	}
+
+	/* we reconnected, reset the delay */
+	recon = g_hash_table_lookup(hash, account);
+	if(recon)
+		recon->delay = INITIAL;
 }
 
 static void
