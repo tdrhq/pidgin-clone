@@ -4591,6 +4591,7 @@ gaim_gtk_new_window(GaimConvWindow *win)
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(gtkwin->notebook), TRUE);
 	gtk_notebook_popup_enable(GTK_NOTEBOOK(gtkwin->notebook));
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook), FALSE);
+	gtk_notebook_set_show_border(GTK_NOTEBOOK(gtkwin->notebook), FALSE);
 
 	gtk_widget_show(gtkwin->notebook);
 
