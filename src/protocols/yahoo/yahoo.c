@@ -26,6 +26,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
+#include "cmds.h"
 #include "debug.h"
 #include "notify.h"
 #include "privacy.h"
@@ -929,7 +930,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		if (!yahoo_privacy_check(gc, im->from)) {
 			gaim_debug_info("yahoo", "Message from %s dropped.\n", im->from);
-			continue;
+			return;
 		}
 
 		m = yahoo_string_decode(gc, im->msg, im->utf8);
@@ -3423,6 +3424,69 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_name,
 
 static GaimPlugin *my_protocol = NULL;
 
+/********************************* Commands **********************************/
+
+static GaimCmdRet
+yahoogaim_cmd_buzz(GaimConversation *c, const gchar *cmd, gchar **args,
+					gchar **error, void *data) {
+
+	GaimAccount *account = gaim_conversation_get_account(c);
+	const char *username = gaim_account_get_username(account);
+
+	if (*args && args[0])
+		return GAIM_CMD_RET_FAILED;
+
+	gaim_debug(GAIM_DEBUG_INFO, "yahoo",
+	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
+	gaim_conv_im_send(GAIM_CONV_IM(c), "<ding>");
+	gaim_conv_im_write(GAIM_CONV_IM(c), "", _("Buzz!!"), 
+		GAIM_MESSAGE_NICK|GAIM_MESSAGE_RECV, time(NULL));
+	return GAIM_CMD_RET_OK;
+}
+
+static GaimCmdRet
+yahoogaim_cmd_chat_join(GaimConversation *conv, const char *cmd,
+                        char **args, char **error, void *data)
+{
+	GHashTable *comp;
+	GaimConnection *gc;
+	struct yahoo_data *yd;
+	int id;
+
+	if (!args || !args[0])
+		return GAIM_CMD_RET_FAILED;
+
+	gc = gaim_conversation_get_gc(conv);
+	yd = gc->proto_data;
+	id = yd->conf_id;
+	gaim_debug(GAIM_DEBUG_INFO, "yahoo",
+	           "Trying to join %s \n", args[0]);
+
+	comp = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	g_hash_table_replace(comp, g_strdup("room"),
+	g_strdup_printf("%s", g_ascii_strdown(args[0], strlen(args[0]))));
+	g_hash_table_replace(comp, g_strdup("type"), g_strdup("Chat"));
+
+	yahoo_c_join(gc, comp);
+
+	g_hash_table_destroy(comp);
+	return GAIM_CMD_RET_OK;
+}
+
+/************************** Plugin Initialization ****************************/
+static void
+yahoogaim_register_commands(void)
+{
+	gaim_cmd_register("join", "s", GAIM_CMD_P_PRPL,
+	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
+	                  GAIM_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoogaim_cmd_chat_join,
+	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
+	gaim_cmd_register("buzz", "", GAIM_CMD_P_PRPL,
+	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoogaim_cmd_buzz,
+	                  _("buzz: Buzz a contact to get their attention"), NULL);
+}
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC,
@@ -3553,7 +3617,7 @@ init_plugin(GaimPlugin *plugin)
 #endif
 
 	my_protocol = plugin;
-
+	yahoogaim_register_commands();
 	yahoo_init_colorht();
 }
 
