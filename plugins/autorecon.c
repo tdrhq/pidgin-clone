@@ -142,6 +142,7 @@ static void restore_state(GaimConnection *gc, void *m) {
 	GaimAccount *account;
 	GaimAutoRecon *recon;
 
+	g_return_if_fail(gc != NULL);
 	account = gaim_connection_get_account(gc);
 
 	/* only restore the state if the user says so */
@@ -151,10 +152,8 @@ static void restore_state(GaimConnection *gc, void *m) {
 			serv_set_away(gc, state->state, state->message);
 	}
 
-	/* we reconnected, reset the delay */
-	recon = g_hash_table_lookup(hash, account);
-	if(recon)
-		recon->delay = INITIAL;
+	/* we reconnected, remove from the hash table of disconnected accounts */
+	g_hash_table_remove(hash, account);
 }
 
 static void
