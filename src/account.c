@@ -145,6 +145,8 @@ gaim_account_new(const char *username, const char *protocol_id)
 	account->ui_settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 				g_free, (GDestroyNotify)g_hash_table_destroy);
 	account->system_log = NULL;
+	/* 0 is not a valid privacy setting */
+	account->perm_deny = 1;
 
 	return account;
 }

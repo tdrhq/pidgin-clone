@@ -2004,6 +2004,7 @@ static gboolean gaim_blist_read(const char *filename)
 		for (anode = privacy->child; anode; anode = anode->next) {
 			xmlnode *x;
 			GaimAccount *account;
+			int imode;
 			const char *acct_name, *proto, *mode, *protocol;
 
 			acct_name = xmlnode_get_attrib(anode, "name");
@@ -2019,7 +2020,8 @@ static gboolean gaim_blist_read(const char *filename)
 			if (!account)
 				continue;
 
-			account->perm_deny = atoi(mode);
+			imode = atoi(mode);
+			account->perm_deny = (imode != 0 ? imode : 1);
 
 			for (x = anode->child; x; x = x->next) {
 				char *name;
