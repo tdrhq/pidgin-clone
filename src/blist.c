@@ -2021,7 +2021,7 @@ static gboolean gaim_blist_read(const char *filename)
 				continue;
 
 			imode = atoi(mode);
-			account->perm_deny = (imode != 0 ? imode : 1);
+			account->perm_deny = (imode != 0 ? imode : GAIM_PRIVACY_ALLOW_ALL);
 
 			for (x = anode->child; x; x = x->next) {
 				char *name;

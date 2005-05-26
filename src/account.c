@@ -28,6 +28,7 @@
 #include "notify.h"
 #include "pounce.h"
 #include "prefs.h"
+#include "privacy.h"
 #include "prpl.h"
 #include "request.h"
 #include "signals.h"
@@ -146,7 +147,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 				g_free, (GDestroyNotify)g_hash_table_destroy);
 	account->system_log = NULL;
 	/* 0 is not a valid privacy setting */
-	account->perm_deny = 1;
+	account->perm_deny = GAIM_PRIVACY_ALLOW_ALL;
 
 	return account;
 }
