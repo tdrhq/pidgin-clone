@@ -2,6 +2,7 @@ version 1.3.1 :
 	* Installer allows you to choose whether or not to put shortcuts on the 
 	  Desktop and Start Menu.  Uninstall icon is no longer placed in the
           Start Menu.
+	* Fixed logging where the gaim home directory path is a UNC path.
 
 version 1.3.0 (5/10/2005):
 	* Updated to GTK+ 2.6.7 (rev a).  This restores functionality on Windows
