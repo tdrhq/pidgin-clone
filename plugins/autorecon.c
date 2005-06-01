@@ -140,7 +140,6 @@ static void restore_state(GaimConnection *gc, void *m) {
 	/* Restore the state to what it was before the disconnect */
 	GaimAwayState *state;
 	GaimAccount *account;
-	GaimAutoRecon *recon;
 
 	g_return_if_fail(gc != NULL);
 	account = gaim_connection_get_account(gc);
