@@ -542,12 +542,15 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	if(!from)
 		return;
 
+	jb = jabber_buddy_find(js, from, TRUE);
+	if(!jb)
+		return;
+
 	resource_name = jabber_get_resource(from);
 	bare_jid = jabber_get_bare_jid(from);
 
 	b = gaim_find_buddy(js->gc->account, bare_jid);
 
-	jb = jabber_buddy_find(js, from, TRUE);
 	info_text = g_string_new("");
 
 	g_string_append_printf(info_text, "<b>%s:</b> %s<br/>", _("Jabber ID"),
