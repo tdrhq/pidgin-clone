@@ -109,8 +109,8 @@ gboolean yahoo_privacy_check(GaimConnection *gc, const char *who)
 					gaim_debug_info("yahoo",
 					    "%s blocked data received from %s (GAIM_PRIVACY_DENY_USERS)\n",
 					    gc->account->username,who);
-					}
-				break;
+					break;
+				}
 			}
 			break;
 
@@ -3207,6 +3207,9 @@ static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *foo
 	char *group2 = NULL;
 
 	if (!yd->logged_in)
+		return;
+
+	if (!yahoo_privacy_check(gc, buddy->name))
 		return;
 
 	if (foo)
