@@ -5140,22 +5140,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		gaim_conv_window_show(win);
 	}
 
-	/*
-	 * If we received an IM, and the GaimConvWindow is not active,
-	 * then make this conversation the active tab in this GaimConvWindow.
-	 *
-	 * We do this so that, when the user comes back to the conversation
-	 * window, the first thing they'll see is the new message.  This is
-	 * especially important when the IM window is flashing in their
-	 * taskbar--we want the title of the window to be set to the name
-	 * of the person that IMed them most recently.
-	 */
-	if ((gaim_conversation_get_type(conv) == GAIM_CONV_IM) &&
-		(!gaim_conv_window_has_focus(win)))
-	{
-		gaim_conv_window_switch_conversation(win, gaim_conversation_get_index(conv));
-	}
-
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
 
