@@ -146,6 +146,22 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 	return TRUE;
 }
 
+/*
+ * When a conversation window is focused, we know the user
+ * has looked at it so we know there are no longer unseen
+ * messages.
+ */
+static gint
+focus_win_cb(GtkWidget *w, GdkEventFocus *e, gpointer d)
+{
+	GaimConvWindow *win = (GaimConvWindow *)d;
+	GaimConversation *conv = gaim_conv_window_get_active_conversation(win);
+
+	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
+
+	return FALSE;
+}
+
 static gint
 close_conv_cb(GtkWidget *w, gpointer d)
 {
@@ -2979,7 +2995,11 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
+	/*
+	 * Only set "unseen" to "none" if the window has focus
+	 */
+	if (gaim_conv_window_has_focus(win))
+		gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
 
 	/* Update the menubar */
 	gray_stuff_out(conv);
@@ -4577,6 +4597,9 @@ gaim_gtk_new_window(GaimConvWindow *win)
 
 	g_signal_connect(G_OBJECT(gtkwin->window), "delete_event",
 					 G_CALLBACK(close_win_cb), win);
+
+	g_signal_connect(G_OBJECT(gtkwin->window), "focus_in_event",
+					 G_CALLBACK(focus_win_cb), win);
 
 	/* Create the notebook. */
 	gtkwin->notebook = gtk_notebook_new();

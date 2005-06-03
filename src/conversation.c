@@ -614,8 +614,6 @@ gaim_conv_window_switch_conversation(GaimConvWindow *win, unsigned int index)
 	if (ops != NULL && ops->switch_conversation != NULL)
 		ops->switch_conversation(win, index);
 
-	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
-
 	gaim_signal_emit(gaim_conversations_get_handle(),
 					 "conversation-switched", old_conv, conv);
 }
@@ -1514,7 +1512,13 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 			gaim_conv_im_set_typing_state(GAIM_CONV_IM(conv), GAIM_NOT_TYPING);
 	}
 
-	if (gaim_conv_window_get_active_conversation(win) != conv) {
+	if (gaim_conv_window_has_focus(win) &&
+		gaim_conv_window_get_active_conversation(win) == conv)
+	{
+		unseen = GAIM_UNSEEN_NONE;
+	}
+	else
+	{
 		if ((flags & GAIM_MESSAGE_NICK) == GAIM_MESSAGE_NICK ||
 				gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK)
 			unseen = GAIM_UNSEEN_NICK;
@@ -1525,10 +1529,24 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		else
 			unseen = GAIM_UNSEEN_TEXT;
 	}
-	else
-		unseen = GAIM_UNSEEN_NONE;
 
 	gaim_conversation_set_unseen(conv, unseen);
+
+	/*
+	 * If we received an IM, and the GaimConvWindow is not active,
+	 * then make this conversation the active tab in this GaimConvWindow.
+	 *
+	 * We do this so that, when the user comes back to the conversation
+	 * window, the first thing they'll see is the new message.  This is
+	 * especially important when the IM window is flashing in their
+	 * taskbar--we want the title of the window to be set to the name
+	 * of the person that IMed them most recently.
+	 */
+	if ((gaim_conversation_get_type(conv) == GAIM_CONV_IM) &&
+		(!gaim_conv_window_has_focus(win)))
+	{
+		gaim_conv_window_switch_conversation(win, gaim_conversation_get_index(conv));
+	}
 }
 
 void
@@ -1768,6 +1786,8 @@ gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const ch
 	else
 		return FALSE;
 	window = gaim_conversation_get_window(conv);
+
+	/* TODO: There's a good chance this is no longer necessary */
 	if (!gaim_conv_window_has_focus(window)) /* don't change the active conversation if the user is using this window */
 		gaim_conv_window_switch_conversation(window, gaim_conversation_get_index(conv));
 
