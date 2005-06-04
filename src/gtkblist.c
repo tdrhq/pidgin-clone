@@ -57,8 +57,12 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-#if (GTK_CHECK_VERSION(2,2,0) && !(defined(__APPLE__) && defined(__MACH__)))
-#define WANT_DROP_SHADOW
+/* if someone explicitly asked for drop shadows, we also need to make
+   sure that their environment can support it. If not, tough */
+#ifdef WANT_DROP_SHADOW
+# if !GTK_CHECK_VERSION(2,2,0) || (defined(__APPLE__) && defined(__MACH__))
+#  undef WANT_DROP_SHADOW
+# endif
 #endif
 
 typedef struct
@@ -130,16 +134,20 @@ static void gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node
 
 static void show_rename_group(GtkWidget *unused, GaimGroup *g);
 
-static gboolean xcomposite_is_present();
-
 struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
 	gboolean contact_expanded;
 };
 
+
 #ifdef WANT_DROP_SHADOW
 /**************************** Weird drop shadow stuff *******************/
-/* This is based on a patch for drop shadows in GTK menus available at http://www.xfce.org/gtkmenu-shadow/ */
+/* This is based on a patch for drop shadows in GTK menus available at
+   http://www.xfce.org/gtkmenu-shadow/
+ */
+
+static gboolean xcomposite_is_present();
+
 
 enum side {
   EAST_SIDE,
@@ -182,7 +190,6 @@ const double top_left_corner[25] = {
   .941, .847, .698, .521, .215
 };
 
-#ifdef WANT_DROP_SHADOW
 static gboolean xcomposite_is_present()
 {
 	static gboolean result = FALSE;
@@ -196,11 +203,10 @@ static gboolean xcomposite_is_present()
 			result = TRUE;
 		known = TRUE;
 	}
-#endif
+#endif /* ifndef _WIN32 */
 
 	return result;
 }
-#endif /* WANT_DROP_SHADOW */
 
 static GdkPixbuf *
 get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
@@ -213,8 +219,7 @@ get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
 	gint original_width = width;
 	gint original_height = height;
 
-#ifdef _WIN32
-#if !GTK_CHECK_VERSION(2,4,8)
+#if !GTK_CHECK_VERSION(2,4,8) && defined(_WIN32)
 	/* XXX: Kill this entire block someday.
 	 *
 	 * 2004-08-22: This bug fix should land in GTK+ version 2.4.8:
@@ -234,8 +239,7 @@ get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
 	x += (workarea->left);
 	y += (workarea->top);
 	g_free(workarea);
-#endif
-#endif
+#endif /* if !GTK_CHECK_VERSION(2,4,8) && defined(_WIN32) */
 
 	if (x < 0) {
 		width += x;
@@ -436,7 +440,8 @@ map_shadow_windows (gpointer data)
 }
 
 /**************** END WEIRD DROP SHADOW STUFF ***********************************/
-#endif
+#endif /* ifdef WANT_DROP_SHADOW */
+
 
 static GSList *blist_prefs_callbacks = NULL;
 
@@ -2255,7 +2260,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		gdk_window_set_user_data (gtkblist->south_shadow, gtkblist->tipwindow);
 		gdk_window_set_back_pixmap (gtkblist->south_shadow, NULL, FALSE);
 	}
-#endif
+#endif /* ifdef WANT_DROP_SHADOW */
 
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
 	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
