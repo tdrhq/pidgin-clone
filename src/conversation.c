@@ -1543,6 +1543,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	 * of the person that IMed them most recently.
 	 */
 	if ((gaim_conversation_get_type(conv) == GAIM_CONV_IM) &&
+		(flags & (GAIM_MESSAGE_RECV | GAIM_MESSAGE_ERROR)) &&
 		(!gaim_conv_window_has_focus(win)))
 	{
 		gaim_conv_window_switch_conversation(win, gaim_conversation_get_index(conv));
