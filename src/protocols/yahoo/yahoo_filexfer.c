@@ -92,7 +92,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	GaimConnection *gc;
 	GaimAccount *account;
 	struct yahoo_data *yd;
-	char *filename;
+	char *filename, *encoded_filename;
 
 	gaim_debug(GAIM_DEBUG_INFO, "yahoo",
 			   "AAA - in yahoo_sendfile_connected\n");
@@ -125,7 +125,8 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	yahoo_packet_hash(pkt, 5, xfer->who);
 	yahoo_packet_hash(pkt, 14, "");
 	filename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
-	yahoo_packet_hash(pkt, 27, gaim_url_encode(filename));
+	encoded_filename = yahoo_string_encode(gc, filename, NULL);
+	yahoo_packet_hash(pkt, 27, encoded_filename);
 	yahoo_packet_hash(pkt, 28, size);
 
 	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
@@ -150,6 +151,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	g_free(size);
 	g_free(post);
 	g_free(buf);
+	g_free(encoded_filename);
 	g_free(filename);
 }
 
@@ -423,18 +425,23 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt)
 	xfer->data = xfer_data;
 
 	/* Set the info about the incoming file. */
-	if (filename)
-		gaim_xfer_set_filename(xfer, filename);
-	else {
+	if (filename) {
+		char *utf8_filename = yahoo_string_decode(gc, filename, TRUE);
+		gaim_xfer_set_filename(xfer, utf8_filename);
+		g_free(utf8_filename);
+	} else {
 		gchar *start, *end;
 	 	start = g_strrstr(xfer_data->path, "/");
 		if (start)
 			start++;
 		end = g_strrstr(xfer_data->path, "?");
 		if (start && *start && end) {
+			char *utf8_filename;
 			filename = g_strndup(start, end - start);
-			gaim_xfer_set_filename(xfer, filename);
+			utf8_filename = yahoo_string_decode(gc, filename, TRUE);
 			g_free(filename);
+			gaim_xfer_set_filename(xfer, utf8_filename);
+			g_free(utf8_filename);
 			filename = NULL;
 		}
 	}
