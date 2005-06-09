@@ -12,12 +12,13 @@
 #  Petter Johan Olsen   updated for 0.73
 #  Kyrre Ness Sjobak, updates for 1.x
 #  Kyrre Ness Sjobak, updates for 1.3
+
 msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-04-02 23:49-0500\n"
-"PO-Revision-Date: 2005-05-05 17:27+0200\n"
+"PO-Revision-Date: 2005-06-08 15:51+0200\n"
 "Last-Translator: Kyrre Ness Sjobak <kyrre@solution-forge.net>\n"
 "Language-Team: Norsk bokmål <no@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -500,9 +501,7 @@ msgstr "Velg kompis"
 msgid ""
 "Select a person from your address book to add this buddy to, or create a new "
 "person."
-msgstr ""
-"Velg en person fra adresseboka for å legge til denne kompisen, eller lag en "
-"ny kompis"
+msgstr "Velg en person fra adresseboka for å legge til denne kontakten, eller lag en ny kontakt."
 
 #. Add the disclosure
 #: plugins/gevolution/assoc-buddy.c:429
@@ -574,9 +573,7 @@ msgstr "Vennligst tast inn personens informasjon under."
 
 #: plugins/gevolution/new_person_dialog.c:268
 msgid "Please enter the buddy's screen name and account type below."
-msgstr ""
-"Venligst tast inn kompisens brukernavn og hvilken protokoll kompisen finnes "
-"på under"
+msgstr "Venligst tast inn kontaktens brukernavn og hvilken protokoll kontakten finnes på under."
 
 #: plugins/gevolution/new_person_dialog.c:288
 msgid "Account type:"
@@ -744,7 +741,7 @@ msgstr "Sjekker for ny lokal e-post."
 
 #: plugins/mailchk.c:163
 msgid "Adds a small box to the buddy list that shows if you have new mail."
-msgstr "Legger til en liten boks i kompislista som viser om du har fått e-post"
+msgstr "Legger til en liten boks i kontaktlista som viser om du har fått e-post."
 
 #. ---------- "Notify For" ----------
 #: plugins/notify.c:604
@@ -1201,7 +1198,7 @@ msgstr "Gjennomsiktighet"
 #. *  summary
 #: plugins/win32/transparency/win2ktrans.c:483
 msgid "Variable Transparency for the buddy list and conversations."
-msgstr "Variabel gjennomsiktighet for kompislisten og samtaler."
+msgstr "Variabel gjennomsiktighet for kontaktlisten og samtaler."
 
 #. *  description
 #: plugins/win32/transparency/win2ktrans.c:485
@@ -1211,9 +1208,9 @@ msgid ""
 "\n"
 "* Note: This plugin requires Win2000 or WinXP."
 msgstr ""
-"Dette tillegget gjør at samtalevinduene og kompislisten blir delvis gjennomsiktige.\n"
+"Dette tillegget gjør at samtalevinduene og kontaktlisten blir delvis gjennomsiktige.\n"
 "\n"
-"* Merk: du må ha Win2000 eller WinXP for at denne skal virke."
+"* Merk: du må ha Windows 2000 eller Windows XP for at denne skal virke."
 
 #: plugins/win32/winprefs/winprefs.c:344
 msgid "GTK+ Runtime Version"
@@ -1976,7 +1973,7 @@ msgstr "Informasjon"
 
 #: src/gtkaccount.c:2561 src/gtkaccount.c:2592
 msgid "Add buddy to your list?"
-msgstr "Legg til brukeren i kontaktlisten din?"
+msgstr "Legg til kontakten i listen din?"
 
 #. Add button
 #: src/gtkaccount.c:2563 src/gtkaccount.c:2594 src/gtkblist.c:4530
@@ -2002,7 +1999,7 @@ msgstr "Konto:"
 
 #: src/gtkblist.c:1166 src/gtkblist.c:3283
 msgid "Get _Info"
-msgstr "Få _info"
+msgstr "_Info"
 
 #: src/gtkblist.c:1169 src/gtkblist.c:3273
 msgid "I_M"
@@ -2084,7 +2081,7 @@ msgstr "_Utvid"
 
 #: src/gtkblist.c:1981 src/gtkconv.c:4512 src/gtkpounce.c:316
 msgid "You are not currently signed on with an account that can add that buddy."
-msgstr "Du er ikke pålogget med noen kontakter som kan legge til den kompisen."
+msgstr "Du er ikke pålogget med noen kontoer som kan legge til den kontakten."
 
 #. Buddies menu
 #: src/gtkblist.c:2402
@@ -2105,7 +2102,7 @@ msgstr "/Kontakter/_Hent brukerinfo..."
 
 #: src/gtkblist.c:2406
 msgid "/Buddies/View User _Log..."
-msgstr "/Kontakter/_Hent brukerlogg..."
+msgstr "/Kontakter/Hent bruker_logg..."
 
 #: src/gtkblist.c:2408
 msgid "/Buddies/Show _Offline Buddies"
@@ -2342,7 +2339,7 @@ msgstr "/Verktøy/_Romliste"
 
 #: src/gtkblist.c:3005
 msgid "/Tools/Privacy"
-msgstr "/Verktøy/_Sikkerhet"
+msgstr "/Verktøy/Blo_kkeringer"
 
 #: src/gtkblist.c:3087
 msgid "Alphabetical"
@@ -2393,7 +2390,7 @@ msgstr "Hent informasjon om den valgte kontakten"
 
 #: src/gtkblist.c:3293
 msgid "_Chat"
-msgstr "Gruppesamtale"
+msgstr "_Gruppesamtale"
 
 #: src/gtkblist.c:3298
 msgid "Join a chat room"
@@ -2401,7 +2398,7 @@ msgstr "Bli med i samtalegruppe"
 
 #: src/gtkblist.c:3303
 msgid "_Away"
-msgstr "Borte"
+msgstr "_Borte"
 
 #: src/gtkblist.c:3308
 msgid "Set an away message"
@@ -3697,7 +3694,7 @@ msgstr "Velg fil"
 
 #: src/gtkpounce.c:161
 msgid "Please enter a buddy to pounce."
-msgstr "Navnet på kompisen du vil varsle."
+msgstr "Navnet på kontakten du vil varsle."
 
 #. "New Buddy Pounce"
 #: src/gtkpounce.c:391 src/gtkpounce.c:895
@@ -5686,7 +5683,6 @@ msgid "Disconnected."
 msgstr "Frakoblet."
 
 #: src/protocols/jabber/auth.c:52
-#, fuzzy
 msgid ""
 "Server requires TLS/SSL for login.  Select \"Use TLS if available\" in "
 "account properties"
@@ -6546,7 +6542,7 @@ msgid ""
 "Do you want this buddy to be added?"
 msgstr ""
 "%s er på den lokale lista innenfor gruppa \"%s\", men ikke på tjenerlista. "
-"Ønsker du at denne vennen skal bli lagt til?"
+"Ønsker du at denne kontakten skal bli lagt til?"
 
 #: src/protocols/msn/dialog.c:105
 #, c-format
@@ -6555,7 +6551,7 @@ msgid ""
 "to be added?"
 msgstr ""
 "%s er på den lokale lista, men ikke på tjenerlista. "
-"Ønsker du at denne vennen skal bli lagt til?"
+"Ønsker du at denne kontakten skal bli lagt til?"
 
 #: src/protocols/msn/error.c:35
 msgid "Unable to parse message"
@@ -7104,7 +7100,7 @@ msgstr "Klarte ikke tillate bruker på %s (%s)"
 #: src/protocols/msn/notification.c:508
 #, c-format
 msgid "%s could not be added because your buddy list is full."
-msgstr "%s kunne ikke bli lagt til fordi din venneliste er full."
+msgstr "%s kunne ikke bli lagt til kontaktlista, fordi din kontaktliste er full."
 
 #: src/protocols/msn/notification.c:517
 #, c-format
@@ -7169,9 +7165,8 @@ msgstr ""
 "%s"
 
 #: src/protocols/msn/session.c:319
-#, fuzzy
 msgid "Our protocol is not supported by the server."
-msgstr "Protokollversjonen er ikke støttet"
+msgstr "Vår protokoll er ikke støttet av tjeneren"
 
 #: src/protocols/msn/session.c:323
 msgid "Error parsing HTTP."
@@ -7186,9 +7181,8 @@ msgid "The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr "MSN-tjenerene er midlertidig utilgjengelig.Vennligst prøv igjen senere."
 
 #: src/protocols/msn/session.c:335
-#, fuzzy
 msgid "The MSN servers are going down temporarily."
-msgstr "Du ble logget av fordi MSN-tjenerne vil bli utilgjengelig en liten stund."
+msgstr "MSN-tjenerne vil bli utilgjengelig en liten stund."
 
 #: src/protocols/msn/session.c:339
 #, c-format
@@ -7197,7 +7191,7 @@ msgstr "Klarte ikke autentisere: %s"
 
 #: src/protocols/msn/session.c:344
 msgid "Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr "Din MSN-venneliste er midlertidig utilgjengelig. Vennligst prøv igjen senere."
+msgstr "Din MSN-kontaktliste er midlertidig utilgjengelig. Vennligst prøv igjen senere."
 
 #: src/protocols/msn/session.c:365 src/protocols/msn/session.c:367
 msgid "Handshaking"
@@ -7241,7 +7235,7 @@ msgstr "Meldingen kunne ikke bli sendt på grunn av en tilkoblingfeil:"
 
 #: src/protocols/msn/switchboard.c:423
 msgid "Message could not be sent because an error with the switchboard occurred:"
-msgstr "Meldingen kunne ikke bli sendt da de skjedde en feil med sentralbordet:"
+msgstr "Meldingen kunne ikke bli sendt, da det skjedde en feil med sentralbordet:"
 
 #: src/protocols/msn/switchboard.c:431
 msgid "Message may have not been sent because an unknown error occurred:"
@@ -7264,7 +7258,7 @@ msgstr "Brukeren %s (%s) ønsker å legge til %s i kontaktlisten sin."
 #: src/protocols/msn/userlist.c:96
 #, c-format
 msgid "The user %s wants to add %s to his or her buddy list."
-msgstr "Brukeren %s ønsker å legge til %s i vennelisten sin."
+msgstr "Brukeren %s ønsker å legge til %s i kontaktlisten sin."
 
 #: src/protocols/napster/napster.c:241
 msgid "Unable to read header from server"
@@ -7466,7 +7460,7 @@ msgstr "Kunne ikke sende beskjed. Klarte ikke hente brukerdetaljer (%s)."
 #: src/protocols/novell/novell.c:379
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
-msgstr "Kunne ikke legge til %s til vennelisten din (%s)."
+msgstr "Kunne ikke legge til %s til kontaktlisten din (%s)."
 
 #: src/protocols/novell/novell.c:405
 #, c-format
@@ -7503,7 +7497,7 @@ msgid ""
 "Unable to add %s to your buddy list. Error creating folder in server side "
 "list (%s)."
 msgstr ""
-"Klarte ikke legge til %s i vennelisten. En feil oppsto under opprettelse "
+"Klarte ikke legge til %s i kontaktlista. En feil oppsto under opprettelse "
 "i lista på tjenersiden (%s)."
 
 #: src/protocols/novell/novell.c:688
@@ -7796,7 +7790,7 @@ msgstr "Ikke mens du er på AOL"
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking to "
 "most likely has a buggy client.)"
-msgstr "(Det oppsto en feil under mottak av denne meldingen. Vennen du snakker til har sannsynligvis en lusete klient.)"
+msgstr "(Det oppsto en feil under mottak av denne meldingen. Kontakten du snakker til har sannsynligvis en lusete klient.)"
 
 #: src/protocols/oscar/oscar.c:588
 msgid "Voice"
@@ -7910,7 +7904,7 @@ msgstr "Evner"
 #: src/protocols/oscar/oscar.c:758
 #, fuzzy
 msgid "Buddy Comment"
-msgstr "Kommentar om venn:"
+msgstr "Kommentar om kontakt:"
 
 #: src/protocols/oscar/oscar.c:893
 #, c-format
@@ -8596,7 +8590,7 @@ msgid ""
 "Could not add the buddy %s because the screen name is invalid.  Screen names "
 "must either start with a letter and contain only letters, numbers and "
 "spaces, or contain only numbers."
-msgstr "Klarte ikke legge til vennen %s fordi skjermnavnet er ugyldig. Skjernavn må enten starte med en bokstav og inneholde kun bokstaver, tall, og mellomrom, eller bare inneholde nummer."
+msgstr "Klarte ikke legge til kontakten %s fordi skjermnavnet er ugyldig. Skjernavn må enten starte med en bokstav og inneholde kun bokstaver, tall, og mellomrom, eller bare inneholde nummer."
 
 #: src/protocols/oscar/oscar.c:5753 src/protocols/oscar/oscar.c:6202
 #: src/protocols/oscar/oscar.c:6216
@@ -8984,14 +8978,14 @@ msgstr "Kan ikke hente brukerinformasjon"
 #: src/protocols/silc/buddy.c:729
 #, c-format
 msgid "The %s buddy is not trusted"
-msgstr "Ikke tillit til vennen %s"
+msgstr "Ikke tillit til kontakten %s"
 
 #: src/protocols/silc/buddy.c:732
 msgid ""
 "You cannot receive buddy notifications until you import his/her public key.  "
 "You can use the Get Public Key command to get the public key."
 msgstr ""
-"Du kan ikke motta vennevarslinger før du importerer hans/hennes offentlige nøkkel. "
+"Du kan ikke motta kontaktvarslinger før du importerer hans/hennes offentlige nøkkel. "
 "Du kan bruke Hent offentlig nøkkel-kommandoen for å få den offentlige nøkkelen."
 
 #. Open file selector to select the public key.
@@ -9002,13 +8996,13 @@ msgstr "Åpne..."
 #: src/protocols/silc/buddy.c:1032
 #, c-format
 msgid "The %s buddy is not present in the network"
-msgstr "Vennen %s er ikke tilgjengelig på nettverket"
+msgstr "Kontakten %s er ikke tilgjengelig på nettverket"
 
 #: src/protocols/silc/buddy.c:1035
 msgid ""
 "To add the buddy you must import his/her public key. Press Import to import "
 "a public key."
-msgstr "For å legge til vennen må du importere hans/hennes offentlige nøkkel. Trykk Import for å importere en offentlig nøkkel."
+msgstr "For å legge til kontakten må du importere hans/hennes offentlige nøkkel. Trykk Import for å importere en offentlig nøkkel."
 
 #: src/protocols/silc/buddy.c:1038
 msgid "Import..."
@@ -9024,7 +9018,7 @@ msgid ""
 "user from the list to add to the buddy list."
 msgstr ""
 "Mer enn en bruker ble funnet med den samme offentlige nøkkelen. "
-"Velg den korrekte brukeren fra lista for å legge til vennelista."
+"Velg den korrekte brukeren fra lista for å legge til kontaktlista."
 
 #: src/protocols/silc/buddy.c:1129
 msgid ""
@@ -9032,7 +9026,7 @@ msgid ""
 "from the list to add to the buddy list."
 msgstr ""
 "Men enn en bruker ble funnet med det samme navnet. "
-"Velg den korrekte brukeren fra lista for å legge til vennelista."
+"Velg den korrekte brukeren fra lista for å legge til kontaktlista."
 
 #: src/protocols/silc/buddy.c:1386
 #, fuzzy
@@ -10619,7 +10613,7 @@ msgstr "Kunne ikke legge til kontakt %s i gruppen %s i tjenerlisten på konto %s.
 
 #: src/protocols/yahoo/yahoo.c:2015
 msgid "Could not add buddy to server list"
-msgstr "Kunne ikke legge til kontakt i kontaktliste"
+msgstr "Kunne ikke legge kontakt til tjenerens kontaktliste"
 
 #: src/protocols/yahoo/yahoo.c:2249 src/protocols/yahoo/yahoo.c:2397
 #: src/protocols/yahoo/ycht.c:414
@@ -10858,7 +10852,7 @@ msgstr "Du snakker nå i %s."
 
 #: src/protocols/yahoo/yahoochat.c:605
 msgid "Failed to join buddy in chat"
-msgstr "Kunne ikke bli med venn i samtale"
+msgstr "Kunne ikke bli med kontakt i samtale"
 
 #: src/protocols/yahoo/yahoochat.c:606
 msgid "Maybe they're not in a chat?"
@@ -11178,11 +11172,10 @@ msgid "Unknown."
 msgstr "Ukjent."
 
 #: src/util.c:2406
-#, fuzzy
 msgid "second"
 msgid_plural "seconds"
-msgstr[0] "andre"
-msgstr[1] "andre"
+msgstr[0] "sekund"
+msgstr[1] "sekunder"
 
 #: src/util.c:2420
 msgid "day"

@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-05-03 20:00+0400\n"
-"PO-Revision-Date: 2005-05-03 21:00+0400\n"
+"POT-Creation-Date: 2005-06-07 21:36+0400\n"
+"PO-Revision-Date: 2005-06-08 21:00+0400\n"
 "Last-Translator: Dmitry Beloglazov <dmaa@users.sf.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: plugins/autorecon.c:234
+#: plugins/autorecon.c:240
 msgid "Error Message Suppression"
 msgstr "Подавление сообщений об ошибках"
 
-#: plugins/autorecon.c:238
+#: plugins/autorecon.c:244
 msgid "Hide Disconnect Errors"
 msgstr "Скрывать ошибки разрыва соединения"
 
-#: plugins/autorecon.c:242
+#: plugins/autorecon.c:248
 msgid "Hide Login Errors"
 msgstr "Скрывать ошибки входа"
 
-#: plugins/autorecon.c:246
+#: plugins/autorecon.c:252
 msgid "Restore Away State On Reconnect"
 msgstr "Восстанавливать статус при пересоединении"
 
@@ -40,7 +40,7 @@ msgstr "Восстанавливать статус при пересоедин�
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/autorecon.c:270
+#: plugins/autorecon.c:276
 msgid "Auto-Reconnect"
 msgstr "Автоматическое пересоединение"
 
@@ -48,7 +48,7 @@ msgstr "Автоматическое пересоединение"
 #. *< version
 #. *  summary
 #. *  description
-#: plugins/autorecon.c:273 plugins/autorecon.c:275
+#: plugins/autorecon.c:279 plugins/autorecon.c:281
 msgid "When you are kicked offline, this reconnects you."
 msgstr "Пересоединение при разрыве соединения."
 
@@ -128,23 +128,23 @@ msgid ""
 "in contact priority computations."
 msgstr ""
 
-#: plugins/docklet/docklet.c:136 src/gtkaccount.c:751 src/gtkaccount.c:2179
+#: plugins/docklet/docklet.c:137 src/gtkaccount.c:751 src/gtkaccount.c:2179
 msgid "Auto-login"
 msgstr "Входить автоматически"
 
-#: plugins/docklet/docklet.c:139
+#: plugins/docklet/docklet.c:140
 msgid "New Message..."
 msgstr "Новое сообщение..."
 
-#: plugins/docklet/docklet.c:140
+#: plugins/docklet/docklet.c:141
 msgid "Join A Chat..."
 msgstr "Присоединиться к чату..."
 
-#: plugins/docklet/docklet.c:176
+#: plugins/docklet/docklet.c:173
 msgid "New..."
 msgstr "Новое..."
 
-#: plugins/docklet/docklet.c:184 src/gtkprefs.c:1812 src/protocols/gg/gg.c:52
+#: plugins/docklet/docklet.c:177 src/gtkprefs.c:1813 src/protocols/gg/gg.c:52
 #: src/protocols/irc/msgs.c:227 src/protocols/jabber/jabber.c:996
 #: src/protocols/jabber/jutil.c:32 src/protocols/jabber/presence.c:69
 #: src/protocols/jabber/presence.c:132 src/protocols/novell/novell.c:2800
@@ -157,40 +157,40 @@ msgid "Away"
 msgstr "Отошёл"
 
 #. else...
-#: plugins/docklet/docklet.c:190 src/away.c:595
+#: plugins/docklet/docklet.c:183 src/away.c:595
 #: src/protocols/oscar/oscar.c:5614 src/protocols/oscar/oscar.c:6895
 msgid "Back"
 msgstr "Вернулся"
 
-#: plugins/docklet/docklet.c:198
+#: plugins/docklet/docklet.c:191
 msgid "Mute Sounds"
 msgstr "Отключить звуки"
 
-#: plugins/docklet/docklet.c:203 src/gtkft.c:628
+#: plugins/docklet/docklet.c:196 src/gtkft.c:659
 msgid "File Transfers"
 msgstr "Передача файлов"
 
-#: plugins/docklet/docklet.c:204 src/gtkaccount.c:2391
+#: plugins/docklet/docklet.c:197 src/gtkaccount.c:2391
 msgid "Accounts"
 msgstr "Учётные записи"
 
-#: plugins/docklet/docklet.c:205 src/gtkprefs.c:2513
+#: plugins/docklet/docklet.c:198 src/gtkprefs.c:2514
 msgid "Preferences"
 msgstr "Настройки"
 
-#: plugins/docklet/docklet.c:214
+#: plugins/docklet/docklet.c:207
 msgid "Signoff"
 msgstr "Отключиться"
 
-#: plugins/docklet/docklet.c:218
+#: plugins/docklet/docklet.c:211
 msgid "Quit"
 msgstr "Выйти"
 
-#: plugins/docklet/docklet.c:533
+#: plugins/docklet/docklet.c:527
 msgid "Tray Icon Configuration"
 msgstr "Настройка значка лотка"
 
-#: plugins/docklet/docklet.c:537
+#: plugins/docklet/docklet.c:531
 msgid "_Hide new messages until tray icon is clicked"
 msgstr "Скрывать новые сообщения до щелчка по значку в лотке"
 
@@ -200,19 +200,19 @@ msgstr "Скрывать новые сообщения до щелчка по з
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/docklet/docklet.c:563
+#: plugins/docklet/docklet.c:557
 msgid "System Tray Icon"
 msgstr "Значок системного лотка"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/docklet/docklet.c:566
+#: plugins/docklet/docklet.c:560
 msgid "Displays an icon for Gaim in the system tray."
 msgstr "Отображает значок Gaim в системном лотке."
 
 #. *  description
-#: plugins/docklet/docklet.c:568
+#: plugins/docklet/docklet.c:562
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
 "the current status of Gaim, allow fast access to commonly used functions, "
@@ -449,9 +449,9 @@ msgstr ""
 "Вверх и вправо для перехода к следующей беседе."
 
 #: plugins/gevolution/add_buddy_dialog.c:132
-#: plugins/gevolution/assoc-buddy.c:120 src/gtkprefs.c:2167
+#: plugins/gevolution/assoc-buddy.c:120 src/gtkprefs.c:2168
 #: src/gtkroomlist.c:553 src/protocols/jabber/jabber.c:607
-#: src/protocols/msn/msn.c:1473 src/protocols/trepia/trepia.c:399
+#: src/protocols/msn/msn.c:1474 src/protocols/trepia/trepia.c:399
 msgid "Name"
 msgstr "Имя"
 
@@ -471,8 +471,8 @@ msgid "Search"
 msgstr "Искать"
 
 #: plugins/gevolution/add_buddy_dialog.c:549
-#: plugins/gevolution/new_person_dialog.c:304 src/gtkblist.c:4145
-#: src/gtkblist.c:4493
+#: plugins/gevolution/new_person_dialog.c:304 src/gtkblist.c:4153
+#: src/gtkblist.c:4501
 msgid "Group:"
 msgstr "Группа:"
 
@@ -511,13 +511,13 @@ msgid "_Associate Buddy"
 msgstr "Соотнести пользователя"
 
 #: plugins/gevolution/eds-utils.c:74 plugins/gevolution/eds-utils.c:87
-#: src/gtkblist.c:3085 src/gtkprefs.c:962 src/gtkprefs.c:1014
-#: src/gtkprefs.c:1826 src/protocols/jabber/jabber.c:947
+#: src/gtkblist.c:3092 src/gtkprefs.c:962 src/gtkprefs.c:1014
+#: src/gtkprefs.c:1827 src/protocols/jabber/jabber.c:947
 msgid "None"
 msgstr "Нет"
 
 #: plugins/gevolution/gevolution.c:93 plugins/gevolution/gevo-util.c:64
-#: src/blist.c:775 src/blist.c:982 src/blist.c:1932 src/gtkblist.c:3960
+#: src/blist.c:776 src/blist.c:983 src/blist.c:1933 src/gtkblist.c:3968
 #: src/protocols/jabber/roster.c:67
 msgid "Buddies"
 msgstr "Пользователи"
@@ -538,7 +538,7 @@ msgstr ""
 "Выберите все учётные записи, пользователи которых должны быть добавлены "
 "автоматически."
 
-#: plugins/gevolution/gevolution.c:381 plugins/idle.c:52 src/gtkconn.c:621
+#: plugins/gevolution/gevolution.c:381 plugins/idle.c:52 src/gtkconn.c:627
 msgid "Account"
 msgstr "Учётная запись"
 
@@ -740,68 +740,68 @@ msgstr ""
 "наличии новой почты."
 
 #. ---------- "Notify For" ----------
-#: plugins/notify.c:604
+#: plugins/notify.c:615
 msgid "Notify For"
 msgstr "Уведомление для"
 
-#: plugins/notify.c:608
+#: plugins/notify.c:619
 msgid "_IM windows"
 msgstr "Окна бесед"
 
-#: plugins/notify.c:615
+#: plugins/notify.c:626
 msgid "C_hat windows"
 msgstr "Окна чатов"
 
-#: plugins/notify.c:622
+#: plugins/notify.c:633
 msgid "_Focused windows"
 msgstr "Окна в фокусе"
 
 #. ---------- "Notification Methods" ----------
-#: plugins/notify.c:630
+#: plugins/notify.c:641
 msgid "Notification Methods"
 msgstr "Методы уведомления"
 
-#: plugins/notify.c:637
+#: plugins/notify.c:648
 msgid "Prepend _string into window title:"
 msgstr "Добавлять строку в начало заголовка окна:"
 
 #. Count method button
-#: plugins/notify.c:656
+#: plugins/notify.c:667
 msgid "Insert c_ount of new messages into window title"
 msgstr "Вставлять количество новых сообщений в заголовок окна"
 
 #. Urgent method button
-#: plugins/notify.c:664
+#: plugins/notify.c:675
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Установить подсказку \"СРОЧНО\" менеджера окон"
 
 #. ---------- "Notification Removals" ----------
-#: plugins/notify.c:672
+#: plugins/notify.c:683
 msgid "Notification Removal"
 msgstr "Удаление уведомлений"
 
 #. Remove on focus button
-#: plugins/notify.c:677
+#: plugins/notify.c:688
 msgid "Remove when conversation window _gains focus"
 msgstr "Удалять, когда окно беседы оказывается в фокусе"
 
 #. Remove on click button
-#: plugins/notify.c:684
+#: plugins/notify.c:695
 msgid "Remove when conversation window _receives click"
 msgstr "Удалять, когда окно беседы получает щелчок"
 
 #. Remove on type button
-#: plugins/notify.c:692
+#: plugins/notify.c:703
 msgid "Remove when _typing in conversation window"
 msgstr "Удалять, когда вы начинаете писать в окне беседы"
 
 #. Remove on message send button
-#: plugins/notify.c:700
+#: plugins/notify.c:711
 msgid "Remove when a _message gets sent"
 msgstr "Удалять после отправки сообщения"
 
 #. Remove on conversation switch button
-#: plugins/notify.c:709
+#: plugins/notify.c:720
 msgid "Remove on switch to conversation ta_b"
 msgstr "Удалять при переключении на вкладку беседы"
 
@@ -811,7 +811,7 @@ msgstr "Удалять при переключении на вкладку бе�
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/notify.c:799
+#: plugins/notify.c:810
 msgid "Message Notification"
 msgstr "Уведомление о сообщении"
 
@@ -819,7 +819,7 @@ msgstr "Уведомление о сообщении"
 #. *< version
 #. *  summary
 #. *  description
-#: plugins/notify.c:802 plugins/notify.c:804
+#: plugins/notify.c:813 plugins/notify.c:815
 msgid "Provides a variety of ways of notifying you of unread messages."
 msgstr ""
 "Предоставляет множество способов уведомления вас о непрочтённых сообщениях."
@@ -1152,30 +1152,30 @@ msgid "Adds iChat-style timestamps to conversations every N minutes."
 msgstr "Добавляет в беседы отметки времени в стиле iChat каждые N минут."
 
 #: plugins/win32/transparency/win2ktrans.c:134
-#: plugins/win32/transparency/win2ktrans.c:404
-#: plugins/win32/transparency/win2ktrans.c:435
+#: plugins/win32/transparency/win2ktrans.c:413
+#: plugins/win32/transparency/win2ktrans.c:444
 msgid "Opacity:"
 msgstr "Непрозрачность:"
 
 #. IM Convo trans options
-#: plugins/win32/transparency/win2ktrans.c:385
+#: plugins/win32/transparency/win2ktrans.c:394
 msgid "IM Conversation Windows"
 msgstr "Окна бесед"
 
-#: plugins/win32/transparency/win2ktrans.c:386
+#: plugins/win32/transparency/win2ktrans.c:395
 msgid "_IM window transparency"
 msgstr "Прозрачность окна беседы"
 
-#: plugins/win32/transparency/win2ktrans.c:396
+#: plugins/win32/transparency/win2ktrans.c:405
 msgid "_Show slider bar in IM window"
 msgstr "Показывать полосу прокрутки в окнах бесед"
 
 #. Buddy List trans options
-#: plugins/win32/transparency/win2ktrans.c:421 src/gtkprefs.c:956
+#: plugins/win32/transparency/win2ktrans.c:430 src/gtkprefs.c:956
 msgid "Buddy List Window"
 msgstr "Окно списка контактов"
 
-#: plugins/win32/transparency/win2ktrans.c:422
+#: plugins/win32/transparency/win2ktrans.c:431
 msgid "_Buddy List window transparency"
 msgstr "Прозрачность окна списка контактов"
 
@@ -1185,19 +1185,19 @@ msgstr "Прозрачность окна списка контактов"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/win32/transparency/win2ktrans.c:480
+#: plugins/win32/transparency/win2ktrans.c:489
 msgid "Transparency"
 msgstr "Прозрачность"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/win32/transparency/win2ktrans.c:483
+#: plugins/win32/transparency/win2ktrans.c:492
 msgid "Variable Transparency for the buddy list and conversations."
 msgstr "Варьируемая прозрачность для списка контактов и бесед."
 
 #. *  description
-#: plugins/win32/transparency/win2ktrans.c:485
+#: plugins/win32/transparency/win2ktrans.c:494
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
 "the buddy list.\n"
@@ -1223,8 +1223,8 @@ msgid "_Start Gaim on Windows startup"
 msgstr "Запускать Gaim при загрузке Windows"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3130
-#: src/gtkprefs.c:2420
+#: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3137
+#: src/gtkprefs.c:2421
 msgid "Buddy List"
 msgstr "Список контактов"
 
@@ -1244,7 +1244,7 @@ msgstr "Держать окно списка контактов наверху"
 
 #. Conversations
 #: plugins/win32/winprefs/winprefs.c:382 src/gtkprefs.c:1007
-#: src/gtkprefs.c:2421 src/protocols/msn/msn.c:1810
+#: src/gtkprefs.c:2422 src/protocols/msn/msn.c:1811
 msgid "Conversations"
 msgstr "Беседы"
 
@@ -1260,41 +1260,41 @@ msgstr "Параметры WinGaim"
 msgid "Options specific to Windows Gaim."
 msgstr "Специфичные для Windows параметры Gaim."
 
-#: src/account.c:295 src/protocols/jabber/jabber.c:1037
+#: src/account.c:298 src/protocols/jabber/jabber.c:1037
 msgid "New passwords do not match."
 msgstr "Новые пароли не совпадают."
 
-#: src/account.c:304
+#: src/account.c:307
 msgid "Fill out all fields completely."
 msgstr "Заполните все поля."
 
-#: src/account.c:329
+#: src/account.c:332
 msgid "Original password"
 msgstr "Исходный пароль"
 
-#: src/account.c:336
+#: src/account.c:339
 msgid "New password"
 msgstr "Новый пароль"
 
-#: src/account.c:343
+#: src/account.c:346
 msgid "New password (again)"
 msgstr "Новый пароль (ещё раз)"
 
-#: src/account.c:349
+#: src/account.c:352
 #, c-format
 msgid "Change password for %s"
 msgstr "Изменить пароль для %s"
 
-#: src/account.c:357
+#: src/account.c:360
 msgid "Please enter your current password and your new password."
 msgstr "Введите ваш текущий и ваш новый пароли."
 
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:360 src/connection.c:198 src/gtkblist.c:2457
-#: src/gtkdialogs.c:498 src/gtkdialogs.c:640 src/gtkdialogs.c:694
-#: src/gtkrequest.c:242 src/protocols/jabber/jabber.c:1084
+#: src/account.c:363 src/connection.c:198 src/gtkblist.c:2462
+#: src/gtkdialogs.c:500 src/gtkdialogs.c:642 src/gtkdialogs.c:696
+#: src/gtkrequest.c:243 src/protocols/jabber/jabber.c:1084
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:226
 #: src/protocols/msn/msn.c:241 src/protocols/msn/msn.c:256
 #: src/protocols/msn/msn.c:271 src/protocols/oscar/oscar.c:2333
@@ -1304,51 +1304,52 @@ msgstr "Введите ваш текущий и ваш новый пароли."
 #: src/protocols/silc/buddy.c:460 src/protocols/silc/buddy.c:1132
 #: src/protocols/silc/chat.c:421 src/protocols/silc/chat.c:459
 #: src/protocols/silc/chat.c:722 src/protocols/silc/ops.c:1081
-#: src/protocols/silc/ops.c:1699 src/protocols/silc/silc.c:709
-#: src/protocols/yahoo/yahoo.c:2945 src/protocols/yahoo/yahoo.c:2954
+#: src/protocols/silc/ops.c:1699 src/protocols/silc/silc.c:711
+#: src/protocols/yahoo/yahoo.c:2940 src/protocols/yahoo/yahoo.c:2949
 #: src/request.h:1245
 msgid "OK"
 msgstr "OK"
 
-#: src/account.c:361 src/account.c:399 src/away.c:367 src/connection.c:199
+#: src/account.c:364 src/account.c:402 src/away.c:367 src/connection.c:199
 #: src/gtkaccount.c:2029 src/gtkaccount.c:2564 src/gtkaccount.c:2595
-#: src/gtkblist.c:2458 src/gtkblist.c:4531 src/gtkconn.c:169
-#: src/gtkdialogs.c:499 src/gtkdialogs.c:641 src/gtkdialogs.c:695
-#: src/gtkdialogs.c:793 src/gtkdialogs.c:815 src/gtkdialogs.c:835
-#: src/gtkdialogs.c:872 src/gtkdialogs.c:932 src/gtkdialogs.c:975
-#: src/gtkdialogs.c:1016 src/gtkimhtmltoolbar.c:437 src/gtkprivacy.c:593
+#: src/gtkblist.c:2463 src/gtkblist.c:4539 src/gtkconn.c:169
+#: src/gtkdialogs.c:501 src/gtkdialogs.c:643 src/gtkdialogs.c:697
+#: src/gtkdialogs.c:795 src/gtkdialogs.c:817 src/gtkdialogs.c:837
+#: src/gtkdialogs.c:874 src/gtkdialogs.c:934 src/gtkdialogs.c:977
+#: src/gtkdialogs.c:1018 src/gtkimhtmltoolbar.c:437 src/gtkprivacy.c:593
 #: src/gtkprivacy.c:606 src/gtkprivacy.c:631 src/gtkprivacy.c:642
-#: src/gtkrequest.c:243 src/protocols/icq/gaim_icq.c:276
+#: src/gtkrequest.c:244 src/protocols/icq/gaim_icq.c:276
 #: src/protocols/jabber/buddy.c:515 src/protocols/jabber/chat.c:754
 #: src/protocols/jabber/jabber.c:676 src/protocols/jabber/jabber.c:1085
-#: src/protocols/jabber/xdata.c:338 src/protocols/msn/msn.c:227
-#: src/protocols/msn/msn.c:242 src/protocols/msn/msn.c:257
-#: src/protocols/msn/msn.c:272 src/protocols/msn/msn.c:289
-#: src/protocols/oscar/oscar.c:1529 src/protocols/oscar/oscar.c:2334
-#: src/protocols/oscar/oscar.c:3557 src/protocols/oscar/oscar.c:3600
-#: src/protocols/oscar/oscar.c:3637 src/protocols/oscar/oscar.c:3694
-#: src/protocols/oscar/oscar.c:6959 src/protocols/oscar/oscar.c:7051
-#: src/protocols/oscar/oscar.c:7103 src/protocols/oscar/oscar.c:7172
-#: src/protocols/oscar/oscar.c:7189 src/protocols/silc/buddy.c:461
-#: src/protocols/silc/buddy.c:1037 src/protocols/silc/buddy.c:1133
-#: src/protocols/silc/chat.c:594 src/protocols/silc/chat.c:723
-#: src/protocols/silc/ops.c:1700 src/protocols/silc/silc.c:710
-#: src/protocols/trepia/trepia.c:348 src/protocols/yahoo/yahoo.c:2946
-#: src/protocols/yahoo/yahoo.c:2955 src/request.h:1245 src/request.h:1255
+#: src/protocols/jabber/presence.c:213 src/protocols/jabber/xdata.c:338
+#: src/protocols/msn/msn.c:227 src/protocols/msn/msn.c:242
+#: src/protocols/msn/msn.c:257 src/protocols/msn/msn.c:272
+#: src/protocols/msn/msn.c:289 src/protocols/oscar/oscar.c:1529
+#: src/protocols/oscar/oscar.c:2334 src/protocols/oscar/oscar.c:3557
+#: src/protocols/oscar/oscar.c:3600 src/protocols/oscar/oscar.c:3637
+#: src/protocols/oscar/oscar.c:3694 src/protocols/oscar/oscar.c:6959
+#: src/protocols/oscar/oscar.c:7051 src/protocols/oscar/oscar.c:7103
+#: src/protocols/oscar/oscar.c:7172 src/protocols/oscar/oscar.c:7189
+#: src/protocols/silc/buddy.c:461 src/protocols/silc/buddy.c:1037
+#: src/protocols/silc/buddy.c:1133 src/protocols/silc/chat.c:594
+#: src/protocols/silc/chat.c:723 src/protocols/silc/ops.c:1700
+#: src/protocols/silc/silc.c:712 src/protocols/trepia/trepia.c:348
+#: src/protocols/yahoo/yahoo.c:2941 src/protocols/yahoo/yahoo.c:2950
+#: src/request.h:1245 src/request.h:1255
 msgid "Cancel"
 msgstr "Отменить"
 
-#: src/account.c:390
+#: src/account.c:393
 #, c-format
 msgid "Change user information for %s"
 msgstr "Изменить информацию о пользователе %s"
 
-#: src/account.c:398 src/gtkrequest.c:249 src/protocols/jabber/buddy.c:514
+#: src/account.c:401 src/gtkrequest.c:250 src/protocols/jabber/buddy.c:514
 #: src/protocols/trepia/trepia.c:347
 msgid "Save"
 msgstr "Сохранить"
 
-#: src/account.c:757 src/gtkft.c:158 src/protocols/jabber/buddy.c:570
+#: src/account.c:760 src/gtkft.c:159 src/protocols/jabber/buddy.c:573
 #: src/protocols/novell/novell.c:2812
 msgid "Unknown"
 msgstr "Неизвестно"
@@ -1375,8 +1376,8 @@ msgid "Remove Away Message"
 msgstr "Удалить сообщение об отсутствии"
 
 #. Remove button
-#: src/away.c:366 src/gtkconv.c:1504 src/gtkconv.c:3880 src/gtkconv.c:3951
-#: src/gtkrequest.c:248
+#: src/away.c:366 src/gtkconv.c:1520 src/gtkconv.c:3901 src/gtkconv.c:3972
+#: src/gtkrequest.c:249
 msgid "Remove"
 msgstr "Удалить"
 
@@ -1423,11 +1424,11 @@ msgstr "Сохранить _и применить"
 msgid "_Use"
 msgstr "_Применить"
 
-#: src/blist.c:681
+#: src/blist.c:682
 msgid "Chats"
 msgstr "Чаты"
 
-#: src/blist.c:1353
+#: src/blist.c:1354
 #, c-format
 msgid ""
 "%d buddy from group %s was not removed because its account was not logged "
@@ -1444,11 +1445,11 @@ msgstr[1] ""
 "вход с соответствующей им учётной записью. Эти пользователи и группа не были "
 "удалены.\n"
 
-#: src/blist.c:1362
+#: src/blist.c:1363
 msgid "Group not removed"
 msgstr "Группа не удалена"
 
-#: src/blist.c:2063
+#: src/blist.c:2066
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded, "
 "and the old file has moved to blist.xml~."
@@ -1456,7 +1457,7 @@ msgstr ""
 "Произошла ошибка при разборе списка контактов. Список не был загружен, а "
 "старый файл переименован в blist.xml~."
 
-#: src/blist.c:2066
+#: src/blist.c:2069
 msgid "Buddy List Error"
 msgstr "Ошибка списка контактов"
 
@@ -1496,67 +1497,67 @@ msgstr "Сообщение слишком велико."
 msgid "Unable to send message."
 msgstr "Не удаётся отправить сообщение."
 
-#: src/conversation.c:2037
+#: src/conversation.c:2059
 #, c-format
 msgid "%s entered the room."
 msgstr "%s вошёл в комнату."
 
-#: src/conversation.c:2040
+#: src/conversation.c:2062
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] вошёл в комнату."
 
-#: src/conversation.c:2136
+#: src/conversation.c:2160
 #, c-format
 msgid "You are now known as %s"
 msgstr "Вы теперь известны как %s"
 
-#: src/conversation.c:2139
+#: src/conversation.c:2163
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s теперь известен как %s"
 
-#: src/conversation.c:2180
+#: src/conversation.c:2205
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s вышел из комнаты (%s)."
 
-#: src/conversation.c:2182
+#: src/conversation.c:2207
 #, c-format
 msgid "%s left the room."
 msgstr "%s вышел из комнаты."
 
-#: src/conversation.c:2251
+#: src/conversation.c:2280
 #, c-format
 msgid "(+%d more)"
 msgstr "(+%d ещё)"
 
-#: src/conversation.c:2253
+#: src/conversation.c:2282
 #, c-format
 msgid " left the room (%s)."
 msgstr " вышел из комнаты (%s)."
 
-#: src/conversation.c:2658
+#: src/conversation.c:2687
 msgid "Last created window"
 msgstr "Последнее созданное окно"
 
-#: src/conversation.c:2660
+#: src/conversation.c:2689
 msgid "Separate IM and Chat windows"
 msgstr "Отдельные окна бесед и чатов"
 
-#: src/conversation.c:2662 src/gtkprefs.c:1387
+#: src/conversation.c:2691 src/gtkprefs.c:1387
 msgid "New window"
 msgstr "Новое окно"
 
-#: src/conversation.c:2664
+#: src/conversation.c:2693
 msgid "By group"
 msgstr "По группе"
 
-#: src/conversation.c:2666
+#: src/conversation.c:2695
 msgid "By account"
 msgstr "По учётной записи"
 
-#: src/ft.c:147 src/protocols/msn/msn.c:369
+#: src/ft.c:149 src/protocols/msn/msn.c:369
 #, c-format
 msgid ""
 "Error reading %s: \n"
@@ -1565,7 +1566,7 @@ msgstr ""
 "Ошибка чтения %s: \n"
 "%s.\n"
 
-#: src/ft.c:151
+#: src/ft.c:153
 #, c-format
 msgid ""
 "Error writing %s: \n"
@@ -1574,7 +1575,7 @@ msgstr ""
 "Ошибка записи %s: \n"
 "%s.\n"
 
-#: src/ft.c:155
+#: src/ft.c:157
 #, c-format
 msgid ""
 "Error accessing %s: \n"
@@ -1583,35 +1584,35 @@ msgstr ""
 "Ошибка доступа %s: \n"
 "%s.\n"
 
-#: src/ft.c:187
+#: src/ft.c:190
 msgid "Cannot send a file of 0 bytes."
 msgstr "Нельзя отправить файл размером 0 байт."
 
-#: src/ft.c:197
+#: src/ft.c:200
 msgid "Cannot send a directory."
 msgstr "Нельзя отправить каталог."
 
-#: src/ft.c:204
+#: src/ft.c:209
 #, fuzzy, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s не является обычным файлом. \n"
 
-#: src/ft.c:260
+#: src/ft.c:266
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s хочет отправить вам %s (%s)"
 
-#: src/ft.c:268
+#: src/ft.c:274
 #, c-format
 msgid "%s wants to send you a file"
 msgstr "%s хочет отправить вам файл"
 
-#: src/ft.c:306
+#: src/ft.c:312
 #, c-format
 msgid "Accept file transfer request from %s?"
 msgstr "Удовлетворить запрос передачи файлов от %s?"
 
-#: src/ft.c:310
+#: src/ft.c:316
 #, c-format
 msgid ""
 "A file is available for download from:\n"
@@ -1622,50 +1623,50 @@ msgstr ""
 "Удалённый узел: %s\n"
 "Удалённый порт: %d"
 
-#: src/ft.c:362
+#: src/ft.c:369
 #, c-format
 msgid "%s is not a valid filename.\n"
 msgstr "%s не является допустимым именем файла.\n"
 
-#: src/ft.c:380
+#: src/ft.c:390
 #, c-format
 msgid "Offering to send %s to %s"
 msgstr "Попытка отправки %s для %s"
 
-#: src/ft.c:874
+#: src/ft.c:885
 #, c-format
 msgid "Transfer of file %s complete"
 msgstr "Передача файла %s завершена"
 
-#: src/ft.c:877
+#: src/ft.c:888
 msgid "File transfer complete"
 msgstr "Передача файлов завершена"
 
-#: src/ft.c:926
+#: src/ft.c:937
 #, c-format
 msgid "You canceled the transfer of %s"
 msgstr "Вы отменили передачу %s"
 
-#: src/ft.c:932
+#: src/ft.c:943
 msgid "File transfer cancelled"
 msgstr "Передача файлов отменена"
 
-#: src/ft.c:985
+#: src/ft.c:996
 #, c-format
 msgid "%s canceled the transfer of %s"
 msgstr "%s отменил передачу %s"
 
-#: src/ft.c:991
+#: src/ft.c:1002
 #, c-format
 msgid "%s canceled the file transfer"
 msgstr "%s отменил передачу файлов"
 
-#: src/ft.c:1040
+#: src/ft.c:1051
 #, c-format
 msgid "File transfer to %s aborted.\n"
 msgstr "Передача файлов для %s прервана.\n"
 
-#: src/ft.c:1042
+#: src/ft.c:1053
 #, c-format
 msgid "File transfer from %s aborted.\n"
 msgstr "Передача файлов от %s прервана.\n"
@@ -1772,11 +1773,11 @@ msgstr ""
 msgid "Login Options"
 msgstr "Параметры входа"
 
-#: src/gtkaccount.c:655 src/gtkft.c:555
+#: src/gtkaccount.c:655 src/gtkft.c:585
 msgid "Protocol:"
 msgstr "Протокол:"
 
-#: src/gtkaccount.c:660 src/gtkblist.c:4117
+#: src/gtkaccount.c:660 src/gtkblist.c:4125
 msgid "Screen Name:"
 msgstr "Идентификатор пользователя:"
 
@@ -1784,7 +1785,7 @@ msgstr "Идентификатор пользователя:"
 msgid "Password:"
 msgstr "Пароль:"
 
-#: src/gtkaccount.c:738 src/gtkblist.c:4131 src/gtkblist.c:4478
+#: src/gtkaccount.c:738 src/gtkblist.c:4139 src/gtkblist.c:4486
 msgid "Alias:"
 msgstr "Псевдоним:"
 
@@ -1900,7 +1901,7 @@ msgstr "Зарегистрировать"
 msgid "Are you sure you want to delete %s?"
 msgstr "Вы действительно хотите удалить %s?"
 
-#: src/gtkaccount.c:2028 src/gtkrequest.c:246
+#: src/gtkaccount.c:2028 src/gtkrequest.c:247
 msgid "Delete"
 msgstr "Удалить"
 
@@ -1911,7 +1912,7 @@ msgstr "Идентификатор пользователя"
 #: src/gtkaccount.c:2166 src/protocols/jabber/jabber.c:994
 #: src/protocols/oscar/oscar.c:685 src/protocols/oscar/oscar.c:5694
 #: src/protocols/oscar/oscar.c:6886 src/protocols/silc/silc.c:45
-#: src/protocols/yahoo/yahoo.c:2708 src/protocols/zephyr/zephyr.c:2122
+#: src/protocols/yahoo/yahoo.c:2703 src/protocols/zephyr/zephyr.c:2122
 #: src/protocols/zephyr/zephyr.c:2141
 msgid "Online"
 msgstr "В сети"
@@ -1920,12 +1921,13 @@ msgstr "В сети"
 msgid "Protocol"
 msgstr "Протокол"
 
-#: src/gtkaccount.c:2517
+#. XXX: Tidy this up when not in string freeze
+#: src/gtkaccount.c:2517 src/protocols/jabber/presence.c:202
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s добавил %s в свой список контактов%s%s%s"
 
-#: src/gtkaccount.c:2531
+#: src/gtkaccount.c:2531 src/protocols/jabber/presence.c:208
 msgid ""
 "\n"
 "\n"
@@ -1940,22 +1942,24 @@ msgid "Information"
 msgstr "Информация"
 
 #: src/gtkaccount.c:2561 src/gtkaccount.c:2592
+#: src/protocols/jabber/presence.c:210
 msgid "Add buddy to your list?"
 msgstr "Добавить пользователя в список?"
 
 #. Add button
-#: src/gtkaccount.c:2563 src/gtkaccount.c:2594 src/gtkblist.c:4530
-#: src/gtkconv.c:1506 src/gtkconv.c:3873 src/gtkconv.c:3944
-#: src/gtkrequest.c:247 src/protocols/icq/gaim_icq.c:276
-#: src/protocols/oscar/oscar.c:3871 src/protocols/silc/chat.c:593
+#: src/gtkaccount.c:2563 src/gtkaccount.c:2594 src/gtkblist.c:4538
+#: src/gtkconv.c:1522 src/gtkconv.c:3894 src/gtkconv.c:3965
+#: src/gtkrequest.c:248 src/protocols/icq/gaim_icq.c:276
+#: src/protocols/jabber/presence.c:212 src/protocols/oscar/oscar.c:3871
+#: src/protocols/silc/chat.c:593
 msgid "Add"
 msgstr "Добавить"
 
-#: src/gtkblist.c:839
+#: src/gtkblist.c:844
 msgid "Join a Chat"
 msgstr "Присоединиться к чату"
 
-#: src/gtkblist.c:860
+#: src/gtkblist.c:865
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
@@ -1963,219 +1967,219 @@ msgstr ""
 "Введите соответствующую информацию о чате, к которому вы хотели бы "
 "присоединиться.\n"
 
-#: src/gtkblist.c:871 src/gtkpounce.c:415 src/gtkroomlist.c:354
+#: src/gtkblist.c:876 src/gtkpounce.c:415 src/gtkroomlist.c:354
 msgid "_Account:"
 msgstr "Учётная запись:"
 
-#: src/gtkblist.c:1166 src/gtkblist.c:3283
+#: src/gtkblist.c:1171 src/gtkblist.c:3290
 msgid "Get _Info"
 msgstr "Информация"
 
-#: src/gtkblist.c:1169 src/gtkblist.c:3273
+#: src/gtkblist.c:1174 src/gtkblist.c:3280
 msgid "I_M"
 msgstr "Сообщение"
 
-#: src/gtkblist.c:1175
+#: src/gtkblist.c:1180
 msgid "_Send File"
 msgstr "Отправить файл"
 
-#: src/gtkblist.c:1181
+#: src/gtkblist.c:1186
 msgid "Add Buddy _Pounce"
 msgstr "Добавить правило"
 
-#: src/gtkblist.c:1183 src/gtkblist.c:1280
+#: src/gtkblist.c:1188 src/gtkblist.c:1285
 msgid "View _Log"
 msgstr "Просмотреть _журнал"
 
-#: src/gtkblist.c:1193
+#: src/gtkblist.c:1198
 msgid "_Alias Buddy..."
 msgstr "Псевдоним пользователя..."
 
-#: src/gtkblist.c:1195
+#: src/gtkblist.c:1200
 msgid "_Remove Buddy"
 msgstr "Удалить пользователя"
 
-#: src/gtkblist.c:1197
+#: src/gtkblist.c:1202
 msgid "Alias Contact..."
 msgstr "Псевдоним контакта..."
 
-#: src/gtkblist.c:1200 src/gtkdialogs.c:869 src/gtkdialogs.c:871
+#: src/gtkblist.c:1205 src/gtkdialogs.c:871 src/gtkdialogs.c:873
 msgid "Remove Contact"
 msgstr "Удалить контакт"
 
-#: src/gtkblist.c:1204 src/gtkblist.c:1288 src/gtkblist.c:1302
+#: src/gtkblist.c:1209 src/gtkblist.c:1293 src/gtkblist.c:1307
 msgid "_Alias..."
 msgstr "_Псевдоним..."
 
-#: src/gtkblist.c:1206 src/gtkblist.c:1290 src/gtkblist.c:1307
-#: src/gtkconn.c:361
+#: src/gtkblist.c:1211 src/gtkblist.c:1295 src/gtkblist.c:1312
+#: src/gtkconn.c:367
 msgid "_Remove"
 msgstr "_Удалить"
 
-#: src/gtkblist.c:1252
+#: src/gtkblist.c:1257
 msgid "Add a _Buddy"
 msgstr "Добавить _пользователя"
 
-#: src/gtkblist.c:1254
+#: src/gtkblist.c:1259
 msgid "Add a C_hat"
 msgstr "Добавить _чат"
 
-#: src/gtkblist.c:1256
+#: src/gtkblist.c:1261
 msgid "_Delete Group"
 msgstr "_Удалить группу"
 
-#: src/gtkblist.c:1258
+#: src/gtkblist.c:1263
 msgid "_Rename"
 msgstr "Пере_именовать"
 
 #. join button
-#: src/gtkblist.c:1276 src/gtkroomlist.c:264 src/gtkroomlist.c:409
+#: src/gtkblist.c:1281 src/gtkroomlist.c:264 src/gtkroomlist.c:409
 #: src/stock.c:88
 msgid "_Join"
 msgstr "При_соединиться"
 
-#: src/gtkblist.c:1278
+#: src/gtkblist.c:1283
 msgid "Auto-Join"
 msgstr "Присоединяться автоматически"
 
-#: src/gtkblist.c:1304 src/gtkblist.c:1329
+#: src/gtkblist.c:1309 src/gtkblist.c:1334
 msgid "_Collapse"
 msgstr "Свернуть"
 
-#: src/gtkblist.c:1334
+#: src/gtkblist.c:1339
 msgid "_Expand"
 msgstr "Развернуть"
 
-#: src/gtkblist.c:1981 src/gtkconv.c:4516 src/gtkpounce.c:316
+#: src/gtkblist.c:1986 src/gtkconv.c:4537 src/gtkpounce.c:316
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
 "Вы не подключены с учётной записью, позволяющей добавить этого пользователя."
 
 #. Buddies menu
-#: src/gtkblist.c:2402
+#: src/gtkblist.c:2407
 msgid "/_Buddies"
 msgstr "/_Контакты"
 
-#: src/gtkblist.c:2403
+#: src/gtkblist.c:2408
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Контакты/Новое _сообщение..."
 
-#: src/gtkblist.c:2404
+#: src/gtkblist.c:2409
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Контакты/Присоединиться к _чату..."
 
-#: src/gtkblist.c:2405
+#: src/gtkblist.c:2410
 msgid "/Buddies/Get User _Info..."
 msgstr "/Контакты/Получить _информацию о пользователе..."
 
-#: src/gtkblist.c:2406
+#: src/gtkblist.c:2411
 msgid "/Buddies/View User _Log..."
 msgstr "/Контакты/Просмотреть _журнал пользователя..."
 
-#: src/gtkblist.c:2408
+#: src/gtkblist.c:2413
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Контакты/Показывать о_тсутствующих пользователей"
 
-#: src/gtkblist.c:2409
+#: src/gtkblist.c:2414
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Контакты/Показывать п_устые группы"
 
-#: src/gtkblist.c:2410
+#: src/gtkblist.c:2415
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Контакты/Добавить _пользователя..."
 
-#: src/gtkblist.c:2411
+#: src/gtkblist.c:2416
 msgid "/Buddies/Add C_hat..."
 msgstr "/Контакты/Добавить ч_ат..."
 
-#: src/gtkblist.c:2412
+#: src/gtkblist.c:2417
 msgid "/Buddies/Add _Group..."
 msgstr "/Контакты/Добавить _группу..."
 
-#: src/gtkblist.c:2414
+#: src/gtkblist.c:2419
 msgid "/Buddies/_Signoff"
 msgstr "/Контакты/_Отключиться"
 
-#: src/gtkblist.c:2415
+#: src/gtkblist.c:2420
 msgid "/Buddies/_Quit"
 msgstr "/Контакты/_Выйти"
 
 #. Tools
-#: src/gtkblist.c:2418
+#: src/gtkblist.c:2423
 msgid "/_Tools"
 msgstr "/_Сервис"
 
-#: src/gtkblist.c:2419
+#: src/gtkblist.c:2424
 msgid "/Tools/_Away"
 msgstr "/Сервис/_Статус"
 
-#: src/gtkblist.c:2420
+#: src/gtkblist.c:2425
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Сервис/Слежение за _пользователями"
 
-#: src/gtkblist.c:2421
+#: src/gtkblist.c:2426
 msgid "/Tools/Account Ac_tions"
 msgstr "/Сервис/Действия с _учётными записями"
 
-#: src/gtkblist.c:2422
+#: src/gtkblist.c:2427
 msgid "/Tools/Pl_ugin Actions"
 msgstr "/Сервис/Действия с _модулями"
 
-#: src/gtkblist.c:2424
+#: src/gtkblist.c:2429
 msgid "/Tools/A_ccounts"
 msgstr "/Сервис/Учётные _записи"
 
-#: src/gtkblist.c:2425
+#: src/gtkblist.c:2430
 msgid "/Tools/_File Transfers"
 msgstr "/Сервис/Передача _файлов"
 
-#: src/gtkblist.c:2426
+#: src/gtkblist.c:2431
 msgid "/Tools/R_oom List"
 msgstr "/Сервис/Список _комнат"
 
-#: src/gtkblist.c:2427
+#: src/gtkblist.c:2432
 msgid "/Tools/Pr_eferences"
 msgstr "/Сервис/_Настройки"
 
-#: src/gtkblist.c:2428
+#: src/gtkblist.c:2433
 msgid "/Tools/Pr_ivacy"
 msgstr "/Сервис/К_онфиденциальность"
 
-#: src/gtkblist.c:2430
+#: src/gtkblist.c:2435
 msgid "/Tools/View System _Log"
 msgstr "/Сервис/Просмотреть системный _журнал"
 
 #. Help
-#: src/gtkblist.c:2433
+#: src/gtkblist.c:2438
 msgid "/_Help"
 msgstr "/_Помощь"
 
-#: src/gtkblist.c:2434
+#: src/gtkblist.c:2439
 msgid "/Help/Online _Help"
 msgstr "/Помощь/Помощь в _сети"
 
-#: src/gtkblist.c:2435
+#: src/gtkblist.c:2440
 msgid "/Help/_Debug Window"
 msgstr "/Помощь/Окно _отладки"
 
-#: src/gtkblist.c:2436
+#: src/gtkblist.c:2441
 msgid "/Help/_About"
 msgstr "/Помощь/О _программе"
 
-#: src/gtkblist.c:2454
+#: src/gtkblist.c:2459
 msgid "Rename Group"
 msgstr "Переименовать группу"
 
-#: src/gtkblist.c:2454
+#: src/gtkblist.c:2459
 msgid "New group name"
 msgstr "Новое имя группы"
 
-#: src/gtkblist.c:2455
+#: src/gtkblist.c:2460
 msgid "Please enter a new name for the selected group."
 msgstr "Введите новое имя для выбранной группы."
 
-#: src/gtkblist.c:2484
+#: src/gtkblist.c:2489
 #, c-format
 msgid ""
 "\n"
@@ -2184,7 +2188,7 @@ msgstr ""
 "\n"
 "<b>Учётная запись:</b> %s"
 
-#: src/gtkblist.c:2548
+#: src/gtkblist.c:2555
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
@@ -2192,12 +2196,12 @@ msgstr ""
 "\n"
 "<b>Статус:</b> Не в сети"
 
-#: src/gtkblist.c:2563
+#: src/gtkblist.c:2570
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:2579
+#: src/gtkblist.c:2586
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2205,7 +2209,7 @@ msgstr ""
 "\n"
 "<b>Учётная запись:</b>"
 
-#: src/gtkblist.c:2580
+#: src/gtkblist.c:2587
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
@@ -2213,7 +2217,7 @@ msgstr ""
 "\n"
 "<b>Псевдоним контакта:</b>"
 
-#: src/gtkblist.c:2581
+#: src/gtkblist.c:2588
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2221,7 +2225,7 @@ msgstr ""
 "\n"
 "<b>Псевдоним:</b>"
 
-#: src/gtkblist.c:2582
+#: src/gtkblist.c:2589
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2229,7 +2233,7 @@ msgstr ""
 "\n"
 "<b>Оригинальный псевдоним:</b>"
 
-#: src/gtkblist.c:2583
+#: src/gtkblist.c:2590
 msgid ""
 "\n"
 "<b>Logged In:</b>"
@@ -2237,7 +2241,7 @@ msgstr ""
 "\n"
 "<b>В сети:</b>"
 
-#: src/gtkblist.c:2584
+#: src/gtkblist.c:2591
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2245,7 +2249,7 @@ msgstr ""
 "\n"
 "<b>Бездействует:</b>"
 
-#: src/gtkblist.c:2585
+#: src/gtkblist.c:2592
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2253,126 +2257,126 @@ msgstr ""
 "\n"
 "<b>Предупреждён:</b>"
 
-#: src/gtkblist.c:2587
+#: src/gtkblist.c:2594
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
 msgstr ""
 
-#: src/gtkblist.c:2588
+#: src/gtkblist.c:2595
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
 msgstr ""
 
-#: src/gtkblist.c:2589
+#: src/gtkblist.c:2596
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
 msgstr ""
 
-#: src/gtkblist.c:2871
+#: src/gtkblist.c:2878
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Бездействует (%dh%02dm) "
 
-#: src/gtkblist.c:2873
+#: src/gtkblist.c:2880
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Бездействует (%dm) "
 
-#: src/gtkblist.c:2878
+#: src/gtkblist.c:2885
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Предупреждён (%d%%) "
 
-#: src/gtkblist.c:2881
+#: src/gtkblist.c:2888
 msgid "Offline "
 msgstr "Не в сети "
 
 #. Make menu items sensitive/insensitive where appropriate
-#: src/gtkblist.c:2999
+#: src/gtkblist.c:3006
 msgid "/Buddies/Join a Chat..."
 msgstr "/Контакты/Присоединиться к чату..."
 
-#: src/gtkblist.c:3002
+#: src/gtkblist.c:3009
 msgid "/Tools/Room List"
 msgstr "/Сервис/Список комнат"
 
-#: src/gtkblist.c:3005
+#: src/gtkblist.c:3012
 msgid "/Tools/Privacy"
 msgstr "/Сервис/Конфиденциальность"
 
-#: src/gtkblist.c:3087
+#: src/gtkblist.c:3094
 msgid "Alphabetical"
 msgstr "По алфавиту"
 
-#: src/gtkblist.c:3088
+#: src/gtkblist.c:3095
 msgid "By status"
 msgstr "По статусу"
 
-#: src/gtkblist.c:3089
+#: src/gtkblist.c:3096
 msgid "By log size"
 msgstr "По размеру журнала"
 
-#: src/gtkblist.c:3155
+#: src/gtkblist.c:3162
 msgid "/Tools/Away"
 msgstr "/Сервис/Статус"
 
-#: src/gtkblist.c:3158
+#: src/gtkblist.c:3165
 msgid "/Tools/Buddy Pounce"
 msgstr "/Сервис/Слежение за пользователями"
 
-#: src/gtkblist.c:3161
+#: src/gtkblist.c:3168
 msgid "/Tools/Account Actions"
 msgstr "/Сервис/Действия с учётными записями"
 
-#: src/gtkblist.c:3164
+#: src/gtkblist.c:3171
 msgid "/Tools/Plugin Actions"
 msgstr "/Сервис/Действия с модулями"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:3252
+#: src/gtkblist.c:3259
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Контакты/Показывать отсутствующих пользователей"
 
-#: src/gtkblist.c:3254
+#: src/gtkblist.c:3261
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Контакты/Показывать пустые группы"
 
-#: src/gtkblist.c:3279
+#: src/gtkblist.c:3286
 msgid "Send a message to the selected buddy"
 msgstr "Отправить сообщение выбранному пользователю"
 
-#: src/gtkblist.c:3289
+#: src/gtkblist.c:3296
 msgid "Get information on the selected buddy"
 msgstr "Получить информацию о выбранном пользователе"
 
-#: src/gtkblist.c:3293
+#: src/gtkblist.c:3300
 msgid "_Chat"
 msgstr "Чат"
 
-#: src/gtkblist.c:3298
+#: src/gtkblist.c:3305
 msgid "Join a chat room"
 msgstr "Присоединиться к чату"
 
-#: src/gtkblist.c:3303
+#: src/gtkblist.c:3310
 msgid "_Away"
 msgstr "Статус"
 
-#: src/gtkblist.c:3308
+#: src/gtkblist.c:3315
 msgid "Set an away message"
 msgstr "Установить сообщение об отсутствии"
 
-#: src/gtkblist.c:4071 src/protocols/silc/buddy.c:731
+#: src/gtkblist.c:4079 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:989 src/protocols/silc/buddy.c:1034
-#: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2875
+#: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2870
 msgid "Add Buddy"
 msgstr "Добавить пользователя"
 
-#: src/gtkblist.c:4095
+#: src/gtkblist.c:4103
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2384,25 +2388,25 @@ msgstr ""
 "пользователя, когда это возможно.\n"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:4155 src/gtkblist.c:4458
+#: src/gtkblist.c:4163 src/gtkblist.c:4466
 msgid "Account:"
 msgstr "Учётная запись:"
 
-#: src/gtkblist.c:4391
+#: src/gtkblist.c:4399
 msgid "This protocol does not support chat rooms."
 msgstr "Этот протокол не поддерживает чаты."
 
-#: src/gtkblist.c:4407
+#: src/gtkblist.c:4415
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "Вы не подключены по протоколам, имеющим поддержку чатов."
 
-#: src/gtkblist.c:4424
+#: src/gtkblist.c:4432
 msgid "Add Chat"
 msgstr "Добавить чат"
 
-#: src/gtkblist.c:4448
+#: src/gtkblist.c:4456
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -2410,15 +2414,15 @@ msgstr ""
 "Введите псевдоним и соответствующую информацию о чате, который вы хотели бы "
 "добавить в список контактов.\n"
 
-#: src/gtkblist.c:4527
+#: src/gtkblist.c:4535
 msgid "Add Group"
 msgstr "Добавить группу"
 
-#: src/gtkblist.c:4528
+#: src/gtkblist.c:4536
 msgid "Please enter the name of the group to be added."
 msgstr "Введите имя добавляемой группы."
 
-#: src/gtkblist.c:5097 src/gtkblist.c:5194
+#: src/gtkblist.c:5105 src/gtkblist.c:5202
 msgid "No actions available"
 msgstr "Нет доступных действий"
 
@@ -2438,11 +2442,11 @@ msgstr "Подключение"
 msgid "Cancel All"
 msgstr "Отменить все"
 
-#: src/gtkconn.c:361 src/gtkconn.c:594
+#: src/gtkconn.c:367 src/gtkconn.c:600
 msgid "_Reconnect"
-msgstr "_Пересоединение"
+msgstr "_Пересоединиться"
 
-#: src/gtkconn.c:558
+#: src/gtkconn.c:564
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">%s has been disconnected.</span>\n"
@@ -2455,32 +2459,32 @@ msgstr ""
 "%s\n"
 "%s"
 
-#: src/gtkconn.c:560
+#: src/gtkconn.c:566
 msgid "Reason Unknown."
 msgstr "Причина неизвестна."
 
-#: src/gtkconn.c:599
+#: src/gtkconn.c:605
 msgid "Reconnect _All"
 msgstr "Пересоединить все"
 
-#: src/gtkconn.c:629
+#: src/gtkconn.c:635
 msgid "Time"
 msgstr "Время"
 
-#: src/gtkconv.c:326
+#: src/gtkconv.c:342
 #, c-format
 msgid "me is using Gaim v%s."
 msgstr ""
 
-#: src/gtkconv.c:335
+#: src/gtkconv.c:351
 msgid "Supported debug options are:  version"
 msgstr "Поддерживаемые параметры отладки:  version"
 
-#: src/gtkconv.c:359
+#: src/gtkconv.c:375
 msgid "No such command (in this context)."
 msgstr "Нет такой команды (в этом контексте)."
 
-#: src/gtkconv.c:362
+#: src/gtkconv.c:378
 msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
@@ -2488,49 +2492,49 @@ msgstr ""
 "Используйте \"/help &lt;команда&gt;\" для помощи по конкретной команде.\n"
 "Следующие команды доступны в этом контексте:\n"
 
-#: src/gtkconv.c:434
+#: src/gtkconv.c:450
 msgid "No such command."
 msgstr "Нет такой команды."
 
-#: src/gtkconv.c:441
+#: src/gtkconv.c:457
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
 msgstr ""
 "Синтаксическая ошибка:  Вы ввели неверное количество аргументов для этой "
 "команды."
 
-#: src/gtkconv.c:446
+#: src/gtkconv.c:462
 msgid "Your command failed for an unknown reason."
 msgstr "Ваша команда не была выполнена по неизвестной причине."
 
-#: src/gtkconv.c:453
+#: src/gtkconv.c:469
 msgid "That command only works in Chats, not IMs."
 msgstr "Эта команда работает только в чатах, не в беседах."
 
-#: src/gtkconv.c:456
+#: src/gtkconv.c:472
 msgid "That command only works in IMs, not Chats."
 msgstr "Эта команда работает только в беседах, не в чатах."
 
-#: src/gtkconv.c:460
+#: src/gtkconv.c:476
 msgid "That command doesn't work on this protocol."
 msgstr "Эта команда не работает с этим протоколом."
 
-#: src/gtkconv.c:703 src/gtkconv.c:729
+#: src/gtkconv.c:719 src/gtkconv.c:745
 msgid "That buddy is not on the same protocol as this chat"
 msgstr ""
 
-#: src/gtkconv.c:723
+#: src/gtkconv.c:739
 msgid ""
 "You are not currently signed on with an account that can invite that buddy."
 msgstr ""
 "Вы не подключены с учётной записью, позволяющей пригласить этого "
 "пользователя."
 
-#: src/gtkconv.c:777
+#: src/gtkconv.c:793
 msgid "Invite Buddy Into Chat Room"
 msgstr "Пригласить пользователя в чат"
 
 #. Put our happy label in it.
-#: src/gtkconv.c:807
+#: src/gtkconv.c:823
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
@@ -2538,358 +2542,358 @@ msgstr ""
 "Введите имя пользователя, которого вы хотите пригласить, вместе с "
 "необязательным текстом приглашения."
 
-#: src/gtkconv.c:828
+#: src/gtkconv.c:844
 msgid "_Buddy:"
 msgstr "Пользователь:"
 
-#: src/gtkconv.c:848
+#: src/gtkconv.c:864
 msgid "_Message:"
 msgstr "Сообщение:"
 
-#: src/gtkconv.c:904 src/gtkconv.c:2629 src/gtkdebug.c:182
+#: src/gtkconv.c:920 src/gtkconv.c:2645 src/gtkdebug.c:182
 msgid "Unable to open file."
 msgstr "Не удаётся открыть файл."
 
-#: src/gtkconv.c:909
+#: src/gtkconv.c:925
 #, c-format
 msgid "<h1>Conversation with %s</h1>\n"
 msgstr "<h1>Беседа с %s</h1>\n"
 
-#: src/gtkconv.c:923
+#: src/gtkconv.c:939
 msgid "Save Conversation"
 msgstr "Сохранить беседу"
 
-#: src/gtkconv.c:1008 src/gtkdebug.c:131
+#: src/gtkconv.c:1024 src/gtkdebug.c:131
 msgid "Find"
 msgstr "Найти"
 
-#: src/gtkconv.c:1034 src/gtkdebug.c:159
+#: src/gtkconv.c:1050 src/gtkdebug.c:159
 msgid "_Search for:"
 msgstr "Искать:"
 
-#: src/gtkconv.c:1450
+#: src/gtkconv.c:1466
 msgid "IM"
 msgstr "Сообщение"
 
 #. Send File button
-#: src/gtkconv.c:1459 src/gtkconv.c:3866 src/protocols/oscar/oscar.c:600
+#: src/gtkconv.c:1475 src/gtkconv.c:3887 src/protocols/oscar/oscar.c:600
 msgid "Send File"
 msgstr "Отправить файл"
 
-#: src/gtkconv.c:1468
+#: src/gtkconv.c:1484
 msgid "Un-Ignore"
 msgstr "Не игнорировать"
 
-#: src/gtkconv.c:1470 src/gtkprefs.c:831
+#: src/gtkconv.c:1486 src/gtkprefs.c:831
 msgid "Ignore"
 msgstr "Игнорировать"
 
 #. Info button
-#: src/gtkconv.c:1479 src/gtkconv.c:3887
+#: src/gtkconv.c:1495 src/gtkconv.c:3908
 msgid "Info"
 msgstr "Информация"
 
-#: src/gtkconv.c:1488
+#: src/gtkconv.c:1504
 msgid "Get Away Msg"
 msgstr "Получить сообщение об отсутствии"
 
-#: src/gtkconv.c:2637
+#: src/gtkconv.c:2653
 msgid "Unable to save icon file to disk."
 msgstr "Не удаётся сохранить файл значка на диск."
 
-#: src/gtkconv.c:2658
+#: src/gtkconv.c:2674
 msgid "Save Icon"
 msgstr "Сохранить значок"
 
-#: src/gtkconv.c:2688
+#: src/gtkconv.c:2704
 msgid "Animate"
 msgstr "Анимировать"
 
-#: src/gtkconv.c:2693
+#: src/gtkconv.c:2709
 msgid "Hide Icon"
 msgstr "Скрыть значок"
 
-#: src/gtkconv.c:2699
+#: src/gtkconv.c:2715
 msgid "Save Icon As..."
 msgstr "Сохранить значок как..."
 
-#: src/gtkconv.c:3072
+#: src/gtkconv.c:3092
 msgid "User is typing..."
 msgstr "Пользователь пишет..."
 
-#: src/gtkconv.c:3080
+#: src/gtkconv.c:3100
 msgid "User has typed something and paused"
 msgstr "Пользователь что-то написал и остановился"
 
 #. Build the Send As menu
-#: src/gtkconv.c:3183
+#: src/gtkconv.c:3203
 msgid "_Send As"
 msgstr "_Отправить как"
 
 #. Conversation menu
-#: src/gtkconv.c:3636
+#: src/gtkconv.c:3657
 msgid "/_Conversation"
 msgstr "/_Беседа"
 
-#: src/gtkconv.c:3638
+#: src/gtkconv.c:3659
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Беседа/Новое _сообщение..."
 
-#: src/gtkconv.c:3643
+#: src/gtkconv.c:3664
 msgid "/Conversation/_Find..."
 msgstr "/Беседа/_Найти..."
 
-#: src/gtkconv.c:3645
+#: src/gtkconv.c:3666
 msgid "/Conversation/View _Log"
 msgstr "/Беседа/Просмотреть _журнал"
 
-#: src/gtkconv.c:3646
+#: src/gtkconv.c:3667
 msgid "/Conversation/_Save As..."
 msgstr "/Беседа/Сохранить как..."
 
-#: src/gtkconv.c:3648
+#: src/gtkconv.c:3669
 msgid "/Conversation/Clear"
 msgstr "/Беседа/Очистить"
 
-#: src/gtkconv.c:3652
+#: src/gtkconv.c:3673
 msgid "/Conversation/Se_nd File..."
 msgstr "/Беседа/Отправить файл..."
 
-#: src/gtkconv.c:3653
+#: src/gtkconv.c:3674
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Беседа/Добавить правило..."
 
-#: src/gtkconv.c:3655
+#: src/gtkconv.c:3676
 msgid "/Conversation/_Get Info"
 msgstr "/Беседа/Получить _информацию"
 
-#: src/gtkconv.c:3657
+#: src/gtkconv.c:3678
 msgid "/Conversation/_Warn..."
 msgstr "/Беседа/Сделать предупреждение..."
 
-#: src/gtkconv.c:3659
+#: src/gtkconv.c:3680
 msgid "/Conversation/In_vite..."
 msgstr "/Беседа/Пригласить..."
 
-#: src/gtkconv.c:3664
+#: src/gtkconv.c:3685
 msgid "/Conversation/A_lias..."
 msgstr "/Беседа/Псевдоним..."
 
-#: src/gtkconv.c:3666
+#: src/gtkconv.c:3687
 msgid "/Conversation/_Block..."
 msgstr "/Беседа/Блокировать..."
 
-#: src/gtkconv.c:3668
+#: src/gtkconv.c:3689
 msgid "/Conversation/_Add..."
 msgstr "/Беседа/Добавить..."
 
-#: src/gtkconv.c:3670
+#: src/gtkconv.c:3691
 msgid "/Conversation/_Remove..."
 msgstr "/Беседа/Удалить..."
 
-#: src/gtkconv.c:3675
+#: src/gtkconv.c:3696
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Беседа/Вставить ссылку..."
 
-#: src/gtkconv.c:3677
+#: src/gtkconv.c:3698
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Беседа/Вставить изображение..."
 
-#: src/gtkconv.c:3682
+#: src/gtkconv.c:3703
 msgid "/Conversation/_Close"
 msgstr "/Беседа/_Закрыть"
 
 #. Options
-#: src/gtkconv.c:3686
+#: src/gtkconv.c:3707
 msgid "/_Options"
 msgstr "/_Параметры"
 
-#: src/gtkconv.c:3687
+#: src/gtkconv.c:3708
 msgid "/Options/Enable _Logging"
 msgstr "/Параметры/Вести _журнал"
 
-#: src/gtkconv.c:3688
+#: src/gtkconv.c:3709
 msgid "/Options/Enable _Sounds"
 msgstr "/Параметры/Воспроизводить _звуки"
 
-#: src/gtkconv.c:3689
+#: src/gtkconv.c:3710
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Параметры/Показывать _панель инструментов форматирования"
 
-#: src/gtkconv.c:3690
+#: src/gtkconv.c:3711
 msgid "/Options/Show T_imestamps"
 msgstr "/Параметры/Показывать _время сообщений"
 
-#: src/gtkconv.c:3732
+#: src/gtkconv.c:3753
 msgid "/Conversation/View Log"
 msgstr "/Беседа/Просмотреть журнал"
 
-#: src/gtkconv.c:3737
+#: src/gtkconv.c:3758
 msgid "/Conversation/Send File..."
 msgstr "/Беседа/Отправить файл..."
 
-#: src/gtkconv.c:3741
+#: src/gtkconv.c:3762
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Беседа/Добавить правило..."
 
-#: src/gtkconv.c:3747
+#: src/gtkconv.c:3768
 msgid "/Conversation/Get Info"
 msgstr "/Беседа/Получить информацию"
 
-#: src/gtkconv.c:3751
+#: src/gtkconv.c:3772
 msgid "/Conversation/Warn..."
 msgstr "/Беседа/Сделать предупреждение..."
 
-#: src/gtkconv.c:3755
+#: src/gtkconv.c:3776
 msgid "/Conversation/Invite..."
 msgstr "/Беседа/Пригласить..."
 
-#: src/gtkconv.c:3761
+#: src/gtkconv.c:3782
 msgid "/Conversation/Alias..."
 msgstr "/Беседа/Псевдоним..."
 
-#: src/gtkconv.c:3765
+#: src/gtkconv.c:3786
 msgid "/Conversation/Block..."
 msgstr "/Беседа/Блокировать..."
 
-#: src/gtkconv.c:3769
+#: src/gtkconv.c:3790
 msgid "/Conversation/Add..."
 msgstr "/Беседа/Добавить..."
 
-#: src/gtkconv.c:3773
+#: src/gtkconv.c:3794
 msgid "/Conversation/Remove..."
 msgstr "/Беседа/Удалить..."
 
-#: src/gtkconv.c:3779
+#: src/gtkconv.c:3800
 msgid "/Conversation/Insert Link..."
 msgstr "/Беседа/Вставить ссылку..."
 
-#: src/gtkconv.c:3783
+#: src/gtkconv.c:3804
 msgid "/Conversation/Insert Image..."
 msgstr "/Беседа/Вставить изображение..."
 
-#: src/gtkconv.c:3789
+#: src/gtkconv.c:3810
 msgid "/Options/Enable Logging"
 msgstr "/Параметры/Вести журнал"
 
-#: src/gtkconv.c:3792
+#: src/gtkconv.c:3813
 msgid "/Options/Enable Sounds"
 msgstr "/Параметры/Воспроизводить звуки"
 
-#: src/gtkconv.c:3795
+#: src/gtkconv.c:3816
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/Параметры/Показывать панель инструментов форматирования"
 
-#: src/gtkconv.c:3798
+#: src/gtkconv.c:3819
 msgid "/Options/Show Timestamps"
 msgstr "/Параметры/Показывать время сообщений"
 
 #. The buttons, from left to right
 #. Warn button
-#: src/gtkconv.c:3852
+#: src/gtkconv.c:3873
 msgid "Warn"
 msgstr "Сделать предупреждение"
 
-#: src/gtkconv.c:3853
+#: src/gtkconv.c:3874
 msgid "Warn the user"
 msgstr "Сделать пользователю предупреждение"
 
 #. Block button
-#: src/gtkconv.c:3859 src/gtkprivacy.c:630 src/gtkprivacy.c:641
+#: src/gtkconv.c:3880 src/gtkprivacy.c:630 src/gtkprivacy.c:641
 msgid "Block"
 msgstr "Блокировать"
 
-#: src/gtkconv.c:3860
+#: src/gtkconv.c:3881
 msgid "Block the user"
 msgstr "Блокировать пользователя"
 
-#: src/gtkconv.c:3867
+#: src/gtkconv.c:3888
 msgid "Send a file to the user"
 msgstr "Отправить пользователю файл"
 
-#: src/gtkconv.c:3874
+#: src/gtkconv.c:3895
 msgid "Add the user to your buddy list"
 msgstr "Добавить пользователя в список контактов"
 
-#: src/gtkconv.c:3881
+#: src/gtkconv.c:3902
 msgid "Remove the user from your buddy list"
 msgstr "Удалить пользователя из списка контактов"
 
-#: src/gtkconv.c:3888 src/gtkconv.c:4223
+#: src/gtkconv.c:3909 src/gtkconv.c:4244
 msgid "Get the user's information"
 msgstr "Получить информацию о пользователе"
 
 #. Send button
-#: src/gtkconv.c:3894 src/gtkconv.c:3958
+#: src/gtkconv.c:3915 src/gtkconv.c:3979
 msgid "Send"
 msgstr "Отправить"
 
-#: src/gtkconv.c:3895 src/gtkconv.c:3959
+#: src/gtkconv.c:3916 src/gtkconv.c:3980
 msgid "Send message"
 msgstr "Отправить сообщение"
 
 #. The buttons, from left to right
 #. Invite
-#: src/gtkconv.c:3937
+#: src/gtkconv.c:3958
 msgid "Invite"
 msgstr "Пригласить"
 
-#: src/gtkconv.c:3938
+#: src/gtkconv.c:3959
 msgid "Invite a user"
 msgstr "Пригласить пользователя"
 
-#: src/gtkconv.c:3945
+#: src/gtkconv.c:3966
 msgid "Add the chat to your buddy list"
 msgstr "Добавить чат в список контактов"
 
-#: src/gtkconv.c:3952
+#: src/gtkconv.c:3973
 msgid "Remove the chat from your buddy list"
 msgstr "Удалить чат из списка контактов"
 
-#: src/gtkconv.c:4076
+#: src/gtkconv.c:4097
 msgid "Topic:"
 msgstr "Тема:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:4139
+#: src/gtkconv.c:4160
 msgid "0 people in room"
 msgstr "0 пользователей в комнате"
 
-#: src/gtkconv.c:4200
+#: src/gtkconv.c:4221
 msgid "IM the user"
 msgstr "Отправить пользователю сообщение"
 
-#: src/gtkconv.c:4212
+#: src/gtkconv.c:4233
 msgid "Ignore the user"
 msgstr "Игнорировать пользователя"
 
-#: src/gtkconv.c:4807
+#: src/gtkconv.c:4832
 msgid "Close conversation"
 msgstr "Закрыть беседу"
 
-#: src/gtkconv.c:5344 src/gtkconv.c:5373 src/gtkconv.c:5469 src/gtkconv.c:5527
+#: src/gtkconv.c:5369 src/gtkconv.c:5398 src/gtkconv.c:5494 src/gtkconv.c:5552
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d пользователь в комнате"
 msgstr[1] "%d пользователей в комнате"
 
-#: src/gtkconv.c:6104 src/gtkconv.c:6107
+#: src/gtkconv.c:6129 src/gtkconv.c:6132
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Беседа/Закрыть"
 
-#: src/gtkconv.c:6479
+#: src/gtkconv.c:6504
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
 msgstr ""
 
-#: src/gtkconv.c:6482
+#: src/gtkconv.c:6507
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
 "me &lt;действие&gt;:  Отправить действие в стиле IRC пользователю или в чат."
 
-#: src/gtkconv.c:6485
+#: src/gtkconv.c:6510
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
@@ -2897,7 +2901,7 @@ msgstr ""
 "debug &lt;параметр&gt;:  Отправить различную отладочную информацию в текущую "
 "беседу."
 
-#: src/gtkconv.c:6489
+#: src/gtkconv.c:6514
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;команда&gt;:  Получить помощь по конкретной команде."
 
@@ -2967,271 +2971,279 @@ msgstr "исходный автор"
 msgid "hacker and designated driver [lazy bum]"
 msgstr ""
 
-#: src/gtkdialogs.c:100 src/gtkdialogs.c:144
+#: src/gtkdialogs.c:100
+msgid "Azerbaijani"
+msgstr "Азербайджанский"
+
+#: src/gtkdialogs.c:101 src/gtkdialogs.c:146
 msgid "Bulgarian"
 msgstr "Болгарский"
 
-#: src/gtkdialogs.c:100
+#: src/gtkdialogs.c:101
 msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
 msgstr "Vladimira Girginova и Vladimir (Kaladan) Petkov"
 
-#: src/gtkdialogs.c:101 src/gtkdialogs.c:145 src/gtkdialogs.c:146
+#: src/gtkdialogs.c:102 src/gtkdialogs.c:147 src/gtkdialogs.c:148
 msgid "Catalan"
 msgstr "Каталонский"
 
-#: src/gtkdialogs.c:102 src/gtkdialogs.c:147
+#: src/gtkdialogs.c:103 src/gtkdialogs.c:149
 msgid "Czech"
 msgstr "Чешский"
 
-#: src/gtkdialogs.c:103
+#: src/gtkdialogs.c:104
 msgid "Danish"
 msgstr "Датский"
 
-#: src/gtkdialogs.c:104 src/gtkdialogs.c:148
+#: src/gtkdialogs.c:105 src/gtkdialogs.c:150
 msgid "German"
 msgstr "Немецкий"
 
-#: src/gtkdialogs.c:105
+#: src/gtkdialogs.c:106
 msgid "Australian English"
 msgstr "Австралийский английский"
 
-#: src/gtkdialogs.c:106
+#: src/gtkdialogs.c:107
 msgid "Canadian English"
 msgstr "Канадский английский"
 
-#: src/gtkdialogs.c:107
+#: src/gtkdialogs.c:108
 msgid "British English"
 msgstr "Британский английский"
 
-#: src/gtkdialogs.c:108 src/gtkdialogs.c:149
+#: src/gtkdialogs.c:109 src/gtkdialogs.c:151
 msgid "Spanish"
 msgstr "Испанский"
 
-#: src/gtkdialogs.c:109
+#: src/gtkdialogs.c:110
 msgid "Estonian"
 msgstr "Эстонский"
 
-#: src/gtkdialogs.c:110 src/gtkdialogs.c:150
+#: src/gtkdialogs.c:111 src/gtkdialogs.c:152
 msgid "Finnish"
 msgstr "Финский"
 
-#: src/gtkdialogs.c:111 src/gtkdialogs.c:151
+#: src/gtkdialogs.c:112 src/gtkdialogs.c:153
 msgid "French"
 msgstr "Французский"
 
-#: src/gtkdialogs.c:112
+#: src/gtkdialogs.c:113
 msgid "Hebrew"
 msgstr "Иврит"
 
-#: src/gtkdialogs.c:113
+#: src/gtkdialogs.c:114
 msgid "Hindi"
 msgstr "Хинди"
 
-#: src/gtkdialogs.c:114
+#: src/gtkdialogs.c:115
 msgid "Hungarian"
 msgstr "Венгерский"
 
-#: src/gtkdialogs.c:115 src/gtkdialogs.c:152
+#: src/gtkdialogs.c:116 src/gtkdialogs.c:154
 msgid "Italian"
 msgstr "Итальянский"
 
-#: src/gtkdialogs.c:116 src/gtkdialogs.c:153
+#: src/gtkdialogs.c:117 src/gtkdialogs.c:155
 msgid "Japanese"
 msgstr "Японский"
 
-#: src/gtkdialogs.c:117
+#: src/gtkdialogs.c:118
 msgid "Georgian"
 msgstr "Грузинский"
 
-#: src/gtkdialogs.c:118 src/gtkdialogs.c:154
+#: src/gtkdialogs.c:119 src/gtkdialogs.c:156
 msgid "Korean"
 msgstr "Корейский"
 
-#: src/gtkdialogs.c:119
+#: src/gtkdialogs.c:120
 msgid "Lithuanian"
 msgstr "Литовский"
 
-#: src/gtkdialogs.c:120
+#: src/gtkdialogs.c:121
 msgid "Macedonian"
 msgstr "Македонский"
 
-#: src/gtkdialogs.c:121
+#: src/gtkdialogs.c:122
 msgid "Burmese"
 msgstr "Бирманский"
 
-#: src/gtkdialogs.c:122
+#: src/gtkdialogs.c:123
 msgid "Dutch; Flemish"
 msgstr "Датский; фламандский"
 
-#: src/gtkdialogs.c:123 src/gtkdialogs.c:155
+#: src/gtkdialogs.c:124 src/gtkdialogs.c:157
 msgid "Norwegian"
 msgstr "Норвежский"
 
-#: src/gtkdialogs.c:124 src/gtkdialogs.c:156
+#: src/gtkdialogs.c:125
+msgid "Punjabi"
+msgstr ""
+
+#: src/gtkdialogs.c:126 src/gtkdialogs.c:158
 msgid "Polish"
 msgstr "Польский"
 
-#: src/gtkdialogs.c:125
+#: src/gtkdialogs.c:127
 msgid "Portuguese"
 msgstr "Португальский"
 
-#: src/gtkdialogs.c:126
+#: src/gtkdialogs.c:128
 msgid "Portuguese-Brazil"
 msgstr "Португальский-бразильский"
 
-#: src/gtkdialogs.c:127
+#: src/gtkdialogs.c:129
 msgid "Romanian"
 msgstr "Румынский"
 
-#: src/gtkdialogs.c:128 src/gtkdialogs.c:157 src/gtkdialogs.c:158
+#: src/gtkdialogs.c:130 src/gtkdialogs.c:159 src/gtkdialogs.c:160
 msgid "Russian"
 msgstr "Русский"
 
-#: src/gtkdialogs.c:129
+#: src/gtkdialogs.c:131
 msgid "Slovenian"
 msgstr "Словенский"
 
-#: src/gtkdialogs.c:130
+#: src/gtkdialogs.c:132
 msgid "Albanian"
 msgstr "Албанский"
 
-#: src/gtkdialogs.c:131
+#: src/gtkdialogs.c:133
 msgid "Serbian"
 msgstr "Сербский"
 
-#: src/gtkdialogs.c:132 src/gtkdialogs.c:160 src/gtkdialogs.c:161
+#: src/gtkdialogs.c:134 src/gtkdialogs.c:162 src/gtkdialogs.c:163
 msgid "Swedish"
 msgstr "Шведский"
 
-#: src/gtkdialogs.c:133
+#: src/gtkdialogs.c:135
 msgid "Turkish"
 msgstr "Турецкий"
 
-#: src/gtkdialogs.c:134
+#: src/gtkdialogs.c:136
 msgid "Ukrainian"
 msgstr "Украинский"
 
-#: src/gtkdialogs.c:135
+#: src/gtkdialogs.c:137
 msgid "Vietnamese"
 msgstr "Вьетнамский"
 
-#: src/gtkdialogs.c:135
+#: src/gtkdialogs.c:137
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh и команда Gnome-Vi"
 
-#: src/gtkdialogs.c:136
+#: src/gtkdialogs.c:138
 msgid "Simplified Chinese"
 msgstr "Упрощённый китайский"
 
-#: src/gtkdialogs.c:137
+#: src/gtkdialogs.c:139
 msgid "Traditional Chinese"
 msgstr "Традиционный китайский"
 
-#: src/gtkdialogs.c:143
+#: src/gtkdialogs.c:145
 msgid "Amharic"
 msgstr "Амхарский"
 
-#: src/gtkdialogs.c:159
+#: src/gtkdialogs.c:161
 msgid "Slovak"
 msgstr "Словацкий"
 
-#: src/gtkdialogs.c:162
+#: src/gtkdialogs.c:164
 msgid "Chinese"
 msgstr "Китайский"
 
-#: src/gtkdialogs.c:204
+#: src/gtkdialogs.c:206
 msgid "About Gaim"
 msgstr "О Gaim"
 
-#: src/gtkdialogs.c:219
+#: src/gtkdialogs.c:221
 #, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 
-#: src/gtkdialogs.c:241
+#: src/gtkdialogs.c:243
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
-"Gaim - это модульный клиент обмена сообщениями, позволяющий использовать "
-"AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr "
-"и Gadu-Gadu одновременно. Он написан с использованием Gtk+ и "
-"распространяется под лицензией GPL.<BR><BR>"
+"Gaim - модульный клиент обмена сообщениями, позволяющий использовать AIM, "
+"MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr и "
+"Gadu-Gadu одновременно. Написан с использованием Gtk+ и распространяется под "
+"лицензией GPL.<BR><BR>"
 
-#: src/gtkdialogs.c:251
+#: src/gtkdialogs.c:253
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim на irc.freenode.net<BR><BR>"
 
-#: src/gtkdialogs.c:254
+#: src/gtkdialogs.c:256
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim на irc.freenode.net<BR><BR>"
 
-#: src/gtkdialogs.c:260
+#: src/gtkdialogs.c:262
 msgid "Active Developers"
 msgstr "Активные разработчики"
 
-#: src/gtkdialogs.c:275
+#: src/gtkdialogs.c:277
 msgid "Crazy Patch Writers"
 msgstr "Одержимые авторы заплаток"
 
-#: src/gtkdialogs.c:290
+#: src/gtkdialogs.c:292
 msgid "Retired Developers"
 msgstr "Разработчики, отошедшие от дел"
 
-#: src/gtkdialogs.c:305
+#: src/gtkdialogs.c:307
 msgid "Current Translators"
 msgstr "Текущие переводчики"
 
-#: src/gtkdialogs.c:325
+#: src/gtkdialogs.c:327
 msgid "Past Translators"
 msgstr "Предыдущие переводчики"
 
-#: src/gtkdialogs.c:480 src/gtkdialogs.c:622 src/gtkdialogs.c:675
+#: src/gtkdialogs.c:482 src/gtkdialogs.c:624 src/gtkdialogs.c:677
 msgid "_Screen name"
 msgstr "Идентификатор пользователя"
 
-#: src/gtkdialogs.c:486 src/gtkdialogs.c:628 src/gtkdialogs.c:681
+#: src/gtkdialogs.c:488 src/gtkdialogs.c:630 src/gtkdialogs.c:683
 msgid "_Account"
 msgstr "Учётная запись"
 
-#: src/gtkdialogs.c:493
+#: src/gtkdialogs.c:495
 msgid "New Instant Message"
 msgstr "Новое сообщение"
 
-#: src/gtkdialogs.c:495
+#: src/gtkdialogs.c:497
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr ""
 "Введите идентификатор пользователя персоны, которой вы хотели бы отправить "
 "сообщение."
 
-#: src/gtkdialogs.c:635
+#: src/gtkdialogs.c:637
 msgid "Get User Info"
 msgstr "Получить информацию о пользователе"
 
-#: src/gtkdialogs.c:637
+#: src/gtkdialogs.c:639
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr ""
 "Введите идентификатор пользователя персоны, информацию о которой вы хотели "
 "бы просмотреть."
 
-#: src/gtkdialogs.c:689
+#: src/gtkdialogs.c:691
 msgid "Get User Log"
 msgstr "Получить журнал пользователя"
 
-#: src/gtkdialogs.c:691
+#: src/gtkdialogs.c:693
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr ""
 "Введите идентификатор пользователя персоны, журнал которой вы хотели бы "
 "просмотреть."
 
-#: src/gtkdialogs.c:731
+#: src/gtkdialogs.c:733
 msgid "Warn User"
 msgstr "Сделать предупреждение пользователю"
 
-#: src/gtkdialogs.c:752
+#: src/gtkdialogs.c:754
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -3244,45 +3256,45 @@ msgstr ""
 "Это увеличит уровень предупреждения %s, и пользователь будет подвержен "
 "ужесточению ограничения уровня.\n"
 
-#: src/gtkdialogs.c:761
+#: src/gtkdialogs.c:763
 msgid "Warn _anonymously?"
 msgstr "Сделать предупреждение анонимно?"
 
-#: src/gtkdialogs.c:768
+#: src/gtkdialogs.c:770
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Анонимные предупреждения менее серьёзны.</b>"
 
-#: src/gtkdialogs.c:789
+#: src/gtkdialogs.c:791
 msgid "Alias Contact"
 msgstr "Псевдоним контакта"
 
-#: src/gtkdialogs.c:790
+#: src/gtkdialogs.c:792
 msgid "Enter an alias for this contact."
 msgstr "Введите псевдоним для этого контакта."
 
-#: src/gtkdialogs.c:792 src/gtkdialogs.c:814 src/gtkdialogs.c:834
-#: src/gtkrequest.c:250 src/protocols/silc/chat.c:584
+#: src/gtkdialogs.c:794 src/gtkdialogs.c:816 src/gtkdialogs.c:836
+#: src/gtkrequest.c:251 src/protocols/silc/chat.c:584
 msgid "Alias"
 msgstr "Псевдоним"
 
-#: src/gtkdialogs.c:810
+#: src/gtkdialogs.c:812
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Введите псевдоним для %s."
 
-#: src/gtkdialogs.c:812
+#: src/gtkdialogs.c:814
 msgid "Alias Buddy"
 msgstr "Псевдоним пользователя"
 
-#: src/gtkdialogs.c:831
+#: src/gtkdialogs.c:833
 msgid "Alias Chat"
 msgstr "Псевдоним чата"
 
-#: src/gtkdialogs.c:832
+#: src/gtkdialogs.c:834
 msgid "Enter an alias for this chat."
 msgstr "Введите псевдоним для этого чата."
 
-#: src/gtkdialogs.c:866
+#: src/gtkdialogs.c:868
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -3291,7 +3303,7 @@ msgstr ""
 "Вы удалите контакт, содержащий %s и %d других пользователей из списка "
 "контактов. Хотите продолжить?"
 
-#: src/gtkdialogs.c:927
+#: src/gtkdialogs.c:929
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -3299,179 +3311,183 @@ msgid ""
 msgstr ""
 "Вы удалите группу %s и всех её членов из списка контактов. Хотите продолжить?"
 
-#: src/gtkdialogs.c:930 src/gtkdialogs.c:931
+#: src/gtkdialogs.c:932 src/gtkdialogs.c:933
 msgid "Remove Group"
 msgstr "Удалить группу"
 
-#: src/gtkdialogs.c:969
+#: src/gtkdialogs.c:971
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Вы удалите %s из списка контактов. Хотите продолжить?"
 
-#: src/gtkdialogs.c:972 src/gtkdialogs.c:974
+#: src/gtkdialogs.c:974 src/gtkdialogs.c:976
 msgid "Remove Buddy"
 msgstr "Удалить пользователя"
 
-#: src/gtkdialogs.c:1011
+#: src/gtkdialogs.c:1013
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "Вы удалите чат %s из списка контактов. Хотите продолжить?"
 
-#: src/gtkdialogs.c:1014 src/gtkdialogs.c:1015
+#: src/gtkdialogs.c:1016 src/gtkdialogs.c:1017
 msgid "Remove Chat"
 msgstr "Удалить чат"
 
-#: src/gtkft.c:140
+#: src/gtkft.c:141
 #, c-format
 msgid "%.2f KB/s"
 msgstr "%.2f KB/s"
 
-#: src/gtkft.c:161 src/gtkft.c:978
+#: src/gtkft.c:162 src/gtkft.c:1012
 msgid "Finished"
 msgstr "Завершено"
 
-#: src/gtkft.c:164 src/gtkft.c:929
+#: src/gtkft.c:165 src/gtkft.c:963
 msgid "Canceled"
 msgstr "Отменено"
 
-#: src/gtkft.c:167 src/gtkft.c:848
+#: src/gtkft.c:168 src/gtkft.c:882
 msgid "Waiting for transfer to begin"
 msgstr "Ожидание начала передачи"
 
-#: src/gtkft.c:220
+#: src/gtkft.c:221
 msgid "<b>Receiving As:</b>"
 msgstr "<b>Приём как:</b>"
 
-#: src/gtkft.c:222
+#: src/gtkft.c:223
 msgid "<b>Receiving From:</b>"
 msgstr "<b>Приём от:</b>"
 
-#: src/gtkft.c:226
+#: src/gtkft.c:227
 msgid "<b>Sending To:</b>"
 msgstr "<b>Отправка для:</b>"
 
-#: src/gtkft.c:228
+#: src/gtkft.c:229
 msgid "<b>Sending As:</b>"
 msgstr "<b>Отправка как:</b>"
 
-#: src/gtkft.c:407
+#: src/gtkft.c:436
 msgid "There is no application configured to open this type of file."
 msgstr "Нет приложения, сопоставленного этому типу файла."
 
-#: src/gtkft.c:412
+#: src/gtkft.c:441
 msgid "An error occurred while opening the file."
 msgstr "Произошла ошибка при открытии файла."
 
-#: src/gtkft.c:503
+#: src/gtkft.c:533
 msgid "Progress"
 msgstr "Прогресс"
 
-#: src/gtkft.c:510
+#: src/gtkft.c:540
 msgid "Filename"
 msgstr "Имя файла"
 
-#: src/gtkft.c:517
+#: src/gtkft.c:547
 msgid "Size"
 msgstr "Размер"
 
-#: src/gtkft.c:524
+#: src/gtkft.c:554
 msgid "Remaining"
 msgstr "Осталось"
 
-#: src/gtkft.c:556
+#: src/gtkft.c:586
 msgid "Filename:"
 msgstr "Имя файла:"
 
-#: src/gtkft.c:557
+#: src/gtkft.c:587
+msgid "Local File:"
+msgstr "Локальный файл:"
+
+#: src/gtkft.c:588
 msgid "Status:"
 msgstr "Статус:"
 
-#: src/gtkft.c:558
+#: src/gtkft.c:589
 msgid "Speed:"
 msgstr "Скорость:"
 
-#: src/gtkft.c:559
+#: src/gtkft.c:590
 msgid "Time Elapsed:"
 msgstr "Прошло времени:"
 
-#: src/gtkft.c:560
+#: src/gtkft.c:591
 msgid "Time Remaining:"
 msgstr "Осталось времени:"
 
-#: src/gtkft.c:652
+#: src/gtkft.c:683
 msgid "_Keep the dialog open"
 msgstr "Держать диалог открытым"
 
-#: src/gtkft.c:662
+#: src/gtkft.c:693
 msgid "_Clear finished transfers"
 msgstr "Очищать завершённые передачи"
 
 #. "Download Details" arrow
-#: src/gtkft.c:671
+#: src/gtkft.c:702
 msgid "Show transfer details"
 msgstr "Показать подробности о передаче"
 
-#: src/gtkft.c:672
+#: src/gtkft.c:703
 msgid "Hide transfer details"
 msgstr "Скрыть подробности о передаче"
 
 #. Pause button
-#: src/gtkft.c:714 src/stock.c:92
+#: src/gtkft.c:745 src/stock.c:92
 msgid "_Pause"
 msgstr "_Пауза"
 
 #. Resume button
-#: src/gtkft.c:724
+#: src/gtkft.c:755
 msgid "_Resume"
 msgstr "_Возобновить"
 
-#: src/gtkft.c:931
+#: src/gtkft.c:965
 msgid "Failed"
 msgstr "Не удалось"
 
-#: src/gtkimhtml.c:602
+#: src/gtkimhtml.c:693
 msgid "Pa_ste As Text"
 msgstr "Вставить как текст"
 
-#: src/gtkimhtml.c:1052
+#: src/gtkimhtml.c:1087
 msgid "Hyperlink color"
 msgstr "Цвет гиперссылки"
 
-#: src/gtkimhtml.c:1053
+#: src/gtkimhtml.c:1088
 msgid "Color to draw hyperlinks."
 msgstr "Цвет для отображения гиперссылок."
 
-#: src/gtkimhtml.c:1259
+#: src/gtkimhtml.c:1296
 msgid "_Copy E-Mail Address"
 msgstr "Скопировать адрес e-mail"
 
-#: src/gtkimhtml.c:1271
+#: src/gtkimhtml.c:1308
 msgid "_Copy Link Location"
 msgstr "Скопировать ссылку"
 
-#: src/gtkimhtml.c:1281
+#: src/gtkimhtml.c:1318
 msgid "_Open Link in Browser"
 msgstr "Открыть ссылку в браузере"
 
-#: src/gtkimhtml.c:2877
+#: src/gtkimhtml.c:2914
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
 msgstr ""
 
-#: src/gtkimhtml.c:2885
+#: src/gtkimhtml.c:2922
 #, c-format
 msgid "Error saving image: %s"
 msgstr "Ошибка сохранения изображения: %s"
 
-#: src/gtkimhtml.c:2962 src/gtkimhtml.c:2974
+#: src/gtkimhtml.c:2999 src/gtkimhtml.c:3011
 msgid "Save Image"
 msgstr "Сохранить изображение"
 
-#: src/gtkimhtml.c:3002
+#: src/gtkimhtml.c:3039
 msgid "_Save Image..."
 msgstr "Сохранить изображение..."
 
@@ -3820,8 +3836,8 @@ msgstr ""
 msgid "Icon"
 msgstr "Значок"
 
-#: src/gtkprefs.c:728 src/gtkprefs.c:2204 src/protocols/jabber/buddy.c:264
-#: src/protocols/jabber/buddy.c:754 src/protocols/jabber/chat.c:743
+#: src/gtkprefs.c:728 src/gtkprefs.c:2205 src/protocols/jabber/buddy.c:264
+#: src/protocols/jabber/buddy.c:757 src/protocols/jabber/chat.c:743
 msgid "Description"
 msgstr "Описание"
 
@@ -4180,43 +4196,43 @@ msgstr "Записывать, когда пользователи отходят
 msgid "Log your _own signons/idleness/awayness"
 msgstr "Записывать собственные подключения/бездействия/отсутствия"
 
-#: src/gtkprefs.c:1599
+#: src/gtkprefs.c:1600
 msgid "Sound Selection"
 msgstr "Выбор звука"
 
-#: src/gtkprefs.c:1650
+#: src/gtkprefs.c:1651
 msgid "Sound Options"
 msgstr "Параметры звука"
 
-#: src/gtkprefs.c:1651
+#: src/gtkprefs.c:1652
 msgid "Sounds when conversation has _focus"
 msgstr "Звуки, когда окно беседы в фокусе"
 
-#: src/gtkprefs.c:1653
+#: src/gtkprefs.c:1654
 msgid "_Sounds while away"
 msgstr "Звуки во время отсутствия"
 
-#: src/gtkprefs.c:1657
+#: src/gtkprefs.c:1658
 msgid "Sound Method"
 msgstr "Метод воспроизведения звука"
 
-#: src/gtkprefs.c:1658
+#: src/gtkprefs.c:1659
 msgid "_Method:"
 msgstr "Метод:"
 
-#: src/gtkprefs.c:1660
+#: src/gtkprefs.c:1661
 msgid "Console beep"
 msgstr "Сигнал динамиком"
 
-#: src/gtkprefs.c:1662
+#: src/gtkprefs.c:1663
 msgid "Automatic"
 msgstr "Автоматически"
 
-#: src/gtkprefs.c:1669
+#: src/gtkprefs.c:1670
 msgid "Command"
 msgstr "Команда"
 
-#: src/gtkprefs.c:1677
+#: src/gtkprefs.c:1678
 #, c-format
 msgid ""
 "Sound c_ommand:\n"
@@ -4225,90 +4241,90 @@ msgstr ""
 "Команда воспроизведения звука:\n"
 "(%s для имени файла)"
 
-#: src/gtkprefs.c:1704
+#: src/gtkprefs.c:1705
 msgid "Sound Events"
 msgstr "Звуковые события"
 
-#: src/gtkprefs.c:1755
+#: src/gtkprefs.c:1756
 msgid "Play"
-msgstr "Воспроизвести"
+msgstr "Воспроизводить"
 
-#: src/gtkprefs.c:1762
+#: src/gtkprefs.c:1763
 msgid "Event"
 msgstr "Событие"
 
-#: src/gtkprefs.c:1781
+#: src/gtkprefs.c:1782
 msgid "Test"
 msgstr "Тест"
 
-#: src/gtkprefs.c:1785
+#: src/gtkprefs.c:1786
 msgid "Reset"
 msgstr "Сброс"
 
-#: src/gtkprefs.c:1789
+#: src/gtkprefs.c:1790
 msgid "Choose..."
 msgstr "Выбрать..."
 
-#: src/gtkprefs.c:1813
+#: src/gtkprefs.c:1814
 msgid "_Queue new messages when away"
 msgstr "Помещать новые сообщения в очередь во время отсутствия"
 
-#: src/gtkprefs.c:1816
+#: src/gtkprefs.c:1817
 msgid "_Auto-reply:"
 msgstr "Автоматический ответ:"
 
-#: src/gtkprefs.c:1818
+#: src/gtkprefs.c:1819
 msgid "Never"
 msgstr "Никогда"
 
-#: src/gtkprefs.c:1819
+#: src/gtkprefs.c:1820
 msgid "When away"
 msgstr "Во время отсутствия"
 
-#: src/gtkprefs.c:1820
+#: src/gtkprefs.c:1821
 msgid "When away and idle"
 msgstr "Во время отсутствия и бездействия"
 
-#: src/gtkprefs.c:1823 src/protocols/msn/msn.c:1326
+#: src/gtkprefs.c:1824 src/protocols/msn/msn.c:1327
 #: src/protocols/msn/state.c:32 src/protocols/novell/novell.c:2806
-#: src/protocols/oscar/oscar.c:4259 src/protocols/yahoo/yahoo.c:2704
+#: src/protocols/oscar/oscar.c:4259 src/protocols/yahoo/yahoo.c:2699
 #: src/protocols/yahoo/yahoo_profile.c:664
 msgid "Idle"
 msgstr "Бездействие"
 
-#: src/gtkprefs.c:1824
+#: src/gtkprefs.c:1825
 msgid "Idle _time reporting:"
 msgstr "Сообщение времени бездействия:"
 
-#: src/gtkprefs.c:1827
+#: src/gtkprefs.c:1828
 msgid "Gaim usage"
 msgstr "Использование Gaim"
 
-#: src/gtkprefs.c:1830
+#: src/gtkprefs.c:1831
 msgid "X usage"
 msgstr "Использование X"
 
-#: src/gtkprefs.c:1832
+#: src/gtkprefs.c:1833
 msgid "Windows usage"
 msgstr "Использование Windows"
 
-#: src/gtkprefs.c:1840
+#: src/gtkprefs.c:1841
 msgid "Auto-away"
 msgstr "Авто-\"Отошёл\""
 
-#: src/gtkprefs.c:1841
+#: src/gtkprefs.c:1842
 msgid "Set away _when idle"
 msgstr "Устанавливать статус \"Отошёл\" автоматически"
 
-#: src/gtkprefs.c:1845
+#: src/gtkprefs.c:1846
 msgid "_Minutes before setting away:"
 msgstr "Минут до установления статуса \"Отошёл\":"
 
-#: src/gtkprefs.c:1853
+#: src/gtkprefs.c:1854
 msgid "Away m_essage:"
 msgstr "Сообщение об отсутствии:"
 
-#: src/gtkprefs.c:1922
+#: src/gtkprefs.c:1923
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -4323,7 +4339,7 @@ msgstr ""
 "<span weight=\"bold\">Веб-сайт:</span>\t\t%s\n"
 "<span weight=\"bold\">Имя файла:</span>\t%s"
 
-#: src/gtkprefs.c:1927
+#: src/gtkprefs.c:1928
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -4338,63 +4354,63 @@ msgstr ""
 "<span weight=\"bold\">URL:</span>  %s\n"
 "<span weight=\"bold\">Имя файла:</span>  %s"
 
-#: src/gtkprefs.c:2160
+#: src/gtkprefs.c:2161
 msgid "Load"
-msgstr "Загрузить"
+msgstr "Загружать"
 
-#: src/gtkprefs.c:2174
+#: src/gtkprefs.c:2175
 msgid "Summary"
 msgstr "Краткое описание"
 
-#: src/gtkprefs.c:2222
+#: src/gtkprefs.c:2223
 msgid "Details"
 msgstr "Подробности"
 
-#: src/gtkprefs.c:2383
+#: src/gtkprefs.c:2384
 msgid "_Edit"
 msgstr "_Изменить"
 
-#: src/gtkprefs.c:2419
+#: src/gtkprefs.c:2420
 msgid "Interface"
 msgstr "Интерфейс"
 
-#: src/gtkprefs.c:2422
+#: src/gtkprefs.c:2423
 msgid "Message Text"
 msgstr "Текст сообщения"
 
-#: src/gtkprefs.c:2423
+#: src/gtkprefs.c:2424
 msgid "Shortcuts"
 msgstr "Горячие клавиши"
 
-#: src/gtkprefs.c:2424
+#: src/gtkprefs.c:2425
 msgid "Smiley Themes"
 msgstr "Темы смайликов"
 
-#: src/gtkprefs.c:2425
+#: src/gtkprefs.c:2426
 msgid "Sounds"
 msgstr "Звуки"
 
-#: src/gtkprefs.c:2426 src/protocols/silc/silc.c:1586
+#: src/gtkprefs.c:2427 src/protocols/silc/silc.c:1588
 msgid "Network"
 msgstr "Сеть"
 
-#: src/gtkprefs.c:2431
+#: src/gtkprefs.c:2432
 msgid "Browser"
 msgstr "Браузер"
 
-#: src/gtkprefs.c:2434
+#: src/gtkprefs.c:2435
 msgid "Logging"
 msgstr "Журналы"
 
-#: src/gtkprefs.c:2435
+#: src/gtkprefs.c:2436
 msgid "Away / Idle"
 msgstr "Отсутствие / Бездействие"
 
-#: src/gtkprefs.c:2436
+#: src/gtkprefs.c:2437
 msgid "Away Messages"
 msgstr "Сообщения об отсутствии"
 
-#: src/gtkprefs.c:2439
+#: src/gtkprefs.c:2440
 msgid "Plugins"
 msgstr "Модули"
 
@@ -4483,7 +4499,7 @@ msgstr "Вы действительно хотите блокировать %s?"
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: src/gtkrequest.c:240 src/protocols/gg/gg.c:951
+#: src/gtkrequest.c:241 src/protocols/gg/gg.c:951
 #: src/protocols/msn/dialog.c:113 src/protocols/msn/msn.c:499
 #: src/protocols/msn/msn.c:502 src/protocols/novell/novell.c:1892
 #: src/protocols/silc/buddy.c:307 src/protocols/silc/pk.c:117
@@ -4491,7 +4507,7 @@ msgstr "Вы действительно хотите блокировать %s?"
 msgid "Yes"
 msgstr "Да"
 
-#: src/gtkrequest.c:241 src/protocols/gg/gg.c:951
+#: src/gtkrequest.c:242 src/protocols/gg/gg.c:951
 #: src/protocols/msn/dialog.c:114 src/protocols/msn/msn.c:499
 #: src/protocols/msn/msn.c:502 src/protocols/novell/novell.c:1893
 #: src/protocols/silc/buddy.c:308 src/protocols/silc/pk.c:118
@@ -4499,28 +4515,28 @@ msgstr "Да"
 msgid "No"
 msgstr "Нет"
 
-#: src/gtkrequest.c:244
+#: src/gtkrequest.c:245
 msgid "Apply"
 msgstr "Применить"
 
-#: src/gtkrequest.c:245 src/protocols/msn/msn.c:314
+#: src/gtkrequest.c:246 src/protocols/msn/msn.c:314
 #: src/protocols/silc/util.c:335
 msgid "Close"
 msgstr "Закрыть"
 
-#: src/gtkrequest.c:1416
+#: src/gtkrequest.c:1421
 msgid "That file already exists"
 msgstr "Такой файл уже существует"
 
-#: src/gtkrequest.c:1417
+#: src/gtkrequest.c:1422
 msgid "Would you like to overwrite it?"
-msgstr "Вы хотели бы перезаписать его?"
+msgstr "Хотите перезаписать его?"
 
-#: src/gtkrequest.c:1455 src/gtkrequest.c:1476
+#: src/gtkrequest.c:1460 src/gtkrequest.c:1481
 msgid "Save File..."
 msgstr "Сохранить файл..."
 
-#: src/gtkrequest.c:1456 src/gtkrequest.c:1477
+#: src/gtkrequest.c:1461 src/gtkrequest.c:1482
 msgid "Open File..."
 msgstr "Открыть файл..."
 
@@ -4571,7 +4587,7 @@ msgstr "Другие говорят в чате"
 
 #: src/gtksound.c:74
 msgid "Someone says your name in chat"
-msgstr "Кто-то назвал ваше имя в чате"
+msgstr "Кто-то произносит ваше имя в чате"
 
 #: src/gtksound.c:173
 #, c-format
@@ -4733,7 +4749,8 @@ msgid ""
 "The required plugin %s was not found. Please install this plugin and try "
 "again."
 msgstr ""
-"Требуемый модуль %s не был найден. Установите этот модуль и попробуйте снова."
+"Требуемый модуль %s не был найден. Установите этот модуль и попытайтесь "
+"снова."
 
 #: src/plugin.c:300 src/plugin.c:328
 msgid "Gaim was unable to load your plugin."
@@ -4753,8 +4770,8 @@ msgstr "Сообщение об отсутствии по умолчанию"
 #: src/protocols/msn/state.c:30 src/protocols/msn/state.c:37
 #: src/protocols/msn/state.c:38 src/protocols/novell/novell.c:2797
 #: src/protocols/novell/novell.c:2916 src/protocols/novell/novell.c:2967
-#: src/protocols/oscar/oscar.c:765 src/protocols/yahoo/yahoo.c:3049
-#: src/protocols/yahoo/yahoo.c:3165
+#: src/protocols/oscar/oscar.c:765 src/protocols/yahoo/yahoo.c:3044
+#: src/protocols/yahoo/yahoo.c:3160
 msgid "Available"
 msgstr "Доступен"
 
@@ -4770,8 +4787,8 @@ msgstr "Отошёл только для друзей"
 #: src/protocols/jabber/presence.c:139 src/protocols/oscar/oscar.c:683
 #: src/protocols/oscar/oscar.c:5609 src/protocols/oscar/oscar.c:5687
 #: src/protocols/oscar/oscar.c:5711 src/protocols/oscar/oscar.c:6892
-#: src/protocols/oscar/oscar.c:6897 src/protocols/yahoo/yahoo.c:2702
-#: src/protocols/yahoo/yahoo.c:3069 src/protocols/yahoo/yahoo.c:3177
+#: src/protocols/oscar/oscar.c:6897 src/protocols/yahoo/yahoo.c:2697
+#: src/protocols/yahoo/yahoo.c:3064 src/protocols/yahoo/yahoo.c:3172
 msgid "Invisible"
 msgstr "Невидимый"
 
@@ -4845,8 +4862,8 @@ msgstr "Не удаётся прочитать сокет"
 #. we didn't successfully connect. tdt->toc_fd is valid here
 #: src/protocols/gg/gg.c:674 src/protocols/icq/gaim_icq.c:343
 #: src/protocols/napster/napster.c:486 src/protocols/napster/napster.c:517
-#: src/protocols/toc/toc.c:170 src/protocols/yahoo/yahoo.c:2340
-#: src/protocols/yahoo/yahoo.c:2369 src/protocols/yahoo/yahoo.c:2432
+#: src/protocols/toc/toc.c:170 src/protocols/yahoo/yahoo.c:2335
+#: src/protocols/yahoo/yahoo.c:2364 src/protocols/yahoo/yahoo.c:2427
 #: src/protocols/yahoo/yahoo_filexfer.c:68
 #: src/protocols/yahoo/yahoo_filexfer.c:111 src/protocols/yahoo/ycht.c:482
 msgid "Unable to connect."
@@ -5101,13 +5118,13 @@ msgstr "Gaim столкнулся с ошибкой соединения с се
 msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 msgstr "Пользователь %s (%s%s%s%s%s) хочет, чтобы вы авторизовали его."
 
-#: src/protocols/icq/gaim_icq.c:296 src/protocols/jabber/presence.c:266
+#: src/protocols/icq/gaim_icq.c:296 src/protocols/jabber/presence.c:300
 #: src/protocols/msn/userlist.c:103 src/protocols/oscar/oscar.c:3799
 #: src/protocols/oscar/oscar.c:6340
 msgid "Authorize"
 msgstr "Авторизовать"
 
-#: src/protocols/icq/gaim_icq.c:296 src/protocols/jabber/presence.c:267
+#: src/protocols/icq/gaim_icq.c:296 src/protocols/jabber/presence.c:301
 #: src/protocols/msn/userlist.c:104 src/protocols/oscar/oscar.c:3801
 #: src/protocols/oscar/oscar.c:6341
 msgid "Deny"
@@ -5129,25 +5146,25 @@ msgstr "Псевдоним:"
 msgid "Gaim User"
 msgstr "Пользователь Gaim"
 
-#: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1309
+#: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1311
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Неизвестная команда: %s"
 
-#: src/protocols/irc/cmds.c:461 src/protocols/jabber/chat.c:576
-#: src/protocols/silc/silc.c:1017
+#: src/protocols/irc/cmds.c:463 src/protocols/jabber/chat.c:576
+#: src/protocols/silc/silc.c:1019
 #, c-format
 msgid "current topic is: %s"
 msgstr "текущая тема: %s"
 
-#: src/protocols/irc/cmds.c:465 src/protocols/jabber/chat.c:580
-#: src/protocols/silc/silc.c:1021
+#: src/protocols/irc/cmds.c:467 src/protocols/jabber/chat.c:580
+#: src/protocols/silc/silc.c:1023
 msgid "No topic is set"
 msgstr "Тема не установлена"
 
-#: src/protocols/irc/dcc_send.c:272 src/protocols/yahoo/yahoo_filexfer.c:174
-#: src/protocols/yahoo/yahoo_filexfer.c:183
-#: src/protocols/yahoo/yahoo_filexfer.c:192
+#: src/protocols/irc/dcc_send.c:272 src/protocols/yahoo/yahoo_filexfer.c:176
+#: src/protocols/yahoo/yahoo_filexfer.c:185
+#: src/protocols/yahoo/yahoo_filexfer.c:194
 msgid "File Transfer Aborted"
 msgstr "Передача файлов прервана"
 
@@ -5172,7 +5189,7 @@ msgstr "Нет MOTD, соотнесённого с этим соединение
 msgid "MOTD for %s"
 msgstr "MOTD для %s"
 
-#: src/protocols/irc/irc.c:93 src/protocols/irc/irc.c:401
+#: src/protocols/irc/irc.c:93 src/protocols/irc/irc.c:405
 msgid "Server has disconnected"
 msgstr "Сервер разорвал соединение"
 
@@ -5193,33 +5210,33 @@ msgid "IRC nicks may not contain whitespace"
 msgstr "Псевдонимы IRC не могут содержать пробелы"
 
 #. connect to the server
-#: src/protocols/irc/irc.c:236 src/protocols/jabber/jabber.c:796
+#: src/protocols/irc/irc.c:237 src/protocols/jabber/jabber.c:796
 #: src/protocols/msn/session.c:364 src/protocols/napster/napster.c:510
 #: src/protocols/novell/novell.c:2152 src/protocols/oscar/oscar.c:1754
-#: src/protocols/trepia/trepia.c:1065 src/protocols/yahoo/yahoo.c:2563
+#: src/protocols/trepia/trepia.c:1065 src/protocols/yahoo/yahoo.c:2558
 #: src/protocols/zephyr/zephyr.c:1452
 msgid "Connecting"
 msgstr "Соединение"
 
-#: src/protocols/irc/irc.c:243
+#: src/protocols/irc/irc.c:244
 msgid "Couldn't create socket"
 msgstr "Не удалось создать сокет"
 
-#: src/protocols/irc/irc.c:258 src/protocols/jabber/jabber.c:302
+#: src/protocols/irc/irc.c:259 src/protocols/jabber/jabber.c:302
 #: src/protocols/oscar/oscar.c:1685 src/protocols/oscar/oscar.c:1750
 msgid "Couldn't connect to host"
 msgstr "Не удалось соединиться с узлом"
 
-#: src/protocols/irc/irc.c:398 src/protocols/trepia/trepia.c:927
+#: src/protocols/irc/irc.c:402 src/protocols/trepia/trepia.c:927
 msgid "Read error"
 msgstr "Ошибка чтения"
 
-#: src/protocols/irc/irc.c:553 src/protocols/silc/chat.c:1373
+#: src/protocols/irc/irc.c:557 src/protocols/silc/chat.c:1373
 #: src/protocols/yahoo/yahoochat.c:1426
 msgid "Users"
 msgstr "Пользователи"
 
-#: src/protocols/irc/irc.c:556 src/protocols/silc/chat.c:1376
+#: src/protocols/irc/irc.c:560 src/protocols/silc/chat.c:1376
 #: src/protocols/silc/ops.c:1166 src/protocols/yahoo/yahoochat.c:1435
 msgid "Topic"
 msgstr "Тема"
@@ -5232,39 +5249,39 @@ msgstr "Тема"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:663
+#: src/protocols/irc/irc.c:667
 msgid "IRC Protocol Plugin"
 msgstr "Модуль протокола IRC"
 
 #. *  summary
-#: src/protocols/irc/irc.c:664
+#: src/protocols/irc/irc.c:668
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Наименее плохой модуль протокола IRC"
 
-#: src/protocols/irc/irc.c:683 src/protocols/irc/msgs.c:239
+#: src/protocols/irc/irc.c:687 src/protocols/irc/msgs.c:239
 #: src/protocols/jabber/jabber.c:1615 src/protocols/napster/napster.c:672
 #: src/protocols/silc/ops.c:1026 src/protocols/silc/ops.c:1129
 msgid "Server"
 msgstr "Сервер"
 
-#: src/protocols/irc/irc.c:686 src/protocols/jabber/jabber.c:1636
-#: src/protocols/msn/msn.c:1933 src/protocols/napster/napster.c:677
-#: src/protocols/silc/silc.c:1594 src/protocols/trepia/trepia.c:1301
+#: src/protocols/irc/irc.c:690 src/protocols/jabber/jabber.c:1636
+#: src/protocols/msn/msn.c:1934 src/protocols/napster/napster.c:677
+#: src/protocols/silc/silc.c:1596 src/protocols/trepia/trepia.c:1301
 msgid "Port"
 msgstr "Порт"
 
-#: src/protocols/irc/irc.c:689
+#: src/protocols/irc/irc.c:693
 msgid "Encodings"
 msgstr "Кодировки"
 
-#: src/protocols/irc/irc.c:692 src/protocols/irc/msgs.c:233
+#: src/protocols/irc/irc.c:696 src/protocols/irc/msgs.c:233
 #: src/protocols/jabber/jabber.c:597 src/protocols/silc/buddy.c:1454
 #: src/protocols/silc/ops.c:973 src/protocols/silc/ops.c:975
 #: src/protocols/silc/ops.c:1123 src/protocols/silc/ops.c:1125
 msgid "Username"
 msgstr "Имя пользователя"
 
-#: src/protocols/irc/irc.c:695
+#: src/protocols/irc/irc.c:699
 msgid "Real name"
 msgstr "Настоящее имя"
 
@@ -5302,7 +5319,7 @@ msgstr " <i>(идентифицирован)</i>"
 
 #: src/protocols/irc/msgs.c:227 src/protocols/irc/msgs.c:233
 #: src/protocols/irc/msgs.c:234 src/protocols/irc/msgs.c:245
-#: src/protocols/msn/msn.c:1326 src/protocols/yahoo/yahoo_profile.c:664
+#: src/protocols/msn/msn.c:1327 src/protocols/yahoo/yahoo_profile.c:664
 #, c-format
 msgid "<b>%s:</b> %s<br>"
 msgstr "<b>%s:</b> %s<br>"
@@ -5704,22 +5721,22 @@ msgstr "Сервер не использует ни одного поддерж�
 msgid "Invalid challenge from server"
 msgstr "Неверный запрос с сервера"
 
-#: src/protocols/jabber/buddy.c:246 src/protocols/jabber/buddy.c:610
+#: src/protocols/jabber/buddy.c:246 src/protocols/jabber/buddy.c:613
 #: src/protocols/silc/ops.c:804
 msgid "Full Name"
 msgstr "Полное имя"
 
-#: src/protocols/jabber/buddy.c:247 src/protocols/jabber/buddy.c:623
+#: src/protocols/jabber/buddy.c:247 src/protocols/jabber/buddy.c:626
 #: src/protocols/silc/ops.c:816
 msgid "Family Name"
 msgstr "Фамилия"
 
-#: src/protocols/jabber/buddy.c:248 src/protocols/jabber/buddy.c:627
+#: src/protocols/jabber/buddy.c:248 src/protocols/jabber/buddy.c:630
 msgid "Given Name"
 msgstr "Имя"
 
-#: src/protocols/jabber/buddy.c:249 src/protocols/jabber/buddy.c:641
-#: src/protocols/jabber/jabber.c:617 src/protocols/msn/msn.c:1316
+#: src/protocols/jabber/buddy.c:249 src/protocols/jabber/buddy.c:644
+#: src/protocols/jabber/jabber.c:617 src/protocols/msn/msn.c:1317
 #: src/protocols/silc/buddy.c:1451 src/protocols/silc/ops.c:820
 #: src/protocols/silc/ops.c:963 src/protocols/silc/ops.c:1113
 #: src/protocols/yahoo/yahoo_profile.c:1000
@@ -5730,62 +5747,62 @@ msgstr "Псевдоним"
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/buddy.c:251 src/protocols/jabber/buddy.c:669
+#: src/protocols/jabber/buddy.c:251 src/protocols/jabber/buddy.c:672
 msgid "Street Address"
 msgstr "Адрес"
 
-#: src/protocols/jabber/buddy.c:252 src/protocols/jabber/buddy.c:665
+#: src/protocols/jabber/buddy.c:252 src/protocols/jabber/buddy.c:668
 msgid "Extended Address"
 msgstr "Дополнительный адрес"
 
-#: src/protocols/jabber/buddy.c:253 src/protocols/jabber/buddy.c:673
+#: src/protocols/jabber/buddy.c:253 src/protocols/jabber/buddy.c:676
 msgid "Locality"
 msgstr "Расположение"
 
-#: src/protocols/jabber/buddy.c:254 src/protocols/jabber/buddy.c:677
+#: src/protocols/jabber/buddy.c:254 src/protocols/jabber/buddy.c:680
 msgid "Region"
 msgstr "Регион"
 
-#: src/protocols/jabber/buddy.c:255 src/protocols/jabber/buddy.c:681
+#: src/protocols/jabber/buddy.c:255 src/protocols/jabber/buddy.c:684
 #: src/protocols/jabber/jabber.c:647
 msgid "Postal Code"
 msgstr "Почтовый код"
 
 #. Country
-#: src/protocols/jabber/buddy.c:256 src/protocols/jabber/buddy.c:686
+#: src/protocols/jabber/buddy.c:256 src/protocols/jabber/buddy.c:689
 #: src/protocols/trepia/trepia.c:340 src/protocols/trepia/trepia.c:417
 msgid "Country"
 msgstr "Страна"
 
-#: src/protocols/jabber/buddy.c:257 src/protocols/jabber/buddy.c:697
-#: src/protocols/jabber/buddy.c:704
+#: src/protocols/jabber/buddy.c:257 src/protocols/jabber/buddy.c:700
+#: src/protocols/jabber/buddy.c:707
 msgid "Telephone"
 msgstr "Телефон"
 
-#: src/protocols/jabber/buddy.c:258 src/protocols/jabber/buddy.c:715
-#: src/protocols/jabber/buddy.c:723 src/protocols/silc/silc.c:654
+#: src/protocols/jabber/buddy.c:258 src/protocols/jabber/buddy.c:718
+#: src/protocols/jabber/buddy.c:726 src/protocols/silc/silc.c:656
 #: src/protocols/silc/util.c:511 src/protocols/yahoo/yahoo_profile.c:995
 msgid "Email"
 msgstr "E-mail"
 
-#: src/protocols/jabber/buddy.c:259 src/protocols/jabber/buddy.c:738
+#: src/protocols/jabber/buddy.c:259 src/protocols/jabber/buddy.c:741
 msgid "Organization Name"
 msgstr "Название организации"
 
-#: src/protocols/jabber/buddy.c:260 src/protocols/jabber/buddy.c:742
+#: src/protocols/jabber/buddy.c:260 src/protocols/jabber/buddy.c:745
 msgid "Organization Unit"
 msgstr "Отдел"
 
-#: src/protocols/jabber/buddy.c:261 src/protocols/jabber/buddy.c:748
+#: src/protocols/jabber/buddy.c:261 src/protocols/jabber/buddy.c:751
 #: src/protocols/novell/novell.c:1451
 msgid "Title"
 msgstr "Звание"
 
-#: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:751
+#: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:754
 msgid "Role"
 msgstr "Должность"
 
-#: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:644
+#: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:647
 #: src/protocols/oscar/oscar.c:5134
 msgid "Birthday"
 msgstr "Дата рождения"
@@ -5801,66 +5818,66 @@ msgid ""
 msgstr ""
 "Все нижеследующие пункты необязательны. Заполняйте по своему усмотрению."
 
-#: src/protocols/jabber/buddy.c:553
+#: src/protocols/jabber/buddy.c:556
 msgid "Jabber ID"
 msgstr "Jabber ID"
 
-#: src/protocols/jabber/buddy.c:563 src/protocols/jabber/buddy.c:570
-#: src/protocols/jabber/buddy.c:583 src/protocols/jabber/jabber.c:969
+#: src/protocols/jabber/buddy.c:566 src/protocols/jabber/buddy.c:573
+#: src/protocols/jabber/buddy.c:586 src/protocols/jabber/jabber.c:969
 #: src/protocols/msn/msn.c:489 src/protocols/novell/novell.c:2819
 #: src/protocols/novell/novell.c:2823 src/protocols/oscar/oscar.c:725
 #: src/protocols/oscar/oscar.c:731 src/protocols/oscar/oscar.c:733
-#: src/protocols/yahoo/yahoo.c:2827
+#: src/protocols/yahoo/yahoo.c:2822
 msgid "Status"
 msgstr "Статус"
 
-#: src/protocols/jabber/buddy.c:631 src/protocols/silc/ops.c:812
+#: src/protocols/jabber/buddy.c:634 src/protocols/silc/ops.c:812
 msgid "Middle Name"
 msgstr "Отчество"
 
-#: src/protocols/jabber/buddy.c:649 src/protocols/jabber/jabber.c:632
+#: src/protocols/jabber/buddy.c:652 src/protocols/jabber/jabber.c:632
 #: src/protocols/oscar/oscar.c:5152 src/protocols/oscar/oscar.c:5160
 #: src/protocols/silc/ops.c:848
 msgid "Address"
 msgstr "Адрес"
 
-#: src/protocols/jabber/buddy.c:661
+#: src/protocols/jabber/buddy.c:664
 msgid "P.O. Box"
 msgstr "Индекс"
 
-#: src/protocols/jabber/buddy.c:767
+#: src/protocols/jabber/buddy.c:770
 msgid "Photo"
 msgstr "Фотография"
 
-#: src/protocols/jabber/buddy.c:767
+#: src/protocols/jabber/buddy.c:770
 msgid "Logo"
 msgstr "Логотип"
 
-#: src/protocols/jabber/buddy.c:783
+#: src/protocols/jabber/buddy.c:786
 msgid "Jabber Profile"
 msgstr "Профиль Jabber"
 
-#: src/protocols/jabber/buddy.c:938
+#: src/protocols/jabber/buddy.c:941
 msgid "Un-hide From"
 msgstr "Показаться для"
 
-#: src/protocols/jabber/buddy.c:941
+#: src/protocols/jabber/buddy.c:944
 msgid "Temporarily Hide From"
 msgstr "Временно скрыться от"
 
 #. && NOT ME
-#: src/protocols/jabber/buddy.c:948
+#: src/protocols/jabber/buddy.c:951
 msgid "Cancel Presence Notification"
 msgstr "Отменить уведомление о присутствии"
 
-#: src/protocols/jabber/buddy.c:954
+#: src/protocols/jabber/buddy.c:957
 msgid "(Re-)Request authorization"
 msgstr "(Повторно) Запросить авторизацию"
 
 #. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
-#: src/protocols/jabber/buddy.c:962
+#: src/protocols/jabber/buddy.c:965
 msgid "Unsubscribe"
 msgstr "Отписаться"
 
@@ -6025,7 +6042,7 @@ msgid "State"
 msgstr "Область"
 
 #: src/protocols/jabber/jabber.c:652 src/protocols/silc/ops.c:853
-#: src/protocols/silc/silc.c:656 src/protocols/silc/util.c:513
+#: src/protocols/silc/silc.c:658 src/protocols/silc/util.c:513
 msgid "Phone"
 msgstr "Телефон"
 
@@ -6422,7 +6439,7 @@ msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Разрешить идентификацию простым текстом через нешифрованные потоки"
 
 #. Account options
-#: src/protocols/jabber/jabber.c:1640 src/protocols/silc/silc.c:1590
+#: src/protocols/jabber/jabber.c:1640 src/protocols/silc/silc.c:1592
 msgid "Connect server"
 msgstr "Соединиться с сервером"
 
@@ -6459,42 +6476,42 @@ msgstr " (Код %s)"
 msgid "XML Parse error"
 msgstr "Ошибка разбора XML"
 
-#: src/protocols/jabber/presence.c:256
+#: src/protocols/jabber/presence.c:290
 #, fuzzy
 msgid "Unknown Error in presence"
 msgstr "Неизвестная ошибка статуса присутствия"
 
-#: src/protocols/jabber/presence.c:259
+#: src/protocols/jabber/presence.c:293
 #, c-format
 msgid "The user %s wants to add you to their buddy list."
 msgstr "Пользователь %s хочет добавить вас в свой список контактов."
 
-#: src/protocols/jabber/presence.c:314 src/protocols/jabber/presence.c:315
+#: src/protocols/jabber/presence.c:348 src/protocols/jabber/presence.c:349
 msgid "Create New Room"
 msgstr "Создать новую комнату"
 
-#: src/protocols/jabber/presence.c:316
+#: src/protocols/jabber/presence.c:350
 msgid ""
 "You are creating a new room.  Would you like to configure it, or accept the "
 "default settings?"
 msgstr ""
-"Вы создаёте новую комнату. Вы хотели бы настроить её или принять установки "
-"по умолчанию?"
+"Вы создаёте новую комнату. Хотите настроить её или принять установки по "
+"умолчанию?"
 
-#: src/protocols/jabber/presence.c:318
+#: src/protocols/jabber/presence.c:352
 msgid "Configure Room"
 msgstr "Настроить комнату"
 
-#: src/protocols/jabber/presence.c:320
+#: src/protocols/jabber/presence.c:354
 msgid "Accept Defaults"
 msgstr "Принять установки по умолчанию"
 
-#: src/protocols/jabber/presence.c:350
+#: src/protocols/jabber/presence.c:384
 #, c-format
 msgid "Error in chat %s"
 msgstr "Ошибка в чате %s"
 
-#: src/protocols/jabber/presence.c:353
+#: src/protocols/jabber/presence.c:387
 #, c-format
 msgid "Error joining chat %s"
 msgstr "Ошибка присоединения к чату %s"
@@ -6807,7 +6824,7 @@ msgid "Page"
 msgstr "Страница"
 
 #: src/protocols/msn/msn.c:489 src/protocols/msn/msn.c:497
-#: src/protocols/msn/msn.c:500 src/protocols/yahoo/yahoo.c:2827
+#: src/protocols/msn/msn.c:500 src/protocols/yahoo/yahoo.c:2822
 #, c-format
 msgid ""
 "\n"
@@ -6824,39 +6841,39 @@ msgstr ""
 msgid "Blocked"
 msgstr "Заблокирован"
 
-#: src/protocols/msn/msn.c:514 src/protocols/msn/msn.c:800
+#: src/protocols/msn/msn.c:514 src/protocols/msn/msn.c:801
 #: src/protocols/msn/state.c:34
 msgid "Away From Computer"
 msgstr "Отошёл от компьютера"
 
-#: src/protocols/msn/msn.c:515 src/protocols/msn/msn.c:802
-#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2684
-#: src/protocols/yahoo/yahoo.c:3051 src/protocols/yahoo/yahoo.c:3167
+#: src/protocols/msn/msn.c:515 src/protocols/msn/msn.c:803
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2679
+#: src/protocols/yahoo/yahoo.c:3046 src/protocols/yahoo/yahoo.c:3162
 msgid "Be Right Back"
 msgstr "Скоро вернусь"
 
-#: src/protocols/msn/msn.c:516 src/protocols/msn/msn.c:804
+#: src/protocols/msn/msn.c:516 src/protocols/msn/msn.c:805
 #: src/protocols/msn/state.c:31 src/protocols/novell/novell.c:2803
 #: src/protocols/novell/novell.c:2918 src/protocols/novell/novell.c:2972
 #: src/protocols/silc/buddy.c:1392 src/protocols/silc/silc.c:48
-#: src/protocols/silc/silc.c:83 src/protocols/yahoo/yahoo.c:2686
-#: src/protocols/yahoo/yahoo.c:3053 src/protocols/yahoo/yahoo.c:3168
+#: src/protocols/silc/silc.c:83 src/protocols/yahoo/yahoo.c:2681
+#: src/protocols/yahoo/yahoo.c:3048 src/protocols/yahoo/yahoo.c:3163
 msgid "Busy"
 msgstr "Занят"
 
-#: src/protocols/msn/msn.c:517 src/protocols/msn/msn.c:806
-#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2694
-#: src/protocols/yahoo/yahoo.c:3061 src/protocols/yahoo/yahoo.c:3172
+#: src/protocols/msn/msn.c:517 src/protocols/msn/msn.c:807
+#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2689
+#: src/protocols/yahoo/yahoo.c:3056 src/protocols/yahoo/yahoo.c:3167
 msgid "On The Phone"
 msgstr "Разговариваю по телефону"
 
-#: src/protocols/msn/msn.c:518 src/protocols/msn/msn.c:808
-#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2698
-#: src/protocols/yahoo/yahoo.c:3065 src/protocols/yahoo/yahoo.c:3174
+#: src/protocols/msn/msn.c:518 src/protocols/msn/msn.c:809
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2693
+#: src/protocols/yahoo/yahoo.c:3060 src/protocols/yahoo/yahoo.c:3169
 msgid "Out To Lunch"
 msgstr "Пошёл перекусить"
 
-#: src/protocols/msn/msn.c:519 src/protocols/msn/msn.c:810
+#: src/protocols/msn/msn.c:519 src/protocols/msn/msn.c:811
 #: src/protocols/zephyr/zephyr.c:2111 src/protocols/zephyr/zephyr.c:2143
 msgid "Hidden"
 msgstr "Скрыт"
@@ -6893,7 +6910,7 @@ msgstr ""
 msgid "Initiate _Chat"
 msgstr "Начать разговор"
 
-#: src/protocols/msn/msn.c:622
+#: src/protocols/msn/msn.c:623
 msgid ""
 "SSL support is needed for MSN. Please install a supported SSL library. See "
 "http://gaim.sf.net/faq-ssl.php for more information."
@@ -6901,116 +6918,116 @@ msgstr ""
 "Поддержка SSL необходима для MSN. Установите поддерживаемую библиотеку SSL. "
 "За дополнительной информацией обращайтесь на http://gaim.sf.net/faq-ssl.php."
 
-#: src/protocols/msn/msn.c:650
+#: src/protocols/msn/msn.c:651
 msgid "Failed to connect to server."
 msgstr "Не удалось соединиться с сервером."
 
-#: src/protocols/msn/msn.c:1308 src/protocols/yahoo/yahoo_profile.c:659
+#: src/protocols/msn/msn.c:1309 src/protocols/yahoo/yahoo_profile.c:659
 #: src/protocols/zephyr/zephyr.c:711 src/protocols/zephyr/zephyr.c:1120
 #, c-format
 msgid "<b>Alias:</b> %s<br>"
 msgstr "<b>Псевдоним:</b> %s<br>"
 
 #. put a link to the actual profile URL
-#: src/protocols/msn/msn.c:1316 src/protocols/msn/msn.c:1674
+#: src/protocols/msn/msn.c:1317 src/protocols/msn/msn.c:1675
 #: src/protocols/yahoo/yahoo_profile.c:1168 src/util.c:784
 #, c-format
 msgid "<b>%s:</b> "
 msgstr "<b>%s:</b> "
 
-#: src/protocols/msn/msn.c:1404
+#: src/protocols/msn/msn.c:1405
 msgid "MSN Profile"
 msgstr "Профиль MSN"
 
-#: src/protocols/msn/msn.c:1409 src/protocols/msn/msn.c:1661
+#: src/protocols/msn/msn.c:1410 src/protocols/msn/msn.c:1662
 #: src/protocols/yahoo/yahoo_profile.c:761
 msgid "Error retrieving profile"
 msgstr "Ошибка загрузки профиля"
 
 #. Age
-#: src/protocols/msn/msn.c:1480 src/protocols/oscar/oscar.c:5139
+#: src/protocols/msn/msn.c:1481 src/protocols/oscar/oscar.c:5139
 #: src/protocols/trepia/trepia.c:286 src/protocols/trepia/trepia.c:405
 #: src/protocols/yahoo/yahoo_profile.c:1015
 msgid "Age"
 msgstr "Возраст"
 
 #. Gender
-#: src/protocols/msn/msn.c:1487 src/protocols/oscar/oscar.c:5125
+#: src/protocols/msn/msn.c:1488 src/protocols/oscar/oscar.c:5125
 #: src/protocols/trepia/trepia.c:280 src/protocols/trepia/trepia.c:407
 #: src/protocols/yahoo/yahoo_profile.c:1025
 msgid "Gender"
 msgstr "Пол"
 
-#: src/protocols/msn/msn.c:1496 src/protocols/yahoo/yahoo_profile.c:1020
+#: src/protocols/msn/msn.c:1497 src/protocols/yahoo/yahoo_profile.c:1020
 msgid "Marital Status"
 msgstr "Брачный статус"
 
-#: src/protocols/msn/msn.c:1503 src/protocols/novell/novell.c:1445
+#: src/protocols/msn/msn.c:1504 src/protocols/novell/novell.c:1445
 #: src/protocols/yahoo/yahoo_profile.c:1010
 msgid "Location"
 msgstr "Местоположение"
 
-#: src/protocols/msn/msn.c:1511 src/protocols/yahoo/yahoo_profile.c:1030
+#: src/protocols/msn/msn.c:1512 src/protocols/yahoo/yahoo_profile.c:1030
 msgid "Occupation"
 msgstr "Занятость"
 
-#: src/protocols/msn/msn.c:1528 src/protocols/msn/msn.c:1534
-#: src/protocols/msn/msn.c:1541 src/protocols/msn/msn.c:1549
-#: src/protocols/msn/msn.c:1556
+#: src/protocols/msn/msn.c:1529 src/protocols/msn/msn.c:1535
+#: src/protocols/msn/msn.c:1542 src/protocols/msn/msn.c:1550
+#: src/protocols/msn/msn.c:1557
 msgid "A Little About Me"
 msgstr "Немного о себе"
 
-#: src/protocols/msn/msn.c:1565 src/protocols/msn/msn.c:1571
-#: src/protocols/msn/msn.c:1578 src/protocols/msn/msn.c:1585
+#: src/protocols/msn/msn.c:1566 src/protocols/msn/msn.c:1572
+#: src/protocols/msn/msn.c:1579 src/protocols/msn/msn.c:1586
 msgid "Favorite Things"
 msgstr "Любимые вещи"
 
-#: src/protocols/msn/msn.c:1594 src/protocols/msn/msn.c:1600
-#: src/protocols/msn/msn.c:1607
+#: src/protocols/msn/msn.c:1595 src/protocols/msn/msn.c:1601
+#: src/protocols/msn/msn.c:1608
 msgid "Hobbies and Interests"
 msgstr "Хобби и интересы"
 
-#: src/protocols/msn/msn.c:1616 src/protocols/msn/msn.c:1622
+#: src/protocols/msn/msn.c:1617 src/protocols/msn/msn.c:1623
 #: src/protocols/yahoo/yahoo_profile.c:1072
 msgid "Favorite Quote"
 msgstr "Любимая цитата"
 
-#: src/protocols/msn/msn.c:1630 src/protocols/yahoo/yahoo_profile.c:1123
+#: src/protocols/msn/msn.c:1631 src/protocols/yahoo/yahoo_profile.c:1123
 msgid "Last Updated"
 msgstr "Последнее обновление"
 
 #. Homepage
-#: src/protocols/msn/msn.c:1641 src/protocols/silc/ops.c:844
+#: src/protocols/msn/msn.c:1642 src/protocols/silc/ops.c:844
 #: src/protocols/trepia/trepia.c:290 src/protocols/trepia/trepia.c:420
 msgid "Homepage"
 msgstr "Домашняя страница"
 
-#: src/protocols/msn/msn.c:1663
+#: src/protocols/msn/msn.c:1664
 msgid "The user has not created a public profile."
 msgstr ""
 
-#: src/protocols/msn/msn.c:1664
+#: src/protocols/msn/msn.c:1665
 msgid ""
 "MSN reported not being able to find the user's profile. This either means "
 "that the user does not exist, or that the user exists but has not created a "
 "public profile."
 msgstr ""
 
-#: src/protocols/msn/msn.c:1668
+#: src/protocols/msn/msn.c:1669
 msgid ""
 "Gaim could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
 
-#: src/protocols/msn/msn.c:1674 src/protocols/yahoo/yahoo_profile.c:1168
+#: src/protocols/msn/msn.c:1675 src/protocols/yahoo/yahoo_profile.c:1168
 msgid "Profile URL"
 msgstr "URL профиля"
 
-#: src/protocols/msn/msn.c:1815
+#: src/protocols/msn/msn.c:1816
 msgid "Display conversation closed notices"
 msgstr "Выводить уведомления о закрытии беседы"
 
-#: src/protocols/msn/msn.c:1820
+#: src/protocols/msn/msn.c:1821
 msgid "Display timeout notices"
 msgstr "Выводить уведомления об истечении времени ожидания"
 
@@ -7024,15 +7041,15 @@ msgstr "Выводить уведомления об истечении врем
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/msn/msn.c:1907 src/protocols/msn/msn.c:1909
+#: src/protocols/msn/msn.c:1908 src/protocols/msn/msn.c:1910
 msgid "MSN Protocol Plugin"
 msgstr "Модуль протокола MSN"
 
-#: src/protocols/msn/msn.c:1928 src/protocols/trepia/trepia.c:1296
+#: src/protocols/msn/msn.c:1929 src/protocols/trepia/trepia.c:1296
 msgid "Login server"
 msgstr "Сервер входа в сеть:"
 
-#: src/protocols/msn/msn.c:1937
+#: src/protocols/msn/msn.c:1938
 msgid "Use HTTP Method"
 msgstr "Использовать метод HTTP"
 
@@ -7046,7 +7063,7 @@ msgstr "Не удаётся установить соединение"
 msgid "%s is not a valid group."
 msgstr "%s не является допустимой группой."
 
-#: src/protocols/msn/notification.c:184 src/protocols/msn/notification.c:522
+#: src/protocols/msn/notification.c:184 src/protocols/msn/notification.c:523
 #: src/protocols/msn/session.c:349
 msgid "Unknown error."
 msgstr "Неизвестная ошибка."
@@ -7056,40 +7073,40 @@ msgstr "Неизвестная ошибка."
 msgid "%s on %s (%s)"
 msgstr "%s на %s (%s)"
 
-#: src/protocols/msn/notification.c:492
+#: src/protocols/msn/notification.c:493
 #, c-format
 msgid "Unable to add user on %s (%s)"
 msgstr "Не удаётся добавить пользователя на %s (%s)"
 
-#: src/protocols/msn/notification.c:496
+#: src/protocols/msn/notification.c:497
 #, c-format
 msgid "Unable to block user on %s (%s)"
 msgstr "Не удаётся заблокировать пользователя на %s (%s)"
 
-#: src/protocols/msn/notification.c:500
+#: src/protocols/msn/notification.c:501
 #, c-format
 msgid "Unable to permit user on %s (%s)"
 msgstr "Не удаётся допустить пользователя на %s (%s)"
 
-#: src/protocols/msn/notification.c:508
+#: src/protocols/msn/notification.c:509
 #, c-format
 msgid "%s could not be added because your buddy list is full."
 msgstr "Не удалось добавить %s, так как список контактов полон."
 
-#: src/protocols/msn/notification.c:517
+#: src/protocols/msn/notification.c:518
 #, c-format
 msgid "%s is not a valid passport account."
 msgstr "%s не является допустимой паспортной учётной записью."
 
-#: src/protocols/msn/notification.c:804
+#: src/protocols/msn/notification.c:805
 msgid "Unable to rename group"
 msgstr "Не удаётся переименовать группу"
 
-#: src/protocols/msn/notification.c:859
+#: src/protocols/msn/notification.c:860
 msgid "Unable to delete group"
 msgstr "Не удаётся удалить группу"
 
-#: src/protocols/msn/notification.c:1286
+#: src/protocols/msn/notification.c:1287
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -7604,7 +7621,7 @@ msgstr ""
 
 #: src/protocols/novell/novell.c:1879
 msgid "Would you like to join the conversation?"
-msgstr "Вы хотели бы присоединиться к беседе?"
+msgstr "Хотите присоединиться к беседе?"
 
 #: src/protocols/novell/novell.c:1985
 msgid "You have been logged out because you logged in at another workstation."
@@ -7641,7 +7658,7 @@ msgstr ""
 "сообщения."
 
 #: src/protocols/novell/novell.c:2809 src/protocols/oscar/oscar.c:733
-#: src/protocols/oscar/oscar.c:6697 src/protocols/yahoo/yahoo.c:2706
+#: src/protocols/oscar/oscar.c:6697 src/protocols/yahoo/yahoo.c:2701
 msgid "Offline"
 msgstr "Не в сети"
 
@@ -7787,7 +7804,7 @@ msgstr "Голос"
 msgid "AIM Direct IM"
 msgstr "Прямое соединение AIM"
 
-#: src/protocols/oscar/oscar.c:594 src/protocols/silc/silc.c:652
+#: src/protocols/oscar/oscar.c:594 src/protocols/silc/silc.c:654
 #: src/protocols/silc/util.c:509
 msgid "Chat"
 msgstr "Чат"
@@ -7834,7 +7851,7 @@ msgstr "Старый ICQ UTF8"
 
 #: src/protocols/oscar/oscar.c:631
 msgid "Trillian Encryption"
-msgstr "Кодирование Trillian"
+msgstr "Шифрование Trillian"
 
 #: src/protocols/oscar/oscar.c:634
 msgid "ICQ UTF8"
@@ -7974,9 +7991,9 @@ msgstr "Не удалось установить соединение"
 msgid "Connection established, cookie sent"
 msgstr "Соединение установлено, данные отправлены"
 
-#: src/protocols/oscar/oscar.c:1967 src/protocols/yahoo/yahoo_filexfer.c:175
-#: src/protocols/yahoo/yahoo_filexfer.c:184
-#: src/protocols/yahoo/yahoo_filexfer.c:193
+#: src/protocols/oscar/oscar.c:1967 src/protocols/yahoo/yahoo_filexfer.c:177
+#: src/protocols/yahoo/yahoo_filexfer.c:186
+#: src/protocols/yahoo/yahoo_filexfer.c:195
 msgid "Unable to establish file descriptor."
 msgstr "Не удаётся установить дескриптор файла."
 
@@ -8777,7 +8794,7 @@ msgstr "Статусное сообщение:"
 msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:7267 src/protocols/silc/silc.c:810
+#: src/protocols/oscar/oscar.c:7267 src/protocols/silc/silc.c:812
 msgid "Set User Info..."
 msgstr "Установить информацию о пользователе..."
 
@@ -8789,7 +8806,7 @@ msgstr "Установить информацию о пользователе (U
 msgid "Set Available Message..."
 msgstr "Установить статусное сообщение..."
 
-#: src/protocols/oscar/oscar.c:7283 src/protocols/silc/silc.c:806
+#: src/protocols/oscar/oscar.c:7283 src/protocols/silc/silc.c:808
 msgid "Change Password..."
 msgstr "Изменить пароль..."
 
@@ -8908,8 +8925,8 @@ msgid ""
 "Key agreement request received from %s. Would you like to perform the key "
 "agreement?"
 msgstr ""
-"Получен запрос согласования ключей от %s. Вы хотели бы выполнить "
-"согласование ключей?"
+"Получен запрос согласования ключей от %s. Хотите выполнить согласование "
+"ключей?"
 
 #: src/protocols/silc/buddy.c:292
 #, c-format
@@ -9048,57 +9065,57 @@ msgstr "Гиперактивный"
 msgid "Robot"
 msgstr "Робот"
 
-#: src/protocols/silc/buddy.c:1405 src/protocols/silc/silc.c:627
+#: src/protocols/silc/buddy.c:1405 src/protocols/silc/silc.c:629
 #: src/protocols/silc/util.c:472
 msgid "Happy"
 msgstr "Счастливый"
 
-#: src/protocols/silc/buddy.c:1407 src/protocols/silc/silc.c:629
+#: src/protocols/silc/buddy.c:1407 src/protocols/silc/silc.c:631
 #: src/protocols/silc/util.c:474
 msgid "Sad"
 msgstr "Печальный"
 
-#: src/protocols/silc/buddy.c:1409 src/protocols/silc/silc.c:631
+#: src/protocols/silc/buddy.c:1409 src/protocols/silc/silc.c:633
 #: src/protocols/silc/util.c:476
 msgid "Angry"
 msgstr "Рассерженный"
 
-#: src/protocols/silc/buddy.c:1411 src/protocols/silc/silc.c:633
+#: src/protocols/silc/buddy.c:1411 src/protocols/silc/silc.c:635
 #: src/protocols/silc/util.c:478
 msgid "Jealous"
 msgstr "Ревнующий"
 
-#: src/protocols/silc/buddy.c:1413 src/protocols/silc/silc.c:635
+#: src/protocols/silc/buddy.c:1413 src/protocols/silc/silc.c:637
 #: src/protocols/silc/util.c:480
 msgid "Ashamed"
 msgstr "Стыдящийся"
 
-#: src/protocols/silc/buddy.c:1415 src/protocols/silc/silc.c:637
+#: src/protocols/silc/buddy.c:1415 src/protocols/silc/silc.c:639
 #: src/protocols/silc/util.c:482
 msgid "Invincible"
 msgstr "Непобедимый"
 
-#: src/protocols/silc/buddy.c:1417 src/protocols/silc/silc.c:639
+#: src/protocols/silc/buddy.c:1417 src/protocols/silc/silc.c:641
 #: src/protocols/silc/util.c:484
 msgid "In Love"
 msgstr "Влюблённый"
 
-#: src/protocols/silc/buddy.c:1419 src/protocols/silc/silc.c:641
+#: src/protocols/silc/buddy.c:1419 src/protocols/silc/silc.c:643
 #: src/protocols/silc/util.c:486
 msgid "Sleepy"
 msgstr "Сонный"
 
-#: src/protocols/silc/buddy.c:1421 src/protocols/silc/silc.c:643
+#: src/protocols/silc/buddy.c:1421 src/protocols/silc/silc.c:645
 #: src/protocols/silc/util.c:488
 msgid "Bored"
 msgstr "Скучающий"
 
-#: src/protocols/silc/buddy.c:1423 src/protocols/silc/silc.c:645
+#: src/protocols/silc/buddy.c:1423 src/protocols/silc/silc.c:647
 #: src/protocols/silc/util.c:490
 msgid "Excited"
 msgstr "Возбуждённый"
 
-#: src/protocols/silc/buddy.c:1425 src/protocols/silc/silc.c:647
+#: src/protocols/silc/buddy.c:1425 src/protocols/silc/silc.c:649
 #: src/protocols/silc/util.c:492
 msgid "Anxious"
 msgstr "Озабоченный"
@@ -9128,7 +9145,7 @@ msgid "Device"
 msgstr "Устройство"
 
 #: src/protocols/silc/buddy.c:1490 src/protocols/silc/ops.c:1016
-#: src/protocols/silc/silc.c:695 src/protocols/silc/silc.c:697
+#: src/protocols/silc/silc.c:697 src/protocols/silc/silc.c:699
 msgid "Timezone"
 msgstr "Часовой пояс"
 
@@ -9356,11 +9373,11 @@ msgstr "Присоединиться к личной группе"
 msgid "Cannot join private group"
 msgstr "Не удаётся присоединиться к личной группе"
 
-#: src/protocols/silc/chat.c:1252 src/protocols/silc/silc.c:909
+#: src/protocols/silc/chat.c:1252 src/protocols/silc/silc.c:911
 msgid "Cannot call command"
 msgstr "Не удаётся вызвать команду"
 
-#: src/protocols/silc/chat.c:1253 src/protocols/silc/silc.c:910
+#: src/protocols/silc/chat.c:1253 src/protocols/silc/silc.c:912
 msgid "Unknown command"
 msgstr "Неизвестная команда"
 
@@ -9505,7 +9522,7 @@ msgstr ""
 msgid "More..."
 msgstr "Ещё..."
 
-#: src/protocols/silc/ops.c:1155 src/protocols/silc/silc.c:798
+#: src/protocols/silc/ops.c:1155 src/protocols/silc/silc.c:800
 msgid "Detach From Server"
 msgstr "Разорвать соединение с сервером"
 
@@ -9721,19 +9738,19 @@ msgid "Out of memory"
 msgstr "Недостаточно памяти"
 
 #. Progress
-#: src/protocols/silc/silc.c:291
+#: src/protocols/silc/silc.c:293
 msgid "Connecting to SILC Server"
 msgstr "Соединение с сервером SILC"
 
-#: src/protocols/silc/silc.c:623
+#: src/protocols/silc/silc.c:625
 msgid "Your Current Mood"
 msgstr "Ваше текущее настроение"
 
-#: src/protocols/silc/silc.c:625
+#: src/protocols/silc/silc.c:627
 msgid "Normal"
 msgstr "Нормально"
 
-#: src/protocols/silc/silc.c:650
+#: src/protocols/silc/silc.c:652
 msgid ""
 "\n"
 "Your Preferred Contact Methods"
@@ -9741,43 +9758,43 @@ msgstr ""
 "\n"
 "Предпочитаемые вами способы контакта"
 
-#: src/protocols/silc/silc.c:658 src/protocols/silc/util.c:517
+#: src/protocols/silc/silc.c:660 src/protocols/silc/util.c:517
 msgid "SMS"
 msgstr "SMS"
 
-#: src/protocols/silc/silc.c:660 src/protocols/silc/util.c:519
+#: src/protocols/silc/silc.c:662 src/protocols/silc/util.c:519
 msgid "MMS"
 msgstr "MMS"
 
-#: src/protocols/silc/silc.c:662 src/protocols/silc/util.c:521
+#: src/protocols/silc/silc.c:664 src/protocols/silc/util.c:521
 msgid "Video Conferencing"
 msgstr "Видеоконференция"
 
-#: src/protocols/silc/silc.c:667
+#: src/protocols/silc/silc.c:669
 msgid "Your Current Status"
 msgstr "Ваш текущий статус"
 
-#: src/protocols/silc/silc.c:674
+#: src/protocols/silc/silc.c:676
 msgid "Online Services"
 msgstr "Сетевые службы"
 
-#: src/protocols/silc/silc.c:677
+#: src/protocols/silc/silc.c:679
 msgid "Let others see what services you are using"
 msgstr "Позволить другим видеть, какие службы вы используете"
 
-#: src/protocols/silc/silc.c:683
+#: src/protocols/silc/silc.c:685
 msgid "Let others see what computer you are using"
 msgstr "Позволить другим видеть, какой компьютер вы используете"
 
-#: src/protocols/silc/silc.c:690
+#: src/protocols/silc/silc.c:692
 msgid "Your VCard File"
 msgstr "Ваш файл VCard"
 
-#: src/protocols/silc/silc.c:703 src/protocols/silc/silc.c:704
+#: src/protocols/silc/silc.c:705 src/protocols/silc/silc.c:706
 msgid "User Online Status Attributes"
 msgstr "Атрибуты сетевого статуса пользователя"
 
-#: src/protocols/silc/silc.c:705
+#: src/protocols/silc/silc.c:707
 #, fuzzy
 msgid ""
 "You can let other users see your online status information and your personal "
@@ -9788,137 +9805,137 @@ msgstr ""
 "статусе и вашу персональную информацию. Введите информацию, которую вы "
 "хотели бы"
 
-#: src/protocols/silc/silc.c:745 src/protocols/silc/silc.c:751
-#: src/protocols/silc/silc.c:1158
+#: src/protocols/silc/silc.c:747 src/protocols/silc/silc.c:753
+#: src/protocols/silc/silc.c:1160
 msgid "Message of the Day"
 msgstr "Сообщение дня"
 
-#: src/protocols/silc/silc.c:745
+#: src/protocols/silc/silc.c:747
 msgid "No Message of the Day available"
 msgstr "Нет доступного сообщения дня"
 
-#: src/protocols/silc/silc.c:746 src/protocols/silc/silc.c:1153
+#: src/protocols/silc/silc.c:748 src/protocols/silc/silc.c:1155
 msgid "There is no Message of the Day associated with this connection"
 msgstr "Нет сообщения дня, соотнесённого с этим соединением"
 
-#: src/protocols/silc/silc.c:793
+#: src/protocols/silc/silc.c:795
 msgid "Online Status"
 msgstr "Сетевой статус"
 
-#: src/protocols/silc/silc.c:802
+#: src/protocols/silc/silc.c:804
 msgid "View Message of the Day"
 msgstr "Просмотреть сообщение дня"
 
-#: src/protocols/silc/silc.c:874
+#: src/protocols/silc/silc.c:876
 #, c-format
 msgid "User <I>%s</I> is not present in the network"
 msgstr "Пользователь <I>%s</I> не присутствует в сети"
 
-#: src/protocols/silc/silc.c:983
+#: src/protocols/silc/silc.c:985
 msgid "Failed to leave channel"
 msgstr "Не удалось покинуть канал"
 
-#: src/protocols/silc/silc.c:1029
+#: src/protocols/silc/silc.c:1031
 msgid "Topic too long"
 msgstr "Тема слишком велика"
 
-#: src/protocols/silc/silc.c:1110
+#: src/protocols/silc/silc.c:1112
 msgid "You must specify a nick"
 msgstr "Вы должны указать псевдоним"
 
-#: src/protocols/silc/silc.c:1212
+#: src/protocols/silc/silc.c:1214
 #, c-format
 msgid "channel %s not found"
 msgstr "канал %s не найден"
 
-#: src/protocols/silc/silc.c:1217
+#: src/protocols/silc/silc.c:1219
 #, c-format
 msgid "channel modes for %s: %s"
 msgstr "режимы канала для %s: %s"
 
-#: src/protocols/silc/silc.c:1219
+#: src/protocols/silc/silc.c:1221
 #, c-format
 msgid "no channel modes are set on %s"
 msgstr "нет установленных режимов канала на %s"
 
-#: src/protocols/silc/silc.c:1232
+#: src/protocols/silc/silc.c:1234
 #, c-format
 msgid "Failed to set cmodes for %s"
 msgstr "Не удалось установить режимы канала для %s"
 
-#: src/protocols/silc/silc.c:1262
+#: src/protocols/silc/silc.c:1264
 #, c-format
 msgid "Unknown command: %s, (may be a Gaim bug)"
 msgstr "Неизвестная команда: %s, (возможно, ошибка Gaim)"
 
-#: src/protocols/silc/silc.c:1325
+#: src/protocols/silc/silc.c:1327
 msgid "part [channel]:  Leave the chat"
 msgstr "part [канал]:  Покинуть чат"
 
-#: src/protocols/silc/silc.c:1329
+#: src/protocols/silc/silc.c:1331
 msgid "leave [channel]:  Leave the chat"
 msgstr "leave [канал]:  Покинуть чат"
 
-#: src/protocols/silc/silc.c:1333
+#: src/protocols/silc/silc.c:1335
 msgid "topic [&lt;new topic&gt;]:  View or change the topic"
 msgstr "topic [&lt;новая тема&gt;]:  Просмотреть или изменить тему"
 
-#: src/protocols/silc/silc.c:1338
+#: src/protocols/silc/silc.c:1340
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
 msgstr ""
 "join &lt;канал&gt; [&lt;пароль&gt;]:  Присоединиться к чату в этой сети"
 
-#: src/protocols/silc/silc.c:1342
+#: src/protocols/silc/silc.c:1344
 msgid "list:  List channels on this network"
 msgstr "list:  Вывести список каналов в этой сети"
 
-#: src/protocols/silc/silc.c:1346
+#: src/protocols/silc/silc.c:1348
 msgid "whois &lt;nick&gt;:  View nick's information"
 msgstr "whois &lt;псевдоним&gt;:  Просмотреть информацию о пользователе"
 
-#: src/protocols/silc/silc.c:1350 src/protocols/zephyr/zephyr.c:2478
+#: src/protocols/silc/silc.c:1352 src/protocols/zephyr/zephyr.c:2478
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
 msgstr ""
 "msg &lt;псевдоним&gt; &lt;сообщение&gt;:  Отправить пользователю личное "
 "сообщение"
 
-#: src/protocols/silc/silc.c:1354
+#: src/protocols/silc/silc.c:1356
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
 msgstr ""
 "query &lt;псевдоним&gt; [&lt;сообщение&gt;]:  Отправить пользователю личное "
 "сообщение"
 
-#: src/protocols/silc/silc.c:1358
+#: src/protocols/silc/silc.c:1360
 msgid "motd:  View the server's Message Of The Day"
 msgstr "motd:  Просмотреть сообщение дня сервера"
 
-#: src/protocols/silc/silc.c:1362
+#: src/protocols/silc/silc.c:1364
 msgid "detach:  Detach this session"
 msgstr "detach:  Прервать эту сессию"
 
-#: src/protocols/silc/silc.c:1366
+#: src/protocols/silc/silc.c:1368
 msgid "quit [message]:  Disconnect from the server, with an optional message"
 msgstr ""
 "quit [сообщение]:  Разорвать соединение с сервером, сообщение необязательно"
 
-#: src/protocols/silc/silc.c:1370
+#: src/protocols/silc/silc.c:1372
 msgid "call &lt;command&gt;:  Call any silc client command"
 msgstr "call &lt;команда&gt;:  Вызвать любую команду клиента silc"
 
-#: src/protocols/silc/silc.c:1376
+#: src/protocols/silc/silc.c:1378
 msgid "kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"
 msgstr ""
 "kill &lt;псевдоним&gt; [-публичный ключ|&lt;причина&gt;]:  Убить пользователя"
 
-#: src/protocols/silc/silc.c:1380
+#: src/protocols/silc/silc.c:1382
 msgid "nick &lt;newnick&gt;:  Change your nickname"
 msgstr "nick &lt;новый псевдоним&gt;:  Изменить свой псевдоним"
 
-#: src/protocols/silc/silc.c:1384
+#: src/protocols/silc/silc.c:1386
 msgid "whowas &lt;nick&gt;:  View nick's information"
 msgstr "whowas &lt;псевдоним&gt;:  Просмотреть информацию о пользователе"
 
-#: src/protocols/silc/silc.c:1388
+#: src/protocols/silc/silc.c:1390
 #, fuzzy
 msgid ""
 "cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display "
@@ -9926,7 +9943,7 @@ msgid ""
 msgstr ""
 "cmode &lt;канал&gt; [+|-&lt;режимы&gt;] [аргументы]:  Change or display "
 
-#: src/protocols/silc/silc.c:1392
+#: src/protocols/silc/silc.c:1394
 msgid ""
 "cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes "
 "on channel"
@@ -9934,83 +9951,83 @@ msgstr ""
 "cumode &lt;канал&gt; +|-&lt;режимы&gt; &lt;псевдоним&gt;:  Изменить режимы "
 "пользователя на канале"
 
-#: src/protocols/silc/silc.c:1396
+#: src/protocols/silc/silc.c:1398
 msgid "umode &lt;usermodes&gt;:  Set your modes in the network"
 msgstr "umode &lt;режимы пользователя&gt;:  Установить свои режимы в сети"
 
-#: src/protocols/silc/silc.c:1400
+#: src/protocols/silc/silc.c:1402
 msgid "oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"
 msgstr ""
 "oper &lt;псевдоним&gt; [-публичный ключ]:  Получить привилегии оператора "
 "сервера"
 
-#: src/protocols/silc/silc.c:1404
+#: src/protocols/silc/silc.c:1406
 msgid ""
 "invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from "
 "channel invite list"
 msgstr ""
 
-#: src/protocols/silc/silc.c:1408
+#: src/protocols/silc/silc.c:1410
 msgid "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
 msgstr ""
 "kick &lt;канал&gt; &lt;псевдоним&gt; [комментарий]:  Удалить пользователя с "
 "канала"
 
-#: src/protocols/silc/silc.c:1412
+#: src/protocols/silc/silc.c:1414
 msgid "info [server]:  View server administrative details"
 msgstr "info [сервер]:  Просмотреть административные подробности о сервере"
 
-#: src/protocols/silc/silc.c:1416
+#: src/protocols/silc/silc.c:1418
 msgid "ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"
 msgstr ""
 "ban [&lt;канал&gt; +|-&lt;псевдоним&gt;]:  Выгнать пользователя с канала"
 
-#: src/protocols/silc/silc.c:1420
+#: src/protocols/silc/silc.c:1422
 msgid "getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"
 msgstr ""
 "getkey &lt;псевдоним|сервер&gt;:  Загрузить публичный ключ пользователя или "
 "сервера"
 
-#: src/protocols/silc/silc.c:1424
+#: src/protocols/silc/silc.c:1426
 msgid "stats:  View server and network statistics"
 msgstr "stats:  Просмотреть статистику сервера и сети"
 
-#: src/protocols/silc/silc.c:1428
+#: src/protocols/silc/silc.c:1430
 msgid "ping:  Send PING to the connected server"
 msgstr "ping:  Послать PING серверу"
 
-#: src/protocols/silc/silc.c:1433
+#: src/protocols/silc/silc.c:1435
 msgid "users &lt;channel&gt;:  List users in channel"
 msgstr ""
 "users &lt;канал&gt;:  Вывести список пользователей, присутствующих на канале"
 
-#: src/protocols/silc/silc.c:1437
+#: src/protocols/silc/silc.c:1439
 msgid ""
 "names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List "
 "specific users in channel(s)"
 msgstr ""
 
-#: src/protocols/silc/silc.c:1449
+#: src/protocols/silc/silc.c:1451
 msgid "Instant Messages"
 msgstr "Сообщения"
 
-#: src/protocols/silc/silc.c:1454
+#: src/protocols/silc/silc.c:1456
 msgid "Digitally sign all IM messages"
 msgstr "Делать цифровую подпись всех сообщений"
 
-#: src/protocols/silc/silc.c:1459
+#: src/protocols/silc/silc.c:1461
 msgid "Verify all IM message signatures"
 msgstr "Проверять подписи всех сообщений"
 
-#: src/protocols/silc/silc.c:1462
+#: src/protocols/silc/silc.c:1464
 msgid "Channel Messages"
 msgstr "Сообщения канала"
 
-#: src/protocols/silc/silc.c:1467
+#: src/protocols/silc/silc.c:1469
 msgid "Digitally sign all channel messages"
 msgstr "Делать цифровую подпись всех сообщений канала"
 
-#: src/protocols/silc/silc.c:1472
+#: src/protocols/silc/silc.c:1474
 msgid "Verify all channel message signatures"
 msgstr "Проверять подписи всех сообщений канала"
 
@@ -10023,40 +10040,40 @@ msgstr "Проверять подписи всех сообщений канал
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/silc/silc.c:1561
+#: src/protocols/silc/silc.c:1563
 msgid "SILC Protocol Plugin"
 msgstr "Модуль протокола SILC"
 
 #. *  description
-#: src/protocols/silc/silc.c:1563
+#: src/protocols/silc/silc.c:1565
 msgid "Secure Internet Live Conferencing (SILC) Protocol"
 msgstr "Протокол Secure Internet Live Conferencing (SILC)"
 
-#: src/protocols/silc/silc.c:1597
+#: src/protocols/silc/silc.c:1599
 msgid "Public Key file"
 msgstr "Файл публичного ключа"
 
-#: src/protocols/silc/silc.c:1601
+#: src/protocols/silc/silc.c:1603
 msgid "Private Key file"
 msgstr "Файл личного ключа"
 
-#: src/protocols/silc/silc.c:1604
+#: src/protocols/silc/silc.c:1606
 msgid "Public key authentication"
 msgstr "Аутентификация публичного ключа"
 
-#: src/protocols/silc/silc.c:1608
+#: src/protocols/silc/silc.c:1610
 msgid "Reject watching by other users"
 msgstr "Запретить просмотр другими пользователями"
 
-#: src/protocols/silc/silc.c:1611
+#: src/protocols/silc/silc.c:1613
 msgid "Block invites"
 msgstr "Блокировать приглашения"
 
-#: src/protocols/silc/silc.c:1614
+#: src/protocols/silc/silc.c:1616
 msgid "Block IMs without Key Exchange"
 msgstr "Блокировать сообщения без обмена ключами"
 
-#: src/protocols/silc/silc.c:1617
+#: src/protocols/silc/silc.c:1619
 msgid "Reject online status attribute requests"
 msgstr "Отвергать запросы атрибута сетевого статуса"
 
@@ -10445,31 +10462,31 @@ msgstr "Вход"
 msgid "Trepia Protocol Plugin"
 msgstr "Модуль протокола Trepia"
 
-#: src/protocols/yahoo/yahoo.c:424
+#: src/protocols/yahoo/yahoo.c:419
 msgid ""
 "You have been logged off as you have logged in on a different machine or "
 "device."
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:917
+#: src/protocols/yahoo/yahoo.c:912
 msgid "Your Yahoo! message did not get sent."
 msgstr "Ваше сообщение Yahoo! не отправлено."
 
-#: src/protocols/yahoo/yahoo.c:941
+#: src/protocols/yahoo/yahoo.c:936 src/protocols/yahoo/yahoo.c:3439
 msgid "Buzz!!"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:986
+#: src/protocols/yahoo/yahoo.c:981
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Системное сообщение Yahoo! для %s:"
 
-#: src/protocols/yahoo/yahoo.c:1053
+#: src/protocols/yahoo/yahoo.c:1048
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
 msgstr "%s (повторно) не разрешил добавить его в ваш список."
 
-#: src/protocols/yahoo/yahoo.c:1056
+#: src/protocols/yahoo/yahoo.c:1051
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10477,11 +10494,11 @@ msgid ""
 msgstr ""
 "%s (повторно) не разрешил добавить его в ваш список по следующей причине: %s."
 
-#: src/protocols/yahoo/yahoo.c:1059
+#: src/protocols/yahoo/yahoo.c:1054
 msgid "Add buddy rejected"
 msgstr "В добавлении пользователя отказано"
 
-#: src/protocols/yahoo/yahoo.c:1820
+#: src/protocols/yahoo/yahoo.c:1815
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -10489,30 +10506,30 @@ msgid ""
 "on to Yahoo.  Check %s for updates."
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:1823
+#: src/protocols/yahoo/yahoo.c:1818
 msgid "Failed Yahoo! Authentication"
 msgstr "Аутентификация Yahoo! завершилась неудачно"
 
-#: src/protocols/yahoo/yahoo.c:1895
+#: src/protocols/yahoo/yahoo.c:1890
 #, c-format
 msgid ""
 "You have tried to ignore %s, but the user is on your buddy list.  Clicking "
 "\"Yes\" will remove and ignore the buddy."
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:1898
+#: src/protocols/yahoo/yahoo.c:1893
 msgid "Ignore buddy?"
 msgstr "Игнорировать пользователя?"
 
-#: src/protocols/yahoo/yahoo.c:1932
+#: src/protocols/yahoo/yahoo.c:1927
 msgid "Invalid username."
 msgstr "Неверное имя пользователя."
 
-#: src/protocols/yahoo/yahoo.c:1943
+#: src/protocols/yahoo/yahoo.c:1938
 msgid "Normal authentication failed!"
 msgstr "Обычная аутентификация завершилась неудачно!"
 
-#: src/protocols/yahoo/yahoo.c:1944
+#: src/protocols/yahoo/yahoo.c:1939
 msgid ""
 "The normal authentication method has failed. This means either your password "
 "is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
@@ -10520,95 +10537,103 @@ msgid ""
 "reduced functionality and features."
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:1952
+#: src/protocols/yahoo/yahoo.c:1947
 msgid "Incorrect password."
 msgstr "Неверный пароль."
 
-#: src/protocols/yahoo/yahoo.c:1955
+#: src/protocols/yahoo/yahoo.c:1950
 msgid "Your account is locked, please log in to the Yahoo! website."
 msgstr "Ваша учётная запись заблокирована, войдите с веб-сайта Yahoo!."
 
-#: src/protocols/yahoo/yahoo.c:1958
+#: src/protocols/yahoo/yahoo.c:1953
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr ""
 "Неизвестная ошибка номер %d. Вход с веб-сайта Yahoo! может исправить это."
 
-#: src/protocols/yahoo/yahoo.c:2012
+#: src/protocols/yahoo/yahoo.c:2007
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
 msgstr ""
 "Не удалось добавить пользователя %s в группу %s в список на сервере учётной "
 "записи %s."
 
-#: src/protocols/yahoo/yahoo.c:2015
+#: src/protocols/yahoo/yahoo.c:2010
 msgid "Could not add buddy to server list"
 msgstr "Не удалось добавить пользователя в список на сервере"
 
-#: src/protocols/yahoo/yahoo.c:2252 src/protocols/yahoo/yahoo.c:2400
+#: src/protocols/yahoo/yahoo.c:2247 src/protocols/yahoo/yahoo.c:2395
 #: src/protocols/yahoo/ycht.c:414
 msgid "Unable to read"
 msgstr "Не удаётся прочитать"
 
-#: src/protocols/yahoo/yahoo.c:2422 src/protocols/yahoo/yahoo.c:2532
-#: src/protocols/yahoo/yahoo.c:2582 src/protocols/yahoo/yahoo.c:2592
+#: src/protocols/yahoo/yahoo.c:2417 src/protocols/yahoo/yahoo.c:2527
+#: src/protocols/yahoo/yahoo.c:2577 src/protocols/yahoo/yahoo.c:2587
 #: src/protocols/yahoo/yahoochat.c:1443 src/protocols/yahoo/yahoochat.c:1504
 #: src/protocols/yahoo/ycht.c:518
 msgid "Connection problem"
 msgstr "Проблема с соединением"
 
-#: src/protocols/yahoo/yahoo.c:2688 src/protocols/yahoo/yahoo.c:3055
-#: src/protocols/yahoo/yahoo.c:3169
+#: src/protocols/yahoo/yahoo.c:2683 src/protocols/yahoo/yahoo.c:3050
+#: src/protocols/yahoo/yahoo.c:3164
 msgid "Not At Home"
 msgstr "Не дома"
 
-#: src/protocols/yahoo/yahoo.c:2690 src/protocols/yahoo/yahoo.c:3057
-#: src/protocols/yahoo/yahoo.c:3170
+#: src/protocols/yahoo/yahoo.c:2685 src/protocols/yahoo/yahoo.c:3052
+#: src/protocols/yahoo/yahoo.c:3165
 msgid "Not At Desk"
 msgstr "Не за столом"
 
-#: src/protocols/yahoo/yahoo.c:2692 src/protocols/yahoo/yahoo.c:3059
-#: src/protocols/yahoo/yahoo.c:3171
+#: src/protocols/yahoo/yahoo.c:2687 src/protocols/yahoo/yahoo.c:3054
+#: src/protocols/yahoo/yahoo.c:3166
 msgid "Not In Office"
 msgstr "Не в офисе"
 
-#: src/protocols/yahoo/yahoo.c:2696 src/protocols/yahoo/yahoo.c:3063
-#: src/protocols/yahoo/yahoo.c:3173
+#: src/protocols/yahoo/yahoo.c:2691 src/protocols/yahoo/yahoo.c:3058
+#: src/protocols/yahoo/yahoo.c:3168
 msgid "On Vacation"
 msgstr "В отпуске"
 
-#: src/protocols/yahoo/yahoo.c:2700 src/protocols/yahoo/yahoo.c:3067
-#: src/protocols/yahoo/yahoo.c:3175
+#: src/protocols/yahoo/yahoo.c:2695 src/protocols/yahoo/yahoo.c:3062
+#: src/protocols/yahoo/yahoo.c:3170
 msgid "Stepped Out"
 msgstr "Вышел"
 
-#: src/protocols/yahoo/yahoo.c:2781 src/protocols/yahoo/yahoo.c:2807
+#: src/protocols/yahoo/yahoo.c:2776 src/protocols/yahoo/yahoo.c:2802
 msgid "Not on server list"
 msgstr "Не в списке на сервере"
 
-#: src/protocols/yahoo/yahoo.c:2886
+#: src/protocols/yahoo/yahoo.c:2881
 msgid "Join in Chat"
 msgstr "Присоединиться в чате"
 
-#: src/protocols/yahoo/yahoo.c:2891
+#: src/protocols/yahoo/yahoo.c:2886
 msgid "Initiate Conference"
 msgstr "Создать конференцию"
 
-#: src/protocols/yahoo/yahoo.c:2943
+#: src/protocols/yahoo/yahoo.c:2938
 msgid "Active which ID?"
 msgstr "Активировать какой ID?"
 
-#: src/protocols/yahoo/yahoo.c:2952
+#: src/protocols/yahoo/yahoo.c:2947
 msgid "Join who in chat?"
 msgstr "К кому присоединиться в чате?"
 
-#: src/protocols/yahoo/yahoo.c:2962
+#: src/protocols/yahoo/yahoo.c:2957
 msgid "Activate ID..."
 msgstr "Активировать ID..."
 
-#: src/protocols/yahoo/yahoo.c:2966
+#: src/protocols/yahoo/yahoo.c:2961
 msgid "Join user in chat..."
 msgstr "Присоединиться к пользователю в чате..."
+
+#: src/protocols/yahoo/yahoo.c:3481
+msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
+msgstr "join &lt;комната&gt;:  Присоединиться к чату в сети Yahoo"
+
+#: src/protocols/yahoo/yahoo.c:3485
+msgid "buzz: Buzz a contact to get their attention"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -10620,47 +10645,47 @@ msgstr "Присоединиться к пользователю в чате..."
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3503 src/protocols/yahoo/yahoo.c:3505
+#: src/protocols/yahoo/yahoo.c:3564 src/protocols/yahoo/yahoo.c:3566
 msgid "Yahoo Protocol Plugin"
 msgstr "Модуль протокола Yahoo"
 
-#: src/protocols/yahoo/yahoo.c:3524
+#: src/protocols/yahoo/yahoo.c:3585
 msgid "Yahoo Japan"
 msgstr "Yahoo Japan"
 
-#: src/protocols/yahoo/yahoo.c:3527
+#: src/protocols/yahoo/yahoo.c:3588
 msgid "Pager host"
 msgstr "Узел пейджера"
 
-#: src/protocols/yahoo/yahoo.c:3530
+#: src/protocols/yahoo/yahoo.c:3591
 msgid "Japan Pager host"
 msgstr "Узел пейджера Japan"
 
-#: src/protocols/yahoo/yahoo.c:3533
+#: src/protocols/yahoo/yahoo.c:3594
 msgid "Pager port"
 msgstr "Порт пейджера"
 
-#: src/protocols/yahoo/yahoo.c:3536
+#: src/protocols/yahoo/yahoo.c:3597
 msgid "File transfer host"
 msgstr "Узел передачи файлов"
 
-#: src/protocols/yahoo/yahoo.c:3539
+#: src/protocols/yahoo/yahoo.c:3600
 msgid "Japan File transfer host"
 msgstr "Узел передачи файлов Japan"
 
-#: src/protocols/yahoo/yahoo.c:3542
+#: src/protocols/yahoo/yahoo.c:3603
 msgid "File transfer port"
 msgstr "Порт передачи файлов"
 
-#: src/protocols/yahoo/yahoo.c:3545
+#: src/protocols/yahoo/yahoo.c:3606
 msgid "Chat Room List Url"
 msgstr "URL списка чатов"
 
-#: src/protocols/yahoo/yahoo.c:3548
+#: src/protocols/yahoo/yahoo.c:3609
 msgid "YCHT Host"
 msgstr "Узел YCHT"
 
-#: src/protocols/yahoo/yahoo.c:3551
+#: src/protocols/yahoo/yahoo.c:3612
 msgid "YCHT Port"
 msgstr "Порт YCHT"
 
@@ -10945,11 +10970,11 @@ msgstr "Доступ запрещён: прокси-сервер запреща�
 msgid "Proxy connection error %d"
 msgstr "Ошибка соединения с прокси %d"
 
-#: src/proxy.c:1784
+#: src/proxy.c:1790
 msgid "Invalid proxy settings"
 msgstr "Неверные настройки прокси"
 
-#: src/proxy.c:1784
+#: src/proxy.c:1790
 msgid ""
 "Either the host name or port number specified for your given proxy type is "
 "invalid."
@@ -11085,38 +11110,38 @@ msgstr "Открыть почту"
 msgid "_Warn"
 msgstr "Сделать предупреждение"
 
-#: src/util.c:2375
+#: src/util.c:2384
 msgid "Calculating..."
 msgstr "Подсчёт..."
 
-#: src/util.c:2378
+#: src/util.c:2387
 msgid "Unknown."
 msgstr "Неизвестно."
 
-#: src/util.c:2408
+#: src/util.c:2417
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "секунда"
 msgstr[1] "секунд"
 
-#: src/util.c:2422
+#: src/util.c:2431
 msgid "day"
 msgid_plural "days"
 msgstr[0] "день"
 msgstr[1] "дней"
 
-#: src/util.c:2430
+#: src/util.c:2439
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "час"
 msgstr[1] "часов"
 
-#: src/util.c:2438
+#: src/util.c:2447
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "минута"
 msgstr[1] "минут"
 
-#: src/util.c:2858
+#: src/util.c:2867
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Ошибка открытия соединения.\n"
