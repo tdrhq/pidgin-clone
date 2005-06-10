@@ -1546,7 +1546,11 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		(flags & (GAIM_MESSAGE_RECV | GAIM_MESSAGE_ERROR)) &&
 		(!gaim_conv_window_has_focus(win)))
 	{
-		gaim_conv_window_switch_conversation(win, gaim_conversation_get_index(conv));
+		/*
+		 * This is auto-tab switching.
+		 * This is currently not enabled because people are lame.  --Mark Doliner
+		 */
+		/* gaim_conv_window_switch_conversation(win, gaim_conversation_get_index(conv)); */
 	}
 }
 
