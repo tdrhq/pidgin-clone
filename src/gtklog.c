@@ -296,6 +296,7 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
 	g_signal_connect(G_OBJECT(lv->window), "response", 
 					 G_CALLBACK(destroy_cb), ht);
+	gtk_window_set_role(GTK_WINDOW(lv->window), "buddy_log");
 
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), 6);
@@ -415,6 +416,7 @@ void gaim_gtk_syslog_show()
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(syslog_viewer->window)->vbox), 0);
 	g_signal_connect(G_OBJECT(syslog_viewer->window), "response", 
 					 G_CALLBACK(destroy_cb), NULL);
+	gtk_window_set_role(GTK_WINDOW(syslog_viewer->window), "system_log");
 
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), 6);
