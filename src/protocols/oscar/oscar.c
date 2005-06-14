@@ -5862,6 +5862,9 @@ static void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *
 	}
 }
 
+/*
+ * FYI, the OSCAR SSI code removes empty groups automatically.
+ */
 static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGroup *group, GList *moved_buddies) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
@@ -5881,7 +5884,6 @@ static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGro
 			oscar_remove_buddies(gc, moved_buddies, groups);
 			oscar_add_buddies(gc, moved_buddies, groups);
 			g_list_free(groups);
-			/** XXX: Shouldn't be we deleting the old group on the server here??? */
 			gaim_debug_info("oscar",
 					   "ssi: moved all buddies from group %s to %s\n", old_name, group->name);
 		} else {
