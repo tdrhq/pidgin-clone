@@ -2662,14 +2662,15 @@ static void
 icon_menu_save_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	gchar *buf;
+ 	const gchar *ext;
 
 	g_return_if_fail(conv != NULL);
 
-	/*
-	 * XXX - The file extension needs to be set to something that doesn't suck...
-	 * Maybe do what gtkimhtml.c does when saving an image?
-	 */
-	buf = g_strdup_printf("%s.icon", gaim_normalize(conv->account, conv->name));
+ 	ext = gaim_buddy_icon_get_type(gaim_conv_im_get_icon(GAIM_CONV_IM(conv)));
+ 	if (ext == NULL)
+ 		ext = "icon";
+ 
+ 	buf = g_strdup_printf("%s.%s", gaim_normalize(conv->account, conv->name), ext);
 
 	gaim_request_file(conv, _("Save Icon"), buf, TRUE,
 					 G_CALLBACK(saveicon_writefile_cb), NULL, conv);
