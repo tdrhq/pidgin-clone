@@ -8,9 +8,10 @@ version 1.4.0:
 	* Attempt to detect the file type of a buddy icon when saving.
 	* Additional Yahoo! boot protection (Peter Lawler)
 	* A few Yahoo! memory leaks plugged (Peter Lawler)
-	* Fixed handling of the new Yahoo! profile page.  Please refer to the
-	  Yahoo! section of the Gaim FAQ for details. (Joshua Honeycutt,
+	* Fixed handling of the new Yahoo! profile page. (Joshua Honeycutt,
 	  Peter Lawler)
+	* Fixed localized Yahoo! room lists.  Please refer to the Yahoo!
+	  section of the Gaim FAQ for details. (Peter Lawler)
 	* Enabled sending files to ICQ users (Jonathan Clark)
 
 version 1.3.1 (6/9/2005):
