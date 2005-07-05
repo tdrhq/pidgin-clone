@@ -134,6 +134,8 @@ static void gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node
 
 static void show_rename_group(GtkWidget *unused, GaimGroup *g);
 
+static void gaim_gtk_blist_tooltip_destroy();
+
 struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
 	gboolean contact_expanded;
@@ -1414,6 +1416,16 @@ gaim_gtk_blist_show_context_menu(GaimBlistNode *node,
 		menu = create_buddy_menu(node, b);
 	}
 
+#ifdef _WIN32
+	/* Unhook the tooltip-timeout since we don't want a tooltip
+	 * to appear and obscure the context menu we are about to show
+	   This is a workaround for GTK+ bug 107320. */
+	if (gtkblist->timeout) {
+		g_source_remove(gtkblist->timeout);
+		gtkblist->timeout = 0;
+	}
+#endif
+
 	/* Now display the menu */
 	if (menu != NULL) {
 		gtk_widget_show_all(menu);
@@ -1677,13 +1689,31 @@ parse_vcard(const char *vcard, GaimGroup *group)
 	return TRUE;
 }
 
+#ifdef _WIN32
+static void gaim_gtk_blist_drag_begin(GtkWidget *widget,
+		GdkDragContext *drag_context, gpointer user_data)
+{
+	gaim_gtk_blist_tooltip_destroy();
+
+
+	/* Unhook the tooltip-timeout since we don't want a tooltip
+	 * to appear and obscure the dragging operation.
+	 * This is a workaround for GTK+ bug 107320. */
+	if (gtkblist->timeout) {
+		g_source_remove(gtkblist->timeout);
+		gtkblist->timeout = 0;
+	}
+}
+#endif
+
 static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
 											GdkDragContext *dc,
 											GtkSelectionData *data,
 											guint info,
 											guint time,
-											gpointer *null)
+											gpointer null)
 {
+
 	if (data->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE))
 	{
 		GtkTreeRowReference *ref = g_object_get_data(G_OBJECT(dc), "gtk-tree-view-source-row");
@@ -3198,6 +3228,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
   	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-get", G_CALLBACK(gaim_gtk_blist_drag_data_get_cb), NULL);
+#ifdef _WIN32
+	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-begin", G_CALLBACK(gaim_gtk_blist_drag_begin), NULL);
+#endif
 
 	/* Tooltips */
 	g_signal_connect(G_OBJECT(gtkblist->treeview), "motion-notify-event", G_CALLBACK(gaim_gtk_blist_motion_cb), NULL);
