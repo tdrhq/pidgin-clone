@@ -5,7 +5,7 @@
 ;;  Windows Code page: 1250
 ;;
 ;;  Author: Martin Srebotnjak <miles@filmsi.net>
-;;  Version 2
+;;  Version 3
 ;;
 
 ; Startup GTK+ check
@@ -22,16 +22,22 @@
 !define GTK_SECTION_TITLE			"GTK+ izvajalno okolje (zahtevano)"
 !define GTK_THEMES_SECTION_TITLE		"Teme GTK+"
 !define GTK_NOTHEME_SECTION_TITLE		"Brez teme"
-!define GTK_WIMP_SECTION_TITLE		"Tema Wimp"
+!define GTK_WIMP_SECTION_TITLE			"Tema Wimp"
 !define GTK_BLUECURVE_SECTION_TITLE		"Tema Bluecurve"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Tema Light House Blue"
+!define GAIM_SHORTCUTS_SECTION_TITLE		"Bližnjice"
+!define GAIM_DESKTOP_SHORTCUT_SECTION_TITLE	"Namizje"
+!define GAIM_STARTMENU_SHORTCUT_SECTION_TITLE	"Zaèetni meni"
 !define GAIM_SECTION_DESCRIPTION		"Temeljne datoteke Gaima"
-!define GTK_SECTION_DESCRIPTION		"Veèplatformna orodjarna GUI, ki jo uporablja Gaim"
-!define GTK_THEMES_SECTION_DESCRIPTION	"Teme GTK+ lahko spremenijo izgled programov GTK+."
+!define GTK_SECTION_DESCRIPTION			"Veèplatformna orodjarna GUI, ki jo uporablja Gaim"
+!define GTK_THEMES_SECTION_DESCRIPTION		"Teme GTK+ lahko spremenijo izgled programov GTK+."
 !define GTK_NO_THEME_DESC			"Brez namestitve teme GTK+"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (oponaševalec Oken) je tema GTK, ki se lepo vklaplja v namizno okolje Windows."
 !define GTK_BLUECURVE_THEME_DESC		"Tema Bluecurve."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Tema Lighthouseblue."
+!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Tema Lighthouseblue."
+!define GAIM_SHORTCUTS_SECTION_DESCRIPTION	"Bližnjice za zagon Gaima"
+!define GAIM_DESKTOP_SHORTCUT_DESC		"Ustvari bližnjico za Gaim na namizju"
+!define GAIM_STARTMENU_SHORTCUT_DESC		"Ustvari vnos Gaim v meniju Start"
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Našel sem starejšo razlièico izvajalnega okolja GTK+. Jo želite nadgraditi?$\rOpomba: èe je ne boste nadgradili, Gaim morda ne bo deloval."
@@ -42,7 +48,7 @@
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (samo odstrani)"
 !define GAIM_PROMPT_WIPEOUT			"Vaš star imenik Gaim bo zbrisan. Želite nadaljevati?$\r$\rOpomba: Vsi nestandardni vtièniki, ki ste jih namestili, bodo zbrisani.$\rUporabniške nastavitve za Gaim se bodo ohranile."
-!define GAIM_PROMPT_DIR_EXISTS		"Namestitveni imenik, ki ste ga navedli, že obstaja. Vsa vsebina$\rbo zbrisana. Želite nadaljevati?"
+!define GAIM_PROMPT_DIR_EXISTS			"Namestitveni imenik, ki ste ga navedli, že obstaja. Vsa vsebina$\rbo zbrisana. Želite nadaljevati?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Napaka pri namestitvi izvajalnega okolja GTK+."

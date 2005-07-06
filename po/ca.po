@@ -32,8 +32,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-07 23:41+0200\n"
-"PO-Revision-Date: 2005-06-07 23:49+0200\n"
+"POT-Creation-Date: 2005-07-03 13:03+0200\n"
+"PO-Revision-Date: 2005-07-03 13:13+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -177,20 +177,20 @@ msgstr "Nou..."
 
 #: ../plugins/docklet/docklet.c:177 ../src/gtkprefs.c:1813
 #: ../src/protocols/gg/gg.c:52 ../src/protocols/irc/msgs.c:227
-#: ../src/protocols/jabber/jabber.c:996 ../src/protocols/jabber/jutil.c:32
+#: ../src/protocols/jabber/jabber.c:998 ../src/protocols/jabber/jutil.c:32
 #: ../src/protocols/jabber/presence.c:69
 #: ../src/protocols/jabber/presence.c:132
 #: ../src/protocols/novell/novell.c:2800 ../src/protocols/novell/novell.c:2917
-#: ../src/protocols/novell/novell.c:2969 ../src/protocols/oscar/oscar.c:679
-#: ../src/protocols/oscar/oscar.c:5696 ../src/protocols/oscar/oscar.c:6687
-#: ../src/protocols/oscar/oscar.c:6887 ../src/protocols/silc/buddy.c:1388
+#: ../src/protocols/novell/novell.c:2969 ../src/protocols/oscar/oscar.c:680
+#: ../src/protocols/oscar/oscar.c:5702 ../src/protocols/oscar/oscar.c:6699
+#: ../src/protocols/oscar/oscar.c:6899 ../src/protocols/silc/buddy.c:1388
 #: ../src/protocols/silc/silc.c:47 ../src/protocols/silc/silc.c:81
 msgid "Away"
 msgstr "Absent"
 
 #. else...
 #: ../plugins/docklet/docklet.c:183 ../src/away.c:595
-#: ../src/protocols/oscar/oscar.c:5614 ../src/protocols/oscar/oscar.c:6895
+#: ../src/protocols/oscar/oscar.c:5620 ../src/protocols/oscar/oscar.c:6907
 msgid "Back"
 msgstr "De tornada"
 
@@ -480,7 +480,7 @@ msgstr ""
 
 #: ../plugins/gevolution/add_buddy_dialog.c:132
 #: ../plugins/gevolution/assoc-buddy.c:120 ../src/gtkprefs.c:2168
-#: ../src/gtkroomlist.c:553 ../src/protocols/jabber/jabber.c:607
+#: ../src/gtkroomlist.c:553 ../src/protocols/jabber/jabber.c:609
 #: ../src/protocols/msn/msn.c:1474 ../src/protocols/trepia/trepia.c:399
 msgid "Name"
 msgstr "Nom"
@@ -498,7 +498,7 @@ msgstr ""
 
 #. "Search"
 #: ../plugins/gevolution/add_buddy_dialog.c:468
-#: ../plugins/gevolution/assoc-buddy.c:354 ../src/protocols/oscar/oscar.c:7171
+#: ../plugins/gevolution/assoc-buddy.c:354 ../src/protocols/oscar/oscar.c:7183
 msgid "Search"
 msgstr "Cerca"
 
@@ -544,7 +544,7 @@ msgstr "_Associa amic"
 
 #: ../plugins/gevolution/eds-utils.c:74 ../plugins/gevolution/eds-utils.c:87
 #: ../src/gtkblist.c:3092 ../src/gtkprefs.c:962 ../src/gtkprefs.c:1014
-#: ../src/gtkprefs.c:1827 ../src/protocols/jabber/jabber.c:947
+#: ../src/gtkprefs.c:1827 ../src/protocols/jabber/jabber.c:949
 msgid "None"
 msgstr "Cap"
 
@@ -616,7 +616,7 @@ msgstr "Informació opcional:"
 
 #. Label
 #: ../plugins/gevolution/new_person_dialog.c:335 ../src/gtkaccount.c:379
-#: ../src/gtkaccount.c:409 ../src/protocols/oscar/oscar.c:585
+#: ../src/gtkaccount.c:409 ../src/protocols/oscar/oscar.c:586
 msgid "Buddy Icon"
 msgstr "Icona de l'amic"
 
@@ -772,68 +772,68 @@ msgstr ""
 "Afegeix una caixeta a la llista d'amics que indica si teniu correus nous."
 
 #. ---------- "Notify For" ----------
-#: ../plugins/notify.c:615
+#: ../plugins/notify.c:614
 msgid "Notify For"
 msgstr "Notifica per a"
 
-#: ../plugins/notify.c:619
+#: ../plugins/notify.c:618
 msgid "_IM windows"
 msgstr "Finestres de M_I"
 
-#: ../plugins/notify.c:626
+#: ../plugins/notify.c:625
 msgid "C_hat windows"
 msgstr "Finestres de _xat"
 
-#: ../plugins/notify.c:633
+#: ../plugins/notify.c:632
 msgid "_Focused windows"
 msgstr "_Finestres actives"
 
 #. ---------- "Notification Methods" ----------
-#: ../plugins/notify.c:641
+#: ../plugins/notify.c:640
 msgid "Notification Methods"
 msgstr "Mètodes de notificació"
 
-#: ../plugins/notify.c:648
+#: ../plugins/notify.c:647
 msgid "Prepend _string into window title:"
 msgstr "Po_sa aquesta cadena davant del títol de la finestra:"
 
 #. Count method button
-#: ../plugins/notify.c:667
+#: ../plugins/notify.c:666
 msgid "Insert c_ount of new messages into window title"
 msgstr "Insereix el _nombre de missatges nous al títol de la finestra"
 
 #. Urgent method button
-#: ../plugins/notify.c:675
+#: ../plugins/notify.c:674
 msgid "Set window manager \"_URGENT\" hint"
 msgstr "Aplica l'opció \"_URGENT\" del gestor de finestres"
 
 #. ---------- "Notification Removals" ----------
-#: ../plugins/notify.c:683
+#: ../plugins/notify.c:682
 msgid "Notification Removal"
 msgstr "Supressió de notificacions"
 
 #. Remove on focus button
-#: ../plugins/notify.c:688
+#: ../plugins/notify.c:687
 msgid "Remove when conversation window _gains focus"
 msgstr "Suprimeix quan la finestra de la conversa esti_gui activada"
 
 #. Remove on click button
-#: ../plugins/notify.c:695
+#: ../plugins/notify.c:694
 msgid "Remove when conversation window _receives click"
 msgstr "Suprimeix quan es faci clic a la finestra de la conve_rsa"
 
 #. Remove on type button
-#: ../plugins/notify.c:703
+#: ../plugins/notify.c:702
 msgid "Remove when _typing in conversation window"
 msgstr "Suprimeix quan s'escrigui a la fines_tra de la conversa"
 
 #. Remove on message send button
-#: ../plugins/notify.c:711
+#: ../plugins/notify.c:710
 msgid "Remove when a _message gets sent"
 msgstr "Suprimeix quan s'enviï un _missatge"
 
 #. Remove on conversation switch button
-#: ../plugins/notify.c:720
+#: ../plugins/notify.c:719
 msgid "Remove on switch to conversation ta_b"
 msgstr "Suprimeix en canviar a la _pestanya de la conversa"
 
@@ -843,7 +843,7 @@ msgstr "Suprimeix en canviar a la _pestanya de la conversa"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: ../plugins/notify.c:810
+#: ../plugins/notify.c:809
 msgid "Message Notification"
 msgstr "Notificació de missatges"
 
@@ -851,7 +851,7 @@ msgstr "Notificació de missatges"
 #. *< version
 #. *  summary
 #. *  description
-#: ../plugins/notify.c:813 ../plugins/notify.c:815
+#: ../plugins/notify.c:812 ../plugins/notify.c:814
 msgid "Provides a variety of ways of notifying you of unread messages."
 msgstr ""
 "Us proporciona diferents maneres de notificar-vos la presència de missatges "
@@ -950,7 +950,7 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: ../plugins/signals-test.c:585
+#: ../plugins/signals-test.c:601
 msgid "Signals Test"
 msgstr "Comprovació de senyals"
 
@@ -958,7 +958,7 @@ msgstr "Comprovació de senyals"
 #. *< version
 #. *  summary
 #. *  description
-#: ../plugins/signals-test.c:588 ../plugins/signals-test.c:590
+#: ../plugins/signals-test.c:604 ../plugins/signals-test.c:606
 msgid "Test to see that all signals are working properly."
 msgstr "Prova per veure si tots els senyals funcionen correctament."
 
@@ -1292,7 +1292,7 @@ msgstr "Opcions del WinGaim"
 msgid "Options specific to Windows Gaim."
 msgstr "Opcions específiques de la versió del Gaim per a Windows"
 
-#: ../src/account.c:298 ../src/protocols/jabber/jabber.c:1037
+#: ../src/account.c:298 ../src/protocols/jabber/jabber.c:1039
 msgid "New passwords do not match."
 msgstr "Les noves contrasenyes no coincideixen."
 
@@ -1325,49 +1325,49 @@ msgstr "Introduïu la contrasenya actual, i la nova."
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
 #: ../src/account.c:363 ../src/connection.c:198 ../src/gtkblist.c:2462
-#: ../src/gtkdialogs.c:500 ../src/gtkdialogs.c:642 ../src/gtkdialogs.c:696
-#: ../src/gtkrequest.c:243 ../src/protocols/jabber/jabber.c:1084
+#: ../src/gtkdialogs.c:502 ../src/gtkdialogs.c:644 ../src/gtkdialogs.c:698
+#: ../src/gtkrequest.c:243 ../src/protocols/jabber/jabber.c:1086
 #: ../src/protocols/jabber/xdata.c:337 ../src/protocols/msn/msn.c:226
 #: ../src/protocols/msn/msn.c:241 ../src/protocols/msn/msn.c:256
-#: ../src/protocols/msn/msn.c:271 ../src/protocols/oscar/oscar.c:2333
-#: ../src/protocols/oscar/oscar.c:3599 ../src/protocols/oscar/oscar.c:3693
-#: ../src/protocols/oscar/oscar.c:6958 ../src/protocols/oscar/oscar.c:7050
-#: ../src/protocols/oscar/oscar.c:7102 ../src/protocols/oscar/oscar.c:7188
+#: ../src/protocols/msn/msn.c:271 ../src/protocols/oscar/oscar.c:2334
+#: ../src/protocols/oscar/oscar.c:3600 ../src/protocols/oscar/oscar.c:3694
+#: ../src/protocols/oscar/oscar.c:6970 ../src/protocols/oscar/oscar.c:7062
+#: ../src/protocols/oscar/oscar.c:7114 ../src/protocols/oscar/oscar.c:7200
 #: ../src/protocols/silc/buddy.c:460 ../src/protocols/silc/buddy.c:1132
 #: ../src/protocols/silc/chat.c:421 ../src/protocols/silc/chat.c:459
 #: ../src/protocols/silc/chat.c:722 ../src/protocols/silc/ops.c:1081
 #: ../src/protocols/silc/ops.c:1699 ../src/protocols/silc/silc.c:711
-#: ../src/protocols/yahoo/yahoo.c:2940 ../src/protocols/yahoo/yahoo.c:2949
+#: ../src/protocols/yahoo/yahoo.c:2938 ../src/protocols/yahoo/yahoo.c:2947
 #: ../src/request.h:1245
 msgid "OK"
 msgstr "D'acord"
 
 #: ../src/account.c:364 ../src/account.c:402 ../src/away.c:367
-#: ../src/connection.c:199 ../src/gtkaccount.c:2029 ../src/gtkaccount.c:2564
-#: ../src/gtkaccount.c:2595 ../src/gtkblist.c:2463 ../src/gtkblist.c:4539
-#: ../src/gtkconn.c:169 ../src/gtkdialogs.c:501 ../src/gtkdialogs.c:643
-#: ../src/gtkdialogs.c:697 ../src/gtkdialogs.c:795 ../src/gtkdialogs.c:817
-#: ../src/gtkdialogs.c:837 ../src/gtkdialogs.c:874 ../src/gtkdialogs.c:934
-#: ../src/gtkdialogs.c:977 ../src/gtkdialogs.c:1018
-#: ../src/gtkimhtmltoolbar.c:437 ../src/gtkprivacy.c:593
-#: ../src/gtkprivacy.c:606 ../src/gtkprivacy.c:631 ../src/gtkprivacy.c:642
+#: ../src/connection.c:199 ../src/gtkaccount.c:2029 ../src/gtkaccount.c:2568
+#: ../src/gtkaccount.c:2599 ../src/gtkblist.c:2463 ../src/gtkblist.c:4539
+#: ../src/gtkconn.c:169 ../src/gtkdialogs.c:503 ../src/gtkdialogs.c:645
+#: ../src/gtkdialogs.c:699 ../src/gtkdialogs.c:797 ../src/gtkdialogs.c:819
+#: ../src/gtkdialogs.c:839 ../src/gtkdialogs.c:876 ../src/gtkdialogs.c:936
+#: ../src/gtkdialogs.c:979 ../src/gtkdialogs.c:1020
+#: ../src/gtkimhtmltoolbar.c:437 ../src/gtkprivacy.c:597
+#: ../src/gtkprivacy.c:610 ../src/gtkprivacy.c:635 ../src/gtkprivacy.c:646
 #: ../src/gtkrequest.c:244 ../src/protocols/icq/gaim_icq.c:276
 #: ../src/protocols/jabber/buddy.c:515 ../src/protocols/jabber/chat.c:754
-#: ../src/protocols/jabber/jabber.c:676 ../src/protocols/jabber/jabber.c:1085
+#: ../src/protocols/jabber/jabber.c:678 ../src/protocols/jabber/jabber.c:1087
 #: ../src/protocols/jabber/presence.c:213 ../src/protocols/jabber/xdata.c:338
 #: ../src/protocols/msn/msn.c:227 ../src/protocols/msn/msn.c:242
 #: ../src/protocols/msn/msn.c:257 ../src/protocols/msn/msn.c:272
-#: ../src/protocols/msn/msn.c:289 ../src/protocols/oscar/oscar.c:1529
-#: ../src/protocols/oscar/oscar.c:2334 ../src/protocols/oscar/oscar.c:3557
-#: ../src/protocols/oscar/oscar.c:3600 ../src/protocols/oscar/oscar.c:3637
-#: ../src/protocols/oscar/oscar.c:3694 ../src/protocols/oscar/oscar.c:6959
-#: ../src/protocols/oscar/oscar.c:7051 ../src/protocols/oscar/oscar.c:7103
-#: ../src/protocols/oscar/oscar.c:7172 ../src/protocols/oscar/oscar.c:7189
+#: ../src/protocols/msn/msn.c:289 ../src/protocols/oscar/oscar.c:1530
+#: ../src/protocols/oscar/oscar.c:2335 ../src/protocols/oscar/oscar.c:3558
+#: ../src/protocols/oscar/oscar.c:3601 ../src/protocols/oscar/oscar.c:3638
+#: ../src/protocols/oscar/oscar.c:3695 ../src/protocols/oscar/oscar.c:6971
+#: ../src/protocols/oscar/oscar.c:7063 ../src/protocols/oscar/oscar.c:7115
+#: ../src/protocols/oscar/oscar.c:7184 ../src/protocols/oscar/oscar.c:7201
 #: ../src/protocols/silc/buddy.c:461 ../src/protocols/silc/buddy.c:1037
 #: ../src/protocols/silc/buddy.c:1133 ../src/protocols/silc/chat.c:594
 #: ../src/protocols/silc/chat.c:723 ../src/protocols/silc/ops.c:1700
 #: ../src/protocols/silc/silc.c:712 ../src/protocols/trepia/trepia.c:348
-#: ../src/protocols/yahoo/yahoo.c:2941 ../src/protocols/yahoo/yahoo.c:2950
+#: ../src/protocols/yahoo/yahoo.c:2939 ../src/protocols/yahoo/yahoo.c:2948
 #: ../src/request.h:1245 ../src/request.h:1255
 msgid "Cancel"
 msgstr "Cancel·la"
@@ -1409,8 +1409,8 @@ msgid "Remove Away Message"
 msgstr "Suprimeix el missatge d'absència"
 
 #. Remove button
-#: ../src/away.c:366 ../src/gtkconv.c:1520 ../src/gtkconv.c:3901
-#: ../src/gtkconv.c:3972 ../src/gtkrequest.c:249
+#: ../src/away.c:366 ../src/gtkconv.c:1520 ../src/gtkconv.c:3902
+#: ../src/gtkconv.c:3973 ../src/gtkrequest.c:249
 msgid "Remove"
 msgstr "Suprimeix"
 
@@ -1515,7 +1515,7 @@ msgid "Unable to send message. The message is too large."
 msgstr "No s'ha pogut enviar el missatge. El missatge és massa llarg."
 
 #: ../src/conversation.c:237 ../src/conversation.c:251
-#: ../src/protocols/oscar/oscar.c:4160
+#: ../src/protocols/oscar/oscar.c:4161
 #, c-format
 msgid "Unable to send message to %s:"
 msgstr "No s'ha pogut enviar el missatge a %s:"
@@ -1528,63 +1528,63 @@ msgstr "El missatge és massa llarg."
 msgid "Unable to send message."
 msgstr "No s'ha pogut enviar el missatge."
 
-#: ../src/conversation.c:2059
+#: ../src/conversation.c:2070
 #, c-format
 msgid "%s entered the room."
 msgstr "%s ha entrat a la sala."
 
-#: ../src/conversation.c:2062
+#: ../src/conversation.c:2073
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] ha entrat a la sala."
 
-#: ../src/conversation.c:2160
+#: ../src/conversation.c:2171
 #, c-format
 msgid "You are now known as %s"
 msgstr "Ara us feu dir %s"
 
-#: ../src/conversation.c:2163
+#: ../src/conversation.c:2174
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s es fa dir %s"
 
-#: ../src/conversation.c:2205
+#: ../src/conversation.c:2216
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s ha sortit de la sala (%s)."
 
-#: ../src/conversation.c:2207
+#: ../src/conversation.c:2218
 #, c-format
 msgid "%s left the room."
 msgstr "%s ha sortit de la sala."
 
-#: ../src/conversation.c:2280
+#: ../src/conversation.c:2291
 #, c-format
 msgid "(+%d more)"
 msgstr "(i %d més)"
 
-#: ../src/conversation.c:2282
+#: ../src/conversation.c:2293
 #, c-format
 msgid " left the room (%s)."
 msgstr " ha sortit de la sala (%s)."
 
-#: ../src/conversation.c:2687
+#: ../src/conversation.c:2698
 msgid "Last created window"
 msgstr "Finestra creada per últim cop"
 
-#: ../src/conversation.c:2689
+#: ../src/conversation.c:2700
 msgid "Separate IM and Chat windows"
 msgstr "Separa les finestres de MI de les de xat."
 
-#: ../src/conversation.c:2691 ../src/gtkprefs.c:1387
+#: ../src/conversation.c:2702 ../src/gtkprefs.c:1387
 msgid "New window"
 msgstr "Nova finestra"
 
-#: ../src/conversation.c:2693
+#: ../src/conversation.c:2704
 msgid "By group"
 msgstr "Per grup"
 
-#: ../src/conversation.c:2695
+#: ../src/conversation.c:2706
 msgid "By account"
 msgstr "Per compte"
 
@@ -1949,7 +1949,7 @@ msgid "Show fewer options"
 msgstr "Mostra menys opcions"
 
 #. Register button
-#: ../src/gtkaccount.c:1658 ../src/protocols/jabber/jabber.c:675
+#: ../src/gtkaccount.c:1658 ../src/protocols/jabber/jabber.c:677
 msgid "Register"
 msgstr "Registra"
 
@@ -1962,14 +1962,14 @@ msgstr "Esteu segur que voleu suprimir %s?"
 msgid "Delete"
 msgstr "Suprimeix"
 
-#: ../src/gtkaccount.c:2142 ../src/protocols/oscar/oscar.c:4244
+#: ../src/gtkaccount.c:2142 ../src/protocols/oscar/oscar.c:4245
 msgid "Screen Name"
 msgstr "Nom d'usuari"
 
-#: ../src/gtkaccount.c:2166 ../src/protocols/jabber/jabber.c:994
-#: ../src/protocols/oscar/oscar.c:685 ../src/protocols/oscar/oscar.c:5694
-#: ../src/protocols/oscar/oscar.c:6886 ../src/protocols/silc/silc.c:45
-#: ../src/protocols/yahoo/yahoo.c:2703 ../src/protocols/zephyr/zephyr.c:2122
+#: ../src/gtkaccount.c:2166 ../src/protocols/jabber/jabber.c:996
+#: ../src/protocols/oscar/oscar.c:686 ../src/protocols/oscar/oscar.c:5700
+#: ../src/protocols/oscar/oscar.c:6898 ../src/protocols/silc/silc.c:45
+#: ../src/protocols/yahoo/yahoo.c:2701 ../src/protocols/zephyr/zephyr.c:2122
 #: ../src/protocols/zephyr/zephyr.c:2141
 msgid "Online"
 msgstr "En línia"
@@ -1979,12 +1979,12 @@ msgid "Protocol"
 msgstr "Protocol"
 
 #. XXX: Tidy this up when not in string freeze
-#: ../src/gtkaccount.c:2517 ../src/protocols/jabber/presence.c:202
+#: ../src/gtkaccount.c:2521 ../src/protocols/jabber/presence.c:202
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s ha fet a %s un dels seus amics%s%s%s"
 
-#: ../src/gtkaccount.c:2531 ../src/protocols/jabber/presence.c:208
+#: ../src/gtkaccount.c:2535 ../src/protocols/jabber/presence.c:208
 msgid ""
 "\n"
 "\n"
@@ -1994,20 +1994,20 @@ msgstr ""
 "\n"
 "Voleu afegir-lo a la llista d'amics?"
 
-#: ../src/gtkaccount.c:2557
+#: ../src/gtkaccount.c:2561
 msgid "Information"
 msgstr "Informació"
 
-#: ../src/gtkaccount.c:2561 ../src/gtkaccount.c:2592
+#: ../src/gtkaccount.c:2565 ../src/gtkaccount.c:2596
 #: ../src/protocols/jabber/presence.c:210
 msgid "Add buddy to your list?"
 msgstr "Voleu afegir l'amic a la llista?"
 
 #. Add button
-#: ../src/gtkaccount.c:2563 ../src/gtkaccount.c:2594 ../src/gtkblist.c:4538
-#: ../src/gtkconv.c:1522 ../src/gtkconv.c:3894 ../src/gtkconv.c:3965
+#: ../src/gtkaccount.c:2567 ../src/gtkaccount.c:2598 ../src/gtkblist.c:4538
+#: ../src/gtkconv.c:1522 ../src/gtkconv.c:3895 ../src/gtkconv.c:3966
 #: ../src/gtkrequest.c:248 ../src/protocols/icq/gaim_icq.c:276
-#: ../src/protocols/jabber/presence.c:212 ../src/protocols/oscar/oscar.c:3871
+#: ../src/protocols/jabber/presence.c:212 ../src/protocols/oscar/oscar.c:3872
 #: ../src/protocols/silc/chat.c:593
 msgid "Add"
 msgstr "Afegeix"
@@ -2059,7 +2059,7 @@ msgstr "Sup_rimeix un amic"
 msgid "Alias Contact..."
 msgstr "Posa un àlies a un contacte..."
 
-#: ../src/gtkblist.c:1205 ../src/gtkdialogs.c:871 ../src/gtkdialogs.c:873
+#: ../src/gtkblist.c:1205 ../src/gtkdialogs.c:873 ../src/gtkdialogs.c:875
 msgid "Remove Contact"
 msgstr "Suprimeix un contacte"
 
@@ -2107,7 +2107,7 @@ msgstr "_Redueix"
 msgid "_Expand"
 msgstr "_Expandeix"
 
-#: ../src/gtkblist.c:1986 ../src/gtkconv.c:4537 ../src/gtkpounce.c:316
+#: ../src/gtkblist.c:1986 ../src/gtkconv.c:4538 ../src/gtkpounce.c:316
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr "No esteu connectat amb cap protocol que permeti afegir aquest amic."
@@ -2434,7 +2434,7 @@ msgstr "Estableix un missatge d'absència"
 
 #: ../src/gtkblist.c:4079 ../src/protocols/silc/buddy.c:731
 #: ../src/protocols/silc/buddy.c:989 ../src/protocols/silc/buddy.c:1034
-#: ../src/protocols/silc/buddy.c:1124 ../src/protocols/yahoo/yahoo.c:2870
+#: ../src/protocols/silc/buddy.c:1124 ../src/protocols/yahoo/yahoo.c:2868
 msgid "Add Buddy"
 msgstr "Afegeix un amic"
 
@@ -2635,8 +2635,8 @@ msgid "IM"
 msgstr "MI"
 
 #. Send File button
-#: ../src/gtkconv.c:1475 ../src/gtkconv.c:3887
-#: ../src/protocols/oscar/oscar.c:600
+#: ../src/gtkconv.c:1475 ../src/gtkconv.c:3888
+#: ../src/protocols/oscar/oscar.c:601
 msgid "Send File"
 msgstr "Envia un fitxer"
 
@@ -2649,7 +2649,7 @@ msgid "Ignore"
 msgstr "Ignora"
 
 #. Info button
-#: ../src/gtkconv.c:1495 ../src/gtkconv.c:3908
+#: ../src/gtkconv.c:1495 ../src/gtkconv.c:3909
 msgid "Info"
 msgstr "Info"
 
@@ -2661,289 +2661,289 @@ msgstr "Aconsegueix el missatge d'absència"
 msgid "Unable to save icon file to disk."
 msgstr "No s'ha pogut desar el fitxer de la icona al disc."
 
-#: ../src/gtkconv.c:2674
+#: ../src/gtkconv.c:2675
 msgid "Save Icon"
 msgstr "Desa la icona"
 
-#: ../src/gtkconv.c:2704
+#: ../src/gtkconv.c:2705
 msgid "Animate"
 msgstr "Anima"
 
-#: ../src/gtkconv.c:2709
+#: ../src/gtkconv.c:2710
 msgid "Hide Icon"
 msgstr "Oculta la icona"
 
-#: ../src/gtkconv.c:2715
+#: ../src/gtkconv.c:2716
 msgid "Save Icon As..."
 msgstr "Anomena i desa la icona..."
 
-#: ../src/gtkconv.c:3092
+#: ../src/gtkconv.c:3093
 msgid "User is typing..."
 msgstr "L'usuari està escrivint..."
 
-#: ../src/gtkconv.c:3100
+#: ../src/gtkconv.c:3101
 msgid "User has typed something and paused"
 msgstr "L'usuari ha escrit alguna cosa i s'ha aturat"
 
 #. Build the Send As menu
-#: ../src/gtkconv.c:3203
+#: ../src/gtkconv.c:3204
 msgid "_Send As"
 msgstr "_Envia com a"
 
 #. Conversation menu
-#: ../src/gtkconv.c:3657
+#: ../src/gtkconv.c:3658
 msgid "/_Conversation"
 msgstr "/_Conversa"
 
-#: ../src/gtkconv.c:3659
+#: ../src/gtkconv.c:3660
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Conversa/_Missatge instantani nou..."
 
-#: ../src/gtkconv.c:3664
+#: ../src/gtkconv.c:3665
 msgid "/Conversation/_Find..."
 msgstr "/Conversa/_Cerca..."
 
-#: ../src/gtkconv.c:3666
+#: ../src/gtkconv.c:3667
 msgid "/Conversation/View _Log"
 msgstr "/Conversa/Visualitza el _registre"
 
-#: ../src/gtkconv.c:3667
+#: ../src/gtkconv.c:3668
 msgid "/Conversation/_Save As..."
 msgstr "/Conversa/Anomena i _desa..."
 
-#: ../src/gtkconv.c:3669
+#: ../src/gtkconv.c:3670
 msgid "/Conversation/Clear"
 msgstr "/Conversa/_Neteja"
 
-#: ../src/gtkconv.c:3673
+#: ../src/gtkconv.c:3674
 msgid "/Conversation/Se_nd File..."
 msgstr "/Conversa/Envia un _fitxer..."
 
-#: ../src/gtkconv.c:3674
+#: ../src/gtkconv.c:3675
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Conversa/Afegeix un a_vís per a l'amic..."
 
-#: ../src/gtkconv.c:3676
+#: ../src/gtkconv.c:3677
 msgid "/Conversation/_Get Info"
 msgstr "/Conversa/_Aconsegueix informació"
 
-#: ../src/gtkconv.c:3678
+#: ../src/gtkconv.c:3679
 msgid "/Conversation/_Warn..."
 msgstr "/Conversa/_Avisa..."
 
-#: ../src/gtkconv.c:3680
+#: ../src/gtkconv.c:3681
 msgid "/Conversation/In_vite..."
 msgstr "/Conversa/Con_vida..."
 
-#: ../src/gtkconv.c:3685
+#: ../src/gtkconv.c:3686
 msgid "/Conversation/A_lias..."
 msgstr "/Conversa/À_lies..."
 
-#: ../src/gtkconv.c:3687
+#: ../src/gtkconv.c:3688
 msgid "/Conversation/_Block..."
 msgstr "/Conversa/_Bloca..."
 
-#: ../src/gtkconv.c:3689
+#: ../src/gtkconv.c:3690
 msgid "/Conversation/_Add..."
 msgstr "/Conversa/_Afegeix..."
 
-#: ../src/gtkconv.c:3691
+#: ../src/gtkconv.c:3692
 msgid "/Conversation/_Remove..."
 msgstr "/Conversa/Sup_rimeix..."
 
-#: ../src/gtkconv.c:3696
+#: ../src/gtkconv.c:3697
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Conversa/Insereix un _enllaç..."
 
-#: ../src/gtkconv.c:3698
+#: ../src/gtkconv.c:3699
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Conversa/Insereix una _imatge..."
 
-#: ../src/gtkconv.c:3703
+#: ../src/gtkconv.c:3704
 msgid "/Conversation/_Close"
 msgstr "/Conversa/_Tanca"
 
 #. Options
-#: ../src/gtkconv.c:3707
+#: ../src/gtkconv.c:3708
 msgid "/_Options"
 msgstr "/_Opcions"
 
-#: ../src/gtkconv.c:3708
+#: ../src/gtkconv.c:3709
 msgid "/Options/Enable _Logging"
 msgstr "/Opcions/Habilita el _registre"
 
-#: ../src/gtkconv.c:3709
+#: ../src/gtkconv.c:3710
 msgid "/Options/Enable _Sounds"
 msgstr "/Opcions/Habilita els _sons"
 
-#: ../src/gtkconv.c:3710
+#: ../src/gtkconv.c:3711
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Opcions/Mos_tra la barra d'eines per al format"
 
-#: ../src/gtkconv.c:3711
+#: ../src/gtkconv.c:3712
 msgid "/Options/Show T_imestamps"
 msgstr "/Opcions/Mostra marques de _temps"
 
-#: ../src/gtkconv.c:3753
+#: ../src/gtkconv.c:3754
 msgid "/Conversation/View Log"
 msgstr "/Conversa/Visualitza el registre"
 
-#: ../src/gtkconv.c:3758
+#: ../src/gtkconv.c:3759
 msgid "/Conversation/Send File..."
 msgstr "/Conversa/Envia un fitxer..."
 
-#: ../src/gtkconv.c:3762
+#: ../src/gtkconv.c:3763
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Conversa/Afegeix avís per a l'amic..."
 
-#: ../src/gtkconv.c:3768
+#: ../src/gtkconv.c:3769
 msgid "/Conversation/Get Info"
 msgstr "/Conversa/Aconsegueix informació"
 
-#: ../src/gtkconv.c:3772
+#: ../src/gtkconv.c:3773
 msgid "/Conversation/Warn..."
 msgstr "/Conversa/Avisa..."
 
-#: ../src/gtkconv.c:3776
+#: ../src/gtkconv.c:3777
 msgid "/Conversation/Invite..."
 msgstr "/Conversa/Convida..."
 
-#: ../src/gtkconv.c:3782
+#: ../src/gtkconv.c:3783
 msgid "/Conversation/Alias..."
 msgstr "/Conversa/Àlies..."
 
-#: ../src/gtkconv.c:3786
+#: ../src/gtkconv.c:3787
 msgid "/Conversation/Block..."
 msgstr "/Conversa/Bloca"
 
-#: ../src/gtkconv.c:3790
+#: ../src/gtkconv.c:3791
 msgid "/Conversation/Add..."
 msgstr "/Conversa/Afegeix..."
 
-#: ../src/gtkconv.c:3794
+#: ../src/gtkconv.c:3795
 msgid "/Conversation/Remove..."
 msgstr "/Conversa/Suprimeix..."
 
-#: ../src/gtkconv.c:3800
+#: ../src/gtkconv.c:3801
 msgid "/Conversation/Insert Link..."
 msgstr "/Conversa/Insereix un enllaç..."
 
-#: ../src/gtkconv.c:3804
+#: ../src/gtkconv.c:3805
 msgid "/Conversation/Insert Image..."
 msgstr "/Conversa/Insereix una imatge..."
 
-#: ../src/gtkconv.c:3810
+#: ../src/gtkconv.c:3811
 msgid "/Options/Enable Logging"
 msgstr "/Opcions/Habilita el registre"
 
-#: ../src/gtkconv.c:3813
+#: ../src/gtkconv.c:3814
 msgid "/Options/Enable Sounds"
 msgstr "/Opcions/Habilita els sons"
 
-#: ../src/gtkconv.c:3816
+#: ../src/gtkconv.c:3817
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/Opcions/Mostra la barra d'eines per al format"
 
-#: ../src/gtkconv.c:3819
+#: ../src/gtkconv.c:3820
 msgid "/Options/Show Timestamps"
 msgstr "/Opcions/Mostra les marques de temps"
 
 #. The buttons, from left to right
 #. Warn button
-#: ../src/gtkconv.c:3873
+#: ../src/gtkconv.c:3874
 msgid "Warn"
 msgstr "Avisa"
 
-#: ../src/gtkconv.c:3874
+#: ../src/gtkconv.c:3875
 msgid "Warn the user"
 msgstr "Avisa l'usuari"
 
 #. Block button
-#: ../src/gtkconv.c:3880 ../src/gtkprivacy.c:630 ../src/gtkprivacy.c:641
+#: ../src/gtkconv.c:3881 ../src/gtkprivacy.c:634 ../src/gtkprivacy.c:645
 msgid "Block"
 msgstr "Bloca"
 
-#: ../src/gtkconv.c:3881
+#: ../src/gtkconv.c:3882
 msgid "Block the user"
 msgstr "Bloca l'usuari"
 
-#: ../src/gtkconv.c:3888
+#: ../src/gtkconv.c:3889
 msgid "Send a file to the user"
 msgstr "Envia un fitxer a l'usuari"
 
-#: ../src/gtkconv.c:3895
+#: ../src/gtkconv.c:3896
 msgid "Add the user to your buddy list"
 msgstr "Afegeix l'usuari a la llista d'amics"
 
-#: ../src/gtkconv.c:3902
+#: ../src/gtkconv.c:3903
 msgid "Remove the user from your buddy list"
 msgstr "Suprimeix l'usuari de la llista d'amics"
 
-#: ../src/gtkconv.c:3909 ../src/gtkconv.c:4244
+#: ../src/gtkconv.c:3910 ../src/gtkconv.c:4245
 msgid "Get the user's information"
 msgstr "Aconsegueix informació de l'usuari"
 
 #. Send button
-#: ../src/gtkconv.c:3915 ../src/gtkconv.c:3979
+#: ../src/gtkconv.c:3916 ../src/gtkconv.c:3980
 msgid "Send"
 msgstr "Envia"
 
-#: ../src/gtkconv.c:3916 ../src/gtkconv.c:3980
+#: ../src/gtkconv.c:3917 ../src/gtkconv.c:3981
 msgid "Send message"
 msgstr "Envia el missatge"
 
 #. The buttons, from left to right
 #. Invite
-#: ../src/gtkconv.c:3958
+#: ../src/gtkconv.c:3959
 msgid "Invite"
 msgstr "Convida"
 
-#: ../src/gtkconv.c:3959
+#: ../src/gtkconv.c:3960
 msgid "Invite a user"
 msgstr "Convida un usuari"
 
-#: ../src/gtkconv.c:3966
+#: ../src/gtkconv.c:3967
 msgid "Add the chat to your buddy list"
 msgstr "Afegeix el xat a la llista d'amics"
 
-#: ../src/gtkconv.c:3973
+#: ../src/gtkconv.c:3974
 msgid "Remove the chat from your buddy list"
 msgstr "Suprimeix l'usuari de la llista d'amics"
 
-#: ../src/gtkconv.c:4097
+#: ../src/gtkconv.c:4098
 msgid "Topic:"
 msgstr "Tema:"
 
 #. Setup the label telling how many people are in the room.
-#: ../src/gtkconv.c:4160
+#: ../src/gtkconv.c:4161
 msgid "0 people in room"
 msgstr "No hi ha ningú a la sala"
 
-#: ../src/gtkconv.c:4221
+#: ../src/gtkconv.c:4222
 msgid "IM the user"
 msgstr "Envieu un MI a l'usuari"
 
-#: ../src/gtkconv.c:4233
+#: ../src/gtkconv.c:4234
 msgid "Ignore the user"
 msgstr "Ignora l'usuari"
 
-#: ../src/gtkconv.c:4832
+#: ../src/gtkconv.c:4833
 msgid "Close conversation"
 msgstr "Tanca la conversa"
 
-#: ../src/gtkconv.c:5369 ../src/gtkconv.c:5398 ../src/gtkconv.c:5494
-#: ../src/gtkconv.c:5552
+#: ../src/gtkconv.c:5370 ../src/gtkconv.c:5399 ../src/gtkconv.c:5495
+#: ../src/gtkconv.c:5553
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d persona a la sala"
 msgstr[1] "%d persones a la sala"
 
-#: ../src/gtkconv.c:6129 ../src/gtkconv.c:6132
+#: ../src/gtkconv.c:6130 ../src/gtkconv.c:6133
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Conversa/Tanca"
 
-#: ../src/gtkconv.c:6504
+#: ../src/gtkconv.c:6505
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
@@ -2951,11 +2951,11 @@ msgstr ""
 "say &lt;missatge&gt;: Envia un missatge normalment com si no fessiu servir "
 "cap ordre."
 
-#: ../src/gtkconv.c:6507
+#: ../src/gtkconv.c:6508
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr "me &lt;acció&gt;: Envia una acció a l'estil IRC a un amic o xat."
 
-#: ../src/gtkconv.c:6510
+#: ../src/gtkconv.c:6511
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
@@ -2963,7 +2963,7 @@ msgstr ""
 "debug &lt;opció&gt;: Envia informació de depuració diversa a la conversa "
 "actual."
 
-#: ../src/gtkconv.c:6514
+#: ../src/gtkconv.c:6515
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;ordre&gt;: Ajuda específica quant a l'ordre."
 
@@ -2989,7 +2989,7 @@ msgstr "desenvolupador principal"
 
 #: ../src/gtkdialogs.c:64 ../src/gtkdialogs.c:67 ../src/gtkdialogs.c:68
 #: ../src/gtkdialogs.c:69 ../src/gtkdialogs.c:70 ../src/gtkdialogs.c:71
-#: ../src/gtkdialogs.c:73 ../src/gtkdialogs.c:74
+#: ../src/gtkdialogs.c:73 ../src/gtkdialogs.c:74 ../src/gtkdialogs.c:75
 msgid "developer"
 msgstr "desenvolupador"
 
@@ -3005,224 +3005,224 @@ msgstr "adaptació a win32"
 msgid "support"
 msgstr "suport"
 
-#: ../src/gtkdialogs.c:89
+#: ../src/gtkdialogs.c:90
 msgid "maintainer"
 msgstr "mantenidor"
 
-#: ../src/gtkdialogs.c:90
+#: ../src/gtkdialogs.c:91
 msgid "former libfaim maintainer"
 msgstr "antic mantenidor de libfaim"
 
-#: ../src/gtkdialogs.c:91
+#: ../src/gtkdialogs.c:92
 msgid "former lead developer"
 msgstr "antic desenvolupador principal"
 
-#: ../src/gtkdialogs.c:92
+#: ../src/gtkdialogs.c:93
 msgid "former maintainer"
 msgstr "antic mantenidor"
 
-#: ../src/gtkdialogs.c:93
+#: ../src/gtkdialogs.c:94
 msgid "former Jabber developer"
 msgstr "antic desenvolupador de Jabber"
 
-#: ../src/gtkdialogs.c:94
+#: ../src/gtkdialogs.c:95
 msgid "original author"
 msgstr "autor original"
 
-#: ../src/gtkdialogs.c:95
+#: ../src/gtkdialogs.c:96
 msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker i conductor designat"
 
-#: ../src/gtkdialogs.c:100
+#: ../src/gtkdialogs.c:101
 msgid "Azerbaijani"
 msgstr "Àzeri"
 
-#: ../src/gtkdialogs.c:101 ../src/gtkdialogs.c:146
+#: ../src/gtkdialogs.c:102 ../src/gtkdialogs.c:147
 msgid "Bulgarian"
 msgstr "Búlgar"
 
-#: ../src/gtkdialogs.c:101
+#: ../src/gtkdialogs.c:102
 msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
 msgstr "Vladimira Girginova i Vladimir (Kaladan) Petkov"
 
-#: ../src/gtkdialogs.c:102 ../src/gtkdialogs.c:147 ../src/gtkdialogs.c:148
+#: ../src/gtkdialogs.c:103 ../src/gtkdialogs.c:148 ../src/gtkdialogs.c:149
 msgid "Catalan"
 msgstr "Català"
 
-#: ../src/gtkdialogs.c:103 ../src/gtkdialogs.c:149
+#: ../src/gtkdialogs.c:104 ../src/gtkdialogs.c:150
 msgid "Czech"
 msgstr "Txec"
 
-#: ../src/gtkdialogs.c:104
+#: ../src/gtkdialogs.c:105
 msgid "Danish"
 msgstr "Danès"
 
-#: ../src/gtkdialogs.c:105 ../src/gtkdialogs.c:150
+#: ../src/gtkdialogs.c:106 ../src/gtkdialogs.c:151
 msgid "German"
 msgstr "Alemany"
 
-#: ../src/gtkdialogs.c:106
+#: ../src/gtkdialogs.c:107
 msgid "Australian English"
 msgstr "Anglès d'Austràlia"
 
-#: ../src/gtkdialogs.c:107
+#: ../src/gtkdialogs.c:108
 msgid "Canadian English"
 msgstr "Anglès canadenc"
 
-#: ../src/gtkdialogs.c:108
+#: ../src/gtkdialogs.c:109
 msgid "British English"
 msgstr "Anglès britànic"
 
-#: ../src/gtkdialogs.c:109 ../src/gtkdialogs.c:151
+#: ../src/gtkdialogs.c:110 ../src/gtkdialogs.c:152
 msgid "Spanish"
 msgstr "Espanyol"
 
-#: ../src/gtkdialogs.c:110
+#: ../src/gtkdialogs.c:111
 msgid "Estonian"
 msgstr "Estoni"
 
-#: ../src/gtkdialogs.c:111 ../src/gtkdialogs.c:152
+#: ../src/gtkdialogs.c:112 ../src/gtkdialogs.c:153
 msgid "Finnish"
 msgstr "Finès"
 
-#: ../src/gtkdialogs.c:112 ../src/gtkdialogs.c:153
+#: ../src/gtkdialogs.c:113 ../src/gtkdialogs.c:154
 msgid "French"
 msgstr "Francès"
 
-#: ../src/gtkdialogs.c:113
+#: ../src/gtkdialogs.c:114
 msgid "Hebrew"
 msgstr "Hebreu"
 
-#: ../src/gtkdialogs.c:114
+#: ../src/gtkdialogs.c:115 ../src/gtkdialogs.c:155
 msgid "Hindi"
 msgstr "Hindi"
 
-#: ../src/gtkdialogs.c:115
+#: ../src/gtkdialogs.c:116
 msgid "Hungarian"
 msgstr "Hongarès"
 
-#: ../src/gtkdialogs.c:116 ../src/gtkdialogs.c:154
+#: ../src/gtkdialogs.c:117 ../src/gtkdialogs.c:156
 msgid "Italian"
 msgstr "Italià"
 
-#: ../src/gtkdialogs.c:117 ../src/gtkdialogs.c:155
+#: ../src/gtkdialogs.c:118 ../src/gtkdialogs.c:157
 msgid "Japanese"
 msgstr "Japonès"
 
-#: ../src/gtkdialogs.c:118
+#: ../src/gtkdialogs.c:119
 msgid "Georgian"
 msgstr "Georgià"
 
-#: ../src/gtkdialogs.c:119 ../src/gtkdialogs.c:156
+#: ../src/gtkdialogs.c:120 ../src/gtkdialogs.c:158
 msgid "Korean"
 msgstr "Coreà"
 
-#: ../src/gtkdialogs.c:120
+#: ../src/gtkdialogs.c:121
 msgid "Lithuanian"
 msgstr "Lituà"
 
-#: ../src/gtkdialogs.c:121
+#: ../src/gtkdialogs.c:122
 msgid "Macedonian"
 msgstr "Macedoni"
 
-#: ../src/gtkdialogs.c:122
+#: ../src/gtkdialogs.c:123
 msgid "Burmese"
 msgstr "Birmà"
 
-#: ../src/gtkdialogs.c:123
+#: ../src/gtkdialogs.c:124
 msgid "Dutch; Flemish"
 msgstr "Holandès; Flamenc"
 
-#: ../src/gtkdialogs.c:124 ../src/gtkdialogs.c:157
+#: ../src/gtkdialogs.c:125 ../src/gtkdialogs.c:159
 msgid "Norwegian"
 msgstr "Noruec"
 
-#: ../src/gtkdialogs.c:125
+#: ../src/gtkdialogs.c:126
 msgid "Punjabi"
 msgstr "Punjabi"
 
-#: ../src/gtkdialogs.c:126 ../src/gtkdialogs.c:158
+#: ../src/gtkdialogs.c:127 ../src/gtkdialogs.c:160
 msgid "Polish"
 msgstr "Polonès"
 
-#: ../src/gtkdialogs.c:127
+#: ../src/gtkdialogs.c:128
 msgid "Portuguese"
 msgstr "Portuguès"
 
-#: ../src/gtkdialogs.c:128
+#: ../src/gtkdialogs.c:129
 msgid "Portuguese-Brazil"
 msgstr "Portuguès de Brasil"
 
-#: ../src/gtkdialogs.c:129
+#: ../src/gtkdialogs.c:130
 msgid "Romanian"
 msgstr "Romanès"
 
-#: ../src/gtkdialogs.c:130 ../src/gtkdialogs.c:159 ../src/gtkdialogs.c:160
+#: ../src/gtkdialogs.c:131 ../src/gtkdialogs.c:161 ../src/gtkdialogs.c:162
 msgid "Russian"
 msgstr "Rus"
 
-#: ../src/gtkdialogs.c:131
+#: ../src/gtkdialogs.c:132
 msgid "Slovenian"
 msgstr "Eslovè"
 
-#: ../src/gtkdialogs.c:132
+#: ../src/gtkdialogs.c:133
 msgid "Albanian"
 msgstr "Albanès"
 
-#: ../src/gtkdialogs.c:133
+#: ../src/gtkdialogs.c:134
 msgid "Serbian"
 msgstr "Serbi"
 
-#: ../src/gtkdialogs.c:134 ../src/gtkdialogs.c:162 ../src/gtkdialogs.c:163
+#: ../src/gtkdialogs.c:135 ../src/gtkdialogs.c:164 ../src/gtkdialogs.c:165
 msgid "Swedish"
 msgstr "Suec"
 
-#: ../src/gtkdialogs.c:135
+#: ../src/gtkdialogs.c:136
 msgid "Turkish"
 msgstr "Turc"
 
-#: ../src/gtkdialogs.c:136
+#: ../src/gtkdialogs.c:137
 msgid "Ukrainian"
 msgstr "Ucraïnès"
 
-#: ../src/gtkdialogs.c:137
+#: ../src/gtkdialogs.c:138
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: ../src/gtkdialogs.c:137
+#: ../src/gtkdialogs.c:138
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "Equip del Vi de Gnome i T.M.Thanh"
 
-#: ../src/gtkdialogs.c:138
+#: ../src/gtkdialogs.c:139
 msgid "Simplified Chinese"
 msgstr "Xinès simplificat"
 
-#: ../src/gtkdialogs.c:139
+#: ../src/gtkdialogs.c:140
 msgid "Traditional Chinese"
 msgstr "Xinès tradicional"
 
-#: ../src/gtkdialogs.c:145
+#: ../src/gtkdialogs.c:146
 msgid "Amharic"
 msgstr "Amhàric"
 
-#: ../src/gtkdialogs.c:161
+#: ../src/gtkdialogs.c:163
 msgid "Slovak"
 msgstr "Eslovac"
 
-#: ../src/gtkdialogs.c:164
+#: ../src/gtkdialogs.c:166
 msgid "Chinese"
 msgstr "Xinès"
 
-#: ../src/gtkdialogs.c:206
+#: ../src/gtkdialogs.c:208
 msgid "About Gaim"
 msgstr "Quant al Gaim"
 
-#: ../src/gtkdialogs.c:221
+#: ../src/gtkdialogs.c:223
 #, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 
-#: ../src/gtkdialogs.c:243
+#: ../src/gtkdialogs.c:245
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
@@ -3233,77 +3233,77 @@ msgstr ""
 "Gadu-Gadu, tots alhora. Fa servir la biblioteca de programació Gtk+, i roman "
 "sota llicència GPL.<BR><BR>"
 
-#: ../src/gtkdialogs.c:253
+#: ../src/gtkdialogs.c:255
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim a irc.freenode.net<BR><BR>"
 
-#: ../src/gtkdialogs.c:256
+#: ../src/gtkdialogs.c:258
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim a irc.freenode.net<BR><BR>"
 
-#: ../src/gtkdialogs.c:262
+#: ../src/gtkdialogs.c:264
 msgid "Active Developers"
 msgstr "Desenvolupadors actius"
 
-#: ../src/gtkdialogs.c:277
+#: ../src/gtkdialogs.c:279
 msgid "Crazy Patch Writers"
 msgstr "Esbojarrats escriptors de pedaços"
 
-#: ../src/gtkdialogs.c:292
+#: ../src/gtkdialogs.c:294
 msgid "Retired Developers"
 msgstr "Desenvolupadors retirats"
 
-#: ../src/gtkdialogs.c:307
+#: ../src/gtkdialogs.c:309
 msgid "Current Translators"
 msgstr "Traductors actuals"
 
-#: ../src/gtkdialogs.c:327
+#: ../src/gtkdialogs.c:329
 msgid "Past Translators"
 msgstr "Antics traductors"
 
-#: ../src/gtkdialogs.c:482 ../src/gtkdialogs.c:624 ../src/gtkdialogs.c:677
+#: ../src/gtkdialogs.c:484 ../src/gtkdialogs.c:626 ../src/gtkdialogs.c:679
 msgid "_Screen name"
 msgstr "_Nom d'usuari:"
 
-#: ../src/gtkdialogs.c:488 ../src/gtkdialogs.c:630 ../src/gtkdialogs.c:683
+#: ../src/gtkdialogs.c:490 ../src/gtkdialogs.c:632 ../src/gtkdialogs.c:685
 msgid "_Account"
 msgstr "_Compte"
 
-#: ../src/gtkdialogs.c:495
+#: ../src/gtkdialogs.c:497
 msgid "New Instant Message"
 msgstr "Missatge instantani nou"
 
-#: ../src/gtkdialogs.c:497
+#: ../src/gtkdialogs.c:499
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr ""
 "Entreu el nom d'usuari de la persona a qui vulgueu enviar un missatge "
 "instantani."
 
-#: ../src/gtkdialogs.c:637
+#: ../src/gtkdialogs.c:639
 msgid "Get User Info"
 msgstr "Aconsegueix dades de l'usuari"
 
-#: ../src/gtkdialogs.c:639
+#: ../src/gtkdialogs.c:641
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr ""
 "Entreu el nom d'usuari de la persona de la qui vulgueu veure la informació."
 
-#: ../src/gtkdialogs.c:691
+#: ../src/gtkdialogs.c:693
 msgid "Get User Log"
 msgstr "Aconsegueix el registre de l'usuari"
 
-#: ../src/gtkdialogs.c:693
+#: ../src/gtkdialogs.c:695
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr ""
 "Entreu el nom d'usuari de la persona de la qui vulgueu veure el registre."
 
-#: ../src/gtkdialogs.c:733
+#: ../src/gtkdialogs.c:735
 msgid "Warn User"
 msgstr "Avisa l'usuari"
 
-#: ../src/gtkdialogs.c:754
+#: ../src/gtkdialogs.c:756
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -3316,45 +3316,45 @@ msgstr ""
 "Això incrementarà el nivell d'avís de %s i estarà subjecte a una limitació "
 "de velocitat més estricta.\n"
 
-#: ../src/gtkdialogs.c:763
+#: ../src/gtkdialogs.c:765
 msgid "Warn _anonymously?"
 msgstr "Voleu _avisar anònimament?"
 
-#: ../src/gtkdialogs.c:770
+#: ../src/gtkdialogs.c:772
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Els avisos anònims són menys estrictes.</b>"
 
-#: ../src/gtkdialogs.c:791
+#: ../src/gtkdialogs.c:793
 msgid "Alias Contact"
 msgstr "Posa un àlies al contacte"
 
-#: ../src/gtkdialogs.c:792
+#: ../src/gtkdialogs.c:794
 msgid "Enter an alias for this contact."
 msgstr "Introduïu un àlies per a aquest contacte."
 
-#: ../src/gtkdialogs.c:794 ../src/gtkdialogs.c:816 ../src/gtkdialogs.c:836
+#: ../src/gtkdialogs.c:796 ../src/gtkdialogs.c:818 ../src/gtkdialogs.c:838
 #: ../src/gtkrequest.c:251 ../src/protocols/silc/chat.c:584
 msgid "Alias"
 msgstr "Àlies"
 
-#: ../src/gtkdialogs.c:812
+#: ../src/gtkdialogs.c:814
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Introduïu un àlies per a %s."
 
-#: ../src/gtkdialogs.c:814
+#: ../src/gtkdialogs.c:816
 msgid "Alias Buddy"
 msgstr "Posa un àlies a un amic"
 
-#: ../src/gtkdialogs.c:833
+#: ../src/gtkdialogs.c:835
 msgid "Alias Chat"
 msgstr "Posa un àlies a un xat"
 
-#: ../src/gtkdialogs.c:834
+#: ../src/gtkdialogs.c:836
 msgid "Enter an alias for this chat."
 msgstr "Introduïu un àlies per a aquest xat."
 
-#: ../src/gtkdialogs.c:868
+#: ../src/gtkdialogs.c:870
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -3363,7 +3363,7 @@ msgstr ""
 "Ara se suprimirà el contacte que conté %s i %d altres amics de la llista "
 "d'amics. Voleu continuar?"
 
-#: ../src/gtkdialogs.c:929
+#: ../src/gtkdialogs.c:931
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -3372,28 +3372,28 @@ msgstr ""
 "Ara se suprimirà el grup %s i tots els seus membres de la llista d'amics. "
 "Voleu continuar?"
 
-#: ../src/gtkdialogs.c:932 ../src/gtkdialogs.c:933
+#: ../src/gtkdialogs.c:934 ../src/gtkdialogs.c:935
 msgid "Remove Group"
 msgstr "Suprimeix el grup"
 
-#: ../src/gtkdialogs.c:971
+#: ../src/gtkdialogs.c:973
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Esteu segur que voleu suprimir %s de la llista d'amics?"
 
-#: ../src/gtkdialogs.c:974 ../src/gtkdialogs.c:976
+#: ../src/gtkdialogs.c:976 ../src/gtkdialogs.c:978
 msgid "Remove Buddy"
 msgstr "Suprimeix l'amic"
 
-#: ../src/gtkdialogs.c:1013
+#: ../src/gtkdialogs.c:1015
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "Esteu segur que voleu suprimir el xat %s de la llista d'amics?"
 
-#: ../src/gtkdialogs.c:1016 ../src/gtkdialogs.c:1017
+#: ../src/gtkdialogs.c:1018 ../src/gtkdialogs.c:1019
 msgid "Remove Chat"
 msgstr "Suprimeix el Xat"
 
@@ -3535,22 +3535,32 @@ msgstr "_Obre l'enllaç en el navegador"
 
 #: ../src/gtkimhtml.c:2914
 msgid ""
-"Unable to guess the image type based on the file extension supplied.  "
+"<span size='larger' weight='bold'>Unrecognized file type</span>\n"
+"\n"
 "Defaulting to PNG."
 msgstr ""
-"No ha estat possible descobrir el tipus d'imatge a partir de l'extensió del "
-"fitxer. S'agafarà PNG com a predeterminat."
+"<span size='larger' weight='bold'>No s'ha pogut reconèixer el tipus de "
+"fitxer</span>\n"
+"\n"
+"Es farà servir PNG per defecte."
 
-#: ../src/gtkimhtml.c:2922
+#: ../src/gtkimhtml.c:2924
 #, c-format
-msgid "Error saving image: %s"
-msgstr "S'ha produït un error en desar la imatge: %s"
+msgid ""
+"<span size='larger' weight='bold'>Error saving image</span>\n"
+"\n"
+"%s"
+msgstr ""
+"<span size='larger' weight='bold'>S'ha produit un error en desar la imatge.</"
+"span>\n"
+"\n"
+"%s"
 
-#: ../src/gtkimhtml.c:2999 ../src/gtkimhtml.c:3011
+#: ../src/gtkimhtml.c:3003 ../src/gtkimhtml.c:3015
 msgid "Save Image"
 msgstr "Desa imatge"
 
-#: ../src/gtkimhtml.c:3039
+#: ../src/gtkimhtml.c:3043
 msgid "_Save Image..."
 msgstr "_Desa imatge..."
 
@@ -3656,13 +3666,13 @@ msgstr "Insereix una imatge"
 msgid "Insert smiley"
 msgstr "Insereix una emoticona"
 
-#: ../src/gtklog.c:315
+#: ../src/gtklog.c:316
 #, c-format
 msgid "Conversations with %s"
 msgstr "Converses amb %s"
 
 #. Window **********
-#: ../src/gtklog.c:411 ../src/gtklog.c:427
+#: ../src/gtklog.c:412 ../src/gtklog.c:429
 msgid "System Log"
 msgstr "Registre del sistema"
 
@@ -4108,8 +4118,8 @@ msgstr "A l'esquerra"
 msgid "New conversation _placement:"
 msgstr "_Posicionament d'una nova conversa:"
 
-#: ../src/gtkprefs.c:1127 ../src/protocols/oscar/oscar.c:743
-#: ../src/protocols/oscar/oscar.c:5106
+#: ../src/gtkprefs.c:1127 ../src/protocols/oscar/oscar.c:744
+#: ../src/protocols/oscar/oscar.c:5112
 msgid "IP Address"
 msgstr "Adreça IP"
 
@@ -4353,7 +4363,7 @@ msgstr "En estar absent i inactiu"
 
 #: ../src/gtkprefs.c:1824 ../src/protocols/msn/msn.c:1327
 #: ../src/protocols/msn/state.c:32 ../src/protocols/novell/novell.c:2806
-#: ../src/protocols/oscar/oscar.c:4259 ../src/protocols/yahoo/yahoo.c:2699
+#: ../src/protocols/oscar/oscar.c:4260 ../src/protocols/yahoo/yahoo.c:2697
 #: ../src/protocols/yahoo/yahoo_profile.c:664
 msgid "Idle"
 msgstr "Inactiu"
@@ -4500,63 +4510,63 @@ msgstr "Bloca tots els usuaris"
 msgid "Block only the users below"
 msgstr "Bloca els usuaris indicats aquí baix"
 
-#: ../src/gtkprivacy.c:393 ../src/protocols/jabber/jabber.c:1502
+#: ../src/gtkprivacy.c:397 ../src/protocols/jabber/jabber.c:1504
 msgid "Privacy"
 msgstr "Privadesa"
 
-#: ../src/gtkprivacy.c:406
+#: ../src/gtkprivacy.c:410
 msgid "Changes to privacy settings take effect immediately."
 msgstr "Els canvis en les opcions de privadesa es realitzen immediatament."
 
 #. "Set privacy for:" label
-#: ../src/gtkprivacy.c:418
+#: ../src/gtkprivacy.c:422
 msgid "Set privacy for:"
 msgstr "Estableix la privadesa de:"
 
-#: ../src/gtkprivacy.c:587 ../src/gtkprivacy.c:603
+#: ../src/gtkprivacy.c:591 ../src/gtkprivacy.c:607
 msgid "Permit User"
 msgstr "Permet l'usuari"
 
-#: ../src/gtkprivacy.c:588
+#: ../src/gtkprivacy.c:592
 msgid "Type a user you permit to contact you."
 msgstr "Escriviu quin usuari permeteu que us contacti."
 
-#: ../src/gtkprivacy.c:589
+#: ../src/gtkprivacy.c:593
 msgid "Please enter the name of the user you wish to be able to contact you."
 msgstr "Introduïu el nom de l'usuari que vulgueu que us pugui contactar."
 
-#: ../src/gtkprivacy.c:592 ../src/gtkprivacy.c:605
+#: ../src/gtkprivacy.c:596 ../src/gtkprivacy.c:609
 msgid "Permit"
 msgstr "Permet"
 
-#: ../src/gtkprivacy.c:597
+#: ../src/gtkprivacy.c:601
 #, c-format
 msgid "Allow %s to contact you?"
 msgstr "Voleu permetre que %s us pugui contactar?"
 
-#: ../src/gtkprivacy.c:599
+#: ../src/gtkprivacy.c:603
 #, c-format
 msgid "Are you sure you wish to allow %s to contact you?"
 msgstr "Esteu segur que voleu permetre que %s us pugui contactar?"
 
-#: ../src/gtkprivacy.c:626 ../src/gtkprivacy.c:639
+#: ../src/gtkprivacy.c:630 ../src/gtkprivacy.c:643
 msgid "Block User"
 msgstr "Bloca un usuari"
 
-#: ../src/gtkprivacy.c:627
+#: ../src/gtkprivacy.c:631
 msgid "Type a user to block."
 msgstr "Escriviu l'usuari que vulgueu blocar."
 
-#: ../src/gtkprivacy.c:628
+#: ../src/gtkprivacy.c:632
 msgid "Please enter the name of the user you wish to block."
 msgstr "Introduïu el nom de l'usuari que vulgueu blocar."
 
-#: ../src/gtkprivacy.c:635
+#: ../src/gtkprivacy.c:639
 #, c-format
 msgid "Block %s?"
 msgstr "Voleu blocar %s?"
 
-#: ../src/gtkprivacy.c:637
+#: ../src/gtkprivacy.c:641
 #, c-format
 msgid "Are you sure you want to block %s?"
 msgstr "Esteu segur que voleu blocar %s?"
@@ -4841,8 +4851,8 @@ msgstr "Opció per defecte lleugerament menys avorrida"
 #: ../src/protocols/msn/state.c:30 ../src/protocols/msn/state.c:37
 #: ../src/protocols/msn/state.c:38 ../src/protocols/novell/novell.c:2797
 #: ../src/protocols/novell/novell.c:2916 ../src/protocols/novell/novell.c:2967
-#: ../src/protocols/oscar/oscar.c:765 ../src/protocols/yahoo/yahoo.c:3044
-#: ../src/protocols/yahoo/yahoo.c:3160
+#: ../src/protocols/oscar/oscar.c:766 ../src/protocols/yahoo/yahoo.c:3042
+#: ../src/protocols/yahoo/yahoo.c:3158
 msgid "Available"
 msgstr "Disponible"
 
@@ -4854,12 +4864,12 @@ msgstr "Només disponible per als amics"
 msgid "Away for friends only"
 msgstr "Només absent per als amics"
 
-#: ../src/protocols/gg/gg.c:54 ../src/protocols/jabber/jabber.c:1000
-#: ../src/protocols/jabber/presence.c:139 ../src/protocols/oscar/oscar.c:683
-#: ../src/protocols/oscar/oscar.c:5609 ../src/protocols/oscar/oscar.c:5687
-#: ../src/protocols/oscar/oscar.c:5711 ../src/protocols/oscar/oscar.c:6892
-#: ../src/protocols/oscar/oscar.c:6897 ../src/protocols/yahoo/yahoo.c:2697
-#: ../src/protocols/yahoo/yahoo.c:3064 ../src/protocols/yahoo/yahoo.c:3172
+#: ../src/protocols/gg/gg.c:54 ../src/protocols/jabber/jabber.c:1002
+#: ../src/protocols/jabber/presence.c:139 ../src/protocols/oscar/oscar.c:684
+#: ../src/protocols/oscar/oscar.c:5615 ../src/protocols/oscar/oscar.c:5693
+#: ../src/protocols/oscar/oscar.c:5717 ../src/protocols/oscar/oscar.c:6904
+#: ../src/protocols/oscar/oscar.c:6909 ../src/protocols/yahoo/yahoo.c:2695
+#: ../src/protocols/yahoo/yahoo.c:3062 ../src/protocols/yahoo/yahoo.c:3170
 msgid "Invisible"
 msgstr "Invisible"
 
@@ -4902,7 +4912,7 @@ msgstr "Ha fallat l'autenticació."
 msgid "Unknown Error Code."
 msgstr "Codi d'error desconegut."
 
-#: ../src/protocols/gg/gg.c:243 ../src/protocols/oscar/oscar.c:4060
+#: ../src/protocols/gg/gg.c:243 ../src/protocols/oscar/oscar.c:4061
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 msgstr "<B>UIN:</B> %s<BR><B>Estat:</B> %s<HR>%s"
@@ -4910,8 +4920,8 @@ msgstr "<B>UIN:</B> %s<BR><B>Estat:</B> %s<HR>%s"
 #. res[0] == username
 #. XXX this should use gaim_notify_userinfo, but it is unclear to me what should be passed for 'who'
 #: ../src/protocols/gg/gg.c:244 ../src/protocols/gg/gg.c:1013
-#: ../src/protocols/napster/napster.c:404 ../src/protocols/oscar/oscar.c:4064
-#: ../src/protocols/oscar/oscar.c:4288 ../src/protocols/silc/ops.c:1086
+#: ../src/protocols/napster/napster.c:404 ../src/protocols/oscar/oscar.c:4065
+#: ../src/protocols/oscar/oscar.c:4289 ../src/protocols/silc/ops.c:1086
 #: ../src/protocols/silc/ops.c:1148 ../src/protocols/toc/toc.c:468
 #: ../src/protocols/zephyr/zephyr.c:720 ../src/protocols/zephyr/zephyr.c:1130
 msgid "Buddy Information"
@@ -5010,25 +5020,25 @@ msgstr "Cercador de Gadu-Gadu"
 msgid "Active"
 msgstr "Actiu"
 
-#: ../src/protocols/gg/gg.c:955 ../src/protocols/oscar/oscar.c:5098
+#: ../src/protocols/gg/gg.c:955 ../src/protocols/oscar/oscar.c:5104
 msgid "UIN"
 msgstr "UIN"
 
 #. First Name
-#: ../src/protocols/gg/gg.c:959 ../src/protocols/jabber/jabber.c:622
-#: ../src/protocols/oscar/oscar.c:5109 ../src/protocols/silc/ops.c:808
+#: ../src/protocols/gg/gg.c:959 ../src/protocols/jabber/jabber.c:624
+#: ../src/protocols/oscar/oscar.c:5115 ../src/protocols/silc/ops.c:808
 #: ../src/protocols/trepia/trepia.c:268
 msgid "First Name"
 msgstr "Nom"
 
 #. Last Name
-#: ../src/protocols/gg/gg.c:964 ../src/protocols/jabber/jabber.c:627
-#: ../src/protocols/oscar/oscar.c:5110 ../src/protocols/trepia/trepia.c:275
+#: ../src/protocols/gg/gg.c:964 ../src/protocols/jabber/jabber.c:629
+#: ../src/protocols/oscar/oscar.c:5116 ../src/protocols/trepia/trepia.c:275
 msgid "Last Name"
 msgstr "Cognoms"
 
 #: ../src/protocols/gg/gg.c:968 ../src/protocols/gg/gg.c:1712
-#: ../src/protocols/irc/msgs.c:219 ../src/protocols/oscar/oscar.c:5099
+#: ../src/protocols/irc/msgs.c:219 ../src/protocols/oscar/oscar.c:5105
 #: ../src/protocols/silc/ops.c:1204
 msgid "Nick"
 msgstr "Sobrenom"
@@ -5043,8 +5053,8 @@ msgid "Sex"
 msgstr "Sexe"
 
 #. City
-#: ../src/protocols/gg/gg.c:992 ../src/protocols/jabber/jabber.c:637
-#: ../src/protocols/oscar/oscar.c:5153 ../src/protocols/oscar/oscar.c:5161
+#: ../src/protocols/gg/gg.c:992 ../src/protocols/jabber/jabber.c:639
+#: ../src/protocols/oscar/oscar.c:5159 ../src/protocols/oscar/oscar.c:5167
 #: ../src/protocols/trepia/trepia.c:332 ../src/protocols/trepia/trepia.c:411
 msgid "City"
 msgstr "Ciutat"
@@ -5151,7 +5161,7 @@ msgid "Directory Search"
 msgstr "Cerca al directori"
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
-#: ../src/protocols/gg/gg.c:1499 ../src/protocols/jabber/jabber.c:1098
+#: ../src/protocols/gg/gg.c:1499 ../src/protocols/jabber/jabber.c:1100
 #: ../src/protocols/toc/toc.c:1564
 msgid "Change Password"
 msgstr "Canvia la contrasenya"
@@ -5205,14 +5215,14 @@ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 msgstr "L'usuari %s (%s%s%s%s%s) vol que l'autoritzeu."
 
 #: ../src/protocols/icq/gaim_icq.c:296 ../src/protocols/jabber/presence.c:300
-#: ../src/protocols/msn/userlist.c:103 ../src/protocols/oscar/oscar.c:3799
-#: ../src/protocols/oscar/oscar.c:6340
+#: ../src/protocols/msn/userlist.c:103 ../src/protocols/oscar/oscar.c:3800
+#: ../src/protocols/oscar/oscar.c:6352
 msgid "Authorize"
 msgstr "Autoritza"
 
 #: ../src/protocols/icq/gaim_icq.c:296 ../src/protocols/jabber/presence.c:301
-#: ../src/protocols/msn/userlist.c:104 ../src/protocols/oscar/oscar.c:3801
-#: ../src/protocols/oscar/oscar.c:6341
+#: ../src/protocols/msn/userlist.c:104 ../src/protocols/oscar/oscar.c:3802
+#: ../src/protocols/oscar/oscar.c:6353
 msgid "Deny"
 msgstr "Denega"
 
@@ -5297,9 +5307,9 @@ msgid "IRC nicks may not contain whitespace"
 msgstr "Els sobrenoms d'IRC no poden contenir espais en blanc"
 
 #. connect to the server
-#: ../src/protocols/irc/irc.c:237 ../src/protocols/jabber/jabber.c:796
+#: ../src/protocols/irc/irc.c:237 ../src/protocols/jabber/jabber.c:798
 #: ../src/protocols/msn/session.c:364 ../src/protocols/napster/napster.c:510
-#: ../src/protocols/novell/novell.c:2152 ../src/protocols/oscar/oscar.c:1754
+#: ../src/protocols/novell/novell.c:2152 ../src/protocols/oscar/oscar.c:1755
 #: ../src/protocols/trepia/trepia.c:1065 ../src/protocols/yahoo/yahoo.c:2558
 #: ../src/protocols/zephyr/zephyr.c:1452
 msgid "Connecting"
@@ -5309,8 +5319,8 @@ msgstr "S'està connectant"
 msgid "Couldn't create socket"
 msgstr "No s'ha pogut crear el sòcol"
 
-#: ../src/protocols/irc/irc.c:259 ../src/protocols/jabber/jabber.c:302
-#: ../src/protocols/oscar/oscar.c:1685 ../src/protocols/oscar/oscar.c:1750
+#: ../src/protocols/irc/irc.c:259 ../src/protocols/jabber/jabber.c:304
+#: ../src/protocols/oscar/oscar.c:1686 ../src/protocols/oscar/oscar.c:1751
 msgid "Couldn't connect to host"
 msgstr "No s'ha pogut connectar a l'ordinador"
 
@@ -5319,12 +5329,12 @@ msgid "Read error"
 msgstr "Error de lectura"
 
 #: ../src/protocols/irc/irc.c:557 ../src/protocols/silc/chat.c:1373
-#: ../src/protocols/yahoo/yahoochat.c:1426
+#: ../src/protocols/yahoo/yahoochat.c:1444
 msgid "Users"
 msgstr "Usuaris"
 
 #: ../src/protocols/irc/irc.c:560 ../src/protocols/silc/chat.c:1376
-#: ../src/protocols/silc/ops.c:1166 ../src/protocols/yahoo/yahoochat.c:1435
+#: ../src/protocols/silc/ops.c:1166 ../src/protocols/yahoo/yahoochat.c:1453
 msgid "Topic"
 msgstr "Tema"
 
@@ -5346,13 +5356,13 @@ msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "El connector per al protocol d'IRC que és menys dolent"
 
 #: ../src/protocols/irc/irc.c:687 ../src/protocols/irc/msgs.c:239
-#: ../src/protocols/jabber/jabber.c:1615
+#: ../src/protocols/jabber/jabber.c:1617
 #: ../src/protocols/napster/napster.c:672 ../src/protocols/silc/ops.c:1026
 #: ../src/protocols/silc/ops.c:1129
 msgid "Server"
 msgstr "Servidor"
 
-#: ../src/protocols/irc/irc.c:690 ../src/protocols/jabber/jabber.c:1636
+#: ../src/protocols/irc/irc.c:690 ../src/protocols/jabber/jabber.c:1638
 #: ../src/protocols/msn/msn.c:1934 ../src/protocols/napster/napster.c:677
 #: ../src/protocols/silc/silc.c:1596 ../src/protocols/trepia/trepia.c:1301
 msgid "Port"
@@ -5363,7 +5373,7 @@ msgid "Encodings"
 msgstr "Codificacions"
 
 #: ../src/protocols/irc/irc.c:696 ../src/protocols/irc/msgs.c:233
-#: ../src/protocols/jabber/jabber.c:597 ../src/protocols/silc/buddy.c:1454
+#: ../src/protocols/jabber/jabber.c:599 ../src/protocols/silc/buddy.c:1454
 #: ../src/protocols/silc/ops.c:973 ../src/protocols/silc/ops.c:975
 #: ../src/protocols/silc/ops.c:1123 ../src/protocols/silc/ops.c:1125
 msgid "Username"
@@ -5414,7 +5424,7 @@ msgstr "<b>%s:</b> %s<br>"
 
 #: ../src/protocols/irc/msgs.c:234 ../src/protocols/silc/ops.c:967
 #: ../src/protocols/silc/ops.c:1117
-#: ../src/protocols/yahoo/yahoo_profile.c:1005
+#: ../src/protocols/yahoo/yahoo_profile.c:1012
 msgid "Realname"
 msgstr "Nom real"
 
@@ -5668,7 +5678,7 @@ msgstr ""
 msgid "names [channel]:  List the users currently in a channel."
 msgstr "names [canal]:  Llista els usuaris connectats al canal."
 
-#: ../src/protocols/irc/parse.c:126 ../src/protocols/jabber/jabber.c:1446
+#: ../src/protocols/irc/parse.c:126 ../src/protocols/jabber/jabber.c:1448
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
 msgstr "nick &lt;sobrenom nou&gt;:  Canvia el vostre sobrenom."
 
@@ -5774,7 +5784,7 @@ msgid "CTCP PING reply"
 msgstr "Resposta de CTCP PING"
 
 #: ../src/protocols/irc/parse.c:525 ../src/protocols/irc/parse.c:529
-#: ../src/protocols/oscar/oscar.c:1582 ../src/protocols/toc/toc.c:188
+#: ../src/protocols/oscar/oscar.c:1583 ../src/protocols/toc/toc.c:188
 #: ../src/protocols/toc/toc.c:596 ../src/protocols/toc/toc.c:612
 #: ../src/protocols/toc/toc.c:689
 msgid "Disconnected."
@@ -5834,14 +5844,14 @@ msgid "Given Name"
 msgstr "Nom comú"
 
 #: ../src/protocols/jabber/buddy.c:249 ../src/protocols/jabber/buddy.c:644
-#: ../src/protocols/jabber/jabber.c:617 ../src/protocols/msn/msn.c:1317
+#: ../src/protocols/jabber/jabber.c:619 ../src/protocols/msn/msn.c:1317
 #: ../src/protocols/silc/buddy.c:1451 ../src/protocols/silc/ops.c:820
 #: ../src/protocols/silc/ops.c:963 ../src/protocols/silc/ops.c:1113
-#: ../src/protocols/yahoo/yahoo_profile.c:1000
+#: ../src/protocols/yahoo/yahoo_profile.c:1007
 msgid "Nickname"
 msgstr "Sobrenom"
 
-#: ../src/protocols/jabber/buddy.c:250 ../src/protocols/jabber/jabber.c:657
+#: ../src/protocols/jabber/buddy.c:250 ../src/protocols/jabber/jabber.c:659
 msgid "URL"
 msgstr "URL"
 
@@ -5862,7 +5872,7 @@ msgid "Region"
 msgstr "Província"
 
 #: ../src/protocols/jabber/buddy.c:255 ../src/protocols/jabber/buddy.c:684
-#: ../src/protocols/jabber/jabber.c:647
+#: ../src/protocols/jabber/jabber.c:649
 msgid "Postal Code"
 msgstr "Codi postal"
 
@@ -5879,7 +5889,8 @@ msgstr "Telèfon"
 
 #: ../src/protocols/jabber/buddy.c:258 ../src/protocols/jabber/buddy.c:718
 #: ../src/protocols/jabber/buddy.c:726 ../src/protocols/silc/silc.c:656
-#: ../src/protocols/silc/util.c:511 ../src/protocols/yahoo/yahoo_profile.c:995
+#: ../src/protocols/silc/util.c:511
+#: ../src/protocols/yahoo/yahoo_profile.c:1002
 msgid "Email"
 msgstr "Correu electrònic"
 
@@ -5901,7 +5912,7 @@ msgid "Role"
 msgstr "Rol"
 
 #: ../src/protocols/jabber/buddy.c:263 ../src/protocols/jabber/buddy.c:647
-#: ../src/protocols/oscar/oscar.c:5134
+#: ../src/protocols/oscar/oscar.c:5140
 msgid "Birthday"
 msgstr "Data de naixement"
 
@@ -5922,11 +5933,11 @@ msgid "Jabber ID"
 msgstr "ID per al Jabber"
 
 #: ../src/protocols/jabber/buddy.c:566 ../src/protocols/jabber/buddy.c:573
-#: ../src/protocols/jabber/buddy.c:586 ../src/protocols/jabber/jabber.c:969
+#: ../src/protocols/jabber/buddy.c:586 ../src/protocols/jabber/jabber.c:971
 #: ../src/protocols/msn/msn.c:489 ../src/protocols/novell/novell.c:2819
-#: ../src/protocols/novell/novell.c:2823 ../src/protocols/oscar/oscar.c:725
-#: ../src/protocols/oscar/oscar.c:731 ../src/protocols/oscar/oscar.c:733
-#: ../src/protocols/yahoo/yahoo.c:2822
+#: ../src/protocols/novell/novell.c:2823 ../src/protocols/oscar/oscar.c:726
+#: ../src/protocols/oscar/oscar.c:732 ../src/protocols/oscar/oscar.c:734
+#: ../src/protocols/yahoo/yahoo.c:2820
 msgid "Status"
 msgstr "Estat"
 
@@ -5934,8 +5945,8 @@ msgstr "Estat"
 msgid "Middle Name"
 msgstr "Primer Cognom"
 
-#: ../src/protocols/jabber/buddy.c:652 ../src/protocols/jabber/jabber.c:632
-#: ../src/protocols/oscar/oscar.c:5152 ../src/protocols/oscar/oscar.c:5160
+#: ../src/protocols/jabber/buddy.c:652 ../src/protocols/jabber/jabber.c:634
+#: ../src/protocols/oscar/oscar.c:5158 ../src/protocols/oscar/oscar.c:5166
 #: ../src/protocols/silc/ops.c:848
 msgid "Address"
 msgstr "Adreça"
@@ -5980,8 +5991,8 @@ msgstr "Tornar a demanar l'autorització"
 msgid "Unsubscribe"
 msgstr "Dessubscriu"
 
-#: ../src/protocols/jabber/chat.c:41 ../src/protocols/oscar/oscar.c:6411
-#: ../src/protocols/yahoo/yahoochat.c:1029
+#: ../src/protocols/jabber/chat.c:41 ../src/protocols/oscar/oscar.c:6423
+#: ../src/protocols/yahoo/yahoochat.c:1040
 msgid "_Room:"
 msgstr "Sa_la:"
 
@@ -6072,439 +6083,439 @@ msgstr "Cerca sales"
 msgid "Error initializing session"
 msgstr "S'ha produït un error en inicialitzar la sessió"
 
-#: ../src/protocols/jabber/jabber.c:211 ../src/protocols/trepia/trepia.c:248
+#: ../src/protocols/jabber/jabber.c:213 ../src/protocols/trepia/trepia.c:248
 #: ../src/protocols/trepia/trepia.c:699 ../src/protocols/trepia/trepia.c:988
 #: ../src/protocols/trepia/trepia.c:1032 ../src/protocols/trepia/trepia.c:1131
 #: ../src/protocols/trepia/trepia.c:1177
 msgid "Write error"
 msgstr "Error d'escriptura"
 
-#: ../src/protocols/jabber/jabber.c:249 ../src/protocols/jabber/jabber.c:269
+#: ../src/protocols/jabber/jabber.c:251 ../src/protocols/jabber/jabber.c:271
 msgid "Read Error"
 msgstr "Error de lectura"
 
-#: ../src/protocols/jabber/jabber.c:329
+#: ../src/protocols/jabber/jabber.c:331
 msgid "Connection Failed"
 msgstr "Ha fallat la connexió"
 
-#: ../src/protocols/jabber/jabber.c:332
+#: ../src/protocols/jabber/jabber.c:334
 msgid "SSL Handshake Failed"
 msgstr "Ha fallat la negociació de la connexió SSL"
 
-#: ../src/protocols/jabber/jabber.c:376 ../src/protocols/jabber/jabber.c:709
+#: ../src/protocols/jabber/jabber.c:378 ../src/protocols/jabber/jabber.c:711
 msgid "Invalid Jabber ID"
 msgstr "ID Jabber invàlid"
 
-#: ../src/protocols/jabber/jabber.c:407 ../src/protocols/jabber/jabber.c:739
+#: ../src/protocols/jabber/jabber.c:409 ../src/protocols/jabber/jabber.c:741
 msgid "SSL support unavailable"
 msgstr "El suport per a SSL no està disponible"
 
-#: ../src/protocols/jabber/jabber.c:417 ../src/protocols/jabber/jabber.c:749
+#: ../src/protocols/jabber/jabber.c:419 ../src/protocols/jabber/jabber.c:751
 #: ../src/protocols/trepia/trepia.c:1071
 msgid "Unable to create socket"
 msgstr "No s'ha pogut crear el sòcol"
 
-#: ../src/protocols/jabber/jabber.c:442
+#: ../src/protocols/jabber/jabber.c:444
 #, c-format
 msgid "Registration of %s@%s successful"
 msgstr "S'ha registrat %s a %s amb èxit"
 
-#: ../src/protocols/jabber/jabber.c:444 ../src/protocols/jabber/jabber.c:445
+#: ../src/protocols/jabber/jabber.c:446 ../src/protocols/jabber/jabber.c:447
 msgid "Registration Successful"
 msgstr "S'ha registrat amb èxit"
 
-#: ../src/protocols/jabber/jabber.c:451 ../src/protocols/jabber/jabber.c:1217
+#: ../src/protocols/jabber/jabber.c:453 ../src/protocols/jabber/jabber.c:1219
 msgid "Unknown Error"
 msgstr "Error desconegut"
 
-#: ../src/protocols/jabber/jabber.c:453 ../src/protocols/jabber/jabber.c:454
+#: ../src/protocols/jabber/jabber.c:455 ../src/protocols/jabber/jabber.c:456
 msgid "Registration Failed"
 msgstr "Ha fallat el registre"
 
-#: ../src/protocols/jabber/jabber.c:565 ../src/protocols/jabber/jabber.c:566
+#: ../src/protocols/jabber/jabber.c:567 ../src/protocols/jabber/jabber.c:568
 msgid "Already Registered"
 msgstr "Ja esteu registrat"
 
-#: ../src/protocols/jabber/jabber.c:601 ../src/protocols/jabber/jabber.c:1072
+#: ../src/protocols/jabber/jabber.c:603 ../src/protocols/jabber/jabber.c:1074
 msgid "Password"
 msgstr "Contrasenya"
 
-#: ../src/protocols/jabber/jabber.c:612
+#: ../src/protocols/jabber/jabber.c:614
 msgid "E-Mail"
 msgstr "Correu electrònic"
 
 #. State
-#: ../src/protocols/jabber/jabber.c:642 ../src/protocols/oscar/oscar.c:5154
-#: ../src/protocols/oscar/oscar.c:5162 ../src/protocols/trepia/trepia.c:336
+#: ../src/protocols/jabber/jabber.c:644 ../src/protocols/oscar/oscar.c:5160
+#: ../src/protocols/oscar/oscar.c:5168 ../src/protocols/trepia/trepia.c:336
 #: ../src/protocols/trepia/trepia.c:414
 msgid "State"
 msgstr "Estat"
 
-#: ../src/protocols/jabber/jabber.c:652 ../src/protocols/silc/ops.c:853
+#: ../src/protocols/jabber/jabber.c:654 ../src/protocols/silc/ops.c:853
 #: ../src/protocols/silc/silc.c:658 ../src/protocols/silc/util.c:513
 msgid "Phone"
 msgstr "Telèfon"
 
-#: ../src/protocols/jabber/jabber.c:662
+#: ../src/protocols/jabber/jabber.c:664
 msgid "Date"
 msgstr "Data"
 
-#: ../src/protocols/jabber/jabber.c:670
+#: ../src/protocols/jabber/jabber.c:672
 msgid "Please fill out the information below to register your new account."
 msgstr "Empleneu els camps següents per registrar un compte nou."
 
-#: ../src/protocols/jabber/jabber.c:673 ../src/protocols/jabber/jabber.c:674
+#: ../src/protocols/jabber/jabber.c:675 ../src/protocols/jabber/jabber.c:676
 msgid "Register New Jabber Account"
 msgstr "Registra un compte Jabber nou"
 
-#: ../src/protocols/jabber/jabber.c:757
+#: ../src/protocols/jabber/jabber.c:759
 msgid "Logged out"
 msgstr "Desconnectat"
 
-#: ../src/protocols/jabber/jabber.c:800
+#: ../src/protocols/jabber/jabber.c:802
 msgid "Initializing Stream"
 msgstr "S'està inicialitzant el flux"
 
-#: ../src/protocols/jabber/jabber.c:806 ../src/protocols/msn/session.c:370
+#: ../src/protocols/jabber/jabber.c:808 ../src/protocols/msn/session.c:370
 msgid "Authenticating"
 msgstr "S'està autenticant"
 
-#: ../src/protocols/jabber/jabber.c:815
+#: ../src/protocols/jabber/jabber.c:817
 msgid "Re-initializing Stream"
 msgstr "S'està reinicialitzant el flux"
 
-#: ../src/protocols/jabber/jabber.c:895 ../src/protocols/jabber/jabber.c:1195
-#: ../src/protocols/jabber/jabber.c:1236 ../src/protocols/jabber/jabber.c:1269
-#: ../src/protocols/oscar/oscar.c:731 ../src/protocols/oscar/oscar.c:6695
+#: ../src/protocols/jabber/jabber.c:897 ../src/protocols/jabber/jabber.c:1197
+#: ../src/protocols/jabber/jabber.c:1238 ../src/protocols/jabber/jabber.c:1271
+#: ../src/protocols/oscar/oscar.c:732 ../src/protocols/oscar/oscar.c:6707
 msgid "Not Authorized"
 msgstr "No Autoritzat"
 
-#: ../src/protocols/jabber/jabber.c:936
+#: ../src/protocols/jabber/jabber.c:938
 msgid "Both"
 msgstr "Ambdós"
 
-#: ../src/protocols/jabber/jabber.c:938
+#: ../src/protocols/jabber/jabber.c:940
 msgid "From (To pending)"
 msgstr "De (a pendent)"
 
-#: ../src/protocols/jabber/jabber.c:940
+#: ../src/protocols/jabber/jabber.c:942
 msgid "From"
 msgstr "De"
 
-#: ../src/protocols/jabber/jabber.c:943
+#: ../src/protocols/jabber/jabber.c:945
 msgid "To"
 msgstr "A"
 
-#: ../src/protocols/jabber/jabber.c:945
+#: ../src/protocols/jabber/jabber.c:947
 msgid "None (To pending)"
 msgstr "Cap (a pendent)"
 
-#: ../src/protocols/jabber/jabber.c:949
+#: ../src/protocols/jabber/jabber.c:951
 msgid "Subscription"
 msgstr "Subscripció"
 
-#: ../src/protocols/jabber/jabber.c:982
+#: ../src/protocols/jabber/jabber.c:984
 msgid "Error"
 msgstr "Error"
 
-#: ../src/protocols/jabber/jabber.c:995 ../src/protocols/jabber/jutil.c:35
+#: ../src/protocols/jabber/jabber.c:997 ../src/protocols/jabber/jutil.c:35
 #: ../src/protocols/jabber/presence.c:72
 #: ../src/protocols/jabber/presence.c:130
 msgid "Chatty"
 msgstr "Xerraire"
 
-#: ../src/protocols/jabber/jabber.c:997 ../src/protocols/jabber/jutil.c:38
+#: ../src/protocols/jabber/jabber.c:999 ../src/protocols/jabber/jutil.c:38
 #: ../src/protocols/jabber/presence.c:74
 #: ../src/protocols/jabber/presence.c:135
 msgid "Extended Away"
 msgstr "Absent durant una bona estona"
 
-#: ../src/protocols/jabber/jabber.c:998 ../src/protocols/jabber/jutil.c:41
+#: ../src/protocols/jabber/jabber.c:1000 ../src/protocols/jabber/jutil.c:41
 #: ../src/protocols/jabber/presence.c:76
-#: ../src/protocols/jabber/presence.c:137 ../src/protocols/oscar/oscar.c:673
-#: ../src/protocols/oscar/oscar.c:5699 ../src/protocols/oscar/oscar.c:6888
+#: ../src/protocols/jabber/presence.c:137 ../src/protocols/oscar/oscar.c:674
+#: ../src/protocols/oscar/oscar.c:5705 ../src/protocols/oscar/oscar.c:6900
 msgid "Do Not Disturb"
 msgstr "No molesteu"
 
-#: ../src/protocols/jabber/jabber.c:1015
+#: ../src/protocols/jabber/jabber.c:1017
 msgid "Password Changed"
 msgstr "S'ha canviat la contrasenya"
 
-#: ../src/protocols/jabber/jabber.c:1016
+#: ../src/protocols/jabber/jabber.c:1018
 msgid "Your password has been changed."
 msgstr "La vostra contrasenya s'ha canviat."
 
-#: ../src/protocols/jabber/jabber.c:1020 ../src/protocols/jabber/jabber.c:1021
+#: ../src/protocols/jabber/jabber.c:1022 ../src/protocols/jabber/jabber.c:1023
 msgid "Error changing password"
 msgstr "S'ha produït un error en canviar la contrsenya"
 
-#: ../src/protocols/jabber/jabber.c:1077
+#: ../src/protocols/jabber/jabber.c:1079
 msgid "Password (again)"
 msgstr "Contrasenya (repetiu-la)"
 
-#: ../src/protocols/jabber/jabber.c:1082 ../src/protocols/jabber/jabber.c:1083
+#: ../src/protocols/jabber/jabber.c:1084 ../src/protocols/jabber/jabber.c:1085
 msgid "Change Jabber Password"
 msgstr "Canvia la contrasenya per al Jabber"
 
-#: ../src/protocols/jabber/jabber.c:1083
+#: ../src/protocols/jabber/jabber.c:1085
 msgid "Please enter your new password"
 msgstr "Introduïu la nova contrasenya"
 
-#: ../src/protocols/jabber/jabber.c:1093 ../src/protocols/toc/toc.c:1554
+#: ../src/protocols/jabber/jabber.c:1095 ../src/protocols/toc/toc.c:1554
 msgid "Set User Info"
 msgstr "Estableix les dades d'usuari"
 
-#: ../src/protocols/jabber/jabber.c:1175
+#: ../src/protocols/jabber/jabber.c:1177
 msgid "Bad Request"
 msgstr "Sol·licitud incorrecta"
 
-#: ../src/protocols/jabber/jabber.c:1177
+#: ../src/protocols/jabber/jabber.c:1179
 msgid "Conflict"
 msgstr "Conflicte"
 
-#: ../src/protocols/jabber/jabber.c:1179
+#: ../src/protocols/jabber/jabber.c:1181
 msgid "Feature Not Implemented"
 msgstr "La característica no està implementada"
 
-#: ../src/protocols/jabber/jabber.c:1181
+#: ../src/protocols/jabber/jabber.c:1183
 msgid "Forbidden"
 msgstr "Prohibit"
 
-#: ../src/protocols/jabber/jabber.c:1183
+#: ../src/protocols/jabber/jabber.c:1185
 msgid "Gone"
 msgstr "Desaparegut"
 
-#: ../src/protocols/jabber/jabber.c:1185 ../src/protocols/jabber/jabber.c:1259
+#: ../src/protocols/jabber/jabber.c:1187 ../src/protocols/jabber/jabber.c:1261
 msgid "Internal Server Error"
 msgstr "Error intern del servidor"
 
-#: ../src/protocols/jabber/jabber.c:1187
+#: ../src/protocols/jabber/jabber.c:1189
 msgid "Item Not Found"
 msgstr "No s'ha trobat l'element"
 
-#: ../src/protocols/jabber/jabber.c:1189
+#: ../src/protocols/jabber/jabber.c:1191
 msgid "Malformed Jabber ID"
 msgstr "l'ID Jabber està mal format"
 
-#: ../src/protocols/jabber/jabber.c:1191
+#: ../src/protocols/jabber/jabber.c:1193
 msgid "Not Acceptable"
 msgstr "No acceptable"
 
-#: ../src/protocols/jabber/jabber.c:1193
+#: ../src/protocols/jabber/jabber.c:1195
 msgid "Not Allowed"
 msgstr "No permès"
 
-#: ../src/protocols/jabber/jabber.c:1197
+#: ../src/protocols/jabber/jabber.c:1199
 msgid "Payment Required"
 msgstr "De pagament"
 
-#: ../src/protocols/jabber/jabber.c:1199
+#: ../src/protocols/jabber/jabber.c:1201
 msgid "Recipient Unavailable"
 msgstr "El destinatari no està disponible"
 
-#: ../src/protocols/jabber/jabber.c:1203
+#: ../src/protocols/jabber/jabber.c:1205
 msgid "Registration Required"
 msgstr "Cal registre"
 
-#: ../src/protocols/jabber/jabber.c:1205
+#: ../src/protocols/jabber/jabber.c:1207
 msgid "Remote Server Not Found"
 msgstr "No s'ha trobat el servidor remot"
 
-#: ../src/protocols/jabber/jabber.c:1207
+#: ../src/protocols/jabber/jabber.c:1209
 msgid "Remote Server Timeout"
 msgstr "El servidor remot ha excedit el temps d'espera"
 
-#: ../src/protocols/jabber/jabber.c:1209
+#: ../src/protocols/jabber/jabber.c:1211
 msgid "Server Overloaded"
 msgstr "El servidor està sobrecarregat"
 
-#: ../src/protocols/jabber/jabber.c:1211
+#: ../src/protocols/jabber/jabber.c:1213
 msgid "Service Unavailable"
 msgstr "El servei no està disponible"
 
-#: ../src/protocols/jabber/jabber.c:1213
+#: ../src/protocols/jabber/jabber.c:1215
 msgid "Subscription Required"
 msgstr "Cal subscripció"
 
-#: ../src/protocols/jabber/jabber.c:1215
+#: ../src/protocols/jabber/jabber.c:1217
 msgid "Unexpected Request"
 msgstr "Sol·licitut inesperada"
 
-#: ../src/protocols/jabber/jabber.c:1222
+#: ../src/protocols/jabber/jabber.c:1224
 msgid "Authorization Aborted"
 msgstr "S'ha avortat l'autorització"
 
-#: ../src/protocols/jabber/jabber.c:1224
+#: ../src/protocols/jabber/jabber.c:1226
 msgid "Incorrect encoding in authorization"
 msgstr "La codificació de l'autorització no és correcta"
 
-#: ../src/protocols/jabber/jabber.c:1227
+#: ../src/protocols/jabber/jabber.c:1229
 msgid "Invalid authzid"
 msgstr "Authzid invàlid"
 
-#: ../src/protocols/jabber/jabber.c:1230
+#: ../src/protocols/jabber/jabber.c:1232
 msgid "Invalid Authorization Mechanism"
 msgstr "El mecanisme d'autorització no és vàlid"
 
-#: ../src/protocols/jabber/jabber.c:1233
+#: ../src/protocols/jabber/jabber.c:1235
 msgid "Authorization mechanism too weak"
 msgstr "El mecanisme d'autorització és massa feble"
 
-#: ../src/protocols/jabber/jabber.c:1238
+#: ../src/protocols/jabber/jabber.c:1240
 msgid "Temporary Authentication Failure"
 msgstr "Ha fallat temporalment l'autenticació"
 
-#: ../src/protocols/jabber/jabber.c:1240
+#: ../src/protocols/jabber/jabber.c:1242
 msgid "Authentication Failure"
 msgstr "S'ha produït un error en l'autenticació"
 
-#: ../src/protocols/jabber/jabber.c:1244
+#: ../src/protocols/jabber/jabber.c:1246
 msgid "Bad Format"
 msgstr "Format incorrecte"
 
-#: ../src/protocols/jabber/jabber.c:1246
+#: ../src/protocols/jabber/jabber.c:1248
 msgid "Bad Namespace Prefix"
 msgstr "Prefix d'espai de noms incorrecte"
 
-#: ../src/protocols/jabber/jabber.c:1249
+#: ../src/protocols/jabber/jabber.c:1251
 msgid "Resource Conflict"
 msgstr "Conflicte de recurs"
 
-#: ../src/protocols/jabber/jabber.c:1251 ../src/protocols/silc/ops.c:1519
+#: ../src/protocols/jabber/jabber.c:1253 ../src/protocols/silc/ops.c:1519
 msgid "Connection Timeout"
 msgstr "La connexió ha excedit el temps d'espera"
 
-#: ../src/protocols/jabber/jabber.c:1253
+#: ../src/protocols/jabber/jabber.c:1255
 msgid "Host Gone"
 msgstr "L'ordinador ha desaparegut"
 
-#: ../src/protocols/jabber/jabber.c:1255
+#: ../src/protocols/jabber/jabber.c:1257
 msgid "Host Unknown"
 msgstr "Servidor desconegut"
 
-#: ../src/protocols/jabber/jabber.c:1257
+#: ../src/protocols/jabber/jabber.c:1259
 msgid "Improper Addressing"
 msgstr "Adreçament incorrecte"
 
-#: ../src/protocols/jabber/jabber.c:1261
+#: ../src/protocols/jabber/jabber.c:1263
 msgid "Invalid ID"
 msgstr "ID invàlid"
 
-#: ../src/protocols/jabber/jabber.c:1263
+#: ../src/protocols/jabber/jabber.c:1265
 msgid "Invalid Namespace"
 msgstr "Espai de noms invàlid"
 
-#: ../src/protocols/jabber/jabber.c:1265
+#: ../src/protocols/jabber/jabber.c:1267
 msgid "Invalid XML"
 msgstr "XML invàlid"
 
-#: ../src/protocols/jabber/jabber.c:1267
+#: ../src/protocols/jabber/jabber.c:1269
 msgid "Non-matching Hosts"
 msgstr "Ordinadors no coincidents"
 
-#: ../src/protocols/jabber/jabber.c:1271
+#: ../src/protocols/jabber/jabber.c:1273
 msgid "Policy Violation"
 msgstr "Violació de la política"
 
-#: ../src/protocols/jabber/jabber.c:1273
+#: ../src/protocols/jabber/jabber.c:1275
 msgid "Remote Connection Failed"
 msgstr "Ha fallat la connexió remota"
 
 # Mirar com es traduïa 'Constraint variables'
-#: ../src/protocols/jabber/jabber.c:1275
+#: ../src/protocols/jabber/jabber.c:1277
 msgid "Resource Constraint"
 msgstr "Restriccions del recurs"
 
-#: ../src/protocols/jabber/jabber.c:1277
+#: ../src/protocols/jabber/jabber.c:1279
 msgid "Restricted XML"
 msgstr "XML restringit"
 
-#: ../src/protocols/jabber/jabber.c:1279
+#: ../src/protocols/jabber/jabber.c:1281
 msgid "See Other Host"
 msgstr "Veu altres ordinadors"
 
-#: ../src/protocols/jabber/jabber.c:1281
+#: ../src/protocols/jabber/jabber.c:1283
 msgid "System Shutdown"
 msgstr "Apagada del Sistema"
 
-#: ../src/protocols/jabber/jabber.c:1283
+#: ../src/protocols/jabber/jabber.c:1285
 msgid "Undefined Condition"
 msgstr "Condició no definida"
 
-#: ../src/protocols/jabber/jabber.c:1285
+#: ../src/protocols/jabber/jabber.c:1287
 msgid "Unsupported Encoding"
 msgstr "La codificació no està implementada"
 
-#: ../src/protocols/jabber/jabber.c:1287
+#: ../src/protocols/jabber/jabber.c:1289
 msgid "Unsupported Stanza Type"
 msgstr "El tipus de permanència no està implementada"
 
-#: ../src/protocols/jabber/jabber.c:1289
+#: ../src/protocols/jabber/jabber.c:1291
 msgid "Unsupported Version"
 msgstr "Aquesta versió no està implementada"
 
-#: ../src/protocols/jabber/jabber.c:1291
+#: ../src/protocols/jabber/jabber.c:1293
 msgid "XML Not Well Formed"
 msgstr "XML mal format"
 
-#: ../src/protocols/jabber/jabber.c:1293
+#: ../src/protocols/jabber/jabber.c:1295
 msgid "Stream Error"
 msgstr "Error de flux"
 
-#: ../src/protocols/jabber/jabber.c:1360
+#: ../src/protocols/jabber/jabber.c:1362
 #, c-format
 msgid "Unable to ban user %s"
 msgstr "No s'ha pogut proscriure l'usuari %s"
 
-#: ../src/protocols/jabber/jabber.c:1412
+#: ../src/protocols/jabber/jabber.c:1414
 #, c-format
 msgid "Unable to kick user %s"
 msgstr "No s'ha pogut fer fora l'usuari %s"
 
-#: ../src/protocols/jabber/jabber.c:1438
+#: ../src/protocols/jabber/jabber.c:1440
 msgid "config:  Configure a chat room."
 msgstr "config:  Configura la sala de xat."
 
-#: ../src/protocols/jabber/jabber.c:1442
+#: ../src/protocols/jabber/jabber.c:1444
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Configura la sala de xat."
 
-#: ../src/protocols/jabber/jabber.c:1451
+#: ../src/protocols/jabber/jabber.c:1453
 msgid "part [room]:  Leave the room."
 msgstr "part [sala]:  Surt de la sala."
 
-#: ../src/protocols/jabber/jabber.c:1456
+#: ../src/protocols/jabber/jabber.c:1458
 msgid "register:  Register with a chat room."
 msgstr "register:  Registra a una sala de xat."
 
-#: ../src/protocols/jabber/jabber.c:1462
+#: ../src/protocols/jabber/jabber.c:1464
 msgid "topic [new topic]:  View or change the topic."
 msgstr "topic [tema nou]:  Mostra o canvia el tema."
 
-#: ../src/protocols/jabber/jabber.c:1468
+#: ../src/protocols/jabber/jabber.c:1470
 msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
 msgstr "ban &lt;user&gt; [sala]:  Proscriu un usuari de la sala."
 
-#: ../src/protocols/jabber/jabber.c:1474
+#: ../src/protocols/jabber/jabber.c:1476
 msgid "invite &lt;user&gt; [room]:  Invite a user to the room."
 msgstr "invite &lt;usuari&gt; [sala]:  Convida un usuari a la sala."
 
-#: ../src/protocols/jabber/jabber.c:1480
+#: ../src/protocols/jabber/jabber.c:1482
 msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
 msgstr "join: &lt;sala&gt; [servidor]:  Entra en un xat d'aquest servidor."
 
-#: ../src/protocols/jabber/jabber.c:1486
+#: ../src/protocols/jabber/jabber.c:1488
 msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
 msgstr "kick &lt;usuari&gt; [sala]:  Fa fora de la sala un usuari."
 
-#: ../src/protocols/jabber/jabber.c:1491
+#: ../src/protocols/jabber/jabber.c:1493
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
 msgstr ""
 "msg &lt;usuari&gt; &lt;missatge&gt;:  Envia un missatge privat a un altre "
 "usuari."
 
-#: ../src/protocols/jabber/jabber.c:1506
+#: ../src/protocols/jabber/jabber.c:1508
 msgid "Hide Operating System"
 msgstr "Oculta el sistema operatiu"
 
@@ -6518,28 +6529,28 @@ msgstr "Oculta el sistema operatiu"
 #. *< version
 #. *  summary
 #. *  description
-#: ../src/protocols/jabber/jabber.c:1593 ../src/protocols/jabber/jabber.c:1595
+#: ../src/protocols/jabber/jabber.c:1595 ../src/protocols/jabber/jabber.c:1597
 msgid "Jabber Protocol Plugin"
 msgstr "Connector per al protocol Jabber"
 
-#: ../src/protocols/jabber/jabber.c:1618
+#: ../src/protocols/jabber/jabber.c:1620
 msgid "Resource"
 msgstr "Recurs"
 
-#: ../src/protocols/jabber/jabber.c:1621
+#: ../src/protocols/jabber/jabber.c:1623
 msgid "Use TLS if available"
 msgstr "Usa TLS si està disponible"
 
-#: ../src/protocols/jabber/jabber.c:1626
+#: ../src/protocols/jabber/jabber.c:1628
 msgid "Force old SSL"
 msgstr "Força antic SSL"
 
-#: ../src/protocols/jabber/jabber.c:1631
+#: ../src/protocols/jabber/jabber.c:1633
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Permet autorització de text sobre fluxes sense xifrar"
 
 #. Account options
-#: ../src/protocols/jabber/jabber.c:1640 ../src/protocols/silc/silc.c:1592
+#: ../src/protocols/jabber/jabber.c:1642 ../src/protocols/silc/silc.c:1592
 msgid "Connect server"
 msgstr "Servidor on connectar-se"
 
@@ -6746,7 +6757,7 @@ msgstr "Falten camps obligatoris"
 msgid "Too many hits to a FND"
 msgstr "Massa coincidències per un FND"
 
-#: ../src/protocols/msn/error.c:112 ../src/protocols/oscar/oscar.c:188
+#: ../src/protocols/msn/error.c:112 ../src/protocols/oscar/oscar.c:189
 msgid "Not logged in"
 msgstr "No està connectat"
 
@@ -6839,7 +6850,7 @@ msgstr "El nom amistós canvia massa depressa"
 msgid "Server too busy"
 msgstr "El servidor està massa ocupat"
 
-#: ../src/protocols/msn/error.c:198 ../src/protocols/oscar/oscar.c:2192
+#: ../src/protocols/msn/error.c:198 ../src/protocols/oscar/oscar.c:2193
 #: ../src/protocols/silc/ops.c:1508 ../src/protocols/toc/toc.c:630
 msgid "Authentication failed"
 msgstr "Ha fallat l'autenticació"
@@ -6927,7 +6938,7 @@ msgid "Page"
 msgstr "Pàgina"
 
 #: ../src/protocols/msn/msn.c:489 ../src/protocols/msn/msn.c:497
-#: ../src/protocols/msn/msn.c:500 ../src/protocols/yahoo/yahoo.c:2822
+#: ../src/protocols/msn/msn.c:500 ../src/protocols/yahoo/yahoo.c:2820
 #, c-format
 msgid ""
 "\n"
@@ -6950,8 +6961,8 @@ msgid "Away From Computer"
 msgstr "Lluny de l'ordinador"
 
 #: ../src/protocols/msn/msn.c:515 ../src/protocols/msn/msn.c:803
-#: ../src/protocols/msn/state.c:33 ../src/protocols/yahoo/yahoo.c:2679
-#: ../src/protocols/yahoo/yahoo.c:3046 ../src/protocols/yahoo/yahoo.c:3162
+#: ../src/protocols/msn/state.c:33 ../src/protocols/yahoo/yahoo.c:2677
+#: ../src/protocols/yahoo/yahoo.c:3044 ../src/protocols/yahoo/yahoo.c:3160
 msgid "Be Right Back"
 msgstr "Tornaré de seguida"
 
@@ -6959,20 +6970,20 @@ msgstr "Tornaré de seguida"
 #: ../src/protocols/msn/state.c:31 ../src/protocols/novell/novell.c:2803
 #: ../src/protocols/novell/novell.c:2918 ../src/protocols/novell/novell.c:2972
 #: ../src/protocols/silc/buddy.c:1392 ../src/protocols/silc/silc.c:48
-#: ../src/protocols/silc/silc.c:83 ../src/protocols/yahoo/yahoo.c:2681
-#: ../src/protocols/yahoo/yahoo.c:3048 ../src/protocols/yahoo/yahoo.c:3163
+#: ../src/protocols/silc/silc.c:83 ../src/protocols/yahoo/yahoo.c:2679
+#: ../src/protocols/yahoo/yahoo.c:3046 ../src/protocols/yahoo/yahoo.c:3161
 msgid "Busy"
 msgstr "Ocupat"
 
 #: ../src/protocols/msn/msn.c:517 ../src/protocols/msn/msn.c:807
-#: ../src/protocols/msn/state.c:35 ../src/protocols/yahoo/yahoo.c:2689
-#: ../src/protocols/yahoo/yahoo.c:3056 ../src/protocols/yahoo/yahoo.c:3167
+#: ../src/protocols/msn/state.c:35 ../src/protocols/yahoo/yahoo.c:2687
+#: ../src/protocols/yahoo/yahoo.c:3054 ../src/protocols/yahoo/yahoo.c:3165
 msgid "On The Phone"
 msgstr "Al telèfon"
 
 #: ../src/protocols/msn/msn.c:518 ../src/protocols/msn/msn.c:809
-#: ../src/protocols/msn/state.c:36 ../src/protocols/yahoo/yahoo.c:2693
-#: ../src/protocols/yahoo/yahoo.c:3060 ../src/protocols/yahoo/yahoo.c:3169
+#: ../src/protocols/msn/state.c:36 ../src/protocols/yahoo/yahoo.c:2691
+#: ../src/protocols/yahoo/yahoo.c:3058 ../src/protocols/yahoo/yahoo.c:3167
 msgid "Out To Lunch"
 msgstr "Fora esmorzant"
 
@@ -7033,7 +7044,7 @@ msgstr "<b>Àlies:</b> %s<br>"
 
 #. put a link to the actual profile URL
 #: ../src/protocols/msn/msn.c:1317 ../src/protocols/msn/msn.c:1675
-#: ../src/protocols/yahoo/yahoo_profile.c:1168 ../src/util.c:784
+#: ../src/protocols/yahoo/yahoo_profile.c:1174 ../src/util.c:796
 #, c-format
 msgid "<b>%s:</b> "
 msgstr "<b>%s:</b> "
@@ -7043,34 +7054,34 @@ msgid "MSN Profile"
 msgstr "Perfil MSN"
 
 #: ../src/protocols/msn/msn.c:1410 ../src/protocols/msn/msn.c:1662
-#: ../src/protocols/yahoo/yahoo_profile.c:761
+#: ../src/protocols/yahoo/yahoo_profile.c:763
 msgid "Error retrieving profile"
 msgstr "S'ha produït un error en recuperar el perfil"
 
 #. Age
-#: ../src/protocols/msn/msn.c:1481 ../src/protocols/oscar/oscar.c:5139
+#: ../src/protocols/msn/msn.c:1481 ../src/protocols/oscar/oscar.c:5145
 #: ../src/protocols/trepia/trepia.c:286 ../src/protocols/trepia/trepia.c:405
-#: ../src/protocols/yahoo/yahoo_profile.c:1015
+#: ../src/protocols/yahoo/yahoo_profile.c:1022
 msgid "Age"
 msgstr "Edat"
 
 #. Gender
-#: ../src/protocols/msn/msn.c:1488 ../src/protocols/oscar/oscar.c:5125
+#: ../src/protocols/msn/msn.c:1488 ../src/protocols/oscar/oscar.c:5131
 #: ../src/protocols/trepia/trepia.c:280 ../src/protocols/trepia/trepia.c:407
-#: ../src/protocols/yahoo/yahoo_profile.c:1025
+#: ../src/protocols/yahoo/yahoo_profile.c:1032
 msgid "Gender"
 msgstr "Sexe"
 
-#: ../src/protocols/msn/msn.c:1497 ../src/protocols/yahoo/yahoo_profile.c:1020
+#: ../src/protocols/msn/msn.c:1497 ../src/protocols/yahoo/yahoo_profile.c:1027
 msgid "Marital Status"
 msgstr "Estat civil"
 
 #: ../src/protocols/msn/msn.c:1504 ../src/protocols/novell/novell.c:1445
-#: ../src/protocols/yahoo/yahoo_profile.c:1010
+#: ../src/protocols/yahoo/yahoo_profile.c:1017
 msgid "Location"
 msgstr "Ubicació"
 
-#: ../src/protocols/msn/msn.c:1512 ../src/protocols/yahoo/yahoo_profile.c:1030
+#: ../src/protocols/msn/msn.c:1512 ../src/protocols/yahoo/yahoo_profile.c:1037
 msgid "Occupation"
 msgstr "Ocupació"
 
@@ -7091,11 +7102,11 @@ msgid "Hobbies and Interests"
 msgstr "Aficions i interessos"
 
 #: ../src/protocols/msn/msn.c:1617 ../src/protocols/msn/msn.c:1623
-#: ../src/protocols/yahoo/yahoo_profile.c:1072
+#: ../src/protocols/yahoo/yahoo_profile.c:1079
 msgid "Favorite Quote"
 msgstr "Cita textual favorita"
 
-#: ../src/protocols/msn/msn.c:1631 ../src/protocols/yahoo/yahoo_profile.c:1123
+#: ../src/protocols/msn/msn.c:1631
 msgid "Last Updated"
 msgstr "Última actualització"
 
@@ -7126,7 +7137,7 @@ msgstr ""
 "El Gaim no ha pogut trobar informació del perfil de l'usuari. El més segur "
 "és que l'usuari no existeixi."
 
-#: ../src/protocols/msn/msn.c:1675 ../src/protocols/yahoo/yahoo_profile.c:1168
+#: ../src/protocols/msn/msn.c:1675 ../src/protocols/yahoo/yahoo_profile.c:1174
 msgid "Profile URL"
 msgstr "URL del perfil"
 
@@ -7161,7 +7172,7 @@ msgid "Use HTTP Method"
 msgstr "Usa el mètode HTTP"
 
 #: ../src/protocols/msn/nexus.c:103 ../src/protocols/msn/servconn.c:127
-#: ../src/protocols/yahoo/yahoochat.c:1383
+#: ../src/protocols/yahoo/yahoochat.c:1394
 msgid "Unable to connect"
 msgstr "No s'ha pogut connectar"
 
@@ -7251,7 +7262,7 @@ msgid "Reading error"
 msgstr "Error en llegir"
 
 #: ../src/protocols/msn/servconn.c:133 ../src/protocols/msn/session.c:341
-#: ../src/protocols/oscar/oscar.c:4122
+#: ../src/protocols/oscar/oscar.c:4123
 msgid "Unknown error"
 msgstr "Error desconegut"
 
@@ -7684,8 +7695,8 @@ msgstr "Títol personal"
 msgid "Mailstop"
 msgstr "Oficina de correu electrònic"
 
-#: ../src/protocols/novell/novell.c:1455 ../src/protocols/oscar/oscar.c:5112
-#: ../src/protocols/oscar/oscar.c:5119
+#: ../src/protocols/novell/novell.c:1455 ../src/protocols/oscar/oscar.c:5118
+#: ../src/protocols/oscar/oscar.c:5125
 msgid "Email Address"
 msgstr "Adreça de correu"
 
@@ -7788,8 +7799,8 @@ msgstr "Error. El suport per a SLL no està instal·lat."
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "S'ha tancat aquesta conferència. No s'hi poden enviar més missatges."
 
-#: ../src/protocols/novell/novell.c:2809 ../src/protocols/oscar/oscar.c:733
-#: ../src/protocols/oscar/oscar.c:6697 ../src/protocols/yahoo/yahoo.c:2701
+#: ../src/protocols/novell/novell.c:2809 ../src/protocols/oscar/oscar.c:734
+#: ../src/protocols/oscar/oscar.c:6709 ../src/protocols/yahoo/yahoo.c:2699
 msgid "Offline"
 msgstr "Fora de línia"
 
@@ -7823,103 +7834,103 @@ msgstr "Adreça del servidor"
 msgid "Server port"
 msgstr "Port en el servidor"
 
-#: ../src/protocols/oscar/oscar.c:184
+#: ../src/protocols/oscar/oscar.c:185
 msgid "Invalid error"
 msgstr "Error invàlid"
 
-#: ../src/protocols/oscar/oscar.c:185
+#: ../src/protocols/oscar/oscar.c:186
 msgid "Invalid SNAC"
 msgstr "SNAC invàlid"
 
-#: ../src/protocols/oscar/oscar.c:186
+#: ../src/protocols/oscar/oscar.c:187
 msgid "Rate to host"
 msgstr "Ràtio a l'ordinador"
 
-#: ../src/protocols/oscar/oscar.c:187
+#: ../src/protocols/oscar/oscar.c:188
 msgid "Rate to client"
 msgstr "Ràtio al client"
 
-#: ../src/protocols/oscar/oscar.c:189
+#: ../src/protocols/oscar/oscar.c:190
 msgid "Service unavailable"
 msgstr "Servei no disponible"
 
-#: ../src/protocols/oscar/oscar.c:190
+#: ../src/protocols/oscar/oscar.c:191
 msgid "Service not defined"
 msgstr "Servei no definit"
 
-#: ../src/protocols/oscar/oscar.c:191
+#: ../src/protocols/oscar/oscar.c:192
 msgid "Obsolete SNAC"
 msgstr "SNAC obsolet"
 
-#: ../src/protocols/oscar/oscar.c:192
+#: ../src/protocols/oscar/oscar.c:193
 msgid "Not supported by host"
 msgstr "El servidor no ho permet"
 
-#: ../src/protocols/oscar/oscar.c:193
+#: ../src/protocols/oscar/oscar.c:194
 msgid "Not supported by client"
 msgstr "El client no ho permet"
 
-#: ../src/protocols/oscar/oscar.c:194
+#: ../src/protocols/oscar/oscar.c:195
 msgid "Refused by client"
 msgstr "Rebutjat pel client"
 
-#: ../src/protocols/oscar/oscar.c:195
+#: ../src/protocols/oscar/oscar.c:196
 msgid "Reply too big"
 msgstr "Resposta massa gran"
 
-#: ../src/protocols/oscar/oscar.c:196
+#: ../src/protocols/oscar/oscar.c:197
 msgid "Responses lost"
 msgstr "S'han perdut respostes"
 
-#: ../src/protocols/oscar/oscar.c:197
+#: ../src/protocols/oscar/oscar.c:198
 msgid "Request denied"
 msgstr "Petició denegada"
 
-#: ../src/protocols/oscar/oscar.c:198
+#: ../src/protocols/oscar/oscar.c:199
 msgid "Busted SNAC payload"
 msgstr "Càrrega SNAC malmesa"
 
-#: ../src/protocols/oscar/oscar.c:199
+#: ../src/protocols/oscar/oscar.c:200
 msgid "Insufficient rights"
 msgstr "Drets insuficients"
 
-#: ../src/protocols/oscar/oscar.c:200
+#: ../src/protocols/oscar/oscar.c:201
 msgid "In local permit/deny"
 msgstr "En la llista de permès/denegat local"
 
-#: ../src/protocols/oscar/oscar.c:201
+#: ../src/protocols/oscar/oscar.c:202
 msgid "Too evil (sender)"
 msgstr "Massa malvat (remitent)"
 
-#: ../src/protocols/oscar/oscar.c:202
+#: ../src/protocols/oscar/oscar.c:203
 msgid "Too evil (receiver)"
 msgstr "Massa malvat (receptor)"
 
-#: ../src/protocols/oscar/oscar.c:203
+#: ../src/protocols/oscar/oscar.c:204
 msgid "User temporarily unavailable"
 msgstr "Usuari no disponible temporalment"
 
-#: ../src/protocols/oscar/oscar.c:204
+#: ../src/protocols/oscar/oscar.c:205
 msgid "No match"
 msgstr "Cap coincidència"
 
-#: ../src/protocols/oscar/oscar.c:205
+#: ../src/protocols/oscar/oscar.c:206
 msgid "List overflow"
 msgstr "Sobreeiximent de la llista"
 
-#: ../src/protocols/oscar/oscar.c:206
+#: ../src/protocols/oscar/oscar.c:207
 msgid "Request ambiguous"
 msgstr "Petició ambigua"
 
-#: ../src/protocols/oscar/oscar.c:207
+#: ../src/protocols/oscar/oscar.c:208
 msgid "Queue full"
 msgstr "Cua plena"
 
-#: ../src/protocols/oscar/oscar.c:208
+#: ../src/protocols/oscar/oscar.c:209
 msgid "Not while on AOL"
 msgstr "No es pot fer mentre estigui a AOL"
 
-#: ../src/protocols/oscar/oscar.c:403 ../src/protocols/oscar/oscar.c:486
+#: ../src/protocols/oscar/oscar.c:404 ../src/protocols/oscar/oscar.c:487
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking to "
 "most likely has a buggy client.)"
@@ -7927,158 +7938,158 @@ msgstr ""
 "(S'ha produït un error en rebre aquest missatge. És molt possible que l'amic "
 "amb qui parleu tingui un client defectuós)"
 
-#: ../src/protocols/oscar/oscar.c:588
+#: ../src/protocols/oscar/oscar.c:589
 msgid "Voice"
 msgstr "Veu"
 
-#: ../src/protocols/oscar/oscar.c:591
+#: ../src/protocols/oscar/oscar.c:592
 msgid "AIM Direct IM"
 msgstr "MI AIM directes"
 
-#: ../src/protocols/oscar/oscar.c:594 ../src/protocols/silc/silc.c:654
+#: ../src/protocols/oscar/oscar.c:595 ../src/protocols/silc/silc.c:654
 #: ../src/protocols/silc/util.c:509
 msgid "Chat"
 msgstr "Xat"
 
-#: ../src/protocols/oscar/oscar.c:597 ../src/protocols/oscar/oscar.c:6999
+#: ../src/protocols/oscar/oscar.c:598 ../src/protocols/oscar/oscar.c:7011
 msgid "Get File"
 msgstr "Aconsegueix el fitxer"
 
-#: ../src/protocols/oscar/oscar.c:604
+#: ../src/protocols/oscar/oscar.c:605
 msgid "Games"
 msgstr "Jocs"
 
-#: ../src/protocols/oscar/oscar.c:607
+#: ../src/protocols/oscar/oscar.c:608
 msgid "Add-Ins"
 msgstr "Afegits"
 
-#: ../src/protocols/oscar/oscar.c:610
+#: ../src/protocols/oscar/oscar.c:611
 msgid "Send Buddy List"
 msgstr "Envia la llista d'amics"
 
-#: ../src/protocols/oscar/oscar.c:613
+#: ../src/protocols/oscar/oscar.c:614
 msgid "ICQ Direct Connect"
 msgstr "Connexió directa a ICQ"
 
-#: ../src/protocols/oscar/oscar.c:616
+#: ../src/protocols/oscar/oscar.c:617
 msgid "AP User"
 msgstr "Usuari AP"
 
-#: ../src/protocols/oscar/oscar.c:619
+#: ../src/protocols/oscar/oscar.c:620
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: ../src/protocols/oscar/oscar.c:622
+#: ../src/protocols/oscar/oscar.c:623
 msgid "Nihilist"
 msgstr "Nihilista"
 
-#: ../src/protocols/oscar/oscar.c:625
+#: ../src/protocols/oscar/oscar.c:626
 msgid "ICQ Server Relay"
 msgstr "Servidor repetidor d'ICQ"
 
-#: ../src/protocols/oscar/oscar.c:628
+#: ../src/protocols/oscar/oscar.c:629
 msgid "Old ICQ UTF8"
 msgstr "Antic ICQ UTF8"
 
-#: ../src/protocols/oscar/oscar.c:631
+#: ../src/protocols/oscar/oscar.c:632
 msgid "Trillian Encryption"
 msgstr "Xifrat Trillian"
 
-#: ../src/protocols/oscar/oscar.c:634
+#: ../src/protocols/oscar/oscar.c:635
 msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
 
-#: ../src/protocols/oscar/oscar.c:637
+#: ../src/protocols/oscar/oscar.c:638
 msgid "Hiptop"
 msgstr "Hiptop"
 
-#: ../src/protocols/oscar/oscar.c:640
+#: ../src/protocols/oscar/oscar.c:641
 msgid "Security Enabled"
 msgstr "Seguretat habilitada"
 
-#: ../src/protocols/oscar/oscar.c:643
+#: ../src/protocols/oscar/oscar.c:644
 msgid "Video Chat"
 msgstr "Xat de vídeo"
 
-#: ../src/protocols/oscar/oscar.c:647
+#: ../src/protocols/oscar/oscar.c:648
 msgid "iChat AV"
 msgstr "iChat AV"
 
-#: ../src/protocols/oscar/oscar.c:650
+#: ../src/protocols/oscar/oscar.c:651
 msgid "Live Video"
 msgstr "Vídeo en directe"
 
-#: ../src/protocols/oscar/oscar.c:653
+#: ../src/protocols/oscar/oscar.c:654
 msgid "Camera"
 msgstr "Càmera"
 
-#: ../src/protocols/oscar/oscar.c:671 ../src/protocols/oscar/oscar.c:5708
-#: ../src/protocols/oscar/oscar.c:6891
+#: ../src/protocols/oscar/oscar.c:672 ../src/protocols/oscar/oscar.c:5714
+#: ../src/protocols/oscar/oscar.c:6903
 msgid "Free For Chat"
 msgstr "Lliure per parlar"
 
-#: ../src/protocols/oscar/oscar.c:675 ../src/protocols/oscar/oscar.c:5702
-#: ../src/protocols/oscar/oscar.c:6889
+#: ../src/protocols/oscar/oscar.c:676 ../src/protocols/oscar/oscar.c:5708
+#: ../src/protocols/oscar/oscar.c:6901
 msgid "Not Available"
 msgstr "No disponible"
 
-#: ../src/protocols/oscar/oscar.c:677 ../src/protocols/oscar/oscar.c:5705
-#: ../src/protocols/oscar/oscar.c:6890
+#: ../src/protocols/oscar/oscar.c:678 ../src/protocols/oscar/oscar.c:5711
+#: ../src/protocols/oscar/oscar.c:6902
 msgid "Occupied"
 msgstr "Ocupat"
 
-#: ../src/protocols/oscar/oscar.c:681
+#: ../src/protocols/oscar/oscar.c:682
 msgid "Web Aware"
 msgstr "Conscient de la web"
 
-#: ../src/protocols/oscar/oscar.c:749
+#: ../src/protocols/oscar/oscar.c:750
 msgid "Capabilities"
 msgstr "Capacitats"
 
-#: ../src/protocols/oscar/oscar.c:758
+#: ../src/protocols/oscar/oscar.c:759
 msgid "Buddy Comment"
 msgstr "Comentari de l'amic"
 
-#: ../src/protocols/oscar/oscar.c:893
+#: ../src/protocols/oscar/oscar.c:894
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "S'ha tancat la conversa d'IM amb %s"
 
-#: ../src/protocols/oscar/oscar.c:895
+#: ../src/protocols/oscar/oscar.c:896
 #, c-format
 msgid "Direct IM with %s failed"
 msgstr "Ha fallat la conversa directa de MI amb %s"
 
-#: ../src/protocols/oscar/oscar.c:902
+#: ../src/protocols/oscar/oscar.c:903
 msgid "Direct Connect failed"
 msgstr "Ha fallat la connexió directa"
 
-#: ../src/protocols/oscar/oscar.c:979 ../src/protocols/oscar/oscar.c:1110
+#: ../src/protocols/oscar/oscar.c:980 ../src/protocols/oscar/oscar.c:1111
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "S'ha establert una connexió directa de MI amb %s"
 
-#: ../src/protocols/oscar/oscar.c:1060
+#: ../src/protocols/oscar/oscar.c:1061
 #, c-format
 msgid "Attempting to connect to %s at %s:%hu for Direct IM."
 msgstr "S'està intentant connectar amb %s a %s:%hu per a MI directa."
 
-#: ../src/protocols/oscar/oscar.c:1480
+#: ../src/protocols/oscar/oscar.c:1481
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
 msgstr ""
 "S'està demanant a %s que es connecti a vostè a %s:%hu per a MI directa."
 
-#: ../src/protocols/oscar/oscar.c:1485
+#: ../src/protocols/oscar/oscar.c:1486
 msgid "Unable to open Direct IM"
 msgstr "No s'ha pogut obrir la comunicació de MI directa"
 
-#: ../src/protocols/oscar/oscar.c:1520
+#: ../src/protocols/oscar/oscar.c:1521
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
 msgstr "Heu escollit obrir una connexió directa de MI amb %s."
 
-#: ../src/protocols/oscar/oscar.c:1524
+#: ../src/protocols/oscar/oscar.c:1525
 msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
@@ -8086,24 +8097,24 @@ msgstr ""
 "Atès que això revela la vostra adreça IP, es podria considerar com un risc "
 "de privadesa. Voleu continuar?"
 
-#: ../src/protocols/oscar/oscar.c:1528 ../src/protocols/oscar/oscar.c:3556
+#: ../src/protocols/oscar/oscar.c:1529 ../src/protocols/oscar/oscar.c:3557
 msgid "Connect"
 msgstr "Connecta"
 
-#: ../src/protocols/oscar/oscar.c:1595 ../src/protocols/toc/toc.c:874
+#: ../src/protocols/oscar/oscar.c:1596 ../src/protocols/toc/toc.c:874
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Se us ha desconnectat de la conversa %s."
 
-#: ../src/protocols/oscar/oscar.c:1614
+#: ../src/protocols/oscar/oscar.c:1615
 msgid "Chat is currently unavailable"
 msgstr "El xat no està actualment disponible"
 
-#: ../src/protocols/oscar/oscar.c:1695
+#: ../src/protocols/oscar/oscar.c:1696
 msgid "Screen name sent"
 msgstr "S'ha enviat el nom d'usuari"
 
-#: ../src/protocols/oscar/oscar.c:1709
+#: ../src/protocols/oscar/oscar.c:1710
 #, c-format
 msgid ""
 "Unable to login: Could not sign on as %s because the screen name is "
@@ -8114,48 +8125,48 @@ msgstr ""
 "no és vàlid. Els noms d'usuari han de començar amb una lletra i contenir "
 "només lletres, nombres o espais, o només nombres."
 
-#: ../src/protocols/oscar/oscar.c:1737
+#: ../src/protocols/oscar/oscar.c:1738
 msgid "Unable to login to AIM"
 msgstr "No s'ha pogut connectar a l'AIM"
 
-#: ../src/protocols/oscar/oscar.c:1839 ../src/protocols/oscar/oscar.c:2285
+#: ../src/protocols/oscar/oscar.c:1840 ../src/protocols/oscar/oscar.c:2286
 msgid "Could Not Connect"
 msgstr "No s'ha pogut connectar"
 
-#: ../src/protocols/oscar/oscar.c:1847
+#: ../src/protocols/oscar/oscar.c:1848
 msgid "Connection established, cookie sent"
 msgstr "Connexió establerta, s'està enviant el secret"
 
-#: ../src/protocols/oscar/oscar.c:1967
+#: ../src/protocols/oscar/oscar.c:1968
 #: ../src/protocols/yahoo/yahoo_filexfer.c:177
 #: ../src/protocols/yahoo/yahoo_filexfer.c:186
 #: ../src/protocols/yahoo/yahoo_filexfer.c:195
 msgid "Unable to establish file descriptor."
 msgstr "No s'ha pogut establir un descriptor de fitxer."
 
-#: ../src/protocols/oscar/oscar.c:1972
+#: ../src/protocols/oscar/oscar.c:1973
 msgid "Unable to create new connection."
 msgstr "No s'ha pogut crear una nova connexió."
 
-#: ../src/protocols/oscar/oscar.c:2044
+#: ../src/protocols/oscar/oscar.c:2045
 msgid "Unable to establish listener socket."
 msgstr "No s'ha pogut establir un sòcol on escoltar."
 
-#: ../src/protocols/oscar/oscar.c:2169 ../src/protocols/toc/toc.c:541
+#: ../src/protocols/oscar/oscar.c:2170 ../src/protocols/toc/toc.c:541
 msgid "Incorrect nickname or password."
 msgstr "El sobrenom o la contrasenya són incorrectes"
 
-#: ../src/protocols/oscar/oscar.c:2174
+#: ../src/protocols/oscar/oscar.c:2175
 msgid "Your account is currently suspended."
 msgstr "El vostre compte està actualment suspès."
 
 #. service temporarily unavailable
-#: ../src/protocols/oscar/oscar.c:2178
+#: ../src/protocols/oscar/oscar.c:2179
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr ""
 "El servei de missatges instantanis d'AOL no està disponible temporalment."
 
-#: ../src/protocols/oscar/oscar.c:2183
+#: ../src/protocols/oscar/oscar.c:2184
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -8164,33 +8175,33 @@ msgstr ""
 "deu minuts i intenteu-ho de nou. Si continueu intentant-ho, haureu d'esperar "
 "encara més temps."
 
-#: ../src/protocols/oscar/oscar.c:2188
+#: ../src/protocols/oscar/oscar.c:2189
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "La versió del client que useu és massa antiga, actualitzeu-la a %s"
 
-#: ../src/protocols/oscar/oscar.c:2220
+#: ../src/protocols/oscar/oscar.c:2221
 msgid "Internal Error"
 msgstr "Error intern"
 
-#: ../src/protocols/oscar/oscar.c:2292
+#: ../src/protocols/oscar/oscar.c:2293
 msgid "Received authorization"
 msgstr "S'ha rebut l'autorització"
 
-#: ../src/protocols/oscar/oscar.c:2316
+#: ../src/protocols/oscar/oscar.c:2317
 msgid "The SecurID key entered is invalid."
 msgstr "La clau SecurID que heu entrat no és vàlida."
 
-#: ../src/protocols/oscar/oscar.c:2330
+#: ../src/protocols/oscar/oscar.c:2331
 msgid "Enter SecurID"
 msgstr "Entreu el SecureID"
 
-#: ../src/protocols/oscar/oscar.c:2331
+#: ../src/protocols/oscar/oscar.c:2332
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Entreu el nombre de 6 dígits de la pantalla digital."
 
-#: ../src/protocols/oscar/oscar.c:2371 ../src/protocols/oscar/oscar.c:2401
-#: ../src/protocols/oscar/oscar.c:2490
+#: ../src/protocols/oscar/oscar.c:2372 ../src/protocols/oscar/oscar.c:2402
+#: ../src/protocols/oscar/oscar.c:2491
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -8199,24 +8210,24 @@ msgstr ""
 "Se us pot desconnectar d'aquí a poc temps. Si voleu, podeu usar TOC fins que "
 "això es resolgui. Comproveu si hi ha actualitzacions a %s."
 
-#: ../src/protocols/oscar/oscar.c:2374 ../src/protocols/oscar/oscar.c:2404
+#: ../src/protocols/oscar/oscar.c:2375 ../src/protocols/oscar/oscar.c:2405
 msgid "Gaim was unable to get a valid AIM login hash."
 msgstr "El Gaim no ha pogut obtenir un hash d'AIM d'entrada vàlid."
 
-#: ../src/protocols/oscar/oscar.c:2493
+#: ../src/protocols/oscar/oscar.c:2494
 msgid "Gaim was unable to get a valid login hash."
 msgstr "El Gaim no ha pogut obtenir un hash d'entrada vàlid."
 
-#: ../src/protocols/oscar/oscar.c:2525
+#: ../src/protocols/oscar/oscar.c:2526
 msgid "Password sent"
 msgstr "S'ha enviat la contrasenya"
 
-#: ../src/protocols/oscar/oscar.c:3548
+#: ../src/protocols/oscar/oscar.c:3549
 #, c-format
 msgid "%s has just asked to directly connect to %s"
 msgstr "%s demana connectar-se directament a %s"
 
-#: ../src/protocols/oscar/oscar.c:3551
+#: ../src/protocols/oscar/oscar.c:3552
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
@@ -8226,19 +8237,19 @@ msgstr ""
 "necessari per poder enviar imatges instantànies. Atès que es revelarà la "
 "vostra adreça IP, això es pot considerar un risc de privadesa."
 
-#: ../src/protocols/oscar/oscar.c:3589
+#: ../src/protocols/oscar/oscar.c:3590
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "Autoritzeu-me perquè pugui afegir-vos a la meva llista d'amics."
 
-#: ../src/protocols/oscar/oscar.c:3597
+#: ../src/protocols/oscar/oscar.c:3598
 msgid "Authorization Request Message:"
 msgstr "Missatge de petició d'autorització:"
 
-#: ../src/protocols/oscar/oscar.c:3598
+#: ../src/protocols/oscar/oscar.c:3599
 msgid "Please authorize me!"
 msgstr "Autoritzeu-me, si us plau."
 
-#: ../src/protocols/oscar/oscar.c:3628
+#: ../src/protocols/oscar/oscar.c:3629
 #, c-format
 msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
@@ -8247,22 +8258,22 @@ msgstr ""
 "L'usuari %s demana una autorització abans de ser afegit a una llista "
 "d'amics. Voleu enviar una sol·licitud d'autorització?"
 
-#: ../src/protocols/oscar/oscar.c:3633 ../src/protocols/oscar/oscar.c:3635
+#: ../src/protocols/oscar/oscar.c:3634 ../src/protocols/oscar/oscar.c:3636
 msgid "Request Authorization"
 msgstr "Sol·licitud d'autorització"
 
-#: ../src/protocols/oscar/oscar.c:3683 ../src/protocols/oscar/oscar.c:3685
-#: ../src/protocols/oscar/oscar.c:3692 ../src/protocols/oscar/oscar.c:3789
-#: ../src/protocols/oscar/oscar.c:3809 ../src/protocols/oscar/oscar.c:6332
-#: ../src/protocols/oscar/oscar.c:6378
+#: ../src/protocols/oscar/oscar.c:3684 ../src/protocols/oscar/oscar.c:3686
+#: ../src/protocols/oscar/oscar.c:3693 ../src/protocols/oscar/oscar.c:3790
+#: ../src/protocols/oscar/oscar.c:3810 ../src/protocols/oscar/oscar.c:6344
+#: ../src/protocols/oscar/oscar.c:6390
 msgid "No reason given."
 msgstr "No s'ha indicat cap motiu."
 
-#: ../src/protocols/oscar/oscar.c:3691
+#: ../src/protocols/oscar/oscar.c:3692
 msgid "Authorization Denied Message:"
 msgstr "Missatge de denegació de l'autorització:"
 
-#: ../src/protocols/oscar/oscar.c:3789
+#: ../src/protocols/oscar/oscar.c:3790
 #, c-format
 msgid ""
 "The user %u wants to add you to their buddy list for the following reason:\n"
@@ -8271,11 +8282,11 @@ msgstr ""
 "L'usuari %u vol afegir-vos a la seva llista d'amics pels següents motius:\n"
 "%s"
 
-#: ../src/protocols/oscar/oscar.c:3797 ../src/protocols/oscar/oscar.c:6338
+#: ../src/protocols/oscar/oscar.c:3798 ../src/protocols/oscar/oscar.c:6350
 msgid "Authorization Request"
 msgstr "Sol·licitud d'autorització"
 
-#: ../src/protocols/oscar/oscar.c:3809
+#: ../src/protocols/oscar/oscar.c:3810
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -8286,17 +8297,17 @@ msgstr ""
 "d'amics pel següent motiu:\n"
 "%s"
 
-#: ../src/protocols/oscar/oscar.c:3810
+#: ../src/protocols/oscar/oscar.c:3811
 msgid "ICQ authorization denied."
 msgstr "S'ha denegat l'autorització ICQ."
 
 #. Someone has granted you authorization
-#: ../src/protocols/oscar/oscar.c:3817
+#: ../src/protocols/oscar/oscar.c:3818
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr "L'usuari %u us ha permès afegir-lo a la vostra llista d'amics."
 
-#: ../src/protocols/oscar/oscar.c:3825
+#: ../src/protocols/oscar/oscar.c:3826
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -8309,7 +8320,7 @@ msgstr ""
 "De: %s [%s]\n"
 "%s"
 
-#: ../src/protocols/oscar/oscar.c:3833
+#: ../src/protocols/oscar/oscar.c:3834
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -8322,7 +8333,7 @@ msgstr ""
 "De: %s [%s]\n"
 "%s"
 
-#: ../src/protocols/oscar/oscar.c:3841
+#: ../src/protocols/oscar/oscar.c:3842
 #, c-format
 msgid ""
 "You have received an ICQ email from %s [%s]\n"
@@ -8335,34 +8346,34 @@ msgstr ""
 "Missatge:\n"
 "%s"
 
-#: ../src/protocols/oscar/oscar.c:3862
+#: ../src/protocols/oscar/oscar.c:3863
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "L'usuari %u d'ICQ us ha enviat un amic: %s (%s)"
 
-#: ../src/protocols/oscar/oscar.c:3868
+#: ../src/protocols/oscar/oscar.c:3869
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Voleu afegir aquest amic a la vostra llista d'amics?"
 
-#: ../src/protocols/oscar/oscar.c:3872
+#: ../src/protocols/oscar/oscar.c:3873
 msgid "Decline"
 msgstr "Rebutja"
 
-#: ../src/protocols/oscar/oscar.c:3956
+#: ../src/protocols/oscar/oscar.c:3957
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "S'ha perdut %hu missatge de %s perquè era invàlid."
 msgstr[1] "S'ha perdut %hu missatges de %s perquè eren invàlids."
 
-#: ../src/protocols/oscar/oscar.c:3965
+#: ../src/protocols/oscar/oscar.c:3966
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "S'ha perdut %hu missatge de %s perquè era massa llarg."
 msgstr[1] "S'ha perdut %hu missatges de %s perquè eren massa llargs."
 
-#: ../src/protocols/oscar/oscar.c:3974
+#: ../src/protocols/oscar/oscar.c:3975
 #, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
@@ -8371,7 +8382,7 @@ msgid_plural ""
 msgstr[0] "S'ha perdut %hu missatge de %s perquè era invàlid."
 msgstr[1] "S'han perdut %hu missatges de %s perquè eren invàlids."
 
-#: ../src/protocols/oscar/oscar.c:3983
+#: ../src/protocols/oscar/oscar.c:3984
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
@@ -8379,70 +8390,70 @@ msgstr[0] "S'ha perdut %hu missatge de %s perquè ell/ella era massa dolent/a."
 msgstr[1] ""
 "S'han perdut %hu missatges de %s perquè ell/ella ere massa dolent/a."
 
-#: ../src/protocols/oscar/oscar.c:3992
+#: ../src/protocols/oscar/oscar.c:3993
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "S'ha perdut %hu missatge de %s perquè sou massa dolents."
 msgstr[1] "S'han perdut %hu missatges de %s perquè sou massa dolents."
 
-#: ../src/protocols/oscar/oscar.c:4001
+#: ../src/protocols/oscar/oscar.c:4002
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "S'ha perdut %hu missatge de %s per motius desconeguts."
 msgstr[1] "S'han perdut %hu missatges de %s per motius desconeguts."
 
-#: ../src/protocols/oscar/oscar.c:4055 ../src/protocols/oscar/oscar.c:4287
+#: ../src/protocols/oscar/oscar.c:4056 ../src/protocols/oscar/oscar.c:4288
 #, c-format
 msgid "Info for %s"
 msgstr "Informació quant a %s"
 
-#: ../src/protocols/oscar/oscar.c:4121
+#: ../src/protocols/oscar/oscar.c:4122
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "Error SNAC: %s\n"
 
 #. Data is assumed to be the destination sn
-#: ../src/protocols/oscar/oscar.c:4157
+#: ../src/protocols/oscar/oscar.c:4158
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "No s'ha pogut enviar el missatge: %s"
 
-#: ../src/protocols/oscar/oscar.c:4157 ../src/protocols/oscar/oscar.c:4162
-#: ../src/protocols/oscar/oscar.c:4220 ../src/protocols/oscar/oscar.c:4224
+#: ../src/protocols/oscar/oscar.c:4158 ../src/protocols/oscar/oscar.c:4163
+#: ../src/protocols/oscar/oscar.c:4221 ../src/protocols/oscar/oscar.c:4225
 msgid "Unknown reason."
 msgstr "Motiu desconegut."
 
-#: ../src/protocols/oscar/oscar.c:4220
+#: ../src/protocols/oscar/oscar.c:4221
 #, c-format
 msgid "User information not available: %s"
 msgstr "La informació de l'usuari no està disponible: %s"
 
-#: ../src/protocols/oscar/oscar.c:4223
+#: ../src/protocols/oscar/oscar.c:4224
 #, c-format
 msgid "User information for %s unavailable:"
 msgstr "La informació de %s no està disponible:"
 
-#: ../src/protocols/oscar/oscar.c:4245
+#: ../src/protocols/oscar/oscar.c:4246
 msgid "Warning Level"
 msgstr "Nivell d'avís"
 
-#: ../src/protocols/oscar/oscar.c:4249
+#: ../src/protocols/oscar/oscar.c:4250
 msgid "Online Since"
 msgstr "En línia des de"
 
-#: ../src/protocols/oscar/oscar.c:4254
-#: ../src/protocols/yahoo/yahoo_profile.c:1118
+#: ../src/protocols/oscar/oscar.c:4255
+#: ../src/protocols/yahoo/yahoo_profile.c:1125
 msgid "Member Since"
 msgstr "Membre des de"
 
-#: ../src/protocols/oscar/oscar.c:4338
+#: ../src/protocols/oscar/oscar.c:4339
 msgid "Your AIM connection may be lost."
 msgstr "La vostra connexió d'AIM es pot perdre."
 
 #. The conversion failed!
-#: ../src/protocols/oscar/oscar.c:4524
+#: ../src/protocols/oscar/oscar.c:4525
 msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
@@ -8450,11 +8461,11 @@ msgstr ""
 "[No s'ha pogut mostrar el missatge d'aquest usuari perquè contenia caràcters "
 "invàlids.]"
 
-#: ../src/protocols/oscar/oscar.c:4744
+#: ../src/protocols/oscar/oscar.c:4750
 msgid "Rate limiting error."
 msgstr "Error de limitació de velocitat."
 
-#: ../src/protocols/oscar/oscar.c:4745
+#: ../src/protocols/oscar/oscar.c:4751
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
@@ -8462,7 +8473,7 @@ msgstr ""
 "No s'ha pogut realitzar la darrera acció que havíeu intentat perquè esteu "
 "per sobre del límit. Espereu 10 segons i torneu-ho a provar."
 
-#: ../src/protocols/oscar/oscar.c:4808
+#: ../src/protocols/oscar/oscar.c:4814
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
@@ -8470,109 +8481,109 @@ msgstr ""
 "Se us ha desconnectat perquè us heu connectat amb el mateix nom des d'un "
 "altre lloc."
 
-#: ../src/protocols/oscar/oscar.c:4810
+#: ../src/protocols/oscar/oscar.c:4816
 msgid "You have been signed off for an unknown reason."
 msgstr "Se us ha desconnectat per motius desconeguts."
 
-#: ../src/protocols/oscar/oscar.c:4841
+#: ../src/protocols/oscar/oscar.c:4847
 msgid "Finalizing connection"
 msgstr "S'està finalitzant la connexió"
 
-#: ../src/protocols/oscar/oscar.c:5124 ../src/protocols/silc/util.c:541
+#: ../src/protocols/oscar/oscar.c:5130 ../src/protocols/silc/util.c:541
 msgid "Mobile Phone"
 msgstr "Telèfon mòbil"
 
-#: ../src/protocols/oscar/oscar.c:5125
+#: ../src/protocols/oscar/oscar.c:5131
 msgid "Not specified"
 msgstr "No especificat"
 
-#: ../src/protocols/oscar/oscar.c:5126 ../src/protocols/trepia/trepia.c:282
+#: ../src/protocols/oscar/oscar.c:5132 ../src/protocols/trepia/trepia.c:282
 #: ../src/protocols/trepia/trepia.c:408
 msgid "Female"
 msgstr "Dona"
 
-#: ../src/protocols/oscar/oscar.c:5126 ../src/protocols/trepia/trepia.c:281
+#: ../src/protocols/oscar/oscar.c:5132 ../src/protocols/trepia/trepia.c:281
 #: ../src/protocols/trepia/trepia.c:408
 msgid "Male"
 msgstr "Home"
 
-#: ../src/protocols/oscar/oscar.c:5142
+#: ../src/protocols/oscar/oscar.c:5148
 msgid "Personal Web Page"
 msgstr "Pàgina web personal"
 
-#: ../src/protocols/oscar/oscar.c:5146
+#: ../src/protocols/oscar/oscar.c:5152
 msgid "Additional Information"
 msgstr "Informació addicional"
 
-#: ../src/protocols/oscar/oscar.c:5151
+#: ../src/protocols/oscar/oscar.c:5157
 msgid "Home Address"
 msgstr "Adreça de casa"
 
-#: ../src/protocols/oscar/oscar.c:5155 ../src/protocols/oscar/oscar.c:5163
+#: ../src/protocols/oscar/oscar.c:5161 ../src/protocols/oscar/oscar.c:5169
 msgid "Zip Code"
 msgstr "Codi postal"
 
-#: ../src/protocols/oscar/oscar.c:5159
+#: ../src/protocols/oscar/oscar.c:5165
 msgid "Work Address"
 msgstr "Adreça de la feina"
 
-#: ../src/protocols/oscar/oscar.c:5167
+#: ../src/protocols/oscar/oscar.c:5173
 msgid "Work Information"
 msgstr "Informació de la feina"
 
-#: ../src/protocols/oscar/oscar.c:5168
+#: ../src/protocols/oscar/oscar.c:5174
 msgid "Company"
 msgstr "Empresa"
 
-#: ../src/protocols/oscar/oscar.c:5169
+#: ../src/protocols/oscar/oscar.c:5175
 msgid "Division"
 msgstr "Divisió"
 
-#: ../src/protocols/oscar/oscar.c:5170
+#: ../src/protocols/oscar/oscar.c:5176
 msgid "Position"
 msgstr "Posició"
 
-#: ../src/protocols/oscar/oscar.c:5172
+#: ../src/protocols/oscar/oscar.c:5178
 msgid "Web Page"
 msgstr "Pàgina web"
 
-#: ../src/protocols/oscar/oscar.c:5182
+#: ../src/protocols/oscar/oscar.c:5188
 #, c-format
 msgid "ICQ Info for %s"
 msgstr "Informació ICQ de %s"
 
-#: ../src/protocols/oscar/oscar.c:5231
+#: ../src/protocols/oscar/oscar.c:5237
 msgid "Pop-Up Message"
 msgstr "Missatge emergent"
 
-#: ../src/protocols/oscar/oscar.c:5252
+#: ../src/protocols/oscar/oscar.c:5258
 #, c-format
 msgid "The following screen names are associated with %s"
 msgstr "Els següents noms d'usuari estan associats amb %s"
 
-#: ../src/protocols/oscar/oscar.c:5256
+#: ../src/protocols/oscar/oscar.c:5262
 msgid "Search Results"
 msgstr "Resultats de la cerca"
 
-#: ../src/protocols/oscar/oscar.c:5273
+#: ../src/protocols/oscar/oscar.c:5279
 #, c-format
 msgid "No results found for email address %s"
 msgstr "No s'han obtingut resultats per a l'adreça de correu %s"
 
-#: ../src/protocols/oscar/oscar.c:5294
+#: ../src/protocols/oscar/oscar.c:5300
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "Hauríeu de rebre un correu demanant-vos confirmar %s."
 
-#: ../src/protocols/oscar/oscar.c:5296
+#: ../src/protocols/oscar/oscar.c:5302
 msgid "Account Confirmation Requested"
 msgstr "S'ha sol·licitat la confirmació del compte"
 
-#: ../src/protocols/oscar/oscar.c:5327
+#: ../src/protocols/oscar/oscar.c:5333
 msgid "Error Changing Account Info"
 msgstr "S'ha produït un error en canviar la informació del compte"
 
-#: ../src/protocols/oscar/oscar.c:5330
+#: ../src/protocols/oscar/oscar.c:5336
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8581,7 +8592,7 @@ msgstr ""
 "Error 0x%04x: no s'ha pogut formatar el nom d'usuari perquè el demanat "
 "difereix de l'original."
 
-#: ../src/protocols/oscar/oscar.c:5333
+#: ../src/protocols/oscar/oscar.c:5339
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8590,7 +8601,7 @@ msgstr ""
 "Error 0x%04x: no s'ha pogut formatar el nom d'usuari perquè el demanat acaba "
 "en un espai."
 
-#: ../src/protocols/oscar/oscar.c:5336
+#: ../src/protocols/oscar/oscar.c:5342
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8599,7 +8610,7 @@ msgstr ""
 "Error 0x%04x: no s'ha pogut formatar el nom d'usuari perquè el demanat és "
 "massa llarg."
 
-#: ../src/protocols/oscar/oscar.c:5339
+#: ../src/protocols/oscar/oscar.c:5345
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -8608,7 +8619,7 @@ msgstr ""
 "Error 0x%04x: no s'ha pogut canviar l'adreça de correu electrònic perquè ja "
 "hi ha una petició pendent per a aquest nom d'usuari."
 
-#: ../src/protocols/oscar/oscar.c:5342
+#: ../src/protocols/oscar/oscar.c:5348
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -8617,7 +8628,7 @@ msgstr ""
 "Error 0x%04x: no s'ha pogut canviar l'adreça de correu electrònic perquè "
 "l'adreça donada ja té massa noms d'usuari associats."
 
-#: ../src/protocols/oscar/oscar.c:5345
+#: ../src/protocols/oscar/oscar.c:5351
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
@@ -8626,12 +8637,12 @@ msgstr ""
 "Error 0x%04x: No s'ha pogut canviar l'adreça de correu perquè l'adreça "
 "indicada no és vàlida."
 
-#: ../src/protocols/oscar/oscar.c:5348
+#: ../src/protocols/oscar/oscar.c:5354
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "Error 0x%04x: error desconegut."
 
-#: ../src/protocols/oscar/oscar.c:5358
+#: ../src/protocols/oscar/oscar.c:5364
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -8640,27 +8651,27 @@ msgstr ""
 "El vostre nom d'usuari té aquest format:\n"
 "%s"
 
-#: ../src/protocols/oscar/oscar.c:5359 ../src/protocols/oscar/oscar.c:5366
+#: ../src/protocols/oscar/oscar.c:5365 ../src/protocols/oscar/oscar.c:5372
 msgid "Account Info"
 msgstr "Informació del compte"
 
-#: ../src/protocols/oscar/oscar.c:5364
+#: ../src/protocols/oscar/oscar.c:5370
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "L'adreça de correu per a %s és %s"
 
-#: ../src/protocols/oscar/oscar.c:5429
+#: ../src/protocols/oscar/oscar.c:5435
 msgid ""
 "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
 "No s'ha enviat la imatge de MI. Heu d'estar directament connectat per poder "
 "enviar imatges de MI."
 
-#: ../src/protocols/oscar/oscar.c:5557
+#: ../src/protocols/oscar/oscar.c:5563
 msgid "Unable to set AIM profile."
 msgstr "No s'ha pogut establir el perfil d'AIM."
 
-#: ../src/protocols/oscar/oscar.c:5558
+#: ../src/protocols/oscar/oscar.c:5564
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -8670,7 +8681,7 @@ msgstr ""
 "procés de connexió. El vostre perfil segueix sense estar establert; intenteu "
 "establir-lo de nou quan el procés de connexió hagi finalitzat."
 
-#: ../src/protocols/oscar/oscar.c:5585
+#: ../src/protocols/oscar/oscar.c:5591
 #, c-format
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
@@ -8685,19 +8696,19 @@ msgstr[1] ""
 "S'ha excedit el límit màxim per la mida del perfil de %d octets. El Gaim "
 "l'ha retallat."
 
-#: ../src/protocols/oscar/oscar.c:5590
+#: ../src/protocols/oscar/oscar.c:5596
 msgid "Profile too long."
 msgstr "Perfil massa llarg."
 
-#: ../src/protocols/oscar/oscar.c:5606 ../src/protocols/oscar/oscar.c:6896
+#: ../src/protocols/oscar/oscar.c:5612 ../src/protocols/oscar/oscar.c:6908
 msgid "Visible"
 msgstr "Visible"
 
-#: ../src/protocols/oscar/oscar.c:5624
+#: ../src/protocols/oscar/oscar.c:5630
 msgid "Unable to set AIM away message."
 msgstr "No s'ha pogut posar el missatge s'absència per a AIM."
 
-#: ../src/protocols/oscar/oscar.c:5625
+#: ../src/protocols/oscar/oscar.c:5631
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -8707,7 +8718,7 @@ msgstr ""
 "amb el procés de connexió. El vostre estat continua essent \"present\"; "
 "intenteu canviar-lo un cop hagi finalitzat el procés de connexió."
 
-#: ../src/protocols/oscar/oscar.c:5665
+#: ../src/protocols/oscar/oscar.c:5671
 #, c-format
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
@@ -8722,11 +8733,11 @@ msgstr[1] ""
 "S'ha superat el límit de %d octets per al missatge d'absència. El Gaim l'ha "
 "retallat."
 
-#: ../src/protocols/oscar/oscar.c:5670
+#: ../src/protocols/oscar/oscar.c:5676
 msgid "Away message too long."
 msgstr "El missatge d'absència és massa llarg."
 
-#: ../src/protocols/oscar/oscar.c:5747
+#: ../src/protocols/oscar/oscar.c:5753
 #, c-format
 msgid ""
 "Could not add the buddy %s because the screen name is invalid.  Screen names "
@@ -8737,16 +8748,16 @@ msgstr ""
 "d'usuari han de començar amb una lletra i contenir lletres, nombres i "
 "espais, o només nombres."
 
-#: ../src/protocols/oscar/oscar.c:5749 ../src/protocols/oscar/oscar.c:6198
-#: ../src/protocols/oscar/oscar.c:6212
+#: ../src/protocols/oscar/oscar.c:5755 ../src/protocols/oscar/oscar.c:6210
+#: ../src/protocols/oscar/oscar.c:6224
 msgid "Unable To Add"
 msgstr "No s'ha pogut afegir"
 
-#: ../src/protocols/oscar/oscar.c:5910
+#: ../src/protocols/oscar/oscar.c:5922
 msgid "Unable To Retrieve Buddy List"
 msgstr "No s'ha pogut obtenir la llista d'amics"
 
-#: ../src/protocols/oscar/oscar.c:5911
+#: ../src/protocols/oscar/oscar.c:5923
 msgid ""
 "Gaim was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -8756,13 +8767,13 @@ msgstr ""
 "llista d'amics no s'ha perdut, i probablement tornarà a estar disponible "
 "d'aquí a poques hores."
 
-#: ../src/protocols/oscar/oscar.c:6093 ../src/protocols/oscar/oscar.c:6094
-#: ../src/protocols/oscar/oscar.c:6099 ../src/protocols/oscar/oscar.c:6256
-#: ../src/protocols/oscar/oscar.c:6257 ../src/protocols/oscar/oscar.c:6262
+#: ../src/protocols/oscar/oscar.c:6105 ../src/protocols/oscar/oscar.c:6106
+#: ../src/protocols/oscar/oscar.c:6111 ../src/protocols/oscar/oscar.c:6268
+#: ../src/protocols/oscar/oscar.c:6269 ../src/protocols/oscar/oscar.c:6274
 msgid "Orphans"
 msgstr "Orfes"
 
-#: ../src/protocols/oscar/oscar.c:6196
+#: ../src/protocols/oscar/oscar.c:6208
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -8771,11 +8782,11 @@ msgstr ""
 "No s'ha pogut afegir l'amic %s perque hi ha massa entrades a la llista "
 "d'amics. Suprimiu-ne algun i torneu-ho a intentar."
 
-#: ../src/protocols/oscar/oscar.c:6196 ../src/protocols/oscar/oscar.c:6210
+#: ../src/protocols/oscar/oscar.c:6208 ../src/protocols/oscar/oscar.c:6222
 msgid "(no name)"
 msgstr "(sense nom)"
 
-#: ../src/protocols/oscar/oscar.c:6210
+#: ../src/protocols/oscar/oscar.c:6222
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
@@ -8785,7 +8796,7 @@ msgstr ""
 "Per motius desconeguts no s'ha pogut afegir l'amic %s. El motiu més comú és "
 "que ja heu ocupat el nombre màxim d'amics a la llista d'amics."
 
-#: ../src/protocols/oscar/oscar.c:6293
+#: ../src/protocols/oscar/oscar.c:6305
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -8794,11 +8805,11 @@ msgstr ""
 "L'usuari %s us ha donat permís per afegir-vos a la seva llista d'amics. "
 "Voleu afegir-lo a la vostra?"
 
-#: ../src/protocols/oscar/oscar.c:6299
+#: ../src/protocols/oscar/oscar.c:6311
 msgid "Authorization Given"
 msgstr "S'ha donat l'autorització"
 
-#: ../src/protocols/oscar/oscar.c:6332
+#: ../src/protocols/oscar/oscar.c:6344
 #, c-format
 msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
@@ -8808,17 +8819,17 @@ msgstr ""
 "%s"
 
 #. Granted
-#: ../src/protocols/oscar/oscar.c:6374
+#: ../src/protocols/oscar/oscar.c:6386
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr "L'usuari %s us ha permès afegir-lo a la vostra llista d'amics."
 
-#: ../src/protocols/oscar/oscar.c:6375
+#: ../src/protocols/oscar/oscar.c:6387
 msgid "Authorization Granted"
 msgstr "S'ha concedit l'autorització"
 
 #. Denied
-#: ../src/protocols/oscar/oscar.c:6378
+#: ../src/protocols/oscar/oscar.c:6390
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
@@ -8829,79 +8840,79 @@ msgstr ""
 "pels següents motius:\n"
 "%s"
 
-#: ../src/protocols/oscar/oscar.c:6379
+#: ../src/protocols/oscar/oscar.c:6391
 msgid "Authorization Denied"
 msgstr "S'ha denegat l'autorització"
 
-#: ../src/protocols/oscar/oscar.c:6416 ../src/protocols/toc/toc.c:1273
+#: ../src/protocols/oscar/oscar.c:6428 ../src/protocols/toc/toc.c:1273
 msgid "_Exchange:"
 msgstr "Int_ercanvi:"
 
-#: ../src/protocols/oscar/oscar.c:6454
+#: ../src/protocols/oscar/oscar.c:6466
 msgid "Invalid chat name specified."
 msgstr "S'ha especificat un nom de xat invàlid."
 
-#: ../src/protocols/oscar/oscar.c:6543
+#: ../src/protocols/oscar/oscar.c:6555
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr ""
 "La vostra imatge MI no s'ha enviat. No podeu enviar imatges MI en xats AIM."
 
-#: ../src/protocols/oscar/oscar.c:6669
+#: ../src/protocols/oscar/oscar.c:6681
 msgid "Away Message"
 msgstr "Missatge d'absència"
 
-#: ../src/protocols/oscar/oscar.c:6955
+#: ../src/protocols/oscar/oscar.c:6967
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "Comentari sobre l'amic %s"
 
-#: ../src/protocols/oscar/oscar.c:6956
+#: ../src/protocols/oscar/oscar.c:6968
 msgid "Buddy Comment:"
 msgstr "Comentari sobre l'amic:"
 
-#: ../src/protocols/oscar/oscar.c:6975
+#: ../src/protocols/oscar/oscar.c:6987
 msgid "Edit Buddy Comment"
 msgstr "Edita el comentari sobre l'amic"
 
-#: ../src/protocols/oscar/oscar.c:6981
+#: ../src/protocols/oscar/oscar.c:6993
 msgid "Get Status Msg"
 msgstr "Aconsegueix el missatge d'estat"
 
-#: ../src/protocols/oscar/oscar.c:6993
+#: ../src/protocols/oscar/oscar.c:7005
 msgid "Direct IM"
 msgstr "MI directa"
 
-#: ../src/protocols/oscar/oscar.c:7010
+#: ../src/protocols/oscar/oscar.c:7022
 msgid "Re-request Authorization"
 msgstr "Torna a demanar l'autorització"
 
-#: ../src/protocols/oscar/oscar.c:7040
+#: ../src/protocols/oscar/oscar.c:7052
 msgid "The new formatting is invalid."
 msgstr "El format nou no és vàlid."
 
-#: ../src/protocols/oscar/oscar.c:7041
+#: ../src/protocols/oscar/oscar.c:7053
 msgid "Screen name formatting can change only capitalization and whitespace."
 msgstr ""
 "El format del nom d'usuari només pot canviar majúscules i minúscules, i "
 "espais en blanc."
 
-#: ../src/protocols/oscar/oscar.c:7048
+#: ../src/protocols/oscar/oscar.c:7060
 msgid "New screen name formatting:"
 msgstr "Format nou del nom d'usuari:"
 
-#: ../src/protocols/oscar/oscar.c:7100
+#: ../src/protocols/oscar/oscar.c:7112
 msgid "Change Address To:"
 msgstr "Canvia l'adreça per:"
 
-#: ../src/protocols/oscar/oscar.c:7145
+#: ../src/protocols/oscar/oscar.c:7157
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>no esteu esperant l'autorització</i>"
 
-#: ../src/protocols/oscar/oscar.c:7148
+#: ../src/protocols/oscar/oscar.c:7160
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Esteu esperant l'autorització dels següents amics"
 
-#: ../src/protocols/oscar/oscar.c:7149
+#: ../src/protocols/oscar/oscar.c:7161
 msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
@@ -8910,75 +8921,75 @@ msgstr ""
 "amb el botó dret del ratolí, i seleccionant \"Torna a demanar l'autorització"
 "\"."
 
-#: ../src/protocols/oscar/oscar.c:7166
+#: ../src/protocols/oscar/oscar.c:7178
 msgid "Find Buddy by E-mail"
 msgstr "Troba un amic per l'adreça de correu"
 
-#: ../src/protocols/oscar/oscar.c:7167
+#: ../src/protocols/oscar/oscar.c:7179
 msgid "Search for a buddy by e-mail address"
 msgstr "Cerca un amic per l'adreça de correu"
 
-#: ../src/protocols/oscar/oscar.c:7168
+#: ../src/protocols/oscar/oscar.c:7180
 msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "Escriviu l'adreça de correu de l'amic que estigueu cercant."
 
-#: ../src/protocols/oscar/oscar.c:7185
+#: ../src/protocols/oscar/oscar.c:7197
 msgid "Available Message:"
 msgstr "Missatge de disponibilitat:"
 
-#: ../src/protocols/oscar/oscar.c:7186
+#: ../src/protocols/oscar/oscar.c:7198
 msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr "Estic fent feina i espero una distracció; parleu amb mi."
 
-#: ../src/protocols/oscar/oscar.c:7267 ../src/protocols/silc/silc.c:812
+#: ../src/protocols/oscar/oscar.c:7279 ../src/protocols/silc/silc.c:812
 msgid "Set User Info..."
 msgstr "Estableix informació d'usuari..."
 
-#: ../src/protocols/oscar/oscar.c:7272
+#: ../src/protocols/oscar/oscar.c:7284
 msgid "Set User Info (URL)..."
 msgstr "Estableix informació d'usuari (URL)..."
 
-#: ../src/protocols/oscar/oscar.c:7278
+#: ../src/protocols/oscar/oscar.c:7290
 msgid "Set Available Message..."
 msgstr "Estableix el missatge de disponibilitat..."
 
-#: ../src/protocols/oscar/oscar.c:7283 ../src/protocols/silc/silc.c:808
+#: ../src/protocols/oscar/oscar.c:7295 ../src/protocols/silc/silc.c:808
 msgid "Change Password..."
 msgstr "Canvia la contrasenya..."
 
-#: ../src/protocols/oscar/oscar.c:7288
+#: ../src/protocols/oscar/oscar.c:7300
 msgid "Change Password (URL)"
 msgstr "Canvia la contrasenya (URL)"
 
-#: ../src/protocols/oscar/oscar.c:7292
+#: ../src/protocols/oscar/oscar.c:7304
 msgid "Configure IM Forwarding (URL)"
 msgstr "Configura el reenviament de MI (URL)"
 
-#: ../src/protocols/oscar/oscar.c:7301
+#: ../src/protocols/oscar/oscar.c:7313
 msgid "Format Screen Name..."
 msgstr "Format del nom d'usuari..."
 
-#: ../src/protocols/oscar/oscar.c:7305
+#: ../src/protocols/oscar/oscar.c:7317
 msgid "Confirm Account"
 msgstr "Confirma el compte"
 
-#: ../src/protocols/oscar/oscar.c:7309
+#: ../src/protocols/oscar/oscar.c:7321
 msgid "Display Currently Registered Address"
 msgstr "Mostra les adreces actualment registrades"
 
-#: ../src/protocols/oscar/oscar.c:7313
+#: ../src/protocols/oscar/oscar.c:7325
 msgid "Change Currently Registered Address..."
 msgstr "Canvia l'adreça actualment registrada..."
 
-#: ../src/protocols/oscar/oscar.c:7320
+#: ../src/protocols/oscar/oscar.c:7332
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Mostra els amics pendents d'autorització"
 
-#: ../src/protocols/oscar/oscar.c:7326
+#: ../src/protocols/oscar/oscar.c:7338
 msgid "Search for Buddy by Email..."
 msgstr "Cerca un amic per l'adreça de correu..."
 
-#: ../src/protocols/oscar/oscar.c:7331
+#: ../src/protocols/oscar/oscar.c:7343
 msgid "Search for Buddy by Information"
 msgstr "Cerca un amic per la informació"
 
@@ -8992,19 +9003,19 @@ msgstr "Cerca un amic per la informació"
 #. *< version
 #. *  summary
 #. *  description
-#: ../src/protocols/oscar/oscar.c:7452 ../src/protocols/oscar/oscar.c:7454
+#: ../src/protocols/oscar/oscar.c:7464 ../src/protocols/oscar/oscar.c:7466
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "Connector per al protocol AIM/ICQ"
 
-#: ../src/protocols/oscar/oscar.c:7473
+#: ../src/protocols/oscar/oscar.c:7485
 msgid "Auth host"
 msgstr "Ordinador d'autorització"
 
-#: ../src/protocols/oscar/oscar.c:7476
+#: ../src/protocols/oscar/oscar.c:7488
 msgid "Auth port"
 msgstr "Port d'autorització"
 
-#: ../src/protocols/oscar/oscar.c:7479 ../src/protocols/zephyr/zephyr.c:2760
+#: ../src/protocols/oscar/oscar.c:7491 ../src/protocols/zephyr/zephyr.c:2760
 msgid "Encoding"
 msgstr "Codificació"
 
@@ -10641,7 +10652,7 @@ msgstr ""
 msgid "Your Yahoo! message did not get sent."
 msgstr "No s'ha pogut enviar el vostre missatge de Yahoo!"
 
-#: ../src/protocols/yahoo/yahoo.c:936 ../src/protocols/yahoo/yahoo.c:3439
+#: ../src/protocols/yahoo/yahoo.c:936 ../src/protocols/yahoo/yahoo.c:3437
 msgid "Buzz!!"
 msgstr "Buzz!!"
 
@@ -10751,69 +10762,69 @@ msgstr "No s'ha pogut llegir"
 
 #: ../src/protocols/yahoo/yahoo.c:2417 ../src/protocols/yahoo/yahoo.c:2527
 #: ../src/protocols/yahoo/yahoo.c:2577 ../src/protocols/yahoo/yahoo.c:2587
-#: ../src/protocols/yahoo/yahoochat.c:1443
-#: ../src/protocols/yahoo/yahoochat.c:1504 ../src/protocols/yahoo/ycht.c:518
+#: ../src/protocols/yahoo/yahoochat.c:1461
+#: ../src/protocols/yahoo/yahoochat.c:1528 ../src/protocols/yahoo/ycht.c:518
 msgid "Connection problem"
 msgstr "Hi ha un problema de connexió"
 
-#: ../src/protocols/yahoo/yahoo.c:2683 ../src/protocols/yahoo/yahoo.c:3050
-#: ../src/protocols/yahoo/yahoo.c:3164
+#: ../src/protocols/yahoo/yahoo.c:2681 ../src/protocols/yahoo/yahoo.c:3048
+#: ../src/protocols/yahoo/yahoo.c:3162
 msgid "Not At Home"
 msgstr "Fora de casa"
 
-#: ../src/protocols/yahoo/yahoo.c:2685 ../src/protocols/yahoo/yahoo.c:3052
-#: ../src/protocols/yahoo/yahoo.c:3165
+#: ../src/protocols/yahoo/yahoo.c:2683 ../src/protocols/yahoo/yahoo.c:3050
+#: ../src/protocols/yahoo/yahoo.c:3163
 msgid "Not At Desk"
 msgstr "Fora de l'escriptori"
 
-#: ../src/protocols/yahoo/yahoo.c:2687 ../src/protocols/yahoo/yahoo.c:3054
-#: ../src/protocols/yahoo/yahoo.c:3166
+#: ../src/protocols/yahoo/yahoo.c:2685 ../src/protocols/yahoo/yahoo.c:3052
+#: ../src/protocols/yahoo/yahoo.c:3164
 msgid "Not In Office"
 msgstr "Fora de l'oficina"
 
-#: ../src/protocols/yahoo/yahoo.c:2691 ../src/protocols/yahoo/yahoo.c:3058
-#: ../src/protocols/yahoo/yahoo.c:3168
+#: ../src/protocols/yahoo/yahoo.c:2689 ../src/protocols/yahoo/yahoo.c:3056
+#: ../src/protocols/yahoo/yahoo.c:3166
 msgid "On Vacation"
 msgstr "De vacances"
 
-#: ../src/protocols/yahoo/yahoo.c:2695 ../src/protocols/yahoo/yahoo.c:3062
-#: ../src/protocols/yahoo/yahoo.c:3170
+#: ../src/protocols/yahoo/yahoo.c:2693 ../src/protocols/yahoo/yahoo.c:3060
+#: ../src/protocols/yahoo/yahoo.c:3168
 msgid "Stepped Out"
 msgstr "Ha marxat"
 
-#: ../src/protocols/yahoo/yahoo.c:2776 ../src/protocols/yahoo/yahoo.c:2802
+#: ../src/protocols/yahoo/yahoo.c:2774 ../src/protocols/yahoo/yahoo.c:2800
 msgid "Not on server list"
 msgstr "No és a la llista del servidor"
 
-#: ../src/protocols/yahoo/yahoo.c:2881
+#: ../src/protocols/yahoo/yahoo.c:2879
 msgid "Join in Chat"
 msgstr "Entra a un xat"
 
-#: ../src/protocols/yahoo/yahoo.c:2886
+#: ../src/protocols/yahoo/yahoo.c:2884
 msgid "Initiate Conference"
 msgstr "Inicia una conferència"
 
-#: ../src/protocols/yahoo/yahoo.c:2938
+#: ../src/protocols/yahoo/yahoo.c:2936
 msgid "Active which ID?"
 msgstr "Quin ID activar?"
 
-#: ../src/protocols/yahoo/yahoo.c:2947
+#: ../src/protocols/yahoo/yahoo.c:2945
 msgid "Join who in chat?"
 msgstr "A qui us voleu unir al xat?"
 
-#: ../src/protocols/yahoo/yahoo.c:2957
+#: ../src/protocols/yahoo/yahoo.c:2955
 msgid "Activate ID..."
 msgstr "Activa l'ID..."
 
-#: ../src/protocols/yahoo/yahoo.c:2961
+#: ../src/protocols/yahoo/yahoo.c:2959
 msgid "Join user in chat..."
 msgstr "Entra a un xat d'usuari..."
 
-#: ../src/protocols/yahoo/yahoo.c:3481
+#: ../src/protocols/yahoo/yahoo.c:3479
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr "join: &lt;sala&gt;:  Entra en una sala de xat de la xarxa Yahoo"
 
-#: ../src/protocols/yahoo/yahoo.c:3485
+#: ../src/protocols/yahoo/yahoo.c:3483
 msgid "buzz: Buzz a contact to get their attention"
 msgstr "buzz: Fa sonar un soroll a un contacte per tal de que us pari atenció"
 
@@ -10827,100 +10838,106 @@ msgstr "buzz: Fa sonar un soroll a un contacte per tal de que us pari atenció"
 #. *< version
 #. *  summary
 #. *  description
-#: ../src/protocols/yahoo/yahoo.c:3564 ../src/protocols/yahoo/yahoo.c:3566
+#: ../src/protocols/yahoo/yahoo.c:3562 ../src/protocols/yahoo/yahoo.c:3564
 msgid "Yahoo Protocol Plugin"
 msgstr "Connector per al protocol Yahoo"
 
-#: ../src/protocols/yahoo/yahoo.c:3585
+#: ../src/protocols/yahoo/yahoo.c:3583
 msgid "Yahoo Japan"
 msgstr "Yahoo Japó"
 
-#: ../src/protocols/yahoo/yahoo.c:3588
+#: ../src/protocols/yahoo/yahoo.c:3586
 msgid "Pager host"
 msgstr "Ordinador del cercapersones"
 
-#: ../src/protocols/yahoo/yahoo.c:3591
+#: ../src/protocols/yahoo/yahoo.c:3589
 msgid "Japan Pager host"
 msgstr "Ordinador del cercapersones del Japó"
 
-#: ../src/protocols/yahoo/yahoo.c:3594
+#: ../src/protocols/yahoo/yahoo.c:3592
 msgid "Pager port"
 msgstr "Port per al cercapersones"
 
-#: ../src/protocols/yahoo/yahoo.c:3597
+#: ../src/protocols/yahoo/yahoo.c:3595
 msgid "File transfer host"
 msgstr "Ordinador per transferència de fitxers"
 
-#: ../src/protocols/yahoo/yahoo.c:3600
+#: ../src/protocols/yahoo/yahoo.c:3598
 msgid "Japan File transfer host"
 msgstr "Port per transferència de fitxers pel Japó"
 
-#: ../src/protocols/yahoo/yahoo.c:3603
+#: ../src/protocols/yahoo/yahoo.c:3601
 msgid "File transfer port"
 msgstr "Port per transferència de fitxers"
 
-#: ../src/protocols/yahoo/yahoo.c:3606
+# FIXME: no poso localització perquè l'usuari ho podria
+#        confondre amb "ubicació" (josep)
+#: ../src/protocols/yahoo/yahoo.c:3604
+msgid "Chat Room Locale"
+msgstr "Característiques locals de la sala de xat"
+
+#: ../src/protocols/yahoo/yahoo.c:3607
 msgid "Chat Room List Url"
 msgstr "URL de la llista de sales de xat"
 
-#: ../src/protocols/yahoo/yahoo.c:3609
+#: ../src/protocols/yahoo/yahoo.c:3610
 msgid "YCHT Host"
 msgstr "Ordinador YCHT"
 
-#: ../src/protocols/yahoo/yahoo.c:3612
+#: ../src/protocols/yahoo/yahoo.c:3613
 msgid "YCHT Port"
 msgstr "Port YCHT"
 
-#: ../src/protocols/yahoo/yahoochat.c:199
+#: ../src/protocols/yahoo/yahoochat.c:206
 #, c-format
 msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
 msgstr ""
 "%s no ha acceptat la vostra invitació a unir-se a la sala \"%s\" perquè \"%s"
 "\"."
 
-#: ../src/protocols/yahoo/yahoochat.c:201
+#: ../src/protocols/yahoo/yahoochat.c:208
 msgid "Invitation Rejected"
 msgstr "S'ha rebutjat la invitació"
 
-#: ../src/protocols/yahoo/yahoochat.c:356
+#: ../src/protocols/yahoo/yahoochat.c:363
 msgid "Failed to join chat"
 msgstr "No s'ha pogut unir al xat"
 
-#: ../src/protocols/yahoo/yahoochat.c:356
+#: ../src/protocols/yahoo/yahoochat.c:363
 msgid "Maybe the room is full?"
 msgstr "Pot ser que la sala estigui plena?"
 
-#: ../src/protocols/yahoo/yahoochat.c:434
+#: ../src/protocols/yahoo/yahoochat.c:441
 #, c-format
 msgid "You are now chatting in %s."
 msgstr "Esteu fent un xat a %s."
 
-#: ../src/protocols/yahoo/yahoochat.c:605
+#: ../src/protocols/yahoo/yahoochat.c:616
 msgid "Failed to join buddy in chat"
 msgstr "No s'ha pogut entrar al xat de l'amic."
 
-#: ../src/protocols/yahoo/yahoochat.c:606
+#: ../src/protocols/yahoo/yahoochat.c:617
 msgid "Maybe they're not in a chat?"
 msgstr "Potser no estan en cap xat?"
 
-#: ../src/protocols/yahoo/yahoochat.c:1383
+#: ../src/protocols/yahoo/yahoochat.c:1394
 msgid "Fetching the room list failed."
 msgstr "No s'ha pogut obtenir la llista de sales."
 
-#: ../src/protocols/yahoo/yahoochat.c:1429
+#: ../src/protocols/yahoo/yahoochat.c:1447
 msgid "Voices"
 msgstr "Veus"
 
-#: ../src/protocols/yahoo/yahoochat.c:1432
+#: ../src/protocols/yahoo/yahoochat.c:1450
 msgid "Webcams"
 msgstr "Càmeres web"
 
-#: ../src/protocols/yahoo/yahoochat.c:1443
-#: ../src/protocols/yahoo/yahoochat.c:1504
+#: ../src/protocols/yahoo/yahoochat.c:1461
+#: ../src/protocols/yahoo/yahoochat.c:1528
 msgid "Unable to fetch room list."
 msgstr "No s'ha pogut obtenir la llista de sales."
 
-#: ../src/protocols/yahoo/yahoochat.c:1497
+#: ../src/protocols/yahoo/yahoochat.c:1521
 msgid "User Rooms"
 msgstr "Sales d'usuari"
 
@@ -10929,15 +10946,15 @@ msgstr "Sales d'usuari"
 msgid "<b>IP Address:</b> %s<br>"
 msgstr "<b>Adreça IP:</b> %s<br>"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:749
+#: ../src/protocols/yahoo/yahoo_profile.c:751
 msgid "Yahoo! Japan Profile"
 msgstr "Perfil Yahoo! jaopnès"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:750
+#: ../src/protocols/yahoo/yahoo_profile.c:752
 msgid "Yahoo! Profile"
 msgstr "Perfil Yahoo!"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:794
+#: ../src/protocols/yahoo/yahoo_profile.c:796
 msgid ""
 "Sorry, profiles marked as containing adult content are not supported at this "
 "time."
@@ -10945,7 +10962,7 @@ msgstr ""
 "Els perfils marcats com a que contenen continguts per adults no estan "
 "implementats de moment."
 
-#: ../src/protocols/yahoo/yahoo_profile.c:796
+#: ../src/protocols/yahoo/yahoo_profile.c:798
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser"
@@ -10953,43 +10970,47 @@ msgstr ""
 "Si voleu veure aquest perfil, haureu de visitar aquest enllaç amb el "
 "navegador"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:969
+#: ../src/protocols/yahoo/yahoo_profile.c:976
 msgid "Yahoo! ID"
 msgstr "ID de Yahoo!"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1043
-#: ../src/protocols/yahoo/yahoo_profile.c:1047
-#: ../src/protocols/yahoo/yahoo_profile.c:1051
+#: ../src/protocols/yahoo/yahoo_profile.c:1050
+#: ../src/protocols/yahoo/yahoo_profile.c:1054
+#: ../src/protocols/yahoo/yahoo_profile.c:1058
 msgid "Hobbies"
 msgstr "Aficions"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1061
-#: ../src/protocols/yahoo/yahoo_profile.c:1065
+#: ../src/protocols/yahoo/yahoo_profile.c:1068
+#: ../src/protocols/yahoo/yahoo_profile.c:1072
 msgid "Latest News"
 msgstr "Últimes notícies"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1086
+#: ../src/protocols/yahoo/yahoo_profile.c:1093
 msgid "Home Page"
 msgstr "Pàgina inicial"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1101
+#: ../src/protocols/yahoo/yahoo_profile.c:1108
 msgid "Cool Link 1"
 msgstr "Enllaç interessant 1"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1106
+#: ../src/protocols/yahoo/yahoo_profile.c:1113
 msgid "Cool Link 2"
 msgstr "Enllaç interessant 2"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1110
+#: ../src/protocols/yahoo/yahoo_profile.c:1117
 msgid "Cool Link 3"
 msgstr "Enllaç interessant 3"
 
 #: ../src/protocols/yahoo/yahoo_profile.c:1130
+msgid "Last Update"
+msgstr "Última actualització"
+
+#: ../src/protocols/yahoo/yahoo_profile.c:1136
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "Dades de l'usuari %s no disponibles"
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1136
+#: ../src/protocols/yahoo/yahoo_profile.c:1142
 msgid ""
 "Sorry, this profile seems to be in a language that is not supported at this "
 "time."
@@ -10997,7 +11018,7 @@ msgstr ""
 "Disculpeu, aquest perfil deu estar en llengua que actualment no està "
 "suportada."
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1152
+#: ../src/protocols/yahoo/yahoo_profile.c:1158
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
 "server-side problem. Please try again later."
@@ -11005,7 +11026,7 @@ msgstr ""
 "No s'ha pogut obtenir el perfil de l'usuari. Això pot ser degut a un "
 "problema temporal del servidor. Intenteu-ho de nou més tard."
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1155
+#: ../src/protocols/yahoo/yahoo_profile.c:1161
 msgid ""
 "Could not retrieve the user's profile. This most likely means that the user "
 "does not exist; however, Yahoo! sometimes does fail to find a user's "
@@ -11015,7 +11036,7 @@ msgstr ""
 "existeixi, tot i que a vegades Yahoo! no pot trobar els perfils d'usuari. Si "
 "sabeu del cert que l'usuari existeix, torneu-ho a intentar més tard."
 
-#: ../src/protocols/yahoo/yahoo_profile.c:1163
+#: ../src/protocols/yahoo/yahoo_profile.c:1169
 msgid "The user's profile is empty."
 msgstr "El perfil d'usuari està buit."
 
@@ -11322,41 +11343,51 @@ msgstr "_Obre el correu"
 msgid "_Warn"
 msgstr "_Avisa"
 
-#: ../src/util.c:2384
+#: ../src/util.c:2396
 msgid "Calculating..."
 msgstr "S'està calculant..."
 
-#: ../src/util.c:2387
+#: ../src/util.c:2399
 msgid "Unknown."
 msgstr "Desconegut."
 
-#: ../src/util.c:2417
+#: ../src/util.c:2429
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "segon"
 msgstr[1] "segons"
 
-#: ../src/util.c:2431
+#: ../src/util.c:2443
 msgid "day"
 msgid_plural "days"
 msgstr[0] "dia"
 msgstr[1] "dies"
 
-#: ../src/util.c:2439
+#: ../src/util.c:2451
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "hora"
 msgstr[1] "hores"
 
-#: ../src/util.c:2447
+#: ../src/util.c:2459
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "minut"
 msgstr[1] "minuts"
 
-#: ../src/util.c:2867
+#: ../src/util.c:2879
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Error en obrir la connexió.\n"
+
+#~ msgid ""
+#~ "Unable to guess the image type based on the file extension supplied.  "
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "No ha estat possible descobrir el tipus d'imatge a partir de l'extensió "
+#~ "del fitxer. S'agafarà PNG com a predeterminat."
+
+#~ msgid "Error saving image: %s"
+#~ msgstr "S'ha produït un error en desar la imatge: %s"
 
 # DUBTE
 #~ msgid "Default SILC Key Pair"
