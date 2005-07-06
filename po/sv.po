@@ -1,6 +1,6 @@
 # Gaim Swedish translation
 # Copyright (C) 2001, Christian Rose <menthos@menthos.com>
-# Copyright (C) 2003-2004, Tore Lundqvist <tlt@mima.x.se>
+# Copyright (C) 2003-2004, Tore Lundqvist
 #
 # This file is distributed under the same license as the Gaim package.
 #
