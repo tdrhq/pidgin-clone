@@ -13,7 +13,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
                still using the old version.
          1.7.  Are the packages signed? If so, by who, and how can I get the
                key?
-         1.8.  Can I use Gaim for GTK+1.2?
+         1.8.  Can I use Gaim for GTK+ 1.2?
          1.9.  Can I run Gaim on IRIX?
          1.10. Can I run gaim on MacOSX?
          1.11. How do I apply the patch "something.diff"?
@@ -80,10 +80,11 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
          6.9.  I heard AOL is combining ICQ and AIM, does that mean I can send
                a message from an AIM account to an ICQ account and vice-versa?
          6.10. Why can't I connect via either Oscar or TOC?
-         6.11. English is not my native language, and some of my friends have
-               trouble seeing my IMs/I have trouble seeing my friends' IMs. How
+               English is not my native language, and some of my friends have
+         6.11. trouble seeing my IMs/I have trouble seeing my friends' IMs. How
                do I use a native language character set with ICQ?
          6.12. Can I set myself invisible?
+         6.13. I am having trouble with file transfer. What's up?
 
 7. IRC Protocol
 
@@ -119,22 +120,23 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 10. MSN Protocol
 
-         10.1.  Why are my file transfers so slow?
-         10.2.  I'm getting lots of "Already in Opposite list" errors on MSN,
+         10.1.  Will Gaim support MSN video chat?
+         10.2.  Why are my file transfers so slow?
+         10.3.  I'm getting lots of "Already in Opposite list" errors on MSN,
                 why?
-         10.3.  Is there a way to invite more than one person to an MSN chat?
-         10.4.  Is MSNP9 (MSN6) going to be supported?
+         10.4.  Is there a way to invite more than one person to an MSN chat?
+         10.5.  Is MSNP9 (MSN6) going to be supported?
                 Will I be able to use Gaim for MSN after October 15th 2003?
-         10.5.  (The day they're preventing third party clients from
+         10.6.  (The day they're preventing third party clients from
                 connecting)
-         10.6.  I just upgraded Gaim and the MSN plugin will not load. Why?
-         10.7.  The MSN plugin won't load, but I have Mozilla NSS!
-         10.8.  What does "MSN: S: 911 3" in the debug window mean when I
+         10.7.  I just upgraded Gaim and the MSN plugin will not load. Why?
+         10.8.  The MSN plugin won't load, but I have Mozilla NSS!
+         10.9.  What does "MSN: S: 911 3" in the debug window mean when I
                 cannot connect to MSN?
-         10.9.  How do I set an MSN avatar?
-         10.10. What does "Has you" in the buddy tooltip mean?
-         10.11. How do I set my MSN Friendly Name (the name other users see)?
-         10.12. What does "Error reading from switchboard server" mean?
+         10.10. How do I set an MSN avatar?
+         10.11. What does "Has you" in the buddy tooltip mean?
+         10.12. How do I set my MSN Friendly Name (the name other users see)?
+         10.13. What does "Error reading from switchboard server" mean?
 
 11. Gadu-Gadu Protocol
 
@@ -173,9 +175,11 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
          16.1. Can I help?
          16.2. Gaim never leaves a core file.
-         16.3. Where should I report bugs?
-         16.4. Where should I submit patches?
-         16.5. Did you guys reverse engineer it?
+         16.3. Will you support features such as voice chat, internet phones,
+               or video chat?
+         16.4. Where should I report bugs?
+         16.5. Where should I submit patches?
+         16.6. Did you guys reverse engineer it?
 
 17. Misc. Questions
 
@@ -282,7 +286,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   are signed by Ethan Blanton. The keys can be obtained from any key server.
   http://pgp.mit.edu/ is popular.
 
-1.8  Can I use Gaim for GTK+1.2?
+1.8  Can I use Gaim for GTK+ 1.2?
  
   As of version 0.60, Gaim has been completely converted to using GTK+2.0. We
   really really really recommend using the most current version of Gaim and not
@@ -301,7 +305,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 1.10  Can I run gaim on MacOSX?
  
   Yes you can, but we do not provide a package for it. The reason being is that
-  to use gaim on MacOSX, you need to install an X server and gtk, which we are
+  to use gaim on MacOSX, you need to install an X server and GTK+, which we are
   not prepared to support. You can either compile gaim (and its dependencies)
   yourself, or you can use the fink installer available from http://fink.sf.net
   . If you would like a native aqua interface or a user-friendly installer, we
@@ -421,12 +425,12 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
  
   The font preference in Gaim is used only for the formatting of outgoing
   messages. The display fonts used by the rest of Gaim are those specified by
-  GTK. To change this font you need to edit your ~/.gtkrc-2.0 file. If you need
-  help you can see our example .gtkrc-2.0 (http://gaim.sf.net/gtkrc-2.0) file.
-  On Windows, this file is located at C:\Documents and Settings\username
-  \.themes\Default\gtk-2.0\gtkrc.
+  GTK+. To change this font you need to edit your ~/.gtkrc-2.0 file. If you
+  need help you can see our example .gtkrc-2.0 (http://gaim.sf.net/gtkrc-2.0)
+  file. On Windows, this file is located at C:\Documents and Settings\username
+  \.themes\Default\gtk-2.0\gtkrc. If the file does not exist, create it.
 
-  You can also just switch to a different GTK theme. You can find GTK themes
+  You can also just switch to a different GTK+ theme. You can find GTK+ themes
   (and information on using them) by visiting themes.freshmeat.net,
   art.gnome.org, or searching on Google.
 
@@ -575,14 +579,15 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 3.1  Does Gaim support file transfer?
  
-  Somewhat, yeah. As of 0.79 the following is supported:
+  Somewhat, yeah. As of 1.2.1 The following is supported:
 
     • Sending and receiving files on AIM (although it might be a bit buggy)
     • Sending and receiving files on IRC
     • Sending and receiving files on Jabber
     • Sending and receiving files on MSN
     • Sending and receiving files on SILC
-    • Sending and receiving files on Yahoo (sending is limited to 1Mb)
+    • Sending and receiving files on Yahoo when not using an HTTP proxy
+      (sending is limited to an unknown file size)
 
   Most of the protocols themselves support file transfer, but Gaim has not been
   written to support it yet. If you would like file transfer to work better or
@@ -695,7 +700,8 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 6.1  Can I set my profile?
  
-  Yes you can. Go to Tools->Account Actions
+  In AIM, yes, you can. Go to Tools->Account Actions
+  In ICQ, this is not yet supported. Patches are welcome.
 
 6.2  Can I set a buddy icon?
  
@@ -709,9 +715,9 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 6.3  Some of my buddies are not showing up as online, why is that?
  
   AOL has set a limit for the maximum number of people you can have in your
-  buddy list. This number is currently 200. If you don't think you are anywhere
-  near that limit, it is possible that your server-stored buddy list is
-  corrupt.
+  buddy list. This number is currently 250 for AIM, if you don't think you are
+  anywhere near that limit, it is possible that your server-stored buddy list
+  is corrupt.
 
   If you think this might be the case, you can try signing on with an official
   AIM program from AOL. This will usually correct any problems with the list.
@@ -757,8 +763,9 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 6.8  Can I add SMS numbers to my buddy list?
  
-  Not currently. This functionality has been broken since around September
-  2003. There is no ETA for when it will be fixed.
+  Yes. You should be able to add phone numbers to your buddy list using the
+  same format as above. This recently started working again--we're not sure
+  why.
 
 6.9  I heard AOL is combining ICQ and AIM, does that mean I can send a message
      from an AIM account to an ICQ account and vice-versa?
@@ -803,8 +810,15 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   conversing with ICQ users. Use the account editor to set this encoding.
 
 6.12  Can I set myself invisible?
-
+ 
   Yes. Go to Tools->Away->account->Invisible.
+
+6.13  I am having trouble with file transfer. What's up?
+ 
+  AIM file transfer is only partially implemented. Notably, it will fail when
+  the *sender* is behind a NAT device, and sometimes when the sender is behind
+  a firewall even if not behind a NAT. ICQ file transfer is not implemented as
+  yet. Patches for both of these are welcome.
 
 +------------------------------------------------------------------------------
 | 7. IRC Protocol
@@ -827,12 +841,12 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   it, and tell Gaim to auto-join it.
 
 7.3  Is it possible to change the user name that appears in username@hostname?
-
+ 
   Yes. Go to Tools->Accounts. Select your IRC account and click Modify. Expand
   the Show more options section. Enter a name in the Username field.
 
 7.4  How can I set/change my real name?
-
+ 
   Go to Tools->Accounts. Select your IRC account and click modify. Expand the
   Show more options section. Enter a name in the Real name field.
 
@@ -860,7 +874,8 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
    2. Select "Jabber" for the protocol.
    3. Fill in screen name and password as you normally would. THIS IS A
       REQUIRED STEP
-   4. Check the "Register with server" check-box
+   4. Check the "Register with server" check-box, if present, else click
+      "Register" instead of "OK" below.
    5. Click "OK".
 
   Note: You are strongly recommended to check the "Remember password" check-box
@@ -1011,14 +1026,18 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 | 10. MSN Protocol
 +------------------------------------------------------------------------------
 
-10.1  Why are my file transfers so slow?
+10.1  Will Gaim support MSN video chat?
+ 
+  See #vv.
+
+10.2  Why are my file transfers so slow?
  
   Gaim only supports tranferring files over MSN via the MSN servers. This means
   all your data is sent to an MSN server and then forwarded to the person at
   the other end of the transfer. It is unknown whether we will support true
   peer to peer file transfer over MSN.
 
-10.2  I'm getting lots of "Already in Opposite list" errors on MSN, why?
+10.3  I'm getting lots of "Already in Opposite list" errors on MSN, why?
  
   The reason this happens is because you have a screen name in both your permit
   list and your deny list. There are two ways to fix this: the correct way and
@@ -1028,25 +1047,25 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   buddy list for all accounts, and also stores the "Contact" grouping of
   Buddies.
 
-10.3  Is there a way to invite more than one person to an MSN chat?
+10.4  Is there a way to invite more than one person to an MSN chat?
  
   Yes. Right click a buddy on your list and choose "Initiate Chat". In the
   conversation window that appears, choose "Invite" from the "Conversation"
   menu to invite another user. When the conversation framework gets another
   rewrite, it is possible that this will be simplified.
 
-10.4  Is MSNP9 (MSN6) going to be supported?
+10.5  Is MSNP9 (MSN6) going to be supported?
  
   MSNP9 support has existed in Gaim since 0.69. However, at this point,
   features such as custom smileys aren't yet implemented.
 
-10.5  Will I be able to use Gaim for MSN after October 15th 2003? (The day
+10.6  Will I be able to use Gaim for MSN after October 15th 2003? (The day
       they're preventing third party clients from connecting)
  
   Yes. We use MSNP9, which is available in 0.69 and up, and MSNP9 is supported
   after October 15th 2003.
 
-10.6  I just upgraded Gaim and the MSN plugin will not load. Why?
+10.7  I just upgraded Gaim and the MSN plugin will not load. Why?
  
   You did not compile with SSL support, or the SSL plugin failed to load. As of
   protocol version 9, the MSN protocol requires the use of SSL, which Gaim
@@ -1054,7 +1073,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   project. Install one or both of these and recompile Gaim, and see the next
   question.
 
-10.7  The MSN plugin won't load, but I have Mozilla NSS!
+10.8  The MSN plugin won't load, but I have Mozilla NSS!
  
   Some distributions, including Slackware, install Mozilla NSS to a
   non-standard directory. The fix is simple. Edit /etc/ld.so.conf and add /usr/
@@ -1068,28 +1087,28 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
   See http://gaim.sf.net/faq-ssl.php on getting SSL to work with Gaim.
 
-10.8  What does "MSN: S: 911 3" in the debug window mean when I cannot connect
+10.9  What does "MSN: S: 911 3" in the debug window mean when I cannot connect
       to MSN?
  
   See http://gaim.sf.net/911.txt.
 
-10.9  How do I set an MSN avatar?
+10.10  How do I set an MSN avatar?
  
   Gaim calls these Buddy Icons. Go to Tools->Accounts and click to Modify your
   MSN account. You can drag and drop a file to the resulting dialog, or use the
   Open button.
 
-10.10  What does "Has you" in the buddy tooltip mean?
+10.11  What does "Has you" in the buddy tooltip mean?
  
   It shows you if that MSN user has added you to his/her buddy list. "Has you:
   No" does not mean you can't talk to that person.
 
-10.11  How do I set my MSN Friendly Name (the name other users see)?
+10.12  How do I set my MSN Friendly Name (the name other users see)?
  
   In the Buddy List window, go to Tools->Account Actions->account->Set Friendly
   Name.
 
-10.12  What does "Error reading from switchboard server" mean?
+10.13  What does "Error reading from switchboard server" mean?
  
   We haven't fully figured that out yet, but even Microsoft's client seems to
   get similar errors, although with less frequency than we do. See Bug 1060205
@@ -1282,15 +1301,26 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   terminal before starting Gaim from that terminal. You can also run Gaim
   directly in gdb with gdb gaim.
 
-16.3  Where should I report bugs?
+16.3  Will you support features such as voice chat, internet phones, or video
+      chat?
+ 
+  In the short term we have no plans to work on or attempt to integrate patches
+  in these areas. However, one of our developers has created gaim-vv (http://
+  gaim-vv.sf.net), a "fork" of Gaim, which will be merged into gaim when a
+  decent subset of voice and video functionality is implemented and stable.
+  Having a separate sourceforge project allows people interested in such
+  features greater access to development while not clogging the main thrust of
+  gaim towards text instant messages.
+
+16.4  Where should I report bugs?
  
   http://gaim.sf.net/bug.php.
 
-16.4  Where should I submit patches?
+16.5  Where should I submit patches?
  
   http://gaim.sf.net/patches.php.
 
-16.5  Did you guys reverse engineer it?
+16.6  Did you guys reverse engineer it?
  
   TOC, Jabber, MSN, Napster, and IRC are published protocols, so we didn't have
   to reverse engineer those. Oscar, ICQ, and Yahoo are not published, and were
