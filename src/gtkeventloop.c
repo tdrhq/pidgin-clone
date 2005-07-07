@@ -58,25 +58,21 @@ static gboolean gaim_gtk_io_invoke(GIOChannel *source, GIOCondition condition, g
 			   closure->result, g_io_channel_unix_get_fd(source));
 #endif
 
-	if(gaim_cond) {
-		/* I've noticed some win32 systems are triggering a
-		   closure's callback function with a gaim_cond of
-		   zero. This seems to happen due to GTK events, like
-		   moving/resizing a window. There's no reason that the
-		   closure function should ever be passed a condition of
-		   zero, so let's drop it instead   - siege */
-
-		closure->function(closure->data, g_io_channel_unix_get_fd(source),
-				  gaim_cond);
-
-	} else {
-#if 0
+#ifdef _WIN32
+	if(! gaim_cond) {
+#if DEBUG
 		gaim_debug(GAIM_DEBUG_MISC, "gtk_eventloop",
 			   "CLOSURE received GIOCondition of 0x%x, which does not"
 			   " match 0x%x (READ) or 0x%x (WRITE)\n",
 			   condition, GAIM_GTK_READ_COND, GAIM_GTK_WRITE_COND);
-#endif
+#endif /* DEBUG */
+
+		return TRUE;
 	}
+#endif /* _WIN32 */
+
+	closure->function(closure->data, g_io_channel_unix_get_fd(source),
+			  gaim_cond);
 
 	return TRUE;
 }
