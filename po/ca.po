@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-03 13:03+0200\n"
+"POT-Creation-Date: 2005-07-07 16:31-0400\n"
 "PO-Revision-Date: 2005-07-03 13:13+0200\n"
 "Last-Translator: Josep Puigdemont i Casamajó <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
@@ -158,8 +158,7 @@ msgstr ""
 "Us permet canviar els valors dels estats inactiu, absent i desconnectat pel "
 "càlcul de la prioritat dels amics."
 
-#: ../plugins/docklet/docklet.c:137 ../src/gtkaccount.c:751
-#: ../src/gtkaccount.c:2179
+#: ../plugins/docklet/docklet.c:137 ../src/gtkaccount.c:751 ../src/gtkaccount.c:2179
 msgid "Auto-login"
 msgstr "Connexió automàtica"
 
@@ -175,16 +174,15 @@ msgstr "Entra a un xat..."
 msgid "New..."
 msgstr "Nou..."
 
-#: ../plugins/docklet/docklet.c:177 ../src/gtkprefs.c:1813
-#: ../src/protocols/gg/gg.c:52 ../src/protocols/irc/msgs.c:227
-#: ../src/protocols/jabber/jabber.c:998 ../src/protocols/jabber/jutil.c:32
-#: ../src/protocols/jabber/presence.c:69
-#: ../src/protocols/jabber/presence.c:132
-#: ../src/protocols/novell/novell.c:2800 ../src/protocols/novell/novell.c:2917
-#: ../src/protocols/novell/novell.c:2969 ../src/protocols/oscar/oscar.c:680
-#: ../src/protocols/oscar/oscar.c:5702 ../src/protocols/oscar/oscar.c:6699
-#: ../src/protocols/oscar/oscar.c:6899 ../src/protocols/silc/buddy.c:1388
-#: ../src/protocols/silc/silc.c:47 ../src/protocols/silc/silc.c:81
+#: ../plugins/docklet/docklet.c:177 ../src/gtkprefs.c:1813 ../src/protocols/gg/gg.c:52
+#: ../src/protocols/irc/msgs.c:227 ../src/protocols/jabber/jabber.c:998
+#: ../src/protocols/jabber/jutil.c:32 ../src/protocols/jabber/presence.c:69
+#: ../src/protocols/jabber/presence.c:132 ../src/protocols/novell/novell.c:2800
+#: ../src/protocols/novell/novell.c:2917 ../src/protocols/novell/novell.c:2969
+#: ../src/protocols/oscar/oscar.c:680 ../src/protocols/oscar/oscar.c:5702
+#: ../src/protocols/oscar/oscar.c:6699 ../src/protocols/oscar/oscar.c:6899
+#: ../src/protocols/silc/buddy.c:1388 ../src/protocols/silc/silc.c:47
+#: ../src/protocols/silc/silc.c:81
 msgid "Away"
 msgstr "Absent"
 
@@ -503,8 +501,8 @@ msgid "Search"
 msgstr "Cerca"
 
 #: ../plugins/gevolution/add_buddy_dialog.c:549
-#: ../plugins/gevolution/new_person_dialog.c:304 ../src/gtkblist.c:4153
-#: ../src/gtkblist.c:4501
+#: ../plugins/gevolution/new_person_dialog.c:304 ../src/gtkblist.c:4186
+#: ../src/gtkblist.c:4534
 msgid "Group:"
 msgstr "Grup:"
 
@@ -543,14 +541,14 @@ msgid "_Associate Buddy"
 msgstr "_Associa amic"
 
 #: ../plugins/gevolution/eds-utils.c:74 ../plugins/gevolution/eds-utils.c:87
-#: ../src/gtkblist.c:3092 ../src/gtkprefs.c:962 ../src/gtkprefs.c:1014
+#: ../src/gtkblist.c:3122 ../src/gtkprefs.c:962 ../src/gtkprefs.c:1014
 #: ../src/gtkprefs.c:1827 ../src/protocols/jabber/jabber.c:949
 msgid "None"
 msgstr "Cap"
 
 #: ../plugins/gevolution/gevolution.c:93 ../plugins/gevolution/gevo-util.c:64
-#: ../src/blist.c:776 ../src/blist.c:983 ../src/blist.c:1933
-#: ../src/gtkblist.c:3968 ../src/protocols/jabber/roster.c:67
+#: ../src/blist.c:776 ../src/blist.c:983 ../src/blist.c:1933 ../src/gtkblist.c:4001
+#: ../src/protocols/jabber/roster.c:67
 msgid "Buddies"
 msgstr "Amics"
 
@@ -569,8 +567,7 @@ msgid "Select all accounts that buddies should be auto-added to."
 msgstr ""
 "Seleccioneu tots els comptes on els amics s'hagin d'afegir automàticament."
 
-#: ../plugins/gevolution/gevolution.c:381 ../plugins/idle.c:52
-#: ../src/gtkconn.c:627
+#: ../plugins/gevolution/gevolution.c:381 ../plugins/idle.c:52 ../src/gtkconn.c:627
 msgid "Account"
 msgstr "Comptes"
 
@@ -588,8 +585,7 @@ msgstr "Integració amb l'Evolution"
 #. *< version
 #. *  summary
 #. *  description
-#: ../plugins/gevolution/gevolution.c:467
-#: ../plugins/gevolution/gevolution.c:469
+#: ../plugins/gevolution/gevolution.c:467 ../plugins/gevolution/gevolution.c:469
 msgid "Provides integration with Ximian Evolution."
 msgstr "Proporciona la integració amb el Ximian Evolution."
 
@@ -1254,7 +1250,7 @@ msgid "_Start Gaim on Windows startup"
 msgstr "_Inicia el Gaim en iniciar Windows"
 
 #. Buddy List
-#: ../plugins/win32/winprefs/winprefs.c:362 ../src/gtkblist.c:3137
+#: ../plugins/win32/winprefs/winprefs.c:362 ../src/gtkblist.c:3167
 #: ../src/gtkprefs.c:2421
 msgid "Buddy List"
 msgstr "Llista d'amics"
@@ -1287,8 +1283,7 @@ msgstr "_Fes que la finestra faci un flaix quan hi arribin missatges"
 msgid "WinGaim Options"
 msgstr "Opcions del WinGaim"
 
-#: ../plugins/win32/winprefs/winprefs.c:409
-#: ../plugins/win32/winprefs/winprefs.c:410
+#: ../plugins/win32/winprefs/winprefs.c:409 ../plugins/win32/winprefs/winprefs.c:410
 msgid "Options specific to Windows Gaim."
 msgstr "Opcions específiques de la versió del Gaim per a Windows"
 
@@ -1324,8 +1319,8 @@ msgstr "Introduïu la contrasenya actual, i la nova."
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: ../src/account.c:363 ../src/connection.c:198 ../src/gtkblist.c:2462
-#: ../src/gtkdialogs.c:502 ../src/gtkdialogs.c:644 ../src/gtkdialogs.c:698
+#: ../src/account.c:363 ../src/connection.c:198 ../src/gtkblist.c:2492
+#: ../src/gtkdialogs.c:505 ../src/gtkdialogs.c:647 ../src/gtkdialogs.c:701
 #: ../src/gtkrequest.c:243 ../src/protocols/jabber/jabber.c:1086
 #: ../src/protocols/jabber/xdata.c:337 ../src/protocols/msn/msn.c:226
 #: ../src/protocols/msn/msn.c:241 ../src/protocols/msn/msn.c:256
@@ -1342,14 +1337,13 @@ msgstr "Introduïu la contrasenya actual, i la nova."
 msgid "OK"
 msgstr "D'acord"
 
-#: ../src/account.c:364 ../src/account.c:402 ../src/away.c:367
-#: ../src/connection.c:199 ../src/gtkaccount.c:2029 ../src/gtkaccount.c:2568
-#: ../src/gtkaccount.c:2599 ../src/gtkblist.c:2463 ../src/gtkblist.c:4539
-#: ../src/gtkconn.c:169 ../src/gtkdialogs.c:503 ../src/gtkdialogs.c:645
-#: ../src/gtkdialogs.c:699 ../src/gtkdialogs.c:797 ../src/gtkdialogs.c:819
-#: ../src/gtkdialogs.c:839 ../src/gtkdialogs.c:876 ../src/gtkdialogs.c:936
-#: ../src/gtkdialogs.c:979 ../src/gtkdialogs.c:1020
-#: ../src/gtkimhtmltoolbar.c:437 ../src/gtkprivacy.c:597
+#: ../src/account.c:364 ../src/account.c:402 ../src/away.c:367 ../src/connection.c:199
+#: ../src/gtkaccount.c:2029 ../src/gtkaccount.c:2568 ../src/gtkaccount.c:2599
+#: ../src/gtkblist.c:2493 ../src/gtkblist.c:4572 ../src/gtkconn.c:169
+#: ../src/gtkdialogs.c:506 ../src/gtkdialogs.c:648 ../src/gtkdialogs.c:702
+#: ../src/gtkdialogs.c:800 ../src/gtkdialogs.c:822 ../src/gtkdialogs.c:842
+#: ../src/gtkdialogs.c:879 ../src/gtkdialogs.c:939 ../src/gtkdialogs.c:982
+#: ../src/gtkdialogs.c:1023 ../src/gtkimhtmltoolbar.c:437 ../src/gtkprivacy.c:597
 #: ../src/gtkprivacy.c:610 ../src/gtkprivacy.c:635 ../src/gtkprivacy.c:646
 #: ../src/gtkrequest.c:244 ../src/protocols/icq/gaim_icq.c:276
 #: ../src/protocols/jabber/buddy.c:515 ../src/protocols/jabber/chat.c:754
@@ -1377,8 +1371,8 @@ msgstr "Cancel·la"
 msgid "Change user information for %s"
 msgstr "Canvia la informació d'usuari de %s"
 
-#: ../src/account.c:401 ../src/gtkrequest.c:250
-#: ../src/protocols/jabber/buddy.c:514 ../src/protocols/trepia/trepia.c:347
+#: ../src/account.c:401 ../src/gtkrequest.c:250 ../src/protocols/jabber/buddy.c:514
+#: ../src/protocols/trepia/trepia.c:347
 msgid "Save"
 msgstr "Desa"
 
@@ -1409,8 +1403,8 @@ msgid "Remove Away Message"
 msgstr "Suprimeix el missatge d'absència"
 
 #. Remove button
-#: ../src/away.c:366 ../src/gtkconv.c:1520 ../src/gtkconv.c:3902
-#: ../src/gtkconv.c:3973 ../src/gtkrequest.c:249
+#: ../src/away.c:366 ../src/gtkconv.c:1520 ../src/gtkconv.c:3902 ../src/gtkconv.c:3973
+#: ../src/gtkrequest.c:249
 msgid "Remove"
 msgstr "Suprimeix"
 
@@ -1834,7 +1828,7 @@ msgid "Protocol:"
 msgstr "Protocol:"
 
 # Mozilla 1.3->ScreenName.label
-#: ../src/gtkaccount.c:660 ../src/gtkblist.c:4125
+#: ../src/gtkaccount.c:660 ../src/gtkblist.c:4158
 msgid "Screen Name:"
 msgstr "Nom d'usuari:"
 
@@ -1842,7 +1836,7 @@ msgstr "Nom d'usuari:"
 msgid "Password:"
 msgstr "Contrasenya:"
 
-#: ../src/gtkaccount.c:738 ../src/gtkblist.c:4139 ../src/gtkblist.c:4486
+#: ../src/gtkaccount.c:738 ../src/gtkblist.c:4172 ../src/gtkblist.c:4519
 msgid "Alias:"
 msgstr "Àlies:"
 
@@ -2004,7 +1998,7 @@ msgid "Add buddy to your list?"
 msgstr "Voleu afegir l'amic a la llista?"
 
 #. Add button
-#: ../src/gtkaccount.c:2567 ../src/gtkaccount.c:2598 ../src/gtkblist.c:4538
+#: ../src/gtkaccount.c:2567 ../src/gtkaccount.c:2598 ../src/gtkblist.c:4571
 #: ../src/gtkconv.c:1522 ../src/gtkconv.c:3895 ../src/gtkconv.c:3966
 #: ../src/gtkrequest.c:248 ../src/protocols/icq/gaim_icq.c:276
 #: ../src/protocols/jabber/presence.c:212 ../src/protocols/oscar/oscar.c:3872
@@ -2012,230 +2006,230 @@ msgstr "Voleu afegir l'amic a la llista?"
 msgid "Add"
 msgstr "Afegeix"
 
-#: ../src/gtkblist.c:844
+#: ../src/gtkblist.c:846
 msgid "Join a Chat"
 msgstr "Entra a un xat"
 
-#: ../src/gtkblist.c:865
+#: ../src/gtkblist.c:867
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
 msgstr "Entreu la informació necessària sobre el xat al que vulgueu entrar.\n"
 
-#: ../src/gtkblist.c:876 ../src/gtkpounce.c:415 ../src/gtkroomlist.c:354
+#: ../src/gtkblist.c:878 ../src/gtkpounce.c:415 ../src/gtkroomlist.c:354
 msgid "_Account:"
 msgstr "_Compte:"
 
 # Això és el botó, alerta l'amplada!
-#: ../src/gtkblist.c:1171 ../src/gtkblist.c:3290
+#: ../src/gtkblist.c:1173 ../src/gtkblist.c:3323
 msgid "Get _Info"
 msgstr "_Informa"
 
-#: ../src/gtkblist.c:1174 ../src/gtkblist.c:3280
+#: ../src/gtkblist.c:1176 ../src/gtkblist.c:3313
 msgid "I_M"
 msgstr "_MI"
 
-#: ../src/gtkblist.c:1180
+#: ../src/gtkblist.c:1182
 msgid "_Send File"
 msgstr "_Envia un fitxer"
 
-#: ../src/gtkblist.c:1186
+#: ../src/gtkblist.c:1188
 msgid "Add Buddy _Pounce"
 msgstr "Afegeix un avís _per a l'amic"
 
-#: ../src/gtkblist.c:1188 ../src/gtkblist.c:1285
+#: ../src/gtkblist.c:1190 ../src/gtkblist.c:1287
 msgid "View _Log"
 msgstr "Visua_litza el registre"
 
-#: ../src/gtkblist.c:1198
+#: ../src/gtkblist.c:1200
 msgid "_Alias Buddy..."
 msgstr "Pos_a un àlies a un amic..."
 
-#: ../src/gtkblist.c:1200
+#: ../src/gtkblist.c:1202
 msgid "_Remove Buddy"
 msgstr "Sup_rimeix un amic"
 
-#: ../src/gtkblist.c:1202
+#: ../src/gtkblist.c:1204
 msgid "Alias Contact..."
 msgstr "Posa un àlies a un contacte..."
 
-#: ../src/gtkblist.c:1205 ../src/gtkdialogs.c:873 ../src/gtkdialogs.c:875
+#: ../src/gtkblist.c:1207 ../src/gtkdialogs.c:876 ../src/gtkdialogs.c:878
 msgid "Remove Contact"
 msgstr "Suprimeix un contacte"
 
-#: ../src/gtkblist.c:1209 ../src/gtkblist.c:1293 ../src/gtkblist.c:1307
+#: ../src/gtkblist.c:1211 ../src/gtkblist.c:1295 ../src/gtkblist.c:1309
 msgid "_Alias..."
 msgstr "À_lies..."
 
-#: ../src/gtkblist.c:1211 ../src/gtkblist.c:1295 ../src/gtkblist.c:1312
+#: ../src/gtkblist.c:1213 ../src/gtkblist.c:1297 ../src/gtkblist.c:1314
 #: ../src/gtkconn.c:367
 msgid "_Remove"
 msgstr "Sup_rimeix"
 
-#: ../src/gtkblist.c:1257
+#: ../src/gtkblist.c:1259
 msgid "Add a _Buddy"
 msgstr "_Afegeix un amic"
 
-#: ../src/gtkblist.c:1259
+#: ../src/gtkblist.c:1261
 msgid "Add a C_hat"
 msgstr "A_fegeix un xat"
 
-#: ../src/gtkblist.c:1261
+#: ../src/gtkblist.c:1263
 msgid "_Delete Group"
 msgstr "_Suprimeix un grup"
 
-#: ../src/gtkblist.c:1263
+#: ../src/gtkblist.c:1265
 msgid "_Rename"
 msgstr "_Canvia el nom"
 
 # Gnome_2.6_Extras [gossip.HEAD.ca.po]
 #. join button
-#: ../src/gtkblist.c:1281 ../src/gtkroomlist.c:264 ../src/gtkroomlist.c:409
+#: ../src/gtkblist.c:1283 ../src/gtkroomlist.c:264 ../src/gtkroomlist.c:409
 #: ../src/stock.c:88
 msgid "_Join"
 msgstr "En_tra"
 
-#: ../src/gtkblist.c:1283
+#: ../src/gtkblist.c:1285
 msgid "Auto-Join"
 msgstr "Entra automàticament"
 
-#: ../src/gtkblist.c:1309 ../src/gtkblist.c:1334
+#: ../src/gtkblist.c:1311 ../src/gtkblist.c:1336
 msgid "_Collapse"
 msgstr "_Redueix"
 
-#: ../src/gtkblist.c:1339
+#: ../src/gtkblist.c:1341
 msgid "_Expand"
 msgstr "_Expandeix"
 
-#: ../src/gtkblist.c:1986 ../src/gtkconv.c:4538 ../src/gtkpounce.c:316
+#: ../src/gtkblist.c:2016 ../src/gtkconv.c:4538 ../src/gtkpounce.c:316
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr "No esteu connectat amb cap protocol que permeti afegir aquest amic."
 
 #. Buddies menu
-#: ../src/gtkblist.c:2407
+#: ../src/gtkblist.c:2437
 msgid "/_Buddies"
 msgstr "/_Amics"
 
-#: ../src/gtkblist.c:2408
+#: ../src/gtkblist.c:2438
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Amics/Missatge _instantani nou..."
 
-#: ../src/gtkblist.c:2409
+#: ../src/gtkblist.c:2439
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Amics/Entra a un _xat..."
 
-#: ../src/gtkblist.c:2410
+#: ../src/gtkblist.c:2440
 msgid "/Buddies/Get User _Info..."
 msgstr "/Amics/Aconsegueix informació de l'_usuari..."
 
-#: ../src/gtkblist.c:2411
+#: ../src/gtkblist.c:2441
 msgid "/Buddies/View User _Log..."
 msgstr "/Amics/Visua_litza el registre de l'usuari..."
 
-#: ../src/gtkblist.c:2413
+#: ../src/gtkblist.c:2443
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Amics/Mostra amics desc_onnectats"
 
-#: ../src/gtkblist.c:2414
+#: ../src/gtkblist.c:2444
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Amics/Mostra grups _buits"
 
-#: ../src/gtkblist.c:2415
+#: ../src/gtkblist.c:2445
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Amics/_Afegeix un amic..."
 
-#: ../src/gtkblist.c:2416
+#: ../src/gtkblist.c:2446
 msgid "/Buddies/Add C_hat..."
 msgstr "/Amics/Afegeix un _xat..."
 
-#: ../src/gtkblist.c:2417
+#: ../src/gtkblist.c:2447
 msgid "/Buddies/Add _Group..."
 msgstr "/Amics/Afegeix un _grup..."
 
-#: ../src/gtkblist.c:2419
+#: ../src/gtkblist.c:2449
 msgid "/Buddies/_Signoff"
 msgstr "/Amics/_Desconnecta"
 
-#: ../src/gtkblist.c:2420
+#: ../src/gtkblist.c:2450
 msgid "/Buddies/_Quit"
 msgstr "/Amics/_Surt"
 
 #. Tools
-#: ../src/gtkblist.c:2423
+#: ../src/gtkblist.c:2453
 msgid "/_Tools"
 msgstr "/_Eines"
 
-#: ../src/gtkblist.c:2424
+#: ../src/gtkblist.c:2454
 msgid "/Tools/_Away"
 msgstr "/Eines/_Absent"
 
-#: ../src/gtkblist.c:2425
+#: ../src/gtkblist.c:2455
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Eines/Avís _per a amics"
 
-#: ../src/gtkblist.c:2426
+#: ../src/gtkblist.c:2456
 msgid "/Tools/Account Ac_tions"
 msgstr "/Eines/Accions dels comp_tes"
 
-#: ../src/gtkblist.c:2427
+#: ../src/gtkblist.c:2457
 msgid "/Tools/Pl_ugin Actions"
 msgstr "/Eines/Acci_ons del connector"
 
-#: ../src/gtkblist.c:2429
+#: ../src/gtkblist.c:2459
 msgid "/Tools/A_ccounts"
 msgstr "/Eines/_Comptes"
 
-#: ../src/gtkblist.c:2430
+#: ../src/gtkblist.c:2460
 msgid "/Tools/_File Transfers"
 msgstr "/Eines/Transferència de _fitxers"
 
-#: ../src/gtkblist.c:2431
+#: ../src/gtkblist.c:2461
 msgid "/Tools/R_oom List"
 msgstr "/Eines/_Llista de sales"
 
-#: ../src/gtkblist.c:2432
+#: ../src/gtkblist.c:2462
 msgid "/Tools/Pr_eferences"
 msgstr "/Eines/Pr_eferències"
 
-#: ../src/gtkblist.c:2433
+#: ../src/gtkblist.c:2463
 msgid "/Tools/Pr_ivacy"
 msgstr "/Eines/_Privadesa"
 
-#: ../src/gtkblist.c:2435
+#: ../src/gtkblist.c:2465
 msgid "/Tools/View System _Log"
 msgstr "/Eines/Visua_litza el registre del sistema"
 
 #. Help
-#: ../src/gtkblist.c:2438
+#: ../src/gtkblist.c:2468
 msgid "/_Help"
 msgstr "/_Ajuda"
 
-#: ../src/gtkblist.c:2439
+#: ../src/gtkblist.c:2469
 msgid "/Help/Online _Help"
 msgstr "/Ajuda/_Ajuda en línia"
 
-#: ../src/gtkblist.c:2440
+#: ../src/gtkblist.c:2470
 msgid "/Help/_Debug Window"
 msgstr "/Ajuda/Finestra de _depuració"
 
-#: ../src/gtkblist.c:2441
+#: ../src/gtkblist.c:2471
 msgid "/Help/_About"
 msgstr "/Ajuda/_Quant a"
 
-#: ../src/gtkblist.c:2459
+#: ../src/gtkblist.c:2489
 msgid "Rename Group"
 msgstr "Reanomena el grup"
 
-#: ../src/gtkblist.c:2459
+#: ../src/gtkblist.c:2489
 msgid "New group name"
 msgstr "Nom de grup nou"
 
-#: ../src/gtkblist.c:2460
+#: ../src/gtkblist.c:2490
 msgid "Please enter a new name for the selected group."
 msgstr "Entreu un nou nom per al grup seleccionat."
 
-#: ../src/gtkblist.c:2489
+#: ../src/gtkblist.c:2519
 #, c-format
 msgid ""
 "\n"
@@ -2244,7 +2238,7 @@ msgstr ""
 "\n"
 "<b>Compte:</b> %s"
 
-#: ../src/gtkblist.c:2555
+#: ../src/gtkblist.c:2585
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
@@ -2252,12 +2246,12 @@ msgstr ""
 "\n"
 "<b>Estat:</b> Desconnectat"
 
-#: ../src/gtkblist.c:2570
+#: ../src/gtkblist.c:2600
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: ../src/gtkblist.c:2586
+#: ../src/gtkblist.c:2616
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2265,7 +2259,7 @@ msgstr ""
 "\n"
 "<b>Compte:</b>"
 
-#: ../src/gtkblist.c:2587
+#: ../src/gtkblist.c:2617
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
@@ -2273,7 +2267,7 @@ msgstr ""
 "\n"
 "<b>Àlies del contacte:</b>"
 
-#: ../src/gtkblist.c:2588
+#: ../src/gtkblist.c:2618
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2281,7 +2275,7 @@ msgstr ""
 "\n"
 "<b>Àlies:</b>"
 
-#: ../src/gtkblist.c:2589
+#: ../src/gtkblist.c:2619
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2289,7 +2283,7 @@ msgstr ""
 "\n"
 "<b>Sobrenom:</b>"
 
-#: ../src/gtkblist.c:2590
+#: ../src/gtkblist.c:2620
 msgid ""
 "\n"
 "<b>Logged In:</b>"
@@ -2297,7 +2291,7 @@ msgstr ""
 "\n"
 "<b>Connectat:</b>"
 
-#: ../src/gtkblist.c:2591
+#: ../src/gtkblist.c:2621
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2305,7 +2299,7 @@ msgstr ""
 "\n"
 "<b>Inactiu:</b>"
 
-#: ../src/gtkblist.c:2592
+#: ../src/gtkblist.c:2622
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2313,7 +2307,7 @@ msgstr ""
 "\n"
 "<b>Avisat:</b>"
 
-#: ../src/gtkblist.c:2594
+#: ../src/gtkblist.c:2624
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2321,7 +2315,7 @@ msgstr ""
 "\n"
 "<b>Descripció:</b> Xerraire"
 
-#: ../src/gtkblist.c:2595
+#: ../src/gtkblist.c:2625
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2329,7 +2323,7 @@ msgstr ""
 "\n"
 "<b>Estat</b>: Imponent"
 
-#: ../src/gtkblist.c:2596
+#: ../src/gtkblist.c:2626
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2337,108 +2331,108 @@ msgstr ""
 "\n"
 "<b>Estat</b>: De conya"
 
-#: ../src/gtkblist.c:2878
+#: ../src/gtkblist.c:2908
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Inactiu (%d h i %02d min) "
 
-#: ../src/gtkblist.c:2880
+#: ../src/gtkblist.c:2910
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Inactiu (%d min) "
 
-#: ../src/gtkblist.c:2885
+#: ../src/gtkblist.c:2915
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Avisat (%d%%) "
 
-#: ../src/gtkblist.c:2888
+#: ../src/gtkblist.c:2918
 msgid "Offline "
 msgstr "Fora de línia "
 
 #. Make menu items sensitive/insensitive where appropriate
-#: ../src/gtkblist.c:3006
+#: ../src/gtkblist.c:3036
 msgid "/Buddies/Join a Chat..."
 msgstr "/Amics/Entra a un xat..."
 
-#: ../src/gtkblist.c:3009
+#: ../src/gtkblist.c:3039
 msgid "/Tools/Room List"
 msgstr "/Eines/Llista de sales"
 
-#: ../src/gtkblist.c:3012
+#: ../src/gtkblist.c:3042
 msgid "/Tools/Privacy"
 msgstr "/Eines/Privadesa"
 
-#: ../src/gtkblist.c:3094
+#: ../src/gtkblist.c:3124
 msgid "Alphabetical"
 msgstr "Alfabèticament"
 
-#: ../src/gtkblist.c:3095
+#: ../src/gtkblist.c:3125
 msgid "By status"
 msgstr "Per estat"
 
-#: ../src/gtkblist.c:3096
+#: ../src/gtkblist.c:3126
 msgid "By log size"
 msgstr "Per la mida del registre"
 
-#: ../src/gtkblist.c:3162
+#: ../src/gtkblist.c:3192
 msgid "/Tools/Away"
 msgstr "/Eines/Absent"
 
-#: ../src/gtkblist.c:3165
+#: ../src/gtkblist.c:3195
 msgid "/Tools/Buddy Pounce"
 msgstr "/Eines/Avís de l'amic"
 
-#: ../src/gtkblist.c:3168
+#: ../src/gtkblist.c:3198
 msgid "/Tools/Account Actions"
 msgstr "/Eines/Accions del compte"
 
-#: ../src/gtkblist.c:3171
+#: ../src/gtkblist.c:3201
 msgid "/Tools/Plugin Actions"
 msgstr "/Eines/Accions del connector"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: ../src/gtkblist.c:3259
+#: ../src/gtkblist.c:3292
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Amics/Mostra amics desconnectats"
 
-#: ../src/gtkblist.c:3261
+#: ../src/gtkblist.c:3294
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Amics/Mostra grups buits"
 
-#: ../src/gtkblist.c:3286
+#: ../src/gtkblist.c:3319
 msgid "Send a message to the selected buddy"
 msgstr "Envia un missatge a l'amic seleccionat"
 
-#: ../src/gtkblist.c:3296
+#: ../src/gtkblist.c:3329
 msgid "Get information on the selected buddy"
 msgstr "Aconsegueix dades sobre l'amic seleccionat"
 
-#: ../src/gtkblist.c:3300
+#: ../src/gtkblist.c:3333
 msgid "_Chat"
 msgstr "_Xat"
 
-#: ../src/gtkblist.c:3305
+#: ../src/gtkblist.c:3338
 msgid "Join a chat room"
 msgstr "Entra a una sala"
 
-#: ../src/gtkblist.c:3310
+#: ../src/gtkblist.c:3343
 msgid "_Away"
 msgstr "_Absent"
 
-#: ../src/gtkblist.c:3315
+#: ../src/gtkblist.c:3348
 msgid "Set an away message"
 msgstr "Estableix un missatge d'absència"
 
-#: ../src/gtkblist.c:4079 ../src/protocols/silc/buddy.c:731
+#: ../src/gtkblist.c:4112 ../src/protocols/silc/buddy.c:731
 #: ../src/protocols/silc/buddy.c:989 ../src/protocols/silc/buddy.c:1034
 #: ../src/protocols/silc/buddy.c:1124 ../src/protocols/yahoo/yahoo.c:2868
 msgid "Add Buddy"
 msgstr "Afegeix un amic"
 
-#: ../src/gtkblist.c:4103
+#: ../src/gtkblist.c:4136
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2449,25 +2443,25 @@ msgstr ""
 "sobrenom substituirà el nom d'usuari allà on sigui possible.\n"
 
 #. Set up stuff for the account box
-#: ../src/gtkblist.c:4163 ../src/gtkblist.c:4466
+#: ../src/gtkblist.c:4196 ../src/gtkblist.c:4499
 msgid "Account:"
 msgstr "Compte:"
 
-#: ../src/gtkblist.c:4399
+#: ../src/gtkblist.c:4432
 msgid "This protocol does not support chat rooms."
 msgstr "Aquest protocol no implementa sales de xat."
 
-#: ../src/gtkblist.c:4415
+#: ../src/gtkblist.c:4448
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "No esteu connectat amb cap protocol que permeti fer xats."
 
-#: ../src/gtkblist.c:4432
+#: ../src/gtkblist.c:4465
 msgid "Add Chat"
 msgstr "Afegeix xat"
 
-#: ../src/gtkblist.c:4456
+#: ../src/gtkblist.c:4489
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -2475,15 +2469,15 @@ msgstr ""
 "Entreu un àlies i la informació addient sobre el xat que vulgueu afegir a la "
 "llista d'amics.\n"
 
-#: ../src/gtkblist.c:4535
+#: ../src/gtkblist.c:4568
 msgid "Add Group"
 msgstr "Afegeix un grup"
 
-#: ../src/gtkblist.c:4536
+#: ../src/gtkblist.c:4569
 msgid "Please enter the name of the group to be added."
 msgstr "Entreu el nom del grup que vulgueu afegir."
 
-#: ../src/gtkblist.c:5105 ../src/gtkblist.c:5202
+#: ../src/gtkblist.c:5138 ../src/gtkblist.c:5235
 msgid "No actions available"
 msgstr "No hi ha accions disponibles"
 
@@ -2635,8 +2629,7 @@ msgid "IM"
 msgstr "MI"
 
 #. Send File button
-#: ../src/gtkconv.c:1475 ../src/gtkconv.c:3888
-#: ../src/protocols/oscar/oscar.c:601
+#: ../src/gtkconv.c:1475 ../src/gtkconv.c:3888 ../src/protocols/oscar/oscar.c:601
 msgid "Send File"
 msgstr "Envia un fitxer"
 
@@ -2931,8 +2924,7 @@ msgstr "Ignora l'usuari"
 msgid "Close conversation"
 msgstr "Tanca la conversa"
 
-#: ../src/gtkconv.c:5370 ../src/gtkconv.c:5399 ../src/gtkconv.c:5495
-#: ../src/gtkconv.c:5553
+#: ../src/gtkconv.c:5370 ../src/gtkconv.c:5399 ../src/gtkconv.c:5495 ../src/gtkconv.c:5553
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
@@ -3005,224 +2997,229 @@ msgstr "adaptació a win32"
 msgid "support"
 msgstr "suport"
 
-#: ../src/gtkdialogs.c:90
+#: ../src/gtkdialogs.c:91
 msgid "maintainer"
 msgstr "mantenidor"
 
-#: ../src/gtkdialogs.c:91
+#: ../src/gtkdialogs.c:92
 msgid "former libfaim maintainer"
 msgstr "antic mantenidor de libfaim"
 
-#: ../src/gtkdialogs.c:92
+#: ../src/gtkdialogs.c:93
 msgid "former lead developer"
 msgstr "antic desenvolupador principal"
 
-#: ../src/gtkdialogs.c:93
+#: ../src/gtkdialogs.c:94
 msgid "former maintainer"
 msgstr "antic mantenidor"
 
-#: ../src/gtkdialogs.c:94
+#: ../src/gtkdialogs.c:95
 msgid "former Jabber developer"
 msgstr "antic desenvolupador de Jabber"
 
-#: ../src/gtkdialogs.c:95
+#: ../src/gtkdialogs.c:96
 msgid "original author"
 msgstr "autor original"
 
-#: ../src/gtkdialogs.c:96
+#: ../src/gtkdialogs.c:97
 msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker i conductor designat"
 
-#: ../src/gtkdialogs.c:101
+#: ../src/gtkdialogs.c:102
 msgid "Azerbaijani"
 msgstr "Àzeri"
 
-#: ../src/gtkdialogs.c:102 ../src/gtkdialogs.c:147
+#: ../src/gtkdialogs.c:103 ../src/gtkdialogs.c:149
 msgid "Bulgarian"
 msgstr "Búlgar"
 
-#: ../src/gtkdialogs.c:102
+#: ../src/gtkdialogs.c:103
 msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
 msgstr "Vladimira Girginova i Vladimir (Kaladan) Petkov"
 
-#: ../src/gtkdialogs.c:103 ../src/gtkdialogs.c:148 ../src/gtkdialogs.c:149
+#: ../src/gtkdialogs.c:104 ../src/gtkdialogs.c:150 ../src/gtkdialogs.c:151
 msgid "Catalan"
 msgstr "Català"
 
-#: ../src/gtkdialogs.c:104 ../src/gtkdialogs.c:150
+#: ../src/gtkdialogs.c:105 ../src/gtkdialogs.c:152
 msgid "Czech"
 msgstr "Txec"
 
-#: ../src/gtkdialogs.c:105
+#: ../src/gtkdialogs.c:106
 msgid "Danish"
 msgstr "Danès"
 
-#: ../src/gtkdialogs.c:106 ../src/gtkdialogs.c:151
+#: ../src/gtkdialogs.c:107 ../src/gtkdialogs.c:153
 msgid "German"
 msgstr "Alemany"
 
-#: ../src/gtkdialogs.c:107
+#: ../src/gtkdialogs.c:108
 msgid "Australian English"
 msgstr "Anglès d'Austràlia"
 
-#: ../src/gtkdialogs.c:108
+#: ../src/gtkdialogs.c:109
 msgid "Canadian English"
 msgstr "Anglès canadenc"
 
-#: ../src/gtkdialogs.c:109
+#: ../src/gtkdialogs.c:110
 msgid "British English"
 msgstr "Anglès britànic"
 
-#: ../src/gtkdialogs.c:110 ../src/gtkdialogs.c:152
+#: ../src/gtkdialogs.c:111 ../src/gtkdialogs.c:154
 msgid "Spanish"
 msgstr "Espanyol"
 
-#: ../src/gtkdialogs.c:111
+#: ../src/gtkdialogs.c:112
 msgid "Estonian"
 msgstr "Estoni"
 
-#: ../src/gtkdialogs.c:112 ../src/gtkdialogs.c:153
+#: ../src/gtkdialogs.c:113 ../src/gtkdialogs.c:155
 msgid "Finnish"
 msgstr "Finès"
 
-#: ../src/gtkdialogs.c:113 ../src/gtkdialogs.c:154
+#: ../src/gtkdialogs.c:114 ../src/gtkdialogs.c:156
 msgid "French"
 msgstr "Francès"
 
-#: ../src/gtkdialogs.c:114
+#: ../src/gtkdialogs.c:115
 msgid "Hebrew"
 msgstr "Hebreu"
 
-#: ../src/gtkdialogs.c:115 ../src/gtkdialogs.c:155
+#: ../src/gtkdialogs.c:116 ../src/gtkdialogs.c:157
 msgid "Hindi"
 msgstr "Hindi"
 
-#: ../src/gtkdialogs.c:116
+#: ../src/gtkdialogs.c:117 ../src/gtkdialogs.c:158
 msgid "Hungarian"
 msgstr "Hongarès"
 
-#: ../src/gtkdialogs.c:117 ../src/gtkdialogs.c:156
+#: ../src/gtkdialogs.c:118 ../src/gtkdialogs.c:159
 msgid "Italian"
 msgstr "Italià"
 
-#: ../src/gtkdialogs.c:118 ../src/gtkdialogs.c:157
+#: ../src/gtkdialogs.c:119 ../src/gtkdialogs.c:160
 msgid "Japanese"
 msgstr "Japonès"
 
-#: ../src/gtkdialogs.c:119
+#: ../src/gtkdialogs.c:120
 msgid "Georgian"
 msgstr "Georgià"
 
-#: ../src/gtkdialogs.c:120 ../src/gtkdialogs.c:158
+#: ../src/gtkdialogs.c:121 ../src/gtkdialogs.c:161
 msgid "Korean"
 msgstr "Coreà"
 
-#: ../src/gtkdialogs.c:121
+#: ../src/gtkdialogs.c:122
 msgid "Lithuanian"
 msgstr "Lituà"
 
-#: ../src/gtkdialogs.c:122
+#: ../src/gtkdialogs.c:123
 msgid "Macedonian"
 msgstr "Macedoni"
 
-#: ../src/gtkdialogs.c:123
+#: ../src/gtkdialogs.c:124
 msgid "Burmese"
 msgstr "Birmà"
 
-#: ../src/gtkdialogs.c:124
+#: ../src/gtkdialogs.c:125
 msgid "Dutch; Flemish"
 msgstr "Holandès; Flamenc"
 
-#: ../src/gtkdialogs.c:125 ../src/gtkdialogs.c:159
+#: ../src/gtkdialogs.c:126
+#, fuzzy
+msgid "Norwegian (Nynorsk)"
+msgstr "Noruec"
+
+#: ../src/gtkdialogs.c:127 ../src/gtkdialogs.c:162
 msgid "Norwegian"
 msgstr "Noruec"
 
-#: ../src/gtkdialogs.c:126
+#: ../src/gtkdialogs.c:128
 msgid "Punjabi"
 msgstr "Punjabi"
 
-#: ../src/gtkdialogs.c:127 ../src/gtkdialogs.c:160
+#: ../src/gtkdialogs.c:129 ../src/gtkdialogs.c:163
 msgid "Polish"
 msgstr "Polonès"
 
-#: ../src/gtkdialogs.c:128
+#: ../src/gtkdialogs.c:130
 msgid "Portuguese"
 msgstr "Portuguès"
 
-#: ../src/gtkdialogs.c:129
+#: ../src/gtkdialogs.c:131
 msgid "Portuguese-Brazil"
 msgstr "Portuguès de Brasil"
 
-#: ../src/gtkdialogs.c:130
+#: ../src/gtkdialogs.c:132
 msgid "Romanian"
 msgstr "Romanès"
 
-#: ../src/gtkdialogs.c:131 ../src/gtkdialogs.c:161 ../src/gtkdialogs.c:162
+#: ../src/gtkdialogs.c:133 ../src/gtkdialogs.c:164 ../src/gtkdialogs.c:165
 msgid "Russian"
 msgstr "Rus"
 
-#: ../src/gtkdialogs.c:132
+#: ../src/gtkdialogs.c:134
 msgid "Slovenian"
 msgstr "Eslovè"
 
-#: ../src/gtkdialogs.c:133
+#: ../src/gtkdialogs.c:135
 msgid "Albanian"
 msgstr "Albanès"
 
-#: ../src/gtkdialogs.c:134
+#: ../src/gtkdialogs.c:136
 msgid "Serbian"
 msgstr "Serbi"
 
-#: ../src/gtkdialogs.c:135 ../src/gtkdialogs.c:164 ../src/gtkdialogs.c:165
+#: ../src/gtkdialogs.c:137 ../src/gtkdialogs.c:167 ../src/gtkdialogs.c:168
 msgid "Swedish"
 msgstr "Suec"
 
-#: ../src/gtkdialogs.c:136
+#: ../src/gtkdialogs.c:138
 msgid "Turkish"
 msgstr "Turc"
 
-#: ../src/gtkdialogs.c:137
+#: ../src/gtkdialogs.c:139
 msgid "Ukrainian"
 msgstr "Ucraïnès"
 
-#: ../src/gtkdialogs.c:138
+#: ../src/gtkdialogs.c:140
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
-#: ../src/gtkdialogs.c:138
+#: ../src/gtkdialogs.c:140
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "Equip del Vi de Gnome i T.M.Thanh"
 
-#: ../src/gtkdialogs.c:139
+#: ../src/gtkdialogs.c:141
 msgid "Simplified Chinese"
 msgstr "Xinès simplificat"
 
-#: ../src/gtkdialogs.c:140
+#: ../src/gtkdialogs.c:142
 msgid "Traditional Chinese"
 msgstr "Xinès tradicional"
 
-#: ../src/gtkdialogs.c:146
+#: ../src/gtkdialogs.c:148
 msgid "Amharic"
 msgstr "Amhàric"
 
-#: ../src/gtkdialogs.c:163
+#: ../src/gtkdialogs.c:166
 msgid "Slovak"
 msgstr "Eslovac"
 
-#: ../src/gtkdialogs.c:166
+#: ../src/gtkdialogs.c:169
 msgid "Chinese"
 msgstr "Xinès"
 
-#: ../src/gtkdialogs.c:208
+#: ../src/gtkdialogs.c:211
 msgid "About Gaim"
 msgstr "Quant al Gaim"
 
-#: ../src/gtkdialogs.c:223
+#: ../src/gtkdialogs.c:226
 #, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 
-#: ../src/gtkdialogs.c:245
+#: ../src/gtkdialogs.c:248
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
@@ -3233,77 +3230,77 @@ msgstr ""
 "Gadu-Gadu, tots alhora. Fa servir la biblioteca de programació Gtk+, i roman "
 "sota llicència GPL.<BR><BR>"
 
-#: ../src/gtkdialogs.c:255
+#: ../src/gtkdialogs.c:258
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim a irc.freenode.net<BR><BR>"
 
-#: ../src/gtkdialogs.c:258
+#: ../src/gtkdialogs.c:261
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim a irc.freenode.net<BR><BR>"
 
-#: ../src/gtkdialogs.c:264
+#: ../src/gtkdialogs.c:267
 msgid "Active Developers"
 msgstr "Desenvolupadors actius"
 
-#: ../src/gtkdialogs.c:279
+#: ../src/gtkdialogs.c:282
 msgid "Crazy Patch Writers"
 msgstr "Esbojarrats escriptors de pedaços"
 
-#: ../src/gtkdialogs.c:294
+#: ../src/gtkdialogs.c:297
 msgid "Retired Developers"
 msgstr "Desenvolupadors retirats"
 
-#: ../src/gtkdialogs.c:309
+#: ../src/gtkdialogs.c:312
 msgid "Current Translators"
 msgstr "Traductors actuals"
 
-#: ../src/gtkdialogs.c:329
+#: ../src/gtkdialogs.c:332
 msgid "Past Translators"
 msgstr "Antics traductors"
 
-#: ../src/gtkdialogs.c:484 ../src/gtkdialogs.c:626 ../src/gtkdialogs.c:679
+#: ../src/gtkdialogs.c:487 ../src/gtkdialogs.c:629 ../src/gtkdialogs.c:682
 msgid "_Screen name"
 msgstr "_Nom d'usuari:"
 
-#: ../src/gtkdialogs.c:490 ../src/gtkdialogs.c:632 ../src/gtkdialogs.c:685
+#: ../src/gtkdialogs.c:493 ../src/gtkdialogs.c:635 ../src/gtkdialogs.c:688
 msgid "_Account"
 msgstr "_Compte"
 
-#: ../src/gtkdialogs.c:497
+#: ../src/gtkdialogs.c:500
 msgid "New Instant Message"
 msgstr "Missatge instantani nou"
 
-#: ../src/gtkdialogs.c:499
+#: ../src/gtkdialogs.c:502
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr ""
 "Entreu el nom d'usuari de la persona a qui vulgueu enviar un missatge "
 "instantani."
 
-#: ../src/gtkdialogs.c:639
+#: ../src/gtkdialogs.c:642
 msgid "Get User Info"
 msgstr "Aconsegueix dades de l'usuari"
 
-#: ../src/gtkdialogs.c:641
+#: ../src/gtkdialogs.c:644
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr ""
 "Entreu el nom d'usuari de la persona de la qui vulgueu veure la informació."
 
-#: ../src/gtkdialogs.c:693
+#: ../src/gtkdialogs.c:696
 msgid "Get User Log"
 msgstr "Aconsegueix el registre de l'usuari"
 
-#: ../src/gtkdialogs.c:695
+#: ../src/gtkdialogs.c:698
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr ""
 "Entreu el nom d'usuari de la persona de la qui vulgueu veure el registre."
 
-#: ../src/gtkdialogs.c:735
+#: ../src/gtkdialogs.c:738
 msgid "Warn User"
 msgstr "Avisa l'usuari"
 
-#: ../src/gtkdialogs.c:756
+#: ../src/gtkdialogs.c:759
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -3316,45 +3313,45 @@ msgstr ""
 "Això incrementarà el nivell d'avís de %s i estarà subjecte a una limitació "
 "de velocitat més estricta.\n"
 
-#: ../src/gtkdialogs.c:765
+#: ../src/gtkdialogs.c:768
 msgid "Warn _anonymously?"
 msgstr "Voleu _avisar anònimament?"
 
-#: ../src/gtkdialogs.c:772
+#: ../src/gtkdialogs.c:775
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Els avisos anònims són menys estrictes.</b>"
 
-#: ../src/gtkdialogs.c:793
+#: ../src/gtkdialogs.c:796
 msgid "Alias Contact"
 msgstr "Posa un àlies al contacte"
 
-#: ../src/gtkdialogs.c:794
+#: ../src/gtkdialogs.c:797
 msgid "Enter an alias for this contact."
 msgstr "Introduïu un àlies per a aquest contacte."
 
-#: ../src/gtkdialogs.c:796 ../src/gtkdialogs.c:818 ../src/gtkdialogs.c:838
+#: ../src/gtkdialogs.c:799 ../src/gtkdialogs.c:821 ../src/gtkdialogs.c:841
 #: ../src/gtkrequest.c:251 ../src/protocols/silc/chat.c:584
 msgid "Alias"
 msgstr "Àlies"
 
-#: ../src/gtkdialogs.c:814
+#: ../src/gtkdialogs.c:817
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Introduïu un àlies per a %s."
 
-#: ../src/gtkdialogs.c:816
+#: ../src/gtkdialogs.c:819
 msgid "Alias Buddy"
 msgstr "Posa un àlies a un amic"
 
-#: ../src/gtkdialogs.c:835
+#: ../src/gtkdialogs.c:838
 msgid "Alias Chat"
 msgstr "Posa un àlies a un xat"
 
-#: ../src/gtkdialogs.c:836
+#: ../src/gtkdialogs.c:839
 msgid "Enter an alias for this chat."
 msgstr "Introduïu un àlies per a aquest xat."
 
-#: ../src/gtkdialogs.c:870
+#: ../src/gtkdialogs.c:873
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -3363,7 +3360,7 @@ msgstr ""
 "Ara se suprimirà el contacte que conté %s i %d altres amics de la llista "
 "d'amics. Voleu continuar?"
 
-#: ../src/gtkdialogs.c:931
+#: ../src/gtkdialogs.c:934
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -3372,28 +3369,28 @@ msgstr ""
 "Ara se suprimirà el grup %s i tots els seus membres de la llista d'amics. "
 "Voleu continuar?"
 
-#: ../src/gtkdialogs.c:934 ../src/gtkdialogs.c:935
+#: ../src/gtkdialogs.c:937 ../src/gtkdialogs.c:938
 msgid "Remove Group"
 msgstr "Suprimeix el grup"
 
-#: ../src/gtkdialogs.c:973
+#: ../src/gtkdialogs.c:976
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Esteu segur que voleu suprimir %s de la llista d'amics?"
 
-#: ../src/gtkdialogs.c:976 ../src/gtkdialogs.c:978
+#: ../src/gtkdialogs.c:979 ../src/gtkdialogs.c:981
 msgid "Remove Buddy"
 msgstr "Suprimeix l'amic"
 
-#: ../src/gtkdialogs.c:1015
+#: ../src/gtkdialogs.c:1018
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "Esteu segur que voleu suprimir el xat %s de la llista d'amics?"
 
-#: ../src/gtkdialogs.c:1018 ../src/gtkdialogs.c:1019
+#: ../src/gtkdialogs.c:1021 ../src/gtkdialogs.c:1022
 msgid "Remove Chat"
 msgstr "Suprimeix el Xat"
 
@@ -3533,7 +3530,7 @@ msgstr "_Copia la ubicació de l'enllaç"
 msgid "_Open Link in Browser"
 msgstr "_Obre l'enllaç en el navegador"
 
-#: ../src/gtkimhtml.c:2914
+#: ../src/gtkimhtml.c:2915
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -3544,7 +3541,18 @@ msgstr ""
 "\n"
 "Es farà servir PNG per defecte."
 
-#: ../src/gtkimhtml.c:2924
+#: ../src/gtkimhtml.c:2918
+#, fuzzy
+msgid ""
+"Unrecognized file type\n"
+"\n"
+"Defaulting to PNG."
+msgstr ""
+"No s'ha pogut reconèixer el tipus de fitxer\n"
+"\n"
+"Es farà servir PNG per defecte."
+
+#: ../src/gtkimhtml.c:2931
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -3556,11 +3564,22 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../src/gtkimhtml.c:3003 ../src/gtkimhtml.c:3015
+#: ../src/gtkimhtml.c:2934
+#, fuzzy, c-format
+msgid ""
+"Error saving image\n"
+"\n"
+"%s"
+msgstr ""
+"S'ha produït un error en desar la imatge\n"
+"\n"
+"%s"
+
+#: ../src/gtkimhtml.c:3014 ../src/gtkimhtml.c:3026
 msgid "Save Image"
 msgstr "Desa imatge"
 
-#: ../src/gtkimhtml.c:3043
+#: ../src/gtkimhtml.c:3054
 msgid "_Save Image..."
 msgstr "_Desa imatge..."
 
@@ -3911,9 +3930,8 @@ msgstr ""
 msgid "Icon"
 msgstr "Icona"
 
-#: ../src/gtkprefs.c:728 ../src/gtkprefs.c:2205
-#: ../src/protocols/jabber/buddy.c:264 ../src/protocols/jabber/buddy.c:757
-#: ../src/protocols/jabber/chat.c:743
+#: ../src/gtkprefs.c:728 ../src/gtkprefs.c:2205 ../src/protocols/jabber/buddy.c:264
+#: ../src/protocols/jabber/buddy.c:757 ../src/protocols/jabber/chat.c:743
 msgid "Description"
 msgstr "Descripció"
 
@@ -4942,13 +4960,11 @@ msgstr "No s'ha pogut llegir el sòcol"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 #: ../src/protocols/gg/gg.c:674 ../src/protocols/icq/gaim_icq.c:343
-#: ../src/protocols/napster/napster.c:486
-#: ../src/protocols/napster/napster.c:517 ../src/protocols/toc/toc.c:170
-#: ../src/protocols/yahoo/yahoo.c:2335 ../src/protocols/yahoo/yahoo.c:2364
-#: ../src/protocols/yahoo/yahoo.c:2427
+#: ../src/protocols/napster/napster.c:486 ../src/protocols/napster/napster.c:517
+#: ../src/protocols/toc/toc.c:170 ../src/protocols/yahoo/yahoo.c:2335
+#: ../src/protocols/yahoo/yahoo.c:2364 ../src/protocols/yahoo/yahoo.c:2427
 #: ../src/protocols/yahoo/yahoo_filexfer.c:68
-#: ../src/protocols/yahoo/yahoo_filexfer.c:111
-#: ../src/protocols/yahoo/ycht.c:482
+#: ../src/protocols/yahoo/yahoo_filexfer.c:111 ../src/protocols/yahoo/ycht.c:482
 msgid "Unable to connect."
 msgstr "No s'ha pogut connectar."
 
@@ -5258,8 +5274,7 @@ msgstr "El tema actual és: %s"
 msgid "No topic is set"
 msgstr "No hi ha cap tema establert"
 
-#: ../src/protocols/irc/dcc_send.c:272
-#: ../src/protocols/yahoo/yahoo_filexfer.c:176
+#: ../src/protocols/irc/dcc_send.c:272 ../src/protocols/yahoo/yahoo_filexfer.c:176
 #: ../src/protocols/yahoo/yahoo_filexfer.c:185
 #: ../src/protocols/yahoo/yahoo_filexfer.c:194
 msgid "File Transfer Aborted"
@@ -5356,9 +5371,8 @@ msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "El connector per al protocol d'IRC que és menys dolent"
 
 #: ../src/protocols/irc/irc.c:687 ../src/protocols/irc/msgs.c:239
-#: ../src/protocols/jabber/jabber.c:1617
-#: ../src/protocols/napster/napster.c:672 ../src/protocols/silc/ops.c:1026
-#: ../src/protocols/silc/ops.c:1129
+#: ../src/protocols/jabber/jabber.c:1617 ../src/protocols/napster/napster.c:672
+#: ../src/protocols/silc/ops.c:1026 ../src/protocols/silc/ops.c:1129
 msgid "Server"
 msgstr "Servidor"
 
@@ -5423,8 +5437,7 @@ msgid "<b>%s:</b> %s<br>"
 msgstr "<b>%s:</b> %s<br>"
 
 #: ../src/protocols/irc/msgs.c:234 ../src/protocols/silc/ops.c:967
-#: ../src/protocols/silc/ops.c:1117
-#: ../src/protocols/yahoo/yahoo_profile.c:1012
+#: ../src/protocols/silc/ops.c:1117 ../src/protocols/yahoo/yahoo_profile.c:1012
 msgid "Realname"
 msgstr "Nom real"
 
@@ -5889,8 +5902,7 @@ msgstr "Telèfon"
 
 #: ../src/protocols/jabber/buddy.c:258 ../src/protocols/jabber/buddy.c:718
 #: ../src/protocols/jabber/buddy.c:726 ../src/protocols/silc/silc.c:656
-#: ../src/protocols/silc/util.c:511
-#: ../src/protocols/yahoo/yahoo_profile.c:1002
+#: ../src/protocols/silc/util.c:511 ../src/protocols/yahoo/yahoo_profile.c:1002
 msgid "Email"
 msgstr "Correu electrònic"
 
@@ -6219,21 +6231,19 @@ msgid "Error"
 msgstr "Error"
 
 #: ../src/protocols/jabber/jabber.c:997 ../src/protocols/jabber/jutil.c:35
-#: ../src/protocols/jabber/presence.c:72
-#: ../src/protocols/jabber/presence.c:130
+#: ../src/protocols/jabber/presence.c:72 ../src/protocols/jabber/presence.c:130
 msgid "Chatty"
 msgstr "Xerraire"
 
 #: ../src/protocols/jabber/jabber.c:999 ../src/protocols/jabber/jutil.c:38
-#: ../src/protocols/jabber/presence.c:74
-#: ../src/protocols/jabber/presence.c:135
+#: ../src/protocols/jabber/presence.c:74 ../src/protocols/jabber/presence.c:135
 msgid "Extended Away"
 msgstr "Absent durant una bona estona"
 
 #: ../src/protocols/jabber/jabber.c:1000 ../src/protocols/jabber/jutil.c:41
-#: ../src/protocols/jabber/presence.c:76
-#: ../src/protocols/jabber/presence.c:137 ../src/protocols/oscar/oscar.c:674
-#: ../src/protocols/oscar/oscar.c:5705 ../src/protocols/oscar/oscar.c:6900
+#: ../src/protocols/jabber/presence.c:76 ../src/protocols/jabber/presence.c:137
+#: ../src/protocols/oscar/oscar.c:674 ../src/protocols/oscar/oscar.c:5705
+#: ../src/protocols/oscar/oscar.c:6900
 msgid "Do Not Disturb"
 msgstr "No molesteu"
 
@@ -6596,8 +6606,7 @@ msgstr "Error desconegut en la presència"
 msgid "The user %s wants to add you to their buddy list."
 msgstr "L'usuari %s vol afegir-vos a la seva llista d'amics."
 
-#: ../src/protocols/jabber/presence.c:348
-#: ../src/protocols/jabber/presence.c:349
+#: ../src/protocols/jabber/presence.c:348 ../src/protocols/jabber/presence.c:349
 msgid "Create New Room"
 msgstr "Crea una nova sala"
 
@@ -7181,8 +7190,8 @@ msgstr "No s'ha pogut connectar"
 msgid "%s is not a valid group."
 msgstr "%s no és un nom de grup vàlid"
 
-#: ../src/protocols/msn/notification.c:184
-#: ../src/protocols/msn/notification.c:523 ../src/protocols/msn/session.c:349
+#: ../src/protocols/msn/notification.c:184 ../src/protocols/msn/notification.c:523
+#: ../src/protocols/msn/session.c:349
 msgid "Unknown error."
 msgstr "Error desconegut."
 
@@ -7443,8 +7452,7 @@ msgstr "_Grup:"
 #. *< version
 #. *  summary
 #. *  description
-#: ../src/protocols/napster/napster.c:652
-#: ../src/protocols/napster/napster.c:654
+#: ../src/protocols/napster/napster.c:652 ../src/protocols/napster/napster.c:654
 msgid "NAPSTER Protocol Plugin"
 msgstr "Connector per al protocol Napster"
 
@@ -8137,8 +8145,7 @@ msgstr "No s'ha pogut connectar"
 msgid "Connection established, cookie sent"
 msgstr "Connexió establerta, s'està enviant el secret"
 
-#: ../src/protocols/oscar/oscar.c:1968
-#: ../src/protocols/yahoo/yahoo_filexfer.c:177
+#: ../src/protocols/oscar/oscar.c:1968 ../src/protocols/yahoo/yahoo_filexfer.c:177
 #: ../src/protocols/yahoo/yahoo_filexfer.c:186
 #: ../src/protocols/yahoo/yahoo_filexfer.c:195
 msgid "Unable to establish file descriptor."
@@ -8443,8 +8450,7 @@ msgstr "Nivell d'avís"
 msgid "Online Since"
 msgstr "En línia des de"
 
-#: ../src/protocols/oscar/oscar.c:4255
-#: ../src/protocols/yahoo/yahoo_profile.c:1125
+#: ../src/protocols/oscar/oscar.c:4255 ../src/protocols/yahoo/yahoo_profile.c:1125
 msgid "Member Since"
 msgstr "Membre des de"
 
@@ -10762,8 +10768,8 @@ msgstr "No s'ha pogut llegir"
 
 #: ../src/protocols/yahoo/yahoo.c:2417 ../src/protocols/yahoo/yahoo.c:2527
 #: ../src/protocols/yahoo/yahoo.c:2577 ../src/protocols/yahoo/yahoo.c:2587
-#: ../src/protocols/yahoo/yahoochat.c:1461
-#: ../src/protocols/yahoo/yahoochat.c:1528 ../src/protocols/yahoo/ycht.c:518
+#: ../src/protocols/yahoo/yahoochat.c:1461 ../src/protocols/yahoo/yahoochat.c:1528
+#: ../src/protocols/yahoo/ycht.c:518
 msgid "Connection problem"
 msgstr "Hi ha un problema de connexió"
 
@@ -10932,8 +10938,7 @@ msgstr "Veus"
 msgid "Webcams"
 msgstr "Càmeres web"
 
-#: ../src/protocols/yahoo/yahoochat.c:1461
-#: ../src/protocols/yahoo/yahoochat.c:1528
+#: ../src/protocols/yahoo/yahoochat.c:1461 ../src/protocols/yahoo/yahoochat.c:1528
 msgid "Unable to fetch room list."
 msgstr "No s'ha pogut obtenir la llista de sales."
 
@@ -11385,9 +11390,6 @@ msgstr "g003: Error en obrir la connexió.\n"
 #~ msgstr ""
 #~ "No ha estat possible descobrir el tipus d'imatge a partir de l'extensió "
 #~ "del fitxer. S'agafarà PNG com a predeterminat."
-
-#~ msgid "Error saving image: %s"
-#~ msgstr "S'ha produït un error en desar la imatge: %s"
 
 # DUBTE
 #~ msgid "Default SILC Key Pair"
