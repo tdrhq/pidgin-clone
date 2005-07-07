@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-05 10:50+0200\n"
-"PO-Revision-Date: 2005-07-03 12:58+0200\n"
+"POT-Creation-Date: 2005-07-07 00:26+0200\n"
+"PO-Revision-Date: 2005-07-07 00:26+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: de <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1309,7 +1309,7 @@ msgstr "Bitte geben Sie Ihr aktuelles und Ihr neues Paßwort ein."
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
 #: src/account.c:363 src/connection.c:198 src/gtkblist.c:2492
-#: src/gtkdialogs.c:502 src/gtkdialogs.c:644 src/gtkdialogs.c:698
+#: src/gtkdialogs.c:505 src/gtkdialogs.c:647 src/gtkdialogs.c:701
 #: src/gtkrequest.c:243 src/protocols/jabber/jabber.c:1086
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:226
 #: src/protocols/msn/msn.c:241 src/protocols/msn/msn.c:256
@@ -1329,10 +1329,10 @@ msgstr "OK"
 #: src/account.c:364 src/account.c:402 src/away.c:367 src/connection.c:199
 #: src/gtkaccount.c:2029 src/gtkaccount.c:2568 src/gtkaccount.c:2599
 #: src/gtkblist.c:2493 src/gtkblist.c:4572 src/gtkconn.c:169
-#: src/gtkdialogs.c:503 src/gtkdialogs.c:645 src/gtkdialogs.c:699
-#: src/gtkdialogs.c:797 src/gtkdialogs.c:819 src/gtkdialogs.c:839
-#: src/gtkdialogs.c:876 src/gtkdialogs.c:936 src/gtkdialogs.c:979
-#: src/gtkdialogs.c:1020 src/gtkimhtmltoolbar.c:437 src/gtkprivacy.c:597
+#: src/gtkdialogs.c:506 src/gtkdialogs.c:648 src/gtkdialogs.c:702
+#: src/gtkdialogs.c:800 src/gtkdialogs.c:822 src/gtkdialogs.c:842
+#: src/gtkdialogs.c:879 src/gtkdialogs.c:939 src/gtkdialogs.c:982
+#: src/gtkdialogs.c:1023 src/gtkimhtmltoolbar.c:437 src/gtkprivacy.c:597
 #: src/gtkprivacy.c:610 src/gtkprivacy.c:635 src/gtkprivacy.c:646
 #: src/gtkrequest.c:244 src/protocols/icq/gaim_icq.c:276
 #: src/protocols/jabber/buddy.c:515 src/protocols/jabber/chat.c:754
@@ -2045,7 +2045,7 @@ msgstr "Buddy _entfernen"
 msgid "Alias Contact..."
 msgstr "Kontakt-Alias..."
 
-#: src/gtkblist.c:1207 src/gtkdialogs.c:873 src/gtkdialogs.c:875
+#: src/gtkblist.c:1207 src/gtkdialogs.c:876 src/gtkdialogs.c:878
 msgid "Remove Contact"
 msgstr "Kontakt entfernen"
 
@@ -2996,224 +2996,228 @@ msgstr "Win32 Portierung"
 msgid "support"
 msgstr "Support"
 
-#: src/gtkdialogs.c:90
+#: src/gtkdialogs.c:91
 msgid "maintainer"
 msgstr "Maintainer"
 
-#: src/gtkdialogs.c:91
+#: src/gtkdialogs.c:92
 msgid "former libfaim maintainer"
 msgstr "früherer libfaim Maintainer"
 
-#: src/gtkdialogs.c:92
+#: src/gtkdialogs.c:93
 msgid "former lead developer"
 msgstr "früherer Hauptentwickler"
 
-#: src/gtkdialogs.c:93
+#: src/gtkdialogs.c:94
 msgid "former maintainer"
 msgstr "früherer Maintainer"
 
-#: src/gtkdialogs.c:94
+#: src/gtkdialogs.c:95
 msgid "former Jabber developer"
 msgstr "früherer Jabber Entwickler"
 
-#: src/gtkdialogs.c:95
+#: src/gtkdialogs.c:96
 msgid "original author"
 msgstr "Originalautor"
 
-#: src/gtkdialogs.c:96
+#: src/gtkdialogs.c:97
 msgid "hacker and designated driver [lazy bum]"
 msgstr "Hacker"
 
-#: src/gtkdialogs.c:101
+#: src/gtkdialogs.c:102
 msgid "Azerbaijani"
 msgstr "Aserbaidschanisch"
 
-#: src/gtkdialogs.c:102 src/gtkdialogs.c:147
+#: src/gtkdialogs.c:103 src/gtkdialogs.c:149
 msgid "Bulgarian"
 msgstr "Bulgarisch"
 
-#: src/gtkdialogs.c:102
+#: src/gtkdialogs.c:103
 msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
 msgstr "Vladimira Girginova und Vladimir (Kaladan) Petkov"
 
-#: src/gtkdialogs.c:103 src/gtkdialogs.c:148 src/gtkdialogs.c:149
+#: src/gtkdialogs.c:104 src/gtkdialogs.c:150 src/gtkdialogs.c:151
 msgid "Catalan"
 msgstr "Katalanisch"
 
-#: src/gtkdialogs.c:104 src/gtkdialogs.c:150
+#: src/gtkdialogs.c:105 src/gtkdialogs.c:152
 msgid "Czech"
 msgstr "Tschechisch"
 
-#: src/gtkdialogs.c:105
+#: src/gtkdialogs.c:106
 msgid "Danish"
 msgstr "Dänisch"
 
-#: src/gtkdialogs.c:106 src/gtkdialogs.c:151
+#: src/gtkdialogs.c:107 src/gtkdialogs.c:153
 msgid "German"
 msgstr "Deutsch"
 
-#: src/gtkdialogs.c:107
+#: src/gtkdialogs.c:108
 msgid "Australian English"
 msgstr "Australisches Englisch"
 
-#: src/gtkdialogs.c:108
+#: src/gtkdialogs.c:109
 msgid "Canadian English"
 msgstr "Kanadisches Englisch"
 
-#: src/gtkdialogs.c:109
+#: src/gtkdialogs.c:110
 msgid "British English"
 msgstr "Britisches Englisch"
 
-#: src/gtkdialogs.c:110 src/gtkdialogs.c:152
+#: src/gtkdialogs.c:111 src/gtkdialogs.c:154
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: src/gtkdialogs.c:111
+#: src/gtkdialogs.c:112
 msgid "Estonian"
 msgstr "Estnisch"
 
-#: src/gtkdialogs.c:112 src/gtkdialogs.c:153
+#: src/gtkdialogs.c:113 src/gtkdialogs.c:155
 msgid "Finnish"
 msgstr "Finnisch"
 
-#: src/gtkdialogs.c:113 src/gtkdialogs.c:154
+#: src/gtkdialogs.c:114 src/gtkdialogs.c:156
 msgid "French"
 msgstr "Französisch"
 
-#: src/gtkdialogs.c:114
+#: src/gtkdialogs.c:115
 msgid "Hebrew"
 msgstr "Hebräisch"
 
-#: src/gtkdialogs.c:115 src/gtkdialogs.c:155
+#: src/gtkdialogs.c:116 src/gtkdialogs.c:157
 msgid "Hindi"
 msgstr "Hindi"
 
-#: src/gtkdialogs.c:116
+#: src/gtkdialogs.c:117 src/gtkdialogs.c:158
 msgid "Hungarian"
 msgstr "Ungarisch"
 
-#: src/gtkdialogs.c:117 src/gtkdialogs.c:156
+#: src/gtkdialogs.c:118 src/gtkdialogs.c:159
 msgid "Italian"
 msgstr "Italienisch"
 
-#: src/gtkdialogs.c:118 src/gtkdialogs.c:157
+#: src/gtkdialogs.c:119 src/gtkdialogs.c:160
 msgid "Japanese"
 msgstr "Japanisch"
 
-#: src/gtkdialogs.c:119
+#: src/gtkdialogs.c:120
 msgid "Georgian"
 msgstr "Georgisch"
 
-#: src/gtkdialogs.c:120 src/gtkdialogs.c:158
+#: src/gtkdialogs.c:121 src/gtkdialogs.c:161
 msgid "Korean"
 msgstr "Koreanisch"
 
-#: src/gtkdialogs.c:121
+#: src/gtkdialogs.c:122
 msgid "Lithuanian"
 msgstr "Litauisch"
 
-#: src/gtkdialogs.c:122
+#: src/gtkdialogs.c:123
 msgid "Macedonian"
 msgstr "Makedonisch"
 
-#: src/gtkdialogs.c:123
+#: src/gtkdialogs.c:124
 msgid "Burmese"
 msgstr "Birmanisch"
 
-#: src/gtkdialogs.c:124
+#: src/gtkdialogs.c:125
 msgid "Dutch; Flemish"
 msgstr "Holländisch; Flämisch"
 
-#: src/gtkdialogs.c:125 src/gtkdialogs.c:159
+#: src/gtkdialogs.c:126
+msgid "Norwegian (Nynorsk)"
+msgstr "Norwegisch (Nynorsk)"
+
+#: src/gtkdialogs.c:127 src/gtkdialogs.c:162
 msgid "Norwegian"
 msgstr "Norwegisch"
 
-#: src/gtkdialogs.c:126
+#: src/gtkdialogs.c:128
 msgid "Punjabi"
 msgstr "Pandschabi"
 
-#: src/gtkdialogs.c:127 src/gtkdialogs.c:160
+#: src/gtkdialogs.c:129 src/gtkdialogs.c:163
 msgid "Polish"
 msgstr "Polnisch"
 
-#: src/gtkdialogs.c:128
+#: src/gtkdialogs.c:130
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
-#: src/gtkdialogs.c:129
+#: src/gtkdialogs.c:131
 msgid "Portuguese-Brazil"
 msgstr "Portugiesisch (Brasilien)"
 
-#: src/gtkdialogs.c:130
+#: src/gtkdialogs.c:132
 msgid "Romanian"
 msgstr "Rumänisch"
 
-#: src/gtkdialogs.c:131 src/gtkdialogs.c:161 src/gtkdialogs.c:162
+#: src/gtkdialogs.c:133 src/gtkdialogs.c:164 src/gtkdialogs.c:165
 msgid "Russian"
 msgstr "Russisch"
 
-#: src/gtkdialogs.c:132
+#: src/gtkdialogs.c:134
 msgid "Slovenian"
 msgstr "Slowenisch"
 
-#: src/gtkdialogs.c:133
+#: src/gtkdialogs.c:135
 msgid "Albanian"
 msgstr "Albanisch"
 
-#: src/gtkdialogs.c:134
+#: src/gtkdialogs.c:136
 msgid "Serbian"
 msgstr "Serbisch"
 
-#: src/gtkdialogs.c:135 src/gtkdialogs.c:164 src/gtkdialogs.c:165
+#: src/gtkdialogs.c:137 src/gtkdialogs.c:167 src/gtkdialogs.c:168
 msgid "Swedish"
 msgstr "Schwedisch"
 
-#: src/gtkdialogs.c:136
+#: src/gtkdialogs.c:138
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: src/gtkdialogs.c:137
+#: src/gtkdialogs.c:139
 msgid "Ukrainian"
 msgstr "Ukrainisch"
 
-#: src/gtkdialogs.c:138
+#: src/gtkdialogs.c:140
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-#: src/gtkdialogs.c:138
+#: src/gtkdialogs.c:140
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh und das Gnome-Vi Team"
 
-#: src/gtkdialogs.c:139
+#: src/gtkdialogs.c:141
 msgid "Simplified Chinese"
 msgstr "Vereinfachtes Chinesisch"
 
-#: src/gtkdialogs.c:140
+#: src/gtkdialogs.c:142
 msgid "Traditional Chinese"
 msgstr "Traditionelles Chinesisch"
 
-#: src/gtkdialogs.c:146
+#: src/gtkdialogs.c:148
 msgid "Amharic"
 msgstr "Amharisch"
 
-#: src/gtkdialogs.c:163
+#: src/gtkdialogs.c:166
 msgid "Slovak"
 msgstr "Slowakisch"
 
-#: src/gtkdialogs.c:166
+#: src/gtkdialogs.c:169
 msgid "Chinese"
 msgstr "Chinesisch"
 
-#: src/gtkdialogs.c:208
+#: src/gtkdialogs.c:211
 msgid "About Gaim"
 msgstr "Über Gaim"
 
-#: src/gtkdialogs.c:223
+#: src/gtkdialogs.c:226
 #, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 
-#: src/gtkdialogs.c:245
+#: src/gtkdialogs.c:248
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
@@ -3224,78 +3228,78 @@ msgstr ""
 "unterstützt. Gaim wird mit Gtk+ entwickelt und ist unter der GPL lizensiert."
 "<BR><BR>"
 
-#: src/gtkdialogs.c:255
+#: src/gtkdialogs.c:258
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim auf irc.freenode.net<BR><BR>"
 
-#: src/gtkdialogs.c:258
+#: src/gtkdialogs.c:261
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #gaim auf irc.freenode.net<BR><BR>"
 
-#: src/gtkdialogs.c:264
+#: src/gtkdialogs.c:267
 msgid "Active Developers"
 msgstr "Aktive Entwickler"
 
-#: src/gtkdialogs.c:279
+#: src/gtkdialogs.c:282
 msgid "Crazy Patch Writers"
 msgstr "Verrückte Patchschreiber"
 
-#: src/gtkdialogs.c:294
+#: src/gtkdialogs.c:297
 msgid "Retired Developers"
 msgstr "Zurückgetretene Entwickler"
 
-#: src/gtkdialogs.c:309
+#: src/gtkdialogs.c:312
 msgid "Current Translators"
 msgstr "Aktuelle Übersetzer"
 
-#: src/gtkdialogs.c:329
+#: src/gtkdialogs.c:332
 msgid "Past Translators"
 msgstr "Frühere Übersetzer"
 
-#: src/gtkdialogs.c:484 src/gtkdialogs.c:626 src/gtkdialogs.c:679
+#: src/gtkdialogs.c:487 src/gtkdialogs.c:629 src/gtkdialogs.c:682
 msgid "_Screen name"
 msgstr "_Benutzername"
 
-#: src/gtkdialogs.c:490 src/gtkdialogs.c:632 src/gtkdialogs.c:685
+#: src/gtkdialogs.c:493 src/gtkdialogs.c:635 src/gtkdialogs.c:688
 msgid "_Account"
 msgstr "_Konto"
 
-#: src/gtkdialogs.c:497
+#: src/gtkdialogs.c:500
 msgid "New Instant Message"
 msgstr "Neue Nachricht"
 
-#: src/gtkdialogs.c:499
+#: src/gtkdialogs.c:502
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr ""
 "Bitte geben Sie den Benutzernamen der Person ein, mit der Sie chatten wollen."
 
-#: src/gtkdialogs.c:639
+#: src/gtkdialogs.c:642
 msgid "Get User Info"
 msgstr "Benutzer-Info abrufen"
 
-#: src/gtkdialogs.c:641
+#: src/gtkdialogs.c:644
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr ""
 "Bitte geben Sie den Benutzernamen der Person ein, dessen Info Sie sehen "
 "möchten."
 
-#: src/gtkdialogs.c:693
+#: src/gtkdialogs.c:696
 msgid "Get User Log"
 msgstr "Benutzer-Mitschnitt abrufen"
 
-#: src/gtkdialogs.c:695
+#: src/gtkdialogs.c:698
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr ""
 "Bitte geben Sie den Benutzernamen der Person ein, dessen Mitschnitt Sie "
 "sehen möchten."
 
-#: src/gtkdialogs.c:735
+#: src/gtkdialogs.c:738
 msgid "Warn User"
 msgstr "Benutzer warnen"
 
-#: src/gtkdialogs.c:756
+#: src/gtkdialogs.c:759
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -3308,45 +3312,45 @@ msgstr ""
 "Dies wird die Warnstufe von %s erhöhen und er oder sie bekommen eine "
 "schlechtere Bewertung.\n"
 
-#: src/gtkdialogs.c:765
+#: src/gtkdialogs.c:768
 msgid "Warn _anonymously?"
 msgstr "_Anonym warnen?"
 
-#: src/gtkdialogs.c:772
+#: src/gtkdialogs.c:775
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Anonyme Warnungen sind nicht so schwerwiegend.</b>"
 
-#: src/gtkdialogs.c:793
+#: src/gtkdialogs.c:796
 msgid "Alias Contact"
 msgstr "Kontakt-Alias"
 
-#: src/gtkdialogs.c:794
+#: src/gtkdialogs.c:797
 msgid "Enter an alias for this contact."
 msgstr "Geben Sie einen Alias für diesen Kontakt ein."
 
-#: src/gtkdialogs.c:796 src/gtkdialogs.c:818 src/gtkdialogs.c:838
+#: src/gtkdialogs.c:799 src/gtkdialogs.c:821 src/gtkdialogs.c:841
 #: src/gtkrequest.c:251 src/protocols/silc/chat.c:584
 msgid "Alias"
 msgstr "Alias"
 
-#: src/gtkdialogs.c:814
+#: src/gtkdialogs.c:817
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Geben Sie einen Alias %s ein."
 
-#: src/gtkdialogs.c:816
+#: src/gtkdialogs.c:819
 msgid "Alias Buddy"
 msgstr "Alias für Buddy"
 
-#: src/gtkdialogs.c:835
+#: src/gtkdialogs.c:838
 msgid "Alias Chat"
 msgstr "Chat-Alias"
 
-#: src/gtkdialogs.c:836
+#: src/gtkdialogs.c:839
 msgid "Enter an alias for this chat."
 msgstr "Geben Sie einen Alias für diesen Chat ein."
 
-#: src/gtkdialogs.c:870
+#: src/gtkdialogs.c:873
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -3355,7 +3359,7 @@ msgstr ""
 "Sie sind dabei, den Kontakt, der %s enthält und %d andere Buddies aus Ihrer "
 "Kontaktliste zu entfernen.  Möchten Sie fortsetzen?"
 
-#: src/gtkdialogs.c:931
+#: src/gtkdialogs.c:934
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -3364,11 +3368,11 @@ msgstr ""
 "Sie sind dabei, die Gruppe %s und alle darin enthaltenen Mitglieder aus "
 "Ihrer Kontaktliste zu entfernen. Möchten Sie fortsetzen?"
 
-#: src/gtkdialogs.c:934 src/gtkdialogs.c:935
+#: src/gtkdialogs.c:937 src/gtkdialogs.c:938
 msgid "Remove Group"
 msgstr "Gruppe entfernen"
 
-#: src/gtkdialogs.c:973
+#: src/gtkdialogs.c:976
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
@@ -3376,11 +3380,11 @@ msgstr ""
 "Sie sind dabei, %s aus Ihrer Kontaktliste zu entfernen. Möchten Sie "
 "fortsetzen?"
 
-#: src/gtkdialogs.c:976 src/gtkdialogs.c:978
+#: src/gtkdialogs.c:979 src/gtkdialogs.c:981
 msgid "Remove Buddy"
 msgstr "Buddy entfernen"
 
-#: src/gtkdialogs.c:1015
+#: src/gtkdialogs.c:1018
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
@@ -3389,7 +3393,7 @@ msgstr ""
 "Sie sind dabei, den Chat %s aus Ihrer Kontaktliste zu entfernen. Möchten Sie "
 "fortsetzen?"
 
-#: src/gtkdialogs.c:1018 src/gtkdialogs.c:1019
+#: src/gtkdialogs.c:1021 src/gtkdialogs.c:1022
 msgid "Remove Chat"
 msgstr "Chat Entfernen"
 
@@ -11460,25 +11464,6 @@ msgstr[1] "Minuten"
 #: src/util.c:2879
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Fehler bei Herstellen der Verbindung.\n"
-
-#~ msgid ""
-#~ "Unable to guess the image type based on the file extension supplied.  "
-#~ "Defaulting to PNG."
-#~ msgstr ""
-#~ "Kann den Dateityp nicht anhand der Dateiendung feststellen. Benutze "
-#~ "Standard-Dateityp PNG."
-
-#~ msgid "Error saving image: %s"
-#~ msgstr "Fehler beim Speichern des Bildes: %s"
-
-#~ msgid "Default SILC Key Pair"
-#~ msgstr "Standard SILC-Schlüsselpaar"
-
-#~ msgid "SILC Public Key"
-#~ msgstr "SILC öffentlicher Schlüssel"
-
-#~ msgid "SILC Private Key"
-#~ msgstr "SILC privater Schlüssel"
 
 #~ msgid "Miscellaneous error"
 #~ msgstr "Unbekannter Fehler"
