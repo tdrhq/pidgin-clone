@@ -1,5 +1,15 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+1.4.0 (7/7/2005):
+	Mark: The last month or four we've promoted a bunch of the Gaim
+	Crazy Patch Writers to developers, so there is now an even larger
+	team of brilliant and amazingly sexy committers working around
+	the globe for your instant messaging pleasure.  Also, we have
+	what I believe to be our first contribution from a Summer of Code
+	student in this release: Jonathan Clark enabled the sending of
+	files to certain ICQ users.  Support is still a bit	rough, but
+	he'll be working on it throughout the summer.
+
 1.3.1 (6/9/2005):
 	Sean: It's been a while since I've done one of these. Welcome to
 	Gaim 1.3.1, "New Hyde Park." This is, again, another bugfix release

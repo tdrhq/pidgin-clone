@@ -1,4 +1,4 @@
-version 1.4.0:
+version 1.4.0 (7/7/2005):
 	* On Windows XP or newer, the non-debug version of gaim will attempt to
 	  use the existing console, if one is present, for debug output.
 	* Updated to GTK+ 2.6.8 (rev a).  This partially fixes the famed "No

@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 1.4.0:
+version 1.4.0 (7/7/2005):
 	* Added: gaim_buddy_icon_uncache()
 	  Deletes a cached buddy icon for a specified buddy
 	* Added: gaim_buddy_icon_get_type
