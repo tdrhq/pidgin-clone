@@ -671,12 +671,10 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess)
 	/* Make sure there aren't any duplicate buddies in a group, or duplicate permits or denies */
 	cur = sess->ssi.local;
 	while (cur) {
-		next = cur->next;
-
 		if ((cur->type == AIM_SSI_TYPE_BUDDY) || (cur->type == AIM_SSI_TYPE_PERMIT) || (cur->type == AIM_SSI_TYPE_DENY))
 		{
 			struct aim_ssi_item *cur2, *next2;
-			cur2 = next;
+			cur2 = cur->next;
 			while (cur2) {
 				next2 = cur2->next;
 				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (cur->name != NULL) && (cur2->name != NULL) && (!strcmp(cur->name, cur2->name)))
@@ -684,7 +682,7 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess)
 				cur2 = next2;
 			}
 		}
-		cur = next;
+		cur = cur->next;
 	}
 
 	/* Check if there are empty groups and delete them */
