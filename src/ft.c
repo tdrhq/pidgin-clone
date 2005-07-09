@@ -113,8 +113,7 @@ gaim_xfer_set_status(GaimXfer *xfer, GaimXferStatusType status)
 	xfer->status = status;
 }
 
-static void
-gaim_xfer_conversation_write(GaimXfer *xfer, char *message, gboolean is_error)
+void gaim_xfer_conversation_write(GaimXfer *xfer, char *message, gboolean is_error)
 {
 	GaimConversation *conv = NULL;
 	GString *gs_message = NULL;
@@ -326,7 +325,7 @@ gaim_xfer_ask_accept(GaimXfer *xfer)
 
 void
 gaim_xfer_request(GaimXfer *xfer)
-{
+{	
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(xfer->ops.init != NULL);
 
@@ -334,10 +333,16 @@ gaim_xfer_request(GaimXfer *xfer)
 
 	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
 		if (gaim_xfer_get_filename(xfer) ||
-		    gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_ACCEPTED)
+		    gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_ACCEPTED) {
+		    	gchar* message = NULL;
+		    	message = g_strdup_printf(_("%s is offering to send file %s"),
+				xfer->who, gaim_xfer_get_filename(xfer));
+			gaim_xfer_conversation_write(xfer, message, FALSE);
+			g_free(message);
 			gaim_xfer_ask_recv(xfer);
-		else
+		} else {
 			gaim_xfer_ask_accept(xfer);
+		}
 	} else
 		gaim_xfer_choose_file(xfer);
 }
@@ -1068,7 +1073,6 @@ gaim_xfer_update_progress(GaimXfer *xfer)
 	if (ui_ops != NULL && ui_ops->update_progress != NULL)
 		ui_ops->update_progress(xfer, gaim_xfer_get_progress(xfer));
 }
-
 
 /**************************************************************************
  * File Transfer Subsystem API
