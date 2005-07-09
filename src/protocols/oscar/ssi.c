@@ -679,7 +679,7 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess)
 			cur2 = next;
 			while (cur2) {
 				next2 = cur2->next;
-				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (!strcmp(cur->name, cur2->name)))
+				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (cur->name != NULL) && (cur2->name != NULL) && (!strcmp(cur->name, cur2->name)))
 					aim_ssi_itemlist_del(&sess->ssi.local, cur2);
 				cur2 = next2;
 			}
