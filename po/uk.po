@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-09 22:38-0400\n"
+"POT-Creation-Date: 2005-07-10 16:02-0400\n"
 "PO-Revision-Date: 2005-05-12 10:43+0300\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
@@ -155,8 +155,8 @@ msgstr "Створити..."
 #: src/protocols/jabber/jutil.c:32 src/protocols/jabber/presence.c:69
 #: src/protocols/jabber/presence.c:132 src/protocols/novell/novell.c:2800
 #: src/protocols/novell/novell.c:2917 src/protocols/novell/novell.c:2969
-#: src/protocols/oscar/oscar.c:679 src/protocols/oscar/oscar.c:5696
-#: src/protocols/oscar/oscar.c:6687 src/protocols/oscar/oscar.c:6887
+#: src/protocols/oscar/oscar.c:684 src/protocols/oscar/oscar.c:5788
+#: src/protocols/oscar/oscar.c:6785 src/protocols/oscar/oscar.c:6985
 #: src/protocols/silc/buddy.c:1388 src/protocols/silc/silc.c:47
 #: src/protocols/silc/silc.c:81
 msgid "Away"
@@ -164,7 +164,7 @@ msgstr "Користувач відійшов"
 
 #. else...
 #: plugins/docklet/docklet.c:183 src/away.c:595
-#: src/protocols/oscar/oscar.c:5614 src/protocols/oscar/oscar.c:6895
+#: src/protocols/oscar/oscar.c:5706 src/protocols/oscar/oscar.c:6993
 msgid "Back"
 msgstr "Повернувся"
 
@@ -471,13 +471,13 @@ msgstr "Нижче виберіть особу з адресної книги а
 
 #. "Search"
 #: plugins/gevolution/add_buddy_dialog.c:468
-#: plugins/gevolution/assoc-buddy.c:354 src/protocols/oscar/oscar.c:7171
+#: plugins/gevolution/assoc-buddy.c:354 src/protocols/oscar/oscar.c:7269
 msgid "Search"
 msgstr "Шукати"
 
 #: plugins/gevolution/add_buddy_dialog.c:549
-#: plugins/gevolution/new_person_dialog.c:304 src/gtkblist.c:4153
-#: src/gtkblist.c:4501
+#: plugins/gevolution/new_person_dialog.c:304 src/gtkblist.c:4186
+#: src/gtkblist.c:4534
 msgid "Group:"
 msgstr "Група:"
 
@@ -516,13 +516,13 @@ msgid "_Associate Buddy"
 msgstr "_Асоціювати користувача"
 
 #: plugins/gevolution/eds-utils.c:74 plugins/gevolution/eds-utils.c:87
-#: src/gtkblist.c:3092 src/gtkprefs.c:962 src/gtkprefs.c:1014
+#: src/gtkblist.c:3122 src/gtkprefs.c:962 src/gtkprefs.c:1014
 #: src/gtkprefs.c:1827 src/protocols/jabber/jabber.c:949
 msgid "None"
 msgstr "немає"
 
 #: plugins/gevolution/gevolution.c:93 plugins/gevolution/gevo-util.c:64
-#: src/blist.c:776 src/blist.c:983 src/blist.c:1933 src/gtkblist.c:3968
+#: src/blist.c:776 src/blist.c:983 src/blist.c:1933 src/gtkblist.c:4001
 #: src/protocols/jabber/roster.c:67
 msgid "Buddies"
 msgstr "Користувачі"
@@ -587,7 +587,7 @@ msgstr "Необов'язкова інформація:"
 
 #. Label
 #: plugins/gevolution/new_person_dialog.c:335 src/gtkaccount.c:379
-#: src/gtkaccount.c:409 src/protocols/oscar/oscar.c:585
+#: src/gtkaccount.c:409 src/protocols/oscar/oscar.c:590
 msgid "Buddy Icon"
 msgstr "Значок користувача"
 
@@ -921,7 +921,7 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/signals-test.c:585
+#: plugins/signals-test.c:601
 msgid "Signals Test"
 msgstr "Перевірка сигналів"
 
@@ -929,7 +929,7 @@ msgstr "Перевірка сигналів"
 #. *< version
 #. *  summary
 #. *  description
-#: plugins/signals-test.c:588 plugins/signals-test.c:590
+#: plugins/signals-test.c:604 plugins/signals-test.c:606
 msgid "Test to see that all signals are working properly."
 msgstr "Перевіряє, чи усі сигнали працюють коректно."
 
@@ -1225,7 +1225,7 @@ msgid "_Start Gaim on Windows startup"
 msgstr "_Запускати Gaim при завантаженні Windows"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3137
+#: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3167
 #: src/gtkprefs.c:2421
 msgid "Buddy List"
 msgstr "Список контактів"
@@ -1294,49 +1294,49 @@ msgstr "Введіть ваш поточний пароль та новий па
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:363 src/connection.c:198 src/gtkblist.c:2462
-#: src/gtkdialogs.c:501 src/gtkdialogs.c:643 src/gtkdialogs.c:697
+#: src/account.c:363 src/connection.c:198 src/gtkblist.c:2492
+#: src/gtkdialogs.c:505 src/gtkdialogs.c:647 src/gtkdialogs.c:701
 #: src/gtkrequest.c:243 src/protocols/jabber/jabber.c:1086
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:226
 #: src/protocols/msn/msn.c:241 src/protocols/msn/msn.c:256
-#: src/protocols/msn/msn.c:271 src/protocols/oscar/oscar.c:2333
-#: src/protocols/oscar/oscar.c:3599 src/protocols/oscar/oscar.c:3693
-#: src/protocols/oscar/oscar.c:6958 src/protocols/oscar/oscar.c:7050
-#: src/protocols/oscar/oscar.c:7102 src/protocols/oscar/oscar.c:7188
+#: src/protocols/msn/msn.c:271 src/protocols/oscar/oscar.c:2413
+#: src/protocols/oscar/oscar.c:3686 src/protocols/oscar/oscar.c:3780
+#: src/protocols/oscar/oscar.c:7056 src/protocols/oscar/oscar.c:7148
+#: src/protocols/oscar/oscar.c:7200 src/protocols/oscar/oscar.c:7286
 #: src/protocols/silc/buddy.c:460 src/protocols/silc/buddy.c:1132
 #: src/protocols/silc/chat.c:421 src/protocols/silc/chat.c:459
 #: src/protocols/silc/chat.c:722 src/protocols/silc/ops.c:1081
 #: src/protocols/silc/ops.c:1699 src/protocols/silc/silc.c:711
-#: src/protocols/yahoo/yahoo.c:2940 src/protocols/yahoo/yahoo.c:2949
+#: src/protocols/yahoo/yahoo.c:2938 src/protocols/yahoo/yahoo.c:2947
 #: src/request.h:1245
 msgid "OK"
 msgstr "Гаразд"
 
 #: src/account.c:364 src/account.c:402 src/away.c:367 src/connection.c:199
-#: src/gtkaccount.c:2029 src/gtkaccount.c:2564 src/gtkaccount.c:2595
-#: src/gtkblist.c:2463 src/gtkblist.c:4539 src/gtkconn.c:169
-#: src/gtkdialogs.c:502 src/gtkdialogs.c:644 src/gtkdialogs.c:698
-#: src/gtkdialogs.c:796 src/gtkdialogs.c:818 src/gtkdialogs.c:838
-#: src/gtkdialogs.c:875 src/gtkdialogs.c:935 src/gtkdialogs.c:978
-#: src/gtkdialogs.c:1019 src/gtkimhtmltoolbar.c:437 src/gtkprivacy.c:593
-#: src/gtkprivacy.c:606 src/gtkprivacy.c:631 src/gtkprivacy.c:642
+#: src/gtkaccount.c:2029 src/gtkaccount.c:2568 src/gtkaccount.c:2599
+#: src/gtkblist.c:2493 src/gtkblist.c:4572 src/gtkconn.c:169
+#: src/gtkdialogs.c:506 src/gtkdialogs.c:648 src/gtkdialogs.c:702
+#: src/gtkdialogs.c:800 src/gtkdialogs.c:822 src/gtkdialogs.c:842
+#: src/gtkdialogs.c:879 src/gtkdialogs.c:939 src/gtkdialogs.c:982
+#: src/gtkdialogs.c:1023 src/gtkimhtmltoolbar.c:437 src/gtkprivacy.c:597
+#: src/gtkprivacy.c:610 src/gtkprivacy.c:635 src/gtkprivacy.c:646
 #: src/gtkrequest.c:244 src/protocols/icq/gaim_icq.c:276
 #: src/protocols/jabber/buddy.c:515 src/protocols/jabber/chat.c:754
 #: src/protocols/jabber/jabber.c:678 src/protocols/jabber/jabber.c:1087
 #: src/protocols/jabber/presence.c:213 src/protocols/jabber/xdata.c:338
 #: src/protocols/msn/msn.c:227 src/protocols/msn/msn.c:242
 #: src/protocols/msn/msn.c:257 src/protocols/msn/msn.c:272
-#: src/protocols/msn/msn.c:289 src/protocols/oscar/oscar.c:1529
-#: src/protocols/oscar/oscar.c:2334 src/protocols/oscar/oscar.c:3557
-#: src/protocols/oscar/oscar.c:3600 src/protocols/oscar/oscar.c:3637
-#: src/protocols/oscar/oscar.c:3694 src/protocols/oscar/oscar.c:6959
-#: src/protocols/oscar/oscar.c:7051 src/protocols/oscar/oscar.c:7103
-#: src/protocols/oscar/oscar.c:7172 src/protocols/oscar/oscar.c:7189
+#: src/protocols/msn/msn.c:289 src/protocols/oscar/oscar.c:1534
+#: src/protocols/oscar/oscar.c:2414 src/protocols/oscar/oscar.c:3644
+#: src/protocols/oscar/oscar.c:3687 src/protocols/oscar/oscar.c:3724
+#: src/protocols/oscar/oscar.c:3781 src/protocols/oscar/oscar.c:7057
+#: src/protocols/oscar/oscar.c:7149 src/protocols/oscar/oscar.c:7201
+#: src/protocols/oscar/oscar.c:7270 src/protocols/oscar/oscar.c:7287
 #: src/protocols/silc/buddy.c:461 src/protocols/silc/buddy.c:1037
 #: src/protocols/silc/buddy.c:1133 src/protocols/silc/chat.c:594
 #: src/protocols/silc/chat.c:723 src/protocols/silc/ops.c:1700
 #: src/protocols/silc/silc.c:712 src/protocols/trepia/trepia.c:348
-#: src/protocols/yahoo/yahoo.c:2941 src/protocols/yahoo/yahoo.c:2950
+#: src/protocols/yahoo/yahoo.c:2939 src/protocols/yahoo/yahoo.c:2948
 #: src/request.h:1245 src/request.h:1255
 msgid "Cancel"
 msgstr "Скасувати"
@@ -1378,7 +1378,7 @@ msgid "Remove Away Message"
 msgstr "Видалення повідомлення про відсутність"
 
 #. Remove button
-#: src/away.c:366 src/gtkconv.c:1520 src/gtkconv.c:3901 src/gtkconv.c:3972
+#: src/away.c:366 src/gtkconv.c:1520 src/gtkconv.c:3902 src/gtkconv.c:3973
 #: src/gtkrequest.c:249
 msgid "Remove"
 msgstr "Видалити"
@@ -1486,7 +1486,7 @@ msgid "Unable to send message. The message is too large."
 msgstr "Не вдається відправити повідомлення. Повідомлення завелике."
 
 #: src/conversation.c:237 src/conversation.c:251
-#: src/protocols/oscar/oscar.c:4160
+#: src/protocols/oscar/oscar.c:4247
 #, c-format
 msgid "Unable to send message to %s:"
 msgstr "Не вдається відправити повідомлення %s:"
@@ -1499,67 +1499,67 @@ msgstr "Повідомлення надто довге."
 msgid "Unable to send message."
 msgstr "Не вдається відправити повідомлення."
 
-#: src/conversation.c:2063
+#: src/conversation.c:2070
 #, c-format
 msgid "%s entered the room."
 msgstr "%s увійшов до кімнати."
 
-#: src/conversation.c:2066
+#: src/conversation.c:2073
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
 msgstr "%s [<I>%s</I>] увійшов до кімнати."
 
-#: src/conversation.c:2164
+#: src/conversation.c:2171
 #, c-format
 msgid "You are now known as %s"
 msgstr "Ви тепер відомі як %s"
 
-#: src/conversation.c:2167
+#: src/conversation.c:2174
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s тепер відомий як %s"
 
-#: src/conversation.c:2209
+#: src/conversation.c:2216
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%s залишив кімнату (%s)"
 
-#: src/conversation.c:2211
+#: src/conversation.c:2218
 #, c-format
 msgid "%s left the room."
 msgstr "%s залишив кімнату."
 
-#: src/conversation.c:2284
+#: src/conversation.c:2291
 #, c-format
 msgid "(+%d more)"
 msgstr "(+%d більше)"
 
-#: src/conversation.c:2286
+#: src/conversation.c:2293
 #, c-format
 msgid " left the room (%s)."
 msgstr " залишив кімнату (%s)."
 
-#: src/conversation.c:2691
+#: src/conversation.c:2698
 msgid "Last created window"
 msgstr "останнє створене вікно"
 
-#: src/conversation.c:2693
+#: src/conversation.c:2700
 msgid "Separate IM and Chat windows"
 msgstr "окреме вікно бесід та розмов"
 
-#: src/conversation.c:2695 src/gtkprefs.c:1387
+#: src/conversation.c:2702 src/gtkprefs.c:1387
 msgid "New window"
 msgstr "нове вікно"
 
-#: src/conversation.c:2697
+#: src/conversation.c:2704
 msgid "By group"
 msgstr "за групою"
 
-#: src/conversation.c:2699
+#: src/conversation.c:2706
 msgid "By account"
 msgstr "за обліковим записом"
 
-#: src/ft.c:149 src/protocols/msn/msn.c:369
+#: src/ft.c:148 src/protocols/msn/msn.c:369
 #, c-format
 msgid ""
 "Error reading %s: \n"
@@ -1568,7 +1568,7 @@ msgstr ""
 "Помилка читання %s: \n"
 "%s.\n"
 
-#: src/ft.c:153
+#: src/ft.c:152
 #, c-format
 msgid ""
 "Error writing %s: \n"
@@ -1577,7 +1577,7 @@ msgstr ""
 "Помилка запису %s: \n"
 "%s.\n"
 
-#: src/ft.c:157
+#: src/ft.c:156
 #, c-format
 msgid ""
 "Error accessing %s: \n"
@@ -1586,35 +1586,35 @@ msgstr ""
 "Помилка доступу %s: \n"
 "%s.\n"
 
-#: src/ft.c:190
+#: src/ft.c:189
 msgid "Cannot send a file of 0 bytes."
 msgstr "Не можна відправляти файл розміром 0 байтів."
 
-#: src/ft.c:200
+#: src/ft.c:199
 msgid "Cannot send a directory."
 msgstr "Не можна відправляти каталог."
 
-#: src/ft.c:209
+#: src/ft.c:208
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
 msgstr "%s не є звичайним файлом. Він не буде перезаписаний.\n"
 
-#: src/ft.c:266
+#: src/ft.c:265
 #, c-format
 msgid "%s wants to send you %s (%s)"
 msgstr "%s бажає надіслати вам %s (%s)"
 
-#: src/ft.c:274
+#: src/ft.c:273
 #, c-format
 msgid "%s wants to send you a file"
 msgstr "%s бажає надіслати вам файл"
 
-#: src/ft.c:312
+#: src/ft.c:311
 #, c-format
 msgid "Accept file transfer request from %s?"
 msgstr "Задовольнити запит передавання файлу %s?"
 
-#: src/ft.c:316
+#: src/ft.c:315
 #, c-format
 msgid ""
 "A file is available for download from:\n"
@@ -1625,50 +1625,55 @@ msgstr ""
 "Віддалений вузол: %s\n"
 "Віддалений порт: %d"
 
-#: src/ft.c:369
+#: src/ft.c:338
+#, fuzzy, c-format
+msgid "%s is offering to send file %s"
+msgstr "Пропозиція надіслати %s до %s"
+
+#: src/ft.c:374
 #, c-format
 msgid "%s is not a valid filename.\n"
 msgstr "%s - не є допустимою назвою файлу.\n"
 
-#: src/ft.c:390
+#: src/ft.c:395
 #, c-format
 msgid "Offering to send %s to %s"
 msgstr "Пропозиція надіслати %s до %s"
 
-#: src/ft.c:885
+#: src/ft.c:890
 #, c-format
 msgid "Transfer of file %s complete"
 msgstr "Передавання файлу %s  завершено"
 
-#: src/ft.c:888
+#: src/ft.c:893
 msgid "File transfer complete"
 msgstr "Передавання файлу завершено"
 
-#: src/ft.c:937
+#: src/ft.c:942
 #, c-format
 msgid "You canceled the transfer of %s"
 msgstr "Ви скасували передавання %s"
 
-#: src/ft.c:943
+#: src/ft.c:948
 msgid "File transfer cancelled"
 msgstr "Передавання файлу скасовано"
 
-#: src/ft.c:996
+#: src/ft.c:1001
 #, c-format
 msgid "%s canceled the transfer of %s"
 msgstr "%s скасував передавання %s"
 
-#: src/ft.c:1002
+#: src/ft.c:1007
 #, c-format
 msgid "%s canceled the file transfer"
 msgstr "%s скасував передавання файлу"
 
-#: src/ft.c:1051
+#: src/ft.c:1056
 #, c-format
 msgid "File transfer to %s aborted.\n"
 msgstr "Передавання файлу до %s припинено.\n"
 
-#: src/ft.c:1053
+#: src/ft.c:1058
 #, c-format
 msgid "File transfer from %s aborted.\n"
 msgstr "Передавання файлу від %s припинено.\n"
@@ -1804,7 +1809,7 @@ msgstr "Параметри входу"
 msgid "Protocol:"
 msgstr "Протокол:"
 
-#: src/gtkaccount.c:660 src/gtkblist.c:4125
+#: src/gtkaccount.c:660 src/gtkblist.c:4158
 msgid "Screen Name:"
 msgstr "Ідентифікатор:"
 
@@ -1812,7 +1817,7 @@ msgstr "Ідентифікатор:"
 msgid "Password:"
 msgstr "Пароль:"
 
-#: src/gtkaccount.c:738 src/gtkblist.c:4139 src/gtkblist.c:4486
+#: src/gtkaccount.c:738 src/gtkblist.c:4172 src/gtkblist.c:4519
 msgid "Alias:"
 msgstr "Псевдонім:"
 
@@ -1932,14 +1937,14 @@ msgstr "Ви дійсно бажаєте видалити %s?"
 msgid "Delete"
 msgstr "Видалити"
 
-#: src/gtkaccount.c:2142 src/protocols/oscar/oscar.c:4244
+#: src/gtkaccount.c:2142 src/protocols/oscar/oscar.c:4331
 msgid "Screen Name"
 msgstr "Ідентифікатор"
 
 #: src/gtkaccount.c:2166 src/protocols/jabber/jabber.c:996
-#: src/protocols/oscar/oscar.c:685 src/protocols/oscar/oscar.c:5694
-#: src/protocols/oscar/oscar.c:6886 src/protocols/silc/silc.c:45
-#: src/protocols/yahoo/yahoo.c:2703 src/protocols/zephyr/zephyr.c:2122
+#: src/protocols/oscar/oscar.c:690 src/protocols/oscar/oscar.c:5786
+#: src/protocols/oscar/oscar.c:6984 src/protocols/silc/silc.c:45
+#: src/protocols/yahoo/yahoo.c:2701 src/protocols/zephyr/zephyr.c:2122
 #: src/protocols/zephyr/zephyr.c:2141
 msgid "Online"
 msgstr "У мережі"
@@ -1949,12 +1954,12 @@ msgid "Protocol"
 msgstr "Протокол"
 
 #. XXX: Tidy this up when not in string freeze
-#: src/gtkaccount.c:2517 src/protocols/jabber/presence.c:202
+#: src/gtkaccount.c:2521 src/protocols/jabber/presence.c:202
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s додав %s у список контактів%s%s%s"
 
-#: src/gtkaccount.c:2531 src/protocols/jabber/presence.c:208
+#: src/gtkaccount.c:2535 src/protocols/jabber/presence.c:208
 msgid ""
 "\n"
 "\n"
@@ -1964,29 +1969,29 @@ msgstr ""
 "\n"
 "Бажаєте додати його чи її до списку контактів?"
 
-#: src/gtkaccount.c:2557
+#: src/gtkaccount.c:2561
 msgid "Information"
 msgstr "Інформація"
 
-#: src/gtkaccount.c:2561 src/gtkaccount.c:2592
+#: src/gtkaccount.c:2565 src/gtkaccount.c:2596
 #: src/protocols/jabber/presence.c:210
 msgid "Add buddy to your list?"
 msgstr "Додати користувача у список?"
 
 #. Add button
-#: src/gtkaccount.c:2563 src/gtkaccount.c:2594 src/gtkblist.c:4538
-#: src/gtkconv.c:1522 src/gtkconv.c:3894 src/gtkconv.c:3965
+#: src/gtkaccount.c:2567 src/gtkaccount.c:2598 src/gtkblist.c:4571
+#: src/gtkconv.c:1522 src/gtkconv.c:3895 src/gtkconv.c:3966
 #: src/gtkrequest.c:248 src/protocols/icq/gaim_icq.c:276
-#: src/protocols/jabber/presence.c:212 src/protocols/oscar/oscar.c:3871
+#: src/protocols/jabber/presence.c:212 src/protocols/oscar/oscar.c:3958
 #: src/protocols/silc/chat.c:593
 msgid "Add"
 msgstr "Додати"
 
-#: src/gtkblist.c:844
+#: src/gtkblist.c:846
 msgid "Join a Chat"
 msgstr "Приєднатися до розмови"
 
-#: src/gtkblist.c:865
+#: src/gtkblist.c:867
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
@@ -1994,90 +1999,90 @@ msgstr ""
 "Введіть відповідну інформацію про розмову, до якого ви бажали б "
 "приєднатись.\n"
 
-#: src/gtkblist.c:876 src/gtkpounce.c:415 src/gtkroomlist.c:354
+#: src/gtkblist.c:878 src/gtkpounce.c:415 src/gtkroomlist.c:354
 msgid "_Account:"
 msgstr "_Обліковий запис:"
 
-#: src/gtkblist.c:1171 src/gtkblist.c:3290
+#: src/gtkblist.c:1173 src/gtkblist.c:3323
 msgid "Get _Info"
 msgstr "_Інформ"
 
-#: src/gtkblist.c:1174 src/gtkblist.c:3280
+#: src/gtkblist.c:1176 src/gtkblist.c:3313
 msgid "I_M"
 msgstr "_Повідомл"
 
-#: src/gtkblist.c:1180
+#: src/gtkblist.c:1182
 msgid "_Send File"
 msgstr "_Надіслати файл"
 
-#: src/gtkblist.c:1186
+#: src/gtkblist.c:1188
 msgid "Add Buddy _Pounce"
 msgstr "Додати _правило"
 
-#: src/gtkblist.c:1188 src/gtkblist.c:1285
+#: src/gtkblist.c:1190 src/gtkblist.c:1287
 msgid "View _Log"
 msgstr "Переглянути _журнал"
 
-#: src/gtkblist.c:1198
+#: src/gtkblist.c:1200
 msgid "_Alias Buddy..."
 msgstr "_Псевдонім користувача..."
 
-#: src/gtkblist.c:1200
+#: src/gtkblist.c:1202
 msgid "_Remove Buddy"
 msgstr "В_идалити користувача"
 
-#: src/gtkblist.c:1202
+#: src/gtkblist.c:1204
 msgid "Alias Contact..."
 msgstr "Псевдонім контакту..."
 
-#: src/gtkblist.c:1205 src/gtkdialogs.c:872 src/gtkdialogs.c:874
+#: src/gtkblist.c:1207 src/gtkdialogs.c:876 src/gtkdialogs.c:878
 msgid "Remove Contact"
 msgstr "Видалити контакт"
 
-#: src/gtkblist.c:1209 src/gtkblist.c:1293 src/gtkblist.c:1307
+#: src/gtkblist.c:1211 src/gtkblist.c:1295 src/gtkblist.c:1309
 msgid "_Alias..."
 msgstr "_Псевдонім..."
 
-#: src/gtkblist.c:1211 src/gtkblist.c:1295 src/gtkblist.c:1312
+#: src/gtkblist.c:1213 src/gtkblist.c:1297 src/gtkblist.c:1314
 #: src/gtkconn.c:367
 msgid "_Remove"
 msgstr "В_идалити"
 
-#: src/gtkblist.c:1257
+#: src/gtkblist.c:1259
 msgid "Add a _Buddy"
 msgstr "Додати _користувача"
 
-#: src/gtkblist.c:1259
+#: src/gtkblist.c:1261
 msgid "Add a C_hat"
 msgstr "Додати _розмову"
 
-#: src/gtkblist.c:1261
+#: src/gtkblist.c:1263
 msgid "_Delete Group"
 msgstr "В_идалити групу"
 
-#: src/gtkblist.c:1263
+#: src/gtkblist.c:1265
 msgid "_Rename"
 msgstr "Пере_йменувати"
 
 #. join button
-#: src/gtkblist.c:1281 src/gtkroomlist.c:264 src/gtkroomlist.c:409
+#: src/gtkblist.c:1283 src/gtkroomlist.c:264 src/gtkroomlist.c:409
 #: src/stock.c:88
 msgid "_Join"
 msgstr "При_єднатись"
 
-#: src/gtkblist.c:1283
+#: src/gtkblist.c:1285
 msgid "Auto-Join"
 msgstr "Авто-приєднання"
 
-#: src/gtkblist.c:1309 src/gtkblist.c:1334
+#: src/gtkblist.c:1311 src/gtkblist.c:1336
 msgid "_Collapse"
 msgstr "_Згорнути"
 
-#: src/gtkblist.c:1339
+#: src/gtkblist.c:1341
 msgid "_Expand"
 msgstr "_Розгорнути"
 
-#: src/gtkblist.c:1986 src/gtkconv.c:4537 src/gtkpounce.c:316
+#: src/gtkblist.c:2016 src/gtkconv.c:4538 src/gtkpounce.c:316
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -2085,129 +2090,129 @@ msgstr ""
 "користувачів."
 
 #. Buddies menu
-#: src/gtkblist.c:2407
+#: src/gtkblist.c:2437
 msgid "/_Buddies"
 msgstr "/_Контакти"
 
-#: src/gtkblist.c:2408
+#: src/gtkblist.c:2438
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Контакти/_Створити повідомлення..."
 
-#: src/gtkblist.c:2409
+#: src/gtkblist.c:2439
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Контакти/Приєднатись до _розмови..."
 
-#: src/gtkblist.c:2410
+#: src/gtkblist.c:2440
 msgid "/Buddies/Get User _Info..."
 msgstr "/Контакти/Отримати _інформацію про користувача..."
 
-#: src/gtkblist.c:2411
+#: src/gtkblist.c:2441
 msgid "/Buddies/View User _Log..."
 msgstr "/Контакти/Переглянути _журнал користувача..."
 
-#: src/gtkblist.c:2413
+#: src/gtkblist.c:2443
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Контакти/Показати _відсутніх користувачів"
 
-#: src/gtkblist.c:2414
+#: src/gtkblist.c:2444
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Контакти/Показати _порожні групи"
 
-#: src/gtkblist.c:2415
+#: src/gtkblist.c:2445
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Контакти/Додати _користувача..."
 
-#: src/gtkblist.c:2416
+#: src/gtkblist.c:2446
 msgid "/Buddies/Add C_hat..."
 msgstr "/Контакти/Додати _розмову..."
 
-#: src/gtkblist.c:2417
+#: src/gtkblist.c:2447
 msgid "/Buddies/Add _Group..."
 msgstr "/Контакти/Додати _групу..."
 
-#: src/gtkblist.c:2419
+#: src/gtkblist.c:2449
 msgid "/Buddies/_Signoff"
 msgstr "/Контакти/Ві_д'єднатись"
 
-#: src/gtkblist.c:2420
+#: src/gtkblist.c:2450
 msgid "/Buddies/_Quit"
 msgstr "/Контакти/Ви_йти"
 
 #. Tools
-#: src/gtkblist.c:2423
+#: src/gtkblist.c:2453
 msgid "/_Tools"
 msgstr "/С_ервіс"
 
-#: src/gtkblist.c:2424
+#: src/gtkblist.c:2454
 msgid "/Tools/_Away"
 msgstr "/Сервіс/С_татус"
 
-#: src/gtkblist.c:2425
+#: src/gtkblist.c:2455
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Сервіс/_Стеження за користувачами"
 
-#: src/gtkblist.c:2426
+#: src/gtkblist.c:2456
 msgid "/Tools/Account Ac_tions"
 msgstr "/Сервіс/_Дії з обліковими записами"
 
-#: src/gtkblist.c:2427
+#: src/gtkblist.c:2457
 msgid "/Tools/Pl_ugin Actions"
 msgstr "/Сервіс/Дії з _модулями"
 
-#: src/gtkblist.c:2429
+#: src/gtkblist.c:2459
 msgid "/Tools/A_ccounts"
 msgstr "/Сервіс/_Облікові записи"
 
-#: src/gtkblist.c:2430
+#: src/gtkblist.c:2460
 msgid "/Tools/_File Transfers"
 msgstr "/Сервіс/Передавання _файлів..."
 
-#: src/gtkblist.c:2431
+#: src/gtkblist.c:2461
 msgid "/Tools/R_oom List"
 msgstr "/Сервіс/_Перелік кімнат"
 
-#: src/gtkblist.c:2432
+#: src/gtkblist.c:2462
 msgid "/Tools/Pr_eferences"
 msgstr "/Сервіс/П_араметри"
 
-#: src/gtkblist.c:2433
+#: src/gtkblist.c:2463
 msgid "/Tools/Pr_ivacy"
 msgstr "/Сервіс/_Конфіденційність"
 
-#: src/gtkblist.c:2435
+#: src/gtkblist.c:2465
 msgid "/Tools/View System _Log"
 msgstr "/Сервіс/Переглянути системний _журнал"
 
 #. Help
-#: src/gtkblist.c:2438
+#: src/gtkblist.c:2468
 msgid "/_Help"
 msgstr "/_Довідка"
 
-#: src/gtkblist.c:2439
+#: src/gtkblist.c:2469
 msgid "/Help/Online _Help"
 msgstr "/Довідка/Довідка у _мережі"
 
-#: src/gtkblist.c:2440
+#: src/gtkblist.c:2470
 msgid "/Help/_Debug Window"
 msgstr "/Довідка/Вікно _налагодження"
 
-#: src/gtkblist.c:2441
+#: src/gtkblist.c:2471
 msgid "/Help/_About"
 msgstr "/Довідка/_Про програму"
 
-#: src/gtkblist.c:2459
+#: src/gtkblist.c:2489
 msgid "Rename Group"
 msgstr "Перейменувати групу"
 
-#: src/gtkblist.c:2459
+#: src/gtkblist.c:2489
 msgid "New group name"
 msgstr "Нова назва групи"
 
-#: src/gtkblist.c:2460
+#: src/gtkblist.c:2490
 msgid "Please enter a new name for the selected group."
 msgstr "Введіть нову назву для обраної групи."
 
-#: src/gtkblist.c:2489
+#: src/gtkblist.c:2519
 #, c-format
 msgid ""
 "\n"
@@ -2216,7 +2221,7 @@ msgstr ""
 "\n"
 "<b>Обліковий запис:</b> %s"
 
-#: src/gtkblist.c:2555
+#: src/gtkblist.c:2585
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
@@ -2224,12 +2229,12 @@ msgstr ""
 "\n"
 "<b>Статус:</b> Не у мережі"
 
-#: src/gtkblist.c:2570
+#: src/gtkblist.c:2600
 #, c-format
 msgid "%d%%"
 msgstr "%d%%"
 
-#: src/gtkblist.c:2586
+#: src/gtkblist.c:2616
 msgid ""
 "\n"
 "<b>Account:</b>"
@@ -2237,7 +2242,7 @@ msgstr ""
 "\n"
 "<b>Обліковий запис:</b>"
 
-#: src/gtkblist.c:2587
+#: src/gtkblist.c:2617
 msgid ""
 "\n"
 "<b>Contact Alias:</b>"
@@ -2245,7 +2250,7 @@ msgstr ""
 "\n"
 "<b>Псевдонім контакту:</b>"
 
-#: src/gtkblist.c:2588
+#: src/gtkblist.c:2618
 msgid ""
 "\n"
 "<b>Alias:</b>"
@@ -2253,7 +2258,7 @@ msgstr ""
 "\n"
 "<b>Псевдонім:</b>"
 
-#: src/gtkblist.c:2589
+#: src/gtkblist.c:2619
 msgid ""
 "\n"
 "<b>Nickname:</b>"
@@ -2261,7 +2266,7 @@ msgstr ""
 "\n"
 "<b>Прізвисько:</b>"
 
-#: src/gtkblist.c:2590
+#: src/gtkblist.c:2620
 msgid ""
 "\n"
 "<b>Logged In:</b>"
@@ -2269,7 +2274,7 @@ msgstr ""
 "\n"
 "<b>У мережі:</b>"
 
-#: src/gtkblist.c:2591
+#: src/gtkblist.c:2621
 msgid ""
 "\n"
 "<b>Idle:</b>"
@@ -2277,7 +2282,7 @@ msgstr ""
 "\n"
 "<b>Бездіяльний:</b>"
 
-#: src/gtkblist.c:2592
+#: src/gtkblist.c:2622
 msgid ""
 "\n"
 "<b>Warned:</b>"
@@ -2285,7 +2290,7 @@ msgstr ""
 "\n"
 "<b>Попереджений:</b>"
 
-#: src/gtkblist.c:2594
+#: src/gtkblist.c:2624
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2293,7 +2298,7 @@ msgstr ""
 "\n"
 "<b>Опис:</b> Примарний"
 
-#: src/gtkblist.c:2595
+#: src/gtkblist.c:2625
 msgid ""
 "\n"
 "<b>Status</b>: Awesome"
@@ -2301,7 +2306,7 @@ msgstr ""
 "\n"
 "<b>Статус</b>: Переляканий"
 
-#: src/gtkblist.c:2596
+#: src/gtkblist.c:2626
 msgid ""
 "\n"
 "<b>Status</b>: Rockin'"
@@ -2309,108 +2314,108 @@ msgstr ""
 "\n"
 "<b>Статус</b>: Rockin'"
 
-#: src/gtkblist.c:2878
+#: src/gtkblist.c:2908
 #, c-format
 msgid "Idle (%dh%02dm) "
 msgstr "Бездіяльний (%dh%02dm) "
 
-#: src/gtkblist.c:2880
+#: src/gtkblist.c:2910
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Бездіяльний (%dm) "
 
-#: src/gtkblist.c:2885
+#: src/gtkblist.c:2915
 #, c-format
 msgid "Warned (%d%%) "
 msgstr "Попереджений (%d%%) "
 
-#: src/gtkblist.c:2888
+#: src/gtkblist.c:2918
 msgid "Offline "
 msgstr "Не у мережі "
 
 #. Make menu items sensitive/insensitive where appropriate
-#: src/gtkblist.c:3006
+#: src/gtkblist.c:3036
 msgid "/Buddies/Join a Chat..."
 msgstr "/Контакти/Приєднатись до розмови..."
 
-#: src/gtkblist.c:3009
+#: src/gtkblist.c:3039
 msgid "/Tools/Room List"
 msgstr "/Сервіс/Перелік кімнат"
 
-#: src/gtkblist.c:3012
+#: src/gtkblist.c:3042
 msgid "/Tools/Privacy"
 msgstr "/Сервіс/Конфіденційність"
 
-#: src/gtkblist.c:3094
+#: src/gtkblist.c:3124
 msgid "Alphabetical"
 msgstr "за алфавітом"
 
-#: src/gtkblist.c:3095
+#: src/gtkblist.c:3125
 msgid "By status"
 msgstr "за статусом"
 
-#: src/gtkblist.c:3096
+#: src/gtkblist.c:3126
 msgid "By log size"
 msgstr "за розміром журналу"
 
-#: src/gtkblist.c:3162
+#: src/gtkblist.c:3192
 msgid "/Tools/Away"
 msgstr "/Сервіс/Статус"
 
-#: src/gtkblist.c:3165
+#: src/gtkblist.c:3195
 msgid "/Tools/Buddy Pounce"
 msgstr "/Сервіс/Стеження за користувачами"
 
-#: src/gtkblist.c:3168
+#: src/gtkblist.c:3198
 msgid "/Tools/Account Actions"
 msgstr "/Сервіс/Дії над обліковими записами"
 
-#: src/gtkblist.c:3171
+#: src/gtkblist.c:3201
 msgid "/Tools/Plugin Actions"
 msgstr "/Сервіс/Дії над модулями"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:3259
+#: src/gtkblist.c:3292
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Контакти/Показувати відсутніх користувачів"
 
-#: src/gtkblist.c:3261
+#: src/gtkblist.c:3294
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Контакти/Показувати порожні групи"
 
-#: src/gtkblist.c:3286
+#: src/gtkblist.c:3319
 msgid "Send a message to the selected buddy"
 msgstr "Відправити повідомлення до обраного користувача"
 
-#: src/gtkblist.c:3296
+#: src/gtkblist.c:3329
 msgid "Get information on the selected buddy"
 msgstr "Отримати інформацію про обраного користувача"
 
-#: src/gtkblist.c:3300
+#: src/gtkblist.c:3333
 msgid "_Chat"
 msgstr "_Розмова"
 
-#: src/gtkblist.c:3305
+#: src/gtkblist.c:3338
 msgid "Join a chat room"
 msgstr "Приєднатися до розмови"
 
-#: src/gtkblist.c:3310
+#: src/gtkblist.c:3343
 msgid "_Away"
 msgstr "_Статус"
 
-#: src/gtkblist.c:3315
+#: src/gtkblist.c:3348
 msgid "Set an away message"
 msgstr "Встановити повідомлення про відсутність"
 
-#: src/gtkblist.c:4079 src/protocols/silc/buddy.c:731
+#: src/gtkblist.c:4112 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:989 src/protocols/silc/buddy.c:1034
-#: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2870
+#: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2868
 msgid "Add Buddy"
 msgstr "Додати користувача"
 
-#: src/gtkblist.c:4103
+#: src/gtkblist.c:4136
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2422,25 +2427,25 @@ msgstr ""
 "користувача, коли це можливо.\n"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:4163 src/gtkblist.c:4466
+#: src/gtkblist.c:4196 src/gtkblist.c:4499
 msgid "Account:"
 msgstr "Обліковий запис:"
 
-#: src/gtkblist.c:4399
+#: src/gtkblist.c:4432
 msgid "This protocol does not support chat rooms."
 msgstr "Цей протокол не підтримує кімнати для розмов."
 
-#: src/gtkblist.c:4415
+#: src/gtkblist.c:4448
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "Ви не підключені за протоколами, що мають підтримку розмов."
 
-#: src/gtkblist.c:4432
+#: src/gtkblist.c:4465
 msgid "Add Chat"
 msgstr "Додати розмову"
 
-#: src/gtkblist.c:4456
+#: src/gtkblist.c:4489
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -2448,15 +2453,15 @@ msgstr ""
 "Введіть псевдонім та відповідну інформацію про розмову, яку ви бажаєте "
 "додати до списку контактів.\n"
 
-#: src/gtkblist.c:4535
+#: src/gtkblist.c:4568
 msgid "Add Group"
 msgstr "Додати групу"
 
-#: src/gtkblist.c:4536
+#: src/gtkblist.c:4569
 msgid "Please enter the name of the group to be added."
 msgstr "Введіть назву групи, що додаватиметься."
 
-#: src/gtkblist.c:5105 src/gtkblist.c:5202
+#: src/gtkblist.c:5138 src/gtkblist.c:5235
 msgid "No actions available"
 msgstr "Немає доступних дій"
 
@@ -2609,7 +2614,7 @@ msgid "IM"
 msgstr "Повідомлення"
 
 #. Send File button
-#: src/gtkconv.c:1475 src/gtkconv.c:3887 src/protocols/oscar/oscar.c:600
+#: src/gtkconv.c:1475 src/gtkconv.c:3888 src/protocols/oscar/oscar.c:605
 msgid "Send File"
 msgstr "Надіслати файл"
 
@@ -2622,7 +2627,7 @@ msgid "Ignore"
 msgstr "Ігнорувати"
 
 #. Info button
-#: src/gtkconv.c:1495 src/gtkconv.c:3908
+#: src/gtkconv.c:1495 src/gtkconv.c:3909
 msgid "Info"
 msgstr "Інформація"
 
@@ -2634,277 +2639,277 @@ msgstr "Отримати повідомлення про відсутності"
 msgid "Unable to save icon file to disk."
 msgstr "Не вдається зберегти файл значка на диск."
 
-#: src/gtkconv.c:2674
+#: src/gtkconv.c:2675
 msgid "Save Icon"
 msgstr "Збереження значка"
 
-#: src/gtkconv.c:2704
+#: src/gtkconv.c:2705
 msgid "Animate"
 msgstr "Анімація"
 
-#: src/gtkconv.c:2709
+#: src/gtkconv.c:2710
 msgid "Hide Icon"
 msgstr "Сховати значок"
 
-#: src/gtkconv.c:2715
+#: src/gtkconv.c:2716
 msgid "Save Icon As..."
 msgstr "Зберегти значок як..."
 
-#: src/gtkconv.c:3092
+#: src/gtkconv.c:3093
 msgid "User is typing..."
 msgstr "Користувач пише..."
 
-#: src/gtkconv.c:3100
+#: src/gtkconv.c:3101
 msgid "User has typed something and paused"
 msgstr "Користувач щось написав та зупинився"
 
 #. Build the Send As menu
-#: src/gtkconv.c:3203
+#: src/gtkconv.c:3204
 msgid "_Send As"
 msgstr "_Надіслати як"
 
 #. Conversation menu
-#: src/gtkconv.c:3657
+#: src/gtkconv.c:3658
 msgid "/_Conversation"
 msgstr "/_Бесіда"
 
-#: src/gtkconv.c:3659
+#: src/gtkconv.c:3660
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Бесіда/Створити _повідомлення"
 
-#: src/gtkconv.c:3664
+#: src/gtkconv.c:3665
 msgid "/Conversation/_Find..."
 msgstr "/Бесіда/З_найти..."
 
-#: src/gtkconv.c:3666
+#: src/gtkconv.c:3667
 msgid "/Conversation/View _Log"
 msgstr "/Бесіда/Переглянути _журнал"
 
-#: src/gtkconv.c:3667
+#: src/gtkconv.c:3668
 msgid "/Conversation/_Save As..."
 msgstr "/Бесіда/Зберегти _як..."
 
-#: src/gtkconv.c:3669
+#: src/gtkconv.c:3670
 msgid "/Conversation/Clear"
 msgstr "/Бесіда/О_чистити"
 
-#: src/gtkconv.c:3673
+#: src/gtkconv.c:3674
 msgid "/Conversation/Se_nd File..."
 msgstr "/Бесіда/Наді_слати файл..."
 
-#: src/gtkconv.c:3674
+#: src/gtkconv.c:3675
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Бесіда/Додати _правило..."
 
-#: src/gtkconv.c:3676
+#: src/gtkconv.c:3677
 msgid "/Conversation/_Get Info"
 msgstr "/Бесіда/_Отримати інформацію"
 
-#: src/gtkconv.c:3678
+#: src/gtkconv.c:3679
 msgid "/Conversation/_Warn..."
 msgstr "/Бесіда/Зробити зас_тереження..."
 
-#: src/gtkconv.c:3680
+#: src/gtkconv.c:3681
 msgid "/Conversation/In_vite..."
 msgstr "/Бесіда/_Запросити..."
 
-#: src/gtkconv.c:3685
+#: src/gtkconv.c:3686
 msgid "/Conversation/A_lias..."
 msgstr "/Бесіда/_Псевдонім..."
 
-#: src/gtkconv.c:3687
+#: src/gtkconv.c:3688
 msgid "/Conversation/_Block..."
 msgstr "/Бесіда/_Блокувати..."
 
-#: src/gtkconv.c:3689
+#: src/gtkconv.c:3690
 msgid "/Conversation/_Add..."
 msgstr "/Бесіда/_Додати..."
 
-#: src/gtkconv.c:3691
+#: src/gtkconv.c:3692
 msgid "/Conversation/_Remove..."
 msgstr "/Бесіда/В_идалити..."
 
-#: src/gtkconv.c:3696
+#: src/gtkconv.c:3697
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Бесіда/Вставити поси_лання..."
 
-#: src/gtkconv.c:3698
+#: src/gtkconv.c:3699
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Бесіда/Вставити зо_браження..."
 
-#: src/gtkconv.c:3703
+#: src/gtkconv.c:3704
 msgid "/Conversation/_Close"
 msgstr "/Бесіда/_Закрити"
 
 #. Options
-#: src/gtkconv.c:3707
+#: src/gtkconv.c:3708
 msgid "/_Options"
 msgstr "/П_араметри"
 
-#: src/gtkconv.c:3708
+#: src/gtkconv.c:3709
 msgid "/Options/Enable _Logging"
 msgstr "/Параметри/Увімкнути _журнал"
 
-#: src/gtkconv.c:3709
+#: src/gtkconv.c:3710
 msgid "/Options/Enable _Sounds"
 msgstr "/Параметри/Увімкнути _звук"
 
-#: src/gtkconv.c:3710
+#: src/gtkconv.c:3711
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Параметри/Показувати панель _форматування"
 
-#: src/gtkconv.c:3711
+#: src/gtkconv.c:3712
 msgid "/Options/Show T_imestamps"
 msgstr "/Параметри/Показувати _час"
 
-#: src/gtkconv.c:3753
+#: src/gtkconv.c:3754
 msgid "/Conversation/View Log"
 msgstr "/Бесіда/Переглянути журнал"
 
-#: src/gtkconv.c:3758
+#: src/gtkconv.c:3759
 msgid "/Conversation/Send File..."
 msgstr "/Бесіда/Надіслати файл..."
 
-#: src/gtkconv.c:3762
+#: src/gtkconv.c:3763
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Бесіда/Додати правило..."
 
-#: src/gtkconv.c:3768
+#: src/gtkconv.c:3769
 msgid "/Conversation/Get Info"
 msgstr "/Бесіда/Отримати інформацію..."
 
-#: src/gtkconv.c:3772
+#: src/gtkconv.c:3773
 msgid "/Conversation/Warn..."
 msgstr "/Бесіда/Зробити застереження..."
 
-#: src/gtkconv.c:3776
+#: src/gtkconv.c:3777
 msgid "/Conversation/Invite..."
 msgstr "/Бесіда/Запросити..."
 
-#: src/gtkconv.c:3782
+#: src/gtkconv.c:3783
 msgid "/Conversation/Alias..."
 msgstr "/Бесіда/Псевдонім..."
 
-#: src/gtkconv.c:3786
+#: src/gtkconv.c:3787
 msgid "/Conversation/Block..."
 msgstr "/Бесіда/Блокувати..."
 
-#: src/gtkconv.c:3790
+#: src/gtkconv.c:3791
 msgid "/Conversation/Add..."
 msgstr "/Бесіда/Додати..."
 
-#: src/gtkconv.c:3794
+#: src/gtkconv.c:3795
 msgid "/Conversation/Remove..."
 msgstr "/Бесіда/Видалити..."
 
-#: src/gtkconv.c:3800
+#: src/gtkconv.c:3801
 msgid "/Conversation/Insert Link..."
 msgstr "/Бесіда/Вставити посилання..."
 
-#: src/gtkconv.c:3804
+#: src/gtkconv.c:3805
 msgid "/Conversation/Insert Image..."
 msgstr "/Бесіда/Вставити зображення..."
 
-#: src/gtkconv.c:3810
+#: src/gtkconv.c:3811
 msgid "/Options/Enable Logging"
 msgstr "/Параметри/Вести журнал"
 
-#: src/gtkconv.c:3813
+#: src/gtkconv.c:3814
 msgid "/Options/Enable Sounds"
 msgstr "/Параметри/Відтворювати звуки"
 
-#: src/gtkconv.c:3816
+#: src/gtkconv.c:3817
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/Параметри/Показувати панель форматування"
 
-#: src/gtkconv.c:3819
+#: src/gtkconv.c:3820
 msgid "/Options/Show Timestamps"
 msgstr "/Параметри/Показувати час повідомлень"
 
 #. The buttons, from left to right
 #. Warn button
-#: src/gtkconv.c:3873
+#: src/gtkconv.c:3874
 msgid "Warn"
 msgstr "Попередити"
 
-#: src/gtkconv.c:3874
+#: src/gtkconv.c:3875
 msgid "Warn the user"
 msgstr "Зробити користувачу попередження"
 
 #. Block button
-#: src/gtkconv.c:3880 src/gtkprivacy.c:630 src/gtkprivacy.c:641
+#: src/gtkconv.c:3881 src/gtkprivacy.c:634 src/gtkprivacy.c:645
 msgid "Block"
 msgstr "Блокувати"
 
-#: src/gtkconv.c:3881
+#: src/gtkconv.c:3882
 msgid "Block the user"
 msgstr "Блокувати користувача"
 
-#: src/gtkconv.c:3888
+#: src/gtkconv.c:3889
 msgid "Send a file to the user"
 msgstr "Надіслати користувачу файл"
 
-#: src/gtkconv.c:3895
+#: src/gtkconv.c:3896
 msgid "Add the user to your buddy list"
 msgstr "Додати користувача у список контактів"
 
-#: src/gtkconv.c:3902
+#: src/gtkconv.c:3903
 msgid "Remove the user from your buddy list"
 msgstr "Видалити користувача зі списку контактів"
 
-#: src/gtkconv.c:3909 src/gtkconv.c:4244
+#: src/gtkconv.c:3910 src/gtkconv.c:4245
 msgid "Get the user's information"
 msgstr "Отримати інформацію про користувача"
 
 #. Send button
-#: src/gtkconv.c:3915 src/gtkconv.c:3979
+#: src/gtkconv.c:3916 src/gtkconv.c:3980
 msgid "Send"
 msgstr "Надіслати"
 
-#: src/gtkconv.c:3916 src/gtkconv.c:3980
+#: src/gtkconv.c:3917 src/gtkconv.c:3981
 msgid "Send message"
 msgstr "Надіслати повідомлення"
 
 #. The buttons, from left to right
 #. Invite
-#: src/gtkconv.c:3958
+#: src/gtkconv.c:3959
 msgid "Invite"
 msgstr "Запросити"
 
-#: src/gtkconv.c:3959
+#: src/gtkconv.c:3960
 msgid "Invite a user"
 msgstr "Запросити користувача"
 
-#: src/gtkconv.c:3966
+#: src/gtkconv.c:3967
 msgid "Add the chat to your buddy list"
 msgstr "Додати розмову у список контактів"
 
-#: src/gtkconv.c:3973
+#: src/gtkconv.c:3974
 msgid "Remove the chat from your buddy list"
 msgstr "Видалити розмову зі списку контактів"
 
-#: src/gtkconv.c:4097
+#: src/gtkconv.c:4098
 msgid "Topic:"
 msgstr "Тема:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:4160
+#: src/gtkconv.c:4161
 msgid "0 people in room"
 msgstr "0 користувачів у кімнаті"
 
-#: src/gtkconv.c:4221
+#: src/gtkconv.c:4222
 msgid "IM the user"
 msgstr "Надіслати повідомлення користувачу"
 
-#: src/gtkconv.c:4233
+#: src/gtkconv.c:4234
 msgid "Ignore the user"
 msgstr "Ігнорувати користувача"
 
-#: src/gtkconv.c:4832
+#: src/gtkconv.c:4833
 msgid "Close conversation"
 msgstr "Закрити бесіду"
 
-#: src/gtkconv.c:5369 src/gtkconv.c:5398 src/gtkconv.c:5494 src/gtkconv.c:5552
+#: src/gtkconv.c:5370 src/gtkconv.c:5399 src/gtkconv.c:5495 src/gtkconv.c:5553
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
@@ -2912,11 +2917,11 @@ msgstr[0] "%d користувач у кімнаті"
 msgstr[1] "%d користувача у кімнаті"
 msgstr[2] "%d користувачів у кімнаті"
 
-#: src/gtkconv.c:6129 src/gtkconv.c:6132
+#: src/gtkconv.c:6130 src/gtkconv.c:6133
 msgid "<main>/Conversation/Close"
 msgstr "<main>/Бесіда/Закрити"
 
-#: src/gtkconv.c:6504
+#: src/gtkconv.c:6505
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
@@ -2924,11 +2929,11 @@ msgstr ""
 "say &lt;message&gt;:  Надіслати повідомлення звичайним чином, як при "
 "використанні команди."
 
-#: src/gtkconv.c:6507
+#: src/gtkconv.c:6508
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr "me &lt;дія&gt;:  Надіслати дію у стилі IRC користувачу або у розмову."
 
-#: src/gtkconv.c:6510
+#: src/gtkconv.c:6511
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
@@ -2936,7 +2941,7 @@ msgstr ""
 "debug &lt;параметр&gt;:  Надіслати різноманітну налагоджувальну інформацію "
 "до поточної бесіди."
 
-#: src/gtkconv.c:6514
+#: src/gtkconv.c:6515
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;команда&gt;:  Довідка з конкретної команди."
 
@@ -2962,7 +2967,7 @@ msgstr "головний розробник"
 
 #: src/gtkdialogs.c:64 src/gtkdialogs.c:67 src/gtkdialogs.c:68
 #: src/gtkdialogs.c:69 src/gtkdialogs.c:70 src/gtkdialogs.c:71
-#: src/gtkdialogs.c:73 src/gtkdialogs.c:74
+#: src/gtkdialogs.c:73 src/gtkdialogs.c:74 src/gtkdialogs.c:75
 msgid "developer"
 msgstr "розробник"
 
@@ -2978,224 +2983,229 @@ msgstr "порт win32"
 msgid "support"
 msgstr "підтримка"
 
-#: src/gtkdialogs.c:89
+#: src/gtkdialogs.c:91
 msgid "maintainer"
 msgstr "особа, що підтримує"
 
-#: src/gtkdialogs.c:90
+#: src/gtkdialogs.c:92
 msgid "former libfaim maintainer"
 msgstr "колишня особа, що підтримувала libfaim"
 
-#: src/gtkdialogs.c:91
+#: src/gtkdialogs.c:93
 msgid "former lead developer"
 msgstr "колишній головний розробник"
 
-#: src/gtkdialogs.c:92
+#: src/gtkdialogs.c:94
 msgid "former maintainer"
 msgstr "колишній особа, що підтримувала"
 
-#: src/gtkdialogs.c:93
+#: src/gtkdialogs.c:95
 msgid "former Jabber developer"
 msgstr "попередній розробник Jabber"
 
-#: src/gtkdialogs.c:94
+#: src/gtkdialogs.c:96
 msgid "original author"
 msgstr "початковий автор"
 
-#: src/gtkdialogs.c:95
+#: src/gtkdialogs.c:97
 msgid "hacker and designated driver [lazy bum]"
 msgstr "хакер та призначений машиніст [lazy bum]"
 
-#: src/gtkdialogs.c:100
+#: src/gtkdialogs.c:102
 msgid "Azerbaijani"
 msgstr "Азербайджанська"
 
-#: src/gtkdialogs.c:101 src/gtkdialogs.c:146
+#: src/gtkdialogs.c:103 src/gtkdialogs.c:149
 msgid "Bulgarian"
 msgstr "Болгарська"
 
-#: src/gtkdialogs.c:101
+#: src/gtkdialogs.c:103
 msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
 msgstr "Vladimira Girginova та Vladimir (Kaladan) Petkov"
 
-#: src/gtkdialogs.c:102 src/gtkdialogs.c:147 src/gtkdialogs.c:148
+#: src/gtkdialogs.c:104 src/gtkdialogs.c:150 src/gtkdialogs.c:151
 msgid "Catalan"
 msgstr "Каталонська"
 
-#: src/gtkdialogs.c:103 src/gtkdialogs.c:149
+#: src/gtkdialogs.c:105 src/gtkdialogs.c:152
 msgid "Czech"
 msgstr "Чеська"
 
-#: src/gtkdialogs.c:104
+#: src/gtkdialogs.c:106
 msgid "Danish"
 msgstr "Датська"
 
-#: src/gtkdialogs.c:105 src/gtkdialogs.c:150
+#: src/gtkdialogs.c:107 src/gtkdialogs.c:153
 msgid "German"
 msgstr "Німецька"
 
-#: src/gtkdialogs.c:106
+#: src/gtkdialogs.c:108
 msgid "Australian English"
 msgstr "Австралійська англійська"
 
-#: src/gtkdialogs.c:107
+#: src/gtkdialogs.c:109
 msgid "Canadian English"
 msgstr "Канадська англійська"
 
-#: src/gtkdialogs.c:108
+#: src/gtkdialogs.c:110
 msgid "British English"
 msgstr "Британська англійська"
 
-#: src/gtkdialogs.c:109 src/gtkdialogs.c:151
+#: src/gtkdialogs.c:111 src/gtkdialogs.c:154
 msgid "Spanish"
 msgstr "Іспанська"
 
-#: src/gtkdialogs.c:110
+#: src/gtkdialogs.c:112
 msgid "Estonian"
 msgstr "Естонська"
 
-#: src/gtkdialogs.c:111 src/gtkdialogs.c:152
+#: src/gtkdialogs.c:113 src/gtkdialogs.c:155
 msgid "Finnish"
 msgstr "Фінська"
 
-#: src/gtkdialogs.c:112 src/gtkdialogs.c:153
+#: src/gtkdialogs.c:114 src/gtkdialogs.c:156
 msgid "French"
 msgstr "Французька"
 
-#: src/gtkdialogs.c:113
+#: src/gtkdialogs.c:115
 msgid "Hebrew"
 msgstr "Іврит"
 
-#: src/gtkdialogs.c:114 src/gtkdialogs.c:154
+#: src/gtkdialogs.c:116 src/gtkdialogs.c:157
 msgid "Hindi"
 msgstr "Хінді"
 
-#: src/gtkdialogs.c:115
+#: src/gtkdialogs.c:117 src/gtkdialogs.c:158
 msgid "Hungarian"
 msgstr "Угорська"
 
-#: src/gtkdialogs.c:116 src/gtkdialogs.c:155
+#: src/gtkdialogs.c:118 src/gtkdialogs.c:159
 msgid "Italian"
 msgstr "Італійська"
 
-#: src/gtkdialogs.c:117 src/gtkdialogs.c:156
+#: src/gtkdialogs.c:119 src/gtkdialogs.c:160
 msgid "Japanese"
 msgstr "Японська"
 
-#: src/gtkdialogs.c:118
+#: src/gtkdialogs.c:120
 msgid "Georgian"
 msgstr "Грузинська"
 
-#: src/gtkdialogs.c:119 src/gtkdialogs.c:157
+#: src/gtkdialogs.c:121 src/gtkdialogs.c:161
 msgid "Korean"
 msgstr "Корейська"
 
-#: src/gtkdialogs.c:120
+#: src/gtkdialogs.c:122
 msgid "Lithuanian"
 msgstr "Литовська"
 
-#: src/gtkdialogs.c:121
+#: src/gtkdialogs.c:123
 msgid "Macedonian"
 msgstr "Македонська"
 
-#: src/gtkdialogs.c:122
+#: src/gtkdialogs.c:124
 msgid "Burmese"
 msgstr "Бірманська"
 
-#: src/gtkdialogs.c:123
+#: src/gtkdialogs.c:125
 msgid "Dutch; Flemish"
 msgstr "Голландська; фламандська"
 
-#: src/gtkdialogs.c:124 src/gtkdialogs.c:158
+#: src/gtkdialogs.c:126
+#, fuzzy
+msgid "Norwegian (Nynorsk)"
+msgstr "Норвезька"
+
+#: src/gtkdialogs.c:127 src/gtkdialogs.c:162
 msgid "Norwegian"
 msgstr "Норвезька"
 
-#: src/gtkdialogs.c:125
+#: src/gtkdialogs.c:128
 msgid "Punjabi"
 msgstr "Пенджабі"
 
-#: src/gtkdialogs.c:126 src/gtkdialogs.c:159
+#: src/gtkdialogs.c:129 src/gtkdialogs.c:163
 msgid "Polish"
 msgstr "Польська"
 
-#: src/gtkdialogs.c:127
+#: src/gtkdialogs.c:130
 msgid "Portuguese"
 msgstr "Португальська"
 
-#: src/gtkdialogs.c:128
+#: src/gtkdialogs.c:131
 msgid "Portuguese-Brazil"
 msgstr "Бразильська португальська"
 
-#: src/gtkdialogs.c:129
+#: src/gtkdialogs.c:132
 msgid "Romanian"
 msgstr "Румунська"
 
-#: src/gtkdialogs.c:130 src/gtkdialogs.c:160 src/gtkdialogs.c:161
+#: src/gtkdialogs.c:133 src/gtkdialogs.c:164 src/gtkdialogs.c:165
 msgid "Russian"
 msgstr "Російська"
 
-#: src/gtkdialogs.c:131
+#: src/gtkdialogs.c:134
 msgid "Slovenian"
 msgstr "Словенська"
 
-#: src/gtkdialogs.c:132
+#: src/gtkdialogs.c:135
 msgid "Albanian"
 msgstr "Албанська"
 
-#: src/gtkdialogs.c:133
+#: src/gtkdialogs.c:136
 msgid "Serbian"
 msgstr "Сербська"
 
-#: src/gtkdialogs.c:134 src/gtkdialogs.c:163 src/gtkdialogs.c:164
+#: src/gtkdialogs.c:137 src/gtkdialogs.c:167 src/gtkdialogs.c:168
 msgid "Swedish"
 msgstr "Шведська"
 
-#: src/gtkdialogs.c:135
+#: src/gtkdialogs.c:138
 msgid "Turkish"
 msgstr "Турецька"
 
-#: src/gtkdialogs.c:136
+#: src/gtkdialogs.c:139
 msgid "Ukrainian"
 msgstr "Українська"
 
-#: src/gtkdialogs.c:137
+#: src/gtkdialogs.c:140
 msgid "Vietnamese"
 msgstr "В'єтнамська"
 
-#: src/gtkdialogs.c:137
+#: src/gtkdialogs.c:140
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh та команда Gnome-Vi"
 
-#: src/gtkdialogs.c:138
+#: src/gtkdialogs.c:141
 msgid "Simplified Chinese"
 msgstr "Китайська спрощена"
 
-#: src/gtkdialogs.c:139
+#: src/gtkdialogs.c:142
 msgid "Traditional Chinese"
 msgstr "Китайська традиційна"
 
-#: src/gtkdialogs.c:145
+#: src/gtkdialogs.c:148
 msgid "Amharic"
 msgstr "Амхарська"
 
-#: src/gtkdialogs.c:162
+#: src/gtkdialogs.c:166
 msgid "Slovak"
 msgstr "Словацька"
 
-#: src/gtkdialogs.c:165
+#: src/gtkdialogs.c:169
 msgid "Chinese"
 msgstr "Китайська"
 
-#: src/gtkdialogs.c:207
+#: src/gtkdialogs.c:211
 msgid "About Gaim"
 msgstr "Про Gaim"
 
-#: src/gtkdialogs.c:222
+#: src/gtkdialogs.c:226
 #, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Gaim %s</span>"
 
-#: src/gtkdialogs.c:244
+#: src/gtkdialogs.c:248
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
@@ -3206,77 +3216,77 @@ msgstr ""
 "Napster, Zephyr, та Gadu-Gadu одразу.  Він написаний з використанням Gtk+ та "
 "поширюється на умовах GPL.<BR><BR>"
 
-#: src/gtkdialogs.c:254
+#: src/gtkdialogs.c:258
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim на irc.freenode.net<BR><BR>"
 
-#: src/gtkdialogs.c:257
+#: src/gtkdialogs.c:261
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"3\">IRC:</FONT> #gaim на irc.freenode.net<BR><BR>"
 
-#: src/gtkdialogs.c:263
+#: src/gtkdialogs.c:267
 msgid "Active Developers"
 msgstr "Активні розробники"
 
-#: src/gtkdialogs.c:278
+#: src/gtkdialogs.c:282
 msgid "Crazy Patch Writers"
 msgstr "Одержимі автори латок"
 
-#: src/gtkdialogs.c:293
+#: src/gtkdialogs.c:297
 msgid "Retired Developers"
 msgstr "Колишні розробники"
 
-#: src/gtkdialogs.c:308
+#: src/gtkdialogs.c:312
 msgid "Current Translators"
 msgstr "Поточні перекладачі"
 
-#: src/gtkdialogs.c:328
+#: src/gtkdialogs.c:332
 msgid "Past Translators"
 msgstr "Попередні перекладачі"
 
-#: src/gtkdialogs.c:483 src/gtkdialogs.c:625 src/gtkdialogs.c:678
+#: src/gtkdialogs.c:487 src/gtkdialogs.c:629 src/gtkdialogs.c:682
 msgid "_Screen name"
 msgstr "_Ідентифікатор користувача"
 
-#: src/gtkdialogs.c:489 src/gtkdialogs.c:631 src/gtkdialogs.c:684
+#: src/gtkdialogs.c:493 src/gtkdialogs.c:635 src/gtkdialogs.c:688
 msgid "_Account"
 msgstr "_Обліковий запис"
 
-#: src/gtkdialogs.c:496
+#: src/gtkdialogs.c:500
 msgid "New Instant Message"
 msgstr "Нове повідомлення"
 
-#: src/gtkdialogs.c:498
+#: src/gtkdialogs.c:502
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr ""
 "Введіть ідентифікатор користувача, якому ви бажаєте відправити повідомлення."
 
-#: src/gtkdialogs.c:638
+#: src/gtkdialogs.c:642
 msgid "Get User Info"
 msgstr "Інформація про користувача"
 
-#: src/gtkdialogs.c:640
+#: src/gtkdialogs.c:644
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr ""
 "Введіть ідентифікатор користувача, інформацію про якого ви бажаєте "
 "переглянути."
 
-#: src/gtkdialogs.c:692
+#: src/gtkdialogs.c:696
 msgid "Get User Log"
 msgstr "Журнал користувача"
 
-#: src/gtkdialogs.c:694
+#: src/gtkdialogs.c:698
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr ""
 "Введіть ідентифікатор користувача, журнал якого ви бажаєте переглянути."
 
-#: src/gtkdialogs.c:734
+#: src/gtkdialogs.c:738
 msgid "Warn User"
 msgstr "Зробити попередження користувачу"
 
-#: src/gtkdialogs.c:755
+#: src/gtkdialogs.c:759
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -3289,45 +3299,45 @@ msgstr ""
 "Це збільшить рівень попередження %s, та до користувача буде застосовано "
 "більш жорстке обмеження рівня.\n"
 
-#: src/gtkdialogs.c:764
+#: src/gtkdialogs.c:768
 msgid "Warn _anonymously?"
 msgstr "Зробити попередження _анонімно?"
 
-#: src/gtkdialogs.c:771
+#: src/gtkdialogs.c:775
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>Анонімні попередження є менш серйозними.</b>"
 
-#: src/gtkdialogs.c:792
+#: src/gtkdialogs.c:796
 msgid "Alias Contact"
 msgstr "Псевдонім контакту"
 
-#: src/gtkdialogs.c:793
+#: src/gtkdialogs.c:797
 msgid "Enter an alias for this contact."
 msgstr "Введіть псевдонім для цього контакту."
 
-#: src/gtkdialogs.c:795 src/gtkdialogs.c:817 src/gtkdialogs.c:837
+#: src/gtkdialogs.c:799 src/gtkdialogs.c:821 src/gtkdialogs.c:841
 #: src/gtkrequest.c:251 src/protocols/silc/chat.c:584
 msgid "Alias"
 msgstr "Псевдонім"
 
-#: src/gtkdialogs.c:813
+#: src/gtkdialogs.c:817
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Введіть псевдонім для %s."
 
-#: src/gtkdialogs.c:815
+#: src/gtkdialogs.c:819
 msgid "Alias Buddy"
 msgstr "Псевдонім користувача"
 
-#: src/gtkdialogs.c:834
+#: src/gtkdialogs.c:838
 msgid "Alias Chat"
 msgstr "Псевдонім розмови"
 
-#: src/gtkdialogs.c:835
+#: src/gtkdialogs.c:839
 msgid "Enter an alias for this chat."
 msgstr "Введіть псевдонім цієї розмови."
 
-#: src/gtkdialogs.c:869
+#: src/gtkdialogs.c:873
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -3336,7 +3346,7 @@ msgstr ""
 "Ви видаляєте зі списку контактів контакт, що містить %s та %d інших "
 "користувачів. Бажаєте продовжити?"
 
-#: src/gtkdialogs.c:930
+#: src/gtkdialogs.c:934
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -3345,28 +3355,28 @@ msgstr ""
 "Ви видаляєте групу %s та всіх її членів зі списку контактів. Бажаєте "
 "продовжити?"
 
-#: src/gtkdialogs.c:933 src/gtkdialogs.c:934
+#: src/gtkdialogs.c:937 src/gtkdialogs.c:938
 msgid "Remove Group"
 msgstr "Видалити групу"
 
-#: src/gtkdialogs.c:972
+#: src/gtkdialogs.c:976
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Ви видаляєте %s зі списку контактів. Бажаєте продовжити?"
 
-#: src/gtkdialogs.c:975 src/gtkdialogs.c:977
+#: src/gtkdialogs.c:979 src/gtkdialogs.c:981
 msgid "Remove Buddy"
 msgstr "Видалити користувача"
 
-#: src/gtkdialogs.c:1014
+#: src/gtkdialogs.c:1018
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "Ви видаляєте розмову %s зі списку контактів. Бажаєте продовжити?"
 
-#: src/gtkdialogs.c:1017 src/gtkdialogs.c:1018
+#: src/gtkdialogs.c:1021 src/gtkdialogs.c:1022
 msgid "Remove Chat"
 msgstr "Видалити розмову"
 
@@ -3506,24 +3516,44 @@ msgstr "_Копіювати посилання"
 msgid "_Open Link in Browser"
 msgstr "_Відкрити посилання у веб-переглядачі"
 
-#: src/gtkimhtml.c:2914
+#: src/gtkimhtml.c:2915
 msgid ""
-"Unable to guess the image type based on the file extension supplied.  "
+"<span size='larger' weight='bold'>Unrecognized file type</span>\n"
+"\n"
 "Defaulting to PNG."
 msgstr ""
-"Не вдається визначити тип зображення шляхом аналізу розширення. Типово "
-"вважається тип PNG."
 
-#: src/gtkimhtml.c:2922
-#, c-format
-msgid "Error saving image: %s"
+#: src/gtkimhtml.c:2918
+msgid ""
+"Unrecognized file type\n"
+"\n"
+"Defaulting to PNG."
+msgstr ""
+
+#: src/gtkimhtml.c:2931
+#, fuzzy, c-format
+msgid ""
+"<span size='larger' weight='bold'>Error saving image</span>\n"
+"\n"
+"%s"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Ви отримали пошту!</span>\n"
+"\n"
+"%s"
+
+#: src/gtkimhtml.c:2934
+#, fuzzy, c-format
+msgid ""
+"Error saving image\n"
+"\n"
+"%s"
 msgstr "Помилка збереження зображення: %s"
 
-#: src/gtkimhtml.c:2999 src/gtkimhtml.c:3011
+#: src/gtkimhtml.c:3014 src/gtkimhtml.c:3026
 msgid "Save Image"
 msgstr "Збереження зображення"
 
-#: src/gtkimhtml.c:3039
+#: src/gtkimhtml.c:3054
 msgid "_Save Image..."
 msgstr "З_берегти зображення..."
 
@@ -3628,13 +3658,13 @@ msgstr "Вставити зображення"
 msgid "Insert smiley"
 msgstr "Вставити посмішку"
 
-#: src/gtklog.c:315
+#: src/gtklog.c:316
 #, c-format
 msgid "Conversations with %s"
 msgstr "Бесіда з %s"
 
 #. Window **********
-#: src/gtklog.c:411 src/gtklog.c:427
+#: src/gtklog.c:412 src/gtklog.c:429
 msgid "System Log"
 msgstr "Системний журнал"
 
@@ -4078,8 +4108,8 @@ msgstr "справа"
 msgid "New conversation _placement:"
 msgstr "Р_озташування нової бесіди:"
 
-#: src/gtkprefs.c:1127 src/protocols/oscar/oscar.c:743
-#: src/protocols/oscar/oscar.c:5106
+#: src/gtkprefs.c:1127 src/protocols/oscar/oscar.c:748
+#: src/protocols/oscar/oscar.c:5198
 msgid "IP Address"
 msgstr "IP Адреса"
 
@@ -4323,7 +4353,7 @@ msgstr "при відсутності або бездіяльності"
 
 #: src/gtkprefs.c:1824 src/protocols/msn/msn.c:1327
 #: src/protocols/msn/state.c:32 src/protocols/novell/novell.c:2806
-#: src/protocols/oscar/oscar.c:4259 src/protocols/yahoo/yahoo.c:2699
+#: src/protocols/oscar/oscar.c:4346 src/protocols/yahoo/yahoo.c:2697
 #: src/protocols/yahoo/yahoo_profile.c:664
 msgid "Idle"
 msgstr "Бездіяльний"
@@ -4470,63 +4500,63 @@ msgstr "Блокувати усіх користувачів"
 msgid "Block only the users below"
 msgstr "Блокувати лише зазначених нижче користувачів"
 
-#: src/gtkprivacy.c:393 src/protocols/jabber/jabber.c:1504
+#: src/gtkprivacy.c:397 src/protocols/jabber/jabber.c:1504
 msgid "Privacy"
 msgstr "Конфіденційність"
 
-#: src/gtkprivacy.c:406
+#: src/gtkprivacy.c:410
 msgid "Changes to privacy settings take effect immediately."
 msgstr "Зміни у параметрах конфіденційності наберуть чинності негайно."
 
 #. "Set privacy for:" label
-#: src/gtkprivacy.c:418
+#: src/gtkprivacy.c:422
 msgid "Set privacy for:"
 msgstr "Налаштувати конфіденційність для:"
 
-#: src/gtkprivacy.c:587 src/gtkprivacy.c:603
+#: src/gtkprivacy.c:591 src/gtkprivacy.c:607
 msgid "Permit User"
 msgstr "Допуск користувача"
 
-#: src/gtkprivacy.c:588
+#: src/gtkprivacy.c:592
 msgid "Type a user you permit to contact you."
 msgstr "Вкажіть користувача, якому дозволяєте звертатись з вас."
 
-#: src/gtkprivacy.c:589
+#: src/gtkprivacy.c:593
 msgid "Please enter the name of the user you wish to be able to contact you."
 msgstr "Введіть ім'я користувача, якому ви дозволяєте звертатись до вас."
 
-#: src/gtkprivacy.c:592 src/gtkprivacy.c:605
+#: src/gtkprivacy.c:596 src/gtkprivacy.c:609
 msgid "Permit"
 msgstr "Дозволити"
 
-#: src/gtkprivacy.c:597
+#: src/gtkprivacy.c:601
 #, c-format
 msgid "Allow %s to contact you?"
 msgstr "Дозволити %s звертатись до вас?"
 
-#: src/gtkprivacy.c:599
+#: src/gtkprivacy.c:603
 #, c-format
 msgid "Are you sure you wish to allow %s to contact you?"
 msgstr "Ви дійсно хочете дозволити %s звертатись до вас?"
 
-#: src/gtkprivacy.c:626 src/gtkprivacy.c:639
+#: src/gtkprivacy.c:630 src/gtkprivacy.c:643
 msgid "Block User"
 msgstr "Блокування користувача"
 
-#: src/gtkprivacy.c:627
+#: src/gtkprivacy.c:631
 msgid "Type a user to block."
 msgstr "Вкажіть користувача, якого блокувати."
 
-#: src/gtkprivacy.c:628
+#: src/gtkprivacy.c:632
 msgid "Please enter the name of the user you wish to block."
 msgstr "Введіть ім'я користувача, якого бажаєте блокувати."
 
-#: src/gtkprivacy.c:635
+#: src/gtkprivacy.c:639
 #, c-format
 msgid "Block %s?"
 msgstr "Блокувати %s?"
 
-#: src/gtkprivacy.c:637
+#: src/gtkprivacy.c:641
 #, c-format
 msgid "Are you sure you want to block %s?"
 msgstr "Ви дійсно бажаєте заблокувати %s?"
@@ -4809,8 +4839,8 @@ msgstr "типове повідомлення про відсутність"
 #: src/protocols/msn/state.c:30 src/protocols/msn/state.c:37
 #: src/protocols/msn/state.c:38 src/protocols/novell/novell.c:2797
 #: src/protocols/novell/novell.c:2916 src/protocols/novell/novell.c:2967
-#: src/protocols/oscar/oscar.c:765 src/protocols/yahoo/yahoo.c:3044
-#: src/protocols/yahoo/yahoo.c:3160
+#: src/protocols/oscar/oscar.c:770 src/protocols/yahoo/yahoo.c:3042
+#: src/protocols/yahoo/yahoo.c:3158
 msgid "Available"
 msgstr "Доступний"
 
@@ -4823,11 +4853,11 @@ msgid "Away for friends only"
 msgstr "Відсутній лише для друзів"
 
 #: src/protocols/gg/gg.c:54 src/protocols/jabber/jabber.c:1002
-#: src/protocols/jabber/presence.c:139 src/protocols/oscar/oscar.c:683
-#: src/protocols/oscar/oscar.c:5609 src/protocols/oscar/oscar.c:5687
-#: src/protocols/oscar/oscar.c:5711 src/protocols/oscar/oscar.c:6892
-#: src/protocols/oscar/oscar.c:6897 src/protocols/yahoo/yahoo.c:2697
-#: src/protocols/yahoo/yahoo.c:3064 src/protocols/yahoo/yahoo.c:3172
+#: src/protocols/jabber/presence.c:139 src/protocols/oscar/oscar.c:688
+#: src/protocols/oscar/oscar.c:5701 src/protocols/oscar/oscar.c:5779
+#: src/protocols/oscar/oscar.c:5803 src/protocols/oscar/oscar.c:6990
+#: src/protocols/oscar/oscar.c:6995 src/protocols/yahoo/yahoo.c:2695
+#: src/protocols/yahoo/yahoo.c:3062 src/protocols/yahoo/yahoo.c:3170
 msgid "Invisible"
 msgstr "Невидимий"
 
@@ -4870,7 +4900,7 @@ msgstr "Ідентифікація завершилась помилкою."
 msgid "Unknown Error Code."
 msgstr "Невідомий код помилки."
 
-#: src/protocols/gg/gg.c:243 src/protocols/oscar/oscar.c:4060
+#: src/protocols/gg/gg.c:243 src/protocols/oscar/oscar.c:4147
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 msgstr "<B>УІН:</B> %s<BR><B>Стан:</B> %s<HR>%s"
@@ -4878,8 +4908,8 @@ msgstr "<B>УІН:</B> %s<BR><B>Стан:</B> %s<HR>%s"
 #. res[0] == username
 #. XXX this should use gaim_notify_userinfo, but it is unclear to me what should be passed for 'who'
 #: src/protocols/gg/gg.c:244 src/protocols/gg/gg.c:1013
-#: src/protocols/napster/napster.c:404 src/protocols/oscar/oscar.c:4064
-#: src/protocols/oscar/oscar.c:4288 src/protocols/silc/ops.c:1086
+#: src/protocols/napster/napster.c:404 src/protocols/oscar/oscar.c:4151
+#: src/protocols/oscar/oscar.c:4375 src/protocols/silc/ops.c:1086
 #: src/protocols/silc/ops.c:1148 src/protocols/toc/toc.c:468
 #: src/protocols/zephyr/zephyr.c:720 src/protocols/zephyr/zephyr.c:1130
 msgid "Buddy Information"
@@ -4966,25 +4996,25 @@ msgstr "Пошукова система Gadu-Gadu"
 msgid "Active"
 msgstr "Активний"
 
-#: src/protocols/gg/gg.c:955 src/protocols/oscar/oscar.c:5098
+#: src/protocols/gg/gg.c:955 src/protocols/oscar/oscar.c:5190
 msgid "UIN"
 msgstr "УІН"
 
 #. First Name
 #: src/protocols/gg/gg.c:959 src/protocols/jabber/jabber.c:624
-#: src/protocols/oscar/oscar.c:5109 src/protocols/silc/ops.c:808
+#: src/protocols/oscar/oscar.c:5201 src/protocols/silc/ops.c:808
 #: src/protocols/trepia/trepia.c:268
 msgid "First Name"
 msgstr "Ім'я"
 
 #. Last Name
 #: src/protocols/gg/gg.c:964 src/protocols/jabber/jabber.c:629
-#: src/protocols/oscar/oscar.c:5110 src/protocols/trepia/trepia.c:275
+#: src/protocols/oscar/oscar.c:5202 src/protocols/trepia/trepia.c:275
 msgid "Last Name"
 msgstr "Прізвище"
 
 #: src/protocols/gg/gg.c:968 src/protocols/gg/gg.c:1712
-#: src/protocols/irc/msgs.c:219 src/protocols/oscar/oscar.c:5099
+#: src/protocols/irc/msgs.c:219 src/protocols/oscar/oscar.c:5191
 #: src/protocols/silc/ops.c:1204
 msgid "Nick"
 msgstr "Прізвисько"
@@ -5000,7 +5030,7 @@ msgstr "Стать"
 
 #. City
 #: src/protocols/gg/gg.c:992 src/protocols/jabber/jabber.c:639
-#: src/protocols/oscar/oscar.c:5153 src/protocols/oscar/oscar.c:5161
+#: src/protocols/oscar/oscar.c:5245 src/protocols/oscar/oscar.c:5253
 #: src/protocols/trepia/trepia.c:332 src/protocols/trepia/trepia.c:411
 msgid "City"
 msgstr "Місто"
@@ -5158,14 +5188,14 @@ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 msgstr "Користувач %s (%s%s%s%s%s) бажає, щоб ви його авторизували."
 
 #: src/protocols/icq/gaim_icq.c:296 src/protocols/jabber/presence.c:300
-#: src/protocols/msn/userlist.c:103 src/protocols/oscar/oscar.c:3799
-#: src/protocols/oscar/oscar.c:6340
+#: src/protocols/msn/userlist.c:103 src/protocols/oscar/oscar.c:3886
+#: src/protocols/oscar/oscar.c:6438
 msgid "Authorize"
 msgstr "Авторизувати"
 
 #: src/protocols/icq/gaim_icq.c:296 src/protocols/jabber/presence.c:301
-#: src/protocols/msn/userlist.c:104 src/protocols/oscar/oscar.c:3801
-#: src/protocols/oscar/oscar.c:6341
+#: src/protocols/msn/userlist.c:104 src/protocols/oscar/oscar.c:3888
+#: src/protocols/oscar/oscar.c:6439
 msgid "Deny"
 msgstr "Відмовити"
 
@@ -5190,13 +5220,13 @@ msgstr "Користувач Gaim"
 msgid "Unknown command: %s"
 msgstr "Невідома команда: %s"
 
-#: src/protocols/irc/cmds.c:463 src/protocols/jabber/chat.c:576
+#: src/protocols/irc/cmds.c:464 src/protocols/jabber/chat.c:576
 #: src/protocols/silc/silc.c:1019
 #, c-format
 msgid "current topic is: %s"
 msgstr "поточна тема : %s"
 
-#: src/protocols/irc/cmds.c:467 src/protocols/jabber/chat.c:580
+#: src/protocols/irc/cmds.c:468 src/protocols/jabber/chat.c:580
 #: src/protocols/silc/silc.c:1023
 msgid "No topic is set"
 msgstr "Тему не встановлено"
@@ -5251,7 +5281,7 @@ msgstr "Псевдоніми IRC не повинні містити побіли
 #. connect to the server
 #: src/protocols/irc/irc.c:237 src/protocols/jabber/jabber.c:798
 #: src/protocols/msn/session.c:364 src/protocols/napster/napster.c:510
-#: src/protocols/novell/novell.c:2152 src/protocols/oscar/oscar.c:1754
+#: src/protocols/novell/novell.c:2152 src/protocols/oscar/oscar.c:1759
 #: src/protocols/trepia/trepia.c:1065 src/protocols/yahoo/yahoo.c:2558
 #: src/protocols/zephyr/zephyr.c:1452
 msgid "Connecting"
@@ -5262,7 +5292,7 @@ msgid "Couldn't create socket"
 msgstr "Не вдається створити сокет"
 
 #: src/protocols/irc/irc.c:259 src/protocols/jabber/jabber.c:304
-#: src/protocols/oscar/oscar.c:1685 src/protocols/oscar/oscar.c:1750
+#: src/protocols/oscar/oscar.c:1690 src/protocols/oscar/oscar.c:1755
 msgid "Couldn't connect to host"
 msgstr "Не вдається з'єднатись з вузлом"
 
@@ -5271,14 +5301,23 @@ msgid "Read error"
 msgstr "Помилка читання"
 
 #: src/protocols/irc/irc.c:557 src/protocols/silc/chat.c:1373
-#: src/protocols/yahoo/yahoochat.c:1426
+#: src/protocols/yahoo/yahoochat.c:1444
 msgid "Users"
 msgstr "Користувачі"
 
 #: src/protocols/irc/irc.c:560 src/protocols/silc/chat.c:1376
-#: src/protocols/silc/ops.c:1166 src/protocols/yahoo/yahoochat.c:1435
+#: src/protocols/silc/ops.c:1166 src/protocols/yahoo/yahoochat.c:1453
 msgid "Topic"
 msgstr "Тема"
+
+#: src/protocols/irc/irc.c:597
+msgid "IRC"
+msgstr ""
+
+#: src/protocols/irc/irc.c:601
+#, fuzzy
+msgid "Quit message"
+msgstr "(1 повідомлення)"
 
 #. *< type
 #. *< ui_requirement
@@ -5288,39 +5327,39 @@ msgstr "Тема"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:667
+#: src/protocols/irc/irc.c:688
 msgid "IRC Protocol Plugin"
 msgstr "Модуль протоколу IRC"
 
 #. *  summary
-#: src/protocols/irc/irc.c:668
+#: src/protocols/irc/irc.c:689
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Найменш поганий модуль протоколу IRC ....."
 
-#: src/protocols/irc/irc.c:687 src/protocols/irc/msgs.c:239
+#: src/protocols/irc/irc.c:708 src/protocols/irc/msgs.c:239
 #: src/protocols/jabber/jabber.c:1617 src/protocols/napster/napster.c:672
 #: src/protocols/silc/ops.c:1026 src/protocols/silc/ops.c:1129
 msgid "Server"
 msgstr "Сервер"
 
-#: src/protocols/irc/irc.c:690 src/protocols/jabber/jabber.c:1638
+#: src/protocols/irc/irc.c:711 src/protocols/jabber/jabber.c:1638
 #: src/protocols/msn/msn.c:1934 src/protocols/napster/napster.c:677
 #: src/protocols/silc/silc.c:1596 src/protocols/trepia/trepia.c:1301
 msgid "Port"
 msgstr "Порт"
 
-#: src/protocols/irc/irc.c:693
+#: src/protocols/irc/irc.c:714
 msgid "Encodings"
 msgstr "Кодування"
 
-#: src/protocols/irc/irc.c:696 src/protocols/irc/msgs.c:233
+#: src/protocols/irc/irc.c:717 src/protocols/irc/msgs.c:233
 #: src/protocols/jabber/jabber.c:599 src/protocols/silc/buddy.c:1454
 #: src/protocols/silc/ops.c:973 src/protocols/silc/ops.c:975
 #: src/protocols/silc/ops.c:1123 src/protocols/silc/ops.c:1125
 msgid "Username"
 msgstr "Ім'я користувача"
 
-#: src/protocols/irc/irc.c:699
+#: src/protocols/irc/irc.c:720
 msgid "Real name"
 msgstr "Справжнє ім'я"
 
@@ -5364,7 +5403,7 @@ msgid "<b>%s:</b> %s<br>"
 msgstr "<b>%s:</b> %s<br>"
 
 #: src/protocols/irc/msgs.c:234 src/protocols/silc/ops.c:967
-#: src/protocols/silc/ops.c:1117 src/protocols/yahoo/yahoo_profile.c:1005
+#: src/protocols/silc/ops.c:1117 src/protocols/yahoo/yahoo_profile.c:1012
 msgid "Realname"
 msgstr "Справжнє ім'я"
 
@@ -5728,7 +5767,7 @@ msgid "CTCP PING reply"
 msgstr "Відповідь CTCP PING"
 
 #: src/protocols/irc/parse.c:525 src/protocols/irc/parse.c:529
-#: src/protocols/oscar/oscar.c:1582 src/protocols/toc/toc.c:188
+#: src/protocols/oscar/oscar.c:1587 src/protocols/toc/toc.c:188
 #: src/protocols/toc/toc.c:596 src/protocols/toc/toc.c:612
 #: src/protocols/toc/toc.c:689
 msgid "Disconnected."
@@ -5791,7 +5830,7 @@ msgstr "Ім'я"
 #: src/protocols/jabber/jabber.c:619 src/protocols/msn/msn.c:1317
 #: src/protocols/silc/buddy.c:1451 src/protocols/silc/ops.c:820
 #: src/protocols/silc/ops.c:963 src/protocols/silc/ops.c:1113
-#: src/protocols/yahoo/yahoo_profile.c:1000
+#: src/protocols/yahoo/yahoo_profile.c:1007
 msgid "Nickname"
 msgstr "Прізвисько"
 
@@ -5833,7 +5872,7 @@ msgstr "Телефон"
 
 #: src/protocols/jabber/buddy.c:258 src/protocols/jabber/buddy.c:718
 #: src/protocols/jabber/buddy.c:726 src/protocols/silc/silc.c:656
-#: src/protocols/silc/util.c:511 src/protocols/yahoo/yahoo_profile.c:995
+#: src/protocols/silc/util.c:511 src/protocols/yahoo/yahoo_profile.c:1002
 msgid "Email"
 msgstr "Ел.пошта"
 
@@ -5855,7 +5894,7 @@ msgid "Role"
 msgstr "Посада"
 
 #: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:647
-#: src/protocols/oscar/oscar.c:5134
+#: src/protocols/oscar/oscar.c:5226
 msgid "Birthday"
 msgstr "День народження"
 
@@ -5876,9 +5915,9 @@ msgstr "Jabber ID"
 #: src/protocols/jabber/buddy.c:566 src/protocols/jabber/buddy.c:573
 #: src/protocols/jabber/buddy.c:586 src/protocols/jabber/jabber.c:971
 #: src/protocols/msn/msn.c:489 src/protocols/novell/novell.c:2819
-#: src/protocols/novell/novell.c:2823 src/protocols/oscar/oscar.c:725
-#: src/protocols/oscar/oscar.c:731 src/protocols/oscar/oscar.c:733
-#: src/protocols/yahoo/yahoo.c:2822
+#: src/protocols/novell/novell.c:2823 src/protocols/oscar/oscar.c:730
+#: src/protocols/oscar/oscar.c:736 src/protocols/oscar/oscar.c:738
+#: src/protocols/yahoo/yahoo.c:2820
 msgid "Status"
 msgstr "Статус"
 
@@ -5887,7 +5926,7 @@ msgid "Middle Name"
 msgstr "Прізвище"
 
 #: src/protocols/jabber/buddy.c:652 src/protocols/jabber/jabber.c:634
-#: src/protocols/oscar/oscar.c:5152 src/protocols/oscar/oscar.c:5160
+#: src/protocols/oscar/oscar.c:5244 src/protocols/oscar/oscar.c:5252
 #: src/protocols/silc/ops.c:848
 msgid "Address"
 msgstr "Адреса"
@@ -5932,8 +5971,8 @@ msgstr "(Повторно-) Запросити авторизацію"
 msgid "Unsubscribe"
 msgstr "Відписатися"
 
-#: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:6411
-#: src/protocols/yahoo/yahoochat.c:1029
+#: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:6509
+#: src/protocols/yahoo/yahoochat.c:1040
 msgid "_Room:"
 msgstr "_Кімната:"
 
@@ -6086,8 +6125,8 @@ msgid "E-Mail"
 msgstr "Ел.пошта"
 
 #. State
-#: src/protocols/jabber/jabber.c:644 src/protocols/oscar/oscar.c:5154
-#: src/protocols/oscar/oscar.c:5162 src/protocols/trepia/trepia.c:336
+#: src/protocols/jabber/jabber.c:644 src/protocols/oscar/oscar.c:5246
+#: src/protocols/oscar/oscar.c:5254 src/protocols/trepia/trepia.c:336
 #: src/protocols/trepia/trepia.c:414
 msgid "State"
 msgstr "Область"
@@ -6127,7 +6166,7 @@ msgstr "Повторна ініціалізація потоку"
 
 #: src/protocols/jabber/jabber.c:897 src/protocols/jabber/jabber.c:1197
 #: src/protocols/jabber/jabber.c:1238 src/protocols/jabber/jabber.c:1271
-#: src/protocols/oscar/oscar.c:731 src/protocols/oscar/oscar.c:6695
+#: src/protocols/oscar/oscar.c:736 src/protocols/oscar/oscar.c:6793
 msgid "Not Authorized"
 msgstr "Не авторизований"
 
@@ -6171,8 +6210,8 @@ msgstr "Розширений статус \"Відійшов\""
 
 #: src/protocols/jabber/jabber.c:1000 src/protocols/jabber/jutil.c:41
 #: src/protocols/jabber/presence.c:76 src/protocols/jabber/presence.c:137
-#: src/protocols/oscar/oscar.c:673 src/protocols/oscar/oscar.c:5699
-#: src/protocols/oscar/oscar.c:6888
+#: src/protocols/oscar/oscar.c:678 src/protocols/oscar/oscar.c:5791
+#: src/protocols/oscar/oscar.c:6986
 msgid "Do Not Disturb"
 msgstr "Не турбувати"
 
@@ -6693,7 +6732,7 @@ msgstr "Пропущені необхідні поля"
 msgid "Too many hits to a FND"
 msgstr "Надто багато попадань у FND"
 
-#: src/protocols/msn/error.c:112 src/protocols/oscar/oscar.c:188
+#: src/protocols/msn/error.c:112 src/protocols/oscar/oscar.c:192
 msgid "Not logged in"
 msgstr "Не у мережі"
 
@@ -6786,7 +6825,7 @@ msgstr "Дружнє ім'я змінюється занадто швидко"
 msgid "Server too busy"
 msgstr "Сервер занадто зайнятий"
 
-#: src/protocols/msn/error.c:198 src/protocols/oscar/oscar.c:2192
+#: src/protocols/msn/error.c:198 src/protocols/oscar/oscar.c:2272
 #: src/protocols/silc/ops.c:1508 src/protocols/toc/toc.c:630
 msgid "Authentication failed"
 msgstr "Ідентифікація завершилась невдало"
@@ -6875,7 +6914,7 @@ msgid "Page"
 msgstr "Сторінка"
 
 #: src/protocols/msn/msn.c:489 src/protocols/msn/msn.c:497
-#: src/protocols/msn/msn.c:500 src/protocols/yahoo/yahoo.c:2822
+#: src/protocols/msn/msn.c:500 src/protocols/yahoo/yahoo.c:2820
 #, c-format
 msgid ""
 "\n"
@@ -6898,8 +6937,8 @@ msgid "Away From Computer"
 msgstr "Відійшов від комп'ютера"
 
 #: src/protocols/msn/msn.c:515 src/protocols/msn/msn.c:803
-#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2679
-#: src/protocols/yahoo/yahoo.c:3046 src/protocols/yahoo/yahoo.c:3162
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2677
+#: src/protocols/yahoo/yahoo.c:3044 src/protocols/yahoo/yahoo.c:3160
 msgid "Be Right Back"
 msgstr "Незабаром повернусь"
 
@@ -6907,20 +6946,20 @@ msgstr "Незабаром повернусь"
 #: src/protocols/msn/state.c:31 src/protocols/novell/novell.c:2803
 #: src/protocols/novell/novell.c:2918 src/protocols/novell/novell.c:2972
 #: src/protocols/silc/buddy.c:1392 src/protocols/silc/silc.c:48
-#: src/protocols/silc/silc.c:83 src/protocols/yahoo/yahoo.c:2681
-#: src/protocols/yahoo/yahoo.c:3048 src/protocols/yahoo/yahoo.c:3163
+#: src/protocols/silc/silc.c:83 src/protocols/yahoo/yahoo.c:2679
+#: src/protocols/yahoo/yahoo.c:3046 src/protocols/yahoo/yahoo.c:3161
 msgid "Busy"
 msgstr "Зайнятий"
 
 #: src/protocols/msn/msn.c:517 src/protocols/msn/msn.c:807
-#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2689
-#: src/protocols/yahoo/yahoo.c:3056 src/protocols/yahoo/yahoo.c:3167
+#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2687
+#: src/protocols/yahoo/yahoo.c:3054 src/protocols/yahoo/yahoo.c:3165
 msgid "On The Phone"
 msgstr "Розмовляю по телефону"
 
 #: src/protocols/msn/msn.c:518 src/protocols/msn/msn.c:809
-#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2693
-#: src/protocols/yahoo/yahoo.c:3060 src/protocols/yahoo/yahoo.c:3169
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2691
+#: src/protocols/yahoo/yahoo.c:3058 src/protocols/yahoo/yahoo.c:3167
 msgid "Out To Lunch"
 msgstr "Відійшов на обід"
 
@@ -6981,7 +7020,7 @@ msgstr "<b>Псевдонім:</b> %s<br>"
 
 #. put a link to the actual profile URL
 #: src/protocols/msn/msn.c:1317 src/protocols/msn/msn.c:1675
-#: src/protocols/yahoo/yahoo_profile.c:1168 src/util.c:796
+#: src/protocols/yahoo/yahoo_profile.c:1174 src/util.c:796
 #, c-format
 msgid "<b>%s:</b> "
 msgstr "<b>%s:</b> "
@@ -6991,34 +7030,34 @@ msgid "MSN Profile"
 msgstr "Профіль MSN"
 
 #: src/protocols/msn/msn.c:1410 src/protocols/msn/msn.c:1662
-#: src/protocols/yahoo/yahoo_profile.c:761
+#: src/protocols/yahoo/yahoo_profile.c:763
 msgid "Error retrieving profile"
 msgstr "Помилка зчитування профілю"
 
 #. Age
-#: src/protocols/msn/msn.c:1481 src/protocols/oscar/oscar.c:5139
+#: src/protocols/msn/msn.c:1481 src/protocols/oscar/oscar.c:5231
 #: src/protocols/trepia/trepia.c:286 src/protocols/trepia/trepia.c:405
-#: src/protocols/yahoo/yahoo_profile.c:1015
+#: src/protocols/yahoo/yahoo_profile.c:1022
 msgid "Age"
 msgstr "Вік"
 
 #. Gender
-#: src/protocols/msn/msn.c:1488 src/protocols/oscar/oscar.c:5125
+#: src/protocols/msn/msn.c:1488 src/protocols/oscar/oscar.c:5217
 #: src/protocols/trepia/trepia.c:280 src/protocols/trepia/trepia.c:407
-#: src/protocols/yahoo/yahoo_profile.c:1025
+#: src/protocols/yahoo/yahoo_profile.c:1032
 msgid "Gender"
 msgstr "Стать"
 
-#: src/protocols/msn/msn.c:1497 src/protocols/yahoo/yahoo_profile.c:1020
+#: src/protocols/msn/msn.c:1497 src/protocols/yahoo/yahoo_profile.c:1027
 msgid "Marital Status"
 msgstr "Сімейний стан"
 
 #: src/protocols/msn/msn.c:1504 src/protocols/novell/novell.c:1445
-#: src/protocols/yahoo/yahoo_profile.c:1010
+#: src/protocols/yahoo/yahoo_profile.c:1017
 msgid "Location"
 msgstr "Розташування"
 
-#: src/protocols/msn/msn.c:1512 src/protocols/yahoo/yahoo_profile.c:1030
+#: src/protocols/msn/msn.c:1512 src/protocols/yahoo/yahoo_profile.c:1037
 msgid "Occupation"
 msgstr "Фах"
 
@@ -7039,11 +7078,11 @@ msgid "Hobbies and Interests"
 msgstr "Хоббі та інтереси"
 
 #: src/protocols/msn/msn.c:1617 src/protocols/msn/msn.c:1623
-#: src/protocols/yahoo/yahoo_profile.c:1072
+#: src/protocols/yahoo/yahoo_profile.c:1079
 msgid "Favorite Quote"
 msgstr "Улюблена цитата"
 
-#: src/protocols/msn/msn.c:1631 src/protocols/yahoo/yahoo_profile.c:1123
+#: src/protocols/msn/msn.c:1631
 msgid "Last Updated"
 msgstr "Останнє оновлення"
 
@@ -7075,7 +7114,7 @@ msgstr ""
 "Gaim не вдається знайти інформацію про профіль користувача. Швидше за все "
 "користувач не існує."
 
-#: src/protocols/msn/msn.c:1675 src/protocols/yahoo/yahoo_profile.c:1168
+#: src/protocols/msn/msn.c:1675 src/protocols/yahoo/yahoo_profile.c:1174
 msgid "Profile URL"
 msgstr "URL профілю"
 
@@ -7110,7 +7149,7 @@ msgid "Use HTTP Method"
 msgstr "Використовувати метод HTTP"
 
 #: src/protocols/msn/nexus.c:103 src/protocols/msn/servconn.c:127
-#: src/protocols/yahoo/yahoochat.c:1383
+#: src/protocols/yahoo/yahoochat.c:1394
 msgid "Unable to connect"
 msgstr "Не вдається з'єднатись"
 
@@ -7203,7 +7242,7 @@ msgid "Reading error"
 msgstr "Помилка читання"
 
 #: src/protocols/msn/servconn.c:133 src/protocols/msn/session.c:341
-#: src/protocols/oscar/oscar.c:4122
+#: src/protocols/oscar/oscar.c:4209
 msgid "Unknown error"
 msgstr "Невідома помилка"
 
@@ -7316,6 +7355,16 @@ msgstr "Користувач %s (%s) бажає додати %s у власни�
 #, c-format
 msgid "The user %s wants to add %s to his or her buddy list."
 msgstr "Користувач %s бажає додати %s до власного списку контактів."
+
+#: src/protocols/msn/userlist.c:627
+#, fuzzy, c-format
+msgid "Unable to add \"%s\"."
+msgstr "Не вдається прочитати файл %s."
+
+#: src/protocols/msn/userlist.c:629
+#, fuzzy
+msgid "The screen name specified is invalid."
+msgstr "Ключ SecurID - неправильний."
 
 #: src/protocols/napster/napster.c:241
 msgid "Unable to read header from server"
@@ -7624,8 +7673,8 @@ msgstr "Особиста веб-сторінка"
 msgid "Mailstop"
 msgstr "Пошта"
 
-#: src/protocols/novell/novell.c:1455 src/protocols/oscar/oscar.c:5112
-#: src/protocols/oscar/oscar.c:5119
+#: src/protocols/novell/novell.c:1455 src/protocols/oscar/oscar.c:5204
+#: src/protocols/oscar/oscar.c:5211
 msgid "Email Address"
 msgstr "Адреса ел.пошти"
 
@@ -7727,8 +7776,8 @@ msgstr ""
 "Ця конференція була закрита. Більше неможливо відправити жодного "
 "повідомлення."
 
-#: src/protocols/novell/novell.c:2809 src/protocols/oscar/oscar.c:733
-#: src/protocols/oscar/oscar.c:6697 src/protocols/yahoo/yahoo.c:2701
+#: src/protocols/novell/novell.c:2809 src/protocols/oscar/oscar.c:738
+#: src/protocols/oscar/oscar.c:6795 src/protocols/yahoo/yahoo.c:2699
 msgid "Offline"
 msgstr "Не в мережі"
 
@@ -7762,103 +7811,103 @@ msgstr "Адреса сервера"
 msgid "Server port"
 msgstr "Порт сервера"
 
-#: src/protocols/oscar/oscar.c:184
+#: src/protocols/oscar/oscar.c:188
 msgid "Invalid error"
 msgstr "Недопустима помилка"
 
-#: src/protocols/oscar/oscar.c:185
+#: src/protocols/oscar/oscar.c:189
 msgid "Invalid SNAC"
 msgstr "Неправильний SNAC"
 
-#: src/protocols/oscar/oscar.c:186
+#: src/protocols/oscar/oscar.c:190
 msgid "Rate to host"
 msgstr "Оцінити вузол"
 
-#: src/protocols/oscar/oscar.c:187
+#: src/protocols/oscar/oscar.c:191
 msgid "Rate to client"
 msgstr "Оцінити клієнта"
 
-#: src/protocols/oscar/oscar.c:189
+#: src/protocols/oscar/oscar.c:193
 msgid "Service unavailable"
 msgstr "Служба недоступна"
 
-#: src/protocols/oscar/oscar.c:190
+#: src/protocols/oscar/oscar.c:194
 msgid "Service not defined"
 msgstr "Служба не визначена"
 
-#: src/protocols/oscar/oscar.c:191
+#: src/protocols/oscar/oscar.c:195
 msgid "Obsolete SNAC"
 msgstr "Застарілий SNAC"
 
-#: src/protocols/oscar/oscar.c:192
+#: src/protocols/oscar/oscar.c:196
 msgid "Not supported by host"
 msgstr "Не підтримується вузлом"
 
-#: src/protocols/oscar/oscar.c:193
+#: src/protocols/oscar/oscar.c:197
 msgid "Not supported by client"
 msgstr "Не підтримується клієнтом"
 
-#: src/protocols/oscar/oscar.c:194
+#: src/protocols/oscar/oscar.c:198
 msgid "Refused by client"
 msgstr "Відкинуто клієнтом"
 
-#: src/protocols/oscar/oscar.c:195
+#: src/protocols/oscar/oscar.c:199
 msgid "Reply too big"
 msgstr "Відповідь завелика"
 
-#: src/protocols/oscar/oscar.c:196
+#: src/protocols/oscar/oscar.c:200
 msgid "Responses lost"
 msgstr "Відповіді загублені"
 
-#: src/protocols/oscar/oscar.c:197
+#: src/protocols/oscar/oscar.c:201
 msgid "Request denied"
 msgstr "Запит заборонено"
 
-#: src/protocols/oscar/oscar.c:198
+#: src/protocols/oscar/oscar.c:202
 msgid "Busted SNAC payload"
 msgstr "Помилкове завантаження SNAC"
 
-#: src/protocols/oscar/oscar.c:199
+#: src/protocols/oscar/oscar.c:203
 msgid "Insufficient rights"
 msgstr "Недостатньо прав"
 
-#: src/protocols/oscar/oscar.c:200
+#: src/protocols/oscar/oscar.c:204
 msgid "In local permit/deny"
 msgstr "У локальному дозволено/заборонено"
 
-#: src/protocols/oscar/oscar.c:201
+#: src/protocols/oscar/oscar.c:205
 msgid "Too evil (sender)"
 msgstr "Занадто докучливий (відправник)"
 
-#: src/protocols/oscar/oscar.c:202
+#: src/protocols/oscar/oscar.c:206
 msgid "Too evil (receiver)"
 msgstr "Занадто докучливий (адресат)"
 
-#: src/protocols/oscar/oscar.c:203
+#: src/protocols/oscar/oscar.c:207
 msgid "User temporarily unavailable"
 msgstr "Користувач тимчасово недоступний"
 
-#: src/protocols/oscar/oscar.c:204
+#: src/protocols/oscar/oscar.c:208
 msgid "No match"
 msgstr "Немає збігів"
 
-#: src/protocols/oscar/oscar.c:205
+#: src/protocols/oscar/oscar.c:209
 msgid "List overflow"
 msgstr "Переповнення списку"
 
-#: src/protocols/oscar/oscar.c:206
+#: src/protocols/oscar/oscar.c:210
 msgid "Request ambiguous"
 msgstr "Неоднозначний запит"
 
-#: src/protocols/oscar/oscar.c:207
+#: src/protocols/oscar/oscar.c:211
 msgid "Queue full"
 msgstr "Черга повна"
 
-#: src/protocols/oscar/oscar.c:208
+#: src/protocols/oscar/oscar.c:212
 msgid "Not while on AOL"
 msgstr "Не у AOL"
 
-#: src/protocols/oscar/oscar.c:403 src/protocols/oscar/oscar.c:486
+#: src/protocols/oscar/oscar.c:408 src/protocols/oscar/oscar.c:491
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking to "
 "most likely has a buggy client.)"
@@ -7866,157 +7915,157 @@ msgstr ""
 "(Помилка при отриманні цього повідомлення. Швидше за все, клієнтська "
 "програма вашого співрозмовника містить помилки.)"
 
-#: src/protocols/oscar/oscar.c:588
+#: src/protocols/oscar/oscar.c:593
 msgid "Voice"
 msgstr "Голос"
 
-#: src/protocols/oscar/oscar.c:591
+#: src/protocols/oscar/oscar.c:596
 msgid "AIM Direct IM"
 msgstr "Пряме з'єднання AIM"
 
-#: src/protocols/oscar/oscar.c:594 src/protocols/silc/silc.c:654
+#: src/protocols/oscar/oscar.c:599 src/protocols/silc/silc.c:654
 #: src/protocols/silc/util.c:509
 msgid "Chat"
 msgstr "Розмова"
 
-#: src/protocols/oscar/oscar.c:597 src/protocols/oscar/oscar.c:6999
+#: src/protocols/oscar/oscar.c:602 src/protocols/oscar/oscar.c:7097
 msgid "Get File"
 msgstr "Отримання файлу"
 
-#: src/protocols/oscar/oscar.c:604
+#: src/protocols/oscar/oscar.c:609
 msgid "Games"
 msgstr "Ігри"
 
-#: src/protocols/oscar/oscar.c:607
+#: src/protocols/oscar/oscar.c:612
 msgid "Add-Ins"
 msgstr "Доповнення"
 
-#: src/protocols/oscar/oscar.c:610
+#: src/protocols/oscar/oscar.c:615
 msgid "Send Buddy List"
 msgstr "Надсилання списку контактів"
 
-#: src/protocols/oscar/oscar.c:613
+#: src/protocols/oscar/oscar.c:618
 msgid "ICQ Direct Connect"
 msgstr "Пряме з'єднання ICQ"
 
-#: src/protocols/oscar/oscar.c:616
+#: src/protocols/oscar/oscar.c:621
 msgid "AP User"
 msgstr "Користувач AP"
 
-#: src/protocols/oscar/oscar.c:619
+#: src/protocols/oscar/oscar.c:624
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/protocols/oscar/oscar.c:622
+#: src/protocols/oscar/oscar.c:627
 msgid "Nihilist"
 msgstr "Нігіліст"
 
-#: src/protocols/oscar/oscar.c:625
+#: src/protocols/oscar/oscar.c:630
 msgid "ICQ Server Relay"
 msgstr "Транзитний сервер ICQ"
 
-#: src/protocols/oscar/oscar.c:628
+#: src/protocols/oscar/oscar.c:633
 msgid "Old ICQ UTF8"
 msgstr "Старий ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:631
+#: src/protocols/oscar/oscar.c:636
 msgid "Trillian Encryption"
 msgstr "Кодування Trillian"
 
-#: src/protocols/oscar/oscar.c:634
+#: src/protocols/oscar/oscar.c:639
 msgid "ICQ UTF8"
 msgstr "ICQ UTF8"
 
-#: src/protocols/oscar/oscar.c:637
+#: src/protocols/oscar/oscar.c:642
 msgid "Hiptop"
 msgstr "Hiptop"
 
-#: src/protocols/oscar/oscar.c:640
+#: src/protocols/oscar/oscar.c:645
 msgid "Security Enabled"
 msgstr "Безпека увімкнена"
 
-#: src/protocols/oscar/oscar.c:643
+#: src/protocols/oscar/oscar.c:648
 msgid "Video Chat"
 msgstr "Відеорозмова"
 
-#: src/protocols/oscar/oscar.c:647
+#: src/protocols/oscar/oscar.c:652
 msgid "iChat AV"
 msgstr "iChat AV"
 
-#: src/protocols/oscar/oscar.c:650
+#: src/protocols/oscar/oscar.c:655
 msgid "Live Video"
 msgstr "Живе відео"
 
-#: src/protocols/oscar/oscar.c:653
+#: src/protocols/oscar/oscar.c:658
 msgid "Camera"
 msgstr "Відеокамера"
 
-#: src/protocols/oscar/oscar.c:671 src/protocols/oscar/oscar.c:5708
-#: src/protocols/oscar/oscar.c:6891
+#: src/protocols/oscar/oscar.c:676 src/protocols/oscar/oscar.c:5800
+#: src/protocols/oscar/oscar.c:6989
 msgid "Free For Chat"
 msgstr "Готовий до розмови"
 
-#: src/protocols/oscar/oscar.c:675 src/protocols/oscar/oscar.c:5702
-#: src/protocols/oscar/oscar.c:6889
+#: src/protocols/oscar/oscar.c:680 src/protocols/oscar/oscar.c:5794
+#: src/protocols/oscar/oscar.c:6987
 msgid "Not Available"
 msgstr "Недоступний"
 
-#: src/protocols/oscar/oscar.c:677 src/protocols/oscar/oscar.c:5705
-#: src/protocols/oscar/oscar.c:6890
+#: src/protocols/oscar/oscar.c:682 src/protocols/oscar/oscar.c:5797
+#: src/protocols/oscar/oscar.c:6988
 msgid "Occupied"
 msgstr "Зайнятий"
 
-#: src/protocols/oscar/oscar.c:681
+#: src/protocols/oscar/oscar.c:686
 msgid "Web Aware"
 msgstr "Підтримується Web"
 
-#: src/protocols/oscar/oscar.c:749
+#: src/protocols/oscar/oscar.c:754
 msgid "Capabilities"
 msgstr "Можливості"
 
-#: src/protocols/oscar/oscar.c:758
+#: src/protocols/oscar/oscar.c:763
 msgid "Buddy Comment"
 msgstr "Коментар користувача"
 
-#: src/protocols/oscar/oscar.c:893
+#: src/protocols/oscar/oscar.c:898
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "Пряме з'єднання з %s закрито"
 
-#: src/protocols/oscar/oscar.c:895
+#: src/protocols/oscar/oscar.c:900
 #, c-format
 msgid "Direct IM with %s failed"
 msgstr "Не вдається створити пряме з'єднання з %s"
 
-#: src/protocols/oscar/oscar.c:902
+#: src/protocols/oscar/oscar.c:907
 msgid "Direct Connect failed"
 msgstr "Не вдається створити пряме з'єднання"
 
-#: src/protocols/oscar/oscar.c:979 src/protocols/oscar/oscar.c:1110
+#: src/protocols/oscar/oscar.c:984 src/protocols/oscar/oscar.c:1115
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Пряме з'єднання з %s встановлено"
 
-#: src/protocols/oscar/oscar.c:1060
+#: src/protocols/oscar/oscar.c:1065
 #, c-format
 msgid "Attempting to connect to %s at %s:%hu for Direct IM."
 msgstr "Спроба створення прямого з'єднання з %s у %s:%hu"
 
-#: src/protocols/oscar/oscar.c:1480
+#: src/protocols/oscar/oscar.c:1485
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
 msgstr "Запит створення прямого з'єднання %s з нами у %s:%hu"
 
-#: src/protocols/oscar/oscar.c:1485
+#: src/protocols/oscar/oscar.c:1490
 msgid "Unable to open Direct IM"
 msgstr "Не вдається відкрити пряме з'єднання"
 
-#: src/protocols/oscar/oscar.c:1520
+#: src/protocols/oscar/oscar.c:1525
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
 msgstr "Ви вибрали відкриття прямого з'єднання з %s"
 
-#: src/protocols/oscar/oscar.c:1524
+#: src/protocols/oscar/oscar.c:1529
 msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
@@ -8024,24 +8073,24 @@ msgstr ""
 "Ваша ІР адреса стане відомою, тому це може становити загрозу "
 "конфіденційності. Бажаєте продовжити?"
 
-#: src/protocols/oscar/oscar.c:1528 src/protocols/oscar/oscar.c:3556
+#: src/protocols/oscar/oscar.c:1533 src/protocols/oscar/oscar.c:3643
 msgid "Connect"
 msgstr "З'єднатися"
 
-#: src/protocols/oscar/oscar.c:1595 src/protocols/toc/toc.c:874
+#: src/protocols/oscar/oscar.c:1600 src/protocols/toc/toc.c:874
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Вас було від'єднано від кімнати розмов %s."
 
-#: src/protocols/oscar/oscar.c:1614
+#: src/protocols/oscar/oscar.c:1619
 msgid "Chat is currently unavailable"
 msgstr "Розмова наразі недоступна"
 
-#: src/protocols/oscar/oscar.c:1695
+#: src/protocols/oscar/oscar.c:1700
 msgid "Screen name sent"
 msgstr "Надіслано ідентифікатор користувача"
 
-#: src/protocols/oscar/oscar.c:1709
+#: src/protocols/oscar/oscar.c:1714
 #, c-format
 msgid ""
 "Unable to login: Could not sign on as %s because the screen name is "
@@ -8053,46 +8102,51 @@ msgstr ""
 "літери та повинен містити лише літери, цифри та пробіли, або ж повинен "
 "містити лише цифри."
 
-#: src/protocols/oscar/oscar.c:1737
+#: src/protocols/oscar/oscar.c:1742
 msgid "Unable to login to AIM"
 msgstr "Не вдається ввійти у мережу AIM"
 
-#: src/protocols/oscar/oscar.c:1839 src/protocols/oscar/oscar.c:2285
+#: src/protocols/oscar/oscar.c:1844 src/protocols/oscar/oscar.c:2365
 msgid "Could Not Connect"
 msgstr "Не вдається з'єднатися"
 
-#: src/protocols/oscar/oscar.c:1847
+#: src/protocols/oscar/oscar.c:1852
 msgid "Connection established, cookie sent"
 msgstr "З'єднання встановлено, відправлено дані"
 
-#: src/protocols/oscar/oscar.c:1967 src/protocols/yahoo/yahoo_filexfer.c:177
+#: src/protocols/oscar/oscar.c:1963
+#, fuzzy, c-format
+msgid "Transfer of file %s timed out."
+msgstr "Передавання файлу %s  завершено"
+
+#: src/protocols/oscar/oscar.c:2047 src/protocols/yahoo/yahoo_filexfer.c:177
 #: src/protocols/yahoo/yahoo_filexfer.c:186
 #: src/protocols/yahoo/yahoo_filexfer.c:195
 msgid "Unable to establish file descriptor."
 msgstr "Не вдається встановити дескриптор файлу."
 
-#: src/protocols/oscar/oscar.c:1972
+#: src/protocols/oscar/oscar.c:2052
 msgid "Unable to create new connection."
 msgstr "Не вдається створити нове з'єднання."
 
-#: src/protocols/oscar/oscar.c:2044
+#: src/protocols/oscar/oscar.c:2124
 msgid "Unable to establish listener socket."
 msgstr "Не вдається встановити сокет прослуховування."
 
-#: src/protocols/oscar/oscar.c:2169 src/protocols/toc/toc.c:541
+#: src/protocols/oscar/oscar.c:2249 src/protocols/toc/toc.c:541
 msgid "Incorrect nickname or password."
 msgstr "Неправильне прізвисько або пароль."
 
-#: src/protocols/oscar/oscar.c:2174
+#: src/protocols/oscar/oscar.c:2254
 msgid "Your account is currently suspended."
 msgstr "Ваш обліковий запис наразі заблокований."
 
 #. service temporarily unavailable
-#: src/protocols/oscar/oscar.c:2178
+#: src/protocols/oscar/oscar.c:2258
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "Служба миттєвих повідомлень AOL тимчасово недоступна."
 
-#: src/protocols/oscar/oscar.c:2183
+#: src/protocols/oscar/oscar.c:2263
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -8100,33 +8154,33 @@ msgstr ""
 "Ви занадто часто з'єднуєтесь та від'єднуєтесь. Зачекайте 10 хвилин та "
 "спробуйте знову. Якщо ви продовжите спроби, вам доведеться чекати ще довше."
 
-#: src/protocols/oscar/oscar.c:2188
+#: src/protocols/oscar/oscar.c:2268
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "Ви використовуєте застару версію клієнта. Поновіть до %s"
 
-#: src/protocols/oscar/oscar.c:2220
+#: src/protocols/oscar/oscar.c:2300
 msgid "Internal Error"
 msgstr "Внутрішня помилка"
 
-#: src/protocols/oscar/oscar.c:2292
+#: src/protocols/oscar/oscar.c:2372
 msgid "Received authorization"
 msgstr "Прийнято авторизацію"
 
-#: src/protocols/oscar/oscar.c:2316
+#: src/protocols/oscar/oscar.c:2396
 msgid "The SecurID key entered is invalid."
 msgstr "Ключ SecurID - неправильний."
 
-#: src/protocols/oscar/oscar.c:2330
+#: src/protocols/oscar/oscar.c:2410
 msgid "Enter SecurID"
 msgstr "Введіть SecurID"
 
-#: src/protocols/oscar/oscar.c:2331
+#: src/protocols/oscar/oscar.c:2411
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Введіть 6-цифрове число з цифрового дисплею."
 
-#: src/protocols/oscar/oscar.c:2371 src/protocols/oscar/oscar.c:2401
-#: src/protocols/oscar/oscar.c:2490
+#: src/protocols/oscar/oscar.c:2451 src/protocols/oscar/oscar.c:2481
+#: src/protocols/oscar/oscar.c:2570
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -8135,24 +8189,24 @@ msgstr ""
 "Незабаром ви можете бути від'єднані. Можливо, ви захочете використати TOC, "
 "доки це не буде виправлено. Перевірте оновлення на %s."
 
-#: src/protocols/oscar/oscar.c:2374 src/protocols/oscar/oscar.c:2404
+#: src/protocols/oscar/oscar.c:2454 src/protocols/oscar/oscar.c:2484
 msgid "Gaim was unable to get a valid AIM login hash."
 msgstr "Gaim не вдається отримати допустимий хеш входу AIM."
 
-#: src/protocols/oscar/oscar.c:2493
+#: src/protocols/oscar/oscar.c:2573
 msgid "Gaim was unable to get a valid login hash."
 msgstr "Gaim не вдається отримати допустимий хеш входу."
 
-#: src/protocols/oscar/oscar.c:2525
+#: src/protocols/oscar/oscar.c:2605
 msgid "Password sent"
 msgstr "Пароль відправлено"
 
-#: src/protocols/oscar/oscar.c:3548
+#: src/protocols/oscar/oscar.c:3635
 #, c-format
 msgid "%s has just asked to directly connect to %s"
 msgstr "%s запитав дозвіл на пряме з'єднання з %s"
 
-#: src/protocols/oscar/oscar.c:3551
+#: src/protocols/oscar/oscar.c:3638
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
@@ -8162,20 +8216,20 @@ msgstr ""
 "та є необхідним для передавання зображень. Так як ваша ІР адреса буде "
 "розкрита, це може вважатись загрозою безпеці."
 
-#: src/protocols/oscar/oscar.c:3589
+#: src/protocols/oscar/oscar.c:3676
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr ""
 "Будь-ласка, авторизуйте мене, щоб я міг додати вас до мого списку контактів."
 
-#: src/protocols/oscar/oscar.c:3597
+#: src/protocols/oscar/oscar.c:3684
 msgid "Authorization Request Message:"
 msgstr "Повідомлення із запитом авторизації"
 
-#: src/protocols/oscar/oscar.c:3598
+#: src/protocols/oscar/oscar.c:3685
 msgid "Please authorize me!"
 msgstr "Будь-ласка, авторизуйте мене!"
 
-#: src/protocols/oscar/oscar.c:3628
+#: src/protocols/oscar/oscar.c:3715
 #, c-format
 msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
@@ -8184,22 +8238,22 @@ msgstr ""
 "Користувач %s вимагає авторизацію перед додаванням його у список контактів. "
 "Чи бажаєте відправити запит авторизації?"
 
-#: src/protocols/oscar/oscar.c:3633 src/protocols/oscar/oscar.c:3635
+#: src/protocols/oscar/oscar.c:3720 src/protocols/oscar/oscar.c:3722
 msgid "Request Authorization"
 msgstr "Запитати авторизацію"
 
-#: src/protocols/oscar/oscar.c:3683 src/protocols/oscar/oscar.c:3685
-#: src/protocols/oscar/oscar.c:3692 src/protocols/oscar/oscar.c:3789
-#: src/protocols/oscar/oscar.c:3809 src/protocols/oscar/oscar.c:6332
-#: src/protocols/oscar/oscar.c:6378
+#: src/protocols/oscar/oscar.c:3770 src/protocols/oscar/oscar.c:3772
+#: src/protocols/oscar/oscar.c:3779 src/protocols/oscar/oscar.c:3876
+#: src/protocols/oscar/oscar.c:3896 src/protocols/oscar/oscar.c:6430
+#: src/protocols/oscar/oscar.c:6476
 msgid "No reason given."
 msgstr "Причина не вказана."
 
-#: src/protocols/oscar/oscar.c:3691
+#: src/protocols/oscar/oscar.c:3778
 msgid "Authorization Denied Message:"
 msgstr "Повідомлення відмови у авторизації:"
 
-#: src/protocols/oscar/oscar.c:3789
+#: src/protocols/oscar/oscar.c:3876
 #, c-format
 msgid ""
 "The user %u wants to add you to their buddy list for the following reason:\n"
@@ -8209,11 +8263,11 @@ msgstr ""
 "причини:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3797 src/protocols/oscar/oscar.c:6338
+#: src/protocols/oscar/oscar.c:3884 src/protocols/oscar/oscar.c:6436
 msgid "Authorization Request"
 msgstr "Запит авторизації"
 
-#: src/protocols/oscar/oscar.c:3809
+#: src/protocols/oscar/oscar.c:3896
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -8224,17 +8278,17 @@ msgstr ""
 "причини:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3810
+#: src/protocols/oscar/oscar.c:3897
 msgid "ICQ authorization denied."
 msgstr "У авторизації ICQ відмовлено."
 
 #. Someone has granted you authorization
-#: src/protocols/oscar/oscar.c:3817
+#: src/protocols/oscar/oscar.c:3904
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr "Користувач %u погодився на додавання себе до вашого списку контактів."
 
-#: src/protocols/oscar/oscar.c:3825
+#: src/protocols/oscar/oscar.c:3912
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -8247,7 +8301,7 @@ msgstr ""
 "Від: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3833
+#: src/protocols/oscar/oscar.c:3920
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -8260,7 +8314,7 @@ msgstr ""
 "Від: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3841
+#: src/protocols/oscar/oscar.c:3928
 #, c-format
 msgid ""
 "You have received an ICQ email from %s [%s]\n"
@@ -8273,20 +8327,20 @@ msgstr ""
 "Повідомлення:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3862
+#: src/protocols/oscar/oscar.c:3949
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "Користувач ICQ %u надіслав вам контакт: %s (%s)"
 
-#: src/protocols/oscar/oscar.c:3868
+#: src/protocols/oscar/oscar.c:3955
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Бажаєте додати цей контакт у список контактів?"
 
-#: src/protocols/oscar/oscar.c:3872
+#: src/protocols/oscar/oscar.c:3959
 msgid "Decline"
 msgstr "Відмовитись"
 
-#: src/protocols/oscar/oscar.c:3956
+#: src/protocols/oscar/oscar.c:4043
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
@@ -8297,7 +8351,7 @@ msgstr[1] ""
 msgstr[2] ""
 "Ви не отримали %hu повідомлень від %s, тому що вони були некоректними."
 
-#: src/protocols/oscar/oscar.c:3965
+#: src/protocols/oscar/oscar.c:4052
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
@@ -8308,7 +8362,7 @@ msgstr[1] ""
 msgstr[2] ""
 "Ви не отримали %hu повідомлень від %s, тому що вони були надто великими."
 
-#: src/protocols/oscar/oscar.c:3974
+#: src/protocols/oscar/oscar.c:4061
 #, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
@@ -8321,7 +8375,7 @@ msgstr[1] ""
 msgstr[2] ""
 "Ви не отримали %hu повідомлень від %s, тому що було перевищено межу оцінки."
 
-#: src/protocols/oscar/oscar.c:3983
+#: src/protocols/oscar/oscar.c:4070
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
@@ -8331,7 +8385,7 @@ msgstr[1] ""
 "Ви не отримали %hu повідомлення від %s, тому що він надто докучливий"
 msgstr[2] "Ви не отримали %hu повідомлень від %s, тому що він надто докучливий"
 
-#: src/protocols/oscar/oscar.c:3992
+#: src/protocols/oscar/oscar.c:4079
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
@@ -8339,7 +8393,7 @@ msgstr[0] "Ви пропустили %hu повідомлення від %s, т�
 msgstr[1] "Ви пропустили %hu повідомлення від %s, тому що ви надто докучливі."
 msgstr[2] "Ви пропустили %hu повідомлень від %s, тому що ви надто докучливі."
 
-#: src/protocols/oscar/oscar.c:4001
+#: src/protocols/oscar/oscar.c:4088
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
@@ -8347,55 +8401,55 @@ msgstr[0] "Ви не отримали %hu повідомлення від %s, з
 msgstr[1] "Ви не отримали %hu повідомлення від %s, з невідомої причини."
 msgstr[2] "Ви не отримали %hu повідомлень від %s, з невідомої причини."
 
-#: src/protocols/oscar/oscar.c:4055 src/protocols/oscar/oscar.c:4287
+#: src/protocols/oscar/oscar.c:4142 src/protocols/oscar/oscar.c:4374
 #, c-format
 msgid "Info for %s"
 msgstr "Інформація для %s"
 
-#: src/protocols/oscar/oscar.c:4121
+#: src/protocols/oscar/oscar.c:4208
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC викликав помилку: %s\n"
 
 #. Data is assumed to be the destination sn
-#: src/protocols/oscar/oscar.c:4157
+#: src/protocols/oscar/oscar.c:4244
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Не вдається відправити повідомлення: %s"
 
-#: src/protocols/oscar/oscar.c:4157 src/protocols/oscar/oscar.c:4162
-#: src/protocols/oscar/oscar.c:4220 src/protocols/oscar/oscar.c:4224
+#: src/protocols/oscar/oscar.c:4244 src/protocols/oscar/oscar.c:4249
+#: src/protocols/oscar/oscar.c:4307 src/protocols/oscar/oscar.c:4311
 msgid "Unknown reason."
 msgstr "Помилка невідома."
 
-#: src/protocols/oscar/oscar.c:4220
+#: src/protocols/oscar/oscar.c:4307
 #, c-format
 msgid "User information not available: %s"
 msgstr "Інформація про користувача недоступна: %s"
 
-#: src/protocols/oscar/oscar.c:4223
+#: src/protocols/oscar/oscar.c:4310
 #, c-format
 msgid "User information for %s unavailable:"
 msgstr "Дані користувача %s недоступні:"
 
-#: src/protocols/oscar/oscar.c:4245
+#: src/protocols/oscar/oscar.c:4332
 msgid "Warning Level"
 msgstr "Рівень попередження"
 
-#: src/protocols/oscar/oscar.c:4249
+#: src/protocols/oscar/oscar.c:4336
 msgid "Online Since"
 msgstr "У мережі з"
 
-#: src/protocols/oscar/oscar.c:4254 src/protocols/yahoo/yahoo_profile.c:1118
+#: src/protocols/oscar/oscar.c:4341 src/protocols/yahoo/yahoo_profile.c:1125
 msgid "Member Since"
 msgstr "Член з"
 
-#: src/protocols/oscar/oscar.c:4338
+#: src/protocols/oscar/oscar.c:4425
 msgid "Your AIM connection may be lost."
 msgstr "Ваше з'єднання AIM можливо буде розірване."
 
 #. The conversion failed!
-#: src/protocols/oscar/oscar.c:4524
+#: src/protocols/oscar/oscar.c:4611
 msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
@@ -8403,11 +8457,11 @@ msgstr ""
 "[Не вдається відобразити повідомлення від цього користувача, тому що воно "
 "містить недопустимі символи.]"
 
-#: src/protocols/oscar/oscar.c:4744
+#: src/protocols/oscar/oscar.c:4836
 msgid "Rate limiting error."
 msgstr "Помилка обмеження межі."
 
-#: src/protocols/oscar/oscar.c:4745
+#: src/protocols/oscar/oscar.c:4837
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
@@ -8415,116 +8469,116 @@ msgstr ""
 "Не вдається виконати останню дію, тому що ви перевищили межу. Зачекайте 10 "
 "секунд та спробуйте знову."
 
-#: src/protocols/oscar/oscar.c:4808
+#: src/protocols/oscar/oscar.c:4900
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
 msgstr ""
 "Вас від'єднано, тому що ви увійшли з цим ідентифікатором з іншого місця."
 
-#: src/protocols/oscar/oscar.c:4810
+#: src/protocols/oscar/oscar.c:4902
 msgid "You have been signed off for an unknown reason."
 msgstr "Вас від'єднано через невідому причину."
 
-#: src/protocols/oscar/oscar.c:4841
+#: src/protocols/oscar/oscar.c:4933
 msgid "Finalizing connection"
 msgstr "Завершення встановлення з'єднання"
 
-#: src/protocols/oscar/oscar.c:5124 src/protocols/silc/util.c:541
+#: src/protocols/oscar/oscar.c:5216 src/protocols/silc/util.c:541
 msgid "Mobile Phone"
 msgstr "Мобільний Телефон"
 
-#: src/protocols/oscar/oscar.c:5125
+#: src/protocols/oscar/oscar.c:5217
 msgid "Not specified"
 msgstr "Не вказано"
 
-#: src/protocols/oscar/oscar.c:5126 src/protocols/trepia/trepia.c:282
+#: src/protocols/oscar/oscar.c:5218 src/protocols/trepia/trepia.c:282
 #: src/protocols/trepia/trepia.c:408
 msgid "Female"
 msgstr "Жінка"
 
-#: src/protocols/oscar/oscar.c:5126 src/protocols/trepia/trepia.c:281
+#: src/protocols/oscar/oscar.c:5218 src/protocols/trepia/trepia.c:281
 #: src/protocols/trepia/trepia.c:408
 msgid "Male"
 msgstr "Чоловік"
 
-#: src/protocols/oscar/oscar.c:5142
+#: src/protocols/oscar/oscar.c:5234
 msgid "Personal Web Page"
 msgstr "Особиста веб-сторінка"
 
-#: src/protocols/oscar/oscar.c:5146
+#: src/protocols/oscar/oscar.c:5238
 msgid "Additional Information"
 msgstr "Додаткова інформація"
 
-#: src/protocols/oscar/oscar.c:5151
+#: src/protocols/oscar/oscar.c:5243
 msgid "Home Address"
 msgstr "Домашня адреса"
 
-#: src/protocols/oscar/oscar.c:5155 src/protocols/oscar/oscar.c:5163
+#: src/protocols/oscar/oscar.c:5247 src/protocols/oscar/oscar.c:5255
 msgid "Zip Code"
 msgstr "Поштовий індекс"
 
-#: src/protocols/oscar/oscar.c:5159
+#: src/protocols/oscar/oscar.c:5251
 msgid "Work Address"
 msgstr "Робоча адреса"
 
-#: src/protocols/oscar/oscar.c:5167
+#: src/protocols/oscar/oscar.c:5259
 msgid "Work Information"
 msgstr "Дані про роботу"
 
-#: src/protocols/oscar/oscar.c:5168
+#: src/protocols/oscar/oscar.c:5260
 msgid "Company"
 msgstr "Компанія"
 
-#: src/protocols/oscar/oscar.c:5169
+#: src/protocols/oscar/oscar.c:5261
 msgid "Division"
 msgstr "Відділ"
 
-#: src/protocols/oscar/oscar.c:5170
+#: src/protocols/oscar/oscar.c:5262
 msgid "Position"
 msgstr "Посада"
 
-#: src/protocols/oscar/oscar.c:5172
+#: src/protocols/oscar/oscar.c:5264
 msgid "Web Page"
 msgstr "Веб-сторінка"
 
-#: src/protocols/oscar/oscar.c:5182
+#: src/protocols/oscar/oscar.c:5274
 #, c-format
 msgid "ICQ Info for %s"
 msgstr "ICQ-інформація про %s"
 
-#: src/protocols/oscar/oscar.c:5231
+#: src/protocols/oscar/oscar.c:5323
 msgid "Pop-Up Message"
 msgstr "Спливаюче повідомлення"
 
-#: src/protocols/oscar/oscar.c:5252
+#: src/protocols/oscar/oscar.c:5344
 #, c-format
 msgid "The following screen names are associated with %s"
 msgstr "Наступні ідентифікатори користувача пов'язані з %s"
 
-#: src/protocols/oscar/oscar.c:5256
+#: src/protocols/oscar/oscar.c:5348
 msgid "Search Results"
 msgstr "Результати пошуку"
 
-#: src/protocols/oscar/oscar.c:5273
+#: src/protocols/oscar/oscar.c:5365
 #, c-format
 msgid "No results found for email address %s"
 msgstr "Нічого не знайдено для ел.адреси %s"
 
-#: src/protocols/oscar/oscar.c:5294
+#: src/protocols/oscar/oscar.c:5386
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "Ви повинні отримати ел. пошту із проханням підтвердити %s."
 
-#: src/protocols/oscar/oscar.c:5296
+#: src/protocols/oscar/oscar.c:5388
 msgid "Account Confirmation Requested"
 msgstr "Запитано підтвердження облікового запису"
 
-#: src/protocols/oscar/oscar.c:5327
+#: src/protocols/oscar/oscar.c:5419
 msgid "Error Changing Account Info"
 msgstr "Помилка зміни інформації про обліковий запис"
 
-#: src/protocols/oscar/oscar.c:5330
+#: src/protocols/oscar/oscar.c:5422
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8533,7 +8587,7 @@ msgstr ""
 "Помилка 0x%04x: Не вдається задати формат ідентифікатора облікового запису, "
 "тому що запитаний ідентифікатор відрізняється від оригінального."
 
-#: src/protocols/oscar/oscar.c:5333
+#: src/protocols/oscar/oscar.c:5425
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8542,7 +8596,7 @@ msgstr ""
 "Помилка 0x%04x: Не вдається задати формат ідентифікатора облікового запису, "
 "тому що запитаний ідентифікатор користувача закінчується пробілом."
 
-#: src/protocols/oscar/oscar.c:5336
+#: src/protocols/oscar/oscar.c:5428
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8551,7 +8605,7 @@ msgstr ""
 "Помилка 0x%04x: Не вдається задати формат ідентифікатора облікового запису, "
 "тому що запитаний ідентифікатор користувача занадто довгий."
 
-#: src/protocols/oscar/oscar.c:5339
+#: src/protocols/oscar/oscar.c:5431
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -8560,7 +8614,7 @@ msgstr ""
 "Помилка 0x%04x: Не вдається змінити адресу ел. пошти, тому що вже є "
 "очікуючий запит для цього ідентифікатора."
 
-#: src/protocols/oscar/oscar.c:5342
+#: src/protocols/oscar/oscar.c:5434
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -8569,7 +8623,7 @@ msgstr ""
 "Помилка 0x%04x: Не вдається змінити адресу ел. пошти, тому що надана адреса "
 "має забагато ідентифікаторів користувачів, пов'язаних з нею."
 
-#: src/protocols/oscar/oscar.c:5345
+#: src/protocols/oscar/oscar.c:5437
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
@@ -8578,12 +8632,12 @@ msgstr ""
 "Помилка 0x%04x: Не вдається змінити адресу ел. пошти назви облікового "
 "запису, тому що вказана адреса помилкова."
 
-#: src/protocols/oscar/oscar.c:5348
+#: src/protocols/oscar/oscar.c:5440
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "Помилка 0x%04x: Помилка невідома."
 
-#: src/protocols/oscar/oscar.c:5358
+#: src/protocols/oscar/oscar.c:5450
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -8592,27 +8646,27 @@ msgstr ""
 "Ваш ідентифікатор користувача наразі форматований наступним чином:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:5359 src/protocols/oscar/oscar.c:5366
+#: src/protocols/oscar/oscar.c:5451 src/protocols/oscar/oscar.c:5458
 msgid "Account Info"
 msgstr "Дані про обліковий запис"
 
-#: src/protocols/oscar/oscar.c:5364
+#: src/protocols/oscar/oscar.c:5456
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "Адресою ел.пошти для %s є %s"
 
-#: src/protocols/oscar/oscar.c:5429
+#: src/protocols/oscar/oscar.c:5521
 msgid ""
 "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
 "Ваше зображення не було відправлене. Ви повинні мати пряме з'єднання для "
 "надсилання повідомлень."
 
-#: src/protocols/oscar/oscar.c:5557
+#: src/protocols/oscar/oscar.c:5649
 msgid "Unable to set AIM profile."
 msgstr "Не вдається встановити профіль АІМ."
 
-#: src/protocols/oscar/oscar.c:5558
+#: src/protocols/oscar/oscar.c:5650
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -8622,7 +8676,7 @@ msgstr ""
 "процедура реєстрації. Ваш профіль залишаться не встановленим; спробуйте "
 "встановити знову коли ви будете з'єднані."
 
-#: src/protocols/oscar/oscar.c:5585
+#: src/protocols/oscar/oscar.c:5677
 #, c-format
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
@@ -8634,19 +8688,19 @@ msgstr[0] "Максимальна довжина профілю складає %
 msgstr[1] "Максимальна довжина профілю складає %d байти. Gaim обрізав його."
 msgstr[2] "Максимальна довжина профілю складає %d байтів. Gaim обрізав його."
 
-#: src/protocols/oscar/oscar.c:5590
+#: src/protocols/oscar/oscar.c:5682
 msgid "Profile too long."
 msgstr "Профіль занадто довгий."
 
-#: src/protocols/oscar/oscar.c:5606 src/protocols/oscar/oscar.c:6896
+#: src/protocols/oscar/oscar.c:5698 src/protocols/oscar/oscar.c:6994
 msgid "Visible"
 msgstr "Видимий"
 
-#: src/protocols/oscar/oscar.c:5624
+#: src/protocols/oscar/oscar.c:5716
 msgid "Unable to set AIM away message."
 msgstr "Не вдається встановити повідомлення про відсутність для АІМ."
 
-#: src/protocols/oscar/oscar.c:5625
+#: src/protocols/oscar/oscar.c:5717
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -8656,7 +8710,7 @@ msgstr ""
 "була завершенапроцедура реєстрації. Ви залишаєтесь у \"теперішньому\" стані; "
 "спробуйте встановити знову, коли ви будете з'єднані."
 
-#: src/protocols/oscar/oscar.c:5665
+#: src/protocols/oscar/oscar.c:5757
 #, c-format
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
@@ -8670,11 +8724,11 @@ msgstr[1] ""
 msgstr[2] ""
 "Максимальна довжина повідмлення складає %d байтів. Gaim обрізав його."
 
-#: src/protocols/oscar/oscar.c:5670
+#: src/protocols/oscar/oscar.c:5762
 msgid "Away message too long."
 msgstr "Повідомлення про відсутність надто довге."
 
-#: src/protocols/oscar/oscar.c:5747
+#: src/protocols/oscar/oscar.c:5839
 #, c-format
 msgid ""
 "Could not add the buddy %s because the screen name is invalid.  Screen names "
@@ -8685,16 +8739,16 @@ msgstr ""
 "неправильний. Ідентифікатори користувачів повинні містити лише літери, числа "
 "та пробіли, або містити лише цифри."
 
-#: src/protocols/oscar/oscar.c:5749 src/protocols/oscar/oscar.c:6198
-#: src/protocols/oscar/oscar.c:6212
+#: src/protocols/oscar/oscar.c:5841 src/protocols/oscar/oscar.c:6296
+#: src/protocols/oscar/oscar.c:6310
 msgid "Unable To Add"
 msgstr "Не вдається додати"
 
-#: src/protocols/oscar/oscar.c:5910
+#: src/protocols/oscar/oscar.c:6008
 msgid "Unable To Retrieve Buddy List"
 msgstr "Не вдається завантажити список контактів"
 
-#: src/protocols/oscar/oscar.c:5911
+#: src/protocols/oscar/oscar.c:6009
 msgid ""
 "Gaim was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -8704,13 +8758,13 @@ msgstr ""
 "список контактів не втрачений, та вірогідно стане доступним через декілька "
 "годин."
 
-#: src/protocols/oscar/oscar.c:6093 src/protocols/oscar/oscar.c:6094
-#: src/protocols/oscar/oscar.c:6099 src/protocols/oscar/oscar.c:6256
-#: src/protocols/oscar/oscar.c:6257 src/protocols/oscar/oscar.c:6262
+#: src/protocols/oscar/oscar.c:6191 src/protocols/oscar/oscar.c:6192
+#: src/protocols/oscar/oscar.c:6197 src/protocols/oscar/oscar.c:6354
+#: src/protocols/oscar/oscar.c:6355 src/protocols/oscar/oscar.c:6360
 msgid "Orphans"
 msgstr "Завислі рядки"
 
-#: src/protocols/oscar/oscar.c:6196
+#: src/protocols/oscar/oscar.c:6294
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -8719,11 +8773,11 @@ msgstr ""
 "Не вдається додати користувача %s, тому що у вашому списку контактів надто "
 "багато користувачів. Видаліть одного та спробуйте ще раз."
 
-#: src/protocols/oscar/oscar.c:6196 src/protocols/oscar/oscar.c:6210
+#: src/protocols/oscar/oscar.c:6294 src/protocols/oscar/oscar.c:6308
 msgid "(no name)"
 msgstr "(немає імені)"
 
-#: src/protocols/oscar/oscar.c:6210
+#: src/protocols/oscar/oscar.c:6308
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
@@ -8734,7 +8788,7 @@ msgstr ""
 "ймовірна причина - у вашому списку контактів вже максимальна кількість "
 "контактів."
 
-#: src/protocols/oscar/oscar.c:6293
+#: src/protocols/oscar/oscar.c:6391
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -8743,11 +8797,11 @@ msgstr ""
 "Користувач %s дозволив додати його до вашого списку контактів. Бажаєте "
 "додати його?"
 
-#: src/protocols/oscar/oscar.c:6299
+#: src/protocols/oscar/oscar.c:6397
 msgid "Authorization Given"
 msgstr "Авторизацію отримано"
 
-#: src/protocols/oscar/oscar.c:6332
+#: src/protocols/oscar/oscar.c:6430
 #, c-format
 msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
@@ -8758,17 +8812,17 @@ msgstr ""
 "%s"
 
 #. Granted
-#: src/protocols/oscar/oscar.c:6374
+#: src/protocols/oscar/oscar.c:6472
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr "Користувач %s дозволив додати себе до вашого списку контактів."
 
-#: src/protocols/oscar/oscar.c:6375
+#: src/protocols/oscar/oscar.c:6473
 msgid "Authorization Granted"
 msgstr "Авторизацію отримано"
 
 #. Denied
-#: src/protocols/oscar/oscar.c:6378
+#: src/protocols/oscar/oscar.c:6476
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
@@ -8779,80 +8833,80 @@ msgstr ""
 "причини:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:6379
+#: src/protocols/oscar/oscar.c:6477
 msgid "Authorization Denied"
 msgstr "У авторизації відмовлено"
 
-#: src/protocols/oscar/oscar.c:6416 src/protocols/toc/toc.c:1273
+#: src/protocols/oscar/oscar.c:6514 src/protocols/toc/toc.c:1273
 msgid "_Exchange:"
 msgstr "Об_мін:"
 
-#: src/protocols/oscar/oscar.c:6454
+#: src/protocols/oscar/oscar.c:6552
 msgid "Invalid chat name specified."
 msgstr "Вказана неправильна назва розмови."
 
-#: src/protocols/oscar/oscar.c:6543
+#: src/protocols/oscar/oscar.c:6641
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr ""
 "Зображення не було відправлено. Ви не можете надсилати зображення у розмови "
 "AIM."
 
-#: src/protocols/oscar/oscar.c:6669
+#: src/protocols/oscar/oscar.c:6767
 msgid "Away Message"
 msgstr "Повідомлення про відсутність"
 
-#: src/protocols/oscar/oscar.c:6955
+#: src/protocols/oscar/oscar.c:7053
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "Коментар користувача для %s"
 
-#: src/protocols/oscar/oscar.c:6956
+#: src/protocols/oscar/oscar.c:7054
 msgid "Buddy Comment:"
 msgstr "Коментар користувача:"
 
-#: src/protocols/oscar/oscar.c:6975
+#: src/protocols/oscar/oscar.c:7073
 msgid "Edit Buddy Comment"
 msgstr "Змінити коментар користувача"
 
-#: src/protocols/oscar/oscar.c:6981
+#: src/protocols/oscar/oscar.c:7079
 msgid "Get Status Msg"
 msgstr "Отримати повідомлення про стан"
 
-#: src/protocols/oscar/oscar.c:6993
+#: src/protocols/oscar/oscar.c:7091
 msgid "Direct IM"
 msgstr "Пряме з'єднання"
 
-#: src/protocols/oscar/oscar.c:7010
+#: src/protocols/oscar/oscar.c:7108
 msgid "Re-request Authorization"
 msgstr "Повторний запит авторизації"
 
-#: src/protocols/oscar/oscar.c:7040
+#: src/protocols/oscar/oscar.c:7138
 msgid "The new formatting is invalid."
 msgstr "Нове форматування недопустиме."
 
-#: src/protocols/oscar/oscar.c:7041
+#: src/protocols/oscar/oscar.c:7139
 msgid "Screen name formatting can change only capitalization and whitespace."
 msgstr ""
 "Форматування ідентифікатора користувача може впливати лише регістр літер та "
 "пробіли."
 
-#: src/protocols/oscar/oscar.c:7048
+#: src/protocols/oscar/oscar.c:7146
 msgid "New screen name formatting:"
 msgstr "Нове форматування ідентифікатора:"
 
-#: src/protocols/oscar/oscar.c:7100
+#: src/protocols/oscar/oscar.c:7198
 msgid "Change Address To:"
 msgstr "Змінити адресу на:"
 
-#: src/protocols/oscar/oscar.c:7145
+#: src/protocols/oscar/oscar.c:7243
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>ви не очікуєте авторизацію</i>"
 
-#: src/protocols/oscar/oscar.c:7148
+#: src/protocols/oscar/oscar.c:7246
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Чи очікуєте авторизацію від наступних користувачів"
 
-#: src/protocols/oscar/oscar.c:7149
+#: src/protocols/oscar/oscar.c:7247
 msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
@@ -8860,75 +8914,75 @@ msgstr ""
 "Ви можете повторно запитати авторизацію від цих користувачів, клацнувши на "
 "них правою кнопкою миші та вибравши \"Повторний запит авторизації\"."
 
-#: src/protocols/oscar/oscar.c:7166
+#: src/protocols/oscar/oscar.c:7264
 msgid "Find Buddy by E-mail"
 msgstr "Знайти користувача за ел. поштою"
 
-#: src/protocols/oscar/oscar.c:7167
+#: src/protocols/oscar/oscar.c:7265
 msgid "Search for a buddy by e-mail address"
 msgstr "Шукати користувача за адресою ел.пошти"
 
-#: src/protocols/oscar/oscar.c:7168
+#: src/protocols/oscar/oscar.c:7266
 msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "Введіть адресу e-mail адресу, якого ви шукаєте."
 
-#: src/protocols/oscar/oscar.c:7185
+#: src/protocols/oscar/oscar.c:7283
 msgid "Available Message:"
 msgstr "Статусне повідомлення:"
 
-#: src/protocols/oscar/oscar.c:7186
+#: src/protocols/oscar/oscar.c:7284
 msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr "Я зайнятий роботою та сподіваюсь на відволікання мене!"
 
-#: src/protocols/oscar/oscar.c:7267 src/protocols/silc/silc.c:812
+#: src/protocols/oscar/oscar.c:7365 src/protocols/silc/silc.c:812
 msgid "Set User Info..."
 msgstr "Встановити інформацію про користувача..."
 
-#: src/protocols/oscar/oscar.c:7272
+#: src/protocols/oscar/oscar.c:7370
 msgid "Set User Info (URL)..."
 msgstr "Встановити інформацію про користувача(URL)..."
 
-#: src/protocols/oscar/oscar.c:7278
+#: src/protocols/oscar/oscar.c:7376
 msgid "Set Available Message..."
 msgstr "Встановити статусне повідомлення..."
 
-#: src/protocols/oscar/oscar.c:7283 src/protocols/silc/silc.c:808
+#: src/protocols/oscar/oscar.c:7381 src/protocols/silc/silc.c:808
 msgid "Change Password..."
 msgstr "Змінити пароль..."
 
-#: src/protocols/oscar/oscar.c:7288
+#: src/protocols/oscar/oscar.c:7386
 msgid "Change Password (URL)"
 msgstr "Змінити пароль (URL)"
 
-#: src/protocols/oscar/oscar.c:7292
+#: src/protocols/oscar/oscar.c:7390
 msgid "Configure IM Forwarding (URL)"
 msgstr "Налаштувати переправлення повідомлень (URL)"
 
-#: src/protocols/oscar/oscar.c:7301
+#: src/protocols/oscar/oscar.c:7399
 msgid "Format Screen Name..."
 msgstr "Форматувати ідентифікатор користувача..."
 
-#: src/protocols/oscar/oscar.c:7305
+#: src/protocols/oscar/oscar.c:7403
 msgid "Confirm Account"
 msgstr "Підтвердити обліковий запис"
 
-#: src/protocols/oscar/oscar.c:7309
+#: src/protocols/oscar/oscar.c:7407
 msgid "Display Currently Registered Address"
 msgstr "Відобразити поточну зареєстровану адресу"
 
-#: src/protocols/oscar/oscar.c:7313
+#: src/protocols/oscar/oscar.c:7411
 msgid "Change Currently Registered Address..."
 msgstr "Змінити поточну зареєстровану адресу..."
 
-#: src/protocols/oscar/oscar.c:7320
+#: src/protocols/oscar/oscar.c:7418
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Показати контакти, що очікують авторизацію"
 
-#: src/protocols/oscar/oscar.c:7326
+#: src/protocols/oscar/oscar.c:7424
 msgid "Search for Buddy by Email..."
 msgstr "Шукати користувача за адресою ел.пошти..."
 
-#: src/protocols/oscar/oscar.c:7331
+#: src/protocols/oscar/oscar.c:7429
 msgid "Search for Buddy by Information"
 msgstr "Шукати користувача за інформацією"
 
@@ -8942,19 +8996,19 @@ msgstr "Шукати користувача за інформацією"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/oscar/oscar.c:7452 src/protocols/oscar/oscar.c:7454
+#: src/protocols/oscar/oscar.c:7550 src/protocols/oscar/oscar.c:7552
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "Модуль протоколу AIM/ICQ"
 
-#: src/protocols/oscar/oscar.c:7473
+#: src/protocols/oscar/oscar.c:7571
 msgid "Auth host"
 msgstr "Вузол ідентифікації"
 
-#: src/protocols/oscar/oscar.c:7476
+#: src/protocols/oscar/oscar.c:7574
 msgid "Auth port"
 msgstr "Порт ідентифікації"
 
-#: src/protocols/oscar/oscar.c:7479 src/protocols/zephyr/zephyr.c:2760
+#: src/protocols/oscar/oscar.c:7577 src/protocols/zephyr/zephyr.c:2760
 msgid "Encoding"
 msgstr "Кодування"
 
@@ -10588,7 +10642,7 @@ msgstr "Ви вийшли з мережі, тому що ви увійшли з 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Ваше повідомлення Yahoo! не відправлено."
 
-#: src/protocols/yahoo/yahoo.c:936 src/protocols/yahoo/yahoo.c:3439
+#: src/protocols/yahoo/yahoo.c:936 src/protocols/yahoo/yahoo.c:3437
 msgid "Buzz!!"
 msgstr "Buzz!!"
 
@@ -10693,69 +10747,69 @@ msgstr "Не вдається прочитати"
 
 #: src/protocols/yahoo/yahoo.c:2417 src/protocols/yahoo/yahoo.c:2527
 #: src/protocols/yahoo/yahoo.c:2577 src/protocols/yahoo/yahoo.c:2587
-#: src/protocols/yahoo/yahoochat.c:1443 src/protocols/yahoo/yahoochat.c:1504
+#: src/protocols/yahoo/yahoochat.c:1461 src/protocols/yahoo/yahoochat.c:1528
 #: src/protocols/yahoo/ycht.c:518
 msgid "Connection problem"
 msgstr "Проблема зв'язку"
 
-#: src/protocols/yahoo/yahoo.c:2683 src/protocols/yahoo/yahoo.c:3050
-#: src/protocols/yahoo/yahoo.c:3164
+#: src/protocols/yahoo/yahoo.c:2681 src/protocols/yahoo/yahoo.c:3048
+#: src/protocols/yahoo/yahoo.c:3162
 msgid "Not At Home"
 msgstr "Не вдома"
 
-#: src/protocols/yahoo/yahoo.c:2685 src/protocols/yahoo/yahoo.c:3052
-#: src/protocols/yahoo/yahoo.c:3165
+#: src/protocols/yahoo/yahoo.c:2683 src/protocols/yahoo/yahoo.c:3050
+#: src/protocols/yahoo/yahoo.c:3163
 msgid "Not At Desk"
 msgstr "Не за столом"
 
-#: src/protocols/yahoo/yahoo.c:2687 src/protocols/yahoo/yahoo.c:3054
-#: src/protocols/yahoo/yahoo.c:3166
+#: src/protocols/yahoo/yahoo.c:2685 src/protocols/yahoo/yahoo.c:3052
+#: src/protocols/yahoo/yahoo.c:3164
 msgid "Not In Office"
 msgstr "Не у офісі"
 
-#: src/protocols/yahoo/yahoo.c:2691 src/protocols/yahoo/yahoo.c:3058
-#: src/protocols/yahoo/yahoo.c:3168
+#: src/protocols/yahoo/yahoo.c:2689 src/protocols/yahoo/yahoo.c:3056
+#: src/protocols/yahoo/yahoo.c:3166
 msgid "On Vacation"
 msgstr "У відпустці"
 
-#: src/protocols/yahoo/yahoo.c:2695 src/protocols/yahoo/yahoo.c:3062
-#: src/protocols/yahoo/yahoo.c:3170
+#: src/protocols/yahoo/yahoo.c:2693 src/protocols/yahoo/yahoo.c:3060
+#: src/protocols/yahoo/yahoo.c:3168
 msgid "Stepped Out"
 msgstr "Вийшов"
 
-#: src/protocols/yahoo/yahoo.c:2776 src/protocols/yahoo/yahoo.c:2802
+#: src/protocols/yahoo/yahoo.c:2774 src/protocols/yahoo/yahoo.c:2800
 msgid "Not on server list"
 msgstr "Не у списку сервера"
 
-#: src/protocols/yahoo/yahoo.c:2881
+#: src/protocols/yahoo/yahoo.c:2879
 msgid "Join in Chat"
 msgstr "Приєднатися до розмови"
 
-#: src/protocols/yahoo/yahoo.c:2886
+#: src/protocols/yahoo/yahoo.c:2884
 msgid "Initiate Conference"
 msgstr "Створити конференцію"
 
-#: src/protocols/yahoo/yahoo.c:2938
+#: src/protocols/yahoo/yahoo.c:2936
 msgid "Active which ID?"
 msgstr "Активувати який ID?"
 
-#: src/protocols/yahoo/yahoo.c:2947
+#: src/protocols/yahoo/yahoo.c:2945
 msgid "Join who in chat?"
 msgstr "До кого приєднатись у розмові?"
 
-#: src/protocols/yahoo/yahoo.c:2957
+#: src/protocols/yahoo/yahoo.c:2955
 msgid "Activate ID..."
 msgstr "Активізувати ID..."
 
-#: src/protocols/yahoo/yahoo.c:2961
+#: src/protocols/yahoo/yahoo.c:2959
 msgid "Join user in chat..."
 msgstr "Приєднатися до користувача у розмові..."
 
-#: src/protocols/yahoo/yahoo.c:3481
+#: src/protocols/yahoo/yahoo.c:3479
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr "join: &lt;кімната&gt;:  приєднатися до кімнати розмов мережі Yahoo."
 
-#: src/protocols/yahoo/yahoo.c:3485
+#: src/protocols/yahoo/yahoo.c:3483
 msgid "buzz: Buzz a contact to get their attention"
 msgstr "buzz: Подати сигнал контакту, щоб привернути увагу"
 
@@ -10769,97 +10823,102 @@ msgstr "buzz: Подати сигнал контакту, щоб приверн�
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3564 src/protocols/yahoo/yahoo.c:3566
+#: src/protocols/yahoo/yahoo.c:3562 src/protocols/yahoo/yahoo.c:3564
 msgid "Yahoo Protocol Plugin"
 msgstr "Модуль протоколу Yahoo"
 
-#: src/protocols/yahoo/yahoo.c:3585
+#: src/protocols/yahoo/yahoo.c:3583
 msgid "Yahoo Japan"
 msgstr "Yahoo Japan"
 
-#: src/protocols/yahoo/yahoo.c:3588
+#: src/protocols/yahoo/yahoo.c:3586
 msgid "Pager host"
 msgstr "Вузол пейджера"
 
-#: src/protocols/yahoo/yahoo.c:3591
+#: src/protocols/yahoo/yahoo.c:3589
 msgid "Japan Pager host"
 msgstr "Japan вузол пейджера"
 
-#: src/protocols/yahoo/yahoo.c:3594
+#: src/protocols/yahoo/yahoo.c:3592
 msgid "Pager port"
 msgstr "Порт пейджера"
 
-#: src/protocols/yahoo/yahoo.c:3597
+#: src/protocols/yahoo/yahoo.c:3595
 msgid "File transfer host"
 msgstr "Вузол передавання файлів"
 
-#: src/protocols/yahoo/yahoo.c:3600
+#: src/protocols/yahoo/yahoo.c:3598
 msgid "Japan File transfer host"
 msgstr "Japan вузол передавання файлів"
 
-#: src/protocols/yahoo/yahoo.c:3603
+#: src/protocols/yahoo/yahoo.c:3601
 msgid "File transfer port"
 msgstr "Порт передавання файлів"
 
-#: src/protocols/yahoo/yahoo.c:3606
+#: src/protocols/yahoo/yahoo.c:3604
+#, fuzzy
+msgid "Chat Room Locale"
+msgstr "Url переліку розмов"
+
+#: src/protocols/yahoo/yahoo.c:3607
 msgid "Chat Room List Url"
 msgstr "Url переліку розмов"
 
-#: src/protocols/yahoo/yahoo.c:3609
+#: src/protocols/yahoo/yahoo.c:3610
 msgid "YCHT Host"
 msgstr "Вузол YCHT"
 
-#: src/protocols/yahoo/yahoo.c:3612
+#: src/protocols/yahoo/yahoo.c:3613
 msgid "YCHT Port"
 msgstr "Порт YCHT"
 
-#: src/protocols/yahoo/yahoochat.c:199
+#: src/protocols/yahoo/yahoochat.c:206
 #, c-format
 msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
 msgstr "%s відмовив вам у запрошенні до кімнати \"%s\" через \"%s\"."
 
-#: src/protocols/yahoo/yahoochat.c:201
+#: src/protocols/yahoo/yahoochat.c:208
 msgid "Invitation Rejected"
 msgstr "У запрошенні відмовлено"
 
-#: src/protocols/yahoo/yahoochat.c:356
+#: src/protocols/yahoo/yahoochat.c:363
 msgid "Failed to join chat"
 msgstr "Не вдається приєднатися до розмови"
 
-#: src/protocols/yahoo/yahoochat.c:356
+#: src/protocols/yahoo/yahoochat.c:363
 msgid "Maybe the room is full?"
 msgstr "Можливо, він не у кімнаті розмов?"
 
-#: src/protocols/yahoo/yahoochat.c:434
+#: src/protocols/yahoo/yahoochat.c:441
 #, c-format
 msgid "You are now chatting in %s."
 msgstr "Ви розмовляєте у %s."
 
-#: src/protocols/yahoo/yahoochat.c:605
+#: src/protocols/yahoo/yahoochat.c:616
 msgid "Failed to join buddy in chat"
 msgstr "Не вдається приєднатися до користувача у кімнаті"
 
-#: src/protocols/yahoo/yahoochat.c:606
+#: src/protocols/yahoo/yahoochat.c:617
 msgid "Maybe they're not in a chat?"
 msgstr "Можливо, він не у кімнаті розмов?"
 
-#: src/protocols/yahoo/yahoochat.c:1383
+#: src/protocols/yahoo/yahoochat.c:1394
 msgid "Fetching the room list failed."
 msgstr "Не вдається завантажити перелік кімнат."
 
-#: src/protocols/yahoo/yahoochat.c:1429
+#: src/protocols/yahoo/yahoochat.c:1447
 msgid "Voices"
 msgstr "Голос"
 
-#: src/protocols/yahoo/yahoochat.c:1432
+#: src/protocols/yahoo/yahoochat.c:1450
 msgid "Webcams"
 msgstr "Веб-камери"
 
-#: src/protocols/yahoo/yahoochat.c:1443 src/protocols/yahoo/yahoochat.c:1504
+#: src/protocols/yahoo/yahoochat.c:1461 src/protocols/yahoo/yahoochat.c:1528
 msgid "Unable to fetch room list."
 msgstr "Не вдається завантажити перелік кімнат."
 
-#: src/protocols/yahoo/yahoochat.c:1497
+#: src/protocols/yahoo/yahoochat.c:1521
 msgid "User Rooms"
 msgstr "Кімнати користувача"
 
@@ -10868,15 +10927,15 @@ msgstr "Кімнати користувача"
 msgid "<b>IP Address:</b> %s<br>"
 msgstr "<b>IP адреса:</b> %s<br>"
 
-#: src/protocols/yahoo/yahoo_profile.c:749
+#: src/protocols/yahoo/yahoo_profile.c:751
 msgid "Yahoo! Japan Profile"
 msgstr "Профіль Yahoo! Japan"
 
-#: src/protocols/yahoo/yahoo_profile.c:750
+#: src/protocols/yahoo/yahoo_profile.c:752
 msgid "Yahoo! Profile"
 msgstr "Профіль Yahoo!"
 
-#: src/protocols/yahoo/yahoo_profile.c:794
+#: src/protocols/yahoo/yahoo_profile.c:796
 msgid ""
 "Sorry, profiles marked as containing adult content are not supported at this "
 "time."
@@ -10884,7 +10943,7 @@ msgstr ""
 "Профілі, позначені як такі, що містять вміст лише для дорослих, наразі не "
 "підтримуються."
 
-#: src/protocols/yahoo/yahoo_profile.c:796
+#: src/protocols/yahoo/yahoo_profile.c:798
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser"
@@ -10892,49 +10951,54 @@ msgstr ""
 "Якщо ви бажаєте переглянути цей профіль, вам слід відвідати це посилання у "
 "веб-переглядачі"
 
-#: src/protocols/yahoo/yahoo_profile.c:969
+#: src/protocols/yahoo/yahoo_profile.c:976
 msgid "Yahoo! ID"
 msgstr "Yahoo! ID"
 
-#: src/protocols/yahoo/yahoo_profile.c:1043
-#: src/protocols/yahoo/yahoo_profile.c:1047
-#: src/protocols/yahoo/yahoo_profile.c:1051
+#: src/protocols/yahoo/yahoo_profile.c:1050
+#: src/protocols/yahoo/yahoo_profile.c:1054
+#: src/protocols/yahoo/yahoo_profile.c:1058
 msgid "Hobbies"
 msgstr "Хоббі"
 
-#: src/protocols/yahoo/yahoo_profile.c:1061
-#: src/protocols/yahoo/yahoo_profile.c:1065
+#: src/protocols/yahoo/yahoo_profile.c:1068
+#: src/protocols/yahoo/yahoo_profile.c:1072
 msgid "Latest News"
 msgstr "Останні новини"
 
-#: src/protocols/yahoo/yahoo_profile.c:1086
+#: src/protocols/yahoo/yahoo_profile.c:1093
 msgid "Home Page"
 msgstr "Домашня сторінка"
 
-#: src/protocols/yahoo/yahoo_profile.c:1101
+#: src/protocols/yahoo/yahoo_profile.c:1108
 msgid "Cool Link 1"
 msgstr "Цікаве посилання 1"
 
-#: src/protocols/yahoo/yahoo_profile.c:1106
+#: src/protocols/yahoo/yahoo_profile.c:1113
 msgid "Cool Link 2"
 msgstr "Цікаве посилання 2"
 
-#: src/protocols/yahoo/yahoo_profile.c:1110
+#: src/protocols/yahoo/yahoo_profile.c:1117
 msgid "Cool Link 3"
 msgstr "Цікаве посилання 3"
 
 #: src/protocols/yahoo/yahoo_profile.c:1130
+#, fuzzy
+msgid "Last Update"
+msgstr "Останнє оновлення"
+
+#: src/protocols/yahoo/yahoo_profile.c:1136
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "Інформація про користувача %s недоступна"
 
-#: src/protocols/yahoo/yahoo_profile.c:1136
+#: src/protocols/yahoo/yahoo_profile.c:1142
 msgid ""
 "Sorry, this profile seems to be in a language that is not supported at this "
 "time."
 msgstr "Схоже, цей профіль на мові, яка наразі не підтримується."
 
-#: src/protocols/yahoo/yahoo_profile.c:1152
+#: src/protocols/yahoo/yahoo_profile.c:1158
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
 "server-side problem. Please try again later."
@@ -10942,7 +11006,7 @@ msgstr ""
 "Не вдається отримати профіль користувача. Швидше за все, це тимчасова "
 "проблема на сервері. Пізніше спробуйте ще раз."
 
-#: src/protocols/yahoo/yahoo_profile.c:1155
+#: src/protocols/yahoo/yahoo_profile.c:1161
 msgid ""
 "Could not retrieve the user's profile. This most likely means that the user "
 "does not exist; however, Yahoo! sometimes does fail to find a user's "
@@ -10952,7 +11016,7 @@ msgstr ""
 "не існує; проте, Yahoo! іноді не знаходить профіль користувача. Якщо ви "
 "впевнені, що користувач існує, пізніше спробуйте ще раз."
 
-#: src/protocols/yahoo/yahoo_profile.c:1163
+#: src/protocols/yahoo/yahoo_profile.c:1169
 msgid "The user's profile is empty."
 msgstr "Профіль користувача порожній."
 
@@ -11297,3 +11361,10 @@ msgstr[2] "хвилин"
 #: src/util.c:2879
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Помилка відкривання з'єднання.\n"
+
+#~ msgid ""
+#~ "Unable to guess the image type based on the file extension supplied.  "
+#~ "Defaulting to PNG."
+#~ msgstr ""
+#~ "Не вдається визначити тип зображення шляхом аналізу розширення. Типово "
+#~ "вважається тип PNG."

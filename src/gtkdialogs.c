@@ -122,9 +122,9 @@ static struct translator current_translators[] = {
 	{N_("Lithuanian"),			"lt", "Gediminas Čičinskas", "gediminas@parok.lt"},
 	{N_("Macedonian"),			"mk", "Tomislav Markovski", "herrera@users.sf.net"},
 	{N_("Burmese"),             "my_MM", "Minn Myat Soe", "mmyatsoe@gmail.com"},
+	{N_("Norwegian"),			"nb", "Kyrre Ness Sjøbæk", "kyrsjo@users.sf.net"},
 	{N_("Dutch; Flemish"),		"nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Norwegian (Nynorsk)"), "nn", "Kurt-Rune Bergset", ""},
-	{N_("Norwegian"),			"no", "Kyrre Ness Sjøbæk", "kyrsjo@users.sf.net"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@redhat.com"},
 	{N_("Polish"),				"pl", "Krzysztof Foltman, Emil Nowak", "krzysztof@foltman.com;emil5@go2.pl"},
 	{N_("Portuguese"),			"pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
@@ -138,6 +138,7 @@ static struct translator current_translators[] = {
 	{N_("Turkish"),             "tr", "Onur Kucuktunc", "onurcc@gmail.com"},
 	{N_("Ukrainian"),           "uk", "Maxim V. Dziumanenko", "mvd@mylinux.com.ua"},
 	{N_("Vietnamese"),			"vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
+	{N_("Xhosa"),               "xh", "Canonical Ltd", "translations@canonical.com"},
 	{N_("Simplified Chinese"),	"zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
 	{N_("Traditional Chinese"),	"zh_TW", "Ambrose C. Li, Paladin R. Liu", "acli@ada.dhs.org;paladin@ms1.hinet.net"},
 	{NULL, NULL, NULL, NULL}
