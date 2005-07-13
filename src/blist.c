@@ -1046,6 +1046,9 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 		((GaimGroup*)cnode->parent)->totalsize--;
 
 		ops->remove(gaimbuddylist, cnode);
+		/* ops->remove() cleaned up the cnode's ui_data, so we need to
+		 * reinitialize it */
+		ops->new_node(cnode);
 
 		gaim_blist_schedule_save();
 	}
