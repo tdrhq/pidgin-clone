@@ -4,6 +4,8 @@ version 1.5.0:
 	* Ability to set IRC quit message (Lalo Martins)
 	* OSCAR file transfers now work for 2 users behind the same NAT
 	  (Jonathan Clark)
+	* Yahoo! buddy requests to add you to their buddy list now prompt for
+	  authorization.
 
 version 1.4.0 (7/7/2005):
 	* Fix system log start times for some protocols
