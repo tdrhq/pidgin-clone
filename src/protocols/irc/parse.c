@@ -384,7 +384,7 @@ char *irc_mirc2txt (const char *string)
 			result[j++] = result[i];
 		}
 	}
-	result[i] = '\0';
+	result[j] = '\0';
         return result;
 }
 
