@@ -5,7 +5,8 @@ version 1.5.0:
 	* OSCAR file transfers now work for 2 users behind the same NAT
 	  (Jonathan Clark)
 	* Yahoo! buddy requests to add you to their buddy list now prompt for
-	  authorization.
+	  authorization
+	* Added a /clear command for conversations/chats
 
 version 1.4.0 (7/7/2005):
 	* Fix system log start times for some protocols
