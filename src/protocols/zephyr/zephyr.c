@@ -168,7 +168,6 @@ Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *instance, 
 }
 
 char *local_zephyr_normalize(zephyr_account* zephyr,const char *);
-static const char *zephyr_normalize(const GaimAccount *, const char *);
 static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic);
 char* zephyr_tzc_deescape_str(const char *message);
 
