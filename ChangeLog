@@ -7,6 +7,8 @@ version 1.5.0:
 	* Yahoo! buddy requests to add you to their buddy list now prompt for
 	  authorization
 	* Added a /clear command for conversations/chats
+	* Fixed ICQ encoding for messages with offline ICQ users
+	  (Ilya Konstantinov, SF Bug #1179452)
 
 version 1.4.0 (7/7/2005):
 	* Fix system log start times for some protocols
