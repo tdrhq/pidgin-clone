@@ -29,7 +29,7 @@ OutFile "gaim-${GAIM_VERSION}-no-gtk.exe"
 !endif
 !endif
 
-SetCompressor lzma
+SetCompressor /SOLID lzma
 ShowInstDetails show
 ShowUninstDetails show
 SetDateSave on
@@ -67,7 +67,7 @@ SetDateSave on
 
   !define MUI_ICON				".\pixmaps\gaim-install.ico"
   !define MUI_UNICON				".\pixmaps\gaim-install.ico"
-  !define MUI_WELCOMEFINISHPAGE_BITMAP 		".\src\win32\nsis\gaim-intro.bmp"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP		".\src\win32\nsis\gaim-intro.bmp"
   !define MUI_HEADERIMAGE
   !define MUI_HEADERIMAGE_BITMAP		".\src\win32\nsis\gaim-header.bmp"
 
@@ -86,7 +86,7 @@ SetDateSave on
 
 ;--------------------------------
 ;Pages
-  
+
   !define MUI_PAGE_CUSTOMFUNCTION_PRE		preWelcomePage
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE			"./COPYING"
@@ -113,7 +113,7 @@ SetDateSave on
 
 ;--------------------------------
 ;Languages
- 
+
   ;; English goes first because its the default. The rest are
   ;; in alphabetical order (at least the strings actually displayed
   ;; will be).
@@ -189,7 +189,7 @@ SetDateSave on
   ; Only need this if using bzip2 compression
 
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-  !insertmacro MUI_RESERVEFILE_LANGDLL 
+  !insertmacro MUI_RESERVEFILE_LANGDLL
   ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
 
 
@@ -234,7 +234,7 @@ Section -SecUninstallOldGaim
   ; If previous version exists .. remove
   try_uninstall:
     StrCmp $R1 "" done
-      ; Version key started with 0.60a3. Prior versions can't be 
+      ; Version key started with 0.60a3. Prior versions can't be
       ; automaticlly uninstalled.
       StrCmp $R2 "" uninstall_problem
         ; Check if we have uninstall string..
@@ -248,20 +248,20 @@ Section -SecUninstallOldGaim
           IfErrors uninstall_problem
             ; Ready to uninstall..
             ClearErrors
-	    ExecWait '"$TEMP\${GAIM_UNINST_EXE}" /S _?=$R1'
-	    IfErrors exec_error
+            ExecWait '"$TEMP\${GAIM_UNINST_EXE}" /S _?=$R1'
+            IfErrors exec_error
               Delete "$TEMP\${GAIM_UNINST_EXE}"
-	      Goto done
+            Goto done
 
-	    exec_error:
+            exec_error:
               Delete "$TEMP\${GAIM_UNINST_EXE}"
               Goto uninstall_problem
 
         uninstall_problem:
-	  ; In this case just wipe out previous Gaim install dir..
-	  ; We get here because versions 0.60a1 and 0.60a2 don't have versions set in the registry
-	  ; and versions 0.60 and lower did not correctly set the uninstall reg string 
-	  ; (the string was set in quotes)
+          ; In this case just wipe out previous Gaim install dir..
+          ; We get here because versions 0.60a1 and 0.60a2 don't have versions set in the registry
+          ; and versions 0.60 and lower did not correctly set the uninstall reg string
+          ; (the string was set in quotes)
           IfSilent do_wipeout
           MessageBox MB_YESNO $(GAIM_PROMPT_WIPEOUT) IDYES do_wipeout IDNO cancel_install
           cancel_install:
@@ -276,7 +276,7 @@ Section -SecUninstallOldGaim
               DeleteRegKey HKLM ${GAIM_REG_KEY}
 
             uninstall_prob_cont:
-	      RMDir /r "$R1"
+              RMDir /r "$R1"
 
   done:
 SectionEnd
@@ -436,7 +436,7 @@ Section $(GAIM_SECTION_TITLE) SecGaim
         Delete "$INSTDIR\plugins\perl.dll"
         RMDir /r "$INSTDIR\perlmod"
         Goto perl_done
- 
+
       perl_exists:
         IfFileExists "$R2\bin\${PERL_DLL}" 0 perl_remove
         StrCmp $R0 "HKLM" 0 perl_done
@@ -677,22 +677,21 @@ SectionEnd ; end of uninstall section
 ;Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGaim} \
-	$(GAIM_SECTION_DESCRIPTION)
+        $(GAIM_SECTION_DESCRIPTION)
 !ifdef WITH_GTK
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtk} \
-	$(GTK_SECTION_DESCRIPTION)
+        $(GTK_SECTION_DESCRIPTION)
 !endif
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkThemes} \
         $(GTK_THEMES_SECTION_DESCRIPTION)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkNone} \
         $(GTK_NO_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkWimp} \
-	$(GTK_WIMP_THEME_DESC)
+        $(GTK_WIMP_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkBluecurve} \
         $(GTK_BLUECURVE_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkLighthouseblue} \
         $(GTK_LIGHTHOUSEBLUE_THEME_DESC)
-
 
   !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} \
         $(GAIM_SHORTCUTS_SECTION_DESCRIPTION)
@@ -700,6 +699,7 @@ SectionEnd ; end of uninstall section
         $(GAIM_DESKTOP_SHORTCUT_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecStartMenuShortcut} \
         $(GAIM_STARTMENU_SHORTCUT_DESC)
+
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
@@ -729,7 +729,7 @@ Function CanWeInstallATheme
     StrCmp $0 "NONE" 0 themes_cont
       StrCmp $GTK_FOLDER $INSTDIR 0 no_rights
         StrCpy $1 $INSTDIR
-	Goto done
+        Goto done
     themes_cont:
 
     StrCmp $0 "HKCU" hkcu hklm
@@ -755,65 +755,65 @@ FunctionEnd
 
 
 Function CheckUserInstallRights
-	ClearErrors
-	UserInfo::GetName
-	IfErrors Win9x
-	Pop $0
-	UserInfo::GetAccountType
-	Pop $1
+  ClearErrors
+  UserInfo::GetName
+  IfErrors Win9x
+  Pop $0
+  UserInfo::GetAccountType
+  Pop $1
 
-	StrCmp $1 "Admin" 0 +3
-                StrCpy $1 "HKLM"
-		Goto done
-	StrCmp $1 "Power" 0 +3
-                StrCpy $1 "HKLM"
-		Goto done
-	StrCmp $1 "User" 0 +3
-		StrCpy $1 "HKCU"
-		Goto done
-	StrCmp $1 "Guest" 0 +3
-		StrCpy $1 "NONE"
-		Goto done
-	; Unknown error
-	StrCpy $1 "NONE"
-        Goto done
+  StrCmp $1 "Admin" 0 +3
+    StrCpy $1 "HKLM"
+    Goto done
+  StrCmp $1 "Power" 0 +3
+    StrCpy $1 "HKLM"
+    Goto done
+  StrCmp $1 "User" 0 +3
+    StrCpy $1 "HKCU"
+    Goto done
+  StrCmp $1 "Guest" 0 +3
+    StrCpy $1 "NONE"
+    Goto done
+  ; Unknown error
+  StrCpy $1 "NONE"
+  Goto done
 
-	Win9x:
-		StrCpy $1 "HKLM"
+  Win9x:
+    StrCpy $1 "HKLM"
 
-	done:
-        Push $1
+  done:
+    Push $1
 FunctionEnd
 
 Function un.CheckUserInstallRights
-	ClearErrors
-	UserInfo::GetName
-	IfErrors Win9x
-	Pop $0
-	UserInfo::GetAccountType
-	Pop $1
+  ClearErrors
+  UserInfo::GetName
+  IfErrors Win9x
+  Pop $0
+  UserInfo::GetAccountType
+  Pop $1
 
-	StrCmp $1 "Admin" 0 +3
-                StrCpy $1 "HKLM"
-		Goto done
-	StrCmp $1 "Power" 0 +3
-                StrCpy $1 "HKLM"
-		Goto done
-	StrCmp $1 "User" 0 +3
-		StrCpy $1 "HKCU"
-		Goto done
-	StrCmp $1 "Guest" 0 +3
-		StrCpy $1 "NONE"
-		Goto done
-	; Unknown error
-	StrCpy $1 "NONE"
-        Goto done
+  StrCmp $1 "Admin" 0 +3
+    StrCpy $1 "HKLM"
+    Goto done
+  StrCmp $1 "Power" 0 +3
+    StrCpy $1 "HKLM"
+    Goto done
+  StrCmp $1 "User" 0 +3
+    StrCpy $1 "HKCU"
+    Goto done
+  StrCmp $1 "Guest" 0 +3
+    StrCpy $1 "NONE"
+    Goto done
+  ; Unknown error
+  StrCpy $1 "NONE"
+  Goto done
 
-	Win9x:
-		StrCpy $1 "HKLM"
+  Win9x:
+    StrCpy $1 "HKLM"
 
-	done:
-        Push $1
+  done:
+    Push $1
 FunctionEnd
 
 ;
@@ -925,9 +925,9 @@ FunctionEnd
 ;
 Function CheckGtkVersion
   ; Version we want to check
-  Pop $6 
+  Pop $6
   ; Reference version
-  Pop $8 
+  Pop $8
 
   ; Check that the string to check is at least 5 chars long (i.e. x.x.x)
   StrLen $7 $6
@@ -1007,7 +1007,7 @@ Function DoWeNeedGtk
       StrCmp $3 "NONE" no_gtk  ; if no rights.. can't upgrade
       StrCmp $3 "HKCU" 0 upgrade_gtk ; if HKLM can upgrade..
         StrCmp $5 "HKLM" no_gtk upgrade_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
-  
+
       upgrade_gtk:
         StrCpy $2 "1"
         Push $5
@@ -1117,57 +1117,16 @@ Function un.onInit
 
   ; Get stored language prefrence
   ReadRegStr $LANGUAGE HKCU ${GAIM_REG_KEY} "${GAIM_REG_LANG}"
-  
+
 FunctionEnd
 
 Function .onSelChange
-  Push $0
-  Push $2
-
-  StrCpy $2 ${SF_SELECTED}
-  SectionGetFlags ${SecGtkNone} $0
-  IntOp $2 $2 & $0
-  SectionGetFlags ${SecGtkWimp} $0
-  IntOp $2 $2 & $0
-  SectionGetFlags ${SecGtkBluecurve} $0
-  IntOp $2 $2 & $0
-  SectionGetFlags ${SecGtkLighthouseblue} $0
-  IntOp $2 $2 & $0
-  StrCmp $2 0 skip
-    SectionSetFlags ${SecGtkNone} 0
-    SectionSetFlags ${SecGtkWimp} 0
-    SectionSetFlags ${SecGtkBluecurve} 0
-    SectionSetFlags ${SecGtkLighthouseblue} 0
-  skip:
-
-  !insertmacro UnselectSection $GTK_THEME_SEL
- 
-  ; Remember old selection
-  StrCpy $2 $GTK_THEME_SEL
-
-  ; Now go through and see who is checked..
-  SectionGetFlags ${SecGtkNone} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $GTK_THEME_SEL ${SecGtkNone}
-  SectionGetFlags ${SecGtkWimp} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $GTK_THEME_SEL ${SecGtkWimp}
-  SectionGetFlags ${SecGtkBluecurve} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $GTK_THEME_SEL ${SecGtkBluecurve}
-  SectionGetFlags ${SecGtkLighthouseblue} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $GTK_THEME_SEL ${SecGtkLighthouseblue}
-
-  StrCmp $2 $GTK_THEME_SEL 0 +2 ; selection hasn't changed
-    !insertmacro SelectSection $GTK_THEME_SEL
-
-  Pop $2
-  Pop $0
+  !insertmacro StartRadioButtons $GTK_THEME_SEL
+    !insertmacro RadioButton ${SecGtkNone}
+    !insertmacro RadioButton ${SecGtkWimp}
+    !insertmacro RadioButton ${SecGtkBluecurve}
+    !insertmacro RadioButton ${SecGtkLighthouseblue}
+  !insertmacro EndRadioButtons
 FunctionEnd
 
 ; Page enter and exit functions..
@@ -1246,42 +1205,41 @@ FunctionEnd
 ; input, none
 ; output, top of stack (replaces, with e.g. whatever)
 ; modifies no other variables.
- 
 Function GetParameters
- 
+
    Push $R0
    Push $R1
    Push $R2
    Push $R3
-   
+
    StrCpy $R2 1
    StrLen $R3 $CMDLINE
-   
+
    ;Check for quote or space
    StrCpy $R0 $CMDLINE $R2
    StrCmp $R0 '"' 0 +3
      StrCpy $R1 '"'
      Goto loop
    StrCpy $R1 " "
-   
+
    loop:
      IntOp $R2 $R2 + 1
      StrCpy $R0 $CMDLINE 1 $R2
      StrCmp $R0 $R1 get
      StrCmp $R2 $R3 get
      Goto loop
-   
+
    get:
      IntOp $R2 $R2 + 1
      StrCpy $R0 $CMDLINE 1 $R2
      StrCmp $R0 " " get
      StrCpy $R0 $CMDLINE "" $R2
-   
+
    Pop $R3
    Pop $R2
    Pop $R1
    Exch $R0
- 
+
 FunctionEnd
 
  ; StrStr
@@ -1428,8 +1386,7 @@ Function GetWindowsVersion
   lbl_error:
     Strcpy $R0 ''
   lbl_done:
- 
+
   Pop $R1
   Exch $R0
 FunctionEnd
-
