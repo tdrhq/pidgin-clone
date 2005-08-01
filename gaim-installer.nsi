@@ -1,7 +1,7 @@
 ; Installer script for win32 Gaim
 ; Herman Bloggs <hermanator12002@yahoo.com>
 
-; NOTE: this .NSI script is intended for NSIS 2.0 (final release).
+; NOTE: this .NSI script is intended for NSIS 2.08
 ;
 
 ;--------------------------------
@@ -87,7 +87,9 @@ SetDateSave on
 ;--------------------------------
 ;Pages
 
+!ifndef WITH_GTK
   !define MUI_PAGE_CUSTOMFUNCTION_PRE		preWelcomePage
+!endif
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE			"./COPYING"
   !insertmacro MUI_PAGE_COMPONENTS
@@ -450,12 +452,10 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
     Call GetWindowsVersion
     Pop $R2
-    StrCmp $R2 "NT 4.0" 0 nt4_done
+    StrCmp $R2 "NT 4.0" +1 +4
     Delete "$INSTDIR\plugins\libsilc.dll"
     Delete "$INSTDIR\silcclient.dll"
     Delete "$INSTDIR\silc.dll"
-
-    nt4_done:
 
     SetOutPath "$INSTDIR"
 
@@ -755,6 +755,8 @@ FunctionEnd
 
 
 Function CheckUserInstallRights
+  Push $0
+  Push $1
   ClearErrors
   UserInfo::GetName
   IfErrors Win9x
@@ -782,10 +784,14 @@ Function CheckUserInstallRights
     StrCpy $1 "HKLM"
 
   done:
-    Push $1
+    Exch $1
+    Exch
+    Pop $0
 FunctionEnd
 
 Function un.CheckUserInstallRights
+  Push $0
+  Push $1
   ClearErrors
   UserInfo::GetName
   IfErrors Win9x
@@ -813,7 +819,9 @@ Function un.CheckUserInstallRights
     StrCpy $1 "HKLM"
 
   done:
-    Push $1
+    Exch $1
+    Exch
+    Pop $0
 FunctionEnd
 
 ;
@@ -823,7 +831,9 @@ FunctionEnd
 ;   Pop $0 ; 0 - Bad path  1 - Good path
 ;
 Function VerifyDir
-  Pop $0
+  Exch $0
+  Push $1
+  Push $2
   Loop:
     IfFileExists $0 dir_exists
     StrCpy $1 $0 ; save last
@@ -864,7 +874,7 @@ Function VerifyDir
       PathBad1:
       StrCpy $0 "0"
       Push $0
-      Return
+      Goto done
 
     PathGood:
       FileClose $1
@@ -872,15 +882,24 @@ Function VerifyDir
       PathGood1:
       StrCpy $0 "1"
       Push $0
+
+  done:
+  Exch 3 ; The top of the stack contains the output variable
+  Pop $0
+  Pop $2
+  Pop $1
 FunctionEnd
 
 Function .onVerifyInstDir
+  Push $0
   Push $INSTDIR
   Call VerifyDir
   Pop $0
   StrCmp $0 "0" 0 dir_good
     Abort
+
   dir_good:
+  Pop $0
 FunctionEnd
 
 ; GetParent
@@ -917,7 +936,7 @@ FunctionEnd
 ; be equal and the minor value needs to be greater or equal.
 ;
 ; Usage:
-;   Push "2.1.0"  ; Refrence version
+;   Push "2.1.0"  ; Reference version
 ;   Push "2.2.1"  ; Version to check
 ;   Call CheckGtkVersion
 ;   Pop $R0
@@ -925,33 +944,39 @@ FunctionEnd
 ;
 Function CheckGtkVersion
   ; Version we want to check
-  Pop $6
+  Exch $R0
+  Exch
   ; Reference version
-  Pop $8
+  Exch $R1
+  Push $R2
+  Push $R3
 
   ; Check that the string to check is at least 5 chars long (i.e. x.x.x)
-  StrLen $7 $6
-  IntCmp $7 5 0 bad_version
+  StrLen $R2 $R0
+  IntCmp $R2 5 0 bad_version
 
   ; Major version check
-  StrCpy $7 $6 1
-  StrCpy $9 $8 1
-  IntCmp $7 $9 check_minor bad_version bad_version
+  StrCpy $R2 $R0 1
+  StrCpy $R3 $R1 1
+  IntCmp $R2 $R3 check_minor bad_version bad_version
 
   check_minor:
-    StrCpy $7 $6 1 2
-    StrCpy $9 $8 1 2
-    IntCmp $7 $9 good_version bad_version good_version
+    StrCpy $R2 $R0 1 2
+    StrCpy $R3 $R1 1 2
+    IntCmp $R2 $R3 good_version bad_version good_version
 
   bad_version:
-    StrCpy $6 "0"
-    Push $6
+    StrCpy $R0 "0"
     Goto done
 
   good_version:
-    StrCpy $6 "1"
-    Push $6
+    StrCpy $R0 "1"
+
   done:
+    Pop $R3
+    Pop $R2
+    Pop $R1
+    Exch $R0
 FunctionEnd
 
 ;
@@ -978,6 +1003,11 @@ Function DoWeNeedGtk
   ;       - If HKLM ver exists but old, return as if no ver exits.
   ;   - If no rights
   ;     - Check HKLM
+  Push $0
+  Push $2
+  Push $3
+  Push $4
+  Push $5
 
   Call CheckUserInstallRights
   Pop $3
@@ -996,8 +1026,7 @@ Function DoWeNeedGtk
 
   have_gtk:
     ; GTK+ is already installed.. check version.
-    StrCpy $1 ${GTK_VERSION} ; Minimum GTK+ version needed
-    Push $1
+    Push ${GTK_VERSION} ; Minimum GTK+ version needed
     Push $0
     Call CheckGtkVersion
     Pop $2
@@ -1038,22 +1067,34 @@ Function DoWeNeedGtk
     Goto done
 
   done:
+  ; The top two items on the stack are what we want to return
+  Exch 5
+  Pop $0
+  Exch 5
+  Pop $2
+  Pop $5
+  Pop $4
+  Pop $3
 FunctionEnd
 
 Function RunCheck
+  Push $R0
   System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
   IntCmp $R0 0 done
   MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) IDOK
     Abort
   done:
+  Pop $R0
 FunctionEnd
 
 Function un.RunCheck
+  Push $R0
   System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
   IntCmp $R0 0 done
   MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) IDOK
     Abort
   done:
+  Pop $R0
 FunctionEnd
 
 Function .onInit
@@ -1065,6 +1106,11 @@ Function .onInit
   Call RunCheck
   StrCpy $name "Gaim ${GAIM_VERSION}"
   StrCpy $GTK_THEME_SEL ${SecGtkWimp}
+
+  !insertmacro SetSectionFlag ${SecGtkThemes} ${SF_RO}
+  !insertmacro UnselectSection ${SecGtkThemes}
+  !insertmacro SelectSection $GTK_THEME_SEL
+
   StrCpy $ISSILENT "/NOUI"
 
   ; GTK installer has two silent states.. one with Message boxes, one without
@@ -1094,21 +1140,19 @@ Function .onInit
   StrCmp $INSTDIR "" 0 instdir_done
 
   Call CheckUserInstallRights
-  Pop $0
+  Pop $R0
 
-  StrCmp $0 "HKLM" 0 user_dir
+  StrCmp $R0 "HKLM" 0 user_dir
     StrCpy $INSTDIR "$PROGRAMFILES\Gaim"
     Goto instdir_done
   user_dir:
-    StrCpy $2 "$SMPROGRAMS"
-    Push $2
+    Push $SMPROGRAMS
     Call GetParent
     Call GetParent
-    Pop $2
-    StrCpy $INSTDIR "$2\Gaim"
+    Pop $R2
+    StrCpy $INSTDIR "$R2\Gaim"
 
   instdir_done:
-
 FunctionEnd
 
 Function un.onInit
@@ -1131,34 +1175,38 @@ FunctionEnd
 
 ; Page enter and exit functions..
 
+!ifndef WITH_GTK
 Function preWelcomePage
   ; If this installer dosn't have GTK, check whether we need it.
   ; We do this here an not in .onInit because language change in
   ; .onInit doesn't take effect until it is finished.
-  !ifndef WITH_GTK
+    Push $R0
     Call DoWeNeedGtk
-    Pop $0
+    Pop $R0
     Pop $GTK_FOLDER
 
-    StrCmp $0 "0" have_gtk need_gtk
+    StrCmp $R0 "0" have_gtk need_gtk
     need_gtk:
       IfSilent skip_mb
       MessageBox MB_OK $(GTK_INSTALLER_NEEDED) IDOK
       skip_mb:
       Quit
     have_gtk:
-  !endif
+    Pop $R0
 FunctionEnd
+!endif
 
 !ifdef WITH_GTK
 Function preGtkDirPage
+  Push $R0
+  Push $R1
   Call DoWeNeedGtk
-  Pop $0
-  Pop $1
+  Pop $R0
+  Pop $R1
 
-  StrCmp $0 "0" have_gtk
-  StrCmp $0 "1" upgrade_gtk
-  StrCmp $0 "2" no_gtk no_gtk
+  StrCmp $R0 "0" have_gtk
+  StrCmp $R0 "1" upgrade_gtk
+  StrCmp $R0 "2" no_gtk no_gtk
 
   ; Don't show dir selector.. Upgrades are done to existing path..
   have_gtk:
@@ -1166,38 +1214,42 @@ Function preGtkDirPage
     Abort
 
   no_gtk:
-    StrCmp $1 "NONE" 0 no_gtk_cont
+    StrCmp $R1 "NONE" 0 no_gtk_cont
       ; Got no install rights..
       Abort
     no_gtk_cont:
       ; Suggest path..
-      StrCmp $1 "HKCU" 0 hklm1
-        StrCpy $2 "$SMPROGRAMS"
-        Push $2
+      StrCmp $R1 "HKCU" 0 hklm1
+        StrCpy $R0 "$SMPROGRAMS"
+        Push $R0
         Call GetParent
         Call GetParent
-        Pop $2
-        StrCpy $2 "$2\GTK\2.0"
+        Pop $R0
+        StrCpy $R0 "$R0\GTK\2.0"
         Goto got_path
       hklm1:
-        StrCpy $2 "${GTK_DEFAULT_INSTALL_PATH}"
+        StrCpy $R0 "${GTK_DEFAULT_INSTALL_PATH}"
 
    got_path:
      StrCpy $name "GTK+ ${GTK_VERSION}"
-     StrCpy $GTK_FOLDER $2
+     StrCpy $GTK_FOLDER $R0
+     Pop $R1
+     Pop $R0
 FunctionEnd
 
 Function postGtkDirPage
+  Push $R0
   StrCpy $name "Gaim ${GAIM_VERSION}"
   Push $GTK_FOLDER
   Call VerifyDir
-  Pop $0
-  StrCmp $0 "0" 0 done
+  Pop $R0
+  StrCmp $R0 "0" 0 done
     IfSilent skip_mb
     MessageBox MB_OK $(GTK_BAD_INSTALL_PATH) IDOK
     skip_mb:
     Abort
   done:
+  Pop $R0
 FunctionEnd
 !endif
 
@@ -1291,18 +1343,20 @@ FunctionEnd
 ; /L=Language e.g.: /L=1033
 ;
 Function ParseParameters
+  Push $R0
   IntOp $LANG_IS_SET 0 + 0
   Call GetParameters
-  Pop $R0
-  Push $R0
+  ;Pop $R0
+  ;Push $R0
   Push "L="
   Call StrStr
-  Pop $R1
-  StrCmp $R1 "" next
-  StrCpy $R1 $R1 4 2 ; Strip first 2 chars of string
-  StrCpy $LANGUAGE $R1
+  Pop $R0
+  StrCmp $R0 "" next
+  StrCpy $R0 $R0 4 2 ; Strip first 2 chars of string
+  StrCpy $LANGUAGE $R0
   IntOp $LANG_IS_SET 0 + 1
   next:
+  Pop $R0
 FunctionEnd
 
 ; GetWindowsVersion
