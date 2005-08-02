@@ -12,6 +12,7 @@ Var GTK_THEME_SEL
 Var LANG_IS_SET
 Var ISSILENT
 Var STARTUP_RUN_KEY
+Var SPELLCHECK_SEL
 
 ;--------------------------------
 ;Configuration
@@ -61,6 +62,9 @@ SetDateSave on
 !define GTK_THEME_DIR				"..\gtk_installer\gtk_themes"
 !define GTK_DEFAULT_THEME_GTKRC_DIR		"share\themes\Default\gtk-2.0"
 !define GTK_DEFAULT_THEME_ENGINE_DIR		"lib\gtk-2.0\2.4.0\engines"
+
+!define ASPELL_REG_KEY				"SOFTWARE\Aspell"
+!define DOWNLOADER_URL				"http://gaim.sourceforge.net/win32/download_redir.php"
 
 ;--------------------------------
 ;Modern UI Configuration
@@ -559,6 +563,100 @@ SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
 SubSectionEnd
 
 ;--------------------------------
+;Spell Checking
+
+SubSection /e $(GAIM_SPELLCHECK_SECTION_TITLE) SecSpellCheck
+  Section /o $(GAIM_SPELLCHECK_BRETON) SecSpellCheckBreton
+    Push ${SecSpellCheckBreton}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_CATALAN) SecSpellCheckCatalan
+    Push ${SecSpellCheckCatalan}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_CZECH) SecSpellCheckCzech
+    Push ${SecSpellCheckCzech}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_WELSH) SecSpellCheckWelsh
+    Push ${SecSpellCheckWelsh}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_DANISH) SecSpellCheckDanish
+    Push ${SecSpellCheckDanish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_GERMAN) SecSpellCheckGerman
+    Push ${SecSpellCheckGerman}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_GREEK) SecSpellCheckGreek
+    Push ${SecSpellCheckGreek}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_ENGLISH) SecSpellCheckEnglish
+    Push ${SecSpellCheckEnglish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_ESPERANTO) SecSpellCheckEsperanto
+    Push ${SecSpellCheckEsperanto}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_SPANISH) SecSpellCheckSpanish
+    Push ${SecSpellCheckSpanish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_FAROESE) SecSpellCheckFaroese
+    Push ${SecSpellCheckFaroese}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_FRENCH) SecSpellCheckFrench
+    Push ${SecSpellCheckFrench}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_ITALIAN) SecSpellCheckItalian
+    Push ${SecSpellCheckItalian}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_DUTCH) SecSpellCheckDutch
+    Push ${SecSpellCheckDutch}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_NORWEGIAN) SecSpellCheckNorwegian
+    Push ${SecSpellCheckNorwegian}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_POLISH) SecSpellCheckPolish
+    Push ${SecSpellCheckPolish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_PORTUGUESE) SecSpellCheckPortuguese
+    Push ${SecSpellCheckPortuguese}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_ROMANIAN) SecSpellCheckRomanian
+    Push ${SecSpellCheckRomanian}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_RUSSIAN) SecSpellCheckRussian
+    Push ${SecSpellCheckRussian}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_SLOVAK) SecSpellCheckSlovak
+    Push ${SecSpellCheckSlovak}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_SWEDISH) SecSpellCheckSwedish
+    Push ${SecSpellCheckSwedish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_UKRAINIAN) SecSpellCheckUkrainian
+    Push ${SecSpellCheckUkrainian}
+    Call InstallAspellAndDict
+  SectionEnd
+SubSectionEnd
+
+;--------------------------------
 ;Uninstaller Section
 
 
@@ -700,6 +798,52 @@ SectionEnd ; end of uninstall section
   !insertmacro MUI_DESCRIPTION_TEXT ${SecStartMenuShortcut} \
         $(GAIM_STARTMENU_SHORTCUT_DESC)
 
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheck} \
+        $(GAIM_SPELLCHECK_SECTION_DESCRIPTION)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckBreton} \
+        "$(GAIM_SPELLCHECK_BRETON) (862kb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckCatalan} \
+        "$(GAIM_SPELLCHECK_CATALAN) (3.9Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckCzech} \
+        "$(GAIM_SPELLCHECK_CZECH) (17Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckWelsh} \
+        "$(GAIM_SPELLCHECK_WELSH) (4.2Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckDanish} \
+        "$(GAIM_SPELLCHECK_DANISH) (6.9Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckGerman} \
+        "$(GAIM_SPELLCHECK_GERMAN) (5.4Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckGreek} \
+        "$(GAIM_SPELLCHECK_GREEK) (7.1Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckEnglish} \
+        "$(GAIM_SPELLCHECK_ENGLISH) (2.3Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckEsperanto} \
+        "$(GAIM_SPELLCHECK_ESPERANTO) (5.7Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSpanish} \
+        "$(GAIM_SPELLCHECK_SPANISH) (7.0Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckFaroese} \
+        "$(GAIM_SPELLCHECK_FAROESE) (913kb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckFrench} \
+        "$(GAIM_SPELLCHECK_FRENCH) (9.3Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckItalian} \
+        "$(GAIM_SPELLCHECK_ITALIAN) (770kb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckDutch} \
+        "$(GAIM_SPELLCHECK_DUTCH) (3.7Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckNorwegian} \
+        "$(GAIM_SPELLCHECK_NORWEGIAN) (3.2Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckPolish} \
+        "$(GAIM_SPELLCHECK_POLISH) (9.3Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckPortuguese} \
+        "$(GAIM_SPELLCHECK_PORTUGUESE) (5.5Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckRomanian} \
+        "$(GAIM_SPELLCHECK_ROMANIAN) (906kb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckRussian} \
+        "$(GAIM_SPELLCHECK_RUSSIAN) (11Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSlovak} \
+        "$(GAIM_SPELLCHECK_SLOVAK) (8.0Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSwedish} \
+        "$(GAIM_SPELLCHECK_SWEDISH) (2.2Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckUkrainian} \
+        "$(GAIM_SPELLCHECK_UKRAINIAN) (12Mb)"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
@@ -1098,6 +1242,7 @@ Function un.RunCheck
 FunctionEnd
 
 Function .onInit
+  Push $R0
   System::Call 'kernel32::CreateMutexA(i 0, i 0, t "gaim_installer_running") i .r1 ?e'
   Pop $R0
   StrCmp $R0 0 +3
@@ -1106,10 +1251,16 @@ Function .onInit
   Call RunCheck
   StrCpy $name "Gaim ${GAIM_VERSION}"
   StrCpy $GTK_THEME_SEL ${SecGtkWimp}
+  StrCpy $SPELLCHECK_SEL ""
 
   !insertmacro SetSectionFlag ${SecGtkThemes} ${SF_RO}
   !insertmacro UnselectSection ${SecGtkThemes}
   !insertmacro SelectSection $GTK_THEME_SEL
+  !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
+  !insertmacro UnselectSection ${SecSpellCheck}
+
+  ;Mark the dictionaries that are already installed as readonly
+  Call SelectAndDisableInstalledDictionaries
 
   StrCpy $ISSILENT "/NOUI"
 
@@ -1153,6 +1304,7 @@ Function .onInit
     StrCpy $INSTDIR "$R2\Gaim"
 
   instdir_done:
+  Pop $R0
 FunctionEnd
 
 Function un.onInit
@@ -1164,13 +1316,72 @@ Function un.onInit
 
 FunctionEnd
 
+; This is a modified StartRadioButtons (from Sections.nsh)
+; The only difference is that it allows for nothing in the group to be selected
+; In that case, the default variable should be set to ""
+!macro StartRadioButtonsUnselectable var
+
+  !define StartRadioButtons_Var "${var}"
+
+  Push $R0
+  Push $R1
+
+   ;If we have no selection, don't try to unselect it
+   StrCmp "${StartRadioButtons_Var}" "" +4
+   SectionGetFlags "${StartRadioButtons_Var}" $R0
+   IntOp $R1 $R0 & ${SF_SELECTED}
+   IntOp $R0 $R0 & ${SECTION_OFF}
+   SectionSetFlags "${StartRadioButtons_Var}" $R0
+
+   ; If the previous value isn't currently selected,
+   ; we don't want to select it at the end
+   IntCmp $R1 ${SF_SELECTED} +2
+   StrCpy "${StartRadioButtons_Var}" ""
+
+   StrCpy $R1 "${StartRadioButtons_Var}"
+
+!macroend
+
 Function .onSelChange
+  Push $0
+  Push $1
+  Push $2
+
   !insertmacro StartRadioButtons $GTK_THEME_SEL
     !insertmacro RadioButton ${SecGtkNone}
     !insertmacro RadioButton ${SecGtkWimp}
     !insertmacro RadioButton ${SecGtkBluecurve}
     !insertmacro RadioButton ${SecGtkLighthouseblue}
   !insertmacro EndRadioButtons
+
+  ; Check that at most one of the non-readonly spelling dictionaries are selected
+  ; We can't use $R0 or $R1 in this block since they're used in the macros
+  !insertmacro StartRadioButtonsUnselectable $SPELLCHECK_SEL
+    ; Start with the first language dictionary
+    IntOp $2 ${SecSpellCheck} + 1
+
+    start_spellcheck_radio:
+    SectionGetFlags $2 $0
+
+    IntOp $1 $0 & ${SF_SECGRPEND}
+    ; If it is the end of the section group, stop
+    IntCmp $1 ${SF_SECGRPEND} end_spellcheck_radio
+
+    IntOp $0 $0 & ${SF_RO}
+    IntCmp $0 ${SF_RO} after_button_insert
+    ; If !readonly, then it is part of the radiobutton group
+    !insertmacro RadioButton $2
+    after_button_insert:
+
+    IntOp $2 $2 + 1 ;Advance to the next section
+    Goto start_spellcheck_radio
+
+    end_spellcheck_radio:
+  !insertmacro EndRadioButtons
+
+  Pop $2
+  Pop $1
+  Pop $0
 FunctionEnd
 
 ; Page enter and exit functions..
@@ -1441,6 +1652,235 @@ Function GetWindowsVersion
     Strcpy $R0 ''
   lbl_done:
 
+  Pop $R1
+  Exch $R0
+FunctionEnd
+
+; SpellChecker Related Functions
+;-------------------------------
+
+; Convert the a Section index to the language code
+; Push the section index onto the stack and pop off the language code after the call
+; This will set the error code, if no match is found
+Function GetLangCodeForSection
+  ClearErrors
+  Push $R0
+  Exch
+  Pop $R0 ;This is the section index
+
+  IntCmp $R0 ${SecSpellCheckBreton} 0 +3 +3
+  StrCpy $R0 "br"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckCatalan} 0 +3 +3
+  StrCpy $R0 "ca"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckCzech} 0 +3 +3
+  StrCpy $R0 "cs"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckWelsh} 0 +3 +3
+  StrCpy $R0 "cy"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckDanish} 0 +3 +3
+  StrCpy $R0 "da"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckGerman} 0 +3 +3
+  StrCpy $R0 "de"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckGreek} 0 +3 +3
+  StrCpy $R0 "el"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckEnglish} 0 +3 +3
+  StrCpy $R0 "en"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckEsperanto} 0 +3 +3
+  StrCpy $R0 "eo"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckSpanish} 0 +3 +3
+  StrCpy $R0 "es"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckFaroese} 0 +3 +3
+  StrCpy $R0 "fo"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckFrench} 0 +3 +3
+  StrCpy $R0 "fr"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckItalian} 0 +3 +3
+  StrCpy $R0 "it"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckDutch} 0 +3 +3
+  StrCpy $R0 "nl"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckNorwegian} 0 +3 +3
+  StrCpy $R0 "no"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckPolish} 0 +3 +3
+  StrCpy $R0 "pl"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckPortuguese} 0 +3 +3
+  StrCpy $R0 "pt"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckRomanian} 0 +3 +3
+  StrCpy $R0 "ro"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckRussian} 0 +3 +3
+  StrCpy $R0 "ru"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckSlovak} 0 +3 +3
+  StrCpy $R0 "sk"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckSwedish} 0 +3 +3
+  StrCpy $R0 "sv"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckUkrainian} 0 +3 +3
+  StrCpy $R0 "uk"
+  Goto done
+
+  SetErrors
+
+  done:
+  Exch $R0
+FunctionEnd ;GetLangCodeForSection
+
+; Select and Disable any Sections that have currently installed dictionaries
+Function SelectAndDisableInstalledDictionaries
+  Push $R0
+  Push $R1
+  Push $R2
+
+  ; Start with the first language dictionary
+  IntOp $R0 ${SecSpellCheck} + 1
+
+  start:
+  ; If it is the end of the section group, stop
+  SectionGetFlags $R0 $R1
+  IntOp $R2 $R1 & ${SF_SECGRPEND}
+  IntCmp $R2 ${SF_SECGRPEND} done
+
+  Push $R0
+  Call GetLangCodeForSection
+  Pop $R2
+  IfErrors end_loop
+  ReadRegStr $R2 HKLM "${ASPELL_REG_KEY}-$R2" "" ; Check that the dictionary is installed
+  StrCmp $R2 "" end_loop ; If it isn't installed, skip to the next item
+  IntOp $R1 $R1 | ${SF_RO} ; Mark Readonly
+  IntOp $R1 $R1 | ${SF_SELECTED} ; Select
+  SectionSetFlags $R0 $R1
+
+  end_loop:
+  IntOp $R0 $R0 + 1 ;Advance to the next section
+  Goto start
+
+  done:
+  Pop $R2
+  Pop $R1
+  Pop $R0
+FunctionEnd
+
+Function InstallAspellAndDict
+  Push $R0
+  Exch
+  Call GetLangCodeForSection
+  Pop $R0 ;This is the language code
+  Push $R1
+
+  IfErrors done ; We weren't able to convert the section to lang code
+
+  retry:
+    Call InstallAspell
+    Pop $R1
+    StrCmp $R1 "" +3
+    StrCmp $R1 "cancel" done
+    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_ERROR) : $R1" IDRETRY retry IDCANCEL done
+
+  retry_dict:
+    Push $R0
+    Call InstallAspellDictionary
+    Pop $R1
+    StrCmp $R1 "" +3
+    StrCmp $R1 "cancel" done
+    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_DICT_ERROR) : $R1" IDRETRY retry_dict
+
+  done:
+
+  Pop $R1
+  Pop $R0
+FunctionEnd
+
+Function InstallAspell
+  Push $R0
+  Push $R1
+  Push $R2
+
+  check:
+  ClearErrors
+  ReadRegDWORD $R0 HKLM ${ASPELL_REG_KEY} "AspellVersion"
+  IntCmp $R0 15 installed
+
+  ; If this is the check after installation, don't infinite loop on failure
+  StrCmp $R1 "$TEMP\aspell_installer.exe" 0 +3
+    StrCpy $R0 $(ASPELL_INSTALL_FAILED)
+    Goto done
+
+  ; We need to download and install aspell
+  StrCpy $R1 "$TEMP\aspell_installer.exe"
+  StrCpy $R2 "${DOWNLOADER_URL}?version=${GAIM_VERSION}&dl_pkg=aspell_core"
+  DetailPrint "Downloading Aspell... ($R2)"
+  NSISdl::download $R2 $R1
+  Pop $R0
+  StrCmp $R0 "success" +2
+    Goto done
+  ExecWait '"$R1"'
+  Delete $R1
+  Goto check ; Check that it is now installed correctly
+
+  installed: ;Aspell is currently installed, no error message
+    DetailPrint "Aspell is installed"
+    StrCpy $R0 ''
+
+  done:
+  Pop $R2
+  Pop $R1
+  Exch $R0
+FunctionEnd
+
+Function InstallAspellDictionary
+  Push $R0
+  Exch
+  Pop $R0 ;This is the language code
+  Push $R1
+  Push $R2
+  Push $R3
+
+  check:
+  ClearErrors
+  ReadRegStr $R1 HKLM "${ASPELL_REG_KEY}-$R0" ""
+  StrCmp $R1 "" 0 installed
+
+  ; If this is the check after installation, don't infinite loop on failure
+  StrCmp $R1 "$TEMP\aspell_installer-$R0.exe" 0 +3
+    StrCpy $R0 $(ASPELL_INSTALL_FAILED)
+    Goto done
+
+  ; We need to download and install aspell
+  StrCpy $R1 "$TEMP\aspell_dict-$R0.exe"
+  StrCpy $R3 "${DOWNLOADER_URL}?version=${GAIM_VERSION}&dl_pkg=lang_$R0"
+  DetailPrint "Downloading the Aspell $R0 Dictionary... ($R3)"
+  NSISdl::download $R3 $R1
+  Pop $R3
+  StrCmp $R3 "success" +3
+    StrCpy $R0 $R3
+    Goto done
+  ExecWait '"$R1"'
+  Delete $R1
+  Goto check ; Check that it is now installed correctly
+
+  installed: ;The dictionary is currently installed, no error message
+    DetailPrint "Aspell $R0 Dictionary is installed"
+    StrCpy $R0 ''
+
+  done:
+  Pop $R3
+  Pop $R2
   Pop $R1
   Exch $R0
 FunctionEnd
