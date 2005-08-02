@@ -9,6 +9,7 @@ version 1.5.0:
 	* Added a /clear command for conversations/chats
 	* Fixed ICQ encoding for messages with offline ICQ users
 	  (Ilya Konstantinov, SF Bug #1179452)
+	* Default Yahoo! chat roomlist locale to 'us'
 
 version 1.4.0 (7/7/2005):
 	* Fix system log start times for some protocols
