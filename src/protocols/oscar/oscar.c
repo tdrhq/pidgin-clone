@@ -1960,12 +1960,14 @@ static gboolean oscar_clientip_timeout(gpointer data) {
 		oft_info = (struct aim_oft_info*) xfer->data;
 		
 		/* Check to see if the clientip has produced any results */
-		if(oft_info->conn && oft_info->conn->status != AIM_CONN_STATUS_INPROGRESS) {
+		if(!oft_info->success) {
 			msg = g_strdup_printf(_("Transfer of file %s timed out."),gaim_xfer_get_filename(xfer));
 			gaim_xfer_conversation_write(xfer, msg, TRUE);
 			g_free(msg);
 			gaim_xfer_unref(xfer);
 			gaim_xfer_cancel_local(xfer);
+		} else {
+			gaim_debug_info("oscar","connection successful; no action taken\n");
 		}
 	}
 	return FALSE;
@@ -1987,7 +1989,7 @@ static gboolean oscar_verifiedip_timeout(gpointer data) {
 		oft_info = (struct aim_oft_info*) xfer->data;
 		
 		/* Check to see if the verifiedip has produced any results */
-		if(oft_info->conn && oft_info->conn->status != AIM_CONN_STATUS_INPROGRESS) {
+		if(!oft_info->success) {
 			/* gaim_xfer_conversation_write(xfer,
 				"Attempting file transfer via secondary IP address...", FALSE); */
 		
@@ -1999,6 +2001,8 @@ static gboolean oscar_verifiedip_timeout(gpointer data) {
 			xfer->remote_ip = g_strdup(oft_info->clientip);
 			gaim_debug_info("oscar","attempting connection using clientip\n");
 			oscar_xfer_init_recv(xfer);
+		} else {
+			gaim_debug_info("oscar","connection successful; no action taken\n");
 		}
 	}
 	return FALSE;
@@ -3210,10 +3214,23 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	if (!(oft_info = xfer->data))
 		return;
 	if (source < 0) {
-		gaim_xfer_cancel_remote(xfer);
-		return;
+		/* This will also be called 3 minutes after the verifiedip times out.
+		 * However, we might have made a successful connection with the clientip
+		 * so we need to make sure the verifiedip's failures aren't taken out
+		 * on the poor little clientip, which might actually have been a success. */
+		if(oft_info->success) {
+			gaim_debug_info("oscar","fd of 0 for verifiedip, but clientip succeeded; ignoring\n");
+			return;
+		} else {
+			gaim_debug_info("oscar","received source of 0 for fd; aborting transfer\n");
+			gaim_xfer_cancel_remote(xfer);
+			return;
+		}
 	}
 
+	gaim_debug_info("oscar","marking connection as success\n");
+	oft_info->success = TRUE; /* Mark this connection as successful before it times out */
+	
 	xfer->fd = source;
 	oft_info->conn->fd = source;
 
