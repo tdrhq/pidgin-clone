@@ -1,9 +1,18 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 1.4.1cvs:
-	* Chinese (Traditional) win32 installer translation updated 
+	* Chinese (Traditional) win32 installer translation updated
 	  (Encoding fixed) (Paladin R. Liu)
+	* Chinese (Simplified) win32 installer translation updated
+	  (Funda Wang)
+	* Dutch win32 installer translation updated
+	  (Vincent van Adrighem)
+	* French win32 installer translation updated (Eric Boumaour)
+	* Hungarian win32 installer translation updated (Gabor Kelemen)
+	* Norwegian win32 installer translation updated
+	  (Jørgen Vinne Iversen)
 	* Russian gaim.desktop translation updated (Dmitry Beloglazov)
+	* Slovak win32 installer translation updated (Dominik Balogh)
 	* Xhosa translation added (Canonical Ltd)
 
 version 1.4.0 (7/7/2005):
