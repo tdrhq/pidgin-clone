@@ -3,6 +3,9 @@ version 1.5.0:
 	  spellchecking support.
 	* Environmental proxy settings will now default to the Internet Explorer
 	  http proxy, if one is present.
+	* Updated to GTK+ 2.6.9 (rev a).  This includes:
+	  GTK+ 2.6.9, Glib 2.6.6, Pango 1.8.2 and zlib 1.2.3
+	  Upgrading is recommended as zlib 1.2.3 contains security fixes
 
 version 1.4.0 (7/7/2005):
 	* On Windows XP or newer, the non-debug version of gaim will attempt
