@@ -782,12 +782,18 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	MsnSlpLink *slplink;
 	MsnObject *obj;
 	char **tokens;
-	char *smile;
-	const char *who;
+	char *body_str, *smile;
+	const char *body, *who;
+	size_t body_len;
 
 	session = cmdproc->servconn->session;
 
-	tokens = g_strsplit(msg->body, "\t", 2);
+	body = msn_message_get_bin_data(msg, &body_len);
+	body_str = g_strndup(body, body_len);
+
+	tokens = g_strsplit(body_str, "\t", 2);
+
+	g_free(body_str);
 
 	smile = tokens[0];
 	obj = msn_object_new_from_string(gaim_url_decode(tokens[1]));
