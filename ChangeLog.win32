@@ -1,4 +1,4 @@
-version 1.5.0:
+version 1.5.0 (8/11/2005):
 	* The installer now supports downloading and installing
 	  spellchecking support.
 	* Environmental proxy settings will now default to the Internet Explorer
