@@ -1,5 +1,8 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 1.5.1:
+	* No changes
+
 version 1.5.0 (8/11/2005):
 	* Added: gaim_xfer_conversation_write
 	  Writes a messages to a conversation window with the use
