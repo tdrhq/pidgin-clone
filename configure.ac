@@ -174,7 +174,6 @@ for i in $STATIC_PRPLS ; do
 		napster)	static_napster=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
-		rendezvous)	static_rendezvous=yes ;;
 		silc)		static_silc=yes ;;
 		toc)		static_toc=yes ;;
 		trepia)		static_trepia=yes ;;
@@ -190,7 +189,6 @@ AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
 AM_CONDITIONAL(STATIC_NAPSTER, test "x$static_napster" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
-AM_CONDITIONAL(STATIC_RENDEZVOUS, test "x$static_rendezvous" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_TREPIA, test "x$static_trepia" = "xyes")
@@ -217,7 +215,6 @@ for i in $DYNAMIC_PRPLS ; do
 		napster)	dynamic_napster=yes ;;
 		novell)		dynamic_novell=yes ;;
 		oscar)		dynamic_oscar=yes ;;
-		rendezvous)	dynamic_rendezvous=yes ;;
 		silc)		dynamic_silc=yes ;;
 		toc)		dynamic_toc=yes ;;
 		trepia)		dynamic_trepia=yes ;;
@@ -233,7 +230,6 @@ AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NAPSTER, test "x$dynamic_napster" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
-AM_CONDITIONAL(DYNAMIC_RENDEZVOUS, test "x$dynamic_rendezvous" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TREPIA, test "x$dynamic_trepia" = "xyes")
@@ -1232,7 +1228,6 @@ AC_OUTPUT([Makefile
 		   src/protocols/napster/Makefile
 		   src/protocols/novell/Makefile
 		   src/protocols/oscar/Makefile
-		   src/protocols/rendezvous/Makefile
 		   src/protocols/silc/Makefile
 		   src/protocols/toc/Makefile
 		   src/protocols/trepia/Makefile
