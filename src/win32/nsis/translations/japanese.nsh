@@ -1,3 +1,4 @@
+;;  vim:syn=winbatch:encoding=cp932:
 ;;
 ;;  japanese.nsh
 ;;
