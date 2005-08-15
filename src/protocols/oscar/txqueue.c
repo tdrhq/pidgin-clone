@@ -198,9 +198,8 @@ static int aim_send(int fd, const void *buf, size_t count)
 
 	for (cur = 0, left = count; left; ) {
 		int ret;
-
 		ret = send(fd, ((unsigned char *)buf)+cur, left, 0);
-
+		
 		if (ret == -1)
 			return -1;
 		else if (ret == 0)
@@ -209,11 +208,11 @@ static int aim_send(int fd, const void *buf, size_t count)
 		cur += ret;
 		left -= ret;
 	}
-
+	
 	return cur;
 }
 
-static int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
+int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 {
 	int wrote = 0;
 

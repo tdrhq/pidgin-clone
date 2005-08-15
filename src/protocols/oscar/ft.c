@@ -61,6 +61,8 @@
 #include "win32dep.h"
 #endif
 
+#include <debug.h>
+
 /*
  * I really want to switch all our networking code to using IPv6 only,
  * but that really isn't a good idea at all.  Evan S. of Adium says
@@ -654,7 +656,7 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 	return ret;
 }
 
-faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn, const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename)
+faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn, const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename, int send_or_recv, int method, int stage)
 {
 	struct aim_oft_info *new;
 
@@ -667,11 +669,21 @@ faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const f
 	new->sess = sess;
 	if (cookie)
 		memcpy(new->cookie, cookie, 8);
+	else
+		aim_im_makecookie(new->cookie);
 	if (ip)
 		new->clientip = strdup(ip);
+	else
+		new->clientip = NULL;
 	if (sn)
 		new->sn = strdup(sn);
+	else
+		new->sn = NULL;
+	new->method = method;
+	new->send_or_recv = send_or_recv;
+	new->stage = stage;
 	new->port = port;
+	new->xfer_reffed = FALSE;
 	new->success = FALSE;
 	new->fh.totfiles = 1;
 	new->fh.filesleft = 1;
@@ -694,6 +706,25 @@ faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const f
 	sess->oft_info = new;
 
 	return new;
+}
+
+faim_export struct aim_rv_proxy_info *aim_rv_proxy_createinfo(aim_session_t *sess, const fu8_t *cookie,
+	fu16_t port)
+{
+	struct aim_rv_proxy_info *proxy_info;
+	
+	if (!(proxy_info = (struct aim_rv_proxy_info*)calloc(1, sizeof(struct aim_rv_proxy_info))))
+		return NULL;
+	
+	proxy_info->sess = sess;
+	proxy_info->port = port;
+	proxy_info->packet_ver = AIM_RV_PROXY_PACKETVER_DFLT;
+	proxy_info->unknownA = AIM_RV_PROXY_UNKNOWNA_DFLT;
+	
+	if (cookie)
+		memcpy(proxy_info->cookie, cookie, 8);
+	
+	return proxy_info;
 }
 
 /**
@@ -901,6 +932,123 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_
 }
 
 /**
+ * Create a rendezvous "init recv" packet and send it on its merry way.
+ * This is the first packet sent to the proxy server by the second client
+ * involved in this rendezvous proxy session.
+ *
+ * @param sess The session.
+ * @param proxy_info Changable pieces of data for this packet
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
+{
+	aim_bstream_t bs;
+	fu8_t *bs_raw;
+	fu16_t packet_len;
+	fu8_t sn_len;
+	int err;
+	
+	err = 0;
+	
+	if (!proxy_info)
+		return -EINVAL;
+
+	sn_len = strlen(proxy_info->sess->sn);
+	packet_len = 2 + 2	/* packet_len, packet_ver */
+		+ 2 + 4		/* cmd_type,  unknownA */
+		+ 2		/* flags */
+		+ 1 + sn_len	/* Length/value pair for screenname */
+		+ 8		/* ICBM Cookie */
+		+ 2		/* port */
+		+ 2 + 2 + 16;	/* TLV for Filesend capability block */
+	
+	if (!(bs_raw = malloc(packet_len)))
+		return -ENOMEM;
+		
+	aim_bstream_init(&bs, bs_raw, packet_len);
+	aimbs_put16(&bs, packet_len - 2); /* Length includes only packets after length marker */
+	aimbs_put16(&bs, proxy_info->packet_ver);
+	aimbs_put16(&bs, AIM_RV_PROXY_INIT_RECV);
+	aimbs_put32(&bs, proxy_info->unknownA);
+	aimbs_put16(&bs, proxy_info->flags);
+	aimbs_put8(&bs, sn_len);
+	aimbs_putraw(&bs, proxy_info->sess->sn, sn_len);
+	aimbs_put16(&bs, proxy_info->port);
+	aimbs_putraw(&bs, proxy_info->cookie, 8);
+	
+	aimbs_put16(&bs, 0x0001);		/* Type */
+	aimbs_put16(&bs, 16);			/* Length */
+	aim_putcap(&bs, AIM_CAPS_SENDFILE);	/* Value */
+	
+	aim_bstream_rewind(&bs);
+	if (aim_bstream_send(&bs, proxy_info->conn, packet_len) != packet_len)
+		err = errno;
+	proxy_info->conn->lastactivity = time(NULL);
+	
+	free(bs_raw);
+
+	return err;
+}
+
+
+/**
+ * Create a rendezvous "init send" packet and send it on its merry way.
+ * This is the first packet sent to the proxy server by the client
+ * first indicating that this will be a proxied connection
+ *
+ * @param sess The session.
+ * @param proxy_info Changable pieces of data for this packet
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
+{
+	aim_bstream_t bs;
+	fu8_t *bs_raw;
+	fu16_t packet_len;
+	fu8_t sn_len;
+	int err;
+	
+	err = 0;
+	
+	if (!proxy_info)
+		return -EINVAL;
+
+	sn_len = strlen(proxy_info->sess->sn);
+	packet_len = 2 + 2	/* packet_len, packet_ver */
+		+ 2 + 4		/* cmd_type,  unknownA */
+		+ 2		/* flags */
+		+ 1 + sn_len	/* Length/value pair for screenname */
+		+ 8		/* ICBM Cookie */
+		+ 2 + 2 + 16;	/* TLV for Filesend capability block */
+	
+	if (!(bs_raw = malloc(packet_len)))
+		return -ENOMEM;
+		
+	aim_bstream_init(&bs, bs_raw, packet_len);
+	aimbs_put16(&bs, packet_len - 2); /* Length includes only packets after length marker */
+	aimbs_put16(&bs, proxy_info->packet_ver);
+	aimbs_put16(&bs, AIM_RV_PROXY_INIT_SEND);
+	aimbs_put32(&bs, proxy_info->unknownA);
+	aimbs_put16(&bs, proxy_info->flags);
+	aimbs_put8(&bs, sn_len);
+	aimbs_putraw(&bs, proxy_info->sess->sn, sn_len);
+	aimbs_putraw(&bs, proxy_info->cookie, 8);
+	
+	aimbs_put16(&bs, 0x0001);		/* Type */
+	aimbs_put16(&bs, 16);			/* Length */
+	aim_putcap(&bs, AIM_CAPS_SENDFILE);	/* Value */
+	
+	aim_bstream_rewind(&bs);
+	if (aim_bstream_send(&bs, proxy_info->conn, packet_len) != packet_len)
+		err = errno;
+	proxy_info->conn->lastactivity = time(NULL);
+	
+	free(bs_raw);
+
+	return err;
+}
+
+/**
  * Handle incoming data on a rendezvous connection.  This is analogous to the 
  * consumesnac function in rxhandlers.c, and I really think this should probably 
  * be in rxhandlers.c as well, but I haven't finished cleaning everything up yet.
@@ -936,4 +1084,102 @@ faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr
 		aim_conn_close(conn);
 
 	return ret;
+}
+
+/**
+ * Handle incoming data on a rendezvous proxy connection.  This is similar to
+ * aim_rxdispatch_rendezvous above and should probably be kept with that function.
+ *
+ * @param sess The session.
+ * @param fr The frame allocated for the incoming data.
+ * @return Return 0 if the packet was handled correctly, otherwise return the 
+ *         error number.
+ */
+faim_internal struct aim_rv_proxy_info *aim_rv_proxy_read(aim_session_t *sess, aim_conn_t *conn)
+{
+	aim_bstream_t bs_hdr;
+	fu8_t hdr_buf[AIM_RV_PROXY_HDR_LEN];
+	aim_bstream_t bs_body; /* The body (everything but the header) of the packet */
+	fu8_t *body_buf = NULL;
+	fu8_t body_len;
+	
+	char str_ip[30] = {""};
+	fu8_t ip_temp[4];
+	
+	fu16_t len;
+	struct aim_rv_proxy_info *proxy_info;
+	
+	if(!(proxy_info = malloc(sizeof(struct aim_rv_proxy_info))))
+		return NULL;
+
+	aim_bstream_init(&bs_hdr, hdr_buf, AIM_RV_PROXY_HDR_LEN);
+	if (aim_bstream_recv(&bs_hdr, conn->fd, AIM_RV_PROXY_HDR_LEN) == AIM_RV_PROXY_HDR_LEN) {
+		aim_bstream_rewind(&bs_hdr);
+		len = aimbs_get16(&bs_hdr);
+		proxy_info->packet_ver = aimbs_get16(&bs_hdr);
+		proxy_info->cmd_type = aimbs_get16(&bs_hdr);
+		proxy_info->unknownA = aimbs_get32(&bs_hdr);
+		proxy_info->flags = aimbs_get16(&bs_hdr);
+		if(proxy_info->cmd_type == AIM_RV_PROXY_READY) {
+			/* Do a little victory dance
+			 * A ready packet contains no additional information */
+		} else if(proxy_info->cmd_type == AIM_RV_PROXY_ERROR) {
+			if(len == AIM_RV_PROXY_ERROR_LEN - 2) {
+				body_len = AIM_RV_PROXY_ERROR_LEN - AIM_RV_PROXY_HDR_LEN;
+				body_buf = malloc(body_len);
+				aim_bstream_init(&bs_body, body_buf, body_len);
+				if (aim_bstream_recv(&bs_body, conn->fd, body_len) == body_len) {
+					aim_bstream_rewind(&bs_body);
+					proxy_info->err_code = aimbs_get16(&bs_body);
+				} else {
+					faimdprintf(sess, 0, "faim: error reading rv proxy error packet\n");
+					aim_conn_close(conn);
+					free(proxy_info);
+					proxy_info = NULL;
+				}
+			} else {
+				faimdprintf(sess, 0, "faim: invalid length for proxy error packet\n");
+				free(proxy_info);
+				proxy_info = NULL;
+			}
+		} else if(proxy_info->cmd_type == AIM_RV_PROXY_ACK) {
+			if(len == AIM_RV_PROXY_ACK_LEN - 2) {
+				body_len = AIM_RV_PROXY_ACK_LEN - AIM_RV_PROXY_HDR_LEN;
+				body_buf = malloc(body_len);
+				aim_bstream_init(&bs_body, body_buf, body_len);
+				if (aim_bstream_recv(&bs_body, conn->fd, body_len) == body_len) {
+					aim_bstream_rewind(&bs_body);
+					proxy_info->port = aimbs_get16(&bs_body);
+					int i;
+					for(i=0; i<4; i++)
+						ip_temp[i] = aimbs_get8(&bs_body);
+					snprintf(str_ip, sizeof(str_ip), "%hhu.%hhu.%hhu.%hhu",
+						ip_temp[0], ip_temp[1],
+						ip_temp[2], ip_temp[3]);
+					proxy_info->ip = strdup(str_ip);
+				} else {
+					faimdprintf(sess, 0, "faim: error reading rv proxy error packet\n");
+					aim_conn_close(conn);
+					free(proxy_info);
+					proxy_info = NULL;
+				}
+			} else {
+				faimdprintf(sess, 0, "faim: invalid length for proxy error packet\n");
+				free(proxy_info);
+				proxy_info = NULL;
+			}
+		} else {
+			faimdprintf(sess, 0, "faim: unknown type for aim rendezvous proxy packet\n");
+		}	
+	} else {
+		faimdprintf(sess, 0, "faim: error reading header of rv proxy packet\n");
+		aim_conn_close(conn);
+		free(proxy_info);
+		proxy_info = NULL;
+	}
+	if(body_buf) {
+		free(body_buf);
+		body_buf = NULL;
+	}
+	return proxy_info;
 }
