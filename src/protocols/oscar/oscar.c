@@ -1942,8 +1942,9 @@ static GaimXfer *oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
 }
 
 /*
- * We're done shoving raw data through the connection. Send an OFT header
- * with the bytes received filled in to indicate this party's over.
+ * We're done sending/receiving raw data through the connection.
+ * If we're the receiver, send an OFT header with the bytes received
+ * filled in to indicate this party's over.
  */
 static void oscar_xfer_end(GaimXfer *xfer)
 {
@@ -1958,9 +1959,9 @@ static void oscar_xfer_end(GaimXfer *xfer)
 		aim_oft_sendheader(oft_info->sess, AIM_CB_OFT_DONE, oft_info);
 	}
 
+	xfer->data = NULL;
 	aim_conn_kill(oft_info->sess, &oft_info->conn);
 	aim_oft_destroyinfo(oft_info);
-	xfer->data = NULL;
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
 }
 
@@ -1982,8 +1983,7 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 	char *msg = NULL;
 	
 	gaim_debug_info("oscar","AAA - in oscar_xfer_ip_timeout\n");
-	
-	
+
 	xfer = (GaimXfer*) data;
 	if(xfer->data) {
 		oft_info = (struct aim_oft_info*) xfer->data;
@@ -1991,9 +1991,10 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 		/* Check to see if the clientip has produced any results */
 		if(!oft_info->success) {
 			/* This connection has worn out its welcome. Goodbye. */
-			if(oft_info->conn)
+			if(oft_info->conn) {
 				close(oft_info->conn->fd);
-			aim_conn_kill(oft_info->sess, &oft_info->conn);
+				aim_conn_kill(oft_info->sess, &oft_info->conn);
+			}
 		
 			if(oft_info->method == AIM_XFER_DIRECT || oft_info->method == AIM_XFER_REDIR) {		
 				/* If (we're currently using the verified ip)
@@ -2055,11 +2056,11 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 					gaim_xfer_get_filename(xfer));
 				gaim_xfer_conversation_write(xfer, msg, TRUE);
 				g_free(msg);
+				gaim_xfer_cancel_local(xfer);
 				if(oft_info->xfer_reffed) {
 					oft_info->xfer_reffed = FALSE;
 					gaim_xfer_unref(xfer);
 				}
-				gaim_xfer_cancel_local(xfer);
 			} else {
 				gaim_debug_warning("oscar","unknown xfer method encountered in timout\n");
 			}
@@ -2381,6 +2382,7 @@ static void oscar_xfer_proxylogin(gpointer data, gint source, GaimInputCondition
 	
 	if(oft_info->send_or_recv == AIM_XFER_SEND) {
 		if(oft_info->stage == AIM_XFER_PROXY_STG1 || oft_info->stage == AIM_XFER_PROXY_STG3) {
+			
 			gaim_debug_info("oscar","sending INIT SEND for stage 1/3 rv proxied send\n");
 			if( (err = aim_rv_proxy_init_send(proxy_info)) ) {
 				gaim_xfer_error(GAIM_XFER_SEND, xfer->who,
@@ -2458,6 +2460,7 @@ static void oscar_send_file_request(GaimXfer *xfer)
 		oft_info->fh.totsize = gaim_xfer_get_size(xfer);
 		oft_info->fh.size = gaim_xfer_get_size(xfer);
 		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
+		memcpy(&oft_info->fh.bcookie, oft_info->cookie, 8);
 
 		aim_im_sendch2_sendfile_ask(od->sess, oft_info);
 		aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT,
@@ -2605,7 +2608,7 @@ static void oscar_send_file(GaimConnection *gc, const char *who, const char *fil
 	/* Create the oscar-specific data */
 	if (use_rv_proxy) {
 		/* This hostname will be resolved by gaim_proxy_connect */
-		xfer->remote_ip = AIM_RV_PROXY_SERVER_URL;
+		xfer->remote_ip = g_strdup(AIM_RV_PROXY_SERVER_URL);
 		xfer->remote_port = AIM_RV_PROXY_CONNECT_PORT;
 		oft_info = aim_oft_createinfo(od->sess, NULL /*cookie*/, who, 0 /*ip*/, 0, 0, 0, NULL,
 			AIM_XFER_SEND, AIM_XFER_PROXY, AIM_XFER_PROXY_STG1);
@@ -3691,10 +3694,6 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 		aim_conn_addhandler(oft_info->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DONE,
 			oscar_sendfile_done, 0);
 		
-		/* Redirected connections won't love us unless we give them a cookie */
-		if(oft_info->method == AIM_XFER_REDIR)
-			memcpy(&oft_info->fh.bcookie, oft_info->cookie, 8);
-		
 		/* Inform the other user that we are ready to transfer */
 		aim_oft_sendheader(oft_info->sess, AIM_CB_OFT_PROMPT, oft_info);
 	}
@@ -3809,10 +3808,9 @@ static int oscar_sendfile_done(aim_session_t *sess, aim_frame_t *fr, ...) {
 		gaim_debug_warning("oscar","NULL oft_info\n");
 		return 1;
 	}
-	if(oft_info->xfer_reffed) {
-		oft_info->xfer_reffed = FALSE;
-		gaim_xfer_unref(xfer);
-	}
+	
+	if(fh->nrecvd == fh->size)
+		gaim_xfer_set_completed(xfer, TRUE);
 
 	xfer->fd = conn->fd;
 	gaim_xfer_end(xfer);
@@ -4042,7 +4040,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				xfer_method = AIM_XFER_PROXY;
 				proxy_stage = AIM_XFER_PROXY_STG2;
 				/* This hostname will be resolved by gaim_proxy_connect */
-				xfer->remote_ip = AIM_RV_PROXY_SERVER_URL;
+				xfer->remote_ip = g_strdup(AIM_RV_PROXY_SERVER_URL);
 				xfer->remote_port = AIM_RV_PROXY_CONNECT_PORT;
 				proxy_info = aim_rv_proxy_createinfo(od->sess, args->cookie, 0);
 			} else {
@@ -4152,7 +4150,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 					oft_info->verifiedip = NULL;
 					
 					/* This hostname will be resolved in gaim_proxy_connect */
-					xfer->remote_ip = AIM_RV_PROXY_SERVER_URL;
+					xfer->remote_ip = g_strdup(AIM_RV_PROXY_SERVER_URL);
 					xfer->remote_port = AIM_RV_PROXY_CONNECT_PORT;
 					
 					oft_info->proxy_info
