@@ -1148,9 +1148,9 @@ faim_internal struct aim_rv_proxy_info *aim_rv_proxy_read(aim_session_t *sess, a
 				body_buf = malloc(body_len);
 				aim_bstream_init(&bs_body, body_buf, body_len);
 				if (aim_bstream_recv(&bs_body, conn->fd, body_len) == body_len) {
+					int i;
 					aim_bstream_rewind(&bs_body);
 					proxy_info->port = aimbs_get16(&bs_body);
-					int i;
 					for(i=0; i<4; i++)
 						ip_temp[i] = aimbs_get8(&bs_body);
 					snprintf(str_ip, sizeof(str_ip), "%hhu.%hhu.%hhu.%hhu",
