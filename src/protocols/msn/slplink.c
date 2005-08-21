@@ -384,6 +384,7 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		msg->msnslp_header.session_id = slpmsg->session_id;
 		msg->msnslp_header.ack_id = slpmsg->ack_id;
 		msg->msnslp_header.ack_size = slpmsg->ack_size;
+		msg->msnslp_header.ack_sub_id = slpmsg->ack_sub_id;
 	}
 	else if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{

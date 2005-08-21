@@ -1800,34 +1800,6 @@ static gboolean msn_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin)
-{
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
-
-	frame = gaim_plugin_pref_frame_new();
-
-	ppref = gaim_plugin_pref_new_with_label(_("Conversations"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label(
-								"/plugins/prpl/msn/conv_close_notice",
-								_("Display conversation closed notices"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label(
-								"/plugins/prpl/msn/conv_timeout_notice",
-								_("Display timeout notices"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	return frame;
-}
-
-static GaimPluginUiInfo prefs_info = {
-	get_plugin_pref_frame
-};
-
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK,
@@ -1917,7 +1889,7 @@ static GaimPluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
-	&prefs_info,                                      /**< prefs_info     */
+	NULL,                                             /**< prefs_info     */
 	msn_actions
 };
 
@@ -1940,9 +1912,7 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	gaim_prefs_add_none("/plugins/prpl/msn");
-	gaim_prefs_add_bool("/plugins/prpl/msn/conv_close_notice",   TRUE);
-	gaim_prefs_add_bool("/plugins/prpl/msn/conv_timeout_notice", TRUE);
+	gaim_prefs_remove("/plugins/prpl/msn");
 }
 
 GAIM_INIT_PLUGIN(msn, init_plugin, info);

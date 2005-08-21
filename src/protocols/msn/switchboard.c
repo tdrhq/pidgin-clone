@@ -637,19 +637,8 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	swboard = cmdproc->data;
 	user = cmd->params[0];
 
-#if 0
-	if (!(swboard->flag & MSN_SB_FLAG_IM))
-	{
-		/* TODO: This is a helper switchboard. It would be better if
-		 * swboard->conv is NULL, but it isn't. */
-		/* Umm? I think swboard->conv is NULL for all helper switchboards now? */
-		msn_switchboard_destroy(swboard);
-		return;
-	}
-#else
-	if (!(swboard->flag & MSN_SB_FLAG_IM))
+	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
 		gaim_debug_error("msn_switchboard", "bye_cmd: helper bug\n");
-#endif
 
 	if (swboard->conv == NULL)
 	{
@@ -668,45 +657,6 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else
 	{
 		/* This is a switchboard used for a im session */
-
-		char *str = NULL;
-
-		if (cmd->param_count == 2 && atoi(cmd->params[1]) == 1)
-		{
-			if (gaim_prefs_get_bool("/plugins/prpl/msn/conv_timeout_notice"))
-			{
-				str = g_strdup_printf(_("The conversation has become "
-										"inactive and timed out."));
-			}
-		}
-		else
-		{
-			if (gaim_prefs_get_bool("/plugins/prpl/msn/conv_close_notice"))
-			{
-				char *username;
-				GaimAccount *account;
-				GaimBuddy *b;
-
-				account = cmdproc->session->account;
-
-				if ((b = gaim_find_buddy(account, user)) != NULL)
-					username = gaim_escape_html(gaim_buddy_get_alias(b));
-				else
-					username = gaim_escape_html(user);
-
-				str = g_strdup_printf(_("%s has closed the conversation "
-										"window."), username);
-
-				g_free(username);
-			}
-		}
-
-		if (str != NULL)
-		{
-			msn_switchboard_report_user(swboard, GAIM_MESSAGE_SYSTEM, str);
-			g_free(str);
-		}
-
 		msn_switchboard_destroy(swboard);
 	}
 }
