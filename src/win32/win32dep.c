@@ -31,12 +31,7 @@
 
 #include <gtk/gtk.h>
 #include <glib.h>
-#if GLIB_CHECK_VERSION(2,6,0)
-#	include <glib/gstdio.h>
-#else
-#	define g_fopen fopen
-#	define g_unlink unlink
-#endif
+#include <glib/gstdio.h>
 #include <gdk/gdkwin32.h>
 
 #include "gaim.h"
@@ -83,10 +78,7 @@ typedef struct _WGAIM_FLASH_INFO WGAIM_FLASH_INFO;
 /*
  * LOCALS
  */
-static char app_data_dir[MAX_PATH + 1] = "C:";
-static char install_dir[MAXPATHLEN];
-static char lib_dir[MAXPATHLEN];
-static char locale_dir[MAXPATHLEN];
+static char *app_data_dir, *install_dir, *lib_dir, *locale_dir;
 static gboolean blink_turned_on = TRUE;
 
 /*
@@ -234,43 +226,76 @@ FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
 /* Determine Gaim Paths during Runtime */
 
 char* wgaim_install_dir(void) {
-	HMODULE hmod;
-	char* buf;
+	static gboolean initialized = FALSE;
 
-	hmod = GetModuleHandle(NULL);
-	if( hmod == 0 ) {
-		buf = g_win32_error_message( GetLastError() );
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "GetModuleHandle error: %s\n", buf);
-		g_free(buf);
-		return NULL;
-	}
-	if(GetModuleFileName( hmod, (char*)&install_dir, MAXPATHLEN ) == 0) {
-		buf = g_win32_error_message( GetLastError() );
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "GetModuleFileName error: %s\n", buf);
-		g_free(buf);
-		return NULL;
-	}
-	buf = g_path_get_dirname( install_dir );
-	strcpy( (char*)&install_dir, buf );
-	g_free( buf );
+	if (!initialized) {
+		char *tmp = NULL;
+		if (G_WIN32_HAVE_WIDECHAR_API()) {
+			wchar_t winstall_dir[MAXPATHLEN];
+			if (GetModuleFileNameW(NULL, winstall_dir,
+					MAXPATHLEN) > 0) {
+				tmp = g_utf16_to_utf8(winstall_dir, -1,
+					NULL, NULL, NULL);
+			}
+		} else {
+			gchar cpinstall_dir[MAXPATHLEN];
+			if (GetModuleFileNameA(NULL, cpinstall_dir,
+					MAXPATHLEN) > 0) {
+				tmp = g_locale_to_utf8(cpinstall_dir,
+					-1, NULL, NULL, NULL);
+			}
+		}
 
-	return (char*)&install_dir;
+		if (tmp == NULL) {
+			tmp = g_win32_error_message(GetLastError());
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim",
+				"GetModuleFileName error: %s\n", tmp);
+			g_free(tmp);
+			return NULL;
+		} else {
+			install_dir = g_path_get_dirname(tmp);
+			g_free(tmp);
+			initialized = TRUE;
+		}
+	}
+
+	return install_dir;
 }
 
 char* wgaim_lib_dir(void) {
-	strcpy(lib_dir, wgaim_install_dir());
-	g_strlcat(lib_dir, G_DIR_SEPARATOR_S "plugins", sizeof(lib_dir));
-	return (char*)&lib_dir;
+	static gboolean initialized = FALSE;
+
+	if (!initialized) {
+		char *inst_dir = wgaim_install_dir();
+		if (inst_dir != NULL) {
+			lib_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "plugins", inst_dir);
+			initialized = TRUE;
+		} else {
+			return NULL;
+		}
+	}
+
+	return lib_dir;
 }
 
 char* wgaim_locale_dir(void) {
-	strcpy(locale_dir, wgaim_install_dir());
-	g_strlcat(locale_dir, G_DIR_SEPARATOR_S "locale", sizeof(locale_dir));
-	return (char*)&locale_dir;
+	static gboolean initialized = FALSE;
+
+	if (!initialized) {
+		char *inst_dir = wgaim_install_dir();
+		if (inst_dir != NULL) {
+			locale_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "locale", inst_dir);
+			initialized = TRUE;
+		} else {
+			return NULL;
+		}
+	}
+
+	return locale_dir;
 }
 
 char* wgaim_data_dir(void) {
-        return (char*)&app_data_dir;
+        return app_data_dir;
 }
 
 /* Miscellaneous */
@@ -416,9 +441,9 @@ void wgaim_init(HINSTANCE hint) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	char *perlenv;
-        char *newenv;
+	char *newenv;
 
-        gaim_debug_set_ui_ops(&ops);
+	gaim_debug_set_ui_ops(&ops);
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init start\n");
 
 	gaimexe_hInstance = hint;
@@ -439,60 +464,45 @@ void wgaim_init(HINSTANCE hint) {
 		WSACleanup();
 	}
 
-        /* Set Environmental Variables */
-        /* Tell perl where to find Gaim's perl modules */
-        perlenv = (char*)g_getenv("PERL5LIB");
-        newenv = g_strdup_printf("PERL5LIB=%s%s%s%s",
-                                 perlenv ? perlenv : "", 
-                                 perlenv ? ";" : "", 
-                                 wgaim_install_dir(), 
-                                 "\\perlmod;");
-        if(putenv(newenv)<0)
+	/* Set Environmental Variables */
+	/* Tell perl where to find Gaim's perl modules */
+	perlenv = (char*) g_getenv("PERL5LIB");
+	newenv = g_strdup_printf("PERL5LIB=%s%s%s%s",
+		perlenv ? perlenv : "",
+		perlenv ? ";" : "",
+		wgaim_install_dir(),
+		"\\perlmod;");
+	if (putenv(newenv) < 0)
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
-        g_free(newenv);
+	g_free(newenv);
 
-        /* Set app data dir, used by gaim_home_dir */
-        newenv = (char*)g_getenv("GAIMHOME");
-        if(!newenv) {
-#if GLIB_CHECK_VERSION(2,6,0)
+	/* Set app data dir, used by gaim_home_dir */
+	newenv = (char*) g_getenv("GAIMHOME");
+	if (!newenv) {
 		if ((MySHGetFolderPathW = (LPFNSHGETFOLDERPATHW) wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathW"))) {
 			wchar_t utf_16_dir[MAX_PATH +1];
-			char *temp;
 			MySHGetFolderPathW(NULL, CSIDL_APPDATA, NULL,
 					SHGFP_TYPE_CURRENT, utf_16_dir);
-			temp = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
-			g_strlcpy(app_data_dir, temp, sizeof(app_data_dir));
-			g_free(temp);
+			app_data_dir = g_utf16_to_utf8(utf_16_dir, -1, NULL, NULL, NULL);
 		} else if ((MySHGetFolderPathA = (LPFNSHGETFOLDERPATHA) wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA"))) {
 			char locale_dir[MAX_PATH + 1];
-			char *temp;
 			MySHGetFolderPathA(NULL, CSIDL_APPDATA, NULL,
 					SHGFP_TYPE_CURRENT, locale_dir);
-			temp = g_locale_to_utf8(locale_dir, -1, NULL, NULL, NULL);
-			g_strlcpy(app_data_dir, temp, sizeof(app_data_dir));
-			g_free(temp);
+			app_data_dir = g_locale_to_utf8(locale_dir, -1, NULL, NULL, NULL);
+		} else {
+			app_data_dir = g_strdup("C:");
 		}
-#else
-		if ((MySHGetFolderPathA = (LPFNSHGETFOLDERPATHA) wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA"))) {
-			MySHGetFolderPathA(NULL, CSIDL_APPDATA, NULL,
-					SHGFP_TYPE_CURRENT, app_data_dir);
-		}
-#endif
-		else {
-			strcpy(app_data_dir, "C:");
-		}
-        }
-        else {
-                g_strlcpy(app_data_dir, newenv, sizeof(app_data_dir));
-        }
-        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n", app_data_dir);
+	} else {
+		app_data_dir = g_strdup(newenv);
+	}
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n", app_data_dir);
 
 	/* IdleTracker Initialization */
 	if(!wgaim_set_idlehooks())
 		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Failed to initialize idle tracker\n");
 
 	wgaim_gtkspell_init();
-        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
 }
 
 /* Windows Cleanup */
