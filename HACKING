@@ -1,6 +1,13 @@
-The majority of the below was written by Eric Warmenhoven way back in 
+Lots of this is pretty grossly out of date...
+Some of it might still be useful.  For coding style, your
+best bet is to browse through some of the files in src and
+emulate what you see there.
+--Mark
+
+
+The majority of the below was written by Eric Warmenhoven way back in
 antiquity. I have taken the liberty of attempting to PARTIALLY update
-it. I still think its helpful, but use it at your own risk. 
+it. I still think its helpful, but use it at your own risk.
 --Luke
 
 
@@ -40,13 +47,13 @@ You'll now have your normal gaim tree with ./configure and all (which
 your life really simple, learn how CVS works. CVS is your friend.) To make
 a patch, just edit the files right there in that tree (don't bother with
 two trees, or even two copies of the same file). Then when you're ready to
-make your patch, simply run 'cvs diff -u >my.patch' and post it on 
+make your patch, simply run 'cvs diff -u >my.patch' and post it on
 sf.net/projects/gaim in the patches section.
 
-Some Documentation is available on the Gaim api if you run the command 
+Some Documentation is available on the Gaim api if you run the command
 $make docs
 after running ./configure (or ./autogen.sh). You will need doxygen and
-graphiz dot to generate these docs. 
+graphiz dot to generate these docs.
 
 CODING STYLE
 ============
