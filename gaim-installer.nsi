@@ -1,5 +1,6 @@
 ; Installer script for win32 Gaim
-; Herman Bloggs <hermanator12002@yahoo.com>
+; Original Author: Herman Bloggs <hermanator12002@yahoo.com>
+; Updated By: Daniel Atallah <daniel_atallah@yahoo.com>
 
 ; NOTE: this .NSI script is intended for NSIS 2.08
 ;
@@ -1857,7 +1858,7 @@ Function InstallAspellDictionary
   StrCmp $R1 "" 0 installed
 
   ; If this is the check after installation, don't infinite loop on failure
-  StrCmp $R1 "$TEMP\aspell_installer-$R0.exe" 0 +3
+  StrCmp $R1 "$TEMP\aspell_dict-$R0.exe" 0 +3
     StrCpy $R0 $(ASPELL_INSTALL_FAILED)
     Goto done
 
