@@ -342,6 +342,7 @@ AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$build_gevo" = "xyes")
 dnl #######################################################################
 dnl # Check for XScreenSaver
 dnl #######################################################################
+export APBUILD_DISABLE_BOGUS_DETECTOR=1
 if test "x$enable_xss" = "xyes" ; then
 	old_LIBS="$LIBS"
 	LIBS="$LIBS $GTK_LIBS $x_libpath_add"
@@ -369,7 +370,7 @@ else
 	enable_xss=no
 fi
 AC_SUBST(XSS_LIBS)
-
+unset APBUILD_DISABLE_BOGUS_DETECTOR
 
 dnl #######################################################################
 dnl # Check for X session management libs
