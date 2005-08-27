@@ -67,7 +67,7 @@
 #define FT_CLIENTIP_TIMEOUT	1000	/* 5000 */
 #define FT_VERIFIEDIP_TIMEOUT	5000	/* 15000 */
 #define FT_REDIR_TIMEOUT	10000	/* 20000 */	/* Time to wait for redirected transfer */
-#define FT_PROXYIP_TIMEOUT	15000	/* 15000 */
+#define FT_PROXYIP_TIMEOUT	180000	/* 120000 */	/* Time to create a checksum for VERY large files */
 
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
 static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
@@ -2051,8 +2051,11 @@ static gboolean oscar_xfer_ip_timeout(gpointer data) {
 					oscar_xfer_init_recv(xfer);
 				}
 			} else if(oft_info->method == AIM_XFER_PROXY) {
-				/* proxyip timed out */
-				msg = g_strdup_printf(_("Transfer of file %s timed out."),
+				/* proxyip timed out
+				 * Yes, it's a bit odd to ask the user to enable proxied file transfers
+				 * when it's a proxied transfer that timed out. It is possible that a
+				 * stage 1/2 proxied transfer might work when a stage 3 will not. */
+				msg = g_strdup_printf(_("Transfer of file %s timed out.\n Try enabling proxy servers for file transfers in Tools->Preferences->AIM/ICQ."),
 					gaim_xfer_get_filename(xfer));
 				gaim_xfer_conversation_write(xfer, msg, TRUE);
 				g_free(msg);
@@ -2281,7 +2284,11 @@ void oscar_xfer_proxylogin_ack(GaimXfer *xfer) {
 		oft_info->fh.name[63] = '\0';
 		oft_info->fh.totsize = gaim_xfer_get_size(xfer);
 		oft_info->fh.size = gaim_xfer_get_size(xfer);
+		
+		/* Calculating the checksum can take a very long time for large files */
+		gaim_debug_info("oscar","calculating file checksum\n");
 		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
+		gaim_debug_info("oscar","checksum calculated\n");
 	
 		aim_im_sendch2_sendfile_ask(oft_info->sess, oft_info);
 	} else {
@@ -2459,7 +2466,12 @@ static void oscar_send_file_request(GaimXfer *xfer)
 		oft_info->fh.name[63] = '\0';
 		oft_info->fh.totsize = gaim_xfer_get_size(xfer);
 		oft_info->fh.size = gaim_xfer_get_size(xfer);
+		
+		/* Calculating the checksum can take a very long time for large files */
+		gaim_debug_info("oscar","calculating file checksum\n");
 		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
+		gaim_debug_info("oscar","checksum calculated\n");
+
 		memcpy(&oft_info->fh.bcookie, oft_info->cookie, 8);
 
 		aim_im_sendch2_sendfile_ask(od->sess, oft_info);
@@ -4069,7 +4081,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			 * with ICQ sendfile requests) & <HTML> message that is sent with AOL file
 			 * transfers (Note: this latter message is ignored only if whole message
 			 * is <HTML>, but not if it starts with <HTML> */
-			if(message && ( g_ascii_strncasecmp(message,"<ICQ_COOL_FT>",13) == 0
+			if(message && ( g_ascii_strncasecmp(message,"<ICQ_COOL_FT>",13) < 0
 				|| g_ascii_strcasecmp(message,"<HTML>") == 0) ) {
 				gaim_debug_info("oscar","Ignoring file transfer message: %s\n", message);
 				g_free(message);
