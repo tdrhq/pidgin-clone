@@ -92,6 +92,7 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data);
 static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *selection_data, gpointer data);
 static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *text, gpointer data);
 static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean plaintext);
+static void gtk_imhtml_mapped_scroll_to_end(GtkWidget *imhtml, gpointer data);
 
 /* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
@@ -1135,6 +1136,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 			g_free, (GDestroyNotify)gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
 
+	g_signal_connect_after(G_OBJECT(imhtml), "map", G_CALLBACK(gtk_imhtml_mapped_scroll_to_end), imhtml);
 	g_signal_connect(G_OBJECT(imhtml), "size-allocate", G_CALLBACK(gtk_size_allocate_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
@@ -2063,6 +2065,8 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	}
 }
 
+#define SCROLL_TO_END_PENDING "gtk_imhtml_scroll_to_end_pending"
+
 gboolean scroll_idle_cb(gpointer data)
 {
 	GtkTextView *imhtml = data;
@@ -2070,15 +2074,33 @@ gboolean scroll_idle_cb(gpointer data)
 
 	adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
 	gtk_adjustment_set_value(adj, adj->upper - adj->page_size);
+	GTK_IMHTML(imhtml)->scroll_src = 0;
 
 	return FALSE;
 }
 
+static void gtk_imhtml_mapped_scroll_to_end(GtkWidget *imhtml, gpointer data)
+{
+	if (g_object_get_data(G_OBJECT(imhtml), SCROLL_TO_END_PENDING)) {
+		g_object_set_data(G_OBJECT(imhtml), SCROLL_TO_END_PENDING, GINT_TO_POINTER(0));
+		if (GTK_IMHTML(imhtml)->scroll_src)
+			g_source_remove(GTK_IMHTML(imhtml)->scroll_src);
+		
+		GTK_IMHTML(imhtml)->scroll_src = g_idle_add_full(GTK_TEXT_VIEW_PRIORITY_VALIDATE + 10, scroll_idle_cb, imhtml, NULL);
+	}
+}
+
 void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml)
 {
-	if (imhtml->scroll_src)
+	if (imhtml->scroll_src) {
 		g_source_remove(imhtml->scroll_src);
-	imhtml->scroll_src = g_idle_add_full(GTK_TEXT_VIEW_PRIORITY_VALIDATE + 10, scroll_idle_cb, imhtml, NULL);
+		imhtml->scroll_src = 0;
+	}
+
+	if (!GTK_WIDGET(imhtml)->window || !gdk_window_is_visible(GTK_WIDGET(imhtml)->window))
+		g_object_set_data(G_OBJECT(imhtml), SCROLL_TO_END_PENDING, GINT_TO_POINTER(1));
+	else
+		imhtml->scroll_src = g_idle_add_full(GTK_TEXT_VIEW_PRIORITY_VALIDATE + 10, scroll_idle_cb, imhtml, NULL);
 }
 
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
