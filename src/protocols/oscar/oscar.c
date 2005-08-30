@@ -67,7 +67,7 @@
 #define FT_CLIENTIP_TIMEOUT	1000	/* 5000 */
 #define FT_VERIFIEDIP_TIMEOUT	5000	/* 15000 */
 #define FT_REDIR_TIMEOUT	10000	/* 20000 */	/* Time to wait for redirected transfer */
-#define FT_PROXYIP_TIMEOUT	180000	/* 120000 */	/* Time to create a checksum for VERY large files */
+#define FT_PROXYIP_TIMEOUT	300000	/* 120000 */	/* Time to create a checksum for VERY large files */
 
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
 static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
