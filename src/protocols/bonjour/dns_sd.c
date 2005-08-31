@@ -93,7 +93,6 @@ static sw_result HOWL_API _resolve_reply(sw_discovery discovery,
 	sw_int8 value[SW_TEXT_RECORD_MAX_LEN];
 	sw_uint32 value_length;
 
-gaim_debug_info("bonjour", "_resolve_reply\n");
 	sw_discovery_cancel(discovery, oid);
 	
 	// Get the ip as a string
@@ -215,79 +214,51 @@ static sw_result HOWL_API _browser_reply(sw_discovery discovery, sw_discovery_oi
 	return SW_OKAY;
 }
 
-dns_sd_packet* _dns_sd_packet_new()
-{
-	return g_new(dns_sd_packet, 1);
-}
-
-void _dns_sd_send_packet(dns_sd_packet* packet, sw_discovery* session)
+int _dns_sd_publish(BonjourDnsSd* data, PublishType type)
 {
 	sw_text_record dns_data;
-	sw_discovery_publish_id session_id;
-gaim_debug_warning("bonjour", "dns_sd send packet --> Fill data for the service\n");	
+	sw_result publish_result;
+
 	// Fill the data for the service	
 	if(sw_text_record_init(&dns_data) != SW_OKAY){
 		gaim_debug_error("bonjour", "Unable to initialize the data for the mDNS.");
-		return;
+		return -1;
 	}
-	
-	sw_text_record_add_key_and_string_value(dns_data, "txtvers", packet->txtvers);
-	sw_text_record_add_key_and_string_value(dns_data, "version", packet->version);
-	sw_text_record_add_key_and_string_value(dns_data, "1st", packet->first);
-	sw_text_record_add_key_and_string_value(dns_data, "last", packet->last);
-	// sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", itoa(packet->port_p2pj));
+
+	sw_text_record_add_key_and_string_value(dns_data, "txtvers", data->txtvers);
+	sw_text_record_add_key_and_string_value(dns_data, "version", data->version);
+	sw_text_record_add_key_and_string_value(dns_data, "1st", data->first);
+	sw_text_record_add_key_and_string_value(dns_data, "last", data->last);
+	// sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", itoa(data->port_p2pj));
 	sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", BONJOUR_DEFAULT_PORT);
-	sw_text_record_add_key_and_string_value(dns_data, "phsh", packet->phsh);
-	sw_text_record_add_key_and_string_value(dns_data, "status", packet->status);
-	sw_text_record_add_key_and_string_value(dns_data, "msg", packet->message);
-	sw_text_record_add_key_and_string_value(dns_data, "email", packet->email);
-	sw_text_record_add_key_and_string_value(dns_data, "vc", packet->vc);
-	sw_text_record_add_key_and_string_value(dns_data, "jid", packet->jid);
-	sw_text_record_add_key_and_string_value(dns_data, "AIM", packet->AIM);
+	sw_text_record_add_key_and_string_value(dns_data, "phsh", data->phsh);
+	sw_text_record_add_key_and_string_value(dns_data, "status", data->status);
+	sw_text_record_add_key_and_string_value(dns_data, "msg", data->msg);
+	sw_text_record_add_key_and_string_value(dns_data, "email", data->email);
+	sw_text_record_add_key_and_string_value(dns_data, "vc", data->vc);
+	sw_text_record_add_key_and_string_value(dns_data, "jid", data->jid);
+	sw_text_record_add_key_and_string_value(dns_data, "AIM", data->AIM);
 
 	// Publish the service
-	if(sw_discovery_publish(*session, 0, packet->name, ICHAT_SERVICE, NULL, 
-			NULL, packet->port_p2pj, sw_text_record_bytes(dns_data), sw_text_record_len(dns_data), 
-			_publish_reply, NULL, &session_id) != SW_OKAY){
-		gaim_debug_error("bonjour", "Unable to publish or change the status of the _presence._tcp service.");
-		return;
+	switch (type) {
+		case PUBLISH_START:
+			publish_result = sw_discovery_publish(*(data->session), 0, data->name, ICHAT_SERVICE, NULL, 
+								NULL, data->port_p2pj, sw_text_record_bytes(dns_data), sw_text_record_len(dns_data), 
+								_publish_reply, NULL, &(data->session_id));
+			break;
+		case PUBLISH_UPDATE:
+			publish_result = sw_discovery_publish_update(*(data->session),data->session_id,
+								sw_text_record_bytes(dns_data), sw_text_record_len(dns_data));
+			break;
 	}
-	
+	if(publish_result != SW_OKAY){
+		gaim_debug_error("bonjour", "Unable to publish or change the status of the _presence._tcp service.");
+		return -1;
+	}
+
 	// Free the memory used by temp data
 	sw_text_record_fina(dns_data);
-}
 
-void _dns_sd_packet_free(dns_sd_packet* packet)
-{
-	g_free(packet);
-}
-
-int _dns_sd_register(BonjourDnsSd* data)
-{
-	dns_sd_packet* packet;
-	
-	// Create a new dns-sd packet
-	packet = _dns_sd_packet_new();
-	packet->name = data->name;
-	packet->txtvers = data->txtvers;
-	packet->version = data->version;
-	packet->first = data->first;
-	packet->last = data->last;
-	packet->port_p2pj = data->port_p2pj;
-	packet->phsh = data->phsh;
-	packet->status = data->status;
-	packet->message = "";
-	packet->email = data->email;
-	packet->vc = data->vc;
-	packet->jid = data->jid;
-	packet->AIM = data->AIM;
-	
-	// Send the dns-sd packet
-	_dns_sd_send_packet(packet, data->session);
-	
-	// Free the dns-sd packet
-	_dns_sd_packet_free(packet);
-	
 	return 0;
 }
 
@@ -301,7 +272,7 @@ gpointer _dns_sd_wait_for_connections(gpointer data)
 {
 	sw_discovery_oid session_id;
 	BonjourDnsSd* dns_sd_data = (BonjourDnsSd*)data;
-gaim_debug_error("bonjour", "Wait for connections\n");	
+
 	// Advise the daemon that we are waiting for connections
 	if(sw_discovery_browse(*(dns_sd_data->session), 0, ICHAT_SERVICE, NULL, _browser_reply,
 			dns_sd_data->account, &session_id) != SW_OKAY){
@@ -340,31 +311,16 @@ void bonjour_dns_sd_free(BonjourDnsSd* data)
 /**
  * Send a new dns-sd packet updating our status.
  */
-void bonjour_dns_sd_send_status(BonjourDnsSd* data, char* status_dns_sd, const char* status_message)
+void bonjour_dns_sd_send_status(BonjourDnsSd* data, char* status, const char* status_message)
 {
-	dns_sd_packet* packet;
-	
-	// Create a new dns-sd packet
-	packet = _dns_sd_packet_new();
-	packet->name = data->name;
-	packet->txtvers = data->txtvers;
-	packet->version = data->version;
-	packet->first = data->first;
-	packet->last = data->last;
-	packet->port_p2pj = data->port_p2pj;
-	packet->phsh = data->phsh;
-	packet->status = status_dns_sd;
-	packet->message = g_strdup(status_message);
-	packet->email = data->email;
-	packet->vc = data->vc;
-	packet->jid = data->jid;
-	packet->AIM = data->AIM;
-	
-	// Send the dns-sd packet
-	_dns_sd_send_packet(packet, data->session);
-	
-	// Free the dns-sd packet
-	_dns_sd_packet_free(packet);
+	if (data->status) g_free(data->status);
+	if (data->msg) g_free(data->msg);
+
+	data->status = g_strdup(status);
+	data->msg = g_strdup(status_message);
+
+	// Update our text record with the new status
+	_dns_sd_publish(data, PUBLISH_UPDATE); // <--We must control the errors
 }
 
 /**
@@ -380,20 +336,13 @@ void bonjour_dns_sd_start(BonjourDnsSd* data)
 	// Initilizations of the dns-sd data and session
 	data->session = malloc(sizeof(sw_discovery));
 	if(sw_discovery_init(data->session) != SW_OKAY){
-			gaim_debug_error("bonjour", "Unable to initialize a mDNS session.");
-			return;
+		gaim_debug_error("bonjour", "Unable to initialize a mDNS session.");
+		return;
 	}
 	
-	// Register our bonjour IM client at the mDNS daemon
-	_dns_sd_register(data);
+	// Publish our bonjour IM client at the mDNS daemon
+	_dns_sd_publish(data, PUBLISH_START); // <--We must control the errors
 	
-	// Wait for new bonjour IM client connections, we should start a new thread
-	/*
-	if (!g_thread_supported ()){
-		g_thread_init (NULL);
-	}
-	g_thread_create(_dns_sd_wait_for_connections, data, FALSE, NULL);
-	*/
 	
 	// Advise the daemon that we are waiting for connections
 	if(sw_discovery_browse(*(data->session), 0, ICHAT_SERVICE, NULL, _browser_reply,
@@ -401,11 +350,8 @@ void bonjour_dns_sd_start(BonjourDnsSd* data)
 		gaim_debug_error("bonjour", "Unable to get service.");
 		return;
 	}
-
-	// Yields control of the cpu to the daemon
-	//sw_discovery_run(*(dns_sd_data->session));
 	
-	// Get the socket that communicates with the mDNS daemon and binf it to a 
+	// Get the socket that communicates with the mDNS daemon and bind it to a 
 	// callback that will handle the dns_sd packets
 	dns_sd_socket = sw_discovery_socket(*(data->session));
 	io_channel = g_io_channel_unix_new(dns_sd_socket);
@@ -417,7 +363,7 @@ void bonjour_dns_sd_start(BonjourDnsSd* data)
  */
 int bonjour_dns_sd_stop(BonjourDnsSd* data)
 {
-	sw_discovery_stop_run(*(data->session));
+	sw_discovery_cancel(*(data->session), data->session_id);
 	
 	return 0;
 }

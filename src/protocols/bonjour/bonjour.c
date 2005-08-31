@@ -61,17 +61,18 @@ void bonjour_login(GaimAccount* account)
 	// Connect to the mDNS daemon looking for buddies in the LAN
 	bd->dns_sd_data = bonjour_dns_sd_new();
 	bd->dns_sd_data->name = (sw_string)gaim_account_get_username(account);
-	bd->dns_sd_data->txtvers = "1";
-	bd->dns_sd_data->version = "1";
+	bd->dns_sd_data->txtvers = g_strdup("1");
+	bd->dns_sd_data->version = g_strdup("1");
 	bd->dns_sd_data->first = gaim_account_get_string(account, "first", "Juanjo");
 	bd->dns_sd_data->last = gaim_account_get_string(account, "last", "");
 	bd->dns_sd_data->port_p2pj = gaim_account_get_int(account, "port", BONJOUR_DEFAULT_PORT_INT);
-	bd->dns_sd_data->phsh = "";
-	bd->dns_sd_data->status = "avail"; //<-- Check the real status if different from avail
+	bd->dns_sd_data->phsh = g_strdup("");
+	bd->dns_sd_data->status = g_strdup("avail"); //<-- Check the real status if different from avail
 	bd->dns_sd_data->email = gaim_account_get_string(account, "email", "");
-	bd->dns_sd_data->vc = "";
-	bd->dns_sd_data->jid = "";
-	bd->dns_sd_data->AIM = "";
+	bd->dns_sd_data->vc = g_strdup("");
+	bd->dns_sd_data->jid = g_strdup("");
+	bd->dns_sd_data->AIM = g_strdup("");
+	bd->dns_sd_data->msg = g_strdup(gc->away);
 	
 	bd->dns_sd_data->account = account;
 	bonjour_dns_sd_start(bd->dns_sd_data);
@@ -91,10 +92,6 @@ void bonjour_close(GaimConnection* connection)
 	GSList* l;
 	BonjourData* bd = (BonjourData*)connection->proto_data;
 	
-	// Stop waiting for conversations
-	bonjour_jabber_stop(bd->jabber_data);
-	g_free(bd->jabber_data);
-	
 	// Stop looking for buddies in the LAN
 	if (connection != NULL) {
 		bonjour_dns_sd_stop(bd->dns_sd_data);
@@ -102,6 +99,10 @@ void bonjour_close(GaimConnection* connection)
 			bonjour_dns_sd_free(bd->dns_sd_data);
 		}
 	}
+	
+	// Stop waiting for conversations
+	bonjour_jabber_stop(bd->jabber_data);
+	g_free(bd->jabber_data);
 	
 	// Remove all the bonjour buddies
 	if(connection != NULL){
@@ -136,14 +137,14 @@ int bonjour_send_im(GaimConnection* connection, const char* to, const char* msg,
 void bonjour_set_status(GaimConnection* connection, const char* state, const char* message)
 {
 	char* status_dns_sd = NULL;
-	char *stripped = NULL;
+	char* stripped = NULL;
 
 	if(message) {
 		stripped = g_strdup(message);
-	} else if(!state || strcmp(state, GAIM_AWAY_CUSTOM)) { // Sacado del plugin de jabber
+	} else {
 		stripped = g_strdup("");
 	}
-gaim_debug_warning("bonjour", "Set status: %s - %s\n", state, stripped);	
+
 	if(connection->away){
 		g_free(connection->away);
 	}
@@ -155,6 +156,8 @@ gaim_debug_warning("bonjour", "Set status: %s - %s\n", state, stripped);
 		status_dns_sd = g_strdup("away");
 	} else if (g_ascii_strcasecmp(state, _("Do Not Disturb")) == 0) {
 		status_dns_sd = g_strdup("dnd");
+	} else if (g_ascii_strcasecmp(state, _("Custom")) == 0) {
+		status_dns_sd = g_strdup("away");
 	}
 
 	if (status_dns_sd != NULL) {

@@ -30,6 +30,7 @@
  */
 typedef struct _bonjour_dns_sd{
 	sw_discovery* session;
+	sw_discovery_oid session_id;
 	GaimAccount* account;
 	gchar* name;
 	gchar* txtvers;
@@ -43,8 +44,14 @@ typedef struct _bonjour_dns_sd{
 	gchar* vc;
 	gchar* jid;
 	gchar* AIM;
+	gchar* msg;
 	GHashTable* buddies;
 }BonjourDnsSd;
+
+typedef enum _PublishType{
+	PUBLISH_START,
+	PUBLISH_UPDATE
+}PublishType;
 
 /**
  * Allocate space for the dns-sd data.
@@ -59,7 +66,7 @@ void bonjour_dns_sd_free(BonjourDnsSd* data);
 /**
  * Send a new dns-sd packet updating our status.
  */
-void bonjour_dns_sd_send_status(BonjourDnsSd* data, char* status_dns_sd, const char* status_message);
+void bonjour_dns_sd_send_status(BonjourDnsSd* data, char* status, const char* status_message);
 
 /**
  * Advertise our presence within the dns-sd daemon and start browsing for other 
