@@ -363,7 +363,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 	/*
 	 * Send only if there's actually any *information* to send
 	 */
-	vc_node = xmlnode_from_str(info, -1);
+	vc_node = info ? xmlnode_from_str(info, -1) : NULL;
 
 	if(vc_node) {
 		if (vc_node->name &&

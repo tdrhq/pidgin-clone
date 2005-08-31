@@ -786,6 +786,8 @@ static void jabber_close(GaimConnection *gc)
 	if(js->user)
 		jabber_id_free(js->user);
 	g_free(js);
+
+	gc->proto_data = NULL;
 }
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
