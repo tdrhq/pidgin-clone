@@ -274,13 +274,12 @@ gaim_connection_disconnect_cb(gpointer data)
 {
 	GaimAccount *account = data;
 	GaimConnection *gc = gaim_account_get_connection(account);
-
-	if (!gaim_account_get_remember_password(account))
-		gaim_account_set_password(account,NULL);
-
+	/* gaim_connection_disconnect() will wipe the password, which is usually fine, but
+	 * when we're knocked off forecfully, we'll want to reconnect easily. */
+	char *password = gaim_account_get_password(account);
 	if (gc)
 		gaim_connection_disconnect(gc);
-
+	gaim_account_set_password(account, password);
 	return FALSE;
 }
 
