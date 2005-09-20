@@ -276,10 +276,11 @@ gaim_connection_disconnect_cb(gpointer data)
 	GaimConnection *gc = gaim_account_get_connection(account);
 	/* gaim_connection_disconnect() will wipe the password, which is usually fine, but
 	 * when we're knocked off forecfully, we'll want to reconnect easily. */
-	char *password = gaim_account_get_password(account);
+	char *password = g_strdup(gaim_account_get_password(account));
 	if (gc)
 		gaim_connection_disconnect(gc);
 	gaim_account_set_password(account, password);
+	free(password);
 	return FALSE;
 }
 
