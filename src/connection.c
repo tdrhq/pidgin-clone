@@ -280,7 +280,7 @@ gaim_connection_disconnect_cb(gpointer data)
 	if (gc)
 		gaim_connection_disconnect(gc);
 	gaim_account_set_password(account, password);
-	free(password);
+	g_free(password);
 	return FALSE;
 }
 
