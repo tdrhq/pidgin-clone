@@ -3210,7 +3210,7 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 		yahoo_packet_hash(pkt, 10, buf);
 		if (gc->away && yd->current_status == YAHOO_STATUS_CUSTOM) {
 			msg = yahoo_string_encode(gc, gc->away, NULL);
-			msg2 = gaim_unescape_html(msg);
+			msg2 = gaim_markup_strip_html(msg);
 			yahoo_packet_hash(pkt, 19, msg2);
 			if (idle)
 				yahoo_packet_hash(pkt, 47, "2");
