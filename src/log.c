@@ -424,7 +424,7 @@ static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount 
 
 	while ((filename = g_dir_read_name(dir))) {
 		if (gaim_str_has_suffix(filename, ext) &&
-				strlen(filename) == 17 + strlen(ext)) {
+				strlen(filename) >= 17 + strlen(ext)) {
 			GaimLog *log;
 			struct generic_logger_data *data;
 			time_t stamp = gaim_str_to_time(filename, FALSE);
