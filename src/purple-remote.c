@@ -1,5 +1,5 @@
 /*
- * gaim-remote
+ * purple-remote
  *
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -25,7 +25,7 @@
 
 #include <getopt.h>
 
-#include <gaim-remote/remote.h>
+#include <purple-remote/remote.h>
 
 /*To be implemented:
 	     "       info                     Show information about connected accounts\n"
@@ -219,19 +219,19 @@ show_longhelp( char *name, char *command)
 		message(_("\n"
 		       "Using AIM: URIs:\n"
 		       "Sending an IM to a screen name:\n"
-		       "	gaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+		       "	purple-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 		       "In this case, 'Penguin' is the screen name we wish to IM, and 'hello world'\n"
 		       "is the message to be sent.  '+' must be used in place of spaces.\n"
 		       "Please note the quoting used above - if you run this from a shell the '&'\n"
 		       "needs to be escaped, or the command will stop at that point.\n"
 		       "Also,the following will just open a conversation window to a screen name,\n"
 		       "with no message:\n"
-		       "	gaim-remote uri 'aim:goim?screenname=Penguin'\n\n"
+		       "	purple-remote uri 'aim:goim?screenname=Penguin'\n\n"
 		       "Joining a chat:\n"
-		       "	gaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+		       "	purple-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 		       "...joins the 'PenguinLounge' chat room.\n\n"
 		       "Adding a buddy to your buddy list:\n"
-		       "	gaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+		       "	purple-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 			  "...prompts you to add 'Penguin' to your buddy list.\n"), 1);
 	}
 

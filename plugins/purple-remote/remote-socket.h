@@ -1,5 +1,5 @@
 /*
- * gaim-remote
+ * purple-remote
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  * Copyright (C) 2002, Sean Egan <bj91704@binghamton.edu>

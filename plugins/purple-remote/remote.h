@@ -22,7 +22,7 @@
 #ifndef _GAIM_REMOTE_H_
 #define _GAIM_REMOTE_H_
 
-#include <gaim-remote/remote-socket.h>
+#include <purple-remote/remote-socket.h>
 
 
 /* this is the basis of the CUI protocol. */

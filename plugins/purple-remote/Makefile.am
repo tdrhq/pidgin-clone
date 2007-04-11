@@ -2,23 +2,23 @@ grincludedir = $(includedir)/gaim
 
 plugindir = $(libdir)/gaim
 
-lib_LTLIBRARIES = libgaim-remote.la
+lib_LTLIBRARIES = libpurple-remote.la
 
 grinclude_HEADERS = \
 	remote-socket.h \
 	remote.h
 
-libgaim_remote_la_SOURCES = remote-socket.c
-libgaim_remote_la_LIBADD = $(GLIB_LIBS)
+libpurple_remote_la_SOURCES = remote-socket.c
+libpurple_remote_la_LIBADD = $(GLIB_LIBS)
 
-gaim_remote_la_LDFLAGS = -module -avoid-version
+purple_remote_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 
-plugin_LTLIBRARIES = gaim-remote.la
+plugin_LTLIBRARIES = purple-remote.la
 
-gaim_remote_la_SOURCES = remote.c
-gaim_remote_la_LIBADD = libgaim-remote.la $(GTK_LIBS)
+purple_remote_la_SOURCES = remote.c
+purple_remote_la_LIBADD = libpurple-remote.la $(GTK_LIBS)
 
 endif
 

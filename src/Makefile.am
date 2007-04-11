@@ -139,7 +139,7 @@ gaim_coreheaders = \
 	version.h \
 	xmlnode.h
 
-bin_PROGRAMS = gaim gaim-remote
+bin_PROGRAMS = gaim purple-remote
 
 gaim_SOURCES = \
 	$(gaim_coresources) \
@@ -225,15 +225,15 @@ gaim_LDADD = \
 	$(GTKSPELL_LIBS) \
 	$(STARTUP_NOTIFICATION_LIBS)
 
-gaim_remote_SOURCES = \
-	gaim-remote.c \
+purple_remote_SOURCES = \
+	purple-remote.c \
 	prefix.c \
 	prefix.h
 
-gaim_remote_DEPENDENCIES = @LIBOBJS@
-gaim_remote_LDADD = \
+purple_remote_DEPENDENCIES = @LIBOBJS@
+purple_remote_LDADD = \
 	@LIBOBJS@ $(GLIB_LIBS) $(INTLLIBS) \
-	$(top_builddir)/plugins/gaim-remote/libgaim-remote.la
+	$(top_builddir)/plugins/purple-remote/libpurple-remote.la
 
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \

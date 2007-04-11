@@ -1,15 +1,15 @@
 EXTRA_DIST = \
 		COPYRIGHT \
 		Doxyfile.in \
-		gaim.pc.in \
-		gaim.spec.in \
-		gaim.apspec.in \
-		gaim.desktop \
-		gaim2blt.pl \
-		gaim-installer.nsi \
+		pidgin.pc.in \
+		pidgin.spec.in \
+		pidgin.apspec.in \
+		pidgin.desktop \
+		purple2blt.pl \
+		pidgin-installer.nsi \
 		HACKING \
 		PROGRAMMING_NOTES \
-		licq2gaim.pl \
+		licq2purple.pl \
 		setup-gettext \
 		ChangeLog.win32 \
 		config.h.mingw \
@@ -25,20 +25,20 @@ EXTRA_DIST = \
 		plugins/win32/winprefs/winprefs.c \
 		po/Makefile.mingw
 
-gaimincludedir=$(includedir)/gaim
-gaiminclude_HEADERS = config.h
+pidginincludedir=$(includedir)/gaim
+pidgininclude_HEADERS = config.h
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = gaim.pc
+pkgconfig_DATA = pidgin.pc
 
-dist-hook: gaim.spec
-	cp gaim.spec $(distdir)
+dist-hook: pidgin.spec
+	cp pidgin.spec $(distdir)
 
-distcheck-hook: plugins/perl/common/Gaim.pm
-#	cp plugins/perl/common/Gaim.pm $(distdir)/plugins/perl/common
+distcheck-hook: plugins/perl/common/Pidgin.pm
+#	cp plugins/perl/common/Pidgin.pm $(distdir)/plugins/perl/common
 
 appsdir = $(datadir)/applications
-apps_DATA = gaim.desktop
+apps_DATA = pidgin.desktop
 
 SUBDIRS = doc intl pixmaps plugins po sounds src
 

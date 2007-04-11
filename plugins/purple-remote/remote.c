@@ -45,7 +45,7 @@
 #include "gaim.h"
 #include "prefs.h"
 
-#include <gaim-remote/remote.h>
+#include <purple-remote/remote.h>
 
 #define REMOTE_PLUGIN_ID "gtk-remote"
 
@@ -750,7 +750,7 @@ static GaimPluginInfo info =
 	N_("Provides remote control for gaim applications."),
 	                                                  /**  description    */
 	N_("Gives Gaim the ability to be remote-controlled through third-party "
-	   "applications or through the gaim-remote tool."),
+	   "applications or through the purple-remote tool."),
 	"Sean Egan <sean.egan@binghamton.edu>",
 	GAIM_WEBSITE,                                     /**< homepage       */
 

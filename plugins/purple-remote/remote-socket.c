@@ -1,5 +1,5 @@
 /*
- * gaim-remote
+ * purple-remote
  *
  * Copyright (C) 2002, Sean Egan <bj91704@binghamton.edu>
  * 
@@ -30,7 +30,7 @@
 
 #include "internal.h"
 #include <sys/un.h>
-#include <gaim-remote/remote.h>
+#include <purple-remote/remote.h>
 #include <sys/types.h>
 #include <unistd.h>
 
