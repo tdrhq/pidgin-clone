@@ -4,33 +4,33 @@ SETUP_GETTEXT=./setup-gettext
 
 ($SETUP_GETTEXT --gettext-tool) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have gettext installed to compile Gaim";
+	echo "You must have gettext installed to compile Pidgin";
 	echo;
 	exit;
 }
 
 (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have libtool installed to compile Gaim";
+	echo "You must have libtool installed to compile Pidgin";
 	echo;
 	exit;
 }
 
 (automake --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have automake installed to compile Gaim";
+	echo "You must have automake installed to compile Pidgin";
 	echo;
 	exit;
 }
 
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have autoconf installed to compile Gaim";
+	echo "You must have autoconf installed to compile Pidgin";
 	echo;
 	exit;
 }
 
-echo "Generating configuration files for Gaim, please wait...."
+echo "Generating configuration files for Pidgin, please wait...."
 echo;
 
 # Backup the po/ChangeLog. This should prevent the annoying

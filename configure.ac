@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([gaim], [1.5.1dev], [gaim-devel@lists.sourceforge.net])
+AC_INIT([pidgin], [1.5.1dev], [devel@pidgin.im])
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
@@ -270,15 +270,15 @@ fi
 AC_SUBST(CFLAGS)
 
 AM_PATH_GLIB_2_0(2.0.0,,AC_MSG_ERROR([
-*** GLib 2.0 is required to build Gaim; please make sure you have the GLib
+*** GLib 2.0 is required to build Pidgin; please make sure you have the GLib
 *** development headers installed. The latest version of GLib is
 *** always available at http://www.gtk.org/.]))
 AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
-*** GTK+ 2.0 is required to build Gaim; please make sure you have the GTK+
+*** GTK+ 2.0 is required to build Pidgin; please make sure you have the GTK+
 *** development headers installed. The latest version of GTK+ is
 *** always available at http://www.gtk.org/.]))
 
-AC_PATH_PROG(gaimpath, gaim)
+AC_PATH_PROG(pidginpath, pidgin)
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GLIB_CFLAGS)
 
@@ -323,7 +323,7 @@ dnl #######################################################################
 dnl # Check for stuff needed by the evolution integration plugin.
 dnl #######################################################################
 build_gevo=no
-AC_ARG_ENABLE(gevolution, [  --disable-gevolution    compile without the Gaim-Evolution plugin],,enable_gevolution=yes)
+AC_ARG_ENABLE(gevolution, [  --disable-gevolution    compile without the Pidgin-Evolution plugin],,enable_gevolution=yes)
 
 if test "x$enable_gevolution" = "xyes"; then
 	evo_deps="libxml-2.0 libebook-1.2 libedata-book-1.2"
@@ -481,7 +481,7 @@ if test "$enable_perl" = yes ; then
 
 		AC_ARG_WITH(perl-lib,
 		[  --with-perl-lib=[site|vendor|DIR]  Specify where to install the
-								   Perl libraries for gaim. Default is site.],
+								   Perl libraries for pidgin. Default is site.],
 		[
 			if test "x$withval" = xsite; then
 				PERL_MM_PARAMS=""
@@ -1197,10 +1197,10 @@ AC_CONFIG_COMMANDS_POST([
 
 AC_OUTPUT([Makefile
 		   Doxyfile
-		   gaim.apspec
+		   pidgin.apspec
 		   doc/Makefile
-		   doc/gaim.1
-		   doc/gaim-remote.1
+		   doc/pidgin.1
+		   doc/purple-remote.1
 		   intl/Makefile
 		   pixmaps/Makefile
 		   pixmaps/smileys/Makefile
@@ -1211,7 +1211,7 @@ AC_OUTPUT([Makefile
 		   plugins/Makefile
 		   plugins/docklet/Makefile
 		   plugins/gevolution/Makefile
-		   plugins/gaim-remote/Makefile
+		   plugins/purple-remote/Makefile
 		   plugins/gestures/Makefile
 		   plugins/perl/Makefile
 		   plugins/perl/common/Makefile.PL
@@ -1234,8 +1234,8 @@ AC_OUTPUT([Makefile
 		   src/protocols/trepia/Makefile
 		   src/protocols/yahoo/Makefile
 		   src/protocols/zephyr/Makefile
-		   gaim.pc
-		   gaim.spec
+		   pidgin.pc
+		   pidgin.spec
 		  ])
 
 echo
@@ -1266,9 +1266,9 @@ echo Use startup notification.......: $enable_startup_notification
 echo
 echo Print debugging messages...... : $enable_debug
 echo
-eval eval echo Gaim will be installed in $bindir.
-if test "x$gaimpath" != "x" ; then
-	echo Warning: You have an old copy of gaim at $gaimpath.
+eval eval echo Pidgin will be installed in $bindir.
+if test "x$pidginpath" != "x" ; then
+	echo Warning: You have an old copy of Pidgin at $Pidginpath.
 fi
 echo
 echo configure complete, now type \'make\'

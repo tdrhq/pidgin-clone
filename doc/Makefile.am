@@ -1,4 +1,4 @@
-man_MANS = gaim.1 gaim-remote.1
+man_MANS = pidgin.1 purple-remote.1
 
 EXTRA_DIST = \
 	the_penguin.txt \
@@ -15,5 +15,5 @@ EXTRA_DIST = \
 	gtkconv-signals.dox \
 	gtkimhtml-signals.dox \
 	plugin-ids.dox \
-	gaim.1.in \
-	gaim-remote.1.in
+	pidgin.1.in \
+	purple-remote.1.in
