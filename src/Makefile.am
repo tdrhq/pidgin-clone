@@ -61,7 +61,7 @@ EXTRA_DIST = \
 
 SUBDIRS = protocols
 
-gaim_coresources = \
+purple_coresources = \
 	account.c \
 	accountopt.c \
 	blist.c \
@@ -99,7 +99,7 @@ gaim_coresources = \
 	value.c \
 	xmlnode.c
 
-gaim_coreheaders = \
+purple_coreheaders = \
 	account.h \
 	accountopt.h \
 	away.h \
@@ -139,10 +139,10 @@ gaim_coreheaders = \
 	version.h \
 	xmlnode.h
 
-bin_PROGRAMS = gaim purple-remote
+bin_PROGRAMS = pidgin purple-remote
 
-gaim_SOURCES = \
-	$(gaim_coresources) \
+pidgin_SOURCES = \
+	$(purple_coresources) \
 	away.c \
 	dnd-hints.c \
 	gaim-disclosure.c \
@@ -175,8 +175,8 @@ gaim_SOURCES = \
 	stock.c \
 	themes.c
 
-gaim_headers = \
-	$(gaim_coreheaders) \
+pidgin_headers = \
+	$(purple_coreheaders) \
 	dnd-hints.h \
 	gaim.h \
 	gaim-disclosure.h \
@@ -207,14 +207,14 @@ gaim_headers = \
 	internal.h \
 	stock.h
 
-gaimincludedir=$(includedir)/gaim
-gaiminclude_HEADERS = \
-	$(gaim_coreheaders) \
-	$(gaim_headers)
+pidginincludedir=$(includedir)/gaim
+pidgininclude_HEADERS = \
+	$(purple_coreheaders) \
+	$(pidgin_headers)
 
-gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
-gaim_LDFLAGS = -export-dynamic
-gaim_LDADD = \
+pidgin_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
+pidgin_LDFLAGS = -export-dynamic
+pidgin_LDADD = \
 	@LIBOBJS@ \
 	$(GTK_LIBS) \
 	$(SOUND_LIBS) \
