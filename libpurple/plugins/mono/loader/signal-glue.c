@@ -88,6 +88,12 @@ int purple_signal_connect_glue(MonoObject* h, MonoObject *plugin, MonoString *si
 	return purple_signal_connect(*instance, sig, (gpointer)klass, get_callback(sig_data), (gpointer)sig_data);
 }
 
+/*
+ * Maybe instead of using the implementation below we just use a hashtable of signal name -> callback function mappings.
+ * Although a hashtable full of function pointers somehow seems dirty :-)
+ * -ecoffey
+ */
+
 static int determine_index(PurpleType type)
 {
 	switch (type) {
@@ -105,11 +111,11 @@ static int determine_index(PurpleType type)
 }
 
 static gpointer callbacks[]= { 
-										NULL,
-										cb_void__pointer,
-										NULL,
-										cb_void__pointer_pointer_pointer
-									};
+	NULL,
+	cb_void__pointer,
+	NULL,
+	cb_void__pointer_pointer_pointer
+};
 
 static int callbacks_array_size = sizeof(callbacks) / sizeof(PurpleCallback);
 	
@@ -127,13 +133,11 @@ static PurpleCallback get_callback(SignalData *sig_data)
 		index += determine_index(purple_value_get_type(sig_data->values[i]));
 	}
 	
-	purple_debug(PURPLE_DEBUG_INFO, "mono", "get_callback index = %d\n", index);
-	
 	if (index >= callbacks_array_size || callbacks[index] == NULL) {
 		purple_debug(PURPLE_DEBUG_ERROR, "mono", "couldn't find a callback function for signal: %s\n", sig_data->signal);
 		return NULL;
 	}
 	
-	purple_debug(PURPLE_DEBUG_MISC, "mono", "using callback at index: %d\n", index);
+	purple_debug(PURPLE_DEBUG_INFO, "mono", "using callback at index: %d\n", index);
 	return PURPLE_CALLBACK(callbacks[index]);
 }
