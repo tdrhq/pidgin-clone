@@ -1,0 +1,33 @@
+Introduction
+
+<p>
+My name is Bartosz Oler, I'm a 3rd year' MsC Computer Science student at the
+Technical University of Szczecin, Poland. This summer I'm working on bringing
+Gadu-Gadu Plugin back to life. Gadu-Gadu is a polish IM, a very popular one.
+<p>
+
+<p>
+I'm quite late with my first blog entry because for the last few weeks I have
+been concentrated on going through the basic Gadu-Gadu protocol plugin
+implementation.
+
+This summer besides the Summer of Code, I'm serving my apprenticeship which
+takes me a lot of time. For the remaining part of day I try to work on my
+project. As a result of this, the aforementioned basic implemetation is now
+working. :)
+</p>
+
+<p>
+In the nearest future, I'm going to work on the following things:
+- add libgadu configuration to the autoconf's setup.
+- solve problem of libgadu build-in resolver (probably I'll patch libgadu
+  sources to use Gaim's resolver).
+
+When this is be done, I'll merge my code with HEAD. And move on to some more
+interesting tasks.
+</p>
+
+<p>
+Well, for now that's all the news from the battleground. ;>
+</p>
+

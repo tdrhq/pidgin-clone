@@ -1,0 +1,8 @@
+Preliminary skeleton dbus support in CVS
+
+Yesterday, I've committed the first dbus-aware version of gaim.  It
+works with the latest DBUS 0.34 and supports two remote calls "ping"
+and "quit".
+
+Still unsure whether dbus should be implemented in gaim proper or as a
+plugin.  I welcome comments from anybody who has insights on this issue.

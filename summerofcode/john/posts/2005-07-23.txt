@@ -1,0 +1,50 @@
+A Little More Functionality
+It seemed that the Perl interpreter was in a bad state.  Loading packages other than Gaim.pm caused
+the interpreter to crash.  I found a work around that allows
+a user to write his scripts to avoid crashing when loading
+dynamic libraries: 
+<pre> <code>
+# Variable we want to use in script:
+package main;
+$foo2;
+
+# Have to use single quotes to force it not to evaluate
+# until runtime.
+
+eval  '
+	# Ususally would cause it to crash
+	use Foo; 
+
+	# Can only use Foo::* inside this block
+	$foo = Foo::bar();  
+	$main::foo2 = Foo::bar();
+';   
+
+# $foo does not exist, but $foo2 does
+</code>  </pre>
+<br>
+By placing any code inside of an
+<code>eval</code> it is possible to load libraries
+dynamically.  It is a little inelegant, but it functions.
+This opens up all the functionality of Perl to the user and
+allows me to start tinkering with the Gtk2 extentions for
+Perl.  
+<br>
+<br>
+In a C plugin it is easy enough to create a Gtk widget and
+pass it to some Gaim function to create all sorts of user
+interfaces.  With Perl, we do not have that ability without
+some way to tie the C API of Gtk to something Perl can use.
+Lucky for us there is a project doing just that: <a
+href="http://gtk2-perl.sourceforge.net/">gtk2-perl</a>.  I
+started working with the Perl bindings inside of eval
+statements with some success.  A simple example I have been
+working with is creating a <code>GtkFrame</code> for the Plugin UI.  It
+seems as though the frame gets mangled when the block it is
+created in finishes.  A little more work on it and the Perl
+interface may have a much richer feature set.  I have put off
+implementing any of the <code>gaim_gtk_*</code> XSUBs due to
+an inability to create the necessary data types in Perl that
+so many of the UI API calls take as arguments.  Back to work
+on testing the XSUBs that are done and trying to get Gtk2
+Perl bindings to work.

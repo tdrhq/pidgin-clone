@@ -1,0 +1,21 @@
+Almost done
+
+I'm getting really close to finish. Most of the features are implemeted:
+<ul>
+	<li>status and description changes are handled pretty well;</li>
+	<li>upload/download of the buddylist to/from the GG servers;</li>
+	<li>save/load of the buddylist to/from the file;</li>
+	<li>changing password;</li>
+	<li>new account registration;</li>
+	<li>searching for buddies;</li>
+	<li>getting buddy info.</li>
+</ul>
+
+To accomplish some of these features I've extended the request API, and
+improved notification about the search results. The commits should come really
+soon. ;)
+
+From the unfinished work, I have to implement chats and replace libgadu
+build-in resolver. Unfortunately, the idea of the chats in Gadu-Gadu is
+a complete mistake.
+

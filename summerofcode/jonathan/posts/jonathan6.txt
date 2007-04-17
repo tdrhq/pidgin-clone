@@ -1,0 +1,3 @@
+Recent Changes Committed to Gaim 1.4.1
+
+I'll keep this one short: All of the changes mentioned in my last post have now been committed to Gaim 1.4.1 and the Gaim version 2. OSCAR file transfers for users behind the same NAT now work. Plus, there are now more pretty little status messages getting sent to the conversation to keep the user up to date about what's going on regarding file transfers. Next on the menu: Proxying file transfers through AOL servers. This is going to be fun.

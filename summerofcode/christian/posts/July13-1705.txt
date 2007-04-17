@@ -1,0 +1,11 @@
+Got a tab...
+
+&nbsp&nbsp Lately I've been messing around with the main plugin file. Just toying with how it loads and such. Also played with some GTK tutorials to get the hang of it, and try to relate how it works to what I know from Java GUI stuff (which helps).
+<br><br>
+&nbsp&nbsp I've managed to create GaimGtkPluginUiInfo Widget and set it proper so that I have my own configuration tab. I don't have any preferences yet, and not much showing in the tab, but the ground work is there and it's easy to add stuff.
+<br>
+<img src='http://gaim.sourceforge.net/summerofcode/christian/Screen1.png' />
+<br><br>
+&nbsp&nbsp Also I've been digging around the denemo source (a score editor) for some ideas, as well as learning the LilyPond music representation format (what I'll be using to store the music with). There's lots of stuff to convert .ly to .mid which will be great when it comes time to export what was composed.
+<br><br>
+&nbsp&nbsp It's pretty cool to see the collaborative types of plugins being done with this project, the Doodle setup, and the Code Editor. Should be a pretty great result at the end of the summer. G'luck guys.<br>

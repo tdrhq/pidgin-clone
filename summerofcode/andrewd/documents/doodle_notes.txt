@@ -1,0 +1,239 @@
+Y = Yahoo Server
+C = Local Client
+
+=======================================================================
+Initiating Doodle (remote user is initiating)
+=======================================================================
+
+Y to C // puzzud requesting ad_reductio (puzzud to yahoo to ad_reductio)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_BRB
+5	ad_reductio
+4	puzzud
+49	IMVIRONMENT
+1	puzzud
+14	1
+13	1
+63	doodle;11
+64	1
+140	1
+
+Y to C // puzzud requesting ad_reductio (puzzud to yahoo to ad_reductio)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_BRB
+5	ad_reductio
+4	puzzud
+49	IMVIRONMENT
+1	puzzud
+14	
+13	0
+63	doodle;11
+64	0
+140	1
+
+C to Y // ad_reductio affirming puzzud (ad_reductio to yahoo to puzzud)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_AVAILABLE
+49	IMVIRONMENT
+1	ad_reductio
+14	1
+13	1
+5	puzzud
+63	doodle;11
+64	1
+1002	1
+
+Y to C // puzzud requesting ad_reductio (puzzud to yahoo to ad_reductio)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_BRB
+5	ad_reductio
+4	puzzud
+49	IMVIRONMENT
+1	puzzud
+14	1
+13	5
+63	doodle;11
+64	1
+140	1
+
+======================================================================
+Various drawing packets
+======================================================================
+
+Y to C // puzzud drawing for ad_reductio (puzzud to yahoo to ad_reductio)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_BRB
+5	ad_reductio
+4	puzzud
+49	IMVIRONMENT
+1	puzzud				// almost a single dot at
+14	"13369344,5,6,4,0,0,0,0"	// almost exactly upper left corner, red, medium
+13	3
+63	doodle;11
+64	1
+140	1
+
+Y to C // puzzud drawing for ad_reductio (puzzud to yahoo to ad_reductio)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_BRB
+5	ad_reductio
+4	puzzud
+49	IMVIRONMENT
+1	puzzud
+14	"13369344,5,33,26,0,0,7,0,6,0,7,0,8,6,0,6,0,1,0"	// horizontal line moved
+13	3							// right a little
+63	doodle;11						// red, medium
+64	1
+140	1
+
+Y to C // puzzud drawing for ad_reductio (puzzud to yahoo to ad_reductio)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_BRB
+5	ad_reductio
+4	puzzud
+49	IMVIRONMENT
+1	puzzud
+14	"13369344,5,33,26,0,0,7,0,6,0,7,0,8,6,0,6,0,1,0"	// horizontal line moved
+13	3							// right a little
+63	doodle;11						// red, medium
+64	1
+140	1
+
+
+=======================================================================
+Clearing canvas
+=======================================================================
+
+Y to C // puzzud requesting clear for ad_reductio (puzzud to yahoo to ad_reductio)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_BRB
+5	ad_reductio
+4	puzzud
+49	IMVIRONMENT
+1	puzzud
+14	" "		// clear request (notice not NULL, but white space)
+13	2
+63	doodle;11
+64	1
+140	1
+
+=======================================================================
+Extras (yuck)
+=======================================================================
+
+Y to C // puzzud requesting clear for ad_reductio (puzzud to yahoo to ad_reductio)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_BRB
+5	ad_reductio
+4	puzzud
+49	IMVIRONMENT
+1	puzzud
+14	"1"		// request to have 'none' of the extra features
+13	4
+63	doodle;11
+64	1
+140	1
+
+=======================================================================
+Shutting down (IMV?)
+=======================================================================
+
+Y to C // puzzud requesting shutdown to ad_reductio (puzzud to yahoo to ad_reductio)
+------
+YAHOO_SERVICE_P2PFILEXFER
+YAHOO_STATUS_BRB
+5	ad_reductio
+4	puzzud
+49	IMVIRONMENT
+1	puzzud
+14			// shutdown?
+13	0
+63	;0
+64	0
+140	1
+
+=======================================================================
+Other notes
+=======================================================================
+Possible max resolution:	368 x 256 (aspect: 23x16)
+
+Brush sizes:			small	= 2
+				medium	= 5
+				larget	= 10
+				
+Brush sizes are limited to those three.  The official client doesn't interpret them.
+
+Single dot/point always yields "'color',x,y,0,0,0,0"
+A single point has two deltas? (some sort of software fix?)
+
+deltas: 	left	= -x	, right	= +x
+		down	= +y	, up	= -y
+
+The color component of a draw message is a 24bit RBG expressed as a decimal.
+colors:
+	red	13369344	204	0	0
+	orange	16737792	255	102	0
+	yellow	15658496	238	238	0
+	green	52224		0	204	0
+	cyan	52428		0	204	204
+	blue	204		0	0	204
+	violet	5381277		82	28	157
+	purple	13369548	204	0	204
+	tan	12093547	184	134	107
+	brown	5256485		80	53	37
+	black	0		0	0	0
+	grey	11184810	170	170	170
+	white	16777215	255	255	255
+	
+Brush colors are NOT limited to just these colors.
+
+Client to Yahoo hash order?
+49
+1
+14
+13
+5
+63
+64
+1002 (is like 140?)
+
+Yahoo to Client hash order?
+5
+4
+49
+1
+14
+13
+63
+64
+140 (is like 1002?)
+
+hash/packets...
+no 4 in C to Y
+order matters?
+1002 and 140 are always the same so far
+
+Limit of 48 deltas in a single packet? (will automatically send)
+
+First two packets (the ready and request packets),
+made in that order in case remote client already has Doodle IMV open?
+because request does nothing if client already has that requested IMV open
+
+Shutdown packet (last one) specifies no particular IMV,
+this is sad because Yahoo developers assumed only one IMV could ever be used (between two people)
+
+Draw packet 'messages' actually include and are enclosed by quotation characters,
+so in code, it will look like this "\"...\""
+
+A standard chat message will kill the Doodle session for a Yahoo Messenger client...
+because each chat message packet contains IMV information in hash #63... tired of stuff like this from
+Yahoo developers.

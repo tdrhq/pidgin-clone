@@ -1,0 +1,32 @@
+Greetings Programs!
+My name is Andrew Dieffenbach and I'm a junior at Southern Illinois University of 
+Edwardsville.<br>
+<br>
+I'm designing a 'whiteboard' system for Gaim, which will allow people to draw 
+and communicate ideas graphically rather than just verbally.  I'm implementing the 
+Yahoo Doodle IMVironment service.  If done well, a single interface should provide 
+the ability to add other similiar services, such as MSN Whiteboard.<br>
+<br>
+Until yesterday, I was developing this idea as a plugin.  I was also working against 
+v1.3.  I was convinced by my mentor to work against the Head branch.  Also, 
+intercepting chat protocol packets from a plugin required a little bit of 
+hackery--not too clean and a little greedy, but it was what I <i>had</i> to do.  My 
+mentor also convinced me to shift my development from a plugin to working within the 
+Yahoo protocol code.  Also, the general whiteboard code will be part of the Gaim 
+core.  Because I'm not just developing a plugin anymore, there is a development 
+branch dedicated to my project:  gaim-doodle.<br>
+<br>
+So far, I've established the basic send and recieve packet functions for Yahoo 
+Doodle.  This was pretty easy to do after I sniffed the network communication 
+between two Yahoo Messenger clients, using Ethereal.  Notes on the packets and other 
+observations I've made can be viewed <A HREF =
+"http://gaim.sourceforge.net/summerofcode/andrewd/documents/doodle_notes.txt">here</A>.<br>
+<br>
+<FONT SIZE = +2>Great Timing!</FONT>
+On an interesting note (which was sort of disturbing for me at the time), on June 
+30th, the Yahoo Doodle IMVironment "expired."  No one anywhere could Doodle.  The 
+little puffs of smoke my plugin made was about the most active 'Doodling' that the 
+Yahoo servers encountered.  Fortunately, I believe on July 2nd, Doodle was back up 
+and available.  I compared the Doodle files I had backed up on my Windows partition 
+to the 'new' ones.  They were exactly the same.  I never bothered to look for any 
+registry variables; at this time, my confidence in my project was revitalized.<br>

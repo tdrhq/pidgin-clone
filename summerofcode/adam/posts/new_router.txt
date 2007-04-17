@@ -1,0 +1,7 @@
+New Router
+
+I've had it with Linksys routers. This is the second one that died on me. I went to Best Buy today to pick up a new 
+one. Found a pretty good deal on a D-Link. $60-$40 mail in rebate. My development has been delayed because
+of it, but now I'll be back on track. The good news is now I have a D-Link to test my UPnP support on. My code 
+works with every Linksys router I've tried so far, but I havn't had access to a D-Link other than through Sean. Hard
+to debug problems that are remote, though I'm still working on putting together that testing client to distribute.

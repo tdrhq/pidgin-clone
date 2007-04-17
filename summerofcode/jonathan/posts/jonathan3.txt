@@ -1,0 +1,3 @@
+Imported Journal Entries
+
+The preceeding journal entries were originally entered in my sourceforge diary. Tonight, I imported them into this nice snazzy new Gaim Summer of Code journal. Pretty cool, eh?

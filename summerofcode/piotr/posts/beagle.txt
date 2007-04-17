@@ -1,0 +1,16 @@
+Integrating Gaim and Beagle
+
+I spent most of yesterday installing and playing with beagle, a linux
+desktop search engine.  Beagle provides some integration with gaim
+out-of-the-box: it indexes gaim logs allows the user to search through
+them.  For every match, beagle gives two options: view the log in the
+built-in viewer or send start an IM conversation.  The latter option
+is implemented using gaim-remote, so it works only for the aim
+protocol.
+
+<p>
+Since gaim-remote has been rewritten for DBus support, it was quite
+easy to modify beagle to offer the "send IM" option for all protocols.
+I've also added a "Get Info" action, which asks Gaim to display the
+information about the user.
+

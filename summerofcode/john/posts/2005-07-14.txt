@@ -1,0 +1,5 @@
+Perl is wierd.
+I was able to get the perl interpreter working with HEAD, but now I realized that it was only a hack.  By statically linking our XSUB module with our perl loader plugin, it works--but only when you also have they dynamically loadable shared library installed.  This is no good.  It looks like it is back to the drawing board, sort of.  I have one idea that I will try out tomorrow where I create a shared library and stick the perl interpreter in there then load it from the loader plugin.  On another side note, I was able to get a few more XSUBs working that I was debugging.  <code>Gaim::Account::connect()</code> began working as soon as I changed the account's status prior to attempting to connect.  Prior to doing this, it would just crash Gaim.
+<br>
+<br>
+So, the challenge is now to get the embedded perl interpreter either working as a completely static library of XSUBs compiled in with the embedded interpreter, or try dynamically loading the interpreter.  We will see how it progresses tomorrow.

@@ -1,0 +1,32 @@
+DBus gets handles
+
+After a few days of fighting with dbus, I have implemented a way of
+accessing some of gaim objects remotely.  The idea is that each of
+these objects gets an integer id (a handle), which can be passed
+through dbus to other application.  
+
+Remote dbus applications need a way of addressing objects exposed by
+gaim to the outside world.  In gaim itself, these objects (such as
+GaimBuddy and company) are identified by pointers.  The gaim dbus
+pointer registration engine converts pointers to handles and back.  
+
+In order for an object to participate in the scheme, it must register
+itself and its type with the engine.  This registration allocates an
+integer id which can be resolved to the pointer and back.
+
+Handles are not persistent.  They are reissued every time gaim is
+started.  This is not good; external applications that use gaim should
+work even whether gaim was restarted in the middle of the interaction.
+
+Pointer registration is only a temporary solution.  When GaimBuddy and
+similar structures have been converted into gobjects, this
+registration will be done automatically by objects themselves.
+
+By the way, this kind of object-handle translation should be so
+common that there must be a library (maybe even glib) that
+implements it.  I feel a bit like reinventing the wheel here.
+
+Now, I'm going to take a look at dbus signals as a way of notifying
+other application about various gaim events, such as data-structure
+changes (a new buddy has been added) or im events (foobar has just
+signed on).

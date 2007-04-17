@@ -1,0 +1,3 @@
+First Post!
+
+</p>This is my first blog post for Gaim's Summer of Code! It's just a test to make sure it works. Expect a full writeup of my status soon.</p>

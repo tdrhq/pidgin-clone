@@ -1,0 +1,110 @@
+<?
+	$page->title = "My Two Cents on AOL's Blockings";
+	require('inc/template.inc.php');
+?>
+
+<h1>My Two Cents on AOL's Blockings</h1>
+
+<p>Every time an article gets posted on Slashdot about the AIM service that AOL
+provides, I see the same comments being made over and over again. A sizable
+percentage of those comments tend to be misinformed, or sometimes just wrong. So
+here's my own thoughts and commentary on everything AOL has done with the AIM
+service since the announcement of TOC.</p>
+
+<h2>AOL Announces TOC</h2>
+
+<p>In 1998 AOL announced that it was going to be providing an open protocol that
+clients could use to access the AIM service; this protocol became known as TOC.
+They not only released a specification of the protocol, they also released a
+client that used the protocol - and released it under the GPL. TiK (as it was
+called) was written in tcl/Tk, and though it wasn't a 1.0 release, it supported
+nearly every feature the TOC protocol offered.</p>
+
+<p>AOL gave the Open Source community TOC, and most people seemed to think at
+the time that this was a Really Good Thing, and that AOL was really trying to be
+friends with us. AOL giving us TOC negates any argument about us not having any
+right to use their servers. TOC operates as a proxy to the real service - it's
+actually <i>less</i> efficient to use TOC than it is to use Oscar. Before you can
+claim that all of these unofficial clients are a drain on AOL's resources, TOC
+must be dropped. Unless if they drop TOC, we have a right to use those
+resources.</p>
+
+<p>Since the release of TOC, it has <i>not</i> kept up with Oscar, and in fact
+has <i>lost</i> features since its release. When TOC was announced, it could not
+retrieve users' away messages or request RVOUS actions (RVOUS actions include
+file transfers, buddy icons, direct IM, and voice chat). Since its release, it 
+has lost the ability to search for users, and features that Oscar has gained
+have never been added to TOC. So while TOC can still perform all of the basic
+functionality that users need, it is <i>not</i> a valid alternative to
+Oscar.</p>
+
+<h2>AOL Blocks MSN and Odigo</h2>
+
+<p>Although these two events were separate they are related. Both were competing
+IM systems. Please note the distinct difference between an IM system and and IM
+client: clients connect to a system. AOL has never deliberately blocked any
+client, even an unofficial one, from connecting to their service (though they
+have made modifications that occasionally broke unofficial clients). They have
+only blocked competing systems, such as MSN and Odigo, from being able to
+communicate with AIM users.</p>
+
+<p>Because MSN and Odigo both have closed servers and closed
+clients, I don't think these blocks were ever really looked at one way or the
+other by most people; or at least, they should not have been. If MSN had "won"
+the battle, so to speak, it would have been replacing one evil, AOL, for
+another, Microsoft (the only reason I say "evil" is that their servers  are not
+open source).</p>
+
+<h2>AOL and Time/Warner Merge</h2>
+
+<p>Everyone seems to think that because AOL and Time/Warner merged that AOL has to
+open up their AIM service; the FCC said so, after all. This has been greatly
+misread by nearly everyone except AOL. According to the FCC <a
+href="aoltw.pdf">conditions</a>, AOL only needs to open AIM to at least one
+would-be competitor <b>if</b> they add "advanced, IM-based high speed services",
+specifically, video conferencing. Until they add video conferencing, they are
+allowed to keep it as closed as they want.</p>
+
+<h2>AOL Blocks Jabber (and Gaim)</h2>
+
+<p>Once again, AOL did not deliberately block Gaim (a client); it was a
+by-product of blocking Jabber (a system). What's really infuriating about this,
+though, is that Jabber is working towards openness and interoperability, and AOL
+doesn't want any part of it. Blocks by AOL have never been about resources or
+making sure only valid clients connect; they have <b>always</b> been about
+cutting out competitors' strongest link: the ability to talk to AIM/AOL
+users. Without that ability, it is highly unlikely that a competing IM system
+could survive (unless if you're Microsoft, in which case you just put MSN
+Messenger on everyone's desktop).</p>
+
+<p>In any event, Jabber was blocked. It's currently able to connect, and the
+last release of Gaim (0.11.0pre10) is able to use Oscar without any problems. If
+a different checksum is asked for, we will be setting up a checksum server that
+will provide the correct 16 bytes, so people will still be able to use Gaim.
+This seems like the only reasonable solution for Gaim. Jabber's current solution
+is to require a copy of the AIM binary at each server installation, which is
+more reasonable since they are a server and not a client. However, since it has
+been more than two weeks since the checksum value changed, I doubt that a
+checksum server will be required. AOL had attempted to block Jabber based on
+other parts of Oscar besides the checksum, so I think the worst of it is over.</p>
+
+<h2>Conclusion</h2>
+
+<p>So that's it. I wrote this just to get a couple points in, in case any
+discussion about AIM ever happens again. Just to sum up, they were:</p>
+
+<ul>
+<li>It's not the resources that are the issue; and if it were, TOC would be
+blocked too;</li>
+<li>TOC is <i>not</i> a valid alternative to Oscar for a serious AIM client;</li>
+<li>AOL blocks competing systems, and never deliberately blocks clients (though
+it may accidentally block them);</li>
+<li>the FCC did not require AOL to open AIM, and even if AOL adds video
+conferencing, they don't have to open it as wide as people seem to think they
+do;</li>
+<li>and finally, the Jabber/Gaim blocks are currently resolved, and we have
+stand-by solutions in case the need arises.</li>
+</ul>
+
+<p><i>--EWarmenhoven, April 19, 2001</i></p>
+

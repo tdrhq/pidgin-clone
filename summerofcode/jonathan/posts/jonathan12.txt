@@ -1,0 +1,16 @@
+Status
+
+With tomorrow being the start of the last month that I'll have to work on this project, I figure it's time for a brief summary of what's been done and what's left to do:<p>
+
+<b>Done</b><br>
+1) Gaim can now send files via ICQ when they're not behind a NAT, as was previously only possible with the AOL protocol<br>
+2) Gaim can receive files via OSCAR, when they're behind the same NAT<br>
+3) Gaim can receive files via OSCAR from behind a NAT when the sender requests that an AOL proxy server be used<p>
+
+<b>To Do</b><br>
+1) Gaim needs to send files via OSCAR and request that an AOL proxy server be used<br>
+2) Gaim needs to send files via OSCAR when the other client requests that an AOL proxy server be used<br>
+3) Gaim needs to receive files via OSCAR and be the one to request that an AOL proxy server be used<br>
+4) All of this needs to be well-documented<p>
+
+Obvously, the first 3 of these are related to what's already been done with Gaim being able to receive files via an AOL proxy server when the other client requests that the proxy be used. Sending and parsing the messages is now trivial, but integrating these messages with the current code is definitely not. However, once these are tackled, writing the documentation will seem like a very worthwhile task so that others won't have to spend quite so much time unravelling the mysteries of Gaim's OSCAR File Transfer code. These next few weeks are going to be very busy, but, with any luck, I'm hoping to be done before it's time to start packing for school.<p>

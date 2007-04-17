@@ -1,0 +1,38 @@
+Recent Progress
+
+Quite a bit has happened since my last entry, so I'll break this down into subheadings:<p>
+
+<b>Monday Night</b><br>
+Monday night I finally got the last of stage 2 proxied transfers finished up. After which, my hard drive promptly crashed. I spent several hours the next day reconstructing my partition table and finally found all of my data in tact. Though I had backups, they were a day or so out of date. Not cool.<p>
+
+<b>Transfer Redirection</b><br>
+Recently, I received a message from Keith Lea of the Joust project in which he brought a new transfer scenario to my attention: redirected transfers. In a redirected transfer, the receiver first attempts to connect to the sender, as in a normal transfer; then, upon finding that no connection is possible that way, the receiver asks the sender to connect to it. I confirmed that the official client does this with datallah's help. From the packet capture I got from that, I wrote code that will hopefully handle transfer redirections. I still haven't gotten a chance to test it yet.<p>
+
+Also, Keith noted that we could initialize transfers faster if we try the client IP (the IP the machine thinks it has) first, then the verified IP (the IP the AOL server thinks the client has). Naturally, IP's on the same subnet should connect very quickly and, if they don't, we can set a short timeout and move on to the next connection method.<p>
+
+<b>Reorganization</b><br>
+One of the biggest steps forward in the past few days has been the reorganization of the file transfer code. Previously, I had a plethora of functions, each handling one possible scenario for a file transfer. This resulted in massive code duplication (oscar.c was nearing 9000 lines, putting it in the morbidly obese sourcefile category). I added variables to <code>oft_info</code> to track information about the transfer including whether we are sending or receiving; if we are using no proxy, redirecting, or using a rendezvous proxy; and what stage a proxied transfer is. This allowed me to condense the code to just a few functions. The codepaths are somewhat complex, but I plan to submit diagrams illustrating the changes to make sure everything is clear.<p>
+
+<b>OSCAR User Prefs</b><br>
+Another minor accomplishment is that I now have a user preference under the main preferences dialog that allows the user to select whether or not to use an AIM/ICQ proxy server for file transfers. Though it's not much to look at, it does its job faithfully. Currently, the Gaim project tries to avoid options when they are not necessary, but this option is useful both for getting the file quickly routed in the right direction and also for keeping a system secure for those who do not wish for their IP address to be revealed.<p>
+
+<b>Stage 3 Proxied Transfers</b><br>
+As if there weren't already enough file transfer scenarios out there, today I discovered that is possible for 3 ICBM requests to be passed back and forth between clients before they decide if a proxy server will be used. Since I already had a good codebase for dealing with proxied transfers, it did not take too long to implement this functionality.<p>
+
+<b>Testing Status</b><br>
+I have begun some preliminary testing after reorganizing the code to make sure everything still works and also see what needs tweaking. Here are where things currently stand:<br>
+<i>Sending</i><br>
+No Proxy - Untested<br>
+Redirection - Untested<br>
+Stage 1 Proxy - Worked<br>
+Stage 2 Proxy - Worked<br>
+Stage 3 Proxy - Worked<br>
+<i>Receiving</i><br>
+No Proxy - Worked<br>
+Redirection - Untested<br>
+Stage 1 Proxy - Worked<br>
+Stage 2 Proxy - Worked<br>
+Stage 3 Proxy - Untested<p>
+
+<b>What Next?</b><br>
+There are still a few loose ends to tie up, but the main priority now will be getting the code moved to HEAD. Right now, it resides in a copy of oldstatus on my computer. I felt this was well-suited to development as it is stable. However, I will need the help of many other people testing this to work all the bugs out. Also, there are some transfer scenarios that I cannot duplicate on my home network alone. It's time to get more people involved. As soon as I finish up this last few details, I will devote my time to testing and documentation.<p>

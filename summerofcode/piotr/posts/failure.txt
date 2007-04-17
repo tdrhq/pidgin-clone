@@ -1,0 +1,33 @@
+Failure
+
+Today's been a failure.  I've tried to install NetworkManager and
+Galago on my computer, but it's much harder than I thought.  The
+essense of the problem is that there are two DBus versions around: the
+older and still popular 0.23 and the new 0.34.  
+
+<p> Gaim dbus support requires the new 0.3x version.  For some
+mysterious reason, i386 is the only architecture for which Debian
+supplies only version 0.23.  So to develop Gaim dbus support I had to
+install 0.34 from source.  In other words, I have two DBus versions
+running on my computer: the DBus system bus runs version 0.23 and the
+session bus runs 0.34.  Note that these versions differ not only in
+library API but also in the public API available to other applications
+through DBus.  As a result, 0.23 and 0.34 applications cannot talk to
+each other.
+
+<p> This is not a problem for Gaim, because it uses only the 0.34
+session bus.  Unfortunately, both NetworkManager and Galago require
+access to the system bus, therefore, to enable gaim to talk to these
+services, they'd have to support DBus 0.34 and also I'd need to
+upgrade my system bus to 0.34.  The latter task alone is almost
+impossible because, as I said, Debian does not support 0.34 yet, and
+compiling the system bus from source would require me to apply some
+Debian modifications I have to clue about.  This is not to mention
+that there's no guarantee that galago works with 0.34 at all.  It
+looks that the chances of success are rather small here.
+
+<p> Instead, I'm going to work on dbus-analize-functions.py.  At the
+moment, this script generates server-side dbus bindings for gaim API
+functions.  I'd like to modify it so that it can generate client
+bindings as well.
+

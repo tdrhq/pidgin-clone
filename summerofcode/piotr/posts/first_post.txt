@@ -1,0 +1,15 @@
+Gaim takes the dbus
+
+My project for this summer will be to add <code>dbus</code> support to
+gaim.  In practical terms, this means that external programs will be
+able to communicate with <code>gaim</code> and, for example, change
+its status, update the list of buddies, etc.  At the moment, such
+communication is possible, however, it uses a custom protocol
+implemented by <code>gaim-remote</code>, which is not compatible with
+anything else.  On the other hand, <code>dbus</code> is a well-defined
+desktop-communication protocol that is becoming the standard.
+
+<p style="text-align: center">
+  <img src="http://academic.scranton.edu/student/CHIBNIKR2/DBus.jpeg" />
+</p>
+

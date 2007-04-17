@@ -1,0 +1,22 @@
+Signals
+
+I've just implemented outgoing DBus signals in gaim.  Basically, you
+can inform other applications that somebody has signed in, started a
+conversation with you, and similar stuff.
+
+The gaim bindings I use are built around the GObject library.  Gaim
+uses its own signal model.  As a result, I had to implement a
+converter between these two models.  Now, each signal emitted by gaim
+is automatically relayed to DBus.  If you want to see it in action,
+run <code>dbus-monitor</code> and launch gaim.
+
+You can use this mechanism to dbusify your gaim signals, but if you're
+creating a new type of signal, I'd recommend using native GObject
+signals instead.  They are more robust; there are many types which
+are not supported by the gaim-dbus converter.
+
+One final remark: the current implementation of GObject DBus doesn't
+seem to support signal registration on the fly.  In other words, only
+signals registered before starting the main gtk loop seem to work.
+I'll look at this problem later.
+

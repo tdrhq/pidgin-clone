@@ -1,0 +1,9 @@
+Testers Wanted
+
+Today, I worked out a few last bugs that I knew were still lurking around in OSCAR file transfers. With all of the currently known bugs killed off, it's now time to start testing the code out on as many machines as possible. If anyone is interested in trying to help me crash the code, just drop me an email at: ardentlygnarly AT users DOT sourceforge DOT net. You can also catch me on irc.freenode.net in #gaim, username ArdentlyGnarly. <i>Note:</i> You'll need a Linux box and CVS to help test.<p>
+
+Also, I've started some preliminary work on documentation. Since the Summer of Code is all about open source software, I pulled down OpenOffice.Org 2.0 Beta for writing things up. The Draw application has proved very useful for making diagrams. As a sample of what's to come, here is one of the charts I came up with today (click to enlarge):<p>
+ 
+<a href="http://gaim.sourceforge.net/summerofcode/jonathan/send.gif"><img src="http://gaim.sourceforge.net/summerofcode/jonathan/send.gif" width="384" height="513"></a><p>
+
+Again, if you'd like to help test the file transfer code, it would be much appreciated.<p>

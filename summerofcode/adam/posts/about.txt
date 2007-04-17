@@ -1,0 +1,10 @@
+About Me
+
+<p>I guess my first real post should be an introduction about myself. My name is Adam Warrington, 
+and I am a 22 year old student at the University of Michigan studying Computer Science. My accepted
+proposal is to implement NAT transparency into Gaim using the UPnP features available in modern routers.</p>
+
+<p>I'm excited to work on this project throughout the summer, and to get to know all the Gaim developers. I'd also
+like to send a thanks out to Sean for sending all us Summer of Coders a copy of his new book to help us in our
+development of Gaim.</p>
+

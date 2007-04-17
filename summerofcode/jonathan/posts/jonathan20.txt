@@ -1,0 +1,12 @@
+Final Post
+
+Tonight I made some final commits:
+<ul>
+<li>All of my changes to the OSCAR file sending code have now been copied over to the HEAD branch from oldstatus.</li>
+<li>A few final bugs have been fixed in both branches.</li>
+<li>A revised copy of the OSCAR file sending documentation (along with the original editable files in OpenOffice.org 2.0 format) has been committed to the CVS doc directory.</li>
+</ul><p>
+
+Since this is my last post, I would just like to say that Google's Summer of Code has been a wonderful thing for both the open source community as a whole and for me personally. Hundreds of projects have made large amounts of progress in just two months and just as many students gained valuable experience. For the Gaim project, users of AOL and ICQ have file transfer capability comparable to the modern official clients.<p>
+No longer when one of my friends attempts to transfer a file to me and must I explain to them that I must switch from Gaim to another AIM client before the file transfer will work. Previously, my friends would focus on this one deficiency rather than seeing the other great features of the program. Not any more. Now I can say "Yeah, Gaim can do that." Adding this functionality to Gaim has strengthened its position as a first-class instant messaging program.<p>
+I have learned much from coding on this project. This has been my first time to work on a program of this size. Luckily, there were top developers there to share their experience and help me along every step of the way. Now, I feel comfortable building on top of existing open source code and would like to continue this type of work in my free time. As I have learned: <b>Hacking open source is fun.</b> Thanks again to the friendly developers of Gaim and the very generous people at Google for making this experience possible.<p>

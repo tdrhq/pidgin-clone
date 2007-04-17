@@ -1,0 +1,36 @@
+Operation!
+With the recent addition of the <code>GaimWhiteboardUiOps</code> object, things are 
+falling into place and kinda--<i>operating</i>.<br>
+<br>
+I've set up a basic GUI interface.  Much of what I do tends to have a Doodle bias; it's hard to 
+keep from doing such.  Because it's easier to recieve than to give, the local client can now 
+interpret and draw what the remote client sends.  Here is a screenshot:<br>
+<br>
+
+<A HREF = "http://gaim.sourceforge.net/summerofcode/andrewd/pictures/20050723_gaim-doodle.png">
+<IMG	SRC="http://gaim.sourceforge.net/summerofcode/andrewd/pictures/20050723_gaim-doodle.png"
+	WIDTH="64%"
+	HEIGHT="64%">
+</A>
+<br>
+
+As you can tell, the graphics are not vectored.  Perhaps later, this can be achieved; right now I'm 
+using pure GDK.  Despite this difference, I think it translates well.<br>
+<br>
+The local client can draw as well, but the information is not sent to the remote client.  I'm not 
+jumping into this functionality right away, because it's pressing me to think of a generic format 
+for the drawing data that isn't so Yahoo Doodle specific.  The 'doodle' posted with this 
+entry was drawn entirely by the Yahoo Messenger client.  The local client can only draw in black 
+with one brush size, mainly because I haven't the necessary GTK GUI-making skills to quickly 
+provide a palette system.<br>
+<br>
+What I do notice is that the GDK mouse tracking functionality is very sensitive.  Therefore, my 
+whiteboard application collects much more deltas or mouse movements, producing at times a pretty 
+nervous or jaggy effect.  I've considered a smoothening or averaging effect.  On a similar note, at 
+some future point in time, it would be beneficial to create some compression of redundant deltas.  
+Of course, this isn't too important at this time.<br>
+<br>
+I'll be working on the GaimWhiteboard to prpl (namely Yahoo) communication, which I think requires 
+a similar sort of UiOp system that was required between GaimWhiteboard and GaimGtkWhiteboard.<br>
+<br>
+

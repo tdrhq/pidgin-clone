@@ -1,0 +1,3 @@
+SNAC's Are Eating My Lunch
+ 
+Right now, even with having solid code to do the actual login for the proxy server, I'm having trouble getting other aspects of proxied file transfers up and running. Namely, the SNAC (a type of OSCAR packet) that is used to request a proxied file transfer seems to be malformed as WinAIM currently automatically rejects my requests to send a file via proxy. (It's a very picky, not to mention rude program.) For now, all I can do is continue to examine packet captures, read existing code for similar SNAC's, and keeping hacking away at it. This wouldn't be the first time I've encountered such frustractions though; generally, enough time and thought takes care of these things.

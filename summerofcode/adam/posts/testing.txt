@@ -1,0 +1,13 @@
+Testing the UPnP implementations.
+
+The current status of the NAT traversal library is it is successfully discovering and fetching the external IP address of
+the router for Linksys routers. This is great as it is the first of the two things needed for NAT transparency: External IP
+address, and port forwarding. I've made my best attempts to get it to work with a DLink router without having one to
+run the tests on (thanks to Sean for running my poorly written code). Being there are more routers out there than I
+can possibly test my library on, I've decided to write a client logger to help me with the process.
+
+I plan on writing a simple server script in PHP to accept logging information from a client that makes use of the entire
+NAT traversal library. I will put logging capabilities around every aspect of the library, including sending the XML description
+of the router (something required by all UPnP routers). I will compile this client script and make it available for download. Then
+I'm going to ask the help of all willing to run this on their systems so I can gather information on as many routers possible.
+This will make testing much easier, and feasible to be done on a large scale before the summer ends.

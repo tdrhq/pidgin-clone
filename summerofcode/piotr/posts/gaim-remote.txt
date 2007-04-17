@@ -1,0 +1,17 @@
+Gaim Remote
+
+OK, I wrote gaim-remote.py.  In addition to existing gaim-remote
+functionality, you can call any dbus-exported gaim API function.  The
+power of python lies in the fact that you don't need to have any
+gaim-specific library, all bindings are created dynamically.  What's
+more, the language is very concise, so implementing common things such
+as starting a new conversation or changing the status of all active
+accounts never takes more than a few lines of code.  Try it!  The dbus
+bindings allow you to write gaim "extensions" in any language that
+supports dbus (these programs are not extensions in the strict sense,
+but have similar capabilities).
+
+<p> Next, I'll try to make gaim talk to other dbus-aware applications
+such as NetworkManager, Galago, and Beagle.  I'm going to write
+external python scripts for that and have as little of C code in gaim
+proper as possible.

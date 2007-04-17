@@ -1,0 +1,8 @@
+Welcome
+
+  I was recently accepted as a Google Summer of Code programmer, and I'll be writing a plugin for Gaim called "Music Messaging" where a number of people can collectively edit a score of music in realtime.
+<br><br>
+  So far I've just thought up some basic concepts and methods for the problems I'll face, and explored the world of SourceForge to get comfortable with it's environment.
+<br><br>
+     More to come...
+

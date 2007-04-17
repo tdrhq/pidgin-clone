@@ -1,0 +1,3 @@
+A long due progress update
+I know I haven't updated in a while but development has now kicked into high gear this week. I have finalized the UI aspect of the editor and how I am going to handle the communication between clients. It will be done through the chat itself using special headers and metadata. I think it can be done efficiently with the use of some comrpession. I expect to have a preliminary working version by the beginning of next week. Here is a screenshot for now. <br> <center><a href="http://gaim.sourceforge.net/summerofcode/cristhian/ui.jpg"><img src="http://gaim.sourceforge.net/summerofcode/cristhian/ui.jpg" alt="Screenshot #1" / border="0"/></a></center><br>
+

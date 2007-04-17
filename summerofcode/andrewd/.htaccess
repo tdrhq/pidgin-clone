@@ -1,0 +1,7 @@
+DirectoryIndex blog
+Options ExecCGI Indexes
+
+<Files blog>
+  ForceType application/cgi-script
+  SetHandler cgi-script
+</Files>

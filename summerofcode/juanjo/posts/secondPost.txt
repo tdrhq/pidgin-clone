@@ -1,0 +1,47 @@
+This is my second post and it is almost the end of the summer :-(
+<p>
+First of all I would like to say that I am very sorry for posting so little 
+during the summer (one post a month, that should be a record). I have been quite 
+busy working (yes, I have to eat and buy pretty things) and programming for the SoC, 
+and posting was frankly the last thing I was thinking of.
+</p>
+<p>
+And now, these are the good news. I have commited my first version of the plugin 
+that communicates with iChat through Bonjour protocol. I haven't been able to test 
+it very hard, so there are probably mountains of bugs, but at least the basic stuff 
+(stablishing conversations, sending and receiving messages) seems to work. Everyone 
+is invited to test the plugin as thoroughly as possible, reporting all the finded 
+bugs to me (I promise that, at least, I will try to fix all of them). I have worked 
+with the oldstable branch of the source tree during the summer, but I am going to port it 
+to HEAD in the next days.
+</p>
+<p>
+In order to compile the plugin, you should first install the 1.0.0 version of the Howl library, 
+It can be found on <a href="http://www.porchdogsoft.com/products/howl/">Porchdog Software</a>.
+Change the file src/protocols/Makefile.am in order to add the bonjour directory to the compilation.
+You should also change the configure.ac file to be able to use the plugin and create the Howl 
+simbols during compilation. You can use this one (<a href="posts/configure.ac">configure.ac</a>) if 
+you don't know how to do it. Then, the normal stuff (autogen.sh, configure, ...).
+</p>
+<p />
+<b>Things that work:</b>
+<br />
+<ul>
+	<li>Presence of other buddies in the local network using Bonjour protocol.</li>
+	<li>Conversations with those buddies.</li>
+</ul>
+<br />
+<b>Things that almost work:</b>
+<br />
+<ul>
+	<li>Changes of status (gaim changes are not seen by the other buddies).</li>
+	<li>Font sizes in messages (iChat fonts are correctly translated to Gaim ones, but no viceversa).</li>
+</ul>
+<br />
+<b>Things that are missing:</b>
+<br />
+<ul>
+	<li>Avatars.</li>
+	<li>File transfers.</li>
+</ul>
+</p>

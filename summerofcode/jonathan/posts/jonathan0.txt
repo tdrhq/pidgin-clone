@@ -1,0 +1,3 @@
+Let's Get This Party Started
+
+Greetings. My name is Jonathan Clark and I'm a junior Computer Science major from Texas Christian University. The Gaim team and the people at Google were kind enough to let me hack away at the OSCAR protocol this summer. My goal is to fully implement file transfer functionality over ICQ and AIM. Get excited.

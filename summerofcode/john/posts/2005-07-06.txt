@@ -1,0 +1,22 @@
+First Post On SoC Blog
+I have been keeping my journal entries in a different place up to this point.  Instead of attempting to move all of these entries over, I have decided that the best course of action is to give a brief summary of what I am inteded to do, what I have done and what I hope to accomplish in the next seven weeks or so.  
+<br><br>
+Gaim has had a loadable plugin to allow users to create Perl scripts that access the Gaim API and act as plugins.  There are a lot of "issues" with the Embedded Perl Interpreter including it no longer working properly in HEAD and it being far out of date with the current API.  It is my intent for the summer to bring the Perl Interpreter back up to date with the current Gaim source.
+<br><br>
+About ten days ago I started working on the Perl loader module that loads the perl scripts and executes them.   Much of the ground work is already present for the interpreter, but it will no longer load the XSUBs library (Gaim.so) and crashes inside of the bootstrap section of the code when it tries to initialize the Perl stack. When a plugin is found g_module_open is called to load the module.  A recent change in how this is called (Now it is given the G_MODULE_BIND_LOCAL flag) enforces local binding of symbols on modules.  This means that the plugins are not putting their symbols in the global symbol table and it means that for some funky reason the embedded Perl interpreter no longer functions.  Most of the first week was spent trying to correct this problem by building the modules differently and rewriting some of the code to handle PerlInterpreter.  Nothing seemed to have any effect aside from having to building Gaim.so with libperl linked to it since it no longer pilfers its symbols from the Gaim Perl plugin.
+<br><br>
+Gaim not functioning in HEAD is still an open question that I have been going back to from time to time, but in between reading the Perl and Gaim source I have started on writing the XSUBs and Perl test code to get the API back up to date.  Thus far I have finished wrapping the following files:
+<br>
+<ul>
+	<li>account.h - Tested and looks to work well.</li>
+	<li>accountopt.h - </li>
+	<li>blist.h - Fully test and seems to work well so far</li>
+	<li>buddyicon.h - New file</li>
+	<li>connection.h - Some of the methods in this one seem to do some strange things...will take care of it when testing.</li>
+	<li>conversation.h - Still needs testing.</li>
+	<li>cipher.h - I am a little worried that the typemap will fail this one since it is dependant on numbering order, but if it is an issue when I do the test, I will write routines to handle the type converstion properly.</li>
+	<li>debug.h - Much of this was already included in the source and worked, so I did not bother with it.</li>
+	<li>gtkaccount.h - I wanted to start playing with some of the GUI stuff.  It works just dandy.</li>
+</ul>
+<br>
+From here I will continue to update the XSUBs.  Making the XSUBs is bit tedious.  Tools exist to conver headers to .xs files, but they were not really working out any better than good ol' grep.  I still have to go through each one and make sure the names are correct and insert the types into the typemap as needed so not using h2xs is not hurting me too much.  This part of the project should be completed without much problem and I will continue to work on it and post updates as I go.

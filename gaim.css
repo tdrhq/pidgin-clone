@@ -1,0 +1,168 @@
+body {
+	font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+	color: #333;
+	font-size: 0.8em;
+	background: repeat-y right url('images/menu-back.png') #eee;
+}
+
+a:link		{ color: #00C; }
+a:visited	{ color: #4462b7; }
+a:hover		{ color: #C00; }
+a:active		{ color: #000; }
+
+/* template */
+
+#header {
+	background: #eee;
+	margin-right: 170px;
+	padding: 1em 3em;
+	border-bottom: 1px solid #999;
+}
+
+#header h1 {
+	margin: 0;
+	font-size: 3em;
+	font-weight: normal;
+	color: #666;
+}
+
+#header h1 span.version { font-size: 0.5em; }
+#header img.logo {
+	margin: 10px 6px 0 0;
+	float: left;
+	border: 0;
+}
+#header h1 a { text-decoration: none; color: #333; }
+#header div.subtitle {
+	margin-left: 45px;
+	color: #999;
+	font-weight: bold;
+}
+
+#download {
+	position: absolute;
+	top: 0;
+	right: 170px;
+	padding: 1em;
+	text-align: right;
+	color: #666;
+}
+
+#rss { float: right; color: #666; }
+
+#nav {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 169px;
+	background: #999;
+	text-align: center;
+	padding-bottom: 1em;
+	margin-bottom: 1em;
+}
+
+#nav ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	line-height: 0;
+}
+
+#nav ul img {
+	display: block;
+	margin: 0 auto;
+}
+
+#content {
+	clear: left;
+	margin-right: 170px;
+	padding: 1em 3em;
+	background: #fff;
+}
+
+#footer {
+	margin-right: 170px;
+	padding: 0.5em;
+	font-size: small;
+	text-align: center;
+	color: #666;
+	background: #eee;
+	border-top: 1px solid #999;
+}
+
+h3 {
+	margin: 0;
+	padding: 0 1em 0 0;
+}
+
+div.section-body {
+	margin: 1em 2em;
+}
+
+#content { line-height: 140%; }
+
+/* Front Page News */
+
+h2.news {
+	border-bottom: 1px solid #CCC;
+	margin-bottom: 0;
+}
+
+div.newsdate {
+	text-align: right;
+	color: #666;
+	font-size: 0.85em;
+}
+
+div.newsdate a:link		{ color: #4462b7; text-decoration: none; }
+div.newsdate a:visited	{ color: #666; text-decoration: none; }
+div.newsdate a:hover		{ color: #00C; text-decoration: underline; }
+div.newsdate a:active	{ color: #000; text-decoration: underline; }
+
+/* Content Styles  */
+
+#content table {
+	border-collapse: collapse;
+	border-spacing: 0px;
+	empty-cells: show;
+	width: 100%;
+}
+
+#content th {
+	padding: 0.2em;
+	font-size: 120%;
+	text-align: left;
+	font-weight: bold;
+	border-bottom: 1px solid #ccc;
+}
+
+#content td {
+	padding: 0.2em;
+	border-bottom: 1px solid #ccc;
+}
+
+#content td.highlight {
+	background-color: #eee;
+	font-weight: bold;
+	vertical-align: top;
+}
+
+#content code {
+	font-family: monospace;
+	color: #663;
+	font-size: 120%;
+}
+
+#content pre {
+	border: 2px solid #ccc;
+	margin: 1em;
+	padding: 1em;
+}
+
+#content dt { font-weight: bold; }
+#content dd { margin: 0.2em 0 1em 1em; }
+
+.faq-question {  }
+.faq-answer { padding-bottom: 1em; }

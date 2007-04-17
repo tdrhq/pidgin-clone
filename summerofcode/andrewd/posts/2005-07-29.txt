@@ -1,0 +1,52 @@
+Purple Ops and such.
+I finished working on another operations object which abstracts communication 
+between GaimWhiteboard and the prpl's:  <code>GaimWhiteboardPrplOps</code>.  It 
+provides the ability for the whiteboard core to make requests like start, end, and 
+clear.  As a result, the whiteboard core allows the prpl's to do their particular 
+network communication (ie inform remote user that the whiteboard session is ending) 
+and other protocol specific stuff.<br>
+<br>
+I added an entry to <code>GaimPluginProtocolInfo</code> for this new object.  This 
+addition was key to allow core access to these prpl specific operations. It also 
+serves to indentify which prpl's have an available whiteboard service.  Perhaps in 
+the future, if my whiteboard object is accepted into Gaim, the operations will be 
+added directly to <code>GaimPluginProtocolInfo</code>, rather than using this 
+middle-man-ish object--I just wanted to keep modifications to existing Gaim files to 
+a minimum.<br>
+<br>
+Just a reminder, my project code is in the 'gaim-doodle' branch.  So, you 
+probably won't find these changes in your source tree.  I figure since my work is 
+halfway acceptable for download now, I'll provide the CVS statement required to 
+grab it:<br>
+<br>
+<mono>cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/gaim co -r 
+gaim-doodle -d gaim-doodle -P gaim</mono><br>
+<br>
+I quickly added the much needed command <b><mono>/doodle</mono></b>, which allows 
+Yahoo users to start a Doodle session with the other person in the conversation.  
+You just gotta enter that into the conversation.  I'll add a button soon enough; 
+that will be easy with the new <code>GaimPluginProtocolInfo</code> entry.<br>
+<br>
+I spent a good deal today fighting with a bug--more like just some hairy program 
+logic.  The jist of it is that a remote request to end a whiteboard session comes in 
+and handles like such:<br>
+<br>
+prpl -> whiteboard -> gtkwhiteboard<br>
+<br>
+But, a local request (more than likely by closing the whiteboard window) is like 
+this:<br>
+<br>
+gtkwhiteboard -> whiteboard -> prpl<br>
+<br>
+The problem is that they use the same <code>_destroy</code> functions.  So, 
+basically I debugged for more than an hour and fixed the code by making it even more 
+hairy.  Eventually, I fessed up and created a state variable, 
+<code>LocalShutdownRequest</code>, to track whether the local client shutdown the 
+session or not.  It works now--no more crashes--I'm happy--I'll clean it later!<br>
+<br>
+As I've said before, I am hesitant to create the system which whiteboard (core) 
+handles the drawing information and, in particular, color.  It'd be very easy to 
+bias it with the way Yahoo Doodle does such.  I can't put this off much longer, 
+because I can only think that there is only two more things I have to work on:  this 
+drawing system and further improvement of the GUI.<br>
+<br>

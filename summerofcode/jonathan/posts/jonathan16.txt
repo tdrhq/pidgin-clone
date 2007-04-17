@@ -1,0 +1,29 @@
+Bug Fix Applied to HEAD
+
+This morning I realized that the bug fix that I mentioned in my last post had only been applied to oldstatus, so I set about the simple copy and paste job of applying the fix to HEAD. I compiled it, ran Gaim, then attempted to receive a test file. The transfer failed when it arrived in <code>oscar_sendfile_connected()</code>. After several minutes of investigating, I found that <code>gaim_proxy_connect()</code> and the underlying OS call to <code>socket()</code> were returning zero as the file descriptor. Since zero is reserved for stdin, I thought this was obviously wrong. And so I spend a little while trying to figure out why this had happened... six and a half hours to be more exact. Frazzled, I started Googling up sockets. This is what I found:<p>
+ 
+
+<pre>
+Socket() is returning descriptor as zero. Is this valid? 
+ 
+No, your computer has inhabited by evil spirits and must be destroyed
+quickly and completely in a fire built in front of the local police
+station while you hop around it on one foot and waving your arms vigorously. 
+ 
+ If you really want to be certain that the evil spirits are dispelled
+ and do not follow you home and infect another computer, you should also
+ be completely nude and repeatedly play Wagner's Ride of the Valkyries
+ BACKWARDS (otherwise you may end up summoning more spirits! very very bad!)
+ on a kazoo until there is nothing left of the computer but ash. 
+ 
+ 
+ Now that you have done that: 
+ 
+ The real answer is yes. A socket descriptor can be from 0 to N (N being
+ dependent on the system / OS). The only reason many people do not see a
+ return of 0 normally is that it is assigned to the stdin stream. If stdin
+ is closed though, 0 will start popping up as a return value on both socket
+ and accept calls. 
+</pre><p>
+
+ Going on the assumption that Gaim 2.0.0 had closed stdin, I looked around for what else could be causing the error. I then found 2 lines in <code>aim_get_command()</code> that made the same assumption I did, that a zero file descriptor was bad news. I commented out the offending lines, and the world was again right.<p>

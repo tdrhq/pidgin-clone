@@ -1,0 +1,3 @@
+AIM & ICQ Appear to Have Similar File Transfers
+
+Tonight I used Packetyzer to take 4 packet captures, an incoming and outgoing for both AIM and ICQ, using the latest official clients for each. These captures (all 15 packets each for a 3 byte text file) revealed remarkable similarities between the AIM and ICQ file transfers. After taking with Mark Doliner, we concluded that they both probably use the same version of OFT (OSCAR File Transfer Protocol). Based on this, the next step is to remove the block that Gaim currently places on using OSCAR to send files over ICQ. After that is done, Will attempt to send a file from Gaim ICQ to an official ICQ client to see how well the two play together.

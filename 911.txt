@@ -1,0 +1,24 @@
+Unhandled command '911' indicates some form of authentication error.
+This could be simply that your password is wrong.
+
+Other reports of this error seem to indicate that it could be a timeout
+problem, if the authenticaion process takes too long to complete, the
+authentication fails.
+Slowness could be caused by a number of factors, including:
+ - being on dialup
+ - slow DNS resolution
+ - network problems.
+
+Please check that your configured DNS servers are correct, and are resolving
+hostnames reasonably quickly. On Linux these are specified in
+/etc/resolv.conf - At least 5 people resolved the '911' error by removing
+incorrect DNS servers from here.
+
+If you are still having problems please try these tests to try to identify
+any potential network problems:
+using telnet, try connecting to
+ - port 1863 on messenger.hotmail.com
+ - port 443 on loginnet.passport.com
+ - port 443 on login.passport.com
+If any of those fail, or take a long time to connect, then this is probably
+not a bug in Pidgin.

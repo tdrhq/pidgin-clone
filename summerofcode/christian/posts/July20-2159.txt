@@ -1,0 +1,6 @@
+Plugins Galore
+
+&nbsp&nbsp So instead of spending tons of time on building a score editor from scratch with Gtk, I'll be hooking up an open source score editor to work with the music messaging plugin. So it's looking like <a href='http://www.gscore.org'>GScore</a> is the choice to be. The interface looks far more intuitive than others like <a href='http://denemo.sourceforge.net/'>Denemo</a>. Not as robust mind you, but with screenshots like below, I think its far more promising.<br>
+<img src='http://www.gscore.org/gscore-in.png' />
+<br><br>
+&nbsp&nbsp I've already contacted the developer of GScore and he's excited about the project so I'll have all the mentorship needed on that end too. It's looking like I may be trying to hook it up with gaim-remote or DBus. More research is needed to figure that stuff out. And possibly a contact with Piotr to see what can be done with the new DBus system. More will come next week when the midterms are over.<br>

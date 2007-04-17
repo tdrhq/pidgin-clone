@@ -1,0 +1,25 @@
+Breaking the Code
+
+No, I haven't broken the Gaim source code; I'm trying to break AOL's hexadecimal code for logging in to a file transfer proxy server. After many hours of spelunking through Gaim's OSCAR code and trying to untangle the twisted mess of function pointers that is the heart and soul of libFaim, I have decided to take another approach. Though I had hoped I might find some useful information in the existing code, analyzing every detail of libFaim is proving much too time consuming. Today, I focused on analyzing what I'm calling the "proxy negotiation" packets that I discovered in my last post. (I realize my last post was a bit rambling and hard to follow, but I'm still not sure of all the details myself. As I find out more, I'll post clarified results here.)<p>
+
+There are basically only 2 packets in the "proxy negotiation" sequence when using a proxy server to receive a file. Here, I will compare and contrast the data structure for the 2 most interesting packet captures:<p>
+<b>Request Packet</b><br>
+Packet Length (2 bytes) - How many bytes come after this length?<br>
+"Proxy Negotiation Code" (2 bytes) - This is always the hex string 04 4A<br>
+Sequence Number? (2 bytes) - This number seems to start at either 2 or 4 with no apparent pattern. In the next packet, it is incremented.<br>
+Hole for Reply X (6 bytes) - All zeros. The reply packet has this part (mostly) filled in (see below)<br>
+Screenname Length (1 byte) - The length of the Screenname string which follows<br>
+Screenname (variable) - OUR screenname, where we are the intended receiver of the file<br>
+ICBM Cookie (8 bytes) - Mmmmm, cookie. Something that's the server has already provided us with.<br>
+Unknown... (4-6 bytes) - I have no idea what these bytes do yet. The 4 byte pattern is 00 01 00 10. The 6 byte pattern is 00 00 00 01 00 10. As you can see, the only differences is that 2 blank bytes have been prepended. Weird.<br>
+Sendfile GUID (16 bytes) - This is always the same hex string every time: 09 46 13 43 4C 7F 11 D1 82 22 44 45 53 54 00 00<p>
+<b>Reply Packet</b><br>
+Packet Length (2 bytes) - Same as above<br>
+"Proxy Negotiation Code" (2 bytes) - The same hex string as above 04 4A<br>
+Sequence Number? (2 bytes) - Again, I'm not sure what this is, but it's the same as the sequence number above, but incremented by 1<br>
+Reply X (6 bytes) - I'm not sure what the point of this is yet, but it is in the same position as the hole above and, so far, has always contained the same hex string: 00 00 00 00 02 20<br>
+More...? (6 bytes, if present) - On one of the packet captures (just one), I had an extra 6 hex bytes at the end of this message: 00 B1 40 0C C9 86. It only happened once, so I was unable to determine a pattern.<p>
+
+Anyway, that's where I stand now. I'm hoping to write some prototype code that generates these messages so that I can see how often these patterns work. Maybe the replies I get from the server will help me decode more of these packets.<p>
+
+On a mournful note, I had my desktop computer crash this morning. All the data for this project is still safe as I keep it in several places, but Windows XP won't load on that machine. Not in Safe Mode. Not in Known Good Mode. Not on a boat. Not in a moat. Sam I am not. Annoyed I am. (Excuse the Dr. Seuss reference.) I've been running a data recovery utility from Linux (which is still happily running along side the dead Windows) for the past several hours. If that fails, I guess it'll be back to the drawing board with the system recovery CD (goodbye data). After this incident, I decided to go ahead and drop the money for Norton Ghost 2005. I'm going to image my Windows and Linux installs for both of my machines so that if anything squirrelly like this happens again, I can just restore an image and be back in business in about 20 minutes.

@@ -1,0 +1,5 @@
+Introduction
+
+This marks my first blog, and the documented start of my work on my Summer of Code project. I'm also a little late out of the starting blocks, as I've been busy fighting the French bureaucracy, at the end of my stay as an exchange student in Toulouse, France. I'm 24 years old and after the summer I'll be working on finishing my Cand.scient. (a bit more than a Master) degree at the University of Copenhagen.
+
+This summer I'll be working on rethinking the buddylist and implementing my brilliant plan :-)

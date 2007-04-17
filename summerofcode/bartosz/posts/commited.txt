@@ -1,0 +1,8 @@
+Commited!
+
+Yes, the first version is now commited to HEAD. But I've found one important
+bug (I guess there are more) and will fix this soon. Tomorrow I'll continue my
+fight with the chats. Wish me luck. ;)
+
+Good night.
+

@@ -1,0 +1,7 @@
+And we're off...
+
+&nbsp&nbsp Last night I spent a good few hours hooking things up with my mentor. Found out I'll be working on the HEAD branch of the 2.0.0 version of Gaim. Just gotta make sure I don't break it ;).
+<br><br>
+&nbsp&nbsp Did the basic setup I'll need for cvs and programming environments and the like. Now I'm wading through the API's provided to try and get a feel of how things are structured. Hopefully by the end of this week I'll be adding components to the score editor view with (I assume) gtk components.
+<br><br>
+&nbsp&nbsp The type of plugin is going to be gtk (as supposed to core, loader, etc). I've never worked with gtk before, but what I expect out of this program is to be immersed in things I haven't done before. No better place to start, eh? On to the API's...<br>

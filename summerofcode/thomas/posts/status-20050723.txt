@@ -1,0 +1,21 @@
+SoC Status
+
+It's time for a little Sommer of Code status report.<br/>
+<br/>
+Currently the following things are working:<br/>
+1) SIP Message Handling<br/>
+2) TCP<br/>
+3) DNS SRV resolving<br/>
+4) registration on SIP server<br/>
+5) sending / receiving instant messages<br/>
+6) presence subscribe / notify for simple status types and PUA == PA<br/>
+<br/>
+Bugs / Problems / Missing:<br/>
+7) SIP over UDP for compatibility with non 2.0 servers<br/>
+8) resending SIP messages (not sure if needed with TCP)<br/>
+9) auto login (currently just works after disconnect/connect, don't know why...)<br/>
+10) uploading presence information (PA != PUA)<br/>
+<br/>
+I'll do a CVS commit when 8 and 9 are fixed.<br/>
+
+[original post at <a href="http://t-butter.de/main/soc/status-20050723.html">http://t-butter.de/main/soc/status-20050723.html</a>]

@@ -1,0 +1,69 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='l10n.xsl'?>
+<project version='1.0' xmlns:l10n='http://faceprint.com/code/l10n' name='pidgin' pofile='pidgin.pot' strings='3022' generated='2007-04-09 12:32:26'>
+<lang code='af' name='Afrikaans' translated='1536' fuzzy='63' />
+<lang code='am' name='Amharic' translated='121' fuzzy='833' />
+<lang code='ar' name='Arabic' translated='199' fuzzy='1589' />
+<lang code='az' name='Azerbaijani' translated='421' fuzzy='703' />
+<lang code='bg' name='Bulgarian' translated='1539' fuzzy='722' />
+<lang code='bn' name='Bengali' translated='2039' fuzzy='165' />
+<lang code='bs' name='Bosnian' translated='1660' fuzzy='911' />
+<lang code='ca' name='Catalan' translated='2927' fuzzy='84' />
+<lang code='ca@valencia' name='Catalan (Valencian)' translated='2926' fuzzy='85' />
+<lang code='cs' name='Czech' translated='2298' fuzzy='486' />
+<lang code='da' name='Danish' translated='2927' fuzzy='84' />
+<lang code='de' name='German' translated='2924' fuzzy='85' />
+<lang code='dz' name='Dzongkha' translated='2760' fuzzy='196' />
+<lang code='el' name='Greek' translated='2199' fuzzy='481' />
+<lang code='en_AU' name='English (Australian)' translated='1641' fuzzy='940' />
+<lang code='en_CA' name='English (Canadian)' translated='1652' fuzzy='934' />
+<lang code='en_GB' name='English (British)' translated='2927' fuzzy='84' />
+<lang code='eo' name='Esperanto' translated='1941' fuzzy='65' />
+<lang code='es' name='Spanish' translated='3014' fuzzy='7' />
+<lang code='et' name='Estonian' translated='1590' fuzzy='360' />
+<lang code='eu' name='Basque' translated='2308' fuzzy='481' />
+<lang code='fa' name='Persian' translated='2357' fuzzy='415' />
+<lang code='fi' name='Finnish' translated='2927' fuzzy='85' />
+<lang code='fr' name='French' translated='3022' fuzzy='0' />
+<lang code='gl' name='Gallegan' translated='2885' fuzzy='116' />
+<lang code='gu' name='Gujarati' translated='1921' fuzzy='736' />
+<lang code='he' name='Hebrew' translated='2927' fuzzy='84' />
+<lang code='hi' name='Hindi' translated='1655' fuzzy='933' />
+<lang code='hu' name='Hungarian' translated='2927' fuzzy='84' />
+<lang code='id' name='Indonesian' translated='0' fuzzy='0' />
+<lang code='it' name='Italian' translated='2112' fuzzy='589' />
+<lang code='ja' name='Japanese' translated='2927' fuzzy='84' />
+<lang code='ka' name='Georgian' translated='1026' fuzzy='477' />
+<lang code='kn' name='Kannada' translated='1598' fuzzy='213' />
+<lang code='ko' name='Korean' translated='1044' fuzzy='1064' />
+<lang code='ku' name='Kurdish' translated='1819' fuzzy='454' />
+<lang code='lt' name='Lithuanian' translated='2926' fuzzy='84' />
+<lang code='mk' name='Macedonian' translated='1855' fuzzy='732' />
+<lang code='my_MM' name='Burmese (Myanmar)' translated='1600' fuzzy='965' />
+<lang code='nb' name='Norwegian Bokmal' translated='1629' fuzzy='993' />
+<lang code='ne' name='Nepali' translated='1668' fuzzy='910' />
+<lang code='nl' name='Dutch' translated='2609' fuzzy='272' />
+<lang code='nn' name='Norwegian Nynorsk' translated='1016' fuzzy='836' />
+<lang code='pa' name='Panjabi' translated='1777' fuzzy='713' />
+<lang code='pl' name='Polish' translated='2499' fuzzy='287' />
+<lang code='ps' name='Pushto' translated='999' fuzzy='43' />
+<lang code='pt' name='Portuguese' translated='2298' fuzzy='486' />
+<lang code='pt_BR' name='Portuguese (Brazilian)' translated='3022' fuzzy='0' />
+<lang code='ro' name='Romanian' translated='2723' fuzzy='224' />
+<lang code='ru' name='Russian' translated='2581' fuzzy='74' />
+<lang code='sk' name='Slovak' translated='2803' fuzzy='160' />
+<lang code='sl' name='Slovenian' translated='3015' fuzzy='5' />
+<lang code='sq' name='Albanian' translated='1882' fuzzy='740' />
+<lang code='sr' name='Serbian' translated='1897' fuzzy='736' />
+<lang code='sr@Latn' name='Serbian (Latin)' translated='1671' fuzzy='936' />
+<lang code='sv' name='Swedish' translated='2837' fuzzy='133' />
+<lang code='ta' name='Tamil' translated='2338' fuzzy='452' />
+<lang code='te' name='Telugu' translated='1672' fuzzy='920' />
+<lang code='th' name='Thai' translated='777' fuzzy='306' />
+<lang code='tr' name='Turkish' translated='1803' fuzzy='743' />
+<lang code='uk' name='Ukrainian' translated='1672' fuzzy='919' />
+<lang code='vi' name='Vietnamese' translated='988' fuzzy='1258' />
+<lang code='xh' name='Xhosa' translated='1612' fuzzy='965' />
+<lang code='zh_CN' name='Chinese (Simplified)' translated='2713' fuzzy='167' />
+<lang code='zh_TW' name='Chinese (Traditional)' translated='2817' fuzzy='142' />
+</project>

@@ -1,0 +1,13 @@
+CVS commit
+
+This week I commited most of the current SIP/SIMPLE protocol plugin. It currently works via TCP and UDP with all combinations of kphone, gaim, iptel.org, sipgate.de and a 0.9.3 SER installation on my server. It sometimes crashes linphone with a SUBSCRIBE msg, but I think this is a bug in linphone and I am trying to fix that.<br/>
+<br/>
+The message typing indication is displayed as a XML file in the chat dialog of kphone which is quite annoying. A patch for kphone is ready soon. Futhermore I'll make the typing indication an option for SIMPLE.<br/>
+<br/>
+It will improve its behaviour behind NATs soon when I committed my STUN functions.<br/>
+<br/>
+There are some known bugs. Namely some mem leaks on disconnect, not RFC compliant resends of UDP messages (wrong timing) and problems with PUBLISH (RFC3903).<br/>
+<br/>
+To test it compile the current CVS version with "./autogen.sh --with-dynamic-prpls"<br/>
+<br/>
+[original at <a href="http://t-butter.de/main/soc/status-20050806.html">http://t-butter.de/main/soc/status-20050806.html</a>]

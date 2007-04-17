@@ -1,0 +1,14 @@
+Getting my feet wet
+
+<div>Slowly dipping my toes in the waters of GTK+ and Gaim... Oh, my - who came up with the interesting idea of implementing something object oriented like GTK+ without utilising an object oriented programming language? :-) On the other hand it's C and not C++ - thank <i>n'importe qui!</i></div>
+
+<div>On a more substantial level I've been developing my ideas on a redesign of the buddy-list. Firstly, I've been looking a bit on <a href="http://hypergraph.sourceforge.net/">HyperGraph</a> - it has a nice smooth feel to it, though it does seem a little bit too strange how the items move around: I wouldn't want to use that interface for moving an item not to mention a group of items. Secondly I've divided my work into two parts: Layout and logic.</div>
+
+<h5>Layout</h5>
+<div>How to present a group of buddies graphically?
+I've been considering different geometric forms: Receiving a bit of critique (from <a href="http://www.dejan.dk/">a physicist!</a>) of the idea of circles centered on circles, I've started to also consider concentric circles. Optionally these can be laid out on a "rugby ball" shape, with their centre on the axis running from end to end of the rugby ball. <img src="/summerofcode/jesper/Stade Toulousain - mini ballon.jpg" alt="Replica of an official rugby ball, marked with the logo of Stade Toulousain." style="float: right" /></div>
+<div>Close buddies are located on circles close to one end of the rugby ball, more distant buddies are located on circles further away from the end of the rugby ball (on the "equator" of the rugby ball). It can be hard to distinguish closeness of close buddies as well as closeness of distant buddies, but it's normally easy to tell a close buddy from a distant buddy. The normal layout would thus be to have a number of close circles at the end of the rugby ball, and a number of circles at the centre of the rugby ball.</div>
+<div>I have however not yet convinced myself of the right path to take, I still feel the circles on circles idea have a strong coherence with the way I, at least, look at a hierarchy of buddies.</div>
+
+<h5>Logic</h5>
+<div>On what basis should the buddy-list be reorganised? As no known computer system has challenged the human way of thinking yet, I'm opting for a semiautomatic way of reorganising the user's buddy-list. Statistics on Gaim events, seem to be the source of information: Messages sent, received, user log-ins and log-outs etc. I am also working on devising some form of reinforcement learning, for the system to learn the hierarchy, while taking into account the actions of the user. More on this in my next post.</div>

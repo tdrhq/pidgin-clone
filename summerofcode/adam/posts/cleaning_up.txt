@@ -1,0 +1,16 @@
+Final Steps
+
+<p>Just want to give everybody an update on my status with things winding down. I see not many people have
+been posting. I assume that is because everyone is scrambling to finish before the 1st. Anyways, UPnP NAT Traversal has been
+working for quite some time now. It's been submitted to CVS, and tested successfully on a good number of routers.
+At that point it was time to port my code to use all the nice Gaim functions. Things like the glib string functions and the
+connection code. I started building NAT traversal as a standalone app to make testing easier. Let me just say that
+testing in Gaim has been a pain, requiring everyone to have my compiled version of Gaim and knowing how to run
+it from the command line with debugging on. So the initial testing as a standalone app was a huge success, and is
+where I found the majority of the problems. Now I have just recently finished porting all my code to use the safer and
+friendlier functions, and am ready to commit that to CVS. A couple of bug fixes were found, and fixed, including a bug with PPP
+type connections. I hope to hear more success stories as I browse these blogs in the next couple days. Good Luck Everyone.
+</p>
+
+<p>-Adam Warrington</p>
+ 

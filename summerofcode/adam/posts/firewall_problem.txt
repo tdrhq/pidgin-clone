@@ -1,0 +1,7 @@
+Problem with software firewalls.
+.
+Well, some upsetting news came up recently. It appears that the default setting for many firewalls in the Linux distros
+out there reject incoming UDP messages. This is definately not a good thing being that the discovery methods for
+discovering UPnP devices on the local network requires sending out a multicast message over UDP, and listening for
+responses from these devices. This means that NAT transparency is not going to work on some Linux distros with
+their default setups. The problem doesn't occur in Windows with their default firewall setup.

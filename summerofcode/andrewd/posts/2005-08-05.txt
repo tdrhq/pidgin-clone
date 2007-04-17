@@ -1,0 +1,58 @@
+Let's draw together, yea yea yea!
+It is now possible for Gaim-Yahoo chatters to Doodle with other Doodlers.  The 
+system I am using to manage local drawing information is fairly Doodle biased; it's 
+good though.  I just wanted to get it working.  I'll clean it up a little, 
+later.<br>
+<br>
+Basically, drawing is the act of pressing the pen down to the paper, moving the pen 
+while down, and eventually lifting the pen back up.  Drawing, of course, often 
+includes doing this process several times over.<br>
+<br>
+The <code>GaimWhiteboard</code> object keeps a list or buffer of coordinates and 
+deltas that represent what the local client user is drawing.  So, the buffer can 
+contain a sequence like:<br>
+<br>
+315 81 0 1 0 0<br>
+<br>
+The first two integers are the starting coordinates (315,81) of the drawing 
+process--essentially, where the 'pen' was pressed down to the 'paper.'  The 
+following integer pairs in the sequence express the 'pen' movement.  The first pair 
+(0,1) shows the 'pen' or mouse cursor did not move left or right (0) but moved one 
+unit down (1).<br>
+<br>
+The idea behind the importance of the next two deltas was kinda influenced by Yahoo 
+Doodle's drawing message protocol.  However, that's all internal and it seems Doodle 
+doesn't always follow it in the way I'd like <code>GaimWhiteboard</code> to do.  
+Anyhow, if there is a delta pair that is (0,0), like this one, then the 'pen' 
+movement stopped.  Since the recording of drawing information doesn't have any 
+respect to time, this can act as a sort of null-termination--the 'pen' has 
+lifted.<br>
+<br>
+Yahoo Doodle seems to only use this idea for drawing single dots--the idea that a 
+single dot is a line with no length or one that ends where it started.  So, Yahoo 
+Doodle expects a null delta and, strangely, another one following it (ie 315 81 0 0 
+0 0).  The Yahoo prpl code will handle this condition accordingly; I say 'will' 
+because it currently doesn't--that's some of the needed cleaning.<br>
+<br>
+The cool thing about this system is that the buffer could, in theory, contain 
+multiple drawings.  GTK+, as far as I know, only reports mouse movements as absolute 
+positions, so the <code>GaimGtkWhiteboard</code> code translates such into deltas.  
+As I've supported, this translation is worth the benefits.<br>
+<br>
+Here is a recent screenshot:<br>
+<br>
+<A HREF = "http://gaim.sourceforge.net/summerofcode/andrewd/pictures/20050805_gaim-doodle.png">
+<IMG	SRC="http://gaim.sourceforge.net/summerofcode/andrewd/pictures/20050805_gaim-doodle.png"
+	WIDTH="64%"
+	HEIGHT="64%"
+	BORDER=0>
+</A>
+<br>
+The GUI code doesn't provide much of a chance to use different colors, but the 
+backend interface exists.  Good news is that the Yahoo Messenger Doodle client 
+<i>does</i> accept any combination of rgb24 colors.  Not so good news is that it 
+only accepts the three set brush sizes:  small(2), medium(5), and large(10).<br>
+<br>
+My next bit of work will involve working on a color system and the availability 
+of colors via a palette and such.<br>
+<br>

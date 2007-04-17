@@ -1,0 +1,37 @@
+DBus for plugins
+
+I've written DBus support for plugins.  Plugins now can register their
+own functions and types.  Wonderful.
+
+Not quite.  The underlying architecture is rather inelegant.  At the
+moment, I use a python script to transform gaim function headers into
+code that uses GObject DBus bindings.  GObject DBus bindings are
+themselves wrappers for low-level GLib DBus bindings.  The result: two
+layers of wrappers, which results in unnecessary complexity, and
+creating artificial GObjects only because the lower wrapper layer
+needs them.  For the plugin writer, it's all conveniently wrapped in
+macro definitions, but if you take a look at my current private
+version of <code>dbus-server.h</code>, you'll see a lot of ugly
+#define statements.  
+
+It's time to get rid of this.  As I can see, GObject bindings buy us
+nothing but more unnecessary declarations.  The signal-to-dbus
+converted was previously re-written to use low-level DBus binding for
+exactly the same reason.  Changing the python script to use low-lever
+DBus binding directly shouldn't be difficult and this enable us to
+drop GObject bindings altogether.  This will also give us the ability
+of changing the implemented functions on the fly (plugins).
+
+Here is the proposed DBus plugin architechture.  At the moment, when
+gaim receives a DBus call, it call the appropriate method and returns
+the result.  If the method doesn't exist, it returns an error, period.
+
+Thing are a bit different in the new model to-be-implemented.  When
+gaim receives a call, it emits a special signal "dbus-method".  The
+opportunity of answering the call is given to all entities connected
+to this signal (the first wins).  The last (first?) entity connected
+to the "dbus-method" signal is gaim itself.  Opinions?
+
+
+
+

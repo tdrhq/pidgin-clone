@@ -1,0 +1,3 @@
+ICQ Files Send Appears Functional
+
+Following advice that Mark gave me, oscar.c was modified so that it no longer checks to see if the OSCAR client is connected as AIM or ICQ. That is, file sending was enabled over ICQ. This was based on the assumption that AIM and ICQ both use the OFT2 protocol for file transfers now. It paid off and today I successfully sent a file from Gaim on my Linux box to an official ICQ client sitting on my Windows box. Thank goodness for a great mentor and a little luck. Now on to the real stuff: finding out what needs to be done to get the receive file capability up and running.

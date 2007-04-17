@@ -1,0 +1,40 @@
+Recent Progress
+
+<p>It has been a long time since I've posted last, so here is my latest progress update for NAT traversal.
+As I have stated before, a huge portion of this project is testing. Since I am creating a NAT traversal
+implementation from scratch, not using any external libraries, it is important to make sure my UPnP code
+works with all existing UPnP enabled routers.</p>
+
+<p>At this moment, I have UPnP implemented into Gaim. The path I have taken to get to this point follows:<br><br>
+
+1. I developed a console application independent of Gaim that would discover if a UPnP enabled router exists on the
+network, attempt to retrieve the public IP address from the router, forward a port on the router to the local computer
+running the application, and then remove that port forward mapping from the router.<br><br>
+
+2. Once I found this application to work on all routers I have access to, and routers of contacts, I have ported this
+code into Gaim. This was a fairly seamless process. I fixed some memory bugs that weren't detected in the client app
+by using valgrind.<br><br>
+
+3. At this point, I found a problem with my current port forwarding implementation. When interacting with and controlling
+the router, the code blocks. The reason for this blocking is that unless we want to change every portion of the code that
+uses the network functions that have UPnP embedded in them, they need to return once all the interaction with the router
+is done. One problem the blocking posed other than an unresponsive UI was when sending two files to a client, when sending
+the second file, the blocking occurs to forward ports. Because of this blocking, the first file whose sending is in 
+progress will timeout. To fix this issue, during the blocking calls, I have used the following code:
+
+<pre><code>
+hrd->tima = gaim_timeout_add(10000, (GSourceFunc)gaim_upnp_timeout, hrd);
+hrd->inpa = gaim_input_add(sock, GAIM_INPUT_READ,
+                             gaim_upnp_http_read, hrd);
+while (!hrd->done) {
+  gtk_main_iteration();
+}
+</code></pre>
+
+What this does is it waits for the responses from the router while iterating the main loop so things like file transfers
+can continue to function.</p>
+
+<p>File transferring is now working through NAT devices without any configuration. Now what needs to be done is submit
+this to CVS, and get it tested on a variety of routers and configurations. I'm waiting for Sean to get back from his
+vacation before I take this next step.</p>
+ 

@@ -1,0 +1,34 @@
+Packet Captures for Proxied File Transfers
+
+This is the part where things get interesting. Right now, I'm trying to figure out how the conversation between the server and client is different for a proxied file transfer is different from a direct connection. To do this, I took a few packet captures from an official AIM client receiving a proxied file send and another that was unproxied. All packet captures were started right before the receiver pressed the accept button for the transfer. In case you're curious (read "a devoted nerd"), I have posted the two captures used in my analysis:<br>
+<a href="proxy_capture4.cap">Proxied Capture #4</a><br>
+<a href="no_proxy_capture3.cap">Unproxied Capture #3</a><br>
+For viewing these files, you'll need either <a href="http://www.networkchemistry.com/products/packetyzer/">Packetyzer</a> (Windows) or <a href="http://www.ethereal.com">Ethereal</a> (Linux/Windows).<p>
+
+For notation, I will refer to packets from the "With Proxy" transfer as WP1, WP2, etc. and packets from the "No Proxy" transfer as NP1, NP2, etc. I'll break my analysis of these captures up into packet sequences based on what I think they do. Here we go:<p>
+
+<b>Acceptance</b><br>
+WP1 - WP3 correspond to NP1 - NP3. The receiver sends a 62 byte SYN packet to the server. The server sends a SYN ACK back and the receiver replies with another ACK. Translation: "Let's do this thing." "Aight." "Aight."<p>
+
+<b>Proxy Negotiation</b><br>
+WP4 - WP6 have no equivalent in the NP transfer. I believe this to be the section where the receiver indicates to the AOL servers that it wishes to route the transfer through their server. WP4 is much like NP4 & WP7. These latter two packets send the name of the sender to the server. However, WP4 is a bit different in that it sends the name of the receiver to the server. The server then replies with an ACK, followed by a PSH ACK including a 12 byte data segment. I'm not sure exactly what this data might be, but I'm willing to bet it could be a cookie to keep us on good terms with the proxy.<p>
+
+<b>Sender Confirmation</b><br>
+WP7 - WP8 correspond to NP4 - NP5. The receiver sends the host the name of the user who is sending the file. The server then replies with an ACK.<p>
+
+<b>The Mystery Packet</b><br>
+WP9 again has no equivalent in the NP transfer. I'm not sure exactly what the purpose of this packet is. It appears to be a receiver to proxy ACK. It only appears in the proxy transfer, but it seems a little out of place. Hopefully time will tell.<p>
+
+<b>The Meat</b><br>
+Packets WP10 - WP11 almost exactly match packets NP6 - NP7. First, the server sends a packet including 256 bytes of data to the receiver. It contains strings such as "OFT2" and "Cool FileXfer". OFT2 stands for Oscar File Transfer 2 (the current file transfer protocol used by AIM and ICQ clients. I believe Cool FileXfer is an older ICQ file transfer protocol. The receiver then replies to the server with almost the exact same packet, with a few bits set this time. Normally, the data of the file would be sent between these two packets. During testing, the file already existed on the other end, so nothing was sent. Basically, these two packets are bookends for the file data.<p>
+
+<b>The End</b><br>
+WP9 and WP10 pair with NP12 and NP15. This is just a pair of ACK's going each direction. Ohhhh. Ahhh.<p>
+
+<b>A Few More Comments</b><br>
+WP3,9,12,15 all appear to be similar receiver to proxy ACK's.<br>
+WP2,5,13,14 all appear to be similar proxy to receiver ACK's.<br>
+NP3,9,10 all appear to be similar receiver to sender ACK's.<br>
+NP2,8,11 all appear to be similar sender to receiver ACK's.<p>
+
+Note: All of these headings represent my early guesses on what these segments might do. It's very possible I might find out otherwise as the week goes on. Keep your fingers crossed.

@@ -1,0 +1,15 @@
+Doodle plugin days are over.
+Certainly, this opportunity to develope for a professional project like Gaim is 
+quite educational.  For instance, when I was first working on my plugin, I was 
+slightly concerned about keeping the bulk of my code independent from that of the
+user-interface.  The degree of discipline required to maintain 
+sufficient distinction between the front-end and back-end code is demanding.<br>
+<br>
+The program is coming along fine.  As implied, I've been working on seperating the 
+code.  The three distinct interface layers are as followed:  gtkwhiteboard (ui), 
+whiteboard (core), and yahoo_doodle (prpl).<br>
+<br>
+I smell some screenshots coming up on my next blog entry.  Look for those, I 
+guess.<br>
+<br>
+

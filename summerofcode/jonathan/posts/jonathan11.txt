@@ -1,0 +1,3 @@
+Paydirt
+
+Last night, Gaim received its first file via an AOL rendezvous proxy server. There's still plenty of cleanup that needs to be done before this chunk is ready to be committed and there's also the matter of sending files via a proxy server, but still: <i>it worked.</i> Again, it's not pretty (yet), but the light at the end of the tunnel (at least for proxying) is in sight... or is that a train?

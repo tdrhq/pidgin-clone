@@ -1,0 +1,2 @@
+There is always one first time
+Hi all, this is my first post for the SoC (as should be obvious). Maybe is a little bit late (I have seen some others that have even code that almost work) but I have been quite busy with the work, studing and suffering a flu during the whole weekend (I should be the only one on earth having flu when outside is 40&deg;C). Well, I think is enough for the first post. I will tell you something about my project, progress, and of course myself tomorrow.

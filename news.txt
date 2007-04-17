@@ -1,0 +1,881 @@
+Important and Long Delayed News
+April 6th, 2007 - 6:19PM EDT
+<p>Many years ago when this project was first started, it was called "GTK+ AOL Instant Messenger."  AOL naturally complained, and Mark Spencer changed the name to "Gaim."  AOL was appeased, and no one really ever heard of it because there were very few users back then.</p> <p>A few years later AOL trademarked "AIM," and started referring to their IM services using that name.  They complained.  The issue was brought up on Slashdot, and the Gaim developers at the time got some legal support. That legal support advised that the ongoing discussions with AOL be kept confidential until fully settled, and so it remained.  The public thought the issue had gone away then.  It sorta did, in that AOL stopped responding to Gaim's legal support for a while.</p> <p>Our legal support has changed several times, and each group of lawyers have recommended silence &amp; secrecy.  Around the time of Gaim's first 2.0.0 beta, AOL came back into our lives in a very strong way, this time threatening to sue Sean.</p> <p>This represents a clear pattern.  AOL received more pushback than they expected, and would sort of let things stand for a while.  Then they would threaten a different Gaim developer.  Each time a new Gaim developer was threatened, we had to look at new legal support, to prevent a conflict of interest.</p> <p>This process could not go on forever.  As a result we ended up forming the Instant Messaging Freedom Corporation, and making it legally responsible for Gaim.  We also had our new legal support work to create a real settlement with AOL that would get this issue dismissed from our lives forever.</p> <p>Getting a settlement with AOL has taken FAR FAR longer than we would have ever guessed.  On legal advice, we have refrained from any non-beta release during this process as a show of good faith, and to keep AOL from giving up on it.  Again, on legal advice, we have also kept this information closely controlled.</p> <p>At long last, I am pleased to announce that we have a signed settlement and can release our new version.  There is one catch however: we have had to change the project's name.</p> <p>After a long, and unfortunately secret debate (as we could not say why we were looking at a name change, we ended up just doing this ourselves), we settled on the name "Pidgin" for gaim itself, "libpurple" for libgaim (which, as of 2.0.0 beta6, exists), and "Finch" for gaim-text. Yes, the spelling of "Pidgin" is intentional, see <a href="http://en.wikipedia.org/wiki/Pidgin">http://en.wikipedia.org/wiki/Pidgin</a>.</p> <p>Since so much is changing between the name and the nature of the 2.0.0 release itself, we decided to go ahead with something we have talked about doing for a while now.  We have set up our own server, kindly donated by DVLabs.  As a result our new home will be www.pidgin.im and <a href="http://developer.pidgin.im">developer.pidgin.im</a>  We, at least for now, will still be using SF's mirroring system for releases.  However, the bug tracking will no longer be on SF, and we will be migrating the mailing lists at some point soon.  Also, we have chosen to go with monotone for our revision control, rather than the SF cvs or svn.</p> <p>In the last week or so, an upgrade to SF's infrastructure caused an old version of the gaim-cabal list to become briefly public.  It has always been our intention to end-of-life this list and make its archives public once the settlement was signed.  Fortunately, the legal process has concluded, allowing us to make a formal announcement now, instead of months from now.</p> <p>I, and all of pidgin's development team have deeply hated the need to keep some portion of our work, decision making and discussion secret for a time.  I sincerely apologize that as a result of this need, you all have had no chance to help us with it, and to provide feedback.</p> <p>Now that the settlement is signed, we hope to have the final Pidgin 2.0.0 release late this week or early next. </p> <p>We are going to release it with a 2.0.0 version number, and an API compatibility layer for plugin authors.  The project has not changed; this is our 2.0.0 release, not some new program that requires new version numbering. </p>
+#
+Summer of Code 2007
+March 15th, 2007 - 10:59PM PST
+Once again, Google has chosen Gaim to participate as a mentoring organization in their Summer of Code project. The Summer of Code is like an internship; students apply to work for an open-source project, under the guidance and mentorship of experienced open-souce developers, and upon sucessful completion of their project, the student is paid $4500.  Find out more at our <a href="/summerofcode/">Summer of Code</a> page.
+#
+Adium 1.0!
+February 2nd, 2007 - 10:42PM PST
+Not really Gaim news, so much, but if you use a Macintosh, you should know that <a href='http://www.adiumx.com/'>Adium X</a> has just released version 1.0 of their fine OS X IM client. Adium uses libgaim, the backend to gaim and gaim-text behind a slick OS X native UI. It's our standard response to "how do I get Gaim for OS X?" Many congratulations to the Adium team!
+#
+2.0.0beta6
+January 19th, 2007 - 8:46AM PST
+Greetings Earth people.  We have watched your planet from afar for 17 years.  And much like the Magicicada of your planet, we have emerged to make lots of loud noises.  Also, we heard that <a href="http://sourceforge.net/project/showfiles.php?group_id=235&package_id=253&release_id=479631">Gaim 2.0.0 beta 6 has been released</a> and we wanted to let everyone know.  We consider this release to be reasonably stable.  With a little luck dragon, 2.0.0 final is just around the corner.
+#
+2.0.0beta5
+November 10th, 2006 - 8:27AM PST
+Annyong!  We fixed a bunch of buglets from the last beta.  We recommend this release to anyone using the earlier betas, and to anyone having problems with a Gaim 1.x.x release.  You can <a href="http://sourceforge.net/project/showfiles.php?group_id=235&package_id=253&release_id=462444">download packages from here</a>.
+#
+2.0.0beta4
+October 18th, 2006 - 4:06 PDT
+Hey, party people. Today we put out Gaim 2.0.0beta4. This one has a whole slew of cool new changes. I've written about some of them at the new <a href="http://gaim.sf.net/planet">Planet Gaim</a> I announced in the previous post. All sorts of packages can be found <a href='http://sourceforge.net/project/showfiles.php?group_id=235&package_id=253&release_id=456679'>here</a>. Enjoy!
+#
+Planet Gaim
+September 26th, 2006 - 1:33PM PDT
+Since we've started going longer periods of time without releasing, as we finsh up 2.0.0, people have been wondering how we're progressing. To answer these questions, I've started a development blog. I've encouraged other Gaim developers to do the same and have set up <a href='http://gaim.sf.net/planet'>Planet Gaim</a> to aggregate everyone's development updates on a single page.
+#
+MSN Crashing
+August 16th, 2006 - 6:58PM PDT
+Yesterday, Gaim started crashing for a bunch of people (most notably Windows users) when trying to connect a MSN account.
+<b>* Update - August 20th, 2006 - 12:32 CDT *</b>
+Gaim 2.0.0beta3.1 has been released which fixes this and other bugs in beta3.  You can download it from its <a href="http://sourceforge.net/project/showfiles.php?group_id=235&package_id=253&release_id=440695">SourceForge file release page</a>.
+#
+Summer of Code Update
+July 6th, 2006 - 11:58PM PDT
+Sorry it's been so long since we last posted some news.  Apparently we're busy people ...or maybe we're just lazy.  Anyhoo, we've been alotted 8 summer of code projects this year.  See our <a href="summerofcode/">Summer of Code</a> web page for more detailed info.
+#
+Summer of Code 2006
+May 1st, 2006 - 2:41PM PDT
+Google is now accepting applications for its 2006 <a href='http://code.google.com/soc'>Summer of Code</a>. Gaim is a mentor again this summer, so take a look at some our suggested <a href='summerofcode/'>projects</a>, and consider applying today!
+#
+Beta 3: What goes up must fall down?
+March 29th, 2006 - 1:27PM EST
+Great day in the park, we've released Gaim 2.0.0 beta 3.  You know the drill--you can find <a href="http://sourceforge.net/project/showfiles.php?group_id=235&amp;package_id=253&amp;release_id=405479">assorted builds on our sourceforge page</a>.  We'd like to note that none of the beta 3 RPMs include a Gadu-Gadu protocol plugin.  So if you need Gadu-Gadu then you should stick with beta 2.  And as my pappy always used to say: don't hitch your wagon to a stump if it has eyes.  We never did know what he was talking about.
+<b>* Update - April 4th, 2006 - 7:10PM CST *</b>
+Known bug: On Windows, timestamps are wrong in the log viewer. They're improperly offset depending on your timezone. This bug is purely a display issue. The logs are still tagged correctly, so in the next release, everything will display properly.
+#
+Beta 2: The Sequel to Beta
+January 24th, 2006 - 5:08PM EST
+We're basically refining crude oil into a usable product.  Only instead of refining crude oil, we're making Gaim better.  But it's really the same thing.  Really.
+Please grab <a href="http://sourceforge.net/project/showfiles.php?group_id=235&package_id=253&release_id=387865">beta 2</a> and let us know what you think.  With any luck we won't need to make any major changes, and Gaim 2.0.0 final will be out before you can prove the theory of special relativity.
+<b>* Update - January 24th, 2006 - 5:32PM EST *</b>
+Gaim 2.0.0 beta 2 does not include voice or video ("vv") support for any protocols.  We've done some work toward vv compatibility for Google Talk, but it isn't ready for the general public yet.  It is unlikely this will change for the final release of Gaim 2.0.0, but vv will be a primary focus for the next major release of Gaim after that.
+<b>* Update - January 27th, 2006 - 5:59PM CST *</b>
+Known bugs:
+	<ul>
+		<li>Sorting the buddy list by status is broken in Gaim 2.0.0 beta 2. The next release, be it beta 3 or the final 2.0.0, will have this bug fixed.</li>
+		<li>Duplicate saved statuses show up in the status selector.</li>
+		<li>Some people are experiencing sound playback issues on Linux when using libao. Using the Command method or copying the sound files from beta1 are both workarounds. We're looking into this.</li>
+	</ul>
+#
+Flooded in Feedback
+December 19th, 2005 - 7:57PM PST
+Wow! We've all been completely swamped in feedback since Saturday's beta release. I'm personally surprised how positive it is as a whole. We've gotten a ton of really well-founded gripes, but I think generally people are liking the direction we're going with Gaim 2.0.0. Also important to note is that there are a bunch of things we had suspected were bad or weren't sure about, and we've been able to gauge everyone's opinions about them. On that note, please keep your feedback coming, but there are a few recurring reports we definitely already know about and are working on that you don't need to let us know about anymore:
+<ul><li>The per-account statusboxes are a bad idea</li>
+    <li>The statusboxes in general are too big.</li>
+    <li>We intentionally removed more preferences than we should have, to see which ones absolutely can't be lived without. Some of them (e.g. Show idle times in buddy list, report idle time by Gaim usage) need to be ressurected</li>
+    <li>Saved statuses need to be easier to get to</li>
+    <li>Smooth scroll needs to be optional; people are very polar about how they feel about the smooth scroll</li>
+	<li>Control-enter, though still optional (see <a href="./faq.php#q19">the	faq</a>), is not particularly easy to find and should perhaps be added to the
+	gaimrc plugin.</li>
+</ul>
+I'm sure there are a bunch of other common themes I'm forgetting about here. The other Gaim developers and I will be sure to come back and update this list as we think of other recurring complaints we've seen. Thanks so much for everyone's truly overwhelming response!
+#
+The ratio of internal energy density to magnetic field energy density
+December 17th, 2005 - 3:24PM EST
+We've released <a href="http://sourceforge.net/project/showfiles.php?group_id=235&amp;package_id=253&amp;release_id=378940">Gaim 2.0.0beta1</a>.  If you decide to try it out, <i>please</i> back up everything in your <a href="faq.php#q28">.gaim</a> directory.  We're looking for lots of feedback on this release--especially what you love about it and what you hate about it.
+Again, this is a <b>beta</b> release and should not be used by those with a heart condition, if you are pregnant, or if you are under the age of 8.  Side-effects include awesomeness, dumbfoundedness, dry mouth and lava.  Consult your doctor to find out if Gaim 2.0.0beta1 is right for you.
+#
+Did I say "end of this month"?
+December 10th, 2005 - 5:18PM PST
+Hey there! So, a whole ton of you have answered my call to get on my case to finish 2.0.0, and I haven't been able to respond to each of you individually, so I figured a news post would do the trick.
+We're really close, now, to releasing our first beta. Check back next next Friday, December 16th. It really should be out by then. In the interim, here's a sneak preview <a href="preview.png">screenshot</a>!
+#
+Tasmanian devils have 300 pounds per square inch of bite
+October 12th, 2005 - 3:31PM PDT
+The page has been quiet for a while, 'eh. I guess we have some catching up to do:
+<h3>Gaim development</h3>
+A lot of you have noticed that while we typically release every three weeks, we haven't had a release in a while. We've shifted all our efforts to finishing Gaim 2.0.0. Gaim 2.0.0 has a ton of great features, fixes every problem you've ever had with Gaim, makes drastic changes to huge parts of Gaim---especially status, includes three new protocols, and does a bunch of other amazing stuff. We're looking to feature freeze at the end of this month and release a month or so later, so be sure to get on our cases and make sure we get it finished. Also, if you choose to give it a sneak peek in CVS, we ask that you please don't contact us about it. We already know a ton of things that are broken and incomplete that we'll get fixed before release. After our freeze, we'll make some pre-release builds for everyone to offer helpful feedback and bug reports on a product a bit closer to being finished than now. Unless you're interested in helping out with development, you should probably wait until then, as CVS can often break things badly for you.
+<h3>Summer of Code</h3>
+Meanwhile, Google's Summer of Code has drawn to a conclusion and we are very happy with what our students accomplished.  Support for Apple's <a href="http://www.apple.com/macosx/features/bonjour/">Bonjour</a> protocol, UPnP NAT traversal, AIM and ICQ file transfer proxying, and support for the SIP/SIMPLE protocol are a few of the additions.  See the news post at the top of our <a href="summerofcode/">Summer of Code</a> page for a detailed list.
+<h3>Working at Google</h3>
+I (Sean) have been hired by Google, moved to Seattle, and have been working on the Google Talk team for about a month and a half. The goal of Google Talk is to make real-time communication as open as possible, and in that regard, I've been working to offer all of Google Talk's features into other clients. Currently, I'm working on making it as easy as possible for other clients to use Google Talk's voice features. You can expect Gaim and other clients to be interoperable with Google Talk's voice features in the near future.
+<h3>Gaim-vv</h3>
+On a related note, the gaim-vv project&#x2014;which aimed to offer a framework for voice and video support in Gaim&#x2014;is being merged back into Gaim proper for hopeful incorporation into Gaim 2.0.0. This will be used to support Google Talk's voice as well as MSN and Yahoo! webcams.
+<h3>Book</h3>
+As I'll soon be getting my first royalty check, I'd like to sincerely thank everyone who bought my <a href="book.php">book</a> and those who wrote me with such great compliments. Everyone seems to really enjoy the book, so be sure to pick up a copy if you haven't already.
+<i>Mark Doliner contributed to this report.</i>
+#
+Gaim 1.5.0 - who needs micro versions&#x203d;
+August 11th, 2005 - 11:54PM EDT
+Good morning class.  Today I'd like all of you to download our newest release of Gaim.  It features some major <a href="security/">security fixes</a> and some minor bug fixes and feature whatchamadingers.  So download, install, attempt to climb a 5.12c, and have a marvelous day!
+#
+Dead Trees and Ink
+July 28th, 2005 - 1:36am EDT
+<a href="http://www.amazon.com/exec/obidos/redirect?path=ASIN/1590594673&link_code=as2&camp=1789&tag=gaim-20&creative=9325"><img border="0" hspace="6" src="book.gif" align="left" /></a>I (Sean) am quite pleased to announce the publication of my book, <b><i><a href="http://www.amazon.com/exec/obidos/redirect?path=ASIN/1590594673&link_code=as2&camp=1789&tag=gaim-20&creative=9325">Open Source Messaging Application Development: Building and Extending Gaim</a></i></b>. This book, written by myself, edited by fellow Gaim developer Nathan Walp, and published by <a href="http://apress.com">Apress</a>, serves as a how-to guide for getting started in open source and free software. By using actual Gaim source code and plug-ins as a common example throughout, it familiarizes the reader with the most common open-source tools and techniques, such as creating GUIs with GTK+, connecting to the Internet with sockets, and much more. Throughout, I share my own insight from my five years working on the project. After reading this book, you should be able to create your own multi-platform, networked, desktop applications just like Gaim.
+I've put up a <a href="book.php">page</a> that goes a bit more into depth about the book, and you can preview Chapter 3 at the publishers' <a href="http://apress.com/book/bookDisplay.html?bID=414">website</a>. This chapter, Development Tools, discusses some of the tools most commonly used in developing open-source software: Emacs, vim, gcc, Autotools, cvs, patch, Sourceforge.net, and others are discussed. Whether you're interested in learning more about how Gaim works to contribute the project, or you want to understand more about open-source tools and techniques with a mind to create your own applications, consider picking up a copy!
+#
+Gaim 1.4.0, around the curb from Wellspring Grocery
+July 8, 2005 - 12:14AM EDT
+We've just released Gaim 1.4.0.  Mostly bug fixes again.  Have a blissful weekend, and may your subsequent Monday be neither manic nor volcanic.
+#
+Summer of Code Blogs
+July 7, 2005 - 2:19AM EDT
+The students working on Gaim this summer as part of Google's <a href="http://code.google.com/summerofcode.html">Summer of Code</a> project are journaling their work on the Gaim webpage. I've updated our main Summer of Code <a href="summerofcode">page</a> to point to each student's blog. I've also aggregated all their blogs to a single <a href="summerofcode/planet">page</a> which much help from Steven Garrity. All these pages are RSS-enabled.
+#
+To be more humanity!
+June 25, 2005 - 2:35PM EDT
+By now, everyone who applied for a spot in the Summer of Code has received an official response from Google. Those that were accepted will be receiving a personal introduction letter from me this weekend. I can't stress enough how pleased we were by the overwhelming interest in working on Gaim. We received 859 applications, more than any other organization except Google itself, about 10% of all applications total. We regret that we are only able to accomodate 15.
+It was really a really difficult process, choosing just 15 from 859, and we unfortunately had to turn down a lot of really high quality applications. This was especially the case for those who applied for the suggestions we made; the vast majority did this and each was necessarily competing against hundreds for just one spot while those who applied with an original idea were competing against about 50 for 15 spots (Hint for next time!).
+Also, I'd like to congratulate Gaim developer Ethan Blanton and his bride Marina who are getting married today!
+<b>* Update - June 27, 2005 - 7:01PM EDT *</b>
+I've updated the Summer of Code <a href="summerofcode/">page</a> to reflect which projects have been accepted.
+#
+New summer of code suggestion!
+June 11, 2005 - 2:38PM EDT
+We've posted a new suggestion for a Summer of Code project!  It's a project to improve Gaim's user interface.  The suggestion can be found at the bottom of our <a href="http://gaim.sourceforge.net/summerofcode/">Summer of Code project list</a>.  Remember, applications are due by June 14th!
+#
+Gaim 1.3.1 - New Hyde Park
+June 10, 2005 - 12:18AM EDT
+Hey.  What's up?  Oh, right.  Gaim.  We've released Gaim 1.3.1, aka "New Hyde Park."  It's got some o' them new fangled <a href="security/">security fixes</a>.  Sorry about that.  You should probably upgrade.  Anyway, I'll see you around.
+#
+Google's Summer of Code
+June 2nd, 2005 - 3:15 EDT
+Gaim has been invited to participate in Google's <a href="http://code.google.com/summerofcode.html">Summer of Code</a> project which aims to team aspiring students with experienced open-source developers. The students learn the ropes of open-source development under the mentorship of the experienced developers and at the end of the summer are given $4500 for their troubles. The Gaim developers are proud to sponsor students in this program. We have created a brief <a href="summerofcode">list of possible projects</a> we'd like to help students complete this summer, but you are free to suggest anything you want! Apply at the Summer of Code <a href="http://code.google.com/summerofcode.html">webpage</a>. Applications must be in by June 14th. 
+#
+Gaim 1.3.0, it's like I'm breathing oxygenated oxygen
+May 10th, 2005 - 11:32PM EST
+We fixed some security problems in this release, so please try to upgrade soon.  See our <a href="http://gaim.sourceforge.net/security/index.php">security page</a> for details.
+I'd like to personally thank Stu Tomlinson ("nosnilmot") for totally owning the security problems.  <i>Quality.</i>
+#
+Gaim 1.2.1, just when you least expect it!
+April 4th, 2005 - 12:53AM EST
+We're a few days early for this release--beat that, postal service!  Speaking of the postal service, <a href="http://www.subpop.com/bands/postalservice/">The Postal Service</a> is quite good.  We released Gaim 1.2.1.  It contains a few security updates (we'll update our <a href="security/">security</a> page soon).  And as always, see the <a href="ChangeLog">ChangeLog</a> for changes.
+<b>*Update April 5th, 2005 - 12:18AM EST*</b>
+We just updated the <a href="security/">security</a> page.  Sorry for the delay.
+#
+Gaim 1.2.0, and You Don't Even Need a Four-Leaf Clover!
+March 17th, 2005 - 11:34PM EST
+Here go the next version of Gaim.  Happy St. Patrick's Day, and may your March Madness be both full of March, and full of Madness.
+#
+Gaim 1.1.4 - Keep on churnin'
+February 24th, 2005 - 10:16PM EST
+Turns out 1.1.3 wasn't perfect. A lot of you using GLib 2.6 hit a crash on startup. Also, we missed a potential <a href="security/index.php">security</a> bug identical to one fixed for 1.1.3. So, after one week, we bring you 1.1.4. Enjoy.
+#
+Gaim 1.1.3
+February 17th, 2005 - 11:11:11PM EST
+We sure are churning out these bugfix releases, huh?  This release contains two minor security fixes, so make sure you upgrade.  See our <a href="security/index.php">security</a> page for more details.
+#
+Gaim 1.1.2
+January 21st, 2005 - 12:34PM EST
+We have a few important points of order tonight.</p><ol><li>Gaim 1.1.2 is out.  It contains some minor bug fixes, and a working HTTP connection method for MSN.  This should help out people behind strict firewalls.  We also have SecurID login support for AOL accounts that require it, thanks to an anonymous user for help getting that working.  See the <a href="ChangeLog">ChangeLog</a> for the rest.</li><li>We have a new developer!  Please welcome Daniel Atallah to the team.</li><li>Gaim's support for perl scripts is degrading rapidly.  Parts of it work; parts of it don't work.  There has been talk of removing support for perl scripts altogether in CVS HEAD.  If you have the know-how to work with C/perl integration, the desire to contribute to an outstandingly sweet open source program, and the time to debug, fix and extend a perl plugin loader, we urge you to swing into action and help us out.  I'd personally love to see a perl plugin that tests the full range of our perl scripting.  Patches are always welcome (the smaller the better!)</li><li>If you would like to track our development but don't want to join the gaim-commits mailing list, you can monitor our CVS commits using RSS.  See the RSS links on the left side of our <a href="http://cia.navi.cx/stats/project/gaim">CIA statistics page</a>.</li></ol><p>
+#
+Gaim 1.1.1
+December 28th, 2004 - 6:54PM EST
+This is our first palindromic version of Gaim since 1.0.1.  Just more minor bug fixes as we continue work on the status rewrite.  We're providing .packages on our download page now.  You can find more information about them at the <a href="http://autopackage.org/">Autopackage</a> website.
+#
+Sad News
+December 23th, 2004 - 9:00PM EST
+On Friday, December 17th, Glen Kruse, father-in-law to Gaim developer Tim Ringenbach, passed away. You can send cards, etc. to his widow at 65 March Mill Rd, Fayetteville, TN 37334.
+#
+The Pink Champagne on Ice
+December 4th, 2004 - 5:00PM EST
+This just in... Gaim 1.1.0 released in the wild.  STOP.  Minor bug fixes and feature enhancements.  See ChangeLog for details.  STOP.  Improvements to away usability ongoing.  END.
+#
+New mailing lists
+November 20th, 2004 - 4:58PM EST
+We've created some new mailing lists for updates to the Sourceforge trackers (bugs, patches, plugins, feature requests, support requests, forums).  These are primarily for developers, and can be <b>very</b> high traffic, but if you're interested in helping out, <a href="http://sourceforge.net/mail/?group_id=235">this</a> could be a good place to start.
+#
+Cherry Bim Bom Bim Bom Bim Bom
+November 12th, 2004 - 10:00AM EST
+We just released Gaim 1.0.3.  It's another bug fix only release. See the <a href="ChangeLog">ChangeLog</a>.
+#
+Happy Halloween
+October 20th, 2004 - 1:31AM
+We released an extra-spooky Gaim 1.0.2 a bit early in response to some just discovered spooky bugs.  More information about the bugs are <a href="security">here</a> and more information about Gaim 1.0.2 is <a href="ChangeLog">here</a>.
+#
+What's up, Nostradamus
+October 9th, 2004 - 4:07PM EST
+Gaim 1.0.1 was released the other day, but we seem to have forgotten to update the webpage.  Whoops.  Hey, there's a <a href="ChangeLog">ChangeLog</a>!
+#
+Hott
+September 17th, 2004 - 7:00PM EST
+We released Gaim 1.0.0.  See the <a href="ChangeLog">ChangeLog</a>.  Enjoy!
+#
+Not like Visa or Mastercard
+August 28th, 2004 - 9:25AM EST
+In all the hustle dealing with releasing 0.82 I completely neglected to acknowledge the discoverer of some of the recent Gaim security holes.  I'd like to thank Sean ("infamous42md") for taking the time to find the problems and tell us about them.
+#
+Gaim 0.82.1 - Apparently not.
+August 27th, 2004 - 1:45AM EST
+We decided to break our three week release cycle and release just 24 hours later!  See the updated <a href="ChangeLog">ChangeLog</a> for details.
+#
+Gaim 0.82 - Can I get an amen?
+August 26th, 2004 - 12:30AM EST
+Three weeks again, baby.  Dig the <a href="ChangeLog">ChangeLog</a>.  This release comes on the heels (or, with any luck, the toes) of a few unfortunate security problems in Gaim.  All known problems have been fixed in 0.82, and we urge you to upgrade to this release.  For anyone wishing to continue using 0.81, you can <a href="gaim-0.81-2.diff">download a patch</a> that fixes these security vulnerabilities.  This patch includes the fixes for the vulnerabilities announced on August 22nd.
+We've also created a <a href="security/index.php">Gaim Security Vulnerability Index</a> that will be used to list vulnerabilities in the future.
+#
+Security Vulnerabilities
+August 22nd, 2004 - 9:36PM EST
+A few security vulnerabilites were recently discovered in Gaim.  Details are <a href="security/index.php">here</a>, or you can skip straight to the <a href="gaim-0.81.diff">patch</a>.  Gaim 0.82 will be released, with fixes, this Thursday.
+#
+Sound submissions
+August 22nd, 2004 - 9:22PM EST
+I just put up the sound submissions I've received so far to <a href="sounds">http://gaim.sourceforge.net/sounds</a>.  The contest isn't over yet.  Keep submitting sounds.  Thanks to everyone who's sent some in.
+#
+Sounds contest!
+August 10th, 2004 - 5:08PM EST
+Announcing:
+<h1>The Gaim Sounds Contest</h1>
+The current Gaim sounds have served us well, but frankly, they're not that good.  They're originally from AOL's initial release of TiK and we've decided that they're due for replacement.  So, potential sound engineers, create some replacement sounds for Gaim and mail them to <a href="mailto:sean.egan@binghamton.edu">sean.egan@binghamton.edu</a>.  There's no deadline yet, but we'll decide on one depending on many submissions we get.
+<b>*Update 08/11/04 11:18AM EST*</b>
+We're already considering the notion of "sound themes."  Please don't write the mailing list to suggest it.
+#
+0.81 released!
+August 5th, 2004 - 11:40PM EST
+0.81 doesn't have too much in the way of new features, but we closed about 240 bugs since the last release.  Check out the new features, and some (240 bullet points would be a bit much) of the bug fixes in the <a href="ChangeLog">ChangeLog</a>.  Also, I've posted some new <a href="http://gaim.sourceforge.net/screenshots.php">screenshots</a> to reflect some of the amazing work that's been going on the past few months.
+#
+0.80 - It's what's for dinner!
+July 16th, 2004 - 7:25PM PST
+Sticking with our new 3 week release cycle we're trying, we have released 0.80. Although not a huge release, it's a darn good one! See the <a href="ChangeLog">ChangeLog</a> for the list of changes. Key features include better browser support, improved way of initiating file transfers, and support for the GTK+ 2.4 file chooser. Go grab it. The pants command you.
+#
+0.79 - Out with the bad air, in with the good air
+June 25th, 2004 - 12:59PM EST
+Alright everybody, prepare to party like it's 1999: we released 0.79.  Yahoo! works.  For now.  See the <a href="ChangeLog">ChangeLog</a> for the grandiose list of changes.
+#
+0.78 - Worth the wait
+May 30th, 2004 - 12:44PM PST
+Well, once again we didn't make the "every two weeks" schedule, but I think most will agree that it was well worth the wait. Version 0.78 fixes all kinds of WYSIWYG formatting bugs, MSN bugs, restores compatibility with Gtk 2.0, adds support for the <a href="http://www.silcnet.org/">SILC</a> protocol, among many other things. Oh yeah, and preferences should be less confusing now! See the <a href="ChangeLog">ChangeLog</a> for everything else we've been up to. It's a big one.
+#
+0.77, Hurray!
+April 22nd, 2004 - 11:00PM PST
+Attempting to get back to our normal release schedule, we have just released Gaim 0.77, only one week late! It's exactly what you expect from a Gaim release -- it runs. As well as running, it has WYSIWYG bug fixes, brings back the system log, adds MSN formatting support, fixes several MSN bugs... Well, just go read the <a href="ChangeLog">ChangeLog</a>. There's a lot more there. It's a good release, so grab it now! Hurry up!
+#
+0.76 - Ebayware
+April 1st, 2004, 11:30PM PST
+After a long, excruciating wait, Gaim v0.76 is finally available for download.  Everything's fixed in this release, and we strongly recommend you grab it ASAP.<p>You're probably wondering, "what took so long?"  Well, life has struck hard on the Gaim camp and we've been too busy with other things to provide with prompt Gaim releases.  As such, we've decided to ask your help.  Sourceforge has recently implemented a wonderful system for donating to open source projects, but due to internal conflicts among the Gaim development team, we've decided we don't want to implement this.  However, if the Gaim project is going to resume the activity level it once saw, we need money.  As such, we've moved to an ebay-based system of generating revenue.  The developers have decided this is a fair way of generating revenue that will help the project.  Our <a href="http://cgi6.ebay.com/ws/eBayISAPI.dll?ViewSellersOtherItems&amp;userid=gaimauctions&amp;completed=0&amp;sort=3&amp;since=-1">first set of auctions</a> is currently up.  Bid now!
+#
+Security vulnerabilities
+January 28th, 2004 - 1:51PM EST
+On Monday, several potential security vulnerabilities in Gaim 0.75 (and previous versions) were publicly disclosed by Stefan Esser.  Due to problems with current Gaim CVS (Yahoo! still not working properly being the most influential) we are not yet ready to release 0.76.  You are encouraged to get and apply this <a href="gaim-0.75.patch">patch</a> from the FreeBSD security team, released with the disclosure.
+#
+Gaim 0.75 - Ice cold
+January 10th, 2004 - 12:51AM EST
+We just released Gaim 0.75 for public consumption.  Yahoo! works in it (again), and it has a bunch of real important fixes you should grab.  Check the <a href="ChangeLog">ChangeLog</a> for more information.
+#
+Yahoo! Problems
+December 29th, 2003 - 3:33PM EST
+For those of you who are having troubles connecting to Yahoo! and have not yet already done so, change your server from scs.yahoo.com to scs.msg.yahoo.com.  Gaim 0.75 will do this automatically for you.
+#
+Gaim RSS News Feed
+December 22, 2003 - 12:28PM PST
+For those who enjoy keeping track of news through RSS aggregators, we now have an <a href="/rss.php/news">RSS feed</a> for the news up. Enjoy.
+#
+Gaim 0.74 - Seldom right, but never hesitant
+November 26, 2003 - 12:43AM EST
+Ethan was too tired to be clever, so I'll just say we released 0.74.  It fixes stuff, so go <a href="http://sourceforge.net/project/shownotes.php?release_id=200082">get it.</a>
+#
+Gaim 0.73 - Happy (almost) Thanksgiving
+November 22, 2003 - 2:00AM EST
+Hi all.  The next wonderful version of Gaim, <a href="https://sourceforge.net/project/shownotes.php?release_id=199264">v0.73</a> is finally out.  I'm too lazy to list all the fun new stuff, so just go read the <a href="ChangeLog">ChangeLog</a> and see for yourself.
+#
+Gaim 0.72 - Happy Halloween.
+October 31st, 2003 - 6:47PM EST
+Happy Halloween.  Here's Gaim <a href="https://sourceforge.net/project/shownotes.php?release_id=194712">v0.72</a>.  This fixes the ICQ crash many of you have faced and includes a bunch of other fixes and niceties.
+#
+Gaim and MSN
+October 17th, 2003 - 5:20PM EDT
+Gaim still works with MSN provided you're using a recent version (0.71 is our current version), and you have SSL libraries properly installed.  We support either Mozilla NSS or GNUTLS.  Check the <a href="faq.php">FAQ</a> for more information.
+#
+Gaim 0.71.  Please kill my roommate
+October 10th, 2003 - 1:54AM EDT
+Gaim 0.71 is out.  It would have been up earlier but Sourceforge was having some troubles (can you believe it?! ;) ).  I'd strongly suggest reading the <a href="ChangeLog">ChangeLog</a> and downloading it right away.
+#
+0.70
+September 28th, 2003 - 9:53PM EDT
+Our friends over at <a href="http://trillian.cc">Cerulean Studios</a> managed to break my speed record at cracking Yahoo authentication schemes with an impressive feat of hackery.  They sent it over and here it is in Gaim 0.70.  However, certain details of the authentication scheme depend on the challenge string the server sends us, and there's really no way to tell what it does until Yahoo starts sending new challenge strings.  So you can expect a few more breakages to come soon.  I wouldn't sign offline if I were you.  Peep the <a href="ChangeLog">ChangeLog</a>.
+<b>*Update 10/07/03 2:34PM EDT*</b>
+Win Gaim 0.70 with the Gtk-wimp theme has been reported to have severe performance issues.  If you are having such a problem, reinstall Gaim choosing "No theme".
+#
+Yahoo! Messenger and 0.69
+September 26th, 2003 - 1:55PM EDT
+You may have noticed that Yahoo has ceased working.  The fix in 0.69 (of which (slightly broken) source packages are currently available) was not adequate.  We're working on the new authentication method now; hopefully it will be cracked soon.
+#
+Zero dot sixty-eight
+September 3rd, 2003 - 6:15PM EDT
+We released 0.68 Monday, but didn't get around to updating the webpage until just now.  Check the <a href="ChangeLog">ChangeLog</a> to see what's in store.
+#
+Possible MSN blockage information
+August 20th, 2003 - 7:10PM PST
+We've had a lot of questions about whether or not Gaim will be able to connect to MSN after October 15th, which is when third party clients will apparently be blocked. For information on this, please see <a href="msn.php">here</a>.  Thank you.
+#
+Gaim 0.67: Our Power's Always On
+August 15th, 2003 - 2:26AM EDT
+Gaim 0.67 has been released.  It looks really nice.  Some choice nuggets you'll find in the <a href="ChangeLog">ChangeLog</a> include a brand new IRC plugin from Ethan "The Man" Blanton and some beautiful status icons on conversation tabs by Etan "Also The Man" Reisner.  And even though this version is totally awesome, we're already working hard on 0.68.  Stay tuned.
+#
+Gaim for Qtopia v0.1 released
+August 10th, 2003 - 4:00PM PST
+The second ever UI for Gaim has been released. It's a version of Gaim for embedded devices running Qtopia or OPIE, such as the Sharp Zaurus or iPaqs running Linux. For more information, see the <a href="http://qpe-gaim.sourceforge.net/">Gaim for Qtopia</a> site, and direct any bug reports to the trackers over there, rather than on the Gaim trackers. Thank you.
+#
+Gaim v0.66 - Get ta get'n
+July 18th, 2003 - 2:38PM EDT
+Well, it seems that we had a few problems with v0.65.  There were some issues regarding importing of default port values.  This problem, as well as a couple others that we noticed right after the release, have been fixed.  See the <a href="ChangeLog">ChangeLog</a> for more information.
+Please note that the mirrors may take a little while to receive the releases.
+#
+Gaim v0.65 - Download it right now!  I mean it!
+July 16th, 2003 - 3:07PM EDT
+Gaim 0.65 is now released.  Don't wait!  Grab it now!  Before the other people grab it, and then you won't be able to grab it anymore!  It's really cool.  When you use it, you can talk with other people over great distances using the "Internet."  I highly recommend it.  Also, we have a <a href="ChangeLog">ChangeLog</a>.
+
+Win Gaim users will want to download <a href="http://prdownloads.sourceforge.net/gaim/gaim-0.65.exe">WinGaim 0.65 with GTK+</a>. It includes a patched version of GTK+ 2.2.1 which fixes the Buddy List Drag and Drop bug.
+#
+Slackware 9 packages for 0.64
+June 4th, 2003 - 11:24AM EDT
+Nur Hussein sent me a Slackware 9 build, so I've posted it online for any of you Slack users that don't want to compile it yourself.  You can find the package <a href="http://prdownloads.sourceforge.net/gaim/gaim-0.64-i386-1.tgz?download">here</a> or on the downloads page.
+
+Remember, kids, CVS is still in development and is broken right now. Don't use it. ;-)
+#
+Mandrake RPMs for 0.64 up.
+June 2nd, 2003 - 8:52PM EDT
+Carles Amigo sent me some Mandrake RPMs which are now uploaded and available for download (when the mirrors get updated, of course).  Thanks, Carles.
+#
+State of the CVS Address
+June 1st, 2003 - 12:27PM PST
+Hey everyone. ChipX86 here. We've had a lot of questions about this, so I'm going to address it here. At the moment, CVS is undergoing some major changes. We are advising our users not to use CVS, and to go back to stable releases. The developers have a direction we're heading in, and bug reports against CVS only slow us down. Once things stabilize, it shouldn't be as much of a problem (but we still request that you only use CVS if you're developing against it or helping us to debug it!) We'll have a few new goodies in 0.65, and our work is leading the way to the completion of our core/UI split, so be patient ;)
+Also, I would like to announce a little experiment that gaim is taking part in, along with picogui, Gnome, GNUpdate, autopackage, and a few other projects. If you join #commits on irc.freenode.net, you'll be able to watch CVS commits as they happen on a variety of projects. Check it out. It's just..  neat.
+#
+Gaim 0.64!  It's a 0, a dot, and a perfect square!
+May 30th, 2003 - 6:24PM EDT
+As you can tell from the <a href="ChangeLog">ChangeLog</a>, Gaim 0.64 has bugfixes, buddy list sorting, and a bunch of internal changes only nerds like us care about.  Download.  Install.  Enjoy.
+<b>*Update 05/31/03 12:03PM EDT</b>
+The Windows builds are now up.  As you've probably noticed, the Windows builds get uploaded one or two days after the release.  Other packages (Mandrake RPM's, Solaris packages, non-i386 RPMs) get sumbmitted from Users Like You, and get uploaded whenever someone sends us some.  If you want to submit a package, E-mail Rob or Sean.
+#
+Mandrake builds uploaded
+May 21st, 2003 - 04:04PM EDT
+Mandrake builds of 0.63 have been uploaded. They may take a little while to propigate to the mirrors, so your patience is appreciated. Enjoy!
+#
+Windows binaries uploaded
+May 19th, 2003 - 12:24PM EDT
+Sorry, again for the delay. We finally got around to uploading the windows builds of Gaim 0.63.  There are a few changes with the builds for this release:
+There is a version with AND without the Gtk+ binaries.  You get to choose. Aren't you happy?  This build should also solve the hell that was the DLL issues that were found in previous versions of the installer. Installation should work for any user of the system, now, including group users.
+# 
+Gaim 0.63 released.  Sorry for the delay
+May 17th, 2003 - 9:10PM EDT
+A bunch of you wrote to protest our week and a day delay, but here it is: Gaim 0.63, slightly late but as awesome as ever.  We've got a completely new plugin API and a completely-rewritten MSN plugin from Christian Hammond.  Thanks, Christian.  We PROMISE 0.64 will be on time. ;)
+#
+Gaim 0.62 released.  The peasants rejoice
+April 24th, 2003 - 5:24PM EDT
+True to our every-other-Thursday release cycle, here's Gaim 0.62.  This is mostly just a bugfix release.  Gaim 0.63 will have cooler things.  Read the <a href="ChangeLog">ChangeLog</a> because ChangeLogs are cool.
+<b>*Update 04/25/03 2:18PM EDT*</b>
+The Windows build is up now.  Also, be sure to check out the <a href="win32/index.php">WinGaim page</a> which has been updated with brief explanations on using GTK+ themes with Wingaim (such as gtk-wimp, my personal favorite).
+#
+Gaim 0.61. Booya
+April 8th, 2003 - 8:31PM EDT
+Well, it's only been a couple days since the 0.60 release, but we decided the drag and drop problem with the buddylist was annoying enough to warrant another release.  This fixes that problem.  See the <a href="ChangeLog">ChangeLog</a> for the other minor changes.
+The Win32 binaries will be uploaded shortly.  We're currently awaiting their build.
+<b>*Update 04/09/03 1:14PM*</b>
+The windows binary has now been uploaded.  You can grab it <a href="http://prdownloads.sourceforge.net/gaim/gaim-0.61.exe?download">here</a>.
+#
+Mandrake RPMs
+April 6th, 2003 - 08:14PM EDT
+Apparently Mandrake 9.1 has some rpms that are named a little differently than redhat.  To get around this problem, we've uploaded some mandrake rpms.  Sorry for any inconvenience.
+#
+Zero dot sixty
+April 5th, 2003 - 04:04AM EST
+Wow.  Almost 10 months in the making, Gaim v0.60 is finally released.  Wow.  0.60.  Wow.  This is our GTK+-2.0 port, with a ton of new features and an almost completely rewritten GUI.  If you haven't been using this in CVS, you're in for some real shock and awe.  We'll be going back to our old every-two-week release cycle now, so those who have been using CVS can go back to using releases, as we assure you they'll be regular once again.  Oh, and be sure to check out the <a href="ChangeLog">ChangeLog</a>.  Also, it's my (Sean's) birthday. ;)
+Both linux and Win32 versions of gaim have been released.  You can download them <a href="http://sourceforge.net/project/showfiles.php?group_id=235&release_id=151016">here</a>.
+<b>*Update 04/05/03 3:48PM*</b>
+We've given the bug tracker a well-needed cleaning as we'd lost control over it.  We've closed lots of bug reports, most of which were outdated, some of which were still valid.  If we closed your bug, and you can still reproduce it, you can reopen it.  Thanks :)
+#
+The Nightlies are back!
+March 12th, 2003 - 11:14PM EST
+The nightly tarballs are back up again.  They now live at <a href="http://us.dl.sf.net/gaim/direct_download">http://us.dl.sf.net/gaim/direct_download/</a> or <a href="http://eu.dl.sf.net/gaim/direct_download">http://eu.dl.sf.net/gaim/direct_download</a>, depending on your locality.  The RPMs will be back soon.
+#
+Sparc binaries uploaded
+March 12th, 2003 - 03:03AM EST
+I uploaded the Sparc builds of v0.59.9.  Thanks, as always, to Benjamin Miller for sending these to me.
+#
+CVS Nightlies temporarily down
+March 11th, 2003 - 04:45PM EST
+I've taken down the CVS nightlies temporarily while we work with SourceForge to move them to the download mirrors.  They should be up again within a few days.
+#
+New CVS Screenshots
+March 2nd, 2003 - 01:15PM EST
+I've uploaded some new <a href="screenshots.php">screenshots</a> of CVS Gaim, soon to become v0.60.  If you're not using CVS, feel free to try it or one of our nightlies out.  Instructions can be found at <a href="cvs.php">http://gaim.sourceforge.net/cvs.php</a>.
+#
+v0.59.9 released!
+March 1st, 2003 - 03:10PM EST
+We pushed the release of v0.59.9 up to the servers.  The only major change is the fix for the problem with messages from users of AOL8 being dropped.  This should be the last release in the 0.59.x series.  After this release we will begin releasing the 0.60+ series.  This features MANY enhancements and a conversion to Gtk2.
+As always, see the <a href="ChangeLog">ChangeLog</a> for information on the changes.  You can download 0.59.9 <a href="http://prdownloads.sourceforge.net/gaim/gaim-0.59.9.tar.gz?download">here</a> if you're too lazy to click on the menu at the top right. ;-).  Enjoy.
+#
+v0.60alpha5 for windows!
+February 8th, 2003 - 12:33AM EST
+A new version of the windows alpha build has been released.  This should address a lot of the issues that some of you have been having (console windows, buddy icons, etc.)  Click <a href="http://prdownloads.sourceforge.net/gaim/gaim-0.60a5.exe?download">here</a> to download it.  Enjoy!
+#
+v0.60alpha4.1 for windows!
+January 22nd, 2003 - 10:53AM EST
+A new release of WinGaim has been pushed to the servers.  This fixes the redraw problem that a lot of you may have experienced with the conversation window.  It was extremely noticeable whenever smiley faces were used.   
+Click <a href="http://prdownloads.sourceforge.net/gaim/gaim-0.60a4.1.exe?download">here</a> to download it.
+#
+Anonymous CVS down
+January 16th, 2003 - 01:52PM EST
+CVS users may have noticed that they haven't been able to login anonymously to use CVS for a few days.  According to <a href="http://sourceforge.net/docman/display_doc.php?docid=2352&group_id=1#cvs">SourceForge.net's site status</a>, they're currently working on some scalability issues and will have CVS back up when these issues have been resolved.
+In the meantime, we're continuing to update our <a href="http://gaim.sourceforge.net/cvs.php#nightly">CVS Nightlies</a> regularly.
+<b>*Update 01/17/2003 03:17PM EST*</b>
+It looks like SourceForge's pserver is back up for anonymous cvs again.  Sorry for the inconvienence.
+#
+v0.59.8 released! Yahoo! works again
+January 07th, 2003 - 10:21PM EST
+Hey all.  We've made a new release of Gaim. The version is 0.59.8.  This fixes the problem that you all have had connecting to Yahoo! recently.  See <a href="ChangeLog">ChangeLog</a> for more information.
+#
+v0.59.7 for linux and 0.60-alpha4 for windows have been released!
+December 29th, 2002 - 03:32AM EST
+We're long overdue for this release, but here it is!  The past month or so has been extremely hectic.  This release contains a fix for the yahoo bug that some of you may have experienced, as well as a crash bug with Oscar.  See the <a href="ChangeLog">ChangeLog</a> for more information.
+This will, we hope, be the last release of the 0.59 series.  We're going to try to get a release of 0.60 ready soon.
+We have also released alpha4 of the 0.60 windows release.  This should resolve some gtk-related crashes that you may have experienced.  You can download it <a href="http://prdownloads.sourceforge.net/gaim/gaim-0.60-alpha4.exe?download">here</a>.
+<b>*Update 12/29/2002 02:40PM EST*</b>
+The download link has been fixed.  Sorry about that.
+#
+0.60 alpha3 for win32 has been released
+November 8th, 2002 - 12:20AM EST
+I just pushed 0.60-alpha3 for win32 to the servers.  Click <a href="http://sourceforge.net/project/showfiles.php?group_id=235&release_id=121137">here</a> for a download link.  The windows releases are at the very bottom. Scroll down if you don't see it! They're there, I promise. 
+As always, if you'd like to try it out for linux then download the CVS copy and build it.  0.60 has so many improvements on the old 0.59 series.  You won't be disappointed!
+#
+0.59.6 is ready -- with style!
+November 7th, 2002 - 11:22PM EST
+Oops! It looks like a little bug crept it's way into the last release.  To those of you who had problems: We're sorry.  Anyway, grab the latest and you should be good to go.  <a href="ChangeLog">ChangeLog</a> will answer your questions.
+#
+0.59.5 released! Now with fewer calories!
+October 17th, 2002 - 12:26AM EDT
+I just pushed Gaim v0.59.5 to the servers.  This release contains the fix for the recent protocol change made by Yahoo!.  Download and enjoy.
+#
+v0.60.0-alpha2 released for Win32!
+October 09th, 2002 - 9:15PM EDT
+
+The second <b>alpha</b> release of the <a href="http://sourceforge.net/project/showfiles.php?group_id=235&release_id=115460">Win32 preview</a> of Gaim 0.60.0 has been released.  This release includes perl support, Gadu-Gadu, and language translations.  Highlighting text in the conversation window copies it to the windows clipboard.  Support for minimizing to the system tray has been added, as well as support for the windows 'default browser.'
+<B><I>We recommend that you uninstall the previous version of the win32 gaim (0.60.0-alpha1) before installing this new version.</I></B>
+#
+v0.59.4 released! Run for your lives!
+October 06th, 2002 - 7:45PM EDT
+We've released the latest and greatest of bug fixes for the stable tree.  There aren't very many changes in this release.  We mostly let it out to hold everyone over while we work on Gaim v0.60.  We think you'll really enjoy it when we're finished.  As always, see the <a href="ChangeLog">ChangeLog</a> if you have any questions.
+#
+Website maintenance
+September 26th, 2002 - 3:41AM PDT
+We experienced a few problems with the website, and lost some data.  Particularly, the past two news items, relating to the win32 release of gaim and something else I can't remember, and updated FAQ information. We'll be working to restore this data.
+The necessary back-end code for member management and the all-new plugins database has been added, though not yet enabled. When some work is done to the plugins system in gaim, this portion of the site will be up.
+<b>*Update 09/26/2002 12:00PM PDT*</b>
+It seems we have all the missing news, and the FAQ is being updated. Thanks for being patient everyone!
+#
+Because nobody reads the FAQ anyway
+September 23rd, 2002 - 5:05PM EDT
+I just wanted to let you all know that there is no applet for GNOME 2 (nor will there ever be). Instead, Robert McQueen has written a Docklet plugin. A docklet does everything our applet used to do, but with far less overhead.  Plus, it'll work with KDE. The docklet conforms to the freedesktop.org standards implemented by GNOME 2 with its Notification Area applet found in GNOME CVS--tarred up here by Robert McQueen and by KDE with this patch from RedHat's null beta. Just load docklet.so, and you're set to go.
+<b>*Update 09/24/2002 12:59PM EDT*</b>
+We just received word that the above patch to the KDE kicker is now in KDE CVS and will be included in KDE 3.1.
+#
+v0.59.3 released! We broke our Yahoo!
+September 15th, 2002 - 12:26PM EDT
+Hey all, Gaim v0.59.3 has been released.  This is mostly a release to fix the problem that some people experience with signing on to the Yahoo Messenger service.  It also changes the color binding in Conversation windows to Ctrl+K as opposed to Ctrl+C.  Any other fixes can be learned of via the <a href="ChangeLog">ChangeLog</a>.
+<b>*Update 09/16/2002 10:08AM EDT*</b>
+Thanks to Benjamin Miller, I just posted some Solaris binaries for 0.59.3.
+#
+Gaim for Win32!
+September 13th, 2002 - 1:45PM EDT
+That's right, folks!  It's Friday 13th and something scary has happened.  We've posted an experimental alpha release of Gaim for Windows.  There are some problems with the port but we're interested in hearing your results.  This has only been tested with Windows 2000.
+The following protocols are supported in this release as plugins: Oscar(AIM/ICQ), TOC, Jabber, MSN, Yahoo, and IRC.
+You can find the release <a href="http://sourceforge.net/project/showfiles.php?group_id=235">here</a>.  Enjoy, and please understand that this is only an alpha release.  If you have any comments, etc., please send mail to gaim@marko.net.
+A big thanks to Herman Bloggs for his work on the Win32 release.
+#
+v0.59.2 is released! Kev P. Henry still rocks!
+September 09th, 2002 - 12:41PM EDT
+Gaim v0.59.2 has been released.  This release contains some translation updates and mostly bug fixes.  We're still actively working on the GTK2 port, as well.  It's going to be nice. :-).  Talk to your good friend <a href="ChangeLog">ChangeLog</a> if you have any questions.
+And yes, Kev P. Henry still rocks.  Thanks, Kev!
+#
+v0.59.1 released!  Now with twice the points!
+August 26th, 2002 - 12:11AM EDT
+We've gone and done something drastic.  The stress of trying to maintain two versions of GTK in the same tree got to us so we went and branched.  0.59.x is our GTK+ 1.2 stable branch which will contain only bugfixes.  New features will be developed on CVS HEAD and releases will continue with our traditional numbering scheme.  We know things have been really slow over the summer, but they'll definitely pick up again now that the summer is ending.  Gaim 0.59.1 contains a few important fixes, including a fix for a security vulnerability for those who use the manual browser option, and a few fixes for proxies.  Check the <a href=ChangeLog>ChangeLog</a>.
+<b>* Update 08/26/2002 20:37PM EDT *</b>
+Hi again; I just put up a new set of 0.59.1 rpm's to fix a problem with the perl dependencies, and also to include some PPC rpms.  Thanks to Ethan Blanton for the RPMs.
+#
+gettext problems resolved
+August 19th, 2002 - 12:26PM PDT
+It looks like we finally got all of the gettext 0.11.x and automake 1.6 problems fixed. If you use either of these and have had problems compiling Gaim, please check out a copy from <a href="cvs.php">CVS</a> and try again. If it doesn't work, drop by #gaim on <a href="http://www.freenode.info">irc.freenode.net</a> (formerly OPN) and let me (ChipX86) know. There is a plan to fork gettext, which has been causing a lot of trouble. See <a href="forkgettext.jpg">here</a> for details. Thanks to Mike Styne for the informative image.
+#
+apt-rpm repository created
+July 10th, 2002 - 3:36PM PDT
+Hi everyone. ChipX86 here. After many hours of hard work, typos, and long crying sessions with my Tux penguin, I am proud to present an <a href="http://apt4rpm.sourceforge.net/">apt-rpm</a> repository for Gaim!  Those of you using apt-rpm can now update to the latest release of Gaim automatically by following the simply <a href="downloads.php#apt-rpm">instructions</a> I've written for you. Maybe if you're good, we'll have nightly CVS packages in here eventually, but only if you read the <a href="faq.php">FAQ</a> before asking questions in #gaim!
+#
+v0.59 released: I'm not dead yet! *meow*
+June 25th, 2002 - 01:30AM EST
+As promised, we've released Gaim v0.59.  We're sorry for the delay.  Sean and I have both been really busy with work, school, life, etc.  Enjoy as this <a href="ChangeLog">ChangeLog</a> is a long one. :)
+#
+We're not dead!
+June 15th, 2002 - 6:02PM EST
+Nope, we're not dead--just busy.  Version 0.59 will be released eventually, we promise.  In the meantime, maybe you want to try <a href="cvs.php">CVS</a>.  Also, we now have a mailing list, gaim-devel, that you might be interested in subscribing to.
+#
+v0.58: "Aww, my bees..."
+May 14th, 2002 - 1:39AM EST
+It's a few days late, but we released 0.58 tonight.  This release contains the fix to the recent BugTraq posting about Gaim, and a bunch of other neat fixes and features.  The <a href="ChangeLog">ChangeLog</a> on this one is long, and I recommend you all commit it to memory.
+#
+Nightly RPMs are back!
+May 1st, 2002 - 3:58AM EST
+Seems the CVS RPMs I've been producing nightly stopped updating a month ago.  I fixed it, and they will again be updated nightly.  I promise
+#
+v0.57! We so <a href="images/happyshot.jpg">HAPPY</a>!
+April 26th, 2002 - 2:15AM EST
+Well, Gaim v0.57 has been released. There's not too much to say about this release. All important goodies can be ripped from le <a href="ChangeLog">ChangeLog</a>. Enjoy!
+#
+v0.56 has been released
+April 11th, 2002 - 11:25PM EST
+Well, two weeks have gone by and it's time for another release. This release is relatively minor due to the fact that Sean and I have been working on a few larger projects. This version has a few improvements and bug fixes. See the <a href="ChangeLog">ChangeLog</a> for more information.
+#
+v0.55 has hit the stores; why wait?
+March 30th, 2002 - 12:16AM EST
+Hi, All. Gaim v0.55 has now been released. Due to real life interference, this release is mostly just a bug fix release created by lots of patches.  Never-the-less, it's a good release. Enjoy! <a href="ChangeLog">ChangeLog</a> is still your friend.
+#
+v0.54 released; Can you see the pretty pictures
+March 14th, 2002 - 11:33PM EST
+Gaim v0.54 has been released. This release includes protocol specific smiley faces (Yahoo!, MSN) as well as Direct IM Image sending. See the <a href="ChangeLog">ChangeLog</a> for more information.
+#
+Gaim: We're Stable Like A Table
+March 11th, 2002 - 11:25PM EST
+Gaim is now officially deskware. Someone buy me (Rob) a desk.
+#
+v0.53 Solaris Binaries
+March 06th, 2002 - 07:43PM EST
+Finally got around to posting the Solaris binaries. Enjoy!
+#
+CVS Nightlies
+March 04th, 2002 - 9:56PM EST
+CVS Nightlies are being made again.  They'll be made and uploaded every night at 12:00AM Eastern.  Also, per request, we're making nightly RPMs for i386 systems.  If you want to use our CVS code, but can't compile it for whatever reason, try these out!
+#
+0.53 has been released! Wagii!
+February 28th, 2002 - 11:28PM EST
+Well, We've released Gaim 0.53! There's lots of super secret things in this release. For example: Typing Notification, various bug fixes, server side buddy lists in Oscar, and IM images. Hug the <A href="ChangeLog">ChangeLog</a>. Enjoy!
+<b>* Update 03/03/2002 12:59AM EST *</b>
+Oh, by the way, go read <a href="http://www.newsforge.net/article.pl?sid=02/02/27/2028200&mode=thread">this</a> neato article posted on NewsForge.
+#
+0.52 has been released; eat it up!
+February 17th, 2002 - 2:51PM EST
+Well, I finally got a little ghettolan (tm) set up in my new place and got my box online. Here's the much awaited 0.52. This fixes some MSN and Yahoo connectivity issues as well as improving Jabber and fixing/updating some translations. The <a href="ChangeLog">ChangeLog</a> is your friend.  Enjoy!
+#
+Bla Bla Bla
+February 15th, 2002 - 12:40PM EST
+I finally got my cable modem hooked up at home (this morning).  If everything is working well when I get home then I will be a happy man. You can expect to see me in #gaim, commiting some much needed changes. Take care, all. Thanks for being patient.
+#
+Another Update
+February 08th. 2002 - 10:05AM EST
+This is a small update for you all. I (Rob) will finally be getting settled into my new home on Monday or Tuesday. You can expect Gaim development to pick up shortly after this. Thanks for being patient.
+#
+Gaim's Future
+January 29th, 2002 - 03:09PM CST
+Hi, Rob here. As many of you may already know, Eric has decided to retire from his position as lead developer. It's sad that we're losing him as a developer but I wish him luck in whatever projects he decides to take on.
+As for Gaim's future, development will continue. I am relocating (new job) at the end of this week, so things will be rather slow for a week or two. Sean Egan will be doing more development work soon, as well. I will be updating the website with his contact information if you want to probe his brain.
+Thank you for all of the praise you have given us over the years. Thank you, Eric, for all of your hard work. I'll see ya next time I'm in California. ;-).
+#
+Retiring
+January 28th, 2002 - 10:42PM PST
+Hi all, EWarmenhoven here. Just wanted to let you know, I'm retiring. It's been nearly two years, and it's time for me to move on to something else. I'll be finishing up my CS degree in a few months and then looking for a job (please someone hire me ;-) ). It's been fun. Thanks for everything.
+#
+Off my lazy butt
+January 24th, 2002 - 01:43PM CST
+Well, I finally got off my lazy but and made a release. Things have been really hectic around here the past month or so. Anyways, I know what you guys are after, so here it is. Enjoy this release. Expect us to get back on our two-week schedule soon.  The ChangeLog is <a href="ChangeLog">here</a> if you're interested.
+#
+Yes, we're still here...
+January 5th, 2002 - 06:45PM CST
+Yes, we know that it has been a while since we made a release. Holidays are funky like that. Eric and I have been taking some much needed time off. We'll try to get a release for you all sometime.
+Also, we'd like to say that we are not affected by the "security flaw" which was present in AOL Instant Messenger. You can stop asking us now. ;-)
+#
+Gaim v0.50, I've had a weird day!
+December 13th, 2001 - 11:59PM PST
+Today was sort of crappy / weird for both Eric and I for different reasons. So, I don't really feel like being joyful. ;-).  Here's 0.50. Here's the <a href="ChangeLog">ChangeLog</a>. Have fun.
+#
+Gaim v0.49, I want to be li-cq
+November 29th, 2001 - 04:23PM CST
+Gaim v0.49 has been released. There were updates to a few of the protocols and various translations. Check the <a href="ChangeLog">ChangeLog</a> for information on the other changes. Enjoy!!
+Yes, that's right everyone, use Oscar for ICQ. It'll work better for you. (Hint: The ICQ2000 protocol is really... you guessed it... Oscar.)
+<b>* Update 12/05/2001 5:10PM CST *</b>
+I just tossed some solaris binaries onto the server. Enjoy!
+#
+Happy Anniversary!
+November 18th, 2001 - 11:56PM CST
+Today marks the three year anniversary of the day the first release of Gaim was made.  Thank you all for sticking with us for this long. We have some exciting things in store for the future. :-).
+#
+gaim v0.48, Get it! Don't wait!
+November 15th, 2001 - 02:28PM CST
+Hiya, all! Gaim v0.48 is ready for you all. Check it out! There aren't too many changes in this release, but, as promised, we have released on Thursday. :-).
+Now, go check it out! The <a href="ChangeLog">ChangeLog</a> is lonely. Go visit it, too.
+#
+gaim v0.47, more neat goodies!
+November 1st, 2001 - 02:51PM CST
+Howdy. I hope all of you had a nice Halloween. For those of you that do not do the Halloween thing, I hope you had a nice Wednesday.  It seems that our website was haunted by some evil red-eyed penguin. Have no fear, as we have vanquished this evil foe. I hope you were not frightened. ;-)
+Now, on to bigger and better things We have released gaim v0.47 today. There are far too many changes to list here, so I will not bother listing them here.  Check out the <a href="ChangeLog">ChangeLog</a>. A big thank you goes out to all of those who sent in patches for this release. Keep'em coming!
+#
+New Disclaimer
+October 22nd, 2001 - 09:59PM CST
+Hello, all. I just added a disclaimer to our navigation bar. Please read it.  Gaim is NOT endorsed by or affiliated with America On Line (AOL).
+#
+gaim v0.46, I love the way you look at me!
+October 18th, 2001 - 01:20PM CST
+Howdy Doo, Useroo's. We've released version 0.46 of gaim.  This release has quite a number of bug fixes.  If you've been having problems with instability in the pass, then we highly recommend trying this release. See the <a href="ChangeLog">ChangeLog</a> for more info.
+#
+gaim v0.45, because we can!
+October 5th, 2001 - 10:35AM PST
+Hey all, 0.45 got pushed up last night, just barely making the two-week mark since the last release. Lots of good bug fixes in this one. Also, there's a new protocol plugin, Gadu-Gadu, and a new Polish translation. And don't forget to <a href="http://gaim.sf.net/bug.php3">report bugs</a>. Have fun with this one. And don't forget to join us in our IRC channel, #gaim on irc.openprojects.net; if you need any help, you'll be able to get it from the people there. Peace everyone.
+#
+gaim v0.44 has been released! Rejoice!
+September 20th, 2001 - 2:17PM CST
+Hey! We pushed gaim v0.44 up to the servers today.  We stuck to our promise of releasing in two weeks.  There's quite a bit of changes, so I won't detail them here.  Just take a look at ye olde <a href="ChangeLog">ChangeLog</a>.
+Also, don't forget about our IRC channel, #gaim. You can find us on irc.openprojects.net. Stop by, say hi, and chat a while.
+<B>* Update 9/21/2001 2:09PM PST *</B>
+For all of you who watch CVS intently, we've got a <a href="http://lists.sourceforge.net/lists/listinfo/gaim-commits">mailing list</a> set up that will mail you when something new has been committed. 5 PenguinPoints for signing up for it, 15 for writing a mail filter that will update and recompile gaim when you get a message.
+#
+gaim v0.43 is out!
+September 06th, 2001 - 3:47PM CST
+Howdy doo, all!  gaim 0.43 is out and available to the masses.  This version features some various bug fixes as well as a restructuring of the way we handle version numbers.  We got tired of all of the prereleases.  We're also going to try to release more often now.  Once every two weeks, hopefully.  Anyway, see the <a href="ChangeLog">ChangeLog</a> for more info. :-)
+<B>* Update 9/09/2001 3:11PM CST *</B>
+Hi All, Rob here.  I uploaded a new set of RPMS to the servers.  The file is gaim-0.43-2.i386.rpm.  The old ones require the arts library from KDE distributions. This should fix the problem for those of you who complained.  Cheers!
+<B>* Update 9/09/2001 6:04PM CST *</B>
+I just uploaded some PPC binaries of gaim and gaim-applet.  Enjoy. R.
+#
+0.11.0pre15 Released
+August 29th, 2001 - 11:58PM CST
+Just to keep all of you people joyful and tripumphant, we've released 0.11.0pre15.  It's been quite a while since our last release.  We haven't gone anywhere, though. We just took a break. :-).  Enjoy this release, see the <a href="ChangeLog">ChangeLog</a> for more info, and look for another release sometime in the not so horribly far away future :-).
+Also, We won Linux Magazine's Editor's Choice Award for 2001 in the Instant Messging Category! Hooray.
+<B>* Update 8/31/2001 3:11PM PST *</B>
+We've got a new Debian package maintainer, Robert McQueen, who has put pre15 packages into sid for us :) Use apt or get the <a href="ftp://ftp.debian.org/debian/pool/main/g/gaim/gaim-common_0.11.0pre15-1_i386.deb">gaim-common</a> package, and the <a href="ftp://ftp.debian.org/debian/pool/main/g/gaim/gaim_11.0pre15-1_i386.deb">gaim</a> or <a href="ftp://ftp.debian.org/debian/pool/main/g/gaim/gaim-gnome_11.0pre15-1_i386.deb">gaim-gnome</a> package, or both! Also, we've got a room on irc.openprojects.net, #gaim :) You can usually find someone there when you need help.
+#
+Updates
+August 6, 2001 - 2:46PM PST
+Hi all, EWarmenhoven here giving you a few updates, seeing as how it's been thirty days since something was last posted here :) First off, I'm not EWarmenhoven anymore, I'm EricWarmenhoven now. Second, I won American Pie 2 tickets off the radio yesterday, and I'm going to see it tomorrow. Also, gaim development was paused for a month or so there, starting from the time my DSL got cut off (around late June), but it's going again now. Hopefully we'll get 0.11 out soon. If you're really impatient and just can't wait for it, download the <a href="gaim-CVS.tar.gz">nightly tarball</a> and play with it! It's got a lot of fixes and improvements since pre14 so you should be using it anyway. Make sure to <a href="bug.php3">report bugs</a>!
+<B>* Update: 8/8/2001 9:37AM PST *</B>
+So I saw American Pie 2 last night, and I thought it was better than the first. I'd recommend it.
+<B>* Update: 8/14/2001 1:40PM PST *</B>
+So I'm EWarmenhoven again, thanks to Andy and Adam. And sorry Andy, I won't bash it anymore. But it does need to be updated. :)
+#
+MSN stuff
+June 27th, 2001 - 2:33PM PST
+Oh yeah, I forgot to post this yesterday.  MSN works again.  It requires the latest copy of gaim (grab a CVS nightly since we havent released pre15 yet).  That is all.  Have a nice day.
+<B>* Update: 6/28/2001 12:14PM PST *</B>
+Don't get a CVS nightly :) The CVS nightly is at least a week old, since my computer has been out of commission for a bit. It really is fixed in CVS though.
+<B>* Update: 7/7/2001 1:14PM PST *</B>
+Alright, the CVS nightly tarball is back up again. Thanks for your patience everyone.
+#
+On the front line ...
+June 26th, 2001 - 12:01PM PST
+For those of you that are wondering why we have been distracted lately and haven't seen the latest news over on slashdot, this link is for you: <a href="http://slashdot.org/article.pl?sid=01/06/25/2115200&mode=nocomment">http://slashdot.org/article.pl?sid=01/06/25/2115200&mode=nocomment</a>.  If you have any comments or questions about the matter, please e-mail us at the address provided in the story (gaimdefense@marko.net).  Thank you, all, for your support.
+#
+Yup, we know about MSN
+June 25th, 2001 - 10:20AM PST
+Hi, all!  We are aware of the problem that exists when trying to sign on to the MSN Messenger service.  They have made a change to their servers and are now requesting a challenge that we currently do not know how to respond to.  We will be working on this and hope to have a solution soon.  Thanks :)
+#
+0.11.0pre14 out tha door :) 
+June 18th, 2001 - 12:43AM PST
+Howdy!  I just pushed 0.11.0pre14 up to the servers.  This one has quite a bumber of bug fixes as well as a couple improvements here and there. If you really must know, you can always check out the <a href="ChangeLog">ChangeLog</a>.  
+Well, that's about all.  Enjoy!
+#
+Someone stole my AIM account
+June 17th, 2001 - 1:46PM PST
+Hi everyone, EWarmenhoven here. Someone stole my account, so if you try to talk to EWarmenhoven, you're not going to be talking to me. Just wanted to let you all know. No, I don't have an AOL account or use AOL. Don't worry, I'll have my revenge.
+<B>* Update: 6/17/2001 3:23PM PST *</B>
+I got it back. Thanks everyone :)
+#
+That's right, it's lucky 13 - I pitty da fool that don't call collect<a href="fool.shtml">!</a>
+June 6th, 2001 - 5:17PM PST
+I just pushed 0.11.0pre13 up to the servers.  This release includes a number of annoying bug fixes as well as a couple small features.  Check the <a href="ChangeLog">ChangeLog</a> for more information.  
+Hurry!  Go get it <a href="http://ftp1.sourceforge.net/gaim/gaim-0.11.0pre13.tar.gz">now</a> :-).
+<B>* Update: 6/9/2001 3:13AM PST *</B>
+I just pushed the PPC builds of the RPM's up to the servers.  Thanks, once again, Christina.
+#
+Oscar Oddities, CVS Circumvents
+June 5th, 2001 - 9:56AM PST
+So a couple days ago Oscar started getting blocked as soon as you tried to sign on; you'd probably see the buddy list flash momentarily and then get "Disconnected". We've got a fix that we're fairly sure works and doesn't break anything else (prior fixes ranged from not solving the problem entirely to breaking chat). So, we're recommending people who want to use Oscar use <a href="cvs.shtml">CVS</a> or the <a href="gaim-CVS.tar.gz">CVS Nightlies</a> (which come complete with ./configure like a normal release). And we're still recommending people use Oscar instead of TOC (especially since TOC seems to have been somewhat flaky over the last few days as well).
+#
+Applet RPMS available
+June 4th, 2001 - 11:23AM PST
+Hola!  Just a quick update for you all.  Applet RPMS will now be available from our sourceforge <a href="http://www.sourceforge.net/projects/gaim/">project page</a>.  For those of you that are always asking for them, there you go :).  Enjoy.
+#
+0.11.0pre12 released, good buddy (hint hint)!
+May 29th, 2001 - 4:22PM PST
+Howdy guys!  It's been about a month since our last release.  gaim 0.11.0pre12 is finally available for your mass consumption.  There have been lots of improvements such as better proxy support, fixes to various protocols, some cleanups on the menus, as well as an insanely often requested feature.  That's right folks, you can finally receive buddy icons from other people.  This only works when using Oscar and we do not, at this moment, have support for sending your own buddy icon. All in due time.  
+Also, I would like to suggest that all of you use Oscar as opposed to TOC.  Our Oscar implementation, these days, works much better and has all that TOC supports and more.  Give it a try under tools->accounts.
+So, what are you waiting for?  Why are you still reading this?  Go! Get <a href="http://ftp1.sourceforge.net/gaim/gaim-0.11.0pre12.tar.gz">it</a>!
+#
+I get knocked down, I get up again, never gonna keep me down .. 
+May 16th, 2001 - 12:26PM PST
+This should probably be another "update" to the previous post but I thought it was getting rather long.  AOL was up to no good this morning with more OSCAR changes / blocks.  0.11.0pre11 and CVS should be good to go now.
+This hack was rather clever.  It seems that they were requesting a bogus offset and length (67MB) of a nonexistent module.  When that happens, you're supposed to hash the modulename + request.  A rather clever trick, if I do say so myself :).
+#
+Down Again, Up Again
+May 9th, 2001 - 1:00PM PST
+So this morning, some of you may have gotten a dialog about not being able to get a good hash for logging in to AIM, and then a message from AOL disconnecting you. That problem has been fixed, temporarily at least; pre11 should be able to sign on without problems. Earlier versions most likely will not be able to sign on. Jabber's AIM transport is not currently able to sign on, either.
+The technical details are: AOL had previously been requesting a hash of 0 bytes (as stated in an earlier announcement). They changed what they were requesting; they are now requesting 67MB starting at an offset of 67MB. Since it was no longer 0 bytes, gaim tried to get the correct hash from a server that had been set up before pre11 was released. However, because of the rather unusual values, the hash server was not able to complete the request, and so did not return a hash at all (hence the message about not getting a good hash). The hash server has been modified to return a current good hash; however, we still need to figure out how to translate 67MB into a workable value.
+<B>* Update: 5/9/2001 9:00PM PST *</B>
+This is great. They give us the offset and the number of bytes, and the file they want it from; however, if that would involve reading past the end of the file, it's considered an invalid request, <i>and the request itself is hashed</i>. You hash the offset and the length and send it back. So, currently gaim still doesn't need the aim.exe binary; however, pre11 doesn't know about this trick, and so will still request a correct hash from the server. pre11 should still be able to sign on, and Jabber's AIM transport looks like it's up and running again.
+<B>* Update: 5/15/2001 1:20AM PST *</B>
+They're back to requesting 0 bytes again, which means that pre11 doesn't need to use the hash server anymore. It's so nice finally having a release that, even after two weeks and two attempted blocks by the server, can still sign on.
+#
+Another release is out the door - 0.11.0pre11
+Apr 30th, 2001 - 11:50:23AM PST
+Howdy guys!  We have packaged up yet another release for you all!  This time, it's 0.11.0pre11.  How lucky!  There have been a lot of changes in this release.  So many that I don't feel like listing them all here, heh.  One of the more notable ones is that Oscar, once again, works.  To find out the rest of the changes please check out the <a href="http://gaim.sourceforge.net/ChangeLog">ChangeLog</a>. 
+Well, what are you waiting for?  Go <a href="http://sourceforge.net/project/showfiles.php?group_id=235&release_id=33277">get it</a>.  Enjoy!
+<b>* Update: 05/06/2001 3:38PM PST *</B>
+I just pushed up some PPC RPM's to the server for you Mac freaks out there.  Enjoy!  Thanks, Christine!
+#
+Here we go, one more time... 
+Apr 23rd, 2001 - 2:54PM PST
+Rob here.  It looks like AOL is back up to its tricks again.  I just made it back from lunch and have found myself unable to sign on to oscar with my other accounts.  Luckily I still had one signed on :-P.  Anyway, we're working on an aswer for what's changed at the moment.  We'll be sure to update you guys as we find out more.
+<b>* Update: 04/25/2001 8:59PM PST *</B>
+Eric here. They found a bug in libfaim; they're currently requesting a hash of 0 bytes, which is rather neat since it means we currently don't need to have a copy of AIM at all. Anyway, current CVS is fixed, and should remain fixed for the foreseeable future. We'll put a release out soon with the update; until then, use <a href="cvs.shtml">CVS</a> or the CVS nightlies.
+#
+The Outcome
+Apr 19th, 2001 - 3:10AM PST
+Eric here. I just wanted to let you all know, the Oscar blocks seem to have stopped. For real this time. 0.11.0pre10 can connect to Oscar just fine. The value that gets sent by the checksum hasn't changed in two weeks, and in those two weeks AOL has tried to block Jabber in other ways. So it looks like everything is finally over, at least from our end. Hopefully AOL and Jabber will finally have a meaningful conversation where some sort of partnership is worked out.
+Anyway, there have been quite a few Slashdot stories about AIM over the past few weeks. Most people's comments seemed pretty insightful but there were a few that seemed misinformed. Maybe <a href="aol.php">this</a> can help clear some things up. (Hopefully this will get posted at least to Slashback, hint, hint.)
+#
+0.11.0pre10 - Happy Friday 13th
+Apr 13th, 2001 - 6:22:35PM PST
+Well, all, it looks like it's Friday the 13th (and Good Friday .. how ironic).  That means it's time for another release of gaim!  Pre10 is out so you should all go <a href="http://ftp1.sourceforge.net/gaim/gaim-0.11.0pre10.tar.gz">download</a> it now.  It includes some jabber fixes, new features (in IRC and others), as well as the addition of Zephyr support.  Please don't use it, though, unless you know what you're doing - things might break, heh.   Enjoy!
+#
+Nightlies!
+Apr 6th, 2001 - 1:55PM PST
+Hey everyone. We're going to start providing nightly tarballs of CVS, complete with a configure script and everything, for those of you who can't get CVS to work for whatever reason (or are just too lazy to get it to work ;). You should still try to use CVS through the <a href="cvs.shtml">normal method</a>, though.
+#
+Oscar Works.
+Apr 5th, 2001 - 12:36AM PST
+Oscar seems to currently be working, even for releases where it had previously not been working (pre7 through pre9, specifically). Jabber came up with an acceptible solution to the problem, so AOL stopped making us send part of AIM, and everything is happy once more. Jabber is still experiencing occasional blocks but for the most part everything seems to be resolved.
+<B>* Update: 04/05/2001 1:10PM PST *</B>
+Okay, more news. AOL, after a short period where it was difficult to connect, is now requesting part of AIM again. So older releases aren't working, again. But CVS still is able to. We'll keep ya posted.
+#
+April Fools!!!
+Apr 3rd, 2001 - 9:45AM PST
+Yeah, Yeah, I know, I know.  Eric and I are the biggest bastards on the face of the earth, hehe!  Well, you guys have to admit, it was a good joke, wasn't it?  I think we gave quite a few people a nice scare.  You guys can pretty much disregard the Apr 1st post.  We haven't taken jobs at AOL and we will continue further development on gaim.  A big thanks goes out to all of you in the community who support our work.  Happy hacking!
+#
+Update on the AOL/Jabber saga
+Apr 1st, 2001 - 2:24PM PST
+This afternoon, I (Eric) received an email from an AOL executive, and after a series of exchanges, we came to the following agreement. Because AOL seems to have the upper hand in this, Rob and I were forced to settle for some things we would have prefered not to have settled for. TOC is getting updated; there will be a version 2 of the protocol, and the old version will be dropped. gaim will therefore stop supporting TOC v1 and Oscar and only support TOC v2. AOL will provide us with a GPL library that we can use, and will also add the necessary hooks in gaim. In return for this, they expect us to add advertisements to gaim. Fortunately for gaim, they have not mandated that all ads be from AOL, so gaim will now be selling ad space to those interested. AOL has also offered me a job, and I've accepted; I'll be working on AIM for Linux in addition to gaim. Meanwhile, Jabber will continue to be blocked, and I (this is the part I had to bend over for) will be helping block Jabber. Anyway, that's the deal.
+<B>* Update: 04/01/2001 2:37PM PST *</B>
+I just talked with Rob and learned that he has accepted the job as well.  It looks like he and I will be co-workers on the same team both extending linux AIM as well as blocking jabber.  
+#
+The fun continues
+Mar 30th, 2001 - 12:57am PST
+AOL is no longer requesting aim.exe. They are now requesting proto.ocm, a different file in an AIM installation. (Stunts like this make it difficult to have a server that provides "correct" values to use, and impossible to embed aim.exe, unforunately.) We've gotten a lot of email with support and suggestions for circumventing the problem, and to all, thanks. Needless to say, Oscar from CVS is not currently working (I've been on vacation the last week, and won't be back until Sunday, Apr 1st, but I will be able to work on gaim some today). TOC is still working (at least, when the servers are working), and you should use that.
+Please do NOT flame AOL, or anyone that works for AOL. The Jabber team is trying very hard to have some sort of dialog and agreement with them. It is important, though, that AOL knows that people are upset that they are working against interoperability. But please, be polite when requesting that AOL representatives talk to people from Jabber. And remember, show your support for Jabber by registering a jabber.org account (you can do this through gaim - load the Jabber plugin and click "Register" at the login prompt).
+<B>* Update: 03/30/2001 6:15AM PST *</B>
+I got especially pissed off that TOC is down and put in a temporary fix for Oscar. CVS should be working, though it's likely it won't be later this afternoon.
+#
+Blah! Alright, use TOC
+Mar 27th, 2001 - 10:15am PST
+Aaight guys, looks like Oscar's not working again.  For the time being, please switch to TOC by going into tools->accounts (or accounts from the opening screen) and clicking on Modify.  This will allow you to sign on without being disconnected.  Bad news is, you won't be able to read other people's away messages without IMing them.  Good news is, you'll be able to receive files (and send files if a windows user right clicks your name and hits 'get file').  Enjoy!
+<B>* Update: 03/27/2001 2:11PM PST *</B>
+We'll try to keep things working as much as we can.  If you experience problems with Oscar, try out the CVS copy.  It's possible that we've implemented a fix.  If not, keep trying, heh.  If you don't feel like messing with it, please switch your account type to TOC.  Everything should work fine.
+<B>* Update: 03/28/2001 1:52PM PST *</B>
+We know what's causing the Oscar disconnects, and there's not much we can do about it. Here's <a href=oscar.shtml>why</a>. The current CVS Oscar status is: Able to connect, with chances of disconnects later today or tomorrow.
+#
+0.11.0-pre9 - Ahhhh yeaaah 
+Mar 26th, 2001 - 5:53pm PST
+Well, that didn't take too long.  Adam of Libfaim woke up this morning and fixed libfaim and we're back online once again.  Thanks for the quick work, Adam!  There's also a couple new goodies in this release.  The GtkIMHTML Widget takes on the Gtk theme color properly and a few other things.  Enjoy!
+#
+AOL's doing funny things again and again and again :-)
+Mar 26th, 2001 - 9:30am PST
+If you are using gaim to sign on to the Oscar servers then you may notice the following message:
+
+(11:23:52) AOL Instant Messenger: You have been disconnected from the AOL Instant Message Service (SM) for accessing the AOL network using unauthorized software.  You can download a FREE, fully featured, and authorized client, here ...
+
+If at all possible, please go to tools->accounts and switch your AIM account to TOC.  Eric and I will work on getting this resolved.  Until then, simply wait it out.  It's probably more problems with the war on Jabber (tm). 
+
+-- Rob
+#
+0.11.0-pre8 - I've been shot!
+Mar 23rd, 2001 - 5:14pm PST
+So in AOL's war on Jabber, gaim caught a stray bullet, but we're happy to announce that pre8 should have some nice armour on it. Maybe we'll be able to stay clear of all of this now. Good luck to the Jabber guys; hopefully something good will come out of this. In the next release of gaim, you'll be able to register a Jabber account and help support a great group of people that put it all together. Until then, enjoy!
+#
+AOL's doing funny things again...
+Mar 22nd, 2001 - 11:56pm PST
+Just wanted to let you all know, AOL's declared war on <a href="http://www.jabbercentral.com/">Jabber</a>. Jabber.org and Jabber.com have both released <a href="http://jabbercentral.com/news/view.php?news_id=985141057">statements</a> about the blocks by AOL. Just like with Odigo, we got caught in the middle of this. Some of you using Oscar may not be able to connect or even get segfaults when you try to connect. All these problems are fixed in <a href="cvs.shtml">CVS</a> if you want to try that; otherwise, TOC is still working. And make sure to show your support for Jabber by registering a jabber.org account and using gaim's Jabber plugin ;)
+#
+0.11.0-pre7 - Gonna drop da funk bomb on ya!! :-)
+Mar 16th, 2001 - 4:47pm PST
+Howdy, All.  We've got a fun, new, and exciting version of gaim for you.  That's right, kiddos, gaim version 0.11.0 prerelease 7 is out!  It features <a href="scrn/tabbed.gif">tabbed</a> conversation windows, links have tool tips and there have been applet fixes.  This version also sports a newly redesigned Yahoo! (Yay!) and MSN protocol plugin.  Download, have fun, and enjoy!  Have a great weekend.
+#
+0.11.0-pre6 - BAM! :-)
+Mar 07th, 2001 - 1:04am PST
+Release early, release often! gaim version 0.11.0pre6 has been released!  This is mostly a bug fix release.  Look for new yahoo and MSN modules in the next release!  If you're curious about this release, look at the <a href="http://gaim.sourceforge.net/ChangeLog">ChangeLog</a>.  Otherwise, <a href="http://sourceforge.net/project/showfiles.php?group_id=235">download</a> and enjoy!
+#
+0.11.0-pre5 - BAM! :-)
+Feb 26th, 2001 - 2:3pmm EST
+Sorry for the delay in release, guys.  It's been about two months since we've actually put anything out.  There's not much of an excuse except for real life, work, blah blah blah.  Don't worry, though, we haven't gone anywhere.  And now, with out any more delay, gaim 0.11.0pre5 has been released.  It has some protocol fixes, a new HTML Widget, more features, etc, etc.  Check the <a href="http://gaim.sourceforge.net/ChangeLog">ChangeLog</a>.  The new version should be showing up on the FTP sites and on the sourceforge site any moment now ... have a great day all!  Peace!
+#
+0.11.0-pre4 is out!
+Dec 23rd, 2000 - 1:44pm EST
+Well, guys, I've got 0.11.0pre4 ready for ya.  Eric and I are on vacation at the moment so I was nice enough to sign on and make a release for you all.  Ain't I just tha sweetest?
+This feature has many new bug fixes as well as support for Jabber and Napster.  Please read the STATUS file for more information.
+Enjoy and happy holidays!
+#
+Announcing... 0.11.0pre3!
+Dec 15th, 2000 - 10:57am PST
+We're proud to annouce that gaim version 0.11.0pre3 has been released!  Go <a href="http://sourceforge.net/project/showfiles.php?group_id=235">get it</a> and let us know what you think.  
+This latest version includes quite a bit of changes.  We also have support for the MSN Protocol as well.  This brings our total to: AIM, Yahoo, ICQ, IRC, and MSN.
+As always, visit our <a href="http://www.sourceforge.net/projects/gaim/">SourceForge</a> site if you have any patches, bug reports, comments, or suggestions.  Take care, and have a great day.
+#
+0.11.0-pre2 has been released!
+Dec 4th, 2000 - 10:57am PST
+Go grab 0.11.0pre2 <a href="http://sourceforge.net/project/showfiles.php?group_id=235">here</a> for the latest release.  0.11.0pre1 had a little bug that caused lots of segfaults.  Sorry about that, guys.  
+#
+At long last.... 0.11.0pre1!
+Dec 3rd, 2000 - 11:31pm PST
+It looks like a screwy util.c has made it into the distribution and it's causing some lovely little segfaults.  I'll have a new, non-crashy version released today (as soon as sourceforge comes back online).  Thanks for your patience.
+************
+Hello, all, gaim version 0.11.0-pre1 has been released to the masses!  Go fetch it <a href="http://sourceforge.net/project/showfiles.php?group_id=235">here</a>
+Please remember that this is only a pre release.  It should be mostly functional and bug free.  We're releasing it as is so that we can find any remaining bugs that have managed to make it past us.  Please visit our <a href="http://www.sourceforge.net/projects/gaim/">SourceForge Site</a> and report any bugs, suggestions, problems that you find.  Thanks, and happy gaiming :)
+#
+Happy Birthday, gaim!
+Nov 26th, 2000 - 3:34am PST
+Well, I'm a little late in mentioning this, but this month is gaim's birthday.  I believe the exact date of the first CVS version was 11/06/1998.  It's been a great two years and we hope to keep providing you guys with wonderful software!
+I would like to take this time to thank everyone who has made this possible.  Mark, for your original design (and horrible code ;-) j/k bro), to Jim for your many late nights of drunken coding, and to Eric for the great amount of work you have done for the project. It couldn't have been done without all of these guys.
+I would also like to say thank you to every one who has ever sent in a patch, provided us with bug reports, or even did graphic design and web work.  Thanks guys!
+Be on the look out for a rumored 0.11.0 pre-release that should be hitting the ftp servers in about a week.  Until then, please feel free to check out the CVS version.  Happy Holidays, everyone!
+#
+Quoth The Penguin!
+Nov 24th, 2000 - 10:23pm PST
+Hey Guys, just a quick update.  Check out page 14 of the December 2000 issue of Linux Journal. You'll find a little surprise :-).  Have a nice day!
+#
+We're still kickin'
+Nov 20th, 2000 - 1:10am PST
+Hello all, Rob and Eric here.  We wanted to take a moment to let you all know that we're still alive and hacking! 
+There are many new things that we have in store for <i>gaim</i>.  These things are responsible for the delay in the release of v0.11.0.   These changes/features include:</p><ul><li>Support for Multiple Connections<li>Protocol Plugins (We currently have a Yahoo! and an IRC plugin)<li>User configurable sounds<li>Improved plugin portabilty and features<li>Updates to perl code<li>And much, much more :)</ul>
+If you're interested in trying any of our development code out then please head over to the CVS section and grab a copy.  Please understand that it may be a little unstable at times.  There may be situations where all of the new features aren't completed.  All in all, though, it's fairly stable.  We think you'll enjoy it!
+Have a great day, all.  And to all of you celebrating Thanksgiving, try not to eat too much turkey.  :-)
+#
+Version 0.10.3 - Bad Rob, Bad!
+Oct 09th, 2000 - 3:39pm PST
+Looks like a buggy piece of code was commited just as I was making my final commit on version number changes.  That little bug slipped into the release unnoticed.  Woops!  Here's the fix! Take care and happy Hacking! - Rob
+#
+Version 0.10.2 Released!
+Oct 07th, 2000 - 2:44am PST
+We're happy to announce that gaim version 0.10.2 has been released.  Fetch it <a href="http://sourceforge.net/project/showfiles.php?group_id=235">here</a>.  Source and binary distributions are available.  This version features a few bug fixes as well as a few improvements on some already supported features.  This release is basically an appetizer for our next release.  We have a big surprise for you.  If all of you are good kids then we might release a sneak peak screen shot :).  Take care, have a wonderful day, and happy hacking! -- Rob
+<B>* Update: 10/7/2000 2:37PM *</B> Looks like we made a funky RPM package.  Please, if you are using the RPM version (or trying to) get gaim-0.10.2-2.i386.rpm before reporting any problems to us.  Thanks!
+#
+The Tuxie Awards
+Sep 17th, 2000 - 5:18pm PST
+Hello, all.  I just received notification from <a href="http://www.linux-mag.com">Linux Magazine</a> that we won 2nd place in the Tuxie awards for Best Collaborative Tool. Thanks to all of you that made this possible!
+#
+gaim 0.10.1! Play Ball!
+Sep 15th, 2000 - 6:15pm PST
+Hey Folks!  gaim version 0.10.1 has now been released!  It features a fix for the small Oscar problem that we were all having a while back as well as a couple other nifty features.  Go get <a href="http://sourceforge.net/project/showfiles.php?group_id=235">it</a> and have a wonderful day!
+#
+gaim 0.10.0 has been released!!
+Sep 11th, 2000 - 2:41am PST
+Hello, Hello, Hello.  Your favorite gaim developer, Rob, here.  Eric and I stayed up nice and late tonight to finish up version 0.10.0 for you guys. I hope you enjoy! It contains many new and exciting features.  Curious minds, click <a href="http://gaim.sourceforge.net/ChangeLog">here</a> for the ChangeLog.  Enjoy!
+Click <a href="scrn/convo1.jpg">here</a> for a small screenshot of our new conversation window.  More screenshots will be up within the next few days.
+#
+Linux World Expo, Baby!
+Aug 17th, 2000 - 1:15pm PST
+Hey, all, whassup?  Rob, here.  I'm currently hanging out by the Linux.com booth here at LWE in San Jose.  Not too much going on right now.  The slashdot boys are throwing a party tonight so that should be fun.  Unfortunately, my flight leaves just before the party.  :-(.  Oh well, we chilled over on the /. booth for a while and watched Star Trek II, the Wrath of Kahn (WHASSUUUUUP).
+That's about it for my very brief and sudden update.  More news will follow.  Oh yeah, and on a more related note, you can expect a new verison of gaim sometime fairly soon.  I cant give you an exact date JUUSSTT yet, but Eric and I have been working hard.  As always, you can check out the latest version of the CVS copy if you want to see what we have going on.  Peace all, keep pimpin' and happy hacking! -- Rob
+#
+0.9.20 Released
+July 18th, 2000 - 10:40am PST
+Hey boys and girls!  I'm sorry for the delay with the announcement.  0.9.20 was actually released several days ago.  I had some connectivity issues with trying to reach the web server and was unable to make the update in time!  Anyway, here ya go!  Enjoy!
+#
+Sign on probs
+June 22nd, 2000 - 8:20pm PST
+Hey Folks, looks like there's some sign on issues when using TOC -- don't worry about it.  It's probably just the routine TOC problems. Just keep trying :-).  It will be back up soon enough.
+#
+Kev Henry Rules!!!
+June 19th, 2000 - 11:31pm PST
+What else is there to say? This dude totally rocks.  Kevin, props to you, my friend, hella props to you.  All I can say is, Mmmm. Sam Adams.  Thank you again, my friend.  May the powers of the pimpin' penguin reign within you always!
+#
+AOL Opens AIM Protocol
+June 15th, 2000 - 2:37PM PST
+Well, it looks like AOL has come up with a standard means of communicating with their servers.  I'll save all of the details by linking you to their <A HREF="http://aim.aol.com/openim/">article</a>.  We at gaim will be working hard to implement all of the things brought up in this article.  We'll keep you posted as the events happen.  Cheers and happy hacking!

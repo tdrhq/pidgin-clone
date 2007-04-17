@@ -1,0 +1,214 @@
+Introduction
+
+<HTML>
+<HEAD>
+<TITLE>
+</TITLE>
+</HEAD>
+
+<BODY>
+<pre>
+Hi all, 
+This is my first post I know I am late but I was lately added to the list of gaim developers and I had troubles installing the software I will be using for blogging. 
+My goal this summer is to develope a bluetooth application for gaim.
+Although, this is not related to gaim but they gave the opportunity to join them :) (Thanks for Gaim).
+My project in brief allows the user to write SMS on the PC and route it to the cell phone via Bluetooth to be sent automatically to the desired number.    
+I thought about preparing a brief explanation about the bluetooth libraries I am using to establish the connection between the client (PC) and server (cell phone)  
+</pre>
+<br>
+<br>
+<H5>The Basic Components of any Bluetooth application consists of the follwoing:</H5>
+
+<ol>
+
+	<h3><li>Stack initialization</li></h3>
+		<ul>
+			<li>gets the bluetooth device ready to start wireless communication.</li>
+			<li>In my application I did not have to worry that much about initializing the bluetooth stack
+			<br>I used setDiscoverable (DiscoveryAgent.GIAC) method in order to allow bluetooth devices to find my device.
+			<br>The parameter DiscoveryAgent.GIAC is the access mode. 
+			<br>GIAC stands for General/Unlimited inquiry access code and allows all devices to discover your device.
+			<br>LIAC can be used instead which is limited inquiry access code to allow a temporary access mode that will revert back to a previous state every 1 minute.</dd>
+			<br>If I wished not to allow any device to discover my device I would have used NOT_DISCOVERABLE. </li>
+		</ul>
+	
+	<h3><li>Device management</li></h3>		
+		<ul>
+			<li>Device management is done through LocalDevice, RemoteDevice and DeviceClass classes in the java bluetooth specification  </li>
+			<li>LocalDevice class:</li>
+				<ul>
+					<li>found in javax.bluetooth.LocalDevice API</li>
+					<li>gives some statistical information about my own bluetooth device</li>
+					<li>you can only have a single instance of this BT object in your JVM at a time instantiated using getLocalDevice () method</li>
+				
+				</ul>
+			
+			<li>RemoteDevice class:</li>
+				<ul>
+					<li>found in javax.bluetooth.RemoteDevice API </li>
+					<li>gives some statistical information about bluetooth devices in the area</li>
+				</ul>
+			<li>DeviceClass class:</li>
+				<ul>
+					<li>found in javax.bluetooth.DeviceClass API </li>
+ 					<li> gives some information about the official classes (simply a classification of bt devices)</li>
+					<li>The methods getMajorDeviceClass () and getMinorDeviceClass () determine what kind of devices are in the area.
+					<br>For example, in my application, Major class description in server side is Phone and the minor class description is smart phone, or cellular. Similarly, the major class description in the client side is the Computer and the minor 		   class	description is Laptop, Desktop,..</li>
+				</ul>
+		</ul>
+	
+	<h3><li>Device discovery</li></h3>
+	
+		<ul>
+			<li> In order to find out what other bt devices are in the area.</li>
+			<li>In a client-server (or master-slave) application type like the one I am doing, it is advisable that the client performs the device discovery, which is the PC in my case.</li>
+			<li>DiscoveryAgent and DiscoveryListener classes are used to discover devices.</li>
+	
+			<li>DiscoveryAgent class:
+				<ul>
+	 				<li> Found in javax.bluetooth.DiscoveryAgent API</li>
+					<li>The discoveryAgent object is immediately instantiated after getting a LocalDevice object
+					<br>DiscoveryAgent agent = localDevice.getDiscoveryAgent ();</li>
+					<li> There are two methods in order to discover bt devices startInquiry () method and retrieveDevices () method.
+		    			 I used startInquiry (), although it is a bit slower than retrieveDevices (), because it doesn't lock the current thread while discovering unlike retrieveDevices () which blocks the current thread.</li>
+				</ul>
+			</li>
+			
+			<li> DiscoveryListener Class:
+				<ul>
+					<li> Found in javax.bluetooth.DiscoveryListener API</li>
+					<li> DiscoveryListener is an interface that has methods that are called by the JVM when the desired event occurs.
+					<br> So, I implemented the interface of the DiscoveryListener to be informed when a bt device is found by DiscoveryAgent.startInquiry (). Whenever a bt device is found, the method deviceDiscovered () is called.  </li>
+				</ul>
+			</li>
+ 		</ul>	
+
+		
+	<h3><li>Service discovery</li></h3>
+		<ul>
+			<li> Performed after discovering the devices to find out what services (if any) these devices offer.</li>
+			<li> DiscoveryAgent, DiscoveryListener, ServiceRecord, DataElement and UUID are the classes provided in the java bluetooth specification for service discovery.</li>
+			<li>UUID Class:</li>
+				<ul>
+					<li> found in javax.bluetooth.UUID API</li>
+					<li> stands for Universal Uninquely Identifier</li>
+ 					<li> uniquely identifies services in the bt protocol.</li>
+					<li> I constructed a UUID for my application from a string representation of a UUID using the constructor UUID ()</li>
+				</ul>
+			<li>DiscoveryAgent Class</li>
+				<ul>
+					<li>  This is the same class that provided methods for device discovery</li> 
+					<li>  It provides a method to find services on remote devices which is searchServices ()	</li> 	   		  	
+					<li>  searchServices () allows the search for a list of services provided in the UUID array on a remote bt device.</li> 
+				</ul>
+			<li> DiscoveryListener Class</li>
+				<ul>
+					<li>  This is the same class that provided methods for device discovery</li> 
+					<li>  searchService () method in DiscoveryAgent class should have an object that implements DiscoveryListener 		   interface to recieve event callbacks when services that matches my UUID criteria are discovered.</li> 
+					<li>  The object implements servicesDiscovered () which is called by the JVM every time a service in a remote bt 		   device is discovered.</li> 
+				</ul>
+			<li> ServiceRecord Class</li>
+				<ul>
+					<li>  found in javax.bluetooth.ServiceRecord API</li>  
+					<li>  its object represents individual entries in the SDDB</li> 
+					<li>  I used service record objects to connect to remote devices
+							<br>String connectionURL = serviceRecordObj.getConnectionURL (0,false);</li> 
+				</ul>	
+			<li> DataElement Class</li>
+				<ul>
+					<li>  Each element in the ServiceRecord object has a number of attributes. All attributes are stored as DataElement Objects. However, I didnt use objects of this class in my application.</li> 
+				</ul>
+		</ul>
+
+	<h3><li>Service Registration</li></h3>
+		<ul> 
+			<li>Before a BT client device can use service discovery on another BT server device it has to do service registartion</li>
+			<li>Service registration is accomplished by the following steps:
+				<ol>
+					<li>create a new ServiceRecord by calling Connector.open () method. The url I used contains a uuid that has a small chance of conflicting with anything.  
+					<br><dd>StreamConnectionNotifier notifier = 
+					<br><dd><dd>(StreamConnectionNotifier) Connector.open (url); </dd></dd></dd></li>	
+					<li>use LocalDevice Object and StreamConnectionNotifier to obtain the ServiceRecord that was created by the system.
+					<br><dd>serviceRecord = localDeviceObject.getRecord (notifier);</dd></li> 
+					<li> Use StreamConnectionNotifier object to call acceptAndOpen () method that waits for bt client to discover this service and connect. This method blocks the current thread until a client responds.
+					<br><dd>notifier.acceptAndOpen ();</dd></li>
+					<li> Client has connected and u are ready to exit. </li>
+					<li>the systems removes the service record from database.
+					<br><dd>notifier.close (); </dd></li>
+ 				</ol>
+			</li>
+		</ul>
+		
+	<h3><li>Communication</li></h3>
+		<ul>
+			<li> I used RFCOMM protocol for communication which is stream oriented.</li>
+			<li> RFCOMM is the protocol layer that the serial port profile uses in order to communicate. </li>
+			<li> To open a connection on a Server Bluetooth device
+			<pre>
+				
+//declarations
+  
+  StreamConnectionNotifier notifier = null;
+  StreamConnection conn = null;
+  LocalDevice localDevice = null;
+  ServiceRecord serviceRecord = null;
+  InputStream in;
+  OutputStream out; 
+				
+//create a URL that contains a UUID
+/*
+ *The string url begins with <i>btspp://localhost:</i> 
+ *because I am using Bluetooth serial port profile
+ *Followed by the UUID which I chose to be <i>11223344556677889900aabbccddeeff</i>
+ *Then comes the name of the service which is <i>RoutingSMS</i>
+*/
+				 
+  String url = "btspp://localhost:11223344556677889900aabbccddeeff;name=RoutingSMS";
+		 
+//open the connection with the url
+			 
+  notifier = Connector.open (url);
+				 
+//block the current thread until the client responds
+				 
+  con = notifier.acceptAndOpen ();
+				 
+//open the stream after the client has responded
+				 
+  in = conn.openInputStream ();
+  out = conn.openOutputStream ();
+				 
+//now the streams are open and ready to receive and send data
+				 
+	   		</pre>
+			</li>
+			<li>To open a connection on a Client Bluetooth device  
+				<pre>
+//identify the url string 
+/*
+*it consists of the string <i>btspp:// </i>followed by the address of the server.
+*it is needed to connect to the device 
+*from the ServiceRecord object obtained from service discovery
+*/
+ 
+ String connectionURL = serviceRecord.getConnectionURL (0,false);
+ 
+// establish a connection with the serial port profile using the following method
+ 
+ StreamConnection con = Connector.open (connectionURL); 
+ DataInputStream in = conn.openDataInputStream ();
+ DataOuputStream out = conn.openDataOutputStream ();
+					  
+//Now the streams are open and you can send and recieve some data.
+				</pre>
+			</li>
+		</ul>	
+
+	
+
+</ol>
+
+</BODY>
+
+
+</HTML>

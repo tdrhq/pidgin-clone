@@ -1,0 +1,17 @@
+Signals reimplemented
+
+A couple of days ago the newest version of DBUS (0.35) came out.  I
+upgraded the DBUS library in my system from 0.34 to 0.35 and realized
+that propagating gaim signal to DBUS stopped working.  The code
+<pre>
+  <code>
+     #define DBUS_API_SUBJECT_TO_CHANGE
+  </code>
+</pre>
+which you have to put into every <code>*.c</code> file has more
+meaning than I thought.  
+
+In version 0.35, the DBUS signal mechanism I relied on was changed, so
+that I had to rewrite the gaim signal DBUS-propagation code using the
+low-level DBUS GLib API.  This approach should be more robust against
+API changes.

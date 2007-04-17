@@ -1,0 +1,7 @@
+Introduction
+
+Hi, this is my first post. I'm a little late since I've been sick the past few days. 
+
+I'm a 26 year old student at James Madison University working on my Master's degree in Information Security.  This summer I will be working to provide more security for Gaim by developing a certificate manager.
+
+That's all for my first post.  I'll talk more about my project tomorrow. 

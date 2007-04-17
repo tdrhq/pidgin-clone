@@ -1,0 +1,3 @@
+Update
+
+I spend the entire weekend working on the certificate manager.  I wasn't making any progress and was getting very frustrated.  Finally about when I was becoming too exhausted to work on it anymore, I realized what I was doing wrong.  Hopefully tomorrow this will result in some real progress with the code. 

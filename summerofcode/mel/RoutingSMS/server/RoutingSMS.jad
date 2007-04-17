@@ -1,0 +1,10 @@
+MIDlet-1: RoutingSMS, , CellPhoneMIDlet
+MIDlet-Jar-Size: 6368
+MIDlet-Jar-URL: RoutingSMS.jar
+MIDlet-Name: SMS Routing over Bluetooth
+MIDlet-Permissions: javax.microedition.io.Connector.http,javax.microedition.io.Connector.bluetooth.server,javax.microedition.pim.ContactList.read
+MIDlet-Permissions-Opt: javax.microedition.io.Connector.https
+MIDlet-Vendor: Forum Nokia
+MIDlet-Version: 1.0.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0

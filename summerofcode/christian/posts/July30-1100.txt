@@ -1,0 +1,20 @@
+Mmmm...progress
+
+&nbsp&nbsp Well I've got the program to be invoked fine. Might change the settings to get the PID, but for now it's ok. Method I ended up writing was:<br>
+<pre><code>
+static void run_editor (void)
+<br>{
+<br>&nbsp&nbsp&nbsp&nbsp GError *spawn_error = NULL;
+<br>&nbsp&nbsp&nbsp&nbsp gchar * args[2];
+<br>&nbsp&nbsp&nbsp&nbsp args[0] = (gchar *)gaim_prefs_get_string("/plugins/gtk/musicmessaging/editor_path");
+<br>&nbsp&nbsp&nbsp&nbsp args[1] = NULL;
+<br>&nbsp&nbsp&nbsp&nbsp if (!(g_spawn_async (".", args, NULL, 0, NULL, NULL, NULL, &spawn_error)))
+<br>&nbsp&nbsp&nbsp&nbsp {
+<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp gaim_notify_error(plugin_pointer, "Error Running Editor", "The following error has occured:", spawn_error->message);
+<br>&nbsp&nbsp&nbsp&nbsp }
+<br>}
+</code></pre>
+<br>
+&nbsp&nbsp Also managed to hook up the button on the chat toolbar when the plugin is activated (which triggers the run_editor() method). Basically I had to use a <code>gaim_conversation_foreach(add_button)</code> to run the add_button on all the conversations that existed, and the magic line in that method was <code>gtk_box_pack_start(GTK_BOX(GAIM_GTK_CONVERSATION(conv)->toolbar), button, FALSE, FALSE, 0);</code>. Not as simple to figure out as I expected :p.<br>
+<br>
+&nbsp&nbsp So with only a small update problem to be fixed today, the plugin's in a state where, when loaded, will add a custom button to all the conversations which opens up the score editor. Next to tackle is making the editor talk through DBUS with gaim, and then the protocol to send those through tags in the conversation (including the handshaking needed to start a musical conversation). After that, it's on to conflict resolution (ie two peeps add a different note in the same place at the same time). That's all for now...<br>

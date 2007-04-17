@@ -1,0 +1,40 @@
+What are handles?
+
+External applications using DBus need a way of refering to some
+objects/structures used by gaim, such as, GaimBuddy.  Obviously, this
+cannot be done by passing raw pointers, because they are
+application-specific.  Two methods remain: we can either refer to
+these objects using some existing fields (such as "name") and hope
+they are unique or introduce a new field (a handle).  Handles are
+unique integer numbers assigned by my code to each object that wants
+to be expored by dbus.
+
+I have opted for handles because of their simplicity: a uniform way of
+identifying many kinds of objects.  On the other hand, using existing
+fields would mean using a name to identify a buddy, a combination of
+account_name and prototol_id for identifying accounts, and a new
+method of identification for each new object type.  The disadvantage
+of handles is that it creates another level of indirection.  However,
+note that in both cases we need a mechanism (a hash-table) that
+translates internal object identifiers (pointers) into external ones
+and back.  As always, I welcome opinions on this issue.  Maybe we can
+use both approaches at the same time.
+
+Anyway, DBus interface currently works with handles.  So if you want
+to talk to a particular buddy you have to issue the following commands
+
+<pre><code>
+  gaim-send FindAccount string:account-name string:protocol-id 
+  gaim-send FindBuddy   int32:account-handle string:buddy-name
+  gaim-send StartIMConversation int32:buddy-handle
+</code></pre>
+   
+The first command returns the account-handle, and the second returns
+the buddy-handle.  If three commands seems to many, we can introduce a
+single command StartIMConversationByName 
+
+<pre><code>
+  gaim-send StartIMConversationByName string:account-name \
+    string:protocol-id string:buddy-name
+</code></pre>
+

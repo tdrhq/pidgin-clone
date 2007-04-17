@@ -1,0 +1,13 @@
+Documentation
+
+Today, I finished up a draft of the documentation for the work I've done this summer. It includes information on:
+<ul>
+<li>The structure of the protocol messages sent during a file transfer.</li>
+<li>The sequence in which the messages must be sent for different file transfer scenarios.</li>
+<li>Diagrams of the file transfer code in Gaim's OSCAR Protocol Plug-in.</li>
+</ul>
+I have posted this draft version of the documentation
+<a href="http://gaim.sourceforge.net/summerofcode/jonathan/ft_doc.pdf">here</a>
+in PDF format. It is geared toward developers, but especially curious powerusers might find it somewhat interesting as well.<p>
+
+After talking with my mentor Mark Doliner, I feel that this project is on track for success. Things are finally winding down, and not a minute too soon. Tomorrow morning I'm moving back to college. Luckily, there are only a few loose ends to tie up in these final 2 weeks.<p>

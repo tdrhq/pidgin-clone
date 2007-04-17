@@ -1,0 +1,9 @@
+SoC Hackathon
+
+&nbsp&nbsp So these weekend I got to put in a good 20 hours or so. Much of it was spent hunting down errors, one that even crashed my ubuntu session entirely, so it was kind of tedious. Tedious but essential. <br>
+<br>
+&nbsp&nbsp Hopped on the dbus and hooked up the music messaging plugin to both send and receive signals via dbus 0.35.2. Kudos to Piotr for helping me out. Still having problems with the gscore side of things though. Think I've got the ability to send messages fine, but the problem I'm having now is finding out how to set up the program so it sits and listens to the dbus server for signals. There seems to be a serious lack of online documentation on this as well...<br>
+<br>
+&nbsp&nbsp I've gotten the listeners for writing and receiving messages started and working too. This is for the communication between two or more peeps in a music conversation. I need to regulate what is displayed whether it be the score editor commands forwarded through gaim, or normal messages. Now all is left is to hook up the certain messages received to the dbus signals that have already been done up.<br>
+<br>
+&nbsp&nbsp I also rewrote how the plugin kept hold of the sessions to allow for expansion (more than one user per session, more than one session per user, etc), and set it up so the plugin has complete control over when the score editor starts/stops. Next on the chopping block is to deal with the handshaking proccess to start the session, and try to get the editor to play nice with dbus. Stay tuned...<br>

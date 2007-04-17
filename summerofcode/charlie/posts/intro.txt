@@ -1,0 +1,109 @@
+Introduction July 6th
+
+Hello.
+
+Before I begin the standard prologue of abbreviated geographical location 
+<br>
+followed quickly by a project description and the ever-elusive plan-of-action,
+<br>
+I think I should preface this whole endeavor with a sheepish admissiong that 
+<br>
+this not only marks my first entry for our Summer of Code journal, but also my 
+<br>
+first blog entry of any kind.  I supposed I'd like to believe that I can 
+<br>
+attribute this blogging inexperience to a preference for admirable activities 
+<br>
+like hiking or digesting great literature, but I honestly can't recall doing 
+<br>
+anything of the sort for the last several years.  I have however, spent a 
+<br>
+considerable amount of time looking for misplaced wallets and fallen keys.  
+<br>
+Anyway, enough with the excuses, lets move on to the meat and potatoes.
+<br>
+Charlie Stockman
+<br>
+Baltimore, MD (although I am spending most of the summer in Palo Alto)
+<p>
+Project: Crazy Chat
+<p>
+Progress to date:  Crazy Chat has gotten off to a characteristically slow start
+<br>
+, but has some leads as to the whereabouts of its second wind.  Crazy Chat was 
+<br>
+initially written to run on Apple X11 for a OSX, an uncommon platform for gaim 
+<br>
+users, so I am moving development to linux (not only to increase the target 
+<br>
+audience, but also because I believe that development will be easier).  At the 
+<br>
+time I received the unexpected grant from my archnemesis Google (I'm an Ask 
+<br>
+Jeeves man, a debate that I will abstain from getting into), I did not have a 
+<br>
+computer running linux, let alone a laptop running Linux, and I was preparing 
+<br>
+to return to Baltimore for a two week vacation.  So my first step was to 
+<br>
+purchase a used Thinkpad, and install Fedora Core 3(convenient for a greenhorn 
+<br>
+like myself) to make it a dual boot system (leaving Windows XP).  After that I 
+<br>
+struggled, but ultimately succeeded with the help of my mentor Gary, to compile
+<br>
+gaim, (a problem that was eventually resolved by re unzipping the tarball, then
+<br>
+doing the ./configure; make; make install, without the mysterious error).  At 
+<br>
+this point I experienced the delightful sensation of waking up to a crashed 
+<br>
+hard drive, which contained, among other things, my personal copy of Crazy 
+<br>
+Chat.  After trying unsuccessfully to revive the beast, I went out searching 
+<br>
+for another copy of Crazy Chat, which I believe that I have found on one of the
+<br>
+Macs in the office of the Stanford Chaparral where we initially were 
+<br>
+developing.  At this point, progress was put on hold when I packed my bags to 
+<br>
+go east, spending the first several days of my return in Philadelphia, enjoying
+<br>
+the Live 8 concert and 4th of July festivities with college friends.  Although 
+<br>
+the cheese steaks and water ice admittedly did very little to improve Crazy 
+<br>
+Chat, they were invaluable to morale.  I arrived in Baltimore yesterday, since 
+<br>
+then I have spent an inordinate amount of time trying to get my wireless card 
+<br>
+working to settle the conflict between me and my dad over the only ethernet 
+<br>
+jack, and the rest of the time reading up on various things such as gtk 
+<br>
+programming in general, autotools, gaim data structures and code, face finding 
+<br>
+algorithms (a subject I have now put on hold), etc...  Currently I am still 
+<br>
+fishing around for the specifics of a plan of action.  Clearly I have to:
+<br>
+1) learn how to capture video for Crazy Chat
+<br>
+2) learn how to output the graphics (using GtkGlExt i assume)
+<br>
+3) incorporate the face finding algorithm (I have been looking around at 
+<br>
+opensource face finders)
+<br>
+4) learn and implement the networking side of the plugin.
+<br>
+5) plug in the old graphics code and hopefully write new code.
+<p>
+Currently I am focusing on this first problem, though it can be difficult not 
+<br>
+to digress into looking at the other problems from time to time (such as the 
+<br>
+face finding).  Anyway, that is all for my first blog.
+<p>
+Charlie  

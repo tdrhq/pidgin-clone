@@ -1,0 +1,7 @@
+STUN and NTLM
+
+I committed the first part of STUN NAT detection. Currently it is possible to find out if there is a NAT between you and the STUN server and the public IP of the NAT router. I am not sure if it should be called before UPnP or after it in get_public_ip in network.c.<br/>
+<br/>
+In the SIMPLE prpl I am trying to implement NTLM authentication to make it compatible with MS servers. Its quite hard to implement it without a server to test against, so I have to set up a fake server which simulates NTLM auth requests. Furthermore there seems to be no official specification of NTLM from MS.<br/>
+<br/>
+[original at: <a href="http://t-butter.de/main/soc/status-20050811.html">http://t-butter.de/main/soc/status-20050811.html</a>]

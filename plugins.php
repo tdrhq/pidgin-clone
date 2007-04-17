@@ -1,0 +1,79 @@
+<?
+	$page->title = 'Plugins';
+	require('inc/template.inc.php');
+?>
+
+<h1>Plugins</h1>
+
+<?
+	$plugins = array(
+/*		"gaim-blogger" => array(
+			"URL"  => "http://gaim-blogger.sourceforge.net",
+			"TEXT" => "Makes use of Purple's IM interface to post, edit, view and track blogs"
+		),
+*/
+		"Meanwhile Protocol Plugin" => array(
+			"URL"  => "http://meanwhile.sourceforge.net/",
+			"TEXT" => "The Meanwhile Project is an open implementation of the Lotus Sametime Community Client protocol."
+		),
+
+		"guifications" => array(
+			"URL"  => "http://gaim.guifications.org/trac/wiki/Guifications",
+			"TEXT" => "Graphical notification when buddies sign on, sign off, go away, etc."
+		),
+
+		"Extended Preferences" => array(
+			"URL"  => "http://gaim-extprefs.sourceforge.net/",
+			"TEXT" => "The Pidgin Extended Preferences Plugin adds additional preferences that have been commonly called for in the past from Pidgin that are either already implemented and hidden, or trivial to implement via a plugin."
+		),
+
+		"IRC Helper" => array(
+			"URL" => "http://gaim-irchelper.sf.net",
+			"TEXT" => "The Pidgin IRC Helper plugin which seeks to handle the rough edges of the IRC protocol through network-specific code."
+		),
+
+		"gaim-encryption" => array(
+			"URL"  => "http://gaim-encryption.sourceforge.net/",
+			"TEXT" => "Another Pidgin encryption plugin (RSA encryption)"
+		),
+
+		"Off-the-Record Messaging" => array(
+			"URL" => "http://www.cypherpunks.ca/otr/",
+			"TEXT" => "Off-the-Record (OTR) Messaging allows you to have private (not just encrypted) conversations over instant messaging by providing:  Encryption, Authentication, Deniability, and Perfect forward secrecy."
+		),
+
+		"PyGaim" => array(
+			"URL" => "http://pygaim.sourceforge.net/",
+			"TEXT" => " PyGaim is a gaim plugin that enables Pidgin to be extensible with Python."
+		),
+
+	);
+?>
+
+<p>
+ Welcome to our plugins page! Here you'll find a listing of some of the plugins
+ available for Pidgin written by Pidgin users. There are other great ones listed in
+ the <a href="http://sourceforge.net/tracker/?atid=390395&amp;group_id=235&amp;func=browse">Plugins</a>
+ section on our SourceForge project page. Remember, the Protocol Plugins come
+ with Pidgin.
+</p>
+
+<ul>
+
+<?php
+	while (list($name, $data) = each($plugins)) {
+		print "  <li>";
+		print '<a href="' . $data["URL"] . '">';
+		print $name;
+		print "</a> - ";
+		print $data["TEXT"];
+		print "</li>\n";
+	}
+?>
+
+</ul>
+
+<p>
+ More to come later....
+</p>
+
