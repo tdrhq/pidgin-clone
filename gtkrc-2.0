@@ -10,7 +10,7 @@ gtk-font-name = "Verdana 9"
 
 # The following section allows you to change the style of the conversation
 # window widgets, log viewer widget, and request and notify window widgets.
-# These only work in Gaim 0.78 or higher.
+# These only work in Pidgin 0.78 or higher.
 style "imhtml-fix"
 {
 font_name = "Sans 10"
@@ -27,12 +27,12 @@ widget "*gaim_gtkrequest_imhtml" style "imhtml-fix"
 # Set the widget style for IMHtml widgets in notify dialogs
 widget "*gaim_gtknotify_imhtml" style "imhtml-fix"
 
-# Uncommenting the line below sets all IMHtml widgets in Gaim to the same style
-# and will work in Gaim versions prior to 0.78
+# Uncommenting the line below sets all IMHtml widgets in Pidgin to the same style
+# and will work in Pidgin versions prior to 0.78
 #widget_class "*.GtkScrolledWindow.GtkIMHtml" style "imhtml-fix"
 
 # The following lets you customize the color of hyperlinks
-# and also the text cursors. The link color thing is Gaim specific
+# and also the text cursors. The link color thing is Pidgin specific
 # but the rest work for any Gtk2 program. You can search the Gtk2
 # docs for other style properties.
 style "my-style-name" {
@@ -48,8 +48,8 @@ widget_class "*" style "my-style-name"
 
 # This style sets the expander size on a treeview to 0, which has the result
 # of reducing the indent for items in the tree. This can be applied to the
-# Gaim buddy list to reduce it's width.
-# This only works in Gaim 0.79 and higher
+# Pidgin buddy list to reduce it's width.
+# This only works in Pidgin 0.79 and higher
 style "my-narrow-tree"
 {
   GtkTreeView::expander_size = 0
@@ -95,7 +95,7 @@ gtk-key-theme-name = "Emacs"
 #this requires changing the "Editable menu accelerators" in the GNOME System preferences (System -> Preferences -> Menu and Toolbar Preferences), and a similar setting in xfce4 in order to work.
 gtk-can-change-accels = 1
 
-# In Gaim 2.0.0 and later, you can set custom keybindings in your theme.  Here
+# In Pidgin 2.0.0 and later, you can set custom keybindings in your theme.  Here
 # is an example to follow
 
 binding "my-bindings"
