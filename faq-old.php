@@ -10,7 +10,7 @@
 <p><i>For those users testing <a href="http://sourceforge.net/project/showfiles.php?group_id=235&package_id=253&release_id=479631">2.0.0beta6</a>, we have an updated <a href="faq2.php">FAQ</a>.</i></p>
 <?
 	/* The Q&A begins here */
-	$faq = file("./faq.txt");
+	$faq = file("./faq-old.txt");
 	$faq_lines = count($faq);
 	$sections = array();
 	
