@@ -1893,6 +1893,11 @@ if test "x$enable_fatal_asserts" = "xyes" ; then
 	AC_DEFINE(PURPLE_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
 fi
 
+PKG_CHECK_MODULES([TP_GLIB],[telepathy-glib],[has_telepathy_glib=yes],[AC_MSG_ERROR([
+* telepathy-glib is required by psyduck.])])
+AC_SUBST([TP_GLIB_CFLAGS])
+AC_SUBST([TP_GLIB_LIBS])
+
 AC_OUTPUT([Makefile
 		   Doxyfile
 		   gaim.service
@@ -2001,6 +2006,7 @@ AC_OUTPUT([Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in
 		   pidgin.spec
+		   psyduck/Makefile
 		  ])
 
 echo
