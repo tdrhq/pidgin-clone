@@ -182,7 +182,7 @@ MonoObject* ml_object_from_purple_subtype(PurpleSubType type, gpointer data)
 	return obj;
 }
 
-MonoObject* ml_create_api_object(char *class_name)
+MonoObject* ml_create_api_object(char *class_name, void *object)
 {
 	MonoObject *obj = NULL;
 	MonoClass *klass = NULL;
@@ -198,9 +198,23 @@ MonoObject* ml_create_api_object(char *class_name)
 		purple_debug(PURPLE_DEBUG_FATAL, "mono", "couldn't create the object from class '%s'\n", class_name);
 		return NULL;
 	}
-	
-	mono_runtime_object_init(obj);
-	
+
+	if (object) {
+		MonoMethod *ctor;
+		gpointer params[1];
+
+		ctor = mono_class_get_method_from_name(klass, ".ctor", 1);
+
+		params[0] = (gpointer)mono_value_box(ml_get_domain(), mono_get_intptr_class(), &object);
+		mono_runtime_invoke(ctor, obj, params, NULL);
+		
+		ctor = mono_class_get_method_from_name(klass, "_updateFromStruct", 0);
+		params[0] = NULL;
+		mono_runtime_invoke(ctor, obj, params, NULL);
+	} else {
+		mono_runtime_object_init(obj);
+	}
+
 	return obj;
 }
 
@@ -233,6 +247,12 @@ void ml_init_internal_calls(void)
 	mono_add_internal_call("Purple.Debug::_debug", purple_debug_glue);
 	mono_add_internal_call("Purple.Signal::_connect", purple_signal_connect_glue);
 	mono_add_internal_call("Purple.BuddyList::_get_handle", purple_blist_get_handle_glue);
+	mono_add_internal_call("Purple.Buddy::_purple_buddy_get_name", purple_buddy_get_name_glue);
+	mono_add_internal_call("Purple.Buddy::_purple_buddy_get_alias", purple_buddy_get_alias_glue);
+	mono_add_internal_call("Purple.Buddy::_purple_buddy_new", purple_buddy_new_glue);
+	mono_add_internal_call("Purple.Account::_purple_account_get_username", purple_account_get_username_glue);
+	mono_add_internal_call("Purple.Account::_purple_account_get_protocol_id", purple_account_get_protocol_id_glue);
+	mono_add_internal_call("Purple.Account::_purple_account_new", purple_account_new_glue);
 }
 
 static GHashTable *plugins_hash = NULL;

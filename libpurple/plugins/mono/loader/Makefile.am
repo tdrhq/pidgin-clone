@@ -10,7 +10,8 @@ mono_la_SOURCES	= \
 	debug-glue.c \
 	signal-glue.c \
 	blist-glue.c \
-	status-glue.c 
+	status-glue.c \
+	account-glue.c
 
 mono_la_LDFLAGS  = -module -avoid-version
 

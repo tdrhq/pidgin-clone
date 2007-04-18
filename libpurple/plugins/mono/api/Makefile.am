@@ -1,6 +1,7 @@
 monodir=$(libdir)/libpurple
 
 mono_sources = \
+	PObject.cs \
 	BlistNode.cs \
 	BuddyList.cs \
 	Buddy.cs \
@@ -10,7 +11,8 @@ mono_sources = \
 	PurplePlugin.cs \
 	Group.cs \
 	Signal.cs \
-	Status.cs
+	Status.cs \
+	Account.cs
 
 EXTRA_DIST = $(mono_sources)
 

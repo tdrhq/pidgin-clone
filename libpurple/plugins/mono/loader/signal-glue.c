@@ -70,6 +70,8 @@ int purple_signal_connect_glue(MonoObject* h, MonoObject *plugin, MonoString *si
 	sig = mono_string_to_utf8(signal);
 	purple_debug(PURPLE_DEBUG_INFO, "mono", "connecting signal: %s\n", sig);
 	
+	purple_debug_info("mono", "class name: %s\n", mono_class_get_name(mono_object_get_class(h)));
+	
 	instance = (void*)mono_object_unbox(h);
 	
 	sig_data = g_new0(SignalData, 1);
