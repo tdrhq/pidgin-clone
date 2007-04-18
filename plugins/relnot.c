@@ -60,7 +60,7 @@ version_fetch_cb(void *ud, const char *data, size_t len)
 	while(*changelog == '\n') changelog++;
 
 	message = g_string_new("");
-	g_string_append_printf(message, _("You are using Gaim version %s.  The "
+	g_string_append_printf(message, _("You are using Pidgin version %s.  The "
 			"current version is %s.<hr>"),
 			gaim_core_get_version(), cur_ver);
 

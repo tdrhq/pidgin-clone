@@ -1,5 +1,5 @@
 /*
- * System tray icon (aka docklet) plugin for Gaim
+ * System tray icon (aka docklet) plugin for Pidgin
  *
  * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
@@ -41,9 +41,9 @@
 /*
  *  DEFINES, MACROS & DATA TYPES
  */
-#define GAIM_SYSTRAY_HINT _("Gaim")
-#define GAIM_SYSTRAY_DISCONN_HINT _("Gaim - Signed off")
-#define GAIM_SYSTRAY_AWAY_HINT _("Gaim - Away")
+#define GAIM_SYSTRAY_HINT _("Pidgin")
+#define GAIM_SYSTRAY_DISCONN_HINT _("Pidgin - Signed off")
+#define GAIM_SYSTRAY_AWAY_HINT _("Pidgin - Away")
 #define WM_TRAYMESSAGE WM_USER /* User defined WM Message */
 
 /*
@@ -110,7 +110,7 @@ static HWND systray_create_hiddenwin() {
 	WNDCLASSEX wcex;
 	TCHAR wname[32];
 
-	strcpy(wname, "GaimWin");
+	strcpy(wname, "PidginWin");
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 

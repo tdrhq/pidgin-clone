@@ -220,7 +220,7 @@ static void icq_mail_express(icq_Link *link, unsigned char hour, unsigned char m
 
 static void icq_req_not(icq_Link *link, unsigned long id, int type, int arg, void *data) {
 	if (type == ICQ_NOTIFY_FAILED)
-		do_error_dialog(_("Gaim encountered an error communicating with the ICQ server."), NULL, GAIM_ERROR);
+		do_error_dialog(_("libPurple encountered an error communicating with the ICQ server."), NULL, GAIM_ERROR);
 	return;
 }
 
@@ -495,7 +495,7 @@ void icq_init(struct prpl *ret) {
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Nick:"));
-	puo->def = g_strdup(_("Gaim User"));
+	puo->def = g_strdup(_("libPurple User"));
 	puo->pos = USEROPT_NICK;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
 

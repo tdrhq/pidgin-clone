@@ -1,5 +1,5 @@
 /*
- * gaim - WinGaim Options Plugin
+ * gaim - WinPidgin Options Plugin
  *
  * File: winprefs.c
  * Date: December 12, 2002
@@ -206,13 +206,13 @@ static void winprefs_set_autostart(GtkWidget *w) {
                 if((size = GetModuleFileName(wgaim_hinstance(),
                                              (LPBYTE)buffer,
                                              sizeof(buffer)))==0) {
-                        gaim_debug_error(WINPREFS_PLUGIN_ID, "GetModuleFileName Error.. Could not set Gaim autostart.\n");
+                        gaim_debug_error(WINPREFS_PLUGIN_ID, "GetModuleFileName Error.. Could not set Pidgin autostart.\n");
                         RegCloseKey(hKey);
                         return;
                 }
                 /* Now set value of new key */
                 if(ERROR_SUCCESS != RegSetValueEx(hKey,
-                                                  "Gaim",
+                                                  "Pidgin",
                                                   0,
                                                   REG_SZ,
                                                   buffer,
@@ -220,7 +220,7 @@ static void winprefs_set_autostart(GtkWidget *w) {
                         gaim_debug_error(WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
         }
         else {
-                if(ERROR_SUCCESS != RegDeleteValue(hKey, "Gaim"))
+                if(ERROR_SUCCESS != RegDeleteValue(hKey, "Pidgin"))
                         gaim_debug_error(WINPREFS_PLUGIN_ID, "Could not delete registry key value\n");
         }
         RegCloseKey(hKey);
@@ -350,9 +350,9 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 
         /* Autostart */
 	vbox = gaim_gtk_make_frame (ret, _("Startup"));
-	button = wgaim_button(_("_Start Gaim on Windows startup"), vbox);
+	button = wgaim_button(_("_Start Pidgin on Windows startup"), vbox);
 	if(open_run_key(&hKey, KEY_QUERY_VALUE)) {
-		if(ERROR_SUCCESS == RegQueryValueEx(hKey, "Gaim", 0, NULL, NULL, NULL)) {
+		if(ERROR_SUCCESS == RegQueryValueEx(hKey, "Pidgin", 0, NULL, NULL, NULL)) {
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 		}
 	}
@@ -404,10 +404,10 @@ static GaimPluginInfo info =
 	NULL,
 	GAIM_PRIORITY_DEFAULT,
 	WINPREFS_PLUGIN_ID,
-	N_("WinGaim Options"),
+	N_("Pidgin-win Options"),
 	VERSION,
-	N_("Options specific to Windows Gaim."),
-	N_("Options specific to Windows Gaim."),
+	N_("Options specific to Windows Pidgin."),
+	N_("Options specific to Windows Pidgin."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",
 	GAIM_WEBSITE,
 	plugin_load,

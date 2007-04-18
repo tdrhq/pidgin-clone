@@ -87,7 +87,7 @@ static GaimPluginInfo info =
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
 
 	GAIMINC_PLUGIN_ID,                                /**< id             */
-	N_("Gaim Demonstration Plugin"),                  /**< name           */
+	N_("Pidgin Demonstration Plugin"),                  /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
 	N_("An example plugin that does stuff - see the description."),

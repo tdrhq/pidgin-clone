@@ -1,5 +1,5 @@
 /*
- * System tray icon (aka docklet) plugin for Gaim
+ * System tray icon (aka docklet) plugin for Pidgin
  *
  * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
@@ -557,10 +557,10 @@ static GaimPluginInfo info =
 	N_("System Tray Icon"),                           /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("Displays an icon for Gaim in the system tray."),
+	N_("Displays an icon for Pidgin in the system tray."),
 	                                                  /**  description    */
 	N_("Displays a system tray icon (in GNOME, KDE or Windows for example) "
-	   "to show the current status of Gaim, allow fast access to commonly "
+	   "to show the current status of Pidgin, allow fast access to commonly "
 	   "used functions, and to toggle display of the buddy list or login "
 	   "window. Also allows messages to be queued until the icon is "
 	   "clicked, similar to ICQ."),

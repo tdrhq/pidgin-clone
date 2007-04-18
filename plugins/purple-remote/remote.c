@@ -1,5 +1,5 @@
 /**
- * Remote control plugin for Gaim
+ * Remote control plugin for Pidgin
  *
  * Copyright (C) 2003 Christian Hammond.
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
@@ -719,7 +719,7 @@ plugin_unload(GaimPlugin *plugin)
 	g_source_remove(watcher);
 	close(UI_fd);
 
-	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d",
+	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "pidgin_%s.%d",
 			g_get_tmp_dir(), g_get_user_name(), gaim_session);
 
 	unlink(buf);
@@ -747,9 +747,9 @@ static GaimPluginInfo info =
 	N_("Remote Control"),                             /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("Provides remote control for gaim applications."),
+	N_("Provides remote control for libPurple applications."),
 	                                                  /**  description    */
-	N_("Gives Gaim the ability to be remote-controlled through third-party "
+	N_("Gives Pidgin the ability to be remote-controlled through third-party "
 	   "applications or through the purple-remote tool."),
 	"Sean Egan <sean.egan@binghamton.edu>",
 	GAIM_WEBSITE,                                     /**< homepage       */

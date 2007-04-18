@@ -381,7 +381,7 @@ jabber_login(GaimAccount *account)
 
 	if(!js->user->resource) {
 		char *me;
-		js->user->resource = g_strdup("Gaim");
+		js->user->resource = g_strdup("libPurple");
 		if(!js->user->node) {
 			js->user->node = js->user->domain;
 			js->user->domain = g_strdup("jabber.org");

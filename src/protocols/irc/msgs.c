@@ -346,7 +346,7 @@ void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, c
 
 	escaped = g_markup_escape_text(args[1], -1);
 	buf = g_strdup_printf(_("Unknown message '%s'"), escaped);
-	gaim_notify_error(gc, _("Unknown message"), buf, _("Gaim has sent a message the IRC server did not understand."));
+	gaim_notify_error(gc, _("Unknown message"), buf, _("libPurple has sent a message the IRC server did not understand."));
 	g_free(escaped);
 	g_free(buf);
 }
