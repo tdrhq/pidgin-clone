@@ -224,6 +224,7 @@ static PurplePluginInfo info =
 
 static void init_plugin(PurplePlugin *plugin)
 {
+	g_module_make_resident(plugin->handle);
 	ml_init();
 	
 	loader_info.exts = g_list_append(loader_info.exts, "dll");
