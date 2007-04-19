@@ -12,7 +12,7 @@ int purple_signal_connect_glue(MonoObject *h, MonoObject *plugin, MonoString *si
 
 MonoObject* purple_blist_get_handle_glue(void);
 MonoObject* purple_blist_build_buddy_object(void* buddy);
-MonoString* purple_buddy_get_name_glue(MonoObject *handle);
+MonoString* purple_buddy_get_name_glue(MonoObject *obj, MonoObject *handle);
 MonoString* purple_buddy_get_alias_glue(MonoObject *handle);
 MonoObject* purple_buddy_new_glue(MonoObject* account_handle, MonoString *name, MonoString *alias);
 

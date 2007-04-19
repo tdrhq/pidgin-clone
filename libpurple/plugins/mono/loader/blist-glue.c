@@ -26,22 +26,23 @@ MonoObject* purple_blist_build_buddy_object(void* data)
 	return obj;
 }
 
-MonoString* purple_buddy_get_name_glue(MonoObject *handle)
+MonoString* purple_buddy_get_name_glue(MonoObject *obj, MonoObject *handle)
 {
 	PurpleBuddy *buddy;
 	
+	purple_debug_info("mono", "obj class name : %s\n", mono_class_get_name(mono_object_get_class(obj)));
 	purple_debug_info("mono", "class name: %s\n", mono_class_get_name(mono_object_get_class(handle)));
 	
-	buddy = (PurpleBuddy*)mono_object_unbox(handle);
+	/*buddy = (PurpleBuddy*)mono_object_unbox(handle);*/
 
-	return mono_string_new_wrapper(purple_buddy_get_name(buddy));
+	return mono_string_new_wrapper("yarg");
 }
 
 MonoString* purple_buddy_get_alias_glue(MonoObject *handle)
 {
-	PurpleBuddy *buddy = (PurpleBuddy*)mono_object_unbox(handle);
+	/*PurpleBuddy *buddy = (PurpleBuddy*)mono_object_unbox(handle);*/
 
-	return mono_string_new_wrapper(purple_buddy_get_alias(buddy));
+	return mono_string_new_wrapper("blah");
 }
 
 MonoObject* purple_buddy_new_glue(MonoObject* account_handle, MonoString *name, MonoString *alias)

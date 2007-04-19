@@ -31,13 +31,13 @@ namespace Purple {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern private static string _purple_buddy_get_name(IntPtr handle);
+		extern private string _purple_buddy_get_name(IntPtr handle);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern private static string _purple_buddy_get_alias(IntPtr handle);
+		extern private string _purple_buddy_get_alias(IntPtr handle);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern private static IntPtr _purple_buddy_new(IntPtr account, string name, string alias);
+		extern private IntPtr _purple_buddy_new(IntPtr account, string name, string alias);
 
 	}
 }
