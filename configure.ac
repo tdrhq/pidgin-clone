@@ -52,7 +52,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_TW"
+ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl we don't use autobreak on cygwin!!
@@ -240,6 +240,10 @@ If you only want to build Finch then specify --disable-gtkui when running config
 
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
+
+	dnl We only really need Pango >= 1.4 for decent RTL support
+	PKG_CHECK_MODULES(pango, [pango >= 1.4.0],
+			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
 	dnl #######################################################################
 	dnl # Check for XScreenSaver
@@ -1832,7 +1836,7 @@ dnl # Check for check
 dnl #######################################################################
 PKG_CHECK_MODULES(CHECK,[check >= 0.9.4],:,[
 					ifdef([AM_PATH_CHECK],
-					[AM_PATH_CHECK],
+					[AM_PATH_CHECK(0.8.2,:,:)],
 					[AC_MSG_RESULT([no, testing is disabled])])
 				  ])
 AM_CONDITIONAL(HAVE_CHECK, [test "x$CHECK_LIBS" != "x"])
