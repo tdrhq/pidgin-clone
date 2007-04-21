@@ -1,32 +1,32 @@
-.TH gaim-remote 1
+.TH purple-remote 1
 
 .SH "NAME"
-gaim-remote v@VERSION@ \- Gaim command-line remote control
+purple-remote v@VERSION@ \- Purple command-line remote control
 
 .SH "SYNOPSIS"
 .TP 5
-\fBgaim-remote \fI[command]\fR \fI[parameters]\fR
+\fBpurple-remote \fI[command]\fR \fI[parameters]\fR
 .TP 5
-\fBgaim-remote -h \fI[command]\fR
+\fBpurple-remote -h \fI[command]\fR
 
 .SH "DESCRIPTION"
 .PP
-\fbgaim-remote\fR is a command-line interface for controlling an already-running instance of the Gaim Instant Messaging client. It currently has only rudimentary support for launching AIM-style URIs, and closing the running instance, although further functionality is planned.
+\fbpurple-remote\fR is a command-line interface for controlling an already-running instance of the Purple Instant Messaging client. It currently has only rudimentary support for launching AIM-style URIs, and closing the running instance, although further functionality is planned.
 
 .SH "OPTIONS"
-The following options are provided by \fBgaim-remote\fR:
+The following options are provided by \fBpurple-remote\fR:
 .TP
 .B \-h [\fIcommand\fB]
-Display help for \fBgaim-remote\fR or a specific command (see below).
+Display help for \fBpurple-remote\fR or a specific command (see below).
 
 .SH "COMMANDS"
-The following commands are implemented by \fBgaim-remote\fR:
+The following commands are implemented by \fBpurple-remote\fR:
 .TP
 .B quit
-Closes the currently-running instance of \fBGaim\fR.
+Closes the currently-running instance of \fBPurple\fR.
 .TP
 .B uri [URI]
-Sends the given AIM-style URI to the currently running instance of \fBGaim\fR (see below).
+Sends the given AIM-style URI to the currently running instance of \fBPurple\fR (see below).
 
 .SH "URIs"
 The following URIs are currently valid. These default to acting on the first AIM account you have in your list:
@@ -45,13 +45,13 @@ Opens a dialog to add the specified buddy to your buddy list.
 
 .SH "FILES"
 .TP
-.I /tmp/gaim_[USERNAME].[INSTANCE]
-The UNIX domain socket used to contact the running instance of \fBGaim\fR.
+.I /tmp/purple_[USERNAME].[INSTANCE]
+The UNIX domain socket used to contact the running instance of \fBPurple\fR.
 
 .SH "SEE ALSO"
-.BR gaim (1),
-.BR \fIhttp://gaim.sourceforge.net/\fR,
-.BR \fIhttp://www.sourceforge.net/projects/gaim/\fR
+.BR purple (1),
+.BR \fIhttp://purple.sourceforge.net/\fR,
+.BR \fIhttp://www.sourceforge.net/projects/purple/\fR
 
 .SH "AUTHOR"
 .PP
