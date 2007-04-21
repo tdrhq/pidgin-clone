@@ -41,6 +41,44 @@ static PurpleDebugUiOps *debug_ui_ops = NULL;
  */
 static gboolean debug_enabled = FALSE;
 
+/*
+ * Following added to make it easier to track console debug output.
+ * This can be nuked at some point in the future when it is not needed.
+ *
+ * -ecoffey
+ *
+ * BEGIN NUKE
+ */
+
+static GList *allowed_categories = NULL;
+
+void purple_debug_add_allowed_category(gchar *cat)
+{
+	if (!cat) {
+		allowed_categories = NULL;
+	} else {
+		allowed_categories = g_list_append(allowed_categories, (gpointer)cat);
+	}
+}
+
+static gboolean purple_debug_category_allowed(const char *cat)
+{
+	GList *iter;
+	if (!allowed_categories)
+		return TRUE;
+		
+	for(iter = allowed_categories; iter; iter = iter->next) {
+		if (strcmp(cat, (gchar*)iter->data) == 0)
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
+/*
+ * END NUKE
+ */
+
 static void
 purple_debug_vargs(PurpleDebugLevel level, const char *category,
 				 const char *format, va_list args)
@@ -60,7 +98,13 @@ purple_debug_vargs(PurpleDebugLevel level, const char *category,
 	arg_s = g_strdup_vprintf(format, args);
 
 	if (debug_enabled) {
+	
 		gchar *ts_s;
+	
+		if (!purple_debug_category_allowed(category)) { /* Can be NUKED with the above */
+			g_free(arg_s);
+			return;
+		}
 
 		if ((category != NULL) &&
 			(purple_prefs_exists("/core/debug/timestamps")) &&

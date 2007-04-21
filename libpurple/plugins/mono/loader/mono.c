@@ -70,7 +70,6 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 	mono_runtime_object_init(mplug->obj);
 
 	while ((m = mono_class_get_methods(mplug->klass, &iter))) {
-		purple_debug_info("mono", "plugin method: %s\n", mono_method_get_name(m));
 		if (strcmp(mono_method_get_name(m), "Load") == 0) {
 			mplug->load = m;
 			found_load = TRUE;
@@ -225,6 +224,7 @@ static PurplePluginInfo info =
 
 static void init_plugin(PurplePlugin *plugin)
 {
+	g_module_make_resident(plugin->handle);
 	ml_init();
 	
 	loader_info.exts = g_list_append(loader_info.exts, "dll");

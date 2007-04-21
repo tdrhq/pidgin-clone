@@ -54,7 +54,7 @@ MonoObject* ml_object_from_purple_type(PurpleType type, gpointer data);
 
 MonoObject* ml_object_from_purple_subtype(PurpleSubType type, gpointer data);
 
-MonoObject* ml_create_api_object(char *class_name);
+MonoObject* ml_create_api_object(char *class_name, void *object);
 
 void ml_set_api_image(MonoImage *image);
 
