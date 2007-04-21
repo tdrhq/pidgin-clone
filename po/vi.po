@@ -1,7 +1,7 @@
-# Vietnamese Translation for Gaim.
+# Vietnamese Translation for Pidgin.
 # Copyright (C) 2003 Gnome i18n Project for Vietnamese
 # This file is distributed under the same license as the Version package.
-# Đóng góp dịch Gaim UI Catalog sang tiếng Việt :
+# Đóng góp dịch Pidgin UI Catalog sang tiếng Việt :
 # Nguyễn  Văn Vũ <vncasper@yahoo.com>.
 # Nguyễn Minh Hương "<parfumi@yahoo.com>.
 # Nguyễn Tiến Hải Bình <zecoj@yahoo.com>.
@@ -11,7 +11,7 @@
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: CVS Version of Gaim-vi \n"
+"Project-Id-Version: CVS Version of Pidgin-vi \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-07-10 16:02-0400\n"
 "PO-Revision-Date: 2004-01-09 15:05+0700\n"
@@ -222,19 +222,19 @@ msgstr "Biểu tượng trên khay"
 #. *< version
 #. *  summary
 #: plugins/docklet/docklet.c:560
-msgid "Displays an icon for Gaim in the system tray."
-msgstr "Hiển thị biểu tượng Gaim trên khay hệ thống."
+msgid "Displays an icon for Pidgin in the system tray."
+msgstr "Hiển thị biểu tượng Pidgin trên khay hệ thống."
 
 #. *  description
 #: plugins/docklet/docklet.c:562
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
-"the current status of Gaim, allow fast access to commonly used functions, "
+"the current status of Pidgin, allow fast access to commonly used functions, "
 "and to toggle display of the buddy list or login window. Also allows "
 "messages to be queued until the icon is clicked, similar to ICQ."
 msgstr ""
 "Hiển thị biểu tượng trên khay hệ thống (ví dụ GNOME, KDE hoặc Windows) để "
-"hiển thị trạng thái hiện thời của Gaim, cho phép truy cập nhanh những chức "
+"hiển thị trạng thái hiện thời của Pidgin, cho phép truy cập nhanh những chức "
 "năng thông thường, và chuyển đổi giữa danh sách buddy hoặc cửa sổ đăng nhập. "
 "Ngoài ra còn cho phép thông điệp được xếp hàng đợi đến khi nhấn chuột lên "
 "biểu tượng, giống như ICQ."
@@ -243,16 +243,16 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: plugins/docklet/docklet-win32.c:44
-msgid "Gaim"
-msgstr "Gaim"
+msgid "Pidgin"
+msgstr "Pidgin"
 
 #: plugins/docklet/docklet-win32.c:45
-msgid "Gaim - Signed off"
-msgstr "Gaim - Ngắt kết nối"
+msgid "Pidgin - Signed off"
+msgstr "Pidgin - Ngắt kết nối"
 
 #: plugins/docklet/docklet-win32.c:46
-msgid "Gaim - Away"
-msgstr "Gaim - Trạng thái"
+msgid "Pidgin - Away"
+msgstr "Pidgin - Trạng thái"
 
 #: plugins/docklet/eggtrayicon.c:122
 #, fuzzy
@@ -314,16 +314,16 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/filectl.c:224
-msgid "Gaim File Control"
-msgstr "Điều Khiển Tập Tin Gaim"
+msgid "Pidgin File Control"
+msgstr "Điều Khiển Tập Tin Pidgin"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 #: plugins/filectl.c:227 plugins/filectl.c:229
-msgid "Allows you to control Gaim by entering commands in a file."
-msgstr "Cho phép bạn điều khiển Gaim bằng các lệnh ghi trong tập tin."
+msgid "Allows you to control Pidgin by entering commands in a file."
+msgstr "Cho phép bạn điều khiển Pidgin bằng các lệnh ghi trong tập tin."
 
 #. *< type
 #. *< ui_requirement
@@ -332,8 +332,8 @@ msgstr "Cho phép bạn điều khiển Gaim bằng các lệnh ghi trong tập 
 #. *< priority
 #. *< id
 #: plugins/gaiminc.c:90
-msgid "Gaim Demonstration Plugin"
-msgstr "Plugin trình bày cho Gaim"
+msgid "Pidgin Demonstration Plugin"
+msgstr "Plugin trình bày cho Pidgin"
 
 #. *< name
 #. *< version
@@ -398,16 +398,16 @@ msgstr "Điều Khiển Từ Xa"
 #. *  summary
 #: plugins/gaim-remote/remote.c:750
 msgid "Provides remote control for gaim applications."
-msgstr "Cung cấp khả năng điều khiển từ xa cho ứng dụng Gaim."
+msgstr "Cung cấp khả năng điều khiển từ xa cho ứng dụng Pidgin."
 
 #. *  description
 #: plugins/gaim-remote/remote.c:752
 msgid ""
-"Gives Gaim the ability to be remote-controlled through third-party "
+"Gives Pidgin the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
 msgstr ""
-"Cho phép điều khiển Gaim từ xa thông qua ứng dụng ngoài hoặc thông qua công "
-"cụ điều khiển Gaim từ xa."
+"Cho phép điều khiển Pidgin từ xa thông qua ứng dụng ngoài hoặc thông qua công "
+"cụ điều khiển Pidgin từ xa."
 
 #. Configuration frame
 #: plugins/gestures/gestures.c:221
@@ -883,8 +883,8 @@ msgstr ""
 
 #: plugins/relnot.c:63
 #, c-format
-msgid "You are using Gaim version %s.  The current version is %s.<hr>"
-msgstr "Bạn đang dùng phiên bản Gaim %s. Phiên bản mới là %s.<hr>"
+msgid "You are using Pidgin version %s.  The current version is %s.<hr>"
+msgstr "Bạn đang dùng phiên bản Pidgin %s. Phiên bản mới là %s.<hr>"
 
 #: plugins/relnot.c:69
 #, c-format
@@ -1242,8 +1242,8 @@ msgid "Startup"
 msgstr "Khởi chạy"
 
 #: plugins/win32/winprefs/winprefs.c:353
-msgid "_Start Gaim on Windows startup"
-msgstr "_Chạy Gaim khi Windows khởi chạy"
+msgid "_Start Pidgin on Windows startup"
+msgstr "_Chạy Pidgin khi Windows khởi chạy"
 
 #. Buddy List
 #: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3167
@@ -1276,12 +1276,12 @@ msgid "_Flash Window when messages are received"
 msgstr "N_hấp nháy cửa sổ khi có tin nhắn"
 
 #: plugins/win32/winprefs/winprefs.c:407
-msgid "WinGaim Options"
-msgstr "Tùy chọn WinGaim"
+msgid "WinPidgin Options"
+msgstr "Tùy chọn WinPidgin"
 
 #: plugins/win32/winprefs/winprefs.c:409 plugins/win32/winprefs/winprefs.c:410
-msgid "Options specific to Windows Gaim."
-msgstr "Tùy chọn riêng cho Gaim trên Windows."
+msgid "Options specific to Windows Pidgin."
+msgstr "Tùy chọn riêng cho Pidgin trên Windows."
 
 #: src/account.c:298 src/protocols/jabber/jabber.c:1039
 msgid "New passwords do not match."
@@ -1714,7 +1714,7 @@ msgid ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Gaim\n"
+"       quit                     Close running copy of Pidgin\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
@@ -1723,7 +1723,7 @@ msgstr ""
 "\n"
 "    LỆNH:\n"
 "       uri                      Xử lý AIM: URI\n"
-"       quit                     Đóng phiên bản Gaim đang sử dụng\n"
+"       quit                     Đóng phiên bản Pidgin đang sử dụng\n"
 "\n"
 "   TÙY CHỌN:\n"
 "       -h, --help [lệnh]    Hiển thị trợ giúp cho lệnh này\n"
@@ -1731,9 +1731,9 @@ msgstr ""
 #: src/gaim-remote.c:185 src/gaim-remote.c:203
 #, fuzzy
 msgid ""
-"Gaim not running (on session 0)\n"
+"Pidgin not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
-msgstr "Gaim không chạy (trong phiên làm việc 0)\n"
+msgstr "Pidgin không chạy (trong phiên làm việc 0)\n"
 
 #: src/gaim-remote.c:219
 #, fuzzy
@@ -1781,10 +1781,10 @@ msgstr ""
 #: src/gaim-remote.c:239
 msgid ""
 "\n"
-"Close running copy of Gaim\n"
+"Close running copy of Pidgin\n"
 msgstr ""
 "\n"
-"Đóng bản sao đang chạy của Gaim\n"
+"Đóng bản sao đang chạy của Pidgin\n"
 
 #: src/gaim-remote.c:243
 msgid ""
@@ -2537,7 +2537,7 @@ msgstr "Thời gian"
 
 #: src/gtkconv.c:342
 #, c-format
-msgid "me is using Gaim v%s."
+msgid "me is using Pidgin v%s."
 msgstr ""
 
 #: src/gtkconv.c:351
@@ -3229,23 +3229,23 @@ msgid "Chinese"
 msgstr "Tiếng Trung Quốc"
 
 #: src/gtkdialogs.c:211
-msgid "About Gaim"
-msgstr "Giới thiệu Gaim"
+msgid "About Pidgin"
+msgstr "Giới thiệu Pidgin"
 
 #: src/gtkdialogs.c:226
 #, c-format
-msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgid "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 
 #: src/gtkdialogs.c:248
 #, fuzzy
 msgid ""
-"Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+"Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
-"Gaim là trình khách nhắn tin có khả năng sử dụng AIM, ICQ, Yahoo!, MSN, IRC, "
-"Jabber, Napster, Zephyr, và Gadu-Gadu. Gaim sử dụng Gtk+ và đăng ký theo GPL."
+"Pidgin là trình khách nhắn tin có khả năng sử dụng AIM, ICQ, Yahoo!, MSN, IRC, "
+"Jabber, Napster, Zephyr, và Gadu-Gadu. Pidgin sử dụng Gtk+ và đăng ký theo GPL."
 "<BR><BR>"
 
 #: src/gtkdialogs.c:258
@@ -4451,8 +4451,8 @@ msgid "Idle _time reporting:"
 msgstr "Báo cáo thời _gian nghỉ: "
 
 #: src/gtkprefs.c:1828
-msgid "Gaim usage"
-msgstr "Cách dùng Gaim"
+msgid "Pidgin usage"
+msgstr "Cách dùng Pidgin"
 
 #: src/gtkprefs.c:1831
 msgid "X usage"
@@ -4854,7 +4854,7 @@ msgstr "Kết nối"
 #: src/main.c:513
 #, fuzzy, c-format
 msgid ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -a, --acct          display account editor window\n"
@@ -4869,7 +4869,7 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 "  -h, --help          display this help and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Sử dụng: %s [TÙY CHỌN]...\n"
 "\n"
 "  -a, --acct          hiển thị cửa sổ hiệu chỉnh tài khoản\n"
@@ -4888,8 +4888,8 @@ msgstr ""
 #. short message
 #: src/main.c:528
 #, c-format
-msgid "Gaim %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Chạy '%s -h' để biết thêm thông tin.\n"
+msgid "Pidgin %s. Try `%s -h' for more information.\n"
+msgstr "Pidgin %s. Chạy '%s -h' để biết thêm thông tin.\n"
 
 #: src/main.c:895
 #, fuzzy
@@ -4898,7 +4898,7 @@ msgstr "Không thể đọc socket"
 
 #: src/main.c:895
 msgid ""
-"Gaim was not able to load your preferences because they are stored in an old "
+"Pidgin was not able to load your preferences because they are stored in an old "
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
 msgstr ""
@@ -4911,8 +4911,8 @@ msgid ""
 msgstr "Không tìm thấy plugin %s. Hãy cài đặt nó rồi thử lại."
 
 #: src/plugin.c:300 src/plugin.c:328
-msgid "Gaim was unable to load your plugin."
-msgstr "Gaim không thể nạp plugin của bạn."
+msgid "Pidgin was unable to load your plugin."
+msgstr "Pidgin không thể nạp plugin của bạn."
 
 #: src/plugin.c:324
 #, c-format
@@ -5163,10 +5163,10 @@ msgstr "Lỗi liên lạc với máy chủ Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:1265
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating with "
+"Pidgin was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
-"Gaim đã không hoàn thành yêu cầu của bạn do có vấn đề truyền thông với máy "
+"Pidgin đã không hoàn thành yêu cầu của bạn do có vấn đề truyền thông với máy "
 "chủ HTTP Gadu-Gadu. Hãy thử lại sau."
 
 #: src/protocols/gg/gg.c:1294
@@ -5175,10 +5175,10 @@ msgstr "Không thể nhập về danh sách buddy Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:1295
 msgid ""
-"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
-"Gaim không thể kết nối đến máy chủ danh sách buddy Gadu-Gadu. Hãy thử lại "
+"Pidgin không thể kết nối đến máy chủ danh sách buddy Gadu-Gadu. Hãy thử lại "
 "sau."
 
 #: src/protocols/gg/gg.c:1368
@@ -5187,8 +5187,8 @@ msgstr "Không thể xuất danh sách buddy"
 
 #: src/protocols/gg/gg.c:1369 src/protocols/gg/gg.c:1392
 msgid ""
-"Gaim was unable to connect to the buddy list server.  Please try again later."
-msgstr "Gaim không thể kết nối vào máy chủ danh sách buddy. Hãy thử lại sau."
+"Pidgin was unable to connect to the buddy list server.  Please try again later."
+msgstr "Pidgin không thể kết nối vào máy chủ danh sách buddy. Hãy thử lại sau."
 
 #: src/protocols/gg/gg.c:1391
 msgid "Unable to delete Gadu-Gadu buddy list"
@@ -5200,10 +5200,10 @@ msgstr "Không thể truy cập thư mục"
 
 #: src/protocols/gg/gg.c:1443
 msgid ""
-"Gaim was unable to search the Directory because it was unable to connect to "
+"Pidgin was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
 msgstr ""
-"Gaim không thể tìm kiếm thư mục bởi nó không thể kết nối được đến máy chủ "
+"Pidgin không thể tìm kiếm thư mục bởi nó không thể kết nối được đến máy chủ "
 "thư mục. Hãy thử lại sau."
 
 #: src/protocols/gg/gg.c:1477
@@ -5212,10 +5212,10 @@ msgstr "Không thể đổi mật khẩu Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:1478
 msgid ""
-"Gaim was unable to change your password due to an error connecting to the "
+"Pidgin was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
-"Gaim không thể đổi mật khẩu của bạn do có lỗi xảy ra khi kết nối đến máy chủ "
+"Pidgin không thể đổi mật khẩu của bạn do có lỗi xảy ra khi kết nối đến máy chủ "
 "Gadu-Gadu. Hãy thử lại sau."
 
 #: src/protocols/gg/gg.c:1494
@@ -5246,10 +5246,10 @@ msgstr "Không thể truy cập lý lịch người dùng."
 
 #: src/protocols/gg/gg.c:1545
 msgid ""
-"Gaim was unable to access this user's profile due to an error connecting to "
+"Pidgin was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
-"Gaim không thể truy cập lý lịch của người dùng này do có lỗi kết nối đến máy "
+"Pidgin không thể truy cập lý lịch của người dùng này do có lỗi kết nối đến máy "
 "chủ thư mục. Hãy thử lại sau."
 
 #. *< type
@@ -5267,8 +5267,8 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Plugin giao thức Gadu-Gadu"
 
 #: src/protocols/icq/gaim_icq.c:223
-msgid "Gaim encountered an error communicating with the ICQ server."
-msgstr "Gaim báo lỗi truyền thông với máy chủ ICQ."
+msgid "Pidgin encountered an error communicating with the ICQ server."
+msgstr "Pidgin báo lỗi truyền thông với máy chủ ICQ."
 
 #: src/protocols/icq/gaim_icq.c:293
 #, c-format
@@ -5300,8 +5300,8 @@ msgid "Nick:"
 msgstr "Biệt danh (nick):"
 
 #: src/protocols/icq/gaim_icq.c:498
-msgid "Gaim User"
-msgstr "Người dùng Gaim"
+msgid "Pidgin User"
+msgstr "Người dùng Pidgin"
 
 #: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1311
 #, c-format
@@ -5326,7 +5326,7 @@ msgid "File Transfer Aborted"
 msgstr "Bỏ việc truyền tập tin"
 
 #: src/protocols/irc/dcc_send.c:273
-msgid "Gaim could not open a listening port."
+msgid "Pidgin could not open a listening port."
 msgstr ""
 
 #: src/protocols/irc/irc.c:75
@@ -5542,8 +5542,8 @@ msgid "Unknown message"
 msgstr "Thông điệp không xác định"
 
 #: src/protocols/irc/msgs.c:349
-msgid "Gaim has sent a message the IRC server did not understand."
-msgstr "Gaim đã gửi một thông điệp mà máy chủ IRC không hiểu."
+msgid "Pidgin has sent a message the IRC server did not understand."
+msgstr "Pidgin đã gửi một thông điệp mà máy chủ IRC không hiểu."
 
 #: src/protocols/irc/msgs.c:373
 #, c-format
@@ -6713,8 +6713,8 @@ msgid "Unable to parse message"
 msgstr "Không thể phân tích thông điệp."
 
 #: src/protocols/msn/error.c:38
-msgid "Syntax Error (probably a Gaim bug)"
-msgstr "Lỗi cú pháp (có thể Gaim có lỗi)"
+msgid "Syntax Error (probably a Pidgin bug)"
+msgstr "Lỗi cú pháp (có thể Pidgin có lỗi)"
 
 #: src/protocols/msn/error.c:42
 #, fuzzy
@@ -7185,7 +7185,7 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:1669
 msgid ""
-"Gaim could not find any information in the user's profile. The user most "
+"Pidgin could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
 
@@ -8278,12 +8278,12 @@ msgstr ""
 "sửa, bạn có thể sử dụng TOC. Hãy kiểm tra %s để cập nhật."
 
 #: src/protocols/oscar/oscar.c:2454 src/protocols/oscar/oscar.c:2484
-msgid "Gaim was unable to get a valid AIM login hash."
-msgstr "Gaim không thể nhận mã đăng nhập AIM hợp lệ."
+msgid "Pidgin was unable to get a valid AIM login hash."
+msgstr "Pidgin không thể nhận mã đăng nhập AIM hợp lệ."
 
 #: src/protocols/oscar/oscar.c:2573
-msgid "Gaim was unable to get a valid login hash."
-msgstr "Gaim không thể nhận mã đăng nhập hợp lệ."
+msgid "Pidgin was unable to get a valid login hash."
+msgstr "Pidgin không thể nhận mã đăng nhập hợp lệ."
 
 #: src/protocols/oscar/oscar.c:2605
 msgid "Password sent"
@@ -8748,15 +8748,15 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5677
 #, c-format
 msgid ""
-"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
 "it for you."
 msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
-"Đã vượt quá độ dài lý lịch tối đa %d byte. Gaim đã lược bỏ nó giúp bạn."
+"Đã vượt quá độ dài lý lịch tối đa %d byte. Pidgin đã lược bỏ nó giúp bạn."
 msgstr[1] ""
-"Đã vượt quá độ dài lý lịch tối đa %d byte. Gaim sẽ lược bỏ nó giúp bạn."
+"Đã vượt quá độ dài lý lịch tối đa %d byte. Pidgin sẽ lược bỏ nó giúp bạn."
 
 #: src/protocols/oscar/oscar.c:5682
 msgid "Profile too long."
@@ -8784,16 +8784,16 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5757
 #, c-format
 msgid ""
-"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"The maximum away message length of %d byte has been exceeded.  Pidgin has "
 "truncated it for you."
 msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
-"Đã vượt quá độ dài tối đa %d byte của thông báo trạng thái.  Gaim đã lược bỏ "
+"Đã vượt quá độ dài tối đa %d byte của thông báo trạng thái.  Pidgin đã lược bỏ "
 "giúp bạn."
 msgstr[1] ""
-"Đã vượt quá độ dài tối đa %d byte của thông báo trạng thái.  Gaim đã lược bỏ "
+"Đã vượt quá độ dài tối đa %d byte của thông báo trạng thái.  Pidgin đã lược bỏ "
 "giúp bạn."
 
 #: src/protocols/oscar/oscar.c:5762
@@ -8819,11 +8819,11 @@ msgstr "Không thể nhận danh sách Buddy"
 
 #: src/protocols/oscar/oscar.c:6009
 msgid ""
-"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 msgstr ""
-"Gaim tạm thời không nhận được danh sách buddy của bạn từ máy chủ AIM. Danh "
+"Pidgin tạm thời không nhận được danh sách buddy của bạn từ máy chủ AIM. Danh "
 "sách này không mất và có thể nhận được sau vài giờ nữa."
 
 #: src/protocols/oscar/oscar.c:6191 src/protocols/oscar/oscar.c:6192
@@ -9388,7 +9388,7 @@ msgstr ""
 #: src/protocols/silc/buddy.c:1564 src/protocols/silc/ops.c:1417
 #, fuzzy
 msgid "Kill User"
-msgstr "Người dùng Gaim"
+msgstr "Người dùng Pidgin"
 
 #: src/protocols/silc/chat.c:37
 #, fuzzy
@@ -10144,7 +10144,7 @@ msgstr "Không lưu được ảnh: %s\n"
 
 #: src/protocols/silc/silc.c:1264
 #, fuzzy, c-format
-msgid "Unknown command: %s, (may be a Gaim bug)"
+msgid "Unknown command: %s, (may be a Pidgin bug)"
 msgstr "Lệnh không xác định: %s"
 
 #: src/protocols/silc/silc.c:1327
@@ -10582,11 +10582,11 @@ msgstr "TOC đã gửi lệnh TẠM NGỪNG."
 #: src/protocols/toc/toc.c:897
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Gaim will prevent anything from going through. This "
+"if you send a message. Pidgin will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
 "Khi hiện tượng này xảy ra, TOC không nhận bất kỳ tin nhắn nào gửi tới, và có "
-"thể ngắt kết nối của bạnnếu bạn tiếp tục gửi tin nhắn. Gaim sẽ không cho "
+"thể ngắt kết nối của bạnnếu bạn tiếp tục gửi tin nhắn. Pidgin sẽ không cho "
 "phép một liên lạc nào. Hiện tượng này chỉ là tạm thời, hãy kiên nhẫn chờ."
 
 #: src/protocols/toc/toc.c:1423
@@ -10616,8 +10616,8 @@ msgid "Could not write file header.  The file will not be transferred."
 msgstr "Không thể ghi header tập tin. Tập tin sẽ không được truyền."
 
 #: src/protocols/toc/toc.c:2059
-msgid "Gaim - Save As..."
-msgstr "Gaim - Lưu là..."
+msgid "Pidgin - Save As..."
+msgstr "Pidgin - Lưu là..."
 
 #: src/protocols/toc/toc.c:2093
 #, c-format
@@ -10776,11 +10776,11 @@ msgstr "Thêm buddy bị từ chối"
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
-"method.  This version of Gaim will likely not be able to successfully sign "
+"method.  This version of Pidgin will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 msgstr ""
 "Máy chủ Yahoo yêu cầu dùng phương thức xác thực không xác định. Phiên bản "
-"Gaim này sẽ có thể không đăng nhập vào Yahoo được. Hãy xem %s để cập nhật."
+"Pidgin này sẽ có thể không đăng nhập vào Yahoo được. Hãy xem %s để cập nhật."
 
 #: src/protocols/yahoo/yahoo.c:1818
 msgid "Failed Yahoo! Authentication"
@@ -10811,7 +10811,7 @@ msgstr "Không xác thực được"
 #: src/protocols/yahoo/yahoo.c:1939
 msgid ""
 "The normal authentication method has failed. This means either your password "
-"is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
+"is incorrect, or Yahoo!'s authentication scheme has changed. Pidgin will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""
@@ -11511,11 +11511,11 @@ msgstr "g003: Lỗi mở kết nối.\n"
 #~ msgid "(There was an error receiving this message)"
 #~ msgstr "(Có lỗi khi nhận thông điệp này)"
 
-#~ msgid "Moving Gaim Settings.."
-#~ msgstr "Đang chuyển các thiết lập Gaim..."
+#~ msgid "Moving Pidgin Settings.."
+#~ msgstr "Đang chuyển các thiết lập Pidgin..."
 
-#~ msgid "Moving Gaim user settings to: "
-#~ msgstr "Chuyển thiết lập người dùng Gaim đến: "
+#~ msgid "Moving Pidgin user settings to: "
+#~ msgstr "Chuyển thiết lập người dùng Pidgin đến: "
 
 #~ msgid "Notification"
 #~ msgstr "Thông báo"
@@ -11861,8 +11861,8 @@ msgstr "g003: Lỗi mở kết nối.\n"
 #~ msgid "Could not send %s to %s, protocol not supported."
 #~ msgstr "Không thể gửi %s tới %s, giao thức không được hỗ trợ."
 
-#~ msgid "Invalid Parameter (probably a Gaim bug)"
-#~ msgstr "Lỗi tham số (có thể Gaim có lỗi)"
+#~ msgid "Invalid Parameter (probably a Pidgin bug)"
+#~ msgstr "Lỗi tham số (có thể Pidgin có lỗi)"
 
 #~ msgid "Invalid User"
 #~ msgstr "Người dùng không hợp lệ"
@@ -11939,8 +11939,8 @@ msgstr "g003: Lỗi mở kết nối.\n"
 #~ msgid "Esperanto"
 #~ msgstr "Esperanto"
 
-#~ msgid "Gaim - Away!"
-#~ msgstr "Gaim - Vắng mặt!"
+#~ msgid "Pidgin - Away!"
+#~ msgstr "Pidgin - Vắng mặt!"
 
 #~ msgid "New Message"
 #~ msgstr "Thông Điệp Mới"
@@ -11961,11 +11961,11 @@ msgstr "g003: Lỗi mở kết nối.\n"
 #~ "Hãy nhập bí danh cho người bên dưới, hoặc đổi tên cho ngưòi này trong "
 #~ "danh sách buddy của bạn."
 
-#~ msgid "Gaim - Information"
-#~ msgstr "Gaim - Thông tin"
+#~ msgid "Pidgin - Information"
+#~ msgstr "Pidgin - Thông tin"
 
-#~ msgid "Gaim - Insert Image"
-#~ msgstr "Gaim - Chèn ảnh"
+#~ msgid "Pidgin - Insert Image"
+#~ msgstr "Pidgin - Chèn ảnh"
 
 #~ msgid "/Conversation/Insert _URL..."
 #~ msgstr "/Cuộc thoại/Chèn _URL..."
@@ -11973,8 +11973,8 @@ msgstr "g003: Lỗi mở kết nối.\n"
 #~ msgid "Port:"
 #~ msgstr "Cổng:"
 
-#~ msgid "Gaim - Save Icon"
-#~ msgstr "Gaim - Lưu biểu tượng"
+#~ msgid "Pidgin - Save Icon"
+#~ msgstr "Pidgin - Lưu biểu tượng"
 
 #~ msgid "Buddy Chat"
 #~ msgstr "Buddy Chat"
@@ -12045,8 +12045,8 @@ msgstr "g003: Lỗi mở kết nối.\n"
 #~ msgid "This user can't accept files"
 #~ msgstr "Người dùng này không thể nhận các tập tin"
 
-#~ msgid "Gaim just support file:// URIS currently"
-#~ msgstr "Hiện tại Gaim đã hỗ trợ file:// URIS"
+#~ msgid "Pidgin just support file:// URIS currently"
+#~ msgstr "Hiện tại Pidgin đã hỗ trợ file:// URIS"
 
 #~ msgid "You are trying to send a lot of files"
 #~ msgstr "Bạn đang cố gửi rất nhiều tập tin"

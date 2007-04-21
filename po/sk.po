@@ -1,7 +1,7 @@
-# Gaim Slovak translation
+# Pidgin Slovak translation
 # Copyright (C) 2002, Daniel Režný <daniel@rezny.sk>
 #
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 #
 msgid ""
 msgstr ""
@@ -203,7 +203,7 @@ msgstr "Odchod"
 #: plugins/docklet/docklet.c:527
 #, fuzzy
 msgid "Tray Icon Configuration"
-msgstr "Gaim - Nastavenie zvukov"
+msgstr "Pidgin - Nastavenie zvukov"
 
 #: plugins/docklet/docklet.c:531
 msgid "_Hide new messages until tray icon is clicked"
@@ -223,14 +223,14 @@ msgstr ""
 #. *< version
 #. *  summary
 #: plugins/docklet/docklet.c:560
-msgid "Displays an icon for Gaim in the system tray."
+msgid "Displays an icon for Pidgin in the system tray."
 msgstr ""
 
 #. *  description
 #: plugins/docklet/docklet.c:562
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
-"the current status of Gaim, allow fast access to commonly used functions, "
+"the current status of Pidgin, allow fast access to commonly used functions, "
 "and to toggle display of the buddy list or login window. Also allows "
 "messages to be queued until the icon is clicked, similar to ICQ."
 msgstr ""
@@ -240,18 +240,18 @@ msgstr ""
 #.
 #: plugins/docklet/docklet-win32.c:44
 #, fuzzy
-msgid "Gaim"
+msgid "Pidgin"
 msgstr "Hry"
 
 #: plugins/docklet/docklet-win32.c:45
 #, fuzzy
-msgid "Gaim - Signed off"
+msgid "Pidgin - Signed off"
 msgstr "Odhlásený.\n"
 
 #: plugins/docklet/docklet-win32.c:46
 #, fuzzy
-msgid "Gaim - Away"
-msgstr "Gaim - Chat"
+msgid "Pidgin - Away"
+msgstr "Pidgin - Chat"
 
 #: plugins/docklet/eggtrayicon.c:122
 msgid "Orientation"
@@ -312,7 +312,7 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/filectl.c:224
-msgid "Gaim File Control"
+msgid "Pidgin File Control"
 msgstr ""
 
 #. *< name
@@ -320,7 +320,7 @@ msgstr ""
 #. *  summary
 #. *  description
 #: plugins/filectl.c:227 plugins/filectl.c:229
-msgid "Allows you to control Gaim by entering commands in a file."
+msgid "Allows you to control Pidgin by entering commands in a file."
 msgstr ""
 
 #. *< type
@@ -331,8 +331,8 @@ msgstr ""
 #. *< id
 #: plugins/gaiminc.c:90
 #, fuzzy
-msgid "Gaim Demonstration Plugin"
-msgstr "Gaim - Konverzácie"
+msgid "Pidgin Demonstration Plugin"
+msgstr "Pidgin - Konverzácie"
 
 #. *< name
 #. *< version
@@ -402,7 +402,7 @@ msgstr ""
 #. *  description
 #: plugins/gaim-remote/remote.c:752
 msgid ""
-"Gives Gaim the ability to be remote-controlled through third-party "
+"Gives Pidgin the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
 msgstr ""
 
@@ -538,7 +538,7 @@ msgstr ""
 #: plugins/gevolution/gevolution.c:348
 #, fuzzy
 msgid "Evolution Integration Configuration"
-msgstr "Gaim - Nastavenie zvukov"
+msgstr "Pidgin - Nastavenie zvukov"
 
 #. Label
 #: plugins/gevolution/gevolution.c:351
@@ -874,7 +874,7 @@ msgstr ""
 
 #: plugins/relnot.c:63
 #, c-format
-msgid "You are using Gaim version %s.  The current version is %s.<hr>"
+msgid "You are using Pidgin version %s.  The current version is %s.<hr>"
 msgstr ""
 
 #: plugins/relnot.c:69
@@ -1243,7 +1243,7 @@ msgid "Startup"
 msgstr "Štát"
 
 #: plugins/win32/winprefs/winprefs.c:353
-msgid "_Start Gaim on Windows startup"
+msgid "_Start Pidgin on Windows startup"
 msgstr ""
 
 #. Buddy List
@@ -1281,11 +1281,11 @@ msgstr ""
 
 #: plugins/win32/winprefs/winprefs.c:407
 #, fuzzy
-msgid "WinGaim Options"
+msgid "WinPidgin Options"
 msgstr "Voľby fontov"
 
 #: plugins/win32/winprefs/winprefs.c:409 plugins/win32/winprefs/winprefs.c:410
-msgid "Options specific to Windows Gaim."
+msgid "Options specific to Windows Pidgin."
 msgstr ""
 
 #: src/account.c:298 src/protocols/jabber/jabber.c:1039
@@ -1728,7 +1728,7 @@ msgid ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Gaim\n"
+"       quit                     Close running copy of Pidgin\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
@@ -1736,7 +1736,7 @@ msgstr ""
 
 #: src/gaim-remote.c:185 src/gaim-remote.c:203
 msgid ""
-"Gaim not running (on session 0)\n"
+"Pidgin not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
 msgstr ""
 
@@ -1766,7 +1766,7 @@ msgstr ""
 #: src/gaim-remote.c:239
 msgid ""
 "\n"
-"Close running copy of Gaim\n"
+"Close running copy of Pidgin\n"
 msgstr ""
 
 #: src/gaim-remote.c:243
@@ -1917,7 +1917,7 @@ msgstr "Konto"
 #: src/gtkaccount.c:1606
 #, fuzzy
 msgid "Modify Account"
-msgstr "Gaim - Zmeniť konto"
+msgstr "Pidgin - Zmeniť konto"
 
 #. Add the disclosure
 #: src/gtkaccount.c:1630
@@ -2558,7 +2558,7 @@ msgstr "Názov"
 
 #: src/gtkconv.c:342
 #, c-format
-msgid "me is using Gaim v%s."
+msgid "me is using Pidgin v%s."
 msgstr ""
 
 #: src/gtkconv.c:351
@@ -2613,7 +2613,7 @@ msgstr ""
 #: src/gtkconv.c:793
 #, fuzzy
 msgid "Invite Buddy Into Chat Room"
-msgstr "Gaim - Pozvať kamaráta do chatovacej miestnosti"
+msgstr "Pidgin - Pozvať kamaráta do chatovacej miestnosti"
 
 #. Put our happy label in it.
 #: src/gtkconv.c:823
@@ -3300,22 +3300,22 @@ msgid "Chinese"
 msgstr "Kanál:"
 
 #: src/gtkdialogs.c:211
-msgid "About Gaim"
-msgstr "O aplikácii Gaim"
+msgid "About Pidgin"
+msgstr "O aplikácii Pidgin"
 
 #: src/gtkdialogs.c:226
 #, c-format
-msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgid "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 msgstr ""
 
 #: src/gtkdialogs.c:248
 #, fuzzy
 msgid ""
-"Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+"Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
-"Gaim je klient podporujúci protokol AOL Instant Messenger. Bol napísaný \n"
+"Pidgin je klient podporujúci protokol AOL Instant Messenger. Bol napísaný \n"
 "použitím Gtk+ a je licencovaný pod GPL.\n"
 "\n"
 "URL: "
@@ -3398,7 +3398,7 @@ msgstr ""
 #: src/gtkdialogs.c:738
 #, fuzzy
 msgid "Warn User"
-msgstr "Gaim Použiť"
+msgstr "Pidgin Použiť"
 
 #: src/gtkdialogs.c:759
 #, c-format
@@ -4568,8 +4568,8 @@ msgstr ""
 
 #: src/gtkprefs.c:1828
 #, fuzzy
-msgid "Gaim usage"
-msgstr "Gaim Použiť"
+msgid "Pidgin usage"
+msgstr "Pidgin Použiť"
 
 #: src/gtkprefs.c:1831
 msgid "X usage"
@@ -4813,7 +4813,7 @@ msgstr "Uložiť ikonu ako..."
 #: src/gtkrequest.c:1461 src/gtkrequest.c:1482
 #, fuzzy
 msgid "Open File..."
-msgstr "Gaim - Uložiť ako..."
+msgstr "Pidgin - Uložiť ako..."
 
 #: src/gtkroomlist.c:331
 #, fuzzy
@@ -4972,7 +4972,7 @@ msgstr "Prihlásiť"
 #: src/main.c:513
 #, c-format
 msgid ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -a, --acct          display account editor window\n"
@@ -4991,7 +4991,7 @@ msgstr ""
 #. short message
 #: src/main.c:528
 #, c-format
-msgid "Gaim %s. Try `%s -h' for more information.\n"
+msgid "Pidgin %s. Try `%s -h' for more information.\n"
 msgstr ""
 
 #: src/main.c:895
@@ -5001,7 +5001,7 @@ msgstr "Nemôžem čítať súbor %s."
 
 #: src/main.c:895
 msgid ""
-"Gaim was not able to load your preferences because they are stored in an old "
+"Pidgin was not able to load your preferences because they are stored in an old "
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
 msgstr ""
@@ -5015,8 +5015,8 @@ msgstr ""
 
 #: src/plugin.c:300 src/plugin.c:328
 #, fuzzy
-msgid "Gaim was unable to load your plugin."
-msgstr "Gaim nemôže poslať správu"
+msgid "Pidgin was unable to load your plugin."
+msgstr "Pidgin nemôže poslať správu"
 
 #: src/plugin.c:324
 #, c-format
@@ -5278,7 +5278,7 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:1265
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating with "
+"Pidgin was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 
@@ -5288,7 +5288,7 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:1295
 msgid ""
-"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
 
@@ -5299,7 +5299,7 @@ msgstr "Importuj zoznam kamarátov"
 
 #: src/protocols/gg/gg.c:1369 src/protocols/gg/gg.c:1392
 msgid ""
-"Gaim was unable to connect to the buddy list server.  Please try again later."
+"Pidgin was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
 
 #: src/protocols/gg/gg.c:1391
@@ -5313,7 +5313,7 @@ msgstr "Nemôžem otvoriť Priame IM spojenie"
 
 #: src/protocols/gg/gg.c:1443
 msgid ""
-"Gaim was unable to search the Directory because it was unable to connect to "
+"Pidgin was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
 msgstr ""
 
@@ -5324,7 +5324,7 @@ msgstr "Nemôžem čítať súbor %s."
 
 #: src/protocols/gg/gg.c:1478
 msgid ""
-"Gaim was unable to change your password due to an error connecting to the "
+"Pidgin was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
 
@@ -5359,7 +5359,7 @@ msgstr "Nemôžem čítať súbor %s."
 
 #: src/protocols/gg/gg.c:1545
 msgid ""
-"Gaim was unable to access this user's profile due to an error connecting to "
+"Pidgin was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 
@@ -5379,7 +5379,7 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu Vyhľadávací Stroj"
 
 #: src/protocols/icq/gaim_icq.c:223
-msgid "Gaim encountered an error communicating with the ICQ server."
+msgid "Pidgin encountered an error communicating with the ICQ server."
 msgstr ""
 
 #: src/protocols/icq/gaim_icq.c:293
@@ -5417,8 +5417,8 @@ msgstr "Prezývka:"
 
 #: src/protocols/icq/gaim_icq.c:498
 #, fuzzy
-msgid "Gaim User"
-msgstr "Gaim Použiť"
+msgid "Pidgin User"
+msgstr "Pidgin Použiť"
 
 #: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1311
 #, c-format
@@ -5444,7 +5444,7 @@ msgid "File Transfer Aborted"
 msgstr ""
 
 #: src/protocols/irc/dcc_send.c:273
-msgid "Gaim could not open a listening port."
+msgid "Pidgin could not open a listening port."
 msgstr ""
 
 #: src/protocols/irc/irc.c:75
@@ -5674,7 +5674,7 @@ msgid "Unknown message"
 msgstr "(1 správa)"
 
 #: src/protocols/irc/msgs.c:349
-msgid "Gaim has sent a message the IRC server did not understand."
+msgid "Pidgin has sent a message the IRC server did not understand."
 msgstr ""
 
 #: src/protocols/irc/msgs.c:373
@@ -6454,7 +6454,7 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:1017
 #, fuzzy
 msgid "Password Changed"
-msgstr "Gaim - Zmena hesla"
+msgstr "Pidgin - Zmena hesla"
 
 #: src/protocols/jabber/jabber.c:1018
 #, fuzzy
@@ -6916,7 +6916,7 @@ msgid "Unable to parse message"
 msgstr "Nemôžem poslať správu: veľmi veľká"
 
 #: src/protocols/msn/error.c:38
-msgid "Syntax Error (probably a Gaim bug)"
+msgid "Syntax Error (probably a Pidgin bug)"
 msgstr ""
 
 #: src/protocols/msn/error.c:42
@@ -7408,7 +7408,7 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:1669
 msgid ""
-"Gaim could not find any information in the user's profile. The user most "
+"Pidgin could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
 
@@ -7771,7 +7771,7 @@ msgstr "Akcie protokolu"
 #: src/protocols/novell/nmuser.c:1895
 #, fuzzy
 msgid "Password has expired"
-msgstr "Gaim - Zmena hesla"
+msgstr "Pidgin - Zmena hesla"
 
 #: src/protocols/novell/nmuser.c:1898
 #, fuzzy
@@ -8037,7 +8037,7 @@ msgstr "Zvuk keď dostanete správu o začiatku konverzácie"
 #: src/protocols/novell/novell.c:1876
 #, fuzzy
 msgid "Invitation to Conversation"
-msgstr "Gaim - Konverzácie"
+msgstr "Pidgin - Konverzácie"
 
 #: src/protocols/novell/novell.c:1877
 #, c-format
@@ -8511,13 +8511,13 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:2454 src/protocols/oscar/oscar.c:2484
 #, fuzzy
-msgid "Gaim was unable to get a valid AIM login hash."
-msgstr "Gaim nemôže poslať správu"
+msgid "Pidgin was unable to get a valid AIM login hash."
+msgstr "Pidgin nemôže poslať správu"
 
 #: src/protocols/oscar/oscar.c:2573
 #, fuzzy
-msgid "Gaim was unable to get a valid login hash."
-msgstr "Gaim nemôže poslať správu"
+msgid "Pidgin was unable to get a valid login hash."
+msgstr "Pidgin nemôže poslať správu"
 
 #: src/protocols/oscar/oscar.c:2605
 #, fuzzy
@@ -8975,10 +8975,10 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5677
 #, c-format
 msgid ""
-"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
 "it for you."
 msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
 msgstr[1] ""
@@ -8995,7 +8995,7 @@ msgstr "Neviditeľný"
 #: src/protocols/oscar/oscar.c:5716
 #, fuzzy
 msgid "Unable to set AIM away message."
-msgstr "Gaim nemôže poslať správu"
+msgstr "Pidgin nemôže poslať správu"
 
 #: src/protocols/oscar/oscar.c:5717
 msgid ""
@@ -9007,10 +9007,10 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5757
 #, c-format
 msgid ""
-"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"The maximum away message length of %d byte has been exceeded.  Pidgin has "
 "truncated it for you."
 msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
 msgstr[1] ""
@@ -9040,7 +9040,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:6009
 msgid ""
-"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 msgstr ""
@@ -9209,7 +9209,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:7264
 #, fuzzy
 msgid "Find Buddy by E-mail"
-msgstr "Gaim - Nájsť kamaráta podľa emailu"
+msgstr "Pidgin - Nájsť kamaráta podľa emailu"
 
 #: src/protocols/oscar/oscar.c:7265
 #, fuzzy
@@ -9446,7 +9446,7 @@ msgstr ""
 #: src/protocols/silc/buddy.c:1023
 #, fuzzy
 msgid "Open..."
-msgstr "Gaim - Uložiť ako..."
+msgstr "Pidgin - Uložiť ako..."
 
 #: src/protocols/silc/buddy.c:1032
 #, c-format
@@ -9504,7 +9504,7 @@ msgstr "Aktívny"
 #: src/protocols/silc/buddy.c:1398
 #, fuzzy
 msgid "Robot"
-msgstr "O aplikácii Gaim"
+msgstr "O aplikácii Pidgin"
 
 #: src/protocols/silc/buddy.c:1405 src/protocols/silc/silc.c:629
 #: src/protocols/silc/util.c:472
@@ -9624,7 +9624,7 @@ msgstr ""
 #: src/protocols/silc/buddy.c:1564 src/protocols/silc/ops.c:1417
 #, fuzzy
 msgid "Kill User"
-msgstr "Gaim Použiť"
+msgstr "Pidgin Použiť"
 
 #: src/protocols/silc/chat.c:37
 #, fuzzy
@@ -10366,7 +10366,7 @@ msgstr "Nemôžem čítať súbor %s."
 
 #: src/protocols/silc/silc.c:1264
 #, c-format
-msgid "Unknown command: %s, (may be a Gaim bug)"
+msgid "Unknown command: %s, (may be a Pidgin bug)"
 msgstr ""
 
 #: src/protocols/silc/silc.c:1327
@@ -10803,7 +10803,7 @@ msgstr ""
 #: src/protocols/toc/toc.c:897
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Gaim will prevent anything from going through. This "
+"if you send a message. Pidgin will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
 
@@ -10836,8 +10836,8 @@ msgid "Could not write file header.  The file will not be transferred."
 msgstr ""
 
 #: src/protocols/toc/toc.c:2059
-msgid "Gaim - Save As..."
-msgstr "Gaim - Uložiť ako..."
+msgid "Pidgin - Save As..."
+msgstr "Pidgin - Uložiť ako..."
 
 #: src/protocols/toc/toc.c:2093
 #, c-format
@@ -11013,7 +11013,7 @@ msgstr "Pridať kamaráta"
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
-"method.  This version of Gaim will likely not be able to successfully sign "
+"method.  This version of Pidgin will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 msgstr ""
 
@@ -11047,7 +11047,7 @@ msgstr "Autentifikácia neuspešná"
 #: src/protocols/yahoo/yahoo.c:1939
 msgid ""
 "The normal authentication method has failed. This means either your password "
-"is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
+"is incorrect, or Yahoo!'s authentication scheme has changed. Pidgin will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""
@@ -12011,8 +12011,8 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "Change"
 #~ msgstr "Kanál:"
 
-#~ msgid "About Gaim v%s"
-#~ msgstr "O aplikácii Gaim v%s"
+#~ msgid "About Pidgin v%s"
+#~ msgstr "O aplikácii Pidgin v%s"
 
 #~ msgid "Buddy Chat"
 #~ msgstr "Chat s kamarátom"
@@ -12046,7 +12046,7 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 
 #, fuzzy
 #~ msgid "Save Log File"
-#~ msgstr "Gaim - Uložit záznamový súbor"
+#~ msgstr "Pidgin - Uložit záznamový súbor"
 
 #, fuzzy
 #~ msgid "Couldn't remove file %s."
@@ -12066,7 +12066,7 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgstr "Nemôžem otvoriť konfiguračný súbor %s."
 
 #, fuzzy
-#~ msgid "Gaim - Information"
+#~ msgid "Pidgin - Information"
 #~ msgstr "Chyba Gadu-Gadu"
 
 #, fuzzy
@@ -12078,11 +12078,11 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgstr "IM"
 
 #, fuzzy
-#~ msgid "Gaim - Insert Image"
-#~ msgstr "Gaim - IM používateľ"
+#~ msgid "Pidgin - Insert Image"
+#~ msgstr "Pidgin - IM používateľ"
 
-#~ msgid "Gaim - Save Conversation"
-#~ msgstr "Gaim - Ulož konverzáciu"
+#~ msgid "Pidgin - Save Conversation"
+#~ msgstr "Pidgin - Ulož konverzáciu"
 
 #, fuzzy
 #~ msgid "/Conversation/Insert _URL..."
@@ -12121,8 +12121,8 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "I_ndividual log file for each buddy's signons"
 #~ msgstr "Samostatný záznamový súbor pre každého pripojeného kamaráta"
 
-#~ msgid "Gaim - Save Icon"
-#~ msgstr "Gaim - Uložiť ikonu"
+#~ msgid "Pidgin - Save Icon"
+#~ msgstr "Pidgin - Uložiť ikonu"
 
 #, fuzzy
 #~ msgid "Unable to find conversation log"
@@ -12331,11 +12331,11 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 
 #, fuzzy
 #~ msgid "Add Deny"
-#~ msgstr "Gaim - Pridať zákaz"
+#~ msgstr "Pidgin - Pridať zákaz"
 
 #, fuzzy
 #~ msgid "Find Buddy By Info"
-#~ msgstr "Gaim - Nájsť kamaráta podľa informácie"
+#~ msgstr "Pidgin - Nájsť kamaráta podľa informácie"
 
 #, fuzzy
 #~ msgid "_Alias:"
@@ -12354,8 +12354,8 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgstr "Prihlásiť/Odhlásiť"
 
 #, fuzzy
-#~ msgid "Gaim - Popup"
-#~ msgstr "Gaim - Pridať skupinu"
+#~ msgid "Pidgin - Popup"
+#~ msgstr "Pidgin - Pridať skupinu"
 
 #, fuzzy
 #~ msgid "More Info"
@@ -12366,12 +12366,12 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgstr "Kontá"
 
 #, fuzzy
-#~ msgid "About Gaim..."
-#~ msgstr "O aplikácii Gaim"
+#~ msgid "About Pidgin..."
+#~ msgstr "O aplikácii Pidgin"
 
 #, fuzzy
-#~ msgid "Gaim Chat"
-#~ msgstr "Gaim - Chat"
+#~ msgid "Pidgin Chat"
+#~ msgstr "Pidgin - Chat"
 
 #~ msgid "yes"
 #~ msgstr "Áno"
@@ -12383,8 +12383,8 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgstr "Gadu-Gadu Používateľ"
 
 #, fuzzy
-#~ msgid "Gaim was unable to send an MSN message"
-#~ msgstr "Gaim nemôže poslať správu"
+#~ msgid "Pidgin was unable to send an MSN message"
+#~ msgstr "Pidgin nemôže poslať správu"
 
 #, fuzzy
 #~ msgid "Unable to connect to Notification Server"
@@ -12433,8 +12433,8 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "No reason was given."
 #~ msgstr "Nenapísali ste prezývku"
 
-#~ msgid "Gaim - Login"
-#~ msgstr "Gaim - Prihlásenie"
+#~ msgid "Pidgin - Login"
+#~ msgstr "Pidgin - Prihlásenie"
 
 #~ msgid "Un-Alias"
 #~ msgstr "Zrušiť alias"
@@ -12454,8 +12454,8 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "Activate Away Message"
 #~ msgstr "Aktivuj 'Preč' správu"
 
-#~ msgid "Gaim - Buddy List"
-#~ msgstr "Gaim - Zoznam kamarátov"
+#~ msgid "Pidgin - Buddy List"
+#~ msgstr "Pidgin - Zoznam kamarátov"
 
 #, fuzzy
 #~ msgid "_Accounts..."
@@ -12471,17 +12471,17 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "Remove selected Buddy/Group"
 #~ msgstr "Vymazať vybratého kamaráta/skupinu"
 
-#~ msgid "Gaim - Group Chats"
-#~ msgstr "Gaim - Skupinové chaty"
+#~ msgid "Pidgin - Group Chats"
+#~ msgstr "Pidgin - Skupinové chaty"
 
 #~ msgid "Send message as: "
 #~ msgstr "Poslať správu ako: "
 
-#~ msgid "Gaim - Add Buddy"
-#~ msgstr "Gaim - Pridať kamaráta"
+#~ msgid "Pidgin - Add Buddy"
+#~ msgstr "Pidgin - Pridať kamaráta"
 
 #, fuzzy
-#~ msgid "Gaim - Privacy"
+#~ msgid "Pidgin - Privacy"
 #~ msgstr "Súkromie"
 
 #, fuzzy
@@ -12492,51 +12492,51 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "C_ancel"
 #~ msgstr "Zrušiť"
 
-#~ msgid "Gaim - Password Change"
-#~ msgstr "Gaim - Zmena hesla"
+#~ msgid "Pidgin - Password Change"
+#~ msgstr "Pidgin - Zmena hesla"
 
-#~ msgid "Gaim - Set User Info"
-#~ msgstr "Gaim - Nastaviť informácie o používateľovi"
+#~ msgid "Pidgin - Set User Info"
+#~ msgstr "Pidgin - Nastaviť informácie o používateľovi"
 
-#~ msgid "Gaim - Add Permit"
-#~ msgstr "Gaim - Pridať povolenie"
+#~ msgid "Pidgin - Add Permit"
+#~ msgstr "Pidgin - Pridať povolenie"
 
-#~ msgid "Gaim - Log Conversation"
-#~ msgstr "Gaim - Zaznamenaj konverzáciu"
+#~ msgid "Pidgin - Log Conversation"
+#~ msgstr "Pidgin - Zaznamenaj konverzáciu"
 
-#~ msgid "Gaim - Add URL"
-#~ msgstr "Gaim - Pridať URL"
+#~ msgid "Pidgin - Add URL"
+#~ msgstr "Pidgin - Pridať URL"
 
-#~ msgid "Gaim - Import Buddy List"
-#~ msgstr "Gaim - Importuj zoznam kamarátov"
+#~ msgid "Pidgin - Import Buddy List"
+#~ msgstr "Pidgin - Importuj zoznam kamarátov"
 
-#~ msgid "Gaim - New away message"
-#~ msgstr "Gaim - Nová 'Preč' správa"
+#~ msgid "Pidgin - New away message"
+#~ msgstr "Pidgin - Nová 'Preč' správa"
 
-#~ msgid "Gaim - Alias Buddy"
-#~ msgstr "Gaim - Alias kamaráta"
+#~ msgid "Pidgin - Alias Buddy"
+#~ msgstr "Pidgin - Alias kamaráta"
 
 #~ msgid "Okay"
 #~ msgstr "OK"
 
-#~ msgid "Gaim - Rename Group"
-#~ msgstr "Gaim - Premenovať skupinu"
+#~ msgid "Pidgin - Rename Group"
+#~ msgstr "Pidgin - Premenovať skupinu"
 
-#~ msgid "Gaim - Rename Buddy"
-#~ msgstr "Gaim - Premenovať kamaráta"
+#~ msgid "Pidgin - Rename Buddy"
+#~ msgstr "Pidgin - Premenovať kamaráta"
 
 #~ msgid "Rename Buddy"
 #~ msgstr "Premenovať kamaráta"
 
-#~ msgid "Gaim - Select Perl Script"
-#~ msgstr "Gaim - Vyberte si Perlový skript"
+#~ msgid "Pidgin - Select Perl Script"
+#~ msgstr "Pidgin - Vyberte si Perlový skript"
 
 #, fuzzy
 #~ msgid "Received: '%s'\n"
 #~ msgstr "Obdržané: '%s'\n"
 
-#~ msgid "Gaim - Load Buddy Icon"
-#~ msgstr "Gaim - Nahrať ikonu kamaráta"
+#~ msgid "Pidgin - Load Buddy Icon"
+#~ msgstr "Pidgin - Nahrať ikonu kamaráta"
 
 #~ msgid "Auto-Login"
 #~ msgstr "Aotomatické prihlasovanie sa"
@@ -12548,12 +12548,12 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ "Nemožete sa prihlásiť na toto konto, nemáte nahraný protokol, alebo "
 #~ "protokol nemá funkciu prihlásenia"
 
-#~ msgid "Gaim - Account Editor"
-#~ msgstr "Gaim - Editor kônt"
+#~ msgid "Pidgin - Account Editor"
+#~ msgstr "Pidgin - Editor kônt"
 
 #, fuzzy
-#~ msgid "Gaim Account Signon"
-#~ msgstr "Gaim - Editor kônt"
+#~ msgid "Pidgin Account Signon"
+#~ msgstr "Pidgin - Editor kônt"
 
 #, fuzzy
 #~ msgid "%s was unable to sign on"
@@ -12603,8 +12603,8 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "_Ignore new conversations when away"
 #~ msgstr "Ignoruj novú konverzáciu keď ste 'Preč'"
 
-#~ msgid "Gaim - Sound Configuration"
-#~ msgstr "Gaim - Nastavenie zvukov"
+#~ msgid "Pidgin - Sound Configuration"
+#~ msgstr "Pidgin - Nastavenie zvukov"
 
 #~ msgid "IM Window"
 #~ msgstr "IM okno"
@@ -12613,15 +12613,15 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "Chat Window"
 #~ msgstr "Okno skupinového chatu"
 
-#~ msgid "Gaim - Preferences"
-#~ msgstr "Gaim - Nastavenia"
+#~ msgid "Pidgin - Preferences"
+#~ msgstr "Pidgin - Nastavenia"
 
 #, fuzzy
-#~ msgid "Gaim - Debug Window"
+#~ msgid "Pidgin - Debug Window"
 #~ msgstr "Zobraz ladiace okno"
 
-#~ msgid "Gaim - New Mail"
-#~ msgstr "Gaim - Nová Pošta"
+#~ msgid "Pidgin - New Mail"
+#~ msgstr "Pidgin - Nová Pošta"
 
 #, fuzzy
 #~ msgid "You missed %d messages from %s because they are too evil."
@@ -12704,27 +12704,27 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgstr "Odkaz"
 
 #, fuzzy
-#~ msgid "Gaim - Remove %s?"
-#~ msgstr "Gaim - Premenovať skupinu"
+#~ msgid "Pidgin - Remove %s?"
+#~ msgstr "Pidgin - Premenovať skupinu"
 
-#~ msgid "Gaim - IM user"
-#~ msgstr "Gaim - IM používateľ"
+#~ msgid "Pidgin - IM user"
+#~ msgstr "Pidgin - IM používateľ"
 
-#~ msgid "Gaim - Get User Info"
-#~ msgstr "Gaim - Získať informácie o používatelovi"
+#~ msgid "Pidgin - Get User Info"
+#~ msgstr "Pidgin - Získať informácie o používatelovi"
 
 #~ msgid "Select None"
 #~ msgstr "Vybrat Žiaden"
 
-#~ msgid "Gaim - Plugin List"
-#~ msgstr "Gaim - Zoznam pluginov"
+#~ msgid "Pidgin - Plugin List"
+#~ msgstr "Pidgin - Zoznam pluginov"
 
-#~ msgid "Gaim - Plugins"
-#~ msgstr "Gaim - Pluginy"
+#~ msgid "Pidgin - Plugins"
+#~ msgstr "Pidgin - Pluginy"
 
 #, fuzzy
 #~ msgid "Loaded Plugins"
-#~ msgstr "Gaim - Pluginy"
+#~ msgstr "Pidgin - Pluginy"
 
 #~ msgid "Filepath:"
 #~ msgstr "Cesta k súboru:"
@@ -12759,8 +12759,8 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "_Raise Window on Events"
 #~ msgstr "Zväčšiť okno pri udalostiach"
 
-#~ msgid "Gaim debug output window"
-#~ msgstr "Gaim vonkajšie ladiace okno"
+#~ msgid "Pidgin debug output window"
+#~ msgstr "Pidgin vonkajšie ladiace okno"
 
 #~ msgid ""
 #~ "You have attempted to load a protocol which was not compiled from the "
@@ -12791,21 +12791,21 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 
 #, fuzzy
 #~ msgid "Password Change Error!"
-#~ msgstr "Gaim - Zmena hesla"
+#~ msgstr "Pidgin - Zmena hesla"
 
 #~ msgid "Chat Error!"
 #~ msgstr "Chyba Chatu!"
 
-#~ msgid "Gaim - Error"
-#~ msgstr "Gaim - Chyba"
+#~ msgid "Pidgin - Error"
+#~ msgstr "Pidgin - Chyba"
 
 #, fuzzy
-#~ msgid "Gaim - Oscar SNAC Error"
-#~ msgstr "Gaim - Chyba"
+#~ msgid "Pidgin - Oscar SNAC Error"
+#~ msgstr "Pidgin - Chyba"
 
 #, fuzzy
-#~ msgid "Gaim - Warning"
-#~ msgstr "Gaim - Prihlásenie"
+#~ msgid "Pidgin - Warning"
+#~ msgstr "Pidgin - Prihlásenie"
 
 #~ msgid "Chat Error"
 #~ msgstr "Chyba Chatu"
@@ -12819,11 +12819,11 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ msgid "Away."
 #~ msgstr "Preč."
 
-#~ msgid "Can't create Gaim applet!"
-#~ msgstr "Nemôžem vytvoriť applet Gaim!"
+#~ msgid "Can't create Pidgin applet!"
+#~ msgstr "Nemôžem vytvoriť applet Pidgin!"
 
-#~ msgid "Gaim - Change Password Error"
-#~ msgstr "Gaim - Chyba zmeny hesla"
+#~ msgid "Pidgin - Change Password Error"
+#~ msgstr "Pidgin - Chyba zmeny hesla"
 
 #~ msgid "Perl Scripts"
 #~ msgstr "Perlové skripty"
@@ -12922,27 +12922,27 @@ msgstr "g003: Chyba pri otváraní spojenia.\n"
 #~ "is get an AIM account; you can get one from http://aim.aol.com/. Just "
 #~ "click the button that says \"New Users\" and you can create an account "
 #~ "that way. Once you have your account, enter the username and password "
-#~ "into the login window that comes up when you start Gaim, and click the "
-#~ "Signon button. Once you're online, you can talk to one of the Gaim "
+#~ "into the login window that comes up when you start Pidgin, and click the "
+#~ "Signon button. Once you're online, you can talk to one of the Pidgin "
 #~ "developers for more assistance; their contact information is in the "
-#~ "AUTHORS file in the Gaim source, or at "
+#~ "AUTHORS file in the Pidgin source, or at "
 #~ msgstr ""
 #~ "Relac, pomoc je za rohom. Prvú vec, ktorú musíte urobiť je získať AIM "
 #~ "konto; možete to urobiť na http://aim.aol.com. Iba kliknite na tlačítko "
 #~ "\"New Users\" a možete konto vytvoriť touto cestou. Potom ako vytvoríte "
 #~ "Vaše konto, vpíšte použivateľské meno a heslo do prihlasovacieho okna, "
-#~ "ktoré sa objavý po štarte aplikácie Gaim, a potom kliknite na tlačidlo "
+#~ "ktoré sa objavý po štarte aplikácie Pidgin, a potom kliknite na tlačidlo "
 #~ "Prihlásiť. Keď ste pripojený, môžete sa rozprávať s niektorým s vývojárov "
-#~ "Gaim-u, ak potrebujete daľšiu pomoc; ich kontaktné informácie sú v súbore "
-#~ "AUTHORS v zdrojovom kóde Gaim-u, alebo v "
+#~ "Pidgin-u, ak potrebujete daľšiu pomoc; ich kontaktné informácie sú v súbore "
+#~ "AUTHORS v zdrojovom kóde Pidgin-u, alebo v "
 
 #~ msgid ""
 #~ "contactinfo.php. If you can't get online and still need more assistance, "
-#~ "feel free to email us at gaim@marko.net. Thanks for using Gaim!"
+#~ "feel free to email us at gaim@marko.net. Thanks for using Pidgin!"
 #~ msgstr ""
 #~ "contactinfo.php. Ak sa nemožete pripojiť a stále potrebujete daľšiu "
 #~ "pomoc, bez obáv pošlite email na gaim@marko.net. Ďakujeme za používanie "
-#~ "Gaim-u!"
+#~ "Pidgin-u!"
 
 #~ msgid "Help!"
 #~ msgstr "Pomoc!"

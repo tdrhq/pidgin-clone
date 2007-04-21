@@ -1,11 +1,11 @@
-# Gaim Serbian translation
+# Pidgin Serbian translation
 # Copyright © 2003, 2004, 2005:
 #   Danilo Segan <dsegan@gmx.net>, 2003, 2004, 2005
 #   Aleksandar Urosevic <urke@users.sourceforge.net>, 2003, 2004
 #   Filip Miletic <f.miletic@ewi.tudelft.nl>, 2004
 #   Prevod.org web site.
 #
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim 1.4.0\n"
@@ -218,19 +218,19 @@ msgstr "Ikonica na panelu"
 #. *< version
 #. *  summary
 #: plugins/docklet/docklet.c:560
-msgid "Displays an icon for Gaim in the system tray."
-msgstr "Prikazuje ikonicu za Gaim u obaveštajnoj zoni panela."
+msgid "Displays an icon for Pidgin in the system tray."
+msgstr "Prikazuje ikonicu za Pidgin u obaveštajnoj zoni panela."
 
 #. *  description
 #: plugins/docklet/docklet.c:562
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
-"the current status of Gaim, allow fast access to commonly used functions, "
+"the current status of Pidgin, allow fast access to commonly used functions, "
 "and to toggle display of the buddy list or login window. Also allows "
 "messages to be queued until the icon is clicked, similar to ICQ."
 msgstr ""
 "Sarađuje sa apletom za Obaveštajnu zonu panela (na primer u Gnomu, KDE-u ili "
-"Vindouzu) kako bi se prikazalo trenutno stanje Gaim-a, omogućio brži pristup "
+"Vindouzu) kako bi se prikazalo trenutno stanje Pidgin-a, omogućio brži pristup "
 "često korišćenim funkcijama, i da se brzo prikaže ili sakrije prozor sa "
 "spiskom drugara ili za prijavu. Takođe, omogućava i odlaganje poruka dok se "
 "ne klikne na ikonicu, slično kao i ICQ."
@@ -239,16 +239,16 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: plugins/docklet/docklet-win32.c:44
-msgid "Gaim"
-msgstr "Gaim"
+msgid "Pidgin"
+msgstr "Pidgin"
 
 #: plugins/docklet/docklet-win32.c:45
-msgid "Gaim - Signed off"
-msgstr "Gaim — Odjavljen"
+msgid "Pidgin - Signed off"
+msgstr "Pidgin — Odjavljen"
 
 #: plugins/docklet/docklet-win32.c:46
-msgid "Gaim - Away"
-msgstr "Gaim — Odsutan"
+msgid "Pidgin - Away"
+msgstr "Pidgin — Odsutan"
 
 #: plugins/docklet/eggtrayicon.c:122
 msgid "Orientation"
@@ -308,16 +308,16 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/filectl.c:224
-msgid "Gaim File Control"
-msgstr "Kontrola Gaim-a datotekom"
+msgid "Pidgin File Control"
+msgstr "Kontrola Pidgin-a datotekom"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 #: plugins/filectl.c:227 plugins/filectl.c:229
-msgid "Allows you to control Gaim by entering commands in a file."
-msgstr "Omogućava Vam da upravljate Gaimom unosom naredbi u datoteku."
+msgid "Allows you to control Pidgin by entering commands in a file."
+msgstr "Omogućava Vam da upravljate Pidginom unosom naredbi u datoteku."
 
 #. *< type
 #. *< ui_requirement
@@ -326,8 +326,8 @@ msgstr "Omogućava Vam da upravljate Gaimom unosom naredbi u datoteku."
 #. *< priority
 #. *< id
 #: plugins/gaiminc.c:90
-msgid "Gaim Demonstration Plugin"
-msgstr "Gaim dodatak za primer"
+msgid "Pidgin Demonstration Plugin"
+msgstr "Pidgin dodatak za primer"
 
 #. *< name
 #. *< version
@@ -393,15 +393,15 @@ msgstr "Udaljeno upravljanje"
 #. *  summary
 #: plugins/gaim-remote/remote.c:750
 msgid "Provides remote control for gaim applications."
-msgstr "Omogućava udaljeno upravljanje Gaim programima."
+msgstr "Omogućava udaljeno upravljanje Pidgin programima."
 
 #. *  description
 #: plugins/gaim-remote/remote.c:752
 msgid ""
-"Gives Gaim the ability to be remote-controlled through third-party "
+"Gives Pidgin the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
 msgstr ""
-"Omogućava Gaimu da se njime upravlja sa udaljenih mesta pomoću nezavisnih "
+"Omogućava Pidginu da se njime upravlja sa udaljenih mesta pomoću nezavisnih "
 "programa, ili pomoću gaim-remote alata."
 
 #. Configuration frame
@@ -863,8 +863,8 @@ msgstr ""
 
 #: plugins/relnot.c:63
 #, c-format
-msgid "You are using Gaim version %s.  The current version is %s.<hr>"
-msgstr "Koristite izdanje Gaima %s.  Tekuće izdanje je %s.<hr>"
+msgid "You are using Pidgin version %s.  The current version is %s.<hr>"
+msgstr "Koristite izdanje Pidgina %s.  Tekuće izdanje je %s.<hr>"
 
 #: plugins/relnot.c:69
 #, c-format
@@ -1218,8 +1218,8 @@ msgid "Startup"
 msgstr "Pokretanje"
 
 #: plugins/win32/winprefs/winprefs.c:353
-msgid "_Start Gaim on Windows startup"
-msgstr "_Pokreni Gaim pri pokretanju Vindousa."
+msgid "_Start Pidgin on Windows startup"
+msgstr "_Pokreni Pidgin pri pokretanju Vindousa."
 
 #. Buddy List
 #: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3167
@@ -1252,12 +1252,12 @@ msgid "_Flash Window when messages are received"
 msgstr "_Izdigni prozor kada pristigne nova poruka"
 
 #: plugins/win32/winprefs/winprefs.c:407
-msgid "WinGaim Options"
-msgstr "Postavke Vindous Gaima"
+msgid "WinPidgin Options"
+msgstr "Postavke Vindous Pidgina"
 
 #: plugins/win32/winprefs/winprefs.c:409 plugins/win32/winprefs/winprefs.c:410
-msgid "Options specific to Windows Gaim."
-msgstr "Postavke svojstvene za Vindous Gaim."
+msgid "Options specific to Windows Pidgin."
+msgstr "Postavke svojstvene za Vindous Pidgin."
 
 #: src/account.c:298 src/protocols/jabber/jabber.c:1039
 msgid "New passwords do not match."
@@ -1694,7 +1694,7 @@ msgid ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Gaim\n"
+"       quit                     Close running copy of Pidgin\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
@@ -1703,7 +1703,7 @@ msgstr ""
 "\n"
 "    NAREDBE:\n"
 "       uri                      Koristi AIM: URI\n"
-"       quit                     Zatvori pokrenutu instancu Gaima\n"
+"       quit                     Zatvori pokrenutu instancu Pidgina\n"
 "       back                     Ukloni obaveštenje o odsustvu\n"
 "       quit                     Zatvori pokrenuti primerak GAIM-a\n"
 "    IZBORI:\n"
@@ -1711,10 +1711,10 @@ msgstr ""
 
 #: src/gaim-remote.c:185 src/gaim-remote.c:203
 msgid ""
-"Gaim not running (on session 0)\n"
+"Pidgin not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
 msgstr ""
-"Gaim nije pokrenut (u sesiji 0)\n"
+"Pidgin nije pokrenut (u sesiji 0)\n"
 "Da li je pokrenut „daljinski upravljač‟?\n"
 
 #: src/gaim-remote.c:219
@@ -1763,10 +1763,10 @@ msgstr ""
 #: src/gaim-remote.c:239
 msgid ""
 "\n"
-"Close running copy of Gaim\n"
+"Close running copy of Pidgin\n"
 msgstr ""
 "\n"
-"Zatvori pokrenutu instancu Gaima\n"
+"Zatvori pokrenutu instancu Pidgina\n"
 
 #: src/gaim-remote.c:243
 msgid ""
@@ -2504,7 +2504,7 @@ msgstr "Vreme"
 
 #: src/gtkconv.c:342
 #, c-format
-msgid "me is using Gaim v%s."
+msgid "me is using Pidgin v%s."
 msgstr "me koristi GAIM v%s."
 
 #: src/gtkconv.c:351
@@ -3187,21 +3187,21 @@ msgid "Chinese"
 msgstr "kineski"
 
 #: src/gtkdialogs.c:211
-msgid "About Gaim"
-msgstr "O Gaimu"
+msgid "About Pidgin"
+msgstr "O Pidginu"
 
 #: src/gtkdialogs.c:226
 #, c-format
-msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgid "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 
 #: src/gtkdialogs.c:248
 msgid ""
-"Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+"Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
-"Gaim je proširivi klijent za brze poruke koji može da koristi AIM, ICQ, "
+"Pidgin je proširivi klijent za brze poruke koji može da koristi AIM, ICQ, "
 "Jahu, MSN, IRC, DŽaber, Napster, Zefir i Gadu-Gadu istovremeno. Napisan je "
 "pomoću Gtk+ i licenciran pod Gnuovom Opštom javnom licencom (GPL).<BR><BR>"
 
@@ -4361,8 +4361,8 @@ msgid "Idle _time reporting:"
 msgstr "Prijavljivanje neak_tivnosti:"
 
 #: src/gtkprefs.c:1828
-msgid "Gaim usage"
-msgstr "Aktivnost u Gaimu"
+msgid "Pidgin usage"
+msgstr "Aktivnost u Pidginu"
 
 #: src/gtkprefs.c:1831
 msgid "X usage"
@@ -4755,7 +4755,7 @@ msgstr "Prijavi _se"
 #: src/main.c:513
 #, c-format
 msgid ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -a, --acct          display account editor window\n"
@@ -4770,7 +4770,7 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 "  -h, --help          display this help and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Upotreba: %s [OPCIJA]...\n"
 "\n"
 "  -a, --acct           prikazuje uređivač naloga\n"
@@ -4791,8 +4791,8 @@ msgstr ""
 #. short message
 #: src/main.c:528
 #, c-format
-msgid "Gaim %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Pokušajte „%s -h“ za više podataka.\n"
+msgid "Pidgin %s. Try `%s -h' for more information.\n"
+msgstr "Pidgin %s. Pokušajte „%s -h“ za više podataka.\n"
 
 #: src/main.c:895
 msgid "Unable to load preferences"
@@ -4800,11 +4800,11 @@ msgstr "Ne mogu da učitam podešavanja"
 
 #: src/main.c:895
 msgid ""
-"Gaim was not able to load your preferences because they are stored in an old "
+"Pidgin was not able to load your preferences because they are stored in an old "
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
 msgstr ""
-"Gaim nije uspeo da učita podešavanja koja imate, jer su snimljena u starom "
+"Pidgin nije uspeo da učita podešavanja koja imate, jer su snimljena u starom "
 "formatu koji se više ne koristi. Molimo Vas da ponovite podešavanja "
 "koristeći prozor Postavke."
 
@@ -4818,8 +4818,8 @@ msgstr ""
 "ponovo."
 
 #: src/plugin.c:300 src/plugin.c:328
-msgid "Gaim was unable to load your plugin."
-msgstr "Gaim nije uspeo da učita Vaš dodatak."
+msgid "Pidgin was unable to load your plugin."
+msgstr "Pidgin nije uspeo da učita Vaš dodatak."
 
 #: src/plugin.c:324
 #, c-format
@@ -5071,10 +5071,10 @@ msgstr "Greška pri sporazumevanju sa Gadu-Gadu serverom"
 
 #: src/protocols/gg/gg.c:1265
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating with "
+"Pidgin was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
-"Gaim nije mogao da ispuni Vaš zahtev zbog problema u pristupanju Gadu-Gadu "
+"Pidgin nije mogao da ispuni Vaš zahtev zbog problema u pristupanju Gadu-Gadu "
 "veb serveru. Pokušajte ponovo kasnije."
 
 #: src/protocols/gg/gg.c:1294
@@ -5083,10 +5083,10 @@ msgstr "Nemoguć uvoz Gadu-Gadu spiska drugara"
 
 #: src/protocols/gg/gg.c:1295
 msgid ""
-"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
-"Gaim nije mogao da se poveže sa Gadu-Gadu serverom sa spiskom drugara. "
+"Pidgin nije mogao da se poveže sa Gadu-Gadu serverom sa spiskom drugara. "
 "Pokušajte ponovo kasnije."
 
 #: src/protocols/gg/gg.c:1368
@@ -5095,9 +5095,9 @@ msgstr "Nemoguć izvoz spiska drugara"
 
 #: src/protocols/gg/gg.c:1369 src/protocols/gg/gg.c:1392
 msgid ""
-"Gaim was unable to connect to the buddy list server.  Please try again later."
+"Pidgin was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
-"Gaim nije mogao da se poveže na server sa spiskom drugara. Pokušajte ponovo "
+"Pidgin nije mogao da se poveže na server sa spiskom drugara. Pokušajte ponovo "
 "kasnije."
 
 #: src/protocols/gg/gg.c:1391
@@ -5111,10 +5111,10 @@ msgstr "Ne mogu pristupiti imeniku"
 
 #: src/protocols/gg/gg.c:1443
 msgid ""
-"Gaim was unable to search the Directory because it was unable to connect to "
+"Pidgin was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
 msgstr ""
-"Gaim nije mogao da pretraži Imenik zato što nije uspeo da se poveže sa "
+"Pidgin nije mogao da pretraži Imenik zato što nije uspeo da se poveže sa "
 "serverom. Pokušajte ponovo kasnije."
 
 #: src/protocols/gg/gg.c:1477
@@ -5123,10 +5123,10 @@ msgstr "Ne mogu da izmenim Gadu-Gadu lozinku"
 
 #: src/protocols/gg/gg.c:1478
 msgid ""
-"Gaim was unable to change your password due to an error connecting to the "
+"Pidgin was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
-"Gaim nije uspeo da izmeni Vašu lozinku usled greške pri povezivanju sa Gadu-"
+"Pidgin nije uspeo da izmeni Vašu lozinku usled greške pri povezivanju sa Gadu-"
 "Gadu serverom. Pokušajte ponovo kasnije."
 
 #: src/protocols/gg/gg.c:1494
@@ -5157,10 +5157,10 @@ msgstr "Ne mogu da pristupim podacima o korisniku."
 
 #: src/protocols/gg/gg.c:1545
 msgid ""
-"Gaim was unable to access this user's profile due to an error connecting to "
+"Pidgin was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
-"Gaim nije uspeo da pristupi podacima ovog korisnika usled greške pri "
+"Pidgin nije uspeo da pristupi podacima ovog korisnika usled greške pri "
 "povezivanju na server sa imenikom. Pokušajte ponovo kasnije."
 
 #. *< type
@@ -5178,8 +5178,8 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Dodatak za Gadu-Gadu protokol"
 
 #: src/protocols/icq/gaim_icq.c:223
-msgid "Gaim encountered an error communicating with the ICQ server."
-msgstr "Gaim je naišao na grešku pri sporazumevanju sa ICQ serverom."
+msgid "Pidgin encountered an error communicating with the ICQ server."
+msgstr "Pidgin je naišao na grešku pri sporazumevanju sa ICQ serverom."
 
 #: src/protocols/icq/gaim_icq.c:293
 #, c-format
@@ -5213,8 +5213,8 @@ msgid "Nick:"
 msgstr "Nadimak:"
 
 #: src/protocols/icq/gaim_icq.c:498
-msgid "Gaim User"
-msgstr "Gaim korisnik"
+msgid "Pidgin User"
+msgstr "Pidgin korisnik"
 
 #: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1311
 #, c-format
@@ -5239,7 +5239,7 @@ msgid "File Transfer Aborted"
 msgstr "Prenos datoteke je obustvaljen"
 
 #: src/protocols/irc/dcc_send.c:273
-msgid "Gaim could not open a listening port."
+msgid "Pidgin could not open a listening port."
 msgstr "GAIM nije uspeo da otvori port za slušanje."
 
 #: src/protocols/irc/irc.c:75
@@ -5451,8 +5451,8 @@ msgid "Unknown message"
 msgstr "Nepoznata greška"
 
 #: src/protocols/irc/msgs.c:349
-msgid "Gaim has sent a message the IRC server did not understand."
-msgstr "IRC server nije razumeo poruku koju je poslao Gaim."
+msgid "Pidgin has sent a message the IRC server did not understand."
+msgstr "IRC server nije razumeo poruku koju je poslao Pidgin."
 
 #: src/protocols/irc/msgs.c:373
 #, c-format
@@ -6651,8 +6651,8 @@ msgid "Unable to parse message"
 msgstr "Ne mogu da obradim poruku."
 
 #: src/protocols/msn/error.c:38
-msgid "Syntax Error (probably a Gaim bug)"
-msgstr "Sintaksna greška (verovatno nedostatak Gaima)"
+msgid "Syntax Error (probably a Pidgin bug)"
+msgstr "Sintaksna greška (verovatno nedostatak Pidgina)"
 
 #: src/protocols/msn/error.c:42
 msgid "Invalid email address"
@@ -7118,7 +7118,7 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:1669
 msgid ""
-"Gaim could not find any information in the user's profile. The user most "
+"Pidgin could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
 "GAIM nije uspeo da pronađe informacije u korisnikovom profilu. Korisnik sa "
@@ -8195,12 +8195,12 @@ msgstr ""
 "ispravi. Pogledajte %s za dopune."
 
 #: src/protocols/oscar/oscar.c:2454 src/protocols/oscar/oscar.c:2484
-msgid "Gaim was unable to get a valid AIM login hash."
-msgstr "Gaim nije uspeo da primi ispravan heš za prijavu na AIM."
+msgid "Pidgin was unable to get a valid AIM login hash."
+msgstr "Pidgin nije uspeo da primi ispravan heš za prijavu na AIM."
 
 #: src/protocols/oscar/oscar.c:2573
-msgid "Gaim was unable to get a valid login hash."
-msgstr "Gaim nije uspeo da primi ispravan heš za prijavu."
+msgid "Pidgin was unable to get a valid login hash."
+msgstr "Pidgin nije uspeo da primi ispravan heš za prijavu."
 
 #: src/protocols/oscar/oscar.c:2605
 msgid "Password sent"
@@ -8675,19 +8675,19 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5677
 #, c-format
 msgid ""
-"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
 "it for you."
 msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
-"Najveća dozvoljena veličina profila od %d bajt je prekoračena. Gaim ga je "
+"Najveća dozvoljena veličina profila od %d bajt je prekoračena. Pidgin ga je "
 "skratio i postavio."
 msgstr[1] ""
-"Najveća dozvoljena veličina profila od %d bajta je prekoračena. Gaim ga je "
+"Najveća dozvoljena veličina profila od %d bajta je prekoračena. Pidgin ga je "
 "skratio i postavio."
 msgstr[2] ""
-"Najveća dozvoljena veličina profila od %d bajtova je prekoračena. Gaim ga je "
+"Najveća dozvoljena veličina profila od %d bajtova je prekoračena. Pidgin ga je "
 "skratio i postavio."
 
 #: src/protocols/oscar/oscar.c:5682
@@ -8715,20 +8715,20 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5757
 #, c-format
 msgid ""
-"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"The maximum away message length of %d byte has been exceeded.  Pidgin has "
 "truncated it for you."
 msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
-"Najveća dozvoljena dužina poruke za odsustvo od %d bajt je prekoračena. Gaim "
+"Najveća dozvoljena dužina poruke za odsustvo od %d bajt je prekoračena. Pidgin "
 "je skratio poruku, i započeo odsustvo."
 msgstr[1] ""
 "Najveća dozvoljena dužina poruke za odsustvo od %d bajta je prekoračena. "
-"Gaim je skratio poruku, i započeo odsustvo."
+"Pidgin je skratio poruku, i započeo odsustvo."
 msgstr[2] ""
 "Najveća dozvoljena dužina poruke za odsustvo od %d bajtova je prekoračena. "
-"Gaim je skratio poruku, i započeo odsustvo."
+"Pidgin je skratio poruku, i započeo odsustvo."
 
 #: src/protocols/oscar/oscar.c:5762
 msgid "Away message too long."
@@ -8756,11 +8756,11 @@ msgstr "Ne mogu preuzeti spisak drugara"
 
 #: src/protocols/oscar/oscar.c:6009
 msgid ""
-"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 msgstr ""
-"Privremeno, Gaim nije uspeo da preuzme Vaš spisak drugara sa AIM servera. "
+"Privremeno, Pidgin nije uspeo da preuzme Vaš spisak drugara sa AIM servera. "
 "Spisak drugara nije nestao, i verovatno će biti dostupan za nekoliko sati."
 
 #: src/protocols/oscar/oscar.c:6191 src/protocols/oscar/oscar.c:6192
@@ -10031,7 +10031,7 @@ msgstr "Ne mogu da sačuvam pristupe za: %s"
 
 #: src/protocols/silc/silc.c:1264
 #, c-format
-msgid "Unknown command: %s, (may be a Gaim bug)"
+msgid "Unknown command: %s, (may be a Pidgin bug)"
 msgstr "Nepoznata naredba: %s (može biti i greška u GAIM-u)"
 
 #: src/protocols/silc/silc.c:1327
@@ -10474,11 +10474,11 @@ msgstr "TOC je poslao naredbu PAUSE."
 #: src/protocols/toc/toc.c:897
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Gaim will prevent anything from going through. This "
+"if you send a message. Pidgin will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
 "Kada se ovo dogodi, TOC zanemaruje sve poruke koje primi, i može Vas "
-"izbaciti ako pošaljete poruku. Gaim će sprečiti da bilo šta prolazi. Ovo je "
+"izbaciti ako pošaljete poruku. Pidgin će sprečiti da bilo šta prolazi. Ovo je "
 "samo privremeno, budite strpljivi."
 
 #: src/protocols/toc/toc.c:1423
@@ -10508,8 +10508,8 @@ msgid "Could not write file header.  The file will not be transferred."
 msgstr "Ne mogu da upišem zaglavlje datoteke. Datoteka se neće preneti."
 
 #: src/protocols/toc/toc.c:2059
-msgid "Gaim - Save As..."
-msgstr "Gaim — Sačuvaj kao..."
+msgid "Pidgin - Save As..."
+msgstr "Pidgin — Sačuvaj kao..."
 
 #: src/protocols/toc/toc.c:2093
 #, c-format
@@ -10671,11 +10671,11 @@ msgstr "Odbijeno dodavanje drugara"
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
-"method.  This version of Gaim will likely not be able to successfully sign "
+"method.  This version of Pidgin will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 msgstr ""
 "Jahu server je zahtevao upotrebu neprepoznatog načina identifikacije. Ovo "
-"izdanje Gaima najverovatnije neće moći da se prijavi na Jahu. Proverite %s "
+"izdanje Pidgina najverovatnije neće moći da se prijavi na Jahu. Proverite %s "
 "radi dopuna."
 
 #: src/protocols/yahoo/yahoo.c:1818
@@ -10706,7 +10706,7 @@ msgstr "Obična identifikacija neuspešna"
 #: src/protocols/yahoo/yahoo.c:1939
 msgid ""
 "The normal authentication method has failed. This means either your password "
-"is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
+"is incorrect, or Yahoo!'s authentication scheme has changed. Pidgin will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""
@@ -11357,7 +11357,7 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ "Unable to guess the image type based on the file extension supplied.  "
 #~ "Defaulting to PNG."
 #~ msgstr ""
-#~ "Gaim nije uspeo da pogodi vrstu zapisa slike na osnovu navedenog nastavka "
+#~ "Pidgin nije uspeo da pogodi vrstu zapisa slike na osnovu navedenog nastavka "
 #~ "datoteke. Podrazumevano se radi o PNG zapisu."
 
 #~ msgid "Default SILC Key Pair"
@@ -11444,10 +11444,10 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 
 # bug: plural-forms
 #~ msgid ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than %d megabytes (%d "
+#~ "Pidgin cannot send files over Yahoo! that are bigger than %d megabytes (%d "
 #~ "bytes)."
 #~ msgstr ""
-#~ "Gaim ne može da šalje datoteke veće od %d megabajta (%d bajtova) preko "
+#~ "Pidgin ne može da šalje datoteke veće od %d megabajta (%d bajtova) preko "
 #~ "servisa Jahu!."
 
 #~ msgid "%d byte"
@@ -11457,17 +11457,17 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ msgstr[2] "%d bajtova"
 
 #~ msgid ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than %d megabyte (%s)."
+#~ "Pidgin cannot send files over Yahoo! that are bigger than %d megabyte (%s)."
 #~ msgid_plural ""
-#~ "Gaim cannot send files over Yahoo! that are bigger than %d megabytes (%s)."
+#~ "Pidgin cannot send files over Yahoo! that are bigger than %d megabytes (%s)."
 #~ msgstr[0] ""
-#~ "Gaim ne može da šalje datoteke veće od %d megabajta (%s) preko servisa "
+#~ "Pidgin ne može da šalje datoteke veće od %d megabajta (%s) preko servisa "
 #~ "Jahu!."
 #~ msgstr[1] ""
-#~ "Gaim ne može da šalje datoteke veće od %d megabajta (%s) preko servisa "
+#~ "Pidgin ne može da šalje datoteke veće od %d megabajta (%s) preko servisa "
 #~ "Jahu!."
 #~ msgstr[2] ""
-#~ "Gaim ne može da šalje datoteke veće od %d megabajta (%s) preko servisa "
+#~ "Pidgin ne može da šalje datoteke veće od %d megabajta (%s) preko servisa "
 #~ "Jahu!."
 
 #~ msgid ""
@@ -11481,11 +11481,11 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ msgstr "MSN je javio grešku za nalog %s"
 
 # bug: s+..+...+
-#~ msgid "Moving Gaim Settings.."
-#~ msgstr "Premešta podešavanja Gaima..."
+#~ msgid "Moving Pidgin Settings.."
+#~ msgstr "Premešta podešavanja Pidgina..."
 
-#~ msgid "Moving Gaim user settings to: "
-#~ msgstr "Premešta podešavanja Gaima u: "
+#~ msgid "Moving Pidgin user settings to: "
+#~ msgstr "Premešta podešavanja Pidgina u: "
 
 #~ msgid "Notification"
 #~ msgstr "Obaveštenje"
@@ -11793,8 +11793,8 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ msgid "Could not send %s to %s, protocol not supported."
 #~ msgstr "Ne mogu da pošaljem %s za %s, protokol nije podržana."
 
-#~ msgid "Invalid Parameter (probably a Gaim bug)"
-#~ msgstr "Neispravan parametar (verovatno nedostatak Gaima)"
+#~ msgid "Invalid Parameter (probably a Pidgin bug)"
+#~ msgstr "Neispravan parametar (verovatno nedostatak Pidgina)"
 
 #~ msgid "Invalid User"
 #~ msgstr "Neispravan korisnik"
@@ -11868,8 +11868,8 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ msgid "Change"
 #~ msgstr "izmene"
 
-#~ msgid "Gaim - Away!"
-#~ msgstr "Gaim — Odsutan!"
+#~ msgid "Pidgin - Away!"
+#~ msgstr "Pidgin — Odsutan!"
 
 #~ msgid "Buddy Chat"
 #~ msgstr "Razgovor sa drugarom"
@@ -11924,11 +11924,11 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ msgid "Clear"
 #~ msgstr "Očisti"
 
-#~ msgid "Gaim - Information"
-#~ msgstr "Gaim — podaci"
+#~ msgid "Pidgin - Information"
+#~ msgstr "Pidgin — podaci"
 
-#~ msgid "Gaim - Insert Image"
-#~ msgstr "Gaim — ubaci sliku"
+#~ msgid "Pidgin - Insert Image"
+#~ msgstr "Pidgin — ubaci sliku"
 
 #~ msgid ""
 #~ "<span weight='bold' size='larger'>Enter a search phrase\n"
@@ -11958,8 +11958,8 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ msgid "I_ndividual log file for each buddy's signons"
 #~ msgstr "Pojedinačna datoteka denvnika za _svakog drugara"
 
-#~ msgid "Gaim - Save Icon"
-#~ msgstr "Gaim — Sačuvaj ikonicu"
+#~ msgid "Pidgin - Save Icon"
+#~ msgstr "Pidgin — Sačuvaj ikonicu"
 
 #~ msgid "<font color=\"red\"><b>log->logger_data was NULL!</b></font>"
 #~ msgstr "<font color=\"red\"><b>log->logger_data je NULL!</b></font>"
@@ -12184,17 +12184,17 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ msgid "Please talk to me, I'm lonely! (and single)"
 #~ msgstr "Molim Vas pričajte sa mnom. Usamljen sam! (i slobodan)"
 
-#~ msgid "Gaim - Popup"
-#~ msgstr "Gaim — iskačući prozor"
+#~ msgid "Pidgin - Popup"
+#~ msgstr "Pidgin — iskačući prozor"
 
 #~ msgid "More Info"
 #~ msgstr "Više podataka"
 
 #~ msgid ""
-#~ "Gaim is converting your old buddy lists to a new format, which will now "
+#~ "Pidgin is converting your old buddy lists to a new format, which will now "
 #~ "be located at %s"
 #~ msgstr ""
-#~ "Gaim prevodi Vaš stari spisak drugara u novi zapis, koji će se sada "
+#~ "Pidgin prevodi Vaš stari spisak drugara u novi zapis, koji će se sada "
 #~ "nalaziti na %s"
 
 #~ msgid "Converting Buddy List"

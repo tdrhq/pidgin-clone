@@ -1,8 +1,8 @@
 # translation of nl.po to 
 # translation of nl.po to Dutch
-# Gaim Dutch translation
+# Pidgin Dutch translation
 # Copyright (C) 2003-2004, Vincent van Adrighem <adrighem@gnome.org>
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 # Vincent van Adrighem <adrighem@gnome.org>, 2004, 2005.
 # Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2004.
 #
@@ -220,19 +220,19 @@ msgstr "Systeemvakpictogram"
 #. *< version
 #. *  summary
 #: ../plugins/docklet/docklet.c:560
-msgid "Displays an icon for Gaim in the system tray."
-msgstr "Geeft een pictogram voor Gaim weer in het mededelingengebied."
+msgid "Displays an icon for Pidgin in the system tray."
+msgstr "Geeft een pictogram voor Pidgin weer in het mededelingengebied."
 
 #. *  description
 #: ../plugins/docklet/docklet.c:562
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
-"the current status of Gaim, allow fast access to commonly used functions, "
+"the current status of Pidgin, allow fast access to commonly used functions, "
 "and to toggle display of the buddy list or login window. Also allows "
 "messages to be queued until the icon is clicked, similar to ICQ."
 msgstr ""
 "Communiceert met het mededelingengebied (zit o.a. in GNOME, KDE of windows) "
-"om op die manier de status van Gaim weer te geven, snel toegang te geven tot "
+"om op die manier de status van Pidgin weer te geven, snel toegang te geven tot "
 "veelgebruikte functies en om het hoofdvenster te verbergen of juist weer te "
 "geven. Ook biedt het de mogelijkheid om inkomende berichten te laten wachten "
 "totdat erop geklikt wordt, net als in ICQ."
@@ -241,16 +241,16 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: ../plugins/docklet/docklet-win32.c:44
-msgid "Gaim"
-msgstr "Gaim"
+msgid "Pidgin"
+msgstr "Pidgin"
 
 #: ../plugins/docklet/docklet-win32.c:45
-msgid "Gaim - Signed off"
-msgstr "Gaim - Afgemeld"
+msgid "Pidgin - Signed off"
+msgstr "Pidgin - Afgemeld"
 
 #: ../plugins/docklet/docklet-win32.c:46
-msgid "Gaim - Away"
-msgstr "Gaim - Afwezig"
+msgid "Pidgin - Away"
+msgstr "Pidgin - Afwezig"
 
 #: ../plugins/docklet/eggtrayicon.c:122
 msgid "Orientation"
@@ -309,15 +309,15 @@ msgstr ""
 #. *< priority
 #. *< id
 #: ../plugins/filectl.c:224
-msgid "Gaim File Control"
-msgstr "Gaim bestandsbesturing"
+msgid "Pidgin File Control"
+msgstr "Pidgin bestandsbesturing"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 #: ../plugins/filectl.c:227 ../plugins/filectl.c:229
-msgid "Allows you to control Gaim by entering commands in a file."
+msgid "Allows you to control Pidgin by entering commands in a file."
 msgstr "Hiermee kunt u gaim besturen door opdrachten in een bestand te zetten."
 
 #. *< type
@@ -327,8 +327,8 @@ msgstr "Hiermee kunt u gaim besturen door opdrachten in een bestand te zetten."
 #. *< priority
 #. *< id
 #: ../plugins/gaiminc.c:90
-msgid "Gaim Demonstration Plugin"
-msgstr "Gaim demonstratieplugin"
+msgid "Pidgin Demonstration Plugin"
+msgstr "Pidgin demonstratieplugin"
 
 #. *< name
 #. *< version
@@ -394,15 +394,15 @@ msgstr "Afstandbediening"
 #. *  summary
 #: ../plugins/gaim-remote/remote.c:750
 msgid "Provides remote control for gaim applications."
-msgstr "Geeft u de mogelijkheid om Gaim te besturen via een afstandbediening."
+msgstr "Geeft u de mogelijkheid om Pidgin te besturen via een afstandbediening."
 
 #. *  description
 #: ../plugins/gaim-remote/remote.c:752
 msgid ""
-"Gives Gaim the ability to be remote-controlled through third-party "
+"Gives Pidgin the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
 msgstr ""
-"Geeft u de mogelijkheid om Gaim te besturen via een afstandbediening van "
+"Geeft u de mogelijkheid om Pidgin te besturen via een afstandbediening van "
 "derden of via gaim-remote."
 
 #. Configuration frame
@@ -875,9 +875,9 @@ msgstr ""
 
 #: ../plugins/relnot.c:63
 #, c-format
-msgid "You are using Gaim version %s.  The current version is %s.<hr>"
+msgid "You are using Pidgin version %s.  The current version is %s.<hr>"
 msgstr ""
-"U maakt gebruik van versie %s van Gaim. De huidige versie is echter %s.<hr>"
+"U maakt gebruik van versie %s van Pidgin. De huidige versie is echter %s.<hr>"
 
 #: ../plugins/relnot.c:69
 #, c-format
@@ -1232,8 +1232,8 @@ msgid "Startup"
 msgstr "Opstarten"
 
 #: ../plugins/win32/winprefs/winprefs.c:353
-msgid "_Start Gaim on Windows startup"
-msgstr "Gaim _starten bij het opstarten van Windows"
+msgid "_Start Pidgin on Windows startup"
+msgstr "Pidgin _starten bij het opstarten van Windows"
 
 #. Buddy List
 #: ../plugins/win32/winprefs/winprefs.c:362 ../src/gtkblist.c:3167
@@ -1266,13 +1266,13 @@ msgid "_Flash Window when messages are received"
 msgstr "Venster laten _knipperen wanneer berichten worden ontvangen"
 
 #: ../plugins/win32/winprefs/winprefs.c:407
-msgid "WinGaim Options"
-msgstr "WinGaim opties"
+msgid "WinPidgin Options"
+msgstr "WinPidgin opties"
 
 #: ../plugins/win32/winprefs/winprefs.c:409
 #: ../plugins/win32/winprefs/winprefs.c:410
-msgid "Options specific to Windows Gaim."
-msgstr "WinGaim-specifieke opties."
+msgid "Options specific to Windows Pidgin."
+msgstr "WinPidgin-specifieke opties."
 
 #: ../src/account.c:298 ../src/protocols/jabber/jabber.c:1039
 msgid "New passwords do not match."
@@ -1708,7 +1708,7 @@ msgid ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Gaim\n"
+"       quit                     Close running copy of Pidgin\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
@@ -1720,17 +1720,17 @@ msgstr ""
 "       away                     Afwezigheidsvenster oproepen met "
 "standaardbericht\n"
 "       back                     Afwezigheidsvenster sluiten\n"
-"       quit                     Sluit actieve versie van Gaim\n"
+"       quit                     Sluit actieve versie van Pidgin\n"
 "\n"
 "    OPTIES:\n"
 "       -h, --help [opdracht]    Geef uitleg over een opdracht\n"
 
 #: ../src/gaim-remote.c:185 ../src/gaim-remote.c:203
 msgid ""
-"Gaim not running (on session 0)\n"
+"Pidgin not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
 msgstr ""
-"Gaim niet actief (in sessie 0)\n"
+"Pidgin niet actief (in sessie 0)\n"
 "Is de plugin voor de afstandbediening wel geladen?\n"
 
 #: ../src/gaim-remote.c:219
@@ -1777,10 +1777,10 @@ msgstr ""
 #: ../src/gaim-remote.c:239
 msgid ""
 "\n"
-"Close running copy of Gaim\n"
+"Close running copy of Pidgin\n"
 msgstr ""
 "\n"
-"Actieve Gaim sluiten\n"
+"Actieve Pidgin sluiten\n"
 
 #: ../src/gaim-remote.c:243
 msgid ""
@@ -2523,8 +2523,8 @@ msgstr "Tijd"
 
 #: ../src/gtkconv.c:342
 #, c-format
-msgid "me is using Gaim v%s."
-msgstr "Ik gebruik Gaim v%s."
+msgid "me is using Pidgin v%s."
+msgstr "Ik gebruik Pidgin v%s."
 
 #: ../src/gtkconv.c:351
 msgid "Supported debug options are:  version"
@@ -3215,21 +3215,21 @@ msgid "Chinese"
 msgstr "Chinees"
 
 #: ../src/gtkdialogs.c:212
-msgid "About Gaim"
-msgstr "Gaim info"
+msgid "About Pidgin"
+msgstr "Pidgin info"
 
 #: ../src/gtkdialogs.c:227
 #, c-format
-msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgid "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 
 #: ../src/gtkdialogs.c:249
 msgid ""
-"Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+"Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
-"Gaim is een modulair programma om expresberichten uit te wisselen via AIM, "
+"Pidgin is een modulair programma om expresberichten uit te wisselen via AIM, "
 "MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell Groupwise, Napster, Zephyr en "
 "GaduGadu en dat allemaal tegelijk! Het is geschreven m.b.v. Gtk+ en wordt "
 "verspreid onder een GPL-licentie.<BR><BR>"
@@ -4399,7 +4399,7 @@ msgid "Idle _time reporting:"
 msgstr "Afwezigheid _berekenen:"
 
 #: ../src/gtkprefs.c:1828
-msgid "Gaim usage"
+msgid "Pidgin usage"
 msgstr "Gebruik van gaim"
 
 #: ../src/gtkprefs.c:1831
@@ -4794,7 +4794,7 @@ msgstr "_Aanmelden"
 #: ../src/main.c:513
 #, c-format
 msgid ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -a, --acct          display account editor window\n"
@@ -4809,7 +4809,7 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 "  -h, --help          display this help and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Gebruik: %s [OPTIES]...\n"
 "\n"
 "  -a, --acct          accountvenster weergeven\n"
@@ -4827,8 +4827,8 @@ msgstr ""
 #. short message
 #: ../src/main.c:528
 #, c-format
-msgid "Gaim %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Probeer '%s -h' voor meer informatie.\n"
+msgid "Pidgin %s. Try `%s -h' for more information.\n"
+msgstr "Pidgin %s. Probeer '%s -h' voor meer informatie.\n"
 
 #: ../src/main.c:895
 msgid "Unable to load preferences"
@@ -4836,11 +4836,11 @@ msgstr "Kan voorkeuren niet laden"
 
 #: ../src/main.c:895
 msgid ""
-"Gaim was not able to load your preferences because they are stored in an old "
+"Pidgin was not able to load your preferences because they are stored in an old "
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
 msgstr ""
-"Gaim kan uw voorkeuren niet laden omdat deze zijn opgeslagen in een oud "
+"Pidgin kan uw voorkeuren niet laden omdat deze zijn opgeslagen in een oud "
 "formaat wat niet meer gebruikt wordt. U kunt gaim opnieuw instellen via het "
 "Voorkeuren-venster."
 
@@ -4854,8 +4854,8 @@ msgstr ""
 "opnieuw."
 
 #: ../src/plugin.c:300 ../src/plugin.c:328
-msgid "Gaim was unable to load your plugin."
-msgstr "Gaim kan de plugin niet laden."
+msgid "Pidgin was unable to load your plugin."
+msgstr "Pidgin kan de plugin niet laden."
 
 #: ../src/plugin.c:324
 #, c-format
@@ -5108,10 +5108,10 @@ msgstr "Fout opgetreden bij communicatie met de GaduGadu-server"
 
 #: ../src/protocols/gg/gg.c:1265
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating with "
+"Pidgin was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
-"Gaim kon niet aan uw verzoek voldoen wegens een communicatieprobleem met de "
+"Pidgin kon niet aan uw verzoek voldoen wegens een communicatieprobleem met de "
 "GaduGadu HTTP-server. Probeert u het later nogmaals."
 
 #: ../src/protocols/gg/gg.c:1294
@@ -5120,10 +5120,10 @@ msgstr "Kon de GaduGadu contactenlijst niet importeren"
 
 #: ../src/protocols/gg/gg.c:1295
 msgid ""
-"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
-"Gaim kon geen verbinding maken met de GaduGadu contactenlijst-server. "
+"Pidgin kon geen verbinding maken met de GaduGadu contactenlijst-server. "
 "Probeert u het later nogmaals."
 
 #: ../src/protocols/gg/gg.c:1368
@@ -5132,9 +5132,9 @@ msgstr "Kan contactenlijst niet exporteren"
 
 #: ../src/protocols/gg/gg.c:1369 ../src/protocols/gg/gg.c:1392
 msgid ""
-"Gaim was unable to connect to the buddy list server.  Please try again later."
+"Pidgin was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
-"Gaim kon geen verbinding maken met de contactenlijst-server. Probeert u het "
+"Pidgin kon geen verbinding maken met de contactenlijst-server. Probeert u het "
 "later nogmaals."
 
 #: ../src/protocols/gg/gg.c:1391
@@ -5147,10 +5147,10 @@ msgstr "Kan adresboek niet benaderen"
 
 #: ../src/protocols/gg/gg.c:1443
 msgid ""
-"Gaim was unable to search the Directory because it was unable to connect to "
+"Pidgin was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
 msgstr ""
-"Gaim kon niet zoeken in het adresboek omdat de adresboek-server onbereikbaar "
+"Pidgin kon niet zoeken in het adresboek omdat de adresboek-server onbereikbaar "
 "is. Probeert u het later nogmaals."
 
 #: ../src/protocols/gg/gg.c:1477
@@ -5159,10 +5159,10 @@ msgstr "Kon GaduGadu-wachtwoord niet veranderen"
 
 #: ../src/protocols/gg/gg.c:1478
 msgid ""
-"Gaim was unable to change your password due to an error connecting to the "
+"Pidgin was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
-"Gaim kon uw wachtwoord niet veranderen wegens een communicatieprobleem met "
+"Pidgin kon uw wachtwoord niet veranderen wegens een communicatieprobleem met "
 "de GaduGadu-server. Probeert u het later nogmaals."
 
 #: ../src/protocols/gg/gg.c:1494
@@ -5193,10 +5193,10 @@ msgstr "Kan het gebruikersprofiel niet benaderen."
 
 #: ../src/protocols/gg/gg.c:1545
 msgid ""
-"Gaim was unable to access this user's profile due to an error connecting to "
+"Pidgin was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
-"Gaim kon het gebruikersprofiel niet benaderen wegens een "
+"Pidgin kon het gebruikersprofiel niet benaderen wegens een "
 "communicatieprobleem met de adresboek-server. Probeert u het later nogmaals."
 
 #. *< type
@@ -5214,7 +5214,7 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu-protocol plugin"
 
 #: ../src/protocols/icq/gaim_icq.c:223
-msgid "Gaim encountered an error communicating with the ICQ server."
+msgid "Pidgin encountered an error communicating with the ICQ server."
 msgstr "Fout opgetreden bij communicatie met de ICQ-server"
 
 #: ../src/protocols/icq/gaim_icq.c:293
@@ -5247,8 +5247,8 @@ msgid "Nick:"
 msgstr "Bijnaam:"
 
 #: ../src/protocols/icq/gaim_icq.c:498
-msgid "Gaim User"
-msgstr "Gaim gebruiker"
+msgid "Pidgin User"
+msgstr "Pidgin gebruiker"
 
 #: ../src/protocols/irc/cmds.c:43 ../src/protocols/silc/silc.c:1311
 #, c-format
@@ -5274,8 +5274,8 @@ msgid "File Transfer Aborted"
 msgstr "Bestandsoverdracht afgebroken"
 
 #: ../src/protocols/irc/dcc_send.c:273
-msgid "Gaim could not open a listening port."
-msgstr "Gaim kon geen poort openen om te luisteren."
+msgid "Pidgin could not open a listening port."
+msgstr "Pidgin kon geen poort openen om te luisteren."
 
 #: ../src/protocols/irc/irc.c:76
 msgid "Error displaying MOTD"
@@ -5487,9 +5487,9 @@ msgid "Unknown message"
 msgstr "Onbekend bericht"
 
 #: ../src/protocols/irc/msgs.c:349
-msgid "Gaim has sent a message the IRC server did not understand."
+msgid "Pidgin has sent a message the IRC server did not understand."
 msgstr ""
-"Gaim heeft een bericht verzonden wat niet begrepen wordt door de IRC-server."
+"Pidgin heeft een bericht verzonden wat niet begrepen wordt door de IRC-server."
 
 #: ../src/protocols/irc/msgs.c:373
 #, c-format
@@ -6692,8 +6692,8 @@ msgid "Unable to parse message"
 msgstr "Kan het bericht niet analyseren"
 
 #: ../src/protocols/msn/error.c:38
-msgid "Syntax Error (probably a Gaim bug)"
-msgstr "Syntaxfout (waarschijnlijk een bug in Gaim)"
+msgid "Syntax Error (probably a Pidgin bug)"
+msgstr "Syntaxfout (waarschijnlijk een bug in Pidgin)"
 
 #: ../src/protocols/msn/error.c:42
 msgid "Invalid email address"
@@ -7158,10 +7158,10 @@ msgstr ""
 
 #: ../src/protocols/msn/msn.c:1669
 msgid ""
-"Gaim could not find any information in the user's profile. The user most "
+"Pidgin could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
-"Gaim kan geen informatie vinden in het gebruikersprofiel. De gebruiker "
+"Pidgin kan geen informatie vinden in het gebruikersprofiel. De gebruiker "
 "bestaat waarschijnlijk niet."
 
 #: ../src/protocols/msn/msn.c:1675 ../src/protocols/yahoo/yahoo_profile.c:1174
@@ -8240,12 +8240,12 @@ msgstr ""
 "gebruiken tot dit probleem is opgelost. Kijk op %s voor nieuwe versies."
 
 #: ../src/protocols/oscar/oscar.c:2455 ../src/protocols/oscar/oscar.c:2485
-msgid "Gaim was unable to get a valid AIM login hash."
-msgstr "Gaim kon geen geldige AIM aanmeld-hash krijgen."
+msgid "Pidgin was unable to get a valid AIM login hash."
+msgstr "Pidgin kon geen geldige AIM aanmeld-hash krijgen."
 
 #: ../src/protocols/oscar/oscar.c:2574
-msgid "Gaim was unable to get a valid login hash."
-msgstr "Gaim kon geen geldige aanmeld-hash krijgen."
+msgid "Pidgin was unable to get a valid login hash."
+msgstr "Pidgin kon geen geldige aanmeld-hash krijgen."
 
 #: ../src/protocols/oscar/oscar.c:2606
 msgid "Password sent"
@@ -8719,16 +8719,16 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:5691
 #, c-format
 msgid ""
-"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
 "it for you."
 msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
-"De maximale profielgrootte van %d byte is overschreden. Gaim heeft het "
+"De maximale profielgrootte van %d byte is overschreden. Pidgin heeft het "
 "afgebroken."
 msgstr[1] ""
-"De maximale profielgrootte van %d bytes is overschreden. Gaim heeft het "
+"De maximale profielgrootte van %d bytes is overschreden. Pidgin heeft het "
 "afgebroken."
 
 #: ../src/protocols/oscar/oscar.c:5696
@@ -8756,17 +8756,17 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:5771
 #, c-format
 msgid ""
-"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"The maximum away message length of %d byte has been exceeded.  Pidgin has "
 "truncated it for you."
 msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
 "De maximale grootte voor afwezigheidsberichten van %d byte is overschreden. "
-"Gaim heeft het afgebroken."
+"Pidgin heeft het afgebroken."
 msgstr[1] ""
 "De maximale grootte van afwezigheidsberichten van %d bytes is overschreden. "
-"Gaim heeft het afgebroken."
+"Pidgin heeft het afgebroken."
 
 #: ../src/protocols/oscar/oscar.c:5776
 msgid "Away message too long."
@@ -8794,11 +8794,11 @@ msgstr "Kan contactenlijst niet ophalen"
 
 #: ../src/protocols/oscar/oscar.c:6023
 msgid ""
-"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 msgstr ""
-"Gaim kan tijdelijk niet bij uw contactenlijst op de AIM-servers. De lijst is "
+"Pidgin kan tijdelijk niet bij uw contactenlijst op de AIM-servers. De lijst is "
 "niet verdwenen. U kunt deze waarschijnlijk over enkele uren weer benaderen."
 
 #: ../src/protocols/oscar/oscar.c:6205 ../src/protocols/oscar/oscar.c:6206
@@ -10074,7 +10074,7 @@ msgstr "Kan kanaalinstellingen (cmodes) niet instellen voor %s"
 
 #: ../src/protocols/silc/silc.c:1264
 #, c-format
-msgid "Unknown command: %s, (may be a Gaim bug)"
+msgid "Unknown command: %s, (may be a Pidgin bug)"
 msgstr "Onbekende opdracht: %s, (zou een gaim-probleem kunnen zijn)"
 
 #: ../src/protocols/silc/silc.c:1327
@@ -10529,11 +10529,11 @@ msgstr "TOC heeft een PAUSE-opdracht verstuurd."
 #: ../src/protocols/toc/toc.c:897
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Gaim will prevent anything from going through. This "
+"if you send a message. Pidgin will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
 "Wanneer dit gebeurt negeert TOC alle berichten die u stuurt, en wordt u "
-"misschien van het netwerk geschopt. Gaim voorkomt deze situatie door geen "
+"misschien van het netwerk geschopt. Pidgin voorkomt deze situatie door geen "
 "berichten door te geven. Dit is slechts een tijdelijke oplossing, wees "
 "geduldig."
 
@@ -10567,8 +10567,8 @@ msgstr ""
 "worden."
 
 #: ../src/protocols/toc/toc.c:2086
-msgid "Gaim - Save As..."
-msgstr "Gaim - Opslaan als..."
+msgid "Pidgin - Save As..."
+msgstr "Pidgin - Opslaan als..."
 
 #: ../src/protocols/toc/toc.c:2120
 #, c-format
@@ -10744,11 +10744,11 @@ msgstr "Contact toevoegen geweigerd"
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
-"method.  This version of Gaim will likely not be able to successfully sign "
+"method.  This version of Pidgin will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 msgstr ""
 "De Yahoo-server heeft een niet herkende identificatiemethode aangevraagd. "
-"Deze versie van Gaim kan waarschijnlijk geen gebruik maken van Yahoo.  Kijk "
+"Deze versie van Pidgin kan waarschijnlijk geen gebruik maken van Yahoo.  Kijk "
 "op %s voor een nieuwe versie."
 
 #: ../src/protocols/yahoo/yahoo.c:1890
@@ -10780,12 +10780,12 @@ msgstr "Normale identificatie mislukt!"
 #: ../src/protocols/yahoo/yahoo.c:2011
 msgid ""
 "The normal authentication method has failed. This means either your password "
-"is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
+"is incorrect, or Yahoo!'s authentication scheme has changed. Pidgin will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""
 "De normale manier van aanmelden is mislukt. Dit betekent dat je wachtwoord "
-"onjuist is, of datYahoo! zijn aanmelding heeft veranderd. Gaim zal nu "
+"onjuist is, of datYahoo! zijn aanmelding heeft veranderd. Pidgin zal nu "
 "proberen om via het Webmessenger-protocol aan te melden. Dit resulteert wel "
 "in minder mogelijkheden en features."
 

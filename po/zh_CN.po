@@ -211,18 +211,18 @@ msgstr "系统托盘图标"
 #. *< version
 #. *  summary
 #: ../plugins/docklet/docklet.c:560
-msgid "Displays an icon for Gaim in the system tray."
-msgstr "在系统托盘中显示 Gaim 的图标。"
+msgid "Displays an icon for Pidgin in the system tray."
+msgstr "在系统托盘中显示 Pidgin 的图标。"
 
 #. *  description
 #: ../plugins/docklet/docklet.c:562
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
-"the current status of Gaim, allow fast access to commonly used functions, "
+"the current status of Pidgin, allow fast access to commonly used functions, "
 "and to toggle display of the buddy list or login window. Also allows "
 "messages to be queued until the icon is clicked, similar to ICQ."
 msgstr ""
-"在系统的托盘区(如 GNOME，KDE 或 Windows)显示一个图标，表示 Gaim 的当前状态，"
+"在系统的托盘区(如 GNOME，KDE 或 Windows)显示一个图标，表示 Pidgin 的当前状态，"
 "并允许快速访问常用的功能，以及切换好友列表或登录窗口的显示。同时，与 ICQ 类"
 "似，还可以将消息存入队列。"
 
@@ -230,16 +230,16 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: ../plugins/docklet/docklet-win32.c:44
-msgid "Gaim"
-msgstr "Gaim"
+msgid "Pidgin"
+msgstr "Pidgin"
 
 #: ../plugins/docklet/docklet-win32.c:45
-msgid "Gaim - Signed off"
-msgstr "Gaim - 已登出"
+msgid "Pidgin - Signed off"
+msgstr "Pidgin - 已登出"
 
 #: ../plugins/docklet/docklet-win32.c:46
-msgid "Gaim - Away"
-msgstr "Gaim - 离开"
+msgid "Pidgin - Away"
+msgstr "Pidgin - 离开"
 
 #: ../plugins/docklet/eggtrayicon.c:122
 msgid "Orientation"
@@ -296,16 +296,16 @@ msgstr "限制每个窗口的对话数，可选分离即时消息和聊天窗口
 #. *< priority
 #. *< id
 #: ../plugins/filectl.c:224
-msgid "Gaim File Control"
-msgstr "Gaim 文件控制"
+msgid "Pidgin File Control"
+msgstr "Pidgin 文件控制"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 #: ../plugins/filectl.c:227 ../plugins/filectl.c:229
-msgid "Allows you to control Gaim by entering commands in a file."
-msgstr "允许您输入文件中的命令来控制 Gaim。"
+msgid "Allows you to control Pidgin by entering commands in a file."
+msgstr "允许您输入文件中的命令来控制 Pidgin。"
 
 #. *< type
 #. *< ui_requirement
@@ -314,8 +314,8 @@ msgstr "允许您输入文件中的命令来控制 Gaim。"
 #. *< priority
 #. *< id
 #: ../plugins/gaiminc.c:90
-msgid "Gaim Demonstration Plugin"
-msgstr "Gaim 演示插件"
+msgid "Pidgin Demonstration Plugin"
+msgstr "Pidgin 演示插件"
 
 #. *< name
 #. *< version
@@ -386,9 +386,9 @@ msgstr "提供 gaim 程序的远程控制。"
 #. *  description
 #: ../plugins/gaim-remote/remote.c:752
 msgid ""
-"Gives Gaim the ability to be remote-controlled through third-party "
+"Gives Pidgin the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
-msgstr "为 Gaim 添加可通过第三方应用程序或 gaim-remote 工具远程控制的能力。"
+msgstr "为 Pidgin 添加可通过第三方应用程序或 gaim-remote 工具远程控制的能力。"
 
 #. Configuration frame
 #: ../plugins/gestures/gestures.c:221
@@ -842,8 +842,8 @@ msgstr ""
 
 #: ../plugins/relnot.c:63
 #, c-format
-msgid "You are using Gaim version %s.  The current version is %s.<hr>"
-msgstr "您正在使用 Gaim 版本 %s。而当前版本为 %s。<hr>"
+msgid "You are using Pidgin version %s.  The current version is %s.<hr>"
+msgstr "您正在使用 Pidgin 版本 %s。而当前版本为 %s。<hr>"
 
 #: ../plugins/relnot.c:69
 #, c-format
@@ -1192,8 +1192,8 @@ msgid "Startup"
 msgstr "启动"
 
 #: ../plugins/win32/winprefs/winprefs.c:353
-msgid "_Start Gaim on Windows startup"
-msgstr "Windows 启动时启动 Gaim(_S)"
+msgid "_Start Pidgin on Windows startup"
+msgstr "Windows 启动时启动 Pidgin(_S)"
 
 #. Buddy List
 #: ../plugins/win32/winprefs/winprefs.c:362 ../src/gtkblist.c:3167
@@ -1226,13 +1226,13 @@ msgid "_Flash Window when messages are received"
 msgstr "收到信息时闪烁窗口(_F)"
 
 #: ../plugins/win32/winprefs/winprefs.c:407
-msgid "WinGaim Options"
-msgstr "WinGaim 选项"
+msgid "WinPidgin Options"
+msgstr "WinPidgin 选项"
 
 #: ../plugins/win32/winprefs/winprefs.c:409
 #: ../plugins/win32/winprefs/winprefs.c:410
-msgid "Options specific to Windows Gaim."
-msgstr "Windows Gaim 特定的选项。"
+msgid "Options specific to Windows Pidgin."
+msgstr "Windows Pidgin 特定的选项。"
 
 #: ../src/account.c:298 ../src/protocols/jabber/jabber.c:1039
 msgid "New passwords do not match."
@@ -1661,7 +1661,7 @@ msgid ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Gaim\n"
+"       quit                     Close running copy of Pidgin\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
@@ -1672,17 +1672,17 @@ msgstr ""
 "       uri                      处理 AIM: URI\n"
 "       away                     弹出带默认信息的离开对话框\n"
 "       back                     删除离开对话框\n"
-"       quit                     关闭 Gaim 的运行副本\n"
+"       quit                     关闭 Pidgin 的运行副本\n"
 "\n"
 "    选项:\n"
 "       -h, --help [命令]        显示命令帮助\n"
 
 #: ../src/gaim-remote.c:185 ../src/gaim-remote.c:203
 msgid ""
-"Gaim not running (on session 0)\n"
+"Pidgin not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
 msgstr ""
-"Gaim 未运行(会话 0)\n"
+"Pidgin 未运行(会话 0)\n"
 "是否装入了“远程控制”插件?\n"
 
 #: ../src/gaim-remote.c:219
@@ -1728,10 +1728,10 @@ msgstr ""
 #: ../src/gaim-remote.c:239
 msgid ""
 "\n"
-"Close running copy of Gaim\n"
+"Close running copy of Pidgin\n"
 msgstr ""
 "\n"
-"关闭 Gaim 的运行副本\n"
+"关闭 Pidgin 的运行副本\n"
 
 #: ../src/gaim-remote.c:243
 msgid ""
@@ -2464,8 +2464,8 @@ msgstr "时间"
 
 #: ../src/gtkconv.c:342
 #, c-format
-msgid "me is using Gaim v%s."
-msgstr "我正在使用 Gaim v%s。"
+msgid "me is using Pidgin v%s."
+msgstr "我正在使用 Pidgin v%s。"
 
 #: ../src/gtkconv.c:351
 msgid "Supported debug options are:  version"
@@ -3147,21 +3147,21 @@ msgid "Chinese"
 msgstr "中文"
 
 #: ../src/gtkdialogs.c:212
-msgid "About Gaim"
-msgstr "关于 Gaim"
+msgid "About Pidgin"
+msgstr "关于 Pidgin"
 
 #: ../src/gtkdialogs.c:227
 #, c-format
-msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgid "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 
 #: ../src/gtkdialogs.c:249
 msgid ""
-"Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+"Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
-"Gaim 是模块化的即时通讯客户程序，同时支持 AIM、MSN、Yahoo!、Jabber、ICQ、"
+"Pidgin 是模块化的即时通讯客户程序，同时支持 AIM、MSN、Yahoo!、Jabber、ICQ、"
 "IRC、SILC、Novell GroupWise、Napster、Zephyr 和 Gadu-Gadu。本程序用 Gtk+ 写"
 "成，并以 GPL 许可协议发行。<BR><BR>"
 
@@ -4299,8 +4299,8 @@ msgid "Idle _time reporting:"
 msgstr "瞌睡时间报告(_T):"
 
 #: ../src/gtkprefs.c:1828
-msgid "Gaim usage"
-msgstr "Gaim 使用"
+msgid "Pidgin usage"
+msgstr "Pidgin 使用"
 
 #: ../src/gtkprefs.c:1831
 msgid "X usage"
@@ -4689,7 +4689,7 @@ msgstr "登入(_S)"
 #: ../src/main.c:513
 #, c-format
 msgid ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -a, --acct          display account editor window\n"
@@ -4704,7 +4704,7 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 "  -h, --help          display this help and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "用法: %s [选项]...\n"
 "\n"
 "  -a, --acct          显示账户编辑窗口\n"
@@ -4721,8 +4721,8 @@ msgstr ""
 #. short message
 #: ../src/main.c:528
 #, c-format
-msgid "Gaim %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s。试试“%s -h”查看帮助。\n"
+msgid "Pidgin %s. Try `%s -h' for more information.\n"
+msgstr "Pidgin %s。试试“%s -h”查看帮助。\n"
 
 #: ../src/main.c:895
 msgid "Unable to load preferences"
@@ -4730,11 +4730,11 @@ msgstr "无法装入首选项"
 
 #: ../src/main.c:895
 msgid ""
-"Gaim was not able to load your preferences because they are stored in an old "
+"Pidgin was not able to load your preferences because they are stored in an old "
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
 msgstr ""
-"Gaim 无法装入您的首选项，原因是存储首选项所用的的格式太老，目前已不支持。请使"
+"Pidgin 无法装入您的首选项，原因是存储首选项所用的的格式太老，目前已不支持。请使"
 "用首选项窗口重新配置您的设置。"
 
 #: ../src/plugin.c:295
@@ -4745,8 +4745,8 @@ msgid ""
 msgstr "所需插件 %s 未找到。安装此插件然后再试一次。"
 
 #: ../src/plugin.c:300 ../src/plugin.c:328
-msgid "Gaim was unable to load your plugin."
-msgstr "Gaim 无法装入您的插件。"
+msgid "Pidgin was unable to load your plugin."
+msgstr "Pidgin 无法装入您的插件。"
 
 #: ../src/plugin.c:324
 #, c-format
@@ -4998,10 +4998,10 @@ msgstr "与 Gadu-Gadu 服务器通讯出错"
 
 #: ../src/protocols/gg/gg.c:1265
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating with "
+"Pidgin was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
-"Gaim 无法完成您的请求，原因是与 Gadu-Gadu HTTP 服务器通讯出现问题。请稍后再试"
+"Pidgin 无法完成您的请求，原因是与 Gadu-Gadu HTTP 服务器通讯出现问题。请稍后再试"
 "一次。"
 
 #: ../src/protocols/gg/gg.c:1294
@@ -5010,9 +5010,9 @@ msgstr "无法导入 Gadu-Gadu 好友列表"
 
 #: ../src/protocols/gg/gg.c:1295
 msgid ""
-"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
-msgstr "Gaim 无法连接到 Gadu-Gadu 好友列表服务器。请稍后再试一次。"
+msgstr "Pidgin 无法连接到 Gadu-Gadu 好友列表服务器。请稍后再试一次。"
 
 #: ../src/protocols/gg/gg.c:1368
 msgid "Couldn't export buddy list"
@@ -5020,8 +5020,8 @@ msgstr "无法导出好友列表"
 
 #: ../src/protocols/gg/gg.c:1369 ../src/protocols/gg/gg.c:1392
 msgid ""
-"Gaim was unable to connect to the buddy list server.  Please try again later."
-msgstr "Gaim 无法连接到好友列表服务器。请稍后再试一次。"
+"Pidgin was unable to connect to the buddy list server.  Please try again later."
+msgstr "Pidgin 无法连接到好友列表服务器。请稍后再试一次。"
 
 #: ../src/protocols/gg/gg.c:1391
 msgid "Unable to delete Gadu-Gadu buddy list"
@@ -5033,9 +5033,9 @@ msgstr "无法访问目录"
 
 #: ../src/protocols/gg/gg.c:1443
 msgid ""
-"Gaim was unable to search the Directory because it was unable to connect to "
+"Pidgin was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
-msgstr "Gaim 无法搜索目录，原因是无法与目录服务器连接。请稍后再试一次。"
+msgstr "Pidgin 无法搜索目录，原因是无法与目录服务器连接。请稍后再试一次。"
 
 #: ../src/protocols/gg/gg.c:1477
 msgid "Unable to change Gadu-Gadu password"
@@ -5043,10 +5043,10 @@ msgstr "无法更改 Gadu-Gadu 密码"
 
 #: ../src/protocols/gg/gg.c:1478
 msgid ""
-"Gaim was unable to change your password due to an error connecting to the "
+"Pidgin was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
-"Gaim 无法更改您的密码，原因是与 Gadu-Gadu 服务器连接出错。请稍后再试一次。"
+"Pidgin 无法更改您的密码，原因是与 Gadu-Gadu 服务器连接出错。请稍后再试一次。"
 
 #: ../src/protocols/gg/gg.c:1494
 msgid "Directory Search"
@@ -5076,10 +5076,10 @@ msgstr "无法访问用户配置文件。"
 
 #: ../src/protocols/gg/gg.c:1545
 msgid ""
-"Gaim was unable to access this user's profile due to an error connecting to "
+"Pidgin was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
-"Gaim 无法访问用户的配置文件，原因是与目录服务器连接出错。请稍后再试一次。"
+"Pidgin 无法访问用户的配置文件，原因是与目录服务器连接出错。请稍后再试一次。"
 
 #. *< type
 #. *< ui_requirement
@@ -5096,8 +5096,8 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu 协议插件"
 
 #: ../src/protocols/icq/gaim_icq.c:223
-msgid "Gaim encountered an error communicating with the ICQ server."
-msgstr "Gaim 与 ICQ 服务器通讯错误。"
+msgid "Pidgin encountered an error communicating with the ICQ server."
+msgstr "Pidgin 与 ICQ 服务器通讯错误。"
 
 #: ../src/protocols/icq/gaim_icq.c:293
 #, c-format
@@ -5129,8 +5129,8 @@ msgid "Nick:"
 msgstr "昵称:"
 
 #: ../src/protocols/icq/gaim_icq.c:498
-msgid "Gaim User"
-msgstr "Gaim 用户"
+msgid "Pidgin User"
+msgstr "Pidgin 用户"
 
 #: ../src/protocols/irc/cmds.c:43 ../src/protocols/silc/silc.c:1311
 #, c-format
@@ -5156,8 +5156,8 @@ msgid "File Transfer Aborted"
 msgstr "文件传送中止"
 
 #: ../src/protocols/irc/dcc_send.c:273
-msgid "Gaim could not open a listening port."
-msgstr "Gaim 无法打开监听端口。"
+msgid "Pidgin could not open a listening port."
+msgstr "Pidgin 无法打开监听端口。"
 
 #: ../src/protocols/irc/irc.c:76
 msgid "Error displaying MOTD"
@@ -5368,8 +5368,8 @@ msgid "Unknown message"
 msgstr "未知信息"
 
 #: ../src/protocols/irc/msgs.c:349
-msgid "Gaim has sent a message the IRC server did not understand."
-msgstr "Gaim 发送了 IRC 服务器无法理解的信息。"
+msgid "Pidgin has sent a message the IRC server did not understand."
+msgstr "Pidgin 发送了 IRC 服务器无法理解的信息。"
 
 #: ../src/protocols/irc/msgs.c:373
 #, c-format
@@ -6519,8 +6519,8 @@ msgid "Unable to parse message"
 msgstr "无法处理消息"
 
 #: ../src/protocols/msn/error.c:38
-msgid "Syntax Error (probably a Gaim bug)"
-msgstr "错误(可能是 Gaim 的 bug)"
+msgid "Syntax Error (probably a Pidgin bug)"
+msgstr "错误(可能是 Pidgin 的 bug)"
 
 #: ../src/protocols/msn/error.c:42
 msgid "Invalid email address"
@@ -6984,9 +6984,9 @@ msgstr ""
 
 #: ../src/protocols/msn/msn.c:1669
 msgid ""
-"Gaim could not find any information in the user's profile. The user most "
+"Pidgin could not find any information in the user's profile. The user most "
 "likely does not exist."
-msgstr "Gaim 在用户的个人资料中找不到任何信息。用户可能不存在。"
+msgstr "Pidgin 在用户的个人资料中找不到任何信息。用户可能不存在。"
 
 #: ../src/protocols/msn/msn.c:1675 ../src/protocols/yahoo/yahoo_profile.c:1174
 msgid "Profile URL"
@@ -8024,12 +8024,12 @@ msgstr ""
 "您即将被断开。您可能想要使用 TOC 直到这一问题被修正。请检查 %s 上的更新。"
 
 #: ../src/protocols/oscar/oscar.c:2455 ../src/protocols/oscar/oscar.c:2485
-msgid "Gaim was unable to get a valid AIM login hash."
-msgstr "Gaim 无法获取有效的 AIM 登录码。"
+msgid "Pidgin was unable to get a valid AIM login hash."
+msgstr "Pidgin 无法获取有效的 AIM 登录码。"
 
 #: ../src/protocols/oscar/oscar.c:2574
-msgid "Gaim was unable to get a valid login hash."
-msgstr "Gaim 无法获取有效的登录码。"
+msgid "Pidgin was unable to get a valid login hash."
+msgstr "Pidgin 无法获取有效的登录码。"
 
 #: ../src/protocols/oscar/oscar.c:2606
 msgid "Password sent"
@@ -8467,12 +8467,12 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:5691
 #, c-format
 msgid ""
-"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
 "it for you."
 msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
-msgstr[0] "已经超过了配置文件的最大长度 %d 字节。Gaim 为您自动截断了。"
+msgstr[0] "已经超过了配置文件的最大长度 %d 字节。Pidgin 为您自动截断了。"
 
 #: ../src/protocols/oscar/oscar.c:5696
 msgid "Profile too long."
@@ -8498,13 +8498,13 @@ msgstr ""
 #: ../src/protocols/oscar/oscar.c:5771
 #, c-format
 msgid ""
-"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"The maximum away message length of %d byte has been exceeded.  Pidgin has "
 "truncated it for you."
 msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
-"已经超过了离开消息的最大长度 %d 字节。Gaim 自动为您截断了消息，并将您设为离"
+"已经超过了离开消息的最大长度 %d 字节。Pidgin 自动为您截断了消息，并将您设为离"
 "开。"
 
 #: ../src/protocols/oscar/oscar.c:5776
@@ -8532,11 +8532,11 @@ msgstr "无法获取好友列表"
 
 #: ../src/protocols/oscar/oscar.c:6023
 msgid ""
-"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 msgstr ""
-"Gaim 暂时无法从 AIM 服务器获取您的好友列表。您的好友列表没有丢失，可能稍等几"
+"Pidgin 暂时无法从 AIM 服务器获取您的好友列表。您的好友列表没有丢失，可能稍等几"
 "小时就能用了。"
 
 #: ../src/protocols/oscar/oscar.c:6205 ../src/protocols/oscar/oscar.c:6206
@@ -9783,8 +9783,8 @@ msgstr "为 %s 设置频道模式失败"
 
 #: ../src/protocols/silc/silc.c:1264
 #, c-format
-msgid "Unknown command: %s, (may be a Gaim bug)"
-msgstr "未知命令: %s，(可能是 Gaim bug)"
+msgid "Unknown command: %s, (may be a Pidgin bug)"
+msgstr "未知命令: %s，(可能是 Pidgin bug)"
 
 #: ../src/protocols/silc/silc.c:1327
 msgid "part [channel]:  Leave the chat"
@@ -10216,11 +10216,11 @@ msgstr "TOC 发送了 PAUSE 命令。"
 #: ../src/protocols/toc/toc.c:897
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Gaim will prevent anything from going through. This "
+"if you send a message. Pidgin will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
 "在这种情况下，TOC 将会忽略送出的任何消息，而且如果您强行送出消息的话，还可能"
-"将您踢出去。Gaim 将会自动拦截送出的任何内容。这仅仅是临时的，所以请耐心稍等片"
+"将您踢出去。Pidgin 将会自动拦截送出的任何内容。这仅仅是临时的，所以请耐心稍等片"
 "刻。"
 
 #: ../src/protocols/toc/toc.c:1450
@@ -10250,8 +10250,8 @@ msgid "Could not write file header.  The file will not be transferred."
 msgstr "无法写入文件头。文件将不会被传送。"
 
 #: ../src/protocols/toc/toc.c:2086
-msgid "Gaim - Save As..."
-msgstr "Gaim - 另存为..."
+msgid "Pidgin - Save As..."
+msgstr "Pidgin - 另存为..."
 
 #: ../src/protocols/toc/toc.c:2120
 #, c-format
@@ -10420,10 +10420,10 @@ msgstr "添加拒绝的好友"
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
-"method.  This version of Gaim will likely not be able to successfully sign "
+"method.  This version of Pidgin will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 msgstr ""
-"Yahoo 服务器请求使用未识别的认证方式。此版本的 Gaim 可能无法成功登入 Yahoo。"
+"Yahoo 服务器请求使用未识别的认证方式。此版本的 Pidgin 可能无法成功登入 Yahoo。"
 "请检查 %s 上的更新。"
 
 #: ../src/protocols/yahoo/yahoo.c:1890
@@ -10453,12 +10453,12 @@ msgstr "普通认证失败！"
 #: ../src/protocols/yahoo/yahoo.c:2011
 msgid ""
 "The normal authentication method has failed. This means either your password "
-"is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
+"is incorrect, or Yahoo!'s authentication scheme has changed. Pidgin will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""
 "普通的身份验证方法失败。这意味着您的密码可能不对，或者是 Yahoo! 的身份验证方"
-"法发生了变化。Gaim 将会尝试使用 Web 信使方式的身份验证，这会损失一部分功能和"
+"法发生了变化。Pidgin 将会尝试使用 Web 信使方式的身份验证，这会损失一部分功能和"
 "特性。"
 
 #: ../src/protocols/yahoo/yahoo.c:2019

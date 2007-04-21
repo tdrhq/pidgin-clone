@@ -1,7 +1,7 @@
 # Hungarian translation of gaim.
 # Copyright (C) 2003, 2005 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gaim package.
-# The Hungarian translation of Gaim was sponsored by Novell Hungary, many thanks for it!
+# The Hungarian translation of Pidgin was sponsored by Novell Hungary, many thanks for it!
 # Zoltan Sutto <suttozoltan@chello.hu>, 2003.
 # Gabor Kelemen <kelemeng@gnome.hu>, 2005.
 #
@@ -217,19 +217,19 @@ msgstr "Rendszertálca-ikon"
 #. *< version
 #. *  summary
 #: plugins/docklet/docklet.c:560
-msgid "Displays an icon for Gaim in the system tray."
-msgstr "Megjelenít egy Gaim-ikont a rendszertálcán."
+msgid "Displays an icon for Pidgin in the system tray."
+msgstr "Megjelenít egy Pidgin-ikont a rendszertálcán."
 
 #. *  description
 #: plugins/docklet/docklet.c:562
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
-"the current status of Gaim, allow fast access to commonly used functions, "
+"the current status of Pidgin, allow fast access to commonly used functions, "
 "and to toggle display of the buddy list or login window. Also allows "
 "messages to be queued until the icon is clicked, similar to ICQ."
 msgstr ""
 "A rendszertálcán (például GNOME, KDE vagy Windows alatt) elhelyezett ikon "
-"segítségével megjeleníti a Gaim állapotát, gyors hozzáférést biztosít a "
+"segítségével megjeleníti a Pidgin állapotát, gyors hozzáférést biztosít a "
 "gyakrabban használt funkciók eléréséhez, és kezeli a partner- és a "
 "bejelentkező ablakokat is. Továbbá az ICQ-hoz hasonlóan az üzeneteket "
 "eltárolja az ikonra történő kattintásig."
@@ -238,16 +238,16 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: plugins/docklet/docklet-win32.c:44
-msgid "Gaim"
-msgstr "Gaim"
+msgid "Pidgin"
+msgstr "Pidgin"
 
 #: plugins/docklet/docklet-win32.c:45
-msgid "Gaim - Signed off"
-msgstr "Gaim - Kijelentkezett"
+msgid "Pidgin - Signed off"
+msgstr "Pidgin - Kijelentkezett"
 
 #: plugins/docklet/docklet-win32.c:46
-msgid "Gaim - Away"
-msgstr "Gaim - Távol"
+msgid "Pidgin - Away"
+msgstr "Pidgin - Távol"
 
 #: plugins/docklet/eggtrayicon.c:122
 msgid "Orientation"
@@ -306,16 +306,16 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/filectl.c:224
-msgid "Gaim File Control"
-msgstr "Gaim fájlvezérlés"
+msgid "Pidgin File Control"
+msgstr "Pidgin fájlvezérlés"
 
 #. *< name
 #. *< version
 #. *  summary
 #. *  description
 #: plugins/filectl.c:227 plugins/filectl.c:229
-msgid "Allows you to control Gaim by entering commands in a file."
-msgstr "Lehetőséget nyújt a Gaim irányítására fájlban megadott parancsokkal."
+msgid "Allows you to control Pidgin by entering commands in a file."
+msgstr "Lehetőséget nyújt a Pidgin irányítására fájlban megadott parancsokkal."
 
 #. *< type
 #. *< ui_requirement
@@ -324,8 +324,8 @@ msgstr "Lehetőséget nyújt a Gaim irányítására fájlban megadott parancsok
 #. *< priority
 #. *< id
 #: plugins/gaiminc.c:90
-msgid "Gaim Demonstration Plugin"
-msgstr "Gaim demóbővítmény"
+msgid "Pidgin Demonstration Plugin"
+msgstr "Pidgin demóbővítmény"
 
 #. *< name
 #. *< version
@@ -391,15 +391,15 @@ msgstr "Távirányítás"
 #. *  summary
 #: plugins/gaim-remote/remote.c:750
 msgid "Provides remote control for gaim applications."
-msgstr "Távirányítási lehetőséget nyújt a Gaim-alkalmazásokhoz."
+msgstr "Távirányítási lehetőséget nyújt a Pidgin-alkalmazásokhoz."
 
 #. *  description
 #: plugins/gaim-remote/remote.c:752
 msgid ""
-"Gives Gaim the ability to be remote-controlled through third-party "
+"Gives Pidgin the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
 msgstr ""
-"Lehetővé teszi a Gaim távirányítását külső alkalmazások vagy a gaim-remote "
+"Lehetővé teszi a Pidgin távirányítását külső alkalmazások vagy a gaim-remote "
 "eszközön keresztül."
 
 #. Configuration frame
@@ -863,8 +863,8 @@ msgstr ""
 
 #: plugins/relnot.c:63
 #, c-format
-msgid "You are using Gaim version %s.  The current version is %s.<hr>"
-msgstr "A Gaim %s verzióját használja. A jelenleg legfrissebb verzió %s.<hr>"
+msgid "You are using Pidgin version %s.  The current version is %s.<hr>"
+msgstr "A Pidgin %s verzióját használja. A jelenleg legfrissebb verzió %s.<hr>"
 
 #: plugins/relnot.c:69
 #, c-format
@@ -1220,8 +1220,8 @@ msgid "Startup"
 msgstr "Indítás"
 
 #: plugins/win32/winprefs/winprefs.c:353
-msgid "_Start Gaim on Windows startup"
-msgstr "A Gaim indítá_sa a Windows indulásakor"
+msgid "_Start Pidgin on Windows startup"
+msgstr "A Pidgin indítá_sa a Windows indulásakor"
 
 #. Buddy List
 #: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3167
@@ -1254,12 +1254,12 @@ msgid "_Flash Window when messages are received"
 msgstr "_Villogtassa az ablakot, ha új üzenet érkezik"
 
 #: plugins/win32/winprefs/winprefs.c:407
-msgid "WinGaim Options"
-msgstr "WinGaim opciók"
+msgid "WinPidgin Options"
+msgstr "WinPidgin opciók"
 
 #: plugins/win32/winprefs/winprefs.c:409 plugins/win32/winprefs/winprefs.c:410
-msgid "Options specific to Windows Gaim."
-msgstr "A Windowsos Gaimra jellemző opciók."
+msgid "Options specific to Windows Pidgin."
+msgstr "A Windowsos Pidginra jellemző opciók."
 
 #: src/account.c:298 src/protocols/jabber/jabber.c:1039
 msgid "New passwords do not match."
@@ -1692,7 +1692,7 @@ msgid ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Gaim\n"
+"       quit                     Close running copy of Pidgin\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
@@ -1704,17 +1704,17 @@ msgstr ""
 "       away                     A \"Távol\" párbeszédablak megjelenítése az "
 "alapértelmezett üzenettel\n"
 "       back                     A \"Távol\" párbeszédablak eltávolítása\n"
-"       quit                      A futó Gaim példány bezárása\n"
+"       quit                      A futó Pidgin példány bezárása\n"
 "\n"
 "    OPCIÓK:\n"
 "       -h, --help [parancs]    Súgó a parancs használatáról\n"
 
 #: src/gaim-remote.c:185 src/gaim-remote.c:203
 msgid ""
-"Gaim not running (on session 0)\n"
+"Pidgin not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
 msgstr ""
-"A Gaim nem fut (a 0-ás munkameneten)\n"
+"A Pidgin nem fut (a 0-ás munkameneten)\n"
 "A \"Távoli vezérlés\" bővítmény be van töltve?\n"
 
 #: src/gaim-remote.c:219
@@ -1764,10 +1764,10 @@ msgstr ""
 #: src/gaim-remote.c:239
 msgid ""
 "\n"
-"Close running copy of Gaim\n"
+"Close running copy of Pidgin\n"
 msgstr ""
 "\n"
-"A Gaim futó példányának bezárása\n"
+"A Pidgin futó példányának bezárása\n"
 
 #: src/gaim-remote.c:243
 msgid ""
@@ -2505,8 +2505,8 @@ msgstr "Idő"
 
 #: src/gtkconv.c:342
 #, c-format
-msgid "me is using Gaim v%s."
-msgstr "a Gaim v%s-et használom."
+msgid "me is using Pidgin v%s."
+msgstr "a Pidgin v%s-et használom."
 
 #: src/gtkconv.c:351
 msgid "Supported debug options are:  version"
@@ -3195,21 +3195,21 @@ msgid "Chinese"
 msgstr "Kínai"
 
 #: src/gtkdialogs.c:212
-msgid "About Gaim"
-msgstr "A Gaim névjegye"
+msgid "About Pidgin"
+msgstr "A Pidgin névjegye"
 
 #: src/gtkdialogs.c:227
 #, c-format
-msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgid "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 
 #: src/gtkdialogs.c:249
 msgid ""
-"Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+"Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
-"A Gaim egy moduláris üzenetküldő kliens AIM, MSN, Yahoo!, Jabber, ICQ, IRC, "
+"A Pidgin egy moduláris üzenetküldő kliens AIM, MSN, Yahoo!, Jabber, ICQ, IRC, "
 "SILC, Novell GroupWise, Napster, Zephyr és Gadu-Gadu protokollok egyidejű "
 "használatának képességével. Gtk+ használatával készül és GPL licenc alatt "
 "terjeszthető.<BR><BR>"
@@ -4365,8 +4365,8 @@ msgid "Idle _time reporting:"
 msgstr "Inak_tív idő jelentése:"
 
 #: src/gtkprefs.c:1828
-msgid "Gaim usage"
-msgstr "Gaim-használat"
+msgid "Pidgin usage"
+msgstr "Pidgin-használat"
 
 #: src/gtkprefs.c:1831
 msgid "X usage"
@@ -4757,7 +4757,7 @@ msgstr "_Bejelentkezés"
 #: src/main.c:513
 #, c-format
 msgid ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -a, --acct          display account editor window\n"
@@ -4772,7 +4772,7 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 "  -h, --help          display this help and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Használat: %s [OPCIÓK]...\n"
 "\n"
 "  -a, --acct          fiókszerkesztő ablak megjelenítése\n"
@@ -4792,8 +4792,8 @@ msgstr ""
 #. short message
 #: src/main.c:528
 #, c-format
-msgid "Gaim %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. Próbálja a \"%s -h\" parancsot további információkért.\n"
+msgid "Pidgin %s. Try `%s -h' for more information.\n"
+msgstr "Pidgin %s. Próbálja a \"%s -h\" parancsot további információkért.\n"
 
 #: src/main.c:895
 msgid "Unable to load preferences"
@@ -4801,11 +4801,11 @@ msgstr "Beállítások betöltése sikertelen"
 
 #: src/main.c:895
 msgid ""
-"Gaim was not able to load your preferences because they are stored in an old "
+"Pidgin was not able to load your preferences because they are stored in an old "
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
 msgstr ""
-"A Gaim nem tudta betölteni a beállításait, mivel azok a régi, már nem "
+"A Pidgin nem tudta betölteni a beállításait, mivel azok a régi, már nem "
 "használt formátumban vannak tárolva. Kérem adja meg újra a beállításait a "
 "Beállítások ablakban."
 
@@ -4817,8 +4817,8 @@ msgid ""
 msgstr "A szükséges %s bővítmény nem található. Kérem telepítse, majd próbálja újra."
 
 #: src/plugin.c:300 src/plugin.c:328
-msgid "Gaim was unable to load your plugin."
-msgstr "A Gaim nem tudta betölteni a bővítményt."
+msgid "Pidgin was unable to load your plugin."
+msgstr "A Pidgin nem tudta betölteni a bővítményt."
 
 #: src/plugin.c:324
 #, c-format
@@ -5068,10 +5068,10 @@ msgstr "Hiba a Gadu-Gadu kiszolgálóval végzett kommunikációban"
 
 #: src/protocols/gg/gg.c:1265
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating with "
+"Pidgin was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
-"A Gaim nem tudja a kérést teljesíteni a kiszolgálóval végzett kommunikáció "
+"A Pidgin nem tudja a kérést teljesíteni a kiszolgálóval végzett kommunikáció "
 "hibája miatt. Kérem később próbálja meg újra."
 
 #: src/protocols/gg/gg.c:1294
@@ -5080,10 +5080,10 @@ msgstr "Nem lehet a Gadu-Gadu partnerlistát importálni"
 
 #: src/protocols/gg/gg.c:1295
 msgid ""
-"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
-"A Gaim nem tudott a Gadu-Gadu partnerlista-kiszolgálóhoz kapcsolódni. Kérem "
+"A Pidgin nem tudott a Gadu-Gadu partnerlista-kiszolgálóhoz kapcsolódni. Kérem "
 "később próbálja meg újra."
 
 #: src/protocols/gg/gg.c:1368
@@ -5091,9 +5091,9 @@ msgid "Couldn't export buddy list"
 msgstr "Nem tudom a partnerlistát exportálni"
 
 #: src/protocols/gg/gg.c:1369 src/protocols/gg/gg.c:1392
-msgid "Gaim was unable to connect to the buddy list server.  Please try again later."
+msgid "Pidgin was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
-"A Gaim nem tudott a partnerlista kiszolgálóhoz kapcsolódni. Kérem később "
+"A Pidgin nem tudott a partnerlista kiszolgálóhoz kapcsolódni. Kérem később "
 "próbálja meg újra."
 
 #: src/protocols/gg/gg.c:1391
@@ -5106,10 +5106,10 @@ msgstr "A könyvtár nem érhető el"
 
 #: src/protocols/gg/gg.c:1443
 msgid ""
-"Gaim was unable to search the Directory because it was unable to connect to "
+"Pidgin was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
 msgstr ""
-"A Gaim nem tudott keresni a Könyvtárban, mert nem tudott a kiszolgálóhoz "
+"A Pidgin nem tudott keresni a Könyvtárban, mert nem tudott a kiszolgálóhoz "
 "kapcsolódni. Kérem később próbálja meg újra."
 
 #: src/protocols/gg/gg.c:1477
@@ -5118,10 +5118,10 @@ msgstr "Nem sikerült a Gadu-Gadu jelszavát megváltoztatni"
 
 #: src/protocols/gg/gg.c:1478
 msgid ""
-"Gaim was unable to change your password due to an error connecting to the "
+"Pidgin was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
-"A Gaim nem tudta a jelszót megváltoztatni, mert nem tudott a Gadu-Gadu "
+"A Pidgin nem tudta a jelszót megváltoztatni, mert nem tudott a Gadu-Gadu "
 "kiszolgálóhoz kapcsolódni. Kérem később próbálja meg újra."
 
 #: src/protocols/gg/gg.c:1494
@@ -5152,10 +5152,10 @@ msgstr "Nem sikerült elérni a felhasználói profilt."
 
 #: src/protocols/gg/gg.c:1545
 msgid ""
-"Gaim was unable to access this user's profile due to an error connecting to "
+"Pidgin was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
-"A Gaim nem tudta elérni a felhasználói profilt, mert nem tudott a "
+"A Pidgin nem tudta elérni a felhasználói profilt, mert nem tudott a "
 "könyvtárkiszolgálóhoz kapcsolódni. Kérem később próbálja meg újra."
 
 #. *< type
@@ -5173,8 +5173,8 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu protokollbővítmény"
 
 #: src/protocols/icq/gaim_icq.c:223
-msgid "Gaim encountered an error communicating with the ICQ server."
-msgstr "A Gaim hibát észlelt az ICQ kiszolgálóval végzett kommunikáció közben."
+msgid "Pidgin encountered an error communicating with the ICQ server."
+msgstr "A Pidgin hibát észlelt az ICQ kiszolgálóval végzett kommunikáció közben."
 
 #: src/protocols/icq/gaim_icq.c:293
 #, c-format
@@ -5206,8 +5206,8 @@ msgid "Nick:"
 msgstr "Becenév:"
 
 #: src/protocols/icq/gaim_icq.c:498
-msgid "Gaim User"
-msgstr "Gaim felhasználó"
+msgid "Pidgin User"
+msgstr "Pidgin felhasználó"
 
 #: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1311
 #, c-format
@@ -5232,8 +5232,8 @@ msgid "File Transfer Aborted"
 msgstr "Fájlküldés megszakítva"
 
 #: src/protocols/irc/dcc_send.c:273
-msgid "Gaim could not open a listening port."
-msgstr "A Gaim nem tudott megnyitni egy szabad  portot."
+msgid "Pidgin could not open a listening port."
+msgstr "A Pidgin nem tudott megnyitni egy szabad  portot."
 
 #: src/protocols/irc/irc.c:76
 msgid "Error displaying MOTD"
@@ -5442,8 +5442,8 @@ msgid "Unknown message"
 msgstr "Ismeretlen üzenet"
 
 #: src/protocols/irc/msgs.c:349
-msgid "Gaim has sent a message the IRC server did not understand."
-msgstr "A Gaim olyan üzenetet küldött, amit az IRC kiszolgáló nem tudott értelmezni."
+msgid "Pidgin has sent a message the IRC server did not understand."
+msgstr "A Pidgin olyan üzenetet küldött, amit az IRC kiszolgáló nem tudott értelmezni."
 
 #: src/protocols/irc/msgs.c:373
 #, c-format
@@ -6630,8 +6630,8 @@ msgid "Unable to parse message"
 msgstr "Az üzenetet nem sikerült értelmezni"
 
 #: src/protocols/msn/error.c:38
-msgid "Syntax Error (probably a Gaim bug)"
-msgstr "Szintaktikai hiba (valószínűleg Gaim hiba)"
+msgid "Syntax Error (probably a Pidgin bug)"
+msgstr "Szintaktikai hiba (valószínűleg Pidgin hiba)"
 
 #: src/protocols/msn/error.c:42
 msgid "Invalid email address"
@@ -7097,10 +7097,10 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:1669
 msgid ""
-"Gaim could not find any information in the user's profile. The user most "
+"Pidgin could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
-"A Gaim nem talált információkat a felhasználó profiljában. A felhasználó "
+"A Pidgin nem talált információkat a felhasználó profiljában. A felhasználó "
 "valószínűleg nem létezik."
 
 #: src/protocols/msn/msn.c:1675 src/protocols/yahoo/yahoo_profile.c:1174
@@ -8160,12 +8160,12 @@ msgstr ""
 "Frissítésekért keresse fel a következő címet: %s."
 
 #: src/protocols/oscar/oscar.c:2455 src/protocols/oscar/oscar.c:2485
-msgid "Gaim was unable to get a valid AIM login hash."
-msgstr "A Gaim nem tudott lekérni egy érvényes AIM belépő hasht."
+msgid "Pidgin was unable to get a valid AIM login hash."
+msgstr "A Pidgin nem tudott lekérni egy érvényes AIM belépő hasht."
 
 #: src/protocols/oscar/oscar.c:2574
-msgid "Gaim was unable to get a valid login hash."
-msgstr "A Gaim nem tudott lekérni egy érvényes belépő hasht."
+msgid "Pidgin was unable to get a valid login hash."
+msgstr "A Pidgin nem tudott lekérni egy érvényes belépő hasht."
 
 #: src/protocols/oscar/oscar.c:2606
 msgid "Password sent"
@@ -8634,13 +8634,13 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5691
 #, c-format
 msgid ""
-"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
 "it for you."
 msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
-msgstr[0] "A profil méret túllépte a maximális %d bájtot. A Gaim csonkította."
-msgstr[1] "A profil méret túllépte a maximális %d bájtot. A Gaim csonkította."
+msgstr[0] "A profil méret túllépte a maximális %d bájtot. A Pidgin csonkította."
+msgstr[1] "A profil méret túllépte a maximális %d bájtot. A Pidgin csonkította."
 
 #: src/protocols/oscar/oscar.c:5696
 msgid "Profile too long."
@@ -8667,13 +8667,13 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5771
 #, c-format
 msgid ""
-"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"The maximum away message length of %d byte has been exceeded.  Pidgin has "
 "truncated it for you."
 msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
-msgstr[0] "A távollét üzenet hossza túllépte a maximális %d bájtot. A Gaim csonkította."
-msgstr[1] "A távollét üzenet hossza túllépte a maximális %d bájtot. A Gaim csonkította."
+msgstr[0] "A távollét üzenet hossza túllépte a maximális %d bájtot. A Pidgin csonkította."
+msgstr[1] "A távollét üzenet hossza túllépte a maximális %d bájtot. A Pidgin csonkította."
 
 #: src/protocols/oscar/oscar.c:5776
 msgid "Away message too long."
@@ -8701,11 +8701,11 @@ msgstr "Nem lehet lekérni a partnerek listáját"
 
 #: src/protocols/oscar/oscar.c:6023
 msgid ""
-"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 msgstr ""
-"A Gaim ideiglenesen nem tudta a partnerek listáját lekérni az AIM "
+"A Pidgin ideiglenesen nem tudta a partnerek listáját lekérni az AIM "
 "kiszolgálóról. A partnerlistája nem veszett el, és néhány órán belül "
 "valószínűleg elérhetővé válik."
 
@@ -9967,8 +9967,8 @@ msgstr "Nem sikerül beállítani a csatorna üzemmódokat a következőhöz: %s
 
 #: src/protocols/silc/silc.c:1264
 #, c-format
-msgid "Unknown command: %s, (may be a Gaim bug)"
-msgstr "Ismeretlen parancs: %s, (talán egy Gaim hiba)"
+msgid "Unknown command: %s, (may be a Pidgin bug)"
+msgstr "Ismeretlen parancs: %s, (talán egy Pidgin hiba)"
 
 #: src/protocols/silc/silc.c:1327
 msgid "part [channel]:  Leave the chat"
@@ -10418,9 +10418,9 @@ msgstr "A TOC egy PAUSE parancsot küldött."
 #: src/protocols/toc/toc.c:897
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Gaim will prevent anything from going through. This "
+"if you send a message. Pidgin will prevent anything from going through. This "
 "is only temporary, please be patient."
-msgstr "Ilyen estben a TOC nem veszi figyelembe a felé küldött üzeneteket, és kirúghatja, ha újabb üzenetet küld. A Gaim megakadályozza hogy bármi is átjusson. Ez csak ideiglenes, kérem legyen türelemmel."
+msgstr "Ilyen estben a TOC nem veszi figyelembe a felé küldött üzeneteket, és kirúghatja, ha újabb üzenetet küld. A Pidgin megakadályozza hogy bármi is átjusson. Ez csak ideiglenes, kérem legyen türelemmel."
 
 #: src/protocols/toc/toc.c:1450
 msgid "Get Dir Info"
@@ -10449,8 +10449,8 @@ msgid "Could not write file header.  The file will not be transferred."
 msgstr "A fájl fejlécét nem sikerült kiírni. A fájl nem lesz elküldve."
 
 #: src/protocols/toc/toc.c:2086
-msgid "Gaim - Save As..."
-msgstr "Gaim - Mentés másként..."
+msgid "Pidgin - Save As..."
+msgstr "Pidgin - Mentés másként..."
 
 #: src/protocols/toc/toc.c:2120
 #, c-format
@@ -10620,10 +10620,10 @@ msgstr "Partner felvétele megtagadva"
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
-"method.  This version of Gaim will likely not be able to successfully sign "
+"method.  This version of Pidgin will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 msgstr ""
-"A Yahoo kiszolgáló ismeretlen hitelesítési eljárás használatát kérte. A Gaim "
+"A Yahoo kiszolgáló ismeretlen hitelesítési eljárás használatát kérte. A Pidgin "
 "ezen verziója valószínűleg nem fog tudni sikeresen bejelentkezni. "
 "Ellenőrizze az esetleges frissítéseket itt: %s."
 
@@ -10655,13 +10655,13 @@ msgstr "A normális hitelesítés sikertelen!"
 #: src/protocols/yahoo/yahoo.c:2011
 msgid ""
 "The normal authentication method has failed. This means either your password "
-"is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
+"is incorrect, or Yahoo!'s authentication scheme has changed. Pidgin will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""
 "A normális hitelesítési eljárás sikertelen volt. Ez vagy azt jelenti, hogy a "
 "jelszava helytelen, vagy azt, hogy a Yahoo! hitelesítési sémája "
-"megváltozott. A Gaim most megpróbál bejelentkezni a Web Messenger "
+"megváltozott. A Pidgin most megpróbál bejelentkezni a Web Messenger "
 "hitelesítés használatával, ami csökkentett funkcionalitást és kevesebb "
 "szolgáltatást fog eredményezni."
 

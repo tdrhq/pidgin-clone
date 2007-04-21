@@ -242,7 +242,7 @@ msgstr "तंत्र तश्तरी आइकन"
 #. *< version
 #. *  summary
 #: plugins/docklet/docklet.c:560
-msgid "Displays an icon for Gaim in the system tray."
+msgid "Displays an icon for Pidgin in the system tray."
 msgstr "गेम के लिए तंत्र तश्तरी में आइकन दर्शाएँ"
 
 #  *  description
@@ -250,7 +250,7 @@ msgstr "गेम के लिए तंत्र तश्तरी में 
 #: plugins/docklet/docklet.c:562
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
-"the current status of Gaim, allow fast access to commonly used functions, "
+"the current status of Pidgin, allow fast access to commonly used functions, "
 "and to toggle display of the buddy list or login window. Also allows "
 "messages to be queued until the icon is clicked, similar to ICQ."
 msgstr ""
@@ -264,15 +264,15 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: plugins/docklet/docklet-win32.c:44
-msgid "Gaim"
+msgid "Pidgin"
 msgstr "गेम"
 
 #: plugins/docklet/docklet-win32.c:45
-msgid "Gaim - Signed off"
+msgid "Pidgin - Signed off"
 msgstr "गेम - साइन्ड ऑफ"
 
 #: plugins/docklet/docklet-win32.c:46
-msgid "Gaim - Away"
+msgid "Pidgin - Away"
 msgstr "गेम - दूर"
 
 #: plugins/docklet/eggtrayicon.c:122
@@ -340,7 +340,7 @@ msgstr "संवादों की संखया को सीमाबद�
 #. *< priority
 #. *< id
 #: plugins/filectl.c:224
-msgid "Gaim File Control"
+msgid "Pidgin File Control"
 msgstr "गेम फ़ाइल नियंत्रण"
 
 #  *< name
@@ -351,7 +351,7 @@ msgstr "गेम फ़ाइल नियंत्रण"
 #. *  summary
 #. *  description
 #: plugins/filectl.c:227 plugins/filectl.c:229
-msgid "Allows you to control Gaim by entering commands in a file."
+msgid "Allows you to control Pidgin by entering commands in a file."
 msgstr "गेम पर नियंत्रण हेतु फ़ाइल में कमांड भरने हेतु अनुमति देता है."
 
 #  *< api_version
@@ -368,7 +368,7 @@ msgstr "गेम पर नियंत्रण हेतु फ़ाइल �
 #. *< priority
 #. *< id
 #: plugins/gaiminc.c:90
-msgid "Gaim Demonstration Plugin"
+msgid "Pidgin Demonstration Plugin"
 msgstr "गेम प्रदर्शक प्लगइन"
 
 #  *< name
@@ -455,7 +455,7 @@ msgstr "गेम अनुप्रयोगों के लिए रिम�
 #. *  description
 #: plugins/gaim-remote/remote.c:752
 msgid ""
-"Gives Gaim the ability to be remote-controlled through third-party "
+"Gives Pidgin the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
 msgstr ""
 "थर्ड पार्टी अनुप्रयोगों या गेम रिमोट उपकरण के द्वारा यह गेम को रिमोट कंट्रोल का सामर्थ्य "
@@ -990,7 +990,7 @@ msgstr ""
 
 #: plugins/relnot.c:63
 #, c-format
-msgid "You are using Gaim version %s.  The current version is %s.<hr>"
+msgid "You are using Pidgin version %s.  The current version is %s.<hr>"
 msgstr "आप गेम का %s अनुवाद उपयोग कर रहें हैं। वर्तमान अनुवाद %s है।<hr>"
 
 #: plugins/relnot.c:69
@@ -1381,7 +1381,7 @@ msgid "Startup"
 msgstr "प्रारंभ-में"
 
 #: plugins/win32/winprefs/winprefs.c:353
-msgid "_Start Gaim on Windows startup"
+msgid "_Start Pidgin on Windows startup"
 msgstr "गेम को विंडोस के प्रारंभ-में प्रारंभ करें (_S)"
 
 #  Buddy List
@@ -1419,11 +1419,11 @@ msgid "_Flash Window when messages are received"
 msgstr "जब संदेश मिलें तो विंडो चमकाएँ (_F)"
 
 #: plugins/win32/winprefs/winprefs.c:407
-msgid "WinGaim Options"
+msgid "WinPidgin Options"
 msgstr "विन-गेम विकल्प"
 
 #: plugins/win32/winprefs/winprefs.c:409 plugins/win32/winprefs/winprefs.c:410
-msgid "Options specific to Windows Gaim."
+msgid "Options specific to Windows Pidgin."
 msgstr "विंडोस गेम हेतु विशेष विकल्प"
 
 #: src/account.c:298 src/protocols/jabber/jabber.c:1039
@@ -1867,7 +1867,7 @@ msgid ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Gaim\n"
+"       quit                     Close running copy of Pidgin\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
@@ -1879,14 +1879,14 @@ msgstr ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Gaim\n"
+"       quit                     Close running copy of Pidgin\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
 
 #: src/gaim-remote.c:185 src/gaim-remote.c:203
 msgid ""
-"Gaim not running (on session 0)\n"
+"Pidgin not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
 msgstr ""
 "गेम चल नहीं रहा है(%d काल पर)\n"
@@ -1937,7 +1937,7 @@ msgstr ""
 #: src/gaim-remote.c:239
 msgid ""
 "\n"
-"Close running copy of Gaim\n"
+"Close running copy of Pidgin\n"
 msgstr ""
 "\n"
 "चालू गेम की प्रतिलिपि को बंद करें\n"
@@ -2721,7 +2721,7 @@ msgstr "समय"
 
 #: src/gtkconv.c:342
 #, c-format
-msgid "me is using Gaim v%s."
+msgid "me is using Pidgin v%s."
 msgstr "मैं गेम प्रयोग कर रहा हूं v%s।"
 
 #: src/gtkconv.c:351
@@ -3431,17 +3431,17 @@ msgid "Chinese"
 msgstr "चीनी"
 
 #: src/gtkdialogs.c:211
-msgid "About Gaim"
+msgid "About Pidgin"
 msgstr "गेम के बारे में"
 
 #: src/gtkdialogs.c:226
 #, c-format
-msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgid "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">गेम v%s</span>"
 
 #: src/gtkdialogs.c:248
 msgid ""
-"Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+"Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
@@ -4626,7 +4626,7 @@ msgid "Idle _time reporting:"
 msgstr "निष्क्रिय समय की रपट करें:(_t)"
 
 #: src/gtkprefs.c:1828
-msgid "Gaim usage"
+msgid "Pidgin usage"
 msgstr "गेम व्यवहार"
 
 #: src/gtkprefs.c:1831
@@ -5021,7 +5021,7 @@ msgstr "साइनऑन(_S)"
 #: src/main.c:513
 #, c-format
 msgid ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -a, --acct          display account editor window\n"
@@ -5036,7 +5036,7 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 "  -h, --help          display this help and exit\n"
 msgstr ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -a, --acct          display account editor window\n"
@@ -5054,7 +5054,7 @@ msgstr ""
 #. short message
 #: src/main.c:528
 #, c-format
-msgid "Gaim %s. Try `%s -h' for more information.\n"
+msgid "Pidgin %s. Try `%s -h' for more information.\n"
 msgstr "गेम %s. और जानकारी के लिए `%s -h' के साथ प्रयत्न करें.\n"
 
 #: src/main.c:895
@@ -5063,7 +5063,7 @@ msgstr "पसंद लोड करने में असमर्थ"
 
 #: src/main.c:895
 msgid ""
-"Gaim was not able to load your preferences because they are stored in an old "
+"Pidgin was not able to load your preferences because they are stored in an old "
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
 msgstr ""
@@ -5079,7 +5079,7 @@ msgstr ""
 "आवश्यक प्लग-इन %s मिला नहीं। कृपया इस प्लग-इन की स्थापना करें और दोबारा प्रयत्न करें।"
 
 #: src/plugin.c:300 src/plugin.c:328
-msgid "Gaim was unable to load your plugin."
+msgid "Pidgin was unable to load your plugin."
 msgstr "गेम प्लग-इन को लोड नहीं कर पाया।"
 
 #: src/plugin.c:324
@@ -5330,7 +5330,7 @@ msgstr "गाडू-गाडू के सवर्र से बात कर
 
 #: src/protocols/gg/gg.c:1265
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating with "
+"Pidgin was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 "गेम आपकी गुज़ारिश पूरी नहीं कर पाया क्योंकि गाडू-गाडू के एच टी टी पी सवर्र से संपर्क करने में "
@@ -5342,7 +5342,7 @@ msgstr "गाडू-गाडू बड्डी सूची आयात क�
 
 #: src/protocols/gg/gg.c:1295
 msgid ""
-"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
 "गेम गाडू-गाडू बड्डी सूची सवर्र से कनेक्ट नहीं कर पाया। कृप्या कुछ समय पशचात प्रयास करें।"
@@ -5353,7 +5353,7 @@ msgstr "बड्डी सूची निर्यात नहीं कर �
 
 #: src/protocols/gg/gg.c:1369 src/protocols/gg/gg.c:1392
 msgid ""
-"Gaim was unable to connect to the buddy list server.  Please try again later."
+"Pidgin was unable to connect to the buddy list server.  Please try again later."
 msgstr "गेम बड्डी सूची सवर्र से कनेक्ट नहीं कर पाया। कृप्या कुछ समय पशचात प्रयास करें।"
 
 #: src/protocols/gg/gg.c:1391
@@ -5366,7 +5366,7 @@ msgstr "डायरेक्टरी तक पहुंच नहीं प�
 
 #: src/protocols/gg/gg.c:1443
 msgid ""
-"Gaim was unable to search the Directory because it was unable to connect to "
+"Pidgin was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
 msgstr ""
 "गेम डायरेक्टरी को खोज नहीं सका क्योंकि वह डायरेक्टरी सवर्र से कनेक्ट नहीं कर पाया। कृप्या "
@@ -5378,7 +5378,7 @@ msgstr "गाडू-गाडू पासवर्ड बदलने मे�
 
 #: src/protocols/gg/gg.c:1478
 msgid ""
-"Gaim was unable to change your password due to an error connecting to the "
+"Pidgin was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
 "गेम पासवर्ड बदलने में विफल रहा क्योंकि गाडू-गाडू सवर्र से कनेक्ट करते समय त्रुटी हुई। कृप्या कुछ "
@@ -5412,7 +5412,7 @@ msgstr "उपयोकर्ता प्रोफाइल लाने मे
 
 #: src/protocols/gg/gg.c:1545
 msgid ""
-"Gaim was unable to access this user's profile due to an error connecting to "
+"Pidgin was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 "गेम उपयोकर्ता प्रोफाइल लाने में असमर्थ रहा क्योंकि वह डायरेक्टरी सवर्र से कनेक्ट नहीं कर "
@@ -5433,7 +5433,7 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "गाडू-गाडू प्रोटोकॉल प्लगइन"
 
 #: src/protocols/icq/gaim_icq.c:223
-msgid "Gaim encountered an error communicating with the ICQ server."
+msgid "Pidgin encountered an error communicating with the ICQ server."
 msgstr "गेम को आई सी क्यू सवर्र से बात करने में त्रुटी हुई"
 
 #: src/protocols/icq/gaim_icq.c:293
@@ -5466,7 +5466,7 @@ msgid "Nick:"
 msgstr "उपनाम:"
 
 #: src/protocols/icq/gaim_icq.c:498
-msgid "Gaim User"
+msgid "Pidgin User"
 msgstr "गेम उपयोगकर्ता"
 
 #: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1311
@@ -5492,7 +5492,7 @@ msgid "File Transfer Aborted"
 msgstr "फ़ाइल हस्तांतरण बीच में स्थगित"
 
 #: src/protocols/irc/dcc_send.c:273
-msgid "Gaim could not open a listening port."
+msgid "Pidgin could not open a listening port."
 msgstr "गेम सुनने के लिए पोर्ट नहीं खोल सका।"
 
 #: src/protocols/irc/irc.c:75
@@ -5711,7 +5711,7 @@ msgid "Unknown message"
 msgstr "अज्ञात संदेश"
 
 #: src/protocols/irc/msgs.c:349
-msgid "Gaim has sent a message the IRC server did not understand."
+msgid "Pidgin has sent a message the IRC server did not understand."
 msgstr "गेम ने संदेश भेजा जिसे आइ आर सी सवर्र समझ नहीं पाया।"
 
 #: src/protocols/irc/msgs.c:373
@@ -6913,7 +6913,7 @@ msgid "Unable to parse message"
 msgstr "संदेश पदभंजन में असमर्थ"
 
 #: src/protocols/msn/error.c:38
-msgid "Syntax Error (probably a Gaim bug)"
+msgid "Syntax Error (probably a Pidgin bug)"
 msgstr "वाक्यविन्यास त्रुटी (शायद गेम में खोट है)"
 
 #: src/protocols/msn/error.c:42
@@ -7380,7 +7380,7 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:1669
 msgid ""
-"Gaim could not find any information in the user's profile. The user most "
+"Pidgin could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
 "गेम उपयोगकर्ता कि प्रोफा़ल में कोइ जानकारी खोज नहीं सका। शायद इस नाम का उपयोगकर्ता "
@@ -8457,11 +8457,11 @@ msgstr ""
 "अपडेट्स के लिए %s देखें।"
 
 #: src/protocols/oscar/oscar.c:2454 src/protocols/oscar/oscar.c:2484
-msgid "Gaim was unable to get a valid AIM login hash."
+msgid "Pidgin was unable to get a valid AIM login hash."
 msgstr "गेम वैध ऐ आई एम लॉगिन हैश लाने में असमर्थ रहा।"
 
 #: src/protocols/oscar/oscar.c:2573
-msgid "Gaim was unable to get a valid login hash."
+msgid "Pidgin was unable to get a valid login hash."
 msgstr "गेम वैध लॉगिन हैश लाने में असमर्थ रहा।"
 
 #: src/protocols/oscar/oscar.c:2605
@@ -8922,10 +8922,10 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5677
 #, c-format
 msgid ""
-"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
 "it for you."
 msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] "प्रोफाइल की अधिकतम लम्बाई %d बाइट पार हो गयी है।"
 msgstr[1] "प्रोफाइल की अधिकतम लम्बाई %d बाइट पार हो गयी है।"
@@ -8954,10 +8954,10 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5757
 #, c-format
 msgid ""
-"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"The maximum away message length of %d byte has been exceeded.  Pidgin has "
 "truncated it for you."
 msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
 "अनुपस्थिति संदेश की अधिकतम लम्बाई %d बाइच पार हो गयी है। गेम ने इसे आपके लिए काट दिया "
@@ -8991,7 +8991,7 @@ msgstr "बड्डी सूची नहीं ला पाया"
 
 #: src/protocols/oscar/oscar.c:6009
 msgid ""
-"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 msgstr ""
@@ -10270,7 +10270,7 @@ msgstr "%s के लिए सीमोड तय करने में अस
 
 #: src/protocols/silc/silc.c:1264
 #, c-format
-msgid "Unknown command: %s, (may be a Gaim bug)"
+msgid "Unknown command: %s, (may be a Pidgin bug)"
 msgstr "अज्ञात कमांड: %s, (शायद गेम में त्रुटी)"
 
 #: src/protocols/silc/silc.c:1327
@@ -10703,7 +10703,7 @@ msgstr "टी औ सी ने ठहरना के कमांड भे�
 #: src/protocols/toc/toc.c:897
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Gaim will prevent anything from going through. This "
+"if you send a message. Pidgin will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
 "जब ऐसा होता है तब टी औ सी किसी भी संदेश पर ध्यान नहीं देगा और आपके संदेश भेजने पर वह "
@@ -10737,7 +10737,7 @@ msgid "Could not write file header.  The file will not be transferred."
 msgstr "फा़इल का हैडर लिख नहीं पाया। यह फा़इन हसतांत्रित नहीं होगी।"
 
 #: src/protocols/toc/toc.c:2059
-msgid "Gaim - Save As..."
+msgid "Pidgin - Save As..."
 msgstr "गेम - ऐसे संचय करें..."
 
 #: src/protocols/toc/toc.c:2093
@@ -10896,7 +10896,7 @@ msgstr "बड्डी को जोड़ना मना हो गया "
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
-"method.  This version of Gaim will likely not be able to successfully sign "
+"method.  This version of Pidgin will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 msgstr ""
 "याहू के सवर्र ने एक अज्ञात प्रमाणिकरन तरीके का अनुरोध किया है। गेम के इस आर्वतन से आप याहू "
@@ -10930,7 +10930,7 @@ msgstr "समान्य प्रमाणीकरण नाकाम"
 #: src/protocols/yahoo/yahoo.c:1939
 msgid ""
 "The normal authentication method has failed. This means either your password "
-"is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
+"is incorrect, or Yahoo!'s authentication scheme has changed. Pidgin will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""

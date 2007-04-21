@@ -1,9 +1,9 @@
-# Gaim Korean translation
+# Pidgin Korean translation
 # Copyright (C) YYYY, Sang-hyun S <artsilly@kuls.korea.ac.kr>
 # Copyright (C) YYYY, A Ho-seok Lee <alee@debian.org>
 # Copyright (C) 2003, Kyeong-uk Son <hey@gnome.or.kr>
 #
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 #
 msgid ""
 msgstr ""
@@ -208,14 +208,14 @@ msgstr "시스템 트레이 아이콘"
 #. *< version
 #. *  summary
 #: plugins/docklet/docklet.c:560
-msgid "Displays an icon for Gaim in the system tray."
+msgid "Displays an icon for Pidgin in the system tray."
 msgstr "시스템 트레이에 게임 아이콘을 보여줍니다."
 
 #. *  description
 #: plugins/docklet/docklet.c:562
 msgid ""
 "Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
-"the current status of Gaim, allow fast access to commonly used functions, "
+"the current status of Pidgin, allow fast access to commonly used functions, "
 "and to toggle display of the buddy list or login window. Also allows "
 "messages to be queued until the icon is clicked, similar to ICQ."
 msgstr ""
@@ -228,15 +228,15 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: plugins/docklet/docklet-win32.c:44
-msgid "Gaim"
+msgid "Pidgin"
 msgstr "게임"
 
 #: plugins/docklet/docklet-win32.c:45
-msgid "Gaim - Signed off"
+msgid "Pidgin - Signed off"
 msgstr "게임 - 연결 끊기"
 
 #: plugins/docklet/docklet-win32.c:46
-msgid "Gaim - Away"
+msgid "Pidgin - Away"
 msgstr "게임 - 자리비움"
 
 #: plugins/docklet/eggtrayicon.c:122
@@ -295,7 +295,7 @@ msgstr "창별 대화 갯수를 제한하고 메시지와 대화를 구분합니
 #. *< priority
 #. *< id
 #: plugins/filectl.c:224
-msgid "Gaim File Control"
+msgid "Pidgin File Control"
 msgstr "게임 파일 콘트롤"
 
 #. *< name
@@ -303,7 +303,7 @@ msgstr "게임 파일 콘트롤"
 #. *  summary
 #. *  description
 #: plugins/filectl.c:227 plugins/filectl.c:229
-msgid "Allows you to control Gaim by entering commands in a file."
+msgid "Allows you to control Pidgin by entering commands in a file."
 msgstr ""
 
 #. *< type
@@ -313,7 +313,7 @@ msgstr ""
 #. *< priority
 #. *< id
 #: plugins/gaiminc.c:90
-msgid "Gaim Demonstration Plugin"
+msgid "Pidgin Demonstration Plugin"
 msgstr "게임 플러그인 시연"
 
 #. *< name
@@ -379,7 +379,7 @@ msgstr "게임 프로그램을 위해 리모콘을 제공합니다."
 #. *  description
 #: plugins/gaim-remote/remote.c:752
 msgid ""
-"Gives Gaim the ability to be remote-controlled through third-party "
+"Gives Pidgin the ability to be remote-controlled through third-party "
 "applications or through the gaim-remote tool."
 msgstr ""
 "써드파티 프로그램이나 게임 원격 도구를 이용해 게임을 원격조종할 수 있게 합니"
@@ -835,7 +835,7 @@ msgstr ""
 
 #: plugins/relnot.c:63
 #, c-format
-msgid "You are using Gaim version %s.  The current version is %s.<hr>"
+msgid "You are using Pidgin version %s.  The current version is %s.<hr>"
 msgstr ""
 
 #: plugins/relnot.c:69
@@ -1182,7 +1182,7 @@ msgid "Startup"
 msgstr "시작"
 
 #: plugins/win32/winprefs/winprefs.c:353
-msgid "_Start Gaim on Windows startup"
+msgid "_Start Pidgin on Windows startup"
 msgstr "윈도우가 시작될 때 게임 실행하기(_S)"
 
 #. Buddy List
@@ -1216,11 +1216,11 @@ msgid "_Flash Window when messages are received"
 msgstr "메시지가 도착하면 윈도우를 깜빡이게(_F)"
 
 #: plugins/win32/winprefs/winprefs.c:407
-msgid "WinGaim Options"
+msgid "WinPidgin Options"
 msgstr "윈게임 옵션"
 
 #: plugins/win32/winprefs/winprefs.c:409 plugins/win32/winprefs/winprefs.c:410
-msgid "Options specific to Windows Gaim."
+msgid "Options specific to Windows Pidgin."
 msgstr "윈도우 게임의 옵션을 정합니다."
 
 #: src/account.c:298 src/protocols/jabber/jabber.c:1039
@@ -1647,7 +1647,7 @@ msgid ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Gaim\n"
+"       quit                     Close running copy of Pidgin\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
@@ -1656,7 +1656,7 @@ msgstr ""
 #: src/gaim-remote.c:185 src/gaim-remote.c:203
 #, fuzzy
 msgid ""
-"Gaim not running (on session 0)\n"
+"Pidgin not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
 msgstr "게임이 실행되고 있지 않음 (on session 0)\n"
 
@@ -1705,7 +1705,7 @@ msgstr ""
 #: src/gaim-remote.c:239
 msgid ""
 "\n"
-"Close running copy of Gaim\n"
+"Close running copy of Pidgin\n"
 msgstr ""
 
 #: src/gaim-remote.c:243
@@ -2439,7 +2439,7 @@ msgstr "시간"
 
 #: src/gtkconv.c:342
 #, c-format
-msgid "me is using Gaim v%s."
+msgid "me is using Pidgin v%s."
 msgstr ""
 
 #: src/gtkconv.c:351
@@ -3124,17 +3124,17 @@ msgid "Chinese"
 msgstr "중국어"
 
 #: src/gtkdialogs.c:211
-msgid "About Gaim"
+msgid "About Pidgin"
 msgstr "게임은"
 
 #: src/gtkdialogs.c:226
 #, c-format
-msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgid "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">게임 v%s</span>"
 
 #: src/gtkdialogs.c:248
 msgid ""
-"Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
+"Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
@@ -4283,7 +4283,7 @@ msgid "Idle _time reporting:"
 msgstr "사용안한 시간 보고하기(_T):"
 
 #: src/gtkprefs.c:1828
-msgid "Gaim usage"
+msgid "Pidgin usage"
 msgstr "게임 사용하지 않은 시간 보여주기"
 
 #: src/gtkprefs.c:1831
@@ -4670,7 +4670,7 @@ msgstr "연결(_S)"
 #: src/main.c:513
 #, c-format
 msgid ""
-"Gaim %s\n"
+"Pidgin %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
 "  -a, --acct          display account editor window\n"
@@ -4689,8 +4689,8 @@ msgstr ""
 #. short message
 #: src/main.c:528
 #, c-format
-msgid "Gaim %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. 더 많은 정보를 원하면 `%s -h'를 입력하세요.\n"
+msgid "Pidgin %s. Try `%s -h' for more information.\n"
+msgstr "Pidgin %s. 더 많은 정보를 원하면 `%s -h'를 입력하세요.\n"
 
 #: src/main.c:895
 msgid "Unable to load preferences"
@@ -4698,7 +4698,7 @@ msgstr "기본설정을 읽을 수 없음"
 
 #: src/main.c:895
 msgid ""
-"Gaim was not able to load your preferences because they are stored in an old "
+"Pidgin was not able to load your preferences because they are stored in an old "
 "format that is no longer used.  Please reconfigure your settings using the "
 "Preferences window."
 msgstr ""
@@ -4712,7 +4712,7 @@ msgstr ""
 "%s 플러그인을 찾을 수 없습니다. 이 플러그인을 설치하고 다시 시도하세요."
 
 #: src/plugin.c:300 src/plugin.c:328
-msgid "Gaim was unable to load your plugin."
+msgid "Pidgin was unable to load your plugin."
 msgstr "게임이 플러그인을 읽어들일 수 없습니다."
 
 #: src/plugin.c:324
@@ -4963,7 +4963,7 @@ msgstr "Gadu-Gadu 서버에 연결 오류"
 
 #: src/protocols/gg/gg.c:1265
 msgid ""
-"Gaim was unable to complete your request due to a problem communicating with "
+"Pidgin was unable to complete your request due to a problem communicating with "
 "the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 "게임이 Gadu-Gadu HTTP 서버 연결 오류로 인해 요청이 완료되지 않았습니다.잠시 "
@@ -4975,7 +4975,7 @@ msgstr "Gadu-Gadu 친구 목록을 가져올 수 없음"
 
 #: src/protocols/gg/gg.c:1295
 msgid ""
-"Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
+"Pidgin was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
 "게임이 Gadu-Gadu 친구 목록 서버에 연결하지 못했습니다. 잠시 후에 다시 시도하"
@@ -4987,7 +4987,7 @@ msgstr "친구 목록을 내보낼 수 없습니다."
 
 #: src/protocols/gg/gg.c:1369 src/protocols/gg/gg.c:1392
 msgid ""
-"Gaim was unable to connect to the buddy list server.  Please try again later."
+"Pidgin was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
 "게임이 친구 목록 서버에 연결하지 못했습니다. 잠시 후에 다시 시도하세요."
 
@@ -5001,7 +5001,7 @@ msgstr "디렉토리에 접근할 수 없음"
 
 #: src/protocols/gg/gg.c:1443
 msgid ""
-"Gaim was unable to search the Directory because it was unable to connect to "
+"Pidgin was unable to search the Directory because it was unable to connect to "
 "the directory server.  Please try again later."
 msgstr ""
 "게임이 디렉토리 서버에 접속할 수 없어 디렉토리 찾기에 실패했습니다. 잠시 후"
@@ -5013,7 +5013,7 @@ msgstr "Gadu-Gadu 열쇠글을 바꿀 수 없음"
 
 #: src/protocols/gg/gg.c:1478
 msgid ""
-"Gaim was unable to change your password due to an error connecting to the "
+"Pidgin was unable to change your password due to an error connecting to the "
 "Gadu-Gadu server.  Please try again later."
 msgstr ""
 "게임이 Gadu-Gadu 서버 연결 오류로 열쇠글을 바꾸지 못했습니다. 잠시 후에 다시 "
@@ -5047,7 +5047,7 @@ msgstr "사용자 소개에 접근할 수 없습니다."
 
 #: src/protocols/gg/gg.c:1545
 msgid ""
-"Gaim was unable to access this user's profile due to an error connecting to "
+"Pidgin was unable to access this user's profile due to an error connecting to "
 "the directory server.  Please try again later."
 msgstr ""
 "게임이 디렉토리 서버 연결 오류로 인해 사용자 소개에 접근하지 못했습니다. 잠"
@@ -5068,7 +5068,7 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "가두-가두 프로토콜 플러그인"
 
 #: src/protocols/icq/gaim_icq.c:223
-msgid "Gaim encountered an error communicating with the ICQ server."
+msgid "Pidgin encountered an error communicating with the ICQ server."
 msgstr "게임이 ICQ 연결 오류를 만났습니다."
 
 #: src/protocols/icq/gaim_icq.c:293
@@ -5101,7 +5101,7 @@ msgid "Nick:"
 msgstr "별명:"
 
 #: src/protocols/icq/gaim_icq.c:498
-msgid "Gaim User"
+msgid "Pidgin User"
 msgstr "게임 사용자"
 
 #: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1311
@@ -5127,7 +5127,7 @@ msgid "File Transfer Aborted"
 msgstr "파일 전송 취소"
 
 #: src/protocols/irc/dcc_send.c:273
-msgid "Gaim could not open a listening port."
+msgid "Pidgin could not open a listening port."
 msgstr ""
 
 #: src/protocols/irc/irc.c:75
@@ -5338,7 +5338,7 @@ msgid "Unknown message"
 msgstr "알 수 없는 메시지"
 
 #: src/protocols/irc/msgs.c:349
-msgid "Gaim has sent a message the IRC server did not understand."
+msgid "Pidgin has sent a message the IRC server did not understand."
 msgstr "게임은 IRC 서버가 보낸 메시지를 이해할 수 없습니다."
 
 #: src/protocols/irc/msgs.c:373
@@ -6500,7 +6500,7 @@ msgid "Unable to parse message"
 msgstr "메시지를 분석할 수 없음"
 
 #: src/protocols/msn/error.c:38
-msgid "Syntax Error (probably a Gaim bug)"
+msgid "Syntax Error (probably a Pidgin bug)"
 msgstr "구문 오류 (게임의 버그일 수 있음)"
 
 #: src/protocols/msn/error.c:42
@@ -6961,7 +6961,7 @@ msgstr ""
 
 #: src/protocols/msn/msn.c:1669
 msgid ""
-"Gaim could not find any information in the user's profile. The user most "
+"Pidgin could not find any information in the user's profile. The user most "
 "likely does not exist."
 msgstr ""
 
@@ -8031,11 +8031,11 @@ msgid ""
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:2454 src/protocols/oscar/oscar.c:2484
-msgid "Gaim was unable to get a valid AIM login hash."
+msgid "Pidgin was unable to get a valid AIM login hash."
 msgstr "게임이 유효한 AIM 로그인 해시를 얻어올 수 없습니다."
 
 #: src/protocols/oscar/oscar.c:2573
-msgid "Gaim was unable to get a valid login hash."
+msgid "Pidgin was unable to get a valid login hash."
 msgstr "게임이 유효한 로그인 해시를 얻어올 수 없습니다."
 
 #: src/protocols/oscar/oscar.c:2605
@@ -8472,10 +8472,10 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5677
 #, c-format
 msgid ""
-"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
+"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
 "it for you."
 msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Gaim has "
+"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
 msgstr[1] ""
@@ -8503,10 +8503,10 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5757
 #, c-format
 msgid ""
-"The maximum away message length of %d byte has been exceeded.  Gaim has "
+"The maximum away message length of %d byte has been exceeded.  Pidgin has "
 "truncated it for you."
 msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Gaim has "
+"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
 "truncated it for you."
 msgstr[0] ""
 msgstr[1] ""
@@ -8534,7 +8534,7 @@ msgstr "친구목록을 받을 수 없음"
 
 #: src/protocols/oscar/oscar.c:6009
 msgid ""
-"Gaim was temporarily unable to retrieve your buddy list from the AIM "
+"Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
 "a few hours."
 msgstr ""
@@ -9826,7 +9826,7 @@ msgstr "%s의 cmodes 설정 실패"
 
 #: src/protocols/silc/silc.c:1264
 #, c-format
-msgid "Unknown command: %s, (may be a Gaim bug)"
+msgid "Unknown command: %s, (may be a Pidgin bug)"
 msgstr "알 수 없는 명령: %s, (게임 버그일 수 있음)"
 
 #: src/protocols/silc/silc.c:1327
@@ -10256,7 +10256,7 @@ msgstr "TOC가 PAUSE 명령을 보냈습니다."
 #: src/protocols/toc/toc.c:897
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Gaim will prevent anything from going through. This "
+"if you send a message. Pidgin will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
 "TOC가 일시중지 명령을 보냈습니다. TOC는 일시중지 명령을 보내면 모든 메시지를 "
@@ -10290,7 +10290,7 @@ msgid "Could not write file header.  The file will not be transferred."
 msgstr "파일 헤더를 쓸 수 없습니다. 파일 전송이 완료되지 않았을 것입니다."
 
 #: src/protocols/toc/toc.c:2059
-msgid "Gaim - Save As..."
+msgid "Pidgin - Save As..."
 msgstr "게임 - 새 이름으로 저장..."
 
 #: src/protocols/toc/toc.c:2093
@@ -10448,7 +10448,7 @@ msgstr "친구 더하기가 거절됨"
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
-"method.  This version of Gaim will likely not be able to successfully sign "
+"method.  This version of Pidgin will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 msgstr ""
 
@@ -10478,7 +10478,7 @@ msgstr "일반 인증 실패!"
 #: src/protocols/yahoo/yahoo.c:1939
 msgid ""
 "The normal authentication method has failed. This means either your password "
-"is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
+"is incorrect, or Yahoo!'s authentication scheme has changed. Pidgin will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""
