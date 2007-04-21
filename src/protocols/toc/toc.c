@@ -2083,7 +2083,7 @@ static void toc_accept_ft(struct ft_request *fr) {
 		ft->port = fr->port;
 		ft->files = fr->files;
 
-		ft->window = window = gtk_file_selection_new(_("Gaim - Save As..."));
+		ft->window = window = gtk_file_selection_new(_("Pidgin - Save As..."));
 		g_snprintf(buf, sizeof(buf), "%s/%s", gaim_home_dir(), fr->filename ? fr->filename : "");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(window), buf);
 		g_signal_connect(G_OBJECT(window), "destroy",

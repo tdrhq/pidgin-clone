@@ -1825,7 +1825,7 @@ GtkWidget *away_page() {
 	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle _time reporting:"),
 			GAIM_PREF_STRING, "/gaim/gtk/idle/reporting_method",
 			_("None"), "none",
-			_("Gaim usage"), "gaim",
+			_("Pidgin usage"), "gaim",
 #ifdef USE_SCREENSAVER
 #ifndef _WIN32
 			_("X usage"), "system",

@@ -349,7 +349,7 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_int_new(_("Port"), "port", 5298);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("First name"), "first", "Gaim");
+	option = gaim_account_option_string_new(_("First name"), "first", "Pidgin");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Last name"), "last", "User");

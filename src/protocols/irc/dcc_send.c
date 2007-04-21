@@ -270,7 +270,7 @@ static void irc_dccsend_send_init(GaimXfer *xfer) {
 
 	if (sock < 0) {
 		gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
-		                  _("Gaim could not open a listening port."));
+		                  _("Pidgin could not open a listening port."));
 		gaim_xfer_cancel_local(xfer);
 		return;
 	}

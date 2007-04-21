@@ -210,7 +210,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 
 	GAIM_DIALOG(about);
 	gtk_window_set_default_size(GTK_WINDOW(about), 450, -1);
-	gtk_window_set_title(GTK_WINDOW(about), _("About Gaim"));
+	gtk_window_set_title(GTK_WINDOW(about), _("About Pidgin"));
 	gtk_window_set_role(GTK_WINDOW(about), "about");
 	gtk_window_set_resizable(GTK_WINDOW(about), TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(about), 340, 550); /* Golden ratio in da hizzy */
@@ -225,7 +225,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	logo = gtk_image_new_from_stock(GAIM_STOCK_LOGO, gtk_icon_size_from_name(GAIM_ICON_SIZE_LOGO));
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
-	labeltext = g_strdup_printf(_("<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"), VERSION);
+	labeltext = g_strdup_printf(_("<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"), VERSION);
 	label = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(label), labeltext);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);

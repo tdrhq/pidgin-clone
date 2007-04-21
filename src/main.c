@@ -525,7 +525,7 @@ show_usage(int mode, const char *name)
 		       "  -h, --help          display this help and exit\n"), VERSION, name);
 		break;
 	case 1:		/* short message */
-		text=g_strdup_printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
+		text=g_strdup_printf(_("Pidgin %s. Try `%s -h' for more information.\n"), VERSION, name);
 		break;
 	}
 
@@ -892,7 +892,7 @@ int main(int argc, char *argv[])
 	accountsxml = g_build_filename(gaim_user_dir(), "accounts.xml", NULL);
 	if (g_file_test(gaimrc, G_FILE_TEST_EXISTS) &&
 		!g_file_test(accountsxml, G_FILE_TEST_EXISTS)) {
-		gaim_notify_error(NULL, NULL, _("Unable to load preferences"), _("Gaim was not able to load your preferences because they are stored in an old format that is no longer used.  Please reconfigure your settings using the Preferences window."));
+		gaim_notify_error(NULL, NULL, _("Unable to load preferences"), _("Pidgin was not able to load your preferences because they are stored in an old format that is no longer used.  Please reconfigure your settings using the Preferences window."));
 	}
 	g_free(gaimrc);
 	g_free(accountsxml);

@@ -1261,7 +1261,7 @@ static GaimCmdRet silcgaim_cmd_generic(GaimConversation *conv,
 	g_free(silcargs);
 	if (!silc_client_command_call(sg->client, sg->conn, silccmd)) {
 		g_free(silccmd);
-		*error = g_strdup_printf(_("Unknown command: %s, (may be a Gaim bug)"), cmd);
+		*error = g_strdup_printf(_("Unknown command: %s, (may be a Pidgin bug)"), cmd);
 		return GAIM_CMD_RET_FAILED;
 	}
 	g_free(silccmd);

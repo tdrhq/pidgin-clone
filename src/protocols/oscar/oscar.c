@@ -2890,7 +2890,7 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
-							_("Gaim was unable to get a valid AIM login hash."),
+							_("Pidgin was unable to get a valid AIM login hash."),
 							buf);
 		gaim_input_remove(pos->inpa);
 		close(pos->fd);
@@ -2920,7 +2920,7 @@ static void straight_to_hell(gpointer data, gint source, GaimInputCondition cond
 		buf = g_strdup_printf(_("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
-							_("Gaim was unable to get a valid AIM login hash."),
+							_("Pidgin was unable to get a valid AIM login hash."),
 							buf);
 		g_free(buf);
 		if (pos->modname)
@@ -3009,7 +3009,7 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
-							_("Gaim was unable to get a valid login hash."),
+							_("Pidgin was unable to get a valid login hash."),
 							buf);
 	}
 
@@ -6680,7 +6680,7 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (reason == 0x0005) {
 		gaim_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
-						  _("Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
+						  _("Pidgin was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
 		od->getblisttimer = gaim_timeout_add(300000, gaim_ssi_rerequestdata, od->sess);
 	}
 

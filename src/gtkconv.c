@@ -339,7 +339,7 @@ debug_command_cb(GaimConversation *conv,
 	GaimCmdStatus status;
 
 	if (!g_ascii_strcasecmp(args[0], "version")) {
-		tmp = g_strdup_printf(_("me is using Gaim v%s."), VERSION);
+		tmp = g_strdup_printf(_("me is using Pidgin v%s."), VERSION);
 		markup = gaim_escape_html(tmp);
 
 		status = gaim_cmd_do_command(conv, tmp, markup, error);

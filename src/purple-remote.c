@@ -182,7 +182,7 @@ send_generic_command(guchar type, guchar subtype) {
 
 	fd = gaim_remote_session_connect(0);
 	if (fd < 0) {
-		message(_("Gaim not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
+		message(_("Pidgin not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
 		return 1;
 	}
 	p = gaim_remote_packet_new(type, subtype);
@@ -200,7 +200,7 @@ send_command_uri() {
 
 	fd = gaim_remote_session_connect(0);
 	if (fd < 0) {
-		message(_("Gaim not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
+		message(_("Pidgin not running (on session 0)\nIs the \"Remote Control\" plugin loaded?\n"), 2);
 		return 1;
 	}
 	p = gaim_remote_packet_new(CUI_TYPE_REMOTE, CUI_REMOTE_URI);
@@ -236,7 +236,7 @@ show_longhelp( char *name, char *command)
 	}
 
 	else if (!strcmp(command, "quit")) {
-		message(_("\nClose running copy of Gaim\n"), 1);
+		message(_("\nClose running copy of Pidgin\n"), 1);
 	}
 
 	else if (!strcmp(command, "away")) {

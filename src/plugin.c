@@ -297,7 +297,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 					   dep_name);
 
 			gaim_notify_error(NULL, NULL,
-							  _("Gaim was unable to load your plugin."),
+							  _("Pidgin was unable to load your plugin."),
 							  buf);
 
 			if (dep_list != NULL)
@@ -325,7 +325,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 						   plugin->info->name);
 
 				gaim_notify_error(NULL, NULL,
-								  _("Gaim was unable to load your plugin."),
+								  _("Pidgin was unable to load your plugin."),
 								  buf);
 
 				if (dep_list != NULL)
