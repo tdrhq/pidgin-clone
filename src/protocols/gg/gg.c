@@ -1262,7 +1262,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 		close(source);
 		gaim_notify_error(gc, NULL,
 						  _("Error communicating with Gadu-Gadu server"),
-						  _("Gaim was unable to complete your request due "
+						  _("Pidgin was unable to complete your request due "
 							"to a problem communicating with the Gadu-Gadu "
 							"HTTP server.  Please try again later."));
 		return;
@@ -1292,7 +1292,7 @@ static void import_buddies_server(GaimConnection *gc)
 	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, hi) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Unable to import Gadu-Gadu buddy list"),
-						  _("Gaim was unable to connect to the Gadu-Gadu "
+						  _("Pidgin was unable to connect to the Gadu-Gadu "
 							"buddy list server.  Please try again later."));
 		g_free(hi->request);
 		g_free(hi);
@@ -1366,7 +1366,7 @@ static void export_buddies_server(GaimConnection *gc)
 	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Couldn't export buddy list"),
-						  _("Gaim was unable to connect to the buddy "
+						  _("Pidgin was unable to connect to the buddy "
 							"list server.  Please try again later."));
 		g_free(he->request);
 		g_free(he);
@@ -1389,7 +1389,7 @@ static void delete_buddies_server(GaimConnection *gc)
 	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, he) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Unable to delete Gadu-Gadu buddy list"),
-						  _("Gaim was unable to connect to the buddy "
+						  _("Pidgin was unable to connect to the buddy "
 							"list server.  Please try again later."));
 		g_free(he->request);
 		g_free(he);
@@ -1440,7 +1440,7 @@ static void agg_dir_search(GaimConnection *gc, const char *first, const char *mi
 	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Unable to access directory"),
-						  _("Gaim was unable to search the Directory "
+						  _("Pidgin was unable to search the Directory "
 							"because it was unable to connect to the "
 							"directory server.  Please try again later."));
 		g_free(srch->request);
@@ -1475,7 +1475,7 @@ static void agg_change_passwd(GaimConnection *gc, const char *old, const char *n
 	if (gaim_proxy_connect(gc->account, GG_REGISTER_HOST, GG_REGISTER_PORT, http_req_callback, hpass) < 0) {
 		gaim_notify_error(gc, NULL,
 							  _("Unable to change Gadu-Gadu password"),
-							  _("Gaim was unable to change your password "
+							  _("Pidgin was unable to change your password "
 								"due to an error connecting to the "
 								"Gadu-Gadu server.  Please try again "
 								"later."));
@@ -1542,7 +1542,7 @@ static void agg_get_info(GaimConnection *gc, const char *who)
 	if (gaim_proxy_connect(gc->account, GG_PUBDIR_HOST, GG_PUBDIR_PORT, http_req_callback, srch) < 0) {
 		gaim_notify_error(gc, NULL,
 						  _("Unable to access user profile."),
-						  _("Gaim was unable to access this user's "
+						  _("Pidgin was unable to access this user's "
 							"profile due to an error connecting to the "
 							"directory server.  Please try again later."));
 		g_free(srch->request);

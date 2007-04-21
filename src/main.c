@@ -343,7 +343,7 @@ sighandler(int sig)
 		break;
 	case SIGSEGV:
 #ifndef DEBUG
-		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
+		fprintf(stderr, "Pidgin has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
 			"It is possible that this bug is already fixed in CVS.\n"
@@ -510,7 +510,7 @@ show_usage(int mode, const char *name)
 
 	switch (mode) {
 	case 0:		/* full help text */
-		text=g_strdup_printf(_("Gaim %s\n"
+		text=g_strdup_printf(_("Pidgin %s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -a, --acct          display account editor window\n"
 		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
@@ -848,7 +848,7 @@ int main(int argc, char *argv[])
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("Gaim %s\n",VERSION);
+		printf("Pidgin %s\n",VERSION);
 		return 0;
 	}
 

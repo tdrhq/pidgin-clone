@@ -194,7 +194,7 @@ save_writefile_cb(void *user_data, const char *filename)
 static void
 save_cb(GtkWidget *w, DebugWindow *win)
 {
-	gaim_request_file(win, _("Save Debug Log"), "gaim-debug.log", TRUE,
+	gaim_request_file(win, _("Save Debug Log"), "pidgin-debug.log", TRUE,
 					  G_CALLBACK(save_writefile_cb), NULL, win);
 }
 

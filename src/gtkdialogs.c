@@ -247,7 +247,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	str = g_string_sized_new(4096);
 
 	g_string_append(str, 
-					_("Gaim is a modular messaging client capable of using "
+					_("Pidgin is a modular messaging client capable of using "
 					  "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, "
 					  "Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 					  "all at once.  It is written using "
@@ -351,7 +351,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 
 	/* The following primarly intented for user/developer interaction and thus
 	   ought not be translated */
-	g_string_append(str, "<b>Gaim was compiled with the following:</b><br/>");
+	g_string_append(str, "<b>Pidgin was compiled with the following:</b><br/>");
 #ifdef CONFIG_ARGS /* win32 build doesn't use configure */
 	g_string_append(str, "Arguments to <i>./configure</i>:  " CONFIG_ARGS "<br/>");
 #endif
@@ -371,9 +371,9 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	g_string_append(str, "Plugins:  Disabled<br/>");
 #endif /* GAIM_PLUGINS */
 #ifdef HAVE_SSL
-	g_string_append(str, "SSL:  Gaim was compiled with SSL support<br/>");
+	g_string_append(str, "SSL:  Pidgin was compiled with SSL support<br/>");
 #else
-	g_string_append(str, "SSL:  Gaim was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
+	g_string_append(str, "SSL:  Pidgin was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
 #endif
 #ifdef HAVE_GNUTLS
 	g_string_append(str, "GNUTLS:  Enabled<br/>");
