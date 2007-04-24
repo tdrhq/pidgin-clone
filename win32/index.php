@@ -1,17 +1,17 @@
 <?
-	$page->title = 'Windows Gaim';
+	$page->title = 'Windows Pidgin';
 	require('../inc/template.inc.php');
 ?>
 
 <p><span style="color: #FF0000;">**Note**</span> 1.5.0 does <b>NOT</b> work with MSN and will crash trying to log in.  Use <a href="http://sourceforge.net/project/showfiles.php?group_id=235&package_id=253">2.0.0beta3.1 or newer</a> to avoid this problem.</p>
 
-<h1>Windows Gaim</h1>
+<h1>Windows Pidgin</h1>
 
-<p>Grab the latest <a href="http://prdownloads.sourceforge.net/gaim/gaim-<?php print $current_win32_version; ?>.exe">Windows build (v<?php print $current_win32_version; ?>)</a>, or if you already have GTK+ v<?php print $current_win32_gtk_version; ?> rev <?php print $current_win32_gtk_revision; ?> installed grab <a href="http://prdownloads.sourceforge.net/gaim/gaim-<?php print $current_win32_version; ?>-no-gtk.exe">Windows Gaim without GTK+</a>.</p>
+<p>Grab the latest <a href="http://prdownloads.sourceforge.net/pidgin/gaim-<?php print $current_win32_version; ?>.exe">Windows build (v<?php print $current_win32_version; ?>)</a>, or if you already have GTK+ v<?php print $current_win32_gtk_version; ?> rev <?php print $current_win32_gtk_revision; ?> installed grab <a href="http://prdownloads.sourceforge.net/pidgin/gaim-<?php print $current_win32_version; ?>-no-gtk.exe">Windows Gaim without GTK+</a>.</p>
 
 <p>For the latest Windows Gaim specific changes, see <a href="ChangeLog.win32">ChangeLog.win32</a>. It includes information on GTK+ changes/fixes affecting Windows Gaim.</p>
 
-<p>Windows Gaim users/developers are encouraged to congregate in #wingaim on irc.freenode.net.</p>
+<p>Windows Gaim users/developers are encouraged to congregate in #pidgin-win32 on irc.freenode.net.</p>
 
 <p>
 <b>NOTE:</b> Those who currently use <code>HOME</code> and <code>LANG</code> environmental variables to set Gaim's settings path and language, will need to use <code>GAIMHOME</code> and <code>GAIMLANG</code> as of version 1.1.0.
@@ -111,7 +111,7 @@ Note: If you are using the WIMP theme, this setting is overridden; you can eithe
 </li>
 
 <li>
-<b>GTK+ 2.6.9 causes GIMP crashes</b> - The updated GTK-Wimp theme that was distributed with the Gaim GTK+ 2.6.9 installer (also included in the WinGaim 1.5.0 installer) triggers a bug in GTK+ that causes GIMP to crash.  You should update to <a href="http://prdownloads.sourceforge.net/gaim/gtk-runtime-2.6.10-rev-a.exe?download">GTK+ 2.6.10</a> to resolve this. See the following <a href="http://bugzilla.gnome.org/show_bug.cgi?id=314529">bugzilla entry</a> for more information.
+<b>GTK+ 2.6.9 causes GIMP crashes</b> - The updated GTK-Wimp theme that was distributed with the Gaim GTK+ 2.6.9 installer (also included in the WinGaim 1.5.0 installer) triggers a bug in GTK+ that causes GIMP to crash.  You should update to <a href="http://prdownloads.sourceforge.net/pidgin/gtk-runtime-2.6.10-rev-a.exe?download">GTK+ 2.6.10</a> to resolve this. See the following <a href="http://bugzilla.gnome.org/show_bug.cgi?id=314529">bugzilla entry</a> for more information.
 </li>
 <li>
 <b>Major GTK+ Bugs</b><i> (that do not need reporting)</i>
@@ -124,7 +124,7 @@ Note: If you are using the WIMP theme, this setting is overridden; you can eithe
 
 
 <h2 id="wingtk">Standalone GTK+ Installer</h2>
-<a href="http://prdownloads.sourceforge.net/gaim/gtk-runtime-<?php print $current_win32_gtk_version; ?>-rev-<?php print $current_win32_gtk_revision; ?>.exe?download">gtk-runtime-<?php print $current_win32_gtk_version; ?>-rev-<?php print $current_win32_gtk_revision; ?>.exe</a>
+<a href="http://prdownloads.sourceforge.net/pidgin/gtk-runtime-<?php print $current_win32_gtk_version; ?>-rev-<?php print $current_win32_gtk_revision; ?>.exe?download">gtk-runtime-<?php print $current_win32_gtk_version; ?>-rev-<?php print $current_win32_gtk_revision; ?>.exe</a>
 
 <p>Check <a href="ChangeLog.win32">ChangeLog.win32</a> for the changes in this GTK+ revision.</p>
 
@@ -149,7 +149,7 @@ gaim-<?php print $current_win32_version; ?>-no-gtk.exe /L=1033 /S /D=C:\Gaim</co
 
 <h2 id="debug">Debugging Windows Gaim</h2>
 <h3>What to do if Gaim crashes</h3>
-<p>First make sure that you are not affected by 'Dll Hell' as described above. Download and install the debug version of WinGaim (<a href="http://prdownloads.sourceforge.net/gaim/gaim-<?php print $current_win32_version; ?>-debug.exe"><?php print $current_win32_version; ?> is here</a>; for other versions, go to <a href="http://sourceforge.net/project/showfiles.php?group_id=235&package_id=253">the gaim file releases area on SF.net</a>).  The next time you run Gaim and it crashes, the call stack will be dumped to <code>gaim.RPT</code> in your Gaim install dir.  When submitting a bug report, give a detailed description on how to produce your bug and attach the most recent crash dump from your <code>gaim.RPT</code> file.</p>
+<p>First make sure that you are not affected by 'Dll Hell' as described above. Download and install the debug version of WinGaim (<a href="http://prdownloads.sourceforge.net/pidgin/gaim-<?php print $current_win32_version; ?>-debug.exe"><?php print $current_win32_version; ?> is here</a>; for other versions, go to <a href="http://sourceforge.net/project/showfiles.php?group_id=235&package_id=253">the gaim file releases area on SF.net</a>).  The next time you run Gaim and it crashes, the call stack will be dumped to <code>gaim.RPT</code> in your Gaim install dir.  When submitting a bug report, give a detailed description on how to produce your bug and attach the most recent crash dump from your <code>gaim.RPT</code> file.</p>
 <h2 id="portable">Running Windows Gaim From a USB Drive</h2>
 <p>It is relatively easy to set up Gaim to run from a USB Drive.  Most of Gaim is very good about not assuming that it is installed; a slightly customized launcher makes it all come together nicely.</p>
 <p>The way that this is set up, other GTK+ applications can use the same GTK+ runtime.</p>
