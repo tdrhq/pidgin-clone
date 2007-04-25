@@ -1268,7 +1268,7 @@ echo Print debugging messages...... : $enable_debug
 echo
 eval eval echo Pidgin will be installed in $bindir.
 if test "x$pidginpath" != "x" ; then
-	echo Warning: You have an old copy of Pidgin at $Pidginpath.
+	echo Warning: You have an old copy of Pidgin at $pidginpath.
 fi
 echo
 echo configure complete, now type \'make\'
