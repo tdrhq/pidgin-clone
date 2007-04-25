@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GAIM\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-07-10 16:02-0400\n"
+"POT-Creation-Date: 2007-04-25 14:32-0400\n"
 "PO-Revision-Date: 2005-05-29 20:43+0530\n"
 "Last-Translator: Akash <akash@ncb.ernet.in>\n"
 "Language-Team: Akash <matrubhasha@ncb.ernet.in>\n"
@@ -168,12 +168,12 @@ msgid "New..."
 msgstr "नया..."
 
 #: plugins/docklet/docklet.c:177 src/gtkprefs.c:1813 src/protocols/gg/gg.c:52
-#: src/protocols/irc/msgs.c:227 src/protocols/jabber/jabber.c:998
+#: src/protocols/irc/msgs.c:227 src/protocols/jabber/jabber.c:1000
 #: src/protocols/jabber/jutil.c:32 src/protocols/jabber/presence.c:69
 #: src/protocols/jabber/presence.c:132 src/protocols/novell/novell.c:2800
 #: src/protocols/novell/novell.c:2917 src/protocols/novell/novell.c:2969
-#: src/protocols/oscar/oscar.c:684 src/protocols/oscar/oscar.c:5788
-#: src/protocols/oscar/oscar.c:6785 src/protocols/oscar/oscar.c:6985
+#: src/protocols/oscar/oscar.c:693 src/protocols/oscar/oscar.c:6462
+#: src/protocols/oscar/oscar.c:7459 src/protocols/oscar/oscar.c:7659
 #: src/protocols/silc/buddy.c:1388 src/protocols/silc/silc.c:47
 #: src/protocols/silc/silc.c:81
 msgid "Away"
@@ -181,7 +181,7 @@ msgstr "दूर"
 
 #. else...
 #: plugins/docklet/docklet.c:183 src/away.c:595
-#: src/protocols/oscar/oscar.c:5706 src/protocols/oscar/oscar.c:6993
+#: src/protocols/oscar/oscar.c:6380 src/protocols/oscar/oscar.c:7667
 msgid "Back"
 msgstr "पीछे"
 
@@ -190,6 +190,7 @@ msgid "Mute Sounds"
 msgstr "आवाज बंद करें"
 
 #: plugins/docklet/docklet.c:196 src/gtkft.c:659
+#: src/protocols/oscar/oscar.c:8176
 msgid "File Transfers"
 msgstr "फ़ाइल हस्तांतरण"
 
@@ -395,23 +396,23 @@ msgstr ""
 " - यह सभी आने वाले शब्दों को उलट देता है\n"
 " -यह आपकी सूची के व्यक्तियों को जब वे लागिन करते हैं, तुरंत संदेश भेजता है."
 
-#: plugins/gaim-remote/remote.c:91
+#: plugins/purple-remote/remote.c:91
 msgid "Not connected to AIM"
 msgstr "एआईएम से कनेक्टेड नहीं है."
 
-#: plugins/gaim-remote/remote.c:100 plugins/gaim-remote/remote.c:139
+#: plugins/purple-remote/remote.c:100 plugins/purple-remote/remote.c:139
 msgid "No screenname given."
 msgstr "कोई स्क्रीन-नाम नहीं दिया है."
 
-#: plugins/gaim-remote/remote.c:176
+#: plugins/purple-remote/remote.c:176
 msgid "No roomname given."
 msgstr "कोई कमरा-नाम नहीं दिया है."
 
-#: plugins/gaim-remote/remote.c:195
+#: plugins/purple-remote/remote.c:195
 msgid "Invalid AIM URI"
 msgstr "अवैध एआईएम यूआरआई"
 
-#: plugins/gaim-remote/remote.c:673
+#: plugins/purple-remote/remote.c:673
 #, c-format
 msgid ""
 "Failed to assign %s to a socket:\n"
@@ -420,7 +421,7 @@ msgstr ""
 "%s को सौकेट पर निर्दिष्ट करने में असमर्थ:\n"
 "%s"
 
-#: plugins/gaim-remote/remote.c:697
+#: plugins/purple-remote/remote.c:697
 msgid "Unable to open socket"
 msgstr "सोकेट खोलने में असमर्थ"
 
@@ -437,7 +438,7 @@ msgstr "सोकेट खोलने में असमर्थ"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/gaim-remote/remote.c:747
+#: plugins/purple-remote/remote.c:747
 msgid "Remote Control"
 msgstr "रिमोट कंट्रोल"
 
@@ -447,16 +448,18 @@ msgstr "रिमोट कंट्रोल"
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/gaim-remote/remote.c:750
-msgid "Provides remote control for gaim applications."
+#: plugins/purple-remote/remote.c:750
+#, fuzzy
+msgid "Provides remote control for libPurple applications."
 msgstr "गेम अनुप्रयोगों के लिए रिमोट कंट्रोल प्रदान करता है"
 
 #  *  description
 #. *  description
-#: plugins/gaim-remote/remote.c:752
+#: plugins/purple-remote/remote.c:752
+#, fuzzy
 msgid ""
 "Gives Pidgin the ability to be remote-controlled through third-party "
-"applications or through the gaim-remote tool."
+"applications or through the purple-remote tool."
 msgstr ""
 "थर्ड पार्टी अनुप्रयोगों या गेम रिमोट उपकरण के द्वारा यह गेम को रिमोट कंट्रोल का सामर्थ्य "
 "प्रदान करता है."
@@ -543,7 +546,7 @@ msgstr "पता  पुस्तक से एक व्यक्ति को
 
 #. "Search"
 #: plugins/gevolution/add_buddy_dialog.c:468
-#: plugins/gevolution/assoc-buddy.c:354 src/protocols/oscar/oscar.c:7269
+#: plugins/gevolution/assoc-buddy.c:354 src/protocols/oscar/oscar.c:7943
 msgid "Search"
 msgstr "खोजें"
 
@@ -587,12 +590,12 @@ msgstr "बड्डी सम्मिलित करें(_A)"
 
 #: plugins/gevolution/eds-utils.c:74 plugins/gevolution/eds-utils.c:87
 #: src/gtkblist.c:3122 src/gtkprefs.c:962 src/gtkprefs.c:1014
-#: src/gtkprefs.c:1827 src/protocols/jabber/jabber.c:949
+#: src/gtkprefs.c:1827 src/protocols/jabber/jabber.c:951
 msgid "None"
 msgstr "कोई नहीं"
 
 #: plugins/gevolution/gevolution.c:93 plugins/gevolution/gevo-util.c:64
-#: src/blist.c:776 src/blist.c:983 src/blist.c:1933 src/gtkblist.c:4001
+#: src/blist.c:776 src/blist.c:983 src/blist.c:1936 src/gtkblist.c:4001
 #: src/protocols/jabber/roster.c:67
 msgid "Buddies"
 msgstr "बड्डीस"
@@ -657,7 +660,7 @@ msgstr "अतिरिक्त सूचना"
 
 #. Label
 #: plugins/gevolution/new_person_dialog.c:335 src/gtkaccount.c:379
-#: src/gtkaccount.c:409 src/protocols/oscar/oscar.c:590
+#: src/gtkaccount.c:409 src/protocols/oscar/oscar.c:599
 msgid "Buddy Icon"
 msgstr "बड्डी आइकोन"
 
@@ -1410,7 +1413,7 @@ msgstr "बड्डी सूची विंडो को ऊपर रखे�
 #  Conversations
 #. Conversations
 #: plugins/win32/winprefs/winprefs.c:382 src/gtkprefs.c:1007
-#: src/gtkprefs.c:2422 src/protocols/msn/msn.c:1811
+#: src/gtkprefs.c:2422
 msgid "Conversations"
 msgstr "वार्तालाप"
 
@@ -1419,14 +1422,15 @@ msgid "_Flash Window when messages are received"
 msgstr "जब संदेश मिलें तो विंडो चमकाएँ (_F)"
 
 #: plugins/win32/winprefs/winprefs.c:407
-msgid "WinPidgin Options"
+#, fuzzy
+msgid "Pidgin-win Options"
 msgstr "विन-गेम विकल्प"
 
 #: plugins/win32/winprefs/winprefs.c:409 plugins/win32/winprefs/winprefs.c:410
 msgid "Options specific to Windows Pidgin."
 msgstr "विंडोस गेम हेतु विशेष विकल्प"
 
-#: src/account.c:298 src/protocols/jabber/jabber.c:1039
+#: src/account.c:298 src/protocols/jabber/jabber.c:1041
 msgid "New passwords do not match."
 msgstr "नया पासवर्ड मेल नहीं खाता."
 
@@ -1461,19 +1465,19 @@ msgstr "कृपया अपना वर्तमान पासवर्ड
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
 #: src/account.c:363 src/connection.c:198 src/gtkblist.c:2492
-#: src/gtkdialogs.c:505 src/gtkdialogs.c:647 src/gtkdialogs.c:701
-#: src/gtkrequest.c:243 src/protocols/jabber/jabber.c:1086
+#: src/gtkdialogs.c:507 src/gtkdialogs.c:649 src/gtkdialogs.c:703
+#: src/gtkrequest.c:243 src/protocols/jabber/jabber.c:1088
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:226
 #: src/protocols/msn/msn.c:241 src/protocols/msn/msn.c:256
-#: src/protocols/msn/msn.c:271 src/protocols/oscar/oscar.c:2413
-#: src/protocols/oscar/oscar.c:3686 src/protocols/oscar/oscar.c:3780
-#: src/protocols/oscar/oscar.c:7056 src/protocols/oscar/oscar.c:7148
-#: src/protocols/oscar/oscar.c:7200 src/protocols/oscar/oscar.c:7286
+#: src/protocols/msn/msn.c:271 src/protocols/oscar/oscar.c:2852
+#: src/protocols/oscar/oscar.c:4347 src/protocols/oscar/oscar.c:4441
+#: src/protocols/oscar/oscar.c:7730 src/protocols/oscar/oscar.c:7822
+#: src/protocols/oscar/oscar.c:7874 src/protocols/oscar/oscar.c:7960
 #: src/protocols/silc/buddy.c:460 src/protocols/silc/buddy.c:1132
 #: src/protocols/silc/chat.c:421 src/protocols/silc/chat.c:459
 #: src/protocols/silc/chat.c:722 src/protocols/silc/ops.c:1081
 #: src/protocols/silc/ops.c:1699 src/protocols/silc/silc.c:711
-#: src/protocols/yahoo/yahoo.c:2938 src/protocols/yahoo/yahoo.c:2947
+#: src/protocols/yahoo/yahoo.c:3021 src/protocols/yahoo/yahoo.c:3030
 #: src/request.h:1245
 msgid "OK"
 msgstr "ठीक"
@@ -1485,28 +1489,28 @@ msgstr "ठीक"
 #: src/account.c:364 src/account.c:402 src/away.c:367 src/connection.c:199
 #: src/gtkaccount.c:2029 src/gtkaccount.c:2568 src/gtkaccount.c:2599
 #: src/gtkblist.c:2493 src/gtkblist.c:4572 src/gtkconn.c:169
-#: src/gtkdialogs.c:506 src/gtkdialogs.c:648 src/gtkdialogs.c:702
-#: src/gtkdialogs.c:800 src/gtkdialogs.c:822 src/gtkdialogs.c:842
-#: src/gtkdialogs.c:879 src/gtkdialogs.c:939 src/gtkdialogs.c:982
-#: src/gtkdialogs.c:1023 src/gtkimhtmltoolbar.c:437 src/gtkprivacy.c:597
+#: src/gtkdialogs.c:508 src/gtkdialogs.c:650 src/gtkdialogs.c:704
+#: src/gtkdialogs.c:802 src/gtkdialogs.c:824 src/gtkdialogs.c:844
+#: src/gtkdialogs.c:881 src/gtkdialogs.c:941 src/gtkdialogs.c:984
+#: src/gtkdialogs.c:1025 src/gtkimhtmltoolbar.c:437 src/gtkprivacy.c:597
 #: src/gtkprivacy.c:610 src/gtkprivacy.c:635 src/gtkprivacy.c:646
 #: src/gtkrequest.c:244 src/protocols/icq/gaim_icq.c:276
 #: src/protocols/jabber/buddy.c:515 src/protocols/jabber/chat.c:754
-#: src/protocols/jabber/jabber.c:678 src/protocols/jabber/jabber.c:1087
+#: src/protocols/jabber/jabber.c:678 src/protocols/jabber/jabber.c:1089
 #: src/protocols/jabber/presence.c:213 src/protocols/jabber/xdata.c:338
 #: src/protocols/msn/msn.c:227 src/protocols/msn/msn.c:242
 #: src/protocols/msn/msn.c:257 src/protocols/msn/msn.c:272
-#: src/protocols/msn/msn.c:289 src/protocols/oscar/oscar.c:1534
-#: src/protocols/oscar/oscar.c:2414 src/protocols/oscar/oscar.c:3644
-#: src/protocols/oscar/oscar.c:3687 src/protocols/oscar/oscar.c:3724
-#: src/protocols/oscar/oscar.c:3781 src/protocols/oscar/oscar.c:7057
-#: src/protocols/oscar/oscar.c:7149 src/protocols/oscar/oscar.c:7201
-#: src/protocols/oscar/oscar.c:7270 src/protocols/oscar/oscar.c:7287
+#: src/protocols/msn/msn.c:289 src/protocols/oscar/oscar.c:1543
+#: src/protocols/oscar/oscar.c:2853 src/protocols/oscar/oscar.c:4305
+#: src/protocols/oscar/oscar.c:4348 src/protocols/oscar/oscar.c:4385
+#: src/protocols/oscar/oscar.c:4442 src/protocols/oscar/oscar.c:7731
+#: src/protocols/oscar/oscar.c:7823 src/protocols/oscar/oscar.c:7875
+#: src/protocols/oscar/oscar.c:7944 src/protocols/oscar/oscar.c:7961
 #: src/protocols/silc/buddy.c:461 src/protocols/silc/buddy.c:1037
 #: src/protocols/silc/buddy.c:1133 src/protocols/silc/chat.c:594
 #: src/protocols/silc/chat.c:723 src/protocols/silc/ops.c:1700
 #: src/protocols/silc/silc.c:712 src/protocols/trepia/trepia.c:348
-#: src/protocols/yahoo/yahoo.c:2939 src/protocols/yahoo/yahoo.c:2948
+#: src/protocols/yahoo/yahoo.c:3022 src/protocols/yahoo/yahoo.c:3031
 #: src/request.h:1245 src/request.h:1255
 msgid "Cancel"
 msgstr "रद्द"
@@ -1552,7 +1556,7 @@ msgid "Remove Away Message"
 msgstr "अनुपस्थिति संदेश हटायें"
 
 #. Remove button
-#: src/away.c:366 src/gtkconv.c:1520 src/gtkconv.c:3902 src/gtkconv.c:3973
+#: src/away.c:366 src/gtkconv.c:1535 src/gtkconv.c:3917 src/gtkconv.c:3988
 #: src/gtkrequest.c:249
 msgid "Remove"
 msgstr "हटाओ"
@@ -1602,7 +1606,7 @@ msgstr "उपयोग(_U)"
 msgid "Chats"
 msgstr "गपशप"
 
-#: src/blist.c:1354
+#: src/blist.c:1357
 #, c-format
 msgid ""
 "%d buddy from group %s was not removed because its account was not logged "
@@ -1617,11 +1621,11 @@ msgstr[1] ""
 "%d बड्डी %s समूह से नहीं निकाले गये क्योंकि उन बड्डीयों ने लॉग इन नहीं किया था। वह बड्डी "
 "और समूह नहीं हटाये गये ।\n"
 
-#: src/blist.c:1363
+#: src/blist.c:1366
 msgid "Group not removed"
 msgstr "समूह हटाए नहीं गए"
 
-#: src/blist.c:2066
+#: src/blist.c:2069
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded, "
 "and the old file has moved to blist.xml~."
@@ -1629,7 +1633,7 @@ msgstr ""
 "आपकी बड्डी सूची के विश्लेषण करने में त्रुटि हुई. यह लोड नहीं हुआ है और पिछली फा़इल का नाम "
 "blist.xml~ रख दिया गया है."
 
-#: src/blist.c:2069
+#: src/blist.c:2072
 msgid "Buddy List Error"
 msgstr "बड्डी सूची त्रुटि"
 
@@ -1656,7 +1660,7 @@ msgid "Unable to send message. The message is too large."
 msgstr "संदेश भेजने में असफल। संदेश बहुत बढ़ा है।"
 
 #: src/conversation.c:237 src/conversation.c:251
-#: src/protocols/oscar/oscar.c:4247
+#: src/protocols/oscar/oscar.c:4908
 #, c-format
 msgid "Unable to send message to %s:"
 msgstr "%s को संदेश भेजने में असमर्थ"
@@ -1857,8 +1861,8 @@ msgstr "ऐक्सपैन्डर आकार"
 msgid "Size of the expander arrow"
 msgstr "ऐक्सपैन्डर तीर का आकार"
 
-#: src/gaim-remote.c:108
-#, c-format
+#: src/purple-remote.c:108
+#, fuzzy, c-format
 msgid ""
 "Usage: %s command [OPTIONS] [URI]\n"
 "\n"
@@ -1867,7 +1871,7 @@ msgid ""
 "       away                     Popup the away dialog with the default "
 "message\n"
 "       back                     Remove the away dialog\n"
-"       quit                     Close running copy of Pidgin\n"
+"       quit                     Close running copy of Gaim\n"
 "\n"
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
@@ -1884,7 +1888,7 @@ msgstr ""
 "    OPTIONS:\n"
 "       -h, --help [command]     Show help for command\n"
 
-#: src/gaim-remote.c:185 src/gaim-remote.c:203
+#: src/purple-remote.c:185 src/purple-remote.c:203
 msgid ""
 "Pidgin not running (on session 0)\n"
 "Is the \"Remote Control\" plugin loaded?\n"
@@ -1892,26 +1896,27 @@ msgstr ""
 "गेम चल नहीं रहा है(%d काल पर)\n"
 "क्या \"रिमोट कंट्रोल\" प्लगिन लोड किया गया है?\n"
 
-#: src/gaim-remote.c:219
+#: src/purple-remote.c:219
+#, fuzzy
 msgid ""
 "\n"
 "Using AIM: URIs:\n"
 "Sending an IM to a screen name:\n"
-"\tgaim-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
+"\tpurple-remote uri 'aim:goim?screenname=Penguin&message=hello+world'\n"
 "In this case, 'Penguin' is the screen name we wish to IM, and 'hello world'\n"
 "is the message to be sent.  '+' must be used in place of spaces.\n"
 "Please note the quoting used above - if you run this from a shell the '&'\n"
 "needs to be escaped, or the command will stop at that point.\n"
 "Also,the following will just open a conversation window to a screen name,\n"
 "with no message:\n"
-"\tgaim-remote uri 'aim:goim?screenname=Penguin'\n"
+"\tpurple-remote uri 'aim:goim?screenname=Penguin'\n"
 "\n"
 "Joining a chat:\n"
-"\tgaim-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
+"\tpurple-remote uri 'aim:gochat?roomname=PenguinLounge'\n"
 "...joins the 'PenguinLounge' chat room.\n"
 "\n"
 "Adding a buddy to your buddy list:\n"
-"\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
+"\tpurple-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 "...prompts you to add 'Penguin' to your buddy list.\n"
 msgstr ""
 "\n"
@@ -1934,7 +1939,7 @@ msgstr ""
 "\tgaim-remote uri 'aim:addbuddy?screenname=Penguin'\n"
 "...prompts you to add 'Penguin' to your buddy list.\n"
 
-#: src/gaim-remote.c:239
+#: src/purple-remote.c:239
 msgid ""
 "\n"
 "Close running copy of Pidgin\n"
@@ -1942,7 +1947,7 @@ msgstr ""
 "\n"
 "चालू गेम की प्रतिलिपि को बंद करें\n"
 
-#: src/gaim-remote.c:243
+#: src/purple-remote.c:243
 msgid ""
 "\n"
 "Mark all accounts as \"away\" with the default message.\n"
@@ -1950,7 +1955,7 @@ msgstr ""
 "\n"
 "सब खातों को डिफाल्ट संदेश से \"अनुपस्थित\" करार दें।\n"
 
-#: src/gaim-remote.c:247
+#: src/purple-remote.c:247
 msgid ""
 "\n"
 "Set all accounts as not away.\n"
@@ -2108,15 +2113,15 @@ msgstr "क्या आप निश्चिता से %s को मिट�
 msgid "Delete"
 msgstr "मिटाएँ"
 
-#: src/gtkaccount.c:2142 src/protocols/oscar/oscar.c:4331
+#: src/gtkaccount.c:2142 src/protocols/oscar/oscar.c:4992
 msgid "Screen Name"
 msgstr "स्क्रीन-नाम:"
 
-#: src/gtkaccount.c:2166 src/protocols/jabber/jabber.c:996
-#: src/protocols/oscar/oscar.c:690 src/protocols/oscar/oscar.c:5786
-#: src/protocols/oscar/oscar.c:6984 src/protocols/silc/silc.c:45
-#: src/protocols/yahoo/yahoo.c:2701 src/protocols/zephyr/zephyr.c:2122
-#: src/protocols/zephyr/zephyr.c:2141
+#: src/gtkaccount.c:2166 src/protocols/jabber/jabber.c:998
+#: src/protocols/oscar/oscar.c:699 src/protocols/oscar/oscar.c:6460
+#: src/protocols/oscar/oscar.c:7658 src/protocols/silc/silc.c:45
+#: src/protocols/yahoo/yahoo.c:2784 src/protocols/zephyr/zephyr.c:2110
+#: src/protocols/zephyr/zephyr.c:2129
 msgid "Online"
 msgstr "ऑनलाइन"
 
@@ -2151,9 +2156,9 @@ msgstr "उपयोगकर्ता को अपनी बड्डी स�
 
 #. Add button
 #: src/gtkaccount.c:2567 src/gtkaccount.c:2598 src/gtkblist.c:4571
-#: src/gtkconv.c:1522 src/gtkconv.c:3895 src/gtkconv.c:3966
+#: src/gtkconv.c:1537 src/gtkconv.c:3910 src/gtkconv.c:3981
 #: src/gtkrequest.c:248 src/protocols/icq/gaim_icq.c:276
-#: src/protocols/jabber/presence.c:212 src/protocols/oscar/oscar.c:3958
+#: src/protocols/jabber/presence.c:212 src/protocols/oscar/oscar.c:4619
 #: src/protocols/silc/chat.c:593
 msgid "Add"
 msgstr "जोड़ें"
@@ -2219,7 +2224,7 @@ msgstr "संपर्क का उपनाम..."
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/gtkblist.c:1207 src/gtkdialogs.c:876 src/gtkdialogs.c:878
+#: src/gtkblist.c:1207 src/gtkdialogs.c:878 src/gtkdialogs.c:880
 msgid "Remove Contact"
 msgstr "संपर्क निकालें"
 
@@ -2266,7 +2271,7 @@ msgstr "सिकुड़िये(_C)"
 msgid "_Expand"
 msgstr "फैलाइये(_E)"
 
-#: src/gtkblist.c:2016 src/gtkconv.c:4538 src/gtkpounce.c:316
+#: src/gtkblist.c:2016 src/gtkconv.c:4553 src/gtkpounce.c:316
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr "आप अभी ऐसे किसी खाते के साथ नहीं हैं जिससे बड्डी को जोड़ सकें।"
@@ -2598,7 +2603,7 @@ msgstr "अनुपस्थित संदेश तय करें"
 
 #: src/gtkblist.c:4112 src/protocols/silc/buddy.c:731
 #: src/protocols/silc/buddy.c:989 src/protocols/silc/buddy.c:1034
-#: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2868
+#: src/protocols/silc/buddy.c:1124 src/protocols/yahoo/yahoo.c:2951
 msgid "Add Buddy"
 msgstr "बड्डी चुनिये"
 
@@ -2728,11 +2733,11 @@ msgstr "मैं गेम प्रयोग कर रहा हूं v%s।
 msgid "Supported debug options are:  version"
 msgstr "समर्थित डीबग विकल्प हैं: अनुवाद"
 
-#: src/gtkconv.c:375
+#: src/gtkconv.c:390
 msgid "No such command (in this context)."
 msgstr "एसा कोइ कमांड नहीं है ( इस प्रसंग में )।"
 
-#: src/gtkconv.c:378
+#: src/gtkconv.c:393
 msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
@@ -2740,45 +2745,45 @@ msgstr ""
 "किसी विशेष कमांड के बारे में जानने के लिए \"/help &lt;command&gt;\" का प्रयोग करें ।\n"
 "इस प्रसंग में यह सभी कमांड उपलब्ध है :\n"
 
-#: src/gtkconv.c:450
+#: src/gtkconv.c:465
 msgid "No such command."
 msgstr "ऐसा कोई निर्देश नहीं है।"
 
-#: src/gtkconv.c:457
+#: src/gtkconv.c:472
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
 msgstr "वाक्यविन्यास त्रुटी: इस कमांड के लिए आपने गलत संख्या के प्रमाण डालें हैं।"
 
-#: src/gtkconv.c:462
+#: src/gtkconv.c:477
 msgid "Your command failed for an unknown reason."
 msgstr "आपका निर्देष अज्ञात कारण से असफल हो गया।"
 
-#: src/gtkconv.c:469
+#: src/gtkconv.c:484
 msgid "That command only works in Chats, not IMs."
 msgstr "यह निर्देष केवल चैट में चलता है, आइऐम में नहीं।"
 
-#: src/gtkconv.c:472
+#: src/gtkconv.c:487
 msgid "That command only works in IMs, not Chats."
 msgstr "यह निर्देष केवल आइऐम में चलता है, चैट में नहीं।"
 
-#: src/gtkconv.c:476
+#: src/gtkconv.c:491
 msgid "That command doesn't work on this protocol."
 msgstr "यह निर्देष इस प्रोटॅकोल में नहीं चलता है।"
 
-#: src/gtkconv.c:719 src/gtkconv.c:745
+#: src/gtkconv.c:734 src/gtkconv.c:760
 msgid "That buddy is not on the same protocol as this chat"
 msgstr "वह बड्डी उस प्रोटॅकोल में नहीं है जिसमें यह चैट है"
 
-#: src/gtkconv.c:739
+#: src/gtkconv.c:754
 msgid ""
 "You are not currently signed on with an account that can invite that buddy."
 msgstr "आप अभी ऐसे किसी खाते के साथ नहीं हैं जिससे बड्डी को आमंत्रण भेज सकें।"
 
-#: src/gtkconv.c:793
+#: src/gtkconv.c:808
 msgid "Invite Buddy Into Chat Room"
 msgstr "बड्डी को चैट कक्ष में आमंत्रित करें"
 
 #. Put our happy label in it.
-#: src/gtkconv.c:823
+#: src/gtkconv.c:838
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
@@ -2786,366 +2791,368 @@ msgstr ""
 "कृपया उपयोगकर्ता का नाम डालिए जिन्हे आप आमंत्रित करना चाहते हैं। अगर आप चाहे तो आमंत्रण "
 "संदेश भी भेज सकते हैं।"
 
-#: src/gtkconv.c:844
+#: src/gtkconv.c:859
 msgid "_Buddy:"
 msgstr "बड्डी(_B):"
 
-#: src/gtkconv.c:864
+#: src/gtkconv.c:879
 msgid "_Message:"
 msgstr "संदेश(_M)"
 
-#: src/gtkconv.c:920 src/gtkconv.c:2645 src/gtkdebug.c:182
+#: src/gtkconv.c:935 src/gtkconv.c:2660 src/gtkdebug.c:182
 msgid "Unable to open file."
 msgstr "फ़ाइल खोलने में असमर्थ"
 
 #  Conversations
-#: src/gtkconv.c:925
+#: src/gtkconv.c:940
 #, c-format
 msgid "<h1>Conversation with %s</h1>\n"
 msgstr "<h1> %s के साथ वार्तालाप</h1>\n"
 
 #  Conversations
-#: src/gtkconv.c:939
+#: src/gtkconv.c:954
 msgid "Save Conversation"
 msgstr "वार्तालाप संचित करें"
 
-#: src/gtkconv.c:1024 src/gtkdebug.c:131
+#: src/gtkconv.c:1039 src/gtkdebug.c:131
 msgid "Find"
 msgstr "खोजें"
 
-#: src/gtkconv.c:1050 src/gtkdebug.c:159
+#: src/gtkconv.c:1065 src/gtkdebug.c:159
 msgid "_Search for:"
 msgstr "के लिए खोज(_S):"
 
-#: src/gtkconv.c:1466
+#: src/gtkconv.c:1481
 msgid "IM"
 msgstr "आईएम(IM)"
 
 #. Send File button
-#: src/gtkconv.c:1475 src/gtkconv.c:3888 src/protocols/oscar/oscar.c:605
+#: src/gtkconv.c:1490 src/gtkconv.c:3903 src/protocols/oscar/oscar.c:614
 msgid "Send File"
 msgstr "फ़ाइल भेजें"
 
-#: src/gtkconv.c:1484
+#: src/gtkconv.c:1499
 msgid "Un-Ignore"
 msgstr "अपेक्षा"
 
-#: src/gtkconv.c:1486 src/gtkprefs.c:831
+#: src/gtkconv.c:1501 src/gtkprefs.c:831
 msgid "Ignore"
 msgstr "उपेक्षा"
 
 #. Info button
-#: src/gtkconv.c:1495 src/gtkconv.c:3909
+#: src/gtkconv.c:1510 src/gtkconv.c:3924
 msgid "Info"
 msgstr "सूचना"
 
-#: src/gtkconv.c:1504
+#: src/gtkconv.c:1519
 msgid "Get Away Msg"
 msgstr "अनुपस्थिति संदेश लायें"
 
-#: src/gtkconv.c:2653
+#: src/gtkconv.c:2668
 msgid "Unable to save icon file to disk."
 msgstr "अइकॉन फ़ाइल को डिस्क में संचित करने में असमर्थ"
 
-#: src/gtkconv.c:2675
+#: src/gtkconv.c:2690
 msgid "Save Icon"
 msgstr "अइकॉन संचित करें"
 
-#: src/gtkconv.c:2705
+#: src/gtkconv.c:2720
 msgid "Animate"
 msgstr "सजीव करें"
 
-#: src/gtkconv.c:2710
+#: src/gtkconv.c:2725
 msgid "Hide Icon"
 msgstr "अइकॉन छुपायें"
 
-#: src/gtkconv.c:2716
+#: src/gtkconv.c:2731
 msgid "Save Icon As..."
 msgstr "अइकॉन इस तरह संचित करें..."
 
-#: src/gtkconv.c:3093
+#: src/gtkconv.c:3108
 msgid "User is typing..."
 msgstr "उपयोगकर्ता टाईप कर रहा है"
 
-#: src/gtkconv.c:3101
+#: src/gtkconv.c:3116
 msgid "User has typed something and paused"
 msgstr "उपयोगकर्ता कुछ टाईप करके ठहर गया है"
 
 #. Build the Send As menu
-#: src/gtkconv.c:3204
+#: src/gtkconv.c:3219
 msgid "_Send As"
 msgstr "ऐसे भेजें(_S)"
 
 #  Conversations
 #. Conversation menu
-#: src/gtkconv.c:3658
+#: src/gtkconv.c:3673
 msgid "/_Conversation"
 msgstr "/वार्ता(_C)"
 
-#: src/gtkconv.c:3660
+#: src/gtkconv.c:3675
 msgid "/Conversation/New Instant _Message..."
 msgstr "/वार्ता/नया इंसटेंट संदेश(_M)..."
 
 #  Conversations
-#: src/gtkconv.c:3665
+#: src/gtkconv.c:3680
 msgid "/Conversation/_Find..."
 msgstr "/वार्ता/खोजें(_F)..."
 
 #  Conversations
-#: src/gtkconv.c:3667
+#: src/gtkconv.c:3682
 msgid "/Conversation/View _Log"
 msgstr "/वार्ता/लॉग देखें(_L)"
 
 #  Conversations
-#: src/gtkconv.c:3668
+#: src/gtkconv.c:3683
 msgid "/Conversation/_Save As..."
 msgstr "/वार्ता/ऐसे संचित करें(_S)..."
 
 #  Conversations
-#: src/gtkconv.c:3670
+#: src/gtkconv.c:3685
 msgid "/Conversation/Clear"
 msgstr "/वार्ता/साफ करें"
 
 #  Conversations
-#: src/gtkconv.c:3674
+#: src/gtkconv.c:3689
 msgid "/Conversation/Se_nd File..."
 msgstr "/वार्ता/फा़इल भेज़ें(_n)..."
 
-#: src/gtkconv.c:3675
+#: src/gtkconv.c:3690
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/वार्ता/नया बड्डी पर झपटा जोड़ें(_P)..."
 
 #  Conversations
-#: src/gtkconv.c:3677
+#: src/gtkconv.c:3692
 msgid "/Conversation/_Get Info"
 msgstr "/वार्ता/जानकारी लायें(_G)"
 
 #  Conversations
-#: src/gtkconv.c:3679
+#: src/gtkconv.c:3694
 msgid "/Conversation/_Warn..."
 msgstr "/वार्ता/चैतावनी दें(_W)..."
 
 #  Conversations
-#: src/gtkconv.c:3681
+#: src/gtkconv.c:3696
 msgid "/Conversation/In_vite..."
 msgstr "/वार्ता/आमंत्रण(_v)..."
 
 #  Conversations
-#: src/gtkconv.c:3686
-msgid "/Conversation/A_lias..."
-msgstr "/वार्ता/उपनाम(_l)..."
+#: src/gtkconv.c:3701
+#, fuzzy
+msgid "/Conversation/Al_ias..."
+msgstr "/वार्ता/उपनाम..."
 
 #  Conversations
-#: src/gtkconv.c:3688
+#: src/gtkconv.c:3703
 msgid "/Conversation/_Block..."
 msgstr "/वार्ता/रोकें(_B)..."
 
 #  Conversations
-#: src/gtkconv.c:3690
+#: src/gtkconv.c:3705
 msgid "/Conversation/_Add..."
 msgstr "/वार्ता/जोड़ें(_A)..."
 
 #  Conversations
-#: src/gtkconv.c:3692
+#: src/gtkconv.c:3707
 msgid "/Conversation/_Remove..."
 msgstr "/वार्ता/निकालें(_R)..."
 
 #  Conversations
-#: src/gtkconv.c:3697
+#: src/gtkconv.c:3712
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/वार्ता/कड़ी भरें(_k)..."
 
 #  Conversations
-#: src/gtkconv.c:3699
+#: src/gtkconv.c:3714
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/वार्ता/चित्र डालें(_e)..."
 
 #  Conversations
-#: src/gtkconv.c:3704
+#: src/gtkconv.c:3719
 msgid "/Conversation/_Close"
 msgstr "/वार्ता/बंद(_C)"
 
 #. Options
-#: src/gtkconv.c:3708
+#: src/gtkconv.c:3723
 msgid "/_Options"
 msgstr "/विकल्प(_O)"
 
-#: src/gtkconv.c:3709
+#: src/gtkconv.c:3724
 msgid "/Options/Enable _Logging"
 msgstr "/विकल्प/लॉगिन चालू करें(_L)"
 
-#: src/gtkconv.c:3710
+#: src/gtkconv.c:3725
 msgid "/Options/Enable _Sounds"
 msgstr "/विकल्प/आवाज़ चालू करें(_S)"
 
-#: src/gtkconv.c:3711
+#: src/gtkconv.c:3726
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/विकल्प/रचना टूलबार दिखायें(_T)"
 
-#: src/gtkconv.c:3712
-msgid "/Options/Show T_imestamps"
-msgstr "/वार्ता/टाइमस्टेंमप्स दिखायें(_i)"
+#: src/gtkconv.c:3727
+#, fuzzy
+msgid "/Options/Show Ti_mestamps"
+msgstr "/विकल्प/टाइमस्टेंमप्स दिखायें"
 
 #  Conversations
-#: src/gtkconv.c:3754
+#: src/gtkconv.c:3769
 msgid "/Conversation/View Log"
 msgstr "/वार्ता/लॉग देखें"
 
 #  Conversations
-#: src/gtkconv.c:3759
+#: src/gtkconv.c:3774
 msgid "/Conversation/Send File..."
 msgstr "/वार्ता/फा़इल भेजें..."
 
-#: src/gtkconv.c:3763
+#: src/gtkconv.c:3778
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/विकल्प/बड्डी झपटा जोड़ें..."
 
 #  Conversations
-#: src/gtkconv.c:3769
+#: src/gtkconv.c:3784
 msgid "/Conversation/Get Info"
 msgstr "/वार्ता/जानकारी लाऐं"
 
 #  Conversations
-#: src/gtkconv.c:3773
+#: src/gtkconv.c:3788
 msgid "/Conversation/Warn..."
 msgstr "/वार्ता/चेतावनी दें..."
 
 #  Conversations
-#: src/gtkconv.c:3777
+#: src/gtkconv.c:3792
 msgid "/Conversation/Invite..."
 msgstr "/वार्ता/आमंत्रण..."
 
 #  Conversations
-#: src/gtkconv.c:3783
+#: src/gtkconv.c:3798
 msgid "/Conversation/Alias..."
 msgstr "/वार्ता/उपनाम..."
 
 #  Conversations
-#: src/gtkconv.c:3787
+#: src/gtkconv.c:3802
 msgid "/Conversation/Block..."
 msgstr "/वार्ता/रोकें..."
 
 #  Conversations
-#: src/gtkconv.c:3791
+#: src/gtkconv.c:3806
 msgid "/Conversation/Add..."
 msgstr "/वार्ता/जोड़ें..."
 
 #  Conversations
-#: src/gtkconv.c:3795
+#: src/gtkconv.c:3810
 msgid "/Conversation/Remove..."
 msgstr "/वार्ता/हटायें..."
 
 #  Conversations
-#: src/gtkconv.c:3801
+#: src/gtkconv.c:3816
 msgid "/Conversation/Insert Link..."
 msgstr "/वार्ता/कड़ी भरें..."
 
 #  Conversations
-#: src/gtkconv.c:3805
+#: src/gtkconv.c:3820
 msgid "/Conversation/Insert Image..."
 msgstr "/वार्ता/चित्र डालें..."
 
-#: src/gtkconv.c:3811
+#: src/gtkconv.c:3826
 msgid "/Options/Enable Logging"
 msgstr "/विकल्प/लॉग करना चालू करें"
 
-#: src/gtkconv.c:3814
+#: src/gtkconv.c:3829
 msgid "/Options/Enable Sounds"
 msgstr "/विकल्प/आवाज़ चालू करें"
 
-#: src/gtkconv.c:3817
+#: src/gtkconv.c:3832
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/विकल्प/रचना टूलबार दिखायें"
 
-#: src/gtkconv.c:3820
+#: src/gtkconv.c:3835
 msgid "/Options/Show Timestamps"
 msgstr "/विकल्प/टाइमस्टेंमप्स दिखायें"
 
 #. The buttons, from left to right
 #. Warn button
-#: src/gtkconv.c:3874
+#: src/gtkconv.c:3889
 msgid "Warn"
 msgstr "चेतावनी दें"
 
-#: src/gtkconv.c:3875
+#: src/gtkconv.c:3890
 msgid "Warn the user"
 msgstr "उपयोगकर्ता को चेतावनी दें"
 
 #. Block button
-#: src/gtkconv.c:3881 src/gtkprivacy.c:634 src/gtkprivacy.c:645
+#: src/gtkconv.c:3896 src/gtkprivacy.c:634 src/gtkprivacy.c:645
 msgid "Block"
 msgstr "रोकें"
 
-#: src/gtkconv.c:3882
+#: src/gtkconv.c:3897
 msgid "Block the user"
 msgstr "उपयोगकर्ता को रोको"
 
-#: src/gtkconv.c:3889
+#: src/gtkconv.c:3904
 msgid "Send a file to the user"
 msgstr "उपयोगकर्ता को फ़ायल भेजें"
 
-#: src/gtkconv.c:3896
+#: src/gtkconv.c:3911
 msgid "Add the user to your buddy list"
 msgstr "उपयोगकर्ता को अपनी बड्डी सूची में जोड़ें।"
 
-#: src/gtkconv.c:3903
+#: src/gtkconv.c:3918
 msgid "Remove the user from your buddy list"
 msgstr "उपयोगकर्ता को अपनी बड्डी सूची में सें निकाले।"
 
-#: src/gtkconv.c:3910 src/gtkconv.c:4245
+#: src/gtkconv.c:3925 src/gtkconv.c:4260
 msgid "Get the user's information"
 msgstr "उपयोगकर्ता की जानकारी लायें"
 
 #. Send button
-#: src/gtkconv.c:3916 src/gtkconv.c:3980
+#: src/gtkconv.c:3931 src/gtkconv.c:3995
 msgid "Send"
 msgstr "भेजो"
 
-#: src/gtkconv.c:3917 src/gtkconv.c:3981
+#: src/gtkconv.c:3932 src/gtkconv.c:3996
 msgid "Send message"
 msgstr "सन्देश भेजो"
 
 #. The buttons, from left to right
 #. Invite
-#: src/gtkconv.c:3959
+#: src/gtkconv.c:3974
 msgid "Invite"
 msgstr "आमंत्रण दें"
 
-#: src/gtkconv.c:3960
+#: src/gtkconv.c:3975
 msgid "Invite a user"
 msgstr "उपयोगकर्ता  को आमंत्रित करें"
 
-#: src/gtkconv.c:3967
+#: src/gtkconv.c:3982
 msgid "Add the chat to your buddy list"
 msgstr "चैट को अपनी बड्डी सूची में जोड़ें"
 
-#: src/gtkconv.c:3974
+#: src/gtkconv.c:3989
 msgid "Remove the chat from your buddy list"
 msgstr "चैट को अपनी बड्डी सूची में से निकालें"
 
-#: src/gtkconv.c:4098
+#: src/gtkconv.c:4113
 msgid "Topic:"
 msgstr "विषय:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:4161
+#: src/gtkconv.c:4176
 msgid "0 people in room"
 msgstr "कक्ष में 0 लोग हैं"
 
-#: src/gtkconv.c:4222
+#: src/gtkconv.c:4237
 msgid "IM the user"
 msgstr "उपयोगकर्ता को आईऐम करें"
 
-#: src/gtkconv.c:4234
+#: src/gtkconv.c:4249
 msgid "Ignore the user"
 msgstr "उपयोगकर्ता की उपेक्षा करें"
 
 #  Conversations
-#: src/gtkconv.c:4833
+#: src/gtkconv.c:4848
 msgid "Close conversation"
 msgstr "वार्तालाप बंद करें"
 
-#: src/gtkconv.c:5370 src/gtkconv.c:5399 src/gtkconv.c:5495 src/gtkconv.c:5553
+#: src/gtkconv.c:5385 src/gtkconv.c:5414 src/gtkconv.c:5510 src/gtkconv.c:5568
 #, fuzzy, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
@@ -3153,28 +3160,34 @@ msgstr[0] "कक्ष में 0 लोग हैं"
 msgstr[1] "कक्ष में 0 लोग हैं"
 
 #  Conversations
-#: src/gtkconv.c:6130 src/gtkconv.c:6133
+#: src/gtkconv.c:6145 src/gtkconv.c:6148
 msgid "<main>/Conversation/Close"
 msgstr "<main>/वार्ता/बंद"
 
-#: src/gtkconv.c:6505
+#: src/gtkconv.c:6520
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
 msgstr ""
 "बोलें &lt;संदेश&gt;: सामान्य तरीके से संदेश भेजें जैसे कि आप कमांड का प्रयोग ना कर रहे हों।"
 
-#: src/gtkconv.c:6508
+#: src/gtkconv.c:6523
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr "में &lt;क्रिया&gt;: किसी बड्डी या चैट को आइ आर सी रुपी क्रिया भेजें।"
 
-#: src/gtkconv.c:6511
+#: src/gtkconv.c:6526
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
 msgstr "डीबग &lt;विकल्प&gt;: विस्तृत डीबग जानकारी वर्तमान वार्तालाप को भेजें।"
 
-#: src/gtkconv.c:6515
+#  Remove on type button
+#: src/gtkconv.c:6529
+#, fuzzy
+msgid "clear: Clears the conversation scrollback."
+msgstr "%s ने वार्तालाप विंडो को बंद कर दिया है ।"
+
+#: src/gtkconv.c:6532
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "मदद &lt;कमांड&gt;: किसी एक कमांड पर मदद।"
 
@@ -3249,7 +3262,7 @@ msgstr "हेकर तथा ओहदेदार चालक [लेज़�
 msgid "Azerbaijani"
 msgstr "सर्बियाइ"
 
-#: src/gtkdialogs.c:103 src/gtkdialogs.c:149
+#: src/gtkdialogs.c:103 src/gtkdialogs.c:151
 msgid "Bulgarian"
 msgstr "बुल्गारियाई"
 
@@ -3257,11 +3270,11 @@ msgstr "बुल्गारियाई"
 msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
 msgstr "व्लाडीमीरा गिरगीनोवा और व्लाडीमिर (कालाडान) पेटकोव"
 
-#: src/gtkdialogs.c:104 src/gtkdialogs.c:150 src/gtkdialogs.c:151
+#: src/gtkdialogs.c:104 src/gtkdialogs.c:152 src/gtkdialogs.c:153
 msgid "Catalan"
 msgstr "केटालन"
 
-#: src/gtkdialogs.c:105 src/gtkdialogs.c:152
+#: src/gtkdialogs.c:105 src/gtkdialogs.c:154
 msgid "Czech"
 msgstr "चेक"
 
@@ -3269,7 +3282,7 @@ msgstr "चेक"
 msgid "Danish"
 msgstr "डेनिश"
 
-#: src/gtkdialogs.c:107 src/gtkdialogs.c:153
+#: src/gtkdialogs.c:107 src/gtkdialogs.c:155
 msgid "German"
 msgstr "जर्मनी"
 
@@ -3285,7 +3298,7 @@ msgstr "अंग्रेजी (CAN)"
 msgid "British English"
 msgstr "अंग्रेजी (UK)"
 
-#: src/gtkdialogs.c:111 src/gtkdialogs.c:154
+#: src/gtkdialogs.c:111 src/gtkdialogs.c:156
 msgid "Spanish"
 msgstr "स्पेनी"
 
@@ -3293,153 +3306,162 @@ msgstr "स्पेनी"
 msgid "Estonian"
 msgstr "एसटोनियन"
 
-#: src/gtkdialogs.c:113 src/gtkdialogs.c:155
+#: src/gtkdialogs.c:113 src/gtkdialogs.c:157
 msgid "Finnish"
 msgstr "फिनिश"
 
-#: src/gtkdialogs.c:114 src/gtkdialogs.c:156
+#: src/gtkdialogs.c:114 src/gtkdialogs.c:158
 msgid "French"
 msgstr "फ्रेंच"
 
 #: src/gtkdialogs.c:115
+#, fuzzy
+msgid "Galician"
+msgstr "इतालवी"
+
+#: src/gtkdialogs.c:116
 msgid "Hebrew"
 msgstr " हिब्रू"
 
-#: src/gtkdialogs.c:116 src/gtkdialogs.c:157
+#: src/gtkdialogs.c:117 src/gtkdialogs.c:159
 msgid "Hindi"
 msgstr "हिन्दी"
 
-#: src/gtkdialogs.c:117 src/gtkdialogs.c:158
+#: src/gtkdialogs.c:118 src/gtkdialogs.c:160
 msgid "Hungarian"
 msgstr "हंगेरियाई"
 
-#: src/gtkdialogs.c:118 src/gtkdialogs.c:159
+#: src/gtkdialogs.c:119 src/gtkdialogs.c:161
 msgid "Italian"
 msgstr "इतालवी"
 
-#: src/gtkdialogs.c:119 src/gtkdialogs.c:160
+#: src/gtkdialogs.c:120 src/gtkdialogs.c:162
 msgid "Japanese"
 msgstr "जापानी"
 
-#: src/gtkdialogs.c:120
+#: src/gtkdialogs.c:121
 msgid "Georgian"
 msgstr "जौर्जियन"
 
-#: src/gtkdialogs.c:121 src/gtkdialogs.c:161
+#: src/gtkdialogs.c:122 src/gtkdialogs.c:163
 msgid "Korean"
 msgstr "कोरियाई"
 
-#: src/gtkdialogs.c:122
+#: src/gtkdialogs.c:123
 msgid "Lithuanian"
 msgstr "लिथुवानियन"
 
-#: src/gtkdialogs.c:123
+#: src/gtkdialogs.c:124
 msgid "Macedonian"
 msgstr "मेसिडोनियन"
 
-#: src/gtkdialogs.c:124
+#: src/gtkdialogs.c:125
 msgid "Burmese"
 msgstr "बर्मी"
 
-#: src/gtkdialogs.c:125
+#: src/gtkdialogs.c:126 src/gtkdialogs.c:164
+msgid "Norwegian"
+msgstr "नारवेजियन "
+
+#: src/gtkdialogs.c:127
 msgid "Dutch; Flemish"
 msgstr "डच; फ्लेमिश"
 
-#: src/gtkdialogs.c:126
+#: src/gtkdialogs.c:128
 #, fuzzy
 msgid "Norwegian (Nynorsk)"
 msgstr "नारवेजियन "
 
-#: src/gtkdialogs.c:127 src/gtkdialogs.c:162
-msgid "Norwegian"
-msgstr "नारवेजियन "
-
-#: src/gtkdialogs.c:128
+#: src/gtkdialogs.c:129
 msgid "Punjabi"
 msgstr ""
 
-#: src/gtkdialogs.c:129 src/gtkdialogs.c:163
+#: src/gtkdialogs.c:130 src/gtkdialogs.c:165
 msgid "Polish"
 msgstr "पोलिष"
 
-#: src/gtkdialogs.c:130
+#: src/gtkdialogs.c:131
 msgid "Portuguese"
 msgstr "पुर्तगाली"
 
-#: src/gtkdialogs.c:131
+#: src/gtkdialogs.c:132
 msgid "Portuguese-Brazil"
 msgstr "पुर्तगाली (ब्राजीलीयाइ)"
 
-#: src/gtkdialogs.c:132
+#: src/gtkdialogs.c:133
 msgid "Romanian"
 msgstr "रोमानी"
 
-#: src/gtkdialogs.c:133 src/gtkdialogs.c:164 src/gtkdialogs.c:165
+#: src/gtkdialogs.c:134 src/gtkdialogs.c:166 src/gtkdialogs.c:167
 msgid "Russian"
 msgstr "रूसी"
 
-#: src/gtkdialogs.c:134
+#: src/gtkdialogs.c:135
 msgid "Slovenian"
 msgstr "स्लोवाक"
 
-#: src/gtkdialogs.c:135
+#: src/gtkdialogs.c:136
 msgid "Albanian"
 msgstr "अलबेनी"
 
-#: src/gtkdialogs.c:136
+#: src/gtkdialogs.c:137
 msgid "Serbian"
 msgstr "सर्बियाइ"
 
-#: src/gtkdialogs.c:137 src/gtkdialogs.c:167 src/gtkdialogs.c:168
+#: src/gtkdialogs.c:138 src/gtkdialogs.c:169 src/gtkdialogs.c:170
 msgid "Swedish"
 msgstr "स्वीडिश"
 
-#: src/gtkdialogs.c:138
+#: src/gtkdialogs.c:139
 msgid "Turkish"
 msgstr "टुर्की"
 
-#: src/gtkdialogs.c:139
+#: src/gtkdialogs.c:140
 msgid "Ukrainian"
 msgstr "युकरेनियन"
 
-#: src/gtkdialogs.c:140
+#: src/gtkdialogs.c:141
 msgid "Vietnamese"
 msgstr "वियतनामी"
 
-#: src/gtkdialogs.c:140
+#: src/gtkdialogs.c:141
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "टी. एम. थान्ह और गह्नोम-वीआइ मण्डली"
 
-#: src/gtkdialogs.c:141
+#: src/gtkdialogs.c:142
+msgid "Xhosa"
+msgstr ""
+
+#: src/gtkdialogs.c:143
 msgid "Simplified Chinese"
 msgstr "सरलीकृत चीनी"
 
-#: src/gtkdialogs.c:142
+#: src/gtkdialogs.c:144
 msgid "Traditional Chinese"
 msgstr "पारम्परिक चीनी"
 
-#: src/gtkdialogs.c:148
+#: src/gtkdialogs.c:150
 msgid "Amharic"
 msgstr "अम्हारिक"
 
-#: src/gtkdialogs.c:166
+#: src/gtkdialogs.c:168
 msgid "Slovak"
 msgstr "स्लोवाक"
 
-#: src/gtkdialogs.c:169
+#: src/gtkdialogs.c:171
 msgid "Chinese"
 msgstr "चीनी"
 
-#: src/gtkdialogs.c:211
+#: src/gtkdialogs.c:213
 msgid "About Pidgin"
 msgstr "गेम के बारे में"
 
-#: src/gtkdialogs.c:226
+#: src/gtkdialogs.c:228
 #, c-format
 msgid "<span weight=\"bold\" size=\"larger\">Pidgin v%s</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">गेम v%s</span>"
 
-#: src/gtkdialogs.c:248
+#: src/gtkdialogs.c:250
 msgid ""
 "Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
@@ -3449,74 +3471,74 @@ msgstr ""
 "ज़ेबल, नेपस्टर, ज़ेफायर, तथा गडू-गडू इन सभी को एक साथ उपयोग में ला सकता है. इसे जीटीके+ के "
 "उपयोग से लिखा गया है और जीपीएल लाइसेंस के तहत है.<BR><BR>"
 
-#: src/gtkdialogs.c:258
+#: src/gtkdialogs.c:260
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim irc.freenode.net पर<BR><BR>"
 
-#: src/gtkdialogs.c:261
+#: src/gtkdialogs.c:263
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"3\">IRC:</FONT> #गेम irc.freenode.net पर<BR><BR>"
 
-#: src/gtkdialogs.c:267
+#: src/gtkdialogs.c:269
 msgid "Active Developers"
 msgstr "सक्रिय डेवलपर्स"
 
-#: src/gtkdialogs.c:282
+#: src/gtkdialogs.c:284
 msgid "Crazy Patch Writers"
 msgstr "क्रेजी पैच लेखकगण"
 
-#: src/gtkdialogs.c:297
+#: src/gtkdialogs.c:299
 msgid "Retired Developers"
 msgstr "सेवानिवृत्त डेवलपर्स"
 
-#: src/gtkdialogs.c:312
+#: src/gtkdialogs.c:314
 msgid "Current Translators"
 msgstr "वर्तमान अनुवादक - रविशंकर श्रीवास्तव (raviratlami@yahoo.com)"
 
-#: src/gtkdialogs.c:332
+#: src/gtkdialogs.c:334
 msgid "Past Translators"
 msgstr "पूर्व अनुवादकः रविशंकर श्रीवास्तव (raviratlami@yahoo.com)"
 
-#: src/gtkdialogs.c:487 src/gtkdialogs.c:629 src/gtkdialogs.c:682
+#: src/gtkdialogs.c:489 src/gtkdialogs.c:631 src/gtkdialogs.c:684
 msgid "_Screen name"
 msgstr "स्क्रीन-नाम(_S)"
 
 #  And now for the buttons
-#: src/gtkdialogs.c:493 src/gtkdialogs.c:635 src/gtkdialogs.c:688
+#: src/gtkdialogs.c:495 src/gtkdialogs.c:637 src/gtkdialogs.c:690
 msgid "_Account"
 msgstr "खाता(_A)"
 
-#: src/gtkdialogs.c:500
+#: src/gtkdialogs.c:502
 msgid "New Instant Message"
 msgstr "नया इंस्टेंट संदेश"
 
-#: src/gtkdialogs.c:502
+#: src/gtkdialogs.c:504
 msgid "Please enter the screen name of the person you would like to IM."
 msgstr "कृप्या जिसे आप आइ एम करना चाहते हैं उसका स्क्रीन नाम भरें।"
 
-#: src/gtkdialogs.c:642
+#: src/gtkdialogs.c:644
 msgid "Get User Info"
 msgstr "उपयोगकर्ता की जानकारी लाऐं"
 
-#: src/gtkdialogs.c:644
+#: src/gtkdialogs.c:646
 msgid ""
 "Please enter the screen name of the person whose info you would like to view."
 msgstr "कृप्या उस व्यक्ति का स्क्रीन नाम भरें जिसके बारे में आप जानकारी देखना चाहतें हैं।"
 
-#: src/gtkdialogs.c:696
+#: src/gtkdialogs.c:698
 msgid "Get User Log"
 msgstr "उपयोगकर्ता का लॉग लाऐं"
 
-#: src/gtkdialogs.c:698
+#: src/gtkdialogs.c:700
 msgid ""
 "Please enter the screen name of the person whose log you would like to view."
 msgstr "कृप्या उस व्यक्ति का स्क्रीन नाम भरें जिसके लॉग आप देखना चाहतें हैं।"
 
-#: src/gtkdialogs.c:738
+#: src/gtkdialogs.c:740
 msgid "Warn User"
 msgstr "उपभोक्ता को सचेत करें"
 
-#: src/gtkdialogs.c:759
+#: src/gtkdialogs.c:761
 #, c-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n"
@@ -3528,45 +3550,45 @@ msgstr ""
 "\n"
 "इस से %s's का चेतावनी के नियम बढ़ जायगा और उसके उपर कठोर माप सीमा लागू होगी।\n"
 
-#: src/gtkdialogs.c:768
+#: src/gtkdialogs.c:770
 msgid "Warn _anonymously?"
 msgstr "बेनामी से सचेत करें(_a)"
 
-#: src/gtkdialogs.c:775
+#: src/gtkdialogs.c:777
 msgid "<b>Anonymous warnings are less severe.</b>"
 msgstr "<b>बेनामी चेतावनियां कम कठोर हैं।</b>"
 
-#: src/gtkdialogs.c:796
+#: src/gtkdialogs.c:798
 msgid "Alias Contact"
 msgstr "संपर्क का उपनाम..."
 
-#: src/gtkdialogs.c:797
+#: src/gtkdialogs.c:799
 msgid "Enter an alias for this contact."
 msgstr "इस संपर्क का उपनाम भरें।"
 
-#: src/gtkdialogs.c:799 src/gtkdialogs.c:821 src/gtkdialogs.c:841
+#: src/gtkdialogs.c:801 src/gtkdialogs.c:823 src/gtkdialogs.c:843
 #: src/gtkrequest.c:251 src/protocols/silc/chat.c:584
 msgid "Alias"
 msgstr "उपनाम:"
 
-#: src/gtkdialogs.c:817
+#: src/gtkdialogs.c:819
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "%s का उपनाम भरें।"
 
-#: src/gtkdialogs.c:819
+#: src/gtkdialogs.c:821
 msgid "Alias Buddy"
 msgstr "बड्डी का उपनाम"
 
-#: src/gtkdialogs.c:838
+#: src/gtkdialogs.c:840
 msgid "Alias Chat"
 msgstr "चैट का उपनाम"
 
-#: src/gtkdialogs.c:839
+#: src/gtkdialogs.c:841
 msgid "Enter an alias for this chat."
 msgstr "इस चैट का उपनाम भरें।"
 
-#: src/gtkdialogs.c:873
+#: src/gtkdialogs.c:875
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddies from "
@@ -3575,7 +3597,7 @@ msgstr ""
 "आप अपनी बड्डी सूची उस संपर्क को, जिसमें %s है उसे और %d दूसरें मित्रों को मिटाने जा रहें हैं। "
 "क्या आप आगे बढ़ना चाहतें हैं?"
 
-#: src/gtkdialogs.c:934
+#: src/gtkdialogs.c:936
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -3589,21 +3611,21 @@ msgstr "आप अपनी बड्डी सूची से %s समूह 
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/gtkdialogs.c:937 src/gtkdialogs.c:938
+#: src/gtkdialogs.c:939 src/gtkdialogs.c:940
 msgid "Remove Group"
 msgstr "समूह मिटाओ"
 
-#: src/gtkdialogs.c:976
+#: src/gtkdialogs.c:978
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "आप अपनी बड्डी सूची से %s को मिटाने जा रहें हैं। क्या आप आगे बढ़ना चाहतें हैं?"
 
-#: src/gtkdialogs.c:979 src/gtkdialogs.c:981
+#: src/gtkdialogs.c:981 src/gtkdialogs.c:983
 msgid "Remove Buddy"
 msgstr "बड्डी निकालें"
 
-#: src/gtkdialogs.c:1018
+#: src/gtkdialogs.c:1020
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
@@ -3617,7 +3639,7 @@ msgstr "आप अपनी बड्डी सूची से %s चैट क
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/gtkdialogs.c:1021 src/gtkdialogs.c:1022
+#: src/gtkdialogs.c:1023 src/gtkdialogs.c:1024
 msgid "Remove Chat"
 msgstr "चैट हटाऐं"
 
@@ -3738,45 +3760,45 @@ msgstr "फिर से आरम्भ करें(_R)"
 msgid "Failed"
 msgstr "असफल हुआ"
 
-#: src/gtkimhtml.c:693
+#: src/gtkimhtml.c:699
 msgid "Pa_ste As Text"
 msgstr "टेक्स्ट् कि तरह चिपकायें"
 
-#: src/gtkimhtml.c:1087
+#: src/gtkimhtml.c:1093
 msgid "Hyperlink color"
 msgstr "हाइपरलिंक रंग"
 
-#: src/gtkimhtml.c:1088
+#: src/gtkimhtml.c:1094
 msgid "Color to draw hyperlinks."
 msgstr "हाइपरलिंक खींचना का रंग।"
 
-#: src/gtkimhtml.c:1296
+#: src/gtkimhtml.c:1303
 msgid "_Copy E-Mail Address"
 msgstr "इमेल पते की प्रतिलिपि बनायें(_C)"
 
-#: src/gtkimhtml.c:1308
+#: src/gtkimhtml.c:1315
 msgid "_Copy Link Location"
 msgstr "कड़ी के स्थान की प्रतिलिपि बनायें(_C)"
 
-#: src/gtkimhtml.c:1318
+#: src/gtkimhtml.c:1325
 msgid "_Open Link in Browser"
 msgstr "कड़ी को ब्राउज़र में खोलें(_O)"
 
-#: src/gtkimhtml.c:2915
+#: src/gtkimhtml.c:2942
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
 "Defaulting to PNG."
 msgstr ""
 
-#: src/gtkimhtml.c:2918
+#: src/gtkimhtml.c:2945
 msgid ""
 "Unrecognized file type\n"
 "\n"
 "Defaulting to PNG."
 msgstr ""
 
-#: src/gtkimhtml.c:2931
+#: src/gtkimhtml.c:2958
 #, fuzzy, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -3787,7 +3809,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/gtkimhtml.c:2934
+#: src/gtkimhtml.c:2961
 #, fuzzy, c-format
 msgid ""
 "Error saving image\n"
@@ -3795,11 +3817,11 @@ msgid ""
 "%s"
 msgstr "चित्र को संचित करने में त्रुटि: %s"
 
-#: src/gtkimhtml.c:3014 src/gtkimhtml.c:3026
+#: src/gtkimhtml.c:3041 src/gtkimhtml.c:3053
 msgid "Save Image"
 msgstr "चित्र संचित करें"
 
-#: src/gtkimhtml.c:3054
+#: src/gtkimhtml.c:3081
 msgid "_Save Image..."
 msgstr "चित्र संचित करें...(_S)"
 
@@ -3905,7 +3927,7 @@ msgid "Insert smiley"
 msgstr "स्माइली डालें"
 
 #  Conversations
-#: src/gtklog.c:316
+#: src/gtklog.c:318
 #, c-format
 msgid "Conversations with %s"
 msgstr "%s के साथ वार्तालाप"
@@ -3918,7 +3940,7 @@ msgstr "%s के साथ वार्तालाप"
 #  *< priority
 #  *< id
 #. Window **********
-#: src/gtklog.c:412 src/gtklog.c:429
+#: src/gtklog.c:414 src/gtklog.c:431
 msgid "System Log"
 msgstr "तंत्र लौग"
 
@@ -4363,8 +4385,8 @@ msgstr "दाहिना"
 msgid "New conversation _placement:"
 msgstr "नए वार्तालाप का स्थान(_p)"
 
-#: src/gtkprefs.c:1127 src/protocols/oscar/oscar.c:748
-#: src/protocols/oscar/oscar.c:5198
+#: src/gtkprefs.c:1127 src/protocols/oscar/oscar.c:757
+#: src/protocols/oscar/oscar.c:5859
 msgid "IP Address"
 msgstr "आइ पी पता"
 
@@ -4616,7 +4638,7 @@ msgstr "जब बेकार और अनुपस्थित"
 
 #: src/gtkprefs.c:1824 src/protocols/msn/msn.c:1327
 #: src/protocols/msn/state.c:32 src/protocols/novell/novell.c:2806
-#: src/protocols/oscar/oscar.c:4346 src/protocols/yahoo/yahoo.c:2697
+#: src/protocols/oscar/oscar.c:5007 src/protocols/yahoo/yahoo.c:2780
 #: src/protocols/yahoo/yahoo_profile.c:664
 msgid "Idle"
 msgstr " बेकार"
@@ -4763,7 +4785,7 @@ msgstr "सब उपभोक्ताओं को रोकों"
 msgid "Block only the users below"
 msgstr "केवल निम्नलिखित उपयोगकर्तौं को रोकें"
 
-#: src/gtkprivacy.c:397 src/protocols/jabber/jabber.c:1504
+#: src/gtkprivacy.c:397 src/protocols/jabber/jabber.c:1539
 msgid "Privacy"
 msgstr "गुप्पता"
 
@@ -4946,7 +4968,7 @@ msgstr "<b><font color=\"red\">लॉगर में पढ़ने का त
 msgid "XML"
 msgstr "एक्सएमएल (XML)"
 
-#: src/log.c:608
+#: src/log.c:609
 #, c-format
 msgid ""
 "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-"
@@ -4955,7 +4977,7 @@ msgstr ""
 "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;स्वतः जवाब "
 "दें&gt;:</b></font> %s<br/>\n"
 
-#: src/log.c:610
+#: src/log.c:611
 #, c-format
 msgid ""
 "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-"
@@ -4964,25 +4986,25 @@ msgstr ""
 "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;स्वतः जवाब "
 "दें&gt;:</b></font> %s<br/>\n"
 
-#: src/log.c:661 src/log.c:791
+#: src/log.c:662 src/log.c:792
 msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
 msgstr "<font color=\"red\"><b>लॉग खोजने में असफल!</b></font>"
 
-#: src/log.c:671 src/log.c:803
+#: src/log.c:672 src/log.c:804
 #, c-format
 msgid "<font color=\"red\"><b>Could not read file: %s</b></font>"
 msgstr "<font color=\"red\"><b>फा़इल पढ़ नहीं पाया: %s</b></font>"
 
-#: src/log.c:675
+#: src/log.c:676
 msgid "HTML"
 msgstr "ऐचटीऐमऐल(HTML)"
 
-#: src/log.c:736
+#: src/log.c:737
 #, c-format
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <स्वतः जवाब दें>: %s\n"
 
-#: src/log.c:807
+#: src/log.c:808
 msgid "Plain text"
 msgstr "सादा टेक्स्ट्"
 
@@ -5063,9 +5085,9 @@ msgstr "पसंद लोड करने में असमर्थ"
 
 #: src/main.c:895
 msgid ""
-"Pidgin was not able to load your preferences because they are stored in an old "
-"format that is no longer used.  Please reconfigure your settings using the "
-"Preferences window."
+"Pidgin was not able to load your preferences because they are stored in an "
+"old format that is no longer used.  Please reconfigure your settings using "
+"the Preferences window."
 msgstr ""
 "गेम आपकी पसंदों को लोड नहीं कर पाया क्योंकि वह पुरानी रचना में है जोकि अब प्रयोग में नहीं "
 "है। कृपया पसंदों कि विंडो से उनकी पुनः संरचना करें।"
@@ -5096,8 +5118,8 @@ msgstr "थोड़ा कम विनोदहीन डिफाल्ट"
 #: src/protocols/msn/state.c:30 src/protocols/msn/state.c:37
 #: src/protocols/msn/state.c:38 src/protocols/novell/novell.c:2797
 #: src/protocols/novell/novell.c:2916 src/protocols/novell/novell.c:2967
-#: src/protocols/oscar/oscar.c:770 src/protocols/yahoo/yahoo.c:3042
-#: src/protocols/yahoo/yahoo.c:3158
+#: src/protocols/oscar/oscar.c:779 src/protocols/yahoo/yahoo.c:3125
+#: src/protocols/yahoo/yahoo.c:3241
 msgid "Available"
 msgstr "उपलब्ध"
 
@@ -5109,12 +5131,12 @@ msgstr "केवल मित्रों के लिए उपस्थि�
 msgid "Away for friends only"
 msgstr "केवल मित्रों के लिए अनुपस्थित"
 
-#: src/protocols/gg/gg.c:54 src/protocols/jabber/jabber.c:1002
-#: src/protocols/jabber/presence.c:139 src/protocols/oscar/oscar.c:688
-#: src/protocols/oscar/oscar.c:5701 src/protocols/oscar/oscar.c:5779
-#: src/protocols/oscar/oscar.c:5803 src/protocols/oscar/oscar.c:6990
-#: src/protocols/oscar/oscar.c:6995 src/protocols/yahoo/yahoo.c:2695
-#: src/protocols/yahoo/yahoo.c:3062 src/protocols/yahoo/yahoo.c:3170
+#: src/protocols/gg/gg.c:54 src/protocols/jabber/jabber.c:1004
+#: src/protocols/jabber/presence.c:139 src/protocols/oscar/oscar.c:697
+#: src/protocols/oscar/oscar.c:6375 src/protocols/oscar/oscar.c:6453
+#: src/protocols/oscar/oscar.c:6477 src/protocols/oscar/oscar.c:7664
+#: src/protocols/oscar/oscar.c:7669 src/protocols/yahoo/yahoo.c:2778
+#: src/protocols/yahoo/yahoo.c:3145 src/protocols/yahoo/yahoo.c:3253
 msgid "Invisible"
 msgstr "अद्रश्य"
 
@@ -5157,7 +5179,7 @@ msgstr "प्रमाणीकरण असफल।"
 msgid "Unknown Error Code."
 msgstr "अज्ञात त्रुटि कोड"
 
-#: src/protocols/gg/gg.c:243 src/protocols/oscar/oscar.c:4147
+#: src/protocols/gg/gg.c:243 src/protocols/oscar/oscar.c:4808
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 msgstr "<B>यू आइ एन:</B> %s<BR><B>वस्तुस्थिति:</B> %s<HR>%s"
@@ -5165,10 +5187,10 @@ msgstr "<B>यू आइ एन:</B> %s<BR><B>वस्तुस्थिति:
 #. res[0] == username
 #. XXX this should use gaim_notify_userinfo, but it is unclear to me what should be passed for 'who'
 #: src/protocols/gg/gg.c:244 src/protocols/gg/gg.c:1013
-#: src/protocols/napster/napster.c:404 src/protocols/oscar/oscar.c:4151
-#: src/protocols/oscar/oscar.c:4375 src/protocols/silc/ops.c:1086
+#: src/protocols/napster/napster.c:404 src/protocols/oscar/oscar.c:4812
+#: src/protocols/oscar/oscar.c:5036 src/protocols/silc/ops.c:1086
 #: src/protocols/silc/ops.c:1148 src/protocols/toc/toc.c:468
-#: src/protocols/zephyr/zephyr.c:720 src/protocols/zephyr/zephyr.c:1130
+#: src/protocols/zephyr/zephyr.c:726 src/protocols/zephyr/zephyr.c:1136
 msgid "Buddy Information"
 msgstr "बड्डी की जानकारी"
 
@@ -5188,8 +5210,8 @@ msgstr "सोकेट पढ़ने में असमर्थ"
 #. we didn't successfully connect. tdt->toc_fd is valid here
 #: src/protocols/gg/gg.c:674 src/protocols/icq/gaim_icq.c:343
 #: src/protocols/napster/napster.c:486 src/protocols/napster/napster.c:517
-#: src/protocols/toc/toc.c:170 src/protocols/yahoo/yahoo.c:2335
-#: src/protocols/yahoo/yahoo.c:2364 src/protocols/yahoo/yahoo.c:2427
+#: src/protocols/toc/toc.c:170 src/protocols/yahoo/yahoo.c:2407
+#: src/protocols/yahoo/yahoo.c:2436 src/protocols/yahoo/yahoo.c:2499
 #: src/protocols/yahoo/yahoo_filexfer.c:68
 #: src/protocols/yahoo/yahoo_filexfer.c:111 src/protocols/yahoo/ycht.c:482
 msgid "Unable to connect."
@@ -5253,25 +5275,25 @@ msgstr "गाडू-गाडू खोज यन्त्र"
 msgid "Active"
 msgstr "क्रियाशील"
 
-#: src/protocols/gg/gg.c:955 src/protocols/oscar/oscar.c:5190
+#: src/protocols/gg/gg.c:955 src/protocols/oscar/oscar.c:5851
 msgid "UIN"
 msgstr "यूआईऐन(UIN)"
 
 #. First Name
 #: src/protocols/gg/gg.c:959 src/protocols/jabber/jabber.c:624
-#: src/protocols/oscar/oscar.c:5201 src/protocols/silc/ops.c:808
+#: src/protocols/oscar/oscar.c:5862 src/protocols/silc/ops.c:808
 #: src/protocols/trepia/trepia.c:268
 msgid "First Name"
 msgstr "पहला नाम"
 
 #. Last Name
 #: src/protocols/gg/gg.c:964 src/protocols/jabber/jabber.c:629
-#: src/protocols/oscar/oscar.c:5202 src/protocols/trepia/trepia.c:275
+#: src/protocols/oscar/oscar.c:5863 src/protocols/trepia/trepia.c:275
 msgid "Last Name"
 msgstr "अंतिम नाम"
 
 #: src/protocols/gg/gg.c:968 src/protocols/gg/gg.c:1712
-#: src/protocols/irc/msgs.c:219 src/protocols/oscar/oscar.c:5191
+#: src/protocols/irc/msgs.c:219 src/protocols/oscar/oscar.c:5852
 #: src/protocols/silc/ops.c:1204
 msgid "Nick"
 msgstr "उप-नाम"
@@ -5287,7 +5309,7 @@ msgstr "लिंग"
 
 #. City
 #: src/protocols/gg/gg.c:992 src/protocols/jabber/jabber.c:639
-#: src/protocols/oscar/oscar.c:5245 src/protocols/oscar/oscar.c:5253
+#: src/protocols/oscar/oscar.c:5906 src/protocols/oscar/oscar.c:5914
 #: src/protocols/trepia/trepia.c:332 src/protocols/trepia/trepia.c:411
 msgid "City"
 msgstr "नगर"
@@ -5330,8 +5352,8 @@ msgstr "गाडू-गाडू के सवर्र से बात कर
 
 #: src/protocols/gg/gg.c:1265
 msgid ""
-"Pidgin was unable to complete your request due to a problem communicating with "
-"the Gadu-Gadu HTTP server.  Please try again later."
+"Pidgin was unable to complete your request due to a problem communicating "
+"with the Gadu-Gadu HTTP server.  Please try again later."
 msgstr ""
 "गेम आपकी गुज़ारिश पूरी नहीं कर पाया क्योंकि गाडू-गाडू के एच टी टी पी सवर्र से संपर्क करने में "
 "समस्या आयी। कृप्या कुछ समय पशचात प्रयास करें।"
@@ -5353,7 +5375,8 @@ msgstr "बड्डी सूची निर्यात नहीं कर �
 
 #: src/protocols/gg/gg.c:1369 src/protocols/gg/gg.c:1392
 msgid ""
-"Pidgin was unable to connect to the buddy list server.  Please try again later."
+"Pidgin was unable to connect to the buddy list server.  Please try again "
+"later."
 msgstr "गेम बड्डी सूची सवर्र से कनेक्ट नहीं कर पाया। कृप्या कुछ समय पशचात प्रयास करें।"
 
 #: src/protocols/gg/gg.c:1391
@@ -5366,8 +5389,8 @@ msgstr "डायरेक्टरी तक पहुंच नहीं प�
 
 #: src/protocols/gg/gg.c:1443
 msgid ""
-"Pidgin was unable to search the Directory because it was unable to connect to "
-"the directory server.  Please try again later."
+"Pidgin was unable to search the Directory because it was unable to connect "
+"to the directory server.  Please try again later."
 msgstr ""
 "गेम डायरेक्टरी को खोज नहीं सका क्योंकि वह डायरेक्टरी सवर्र से कनेक्ट नहीं कर पाया। कृप्या "
 "कुछ समय पशचात प्रयास करें।"
@@ -5389,8 +5412,8 @@ msgid "Directory Search"
 msgstr "डायरेक्टरी खोज"
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
-#: src/protocols/gg/gg.c:1499 src/protocols/jabber/jabber.c:1100
-#: src/protocols/toc/toc.c:1564
+#: src/protocols/gg/gg.c:1499 src/protocols/jabber/jabber.c:1102
+#: src/protocols/toc/toc.c:1591
 msgid "Change Password"
 msgstr "पासवर्ड बदलें"
 
@@ -5412,8 +5435,8 @@ msgstr "उपयोकर्ता प्रोफाइल लाने मे
 
 #: src/protocols/gg/gg.c:1545
 msgid ""
-"Pidgin was unable to access this user's profile due to an error connecting to "
-"the directory server.  Please try again later."
+"Pidgin was unable to access this user's profile due to an error connecting "
+"to the directory server.  Please try again later."
 msgstr ""
 "गेम उपयोकर्ता प्रोफाइल लाने में असमर्थ रहा क्योंकि वह डायरेक्टरी सवर्र से कनेक्ट नहीं कर "
 "पाया। कृप्या कुछ समय पशचात प्रयास करें।"
@@ -5433,7 +5456,8 @@ msgid "Gadu-Gadu Protocol Plugin"
 msgstr "गाडू-गाडू प्रोटोकॉल प्लगइन"
 
 #: src/protocols/icq/gaim_icq.c:223
-msgid "Pidgin encountered an error communicating with the ICQ server."
+#, fuzzy
+msgid "libPurple encountered an error communicating with the ICQ server."
 msgstr "गेम को आई सी क्यू सवर्र से बात करने में त्रुटी हुई"
 
 #: src/protocols/icq/gaim_icq.c:293
@@ -5442,14 +5466,14 @@ msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
 msgstr "%s उपयोगकर्ता (%s%s%s%s%s) चाहते हैं कि आप उन्हे प्रमाणित करें।"
 
 #: src/protocols/icq/gaim_icq.c:296 src/protocols/jabber/presence.c:300
-#: src/protocols/msn/userlist.c:103 src/protocols/oscar/oscar.c:3886
-#: src/protocols/oscar/oscar.c:6438
+#: src/protocols/msn/userlist.c:103 src/protocols/oscar/oscar.c:4547
+#: src/protocols/oscar/oscar.c:7112 src/protocols/yahoo/yahoo.c:1080
 msgid "Authorize"
 msgstr "अनुमति दें"
 
 #: src/protocols/icq/gaim_icq.c:296 src/protocols/jabber/presence.c:301
-#: src/protocols/msn/userlist.c:104 src/protocols/oscar/oscar.c:3888
-#: src/protocols/oscar/oscar.c:6439
+#: src/protocols/msn/userlist.c:104 src/protocols/oscar/oscar.c:4549
+#: src/protocols/oscar/oscar.c:7113 src/protocols/yahoo/yahoo.c:1082
 msgid "Deny"
 msgstr "मना करें"
 
@@ -5465,9 +5489,11 @@ msgstr "कनेक्ट कर रहा है..."
 msgid "Nick:"
 msgstr "उपनाम:"
 
+#  *  DEFINES, MACROS & DATA TYPES
 #: src/protocols/icq/gaim_icq.c:498
-msgid "Pidgin User"
-msgstr "गेम उपयोगकर्ता"
+#, fuzzy
+msgid "libPurple User"
+msgstr "उपयोगकर्ता को मारो"
 
 #: src/protocols/irc/cmds.c:43 src/protocols/silc/silc.c:1311
 #, c-format
@@ -5495,28 +5521,28 @@ msgstr "फ़ाइल हस्तांतरण बीच में स्�
 msgid "Pidgin could not open a listening port."
 msgstr "गेम सुनने के लिए पोर्ट नहीं खोल सका।"
 
-#: src/protocols/irc/irc.c:75
+#: src/protocols/irc/irc.c:76
 msgid "Error displaying MOTD"
 msgstr "ऐम औ टी डी दिखाने में त्रुटी"
 
-#: src/protocols/irc/irc.c:75
+#: src/protocols/irc/irc.c:76
 msgid "No MOTD available"
 msgstr "ऐम औ टी डी मोजूद नहीं है"
 
-#: src/protocols/irc/irc.c:76
+#: src/protocols/irc/irc.c:77
 msgid "There is no MOTD associated with this connection."
 msgstr "इस कनेक्शन के साथ कोइ ऐम औ टी डी जु़ड़ा नहीं है।"
 
-#: src/protocols/irc/irc.c:79
+#: src/protocols/irc/irc.c:80
 #, c-format
 msgid "MOTD for %s"
 msgstr "%s के लिए ऐम औ टी डी"
 
-#: src/protocols/irc/irc.c:93 src/protocols/irc/irc.c:405
+#: src/protocols/irc/irc.c:94 src/protocols/irc/irc.c:406
 msgid "Server has disconnected"
 msgstr "सर्वर ने कनेक्शन तोड़ा"
 
-#: src/protocols/irc/irc.c:158
+#: src/protocols/irc/irc.c:159
 msgid "View MOTD"
 msgstr "ऐमऔटीडी(MOTD) देखें"
 
@@ -5524,55 +5550,55 @@ msgstr "ऐमऔटीडी(MOTD) देखें"
 # #-#-#-#-#  gnome-session.HEAD.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/session-properties.c:179
 #  Cancel button.
-#: src/protocols/irc/irc.c:180 src/protocols/silc/chat.c:32
+#: src/protocols/irc/irc.c:181 src/protocols/silc/chat.c:32
 msgid "_Channel:"
 msgstr "चैनल(_C):"
 
-#: src/protocols/irc/irc.c:185 src/protocols/jabber/chat.c:56
+#: src/protocols/irc/irc.c:186 src/protocols/jabber/chat.c:56
 msgid "_Password:"
 msgstr "पासवर्ड:(_P)"
 
-#: src/protocols/irc/irc.c:217
+#: src/protocols/irc/irc.c:218
 msgid "IRC nicks may not contain whitespace"
 msgstr "आइ आर सी उपनामों में वाइटस्पेस नहीं हो सकती"
 
 #. connect to the server
-#: src/protocols/irc/irc.c:237 src/protocols/jabber/jabber.c:798
+#: src/protocols/irc/irc.c:238 src/protocols/jabber/jabber.c:800
 #: src/protocols/msn/session.c:364 src/protocols/napster/napster.c:510
-#: src/protocols/novell/novell.c:2152 src/protocols/oscar/oscar.c:1759
-#: src/protocols/trepia/trepia.c:1065 src/protocols/yahoo/yahoo.c:2558
-#: src/protocols/zephyr/zephyr.c:1452
+#: src/protocols/novell/novell.c:2152 src/protocols/oscar/oscar.c:1768
+#: src/protocols/trepia/trepia.c:1065 src/protocols/yahoo/yahoo.c:2641
+#: src/protocols/zephyr/zephyr.c:1458
 msgid "Connecting"
 msgstr "कनेक्ट कर रहा है"
 
-#: src/protocols/irc/irc.c:244
+#: src/protocols/irc/irc.c:245
 msgid "Couldn't create socket"
 msgstr "सॉकट नहीं बना सका"
 
-#: src/protocols/irc/irc.c:259 src/protocols/jabber/jabber.c:304
-#: src/protocols/oscar/oscar.c:1690 src/protocols/oscar/oscar.c:1755
+#: src/protocols/irc/irc.c:260 src/protocols/jabber/jabber.c:304
+#: src/protocols/oscar/oscar.c:1699 src/protocols/oscar/oscar.c:1764
 msgid "Couldn't connect to host"
 msgstr "होस्ट से कनेक्टेड नहीं कर पाया"
 
-#: src/protocols/irc/irc.c:402 src/protocols/trepia/trepia.c:927
+#: src/protocols/irc/irc.c:403 src/protocols/trepia/trepia.c:927
 msgid "Read error"
 msgstr "पढ़ने में त्रुटि"
 
-#: src/protocols/irc/irc.c:557 src/protocols/silc/chat.c:1373
+#: src/protocols/irc/irc.c:568 src/protocols/silc/chat.c:1373
 #: src/protocols/yahoo/yahoochat.c:1444
 msgid "Users"
 msgstr "उपयोगकर्ता"
 
-#: src/protocols/irc/irc.c:560 src/protocols/silc/chat.c:1376
+#: src/protocols/irc/irc.c:571 src/protocols/silc/chat.c:1376
 #: src/protocols/silc/ops.c:1166 src/protocols/yahoo/yahoochat.c:1453
 msgid "Topic"
 msgstr "विषय"
 
-#: src/protocols/irc/irc.c:597
+#: src/protocols/irc/irc.c:608
 msgid "IRC"
 msgstr ""
 
-#: src/protocols/irc/irc.c:601
+#: src/protocols/irc/irc.c:612
 #, fuzzy
 msgid "Quit message"
 msgstr "(1 सन्देश)"
@@ -5585,39 +5611,39 @@ msgstr "(1 सन्देश)"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:688
+#: src/protocols/irc/irc.c:699
 msgid "IRC Protocol Plugin"
 msgstr "\"आईआरसी(IRC) प्रोटोकाल प्लगइन"
 
 #. *  summary
-#: src/protocols/irc/irc.c:689
+#: src/protocols/irc/irc.c:700
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "वह आइ आर सी प्रोटोकॉल जो कि कम खराब है"
 
-#: src/protocols/irc/irc.c:708 src/protocols/irc/msgs.c:239
-#: src/protocols/jabber/jabber.c:1617 src/protocols/napster/napster.c:672
+#: src/protocols/irc/irc.c:719 src/protocols/irc/msgs.c:239
+#: src/protocols/jabber/jabber.c:1652 src/protocols/napster/napster.c:672
 #: src/protocols/silc/ops.c:1026 src/protocols/silc/ops.c:1129
 msgid "Server"
 msgstr "सर्वर"
 
-#: src/protocols/irc/irc.c:711 src/protocols/jabber/jabber.c:1638
-#: src/protocols/msn/msn.c:1934 src/protocols/napster/napster.c:677
+#: src/protocols/irc/irc.c:722 src/protocols/jabber/jabber.c:1673
+#: src/protocols/msn/msn.c:1906 src/protocols/napster/napster.c:677
 #: src/protocols/silc/silc.c:1596 src/protocols/trepia/trepia.c:1301
 msgid "Port"
 msgstr "पोर्ट"
 
-#: src/protocols/irc/irc.c:714
+#: src/protocols/irc/irc.c:725
 msgid "Encodings"
 msgstr "एनकोडिंग्स"
 
-#: src/protocols/irc/irc.c:717 src/protocols/irc/msgs.c:233
+#: src/protocols/irc/irc.c:728 src/protocols/irc/msgs.c:233
 #: src/protocols/jabber/jabber.c:599 src/protocols/silc/buddy.c:1454
 #: src/protocols/silc/ops.c:973 src/protocols/silc/ops.c:975
 #: src/protocols/silc/ops.c:1123 src/protocols/silc/ops.c:1125
 msgid "Username"
 msgstr "उपयोगकर्ता-नाम"
 
-#: src/protocols/irc/irc.c:720
+#: src/protocols/irc/irc.c:731
 msgid "Real name"
 msgstr "असली नाम"
 
@@ -5711,7 +5737,8 @@ msgid "Unknown message"
 msgstr "अज्ञात संदेश"
 
 #: src/protocols/irc/msgs.c:349
-msgid "Pidgin has sent a message the IRC server did not understand."
+#, fuzzy
+msgid "libPurple has sent a message the IRC server did not understand."
 msgstr "गेम ने संदेश भेजा जिसे आइ आर सी सवर्र समझ नहीं पाया।"
 
 #: src/protocols/irc/msgs.c:373
@@ -5915,7 +5942,7 @@ msgstr ""
 msgid "names [channel]:  List the users currently in a channel."
 msgstr "names [चैनल]:चैनल में विद्दमान उपयोगकर्तायों कि सूची दिखायें।"
 
-#: src/protocols/irc/parse.c:126 src/protocols/jabber/jabber.c:1448
+#: src/protocols/irc/parse.c:126 src/protocols/jabber/jabber.c:1477
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
 msgstr "nick &lt;नया उपनाम&gt;:  आपना उपनाम बदलें।"
 
@@ -6006,21 +6033,21 @@ msgstr ""
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
 msgstr "whois [सवर्र] &lt;उपनाम&gt;:  किसी उपयोगकर्ता के बारे में जानकारी लायें।"
 
-#: src/protocols/irc/parse.c:421
+#: src/protocols/irc/parse.c:433
 #, c-format
 msgid "Reply time from %s: %lu seconds"
 msgstr "उत्तर आने का समय %s से: %lu सेकेंड"
 
-#: src/protocols/irc/parse.c:422
+#: src/protocols/irc/parse.c:434
 msgid "PONG"
 msgstr "पोंग"
 
-#: src/protocols/irc/parse.c:422
+#: src/protocols/irc/parse.c:434
 msgid "CTCP PING reply"
 msgstr "सी टी सी पी पिंग का उत्तर"
 
-#: src/protocols/irc/parse.c:525 src/protocols/irc/parse.c:529
-#: src/protocols/oscar/oscar.c:1587 src/protocols/toc/toc.c:188
+#: src/protocols/irc/parse.c:537 src/protocols/irc/parse.c:541
+#: src/protocols/oscar/oscar.c:1596 src/protocols/toc/toc.c:188
 #: src/protocols/toc/toc.c:596 src/protocols/toc/toc.c:612
 #: src/protocols/toc/toc.c:689
 msgid "Disconnected."
@@ -6147,7 +6174,7 @@ msgid "Role"
 msgstr "कार्य भाग"
 
 #: src/protocols/jabber/buddy.c:263 src/protocols/jabber/buddy.c:647
-#: src/protocols/oscar/oscar.c:5226
+#: src/protocols/oscar/oscar.c:5887
 msgid "Birthday"
 msgstr "जन्मदिन"
 
@@ -6167,11 +6194,11 @@ msgstr "जैबर आइ डी"
 
 #  Autostart
 #: src/protocols/jabber/buddy.c:566 src/protocols/jabber/buddy.c:573
-#: src/protocols/jabber/buddy.c:586 src/protocols/jabber/jabber.c:971
+#: src/protocols/jabber/buddy.c:586 src/protocols/jabber/jabber.c:973
 #: src/protocols/msn/msn.c:489 src/protocols/novell/novell.c:2819
-#: src/protocols/novell/novell.c:2823 src/protocols/oscar/oscar.c:730
-#: src/protocols/oscar/oscar.c:736 src/protocols/oscar/oscar.c:738
-#: src/protocols/yahoo/yahoo.c:2820
+#: src/protocols/novell/novell.c:2823 src/protocols/oscar/oscar.c:739
+#: src/protocols/oscar/oscar.c:745 src/protocols/oscar/oscar.c:747
+#: src/protocols/yahoo/yahoo.c:2903
 msgid "Status"
 msgstr "वस्तुस्थिति"
 
@@ -6180,7 +6207,7 @@ msgid "Middle Name"
 msgstr "मध्यस्थित नाम"
 
 #: src/protocols/jabber/buddy.c:652 src/protocols/jabber/jabber.c:634
-#: src/protocols/oscar/oscar.c:5244 src/protocols/oscar/oscar.c:5252
+#: src/protocols/oscar/oscar.c:5905 src/protocols/oscar/oscar.c:5913
 #: src/protocols/silc/ops.c:848
 msgid "Address"
 msgstr "पता"
@@ -6225,7 +6252,7 @@ msgstr "(दोबारा) प्रमाणिकरण के लिए व
 msgid "Unsubscribe"
 msgstr "अनसबस्क्राइब"
 
-#: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:6509
+#: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:7183
 #: src/protocols/yahoo/yahoochat.c:1040
 msgid "_Room:"
 msgstr "कक्ष:(_R)"
@@ -6362,7 +6389,7 @@ msgstr "रजिस्ट्रेशन सफल रहा"
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
-#: src/protocols/jabber/jabber.c:453 src/protocols/jabber/jabber.c:1219
+#: src/protocols/jabber/jabber.c:453 src/protocols/jabber/jabber.c:1221
 msgid "Unknown Error"
 msgstr "अज्ञात त्रुटि"
 
@@ -6374,7 +6401,7 @@ msgstr "रजिस्ट्रेशन असफल रहा"
 msgid "Already Registered"
 msgstr "पहले से रेजिस्टर्ड है"
 
-#: src/protocols/jabber/jabber.c:603 src/protocols/jabber/jabber.c:1074
+#: src/protocols/jabber/jabber.c:603 src/protocols/jabber/jabber.c:1076
 msgid "Password"
 msgstr "पासवर्ड "
 
@@ -6383,8 +6410,8 @@ msgid "E-Mail"
 msgstr "इमेल"
 
 #. State
-#: src/protocols/jabber/jabber.c:644 src/protocols/oscar/oscar.c:5246
-#: src/protocols/oscar/oscar.c:5254 src/protocols/trepia/trepia.c:336
+#: src/protocols/jabber/jabber.c:644 src/protocols/oscar/oscar.c:5907
+#: src/protocols/oscar/oscar.c:5915 src/protocols/trepia/trepia.c:336
 #: src/protocols/trepia/trepia.c:414
 msgid "State"
 msgstr "स्थिति"
@@ -6410,218 +6437,218 @@ msgstr "नया जैबर खाता रेजिस्टर करे�
 msgid "Logged out"
 msgstr "लौग आउट हो चुका है"
 
-#: src/protocols/jabber/jabber.c:802
+#: src/protocols/jabber/jabber.c:804
 msgid "Initializing Stream"
 msgstr "धारा की शुरुआत"
 
-#: src/protocols/jabber/jabber.c:808 src/protocols/msn/session.c:370
+#: src/protocols/jabber/jabber.c:810 src/protocols/msn/session.c:370
 msgid "Authenticating"
 msgstr "प्रमाणित कर रहा है"
 
-#: src/protocols/jabber/jabber.c:817
+#: src/protocols/jabber/jabber.c:819
 msgid "Re-initializing Stream"
 msgstr "धारा की पुनः शुरुआत"
 
-#: src/protocols/jabber/jabber.c:897 src/protocols/jabber/jabber.c:1197
-#: src/protocols/jabber/jabber.c:1238 src/protocols/jabber/jabber.c:1271
-#: src/protocols/oscar/oscar.c:736 src/protocols/oscar/oscar.c:6793
+#: src/protocols/jabber/jabber.c:899 src/protocols/jabber/jabber.c:1199
+#: src/protocols/jabber/jabber.c:1240 src/protocols/jabber/jabber.c:1273
+#: src/protocols/oscar/oscar.c:745 src/protocols/oscar/oscar.c:7467
 msgid "Not Authorized"
 msgstr "अप्रमाणित"
 
-#: src/protocols/jabber/jabber.c:938
+#: src/protocols/jabber/jabber.c:940
 msgid "Both"
 msgstr "दोनो"
 
-#: src/protocols/jabber/jabber.c:940
+#: src/protocols/jabber/jabber.c:942
 msgid "From (To pending)"
 msgstr "से (विचाराधीन को)"
 
-#: src/protocols/jabber/jabber.c:942
+#: src/protocols/jabber/jabber.c:944
 msgid "From"
 msgstr "से"
 
-#: src/protocols/jabber/jabber.c:945
+#: src/protocols/jabber/jabber.c:947
 msgid "To"
 msgstr "को"
 
-#: src/protocols/jabber/jabber.c:947
+#: src/protocols/jabber/jabber.c:949
 msgid "None (To pending)"
 msgstr "कोइ नही (विचाराधीन को)"
 
-#: src/protocols/jabber/jabber.c:951
+#: src/protocols/jabber/jabber.c:953
 msgid "Subscription"
 msgstr "सबस्क्रिप्शन"
 
-#: src/protocols/jabber/jabber.c:984
+#: src/protocols/jabber/jabber.c:986
 msgid "Error"
 msgstr "त्रुटी"
 
-#: src/protocols/jabber/jabber.c:997 src/protocols/jabber/jutil.c:35
+#: src/protocols/jabber/jabber.c:999 src/protocols/jabber/jutil.c:35
 #: src/protocols/jabber/presence.c:72 src/protocols/jabber/presence.c:130
 msgid "Chatty"
 msgstr "चैटी"
 
-#: src/protocols/jabber/jabber.c:999 src/protocols/jabber/jutil.c:38
+#: src/protocols/jabber/jabber.c:1001 src/protocols/jabber/jutil.c:38
 #: src/protocols/jabber/presence.c:74 src/protocols/jabber/presence.c:135
 msgid "Extended Away"
 msgstr "बहुत देर के लिए अनुपस्थित"
 
-#: src/protocols/jabber/jabber.c:1000 src/protocols/jabber/jutil.c:41
+#: src/protocols/jabber/jabber.c:1002 src/protocols/jabber/jutil.c:41
 #: src/protocols/jabber/presence.c:76 src/protocols/jabber/presence.c:137
-#: src/protocols/oscar/oscar.c:678 src/protocols/oscar/oscar.c:5791
-#: src/protocols/oscar/oscar.c:6986
+#: src/protocols/oscar/oscar.c:687 src/protocols/oscar/oscar.c:6465
+#: src/protocols/oscar/oscar.c:7660
 msgid "Do Not Disturb"
 msgstr "परेशान ना करें"
 
-#: src/protocols/jabber/jabber.c:1017
+#: src/protocols/jabber/jabber.c:1019
 msgid "Password Changed"
 msgstr "पासवर्ड बदला गया"
 
-#: src/protocols/jabber/jabber.c:1018
+#: src/protocols/jabber/jabber.c:1020
 msgid "Your password has been changed."
 msgstr "आपका पासवर्ड बदल दिया गया है।"
 
-#: src/protocols/jabber/jabber.c:1022 src/protocols/jabber/jabber.c:1023
+#: src/protocols/jabber/jabber.c:1024 src/protocols/jabber/jabber.c:1025
 msgid "Error changing password"
 msgstr "पासवर्ड बदलते समय त्रुटि"
 
-#: src/protocols/jabber/jabber.c:1079
+#: src/protocols/jabber/jabber.c:1081
 msgid "Password (again)"
 msgstr "पासवर्ड (फिर से)"
 
-#: src/protocols/jabber/jabber.c:1084 src/protocols/jabber/jabber.c:1085
+#: src/protocols/jabber/jabber.c:1086 src/protocols/jabber/jabber.c:1087
 msgid "Change Jabber Password"
 msgstr "जैबर(Jabber) पासवर्ड बदलें"
 
-#: src/protocols/jabber/jabber.c:1085
+#: src/protocols/jabber/jabber.c:1087
 msgid "Please enter your new password"
 msgstr "कृपया आपका नया पासवर्ड डालें।"
 
-#: src/protocols/jabber/jabber.c:1095 src/protocols/toc/toc.c:1554
+#: src/protocols/jabber/jabber.c:1097 src/protocols/toc/toc.c:1581
 msgid "Set User Info"
 msgstr "उपयोगकर्ता की जानकारी भरें"
 
-#: src/protocols/jabber/jabber.c:1177
+#: src/protocols/jabber/jabber.c:1179
 msgid "Bad Request"
 msgstr "खराब विनय"
 
-#: src/protocols/jabber/jabber.c:1179
+#: src/protocols/jabber/jabber.c:1181
 msgid "Conflict"
 msgstr "तक्क्रार"
 
-#: src/protocols/jabber/jabber.c:1181
+#: src/protocols/jabber/jabber.c:1183
 msgid "Feature Not Implemented"
 msgstr "लक्षण अभी बना नही है"
 
-#: src/protocols/jabber/jabber.c:1183
+#: src/protocols/jabber/jabber.c:1185
 msgid "Forbidden"
 msgstr "वर्जित"
 
-#: src/protocols/jabber/jabber.c:1185
+#: src/protocols/jabber/jabber.c:1187
 msgid "Gone"
 msgstr "चला गया"
 
-#: src/protocols/jabber/jabber.c:1187 src/protocols/jabber/jabber.c:1261
+#: src/protocols/jabber/jabber.c:1189 src/protocols/jabber/jabber.c:1263
 msgid "Internal Server Error"
 msgstr "अंदरुनी सवर्र त्रुटी"
 
-#: src/protocols/jabber/jabber.c:1189
+#: src/protocols/jabber/jabber.c:1191
 msgid "Item Not Found"
 msgstr "चीज़ नहीं मिली"
 
-#: src/protocols/jabber/jabber.c:1191
+#: src/protocols/jabber/jabber.c:1193
 msgid "Malformed Jabber ID"
 msgstr "अमान्य जैबर(Jabber) आइ डी"
 
-#: src/protocols/jabber/jabber.c:1193
+#: src/protocols/jabber/jabber.c:1195
 msgid "Not Acceptable"
 msgstr "स्वीकृत नहीं"
 
-#: src/protocols/jabber/jabber.c:1195
+#: src/protocols/jabber/jabber.c:1197
 msgid "Not Allowed"
 msgstr "इसकी आज्ञा नहीं है"
 
-#: src/protocols/jabber/jabber.c:1199
+#: src/protocols/jabber/jabber.c:1201
 msgid "Payment Required"
 msgstr "भुगतान आवशयक है"
 
-#: src/protocols/jabber/jabber.c:1201
+#: src/protocols/jabber/jabber.c:1203
 msgid "Recipient Unavailable"
 msgstr "प्राप्तकर्ती उपलब्ध नहीं है"
 
-#: src/protocols/jabber/jabber.c:1205
+#: src/protocols/jabber/jabber.c:1207
 msgid "Registration Required"
 msgstr "रजिस्ट्रेशन आवशयक"
 
-#: src/protocols/jabber/jabber.c:1207
+#: src/protocols/jabber/jabber.c:1209
 msgid "Remote Server Not Found"
 msgstr "रिमोट सवर्र नहीं मिला"
 
-#: src/protocols/jabber/jabber.c:1209
+#: src/protocols/jabber/jabber.c:1211
 msgid "Remote Server Timeout"
 msgstr "रिमोट सवर्र टाइमआउट"
 
-#: src/protocols/jabber/jabber.c:1211
+#: src/protocols/jabber/jabber.c:1213
 msgid "Server Overloaded"
 msgstr "सर्वर बहुत लादा हुआ है"
 
-#: src/protocols/jabber/jabber.c:1213
+#: src/protocols/jabber/jabber.c:1215
 msgid "Service Unavailable"
 msgstr "सेवा उपलब्ध नहीं है "
 
-#: src/protocols/jabber/jabber.c:1215
+#: src/protocols/jabber/jabber.c:1217
 msgid "Subscription Required"
 msgstr "सबस्क्रिपशन आवशयक"
 
-#: src/protocols/jabber/jabber.c:1217
+#: src/protocols/jabber/jabber.c:1219
 msgid "Unexpected Request"
 msgstr "अनपेक्षित इच्छा"
 
-#: src/protocols/jabber/jabber.c:1224
+#: src/protocols/jabber/jabber.c:1226
 msgid "Authorization Aborted"
 msgstr "प्रमाणिकरण अधूरा रह गया"
 
-#: src/protocols/jabber/jabber.c:1226
+#: src/protocols/jabber/jabber.c:1228
 msgid "Incorrect encoding in authorization"
 msgstr "प्रमाणिकरण में गलत एनकोडिंग"
 
-#: src/protocols/jabber/jabber.c:1229
+#: src/protocols/jabber/jabber.c:1231
 msgid "Invalid authzid"
 msgstr "अवैध औथआइडी"
 
-#: src/protocols/jabber/jabber.c:1232
+#: src/protocols/jabber/jabber.c:1234
 msgid "Invalid Authorization Mechanism"
 msgstr "अवैध प्रमाणिकरण बनावट"
 
-#: src/protocols/jabber/jabber.c:1235
+#: src/protocols/jabber/jabber.c:1237
 msgid "Authorization mechanism too weak"
 msgstr "प्रमाणिकरण बनावट बहुत कमज़ोर है"
 
-#: src/protocols/jabber/jabber.c:1240
+#: src/protocols/jabber/jabber.c:1242
 msgid "Temporary Authentication Failure"
 msgstr "अस्थाई प्रमाणिकरण असफल"
 
-#: src/protocols/jabber/jabber.c:1242
+#: src/protocols/jabber/jabber.c:1244
 msgid "Authentication Failure"
 msgstr "प्रमाणिकरण असफल"
 
-#: src/protocols/jabber/jabber.c:1246
+#: src/protocols/jabber/jabber.c:1248
 msgid "Bad Format"
 msgstr "खोटी रचना"
 
-#: src/protocols/jabber/jabber.c:1248
+#: src/protocols/jabber/jabber.c:1250
 msgid "Bad Namespace Prefix"
 msgstr "खराब नेमस्पेस उपसर्ग"
 
-#: src/protocols/jabber/jabber.c:1251
+#: src/protocols/jabber/jabber.c:1253
 msgid "Resource Conflict"
 msgstr "साधन में टक्कर"
 
-#: src/protocols/jabber/jabber.c:1253 src/protocols/silc/ops.c:1519
+#: src/protocols/jabber/jabber.c:1255 src/protocols/silc/ops.c:1519
 msgid "Connection Timeout"
 msgstr "कनेक्शन का समय पूरा हुआ"
 
-#: src/protocols/jabber/jabber.c:1255
+#: src/protocols/jabber/jabber.c:1257
 msgid "Host Gone"
 msgstr "होस्ट चला गया"
 
@@ -6629,31 +6656,31 @@ msgstr "होस्ट चला गया"
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
-#: src/protocols/jabber/jabber.c:1257
+#: src/protocols/jabber/jabber.c:1259
 msgid "Host Unknown"
 msgstr "अज्ञात होस्ट"
 
-#: src/protocols/jabber/jabber.c:1259
+#: src/protocols/jabber/jabber.c:1261
 msgid "Improper Addressing"
 msgstr "अनुचित निवेदन"
 
-#: src/protocols/jabber/jabber.c:1263
+#: src/protocols/jabber/jabber.c:1265
 msgid "Invalid ID"
 msgstr "अमान्य आई डी"
 
-#: src/protocols/jabber/jabber.c:1265
+#: src/protocols/jabber/jabber.c:1267
 msgid "Invalid Namespace"
 msgstr "अवैध नैमस्पेस(Namespace)"
 
-#: src/protocols/jabber/jabber.c:1267
+#: src/protocols/jabber/jabber.c:1269
 msgid "Invalid XML"
 msgstr "अवैध एक्सएमएल (XML)"
 
-#: src/protocols/jabber/jabber.c:1269
+#: src/protocols/jabber/jabber.c:1271
 msgid "Non-matching Hosts"
 msgstr "कोइ मिलता हुआ होस्ट नहीं"
 
-#: src/protocols/jabber/jabber.c:1273
+#: src/protocols/jabber/jabber.c:1275
 msgid "Policy Violation"
 msgstr "नीति का उलंघन"
 
@@ -6664,7 +6691,7 @@ msgstr "नीति का उलंघन"
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/protocols/jabber/jabber.c:1275
+#: src/protocols/jabber/jabber.c:1277
 msgid "Remote Connection Failed"
 msgstr "दूर का कनेक्शन असफल"
 
@@ -6675,98 +6702,115 @@ msgstr "दूर का कनेक्शन असफल"
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/protocols/jabber/jabber.c:1277
+#: src/protocols/jabber/jabber.c:1279
 msgid "Resource Constraint"
 msgstr "स्रोत निश्शेषित"
 
-#: src/protocols/jabber/jabber.c:1279
+#: src/protocols/jabber/jabber.c:1281
 msgid "Restricted XML"
 msgstr "सीमाबद्ध एक्सएमएल "
 
-#: src/protocols/jabber/jabber.c:1281
+#: src/protocols/jabber/jabber.c:1283
 msgid "See Other Host"
 msgstr "दूसरा होस्ट देखें"
 
-#: src/protocols/jabber/jabber.c:1283
+#: src/protocols/jabber/jabber.c:1285
 msgid "System Shutdown"
 msgstr "तंत्र शटडॉन् "
 
-#: src/protocols/jabber/jabber.c:1285
+#: src/protocols/jabber/jabber.c:1287
 msgid "Undefined Condition"
 msgstr "अज्ञात अवस्था"
 
-#: src/protocols/jabber/jabber.c:1287
+#: src/protocols/jabber/jabber.c:1289
 msgid "Unsupported Encoding"
 msgstr "असमर्थित ऐनकोडिंग "
 
-#: src/protocols/jabber/jabber.c:1289
+#: src/protocols/jabber/jabber.c:1291
 msgid "Unsupported Stanza Type"
 msgstr "असमर्थित छंद प्रकार"
 
-#: src/protocols/jabber/jabber.c:1291
+#: src/protocols/jabber/jabber.c:1293
 msgid "Unsupported Version"
 msgstr "असमर्थित आवर्तन"
 
-#: src/protocols/jabber/jabber.c:1293
+#: src/protocols/jabber/jabber.c:1295
 msgid "XML Not Well Formed"
 msgstr "एक्सएमएल ठीक से रचित नहीं है"
 
-#: src/protocols/jabber/jabber.c:1295
+#: src/protocols/jabber/jabber.c:1297
 msgid "Stream Error"
 msgstr "स्ट्रीम त्रुटि"
 
-#: src/protocols/jabber/jabber.c:1362
+#: src/protocols/jabber/jabber.c:1364
 #, c-format
 msgid "Unable to ban user %s"
 msgstr "%s उपयोगकर्ता को निषेध करने में असमर्थ"
 
-#: src/protocols/jabber/jabber.c:1414
+#: src/protocols/jabber/jabber.c:1386
+#, fuzzy, c-format
+msgid "Unknown affiliation: \"%s\""
+msgstr "अज्ञात आदेश: %s"
+
+#: src/protocols/jabber/jabber.c:1391
+#, fuzzy, c-format
+msgid "Unable to affiliate user %s as \"%s\""
+msgstr "आमंत्रण करने में असमर्थ(%s)।"
+
+#: src/protocols/jabber/jabber.c:1443
 #, c-format
 msgid "Unable to kick user %s"
 msgstr "%s उपयोगकर्ता को लात मारने में असमर्थ"
 
-#: src/protocols/jabber/jabber.c:1440
+#: src/protocols/jabber/jabber.c:1469
 msgid "config:  Configure a chat room."
 msgstr "कंफिग: चैट कमरे की संरचना करें।"
 
-#: src/protocols/jabber/jabber.c:1444
+#: src/protocols/jabber/jabber.c:1473
 msgid "configure:  Configure a chat room."
 msgstr "संरचना: चैट कमरे की संरचना करें।"
 
-#: src/protocols/jabber/jabber.c:1453
+#: src/protocols/jabber/jabber.c:1482
 msgid "part [room]:  Leave the room."
 msgstr "छोड़ें [कक्ष]: कक्ष को छोड़ें।"
 
-#: src/protocols/jabber/jabber.c:1458
+#: src/protocols/jabber/jabber.c:1487
 msgid "register:  Register with a chat room."
 msgstr "रेजिस्टर: चैट कक्ष के साथ रेजिस्टर करें"
 
-#: src/protocols/jabber/jabber.c:1464
+#: src/protocols/jabber/jabber.c:1493
 msgid "topic [new topic]:  View or change the topic."
 msgstr "विषय [नया विषय]: चैनल विषय को देखें या बदलें।"
 
-#: src/protocols/jabber/jabber.c:1470
+#: src/protocols/jabber/jabber.c:1499
 msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
 msgstr "ban &lt;उपयोगकर्ता&gt; [कक्ष]:  किसी उपयोगकर्ता को कक्ष से निषिध करें।"
 
-#: src/protocols/jabber/jabber.c:1476
-msgid "invite &lt;user&gt; [room]:  Invite a user to the room."
+#: src/protocols/jabber/jabber.c:1505
+msgid ""
+"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
+"affiliation with the room."
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1511
+#, fuzzy
+msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;उपयोगकर्ता&gt; [कक्ष]:  उपयोगकर्ता को कक्ष में आमंत्रित करें।"
 
-#: src/protocols/jabber/jabber.c:1482
+#: src/protocols/jabber/jabber.c:1517
 msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
 msgstr "join: &lt;कक्ष&gt; [सवर्र]:  इस सवर्र पर कोई चैट में शामिल हों।"
 
-#: src/protocols/jabber/jabber.c:1488
+#: src/protocols/jabber/jabber.c:1523
 msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
 msgstr "kick &lt;उपयोगकर्ता&gt; [कक्ष]:  किसी उपयोगकर्ता को लात मारें।"
 
-#: src/protocols/jabber/jabber.c:1493
+#: src/protocols/jabber/jabber.c:1528
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
 msgstr "msg &lt;उपयोगकर्ता&gt; &lt;संदेश&gt;:  किसी उपयोगकर्ता को निजी संदेश भेजें।"
 
-#: src/protocols/jabber/jabber.c:1508
+#: src/protocols/jabber/jabber.c:1543
 msgid "Hide Operating System"
 msgstr "ऑपरेटिंग सिस्टम छिपायें"
 
@@ -6780,28 +6824,28 @@ msgstr "ऑपरेटिंग सिस्टम छिपायें"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/jabber/jabber.c:1595 src/protocols/jabber/jabber.c:1597
+#: src/protocols/jabber/jabber.c:1630 src/protocols/jabber/jabber.c:1632
 msgid "Jabber Protocol Plugin"
 msgstr "जैबर प्रोटॅकोल प्लगइन"
 
-#: src/protocols/jabber/jabber.c:1620
+#: src/protocols/jabber/jabber.c:1655
 msgid "Resource"
 msgstr "सहारा"
 
-#: src/protocols/jabber/jabber.c:1623
+#: src/protocols/jabber/jabber.c:1658
 msgid "Use TLS if available"
 msgstr "अगर टी एल एस उपलब्ध है तो प्रयोग करें"
 
-#: src/protocols/jabber/jabber.c:1628
+#: src/protocols/jabber/jabber.c:1663
 msgid "Force old SSL"
 msgstr "पुराने एस एस एल के लिए विवश करें"
 
-#: src/protocols/jabber/jabber.c:1633
+#: src/protocols/jabber/jabber.c:1668
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "अनइनक्रिपटिड धारा के उपर समान्स टेक्सट प्रमाणिकरण की आज्ञा दें"
 
 #. Account options
-#: src/protocols/jabber/jabber.c:1642 src/protocols/silc/silc.c:1592
+#: src/protocols/jabber/jabber.c:1677 src/protocols/silc/silc.c:1592
 msgid "Connect server"
 msgstr "सर्वर कनेक्ट करें"
 
@@ -6913,7 +6957,8 @@ msgid "Unable to parse message"
 msgstr "संदेश पदभंजन में असमर्थ"
 
 #: src/protocols/msn/error.c:38
-msgid "Syntax Error (probably a Pidgin bug)"
+#, fuzzy
+msgid "Syntax Error (probably a libPurple bug)"
 msgstr "वाक्यविन्यास त्रुटी (शायद गेम में खोट है)"
 
 #: src/protocols/msn/error.c:42
@@ -6952,7 +6997,7 @@ msgstr "पहले से मौजूद है"
 msgid "Not on list"
 msgstr "सूची में नहीं"
 
-#: src/protocols/msn/error.c:70 src/protocols/zephyr/zephyr.c:680
+#: src/protocols/msn/error.c:70 src/protocols/zephyr/zephyr.c:686
 msgid "User is offline"
 msgstr "उपयोगकर्ता ऑफलाइन है"
 
@@ -7004,7 +7049,7 @@ msgstr "आवयशक खण्ड गायब"
 msgid "Too many hits to a FND"
 msgstr "एक ऐफ एन डी को बहुत सारी मार"
 
-#: src/protocols/msn/error.c:112 src/protocols/oscar/oscar.c:192
+#: src/protocols/msn/error.c:112 src/protocols/oscar/oscar.c:200
 msgid "Not logged in"
 msgstr "लौग्ड नहीं है"
 
@@ -7098,7 +7143,7 @@ msgstr "दोस्ताना नाम बहुत  शीघ्रता �
 msgid "Server too busy"
 msgstr "सर्वर बहुत व्यस्त है"
 
-#: src/protocols/msn/error.c:198 src/protocols/oscar/oscar.c:2272
+#: src/protocols/msn/error.c:198 src/protocols/oscar/oscar.c:2711
 #: src/protocols/silc/ops.c:1508 src/protocols/toc/toc.c:630
 msgid "Authentication failed"
 msgstr "प्रमाणीकरण असफल"
@@ -7186,7 +7231,7 @@ msgid "Page"
 msgstr "पन्ना"
 
 #: src/protocols/msn/msn.c:489 src/protocols/msn/msn.c:497
-#: src/protocols/msn/msn.c:500 src/protocols/yahoo/yahoo.c:2820
+#: src/protocols/msn/msn.c:500 src/protocols/yahoo/yahoo.c:2903
 #, c-format
 msgid ""
 "\n"
@@ -7209,8 +7254,8 @@ msgid "Away From Computer"
 msgstr "कमप्युटर से अनुपस्थिति"
 
 #: src/protocols/msn/msn.c:515 src/protocols/msn/msn.c:803
-#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2677
-#: src/protocols/yahoo/yahoo.c:3044 src/protocols/yahoo/yahoo.c:3160
+#: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:2760
+#: src/protocols/yahoo/yahoo.c:3127 src/protocols/yahoo/yahoo.c:3243
 msgid "Be Right Back"
 msgstr "थोड़ी देर में वापस"
 
@@ -7218,25 +7263,25 @@ msgstr "थोड़ी देर में वापस"
 #: src/protocols/msn/state.c:31 src/protocols/novell/novell.c:2803
 #: src/protocols/novell/novell.c:2918 src/protocols/novell/novell.c:2972
 #: src/protocols/silc/buddy.c:1392 src/protocols/silc/silc.c:48
-#: src/protocols/silc/silc.c:83 src/protocols/yahoo/yahoo.c:2679
-#: src/protocols/yahoo/yahoo.c:3046 src/protocols/yahoo/yahoo.c:3161
+#: src/protocols/silc/silc.c:83 src/protocols/yahoo/yahoo.c:2762
+#: src/protocols/yahoo/yahoo.c:3129 src/protocols/yahoo/yahoo.c:3244
 msgid "Busy"
 msgstr "व्यस्त"
 
 #: src/protocols/msn/msn.c:517 src/protocols/msn/msn.c:807
-#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2687
-#: src/protocols/yahoo/yahoo.c:3054 src/protocols/yahoo/yahoo.c:3165
+#: src/protocols/msn/state.c:35 src/protocols/yahoo/yahoo.c:2770
+#: src/protocols/yahoo/yahoo.c:3137 src/protocols/yahoo/yahoo.c:3248
 msgid "On The Phone"
 msgstr "फोन पर है"
 
 #: src/protocols/msn/msn.c:518 src/protocols/msn/msn.c:809
-#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2691
-#: src/protocols/yahoo/yahoo.c:3058 src/protocols/yahoo/yahoo.c:3167
+#: src/protocols/msn/state.c:36 src/protocols/yahoo/yahoo.c:2774
+#: src/protocols/yahoo/yahoo.c:3141 src/protocols/yahoo/yahoo.c:3250
 msgid "Out To Lunch"
 msgstr " दोपहर के खाने के लिए गया"
 
 #: src/protocols/msn/msn.c:519 src/protocols/msn/msn.c:811
-#: src/protocols/zephyr/zephyr.c:2111 src/protocols/zephyr/zephyr.c:2143
+#: src/protocols/zephyr/zephyr.c:2099 src/protocols/zephyr/zephyr.c:2131
 msgid "Hidden"
 msgstr "छिपा हुआ"
 
@@ -7286,7 +7331,7 @@ msgid "Failed to connect to server."
 msgstr "सर्वर से कनेक्ट करने में असफल।"
 
 #: src/protocols/msn/msn.c:1309 src/protocols/yahoo/yahoo_profile.c:659
-#: src/protocols/zephyr/zephyr.c:711 src/protocols/zephyr/zephyr.c:1120
+#: src/protocols/zephyr/zephyr.c:717 src/protocols/zephyr/zephyr.c:1126
 #, c-format
 msgid "<b>Alias:</b> %s<br>"
 msgstr "<b>उपनाम:</b> %s<br>"
@@ -7308,14 +7353,14 @@ msgid "Error retrieving profile"
 msgstr "प्रोफ़ाइल लाने में त्रुटी"
 
 #. Age
-#: src/protocols/msn/msn.c:1481 src/protocols/oscar/oscar.c:5231
+#: src/protocols/msn/msn.c:1481 src/protocols/oscar/oscar.c:5892
 #: src/protocols/trepia/trepia.c:286 src/protocols/trepia/trepia.c:405
 #: src/protocols/yahoo/yahoo_profile.c:1022
 msgid "Age"
 msgstr "आयु"
 
 #. Gender
-#: src/protocols/msn/msn.c:1488 src/protocols/oscar/oscar.c:5217
+#: src/protocols/msn/msn.c:1488 src/protocols/oscar/oscar.c:5878
 #: src/protocols/trepia/trepia.c:280 src/protocols/trepia/trepia.c:407
 #: src/protocols/yahoo/yahoo_profile.c:1032
 msgid "Gender"
@@ -7379,9 +7424,10 @@ msgstr ""
 "उपयोगकर्ता नहीं है या उपयोगकर्ता तो है परंतु उसने अपनी सार्वजनिक प्रोफा़इल नहीं बनायी है।"
 
 #: src/protocols/msn/msn.c:1669
+#, fuzzy
 msgid ""
-"Pidgin could not find any information in the user's profile. The user most "
-"likely does not exist."
+"libPurple could not find any information in the user's profile. The user "
+"most likely does not exist."
 msgstr ""
 "गेम उपयोगकर्ता कि प्रोफा़ल में कोइ जानकारी खोज नहीं सका। शायद इस नाम का उपयोगकर्ता "
 "नहीं है।"
@@ -7389,14 +7435,6 @@ msgstr ""
 #: src/protocols/msn/msn.c:1675 src/protocols/yahoo/yahoo_profile.c:1174
 msgid "Profile URL"
 msgstr "प्रोफा़इल यू आर एल"
-
-#: src/protocols/msn/msn.c:1816
-msgid "Display conversation closed notices"
-msgstr "संवाद समाप्ती की सूचनाएं दिखायें"
-
-#: src/protocols/msn/msn.c:1821
-msgid "Display timeout notices"
-msgstr "टाइमआउट सूचनाएं दिखायें"
 
 #. *< type
 #. *< ui_requirement
@@ -7408,15 +7446,15 @@ msgstr "टाइमआउट सूचनाएं दिखायें"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/msn/msn.c:1908 src/protocols/msn/msn.c:1910
+#: src/protocols/msn/msn.c:1880 src/protocols/msn/msn.c:1882
 msgid "MSN Protocol Plugin"
 msgstr "एमएसएन (MSN) प्रोटॅकोल प्लगइन"
 
-#: src/protocols/msn/msn.c:1929 src/protocols/trepia/trepia.c:1296
+#: src/protocols/msn/msn.c:1901 src/protocols/trepia/trepia.c:1296
 msgid "Login server"
 msgstr "लागिन सर्वर"
 
-#: src/protocols/msn/msn.c:1938
+#: src/protocols/msn/msn.c:1910
 msgid "Use HTTP Method"
 msgstr "एच टी टी पी विधियों का उपयोग करें"
 
@@ -7509,7 +7547,7 @@ msgstr "पढ़ने में त्रुटि"
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 #: src/protocols/msn/servconn.c:133 src/protocols/msn/session.c:341
-#: src/protocols/oscar/oscar.c:4209
+#: src/protocols/oscar/oscar.c:4870
 msgid "Unknown error"
 msgstr "अज्ञात त्रुटि"
 
@@ -7607,16 +7645,6 @@ msgstr "संदेश भेजा नहीं जा सका क्यो�
 #: src/protocols/msn/switchboard.c:429
 msgid "Message may have not been sent because an unknown error occurred:"
 msgstr "संदेश भेजा नहीं जा सका क्योंकि अज्ञात त्रुटी हुई"
-
-#: src/protocols/msn/switchboard.c:678
-msgid "The conversation has become inactive and timed out."
-msgstr "सवांद निरुद्दोग हो के टाइमआउट हो गया।"
-
-#  Remove on type button
-#: src/protocols/msn/switchboard.c:697
-#, c-format
-msgid "%s has closed the conversation window."
-msgstr "%s ने वार्तालाप विंडो को बंद कर दिया है ।"
 
 #: src/protocols/msn/userlist.c:87
 #, c-format
@@ -7934,8 +7962,8 @@ msgstr "निजी उपाधि"
 msgid "Mailstop"
 msgstr "मेलबंद"
 
-#: src/protocols/novell/novell.c:1455 src/protocols/oscar/oscar.c:5204
-#: src/protocols/oscar/oscar.c:5211
+#: src/protocols/novell/novell.c:1455 src/protocols/oscar/oscar.c:5865
+#: src/protocols/oscar/oscar.c:5872
 msgid "Email Address"
 msgstr "इमेल पता"
 
@@ -8035,8 +8063,8 @@ msgstr "त्रुटी । एस एस एल समर्थन स्थ
 msgid "This conference has been closed. No more messages can be sent."
 msgstr "यह सम्मेलन बंद कर दिया गया है। और संदेश नहीं भेजे जा सकते।"
 
-#: src/protocols/novell/novell.c:2809 src/protocols/oscar/oscar.c:738
-#: src/protocols/oscar/oscar.c:6795 src/protocols/yahoo/yahoo.c:2699
+#: src/protocols/novell/novell.c:2809 src/protocols/oscar/oscar.c:747
+#: src/protocols/oscar/oscar.c:7469 src/protocols/yahoo/yahoo.c:2782
 msgid "Offline"
 msgstr "ऑफलैन"
 
@@ -8070,103 +8098,103 @@ msgstr "सवर्र पता"
 msgid "Server port"
 msgstr "सवर्र पोर्ट"
 
-#: src/protocols/oscar/oscar.c:188
+#: src/protocols/oscar/oscar.c:196
 msgid "Invalid error"
 msgstr "अवैध त्रुटि"
 
-#: src/protocols/oscar/oscar.c:189
+#: src/protocols/oscar/oscar.c:197
 msgid "Invalid SNAC"
 msgstr "अवैध एसएनऐसी ( SNAC)"
 
-#: src/protocols/oscar/oscar.c:190
+#: src/protocols/oscar/oscar.c:198
 msgid "Rate to host"
 msgstr "होस्ट तक दर"
 
-#: src/protocols/oscar/oscar.c:191
+#: src/protocols/oscar/oscar.c:199
 msgid "Rate to client"
 msgstr "क्लायंट तक दर"
 
-#: src/protocols/oscar/oscar.c:193
+#: src/protocols/oscar/oscar.c:201
 msgid "Service unavailable"
 msgstr "सेवा उपलब्ध नहीं है "
 
-#: src/protocols/oscar/oscar.c:194
+#: src/protocols/oscar/oscar.c:202
 msgid "Service not defined"
 msgstr "सेवा परिभाषित नहीं"
 
-#: src/protocols/oscar/oscar.c:195
+#: src/protocols/oscar/oscar.c:203
 msgid "Obsolete SNAC"
 msgstr "अप्रचलित एसएनऐसी"
 
-#: src/protocols/oscar/oscar.c:196
+#: src/protocols/oscar/oscar.c:204
 msgid "Not supported by host"
 msgstr "होस्ट द्वारा समर्थित नहीं"
 
-#: src/protocols/oscar/oscar.c:197
+#: src/protocols/oscar/oscar.c:205
 msgid "Not supported by client"
 msgstr "क्लायंट द्वारा समर्थित नहीं"
 
-#: src/protocols/oscar/oscar.c:198
+#: src/protocols/oscar/oscar.c:206
 msgid "Refused by client"
 msgstr "क्लायंट द्वारा मना किया गया"
 
-#: src/protocols/oscar/oscar.c:199
+#: src/protocols/oscar/oscar.c:207
 msgid "Reply too big"
 msgstr "उत्तर बहुत बड़ा है"
 
-#: src/protocols/oscar/oscar.c:200
+#: src/protocols/oscar/oscar.c:208
 msgid "Responses lost"
 msgstr "उत्तर खो गये"
 
-#: src/protocols/oscar/oscar.c:201
+#: src/protocols/oscar/oscar.c:209
 msgid "Request denied"
 msgstr "अनुरोध निषेध"
 
-#: src/protocols/oscar/oscar.c:202
+#: src/protocols/oscar/oscar.c:210
 msgid "Busted SNAC payload"
 msgstr "टूटा हुआ एसएनऐसी समान"
 
-#: src/protocols/oscar/oscar.c:203
+#: src/protocols/oscar/oscar.c:211
 msgid "Insufficient rights"
 msgstr "अपर्याप्त अधीकार"
 
-#: src/protocols/oscar/oscar.c:204
+#: src/protocols/oscar/oscar.c:212
 msgid "In local permit/deny"
 msgstr "स्थानीय में स्वीकारें / अस्वीकारें"
 
-#: src/protocols/oscar/oscar.c:205
+#: src/protocols/oscar/oscar.c:213
 msgid "Too evil (sender)"
 msgstr "बहुत बुरा (भेजने वाला)"
 
-#: src/protocols/oscar/oscar.c:206
+#: src/protocols/oscar/oscar.c:214
 msgid "Too evil (receiver)"
 msgstr "बहुत बुरा (पाने वाला)"
 
-#: src/protocols/oscar/oscar.c:207
+#: src/protocols/oscar/oscar.c:215
 msgid "User temporarily unavailable"
 msgstr "उपयोगकर्ता अस्थाई तोर से उपलब्ध नहीं है।"
 
-#: src/protocols/oscar/oscar.c:208
+#: src/protocols/oscar/oscar.c:216
 msgid "No match"
 msgstr "कोइ बराबर का नहीं मिला"
 
-#: src/protocols/oscar/oscar.c:209
+#: src/protocols/oscar/oscar.c:217
 msgid "List overflow"
 msgstr "सूची अधिकता"
 
-#: src/protocols/oscar/oscar.c:210
+#: src/protocols/oscar/oscar.c:218
 msgid "Request ambiguous"
 msgstr "अस्पष्ट अनुरोध"
 
-#: src/protocols/oscar/oscar.c:211
+#: src/protocols/oscar/oscar.c:219
 msgid "Queue full"
 msgstr "कतार पूरी"
 
-#: src/protocols/oscar/oscar.c:212
+#: src/protocols/oscar/oscar.c:220
 msgid "Not while on AOL"
 msgstr "जब तक ऐ औ एल पर तब तक नहीं"
 
-#: src/protocols/oscar/oscar.c:408 src/protocols/oscar/oscar.c:491
+#: src/protocols/oscar/oscar.c:417 src/protocols/oscar/oscar.c:500
 msgid ""
 "(There was an error receiving this message.  The buddy you are speaking to "
 "most likely has a buggy client.)"
@@ -8174,126 +8202,126 @@ msgstr ""
 "(संदेश प्राप्त करने में त्रुटी। जिस बड्डी से आप बातचीत कर रहें है उसके पास शायद खोटा क्लायंट "
 "है।)"
 
-#: src/protocols/oscar/oscar.c:593
+#: src/protocols/oscar/oscar.c:602
 msgid "Voice"
 msgstr "आवाज़"
 
-#: src/protocols/oscar/oscar.c:596
+#: src/protocols/oscar/oscar.c:605
 msgid "AIM Direct IM"
 msgstr "ऐ आइ एम सीधा आई एम"
 
-#: src/protocols/oscar/oscar.c:599 src/protocols/silc/silc.c:654
+#: src/protocols/oscar/oscar.c:608 src/protocols/silc/silc.c:654
 #: src/protocols/silc/util.c:509
 msgid "Chat"
 msgstr "चैट"
 
-#: src/protocols/oscar/oscar.c:602 src/protocols/oscar/oscar.c:7097
+#: src/protocols/oscar/oscar.c:611 src/protocols/oscar/oscar.c:7771
 msgid "Get File"
 msgstr "फा़इल लायें"
 
 #  *  DEFINES, MACROS & DATA TYPES
-#: src/protocols/oscar/oscar.c:609
+#: src/protocols/oscar/oscar.c:618
 msgid "Games"
 msgstr "गेम"
 
-#: src/protocols/oscar/oscar.c:612
+#: src/protocols/oscar/oscar.c:621
 msgid "Add-Ins"
 msgstr "जु़ड़ने वाली वस्तूऐं"
 
 #  Buddy List
-#: src/protocols/oscar/oscar.c:615
+#: src/protocols/oscar/oscar.c:624
 msgid "Send Buddy List"
 msgstr "बड्डी सूची भेजें"
 
-#: src/protocols/oscar/oscar.c:618
+#: src/protocols/oscar/oscar.c:627
 msgid "ICQ Direct Connect"
 msgstr "आइ सी क्यू सीधा कनेक्ट"
 
-#: src/protocols/oscar/oscar.c:621
+#: src/protocols/oscar/oscar.c:630
 msgid "AP User"
 msgstr "ऐ पी उपयोगकर्ता"
 
-#: src/protocols/oscar/oscar.c:624
+#: src/protocols/oscar/oscar.c:633
 msgid "ICQ RTF"
 msgstr "आइ सी क्यू आर टी ऐफ"
 
-#: src/protocols/oscar/oscar.c:627
+#: src/protocols/oscar/oscar.c:636
 msgid "Nihilist"
 msgstr "शून्यवादी"
 
-#: src/protocols/oscar/oscar.c:630
+#: src/protocols/oscar/oscar.c:639
 msgid "ICQ Server Relay"
 msgstr "आइ सी क्यू सवर्र रीले"
 
-#: src/protocols/oscar/oscar.c:633
+#: src/protocols/oscar/oscar.c:642
 msgid "Old ICQ UTF8"
 msgstr "पुराना आइ सी क्यू यू टी ऐफ-8"
 
-#: src/protocols/oscar/oscar.c:636
+#: src/protocols/oscar/oscar.c:645
 msgid "Trillian Encryption"
 msgstr "ट्रिलियन एनक्रिपशन"
 
-#: src/protocols/oscar/oscar.c:639
+#: src/protocols/oscar/oscar.c:648
 msgid "ICQ UTF8"
 msgstr "आइ सी क्यू यू टी ऐफ-8"
 
-#: src/protocols/oscar/oscar.c:642
+#: src/protocols/oscar/oscar.c:651
 msgid "Hiptop"
 msgstr "हिपटौप"
 
-#: src/protocols/oscar/oscar.c:645
+#: src/protocols/oscar/oscar.c:654
 msgid "Security Enabled"
 msgstr "सुरक्षा समर्थित"
 
-#: src/protocols/oscar/oscar.c:648
+#: src/protocols/oscar/oscar.c:657
 msgid "Video Chat"
 msgstr "विडीयो चैट"
 
-#: src/protocols/oscar/oscar.c:652
+#: src/protocols/oscar/oscar.c:661
 msgid "iChat AV"
 msgstr "आइ चैट AV"
 
-#: src/protocols/oscar/oscar.c:655
+#: src/protocols/oscar/oscar.c:664
 msgid "Live Video"
 msgstr "प्रत्यक्ष विडीयो"
 
-#: src/protocols/oscar/oscar.c:658
+#: src/protocols/oscar/oscar.c:667
 msgid "Camera"
 msgstr "कॉमेरा"
 
-#: src/protocols/oscar/oscar.c:676 src/protocols/oscar/oscar.c:5800
-#: src/protocols/oscar/oscar.c:6989
+#: src/protocols/oscar/oscar.c:685 src/protocols/oscar/oscar.c:6474
+#: src/protocols/oscar/oscar.c:7663
 msgid "Free For Chat"
 msgstr "चैट के लिए समय है"
 
-#: src/protocols/oscar/oscar.c:680 src/protocols/oscar/oscar.c:5794
-#: src/protocols/oscar/oscar.c:6987
+#: src/protocols/oscar/oscar.c:689 src/protocols/oscar/oscar.c:6468
+#: src/protocols/oscar/oscar.c:7661
 msgid "Not Available"
 msgstr "उपलब्ध नहीं"
 
-#: src/protocols/oscar/oscar.c:682 src/protocols/oscar/oscar.c:5797
-#: src/protocols/oscar/oscar.c:6988
+#: src/protocols/oscar/oscar.c:691 src/protocols/oscar/oscar.c:6471
+#: src/protocols/oscar/oscar.c:7662
 msgid "Occupied"
 msgstr "व्यस्त"
 
-#: src/protocols/oscar/oscar.c:686
+#: src/protocols/oscar/oscar.c:695
 msgid "Web Aware"
 msgstr "वैब अवगत"
 
-#: src/protocols/oscar/oscar.c:754
+#: src/protocols/oscar/oscar.c:763
 msgid "Capabilities"
 msgstr "योग्यताऐं"
 
-#: src/protocols/oscar/oscar.c:763
+#: src/protocols/oscar/oscar.c:772
 msgid "Buddy Comment"
 msgstr "बड्डी टिप्पणी"
 
-#: src/protocols/oscar/oscar.c:898
+#: src/protocols/oscar/oscar.c:907
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "सीधा आई एम %s के साथ बंद"
 
-#: src/protocols/oscar/oscar.c:900
+#: src/protocols/oscar/oscar.c:909
 #, c-format
 msgid "Direct IM with %s failed"
 msgstr "सीधा आई एम %s के साथ असफल"
@@ -8305,35 +8333,35 @@ msgstr "सीधा आई एम %s के साथ असफल"
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/protocols/oscar/oscar.c:907
+#: src/protocols/oscar/oscar.c:916
 msgid "Direct Connect failed"
 msgstr "सीधा कनेक्ट असफल"
 
-#: src/protocols/oscar/oscar.c:984 src/protocols/oscar/oscar.c:1115
+#: src/protocols/oscar/oscar.c:993 src/protocols/oscar/oscar.c:1124
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "सीधा आई एम %s के साथ स्थापित"
 
-#: src/protocols/oscar/oscar.c:1065
+#: src/protocols/oscar/oscar.c:1074
 #, c-format
 msgid "Attempting to connect to %s at %s:%hu for Direct IM."
 msgstr "%s को %s पर कनेक्ट करने का प्रयास कर रहा है:%hu सीधे आई एम के लिए।"
 
-#: src/protocols/oscar/oscar.c:1485
+#: src/protocols/oscar/oscar.c:1494
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
 msgstr "%s को %s पर कनेक्ट करने के लिए पूछ रहा है:%hu सीधे आई एम के लिए।"
 
-#: src/protocols/oscar/oscar.c:1490
+#: src/protocols/oscar/oscar.c:1499
 msgid "Unable to open Direct IM"
 msgstr "सीधा आई एम खोलने में असमर्थ"
 
-#: src/protocols/oscar/oscar.c:1525
+#: src/protocols/oscar/oscar.c:1534
 #, c-format
 msgid "You have selected to open a Direct IM connection with %s."
 msgstr "आपने %s के साथ सीधा आई एम खोलने का चुनाव किया है।"
 
-#: src/protocols/oscar/oscar.c:1529
+#: src/protocols/oscar/oscar.c:1538
 msgid ""
 "Because this reveals your IP address, it may be considered a privacy risk.  "
 "Do you wish to continue?"
@@ -8341,24 +8369,24 @@ msgstr ""
 "चूंकि यह आपका आई पी पता दिखाता है इसे आपकी गुप्तता पर खतरा समझा जा सकता है। क्या आप "
 "अब भी आगे बढ़ना चाहेंगे?"
 
-#: src/protocols/oscar/oscar.c:1533 src/protocols/oscar/oscar.c:3643
+#: src/protocols/oscar/oscar.c:1542 src/protocols/oscar/oscar.c:4304
 msgid "Connect"
 msgstr "कनेक्ट"
 
-#: src/protocols/oscar/oscar.c:1600 src/protocols/toc/toc.c:874
+#: src/protocols/oscar/oscar.c:1609 src/protocols/toc/toc.c:874
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "आप %s चैट कक्ष से डिसकनेक्ट हो गये हो।"
 
-#: src/protocols/oscar/oscar.c:1619
+#: src/protocols/oscar/oscar.c:1628
 msgid "Chat is currently unavailable"
 msgstr "चैट अभी के लिए उपलब्ध नहीं है"
 
-#: src/protocols/oscar/oscar.c:1700
+#: src/protocols/oscar/oscar.c:1709
 msgid "Screen name sent"
 msgstr "स्क्रीन-नाम भेजा"
 
-#: src/protocols/oscar/oscar.c:1714
+#: src/protocols/oscar/oscar.c:1723
 #, c-format
 msgid ""
 "Unable to login: Could not sign on as %s because the screen name is "
@@ -8369,51 +8397,73 @@ msgstr ""
 "किसी अक्षर से शुरु होना चाहीए और उसमें केवल अक्षर, अंक और खाली जगह होने चाहीए, नहीं तो "
 "केवल अंक होने चाहीए।"
 
-#: src/protocols/oscar/oscar.c:1742
+#: src/protocols/oscar/oscar.c:1751
 msgid "Unable to login to AIM"
 msgstr "ऐ आई एम में लॉगिन करने में असमर्थ"
 
-#: src/protocols/oscar/oscar.c:1844 src/protocols/oscar/oscar.c:2365
+#: src/protocols/oscar/oscar.c:1853 src/protocols/oscar/oscar.c:2804
 msgid "Could Not Connect"
 msgstr "कनेक्ट नहीं कर पाया"
 
-#: src/protocols/oscar/oscar.c:1852
+#: src/protocols/oscar/oscar.c:1861
 msgid "Connection established, cookie sent"
 msgstr "कनेक्शन हुआ, कुकी भेज दिया"
 
-#: src/protocols/oscar/oscar.c:1963
-#, fuzzy, c-format
-msgid "Transfer of file %s timed out."
-msgstr "%s का हस्तांतरण पूरा हुआ"
+#. clientip & verifiedip failed, request a redirect
+#. * that is, we want the sender to connect to us
+#. Let the user not to lose hope quite yet
+#: src/protocols/oscar/oscar.c:2013
+#, fuzzy
+msgid "Attempting connection redirect..."
+msgstr "%s को %s पर कनेक्ट करने का प्रयास कर रहा है:%hu सीधे आई एम के लिए।"
 
-#: src/protocols/oscar/oscar.c:2047 src/protocols/yahoo/yahoo_filexfer.c:177
+#. proxyip timed out
+#. * Yes, it's a bit odd to ask the user to enable proxied file transfers
+#. * when it's a proxied transfer that timed out. It is possible that a
+#. * stage 1/2 proxied transfer might work when a stage 3 will not.
+#: src/protocols/oscar/oscar.c:2058
+#, c-format
+msgid ""
+"Transfer of file %s timed out.\n"
+" Try enabling proxy servers for file transfers in Tools->Preferences->AIM/"
+"ICQ."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:2156 src/protocols/yahoo/yahoo_filexfer.c:177
 #: src/protocols/yahoo/yahoo_filexfer.c:186
 #: src/protocols/yahoo/yahoo_filexfer.c:195
 msgid "Unable to establish file descriptor."
 msgstr "फाइल डिसक्रिपट्र स्थापित करनें में असमर्थ।"
 
-#: src/protocols/oscar/oscar.c:2052
+#: src/protocols/oscar/oscar.c:2161
 msgid "Unable to create new connection."
 msgstr "नया कनेक्शन बनाने में असमर्थ।"
 
-#: src/protocols/oscar/oscar.c:2124
-msgid "Unable to establish listener socket."
+#: src/protocols/oscar/oscar.c:2396 src/protocols/oscar/oscar.c:2405
+#: src/protocols/oscar/oscar.c:2419 src/protocols/oscar/oscar.c:2429
+#, fuzzy
+msgid "Unable to log into file transfer proxy."
+msgstr "%s फा़इल लिखने में असमर्थ।"
+
+#: src/protocols/oscar/oscar.c:2482
+#, fuzzy
+msgid "Unable to establish listener socket or no AOL proxy connection present."
 msgstr "लिसनर सॉकेट स्थापित करनें में असमर्थ।"
 
-#: src/protocols/oscar/oscar.c:2249 src/protocols/toc/toc.c:541
+#: src/protocols/oscar/oscar.c:2688 src/protocols/toc/toc.c:541
 msgid "Incorrect nickname or password."
 msgstr "अवैध उपनाम या पासवर्ड"
 
-#: src/protocols/oscar/oscar.c:2254
+#: src/protocols/oscar/oscar.c:2693
 msgid "Your account is currently suspended."
 msgstr "आपका खाता अभी निलंबित है।"
 
 #. service temporarily unavailable
-#: src/protocols/oscar/oscar.c:2258
+#: src/protocols/oscar/oscar.c:2697
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "ऐ औ एल इंसटेंट मैसंजर सेवा अस्थाई रुप से उपलब्ध नहीं है।"
 
-#: src/protocols/oscar/oscar.c:2263
+#: src/protocols/oscar/oscar.c:2702
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -8421,33 +8471,33 @@ msgstr ""
 "आप बार-बार कनेक्ट और डिसकनेक्ट हों रहें हैं। दस मिनट प्रतीक्षा करें फिर प्रयास करें। अगर आप "
 "बिना रुके प्रयास करते रहे तब आपको ज़्यादा प्रतीक्षा करनी पड़ेगी।"
 
-#: src/protocols/oscar/oscar.c:2268
+#: src/protocols/oscar/oscar.c:2707
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "यह क्लायंट अनुवाद बहुत पुराना है। कृपया अपग्रेड करें यहा पर %s"
 
-#: src/protocols/oscar/oscar.c:2300
+#: src/protocols/oscar/oscar.c:2739
 msgid "Internal Error"
 msgstr "अन्दरुनी त्रुटि"
 
-#: src/protocols/oscar/oscar.c:2372
+#: src/protocols/oscar/oscar.c:2811
 msgid "Received authorization"
 msgstr "प्रमानिकरण मिला"
 
-#: src/protocols/oscar/oscar.c:2396
+#: src/protocols/oscar/oscar.c:2835
 msgid "The SecurID key entered is invalid."
 msgstr "डाली गयी सेक्योर आई डी कुंजी अवैध है।"
 
-#: src/protocols/oscar/oscar.c:2410
+#: src/protocols/oscar/oscar.c:2849
 msgid "Enter SecurID"
 msgstr "सेक्योर आई डी डालें"
 
-#: src/protocols/oscar/oscar.c:2411
+#: src/protocols/oscar/oscar.c:2850
 msgid "Enter the 6 digit number from the digital display."
 msgstr "डिजीटल डिसप्ले से 6 अंको का नंबर डालें"
 
-#: src/protocols/oscar/oscar.c:2451 src/protocols/oscar/oscar.c:2481
-#: src/protocols/oscar/oscar.c:2570
+#: src/protocols/oscar/oscar.c:2890 src/protocols/oscar/oscar.c:2920
+#: src/protocols/oscar/oscar.c:3009
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -8456,24 +8506,24 @@ msgstr ""
 "आप जल्दी डिसकनेक्ट हो जाएंगे। जब तक यह ठीक होगा आप टी औ सी का प्रयोग करना चाहेंगे। "
 "अपडेट्स के लिए %s देखें।"
 
-#: src/protocols/oscar/oscar.c:2454 src/protocols/oscar/oscar.c:2484
+#: src/protocols/oscar/oscar.c:2893 src/protocols/oscar/oscar.c:2923
 msgid "Pidgin was unable to get a valid AIM login hash."
 msgstr "गेम वैध ऐ आई एम लॉगिन हैश लाने में असमर्थ रहा।"
 
-#: src/protocols/oscar/oscar.c:2573
+#: src/protocols/oscar/oscar.c:3012
 msgid "Pidgin was unable to get a valid login hash."
 msgstr "गेम वैध लॉगिन हैश लाने में असमर्थ रहा।"
 
-#: src/protocols/oscar/oscar.c:2605
+#: src/protocols/oscar/oscar.c:3044
 msgid "Password sent"
 msgstr "पासवर्ड भेजा दिया"
 
-#: src/protocols/oscar/oscar.c:3635
+#: src/protocols/oscar/oscar.c:4296
 #, c-format
 msgid "%s has just asked to directly connect to %s"
 msgstr "%s ने %s से सीधा कनेक्ट करने के लिए पूछा"
 
-#: src/protocols/oscar/oscar.c:3638
+#: src/protocols/oscar/oscar.c:4299
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
@@ -8482,19 +8532,19 @@ msgstr ""
 "इसके लिए दोनो कमप्यूटर्स में सीधा कनेक्शन ज़रुरी है और आई एम चित्रों के लिए आवशयक है। चूंकि "
 "यह आपका आई पी पता दिखाता है इसे आपकी गुप्तता पर खतरा समझा जा सकता है।"
 
-#: src/protocols/oscar/oscar.c:3676
+#: src/protocols/oscar/oscar.c:4337
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "कृपया मुझे प्रमाणित करे ताकि में आपको अपनी बड्डी सूची में डाल सकुँ।"
 
-#: src/protocols/oscar/oscar.c:3684
+#: src/protocols/oscar/oscar.c:4345
 msgid "Authorization Request Message:"
 msgstr "प्रमाणिकरण के लिए विनय संदेश"
 
-#: src/protocols/oscar/oscar.c:3685
+#: src/protocols/oscar/oscar.c:4346
 msgid "Please authorize me!"
 msgstr "कृपया मुझे प्रमाणित करें!"
 
-#: src/protocols/oscar/oscar.c:3715
+#: src/protocols/oscar/oscar.c:4376
 #, c-format
 msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
@@ -8503,22 +8553,22 @@ msgstr ""
 "इस %s उपयोगकर्ता को बड्डी सूची में डालने से पहले पूछना पड़ेगा। क्या आप प्रमाणिकरन आवेदन "
 "भेजना चाहतें हैं?"
 
-#: src/protocols/oscar/oscar.c:3720 src/protocols/oscar/oscar.c:3722
+#: src/protocols/oscar/oscar.c:4381 src/protocols/oscar/oscar.c:4383
 msgid "Request Authorization"
 msgstr "प्रमाणिकरन का अनुरोध करें"
 
-#: src/protocols/oscar/oscar.c:3770 src/protocols/oscar/oscar.c:3772
-#: src/protocols/oscar/oscar.c:3779 src/protocols/oscar/oscar.c:3876
-#: src/protocols/oscar/oscar.c:3896 src/protocols/oscar/oscar.c:6430
-#: src/protocols/oscar/oscar.c:6476
+#: src/protocols/oscar/oscar.c:4431 src/protocols/oscar/oscar.c:4433
+#: src/protocols/oscar/oscar.c:4440 src/protocols/oscar/oscar.c:4537
+#: src/protocols/oscar/oscar.c:4557 src/protocols/oscar/oscar.c:7104
+#: src/protocols/oscar/oscar.c:7150
 msgid "No reason given."
 msgstr "कोई कारण नहीं दिया"
 
-#: src/protocols/oscar/oscar.c:3778
+#: src/protocols/oscar/oscar.c:4439
 msgid "Authorization Denied Message:"
 msgstr "प्रमाणिकरन मनाही संदेश:"
 
-#: src/protocols/oscar/oscar.c:3876
+#: src/protocols/oscar/oscar.c:4537
 #, c-format
 msgid ""
 "The user %u wants to add you to their buddy list for the following reason:\n"
@@ -8527,11 +8577,11 @@ msgstr ""
 "उपयोगकर्ता %u आपको अपनी बड्डी सूची में डालना चाहता है इन कारणों से:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3884 src/protocols/oscar/oscar.c:6436
+#: src/protocols/oscar/oscar.c:4545 src/protocols/oscar/oscar.c:7110
 msgid "Authorization Request"
 msgstr "प्रमाणिकरण विनय"
 
-#: src/protocols/oscar/oscar.c:3896
+#: src/protocols/oscar/oscar.c:4557
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -8542,17 +8592,17 @@ msgstr ""
 "कारणों से:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3897
+#: src/protocols/oscar/oscar.c:4558
 msgid "ICQ authorization denied."
 msgstr "आई सी क्यू प्रमाणिकरन मना।"
 
 #. Someone has granted you authorization
-#: src/protocols/oscar/oscar.c:3904
+#: src/protocols/oscar/oscar.c:4565
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr "उपयोगकर्ता %u ने  आपकी बड्डी सूची में डालने के अनुरोध को मान लिया है।"
 
-#: src/protocols/oscar/oscar.c:3912
+#: src/protocols/oscar/oscar.c:4573
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -8565,7 +8615,7 @@ msgstr ""
 "से: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3920
+#: src/protocols/oscar/oscar.c:4581
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -8578,7 +8628,7 @@ msgstr ""
 "से: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3928
+#: src/protocols/oscar/oscar.c:4589
 #, c-format
 msgid ""
 "You have received an ICQ email from %s [%s]\n"
@@ -8591,34 +8641,34 @@ msgstr ""
 "संदेश है:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:3949
+#: src/protocols/oscar/oscar.c:4610
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "आई सी कयू उपयोगकर्ता %u ने आपको एक बड्डी भेजा है: %s (%s)"
 
-#: src/protocols/oscar/oscar.c:3955
+#: src/protocols/oscar/oscar.c:4616
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "क्या आप इस बड्डी को बड्डी सूची मे डालना चाहतें हैं?"
 
-#: src/protocols/oscar/oscar.c:3959
+#: src/protocols/oscar/oscar.c:4620
 msgid "Decline"
 msgstr "मना करें"
 
-#: src/protocols/oscar/oscar.c:4043
+#: src/protocols/oscar/oscar.c:4704
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत बड़ा था।"
 msgstr[1] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत बड़ा था।"
 
-#: src/protocols/oscar/oscar.c:4052
+#: src/protocols/oscar/oscar.c:4713
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत बड़ा था।"
 msgstr[1] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत बड़ा था।"
 
-#: src/protocols/oscar/oscar.c:4061
+#: src/protocols/oscar/oscar.c:4722
 #, fuzzy, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
@@ -8627,39 +8677,39 @@ msgid_plural ""
 msgstr[0] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत तेज़ भेजा गया था।"
 msgstr[1] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत तेज़ भेजा गया था।"
 
-#: src/protocols/oscar/oscar.c:4070
+#: src/protocols/oscar/oscar.c:4731
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
 msgstr[0] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत बड़ा था।"
 msgstr[1] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत बड़ा था।"
 
-#: src/protocols/oscar/oscar.c:4079
+#: src/protocols/oscar/oscar.c:4740
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत बड़ा था।"
 msgstr[1] "आपने एक %s से एक आइ एम खो दिया क्योंकि वह बहुत बड़ा था।"
 
-#: src/protocols/oscar/oscar.c:4088
+#: src/protocols/oscar/oscar.c:4749
 #, fuzzy, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "आपको अज्ञात कारनों से साइन-ऑफ करा गया है।"
 msgstr[1] "आपको अज्ञात कारनों से साइन-ऑफ करा गया है।"
 
-#: src/protocols/oscar/oscar.c:4142 src/protocols/oscar/oscar.c:4374
+#: src/protocols/oscar/oscar.c:4803 src/protocols/oscar/oscar.c:5035
 #, c-format
 msgid "Info for %s"
 msgstr "%s के लिए विवरण"
 
-#: src/protocols/oscar/oscar.c:4208
+#: src/protocols/oscar/oscar.c:4869
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "एस एन ऐ सी ने त्रुटी दी: %s\n"
 
 #. Data is assumed to be the destination sn
-#: src/protocols/oscar/oscar.c:4244
+#: src/protocols/oscar/oscar.c:4905
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "संदेश भेजने में असमर्थ: %s"
@@ -8668,164 +8718,164 @@ msgstr "संदेश भेजने में असमर्थ: %s"
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
-#: src/protocols/oscar/oscar.c:4244 src/protocols/oscar/oscar.c:4249
-#: src/protocols/oscar/oscar.c:4307 src/protocols/oscar/oscar.c:4311
+#: src/protocols/oscar/oscar.c:4905 src/protocols/oscar/oscar.c:4910
+#: src/protocols/oscar/oscar.c:4968 src/protocols/oscar/oscar.c:4972
 msgid "Unknown reason."
 msgstr "अज्ञात कारण"
 
-#: src/protocols/oscar/oscar.c:4307
+#: src/protocols/oscar/oscar.c:4968
 #, c-format
 msgid "User information not available: %s"
 msgstr "उपयोगकर्ता जानकारी उपलब्ध नहीं: %s"
 
-#: src/protocols/oscar/oscar.c:4310
+#: src/protocols/oscar/oscar.c:4971
 #, c-format
 msgid "User information for %s unavailable:"
 msgstr "उपयोगकर्ता %s हेतु जानकारी उपलब्ध नहीं"
 
-#: src/protocols/oscar/oscar.c:4332
+#: src/protocols/oscar/oscar.c:4993
 msgid "Warning Level"
 msgstr "चेतावनी स्तर"
 
-#: src/protocols/oscar/oscar.c:4336
+#: src/protocols/oscar/oscar.c:4997
 msgid "Online Since"
 msgstr "से औनलाइन"
 
-#: src/protocols/oscar/oscar.c:4341 src/protocols/yahoo/yahoo_profile.c:1125
+#: src/protocols/oscar/oscar.c:5002 src/protocols/yahoo/yahoo_profile.c:1125
 msgid "Member Since"
 msgstr "से सदस्य"
 
-#: src/protocols/oscar/oscar.c:4425
+#: src/protocols/oscar/oscar.c:5086
 msgid "Your AIM connection may be lost."
 msgstr "आपका ऐ आई एम कनेक्शन शायद टूट गया है।"
 
 #. The conversion failed!
-#: src/protocols/oscar/oscar.c:4611
+#: src/protocols/oscar/oscar.c:5272
 msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
 msgstr "[इस उपयोगकर्त से एक संदेश दिखाने में असमर्थ क्योंकि उसमें अवैध अक्षर हैं।]"
 
-#: src/protocols/oscar/oscar.c:4836
+#: src/protocols/oscar/oscar.c:5497
 msgid "Rate limiting error."
 msgstr "दर सीमा त्रुटी।"
 
-#: src/protocols/oscar/oscar.c:4837
+#: src/protocols/oscar/oscar.c:5498
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
 msgstr "पिछली क्रिया आपने की वह हो ना पायी क्योंकि आप दर सीमा का उल्लंघन कर रहें हैं।"
 
-#: src/protocols/oscar/oscar.c:4900
+#: src/protocols/oscar/oscar.c:5561
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
 msgstr ""
 "आपको डिसकनेक्ट कर दिया गया है क्योंकि आपने इसी स्क्रीन-नाम से कहीं और भी लॉगिन किया।"
 
-#: src/protocols/oscar/oscar.c:4902
+#: src/protocols/oscar/oscar.c:5563
 msgid "You have been signed off for an unknown reason."
 msgstr "आपको अज्ञात कारनों से साइन-ऑफ करा गया है।"
 
-#: src/protocols/oscar/oscar.c:4933
+#: src/protocols/oscar/oscar.c:5594
 msgid "Finalizing connection"
 msgstr "कनेक्शन को निर्णायक कर रहा है"
 
-#: src/protocols/oscar/oscar.c:5216 src/protocols/silc/util.c:541
+#: src/protocols/oscar/oscar.c:5877 src/protocols/silc/util.c:541
 msgid "Mobile Phone"
 msgstr "मोबाइल फोन"
 
-#: src/protocols/oscar/oscar.c:5217
+#: src/protocols/oscar/oscar.c:5878
 msgid "Not specified"
 msgstr "बताया नहीं गया"
 
-#: src/protocols/oscar/oscar.c:5218 src/protocols/trepia/trepia.c:282
+#: src/protocols/oscar/oscar.c:5879 src/protocols/trepia/trepia.c:282
 #: src/protocols/trepia/trepia.c:408
 msgid "Female"
 msgstr "स्त्री"
 
-#: src/protocols/oscar/oscar.c:5218 src/protocols/trepia/trepia.c:281
+#: src/protocols/oscar/oscar.c:5879 src/protocols/trepia/trepia.c:281
 #: src/protocols/trepia/trepia.c:408
 msgid "Male"
 msgstr "पुरुष"
 
-#: src/protocols/oscar/oscar.c:5234
+#: src/protocols/oscar/oscar.c:5895
 msgid "Personal Web Page"
 msgstr "निजी वेब पन्ना"
 
-#: src/protocols/oscar/oscar.c:5238
+#: src/protocols/oscar/oscar.c:5899
 msgid "Additional Information"
 msgstr "अतिरिक्त सूचना"
 
-#: src/protocols/oscar/oscar.c:5243
+#: src/protocols/oscar/oscar.c:5904
 msgid "Home Address"
 msgstr "घर का पता"
 
-#: src/protocols/oscar/oscar.c:5247 src/protocols/oscar/oscar.c:5255
+#: src/protocols/oscar/oscar.c:5908 src/protocols/oscar/oscar.c:5916
 msgid "Zip Code"
 msgstr "ज़िप कोड"
 
-#: src/protocols/oscar/oscar.c:5251
+#: src/protocols/oscar/oscar.c:5912
 msgid "Work Address"
 msgstr "दफतर का पता"
 
-#: src/protocols/oscar/oscar.c:5259
+#: src/protocols/oscar/oscar.c:5920
 msgid "Work Information"
 msgstr "कार्य की जानकारी"
 
-#: src/protocols/oscar/oscar.c:5260
+#: src/protocols/oscar/oscar.c:5921
 msgid "Company"
 msgstr "संस्था"
 
-#: src/protocols/oscar/oscar.c:5261
+#: src/protocols/oscar/oscar.c:5922
 msgid "Division"
 msgstr "भागगणित"
 
-#: src/protocols/oscar/oscar.c:5262
+#: src/protocols/oscar/oscar.c:5923
 msgid "Position"
 msgstr "दर्जा"
 
-#: src/protocols/oscar/oscar.c:5264
+#: src/protocols/oscar/oscar.c:5925
 msgid "Web Page"
 msgstr "वेब पृष्ठ"
 
-#: src/protocols/oscar/oscar.c:5274
+#: src/protocols/oscar/oscar.c:5935
 #, c-format
 msgid "ICQ Info for %s"
 msgstr "%s लिए के आइसीक्यू जानकारी"
 
-#: src/protocols/oscar/oscar.c:5323
+#: src/protocols/oscar/oscar.c:5984
 msgid "Pop-Up Message"
 msgstr "पॉप-अप संदेश"
 
-#: src/protocols/oscar/oscar.c:5344
+#: src/protocols/oscar/oscar.c:6005
 #, c-format
 msgid "The following screen names are associated with %s"
 msgstr "इस के साथ %s आने वाले यह स्क्रीन-नाम जु़ड़ें हुए हैं"
 
-#: src/protocols/oscar/oscar.c:5348
+#: src/protocols/oscar/oscar.c:6009
 msgid "Search Results"
 msgstr "खोज के नतीजे"
 
-#: src/protocols/oscar/oscar.c:5365
+#: src/protocols/oscar/oscar.c:6026
 #, c-format
 msgid "No results found for email address %s"
 msgstr "%s इमेल पते के लिए कोइ भी नतीजा नहीं मिला"
 
-#: src/protocols/oscar/oscar.c:5386
+#: src/protocols/oscar/oscar.c:6047
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "%s को निश्चित करने के लिए एक ईमेल मिलेगा।"
 
-#: src/protocols/oscar/oscar.c:5388
+#: src/protocols/oscar/oscar.c:6049
 msgid "Account Confirmation Requested"
 msgstr "खाता पुष्टिकरण के लिए अनुरोध"
 
-#: src/protocols/oscar/oscar.c:5419
+#: src/protocols/oscar/oscar.c:6080
 msgid "Error Changing Account Info"
 msgstr "खाता जानकारी बदलनें में त्रुटी"
 
-#: src/protocols/oscar/oscar.c:5422
+#: src/protocols/oscar/oscar.c:6083
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8834,7 +8884,7 @@ msgstr ""
 "त्रुटी 0x%04x: स्क्रीन-नाम की रचना करने में असमर्थ क्योंकि मांगा गया स्क्रीन-नाम प्रारंभिक "
 "स्क्रीन-नाम से अलग है।"
 
-#: src/protocols/oscar/oscar.c:5425
+#: src/protocols/oscar/oscar.c:6086
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8843,7 +8893,7 @@ msgstr ""
 "त्रुटी 0x%04x: स्क्रीन-नाम की रचना करने में असमर्थ क्योंकि मांगा गया स्क्रीन-नाम खाली जगह "
 "में समाप्त होता है।"
 
-#: src/protocols/oscar/oscar.c:5428
+#: src/protocols/oscar/oscar.c:6089
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8852,7 +8902,7 @@ msgstr ""
 "त्रुटी 0x%04x: स्क्रीन-नाम की रचना करने में असमर्थ क्योंकि मांगा गया स्क्रीन-नाम  बहुत "
 "लम्बा है।"
 
-#: src/protocols/oscar/oscar.c:5431
+#: src/protocols/oscar/oscar.c:6092
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -8860,7 +8910,7 @@ msgid ""
 msgstr ""
 "त्रुटी 0x%04x: ईमेल बदलने में असमर्थ क्योंकि मांगे गये ईमेल पते के लिए पहले से एक आवेदन है।"
 
-#: src/protocols/oscar/oscar.c:5434
+#: src/protocols/oscar/oscar.c:6095
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -8869,19 +8919,19 @@ msgstr ""
 "त्रुटी 0x%04x: ईमेल बदलने में असमर्थ क्योंकि मांगे गये ईमेल पते के लिए पहले से बहुत से स्क्रीन-"
 "नाम जुड़े हैं।"
 
-#: src/protocols/oscar/oscar.c:5437
+#: src/protocols/oscar/oscar.c:6098
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "त्रुटी 0x%04x:  ईमेल बदलने में असमर्थ क्योंकि दिया गया ईमेल पता अवैध है।"
 
-#: src/protocols/oscar/oscar.c:5440
+#: src/protocols/oscar/oscar.c:6101
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "त्रुटी 0x%04x: अज्ञात त्रुटी।"
 
-#: src/protocols/oscar/oscar.c:5450
+#: src/protocols/oscar/oscar.c:6111
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -8891,26 +8941,26 @@ msgstr ""
 "%s"
 
 #  And now for the buttons
-#: src/protocols/oscar/oscar.c:5451 src/protocols/oscar/oscar.c:5458
+#: src/protocols/oscar/oscar.c:6112 src/protocols/oscar/oscar.c:6119
 msgid "Account Info"
 msgstr "खाता विवरण"
 
-#: src/protocols/oscar/oscar.c:5456
+#: src/protocols/oscar/oscar.c:6117
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "%s के लिए ईमेल पता है %s"
 
-#: src/protocols/oscar/oscar.c:5521
+#: src/protocols/oscar/oscar.c:6182
 msgid ""
 "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
 "आई एम चित्र नहीं भेजा गया। आई एम चित्र भेजने के लिए आपका सीधा कनेक्शन होना चाहिए।"
 
-#: src/protocols/oscar/oscar.c:5649
+#: src/protocols/oscar/oscar.c:6323
 msgid "Unable to set AIM profile."
 msgstr "ऐ आई एम प्रोफाइल तय करने में असमर्थ।"
 
-#: src/protocols/oscar/oscar.c:5650
+#: src/protocols/oscar/oscar.c:6324
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -8919,30 +8969,30 @@ msgstr ""
 "आपने शायद अपनी प्रोफाइल को लॉगिन होने से पहले ही तय करना चाहा। आपकी प्रोफाइल अभी "
 "दृढ़ नहीं हुई। दोबारा प्रयास करें पूर्ण रूप से लॉगिन करने के बाद।"
 
-#: src/protocols/oscar/oscar.c:5677
-#, c-format
+#: src/protocols/oscar/oscar.c:6351
+#, fuzzy, c-format
 msgid ""
-"The maximum profile length of %d byte has been exceeded.  Pidgin has truncated "
+"The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
 "it for you."
 msgid_plural ""
-"The maximum profile length of %d bytes has been exceeded.  Pidgin has "
+"The maximum profile length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr[0] "प्रोफाइल की अधिकतम लम्बाई %d बाइट पार हो गयी है।"
 msgstr[1] "प्रोफाइल की अधिकतम लम्बाई %d बाइट पार हो गयी है।"
 
-#: src/protocols/oscar/oscar.c:5682
+#: src/protocols/oscar/oscar.c:6356
 msgid "Profile too long."
 msgstr "प्रोफाइल बहुत लम्बी है।"
 
-#: src/protocols/oscar/oscar.c:5698 src/protocols/oscar/oscar.c:6994
+#: src/protocols/oscar/oscar.c:6372 src/protocols/oscar/oscar.c:7668
 msgid "Visible"
 msgstr "द्रश्य"
 
-#: src/protocols/oscar/oscar.c:5716
+#: src/protocols/oscar/oscar.c:6390
 msgid "Unable to set AIM away message."
 msgstr "ऐ आइ एम का दूर संदेश दृढ करने में असमर्थ "
 
-#: src/protocols/oscar/oscar.c:5717
+#: src/protocols/oscar/oscar.c:6391
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -8951,13 +9001,13 @@ msgstr ""
 "आपने शायद अपनी प्रोफाइल को लॉगिन होने से पहले ही अनुपस्थिति संदेश तय करना चाहा। आप "
 "अभी \"मोजू़द\" वस्तुस्थिति में रहेंगे। दोबारा प्रयास करें पूर्ण रूप से कनेक्ट होने के बाद।"
 
-#: src/protocols/oscar/oscar.c:5757
-#, c-format
+#: src/protocols/oscar/oscar.c:6431
+#, fuzzy, c-format
 msgid ""
-"The maximum away message length of %d byte has been exceeded.  Pidgin has "
+"The maximum away message length of %d byte has been exceeded.  Gaim has "
 "truncated it for you."
 msgid_plural ""
-"The maximum away message length of %d bytes has been exceeded.  Pidgin has "
+"The maximum away message length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr[0] ""
 "अनुपस्थिति संदेश की अधिकतम लम्बाई %d बाइच पार हो गयी है। गेम ने इसे आपके लिए काट दिया "
@@ -8966,11 +9016,11 @@ msgstr[1] ""
 "अनुपस्थिति संदेश की अधिकतम लम्बाई %d बाइच पार हो गयी है। गेम ने इसे आपके लिए काट दिया "
 "है।"
 
-#: src/protocols/oscar/oscar.c:5762
+#: src/protocols/oscar/oscar.c:6436
 msgid "Away message too long."
 msgstr "अनुपस्थिति संदेश बहुत लम्बा है।"
 
-#: src/protocols/oscar/oscar.c:5839
+#: src/protocols/oscar/oscar.c:6513
 #, c-format
 msgid ""
 "Could not add the buddy %s because the screen name is invalid.  Screen names "
@@ -8980,16 +9030,16 @@ msgstr ""
 "बड्डी %s जोड़ नहीं पाया क्योंक् स्क्रीन-नाम अवैध है। स्क्रीन-नाम या सिर्फ अंको का होना "
 "चाहिए नहीं तो अक्षर से शुरु होना चाहिए। उसमें केवल अक्षर, अंक ओर खाली जगह होनी चाहिए।"
 
-#: src/protocols/oscar/oscar.c:5841 src/protocols/oscar/oscar.c:6296
-#: src/protocols/oscar/oscar.c:6310
+#: src/protocols/oscar/oscar.c:6515 src/protocols/oscar/oscar.c:6970
+#: src/protocols/oscar/oscar.c:6984
 msgid "Unable To Add"
 msgstr "जोड़ने में असर्मथ"
 
-#: src/protocols/oscar/oscar.c:6008
+#: src/protocols/oscar/oscar.c:6682
 msgid "Unable To Retrieve Buddy List"
 msgstr "बड्डी सूची नहीं ला पाया"
 
-#: src/protocols/oscar/oscar.c:6009
+#: src/protocols/oscar/oscar.c:6683
 msgid ""
 "Pidgin was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -8998,13 +9048,13 @@ msgstr ""
 "गेम अस्थाई तोर पे ऐ आई एम के सवर्र से आपकी बड्डी सूची न ला पाया। आपकी बड्डी सूची खोई "
 "नहीं है और कुछ देर उपरांत उपलब्ध हो जाएगी।"
 
-#: src/protocols/oscar/oscar.c:6191 src/protocols/oscar/oscar.c:6192
-#: src/protocols/oscar/oscar.c:6197 src/protocols/oscar/oscar.c:6354
-#: src/protocols/oscar/oscar.c:6355 src/protocols/oscar/oscar.c:6360
+#: src/protocols/oscar/oscar.c:6865 src/protocols/oscar/oscar.c:6866
+#: src/protocols/oscar/oscar.c:6871 src/protocols/oscar/oscar.c:7028
+#: src/protocols/oscar/oscar.c:7029 src/protocols/oscar/oscar.c:7034
 msgid "Orphans"
 msgstr "लावारिस"
 
-#: src/protocols/oscar/oscar.c:6294
+#: src/protocols/oscar/oscar.c:6968
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -9013,11 +9063,11 @@ msgstr ""
 "बड्डी %s को जोड़ नहीं पाया क्योंकि आपकी सूची में बहुत ज्यादा बड्डी हैं। किसी एक को हटा कर "
 "फिर प्रयत्न करें।"
 
-#: src/protocols/oscar/oscar.c:6294 src/protocols/oscar/oscar.c:6308
+#: src/protocols/oscar/oscar.c:6968 src/protocols/oscar/oscar.c:6982
 msgid "(no name)"
 msgstr "(कोई नाम नहीं)"
 
-#: src/protocols/oscar/oscar.c:6308
+#: src/protocols/oscar/oscar.c:6982
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
@@ -9025,7 +9075,7 @@ msgid ""
 "buddy list."
 msgstr "बड्डी %s को जोड़ नहीं पाया। शायद आपने अधिकतम सीमा पार कर ली है बड्डी सूची की।"
 
-#: src/protocols/oscar/oscar.c:6391
+#: src/protocols/oscar/oscar.c:7065
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -9033,11 +9083,11 @@ msgid ""
 msgstr ""
 "उपयोगकर्ता %s ने आपके स्वाकृती दी अपनी बड्डी सूची में जोड़ने की। क्या आप डालना चाहतें हैं?"
 
-#: src/protocols/oscar/oscar.c:6397
+#: src/protocols/oscar/oscar.c:7071
 msgid "Authorization Given"
 msgstr "प्रमानिकरण दिया"
 
-#: src/protocols/oscar/oscar.c:6430
+#: src/protocols/oscar/oscar.c:7104
 #, c-format
 msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
@@ -9047,17 +9097,17 @@ msgstr ""
 "%s"
 
 #. Granted
-#: src/protocols/oscar/oscar.c:6472
+#: src/protocols/oscar/oscar.c:7146
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr "उपयोगकर्ता %s ने आपके अनुरोध को मान लिया है।"
 
-#: src/protocols/oscar/oscar.c:6473
+#: src/protocols/oscar/oscar.c:7147
 msgid "Authorization Granted"
 msgstr "प्रमानिकरण दिया"
 
 #. Denied
-#: src/protocols/oscar/oscar.c:6476
+#: src/protocols/oscar/oscar.c:7150
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
@@ -9067,76 +9117,76 @@ msgstr ""
 "उपयोगकर्ता %s ने आपके अनुरोध को निम्नलिखत कारणों कि वजह ठुकरा दिया है।:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:6477
+#: src/protocols/oscar/oscar.c:7151
 msgid "Authorization Denied"
 msgstr "प्रमानिकरण मना हुआ"
 
-#: src/protocols/oscar/oscar.c:6514 src/protocols/toc/toc.c:1273
+#: src/protocols/oscar/oscar.c:7188 src/protocols/toc/toc.c:1273
 msgid "_Exchange:"
 msgstr "अदला-बदली:(_E)"
 
-#: src/protocols/oscar/oscar.c:6552
+#: src/protocols/oscar/oscar.c:7223
 msgid "Invalid chat name specified."
 msgstr "अवैध चैट नाम दिया गया।"
 
-#: src/protocols/oscar/oscar.c:6641
+#: src/protocols/oscar/oscar.c:7315
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr "आपका आई एम चित्र नहीं गया। आप ऐ आई एम में आई एम चित्र नहीं भेज सकते।"
 
-#: src/protocols/oscar/oscar.c:6767
+#: src/protocols/oscar/oscar.c:7441
 msgid "Away Message"
 msgstr "दूर संदेश"
 
-#: src/protocols/oscar/oscar.c:7053
+#: src/protocols/oscar/oscar.c:7727
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "%s के लिए बड्डी टिप्पणी"
 
-#: src/protocols/oscar/oscar.c:7054
+#: src/protocols/oscar/oscar.c:7728
 msgid "Buddy Comment:"
 msgstr "बड्डी टिप्पणी"
 
-#: src/protocols/oscar/oscar.c:7073
+#: src/protocols/oscar/oscar.c:7747
 msgid "Edit Buddy Comment"
 msgstr "बड्डी टिप्पणी का संपादन\" "
 
-#: src/protocols/oscar/oscar.c:7079
+#: src/protocols/oscar/oscar.c:7753
 msgid "Get Status Msg"
 msgstr "वस्तुस्थिति संदेश लायें"
 
-#: src/protocols/oscar/oscar.c:7091
+#: src/protocols/oscar/oscar.c:7765
 msgid "Direct IM"
 msgstr "सीधा आई एम"
 
-#: src/protocols/oscar/oscar.c:7108
+#: src/protocols/oscar/oscar.c:7782
 msgid "Re-request Authorization"
 msgstr "पुनः प्रमानिकरण के लिए अनुरोध करें"
 
-#: src/protocols/oscar/oscar.c:7138
+#: src/protocols/oscar/oscar.c:7812
 msgid "The new formatting is invalid."
 msgstr "नई रचना अवैध है।"
 
-#: src/protocols/oscar/oscar.c:7139
+#: src/protocols/oscar/oscar.c:7813
 msgid "Screen name formatting can change only capitalization and whitespace."
 msgstr "स्क्रीन-नाम रचना केवल खाली जगह और केपिटलाइज़ेशन बदलेगी"
 
-#: src/protocols/oscar/oscar.c:7146
+#: src/protocols/oscar/oscar.c:7820
 msgid "New screen name formatting:"
 msgstr "नये स्क्रीन-नाम की रचना:"
 
-#: src/protocols/oscar/oscar.c:7198
+#: src/protocols/oscar/oscar.c:7872
 msgid "Change Address To:"
 msgstr "पता बदलें:"
 
-#: src/protocols/oscar/oscar.c:7243
+#: src/protocols/oscar/oscar.c:7917
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>आप प्रमाणिकरन की प्रतीक्षा नहीं कर रहें हैं</i>"
 
-#: src/protocols/oscar/oscar.c:7246
+#: src/protocols/oscar/oscar.c:7920
 msgid "You are awaiting authorization from the following buddies"
 msgstr "निम्नलिखित बड्डी से आप प्रमाणिकरन की प्रतीक्षा कर रहें हैं"
 
-#: src/protocols/oscar/oscar.c:7247
+#: src/protocols/oscar/oscar.c:7921
 msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
@@ -9144,78 +9194,82 @@ msgstr ""
 "आप दाहीना क्लिक कर और \"पुनः प्रमानिकरण के लिए अनुरोध करें\" चुन कर पुनः प्रमानिकरण के "
 "लिए अनुरोध कर सकतें हैं।"
 
-#: src/protocols/oscar/oscar.c:7264
+#: src/protocols/oscar/oscar.c:7938
 msgid "Find Buddy by E-mail"
 msgstr "ईमेल के द्वारा बड्डी को ढूंढें"
 
-#: src/protocols/oscar/oscar.c:7265
+#: src/protocols/oscar/oscar.c:7939
 msgid "Search for a buddy by e-mail address"
 msgstr "बड्डी की खोज ईमेल पता द्वारा करें"
 
-#: src/protocols/oscar/oscar.c:7266
+#: src/protocols/oscar/oscar.c:7940
 msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "जिस बड्डी की खोज कर रहें हैं उसका ईमेल पता डालें।"
 
-#: src/protocols/oscar/oscar.c:7283
+#: src/protocols/oscar/oscar.c:7957
 msgid "Available Message:"
 msgstr "उपलब्ध संदेश:"
 
-#: src/protocols/oscar/oscar.c:7284
+#: src/protocols/oscar/oscar.c:7958
 msgid "I'm doing work and hoping for a distraction--IM me!"
 msgstr "मैं काम कर रहा हूं और ध्यान बांटने कि आशा कर रहा हूं, मुझे आई एम करो!"
 
-#: src/protocols/oscar/oscar.c:7365 src/protocols/silc/silc.c:812
+#: src/protocols/oscar/oscar.c:8039 src/protocols/silc/silc.c:812
 msgid "Set User Info..."
 msgstr "उपयोगकर्ता की जानकारी दृढ़ करें..."
 
-#: src/protocols/oscar/oscar.c:7370
+#: src/protocols/oscar/oscar.c:8044
 msgid "Set User Info (URL)..."
 msgstr "उपयोगकर्ता की जानकारी दृढ़ करें(यू आर एल)..."
 
-#: src/protocols/oscar/oscar.c:7376
+#: src/protocols/oscar/oscar.c:8050
 msgid "Set Available Message..."
 msgstr "उपलब्ध संदेश दृढ़ करें..."
 
-#: src/protocols/oscar/oscar.c:7381 src/protocols/silc/silc.c:808
+#: src/protocols/oscar/oscar.c:8055 src/protocols/silc/silc.c:808
 msgid "Change Password..."
 msgstr "पासवर्ड बदलें..."
 
-#: src/protocols/oscar/oscar.c:7386
+#: src/protocols/oscar/oscar.c:8060
 msgid "Change Password (URL)"
 msgstr "पासवर्ड बदलें (यू आर ऐल )"
 
-#: src/protocols/oscar/oscar.c:7390
+#: src/protocols/oscar/oscar.c:8064
 msgid "Configure IM Forwarding (URL)"
 msgstr "आई एम फोर्व़डिंग (यू आर एल) कि संरचना करें"
 
-#: src/protocols/oscar/oscar.c:7399
+#: src/protocols/oscar/oscar.c:8073
 msgid "Format Screen Name..."
 msgstr "स्क्रीन-नाम की रचना करें"
 
 #  And now for the buttons
-#: src/protocols/oscar/oscar.c:7403
+#: src/protocols/oscar/oscar.c:8077
 msgid "Confirm Account"
 msgstr "खाते को द्रढ़ करें"
 
-#: src/protocols/oscar/oscar.c:7407
+#: src/protocols/oscar/oscar.c:8081
 msgid "Display Currently Registered Address"
 msgstr "वर्तमान रजिस्टर करा पता दिखायें"
 
-#: src/protocols/oscar/oscar.c:7411
+#: src/protocols/oscar/oscar.c:8085
 msgid "Change Currently Registered Address..."
 msgstr "वर्तमान रजिस्टर करा पता बदलें"
 
-#: src/protocols/oscar/oscar.c:7418
+#: src/protocols/oscar/oscar.c:8092
 msgid "Show Buddies Awaiting Authorization"
 msgstr "प्रमाणिकरन कि प्रतीक्षा कर रहे बड्डी दिखायें"
 
-#: src/protocols/oscar/oscar.c:7424
+#: src/protocols/oscar/oscar.c:8098
 msgid "Search for Buddy by Email..."
 msgstr "बड्डी की खोज ईमेल द्वारा करें..."
 
-#: src/protocols/oscar/oscar.c:7429
+#: src/protocols/oscar/oscar.c:8103
 msgid "Search for Buddy by Information"
 msgstr "बड्डी की खोज जानकारी द्वारा करें"
+
+#: src/protocols/oscar/oscar.c:8181
+msgid "Use AIM/ICQ proxy server (Slower/More Secure/Usually Works)"
+msgstr ""
 
 #. *< type
 #. *< ui_requirement
@@ -9227,19 +9281,19 @@ msgstr "बड्डी की खोज जानकारी द्वार�
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/oscar/oscar.c:7550 src/protocols/oscar/oscar.c:7552
+#: src/protocols/oscar/oscar.c:8275 src/protocols/oscar/oscar.c:8277
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "ऐ आई एम/आई सी क्यू प्रोटॅकोल प्लगइन"
 
-#: src/protocols/oscar/oscar.c:7571
+#: src/protocols/oscar/oscar.c:8296
 msgid "Auth host"
 msgstr "औथ होस्ट"
 
-#: src/protocols/oscar/oscar.c:7574
+#: src/protocols/oscar/oscar.c:8299
 msgid "Auth port"
 msgstr "प्रमाण पोर्ट"
 
-#: src/protocols/oscar/oscar.c:7577 src/protocols/zephyr/zephyr.c:2760
+#: src/protocols/oscar/oscar.c:8302 src/protocols/zephyr/zephyr.c:2748
 msgid "Encoding"
 msgstr "ऐनकोडिंग"
 
@@ -10297,7 +10351,7 @@ msgstr "सूची: इस नेटवर्क पर चैनलों क
 msgid "whois &lt;nick&gt;:  View nick's information"
 msgstr "whois &lt;उपनाम&gt;:  उपनाम के बारे में जानकारी लायें"
 
-#: src/protocols/silc/silc.c:1352 src/protocols/zephyr/zephyr.c:2478
+#: src/protocols/silc/silc.c:1352 src/protocols/zephyr/zephyr.c:2466
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
 msgstr "msg &lt;उपनाम&gt; &lt;संदेश&gt;:  किसी उपयोगकर्ता को निजी संदेश भेजें।"
 
@@ -10701,53 +10755,54 @@ msgid "TOC has sent a PAUSE command."
 msgstr "टी औ सी ने ठहरना के कमांड भेजा है।"
 
 #: src/protocols/toc/toc.c:897
+#, fuzzy
 msgid ""
 "When this happens, TOC ignores any messages sent to it, and may kick you off "
-"if you send a message. Pidgin will prevent anything from going through. This "
+"if you send a message. Gaim will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
 "जब ऐसा होता है तब टी औ सी किसी भी संदेश पर ध्यान नहीं देगा और आपके संदेश भेजने पर वह "
 "आपको लात भी मार सकता है। गेम कुछ भी जाने से रोक देगा। यह केवल अस्थाई है, कृपया संयम "
 "बनाये रखें।"
 
-#: src/protocols/toc/toc.c:1423
+#: src/protocols/toc/toc.c:1450
 msgid "Get Dir Info"
 msgstr "डिर जानकारी लायें"
 
-#: src/protocols/toc/toc.c:1559
+#: src/protocols/toc/toc.c:1586
 msgid "Set Dir Info"
 msgstr "डिर जानकारी दृढ़ करें..."
 
-#: src/protocols/toc/toc.c:1681
+#: src/protocols/toc/toc.c:1708
 #, c-format
 msgid "Could not open %s for writing!"
 msgstr "%s को खोल नहीं पाया लिखने के लिए!"
 
-#: src/protocols/toc/toc.c:1717
+#: src/protocols/toc/toc.c:1744
 msgid "File transfer failed; other side probably canceled."
 msgstr "फा़इल हसतांत्रण विफल; शायद दूसरी और से रद्द हुआ।"
 
-#: src/protocols/toc/toc.c:1762 src/protocols/toc/toc.c:1802
-#: src/protocols/toc/toc.c:1926 src/protocols/toc/toc.c:2014
+#: src/protocols/toc/toc.c:1789 src/protocols/toc/toc.c:1829
+#: src/protocols/toc/toc.c:1953 src/protocols/toc/toc.c:2041
 msgid "Could not connect for transfer."
 msgstr "हसतांतरण करने के लिए कनेक्ट नहीं कर पाया।"
 
-#: src/protocols/toc/toc.c:1959
+#: src/protocols/toc/toc.c:1986
 msgid "Could not write file header.  The file will not be transferred."
 msgstr "फा़इल का हैडर लिख नहीं पाया। यह फा़इन हसतांत्रित नहीं होगी।"
 
-#: src/protocols/toc/toc.c:2059
+#: src/protocols/toc/toc.c:2086
 msgid "Pidgin - Save As..."
 msgstr "गेम - ऐसे संचय करें..."
 
-#: src/protocols/toc/toc.c:2093
+#: src/protocols/toc/toc.c:2120
 #, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/protocols/toc/toc.c:2100
+#: src/protocols/toc/toc.c:2127
 #, c-format
 msgid "%s requests you to send them a file"
 msgstr "%s आपसे फा़इल भेजने का अनुरोध कर रहें हैं"
@@ -10762,15 +10817,15 @@ msgstr "%s आपसे फा़इल भेजने का अनुरो�
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/toc/toc.c:2187 src/protocols/toc/toc.c:2189
+#: src/protocols/toc/toc.c:2214 src/protocols/toc/toc.c:2216
 msgid "TOC Protocol Plugin"
 msgstr "टीऔसी प्रोटोकॉल प्लगइन"
 
-#: src/protocols/toc/toc.c:2208
+#: src/protocols/toc/toc.c:2235
 msgid "TOC host"
 msgstr "टीऔसी होस्ट"
 
-#: src/protocols/toc/toc.c:2212
+#: src/protocols/toc/toc.c:2239
 msgid "TOC port"
 msgstr "टीऔसी पोर्ट"
 
@@ -10867,7 +10922,7 @@ msgstr "आपको लॉग-औफ कर दिया गया है क�
 msgid "Your Yahoo! message did not get sent."
 msgstr "आपका याहू! संदेश भेजा नहीं गया।"
 
-#: src/protocols/yahoo/yahoo.c:936 src/protocols/yahoo/yahoo.c:3437
+#: src/protocols/yahoo/yahoo.c:936 src/protocols/yahoo/yahoo.c:3520
 msgid "Buzz!!"
 msgstr "बज़्ज़!!"
 
@@ -10876,37 +10931,50 @@ msgstr "बज़्ज़!!"
 msgid "Yahoo! system message for %s:"
 msgstr "%s के लिए याहू! तंत्र संदेश: "
 
-#: src/protocols/yahoo/yahoo.c:1048
+#. TODO: this is almost exactly the same as what MSN does,
+#. * this should probably be moved to the core.
+#. *
+#: src/protocols/yahoo/yahoo.c:1072
+#, fuzzy, c-format
+msgid "The user %s wants to add %s to his or her buddy list%s%s."
+msgstr "उपयोगकर्ता %s को %s अपनी बड्डी सूची में जोड़ना चाहतें हैं।"
+
+#: src/protocols/yahoo/yahoo.c:1078
+#, fuzzy
+msgid "Message (optional) :"
+msgstr "संदेश सूचना"
+
+#: src/protocols/yahoo/yahoo.c:1120
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
 msgstr "%s ने आपके उनको बड्डी सूची में जोड़ने के अनुरोध को ठुकरा दिया है।"
 
-#: src/protocols/yahoo/yahoo.c:1051
+#: src/protocols/yahoo/yahoo.c:1123
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
 "following reason: %s."
 msgstr "%s ने आपके उनको बड्डी सूची में जोड़ने के अनुरोध को ठुकरा दिया है, इन कारणों से: %s।"
 
-#: src/protocols/yahoo/yahoo.c:1054
+#: src/protocols/yahoo/yahoo.c:1126
 msgid "Add buddy rejected"
 msgstr "बड्डी को जोड़ना मना हो गया "
 
-#: src/protocols/yahoo/yahoo.c:1815
-#, c-format
+#: src/protocols/yahoo/yahoo.c:1887
+#, fuzzy, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
-"method.  This version of Pidgin will likely not be able to successfully sign "
+"method.  This version of Gaim will likely not be able to successfully sign "
 "on to Yahoo.  Check %s for updates."
 msgstr ""
 "याहू के सवर्र ने एक अज्ञात प्रमाणिकरन तरीके का अनुरोध किया है। गेम के इस आर्वतन से आप याहू "
 "में सफलतापू्र्वक साइन-इन नहीं कर सकेंगे। अपडेट्स के लिए %s देखें।"
 
-#: src/protocols/yahoo/yahoo.c:1818
+#: src/protocols/yahoo/yahoo.c:1890
 msgid "Failed Yahoo! Authentication"
 msgstr "याहू! प्रमाणीकरण असफल"
 
-#: src/protocols/yahoo/yahoo.c:1890
+#: src/protocols/yahoo/yahoo.c:1962
 #, c-format
 msgid ""
 "You have tried to ignore %s, but the user is on your buddy list.  Clicking "
@@ -10915,22 +10983,23 @@ msgstr ""
 "You have tried to ignore %s, but the user is on your buddy list.  Clicking "
 "\"Yes\" will remove and ignore the buddy."
 
-#: src/protocols/yahoo/yahoo.c:1893
+#: src/protocols/yahoo/yahoo.c:1965
 msgid "Ignore buddy?"
 msgstr "बड्डी की अपेक्षा करें?"
 
-#: src/protocols/yahoo/yahoo.c:1927
+#: src/protocols/yahoo/yahoo.c:1999
 msgid "Invalid username."
 msgstr "गलत उपयोगकर्ता-नाम"
 
-#: src/protocols/yahoo/yahoo.c:1938
+#: src/protocols/yahoo/yahoo.c:2010
 msgid "Normal authentication failed!"
 msgstr "समान्य प्रमाणीकरण नाकाम"
 
-#: src/protocols/yahoo/yahoo.c:1939
+#: src/protocols/yahoo/yahoo.c:2011
+#, fuzzy
 msgid ""
 "The normal authentication method has failed. This means either your password "
-"is incorrect, or Yahoo!'s authentication scheme has changed. Pidgin will now "
+"is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
 "attempt to log in using Web Messenger authentication, which will result in "
 "reduced functionality and features."
 msgstr ""
@@ -10938,98 +11007,98 @@ msgstr ""
 "याहू! कि प्रमाणिकरण प्रणाली बदल गयी है। गेम अब वैब मेसंजर प्रमाणिकरण का प्रयोग करके लॉग-"
 "इन करने का प्रयास करेगा जिसकी वजह से कुछ अधिकार व लक्षन नहीं मिलेंगे।"
 
-#: src/protocols/yahoo/yahoo.c:1947
+#: src/protocols/yahoo/yahoo.c:2019
 msgid "Incorrect password."
 msgstr "गलत पासवर्ड "
 
-#: src/protocols/yahoo/yahoo.c:1950
+#: src/protocols/yahoo/yahoo.c:2022
 msgid "Your account is locked, please log in to the Yahoo! website."
 msgstr "आपके खाते पर ताला लगा है, कृपया याहू कि वेब साइट पर लॉग-इन करें।"
 
-#: src/protocols/yahoo/yahoo.c:1953
+#: src/protocols/yahoo/yahoo.c:2025
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr "अज्ञात त्रुटी संखया %d। याहू में लॉग-इन करने से शायद ठीक हो जाय।"
 
-#: src/protocols/yahoo/yahoo.c:2007
+#: src/protocols/yahoo/yahoo.c:2079
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
 msgstr "इस खाते %s पर बड्डी %s को %s समुह में जोड़ नहीं पाया।"
 
-#: src/protocols/yahoo/yahoo.c:2010
+#: src/protocols/yahoo/yahoo.c:2082
 msgid "Could not add buddy to server list"
 msgstr "बड्डी को सवर्र सूची में नहीं डाल सका।"
 
-#: src/protocols/yahoo/yahoo.c:2247 src/protocols/yahoo/yahoo.c:2395
+#: src/protocols/yahoo/yahoo.c:2319 src/protocols/yahoo/yahoo.c:2467
 #: src/protocols/yahoo/ycht.c:414
 msgid "Unable to read"
 msgstr "पढ़ने में असमर्थ"
 
-#: src/protocols/yahoo/yahoo.c:2417 src/protocols/yahoo/yahoo.c:2527
-#: src/protocols/yahoo/yahoo.c:2577 src/protocols/yahoo/yahoo.c:2587
+#: src/protocols/yahoo/yahoo.c:2489 src/protocols/yahoo/yahoo.c:2610
+#: src/protocols/yahoo/yahoo.c:2660 src/protocols/yahoo/yahoo.c:2670
 #: src/protocols/yahoo/yahoochat.c:1461 src/protocols/yahoo/yahoochat.c:1528
 #: src/protocols/yahoo/ycht.c:518
 msgid "Connection problem"
 msgstr "कनेक्शन में कठिनाई"
 
-#: src/protocols/yahoo/yahoo.c:2681 src/protocols/yahoo/yahoo.c:3048
-#: src/protocols/yahoo/yahoo.c:3162
+#: src/protocols/yahoo/yahoo.c:2764 src/protocols/yahoo/yahoo.c:3131
+#: src/protocols/yahoo/yahoo.c:3245
 msgid "Not At Home"
 msgstr "घर पर नहीं"
 
-#: src/protocols/yahoo/yahoo.c:2683 src/protocols/yahoo/yahoo.c:3050
-#: src/protocols/yahoo/yahoo.c:3163
+#: src/protocols/yahoo/yahoo.c:2766 src/protocols/yahoo/yahoo.c:3133
+#: src/protocols/yahoo/yahoo.c:3246
 msgid "Not At Desk"
 msgstr "डेस्क पर नहीं"
 
-#: src/protocols/yahoo/yahoo.c:2685 src/protocols/yahoo/yahoo.c:3052
-#: src/protocols/yahoo/yahoo.c:3164
+#: src/protocols/yahoo/yahoo.c:2768 src/protocols/yahoo/yahoo.c:3135
+#: src/protocols/yahoo/yahoo.c:3247
 msgid "Not In Office"
 msgstr "दफ्तर में नहीं"
 
-#: src/protocols/yahoo/yahoo.c:2689 src/protocols/yahoo/yahoo.c:3056
-#: src/protocols/yahoo/yahoo.c:3166
+#: src/protocols/yahoo/yahoo.c:2772 src/protocols/yahoo/yahoo.c:3139
+#: src/protocols/yahoo/yahoo.c:3249
 msgid "On Vacation"
 msgstr "छुट्टी पर हैं"
 
-#: src/protocols/yahoo/yahoo.c:2693 src/protocols/yahoo/yahoo.c:3060
-#: src/protocols/yahoo/yahoo.c:3168
+#: src/protocols/yahoo/yahoo.c:2776 src/protocols/yahoo/yahoo.c:3143
+#: src/protocols/yahoo/yahoo.c:3251
 msgid "Stepped Out"
 msgstr "बाहर निकला"
 
-#: src/protocols/yahoo/yahoo.c:2774 src/protocols/yahoo/yahoo.c:2800
+#: src/protocols/yahoo/yahoo.c:2857 src/protocols/yahoo/yahoo.c:2883
 msgid "Not on server list"
 msgstr "सवर्र सूची में नहीं"
 
-#: src/protocols/yahoo/yahoo.c:2879
+#: src/protocols/yahoo/yahoo.c:2962
 msgid "Join in Chat"
 msgstr "संवाद में जुड़ें"
 
-#: src/protocols/yahoo/yahoo.c:2884
+#: src/protocols/yahoo/yahoo.c:2967
 msgid "Initiate Conference"
 msgstr "सम्मेलन आरम्भ करें"
 
-#: src/protocols/yahoo/yahoo.c:2936
+#: src/protocols/yahoo/yahoo.c:3019
 msgid "Active which ID?"
 msgstr "कोनसा आइ डी क्रियांवित करें?"
 
-#: src/protocols/yahoo/yahoo.c:2945
+#: src/protocols/yahoo/yahoo.c:3028
 msgid "Join who in chat?"
 msgstr "किससे संवाद करें ?"
 
-#: src/protocols/yahoo/yahoo.c:2955
+#: src/protocols/yahoo/yahoo.c:3038
 msgid "Activate ID..."
 msgstr "आइ डी क्रियांवित करें..."
 
-#: src/protocols/yahoo/yahoo.c:2959
+#: src/protocols/yahoo/yahoo.c:3042
 msgid "Join user in chat..."
 msgstr "उपयोगकर्ता से संवाद में जुड़ें"
 
-#: src/protocols/yahoo/yahoo.c:3479
+#: src/protocols/yahoo/yahoo.c:3562
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr "join &lt;कक्ष&gt;:  याहू नेटवर्क पर किसी चैट कक्ष में जाएं"
 
-#: src/protocols/yahoo/yahoo.c:3483
+#: src/protocols/yahoo/yahoo.c:3566
 msgid "buzz: Buzz a contact to get their attention"
 msgstr "बज़्ज़: संपर्क का ध्यान आकर्शित करने के लिए उनको बज़्ज़ करें"
 
@@ -11043,52 +11112,52 @@ msgstr "बज़्ज़: संपर्क का ध्यान आकर�
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3562 src/protocols/yahoo/yahoo.c:3564
+#: src/protocols/yahoo/yahoo.c:3645 src/protocols/yahoo/yahoo.c:3647
 msgid "Yahoo Protocol Plugin"
 msgstr "याहू प्रोटोकाल प्लगइन"
 
-#: src/protocols/yahoo/yahoo.c:3583
+#: src/protocols/yahoo/yahoo.c:3666
 msgid "Yahoo Japan"
 msgstr "याहू जापान"
 
-#: src/protocols/yahoo/yahoo.c:3586
+#: src/protocols/yahoo/yahoo.c:3669
 msgid "Pager host"
 msgstr "पैजर होस्ट"
 
-#: src/protocols/yahoo/yahoo.c:3589
+#: src/protocols/yahoo/yahoo.c:3672
 msgid "Japan Pager host"
 msgstr "जापान पैजर होस्ट"
 
-#: src/protocols/yahoo/yahoo.c:3592
+#: src/protocols/yahoo/yahoo.c:3675
 msgid "Pager port"
 msgstr "पैजर पोर्ट"
 
-#: src/protocols/yahoo/yahoo.c:3595
+#: src/protocols/yahoo/yahoo.c:3678
 msgid "File transfer host"
 msgstr "फ़ाइल हस्तांतरण होस्ट"
 
-#: src/protocols/yahoo/yahoo.c:3598
+#: src/protocols/yahoo/yahoo.c:3681
 msgid "Japan File transfer host"
 msgstr "जापान फ़ाइल हस्तांतरण होस्ट"
 
-#: src/protocols/yahoo/yahoo.c:3601
+#: src/protocols/yahoo/yahoo.c:3684
 msgid "File transfer port"
 msgstr "फ़ाइल हस्तांतरण पोर्ट"
 
-#: src/protocols/yahoo/yahoo.c:3604
+#: src/protocols/yahoo/yahoo.c:3687
 #, fuzzy
 msgid "Chat Room Locale"
 msgstr "चैट कक्ष सूची की कड़ी"
 
-#: src/protocols/yahoo/yahoo.c:3607
+#: src/protocols/yahoo/yahoo.c:3690
 msgid "Chat Room List Url"
 msgstr "चैट कक्ष सूची की कड़ी"
 
-#: src/protocols/yahoo/yahoo.c:3610
+#: src/protocols/yahoo/yahoo.c:3693
 msgid "YCHT Host"
 msgstr "वायसीएचटी होस्ट"
 
-#: src/protocols/yahoo/yahoo.c:3613
+#: src/protocols/yahoo/yahoo.c:3696
 msgid "YCHT Port"
 msgstr "वायसीएचटी पोर्ट"
 
@@ -11101,15 +11170,15 @@ msgstr "%s ने आपके \"%s\" कक्ष के सम्मेलन 
 msgid "Invitation Rejected"
 msgstr "आमंत्रण अस्वीकृत"
 
-#: src/protocols/yahoo/yahoochat.c:363
+#: src/protocols/yahoo/yahoochat.c:362
 msgid "Failed to join chat"
 msgstr "वार्तालाप में जुड़ने में असफल"
 
-#: src/protocols/yahoo/yahoochat.c:363
+#: src/protocols/yahoo/yahoochat.c:362
 msgid "Maybe the room is full?"
 msgstr "शायद कक्ष भरा हुआ है?"
 
-#: src/protocols/yahoo/yahoochat.c:441
+#: src/protocols/yahoo/yahoochat.c:440
 #, c-format
 msgid "You are now chatting in %s."
 msgstr "अब आप %s में वार्तालाप कर रहें हैं।"
@@ -11241,78 +11310,78 @@ msgstr "उपयोगकर्ता की प्रोफाइल खाल
 msgid "Connection problem with the YCHT server."
 msgstr "वाय सी एच टी YCHT सर्वर से कनेक्शन में कठिनाई"
 
-#: src/protocols/zephyr/zephyr.c:328
+#: src/protocols/zephyr/zephyr.c:327
 msgid ""
 "(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
 msgstr "(इस संदेश को बदलने में त्रुटी हुइ।\t खाता संपादक में 'एनकोडिंग' विकल्प को जाचें)"
 
-#: src/protocols/zephyr/zephyr.c:676
+#: src/protocols/zephyr/zephyr.c:682
 #, c-format
 msgid "Unable send to chat %s,%s,%s"
 msgstr "चैट को भेजने में असफल %s,%s,%s"
 
-#: src/protocols/zephyr/zephyr.c:709 src/protocols/zephyr/zephyr.c:1118
+#: src/protocols/zephyr/zephyr.c:715 src/protocols/zephyr/zephyr.c:1124
 #, c-format
 msgid "<b>User:</b> %s<br>"
 msgstr "<b>उपभोक्ता:</b> %s<br>"
 
-#: src/protocols/zephyr/zephyr.c:713 src/protocols/zephyr/zephyr.c:1123
+#: src/protocols/zephyr/zephyr.c:719 src/protocols/zephyr/zephyr.c:1129
 msgid "<br>Hidden or not logged-in"
 msgstr "<br>छिपा हुआ या लॉग-इन नहीं किया है"
 
-#: src/protocols/zephyr/zephyr.c:718 src/protocols/zephyr/zephyr.c:1125
+#: src/protocols/zephyr/zephyr.c:724 src/protocols/zephyr/zephyr.c:1131
 #, c-format
 msgid "<br>At %s since %s"
 msgstr "<br>यहां पर %s %s से"
 
-#: src/protocols/zephyr/zephyr.c:1408 src/protocols/zephyr/zephyr.c:1409
+#: src/protocols/zephyr/zephyr.c:1414 src/protocols/zephyr/zephyr.c:1415
 msgid "Anyone"
 msgstr "कोइ भी"
 
-#: src/protocols/zephyr/zephyr.c:2155
+#: src/protocols/zephyr/zephyr.c:2143
 msgid "_Class:"
 msgstr "वर्ग:(_C)"
 
-#: src/protocols/zephyr/zephyr.c:2161
+#: src/protocols/zephyr/zephyr.c:2149
 msgid "_Instance:"
 msgstr "दृष्टान्ट:(_I)"
 
-#: src/protocols/zephyr/zephyr.c:2167
+#: src/protocols/zephyr/zephyr.c:2155
 msgid "_Recipient:"
 msgstr "प्राप्तकर्ता:(_R)"
 
-#: src/protocols/zephyr/zephyr.c:2178
+#: src/protocols/zephyr/zephyr.c:2166
 #, c-format
 msgid "Attempt to subscribe to %s,%s,%s failed"
 msgstr "%s,%s,%s को सबस्क्राइब करने का प्रयास विफल"
 
-#: src/protocols/zephyr/zephyr.c:2483
+#: src/protocols/zephyr/zephyr.c:2471
 msgid "zlocate &lt;nick&gt;: Locate user"
 msgstr "zlocate &lt;उपनाम&gt;: उपयोगकर्ता ढूंढे"
 
-#: src/protocols/zephyr/zephyr.c:2488
+#: src/protocols/zephyr/zephyr.c:2476
 msgid "zl &lt;nick&gt;: Locate user"
 msgstr "zl &lt;उपनाम&gt;: उपयोगकर्ता ढूंढ़े"
 
-#: src/protocols/zephyr/zephyr.c:2493
+#: src/protocols/zephyr/zephyr.c:2481
 msgid "instance &lt;instance&gt;: Set the instance to be used on this class"
 msgstr "instance &lt;instance&gt;: Set the instance to be used on this class"
 
-#: src/protocols/zephyr/zephyr.c:2498
+#: src/protocols/zephyr/zephyr.c:2486
 msgid "inst &lt;instance&gt;: Set the instance to be used on this class"
 msgstr "inst &lt;instance&gt;: Set the instance to be used on this class"
 
-#: src/protocols/zephyr/zephyr.c:2504
+#: src/protocols/zephyr/zephyr.c:2492
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
 msgstr "sub &lt;class&gt; &lt;instance&gt; &lt;प्राप्तकर्ता&gt;: नये चैट में शामिल हों"
 
-#: src/protocols/zephyr/zephyr.c:2509
+#: src/protocols/zephyr/zephyr.c:2497
 msgid ""
 "zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
 msgstr "zi &lt;instance&gt;: इसे एक संदेश भेजें &lt;message,<i>instance</i>,*&gt;"
 
-#: src/protocols/zephyr/zephyr.c:2515
+#: src/protocols/zephyr/zephyr.c:2503
 msgid ""
 "zci &lt;class&gt; &lt;instance&gt;: Send a message to &lt;<i>class</i>,"
 "<i>instance</i>,*&gt;"
@@ -11320,7 +11389,7 @@ msgstr ""
 "zci &lt;class&gt; &lt;instance&gt;: इसे एक संदेश भेजें  &lt;<i>class</i>,"
 "<i>instance</i>,*&gt;"
 
-#: src/protocols/zephyr/zephyr.c:2521
+#: src/protocols/zephyr/zephyr.c:2509
 msgid ""
 "zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;"
 "<i>class</i>,<i>instance</i>,<i>recipient</i>&gt;"
@@ -11328,7 +11397,7 @@ msgstr ""
 "zcir &lt;class&gt; &lt;instance&gt; &lt;प्राप्तकर्ता&gt;: इसे एक संदेश भेजें  &lt;"
 "<i>class</i>,<i>instance</i>,<i>प्राप्तकर्ता</i>&gt;"
 
-#: src/protocols/zephyr/zephyr.c:2527
+#: src/protocols/zephyr/zephyr.c:2515
 msgid ""
 "zir &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;MESSAGE,"
 "<i>instance</i>,<i>recipient</i>&gt;"
@@ -11336,15 +11405,15 @@ msgstr ""
 "zir &lt;instance&gt; &lt;प्राप्तकर्ता&gt;: इसे एक संदेश भेजें &lt;MESSAGE,"
 "<i>instance</i>,<i>प्राप्तकर्ता</i>&gt;"
 
-#: src/protocols/zephyr/zephyr.c:2532
+#: src/protocols/zephyr/zephyr.c:2520
 msgid "zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"
 msgstr "zc &lt;क्लास&gt;: एक संदेश भेजें इसको &lt;<i>क्लास</i>,PERSONAL,*&gt;"
 
-#: src/protocols/zephyr/zephyr.c:2638
+#: src/protocols/zephyr/zephyr.c:2626
 msgid "Resubscribe"
 msgstr "दोबारा सबसक्राइब करें"
 
-#: src/protocols/zephyr/zephyr.c:2641
+#: src/protocols/zephyr/zephyr.c:2629
 msgid "Retrieve subscriptions from server"
 msgstr "सवर्र ने सबसक्रिपशन लेकर आऐं।"
 
@@ -11358,19 +11427,19 @@ msgstr "सवर्र ने सबसक्रिपशन लेकर आ�
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/zephyr/zephyr.c:2724 src/protocols/zephyr/zephyr.c:2726
+#: src/protocols/zephyr/zephyr.c:2712 src/protocols/zephyr/zephyr.c:2714
 msgid "Zephyr Protocol Plugin"
 msgstr "ज़ैफिर (Zephyr) प्रोटॅकोल प्लगइन"
 
-#: src/protocols/zephyr/zephyr.c:2751
+#: src/protocols/zephyr/zephyr.c:2739
 msgid "Export to .anyone"
 msgstr ".anyone को निर्यात करें"
 
-#: src/protocols/zephyr/zephyr.c:2754
+#: src/protocols/zephyr/zephyr.c:2742
 msgid "Export to .zephyr.subs"
 msgstr ".zephyr.subs को निर्यात करें"
 
-#: src/protocols/zephyr/zephyr.c:2757
+#: src/protocols/zephyr/zephyr.c:2745
 msgid "Exposure"
 msgstr "दिखावा"
 
@@ -11527,7 +11596,7 @@ msgstr "डाक देखें(_O)"
 msgid "_Warn"
 msgstr "चेताओ(_W)"
 
-#: src/util.c:2396
+#: src/util.c:2403
 msgid "Calculating..."
 msgstr "गणना जारी..."
 
@@ -11535,37 +11604,60 @@ msgstr "गणना जारी..."
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
-#: src/util.c:2399
+#: src/util.c:2406
 msgid "Unknown."
 msgstr "अज्ञात"
 
-#: src/util.c:2429
+#: src/util.c:2436
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "सेकंड"
 msgstr[1] "सेकंडों"
 
-#: src/util.c:2443
+#: src/util.c:2450
 msgid "day"
 msgid_plural "days"
 msgstr[0] "दिन"
 msgstr[1] "दिनों"
 
-#: src/util.c:2451
+#: src/util.c:2458
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "घंटा"
 msgstr[1] "घंटें"
 
-#: src/util.c:2459
+#: src/util.c:2466
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "मिनट"
 msgstr[1] "मिनटों"
 
-#: src/util.c:2879
+#: src/util.c:2889
 msgid "g003: Error opening connection.\n"
 msgstr "g003: कनेक्शन करने में त्रुटी.\n"
+
+#  Conversations
+#~ msgid "/Conversation/A_lias..."
+#~ msgstr "/वार्ता/उपनाम(_l)..."
+
+#~ msgid "/Options/Show T_imestamps"
+#~ msgstr "/वार्ता/टाइमस्टेंमप्स दिखायें(_i)"
+
+#~ msgid "Pidgin User"
+#~ msgstr "गेम उपयोगकर्ता"
+
+#~ msgid "Display conversation closed notices"
+#~ msgstr "संवाद समाप्ती की सूचनाएं दिखायें"
+
+#~ msgid "Display timeout notices"
+#~ msgstr "टाइमआउट सूचनाएं दिखायें"
+
+#~ msgid "The conversation has become inactive and timed out."
+#~ msgstr "सवांद निरुद्दोग हो के टाइमआउट हो गया।"
+
+#, fuzzy
+#~ msgid "Transfer of file %s timed out."
+#~ msgstr "%s का हस्तांतरण पूरा हुआ"
 
 #~ msgid ""
 #~ "Unable to guess the image type based on the file extension supplied.  "
