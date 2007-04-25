@@ -33,23 +33,6 @@ RPM of gtkspell at <a href="http://freshrpms.net/">freshrpms.net</a>.  You
 can find the source and a non-Red Hat specific RPM at <a
 href="http://gtkspell.sourceforge.net/">gtkspell.sourceforge.net</a>.
 
-Q:	What do I need to use the SILC protocol?
-
-A:	You need to install the
-<a href="http://silcnet.org/software/download/toolkit/">SILC toolkit</a>
-and the Pidgin SILC plugin.  This plugin is generally provided as a
-separate package (such as a purple-silc RPM).  If you're compiling yourself,
-see the <code>./configure --help</code> for specifying the SILC includes and libs.
-If you're compiling an SRPM, use <code>--with silc</code> to build the
-purple-silc RPM.
-<p>
- In Windows, the SILC toolkit is installed with Pidgin.
-</p>
-<p>
- Some distributions provide the SILC toolkit and include Pidgin's
- SILC plugin in their Pidgin package.
-</p>
-
 Q:	Is there some way I can compile just Pidgin, without all of these protocols?
 
 A:	Yeah.  There are actually three ways to do it.
@@ -176,31 +159,31 @@ Pidgin. If you still have problems, try the following:
  <li>If you use 0.75 or higher on win32, try deleting <code>tcl.dll</code>.</li>
 </ul>
 
-!ANCHOR	svn
-Q:	Pidgin &lt;non-current version&gt; is buggy.  Pidgin SVN is buggy.  Why?
+!ANCHOR mtn
+Q:	Pidgin &lt;non-current version&gt; is buggy.  Pidgin MTN is buggy.  Why?
 
 A:	Non-current versions have old bugs which may be fixed in the
-current version--that's why we make new releases.  SVN is
+current version--that's why we make new releases.  MTN is
 frequently unusable because of changes in the code.  Bugs are
 introduced during the development process and are hopefully fixed
 before a release is made.
 
-Q:	Why do you always say not to use SVN?
+Q:	Why do you always say not to use MTN?
 
 A:	That's a long story.  For starters, see the previous question.
-It is often the case that Pidgin SVN exhibits bad behavior due to
+It is often the case that Pidgin MTN exhibits bad behavior due to
 features and bugfixes which are in a transitory state or which are not
 yet well understood.  These bad behaviors range from the harmless
 (maybe a graphical glitch in a dialog box) to the irritating (a
 particular protocol may not work), to the downright damaging (recently
 a bug in SVN destroyed the user's buddy lists).  While behaviors like
 this are acceptable to some users (particularly developers, who are
-used to such things), they tend to cause many Pidgin SVN users to
+used to such things), they tend to cause many Pidgin MTN users to
 contact Pidgin developers and report the same (usually egregious) bug
 over and over - using time which could be better spent fixing the
 bugs.
 <p>
-A second major point involves public resources - an SVN checkout is not
+A second major point involves public resources - an MTN checkout is not
 a cheap operation.  As many Sourceforge users are aware, at various
 points in the recent past Sourceforge CVS has been less than pleasant
 to work with.  This is, of course, because Sourceforge hosts dozens
@@ -209,7 +192,7 @@ method of source code collaboration.  Unfortunately, when too many
 users are poking around in that CVS just for the sake of poking
 around, it prevents other users who are trying to do work to improve
 those very same projects from accomplishing their tasks.  Naturally,
-this could  easily become true of Sourceforge's SVN offering as well.
+this could  easily become true of our MTN offering as well.
 It is better for the community if an enterprising individual wishing
 to fix a particular bug [s]he has seen can get to the code and create
 a patch, even if this means that some users have to wait a few weeks
@@ -229,16 +212,16 @@ administrators may be forced to take action.  (This is particularly
 likely if the buggy behavior is damaging in some way.)  Pidgin releases
 represent code which the Pidgin developers feel is relatively
 well-behaved and stable.  This includes not only the interface seen by
-Pidgin users, but the traffic seen by IM service providers.  Pidgin SVN
+Pidgin users, but the traffic seen by IM service providers.  Pidgin MTN
 bears no such guarantees.
 </p>
 <p>
 In short, there are a lot of good reasons to <i>not</i> use
-Pidgin SVN if one does not wish to develop Pidgin, Pidgin plugins, or a
+Pidgin MTN if one does not wish to develop Pidgin, Pidgin plugins, or a
 codebase which interacts with Pidgin in some intimate way.  There are,
-however, only a few reasons <i>to</i> use Pidgin SVN outside of the
+however, only a few reasons <i>to</i> use Pidgin MTN outside of the
 above.  Please weigh these things carefully and decide whether you
-wish to use Pidgin SVN for a good reason which furthers the community, or
+wish to use Pidgin MTN for a good reason which furthers the community, or
 for selfish reasons which are not entirely important.
 </p>
 
