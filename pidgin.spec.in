@@ -6,13 +6,14 @@ Summary:    A Gtk+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
 Version:    @VERSION@
 Release:    0
-Epoch:      1
 License:    GPL
 Group:      Applications/Internet
-URL:        http://gaim.sourceforge.net/
-Packager:   %{packager}
-Source:     %{name}-%{version}.tar.gz
+URL:        http://www.pidgin/im/
+Source:     %{name}-%{version}.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
+
+Provides:   gaim = 1:1.5.1
+Obsoletes:	gaim < 1:1.5.1
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel
@@ -26,14 +27,14 @@ Requires: perl
 %if "%{_vendor}" == "MandrakeSoft"
 # Mandrake/Mandriva requirements
 BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
-Provides:  libgaim-remote0
+Obsoletes:  libgaim-remote0
 %else
 
 # Mandrake 10.2 (and higher?)
 %if "%{_vendor}" == "Mandrakesoft"
 # Mandrake/Mandriva requirements
 BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
-Provides:  libgaim-remote0
+Obsoletes:  libgaim-remote0
 %else
 
 # SuSE & Red Hat / Fedora requirements
@@ -49,45 +50,49 @@ BuildRequires: mozilla-nss-devel
 
 %if 0%{?_with_silc:1}
 %package silc
-Summary:    SILC (Secure Internet Live Conferencing) plugin for Gaim
+Summary:    SILC (Secure Internet Live Conferencing) plugin for Pidgin
 Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
+Requires:   pidgin = %{version}
+Obsoletes:	gaim-silc < 1:1.5.1
 %endif
 
 %if 0%{?_with_tcl:1}
 %package tcl
-Summary:    Tcl scripting support for Gaim
+Summary:    Tcl scripting support for Pidgin
 Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
+Requires:   pidgin = %{version}
+Obsoletes:  gaim-tcl < 1:1.5.1
 %endif
 
 %package devel
-Summary:    Development headers, documentation, and libraries for Gaim.
+Summary:    Development headers, documentation, and libraries for Pidgin.
 Group:      Applications/Internet
-Requires:   pkgconfig, gaim = %{epoch}:%{version}
+Requires:   pkgconfig, pidgin = %{version}
+Provides:	gaim-devel = 1:1.5.1
+Obsoletes:	gaim-devel < 1:1.5.1
 
 %description
-Gaim allows you to talk to anyone using a variety of messaging
+Pidgin allows you to talk to anyone using a variety of messaging
 protocols, including AIM, ICQ, IRC, Yahoo!, Novell Groupwise,
 MSN Messenger, Jabber, Gadu-Gadu, Napster, and Zephyr.  These
 protocols are implemented using a modular, easy to use design.
 To use a protocol, just add an account using the account editor.
 
-Gaim supports many common features of other clients, as well as many
+Pidgin supports many common features of other clients, as well as many
 unique features, such as perl scripting, TCL scripting and C plugins.
 
-Gaim is NOT affiliated with or endorsed by America Online, Inc.,
+Pidgin is NOT affiliated with or endorsed by America Online, Inc.,
 Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 
 %if 0%{?_with_silc:1}
 %description silc
-SILC (Secure Internet Live Conferencing) plugin for Gaim
+SILC (Secure Internet Live Conferencing) plugin for Pidgin
 %endif
 
 %if 0%{?_with_tcl:1}
 %description tcl
-Tcl plugin loader for Gaim.  This package will allow you to write or
-use Gaim plugins written in the Tcl programming language.
+Tcl plugin loader for Pidgin.  This package will allow you to write or
+use Pidgin plugins written in the Tcl programming language.
 %endif
 
 %description devel
@@ -126,6 +131,9 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
 
+ln -sf pidgin $RPM_BUILD_ROOT%{_bindir}/gaim
+ln -sf purple-remote $RPM_BUILD_ROOT%{_bindir}/gaim-remote
+
 %if 0%{!?_with_silc:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
 %endif
@@ -152,7 +160,7 @@ rm -rf %{buildroot}
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/gaim
-%attr(755, root, root) %{_libdir}/libgaim-remote.so.*
+%attr(755, root, root) %{_libdir}/libpurple-remote.so.*
 %attr(755, root, root) %{perl_vendorlib}
 
 %{_bindir}/*
@@ -182,13 +190,19 @@ rm -rf %{buildroot}
 %doc plugins/HOWTO
 %doc HACKING PROGRAMMING_NOTES
 
-%attr(755, root, root) %{_libdir}/libgaim-remote.so
-%attr(755, root, root) %{_libdir}/libgaim-remote.la
+%attr(755, root, root) %{_libdir}/libpurple-remote.so
+%attr(755, root, root) %{_libdir}/libpurple-remote.la
 %dir %{_includedir}/gaim
 %{_includedir}/gaim/*.h
-%{_libdir}/pkgconfig/gaim.pc
+%{_libdir}/pkgconfig/pidgin.pc
 
 %changelog
+* Wed Apr 25 2007 <stu@nosnilmot.com>
+- Rename to pidgin
+- Add obsoletes/provides for gaim for upgrades
+- Drop epoch
+- Switch to using .tar.bz2 in source RPM
+
 * Thu Apr 28 2005 <stu@nosnilmot.com>
 - Use perl_vendorlib & perl_archlib for better 64bit compat (Jeff Mahoney)
 - Clean up Requires, most should be auto-detected
