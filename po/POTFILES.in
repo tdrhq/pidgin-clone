@@ -7,7 +7,7 @@ plugins/docklet/eggtrayicon.c
 plugins/extplacement.c
 plugins/filectl.c
 plugins/gaiminc.c
-plugins/pidgin-remote/remote.c
+plugins/purple-remote/remote.c
 plugins/gestures/gestures.c
 plugins/gevolution/add_buddy_dialog.c
 plugins/gevolution/assoc-buddy.c
@@ -45,7 +45,7 @@ src/connection.c
 src/conversation.c
 src/ft.c
 src/gaim-disclosure.c
-src/pidgin-remote.c
+src/purple-remote.c
 src/gtkaccount.c
 src/gtkblist.c
 src/gtkconn.c
