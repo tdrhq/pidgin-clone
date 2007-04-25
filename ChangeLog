@@ -259,7 +259,7 @@ version 0.81 (08/05/2004):
 	  Radchenko)
 	* Visual display of ops/voice/halfops/so on in Chats (Stu Tomlinson)
 	* Tab completion of slash commands in Chats (Stu Tomlinson)
-	* gaim-remote can now manipulate status (István Váradi)
+	* gaim-remote can now manipulate status (Istv?n V?radi)
 	* The text messages of Yahoo Audibles are now displayed, although
 	  the audio and graphics are not.
 	* Yahoo! away messages can be 255 characters long now
@@ -271,7 +271,7 @@ version 0.81 (08/05/2004):
 		* Fixed duplicate root folder bug
 		* Fixed bug with folder ordering (on a first time login
 		  folders were being added in reverse order).
-	* Use ISO date format for the system log (Eduardo Pérez)
+	* Use ISO date format for the system log (Eduardo P?rez)
 	* Long buddy lists with irc should cause flooding disconnects less
 	  (Stu Tomlinson)
 	* Better smiley substitution
@@ -315,7 +315,7 @@ version 0.80 (07/15/2004):
 	* Parentheses are now displayed around the title and tabs of
 	  conversations from offline accounts or parted chats.
 	* Zephyr typing notification (Arun A Tharuvai)
-	* Account dialog's columns are resizable (Eduardo Pérez)
+	* Account dialog's columns are resizable (Eduardo P?rez)
 
 	Bug Fixes:
 	* The firefox browser option now works with firefox 0.9
