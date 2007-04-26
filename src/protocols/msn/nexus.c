@@ -105,6 +105,16 @@ login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 	 * to destroy it here, or we'd crash */
 }
 
+/* this guards against missing hash entries */
+	static char *
+nexus_challenge_data_lookup(GHashTable *challenge_data, const char *key)
+{
+	char *entry;
+
+	return (entry = (char *)g_hash_table_lookup(challenge_data, key)) ?
+		entry : "(null)";
+}
+
 static void
 login_connect_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
@@ -143,18 +153,18 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		"Cache-Control: no-cache\r\n"
 		"\r\n",
 		nexus->login_path,
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ru"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "ru"),
 		username, password,
-		(char *)g_hash_table_lookup(nexus->challenge_data, "lc"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "id"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "tw"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "fs"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ru"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "lc"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "id"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "tw"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "fs"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "ru"),
 		ctint,
-		(char *)g_hash_table_lookup(nexus->challenge_data, "kpp"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "kv"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ver"),
-		(char *)g_hash_table_lookup(nexus->challenge_data, "tpf"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "kpp"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "kv"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "ver"),
+		nexus_challenge_data_lookup(nexus->challenge_data, "tpf"),
 		nexus->login_host);
 
 	gaim_debug_misc("msn", "Sending: {%s}\n", request_str);
