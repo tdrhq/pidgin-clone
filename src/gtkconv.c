@@ -1842,6 +1842,11 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				if (!(event->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)) &&
 					gaim_prefs_get_bool("/gaim/gtk/conversations/enter_sends"))
 				{
+					if (gtk_im_context_filter_keypress (GTK_TEXT_VIEW (entry)->im_context, event))
+					{
+						GTK_TEXT_VIEW (entry)->need_im_reset = TRUE;
+						return TRUE;
+					}
 					send_cb(NULL, conv);
 					return TRUE;
 				}
