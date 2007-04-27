@@ -57,7 +57,7 @@
 <table>
  <tr>
   <td width="160"><b>Escape</b></td>
-  <td>Close Window <font color="#0000DD">*</font></td>
+  <td>Close Window</td>
  </tr>
  <tr>
   <td><b>Control-W</b></td>
