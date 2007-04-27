@@ -18,7 +18,7 @@
 		),
 
 		"guifications" => array(
-			"URL"  => "http://gaim.guifications.org/trac/wiki/Guifications",
+			"URL"  => "http://pidgin.guifications.org/trac/wiki/Guifications",
 			"TEXT" => "Graphical notification when buddies sign on, sign off, go away, etc."
 		),
 
@@ -45,6 +45,11 @@
 		"PyGaim" => array(
 			"URL" => "http://pygaim.sourceforge.net/",
 			"TEXT" => " PyGaim is a gaim plugin that enables Pidgin to be extensible with Python."
+		),
+
+		"Purple Plugin Pack" => array(
+			"URL" => "http://purple.guifications.org/trac/wiki/PluginPack"
+			"TEXT" => "The Purple Plugin Pack is a collection of over 30 plugins for libpurple and Pidgin, including a few that implement often-requested features for Pidgin."
 		),
 
 	);
