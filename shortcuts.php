@@ -112,6 +112,10 @@
   <td>New Instant Message</td>
  </tr>
  <tr>
+  <td><b>Control-R</b></td>
+  <td>Reset text formatting</td>
+ </tr>
+ <tr>
   <td><b>Control-Z</b></td>
   <td>Iconify Window</td>
  </tr>
