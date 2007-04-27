@@ -12,9 +12,9 @@
 			"TEXT" => "Makes use of Purple's IM interface to post, edit, view and track blogs"
 		),
 */
-		"Meanwhile Protocol Plugin" => array(
+		"<del>Meanwhile Protocol Plugin" => array(
 			"URL"  => "http://meanwhile.sourceforge.net/",
-			"TEXT" => "The Meanwhile Project is an open implementation of the Lotus Sametime Community Client protocol."
+			"TEXT" => "The Meanwhile Project is an open implementation of the Lotus Sametime Community Client protocol.</del> <br/>The Meanwhile code has been merged into libpurple/Pidgin."
 		),
 
 		"guifications" => array(
@@ -28,8 +28,8 @@
 		),
 
 		"IRC Helper" => array(
-			"URL" => "http://gaim-irchelper.sf.net",
-			"TEXT" => "The Pidgin IRC Helper plugin which seeks to handle the rough edges of the IRC protocol through network-specific code."
+			"URL" => "http://plugins.guifications.org/trac/wiki/irchelper",
+			"TEXT" => "The Pidgin IRC Helper plugin which seeks to handle the rough edges of the IRC protocol through network-specific code.<br/>IRC Helper has moved to the plugin pack."
 		),
 
 		"gaim-encryption" => array(

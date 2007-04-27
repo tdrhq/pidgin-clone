@@ -1,132 +1,47 @@
 <?
-	$page->title = 'Status Icons';
-	require('inc/template.inc.php');
+        $page->title = 'Status Icons';
+        require('inc/template.inc.php');
 ?>
 
-<h1>Status Icons</h1>
+<h2>Statuses</h2>
 
-<?
-	$statusicons = array(
-		"AIM" => array(
-			"ID" => "aim",
-			"ICONS" => array(
-				"Online confirmed account"      => "confirmed.png",
-				"Online unconfirmed account"    => "unconfirmed.png",
-				"AOL user"                      => "aol.png",
-				"Administrator"                 => "admin.png",
-				"Away"                          => "away.png",
-				"ActiveBuddy interactive agent" => "activebuddy.png",
-				"Wireless user"                 => "wireless.png",
-				"Offline"                       => "offline.png",
-			)
-		),
+<table cellpadding="3">
+  <tr><td><img src="images/available.png"></td><td>Available</td></tr>
+  <tr><td><img src="images/away.png"></td><td>Away</td></tr>
+  <tr><td><img src="images/extended-away.png"></td><td>Extended away</td></tr>
+  <tr><td><img src="images/busy.png"></td><td>Busy</td></tr>
+  <tr><td><img src="images/invisible.png"></td><td>Invisible</td></tr>
+  <tr><td><img src="images/offline.png"></td><td>Offline</td></tr>
+  <tr><td><img src="images/log-in.png"></td><td>Buddy logs in</td></tr>
+  <tr><td><img src="images/log-out.png"></td><td>Buddy logs out</td></tr>
+</table><br/><br/>
 
-		"Gadu-Gadu" => array(
-			"ID" => "gg",
-			"ICONS" => array(
-				"Online / Available" => "online.png",
-				"Away"               => "away.png",
-				"Busy"               => "busy.png",
-				"Invisible"          => "invisible.png",
-			)
-		),
+<h2>Chatrooms</h2>
 
-		"ICQ" => array(
-			"ID" => "icq",
-			"ICONS" => array(
-				"Online / Available" => "online.png",
-				"Away"               => "away.png",
-				"Do not disturb"     => "dnd.png",
-				"Not available"      => "na.png",
-				"Occupied"           => "occ.png",
-				"Free for chat"      => "ffc.png",
-				"Offline"            => "offline.png",
-			)
-		),
+<table cellpadding="3">
+  <tr><td><img src="images/founder.png"></td><td>Founder</td></tr>
+  <tr><td><img src="images/operator.png"></td><td>Operator</td></tr>
+  <tr><td><img src="images/half-operator.png"></td><td>Half operator</td></tr>
+  <tr><td><img src="images/voice.png"></td><td>Voiced user</td></tr>
+  <tr><td><img src="images/blocked.png"></td><td>Ignored user</td></tr>
+</table><br/><br/>
 
-		"IRC" => array(
-			"ID" => "irc",
-			"ICONS" => array(
-				"Online / Available" => "online.png",
-				"Offline"            => "offline.png",
-			)
-		),
 
-		"Jabber" => array(
-			"ID" => "jabber",
-			"ICONS" => array(
-				"Online / Available" => "available.png",
-				"Away"               => "away.png",
-				"Invitation to chat" => "chat.png",
-				"Do not disturb"     => "dnd.png",
-				"Presence error"     => "error.png",
-				"Extended away"      => "xa.png",
-				"Offline"            => "offline.png",
-			)
-		),
+<h2>Emblems</h2>
 
-		"MSN" => array(
-			"ID" => "msn",
-			"ICONS" => array(
-				"Online / Available" => "online.png",
-				"Away"               => "away.png",
-				"Occupied"           => "occupied.png",
-				"You are not on their buddy list"
-									 => "nr.png",
-				"Blocked"            => "blocked.png",
-				"Offline"            => "offline.png",
-			)
-		),
-
-		"Yahoo!" => array(
-			"ID" => "yahoo",
-
-			"ICONS" => array(
-				"Online / Available" => "online.png",
-				"Away"               => "away.png",
-				"Inviting to a game" => "game.png",
-				"Idle"               => "idle.png",
-				"Offline"            => "offline.png",
-			)
-		),
-
-		"Chat" => array(
-			"ID" => "chat",
-
-			"ICONS" => array(
-				"Founder / Owner"       => "founder.png",
-				"Operator / Moderator " => "op.png",
-				"&quot;Half-Op&quot;"   => "halfop.png",
-				"Voiced user"           => "voice.png",
-				"Ignored user"          => "ignored.png",
-			)
-		)
-	);
-?>
-
-<ul>
-<?
-foreach($statusicons as $name => $data) {
-	?>
-	<li><a href="#<?=$data["ID"]?>"><?=$name?></a></li>
-	<?
-}
-?>
-</ul>
-
-<?
-foreach($statusicons as $name => $data) {
-	?>
-	<a name="<?=$data["ID"]?>"></a>
-	<h2><?=$name?></h2>
-	<?
-
-	foreach ($data["ICONS"] as $desc => $filename) {
-		?>
-		<img src="/images/statusicons/<?=$data["ID"]?>/<?=$filename?>" alt="<?=$desc?>" />
-		<?=$desc?><br />
-		<?
-	}
-}
-
-?>
+<table cellpadding="3">
+  <tr><td><img src="images/aol-client.png"></td><td>Buddy is using official AOL client</td></tr>
+  <tr><td><img src="images/blocked.png"></td><td>Buddy is blocked</td></tr>
+  <tr><td><img src="images/bot.png"></td><td>Buddy is a bot</td></tr>
+  <tr><td><img src="images/external.png"></td><td>Buddy is not on the local network</td></tr>
+  <tr><td><img src="images/female.png"></td><td>Buddy is female</td></tr>
+  <tr><td><img src="images/free-for-chat.png"></td><td>Buddy wants to have a chat</td></tr>
+  <tr><td><img src="images/game.png"></td><td>Buddy is playing a game</td></tr>
+  <tr><td><img src="images/male.png"></td><td>Buddy is male</td></tr>
+  <tr><td><img src="images/mobile.png"></td><td>Buddy is mobile</td></tr>
+  <tr><td><img src="images/not-authorized.png"></td><td>You're not authorized to this buddy's status</td></tr>  
+  <tr><td><img src="images/qq-member.png"></td><td>Buddy is a QQ member</td></tr>
+  <tr><td><img src="images/secure.png"></td><td>Converation with this buddy goes over a secure connection</td></tr>
+  <tr><td><img src="images/unavailable.png"></td><td>Unavailable</td></tr>
+  <tr><td><img src="images/video.png"></td><td>Buddy is watching a video</td></tr>
+</table><br/><br/>
