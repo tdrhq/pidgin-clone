@@ -1,5 +1,11 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+1.5.1 (4/27/2007):
+	Luke: There really isn't much in this release, some backported
+	patches, and some patches from RedHat.  The only real purpose
+	to this is to make it legal to release security fixes to this
+	branch of the code.
+
 1.5.0 (8/11/2005):
 	Mark: No super crazy major changes here.  Just the usual bug
 	fixes and some pretty important security updates.

@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 1.5.1:
+version 1.5.1 (4/27/2007):
 	* Major overhaul of AIM/ICQ file transfers. OSCAR transfers work for any
 	  NAT configuration thanks to proxy servers. (Jonathan Clark)
 
