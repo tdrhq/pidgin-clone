@@ -5,6 +5,8 @@ includedir=@includedir@
 datadir=@datadir@
 sysconfdir=@sysconfdir@
 
+plugindir=@libdir@/pidgin/
+
 Name: Pidgin
 Description: Pidgin is a GTK2-based instant messenger application.
 Version: @VERSION@

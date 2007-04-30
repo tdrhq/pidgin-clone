@@ -2057,6 +2057,7 @@ AC_OUTPUT([Makefile
 		   libpurple/tests/Makefile
 		   libpurple/version.h
 		   finch/Makefile
+		   finch/finch.pc
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc
 		   finch/libgnt/wms/Makefile
