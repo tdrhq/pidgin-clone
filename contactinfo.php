@@ -166,6 +166,7 @@
 <h2>Crazy Patch Writers</h2>
 
 <dl>
+<dt>John 'rekkanoryo' Bailey</dt>
 <dt>Ka-Hing 'javabsp' Cheung</dt>
 <dt>Felipe 'shx' Contreras</dt>
 <dt>Decklin Foster</dt>
