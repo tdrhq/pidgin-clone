@@ -48,7 +48,7 @@
 		),
 
 		"Purple Plugin Pack" => array(
-			"URL" => "http://purple.guifications.org/trac/wiki/PluginPack"
+			"URL" => "http://purple.guifications.org/trac/wiki/PluginPack",
 			"TEXT" => "The Purple Plugin Pack is a collection of over 30 plugins for libpurple and Pidgin, including a few that implement often-requested features for Pidgin."
 		),
 
