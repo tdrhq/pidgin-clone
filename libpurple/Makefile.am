@@ -215,7 +215,7 @@ libpurple_la_SOURCES = \
 noinst_HEADERS= \
 	internal.h 
 
-libpurpleincludedir=$(includedir)/libpurple-$(PURPLE_MAJOR_VERSION).0
+libpurpleincludedir=$(includedir)/purple-$(PURPLE_MAJOR_VERSION).0
 libpurpleinclude_HEADERS = \
 	$(purple_coreheaders) \
 	$(dbus_headers)
