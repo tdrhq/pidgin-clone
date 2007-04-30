@@ -34,8 +34,8 @@ pkgconfig_DATA = pidgin.pc
 dist-hook: pidgin.spec
 	cp pidgin.spec $(distdir)
 
-distcheck-hook: plugins/perl/common/Pidgin.pm
-#	cp plugins/perl/common/Pidgin.pm $(distdir)/plugins/perl/common
+distcheck-hook: plugins/perl/common/Gaim.pm
+#	cp plugins/perl/common/Gaim.pm $(distdir)/plugins/perl/common
 
 appsdir = $(datadir)/applications
 apps_DATA = pidgin.desktop
