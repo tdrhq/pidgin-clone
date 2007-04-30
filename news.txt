@@ -1,5 +1,5 @@
 The Final Beta
-April 29, 2006 - 11:37PM PDT
+April 29, 2007 - 11:37PM PDT
 <p>Tonight we've released Pidgin 2.0.0beta7. This is the last in our long series of betas. We anticipate a final release later this week.</p>
 <p>While previous betas in the 2.0.0 series have been extremely stable, and we recommended their use, this release is actually of beta quality. This is our first release to reflect the name change from Gaim to Pidgin, and so there are a lot of fairly significant changes here, which we'd like to see have broader testing before declaring it ready for release. If you would like to help us out, grab a copy from <a href='http://sourceforge.net/project/showfiles.php?group_id=235&package_id=230234&release_id=504761'>Sourceforge.net</a></p>
 <p>I strongly recommend that you <b>backup your ~/.gaim directory</b> before running Pidgin for the first time. Windows users should see where their version of Windows stores their configuration files at our Win32 <a href='http://pidgin.im/win32/#faq'>FAQ</a>. Things you should be on the lookout for include problems with preferences being lost or forgotten, buddy icons not working as you expect, plugins or other external files not properly being found. If you find an issue that severely prohibits you from using 2.0.0beta7, please report it at <a href='http://developer.pidgin.im/'>http://developer.pidgin.im/</a>.</p>
