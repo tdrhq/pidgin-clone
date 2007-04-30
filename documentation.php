@@ -29,7 +29,7 @@
  <li><a href="statusicons.php">Status Icons</a></li>
  <li><a href="security/">Security Problems</a></li>
  <li><a href="l10n/">Internationalization Statistics</a> - Updated nightly</li>
- <li><a href="gdb.php">Getting a backtrace</a> - Using GDB to get a backtrace</li>
+ <li><a href="bug.php">Tips for Bug Reports</a> - What to do if you've found a bug in Pidgin. 
  <li><a href="protocol.php">Protocols</a> -
   Descriptions of the protocols Pidgin uses (incomplete)</li>
  <li><a href="http://developer.pidgin.im/doxygen/dev/html/main.html">API Documentation</a> - 

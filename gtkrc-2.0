@@ -16,16 +16,16 @@ style "imhtml-fix"
 font_name = "Sans 10"
 }
 # Set the widget style for the conversation entry box
-widget "*gaim_gtkconv_entry" style "imhtml-fix"
+widget "*pidgin_conv_entry" style "imhtml-fix"
 # Set the widget style for the conversation
-widget "*gaim_gtkconv_imhtml" style "imhtml-fix"
+widget "*pidgin_conv_imhtml" style "imhtml-fix"
 # Set the widget style for the log viewer
-widget "*gaim_gtklog_imhtml" style "imhtml-fix"
+widget "*pidgin_log_imhtml" style "imhtml-fix"
 
 # Set the widget style for IMHtml input widgets in request dialogs
-widget "*gaim_gtkrequest_imhtml" style "imhtml-fix"
+widget "*pidgin_request_imhtml" style "imhtml-fix"
 # Set the widget style for IMHtml widgets in notify dialogs
-widget "*gaim_gtknotify_imhtml" style "imhtml-fix"
+widget "*pidgin_notify_imhtml" style "imhtml-fix"
 
 # Uncommenting the line below sets all IMHtml widgets in Pidgin to the same style
 # and will work in Pidgin versions prior to 0.78
@@ -55,10 +55,10 @@ style "my-narrow-tree"
   GtkTreeView::expander_size = 0
 }
 # And apply the style to the buddy list:
-widget "*gaim_gtkblist_treeview" style "my-narrow-tree"
+widget "*pidgin_blist_treeview" style "my-narrow-tree"
 
 # Customize the New 2.0.0 Status Selector
-style "gaim-statusbox-style" {
+style "pidgin-statusbox-style" {
     # This is a work-around that keeps you from having to scroll
     # if the status selector is at the bottom of the screen.
         GtkComboBox::appears-as-list = 1
@@ -79,7 +79,7 @@ style "gaim-statusbox-style" {
     GtkWidget::focus-line-width = 0
     GtkWidget::focus-padding = 0
 }
-widget "*gaim_gtkblist_statusbox*" style "gaim-statusbox-style"
+widget "*pidgin_blist_statusbox*" style "pidgin-statusbox-style"
 
 
 #############################
@@ -91,7 +91,7 @@ widget "*gaim_gtkblist_statusbox*" style "gaim-statusbox-style"
 # ctrl-a == move to beginning of line, ctrl-e == move to end of line, etc.
 gtk-key-theme-name = "Emacs"
 
-#to let you edit your gaim key bindings
+#to let you edit your pidgin key bindings
 #this requires changing the "Editable menu accelerators" in the GNOME System preferences (System -> Preferences -> Menu and Toolbar Preferences), and a similar setting in xfce4 in order to work.
 gtk-can-change-accels = 1
 
@@ -114,5 +114,5 @@ binding "my-bindings"
 	bind "<ctrl>F1" { "format_function_clear" () }
 }
   
-widget "*gaim_gtkconv_entry" binding "my-bindings"
+widget "*pidgin_conv_entry" binding "my-bindings"
  
