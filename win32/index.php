@@ -19,7 +19,7 @@
 <p>Windows Pidgin users/developers are encouraged to congregate in #pidgin-win32 on irc.freenode.net.</p>
 
 <p>
-<b>NOTE:</b> Those who previously used the <code>GAIMHOME</code> and <code>GAIMLANG</code> environmental variables to define the settings path and language, will need to use <code>PIDGINHOME</code> and <code>PIDGINLANG</code> as of version 2.0.0beta7.
+<b>NOTE:</b> Those who previously used the <code>GAIMHOME</code> and <code>GAIMLANG</code> environmental variables to define the settings path and language, will need to use <code>PURPLEHOME</code> and <code>PIDGINLANG</code> as of version 2.0.0beta7.
 </p>
 
 <h3>Contents</h3>
