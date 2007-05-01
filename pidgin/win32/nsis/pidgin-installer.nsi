@@ -155,6 +155,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
 
   !insertmacro MUI_LANGUAGE "English"
 
+  !insertmacro MUI_LANGUAGE "Afrikaans"
   !insertmacro MUI_LANGUAGE "Albanian"
   !insertmacro MUI_LANGUAGE "Bulgarian"
   !insertmacro MUI_LANGUAGE "Catalan"
@@ -192,6 +193,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
 
   !include "${PIDGIN_NSIS_INCLUDE_PATH}\langmacros.nsh"
 
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "AFRIKAANS"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\afrikaans.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ALBANIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\albanian.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "BULGARIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "CATALAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\catalan.nsh"
@@ -326,7 +328,6 @@ SectionEnd
 
 !ifdef WITH_GTK
 Section $(GTK_SECTION_TITLE) SecGtk
-  SectionIn 1 RO
 
   Call CheckUserInstallRights
   Pop $R1
@@ -1065,11 +1066,11 @@ Function DoWeNeedGtk
       StrCmp $1 "HKCU" 0 +2   ; if HKLM can upgrade..
       StrCmp $2 "HKLM" no_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
       Push $2
-    IntCmp $3 1 +3
-      Push "1" ; Optional Upgrade
-      Goto done
-      Push "2" ; Mandatory Upgrade
-      Goto done
+      IntCmp $3 1 +3
+        Push "1" ; Optional Upgrade
+        Goto done
+        Push "2" ; Mandatory Upgrade
+        Goto done
 
   good_version:
     StrCmp $2 "HKLM" have_hklm_gtk have_hkcu_gtk
@@ -1095,11 +1096,11 @@ Function DoWeNeedGtk
   done:
   ; The top two items on the stack are what we want to return
   Exch 4
-  Pop $0
+  Pop $1
   Exch 4
+  Pop $0
   Pop $3
   Pop $2
-  Pop $1
 FunctionEnd
 
 
@@ -1199,6 +1200,7 @@ Function .onInit
     StrCpy $INSTDIR "$R2\Pidgin"
 
   instdir_done:
+;LogSet on
   Pop $R0
 FunctionEnd
 
@@ -1275,7 +1277,7 @@ FunctionEnd
 ; Page enter and exit functions..
 
 Function preWelcomePage
-  Push R0
+  Push $R0
 
 !ifndef WITH_GTK
   ; If this installer dosn't have GTK, check whether we need it.
@@ -1292,7 +1294,16 @@ Function preWelcomePage
   done:
 
 !else
-  Push R1
+  Push $R1
+  Push $R2
+
+  ; Make the GTK+ Section RO if it is required.
+  Call DoWeNeedGtk
+  Pop $R0
+  Pop $R2
+  IntCmp $R0 1 gtk_not_mandatory gtk_not_mandatory
+    !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
+  gtk_not_mandatory:
 
   ; If on Win95/98/ME warn them that the GTK+ version wont work
   Call GetWindowsVersion
@@ -1304,22 +1315,13 @@ Function preWelcomePage
 
   win_ver_bad:
     !insertmacro UnselectSection ${SecGtk}
-    !insertmacro SetSectionFlag ${SecGtkNone} ${SF_RO}
-    !insertmacro UnselectSection ${SecGtkNone}
-    !insertmacro SetSectionFlag ${SecGtkWimp} ${SF_RO}
-    !insertmacro UnselectSection ${SecGtkWimp}
-    !insertmacro SetSectionFlag ${SecGtkBluecurve} ${SF_RO}
-    !insertmacro UnselectSection ${SecGtkBluecurve}
-    !insertmacro SetSectionFlag ${SecGtkLighthouseblue} ${SF_RO}
-    !insertmacro UnselectSection ${SecGtkLighthouseblue}
+    !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
     MessageBox MB_OK $(GTK_WINDOWS_INCOMPATIBLE) /SD IDOK
-    Call DoWeNeedGtk
-    Pop $R0
-    Pop $R1
     IntCmp $R0 1 done done ; Upgrade isn't optional - abort if we don't have a suitable version
     Quit
 
   done:
+  Pop $R2
   Pop $R1
 !endif
   Pop $R0

@@ -405,6 +405,12 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* whiteboard_prpl_ops */
 	NULL,                                                    /* send_raw */
 	NULL,                                                    /* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -435,6 +441,12 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 
@@ -580,7 +592,7 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_string_new(_("AIM Account"), "AIM", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_string_new(_("Jabber Account"), "jid", "");
+	option = purple_account_option_string_new(_("XMPP Account"), "jid", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;
