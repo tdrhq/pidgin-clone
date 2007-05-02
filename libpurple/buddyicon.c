@@ -24,11 +24,11 @@
  */
 #include "internal.h"
 #include "buddyicon.h"
-#include "cipher.h"
 #include "conversation.h"
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "imgstore.h"
+#include "sha1cipher.h"
 #include "util.h"
 
 typedef struct _PurpleBuddyIconData PurpleBuddyIconData;
@@ -96,24 +96,18 @@ unref_filename(const char *filename)
 static char *
 purple_buddy_icon_data_calculate_filename(guchar *icon_data, size_t icon_len)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *sha1_cipher = purple_sha1_cipher_new();
 	gchar digest[41];
 
-	context = purple_cipher_context_new_by_name("sha1", NULL);
-	if (context == NULL)
-	{
-		purple_debug_error("buddyicon", "Could not find sha1 cipher\n");
-		g_return_val_if_reached(NULL);
-	}
-
 	/* Hash the icon data */
-	purple_cipher_context_append(context, icon_data, icon_len);
-	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
+	purple_cipher_append(sha1_cipher, icon_data, icon_len);
+	if (!purple_cipher_digest_to_str(sha1_cipher, sizeof(digest), digest, NULL))
 	{
 		purple_debug_error("buddyicon", "Failed to get SHA-1 digest.\n");
 		g_return_val_if_reached(NULL);
 	}
-	purple_cipher_context_destroy(context);
+
+	g_object_unref(G_OBJECT(sha1_cipher));
 
 	/* Return the filename */
 	return g_strdup_printf("%s.%s", digest,

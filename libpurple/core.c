@@ -23,7 +23,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "internal.h"
-#include "cipher.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
@@ -116,8 +115,6 @@ purple_core_init(const char *ui)
 	purple_dbus_init();
 #endif
 
-	purple_ciphers_init();
-
 	/* Initialize all static protocols. */
 	static_proto_init();
 
@@ -183,7 +180,6 @@ purple_core_quit(void)
 	purple_ssl_uninit();
 	purple_pounces_uninit();
 	purple_blist_uninit();
-	purple_ciphers_uninit();
 	purple_notify_uninit();
 	purple_conversations_uninit();
 	purple_connections_uninit();
