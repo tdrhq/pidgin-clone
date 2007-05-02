@@ -26,81 +26,48 @@
 #define PURPLE_CIPHER_H
 
 #include <glib.h>
+#include <glib-object.h>
 
-#define PURPLE_CIPHER(obj)			((PurpleCipher *)(obj))			/**< PurpleCipher typecast helper			*/
-#define PURPLE_CIPHER_OPS(obj)		((PurpleCipherOps *)(obj))		/**< PurpleCipherInfo typecase helper		*/
-#define PURPLE_CIPHER_CONTEXT(obj)	((PurpleCipherContext *)(obj))	/**< PurpleCipherContext typecast helper	*/
+#define PURPLE_TYPE_CIPHER				(purple_cipher_get_gtype())
+#define PURPLE_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CIPHER, PurpleCipher))
+#define PURPLE_CIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_CIPHER, PurpleCipherClass))
+#define PURPLE_IS_CIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_CIPHER))
+#define PURPLE_IS_CIPHER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((obj), PURPLE_TYPE_CIPHER))
+#define PURPLE_CIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_CIPHER, PurpleCipherClass))
 
-typedef struct _PurpleCipher			PurpleCipher;			/**< A handle to a PurpleCipher	*/
-typedef struct _PurpleCipherOps		PurpleCipherOps;		/**< Ops for a PurpleCipher		*/
-typedef struct _PurpleCipherContext	PurpleCipherContext;	/**< A context for a PurpleCipher	*/
+typedef struct _PurpleCipher			PurpleCipher;
+typedef struct _PurpleCipherPriv		PurpleCipherPriv;
+typedef struct _PurpleCipherClass		PurpleCipherClass;
 
+struct _PurpleCipher {
+	GObject gparent;
 
-/**
- * The operation flags for a cipher
- */
-typedef enum _PurpleCipherCaps {
-	PURPLE_CIPHER_CAPS_SET_OPT			= 1 << 1,		/**< Set option flag	*/
-	PURPLE_CIPHER_CAPS_GET_OPT			= 1 << 2,		/**< Get option flag	*/
-	PURPLE_CIPHER_CAPS_INIT				= 1 << 3,		/**< Init flag			*/
-	PURPLE_CIPHER_CAPS_RESET				= 1 << 4,		/**< Reset flag			*/
-	PURPLE_CIPHER_CAPS_UNINIT				= 1 << 5,		/**< Uninit flag		*/
-	PURPLE_CIPHER_CAPS_SET_IV				= 1 << 6,		/**< Set IV flag		*/
-	PURPLE_CIPHER_CAPS_APPEND				= 1 << 7,		/**< Append flag		*/
-	PURPLE_CIPHER_CAPS_DIGEST				= 1 << 8,		/**< Digest flag		*/
-	PURPLE_CIPHER_CAPS_ENCRYPT			= 1 << 9,		/**< Encrypt flag		*/
-	PURPLE_CIPHER_CAPS_DECRYPT			= 1 << 10,		/**< Decrypt flag		*/
-	PURPLE_CIPHER_CAPS_SET_SALT			= 1 << 11,		/**< Set salt flag		*/
-	PURPLE_CIPHER_CAPS_GET_SALT_SIZE		= 1 << 12,		/**< Get salt size flag	*/
-	PURPLE_CIPHER_CAPS_SET_KEY			= 1 << 13,		/**< Set key flag		*/
-	PURPLE_CIPHER_CAPS_GET_KEY_SIZE		= 1 << 14,		/**< Get key size flag	*/
-	PURPLE_CIPHER_CAPS_UNKNOWN			= 1 << 16		/**< Unknown			*/
-} PurpleCipherCaps;
+	PurpleCipherPriv *priv;
 
-/**
- * The operations of a cipher.  Every cipher must implement one of these.
- */
-struct _PurpleCipherOps {
-	/** The set option function	*/
-	void (*set_option)(PurpleCipherContext *context, const gchar *name, void *value);
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
+};
 
-	/** The get option function */
-	void *(*get_option)(PurpleCipherContext *context, const gchar *name);
+struct _PurpleCipherClass {
+	GObjectClass gparent;
 
-	/** The init function */
-	void (*init)(PurpleCipherContext *context, void *extra);
-
-	/** The reset function */
 	void (*reset)(PurpleCipherContext *context, void *extra);
 
-	/** The uninit function */
-	void (*uninit)(PurpleCipherContext *context);
-
-	/** The set initialization vector function */
 	void (*set_iv)(PurpleCipherContext *context, guchar *iv, size_t len);
 
-	/** The append data function */
 	void (*append)(PurpleCipherContext *context, const guchar *data, size_t len);
 
-	/** The digest function */
 	gboolean (*digest)(PurpleCipherContext *context, size_t in_len, guchar digest[], size_t *out_len);
 
-	/** The encrypt function */
 	int (*encrypt)(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
-
-	/** The decrypt function */
 	int (*decrypt)(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
 
-	/** The set salt function */
 	void (*set_salt)(PurpleCipherContext *context, guchar *salt);
-
-	/** The get salt size function */
 	size_t (*get_salt_size)(PurpleCipherContext *context);
 
-	/** The set key function */
 	void (*set_key)(PurpleCipherContext *context, const guchar *key);
-
-	/** The get key size function */
 	size_t (*get_key_size)(PurpleCipherContext *context);
 
 	void (*_purple_reserved1)(void);
@@ -109,9 +76,7 @@ struct _PurpleCipherOps {
 	void (*_purple_reserved4)(void);
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
 /*****************************************************************************/
 /** @name PurpleCipher API													 */
@@ -441,8 +406,6 @@ gchar *purple_cipher_http_digest_calculate_response(
 
 /*@}*/
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+G_END_DECLS
 
 #endif /* PURPLE_CIPHER_H */

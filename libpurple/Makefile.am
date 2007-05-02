@@ -49,6 +49,7 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
+	md5cipher.c \
 	mime.c \
 	nat-pmp.c \
 	network.c \
@@ -100,6 +101,7 @@ purple_coreheaders = \
 	idle.h \
 	imgstore.h \
 	log.h \
+	md5cipher.h \
 	mime.h \
 	nat-pmp.h \
 	network.h \
