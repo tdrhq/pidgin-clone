@@ -245,159 +245,181 @@ probe_perl_plugin(PurplePlugin *plugin)
 
 	PerlInterpreter *prober = perl_alloc();
 	char *argv[] = {"", plugin->path };
-	gboolean status = TRUE;
+	gint ret = 0;
 	HV *plugin_info;
 	PERL_SET_CONTEXT(prober);
 	PL_perl_destruct_level = 1;
 	perl_construct(prober);
 
-	perl_parse(prober, xs_init, 2, argv, NULL);
-
-	perl_run(prober);
-
-	plugin_info = perl_get_hv("PLUGIN_INFO", FALSE);
-
-	if (plugin_info == NULL)
-		status = FALSE;
-	else if (!hv_exists(plugin_info, "perl_api_version",
-	                    strlen("perl_api_version")) ||
-	         !hv_exists(plugin_info, "name", strlen("name")) ||
-	         !hv_exists(plugin_info, "load", strlen("load"))) {
-		/* Not a valid plugin. */
-
-		status = FALSE;
+	ret = perl_parse(prober, xs_init, 2, argv, NULL);
+	PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
+	if (ret != 0) {
+		if (SvTRUE(ERRSV)) {
+			purple_debug_error("perl",
+			                   "perl plugin failed to parse: %s\n",
+			                   SvPVutf8_nolen(ERRSV));
+			plugin->error = g_strdup(SvPVutf8_nolen(ERRSV));
+			plugin->unloadable = TRUE;
+		}
 	} else {
-		SV **key;
-		int perl_api_ver;
+		ret = perl_run(prober);
+		if (ret != 0) {
+			purple_debug_error("perl",
+			                   "perl plugin failed to run: %s\n",
+			                   SvPVutf8_nolen(ERRSV));
+			plugin->error = g_strdup(SvPVutf8_nolen(ERRSV));
+			plugin->unloadable = TRUE;
+		} else {
+			plugin_info = perl_get_hv("PLUGIN_INFO", FALSE);
 
-		key = hv_fetch(plugin_info, "perl_api_version",
-		               strlen("perl_api_version"), 0);
+			if (plugin_info == NULL)
+				plugin->unloadable = TRUE;
+			else if (!hv_exists(plugin_info, "perl_api_version",
+			                    strlen("perl_api_version")) ||
+			         !hv_exists(plugin_info, "name",
+			                    strlen("name")) ||
+			         !hv_exists(plugin_info, "load",
+			                    strlen("load"))) {
+				/* Not a valid plugin. */
 
-		perl_api_ver = SvIV(*key);
+				plugin->unloadable = TRUE;
+			} else {
+				SV **key;
+				int perl_api_ver;
 
-		if (perl_api_ver != 2)
-			status = FALSE;
-		else {
-			PurplePluginInfo *info;
-			PurplePerlScript *gps;
-			char *basename;
-			STRLEN len;
+				key = hv_fetch(plugin_info, "perl_api_version",
+				               strlen("perl_api_version"), 0);
 
-			info = g_new0(PurplePluginInfo, 1);
-			gps  = g_new0(PurplePerlScript, 1);
+				perl_api_ver = SvIV(*key);
 
-			info->magic = PURPLE_PLUGIN_MAGIC;
-			info->major_version = PURPLE_MAJOR_VERSION;
-			info->minor_version = PURPLE_MINOR_VERSION;
-			info->type = PURPLE_PLUGIN_STANDARD;
+				if (perl_api_ver != 2) {
+					plugin->unloadable = TRUE;
+				} else {
+					PurplePluginInfo *info;
+					PurplePerlScript *gps;
+					char *basename;
+					STRLEN len;
 
-			info->dependencies = g_list_append(info->dependencies,
-			                                   PERL_PLUGIN_ID);
+					info = g_new0(PurplePluginInfo, 1);
+					gps  = g_new0(PurplePerlScript, 1);
 
-			gps->plugin = plugin;
+					info->magic = PURPLE_PLUGIN_MAGIC;
+					info->major_version = PURPLE_MAJOR_VERSION;
+					info->minor_version = PURPLE_MINOR_VERSION;
+					info->type = PURPLE_PLUGIN_STANDARD;
 
-			basename = g_path_get_basename(plugin->path);
-			purple_perl_normalize_script_name(basename);
-			gps->package = g_strdup_printf("Purple::Script::%s",
-			                               basename);
-			g_free(basename);
+					info->dependencies = g_list_append(info->dependencies, PERL_PLUGIN_ID);
 
-			/* We know this one exists. */
-			key = hv_fetch(plugin_info, "name", strlen("name"), 0);
-			info->name = g_strdup(SvPV(*key, len));
-			/* Set id here in case we don't find one later. */
-			info->id = g_strdup(SvPV(*key, len));
+					gps->plugin = plugin;
 
-#ifdef PURPLE_GTKPERL
-			if ((key = hv_fetch(plugin_info, "GTK_UI",
-			                    strlen("GTK_UI"), 0)))
-				info->ui_requirement = PURPLE_GTK_PLUGIN_TYPE;
-#endif
+					basename = g_path_get_basename(plugin->path);
+					purple_perl_normalize_script_name(basename);
+					gps->package = g_strdup_printf("Purple::Script::%s", basename);
+					g_free(basename);
 
-			if ((key = hv_fetch(plugin_info, "url",
-			                    strlen("url"), 0)))
-				info->homepage = g_strdup(SvPV(*key, len));
-
-			if ((key = hv_fetch(plugin_info, "author",
-			                    strlen("author"), 0)))
-				info->author = g_strdup(SvPV(*key, len));
-
-			if ((key = hv_fetch(plugin_info, "summary",
-			                    strlen("summary"), 0)))
-				info->summary = g_strdup(SvPV(*key, len));
-
-			if ((key = hv_fetch(plugin_info, "description",
-			                    strlen("description"), 0)))
-				info->description = g_strdup(SvPV(*key, len));
-
-			if ((key = hv_fetch(plugin_info, "version",
-			                    strlen("version"), 0)))
-				info->version = g_strdup(SvPV(*key, len));
-
-			/* We know this one exists. */
-			key = hv_fetch(plugin_info, "load", strlen("load"), 0);
-			gps->load_sub = g_strdup_printf("%s::%s", gps->package,
-			                                SvPV(*key, len));
-
-			if ((key = hv_fetch(plugin_info, "unload",
-			                    strlen("unload"), 0)))
-				gps->unload_sub = g_strdup_printf("%s::%s",
-				                                  gps->package,
-				                                  SvPV(*key, len));
-
-			if ((key = hv_fetch(plugin_info, "id",
-			                    strlen("id"), 0))) {
-				g_free(info->id);
-				info->id = g_strdup_printf("perl-%s",
-				                           SvPV(*key, len));
-			}
-
-		/********************************************************/
-		/* Only one of the next two options should be present   */
-		/*                                                      */
-		/* prefs_info - Uses non-GUI (read GTK) purple API calls  */
-		/*              and creates a PurplePluginPrefInfo type.  */
-		/*                                                      */
-		/* gtk_prefs_info - Requires gtk2-perl be installed by  */
-		/*                  the user and he must create a       */
-		/*                  GtkWidget the user and he must      */
-		/*                  create a GtkWidget representing the */
-		/*                  plugin preferences page.            */
-		/********************************************************/
-			if ((key = hv_fetch(plugin_info, "prefs_info",
-			                    strlen("prefs_info"), 0))) {
-				/* key now is the name of the Perl sub that
-				 * will create a frame for us */
-				gps->prefs_sub = g_strdup_printf("%s::%s",
-				                                 gps->package,
-				                                 SvPV(*key, len));
-				info->prefs_info = &ui_info;
+					if ((key = hv_fetch(plugin_info, "name",
+					                    strlen("name"), 0))) {
+						info->name = g_strdup(SvPV(*key, len));
 			}
 
 #ifdef PURPLE_GTKPERL
-			if ((key = hv_fetch(plugin_info, "gtk_prefs_info",
-			                    strlen("gtk_prefs_info"), 0))) {
-				/* key now is the name of the Perl sub that
-				 * will create a frame for us */
-				gps->gtk_prefs_sub = g_strdup_printf("%s::%s",
-				                                     gps->package,
-				                                     SvPV(*key, len));
-				info->ui_info = &gtk_ui_info;
-			}
+					if ((key = hv_fetch(plugin_info, "GTK_UI",
+					                    strlen("GTK_UI"), 0))) {
+						info->ui_requirement = PURPLE_GTK_PLUGIN_TYPE;
+					}
 #endif
 
-			if ((key = hv_fetch(plugin_info, "plugin_action_sub",
-			                    strlen("plugin_action_sub"), 0))) {
-				gps->plugin_action_sub = g_strdup_printf("%s::%s",
-				                                         gps->package,
-				                                         SvPV(*key, len));
-				info->actions = purple_perl_plugin_actions;
+					if ((key = hv_fetch(plugin_info, "url",
+					                    strlen("url"), 0))) {
+						info->homepage = g_strdup(SvPV(*key, len));
+					}
+
+					if ((key = hv_fetch(plugin_info, "author",
+					                    strlen("author"), 0))) {
+						info->author = g_strdup(SvPV(*key, len));
+					}
+
+					if ((key = hv_fetch(plugin_info, "summary",
+					                    strlen("summary"), 0))) {
+						info->summary = g_strdup(SvPV(*key, len));
+					}
+
+					if ((key = hv_fetch(plugin_info, "description",
+					                    strlen("description"), 0))) {
+						info->description = g_strdup(SvPV(*key, len));
+					}
+
+					if ((key = hv_fetch(plugin_info, "version",
+					                    strlen("version"), 0))) {
+						info->version = g_strdup(SvPV(*key, len));
+					}
+
+					if ((key = hv_fetch(plugin_info, "load",
+					                    strlen("load"), 0))) {
+						gps->load_sub = g_strdup_printf("%s::%s",
+						                                gps->package,
+						                                SvPV(*key, len));
+					}
+
+					if ((key = hv_fetch(plugin_info, "unload",
+					                    strlen("unload"), 0))) {
+						gps->unload_sub = g_strdup_printf("%s::%s",
+						                                  gps->package,
+						                                  SvPV(*key, len));
+					}
+
+					if ((key = hv_fetch(plugin_info, "id",
+					                    strlen("id"), 0))) {
+						g_free(info->id);
+						info->id = g_strdup_printf("perl-%s",
+						                           SvPV(*key, len));
+					} else {
+						/* Plugins need ids. */
+						info->id = g_strdup(info->name);
+					}
+
+		/*********************************************************/
+		/* Only one of the next two options should be present    */
+		/*                                                       */
+		/* prefs_info - Uses non-GUI (read GTK) purple API calls */
+		/*              and creates a PurplePluginPrefInfo type. */
+		/*                                                       */
+		/* gtk_prefs_info - Requires gtk2-perl be installed by   */
+		/*                  the user and he must create a        */
+		/*                  GtkWidget the user and he must       */
+		/*                  create a GtkWidget representing the  */
+		/*                  plugin preferences page.             */
+		/*********************************************************/
+					if ((key = hv_fetch(plugin_info, "prefs_info",
+							    strlen("prefs_info"), 0))) {
+						/* key now is the name of the
+						 * Perl sub that will create a
+						 * frame for us */
+						gps->prefs_sub = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
+						info->prefs_info = &ui_info;
+					}
+
+#ifdef PURPLE_GTKPERL
+					if ((key = hv_fetch(plugin_info, "gtk_prefs_info",
+					                    strlen("gtk_prefs_info"), 0))) {
+						/* key now is the name of the
+						 * Perl sub that will create a
+						 * frame for us */
+						gps->gtk_prefs_sub = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
+						info->ui_info = &gtk_ui_info;
+					}
+#endif
+
+					if ((key = hv_fetch(plugin_info, "plugin_action_sub",
+					                    strlen("plugin_action_sub"), 0))) {
+						gps->plugin_action_sub = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
+						info->actions = purple_perl_plugin_actions;
+					}
+
+					info->extra_info = gps;
+					plugin->info = info;
+				}
 			}
-
-			plugin->info = info;
-			info->extra_info = gps;
-
-			status = purple_plugin_register(plugin);
 		}
 	}
 
@@ -405,7 +427,13 @@ probe_perl_plugin(PurplePlugin *plugin)
 	PERL_SET_CONTEXT(prober);
 	perl_destruct(prober);
 	perl_free(prober);
-	return status;
+
+	if (plugin->unloadable) {
+		/* Don't register the plugin if we know it is going to fail. */
+		return FALSE;
+	}
+
+	return purple_plugin_register(plugin);
 }
 
 static gboolean
