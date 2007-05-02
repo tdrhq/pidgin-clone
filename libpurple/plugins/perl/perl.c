@@ -129,7 +129,7 @@ xs_init(pTHX)
 	char *file = __FILE__;
 
 	/* This one allows dynamic loading of perl modules in perl scripts by
-	 * the 'use perlmod;' construction */
+	 * the 'use perlmod;' construction. See perlembed for more info. */
 	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
 }
 
@@ -272,27 +272,23 @@ probe_perl_plugin(PurplePlugin *plugin)
 		} else {
 			plugin_info = perl_get_hv("PLUGIN_INFO", FALSE);
 
-			if (plugin_info == NULL)
-				plugin->unloadable = TRUE;
-			else if (!hv_exists(plugin_info, "perl_api_version",
-			                    strlen("perl_api_version")) ||
-			         !hv_exists(plugin_info, "name",
-			                    strlen("name")) ||
-			         !hv_exists(plugin_info, "load",
-			                    strlen("load"))) {
-				/* Not a valid plugin. */
-
+			if (plugin_info == NULL) {
+				purple_debug_error("perl", "This plugin has not defined a plugin_info hash.");
+				plugin->error = g_strdup(_("This plugin did not have a plugin_info hash."));
 				plugin->unloadable = TRUE;
 			} else {
 				SV **key;
-				int perl_api_ver;
+				int perl_api_ver = 0;
 
-				key = hv_fetch(plugin_info, "perl_api_version",
-				               strlen("perl_api_version"), 0);
-
-				perl_api_ver = SvIV(*key);
+				if ((key = hv_fetch(plugin_info,
+				                    "perl_api_version",
+				                    strlen("perl_api_version"),
+				                    0))) {
+					perl_api_ver = SvIV(*key);
+				}
 
 				if (perl_api_ver != 2) {
+					plugin->error = g_strdup(_("Incorrect perl_api_version\n"));
 					plugin->unloadable = TRUE;
 				} else {
 					PurplePluginInfo *info;
@@ -320,7 +316,7 @@ probe_perl_plugin(PurplePlugin *plugin)
 					if ((key = hv_fetch(plugin_info, "name",
 					                    strlen("name"), 0))) {
 						info->name = g_strdup(SvPV(*key, len));
-			}
+					}
 
 #ifdef PURPLE_GTKPERL
 					if ((key = hv_fetch(plugin_info, "GTK_UI",
@@ -373,9 +369,6 @@ probe_perl_plugin(PurplePlugin *plugin)
 						g_free(info->id);
 						info->id = g_strdup_printf("perl-%s",
 						                           SvPV(*key, len));
-					} else {
-						/* Plugins need ids. */
-						info->id = g_strdup(info->name);
 					}
 
 		/*********************************************************/
