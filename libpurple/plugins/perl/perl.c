@@ -461,7 +461,7 @@ load_perl_plugin(PurplePlugin *plugin)
 		                                         "Purple::Plugin")));
 		PUTBACK;
 
-		perl_call_pv(gps->load_sub, G_EVAL | G_SCALAR);
+		call_pv(gps->load_sub, G_EVAL | G_SCALAR);
 		SPAGAIN;
 
 		if (SvTRUE(ERRSV)) {
@@ -494,8 +494,8 @@ destroy_package(const char *package)
 	XPUSHs(sv_2mortal(newSVpv(package, strlen(package))));
 	PUTBACK;
 
-	perl_call_pv("Purple::PerlLoader::destroy_package",
-	             G_VOID | G_EVAL | G_DISCARD);
+	call_pv("Purple::PerlLoader::destroy_package",
+	        G_VOID | G_EVAL | G_DISCARD);
 
 	SPAGAIN;
 
@@ -525,7 +525,7 @@ unload_perl_plugin(PurplePlugin *plugin)
 		                                         "Purple::Plugin")));
 		PUTBACK;
 
-		perl_call_pv(gps->unload_sub, G_EVAL | G_SCALAR);
+		call_pv(gps->unload_sub, G_EVAL | G_SCALAR);
 		SPAGAIN;
 
 		if (SvTRUE(ERRSV)) {
