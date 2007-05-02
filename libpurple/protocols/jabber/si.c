@@ -23,11 +23,11 @@
 #include "blist.h"
 
 #include "internal.h"
-#include "cipher.h"
 #include "debug.h"
 #include "ft.h"
 #include "network.h"
 #include "notify.h"
+#include "sha1cipher.h"
 
 #include "buddy.h"
 #include "disco.h"
@@ -159,6 +159,8 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 	dstjid = jabber_id_new(xfer->who);
 
 	if(dstjid != NULL) {
+		PurpleCipher *cipher;
+
 		jsx->gpi = purple_proxy_info_new();
 		purple_proxy_info_set_type(jsx->gpi, PURPLE_PROXY_SOCKS5);
 		purple_proxy_info_set_host(jsx->gpi, streamhost->host);
@@ -169,8 +171,11 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", jsx->stream_id, dstjid->node, dstjid->domain, dstjid->resource, jsx->js->user->node,
 				jsx->js->user->domain, jsx->js->user->resource);
 
-		purple_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
-				sizeof(hashval), hashval, NULL);
+		cipher = purple_sha1_cipher_new();
+		purple_cipher_append(cipher, (guchar *)dstaddr, strlen(dstaddr));
+		purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+		g_object_unref(G_OBJECT(cipher));
+
 		g_free(dstaddr);
 		dstaddr = g_malloc(41);
 		p = dstaddr;
@@ -284,6 +289,7 @@ static void
 jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 		PurpleInputCondition cond)
 {
+	PurpleCipher *cipher;
 	PurpleXfer *xfer = data;
 	JabberSIXfer *jsx = xfer->data;
 	int i;
@@ -346,8 +352,11 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 			jsx->js->user->node, jsx->js->user->domain,
 			jsx->js->user->resource, xfer->who);
 
-	purple_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
-							  sizeof(hashval), hashval, NULL);
+	cipher = purple_sha1_cipher_new();
+	purple_cipher_append(cipher, (guchar *)dstaddr, strlen(dstaddr));
+	purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+	g_object_unref(G_OBJECT(cipher));
+
 	g_free(dstaddr);
 	dstaddr = g_malloc(41);
 	p = dstaddr;
