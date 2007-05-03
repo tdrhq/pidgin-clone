@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <glib.h>
 
-#include "cipher.h"
+#include "md5cipher.h"
 #include "yahoo_crypt.h"
 
 /* Define our magic string to mark salt for MD5 "encryption"
@@ -40,8 +40,7 @@ static const char b64t[64] =
 
 char *yahoo_crypt(const char *key, const char *salt)
 {
-	PurpleCipher *cipher;
-	PurpleCipherContext *context1, *context2;
+	PurpleCipher *md5_cipher1, *md5_cipher2;
 	guchar digest[16];
 	static char *buffer = NULL;
 	static int buflen = 0;
@@ -59,9 +58,8 @@ char *yahoo_crypt(const char *key, const char *salt)
 			return NULL;
 	}
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context1 = purple_cipher_context_new(cipher, NULL);
-	context2 = purple_cipher_context_new(cipher, NULL);
+	md5_cipher1 = purple_md5_cipher_new();
+	md5_cipher2 = purple_md5_cipher_new();
 
 	/* Find beginning of salt string.  The prefix should normally always
 	 * be present.  Just in case it is not.
@@ -74,40 +72,40 @@ char *yahoo_crypt(const char *key, const char *salt)
 	key_len = strlen (key);
 
 	/* Add the key string.  */
-	purple_cipher_context_append(context1, (const guchar *)key, key_len);
+	purple_cipher_append(md5_cipher1, (const guchar *)key, key_len);
 
 	/* Because the SALT argument need not always have the salt prefix we
 	 * add it separately.
 	 */
-	purple_cipher_context_append(context1, (const guchar *)md5_salt_prefix,
-							   sizeof(md5_salt_prefix) - 1);
+	purple_cipher_append(md5_cipher1, (const guchar *)md5_salt_prefix,
+						 sizeof(md5_salt_prefix) - 1);
 
 	/* The last part is the salt string.  This must be at most 8
 	 * characters and it ends at the first `$' character (for
 	 * compatibility which existing solutions).
 	 */
-	purple_cipher_context_append(context1, (const guchar *)salt, salt_len);
+	purple_cipher_append(md5_cipher1, (const guchar *)salt, salt_len);
 
 	/* Compute alternate MD5 sum with input KEY, SALT, and KEY.  The
 	 * final result will be added to the first context.
 	 */
 
 	/* Add key.  */
-	purple_cipher_context_append(context2, (const guchar *)key, key_len);
+	purple_cipher_append(md5_cipher2, (const guchar *)key, key_len);
 
 	/* Add salt.  */
-	purple_cipher_context_append(context2, (const guchar *)salt, salt_len);
+	purple_cipher_append(md5_cipher2, (const guchar *)salt, salt_len);
 
 	/* Add key again.  */
-	purple_cipher_context_append(context2, (const guchar *)key, key_len);
+	purple_cipher_append(md5_cipher2, (const guchar *)key, key_len);
 
-	/* Now get result of this (16 bytes) and add it to the other context.  */
-	purple_cipher_context_digest(context2, sizeof(digest), digest, NULL);
+	/* Now get result of this (16 bytes) and add it to the other md5_cipher.  */
+	purple_cipher_digest(md5_cipher2, sizeof(digest), digest, NULL);
 
 	/* Add for any character in the key one byte of the alternate sum.  */
 	for (cnt = key_len; cnt > 16; cnt -= 16)
-		purple_cipher_context_append(context1, digest, 16);
-	purple_cipher_context_append(context1, digest, cnt);
+		purple_cipher_append(md5_cipher1, digest, 16);
+	purple_cipher_append(md5_cipher1, digest, cnt);
 
 	/* For the following code we need a NUL byte.  */
 	digest[0] = '\0';
@@ -118,11 +116,11 @@ char *yahoo_crypt(const char *key, const char *salt)
 	 * what was intended but we have to follow this to be compatible.
 	 */
 	for (cnt = key_len; cnt > 0; cnt >>= 1)
-		purple_cipher_context_append(context1,
-								   (cnt & 1) != 0 ? digest : (guchar *)key, 1);
+		purple_cipher_append(md5_cipher1,
+							 (cnt & 1) != 0 ? digest : (guchar *)key, 1);
 
 	/* Create intermediate result.  */
-	purple_cipher_context_digest(context1, sizeof(digest), digest, NULL);
+	purple_cipher_digest(md5_cipher1, sizeof(digest), digest, NULL);
 
 	/* Now comes another weirdness.  In fear of password crackers here
 	 * comes a quite long loop which just processes the output of the
@@ -130,30 +128,30 @@ char *yahoo_crypt(const char *key, const char *salt)
 	 */
 	for (cnt = 0; cnt < 1000; ++cnt) {
 		/* New context.  */
-		purple_cipher_context_reset(context2, NULL);
+		purple_cipher_reset(md5_cipher2);
 
 		/* Add key or last result.  */
 		if ((cnt & 1) != 0)
-			purple_cipher_context_append(context2, (const guchar *)key, key_len);
+			purple_cipher_append(md5_cipher2, (const guchar *)key, key_len);
 		else
-			purple_cipher_context_append(context2, digest, 16);
+			purple_cipher_append(md5_cipher2, digest, 16);
 
 		/* Add salt for numbers not divisible by 3.  */
 		if (cnt % 3 != 0)
-			purple_cipher_context_append(context2, (const guchar *)salt, salt_len);
+			purple_cipher_append(md5_cipher2, (const guchar *)salt, salt_len);
 
 		/* Add key for numbers not divisible by 7.  */
 		if (cnt % 7 != 0)
-			purple_cipher_context_append(context2, (const guchar *)key, key_len);
+			purple_cipher_append(md5_cipher2, (const guchar *)key, key_len);
 
 		/* Add key or last result.  */
 		if ((cnt & 1) != 0)
-			purple_cipher_context_append(context2, digest, 16);
+			purple_cipher_append(md5_cipher2, digest, 16);
 		else
-			purple_cipher_context_append(context2, (const guchar *)key, key_len);
+			purple_cipher_append(md5_cipher2, (const guchar *)key, key_len);
 
 		/* Create intermediate result.  */
-		purple_cipher_context_digest(context2, sizeof(digest), digest, NULL);
+		purple_cipher_digest(md5_cipher2, sizeof(digest), digest, NULL);
 	}
 
 	/* Now we can construct the result string.  It consists of three parts. */
@@ -198,10 +196,10 @@ char *yahoo_crypt(const char *key, const char *salt)
 	 * information.  We do it in this way to clear correct_words[]
 	 * inside the MD5 implementation as well.
 	 */
-	purple_cipher_context_reset(context1, NULL);
-	purple_cipher_context_digest(context1, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context1);
-	purple_cipher_context_destroy(context2);
+	purple_cipher_reset(md5_cipher1);
+	purple_cipher_digest(md5_cipher1, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(md5_cipher1));
+	g_object_unref(G_OBJECT(md5_cipher2));
 
 	return buffer;
 }
