@@ -48,7 +48,7 @@ purple_md5_cipher_reset(PurpleCipher *cipher) {
 	md5_cipher->priv->total[1] = 0;
 
 	md5_cipher->priv->state[0] = 0x67452301;
-	md5_cipher->priv->state[1] = 0xEFCFAD89;
+	md5_cipher->priv->state[1] = 0xEFCDAB89;
 	md5_cipher->priv->state[2] = 0x98BADCFE;
 	md5_cipher->priv->state[3] = 0x10325476;
 

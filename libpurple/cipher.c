@@ -74,7 +74,7 @@ purple_cipher_reset(PurpleCipher *cipher) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass->reset)
+	if(klass && klass->reset)
 		klass->reset(cipher);
 }
 
@@ -87,7 +87,7 @@ purple_cipher_set_iv(PurpleCipher *cipher, guchar *iv, size_t len) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass->set_iv)
+	if(klass && klass->set_iv)
 		klass->set_iv(cipher, iv, len);
 }
 
@@ -99,7 +99,7 @@ purple_cipher_append(PurpleCipher *cipher, const guchar *data, size_t len) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass->append)
+	if(klass && klass->append)
 		klass->append(cipher, data, len);
 }
 
@@ -111,7 +111,9 @@ purple_cipher_digest(PurpleCipher *cipher, size_t in_len, guchar digest[],
 
 	g_return_val_if_fail(PURPLE_IS_CIPHER(cipher), FALSE);
 
-	if(klass->digest)
+	klass = PURPLE_CIPHER_GET_CLASS(cipher);
+
+	if(klass && klass->digest)
 		return klass->digest(cipher, in_len, digest, out_len);
 
 	return FALSE;
@@ -157,7 +159,7 @@ purple_cipher_encrypt(PurpleCipher *cipher, const guchar data[], size_t len,
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass->encrypt)
+	if(klass && klass->encrypt)
 		return klass->encrypt(cipher, data, len, output, outlen);
 
 	if(outlen)
@@ -176,7 +178,7 @@ purple_cipher_decrypt(PurpleCipher *cipher, const guchar data[], size_t len,
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass->decrypt)
+	if(klass && klass->decrypt)
 		return klass->decrypt(cipher, data, len, output, outlen);
 
 	if(outlen)
@@ -193,7 +195,7 @@ purple_cipher_set_salt(PurpleCipher *cipher, guchar *salt) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass->set_salt)
+	if(klass && klass->set_salt)
 		klass->set_salt(cipher, salt);
 }
 
@@ -205,7 +207,7 @@ purple_cipher_get_salt_size(PurpleCipher *cipher) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass->get_salt_size)
+	if(klass && klass->get_salt_size)
 		return klass->get_salt_size(cipher);
 
 	return -1;
@@ -219,7 +221,7 @@ purple_cipher_set_key(PurpleCipher *cipher, const guchar *key) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass->set_key)
+	if(klass && klass->set_key)
 		klass->set_key(cipher, key);
 }
 
@@ -231,7 +233,7 @@ purple_cipher_get_key_size(PurpleCipher *cipher) {
 
 	klass = PURPLE_CIPHER_GET_CLASS(cipher);
 
-	if(klass->get_key_size)
+	if(klass && klass->get_key_size)
 		return klass->get_key_size(cipher);
 
 	return -1;

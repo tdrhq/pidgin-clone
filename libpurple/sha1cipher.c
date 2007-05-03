@@ -54,7 +54,7 @@ purple_sha1_cipher_reset(PurpleCipher *cipher) {
 	sha1_cipher->priv->sizeHi = 0;
 	sha1_cipher->priv->sizeLo = 0;
 
-	sha1_cipher->priv->H[0] = 0x67452391;
+	sha1_cipher->priv->H[0] = 0x67452301;
 	sha1_cipher->priv->H[1] = 0xefcdab89;
 	sha1_cipher->priv->H[2] = 0x98badcfe;
 	sha1_cipher->priv->H[3] = 0x10325476;
