@@ -119,6 +119,8 @@ static PurpleGtkPluginUiInfo gtk_ui_info =
 };
 #endif
 
+/* This allows dynamic loading of perl modules in perl scripts by the 'use
+ * perlmod;' construction. See perlembed for more info. */
 static void
 #ifdef OLD_PERL
 xs_init()
@@ -127,9 +129,9 @@ xs_init(pTHX)
 #endif
 {
 	char *file = __FILE__;
+	dXSUB_SYS;
 
-	/* This one allows dynamic loading of perl modules in perl scripts by
-	 * the 'use perlmod;' construction. See perlembed for more info. */
+	/* DynaLoader is a special case */
 	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);
 }
 
