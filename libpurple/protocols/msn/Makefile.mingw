@@ -29,9 +29,11 @@ INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
+			-I$(MSPACK_TOP) \
 			-I$(PIDGIN_TREE_TOP)
 
-LIB_PATHS +=		-L$(GTK_TOP)/lib \
+LIB_PATHS +=	-L$(GTK_TOP)/lib \
+			-L$(MSPACK_TOP) \
 			-L$(PURPLE_TOP)
 
 ##
@@ -79,6 +81,7 @@ LIBS =	\
 			-lglib-2.0 \
 			-lintl \
 			-lws2_32 \
+			-lmspack \
 			-lpurple
 
 include $(PIDGIN_COMMON_RULES)

@@ -2270,6 +2270,23 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
+#ifdef USE_MSPACK
+	option = purple_account_option_bool_new(_("Show winks"),
+										  "winks", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+#endif
+
+#ifdef _WIN32
+	option = purple_account_option_bool_new(_("Play voice clips"),
+										  "voice_clips", TRUE);
+#else
+	option = purple_account_option_bool_new(_("Play voice clips (requires specialized codec)"),
+										  "voice_clips", FALSE);
+#endif
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+
 	purple_cmd_register("nudge", "", PURPLE_CMD_P_PRPL,
 	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                 "prpl-msn", msn_cmd_nudge,

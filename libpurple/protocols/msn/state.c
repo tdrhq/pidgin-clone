@@ -248,6 +248,7 @@ msn_change_status(MsnSession *session)
 	MsnUser *user;
 	MsnObject *msnobj;
 	const char *state_text;
+	int client_id;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
@@ -264,17 +265,27 @@ msn_change_status(MsnSession *session)
 		return;
 
 	msnobj = msn_user_get_object(user);
+	
+	client_id = MSN_CLIENT_ID;
+#ifdef USE_MSPACK
+	if (purple_account_get_bool(session->account, "winks", TRUE))
+#else
+	if (purple_account_get_bool(session->account, "winks", FALSE))
+#endif
+		client_id |= MSN_CLIENT_CAP_WINKS;
+	if (purple_account_get_bool(session->account, "voice_clips", TRUE))
+		client_id |= MSN_CLIENT_CAP_VOICE_CLIP;
 
 	if (msnobj == NULL){
 		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text,
-						 MSN_CLIENT_ID);
+						 client_id);
 	}else{
 		char *msnobj_str;
 
 		msnobj_str = msn_object_to_string(msnobj);
 
 		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
-						 MSN_CLIENT_ID, purple_url_encode(msnobj_str));
+						 client_id, purple_url_encode(msnobj_str));
 
 		g_free(msnobj_str);
 	}

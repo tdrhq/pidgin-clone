@@ -23,6 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "notify.h"
+#include "sound.h"
+#include <string.h>
 
 static PurpleNotifyUiOps *notify_ui_ops = NULL;
 static GList *handles = NULL;
@@ -685,6 +687,11 @@ purple_notify_uri(void *handle, const char *uri)
 	PurpleNotifyUiOps *ops;
 
 	g_return_val_if_fail(uri != NULL, NULL);
+
+	if (uri==strstr(uri, "audio://")) {
+		purple_sound_play_file((uri+8), NULL);
+		return NULL;
+	}
 
 	ops = purple_notify_get_ui_ops();
 

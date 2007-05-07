@@ -129,6 +129,7 @@ struct _MsnMessage
 	void *ack_data; /**< The data used by callbacks. */
 
 	MsnMsgErrorType error; /**< The error of the message. */
+	int partcount; /**The number of parts expected if this is  multipart message*/
 };
 
 /**
@@ -184,8 +185,10 @@ MsnMessage *msn_message_new_from_cmd(MsnSession *session, MsnCommand *cmd);
  * @param msg         The message.
  * @param payload     The payload.
  * @param payload_len The length of the payload.
+ *
+ * @return The message, or NULL if the message is not the final part of a multipart msg.
  */
-void msn_message_parse_payload(MsnMessage *msg, const char *payload,
+MsnMessage *msn_message_parse_payload(MsnMessage *msg, const char *payload,
 							   size_t payload_len,
 						  const char *line_dem,const char *body_dem);
 
