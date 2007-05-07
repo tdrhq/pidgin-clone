@@ -53,11 +53,13 @@ init_libpurple()
 
 int main()
 {
-	PurplePlugin *buddyback = NULL;
+	PurplePlugin *buddyback = NULL, *monoloader = NULL;
 
 	init_libpurple();
 	
-	buddyback = purple_plugins_find_with_basename("GetBuddyBack");
+	monoloader = purple_plugin_probe("../plugins/mono/loader/.libs/mono.so");
+	purple_plugin_load(monoloader);
+	buddyback = purple_plugin_probe("../plugins/mono/GetBuddyBack.dll");
 	
 	if (!buddyback) {
 		printf("Didn't find test plugin.\n");
