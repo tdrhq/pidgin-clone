@@ -6,6 +6,15 @@
 
 char* say_hello()
 {
-	return g_strdup("hello!");
+	return "Hello";
 }
 
+void set_hello(char* str)
+{
+	printf("%s\n", str);
+}
+
+int length(char* s)
+{
+	return strlen(s);
+}

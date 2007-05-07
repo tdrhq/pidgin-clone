@@ -5,6 +5,7 @@
 #include <mono/metadata/debug-helpers.h>
 
 char* say_hello();
+void set_hello(char *str);
 
 int main(int argc, char *argv[])
 {
