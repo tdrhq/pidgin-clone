@@ -112,7 +112,7 @@ static struct developer retired_developers[] = {
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
-	{"Jim Seymour",			N_("Jabber developer"), NULL},
+	{"Jim Seymour",			N_("XMPP developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
 	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
 	{NULL, NULL, NULL}
@@ -156,15 +156,15 @@ static struct translator current_translators[] = {
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
 	{N_("Galician"),            "gl", "Ignacio Casal Quinteiro", "nacho.resa@gmail.com"},
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},
-	{N_("Gujarati"),            "gu", "Gujarati Language Team", "indianoss-gujarati@lists.sourceforge.net"},
+	{N_("Gujarati"),            "gu", N_("Gujarati Language Team"), "indianoss-gujarati@lists.sourceforge.net"},
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
 	{N_("Hindi"),               "hi", "Ravishankar Shrivastava", "raviratlami@yahoo.com"},
 	{N_("Hungarian"),           "hu", "Zoltan Sutto", "sutto.zoltan@rutinsoft.hu"},
 	{N_("Indonesian"),          "id", "Rai S. Regawa", "raireg@yahoo.com"},
 	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
-	{N_("Georgian"),            "ka", "Ubuntu Georgian Translators", "alexander.didebulidze@stusta.mhn.de"},
-	{N_("Kannada"),             "kn", "Kannada Translation team", "translation@sampada.info"},
+	{N_("Georgian"),            "ka", N_("Ubuntu Georgian Translators"), "alexander.didebulidze@stusta.mhn.de"},
+	{N_("Kannada"),             "kn", N_("Kannada Translation team"), "translation@sampada.info"},
 	{N_("Korean"),              "ko", "Kyung-uk Son", "vvs740@chol.com"},
 	{N_("Kurdish"),             "ku", "Erdal Ronahi", "erdal.ronahi@gmail.com"},
 	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
@@ -350,7 +350,9 @@ void pidgin_dialogs_about()
 	gdk_pixbuf_unref(pixbuf);
 	/* Insert the logo */
 	obj = gtk_widget_get_accessible(logo);
-	atk_object_set_description(obj, PIDGIN_NAME " " VERSION);
+	tmp = g_strconcat(PIDGIN_NAME, " " VERSION, NULL);
+	atk_object_set_description(obj, tmp);
+	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
 	frame = pidgin_create_imhtml(FALSE, &text, NULL, NULL);
@@ -360,8 +362,9 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		_("%s is a modular messaging client capable of using "
-		  "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, "
+		_("%s is a graphical modular messaging client based on "
+		  "libpurple which is capable of connecting to "
+		  "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
 		  "Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, "
 		  "Gadu-Gadu, and QQ all at once.  "
 		  "It is written using GTK+.<BR><BR>"
@@ -506,9 +509,9 @@ void pidgin_dialogs_about()
 #endif
 
 #ifdef HAVE_SSL
-	g_string_append(str, "  <b>SSL:</b> " PIDGIN_NAME " was compiled with SSL support.<br/>");
+	g_string_append(str, "  <b>SSL:</b> SSL support is present.<br/>");
 #else
-	g_string_append(str, "  <b>SSL:</b> " PIDGIN_NAME " was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
+	g_string_append(str, "  <b>SSL:</b> SSL support was <b><i>NOT</i></b> compiled!<br/>");
 #endif
 
 /* This might be useful elsewhere too, but it is particularly useful for

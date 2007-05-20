@@ -1739,6 +1739,7 @@ purple_markup_strip_html(const char *str)
 				else if (strncasecmp(str2 + i, "<p>", 3) == 0
 				 || strncasecmp(str2 + i, "<tr", 3) == 0
 				 || strncasecmp(str2 + i, "<br", 3) == 0
+				 || strncasecmp(str2 + i, "<hr", 3) == 0
 				 || strncasecmp(str2 + i, "<li", 3) == 0
 				 || strncasecmp(str2 + i, "<div", 4) == 0
 				 || strncasecmp(str2 + i, "</table>", 8) == 0)
@@ -2522,29 +2523,15 @@ FILE *
 purple_mkstemp(char **fpath, gboolean binary)
 {
 	const gchar *tmpdir;
-#ifndef _WIN32
 	int fd;
-#endif
 	FILE *fp = NULL;
 
 	g_return_val_if_fail(fpath != NULL, NULL);
 
 	if((tmpdir = (gchar*)g_get_tmp_dir()) != NULL) {
 		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, purple_mkstemp_templ)) != NULL) {
-#ifdef _WIN32
-			char* result = _mktemp( *fpath );
-			if( result == NULL )
-				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
-						   "Problem creating the template\n");
-			else
-			{
-				if( (fp = g_fopen( result, binary?"wb+":"w+")) == NULL ) {
-					purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
-							   "Couldn't fopen() %s\n", result);
-				}
-			}
-#else
-			if((fd = mkstemp(*fpath)) == -1) {
+			fd = g_mkstemp(*fpath);
+			if(fd == -1) {
 				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
 						   "Couldn't make \"%s\", error: %d\n",
 						   *fpath, errno);
@@ -2555,7 +2542,7 @@ purple_mkstemp(char **fpath, gboolean binary)
 							   "Couldn't fdopen(), error: %d\n", errno);
 				}
 			}
-#endif
+
 			if(!fp) {
 				g_free(*fpath);
 				*fpath = NULL;
@@ -3298,6 +3285,9 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 		gfud->inpa = 0;
 		close(gfud->fd);
 		gfud->fd = -1;
+		gfud->request_written = 0;
+		gfud->len = 0;
+		gfud->data_len = 0;
 
 		g_free(gfud->website.user);
 		g_free(gfud->website.passwd);
@@ -3510,7 +3500,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 	gfud->request_written += len;
 
-	if (gfud->request_written != total_len)
+	if (gfud->request_written < total_len)
 		return;
 
 	/* We're done writing our request, now start reading the response */
