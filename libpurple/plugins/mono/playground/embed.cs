@@ -6,8 +6,10 @@ class Embed
 	static void Main()
 	{
 		string str = build_string(say_hello());
-		Console.WriteLine(str);
 		set_hello(str);
+		
+		IntPtr obj = create_struct(10);
+		print_struct_value(obj);
 	}
 	
 	static string build_string(IntPtr ptr)
@@ -26,4 +28,10 @@ class Embed
 	
 	[DllImport("./libtest")]
 	static extern int length(IntPtr s);
+	
+	[DllImport("./libtest")]
+	static extern IntPtr create_struct(int v);
+	
+	[DllImport("./libtest")]
+	static extern void print_struct_value(IntPtr s);
 }

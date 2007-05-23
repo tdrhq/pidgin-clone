@@ -4,14 +4,17 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 
-char* say_hello();
-void set_hello(char *str);
+#include "libtest.h"
 
 int main(int argc, char *argv[])
 {
 	MonoDomain *domain;
 	MonoAssembly *assm;
 	const char *file;
+	
+	TestStruct *ts = create_struct(5);
+	
+	print_struct_value(ts);
 	
 	file = argv[1];
 	
