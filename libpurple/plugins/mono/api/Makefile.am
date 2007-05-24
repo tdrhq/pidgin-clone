@@ -12,7 +12,8 @@ mono_sources = \
 	Group.cs \
 	Signal.cs \
 	Status.cs \
-	Account.cs
+	Account.cs \
+	Util.cs
 
 EXTRA_DIST = $(mono_sources)
 

@@ -1,6 +1,5 @@
 using System;
-using System.Runtime.CompilerServices;
-
+using System.Runtime.InteropServices;
 
 namespace Purple {
 	public class Buddy : BlistNode {
@@ -11,33 +10,33 @@ namespace Purple {
 			: base(handle)
 		{
 			Debug.debug(Debug.INFO, "mono", "in Buddy constructor\n");
+			IntPtr pname = purple_buddy_get_name(handle);
+			Debug.debug(Debug.INFO, "mono", "got buddy name in pointer\n");
+			IntPtr palias = purple_buddy_get_alias(handle);
+			Debug.debug(Debug.INFO, "mono", "got buddy alias in pointer\n");
+			name = Util.build_string(pname);
+			Debug.debug(Debug.INFO, "mono", "name is set\n");
+			alias = Util.build_string(palias);
+			Debug.debug(Debug.INFO, "mono", "alias is set\n");
+			
+			System.Console.WriteLine(name + " " + alias);
 		}
 
 		public Buddy(Account a, string name, string alias)
 		{
 			this.name = name;
 			this.alias = alias;
-			_c_handle = _purple_buddy_new(a.Handle, name, alias);
+			//_c_handle = _purple_buddy_new(a.Handle, name, alias);
 		}
 
 		public string Name { get { return name; } }
 		public string Alias { get { return alias; } }
-
-		protected override void _updateFromStruct()
-		{
-			Debug.debug(Debug.INFO, "mono", "updateFromStruct " + _c_handle + " : " + _c_handle.GetType() + "\n");
-			name = _purple_buddy_get_name(_c_handle);
-			alias = _purple_buddy_get_alias(_c_handle);
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern private string _purple_buddy_get_name(IntPtr handle);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern private string _purple_buddy_get_alias(IntPtr handle);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern private IntPtr _purple_buddy_new(IntPtr account, string name, string alias);
+		
+		[DllImport("libpurple")]
+		static private extern IntPtr purple_buddy_get_name(IntPtr h);
+		
+		[DllImport("libpurple")]
+		static private extern IntPtr purple_buddy_get_alias(IntPtr h);
 
 	}
 }

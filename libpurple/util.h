@@ -62,6 +62,8 @@ typedef struct _PurpleKeyValuePair
 
 } PurpleKeyValuePair;
 
+int ml_strlen(char* s);
+
 /**
  * Creates a new PurpleMenuAction.
  *
