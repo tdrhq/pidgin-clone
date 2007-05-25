@@ -21,16 +21,16 @@ int length(char* s)
 	return strlen(s);
 }
 
-TestStruct* create_struct(int v)
+TestStruct* create_struct(char *s)
 {
 	TestStruct* ret = (TestStruct*)malloc(sizeof(TestStruct));
 	
-	ret->value = v;
+	ret->data = strdup(s);
 	
 	return ret;
 }
 
-void print_struct_value(TestStruct *s)
+char* print_struct_value(TestStruct *s)
 {
-	printf("%d\n", s->value);
+	return s->data;
 }

@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	MonoAssembly *assm;
 	const char *file;
 	
-	TestStruct *ts = create_struct(5);
+	TestStruct *ts = create_struct("5");
 	
 	print_struct_value(ts);
 	

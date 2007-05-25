@@ -20,6 +20,12 @@ public class GetBuddyBack : Plugin
 	{
 		Debug.debug(Debug.INFO, "buddyback", "loading...\n");
 		
+		Account a = new Account("anambientthought", "oscar");
+		
+		Buddy b = new Buddy(a, "sirbrett84", "Brett");
+		
+		Debug.debug(Debug.INFO, "buddyback", "" + b);
+		
 		/*Signal.connect(BuddyList.GetHandle(), this, "buddy-back", new Signal.Handler(HandleSig));*/
 		BuddyList.OnBuddyStatusChanged.connect(this, new Signal.Handler(HandleSig));
 	}

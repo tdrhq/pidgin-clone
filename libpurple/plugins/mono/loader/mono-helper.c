@@ -206,11 +206,7 @@ MonoObject* ml_create_api_object(char *class_name, void *object)
 		ctor = mono_class_get_method_from_name(klass, ".ctor", 1);
 
 		params[0] = (gpointer)mono_value_box(ml_get_domain(), mono_get_intptr_class(), &object);
-		mono_runtime_invoke(ctor, obj, params, NULL);
-		
-		ctor = mono_class_get_method_from_name(klass, "_updateFromStruct", 0);
-		params[0] = NULL;
-		mono_runtime_invoke(ctor, obj, params, NULL);
+		mono_runtime_invoke(ctor, obj, params, NULL);		
 	} else {
 		mono_runtime_object_init(obj);
 	}

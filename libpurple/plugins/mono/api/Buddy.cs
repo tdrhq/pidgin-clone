@@ -26,11 +26,14 @@ namespace Purple {
 		{
 			this.name = name;
 			this.alias = alias;
-			//_c_handle = _purple_buddy_new(a.Handle, name, alias);
+			_c_handle = purple_buddy_new(a.Handle, name, alias);
 		}
 
 		public string Name { get { return name; } }
 		public string Alias { get { return alias; } }
+		
+		[DllImport("libpurple")]
+		static private extern IntPtr purple_buddy_new(IntPtr h, string name, string alias);
 		
 		[DllImport("libpurple")]
 		static private extern IntPtr purple_buddy_get_name(IntPtr h);
