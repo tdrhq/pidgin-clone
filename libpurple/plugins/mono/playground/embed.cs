@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 class Util
 {
@@ -11,8 +12,8 @@ class Util
 		return System.Text.Encoding.UTF8.GetString (bytes);
 	}
 	
-	[DllImport("./libtest")]
-	static extern int length(IntPtr s);
+	[MethodImplAttribute(MethodImplOptions.InternalCall)]
+	private static extern int length(IntPtr s);
 }
 
 class Embed

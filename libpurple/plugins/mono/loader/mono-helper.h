@@ -30,6 +30,8 @@ gboolean ml_init(void);
 
 void ml_uninit(void);
 
+MonoObject* ml_plugin_get_handle(MonoObject *plugin);
+
 MonoObject* ml_invoke(MonoMethod *method, void *obj, void **params);
 
 MonoObject* ml_delegate_invoke(MonoObject *method, void **params);

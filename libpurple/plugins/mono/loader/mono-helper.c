@@ -52,13 +52,21 @@ void ml_uninit()
 	_runtime_active = FALSE;
 }
 
+MonoObject* ml_plugin_get_handle(MonoObject *plugin)
+{
+	void* handle = (void*)mono_object_get_class(plugin);
+
+	return mono_value_box(ml_get_domain(), mono_get_intptr_class(), &handle);
+}
+
+
 MonoObject* ml_delegate_invoke(MonoObject *method, void **params)
 {
 	MonoObject *ret, *exception;
 	
 	ret = mono_runtime_delegate_invoke(method, params, &exception);
 	if (exception) {
-		purple_debug(PURPLE_DEBUG_ERROR, "mono", "caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
+		purple_debug(PURPLE_DEBUG_ERROR, "mono", "delegate invoke caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
 	}
 	
 	return ret;
@@ -70,7 +78,7 @@ MonoObject* ml_invoke(MonoMethod *method, void *obj, void **params)
 	
 	ret = mono_runtime_invoke(method, obj, params, &exception);
 	if (exception) {
-		purple_debug(PURPLE_DEBUG_ERROR, "mono", "caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
+		purple_debug(PURPLE_DEBUG_ERROR, "mono", "invoke caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
 	}
 	
 	return ret;
@@ -170,10 +178,10 @@ MonoObject* ml_object_from_purple_subtype(PurpleSubType type, gpointer data)
 	
 	switch (type) {
 		case PURPLE_SUBTYPE_BLIST_BUDDY:
-			obj = purple_blist_build_buddy_object(data);
+			//obj = purple_blist_build_buddy_object(data);
 		break;
 		case PURPLE_SUBTYPE_STATUS:
-			obj = purple_status_build_status_object(data);
+			//obj = purple_status_build_status_object(data);
 		break;
 		default:
 		break;
@@ -240,15 +248,16 @@ MonoImage* ml_get_api_image()
 
 void ml_init_internal_calls(void)
 {
-	mono_add_internal_call("Purple.Debug::_debug", purple_debug_glue);
-	mono_add_internal_call("Purple.Signal::_connect", purple_signal_connect_glue);
-	mono_add_internal_call("Purple.BuddyList::_get_handle", purple_blist_get_handle_glue);
-	mono_add_internal_call("Purple.Buddy::_purple_buddy_get_name", purple_buddy_get_name_glue);
-	mono_add_internal_call("Purple.Buddy::_purple_buddy_get_alias", purple_buddy_get_alias_glue);
-	mono_add_internal_call("Purple.Buddy::_purple_buddy_new", purple_buddy_new_glue);
-	mono_add_internal_call("Purple.Account::_purple_account_get_username", purple_account_get_username_glue);
-	mono_add_internal_call("Purple.Account::_purple_account_get_protocol_id", purple_account_get_protocol_id_glue);
-	mono_add_internal_call("Purple.Account::_purple_account_new", purple_account_new_glue);
+	//mono_add_internal_call("Purple.Debug::_debug", purple_debug_glue);
+	//mono_add_internal_call("Purple.Signal::_connect", purple_signal_connect_glue);
+	//mono_add_internal_call("Purple.BuddyList::_get_handle", purple_blist_get_handle_glue);
+	//mono_add_internal_call("Purple.Buddy::_purple_buddy_get_name", purple_buddy_get_name_glue);
+	//mono_add_internal_call("Purple.Buddy::_purple_buddy_get_alias", purple_buddy_get_alias_glue);
+	//mono_add_internal_call("Purple.Buddy::_purple_buddy_new", purple_buddy_new_glue);
+	//mono_add_internal_call("Purple.Account::_purple_account_get_username", purple_account_get_username_glue);
+	//mono_add_internal_call("Purple.Account::_purple_account_get_protocol_id", purple_account_get_protocol_id_glue);
+	//mono_add_internal_call("Purple.Account::_purple_account_new", purple_account_new_glue);
+	mono_add_internal_call("Purple.Plugin::_plugin_get_handle", ml_plugin_get_handle);
 }
 
 static GHashTable *plugins_hash = NULL;

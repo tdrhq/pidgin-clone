@@ -6,6 +6,12 @@
 
 #include "libtest.h"
 
+int length(MonoObject *str)
+{
+	mono_object_unbox(str);
+	return 10;
+}
+
 int main(int argc, char *argv[])
 {
 	MonoDomain *domain;
@@ -20,7 +26,9 @@ int main(int argc, char *argv[])
 	
 	// Setup the runtime
 	domain = mono_jit_init("test"); 
-	
+
+	mono_add_internal_call("Util::length", length);
+
 	// Open the assembly
 	assm = mono_domain_assembly_open(domain, "embed.exe");
 	

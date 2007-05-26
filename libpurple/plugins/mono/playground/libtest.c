@@ -16,10 +16,7 @@ void set_hello(char* str)
 	printf("%s\n", str);
 }
 
-int length(char* s)
-{
-	return strlen(s);
-}
+
 
 TestStruct* create_struct(char *s)
 {

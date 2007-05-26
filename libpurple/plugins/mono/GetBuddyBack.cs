@@ -1,3 +1,4 @@
+using System;
 using Purple;
 
 public class GetBuddyBack : Plugin
@@ -9,25 +10,18 @@ public class GetBuddyBack : Plugin
 	{
 	}
 
-	public void HandleSig(object[] args)
+	public void HandleSig(IntPtr p)
 	{
-		Buddy buddy = (Buddy)args[0];
-		
-		Debug.debug(Debug.INFO, "buddyback", "buddy " + buddy.Name + " is back!\n");
+		Buddy buddy = new Buddy(p);
+
+		Debug.debug(Debug.INFO, "buddyback", "buddy " + buddy.Alias + " is back!\n");
 	}
 	
 	public override void Load()
 	{
 		Debug.debug(Debug.INFO, "buddyback", "loading...\n");
 		
-		Account a = new Account("anambientthought", "oscar");
-		
-		Buddy b = new Buddy(a, "sirbrett84", "Brett");
-		
-		Debug.debug(Debug.INFO, "buddyback", "" + b);
-		
-		/*Signal.connect(BuddyList.GetHandle(), this, "buddy-back", new Signal.Handler(HandleSig));*/
-		BuddyList.OnBuddyStatusChanged.connect(this, new Signal.Handler(HandleSig));
+		BuddyList.OnBuddyStatusChanged.connect(this.Handle, new Signal.Handler(HandleSig));
 	}
 	
 	public override void Unload()

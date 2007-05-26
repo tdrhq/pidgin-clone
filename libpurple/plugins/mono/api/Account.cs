@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-
 namespace Purple {
 	public class Account : PObject {
 		private string username;
@@ -10,6 +9,8 @@ namespace Purple {
 		public Account(IntPtr handle)
 			: base(handle)
 		{
+			this.username = Util.build_string(purple_account_get_username(handle));
+			this.protocol_id = Util.build_string(purple_account_get_protocol_id(handle));
 		}
 		
 		public Account(string username, string protocol_id)
