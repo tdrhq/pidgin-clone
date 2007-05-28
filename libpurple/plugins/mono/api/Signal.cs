@@ -7,6 +7,8 @@ namespace Purple
 	{
 		public delegate void Handler(IntPtr p);
 
+		public delegate void VOID__POINTER_POINTER_POINTER(IntPtr p1, IntPtr p2, IntPtr p3);
+
 		public static int connect(IntPtr instance, string signal, IntPtr handle, Delegate func, IntPtr data)
 		{
 			return purple_signal_connect(instance, signal, handle, func, data);

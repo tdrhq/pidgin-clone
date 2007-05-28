@@ -10,18 +10,21 @@ public class GetBuddyBack : Plugin
 	{
 	}
 
-	public void HandleSig(IntPtr p)
+	public void HandleSig(IntPtr pbuddy, IntPtr poldstatus, IntPtr pnewstatus)
 	{
-		Buddy buddy = new Buddy(p);
+		Buddy buddy = new Buddy(pbuddy);
+		Status oldstatus = new Status(poldstatus);
+		Status newstatus = new Status(pnewstatus);
 
-		Debug.debug(Debug.INFO, "buddyback", "buddy " + buddy.Alias + " is back!\n");
+		Debug.debug(Debug.INFO, "buddyback", "buddy " + buddy.Alias + " went from " + oldstatus.Id + " to " + newstatus.Id + "\n");
 	}
 	
 	public override void Load()
 	{
 		Debug.debug(Debug.INFO, "buddyback", "loading...\n");
 		
-		BuddyList.OnBuddyStatusChanged.connect(this.Handle, new Signal.Handler(HandleSig));
+		//BuddyList.OnBuddyStatusChanged.connect(this.Handle, new Signal.VOID__POINTER_POINTER_POINTER(HandleSig));
+		BuddyList.OnBuddyStatusChanged.connect(this.Handle, new BuddyList.BuddyStatusChangedHandle(HandleSig));
 	}
 	
 	public override void Unload()

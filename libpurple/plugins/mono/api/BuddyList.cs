@@ -5,6 +5,8 @@ namespace Purple {
 	public class BuddyList {
 		public static Event OnBuddyStatusChanged =
 			new Event(GetHandle(), "buddy-status-changed");
+
+		public delegate void BuddyStatusChangedHandle(IntPtr p1, IntPtr p2, IntPtr p3);
 	
 		public static IntPtr GetHandle()
 		{
