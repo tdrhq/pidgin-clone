@@ -13,7 +13,6 @@
 #include <glib.h>
 #include <string.h>
 #include "mono-helper.h"
-#include "mono-glue.h"
 #include "value.h"
 #include "debug.h"
 
@@ -59,7 +58,7 @@ MonoObject* ml_plugin_get_handle(MonoObject *plugin)
 	return mono_value_box(ml_get_domain(), mono_get_intptr_class(), &handle);
 }
 
-
+// DEPRECATED
 MonoObject* ml_delegate_invoke(MonoObject *method, void **params)
 {
 	MonoObject *ret, *exception;
@@ -167,11 +166,13 @@ gboolean ml_is_api_dll(MonoImage *image)
 	return FALSE;
 }
 
+// DEPRECATED
 MonoObject* ml_object_from_purple_type(PurpleType type, gpointer data)
 {
 	return NULL;
 }
 
+// DEPRECATED
 MonoObject* ml_object_from_purple_subtype(PurpleSubType type, gpointer data)
 {
 	MonoObject *obj = NULL;
@@ -190,6 +191,7 @@ MonoObject* ml_object_from_purple_subtype(PurpleSubType type, gpointer data)
 	return obj;
 }
 
+// DEPRECATED
 MonoObject* ml_create_api_object(char *class_name, void *object)
 {
 	MonoObject *obj = NULL;
@@ -260,8 +262,10 @@ void ml_init_internal_calls(void)
 	mono_add_internal_call("Purple.Plugin::_plugin_get_handle", ml_plugin_get_handle);
 }
 
+// DEPRECATED
 static GHashTable *plugins_hash = NULL;
 
+// DEPRECATED
 void ml_add_plugin(PurpleMonoPlugin *plugin)
 {
 	if (!plugins_hash)
@@ -270,21 +274,25 @@ void ml_add_plugin(PurpleMonoPlugin *plugin)
 	g_hash_table_insert(plugins_hash, plugin->klass, plugin);
 }
 
+// DEPRECATED
 gboolean ml_remove_plugin(PurpleMonoPlugin *plugin)
 {
 	return g_hash_table_remove(plugins_hash, plugin->klass);
 }
 
+// DEPRECATED
 gpointer ml_find_plugin(PurpleMonoPlugin *plugin)
 {
 	return g_hash_table_lookup(plugins_hash, plugin->klass);
 }
 
+// DEPRECATED
 gpointer ml_find_plugin_by_class(MonoClass *klass)
 {
 	return g_hash_table_lookup(plugins_hash, klass);
 }
 
+// DEPRECATED
 GHashTable* ml_get_plugin_hash()
 {
 	return plugins_hash;

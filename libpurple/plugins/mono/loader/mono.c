@@ -51,7 +51,6 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 	info = g_new0(PurplePluginInfo, 1);
 	mplug = g_new0(PurpleMonoPlugin, 1);
 	
-	mplug->signal_data = NULL;
 
 	mplug->assm = assm;
 
@@ -141,9 +140,6 @@ static gboolean unload_mono_plugin(PurplePlugin *plugin)
 	mplug = (PurpleMonoPlugin*)plugin->info->extra_info;
 
 	purple_signals_disconnect_by_handle((gpointer)mplug->klass);
-	g_list_foreach(mplug->signal_data, (GFunc)g_free, NULL);
-	g_list_free(mplug->signal_data);
-	mplug->signal_data = NULL;
 
 	ml_invoke(mplug->unload, mplug->obj, NULL);
 
