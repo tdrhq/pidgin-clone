@@ -145,11 +145,11 @@ perl_init(void)
 	char *perl_args[] = { "", "-e", "0", "-w" };
 	char perl_definitions[] =
 	{
-		/* We use to function one to load a file the other to execute
-		 * the string obtained from the first and holding the file
-		 * contents. This allows to have a really local $/ without
-		 * introducing temp variables to hold the old value. Just a
-		 * question of style:) */
+		/* We use two functions one to load a file the other to
+		 * execute the string obtained from the first and holding the
+		 * file contents. This allows to have a really local $/
+		 * without introducing temp variables to hold the old value.
+		 * Just a question of style:) */
 		"package Purple::PerlLoader;"
 		"use Symbol;"
 
@@ -368,7 +368,6 @@ probe_perl_plugin(PurplePlugin *plugin)
 
 					if ((key = hv_fetch(plugin_info, "id",
 					                    strlen("id"), 0))) {
-						g_free(info->id);
 						info->id = g_strdup_printf("perl-%s",
 						                           SvPV(*key, len));
 					}
