@@ -141,7 +141,7 @@ purple_perl_ref_object(SV *o)
 
   30/11/2002: execute_perl modified by Eric Timme <timothy@voidnet.com>
 		args changed to char** so that we can have preparsed
-  		arguments again, and many headaches ensued! This essentially
+		arguments again, and many headaches ensued! This essentially
 		means we replaced one hacked method with a messier hacked
 		method out of perceived necessity. Formerly execute_perl
 		required a single char_ptr, and it would insert it into an
@@ -214,22 +214,26 @@ execute_perl(const char *function, int argc, char **args)
 		purple_debug(PURPLE_DEBUG_ERROR, "perl",
 				   "Perl error from %s: expected 1 return value, "
 				   "but got %d\n", function, count);
-	} else
+	} else {
 		ret_value = POPi;
+	}
 
 	/* Check for changed arguments */
 	for (i = 0; i < argc; i++) {
 		if (args[i] && strcmp(args[i], SvPVX(sv_args[i]))) {
 			/*
-			 * Shizzel.  So the perl script changed one of the parameters,
-			 * and we want this change to affect the original parameters.
-			 * args[i] is just a temporary little list of pointers.  We don't
-			 * want to free args[i] here because the new parameter doesn't
-			 * overwrite the data that args[i] points to.  That is done by
-			 * the function that called execute_perl.  I'm not explaining this
-			 * very well.  See, it's aggregate...  Oh, but if 2 perl scripts
-			 * both modify the data, _that's_ a memleak.  This is really kind
-			 * of hackish.  I should fix it.  Look how long this comment is.
+			 * Shizzel.  So the perl script changed one of the
+			 * parameters, and we want this change to affect the
+			 * original parameters.  args[i] is just a temporary
+			 * little list of pointers.  We don't want to free
+			 * args[i] here because the new parameter doesn't
+			 * overwrite the data that args[i] points to.  That is
+			 * done by the function that called execute_perl.  I'm
+			 * not explaining this very well.  See, it's
+			 * aggregate...  Oh, but if 2 perl scripts both modify
+			 * the data, _that's_ a memleak.  This is really kind
+			 * of hackish.  I should fix it.  Look how long this
+			 * comment is.
 			 * Holy crap.
 			 */
 			args[i] = g_strdup(SvPV(sv_args[i], na));
