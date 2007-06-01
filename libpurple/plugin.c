@@ -1399,6 +1399,8 @@ gboolean
 purple_plugin_register(PurplePlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
+	/* ETAN Should this be a g_return of just an if? */
+	g_return_val_if_fail(plugin->info != NULL, FALSE);
 
 	/* If this plugin has been registered already then exit */
 	if (g_list_find(plugins, plugin))
