@@ -235,6 +235,10 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, PidginConversation *gt
 		return FALSE;
 	}
 
+	if (gdk_window_get_state(gtkconv->win->window->window) & GDK_WINDOW_STATE_MAXIMIZED) {
+		return FALSE;
+	}
+
 	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the
 	 * tab bar will fit, but then I don't want new windows taking up the entire screen.  I check to see
 	 * if there is only one conversation in the window.  This way we'll be setting new windows to the
@@ -2893,13 +2897,24 @@ regenerate_options_items(PidginWindow *win)
 	GList *list;
 	PidginConversation *gtkconv;
 	PurpleConversation *conv;
-	PurpleBuddy *buddy;
+	PurpleBlistNode *node = NULL;
+	PurpleChat *chat = NULL;
+	PurpleBuddy *buddy = NULL;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 	conv = gtkconv->active_conv;
-	buddy = purple_find_buddy(conv->account, conv->name);
 
 	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
+
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+		chat = purple_blist_find_chat(conv->account, conv->name);
+	else
+		buddy = purple_find_buddy(conv->account, conv->name);
+
+	if (chat)
+		node = (PurpleBlistNode *)chat;
+	else if (buddy)
+		node = (PurpleBlistNode *)buddy;
 
 	/* Remove the previous entries */
 	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
@@ -2910,12 +2925,11 @@ regenerate_options_items(PidginWindow *win)
 	}
 
 	/* Now add the stuff */
-	if (buddy)
+	if (node)
 	{
 		if (purple_account_is_connected(conv->account))
-			pidgin_append_blist_node_proto_menu(menu, conv->account->gc,
-												  (PurpleBlistNode *)buddy);
-		pidgin_append_blist_node_extended_menu(menu, (PurpleBlistNode *)buddy);
+			pidgin_append_blist_node_proto_menu(menu, conv->account->gc, node);
+		pidgin_append_blist_node_extended_menu(menu, node);
 	}
 
 	if ((list = gtk_container_get_children(GTK_CONTAINER(menu))) == NULL)
@@ -6952,7 +6966,7 @@ pidgin_conversations_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/scrollback_lines", 4000);
 
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font", TRUE);
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/custom_font", "Sans 28");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/custom_font", "");
 
 	/* Conversations -> Chat */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/chat");

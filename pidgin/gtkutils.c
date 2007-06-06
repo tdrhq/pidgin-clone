@@ -612,6 +612,7 @@ create_protocols_menu(const char *default_proto_id)
 				g_object_unref(pixbuf);
 
 			gtalk_name = NULL;
+			i++;
 		}
 
 		pixbuf = get_prpl_pixbuf(prpl_info);
@@ -1457,8 +1458,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			else
 				purple_request_choice(NULL, NULL,
 						    _("You have dragged an image"),
-						    (ft ? _("You can send this image as a file transfer or "
-							   "embed it into this message, or use it as the buddy icon for this user.") :
+						    (ft ? _("You can send this image as a file transfer, or use it as the buddy icon for this user.") :
 						    _("You can insert this image into this message, or use it as the buddy icon for this user")),
 						    (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
 							"OK", (GCallback)dnd_image_ok_callback,
@@ -3034,20 +3034,20 @@ gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
 
         row = pixels;
         for (i = 3; i < rowstride; i+=4) {
-                if (row[i] != 0xff)
+                if (row[i] < 0xfe)
                         return FALSE;
         }
 
         for (i = 1; i < height - 1; i++) {
                 row = pixels + (i*rowstride);
-                if (row[3] != 0xff || row[rowstride-1] != 0xff) {
+                if (row[3] < 0xfe || row[rowstride-1] < 0xfe) {
                         return FALSE;
-                }
+            }
         }
 
         row = pixels + ((height-1) * rowstride);
         for (i = 3; i < rowstride; i+=4) {
-                if (row[i] != 0xff)
+                if (row[i] < 0xfe)
                         return FALSE;
         }
 
