@@ -22,8 +22,9 @@ gboolean ml_init()
 {
 	MonoDomain *d;
 	
-	g_return_val_if_fail(_runtime_active == FALSE, TRUE);
-	
+	if (_runtime_active == TRUE)
+		return TRUE;
+
 	d = mono_jit_init("purple");
 	
 	if (!d) {
@@ -58,22 +59,9 @@ MonoObject* ml_plugin_get_handle(MonoObject *plugin)
 	return mono_value_box(ml_get_domain(), mono_get_intptr_class(), &handle);
 }
 
-// DEPRECATED
-MonoObject* ml_delegate_invoke(MonoObject *method, void **params)
-{
-	MonoObject *ret, *exception;
-	
-	ret = mono_runtime_delegate_invoke(method, params, &exception);
-	if (exception) {
-		purple_debug(PURPLE_DEBUG_ERROR, "mono", "delegate invoke caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
-	}
-	
-	return ret;
-}
-
 MonoObject* ml_invoke(MonoMethod *method, void *obj, void **params)
 {
-	MonoObject *ret, *exception;
+	MonoObject *ret = NULL, *exception = NULL;
 	
 	ret = mono_runtime_invoke(method, obj, params, &exception);
 	if (exception) {
@@ -85,7 +73,7 @@ MonoObject* ml_invoke(MonoMethod *method, void *obj, void **params)
 
 MonoClass* ml_find_plugin_class(MonoImage *image)
 {
-	MonoClass *klass, *pklass = NULL;
+	MonoClass *klass = NULL, *pklass = NULL;
 	int i, total;
 
 	total = mono_image_get_table_rows (image, MONO_TABLE_TYPEDEF);
@@ -105,9 +93,9 @@ MonoClass* ml_find_plugin_class(MonoImage *image)
 
 void ml_set_prop_string(MonoObject *obj, char *field, char *data)
 {
-	MonoClass *klass;
-	MonoProperty *prop;
-	MonoString *str;
+	MonoClass *klass = NULL;
+	MonoProperty *prop = NULL;
+	MonoString *str = NULL;
 	gpointer args[1];
 	
 	klass = mono_object_get_class(obj);
@@ -123,9 +111,9 @@ void ml_set_prop_string(MonoObject *obj, char *field, char *data)
 
 gchar* ml_get_prop_string(MonoObject *obj, char *field)
 {
-	MonoClass *klass;
-	MonoProperty *prop;
-	MonoString *str;
+	MonoClass *klass = NULL;
+	MonoProperty *prop = NULL;
+	MonoString *str = NULL;
 	
 	klass = mono_object_get_class(obj);
 	
@@ -138,8 +126,8 @@ gchar* ml_get_prop_string(MonoObject *obj, char *field)
 
 MonoObject* ml_get_info_prop(MonoObject *obj)
 {
-	MonoClass *klass;
-	MonoProperty *prop;
+	MonoClass *klass = NULL;
+	MonoProperty *prop = NULL;
 	
 	klass = mono_class_get_parent(mono_object_get_class(obj));
 	
@@ -150,7 +138,7 @@ MonoObject* ml_get_info_prop(MonoObject *obj)
 
 gboolean ml_is_api_dll(MonoImage *image)
 {	
-	MonoClass *klass;
+	MonoClass *klass = NULL;
 	int i, total;
 
 	total = mono_image_get_table_rows (image, MONO_TABLE_TYPEDEF);
@@ -164,64 +152,6 @@ gboolean ml_is_api_dll(MonoImage *image)
 	}
 	
 	return FALSE;
-}
-
-// DEPRECATED
-MonoObject* ml_object_from_purple_type(PurpleType type, gpointer data)
-{
-	return NULL;
-}
-
-// DEPRECATED
-MonoObject* ml_object_from_purple_subtype(PurpleSubType type, gpointer data)
-{
-	MonoObject *obj = NULL;
-	
-	switch (type) {
-		case PURPLE_SUBTYPE_BLIST_BUDDY:
-			//obj = purple_blist_build_buddy_object(data);
-		break;
-		case PURPLE_SUBTYPE_STATUS:
-			//obj = purple_status_build_status_object(data);
-		break;
-		default:
-		break;
-	}
-	
-	return obj;
-}
-
-// DEPRECATED
-MonoObject* ml_create_api_object(char *class_name, void *object)
-{
-	MonoObject *obj = NULL;
-	MonoClass *klass = NULL;
-		
-	klass = mono_class_from_name(ml_get_api_image(), "Purple", class_name);
-	if (!klass) {
-		purple_debug(PURPLE_DEBUG_FATAL, "mono", "couldn't find the '%s' class\n", class_name);
-		return NULL;
-	}
-	
-	obj = mono_object_new(ml_get_domain(), klass);
-	if (!obj) {
-		purple_debug(PURPLE_DEBUG_FATAL, "mono", "couldn't create the object from class '%s'\n", class_name);
-		return NULL;
-	}
-
-	if (object) {
-		MonoMethod *ctor;
-		gpointer params[1];
-
-		ctor = mono_class_get_method_from_name(klass, ".ctor", 1);
-
-		params[0] = (gpointer)mono_value_box(ml_get_domain(), mono_get_intptr_class(), &object);
-		mono_runtime_invoke(ctor, obj, params, NULL);		
-	} else {
-		mono_runtime_object_init(obj);
-	}
-
-	return obj;
 }
 
 static MonoDomain *_domain = NULL;
@@ -250,50 +180,6 @@ MonoImage* ml_get_api_image()
 
 void ml_init_internal_calls(void)
 {
-	//mono_add_internal_call("Purple.Debug::_debug", purple_debug_glue);
-	//mono_add_internal_call("Purple.Signal::_connect", purple_signal_connect_glue);
-	//mono_add_internal_call("Purple.BuddyList::_get_handle", purple_blist_get_handle_glue);
-	//mono_add_internal_call("Purple.Buddy::_purple_buddy_get_name", purple_buddy_get_name_glue);
-	//mono_add_internal_call("Purple.Buddy::_purple_buddy_get_alias", purple_buddy_get_alias_glue);
-	//mono_add_internal_call("Purple.Buddy::_purple_buddy_new", purple_buddy_new_glue);
-	//mono_add_internal_call("Purple.Account::_purple_account_get_username", purple_account_get_username_glue);
-	//mono_add_internal_call("Purple.Account::_purple_account_get_protocol_id", purple_account_get_protocol_id_glue);
-	//mono_add_internal_call("Purple.Account::_purple_account_new", purple_account_new_glue);
 	mono_add_internal_call("Purple.Plugin::_plugin_get_handle", ml_plugin_get_handle);
 }
 
-// DEPRECATED
-static GHashTable *plugins_hash = NULL;
-
-// DEPRECATED
-void ml_add_plugin(PurpleMonoPlugin *plugin)
-{
-	if (!plugins_hash)
-		plugins_hash = g_hash_table_new(NULL, NULL);
-		
-	g_hash_table_insert(plugins_hash, plugin->klass, plugin);
-}
-
-// DEPRECATED
-gboolean ml_remove_plugin(PurpleMonoPlugin *plugin)
-{
-	return g_hash_table_remove(plugins_hash, plugin->klass);
-}
-
-// DEPRECATED
-gpointer ml_find_plugin(PurpleMonoPlugin *plugin)
-{
-	return g_hash_table_lookup(plugins_hash, plugin->klass);
-}
-
-// DEPRECATED
-gpointer ml_find_plugin_by_class(MonoClass *klass)
-{
-	return g_hash_table_lookup(plugins_hash, klass);
-}
-
-// DEPRECATED
-GHashTable* ml_get_plugin_hash()
-{
-	return plugins_hash;
-}
