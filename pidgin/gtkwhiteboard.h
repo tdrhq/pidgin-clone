@@ -43,13 +43,43 @@
 /**
  * A PidginWhiteboard
  */
+typedef enum  { ERASE, FILL, LINE, MULTILINE, RECTANGLE,  PEN, TEXT, ARC, OVAL, BRUSH, NONE, PASTE = 1000}
+DRAWING_TOOL ;
+
+
 typedef struct _PidginWhiteboard
 {
-	PurpleWhiteboard *wb;      /**< backend data for this whiteboard */
 
+    GdkPixbuf *rgbbuf, *regionbuf;
+    GdkGC *gc;
+    char *name;
+    GtkWidget *current_button;
+    DRAWING_TOOL current_tool, saved_tool;
+    GdkCursor *cursor;
+    GdkFont *font;
+    int filled;
+    int timer;
+    int flash_state;
+
+    GdkPoint pts[5000]; /* a temporary array for storing points */
+    int num_pts;
+    int ptdiffx;
+    int ptdiffy;
+    int modified;
+    int has_focus;
+    int lx;
+    int ly;
+    int mx;
+    int my;
+    int llx;
+    int lly;
+    int lpx;
+    int lpy;
+    char textbuf[2000];
+
+    PurpleWhiteboard *wb;    /**< backend data for this whiteboard */
 	GtkWidget *window;       /**< Window for the Doodle session */
 	GtkWidget *drawing_area; /**< Drawing area */
-
 	GdkPixmap *pixmap;       /**< Memory for drawing area */
 
 	int  width;              /**< Canvas width */
@@ -57,6 +87,14 @@ typedef struct _PidginWhiteboard
 	int brush_color;         /**< Foreground color */
 	int brush_size;          /**< Brush size */
 } PidginWhiteboard;
+
+static PidginWhiteboard * make_image_buf()
+{
+    PidginWhiteboard *buf = calloc(sizeof(PidginWhiteboard), 1);
+
+    return buf;
+}
+
 
 #ifdef __cplusplus
 extern "C" {

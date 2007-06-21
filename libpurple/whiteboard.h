@@ -35,18 +35,21 @@ typedef struct _PurpleWhiteboardPrplOps PurpleWhiteboardPrplOps;
 /**
  * A PurpleWhiteboard
  */
+#define STUDENT_BOARD 0
+#define TEACHER_BOARD 1
 typedef struct _PurpleWhiteboard
 {
 	int state;                       /**< State of whiteboard session */
 
 	PurpleAccount *account;            /**< Account associated with this session */
 	char *who;                       /**< Name of the remote user */
-
 	void *ui_data;                   /**< Graphical user-interface data */
 	void *proto_data;                /**< Protocol specific data */
 	PurpleWhiteboardPrplOps *prpl_ops; /**< Protocol-plugin operations */
 
 	GList *draw_list;                /**< List of drawing elements/deltas to send */
+    /* me */
+    int boardType;
 } PurpleWhiteboard;
 
 /**
@@ -63,9 +66,10 @@ typedef struct _PurpleWhiteboardUiOps
 	void (*draw_line)(PurpleWhiteboard *wb, int x1, int y1,
 					  int x2, int y2,
 					  int color, int size);                            /**< draw_line function */
-	void (*clear)(PurpleWhiteboard *wb);                                 /**< clear function */
 
-	void (*_purple_reserved1)(void);
+    void (*clear)(PurpleWhiteboard *wb);                                 /**< clear function */
+
+	void (*draw_shape)(PurpleWhiteboard*,GList*);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
@@ -82,7 +86,7 @@ struct _PurpleWhiteboardPrplOps
 	void (*set_dimensions)(PurpleWhiteboard *wb, int width, int height);   /**< set_dimensions function */
 	void (*get_brush) (const PurpleWhiteboard *wb, int *size, int *color); /**< get the brush size and color */
 	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);         /**< set the brush size and color */
-	void (*send_draw_list)(PurpleWhiteboard *wb, GList *draw_list);        /**< send_draw_list function */
+	void (*send_draw_list)(PurpleWhiteboard *wb, GList *draw_list,int);    /**< send_draw_list function */
 	void (*clear)(PurpleWhiteboard *wb);                                   /**< clear function */
 
 	void (*_purple_reserved1)(void);
@@ -125,7 +129,11 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
  * @return The new whiteboard
  */
 PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state);
-
+/* me */
+PurpleWhiteboard *purple_whiteboard_create_session(PurpleWhiteboard *wb);
+void purple_whiteboard_destroy_window(PurpleAccount *account);
+void purple_whiteboard_draw_shape(PurpleWhiteboard*,GList*);
+/**/
 /**
  * Destroys a whiteboard
  *
@@ -194,7 +202,7 @@ void purple_whiteboard_draw_point(PurpleWhiteboard *wb, int x, int y, int color,
  * @param wb	The whiteboard
  * @param list	A GList of points
  */
-void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list);
+void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list,int);
 
 /**
  * Draws a line on a whiteboard

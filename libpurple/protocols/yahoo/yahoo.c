@@ -59,7 +59,9 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *, PurpleGroup *);
 static void yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
 #endif
 static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status);
-
+/** me **/
+void purple_buddy_doodle_start(PurpleBuddy *buddy,PurpleWhiteboard *wb  );
+/***/
 static void
 yahoo_add_permit(PurpleConnection *gc, const char *who)
 {
@@ -906,7 +908,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
-	char *prim, *me = NULL, *msg = NULL;
+	char *prim, *me = NULL, *msg = NULL, *escmsg = NULL;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -922,10 +924,14 @@ static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *
 	if (!msg || !g_utf8_validate(msg, -1, NULL))
 		return;
 
+	/* TODO: Does this really need to be escaped?  It seems like it doesn't. */
+	escmsg = g_markup_escape_text(msg, -1);
+
 	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
 	                       me?me:purple_connection_get_display_name(gc));
-	purple_notify_info(NULL, NULL, prim, msg);
+	purple_notify_info(NULL, NULL, prim, escmsg);
 	g_free(prim);
+	g_free(escmsg);
 }
 
 struct yahoo_add_request {
@@ -3243,7 +3249,62 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 					   purple_connection_get_account(gc), NULL, NULL,
 					   gc);
 }
+/* me */
 
+static void yahoo_show_class_window(PurplePluginAction *action)
+{
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+
+    PurplePluginProtocolInfo *prpl_info;
+	PurpleWhiteboard *wb = g_new0(PurpleWhiteboard, 1);
+	wb->account  = gc->account;
+	wb->state    = DOODLE_STATE_REQUESTING;
+    wb->who      = g_strdup(gc->display_name);
+    wb->boardType= TEACHER_BOARD;
+    prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+    purple_whiteboard_set_prpl_ops(wb, prpl_info->whiteboard_prpl_ops);
+
+    if(wb->prpl_ops && wb->prpl_ops->start)
+        wb->prpl_ops->start(wb);
+
+    purple_whiteboard_create_session(wb);
+    yahoo_doodle_command_send_request(gc, gc->display_name);
+    yahoo_doodle_command_send_ready(gc, gc->display_name);
+
+    GSList *buddyList = purple_find_buddies(gc->account,NULL); 
+    g_slist_foreach(buddyList, (GFunc)yahoo_doodle_start_student_session,wb );
+	g_slist_free(buddyList);
+}
+static void yahoo_initiate_class(PurplePluginAction *action)
+{
+    PurpleConnection *gc = (PurpleConnection *) action->context;
+	GHashTable *components;
+    PurpleBuddy *buddy;
+	struct yahoo_data *yd;
+	int id;
+	yd = gc->proto_data;
+	id = yd->conf_id;
+	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	g_hash_table_replace(components, g_strdup("room"),
+            g_strdup_printf("%s-%d", purple_connection_get_display_name(gc), id));
+	g_hash_table_replace(components, g_strdup("topic"), g_strdup("Join Discussion.."));
+	g_hash_table_replace(components, g_strdup("type"), g_strdup("Conference"));
+	yahoo_c_join(gc, components);
+	g_hash_table_destroy(components);
+
+    GSList *buddyList = purple_find_buddies(gc->account,NULL),*list; 
+    list = buddyList;
+    while(list){
+        buddy = list->data;
+        serv_chat_invite(gc, id, "Join my class room...", buddy->name);
+        list = list->next;
+    }
+//    g_slist_foreach(buddyList, (GFunc)yahoo_initiate_class_room,gc );
+	g_slist_free(buddyList);
+
+}
+
+/*****/
 static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	GList *m = NULL;
 	PurplePluginAction *act;
@@ -3255,8 +3316,15 @@ static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	act = purple_plugin_action_new(_("Join User in Chat..."),
 			yahoo_show_chat_goto);
 	m = g_list_append(m, act);
-
-	return m;
+/* me */
+    act = purple_plugin_action_new(_("Start class..."),
+			yahoo_show_class_window);
+    m = g_list_append(m, act);
+    act = purple_plugin_action_new(_("Start discussion ..."),
+			yahoo_initiate_class);
+    m = g_list_append(m, act);
+/***/
+    return m;
 }
 
 static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)

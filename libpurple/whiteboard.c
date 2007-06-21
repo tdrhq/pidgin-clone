@@ -25,7 +25,7 @@
 
 #include "whiteboard.h"
 #include "prpl.h"
-
+#include "debug.h"
 /******************************************************************************
  * Globals
  *****************************************************************************/
@@ -49,6 +49,16 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
 	wb->prpl_ops = ops;
 }
 
+/* me */
+PurpleWhiteboard *purple_whiteboard_create_session(PurpleWhiteboard *wb)
+{
+//    purple_debug_info("yahoo", " no problem here (%s)\n", wb->who);
+	wbList = g_list_append(wbList, wb);
+
+	return wb;
+}
+/**/
+
 PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state)
 {
 	PurplePluginProtocolInfo *prpl_info;
@@ -57,6 +67,7 @@ PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *w
 	wb->account = account;
 	wb->state   = state;
 	wb->who     = g_strdup(who);
+    wb->boardType = STUDENT_BOARD;
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
 	purple_whiteboard_set_prpl_ops(wb, prpl_info->whiteboard_prpl_ops);
@@ -70,10 +81,86 @@ PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *w
 	return wb;
 }
 
+void purple_whiteboard_destroy_window(PurpleAccount *account)
+{
+    PurpleWhiteboard *wb1;
+    PurpleWhiteboard *wb;
+    GList *l = wbList;
+   
+	wb = NULL; 
+    while (l != NULL)
+    {
+        wb1 = l->data;
+        l = l->next; 
+        if (wb1->account == account){
+            wb     = wb1;
+            break;
+        }
+    }
+
+    if (wb == NULL) {
+        purple_debug_info("yahoo", "yes there is problem \n");
+        return;
+    }
+
+    purple_debug_info("yahoo", "ok ok  %s %s\n",account->username,wb->who);
+    
+    if (wb->boardType == STUDENT_BOARD)
+	{
+        l = wbList;
+        while(l != NULL)
+        {
+            wb1 = l->data;
+            if (wb->account == wb1->account){
+                wbList = g_list_remove(wbList, wb1);
+            }
+            l = l->next;
+        }
+    	purple_debug_info("yahoo STUDENT ", "ok ok  %s %s\n",account->username, wb->who);
+    }
+    else
+	{
+        l = wbList;
+        while(l != NULL)
+        {
+            wb1 = l->data;
+            if (wb1->account == wb->account && wb1->boardType == STUDENT_BOARD && wb->prpl_ops && wb->prpl_ops->end){
+                wb->prpl_ops->end(wb1);
+                purple_debug_info("yahoo SENDING CLOSE", "yes u r: Got Shutdown (%s)\n", wb1->who);
+            }
+            l = l->next;
+        }/*This loops sends a closing signal to all the student whiteboards*/
+        
+		l = wbList;
+        
+        int i = 0;	//for debugging
+		while (l != NULL)
+        {
+			i++;
+            wb1 = l->data;
+            //if (wb1->account == wb->account || !strcmp(wb1->who,wb->account->username)){
+            if (wb1->account == wb->account){
+                purple_debug_info("yahoo CLOSING BOARDS", "yes u r: Got Shutdown (%s) - %d \n", wb1->who , i );
+                wbList = g_list_remove(wbList, wb1);
+            }
+            l = l->next; 
+        }
+    }
+    
+	if(wb->ui_data)
+    {
+        /* Destroy frontend */
+        if(whiteboard_ui_ops && whiteboard_ui_ops->destroy)
+            whiteboard_ui_ops->destroy(wb);
+    }
+}
+
+
 void purple_whiteboard_destroy(PurpleWhiteboard *wb)
 {
 	g_return_if_fail(wb != NULL);
-
+    PurpleWhiteboard *wb1;
+    GList *l ;
 	if(wb->ui_data)
 	{
 		/* Destroy frontend */
@@ -82,18 +169,52 @@ void purple_whiteboard_destroy(PurpleWhiteboard *wb)
 	}
 
 	/* Do protocol specific session ending procedures */
-	if(wb->prpl_ops && wb->prpl_ops->end)
-		wb->prpl_ops->end(wb);
+    if(wb->boardType == STUDENT_BOARD){
 
-	g_free(wb->who);
-	wbList = g_list_remove(wbList, wb);
-	g_free(wb);
+        purple_debug_info("yahoo", "yes u r: Got Shutdown (%s) - %d - %u \n", wb->who , wb->boardType, wb->prpl_ops);
+        l = wbList;
+        while(l != NULL)
+        {
+            wb1 = l->data;
+            if (!strcmp(wb1->who,wb->account->username)){
+                wbList = g_list_remove(wbList, wb1);
+            }
+            l = l->next;
+        }
+        wbList = g_list_remove(wbList, wb);
+        g_free(wb);
+    }
+    else{
+
+//        purple_debug_info("yahoo", "yes u r: Got Shutdown (%s) - %d\n", wb->who , wb->boardType);
+        GList *l = wbList;
+        while(l != NULL)
+        {
+            wb1 = l->data;
+            if (wb1->account == wb->account && wb1->boardType == STUDENT_BOARD && wb->prpl_ops && wb->prpl_ops->end){
+                wb->prpl_ops->end(wb1);
+            }
+            l = l->next;
+        }
+        l = wbList;
+        int i=0;
+        while(l != NULL)
+        {
+            wb1 = l->data;
+            l = l->next; i++;
+            if (wb1->account == wb->account ){
+                purple_debug_info("yahoo", "yes u r: Got Shutdown (%s) - %d \n", wb1->who , i );
+                g_free(wb1->who);
+                wbList = g_list_remove(wbList, wb1);
+            }
+        }
+    }
 }
 
 void purple_whiteboard_start(PurpleWhiteboard *wb)
 {
 	/* Create frontend for whiteboard */
-	if(whiteboard_ui_ops && whiteboard_ui_ops->create)
+    if(whiteboard_ui_ops && whiteboard_ui_ops->create)
 		whiteboard_ui_ops->create(wb);
 }
 
@@ -104,19 +225,15 @@ void purple_whiteboard_start(PurpleWhiteboard *wb)
 PurpleWhiteboard *purple_whiteboard_get_session(const PurpleAccount *account, const char *who)
 {
 	PurpleWhiteboard *wb;
-
 	GList *l = wbList;
-
 	/* Look for a whiteboard session between the local user and the remote user
 	 */
 	while(l != NULL)
 	{
 		wb = l->data;
-
 		if(wb->account == account && !strcmp(wb->who, who))
 			return wb;
-
-		l = l->next;
+        l = l->next;
 	}
 
 	return NULL;
@@ -146,20 +263,39 @@ void purple_whiteboard_set_dimensions(PurpleWhiteboard *wb, int width, int heigh
 		whiteboard_ui_ops->set_dimensions(wb, width, height);
 }
 
-void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list)
+/**  me  **/
+void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list,int command)
 {
-	PurpleWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+//	PurpleWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
 
-	if (prpl_ops && prpl_ops->send_draw_list)
-		prpl_ops->send_draw_list(wb, list);
+	PurpleWhiteboard *wb1;
+
+	GList *l = wbList;
+//    purple_debug_info("yahoo", " sending list with command %d \n",command);
+    if (wb->boardType == TEACHER_BOARD ){
+        /* Look for a whiteboard session between the local user and the remote user
+         */
+        while(l != NULL)
+        {
+            wb1 = l->data;
+           
+            if (wb1->account == wb->account && wb1->boardType == STUDENT_BOARD && wb->prpl_ops && wb->prpl_ops->send_draw_list)
+                wb->prpl_ops->send_draw_list(wb1, list,command);
+            l = l->next;
+        }
+    }
+//    purple_debug_info("yahoo", " sending list with command out %d \n",command);
 }
-
+/********/
 void purple_whiteboard_draw_point(PurpleWhiteboard *wb, int x, int y, int color, int size)
 {
 	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_point)
 		whiteboard_ui_ops->draw_point(wb, x, y, color, size);
 }
-
+void purple_whiteboard_draw_shape(PurpleWhiteboard* wb,GList *draw_list){
+	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_line)
+		whiteboard_ui_ops->draw_shape(wb, draw_list);
+}
 void purple_whiteboard_draw_line(PurpleWhiteboard *wb, int x1, int y1, int x2, int y2, int color, int size)
 {
 	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_line)
@@ -168,8 +304,20 @@ void purple_whiteboard_draw_line(PurpleWhiteboard *wb, int x1, int y1, int x2, i
 
 void purple_whiteboard_clear(PurpleWhiteboard *wb)
 {
-	if(whiteboard_ui_ops && whiteboard_ui_ops->clear)
-		whiteboard_ui_ops->clear(wb);
+    GList *l = wbList;
+    while(l != NULL)
+    {
+        PurpleWhiteboard *wb1;
+        wb1 = l->data;
+        
+        if (wb1->account == wb->account && wb1->boardType == STUDENT_BOARD && wb->prpl_ops && wb->prpl_ops->clear){
+            wb->prpl_ops->clear(wb1);
+        }
+        l = l->next;
+    }
+    if (whiteboard_ui_ops && whiteboard_ui_ops->clear){
+        whiteboard_ui_ops->clear(wb);
+    }
 }
 
 void purple_whiteboard_send_clear(PurpleWhiteboard *wb)

@@ -9,11 +9,19 @@ EXTRA_DIST = \
 		arrow-right.xpm		\
 		arrow-left.xpm		\
 		Makefile.mingw			\
-		pidgin.ico
+		pidgin.ico \
+        eraseOp.xpm \
+        lineOp.xpm \
+        pencilOp.xpm \
+        textOp.xpm \
+        boxOp.xpm \
+        clineOp.xpm  \
+        brushOp.xpm  
+
 
 pidginbuttonpixdir = $(datadir)/pixmaps/pidgin/buttons
 pidginbuttonpix_DATA = edit.png pause.png
 
 pidgindistpixdir = $(datadir)/pixmaps/pidgin
-pidgindistpix_DATA = logo.png arrow-down.xpm arrow-left.xpm arrow-right.xpm arrow-up.xpm
+pidgindistpix_DATA = logo.png arrow-down.xpm arrow-left.xpm arrow-right.xpm arrow-up.xpm eraseOp.xpm lineOp.xpm  pencilOp.xpm textOp.xpm boxOp.xpm clineOp.xpm brushOp.xpm 
 

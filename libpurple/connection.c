@@ -37,6 +37,9 @@
 #include "signals.h"
 #include "util.h"
 
+//added
+#include "whiteboard.h"
+
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
 static PurpleConnectionUiOps *connection_ui_ops = NULL;
@@ -173,7 +176,11 @@ purple_connection_destroy(PurpleConnection *gc)
 	account = purple_connection_get_account(gc);
 
 	purple_debug_info("connection", "Disconnecting connection %p\n", gc);
-
+    
+	/* me */
+    purple_whiteboard_destroy_window(account);
+    /*  */
+	
 	if (purple_connection_get_state(gc) != PURPLE_CONNECTING)
 		remove = TRUE;
 
