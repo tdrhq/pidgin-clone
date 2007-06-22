@@ -59,9 +59,8 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *, PurpleGroup *);
 static void yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
 #endif
 static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status);
-/** me **/
 void purple_buddy_doodle_start(PurpleBuddy *buddy,PurpleWhiteboard *wb  );
-/***/
+
 static void
 yahoo_add_permit(PurpleConnection *gc, const char *who)
 {
@@ -3249,7 +3248,6 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 					   purple_connection_get_account(gc), NULL, NULL,
 					   gc);
 }
-/* me */
 
 static void yahoo_show_class_window(PurplePluginAction *action)
 {
@@ -3275,6 +3273,7 @@ static void yahoo_show_class_window(PurplePluginAction *action)
     g_slist_foreach(buddyList, (GFunc)yahoo_doodle_start_student_session,wb );
 	g_slist_free(buddyList);
 }
+
 static void yahoo_initiate_class(PurplePluginAction *action)
 {
     PurpleConnection *gc = (PurpleConnection *) action->context;
@@ -3304,7 +3303,6 @@ static void yahoo_initiate_class(PurplePluginAction *action)
 
 }
 
-/*****/
 static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	GList *m = NULL;
 	PurplePluginAction *act;
@@ -3316,15 +3314,20 @@ static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	act = purple_plugin_action_new(_("Join User in Chat..."),
 			yahoo_show_chat_goto);
 	m = g_list_append(m, act);
-/* me */
-    act = purple_plugin_action_new(_("Start class..."),
+
+	/* me */
+    
+	act = purple_plugin_action_new(_("Start class..."),
 			yahoo_show_class_window);
     m = g_list_append(m, act);
-    act = purple_plugin_action_new(_("Start discussion ..."),
+    
+	act = purple_plugin_action_new(_("Start discussion ..."),
 			yahoo_initiate_class);
     m = g_list_append(m, act);
-/***/
-    return m;
+	
+	/**/
+    
+	return m;
 }
 
 static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)

@@ -124,10 +124,8 @@ void yahoo_doodle_initiate(PurpleConnection *gc, const char *name)
 	/* NOTE Perhaps some careful handling of remote assumed established
 	 * sessions
 	 */
-/** me */
 	yahoo_doodle_command_send_request(gc, to);
 	yahoo_doodle_command_send_ready(gc, to);
-/**/
 }
 
 void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from,
@@ -156,8 +154,13 @@ void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from
 			break;
 		case DOODLE_CMD_DRAW_LINE:
 		case DOODLE_CMD_DRAW_RECT:
+        case DOODLE_CMD_DRAW_ARC:
         case DOODLE_CMD_DRAW_TEXT:
+        case DOODLE_CMD_DRAW_FILL:
         case DOODLE_CMD_DRAW_BRUSH:
+        case DOODLE_CMD_DRAW_VIDEO:
+            yahoo_doodle_command_got_draw_shape(gc, from, message);
+			break;
 		case DOODLE_CMD_EXTRA:
 			yahoo_doodle_command_got_extra(gc, from, message);
 			break;
@@ -210,7 +213,7 @@ void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *from)
 	 * session at this point
 	 */
 }
-/**me */
+
 void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *from)
 {
 	PurpleAccount *account;
@@ -377,7 +380,6 @@ void yahoo_doodle_command_got_clear(PurpleConnection *gc, const char *from)
 	 * client would have sent one)
 	 */
 	wb = purple_whiteboard_get_session(account, from);
-/* me */
 
 	if(wb == NULL)
 		return;
@@ -507,7 +509,6 @@ void yahoo_doodle_command_send_ready(PurpleConnection *gc, const char *to)
 	yahoo_doodle_command_send_generic("Ready", gc, to, "", "0", NULL, "0");
 }
 
-/*me*/
 void yahoo_doodle_start_student_session(PurpleBuddy *buddy, PurpleWhiteboard *wb ){
 	if(!PURPLE_BUDDY_IS_ONLINE(buddy)){
         purple_debug_info("yahoo", " (%s) is offline \n", buddy->name); 
@@ -616,12 +617,7 @@ void yahoo_doodle_end(PurpleWhiteboard *wb)
 	PurpleConnection *gc = purple_account_get_connection(wb->account);
 
     purple_debug_info("yahoo", "white board end... (%s)\n", wb->who); 
-//    if(wb->boardType == TEACHER_BOARD) 
-//        purple_whiteboard_remove_all_sessions();
 	yahoo_doodle_command_send_shutdown(gc, wb->who);
-//    purple_debug_info("yahoo", "white board end... (%s)\n", wb->who); 
-//	g_free(wb->proto_data);
-//	me.....
 }
 
 void yahoo_doodle_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height)
