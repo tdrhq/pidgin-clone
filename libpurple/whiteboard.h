@@ -48,7 +48,6 @@ typedef struct _PurpleWhiteboard
 	PurpleWhiteboardPrplOps *prpl_ops; /**< Protocol-plugin operations */
 
 	GList *draw_list;                /**< List of drawing elements/deltas to send */
-    /* me */
     int boardType;
 } PurpleWhiteboard;
 
@@ -129,11 +128,29 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
  * @return The new whiteboard
  */
 PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state);
-/* me */
+
+/**
+ * Adds whiteboard to the session list
+ *
+ * $param wb The whiteboard
+ */ 
 PurpleWhiteboard *purple_whiteboard_create_session(PurpleWhiteboard *wb);
+
+/**
+ * Destroys the whiteboard window for students and prof
+ *
+ * @param account The account
+ */
 void purple_whiteboard_destroy_window(PurpleAccount *account);
-void purple_whiteboard_draw_shape(PurpleWhiteboard*,GList*);
-/**/
+
+/**
+ * Draws a shape on whiteboard
+ * 
+ * @param wb The whiteboard on which the shape has to be drawn
+ * @param list The GList of points
+ */
+void purple_whiteboard_draw_shape(PurpleWhiteboard *wb, GList *list);
+
 /**
  * Destroys a whiteboard
  *
