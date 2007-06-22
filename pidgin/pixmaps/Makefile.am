@@ -8,7 +8,7 @@ EXTRA_DIST = \
 		arrow-up.xpm		\
 		arrow-right.xpm		\
 		arrow-left.xpm		\
-		Makefile.mingw			\
+		Makefile.mingw	\
 		pidgin.ico \
         eraseOp.xpm \
         lineOp.xpm \
