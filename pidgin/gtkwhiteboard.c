@@ -37,6 +37,8 @@
 #define  ARC_SHAPE -4
 #define  MULTILINE_SHAPE -5
 #define  TEXT_SHAPE -7
+#define  FILL_SHAPE -8
+#define  VIDEO_W   -9
 
 /******************************************************************************
  * Prototypes
