@@ -2053,7 +2053,24 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
     gtk_object_set_data_full (GTK_OBJECT (window), "erase_button", erase_button,
                             (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (erase_button);
-  
+ 
+  filename = g_build_filename(DATADIR, "pixmaps", "pidgin","fillOp.xpm", NULL);
+  pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+  g_free(filename);
+  tmp_toolbar_icon = gtk_image_new_from_pixbuf(pixbuf);
+  fill_button = gtk_toolbar_append_element (GTK_TOOLBAR (toolbar4),
+                                GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+                                NULL,
+                                "",
+                                _("fill"), NULL,
+                                tmp_toolbar_icon , NULL, NULL);
+  gtk_widget_set_name (fill_button, "fill_button");
+  gtk_widget_ref (fill_button);
+  gtk_object_set_data_full (GTK_OBJECT (window), "fill_button", fill_button,
+                            (GtkDestroyNotify) gtk_widget_unref);
+  gtk_widget_show (fill_button);
+
+
   filename = g_build_filename(DATADIR, "pixmaps", "pidgin","lineOp.xpm", NULL);
   pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
   g_free(filename);
@@ -2990,12 +3007,16 @@ static void pidgin_whiteboard_set_canvas_as_icon(PidginWhiteboard *gtkwb)
 	GdkPixbuf *pixbuf;
 
 	/* Makes an icon from the whiteboard's canvas 'image' */
-	pixbuf = gdk_pixbuf_get_from_drawable(NULL,
+	/*pixbuf = gdk_pixbuf_get_from_drawable(NULL,
 										  (GdkDrawable*)(gtkwb->pixmap),
 										  gdk_drawable_get_colormap(gtkwb->pixmap),
 										  0, 0,
 										  0, 0,
-										  gtkwb->width, gtkwb->height);
+										  gtkwb->width, gtkwb->height);*/
+
+    char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin","pidgin.ico", NULL);
+    pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+    g_free(filename);
 
 	gtk_window_set_icon((GtkWindow*)(gtkwb->window), pixbuf);
 }
