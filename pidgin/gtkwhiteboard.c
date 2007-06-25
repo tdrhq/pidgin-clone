@@ -480,6 +480,24 @@ int image_buf_get_fill(PidginWhiteboard *ibuf)
     return ibuf->filled;
 }
 
+void image_buf_set_font(PidginWhiteboard *ibuf,  const char *font_name)
+{
+    GdkFont *oldfont = ibuf->font;
+    GdkFont* font;
+    PangoFontDescription *font_description = pango_font_description_from_string(font_name);
+
+//    GtkFontButton *w = (GtkFontButton *)lookup_widget(ibuf->window, "fontpicker");
+//    g_assert(w);
+    font = gdk_font_from_description(font_description);
+    ibuf->font = font;
+//    gtk_font_button_set_show_style(w,TRUE);
+//    gtk_font_button_set_show_size (w,12);
+//    gtk_font_button_set_use_font (w,font_name);
+    gdk_font_ref(ibuf->font);
+    if (oldfont)
+        gdk_font_unref(oldfont);
+}
+
 static void image_buf_draw_flash(PidginWhiteboard *ibuf)
 {
 
@@ -689,6 +707,120 @@ void set_button_pixmap(GtkButton *button, unsigned char **data, PidginWhiteboard
     gtk_widget_show(gtkpixmap);
 }
 
+
+static void flood_fill(struct fillinfo *info, int x, int y)
+{
+    struct fillpixelinfo stack[10000];
+    struct fillpixelinfo * sp = stack;
+
+    int l, x1, x2, dy;
+
+#define PUSH(py, pxl, pxr, pdy) \
+{  struct fillpixelinfo *p = sp;\
+   if (((py) + (pdy) >= 0) && ((py) + (pdy) < info->height))\
+   {\
+      p->y = (py);\
+      p->xl = (pxl);\
+      p->xr = (pxr);\
+      p->dy = (pdy);\
+      sp++; \
+   }\
+}
+
+    
+#define POP(py, pxl, pxr, pdy) \
+{\
+   sp--;\
+   (py) = sp->y + sp->dy;\
+   (pxl) = sp->xl;\
+   (pxr) = sp->xr;\
+   (pdy) = sp->dy;\
+}
+
+    if ((x >= 0) && (x < info->width) && (y >= 0) && (y < info->height))
+    {
+        if ((info->or == info->r) && (info->og == info->g) && (info->ob == info->b))
+            return;
+
+        PUSH(y, x, x, 1);
+        PUSH(y + 1, x, x, -1);
+
+        while (sp > stack)
+        {
+            POP(y, x1, x2, dy);
+            for (x = x1; (x >= 0) && is_old_pixel_value(info, x, y); x--)
+                set_new_pixel_value(info, x, y);
+            if (x >= x1)
+                goto skip;
+            l = x + 1;
+            if (l < x1)
+                PUSH(y, l, x1 - 1, -dy);
+            x = x1 + 1;
+            do
+            {
+                for (; (x < info->width) && is_old_pixel_value(info, x, y); x++)
+                    set_new_pixel_value(info, x, y);
+
+                PUSH(y, l, x - 1, dy);
+                if (x > x2 + 1)
+                    PUSH(y, x2 + 1, x - 1, -dy);
+skip:
+                for (x++; x <= x2 && !is_old_pixel_value(info, x, y); x++)
+                    ;
+
+                l = x;
+            }
+            while (x <= x2);
+
+
+        }
+    }
+
+#undef POP
+#undef PUSH
+
+}
+
+
+void image_buf_flood_fill(PidginWhiteboard *ibuf, int x, int y, const GdkColor *color)
+{
+    unsigned char r, g, b;
+    struct fillinfo fillinfo;
+    unsigned char *p ;
+    image_buf_pixmap_to_rgbbuf(ibuf, 0);
+    //GdkColor_to_rgb(color, &r, &g, &b);
+
+    //added ;ater
+    r = color->red;
+    g = color->green;
+    b = color->blue;
+    //added ;ater
+
+    purple_debug_info("image_buf_flood_fill : ", "RED %d\n", r);
+    purple_debug_info("image_buf_flood_fill : ", "GREEN %d\n", g);
+    purple_debug_info("image_buf_flood_fill : ", "BLUE %d\n", b);
+
+
+    fillinfo.rgb = image_buf_rgbbuf(ibuf);
+    fillinfo.width = image_buf_width(ibuf);
+    fillinfo.height = image_buf_height(ibuf);
+    fillinfo.rowstride = image_buf_rowstride(ibuf);
+    fillinfo.pixelsize = image_buf_pixelsize(ibuf);
+    fillinfo.r = r;
+    fillinfo.g = g;
+    fillinfo.b = b;
+    p = fillinfo.rgb + y * fillinfo.rowstride + x * fillinfo.pixelsize;
+    fillinfo.or = *p;
+    fillinfo.og = *(p + 1);
+    fillinfo.ob = *(p + 2);
+    flood_fill(&fillinfo, x, y);
+
+    image_buf_rgbbuf_to_pixmap(ibuf, 0);
+    ibuf->modified = 1;
+}
+
+
+
 void on_text_button_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
     PidginWhiteboard *gtkwb = (PidginWhiteboard*)(user_data);
@@ -740,6 +872,14 @@ on_pen_button_toggled                  (GtkToggleButton *togglebutton,
     PidginWhiteboard *gtkwb = (PidginWhiteboard*)(user_data);
     select_toolbar_toggle_button(togglebutton, 0,gtkwb);
 
+}
+
+void
+on_arc_button_toggled                  (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    PidginWhiteboard *gtkwb = (PidginWhiteboard*)(user_data);
+    select_toolbar_toggle_button(togglebutton, 0,gtkwb);
 }
 
 void
@@ -2299,7 +2439,7 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
     gtkwb->cursor = 0;
     gtkwb->filled = 0;
     gtkwb->flash_state = 0;
-    //image_buf_set_font(gtkwb, "Sans 12");
+    image_buf_set_font(gtkwb, "Sans 12");
     image_buf_rgbbuf_to_pixmap(gtkwb, 0);
     //        image_buf_set_foreground_to_palette(ibuf, black_palette);
     //        image_buf_set_background_to_palette(ibuf, white_palette);
