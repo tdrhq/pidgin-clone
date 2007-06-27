@@ -2018,8 +2018,8 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
      GtkWidget *fontpicker1;
      GtkWidget *tmp_toolbar_icon;
      GtkWidget *table5;
-     GtkWidget *Line_Width;
-     GtkWidget *Line_Width1;
+     GtkWidget *blank_label1;
+     GtkWidget *blank_label2;
      GtkWidget *line_width_combo;
      GList *line_width_combo_items = NULL;
      GtkWidget *line_width_combo_combo_entry;
@@ -2200,9 +2200,10 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
     g_signal_connect(G_OBJECT(clear_button), "clicked",
             G_CALLBACK(pidgin_whiteboard_button_clear_press), gtkwb);
     //gtk_table_attach (GTK_TABLE (table4), clear_button, 0, 2, 4, 5,
-    gtk_table_attach (GTK_TABLE (table4), clear_button, 1, 2, 3, 4,
+    gtk_table_attach (GTK_TABLE (table4), clear_button, 1, 2, 4, 5,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
+    gtk_tooltips_set_tip (tooltips, clear_button, _("Clear the whiteboard"), NULL);
 
     save_button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
     gtk_widget_show(save_button);
@@ -2212,6 +2213,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                     (GtkAttachOptions) (0), 0, 0);
     g_signal_connect(G_OBJECT(save_button), "clicked",
           G_CALLBACK(pidgin_whiteboard_button_save_press), gtkwb);
+    gtk_tooltips_set_tip (tooltips, save_button, _("Save the current whiteboard"), NULL);
 
     color_button = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
     //gtk_table_attach (GTK_TABLE (table4), color_button , 0, 2, 6, 7,
@@ -2221,6 +2223,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
     gtk_widget_show(color_button);
     g_signal_connect(G_OBJECT(color_button), "clicked",
 					 G_CALLBACK(color_select_dialog), gtkwb);
+    gtk_tooltips_set_tip (tooltips, color_button, _("Pick a color"), NULL);
 
 	GdkPixbuf *pixbuf;
     char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin","video.png", NULL);
@@ -2235,7 +2238,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
             (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (video_button);
 
-    gtk_table_attach (GTK_TABLE (table4), video_button , 0, 2, 8, 9,
+    gtk_table_attach (GTK_TABLE (table4), video_button , 0, 2, 9, 10,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
     gtk_container_set_border_width (GTK_CONTAINER (video_button), 3);
@@ -2245,12 +2248,32 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 					 G_CALLBACK(video_click), gtkwb);
 
     if(wb->boardType == TEACHER_BOARD){
+  
+		blank_label1 = gtk_label_new ("");
+		gtk_widget_set_name (blank_label1, "blank_label1");
+		gtk_widget_ref (blank_label1);
+		gtk_object_set_data_full (GTK_OBJECT (window), "blank_label1", blank_label1,
+				(GtkDestroyNotify) gtk_widget_unref);
+		gtk_table_attach (GTK_TABLE (table4), blank_label1, 0, 2, 7, 8,
+				(GtkAttachOptions) (0),
+				(GtkAttachOptions) (0), 0, 0);
+		gtk_widget_show (blank_label1);
 		
+		blank_label2 = gtk_label_new ("");
+		gtk_widget_set_name (blank_label2, "blank_label2");
+		gtk_widget_ref (blank_label2);
+		gtk_object_set_data_full (GTK_OBJECT (window), "blank_label2", blank_label2,
+				(GtkDestroyNotify) gtk_widget_unref);
+		gtk_table_attach (GTK_TABLE (table4), blank_label2, 0, 2, 3, 4,
+				(GtkAttachOptions) (0),
+				(GtkAttachOptions) (0), 0, 0);
+		gtk_widget_show (blank_label2);
+
 	textView =  gtk_entry_new();
-    purple_debug_error("VIDEO ENTRY PROF", "***CLICK\n");
+    //purple_debug_error("VIDEO ENTRY PROF", "***CLICK\n");
     gtk_entry_set_max_length (GTK_ENTRY (textView), 0);
     gtk_entry_set_text (GTK_ENTRY (textView), "Write Video URL here.");
-    gtk_table_attach (GTK_TABLE (table4), textView , 0, 2, 7, 8,
+    gtk_table_attach (GTK_TABLE (table4), textView , 0, 2, 8, 9,
                 (GtkAttachOptions) (0),
                 (GtkAttachOptions) (0), 0, 0);
     gtk_widget_show(textView);
@@ -2265,7 +2288,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                                GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                                NULL,
                                                "",
-                                               _("erase"), NULL,
+                                               _("Erase to background"), NULL,
                                                tmp_toolbar_icon, NULL, NULL);
     gtk_widget_set_name (erase_button, "erase_button");
     gtk_widget_ref (erase_button);
@@ -2297,7 +2320,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("fill"), NULL,
+                                _("Fill with color"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (fill_button, "fill_button");
   gtk_widget_ref (fill_button);
@@ -2313,7 +2336,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("line"), NULL,
+                                _("Draw straight line"), NULL,
                                 tmp_toolbar_icon, NULL, NULL);
   gtk_widget_set_name (line_button, "line_button");
   gtk_widget_ref (line_button);
@@ -2329,7 +2352,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("polyline"), NULL,
+                                _("Draw connected straight lines"), NULL,
                                 tmp_toolbar_icon, NULL, NULL);
   gtk_widget_set_name (multiline_button, "multiline_button");
   gtk_widget_ref (multiline_button);
@@ -2345,7 +2368,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("rectangle"), NULL,
+                                _("Draw rectangle"), NULL,
                                 tmp_toolbar_icon, NULL, NULL);
   gtk_widget_set_name (rectangle_button, "rectangle_button");
   gtk_widget_ref (rectangle_button);
@@ -2376,7 +2399,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("pen"), NULL,
+                                _("Pencil"), NULL,
                                 tmp_toolbar_icon, NULL, NULL);
   gtk_widget_set_name (pen_button, "pen_button");
   gtk_widget_ref (pen_button);
@@ -2408,7 +2431,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("text"), NULL,
+                                _("Write text"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (text_button, "text_button");
   gtk_widget_ref (text_button);
@@ -2424,7 +2447,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("arc"), NULL,
+                                _("Draw arc"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (arc_button, "arc_button");
   gtk_widget_ref (arc_button);
@@ -2441,7 +2464,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("oval"), NULL,
+                                _("Draw oval"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (oval_button, "oval_button");
   gtk_widget_ref (oval_button);
@@ -2458,7 +2481,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("brush"), NULL,
+                                _("Paint fuzzy brush strokes"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (brush_button, "brush_button");
   gtk_widget_ref (brush_button);
@@ -2482,7 +2505,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                     (GtkAttachOptions) (0), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (filled_button), 3);
   GTK_WIDGET_UNSET_FLAGS (filled_button, GTK_CAN_FOCUS);
-  gtk_tooltips_set_tip (tooltips, filled_button, _("fill"), NULL);
+  gtk_tooltips_set_tip (tooltips, filled_button, _("Turn color fill on/off"), NULL);
   
   /////
 /*
@@ -2519,7 +2542,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
   gtk_object_set_data_full (GTK_OBJECT (window), "line_width_combo", line_width_combo,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (line_width_combo);
-  gtk_table_attach (GTK_TABLE (table4), line_width_combo, 0, 1, 3, 4,
+  gtk_table_attach (GTK_TABLE (table4), line_width_combo, 0, 1, 4, 5,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (line_width_combo, 45, -2);
@@ -2539,8 +2562,8 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
   gtk_object_set_data_full (GTK_OBJECT (window), "line_width_combo_combo_entry", line_width_combo_combo_entry,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (line_width_combo_combo_entry);
-  gtk_tooltips_set_tip (tooltips, line_width_combo_combo_entry, _("line width"), NULL);
-  gtk_entry_set_text (GTK_ENTRY (line_width_combo_combo_entry), _("1"));
+  gtk_tooltips_set_tip (tooltips, line_width_combo_combo_entry, _("Set line width"), NULL);
+  gtk_entry_set_text (GTK_ENTRY (line_width_combo_combo_entry), _("2"));
 
 
 /*****/
