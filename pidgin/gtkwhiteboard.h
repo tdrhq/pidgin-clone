@@ -46,7 +46,6 @@
 typedef enum  { ERASE, FILL, LINE, MULTILINE, RECTANGLE,  PEN, TEXT, ARC, OVAL, BRUSH, NONE, PASTE = 1000}
 DRAWING_TOOL ;
 
-
 typedef struct _PidginWhiteboard
 {
 
@@ -65,6 +64,7 @@ typedef struct _PidginWhiteboard
     int num_pts;
     int ptdiffx;
     int ptdiffy;
+    gchar *video_uri;
     int modified;
     int has_focus;
     int lx;
@@ -87,10 +87,23 @@ typedef struct _PidginWhiteboard
 	int brush_color;         /**< Foreground color */
 	int brush_size;          /**< Brush size */
 } PidginWhiteboard;
-
+/*
+static void set_palette_entries(PidginWhiteboard *ibuf)
+{
+    int i;
+    for (i = 0; i < 28; i++)
+    {
+        ibuf->palettes[i].red = (short) (init_palette_values[i][0] * 255);
+        ibuf->palettes[i].green = (short) (init_palette_values[i][1] * 255);
+        ibuf->palettes[i].blue = (short) (init_palette_values[i][2] * 255);
+    }
+}
+*/
 static PidginWhiteboard * make_image_buf()
 {
     PidginWhiteboard *buf = calloc(sizeof(PidginWhiteboard), 1);
+
+//    set_palette_entries(buf);
 
     return buf;
 }
