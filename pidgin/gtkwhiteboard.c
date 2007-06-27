@@ -2089,9 +2089,25 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 	buddy = purple_find_buddy(wb->account, wb->who);
 
 	if (buddy != NULL)
-		gtk_window_set_title((GtkWindow*)(window), purple_buddy_get_contact_alias(buddy));
+	{
+		char *titlename = purple_buddy_get_contact_alias(buddy);
+		GString* title = g_string_sized_new (sizeof(" Classroom with ") + sizeof(titlename));
+		g_string_append (title, " Classroom with ");
+		g_string_append (title, titlename);
+
+		gtk_window_set_title((GtkWindow*)(window), title->str);
+		g_string_free (title, TRUE);
+	}		  
 	else
-		gtk_window_set_title((GtkWindow*)(window), wb->who);
+	{
+		char *titlename = wb->who;
+		GString* title = g_string_sized_new (sizeof(" Running classroom on ") + sizeof(titlename));
+		g_string_append (title, " Running classroom on ");
+		g_string_append (title, titlename);
+		
+		gtk_window_set_title((GtkWindow*)(window), title->str);
+		g_string_free (title, TRUE);
+	}	
 
     gtk_window_set_resizable((GtkWindow*)(window), FALSE);
     
