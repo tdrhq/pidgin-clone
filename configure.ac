@@ -338,6 +338,38 @@ If you only want to build Finch then specify --disable-gtkui when running config
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
+    ###############################
+    ## Check for swfdec >= 0.4.4 ##
+    ###############################
+
+    PKG_CHECK_MODULES(SWFDEC, [swfdec-0.4 >= 0.4.4], 
+        AC_DEFINE(HAVE_SWFDEC, 1, [Define if we have swfdec 0.4.4 or newer.]), [
+    AC_MSG_ERROR([
+        You must have the swfdec 0.4.4 development headers installed to compile Pidgin.])])
+
+    AC_SUBST(SWFDEC_CFLAGS)
+    AC_SUBST(SWFDEC_LIBS)
+
+    LIBS="$LIBS $SWFDEC_LIBS"
+    CPPFLAGS="$CPPFLAGS $SWFDEC_CFLAGS"
+
+    ###################################
+    ## Check for swfdec-gtk >= 0.4.4 ##
+    ###################################
+
+    PKG_CHECK_MODULES(SWFDECGTK, [swfdec-gtk-0.4 >= 0.4.4],
+        AC_DEFINE(HAVE_SWFDECGTK, 1, [Define if we have swfdec-gtk 0.4.4 or newer.]), [
+    AC_MSG_ERROR([
+        You must have the swfdec-gtk 0.4.4 development headers installed to compile Pidgin.])])
+
+    AC_SUBST(SWFDECGTK_CFLAGS)
+    AC_SUBST(SWFDECGTK_LIBS)
+
+    LIBS="$LIBS $SWFDECGTK_LIBS"
+    CPPFLAGS="$CPPFLAGS $SWFDECGTK_CFLAGS"
+    
+	###################################
+
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(pango, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
