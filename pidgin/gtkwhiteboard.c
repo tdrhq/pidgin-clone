@@ -2195,15 +2195,23 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
     gtk_container_set_border_width (GTK_CONTAINER (toolbar4), 1);
 
 
-    clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-    gtk_widget_show(clear_button);
-    g_signal_connect(G_OBJECT(clear_button), "clicked",
-            G_CALLBACK(pidgin_whiteboard_button_clear_press), gtkwb);
-    //gtk_table_attach (GTK_TABLE (table4), clear_button, 0, 2, 4, 5,
-    gtk_table_attach (GTK_TABLE (table4), clear_button, 1, 2, 4, 5,
+	clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+	gtk_widget_show(clear_button);
+	g_signal_connect(G_OBJECT(clear_button), "clicked",
+			G_CALLBACK(pidgin_whiteboard_button_clear_press), gtkwb);
+   	gtk_tooltips_set_tip (tooltips, clear_button, _("Clear the whiteboard"), NULL);
+    if(wb->boardType == TEACHER_BOARD)
+	{
+	    gtk_table_attach (GTK_TABLE (table4), clear_button, 1, 2, 4, 5,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
-    gtk_tooltips_set_tip (tooltips, clear_button, _("Clear the whiteboard"), NULL);
+	}
+	else
+	{
+	    gtk_table_attach (GTK_TABLE (table4), clear_button, 0, 2, 4, 5,
+                    (GtkAttachOptions) (0),
+                    (GtkAttachOptions) (0), 0, 0);
+	}
 
     save_button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
     gtk_widget_show(save_button);
