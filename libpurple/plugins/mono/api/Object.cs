@@ -2,11 +2,11 @@ using System;
 using System.Runtime.CompilerServices;
 
 namespace Purple {
-	public class PObject {
+	public class Object {
 		protected IntPtr _c_handle;
 
-		public PObject() { }
-		public PObject(IntPtr h)
+		public Object() { }
+		public Object(IntPtr h)
 		{
 			_c_handle = h;
 			Debug.debug(Debug.INFO, "mono", "in PObject constructor " + _c_handle + "\n");

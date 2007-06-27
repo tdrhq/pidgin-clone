@@ -1,7 +1,7 @@
 monodir=$(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 mono_sources = \
-	PObject.cs \
+	Object.cs \
 	BlistNode.cs \
 	BuddyList.cs \
 	Buddy.cs \

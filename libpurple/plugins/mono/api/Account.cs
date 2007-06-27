@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace Purple {
-	public class Account : PObject {
+	public class Account : Object {
 		private string username;
 		private string protocol_id;
 

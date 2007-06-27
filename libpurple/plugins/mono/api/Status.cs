@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace Purple {
-	public class Status : PObject {
+	public class Status : Object {
 		private string id;
 		private string name;
 		

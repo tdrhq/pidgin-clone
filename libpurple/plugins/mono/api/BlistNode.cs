@@ -1,7 +1,7 @@
 using System;
 
 namespace Purple {
-	public class BlistNode : PObject {
+	public class BlistNode : Object {
 		
 		public BlistNode() { }
 		public BlistNode(IntPtr handle)
