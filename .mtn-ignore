@@ -56,7 +56,6 @@ mkinstalldirs
 po/Makefile.in.in
 po/POTFILES
 po/stamp-it
-psyduck/psyduck$
 stamp-h1
 win32-install-dir(\.release)?
 VERSION

@@ -49,7 +49,7 @@ if ENABLE_GNT
 GNT_DIR=finch
 endif
 
-SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros po psyduck
+SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros po
 
 docs: Doxyfile
 if HAVE_DOXYGEN
