@@ -474,6 +474,8 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	purple_signal_emit(purple_conversations_get_handle(), "received-im-msg", gc->account,
 					 name, message, cnv, flags);
+	purple_signal_emit(purple_conversations_get_handle(), "received-im-msg-with-timestamp",
+					 gc->account, name, message, cnv, flags, mtime);
 
 	/* search for conversation again in case it was created by received-im-msg handler */
 	if (cnv == NULL)
