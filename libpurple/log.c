@@ -635,24 +635,12 @@ void purple_log_init(void)
 	purple_log_logger_add(old_logger);
 
 	purple_signal_register(handle, "log-timestamp",
-#if SIZEOF_TIME_T == 4
-	                     purple_marshal_POINTER__POINTER_INT_BOOLEAN,
-#elif SIZEOF_TIME_T == 8
-			     purple_marshal_POINTER__POINTER_INT64_BOOLEAN,
-#else
-#error Unknown size of time_t
-#endif
-	                     purple_value_new(PURPLE_TYPE_STRING), 3,
-	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                    PURPLE_SUBTYPE_LOG),
-#if SIZEOF_TIME_T == 4
-	                     purple_value_new(PURPLE_TYPE_INT),
-#elif SIZEOF_TIME_T == 8
-	                     purple_value_new(PURPLE_TYPE_INT64),
-#else
-# error Unknown size of time_t
-#endif
-	                     purple_value_new(PURPLE_TYPE_BOOLEAN));
+	                       purple_marshal_POINTER__POINTER_TIMET_BOOLEAN,
+	                       purple_value_new(PURPLE_TYPE_STRING), 3,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                       PURPLE_SUBTYPE_LOG),
+	                       purple_value_new(PURPLE_TYPE_TIMET),
+	                       purple_value_new(PURPLE_TYPE_BOOLEAN));
 
 	purple_prefs_connect_callback(NULL, "/purple/logging/format",
 							    logger_pref_cb, NULL);
