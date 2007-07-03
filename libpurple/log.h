@@ -39,6 +39,7 @@ typedef struct _PurpleLogLogger PurpleLogLogger;
 typedef struct _PurpleLogCommonLoggerData PurpleLogCommonLoggerData;
 typedef struct _PurpleLogSet PurpleLogSet;
 
+
 typedef enum {
 	PURPLE_LOG_IM,
 	PURPLE_LOG_CHAT,
@@ -53,6 +54,12 @@ typedef enum {
 #include "conversation.h"
 
 typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
+
+/* Log callback functions */
+typedef void (*PurpleLogWriteCallback) (void *);
+typedef void (*PurpleLogReadCallback) (char *text, void *);
+typedef void (*PurpleLogListCallback) (GList *list, void *);
+typedef void (*PurpleLogSizeCallback) (int size, void *);
 
 /**
  * A log logger.
@@ -80,6 +87,10 @@ struct _PurpleLogLogger {
 
 	/** This function returns a sorted GList of available PurpleLogs */
 	GList *(*list)(PurpleLogType type, const char *name, PurpleAccount *account);
+
+	/** This function returns a sorted GList of available PurpleLogs 
+	* Note: provides callback to make call non-blockable*/
+	gboolean (*list_cb)(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void *data);
 
 	/** Given one of the logs returned by the logger's list function,
 	 *  this returns the contents of the log in GtkIMHtml markup */
@@ -250,6 +261,19 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags);
 GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *account);
 
 /**
+ * Returns a list of all available logs. 
+ * Note: provides callback to make call non-blockable
+ *
+ * @param type                The type of the log
+ * @param name                The name of the log
+ * @param account             The account
+ * @param cb                  The callback
+ * @param data                User data
+ * @return                    A sorted list of PurpleLogs
+ */
+gboolean purple_log_get_logs_cb(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void *data);
+
+/**
  * Returns a GHashTable of PurpleLogSets.
  *
  * A "log set" here means the information necessary to gather the
@@ -396,6 +420,28 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name,
 							  PurpleAccount *account, const char *ext,
 							  PurpleLogLogger *logger);
 
+/**
+ * Returns a sorted GList of PurpleLogs of the requested type.
+ *
+ * This function should only be used with logs that are written
+ * with purple_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's @c list function.
+ * It should only be passed to purple_log_logger_new() and never
+ * called directly.
+ *
+ * @param type     The type of the logs being listed.
+ * @param name     The name of the log.
+ * @param account  The account of the log.
+ * @param ext      The file extension this log format uses.
+ * @param logger   A reference to the logger struct for this log.
+ * @param cb       The callback 
+ * @param data     User data
+ *
+ * @return TRUE - if it's all right, otherwise - FALSE
+ */gboolean purple_log_common_lister_cb(PurpleLogType type, const char *name, 
+								PurpleAccount *account, const char *ext, 
+								PurpleLogLogger *logger, PurpleLogListCallback cb, void *data);
+								
 /**
  * Returns the total size of all the logs for a given user, with
  * a given extension.
