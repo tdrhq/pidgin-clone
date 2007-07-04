@@ -679,9 +679,9 @@ static void pidgin_log_show_size_callback(int size, void *data)
 static void pidgin_log_show_list_callback(GList *list, void *data)
 {
 	struct _pidgin_log_show_data * pidgin_log_show_data = data;
-	
+
 	pidgin_log_show_data->list = list;
-	
+
 	purple_debug_info("gtklog", "pidgin_log_show_list_callback - making one more non-blocking call: purple_log_get_total_size_cb\n");
 	purple_log_get_total_size_cb(pidgin_log_show_data->type, pidgin_log_show_data->screenname, pidgin_log_show_data->account,
 		pidgin_log_show_size_callback, pidgin_log_show_data);
@@ -693,7 +693,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	const char *name = screenname;
 	char *title;
 	struct _pidgin_log_show_data *pidgin_log_show_data;
-	
+
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(screenname != NULL);
 

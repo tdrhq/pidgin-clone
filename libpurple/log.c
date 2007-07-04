@@ -568,7 +568,7 @@ void purple_log_get_logs_cb(PurpleLogType type, const char *name, PurpleAccount 
 	GSList *n;
 	gboolean called_cb = FALSE;
 	struct _purple_log_callback_data *callback_data;
-	
+
 	purple_debug_info("log", "purple_log_get_logs_cb - enter\n");
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
 	callback_data->data = data;
@@ -587,7 +587,7 @@ void purple_log_get_logs_cb(PurpleLogType type, const char *name, PurpleAccount 
 			purple_debug_info("log", "purple_log_get_logs_cb - decrease callback_data->counter %i\n", callback_data->counter);
 		}
 	}
-	
+
 	/* either there are no loggers or they haven't list_cb functions or we have counted all*/
 	if (!callback_data->counter)
 		cb(callback_data->ret_list, data);
