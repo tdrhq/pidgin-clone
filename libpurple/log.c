@@ -300,7 +300,6 @@ void purple_log_get_total_size_cb(PurpleLogType type, const char *name, PurpleAc
 	int size = 0;
 	GSList *n;
 	struct _purple_logsize_user *lu;
-	gboolean called_cb = FALSE; 
 
 	lu = g_new(struct _purple_logsize_user, 1);
 	lu->name = g_strdup(purple_normalize(account, name));
@@ -326,11 +325,9 @@ void purple_log_get_total_size_cb(PurpleLogType type, const char *name, PurpleAc
 			if(logger->total_size_cb) {
 				purple_debug_info("log", "purple_log_get_total_size_cb - make logger->total_size_cb call\n");
 				logger->total_size_cb(type, name, account, log_size_combiner, callback_data);
-				called_cb = TRUE;
 			} else if(logger->list_cb) {
 				purple_debug_info("log", "purple_log_get_total_size_cb - make logger->list_cb call\n");
 				logger->list_cb(type, name, account, log_size_combiner_list, callback_data);
-				called_cb = TRUE;
 			} else {
 				/* As there is no any non-blocking functions we can call blocking variants */
 				if(logger->total_size){
@@ -579,7 +576,6 @@ GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *
 void purple_log_get_logs_cb(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void * data)
 {
 	GSList *n;
-	gboolean called_cb = FALSE;
 	struct _purple_log_callback_data *callback_data;
 
 	purple_debug_info("log", "purple_log_get_logs_cb - enter\n");
@@ -595,7 +591,6 @@ void purple_log_get_logs_cb(PurpleLogType type, const char *name, PurpleAccount 
 		if (logger->list_cb) {
 			purple_debug_info("log", "make a logger->list_cb call\n");
 			logger->list_cb(type, name, account, log_list_combiner, callback_data);
-			called_cb = TRUE;
 		} else {
 			/* As there is no non-blocking list function we can call blocking variant */
 			if (logger->list)
