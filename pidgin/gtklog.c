@@ -658,26 +658,33 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	return lv;
 }
 
-static void pidgin_log_show_list_callback(GList *list, void *data)
+static void pidgin_log_show_size_callback(int size, void *data)
 {
 	struct _pidgin_log_show_data * pidgin_log_show_data = data;
 
-	purple_debug_info("gtklog", "pidgin_log_show_list_callback - call display_log_viewer\n");
+	purple_debug_info("gtklog", "pidgin_log_show_size_callback - call display_log_viewer\n");
 
-	display_log_viewer(pidgin_log_show_data->ht, list,
+	display_log_viewer(pidgin_log_show_data->ht, pidgin_log_show_data->list,
 		pidgin_log_show_data->title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(pidgin_log_show_data->account, PIDGIN_PRPL_ICON_MEDIUM)), 
-		purple_log_get_total_size(pidgin_log_show_data->type, pidgin_log_show_data->screenname, pidgin_log_show_data->account));
+		size);
 
-	purple_debug_info("gtklog", "pidgin_log_show_list_callback - free memory\n");
+	purple_debug_info("gtklog", "pidgin_log_show_size_callback - free memory\n");
 
 	g_free(pidgin_log_show_data->title);
 	g_free(pidgin_log_show_data->screenname);
 	g_free(pidgin_log_show_data);
 }
 
-static void pidgin_log_show_size_callback(int size, void *data)
+static void pidgin_log_show_list_callback(GList *list, void *data)
 {
+	struct _pidgin_log_show_data * pidgin_log_show_data = data;
+	
+	pidgin_log_show_data->list = list;
+	
+	purple_debug_info("gtklog", "pidgin_log_show_list_callback - making one more non-blocking call: purple_log_get_total_size_cb\n");
+	purple_log_get_total_size_cb(pidgin_log_show_data->type, pidgin_log_show_data->screenname, pidgin_log_show_data->account,
+		pidgin_log_show_size_callback, pidgin_log_show_data);
 }
 
 void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {

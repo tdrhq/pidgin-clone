@@ -40,21 +40,19 @@ static PurpleLogLogger *html_logger;
 static PurpleLogLogger *txt_logger;
 static PurpleLogLogger *old_logger;
 
-struct _purple_log_list_callback_data {
-	PurpleLogType type;
-	char *name;
-	PurpleAccount *account;
+struct _purple_log_callback_data {
 	void *data;
-	
-	/* counter which used to recognized when all 
-	* loggers finished their work */
-	GSList * logger_list;
 
-	/* this is may de useful */
+	int counter;
+
 	GList * ret_list;
-	
+	int * ret_int;
 	/* list callback */
-	PurpleLogListCallback cb;
+	PurpleLogListCallback list_cb;
+	PurpleLogSizeCallback size_cb;
+	
+	/* size callback data */
+	struct _purple_logsize_user *lu;
 };
 
 struct _purple_logsize_user {
@@ -72,8 +70,10 @@ static GList *html_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 static GList *html_logger_list_syslog(PurpleAccount *account);
 static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
-static gboolean html_logger_list_cb(PurpleLogType type, const char *sn, PurpleAccount *account, 
+static void html_logger_list_cb(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
+static void html_logger_total_size_cb(PurpleLogType type, const char *name, PurpleAccount *account,
+									PurpleLogSizeCallback cb, void *data);
 
 static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account);
 static int old_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
@@ -94,10 +94,14 @@ static GList *txt_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 static GList *txt_logger_list_syslog(PurpleAccount *account);
 static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
-static gboolean txt_logger_list_cb(PurpleLogType type, const char *sn, PurpleAccount *account, 
+static void txt_logger_list_cb(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
+static void txt_logger_total_size_cb(PurpleLogType type, const char *name, PurpleAccount *account,
+								PurpleLogSizeCallback cb, void *data);
 
 static void log_list_combiner(GList * list, void *data);
+static void log_size_combiner(int size, void *data);
+static void log_size_combiner_list(GList * list, void *data);
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
@@ -217,6 +221,16 @@ int purple_log_get_size(PurpleLog *log)
 	return 0;
 }
 
+void purple_log_get_size_cb(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
+{
+	g_return_if_fail(log && log->logger);
+
+	if (log->logger->size_cb)
+		log->logger->size_cb(log, cb, data);
+	else 
+		cb(0, data);
+}
+
 static guint _purple_logsize_user_hash(struct _purple_logsize_user *lu)
 {
 	return g_str_hash(lu->name);
@@ -273,6 +287,54 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(size));
 	}
 	return size;
+}
+
+void purple_log_get_total_size_cb(PurpleLogType type, const char *name, PurpleAccount *account, 
+								PurpleLogSizeCallback cb, void *data)
+{
+	gpointer ptrsize;
+	int size = 0;
+	GSList *n;
+	struct _purple_logsize_user *lu;
+	gboolean called_cb = FALSE; 
+
+	lu = g_new(struct _purple_logsize_user, 1);
+	lu->name = g_strdup(purple_normalize(account, name));
+	lu->account = account;
+
+	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
+		size = GPOINTER_TO_INT(ptrsize);
+		g_free(lu->name);
+		g_free(lu);
+		cb(size, data);
+	} else {
+		struct _purple_log_callback_data *callback_data = g_new0(struct _purple_log_callback_data, 1);
+		purple_debug_info("log", "purple_log_get_total_size_cb - creating _purple_log_callback_data structure \n");
+		callback_data->size_cb = cb;
+		callback_data->data = data;
+		callback_data->lu = lu;
+		callback_data->counter += g_slist_length(loggers);
+		purple_debug_info("log", "purple_log_get_total_size_cb - callback_data->counter %i\n", callback_data->counter);
+		for (n = loggers; n; n = n->next) {
+			PurpleLogLogger *logger = n->data;
+			
+			if(logger->total_size_cb) {
+				purple_debug_info("log", "purple_log_get_total_size_cb - make logger->total_size_cb call\n");
+				logger->total_size_cb(type, name, account, log_size_combiner, callback_data);
+				called_cb = TRUE;
+			} else {
+				if(logger->list_cb) {
+					purple_debug_info("log", "purple_log_get_total_size_cb - make logger->list_cb call\n");
+					logger->list_cb(type, name, account, log_size_combiner_list, callback_data);
+					called_cb = TRUE;
+				} 
+				callback_data->counter--;
+			}
+		}
+		if (!callback_data->counter)
+			cb(callback_data->ret_int, data);
+	}
+
 }
 
 gboolean purple_log_is_deletable(PurpleLog *log)
@@ -411,11 +473,15 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 	if (functions >= 11)
 		logger->is_deletable = va_arg(args, void *);
 
-	/* functions with callback */
+	/* callbacks functions */
 	if (functions >= 12)
 		logger->list_cb = va_arg(args, void *);
-
 	if (functions >= 13)
+		logger->size_cb = va_arg(args, void *);
+	if (functions >= 14)
+		logger->total_size_cb = va_arg(args, void *);
+
+	if (functions >= 15)
 		purple_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
 
 	va_end(args);
@@ -497,34 +563,34 @@ GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *
 	return g_list_sort(logs, purple_log_compare);
 }
 
-gboolean purple_log_get_logs_cb(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void * data)
+void purple_log_get_logs_cb(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void * data)
 {
 	GSList *n;
-
+	gboolean called_cb = FALSE;
+	struct _purple_log_callback_data *callback_data;
+	
 	purple_debug_info("log", "purple_log_get_logs_cb - enter\n");
-
+	callback_data = g_new0(struct _purple_log_callback_data, 1);
+	callback_data->data = data;
+	callback_data->list_cb = cb;
+	callback_data->counter += g_slist_length(loggers);
+	purple_debug_info("log", "purple_log_get_logs_cb - callback_data->counter %i\n", callback_data->counter);
 	for (n = loggers; n; n = n->next) {
 		PurpleLogLogger *logger = n->data;
 
 		if (logger->list_cb) {
-			struct _purple_log_list_callback_data *list_callback_data = g_new0(struct _purple_log_list_callback_data, 1);
-
-			purple_debug_info("log", "purple_log_get_logs_cb - creating _purple_log_list_callback_data structure \n");
-
-			list_callback_data->cb = cb;
-			list_callback_data->logger_list = n;
-			list_callback_data->type = type;
-			list_callback_data->name = g_strdup(name);
-			list_callback_data->account = account;
-			list_callback_data->data = data;
 			purple_debug_info("log", "make a logger->list_cb call\n");
-			return logger->list_cb(type, name, account, log_list_combiner, list_callback_data);
+			logger->list_cb(type, name, account, log_list_combiner, callback_data);
+			called_cb = TRUE;
+		} else {
+			callback_data->counter--;
+			purple_debug_info("log", "purple_log_get_logs_cb - decrease callback_data->counter %i\n", callback_data->counter);
 		}
 	}
-
-	/* either there are no loggers or they haven't list functions */
-	cb(NULL, NULL);
-	return TRUE;
+	
+	/* either there are no loggers or they haven't list_cb functions or we have counted all*/
+	if (!callback_data->counter)
+		cb(callback_data->ret_list, data);
 }
 
 gint purple_log_set_compare(gconstpointer y, gconstpointer z)
@@ -654,7 +720,7 @@ void purple_log_init(void)
 
 	purple_prefs_add_string("/purple/logging/format", "txt");
 
-	html_logger = purple_log_logger_new("html", _("HTML"), 12,
+	html_logger = purple_log_logger_new("html", _("HTML"), 14,
 									  NULL,
 									  html_logger_write,
 									  html_logger_finalize,
@@ -666,10 +732,12 @@ void purple_log_init(void)
 									  NULL,
 									  purple_log_common_deleter,
 									  purple_log_common_is_deletable,
-									  html_logger_list_cb);
+									  html_logger_list_cb,
+									  purple_log_common_sizer_cb,
+									  html_logger_total_size_cb);
 	purple_log_logger_add(html_logger);
 
-	txt_logger = purple_log_logger_new("txt", _("Plain text"), 12,
+	txt_logger = purple_log_logger_new("txt", _("Plain text"), 14,
 									 NULL,
 									 txt_logger_write,
 									 txt_logger_finalize,
@@ -681,7 +749,9 @@ void purple_log_init(void)
 									 NULL,
 									 purple_log_common_deleter,
 									 purple_log_common_is_deletable,
-									 txt_logger_list_cb);
+									 txt_logger_list_cb,
+									 purple_log_common_sizer_cb,
+									 txt_logger_total_size_cb);
 	purple_log_logger_add(txt_logger);
 
 	old_logger = purple_log_logger_new("old", _("Old flat format"), 9,
@@ -974,10 +1044,9 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 	return list;
 }
 
-gboolean purple_log_common_lister_cb(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext, PurpleLogLogger *logger, PurpleLogListCallback cb, void *data)
+void purple_log_common_lister_cb(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext, PurpleLogLogger *logger, PurpleLogListCallback cb, void *data)
 {
 	cb(purple_log_common_lister(type, name, account, ext, logger), data);
-	return TRUE;
 }
 
 int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext)
@@ -1022,6 +1091,12 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAc
 	return size;
 }
 
+void purple_log_common_total_sizer_cb(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext, 
+								PurpleLogSizeCallback cb, void *data)
+{
+	cb(purple_log_common_total_sizer(type, name, account, ext), data);
+}
+
 int purple_log_common_sizer(PurpleLog *log)
 {
 	struct stat st;
@@ -1033,6 +1108,12 @@ int purple_log_common_sizer(PurpleLog *log)
 		st.st_size = 0;
 
 	return st.st_size;
+}
+
+
+void purple_log_common_sizer_cb(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
+{
+	cb(purple_log_common_sizer(log), data);
 }
 
 /* This will build log sets for all loggers that use the common logger
@@ -1478,9 +1559,9 @@ static GList *html_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 	return purple_log_common_lister(type, sn, account, ".html", html_logger);
 }
 
-static gboolean html_logger_list_cb(PurpleLogType type, const char *sn, PurpleAccount *account, PurpleLogListCallback cb, void * data)
+static void html_logger_list_cb(PurpleLogType type, const char *sn, PurpleAccount *account, PurpleLogListCallback cb, void * data)
 {
-	return purple_log_common_lister_cb(type, sn, account, ".html", html_logger, cb, data);
+	purple_log_common_lister_cb(type, sn, account, ".html", html_logger, cb, data);
 }
 
 static GList *html_logger_list_syslog(PurpleAccount *account)
@@ -1513,6 +1594,13 @@ static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAc
 {
 	return purple_log_common_total_sizer(type, name, account, ".html");
 }
+
+static void html_logger_total_size_cb(PurpleLogType type, const char *name, PurpleAccount *account,
+									PurpleLogSizeCallback cb, void *data)
+{
+	purple_log_common_total_sizer_cb(type, name, account, ".html", cb, data);
+}
+
 
 
 /****************************
@@ -1616,9 +1704,9 @@ static GList *txt_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	return purple_log_common_lister(type, sn, account, ".txt", txt_logger);
 }
 
-static gboolean txt_logger_list_cb(PurpleLogType type, const char *sn, PurpleAccount *account, PurpleLogListCallback cb, void *data)
+static void txt_logger_list_cb(PurpleLogType type, const char *sn, PurpleAccount *account, PurpleLogListCallback cb, void *data)
 {
-	return purple_log_common_lister_cb(type, sn, account, ".txt", txt_logger, cb, data);
+	purple_log_common_lister_cb(type, sn, account, ".txt", txt_logger, cb, data);
 }
 
 static GList *txt_logger_list_syslog(PurpleAccount *account)
@@ -1649,6 +1737,11 @@ static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAcc
 	return purple_log_common_total_sizer(type, name, account, ".txt");
 }
 
+static void txt_logger_total_size_cb(PurpleLogType type, const char *name, PurpleAccount *account,
+									PurpleLogSizeCallback cb, void *data)
+{
+	purple_log_common_total_sizer_cb(type, name, account, ".txt", cb, data);
+}
 
 /****************
  * OLD LOGGER ***
@@ -2053,35 +2146,63 @@ static void old_logger_finalize(PurpleLog *log)
 	g_slice_free(struct old_logger_data, data);
 }
 
+
+static void log_size_combiner(int size, void *data) {
+	struct _purple_log_callback_data *callback_data = data;
+
+	purple_debug_info("log", "log_size_combiner - enter\n");
+
+	g_return_if_fail(callback_data);
+
+	purple_debug_info("log", "log_size_combiner - size = %i\n", callback_data->counter);
+	callback_data->ret_int += size;
+	callback_data->counter--;
+	purple_debug_info("log", "log_size_combiner - callback_data->counter %i\n", callback_data->counter);
+
+	if (!callback_data->counter) {
+		purple_debug_info("log", "log_size_combiner - making call UI callback\n");
+
+		callback_data->size_cb((int)callback_data->ret_int, callback_data->data);
+		g_hash_table_replace(logsize_users, callback_data->lu, GINT_TO_POINTER(callback_data->ret_int));
+
+		purple_debug_info("log", "log_size_combiner - free memory\n");
+		g_free(callback_data);
+	}
+}
+
+static void log_size_combiner_list(GList *list, void *data) {
+	struct _purple_log_callback_data *callback_data = data;
+
+	purple_debug_info("log", "log_size_combiner_list - enter\n");
+
+	g_return_if_fail(callback_data);
+	callback_data->counter += g_list_length(list);
+	while (list) {
+		PurpleLog *log = (PurpleLog*)(list->data);
+		purple_log_get_size_cb(log, log_size_combiner, callback_data);
+		purple_log_free(log);
+		list = g_list_delete_link(list, list);
+	}
+}
+
 static void log_list_combiner(GList *list, void *data)
 {
-	GSList *n;
-	struct _purple_log_list_callback_data *list_callback_data = data;
+	struct _purple_log_callback_data *callback_data = data;
 
 	purple_debug_info("log", "log_list_combiner - enter\n");
 
-	g_return_if_fail(list_callback_data);
+	g_return_if_fail(callback_data);
 
-	list_callback_data->ret_list = g_list_concat(list, list_callback_data->ret_list);
+	callback_data->ret_list = g_list_concat(list, callback_data->ret_list);
+	callback_data->counter--;
 
-	for (n = list_callback_data->logger_list->next; n; n = n->next) {
-		PurpleLogLogger *logger = n->data;
+	purple_debug_info("log", "log_list_combiner - callback_data->counter %i\n", callback_data->counter);
+	if (!callback_data->counter) {
+		purple_debug_info("log", "log_list_combiner - making call UI callback\n");
 
-		if (logger->list_cb) {
-			list_callback_data->logger_list = n;
-			purple_debug_info("log", "log_list_combiner - making logger->list_cb\n");
-			logger->list_cb(list_callback_data->type, list_callback_data->name, 
-				list_callback_data->account, log_list_combiner, list_callback_data);
-			return;
-		}
+		callback_data->list_cb(g_list_sort(callback_data->ret_list, purple_log_compare), callback_data->data);
+
+		purple_debug_info("log", "log_list_combiner - free memory\n");
+		g_free(callback_data);
 	}
-
-	purple_debug_info("log", "log_list_combiner - making call UI callback\n");
-	list_callback_data->cb(g_list_sort(list_callback_data->ret_list, purple_log_compare), list_callback_data->data);
-
-	purple_debug_info("log", "log_list_combiner - free memory\n");
-	g_free(list_callback_data->name);
-	g_free(list_callback_data);
-
-	return;
 }
