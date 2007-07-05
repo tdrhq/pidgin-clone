@@ -490,8 +490,10 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 		logger->size_cb = va_arg(args, void *);
 	if (functions >= 14)
 		logger->total_size_cb = va_arg(args, void *);
-
 	if (functions >= 15)
+		logger->list_syslog_cb = va_arg(args, void *);
+
+	if (functions >= 16)
 		purple_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
 
 	va_end(args);
@@ -565,9 +567,8 @@ GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *
 	GSList *n;
 	for (n = loggers; n; n = n->next) {
 		PurpleLogLogger *logger = n->data;
-		if (!logger->list)
-			continue;
-		logs = g_list_concat(logger->list(type, name, account), logs);
+		if (logger->list)
+			logs = g_list_concat(logger->list(type, name, account), logs);
 	}
 
 	return g_list_sort(logs, purple_log_compare);
@@ -595,7 +596,7 @@ void purple_log_get_logs_cb(PurpleLogType type, const char *name, PurpleAccount 
 			/* As there is no non-blocking list function we can call blocking variant */
 			if (logger->list)
 				callback_data->ret_list = g_list_concat(logger->list(type, name, account), callback_data->ret_list);
-			
+
 			/* we haven't made any non-blocking call,
 			     so we need to decrease count of non-blocking calls */
 			callback_data->counter--;
@@ -709,6 +710,40 @@ GList *purple_log_get_system_logs(PurpleAccount *account)
 	}
 
 	return g_list_sort(logs, purple_log_compare);
+}
+
+void purple_log_get_system_logs_cb(PurpleAccount *account, PurpleLogListCallback cb, void *data)
+{
+	GSList *n;
+	struct _purple_log_callback_data *callback_data;
+
+	callback_data = g_new0(struct _purple_log_callback_data, 1);
+	callback_data->data = data;
+	callback_data->list_cb = cb;
+
+	purple_debug_info("log", "purple_log_get_system_logs_cb - callback_data->counter %i\n", callback_data->counter);
+	callback_data->counter += g_slist_length(loggers);
+
+	for (n = loggers; n; n = n->next) {
+		PurpleLogLogger *logger = n->data;
+		
+		if (logger->list_syslog_cb) {
+			purple_debug_info("log", "make a logger->list_syslog_cb call\n");
+			logger->list_syslog_cb(account, log_list_combiner, callback_data);
+		} else {
+			/* As there is no non-blocking list function we can call blocking variant */
+			if (logger->list_syslog)
+				callback_data->ret_list = g_list_concat(logger->list_syslog(account), callback_data->ret_list);
+
+			/* we haven't made any non-blocking call,
+			     so we need to decrease count of non-blocking calls */
+			callback_data->counter--;
+		}
+	}
+
+	/* either there are no loggers or they haven't list_cb functions or we have counted all*/
+	if (!callback_data->counter)
+		cb(g_list_sort(callback_data->ret_list, purple_log_compare), data);
 }
 
 /****************************************************************************

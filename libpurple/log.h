@@ -120,8 +120,8 @@ struct _PurpleLogLogger {
 
 	/** This function returns a sorted GList of available system PurpleLogs 
 	* Note: provides callback to make call non-blockable */
-	GList *(*list_syslog_cb)(PurpleAccount *account, PurpleLogListCallback cb, void *data);
-	
+	void (*list_syslog_cb)(PurpleAccount *account, PurpleLogListCallback cb, void *data);
+
 	/** Adds PurpleLogSets to a GHashTable. By passing the data in the PurpleLogSets
 	 *  to list, the caller can get every available PurpleLog from the logger.
 	 *  Loggers using purple_log_common_writer() (or otherwise storing their
@@ -312,6 +312,15 @@ GHashTable *purple_log_get_log_sets(void);
  * @return        A sorted list of PurpleLogs
  */
 GList *purple_log_get_system_logs(PurpleAccount *account);
+
+/**
+ * Returns a list of all available system logs
+ *
+ * @param account The account
+ * @param cb                  The callback
+ * @param data                User data
+ */
+void purple_log_get_system_logs_cb(PurpleAccount *account, PurpleLogListCallback cb, void *data);
 
 /**
  * Returns the size of a log
