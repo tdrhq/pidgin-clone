@@ -153,7 +153,7 @@ PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *a
 
 void purple_log_free(PurpleLog *log)
 {
-	g_return_if_fail(log);
+	g_return_if_fail(log != NULL);
 	if (log->logger && log->logger->finalize)
 		log->logger->finalize(log);
 	g_free(log->name);
@@ -178,9 +178,9 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 	gsize written, total = 0;
 	gpointer ptrsize;
 
-	g_return_if_fail(log);
-	g_return_if_fail(log->logger);
-	g_return_if_fail(log->logger->write);
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+	g_return_if_fail(log->logger->write != NULL);
 
 	written = (log->logger->write)(log, type, from, time, message);
 
@@ -203,7 +203,9 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	PurpleLogReadFlags mflags;
-	g_return_val_if_fail(log && log->logger, NULL);
+	g_return_val_if_fail(log != NULL, NULL);
+	g_return_val_if_fail(log->logger != NULL, NULL);
+	
 	if (log->logger->read) {
 		char *ret = (log->logger->read)(log, flags ? flags : &mflags);
 		purple_str_strip_char(ret, '\r');
@@ -214,7 +216,8 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 
 int purple_log_get_size(PurpleLog *log)
 {
-	g_return_val_if_fail(log && log->logger, 0);
+	g_return_val_if_fail(log != NULL, 0);
+	g_return_val_if_fail(log->logger != NULL, 0);
 
 	if (log->logger->size)
 		return log->logger->size(log);
@@ -223,7 +226,9 @@ int purple_log_get_size(PurpleLog *log)
 
 void purple_log_get_size_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
 {
-	g_return_if_fail(log && log->logger);
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+	
 	if (log->logger->size_nonblocking)
 		log->logger->size_nonblocking(log, cb, data);
 	else if (log->logger->size)
@@ -510,7 +515,7 @@ void purple_log_logger_free(PurpleLogLogger *logger)
 
 void purple_log_logger_add (PurpleLogLogger *logger)
 {
-	g_return_if_fail(logger);
+	g_return_if_fail(logger != NULL);
 	if (g_slist_find(loggers, logger))
 		return;
 	loggers = g_slist_append(loggers, logger);
@@ -521,13 +526,13 @@ void purple_log_logger_add (PurpleLogLogger *logger)
 
 void purple_log_logger_remove (PurpleLogLogger *logger)
 {
-	g_return_if_fail(logger);
+	g_return_if_fail(logger != NULL);
 	loggers = g_slist_remove(loggers, logger);
 }
 
 void purple_log_logger_set (PurpleLogLogger *logger)
 {
-	g_return_if_fail(logger);
+	g_return_if_fail(logger != NULL);
 	current_logger = logger;
 }
 
@@ -2201,7 +2206,7 @@ static void log_size_combiner(int size, void *data) {
 
 	purple_debug_info("log", "log_size_combiner - enter\n");
 
-	g_return_if_fail(callback_data);
+	g_return_if_fail(callback_data != NULL);
 
 	purple_debug_info("log", "log_size_combiner - size = %i\n", callback_data->counter);
 	callback_data->ret_int += size;
@@ -2224,7 +2229,7 @@ static void log_size_combiner_list(GList *list, void *data) {
 
 	purple_debug_info("log", "log_size_combiner_list - enter\n");
 
-	g_return_if_fail(callback_data);
+	g_return_if_fail(callback_data != NULL);
 	purple_debug_info("log", "log_size_combiner_list - list size %i\n", g_list_length(list));
 
 	callback_data->counter += g_list_length(list);
@@ -2244,7 +2249,7 @@ static void log_list_combiner(GList *list, void *data)
 
 	purple_debug_info("log", "log_list_combiner - enter\n");
 
-	g_return_if_fail(callback_data);
+	g_return_if_fail(callback_data != NULL);
 
 	callback_data->ret_list = g_list_concat(list, callback_data->ret_list);
 	callback_data->counter--;
