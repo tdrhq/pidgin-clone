@@ -682,8 +682,8 @@ static void pidgin_log_show_list_callback(GList *list, void *data)
 
 	pidgin_log_show_data->list = list;
 
-	purple_debug_info("gtklog", "pidgin_log_show_list_callback - making one more non-blocking call: purple_log_get_total_size_cb\n");
-	purple_log_get_total_size_cb(pidgin_log_show_data->type, pidgin_log_show_data->screenname, pidgin_log_show_data->account,
+	purple_debug_info("gtklog", "pidgin_log_show_list_callback - making one more non-blocking call: purple_log_get_total_size_nonblocking\n");
+	purple_log_get_total_size_nonblocking(pidgin_log_show_data->type, pidgin_log_show_data->screenname, pidgin_log_show_data->account,
 		pidgin_log_show_size_callback, pidgin_log_show_data);
 }
 
@@ -739,8 +739,8 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	pidgin_log_show_data->account = account;
 	pidgin_log_show_data->ht = ht;
 
-	purple_debug_info("gtklog", "pidgin_log_show - making non-blocking call purple_log_get_logs_cb\n");
-	purple_log_get_logs_cb(type, screenname, account, pidgin_log_show_list_callback, pidgin_log_show_data);
+	purple_debug_info("gtklog", "pidgin_log_show - making non-blocking call purple_log_get_logs_nonblocking\n");
+	purple_log_get_logs_nonblocking(type, screenname, account, pidgin_log_show_list_callback, pidgin_log_show_data);
 }
 
 /*
