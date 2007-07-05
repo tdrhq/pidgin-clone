@@ -99,9 +99,9 @@ static void txt_logger_list_nonblocking(PurpleLogType type, const char *sn, Purp
 static void txt_logger_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account,
 								PurpleLogSizeCallback cb, void *data);
 
-static void log_list_combiner(GList * list, void *data);
-static void log_size_combiner(int size, void *data);
-static void log_size_combiner_list(GList * list, void *data);
+static void log_list_cb(GList * list, void *data);
+static void log_size_cb(int size, void *data);
+static void log_size_list_cb(GList * list, void *data);
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
@@ -329,17 +329,17 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 			
 			if(logger->total_size_nonblocking) {
 				purple_debug_info("log", "purple_log_get_total_size_nonblocking - make logger->total_size_nonblocking call\n");
-				logger->total_size_nonblocking(type, name, account, log_size_combiner, callback_data);
+				logger->total_size_nonblocking(type, name, account, log_size_cb, callback_data);
 			} else if(logger->list_nonblocking) {
 				purple_debug_info("log", "purple_log_get_total_size_nonblocking - make logger->list_nonblocking call\n");
-				logger->list_nonblocking(type, name, account, log_size_combiner_list, callback_data);
+				logger->list_nonblocking(type, name, account, log_size_list_cb, callback_data);
 			} else {
 				/* As there is no any non-blocking functions we can call blocking variants */
 				if(logger->total_size){
 					callback_data->ret_int += (logger->total_size)(type, name, account);
 				} else if(logger->list) {
 					GList *logs = (logger->list)(type, name, account);
-					log_size_combiner_list(logs, callback_data);
+					log_size_list_cb(logs, callback_data);
 				}
 				/* we haven't made any non-blocking call,
 				     so we need to decrease count of non-blocking calls */
@@ -596,7 +596,7 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
 
 		if (logger->list_nonblocking) {
 			purple_debug_info("log", "make a logger->list_nonblocking call\n");
-			logger->list_nonblocking(type, name, account, log_list_combiner, callback_data);
+			logger->list_nonblocking(type, name, account, log_list_cb, callback_data);
 		} else {
 			/* As there is no non-blocking list function we can call blocking variant */
 			if (logger->list)
@@ -734,7 +734,7 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogLis
 		
 		if (logger->list_syslog_nonblocking) {
 			purple_debug_info("log", "make a logger->list_syslog_nonblocking call\n");
-			logger->list_syslog_nonblocking(account, log_list_combiner, callback_data);
+			logger->list_syslog_nonblocking(account, log_list_cb, callback_data);
 		} else {
 			/* As there is no non-blocking list function we can call blocking variant */
 			if (logger->list_syslog)
@@ -2201,66 +2201,66 @@ static void old_logger_finalize(PurpleLog *log)
 }
 
 
-static void log_size_combiner(int size, void *data) {
+static void log_size_cb(int size, void *data) {
 	struct _purple_log_callback_data *callback_data = data;
 
-	purple_debug_info("log", "log_size_combiner - enter\n");
+	purple_debug_info("log", "log_size_cb - enter\n");
 
 	g_return_if_fail(callback_data != NULL);
 
-	purple_debug_info("log", "log_size_combiner - size = %i\n", callback_data->counter);
+	purple_debug_info("log", "log_size_cb - size = %i\n", callback_data->counter);
 	callback_data->ret_int += size;
 	callback_data->counter--;
-	purple_debug_info("log", "log_size_combiner - callback_data->counter %i\n", callback_data->counter);
+	purple_debug_info("log", "log_size_cb - callback_data->counter %i\n", callback_data->counter);
 
 	if (!callback_data->counter) {
-		purple_debug_info("log", "log_size_combiner - making call UI callback\n");
+		purple_debug_info("log", "log_size_cb - making call UI callback\n");
 
 		callback_data->size_nonblocking((int)callback_data->ret_int, callback_data->data);
 		g_hash_table_replace(logsize_users, callback_data->lu, GINT_TO_POINTER(callback_data->ret_int));
 
-		purple_debug_info("log", "log_size_combiner - free memory\n");
+		purple_debug_info("log", "log_size_cb - free memory\n");
 		g_free(callback_data);
 	}
 }
 
-static void log_size_combiner_list(GList *list, void *data) {
+static void log_size_list_cb(GList *list, void *data) {
 	struct _purple_log_callback_data *callback_data = data;
 
-	purple_debug_info("log", "log_size_combiner_list - enter\n");
+	purple_debug_info("log", "log_size_list_cb - enter\n");
 
 	g_return_if_fail(callback_data != NULL);
-	purple_debug_info("log", "log_size_combiner_list - list size %i\n", g_list_length(list));
+	purple_debug_info("log", "log_size_list_cb - list size %i\n", g_list_length(list));
 
 	callback_data->counter += g_list_length(list);
 	while (list) {
 		PurpleLog *log = (PurpleLog*)(list->data);
-		purple_log_get_size_nonblocking(log, log_size_combiner, callback_data);
-		purple_debug_info("log", "log_size_combiner_list - purple_log_get_size_nonblocking finished\n");
+		purple_log_get_size_nonblocking(log, log_size_cb, callback_data);
+		purple_debug_info("log", "log_size_list_cb - purple_log_get_size_nonblocking finished\n");
 		
 		purple_log_free(log);
 		list = g_list_delete_link(list, list);
 	}
 }
 
-static void log_list_combiner(GList *list, void *data)
+static void log_list_cb(GList *list, void *data)
 {
 	struct _purple_log_callback_data *callback_data = data;
 
-	purple_debug_info("log", "log_list_combiner - enter\n");
+	purple_debug_info("log", "log_list_cb - enter\n");
 
 	g_return_if_fail(callback_data != NULL);
 
 	callback_data->ret_list = g_list_concat(list, callback_data->ret_list);
 	callback_data->counter--;
 
-	purple_debug_info("log", "log_list_combiner - callback_data->counter %i\n", callback_data->counter);
+	purple_debug_info("log", "log_list_cb - callback_data->counter %i\n", callback_data->counter);
 	if (!callback_data->counter) {
-		purple_debug_info("log", "log_list_combiner - making call UI callback\n");
+		purple_debug_info("log", "log_list_cb - making call UI callback\n");
 
 		callback_data->list_nonblocking(g_list_sort(callback_data->ret_list, purple_log_compare), callback_data->data);
 
-		purple_debug_info("log", "log_list_combiner - free memory\n");
+		purple_debug_info("log", "log_list_cb - free memory\n");
 		g_free(callback_data);
 	}
 }
