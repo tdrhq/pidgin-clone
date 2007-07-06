@@ -47,6 +47,7 @@ struct _purple_log_callback_data {
 
 	GList * ret_list;
 	int * ret_int;
+	
 	/* list callback */
 	PurpleLogListCallback list_nonblocking;
 	PurpleLogSizeCallback size_nonblocking;
@@ -235,8 +236,7 @@ void purple_log_get_size_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, v
 		/* if logger doesn't provide non-blocking size function, 
 		    that's mean that we can call blocking variant */
 		cb(log->logger->size(log), data);
-	else
-		/* there is no any size functions */
+	else /* there is no any size functions */
 		cb(0, data);
 }
 
@@ -316,16 +316,28 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 		g_free(lu);
 		cb(size, data);
 	} else {
-		struct _purple_log_callback_data *callback_data = g_new0(struct _purple_log_callback_data, 1);
-		purple_debug_info("log", "purple_log_get_total_size_nonblocking - creating _purple_log_callback_data structure \n");
+		struct _purple_log_callback_data *callback_data;
+
+		/* if there are no any loggers we should inform UI */
+		if (!loggers) {
+			cb(0, data);
+			return;
+		}
+		callback_data = g_new0(struct _purple_log_callback_data, 1);
+
 		callback_data->size_nonblocking = cb;
 		callback_data->data = data;
 		callback_data->lu = lu;
-		callback_data->counter += g_slist_length(loggers);
+
+		/* imho, this is really the best and simplest way 
+		     especially now, because we have blocking total_size_nonblocking function 
+		     and list_nonblocking functions*/
+		callback_data->counter = g_slist_length(loggers);
+
 		purple_debug_info("log", "purple_log_get_total_size_nonblocking - callback_data->counter %i\n", callback_data->counter);
+
 		for (n = loggers; n; n = n->next) {
 			PurpleLogLogger *logger = n->data;
-			purple_debug_info("log", "purple_log_get_total_size_nonblocking - working with \"%s\" logger\n", logger->name);
 			
 			if(logger->total_size_nonblocking) {
 				purple_debug_info("log", "purple_log_get_total_size_nonblocking - make logger->total_size_nonblocking call\n");
@@ -335,21 +347,15 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 				logger->list_nonblocking(type, name, account, log_size_list_cb, callback_data);
 			} else {
 				/* As there is no any non-blocking functions we can call blocking variants */
-				if(logger->total_size){
-					callback_data->ret_int += (logger->total_size)(type, name, account);
-				} else if(logger->list) {
+				if(logger->total_size)
+					log_size_cb((logger->total_size)(type, name, account), callback_data);
+				else if(logger->list) {
 					GList *logs = (logger->list)(type, name, account);
 					log_size_list_cb(logs, callback_data);
 				}
-				/* we haven't made any non-blocking call,
-				     so we need to decrease count of non-blocking calls */
-				callback_data->counter--;
 			}
 		}
-		if (!callback_data->counter)
-			cb((int)callback_data->ret_int, data);
 	}
-
 }
 
 gboolean purple_log_is_deletable(PurpleLog *log)
@@ -584,33 +590,30 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
 	GSList *n;
 	struct _purple_log_callback_data *callback_data;
 
-	purple_debug_info("log", "purple_log_get_logs_nonblocking - enter\n");
+	/* if there are no any loggers we should inform UI */
+	if (!loggers) {
+		cb(NULL, data);
+		return;
+	}
+
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
 	callback_data->data = data;
 	callback_data->list_nonblocking = cb;
-	callback_data->counter += g_slist_length(loggers);
-	purple_debug_info("log", "purple_log_get_logs_nonblocking - callback_data->counter %i\n", callback_data->counter);
+
+		/* imho, this is really the best and simplest way 
+		     especially now, because we have blocking total_size_nonblocking function 
+		     and list_nonblocking functions*/
+	callback_data->counter = g_slist_length(loggers);
+
 	for (n = loggers; n; n = n->next) {
 		PurpleLogLogger *logger = n->data;
-		purple_debug_info("log", "purple_log_get_logs_nonblocking - working with \"%s\" logger\n", logger->name);
 
 		if (logger->list_nonblocking) {
 			purple_debug_info("log", "make a logger->list_nonblocking call\n");
 			logger->list_nonblocking(type, name, account, log_list_cb, callback_data);
-		} else {
-			/* As there is no non-blocking list function we can call blocking variant */
-			if (logger->list)
-				callback_data->ret_list = g_list_concat(logger->list(type, name, account), callback_data->ret_list);
-
-			/* we haven't made any non-blocking call,
-			     so we need to decrease count of non-blocking calls */
-			callback_data->counter--;
-		}
+		} else if (logger->list) /* As there is no non-blocking list function we should call blocking variant */
+			log_list_cb(logger->list(type, name, account), callback_data);
 	}
-
-	/* either there are no loggers or they haven't list_nonblocking functions or we have counted all*/
-	if (!callback_data->counter)
-		cb(callback_data->ret_list, data);
 }
 
 gint purple_log_set_compare(gconstpointer y, gconstpointer z)
@@ -722,33 +725,31 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogLis
 	GSList *n;
 	struct _purple_log_callback_data *callback_data;
 
+	/* if there are no any loggers we should inform UI */
+	if (!loggers) {
+		cb(NULL, data);
+		return;
+	}
+
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
 	callback_data->data = data;
 	callback_data->list_nonblocking = cb;
 
+	/* imho, this is really the best and simplest way 
+	     especially now, because we have blocking total_size_nonblocking function 
+	     and list_nonblocking functions*/
+	callback_data->counter = g_slist_length(loggers);
 	purple_debug_info("log", "purple_log_get_system_logs_nonblocking - callback_data->counter %i\n", callback_data->counter);
-	callback_data->counter += g_slist_length(loggers);
 
 	for (n = loggers; n; n = n->next) {
 		PurpleLogLogger *logger = n->data;
-		
+
 		if (logger->list_syslog_nonblocking) {
 			purple_debug_info("log", "make a logger->list_syslog_nonblocking call\n");
 			logger->list_syslog_nonblocking(account, log_list_cb, callback_data);
-		} else {
-			/* As there is no non-blocking list function we can call blocking variant */
-			if (logger->list_syslog)
-				callback_data->ret_list = g_list_concat(logger->list_syslog(account), callback_data->ret_list);
-
-			/* we haven't made any non-blocking call,
-			     so we need to decrease count of non-blocking calls */
-			callback_data->counter--;
-		}
+		} else if (logger->list_syslog) /* As there is no non-blocking list function we can call blocking variant */
+			log_list_cb(logger->list_syslog(account), callback_data);
 	}
-
-	/* either there are no loggers or they haven't list_syslog_nonblocking functions or we have counted all*/
-	if (!callback_data->counter)
-		cb(g_list_sort(callback_data->ret_list, purple_log_compare), data);
 }
 
 /****************************************************************************
@@ -2201,21 +2202,18 @@ static void old_logger_finalize(PurpleLog *log)
 }
 
 
-static void log_size_cb(int size, void *data) {
+static void log_size_cb(int size, void *data) 
+{
 	struct _purple_log_callback_data *callback_data = data;
-
-	purple_debug_info("log", "log_size_cb - enter\n");
 
 	g_return_if_fail(callback_data != NULL);
 
-	purple_debug_info("log", "log_size_cb - size = %i\n", callback_data->counter);
 	callback_data->ret_int += size;
+
 	callback_data->counter--;
 	purple_debug_info("log", "log_size_cb - callback_data->counter %i\n", callback_data->counter);
 
 	if (!callback_data->counter) {
-		purple_debug_info("log", "log_size_cb - making call UI callback\n");
-
 		callback_data->size_nonblocking((int)callback_data->ret_int, callback_data->data);
 		g_hash_table_replace(logsize_users, callback_data->lu, GINT_TO_POINTER(callback_data->ret_int));
 
@@ -2224,20 +2222,19 @@ static void log_size_cb(int size, void *data) {
 	}
 }
 
-static void log_size_list_cb(GList *list, void *data) {
+static void log_size_list_cb(GList *list, void *data) 
+{
 	struct _purple_log_callback_data *callback_data = data;
 
-	purple_debug_info("log", "log_size_list_cb - enter\n");
-
 	g_return_if_fail(callback_data != NULL);
-	purple_debug_info("log", "log_size_list_cb - list size %i\n", g_list_length(list));
 
 	callback_data->counter += g_list_length(list);
+	purple_debug_info("log", "log_size_list_cb - list size %i\n", g_list_length(list));
+
 	while (list) {
 		PurpleLog *log = (PurpleLog*)(list->data);
 		purple_log_get_size_nonblocking(log, log_size_cb, callback_data);
-		purple_debug_info("log", "log_size_list_cb - purple_log_get_size_nonblocking finished\n");
-		
+
 		purple_log_free(log);
 		list = g_list_delete_link(list, list);
 	}
@@ -2247,19 +2244,13 @@ static void log_list_cb(GList *list, void *data)
 {
 	struct _purple_log_callback_data *callback_data = data;
 
-	purple_debug_info("log", "log_list_cb - enter\n");
-
 	g_return_if_fail(callback_data != NULL);
 
-	callback_data->ret_list = g_list_concat(list, callback_data->ret_list);
 	callback_data->counter--;
 
-	purple_debug_info("log", "log_list_cb - callback_data->counter %i\n", callback_data->counter);
-	if (!callback_data->counter) {
-		purple_debug_info("log", "log_list_cb - making call UI callback\n");
-
-		callback_data->list_nonblocking(g_list_sort(callback_data->ret_list, purple_log_compare), callback_data->data);
-
+	if (!list) 
+		callback_data->list_nonblocking(list, callback_data);
+	else if (!callback_data->counter) {
 		purple_debug_info("log", "log_list_cb - free memory\n");
 		g_free(callback_data);
 	}
