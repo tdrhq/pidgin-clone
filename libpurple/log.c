@@ -40,6 +40,22 @@ static PurpleLogLogger *html_logger;
 static PurpleLogLogger *txt_logger;
 static PurpleLogLogger *old_logger;
 
+struct _purple_log_callback_data {
+	void *data;
+
+	int counter;
+
+	GList * ret_list;
+	int * ret_int;
+	
+	/* list callback */
+	PurpleLogListCallback list_nonblocking;
+	PurpleLogSizeCallback size_nonblocking;
+	
+	/* size callback data */
+	struct _purple_logsize_user *lu;
+};
+
 struct _purple_logsize_user {
 	char *name;
 	PurpleAccount *account;
@@ -55,6 +71,10 @@ static GList *html_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 static GList *html_logger_list_syslog(PurpleAccount *account);
 static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
+static void html_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
+								PurpleLogListCallback cb, void *data);
+static void html_logger_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account,
+									PurpleLogSizeCallback cb, void *data);
 
 static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account);
 static int old_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
@@ -62,6 +82,10 @@ static char * old_logger_read (PurpleLog *log, PurpleLogReadFlags *flags);
 static int old_logger_size (PurpleLog *log);
 static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets);
 static void old_logger_finalize(PurpleLog *log);
+/*
+static gboolean old_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
+								PurpleLogListCallback cb, void *data);
+*/
 
 static gsize txt_logger_write(PurpleLog *log,
 							 PurpleMessageFlags type,
@@ -71,7 +95,14 @@ static GList *txt_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 static GList *txt_logger_list_syslog(PurpleAccount *account);
 static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
+static void txt_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
+								PurpleLogListCallback cb, void *data);
+static void txt_logger_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account,
+								PurpleLogSizeCallback cb, void *data);
 
+static void log_list_cb(GList * list, void *data);
+static void log_size_cb(int size, void *data);
+static void log_size_list_cb(GList * list, void *data);
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
@@ -123,7 +154,7 @@ PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *a
 
 void purple_log_free(PurpleLog *log)
 {
-	g_return_if_fail(log);
+	g_return_if_fail(log != NULL);
 	if (log->logger && log->logger->finalize)
 		log->logger->finalize(log);
 	g_free(log->name);
@@ -148,9 +179,9 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 	gsize written, total = 0;
 	gpointer ptrsize;
 
-	g_return_if_fail(log);
-	g_return_if_fail(log->logger);
-	g_return_if_fail(log->logger->write);
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+	g_return_if_fail(log->logger->write != NULL);
 
 	written = (log->logger->write)(log, type, from, time, message);
 
@@ -173,7 +204,9 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	PurpleLogReadFlags mflags;
-	g_return_val_if_fail(log && log->logger, NULL);
+	g_return_val_if_fail(log != NULL, NULL);
+	g_return_val_if_fail(log->logger != NULL, NULL);
+	
 	if (log->logger->read) {
 		char *ret = (log->logger->read)(log, flags ? flags : &mflags);
 		purple_str_strip_char(ret, '\r');
@@ -184,11 +217,27 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 
 int purple_log_get_size(PurpleLog *log)
 {
-	g_return_val_if_fail(log && log->logger, 0);
+	g_return_val_if_fail(log != NULL, 0);
+	g_return_val_if_fail(log->logger != NULL, 0);
 
 	if (log->logger->size)
 		return log->logger->size(log);
 	return 0;
+}
+
+void purple_log_get_size_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
+{
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+	
+	if (log->logger->size_nonblocking)
+		log->logger->size_nonblocking(log, cb, data);
+	else if (log->logger->size)
+		/* if logger doesn't provide non-blocking size function, 
+		    that's mean that we can call blocking variant */
+		cb(log->logger->size(log), data);
+	else /* there is no any size functions */
+		cb(0, data);
 }
 
 static guint _purple_logsize_user_hash(struct _purple_logsize_user *lu)
@@ -247,6 +296,66 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(size));
 	}
 	return size;
+}
+
+void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, 
+								PurpleLogSizeCallback cb, void *data)
+{
+	gpointer ptrsize;
+	int size = 0;
+	GSList *n;
+	struct _purple_logsize_user *lu;
+
+	lu = g_new(struct _purple_logsize_user, 1);
+	lu->name = g_strdup(purple_normalize(account, name));
+	lu->account = account;
+
+	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
+		size = GPOINTER_TO_INT(ptrsize);
+		g_free(lu->name);
+		g_free(lu);
+		cb(size, data);
+	} else {
+		struct _purple_log_callback_data *callback_data;
+
+		/* if there are no any loggers we should inform UI */
+		if (loggers == NULL) {
+			cb(0, data);
+			return;
+		}
+		callback_data = g_new0(struct _purple_log_callback_data, 1);
+
+		callback_data->size_nonblocking = cb;
+		callback_data->data = data;
+		callback_data->lu = lu;
+
+		/* imho, this is really the best and simplest way 
+		     especially now, because we have blocking total_size_nonblocking function 
+		     and list_nonblocking functions*/
+		callback_data->counter = g_slist_length(loggers);
+
+		purple_debug_info("log", "purple_log_get_total_size_nonblocking - callback_data->counter %i\n", callback_data->counter);
+
+		for (n = loggers; n; n = n->next) {
+			PurpleLogLogger *logger = n->data;
+			
+			if(logger->total_size_nonblocking) {
+				purple_debug_info("log", "purple_log_get_total_size_nonblocking - make logger->total_size_nonblocking call\n");
+				logger->total_size_nonblocking(type, name, account, log_size_cb, callback_data);
+			} else if(logger->list_nonblocking) {
+				purple_debug_info("log", "purple_log_get_total_size_nonblocking - make logger->list_nonblocking call\n");
+				logger->list_nonblocking(type, name, account, log_size_list_cb, callback_data);
+			} else {
+				/* As there is no any non-blocking functions we can call blocking variants */
+				if(logger->total_size)
+					log_size_cb((logger->total_size)(type, name, account), callback_data);
+				else if(logger->list) {
+					GList *logs = (logger->list)(type, name, account);
+					log_size_list_cb(logs, callback_data);
+				}
+			}
+		}
+	}
 }
 
 gboolean purple_log_is_deletable(PurpleLog *log)
@@ -385,7 +494,17 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 	if (functions >= 11)
 		logger->is_deletable = va_arg(args, void *);
 
+	/* callbacks functions */
 	if (functions >= 12)
+		logger->list_nonblocking = va_arg(args, void *);
+	if (functions >= 13)
+		logger->size_nonblocking = va_arg(args, void *);
+	if (functions >= 14)
+		logger->total_size_nonblocking = va_arg(args, void *);
+	if (functions >= 15)
+		logger->list_syslog_nonblocking = va_arg(args, void *);
+
+	if (functions >= 16)
 		purple_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
 
 	va_end(args);
@@ -402,7 +521,7 @@ void purple_log_logger_free(PurpleLogLogger *logger)
 
 void purple_log_logger_add (PurpleLogLogger *logger)
 {
-	g_return_if_fail(logger);
+	g_return_if_fail(logger != NULL);
 	if (g_slist_find(loggers, logger))
 		return;
 	loggers = g_slist_append(loggers, logger);
@@ -413,13 +532,13 @@ void purple_log_logger_add (PurpleLogLogger *logger)
 
 void purple_log_logger_remove (PurpleLogLogger *logger)
 {
-	g_return_if_fail(logger);
+	g_return_if_fail(logger != NULL);
 	loggers = g_slist_remove(loggers, logger);
 }
 
 void purple_log_logger_set (PurpleLogLogger *logger)
 {
-	g_return_if_fail(logger);
+	g_return_if_fail(logger != NULL);
 	current_logger = logger;
 }
 
@@ -459,12 +578,42 @@ GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *
 	GSList *n;
 	for (n = loggers; n; n = n->next) {
 		PurpleLogLogger *logger = n->data;
-		if (!logger->list)
-			continue;
-		logs = g_list_concat(logger->list(type, name, account), logs);
+		if (logger->list)
+			logs = g_list_concat(logger->list(type, name, account), logs);
 	}
 
 	return g_list_sort(logs, purple_log_compare);
+}
+
+void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void * data)
+{
+	GSList *n;
+	struct _purple_log_callback_data *callback_data;
+
+	/* if there are no any loggers we should inform UI */
+	if (loggers == NULL) {
+		cb(NULL, data);
+		return;
+	}
+
+	callback_data = g_new0(struct _purple_log_callback_data, 1);
+	callback_data->data = data;
+	callback_data->list_nonblocking = cb;
+
+	/* imho, this is really the best and simplest way 
+	     especially now, because we have blocking total_size_nonblocking function 
+	     and list_nonblocking functions*/
+	callback_data->counter = g_slist_length(loggers);
+
+	for (n = loggers; n; n = n->next) {
+		PurpleLogLogger *logger = n->data;
+
+		if (logger->list_nonblocking) {
+			purple_debug_info("log", "make a logger->list_nonblocking call\n");
+			logger->list_nonblocking(type, name, account, log_list_cb, callback_data);
+		} else if (logger->list) /* As there is no non-blocking list function we should call blocking variant */
+			log_list_cb(logger->list(type, name, account), callback_data);
+	}
 }
 
 gint purple_log_set_compare(gconstpointer y, gconstpointer z)
@@ -571,6 +720,38 @@ GList *purple_log_get_system_logs(PurpleAccount *account)
 	return g_list_sort(logs, purple_log_compare);
 }
 
+void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data)
+{
+	GSList *n;
+	struct _purple_log_callback_data *callback_data;
+
+	/* if there are no any loggers we should inform UI */
+	if (loggers == NULL) {
+		cb(NULL, data);
+		return;
+	}
+
+	callback_data = g_new0(struct _purple_log_callback_data, 1);
+	callback_data->data = data;
+	callback_data->list_nonblocking = cb;
+
+	/* imho, this is really the best and simplest way 
+	     especially now, because we have blocking total_size_nonblocking function 
+	     and list_nonblocking functions*/
+	callback_data->counter = g_slist_length(loggers);
+	purple_debug_info("log", "purple_log_get_system_logs_nonblocking - callback_data->counter %i\n", callback_data->counter);
+
+	for (n = loggers; n; n = n->next) {
+		PurpleLogLogger *logger = n->data;
+
+		if (logger->list_syslog_nonblocking) {
+			purple_debug_info("log", "make a logger->list_syslog_nonblocking call\n");
+			logger->list_syslog_nonblocking(account, log_list_cb, callback_data);
+		} else if (logger->list_syslog) /* As there is no non-blocking list function we can call blocking variant */
+			log_list_cb(logger->list_syslog(account), callback_data);
+	}
+}
+
 /****************************************************************************
  * LOG SUBSYSTEM ************************************************************
  ****************************************************************************/
@@ -594,7 +775,7 @@ void purple_log_init(void)
 
 	purple_prefs_add_string("/purple/logging/format", "txt");
 
-	html_logger = purple_log_logger_new("html", _("HTML"), 11,
+	html_logger = purple_log_logger_new("html", _("HTML"), 14,
 									  NULL,
 									  html_logger_write,
 									  html_logger_finalize,
@@ -605,10 +786,13 @@ void purple_log_init(void)
 									  html_logger_list_syslog,
 									  NULL,
 									  purple_log_common_deleter,
-									  purple_log_common_is_deletable);
+									  purple_log_common_is_deletable,
+									  html_logger_list_nonblocking,
+									  purple_log_common_sizer_nonblocking,
+									  html_logger_total_size_nonblocking);
 	purple_log_logger_add(html_logger);
 
-	txt_logger = purple_log_logger_new("txt", _("Plain text"), 11,
+	txt_logger = purple_log_logger_new("txt", _("Plain text"), 14,
 									 NULL,
 									 txt_logger_write,
 									 txt_logger_finalize,
@@ -619,7 +803,10 @@ void purple_log_init(void)
 									 txt_logger_list_syslog,
 									 NULL,
 									 purple_log_common_deleter,
-									 purple_log_common_is_deletable);
+									 purple_log_common_is_deletable,
+									 txt_logger_list_nonblocking,
+									 purple_log_common_sizer_nonblocking,
+									 txt_logger_total_size_nonblocking);
 	purple_log_logger_add(txt_logger);
 
 	old_logger = purple_log_logger_new("old", _("Old flat format"), 9,
@@ -912,6 +1099,11 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 	return list;
 }
 
+void purple_log_common_lister_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext, PurpleLogLogger *logger, PurpleLogListCallback cb, void *data)
+{
+	cb(purple_log_common_lister(type, name, account, ext, logger), data);
+}
+
 int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext)
 {
 	GDir *dir;
@@ -954,6 +1146,12 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAc
 	return size;
 }
 
+void purple_log_common_total_sizer_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext, 
+								PurpleLogSizeCallback cb, void *data)
+{
+	cb(purple_log_common_total_sizer(type, name, account, ext), data);
+}
+
 int purple_log_common_sizer(PurpleLog *log)
 {
 	struct stat st;
@@ -965,6 +1163,12 @@ int purple_log_common_sizer(PurpleLog *log)
 		st.st_size = 0;
 
 	return st.st_size;
+}
+
+
+void purple_log_common_sizer_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
+{
+	cb(purple_log_common_sizer(log), data);
 }
 
 /* This will build log sets for all loggers that use the common logger
@@ -1410,6 +1614,11 @@ static GList *html_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 	return purple_log_common_lister(type, sn, account, ".html", html_logger);
 }
 
+static void html_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, PurpleLogListCallback cb, void * data)
+{
+	purple_log_common_lister_nonblocking(type, sn, account, ".html", html_logger, cb, data);
+}
+
 static GList *html_logger_list_syslog(PurpleAccount *account)
 {
 	return purple_log_common_lister(PURPLE_LOG_SYSTEM, ".system", account, ".html", html_logger);
@@ -1440,6 +1649,13 @@ static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAc
 {
 	return purple_log_common_total_sizer(type, name, account, ".html");
 }
+
+static void html_logger_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account,
+									PurpleLogSizeCallback cb, void *data)
+{
+	purple_log_common_total_sizer_nonblocking(type, name, account, ".html", cb, data);
+}
+
 
 
 /****************************
@@ -1543,6 +1759,11 @@ static GList *txt_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	return purple_log_common_lister(type, sn, account, ".txt", txt_logger);
 }
 
+static void txt_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, PurpleLogListCallback cb, void *data)
+{
+	purple_log_common_lister_nonblocking(type, sn, account, ".txt", txt_logger, cb, data);
+}
+
 static GList *txt_logger_list_syslog(PurpleAccount *account)
 {
 	return purple_log_common_lister(PURPLE_LOG_SYSTEM, ".system", account, ".txt", txt_logger);
@@ -1571,6 +1792,11 @@ static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAcc
 	return purple_log_common_total_sizer(type, name, account, ".txt");
 }
 
+static void txt_logger_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account,
+									PurpleLogSizeCallback cb, void *data)
+{
+	purple_log_common_total_sizer_nonblocking(type, name, account, ".txt", cb, data);
+}
 
 /****************
  * OLD LOGGER ***
@@ -1973,4 +2199,67 @@ static void old_logger_finalize(PurpleLog *log)
 	struct old_logger_data *data = log->logger_data;
 	purple_stringref_unref(data->pathref);
 	g_slice_free(struct old_logger_data, data);
+}
+
+
+static void log_size_cb(int size, void *data) 
+{
+	struct _purple_log_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	callback_data->ret_int += size;
+
+	callback_data->counter--;
+	purple_debug_info("log", "log_size_cb - callback_data->counter = %i\n", callback_data->counter);
+
+	if (!callback_data->counter) {
+		callback_data->size_nonblocking((int)callback_data->ret_int, callback_data->data);
+		g_hash_table_replace(logsize_users, callback_data->lu, GINT_TO_POINTER(callback_data->ret_int));
+
+		purple_debug_info("log", "log_size_cb - free memory\n");
+		g_free(callback_data);
+	}
+}
+
+static void log_size_list_cb(GList *list, void *data) 
+{
+	struct _purple_log_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	purple_debug_info("log", "log_size_list_cb - callback_data->counter = %i, list size = %i\n", callback_data->counter, g_list_length(list));
+	callback_data->counter += g_list_length(list);
+
+	while (list) {
+		PurpleLog *log = (PurpleLog*)(list->data);
+		purple_log_get_size_nonblocking(log, log_size_cb, callback_data);
+
+		purple_log_free(log);
+		list = g_list_delete_link(list, list);
+	}
+
+	/* extra call, we need it for destroing callback_data and calling UI callback */
+	log_size_cb(0, callback_data);
+}
+
+static void log_list_cb(GList *list, void *data)
+{
+	struct _purple_log_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	callback_data->counter--;
+	purple_debug_info("log", "log_list_cb - callback_data->counter = %i\n", callback_data->counter);
+
+	if (list != NULL) 
+		callback_data->list_nonblocking(list, callback_data->data);
+
+	if (!callback_data->counter) {
+		/* sending end of list flag */
+		callback_data->list_nonblocking(NULL, callback_data->data);
+
+		purple_debug_info("log", "log_list_cb - free memory\n");
+		g_free(callback_data);
+	}
 }

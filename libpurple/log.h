@@ -39,6 +39,7 @@ typedef struct _PurpleLogLogger PurpleLogLogger;
 typedef struct _PurpleLogCommonLoggerData PurpleLogCommonLoggerData;
 typedef struct _PurpleLogSet PurpleLogSet;
 
+
 typedef enum {
 	PURPLE_LOG_IM,
 	PURPLE_LOG_CHAT,
@@ -53,6 +54,12 @@ typedef enum {
 #include "conversation.h"
 
 typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
+
+/* Log callback functions */
+typedef void (*PurpleLogWriteCallback) (void *);
+typedef void (*PurpleLogReadCallback) (char *text, void *);
+typedef void (*PurpleLogListCallback) (GList *list, void *);
+typedef void (*PurpleLogSizeCallback) (int size, void *);
 
 /**
  * A log logger.
@@ -81,6 +88,10 @@ struct _PurpleLogLogger {
 	/** This function returns a sorted GList of available PurpleLogs */
 	GList *(*list)(PurpleLogType type, const char *name, PurpleAccount *account);
 
+	/** This function returns a sorted GList of available PurpleLogs 
+	* Note: provides callback to make call non-blockable */
+	void (*list_nonblocking)(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void *data);
+
 	/** Given one of the logs returned by the logger's list function,
 	 *  this returns the contents of the log in GtkIMHtml markup */
 	char *(*read)(PurpleLog *log, PurpleLogReadFlags *flags);
@@ -89,12 +100,27 @@ struct _PurpleLogLogger {
 	 *  this returns the size of the log in bytes */
 	int (*size)(PurpleLog *log);
 
+	/** Given one of the logs returned by the logger's list function,
+	 *  this returns the size of the log in bytes 
+	* Note: provides callback to make call non-blockable */
+	void (*size_nonblocking)(PurpleLog *log, PurpleLogSizeCallback cb, void *data);
+
 	/** Returns the total size of all the logs. If this is undefined a default
 	 *  implementation is used */
 	int (*total_size)(PurpleLogType type, const char *name, PurpleAccount *account);
 
+	/** Returns the total size of all the logs. If this is undefined a default
+	 *  implementation is used
+ 	* Note: provides callback to make call non-blockable */
+
+	void (*total_size_nonblocking)(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogSizeCallback cb, void *data);
+
 	/** This function returns a sorted GList of available system PurpleLogs */
 	GList *(*list_syslog)(PurpleAccount *account);
+
+	/** This function returns a sorted GList of available system PurpleLogs 
+	* Note: provides callback to make call non-blockable */
+	void (*list_syslog_nonblocking)(PurpleAccount *account, PurpleLogListCallback cb, void *data);
 
 	/** Adds PurpleLogSets to a GHashTable. By passing the data in the PurpleLogSets
 	 *  to list, the caller can get every available PurpleLog from the logger.
@@ -250,6 +276,18 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags);
 GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *account);
 
 /**
+ * Returns a list of all available logs. 
+ * Note: provides callback to make call non-blockable
+ *
+ * @param type                The type of the log
+ * @param name                The name of the log
+ * @param account             The account
+ * @param cb                  The callback
+ * @param data                User data
+ */
+void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void *data);
+
+/**
  * Returns a GHashTable of PurpleLogSets.
  *
  * A "log set" here means the information necessary to gather the
@@ -276,12 +314,31 @@ GHashTable *purple_log_get_log_sets(void);
 GList *purple_log_get_system_logs(PurpleAccount *account);
 
 /**
+ * Returns a list of all available system logs
+ *
+ * @param account The account
+ * @param cb                  The callback
+ * @param data                User data
+ */
+void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
+
+/**
  * Returns the size of a log
  *
  * @param log                 The log
  * @return                    The size of the log, in bytes
  */
 int purple_log_get_size(PurpleLog *log);
+
+/**
+ * Returns the size of a log
+ *
+ * @param log                 The log
+ * @return                    The size of the log, in bytes
+ * @param cb                  The callback
+ * @param data                User data
+ */
+void purple_log_get_size_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, void *data);
 
 /**
  * Returns the size, in bytes, of all available logs in this conversation
@@ -292,6 +349,18 @@ int purple_log_get_size(PurpleLog *log);
  * @return                    The size in bytes
  */
 int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
+
+/**
+ * Returns the size, in bytes, of all available logs in this conversation
+ *
+ * @param type                The type of the log
+ * @param name                The name of the log
+ * @param account             The account
+ * @return                    The size in bytes
+ * @param cb                  The callback
+ * @param data                User data
+ */
+void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogSizeCallback cb, void *data);
 
 /**
  * Tests whether a log is deletable
@@ -397,6 +466,27 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name,
 							  PurpleLogLogger *logger);
 
 /**
+ * Returns a sorted GList of PurpleLogs of the requested type.
+ *
+ * This function should only be used with logs that are written
+ * with purple_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's @c list function.
+ * It should only be passed to purple_log_logger_new() and never
+ * called directly.
+ *
+ * @param type     The type of the logs being listed.
+ * @param name     The name of the log.
+ * @param account  The account of the log.
+ * @param ext      The file extension this log format uses.
+ * @param logger   A reference to the logger struct for this log.
+ * @param cb       The callback 
+ * @param data     User data
+ */
+void purple_log_common_lister_nonblocking(PurpleLogType type, const char *name, 
+								PurpleAccount *account, const char *ext, 
+								PurpleLogLogger *logger, PurpleLogListCallback cb, void *data);
+
+/**
  * Returns the total size of all the logs for a given user, with
  * a given extension.
  *
@@ -418,6 +508,29 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name,
 int purple_log_common_total_sizer(PurpleLogType type, const char *name,
 								PurpleAccount *account, const char *ext);
 
+								/**
+ * Returns the total size of all the logs for a given user, with
+ * a given extension.
+ *
+ * This function should only be used with logs that are written
+ * with purple_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's @c total_size function.
+ * It should only be passed to purple_log_logger_new() and never
+ * called directly.
+ *
+ * @param type     The type of the logs being sized.
+ * @param name     The name of the logs to size
+ *                 (e.g. the username or chat name).
+ * @param account  The account of the log.
+ * @param ext      The file extension this log format uses.
+ *
+ * @return The size of all the logs with the specified extension
+ *         for the specified user.
+ */
+void purple_log_common_total_sizer_nonblocking(PurpleLogType type, const char *name,
+								PurpleAccount *account, const char *ext,
+								PurpleLogSizeCallback cb, void *data);
+
 /**
  * Returns the size of a given PurpleLog.
  *
@@ -432,6 +545,21 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name,
  * @return An integer indicating the size of the log in bytes.
  */
 int purple_log_common_sizer(PurpleLog *log);
+
+/**
+ * Returns the size of a given PurpleLog.
+ *
+ * This function should only be used with logs that are written
+ * with purple_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's @c size function.
+ * It should only be passed to purple_log_logger_new() and never
+ * called directly.
+ *
+ * @param log      The PurpleLog to size.
+ * @param cb       The callback 
+ * @param data     User data
+ */
+void purple_log_common_sizer_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, void *data);
 
 /**
  * Deletes a log

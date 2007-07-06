@@ -49,6 +49,15 @@ struct log_viewer_hash_t {
 	PurpleContact *contact;
 };
 
+struct _pidgin_log_show_data {
+	char *title;
+	GList *list;
+	PurpleLogType type;
+	char *screenname;
+	PurpleAccount *account;
+	struct log_viewer_hash_t *ht;
+};
+
 static guint log_viewer_hash(gconstpointer data)
 {
 	const struct log_viewer_hash_t *viewer = data;
@@ -649,6 +658,97 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	return lv;
 }
 
+static void pidgin_log_show_size_cb(int size, void *data)
+{
+	struct _pidgin_log_show_data * pidgin_log_show_data = data;
+
+	purple_debug_info("gtklog", "pidgin_log_show_size_cb - call display_log_viewer\n");
+
+	display_log_viewer(pidgin_log_show_data->ht, pidgin_log_show_data->list,
+		pidgin_log_show_data->title, 
+		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(pidgin_log_show_data->account, PIDGIN_PRPL_ICON_MEDIUM)), 
+		size);
+
+	purple_debug_info("gtklog", "pidgin_log_show_size_cb - free memory\n");
+
+	g_free(pidgin_log_show_data->title);
+	g_free(pidgin_log_show_data->screenname);
+	g_free(pidgin_log_show_data);
+}
+
+static void pidgin_log_show_list_cb(GList *list, void *data)
+{
+	struct _pidgin_log_show_data * pidgin_log_show_data = data;
+	purple_debug_info("gtklog", "pidgin_log_show_list_cb - enter\n");
+		
+	if (list != NULL) 
+		pidgin_log_show_data->list = g_list_concat(list, pidgin_log_show_data->list);
+	else {
+		pidgin_log_show_data->list = g_list_sort(pidgin_log_show_data->list, purple_log_compare);
+
+		purple_debug_info("gtklog", "pidgin_log_show_list_cb - making one more non-blocking call: purple_log_get_total_size_nonblocking\n");
+		purple_log_get_total_size_nonblocking(pidgin_log_show_data->type, pidgin_log_show_data->screenname, pidgin_log_show_data->account,
+			pidgin_log_show_size_cb, pidgin_log_show_data);
+	}
+}
+
+void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
+	struct log_viewer_hash_t *ht;
+	PidginLogViewer *lv = NULL;
+	const char *name = screenname;
+	char *title;
+	struct _pidgin_log_show_data *pidgin_log_show_data;
+
+	g_return_if_fail(account != NULL);
+	g_return_if_fail(screenname != NULL);
+
+	ht = g_new0(struct log_viewer_hash_t, 1);
+
+	ht->type = type;
+	ht->screenname = g_strdup(screenname);
+	ht->account = account;
+
+	if (log_viewers == NULL) {
+		log_viewers = g_hash_table_new(log_viewer_hash, log_viewer_equal);
+	} else if ((lv = g_hash_table_lookup(log_viewers, ht))) {
+		gtk_window_present(GTK_WINDOW(lv->window));
+		g_free(ht->screenname);
+		g_free(ht);
+		return;
+	}
+
+	if (type == PURPLE_LOG_CHAT) {
+		PurpleChat *chat;
+
+		chat = purple_blist_find_chat(account, screenname);
+		if (chat != NULL)
+			name = purple_chat_get_name(chat);
+
+		title = g_strdup_printf(_("Conversations in %s"), name);
+	} else {
+		PurpleBuddy *buddy;
+
+		buddy = purple_find_buddy(account, screenname);
+		if (buddy != NULL)
+			name = purple_buddy_get_contact_alias(buddy);
+
+		title = g_strdup_printf(_("Conversations with %s"), name);
+	}
+
+	purple_debug_info("gtklog", "pidgin_log_show - creating pidgin_log_show_data structure\n");
+	pidgin_log_show_data = g_new0(struct _pidgin_log_show_data, 1);
+
+	pidgin_log_show_data->type = type;
+	pidgin_log_show_data->screenname = g_strdup(screenname);
+	pidgin_log_show_data->title = g_strdup(title);
+	pidgin_log_show_data->account = account;
+	pidgin_log_show_data->ht = ht;
+
+	purple_debug_info("gtklog", "pidgin_log_show - making non-blocking call purple_log_get_logs_nonblocking\n");
+	purple_log_get_logs_nonblocking(type, screenname, account, pidgin_log_show_list_cb, pidgin_log_show_data);
+}
+
+/*
 void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
 	struct log_viewer_hash_t *ht;
 	PidginLogViewer *lv = NULL;
@@ -696,6 +796,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 			purple_log_get_total_size(type, screenname, account));
 	g_free(title);
 }
+*/
 
 void pidgin_log_show_contact(PurpleContact *contact) {
 	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
