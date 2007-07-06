@@ -1885,9 +1885,6 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			data->length = new_line - start_log;
 			data->offset = offset;
 			offset += data->length;
-			purple_debug_info("QIP logger list",
-				"Creating log: path = (%s); length = (%d); offset = (%d)\n", 
-				data->path, data->length, data->offset);
 
 			/* XXX: Look into this later... Should we pass in a struct tm? */
 			log = purple_log_new(PURPLE_LOG_IM, sn, account,
