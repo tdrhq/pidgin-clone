@@ -679,12 +679,17 @@ static void pidgin_log_show_size_cb(int size, void *data)
 static void pidgin_log_show_list_cb(GList *list, void *data)
 {
 	struct _pidgin_log_show_data * pidgin_log_show_data = data;
+	purple_debug_info("gtklog", "pidgin_log_show_list_cb - enter\n");
+		
+	if (list != NULL) 
+		pidgin_log_show_data->list = g_list_concat(list, pidgin_log_show_data->list);
+	else {
+		pidgin_log_show_data->list = g_list_sort(pidgin_log_show_data->list, purple_log_compare);
 
-	pidgin_log_show_data->list = list;
-
-	purple_debug_info("gtklog", "pidgin_log_show_list_cb - making one more non-blocking call: purple_log_get_total_size_nonblocking\n");
-	purple_log_get_total_size_nonblocking(pidgin_log_show_data->type, pidgin_log_show_data->screenname, pidgin_log_show_data->account,
-		pidgin_log_show_size_cb, pidgin_log_show_data);
+		purple_debug_info("gtklog", "pidgin_log_show_list_cb - making one more non-blocking call: purple_log_get_total_size_nonblocking\n");
+		purple_log_get_total_size_nonblocking(pidgin_log_show_data->type, pidgin_log_show_data->screenname, pidgin_log_show_data->account,
+			pidgin_log_show_size_cb, pidgin_log_show_data);
+	}
 }
 
 void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
