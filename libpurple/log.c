@@ -47,12 +47,14 @@ struct _purple_log_callback_data {
 
 	GList * ret_list;
 	int * ret_int;
+	GHashTable *ret_sets;
 	
 	/* list callback */
 	PurpleLogListCallback list_cb;
 	PurpleLogSizeCallback size_cb;
 	PurpleLogTextCallback text_cb;
 	PurpleLogVoidCallback void_cb;
+	PurpleLogHashTableCallback hash_table_cb;
 	
 	/* size callback data */
 	struct _purple_logsize_user *lu;
@@ -65,6 +67,7 @@ struct _purple_logsize_user {
 static GHashTable *logsize_users = NULL;
 
 static void log_get_log_sets_common(GHashTable *sets);
+static void log_get_log_sets_common_nonblocking(GHashTable *sets, PurpleLogVoidCallback cb, void *data);
 
 static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  const char *from, time_t time, const char *message);
@@ -107,6 +110,7 @@ static void log_size_cb(int size, void *data);
 static void log_size_list_cb(GList * list, void *data);
 static void log_read_cb(char *text, void *data);
 static void log_write_cb(int size, void *data);
+static void log_hash_cb(void *data);
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
@@ -780,6 +784,43 @@ GHashTable *purple_log_get_log_sets(void)
 	return sets;
 }
 
+void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, void *data)
+{
+	GSList *n;
+	struct _purple_log_callback_data *callback_data;
+	callback_data = g_new0(struct _purple_log_callback_data, 1);
+	callback_data->data = data;
+	callback_data->hash_table_cb = cb;
+	callback_data->ret_sets = g_hash_table_new_full(log_set_hash, log_set_equal,
+											(GDestroyNotify)purple_log_set_free, NULL);
+
+	/* if there are no any loggers we should inform UI */
+	if (loggers == NULL) {
+		callback_data->counter++;
+		log_hash_cb(callback_data);
+		return;
+	}
+
+	callback_data->counter = g_slist_length(loggers);
+
+	/* Get the log sets from all the loggers. */
+	for (n = loggers; n; n = n->next) {
+		PurpleLogLogger *logger = n->data;
+
+		if (logger->get_log_sets_nonblocking)
+			logger->get_log_sets_nonblocking(log_add_log_set_to_hash, callback_data->ret_sets, log_hash_cb, callback_data);
+		else if (logger->get_log_sets) {
+			/* As there is no non-blocking list function we can call blocking variant */
+			logger->get_log_sets(log_add_log_set_to_hash, callback_data->ret_sets);
+			log_hash_cb(callback_data);
+		} else 
+			callback_data->counter--;
+	}
+
+	callback_data->counter++;
+	log_get_log_sets_common_nonblocking(callback_data->ret_sets, log_hash_cb, callback_data);
+}
+
 void purple_log_set_free(PurpleLogSet *set)
 {
 	g_return_if_fail(set != NULL);
@@ -1382,6 +1423,12 @@ static void log_get_log_sets_common(GHashTable *sets)
 	}
 	g_free(log_path);
 	g_dir_close(log_dir);
+}
+
+static void log_get_log_sets_common_nonblocking(GHashTable *sets, PurpleLogVoidCallback cb, void *data)
+{
+	log_get_log_sets_common(sets);
+	if (cb) cb(data);
 }
 
 gboolean purple_log_common_deleter(PurpleLog *log)
@@ -2390,4 +2437,18 @@ static void log_write_cb(int size, void *data)
 	}
 	if (callback_data->void_cb)
 		callback_data->void_cb(callback_data);
+}
+
+static void log_hash_cb(void *data)
+{
+	struct _purple_log_callback_data *callback_data = data;
+	g_return_if_fail(callback_data != NULL);
+
+	callback_data->counter--;
+
+	if (!callback_data->counter) {
+		callback_data->hash_table_cb(callback_data->ret_sets, callback_data->data);
+
+		g_free(callback_data);
+	}
 }

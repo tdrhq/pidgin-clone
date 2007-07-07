@@ -61,6 +61,7 @@ typedef void (*PurpleLogTextCallback) (char *text, void *);
 typedef void (*PurpleLogBooleanCallback) (gboolean bool, void *);
 typedef void (*PurpleLogListCallback) (GList *list, void *);
 typedef void (*PurpleLogSizeCallback) (int size, void *);
+typedef void (*PurpleLogHashTableCallback) (GHashTable *table, void *);
 
 /**
  * A log logger.
@@ -167,7 +168,7 @@ struct _PurpleLogLogger {
 	 *  then call @a cb with @a sets and the newly created PurpleLogSet. 
 	 * Note: provides callback to make call non-blockable */
 	void (*get_log_sets_nonblocking)(PurpleLogSetCallback cb, GHashTable *sets, 
-		PurpleLogSizeCallback cb1, void *data);
+		PurpleLogVoidCallback cb1, void *data);
 
 	/* Attempts to delete the specified log, indicating success or failure */
 	gboolean (*remove)(PurpleLog *log);
@@ -381,6 +382,25 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
  * @return A GHashTable of all available unique PurpleLogSets
  */
 GHashTable *purple_log_get_log_sets(void);
+
+/**
+ * Returns a GHashTable of PurpleLogSets.
+ *
+ * A "log set" here means the information necessary to gather the
+ * PurpleLogs for a given buddy/chat. This information would be passed
+ * to purple_log_list to get a list of PurpleLogs.
+ *
+ * The primary use of this function is to get a list of everyone the
+ * user has ever talked to (assuming he or she uses logging).
+ *
+ * The GHashTable that's returned will free all log sets in it when
+ * destroyed. If a PurpleLogSet is removed from the GHashTable, it
+ * must be freed with purple_log_set_free().
+ *
+ * @param cb      The callback
+ * @param data    User data
+*/
+void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, void *data);
 
 /**
  * Returns a list of all available system logs
