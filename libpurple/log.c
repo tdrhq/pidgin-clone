@@ -80,6 +80,9 @@ static GList *html_logger_list_syslog(PurpleAccount *account);
 static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
 
+static void html_logger_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
+							  const char *from, time_t time, const char *message,
+							  PurpleLogSizeCallback cb, void *data);
 static void html_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
 static void html_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
@@ -102,6 +105,10 @@ static GList *txt_logger_list_syslog(PurpleAccount *account);
 static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
 
+static void txt_logger_write_nonblocking(PurpleLog *log,
+							 PurpleMessageFlags type,
+							 const char *from, time_t time, const char *message,
+							 PurpleLogSizeCallback cb, void *data);
 static void txt_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
 static void txt_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
@@ -965,7 +972,7 @@ void purple_log_init(void)
 									  purple_log_common_deleter,
 									  purple_log_common_is_deletable,
 									  NULL, /* create_nonblocking */
-									  NULL, /* write_nonblocking */
+									  html_logger_write_nonblocking,
 									  NULL, /* finaliza_nonblocking */
 									  html_logger_list_nonblocking,
 									  NULL, /* read_nonblocking */
@@ -987,7 +994,7 @@ void purple_log_init(void)
 									 purple_log_common_deleter,
 									 purple_log_common_is_deletable,
 									 NULL, /* create_nonblocking */
-									 NULL, /* write_nonblocking */
+									 txt_logger_write_nonblocking,
 									 NULL, /* finaliza_nonblocking */
 									 txt_logger_list_nonblocking,
 									 NULL, /* read_nonblocking */
@@ -1788,6 +1795,15 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 	return written;
 }
 
+static void html_logger_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
+							  const char *from, time_t time, const char *message,
+							  PurpleLogSizeCallback cb, void *data)
+{
+	gsize size = html_logger_write(log, type, from, time, message);
+	if (cb != NULL)
+		cb(size, data);
+}
+
 static void html_logger_finalize(PurpleLog *log)
 {
 	PurpleLogCommonLoggerData *data = log->logger_data;
@@ -1938,6 +1954,16 @@ static gsize txt_logger_write(PurpleLog *log,
 	fflush(data->file);
 
 	return written;
+}
+
+static void txt_logger_write_nonblocking(PurpleLog *log,
+							 PurpleMessageFlags type,
+							 const char *from, time_t time, const char *message,
+							 PurpleLogSizeCallback cb, void *data)
+{
+	gsize size = txt_logger_write(log, type, from, time, message);
+	if (cb != NULL)
+		cb(size, data);
 }
 
 static void txt_logger_finalize(PurpleLog *log)
