@@ -79,8 +79,10 @@ static GList *html_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 static GList *html_logger_list_syslog(PurpleAccount *account);
 static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
+
 static void html_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
+static void html_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
 static void html_logger_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account,
 									PurpleLogSizeCallback cb, void *data);
 
@@ -90,10 +92,6 @@ static char * old_logger_read (PurpleLog *log, PurpleLogReadFlags *flags);
 static int old_logger_size (PurpleLog *log);
 static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets);
 static void old_logger_finalize(PurpleLog *log);
-/*
-static gboolean old_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
-								PurpleLogListCallback cb, void *data);
-*/
 
 static gsize txt_logger_write(PurpleLog *log,
 							 PurpleMessageFlags type,
@@ -103,8 +101,10 @@ static GList *txt_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 static GList *txt_logger_list_syslog(PurpleAccount *account);
 static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
+
 static void txt_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
+static void txt_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
 static void txt_logger_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account,
 								PurpleLogSizeCallback cb, void *data);
 
@@ -952,7 +952,7 @@ void purple_log_init(void)
 
 	purple_prefs_add_string("/purple/logging/format", "txt");
 
-	html_logger = purple_log_logger_new("html", _("HTML"), 18,
+	html_logger = purple_log_logger_new("html", _("HTML"), 19,
 									  NULL,
 									  html_logger_write,
 									  html_logger_finalize,
@@ -970,10 +970,11 @@ void purple_log_init(void)
 									  html_logger_list_nonblocking,
 									  NULL, /* read_nonblocking */
 									  purple_log_common_sizer_nonblocking,
-									  html_logger_total_size_nonblocking);
+									  html_logger_total_size_nonblocking,
+									  html_logger_list_syslog_nonblocking);
 	purple_log_logger_add(html_logger);
 
-	txt_logger = purple_log_logger_new("txt", _("Plain text"), 14,
+	txt_logger = purple_log_logger_new("txt", _("Plain text"), 19,
 									 NULL,
 									 txt_logger_write,
 									 txt_logger_finalize,
@@ -991,7 +992,8 @@ void purple_log_init(void)
 									 txt_logger_list_nonblocking,
 									 NULL, /* read_nonblocking */
 									 purple_log_common_sizer_nonblocking,
-									 txt_logger_total_size_nonblocking);
+									 txt_logger_total_size_nonblocking,
+									 txt_logger_list_syslog_nonblocking);
 	purple_log_logger_add(txt_logger);
 
 	old_logger = purple_log_logger_new("old", _("Old flat format"), 9,
@@ -1815,6 +1817,11 @@ static GList *html_logger_list_syslog(PurpleAccount *account)
 	return purple_log_common_lister(PURPLE_LOG_SYSTEM, ".system", account, ".html", html_logger);
 }
 
+static void html_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void * data)
+{
+	purple_log_common_lister_nonblocking(PURPLE_LOG_SYSTEM, ".system", account, ".html", html_logger, cb, data);
+}
+
 static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	char *read;
@@ -1958,6 +1965,11 @@ static void txt_logger_list_nonblocking(PurpleLogType type, const char *sn, Purp
 static GList *txt_logger_list_syslog(PurpleAccount *account)
 {
 	return purple_log_common_lister(PURPLE_LOG_SYSTEM, ".system", account, ".txt", txt_logger);
+}
+
+static void txt_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data)
+{
+	purple_log_common_lister_nonblocking(PURPLE_LOG_SYSTEM, ".system", account, ".txt", txt_logger, cb, data);
 }
 
 static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
