@@ -441,8 +441,7 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 				GList *logs = (logger->list)(type, name, account);
 				log_size_list_cb(logs, callback_data);
 			} else 
-				/* we should decrease counter if we there are no any calls */
-				callback_data->counter--;
+				log_size_cb(0, callback_data);
 		}
 	}
 }
@@ -757,8 +756,7 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
 			/* As there is no nonblocking list function we should call blocking analog */
 			log_list_cb(logger->list(type, name, account), callback_data);
 		} else
-			/* we should decrease counter if we there are no any calls */
-			callback_data->counter--;
+			log_list_cb(NULL, callback_data);
 	}
 }
 
@@ -866,13 +864,13 @@ void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, void *da
 
 		if (logger->get_log_sets_nonblocking)
 			logger->get_log_sets_nonblocking(log_add_log_set_to_hash, callback_data->ret_sets, log_hash_cb, callback_data);
-		else if (logger->get_log_sets) {
-			/* As there is no nonblocking  function we can call blocking analog*/
-			logger->get_log_sets(log_add_log_set_to_hash, callback_data->ret_sets);
+		else {
+			if (logger->get_log_sets)
+				/* As there is no nonblocking  function we can call blocking analog*/
+				logger->get_log_sets(log_add_log_set_to_hash, callback_data->ret_sets);
+
 			log_hash_cb(callback_data);
-		} else 
-			/* we should decrease counter if we there are no any calls */
-			callback_data->counter--;
+		} 
 	}
 
 	callback_data->counter++;
@@ -936,7 +934,7 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogLis
 			log_list_cb(logger->list_syslog(account), callback_data);
 		} else
 			/* we should decrease counter if we there are no any calls */
-			callback_data->counter--;
+			log_list_cb(NULL, callback_data);
 	}
 }
 
@@ -2496,7 +2494,7 @@ static void log_list_cb(GList *list, void *data)
 	g_return_if_fail(callback_data != NULL);
 
 	callback_data->counter--;
-	//purple_debug_info("log", "log_list_cb - callback_data->counter = %i\n", callback_data->counter);
+	purple_debug_info("log", "log_list_cb - callback_data->counter = %i\n", callback_data->counter);
 
 	if (list != NULL) 
 		callback_data->list_cb(list, callback_data->data);
