@@ -56,8 +56,9 @@ typedef enum {
 typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
 
 /* Log callback functions */
-typedef void (*PurpleLogWriteCallback) (void *);
-typedef void (*PurpleLogReadCallback) (char *text, void *);
+typedef void (*PurpleLogVoidCallback) (void *);
+typedef void (*PurpleLogTextCallback) (char *text, void *);
+typedef void (*PurpleLogBooleanCallback) (gboolean bool, void *);
 typedef void (*PurpleLogListCallback) (GList *list, void *);
 typedef void (*PurpleLogSizeCallback) (int size, void *);
 
@@ -75,6 +76,11 @@ struct _PurpleLogLogger {
 	    I don't think this is actually needed. */
 	void (*create)(PurpleLog *log);
 
+	/** This gets called when the log is first created.
+	    I don't think this is actually needed.
+	    Note: provides callback to make call non-blockable */
+	void (*create_nonblocking)(PurpleLog *log, PurpleLogVoidCallback cb, void *data);
+
 	/** This is used to write to the log file */
 	gsize (*write)(PurpleLog *log,
 		     PurpleMessageFlags type,
@@ -82,8 +88,20 @@ struct _PurpleLogLogger {
 		     time_t time,
 		     const char *message);
 
+	/** This is used to write to the log
+	    Note: provides callback to make call non-blockable */
+	void (*write_nonblocking)(PurpleLog *log,
+		     PurpleMessageFlags type,
+		     const char *from,
+		     time_t time,
+		     const char *message, PurpleLogSizeCallback cb, void *data);
+ 
 	/** Called when the log is destroyed */
 	void (*finalize)(PurpleLog *log);
+
+	/** Called when the log is destroyed 
+	    Note: provides callback to make call non-blockable */
+	void (*finalize_nonblocking)(PurpleLog *log, PurpleLogVoidCallback cb, void *data);
 
 	/** This function returns a sorted GList of available PurpleLogs */
 	GList *(*list)(PurpleLogType type, const char *name, PurpleAccount *account);
@@ -97,11 +115,16 @@ struct _PurpleLogLogger {
 	char *(*read)(PurpleLog *log, PurpleLogReadFlags *flags);
 
 	/** Given one of the logs returned by the logger's list function,
+	 *  this returns the contents of the log in GtkIMHtml markup 
+	 * Note: provides callback to make call non-blockable */
+	void (*read_nonblocking)(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogTextCallback cb, void *data);
+
+	/** Given one of the logs returned by the logger's list function,
 	 *  this returns the size of the log in bytes */
 	int (*size)(PurpleLog *log);
 
 	/** Given one of the logs returned by the logger's list function,
-	 *  this returns the size of the log in bytes 
+	*  this returns the size of the log in bytes 
 	* Note: provides callback to make call non-blockable */
 	void (*size_nonblocking)(PurpleLog *log, PurpleLogSizeCallback cb, void *data);
 
@@ -119,7 +142,7 @@ struct _PurpleLogLogger {
 	GList *(*list_syslog)(PurpleAccount *account);
 
 	/** This function returns a sorted GList of available system PurpleLogs 
-	* Note: provides callback to make call non-blockable */
+	   * Note: provides callback to make call non-blockable */
 	void (*list_syslog_nonblocking)(PurpleAccount *account, PurpleLogListCallback cb, void *data);
 
 	/** Adds PurpleLogSets to a GHashTable. By passing the data in the PurpleLogSets
@@ -132,11 +155,31 @@ struct _PurpleLogLogger {
 	 *  then call @a cb with @a sets and the newly created PurpleLogSet. */
 	void (*get_log_sets)(PurpleLogSetCallback cb, GHashTable *sets);
 
+	/** Adds PurpleLogSets to a GHashTable. By passing the data in the PurpleLogSets
+	 *  to list, the caller can get every available PurpleLog from the logger.
+	 *  Loggers using purple_log_common_writer() (or otherwise storing their
+	 *  logs in the same directory structure as the stock loggers) do not
+	 *  need to implement this function.
+	 *
+	 *  Loggers which implement this function must create a PurpleLogSet,
+	 *  then call @a cb with @a sets and the newly created PurpleLogSet. 
+	 * Note: provides callback to make call non-blockable */
+	void (*get_log_sets_nonblocking)(PurpleLogSetCallback cb, GHashTable *sets, 
+		PurpleLogSizeCallback cb1, void *data);
+
 	/* Attempts to delete the specified log, indicating success or failure */
 	gboolean (*remove)(PurpleLog *log);
 
+	/* Attempts to delete the specified log, indicating success or failure 
+	 * Note: provides callback to make call non-blockable */
+	void (*remove_nonblocking)(PurpleLog *log, PurpleLogBooleanCallback cb, void *data);
+
 	/* Tests whether a log is deletable */
 	gboolean (*is_deletable)(PurpleLog *log);
+
+	/* Tests whether a log is deletable 
+	 * Note: provides callback to make call non-blockable */
+	void (*is_deletable_nonblocking)(PurpleLog *log, PurpleLogBooleanCallback cb, void *data);
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);

@@ -194,6 +194,7 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 		total = GPOINTER_TO_INT(ptrsize);
 		total += written;
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(total));
+		purple_debug_info("log", "HASH(purple_log_write): total size %i\n", total);
 	} else {
 		g_free(lu->name);
 		g_free(lu);
@@ -270,6 +271,7 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
 
 	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
 		size = GPOINTER_TO_INT(ptrsize);
+		purple_debug_info("log", "HASH(purple_log_get_total_size): using size from hash %i {name = \"%s\"\n}", size, name);
 		g_free(lu->name);
 		g_free(lu);
 	} else {
@@ -293,6 +295,7 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
 			}
 		}
 
+		purple_debug_info("log", "HASH(purple_log_get_total_size): write size to hash %i {name = \"%s\"\n}", size, name);
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(size));
 	}
 	return size;
@@ -312,6 +315,8 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 
 	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
 		size = GPOINTER_TO_INT(ptrsize);
+		purple_debug_info("log", "HASH(purple_log_get_total_size_nonblocking): using size from hash %i\n", size);
+
 		g_free(lu->name);
 		g_free(lu);
 		cb(size, data);
@@ -496,15 +501,29 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 
 	/* callbacks functions */
 	if (functions >= 12)
-		logger->list_nonblocking = va_arg(args, void *);
+		logger->create_nonblocking = va_arg(args, void *);
 	if (functions >= 13)
-		logger->size_nonblocking = va_arg(args, void *);
+		logger->write_nonblocking = va_arg(args, void *);
 	if (functions >= 14)
-		logger->total_size_nonblocking = va_arg(args, void *);
+		logger->finalize_nonblocking = va_arg(args, void *);
 	if (functions >= 15)
-		logger->list_syslog_nonblocking = va_arg(args, void *);
-
+		logger->list_nonblocking = va_arg(args, void *);
 	if (functions >= 16)
+		logger->read_nonblocking = va_arg(args, void *);
+	if (functions >= 17)
+		logger->size_nonblocking = va_arg(args, void *);
+	if (functions >= 18)
+		logger->total_size_nonblocking = va_arg(args, void *);
+	if (functions >= 19)
+		logger->list_syslog_nonblocking = va_arg(args, void *);
+	if (functions >= 20)
+		logger->get_log_sets_nonblocking = va_arg(args, void *);
+	if (functions >= 21)
+		logger->remove_nonblocking = va_arg(args, void *);
+	if (functions >= 22)
+		logger->is_deletable_nonblocking = va_arg(args, void *);
+
+	if (functions >= 23)
 		purple_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
 
 	va_end(args);
@@ -775,7 +794,7 @@ void purple_log_init(void)
 
 	purple_prefs_add_string("/purple/logging/format", "txt");
 
-	html_logger = purple_log_logger_new("html", _("HTML"), 14,
+	html_logger = purple_log_logger_new("html", _("HTML"), 18,
 									  NULL,
 									  html_logger_write,
 									  html_logger_finalize,
@@ -787,7 +806,11 @@ void purple_log_init(void)
 									  NULL,
 									  purple_log_common_deleter,
 									  purple_log_common_is_deletable,
+									  NULL, /* create_nonblocking */
+									  NULL, /* write_nonblocking */
+									  NULL, /* finaliza_nonblocking */
 									  html_logger_list_nonblocking,
+									  NULL, /* read_nonblocking */
 									  purple_log_common_sizer_nonblocking,
 									  html_logger_total_size_nonblocking);
 	purple_log_logger_add(html_logger);
@@ -801,10 +824,14 @@ void purple_log_init(void)
 									 purple_log_common_sizer,
 									 txt_logger_total_size,
 									 txt_logger_list_syslog,
-									 NULL,
+									 NULL, 
 									 purple_log_common_deleter,
 									 purple_log_common_is_deletable,
+									 NULL, /* create_nonblocking */
+									 NULL, /* write_nonblocking */
+									 NULL, /* finaliza_nonblocking */
 									 txt_logger_list_nonblocking,
+									 NULL, /* read_nonblocking */
 									 purple_log_common_sizer_nonblocking,
 									 txt_logger_total_size_nonblocking);
 	purple_log_logger_add(txt_logger);
@@ -2211,10 +2238,11 @@ static void log_size_cb(int size, void *data)
 	callback_data->ret_int += size;
 
 	callback_data->counter--;
-	purple_debug_info("log", "log_size_cb - callback_data->counter = %i\n", callback_data->counter);
+	//purple_debug_info("log", "log_size_cb - callback_data->counter = %i\n", callback_data->counter);
 
 	if (!callback_data->counter) {
 		callback_data->size_nonblocking((int)callback_data->ret_int, callback_data->data);
+		purple_debug_info("log", "HASH(log_size_cb): write size to hash %i\n", callback_data->ret_int);
 		g_hash_table_replace(logsize_users, callback_data->lu, GINT_TO_POINTER(callback_data->ret_int));
 
 		purple_debug_info("log", "log_size_cb - free memory\n");
@@ -2228,7 +2256,7 @@ static void log_size_list_cb(GList *list, void *data)
 
 	g_return_if_fail(callback_data != NULL);
 
-	purple_debug_info("log", "log_size_list_cb - callback_data->counter = %i, list size = %i\n", callback_data->counter, g_list_length(list));
+	//purple_debug_info("log", "log_size_list_cb - callback_data->counter = %i, list size = %i\n", callback_data->counter, g_list_length(list));
 	callback_data->counter += g_list_length(list);
 
 	while (list) {
@@ -2250,7 +2278,7 @@ static void log_list_cb(GList *list, void *data)
 	g_return_if_fail(callback_data != NULL);
 
 	callback_data->counter--;
-	purple_debug_info("log", "log_list_cb - callback_data->counter = %i\n", callback_data->counter);
+	//purple_debug_info("log", "log_list_cb - callback_data->counter = %i\n", callback_data->counter);
 
 	if (list != NULL) 
 		callback_data->list_nonblocking(list, callback_data->data);
