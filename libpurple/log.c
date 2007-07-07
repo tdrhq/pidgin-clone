@@ -51,6 +51,7 @@ struct _purple_log_callback_data {
 	/* list callback */
 	PurpleLogListCallback list_nonblocking;
 	PurpleLogSizeCallback size_nonblocking;
+	PurpleLogTextCallback text_nonblocking;
 	
 	/* size callback data */
 	struct _purple_logsize_user *lu;
@@ -103,6 +104,7 @@ static void txt_logger_total_size_nonblocking(PurpleLogType type, const char *na
 static void log_list_cb(GList * list, void *data);
 static void log_size_cb(int size, void *data);
 static void log_size_list_cb(GList * list, void *data);
+static void log_read_cb(char *text, void *data);
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
@@ -214,6 +216,30 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 		return ret;
 	}
 	return g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>"));
+}
+
+
+void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogTextCallback cb, void *data)
+{
+	PurpleLogReadFlags mflags;
+	struct _purple_log_callback_data *callback_data;
+
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+
+	callback_data = g_new0(struct _purple_log_callback_data, 1);
+
+	callback_data->text_nonblocking = cb;
+	callback_data->data = data;
+
+	if (log->logger->read_nonblocking) 
+		log->logger->read_nonblocking(log, flags ? flags : &mflags, log_read_cb, callback_data);
+	else if (log->logger->read)
+		/* if logger doesn't provide non-blocking size function, 
+		    that's mean that we can call blocking variant */
+		log_read_cb((log->logger->read)(log, flags ? flags : &mflags), callback_data);
+	else /* there is no any size functions */
+		log_read_cb(g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>")), callback_data);
 }
 
 int purple_log_get_size(PurpleLog *log)
@@ -2290,4 +2316,15 @@ static void log_list_cb(GList *list, void *data)
 		purple_debug_info("log", "log_list_cb - free memory\n");
 		g_free(callback_data);
 	}
+}
+
+static void log_read_cb(char *text, void *data)
+{
+	struct _purple_log_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	purple_str_strip_char(text, '\r');
+	callback_data->text_nonblocking(text, callback_data->data);
+	g_free(callback_data);
 }

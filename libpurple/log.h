@@ -309,6 +309,17 @@ void purple_log_write(PurpleLog *log,
 char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags);
 
 /**
+ * Reads from a log
+ *
+ * @param log   The log to read from
+ * @param flags The returned logging flags.
+ * @param cb    The callback
+ * @param data  User data
+ */
+void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, 
+								PurpleLogTextCallback cb, void *data);
+
+/**
  * Returns a list of all available logs
  *
  * @param type                The type of the log
@@ -328,7 +339,8 @@ GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *
  * @param cb                  The callback
  * @param data                User data
  */
-void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void *data);
+void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, 
+									PurpleLogListCallback cb, void *data);
 
 /**
  * Returns a GHashTable of PurpleLogSets.
