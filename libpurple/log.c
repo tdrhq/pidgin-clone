@@ -83,6 +83,8 @@ static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAc
 static void html_logger_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
 							  const char *from, time_t time, const char *message,
 							  PurpleLogSizeCallback cb, void *data);
+static void html_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
+							PurpleLogTextCallback cb, void *data);
 static void html_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
 static void html_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
@@ -109,6 +111,8 @@ static void txt_logger_write_nonblocking(PurpleLog *log,
 							 PurpleMessageFlags type,
 							 const char *from, time_t time, const char *message,
 							 PurpleLogSizeCallback cb, void *data);
+static void txt_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
+							PurpleLogTextCallback cb, void *data);
 static void txt_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
 static void txt_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
@@ -973,9 +977,9 @@ void purple_log_init(void)
 									  purple_log_common_is_deletable,
 									  NULL, /* create_nonblocking */
 									  html_logger_write_nonblocking,
-									  NULL, /* finaliza_nonblocking */
+									  NULL, /* finalize_nonblocking */
 									  html_logger_list_nonblocking,
-									  NULL, /* read_nonblocking */
+									  html_logger_read_nonblocking,
 									  purple_log_common_sizer_nonblocking,
 									  html_logger_total_size_nonblocking,
 									  html_logger_list_syslog_nonblocking);
@@ -995,9 +999,9 @@ void purple_log_init(void)
 									 purple_log_common_is_deletable,
 									 NULL, /* create_nonblocking */
 									 txt_logger_write_nonblocking,
-									 NULL, /* finaliza_nonblocking */
+									 NULL, /* finalize_nonblocking */
 									 txt_logger_list_nonblocking,
-									 NULL, /* read_nonblocking */
+									 txt_logger_read_nonblocking,
 									 purple_log_common_sizer_nonblocking,
 									 txt_logger_total_size_nonblocking,
 									 txt_logger_list_syslog_nonblocking);
@@ -1859,6 +1863,12 @@ static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
+static void html_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
+							PurpleLogTextCallback cb, void *data)
+{
+	cb(html_logger_read(log, flags), data);
+}
+
 static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
 {
 	return purple_log_common_total_sizer(type, name, account, ".html");
@@ -2014,6 +2024,12 @@ static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 			return process_txt_log(read, NULL);
 	}
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
+}
+
+static void txt_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
+							PurpleLogTextCallback cb, void *data)
+{
+	cb(txt_logger_read(log, flags), data);
 }
 
 static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
