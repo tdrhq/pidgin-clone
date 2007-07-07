@@ -49,7 +49,7 @@ struct log_viewer_hash_t {
 	PurpleContact *contact;
 };
 
-struct _pidgin_log_show_data {
+struct _pidgin_log_data {
 	PidginLogViewer *log_viewer;
 	
 	PurpleLogVoidCallback done_cb;
@@ -660,7 +660,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 }
 
 static PidginLogViewer *display_log_viewer_nonblocking(struct log_viewer_hash_t *ht, 
-						const char *title, GtkWidget *icon)
+						const char *title, GtkWidget *icon, gboolean need_log_size)
 {
 	PidginLogViewer *lv;
 	GtkWidget *title_box;
@@ -748,13 +748,15 @@ static PidginLogViewer *display_log_viewer_nonblocking(struct log_viewer_hash_t 
 	g_signal_connect(lv->treeview, "popup-menu", G_CALLBACK(log_popup_menu_cb), lv);
 
 	/* Log size ************/
-	text = g_strdup_printf("<span weight='bold'>%s</span> %s", _("Total log size:"), _("calculating..."));
-	lv->size_label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(lv->size_label), text);
-	/*		gtk_paned_add1(GTK_PANED(pane), size_label); */
-	gtk_misc_set_alignment(GTK_MISC(lv->size_label), 0, 0);
-	gtk_box_pack_end(GTK_BOX(GTK_DIALOG(lv->window)->vbox), lv->size_label, FALSE, FALSE, 0);
-	g_free(text);
+	if (need_log_size) {
+		text = g_strdup_printf("<span weight='bold'>%s</span> %s", _("Total log size:"), _("calculating..."));
+		lv->size_label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(lv->size_label), text);
+		/*		gtk_paned_add1(GTK_PANED(pane), size_label); */
+		gtk_misc_set_alignment(GTK_MISC(lv->size_label), 0, 0);
+		gtk_box_pack_end(GTK_BOX(GTK_DIALOG(lv->window)->vbox), lv->size_label, FALSE, FALSE, 0);
+		g_free(text);
+	}
 
 	/* A fancy little box ************/
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -779,9 +781,9 @@ static PidginLogViewer *display_log_viewer_nonblocking(struct log_viewer_hash_t 
 
 	/* Progress bar **********/
 	lv->progress_bar = gtk_progress_bar_new();
-	gtk_progress_bar_set_text(lv->progress_bar, "Waiting for logs ...");
-	gtk_misc_set_alignment(GTK_MISC(lv->progress_bar), 0.5, 0.5);
-	gtk_box_pack_start(GTK_BOX(vbox), lv->progress_bar, FALSE, FALSE, 0);
+	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(lv->progress_bar), "Waiting for logs ...");
+	//gtk_misc_set_alignment(GTK_MISC(lv->progress_bar), 0.5, 0.5);
+	gtk_box_pack_start(GTK_BOX(vbox), (GtkWidget *)lv->progress_bar, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(lv->window);
 	return lv;
@@ -799,7 +801,7 @@ static void set_log_viewer_log_size(PidginLogViewer *log_viewer, int log_size)
 static void append_log_viewer_logs(PidginLogViewer *log_viewer, GList *logs) 
 {
 	/* update progress bar */
-	gtk_progress_bar_pulse(log_viewer->progress_bar);
+	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(log_viewer->progress_bar));
 
 	log_viewer->logs = g_list_concat(logs, log_viewer->logs);
 	log_viewer->logs = g_list_sort(log_viewer->logs, purple_log_compare);
@@ -808,41 +810,41 @@ static void append_log_viewer_logs(PidginLogViewer *log_viewer, GList *logs)
 	
 }
 
-static void pidgin_log_show_done(void *data) 
+static void pidgin_log_done(void *data) 
 {
-	struct _pidgin_log_show_data *pidgin_log_show_data = data;
+	struct _pidgin_log_data *pidgin_log_data = data;
 	
-	gtk_widget_hide(pidgin_log_show_data->log_viewer->progress_bar);
+	gtk_widget_hide(pidgin_log_data->log_viewer->progress_bar);
 	
-	g_free(pidgin_log_show_data);
+	g_free(pidgin_log_data);
 }
 
-static void pidgin_log_show_size_cb(int size, void *data)
+static void pidgin_log_size_cb(int size, void *data)
 {
-	struct _pidgin_log_show_data * pidgin_log_show_data = data;
+	struct _pidgin_log_data * pidgin_log_data = data;
 
-	set_log_viewer_log_size(pidgin_log_show_data->log_viewer, size);
-	purple_debug_info("gtklog", "pidgin_log_show_size_cb - free memory\n");
-	pidgin_log_show_data->counter++;
+	set_log_viewer_log_size(pidgin_log_data->log_viewer, size);
+	purple_debug_info("gtklog", "pidgin_log_size_cb - free memory\n");
+	pidgin_log_data->counter++;
 
-	if (pidgin_log_show_data->counter == pidgin_log_show_data->done_count) {
-		pidgin_log_show_data->done_cb(pidgin_log_show_data);
+	if (pidgin_log_data->counter == pidgin_log_data->done_count) {
+		pidgin_log_data->done_cb(pidgin_log_data);
 	}
 }
 
-static void pidgin_log_show_list_cb(GList *list, void *data)
+static void pidgin_log_list_cb(GList *list, void *data)
 {
-	struct _pidgin_log_show_data *pidgin_log_show_data = data;
-	purple_debug_info("gtklog", "pidgin_log_show_list_cb - enter\n");
+	struct _pidgin_log_data *pidgin_log_data = data;
+	purple_debug_info("gtklog", "pidgin_log_list_cb - enter\n");
 
 	if (list != NULL) 
-		append_log_viewer_logs(pidgin_log_show_data->log_viewer, list);
+		append_log_viewer_logs(pidgin_log_data->log_viewer, list);
 	else {
-		pidgin_log_show_data->counter++;
+		pidgin_log_data->counter++;
 	}
 
-	if (pidgin_log_show_data->counter == pidgin_log_show_data->done_count) {
-		pidgin_log_show_data->done_cb(pidgin_log_show_data);
+	if (pidgin_log_data->counter == pidgin_log_data->done_count) {
+		pidgin_log_data->done_cb(pidgin_log_data);
 	}
 }
 
@@ -851,7 +853,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	PidginLogViewer *lv = NULL;
 	const char *name = screenname;
 	char *title;
-	struct _pidgin_log_show_data *pidgin_log_show_data;
+	struct _pidgin_log_data *pidgin_log_data;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(screenname != NULL);
@@ -891,15 +893,15 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 
 	purple_debug_info("gtklog", "pidgin_log_show - creating pidgin_log_show_data structure\n");
 
-	pidgin_log_show_data = g_new0(struct _pidgin_log_show_data, 1);
-	pidgin_log_show_data->done_cb = pidgin_log_show_done;
-	pidgin_log_show_data->done_count = 2;
-	pidgin_log_show_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
-		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)));
+	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
+	pidgin_log_data->done_cb = pidgin_log_done;
+	pidgin_log_data->done_count = 2;
+	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
+		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
 
-	purple_log_get_logs_nonblocking(type, screenname, account, pidgin_log_show_list_cb, pidgin_log_show_data);
+	purple_log_get_logs_nonblocking(type, screenname, account, pidgin_log_list_cb, pidgin_log_data);
 	purple_log_get_total_size_nonblocking(type, screenname, account, 
-										pidgin_log_show_size_cb, pidgin_log_show_data);
+										pidgin_log_size_cb, pidgin_log_data);
 }
 
 void pidgin_log_show_contact(PurpleContact *contact) {
@@ -963,24 +965,31 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 void pidgin_syslog_show()
 {
 	GList *accounts = NULL;
-	GList *logs = NULL;
+	struct _pidgin_log_data *pidgin_log_data;
 
 	if (syslog_viewer != NULL) {
 		gtk_window_present(GTK_WINDOW(syslog_viewer->window));
 		return;
 	}
 
-	for(accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
+	pidgin_log_data->done_cb = pidgin_log_done;
+	syslog_viewer = pidgin_log_data->log_viewer = display_log_viewer_nonblocking(NULL, 
+														_("System Log"), NULL, FALSE);
+
+	accounts = purple_accounts_get_all();
+	pidgin_log_data->done_count = g_list_length(accounts);
+	
+	for(; accounts != NULL; accounts = accounts->next) {
 
 		PurpleAccount *account = (PurpleAccount *)accounts->data;
-		if(purple_find_prpl(purple_account_get_protocol_id(account)) == NULL)
-			continue;
+		if(purple_find_prpl(purple_account_get_protocol_id(account)) != NULL) {
+			purple_debug_info("gtklog", "making call: purple_log_get_system_logs_nonblocking\n");
 
-		logs = g_list_concat(purple_log_get_system_logs(account), logs);
+			purple_log_get_system_logs_nonblocking(account, pidgin_log_list_cb, pidgin_log_data);
+		} else 
+			pidgin_log_list_cb(NULL, pidgin_log_data);
 	}
-	logs = g_list_sort(logs, purple_log_compare);
-
-	syslog_viewer = display_log_viewer(NULL, logs, _("System Log"), NULL, 0);
 }
 
 /****************************************************************************
