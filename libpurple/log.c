@@ -2437,6 +2437,7 @@ static void log_write_cb(int size, void *data)
 	}
 	if (callback_data->void_cb)
 		callback_data->void_cb(callback_data);
+	g_free(callback_data);
 }
 
 static void log_hash_cb(void *data)
