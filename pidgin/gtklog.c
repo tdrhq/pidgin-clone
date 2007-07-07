@@ -50,12 +50,11 @@ struct log_viewer_hash_t {
 };
 
 struct _pidgin_log_show_data {
-	char *title;
-	GList *list;
-	PurpleLogType type;
-	char *screenname;
-	PurpleAccount *account;
-	struct log_viewer_hash_t *ht;
+	PidginLogViewer *log_viewer;
+	
+	PurpleLogVoidCallback done_cb;
+	int counter;
+	int done_count;
 };
 
 static guint log_viewer_hash(gconstpointer data)
@@ -480,6 +479,8 @@ static void populate_log_tree(PidginLogViewer *lv)
 	GtkTreeIter toplevel, child;
 	GList *logs = lv->logs;
 
+	gtk_tree_store_clear(lv->treestore);
+
 	while (logs != NULL) {
 		PurpleLog *log = logs->data;
 
@@ -658,37 +659,180 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	return lv;
 }
 
+static PidginLogViewer *display_log_viewer_nonblocking(struct log_viewer_hash_t *ht, 
+						const char *title, GtkWidget *icon)
+{
+	PidginLogViewer *lv;
+	GtkWidget *title_box;
+	char *text;
+	GtkWidget *pane;
+	GtkWidget *sw;
+	GtkCellRenderer *rend;
+	GtkTreeViewColumn *col;
+	GtkTreeSelection *sel;
+	GtkWidget *vbox;
+	GtkWidget *frame;
+	GtkWidget *hbox;
+	GtkWidget *find_button;
+
+	lv = g_new0(PidginLogViewer, 1);
+	lv->logs = NULL;
+
+	if (ht != NULL)
+		g_hash_table_insert(log_viewers, ht, lv);
+
+	/* Window ***********/
+	lv->window = gtk_dialog_new_with_buttons(title, NULL, 0,
+					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+#ifdef _WIN32
+	/* Steal the "HELP" response and use it to trigger browsing to the logs folder */
+	gtk_dialog_add_button(GTK_DIALOG(lv->window), _("_Browse logs folder"), GTK_RESPONSE_HELP);
+#endif
+	gtk_container_set_border_width (GTK_CONTAINER(lv->window), PIDGIN_HIG_BOX_SPACE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(lv->window), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
+	g_signal_connect(G_OBJECT(lv->window), "response",
+					 G_CALLBACK(destroy_cb), ht);
+	gtk_window_set_role(GTK_WINDOW(lv->window), "log_viewer");
+
+	/* Icon *************/
+	if (icon != NULL) {
+		title_box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_set_border_width(GTK_CONTAINER(title_box), PIDGIN_HIG_BOX_SPACE);
+		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), title_box, FALSE, FALSE, 0);
+
+		gtk_box_pack_start(GTK_BOX(title_box), icon, FALSE, FALSE, 0);
+	} else
+		title_box = GTK_DIALOG(lv->window)->vbox;
+
+	/* Label ************/
+	lv->label = gtk_label_new(NULL);
+
+	text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>", title);
+
+	gtk_label_set_markup(GTK_LABEL(lv->label), text);
+	gtk_misc_set_alignment(GTK_MISC(lv->label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(title_box), lv->label, FALSE, FALSE, 0);
+	g_free(text);
+
+	/* Pane *************/
+	pane = gtk_hpaned_new();
+	gtk_container_set_border_width(GTK_CONTAINER(pane), PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), pane, TRUE, TRUE, 0);
+
+	/* List *************/
+	sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	gtk_paned_add1(GTK_PANED(pane), sw);
+	lv->treestore = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
+	lv->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (lv->treestore));
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes ("time", rend, "markup", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);
+	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (lv->treeview), FALSE);
+	gtk_container_add (GTK_CONTAINER (sw), lv->treeview);
+
+	populate_log_tree(lv);
+
+	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (lv->treeview));
+	g_signal_connect (G_OBJECT (sel), "changed",
+			G_CALLBACK (log_select_cb),
+			lv);
+	g_signal_connect (G_OBJECT(lv->treeview), "row-activated",
+			G_CALLBACK(log_row_activated_cb),
+			lv);
+	pidgin_set_accessible_label(lv->treeview, lv->label);
+
+	g_signal_connect(lv->treeview, "button-press-event", G_CALLBACK(log_button_press_cb), lv);
+	g_signal_connect(lv->treeview, "popup-menu", G_CALLBACK(log_popup_menu_cb), lv);
+
+	/* Log size ************/
+	text = g_strdup_printf("<span weight='bold'>%s</span> %s", _("Total log size:"), _("calculating..."));
+	lv->size_label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(lv->size_label), text);
+	/*		gtk_paned_add1(GTK_PANED(pane), size_label); */
+	gtk_misc_set_alignment(GTK_MISC(lv->size_label), 0, 0);
+	gtk_box_pack_end(GTK_BOX(GTK_DIALOG(lv->window)->vbox), lv->size_label, FALSE, FALSE, 0);
+	g_free(text);
+
+	/* A fancy little box ************/
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_paned_add2(GTK_PANED(pane), vbox);
+
+	/* Viewer ************/
+	frame = pidgin_create_imhtml(FALSE, &lv->imhtml, NULL, NULL);
+	gtk_widget_set_name(lv->imhtml, "pidgin_log_imhtml");
+	gtk_widget_set_size_request(lv->imhtml, 320, 200);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
+
+	/* Search box **********/
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	lv->entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), lv->entry, TRUE, TRUE, 0);
+	find_button = gtk_button_new_from_stock(GTK_STOCK_FIND);
+	gtk_box_pack_start(GTK_BOX(hbox), find_button, FALSE, FALSE, 0);
+	g_signal_connect(GTK_ENTRY(lv->entry), "activate", G_CALLBACK(search_cb), lv);
+	g_signal_connect(GTK_BUTTON(find_button), "clicked", G_CALLBACK(search_cb), lv);
+
+	gtk_widget_show_all(lv->window);
+
+	return lv;
+}
+
+static void set_log_viewer_log_size(PidginLogViewer *log_viewer, int log_size) 
+{
+	char *sz_txt = purple_str_size_to_units(log_size);
+	char *text = g_strdup_printf("<span weight='bold'>%s</span> %s", _("Total log size:"), sz_txt);
+	gtk_label_set_markup(GTK_LABEL(log_viewer->size_label), text);
+	g_free(sz_txt);
+	g_free(text);
+}
+
+static void append_log_viewer_logs(PidginLogViewer *log_viewer, GList *logs) 
+{
+	log_viewer->logs = g_list_concat(logs, log_viewer->logs);
+	log_viewer->logs = g_list_sort(log_viewer->logs, purple_log_compare);
+	populate_log_tree(log_viewer);
+}
+
+static void pidgin_log_show_done(void *data) 
+{
+	struct _pidgin_log_show_data *pidgin_log_show_data = data;
+
+	select_first_log(pidgin_log_show_data->log_viewer);
+
+	g_free(pidgin_log_show_data);
+}
+
 static void pidgin_log_show_size_cb(int size, void *data)
 {
 	struct _pidgin_log_show_data * pidgin_log_show_data = data;
 
-	purple_debug_info("gtklog", "pidgin_log_show_size_cb - call display_log_viewer\n");
-
-	display_log_viewer(pidgin_log_show_data->ht, pidgin_log_show_data->list,
-		pidgin_log_show_data->title, 
-		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(pidgin_log_show_data->account, PIDGIN_PRPL_ICON_MEDIUM)), 
-		size);
-
+	set_log_viewer_log_size(pidgin_log_show_data->log_viewer, size);
 	purple_debug_info("gtklog", "pidgin_log_show_size_cb - free memory\n");
+	pidgin_log_show_data->counter++;
 
-	g_free(pidgin_log_show_data->title);
-	g_free(pidgin_log_show_data->screenname);
-	g_free(pidgin_log_show_data);
+	if (pidgin_log_show_data->counter == pidgin_log_show_data->done_count) {
+		pidgin_log_show_data->done_cb(pidgin_log_show_data);
+	}
 }
 
 static void pidgin_log_show_list_cb(GList *list, void *data)
 {
-	struct _pidgin_log_show_data * pidgin_log_show_data = data;
+	struct _pidgin_log_show_data *pidgin_log_show_data = data;
 	purple_debug_info("gtklog", "pidgin_log_show_list_cb - enter\n");
-		
-	if (list != NULL) 
-		pidgin_log_show_data->list = g_list_concat(list, pidgin_log_show_data->list);
-	else {
-		pidgin_log_show_data->list = g_list_sort(pidgin_log_show_data->list, purple_log_compare);
 
-		purple_debug_info("gtklog", "pidgin_log_show_list_cb - making one more non-blocking call: purple_log_get_total_size_nonblocking\n");
-		purple_log_get_total_size_nonblocking(pidgin_log_show_data->type, pidgin_log_show_data->screenname, pidgin_log_show_data->account,
-			pidgin_log_show_size_cb, pidgin_log_show_data);
+	if (list != NULL) 
+		append_log_viewer_logs(pidgin_log_show_data->log_viewer, list);
+	else {
+		pidgin_log_show_data->counter++;
+	}
+
+	if (pidgin_log_show_data->counter == pidgin_log_show_data->done_count) {
+		pidgin_log_show_data->done_cb(pidgin_log_show_data);
 	}
 }
 
@@ -736,67 +880,17 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	}
 
 	purple_debug_info("gtklog", "pidgin_log_show - creating pidgin_log_show_data structure\n");
+
 	pidgin_log_show_data = g_new0(struct _pidgin_log_show_data, 1);
+	pidgin_log_show_data->done_cb = pidgin_log_show_done;
+	pidgin_log_show_data->done_count = 2;
+	pidgin_log_show_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
+		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)));
 
-	pidgin_log_show_data->type = type;
-	pidgin_log_show_data->screenname = g_strdup(screenname);
-	pidgin_log_show_data->title = g_strdup(title);
-	pidgin_log_show_data->account = account;
-	pidgin_log_show_data->ht = ht;
-
-	purple_debug_info("gtklog", "pidgin_log_show - making non-blocking call purple_log_get_logs_nonblocking\n");
 	purple_log_get_logs_nonblocking(type, screenname, account, pidgin_log_show_list_cb, pidgin_log_show_data);
+	purple_log_get_total_size_nonblocking(type, screenname, account, 
+										pidgin_log_show_size_cb, pidgin_log_show_data);
 }
-
-/*
-void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
-	struct log_viewer_hash_t *ht;
-	PidginLogViewer *lv = NULL;
-	const char *name = screenname;
-	char *title;
-
-	g_return_if_fail(account != NULL);
-	g_return_if_fail(screenname != NULL);
-
-	ht = g_new0(struct log_viewer_hash_t, 1);
-
-	ht->type = type;
-	ht->screenname = g_strdup(screenname);
-	ht->account = account;
-
-	if (log_viewers == NULL) {
-		log_viewers = g_hash_table_new(log_viewer_hash, log_viewer_equal);
-	} else if ((lv = g_hash_table_lookup(log_viewers, ht))) {
-		gtk_window_present(GTK_WINDOW(lv->window));
-		g_free(ht->screenname);
-		g_free(ht);
-		return;
-	}
-
-	if (type == PURPLE_LOG_CHAT) {
-		PurpleChat *chat;
-
-		chat = purple_blist_find_chat(account, screenname);
-		if (chat != NULL)
-			name = purple_chat_get_name(chat);
-
-		title = g_strdup_printf(_("Conversations in %s"), name);
-	} else {
-		PurpleBuddy *buddy;
-
-		buddy = purple_find_buddy(account, screenname);
-		if (buddy != NULL)
-			name = purple_buddy_get_contact_alias(buddy);
-
-		title = g_strdup_printf(_("Conversations with %s"), name);
-	}
-
-	display_log_viewer(ht, purple_log_get_logs(type, screenname, account),
-			title, gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), 
-			purple_log_get_total_size(type, screenname, account));
-	g_free(title);
-}
-*/
 
 void pidgin_log_show_contact(PurpleContact *contact) {
 	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
