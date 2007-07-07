@@ -472,6 +472,19 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 gboolean purple_log_is_deletable(PurpleLog *log);
 
 /**
+ * Tests whether a log is deletable
+ *
+ * A return value of @c FALSE indicates that purple_log_delete() will fail on this
+ * log, unless something changes between the two calls.  A return value of @c TRUE,
+ * however, does not guarantee the log can be deleted.
+ *
+ * @param log                 The log
+ * @param cb                  The callback
+ * @param data                User data
+ */
+void purple_log_is_deletable_nonblocking(PurpleLog *log, PurpleLogBooleanCallback cb, void *data);
+
+/**
  * Deletes a log
  *
  * @param log                 The log
