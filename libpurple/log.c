@@ -52,6 +52,7 @@ struct _purple_log_callback_data {
 	PurpleLogListCallback list_nonblocking;
 	PurpleLogSizeCallback size_nonblocking;
 	PurpleLogTextCallback text_nonblocking;
+	PurpleLogVoidCallback void_nonblocking;
 	
 	/* size callback data */
 	struct _purple_logsize_user *lu;
@@ -105,6 +106,7 @@ static void log_list_cb(GList * list, void *data);
 static void log_size_cb(int size, void *data);
 static void log_size_list_cb(GList * list, void *data);
 static void log_read_cb(char *text, void *data);
+static void log_write_cb(int size, void *data);
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
@@ -204,6 +206,43 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 
 }
 
+void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
+		    const char *from, time_t time, const char *message,
+			PurpleLogVoidCallback cb, void *data)
+{
+	struct _purple_logsize_user *lu;
+	struct _purple_log_callback_data *callback_data;
+
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+	g_return_if_fail(log->logger->write != NULL);
+
+	lu = g_new(struct _purple_logsize_user, 1);
+
+	lu->name = g_strdup(purple_normalize(log->account, log->name));
+	lu->account = log->account;
+
+	callback_data = g_new0(struct _purple_log_callback_data, 1);
+	callback_data->void_nonblocking = cb;
+	callback_data->data = data;
+	callback_data->lu = lu;
+	
+	if (log->logger->write_nonblocking) 
+		(log->logger->write_nonblocking)(log, type, from, time, message, log_write_cb, callback_data);
+	else if (log->logger->write)
+		/* if logger doesn't provide non-blocking size function, 
+		    that's mean that we can call blocking variant */
+		log_write_cb((log->logger->write)(log, type, from, time, message), callback_data);
+	else {
+		/* there is no any write functions */
+		g_free(lu->name);
+		g_free(lu);
+		g_free(callback_data);
+		cb(data);
+	}
+		
+}
+
 char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	PurpleLogReadFlags mflags;
@@ -238,7 +277,7 @@ void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, Purp
 		/* if logger doesn't provide non-blocking size function, 
 		    that's mean that we can call blocking variant */
 		log_read_cb((log->logger->read)(log, flags ? flags : &mflags), callback_data);
-	else /* there is no any size functions */
+	else /* there is no any read functions */
 		log_read_cb(g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>")), callback_data);
 }
 
@@ -2327,4 +2366,26 @@ static void log_read_cb(char *text, void *data)
 	purple_str_strip_char(text, '\r');
 	callback_data->text_nonblocking(text, callback_data->data);
 	g_free(callback_data);
+}
+
+static void log_write_cb(int size, void *data)
+{
+	struct _purple_log_callback_data *callback_data = data;
+	struct _purple_logsize_user *lu;
+	gpointer ptrsize;
+	gsize total = 0;
+
+	g_return_if_fail(callback_data != NULL);
+	lu = callback_data->lu;
+
+	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
+		total = GPOINTER_TO_INT(ptrsize);
+		total += size;
+		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(total));
+		purple_debug_info("log", "HASH(log_write_cb): total size %i\n", total);
+	} else {
+		g_free(lu->name);
+		g_free(lu);
+	}
+	callback_data->void_nonblocking(callback_data);
 }

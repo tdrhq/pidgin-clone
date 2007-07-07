@@ -94,7 +94,9 @@ struct _PurpleLogLogger {
 		     PurpleMessageFlags type,
 		     const char *from,
 		     time_t time,
-		     const char *message, PurpleLogSizeCallback cb, void *data);
+		     const char *message, 
+			 PurpleLogSizeCallback cb, 
+			 void *data);
  
 	/** Called when the log is destroyed */
 	void (*finalize)(PurpleLog *log);
@@ -297,6 +299,26 @@ void purple_log_write(PurpleLog *log,
 		    const char *from,
 		    time_t time,
 		    const char *message);
+
+/**
+ * Writes to a log file. Assumes you have checked preferences already.
+ *
+ * @param log          The log to write to
+ * @param type         The type of message being logged
+ * @param from         Whom this message is coming from, or @c NULL for
+ *                     system messages
+ * @param time         A timestamp in UNIX time
+ * @param message      The message to log
+ * @param cb           The callback
+ * @param data         User data
+ */
+void purple_log_write_nonblocking(PurpleLog *log,
+		    PurpleMessageFlags type,
+		    const char *from,
+		    time_t time,
+		    const char *message,
+			PurpleLogVoidCallback cb, 
+			void *data);
 
 /**
  * Reads from a log
