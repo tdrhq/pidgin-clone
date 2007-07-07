@@ -777,8 +777,13 @@ static PidginLogViewer *display_log_viewer_nonblocking(struct log_viewer_hash_t 
 	g_signal_connect(GTK_ENTRY(lv->entry), "activate", G_CALLBACK(search_cb), lv);
 	g_signal_connect(GTK_BUTTON(find_button), "clicked", G_CALLBACK(search_cb), lv);
 
-	gtk_widget_show_all(lv->window);
+	/* Progress bar **********/
+	lv->progress_bar = gtk_progress_bar_new();
+	gtk_progress_bar_set_text(lv->progress_bar, "Waiting for logs ...");
+	gtk_misc_set_alignment(GTK_MISC(lv->progress_bar), 0.5, 0.5);
+	gtk_box_pack_start(GTK_BOX(vbox), lv->progress_bar, FALSE, FALSE, 0);
 
+	gtk_widget_show_all(lv->window);
 	return lv;
 }
 
@@ -793,17 +798,22 @@ static void set_log_viewer_log_size(PidginLogViewer *log_viewer, int log_size)
 
 static void append_log_viewer_logs(PidginLogViewer *log_viewer, GList *logs) 
 {
+	/* update progress bar */
+	gtk_progress_bar_pulse(log_viewer->progress_bar);
+
 	log_viewer->logs = g_list_concat(logs, log_viewer->logs);
 	log_viewer->logs = g_list_sort(log_viewer->logs, purple_log_compare);
 	populate_log_tree(log_viewer);
+	select_first_log(log_viewer);
+	
 }
 
 static void pidgin_log_show_done(void *data) 
 {
 	struct _pidgin_log_show_data *pidgin_log_show_data = data;
-
-	select_first_log(pidgin_log_show_data->log_viewer);
-
+	
+	gtk_widget_hide(pidgin_log_show_data->log_viewer->progress_bar);
+	
 	g_free(pidgin_log_show_data);
 }
 

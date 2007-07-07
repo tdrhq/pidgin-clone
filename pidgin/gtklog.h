@@ -48,6 +48,7 @@ struct _PidginLogViewer {
 	char             *search;    /**< The string currently being searched for  */
 	GtkWidget        *label;     /**< The label at the top of the log viewer   */
 	GtkWidget        *size_label; /**< The label with total log size           */
+	GtkWidget        *progress_bar; /**< The progress bar */
 };
 
 
