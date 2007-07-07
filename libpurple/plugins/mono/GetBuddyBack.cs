@@ -17,6 +17,7 @@ public class GetBuddyBack : Plugin
 		Status newstatus = new Status(pnewstatus);
 
 		Debug.debug(Debug.INFO, "buddyback", "buddy " + buddy.Alias + " went from " + oldstatus.Id + " to " + newstatus.Id + "\n");
+		Debug.debug(Debug.INFO, "buddyback", "account: " + buddy.PAccount.Username + ", " + buddy.PAccount.ProtocolId + "\n");
 	}
 	
 	public override void Load()

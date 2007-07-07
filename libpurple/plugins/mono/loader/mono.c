@@ -58,6 +58,10 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 		return FALSE;
 	}
 
+	mplug->load = mono_class_get_method_from_name(mplug->klass, "Load", 0);
+	mplug->unload = mono_class_get_method_from_name(mplug->klass, "Unload", 0);
+	mplug->destroy = mono_class_get_method_from_name(mplug->klass, "Destroy", 0);
+
 	mplug->obj = mono_object_new(ml_get_domain(), mplug->klass);
 	if (!mplug->obj) {
 		purple_debug_error("mono", "obj not valid\n");

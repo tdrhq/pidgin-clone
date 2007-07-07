@@ -20,7 +20,7 @@ static gboolean _runtime_active = FALSE;
 
 gboolean ml_init()
 {
-	MonoDomain *d;
+	MonoDomain *d = NULL;
 	
 	if (_runtime_active == TRUE)
 		return TRUE;
