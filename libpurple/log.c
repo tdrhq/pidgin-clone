@@ -238,7 +238,8 @@ void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
 		g_free(lu->name);
 		g_free(lu);
 		g_free(callback_data);
-		cb(data);
+		if (cb)
+			cb(data);
 	}
 		
 }
@@ -2387,5 +2388,6 @@ static void log_write_cb(int size, void *data)
 		g_free(lu->name);
 		g_free(lu);
 	}
-	callback_data->void_cb(callback_data);
+	if (callback_data->void_cb)
+		callback_data->void_cb(callback_data);
 }
