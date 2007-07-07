@@ -41,8 +41,11 @@ static PurpleLogLogger *txt_logger;
 static PurpleLogLogger *old_logger;
 
 struct _purple_log_callback_data {
+	/* user data */
 	void *data;
 
+	/* useful for iterative calls, 
+	    like purple_log_get_logs_nonblocking */
 	int counter;
 
 	GList * ret_list;
@@ -56,7 +59,7 @@ struct _purple_log_callback_data {
 	PurpleLogVoidCallback void_cb;
 	PurpleLogHashTableCallback hash_table_cb;
 	
-	/* size callback data */
+	/* for hashing purposes */
 	struct _purple_logsize_user *lu;
 };
 
@@ -421,7 +424,7 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 				purple_debug_info("log", "purple_log_get_total_size_nonblocking - make logger->list_nonblocking call\n");
 				logger->list_nonblocking(type, name, account, log_size_list_cb, callback_data);
 			} else if(logger->total_size) { 
-				/* As there is no any non-blocking functions we can call blocking variants */
+				/* As there is no any nonblocking functions we can call blocking analogs */
 				log_size_cb((logger->total_size)(type, name, account), callback_data);
 			} else if(logger->list) {
 				GList *logs = (logger->list)(type, name, account);
@@ -719,7 +722,7 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
 			purple_debug_info("log", "make a logger->list_nonblocking call\n");
 			logger->list_nonblocking(type, name, account, log_list_cb, callback_data);
 		} else if (logger->list) {
-			/* As there is no non-blocking list function we should call blocking variant */
+			/* As there is no nonblocking list function we should call blocking analog */
 			log_list_cb(logger->list(type, name, account), callback_data);
 		} else
 			/* we should decrease counter if we there are no any calls */
@@ -832,7 +835,7 @@ void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, void *da
 		if (logger->get_log_sets_nonblocking)
 			logger->get_log_sets_nonblocking(log_add_log_set_to_hash, callback_data->ret_sets, log_hash_cb, callback_data);
 		else if (logger->get_log_sets) {
-			/* As there is no non-blocking list function we can call blocking variant */
+			/* As there is no nonblocking  function we can call blocking analog*/
 			logger->get_log_sets(log_add_log_set_to_hash, callback_data->ret_sets);
 			log_hash_cb(callback_data);
 		} else 
@@ -897,7 +900,7 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogLis
 			purple_debug_info("log", "make a logger->list_syslog_nonblocking call\n");
 			logger->list_syslog_nonblocking(account, log_list_cb, callback_data);
 		} else if (logger->list_syslog) {
-			/* As there is no non-blocking list function we can call blocking variant */
+			/* As there is no nonblocking function we should call blocking analog */
 			log_list_cb(logger->list_syslog(account), callback_data);
 		} else
 			/* we should decrease counter if we there are no any calls */

@@ -310,7 +310,7 @@ void purple_log_write(PurpleLog *log,
  *                     system messages
  * @param time         A timestamp in UNIX time
  * @param message      The message to log
- * @param cb           The callback
+ * @param cb           The callback (optional: NULL value is valid)
  * @param data         User data
  */
 void purple_log_write_nonblocking(PurpleLog *log,
