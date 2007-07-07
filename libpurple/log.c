@@ -49,10 +49,10 @@ struct _purple_log_callback_data {
 	int * ret_int;
 	
 	/* list callback */
-	PurpleLogListCallback list_nonblocking;
-	PurpleLogSizeCallback size_nonblocking;
-	PurpleLogTextCallback text_nonblocking;
-	PurpleLogVoidCallback void_nonblocking;
+	PurpleLogListCallback list_cb;
+	PurpleLogSizeCallback size_cb;
+	PurpleLogTextCallback text_cb;
+	PurpleLogVoidCallback void_cb;
 	
 	/* size callback data */
 	struct _purple_logsize_user *lu;
@@ -223,7 +223,7 @@ void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
 	lu->account = log->account;
 
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
-	callback_data->void_nonblocking = cb;
+	callback_data->void_cb = cb;
 	callback_data->data = data;
 	callback_data->lu = lu;
 	
@@ -268,7 +268,7 @@ void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, Purp
 
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
 
-	callback_data->text_nonblocking = cb;
+	callback_data->text_cb = cb;
 	callback_data->data = data;
 
 	if (log->logger->read_nonblocking) 
@@ -395,7 +395,7 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 		}
 		callback_data = g_new0(struct _purple_log_callback_data, 1);
 
-		callback_data->size_nonblocking = cb;
+		callback_data->size_cb = cb;
 		callback_data->data = data;
 		callback_data->lu = lu;
 
@@ -682,7 +682,7 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
 
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
 	callback_data->data = data;
-	callback_data->list_nonblocking = cb;
+	callback_data->list_cb = cb;
 
 	/* imho, this is really the best and simplest way 
 	     especially now, because we have blocking total_size_nonblocking function 
@@ -817,7 +817,7 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogLis
 
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
 	callback_data->data = data;
-	callback_data->list_nonblocking = cb;
+	callback_data->list_cb = cb;
 
 	/* imho, this is really the best and simplest way 
 	     especially now, because we have blocking total_size_nonblocking function 
@@ -2306,7 +2306,7 @@ static void log_size_cb(int size, void *data)
 	//purple_debug_info("log", "log_size_cb - callback_data->counter = %i\n", callback_data->counter);
 
 	if (!callback_data->counter) {
-		callback_data->size_nonblocking((int)callback_data->ret_int, callback_data->data);
+		callback_data->size_cb((int)callback_data->ret_int, callback_data->data);
 		purple_debug_info("log", "HASH(log_size_cb): write size to hash %i\n", callback_data->ret_int);
 		g_hash_table_replace(logsize_users, callback_data->lu, GINT_TO_POINTER(callback_data->ret_int));
 
@@ -2346,11 +2346,11 @@ static void log_list_cb(GList *list, void *data)
 	//purple_debug_info("log", "log_list_cb - callback_data->counter = %i\n", callback_data->counter);
 
 	if (list != NULL) 
-		callback_data->list_nonblocking(list, callback_data->data);
+		callback_data->list_cb(list, callback_data->data);
 
 	if (!callback_data->counter) {
 		/* sending end of list flag */
-		callback_data->list_nonblocking(NULL, callback_data->data);
+		callback_data->list_cb(NULL, callback_data->data);
 
 		purple_debug_info("log", "log_list_cb - free memory\n");
 		g_free(callback_data);
@@ -2364,7 +2364,7 @@ static void log_read_cb(char *text, void *data)
 	g_return_if_fail(callback_data != NULL);
 
 	purple_str_strip_char(text, '\r');
-	callback_data->text_nonblocking(text, callback_data->data);
+	callback_data->text_cb(text, callback_data->data);
 	g_free(callback_data);
 }
 
@@ -2387,5 +2387,5 @@ static void log_write_cb(int size, void *data)
 		g_free(lu->name);
 		g_free(lu);
 	}
-	callback_data->void_nonblocking(callback_data);
+	callback_data->void_cb(callback_data);
 }
