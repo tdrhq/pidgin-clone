@@ -480,6 +480,15 @@ gboolean purple_log_is_deletable(PurpleLog *log);
 gboolean purple_log_delete(PurpleLog *log);
 
 /**
+ * Deletes a log
+ *
+ * @param log                 The log
+ * @param cb                  The callback (optional: NULL value is valid)
+ * @param data                User data
+ */
+void purple_log_delete_nonblocking(PurpleLog *log, PurpleLogBooleanCallback cb, void *data);
+
+/**
  * Returns the default logger directory Purple uses for a given account
  * and username.  This would be where Purple stores logs created by
  * the built-in text or HTML loggers.

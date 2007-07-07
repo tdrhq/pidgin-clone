@@ -458,6 +458,24 @@ gboolean purple_log_delete(PurpleLog *log)
 	return FALSE;
 }
 
+void purple_log_delete_nonblocking(PurpleLog *log, PurpleLogBooleanCallback cb, void *data)
+{
+	gboolean result = FALSE;
+	
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+
+	if (log->logger->remove_nonblocking != NULL)
+		(log->logger->remove_nonblocking)(log, cb, data);
+	else if (log->logger->remove != NULL) 
+		/* As there is no nonblocking function we can call blocking analog */
+		result = (log->logger->remove)(log);
+
+	/* callback is optional, so we should check if it's not NULL */
+	if (cb != NULL)
+		cb(result, data);
+}
+
 char *
 purple_log_get_log_dir(PurpleLogType type, const char *name, PurpleAccount *account)
 {
