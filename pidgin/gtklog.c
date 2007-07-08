@@ -216,6 +216,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 
 static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 	PidginLogViewer *lv = syslog_viewer;
+	GList *logs;
 
 #ifdef _WIN32
 	if (resp == GTK_RESPONSE_HELP) {
@@ -237,7 +238,9 @@ static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 
 	purple_request_close_with_handle(lv);
 
-	g_list_foreach(lv->logs, (GFunc)purple_log_free, NULL);
+	for (logs = lv->logs; logs != NULL; logs = logs->next) 
+		purple_log_free_nonblocking(logs->data, NULL, NULL);
+
 	g_list_free(lv->logs);
 
 	g_free(lv->search);
