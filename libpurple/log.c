@@ -1319,6 +1319,8 @@ purple_log_common_list_cb(gpointer data)
 		cb(logs, cb_data);
 	cb(NULL, cb_data);
 
+	g_free(data);
+
 	return FALSE;
 }
 
