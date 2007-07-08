@@ -224,16 +224,19 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 
 }
 
+// TODO: Should this perhaps return a boolean indicating success or failure?
+// TODO: Then the UI could display a failure message if, for example, a database
+// TODO: logger failed to log a message mid-conversation.
 void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
-		    const char *from, time_t time, const char *message,
-			PurpleLogVoidCallback cb, void *data)
+		                  const char *from, time_t time, const char *message,
+                                  PurpleLogVoidCallback cb, void *data)
 {
 	struct _purple_logsize_user *lu;
 	struct _purple_log_callback_data *callback_data;
 
 	g_return_if_fail(log != NULL);
 	g_return_if_fail(log->logger != NULL);
-	g_return_if_fail(log->logger->write != NULL);
+	g_return_if_fail(log->logger->write != NULL || log->logger->write_nonblocking != NULL);
 
 	lu = g_new(struct _purple_logsize_user, 1);
 
@@ -248,18 +251,7 @@ void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
 	if (log->logger->write_nonblocking) 
 		(log->logger->write_nonblocking)(log, type, from, time, message, log_write_cb, callback_data);
 	else if (log->logger->write)
-		/* if logger doesn't provide non-blocking size function, 
-		    that's mean that we can call blocking variant */
 		log_write_cb((log->logger->write)(log, type, from, time, message), callback_data);
-	else {
-		/* there is no any write functions */
-		g_free(lu->name);
-		g_free(lu);
-		g_free(callback_data);
-		if (cb)
-			cb(data);
-	}
-		
 }
 
 char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
@@ -293,10 +285,8 @@ void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, Purp
 	if (log->logger->read_nonblocking) 
 		log->logger->read_nonblocking(log, flags ? flags : &mflags, log_read_cb, callback_data);
 	else if (log->logger->read)
-		/* if logger doesn't provide non-blocking size function, 
-		    that's mean that we can call blocking variant */
 		log_read_cb((log->logger->read)(log, flags ? flags : &mflags), callback_data);
-	else /* there is no any read functions */
+	else
 		log_read_cb(g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>")), callback_data);
 }
 
@@ -318,10 +308,8 @@ void purple_log_get_size_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, v
 	if (log->logger->size_nonblocking)
 		log->logger->size_nonblocking(log, cb, data);
 	else if (log->logger->size)
-		/* if logger doesn't provide non-blocking size function, 
-		    that's mean that we can call blocking variant */
 		cb(log->logger->size(log), data);
-	else /* there is no any size functions */
+	else
 		cb(0, data);
 }
 
@@ -385,6 +373,17 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
 	return size;
 }
 
+// TODO: Would it make sense to allow the caller to pass in a list of logs, if
+// TODO: it just got them from purple_log_get_logs_nonblocking()?  Pidgin asks
+// TODO: for the total size, which means that for some loggers, we end up
+// TODO: calling list *again* needlessly (to loop over them and size them).
+// TODO: If we had a list of logs, we could loop over them and find those
+// TODO: where the logger had a size function (but no total_size function).
+// TODO: We could size just those with something like this (this ignores
+// TODO: the blocking vs. non-blocking distinction for simplicity):
+// TODO: for (...) {
+// TODO: 	if (!log->logger->total_size && log->logger->size)
+// TODO: 		Call the size function.
 void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, 
 								PurpleLogSizeCallback cb, void *data)
 {
@@ -1333,6 +1332,9 @@ void purple_log_common_lister_nonblocking(PurpleLogType type, const char *name, 
 	purple_timeout_add_seconds(5, purple_log_common_list_cb, temp);
 }
 
+// TODO: Rather than calling this multiple times with different extensions,
+// TODO: could we somehow store up all the extensions and do the loop just
+// TODO: once?  This may be possible with the non-blocking stuff...
 int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext)
 {
 	GDir *dir;
