@@ -58,7 +58,7 @@ typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
 /* Log callback functions */
 typedef void (*PurpleLogVoidCallback) (void *);
 typedef void (*PurpleLogTextCallback) (char *text, void *);
-typedef void (*PurpleLogBooleanCallback) (gboolean bool, void *);
+typedef void (*PurpleLogBooleanCallback) (gboolean, void *);
 typedef void (*PurpleLogListCallback) (GList *list, void *);
 typedef void (*PurpleLogSizeCallback) (int size, void *);
 typedef void (*PurpleLogHashTableCallback) (GHashTable *table, void *);

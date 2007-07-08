@@ -698,6 +698,13 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	return lv;
 }
 
+static gboolean
+pulse_progress_bar(GtkProgressBar *progress_bar)
+{
+	gtk_progress_bar_pulse(progress_bar);
+	return TRUE;
+}
+
 static PidginLogViewer *display_log_viewer_nonblocking(struct log_viewer_hash_t *ht, 
 						const char *title, GtkWidget *icon, gboolean need_log_size)
 {
@@ -821,6 +828,7 @@ static PidginLogViewer *display_log_viewer_nonblocking(struct log_viewer_hash_t 
 	/* Progress bar **********/
 	lv->progress_bar = gtk_progress_bar_new();
 	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(lv->progress_bar), "Waiting for logs ...");
+	lv->pulser = purple_timeout_add(200, (GSourceFunc)pulse_progress_bar, lv->progress_bar);
 	//gtk_misc_set_alignment(GTK_MISC(lv->progress_bar), 0.5, 0.5);
 	gtk_box_pack_start(GTK_BOX(vbox), (GtkWidget *)lv->progress_bar, FALSE, FALSE, 0);
 
@@ -839,9 +847,8 @@ static void set_log_viewer_log_size(PidginLogViewer *log_viewer, int log_size)
 
 static void append_log_viewer_logs(PidginLogViewer *log_viewer, GList *logs) 
 {
-	/* update progress bar */
-	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(log_viewer->progress_bar));
-
+	// TODO: Instead of doing this, we should find a way to avoid
+	// TODO: rebuilding the entire UI tree and just insert the new logs.
 	log_viewer->logs = g_list_concat(logs, log_viewer->logs);
 	log_viewer->logs = g_list_sort(log_viewer->logs, purple_log_compare);
 	populate_log_tree(log_viewer);
@@ -849,12 +856,18 @@ static void append_log_viewer_logs(PidginLogViewer *log_viewer, GList *logs)
 	
 }
 
-static void pidgin_log_done_cb(void *data) 
+static void pidgin_log_done(void *data) 
 {
 	struct _pidgin_log_data *pidgin_log_data = data;
-	
-	gtk_widget_hide(pidgin_log_data->log_viewer->progress_bar);
-	
+	PidginLogViewer *log_viewer = pidgin_log_data->log_viewer;
+
+	purple_timeout_remove(log_viewer->pulser);
+	gtk_widget_hide(log_viewer->progress_bar);
+
+	// TODO: We should only select the first log
+	// TODO: if one is not already selected.
+	select_first_log(log_viewer);
+
 	g_free(pidgin_log_data);
 }
 
@@ -878,11 +891,7 @@ static void pidgin_log_list_cb(GList *list, void *data)
 
 	if (list != NULL) 
 		append_log_viewer_logs(pidgin_log_data->log_viewer, list);
-	else {
-		pidgin_log_data->counter++;
-	}
-
-	if (pidgin_log_data->counter == pidgin_log_data->destination_count) {
+	else
 		pidgin_log_data->done_cb(pidgin_log_data);
 	}
 }
@@ -933,8 +942,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	purple_debug_info("gtklog", "pidgin_log_show - creating pidgin_log_show_data structure\n");
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_done_cb;
-	pidgin_log_data->destination_count = 2;
+	pidgin_log_data->done_cb = pidgin_log_done;
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
 
@@ -943,6 +951,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 										pidgin_log_size_cb, pidgin_log_data);
 }
 
+// TODO: This function needs to be modified to be non-blocking.
 void pidgin_log_show_contact(PurpleContact *contact) {
 	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
 	PurpleBlistNode *child;

@@ -731,7 +731,7 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
 	GSList *n;
 	struct _purple_log_callback_data *callback_data;
 
-	/* if there are no any loggers we should inform UI */
+	/* If there are no loggers, let the UI know we're done now. */
 	if (loggers == NULL) {
 		cb(NULL, data);
 		return;
@@ -741,22 +741,27 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
 	callback_data->data = data;
 	callback_data->list_cb = cb;
 
-	/* imho, this is really the best and simplest way 
-	     especially now, because we have blocking total_size_nonblocking function 
-	     and list_nonblocking functions*/
-	callback_data->counter = g_slist_length(loggers);
-
 	for (n = loggers; n; n = n->next) {
 		PurpleLogLogger *logger = n->data;
 
 		if (logger->list_nonblocking) {
-			purple_debug_info("log", "make a logger->list_nonblocking call\n");
 			logger->list_nonblocking(type, name, account, log_list_cb, callback_data);
+			callback_data->counter++;
 		} else if (logger->list) {
-			/* As there is no nonblocking list function we should call blocking analog */
-			log_list_cb(logger->list(type, name, account), callback_data);
-		} else
-			log_list_cb(NULL, callback_data);
+			/* Call the blocking list function instead. */
+			GList *logs = logger->list(type, name, account);
+			if (logs != NULL)
+				cb(logs, data);
+		}
+	}
+
+	/* This happens if we have no (non-blocking)
+	 * list functions to wait on. */
+	if (callback_data->counter == 0)
+	{
+		/* Let the caller know we're done. */
+		cb(NULL, data);
+		g_free(callback_data);
 	}
 }
 
@@ -907,7 +912,7 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogLis
 	GSList *n;
 	struct _purple_log_callback_data *callback_data;
 
-	/* if there are no any loggers we should inform UI */
+	/* If there are no loggers, let the UI know we're done now. */
 	if (loggers == NULL) {
 		cb(NULL, data);
 		return;
@@ -917,24 +922,27 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogLis
 	callback_data->data = data;
 	callback_data->list_cb = cb;
 
-	/* imho, this is really the best and simplest way 
-	     especially now, because we have blocking total_size_nonblocking function 
-	     and list_nonblocking functions*/
-	callback_data->counter = g_slist_length(loggers);
-	purple_debug_info("log", "purple_log_get_system_logs_nonblocking - callback_data->counter %i\n", callback_data->counter);
-
 	for (n = loggers; n; n = n->next) {
 		PurpleLogLogger *logger = n->data;
 
 		if (logger->list_syslog_nonblocking) {
-			purple_debug_info("log", "make a logger->list_syslog_nonblocking call\n");
+			callback_data->counter++;
 			logger->list_syslog_nonblocking(account, log_list_cb, callback_data);
 		} else if (logger->list_syslog) {
-			/* As there is no nonblocking function we should call blocking analog */
-			log_list_cb(logger->list_syslog(account), callback_data);
-		} else
-			/* we should decrease counter if we there are no any calls */
-			log_list_cb(NULL, callback_data);
+			/* Call the blocking list function instead. */
+			GList *logs = logger->list_syslog(account);
+			if (logs != NULL)
+				cb(logs, data);
+		}
+	}
+
+	/* This happens if we have no (non-blocking)
+	 * list functions to wait on. */
+	if (callback_data->counter == 0)
+	{
+		/* Let the caller know we're done. */
+		cb(NULL, data);
+		g_free(callback_data);
 	}
 }
 
@@ -1295,9 +1303,34 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 	return list;
 }
 
+// TODO: THESE TWO FUNCTIONS EXIST FOR TESTING ONLY
+// TODO: EVENTUALLY, WE NEED REAL NON-BLOCKING CODE HERE, OR NOTHING AT ALL
+// TODO: FOR NOW, THIS ADDS A DELAY SO WE CAN SEE EVERYTHING
+static gboolean
+purple_log_common_list_cb(gpointer data)
+{
+	gpointer *temp = data;
+	PurpleLogListCallback cb = temp[0];
+	GList *logs              = temp[1];
+	void *cb_data            = temp[2];
+
+	if (logs != NULL)
+		cb(logs, cb_data);
+	cb(NULL, cb_data);
+
+	return FALSE;
+}
+
 void purple_log_common_lister_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext, PurpleLogLogger *logger, PurpleLogListCallback cb, void *data)
 {
-	cb(purple_log_common_lister(type, name, account, ext, logger), data);
+	GList *logs = purple_log_common_lister(type, name, account, ext, logger);
+	gpointer *temp = g_new(gpointer, 3);
+
+	temp[0] = cb;
+	temp[1] = logs;
+	temp[2] = data;
+
+	purple_timeout_add_seconds(5, purple_log_common_list_cb, temp);
 }
 
 int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext)
@@ -2493,19 +2526,21 @@ static void log_list_cb(GList *list, void *data)
 
 	g_return_if_fail(callback_data != NULL);
 
-	callback_data->counter--;
-	purple_debug_info("log", "log_list_cb - callback_data->counter = %i\n", callback_data->counter);
-
+	/* Pass logs up to the caller. */
 	if (list != NULL) 
+	{
 		callback_data->list_cb(list, callback_data->data);
+		return;
+	}
 
-	if (!callback_data->counter) {
-		/* sending end of list flag */
+	if (callback_data->counter == 1) {
+		/* Let the caller know we're done. */
 		callback_data->list_cb(NULL, callback_data->data);
 
-		purple_debug_info("log", "log_list_cb - free memory\n");
 		g_free(callback_data);
 	}
+	else
+		callback_data->counter--;
 }
 
 static void log_read_cb(char *text, void *data)
