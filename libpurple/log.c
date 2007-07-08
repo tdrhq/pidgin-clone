@@ -194,6 +194,62 @@ void purple_log_free(PurpleLog *log)
 	g_slice_free(PurpleLog, log);
 }
 
+static void log_free_cb(void *data)
+{
+	gpointer *temp = data;
+	struct _purple_log_callback_data *callback_data = temp[0];
+	PurpleLog *log = temp[1];
+	
+	if (callback_data->void_cb != NULL)
+		callback_data->void_cb(callback_data->data);
+
+	g_free(log->name);
+	g_free(callback_data);
+	g_free(data);
+
+	if (log->tm != NULL)
+	{
+#ifdef HAVE_STRUCT_TM_TM_ZONE
+		/* XXX: This is so wrong... */
+		g_free((char *)log->tm->tm_zone);
+#endif
+		g_slice_free(struct tm, log->tm);
+	}
+
+	PURPLE_DBUS_UNREGISTER_POINTER(log);
+	g_slice_free(PurpleLog, log);
+}
+
+void purple_log_free_nonblocking(PurpleLog *log, PurpleLogVoidCallback cb, void *data)
+{
+	gpointer *callback_data_wrapper;
+	struct _purple_log_callback_data *callback_data;
+	if (log == NULL) {
+		if (cb != NULL)
+			cb(data);
+		return;
+	}
+
+	callback_data = g_new0(struct _purple_log_callback_data, 1);
+	callback_data->data = data;
+	callback_data->void_cb = cb;
+
+	callback_data_wrapper = g_new0(gpointer, 2);
+	callback_data_wrapper[0] = callback_data;
+	callback_data_wrapper[1] = log;
+	
+	if (log->logger != NULL) {
+		if (log->logger->finalize_nonblocking != NULL) {
+			log->logger->finalize_nonblocking(log, log_free_cb, callback_data_wrapper); 
+			return;
+		} else if (log->logger->finalize != NULL) 
+			log->logger->finalize(log);
+	}
+
+	log_free_cb(callback_data_wrapper);
+}
+
+
 void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 		    const char *from, time_t time, const char *message)
 {

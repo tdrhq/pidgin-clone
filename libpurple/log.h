@@ -286,6 +286,15 @@ PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *a
 void purple_log_free(PurpleLog *log);
 
 /**
+ * Frees a log
+ *
+ * @param log         The log to destroy
+ * @param cb           The callback (optional: NULL value is valid)
+ * @param data         User data
+ */
+void purple_log_free_nonblocking(PurpleLog *log, PurpleLogVoidCallback cb, void *data);
+
+/**
  * Writes to a log file. Assumes you have checked preferences already.
  *
  * @param log          The log to write to
