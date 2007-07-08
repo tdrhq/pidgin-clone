@@ -55,7 +55,7 @@ struct _purple_log_callback_data {
 	/* list callback */
 	PurpleLogListCallback list_cb;
 	PurpleLogSizeCallback size_cb;
-	PurpleLogTextCallback text_cb;
+	PurpleLogReadCallback read_cb;
 	PurpleLogVoidCallback void_cb;
 	PurpleLogHashTableCallback hash_table_cb;
 	
@@ -84,7 +84,7 @@ static void html_logger_write_nonblocking(PurpleLog *log, PurpleMessageFlags typ
 							  const char *from, time_t time, const char *message,
 							  PurpleLogSizeCallback cb, void *data);
 static void html_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
-							PurpleLogTextCallback cb, void *data);
+							PurpleLogReadCallback cb, void *data);
 static void html_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
 static void html_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
@@ -112,7 +112,7 @@ static void txt_logger_write_nonblocking(PurpleLog *log,
 							 const char *from, time_t time, const char *message,
 							 PurpleLogSizeCallback cb, void *data);
 static void txt_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
-							PurpleLogTextCallback cb, void *data);
+							PurpleLogReadCallback cb, void *data);
 static void txt_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
 static void txt_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
@@ -122,7 +122,7 @@ static void txt_logger_total_size_nonblocking(PurpleLogType type, const char *na
 static void log_list_cb(GList * list, void *data);
 static void log_size_cb(int size, void *data);
 static void log_size_list_cb(GList * list, void *data);
-static void log_read_cb(char *text, void *data);
+static void log_read_cb(char *text, PurpleLogReadFlags *flags, void *data);
 static void log_write_cb(int size, void *data);
 static void log_hash_cb(void *data);
 /**************************************************************************
@@ -277,7 +277,7 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 }
 
 
-void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogTextCallback cb, void *data)
+void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogReadCallback cb, void *data)
 {
 	PurpleLogReadFlags mflags;
 	struct _purple_log_callback_data *callback_data;
@@ -287,17 +287,18 @@ void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, Purp
 
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
 
-	callback_data->text_cb = cb;
+	callback_data->read_cb = cb;
 	callback_data->data = data;
 
 	if (log->logger->read_nonblocking) 
 		log->logger->read_nonblocking(log, flags ? flags : &mflags, log_read_cb, callback_data);
-	else if (log->logger->read)
+	else if (log->logger->read) {
 		/* if logger doesn't provide non-blocking size function, 
 		    that's mean that we can call blocking variant */
-		log_read_cb((log->logger->read)(log, flags ? flags : &mflags), callback_data);
-	else /* there is no any read functions */
-		log_read_cb(g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>")), callback_data);
+		char *text = (log->logger->read)(log, flags ? flags : &mflags);
+		log_read_cb(text, flags, callback_data);
+	} else /* there is no any read functions */
+		log_read_cb(g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>")), flags, callback_data);
 }
 
 int purple_log_get_size(PurpleLog *log)
@@ -1895,9 +1896,10 @@ static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 }
 
 static void html_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
-							PurpleLogTextCallback cb, void *data)
+							PurpleLogReadCallback cb, void *data)
 {
-	cb(html_logger_read(log, flags), data);
+	char *text = html_logger_read(log, flags);
+	cb(text, flags, data);
 }
 
 static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
@@ -2058,9 +2060,10 @@ static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 }
 
 static void txt_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
-							PurpleLogTextCallback cb, void *data)
+							PurpleLogReadCallback cb, void *data)
 {
-	cb(txt_logger_read(log, flags), data);
+	char *text = txt_logger_read(log, flags);
+	cb(text, flags, data);
 }
 
 static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
@@ -2543,14 +2546,14 @@ static void log_list_cb(GList *list, void *data)
 		callback_data->counter--;
 }
 
-static void log_read_cb(char *text, void *data)
+static void log_read_cb(char *text, PurpleLogReadFlags *flags, void *data)
 {
 	struct _purple_log_callback_data *callback_data = data;
 
 	g_return_if_fail(callback_data != NULL);
 
 	purple_str_strip_char(text, '\r');
-	callback_data->text_cb(text, callback_data->data);
+	callback_data->read_cb(text, flags, callback_data->data);
 	g_free(callback_data);
 }
 

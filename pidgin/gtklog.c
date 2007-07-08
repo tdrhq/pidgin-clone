@@ -145,7 +145,7 @@ static void pidgin_log_search_done_cb(void *data)
 	}
 }
 
-static void pidgin_log_search_cb(char *text, void *data)
+static void pidgin_log_search_cb(char *text, PurpleLogReadFlags *flags, void *data)
 {
 	struct _pidgin_log_search_data_wrapper *pidgin_log_data_wrapper = data;
 	struct _pidgin_log_data *pidgin_log_data = pidgin_log_data_wrapper->data;
