@@ -893,7 +893,6 @@ static void pidgin_log_list_cb(GList *list, void *data)
 		append_log_viewer_logs(pidgin_log_data->log_viewer, list);
 	else
 		pidgin_log_data->done_cb(pidgin_log_data);
-	}
 }
 
 void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
@@ -1021,7 +1020,7 @@ void pidgin_syslog_show()
 	}
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_done_cb;
+	pidgin_log_data->done_cb = pidgin_log_done;
 	syslog_viewer = pidgin_log_data->log_viewer = display_log_viewer_nonblocking(NULL, 
 														_("System Log"), NULL, FALSE);
 
