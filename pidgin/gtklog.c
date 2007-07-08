@@ -54,7 +54,7 @@ struct _pidgin_log_data {
 	
 	PurpleLogVoidCallback done_cb;
 	int counter;
-	int done_count;
+	int destination_count;
 };
 
 struct _pidgin_log_search_data_wrapper {
@@ -136,7 +136,7 @@ static void pidgin_log_search_done_cb(void *data)
 {
 	struct _pidgin_log_data *pidgin_log_data = data;
 
-	if (pidgin_log_data->counter == pidgin_log_data->done_count) {
+	if (pidgin_log_data->counter == pidgin_log_data->destination_count) {
 		select_first_log(pidgin_log_data->log_viewer);
 		pidgin_clear_cursor(pidgin_log_data->log_viewer->window);
 
@@ -199,7 +199,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 
 	pidgin_log_data= g_new0(struct _pidgin_log_data, 1);
 	pidgin_log_data->done_cb = pidgin_log_search_done_cb;
-	pidgin_log_data->done_count = g_list_length(lv->logs);
+	pidgin_log_data->destination_count = g_list_length(lv->logs);
 	pidgin_log_data->log_viewer = lv;
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
@@ -866,7 +866,7 @@ static void pidgin_log_size_cb(int size, void *data)
 	purple_debug_info("gtklog", "pidgin_log_size_cb - free memory\n");
 	pidgin_log_data->counter++;
 
-	if (pidgin_log_data->counter == pidgin_log_data->done_count) {
+	if (pidgin_log_data->counter == pidgin_log_data->destination_count) {
 		pidgin_log_data->done_cb(pidgin_log_data);
 	}
 }
@@ -882,7 +882,7 @@ static void pidgin_log_list_cb(GList *list, void *data)
 		pidgin_log_data->counter++;
 	}
 
-	if (pidgin_log_data->counter == pidgin_log_data->done_count) {
+	if (pidgin_log_data->counter == pidgin_log_data->destination_count) {
 		pidgin_log_data->done_cb(pidgin_log_data);
 	}
 }
@@ -934,7 +934,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
 	pidgin_log_data->done_cb = pidgin_log_done_cb;
-	pidgin_log_data->done_count = 2;
+	pidgin_log_data->destination_count = 2;
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
 
@@ -1017,8 +1017,8 @@ void pidgin_syslog_show()
 														_("System Log"), NULL, FALSE);
 
 	accounts = purple_accounts_get_all();
-	pidgin_log_data->done_count = g_list_length(accounts);
-	
+	pidgin_log_data->destination_count = g_list_length(accounts);
+
 	for(; accounts != NULL; accounts = accounts->next) {
 
 		PurpleAccount *account = (PurpleAccount *)accounts->data;
