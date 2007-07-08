@@ -849,7 +849,7 @@ static void append_log_viewer_logs(PidginLogViewer *log_viewer, GList *logs)
 	
 }
 
-static void pidgin_log_done(void *data) 
+static void pidgin_log_done_cb(void *data) 
 {
 	struct _pidgin_log_data *pidgin_log_data = data;
 	
@@ -933,7 +933,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	purple_debug_info("gtklog", "pidgin_log_show - creating pidgin_log_show_data structure\n");
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_done;
+	pidgin_log_data->done_cb = pidgin_log_done_cb;
 	pidgin_log_data->done_count = 2;
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
@@ -1012,7 +1012,7 @@ void pidgin_syslog_show()
 	}
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_done;
+	pidgin_log_data->done_cb = pidgin_log_done_cb;
 	syslog_viewer = pidgin_log_data->log_viewer = display_log_viewer_nonblocking(NULL, 
 														_("System Log"), NULL, FALSE);
 
