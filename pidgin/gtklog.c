@@ -262,17 +262,15 @@ static void delete_log_cleanup_cb(gpointer *data)
 	g_free(data);
 }
 
-static void delete_log_cb(gpointer *data)
+static void pidgin_log_delete_log_cb(gboolean result, void *data)
 {
-	if (!purple_log_delete((PurpleLog *)data[2]))
-	{
+	gpointer *temp = data;
+	if (!result) {
 		purple_notify_error(NULL, NULL, "Log Deletion Failed",
 		                  "Check permissions and try again.");
-	}
-	else
-	{
-		GtkTreeStore *treestore = data[0];
-		GtkTreeIter *iter = (GtkTreeIter *)data[1];
+	} else {
+		GtkTreeStore *treestore = temp[0];
+		GtkTreeIter *iter = (GtkTreeIter *)temp[1];
 		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(treestore), iter);
 		gboolean first = !gtk_tree_path_prev(path);
 
@@ -294,7 +292,12 @@ static void delete_log_cb(gpointer *data)
 #endif
 	}
 
-	delete_log_cleanup_cb(data);
+	delete_log_cleanup_cb(temp);
+}
+
+static void delete_log_cb(gpointer *data)
+{
+	purple_log_delete_nonblocking((PurpleLog *)data[2], pidgin_log_delete_log_cb, data);
 }
 
 static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
