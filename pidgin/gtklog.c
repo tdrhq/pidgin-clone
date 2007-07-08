@@ -54,7 +54,6 @@ struct _pidgin_log_data {
 	
 	PurpleLogVoidCallback done_cb;
 	int counter;
-	int destination_count;
 };
 
 struct _pidgin_log_search_data_wrapper {
@@ -136,7 +135,9 @@ static void pidgin_log_search_done_cb(void *data)
 {
 	struct _pidgin_log_data *pidgin_log_data = data;
 
-	if (pidgin_log_data->counter == pidgin_log_data->destination_count) {
+	pidgin_log_data->counter--;
+
+	if (!pidgin_log_data->counter) {
 		select_first_log(pidgin_log_data->log_viewer);
 		pidgin_clear_cursor(pidgin_log_data->log_viewer->window);
 
@@ -149,7 +150,6 @@ static void pidgin_log_search_cb(char *text, void *data)
 	struct _pidgin_log_search_data_wrapper *pidgin_log_data_wrapper = data;
 	struct _pidgin_log_data *pidgin_log_data = pidgin_log_data_wrapper->data;
 
-	pidgin_log_data->counter++;
 	if (text && text && purple_strcasestr(text, pidgin_log_data_wrapper->search_term)) {
 		GtkTreeIter iter;
 		PurpleLog *log = pidgin_log_data_wrapper->log;
@@ -199,7 +199,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 
 	pidgin_log_data= g_new0(struct _pidgin_log_data, 1);
 	pidgin_log_data->done_cb = pidgin_log_search_done_cb;
-	pidgin_log_data->destination_count = g_list_length(lv->logs);
+	pidgin_log_data->counter = g_list_length(lv->logs);
 	pidgin_log_data->log_viewer = lv;
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
@@ -860,9 +860,9 @@ static void pidgin_log_done_cb(void *data)
 	struct _pidgin_log_data *pidgin_log_data = data;
 	PidginLogViewer *log_viewer = pidgin_log_data->log_viewer;
 
-	pidgin_log_data->counter++;
+	pidgin_log_data->counter--;
 
-	if (pidgin_log_data->counter == pidgin_log_data->destination_count) {
+	if (!pidgin_log_data->counter) {
 		purple_timeout_remove(log_viewer->pulser);
 		gtk_widget_hide(log_viewer->progress_bar);
 
@@ -871,6 +871,7 @@ static void pidgin_log_done_cb(void *data)
 		select_first_log(log_viewer);
 
 		g_free(pidgin_log_data);
+		purple_debug_info("pidgin_log_done_cb", "free memory\n");
 	}
 }
 
@@ -941,12 +942,12 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	pidgin_log_data->done_cb = pidgin_log_done_cb;
 
 	/* we should set count of nonblocking  calls
-	    when counter will be pidgin_log_data->destination_count in done_cb callback
+	    when counter will be zero
 	    we free all data and make neccessary operations
 	    we have 2 nonblocking calls: 
 	    purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking  */
 
-	pidgin_log_data->destination_count = 2; 
+	pidgin_log_data->counter = 2; 
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
 	g_free(title);
@@ -1015,11 +1016,11 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 		buddy_list_size++;
 
 	/* we should set count of nonblocking  calls
-	    when counter will be pidgin_log_data->destination_count in done_cb callback
+	    when counter will be zero
 	    we free all data and make neccessary operations 
 	    we have 2 nonblocking calls: purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking 
 	    so we need multiply 2 on iteration count */
-	pidgin_log_data->destination_count = 2 * buddy_list_size;
+	pidgin_log_data->counter = 2 * buddy_list_size;
 
 	for (child = contact->node.child ; child ; child = child->next) {
 		if (PURPLE_BLIST_NODE_IS_BUDDY(child)) {
@@ -1052,9 +1053,9 @@ void pidgin_syslog_show()
 
 	accounts = purple_accounts_get_all();
 	/* we should set count of nonblocking  calls
-	    when counter will be pidgin_log_data->destination_count in done_cb callback
+	    when counter will be zero
 	    we free all data and make neccessary operations */
-	pidgin_log_data->destination_count = g_list_length(accounts);
+	pidgin_log_data->counter = g_list_length(accounts);
 
 	for(; accounts != NULL; accounts = accounts->next) {
 
