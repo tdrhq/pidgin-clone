@@ -447,14 +447,40 @@ static gboolean search_find_cb(gpointer data)
 	return FALSE;
 }
 
+static void pigdin_log_read_cb(char *text, PurpleLogReadFlags *flags, void *data)
+{
+	gpointer *temp = data;
+	struct _pidgin_log_data *pidgin_log_data = temp[0];
+	PurpleLog *log = temp[1];
+
+	gtk_imhtml_clear(GTK_IMHTML(pidgin_log_data->log_viewer->imhtml));
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(pidgin_log_data->log_viewer->imhtml),
+	                            purple_account_get_protocol_name(log->account));
+
+	purple_signal_emit(pidgin_log_get_handle(), "log-displaying", pidgin_log_data->log_viewer, log);
+
+	gtk_imhtml_append_text(GTK_IMHTML(pidgin_log_data->log_viewer->imhtml), text,
+			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL |
+			       ((*flags & PURPLE_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
+	g_free(text);
+
+	if (pidgin_log_data->log_viewer->search != NULL) {
+		gtk_imhtml_search_clear(GTK_IMHTML(pidgin_log_data->log_viewer->imhtml));
+		g_idle_add(search_find_cb, pidgin_log_data->log_viewer);
+	}
+
+	pidgin_clear_cursor(pidgin_log_data->log_viewer->window);
+	g_free(pidgin_log_data);
+	g_free(data);
+}
+
 static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	GtkTreeIter iter;
 	GValue val;
 	GtkTreeModel *model = GTK_TREE_MODEL(viewer->treestore);
 	PurpleLog *log = NULL;
-	PurpleLogReadFlags flags;
-	char *read = NULL;
-
+	struct _pidgin_log_data *pidgin_log_data;
+	gpointer *data;
 	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
 		return;
 
@@ -481,26 +507,15 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 		g_free(title);
 	}
 
-	read = purple_log_read(log, &flags);
-	viewer->flags = flags;
+	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
+	pidgin_log_data->log_viewer = viewer;
 
-	gtk_imhtml_clear(GTK_IMHTML(viewer->imhtml));
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(viewer->imhtml),
-	                            purple_account_get_protocol_name(log->account));
+	data = g_new(gpointer, 2);
+	data[0] = pidgin_log_data;
+	data[1] = log;
 
-	purple_signal_emit(pidgin_log_get_handle(), "log-displaying", viewer, log);
+	purple_log_read_nonblocking(log, &viewer->flags, pigdin_log_read_cb, data);
 
-	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read,
-			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL |
-			       ((flags & PURPLE_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
-	g_free(read);
-
-	if (viewer->search != NULL) {
-		gtk_imhtml_search_clear(GTK_IMHTML(viewer->imhtml));
-		g_idle_add(search_find_cb, viewer);
-	}
-
-	pidgin_clear_cursor(viewer->window);
 }
 
 /* I want to make this smarter, but haven't come up with a cool algorithm to do so, yet.
