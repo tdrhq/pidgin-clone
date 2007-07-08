@@ -56,12 +56,6 @@ struct _pidgin_log_data {
 	int counter;
 };
 
-struct _pidgin_log_search_data_wrapper {
-	struct _pidgin_log_data *data;
-	PurpleLog *log;
-	const char *search_term;
-};
-
 static guint log_viewer_hash(gconstpointer data)
 {
 	const struct log_viewer_hash_t *viewer = data;
@@ -147,12 +141,13 @@ static void pidgin_log_search_done_cb(void *data)
 
 static void pidgin_log_search_cb(char *text, PurpleLogReadFlags *flags, void *data)
 {
-	struct _pidgin_log_search_data_wrapper *pidgin_log_data_wrapper = data;
-	struct _pidgin_log_data *pidgin_log_data = pidgin_log_data_wrapper->data;
-
-	if (text && text && purple_strcasestr(text, pidgin_log_data_wrapper->search_term)) {
+	gpointer *pidgin_log_data_wrapper = data;
+	struct _pidgin_log_data *pidgin_log_data = pidgin_log_data_wrapper[0];
+	char *search_term = pidgin_log_data_wrapper[2];
+	
+	if (text && text && purple_strcasestr(text, search_term)) {
 		GtkTreeIter iter;
-		PurpleLog *log = pidgin_log_data_wrapper->log;
+		PurpleLog *log = pidgin_log_data_wrapper[1];
 
 		gtk_tree_store_append (pidgin_log_data->log_viewer->treestore, &iter, NULL);
 		gtk_tree_store_set(pidgin_log_data->log_viewer->treestore, &iter,
@@ -203,12 +198,11 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	pidgin_log_data->log_viewer = lv;
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
-		struct _pidgin_log_search_data_wrapper *pidgin_log_data_wrapper = 
-						g_new0(struct _pidgin_log_search_data_wrapper, 1);
+		gpointer *pidgin_log_data_wrapper = g_new(gpointer, 3);
 
-		pidgin_log_data_wrapper->data = pidgin_log_data;
-		pidgin_log_data_wrapper->log = logs->data;
-		pidgin_log_data_wrapper->search_term = search_term;
+		pidgin_log_data_wrapper[0] = pidgin_log_data;
+		pidgin_log_data_wrapper[1] = logs->data;
+		pidgin_log_data_wrapper[2] = (char *)search_term;
 
 		purple_log_read_nonblocking((PurpleLog*)logs->data, NULL, pidgin_log_search_cb, pidgin_log_data_wrapper);
 	}
