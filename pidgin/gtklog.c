@@ -861,8 +861,6 @@ static void pidgin_log_done_cb(void *data)
 	PidginLogViewer *log_viewer = pidgin_log_data->log_viewer;
 
 	pidgin_log_data->counter++;
-	purple_debug_info("gtklog", "pidgin_log_done_cb - pidgin_log_data->counter = %i\t pidgin_log_data->destination_count = %i \n",
-			pidgin_log_data->counter, pidgin_log_data->destination_count);
 
 	if (pidgin_log_data->counter == pidgin_log_data->destination_count) {
 		purple_timeout_remove(log_viewer->pulser);
@@ -904,6 +902,8 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(screenname != NULL);
 
+	purple_debug_info("pidgin_log_show_contact", "enter\n");
+
 	ht = g_new0(struct log_viewer_hash_t, 1);
 
 	ht->type = type;
@@ -939,33 +939,37 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
 	pidgin_log_data->done_cb = pidgin_log_done_cb;
-	
+
 	/* we should set count of nonblocking  calls
 	    when counter will be pidgin_log_data->destination_count in done_cb callback
-	    we free all data and make neccessary operations */
-	// we have 2 nonblocking calls: purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking 
+	    we free all data and make neccessary operations
+	    we have 2 nonblocking calls: 
+	    purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking  */
+
 	pidgin_log_data->destination_count = 2; 
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
+	g_free(title);
 
 	purple_log_get_logs_nonblocking(type, screenname, account, pidgin_log_list_cb, pidgin_log_data);
 	purple_log_get_total_size_nonblocking(type, screenname, account, 
 										pidgin_log_size_cb, pidgin_log_data);
 }
 
-// TODO: This function needs to be modified to be non-blocking.
 void pidgin_log_show_contact(PurpleContact *contact) {
 	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
 	PurpleBlistNode *child;
 	PidginLogViewer *lv = NULL;
-	GList *logs = NULL;
 	GdkPixbuf *pixbuf;
 	GtkWidget *image = gtk_image_new();
 	const char *name = NULL;
 	char *title;
-	int total_log_size = 0;
+	struct _pidgin_log_data *pidgin_log_data;
+	int buddy_list_size = 0;
 
 	g_return_if_fail(contact != NULL);
+
+	purple_debug_info("pidgin_log_show_contact", "enter\n");
 
 	ht->type = PURPLE_LOG_IM;
 	ht->contact = contact;
@@ -977,16 +981,6 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 		g_free(ht);
 		return;
 	}
-
-	for (child = contact->node.child ; child ; child = child->next) {
-		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
-			continue;
-
-		logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name,
-						((PurpleBuddy *)child)->account), logs);
-		total_log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, ((PurpleBuddy *)child)->account);
-	}
-	logs = g_list_sort(logs, purple_log_compare);
 
 	pixbuf = gtk_widget_render_icon(image, PIDGIN_STOCK_STATUS_PERSON,
 					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL), "GtkWindow");
@@ -1007,9 +1001,38 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 			name = "";
 	}
 
+	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
+	pidgin_log_data->done_cb = pidgin_log_done_cb;
+	
+	
 	title = g_strdup_printf(_("Conversations with %s"), name);
-	display_log_viewer(ht, logs, title, image, total_log_size);
+	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
+											image, TRUE);
 	g_free(title);
+
+	/*XXX Maybe need to be new function in blish.h */
+	for (child = contact->node.child; child; child = child->next) 
+		buddy_list_size++;
+
+	/* we should set count of nonblocking  calls
+	    when counter will be pidgin_log_data->destination_count in done_cb callback
+	    we free all data and make neccessary operations 
+	    we have 2 nonblocking calls: purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking 
+	    so we need multiply 2 on iteration count */
+	pidgin_log_data->destination_count = 2 * buddy_list_size;
+
+	for (child = contact->node.child ; child ; child = child->next) {
+		if (PURPLE_BLIST_NODE_IS_BUDDY(child)) {
+			purple_log_get_logs_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, 
+				((PurpleBuddy *)child)->account, pidgin_log_list_cb, pidgin_log_data);
+			purple_log_get_total_size_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, 
+				((PurpleBuddy *)child)->account, pidgin_log_size_cb, pidgin_log_data);
+
+		} else {
+			pidgin_log_list_cb(NULL, pidgin_log_data);
+			pidgin_log_size_cb(0, pidgin_log_data);
+		}
+	}
 }
 
 void pidgin_syslog_show()
