@@ -829,7 +829,6 @@ static PidginLogViewer *display_log_viewer_nonblocking(struct log_viewer_hash_t 
 	lv->progress_bar = gtk_progress_bar_new();
 	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(lv->progress_bar), "Waiting for logs ...");
 	lv->pulser = purple_timeout_add(200, (GSourceFunc)pulse_progress_bar, lv->progress_bar);
-	//gtk_misc_set_alignment(GTK_MISC(lv->progress_bar), 0.5, 0.5);
 	gtk_box_pack_start(GTK_BOX(vbox), (GtkWidget *)lv->progress_bar, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(lv->window);
@@ -856,19 +855,25 @@ static void append_log_viewer_logs(PidginLogViewer *log_viewer, GList *logs)
 	
 }
 
-static void pidgin_log_done(void *data) 
+static void pidgin_log_done_cb(void *data) 
 {
 	struct _pidgin_log_data *pidgin_log_data = data;
 	PidginLogViewer *log_viewer = pidgin_log_data->log_viewer;
 
-	purple_timeout_remove(log_viewer->pulser);
-	gtk_widget_hide(log_viewer->progress_bar);
+	pidgin_log_data->counter++;
+	purple_debug_info("gtklog", "pidgin_log_done_cb - pidgin_log_data->counter = %i\t pidgin_log_data->destination_count = %i \n",
+			pidgin_log_data->counter, pidgin_log_data->destination_count);
 
-	// TODO: We should only select the first log
-	// TODO: if one is not already selected.
-	select_first_log(log_viewer);
+	if (pidgin_log_data->counter == pidgin_log_data->destination_count) {
+		purple_timeout_remove(log_viewer->pulser);
+		gtk_widget_hide(log_viewer->progress_bar);
 
-	g_free(pidgin_log_data);
+		// TODO: We should only select the first log
+		// TODO: if one is not already selected.
+		select_first_log(log_viewer);
+
+		g_free(pidgin_log_data);
+	}
 }
 
 static void pidgin_log_size_cb(int size, void *data)
@@ -876,18 +881,12 @@ static void pidgin_log_size_cb(int size, void *data)
 	struct _pidgin_log_data * pidgin_log_data = data;
 
 	set_log_viewer_log_size(pidgin_log_data->log_viewer, size);
-	purple_debug_info("gtklog", "pidgin_log_size_cb - free memory\n");
-	pidgin_log_data->counter++;
-
-	if (pidgin_log_data->counter == pidgin_log_data->destination_count) {
-		pidgin_log_data->done_cb(pidgin_log_data);
-	}
+	pidgin_log_data->done_cb(pidgin_log_data);
 }
 
 static void pidgin_log_list_cb(GList *list, void *data)
 {
 	struct _pidgin_log_data *pidgin_log_data = data;
-	purple_debug_info("gtklog", "pidgin_log_list_cb - enter\n");
 
 	if (list != NULL) 
 		append_log_viewer_logs(pidgin_log_data->log_viewer, list);
@@ -938,10 +937,14 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 		title = g_strdup_printf(_("Conversations with %s"), name);
 	}
 
-	purple_debug_info("gtklog", "pidgin_log_show - creating pidgin_log_show_data structure\n");
-
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_done;
+	pidgin_log_data->done_cb = pidgin_log_done_cb;
+	
+	/* we should set count of nonblocking  calls
+	    when counter will be pidgin_log_data->destination_count in done_cb callback
+	    we free all data and make neccessary operations */
+	// we have 2 nonblocking calls: purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking 
+	pidgin_log_data->destination_count = 2; 
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
 
@@ -1020,11 +1023,14 @@ void pidgin_syslog_show()
 	}
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_done;
+	pidgin_log_data->done_cb = pidgin_log_done_cb;
 	syslog_viewer = pidgin_log_data->log_viewer = display_log_viewer_nonblocking(NULL, 
 														_("System Log"), NULL, FALSE);
 
 	accounts = purple_accounts_get_all();
+	/* we should set count of nonblocking  calls
+	    when counter will be pidgin_log_data->destination_count in done_cb callback
+	    we free all data and make neccessary operations */
 	pidgin_log_data->destination_count = g_list_length(accounts);
 
 	for(; accounts != NULL; accounts = accounts->next) {
