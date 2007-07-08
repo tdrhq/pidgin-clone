@@ -51,7 +51,7 @@ struct log_viewer_hash_t {
 
 struct _pidgin_log_data {
 	PidginLogViewer *log_viewer;
-	
+
 	PurpleLogVoidCallback done_cb;
 	int counter;
 };
@@ -675,7 +675,7 @@ static PidginLogViewer *display_log_viewer_nonblocking(struct log_viewer_hash_t 
 
 	/* Progress bar **********/
 	lv->progress_bar = gtk_progress_bar_new();
-	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(lv->progress_bar), "Waiting for logs ...");
+	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(lv->progress_bar), _("Waiting for logs ..."));
 	lv->pulser = purple_timeout_add(200, (GSourceFunc)pulse_progress_bar, lv->progress_bar);
 	gtk_box_pack_start(GTK_BOX(vbox), (GtkWidget *)lv->progress_bar, FALSE, FALSE, 0);
 
@@ -700,7 +700,6 @@ static void append_log_viewer_logs(PidginLogViewer *log_viewer, GList *logs)
 	log_viewer->logs = g_list_sort(log_viewer->logs, purple_log_compare);
 	populate_log_tree(log_viewer);
 	select_first_log(log_viewer);
-	
 }
 
 static void pidgin_log_done_cb(void *data) 
@@ -719,7 +718,6 @@ static void pidgin_log_done_cb(void *data)
 		select_first_log(log_viewer);
 
 		g_free(pidgin_log_data);
-		purple_debug_info("pidgin_log_done_cb", "free memory\n");
 	}
 }
 
@@ -750,8 +748,6 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(screenname != NULL);
-
-	purple_debug_info("pidgin_log_show_contact", "enter\n");
 
 	ht = g_new0(struct log_viewer_hash_t, 1);
 
@@ -817,8 +813,6 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 	int buddy_list_size = 0;
 
 	g_return_if_fail(contact != NULL);
-
-	purple_debug_info("pidgin_log_show_contact", "enter\n");
 
 	ht->type = PURPLE_LOG_IM;
 	ht->contact = contact;
@@ -908,11 +902,9 @@ void pidgin_syslog_show()
 	for(; accounts != NULL; accounts = accounts->next) {
 
 		PurpleAccount *account = (PurpleAccount *)accounts->data;
-		if(purple_find_prpl(purple_account_get_protocol_id(account)) != NULL) {
-			purple_debug_info("gtklog", "making call: purple_log_get_system_logs_nonblocking\n");
-
+		if(purple_find_prpl(purple_account_get_protocol_id(account)) != NULL)
 			purple_log_get_system_logs_nonblocking(account, pidgin_log_list_cb, pidgin_log_data);
-		} else 
+		else 
 			pidgin_log_list_cb(NULL, pidgin_log_data);
 	}
 }
