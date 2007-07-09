@@ -518,25 +518,6 @@ gboolean purple_log_is_deletable(PurpleLog *log)
 	return TRUE;
 }
 
-void purple_log_is_deletable_nonblocking(PurpleLog *log, PurpleLogBooleanCallback cb, void *data)
-{
-	gboolean result = FALSE;
-
-	g_return_if_fail(log != NULL);
-	g_return_if_fail(log->logger != NULL);
-
-	if (log->logger->remove != NULL || log->logger->remove_nonblocking != NULL)
-		result = TRUE;
-
-	if (result && log->logger->is_deletable_nonblocking != NULL) {
-		log->logger->is_deletable_nonblocking(log, cb, data);
-		return;
-	} else if (result && log->logger->is_deletable != NULL)
-		result = log->logger->is_deletable(log);
-
-	cb(result, data);
-}
-
 gboolean purple_log_delete(PurpleLog *log)
 {
 	g_return_val_if_fail(log != NULL, FALSE);
@@ -700,10 +681,8 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 		logger->get_log_sets_nonblocking = va_arg(args, void *);
 	if (functions >= 21)
 		logger->remove_nonblocking = va_arg(args, void *);
-	if (functions >= 22)
-		logger->is_deletable_nonblocking = va_arg(args, void *);
 
-	if (functions >= 23)
+	if (functions >= 22)
 		purple_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
 
 	va_end(args);

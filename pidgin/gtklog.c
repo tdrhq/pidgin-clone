@@ -350,22 +350,13 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	g_free(tmp);
 }
 
-static void pidgin_log_show_popup_menu_cb(gboolean result, void *data)
-{
-	GtkWidget *menuitem = data;
-
-	if (result)
-		gtk_widget_set_sensitive(menuitem, TRUE);
-}
 static void log_show_popup_menu(GtkWidget *treeview, GdkEventButton *event, gpointer *data)
 {
 	GtkWidget *menu = gtk_menu_new();
 	GtkWidget *menuitem = gtk_menu_item_new_with_label("Delete Log...");
 
-	/* As we use nonblocking call, it's better disable item first
-	    and if it's Ok, we enable it in callback */
-	gtk_widget_set_sensitive(menuitem, FALSE);
-	purple_log_is_deletable_nonblocking((PurpleLog *)data[1], pidgin_log_show_popup_menu_cb, menuitem);
+	if (!purple_log_is_deletable((PurpleLog *)data[1]))
+		gtk_widget_set_sensitive(menuitem, FALSE);
 
 	g_signal_connect(menuitem, "activate", G_CALLBACK(log_delete_log_cb), data);
 	g_object_set_data_full(G_OBJECT(menuitem), "log-viewer-data", data, g_free);
