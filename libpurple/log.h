@@ -63,6 +63,17 @@ typedef void (*PurpleLogListCallback) (GList *list, void *);
 typedef void (*PurpleLogSizeCallback) (int size, void *);
 typedef void (*PurpleLogHashTableCallback) (GHashTable *table, void *);
 
+
+// TODO: If we want this to be merged for a minor release instead of a major,
+// TODO: we need to use the padding for our new functions. As there is not
+// TODO: enough padding, we'd have to temporarily allocate a secondary struct
+// TODO: and store a pointer to it in one of the padding slots.
+
+// TODO: Alternatively, we could just drop all the blocking stuff entirely
+// TODO: and push all this for 3.0.0.  If that's done, this struct should be
+// TODO: hidden and the function signatures copied and descriptions moved to
+// TODO: the purple_log_logger_new() documentation block.
+
 /**
  * A log logger.
  *
@@ -76,6 +87,9 @@ struct _PurpleLogLogger {
 	/** This gets called when the log is first created.
 	    I don't think this is actually needed. */
 	void (*create)(PurpleLog *log);
+
+	// TODO: We could probably drop this. There's really no reason to use it.
+	// TODO: If we do, we should deprecate create at the same time.
 
 	/** This gets called when the log is first created.
 	    I don't think this is actually needed.
@@ -110,7 +124,7 @@ struct _PurpleLogLogger {
 	GList *(*list)(PurpleLogType type, const char *name, PurpleAccount *account);
 
 	/** This function returns a sorted GList of available PurpleLogs 
-	* Note: provides callback to make call non-blockable */
+	  * Note: provides callback to make call non-blockable */
 	void (*list_nonblocking)(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void *data);
 
 	/** Given one of the logs returned by the logger's list function,
@@ -137,8 +151,7 @@ struct _PurpleLogLogger {
 
 	/** Returns the total size of all the logs. If this is undefined a default
 	 *  implementation is used
- 	* Note: provides callback to make call non-blockable */
-
+ 	 * Note: provides callback to make call non-blockable */
 	void (*total_size_nonblocking)(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogSizeCallback cb, void *data);
 
 	/** This function returns a sorted GList of available system PurpleLogs */
