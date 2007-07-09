@@ -325,7 +325,7 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 }
 
 
-void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogTextCallback cb, void *data)
+void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogReadCallback cb, void *data)
 {
 	PurpleLogReadFlags mflags;
 	struct _purple_log_callback_data *callback_data;
@@ -335,15 +335,16 @@ void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, Purp
 
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
 
-	callback_data->text_cb = cb;
+	callback_data->read_cb = cb;
 	callback_data->data = data;
 
 	if (log->logger->read_nonblocking) 
 		log->logger->read_nonblocking(log, flags ? flags : &mflags, log_read_cb, callback_data);
-	else if (log->logger->read)
-		log_read_cb((log->logger->read)(log, flags ? flags : &mflags), callback_data);
-	else
-		log_read_cb(g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>")), callback_data);
+	else if (log->logger->read) {
+		char *text = (log->logger->read)(log, flags ? flags : &mflags);
+		log_read_cb(text, flags, callback_data);
+	} else
+		log_read_cb(g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>")), flags, callback_data);
 }
 
 int purple_log_get_size(PurpleLog *log)
