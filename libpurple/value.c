@@ -186,6 +186,10 @@ purple_value_dup(const PurpleValue *value)
 			purple_value_set_boxed(new_value, purple_value_get_boxed(value));
 			break;
 
+		case PURPLE_TYPE_TIMET:
+			purple_value_set_timet(new_value, purple_value_get_timet(value));
+			break;
+
 		default:
 			break;
 	}
@@ -356,6 +360,14 @@ purple_value_set_boxed(PurpleValue *value, void *data)
 	value->data.boxed_data = data;
 }
 
+void
+purple_value_set_timet(PurpleValue *value, time_t data)
+{
+	g_return_if_fail(value != NULL);
+
+	value->data.timet_data = data;
+}
+
 char
 purple_value_get_char(const PurpleValue *value)
 {
@@ -484,3 +496,10 @@ purple_value_get_boxed(const PurpleValue *value)
 	return value->data.boxed_data;
 }
 
+time_t
+purple_value_get_timet(const PurpleValue *value)
+{
+	g_return_val_if_fail(value != NULL, NULL);
+
+	return value->data.timet_data;
+}

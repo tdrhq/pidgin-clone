@@ -49,7 +49,8 @@ typedef enum
 	PURPLE_TYPE_OBJECT,       /**< Object pointer.                   */
 	PURPLE_TYPE_POINTER,      /**< Generic pointer.                  */
 	PURPLE_TYPE_ENUM,         /**< Enum.                             */
-	PURPLE_TYPE_BOXED         /**< Boxed pointer with specific type. */
+	PURPLE_TYPE_BOXED,        /**< Boxed pointer with specific type. */
+	PURPLE_TYPE_TIMET         /**< time_t (usually int32 or int64).  */
 
 } PurpleType;
 
@@ -106,6 +107,7 @@ typedef struct
 		void *pointer_data;
 		int enum_data;
 		void *boxed_data;
+		time_t timet_data;
 
 	} data;
 
@@ -351,6 +353,14 @@ void purple_value_set_enum(PurpleValue *value, int data);
 void purple_value_set_boxed(PurpleValue *value, void *data);
 
 /**
+ * Sets the value's time_t data.
+ *
+ * @param value The value.
+ * @param data The time_t data.
+ */
+void purple_value_set_timet(PurpleValue *value, time_t data);
+
+/**
  * Returns the value's character data.
  *
  * @param value The value.
@@ -493,6 +503,15 @@ int purple_value_get_enum(const PurpleValue *value);
  * @return The boxed data.
  */
 void *purple_value_get_boxed(const PurpleValue *value);
+
+/**
+ * Returns the value's time_t data.
+ *
+ * @param value The value.
+ *
+ * @return The time_t data.
+ */
+time_t purple_value_get_timet(const PurpleValue *value);
 
 #ifdef __cplusplus
 }

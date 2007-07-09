@@ -261,6 +261,21 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *buffer,
 					(conv != NULL) ? purple_conversation_get_name(conv) : "(null)", flags);
 }
 
+static void
+received_im_msg_with_timestamp_cb(PurpleAccount *account, char *sender,
+								  char *buffer, PurpleConversation *conv,
+								  PurpleMessageFlags flags, time_t mtime,
+								  void *data)
+{
+	struct tm *timestamp = localtime (mtime);
+	const char *timestamp_str = purple_time_format (timestamp);
+	purple_debug_misc("signals test", "received-im-msg-with-timestamp "
+					"(%s, %s, %s, %s, %d, %s)\n",
+					purple_account_get_username(account), sender, buffer,
+					(conv != NULL) ? purple_conversation_get_name(conv) : "(null)",
+					flags, timestamp_str);
+}
+
 static gboolean
 writing_chat_msg_cb(PurpleAccount *account, const char *who, char **buffer,
 				PurpleConversation *conv, PurpleMessageFlags flags, void *data)
