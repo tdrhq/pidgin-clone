@@ -55,7 +55,7 @@ struct _purple_log_callback_data {
 	/* list callback */
 	PurpleLogListCallback list_cb;
 	PurpleLogSizeCallback size_cb;
-	PurpleLogTextCallback text_cb;
+	PurpleLogReadCallback read_cb;
 	PurpleLogVoidCallback void_cb;
 	PurpleLogHashTableCallback hash_table_cb;
 	
@@ -84,7 +84,7 @@ static void html_logger_write_nonblocking(PurpleLog *log, PurpleMessageFlags typ
 							  const char *from, time_t time, const char *message,
 							  PurpleLogSizeCallback cb, void *data);
 static void html_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
-							PurpleLogTextCallback cb, void *data);
+							PurpleLogReadCallback cb, void *data);
 static void html_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
 static void html_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
@@ -112,7 +112,7 @@ static void txt_logger_write_nonblocking(PurpleLog *log,
 							 const char *from, time_t time, const char *message,
 							 PurpleLogSizeCallback cb, void *data);
 static void txt_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
-							PurpleLogTextCallback cb, void *data);
+							PurpleLogReadCallback cb, void *data);
 static void txt_logger_list_nonblocking(PurpleLogType type, const char *sn, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data);
 static void txt_logger_list_syslog_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
@@ -122,7 +122,7 @@ static void txt_logger_total_size_nonblocking(PurpleLogType type, const char *na
 static void log_list_cb(GList * list, void *data);
 static void log_size_cb(int size, void *data);
 static void log_size_list_cb(GList * list, void *data);
-static void log_read_cb(char *text, void *data);
+static void log_read_cb(char *text, PurpleLogReadFlags *flags, void *data);
 static void log_write_cb(int size, void *data);
 static void log_hash_cb(void *data);
 /**************************************************************************
@@ -193,6 +193,62 @@ void purple_log_free(PurpleLog *log)
 	PURPLE_DBUS_UNREGISTER_POINTER(log);
 	g_slice_free(PurpleLog, log);
 }
+static void log_free_cb(void *data)
+{
+	gpointer *temp = data;
+	struct _purple_log_callback_data *callback_data = temp[0];
+	PurpleLog *log = temp[1];
+
+	if (log->tm != NULL)
+	{
+#ifdef HAVE_STRUCT_TM_TM_ZONE
+		/* XXX: This is so wrong... */
+		g_free((char *)log->tm->tm_zone);
+#endif
+		g_slice_free(struct tm, log->tm);
+	}
+
+	PURPLE_DBUS_UNREGISTER_POINTER(log);
+	g_slice_free(PurpleLog, log);
+
+	if (callback_data->void_cb != NULL)
+		callback_data->void_cb(callback_data->data);
+
+	g_free(log->name);
+	g_free(callback_data);
+	g_free(data);
+}
+
+void purple_log_free_nonblocking(PurpleLog *log, PurpleLogVoidCallback cb, void *data)
+{
+	gpointer *callback_data_wrapper;
+	struct _purple_log_callback_data *callback_data;
+
+	if (log == NULL) {
+		if (cb != NULL)
+			cb(data);
+		return;
+	}
+
+	callback_data = g_new0(struct _purple_log_callback_data, 1);
+	callback_data->data = data;
+	callback_data->void_cb = cb;
+
+	callback_data_wrapper = g_new0(gpointer, 2);
+	callback_data_wrapper[0] = callback_data;
+	callback_data_wrapper[1] = log;
+
+	if (log->logger != NULL) {
+		if (log->logger->finalize_nonblocking != NULL) {
+			log->logger->finalize_nonblocking(log, log_free_cb, callback_data_wrapper); 
+			return;
+		} else if (log->logger->finalize != NULL) 
+			log->logger->finalize(log);
+	}
+
+	log_free_cb(callback_data_wrapper);
+}
+
 
 void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 		    const char *from, time_t time, const char *message)
@@ -1316,6 +1372,7 @@ purple_log_common_list_cb(gpointer data)
 	if (logs != NULL)
 		cb(logs, cb_data);
 	cb(NULL, cb_data);
+	g_free(data);
 
 	return FALSE;
 }
@@ -1897,9 +1954,10 @@ static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 }
 
 static void html_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
-							PurpleLogTextCallback cb, void *data)
+							PurpleLogReadCallback cb, void *data)
 {
-	cb(html_logger_read(log, flags), data);
+	char *text = html_logger_read(log, flags);
+	cb(text, flags, data);
 }
 
 static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
@@ -2060,9 +2118,10 @@ static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 }
 
 static void txt_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
-							PurpleLogTextCallback cb, void *data)
+							PurpleLogReadCallback cb, void *data)
 {
-	cb(txt_logger_read(log, flags), data);
+	char *text = txt_logger_read(log, flags);
+	cb(text, flags, data);
 }
 
 static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
@@ -2545,14 +2604,14 @@ static void log_list_cb(GList *list, void *data)
 		callback_data->counter--;
 }
 
-static void log_read_cb(char *text, void *data)
+static void log_read_cb(char *text, PurpleLogReadFlags *flags, void *data)
 {
 	struct _purple_log_callback_data *callback_data = data;
 
 	g_return_if_fail(callback_data != NULL);
 
 	purple_str_strip_char(text, '\r');
-	callback_data->text_cb(text, callback_data->data);
+	callback_data->read_cb(text, flags, callback_data->data);
 	g_free(callback_data);
 }
 

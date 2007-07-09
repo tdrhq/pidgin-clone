@@ -57,7 +57,7 @@ typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
 
 /* Log callback functions */
 typedef void (*PurpleLogVoidCallback) (void *);
-typedef void (*PurpleLogTextCallback) (char *text, void *);
+typedef void (*PurpleLogReadCallback) (char *text, PurpleLogReadFlags *flags, void *);
 typedef void (*PurpleLogBooleanCallback) (gboolean, void *);
 typedef void (*PurpleLogListCallback) (GList *list, void *);
 typedef void (*PurpleLogSizeCallback) (int size, void *);
@@ -134,7 +134,7 @@ struct _PurpleLogLogger {
 	/** Given one of the logs returned by the logger's list function,
 	 *  this returns the contents of the log in GtkIMHtml markup 
 	 * Note: provides callback to make call non-blockable */
-	void (*read_nonblocking)(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogTextCallback cb, void *data);
+	void (*read_nonblocking)(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogReadCallback cb, void *data);
 
 	/** Given one of the logs returned by the logger's list function,
 	 *  this returns the size of the log in bytes */
@@ -299,6 +299,15 @@ PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *a
 void purple_log_free(PurpleLog *log);
 
 /**
+ * Frees a log
+ *
+ * @param log         The log to destroy
+ * @param cb           The callback (optional: NULL value is valid)
+ * @param data         User data
+ */
+void purple_log_free_nonblocking(PurpleLog *log, PurpleLogVoidCallback cb, void *data);
+
+/**
  * Writes to a log file. Assumes you have checked preferences already.
  *
  * @param log          The log to write to
@@ -353,7 +362,7 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags);
  * @param data  User data
  */
 void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, 
-								PurpleLogTextCallback cb, void *data);
+								PurpleLogReadCallback cb, void *data);
 
 /**
  * Returns a list of all available logs
