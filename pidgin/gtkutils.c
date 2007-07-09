@@ -1987,13 +1987,21 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, gpointer **set_h
 }
 
 #ifdef NEW_STYLE_COMPLETION
+static void log_get_log_sets_cb(GHashTable *sets, void *data)
+{
+	gpointer *set_hash_data = data;
+	
+	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
+	g_hash_table_destroy(sets);
+	g_free(set_hash_data);
+}
+
 static void
 add_completion_list(GtkListStore *store)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	gboolean all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(store), "screenname-all"));
-	GHashTable *sets;
-	gpointer set_hash_data[] = {store, GINT_TO_POINTER(all)};
+	gpointer  *data_wrapper;
 
 	gtk_list_store_clear(store);
 
@@ -2024,19 +2032,38 @@ add_completion_list(GtkListStore *store)
 		}
 	}
 
-	sets = purple_log_get_log_sets();
-	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
-	g_hash_table_destroy(sets);
+	data_wrapper = g_new(gpointer, 2);
+	/* XXX: can we use store argument? */
+	data_wrapper[0] = store;
+	data_wrapper[1] = GINT_TO_POINTER(all);
+
+	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, data_wrapper);
 }
 #else
+
+static void log_get_log_sets_cb(GHashTable *sets, void *data)
+{
+	gpointer *data_wrapper = data;
+	gpointer set_hash_data[2];
+	GList *item = NULL:
+
+	set_hash_data[0] = &item;
+	set_hash_data[1] = data_wrapper[0]; // GINT_TO_POINTER(data->all);
+	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
+	g_hash_table_destroy(sets);
+	g_completion_add_items(data_wrapper[1], item);
+
+	g_list_free(item);
+	g_free(data_wrapper);
+}
+
 static void
 add_completion_list(PidginCompletionData *data)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	GCompletion *completion;
+	gpointer *data_wrapper;
 	GList *item = g_list_append(NULL, NULL);
-	GHashTable *sets;
-	gpointer set_hash_data[2];
 
 	completion = data->completion;
 
@@ -2067,14 +2094,11 @@ add_completion_list(PidginCompletionData *data)
 	}
 	g_list_free(item);
 
-	sets = purple_log_get_log_sets();
-	item = NULL;
-	set_hash_data[0] = &item;
-	set_hash_data[1] = GINT_TO_POINTER(data->all);
-	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
-	g_hash_table_destroy(sets);
-	g_completion_add_items(data->completion, item);
-	g_list_free(item);
+	data_wrapper = g_new(gpointer, 2);
+	/* XXX: can we use data argument? */
+	data_wrapper[0] = GINT_TO_POINTER(data->all);
+	data_wrapper[1] = completion;
+	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, data_wrapper);
 }
 #endif
 
