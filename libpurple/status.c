@@ -635,8 +635,10 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		{
 			purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
 			               current_time, tmp, log_notify_buddy_status_update_cb, tmp);
+			return;
 		}
 
+		g_free(tmp);
 	}
 }
 
@@ -1241,7 +1243,8 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 					purple_buddy_get_alias(buddy));
 
 				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp, log_update_buddy_idle_cb, tmp);
+					purple_buddy_get_alias(buddy), current_time, tmp, 
+					log_update_buddy_idle_cb, tmp);
 			}
 		}
 	} else {
