@@ -1222,21 +1222,9 @@ purple_presence_switch_status(PurplePresence *presence, const char *status_id)
 
 static void log_update_buddy_idle_cb(gboolean result, void *data)
 {
-	gpointer *temp = data;
-	PurpleBuddy *buddy = temp[1];
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-
-	purple_contact_invalidate_priority_buddy(purple_buddy_get_contact(buddy));
-
-	/* Should this be done here? It'd perhaps make more sense to
-	 * connect to buddy-[un]idle signals and update from there
-	 */
-
-	if (ops != NULL && ops->update != NULL)
-		ops->update(purple_get_blist(), (PurpleBlistNode *)buddy);
-	g_free(temp[0]); //g_free(tmp)
-	g_free(temp);
+	g_free(data);
 }
+
 static void
 update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 		time_t current_time, gboolean old_idle, gboolean idle)
@@ -1251,13 +1239,9 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 				char *tmp = g_strdup_printf(
 					(!old_idle && idle) ? _("%s became idle") : _("%s became unidle"),
 					purple_buddy_get_alias(buddy));
-				gpointer * callback_data = g_new(gpointer, 2);
-				callback_data[0] = tmp;
-				callback_data[1] = buddy;
 
 				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp, log_update_buddy_idle_cb, callback_data);
-				return;
+				purple_buddy_get_alias(buddy), current_time, tmp, log_update_buddy_idle_cb, tmp);
 			}
 		}
 	} else {
