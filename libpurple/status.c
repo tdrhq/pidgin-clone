@@ -1259,6 +1259,11 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 		ops->update(purple_get_blist(), (PurpleBlistNode *)buddy);
 }
 
+static void log_purple_presence_set_idle_cb(gboolean result, void *data)
+{
+	g_free(data);
+}
+
 void
 purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_time)
 {
@@ -1302,10 +1307,10 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 				else
 					msg = g_strdup_printf(_("+++ %s became unidle"), purple_account_get_username(account));
 
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
+				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
 				                 purple_account_get_username(account),
-				                 (idle ? idle_time : current_time), msg);
-				g_free(msg);
+				                 (idle ? idle_time : current_time), msg,
+								 log_purple_presence_set_idle_cb, msg);
 			}
 		}
 
