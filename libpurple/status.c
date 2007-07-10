@@ -592,6 +592,11 @@ purple_status_destroy(PurpleStatus *status)
 	g_free(status);
 }
 
+static void log_notify_buddy_status_update_cb(gboolean result, void *data)
+{
+	g_free(data);
+}
+
 static void
 notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		PurpleStatus *old_status, PurpleStatus *new_status)
@@ -628,11 +633,10 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		log = purple_account_get_log(buddy->account, FALSE);
 		if (log != NULL)
 		{
-			purple_log_write(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
-			               current_time, tmp);
+			purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
+			               current_time, tmp, log_notify_buddy_status_update_cb, tmp);
 		}
 
-		g_free(tmp);
 	}
 }
 
