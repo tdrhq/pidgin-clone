@@ -906,7 +906,7 @@ purple_account_destroy(PurpleAccount *account)
 	purple_presence_destroy(account->presence);
 
 	if(account->system_log)
-		purple_log_free(account->system_log);
+		purple_log_free_nonblocking(account->system_log, NULL, NULL);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(account);
 	g_free(account);
