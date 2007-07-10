@@ -1220,50 +1220,50 @@ purple_presence_switch_status(PurplePresence *presence, const char *status_id)
 	purple_presence_set_status_active(presence, status_id, TRUE);
 }
 
+static void log_update_buddy_idle_cb(gboolean result, void *data)
+{
+	gpointer *temp = data;
+	PurpleBuddy *buddy = temp[1];
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+
+	purple_contact_invalidate_priority_buddy(purple_buddy_get_contact(buddy));
+
+	/* Should this be done here? It'd perhaps make more sense to
+	 * connect to buddy-[un]idle signals and update from there
+	 */
+
+	if (ops != NULL && ops->update != NULL)
+		ops->update(purple_get_blist(), (PurpleBlistNode *)buddy);
+	g_free(temp[0]); //g_free(tmp)
+	g_free(temp);
+}
 static void
 update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 		time_t current_time, gboolean old_idle, gboolean idle)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
-	if (!old_idle && idle)
-	{
-		if (purple_prefs_get_bool("/purple/logging/log_system"))
-		{
+	if (old_idle == idle) {
+		if (purple_prefs_get_bool("/purple/logging/log_system")) {
 			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
 
-			if (log != NULL)
-			{
-				char *tmp = g_strdup_printf(_("%s became idle"),
-				purple_buddy_get_alias(buddy));
+			if (log != NULL) {
+				char *tmp = g_strdup_printf(
+					(!old_idle && idle) ? _("%s became idle") : _("%s became unidle"),
+					purple_buddy_get_alias(buddy));
+				gpointer * callback_data = g_new(gpointer, 2);
+				callback_data[0] = tmp;
+				callback_data[1] = buddy;
 
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp);
-				g_free(tmp);
+				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
+				purple_buddy_get_alias(buddy), current_time, tmp, log_update_buddy_idle_cb, callback_data);
+				return;
 			}
 		}
-	}
-	else if (old_idle && !idle)
-	{
-		if (purple_prefs_get_bool("/purple/logging/log_system"))
-		{
-			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
-
-			if (log != NULL)
-			{
-				char *tmp = g_strdup_printf(_("%s became unidle"),
-				purple_buddy_get_alias(buddy));
-
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp);
-				g_free(tmp);
-			}
-		}
-	}
-
-	if (old_idle != idle)
+	} else {
 		purple_signal_emit(purple_blist_get_handle(), "buddy-idle-changed", buddy,
 		                 old_idle, idle);
+	}
 
 	purple_contact_invalidate_priority_buddy(purple_buddy_get_contact(buddy));
 
