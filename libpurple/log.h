@@ -336,7 +336,7 @@ void purple_log_write_nonblocking(PurpleLog *log,
 		    const char *from,
 		    time_t time,
 		    const char *message,
-			PurpleLogVoidCallback cb, 
+			PurpleLogBooleanCallback cb, 
 			void *data);
 
 /**

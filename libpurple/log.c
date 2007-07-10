@@ -58,6 +58,7 @@ struct _purple_log_callback_data {
 	PurpleLogReadCallback read_cb;
 	PurpleLogVoidCallback void_cb;
 	PurpleLogHashTableCallback hash_table_cb;
+	PurpleLogBooleanCallback bool_cb;
 	
 	/* for hashing purposes */
 	struct _purple_logsize_user *lu;
@@ -285,7 +286,7 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 // TODO: logger failed to log a message mid-conversation.
 void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
 		                  const char *from, time_t time, const char *message,
-                                  PurpleLogVoidCallback cb, void *data)
+                                  PurpleLogBooleanCallback cb, void *data)
 {
 	struct _purple_logsize_user *lu;
 	struct _purple_log_callback_data *callback_data;
@@ -300,7 +301,7 @@ void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
 	lu->account = log->account;
 
 	callback_data = g_new0(struct _purple_log_callback_data, 1);
-	callback_data->void_cb = cb;
+	callback_data->bool_cb = cb;
 	callback_data->data = data;
 	callback_data->lu = lu;
 	
@@ -2614,8 +2615,8 @@ static void log_write_cb(int size, void *data)
 		g_free(lu->name);
 		g_free(lu);
 	}
-	if (callback_data->void_cb)
-		callback_data->void_cb(callback_data);
+	if (callback_data->bool_cb)
+		callback_data->bool_cb(size != 0, callback_data);
 	g_free(callback_data);
 }
 
