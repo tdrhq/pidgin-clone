@@ -2616,7 +2616,8 @@ static void log_write_cb(int size, void *data)
 		g_free(lu);
 	}
 	if (callback_data->bool_cb)
-		callback_data->bool_cb(size != 0, callback_data);
+		callback_data->bool_cb(size != 0, callback_data->data);
+
 	g_free(callback_data);
 }
 
