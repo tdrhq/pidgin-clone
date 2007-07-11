@@ -54,33 +54,36 @@ static void historize_log_read_cb(char *text, PurpleLogReadFlags *flags, void *d
 	char *protocol;
 
 	gtkconv = PIDGIN_CONVERSATION(callback_data->conv);
-	if (*flags & PURPLE_LOG_READ_NO_NEWLINE)
-		options |= GTK_IMHTML_NO_NEWLINE;
 
-	protocol = g_strdup(gtk_imhtml_get_protocol_name(GTK_IMHTML(gtkconv->imhtml)));
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
-								purple_account_get_protocol_name(((PurpleLog*)logs->data)->account));
+	if (gtk_imhtml_get_markup(gtkconv->imhtml) == NULL ||
+		!strcmp(gtk_imhtml_get_markup(gtkconv->imhtml),""))  {
+		if (*flags & PURPLE_LOG_READ_NO_NEWLINE)
+			options |= GTK_IMHTML_NO_NEWLINE;
 
-	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);
+		protocol = g_strdup(gtk_imhtml_get_protocol_name(GTK_IMHTML(gtkconv->imhtml)));
+		gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
+									purple_account_get_protocol_name(((PurpleLog*)logs->data)->account));
 
-	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), callback_data->alias,
-							 purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
-	g_free(header);
+		if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
+			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);
 
-	g_strchomp(text);
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), text, options);
-	g_free(text);
+		header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), callback_data->alias,
+								 purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
+		g_free(header);
 
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
+		g_strchomp(text);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), text, options);
+		g_free(text);
 
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol);
-	g_free(protocol);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
 
-	g_object_ref(G_OBJECT(gtkconv->imhtml));
-	g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
+		gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol);
+		g_free(protocol);
 
+		g_object_ref(G_OBJECT(gtkconv->imhtml));
+		g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
+	}
 
 	for (;logs != NULL; logs = logs->next) 
 		purple_log_free_nonblocking(logs->data, NULL, NULL);
