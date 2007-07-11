@@ -2010,7 +2010,7 @@ purple_account_get_log(PurpleAccount *account, gboolean create)
 
 static void purple_account_destroy_log_cb(void *data)
 {
-	data = NULL;
+	((PurpleAccount *) data)->system_log = NULL;
 }
 
 void
@@ -2019,7 +2019,7 @@ purple_account_destroy_log(PurpleAccount *account)
 	g_return_if_fail(account != NULL);
 
 	if(account->system_log)
-		purple_log_free_nonblocking(account->system_log, purple_account_destroy_log_cb, account->system_log);
+		purple_log_free_nonblocking(account->system_log, purple_account_destroy_log_cb, account);
 }
 
 void
