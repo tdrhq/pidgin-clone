@@ -25,7 +25,7 @@ struct _historize_callback_data
 {
 	int counter;
 
-	GList *logs;
+	PurpleLog *log;
 
 	guint flags;
 
@@ -48,27 +48,26 @@ static void historize_log_read_cb(char *text, PurpleLogReadFlags *flags, void *d
 {
 	struct _historize_callback_data *callback_data = data;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
-	GList *logs = callback_data->logs;
 	PidginConversation *gtkconv;
 	char *header;
 	char *protocol;
 
 	gtkconv = PIDGIN_CONVERSATION(callback_data->conv);
 
-	if (gtk_imhtml_get_markup(gtkconv->imhtml) == NULL ||
-		!strcmp(gtk_imhtml_get_markup(gtkconv->imhtml),""))  {
+	if (gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml) == NULL ||
+		!strcmp(gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml),""))  {
 		if (*flags & PURPLE_LOG_READ_NO_NEWLINE)
 			options |= GTK_IMHTML_NO_NEWLINE;
 
 		protocol = g_strdup(gtk_imhtml_get_protocol_name(GTK_IMHTML(gtkconv->imhtml)));
 		gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
-									purple_account_get_protocol_name(((PurpleLog*)logs->data)->account));
+									purple_account_get_protocol_name(callback_data->log->account));
 
 		if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);
 
 		header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), callback_data->alias,
-								 purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
+								 purple_date_format_full(localtime(&callback_data->log->time)));
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
 		g_free(header);
 
@@ -85,21 +84,39 @@ static void historize_log_read_cb(char *text, PurpleLogReadFlags *flags, void *d
 		g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
 	}
 
-	for (;logs != NULL; logs = logs->next) 
-		purple_log_free_nonblocking(logs->data, NULL, NULL);
-
-	g_list_free(callback_data->logs);
+	purple_log_free_nonblocking(callback_data->log, NULL, NULL);
 	g_free(callback_data);
+}
+
+static PurpleLog *get_last_log(GList *list, PurpleLog *last_log) 
+{
+	GList *node;
+
+	if (last_log == NULL) {
+		last_log = list->data;
+		node = g_list_next(list);
+	} else 
+		node = list;
+
+	for(; node; node = g_list_next(node)) 
+		if (purple_log_compare(last_log, node->data) > 0) {
+			purple_log_free_nonblocking(last_log, NULL, NULL);
+			last_log = node->data;
+		} else
+			purple_log_free_nonblocking(node->data, NULL, NULL);
+
+	g_list_free(list);
+	return last_log;
 }
 
 static void historize_log_list_cb(GList *list, void *data)
 {
 	struct _historize_callback_data *callback_data = data;
 
-	if (list != NULL) {
-		callback_data->logs = g_list_concat(list, callback_data->logs);
-	} else if (callback_data->logs != NULL)
-				purple_log_read_nonblocking((PurpleLog*)callback_data->logs->data, &callback_data->flags, 
+	if (list != NULL)
+		callback_data->log = get_last_log(list, callback_data->log);
+	else if (callback_data->log != NULL)
+				purple_log_read_nonblocking(callback_data->log, &callback_data->flags, 
 										historize_log_read_cb, callback_data);
 	else
 		g_free(callback_data);
@@ -109,20 +126,18 @@ static void historize_log_collector_cb(GList *list, void *data)
 {
 	struct _historize_callback_data *callback_data = data;
 
-	if (list != NULL) {
-		callback_data->logs = g_list_concat(list, callback_data->logs);
-	} else {
+	if (list != NULL)
+		callback_data->log = get_last_log(list, callback_data->log);
+	else {
 		callback_data->counter--;
 
 		if (!callback_data->counter) {
-			if (callback_data->logs == NULL) {
+			if (callback_data->log == NULL) {
 				purple_debug_info("historize_log_collector_cb", "making purple_log_get_logs_nonblocking call");
 				purple_log_get_logs_nonblocking(PURPLE_LOG_IM, callback_data->name, 
 						callback_data->account, historize_log_list_cb, callback_data);
-			} else {
-				callback_data->logs = g_list_sort(callback_data->logs, purple_log_compare);
+			} else
 				historize_log_list_cb(NULL, callback_data);
-			}
 		}
 	}
 }
@@ -153,7 +168,7 @@ static void historize(PurpleConversation *c)
 		if (buddies != NULL)
 			alias = purple_buddy_get_contact_alias((PurpleBuddy *)buddies->data);
 
-		callback_data->logs = NULL;
+		callback_data->log = NULL;
 		callback_data->conv = c;
 		callback_data->name = name;
 		callback_data->account = account;
