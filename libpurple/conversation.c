@@ -825,20 +825,6 @@ purple_find_conversation_with_account(PurpleConversationType type,
 	return c;
 }
 
-static void purple_conversation_write_cb(gboolean result, void *data)
-{
-	gpointer *callback_data = data;
-	int *counter = callback_data[0];
-
-	*counter--;
-
-	if (*counter) {
-		g_free(counter);
-		g_free(callback_data[1]); //displayed_dup
-		g_free(callback_data);
-	}
-}
-
 void
 purple_conversation_write(PurpleConversation *conv, const char *who,
 						const char *message, PurpleMessageFlags flags,
@@ -930,21 +916,13 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 
 	if (!(flags & PURPLE_MESSAGE_NO_LOG) && purple_conversation_is_logging(conv)) {
 		GList *log;
-		char *displayed_dup = g_strdup(displayed);
-		gpointer *callback_data = g_new(gpointer, 2);
-		int *counter = g_new(int, 1);
 
 		if (conv->logs == NULL)
 			open_log(conv);
 
-		*counter = g_list_length(conv->logs);
-
-		callback_data[0] = counter;
-		callback_data[1] = displayed_dup;
-
 		for (log = conv->logs; log != NULL; log = g_list_next(log))
-			purple_log_write_nonblocking((PurpleLog *)log->data, flags, alias, mtime, displayed_dup,
-							purple_conversation_write_cb, callback_data);
+			purple_log_write_nonblocking((PurpleLog *)log->data, flags, alias, mtime, g_strdup(displayed),
+							NULL, NULL);
 	}
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {

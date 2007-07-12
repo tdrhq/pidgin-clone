@@ -51,7 +51,7 @@ struct _purple_log_callback_data {
 	GList * ret_list;
 	int * ret_int;
 	GHashTable *ret_sets;
-	
+
 	/* list callback */
 	PurpleLogListCallback list_cb;
 	PurpleLogSizeCallback size_cb;
@@ -59,9 +59,12 @@ struct _purple_log_callback_data {
 	PurpleLogVoidCallback void_cb;
 	PurpleLogHashTableCallback hash_table_cb;
 	PurpleLogBooleanCallback bool_cb;
-	
+
 	/* for hashing purposes */
 	struct _purple_logsize_user *lu;
+
+	/* need for write function */
+	char *message;
 };
 
 struct _purple_logsize_user {
@@ -285,7 +288,7 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 // TODO: Then the UI could display a failure message if, for example, a database
 // TODO: logger failed to log a message mid-conversation.
 void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
-		                  const char *from, time_t time, const char *message,
+		                  const char *from, time_t time, char *message,
                                   PurpleLogBooleanCallback cb, void *data)
 {
 	struct _purple_logsize_user *lu;
@@ -304,7 +307,8 @@ void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
 	callback_data->bool_cb = cb;
 	callback_data->data = data;
 	callback_data->lu = lu;
-	
+	callback_data->message = message;
+
 	if (log->logger->write_nonblocking) 
 		(log->logger->write_nonblocking)(log, type, from, time, message, log_write_cb, callback_data);
 	else if (log->logger->write)
@@ -2664,6 +2668,7 @@ static void log_write_cb(int size, void *data)
 	if (callback_data->bool_cb)
 		callback_data->bool_cb(size != 0, callback_data->data);
 
+	g_free(callback_data->message);
 	g_free(callback_data);
 }
 

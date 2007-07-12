@@ -592,11 +592,6 @@ purple_status_destroy(PurpleStatus *status)
 	g_free(status);
 }
 
-static void log_notify_buddy_status_update_cb(gboolean result, void *data)
-{
-	g_free(data);
-}
-
 static void
 notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		PurpleStatus *old_status, PurpleStatus *new_status)
@@ -634,7 +629,7 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		if (log != NULL)
 		{
 			purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
-			               current_time, tmp, log_notify_buddy_status_update_cb, tmp);
+			               current_time, tmp, NULL, NULL);
 			return;
 		}
 
@@ -1222,11 +1217,6 @@ purple_presence_switch_status(PurplePresence *presence, const char *status_id)
 	purple_presence_set_status_active(presence, status_id, TRUE);
 }
 
-static void log_update_buddy_idle_cb(gboolean result, void *data)
-{
-	g_free(data);
-}
-
 static void
 update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 		time_t current_time, gboolean old_idle, gboolean idle)
@@ -1244,7 +1234,7 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 
 				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
 					purple_buddy_get_alias(buddy), current_time, tmp, 
-					log_update_buddy_idle_cb, tmp);
+					NULL, NULL);
 			}
 		}
 	} else {
@@ -1260,11 +1250,6 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 
 	if (ops != NULL && ops->update != NULL)
 		ops->update(purple_get_blist(), (PurpleBlistNode *)buddy);
-}
-
-static void log_purple_presence_set_idle_cb(gboolean result, void *data)
-{
-	g_free(data);
 }
 
 void
@@ -1313,7 +1298,7 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
 				                 purple_account_get_username(account),
 				                 (idle ? idle_time : current_time), msg,
-								 log_purple_presence_set_idle_cb, msg);
+								 NULL, NULL);
 			}
 		}
 

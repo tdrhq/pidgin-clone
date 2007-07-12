@@ -50,21 +50,15 @@ enum {
 /* Henry: private function for reading/writing of system log */
 static void log_qq_sys_msg_log_write_cb(gboolean result, void *data)
 {
-	gpointer *temp = data;
-	PurpleLog *log = temp[1];
+	PurpleLog *log = data;
 
 	purple_log_free_nonblocking(log, NULL, NULL);
-
-	g_free(temp[0]); // g_free(new_msg)
-	g_free(temp);
 }
 
 static void _qq_sys_msg_log_write(PurpleConnection *gc, gchar *msg, gchar *from)
 {
 	PurpleLog *log;
 	PurpleAccount *account;
-	char *new_msg = g_strdup(msg);
-	gpointer *callback_data = g_new(gpointer, 2);
 
 	account = purple_connection_get_account(gc);
 
@@ -75,10 +69,9 @@ static void _qq_sys_msg_log_write(PurpleConnection *gc, gchar *msg, gchar *from)
 			time(NULL),
 			NULL
 			);
-	callback_data[0] = new_msg;
-	callback_data[1] = log;
+
 	purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM, from,
-			time(NULL), new_msg, log_qq_sys_msg_log_write_cb, callback_data);
+			time(NULL), g_strdup(msg), log_qq_sys_msg_log_write_cb, log);
 }
 
 /* suggested by rakescar@linuxsir, can still approve after search */
