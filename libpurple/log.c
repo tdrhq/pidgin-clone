@@ -1414,10 +1414,36 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAc
 	return size;
 }
 
+// TODO: THESE TWO FUNCTIONS EXIST FOR TESTING ONLY
+// TODO: EVENTUALLY, WE NEED REAL NON-BLOCKING CODE HERE, OR NOTHING AT ALL
+// TODO: FOR NOW, THIS ADDS A DELAY SO WE CAN SEE EVERYTHING
+static gboolean
+purple_log_common_size_cb(gpointer data)
+{
+	gpointer *temp = data;
+	PurpleLogSizeCallback cb = temp[0];
+	int *size                = temp[1];
+	void *cb_data            = temp[2];
+
+	cb(*size, cb_data);
+	g_free(size);
+	g_free(data);
+
+	return FALSE;
+}
+
 void purple_log_common_total_sizer_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext, 
 								PurpleLogSizeCallback cb, void *data)
 {
-	cb(purple_log_common_total_sizer(type, name, account, ext), data);
+	gpointer *temp = g_new(gpointer, 3);
+	int *size = g_new(int, 1);
+
+	*size = purple_log_common_total_sizer(type, name, account, ext);
+	temp[0] = cb;
+	temp[1] = size;
+	temp[2] = data;
+
+	purple_timeout_add_seconds(2, purple_log_common_size_cb, temp);
 }
 
 int purple_log_common_sizer(PurpleLog *log)
@@ -1435,7 +1461,16 @@ int purple_log_common_sizer(PurpleLog *log)
 
 void purple_log_common_sizer_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
 {
-	cb(purple_log_common_sizer(log), data);
+	gpointer *temp = g_new(gpointer, 3);
+	int *size = g_new(int, 1);
+
+	*size = purple_log_common_sizer(log);
+
+	temp[0] = cb;
+	temp[1] = size;
+	temp[2] = data;
+
+	purple_timeout_add_seconds(2, purple_log_common_size_cb, temp);
 }
 
 /* This will build log sets for all loggers that use the common logger
