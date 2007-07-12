@@ -486,15 +486,14 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 			PurpleLogLogger *logger = n->data;
 			
 			if(logger->total_size_nonblocking) {
-				purple_debug_info("log", "purple_log_get_total_size_nonblocking - make logger->total_size_nonblocking call\n");
 				logger->total_size_nonblocking(type, name, account, log_size_cb, callback_data);
 			} else if(logger->list_nonblocking) {
-				purple_debug_info("log", "purple_log_get_total_size_nonblocking - make logger->list_nonblocking call\n");
 				logger->list_nonblocking(type, name, account, log_size_list_cb, callback_data);
 			} else if(logger->total_size) { 
 				/* As there is no any nonblocking functions we can call blocking analogs */
 				log_size_cb((logger->total_size)(type, name, account), callback_data);
 			} else if(logger->list) {
+				/* to prevent code duplication we reuse log_size_list_cb */
 				GList *logs = (logger->list)(type, name, account);
 				log_size_list_cb(logs, callback_data);
 			} else 
@@ -1433,7 +1432,6 @@ int purple_log_common_sizer(PurpleLog *log)
 
 	return st.st_size;
 }
-
 
 void purple_log_common_sizer_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
 {
@@ -2541,20 +2539,33 @@ static void log_size_cb(int size, void *data)
 	}
 }
 
+static void log_size_list_free_log_cb(int size, void *data)
+{
+	gpointer *callback_data = data;
+
+	purple_log_free_nonblocking(callback_data[0], NULL, NULL);
+	log_size_cb(size, callback_data[1]);
+
+	g_free(callback_data);
+}
+
 static void log_size_list_cb(GList *list, void *data) 
 {
 	struct _purple_log_callback_data *callback_data = data;
 
 	g_return_if_fail(callback_data != NULL);
 
-	//purple_debug_info("log", "log_size_list_cb - callback_data->counter = %i, list size = %i\n", callback_data->counter, g_list_length(list));
 	callback_data->counter += g_list_length(list);
 
 	while (list) {
+		gpointer *callback_data1 = g_new(gpointer, 2);
 		PurpleLog *log = (PurpleLog*)(list->data);
-		purple_log_get_size_nonblocking(log, log_size_cb, callback_data);
 
-		purple_log_free(log);
+		callback_data1[0] = log;
+		callback_data1[1] = callback_data;
+
+		purple_log_get_size_nonblocking(log, log_size_list_free_log_cb, callback_data1);
+
 		list = g_list_delete_link(list, list);
 	}
 
