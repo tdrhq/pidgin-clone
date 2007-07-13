@@ -3,18 +3,23 @@ using System.Runtime.InteropServices;
 
 namespace Purple {
 	public class Status : Object {
-		private string id;
-		private string name;
 		
 		public Status(IntPtr handle)
 			: base(handle)
 		{
-			id = Util.build_string(purple_status_get_id(handle));
-			name = Util.build_string(purple_status_get_name(handle));
 		}
 
-		public string Id { get { return id; } }
-		public string Name { get { return name; } }
+		public string Id {
+			get {
+				return Util.build_string(purple_status_get_id(Handle));
+			}
+		}
+
+		public string Name {
+			get {
+				return Util.build_string(purple_status_get_name(Handle));
+			}
+		}
 
 		[DllImport("libpurple")]
 		private static extern IntPtr purple_status_get_id(IntPtr h);
