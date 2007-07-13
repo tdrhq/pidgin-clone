@@ -1,4 +1,4 @@
-/**
+	/**
  * @file gtkutils.c GTK+ utility functions
  * @ingroup pidgin
  *
@@ -2137,12 +2137,12 @@ static void pidgin_setup_screenname_autocomplete_cb(void *cdata)
 	gpointer *callback_data = cdata;
 	gpointer cb_data = NULL;
 	gpointer *data;
-	GtkEntryCompletion *completion;
 	GtkWidget *entry = callback_data[1];
 	gboolean *all = callback_data[3];
 
 #ifdef NEW_STYLE_COMPLETION
 	GtkListStore *store = callback_data[0];
+	GtkEntryCompletion *completion;
 
 	cb_data = store;
 
@@ -2166,7 +2166,6 @@ static void pidgin_setup_screenname_autocomplete_cb(void *cdata)
 	g_object_unref(store);
 
 	gtk_entry_completion_set_text_column(completion, 0);
-
 
 #else
 	cb_data = data;
@@ -2231,7 +2230,7 @@ pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gb
 	data = g_new0(PidginCompletionData, 1);
 
 	data->completion = g_completion_new(NULL);
-	data->all = *all;
+	data->all = all;
 
 	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
 
