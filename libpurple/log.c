@@ -2672,6 +2672,21 @@ static void log_write_cb(int size, void *data)
 	g_free(callback_data);
 }
 
+// TODO: THESE TWO FUNCTIONS EXIST FOR TESTING ONLY
+// TODO: EVENTUALLY, WE NEED REAL NON-BLOCKING CODE HERE, OR NOTHING AT ALL
+// TODO: FOR NOW, THIS ADDS A DELAY SO WE CAN SEE EVERYTHING
+static gboolean
+log_hash_cb_timeout(gpointer data)
+{
+	gpointer *temp = data;
+	PurpleLogHashTableCallback cb = temp[2];
+
+	cb(temp[0], temp[1]);
+	g_free(data);
+
+	return FALSE;
+}
+
 static void log_hash_cb(void *data)
 {
 	struct _purple_log_callback_data *callback_data = data;
@@ -2680,7 +2695,11 @@ static void log_hash_cb(void *data)
 	callback_data->counter--;
 
 	if (!callback_data->counter) {
-		callback_data->hash_table_cb(callback_data->ret_sets, callback_data->data);
+		gpointer *temp = g_new(gpointer, 3);
+		temp[0] = callback_data->ret_sets;
+		temp[1] = callback_data->data;
+		temp[2] = callback_data->hash_table_cb;
+		purple_timeout_add_seconds(4, log_hash_cb_timeout, temp);
 
 		g_free(callback_data);
 	}
