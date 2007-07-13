@@ -1989,19 +1989,27 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, gpointer **set_h
 #ifdef NEW_STYLE_COMPLETION
 static void log_get_log_sets_cb(GHashTable *sets, void *data)
 {
-	gpointer *set_hash_data = data;
-	
+	gpointer *callback_data = data;
+	gpointer set_hash_data[] = {callback_data[2], callback_data[3]};
+	PurpleLogVoidCallback cb = callback_data[0];
+
 	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
+
 	g_hash_table_destroy(sets);
+
+	if (cb)
+		cb(callback_data[1]);
+
 	g_free(set_hash_data);
+	g_free(callback_data);
 }
 
 static void
-add_completion_list(GtkListStore *store)
+add_completion_list(GtkListStore *store, PurpleLogVoidCallback cb, void *user_data)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	gboolean all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(store), "screenname-all"));
-	gpointer  *data_wrapper;
+	gpointer *callback_data;
 
 	gtk_list_store_clear(store);
 
@@ -2032,37 +2040,43 @@ add_completion_list(GtkListStore *store)
 		}
 	}
 
-	data_wrapper = g_new(gpointer, 2);
-	/* XXX: can we use store argument? */
-	data_wrapper[0] = store;
-	data_wrapper[1] = GINT_TO_POINTER(all);
+	callback_data = g_new(gpointer, 4);
 
-	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, data_wrapper);
+	callback_data[0] = cb;
+	callback_data[1] = user_data;
+	callback_data[2] = store;
+	callback_data[3] = GINT_TO_POINTER(all); 
+	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, callback_data);
 }
 #else
 
 static void log_get_log_sets_cb(GHashTable *sets, void *data)
 {
-	gpointer *data_wrapper = data;
+	gpointer *callback_data = data;
 	gpointer set_hash_data[2];
-	GList *item = NULL:
+	GList *item = NULL;
+	PurpleLogVoidCallback cb = callback_data[2];
 
 	set_hash_data[0] = &item;
-	set_hash_data[1] = data_wrapper[0]; // GINT_TO_POINTER(data->all);
+	set_hash_data[1] = callback_data[0]; // GINT_TO_POINTER(data->all);
 	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
 	g_hash_table_destroy(sets);
-	g_completion_add_items(data_wrapper[1], item);
+	g_completion_add_items(callback_data[1], item);
 
 	g_list_free(item);
-	g_free(data_wrapper);
+
+	if (cb != NULL)
+		cb(callback_data[3]);
+
+	g_free(callback_data);
 }
 
 static void
-add_completion_list(PidginCompletionData *data)
+add_completion_list(PidginCompletionData *data, PurpleLogVoidCallback cb, void *user_data)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	GCompletion *completion;
-	gpointer *data_wrapper;
+	gpointer *callback_data;
 	GList *item = g_list_append(NULL, NULL);
 
 	completion = data->completion;
@@ -2094,11 +2108,14 @@ add_completion_list(PidginCompletionData *data)
 	}
 	g_list_free(item);
 
-	data_wrapper = g_new(gpointer, 2);
-	/* XXX: can we use data argument? */
-	data_wrapper[0] = GINT_TO_POINTER(data->all);
-	data_wrapper[1] = completion;
-	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, data_wrapper);
+	callback_data = g_new(gpointer, 4);
+
+	callback_data[0] = GINT_TO_POINTER(data->all);
+	callback_data[1] = completion;
+	callback_data[2] = cb;
+	callback_data[3] = user_data;
+
+	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, callback_data);
 }
 #endif
 
@@ -2112,24 +2129,20 @@ screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
 static void
 repopulate_autocomplete(gpointer something, gpointer data)
 {
-	add_completion_list(data);
+	add_completion_list(data, NULL, NULL);
 }
 
-void
-pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gboolean all)
+static void pidgin_setup_screenname_autocomplete_cb(void *cdata)
 {
+	gpointer *callback_data = cdata;
 	gpointer cb_data = NULL;
+	gpointer *data;
+	GtkEntryCompletion *completion;
+	GtkWidget *entry = callback_data[1];
+	gboolean *all = callback_data[3];
 
 #ifdef NEW_STYLE_COMPLETION
-	/* Store the displayed completion value, the screenname, the UTF-8 normalized & casefolded screenname,
-	 * the UTF-8 normalized & casefolded value for comparison, and the account. */
-	GtkListStore *store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-
-	GtkEntryCompletion *completion;
-	gpointer *data;
-
-	g_object_set_data(G_OBJECT(store), "screenname-all", GINT_TO_POINTER(all));
-	add_completion_list(store);
+	GtkListStore *store = callback_data[0];
 
 	cb_data = store;
 
@@ -2142,7 +2155,7 @@ pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gb
 
 	data = g_new0(gpointer, 2);
 	data[0] = entry;
-	data[1] = accountopt;
+	data[1] = callback_data[2]; //accountopt;
 	g_signal_connect(G_OBJECT(completion), "match-selected",
 		G_CALLBACK(screenname_completion_match_selected_cb), data);
 
@@ -2154,17 +2167,8 @@ pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gb
 
 	gtk_entry_completion_set_text_column(completion, 0);
 
-#else /* !NEW_STYLE_COMPLETION */
-	PidginCompletionData *data;
 
-	data = g_new0(PidginCompletionData, 1);
-
-	data->completion = g_completion_new(NULL);
-	data->all = all;
-
-	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
-
-	add_completion_list(data);
+#else
 	cb_data = data;
 
 	g_signal_connect(G_OBJECT(entry), "event",
@@ -2172,9 +2176,9 @@ pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gb
 	g_signal_connect(G_OBJECT(entry), "destroy",
 					 G_CALLBACK(destroy_completion_data), data);
 
-#endif /* !NEW_STYLE_COMPLETION */
+#endif
 
-	if (!all)
+	if (!*all)
 	{
 		purple_signal_connect(purple_connections_get_handle(), "signed-on", entry,
 							PURPLE_CALLBACK(repopulate_autocomplete), cb_data);
@@ -2188,6 +2192,51 @@ pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gb
 						PURPLE_CALLBACK(repopulate_autocomplete), cb_data);
 
 	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
+
+	purple_debug_info("gtkutils", "screeenname autocompletition finished\n");
+	g_free(all);
+	g_free(callback_data);
+}
+
+void
+pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gboolean all)
+{
+	gpointer *callback_data;
+
+#ifdef NEW_STYLE_COMPLETION
+	GtkListStore *store;
+#else
+	PidginCompletionData *data;
+#endif
+
+	callback_data = g_new(gpointer, 4);
+
+	callback_data[0] = NULL;
+
+	callback_data[1] = entry;
+	callback_data[2] = accountopt;
+	callback_data[3] = g_new(gboolean, 1);
+	*(gboolean *)callback_data[3] = all;
+
+#ifdef NEW_STYLE_COMPLETION
+	/* Store the displayed completion value, the screenname, the UTF-8 normalized & casefolded screenname,
+	 * the UTF-8 normalized & casefolded value for comparison, and the account. */
+	store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	g_object_set_data(G_OBJECT(store), "screenname-all", GINT_TO_POINTER(all));
+
+	callback_data[0] = store;
+	add_completion_list(store, pidgin_setup_screenname_autocomplete_cb, callback_data);
+
+#else /* !NEW_STYLE_COMPLETION */
+	data = g_new0(PidginCompletionData, 1);
+
+	data->completion = g_completion_new(NULL);
+	data->all = *all;
+
+	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
+
+	add_completion_list(data, pidgin_setup_screenname_autocomplete_cb, callback_data);
+#endif /* !NEW_STYLE_COMPLETION */
 }
 
 void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
