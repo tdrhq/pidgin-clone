@@ -178,13 +178,11 @@ static guint _pidgin_logsize_contact_hash(struct _pidgin_logsize_contact *lc)
 static guint _pidgin_logsize_contact_equal(struct _pidgin_logsize_contact *lc1,
 		struct _pidgin_logsize_contact *lc2)
 {
-	//purple_debug_info("HASH comp", "%p == %p ; %s = %s\n",  lc1->contact, lc2->contact, lc1->name, lc2->name);
 	return lc1->contact == lc2->contact && (!strcmp(lc1->name, lc2->name));
 }
 
 static void _pidgin_logsize_contact_free_key(struct _pidgin_logsize_contact *lc)
 {
-	//purple_debug_info("HASH free","%p; %s\n", lc->contact, lc->name);
 	g_free(lc->name);
 	g_free(lc);
 }
@@ -6442,6 +6440,8 @@ static int get_total_size_for_contact(PurpleBlistNode *node)
 		g_hash_table_replace(logsize_contacts, lc_init, GINT_TO_POINTER(0));
 	}
 
+	/* check if we need to update total size for contact 
+	    We shouldn't update if previous call hasn't finished */
 	if (need_to_update) {
 		struct _pidgin_log_size_data *callback_data = g_new0(struct _pidgin_log_size_data, 1);
 		PurpleBlistNode *n;
@@ -6458,7 +6458,6 @@ static int get_total_size_for_contact(PurpleBlistNode *node)
 												get_total_size_for_contact_cb, callback_data);
 	} else
 		_pidgin_logsize_contact_free_key(lc);
-
 
 	return total_size;
 }
