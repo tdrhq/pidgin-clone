@@ -3,6 +3,11 @@ using System.Runtime.InteropServices;
 
 namespace Purple {
 	public class Buddy : BlistNode {
+
+		public static Buddy Get(IntPtr handle)
+		{
+			return ObjectManager.GetObject(handle, typeof(Buddy)) as Buddy;
+		}
 		
 		public Buddy(IntPtr handle)
 			: base(handle)
