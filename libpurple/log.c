@@ -460,7 +460,6 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 
 	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
 		size = GPOINTER_TO_INT(ptrsize);
-		purple_debug_info("log", "HASH(purple_log_get_total_size_nonblocking): using size from hash %i\n", size);
 
 		g_free(lu->name);
 		g_free(lu);
@@ -483,8 +482,6 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 		     especially now, because we have blocking total_size_nonblocking function 
 		     and list_nonblocking functions*/
 		callback_data->counter = g_slist_length(loggers);
-
-		purple_debug_info("log", "purple_log_get_total_size_nonblocking - callback_data->counter %i\n", callback_data->counter);
 
 		for (n = loggers; n; n = n->next) {
 			PurpleLogLogger *logger = n->data;
@@ -2566,14 +2563,11 @@ static void log_size_cb(int size, void *data)
 	callback_data->ret_int += size;
 
 	callback_data->counter--;
-	//purple_debug_info("log", "log_size_cb - callback_data->counter = %i\n", callback_data->counter);
 
 	if (!callback_data->counter) {
 		callback_data->size_cb((int)callback_data->ret_int, callback_data->data);
-		purple_debug_info("log", "HASH(log_size_cb): write size to hash %i\n", callback_data->ret_int);
 		g_hash_table_replace(logsize_users, callback_data->lu, GINT_TO_POINTER(callback_data->ret_int));
 
-		purple_debug_info("log", "log_size_cb - free memory\n");
 		g_free(callback_data);
 	}
 }
@@ -2660,7 +2654,6 @@ static void log_write_cb(int size, void *data)
 		total = GPOINTER_TO_INT(ptrsize);
 		total += size;
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(total));
-		purple_debug_info("log", "HASH(log_write_cb): total size %i\n", total);
 	} else {
 		g_free(lu->name);
 		g_free(lu);
