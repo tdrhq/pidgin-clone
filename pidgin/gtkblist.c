@@ -6423,7 +6423,6 @@ static void get_total_size_for_contact_cb(int size, void *data)
 
 	if (!callback_data->counter) {
 		callback_data->lc->finished = TRUE;
-		purple_debug_info("sort method lod", "log size for %s was successfully updated\n", callback_data->lc->name);
 		g_hash_table_replace(logsize_contacts, callback_data->lc, GINT_TO_POINTER(callback_data->total_size));
 		g_free(callback_data);
 	}
@@ -6470,7 +6469,6 @@ static int get_total_size_for_contact(PurpleBlistNode *node)
 		for (n = node->child; n; n = n->next)
 			callback_data->counter++;
 
-		purple_debug_info("sort method lod", "updating log size for %s\n", lc->name);
 		for (n = node->child; n; n = n->next)
 			purple_log_get_total_size_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy*)(n))->name, ((PurpleBuddy*)(n))->account, 
 												get_total_size_for_contact_cb, callback_data);
