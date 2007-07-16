@@ -7,7 +7,8 @@
   <meta http-equiv="Content-language" content="en-US" />
   <meta name="copyright" content="Pidgin Developers" />
   <meta name="description" content="The home of Pidgin, Finch, and the libpurple IM client library." />
-  <meta name="keywords" content="pidgin, finch, libpurple, purple, IM, instant messaging, internet messaging, AIM, ICQ, XMMP, Jabber, MSN, Yahoo, Gadu-Gadu, IRC, Bonjour, SILC, SIP/SIMPLE, Zephyr, QQ, GroupWise, Sametime, Linux, Windows, GTK+" />
+  <meta name="keywords" content="pidgin, finch, libpurple, purple, IM, instant messaging, internet messaging, AIM, ICQ, XMMP, Jabber, Google Talk, MSN, Yahoo, Gadu-Gadu, IRC, Bonjour, SILC, SIP/SIMPLE, Zephyr, QQ, GroupWise, Sametime, Linux, Windows, GTK+" />
+  <link rel="stylesheet" href="/shared/css/main.css" />
 </head>
 <body>
 
@@ -21,177 +22,57 @@
 </ul>
 </div>
 
-<div class="LeftHomeContent">
-<div class="LeftHomeContentTop">
-</div> <!-- .LeftHomeContentTop -->
-<div class="LeftHomeContentInner">
+<div id="main">
 
-<img class="BigPidginLogo" alt="Pidgin" src="/extension/pidgin/design/pidgin/images/pidgin_logo_big.gif"/>
-<span class="HomeFileVersion">
-2.0.2</span>
+<div id="left">
 
-<div class="HomeFileDownloadBlock">
-<div class="HomeFileDownloadBlockTop">
-</div>  <!-- .HomeFileDownloadBlockTop -->
-<div class="HomeFileDownloadBlockInner">
-<div class="Content">
-<a href="
-/download"><div class="DownloadButton"></div></a>
-<h3><a href="
-/download">Download Pidgin</a></h3>
-<a href="
-/download">
-2.0.2</a>
-</div>  <!-- .Content -->
-</div>  <!-- .HomeFileDownloadBlockInner -->
-<div class="HomeFileDownloadBlockBottom">
-</div>  <!-- .HomeFileDownloadBlockBottom -->
-</div>  <!-- .HomeFileDownloadBlock -->
-
-</div> <!-- .LeftHomeContentInner -->
-<div class="LeftHomeContentBottom">
-</div> <!-- .LeftHomeContentBottom -->
-
-<div class="BigPidgin">
+<div id="version"><img src="/shared/img/logo.text-big.gif" alt="Pidgin" />
+<img src="/shared/img/logo.pidgin.png" alt="Pidgin" id="logo" />
+<span class="number">2.0.2</span>
 </div>
 
-<h3 class="HomeLeftText">
-</h3>
-</div> <!-- .LeftHomeContent -->
+<div id="download">
+<a href="/download/"><img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
+Download Pidgin<br />
+2.0.2</a>
+</div>
 
+</div>
 
-
-
-<div class="RightHomeContent">
-<div class="RightHomeContentTop">
-</div> <!-- .RightHomeContentTop -->
-<div class="RightHomeContentInner">
-
-<h1>
-What is Pidgin?</h1>
-
+<div id="content">
+<h1>What is Pidgin?</h1>
 
 <p>Pidgin is a multi-protocol Instant Messaging client that allows you to use all of your IM accounts at once.</p>
 
 <p>Pidgin can work with:</p>
 
-<table class="default"  border="0" cellpadding="2" cellspacing="0" >
-<tr>
-<td valign="top">  
-<ul>
-
-<li>AIM</li>
-
-<li>Bonjour</li>
-
-<li>Gadu-Gadu</li>
-
-<li>Google Talk</li>
-
-<li>Groupwise</li>
-
+<ul class="condensed">
+  <li>AIM</li>
+  <li>ICQ</li>
+  <li>SIMPLE</li>
+  <li>Bonjour</li>
+  <li>IRC</li>
+  <li>Sametime</li>
+  <li>Gadu-Gadu</li>
+  <li>MSN</li>
+  <li>XMPP</li>
+  <li>Google Talk</li>
+  <li>QQ</li>
+  <li>Yahoo!</li>
+  <li>Groupwise</li>
+  <li>SILC</li>
+  <li>Zephyr</li>
 </ul>
 
-  </td>
+<p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.gif" alt="Learn More" /></a></p>
+</div>
 
-<td valign="top">  
-<ul>
+</div>
 
-<li>ICQ</li>
+<div id="footer">
+<!-- Need a SF.net and Luke hosting banner here -->
+</div>
 
-<li>IRC</li>
-
-<li>MSN</li>
-
-<li>QQ</li>
-
-<li>SILC</li>
-
-</ul>
-
-  </td>
-
-<td valign="top">  
-<ul>
-
-<li>SIMPLE</li>
-
-<li>Sametime</li>
-
-<li>XMPP</li>
-
-<li>Yahoo!</li>
-
-<li>Zephyr</li>
-
-</ul>
-
-  </td>
-</tr>
-
-</table>
-
-<div class="object-center embedCentered"><div class="content-view-embed">
-	<div class="class-image">
-		<div class="attribute-image">
-			<p>
-				    				
-
-    
-        
-    
-        
-    
-    
-    							</p>
-		</div>
-
-			</div>
-</div></div>
-<div class="object-right"><div class="content-view-embed">
-	<div class="class-image">
-		<div class="attribute-image">
-			<p>
-				    				
-
-    
-        
-    
-    <a href="/pidgin/about" target="_self">            <img src="/var/ezwebin_site/storage/images/media/images/learn_more_button/703-2-eng-US/learn_more_button.gif" width="116" height="29"  style="border: 0px;" alt="Learn More" title="Learn More" /></a>    
-    
-    
-    							</p>
-		</div>
-
-			</div>
-</div></div>
-</div> <!-- .RightHomeContentInner -->
-<div class="RightHomeContentBottom">
-</div> <!-- .RightHomeContentBottom -->
-</div> <!-- .RightHomeContent -->
-
-
-<div class="FooterInformation">
-
-<div class="object-center"><div class="content-view-embed">
-	<div class="class-image">
-		<div class="attribute-image">
-			<p>
-				    				
-
-    
-        
-    
-        
-    
-    
-    							</p>
-		</div>
-
-			</div>
-</div></div></div> <!-- .FooterInformation -->
-</div> <!-- #Container -->
-</div> <!-- #BodyWrapper -->
 </body>
-</html><!-- Generated: 2007-06-20 21:11:02 -->
+</html>
 
