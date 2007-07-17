@@ -54,6 +54,9 @@ struct _pidgin_log_data {
 
 	PurpleLogVoidCallback done_cb;
 	int counter;
+
+	gboolean need_continue;
+	gulong destroy_handler_id;
 };
 
 static guint log_viewer_hash(gconstpointer data)
@@ -750,12 +753,17 @@ static void pidgin_log_done_cb(void *data)
 	pidgin_log_data->counter--;
 
 	if (!pidgin_log_data->counter) {
-		purple_timeout_remove(log_viewer->pulser);
-		gtk_widget_hide(log_viewer->progress_bar);
 
-		// TODO: We should only select the first log
-		// TODO: if one is not already selected.
-		select_first_log(log_viewer);
+		if (pidgin_log_data->need_continue == TRUE) {
+			g_signal_handler_disconnect(log_viewer->window, pidgin_log_data->destroy_handler_id);
+
+			purple_timeout_remove(log_viewer->pulser);
+			gtk_widget_hide(log_viewer->progress_bar);
+
+			// TODO: We should only select the first log
+			// TODO: if one is not already selected.
+			select_first_log(log_viewer);
+		} 
 
 		g_free(pidgin_log_data);
 	}
@@ -765,7 +773,9 @@ static void pidgin_log_size_cb(int size, void *data)
 {
 	struct _pidgin_log_data * pidgin_log_data = data;
 
-	set_log_viewer_log_size(pidgin_log_data->log_viewer, size);
+	if (pidgin_log_data->need_continue == TRUE)
+		set_log_viewer_log_size(pidgin_log_data->log_viewer, size);
+
 	pidgin_log_data->done_cb(pidgin_log_data);
 }
 
@@ -773,10 +783,21 @@ static void pidgin_log_list_cb(GList *list, void *data)
 {
 	struct _pidgin_log_data *pidgin_log_data = data;
 
-	if (list != NULL) 
-		append_log_viewer_logs(pidgin_log_data->log_viewer, list);
-	else
+	if (list != NULL) {
+		if (pidgin_log_data->need_continue == TRUE)
+			append_log_viewer_logs(pidgin_log_data->log_viewer, list);
+	} else
 		pidgin_log_data->done_cb(pidgin_log_data);
+}
+
+static void pidgin_window_distroy_cb(GtkWidget *w, void *data)
+{
+	struct _pidgin_log_data *callback_data = data;
+
+	/* mark that log window has destroyed*/
+	callback_data->need_continue = FALSE;
+	/* stop progress bar pulser */
+	purple_timeout_remove(callback_data->log_viewer->pulser);
 }
 
 void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
@@ -835,6 +856,10 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
 	g_free(title);
+	pidgin_log_data->destroy_handler_id = g_signal_connect(G_OBJECT(pidgin_log_data->log_viewer->window), "destroy", 
+							G_CALLBACK(pidgin_window_distroy_cb), pidgin_log_data);
+
+	pidgin_log_data->need_continue = TRUE;
 
 	purple_log_get_logs_nonblocking(type, screenname, account, pidgin_log_list_cb, pidgin_log_data);
 	purple_log_get_total_size_nonblocking(type, screenname, account, 
@@ -903,6 +928,10 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 	    we have 2 nonblocking calls: purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking 
 	    so we need multiply 2 on iteration count */
 	pidgin_log_data->counter = 2 * buddy_list_size;
+	pidgin_log_data->destroy_handler_id = g_signal_connect(G_OBJECT(pidgin_log_data->log_viewer->window), "destroy", 
+							G_CALLBACK(pidgin_window_distroy_cb), pidgin_log_data);
+
+	pidgin_log_data->need_continue = TRUE;
 
 	for (child = contact->node.child ; child ; child = child->next) {
 		if (PURPLE_BLIST_NODE_IS_BUDDY(child)) {
