@@ -1,0 +1,68 @@
+<?
+  // Update these to match the current page.
+  $page['title'] =   "About";
+  $page['section'] = "About";
+
+  include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
+  include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
+?>
+
+<div id="content">
+
+<div class="box_full">
+<div id="main">
+
+<h1>What is Pidgin?</h1>
+
+<p><img src="/shared/img/contact_window.png" alt="Buddy List" class="inline" />
+Pidgin is an instant messaging program for Windows, Linux, BSD, and other
+Unixes. You can talk to your friends using AIM, ICQ, Jabber/XMPP, MSN
+Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, Novell GroupWise Messenger, QQ,
+Lotus Sametime, SILC, SIMPLE, and Zephyr.</p>
+
+<p>Pidgin can log in to multiple accounts on multiple IM networks
+simultaneously. This means that you can be chatting with friends on AIM,
+talking to a friend on Yahoo Messenger, and sitting in an IRC channel all at
+the same time.</p>
+
+<p>Pidgin supports many features of the various networks, such as file
+transfer, away messages, and typing notification. It also goes beyond that
+and provides many unique features. A few popular features are Buddy Pounces,
+which give the ability to notify you, send a message, play a sound, or run a
+program when a specific buddy goes away, signs online, or returns from idle;
+and plugins, consisting of text replacement, a buddy ticker, extended message
+notification, iconify on away, spell checking, tabbed conversations, and more.
+</p>
+
+<p>Pidgin runs on a number of platforms, including Windows, Linux, and other
+UNIX operating systems. Looking for Pidgin for OS X? Try <a
+href="http://www.adiumx.com/" target="_self">Adium</a>!</p>
+
+<p>Pidgin integrates well with GNOME 2 and KDE 3.1's system tray, as well as
+Windows' own system tray. This allows you to work with Pidgin without
+requiring the buddy list window to be open at all times.</p>
+
+<p>Pidgin is under constant development, and releases are usually frequent.
+The latest news regarding Pidgin can be found on the <a href="/news">news</a>
+page.</p>
+
+<h1>What is Finch?</h1>
+
+<p>Finch is the text-based version of Pidgin. It supports the same IM
+networks, but you can run it in a console window. You can use it on Linux,
+BSD, and other Unixes.</p>
+
+<h1>What is libpurple?</h1>
+
+<p>libpurple is the programming library that powers Pidgin and Finch. It's
+responsible for connecting to all the IM networks, and for managing your
+accounts and preferences. It's written in C and makes heavy use of <a
+href="http://www.gtk.org/">Glib</a>.</p>
+
+
+</div>
+</div>
+
+</div>
+
+<?php include($_SERVER['DOCUMENT_ROOT'] . "/../inc/footer.inc"); ?>

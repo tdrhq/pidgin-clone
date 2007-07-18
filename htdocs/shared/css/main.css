@@ -45,7 +45,7 @@ a:hover, a:active {
   border-right: 1px solid #BFABC6;
   text-transform: uppercase;
 }
-#header ul li a:link, #header ul li a:visited {
+#header ul li a:link, #header ul li a:visited, #header ul li a:active {
   display: block;
   height: 27px;
   color: #FFF;
@@ -54,7 +54,7 @@ a:hover, a:active {
   border-right: 1px solid #3F2844;
 }
 
-#header ul li a:active, #header ul li a:hover, #header ul li.active a {
+#header ul li a:hover, #header ul li.active a {
   background-color: #8E6E95
 }
 
@@ -80,6 +80,24 @@ a:hover, a:active {
   position: relative;
 }
 
+.box_full {
+  position: relative;
+  z-index: 5;
+  width: 790px;
+  padding: 0;
+  margin: 0 5px 0 5px;
+  margin-bottom: -137px;
+}
+
+.box_full p {
+  line-height: 1.5em;
+}
+
+.box_full img.inline {
+  float: right;
+  margin: 5px 2px 0 24px;
+}
+
 .box_home:before {
   content: url('/shared/img/frame.home.top.gif');
   display: block;
@@ -89,6 +107,20 @@ a:hover, a:active {
 
 .box_home:after {
   content: url('/shared/img/frame.home.bottom.gif');
+  display: block;
+  height: 17px;
+  overflow: hidden;
+}
+
+.box_full:before {
+  content: url('/shared/img/frame.full.top.png');
+  display: block;
+  height: 9px;
+  overflow: hidden;
+}
+
+.box_full:after {
+  content: url('/shared/img/frame.full.bottom.png');
   display: block;
   height: 17px;
   overflow: hidden;
@@ -170,7 +202,7 @@ h1 {
 }
 
 #footer {
-  height: 42px;
+  height: 40px;
   padding-top: 118px;
   margin-top: 36px;
   text-align: center;
