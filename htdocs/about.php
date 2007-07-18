@@ -4,7 +4,6 @@
   $page['section'] = "About";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
-  include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
 ?>
 
 <div id="content">
