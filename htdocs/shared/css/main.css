@@ -148,6 +148,26 @@ a:hover, a:active {
   margin-bottom: -137px;
 }
 
+.box_download {
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.box_download p {
+  border: 1px #F3D6C6;
+  border-style: none solid;
+  margin: 0;
+  width: 487px;
+  background-color: #FEF2E2;
+  line-height: 1.2em;
+  padding: 12px 18px 0 18px;
+}
+
+.box_download p:first-child {
+  padding: 18px 18px 0 18px;
+  height: 70px;
+}
+
 .box_home:before {
   content: url('/shared/img/frame.home.top.gif');
   display: block;
@@ -204,6 +224,21 @@ a:hover, a:active {
   overflow: hidden;
 }
 
+
+.box_download:before {
+  content: url('/shared/img/frame.download.top.gif');
+  display: block;
+  height: 7px;
+  overflow: hidden;
+}
+
+.box_download:after {
+  content: url('/shared/img/frame.download.bottom.gif');
+  display: block;
+  height: 27px;
+  overflow: hidden;
+}
+
 #version {
   text-align: right;
   padding: 20px 73px 28px 36px;
@@ -231,16 +266,19 @@ a:hover, a:active {
   width: 213px;
   padding: 15px 20px 20px 35px;
   background: url('/shared/img/balloon.png') no-repeat top left;
+}
+
+#download, .box_download p:first-child {
   font-size: 1.2em;
   font-weight: bold;
 }
 
-#download .number {
+#download .number, .box_download .number {
   font-size: 0.85em;
   font-weight: normal;
 }
 
-#download a img {
+#download a img, .box_download a img {
   position: relative;
   float: left;
   margin-right: 6px;
