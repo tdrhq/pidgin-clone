@@ -10,14 +10,7 @@
 
 <div id="content">
 
-<div class="box_nav">
-<ul>
-  <li><a href="/download/windows/">Windows</a></li>
-  <li><a href="/download/source/">Source</a></li>
-  <li><a href="/download/fedora_core/">Fedora Core</a></li>
-  <li><a href="/download/centos_rhel/">CentOS / RHEL</a></li>
-</ul>
-</div>
+<? include($_SERVER['DOCUMENT_ROOT'] . "/../inc/section.download.inc"); ?>
 
 <div class="box_right">
 <div id="main">
