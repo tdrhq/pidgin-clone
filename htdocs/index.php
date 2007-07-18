@@ -22,24 +22,32 @@
 </ul>
 </div>
 
-<div id="main">
+<div id="content">
+
+<div class="box_home">
 
 <div id="left">
 
 <div id="version"><img src="/shared/img/logo.text-big.gif" alt="Pidgin" />
-<img src="/shared/img/logo.pidgin.png" alt="Pidgin" id="logo" />
 <span class="number">2.0.2</span>
 </div>
 
 <div id="download">
-<a href="/download/"><img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
+<img src="/shared/img/logo.pidgin.png" alt="[Pidgin Logo]" id="logo" />
+<a href="/download/">
+<img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
 Download Pidgin<br />
-2.0.2</a>
+<span class="number">2.0.2</span></a>
 </div>
 
 </div>
 
-<div id="content">
+</div>
+
+<div class="box_home">
+
+<div id="main">
+
 <h1>What is Pidgin?</h1>
 
 <p>Pidgin is a multi-protocol Instant Messaging client that allows you to use all of your IM accounts at once.</p>
@@ -65,12 +73,16 @@ Download Pidgin<br />
 </ul>
 
 <p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.gif" alt="Learn More" /></a></p>
+
+</div>
+
 </div>
 
 </div>
 
 <div id="footer">
 <!-- Need a SF.net and Luke hosting banner here -->
+<a href="http://sourceforge.net"><IMG src="http://sourceforge.net/sflogo.php?group_id=235&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net" /></a>
 </div>
 
 </body>
