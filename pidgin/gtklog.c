@@ -790,7 +790,7 @@ static void pidgin_log_list_cb(GList *list, void *data)
 		pidgin_log_data->done_cb(pidgin_log_data);
 }
 
-static void pidgin_window_distroy_cb(GtkWidget *w, void *data)
+static void pidgin_window_destroy_cb(GtkWidget *w, void *data)
 {
 	struct _pidgin_log_data *callback_data = data;
 
@@ -857,7 +857,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
 	g_free(title);
 	pidgin_log_data->destroy_handler_id = g_signal_connect(G_OBJECT(pidgin_log_data->log_viewer->window), "destroy", 
-							G_CALLBACK(pidgin_window_distroy_cb), pidgin_log_data);
+							G_CALLBACK(pidgin_window_destroy_cb), pidgin_log_data);
 
 	pidgin_log_data->need_continue = TRUE;
 
@@ -929,7 +929,7 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 	    so we need multiply 2 on iteration count */
 	pidgin_log_data->counter = 2 * buddy_list_size;
 	pidgin_log_data->destroy_handler_id = g_signal_connect(G_OBJECT(pidgin_log_data->log_viewer->window), "destroy", 
-							G_CALLBACK(pidgin_window_distroy_cb), pidgin_log_data);
+							G_CALLBACK(pidgin_window_destroy_cb), pidgin_log_data);
 
 	pidgin_log_data->need_continue = TRUE;
 
