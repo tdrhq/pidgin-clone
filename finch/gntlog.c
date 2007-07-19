@@ -84,27 +84,90 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 }
 
 static void
-finch_log_window_destroy_cb(GntWidget *w, gpointer *data)
+finch_log_window_destroy_cb(GntWidget *w, gpointer data)
 {
+	FinchLogData *callback_data = data;
 
+	/* mark that log window has destroyed*/
+	callback_data->need_continue = FALSE;
+
+}
+
+static void set_log_viewer_log_size(FinchLogViewer *log_viewer, int log_size) 
+{
+	char *sz_txt = purple_str_size_to_units(log_size);
+	/* const char *field_name = _("Total log size:"); Useful later, throws a warning for now.*/
+
+	g_free(sz_txt);
 }
 
 static void
 finch_log_size_cb(int size, void *data)
 {
+	FinchLogData * finch_log_data = data;
 
+	if (finch_log_data->need_continue == TRUE)
+		set_log_viewer_log_size(finch_log_data->log_viewer, size);
+
+	finch_log_data->done_cb(finch_log_data);
+}
+
+static void
+populate_log_tree(FinchLogViewer *lw)
+{
+
+}
+
+static void
+select_first_log(FinchLogViewer *lv)
+{
+
+}
+
+static void append_log_viewer_logs(FinchLogViewer *log_viewer, GList *logs) 
+{
+	// TODO: Instead of doing this, we should find a way to avoid
+	// TODO: rebuilding the entire UI tree and just insert the new logs.
+	log_viewer->logs = g_list_concat(logs, log_viewer->logs);
+	log_viewer->logs = g_list_sort(log_viewer->logs, purple_log_compare);
+	populate_log_tree(log_viewer);
+	select_first_log(log_viewer);
 }
 
 static void
 finch_log_list_cb(GList * list, void * data)
 {
+	FinchLogData *finch_log_data = data;
+
+	if (list != NULL) {
+		if (finch_log_data->need_continue == TRUE) {
+			append_log_viewer_logs(finch_log_data->log_viewer, list);
+		} } else {
+		finch_log_data->done_cb(finch_log_data);
+	}
 
 }
 
 static void
 finch_log_done_cb(void *data)
 {
+	FinchLogData *finch_log_data = data;
+	FinchLogViewer *log_viewer = finch_log_data->log_viewer;
 
+	finch_log_data->counter--;
+
+	if (!finch_log_data->counter) {
+
+		if (finch_log_data->need_continue == TRUE) {
+			g_signal_handler_disconnect(log_viewer->window, finch_log_data->destroy_handler_id);
+
+			// TODO: We should only select the first log
+			// TODO: if one is not already selected.
+			select_first_log(log_viewer);
+		} 
+
+		g_free(finch_log_data);
+	}
 }
 
 static FinchLogViewer *
