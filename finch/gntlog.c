@@ -22,3 +22,36 @@
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
+#include "gntlog.h"
+
+void
+finch_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account)
+{
+}
+
+void
+finch_log_show_contact(PurpleContact *contact)
+{
+}
+
+void
+finch_syslog_show()
+{
+}
+
+void
+finch_log_init()
+{
+}
+void *
+finch_log_get_handle()
+{
+		static int handle;
+		return &handle;
+}
+
+void 
+finch_log_uninit()
+{
+}
