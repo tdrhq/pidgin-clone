@@ -47,8 +47,8 @@ struct _FinchLogViewer {
 	GntTree						*treestore;  	/* The treestore containing said logs       */
 
 	GntWidget        	*window;     	/* The viewer's window                      */
-	GntWidget        	*treeview;    /* The tree representing said treestore */
-	GntWidget        	*tv;    		  /* The textview to display said logs          */
+	GntWidget        	*treeview;    /* The tree representing said treestore 		*/
+	GntWidget        	*tv;    		  /* The textview to display said logs        */
 	GntWidget        	*entry;       /* The search entry, in which search terms  */
 	                               	/* are entered                              */
 
@@ -61,7 +61,7 @@ struct _FinchLogViewer {
 
 
 
-void finch_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account);
+void finch_log_show(PurpleLogType type, gchar *screenname, PurpleAccount *account);
 void finch_log_show_contact(PurpleContact *contact);
 
 void finch_syslog_show(void);
