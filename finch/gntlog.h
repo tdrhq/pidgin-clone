@@ -49,17 +49,18 @@ struct _FinchLogViewer {
 	GntWidget        	*window;     	/* The viewer's window                      */
 	GntWidget        	*treeview;    /* The tree representing said treestore 		*/
 	GntWidget        	*tv;    		  /* The textview to display said logs        */
+	GntWidget        	*label;       /* The label at the top of the log viewer   */
+	GntWidget        	*size_label;  /* The label with total log size           	*/
 	GntWidget        	*entry;       /* The search entry, in which search terms  */
 	                               	/* are entered                              */
 
 	PurpleLogReadFlags flags;       /* The most recently used log flags         */
 	char             	*search;      /* The string currently being searched for  */
-	GntWidget        	*label;       /* The label at the top of the log viewer   */
-	GntWidget        	*size_label;  /* The label with total log size           	*/
 
 };
 
 
+void finch_log_test(void); /* Here until I finish making the log_viewer look right */
 
 void finch_log_show(PurpleLogType type, gchar *screenname, PurpleAccount *account);
 void finch_log_show_contact(PurpleContact *contact);

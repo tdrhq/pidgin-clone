@@ -25,9 +25,18 @@
 
 #include "finch.h"
 
-static GHashTable *log_viewers = NULL;
+#include "gntwindow.h"
+#include "gnttree.h"
+#include "gntentry.h"
+#include "gntbox.h"
+#include "gnttextview.h"
+#include "gntbutton.h"
+
 
 #include "gntlog.h"
+
+static GHashTable *log_viewers = NULL;
+
 typedef struct {
 	PurpleLogType type;
 	char *screenname;
@@ -173,7 +182,93 @@ finch_log_done_cb(void *data)
 static FinchLogViewer *
 display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_size)
 {
-	return NULL;
+
+	GntWidget *win;
+	GntWidget *tv;
+	GntWidget *tree;
+	GntWidget *entry;
+	GntWidget *button;
+	GntWidget *splitbox;
+	GntWidget *rightbox;
+	GntWidget *searchbox;
+	GntWidget *aligned_box;
+
+	int h,w;
+
+	FinchLogViewer *viewer;
+
+	viewer = g_new0(FinchLogViewer,1);
+ /*	g_hash_table_insert(log_viewers,ht,viewer);	*/
+
+	viewer->window = win = gnt_window_box_new(FALSE, TRUE);
+	gnt_box_set_title(GNT_BOX(win),title);
+	gnt_box_set_pad(GNT_BOX(win), 0);
+	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
+	gnt_box_set_fill(GNT_BOX(win), TRUE);
+	gnt_box_set_alignment(GNT_BOX(win), GNT_ALIGN_MID);
+
+	tv = gnt_text_view_new();
+	gnt_widget_get_size(tv,&w,&h);
+	gnt_widget_set_size(tv,w,2);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv),"Conversation with someone.",GNT_TEXT_FLAG_NORMAL);
+	gnt_box_add_widget(GNT_BOX(win),tv);
+
+	splitbox = gnt_hbox_new(FALSE);
+	gnt_box_set_pad(GNT_BOX(splitbox), 1);
+	gnt_box_set_alignment(GNT_BOX(splitbox), GNT_ALIGN_TOP);
+
+	tree = gnt_tree_new();
+	gnt_widget_get_size(tree,&w,&h);
+	gnt_widget_set_size(tree,30,h);
+	gnt_box_add_widget(GNT_BOX(splitbox),tree);
+
+	rightbox = gnt_vbox_new(FALSE);
+	gnt_widget_get_size(tv,&w,&h);
+	gnt_widget_set_size(tv,45,h);
+
+	tv = gnt_text_view_new();
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv),"We talked a bit here.\nAnd some more here too.\nAnd life was just dandy out here.",GNT_TEXT_FLAG_NORMAL);
+	gnt_box_add_widget(GNT_BOX(rightbox),tv);
+
+	searchbox = gnt_hbox_new(FALSE);
+	
+	entry = gnt_entry_new("");
+	gnt_box_add_widget(GNT_BOX(searchbox),entry);
+
+	button = gnt_button_new("Search");
+	gnt_box_add_widget(GNT_BOX(searchbox),button);
+
+	gnt_box_add_widget(GNT_BOX(rightbox),searchbox);
+	gnt_box_add_widget(GNT_BOX(splitbox),rightbox);
+	gnt_box_add_widget(GNT_BOX(win),splitbox);
+
+	if(need_log_size){
+		tv = gnt_text_view_new();
+		gnt_widget_get_size(tv,&w,&h);
+		gnt_widget_set_size(tv,w,2);
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv),"LogSize",GNT_TEXT_FLAG_NORMAL);
+		gnt_box_add_widget(GNT_BOX(win),tv);
+	}
+
+	aligned_box = gnt_hbox_new(FALSE);
+	gnt_box_set_alignment(GNT_BOX(aligned_box),GNT_ALIGN_RIGHT);
+	button = gnt_button_new("Close");
+	gnt_box_add_widget(GNT_BOX(aligned_box),button);
+	gnt_box_add_widget(GNT_BOX(win),aligned_box);
+
+	gnt_widget_show(win);
+
+	return viewer;
+}
+
+void
+finch_log_test()
+{
+	LogViewerHashT ht;
+	const char * title = "Testing Logs";
+
+	display_log_viewer(&ht,title,TRUE);	
+	
 }
 
 void
