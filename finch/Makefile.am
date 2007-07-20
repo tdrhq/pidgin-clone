@@ -25,8 +25,10 @@ finch_SOURCES = \
 	gntpounce.c \
 	gntprefs.c \
 	gntrequest.c \
+	gntsound.c \
 	gntstatus.c \
-	gntui.c
+	gntui.c \
+	gntlog.c
 
 finch_headers = \
 	gntaccount.h \
@@ -42,8 +44,10 @@ finch_headers = \
 	gntpounce.h \
 	gntprefs.h \
 	gntrequest.h \
+	gntsound.h \
 	gntstatus.h \
-	gntui.h
+	gntui.h \
+	gntlog.h
 
 finchincludedir=$(includedir)/finch
 finchinclude_HEADERS = \
@@ -58,6 +62,7 @@ finch_LDADD = \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GNT_LIBS) \
+	$(GSTREAMER_LIBS) \
 	./libgnt/libgnt.la \
 	$(top_builddir)/libpurple/libpurple.la
 
@@ -75,4 +80,5 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
 	$(GNT_CFLAGS)

@@ -628,8 +628,9 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		log = purple_account_get_log(buddy->account, FALSE);
 		if (log != NULL)
 		{
-			purple_log_write(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
-			               current_time, tmp);
+			purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
+			               current_time, tmp, NULL, NULL);
+			return;
 		}
 
 		g_free(tmp);
@@ -1222,44 +1223,24 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
-	if (!old_idle && idle)
-	{
-		if (purple_prefs_get_bool("/purple/logging/log_system"))
-		{
+	if (old_idle == idle) {
+		if (purple_prefs_get_bool("/purple/logging/log_system")) {
 			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
 
-			if (log != NULL)
-			{
-				char *tmp = g_strdup_printf(_("%s became idle"),
-				purple_buddy_get_alias(buddy));
+			if (log != NULL) {
+				char *tmp = g_strdup_printf(
+					(!old_idle && idle) ? _("%s became idle") : _("%s became unidle"),
+					purple_buddy_get_alias(buddy));
 
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp);
-				g_free(tmp);
+				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
+					purple_buddy_get_alias(buddy), current_time, tmp, 
+					NULL, NULL);
 			}
 		}
-	}
-	else if (old_idle && !idle)
-	{
-		if (purple_prefs_get_bool("/purple/logging/log_system"))
-		{
-			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
-
-			if (log != NULL)
-			{
-				char *tmp = g_strdup_printf(_("%s became unidle"),
-				purple_buddy_get_alias(buddy));
-
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp);
-				g_free(tmp);
-			}
-		}
-	}
-
-	if (old_idle != idle)
+	} else {
 		purple_signal_emit(purple_blist_get_handle(), "buddy-idle-changed", buddy,
 		                 old_idle, idle);
+	}
 
 	purple_contact_invalidate_priority_buddy(purple_buddy_get_contact(buddy));
 
@@ -1314,10 +1295,10 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 				else
 					msg = g_strdup_printf(_("+++ %s became unidle"), purple_account_get_username(account));
 
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
+				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
 				                 purple_account_get_username(account),
-				                 (idle ? idle_time : current_time), msg);
-				g_free(msg);
+				                 (idle ? idle_time : current_time), msg,
+								 NULL, NULL);
 			}
 		}
 
