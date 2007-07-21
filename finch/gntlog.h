@@ -60,8 +60,6 @@ struct _FinchLogViewer {
 };
 
 
-void finch_log_test(void); /* Here until I finish making the log_viewer look right */
-
 void finch_log_show(PurpleLogType type, gchar *screenname, PurpleAccount *account);
 void finch_log_show_contact(PurpleContact *contact);
 

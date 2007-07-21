@@ -319,16 +319,6 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 }
 
 void
-finch_log_test()
-{
-	LogViewerHashT ht;
-	const char * title = "Testing Logs";
-
-	display_log_viewer(&ht, title, TRUE);	
-	
-}
-
-void
 finch_log_show(PurpleLogType type, gchar *screenname, PurpleAccount *account)
 {
 	LogViewerHashT *ht; FinchLogViewer *lv = NULL;
