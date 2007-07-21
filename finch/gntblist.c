@@ -51,6 +51,7 @@
 
 #include "gntblist.h"
 #include "gntconv.h"
+#include "gntlog.h"
 #include "gntstatus.h"
 #include <string.h>
 
@@ -100,6 +101,7 @@ typedef struct
 
 FinchBlist *ggblist;
 
+static void finch_blist_view_log_cb(PurpleBlistNode *node, PurpleBuddy *buddy);
 static void add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist);
 static void add_contact(PurpleContact *contact, FinchBlist *ggblist);
 static void add_group(PurpleGroup *group, FinchBlist *ggblist);
@@ -817,6 +819,7 @@ create_chat_menu(GntMenu *menu, PurpleChat *chat)
 			G_CALLBACK(purple_menu_action_free), action);
 
 	add_custom_action(menu, _("Edit Settings"), (PurpleCallback)chat_components_edit, chat);
+	add_custom_action(menu, _("View Log"), PURPLE_CALLBACK(finch_blist_view_log_cb), chat);
 }
 
 static void
@@ -883,6 +886,48 @@ finch_blist_pounce_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 	finch_pounce_editor_show(b->account, b->name, NULL);
 }
 
+static void
+finch_blist_view_log_cb(PurpleBlistNode *node, PurpleBuddy *buddy)
+{
+	PurpleAccount *account;
+	PurpleLogType type;
+	gchar *name = NULL;
+
+	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		PurpleBuddy *b = (PurpleBuddy*) node;
+
+
+		type = PURPLE_LOG_IM;
+		name = g_strdup(b->name);
+		account = b->account;
+	}
+	else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		PurpleChat *c = (PurpleChat*) node;
+		PurplePluginProtocolInfo *prpl_info = NULL;
+		
+
+		type = PURPLE_LOG_CHAT;
+		account = c->account;
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
+		if (prpl_info && prpl_info->get_chat_name) {
+			name = prpl_info->get_chat_name(c->components);
+		}
+	}
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		finch_log_show_contact((PurpleContact *)node);
+		return;
+	}
+	else {
+		/* This callback should not have been registered for a node
+		 * that doesn't match the type of one of the blocks above. */
+		g_return_if_reached();
+	}
+
+	if(name && account){
+		finch_log_show(type,name,account);
+		g_free(name);
+	}
+}
 
 static void
 create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
@@ -906,10 +951,8 @@ create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 			add_custom_action(menu, _("Send File"),
 					PURPLE_CALLBACK(finch_blist_menu_send_file_cb), buddy);
 	}
-#if 0
-	add_custom_action(tree, _("View Log"),
-			PURPLE_CALLBACK(finch_blist_view_log_cb)), buddy);
-#endif
+	add_custom_action(menu, _("View Log"),
+			PURPLE_CALLBACK(finch_blist_view_log_cb), buddy);
 
 	/* Protocol actions */
 	append_proto_menu(menu,

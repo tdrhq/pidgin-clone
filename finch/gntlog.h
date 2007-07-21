@@ -43,11 +43,11 @@ typedef struct _FinchLogViewer FinchLogViewer;
  * A Gnt Log Viewer.  You can look at logs with it.
  */
 struct _FinchLogViewer {
-	GList *logs;                   	/* The list of logs viewed in this viewer   */
-	GntTree						*treestore;  	/* The treestore containing said logs       */
+	GList 						*logs;       	/* The list of logs viewed in this viewer   */
+	GList 						*months;			/* Store the months covered									*/
 
 	GntWidget        	*window;     	/* The viewer's window                      */
-	GntWidget        	*treeview;    /* The tree representing said treestore 		*/
+	GntWidget					*tree;  			/* The tree containing said logs       			*/
 	GntWidget        	*tv;    		  /* The textview to display said logs        */
 	GntWidget        	*label;       /* The label at the top of the log viewer   */
 	GntWidget        	*size_label;  /* The label with total log size           	*/
