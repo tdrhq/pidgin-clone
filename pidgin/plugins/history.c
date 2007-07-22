@@ -194,15 +194,17 @@ static void historize(PurpleConversation *c)
 							purple_buddy_get_name((PurpleBuddy *)node2),
 							purple_buddy_get_account((PurpleBuddy *)node2), 
 							historize_log_collector_cb, callback_data);
+				/* free buddies list and exit */
 				g_slist_free(buddies);
 				return;
 			}
 		}
+		/* free buddies list */
+		g_slist_free(buddies);
 		purple_log_get_logs_nonblocking(PURPLE_LOG_IM, callback_data->name, 
 			callback_data->account, historize_log_list_cb, callback_data);
 	}
-	else if (convtype == PURPLE_CONV_TYPE_CHAT)
-	{
+	else if (convtype == PURPLE_CONV_TYPE_CHAT){
 		struct _historize_callback_data *callback_data;
 
 		/* If we're not logging, don't show anything.
