@@ -38,8 +38,6 @@
 #include "gnttextview.h"
 #include "gntbutton.h"
 
-
-
 static GHashTable *log_viewers = NULL;
 
 typedef struct {
@@ -57,8 +55,18 @@ typedef struct {
 
 	gboolean need_continue;
 	gulong destroy_handler_id;
-} FinchLogData
-;
+} FinchLogData;
+
+static const char *
+display_name_for_log_viewer(LogViewerHashT *ht)
+{
+	static char display[1024];
+	g_snprintf(display, sizeof(display), "%s (%s: %s)", ht->screenname,
+			purple_account_get_username(ht->account),
+			purple_account_get_protocol_name(ht->account));
+	return display;
+}
+
 static guint log_viewer_hash(gconstpointer data)
 {
 	const LogViewerHashT *viewer = data;
@@ -109,9 +117,9 @@ finch_log_window_destroy_cb(GntWidget *w, gpointer data)
 
 static void set_log_viewer_log_size(FinchLogViewer *log_viewer, int log_size) 
 {
-	char *size = purple_str_size_to_units(log_size);
+	char *size = log_size ? purple_str_size_to_units(log_size) : NULL;
 	GntTextView *tv = GNT_TEXT_VIEW(log_viewer->info);
-	gnt_text_view_tag_change(tv, "log-size", size, TRUE);
+	gnt_text_view_tag_change(tv, "log-size", size ? size : _("No logs available."), TRUE);
 	g_free(size);
 	gnt_widget_draw(log_viewer->window);
 }
@@ -265,9 +273,9 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 	gnt_widget_get_size(tv, &w, &h);
 	gnt_widget_set_size(tv, w, 3);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("Conversation with "), GNT_TEXT_FLAG_NORMAL);
-	gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), "someone", GNT_TEXT_FLAG_BOLD, "who");
+	gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), display_name_for_log_viewer(ht), GNT_TEXT_FLAG_BOLD, "who");
 	if(need_log_size){
-		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("\nLog Size: "), GNT_TEXT_FLAG_NORMAL);
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("\nTotal Log Size: "), GNT_TEXT_FLAG_NORMAL);
 		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), _("(Computing...)"), GNT_TEXT_FLAG_BOLD, "log-size");
 	}
 	gnt_text_view_scroll(GNT_TEXT_VIEW(tv), 0);
@@ -321,7 +329,8 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 void
 finch_log_show(PurpleLogType type, gchar *screenname, PurpleAccount *account)
 {
-	LogViewerHashT *ht; FinchLogViewer *lv = NULL;
+	LogViewerHashT *ht;
+	FinchLogViewer *lv = NULL;
 	gchar * name = screenname;
 	char *title;
 	FinchLogData * finch_log_data;
@@ -334,7 +343,6 @@ finch_log_show(PurpleLogType type, gchar *screenname, PurpleAccount *account)
 	ht->type = type;
 	ht->screenname = g_strdup(screenname);
 	ht->account = account;
-
 
 	if (log_viewers == NULL) {
 		log_viewers = g_hash_table_new(log_viewer_hash, log_viewer_equal);
@@ -385,7 +393,6 @@ finch_log_show(PurpleLogType type, gchar *screenname, PurpleAccount *account)
 
 	purple_log_get_logs_nonblocking(type, screenname, account, finch_log_list_cb, finch_log_data);
 	purple_log_get_total_size_nonblocking(type, screenname, account, finch_log_size_cb, finch_log_data);
-
 }
 
 void
