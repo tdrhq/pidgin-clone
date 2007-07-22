@@ -27,7 +27,8 @@ finch_SOURCES = \
 	gntrequest.c \
 	gntsound.c \
 	gntstatus.c \
-	gntui.c
+	gntui.c \
+	gntlog.c
 
 finch_headers = \
 	gntaccount.h \
@@ -45,7 +46,8 @@ finch_headers = \
 	gntrequest.h \
 	gntsound.h \
 	gntstatus.h \
-	gntui.h
+	gntui.h \
+	gntlog.h
 
 finchincludedir=$(includedir)/finch
 finchinclude_HEADERS = \

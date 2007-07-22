@@ -854,6 +854,7 @@ gnt_tree_destroy(GntWidget *widget)
 	if (tree->hash)
 		g_hash_table_destroy(tree->hash);
 	g_list_free(tree->list);
+
 	gnt_tree_free_columns(tree);
 	g_free(tree->priv);
 }
