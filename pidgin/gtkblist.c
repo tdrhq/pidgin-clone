@@ -106,7 +106,7 @@ typedef struct
 static GHashTable *logsize_contacts = NULL;
 
 struct _pidgin_logsize_contact {
-	PurpleContact *contact;
+	PurpleBlistNode *node;
 	char *name;
 	gboolean finished;
 };
@@ -116,6 +116,7 @@ struct _pidgin_log_size_data
 	int counter;
 	int total_size;
 	struct _pidgin_logsize_contact *lc;
+	int value;
 };
 
 static GtkWidget *accountmenu = NULL;
@@ -172,13 +173,13 @@ static char *dim_grey()
 
 static guint _pidgin_logsize_contact_hash(struct _pidgin_logsize_contact *lc)
 {
-	return g_direct_hash(lc->contact);
+	return g_direct_hash(lc->node);
 }
 
 static guint _pidgin_logsize_contact_equal(struct _pidgin_logsize_contact *lc1,
 		struct _pidgin_logsize_contact *lc2)
 {
-	return lc1->contact == lc2->contact && (!strcmp(lc1->name, lc2->name));
+	return lc1->node == lc2->node && (!strcmp(lc1->name, lc2->name));
 }
 
 static void _pidgin_logsize_contact_free_key(struct _pidgin_logsize_contact *lc)
@@ -6157,7 +6158,7 @@ void pidgin_blist_init(void)
 static void pidgin_save_total_size_cb(gpointer key, gpointer value, gpointer user_data)
 {
 	struct _pidgin_logsize_contact *lc = key;
-	purple_blist_node_set_int((PurpleBlistNode *)lc->contact, "log_size", GPOINTER_TO_INT(value));
+	purple_blist_node_set_int(lc->node, "log_size", GPOINTER_TO_INT(value));
 }
 
 void
@@ -6203,11 +6204,50 @@ void pidgin_blist_sort_method_unreg(const char *id){
 	pidgin_blist_update_sort_methods();
 }
 
-static gboolean sort_method_log_cb(gpointer data) 
+static void get_total_size_for_contact_cb(int size, void *data)
 {
-	redo_buddy_list(purple_get_blist(), FALSE, FALSE);
-	/* save in blist file total size value for each contact */
-	g_hash_table_foreach(logsize_contacts, pidgin_save_total_size_cb, NULL);
+	struct _pidgin_log_size_data *callback_data = data;
+
+	callback_data->counter--;
+	callback_data->total_size += size;
+
+	if (!callback_data->counter) {
+		callback_data->lc->finished = TRUE;
+		if (callback_data->value != callback_data->total_size) {
+			g_hash_table_replace(logsize_contacts, callback_data->lc, GINT_TO_POINTER(callback_data->total_size));
+			/* refresh buddy list */
+			redo_buddy_list(purple_get_blist(), FALSE, FALSE);
+			/* saving value into blist file */
+			purple_blist_node_set_int(callback_data->lc->node, "log_size", callback_data->total_size);
+		}
+		g_free(callback_data);
+	}
+}
+
+static void pidgin_update_total_size_cb(gpointer key, gpointer value, gpointer user_data)
+{
+	struct _pidgin_logsize_contact *lc = key;
+
+	if (lc->finished == TRUE) {
+		struct _pidgin_log_size_data *callback_data = g_new0(struct _pidgin_log_size_data, 1);
+		PurpleBlistNode *n;
+
+		callback_data->lc = lc;
+		callback_data->lc->finished = FALSE;
+		callback_data->value = GPOINTER_TO_INT(value);
+
+		for (n = lc->node->child; n; n = n->next)
+			callback_data->counter++;
+
+		for (n = lc->node->child; n; n = n->next)
+			purple_log_get_total_size_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy*)(n))->name, ((PurpleBuddy*)(n))->account, 
+													get_total_size_for_contact_cb, callback_data);
+	}
+}
+
+static gboolean update_log_size_table_cb(gpointer data) 
+{
+	g_hash_table_foreach(logsize_contacts, pidgin_update_total_size_cb, NULL);
 	return !strcmp(current_sort_method->id, "log_size");
 }
 
@@ -6233,7 +6273,7 @@ void pidgin_blist_sort_method_set(const char *id){
 	}
 
 	if (!strcmp(id, "log_size")) {
-		purple_timeout_add_seconds(10, sort_method_log_cb, NULL);
+		purple_timeout_add_seconds(10, update_log_size_table_cb, NULL);
 	}
 }
 
@@ -6414,20 +6454,6 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 	}
 }
 
-static void get_total_size_for_contact_cb(int size, void *data)
-{
-	struct _pidgin_log_size_data *callback_data = data;
-
-	callback_data->counter--;
-	callback_data->total_size += size;
-
-	if (!callback_data->counter) {
-		callback_data->lc->finished = TRUE;
-		g_hash_table_replace(logsize_contacts, callback_data->lc, GINT_TO_POINTER(callback_data->total_size));
-		g_free(callback_data);
-	}
-}
-
 static int get_total_size_for_contact(PurpleBlistNode *node)
 {
 	struct _pidgin_logsize_contact *lc_found = NULL;
@@ -6440,7 +6466,7 @@ static int get_total_size_for_contact(PurpleBlistNode *node)
 	lc = g_new(struct _pidgin_logsize_contact, 1);
 
 	lc->name = g_strdup(purple_contact_get_alias((PurpleContact*)node));
-	lc->contact = (PurpleContact *)node;
+	lc->node = node;
 
 	if(g_hash_table_lookup_extended(logsize_contacts, lc, (gpointer *)lc_found_p, &ptrsize)) {
 		need_to_update = lc_found && lc_found->finished;
@@ -6450,30 +6476,13 @@ static int get_total_size_for_contact(PurpleBlistNode *node)
 		struct _pidgin_logsize_contact *lc_init = g_new(struct _pidgin_logsize_contact, 1);
 
 		total_size  = purple_blist_node_get_int(node, "log_size");
+		purple_debug_info("sort_method_log", "initial value from blist file = %i\n", total_size);
+
 		lc_init->name = g_strdup(purple_contact_get_alias((PurpleContact*)node));
-		lc_init->contact = (PurpleContact *)node;
+		lc_init->node = node;
 		lc_init->finished = FALSE;
-		/* TODO: read from blist file */
 		g_hash_table_replace(logsize_contacts, lc_init, GINT_TO_POINTER(total_size ));
 	}
-
-	/* check if we need to update total size for contact 
-	    We shouldn't update if previous call hasn't finished */
-	if (need_to_update) {
-		struct _pidgin_log_size_data *callback_data = g_new0(struct _pidgin_log_size_data, 1);
-		PurpleBlistNode *n;
-
-		callback_data->lc = lc;
-		callback_data->lc->finished = FALSE;
-
-		for (n = node->child; n; n = n->next)
-			callback_data->counter++;
-
-		for (n = node->child; n; n = n->next)
-			purple_log_get_total_size_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy*)(n))->name, ((PurpleBuddy*)(n))->account, 
-												get_total_size_for_contact_cb, callback_data);
-	} else
-		_pidgin_logsize_contact_free_key(lc);
 
 	return total_size;
 }
