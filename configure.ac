@@ -2038,6 +2038,8 @@ if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
+AM_CONDITIONAL(PURPLE_AVAILABLE, true)
+
 AC_OUTPUT([Makefile
 		   Doxyfile
 		   doc/Makefile
@@ -2069,6 +2071,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/icons/Makefile
 		   pidgin/pixmaps/icons/16/Makefile
 		   pidgin/pixmaps/icons/16/scalable/Makefile
+		   pidgin/pixmaps/icons/22/Makefile
+		   pidgin/pixmaps/icons/22/scalable/Makefile
 		   pidgin/pixmaps/icons/24/Makefile
 		   pidgin/pixmaps/icons/24/scalable/Makefile
 		   pidgin/pixmaps/icons/32/Makefile
@@ -2114,7 +2118,6 @@ AC_OUTPUT([Makefile
 		   pidgin/plugins/perl/Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
-		   pidgin/sounds/Makefile
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple.pc
@@ -2147,6 +2150,8 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
 		   libpurple/version.h
+		   share/Makefile
+		   share/sounds/Makefile
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc
