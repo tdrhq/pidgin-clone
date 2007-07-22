@@ -48,11 +48,11 @@ const char *gnt_style_get(GntStyle style)
 char *gnt_style_get_from_name(const char *group, const char *key)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
-	if (group == NULL && (group = g_get_prgname()) != NULL && *group != '\0') {
-		return g_key_file_get_value(gkfile, group, key, NULL);
-	}
-
-	if (!group || !*group)
+	const char *prg = g_get_prgname();
+	if ((group == NULL || *group == '\0') && prg &&
+			g_key_file_has_group(gkfile, prg))
+		group = prg;
+	if (!group)
 		group = "general";
 	return g_key_file_get_value(gkfile, group, key, NULL);
 #endif
@@ -145,8 +145,8 @@ void gnt_style_read_workspaces(GntWM *wm)
 		int j;
 		GntWS *ws;
 		gchar **titles;
-		char *group = calloc(12, 1);
-		g_sprintf(group, "Workspace-%d", i);
+		char group[32];
+		g_snprintf(group, sizeof(group), "Workspace-%d", i);
 		name = g_key_file_get_value(gkfile, group, "name", NULL);
 		if (!name)
 			return;
@@ -168,7 +168,6 @@ void gnt_style_read_workspaces(GntWM *wm)
 				g_hash_table_replace(wm->title_places, g_strdup(titles[j]), ws);
 			g_strfreev(titles);
 		}
-		g_free(group);
 	}
 #endif
 }
