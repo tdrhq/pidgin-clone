@@ -109,13 +109,10 @@ finch_log_window_destroy_cb(GntWidget *w, gpointer data)
 
 static void set_log_viewer_log_size(FinchLogViewer *log_viewer, int log_size) 
 {
-	char *sz_txt = g_strdup_printf("Log Size: %s", purple_str_size_to_units(log_size));
-	GntTextView *tv = GNT_TEXT_VIEW(log_viewer->size_label);
-
-
-	gnt_text_view_append_text_with_flags(tv, sz_txt, GNT_TEXT_FLAG_NORMAL);
-
-	g_free(sz_txt);
+	char *size = purple_str_size_to_units(log_size);
+	GntTextView *tv = GNT_TEXT_VIEW(log_viewer->info);
+	gnt_text_view_tag_change(tv, "log-size", size, TRUE);
+	g_free(size);
 	gnt_widget_draw(log_viewer->window);
 }
 
@@ -240,7 +237,6 @@ finch_log_done_cb(void *data)
 static FinchLogViewer *
 display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_size)
 {
-
 	GntWidget *win;
 	GntWidget *tv;
 	GntWidget *tree;
@@ -265,10 +261,18 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 	gnt_box_set_fill(GNT_BOX(win), TRUE);
 	gnt_box_set_alignment(GNT_BOX(win), GNT_ALIGN_MID);
 
-	viewer->label = tv = gnt_text_view_new();
+	viewer->info = tv = gnt_text_view_new();
 	gnt_widget_get_size(tv, &w, &h);
-	gnt_widget_set_size(tv, w, 2);
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), "Conversation with someone.", GNT_TEXT_FLAG_NORMAL);
+	gnt_widget_set_size(tv, w, 3);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("Conversation with "), GNT_TEXT_FLAG_NORMAL);
+	gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), "someone", GNT_TEXT_FLAG_BOLD, "who");
+	if(need_log_size){
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("\nLog Size: "), GNT_TEXT_FLAG_NORMAL);
+		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), _("(Computing...)"), GNT_TEXT_FLAG_BOLD, "log-size");
+	}
+	gnt_text_view_scroll(GNT_TEXT_VIEW(tv), 0);
+	gnt_text_view_set_flag(GNT_TEXT_VIEW(tv), GNT_TEXT_VIEW_NO_SCROLL);  /* Let's not show the scrollbars here */
+	GNT_WIDGET_UNSET_FLAGS(tv, GNT_WIDGET_GROW_Y);
 	gnt_box_add_widget(GNT_BOX(win), tv);
 
 	splitbox = gnt_hbox_new(FALSE);
@@ -287,25 +291,21 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 	viewer->tv = tv = gnt_text_view_new();
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), "We talked a bit here.\nAnd some more here too.\nAnd life was just dandy out here.", GNT_TEXT_FLAG_NORMAL);
 	gnt_box_add_widget(GNT_BOX(rightbox), tv);
+	gnt_text_view_attach_pager_widget(GNT_TEXT_VIEW(tv), win);
 
 	searchbox = gnt_hbox_new(FALSE);
 	
 	viewer->entry = entry = gnt_entry_new("");
 	gnt_box_add_widget(GNT_BOX(searchbox), entry);
+	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(tv), entry);
 
 	button = gnt_button_new("Search");
 	gnt_box_add_widget(GNT_BOX(searchbox), button);
+	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(tv), button);
 
 	gnt_box_add_widget(GNT_BOX(rightbox), searchbox);
 	gnt_box_add_widget(GNT_BOX(splitbox), rightbox);
 	gnt_box_add_widget(GNT_BOX(win), splitbox);
-
-	if(need_log_size){
-		viewer->size_label = tv = gnt_text_view_new();
-		gnt_widget_get_size(tv, &w, &h);
-		gnt_widget_set_size(tv, w, 2);
-		gnt_box_add_widget(GNT_BOX(win), tv);
-	}
 
 	aligned_box = gnt_hbox_new(FALSE);
 	gnt_box_set_alignment(GNT_BOX(aligned_box), GNT_ALIGN_RIGHT);
