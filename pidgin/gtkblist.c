@@ -104,6 +104,7 @@ typedef struct
 } PidginJoinChatData;
 
 static GHashTable *logsize_contacts = NULL;
+static gulong update_logsize_contacts_id = 0;
 
 struct _pidgin_logsize_contact {
 	PurpleBlistNode *node;
@@ -6155,7 +6156,7 @@ void pidgin_blist_init(void)
 			(GDestroyNotify)_pidgin_logsize_contact_free_key, NULL);
 }
 
-static void pidgin_save_total_size_cb(gpointer key, gpointer value, gpointer user_data)
+static void save_total_size(gpointer key, gpointer value, gpointer user_data)
 {
 	struct _pidgin_logsize_contact *lc = key;
 	purple_blist_node_set_int(lc->node, "log_size", GPOINTER_TO_INT(value));
@@ -6166,7 +6167,7 @@ pidgin_blist_uninit(void) {
 	purple_signals_unregister_by_instance(pidgin_blist_get_handle());
 	purple_signals_disconnect_by_handle(pidgin_blist_get_handle());
 
-	g_hash_table_foreach(logsize_contacts, pidgin_save_total_size_cb, NULL);
+	g_hash_table_foreach(logsize_contacts, save_total_size, NULL);
 }
 
 /*********************************************************************
@@ -6224,7 +6225,7 @@ static void get_total_size_for_contact_cb(int size, void *data)
 	}
 }
 
-static void pidgin_update_total_size_cb(gpointer key, gpointer value, gpointer user_data)
+static void update_contact_total_size(gpointer key, gpointer value, gpointer user_data)
 {
 	struct _pidgin_logsize_contact *lc = key;
 
@@ -6247,8 +6248,13 @@ static void pidgin_update_total_size_cb(gpointer key, gpointer value, gpointer u
 
 static gboolean update_log_size_table_cb(gpointer data) 
 {
-	g_hash_table_foreach(logsize_contacts, pidgin_update_total_size_cb, NULL);
-	return !strcmp(current_sort_method->id, "log_size");
+	if (!strcmp(current_sort_method->id, "log_size")) {
+		g_hash_table_foreach(logsize_contacts, update_contact_total_size, NULL);
+		return TRUE;
+	} else {
+		update_logsize_contacts_id = 0;
+		return FALSE;
+	}
 }
 
 void pidgin_blist_sort_method_set(const char *id){
@@ -6272,8 +6278,8 @@ void pidgin_blist_sort_method_set(const char *id){
 		redo_buddy_list(purple_get_blist(), FALSE, FALSE);
 	}
 
-	if (!strcmp(id, "log_size")) {
-		purple_timeout_add_seconds(10, update_log_size_table_cb, NULL);
+	if (!strcmp(id, "log_size") && !update_logsize_contacts_id ) {
+		update_logsize_contacts_id  = purple_timeout_add_seconds(10, update_log_size_table_cb, NULL);
 	}
 }
 
