@@ -100,23 +100,6 @@ typedef struct
 
 FinchBlist *ggblist;
 
-static GHashTable *logsize_contacts = NULL;
-static gulong update_logsize_contacts_id = 0;
-
-struct _finch_logsize_contact {
-	PurpleBlistNode *node;
-	char *name;
-	gboolean finished;
-};
-
-struct _finch_log_size_data
-{
-	int counter;
-	int total_size;
-	struct _finch_logsize_contact *lc;
-	int value;
-};
-
 static void add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist);
 static void add_contact(PurpleContact *contact, FinchBlist *ggblist);
 static void add_group(PurpleGroup *group, FinchBlist *ggblist);
@@ -139,25 +122,6 @@ static int blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2)
 static int blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2);
-
-static void populate_buddylist();
-
-static guint _finch_logsize_contact_hash(struct _finch_logsize_contact *lc)
-{
-	return g_direct_hash(lc->node);
-}
-
-static guint _finch_logsize_contact_equal(struct _finch_logsize_contact *lc1,
-		struct _finch_logsize_contact *lc2)
-{
-	return lc1->node == lc2->node && (!strcmp(lc1->name, lc2->name));
-}
-
-static void _finch_logsize_contact_free_key(struct _finch_logsize_contact *lc)
-{
-	g_free(lc->name);
-	g_free(lc);
-}
 
 static gboolean
 is_contact_online(PurpleContact *contact)
@@ -1648,57 +1612,6 @@ reset_blist_window(GntWidget *window, gpointer null)
 	ggblist = NULL;
 }
 
-static void get_total_size_for_contact_cb(int size, void *data)
-{
-	struct _finch_log_size_data *callback_data = data;
-
-	callback_data->counter--;
-	callback_data->total_size += size;
-
-	if (!callback_data->counter) {
-		callback_data->lc->finished = TRUE;
-		if (callback_data->value != callback_data->total_size) {
-			g_hash_table_replace(logsize_contacts, callback_data->lc, GINT_TO_POINTER(callback_data->total_size));
-			/* refresh buddy list */
-			populate_buddylist();
-			/* saving value into blist file */
-			purple_blist_node_set_int(callback_data->lc->node, "log_size", callback_data->total_size);
-		}
-		g_free(callback_data);
-	}
-}
-
-static void update_contact_total_size(gpointer key, gpointer value, gpointer user_data)
-{
-	struct _finch_logsize_contact *lc = key;
-
-	if (lc->finished == TRUE) {
-		struct _finch_log_size_data *callback_data = g_new0(struct _finch_log_size_data, 1);
-		PurpleBlistNode *n;
-
-		callback_data->lc = lc;
-		callback_data->lc->finished = FALSE;
-		callback_data->value = GPOINTER_TO_INT(value);
-
-		for (n = lc->node->child; n; n = n->next)
-			callback_data->counter++;
-
-		for (n = lc->node->child; n; n = n->next)
-			purple_log_get_total_size_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy*)(n))->name, ((PurpleBuddy*)(n))->account, get_total_size_for_contact_cb, callback_data);
-	}
-}
-
-static gboolean update_log_size_table_cb(gpointer data) 
-{
-	if (!strcmp(purple_prefs_get_string(PREF_ROOT "/sort_type"), "log")) {
-		g_hash_table_foreach(logsize_contacts, update_contact_total_size, NULL);
-		return TRUE;
-	} else {
-		update_logsize_contacts_id = 0;
-		return FALSE;
-	}
-}
-
 static void
 populate_buddylist()
 {
@@ -1712,8 +1625,6 @@ populate_buddylist()
 		gnt_tree_set_compare_func(GNT_TREE(ggblist->tree),
 			(GCompareFunc)blist_node_compare_status);
 	} else if (strcmp(purple_prefs_get_string(PREF_ROOT "/sort_type"), "log") == 0) {
-		if (!update_logsize_contacts_id) 
-			update_logsize_contacts_id  = purple_timeout_add_seconds(10, update_log_size_table_cb, NULL);
 		gnt_tree_set_compare_func(GNT_TREE(ggblist->tree),
 			(GCompareFunc)blist_node_compare_log);
 	}
@@ -1830,10 +1741,6 @@ void finch_blist_init()
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", purple_blist_get_handle(),
 			G_CALLBACK(account_signed_on_cb), NULL);
-
-	logsize_contacts = g_hash_table_new_full((GHashFunc)_finch_logsize_contact_hash,
-			(GEqualFunc)_finch_logsize_contact_equal,
-			(GDestroyNotify)_finch_logsize_contact_free_key, NULL);
 	return;
 }
 
@@ -2067,66 +1974,46 @@ blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	return ret;
 }
 
-
-static int get_total_size_for_contact(PurpleBlistNode *node)
+static int
+get_contact_log_size(PurpleBlistNode *c)
 {
-	struct _finch_logsize_contact *lc_found = NULL;
-	struct _finch_logsize_contact **lc_found_p = &lc_found;
-	gpointer ptrsize;
-	int total_size = 0;
-	gboolean need_to_update = TRUE;
-	struct _finch_logsize_contact *lc = g_new(struct _finch_logsize_contact, 1);
+	int log = 0;
+	PurpleBlistNode *node;
 
-	lc = g_new(struct _finch_logsize_contact, 1);
-
-	lc->name = g_strdup(purple_contact_get_alias((PurpleContact*)node));
-	lc->node = node;
-
-	if(g_hash_table_lookup_extended(logsize_contacts, lc, (gpointer *)lc_found_p, &ptrsize)) {
-		need_to_update = lc_found && lc_found->finished;
-		total_size = GPOINTER_TO_INT(ptrsize);
-	} else {
-		/* initial value */
-		struct _finch_logsize_contact *lc_init = g_new(struct _finch_logsize_contact, 1);
-
-		total_size  = purple_blist_node_get_int(node, "log_size");
-		purple_debug_info("sort_method_log", "initial value from blist file = %i\n", total_size);
-
-		lc_init->name = g_strdup(purple_contact_get_alias((PurpleContact*)node));
-		lc_init->node = node;
-		lc_init->finished = FALSE;
-		g_hash_table_replace(logsize_contacts, lc_init, GINT_TO_POINTER(total_size ));
+	for (node = c->child; node; node = node->next) {
+		PurpleBuddy *b = (PurpleBuddy*)node;
+		log += purple_log_get_total_size(PURPLE_LOG_IM, b->name, b->account);
 	}
 
-	return total_size;
+	return log;
 }
 
 static int
 blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2)
 {
 	int ret;
+	PurpleBuddy *b1, *b2;
 
 	if (n1->type != n2->type)
 		return blist_node_compare_position(n1, n2);
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(n1)) {
-		ret = get_total_size_for_contact(n2) - get_total_size_for_contact(n1);
-		if (ret != 0)
-			return ret;
-	} else if (PURPLE_BLIST_NODE_IS_BUDDY(n1)) {
-		/*
-		PurpleBuddy *b1, *b2;
-		b1 = (PurpleBuddy*)n1;
-		b2 = (PurpleBuddy*)n2;
-		ret = purple_log_get_total_size(PURPLE_LOG_IM, b2->name, b2->account) - 
-				purple_log_get_total_size(PURPLE_LOG_IM, b1->name, b1->account);
-		if (ret != 0)
-			return ret;
-		*/
-		purple_debug_info("LOG compare", "------- node is buddy ------- \n");
-	} else
-		return blist_node_compare_position(n1, n2);
-
+	switch (n1->type) {
+		case PURPLE_BLIST_BUDDY_NODE:
+			b1 = (PurpleBuddy*)n1;
+			b2 = (PurpleBuddy*)n2;
+			ret = purple_log_get_total_size(PURPLE_LOG_IM, b2->name, b2->account) - 
+					purple_log_get_total_size(PURPLE_LOG_IM, b1->name, b1->account);
+			if (ret != 0)
+				return ret;
+			break;
+		case PURPLE_BLIST_CONTACT_NODE:
+			ret = get_contact_log_size(n2) - get_contact_log_size(n1);
+			if (ret != 0)
+				return ret;
+			break;
+		default:
+			return blist_node_compare_position(n1, n2);
+	}
 	ret = blist_node_compare_text(n1, n2);
 	return ret;
 }
@@ -2478,12 +2365,6 @@ blist_show(PurpleBuddyList *list)
 	savedstatus_changed(purple_savedstatus_get_current(), NULL);
 }
 
-static void save_total_size(gpointer key, gpointer value, gpointer user_data)
-{
-	struct _finch_logsize_contact *lc = key;
-	purple_blist_node_set_int(lc->node, "log_size", GPOINTER_TO_INT(value));
-}
-
 void finch_blist_uninit()
 {
 	if (ggblist == NULL)
@@ -2492,8 +2373,6 @@ void finch_blist_uninit()
 	gnt_widget_destroy(ggblist->window);
 	g_free(ggblist);
 	ggblist = NULL;
-
-	g_hash_table_foreach(logsize_contacts, save_total_size, NULL);
 }
 
 gboolean finch_blist_get_position(int *x, int *y)
