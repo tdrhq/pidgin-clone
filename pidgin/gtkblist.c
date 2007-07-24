@@ -103,6 +103,20 @@ typedef struct
 	GList *entries;
 } PidginJoinChatData;
 
+static GHashTable *logsize_contacts = NULL;
+
+struct _pidgin_logsize_contact {
+	PurpleContact *contact;
+	char *name;
+	gboolean finished;
+};
+
+struct _pidgin_log_size_data
+{
+	int counter;
+	int total_size;
+	struct _pidgin_logsize_contact *lc;
+};
 
 static GtkWidget *accountmenu = NULL;
 
@@ -154,6 +168,23 @@ static char *dim_grey()
 		snprintf(dim_grey_string, sizeof(dim_grey_string), "%s", pidgin_get_dim_grey_string(gtkblist->treeview)); 
 	}
 	return dim_grey_string;
+}
+
+static guint _pidgin_logsize_contact_hash(struct _pidgin_logsize_contact *lc)
+{
+	return g_direct_hash(lc->contact);
+}
+
+static guint _pidgin_logsize_contact_equal(struct _pidgin_logsize_contact *lc1,
+		struct _pidgin_logsize_contact *lc2)
+{
+	return lc1->contact == lc2->contact && (!strcmp(lc1->name, lc2->name));
+}
+
+static void _pidgin_logsize_contact_free_key(struct _pidgin_logsize_contact *lc)
+{
+	g_free(lc->name);
+	g_free(lc);
 }
 
 /***************************************************
@@ -6117,12 +6148,24 @@ void pidgin_blist_init(void)
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-privacy-changed", gtk_blist_handle, PURPLE_CALLBACK(pidgin_blist_update_privacy_cb), NULL);
+
+	logsize_contacts = g_hash_table_new_full((GHashFunc)_pidgin_logsize_contact_hash,
+			(GEqualFunc)_pidgin_logsize_contact_equal,
+			(GDestroyNotify)_pidgin_logsize_contact_free_key, NULL);
+}
+
+static void pidgin_save_total_size_cb(gpointer key, gpointer value, gpointer user_data)
+{
+	struct _pidgin_logsize_contact *lc = key;
+	purple_blist_node_set_int((PurpleBlistNode *)lc->contact, "log_size", GPOINTER_TO_INT(value));
 }
 
 void
 pidgin_blist_uninit(void) {
 	purple_signals_unregister_by_instance(pidgin_blist_get_handle());
 	purple_signals_disconnect_by_handle(pidgin_blist_get_handle());
+
+	g_hash_table_foreach(logsize_contacts, pidgin_save_total_size_cb, NULL);
 }
 
 /*********************************************************************
@@ -6160,6 +6203,14 @@ void pidgin_blist_sort_method_unreg(const char *id){
 	pidgin_blist_update_sort_methods();
 }
 
+static gboolean sort_method_log_cb(gpointer data) 
+{
+	redo_buddy_list(purple_get_blist(), FALSE, FALSE);
+	/* save in blist file total size value for each contact */
+	g_hash_table_foreach(logsize_contacts, pidgin_save_total_size_cb, NULL);
+	return !strcmp(current_sort_method->id, "log_size");
+}
+
 void pidgin_blist_sort_method_set(const char *id){
 	GList *l = pidgin_blist_sort_methods;
 
@@ -6179,6 +6230,10 @@ void pidgin_blist_sort_method_set(const char *id){
 		redo_buddy_list(purple_get_blist(), TRUE, FALSE);
 	} else {
 		redo_buddy_list(purple_get_blist(), FALSE, FALSE);
+	}
+
+	if (!strcmp(id, "log_size")) {
+		purple_timeout_add_seconds(10, sort_method_log_cb, NULL);
 	}
 }
 
@@ -6359,6 +6414,70 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 	}
 }
 
+static void get_total_size_for_contact_cb(int size, void *data)
+{
+	struct _pidgin_log_size_data *callback_data = data;
+
+	callback_data->counter--;
+	callback_data->total_size += size;
+
+	if (!callback_data->counter) {
+		callback_data->lc->finished = TRUE;
+		g_hash_table_replace(logsize_contacts, callback_data->lc, GINT_TO_POINTER(callback_data->total_size));
+		g_free(callback_data);
+	}
+}
+
+static int get_total_size_for_contact(PurpleBlistNode *node)
+{
+	struct _pidgin_logsize_contact *lc_found = NULL;
+	struct _pidgin_logsize_contact **lc_found_p = &lc_found;
+	gpointer ptrsize;
+	int total_size = 0;
+	gboolean need_to_update = TRUE;
+	struct _pidgin_logsize_contact *lc = g_new(struct _pidgin_logsize_contact, 1);
+
+	lc = g_new(struct _pidgin_logsize_contact, 1);
+
+	lc->name = g_strdup(purple_contact_get_alias((PurpleContact*)node));
+	lc->contact = (PurpleContact *)node;
+
+	if(g_hash_table_lookup_extended(logsize_contacts, lc, (gpointer *)lc_found_p, &ptrsize)) {
+		need_to_update = lc_found && lc_found->finished;
+		total_size = GPOINTER_TO_INT(ptrsize);
+	} else {
+		/* initial value */
+		struct _pidgin_logsize_contact *lc_init = g_new(struct _pidgin_logsize_contact, 1);
+
+		total_size  = purple_blist_node_get_int(node, "log_size");
+		lc_init->name = g_strdup(purple_contact_get_alias((PurpleContact*)node));
+		lc_init->contact = (PurpleContact *)node;
+		lc_init->finished = FALSE;
+		/* TODO: read from blist file */
+		g_hash_table_replace(logsize_contacts, lc_init, GINT_TO_POINTER(total_size ));
+	}
+
+	/* check if we need to update total size for contact 
+	    We shouldn't update if previous call hasn't finished */
+	if (need_to_update) {
+		struct _pidgin_log_size_data *callback_data = g_new0(struct _pidgin_log_size_data, 1);
+		PurpleBlistNode *n;
+
+		callback_data->lc = lc;
+		callback_data->lc->finished = FALSE;
+
+		for (n = node->child; n; n = n->next)
+			callback_data->counter++;
+
+		for (n = node->child; n; n = n->next)
+			purple_log_get_total_size_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy*)(n))->name, ((PurpleBuddy*)(n))->account, 
+												get_total_size_for_contact_cb, callback_data);
+	} else
+		_pidgin_logsize_contact_free_key(lc);
+
+	return total_size;
+}
+
 static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
 	GtkTreeIter more_z;
@@ -6372,9 +6491,7 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 	}
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		PurpleBlistNode *n;
-		for (n = node->child; n; n = n->next)
-			log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy*)(n))->name, ((PurpleBuddy*)(n))->account);
+		log_size = get_total_size_for_contact(node);
 		buddy_name = purple_contact_get_alias((PurpleContact*)node);
 	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		/* we don't have a reliable way of getting the log filename
@@ -6400,7 +6517,6 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 	do {
 		GValue val;
 		PurpleBlistNode *n;
-		PurpleBlistNode *n2;
 		int cmp;
 
 		val.g_type = 0;
@@ -6409,8 +6525,7 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 		this_log_size = 0;
 
 		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
-			for (n2 = n->child; n2; n2 = n2->next)
-				this_log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy*)(n2))->name, ((PurpleBuddy*)(n2))->account);
+			this_log_size = get_total_size_for_contact(n);
 			this_buddy_name = purple_contact_get_alias((PurpleContact*)n);
 		} else {
 			this_buddy_name = NULL;
