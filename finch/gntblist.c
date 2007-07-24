@@ -51,6 +51,7 @@
 
 #include "gntblist.h"
 #include "gntconv.h"
+#include "gntlog.h"
 #include "gntstatus.h"
 #include <string.h>
 
@@ -98,8 +99,9 @@ typedef struct
 	} u;
 } StatusBoxItem;
 
-FinchBlist *ggblist;
+static FinchBlist *ggblist;
 
+static void finch_blist_view_log_cb(PurpleBlistNode *node, PurpleBuddy *buddy);
 static void add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist);
 static void add_contact(PurpleContact *contact, FinchBlist *ggblist);
 static void add_group(PurpleGroup *group, FinchBlist *ggblist);
@@ -420,11 +422,13 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 	PurpleGroup *grp;
 	GHashTable *hash = NULL;
 	PurpleConnection *gc;
+	gboolean autojoin;
 
 	account = purple_request_fields_get_account(allfields, "account");
 	name = purple_request_fields_get_string(allfields, "name");
 	alias = purple_request_fields_get_string(allfields, "alias");
 	group = purple_request_fields_get_string(allfields, "group");
+	autojoin = purple_request_fields_get_bool(allfields, "autojoin");
 
 	if (!purple_account_is_connected(account) || !name || !*name)
 		return;
@@ -446,6 +450,9 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 		}
 		purple_blist_add_chat(chat, grp, NULL);
 		purple_blist_alias_chat(chat, alias);
+		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gnt-autojoin", autojoin);
+		if (autojoin)
+			serv_join_chat(chat->account->gc, chat->components);
 	}
 }
 
@@ -471,6 +478,9 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("group", _("Group"), grp ? grp->name : NULL, FALSE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_bool_new("autojoin", _("Auto-join"), FALSE);
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(NULL, _("Add Chat"), NULL,
@@ -883,6 +893,7 @@ create_chat_menu(GntMenu *menu, PurpleChat *chat)
 			G_CALLBACK(purple_menu_action_free), action);
 
 	add_custom_action(menu, _("Edit Settings"), (PurpleCallback)chat_components_edit, chat);
+	add_custom_action(menu, _("View Log"), PURPLE_CALLBACK(finch_blist_view_log_cb), chat);
 }
 
 static void
@@ -949,6 +960,48 @@ finch_blist_pounce_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	finch_pounce_editor_show(b->account, b->name, NULL);
 }
 
+static void
+finch_blist_view_log_cb(PurpleBlistNode *node, PurpleBuddy *buddy)
+{
+	PurpleAccount *account;
+	PurpleLogType type;
+	gchar *name = NULL;
+
+	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		PurpleBuddy *b = (PurpleBuddy*) node;
+
+
+		type = PURPLE_LOG_IM;
+		name = g_strdup(b->name);
+		account = b->account;
+	}
+	else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		PurpleChat *c = (PurpleChat*) node;
+		PurplePluginProtocolInfo *prpl_info = NULL;
+		
+
+		type = PURPLE_LOG_CHAT;
+		account = c->account;
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
+		if (prpl_info && prpl_info->get_chat_name) {
+			name = prpl_info->get_chat_name(c->components);
+		}
+	}
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		finch_log_show_contact((PurpleContact *)node);
+		return;
+	}
+	else {
+		/* This callback should not have been registered for a node
+		 * that doesn't match the type of one of the blocks above. */
+		g_return_if_reached();
+	}
+
+	if(name && account){
+		finch_log_show(type,name,account);
+		g_free(name);
+	}
+}
 
 static void
 create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
@@ -972,10 +1025,8 @@ create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 			add_custom_action(menu, _("Send File"),
 					PURPLE_CALLBACK(finch_blist_menu_send_file_cb), buddy);
 	}
-#if 0
-	add_custom_action(tree, _("View Log"),
-			PURPLE_CALLBACK(finch_blist_view_log_cb)), buddy);
-#endif
+	add_custom_action(menu, _("View Log"),
+			PURPLE_CALLBACK(finch_blist_view_log_cb), buddy);
 
 	/* Protocol actions */
 	append_proto_menu(menu,
@@ -1739,7 +1790,7 @@ populate_status_dropdown()
 	}
 
 	/* Now the popular statuses */
-	for (iter = purple_savedstatuses_get_popular(6); iter; iter = iter->next)
+	for (iter = purple_savedstatuses_get_popular(6); iter; iter = g_list_delete_link(iter, iter))
 	{
 		item = g_new0(StatusBoxItem, 1);
 		item->type = STATUS_SAVED_POPULAR;
