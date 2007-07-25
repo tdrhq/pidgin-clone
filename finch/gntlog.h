@@ -51,6 +51,8 @@ struct _FinchLogViewer {
 	GntWidget *tv;       /* The textview to display said logs */
 	GntWidget *info;     /* The textview to display information about the log (eg. size etc.) */
 	GntWidget *entry;    /* The search entry */
+	GntWidget *size_label; /* Label that displays the size of the logs */
+	GntWidget *label; 			/* Label that displays what the current log is about */
 
 	PurpleLogReadFlags flags; /* The most recently used log flags */
 	char *search; /* The string currently being searched for */

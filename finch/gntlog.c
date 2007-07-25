@@ -135,16 +135,6 @@ finch_log_size_cb(int size, void *data)
 	finch_log_data->done_cb(finch_log_data);
 }
 
-static void
-free_months(FinchLogViewer *lv)
-{
-	if(!lv->months)
-		return;
-	g_list_foreach(lv->months, (GFunc)g_free, NULL);
-	g_list_free(lv->months);
-	lv->months = NULL;
-}
-
 static const char *log_get_date(PurpleLog *log)
 {
 	if (log->tm)
@@ -154,54 +144,57 @@ static const char *log_get_date(PurpleLog *log)
 }
 
 static void
-populate_log_tree(FinchLogViewer *lv)
-{
-	const char *month;
-	char * current_month = NULL;
-	GList *logs = lv->logs;
-
-	/* Clear the tree, clean up the months which were keys for the tree. */
-	gnt_tree_remove_all(GNT_TREE(lv->tree));
-	free_months(lv);
-
-	while (logs != NULL) {
-		PurpleLog *log = logs->data;
-
-
-		month = purple_utf8_strftime(_("%B %Y"),
-		                           log->tm ? log->tm : localtime(&log->time));
-
-		if (!current_month || strcmp(month, current_month))
-		{
-			current_month = g_strdup(month);
-			lv->months = g_list_append(lv->months, current_month);
-
-			gnt_tree_add_row_last(GNT_TREE(lv->tree), current_month, gnt_tree_create_row(GNT_TREE(lv->tree), current_month), NULL);
-		}
-
-		/* sub */
-		gnt_tree_add_row_last(GNT_TREE(lv->tree), log,
-					gnt_tree_create_row(GNT_TREE(lv->tree),	log_get_date(log)),
-					current_month);
-		
-		logs = logs->next;
-	}
-
-}
-
-static void
 select_first_log(FinchLogViewer *lv)
 {
 
 }
 
+static void
+add_logs(FinchLogViewer *lv, GList *logs)
+{
+	const char *month;
+	PurpleLog *log;
+	char * current_month;
+	GList *tmp;
+
+	if(!logs)
+		return;
+
+	lv->logs = g_list_concat(logs, lv->logs);
+	lv->logs = g_list_sort(lv->logs, purple_log_compare);
+
+	while(logs != NULL) {
+		log = logs->data;
+
+		month = purple_utf8_strftime(_("%B %Y"),
+															 log->tm ? log->tm : localtime(&log->time));
+		tmp = g_list_find_custom(lv->months, month, (GCompareFunc)g_ascii_strcasecmp);
+		if(!tmp) {
+			current_month = g_strdup(month);
+
+			/* Add it so we can clear it later */
+			lv->months = g_list_append(lv->months, current_month);
+
+			gnt_tree_add_row_last(GNT_TREE(lv->tree), 
+											current_month, 
+											gnt_tree_create_row(GNT_TREE(lv->tree), month), 
+											NULL);			
+		}
+		else {
+			current_month = tmp->data;
+		}
+
+		gnt_tree_add_row_last(GNT_TREE(lv->tree), log,
+				gnt_tree_create_row(GNT_TREE(lv->tree),	log_get_date(log)),
+				current_month);
+
+		logs = logs->next;
+	}
+}
+
 static void append_log_viewer_logs(FinchLogViewer *log_viewer, GList *logs) 
 {
-	// TODO: Instead of doing this, we should find a way to avoid
-	// TODO: rebuilding the entire UI tree and just insert the new logs.
-	log_viewer->logs = g_list_concat(logs, log_viewer->logs);
-	log_viewer->logs = g_list_sort(log_viewer->logs, purple_log_compare);
-	populate_log_tree(log_viewer);
+	add_logs(log_viewer, logs);
 	select_first_log(log_viewer);
 }
 
@@ -274,7 +267,7 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 	gnt_widget_set_size(tv, w, 3);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("Conversation with "), GNT_TEXT_FLAG_NORMAL);
 	gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), display_name_for_log_viewer(ht), GNT_TEXT_FLAG_BOLD, "who");
-	if(need_log_size){
+	if(need_log_size) {
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("\nTotal Log Size: "), GNT_TEXT_FLAG_NORMAL);
 		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), _("(Computing...)"), GNT_TEXT_FLAG_BOLD, "log-size");
 	}
