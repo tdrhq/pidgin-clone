@@ -199,6 +199,21 @@ static void append_log_viewer_logs(FinchLogViewer *log_viewer, GList *logs)
 }
 
 static void
+free_months (FinchLogViewer *lv)
+{
+	g_list_foreach(lv->months,(GFunc)g_free,NULL);
+	g_list_free(lv->months);
+}
+
+static void
+cleanup_log_window(GntWidget *win, gpointer data)
+{
+	FinchLogViewer *viewer = data;
+	free_months(viewer);
+	g_hash_table_remove(log_viewers, viewer->hash);
+}
+
+static void
 finch_log_list_cb(GList * list, void * data)
 {
 	FinchLogData *finch_log_data = data;
@@ -254,6 +269,7 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 
 	viewer = g_new0(FinchLogViewer, 1);
  	g_hash_table_insert(log_viewers, ht, viewer);
+	viewer->hash = ht;
 
 	viewer->window = win = gnt_window_box_new(FALSE, TRUE);
 	gnt_box_set_title(GNT_BOX(win), title);
@@ -313,6 +329,8 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 	button = gnt_button_new("Close");
 	gnt_box_add_widget(GNT_BOX(aligned_box), button);
 	gnt_box_add_widget(GNT_BOX(win), aligned_box);
+
+	g_signal_connect(G_OBJECT(win),"destroy",G_CALLBACK(cleanup_log_window),viewer);
 
 	gnt_widget_show(win);
 

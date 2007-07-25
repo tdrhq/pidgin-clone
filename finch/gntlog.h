@@ -45,6 +45,7 @@ typedef struct _FinchLogViewer FinchLogViewer;
 struct _FinchLogViewer {
 	GList *logs;         /* The list of logs viewed in this viewer */
 	GList *months;       /* Store the months covered */
+	void *hash;					/* A hash value */
 
 	GntWidget *window;   /* The viewer's window */
 	GntWidget *tree;     /* The tree containing said logs */
