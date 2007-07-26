@@ -3,7 +3,7 @@ using System.Collections;
 using System.Reflection;
 
 namespace Purple {
-	class ObjectManager {
+	public sealed class ObjectManager {
 		private static Hashtable _objects = new Hashtable();
 
 		public static Object GetObject(IntPtr handle, Type t)
@@ -11,7 +11,7 @@ namespace Purple {
 			if (handle == IntPtr.Zero)
 				return null;
 
-			Debug.debug(Debug.INFO, handle + " to " + t + "\n");
+			Debug.debug(Debug.INFO, "mono", handle + " to " + t + "\n");
 
 			WeakReference wref = _objects[handle] as WeakReference;
 			Object obj = null;
