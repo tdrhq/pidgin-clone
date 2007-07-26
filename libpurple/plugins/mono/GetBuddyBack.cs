@@ -10,12 +10,9 @@ public class GetBuddyBack : Plugin
 	{
 	}
 
-	public void HandleSig(IntPtr pbuddy, IntPtr poldstatus, IntPtr pnewstatus)
+	public void HandleSig(Buddy buddy, Status oldstatus, Status newstatus)
 	{
-		Buddy buddy = new Buddy(pbuddy);
-		Status oldstatus = new Status(poldstatus);
-		Status newstatus = new Status(pnewstatus);
-
+		//Debug.debug(Debug.INFO, "buddyback", "Caught signal!\n");
 		Debug.debug(Debug.INFO, "buddyback", "buddy " + buddy.Alias + " went from " + oldstatus.Id + " to " + newstatus.Id + "\n");
 		Debug.debug(Debug.INFO, "buddyback", "account: " + buddy.PAccount.Username + ", " + buddy.PAccount.ProtocolId + "\n");
 	}
