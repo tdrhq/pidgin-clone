@@ -2133,7 +2133,7 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT),
-                                                 purple_value_new(PURPLE_TYPE_TIMET));
+						 purple_value_new(PURPLE_TYPE_TIMET));
 
 	purple_signal_register(handle, "writing-chat-msg",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
@@ -2192,6 +2192,18 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT));
+
+	purple_signal_register(handle, "received-chat-msg-with-timestamp",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT_TIMET,
+						 NULL, 6,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CONVERSATION),
+						 purple_value_new(PURPLE_TYPE_UINT),
+						 purple_value_new(PURPLE_TYPE_TIMET));
 
 	purple_signal_register(handle, "conversation-created",
 						 purple_marshal_VOID__POINTER, NULL, 1,

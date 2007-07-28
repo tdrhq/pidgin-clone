@@ -805,6 +805,9 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	purple_signal_emit(purple_conversations_get_handle(), "received-chat-msg", g->account,
 					 who, message, conv, flags);
 
+	purple_signal_emit(purple_conversations_get_handle(), "received-chat-msg-with-timestamp",
+					 g->account, who, message, conv, flags, mtime);
+
 	purple_conv_chat_write(chat, who, message, flags, mtime);
 
 	g_free(angel);
