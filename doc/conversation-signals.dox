@@ -7,12 +7,14 @@
   @signal sent-im-msg
   @signal receiving-im-msg
   @signal received-im-msg
+  @signal received-im-msg-with-timestamp
   @signal writing-chat-msg
   @signal wrote-chat-msg
   @signal sending-chat-msg
   @signal sent-chat-msg
   @signal receiving-chat-msg
   @signal received-chat-msg
+  @signal received-chat-msg-with-timestamp
   @signal conversation-created
   @signal conversation-updated
   @signal deleting-conversation
@@ -124,9 +126,26 @@ void (*received_im_msg)(PurpleAccount *account, char *sender, char *message,
    Emitted after an IM is received.
   @param account The account the message was received on.
   @param sender  The username of the sender.
-  @param message The message that was sent.
+  @param message The message that was received.
   @param conv    The IM conversation.
   @param flags   The IM message flags.
+ @endsignaldef
+
+ @signaldef received-im-msg-with-timestamp
+  @signalproto
+void (*received_im_msg_with_timestamp)(PurpleAccount *account, char *sender,
+                                       char *message, PurpleConversation *conv,
+                                       PurpleMessageFlags flags, time_t mtime);
+  @endsignalproto
+  @signaldesc
+   Emitted after an IM is received.  Identical to received-im-msg, but with
+   the timestamp of the message.
+  @param account The account the message was received on.
+  @param sender  The username of the sender.
+  @param message The message that was received.
+  @param conv    The IM conversation.
+  @param flags   The IM message flags.
+  @param mtime   The time at which the IM was received.
  @endsignaldef
 
  @signaldef writing-chat-msg
@@ -218,7 +237,23 @@ void (*received_chat_msg)(PurpleAccount *account, char *sender, char *message,
    Emitted after a chat message is received.
   @param account The account the message was received on.
   @param sender  The username of the sender.
-  @param message The message that was sent.
+  @param message The message that was received.
+  @param conv    The chat conversation.
+  @param flags   The chat message flags.
+ @endsignaldef
+
+ @signaldef received-chat-msg-with-timestamp
+  @signalproto
+void (*received_chat_msg_with_timestamp)(PurpleAccount *account, char *sender,
+                                         char *message, PurpleConversation *conv,
+                                         PurpleMessageFlags flags, time_t mtime);
+  @endsignalproto
+  @signaldesc
+   Emitted after a chat message is received.  Identical to received-chat-msg,
+   but with the timestamp of the message.
+  @param account The account the message was received on.
+  @param sender  The username of the sender.
+  @param message The message that was received.
   @param conv    The chat conversation.
   @param flags   The chat message flags.
  @endsignaldef
