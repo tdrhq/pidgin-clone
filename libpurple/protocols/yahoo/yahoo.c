@@ -366,9 +366,11 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				break;
 
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
-			if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL &&
-					cksum != strtol(locksum, NULL, 10))
-				yahoo_send_picture_request(gc, name);
+			if (b) {
+				locksum = purple_buddy_icons_get_checksum_for_user(b);
+				if (!locksum || (cksum != strtol(locksum, NULL, 10)))
+					yahoo_send_picture_request(gc, name);
+			}
 
 			break;
 		}
@@ -907,7 +909,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
-	char *prim, *me = NULL, *msg = NULL, *escmsg = NULL;
+	char *prim, *me = NULL, *msg = NULL;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -923,14 +925,10 @@ static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *
 	if (!msg || !g_utf8_validate(msg, -1, NULL))
 		return;
 
-	/* TODO: Does this really need to be escaped?  It seems like it doesn't. */
-	escmsg = g_markup_escape_text(msg, -1);
-
 	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
 	                       me?me:purple_connection_get_display_name(gc));
-	purple_notify_info(NULL, NULL, prim, escmsg);
+	purple_notify_info(NULL, NULL, prim, msg);
 	g_free(prim);
-	g_free(escmsg);
 }
 
 struct yahoo_add_request {
@@ -1913,6 +1911,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	char *msg;
 	char *url = NULL;
 	char *fullmsg;
+	PurpleAccount *account = gc->account;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -1945,6 +1944,9 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 			return;
 		}
 #endif
+		if (!purple_account_get_remember_password(account))
+			purple_account_set_password(account, NULL);
+
 		msg = g_strdup(_("Incorrect password."));
 		break;
 	case 14:
@@ -2306,7 +2308,7 @@ static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 			 * are you trying to pull? */
 			guchar *start;
 
-			purple_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!");
+			purple_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!\n");
 
 			start = memchr(yd->rxqueue + 1, 'Y', yd->rxlen - 1);
 			if (start) {
@@ -2373,7 +2375,11 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 	}
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Unable to connect."));
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+				error_message);
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -2401,7 +2407,11 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 	}
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Unable to connect."));
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+				error_message);
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -2503,12 +2513,16 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCon
 	if (written < 0 && errno == EAGAIN)
 		written = 0;
 	else if (written <= 0) {
+		gchar *tmp;
 		g_free(yd->auth);
 		yd->auth = NULL;
 		if (gc->inpa)
 			purple_input_remove(gc->inpa);
 		gc->inpa = 0;
-		purple_connection_error(gc, _("Unable to connect."));
+		tmp = g_strdup_printf(_("Lost connection with %s:\n%s"),
+				"login.yahoo.com:80", strerror(errno));
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -2529,7 +2543,11 @@ static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_mes
 	PurpleConnection *gc = data;
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Unable to connect."));
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not establish a connection with %s:\n%s"),
+				"login.yahoo.com:80", error_message);
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -2612,8 +2630,7 @@ yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	if (error_message != NULL)
 	{
-		/* TODO: Include error_message in the message below */
-		purple_connection_error(gc, _("Unable to connect."));
+		purple_connection_error(gc, error_message);
 		return;
 	}
 
@@ -3896,7 +3913,7 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 			if (message) {
 				/* Spaces are encoded as '+' */
 				g_strdelimit(message, "+", ' ');
-				purple_conv_im_send(PURPLE_CONV_IM(conv), message);
+				purple_conv_send_confirm(conv, message);
 			}
 		}
 		/*else

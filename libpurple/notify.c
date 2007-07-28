@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "internal.h"
+#include "dbus-maybe.h"
 #include "notify.h"
 
 static PurpleNotifyUiOps *notify_ui_ops = NULL;
@@ -110,6 +112,10 @@ purple_notify_email(void *handle, const char *subject, const char *from,
 		info            = g_new0(PurpleNotifyInfo, 1);
 		info->type      = PURPLE_NOTIFY_EMAIL;
 		info->handle    = handle;
+
+		purple_signal_emit(purple_notify_get_handle(), "displaying-email-notification",
+							subject, from, to, url);
+
 		info->ui_handle = ops->notify_email(handle, subject, from, to, url);
 		info->cb = cb;
 		info->cb_user_data = user_data;
@@ -162,6 +168,10 @@ purple_notify_emails(void *handle, size_t count, gboolean detailed,
 		info            = g_new0(PurpleNotifyInfo, 1);
 		info->type      = PURPLE_NOTIFY_EMAILS;
 		info->handle    = handle;
+
+		purple_signal_emit(purple_notify_get_handle(), "displaying-emails-notification",
+							subjects, froms, tos, urls, count);
+
 		info->ui_handle = ops->notify_emails(handle, count, detailed, subjects,
 											 froms, tos, urls);
 		info->cb = cb;
@@ -481,6 +491,7 @@ purple_notify_user_info_entry_new(const char *label, const char *value)
 	PurpleNotifyUserInfoEntry *user_info_entry;
 	
 	user_info_entry = g_new0(PurpleNotifyUserInfoEntry, 1);
+	PURPLE_DBUS_REGISTER_POINTER(user_info_entry, PurpleNotifyUserInfoEntry);
 	user_info_entry->label = g_strdup(label);
 	user_info_entry->value = g_strdup(value);
 	user_info_entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_PAIR;
@@ -495,6 +506,7 @@ purple_notify_user_info_entry_destroy(PurpleNotifyUserInfoEntry *user_info_entry
 	
 	g_free(user_info_entry->label);
 	g_free(user_info_entry->value);	
+	PURPLE_DBUS_UNREGISTER_POINTER(user_info_entry);
 	g_free(user_info_entry);
 }
 
@@ -504,6 +516,7 @@ purple_notify_user_info_new()
 	PurpleNotifyUserInfo *user_info;
 	
 	user_info = g_new0(PurpleNotifyUserInfo, 1);
+	PURPLE_DBUS_REGISTER_POINTER(user_info, PurpleNotifyUserInfo);
 	user_info->user_info_entries = NULL;
 	
 	return user_info;
@@ -521,6 +534,7 @@ purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info)
 	}
 	
 	g_list_free(user_info->user_info_entries);
+	PURPLE_DBUS_UNREGISTER_POINTER(user_info);
 	g_free(user_info);
 }
 
@@ -743,17 +757,15 @@ purple_notify_close(PurpleNotifyType type, void *ui_handle)
 void
 purple_notify_close_with_handle(void *handle)
 {
-	GList *l, *l_next;
+	GList *l, *prev = NULL;
 	PurpleNotifyUiOps *ops;
 
 	g_return_if_fail(handle != NULL);
 
 	ops = purple_notify_get_ui_ops();
 
-	for (l = handles; l != NULL; l = l_next) {
+	for (l = handles; l != NULL; l = prev ? prev->next : handles) {
 		PurpleNotifyInfo *info = l->data;
-
-		l_next = l->next;
 
 		if (info->handle == handle) {
 			handles = g_list_remove(handles, info);
@@ -765,7 +777,8 @@ purple_notify_close_with_handle(void *handle)
 				info->cb(info->cb_user_data);
 
 			g_free(info);
-		}
+		} else
+			prev = l;
 	}
 }
 
@@ -793,6 +806,21 @@ void
 purple_notify_init(void)
 {
 	gpointer handle = purple_notify_get_handle();
+
+	purple_signal_register(handle, "displaying-email-notification",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER, NULL, 4,
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "displaying-emails-notification",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT, NULL, 5,
+						 purple_value_new(PURPLE_TYPE_POINTER),
+						 purple_value_new(PURPLE_TYPE_POINTER),
+						 purple_value_new(PURPLE_TYPE_POINTER),
+						 purple_value_new(PURPLE_TYPE_POINTER),
+						 purple_value_new(PURPLE_TYPE_UINT));
 
 	purple_signal_register(handle, "displaying-userinfo",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,

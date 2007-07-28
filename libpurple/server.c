@@ -92,7 +92,7 @@ get_last_auto_response(PurpleConnection *gc, const char *name)
 
 	/* because we're modifying or creating a lar, schedule the
 	 * function to expire them as the pref dictates */
-	purple_timeout_add((SECS_BEFORE_RESENDING_AUTORESPONSE + 1) * 1000, expire_last_auto_responses, NULL);
+	purple_timeout_add_seconds((SECS_BEFORE_RESENDING_AUTORESPONSE + 1), expire_last_auto_responses, NULL);
 
 	tmp = last_auto_responses;
 
@@ -198,7 +198,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (b != NULL && b->account->gc->prpl != NULL)
+	if (b != NULL && b->account->gc && b->account->gc->prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(b->account->gc->prpl);
 
 	if (b && prpl_info && prpl_info->alias_buddy) {
@@ -210,34 +210,36 @@ void
 serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	GSList *buds, *buddies = purple_find_buddies(account, who);
+	GSList *buddies = purple_find_buddies(account, who);
 	PurpleBuddy *b;
 	PurpleConversation *conv;
 
-	for (buds = buddies; buds; buds = buds->next)
+	while (buddies != NULL)
 	{
-		b = buds->data;
+		b = buddies->data;
+		buddies = g_slist_delete_link(buddies, buddies);
+
 		if ((b->server_alias == NULL && alias == NULL) ||
 		    (b->server_alias && alias && !strcmp(b->server_alias, alias)))
 		{
 			continue;
 		}
+
 		purple_blist_server_alias_buddy(b, alias);
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, account);
-
 		if (conv != NULL && alias != NULL && strcmp(alias, who))
 		{
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
 										who, alias);
 
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM,
-									time(NULL));
+			purple_conversation_write(conv, NULL, tmp,
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+					time(NULL));
 
 			g_free(tmp);
 		}
 	}
-	g_slist_free(buddies);
 }
 
 /*
@@ -575,15 +577,20 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		purple_conv_im_set_typing_state(im, state);
 		purple_conv_im_update_typing(im);
 	} else {
-		if (state == PURPLE_TYPING)
+		switch (state)
 		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typing", gc->account, name);
-		}
-		else
-		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typed", gc->account, name);
+			case PURPLE_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing", gc->account, name);
+				break;
+			case PURPLE_TYPED:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typed", gc->account, name);
+				break;
+			case PURPLE_NOT_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing-stopped", gc->account, name);
+				break;
 		}
 	}
 

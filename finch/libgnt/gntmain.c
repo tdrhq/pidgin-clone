@@ -1,5 +1,27 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #define _GNU_SOURCE
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__unix__)
 #define _XOPEN_SOURCE_EXTENDED
 #endif
 
@@ -12,13 +34,16 @@
 
 #include "gnt.h"
 #include "gntbox.h"
+#include "gntbutton.h"
 #include "gntcolors.h"
 #include "gntclipboard.h"
 #include "gntkeys.h"
+#include "gntlabel.h"
 #include "gntmenu.h"
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
+#include "gntwindow.h"
 #include "gntwm.h"
 
 #include <panel.h>
@@ -40,6 +65,7 @@
  */
 
 static GIOChannel *channel = NULL;
+static int channel_read_callback;
 
 static gboolean ascii_only;
 static gboolean mouse_enabled;
@@ -48,7 +74,7 @@ static void setup_io(void);
 
 static gboolean refresh_screen();
 
-GntWM *wm;
+static GntWM *wm;
 static GntClipboard *clipboard;
 
 #define HOLDING_ESCAPE  (escape_stuff.timer != 0)
@@ -91,7 +117,7 @@ detect_mouse_action(const char *buffer)
 	GntWidget *widget = NULL;
 	PANEL *p = NULL;
 
-	if (!wm->ordered || buffer[0] != 27)
+	if (!wm->cws->ordered || buffer[0] != 27)
 		return FALSE;
 	
 	buffer++;
@@ -141,13 +167,13 @@ detect_mouse_action(const char *buffer)
 		event = GNT_MOUSE_UP;
 	} else
 		return FALSE;
-	
-	if (gnt_wm_process_click(wm, event, x, y, widget))
+
+	if (widget && gnt_wm_process_click(wm, event, x, y, widget))
 		return TRUE;
 	
 	if (event == GNT_LEFT_MOUSE_DOWN && widget && widget != wm->_list.window &&
 			!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT)) {
-		if (widget != wm->ordered->data) {
+		if (widget != wm->cws->ordered->data) {
 			gnt_wm_raise_window(wm, widget);
 		}
 		if (y == widget->priv.y) {
@@ -158,7 +184,7 @@ detect_mouse_action(const char *buffer)
 	} else if (event == GNT_MOUSE_UP) {
 		if (button == MOUSE_NONE && y == getmaxy(stdscr) - 1) {
 			/* Clicked on the taskbar */
-			int n = g_list_length(wm->list);
+			int n = g_list_length(wm->cws->list);
 			if (n) {
 				int width = getmaxx(stdscr) / n;
 				gnt_bindable_perform_action_named(GNT_BINDABLE(wm), "switch-window-n", x/width, NULL);
@@ -174,7 +200,8 @@ detect_mouse_action(const char *buffer)
 		offset = 0;
 	}
 
-	gnt_widget_clicked(widget, event, x, y);
+	if (widget)
+		gnt_widget_clicked(widget, event, x, y);
 	return TRUE;
 }
 
@@ -194,8 +221,13 @@ static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char keys[256];
-	int rd = read(STDIN_FILENO, keys + HOLDING_ESCAPE, sizeof(keys) - 1 - HOLDING_ESCAPE);
+	int rd;
 	char *k;
+
+	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
+		return FALSE;
+
+	rd = read(STDIN_FILENO, keys + HOLDING_ESCAPE, sizeof(keys) - 1 - HOLDING_ESCAPE);
 	if (rd < 0)
 	{
 		int ch = getch(); /* This should return ERR, but let's see what it really returns */
@@ -262,7 +294,7 @@ setup_io()
 	g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL );
 #endif
 
-	result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
+	channel_read_callback = result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
 					(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI),
 					io_invoke, NULL, NULL);
 	
@@ -274,7 +306,7 @@ setup_io()
 	                                 But irssi does this, so I am going to assume the
 	                                 crashes were caused by some other stuff. */
 
-	g_printerr("gntmain: setting up IO\n");
+	g_printerr("gntmain: setting up IO (%d)\n", channel_read_callback);
 }
 
 static gboolean
@@ -303,20 +335,79 @@ clean_pid(void)
 }
 
 static void
+exit_confirmed(gpointer null)
+{
+	gnt_bindable_perform_action_named(GNT_BINDABLE(wm), "wm-quit", NULL);
+}
+
+static void
+exit_win_close(GntWidget *w, GntWidget **win)
+{
+	*win = NULL;
+}
+
+static void
+ask_before_exit()
+{
+	static GntWidget *win = NULL;
+	GntWidget *bbox, *button;
+
+	if (wm->menu) {
+		do {
+			gnt_widget_hide(GNT_WIDGET(wm->menu));
+			if (wm->menu)
+				wm->menu = wm->menu->parentmenu;
+		} while (wm->menu);
+	}
+
+	if (win)
+		goto raise;
+
+	win = gnt_vwindow_new(FALSE);
+	gnt_box_add_widget(GNT_BOX(win), gnt_label_new("Are you sure you want to quit?"));
+	gnt_box_set_title(GNT_BOX(win), "Quit?");
+	gnt_box_set_alignment(GNT_BOX(win), GNT_ALIGN_MID);
+	g_signal_connect(G_OBJECT(win), "destroy", G_CALLBACK(exit_win_close), &win);
+
+	bbox = gnt_hbox_new(FALSE);
+	gnt_box_add_widget(GNT_BOX(win), bbox);
+
+	button = gnt_button_new("Quit");
+	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(exit_confirmed), NULL);
+	gnt_box_add_widget(GNT_BOX(bbox), button);
+
+	button = gnt_button_new("Cancel");
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gnt_widget_destroy), win);
+	gnt_box_add_widget(GNT_BOX(bbox), button);
+
+	gnt_widget_show(win);
+raise:
+	gnt_wm_raise_window(wm, win);
+}
+
+#ifdef SIGWINCH
+static void (*org_winch_handler)(int);
+#endif
+
+static void
 sighandler(int sig)
 {
 	switch (sig) {
 #ifdef SIGWINCH
 	case SIGWINCH:
-		werase(stdscr);
-		wrefresh(stdscr);
+		erase();
 		g_idle_add(refresh_screen, NULL);
+		org_winch_handler(sig);
 		signal(SIGWINCH, sighandler);
 		break;
 #endif
 	case SIGCHLD:
 		clean_pid();
 		signal(SIGCHLD, sighandler);
+		break;
+	case SIGINT:
+		ask_before_exit();
+		signal(SIGINT, sighandler);
 		break;
 	}
 }
@@ -352,10 +443,14 @@ void gnt_init()
 
 	setup_io();
 
+#ifdef NO_WIDECHAR
+	ascii_only = TRUE;
+#else
 	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
 		ascii_only = FALSE;
 	else
 		ascii_only = TRUE;
+#endif
 
 	initscr();
 	typeahead(-1);
@@ -384,9 +479,10 @@ void gnt_init()
 	wrefresh(stdscr);
 
 #ifdef SIGWINCH
-	signal(SIGWINCH, sighandler);
+	org_winch_handler = signal(SIGWINCH, sighandler);
 #endif
 	signal(SIGCHLD, sighandler);
+	signal(SIGINT, sighandler);
 	signal(SIGPIPE, SIG_IGN);
 
 	g_type_init();
@@ -405,6 +501,14 @@ void gnt_main()
 /*********************************
  * Stuff for 'window management' *
  *********************************/
+
+void gnt_window_present(GntWidget *window)
+{
+	if (wm->event_stack)
+		gnt_wm_raise_window(wm, window);
+	else
+		gnt_widget_set_urgent(window);
+}
 
 void gnt_screen_occupy(GntWidget *widget)
 {
@@ -437,7 +541,7 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 
 	if (widget == wm->_list.window)
 		return TRUE;
-	if (wm->ordered && wm->ordered->data == widget) {
+	if (wm->cws->ordered && wm->cws->ordered->data == widget) {
 		if (GNT_IS_BOX(widget) &&
 				(GNT_BOX(widget)->active == w || widget == w))
 			return TRUE;
@@ -450,7 +554,7 @@ void gnt_widget_set_urgent(GntWidget *widget)
 	while (widget->parent)
 		widget = widget->parent;
 
-	if (wm->ordered && wm->ordered->data == widget)
+	if (wm->cws->ordered && wm->cws->ordered->data == widget)
 		return;
 
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_URGENT);
@@ -532,7 +636,68 @@ GntClipboard *gnt_get_clipboard()
 {
 	return clipboard;
 }
+
 gchar *gnt_get_clipboard_string()
 {
 	return gnt_clipboard_get_string(clipboard);
 }
+
+#if GLIB_CHECK_VERSION(2,4,0)
+typedef struct
+{
+	void (*callback)(int status, gpointer data);
+	gpointer data;
+} ChildProcess;
+
+static void
+reap_child(GPid pid, gint status, gpointer data)
+{
+	ChildProcess *cp = data;
+	if (cp->callback) {
+		cp->callback(status, cp->data);
+	}
+	g_free(cp);
+	clean_pid();
+	wm->mode = GNT_KP_MODE_NORMAL;
+	clear();
+	setup_io();
+	refresh_screen();
+}
+#endif
+
+gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
+		gint *stin, gint *stout, gint *sterr,
+		void (*callback)(int status, gpointer data), gpointer data)
+{
+#if GLIB_CHECK_VERSION(2,4,0)
+	GPid pid = 0;
+	ChildProcess *cp = NULL;
+
+	if (!g_spawn_async_with_pipes(wd, argv, envp,
+			G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+			(GSpawnChildSetupFunc)endwin, NULL,
+			&pid, stin, stout, sterr, NULL))
+		return FALSE;
+
+	cp = g_new0(ChildProcess, 1);
+	cp->callback = callback;
+	cp->data = data;
+	g_source_remove(channel_read_callback);
+	wm->mode = GNT_KP_MODE_WAIT_ON_CHILD;
+	g_child_watch_add(pid, reap_child, cp);
+
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
+
+gboolean gnt_is_refugee()
+{
+#if GLIB_CHECK_VERSION(2,4,0)
+	return (wm && wm->mode == GNT_KP_MODE_WAIT_ON_CHILD);
+#else
+	return FALSE;
+#endif
+}
+

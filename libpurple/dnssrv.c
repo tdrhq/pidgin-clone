@@ -50,11 +50,11 @@ typedef union {
 	u_char buf[1024];
 } queryans;
 #else
-static DNS_STATUS WINAPI (*MyDnsQuery_UTF8) (
+static DNS_STATUS (WINAPI *MyDnsQuery_UTF8) (
 	PCSTR lpstrName, WORD wType, DWORD fOptions,
 	PIP4_ARRAY aipServers, PDNS_RECORD* ppQueryResultsSet,
 	PVOID* pReserved) = NULL;
-static void WINAPI (*MyDnsRecordListFree) (PDNS_RECORD pRecordList,
+static void (WINAPI *MyDnsRecordListFree) (PDNS_RECORD pRecordList,
 	DNS_FREE_TYPE FreeType) = NULL;
 #endif
 
@@ -192,11 +192,19 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 	PurpleSrvCallback cb = query_data->cb;
 	int status;
 
-	read(source, &size, sizeof(int));
-	purple_debug_info("dnssrv","found %d SRV entries\n", size);
-	tmp = res = g_new0(PurpleSrvResponse, size);
-	for (i = 0; i < size; i++) {
-		read(source, tmp++, sizeof(PurpleSrvResponse));
+	if (read(source, &size, sizeof(int)) > 0)
+	{
+		purple_debug_info("dnssrv","found %d SRV entries\n", size);
+		tmp = res = g_new0(PurpleSrvResponse, size);
+		for (i = 0; i < size; i++) {
+			read(source, tmp++, sizeof(PurpleSrvResponse));
+		}
+	}
+	else
+	{
+		purple_debug_info("dnssrv","found 0 SRV entries; errno is %i\n", errno);
+		size = 0;
+		res = NULL;
 	}
 
 	cb(res, size, query_data->extradata);

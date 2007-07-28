@@ -85,6 +85,7 @@ PIDGIN_C_SRC =	\
 			gtkscrollbook.c \
 			gtksound.c \
 			gtksourceiter.c \
+			gtksourceundomanager.c \
 			gtkstatusbox.c \
 			gtkthemes.c \
 			gtkutils.c \
@@ -106,33 +107,29 @@ EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(EXE_RC_SRC:%.rc=%.o)
 ##
 ## LIBRARIES
 ##
-LIBPURPLES =	\
-		-lpurple \
-		-lglib-2.0 \
-		-lgthread-2.0 \
-		-lgobject-2.0 \
-		-lgmodule-2.0 \
-		-lintl \
-		-lws2_32 \
-		-lwinmm \
-		-lz
 
-GTKPURPLES =	\
-		$(LIBPURPLES) \
+PIDGIN_LIBS =	\
+		-lintl \
+		-lglib-2.0 \
+		-lgobject-2.0 \
+		-lgthread-2.0 \
+		-lpurple \
+		-lz \
 		-lidletrack \
 		-lgtk-win32-2.0 \
 		-latk-1.0 \
 		-lpango-1.0 \
 		-lgdk-win32-2.0 \
 		-lgdk_pixbuf-2.0 \
-		-lgdi32
+		-lgdi32 \
+		-lwinmm
 
 include $(PIDGIN_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all install install_shallow clean clean_exe
+.PHONY: all install install_shallow clean
 
 all: $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
 	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE)
@@ -159,16 +156,10 @@ win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 $(EXE_OBJECTS) $(PIDGIN_OBJECTS): $(PIDGIN_CONFIG_H)
 
 $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a: $(PURPLE_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(PIDGIN_OBJECTS)
-	$(CC) -shared $(PIDGIN_OBJECTS) $(LIB_PATHS) $(GTKPURPLES) $(DLL_LD_FLAGS) -Wl,--out-implib,$(PIDGIN_TARGET).dll.a -o $(PIDGIN_TARGET).dll
+	$(CC) -shared $(PIDGIN_OBJECTS) $(LIB_PATHS) $(PIDGIN_LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(PIDGIN_TARGET).def,--out-implib,$(PIDGIN_TARGET).dll.a -o $(PIDGIN_TARGET).dll
 
 $(EXE_TARGET).exe: $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET).exe
-
-$(EXE_TARGET)-portable.exe: DEFINES += -DPORTABLE
-$(EXE_TARGET)-portable.exe: EXE_NAME := $(EXE_TARGET)-portable.exe
-$(EXE_TARGET)-portable.exe: clean_exe $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(EXE_OBJECTS)
-	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET)-portable.exe
-	$(MAKE) -f $(MINGW_MAKEFILE) clean_exe
 
 ##
 ## CLEAN RULES
@@ -176,11 +167,9 @@ $(EXE_TARGET)-portable.exe: clean_exe $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(PIDGI
 clean:
 	$(MAKE) -C $(PIDGIN_IDLETRACK_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(PIDGIN_PIXMAPS_TOP) -f $(MINGW_MAKEFILE) clean
 	rm -f $(PIDGIN_OBJECTS) $(PIDGIN_RC_SRC) $(EXE_OBJECTS) $(EXE_RC_SRC)
-	rm -f $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a
-	rm -f $(EXE_TARGET).exe $(EXE_TARGET)-portable.exe
-
-clean_exe:
-	rm -f $(EXE_OBJECTS) $(EXE_RC_SRC)
+	rm -f $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a $(PIDGIN_TARGET).def
+	rm -f $(EXE_TARGET).exe
 
 include $(PIDGIN_COMMON_TARGETS)

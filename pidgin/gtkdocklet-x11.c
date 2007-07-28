@@ -42,7 +42,6 @@ static GtkWidget *image = NULL;
 static GtkTooltips *tooltips = NULL;
 static GdkPixbuf *blank_icon = NULL;
 static int embed_timeout = 0;
-static DockletStatus icon_status = 0;
 static int docklet_height = 0;
 
 /* protos */
@@ -90,58 +89,60 @@ docklet_x11_clicked_cb(GtkWidget *button, GdkEventButton *event, void *data)
 }
 
 static void
-docklet_x11_update_icon(DockletStatus icon)
+docklet_x11_update_icon(PurpleStatusPrimitive status, gboolean connecting, gboolean pending)
 {
 	const gchar *icon_name = NULL;
 
 	g_return_if_fail(image != NULL);
 
-	switch (icon) {
-		case DOCKLET_STATUS_OFFLINE:
+	switch (status) {
+		case PURPLE_STATUS_OFFLINE:
 			icon_name = PIDGIN_STOCK_TRAY_OFFLINE;
 			break;
-		case DOCKLET_STATUS_CONNECTING:
-			icon_name = PIDGIN_STOCK_TRAY_CONNECT;
-			break;
-		case DOCKLET_STATUS_AVAILABLE:
-			icon_name = PIDGIN_STOCK_TRAY_AVAILABLE;
-			break;
-		case DOCKLET_STATUS_PENDING:
-			icon_name = PIDGIN_STOCK_TRAY_PENDING;
-			break;
-		case DOCKLET_STATUS_AWAY:
+		case PURPLE_STATUS_AWAY:
 			icon_name = PIDGIN_STOCK_TRAY_AWAY;
 			break;
-		case DOCKLET_STATUS_BUSY:
+		case PURPLE_STATUS_UNAVAILABLE:
 			icon_name = PIDGIN_STOCK_TRAY_BUSY;
 			break;
-		case DOCKLET_STATUS_XA:
+		case PURPLE_STATUS_EXTENDED_AWAY:
 			icon_name = PIDGIN_STOCK_TRAY_XA;
 			break;
-		case DOCKLET_STATUS_INVISIBLE:
+		case PURPLE_STATUS_INVISIBLE:
 			icon_name = PIDGIN_STOCK_TRAY_INVISIBLE;
 			break;
+		default:
+			icon_name = PIDGIN_STOCK_TRAY_AVAILABLE;
+			break;
 	}
+
+	if (pending)
+		icon_name = PIDGIN_STOCK_TRAY_PENDING;
+	if (connecting)
+		icon_name = PIDGIN_STOCK_TRAY_CONNECT;
 
 	if(icon_name) {
 		int icon_size;
 		if (docklet_height < 22)
 			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
-		else
+		else if (docklet_height < 32)
 			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
+		else if (docklet_height < 48)
+			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MEDIUM);
+		else
+			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_LARGE);
 
 		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, icon_size);
 	}
-	icon_status = icon;
 }
 
 static void
 docklet_x11_resize_icon(GtkWidget *widget)
 {
-	if (docklet_height == widget->allocation.height)
+	if (docklet_height == MIN(widget->allocation.height, widget->allocation.width))
 		return;
-	docklet_height = widget->allocation.height;
-	docklet_x11_update_icon(icon_status);
+	docklet_height = MIN(widget->allocation.height, widget->allocation.width);
+	pidgin_docklet_update_icon();
 }
 
 static void
@@ -284,7 +285,7 @@ docklet_x11_create(gboolean recreate)
 	 * The x11 docklet tracks whether it successfully embedded in a pref and
 	 * allows for a longer timeout period if it successfully embedded the last
 	 * time it was run. This should hopefully solve problems with the buddy
-	 * list not properly starting hidden when gaim is started on login.
+	 * list not properly starting hidden when Pidgin is started on login.
 	 */
 	if(!recreate) {
 		pidgin_docklet_embedded();

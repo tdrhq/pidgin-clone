@@ -43,20 +43,20 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [0])
+m4_define([purple_lt_current], [1])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [0])
+m4_define([purple_minor_version], [1])
 m4_define([purple_micro_version], [0])
-m4_define([purple_version_suffix], [beta7])
+m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [0])
-m4_define([gnt_major_version], [1])
+m4_define([gnt_lt_current], [1])
+m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [0])
 m4_define([gnt_micro_version], [0])
-m4_define([gnt_version_suffix], [beta7])
+m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -92,8 +92,6 @@ AC_SUBST(GNT_VERSION)
 
 GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
-
-AC_DEFINE(PIDGIN_NAME, "Pidgin", [The user-visible application name])
 
 AC_PATH_PROG(sedpath, sed)
 
@@ -140,6 +138,19 @@ esac
 
 ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
+
+dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
+dnl AM_GLIB_GNU_GETTEXT found it.
+
+if test x$MSGFMT = xno
+then
+	AC_ERROR([
+
+The msgfmt command is required to build libpurple.  If it is installed
+on your system, ensure that it is in your path.  If it is not, install
+GNU gettext to continue.
+])
+fi
 
 dnl we don't use autobreak on cygwin!!
 dnl AC_CYGWIN
@@ -558,14 +569,15 @@ dnl #######################################################################
 AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
-PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], , [
-	AC_MSG_RESULT(no)
-	enable_gst="no"
-])
 if test "x$enable_gst" != "xno"; then
-	AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
-	AC_SUBST(GSTREAMER_CFLAGS)
-	AC_SUBST(GSTREAMER_LIBS)
+	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
+		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
+		AC_SUBST(GSTREAMER_CFLAGS)
+		AC_SUBST(GSTREAMER_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		enable_gst="no"
+	])
 fi
 
 dnl #######################################################################
@@ -635,13 +647,14 @@ AC_ARG_WITH(silc-includes, [AC_HELP_STRING([--with-silc-includes=DIR], [compile 
 AC_ARG_WITH(silc-libs, [AC_HELP_STRING([--with-silc-libs=DIR], [compile the SILC plugin against the SILC libs in DIR])], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
 SILC_CFLAGS=""
 SILC_LIBS=""
+have_silc="no"
 if test -n "$with_silc_includes" || test -n "$with_silc_libs"; then
 	silc_manual_check="yes"
 else
 	silc_manual_check="no"
 fi
 if test "x$silc_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(SILC, silcclient, [
+	PKG_CHECK_MODULES(SILC, [silcclient >= 1.1], [
 		have_silc="yes"
 		silcincludes="yes"
 		silcclient="yes"
@@ -649,16 +662,26 @@ if test "x$silc_manual_check" = "xno"; then
 		AC_MSG_RESULT(no)
 		have_silc="no"
 	])
-	dnl If silcclient.pc wasn't found, check for just silc.pc
 	if test "x$have_silc" = "xno"; then
-		PKG_CHECK_MODULES(SILC, silc, [
+		PKG_CHECK_MODULES(SILC, silcclient, [
 			have_silc="yes"
-			silcincludes="yes"
-			silcclient="yes"
+			silc10includes="yes"
+			silc10client="yes"
 		], [
 			AC_MSG_RESULT(no)
 			have_silc="no"
 		])
+		dnl If silcclient.pc wasn't found, check for just silc.pc
+		if test "x$have_silc" = "xno"; then
+			PKG_CHECK_MODULES(SILC, silc, [
+				have_silc="yes"
+				silc10includes="yes"
+				silc10client="yes"
+			], [
+				AC_MSG_RESULT(no)
+				have_silc="no"
+			])
+		fi
 	fi
 else
 	if test "$ac_silc_includes" != "no"; then
@@ -666,7 +689,7 @@ else
 	fi
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
-	AC_CHECK_HEADER(silcincludes.h, [silcincludes=yes])
+	AC_CHECK_HEADER(silc.h, [silcincludes=yes])
 	CPPFLAGS="$CPPFLAGS_save"
 
 	if test "$ac_silc_libs" != "no"; then
@@ -674,11 +697,28 @@ else
 	fi
 	SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread $LIBDL"
 	AC_CHECK_LIB(silcclient, silc_client_init, [silcclient=yes], , $SILC_LIBS)
+
+	if test "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes"; then
+		have_silc="yes"
+	else
+		CPPFLAGS_save="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
+		AC_CHECK_HEADER(silcincludes.h, [silc10includes=yes])
+		CPPFLAGS="$CPPFLAGS_save"
+
+		SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread $LIBDL"
+		AC_CHECK_LIB(silcclient, silc_client_init, [silc10client=yes], , $SILC_LIBS)
+		if test "x$silc10includes" = "xyes" -a "x$silc10client" = "xyes"; then
+			have_silc="yes"
+		fi
+	fi
 fi
 AC_SUBST(SILC_LIBS)
 AC_SUBST(SILC_CFLAGS)
 dnl SILC Toolkit >= 1.0.1 has a new MIME API
 if test "x$silcclient" = "xyes"; then
+	AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
+elif test "x$silc10client" = "xyes"; then
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
 		AC_MSG_CHECKING(for silcmime.h)
@@ -783,7 +823,10 @@ if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc/silc10/'`
+fi
+if test "x$silc10includes" != "xyes" -o "x$silc10client" != "xyes"; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc10//'`
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
@@ -791,13 +834,24 @@ extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.a":
-	if test "x$i" = "xsilc"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib${i}purple.a"
+	dnl ... and Ugly special case for multi-protocol oscar
+	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.a"
+		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
+		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
+		load_proto="$load_proto purple_init_aim_plugin();"
+		load_proto="$load_proto purple_init_icq_plugin();"
 	else
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib$i.a"
+		if test "x$i" = "xsilc"; then
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.a"
+		elif test "x$i" = "xsilc10"; then
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libsilcpurple.a"
+		else
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.a"
+		fi
+		extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
+		load_proto="$load_proto purple_init_${i}_plugin();"
 	fi
-	extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
-	load_proto="$load_proto purple_init_${i}_plugin();"
 	case $i in
 		bonjour)	static_bonjour=yes ;;
 		gg)			static_gg=yes ;;
@@ -811,6 +865,7 @@ for i in $STATIC_PRPLS ; do
 		qq)			static_qq=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
+		silc10)		static_silc=yes ;;
 		simple)		static_simple=yes ;;
 		toc)		static_toc=yes ;;
 		yahoo)		static_yahoo=yes ;;
@@ -827,7 +882,7 @@ AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_QQ, test "x$static_qq" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
-AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
+AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$have_silc" = "xyes")
 AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
@@ -847,7 +902,10 @@ if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc/silc10/'`
+fi
+if test "x$silc10includes" != "xyes" -o "x$silc10client" != "xyes"; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc10//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
@@ -864,6 +922,7 @@ for i in $DYNAMIC_PRPLS ; do
 		qq)			dynamic_qq=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
+		silc10)		dynamic_silc=yes ;;
 		simple)		dynamic_simple=yes ;;
 		toc)		dynamic_toc=yes ;;
 		yahoo)		dynamic_yahoo=yes ;;
@@ -880,7 +939,7 @@ AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
 AM_CONDITIONAL(DYNAMIC_QQ, test "x$dynamic_qq" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$have_silc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SIMPLE, test "x$dynamic_simple" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
@@ -894,22 +953,7 @@ AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 AC_CHECK_HEADER(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
-AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], enable_fortify="$enableval", enable_fortify=yes)
-
-AC_ARG_ENABLE(mcheck, [AC_HELP_STRING([--enable-mcheck], [compile with mcheck (malloc debugging) support])], enable_mcheck="$enableval", enable_mcheck="$enable_debug")
-if test "x$enable_mcheck" = "xyes" ; then
-	orig_LIBS="$LIBS"
-	LIBS="$LIBS -lmcheck"
-	AC_MSG_CHECKING(for mcheck support)
-	AC_TRY_COMPILE([], [
-		int main() {return 0;}
-	], [
-		AC_MSG_RESULT(yes)
-	], [
-		AC_MSG_RESULT(no)
-		LIBS="$orig_LIBS"
-	])
-fi
+AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
 
 if test "x$GCC" = "xyes"; then
 	dnl We enable -Wall later.
@@ -1103,7 +1147,7 @@ if test x"$enable_dbus" = "xyes" ; then
 			dnl # no prefix given, so we look for the correct dbus system paths.
 			dnl # if a prefix is given, we use it.
 
-			serviceprefixes="$datadir $libdir /usr/share /usr/local/share"
+			serviceprefixes="$prefix/share $prefix/lib /usr/share /usr/local/share"
 			DBUS_SERVICES_DIR=""
 
 			for d in $serviceprefixes ; do
@@ -1187,7 +1231,7 @@ if test "$enable_perl" = yes ; then
 	PERL_CFLAGS=`$perlpath -MExtUtils::Embed -e ccopts 2>/dev/null`
 	if test "_$PERL_CFLAGS" = _ ; then
 		AC_MSG_RESULT([not found, building without perl.])
-		enable_perl = no
+		enable_perl=no
 	else
 		PERL_LIBS=`$perlpath -MExtUtils::Embed -e ldopts 2>/dev/null |$sedpath 's/-lgdbm //'`
 		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-ldb //'`
@@ -1922,6 +1966,7 @@ AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
+AC_CHECK_HEADERS(sys/sysctl.h sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
@@ -1988,14 +2033,9 @@ AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
 
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
+
 if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
-fi
-
-AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts],
-	[make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
-if test "x$enable_fatal_asserts" = "xyes" ; then
-	AC_DEFINE(PURPLE_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
 fi
 
 AC_OUTPUT([Makefile
@@ -2029,6 +2069,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/icons/Makefile
 		   pidgin/pixmaps/icons/16/Makefile
 		   pidgin/pixmaps/icons/16/scalable/Makefile
+		   pidgin/pixmaps/icons/22/Makefile
+		   pidgin/pixmaps/icons/22/scalable/Makefile
 		   pidgin/pixmaps/icons/24/Makefile
 		   pidgin/pixmaps/icons/24/scalable/Makefile
 		   pidgin/pixmaps/icons/32/Makefile
@@ -2064,6 +2106,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/tray/16/scalable/Makefile
 		   pidgin/pixmaps/tray/22/Makefile
 		   pidgin/pixmaps/tray/22/scalable/Makefile
+		   pidgin/pixmaps/tray/32/Makefile
+		   pidgin/pixmaps/tray/48/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile
@@ -2093,10 +2137,12 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/jabber/Makefile
 		   libpurple/protocols/msn/Makefile
 		   libpurple/protocols/novell/Makefile
+		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
 		   libpurple/protocols/qq/Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
+		   libpurple/protocols/silc10/Makefile
 		   libpurple/protocols/simple/Makefile
 		   libpurple/protocols/toc/Makefile
 		   libpurple/protocols/yahoo/Makefile
@@ -2146,7 +2192,6 @@ echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo
 echo Print debugging messages...... : $enable_debug
-echo Assertions are fatal.......... : $enable_fatal_asserts
 echo
 eval eval echo Pidgin will be installed in $bindir.
 if test "x$pidginpath" != "x" ; then

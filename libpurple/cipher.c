@@ -4,10 +4,6 @@
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- *
- * Original md5
- * Copyright (C) 2001-2003  Christophe Devine <c.devine@cr0.net>
- *
  */
 #include <glib.h>
 #include <string.h>
@@ -261,8 +257,8 @@ gchar *purple_cipher_http_digest_calculate_session_key(
 	/* Check for a supported algorithm. */
 	g_return_val_if_fail(algorithm == NULL ||
 						 *algorithm == '\0' ||
-						 strcasecmp(algorithm, "MD5") ||
-						 strcasecmp(algorithm, "MD5-sess"), NULL);
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
 
 	cipher = purple_ciphers_find_cipher("md5");
 	g_return_val_if_fail(cipher != NULL, NULL);
@@ -326,14 +322,14 @@ gchar *purple_cipher_http_digest_calculate_response(
 	/* Check for a supported algorithm. */
 	g_return_val_if_fail(algorithm == NULL ||
 						 *algorithm == '\0' ||
-						 strcasecmp(algorithm, "MD5") ||
-						 strcasecmp(algorithm, "MD5-sess"), NULL);
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
 
 	/* Check for a supported "quality of protection". */
 	g_return_val_if_fail(qop == NULL ||
 						 *qop == '\0' ||
-						 strcasecmp(qop, "auth") ||
-						 strcasecmp(qop, "auth-int"), NULL);
+						 g_ascii_strcasecmp(qop, "auth") ||
+						 g_ascii_strcasecmp(qop, "auth-int"), NULL);
 
 	cipher = purple_ciphers_find_cipher("md5");
 	g_return_val_if_fail(cipher != NULL, NULL);
@@ -344,7 +340,7 @@ gchar *purple_cipher_http_digest_calculate_response(
 	purple_cipher_cipher_append(cipher, (guchar *)":", 1);
 	purple_cipher_cipher_append(cipher, (guchar *)digest_uri, strlen(digest_uri));
 
-	if (qop != NULL && !strcasecmp(qop, "auth-int"))
+	if (qop != NULL && !g_ascii_strcasecmp(qop, "auth-int"))
 	{
 		PurpleCipherContext *cipher2;
 		gchar entity_hash[33];
@@ -406,5 +402,4 @@ gchar *purple_cipher_http_digest_calculate_response(
 
 	return g_strdup(hash2);
 }
-
 #endif

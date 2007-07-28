@@ -77,10 +77,15 @@ common_sources = \
 #	common/fallback/const-c.inc \
 #	common/fallback/const-xs.inc
 
+perl_scripts = \
+	scripts/function_list.pl \
+	scripts/signals-test.pl
+
 EXTRA_DIST = \
 	Makefile.mingw \
 	common/Makefile.mingw \
-	$(common_sources)
+	$(common_sources) \
+	$(perl_scripts)
 
 common/Makefile: common/Makefile.PL
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
@@ -148,9 +153,9 @@ distclean-generic:
 	fi
 
 AM_CPPFLAGS = \
-	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \

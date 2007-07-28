@@ -31,7 +31,6 @@
 /** @name Stock images                                                    */
 /**************************************************************************/
 /*@{*/
-#define PIDGIN_STOCK_ABOUT           "pidgin-about"
 #define PIDGIN_STOCK_ACTION          "pidgin-action"
 #define PIDGIN_STOCK_ALIAS           "pidgin-alias"
 #define PIDGIN_STOCK_AWAY            "pidgin-away"
@@ -45,7 +44,6 @@
 #define PIDGIN_STOCK_FGCOLOR         "pidgin-fgcolor"
 #define PIDGIN_STOCK_FILE_CANCELED   "pidgin-file-canceled"
 #define PIDGIN_STOCK_FILE_DONE       "pidgin-file-done"
-#define PIDGIN_STOCK_FILE_TRANSFER   "pidgin-file-transfer"
 #define PIDGIN_STOCK_IGNORE          "pidgin-ignore"
 #define PIDGIN_STOCK_INVITE          "pidgin-invite"
 #define PIDGIN_STOCK_MODIFY          "pidgin-modify"
@@ -72,6 +70,7 @@
 #define PIDGIN_STOCK_STATUS_LOGIN      "pidgin-status-login"
 #define PIDGIN_STOCK_STATUS_LOGOUT     "pidgin-status-logout"
 #define PIDGIN_STOCK_STATUS_OFFLINE    "pidgin-status-offline"
+#define PIDGIN_STOCK_STATUS_OFFLINE_I  "pidgin-status-offline"
 #define PIDGIN_STOCK_STATUS_PERSON     "pidgin-status-person"
 #define PIDGIN_STOCK_STATUS_MESSAGE    "pidgin-status-message"
 
@@ -106,6 +105,7 @@
 #define PIDGIN_STOCK_ANIMATION_TYPING2	"pidgin-anim-typing2"
 #define PIDGIN_STOCK_ANIMATION_TYPING3	"pidgin-anim-typing3"
 #define PIDGIN_STOCK_ANIMATION_TYPING4	"pidgin-anim-typing4"
+#define PIDGIN_STOCK_ANIMATION_TYPING5	"pidgin-anim-typing5"
 
 /* Toolbar (and menu) icons */
 #define PIDGIN_STOCK_TOOLBAR_ACCOUNTS     "pidgin-accounts"
@@ -116,6 +116,7 @@
 #define PIDGIN_STOCK_TOOLBAR_FONT_FACE	  "pidgin-font-face"
 #define PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER "pidgin-text-smaller"
 #define PIDGIN_STOCK_TOOLBAR_TEXT_LARGER  "pidgin-text-larger"
+#define PIDGIN_STOCK_TOOLBAR_INSERT       "pidgin-insert"
 #define PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE "pidgin-insert-image"
 #define PIDGIN_STOCK_TOOLBAR_INSERT_LINK  "pidgin-insert-link"
 #define PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW  "pidgin-message-new"
@@ -125,6 +126,7 @@
 #define PIDGIN_STOCK_TOOLBAR_USER_INFO    "pidgin-info"
 #define PIDGIN_STOCK_TOOLBAR_UNBLOCK      "pidgin-unblock"
 #define PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR "pidgin-select-avatar"
+#define PIDGIN_STOCK_TOOLBAR_SEND_FILE    "pidgin-send-file"
 
 /* Tray icons */
 #define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"
@@ -135,6 +137,7 @@
 #define PIDGIN_STOCK_TRAY_OFFLINE         "pidgin-tray-offline"
 #define PIDGIN_STOCK_TRAY_CONNECT         "pidgin-tray-connect"
 #define PIDGIN_STOCK_TRAY_PENDING         "pidgin-tray-pending"
+#define PIDGIN_STOCK_TRAY_EMAIL		  "pidgin-tray-email"
 
 
 /*@}*/

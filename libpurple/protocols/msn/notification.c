@@ -589,6 +589,34 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	MsnSession *session;
+	static int count = 0;
+	const char *passport;
+	PurpleAccount *account;
+
+	session = cmdproc->session;
+	account = session->account;
+
+	if (session->passport_info.file == NULL)
+		return;
+
+	passport = purple_normalize(account, purple_account_get_username(account));
+
+	if ((strstr(passport, "@hotmail.") != NULL) ||
+		(strstr(passport, "@msn.com") != NULL))
+		return;
+
+	if (count++ < 26)
+		return;
+
+	count = 0;
+	msn_cmdproc_send(cmdproc, "URL", "%s", "INBOX");
+}
+
+
+static void
 fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSlpLink *slplink;
@@ -677,7 +705,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	user = msn_userlist_find_user(session->userlist, passport);
 
 	old_friendly = msn_user_get_friendly_name(user);
-	if (!old_friendly || (old_friendly && strcmp(old_friendly, friendly)))
+	if (!old_friendly || (old_friendly && (!friendly || strcmp(old_friendly, friendly))))
 	{
 		serv_got_alias(gc, passport, friendly);
 		msn_user_set_friendly_name(user, friendly);
@@ -884,6 +912,7 @@ static void
 syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
+	MsnSync *sync;
 	int total_users;
 
 	session = cmdproc->session;
@@ -902,22 +931,12 @@ syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	total_users  = atoi(cmd->params[2]);
 
-	if (total_users == 0)
-	{
-		msn_session_finish_login(session);
-	}
-	else
-	{
-		/* syn_table */
-		MsnSync *sync;
+	sync = msn_sync_new(session);
+	sync->total_users = total_users;
+	sync->old_cbs_table = cmdproc->cbs_table;
 
-		sync = msn_sync_new(session);
-		sync->total_users = total_users;
-		sync->old_cbs_table = cmdproc->cbs_table;
-
-		session->sync = sync;
-		cmdproc->cbs_table = sync->cbs_table;
-	}
+	session->sync = sync;
+	cmdproc->cbs_table = sync->cbs_table;
 }
 
 /**************************************************************************
@@ -946,7 +965,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	url = cmd->params[2];
 
 	buf = g_strdup_printf("%s%lu%s",
-			   session->passport_info.mspauth,
+			   session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
 			   time(NULL) - session->passport_info.sl,
 			   purple_connection_get_password(account->gc));
 
@@ -979,6 +998,9 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 	else
 	{
+#ifdef _WIN32
+		fputs("<!-- saved from url=(0013)about:internet -->\n", fd);
+#endif
 		fputs("<html>\n"
 			  "<head>\n"
 			  "<noscript>\n"
@@ -1139,33 +1161,25 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if ((value = msn_message_get_attr(msg, "kv")) != NULL)
 	{
-		if (session->passport_info.kv != NULL)
-			g_free(session->passport_info.kv);
-
+		g_free(session->passport_info.kv);
 		session->passport_info.kv = g_strdup(value);
 	}
 
 	if ((value = msn_message_get_attr(msg, "sid")) != NULL)
 	{
-		if (session->passport_info.sid != NULL)
-			g_free(session->passport_info.sid);
-
+		g_free(session->passport_info.sid);
 		session->passport_info.sid = g_strdup(value);
 	}
 
 	if ((value = msn_message_get_attr(msg, "MSPAuth")) != NULL)
 	{
-		if (session->passport_info.mspauth != NULL)
-			g_free(session->passport_info.mspauth);
-
+		g_free(session->passport_info.mspauth);
 		session->passport_info.mspauth = g_strdup(value);
 	}
 
 	if ((value = msn_message_get_attr(msg, "ClientIP")) != NULL)
 	{
-		if (session->passport_info.client_ip != NULL)
-			g_free(session->passport_info.client_ip);
-
+		g_free(session->passport_info.client_ip);
 		session->passport_info.client_ip = g_strdup(value);
 	}
 
@@ -1276,11 +1290,8 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 					  msn_user_get_passport(session->user),
 					  session->passport_info.file, NULL, NULL);
 
-	if (from != NULL)
-		g_free(from);
-
-	if (subject != NULL)
-		g_free(subject);
+	g_free(from);
+	g_free(subject);
 
 	g_hash_table_destroy(table);
 }
@@ -1412,7 +1423,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "ADD", add_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "QRY", NULL);
-	msn_table_add_cmd(cbs_table, NULL, "QNG", NULL);
+	msn_table_add_cmd(cbs_table, NULL, "QNG", qng_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "FLN", fln_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "NLN", nln_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "ILN", iln_cmd);

@@ -277,18 +277,18 @@ static gchar *auth_header(struct simple_account_data *sip,
 							auth->nonce, noncecount, NULL, auth->digest_session_key);
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "response %s\n", response);
 
-		ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n", authuser, auth->realm, auth->nonce, target, noncecount, response);
+		ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"", authuser, auth->realm, auth->nonce, target, noncecount, response);
 		g_free(response);
 		return ret;
 	} else if(auth->type == 2) { /* NTLM */
 		if(auth->nc == 3 && auth->nonce) {
 			/* TODO: Don't hardcode "purple" as the hostname */
 			ret = purple_ntlm_gen_type3(authuser, sip->password, "purple", authdomain, (const guint8 *)auth->nonce, &auth->flags);
-			tmp = g_strdup_printf("NTLM qop=\"auth\", opaque=\"%s\", realm=\"%s\", targetname=\"%s\", gssapi-data=\"%s\"\r\n", auth->opaque, auth->realm, auth->target, ret);
+			tmp = g_strdup_printf("NTLM qop=\"auth\", opaque=\"%s\", realm=\"%s\", targetname=\"%s\", gssapi-data=\"%s\"", auth->opaque, auth->realm, auth->target, ret);
 			g_free(ret);
 			return tmp;
 		}
-		tmp = g_strdup_printf("NTLM qop=\"auth\", realm=\"%s\", targetname=\"%s\", gssapi-data=\"\"\r\n", auth->realm, auth->target);
+		tmp = g_strdup_printf("NTLM qop=\"auth\", realm=\"%s\", targetname=\"%s\", gssapi-data=\"\"", auth->realm, auth->target);
 		return tmp;
 	}
 
@@ -298,7 +298,7 @@ static gchar *auth_header(struct simple_account_data *sip,
 						auth->nonce, noncecount, NULL, auth->digest_session_key);
 	purple_debug(PURPLE_DEBUG_MISC, "simple", "response %s\n", response);
 
-	ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n", authuser, auth->realm, auth->nonce, target, noncecount, response);
+	ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"", authuser, auth->realm, auth->nonce, target, noncecount, response);
 	g_free(response);
 	return ret;
 }
@@ -337,7 +337,7 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		return;
 	}
 
-	if(!g_strncasecmp(hdr, "NTLM", 4)) {
+	if(!g_ascii_strncasecmp(hdr, "NTLM", 4)) {
 		purple_debug_info("simple", "found NTLM\n");
 		auth->type = 2;
 		parts = g_strsplit(hdr+5, "\", ", 0);
@@ -630,14 +630,12 @@ static void send_sip_request(PurpleConnection *gc, const gchar *method,
 	if(addheaders) addh = addheaders;
 	if(sip->registrar.type && !strcmp(method, "REGISTER")) {
 		buf = auth_header(sip, &sip->registrar, method, url);
-		auth = g_strdup_printf("Authorization: %s", buf);
+		auth = g_strdup_printf("Authorization: %s\r\n", buf);
 		g_free(buf);
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "header %s", auth);
-	}
-
-	if(sip->proxy.type && strcmp(method, "REGISTER")) {
+	} else if(sip->proxy.type && strcmp(method, "REGISTER")) {
 		buf = auth_header(sip, &sip->proxy, method, url);
-		auth = g_strdup_printf("Proxy-Authorization: %s", buf);
+		auth = g_strdup_printf("Proxy-Authorization: %s\r\n", buf);
 		g_free(buf);
 		purple_debug(PURPLE_DEBUG_MISC, "simple", "header %s", auth);
 	}
@@ -978,6 +976,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 
 		if(!isc) {
 			purple_debug_info("simple", "process_incoming_message: can not parse iscomposing\n");
+			g_free(from);
 			return;
 		}
 
@@ -986,6 +985,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 		if(!state) {
 			purple_debug_info("simple", "process_incoming_message: no state found\n");
 			xmlnode_free(isc);
+			g_free(from);
 			return;
 		}
 
@@ -1065,6 +1065,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 
 	if(!pidf) {
 		purple_debug_info("simple", "process_incoming_notify: no parseable pidf\n");
+		g_free(from);
 		return;
 	}
 
@@ -1075,6 +1076,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	if(!basicstatus) {
 		purple_debug_info("simple", "process_incoming_notify: no basic found\n");
 		xmlnode_free(pidf);
+		g_free(from);
 		return;
 	}
 
@@ -1083,6 +1085,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	if(!tmp2) {
 		purple_debug_info("simple", "process_incoming_notify: no basic data found\n");
 		xmlnode_free(pidf);
+		g_free(from);
 		return;
 	}
 
@@ -1239,13 +1242,13 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 			while(tmp && tmp < acceptheader + strlen(acceptheader)) {
 				gchar *tmp2 = strchr(tmp, ',');
 				if(tmp2) *tmp2 = '\0';
-				if(!strcasecmp("application/pidf+xml", tmp))
+				if(!g_ascii_strcasecmp("application/pidf+xml", tmp))
 					foundpidf = TRUE;
-				if(!strcasecmp("application/xpidf+xml", tmp))
+				if(!g_ascii_strcasecmp("application/xpidf+xml", tmp))
 					foundxpidf = TRUE;
 				if(tmp2) {
 					*tmp2 = ',';
-					tmp = tmp2;
+					tmp = tmp2 + 1;
 					while(*tmp == ' ') tmp++;
 				} else
 					tmp = 0;

@@ -61,13 +61,13 @@ void
 flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy)
 {
 	FlapFrame *frame;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	frame = flap_frame_new(od, 0x01, 4 + 2 + 2 + length);
 	byte_stream_put32(&frame->data, 0x00000001);
-	aim_tlvlist_add_raw(&tl, 0x0006, length, chipsahoy);
-	aim_tlvlist_write(&frame->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
+	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 }
@@ -303,7 +303,7 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		}
 	}
 
-	if (conn->fd != -1)
+	if (conn->fd >= 0)
 	{
 		if (conn->type == SNAC_FAMILY_LOCATE)
 			flap_connection_send_close(od, conn);
@@ -356,15 +356,20 @@ flap_connection_destroy_cb(gpointer data)
 	FlapConnection *conn;
 	OscarData *od;
 	PurpleAccount *account;
+	aim_rxcallback_t userfunc;
 
 	conn = data;
 	od = conn->od;
 	account = (PURPLE_CONNECTION_IS_VALID(od->gc) ? purple_connection_get_account(od->gc) : NULL);
 
 	purple_debug_info("oscar", "Destroying oscar connection of "
-			"type 0x%04hx\n", conn->type);
+			"type 0x%04hx.  Disconnect reason is %d\n",
+			conn->type, conn->disconnect_reason);
 
 	od->oscar_connections = g_slist_remove(od->oscar_connections, conn);
+
+	if ((userfunc = aim_callhandler(od, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR)))
+		userfunc(od, conn, NULL, conn->disconnect_code, conn->error_message);
 
 	/*
 	 * TODO: If we don't have a SNAC_FAMILY_LOCATE connection then
@@ -375,7 +380,10 @@ flap_connection_destroy_cb(gpointer data)
 	{
 		/* No more FLAP connections!  Sign off this PurpleConnection! */
 		gchar *tmp;
-		if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
+		if (conn->disconnect_code == 0x0001) {
+			tmp = g_strdup(_("You have signed on from another location."));
+			od->gc->wants_to_die = TRUE;
+		} else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
 			tmp = g_strdup(_("Server closed the connection."));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
 			tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
@@ -693,10 +701,8 @@ parse_fakesnac(OscarData *od, FlapConnection *conn, FlapFrame *frame, guint16 fa
 static void
 parse_flap_ch4(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 {
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	char *msg = NULL;
-	guint16 code = 0;
-	aim_rxcallback_t userfunc;
 
 	if (byte_stream_empty(&frame->data) == 0) {
 		/* XXX should do something with this */
@@ -713,17 +719,21 @@ parse_flap_ch4(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 	tlvlist = aim_tlvlist_read(&frame->data);
 
 	if (aim_tlv_gettlv(tlvlist, 0x0009, 1))
-		code = aim_tlv_get16(tlvlist, 0x0009, 1);
+		conn->disconnect_code = aim_tlv_get16(tlvlist, 0x0009, 1);
 
 	if (aim_tlv_gettlv(tlvlist, 0x000b, 1))
 		msg = aim_tlv_getstr(tlvlist, 0x000b, 1);
 
-	if ((userfunc = aim_callhandler(od, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR)))
-		userfunc(od, conn, frame, code, msg);
+	/*
+	 * The server ended this FLAP connnection, so let's be nice and
+	 * close the physical TCP connection
+	 */
+	flap_connection_schedule_destroy(conn,
+			OSCAR_DISCONNECT_REMOTE_CLOSED, msg);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
-	free(msg);
+	g_free(msg);
 }
 
 /**
@@ -792,7 +802,7 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 			}
 
 			/* If there was an error then close the connection */
-			if (read == -1)
+			if (read < 0)
 			{
 				if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 					/* No worries */
@@ -853,7 +863,7 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 				break;
 			}
 
-			if (read == -1)
+			if (read < 0)
 			{
 				if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 					/* No worries */
@@ -902,7 +912,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
 	if (ret <= 0)
 	{
-		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+		if (ret < 0 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
 			/* No worries */
 			return;
 
@@ -936,7 +946,7 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 	purple_circ_buffer_append(conn->buffer_outgoing, bs->data, count);
 
 	/* If we haven't already started writing stuff, then start the cycle */
-	if ((conn->watcher_outgoing == 0) && (conn->fd != -1))
+	if ((conn->watcher_outgoing == 0) && (conn->fd >= 0))
 	{
 		conn->watcher_outgoing = purple_input_add(conn->fd,
 				PURPLE_INPUT_WRITE, send_cb, conn);

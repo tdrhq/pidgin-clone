@@ -6,10 +6,12 @@ EXTRA_DIST = change-bgcolor.png \
 		font-face.png \
 		font-size-down.png \
 		font-size-up.png \
+		insert.png \
 		insert-image.png \
 		insert-link.png \
 		message-new.png \
 		plugins.png \
+		send-file.png \
 		unblock.png
 
 pidgintoolbarpixdir = $(datadir)/pixmaps/pidgin/toolbar/16

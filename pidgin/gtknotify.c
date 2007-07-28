@@ -40,6 +40,12 @@
 
 typedef struct
 {
+	GtkWidget *window;
+	int count;
+} PidginUserInfo;
+
+typedef struct
+{
 	PurpleAccount *account;
 	char *url;
 	GtkWidget *label;
@@ -549,6 +555,21 @@ formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 	return FALSE;
 }
 
+static GtkIMHtmlOptions
+notify_imhtml_options()
+{
+	GtkIMHtmlOptions options = 0;
+
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting"))
+		options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
+
+	options |= GTK_IMHTML_NO_COMMENTS;
+	options |= GTK_IMHTML_NO_TITLE;
+	options |= GTK_IMHTML_NO_NEWLINE;
+	options |= GTK_IMHTML_NO_SCROLL;
+	return options;
+}
+
 static void *
 pidgin_notify_formatted(const char *title, const char *primary,
 						  const char *secondary, const char *text)
@@ -559,14 +580,11 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	GtkWidget *button;
 	GtkWidget *imhtml;
 	GtkWidget *frame;
-	int options = 0;
 	char label_text[2048];
 	char *linked_text, *primary_esc, *secondary_esc;
 
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(window), title);
+	window = pidgin_create_window(title, PIDGIN_HIG_BORDER, NULL, TRUE);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(formatted_close_cb), NULL);
@@ -610,23 +628,16 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(button);
 
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
-							 G_CALLBACK(formatted_close_cb), window);
+							 G_CALLBACK(gtk_widget_destroy), window);
 	g_signal_connect(G_OBJECT(window), "key_press_event",
 					 G_CALLBACK(formatted_input_cb), NULL);
 
-	/* Add the text to the gtkimhtml */
-	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting"))
-		options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
-
-	options |= GTK_IMHTML_NO_COMMENTS;
-	options |= GTK_IMHTML_NO_TITLE;
-	options |= GTK_IMHTML_NO_NEWLINE;
-	options |= GTK_IMHTML_NO_SCROLL;
-
 	/* Make sure URLs are clickable */
 	linked_text = purple_markup_linkify(text);
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), linked_text, options);
+	gtk_imhtml_append_text(GTK_IMHTML(imhtml), linked_text, notify_imhtml_options());
 	g_free(linked_text);
+
+	g_object_set_data(G_OBJECT(window), "info-widget", imhtml);
 
 	/* Show the window */
 	gtk_widget_show(window);
@@ -661,13 +672,12 @@ pidgin_notify_searchresults_new_rows(PurpleConnection *gc, PurpleNotifySearchRes
 
 		for (j = 1; j < col_num; j++) {
 			GValue v;
-			char *escaped = g_markup_escape_text(g_list_nth_data(row, j - 1), -1);
+			char *data = g_list_nth_data(row, j - 1);
 
 			v.g_type = 0;
 			g_value_init(&v, G_TYPE_STRING);
-			g_value_set_string(&v, escaped);
+			g_value_set_string(&v, data);
 			gtk_list_store_set_value(model, &iter, j, &v);
-			g_free(escaped);
 		}
 	}
 
@@ -705,10 +715,8 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	data->results = results;
 
 	/* Create the window */
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(window), (title ? title :_("Search Results")));
+	window = pidgin_create_window(title ? title :_("Search Results"), PIDGIN_HIG_BORDER, NULL, TRUE);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect_swapped(G_OBJECT(window), "delete_event",
 							 G_CALLBACK(searchresults_close_cb), data);
@@ -856,18 +864,65 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	return data;
 }
 
+/** Xerox'ed from Finch! How the tables have turned!! ;) **/
+/** User information. **/
+static GHashTable *userinfo;
+
+static char *
+userinfo_hash(PurpleAccount *account, const char *who)
+{
+	char key[256];
+	snprintf(key, sizeof(key), "%s - %s", purple_account_get_username(account), purple_normalize(account, who));
+	return g_utf8_strup(key, -1);
+}
+
+static void
+remove_userinfo(GtkWidget *widget, gpointer key)
+{
+	PidginUserInfo *pinfo = g_hash_table_lookup(userinfo, key);
+
+	while (pinfo->count--)
+		purple_notify_close(PURPLE_NOTIFY_USERINFO, widget);
+
+	g_hash_table_remove(userinfo, key);
+}
+
 static void *
 pidgin_notify_userinfo(PurpleConnection *gc, const char *who,
 						 PurpleNotifyUserInfo *user_info)
 {
-	char *primary, *info;
+	char *info;
 	void *ui_handle;
+	char *key = userinfo_hash(purple_connection_get_account(gc), who);
+	PidginUserInfo *pinfo = NULL;
 
-	primary = g_strdup_printf(_("Info for %s"), who);
+	if (!userinfo) {
+		userinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	}
+
 	info = purple_notify_user_info_get_text_with_newline(user_info, "<br />");
-	ui_handle = pidgin_notify_formatted(_("Buddy Information"), primary, NULL, info);
+	pinfo = g_hash_table_lookup(userinfo, key);
+	if (pinfo != NULL) {
+		GtkIMHtml *imhtml = g_object_get_data(G_OBJECT(pinfo->window), "info-widget");
+		char *linked_text = purple_markup_linkify(info);
+		gtk_imhtml_clear(imhtml);
+		gtk_imhtml_append_text(imhtml, linked_text, notify_imhtml_options());
+		g_free(linked_text);
+		g_free(key);
+		ui_handle = pinfo->window;
+		pinfo->count++;
+	} else {
+		char *primary = g_strdup_printf(_("Info for %s"), who);
+		ui_handle = pidgin_notify_formatted(_("Buddy Information"), primary, NULL, info);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(ui_handle), G_CALLBACK(formatted_close_cb), NULL);
+		g_signal_connect(G_OBJECT(ui_handle), "destroy", G_CALLBACK(remove_userinfo), key);
+		g_free(primary);
+		pinfo = g_new0(PidginUserInfo, 1);
+		pinfo->window = ui_handle;
+		pinfo->count = 1;
+		g_hash_table_insert(userinfo, key, pinfo);
+	}
 	g_free(info);
-	g_free(primary);
 	return ui_handle;
 }
 

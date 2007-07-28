@@ -6,6 +6,7 @@ TRAY_ICONS =	tray-away.png \
 		tray-connecting.png \
 		tray-extended-away.png \
 		tray-message.png \
+		tray-new-im.png \
 		tray-offline.png \
 		tray-online.png
 
@@ -15,9 +16,9 @@ EXTRA_DIST = $(TRAY_ICONS) \
 	busy_4bit.ico \
 	connecting_4bit.ico \
 	extended-away_4bit.ico \
+	invisible_4bit.ico \
 	message_4bit.ico \
-	offline_4bit.ico \
-	invisible_4bit.ico
+	offline_4bit.ico
 
 pidgintraypixdir = $(datadir)/pixmaps/pidgin/tray/16
 pidgintraypix_DATA = $(TRAY_ICONS)
