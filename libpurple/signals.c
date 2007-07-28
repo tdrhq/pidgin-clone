@@ -751,6 +751,22 @@ purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT(PurpleCallback cb,
 }
 
 void
+purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT_TIMET(PurpleCallback cb,
+                                                                va_list args,
+                                                                void *data,
+                                                                void **return_val)
+{
+	void *arg1 = va_arg(args, void *);
+	void *arg2 = va_arg(args, void *);
+	void *arg3 = va_arg(args, void *);
+	void *arg4 = va_arg(args, void *);
+	guint arg5 = va_arg(args, guint);
+	time_t arg6 = va_arg(args, time_t);
+
+	((void (*)(void *, void *, void *, void *, guint, time_t, void *))cb)(arg1, arg2, arg3, arg4, arg5, arg6, data);
+}
+
+void
 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT(PurpleCallback cb,
 													 va_list args,
 													 void *data,
@@ -1021,6 +1037,22 @@ purple_marshal_POINTER__POINTER_INT64_BOOLEAN(
 	gboolean arg3 = va_arg(args, gboolean);
 
 	ret_val = ((gpointer(*)(void *, gint64, gboolean, void *))cb)(arg1, arg2, arg3, data);
+
+	if (return_val != NULL)
+		*return_val = ret_val;
+}
+
+void
+purple_marshal_POINTER__POINTER_TIMET_BOOLEAN(
+                                    PurpleCallback cb, va_list args, void *data,
+                                    void **return_val)
+{
+	gpointer ret_val;
+	void *arg1 = va_arg(args, void *);
+	time_t arg2 = va_arg(args, gint64);
+	gboolean arg3 = va_arg(args, gboolean);
+
+	ret_val = ((gpointer(*)(void *, time_t, gboolean, void *))cb)(arg1, arg2, arg3, data);
 
 	if (return_val != NULL)
 		*return_val = ret_val;

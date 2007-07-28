@@ -7215,23 +7215,11 @@ pidgin_conversations_init(void)
 	                                    "PidginWindow *"));
 
 	purple_signal_register(handle, "conversation-timestamp",
-#if SIZEOF_TIME_T == 4
-	                     purple_marshal_POINTER__POINTER_INT_BOOLEAN,
-#elif SIZEOF_TIME_T == 8
-			     purple_marshal_POINTER__POINTER_INT64_BOOLEAN,
-#else
-#error Unkown size of time_t
-#endif
+	                     purple_marshal_POINTER__POINTER_TIMET_BOOLEAN,
 	                     purple_value_new(PURPLE_TYPE_STRING), 3,
 	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
 	                                    PURPLE_SUBTYPE_CONVERSATION),
-#if SIZEOF_TIME_T == 4
-	                     purple_value_new(PURPLE_TYPE_INT),
-#elif SIZEOF_TIME_T == 8
-	                     purple_value_new(PURPLE_TYPE_INT64),
-#else
-# error Unknown size of time_t
-#endif
+	                     purple_value_new(PURPLE_TYPE_TIMET),
 	                     purple_value_new(PURPLE_TYPE_BOOLEAN));
 
 	purple_signal_register(handle, "displaying-im-msg",

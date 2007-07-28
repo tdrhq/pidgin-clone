@@ -674,6 +674,7 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 		int id;
 		gint xint;
 		guint xuint;
+		time_t xtime_t;
 		gboolean xboolean;
 		gpointer ptr = NULL;
 		gpointer val;
@@ -697,6 +698,18 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 		case PURPLE_TYPE_BOOLEAN:
 			xboolean = my_arg(gboolean);
 			dbus_message_iter_append_basic(iter, DBUS_TYPE_BOOLEAN, &xboolean);
+			break;
+		case PURPLE_TYPE_TIMET:
+			xtime_t = my_arg(time_t);
+			dbus_message_iter_append_basic(iter,
+#if SIZEOF_TIME_T == 4
+					                       DBUS_TYPE_INT32,
+#elif SIZEOF_TIME_T == 8
+					                       DBUS_TYPE_INT64,
+#else
+#error Unknown size of time_t
+#endif
+										   &xtime_t);
 			break;
 		case PURPLE_TYPE_STRING:
 			str = null_to_empty(my_arg(char*));
