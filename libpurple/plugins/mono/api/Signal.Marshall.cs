@@ -10,11 +10,7 @@ namespace Purple
 		/*
 		 * Delegate "marshall" definitions
 		 */
-		public delegate void VOID__POINTER_POINTER_POINTER_dl(IntPtr p1, IntPtr p2, IntPtr p3, int signal);
-
-
-		
-
+		private delegate void VOID__POINTER_POINTER_POINTER_dl(IntPtr p1, IntPtr p2, IntPtr p3, int signal);
 
 		/*
 		 * C# 2.0 does not support in-place initalization of generics so we use this method
@@ -23,19 +19,19 @@ namespace Purple
 
 		private static void Initalize()
 		{
-			if (!_initalized) {
-				// string signal name to integer key
-				_signal_name_to_key.Add("buddy-status-changed", 1);
+			if (_initalized) 
+				return;
 
-				// integer key to delegate "marshall"
-				_key_to_delegate.Add(1, 
-					new VOID__POINTER_POINTER_POINTER_dl(delegate(IntPtr p1, IntPtr p2, IntPtr p3, int key) { 
-						HandleIntPtrCallback(_signal_data[key].Args, _signal_data[key].Delegates, p1, p2, p3); 
-					}));
+			// string signal name to integer key
+			_signal_name_to_key.Add("buddy-status-changed", 1);
 
-				// Everything is initalized now
-				_initalized = true;
-			}
+			// integer key to delegate "marshall"
+			_key_to_delegate.Add(_signal_name_to_key["buddy-status-changed"], 
+				new VOID__POINTER_POINTER_POINTER_dl(delegate(IntPtr p1, IntPtr p2, IntPtr p3, int key) { 
+					HandleCallback(_signal_data[key].Args, _signal_data[key].Delegates, p1, p2, p3); 
+				}));
+
+			_initalized = true;
 		}
 	}
 }

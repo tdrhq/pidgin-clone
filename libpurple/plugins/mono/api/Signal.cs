@@ -53,11 +53,28 @@ namespace Purple
 		}
 
 		/*
+		 * Helper method for marshalls.  Takes a list of types, delegates, and arguments to the delegates.
+		 * If one of the args is a IntPtr then we'll build a Purple.Object out of it, otherwise
+		 * we'll just forward it on to the delegates.
+		 */
+		private static void HandleCallback(ParameterInfo[] arginfo, List<Delegate> delegates, params object[] args)
+		{
+			List<object> objs = new List<object>();
+
+			for (int i = 0; i < args.Length; i++)
+			{
+				if (args[i].GetType() == typeof(IntPtr)) {
+					objs.Add(ObjectManager.GetObject((IntPtr)args[i], arginfo[i].ParameterType));
+				} else {
+					objs.Add(args[i]);
+				}
+			}
+
+			DispatchCallbacks(delegates, objs.ToArray());
+		}
+
+		/*
 		 * Helper method for marshalls that only have IntPtr args
-		 * NOTE: this could be extended to a more generic HandleCallback that
-		 * would take a params object[] instead of params IntPtr[] and then
-		 * only call ObjectManager if type is IntPtr, otherwise just forward
-		 * on the variable to the delegates
 		 */
 		private static void HandleIntPtrCallback(ParameterInfo[] args, List<Delegate> delegates, params IntPtr[] structs)
 		{
