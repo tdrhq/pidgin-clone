@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 class Util
 {
@@ -20,6 +21,7 @@ class Embed
 {
 	static void Main()
 	{
+		Dictionary<int, string> dict = new Dictionary<int, string>();
 		string str = Util.build_string(say_hello());
 		set_hello(str);
 		

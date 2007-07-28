@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	file = argv[1];
 	
 	// Setup the runtime
-	domain = mono_jit_init("test"); 
+	domain = mono_jit_init_version("test", "v2.0.50727"); 
 
 	mono_add_internal_call("Util::length", length);
 

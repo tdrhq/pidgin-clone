@@ -33,9 +33,8 @@ namespace Purple {
 
 		public Account PAccount { 
 			get { 
-				Account a = new Account(purple_buddy_get_account(_c_handle));
-				return a;
-			} 
+				return ObjectManager.GetObject(purple_buddy_get_account(_c_handle), typeof(Account)) as Account;
+			}
 		}
 		
 		[DllImport("libpurple")]

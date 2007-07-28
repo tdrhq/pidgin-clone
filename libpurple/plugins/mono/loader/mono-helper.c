@@ -25,7 +25,7 @@ gboolean ml_init()
 	if (_runtime_active == TRUE)
 		return TRUE;
 
-	d = mono_jit_init("purple");
+	d = mono_jit_init_version("purple", "v2.0.50727");
 	
 	if (!d) {
 		ml_set_domain(NULL);

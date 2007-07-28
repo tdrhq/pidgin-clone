@@ -1,78 +1,95 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Purple
 {
-	public class Signal
+	public partial class Signal
 	{
+		/*
+		 * Internal class to map one signal to multiple registered delegates
+		 */
 		private class SignalData
 		{
 			private Type _return_type;
 			private ParameterInfo[] _argument_types;
-			private ArrayList _method_infos;
-			private ArrayList _delegates;
+			private List<Delegate> _delegates;
 
 			public SignalData(Type ret, ParameterInfo[] args)
 			{
 				_return_type = ret;
 				_argument_types = args;
-				_delegates = new ArrayList();
-				_method_infos = new ArrayList();
+				_delegates = new List<Delegate>();
 			}
 
-			public void AddDelegate(MethodInfo mi, Delegate d)
+			public void AddDelegate(Delegate d)
 			{
-				_method_infos.Add(mi);	
 				_delegates.Add(d);
 			}
 
 			public ParameterInfo[] Args { get { return _argument_types; } }
-			public ArrayList MethodInfos { get { return _method_infos; } }
-			public ArrayList Delegates { get { return _delegates; } }
+			public List<Delegate> Delegates { get { return _delegates; } }
 		}
 
-		private static Hashtable _signal_data = new Hashtable();
+		// Key -> SignalData
+		private static Dictionary<int, SignalData> _signal_data = new Dictionary<int, SignalData>();
 
-		public delegate void Handler(IntPtr p);
+		// String signal -> Key
+		private static Dictionary<string, int> _signal_name_to_key = new Dictionary<string, int>();
+		
+		// Key -> Delegate "marshall"
+		private static Dictionary<int, Delegate> _key_to_delegate = new Dictionary<int, Delegate>();
 
-		public delegate void VOID__POINTER_POINTER_POINTER_dl(IntPtr p1, IntPtr p2, IntPtr p3, int signal);
-
-		public static void VOID__POINTER_POINTER_POINTER(IntPtr p1, IntPtr p2, IntPtr p3, int signal)
+		/*
+		 * Helper method to iterate over delegates and invoke them
+		 */
+		private static void DispatchCallbacks(List<Delegate> delegates, object[] args)
 		{
-			Console.WriteLine("In signal callback: " + p1 + ", " + p2 + ", " + p3 + ", " + signal);
-			SignalData sd = ((SignalData)_signal_data[signal]);
-
-			ParameterInfo[] p = sd.Args;
-			
-			Object o1 = ObjectManager.GetObject(p1, p[0].ParameterType);
-			Object o2 = ObjectManager.GetObject(p2, p[1].ParameterType);
-			Object o3 = ObjectManager.GetObject(p3, p[2].ParameterType);
-
-			int i = 0;
-			foreach (Delegate d in sd.Delegates)
+			foreach (Delegate d in delegates)
 			{
-				d.DynamicInvoke(new object[] { o1, o2, o3 } );
+				d.DynamicInvoke(args);
 			}
 		}
 
+		/*
+		 * Helper method for marshalls that only have IntPtr args
+		 * NOTE: this could be extended to a more generic HandleCallback that
+		 * would take a params object[] instead of params IntPtr[] and then
+		 * only call ObjectManager if type is IntPtr, otherwise just forward
+		 * on the variable to the delegates
+		 */
+		private static void HandleIntPtrCallback(ParameterInfo[] args, List<Delegate> delegates, params IntPtr[] structs)
+		{
+			List<Object> objs = new List<Object>();
+
+			for (int i = 0; i < structs.Length; i++)
+			{
+				objs.Add(ObjectManager.GetObject(structs[i], args[i].ParameterType));
+			}
+
+			DispatchCallbacks(delegates, objs.ToArray());
+		}
+
+		/*
+		 * Frontend connect for everyone.  Used by Event.connect
+		 */
 		public static int connect(IntPtr instance, string signal, IntPtr handle, Delegate func, IntPtr data)
 		{
+			Initalize();
 			MethodInfo mi = func.GetType().GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance);
 
-			int key = 1; // This is hardcoded right now;  In the future this would come from a mapping
-				     // of string signal -> ints
+			int key = _signal_name_to_key[signal]; 
 
 			if (!_signal_data.ContainsKey(key)) {
 				_signal_data.Add(key, new SignalData(null, mi.GetParameters()));
 			}
 
-			SignalData sd = _signal_data[key] as SignalData;
+			SignalData sd = _signal_data[key];
 
-			sd.AddDelegate(mi, func);
+			sd.AddDelegate(func);
 
-			return _connect(instance, signal, handle, new VOID__POINTER_POINTER_POINTER_dl(VOID__POINTER_POINTER_POINTER), key);
+			return _connect(instance, signal, handle, _key_to_delegate[key], key);
 		}
 
 		private static int _connect(IntPtr instance, string signal, IntPtr handle, Delegate func, int data)

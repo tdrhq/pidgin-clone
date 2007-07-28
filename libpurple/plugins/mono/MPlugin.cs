@@ -24,7 +24,7 @@ public class MPlugin : Plugin
 		Debug.debug(Debug.INFO, "mplug", "loading...\n");
 		
 		/*Signal.connect(BuddyList.GetHandle(), this, "buddy-away", new Signal.Handler(HandleSig));*/
-		BuddyList.OnBuddyStatusChanged.connect(this.Handle, new Signal.Handler(HandleSig));
+		/*BuddyList.OnBuddyStatusChanged.connect(this.Handle, new Signal.Handler(HandleSig));*/
 	}
 	
 	public override void Unload()
