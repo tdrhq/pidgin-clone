@@ -1,6 +1,7 @@
 EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-types.py \
+		marshallers.list \
 		purple-notifications-example \
 		purple-remote \
 		purple-send \
@@ -139,7 +140,15 @@ purple_coreheaders = \
 	xmlnode.h \
 	whiteboard.h
 
-BUILT_SOURCES = version.h
+marshallers.h: marshallers.list
+	@echo "Generating marshallers.h"
+	$(GLIB_GENMARSHAL) --prefix=purple_marshal marshallers.list --header > marshallers.h
+
+marshallers.c: marshallers.list
+	@echo "Generation marshallers.c"
+	$(GLIB_GENMARSHAL) --prefix=purple_marshal marshallers.list --body > marshallers.c
+
+BUILT_SOURCES = version.h marshallers.h marshallers.c
 
 if ENABLE_DBUS
 
@@ -149,6 +158,8 @@ CLEANFILES = \
 	dbus-client-binding.h \
 	dbus-types.c \
 	dbus-types.h \
+	marshallers.h \
+	marshallers.c \
 	purple-client-bindings.c \
 	purple-client-bindings.h \
 	purple.service
