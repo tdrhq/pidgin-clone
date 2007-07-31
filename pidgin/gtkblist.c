@@ -103,23 +103,6 @@ typedef struct
 	GList *entries;
 } PidginJoinChatData;
 
-static GHashTable *logsize_contacts = NULL;
-static gulong update_logsize_contacts_id = 0;
-
-struct _pidgin_logsize_contact {
-	PurpleBlistNode *node;
-	char *name;
-	gboolean finished;
-};
-
-struct _pidgin_log_size_data
-{
-	int counter;
-	int total_size;
-	struct _pidgin_logsize_contact *lc;
-	int value;
-};
-
 static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
@@ -170,23 +153,6 @@ static char *dim_grey()
 		snprintf(dim_grey_string, sizeof(dim_grey_string), "%s", pidgin_get_dim_grey_string(gtkblist->treeview)); 
 	}
 	return dim_grey_string;
-}
-
-static guint _pidgin_logsize_contact_hash(struct _pidgin_logsize_contact *lc)
-{
-	return g_direct_hash(lc->node);
-}
-
-static guint _pidgin_logsize_contact_equal(struct _pidgin_logsize_contact *lc1,
-		struct _pidgin_logsize_contact *lc2)
-{
-	return lc1->node == lc2->node && (!strcmp(lc1->name, lc2->name));
-}
-
-static void _pidgin_logsize_contact_free_key(struct _pidgin_logsize_contact *lc)
-{
-	g_free(lc->name);
-	g_free(lc);
 }
 
 /***************************************************
@@ -6100,6 +6066,89 @@ static void buddy_signonoff_cb(PurpleBuddy *buddy)
 			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
 }
 
+/* {{{ Non-blocking logging stuff */
+
+struct {
+	int timer;
+	GList *updates;   /* A list of PurpleBuddy */
+} queue;
+
+static void
+total_size_for_buddy(int size, void *data)
+{
+	PurpleBlistNode *node = data;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	
+	purple_blist_node_set_int(node, "log_size", size);
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		pidgin_blist_update_buddy(purple_get_blist(), node, FALSE);
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		pidgin_blist_update_contact(purple_get_blist(), node);
+}
+
+static gboolean
+update_log_size_cb(gpointer null)
+{
+	while (queue.updates) {
+		PurpleBuddy *buddy = queue.updates->data;
+		purple_log_get_total_size_nonblocking(PURPLE_LOG_IM,
+				buddy->name, buddy->account, total_size_for_buddy, buddy);
+		queue.updates = g_list_delete_link(queue.updates, queue.updates);
+	}
+	queue.timer = 0;
+	return FALSE;
+}
+
+static void
+queue_update_log_size(PurpleBlistNode *node)
+{
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		if (!g_list_find(queue.updates, node) && buddy_is_displayable((PurpleBuddy *)node))
+			queue.updates = g_list_prepend(queue.updates, node);
+	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		for (node = node->child; node; node = node->next) {
+			if (!g_list_find(queue.updates, node) && buddy_is_displayable((PurpleBuddy *)node))
+				queue.updates = g_list_prepend(queue.updates, node);
+		}
+	} else {
+		/* Do we want to do something for chats? */
+		return;
+	}
+
+	if (queue.timer == 0) {
+		queue.timer = purple_timeout_add_seconds(10, update_log_size_cb, NULL);
+	}
+}
+
+/* }}} Non-blocking logging stuff */
+
+static void
+wrote_msg_cb(PurpleAccount *account, const char *who, const char *message,
+		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
+{
+	PurpleBlistNode *node = NULL;
+
+	if (flags & PURPLE_MESSAGE_NO_LOG)
+		return;  /* The message didn't update the log */
+	switch (purple_conversation_get_type(conv)) {
+		case PURPLE_CONV_TYPE_IM:
+			node = (PurpleBlistNode*)purple_find_buddy(account, who);
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			node = (PurpleBlistNode*)purple_blist_find_chat(account, purple_conversation_get_name(conv));
+			break;
+		default:
+			/* get rid of compiler whining */
+			break;
+	}
+
+	if (!node)
+		return;
+
+	queue_update_log_size(node);
+}
+
 void pidgin_blist_init(void)
 {
 	void *gtk_blist_handle = pidgin_blist_get_handle();
@@ -6151,23 +6200,17 @@ void pidgin_blist_init(void)
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-privacy-changed", gtk_blist_handle, PURPLE_CALLBACK(pidgin_blist_update_privacy_cb), NULL);
 
-	logsize_contacts = g_hash_table_new_full((GHashFunc)_pidgin_logsize_contact_hash,
-			(GEqualFunc)_pidgin_logsize_contact_equal,
-			(GDestroyNotify)_pidgin_logsize_contact_free_key, NULL);
-}
+	purple_signal_connect(purple_conversations_get_handle(), "wrote-im-msg", purple_blist_get_handle(),
+			G_CALLBACK(wrote_msg_cb), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg", purple_blist_get_handle(),
+			G_CALLBACK(wrote_msg_cb), NULL);
 
-static void save_total_size(gpointer key, gpointer value, gpointer user_data)
-{
-	struct _pidgin_logsize_contact *lc = key;
-	purple_blist_node_set_int(lc->node, "log_size", GPOINTER_TO_INT(value));
 }
 
 void
 pidgin_blist_uninit(void) {
 	purple_signals_unregister_by_instance(pidgin_blist_get_handle());
 	purple_signals_disconnect_by_handle(pidgin_blist_get_handle());
-
-	g_hash_table_foreach(logsize_contacts, save_total_size, NULL);
 }
 
 /*********************************************************************
@@ -6205,58 +6248,6 @@ void pidgin_blist_sort_method_unreg(const char *id){
 	pidgin_blist_update_sort_methods();
 }
 
-static void get_total_size_for_contact_cb(int size, void *data)
-{
-	struct _pidgin_log_size_data *callback_data = data;
-
-	callback_data->counter--;
-	callback_data->total_size += size;
-
-	if (!callback_data->counter) {
-		callback_data->lc->finished = TRUE;
-		if (callback_data->value != callback_data->total_size) {
-			g_hash_table_replace(logsize_contacts, callback_data->lc, GINT_TO_POINTER(callback_data->total_size));
-			/* refresh buddy list */
-			redo_buddy_list(purple_get_blist(), FALSE, FALSE);
-			/* saving value into blist file */
-			purple_blist_node_set_int(callback_data->lc->node, "log_size", callback_data->total_size);
-		}
-		g_free(callback_data);
-	}
-}
-
-static void update_contact_total_size(gpointer key, gpointer value, gpointer user_data)
-{
-	struct _pidgin_logsize_contact *lc = key;
-
-	if (lc->finished == TRUE) {
-		struct _pidgin_log_size_data *callback_data = g_new0(struct _pidgin_log_size_data, 1);
-		PurpleBlistNode *n;
-
-		callback_data->lc = lc;
-		callback_data->lc->finished = FALSE;
-		callback_data->value = GPOINTER_TO_INT(value);
-
-		for (n = lc->node->child; n; n = n->next)
-			callback_data->counter++;
-
-		for (n = lc->node->child; n; n = n->next)
-			purple_log_get_total_size_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy*)(n))->name, ((PurpleBuddy*)(n))->account, 
-													get_total_size_for_contact_cb, callback_data);
-	}
-}
-
-static gboolean update_log_size_table_cb(gpointer data) 
-{
-	if (!strcmp(current_sort_method->id, "log_size")) {
-		g_hash_table_foreach(logsize_contacts, update_contact_total_size, NULL);
-		return TRUE;
-	} else {
-		update_logsize_contacts_id = 0;
-		return FALSE;
-	}
-}
-
 void pidgin_blist_sort_method_set(const char *id){
 	GList *l = pidgin_blist_sort_methods;
 
@@ -6277,9 +6268,15 @@ void pidgin_blist_sort_method_set(const char *id){
 	} else {
 		redo_buddy_list(purple_get_blist(), FALSE, FALSE);
 	}
+	
+	if (!strcmp(id, "log_size")) {
+		PurpleBlistNode *node = purple_blist_get_root();
 
-	if (!strcmp(id, "log_size") && !update_logsize_contacts_id ) {
-		update_logsize_contacts_id  = purple_timeout_add_seconds(10, update_log_size_table_cb, NULL);
+		while (node) {
+			if (PURPLE_BLIST_NODE_IS_BUDDY(node) || PURPLE_BLIST_NODE_IS_CONTACT(node))
+				queue_update_log_size(node);
+			node = purple_blist_node_next(node, FALSE);
+		}
 	}
 }
 
@@ -6460,6 +6457,7 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 	}
 }
 
+/*
 static int get_total_size_for_contact(PurpleBlistNode *node)
 {
 	struct _pidgin_logsize_contact *lc_found = NULL;
@@ -6478,7 +6476,7 @@ static int get_total_size_for_contact(PurpleBlistNode *node)
 		need_to_update = lc_found && lc_found->finished;
 		total_size = GPOINTER_TO_INT(ptrsize);
 	} else {
-		/* initial value */
+		// initial value 
 		struct _pidgin_logsize_contact *lc_init = g_new(struct _pidgin_logsize_contact, 1);
 
 		total_size  = purple_blist_node_get_int(node, "log_size");
@@ -6491,6 +6489,23 @@ static int get_total_size_for_contact(PurpleBlistNode *node)
 	}
 
 	return total_size;
+}
+*/
+
+static int get_log_size_for_node(PurpleBlistNode *node)
+{
+	int size = 0;
+
+	purple_debug_info("XXXXXXX", "get_log_size_for_node - start \n");
+
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		return purple_blist_node_get_int(node, "log_size");
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		for (node = node->child; node; node = node->next)
+			size += purple_blist_node_get_int(node, "log_size");
+	}
+	purple_debug_info("XXXXXXX", "get_log_size_for_node - end (size = %i)\n", size);
+	return size;
 }
 
 static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
@@ -6505,9 +6520,11 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 		return;
 	}
 
-	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		log_size = get_total_size_for_contact(node);
-		buddy_name = purple_contact_get_alias((PurpleContact*)node);
+	if(PURPLE_BLIST_NODE_IS_CONTACT(node) || PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		log_size = get_log_size_for_node(node);
+
+		buddy_name = PURPLE_BLIST_NODE_IS_CONTACT(node) ? purple_contact_get_alias((PurpleContact*)node) : 
+														purple_buddy_get_name((PurpleBuddy *)node);
 	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		/* we don't have a reliable way of getting the log filename
 		 * from the chat info in the blist, yet */
@@ -6539,9 +6556,10 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 		n = g_value_get_pointer(&val);
 		this_log_size = 0;
 
-		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
-			this_log_size = get_total_size_for_contact(n);
-			this_buddy_name = purple_contact_get_alias((PurpleContact*)n);
+		if(PURPLE_BLIST_NODE_IS_CONTACT(n) || PURPLE_BLIST_NODE_IS_BUDDY(n)) {
+			this_log_size = get_log_size_for_node(n);
+			this_buddy_name = PURPLE_BLIST_NODE_IS_CONTACT(n) ? purple_contact_get_alias((PurpleContact*)n) : 
+														purple_buddy_get_name((PurpleBuddy *)n);
 		} else {
 			this_buddy_name = NULL;
 		}
