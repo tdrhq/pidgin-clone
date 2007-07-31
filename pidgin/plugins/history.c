@@ -54,10 +54,12 @@ static void historize_log_read_cb(char *text, PurpleLogReadFlags *flags, void *d
 	char *text_backup = NULL;
 	gtkconv = PIDGIN_CONVERSATION(callback_data->conv);
 
-	if (gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml) != NULL)
-		text_backup = strdup(gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml));
+	char *imhtml_text = gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml);
 
-	gtk_imhtml_clear((GtkIMHtml *)gtkconv->imhtml);
+	if (imhtml_text != NULL && strcmp(imhtml_text, "") {
+		text_backup = strdup(imhtml_text);
+		gtk_imhtml_clear((GtkIMHtml *)gtkconv->imhtml);
+	}
 
 	if (*flags & PURPLE_LOG_READ_NO_NEWLINE)
 		options |= GTK_IMHTML_NO_NEWLINE;
