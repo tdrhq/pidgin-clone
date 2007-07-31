@@ -51,38 +51,44 @@ static void historize_log_read_cb(char *text, PurpleLogReadFlags *flags, void *d
 	PidginConversation *gtkconv;
 	char *header;
 	char *protocol;
-
+	char *text_backup = NULL;
 	gtkconv = PIDGIN_CONVERSATION(callback_data->conv);
 
-	if (gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml) == NULL ||
-		!strcmp(gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml),""))  {
-		if (*flags & PURPLE_LOG_READ_NO_NEWLINE)
-			options |= GTK_IMHTML_NO_NEWLINE;
+	if (gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml) != NULL)
+		text_backup = strdup(gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml));
 
-		protocol = g_strdup(gtk_imhtml_get_protocol_name(GTK_IMHTML(gtkconv->imhtml)));
-		gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
-									purple_account_get_protocol_name(callback_data->log->account));
+	gtk_imhtml_clear((GtkIMHtml *)gtkconv->imhtml);
 
-		if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
-			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);
+	if (*flags & PURPLE_LOG_READ_NO_NEWLINE)
+		options |= GTK_IMHTML_NO_NEWLINE;
 
-		header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), callback_data->alias,
-								 purple_date_format_full(localtime(&callback_data->log->time)));
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
-		g_free(header);
+	protocol = g_strdup(gtk_imhtml_get_protocol_name(GTK_IMHTML(gtkconv->imhtml)));
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
+								purple_account_get_protocol_name(callback_data->log->account));
 
-		g_strchomp(text);
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), text, options);
-		g_free(text);
+	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
+	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), callback_data->alias,
+							 purple_date_format_full(localtime(&callback_data->log->time)));
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
+	g_free(header);
 
-		gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol);
-		g_free(protocol);
+	g_strchomp(text);
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), text, options);
+	g_free(text);
 
-		g_object_ref(G_OBJECT(gtkconv->imhtml));
-		g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
-	}
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
+
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol);
+	g_free(protocol);
+
+	if (text_backup)
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), text_backup, GTK_IMHTML_NO_NEWLINE );
+	g_free(text_backup);
+
+	g_object_ref(G_OBJECT(gtkconv->imhtml));
+	g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
 
 	purple_log_free_nonblocking(callback_data->log, NULL, NULL);
 	g_free(callback_data);
