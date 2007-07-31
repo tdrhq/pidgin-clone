@@ -64,22 +64,30 @@ static void historize_log_read_cb(char *history, PurpleLogReadFlags *flags, void
 	FinchConv * finch_conv = callback_data->conv->ui_data;
 	GntTextView *view = GNT_TEXT_VIEW(finch_conv->tv);
 	GString *buffer = view->string;
+	char *text_backup = NULL;
+	char *header = NULL;
 
-	if (g_string_equal(buffer, g_string_new(""))) {
-		char *header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), callback_data->alias,
-							 purple_date_format_full(localtime(&callback_data->log->time)));
-							 
-		purple_conversation_write(callback_data->conv, "", header, mflag, time(NULL));
-		g_free(header);
-
-		if (*flags & PURPLE_LOG_READ_NO_NEWLINE)
-			purple_str_strip_char(history, '\n');
-		purple_conversation_write(callback_data->conv, "", history, mflag, time(NULL));
-
-		purple_conversation_write(callback_data->conv, "", "<hr>", mflag, time(NULL));
+	if (!g_string_equal(buffer, g_string_new(""))) {
+		text_backup = strdup(buffer->str);
+		gnt_text_view_clear(view);
 	}
 
+	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), callback_data->alias,
+					 purple_date_format_full(localtime(&callback_data->log->time)));
+
+	purple_conversation_write(callback_data->conv, "", header, mflag, time(NULL));
+	g_free(header);
+
+	if (*flags & PURPLE_LOG_READ_NO_NEWLINE)
+		purple_str_strip_char(history, '\n');
+	purple_conversation_write(callback_data->conv, "", history, mflag, time(NULL));
+
+	purple_conversation_write(callback_data->conv, "", "<hr>", mflag, time(NULL));
 	g_free(history);
+
+	purple_conversation_write(callback_data->conv, "", text_backup, PURPLE_MESSAGE_NO_LOG, 
+		time(NULL));
+	g_free(text_backup);
 
 	purple_log_free_nonblocking(callback_data->log, NULL, NULL);
 	g_free(callback_data);
