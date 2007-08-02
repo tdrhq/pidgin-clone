@@ -137,6 +137,8 @@ update_buddy_board(PurpleBuddy *buddy, const char *which)
 
         all_active_accounts = all_active_accounts->next;
     }
+	
+	purple_debug_info("UPDATE BUDDY BOARD", "NEW STUDENT CAME ONLINE !!\n");
 
 }
 
