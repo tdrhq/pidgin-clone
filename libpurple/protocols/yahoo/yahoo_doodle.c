@@ -101,6 +101,46 @@ PurpleCmdRet yahoo_doodle_purple_cmd_start(PurpleConversation *conv, const char 
 	return PURPLE_CMD_RET_OK;
 }
 
+void *
+purple_doodle_get_handle(void)
+{
+    static int handle;
+
+    return &handle;
+}
+
+static void
+update_buddy_board(PurpleBuddy *buddy, const char *which)
+{
+
+    // TO BE FIXED ..
+    // CURRENTLY WORKS ONLY FOR SINGLE CLASSROOM CONNECTION
+
+    PurpleConnection *gc;
+    PurpleAccount *account;
+    PurpleWhiteboard *wb_teacher;
+
+    GList *all_active_accounts;
+    all_active_accounts =  purple_accounts_get_all_active();
+    while (all_active_accounts != NULL)
+    {
+        account = (PurpleAccount*)(all_active_accounts->data);
+        gc = purple_account_get_connection(account);
+        wb_teacher  = purple_whiteboard_get_session(account, gc->display_name);
+        if(wb_teacher != NULL && wb_teacher->boardType != STUDENT_BOARD){
+            PurpleWhiteboard *wb  = purple_whiteboard_get_session(buddy->account, buddy->name);
+            purple_debug_info("yahoo", "new student came online.. (%s) - %d\n",  buddy->name, wb?1:0);
+            if(wb == NULL){
+                yahoo_doodle_start_student_session(buddy, wb_teacher);
+            }
+        }
+
+        all_active_accounts = all_active_accounts->next;
+    }
+
+}
+
+
 void yahoo_doodle_initiate(PurpleConnection *gc, const char *name)
 {
 	PurpleAccount *account;
@@ -540,6 +580,8 @@ void yahoo_doodle_start_student_session(PurpleBuddy *buddy, PurpleWhiteboard *wb
   
     yahoo_doodle_command_send_request(gc, buddy->name);
 	yahoo_doodle_command_send_ready(gc, buddy->name);
+
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", purple_doodle_get_handle(), PURPLE_CALLBACK(update_buddy_board), "on");
 
 }
 
