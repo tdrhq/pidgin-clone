@@ -1,0 +1,63 @@
+/* Hack: IE inherits the container background outside the box! Fake fill bg */
+.box_home:before, .box_right:before, .box_full:before, .box_nav:before {
+  background: url('/shared/img/header.repeat.jpg') -126px left;
+}
+
+/* Hacks: Work around transparency and positioning issues for :after */
+.box_home:after {
+  content: "\A0";
+  font-size: 1pt;
+  background-image: url('/shared/img/frame.home.bottom.png');
+  margin-left: 1px;
+}
+
+#content div.box_home:first-child:after {
+  margin-left: 0px;
+}
+
+.box_full:after {
+  content: "\A0";
+  font-size: 1pt;
+  background-image: url('/shared/img/frame.full.bottom.png') bottom right;
+  margin-left: 2px;
+}
+
+.box_nav:after {
+  content: "\A0";
+  font-size: 1pt;
+  background-image: url('/shared/img/frame.nav.bottom.png') bottom right;
+}
+
+.box_right:after {
+  content: "\A0";
+  font-size: 1pt;
+  background-image: url('/shared/img/frame.right.bottom.png') bottom right;
+  margin-left: 1px;
+}
+
+#download:after {
+  content: "\A0";
+  font-size: 1pt;
+  background-image: url('/shared/img/balloon.bottom.png') bottom left;
+}
+
+.box_right {
+  margin-bottom: 0px;
+}
+
+#left {
+  padding-top: 6px;
+}
+
+/* Hack: Avoid disappearing floaty text */
+#main h1, #main p {
+  position: relative;
+  left: 0;
+}
+
+/* Hack: Fix IE's confusion about where to put this item */
+#download {
+  height: 71px;
+  left: 109px;
+  top: 151px;
+}

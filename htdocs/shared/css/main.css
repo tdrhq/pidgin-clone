@@ -122,13 +122,17 @@ a:hover, a:active {
 
 .box_nav ul li {
   font-size: 1.1em;
-  display: block;
+  display: inline;
   margin: 0;
   padding: 0;
 }
 
 .box_nav ul li:first-child a {
   border-top: 1px solid #EFEFEF;
+}
+
+.box_nav ul li:first-child a:link, .box_nav ul li:first-child a:visited, .box_nav ul li:first-child a:active {
+  padding-top: 2px;
 }
 
 .box_nav ul li a:link, .box_nav ul li a:visited, .box_nav ul li a:active {
@@ -242,32 +246,49 @@ a:hover, a:active {
 }
 
 #version {
-  text-align: right;
-  padding: 20px 73px 28px 36px;
+  text-align: left;
+  padding: 20px 0 28px 0;
   height: 216px;
+  left: 36px;
   position: relative;
 }
 
 #version .number {
+  display: block;
   z-index: 10;
   top: -29px;
+  left: 255px;
   position: relative;
 }
 
 #download #logo {
   display: block;
   position: absolute;
-  top: -7px;
+  top: -6px;
   left: -86px;
+}
+
+#download:before {
+  content: url('/shared/img/balloon.top.gif');
+  display: block;
+  height: 17px;
+  overflow: hidden;
+}
+
+#download:after {
+  content: url('/shared/img/balloon.bottom.png');
+  display: block;
+  height: 16px;
+  overflow: hidden;
+  clear: both;
 }
 
 #download {
   position: absolute;
-  top: 157px;
   left: 101px;
-  width: 213px;
-  padding: 15px 20px 20px 35px;
-  background: url('/shared/img/balloon.png') no-repeat top left;
+  top: 157px;
+  background: url('/shared/img/balloon.middle.gif') no-repeat left 17px;
+  width: 268px;
 }
 
 #download, .box_download p:first-child {
@@ -281,9 +302,13 @@ a:hover, a:active {
 }
 
 #download a img, .box_download a img {
-  position: relative;
   float: left;
   margin-right: 6px;
+}
+
+#download a {
+  display: block;
+  padding-left: 35px;
 }
 
 #main {

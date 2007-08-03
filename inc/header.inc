@@ -32,6 +32,15 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
   <meta name="description" content="The home of Pidgin, Finch, and the libpurple IM client library." />
   <meta name="keywords" content="pidgin, finch, libpurple, purple, IM, instant messaging, internet messaging, AIM, ICQ, XMMP, Jabber, Google Talk, MSN, Yahoo, Gadu-Gadu, IRC, Bonjour, SILC, SIP/SIMPLE, Zephyr, QQ, GroupWise, Sametime, Linux, Windows, GTK+" />
   <link rel="stylesheet" href="/shared/css/main.css" />
+  <!-- Correct rendering bugs from Microsoft Internet Explorer -->
+  <!--[if lt IE 7]>
+    <script type="text/javascript">
+      IE7_PNG_SUFFIX = ".png";
+    </script>
+    <script src="/shared/js/ie7/ie7-standard-p.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/shared/css/ie6.css">
+  <![endif]-->
+
 </head>
 <body>
 
