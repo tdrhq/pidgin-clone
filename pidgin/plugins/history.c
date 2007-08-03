@@ -52,11 +52,13 @@ static void historize_log_read_cb(char *text, PurpleLogReadFlags *flags, void *d
 	char *header;
 	char *protocol;
 	char *text_backup = NULL;
+	char *imhtml_text;
+
 	gtkconv = PIDGIN_CONVERSATION(callback_data->conv);
 
-	char *imhtml_text = gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml);
+	imhtml_text = gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml);
 
-	if (imhtml_text != NULL && strcmp(imhtml_text, "") {
+	if (imhtml_text != NULL && strcmp(imhtml_text, "")) {
 		text_backup = strdup(imhtml_text);
 		gtk_imhtml_clear((GtkIMHtml *)gtkconv->imhtml);
 	}
