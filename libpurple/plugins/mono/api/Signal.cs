@@ -64,7 +64,11 @@ namespace Purple
 			for (int i = 0; i < args.Length; i++)
 			{
 				if (args[i].GetType() == typeof(IntPtr)) {
-					objs.Add(ObjectManager.GetObject((IntPtr)args[i], arginfo[i].ParameterType));
+					if (arginfo[i].ParameterType == typeof(string)) {
+						objs.Add(Util.build_string((IntPtr)args[i]));
+					} else {
+						objs.Add(ObjectManager.GetObject((IntPtr)args[i], arginfo[i].ParameterType));
+					}
 				} else {
 					objs.Add(args[i]);
 				}
