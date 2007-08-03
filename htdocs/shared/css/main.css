@@ -52,6 +52,8 @@ a:hover, a:active {
   padding: 13px 15px 0;
   text-decoration: none;
   border-right: 1px solid #3F2844;
+  white-space: nowrap;
+  float: left;
 }
 
 #header ul li a:hover, #header ul li.active a {
