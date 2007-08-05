@@ -28,11 +28,10 @@ gntlastlog_la_LIBADD  = $(GLIB_LIBS)
 
 endif # PLUGINS
 
-EXTRA_DIST = 
+EXTRA_DIST = pietray.py
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
-	-DVERSION=\"$(VERSION)\" \
 	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir) \

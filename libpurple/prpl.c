@@ -83,44 +83,50 @@ void
 purple_prpl_got_user_idle(PurpleAccount *account, const char *name,
 		gboolean idle, time_t idle_time)
 {
-	PurpleBuddy *buddy;
 	PurplePresence *presence;
+	GSList *list;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
 	g_return_if_fail(purple_account_is_connected(account));
 
-	if ((buddy = purple_find_buddy(account, name)) == NULL)
+	if ((list = purple_find_buddies(account, name)) == NULL)
 		return;
 
-	presence = purple_buddy_get_presence(buddy);
-
-	purple_presence_set_idle(presence, idle, idle_time);
+	while (list) {
+		presence = purple_buddy_get_presence(list->data);
+		list = g_slist_delete_link(list, list);
+		purple_presence_set_idle(presence, idle, idle_time);
+	}
 }
 
 void
 purple_prpl_got_user_login_time(PurpleAccount *account, const char *name,
 		time_t login_time)
 {
-	PurpleBuddy *buddy;
+	GSList *list;
 	PurplePresence *presence;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
 
-	if ((buddy = purple_find_buddy(account, name)) == NULL)
+	if ((list = purple_find_buddies(account, name)) == NULL)
 		return;
 
 	if (login_time == 0)
 		login_time = time(NULL);
 
-	presence = purple_buddy_get_presence(buddy);
+	while (list) {
+		PurpleBuddy *buddy = list->data;
+		presence = purple_buddy_get_presence(buddy);
+		list = g_slist_delete_link(list, list);
 
-	if (purple_presence_get_login_time(presence) != login_time)
-	{
-		purple_presence_set_login_time(presence, login_time);
+		if (purple_presence_get_login_time(presence) != login_time)
+		{
+			purple_presence_set_login_time(presence, login_time);
 
-		purple_signal_emit(purple_blist_get_handle(), "buddy-got-login-time", buddy);
+			purple_signal_emit(purple_blist_get_handle(), "buddy-got-login-time", buddy);
+		}
 	}
 }
 
@@ -128,7 +134,7 @@ void
 purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 		const char *status_id, ...)
 {
-	GSList *list;
+	GSList *list, *l;
 	PurpleBuddy *buddy;
 	PurplePresence *presence;
 	PurpleStatus *status;
@@ -140,24 +146,30 @@ purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 	g_return_if_fail(status_id != NULL);
 	g_return_if_fail(purple_account_is_connected(account) || purple_account_is_connecting(account));
 
-	if ((buddy = purple_find_buddy(account, name)) == NULL)
+	if((list = purple_find_buddies(account, name)) == NULL)
 		return;
 
-	presence = purple_buddy_get_presence(buddy);
-	status   = purple_presence_get_status(presence, status_id);
+	for(l = list; l != NULL; l = l->next) {
+		buddy = l->data;
 
-	g_return_if_fail(status != NULL);
+		presence = purple_buddy_get_presence(buddy);
+		status   = purple_presence_get_status(presence, status_id);
 
-	old_status = purple_presence_get_active_status(presence);
+		if(NULL == status)
+			continue;
 
-	va_start(args, status_id);
-	purple_status_set_active_with_attrs(status, TRUE, args);
-	va_end(args);
+		old_status = purple_presence_get_active_status(presence);
 
-	list = purple_find_buddies(account, name);
-	g_slist_foreach(list, (GFunc)purple_blist_update_buddy_status, old_status);
+		va_start(args, status_id);
+		purple_status_set_active_with_attrs(status, TRUE, args);
+		va_end(args);
+
+		purple_blist_update_buddy_status(buddy, old_status);
+	}
+
 	g_slist_free(list);
 
+	/* we get to re-use the last status we found */
 	if (!purple_status_is_online(status))
 		serv_got_typing_stopped(purple_account_get_connection(account), name);
 }
@@ -165,6 +177,7 @@ purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *name,
 					const char *status_id)
 {
+	GSList *list, *l;
 	PurpleBuddy *buddy;
 	PurplePresence *presence;
 	PurpleStatus *status;
@@ -174,14 +187,22 @@ void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *na
 	g_return_if_fail(status_id != NULL);
 	g_return_if_fail(purple_account_is_connected(account) || purple_account_is_connecting(account));
 
-	if ((buddy = purple_find_buddy(account, name)) == NULL)
+	if((list = purple_find_buddies(account, name)) == NULL)
 		return;
 
-	presence = purple_buddy_get_presence(buddy);
-	status   = purple_presence_get_status(presence, status_id);
+	for(l = list; l != NULL; l = l->next) {
+		buddy = l->data;
 
-	g_return_if_fail(status != NULL);
-	purple_status_set_active(status, FALSE);
+		presence = purple_buddy_get_presence(buddy);
+		status   = purple_presence_get_status(presence, status_id);
+
+		if(NULL == status)
+			continue;
+
+		purple_status_set_active(status, FALSE);
+	}
+
+	g_slist_free(list);
 }
 
 static void
@@ -244,7 +265,7 @@ GList *
 purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence)
 {
 	GList *statuses = NULL;
-	const GList *l;
+	GList *l;
 	PurpleStatus *status;
 
 	g_return_val_if_fail(account  != NULL, NULL);

@@ -2,7 +2,7 @@
 ; Original Author: Herman Bloggs <hermanator12002@yahoo.com>
 ; Updated By: Daniel Atallah <daniel_atallah@yahoo.com>
 
-; NOTE: this .NSI script is intended for NSIS 2.08
+; NOTE: this .NSI script is intended for NSIS 2.27
 ;
 
 ;--------------------------------
@@ -38,6 +38,8 @@ SetDateSave on
 
 !include "MUI.nsh"
 !include "Sections.nsh"
+!include "WinVer.nsh"
+!include "LogicLib.nsh"
 
 !include "FileFunc.nsh"
 !insertmacro GetParameters
@@ -94,6 +96,13 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
 !endif
 
 ;--------------------------------
+;Reserve files used in .onInit
+;for faster start-up
+ReserveFile "${NSISDIR}\Plugins\System.dll"
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+!insertmacro MUI_RESERVEFILE_LANGDLL
+
+;--------------------------------
 ;Modern UI Configuration
 
   !define MUI_ICON				".\pixmaps\pidgin-install.ico"
@@ -114,10 +123,11 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
   !define MUI_ABORTWARNING
 
   ;Finish Page config
+  !define MUI_FINISHPAGE_NOAUTOCLOSE
   !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGIN_FINISH_VISIT_WEB_SITE)
-  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im/win32"
+  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im"
 
 ;--------------------------------
 ;Pages
@@ -260,7 +270,7 @@ Section -SecUninstallOldPidgin
   ReadRegStr $STARTUP_RUN_KEY HKCU "${STARTUP_RUN_KEY}" $R7
   IfErrors +3
   StrCpy $STARTUP_RUN_KEY "HKCU"
-  Goto +4
+  Goto +5
   ClearErrors
   ReadRegStr $STARTUP_RUN_KEY HKLM "${STARTUP_RUN_KEY}" $R7
   IfErrors +2
@@ -282,9 +292,9 @@ Section -SecUninstallOldPidgin
 
   ; If a previous version exists, remove it
   try_uninstall:
-    StrCmp $R1 "" done
+    StrCmp $R1 "" no_version_found
       ; Version key started with 0.60a3. Prior versions can't be
-      ; automaticlly uninstalled.
+      ; automatically uninstalled.
       StrCmp $R2 "" uninstall_problem
         ; Check if we have uninstall string..
         IfFileExists $R3 0 uninstall_problem
@@ -306,16 +316,18 @@ Section -SecUninstallOldPidgin
               Delete "$TEMP\$R6"
               Goto uninstall_problem
 
-        uninstall_problem:
+        no_version_found:
+          ;We've already tried to fallback to an old gaim instance
+          StrCmp $R7 "Gaim" done
           ; If we couldn't uninstall Pidgin, try to uninstall Gaim
-          StrCmp $R4 ${PIDGIN_REG_KEY} cannot_uninstall
+          StrCpy $STARTUP_RUN_KEY "NONE"
           StrCpy $R4 ${OLD_GAIM_REG_KEY}
           StrCpy $R5 ${OLD_GAIM_UNINSTALL_KEY}
           StrCpy $R6 ${OLD_GAIM_UNINST_EXE}
           StrCpy $R7 "Gaim"
           Goto start_comparison
 
-          cannot_uninstall:
+        uninstall_problem:
           ; We can't uninstall.  Either the user must manually uninstall or we ignore and reinstall over it.
           MessageBox MB_OKCANCEL $(PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL) /SD IDOK IDOK done
           Quit
@@ -344,9 +356,9 @@ Section $(GTK_SECTION_TITLE) SecGtk
   StrCmp $R0 "0" have_gtk
   StrCmp $R0 "1" upgrade_gtk
   StrCmp $R0 "2" upgrade_gtk
-  StrCmp $R0 "3" no_gtk no_gtk
+  ;StrCmp $R0 "3" no_gtk no_gtk
 
-  no_gtk:
+  ;no_gtk:
     StrCmp $R1 "NONE" gtk_no_install_rights
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
@@ -419,7 +431,11 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R1\bin"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
-    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" $(PIDGIN_UNINSTALL_DESC)
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
+    WriteRegDWORD HKLM "${PIDGIN_UNINSTALL_KEY}" "NoModify" 1
+    WriteRegDWORD HKLM "${PIDGIN_UNINSTALL_KEY}" "NoRepair" 1
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
     ; Sets scope of the desktop and Start Menu entries for all users.
     SetShellVarContext "all"
@@ -432,7 +448,11 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
 
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
-    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" $(PIDGIN_UNINSTALL_DESC)
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
+    WriteRegDWORD HKCU "${PIDGIN_UNINSTALL_KEY}" "NoModify" 1
+    WriteRegDWORD HKCU "${PIDGIN_UNINSTALL_KEY}" "NoRepair" 1
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
     Goto pidgin_install_files
 
@@ -478,12 +498,12 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     ; If this is under NT4, delete the SILC support stuff
     ; there is a bug that will prevent any account from connecting
     ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
-    Call GetWindowsVersion
-    Pop $R2
-    StrCmp $R2 "NT 4.0" +1 +4
-    Delete "$INSTDIR\plugins\libsilc.dll"
-    Delete "$INSTDIR\silcclient.dll"
-    Delete "$INSTDIR\silc.dll"
+    ${If} ${IsNT}
+    ${AndIf} ${IsWinNT4}
+      Delete "$INSTDIR\plugins\libsilc.dll"
+      Delete "$INSTDIR\silcclient.dll"
+      Delete "$INSTDIR\silc.dll"
+    ${EndIf}
 
     SetOutPath "$INSTDIR"
 
@@ -516,8 +536,7 @@ SectionGroup /e $(PIDGIN_SHORTCUTS_SECTION_TITLE) SecShortcuts
   SectionEnd
   Section $(PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE) SecStartMenuShortcut
     SetOverwrite on
-    CreateDirectory "$SMPROGRAMS\Pidgin"
-    CreateShortCut "$SMPROGRAMS\Pidgin\Pidgin.lnk" "$INSTDIR\pidgin.exe"
+    CreateShortCut "$SMPROGRAMS\Pidgin.lnk" "$INSTDIR\pidgin.exe"
     SetOverwrite off
   SectionEnd
 SectionGroupEnd
@@ -678,7 +697,9 @@ Section Uninstall
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
+    Delete "$INSTDIR\plugins\joinpart.dll"
     Delete "$INSTDIR\plugins\libaim.dll"
+    Delete "$INSTDIR\plugins\libbonjour.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
     Delete "$INSTDIR\plugins\libicq.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
@@ -747,7 +768,6 @@ Section Uninstall
     RMDir "$INSTDIR"
 
     ; Shortcuts..
-    RMDir /r "$SMPROGRAMS\Pidgin"
     Delete "$DESKTOP\Pidgin.lnk"
 
     Goto done
@@ -1057,6 +1077,7 @@ Function DoWeNeedGtk
 
   have_gtk:
     ; GTK+ is already installed; check version.
+	; Change this to not even run the GTK installer if this version is already installed.
     ${VersionCompare} ${GTK_INSTALL_VERSION} $0 $3
     IntCmp $3 1 +1 good_version good_version
     ${VersionCompare} ${GTK_MIN_VERSION} $0 $3
@@ -1138,11 +1159,43 @@ Function .onInit
   IfErrors +2
   WriteRegStr HKCU "${PIDGIN_REG_KEY}" "Installer Language" "$R0"
 
+  !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
+  !insertmacro UnselectSection ${SecSpellCheck}
+
   ;Mark the dictionaries that are already installed as readonly
   Call SelectAndDisableInstalledDictionaries
 
   ;Preselect the URI handlers as appropriate
   Call SelectURIHandlerSelections
+
+  ;Preselect the "shortcuts" checkboxes according to the previous installation
+  ClearErrors
+  ;Make sure that there was a previous installation
+  ReadRegStr $R0 HKCU "${PIDGIN_REG_KEY}" "Installer Language"
+  IfErrors done_preselecting_shortcuts
+    ;Does the Desktop shortcut exist?
+    GetFileTime "$DESKTOP\Pidgin.lnk" $R0 $R0
+    IfErrors +1 +4
+    ClearErrors
+    SetShellVarContext "all"
+    GetFileTime "$DESKTOP\Pidgin.lnk" $R0 $R0
+    IfErrors preselect_startmenu_shortcut ;Desktop Shortcut if off by default
+    !insertmacro SelectSection ${SecDesktopShortcut}
+  preselect_startmenu_shortcut:
+    ;Reset ShellVarContext because we may have changed it
+    SetShellVarContext "current"
+    ClearErrors
+    ;Does the StartMenu shortcut exist?
+    GetFileTime "$SMPROGRAMS\Pidgin.lnk" $R0 $R0
+    IfErrors +1 done_preselecting_shortcuts ;StartMenu Shortcut is on by default
+    ClearErrors
+    SetShellVarContext "all"
+    GetFileTime "$SMPROGRAMS\Pidgin.lnk" $R0 $R0
+    IfErrors +1 done_preselecting_shortcuts ;StartMenu Shortcut is on by default
+    !insertmacro UnselectSection ${SecStartMenuShortcut}
+  done_preselecting_shortcuts:
+  ;Reset ShellVarContext because we may have changed it
+  SetShellVarContext "current"
 
   StrCpy $ISSILENT "/NOUI"
 
@@ -1281,7 +1334,7 @@ Function preWelcomePage
 
 !ifndef WITH_GTK
   ; If this installer dosn't have GTK, check whether we need it.
-  ; We do this here an not in .onInit because language change in
+  ; We do this here and not in .onInit because language change in
   ; .onInit doesn't take effect until it is finished.
   Call DoWeNeedGtk
   Pop $R0
@@ -1306,19 +1359,13 @@ Function preWelcomePage
   gtk_not_mandatory:
 
   ; If on Win95/98/ME warn them that the GTK+ version wont work
-  Call GetWindowsVersion
-  Pop $R1
-  StrCmp $R1 "95" win_ver_bad
-  StrCmp $R1 "98" win_ver_bad
-  StrCmp $R1 "ME" win_ver_bad
-  Goto done
-
-  win_ver_bad:
+  ${Unless} ${IsNT}
     !insertmacro UnselectSection ${SecGtk}
     !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
     MessageBox MB_OK $(GTK_WINDOWS_INCOMPATIBLE) /SD IDOK
     IntCmp $R0 1 done done ; Upgrade isn't optional - abort if we don't have a suitable version
     Quit
+  ${EndIf}
 
   done:
   Pop $R2
@@ -1380,98 +1427,6 @@ Function postGtkDirPage
   Pop $R0
 FunctionEnd
 !endif
-
-; GetWindowsVersion
-;
-; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
-; Updated by Joost Verburg
-;
-; Returns on top of stack
-;
-; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003, Vista)
-; or
-; '' (Unknown Windows Version)
-;
-; Usage:
-;   Call GetWindowsVersion
-;   Pop $R0
-;
-; at this point $R0 is "NT 4.0" or whatnot
-Function GetWindowsVersion
-
-  Push $R0
-  Push $R1
-
-  ClearErrors
-  ReadRegStr $R0 HKLM \
-  "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
-
-  IfErrors 0 lbl_winnt
-
-  ; we are not NT
-  ReadRegStr $R0 HKLM \
-  "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
-
-  StrCpy $R1 $R0 1
-  StrCmp $R1 '4' 0 lbl_error
-
-  StrCpy $R1 $R0 3
-
-  StrCmp $R1 '4.0' lbl_win32_95
-  StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
-
-  lbl_win32_95:
-    StrCpy $R0 '95'
-  Goto lbl_done
-
-  lbl_win32_98:
-    StrCpy $R0 '98'
-  Goto lbl_done
-
-  lbl_win32_ME:
-    StrCpy $R0 'ME'
-  Goto lbl_done
-
-  lbl_winnt:
-    StrCpy $R1 $R0 1
-
-    StrCmp $R1 '3' lbl_winnt_x
-    StrCmp $R1 '4' lbl_winnt_x
-
-    StrCpy $R1 $R0 3
-
-    StrCmp $R1 '5.0' lbl_winnt_2000
-    StrCmp $R1 '5.1' lbl_winnt_XP
-    StrCmp $R1 '5.2' lbl_winnt_2003
-    StrCmp $R1 '6.0' lbl_winnt_vista lbl_error
-
-  lbl_winnt_x:
-    StrCpy $R0 "NT $R0" 6
-  Goto lbl_done
-
-  lbl_winnt_2000:
-    Strcpy $R0 '2000'
-  Goto lbl_done
-
-  lbl_winnt_XP:
-    Strcpy $R0 'XP'
-  Goto lbl_done
-
-  lbl_winnt_2003:
-    Strcpy $R0 '2003'
-  Goto lbl_done
-
-  lbl_winnt_vista:
-    Strcpy $R0 'Vista'
-  Goto lbl_done
-
-  lbl_error:
-    Strcpy $R0 ''
-  lbl_done:
-
-  Pop $R1
-  Exch $R0
-FunctionEnd
 
 ; SpellChecker Related Functions
 ;-------------------------------
@@ -1642,7 +1597,7 @@ Function InstallAspell
   StrCpy $R1 "$TEMP\aspell_installer.exe"
   StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=aspell_core"
   DetailPrint "Downloading Aspell... ($R2)"
-  NSISdl::download $R2 $R1
+  NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
   StrCmp $R0 "success" +2
     Goto done
@@ -1682,7 +1637,7 @@ Function InstallAspellDictionary
   StrCpy $R1 "$TEMP\aspell_dict-$R0.exe"
   StrCpy $R3 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=lang_$R0"
   DetailPrint "Downloading the Aspell $R0 Dictionary... ($R3)"
-  NSISdl::download $R3 $R1
+  NSISdl::download /TIMEOUT=10000 $R3 $R1
   Pop $R3
   StrCmp $R3 "success" +3
     StrCpy $R0 $R3

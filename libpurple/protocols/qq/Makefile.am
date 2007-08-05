@@ -34,8 +34,6 @@ QQSOURCES = \
 	group_info.h \
 	group_join.c \
 	group_join.h \
-	group_misc.c \
-	group_misc.h \
 	group_network.c \
 	group_network.h \
 	group_opt.c \
@@ -93,7 +91,7 @@ endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
-	-DVERSION=\"$(VERSION)\" \
+	-I$(top_builddir)/libpurple \
 	-DQQ_BUDDY_ICON_DIR=\"$(datadir)/pixmaps/purple/buddy_icons/qq\" \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS)

@@ -17,38 +17,67 @@
 #include <glib.h>
 #include <stdlib.h>
 
+#include "internal.h"
 #include "buddy.h"
 #include "account.h"
 #include "blist.h"
 #include "bonjour.h"
+#include "mdns_interface.h"
 #include "debug.h"
 
 /**
  * Creates a new buddy.
  */
 BonjourBuddy *
-bonjour_buddy_new(const gchar *name, const gchar *first, gint port_p2pj,
-	const gchar *phsh, const gchar *status, const gchar *email,
-	const gchar *last, const gchar *jid, const gchar *AIM,
-	const gchar *vc, const gchar *ip, const gchar *msg)
+bonjour_buddy_new(const gchar *name, PurpleAccount* account)
 {
-	BonjourBuddy *buddy = malloc(sizeof(BonjourBuddy));
+	BonjourBuddy *buddy = g_new0(BonjourBuddy, 1);
 
+	buddy->account = account;
 	buddy->name = g_strdup(name);
-	buddy->first = g_strdup(first);
-	buddy->port_p2pj = port_p2pj;
-	buddy->phsh = g_strdup(phsh);
-	buddy->status = g_strdup(status);
-	buddy->email = g_strdup(email);
-	buddy->last = g_strdup(last);
-	buddy->jid = g_strdup(jid);
-	buddy->AIM = g_strdup(AIM);
-	buddy->vc = g_strdup(vc);
-	buddy->ip = g_strdup(ip);
-	buddy->msg = g_strdup(msg);
-	buddy->conversation = NULL;
+
+	_mdns_init_buddy(buddy);
 
 	return buddy;
+}
+
+void
+set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char *value, uint32_t len){
+	gchar **fld = NULL;
+
+	if (!strcmp(record_key, "1st"))
+		fld = &buddy->first;
+	else if(!strcmp(record_key, "email"))
+		fld = &buddy->email;
+	else if(!strcmp(record_key, "ext"))
+		fld = &buddy->ext;
+	else if(!strcmp(record_key, "jid"))
+		fld = &buddy->jid;
+	else if(!strcmp(record_key, "last"))
+		fld = &buddy->last;
+	else if(!strcmp(record_key, "msg"))
+		fld = &buddy->msg;
+	else if(!strcmp(record_key, "nick"))
+		fld = &buddy->nick;
+	else if(!strcmp(record_key, "node"))
+		fld = &buddy->node;
+	else if(!strcmp(record_key, "phsh"))
+		fld = &buddy->phsh;
+	else if(!strcmp(record_key, "status"))
+		fld = &buddy->status;
+	else if(!strcmp(record_key, "vc"))
+		fld = &buddy->vc;
+	else if(!strcmp(record_key, "ver"))
+		fld = &buddy->ver;
+	else if(!strcmp(record_key, "AIM"))
+		fld = &buddy->AIM;
+
+	if(fld == NULL)
+		return;
+
+	g_free(*fld);
+	*fld = NULL;
+	*fld = g_strndup(value, len);
 }
 
 /**
@@ -57,21 +86,11 @@ bonjour_buddy_new(const gchar *name, const gchar *first, gint port_p2pj,
 gboolean
 bonjour_buddy_check(BonjourBuddy *buddy)
 {
-	if (buddy->name == NULL) {
+	if (buddy->account == NULL)
 		return FALSE;
-	}
 
-	if (buddy->first == NULL) {
+	if (buddy->name == NULL)
 		return FALSE;
-	}
-
-	if (buddy->last == NULL) {
-		return FALSE;
-	}
-
-	if (buddy->status == NULL) {
-		return FALSE;
-	}
 
 	return TRUE;
 }
@@ -82,12 +101,13 @@ bonjour_buddy_check(BonjourBuddy *buddy)
  * the buddy.
  */
 void
-bonjour_buddy_add_to_purple(PurpleAccount *account, BonjourBuddy *bonjour_buddy)
+bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 {
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
-	const char *status_id, *first, *last;
-	char *alias;
+	PurpleAccount *account = bonjour_buddy->account;
+	const char *status_id, *first, *last, *old_hash, *new_hash;
+	gchar *alias = NULL;
 
 	/* Translate between the Bonjour status and the Purple status */
 	if (g_ascii_strcasecmp("dnd", bonjour_buddy->status) == 0)
@@ -100,43 +120,55 @@ bonjour_buddy_add_to_purple(PurpleAccount *account, BonjourBuddy *bonjour_buddy)
 	 * field from the DNS SD.
 	 */
 
-	/* Create the alias for the buddy using the first and the last name */
-	first = bonjour_buddy->first;
-	last = bonjour_buddy->last;
-	alias = g_strdup_printf("%s%s%s",
-							(first && *first ? first : ""),
-							(first && *first && last && *last ? " " : ""),
-							(last && *last ? last : ""));
-
 	/* Make sure the Bonjour group exists in our buddy list */
 	group = purple_find_group(BONJOUR_GROUP_NAME); /* Use the buddy's domain, instead? */
-	if (group == NULL)
-	{
+	if (group == NULL) {
 		group = purple_group_new(BONJOUR_GROUP_NAME);
 		purple_blist_add_group(group, NULL);
 	}
 
 	/* Make sure the buddy exists in our buddy list */
 	buddy = purple_find_buddy(account, bonjour_buddy->name);
-	if (buddy == NULL)
-	{
-		buddy = purple_buddy_new(account, bonjour_buddy->name, alias);
+
+	if (buddy == NULL) {
+		buddy = purple_buddy_new(account, bonjour_buddy->name, NULL);
 		buddy->proto_data = bonjour_buddy;
 		purple_blist_node_set_flags((PurpleBlistNode *)buddy, PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 	}
 
+	/* Create the alias for the buddy using the first and the last name */
+	first = bonjour_buddy->first;
+	last = bonjour_buddy->last;
+	if ((first && *first) || (last && *last))
+		alias = g_strdup_printf("%s%s%s",
+					(first && *first ? first : ""),
+					(first && *first && last && *last ? " " : ""),
+					(last && *last ? last : ""));
+	serv_got_alias(purple_account_get_connection(account), buddy->name, alias);
+	g_free(alias);
+
 	/* Set the user's status */
 	if (bonjour_buddy->msg != NULL)
 		purple_prpl_got_user_status(account, buddy->name, status_id,
-								  "message", bonjour_buddy->msg,
-								  NULL);
+					    "message", bonjour_buddy->msg, NULL);
 	else
-		purple_prpl_got_user_status(account, buddy->name, status_id,
-								  NULL);
+		purple_prpl_got_user_status(account, buddy->name, status_id, NULL);
+
 	purple_prpl_got_user_idle(account, buddy->name, FALSE, 0);
 
-	g_free(alias);
+	/* TODO: Because we don't save Bonjour buddies in blist.xml,
+	 * we will always have to look up the buddy icon at login time.
+	 * I think we should figure out a way to do something about this. */
+
+	/* Deal with the buddy icon */
+	old_hash = purple_buddy_icons_get_checksum_for_user(buddy);
+	new_hash = (bonjour_buddy->phsh && *(bonjour_buddy->phsh)) ? bonjour_buddy->phsh : NULL;
+	if (new_hash && (!old_hash || strcmp(old_hash, new_hash) != 0)) {
+		/* Look up the new icon data */
+		bonjour_dns_sd_retrieve_buddy_icon(bonjour_buddy);
+	} else
+		purple_buddy_icons_set_for_user(account, buddy->name, NULL, 0, NULL);
 }
 
 /**
@@ -146,6 +178,9 @@ void
 bonjour_buddy_delete(BonjourBuddy *buddy)
 {
 	g_free(buddy->name);
+	g_free(buddy->ip);
+	g_free(buddy->full_service_name);
+
 	g_free(buddy->first);
 	g_free(buddy->phsh);
 	g_free(buddy->status);
@@ -154,14 +189,17 @@ bonjour_buddy_delete(BonjourBuddy *buddy)
 	g_free(buddy->jid);
 	g_free(buddy->AIM);
 	g_free(buddy->vc);
-	g_free(buddy->ip);
 	g_free(buddy->msg);
+	g_free(buddy->ext);
+	g_free(buddy->nick);
+	g_free(buddy->node);
+	g_free(buddy->ver);
 
-	if (buddy->conversation != NULL)
-	{
-		g_free(buddy->conversation->buddy_name);
-		g_free(buddy->conversation);
-	}
+	bonjour_jabber_close_conversation(buddy->conversation);
+	buddy->conversation = NULL;
 
-	free(buddy);
+	/* Clean up any mdns implementation data */
+	_mdns_delete_buddy(buddy);
+
+	g_free(buddy);
 }

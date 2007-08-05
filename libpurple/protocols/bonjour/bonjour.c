@@ -37,7 +37,7 @@
 #include "version.h"
 
 #include "bonjour.h"
-#include "dns_sd.h"
+#include "mdns_common.h"
 #include "jabber.h"
 #include "buddy.h"
 
@@ -94,14 +94,13 @@ static void
 bonjour_login(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurpleGroup *bonjour_group = NULL;
-	BonjourData *bd = NULL;
+	PurpleGroup *bonjour_group;
+	BonjourData *bd;
 	PurpleStatus *status;
 	PurplePresence *presence;
 
 	gc->flags |= PURPLE_CONNECTION_HTML;
-	gc->proto_data = g_new0(BonjourData, 1);
-	bd = gc->proto_data;
+	gc->proto_data = bd = g_new0(BonjourData, 1);
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new(BonjourJabber, 1);
@@ -111,26 +110,16 @@ bonjour_login(PurpleAccount *account)
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
 		purple_connection_error(gc, _("Unable to listen for incoming IM connections\n"));
-
-		/* Free the data */
-		g_free(bd->jabber_data);
-		bd->jabber_data = NULL;
 		return;
 	}
 
 	/* Connect to the mDNS daemon looking for buddies in the LAN */
 	bd->dns_sd_data = bonjour_dns_sd_new();
-	bd->dns_sd_data->name = (sw_string)purple_account_get_username(account);
-	bd->dns_sd_data->txtvers = g_strdup("1");
-	bd->dns_sd_data->version = g_strdup("1");
 	bd->dns_sd_data->first = g_strdup(purple_account_get_string(account, "first", default_firstname));
 	bd->dns_sd_data->last = g_strdup(purple_account_get_string(account, "last", default_lastname));
 	bd->dns_sd_data->port_p2pj = bd->jabber_data->port;
-	bd->dns_sd_data->phsh = g_strdup("");
-	bd->dns_sd_data->email = g_strdup(purple_account_get_string(account, "email", ""));
-	bd->dns_sd_data->vc = g_strdup("");
-	bd->dns_sd_data->jid = g_strdup(purple_account_get_string(account, "jid", ""));
-	bd->dns_sd_data->AIM = g_strdup(purple_account_get_string(account, "AIM", ""));
+	/* Not engaged in AV conference */
+	bd->dns_sd_data->vc = g_strdup("!");
 
 	status = purple_account_get_active_status(account);
 	presence = purple_account_get_presence(account);
@@ -161,7 +150,7 @@ static void
 bonjour_close(PurpleConnection *connection)
 {
 	PurpleGroup *bonjour_group;
-	BonjourData *bd = (BonjourData*)connection->proto_data;
+	BonjourData *bd = connection->proto_data;
 
 	/* Stop looking for buddies in the LAN */
 	if (bd->dns_sd_data != NULL)
@@ -278,6 +267,7 @@ static void
 bonjour_convo_closed(PurpleConnection *connection, const char *who)
 {
 	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	BonjourBuddy *bb;
 
 	if (buddy == NULL)
 	{
@@ -288,7 +278,9 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 		return;
 	}
 
-	bonjour_jabber_close_conversation(((BonjourData*)(connection->proto_data))->jabber_data, buddy);
+	bb = buddy->proto_data;
+	bonjour_jabber_close_conversation(bb->conversation);
+	bb->conversation = NULL;
 }
 
 static char *
@@ -331,6 +323,8 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
+	/* These shouldn't happen here because they are allocated in _init() */
+
 	g_free(default_firstname);
 	g_free(default_lastname);
 	g_free(default_hostname);
@@ -460,6 +454,7 @@ initialize_default_account_values()
 	const char *fullname = NULL;
 #endif
 	char *splitpoint = NULL;
+	char *tmp;
 	char hostname[255];
 
 #ifndef _WIN32
@@ -483,61 +478,53 @@ initialize_default_account_values()
 	}
 
 #else
-	FARPROC myNetUserGetInfo = wpurple_find_and_loadproc("Netapi32.dll",
-		"NetUserGetInfo");
+	wchar_t username[UNLEN + 1];
+	DWORD dwLenUsername = UNLEN + 1;
 
-	if (myNetUserGetInfo) {
-		LPUSER_INFO_10 user_info = NULL;
-		LPSERVER_INFO_100 server_info = NULL;
-		wchar_t *servername = NULL;
-		wchar_t username[UNLEN + 1] = {'\0'};
-		DWORD dwLenUsername = sizeof(username);
-		FARPROC myNetServerEnum = wpurple_find_and_loadproc(
-			"Netapi32.dll", "NetServerEnum");
-		FARPROC myNetApiBufferFree = wpurple_find_and_loadproc(
-			"Netapi32.dll", "NetApiBufferFree");
+	if (!GetUserNameW((LPWSTR) &username, &dwLenUsername))
+		purple_debug_warning("bonjour", "Unable to look up username\n");
 
-		if (myNetServerEnum && myNetApiBufferFree) {
-			DWORD dwEntriesRead = 0;
-			DWORD dwTotalEntries = 0;
-			DWORD dwResumeHandle = 0;
+	if (username != NULL && *username != '\0') {
+		LPBYTE servername = NULL;
+		LPBYTE info = NULL;
 
-			NET_API_STATUS nStatus = (myNetServerEnum)(NULL, 100,
-				&server_info, MAX_PREFERRED_LENGTH,
-				&dwEntriesRead, &dwTotalEntries,
-				SV_TYPE_DOMAIN_CTRL, NULL, &dwResumeHandle);
+		NetGetDCName(NULL, NULL, &servername);
 
-			if ((nStatus == NERR_Success
-					|| nStatus == ERROR_MORE_DATA)
-					&& dwEntriesRead > 0) {
-				servername = server_info->sv100_name;
-			} else {
-				purple_debug_warning("bonjour", "Unable to look up domain controller. NET_API_STATUS = %d, Entries Read = %d, Total Entries = %d\n", nStatus, dwEntriesRead, dwTotalEntries);
-			}
+		purple_debug_info("bonjour", "Looking up the full name from the %s.\n", (servername ? "domain controller" : "local machine"));
+
+		if (NetUserGetInfo((LPCWSTR) servername, username, 10, &info) == NERR_Success
+				&& info != NULL && ((LPUSER_INFO_10) info)->usri10_full_name != NULL
+				&& *(((LPUSER_INFO_10) info)->usri10_full_name) != '\0') {
+			fullname = g_utf16_to_utf8(
+				((LPUSER_INFO_10) info)->usri10_full_name,
+				-1, NULL, NULL, NULL);
 		}
+		/* Fall back to the local machine if we didn't get the full name from the domain controller */
+		else if (servername != NULL) {
+			purple_debug_info("bonjour", "Looking up the full name from the local machine");
 
-		if (!GetUserNameW(&username, &dwLenUsername)) {
-			purple_debug_warning("bonjour",
-				"Unable to look up username\n");
-		}
+			if (info != NULL) NetApiBufferFree(info);
+			info = NULL;
 
-		if (username != NULL && *username != '\0'
-				&& (myNetUserGetInfo)(servername, username, 10,
-					&user_info) == NERR_Success) {
-			if (user_info != NULL) {
+			if (NetUserGetInfo(NULL, username, 10, &info) == NERR_Success
+					&& info != NULL && ((LPUSER_INFO_10) info)->usri10_full_name != NULL
+					&& *(((LPUSER_INFO_10) info)->usri10_full_name) != '\0') {
 				fullname = g_utf16_to_utf8(
-					user_info->usri10_full_name,
+					((LPUSER_INFO_10) info)->usri10_full_name,
 					-1, NULL, NULL, NULL);
 			}
 		}
-		if (user_info != NULL)
-			(myNetApiBufferFree)(user_info);
-		if (server_info != NULL)
-			(myNetApiBufferFree)(server_info);
+
+		if (info != NULL) NetApiBufferFree(info);
+		if (servername != NULL) NetApiBufferFree(servername);
 	}
 
-	if (!fullname)
-		fullname = g_strdup(_("Purple Person"));
+	if (!fullname) {
+		if (username != NULL && *username != '\0')
+			fullname = g_utf16_to_utf8(username, -1, NULL, NULL, NULL);
+		else
+			fullname = g_strdup(_("Purple Person"));
+	}
 #endif
 
 	/* Split the real name into a first and last name */
@@ -545,7 +532,16 @@ initialize_default_account_values()
 	if (splitpoint != NULL)
 	{
 		default_firstname = g_strndup(fullname, splitpoint - fullname);
-		default_lastname = g_strdup(&splitpoint[1]);
+		tmp = &splitpoint[1];
+		
+		/* The last name may be followed by a comma and additional data.
+		 * Only use the last name itself.
+		 */
+		splitpoint = strchr(tmp, ',');
+		if (splitpoint != NULL)
+			default_lastname = g_strndup(tmp, splitpoint - tmp);
+		else
+			default_lastname = g_strdup(tmp);
 	}
 	else
 	{

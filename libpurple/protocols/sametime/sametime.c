@@ -611,9 +611,9 @@ static void mw_aware_list_clear(struct mwAwareList *list) {
 
 
 static struct mwAwareListHandler mw_aware_list_handler = {
-  .on_aware = mw_aware_list_on_aware,
-  .on_attrib = mw_aware_list_on_attrib,
-  .clear = mw_aware_list_clear,
+  mw_aware_list_on_aware,
+  mw_aware_list_on_attrib,
+  mw_aware_list_clear,
 };
 
 
@@ -1777,14 +1777,14 @@ static void mw_session_announce(struct mwSession *s,
 
 
 static struct mwSessionHandler mw_session_handler = {
-  .io_write = mw_session_io_write,
-  .io_close = mw_session_io_close,
-  .clear = mw_session_clear,
-  .on_stateChange = mw_session_stateChange,
-  .on_setPrivacyInfo = mw_session_setPrivacyInfo,
-  .on_setUserStatus = mw_session_setUserStatus,
-  .on_admin = mw_session_admin,
-  .on_announce = mw_session_announce,
+  mw_session_io_write,
+  mw_session_io_close,
+  mw_session_clear,
+  mw_session_stateChange,
+  mw_session_setPrivacyInfo,
+  mw_session_setUserStatus,
+  mw_session_admin,
+  mw_session_announce,
 };
 
 
@@ -1803,8 +1803,8 @@ static void mw_aware_clear(struct mwServiceAware *srvc) {
 
 
 static struct mwAwareHandler mw_aware_handler = {
-  .on_attrib = mw_aware_on_attrib,
-  .clear = mw_aware_clear,
+  mw_aware_on_attrib,
+  mw_aware_clear,
 };
 
 
@@ -2042,14 +2042,14 @@ static void mw_conf_clear(struct mwServiceConference *srvc) {
 
 
 static struct mwConferenceHandler mw_conference_handler = {
-  .on_invited = mw_conf_invited,
-  .conf_opened = mw_conf_opened,
-  .conf_closed = mw_conf_closed,
-  .on_peer_joined = mw_conf_peer_joined,
-  .on_peer_parted = mw_conf_peer_parted,
-  .on_text = mw_conf_text,
-  .on_typing = mw_conf_typing,
-  .clear = mw_conf_clear,
+  mw_conf_invited,
+  mw_conf_opened,
+  mw_conf_closed,
+  mw_conf_peer_joined,
+  mw_conf_peer_parted,
+  mw_conf_text,
+  mw_conf_typing,
+  mw_conf_clear,
 };
 
 
@@ -2287,12 +2287,12 @@ static void mw_ft_clear(struct mwServiceFileTransfer *srvc) {
 
 
 static struct mwFileTransferHandler mw_ft_handler = {
-  .ft_offered = mw_ft_offered,
-  .ft_opened = mw_ft_opened,
-  .ft_closed = mw_ft_closed,
-  .ft_recv = mw_ft_recv,
-  .ft_ack = mw_ft_ack,
-  .clear = mw_ft_clear,
+  mw_ft_offered,
+  mw_ft_opened,
+  mw_ft_closed,
+  mw_ft_recv,
+  mw_ft_ack,
+  mw_ft_clear,
 };
 
 
@@ -2660,7 +2660,7 @@ static void im_recv_mime(struct mwConversation *conv,
   GString *str;
 
   PurpleMimeDocument *doc;
-  const GList *parts;
+  GList *parts;
 
   img_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
   images = NULL;
@@ -2854,11 +2854,11 @@ static void mw_im_clear(struct mwServiceIm *srvc) {
 
 
 static struct mwImHandler mw_im_handler = {
-  .conversation_opened = mw_conversation_opened,
-  .conversation_closed = mw_conversation_closed,
-  .conversation_recv = mw_conversation_recv,
-  .place_invite = mw_place_invite,
-  .clear = mw_im_clear,
+  mw_conversation_opened,
+  mw_conversation_closed,
+  mw_conversation_recv,
+  mw_place_invite,
+  mw_im_clear,
 };
 
 
@@ -3052,14 +3052,14 @@ static void mw_place_clear(struct mwServicePlace *srvc) {
 
 
 static struct mwPlaceHandler mw_place_handler = {
-  .opened = mw_place_opened,
-  .closed = mw_place_closed,
-  .peerJoined = mw_place_peerJoined,
-  .peerParted = mw_place_peerParted,
-  .peerSetAttribute = mw_place_peerSetAttribute,
-  .peerUnsetAttribute = mw_place_peerUnsetAttribute,
-  .message = mw_place_message,
-  .clear = mw_place_clear,
+  mw_place_opened,
+  mw_place_closed,
+  mw_place_peerJoined,
+  mw_place_peerParted,
+  mw_place_peerSetAttribute,
+  mw_place_peerUnsetAttribute,
+  mw_place_message,
+  mw_place_clear,
 };
 
 
@@ -3189,7 +3189,8 @@ static char *mw_prpl_status_text(PurpleBuddy *b) {
   pd = gc->proto_data;
 
   ret = mwServiceAware_getText(pd->srvc_aware, &t);
-  return ret? g_markup_escape_text(ret, -1): NULL;
+  
+  return (ret && g_utf8_validate(ret, -1, NULL)) ? g_markup_escape_text(ret, -1): NULL;
 }
 
 
@@ -3254,7 +3255,7 @@ static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info
   message = mwServiceAware_getText(pd->srvc_aware, &idb);
   status = status_text(b);
 
-  if(message != NULL && purple_utf8_strcasecmp(status, message)) {
+  if(message != NULL && g_utf8_validate(message, -1, NULL) && purple_utf8_strcasecmp(status, message)) {
     tmp = g_markup_escape_text(message, -1);
 	purple_notify_user_info_add_pair(user_info, status, tmp);
     g_free(tmp);
@@ -3401,7 +3402,7 @@ static void conf_select_prompt_cancel(PurpleBuddy *buddy,
 static void conf_select_prompt_invite(PurpleBuddy *buddy,
 				      PurpleRequestFields *fields) {
   PurpleRequestField *f;
-  const GList *l;
+  GList *l;
   const char *msg;
   
   f = purple_request_fields_get_field(fields, CHAT_KEY_INVITE);
@@ -4151,7 +4152,7 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
 
 	/* XXX Is this adding a status message in its own section rather than with the "Status" label? */
     tmp2 = mwServiceAware_getText(pd->srvc_aware, &idb);
-    if(tmp2) {
+    if(tmp2 && g_utf8_validate(tmp2, -1, NULL)) {
       tmp = g_markup_escape_text(tmp2, -1);
 	  purple_notify_user_info_add_section_break(user_info);
 	  purple_notify_user_info_add_pair(user_info, NULL, tmp);
@@ -4575,9 +4576,9 @@ static void mw_prpl_set_permit_deny(PurpleConnection *gc) {
   struct mwSession *session;
 
   struct mwPrivacyInfo privacy = {
-    .deny = FALSE,
-    .count = 0,
-    .users = NULL,
+    FALSE, /* deny  */
+    0,     /* count */
+    NULL,  /* users */
   };
 
   g_return_if_fail(gc != NULL);
@@ -5167,7 +5168,13 @@ mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
 
 
 static PurplePluginUiInfo mw_plugin_ui_info = {
-  .get_plugin_pref_frame = mw_plugin_get_plugin_pref_frame,
+  mw_plugin_get_plugin_pref_frame,
+  0,    /* page_num */
+  NULL, /* frame */
+  NULL,
+  NULL,
+  NULL,
+  NULL
 };
 
 
@@ -5262,7 +5269,7 @@ static void remote_group_multi_cleanup(gpointer ignore,
 				       PurpleRequestFields *fields) {
   
   PurpleRequestField *f;
-  const GList *l;
+  GList *l;
 
   f = purple_request_fields_get_field(fields, "group");
   l = purple_request_field_list_get_items(f);
@@ -5328,7 +5335,7 @@ static void remote_group_done(struct mwPurplePluginData *pd,
 static void remote_group_multi_cb(struct mwPurplePluginData *pd,
 				  PurpleRequestFields *fields) {
   PurpleRequestField *f;
-  const GList *l;
+  GList *l;
 
   f = purple_request_fields_get_field(fields, "group");
   l = purple_request_field_list_get_selected(f);
@@ -5648,30 +5655,39 @@ static void mw_plugin_destroy(PurplePlugin *plugin) {
   g_log_remove_handler("meanwhile", log_handler[1]);
 }
 
+static PurplePluginInfo mw_plugin_info =
+{
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
-static PurplePluginInfo mw_plugin_info = {
-  .magic           = PURPLE_PLUGIN_MAGIC,
-  .major_version   = PURPLE_MAJOR_VERSION,
-  .minor_version   = PURPLE_MINOR_VERSION,
-  .type            = PURPLE_PLUGIN_PROTOCOL,
-  .ui_requirement  = NULL,
-  .flags           = 0,
-  .dependencies    = NULL,
-  .priority        = PURPLE_PRIORITY_DEFAULT,
-  .id              = PLUGIN_ID,
-  .name            = PLUGIN_NAME,
-  .version         = VERSION,
-  .summary         = PLUGIN_SUMMARY,
-  .description     = PLUGIN_DESC,
-  .author          = PLUGIN_AUTHOR,
-  .homepage        = PLUGIN_HOMEPAGE,
-  .load            = mw_plugin_load,
-  .unload          = mw_plugin_unload,
-  .destroy         = mw_plugin_destroy,
-  .ui_info         = NULL,
-  .extra_info      = &mw_prpl_info,
-  .prefs_info      = &mw_plugin_ui_info,
-  .actions         = mw_plugin_actions,
+	PLUGIN_ID,                                        /**< id             */
+	PLUGIN_NAME,                                      /**< name           */
+	VERSION,                                          /**< version        */
+	PLUGIN_SUMMARY,                                   /**< summary        */
+	PLUGIN_DESC,                                      /**<  description    */
+	PLUGIN_AUTHOR,                                    /**< author         */
+	PLUGIN_HOMEPAGE,                                  /**< homepage       */
+
+	mw_plugin_load,                                   /**< load           */
+	mw_plugin_unload,                                 /**< unload         */
+	mw_plugin_destroy,                                /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&mw_prpl_info,                                    /**< extra_info     */
+	&mw_plugin_ui_info,                               /**< prefs_info     */
+	mw_plugin_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 

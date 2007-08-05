@@ -226,7 +226,7 @@ static void
 schedule_prefs_save(void)
 {
 	if (save_timer == 0)
-		save_timer = purple_timeout_add(5000, save_cb, NULL);
+		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
 
@@ -937,7 +937,7 @@ purple_prefs_set_path_list(const char *name, GList *value)
 
 		if(pref->type != PURPLE_PREF_PATH_LIST) {
 			purple_debug_error("prefs",
-					"purple_prefs_set_path_list: %s not a string list pref\n",
+					"purple_prefs_set_path_list: %s not a path list pref\n",
 					name);
 			return;
 		}
@@ -1323,6 +1323,25 @@ purple_prefs_disconnect_by_handle(void *handle)
 	g_return_if_fail(handle != NULL);
 
 	disco_callback_helper_handle(&prefs, handle);
+}
+
+GList *
+purple_prefs_get_children_names(const char *name)
+{
+	GList * list = NULL;
+	struct purple_pref *pref = find_pref(name), *child;
+	char sep[2] = "\0\0";;
+
+	if (pref == NULL)
+		return NULL;
+
+	if (name[strlen(name) - 1] != '/')
+		sep[0] = '/';
+	for (child = pref->first_child; child; child = child->sibling) {
+		list = g_list_append(list, g_strdup_printf("%s%s%s", name, sep, child->name));
+	}
+	return list;
+
 }
 
 void
