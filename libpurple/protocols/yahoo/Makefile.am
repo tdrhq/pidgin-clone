@@ -9,6 +9,8 @@ YAHOOSOURCES = \
 	yahoo.h \
 	yahoochat.h \
 	yahoochat.c \
+	yahoo_aliases.c \
+	yahoo_alisaes.h \
 	yahoo_auth.c \
 	yahoo_auth.h \
 	yahoo_crypt.h \
@@ -49,5 +51,6 @@ endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS)

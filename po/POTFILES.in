@@ -132,6 +132,14 @@ libpurple/protocols/silc/pk.c
 libpurple/protocols/silc/silc.c
 libpurple/protocols/silc/util.c
 libpurple/protocols/silc/wb.c
+libpurple/protocols/silc10/buddy.c
+libpurple/protocols/silc10/chat.c
+libpurple/protocols/silc10/ft.c
+libpurple/protocols/silc10/ops.c
+libpurple/protocols/silc10/pk.c
+libpurple/protocols/silc10/silc.c
+libpurple/protocols/silc10/util.c
+libpurple/protocols/silc10/wb.c
 libpurple/protocols/simple/simple.c
 libpurple/protocols/toc/toc.c
 libpurple/protocols/yahoo/yahoo.c
@@ -177,7 +185,10 @@ pidgin/gtkstatusbox.c
 pidgin/gtkutils.c
 pidgin/gtkwhiteboard.c
 pidgin/pidgincombobox.c
+pidgin/pidgin.h
 pidgin/pidginstock.c
+pidgin/pixmaps/emotes/default/22/default.theme.in
+pidgin/pixmaps/emotes/none/none.theme.in
 pidgin/plugins/cap/cap.c
 pidgin/plugins/contact_priority.c
 pidgin/plugins/convcolors.c
@@ -189,6 +200,7 @@ pidgin/plugins/gevolution/eds-utils.c
 pidgin/plugins/gevolution/gevolution.c
 pidgin/plugins/gevolution/gevo-util.c
 pidgin/plugins/gevolution/new_person_dialog.c
+pidgin/plugins/gtkbuddynote.c
 pidgin/plugins/gtk-signals-test.c
 pidgin/plugins/history.c
 pidgin/plugins/iconaway.c

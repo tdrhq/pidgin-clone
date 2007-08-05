@@ -52,6 +52,7 @@ Purple::BuddyList::Contact		T_PurpleObj
 Purple::BuddyList::Group			T_PurpleObj
 Purple::BuddyList::Node			T_PurpleObj
 Purple::BuddyList::NodeFlags		T_IV
+Purple::BuddyList::NodeType		T_IV
 Purple::BuddyList::UiOps			T_PurpleObj
 
 Purple::Cipher				T_PurpleObj
@@ -137,7 +138,9 @@ Purple::RoomlistFieldType			T_IV
 Purple::RoomlistRoomType			T_IV
 
 Purple::SavedStatus			T_PurpleObj
-Purple::SavedStatusSub			T_PurpleObj
+const Purple::SavedStatus			T_PurpleObj
+Purple::SavedStatus::Sub			T_PurpleObj
+const Purple::SavedStatus::Sub			T_PurpleObj
 Purple::SoundEventID			T_IV
 Purple::Sound::UiOps			T_PurpleObj
 

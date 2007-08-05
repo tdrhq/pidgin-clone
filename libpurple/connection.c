@@ -72,7 +72,7 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 	if (on && !gc->keepalive)
 	{
 		purple_debug_info("connection", "Activating keepalive.\n");
-		gc->keepalive = purple_timeout_add(30000, send_keepalive, gc);
+		gc->keepalive = purple_timeout_add_seconds(30, send_keepalive, gc);
 	}
 	else if (!on && gc->keepalive > 0)
 	{
@@ -161,7 +161,7 @@ void
 purple_connection_destroy(PurpleConnection *gc)
 {
 	PurpleAccount *account;
-	GSList *buddies, *tmp;
+	GSList *buddies;
 #if 0
 	GList *wins;
 #endif
@@ -197,11 +197,11 @@ purple_connection_destroy(PurpleConnection *gc)
 
 	/* Clear out the proto data that was freed in the prpl close method*/
 	buddies = purple_find_buddies(account, NULL);
-	for (tmp = buddies; tmp; tmp = tmp->next) {
-		PurpleBuddy *buddy = tmp->data;
+	while (buddies != NULL) {
+		PurpleBuddy *buddy = buddies->data;
 		buddy->proto_data = NULL;
+		buddies = g_slist_delete_link(buddies, buddies);
 	}
-	g_slist_free(buddies);
 
 	connections = g_list_remove(connections, gc);
 
@@ -436,7 +436,7 @@ purple_connection_error(PurpleConnection *gc, const char *text)
 	g_return_if_fail(gc   != NULL);
 
 	if (text == NULL) {
-		g_critical("purple_connection_error: check `text != NULL' failed");
+		purple_debug_error("connection", "purple_connection_error: check `text != NULL' failed");
 		text = _("Unknown error");
 	}
 

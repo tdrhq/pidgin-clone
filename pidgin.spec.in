@@ -6,7 +6,7 @@
 # When not doing betas comment this out
 # NOTE: %defines in spec files are evaluated in comments so the correct
 #       way to comment it out is to replace the % with #
-%define beta 7
+#define beta 7
 
 %if 0%{?beta}
 %define pidginver %(echo "@VERSION@"|sed -e 's/dev.*//; s/beta.*//')
@@ -26,6 +26,9 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
+BuildRequires: gtk2-devel
+
+%{!?_without_startupnotification:BuildRequires: startup-notification-devel}
 %{?_with_avahi:BuildRequires: avahi-compat-howl-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
 %{?_with_howl:BuildRequires: howl-devel}
@@ -49,11 +52,13 @@ BuildRequires: gnutls-devel
 # Mandrake 10.1 and lower || Mandrake 10.2 (and higher?)
 %if "%{_vendor}" == "MandrakeSoft" || "%{_vendor}" == "Mandrakesoft" || "%{_vendor}" == "Mandriva"
 # For Mandrake/Mandriva:
-BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
+BuildRequires: libnss3-devel, perl-devel
 Obsoletes:  libgaim-remote0
+%{!?_without_modularx:BuildRequires: libsm-devel, libxscrnsaver-devel}
 %else
+# For !Mandriva
+%{!?_without_modularx:BuildRequires: libSM-devel, libXScrnSaver-devel}
 # For SuSE, Red Hat, Fedora and others:
-BuildRequires: gtk2-devel
 %if "%{_vendor}" != "suse"
 # For Red Hat, Fedora and others:
 # let's assume RH & FC1 are the only brain-dead distros missing the
@@ -67,6 +72,10 @@ BuildRequires: mozilla-nss-devel
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
 
+Requires(pre): GConf2
+Requires(post): GConf2
+Requires(preun): GConf2
+
 Obsoletes: gaim
 Provides: gaim
 
@@ -74,6 +83,7 @@ Provides: gaim
 Summary:    Development headers, documentation, and libraries for Pidgin
 Group:      Applications/Internet
 Requires:   pidgin = %{version}, libpurple-devel = %{version}
+Requires:   gtk2-devel
 Requires:   pkgconfig
 Obsoletes:  gaim-devel
 Provides:   gaim-devel
@@ -86,12 +96,19 @@ Obsoletes:  gaim-tcl
 Obsoletes:  gaim-gadugadu
 Obsoletes:  pidgin-tcl < 2.0.0
 Obsoletes:  pidgin-silc < 2.0.0
+%{?_with_sasl:Requires:   cyrus-sasl-plain, cyrus-sasl-md5}
 
 %package -n libpurple-devel
 Summary:    Development headers, documentation, and libraries for libpurple
 Group:      Applications/Internet
 Requires:   libpurple = %{version}
 Requires:   pkgconfig
+%if "%{_vendor}" == "suse"
+# For SuSE:
+%{?_with_dbus:Requires: dbus-1-devel >= 0.35}
+%else
+%{?_with_dbus:Requires: dbus-devel >= 0.35}
+%endif
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package -n libpurple-bonjour
@@ -124,6 +141,7 @@ Requires:   libpurple = %{version}
 Summary:    Headers etc. for finch stuffs
 Group:      Applications/Internet
 Requires:   finch = %{version}, libpurple-devel = %{version}
+Requires:   ncurses-devel
 Requires:   pkgconfig
 %endif
 
@@ -207,8 +225,6 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
                                     %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
-                                    %{!?_without_silc:--with-silc-includes=%{_includedir}/silc} \
-                                    %{!?_without_silc:--with-silc-libs=%{_libdir}/silc} \
                                     %{?_without_tcl:--disable-tcl} \
                                     %{?_without_text:--disable-consoleui}
 
@@ -228,11 +244,11 @@ make DESTDIR=$RPM_BUILD_ROOT install
 
 # Delete files that we don't want to put in any of the RPMs
 rm -f $RPM_BUILD_ROOT%{_libdir}/finch/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/gnt/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/pidgin/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/purple/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/purple/liboscar.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/purple/libjabber.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/purple/private/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/liboscar.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libjabber.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
@@ -282,8 +298,6 @@ find $RPM_BUILD_ROOT%{_libdir}/finch -xtype f -print | \
 
 # files -f file can only take one filename :(
 cat %{name}.lang >> %{name}-%{version}-purpleplugins
-cat %{name}.lang >> %{name}-%{version}-pidginplugins
-cat %{name}.lang >> %{name}-%{version}-finchplugins
 
 %clean
 rm -rf %{buildroot}
@@ -291,9 +305,11 @@ rm -rf %{buildroot}
 %pre
 if [ "$1" -gt 1 -a -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
-    gconftool-2 --makefile-uninstall-rule \
-        %{_sysconfdir}/gconf/schemas/purple.schemas >/dev/null || :
-    killall -HUP gconfd-2 || :
+    if [ -f %{_sysconfdir}/gconf/schemas/purple.schemas ]; then
+        gconftool-2 --makefile-uninstall-rule \
+            %{_sysconfdir}/gconf/schemas/purple.schemas >/dev/null || :
+        killall -HUP gconfd-2 &> /dev/null || :
+    fi
 fi
 
 %post
@@ -301,8 +317,10 @@ if [ -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
     gconftool-2 --makefile-install-rule \
         %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
-    killall -HUP gconfd-2 || :
+    killall -HUP gconfd-2 &> /dev/null || :
 fi
+touch --no-create %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
 
 %post -n libpurple -p /sbin/ldconfig
 
@@ -313,8 +331,12 @@ if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
     gconftool-2 --makefile-uninstall-rule \
       %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
-    killall -HUP gconfd-2 || :
+    killall -HUP gconfd-2 &> /dev/null || :
 fi
+
+%postun
+touch --no-create %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
 
 %postun -n libpurple -p /sbin/ldconfig
 
@@ -419,6 +441,8 @@ fi
 %doc %{_mandir}/man1/finch.*
 %{_bindir}/finch
 %{_libdir}/libgnt.so.*
+%{_libdir}/gnt/irssi.so
+%{_libdir}/gnt/s.so
 
 %files -n finch-devel
 %defattr(-, root, root)
@@ -433,6 +457,39 @@ fi
 %endif
 
 %changelog
+* Thu Jul 12 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Don't hardcode silc header locations, rely on pkg-config for those,
+  because I think I broke non-pkg-config detection of older silc
+  toolkit.
+
+* Tue Jun 5 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add missing Requires for gtk2-devel, dbus-devel & ncurses-devel to
+  appropriate -devel subpackages
+
+* Sun May 27 2007 Stu Tomlinson <stu@nosnilmot.com>
+- add cyrus-sasl-plain & cyrus-sasl-md5 to Requires
+
+* Thu May 24 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Silence errors from gtk-update-icon-cache
+- Change Mandriva build dependencies to reflect the correct (lower case)
+  names for libSM-devel & libXScrnSaver-devel (Sunny Dubey)
+
+* Thu May 10 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add scriptlet Requires for GConf2 to fix schema installation
+- Silence harmless errors when gconfd-2 is not running at install time
+
+* Thu May 3 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add missing BuildRequires: startup-notification-devel, if you really
+  need to build on a distro without it use --without startupnotification
+- Add BuildRequires: libSM-devel, libXScrnSaver-devel for distros with
+  modular X. For those without, build with --without modularx
+- Change Mandriva BuildRequires to gkt2-devel (reported by Götz Waschk)
+
+* Tue May 1 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Run gtk-update-icon-cache on installation/uninstallation
+- Guard against errors when upgrading from Gaim/Pidgin 1.5.x which had
+  no schemas file
+
 * Sun Apr 29 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Update to reflect perl Purple::GtkUI -> Pidgin change
 

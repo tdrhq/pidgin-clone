@@ -54,7 +54,9 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
  */
 #define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0, 0}
 
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "blist.h"
 #include "conversation.h"
@@ -155,6 +157,12 @@ typedef enum
 	 * Gadu-Gadu doesn't need a screenname to register new account.
 	 */
 	OPT_PROTO_REGISTER_NOSCREENNAME = 0x00000200,
+
+	/**
+	 * Indicates that slash commands are native to this protocol.
+	 * Used as a hint that unknown commands should not be sent as messages.
+	 */
+	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
 
 } PurpleProtocolOptions;
 
@@ -370,7 +378,7 @@ void purple_prpl_got_account_login_time(PurpleAccount *account, time_t login_tim
  *                  beginning with the value for @a attr_id.
  */
 void purple_prpl_got_account_status(PurpleAccount *account,
-								  const char *status_id, ...);
+								  const char *status_id, ...) G_GNUC_NULL_TERMINATED;
 /**
  * Notifies Purple that a user's idle state and time have changed.
  *
@@ -410,7 +418,7 @@ void purple_prpl_got_user_login_time(PurpleAccount *account, const char *name,
  *                  beginning with the value for @a attr_id.
  */
 void purple_prpl_got_user_status(PurpleAccount *account, const char *name,
-							   const char *status_id, ...);
+							   const char *status_id, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * Notifies libpurple that a user's status has been deactivated

@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+		mdns_win32.c \
 		Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
@@ -8,12 +9,18 @@ BONJOURSOURCES = \
 	bonjour.h \
 	buddy.c \
 	buddy.h \
-	dns_sd.c \
-	dns_sd.h \
+	dns_sd_proxy.h \
 	jabber.c \
-	jabber.h
+	jabber.h \
+	mdns_common.c \
+	mdns_common.h \
+	mdns_howl.c \
+	mdns_interface.h \
+	mdns_types.h \
+	parser.c \
+	parser.h
 
-AM_CFLAGS = $(st)
+AM_CFLAGS = $(st) -DUSE_BONJOUR_HOWL
 
 libbonjour_la_LDFLAGS = -module -avoid-version
 
@@ -30,13 +37,15 @@ else
 st =
 pkg_LTLIBRARIES       = libbonjour.la
 libbonjour_la_SOURCES = $(BONJOURSOURCES)
-libbonjour_la_LIBADD   = $(GLIB_LIBS) $(HOWL_LIBS)
+libbonjour_la_LIBADD   = $(GLIB_LIBS) $(HOWL_LIBS) $(LIBXML_LIBS)
 
 endif
 
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
-	$(HOWL_CFLAGS)
+	$(HOWL_CFLAGS) \
+	$(LIBXML_CFLAGS)

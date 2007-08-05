@@ -1,9 +1,10 @@
 /**
- * @file group_misc.c
+ * @file gntsound.c GNT Sound API
+ * @ingroup finch
  *
- * purple
+ * finch
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Finch is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -21,9 +22,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "internal.h"
+#include "gntsound.h"
 
-#include "debug.h"
+const char *finch_sound_get_active_profile(void)
+{
+	return NULL;
+}
 
-#include "buddy_status.h"
-#include "group_misc.h"
-#include "utils.h"
+void finch_sound_set_active_profile(const char *name)
+{
+}
+
+GList *finch_sound_get_profiles(void)
+{
+	return NULL;
+}
+
+PurpleSoundUiOps *finch_sound_get_ui_ops(void)
+{
+	return NULL;
+}
+
+void finch_sounds_show_all(void)
+{
+}
+

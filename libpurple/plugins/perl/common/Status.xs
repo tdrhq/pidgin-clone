@@ -113,16 +113,6 @@ Purple::Status
 purple_presence_get_active_status(presence)
 	Purple::Presence presence
 
-void
-purple_presence_get_buddies(presence)
-	Purple::Presence presence
-PREINIT:
-	const GList *l;
-PPCODE:
-	for (l = purple_presence_get_buddies(presence); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::BuddyList::Buddy")));
-	}
-
 const char *
 purple_presence_get_chat_user(presence)
 	Purple::Presence presence
@@ -152,7 +142,7 @@ void
 purple_presence_get_statuses(presence)
 	Purple::Presence presence
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_presence_get_statuses(presence); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Status")));
@@ -195,11 +185,6 @@ purple_presence_new_for_buddy(buddy)
 Purple::Presence
 purple_presence_new_for_conv(conv)
 	Purple::Conversation conv
-
-void
-purple_presence_remove_buddy(presence, buddy)
-	Purple::Presence presence
-	Purple::BuddyList::Buddy buddy
 
 void
 purple_presence_set_idle(presence, idle, idle_time)
@@ -407,7 +392,7 @@ void
 purple_status_type_get_attrs(status_type)
 	Purple::StatusType status_type
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_status_type_get_attrs(status_type); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::StatusAttr")));

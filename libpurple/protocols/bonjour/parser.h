@@ -1,5 +1,5 @@
 /**
- * @file group_misc.h
+ * @file parser.h Bonjour Jabber XML parser functions
  *
  * purple
  *
@@ -21,11 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#ifndef _PURPLE_BONJOUR_PARSER_H_
+#define _PURPLE_BONJOUR_PARSER_H_
 
-#ifndef _QQ_GROUP_MISC_H_
-#define _QQ_GROUP_MISC_H_
+#include "buddy.h"
+#include "jabber.h"
 
-#include <glib.h>
-#include "group.h"
+void bonjour_parser_setup(BonjourJabberConversation *bconv);
+void bonjour_parser_process(PurpleBuddy *pb, const char *buf, int len);
 
-#endif
+#endif /* _PURPLE_BONJOUR_PARSER_H_ */

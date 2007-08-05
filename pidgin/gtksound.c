@@ -370,12 +370,12 @@ bus_call (GstBus     *bus,
 		break;
 	case GST_MESSAGE_ERROR:
 		gst_message_parse_error(msg, &err, NULL);
-		purple_debug_error("gstreamer", err->message);
+		purple_debug_error("gstreamer", "%s\n", err->message);
 		g_error_free(err);
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);
-		purple_debug_warning("gstreamer", err->message);
+		purple_debug_warning("gstreamer", "%s\n", err->message);
 		g_error_free(err);
 		break;
 	default:
@@ -418,6 +418,7 @@ pidgin_sound_play_file(const char *filename)
 	if (!strcmp(method, "custom")) {
 		const char *sound_cmd;
 		char *command;
+		char *esc_filename;
 		GError *error = NULL;
 
 		sound_cmd = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/sound/command");
@@ -429,16 +430,19 @@ pidgin_sound_play_file(const char *filename)
 			return;
 		}
 
+		esc_filename = g_shell_quote(filename);
+
 		if(strstr(sound_cmd, "%s"))
-			command = purple_strreplace(sound_cmd, "%s", filename);
+			command = purple_strreplace(sound_cmd, "%s", esc_filename);
 		else
-			command = g_strdup_printf("%s %s", sound_cmd, filename);
+			command = g_strdup_printf("%s %s", sound_cmd, esc_filename);
 
 		if(!g_spawn_command_line_async(command, &error)) {
 			purple_debug_error("gtksound", "sound command could not be launched: %s\n", error->message);
 			g_error_free(error);
 		}
 
+		g_free(esc_filename);
 		g_free(command);
 		return;
 	}
@@ -458,6 +462,12 @@ pidgin_sound_play_file(const char *filename)
 		}
 	} else if (!strcmp(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
+		if (!sink) {
+			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
+			return;
+		}
+	} else if (!strcmp(method, "alsa")) {
+		sink = gst_element_factory_make("alsasink", "sink");
 		if (!sink) {
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;

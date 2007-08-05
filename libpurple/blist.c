@@ -35,8 +35,6 @@
 #include "value.h"
 #include "xmlnode.h"
 
-#define PATHSIZE 1024
-
 static PurpleBlistUiOps *blist_ui_ops = NULL;
 
 static PurpleBuddyList *purplebuddylist = NULL;
@@ -365,7 +363,7 @@ void
 purple_blist_schedule_save()
 {
 	if (save_timer == 0)
-		save_timer = purple_timeout_add(5000, save_cb, NULL);
+		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
 
@@ -1774,7 +1772,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 
 	node = (PurpleBlistNode *)buddy;
 	cnode = node->parent;
-	gnode = cnode->parent;
+	gnode = (cnode != NULL) ? cnode->parent : NULL;
 	contact = (PurpleContact *)cnode;
 	group = (PurpleGroup *)gnode;
 
@@ -1783,35 +1781,37 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 		node->prev->next = node->next;
 	if (node->next)
 		node->next->prev = node->prev;
-	if (cnode->child == node)
+	if ((cnode != NULL) && (cnode->child == node))
 		cnode->child = node->next;
 
 	/* Adjust size counts */
-	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
-		contact->online--;
-		if (contact->online == 0)
-			group->online--;
+	if (contact != NULL) {
+		if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
+			contact->online--;
+			if (contact->online == 0)
+				group->online--;
+		}
+		if (purple_account_is_connected(buddy->account)) {
+			contact->currentsize--;
+			if (contact->currentsize == 0)
+				group->currentsize--;
+		}
+		contact->totalsize--;
+
+		/* Re-sort the contact */
+		if (cnode->child && contact->priority == buddy) {
+			purple_contact_invalidate_priority_buddy(contact);
+			if (ops && ops->update)
+				ops->update(purplebuddylist, cnode);
+		}
 	}
-	if (purple_account_is_connected(buddy->account)) {
-		contact->currentsize--;
-		if (contact->currentsize == 0)
-			group->currentsize--;
-	}
-	contact->totalsize--;
 
 	purple_blist_schedule_save();
-
-	/* Re-sort the contact */
-	if (cnode->child && contact->priority == buddy) {
-		purple_contact_invalidate_priority_buddy(contact);
-		if (ops && ops->update)
-			ops->update(purplebuddylist, cnode);
-	}
 
 	/* Remove this buddy from the buddies hash table */
 	hb.name = g_strdup(purple_normalize(buddy->account, buddy->name));
 	hb.account = buddy->account;
-	hb.group = ((PurpleBlistNode*)buddy)->parent->parent;
+	hb.group = gnode;
 	g_hash_table_remove(purplebuddylist->buddies, &hb);
 	g_free(hb.name);
 
@@ -1825,7 +1825,6 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	/* Delete the node */
 	purple_buddy_icon_unref(buddy->icon);
 	g_hash_table_destroy(buddy->node.settings);
-	purple_presence_remove_buddy(buddy->presence, buddy);
 	purple_presence_destroy(buddy->presence);
 	g_free(buddy->name);
 	g_free(buddy->alias);
@@ -1842,7 +1841,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	while (g_source_remove_by_user_data((gpointer *)buddy));
 
 	/* If the contact is empty then remove it */
-	if (!cnode->child)
+	if ((contact != NULL) && !cnode->child)
 		purple_blist_remove_contact(contact);
 }
 
@@ -2037,13 +2036,18 @@ const char *purple_chat_get_name(PurpleChat *chat)
 	struct proto_chat_entry *pce;
 	GList *parts;
 	char *ret;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_val_if_fail(chat != NULL, NULL);
 
 	if ((chat->alias != NULL) && (*chat->alias != '\0'))
 		return chat->alias;
 
-	parts = PURPLE_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->chat_info(chat->account->gc);
+	prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	parts = prpl_info->chat_info(chat->account->gc);
 	pce = parts->data;
 	ret = g_hash_table_lookup(chat->components, pce->identifier);
 	g_list_foreach(parts, (GFunc)g_free, NULL);
@@ -2406,6 +2410,13 @@ gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account)
 	return FALSE;
 }
 
+const char *purple_group_get_name(PurpleGroup *group)
+{
+	g_return_val_if_fail(group != NULL, NULL);
+
+	return group->name;
+}
+
 void
 purple_blist_request_add_buddy(PurpleAccount *account, const char *username,
 							 const char *group, const char *alias)
@@ -2485,6 +2496,13 @@ purple_blist_node_get_flags(PurpleBlistNode *node)
 	g_return_val_if_fail(node != NULL, 0);
 
 	return node->flags;
+}
+
+PurpleBlistNodeType
+purple_blist_node_get_type(PurpleBlistNode *node)
+{
+	g_return_val_if_fail(node != NULL, PURPLE_BLIST_OTHER_NODE);
+	return node->type;
 }
 
 void

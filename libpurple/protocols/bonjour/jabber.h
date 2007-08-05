@@ -26,10 +26,12 @@
 #ifndef _BONJOUR_JABBER_H_
 #define _BONJOUR_JABBER_H_
 
-#include "account.h"
+#include <libxml/parser.h>
 
-#define STREAM_END "</stream:stream>"
-#define DOCTYPE "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\">"
+#include "xmlnode.h"
+
+#include "account.h"
+#include "circbuffer.h"
 
 typedef struct _BonjourJabber
 {
@@ -42,10 +44,15 @@ typedef struct _BonjourJabber
 typedef struct _BonjourJabberConversation
 {
 	gint socket;
-	gint watcher_id;
-	gchar* buddy_name;
-	gboolean stream_started;
-	gint message_id;
+	guint rx_handler;
+	guint tx_handler;
+	PurpleCircBuffer *tx_buf;
+	gboolean sent_stream_start;
+	gboolean recv_stream_start;
+	PurpleProxyConnectData *connect_data;
+	gpointer stream_data;
+	xmlParserCtxt *context;
+	xmlnode *current;
 } BonjourJabberConversation;
 
 /**
@@ -58,7 +65,13 @@ gint bonjour_jabber_start(BonjourJabber *data);
 
 int bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body);
 
-void bonjour_jabber_close_conversation(BonjourJabber *data, PurpleBuddy *gb);
+void bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
+
+void bonjour_jabber_stream_started(PurpleBuddy *pb);
+
+void bonjour_jabber_stream_ended(PurpleBuddy *pb);
+
+void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet);
 
 void bonjour_jabber_stop(BonjourJabber *data);
 

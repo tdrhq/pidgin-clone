@@ -69,6 +69,7 @@ typedef PurpleAccountUserSplit *		Purple__Account__UserSplit;
 /* blist.h */
 typedef PurpleBlistNode *			Purple__BuddyList__Node;
 typedef PurpleBlistNodeFlags		Purple__BuddyList__NodeFlags;
+typedef PurpleBlistNodeType		Purple__BuddyList__NodeType;
 typedef PurpleBlistUiOps *		Purple__BuddyList__UiOps;
 typedef PurpleBuddyList *			Purple__BuddyList;
 typedef PurpleBuddy *			Purple__BuddyList__Buddy;
@@ -236,7 +237,7 @@ typedef PurpleRoomlistUiOps *		Purple__Roomlist__UiOps;
 
 /* savedstatuses.h */
 typedef PurpleSavedStatus *		Purple__SavedStatus;
-typedef PurpleSavedStatusSub *		Purple__SavedStatusSub;
+typedef PurpleSavedStatusSub *		Purple__SavedStatus__Sub;
 
 /* sound.h */
 typedef PurpleSoundEventID		Purple__SoundEventID;

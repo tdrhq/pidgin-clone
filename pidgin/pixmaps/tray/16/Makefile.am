@@ -1,8 +1,12 @@
+SUBDIRS = scalable
+
 TRAY_ICONS =	tray-away.png \
 		tray-busy.png \
+		tray-invisible.png \
 		tray-connecting.png \
 		tray-extended-away.png \
 		tray-message.png \
+		tray-new-im.png \
 		tray-offline.png \
 		tray-online.png
 
@@ -12,6 +16,7 @@ EXTRA_DIST = $(TRAY_ICONS) \
 	busy_4bit.ico \
 	connecting_4bit.ico \
 	extended-away_4bit.ico \
+	invisible_4bit.ico \
 	message_4bit.ico \
 	offline_4bit.ico
 

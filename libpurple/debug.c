@@ -41,44 +41,6 @@ static PurpleDebugUiOps *debug_ui_ops = NULL;
  */
 static gboolean debug_enabled = FALSE;
 
-/*
- * Following added to make it easier to track console debug output.
- * This can be nuked at some point in the future when it is not needed.
- *
- * -ecoffey
- *
- * BEGIN NUKE
- */
-
-static GList *allowed_categories = NULL;
-
-void purple_debug_add_allowed_category(gchar *cat)
-{
-	if (!cat) {
-		allowed_categories = NULL;
-	} else {
-		allowed_categories = g_list_append(allowed_categories, (gpointer)cat);
-	}
-}
-
-static gboolean purple_debug_category_allowed(const char *cat)
-{
-	GList *iter;
-	if (!allowed_categories)
-		return TRUE;
-		
-	for(iter = allowed_categories; iter; iter = iter->next) {
-		if (strcmp(cat, (gchar*)iter->data) == 0)
-			return TRUE;
-	}
-	
-	return FALSE;
-}
-
-/*
- * END NUKE
- */
-
 static void
 purple_debug_vargs(PurpleDebugLevel level, const char *category,
 				 const char *format, va_list args)
@@ -98,25 +60,13 @@ purple_debug_vargs(PurpleDebugLevel level, const char *category,
 	arg_s = g_strdup_vprintf(format, args);
 
 	if (debug_enabled) {
-	
 		gchar *ts_s;
-	
-		if (!purple_debug_category_allowed(category)) { /* Can be NUKED with the above */
-			g_free(arg_s);
-			return;
-		}
+		const char *mdate;
+		time_t mtime = time(NULL);
 
-		if ((category != NULL) &&
-			(purple_prefs_exists("/purple/debug/timestamps")) &&
-			(purple_prefs_get_bool("/purple/debug/timestamps"))) {
-			const char *mdate;
 
-			time_t mtime = time(NULL);
-			mdate = purple_utf8_strftime("%H:%M:%S", localtime(&mtime));
-			ts_s = g_strdup_printf("(%s) ", mdate);
-		} else {
-			ts_s = g_strdup("");
-		}
+		mdate = purple_utf8_strftime("%H:%M:%S", localtime(&mtime));
+		ts_s = g_strdup_printf("(%s) ", mdate);
 
 		if (category == NULL)
 			g_print("%s%s", ts_s, arg_s);
@@ -236,8 +186,9 @@ purple_debug_init(void)
 	purple_prefs_add_none("/purple/debug");
 
 	/*
-	 * This pref is currently used by both the console
-	 * output and the debug window output.
+	 * This pref is obsolete and no longer referenced anywhere. It only
+	 * survives here because it would be an API break if we removed it.
+	 * Remove this when we get to 3.0.0 :)
 	 */
-	purple_prefs_add_bool("/purple/debug/timestamps", FALSE);
+	purple_prefs_add_bool("/purple/debug/timestamps", TRUE);
 }

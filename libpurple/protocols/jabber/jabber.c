@@ -463,7 +463,11 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 	JabberStream *js = gc->proto_data;
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Couldn't connect to host"));
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+				error);
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -508,13 +512,13 @@ static void tls_init(JabberStream *js)
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->gc);
 }
 
-static void jabber_login_connect(JabberStream *js, const char *server, int port)
+static void jabber_login_connect(JabberStream *js, const char *fqdn, const char *host, int port)
 {
 #ifdef HAVE_CYRUS_SASL
-	js->serverFQDN = g_strdup(server);
+	js->serverFQDN = g_strdup(fqdn);
 #endif
 
-	if (purple_proxy_connect(js->gc, js->gc->account, server,
+	if (purple_proxy_connect(js->gc, js->gc->account, host,
 			port, jabber_login_callback, js->gc) == NULL)
 		purple_connection_error(js->gc, _("Unable to create socket"));
 }
@@ -527,10 +531,10 @@ static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
 	js->srv_query_data = NULL;
 
 	if(results) {
-		jabber_login_connect(js, resp->hostname, resp->port);
+		jabber_login_connect(js, resp->hostname, resp->hostname, resp->port);
 		g_free(resp);
 	} else {
-		jabber_login_connect(js, js->user->domain,
+		jabber_login_connect(js, js->user->domain, js->user->domain,
 			purple_account_get_int(js->gc->account, "port", 5222));
 	}
 }
@@ -556,7 +560,6 @@ jabber_login(PurpleAccount *account)
 			g_free, (GDestroyNotify)jabber_buddy_free);
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_chat_free);
-	js->chat_servers = g_list_append(NULL, g_strdup("conference.jabber.org"));
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
@@ -565,7 +568,12 @@ jabber_login(PurpleAccount *account)
 		purple_connection_error(gc, _("Invalid XMPP ID"));
 		return;
 	}
-
+	
+	if (!js->user->domain || *(js->user->domain) == '\0') {
+		purple_connection_error(gc, _("Invalid XMPP ID. Domain must be set."));
+		return;
+	}
+	
 	if(!js->user->resource) {
 		char *me;
 		js->user->resource = g_strdup("Home");
@@ -600,7 +608,7 @@ jabber_login(PurpleAccount *account)
 	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(!js->gsc) {
 		if(connect_server[0]) {
-			jabber_login_connect(js, connect_server, purple_account_get_int(account, "port", 5222));
+			jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222));
 		} else {
 			js->srv_query_data = purple_srv_resolve("xmpp-client",
 					"tcp", js->user->domain, srv_resolved_cb, js);
@@ -945,7 +953,7 @@ void jabber_register_account(PurpleAccount *account)
 
 	if(!js->gsc) {
 		if (connect_server[0]) {
-			jabber_login_connect(js, server,
+			jabber_login_connect(js, js->user->domain, server,
 			                     purple_account_get_int(account,
 			                                          "port", 5222));
 		} else {
@@ -1055,12 +1063,13 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_REINITIALIZING:
 			purple_connection_update_progress(js->gc, _("Re-initializing Stream"),
 					(js->gsc ? 7 : 4), JABBER_CONNECT_STEPS);
-			
+
 			/* The stream will be reinitialized later, in jabber_recv_cb_ssl() */
 			js->reinit = TRUE;
-			
+
 			break;
 		case JABBER_STREAM_CONNECTED:
+			/* now we can alert the core that we're ready to send status */
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			jabber_disco_items_server(js);
 			break;
@@ -1107,9 +1116,11 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 
 char *jabber_status_text(PurpleBuddy *b)
 {
-	JabberBuddy *jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
-			FALSE);
 	char *ret = NULL;
+	JabberBuddy *jb = NULL;
+	
+	if (b->account->gc && b->account->gc->proto_data)
+		jb = jabber_buddy_find(b->account->gc->proto_data, b->name, FALSE);
 
 	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
@@ -1358,11 +1369,13 @@ static void jabber_password_change(PurplePluginAction *action)
 	field = purple_request_field_string_new("password1", _("Password"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("password2", _("Password (again)"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(js->gc, _("Change XMPP Password"),
@@ -1605,6 +1618,10 @@ static PurpleCmdRet jabber_cmd_chat_config(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
+
+	if (!chat)
+		return PURPLE_CMD_RET_FAILED;
+
 	jabber_chat_request_room_configure(chat);
 	return PURPLE_CMD_RET_OK;
 }
@@ -1613,6 +1630,10 @@ static PurpleCmdRet jabber_cmd_chat_register(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
+
+	if (!chat)
+		return PURPLE_CMD_RET_FAILED;
+
 	jabber_chat_register(chat);
 	return PURPLE_CMD_RET_OK;
 }
@@ -1621,6 +1642,10 @@ static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
+
+	if (!chat)
+		return PURPLE_CMD_RET_FAILED;
+
 	jabber_chat_change_topic(chat, args ? args[0] : NULL);
 	return PURPLE_CMD_RET_OK;
 }
@@ -1630,7 +1655,7 @@ static PurpleCmdRet jabber_cmd_chat_nick(PurpleConversation *conv,
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 
-	if(!args || !args[0])
+	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
 	jabber_chat_change_nick(chat, args[0]);
@@ -1641,6 +1666,10 @@ static PurpleCmdRet jabber_cmd_chat_part(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
+
+	if (!chat)
+		return PURPLE_CMD_RET_FAILED;
+
 	jabber_chat_part(chat, args ? args[0] : NULL);
 	return PURPLE_CMD_RET_OK;
 }
@@ -1650,7 +1679,7 @@ static PurpleCmdRet jabber_cmd_chat_ban(PurpleConversation *conv,
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 
-	if(!args || !args[0])
+	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
 	if(!jabber_chat_ban_user(chat, args[0], args[1])) {
@@ -1666,7 +1695,7 @@ static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 
-	if (!args || !args[0] || !args[1])
+	if (!chat || !args || !args[0] || !args[1])
 		return PURPLE_CMD_RET_FAILED;
 
 	if (strcmp(args[1], "owner") != 0 && 
@@ -1691,7 +1720,7 @@ static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 {
 	JabberChat *chat;
 
-	if (!args || !args[0] || !args[1])
+	if (!chat || !args || !args[0] || !args[1])
 		return PURPLE_CMD_RET_FAILED;
 
 	if (strcmp(args[1], "moderator") != 0 &&
@@ -1732,7 +1761,7 @@ static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	GHashTable *components;
 
-	if(!args || !args[0])
+	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
@@ -1754,7 +1783,7 @@ static PurpleCmdRet jabber_cmd_chat_kick(PurpleConversation *conv,
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 
-	if(!args || !args[0])
+	if(!chat || !args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
 
 	if(!jabber_chat_kick_user(chat, args[0], args[1])) {
@@ -1770,6 +1799,9 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	char *who;
+
+	if (!chat)
+		return PURPLE_CMD_RET_FAILED;
 
 	who = g_strdup_printf("%s@%s/%s", chat->room, chat->server, args[0]);
 
