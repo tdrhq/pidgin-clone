@@ -3,6 +3,11 @@ import re
 import string
 
 
+def convertname(name):
+	newname = ""
+	for w in name.split("-"):
+		newname += w.capitalize()
+	return newname
 
 def parse_signal_register_calls(input):
 	signal_reg = re.compile(".*purple_signal_register.*")
@@ -74,5 +79,45 @@ def parse_signal_register_details(signal_regs):
 	
 input = iter(sys.stdin)
 
+head = """
+using System;
+using System.Runtime.InteropServices;
+
+namespace Purple {
+	public class %s {
+"""
+
+print head % (sys.argv[1])
+
+from monotypes import *
+
 for k, v in parse_signal_register_details(parse_signal_register_calls(input)).items():
-	print k, v
+	event_name = "On" + convertname(k)
+	delegate_name = convertname(k) + "Handle";
+
+	output = "\t\tpublic static Event " + event_name + " = new Event(GetHandle(), \"" + k + "\");\n";
+
+	output += "\t\tpublic delegate "
+
+	ret_type = v[0]
+
+	output += types[ret_type] + " " + delegate_name + "("
+
+	if v[1:] == []:
+		output += ");"
+	else:
+		i = 1
+		for t in v[1:]:
+			try:
+				output += types[t] + " arg" + str(i) + ", "
+				i += 1
+			except KeyError:
+				output = None
+				break
+
+	if output:
+		output = re.sub(", $", ");", output)
+		print output + "\n"
+
+print "\t}\n}"
+	
