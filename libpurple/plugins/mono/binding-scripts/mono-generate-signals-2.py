@@ -80,11 +80,8 @@ def parse_signal_register_details(signal_regs):
 input = iter(sys.stdin)
 
 head = """
-using System;
-using System.Runtime.InteropServices;
-
 namespace Purple {
-	public class %s {
+	public partial class %s {
 """
 
 print head % (sys.argv[1])

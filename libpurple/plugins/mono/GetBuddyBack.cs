@@ -16,6 +16,11 @@ public class GetBuddyBack : Plugin
 		Debug.debug(Debug.INFO, "buddyback", "buddy " + buddy.Alias + " went from " + oldstatus.Id + " to " + newstatus.Id + "\n");
 		Debug.debug(Debug.INFO, "buddyback", "account: " + buddy.PAccount.Username + ", " + buddy.PAccount.ProtocolId + "\n");
 	}
+
+	public void BuddySignedOn(Buddy b)
+	{
+		Debug.debug(Debug.INFO, "buddyback", "buddy: " + buddy.Alias + " signed on\n");
+	}
 	
 	public override void Load()
 	{
@@ -23,6 +28,7 @@ public class GetBuddyBack : Plugin
 		
 		//BuddyList.OnBuddyStatusChanged.connect(this.Handle, new Signal.VOID__POINTER_POINTER_POINTER(HandleSig));
 		BuddyList.OnBuddyStatusChanged.connect(this.Handle, new BuddyList.BuddyStatusChangedHandle(HandleSig));
+		BuddyList.OnBuddySignedOn.connect(this.Handle, new BuddyList.BuddySignedOnHandle(BuddySignedOn));
 	}
 	
 	public override void Unload()

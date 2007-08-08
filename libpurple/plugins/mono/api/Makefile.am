@@ -5,6 +5,7 @@ mono_sources = \
 	ObjectManager.cs \
 	BlistNode.cs \
 	BuddyList.cs \
+	BuddyList.Signals.cs \
 	Buddy.cs \
 	Contact.cs \
 	Debug.cs \
