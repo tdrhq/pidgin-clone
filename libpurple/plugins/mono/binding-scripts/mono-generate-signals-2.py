@@ -10,6 +10,10 @@ def convertname(name):
 	return newname
 
 def parse_signal_register_calls(input):
+	"""
+	Greps input for purpe_signal_register calls, and collapses calls into a single string
+	and returns them in a list
+	"""
 	signal_reg = re.compile(".*purple_signal_register.*")
 	end_call = re.compile(".*\);")
 
@@ -40,6 +44,9 @@ def parse_signal_register_calls(input):
 
 
 def parse_signal_register_details(signal_regs):
+	"""
+	Parses a group of "purple_signal_register" calls into a dict of the form "signal-name" -> [return_type, args]
+	"""
 	func_parse = re.compile("purple_signal_register\(handle\s*,\s*\"([A-Za-z0-9_-]+)\"\s*,\s*([A-Za-z0-9_-]+)\s*,\s*(.+)\s*,\s*([0-9]+)\s*,?\s*(.*)\s*(\);)$");
 
 	return_type_parse = re.compile("(purple_value_new\(PURPLE_TYPE_SUBTYPE,|purple_value_new\()?\s*([A-Za-z_-]+)")
@@ -57,7 +64,7 @@ def parse_signal_register_details(signal_regs):
 
 			return_type_m = return_type_parse.match(return_type_str)
 
-			signals[signal_name] = [return_type_m.group(2)]
+			signals[signal_name] = {"types": [return_type_m.group(2)], "marshall": marshall}
 
 			#print "Parsing signal: " + signal_name
 
@@ -71,50 +78,74 @@ def parse_signal_register_details(signal_regs):
 				if v:
 					for g in v.groups():
 						if g and g != "PURPLE_TYPE_SUBTYPE" and g != "PURPLE_TYPE_BOXED":
-							signals[signal_name].append(g)
+							signals[signal_name]["types"].append(g)
 
 	return signals
 
 
 	
-input = iter(sys.stdin)
 
-head = """
+
+from monotypes import *
+
+def write_events_and_delegates(signals, classname, out):
+	"""
+	Creates a C# class with Events, and delegate handles
+
+	signals: dictionary in the form of "signal-name" -> [return type, types]"
+	classname: desired C# classname
+	out: output to write to
+	"""
+
+	head = """
 namespace Purple {
 	public partial class %s {
 """
 
-print head % (sys.argv[1])
+	out.write(head % (classname))
 
-from monotypes import *
+	for k, d in signals:
+		event_name = "On" + convertname(k)
+		delegate_name = convertname(k) + "Handle";
 
-for k, v in parse_signal_register_details(parse_signal_register_calls(input)).items():
-	event_name = "On" + convertname(k)
-	delegate_name = convertname(k) + "Handle";
+		output = "\t\tpublic static Event " + event_name + " = new Event(GetHandle(), \"" + k + "\");\n";
 
-	output = "\t\tpublic static Event " + event_name + " = new Event(GetHandle(), \"" + k + "\");\n";
+		output += "\t\tpublic delegate "
 
-	output += "\t\tpublic delegate "
+		v = d["types"]
 
-	ret_type = v[0]
+		ret_type = v[0]
 
-	output += types[ret_type] + " " + delegate_name + "("
+		output += types[ret_type] + " " + delegate_name + "("
 
-	if v[1:] == []:
-		output += ");"
-	else:
-		i = 1
-		for t in v[1:]:
-			try:
-				output += types[t] + " arg" + str(i) + ", "
-				i += 1
-			except KeyError:
-				output = None
-				break
+		if v[1:] == []:
+			output += ");"
+		else:
+			i = 1
+			for t in v[1:]:
+				try:
+					output += types[t] + " arg" + str(i) + ", "
+					i += 1
+				except KeyError:
+					output = None
+					break
 
-	if output:
-		output = re.sub(", $", ");", output)
-		print output + "\n"
+		if output:
+			output = re.sub(", $", ");", output)
+			out.write(output + "\n\n")
 
-print "\t}\n}"
+	out.write("\t}\n}")
 	
+
+def write_marshalls(signals, out):
+	"""
+	signals: dict in the form of "signal-name" -> [return type, arg types]
+	out: output to write to
+	"""
+
+
+
+input = iter(sys.stdin)
+
+write_events_and_delegates(parse_signal_register_details(parse_signal_register_calls(input)).items(), sys.argv[1], sys.stdout)
+

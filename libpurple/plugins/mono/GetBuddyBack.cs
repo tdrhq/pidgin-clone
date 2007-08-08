@@ -17,7 +17,7 @@ public class GetBuddyBack : Plugin
 		Debug.debug(Debug.INFO, "buddyback", "account: " + buddy.PAccount.Username + ", " + buddy.PAccount.ProtocolId + "\n");
 	}
 
-	public void BuddySignedOn(Buddy b)
+	public void BuddySignedOn(Buddy buddy)
 	{
 		Debug.debug(Debug.INFO, "buddyback", "buddy: " + buddy.Alias + " signed on\n");
 	}
