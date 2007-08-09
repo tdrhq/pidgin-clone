@@ -58,7 +58,7 @@ static void historize_log_read_cb(char *text, PurpleLogReadFlags *flags, void *d
 
 	imhtml_text = gtk_imhtml_get_markup((GtkIMHtml *)gtkconv->imhtml);
 
-	if (imhtml_text != NULL && strcmp(imhtml_text, "")) {
+	if (imhtml_text != NULL && *imhtml_text) {
 		text_backup = strdup(imhtml_text);
 		gtk_imhtml_clear((GtkIMHtml *)gtkconv->imhtml);
 	}
