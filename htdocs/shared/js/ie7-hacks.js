@@ -5,9 +5,7 @@ function search(element) {
     var type = null;
     // If the divs are "boxes", boxify them (mimick :before/:after)
     if (divs[i].className.match(/^box_[a-z]+[^_]$/)) {
-      type = divs[i].className.match(/^box_(.*)$/)[1];
-      type = "box_" + type;
-      boxify(divs[i], type);
+      boxify(divs[i], divs[i].className);
     // If the divs is the "download bubble," do the same.
     } else if (divs[i].id == "download") {
       boxify(divs[i], divs[i].id);
