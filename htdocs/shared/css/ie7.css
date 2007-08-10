@@ -1,0 +1,72 @@
+.box_right {
+  margin-bottom: 0px;
+}
+
+.box_home_before, .box_full_before, .box_nav_before, .box_right_before {
+  height: 9px;
+  font-size: 1px;
+}
+
+.box_home_after, .box_full_after, .box_nav_after, .box_right_after {
+  height: 17px;
+  font-size: 1px;
+}
+
+.box_home_before {
+  background-image: url('/shared/img/frame.home.top.gif');
+}
+
+.box_home_after {
+  background-image: url('/shared/img/frame.home.bottom.png');
+}
+
+.box_full_before {
+  background-image: url('/shared/img/frame.full.top.png');
+}
+
+.box_full_after {
+  background-image: url('/shared/img/frame.full.bottom.png');
+  height: 15px;
+}
+
+.box_nav_before {
+  background-image: url('/shared/img/frame.nav.top.gif');
+}
+
+.box_nav_after {
+  background-image: url('/shared/img/frame.nav.bottom.png');
+}
+
+.box_right_before {
+  background-image: url('/shared/img/frame.right.top.gif');
+}
+
+.box_right_after {
+  background-image: url('/shared/img/frame.right.bottom.png');
+}
+
+
+.box_download_before {
+  background: url('/shared/img/frame.download.top.gif') no-repeat;
+  height: 7px;
+  font-size: 1px;
+}
+
+.box_download_after {
+  background: url('/shared/img/frame.download.bottom.gif') no-repeat;
+  height: 27px;
+  font-size: 1px;
+}
+
+.download_before {
+  background-image: url('/shared/img/balloon.top.gif');
+  height: 17px;
+  font-size: 1px;
+}
+
+.download_after {
+  background-image: url('/shared/img/balloon.bottom.png');
+  height: 16px;
+  font-size: 1px;
+  clear: both;
+}
