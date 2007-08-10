@@ -67,7 +67,7 @@ static void historize_log_read_cb(char *history, PurpleLogReadFlags *flags, void
 	char *text_backup = NULL;
 	char *header = NULL;
 
-	if (!g_string_equal(buffer, g_string_new(""))) {
+	if (*buffer->str) {
 		text_backup = strdup(buffer->str);
 		gnt_text_view_clear(view);
 	}
