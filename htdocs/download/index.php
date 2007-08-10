@@ -21,10 +21,10 @@
 code, we distribute binaries for Windows, Fedora Core, and CentOS / RHEL.</p>
 
 <ul>
-  <li><a href="/download/windows.php">Windows</a></li>
-  <li><a href="/download/source.php">Source</a></li>
-  <li><a href="/download/fedora_core.php">Fedora Core</a></li>
-  <li><a href="/download/centos_rhel.php">CentOS / RHEL</a></li>
+  <li><a href="/download/windows/">Windows</a></li>
+  <li><a href="/download/source/">Source</a></li>
+  <li><a href="/download/fedora_core">Fedora Core</a></li>
+  <li><a href="/download/centos_rhel">CentOS / RHEL</a></li>
 </ul>
 
 </div>

@@ -1,8 +1,8 @@
 <?
 
 // Define Sub Sections
-$sub_sections['Latest News'] = "/news/";
-$sub_sections['Blogs']       = "/news/blogs.php";
+$sub_sections['Latest News'] = "/news/latest/";
+$sub_sections['Blogs']       = "/news/blogs/";
 
 include("section.inc");
 

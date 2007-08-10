@@ -14,7 +14,7 @@ if (!array_key_exists('section', $page)) {
 // Define Sections
 $sections['Home']                  = "/";
 $sections['Download']              = "/download/";
-$sections['About']                 = "/about.php";
+$sections['About']                 = "/about/";
 $sections['News']                  = "/news/";
 $sections['Support & Development'] = "http://developer.pidgin.im/";
 
