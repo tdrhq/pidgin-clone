@@ -53,6 +53,24 @@ gnt_bindable_free_rebind_info()
 	g_free(rebind_info.okeys);
 }
 
+static struct
+{
+	char * okeys; /* Old keystrokes */
+	char * keys; /* New Keystrokes being bound to the action */
+	GntBindableClass * klass; /* Class of the object that's getting keys rebound */
+	char * name; /* The name of the action */
+	GList * params; /* The list of paramaters */
+	
+} rebind_info = {NULL,NULL,NULL,NULL,NULL};
+
+static void 
+gnt_bindable_free_rebind_info()
+{
+	g_free(rebind_info.name);
+	g_free(rebind_info.keys);
+	g_free(rebind_info.okeys);
+}
+
 static void
 gnt_bindable_rebinding_cancel(GntWidget *button, gpointer data)
 {
@@ -194,24 +212,6 @@ static void
 add_binding(gpointer key, gpointer value, gpointer data)
 {
 	BindingView *bv = data;
-	GntBindableActionParam *act = value;
-	const char *name = g_hash_table_lookup(bv->hash, act->action);
-	if (name && *name) {
-		const char *k = gnt_key_lookup(key);
-		if (!k)
-			k = key;
-		gnt_tree_add_row_after(bv->tree, (gpointer)k,
-				gnt_tree_create_row(bv->tree, k, name), NULL, NULL);
-	}
-}
-
-static void
-add_action(gpointer key, gpointer value, gpointer data)
-{
-	BindingView *bv = data;
-	g_hash_table_insert(bv->hash, value, key);
-}
-
 static void
 gnt_bindable_class_init(GntBindableClass *klass)
 {
@@ -369,7 +369,7 @@ register_binding(GntBindableClass *klass, const char *name, const char *trigger,
 
 	action = g_hash_table_lookup(klass->actions, name);
 	if (!action) {
-		g_printerr("GntWidget: Invalid action name %s for %s\n",
+		g_printerr("GntBindable: Invalid action name %s for %s\n",
 				name, g_type_name(G_OBJECT_CLASS_TYPE(klass)));
 		if (list)
 			g_list_free(list);

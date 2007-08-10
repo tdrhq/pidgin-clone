@@ -488,6 +488,35 @@ window_close(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
+static gboolean
+help_for_widget(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *widget, *tree, *win, *active;
+	char *title;
+
+	if (!wm->cws->ordered)
+		return TRUE;
+
+	widget = wm->cws->ordered->data;
+	if (!GNT_IS_BOX(widget))
+		return TRUE;
+	active = GNT_BOX(widget)->active;
+
+	tree = gnt_widget_bindings_view(active);
+	win = gnt_window_new();
+	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(active)));
+	gnt_box_set_title(GNT_BOX(win), title);
+	if (tree)
+		gnt_box_add_widget(GNT_BOX(win), tree);
+	else
+		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
+
+	gnt_widget_show(win);
+
+	return TRUE;
+}
+
 static void
 destroy__list(GntWidget *widget, GntWM *wm)
 {
@@ -658,6 +687,8 @@ dump_screen(GntBindable *bindable, GList *null)
 		{'j', "&#x2518;"},
 		{'a', "&#x2592;"},
 		{'n', "&#x253c;"},
+		{'w', "&#x252c;"},
+		{'v', "&#x2534;"},
 		{'\0', NULL}
 	};
 
@@ -736,7 +767,6 @@ dump_screen(GntBindable *bindable, GList *null)
 			print = ch;
 #ifndef NO_WIDECHAR
 			if (wch.chars[0] > 255) {
-				/* XXX This lines throws a warning, can we quiet it? */
 				snprintf(unicode, sizeof(unicode), "&#x%x;", wch.chars[0]);
 				print = unicode;
 			}
@@ -816,7 +846,6 @@ static gboolean
 shift_right(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
-	
 	if (wm->_list.window)
 		return TRUE;
 
@@ -1184,9 +1213,37 @@ help_for_widget(GntBindable *bindable, GList *null)
 }
 
 static void
+accumulate_windows(gpointer window, gpointer node, gpointer p)
+{
+	GList *list = *(GList**)p;
+	list = g_list_prepend(list, window);
+	*(GList**)p = list;
+}
+
+static void
+gnt_wm_destroy(GObject *obj)
+{
+	GntWM *wm = GNT_WM(obj);
+	GList *list = NULL;
+	g_hash_table_foreach(wm->nodes, accumulate_windows, &list);
+	g_list_foreach(list, (GFunc)gnt_widget_destroy, NULL);
+	g_list_free(list);
+	g_hash_table_destroy(wm->nodes);
+	wm->nodes = NULL;
+
+	while (wm->workspaces) {
+		g_object_unref(wm->workspaces->data);
+		wm->workspaces = g_list_delete_link(wm->workspaces, wm->workspaces);
+	}
+}
+
+static void
 gnt_wm_class_init(GntWMClass *klass)
 {
 	int i;
+	GObjectClass *gclass = G_OBJECT_CLASS(klass);
+
+	gclass->dispose = gnt_wm_destroy;
 
 	klass->new_window = gnt_wm_new_window_real;
 	klass->decorate_window = NULL;
@@ -1344,8 +1401,6 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" "\\", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-window", help_for_window,
 				"\033" "|", NULL);
-	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard", toggle_clipboard, 
-				"\033" "C", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-start", ignore_keys_start, 
 				GNT_KEY_CTRL_G, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-end", ignore_keys_end, 
@@ -1963,7 +2018,6 @@ gnt_wm_give_focus(GntWM *wm, GntWidget *widget)
 	if (!node)
 		return;
 
-	/* XXX Should there be a check before access to 'data' to make sure 'ordered' isn't NULL? */
 	if (widget != wm->_list.window && !GNT_IS_MENU(widget) &&
 				wm->cws->ordered->data != widget) {
 		GntWidget *w = wm->cws->ordered->data;
@@ -2028,7 +2082,6 @@ void gnt_wm_raise_window(GntWM *wm, GntWidget *widget)
 	GntWS *ws = gnt_wm_widget_find_workspace(wm, widget);
 	if (wm->cws != ws)
 		gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, ws));
-	/* XXX Should there be a check before access to 'data' to make sure 'ordered' isn't NULL? */
 	if (widget != wm->cws->ordered->data) {
 		GntWidget *wid = wm->cws->ordered->data;
 		wm->cws->ordered = g_list_bring_to_front(wm->cws->ordered, widget);
@@ -2044,4 +2097,5 @@ void gnt_wm_set_event_stack(GntWM *wm, gboolean set)
 {
 	wm->event_stack = set;
 }
+
 
