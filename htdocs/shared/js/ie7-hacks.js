@@ -3,9 +3,9 @@ function search(element) {
   var divs = element.getElementsByTagName("div");
   for (var i = 0; divs[i] != null; i++) {
     // If the divs are "boxes", boxify them (mimick :before/:after)
-    if (divs[i].className.match(/^box_[a-z]+[^_]$/)) {
+    if (divs[i].className.match(/^box_[a-z]+$/)) {
       boxify(divs[i], divs[i].className);
-    // If the divs is the "download bubble," do the same.
+    // If the div is the "download bubble," do the same.
     } else if (divs[i].id == "download") {
       boxify(divs[i], divs[i].id);
     }
