@@ -2,7 +2,6 @@ function search(element) {
   // Get a list of divs in the document
   var divs = element.getElementsByTagName("div");
   for (var i = 0; divs[i] != null; i++) {
-    var type = null;
     // If the divs are "boxes", boxify them (mimick :before/:after)
     if (divs[i].className.match(/^box_[a-z]+[^_]$/)) {
       boxify(divs[i], divs[i].className);
