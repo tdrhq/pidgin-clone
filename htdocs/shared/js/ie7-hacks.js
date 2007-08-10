@@ -23,8 +23,6 @@ function boxify(element, type) {
   after.className = type + "_after";
   after.innerHTML = "&nbsp;";
   element.insertBefore(after);
-
-  return;
 }
 
 search(document);
