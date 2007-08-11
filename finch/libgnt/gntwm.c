@@ -34,13 +34,13 @@
 #include <string.h>
 #include <time.h>
 
-#include "gntbutton.h"
 #include "gntwm.h"
-#include "gntentry.h"
 #include "gntstyle.h"
 #include "gntmarshal.h"
 #include "gnt.h"
 #include "gntbox.h"
+#include "gntbutton.h"
+#include "gntentry.h"
 #include "gntlabel.h"
 #include "gntmenu.h"
 #include "gnttextview.h"
@@ -488,35 +488,6 @@ window_close(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
-static gboolean
-help_for_widget(GntBindable *bindable, GList *null)
-{
-	GntWM *wm = GNT_WM(bindable);
-	GntWidget *widget, *tree, *win, *active;
-	char *title;
-
-	if (!wm->cws->ordered)
-		return TRUE;
-
-	widget = wm->cws->ordered->data;
-	if (!GNT_IS_BOX(widget))
-		return TRUE;
-	active = GNT_BOX(widget)->active;
-
-	tree = gnt_widget_bindings_view(active);
-	win = gnt_window_new();
-	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(active)));
-	gnt_box_set_title(GNT_BOX(win), title);
-	if (tree)
-		gnt_box_add_widget(GNT_BOX(win), tree);
-	else
-		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
-
-	gnt_widget_show(win);
-
-	return TRUE;
-}
-
 static void
 destroy__list(GntWidget *widget, GntWM *wm)
 {
@@ -846,6 +817,7 @@ static gboolean
 shift_right(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
+	
 	if (wm->_list.window)
 		return TRUE;
 
@@ -1171,7 +1143,6 @@ help_for_bindable(GntWM *wm, GntBindable *bindable)
 		ret =  gnt_bindable_build_help_window(bindable);
 	}
 	return ret;
-
 }
 
 static gboolean
@@ -1185,11 +1156,10 @@ help_for_window(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
 	GntWidget *widget;
-	
-	
+
 	if(!wm->cws->ordered)
 		return FALSE;
-	
+
 	widget = wm->cws->ordered->data;
 
 	return help_for_bindable(wm,GNT_BINDABLE(widget));
@@ -1209,7 +1179,6 @@ help_for_widget(GntBindable *bindable, GList *null)
 		return TRUE;
 
 	return help_for_bindable(wm, GNT_BINDABLE(GNT_BOX(widget)->active));
-
 }
 
 static void
@@ -1395,8 +1364,8 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" "T", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "workspace-list", workspace_list,
 				"\033" "s", NULL);
-	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard",
-				toggle_clipboard, "\033" "C", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard", toggle_clipboard,
+				"\033" "C", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-wm", help_for_wm,
 				"\033" "\\", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-window", help_for_window,
