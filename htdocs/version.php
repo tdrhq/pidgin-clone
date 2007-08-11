@@ -1,5 +1,7 @@
 <?php
-require 'inc/version.inc.php';
+
+header("Content-Type: text/plain");
+include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
 error_reporting(0);
 /*
 Is anyone still using the data anymore?
@@ -27,7 +29,7 @@ $my_ver = str_replace('cvs', '', $version);
 $my_ver = str_replace('dev', '', $version);
 $my_ver = preg_replace('/beta(\d+)$/', '', $my_ver);
 $my_ver = preg_replace('/-(\d+)$/', '', $my_ver);
-$cur_ver = ($win32 ? $current_win32_version : $current_version);
+$cur_ver = ($win32 ? $pidgin_win32_version : $pidgin_version);
 
 if ($cur_ver != $my_ver || $dev == false) {
 	$cur_ver_parts = explode('.', $cur_ver);
