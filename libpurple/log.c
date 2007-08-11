@@ -732,7 +732,7 @@ GList *purple_log_logger_get_options(void)
 
 	for (n = loggers; n; n = n->next) {
 		data = n->data;
-		if (!data->write)
+		if (!data->write && !data->write_nonblocking)
 			continue;
 		list = g_list_append(list, data->name);
 		list = g_list_append(list, data->id);
