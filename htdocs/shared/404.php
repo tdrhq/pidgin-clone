@@ -16,8 +16,8 @@
 <p>Sorry, the page you tried to reach isn't here!  Please try using other
 links on the site to find what you're looking for.  If you're sure this
 page should work, please submit a <a
-href="http://developer.pidgin.im/newticket">new ticket</a> to let us know
-about the problem.</p>
+href="http://developer.pidgin.im/simpleticket">new ticket</a> to let us
+know about the problem.</p>
 
 </div>
 </div>
