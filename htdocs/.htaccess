@@ -1,1 +1,4 @@
 Options +MultiViews
+
+ErrorDocument 403 /shared/403.php
+ErrorDocument 404 /shared/404.php
