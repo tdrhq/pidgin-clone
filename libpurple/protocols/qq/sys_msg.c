@@ -48,6 +48,13 @@ enum {
 };
 
 /* Henry: private function for reading/writing of system log */
+static void log_qq_sys_msg_log_write_cb(gboolean result, void *data)
+{
+	PurpleLog *log = data;
+
+	purple_log_free_nonblocking(log, NULL, NULL);
+}
+
 static void _qq_sys_msg_log_write(PurpleConnection *gc, gchar *msg, gchar *from)
 {
 	PurpleLog *log;
@@ -62,9 +69,9 @@ static void _qq_sys_msg_log_write(PurpleConnection *gc, gchar *msg, gchar *from)
 			time(NULL),
 			NULL
 			);
-	purple_log_write(log, PURPLE_MESSAGE_SYSTEM, from,
-			time(NULL), msg);
-	purple_log_free(log);
+
+	purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM, from,
+			time(NULL), g_strdup(msg), log_qq_sys_msg_log_write_cb, log);
 }
 
 /* suggested by rakescar@linuxsir, can still approve after search */

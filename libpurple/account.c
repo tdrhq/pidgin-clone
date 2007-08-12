@@ -906,7 +906,7 @@ purple_account_destroy(PurpleAccount *account)
 	purple_presence_destroy(account->presence);
 
 	if(account->system_log)
-		purple_log_free(account->system_log);
+		purple_log_free_nonblocking(account->system_log, NULL, NULL);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(account);
 	g_free(account);
@@ -2008,15 +2008,18 @@ purple_account_get_log(PurpleAccount *account, gboolean create)
 	return account->system_log;
 }
 
+static void purple_account_destroy_log_cb(void *data)
+{
+	((PurpleAccount *) data)->system_log = NULL;
+}
+
 void
 purple_account_destroy_log(PurpleAccount *account)
 {
 	g_return_if_fail(account != NULL);
 
-	if(account->system_log){
-		purple_log_free(account->system_log);
-		account->system_log = NULL;
-	}
+	if(account->system_log)
+		purple_log_free_nonblocking(account->system_log, purple_account_destroy_log_cb, account);
 }
 
 void

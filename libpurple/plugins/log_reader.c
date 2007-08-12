@@ -236,7 +236,7 @@ static char *adium_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 	/* XXX: TODO: We probably want to set PURPLE_LOG_READ_NO_NEWLINE
 	 * XXX: TODO: for HTML logs. */
-	if (flags != NULL)
+	if (flags != NULL)	
 		*flags = 0;
 
 	g_return_val_if_fail(log != NULL, g_strdup(""));
@@ -1121,7 +1121,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		if (name_guessed != NAME_GUESS_UNKNOWN)
 			text = g_string_append(text, "</span>");
 
-		style = xmlnode_get_attrib(text_node, "Style");
+		style     = xmlnode_get_attrib(text_node, "Style");
 
 		tmp = xmlnode_get_data(text_node);
 		if (style && *style) {
@@ -1431,7 +1431,6 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 	if (flags != NULL)
 		*flags = PURPLE_LOG_READ_NO_NEWLINE;
-
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
 	data = log->logger_data;
@@ -1772,7 +1771,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	gboolean main_cycle = TRUE;
 	char *c;
 	char *start_log;
-	char *new_line;
+	char *new_line = NULL;
 	int offset = 0;
 	GError *error;
 
@@ -1927,9 +1926,8 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	char *utf8_string;
 	FILE *file;
 
-	if (flags != NULL)
+	if (flags != NULL)	
 		*flags = PURPLE_LOG_READ_NO_NEWLINE;
-
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
 	data = log->logger_data;
