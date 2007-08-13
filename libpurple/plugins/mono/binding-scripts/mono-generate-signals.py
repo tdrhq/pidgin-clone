@@ -176,17 +176,18 @@ def write_marshalls(signals, out):
 	for sig_name, sig_info in signals:
 		argtypes = sig_info["types"]
 		marshall = sig_info["marshall"]
+
 		
 		# figure out marshall args and types
-		if not added_marshalls.has_key(marshall):
-			try:
-				m = "%s_dl" % (marshall)
-				arg_str = create_marshall_args_str(argtypes)
-				marshalls[sig_name] = {"m": m, "arg_str": arg_str, "arg_len": len(argtypes) - 1}
-				added_marshalls[marshall] = True
+		try:
+			m = "%s_dl" % (marshall)
+			arg_str = create_marshall_args_str(argtypes)
+			marshalls[sig_name] = {"m": m, "arg_str": arg_str, "arg_len": len(argtypes) - 1}
+			added_marshalls[marshall] = True
+			if not added_marshalls.has_key(marshall):
 				marshalls_out += "\t\tprivate delegate %s %s(%s);\n" % (types[argtypes[0]], m, arg_str)
-			except InvalidType:
-				pass
+		except InvalidType:
+			pass
 		
 	i = 1
 	for sig_name, sig_info in signals:
@@ -226,10 +227,10 @@ namespace Purple
 		{
 			if (_initalized)
 				return;
-%s
 
 %s
 
+%s
 			_initalized = true;
 		}
 	}
@@ -238,8 +239,19 @@ namespace Purple
 
 	out.write(output % (marshalls_out, name_to_key, key_to_delegate))
 
+
+
 input = iter(sys.stdin)
 
-#write_events_and_delegates(parse_signal_register_details(parse_signal_register_calls(input)).items(), sys.argv[1], sys.stdout)
-write_marshalls(parse_signal_register_details(parse_signal_register_calls(input)).items(), sys.stdout)
 
+if len(sys.argv) < 2:
+	print "%s: --events ClassName --marshalls" % (sys.argv[0])
+	sys.exit(1)
+
+
+if sys.argv[1] == "--events":
+	classname = sys.argv[2]
+	write_events_and_delegates(parse_signal_register_details(parse_signal_register_calls(input)).items(), classname, sys.stdout)
+
+elif sys.argv[1] == "--marshalls":
+	write_marshalls(parse_signal_register_details(parse_signal_register_calls(input)).items(), sys.stdout)
