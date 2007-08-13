@@ -136,6 +136,29 @@ namespace Purple {
 
 	out.write("\t}\n}")
 	
+class InvalidType:
+	pass
+
+def create_marshall_args_str(argtypes):
+	is_intptr = re.compile("(PURPLE_SUBTYPE_.*|PURPLE_TYPE_STRING)")
+
+	arg_str = ""
+	i = 1
+
+	for arg in argtypes[1:]:
+		if is_intptr.match(arg):
+			arg_str += "IntPtr p%d, " % (i)
+			i += 1
+		else:
+			try:
+				arg_str += "%s p%d, " % (types[arg], i)
+				i += 1
+			except KeyError:
+				raise InvalidType	
+
+	arg_str += "int key"
+
+	return arg_str 
 
 def write_marshalls(signals, out):
 	"""
@@ -143,9 +166,80 @@ def write_marshalls(signals, out):
 	out: output to write to
 	"""
 
+	marshalls = {}
+	added_marshalls = {}
+	marshalls_out = ""
 
+	name_to_key = ""
+	key_to_delegate = ""
+
+	for sig_name, sig_info in signals:
+		argtypes = sig_info["types"]
+		marshall = sig_info["marshall"]
+		
+		# figure out marshall args and types
+		if not added_marshalls.has_key(marshall):
+			try:
+				m = "%s_dl" % (marshall)
+				arg_str = create_marshall_args_str(argtypes)
+				marshalls[sig_name] = {"m": m, "arg_str": arg_str, "arg_len": len(argtypes) - 1}
+				added_marshalls[marshall] = True
+				marshalls_out += "\t\tprivate delegate %s %s(%s);\n" % (types[argtypes[0]], m, arg_str)
+			except InvalidType:
+				pass
+		
+	i = 1
+	for sig_name, sig_info in signals:
+		name_to_key += "\t\t\t_signal_name_to_key.Add(\"%s\", %d);\n" % (sig_name, i)
+
+		t = ""
+		try:
+			t += "\t\t\t_key_to_delegate.Add(_signal_name_to_key[\"%s\"],\n" % (sig_name)
+			t += "\t\t\t\tnew %s(delegate(%s) {\n" % (marshalls[sig_name]["m"], marshalls[sig_name]["arg_str"])
+			t += "\t\t\t\t\tHandleCallback(_signal_data[key].Args, _signal_data[key].Delegates,"
+			for j in range(marshalls[sig_name]["arg_len"]):
+				t += " p%d," % (j + 1)
+			t = re.sub(",$", ");", t)
+			t += "\n\t\t\t\t}));\n\n"
+		except KeyError:
+			t = ""
+			pass
+
+		key_to_delegate += t
+		i += 1
+
+	output = """
+using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
+
+namespace Purple
+{
+        public partial class Signal
+	{
+%s
+
+		private static bool _initalized = false;
+
+		private static void Initalize()
+		{
+			if (_initalized)
+				return;
+%s
+
+%s
+
+			_initalized = true;
+		}
+	}
+}
+	"""
+
+	out.write(output % (marshalls_out, name_to_key, key_to_delegate))
 
 input = iter(sys.stdin)
 
-write_events_and_delegates(parse_signal_register_details(parse_signal_register_calls(input)).items(), sys.argv[1], sys.stdout)
+#write_events_and_delegates(parse_signal_register_details(parse_signal_register_calls(input)).items(), sys.argv[1], sys.stdout)
+write_marshalls(parse_signal_register_details(parse_signal_register_calls(input)).items(), sys.stdout)
 
