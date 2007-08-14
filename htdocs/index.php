@@ -17,9 +17,9 @@
 </div>
 
 <div id="download">
-<img src="/shared/img/logo.pidgin.png" alt="[Pidgin Logo]" id="logo" />
+<img src="/shared/img/logo.pidgin.png" alt="[Pidgin Logo]" id="logo" width="107" height="185" />
 <a href="/download/">
-<img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
+<img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="64" height"67" />
 Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?></span></a>
 </div>

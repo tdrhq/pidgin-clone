@@ -13,7 +13,7 @@
 
 <h1>What is Pidgin?</h1>
 
-<p><img src="/shared/img/contact_window.png" alt="Buddy List" class="inline" />
+<p><img src="/shared/img/contact_window.png" alt="Buddy List" class="inline" width="192" height="420" />
 Pidgin is an instant messaging program for Windows, Linux, BSD, and other
 Unixes. You can talk to your friends using AIM, ICQ, Jabber/XMPP, MSN
 Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, Novell GroupWise Messenger, QQ,
@@ -35,7 +35,7 @@ notification, iconify on away, spell checking, tabbed conversations, and more.
 
 <p>Pidgin runs on a number of platforms, including Windows, Linux, and other
 UNIX operating systems. Looking for Pidgin for OS X? Try <a
-href="http://www.adiumx.com/" target="_self">Adium</a>!</p>
+href="http://www.adiumx.com/">Adium</a>!</p>
 
 <p>Pidgin integrates well with GNOME 2 and KDE 3.1's system tray, as well as
 Windows' own system tray. This allows you to work with Pidgin without
