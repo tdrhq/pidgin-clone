@@ -315,23 +315,6 @@ static void db_remove_notify(gpointer data)
 	}
 }
 
-static void db_print_error() 
-{
-	const char *message;
-	dbi_conn_error(db_logger->db_conn, &message);
-	purple_debug_info("Database Logger", "ERROR: %s\n", message);
-}
-
-static gboolean db_process_result(dres)
-{
-	if (dres) {
-		dbi_result_free(dres);
-		return TRUE;
-	} else {
-		db_print_error();
-		return FALSE;
-	}
-}
 /****************************************************************************
 * 						UTILS FUNCTIONS 
 ****************************************************************************/
@@ -346,12 +329,29 @@ static void unlock()
 	g_mutex_unlock(db_mutex);
 }
 
-static gboolean dbi_retrieve_int_value(dbi_result dres, int *value, const char *field_name) 
+static void db_print_error() 
+{
+	const char *message;
+	dbi_conn_error(db_logger->db_conn, &message);
+	purple_debug_info("Database Logger", "ERROR: %s\n", message);
+}
+
+static gboolean db_process_result(dbi_result dres)
+{
+	if (dres) {
+		dbi_result_free(dres);
+		return TRUE;
+	} else {
+		db_print_error();
+		return FALSE;
+	}
+}
+static gboolean db_retrieve_int_value(dbi_result dres, int *value, const char *field_name) 
 {
 	if (dres) {
 		/* TODO: check if there are several rows */
 		while (dbi_result_next_row(dres)) {
-			*id = dbi_result_get_uint(dres, field_name);
+			*value = dbi_result_get_uint(dres, field_name);
 		}
 		dbi_result_free(dres);
 		return TRUE;
@@ -360,12 +360,12 @@ static gboolean dbi_retrieve_int_value(dbi_result dres, int *value, const char *
 	return FALSE;
 }
 
-static gboolean dbi_retrieve_id(dbi_result dres, int *id) 
+static gboolean db_retrieve_id(dbi_result dres, int *id) 
 {
-	return dbi_retrieve_int_value(dres, id, "id");
+	return db_retrieve_int_value(dres, id, "id");
 }
 
-static int get_protocol_id(PurpleAccount *account) 
+static int db_get_protocol_id(PurpleAccount *account) 
 {
 	PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
@@ -380,7 +380,7 @@ static int get_protocol_id(PurpleAccount *account)
 	while (id == -1) {
 		dbi_result dres = dbi_conn_queryf(db_logger->db_conn, 
 						"SELECT id FROM protocols WHERE name = \"%s\"", protocol_name);
-		if (!dbi_retrieve_id(dres, &id)) 
+		if (!db_retrieve_id(dres, &id)) 
 			break;
 
 		/*if id not found we should insert new protocol */
@@ -395,7 +395,7 @@ static int get_protocol_id(PurpleAccount *account)
 	return id;
 }
 
-static int get_account_id(PurpleAccount *account) 
+static int db_get_account_id(PurpleAccount *account) 
 {
 	char *account_name = g_strdup(purple_escape_filename(purple_normalize(account,
 				purple_account_get_username(account))));
@@ -409,13 +409,13 @@ static int get_account_id(PurpleAccount *account)
 	while (id == -1) {
 		dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "SELECT id FROM accounts WHERE name = \"%s\"", account_name);
 
-		if (!dbi_retrieve_id(dres, &id)) 
+		if (!db_retrieve_id(dres, &id)) 
 			break;
 
 		/*if id not found we should insert new account */
 		if (id == -1) {
 			dres = dbi_conn_queryf(db_logger->db_conn, "INSERT INTO accounts(`name`, `protocolId`) VALUES(\"%s\", %i)", 
-								account_name, get_protocol_id(account));
+								account_name, db_get_protocol_id(account));
 			if (!db_process_result(dres))
 				break;
 		}
@@ -425,7 +425,7 @@ static int get_account_id(PurpleAccount *account)
 	return id;
 }
 
-static int get_buddy_id(PurpleLog *log) 
+static int db_get_buddy_id(PurpleLog *log) 
 {
 	char *buddy_name = NULL;
 	int id = -1;
@@ -453,14 +453,14 @@ static int get_buddy_id(PurpleLog *log)
 	    when we add an account, but it seems that the result depends on database */
 	while (id == -1) {
 		dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "SELECT id FROM buddies WHERE name = \"%s\" AND type =%i AND accountID = %i ", 
-									buddy_name, buddy_type, get_account_id(account));
-		if (!dbi_retrieve_id(dres, &id)) 
+									buddy_name, buddy_type, db_get_account_id(account));
+		if (!db_retrieve_id(dres, &id)) 
 			break;
 
 		/*if id not found we should insert new account */
 		if (id == -1) {
 			dres = dbi_conn_queryf(db_logger->db_conn, "INSERT INTO buddies(`name`, `type`, `accountId`) VALUES(\"%s\", %i, %i)", 
-								buddy_name, buddy_type, get_account_id(account));
+								buddy_name, buddy_type, db_get_account_id(account));
 			if (!db_process_result(dres))
 				break;
 		}
@@ -470,12 +470,11 @@ static int get_buddy_id(PurpleLog *log)
 	return id;
 }
 
-int get_conversation_size(int id)
+static int db_get_conversation_size(int id)
 {
 	int ret_value = 0;
-	dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "SELECT size FROM conversations WHERE id=%i", 
-									buddy_name, buddy_type, get_account_id(account));
-	dbi_retrieve_int_value(dres, &ret_value, "size");
+	dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "SELECT size FROM conversations WHERE id=%i", id);
+	db_retrieve_int_value(dres, &ret_value, "size");
 	return ret_value;
 }
 /****************************************************************************
@@ -549,7 +548,7 @@ static gpointer db_write(gpointer data)
 		/* create new conversation in log */
 		dres = dbi_conn_queryf(db_logger->db_conn, 
 			"INSERT INTO conversations(`datetime`, `size`, `accountId`, `buddyId`) VALUES(%i, %i, %i, %i )", 
-			time, 0, get_account_id(log->account), get_buddy_id(log));
+			time, 0, db_get_account_id(log->account), db_get_buddy_id(log));
 		db_process_result(dres);
 
 		/* we can use dbi_conn_sequence_last to get row ID generated by the last INSERT command
@@ -557,12 +556,12 @@ static gpointer db_write(gpointer data)
 		some databases need exlicit sequences*/
 		dres = dbi_conn_queryf(db_logger->db_conn, 
 			"SELECT id FROM conversations WHERE datetime = %i AND accountID = %i AND buddyId = %i", 
-									time, get_account_id(log->account), get_buddy_id(log));
-		dbi_retrieve_id(dres, &conv_info->id);
+									time, db_get_account_id(log->account), db_get_buddy_id(log));
+		db_retrieve_id(dres, &conv_info->id);
 	}
 
 	if (conv_info->id != -1) {
-		int log_size = get_conversation_size(conv_info->id);
+		int log_size = db_get_conversation_size(conv_info->id);
 		purple_debug_info("Database Logger", "insert new message[new thread]\n");
 
 		dres = dbi_conn_queryf(db_logger->db_conn, 
@@ -575,8 +574,6 @@ static gpointer db_write(gpointer data)
 		dres = dbi_conn_queryf(db_logger->db_conn,
 				"UPDATE conversations SET size=%i WHERE id=%i",
 				log_size, conv_info->id);
-
-		
 	} else 
 		purple_debug_info("Database Logger", "conv_info->id == -1\n");
 
