@@ -250,6 +250,28 @@ finch_log_done_cb(void *data)
 	gnt_widget_draw(log_viewer->window);
 }
 
+static void
+show_log(char *text, PurpleLogReadFlags *flags, gpointer *data)
+{
+	FinchLogViewer *lv = (FinchLogViewer *)data;
+	gnt_text_view_tag_change(GNT_TEXT_VIEW(lv->tv), "log-data", text ? text : _("Empty Log"), TRUE);
+	gnt_widget_draw(lv->tv);
+}
+
+static void
+update_log_view(GntTree *tree, gpointer data)
+{
+	FinchLogViewer *lv = data;
+	PurpleLog *log;
+	gpointer key = gnt_tree_get_selection_data(GNT_TREE(lv->tree));
+
+	if(!g_list_find(lv->months, key)) { /* Check to see if it's a month header */
+		log = (PurpleLog *)key;
+		purple_log_read_nonblocking(log,&(lv->flags),(PurpleLogReadCallback)show_log, lv);
+	}
+
+}
+
 static FinchLogViewer *
 display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_size)
 {
@@ -300,13 +322,14 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 	gnt_widget_get_size(tree, &w, &h);
 	gnt_widget_set_size(tree, 30, h);
 	gnt_box_add_widget(GNT_BOX(splitbox), tree);
+	g_signal_connect(G_OBJECT(tree),"activate",G_CALLBACK(update_log_view),viewer);
 
 	rightbox = gnt_vbox_new(FALSE);
 	gnt_widget_get_size(tv, &w, &h);
 	gnt_widget_set_size(tv, 45, h);
 
 	viewer->tv = tv = gnt_text_view_new();
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), "We talked a bit here.\nAnd some more here too.\nAnd life was just dandy out here.", GNT_TEXT_FLAG_NORMAL);
+	gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), _("Loading..."), GNT_TEXT_FLAG_NORMAL, "log-data");
 	gnt_box_add_widget(GNT_BOX(rightbox), tv);
 	gnt_text_view_attach_pager_widget(GNT_TEXT_VIEW(tv), win);
 
