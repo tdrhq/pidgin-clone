@@ -144,12 +144,6 @@ static const char *log_get_date(PurpleLog *log)
 }
 
 static void
-select_first_log(FinchLogViewer *lv)
-{
-
-}
-
-static void
 add_logs(FinchLogViewer *lv, GList *logs)
 {
 	const char *month;
@@ -195,7 +189,6 @@ add_logs(FinchLogViewer *lv, GList *logs)
 static void append_log_viewer_logs(FinchLogViewer *log_viewer, GList *logs) 
 {
 	add_logs(log_viewer, logs);
-	select_first_log(log_viewer);
 }
 
 static void
@@ -238,13 +231,6 @@ finch_log_done_cb(void *data)
 	finch_log_data->counter--;
 
 	if (!finch_log_data->counter) {
-
-		if (finch_log_data->need_continue == TRUE) {
-			// TODO: We should only select the first log
-			// TODO: if one is not already selected.
-			select_first_log(log_viewer);
-		} 
-
 		g_free(finch_log_data);
 	}
 	gnt_widget_draw(log_viewer->window);
@@ -329,7 +315,7 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 	gnt_widget_set_size(tv, 45, h);
 
 	viewer->tv = tv = gnt_text_view_new();
-	gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), _("Loading..."), GNT_TEXT_FLAG_NORMAL, "log-data");
+	gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), _("Select a log to view."), GNT_TEXT_FLAG_NORMAL, "log-data");
 	gnt_box_add_widget(GNT_BOX(rightbox), tv);
 	gnt_text_view_attach_pager_widget(GNT_TEXT_VIEW(tv), win);
 
