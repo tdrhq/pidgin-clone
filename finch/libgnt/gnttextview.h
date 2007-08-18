@@ -207,6 +207,15 @@ void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *pager);
  */
 void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag);
 
+/**
+ * Appends HTML to a textview with proper formatting.
+ *
+ * @param view The textview widget
+ * @param html The HTML to be appended
+ * 
+ */
+void gnt_text_view_append_html(GntTextView *view, const char *html);
+
 G_END_DECLS
 
 #endif /* GNT_TEXT_VIEW_H */

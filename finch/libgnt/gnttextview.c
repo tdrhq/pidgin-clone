@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <libxml/HTMLparser.h>
 
 enum
 {
@@ -60,6 +61,7 @@ static GntWidgetClass *parent_class = NULL;
 static gchar *select_start;
 static gchar *select_end;
 static gboolean double_click;
+
 
 static void
 gnt_text_view_draw(GntWidget *widget)
@@ -912,3 +914,115 @@ void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *wid)
 	g_object_set_data(G_OBJECT(wid), "editor-for", view);
 }
 
+static gboolean
+check_xml_name(xmlNodePtr node, const char *name)
+{
+	return !xmlStrcmp(node->name, (const xmlChar *) name);
+}
+
+static gboolean
+check_xml_name_list(xmlNodePtr node, int n, ...)
+{
+	va_list args;
+	const char *name;
+
+	va_start(args, n);
+	while(n--){ 
+		name = va_arg(args, const char *);
+
+		if(check_xml_name(node, name)){
+			va_end(args);
+			return TRUE;
+		}
+
+	}
+	va_end(args);
+
+	return FALSE;
+		
+}
+
+static void
+parse_body(GntTextView *view, xmlNodePtr cur, GntTextFormatFlags flag)
+{
+	cur = cur->xmlChildrenNode;
+	while(cur) {
+		if(check_xml_name_list(cur, 3, "b", "blockquote", "strong")) {
+			parse_body(view, cur, flag | GNT_TEXT_FLAG_BOLD);
+		}
+		else if(check_xml_name(cur, "i")) {
+			parse_body(view, cur, flag | GNT_TEXT_FLAG_DIM);
+		}
+		else if(check_xml_name(cur, "u")) {
+			parse_body(view, cur, flag | GNT_TEXT_FLAG_HIGHLIGHT);
+		}
+		else if(check_xml_name_list(cur, 4, "h1", "h2", "h3", "h4")) {
+			parse_body(view, cur, flag | GNT_TEXT_FLAG_HIGHLIGHT | GNT_TEXT_FLAG_BOLD);
+
+			/* Without this, the whole line is HIGHLIGHT */
+			/* XXX: Better solution? */
+			gnt_text_view_append_text_with_flags(view, " ", flag);
+
+ 			gnt_text_view_append_text_with_flags(view, "\n", flag);
+		}
+		else if(check_xml_name_list(cur, 3, "p", "hr", "br")) {
+			gnt_text_view_append_text_with_flags(view, "\n", flag);
+		}
+		else if(check_xml_name(cur, "text")) {
+			gnt_text_view_append_text_with_flags(view, (const char *)cur->content, flag);
+		}
+		else {
+			/* Some other tag we ignore, just recurse and continue */
+			/* XXX: How should we detect non-recursing tags, like HR and BR? This here could be buggy. */
+			parse_body(view, cur, flag);
+		}
+
+		cur = cur->next;
+	}
+}
+
+static void
+parse_html(GntTextView *view, xmlNodePtr cur)
+{
+
+	cur = cur->xmlChildrenNode;
+	while(cur){
+		if(check_xml_name(cur, "head")) {
+			/* If we decide to do something with the head information */
+		}		
+		else if(check_xml_name(cur, "body")) {
+			parse_body(view, cur, GNT_TEXT_FLAG_NORMAL);
+		}
+		else {
+			/* XXX: What should we do here? */
+		}
+
+		cur = cur->next;
+	}
+}
+
+void
+gnt_text_view_append_html(GntTextView *view, const char *html)
+{
+
+	htmlDocPtr doc;
+	xmlNodePtr cur;
+
+	doc = htmlParseDoc((xmlChar *)html, "UTF-8");
+	if(!doc) {
+		/* HTML not parsed successfully. */
+		xmlFreeDoc(doc);
+		return;
+	}
+
+	cur = xmlDocGetRootElement(doc);
+	if (!cur) {
+		/* Empty document\n */
+		xmlFreeDoc(doc);
+		return;
+	}
+
+	parse_html(view, cur);	
+	xmlFreeDoc(doc);
+
+}
