@@ -250,6 +250,7 @@ gnt_combo_box_class_init(GntComboBoxClass *klass)
 					 NULL, NULL,
 					 gnt_closure_marshal_VOID__POINTER_POINTER,
 					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
+	/* oldkey, newkey */
 
 	GNTDEBUG;
 }
