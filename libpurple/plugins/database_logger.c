@@ -257,7 +257,13 @@ static void database_logger_remove_log(PurpleLog *log, PurpleLogBooleanCallback 
 {
 	purple_debug_info("Database Logger", "Remove log function\n");
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_REMOVE_LOG] != NULL) {
-	
+		DatabaseRemoveLogOperation *op = g_new(DatabaseRemoveLogOperation, 1);
+		op->type = PURPLE_DATABASE_LOGGER_REMOVE_LOG;
+		op->log = log;
+		op->cb = cb;
+		op->data = data;
+		op->ret_value = 0;
+		g_thread_create(db_thread, op, FALSE, NULL);
 	} else {
 		cb(FALSE, data);
 	}
@@ -827,6 +833,24 @@ static gpointer db_sets(gpointer data)
 
 static gpointer db_remove(gpointer data)
 {
+	DatabaseRemoveLogOperation *op = data;
+	ConversationInfo *conv_info = op->log->logger_data;
+
+	lock();
+	op->ret_value = FALSE;
+	if (conv_info && conv_info->id != -1){
+		dbi_result dres;
+
+		dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `messages` WHERE conversationId = %i",
+							conv_info->id);
+		if (db_process_result(dres)) {
+			dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `conversation` WHERE id = %i",
+								conv_info->id);
+			db_process_result(dres);
+			op->ret_value = TRUE;
+		}
+	}
+	unlock();
 	return NULL;
 }
 /**
