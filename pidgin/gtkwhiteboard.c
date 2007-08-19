@@ -3598,7 +3598,8 @@ static void pidgin_whiteboard_draw_shape(PurpleWhiteboard *wb, GList *draw_list)
               draw_list = draw_list->next;
               y = GPOINTER_TO_INT(draw_list->data);
               purple_debug_error("gtkwhiteboard", " in fill color at %d %d\n",x,y );
-              image_buf_flood_fill(gtkwb, x, y, &col);          
+              image_buf_flood_fill(gtkwb, x, y, &col);         
+			  gtk_widget_queue_draw(gtkwb->drawing_area);
               break;
         case VIDEO_TOOL:
               i=0;
