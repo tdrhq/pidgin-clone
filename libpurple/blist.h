@@ -761,13 +761,26 @@ void purple_blist_schedule_save(void);
 void purple_blist_request_add_buddy(PurpleAccount *account, const char *username,
 								  const char *group, const char *alias);
 
-/* prekshu */
-void purple_blist_request_add_to_class (PurpleAccount *account, const char *username,
-							const char *group, const char *alias);
-void purple_blist_request_remove_from_class (PurpleAccount *account, const char *username,
-							const char *group, const char *alias);
-gint purple_blist_request_check_presence (PurpleAccount *account, const char *username,
-                            const char *group, const char *alias);
+/**
+ * Adds a group to class
+ *
+ * @param group    The name of the group to be added to the class.
+ */
+void purple_blist_request_add_to_class (const char *group);
+
+/**
+ * Removes a group from a class
+ *
+ * @param group    The name of the group to be removed from the class.
+ */
+void purple_blist_request_remove_from_class (const char *group);
+
+/**
+ * Checks for the presence of a group in the class
+ *
+ * @param group    The name of the group whose presence is to be checked.
+ */
+gint purple_blist_request_check_presence (const char *group);
 
 /**
  * Requests from the user information needed to add a chat to the

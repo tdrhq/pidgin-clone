@@ -2429,10 +2429,8 @@ purple_blist_request_add_buddy(PurpleAccount *account, const char *username,
 		ui_ops->request_add_buddy(account, username, group, alias);
 }
 
-/* prekshu */
 gint 
-purple_blist_request_check_presence (PurpleAccount *account, const char *username,
-                            const char *group, const char *alias)
+purple_blist_request_check_presence (const char *group)
 {
 	xmlnode *purple, *glist, *id;
 	int alreadyThere = 0;
@@ -2453,7 +2451,6 @@ purple_blist_request_check_presence (PurpleAccount *account, const char *usernam
 			for (groupid = xmlnode_get_child(glist, "id"); groupid != NULL;
 					groupid  = xmlnode_get_next_twin(groupid)) 
 			{
-				purple_debug_info ("GROUP ID READ", "##%s##\n", xmlnode_get_data(groupid));
 				if (!strcmp(group, xmlnode_get_data(groupid)))
 				{	
 					return 1;
@@ -2465,10 +2462,8 @@ purple_blist_request_check_presence (PurpleAccount *account, const char *usernam
 	return 0;
 }	
 
-/* prekshu */
 void 
-purple_blist_request_add_to_class (PurpleAccount *account, const char *username,
-							const char *group, const char *alias)
+purple_blist_request_add_to_class (const char *group)
 {
 	purple_debug_info ("REQUEST ADD TO CLASS", "ADDED\n");
 
@@ -2480,9 +2475,6 @@ purple_blist_request_add_to_class (PurpleAccount *account, const char *username,
 
 	if (purple == NULL)
 	{
-		purple_debug_info ("LIST IS NULL", "ADDED\n");
-		purple_debug_info ("CREATING classroom.xml", "ADDED\n");
-
 		purple = xmlnode_new("purple");
 		xmlnode_set_attrib(purple, "version", "1.0");
 		
@@ -2490,9 +2482,6 @@ purple_blist_request_add_to_class (PurpleAccount *account, const char *username,
 	}
 	else 
 	{
-		purple_debug_info ("Group", "%s\n", group);
-		purple_debug_info ("MODIFYING classroom.xml", "ADDED\n");
-
 		glist = xmlnode_get_child(purple, "group");
 		if (glist) 
 		{
@@ -2500,7 +2489,6 @@ purple_blist_request_add_to_class (PurpleAccount *account, const char *username,
 			for (groupid = xmlnode_get_child(glist, "id"); groupid != NULL;
 					groupid  = xmlnode_get_next_twin(groupid)) 
 			{
-				purple_debug_info ("GROUP ID READ", "##%s##\n", xmlnode_get_data(groupid));
 				if (!strcmp(group, xmlnode_get_data(groupid)))
 				{	
 					alreadyThere = 1;
@@ -2522,19 +2510,13 @@ purple_blist_request_add_to_class (PurpleAccount *account, const char *username,
 	}	
 }
 
-/* prekshu */
 void 
-purple_blist_request_remove_from_class (PurpleAccount *account, const char *username,
-							const char *group, const char *alias)
+purple_blist_request_remove_from_class (const char *group)
 {
-	purple_debug_info ("REQUEST REMOVE FROM CLASS", "REMOVED\n");
-
 	xmlnode *purple, *purplenew, *glist, *glistnew, *id, *newid;
 	char *data;
 
 	purple = purple_util_read_xml_from_file("classroom.xml", _("class groups"));
-
-	purple_debug_info ("MODIFYING classroom.xml", "%s REMOVED\n\n", group);
 
 	purplenew = xmlnode_new("purple");
 	xmlnode_set_attrib(purplenew, "version", "1.0");
@@ -2547,7 +2529,6 @@ purple_blist_request_remove_from_class (PurpleAccount *account, const char *user
 		for (groupid = xmlnode_get_child(glist, "id"); groupid != NULL;
 				groupid  = xmlnode_get_next_twin(groupid)) 
 		{
-			purple_debug_info ("GROUP ID READ", "##%s##\n", xmlnode_get_data(groupid));
 			if (strcmp(group, xmlnode_get_data(groupid)))
 			{	
 				newid = xmlnode_new_child(glistnew, "id");

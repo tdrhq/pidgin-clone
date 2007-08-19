@@ -880,7 +880,9 @@ static void pidgin_blist_add_chat_cb()
 	}
 }
 
-/* prekshu */
+/**
+ * Callback function when a group is to be added to a class
+ */ 
 static void pidgin_blist_add_to_class_cb ()
 {
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
@@ -892,14 +894,15 @@ static void pidgin_blist_add_to_class_cb ()
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		if (PURPLE_BLIST_NODE_IS_GROUP(node)) 
 		{
-			purple_debug_info ("ADD TO CLASS GROUP CLICKED", "GROUP CLICKED %s\n\n", "GROUP CLICKED");
-			// Update $HOME/.purple/classroom.xml file
-			purple_blist_request_add_to_class(NULL, NULL, ((PurpleGroup*)node)->name, NULL);
+			purple_debug_info ("buddylist", "ADD TO CLASS GROUP CLICKED\n");
+			purple_blist_request_add_to_class(((PurpleGroup*)node)->name);
 		}
 	}
 }
 
-/* prekshu */
+/**
+ * Callback function when a group is to be removed from a class
+ */ 
 static void pidgin_blist_remove_from_class_cb ()
 {
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
@@ -911,9 +914,8 @@ static void pidgin_blist_remove_from_class_cb ()
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		if (PURPLE_BLIST_NODE_IS_GROUP(node)) 
 		{
-			purple_debug_info ("REMOVE FROM CLASS GROUP CLICKED", "GROUP CLICKED %s\n\n", "GROUP CLICKED");
-			// Update $HOME/.purple/classroom.xml file
-			purple_blist_request_remove_from_class(NULL, NULL, ((PurpleGroup*)node)->name, NULL);
+			purple_debug_info ("buddylist", "REMOVE FROM CLASS GROUP CLICKED\n");
+			purple_blist_request_remove_from_class(((PurpleGroup*)node)->name);
 		}
 	}
 }
@@ -1203,25 +1205,29 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
 	return FALSE;
 }
 
-/* prekshu */
+/**
+ * Checks whether a group is already added to the class
+ */
 gint groupAlreadyInClass(PurpleBlistNode *node, PurpleGroup *g)
 {
 		if (PURPLE_BLIST_NODE_IS_GROUP(node)) 
 		{
-			return purple_blist_request_check_presence(NULL, NULL, ((PurpleGroup*)node)->name, NULL);
+			return purple_blist_request_check_presence(((PurpleGroup*)node)->name);
 		}
 	
 		return -1;
 }
 
-/* prekshu */
+/**
+ * Creates the menu when we right click on a group node in buddylist window
+ */
 static GtkWidget *
 create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 {
 	GtkWidget *menu;
 	GtkWidget *item;
 
-	purple_debug_info ("CREATE_GROUP_MENU", "CALLED\n\n");
+	purple_debug_info ("buddylist", "CREATE_GROUP_MENU CALLED\n");
 
 	menu = gtk_menu_new();
 	item = pidgin_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
