@@ -684,7 +684,7 @@ static GList *get_list_log(PurpleLogType type, const char *name, PurpleAccount *
 			datetime = dbi_result_get_uint(dres, "datetime");
 
 			tm = localtime(&datetime);
-
+			purple_debug_info("Database Logger", "get_list_log: type = %i\n", type);
 			log = purple_log_new(type, name, account, NULL, datetime, (datetime != 0) ?  tm : NULL);
 			log->logger = db_logger->logger;
 			log->logger_data = conv_info = g_slice_new0(ConversationInfo);
@@ -858,7 +858,7 @@ static gpointer db_list(gpointer data)
 	purple_debug_info("Database Logger", "---- XXX ---- db_list: account = %s , name = %s\n", purple_account_get_username(op->account), op->name);
 
 	lock();
-	op->ret_value = get_list_log(op->type, op->name, op->account);
+	op->ret_value = get_list_log(op->log_type, op->name, op->account);
 	unlock();
 
 	return NULL;
@@ -908,7 +908,7 @@ static gpointer db_total_size(gpointer data)
 
 	op->ret_value = 0;
 	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT SUM(size) FROM conversations WHERE accountId = %i AND buddyId = %i",
-							db_get_account_id(op->account), db_get_buddy_id(op->type, op->name, op->account));
+							db_get_account_id(op->account), db_get_buddy_id(op->log_type, op->name, op->account));
 							
 	if (dres) {
 		char *string = NULL;
@@ -990,7 +990,7 @@ static gpointer db_remove(gpointer data)
 		dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `messages` WHERE conversationId = %i",
 							conv_info->id);
 		if (db_process_result(dres)) {
-			dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `conversation` WHERE id = %i",
+			dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `conversations` WHERE id = %i",
 								conv_info->id);
 			db_process_result(dres);
 			op->ret_value = TRUE;
