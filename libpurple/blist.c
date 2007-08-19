@@ -2432,9 +2432,7 @@ purple_blist_request_add_buddy(PurpleAccount *account, const char *username,
 gint 
 purple_blist_request_check_presence (const char *group)
 {
-	xmlnode *purple, *glist, *id;
-	int alreadyThere = 0;
-	char *data;
+	xmlnode *purple, *glist;
 
 	purple = purple_util_read_xml_from_file("classroom.xml", _("class groups"));
 
@@ -2465,8 +2463,6 @@ purple_blist_request_check_presence (const char *group)
 void 
 purple_blist_request_add_to_class (const char *group)
 {
-	purple_debug_info ("REQUEST ADD TO CLASS", "ADDED\n");
-
 	xmlnode *purple, *glist, *id;
 	int alreadyThere = 0;
 	char *data;
@@ -2513,7 +2509,7 @@ purple_blist_request_add_to_class (const char *group)
 void 
 purple_blist_request_remove_from_class (const char *group)
 {
-	xmlnode *purple, *purplenew, *glist, *glistnew, *id, *newid;
+	xmlnode *purple, *purplenew, *glist, *glistnew, *newid;
 	char *data;
 
 	purple = purple_util_read_xml_from_file("classroom.xml", _("class groups"));

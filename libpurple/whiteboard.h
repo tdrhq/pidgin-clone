@@ -41,15 +41,14 @@ typedef struct _PurpleWhiteboard
 {
 	int state;                       /**< State of whiteboard session */
 
-	PurpleAccount *account;            /**< Account associated with this session */
+	PurpleAccount *account;          /**< Account associated with this session */
 	char *who;                       /**< Name of the remote user */
 	void *ui_data;                   /**< Graphical user-interface data */
 	void *proto_data;                /**< Protocol specific data */
 	PurpleWhiteboardPrplOps *prpl_ops; /**< Protocol-plugin operations */
 
 	GList *draw_list;                /**< List of drawing elements/deltas to send */
-    /* anil */
-    int boardType;
+    int boardType; 					 /**< Teacher board or Student board */
 } PurpleWhiteboard;
 
 /**
@@ -129,15 +128,33 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
  * @return The new whiteboard
  */
 PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state);
-/* anil */
+
+/**
+ * Adds whiteboard to the session list
+ *
+ * @param wb 	The whiteboard
+ */ 
 PurpleWhiteboard *purple_whiteboard_create_session(PurpleWhiteboard *wb);
+
+/**
+ * Destroys the whiteboard window for students and instructor
+ *
+ * @param account The account
+ */
 void purple_whiteboard_destroy_window(PurpleAccount *account);
-void purple_whiteboard_draw_shape(PurpleWhiteboard*,GList*);
-/**/
+
+/**
+ * Draws a shape on whiteboard
+ * 
+ * @param wb 	The whiteboard on which the shape has to be drawn
+ * @param list 	The GList of points
+ */
+void purple_whiteboard_draw_shape(PurpleWhiteboard *wb, GList *list);
+
 /**
  * Destroys a whiteboard
  *
- * @param wb The whiteboard.
+ * @param wb 	The whiteboard
  */
 void purple_whiteboard_destroy(PurpleWhiteboard *wb);
 
@@ -201,8 +218,9 @@ void purple_whiteboard_draw_point(PurpleWhiteboard *wb, int x, int y, int color,
  *
  * @param wb	The whiteboard
  * @param list	A GList of points
+ * @param command The command to be send
  */
-void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list,int);
+void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list, int command);
 
 /**
  * Draws a line on a whiteboard

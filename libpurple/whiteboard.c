@@ -49,15 +49,12 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
 	wb->prpl_ops = ops;
 }
 
-/* anil*/
 PurpleWhiteboard *purple_whiteboard_create_session(PurpleWhiteboard *wb)
 {
-//    purple_debug_info("yahoo", " no problem here (%s)\n", wb->who);
 	wbList = g_list_append(wbList, wb);
 
 	return wb;
 }
-/**/
 
 PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state)
 {
@@ -99,11 +96,11 @@ void purple_whiteboard_destroy_window(PurpleAccount *account)
     }
 
     if (wb == NULL) {
-        purple_debug_info("yahoo", "yes there is problem \n");
+        purple_debug_info("yahoo", "problem in purple_whiteboard_destroy_window()\n");
         return;
     }
 
-    purple_debug_info("yahoo", "ok ok  %s %s\n",account->username,wb->who);
+    purple_debug_info("yahoo", "ok ok  %s %s\n", account->username, wb->who);
     
     if (wb->boardType == STUDENT_BOARD)
 	{
@@ -116,7 +113,7 @@ void purple_whiteboard_destroy_window(PurpleAccount *account)
             }
             l = l->next;
         }
-    	purple_debug_info("yahoo STUDENT ", "ok ok  %s %s\n",account->username, wb->who);
+    	purple_debug_info("yahoo student", "ok ok  %s %s\n", account->username, wb->who);
     }
     else
 	{
@@ -126,7 +123,7 @@ void purple_whiteboard_destroy_window(PurpleAccount *account)
             wb1 = l->data;
             if (wb1->account == wb->account && wb1->boardType == STUDENT_BOARD && wb->prpl_ops && wb->prpl_ops->end){
                 wb->prpl_ops->end(wb1);
-                purple_debug_info("yahoo SENDING CLOSE", "yes u r: Got Shutdown (%s)\n", wb1->who);
+                purple_debug_info("yahoo sending close", "Got Shutdown (%s)\n", wb1->who);
             }
             l = l->next;
         }/*This loops sends a closing signal to all the student whiteboards*/
@@ -138,9 +135,8 @@ void purple_whiteboard_destroy_window(PurpleAccount *account)
         {
 			i++;
             wb1 = l->data;
-            //if (wb1->account == wb->account || !strcmp(wb1->who,wb->account->username)){
             if (wb1->account == wb->account){
-                purple_debug_info("yahoo CLOSING BOARDS", "yes u r: Got Shutdown (%s) - %d \n", wb1->who , i );
+                purple_debug_info("yahoo closing boards", "Got Shutdown (%s) - %d\n", wb1->who, i);
                 wbList = g_list_remove(wbList, wb1);
             }
             l = l->next; 
@@ -263,18 +259,14 @@ void purple_whiteboard_set_dimensions(PurpleWhiteboard *wb, int width, int heigh
 		whiteboard_ui_ops->set_dimensions(wb, width, height);
 }
 
-/**  anil  **/
 void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list, int command)
 {
-//	PurpleWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
-
 	PurpleWhiteboard *wb1;
 
 	GList *l = wbList;
     purple_debug_info("yahoo", " sending list with command %d \n", command);
     if (wb->boardType == TEACHER_BOARD ){
-        /* Look for a whiteboard session between the local user and the remote user
-         */
+        /* Look for a whiteboard session between the local user and the remote user */
         while(l != NULL)
         {
             wb1 = l->data;
@@ -284,18 +276,19 @@ void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list, int com
             l = l->next;
         }
     }
-//    purple_debug_info("yahoo", " sending list with command out %d \n",command);
 }
-/********/
+
 void purple_whiteboard_draw_point(PurpleWhiteboard *wb, int x, int y, int color, int size)
 {
 	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_point)
 		whiteboard_ui_ops->draw_point(wb, x, y, color, size);
 }
+
 void purple_whiteboard_draw_shape(PurpleWhiteboard* wb,GList *draw_list){
 	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_line)
 		whiteboard_ui_ops->draw_shape(wb, draw_list);
 }
+
 void purple_whiteboard_draw_line(PurpleWhiteboard *wb, int x1, int y1, int x2, int y2, int color, int size)
 {
 	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_line)
