@@ -785,12 +785,13 @@ static gpointer db_size(gpointer data)
 {
 	DatabaseSizeOperation *op = data;
 	ConversationInfo *conv_info = op->log->logger_data;
-	dbi_result dres;
 
 	purple_debug_info("Database Logger", "db_size: account = %s", purple_account_get_username(op->log->account));
 	lock();
 	op->ret_value = 0;
 	if (conv_info && conv_info->id != -1){
+		dbi_result dres;
+
 		dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `size` FROM `conversations` WHERE conversationId=%i",
 							conv_info->id);
 		db_retrieve_int_value(dres, &op->ret_value, "size") ;
@@ -802,6 +803,20 @@ static gpointer db_size(gpointer data)
 
 static gpointer db_total_size(gpointer data)
 {
+	DatabaseTotalSizeOperation *op = data;
+	dbi_result dres;
+
+	purple_debug_info("Database Logger", "db_total_size: account = %s", purple_account_get_username(op->account));
+
+	lock();
+
+	op->ret_value = 0;
+	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT SUM(size) FROM conversations WHERE accountId = %i AND buddyId = %i",
+							db_get_account_id(op->account), db_get_buddy_id(op->type, op->name, op->account));
+	db_retrieve_int_value(dres, &op->ret_value, "SUM(size)") ;
+
+	unlock();
+
 	return NULL;
 }
 
