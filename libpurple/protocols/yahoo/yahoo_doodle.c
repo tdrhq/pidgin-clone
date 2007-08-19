@@ -114,7 +114,7 @@ purple_doodle_get_handle(void)
     return &handle;
 }
 
-static void
+/*static void
 update_buddy_board(PurpleBuddy *buddy, const char *which)
 {
 
@@ -140,10 +140,7 @@ update_buddy_board(PurpleBuddy *buddy, const char *which)
         all_active_accounts = all_active_accounts->next;
     }
 
-	purple_debug_info("UPDATE BUDDY BOARD", "PREKSHU YOU ARE GOD !! FINALLY YOU GOT REQUEST !!\n");
-	purple_debug_info("UPDATE BUDDY BOARD", "PREKSHU YOU ARE GOD !! FINALLY YOU GOT REQUEST !!\n");
-	purple_debug_info("UPDATE BUDDY BOARD", "PREKSHU YOU ARE GOD !! FINALLY YOU GOT REQUEST !!\n");
-}
+}*/
 
 void yahoo_doodle_initiate(PurpleConnection *gc, const char *name)
 {
@@ -576,9 +573,6 @@ void yahoo_doodle_command_send_ready(PurpleConnection *gc, const char *to)
 	yahoo_doodle_command_send_generic("Ready", gc, to, "", "0", NULL, "0");
 }
 
-/*anil*/
-/*anil*/
-/*anil*/
 void yahoo_doodle_start_student_session(PurpleBuddy *buddy, PurpleWhiteboard *wb ){
 	if(!PURPLE_BUDDY_IS_ONLINE(buddy)){
         purple_debug_info("yahoo", " (%s) is offline \n", buddy->name); 
@@ -625,7 +619,6 @@ void yahoo_doodle_start_student_session(PurpleBuddy *buddy, PurpleWhiteboard *wb
 			return;
 	}
 
-	//////////////////////////
 	PurpleConnection *gc = buddy->account->gc;
     PurpleAccount *account ;
     account = purple_connection_get_account(gc);
@@ -652,39 +645,13 @@ void yahoo_doodle_start_student_session(PurpleBuddy *buddy, PurpleWhiteboard *wb
     yahoo_doodle_command_send_request(gc, buddy->name);
 	yahoo_doodle_command_send_ready(gc, buddy->name);
 
-	purple_debug_info("DOODLE DOODLE", "YAHOO DOOODLE START STUDENT SESSION\n");
-	
-	purple_debug_info("HELLO HELLO", "PREKSHU YOU ARE GOD !! FINALLY YOU GOT REQUEST !!\n");
-	purple_debug_info("HELLO HELLO", "PREKSHU YOU ARE GOD !! FINALLY YOU GOT REQUEST !!\n");
-	purple_debug_info("HELLO HELLO", "PREKSHU YOU ARE GOD !! FINALLY YOU GOT REQUEST !!\n");
-
-	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", purple_doodle_get_handle(), PURPLE_CALLBACK(update_buddy_board), "on");
+	// TO BE FIXED
+	// It worked well for single whiteboard but for multiple whiteboards
+	// I do not have any idea how to do 
+	//purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", purple_doodle_get_handle(), PURPLE_CALLBACK(update_buddy_board), "on");
 
 }
 
-/*anil*/
-/*anil*/
-/*anil*/
-/*void check_for_new_student_online(PurpleConnection *gc,PurpleWhiteboard *wb_teacher){
-    GSList *buddyList = purple_find_buddies(gc->account,NULL); 
-    purple_debug_info("yahoo", "checking for new student.. (%s)\n", wb_teacher->who); 
-    while(buddyList != NULL){
-        PurpleBuddy *buddy = buddyList->data;
-        PurpleWhiteboard *wb  = purple_whiteboard_get_session(buddy->account, buddy->name);
-        purple_debug_info("yahoo", "new student came online.. (%s) - %d\n",  buddy->name, wb?1:0); 
-        if(wb == NULL){
-            yahoo_doodle_start_student_session(buddy,wb_teacher);
-        }
-        buddyList = buddyList->next;
-    }
-}*/
-
-
-
-/**/
-/*anil*/
-/*anil*/
-/*anil*/
 void yahoo_doodle_command_send_draw(PurpleConnection *gc, const char *to, const char *message,int command)
 {
     PurpleAccount *account;
@@ -696,14 +663,10 @@ void yahoo_doodle_command_send_draw(PurpleConnection *gc, const char *to, const 
 	account = purple_connection_get_account(gc);
 	wb      = purple_whiteboard_get_session(account, gc->display_name);
     if(wb != NULL && wb->boardType != STUDENT_BOARD){
-//        check_for_new_student_online(gc,wb);
         yahoo_doodle_command_send_generic("Draw", gc, to, message, command_str, NULL, "1");
     }
 }
 
-/*anil*/
-/*anil*/
-/*anil*/
 void yahoo_doodle_command_send_clear(PurpleConnection *gc, const char *to)
 {
     PurpleAccount *account;
@@ -734,8 +697,6 @@ void yahoo_doodle_start(PurpleWhiteboard *wb)
 {
 	doodle_session *ds = g_new0(doodle_session, 1);
 
-	/* purple_debug_debug("yahoo", "doodle: yahoo_doodle_start()\n"); */
-
 	/* Set default brush size and color */
 	ds->brush_size  = DOODLE_BRUSH_SMALL;
 	ds->brush_color = DOODLE_COLOR_RED;
@@ -743,20 +704,12 @@ void yahoo_doodle_start(PurpleWhiteboard *wb)
 	wb->proto_data = ds;
 }
 
-/*anil*/
-/*anil*/
-/*anil*/
 void yahoo_doodle_end(PurpleWhiteboard *wb)
 {
 	PurpleConnection *gc = purple_account_get_connection(wb->account);
 
     purple_debug_info("yahoo", "white board end... (%s)\n", wb->who); 
-//    if(wb->boardType == TEACHER_BOARD) 
-//        purple_whiteboard_remove_all_sessions();
 	yahoo_doodle_command_send_shutdown(gc, wb->who);
-//    purple_debug_info("yahoo", "white board end... (%s)\n", wb->who); 
-//	g_free(wb->proto_data);
-//	anil.....
 }
 
 void yahoo_doodle_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height)
@@ -784,9 +737,6 @@ static char *yahoo_doodle_build_draw_string(doodle_session *ds, GList *draw_list
 	return g_string_free(message, FALSE);
 }
 
-/*anil*/
-/*anil*/
-/*anil*/
 void yahoo_doodle_send_draw_list(PurpleWhiteboard *wb, GList *draw_list, int command)
 {
 	doodle_session *ds = wb->proto_data;
@@ -794,9 +744,6 @@ void yahoo_doodle_send_draw_list(PurpleWhiteboard *wb, GList *draw_list, int com
 
 	g_return_if_fail(draw_list != NULL);
 
-	/*anil*/
-	/*anil*/
-	/*anil*/
 	message = yahoo_doodle_build_draw_string(ds, draw_list);
    	yahoo_doodle_command_send_draw(wb->account->gc, wb->who, message, command);
 	g_free(message);
@@ -825,9 +772,7 @@ void yahoo_doodle_draw_stroke(PurpleWhiteboard *wb, GList *draw_list)
 	draw_list = draw_list->next;
 	g_return_if_fail(draw_list != NULL);
 
-/*anil*/
-/*anil*/
-/*anil*/
+	/* */
     x = GPOINTER_TO_INT(draw_list->data);
     draw_list = draw_list->next;
     y = GPOINTER_TO_INT(draw_list->data);
@@ -847,8 +792,6 @@ void yahoo_doodle_draw_stroke(PurpleWhiteboard *wb, GList *draw_list)
 
 		draw_list = draw_list->next->next;
 	}
-//	purple_debug_info("yahoo", "doodle: end : color=%d, size=%d, (%d,%d)\n", brush_color, brush_size, x, y);
-
 }
 
 void yahoo_doodle_get_brush(const PurpleWhiteboard *wb, int *size, int *color)

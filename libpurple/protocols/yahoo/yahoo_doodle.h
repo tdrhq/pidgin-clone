@@ -43,8 +43,6 @@
 #define DOODLE_CMD_EXTRA    4
 #define DOODLE_CMD_CONFIRM  5
 
-
-///////////////////
 #define DOODLE_CMD_DRAW_LINE 6
 #define DOODLE_CMD_DRAW_RECT 7
 #define DOODLE_CMD_DRAW_ARC 8
@@ -57,8 +55,6 @@
 #define DOODLE_CMD_DRAW_CLOSEPAGE 17
 #define DOODLE_CMD_DRAW_EDITPAGE 18
 #define DOODLE_CMD_DRAW_SETFONT 19
-///////////////////
-
 
 /* Doodle communication command for shutting down (also 0) */
 #define DOODLE_CMD_SHUTDOWN 0
@@ -73,12 +69,8 @@
 #define DOODLE_STATE_REQUESTED   1
 #define DOODLE_STATE_ESTABLISHED 2
 
-
-///////
 #define DOODLE_CANVAS_WIDTH  520
 #define DOODLE_CANVAS_HEIGHT 520
-///////
-
 
 /* Doodle color codes (most likely RGB) */
 /* TODO: Should be an enum and sorted by color name. */
