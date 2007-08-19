@@ -35,17 +35,9 @@
 #include "gnttree.h"
 #include "gntentry.h"
 #include "gntbox.h"
+#include "gntcombobox.h"
 #include "gnttextview.h"
 #include "gntbutton.h"
-
-static GHashTable *log_viewers = NULL;
-
-typedef struct {
-	PurpleLogType type;
-	char *screenname;
-	PurpleAccount *account;
-	PurpleContact *contact;
-} LogViewerHashT;
 
 typedef struct {
 	FinchLogViewer *log_viewer;
@@ -57,17 +49,19 @@ typedef struct {
 	gulong destroy_handler_id;
 } FinchLogData;
 
-static const char *
-display_name_for_log_viewer(LogViewerHashT *ht)
+static FinchLogViewer * create_log_viewer(PurpleAccount *account, const char * screenname, const gchar * title, gboolean need_log_size);
+
+/*static const char *
+display_name_for_log_viewer(const char *screenname, PurpleAccount *account)
 {
 	static char display[1024];
-	g_snprintf(display, sizeof(display), "%s (%s: %s)", ht->screenname,
-			purple_account_get_username(ht->account),
-			purple_account_get_protocol_name(ht->account));
+	g_snprintf(display, sizeof(display), "%s (%s: %s)", screenname,
+			purple_account_get_username(account),
+			purple_account_get_protocol_name(account));
 	return display;
-}
+}*/
 
-static guint log_viewer_hash(gconstpointer data)
+/*static guint log_viewer_hash(gconstpointer data)
 {
 	const LogViewerHashT *viewer = data;
 
@@ -103,7 +97,7 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 	g_free(normal);
 
 	return ret;
-}
+}*/
 
 static void
 finch_log_window_destroy_cb(GntWidget *w, gpointer data)
@@ -128,14 +122,14 @@ static void
 finch_log_size_cb(int size, void *data)
 {
 	FinchLogData * finch_log_data = data;
-
 	if (finch_log_data->need_continue == TRUE)
 		set_log_viewer_log_size(finch_log_data->log_viewer, size);
 
 	finch_log_data->done_cb(finch_log_data);
 }
 
-static const char *log_get_date(PurpleLog *log)
+static const char 
+*log_get_date(PurpleLog *log)
 {
 	if (log->tm)
 		return purple_date_format_full(log->tm);
@@ -199,24 +193,19 @@ static void append_log_viewer_logs(FinchLogViewer *log_viewer, GList *logs)
 static void
 free_months (FinchLogViewer *lv)
 {
-	g_list_foreach(lv->months,(GFunc)g_free,NULL);
-	g_list_free(lv->months);
+	if(lv->months){
+		g_list_foreach(lv->months, (GFunc)g_free, NULL);
+		g_list_free(lv->months);
+		lv->months = NULL;
+	}
 }
 
-static void
-cleanup_log_window(GntWidget *win, gpointer data)
-{
-	FinchLogViewer *viewer = data;
-	free_months(viewer);
-	g_hash_table_remove(log_viewers, viewer->hash);
-}
 
 static void
 finch_log_list_cb(GList * list, void * data)
 {
 	FinchLogData *finch_log_data = data;
-
-
+	
 	if (list != NULL) {
 		if (finch_log_data->need_continue == TRUE) {
 			append_log_viewer_logs(finch_log_data->log_viewer, list);
@@ -271,39 +260,229 @@ update_log_view(GntTree *tree, gpointer data)
 
 }
 
+static void
+clean_up_screenname(FinchLogViewer *viewer)
+{
+	GSList *itr;
+	GntEntry *entry = GNT_ENTRY(viewer->screenname);
+
+	gnt_entry_set_text(entry, "");
+
+	for(itr = viewer->suggest;itr;itr = itr->next){
+		gnt_entry_remove_suggest(entry, (const char *)itr->data);
+		g_free(itr->data);
+	}
+
+	g_slist_free(viewer->suggest);
+	viewer->suggest = NULL;
+	
+}
+
+static void
+setup_suggest(GntEntry *entry, FinchLogViewer *viewer, PurpleAccount *account)
+{
+	GSList *itrs;
+	viewer->suggest = purple_find_buddies(account, NULL);
+	for(itrs = viewer->suggest;itrs;itrs = itrs->next) {
+		PurpleBuddy *buddy = itrs->data;
+		gnt_entry_add_suggest(GNT_ENTRY(viewer->screenname), buddy->name);
+	}
+}
+
+static char *
+get_title(PurpleLogType type, PurpleAccount *account, const gchar *screenname)
+{
+	char *title;
+	const char *name = screenname;
+
+	if (type == PURPLE_LOG_CHAT) {
+		PurpleChat *chat;
+	
+		chat = purple_blist_find_chat(account, screenname);
+		if (chat != NULL)
+			name = (gchar *)purple_chat_get_name(chat);
+	
+		title = g_strdup_printf(_("Conversations in %s"), name);
+	} 
+	else {
+		PurpleBuddy *buddy;
+	
+		buddy = purple_find_buddy(account, screenname);
+		if (buddy != NULL)
+			name = (gchar *)purple_buddy_get_contact_alias(buddy);
+		title = g_strdup_printf(_("Conversations with %s"), name);
+	}
+
+	return title;
+
+}
+
+static void
+clear_viewer(FinchLogViewer *viewer)
+{
+	gnt_box_set_title(GNT_BOX(viewer->window),"");
+	
+	gnt_text_view_tag_change(GNT_TEXT_VIEW(viewer->info), "who", " ", TRUE);
+	gnt_text_view_tag_change(GNT_TEXT_VIEW(viewer->info), "log-size", " ", TRUE);
+	gnt_widget_draw(viewer->info);
+	
+
+	gnt_tree_remove_all(GNT_TREE(viewer->tree));
+	free_months(viewer);
+	gnt_text_view_clear(GNT_TEXT_VIEW(viewer->tv));
+	gnt_entry_clear(GNT_ENTRY(viewer->entry));
+}
+
+static void
+setup_viewer(FinchLogViewer *viewer, PurpleAccount *account, const gchar *screenname, const char *title)
+{
+	gnt_box_set_title(GNT_BOX(viewer->window), title);
+	gnt_text_view_tag_change(GNT_TEXT_VIEW(viewer->info), "who",  screenname, TRUE);
+}
+
+static void
+load_logs(PurpleLogType type, PurpleAccount *account, const gchar *screenname, FinchLogViewer *viewer)
+{
+	FinchLogData * finch_log_data;
+	char *title = get_title(type, account, screenname);
+
+	setup_viewer(viewer, account, screenname, title);
+
+	finch_log_data = g_new0(FinchLogData, 1);
+	finch_log_data->done_cb = finch_log_done_cb;
+
+	/* we should set count of nonblocking  calls
+			when counter will be zero
+			we free all data and make neccessary operations
+			we have 2 nonblocking calls: 
+			purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking  */
+
+	
+	finch_log_data->log_viewer = viewer;
+
+	finch_log_data->counter = 2;
+	finch_log_data->destroy_handler_id =
+					g_signal_connect( G_OBJECT(finch_log_data->log_viewer->window), 
+														"destroy",
+														G_CALLBACK(finch_log_window_destroy_cb), 
+														finch_log_data);
+
+	finch_log_data->need_continue = TRUE;
+
+	purple_log_get_logs_nonblocking(type, screenname, account, finch_log_list_cb, finch_log_data);
+	purple_log_get_total_size_nonblocking(type, screenname, account, finch_log_size_cb, finch_log_data);
+
+}
+
+
+static void
+load_user(GntEntry *entry, FinchLogViewer *viewer)
+{
+	const char * screenname = gnt_entry_get_text(entry);
+	PurpleAccount *account = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(viewer->account));
+	PurpleBuddy *buddy = purple_find_buddy(account, screenname);
+	PurpleBlistNode *node = (PurpleBlistNode *)buddy;
+	PurpleLogType type = PURPLE_LOG_IM;
+
+
+	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		type = PURPLE_LOG_IM;
+	}
+	else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		type = PURPLE_LOG_CHAT;
+	}
+	clear_viewer(viewer);
+	load_logs(type, account, screenname, viewer);
+	
+}
+
+static gboolean
+screenname_key_pressed(GntEntry *entry, const char * key, FinchLogViewer *viewer)
+{
+	if(key[0] == '\r' && key[1] == 0) {
+		load_user(entry, viewer);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static void
+change_account(GntComboBox *combox, gpointer oldkey, gpointer newkey, FinchLogViewer *viewer)
+{
+	PurpleAccount *account = newkey;
+
+	clean_up_screenname(viewer);
+	clear_viewer(viewer);
+
+	gnt_box_give_focus_to_child(GNT_BOX(viewer->window), viewer->screenname);
+	setup_suggest(GNT_ENTRY(viewer->screenname), viewer, account);
+	
+}
+
 static FinchLogViewer *
-display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_size)
+create_log_viewer(PurpleAccount *account, const char *screenname, const gchar * title, gboolean need_log_size)
 {
 	GntWidget *win;
 	GntWidget *tv;
 	GntWidget *tree;
 	GntWidget *entry;
 	GntWidget *button;
+	GntWidget *combox;
+	GntWidget *selectbox;
 	GntWidget *splitbox;
 	GntWidget *rightbox;
 	GntWidget *searchbox;
 	GntWidget *aligned_box;
+	
 
+	GList *itr;
 	int h, w;
 
 	FinchLogViewer *viewer;
 
 	viewer = g_new0(FinchLogViewer, 1);
- 	g_hash_table_insert(log_viewers, ht, viewer);
-	viewer->hash = ht;
+	viewer->suggest = NULL;
 
 	viewer->window = win = gnt_window_box_new(FALSE, TRUE);
+
 	gnt_box_set_title(GNT_BOX(win), title);
 	gnt_box_set_pad(GNT_BOX(win), 0);
 	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
 	gnt_box_set_fill(GNT_BOX(win), TRUE);
 	gnt_box_set_alignment(GNT_BOX(win), GNT_ALIGN_MID);
 
+	selectbox = gnt_box_new(TRUE, FALSE);	
+	viewer->screenname = entry = gnt_entry_new("");
+	gnt_entry_set_text(GNT_ENTRY(viewer->screenname), screenname);
+
+	viewer->account = combox = gnt_combo_box_new();
+	gnt_widget_get_size(combox, &w, &h);
+	gnt_widget_set_size(combox, 35, h);
+	
+	for(itr = purple_accounts_get_all();itr;itr = itr->next) {
+		PurpleAccount * account = itr->data;
+		
+		gnt_combo_box_add_data(GNT_COMBO_BOX(viewer->account), account, account->username);
+			
+	}
+	gnt_combo_box_set_selected(GNT_COMBO_BOX(viewer->account), account);
+	setup_suggest(GNT_ENTRY(entry), viewer, account);
+
+	g_signal_connect_swapped(G_OBJECT(entry), "destroy", G_CALLBACK(clean_up_screenname), viewer);
+	g_signal_connect(G_OBJECT(entry), "key_pressed", G_CALLBACK(screenname_key_pressed), viewer);
+	g_signal_connect(G_OBJECT(combox), "selection-changed", G_CALLBACK(change_account), viewer);
+
+	gnt_box_add_widget(GNT_BOX(selectbox), entry);
+	gnt_box_add_widget(GNT_BOX(selectbox), combox);
+	gnt_box_readjust(GNT_BOX(selectbox));
+	gnt_box_add_widget(GNT_BOX(win), selectbox);
+	
+
 	viewer->info = tv = gnt_text_view_new();
 	gnt_widget_get_size(tv, &w, &h);
 	gnt_widget_set_size(tv, w, 3);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("Conversation with "), GNT_TEXT_FLAG_NORMAL);
-	gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), display_name_for_log_viewer(ht), GNT_TEXT_FLAG_BOLD, "who");
+	gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), screenname, GNT_TEXT_FLAG_BOLD, "who");
 	if(need_log_size) {
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("\nTotal Log Size: "), GNT_TEXT_FLAG_NORMAL);
 		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(tv), _("(Computing...)"), GNT_TEXT_FLAG_BOLD, "log-size");
@@ -352,7 +531,7 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 	gnt_box_add_widget(GNT_BOX(aligned_box), button);
 	gnt_box_add_widget(GNT_BOX(win), aligned_box);
 
-	g_signal_connect(G_OBJECT(win),"destroy",G_CALLBACK(cleanup_log_window),viewer);
+	g_signal_connect_swapped(G_OBJECT(win),"destroy",G_CALLBACK(clear_viewer),viewer);
 
 	gnt_widget_show(win);
 
@@ -362,86 +541,18 @@ display_log_viewer(LogViewerHashT *ht, const gchar * title, gboolean need_log_si
 void
 finch_log_show(PurpleLogType type, gchar *screenname, PurpleAccount *account)
 {
-	LogViewerHashT *ht;
-	FinchLogViewer *lv = NULL;
-	gchar * name = screenname;
-	char *title;
-	FinchLogData * finch_log_data;
-	
+	const gchar *title = get_title(type, account, screenname);
+
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(screenname != NULL);
 
-	ht = g_new0(LogViewerHashT, 1);
 
-	ht->type = type;
-	ht->screenname = g_strdup(screenname);
-	ht->account = account;
-
-	if (log_viewers == NULL) {
-		log_viewers = g_hash_table_new(log_viewer_hash, log_viewer_equal);
-	} else if ((lv = g_hash_table_lookup(log_viewers, ht))) {
-		gnt_window_present(lv->window);
-		g_free(ht->screenname);
-		g_free(ht);
-		return;
-	}
-
-	if (type == PURPLE_LOG_CHAT) {
-		PurpleChat *chat;
-
-		chat = purple_blist_find_chat(account, screenname);
-		if (chat != NULL)
-			name = (gchar *)purple_chat_get_name(chat);
-
-		title = g_strdup_printf(_("Conversations in %s"), name);
-	} else {
-		PurpleBuddy *buddy;
-
-		buddy = purple_find_buddy(account, screenname);
-		if (buddy != NULL)
-			name = (gchar *)purple_buddy_get_contact_alias(buddy);
-
-		title = g_strdup_printf(_("Conversations with %s"), name);
-	}
-
-	finch_log_data = g_new0(FinchLogData, 1);
-	finch_log_data->done_cb = finch_log_done_cb;
-
-	/* we should set count of nonblocking  calls
-	    when counter will be zero
-	    we free all data and make neccessary operations
-	    we have 2 nonblocking calls: 
-	    purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking  */
-
-	finch_log_data->counter = 2;
-	finch_log_data->log_viewer = display_log_viewer(ht, title, TRUE);
-	g_free(title);
-	finch_log_data->destroy_handler_id =
-					g_signal_connect( G_OBJECT(finch_log_data->log_viewer->window), 
-													  "destroy",
-														G_CALLBACK(finch_log_window_destroy_cb), 
-														finch_log_data);
-
-	finch_log_data->need_continue = TRUE;
-
-	purple_log_get_logs_nonblocking(type, screenname, account, finch_log_list_cb, finch_log_data);
-	purple_log_get_total_size_nonblocking(type, screenname, account, finch_log_size_cb, finch_log_data);
-}
-
-void
-finch_log_show_contact(PurpleContact *contact)
-{
-}
-
-void
-finch_syslog_show()
-{
+	load_logs(type, account, screenname, create_log_viewer(account, screenname, title, TRUE));
 }
 
 void
 finch_log_init()
 {
-	
 }
 
 void *

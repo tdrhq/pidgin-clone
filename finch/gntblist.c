@@ -988,7 +988,7 @@ finch_blist_view_log_cb(PurpleBlistNode *node, PurpleBuddy *buddy)
 		}
 	}
 	else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		finch_log_show_contact((PurpleContact *)node);
+		//finch_log_show_contact((PurpleContact *)node);
 		return;
 	}
 	else {

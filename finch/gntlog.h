@@ -48,21 +48,19 @@ struct _FinchLogViewer {
 	void *hash;					/* A hash value */
 
 	GntWidget *window;   /* The viewer's window */
+	GntWidget *account;  /* The combox with accounts */
+	GntWidget *screenname; /* The entry with the current screenname */
+	GSList *suggest;			/* List of suggestions for the screennames */
 	GntWidget *tree;     /* The tree containing said logs */
 	GntWidget *tv;       /* The textview to display said logs */
 	GntWidget *info;     /* The textview to display information about the log (eg. size etc.) */
 	GntWidget *entry;    /* The search entry */
-	GntWidget *size_label; /* Label that displays the size of the logs */
-	GntWidget *label; 			/* Label that displays what the current log is about */
 
 	PurpleLogReadFlags flags; /* The most recently used log flags */
 	char *search; /* The string currently being searched for */
 };
 
 void finch_log_show(PurpleLogType type, gchar *screenname, PurpleAccount *account);
-void finch_log_show_contact(PurpleContact *contact);
-
-void finch_syslog_show(void);
 
 /**************************************************************************/
 /** @name Gnt Log Subsystem                                              */
