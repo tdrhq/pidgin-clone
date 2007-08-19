@@ -85,7 +85,7 @@ static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
 
 static void html_logger_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
-							  const char *from, time_t time, const char *message,
+							  const char *from, time_t time, char *message,
 							  PurpleLogSizeCallback cb, void *data);
 static void html_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
 							PurpleLogReadCallback cb, void *data);
@@ -113,7 +113,7 @@ static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAcc
 
 static void txt_logger_write_nonblocking(PurpleLog *log,
 							 PurpleMessageFlags type,
-							 const char *from, time_t time, const char *message,
+							 const char *from, time_t time, char *message,
 							 PurpleLogSizeCallback cb, void *data);
 static void txt_logger_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags,
 							PurpleLogReadCallback cb, void *data);
@@ -1906,12 +1906,13 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 }
 
 static void html_logger_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
-							  const char *from, time_t time, const char *message,
+							  const char *from, time_t time, char *message,
 							  PurpleLogSizeCallback cb, void *data)
 {
 	gsize size = html_logger_write(log, type, from, time, message);
 	if (cb != NULL)
 		cb(size, data);
+	g_free(message);
 }
 
 static void html_logger_finalize(PurpleLog *log)
@@ -2075,12 +2076,13 @@ static gsize txt_logger_write(PurpleLog *log,
 
 static void txt_logger_write_nonblocking(PurpleLog *log,
 							 PurpleMessageFlags type,
-							 const char *from, time_t time, const char *message,
+							 const char *from, time_t time, char *message,
 							 PurpleLogSizeCallback cb, void *data)
 {
 	gsize size = txt_logger_write(log, type, from, time, message);
 	if (cb != NULL)
 		cb(size, data);
+	g_free(message);
 }
 
 static void txt_logger_finalize(PurpleLog *log)

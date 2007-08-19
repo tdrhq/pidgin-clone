@@ -109,7 +109,7 @@ struct _PurpleLogLogger {
 		     PurpleMessageFlags type,
 		     const char *from,
 		     time_t time,
-		     const char *message, 
+		     char *message, 
 			 PurpleLogSizeCallback cb, 
 			 void *data);
  
