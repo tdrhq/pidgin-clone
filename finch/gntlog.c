@@ -269,8 +269,8 @@ clean_up_screenname(FinchLogViewer *viewer)
 	gnt_entry_set_text(entry, "");
 
 	for(itr = viewer->suggest;itr;itr = itr->next){
-		gnt_entry_remove_suggest(entry, (const char *)itr->data);
-		g_free(itr->data);
+		PurpleBuddy *buddy = itr->data;
+		gnt_entry_remove_suggest(entry, buddy->name);
 	}
 
 	g_slist_free(viewer->suggest);
