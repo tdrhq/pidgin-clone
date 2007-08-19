@@ -761,6 +761,14 @@ void purple_blist_schedule_save(void);
 void purple_blist_request_add_buddy(PurpleAccount *account, const char *username,
 								  const char *group, const char *alias);
 
+/* prekshu */
+void purple_blist_request_add_to_class (PurpleAccount *account, const char *username,
+							const char *group, const char *alias);
+void purple_blist_request_remove_from_class (PurpleAccount *account, const char *username,
+							const char *group, const char *alias);
+gint purple_blist_request_check_presence (PurpleAccount *account, const char *username,
+                            const char *group, const char *alias);
+
 /**
  * Requests from the user information needed to add a chat to the
  * buddy list.

@@ -49,12 +49,15 @@ void purple_whiteboard_set_prpl_ops(PurpleWhiteboard *wb, PurpleWhiteboardPrplOp
 	wb->prpl_ops = ops;
 }
 
+/* anil*/
 PurpleWhiteboard *purple_whiteboard_create_session(PurpleWhiteboard *wb)
 {
+//    purple_debug_info("yahoo", " no problem here (%s)\n", wb->who);
 	wbList = g_list_append(wbList, wb);
 
 	return wb;
 }
+/**/
 
 PurpleWhiteboard *purple_whiteboard_create(PurpleAccount *account, const char *who, int state)
 {
@@ -260,36 +263,39 @@ void purple_whiteboard_set_dimensions(PurpleWhiteboard *wb, int width, int heigh
 		whiteboard_ui_ops->set_dimensions(wb, width, height);
 }
 
-void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list,int command)
+/**  anil  **/
+void purple_whiteboard_send_draw_list(PurpleWhiteboard *wb, GList *list, int command)
 {
+//	PurpleWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+
 	PurpleWhiteboard *wb1;
 
 	GList *l = wbList;
-	if (wb->boardType == TEACHER_BOARD ){
-		/* Look for a whiteboard session between the local user and the remote user */
-		while(l != NULL)
-		{
-			wb1 = l->data;
-
-			if (wb1->account == wb->account && wb1->boardType == STUDENT_BOARD && wb->prpl_ops && wb->prpl_ops->send_draw_list)
-				wb->prpl_ops->send_draw_list(wb1, list,command);
-			l = l->next;
-		}
-	}
+    purple_debug_info("yahoo", " sending list with command %d \n", command);
+    if (wb->boardType == TEACHER_BOARD ){
+        /* Look for a whiteboard session between the local user and the remote user
+         */
+        while(l != NULL)
+        {
+            wb1 = l->data;
+           
+            if (wb1->account == wb->account && wb1->boardType == STUDENT_BOARD && wb->prpl_ops && wb->prpl_ops->send_draw_list)
+                wb->prpl_ops->send_draw_list(wb1, list, command);
+            l = l->next;
+        }
+    }
+//    purple_debug_info("yahoo", " sending list with command out %d \n",command);
 }
-
+/********/
 void purple_whiteboard_draw_point(PurpleWhiteboard *wb, int x, int y, int color, int size)
 {
 	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_point)
-			whiteboard_ui_ops->draw_point(wb, x, y, color, size);
+		whiteboard_ui_ops->draw_point(wb, x, y, color, size);
 }
-
-void purple_whiteboard_draw_shape(PurpleWhiteboard* wb,GList *draw_list)
-{
+void purple_whiteboard_draw_shape(PurpleWhiteboard* wb,GList *draw_list){
 	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_line)
-			whiteboard_ui_ops->draw_shape(wb, draw_list);
+		whiteboard_ui_ops->draw_shape(wb, draw_list);
 }
-
 void purple_whiteboard_draw_line(PurpleWhiteboard *wb, int x1, int y1, int x2, int y2, int color, int size)
 {
 	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_line)

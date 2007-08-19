@@ -56,6 +56,7 @@ typedef struct _PidginWhiteboard
     DRAWING_TOOL current_tool, saved_tool;
     GdkCursor *cursor;
     GdkFont *font;
+	char *font_string;
     int filled;
     int timer;
     int flash_state;

@@ -22,11 +22,13 @@
  */
 
 #include <stdlib.h>
+
 #include <gtk/gtkfontbutton.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gtk/gtk.h>
 #include <gtk/gtkwidget.h>
 #include <gdk/gdkkeysyms.h>
+#include <unistd.h>
 #include "internal.h"
 #include "blist.h"
 #include "debug.h"
@@ -42,6 +44,14 @@
 #define  TEXT_SHAPE -7
 #define  FILL_SHAPE -8
 #define  VIDEO_W   -9
+#define  PAGES_W   -10
+#define  SWITCH_PAGE   -11
+#define  CLOSE_PAGE   -12
+#define  EDIT_PAGE   -13
+#define  SET_FONT   -14
+#define DOODLE_CANVAS_WIDTH  520
+#define DOODLE_CANVAS_HEIGHT 520
+
 
 /******************************************************************************
  * Prototypes
@@ -70,7 +80,11 @@ static void pidgin_whiteboard_draw_rectangle(PurpleWhiteboard *wb, int x0, int y
 												int x1, int y1, int color, int size);
 
 static void pidgin_whiteboard_draw_arc(PurpleWhiteboard *wb,gboolean filled,gint x,gint y,gint width,gint height,gint angle1,gint angle2 );
+
 static void pidgin_whiteboard_draw_text(PurpleWhiteboard *wb, gint x,gint y,guint text);
+static void pidgin_whiteboard_new_draw_text(GList *draw_list, PurpleWhiteboard *wb, gint x,gint y,guint text);
+static void pidgin_whiteboard_set_text_drawlist (GList *draw_list, gint x, gint y, guint text);
+
 static void pidgin_whiteboard_draw_fill(PurpleWhiteboard *wb,int x,int y );
 
 static void pidgin_whiteboard_draw_shape(PurpleWhiteboard *wb, GList*);
@@ -89,6 +103,9 @@ static void pidgin_whiteboard_rgb24_to_rgb48_fill(int color_rgb, GdkColor *color
 
 static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb);
 
+void onSwitchPage (GtkNotebook *notebooktemp, GtkNotebookPage *page, gint newPageNum, gpointer userdata);
+void editpage_click(GtkWidget *button, gpointer userdata);
+
 void pausebtn(GtkWidget *button, SwfdecPlayer *player);
 void playbtn (GtkWidget *button, SwfdecPlayer *player);
 
@@ -106,6 +123,13 @@ static int MotionCount; /* Tracks how many brush motions made */
 static int BrushState = BRUSH_STATE_UP;
 GtkWidget *textView;
 GtkWidget *playbutton, *quitbutton, *pausebutton;
+GtkTextBuffer *textTooltextViewBuffer;
+gchar *myText;
+GtkWidget *notebook;
+gint lastActivePageNum;
+gint setEditable = -1;
+gint textToolTextViewLen = -1;
+gint textToolTextViewOpen = 0;
 
 static PurpleWhiteboardUiOps ui_ops =
 {
@@ -489,20 +513,31 @@ int image_buf_get_fill(PidginWhiteboard *ibuf)
 {
     return ibuf->filled;
 }
+
 void image_buf_set_font(PidginWhiteboard *ibuf,  const char *font_name)
 {
     GdkFont *oldfont = ibuf->font;
     GdkFont* font;
     PangoFontDescription *font_description = pango_font_description_from_string(font_name);
     
-//    GtkFontButton *w = (GtkFontButton *)lookup_widget(ibuf->window, "fontpicker");
-//    g_assert(w);
-    font = gdk_font_from_description(font_description);
+	font = gdk_font_from_description(font_description);
+
+	if (font == NULL)
+	{
+		// Useful in case of Student Boards ..
+		// If font is not available on student's side use the default font
+		// Serif 12
+		// The font families "Sans", "Monospace", and "Serif" are guaranteed to exist on all GTK+ installations; 
+		// these will never fail to load.
+		// http://developer.gnome.org/dotplan/porting/ar01s10.html
+		font_description = pango_font_description_from_string("Serif 12");
+		font = gdk_font_from_description(font_description);
+	}
+
     ibuf->font = font;
-//    gtk_font_button_set_show_style(w,TRUE);
-//    gtk_font_button_set_show_size (w,12);
-//    gtk_font_button_set_use_font (w,font_name);
-    gdk_font_ref(ibuf->font);
+	ibuf->font_string = font_name;
+
+	gdk_font_ref(ibuf->font);
     if (oldfont)
         gdk_font_unref(oldfont);
 }
@@ -955,11 +990,34 @@ void on_fontpicker_font_set(GtkFontButton *gnomefontpicker,  gpointer  user_data
     PidginWhiteboard *ibuf = (PidginWhiteboard *)user_data;
     g_assert(ibuf);
     char *font_name = gtk_font_button_get_font_name (gnomefontpicker);
-    image_buf_set_font(ibuf,font_name);
+	purple_debug_info("FONT PICKED", "%s\n", font_name);
+	
+	if(ibuf->wb->boardType == TEACHER_BOARD)
+	{
+		gint fontnamelen = strlen(font_name);
+		gint i;
+		GList *draw_list = ibuf->wb->draw_list;
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER(SET_FONT));
+		for (i=0; i<fontnamelen; i++)
+		{
+			draw_list = g_list_append(draw_list, GINT_TO_POINTER(font_name[i]));
+		}
+		purple_debug_info("FONT PICKED MESSAGE SENT", "%s\n", font_name);
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER('\0'));
+		purple_whiteboard_send_draw_list(ibuf->wb, draw_list, 19);
+		
+		if(draw_list)
+			purple_whiteboard_draw_list_destroy(draw_list);
+		
+		ibuf->wb->draw_list = NULL;
+	}
+	
+	image_buf_set_font(ibuf,font_name);
     gtk_font_button_set_show_style(gnomefontpicker,TRUE);
     gtk_font_button_set_show_size (gnomefontpicker,12);
     gtk_font_button_set_use_font (gnomefontpicker,font_name);
 }
+
 void
 on_multiline_button_toggled            (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
@@ -1077,6 +1135,214 @@ void image_buf_paint_interpolate(PidginWhiteboard *ibuf, int x, int y)
     {
         gdk_gc_set_foreground(ibuf->gc, &(gcvalues.foreground));
     }
+}
+
+typedef struct _ViewPlusBoard
+{
+	GtkWidget *text_view;
+	PidginWhiteboard *ibuf;
+} ViewPlusBoard;
+
+static void on_ok_clicked(GtkWidget *button, gpointer data)
+{
+	textToolTextViewOpen = 0;
+	ViewPlusBoard *combinedData = (ViewPlusBoard*)data;
+	PidginWhiteboard *ibuf = combinedData->ibuf;
+	GtkWidget *text_view = combinedData->text_view;
+
+    GtkWidget *window; 
+    GtkTextBuffer *buffer;
+    GtkTextIter start, end;
+
+    window = text_view->parent->parent;
+
+    /*myText = g_new0(gchar,50);
+    myText = gtk_entry_get_text (GTK_ENTRY(text_view));*/
+
+//////////
+  	//buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (text_view));
+  	textTooltextViewBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (text_view));
+	
+	// Obtain iters for the start and end of points of the buffer 
+	//gtk_text_buffer_get_start_iter (buffer, &start);
+	//gtk_text_buffer_get_end_iter (buffer, &end);
+	gtk_text_buffer_get_start_iter (textTooltextViewBuffer, &start);
+	gtk_text_buffer_get_end_iter (textTooltextViewBuffer, &end);
+
+	//gchar *myText = gtk_text_buffer_get_text (buffer, &start, &end, FALSE); 
+	gchar *myText = gtk_text_buffer_get_text (textTooltextViewBuffer, &start, &end, FALSE); 
+//////////
+
+	/// added later
+    GList *draw_list = ibuf->wb->draw_list;
+	draw_list = g_list_append(draw_list, GINT_TO_POINTER(TEXT_SHAPE));
+	draw_list = g_list_append(draw_list, GINT_TO_POINTER(ibuf->brush_size));
+	draw_list = g_list_append(draw_list, GINT_TO_POINTER(ibuf->brush_color));
+
+	draw_list = g_list_append(draw_list, GINT_TO_POINTER(ibuf->llx));
+	draw_list = g_list_append(draw_list, GINT_TO_POINTER(ibuf->lly));
+	///
+	while(*myText)
+	{
+		purple_debug_info("LOOP LOOP", "Text: %c, llx: %d, lly: %d\n", *myText, ibuf->llx, ibuf->lly);
+		
+		//pidgin_whiteboard_draw_text(ibuf->wb, ibuf->llx, ibuf->lly, *(myText++));
+		pidgin_whiteboard_set_text_drawlist (draw_list, ibuf->llx, ibuf->lly, *(myText++));
+
+		ibuf->llx +=  (int) (gdk_string_width(ibuf->font, "--") + 0.5);
+	}
+	//
+	pidgin_whiteboard_new_draw_text(draw_list, ibuf->wb, ibuf->llx, ibuf->lly, '\0');
+    //
+
+	textToolTextViewLen = -1;
+	gtk_widget_destroy(window);
+}
+
+static void on_cancel_clicked(GtkWidget *button, GtkWidget *text_view)
+{ 
+	textToolTextViewOpen = 0;
+    GtkWidget *window; 
+    window = text_view->parent->parent;
+    myText = "";
+	textToolTextViewLen = -1;
+    gtk_widget_destroy(window);
+}
+
+static void on_char_inserted(GtkTextBuffer *buffer, gpointer user_data)
+{
+	PidginWhiteboard *gtkwb = (PidginWhiteboard *)user_data;
+
+	gint startx = gtkwb->llx;
+	gint starty = gtkwb->lly;
+	GtkWidget *widget = gtkwb->drawing_area;
+	GdkPixmap *pixmap = gtkwb->pixmap;
+	GdkGC *gfx_con = gdk_gc_new(pixmap);
+	GdkColor col;
+	GdkColor selectionColor = {0, 65535, 46224, 0}; //golden yellow
+	
+    GtkTextIter start, end;
+ 	
+	// Obtain iters for the start and end of points of the buffer 
+	gtk_text_buffer_get_start_iter (buffer, &start);
+	gtk_text_buffer_get_end_iter (buffer, &end);
+
+	gchar *bufferText = gtk_text_buffer_get_text (buffer, &start, &end, FALSE); 
+	
+	purple_whiteboard_get_brush(gtkwb->wb, &gtkwb->brush_size, &gtkwb->brush_color);
+	gdk_gc_set_line_attributes(gfx_con, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+
+	pidgin_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &col);
+	gdk_gc_set_rgb_fg_color(gfx_con, &col);
+	
+	PangoFontDescription *font_description = pango_font_description_from_string(gtkwb->font_string);
+	PangoLayout*  mylayout =  gtk_widget_create_pango_layout(widget, bufferText);
+	pango_layout_set_font_description(mylayout, font_description);
+	pango_layout_set_width (mylayout, (DOODLE_CANVAS_WIDTH - startx)*PANGO_SCALE);
+	pango_layout_set_wrap (mylayout, PANGO_WRAP_WORD);
+
+	int layoutwidth, layoutheight;
+	pango_layout_get_size (mylayout, &layoutwidth, &layoutheight);
+
+	gint newlength = strlen(bufferText);
+	if (newlength > textToolTextViewLen)
+	{
+		purple_debug_info ("ON CHAR INSERTED", "newlength > textToolTextViewLen\n\n");		
+		gdk_draw_drawable(gtkwb->drawing_area->window,
+			gfx_con,
+			gtkwb->pixmap,
+			0, 0,
+		    0, 0,
+		    DOODLE_CANVAS_WIDTH, DOODLE_CANVAS_HEIGHT);
+
+		gdk_draw_layout(gtkwb->drawing_area->window, gfx_con, startx, starty, mylayout);
+		gdk_gc_set_rgb_fg_color(gfx_con, &selectionColor);
+		gdk_draw_rectangle (gtkwb->drawing_area->window, gfx_con, FALSE, startx, starty, layoutwidth/PANGO_SCALE, layoutheight/PANGO_SCALE);
+		gdk_gc_set_rgb_fg_color(gfx_con, &col);
+		textToolTextViewLen = newlength;
+	}
+	else 
+	{
+		purple_debug_info ("ON CHAR INSERTED", "newlength < textToolTextViewLen\n\n");
+
+		gdk_draw_drawable(gtkwb->drawing_area->window,
+			gfx_con,
+			gtkwb->pixmap,
+			0, 0,
+		    0, 0,
+		    DOODLE_CANVAS_WIDTH, DOODLE_CANVAS_HEIGHT);
+
+		gdk_draw_layout(gtkwb->drawing_area->window, gfx_con, startx, starty, mylayout);
+		gdk_gc_set_rgb_fg_color(gfx_con, &selectionColor);
+		gdk_draw_rectangle (gtkwb->drawing_area->window, gfx_con, FALSE, startx, starty, layoutwidth/PANGO_SCALE, layoutheight/PANGO_SCALE);
+		gdk_gc_set_rgb_fg_color(gfx_con, &col);
+		textToolTextViewLen = newlength;
+	}
+}
+
+static void textTool_clicked (PidginWhiteboard *ibuf)
+{
+	textToolTextViewOpen = 1;
+    GtkWidget *window;
+    GtkWidget *vbox, *hbox;
+    GtkWidget *text_view, *textEntry;
+    GtkWidget *okbutton, *cancelbutton;
+    //GtkTextBuffer *buffer;
+
+  /* Create a Window. */
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title (GTK_WINDOW (window), "Enter Text");
+  gtk_window_set_deletable (window, FALSE);
+  gtk_window_set_resizable (window, FALSE);
+  /*gtk_signal_connect (GTK_OBJECT (window), "destroy",
+		  GTK_SIGNAL_FUNC (on_cross_clicked), NULL);*/
+
+  /* Set a decent default size for the window. */
+  gtk_window_set_default_size (GTK_WINDOW (window), 40, 10);
+
+  vbox = gtk_vbox_new (FALSE, 2);
+  gtk_container_add (GTK_CONTAINER (window), vbox);
+
+  /* Create a multiline text widget. */
+  text_view = gtk_text_view_new ();
+  gtk_box_pack_start (GTK_BOX (vbox), text_view, 1, 1, 0);
+  textTooltextViewBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (text_view));
+  g_signal_connect (G_OBJECT (textTooltextViewBuffer), "changed", G_CALLBACK (on_char_inserted), ibuf);
+  
+  /*textEntry =  gtk_entry_new();
+  gtk_entry_set_max_length (GTK_ENTRY (textEntry), 50);
+  gtk_entry_set_text (GTK_ENTRY (textEntry), "Max 50 chars");
+  gtk_box_pack_start (GTK_BOX (vbox), textEntry, 1, 1, 0);
+  gtk_signal_connect (GTK_OBJECT (textEntry), "changed", GTK_SIGNAL_FUNC (on_char_inserted), ibuf);*/
+
+  /* Set the default buffer text. */
+  //gtk_text_buffer_set_text (buffer, "Max 20 Chars", -1);
+
+  hbox = gtk_hbox_new (TRUE, 0);
+ 
+  /* Create ok button. */
+  okbutton = gtk_button_new_with_mnemonic ("_OK");
+  GTK_WIDGET_SET_FLAGS(okbutton, GTK_CAN_DEFAULT);
+  gtk_box_pack_start (GTK_BOX (hbox), okbutton, TRUE, TRUE, 0);
+  ViewPlusBoard data = {text_view, ibuf};
+  gtk_signal_connect (GTK_OBJECT (okbutton), "clicked",
+          GTK_SIGNAL_FUNC (on_ok_clicked), &data);
+  
+  /* Create cancel button. */
+  cancelbutton = gtk_button_new_with_mnemonic (" _Cancel ");
+  gtk_box_pack_start (GTK_BOX (hbox), cancelbutton, TRUE, TRUE, 0);
+  //gtk_signal_connect_object (GTK_OBJECT (button), "clicked",
+  //        GTK_SIGNAL_FUNC (gtk_widget_destroy), GTK_OBJECT(window));
+  gtk_signal_connect (GTK_OBJECT (cancelbutton), "clicked",
+          //GTK_SIGNAL_FUNC (on_cancel_clicked), GTK_OBJECT(text_view));
+          GTK_SIGNAL_FUNC (on_cancel_clicked), GTK_OBJECT(textEntry));
+
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
+ 
+  gtk_window_set_default(window, okbutton);      
+  gtk_widget_show_all (window);
+  gtk_main ();
+
 }
 
 void handle_button_release(PidginWhiteboard *ibuf, int x, int y)
@@ -1220,6 +1486,11 @@ void handle_button_release(PidginWhiteboard *ibuf, int x, int y)
     {
         ibuf->llx = x;
         ibuf->lly = y;
+
+		/* ADDED FOR TESTING */
+		purple_debug_info("EARLY TEXT INPUT", "%s\n", myText);			
+		textTool_clicked(ibuf);
+		/* ADDED FOR TESTING */
     }
     else
         clear_points(ibuf);
@@ -1304,8 +1575,8 @@ void handle_button_press(PidginWhiteboard *ibuf, int x, int y)
                 ibuf->llx = INT_MIN;
                 ibuf->lly = INT_MIN;
             }
+       	 	
             break;
-            
         case ERASE:
             /* TODO: object-oriented brush */
             old_color = ibuf->brush_color;
@@ -1950,6 +2221,151 @@ void video_click(GtkToggleButton *togglebutton, gpointer  user_data)
   player = NULL;
 }
 
+/*void voice_click(GtkToggleButton *togglebutton, gpointer  user_data)
+{
+	purple_debug_info("gtkwhiteboard", "eKaksha Voice Client started !\n");
+	system(getClientExecPath());
+}
+
+void voiceserverstart_click(GtkToggleButton *togglebutton, gpointer  user_data)
+{
+		purple_debug_info("gtkwhiteboard", "eKaksha Voice Server started !\n");
+		system("killall -9 eKakshaVoiceServer 2>/dev/null");
+		gtk_widget_hide (newpage_button);
+		system(getServerExecPath());
+}*/
+
+void newpage_click(GtkWidget *button, gpointer user_data)
+{
+	PidginWhiteboard *gtkwb = (PidginWhiteboard *)user_data;
+	GdkPixbuf *pixbuf;
+	GtkWidget *image;
+
+	pixbuf = gdk_pixbuf_get_from_drawable(NULL,
+			(GdkDrawable*)(gtkwb->pixmap),
+			gdk_drawable_get_colormap(gtkwb->pixmap),
+			0, 0,
+			0, 0,
+			gtkwb->width, gtkwb->height);
+
+	image = gtk_image_new_from_pixbuf(pixbuf);
+	
+	//gdk_pixbuf_unref(pixbuf);
+	gtk_widget_show (image);
+
+	GtkWidget *currentpage = gtk_notebook_get_nth_page (notebook, gtk_notebook_get_current_page (notebook));
+	GtkWidget *lastpage = gtk_notebook_get_nth_page (notebook, -1);
+
+	gint currentpagenum = gtk_notebook_get_current_page (notebook);
+	gint lastpagenum = gtk_notebook_get_n_pages (notebook) - 1;
+
+	purple_debug_info("\nNEWPAGE_CLICK", "LAST ACTIVE PAGE = %d\n\n", lastActivePageNum);
+	lastActivePageNum = lastpagenum + 1;
+	purple_debug_info("\nNEWPAGE_CLICK", "NEW PAGE NUM = %d\n\n", lastActivePageNum);
+
+	if (currentpagenum == lastpagenum)
+	{
+		if (setEditable == -1)
+		{
+			// We are on the last page wchi is editable right now..
+
+			GtkWidget *tablabel = gtk_notebook_get_tab_label (notebook, currentpage);
+			purple_debug_info("TAB LABEL setEditable == -1", "Current page %s\n", gtk_notebook_get_tab_label_text (notebook, currentpage));
+			GtkWidget *newlabel = gtk_label_new (gtk_notebook_get_tab_label_text (notebook, currentpage));
+
+			int newpagenum = atoi(gtk_notebook_get_tab_label_text (notebook, currentpage));
+			char newpagestr[3];
+			sprintf(newpagestr, "%d", newpagenum+1);  
+
+			gtk_notebook_insert_page (notebook, image, newlabel, gtk_notebook_get_current_page (notebook));
+			tablabel = gtk_label_new (newpagestr);
+			gtk_notebook_set_tab_label (notebook, currentpage, tablabel);
+		}
+		else
+		{
+			//editable page is at setEditable	
+			purple_debug_info("TAB LABEL ELSE setEditable", "Current page %s\n", gtk_notebook_get_tab_label_text (notebook, currentpage));
+			purple_debug_info("SETEDITABLE = ", "%d\n", setEditable);
+			GtkWidget * editablePage = gtk_notebook_get_nth_page (notebook, setEditable);
+			GtkWidget *newlabel = gtk_label_new (gtk_notebook_get_tab_label_text (notebook, editablePage));
+			gtk_notebook_insert_page (notebook, image, newlabel, setEditable+1);
+			
+			int newpagenum = atoi(gtk_notebook_get_tab_label_text (notebook, lastpage));
+			char newpagestr[3];
+			sprintf(newpagestr, "%d", newpagenum+1);  
+			
+			gtk_notebook_reorder_child (notebook, editablePage, -1);
+			gtk_notebook_set_tab_label_text (notebook, editablePage, newpagestr);
+			gtk_notebook_set_current_page (notebook, -1);
+			
+			setEditable = -1;
+		}
+	}
+	else
+	{
+		if (setEditable == -1)
+		{
+			GtkWidget *tablabel = gtk_notebook_get_tab_label (notebook, lastpage);
+			purple_debug_info("ELSE ELSE TAB LABEL", "Last page %s\n", gtk_notebook_get_tab_label_text (notebook, lastpage));
+			GtkWidget *newlabel = gtk_label_new (gtk_notebook_get_tab_label_text (notebook, lastpage));
+
+			int newpagenum = atoi(gtk_notebook_get_tab_label_text (notebook, lastpage));
+			char newpagestr[3];
+			sprintf(newpagestr, "%d", newpagenum+1);  
+
+			gtk_notebook_insert_page (notebook, image, newlabel, lastpagenum);
+			tablabel = gtk_label_new (newpagestr);
+			gtk_notebook_set_tab_label (notebook, lastpage, tablabel);
+			gtk_notebook_set_current_page (notebook, lastpagenum+1);
+		}
+		else
+		{
+			//editable page is at setEditable	
+			purple_debug_info("ELSE ELSE TAB LABEL", "ELSE ELSE Last page %s\n", gtk_notebook_get_tab_label_text (notebook, lastpage));
+			GtkWidget * editablePage = gtk_notebook_get_nth_page (notebook, setEditable);
+			GtkWidget *newlabel = gtk_label_new (gtk_notebook_get_tab_label_text (notebook, editablePage));
+			gtk_notebook_insert_page (notebook, image, newlabel, setEditable+1);
+			
+			int newpagenum = atoi(gtk_notebook_get_tab_label_text (notebook, lastpage));
+			char newpagestr[3];
+			sprintf(newpagestr, "%d", newpagenum+1);  
+			
+			gtk_notebook_reorder_child (notebook, editablePage, -1);
+			gtk_notebook_set_tab_label_text (notebook, editablePage, newpagestr);
+			gtk_notebook_set_current_page (notebook, -1);
+			
+			setEditable = -1;
+		}
+	}
+
+	if(gtkwb->wb->boardType == TEACHER_BOARD)
+	{
+		GList *draw_list = gtkwb->wb->draw_list;
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER(PAGES_W));
+		/*int i=0;
+		while(gtkwb->video_uri[i]!='\0'){
+			purple_debug_info("gtkwhiteboard", " PAGES TOOL - %c \n", gtkwb->video_uri[i] );
+			draw_list = g_list_append(draw_list, GINT_TO_POINTER(gtkwb->video_uri[i]));
+			i++;
+		}*/
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER('\0'));
+		purple_whiteboard_send_draw_list(gtkwb->wb, draw_list, 15);
+		if(draw_list)
+			purple_whiteboard_draw_list_destroy(draw_list);
+		gtkwb->wb->draw_list = NULL;
+	}
+
+	pidgin_whiteboard_button_clear_press(NULL, gtkwb);
+
+}	
+
+/*void voiceserverstop_click(GtkToggleButton *togglebutton, gpointer  user_data)
+{
+		system("killall -9 eKakshaVoiceServer 2>/dev/null");
+		purple_debug_info("gtkwhiteboard", "eKaksha Voice Server stopped !\n");
+		gtk_widget_show (newpage_button);
+}*/
+	
 gboolean
 on_edit_textView(GtkWidget   *widget, gpointer user_data){
     PidginWhiteboard *ibuf = (PidginWhiteboard*)(user_data);
@@ -1979,31 +2395,305 @@ on_drawingarea_expose_event            (GtkWidget       *widget,
 					  event->area.x, event->area.y,
 					  event->area.width, event->area.height);
 
-//    ibuf->pixmap = gtkwb->pixmap ;
-//    purple_debug_error("gtkwhiteboard", "***Button expose event 2 %u \n", gtkwb );
-    return FALSE;
+	purple_debug_error("OUTSIDE EXPOSE EVENT", "WHITEBOARD EXPOSED\n");
+	purple_debug_error("OUTSIDE EXPOSE EVENT", "CURRENT WHITEBOARD TOOL %d\n", gtkwb->current_tool);
+
+    if (textToolTextViewOpen == 1 && gtkwb->current_tool == TEXT)
+	{
+	    purple_debug_error("IN EXPOSE EVENT", "WHITEBOARD EXPOSED\n");
+		on_char_inserted (textTooltextViewBuffer, gtkwb);
+	}
+	
+	return FALSE;
 }
+
+void 
+onSwitchPage (GtkNotebook *notebooktemp, GtkNotebookPage *page, gint newPageNum, gpointer userdata)
+{	
+	PidginWhiteboard *gtkwb = (PidginWhiteboard *)userdata;
+	purple_debug_info ("ON SWITCH PAGE","LAST ACTIVE PAGE = %d\n", lastActivePageNum);	 
+	purple_debug_info ("ON SWITCH PAGE","NEW PAGE = %d\n", newPageNum);	
+
+	GdkPixbuf *pixbuf, *pixbuf1;
+	GtkWidget *imageLastActivePage, *imageNewActivePage;
+	GtkWidget *lastActivePage;
+
+	if(lastActivePageNum != newPageNum)
+	{
+		if(gtkwb->wb->boardType == TEACHER_BOARD)
+		{
+			GList *draw_list = gtkwb->wb->draw_list;
+			draw_list = g_list_append(draw_list, GINT_TO_POINTER(SWITCH_PAGE));
+			draw_list = g_list_append(draw_list, GINT_TO_POINTER(newPageNum));
+			draw_list = g_list_append(draw_list, GINT_TO_POINTER('\0'));
+			purple_whiteboard_send_draw_list(gtkwb->wb, draw_list, 16);
+			if(draw_list)
+				purple_whiteboard_draw_list_destroy(draw_list);
+			gtkwb->wb->draw_list = NULL;
+		}
+
+		/*if(gtkwb->wb->boardType == STUDENT_BOARD)
+		{
+			editpage_click (NULL, userdata);
+		}*/
+
+			lastActivePageNum = newPageNum;	
+	}	
+}
+
+void closepage_click(GtkWidget *button, gpointer userdata)
+{
+	PidginWhiteboard *gtkwb = (PidginWhiteboard *)userdata;
+
+	gint currentPageNum = gtk_notebook_get_current_page (notebook);
+	gint totalNotebookPages = gtk_notebook_get_n_pages (notebook);	
+
+	if (totalNotebookPages == 1)
+		return;
+	
+	if(gtkwb->wb->boardType == TEACHER_BOARD)
+	{
+		GList *draw_list = gtkwb->wb->draw_list;
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER(CLOSE_PAGE));
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER(currentPageNum));
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER('\0'));
+		purple_whiteboard_send_draw_list(gtkwb->wb, draw_list, 17);
+		if(draw_list)
+			purple_whiteboard_draw_list_destroy(draw_list);
+		gtkwb->wb->draw_list = NULL;
+	}
+	
+	if (currentPageNum == totalNotebookPages - 1)
+	{
+		// We are on the last page
+
+		if (setEditable == -1)
+		{
+			// Save the image of second last page in a variable
+			// Remove second last page
+			// Make editable page the current page
+			// Put that image on current page (editable)
+			
+			purple_debug_info("seteditable = -1", "totalpages-2 = %d\n\n", totalNotebookPages-2);
+			GtkWidget *imageSecondLastPage = gtk_notebook_get_nth_page (notebook, totalNotebookPages - 2);
+			gchar *labelSecondLast = gtk_notebook_get_tab_label_text (notebook, imageSecondLastPage);
+			GtkWidget *lastPage = gtk_notebook_get_nth_page (notebook, totalNotebookPages - 1);
+			gtk_notebook_set_tab_label_text (notebook, lastPage, labelSecondLast);
+
+			GdkPixbuf *pixbuf1 = gtk_image_get_pixbuf (imageSecondLastPage);
+			if(pixbuf1 == NULL)
+				purple_debug_info("Second Last Page", "IMAGE EMPTY\n\n");
+			else 
+				purple_debug_info("Second Last Page", "IMAGE not not EMPTY\n\n");
+
+			GtkWidget *drawing_area = gtkwb->drawing_area;
+			GdkPixmap *drawing_pixmap = gtkwb->pixmap;
+			GdkGC *gfx_con = gdk_gc_new(drawing_pixmap);
+			gdk_draw_pixbuf (drawing_pixmap, gfx_con, pixbuf1, 0, 0, 0, 0, DOODLE_CANVAS_WIDTH, 
+					DOODLE_CANVAS_HEIGHT, GDK_RGB_DITHER_NORMAL, 0, 0);
+			gtk_widget_queue_draw (drawing_area); 
+			
+			g_signal_handlers_block_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+			gtk_notebook_remove_page (notebook, totalNotebookPages - 2);	
+			g_signal_handlers_unblock_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+			
+			gtk_notebook_set_current_page (notebook, -1);
+
+			lastActivePageNum = currentPageNum - 1;
+
+			//setEditable remains same;
+		}
+		else
+		{
+			// Remove the current page and set second last page to be 
+			// the current active page
+			
+			purple_debug_info("seteditable = ", "%d\n\n", setEditable);
+			
+			g_signal_handlers_block_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+			gtk_notebook_remove_page (notebook, currentPageNum);	
+			g_signal_handlers_unblock_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+			
+			gtk_notebook_set_current_page (notebook, currentPageNum - 1);
+			lastActivePageNum = currentPageNum - 1;
+			
+			//setEditable
+			if (setEditable == totalNotebookPages - 2)
+				setEditable = -1;
+		}
+	}
+	else
+	{
+		// We can be anywhere between 0 to secondlast page
+		
+		if (currentPageNum == setEditable)
+		{
+			// Save the image of next page in a variable
+			// Remove next page
+			// Make editable page the current page
+			// Put that image on current page (editable)
+
+			GtkWidget * imageNextPage = gtk_notebook_get_nth_page (notebook, currentPageNum+1);
+			gchar *labelNextPage = gtk_notebook_get_tab_label_text (notebook, imageNextPage);
+			GtkWidget *currentPage = gtk_notebook_get_nth_page (notebook, currentPageNum);
+			gtk_notebook_set_tab_label_text (notebook, currentPage, labelNextPage);
+
+			GdkPixbuf *pixbuf1 = gtk_image_get_pixbuf (imageNextPage);
+			if(pixbuf1 == NULL)
+				purple_debug_info("Next Page", "IMAGE EMPTY\n\n");
+			else 
+				purple_debug_info("Next Page", "IMAGE not not EMPTY\n\n");
+
+			GtkWidget *drawing_area = gtkwb->drawing_area;
+			GdkPixmap *drawing_pixmap = gtkwb->pixmap;
+			GdkGC *gfx_con = gdk_gc_new(drawing_pixmap);
+			gdk_draw_pixbuf (drawing_pixmap, gfx_con, pixbuf1, 0, 0, 0, 0, DOODLE_CANVAS_WIDTH, 
+					DOODLE_CANVAS_HEIGHT, GDK_RGB_DITHER_NORMAL, 0, 0);
+			gtk_widget_queue_draw (drawing_area); 
+			
+			g_signal_handlers_block_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+			gtk_notebook_remove_page (notebook, currentPageNum+1);	
+			g_signal_handlers_unblock_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+			
+			gtk_notebook_set_current_page (notebook, currentPageNum);
+
+			lastActivePageNum = currentPageNum;
+			
+			//setEditable
+			if (currentPageNum == totalNotebookPages - 2)
+				setEditable = -1;	
+
+		}
+		else
+		{
+			// Remove the current page and set the next page to be 
+			// the current active page
+			
+			g_signal_handlers_block_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+			gtk_notebook_remove_page (notebook, currentPageNum);	
+			g_signal_handlers_unblock_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+			
+			gtk_notebook_set_current_page (notebook, currentPageNum);
+			lastActivePageNum = currentPageNum;
+
+			//setEditable
+			if (setEditable > currentPageNum)
+				setEditable = setEditable - 1;
+		}
+	}
+}
+
+void editpage_click(GtkWidget *button, gpointer userdata)
+{
+	PidginWhiteboard *gtkwb = (PidginWhiteboard *)userdata;
+	GdkPixbuf *pixbuf, *pixbuf1;
+	GtkWidget *imageLastPage, *imageNewActivePage;
+	GtkWidget *lastPage;
+	gint newPageNum;
+
+	gint totalNumPages = gtk_notebook_get_n_pages (notebook);
+	if (setEditable == -1 && gtk_notebook_get_current_page(notebook) == totalNumPages - 1)
+		return;
+
+	newPageNum = gtk_notebook_get_current_page (notebook);
+
+	if(gtkwb->wb->boardType == TEACHER_BOARD)
+	{
+		GList *draw_list = gtkwb->wb->draw_list;
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER(EDIT_PAGE));
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER(newPageNum));
+		draw_list = g_list_append(draw_list, GINT_TO_POINTER('\0'));
+		purple_whiteboard_send_draw_list(gtkwb->wb, draw_list, 18);
+		if(draw_list)
+			purple_whiteboard_draw_list_destroy(draw_list);
+		gtkwb->wb->draw_list = NULL;
+	}
+
+	pixbuf = gdk_pixbuf_get_from_drawable(NULL,
+	  (GdkDrawable*)(gtkwb->pixmap),
+	  gdk_drawable_get_colormap(gtkwb->pixmap),
+	  0, 0,
+	  0, 0,
+	  gtkwb->width, gtkwb->height);
+
+	//save images of editable page and current active pages in variables.. 
+	imageLastPage = gtk_image_new_from_pixbuf(pixbuf);
+	gdk_pixbuf_unref(pixbuf);
+	gtk_widget_show (imageLastPage);
+
+//	newPageNum = gtk_notebook_get_current_page (notebook);
+	
+	if (newPageNum != setEditable)
+	{	
+
+		imageNewActivePage = gtk_notebook_get_nth_page (notebook, newPageNum);
+		//
+
+		//lastPage = gtk_notebook_get_nth_page (notebook, -1);
+		lastPage = gtk_notebook_get_nth_page (notebook, setEditable);
+
+		purple_debug_info("TAB LABEL", "Last Page LABEL %s\n", gtk_notebook_get_tab_label_text (notebook, lastPage));
+		gchar *lastLabelText = gtk_notebook_get_tab_label_text (notebook, lastPage);
+
+		purple_debug_info("TAB LABEL", "New  Active Page LABEL %s\n", gtk_notebook_get_tab_label_text (notebook, imageNewActivePage));
+		gchar *newActLabelText = gtk_notebook_get_tab_label_text (notebook, imageNewActivePage);
+
+		GtkWidget *tablabel = gtk_label_new (lastLabelText);
+		//gtk_notebook_insert_page (notebook, imageLastPage, tablabel, -1);
+		gtk_notebook_insert_page (notebook, imageLastPage, tablabel, setEditable);
+
+		gtk_notebook_reorder_child (notebook, lastPage, newPageNum+1);
+		gtk_notebook_set_tab_label_text (notebook, lastPage, newActLabelText);
+
+		pixbuf1 = gtk_image_get_pixbuf (imageNewActivePage);
+		if(pixbuf1 == NULL)
+			purple_debug_info("\nIMAGE EMPTY", "\n\n");
+		else 
+			purple_debug_info("\nIMAGE not not EMPTY", "\n\n");
+
+		GtkWidget *drawing_area = gtkwb->drawing_area;
+		GdkPixmap *drawing_pixmap = gtkwb->pixmap;
+		GdkGC *gfx_con = gdk_gc_new(drawing_pixmap);
+		gdk_draw_pixbuf (drawing_pixmap, gfx_con, pixbuf1, 0, 0, 0, 0, DOODLE_CANVAS_WIDTH, DOODLE_CANVAS_HEIGHT, GDK_RGB_DITHER_NORMAL, 0, 0);
+		gtk_widget_queue_draw (drawing_area); 
+
+		g_signal_handlers_block_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+		gtk_notebook_remove_page (notebook, newPageNum);
+		g_signal_handlers_unblock_by_func(G_OBJECT(notebook), onSwitchPage, (PidginWhiteboard *)userdata);
+
+		gtk_notebook_set_current_page (notebook, newPageNum);
+
+		if (newPageNum == gtk_notebook_get_n_pages (notebook) - 1)
+			setEditable = -1;
+		else
+			setEditable = newPageNum;
+	}
+
+}
+
 void
 on_line_width_combo_combo_entry_changed (GtkEditable     *editable,
-                                         gpointer         user_data)
+		gpointer         user_data)
 {
-    char *tmp;
-    int t;
-    PidginWhiteboard *ibuf = (PidginWhiteboard*)(user_data);
-    g_assert(ibuf);
-    tmp = gtk_editable_get_chars(editable, 0, -1);
-    g_assert(tmp);
-    sscanf(tmp, "%d", &t);
-    g_assert(t != 0);
-    gdk_gc_set_line_attributes(ibuf->gc, t, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
-    purple_debug_error("gtkwhiteboard", "*** %d  \n",t );
-    
-    purple_whiteboard_get_brush(ibuf->wb, &ibuf->brush_size, &ibuf->brush_color);
-    purple_whiteboard_send_brush(ibuf->wb, t , ibuf->brush_color);
-    ibuf->brush_size = t;
-    g_free(tmp);
-    gtk_widget_grab_focus(ibuf->drawing_area); /* force the line width entry widget to give up focus */
+	char *tmp;
+	int t;
+	PidginWhiteboard *ibuf = (PidginWhiteboard*)(user_data);
+	g_assert(ibuf);
+	tmp = gtk_editable_get_chars(editable, 0, -1);
+	g_assert(tmp);
+	sscanf(tmp, "%d", &t);
+	g_assert(t != 0);
+	gdk_gc_set_line_attributes(ibuf->gc, t, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
+	purple_debug_error("gtkwhiteboard", "*** %d  \n",t );
+
+	purple_whiteboard_get_brush(ibuf->wb, &ibuf->brush_size, &ibuf->brush_color);
+	purple_whiteboard_send_brush(ibuf->wb, t , ibuf->brush_color);
+	ibuf->brush_size = t;
+	g_free(tmp);
+	gtk_widget_grab_focus(ibuf->drawing_area); /* force the line width entry widget to give up focus */
 }
+
+
 
 static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 {
@@ -2012,40 +2702,45 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 	GtkWidget *drawing_area;
 	GtkWidget *vbox_controls;
 	GtkWidget *hbox_canvas_and_controls;
+	GtkWidget *vbox_notebook_and_controls;
+	GtkWidget *hbox_notebookcontrols;
 
-     GtkWidget *toolbar6;
-     GtkWidget *fontpicker;
-     GtkWidget *fontpicker1;
-     GtkWidget *tmp_toolbar_icon;
-     GtkWidget *table5;
-     GtkWidget *blank_label1;
-     GtkWidget *blank_label2;
-     GtkWidget *line_width_combo;
-     GList *line_width_combo_items = NULL;
-     GtkWidget *line_width_combo_combo_entry;
-     GtkWidget *table8;
-     GtkWidget *fixed1;
-     GtkWidget *table4;
-     GtkWidget *toolbar4;
-     GtkWidget *erase_button;
-     GtkWidget *fill_button;
-     GtkWidget *line_button;
-     GtkWidget *multiline_button;
-     GtkWidget *rectangle_button;
-     GtkWidget *toolbar5;
-     GtkWidget *pen_button;
-     GtkWidget *text_button;
-     GtkWidget *arc_button;
-     GtkWidget *oval_button;
-     GtkWidget *brush_button;
-     GtkWidget *filled_button;
-     GtkWidget *video_button;
+	GtkWidget *toolbar6;
+	GtkWidget *fontpicker;
+	GtkWidget *tmp_toolbar_icon;
+	GtkWidget *table5;
+	GtkWidget *Line_Width;
+	GtkWidget *Line_Width1;
+	GtkWidget *line_width_combo;
+	GList *line_width_combo_items = NULL;
+	GtkWidget *line_width_combo_combo_entry;
+	GtkWidget *table8;
+	GtkWidget *fixed1;
+	GtkWidget *table4;
+	GtkWidget *toolbar4;
+	GtkWidget *erase_button;
+	GtkWidget *fill_button;
+	GtkWidget *line_button;
+	GtkWidget *multiline_button;
+	GtkWidget *rectangle_button;
+	GtkWidget *toolbar5;
+	GtkWidget *pen_button;
+	GtkWidget *text_button;
+	GtkWidget *arc_button;
+	GtkWidget *oval_button;
+	GtkWidget *brush_button;
+	GtkWidget *filled_button;
+	GtkWidget *video_button;
+	GtkWidget *newpage_button;
+	GtkWidget *editpage_button;
+	GtkWidget *closepage_button;
+	GtkWidget *dummyLabel1, *dummyLabel2;
 
-     GtkTooltips *tooltips;
-     tooltips = gtk_tooltips_new ();
+	GtkTooltips *tooltips;
+	tooltips = gtk_tooltips_new ();
 	/*
-		--------------------------
-		|[][][][palette[][][][][]|
+	   --------------------------
+	   |[][][][palette[][][][][]|
 		|------------------------|
 		|       canvas     | con |
 		|                  | trol|
@@ -2088,26 +2783,32 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 	 */
 	buddy = purple_find_buddy(wb->account, wb->who);
 
-	if (buddy != NULL)
-	{
-		char *titlename = purple_buddy_get_contact_alias(buddy);
-		GString* title = g_string_sized_new (sizeof(" Classroom with ") + sizeof(titlename));
-		g_string_append (title, " Classroom with ");
-		g_string_append (title, titlename);
-
-		gtk_window_set_title((GtkWindow*)(window), title->str);
-		g_string_free (title, TRUE);
-	}		  
+	/*if (buddy != NULL)
+		gtk_window_set_title((GtkWindow*)(window), purple_buddy_get_contact_alias(buddy));
 	else
-	{
-		char *titlename = wb->who;
-		GString* title = g_string_sized_new (sizeof(" Running classroom on ") + sizeof(titlename));
-		g_string_append (title, " Running classroom on ");
-		g_string_append (title, titlename);
-		
-		gtk_window_set_title((GtkWindow*)(window), title->str);
-		g_string_free (title, TRUE);
-	}	
+		gtk_window_set_title((GtkWindow*)(window), wb->who);*/
+
+    if (buddy != NULL)
+    {
+        char *titlename = purple_buddy_get_contact_alias(buddy);
+        GString* title = g_string_sized_new (sizeof(" Classroom with ") + sizeof(titlename));
+        g_string_append (title, " Classroom with ");
+        g_string_append (title, titlename);
+
+        gtk_window_set_title((GtkWindow*)(window), title->str);
+        g_string_free (title, TRUE);
+    }
+    else
+    {
+        char *titlename = wb->who;
+        GString* title = g_string_sized_new (sizeof(" Running classroom on ") + sizeof(titlename));
+        g_string_append (title, " Running classroom on ");
+        g_string_append (title, titlename);
+
+        gtk_window_set_title((GtkWindow*)(window), title->str);
+        g_string_free (title, TRUE);
+    }
+
 
     gtk_window_set_resizable((GtkWindow*)(window), FALSE);
     
@@ -2116,22 +2817,51 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 
     hbox_canvas_and_controls = gtk_hbox_new(FALSE, 0);
 	gtk_widget_show(hbox_canvas_and_controls);
+    
+	vbox_notebook_and_controls = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(vbox_notebook_and_controls);
 
+    hbox_notebookcontrols = gtk_hbox_new(FALSE, 0);
+	gtk_widget_show(hbox_notebookcontrols);
+	
 	gtk_container_add(GTK_CONTAINER(window), hbox_canvas_and_controls);
 	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
+	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), vbox_notebook_and_controls, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE); 
+
+
+	//gtk_container_add(GTK_CONTAINER(hbox_canvas_and_controls), vbox_notebook_and_controls);
+	/* Create a new notebook, place the position of the tabs */
+	notebook = gtk_notebook_new ();
+	gtk_notebook_set_tab_pos (GTK_NOTEBOOK (notebook), GTK_POS_TOP);
+	gtk_widget_set_name (notebook, "notebook");
+	gtk_widget_ref (notebook);
+	gtk_object_set_data_full (GTK_OBJECT (window), "notebook", notebook,
+			(GtkDestroyNotify) gtk_widget_unref);
+	gtk_box_pack_start(GTK_BOX(vbox_notebook_and_controls), notebook, TRUE, TRUE, 0);
+	gtk_widget_show (notebook);
+
+	gtk_box_pack_start(GTK_BOX(vbox_notebook_and_controls), hbox_notebookcontrols, TRUE, TRUE, 0); 
 	
 	/* Create the drawing area */
 
     drawing_area = gtk_drawing_area_new ();
-    gtkwb->drawing_area = drawing_area;
+	gtkwb->drawing_area = drawing_area;
     gtk_widget_set_name (drawing_area, "drawingarea");
     gtk_widget_set_size_request(GTK_WIDGET(drawing_area), gtkwb->width , gtkwb->height);
     gtk_widget_ref (drawing_area);
-    gtk_object_set_data_full (GTK_OBJECT (window), "drawingarea", drawing_area,
+/*    gtk_object_set_data_full (GTK_OBJECT (window), "drawingarea", drawing_area,
                               (GtkDestroyNotify) gtk_widget_unref);
-    gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), drawing_area, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
-    gtk_widget_show (drawing_area);
+    gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), drawing_area, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);*/
+	GtkWidget *tablabel;
+	tablabel = gtk_label_new ("1");
+	
+	gtk_notebook_append_page (GTK_NOTEBOOK (notebook), drawing_area, tablabel);
+	lastActivePageNum = 0;
+	
+	//gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), 0);
+    
+	gtk_widget_show (drawing_area);
 
     gtk_widget_set_events (drawing_area, GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON1_MOTION_MASK | GDK_BUTTON2_MOTION_MASK | GDK_BUTTON3_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_PROPERTY_CHANGE_MASK | GDK_VISIBILITY_NOTIFY_MASK | GDK_FOCUS_CHANGE_MASK | GDK_STRUCTURE_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_PROPERTY_CHANGE_MASK);
     GTK_WIDGET_SET_FLAGS(drawing_area, GTK_CAN_FOCUS);
@@ -2149,7 +2879,16 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), drawing_area, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(drawing_area);
 */
-    g_signal_connect (G_OBJECT (drawing_area), "configure_event",
+
+
+
+	//if (gtkwb->wb->boardType == TEACHER_BOARD)
+	//{
+		g_signal_connect (G_OBJECT(notebook), "switch-page", 
+				G_CALLBACK (onSwitchPage), 
+				gtkwb);
+	//}
+	g_signal_connect (G_OBJECT (drawing_area), "configure_event",
                       G_CALLBACK(pidgin_whiteboard_configure_event),
                       gtkwb);
     g_signal_connect (G_OBJECT (drawing_area), "expose_event",
@@ -2211,23 +2950,14 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
     gtk_container_set_border_width (GTK_CONTAINER (toolbar4), 1);
 
 
-	clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-	gtk_widget_show(clear_button);
-	g_signal_connect(G_OBJECT(clear_button), "clicked",
-			G_CALLBACK(pidgin_whiteboard_button_clear_press), gtkwb);
-   	gtk_tooltips_set_tip (tooltips, clear_button, _("Clear the whiteboard"), NULL);
-    if(wb->boardType == TEACHER_BOARD)
-	{
-	    gtk_table_attach (GTK_TABLE (table4), clear_button, 1, 2, 4, 5,
+    clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+    gtk_widget_show(clear_button);
+    g_signal_connect(G_OBJECT(clear_button), "clicked",
+            G_CALLBACK(pidgin_whiteboard_button_clear_press), gtkwb);
+    //gtk_table_attach (GTK_TABLE (table4), clear_button, 0, 2, 4, 5,
+    gtk_table_attach (GTK_TABLE (table4), clear_button, 1, 2, 3, 4,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
-	}
-	else
-	{
-	    gtk_table_attach (GTK_TABLE (table4), clear_button, 0, 2, 4, 5,
-                    (GtkAttachOptions) (0),
-                    (GtkAttachOptions) (0), 0, 0);
-	}
 
     save_button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
     gtk_widget_show(save_button);
@@ -2237,7 +2967,6 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                     (GtkAttachOptions) (0), 0, 0);
     g_signal_connect(G_OBJECT(save_button), "clicked",
           G_CALLBACK(pidgin_whiteboard_button_save_press), gtkwb);
-    gtk_tooltips_set_tip (tooltips, save_button, _("Save the current whiteboard"), NULL);
 
     color_button = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
     //gtk_table_attach (GTK_TABLE (table4), color_button , 0, 2, 6, 7,
@@ -2247,7 +2976,6 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
     gtk_widget_show(color_button);
     g_signal_connect(G_OBJECT(color_button), "clicked",
 					 G_CALLBACK(color_select_dialog), gtkwb);
-    gtk_tooltips_set_tip (tooltips, color_button, _("Pick a color"), NULL);
 
 	GdkPixbuf *pixbuf;
     char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin","video.png", NULL);
@@ -2262,7 +2990,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
             (GtkDestroyNotify) gtk_widget_unref);
     gtk_widget_show (video_button);
 
-    gtk_table_attach (GTK_TABLE (table4), video_button , 0, 2, 9, 10,
+    gtk_table_attach (GTK_TABLE (table4), video_button , 0, 2, 8, 9,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
     gtk_container_set_border_width (GTK_CONTAINER (video_button), 3);
@@ -2271,36 +2999,144 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
     g_signal_connect(G_OBJECT(video_button), "clicked",
 					 G_CALLBACK(video_click), gtkwb);
 
+    /*filename = g_build_filename(DATADIR, "pixmaps", "pidgin","chat.png", NULL);
+    pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+    g_free(filename);
+    tmp_toolbar_icon = gtk_image_new_from_pixbuf(pixbuf);
+    voice_button = gtk_button_new_with_mnemonic ("Voice Cha_t");
+  	gtk_button_set_image(voice_button, tmp_toolbar_icon );
+    gtk_widget_set_name (voice_button, "voice_button");
+    gtk_widget_ref (voice_button);
+    gtk_object_set_data_full (GTK_OBJECT (window), "voice_button", voice_button,
+            (GtkDestroyNotify) gtk_widget_unref);
+    gtk_widget_show (voice_button);
+
+    gtk_table_attach (GTK_TABLE (table4), voice_button , 0, 2, 10, 11,
+                    (GtkAttachOptions) (0),
+                    (GtkAttachOptions) (0), 0, 0);
+    gtk_container_set_border_width (GTK_CONTAINER (voice_button), 3);
+    GTK_WIDGET_UNSET_FLAGS (voice_button, GTK_CAN_FOCUS);
+    gtk_tooltips_set_tip (tooltips, voice_button, _("Voice Chat"), NULL);
+    g_signal_connect(G_OBJECT(voice_button), "clicked",
+					 G_CALLBACK(voice_click), gtkwb);*/
+    
+	dummyLabel1 = gtk_label_new("");
+	gtk_table_attach (GTK_TABLE (table4), dummyLabel1 , 0, 2, 10, 11,
+                (GtkAttachOptions) (0),
+                (GtkAttachOptions) (0), 0, 0);
+	gtk_widget_show (dummyLabel1);
+
     if(wb->boardType == TEACHER_BOARD){
-  
-		blank_label1 = gtk_label_new ("");
-		gtk_widget_set_name (blank_label1, "blank_label1");
-		gtk_widget_ref (blank_label1);
-		gtk_object_set_data_full (GTK_OBJECT (window), "blank_label1", blank_label1,
+	
+		fontpicker = gtk_font_button_new();
+		gtk_font_button_set_use_font (GTK_FONT_BUTTON (fontpicker), TRUE);
+		gtk_widget_set_name (fontpicker, "fontpicker");
+		gtk_widget_ref (fontpicker);
+
+		gtk_font_button_set_font_name (GTK_FONT_BUTTON (fontpicker), "Serif 12");
+		gtk_font_button_set_show_style(GTK_FONT_BUTTON (fontpicker), TRUE);
+		gtk_font_button_set_show_size (GTK_FONT_BUTTON (fontpicker), 12);
+
+		gtk_object_set_data_full (GTK_OBJECT (window), "fontpicker", fontpicker,
 				(GtkDestroyNotify) gtk_widget_unref);
-		gtk_table_attach (GTK_TABLE (table4), blank_label1, 0, 2, 7, 8,
+		gtk_widget_show (fontpicker);
+
+		gtk_table_attach (GTK_TABLE (table4), fontpicker, 0, 2, 11, 12,
 				(GtkAttachOptions) (0),
 				(GtkAttachOptions) (0), 0, 0);
-		gtk_widget_show (blank_label1);
+		gtk_signal_connect (GTK_OBJECT (fontpicker), "font_set",  
+				GTK_SIGNAL_FUNC (on_fontpicker_font_set), 
+				gtkwb);
+		gtk_tooltips_set_tip (tooltips, fontpicker, _("Select Font"), NULL);
+
 		
-		blank_label2 = gtk_label_new ("");
-		gtk_widget_set_name (blank_label2, "blank_label2");
-		gtk_widget_ref (blank_label2);
-		gtk_object_set_data_full (GTK_OBJECT (window), "blank_label2", blank_label2,
+    	filename = g_build_filename(DATADIR, "pixmaps", "pidgin","gtk-add.png", NULL);
+    	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+    	g_free(filename);
+    	tmp_toolbar_icon = gtk_image_new_from_pixbuf(pixbuf);
+		newpage_button = gtk_button_new ();
+		gtk_button_set_image(newpage_button, tmp_toolbar_icon );
+		gtk_widget_set_name (newpage_button, "newpage_button");
+		gtk_widget_ref (newpage_button);
+		gtk_object_set_data_full (GTK_OBJECT (window), "newpage_button", newpage_button,
 				(GtkDestroyNotify) gtk_widget_unref);
-		gtk_table_attach (GTK_TABLE (table4), blank_label2, 0, 2, 3, 4,
+		gtk_widget_show (newpage_button);
+
+		gtk_box_pack_start(GTK_BOX(hbox_notebookcontrols), newpage_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE); 
+		/*gtk_table_attach (GTK_TABLE (table4), newpage_button , 0, 1, 9, 10,
 				(GtkAttachOptions) (0),
-				(GtkAttachOptions) (0), 0, 0);
-		gtk_widget_show (blank_label2);
+				(GtkAttachOptions) (0), 0, 0);*/
+		gtk_container_set_border_width (GTK_CONTAINER (newpage_button), 3);
+		GTK_WIDGET_UNSET_FLAGS (newpage_button, GTK_CAN_FOCUS);
+		gtk_tooltips_set_tip (tooltips, newpage_button, _("Open a new page"), NULL);
+
+		g_signal_connect(G_OBJECT(newpage_button), "clicked",
+				G_CALLBACK (newpage_click), gtkwb);
+    
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin","gtk-close.png", NULL);
+    	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+    	g_free(filename);
+    	tmp_toolbar_icon = gtk_image_new_from_pixbuf(pixbuf);
+		closepage_button = gtk_button_new ();
+		gtk_widget_set_name (closepage_button, "closepage_button");
+  		gtk_button_set_image(closepage_button, tmp_toolbar_icon );
+		gtk_widget_ref (closepage_button);
+		gtk_object_set_data_full (GTK_OBJECT (window), "closepage_button", closepage_button,
+				(GtkDestroyNotify) gtk_widget_unref);
+		gtk_widget_show (closepage_button);
+
+		gtk_box_pack_start(GTK_BOX(hbox_notebookcontrols), closepage_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE); 
+		/*gtk_table_attach (GTK_TABLE (table4), closepage_button , 2, 3, 9, 10,
+				(GtkAttachOptions) (0),
+				(GtkAttachOptions) (0), 0, 0);*/
+		gtk_container_set_border_width (GTK_CONTAINER (closepage_button), 3);
+		GTK_WIDGET_UNSET_FLAGS (closepage_button, GTK_CAN_FOCUS);
+		gtk_tooltips_set_tip (tooltips, closepage_button, _("Delete the current page"), NULL);
+		g_signal_connect(G_OBJECT(closepage_button), "clicked",
+				G_CALLBACK(closepage_click), gtkwb);
+
+    	filename = g_build_filename(DATADIR, "pixmaps", "pidgin","gtk-edit.png", NULL);
+    	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+    	g_free(filename);
+    	tmp_toolbar_icon = gtk_image_new_from_pixbuf(pixbuf);
+		editpage_button = gtk_button_new ();
+		gtk_widget_set_name (editpage_button, "editpage_button");
+  		gtk_button_set_image(editpage_button, tmp_toolbar_icon );
+		gtk_widget_ref (editpage_button);
+		gtk_object_set_data_full (GTK_OBJECT (window), "editpage_button", editpage_button,
+				(GtkDestroyNotify) gtk_widget_unref);
+		gtk_widget_show (editpage_button);
+
+		gtk_box_pack_start(GTK_BOX(hbox_notebookcontrols), editpage_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE); 
+		/*gtk_table_attach (GTK_TABLE (table4), editpage_button , 1, 2, 9, 10,
+				(GtkAttachOptions) (0),
+				(GtkAttachOptions) (0), 0, 0);*/
+		gtk_container_set_border_width (GTK_CONTAINER (editpage_button), 3);
+		GTK_WIDGET_UNSET_FLAGS (editpage_button, GTK_CAN_FOCUS);
+		gtk_tooltips_set_tip (tooltips, editpage_button, _("Edit the current page"), NULL);
+		g_signal_connect(G_OBJECT(editpage_button), "clicked",
+				G_CALLBACK(editpage_click), gtkwb);
+
+	dummyLabel2 = gtk_label_new("");
+    gtk_table_attach (GTK_TABLE (table4), dummyLabel2 , 0, 2, 6, 7,
+                (GtkAttachOptions) (0),
+                (GtkAttachOptions) (0), 0, 0);
+    gtk_widget_show(dummyLabel2);
+
 
 	textView =  gtk_entry_new();
-    //purple_debug_error("VIDEO ENTRY PROF", "***CLICK\n");
+    purple_debug_error("VIDEO ENTRY PROF", "***CLIKC\n");
     gtk_entry_set_max_length (GTK_ENTRY (textView), 0);
     gtk_entry_set_text (GTK_ENTRY (textView), "Write Video URL here.");
-    gtk_table_attach (GTK_TABLE (table4), textView , 0, 2, 8, 9,
+    gtk_table_attach (GTK_TABLE (table4), textView , 0, 2, 7, 8,
                 (GtkAttachOptions) (0),
                 (GtkAttachOptions) (0), 0, 0);
     gtk_widget_show(textView);
+
+
+/*    g_signal_connect(G_OBJECT(textView), "activate",
+					 G_CALLBACK(on_edit_textView), gtkwb);
+*/
 
     //GdkPixbuf *pixbuf;
     //char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin","eraseOp.xpm", NULL);
@@ -2312,7 +3148,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                                GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                                NULL,
                                                "",
-                                               _("Erase to background"), NULL,
+                                               _("erase"), NULL,
                                                tmp_toolbar_icon, NULL, NULL);
     gtk_widget_set_name (erase_button, "erase_button");
     gtk_widget_ref (erase_button);
@@ -2344,7 +3180,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("Fill with color"), NULL,
+                                _("fill"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (fill_button, "fill_button");
   gtk_widget_ref (fill_button);
@@ -2360,7 +3196,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("Draw straight line"), NULL,
+                                _("line"), NULL,
                                 tmp_toolbar_icon, NULL, NULL);
   gtk_widget_set_name (line_button, "line_button");
   gtk_widget_ref (line_button);
@@ -2376,7 +3212,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("Draw connected straight lines"), NULL,
+                                _("polyline"), NULL,
                                 tmp_toolbar_icon, NULL, NULL);
   gtk_widget_set_name (multiline_button, "multiline_button");
   gtk_widget_ref (multiline_button);
@@ -2392,7 +3228,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("Draw rectangle"), NULL,
+                                _("rectangle"), NULL,
                                 tmp_toolbar_icon, NULL, NULL);
   gtk_widget_set_name (rectangle_button, "rectangle_button");
   gtk_widget_ref (rectangle_button);
@@ -2423,7 +3259,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("Pencil"), NULL,
+                                _("pen"), NULL,
                                 tmp_toolbar_icon, NULL, NULL);
   gtk_widget_set_name (pen_button, "pen_button");
   gtk_widget_ref (pen_button);
@@ -2455,7 +3291,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("Write text"), NULL,
+                                _("text"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (text_button, "text_button");
   gtk_widget_ref (text_button);
@@ -2471,7 +3307,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("Draw arc"), NULL,
+                                _("arc"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (arc_button, "arc_button");
   gtk_widget_ref (arc_button);
@@ -2488,7 +3324,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("Draw oval"), NULL,
+                                _("oval"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (oval_button, "oval_button");
   gtk_widget_ref (oval_button);
@@ -2505,7 +3341,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                                 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
                                 NULL,
                                 "",
-                                _("Paint fuzzy brush strokes"), NULL,
+                                _("brush"), NULL,
                                 tmp_toolbar_icon , NULL, NULL);
   gtk_widget_set_name (brush_button, "brush_button");
   gtk_widget_ref (brush_button);
@@ -2529,11 +3365,11 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                     (GtkAttachOptions) (0), 0, 0);
   gtk_container_set_border_width (GTK_CONTAINER (filled_button), 3);
   GTK_WIDGET_UNSET_FLAGS (filled_button, GTK_CAN_FOCUS);
-  gtk_tooltips_set_tip (tooltips, filled_button, _("Turn color fill on/off"), NULL);
+  gtk_tooltips_set_tip (tooltips, filled_button, _("fill"), NULL);
   
   /////
-/*
-  fontpicker = gtk_font_button_new();
+
+  /*fontpicker = gtk_font_button_new();
   gtk_font_button_set_use_font (GTK_FONT_BUTTON (fontpicker), TRUE);
   gtk_widget_set_name (fontpicker, "fontpicker");
   gtk_widget_ref (fontpicker);
@@ -2541,14 +3377,13 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (fontpicker);
 
-  gtk_table_attach (GTK_TABLE (table4), fontpicker, 0, 2, 2, 3,
+  gtk_table_attach (GTK_TABLE (table4), fontpicker, 0, 2, 11, 12,
 		                      (GtkAttachOptions) (0),
-		                      (GtkAttachOptions) (0), 0, 0);
-*/    
-//  gnome_font_picker_set_mode (GNOME_FONT_PICKER (fontpicker), GNOME_FONT_PICKER_MODE_FONT_INFO);
-//  gnome_font_picker_fi_set_use_font_in_label (GNOME_FONT_PICKER (fontpicker), TRUE, 14);
-//  GTK_WIDGET_UNSET_FLAGS (fontpicker, GTK_CAN_FOCUS);
-//  gtk_tooltips_set_tip (tooltips, fontpicker, _("fontpicker"), NULL);
+		                      (GtkAttachOptions) (0), 0, 0);*/
+    
+  /*gnome_font_picker_set_mode (GNOME_FONT_PICKER (fontpicker), GNOME_FONT_PICKER_MODE_FONT_INFO);
+  gnome_font_picker_fi_set_use_font_in_label (GNOME_FONT_PICKER (fontpicker), TRUE, 14);
+  GTK_WIDGET_UNSET_FLAGS (fontpicker, GTK_CAN_FOCUS);*/
 
   /*Line_Width = gtk_label_new (_("line width"));
   gtk_widget_set_name (Line_Width, "Line_Width");
@@ -2566,7 +3401,7 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
   gtk_object_set_data_full (GTK_OBJECT (window), "line_width_combo", line_width_combo,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (line_width_combo);
-  gtk_table_attach (GTK_TABLE (table4), line_width_combo, 0, 1, 4, 5,
+  gtk_table_attach (GTK_TABLE (table4), line_width_combo, 0, 1, 3, 4,
                     (GtkAttachOptions) (0),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_usize (line_width_combo, 45, -2);
@@ -2586,15 +3421,12 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
   gtk_object_set_data_full (GTK_OBJECT (window), "line_width_combo_combo_entry", line_width_combo_combo_entry,
                             (GtkDestroyNotify) gtk_widget_unref);
   gtk_widget_show (line_width_combo_combo_entry);
-  gtk_tooltips_set_tip (tooltips, line_width_combo_combo_entry, _("Set line width"), NULL);
-  gtk_entry_set_text (GTK_ENTRY (line_width_combo_combo_entry), _("2"));
+  gtk_tooltips_set_tip (tooltips, line_width_combo_combo_entry, _("line width"), NULL);
+  gtk_entry_set_text (GTK_ENTRY (line_width_combo_combo_entry), _("1"));
 
 
-/*****/
     /*   Event handling*/
 
-//    gtk_signal_connect (GTK_OBJECT (fontpicker), "font_set",  GTK_SIGNAL_FUNC (on_fontpicker_font_set), gtkwb);
-/* anil */
     gtk_signal_connect (GTK_OBJECT (line_width_combo_combo_entry), "changed",
                       GTK_SIGNAL_FUNC (on_line_width_combo_combo_entry_changed),
                       gtkwb);
@@ -2765,10 +3597,10 @@ static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventCon
     gtkwb->cursor = 0;
     gtkwb->filled = 0;
     gtkwb->flash_state = 0;
-    image_buf_set_font(gtkwb, "Sans 12");
+    image_buf_set_font(gtkwb, "Serif 12");
     image_buf_rgbbuf_to_pixmap(gtkwb, 0);
-    //        image_buf_set_foreground_to_palette(ibuf, black_palette);
-    //        image_buf_set_background_to_palette(ibuf, white_palette);
+    // image_buf_set_foreground_to_palette(ibuf, black_palette);
+    // image_buf_set_background_to_palette(ibuf, white_palette);
     memset(gtkwb->textbuf, 0, sizeof(gtkwb->textbuf));
     set_drawing_tool(gtkwb, PEN);
 	return TRUE;
@@ -2993,7 +3825,9 @@ static void pidgin_whiteboard_draw_shape(PurpleWhiteboard *wb, GList *draw_list)
              gdk_draw_arc(gtkwb->drawing_area->window,gfx_con,filled,x,y,width, height,angle1,angle2);
              break;
         case TEXT_SHAPE:
-              line_width = GPOINTER_TO_INT(draw_list->data);
+              /*  ORIGINAL
+
+			  line_width = GPOINTER_TO_INT(draw_list->data);
               draw_list = draw_list->next;
               line_color = GPOINTER_TO_INT(draw_list->data);
               draw_list = draw_list->next;
@@ -3009,9 +3843,74 @@ static void pidgin_whiteboard_draw_shape(PurpleWhiteboard *wb, GList *draw_list)
               purple_debug_info("gtkwhiteboard", " at (%d, %d)... %c \n",x,y,text);
               char st[3];
               sprintf(st,"%c\0",text);
-              gdk_draw_string(pixmap,gtkwb->font,gfx_con,x,y,st);
-              gdk_draw_string(gtkwb->drawing_area->window,gtkwb->font,gfx_con,x,y,st);
+			  
+			  PangoFontDescription *font_description = pango_font_description_from_string(gtkwb->font_string);
+			  purple_debug_info("STUDENT FONT DRAWN", "%s\n", gtkwb->font_string);
+			  PangoLayout*  mylayout =  gtk_widget_create_pango_layout(widget, st);
+			  pango_layout_set_font_description(mylayout, font_description);
+
+			  gdk_draw_layout(pixmap, gfx_con, x, y, mylayout);
+			  gdk_draw_layout(gtkwb->drawing_area->window, gfx_con, x, y, mylayout);
+			  
+			  */
+			  
+  			  purple_debug_info("gtkwhiteboard", "INSIDE DRAW TEXT\n\n");
+			  
+			  line_width = GPOINTER_TO_INT(draw_list->data);
+			  draw_list = draw_list->next;
+			  
+			  line_color = GPOINTER_TO_INT(draw_list->data);
+			  draw_list = draw_list->next;
+			  
+			  gint startx = GPOINTER_TO_INT(draw_list->data);
+			  draw_list = draw_list->next;
+			  
+			  gint starty = GPOINTER_TO_INT(draw_list->data);
+			  draw_list = draw_list->next;
+			  
+			  pidgin_whiteboard_rgb24_to_rgb48(line_color, &col);
+			  gdk_gc_set_rgb_fg_color(gfx_con, &col);
+			  gdk_gc_set_line_attributes(gfx_con,line_width,GDK_LINE_SOLID,GDK_CAP_ROUND,GDK_JOIN_BEVEL);
+
+			  GString *gstr = g_string_new("");
+
+              while(draw_list)
+			  {
+				  int text = GPOINTER_TO_INT(draw_list->data);
+                  draw_list = draw_list->next;
+				  
+				  purple_debug_info("gtkwhiteboard", "Student Text = %c\n", text);
+				  char st[3];
+				  sprintf(st,"%c\0", text);
+				  g_string_append (gstr, st);
+              }
+			 
+			  PangoFontDescription *font_description = pango_font_description_from_string(gtkwb->font_string);
+			  purple_debug_info("STUDENT FONT DRAWN", "%s\n", gtkwb->font_string);
+			  PangoLayout*  mylayout =  gtk_widget_create_pango_layout(widget, gstr->str);
+			  pango_layout_set_font_description(mylayout, font_description);
+			  pango_layout_set_width (mylayout, (DOODLE_CANVAS_WIDTH - startx)*PANGO_SCALE);
+			  pango_layout_set_wrap (mylayout, PANGO_WRAP_WORD);
+
+			  gdk_draw_layout(pixmap, gfx_con, startx, starty, mylayout);
+			  gdk_draw_layout(gtkwb->drawing_area->window, gfx_con, startx, starty, mylayout);
+			  
               break;
+		case SET_FONT:
+  			  purple_debug_info("gtkwhiteboard", "INSIDE SET FONT\n\n");
+			  GString *fontstr = g_string_new("");
+              while(draw_list)
+			  {
+				  int text = GPOINTER_TO_INT(draw_list->data);
+                  draw_list = draw_list->next;
+				  
+				  purple_debug_info("gtkwhiteboard", "STUDENT FONT = %c\n", text);
+				  char st[3];
+				  sprintf(st,"%c\0", text);
+				  g_string_append (fontstr, st);
+              }
+			  image_buf_set_font (gtkwb, fontstr->str);
+			  break;
         case FILL_SHAPE:
 
               line_width = GPOINTER_TO_INT(draw_list->data);
@@ -3041,6 +3940,29 @@ static void pidgin_whiteboard_draw_shape(PurpleWhiteboard *wb, GList *draw_list)
               purple_debug_info("gtkwhiteboard", "video url %s \n",gtkwb->video_uri );
               video_click(gtkwb->drawing_area,gtkwb);
               break;
+		case PAGES_W:
+              purple_debug_info("gtkwhiteboard", "INSIDE DRAW PAGES\n");
+			  newpage_click(gtkwb->drawing_area, gtkwb);
+			  break;
+		case SWITCH_PAGE:
+              purple_debug_info("gtkwhiteboard", "INSIDE SWITCH PAGE\n");
+			  gint newpagenum = (gint)draw_list->data;
+			  gtk_notebook_set_current_page (notebook, newpagenum);
+			  onSwitchPage (notebook, NULL, newpagenum, gtkwb); 	
+			  break;	
+		case CLOSE_PAGE:
+			  purple_debug_info("gtkwhiteboard", "INSIDE CLOSE PAGE\n");	
+			  gint currentpagenum = (gint)draw_list->data;
+			  gtk_notebook_set_current_page (notebook, currentpagenum);
+			  closepage_click (NULL, gtkwb);
+			  break;
+		case EDIT_PAGE:
+			  purple_debug_info("gtkwhiteboard", "INSIDE EDIT PAGE\n");	
+			  gint editpagenum = (gint)draw_list->data;
+			  gtk_notebook_set_current_page (notebook, editpagenum);
+			  editpage_click (NULL, gtkwb);
+			  break;
+
         default:
               purple_debug_error("gtkwhiteboard", "unknown option %d \n",shape );
     }
@@ -3163,19 +4085,108 @@ static void pidgin_whiteboard_draw_text(PurpleWhiteboard *wb, gint x,gint y,guin
     draw_list = g_list_append(draw_list, GINT_TO_POINTER(gtkwb->brush_color));
     draw_list = g_list_append(draw_list, GINT_TO_POINTER(x));
     draw_list = g_list_append(draw_list, GINT_TO_POINTER(y));
-//    purple_debug_info("gtkwhiteboard", " at (%d, %d)... %c \n",x,y,text);
     draw_list = g_list_append(draw_list, GINT_TO_POINTER(text));
 
-    purple_whiteboard_send_draw_list(wb, draw_list,11);
+    purple_whiteboard_send_draw_list(wb, draw_list, 11);
     char st[3];
     sprintf(st,"%c",text);
-    gdk_draw_string(pixmap,gtkwb->font,gfx_con,x,y,st);
-    gdk_draw_string(gtkwb->drawing_area->window,gtkwb->font,gfx_con,x,y,st);
+
+///////////////////////////////////////////////
+    /*GdkFont* myfont;
+    PangoFontDescription *font_description = pango_font_description_from_string("Sans Italic 12");
+    myfont = gdk_font_from_description(font_description);
+	if(myfont == NULL)
+		purple_debug_info("FONT NOT LOADED", "%s\n", gtkwb->font);
+	else
+		purple_debug_info("FONT LOADED SUCCESSFULLY", "%s\n", gtkwb->font);*/
+
+	//myfont = gdk_font_load ("-*-courier-bold-r-normal--*-120-*-*-*-*-iso8859-1");
+	//myfont = gdk_font_load ("-*-helvetica-bold-r-normal--*-120-*-*-*-*-iso8859-1");
+	//myfont = gdk_font_load ("-bitstream-charter-bold-r-normal--*-120-*-*-*-*-iso8859-1");
+	//myfont = gdk_font_load ("-*-times-bold-r-normal--*-120-*-*-*-*-iso8859-1");
+
+	PangoFontDescription *font_description = pango_font_description_from_string(gtkwb->font_string);
+    purple_debug_info("FONT DRAWN", "%s\n", gtkwb->font_string);
+	PangoLayout*  mylayout =  gtk_widget_create_pango_layout(widget, st);
+	pango_layout_set_font_description(mylayout, font_description);
+	pango_layout_set_width (mylayout, (DOODLE_CANVAS_WIDTH - x)*PANGO_SCALE);
+	pango_layout_set_wrap (mylayout, PANGO_WRAP_WORD);
+
+	gdk_draw_layout(pixmap, gfx_con, x, y, mylayout);
+	gdk_draw_layout(gtkwb->drawing_area->window, gfx_con, x, y, mylayout);
+//////////////////////////////////////////////
+
+    //gdk_draw_string(pixmap,gtkwb->font,gfx_con,x,y,st);
+    //gdk_draw_string(gtkwb->drawing_area->window,gtkwb->font,gfx_con,x,y,st);
     if(draw_list)
         purple_whiteboard_draw_list_destroy(draw_list);
     wb->draw_list = NULL;
     return;
 }
+
+static void pidgin_whiteboard_set_text_drawlist (GList *draw_list, gint x, gint y, guint text) 
+{
+    //draw_list = g_list_append(draw_list, GINT_TO_POINTER(x));
+    //draw_list = g_list_append(draw_list, GINT_TO_POINTER(y));
+    draw_list = g_list_append(draw_list, GINT_TO_POINTER(text));
+}
+
+static void pidgin_whiteboard_new_draw_text (GList *draw_list, PurpleWhiteboard *wb, gint x, gint y, guint text)
+{
+    PidginWhiteboard *gtkwb = wb->ui_data;
+	GtkWidget *widget = gtkwb->drawing_area;
+	GdkPixmap *pixmap = gtkwb->pixmap;
+    GdkGC *gfx_con = gdk_gc_new(pixmap);
+    GdkColor col;
+	int i;
+    
+    purple_whiteboard_get_brush(wb, &gtkwb->brush_size, &gtkwb->brush_color);
+    gdk_gc_set_line_attributes(gfx_con, gtkwb->brush_size, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
+
+	pidgin_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &col);
+	gdk_gc_set_rgb_fg_color(gfx_con, &col);
+    gdk_gc_set_line_attributes(gfx_con,gtkwb->brush_size,GDK_LINE_SOLID,GDK_CAP_ROUND,GDK_JOIN_BEVEL);
+
+    purple_whiteboard_send_draw_list(wb, draw_list, 11);
+	
+	GString *gstr = g_string_new("");
+
+	draw_list = draw_list->next; // Ignore the tool name 
+	draw_list = draw_list->next; // Ignore color 
+	draw_list = draw_list->next; // Ignore brush shape 
+	gint startx =  GPOINTER_TO_INT(draw_list->data);
+	draw_list = draw_list->next; 
+
+	gint starty =  GPOINTER_TO_INT(draw_list->data);
+	draw_list = draw_list->next; 
+	
+	while(draw_list)
+	{
+		int text = GPOINTER_TO_INT(draw_list->data);
+		draw_list = draw_list->next;
+
+		purple_debug_info("gtkwhiteboard", "TEACHER Text = %c\n", text);
+		char st[3];
+		sprintf(st,"%c\0", text);
+		g_string_append (gstr, st);
+	}
+
+	PangoFontDescription *font_description = pango_font_description_from_string(gtkwb->font_string);
+    purple_debug_info("FONT DRAWN", "%s\n", gtkwb->font_string);
+	PangoLayout*  mylayout =  gtk_widget_create_pango_layout(widget, gstr->str);
+	pango_layout_set_font_description(mylayout, font_description);
+	pango_layout_set_width (mylayout, (DOODLE_CANVAS_WIDTH - startx)*PANGO_SCALE);
+	pango_layout_set_wrap (mylayout, PANGO_WRAP_WORD);
+
+	gdk_draw_layout(pixmap, gfx_con, startx, starty, mylayout);
+	gdk_draw_layout(gtkwb->drawing_area->window, gfx_con, startx, starty, mylayout);
+
+    if(draw_list)
+        purple_whiteboard_draw_list_destroy(draw_list);
+    wb->draw_list = NULL;
+    return;
+}
+
 static void pidgin_whiteboard_draw_fill(PurpleWhiteboard *wb,int x,int y )
 {
     PidginWhiteboard *gtkwb = wb->ui_data;
@@ -3255,71 +4266,215 @@ static void pidgin_whiteboard_button_clear_press(GtkWidget *widget, gpointer dat
 	purple_whiteboard_send_clear(gtkwb->wb);
 }
 
+static void save_whiteboards (PidginWhiteboard *gtkwb, char *fileNamePrefix, char* folder)
+{
+	char *filename;
+	GdkPixbuf *pixbuf, *pixbufothers;
+	gint numofpages = gtk_notebook_get_n_pages (notebook);	
+	gint i;
+	GtkWidget *image;
+
+	for (i=0; i<numofpages; i++)
+	{
+		if(i != setEditable)
+		{
+			if (i==numofpages-1 && setEditable == -1)
+			{
+				GString *gstr = g_string_new (folder);
+				char pagestr[3];
+				sprintf(pagestr, "%d", numofpages-1);  
+				g_string_append (gstr, "/"); 		
+				g_string_append (gstr, fileNamePrefix); 		
+				g_string_append (gstr, pagestr); 		
+				g_string_append (gstr, ".jpg"); 		
+				filename = gstr->str;
+
+				// Makes an icon from the whiteboard's canvas 'image' 
+				pixbuf = gdk_pixbuf_get_from_drawable(NULL,
+						(GdkDrawable*)(gtkwb->pixmap),
+						gdk_drawable_get_colormap(gtkwb->pixmap),
+						0, 0,
+						0, 0,
+						gtkwb->width, gtkwb->height);
+
+				if(gdk_pixbuf_save(pixbuf, filename, "jpeg", NULL, "quality", "100", NULL))
+					purple_debug_info("gtkwhiteboard", "Page %d Saved...\n", numofpages-1);
+				else
+					purple_debug_info("gtkwhiteboard", "Page %d not Saved... Error\n", numofpages-1);
+				g_string_free (gstr, TRUE);	
+
+			}
+			else
+			{
+				GString *gstr = g_string_new (folder);
+				char pagestr[3];
+				sprintf(pagestr, "%d", i);  
+				g_string_append (gstr, "/"); 		
+				g_string_append (gstr, fileNamePrefix); 		
+				g_string_append (gstr, pagestr); 		
+				g_string_append (gstr, ".jpg"); 		
+
+				image = gtk_notebook_get_nth_page (notebook, i);  
+				pixbufothers = gtk_image_get_pixbuf (image);
+
+				filename = gstr->str;
+				purple_debug_info("\nFILENAME", "SAVED IS %s\n", filename);
+
+				if(gdk_pixbuf_save(pixbufothers, filename, "jpeg", NULL, "quality", "100", NULL))
+					purple_debug_info("gtkwhiteboard", "Page %d Saved...\n", i);
+				else
+					purple_debug_info("gtkwhiteboard", "Page %d not Saved... Error\n", i);
+
+				g_string_free (gstr, TRUE);	
+			}
+		}
+		else
+		{
+			GString *gstr = g_string_new (folder);
+			char pagestr[3];
+			sprintf(pagestr, "%d", setEditable);  
+			g_string_append (gstr, "/"); 		
+			g_string_append (gstr, fileNamePrefix); 		
+			g_string_append (gstr, pagestr); 		
+			g_string_append (gstr, ".jpg"); 		
+			filename = gstr->str;
+
+			// Makes an icon from the whiteboard's canvas 'image' 
+			pixbuf = gdk_pixbuf_get_from_drawable(NULL,
+					(GdkDrawable*)(gtkwb->pixmap),
+					gdk_drawable_get_colormap(gtkwb->pixmap),
+					0, 0,
+					0, 0,
+					gtkwb->width, gtkwb->height);
+
+			if(gdk_pixbuf_save(pixbuf, filename, "jpeg", NULL, "quality", "100", NULL))
+				purple_debug_info("gtkwhiteboard", "Page %d Saved...\n", setEditable);
+			else
+				purple_debug_info("gtkwhiteboard", "Page %d not Saved... Error\n", setEditable);
+			g_string_free (gstr, TRUE);	
+
+		}
+	}
+}
+
 static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data)
 {
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)(data);
-	GdkPixbuf *pixbuf;
 
 	GtkWidget *dialog;
 
-	int result;
+	dialog = gtk_file_chooser_dialog_new (_("Save Pages"),
+			GTK_WINDOW(gtkwb->window),
+			GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+			NULL);
 
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	dialog = gtk_file_chooser_dialog_new (_("Save File"),
-										  GTK_WINDOW(gtkwb->window),
-										  GTK_FILE_CHOOSER_ACTION_SAVE,
-										  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-										  GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-										  NULL);
-
-	/* gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog), (gboolean)(TRUE)); */
-
-	/* if(user_edited_a_new_document) */
+	char *fileNamePrefix = "page";
+	
+	//while (gtk_dialog_run(GTK_DIALOG(dialog)))
+	while (1)
 	{
-	/* gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), default_folder_for_saving); */
-		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "whiteboard.jpg");
+		gint response = gtk_dialog_run(GTK_DIALOG(dialog)) ;
+		if (response == GTK_RESPONSE_ACCEPT)
+		{	
+			char *filename, *folder;
+			gint filesexist = 0;
+
+			folder = gtk_file_chooser_get_current_folder (dialog);
+			if (g_file_test(folder, G_FILE_TEST_EXISTS))
+			{
+				gint numofpages = gtk_notebook_get_n_pages (notebook);
+				gint i;
+				for (i=0; i<numofpages; i++)
+				{
+					GString *gstr = g_string_new (folder);
+					char pagenumstr[3];
+					sprintf(pagenumstr, "%d", i);  
+					g_string_append (gstr, "/"); 		
+					g_string_append (gstr, fileNamePrefix); 		
+					g_string_append (gstr, pagenumstr); 		
+					g_string_append (gstr, ".jpg"); 		
+					filename = gstr->str;
+
+					if (g_file_test(filename, G_FILE_TEST_EXISTS))
+					{
+						filesexist = 1;
+						g_string_free (gstr, TRUE);
+						break;
+					}
+					g_string_free (gstr, TRUE);
+				}
+
+				if (filesexist)
+				{
+					GtkMessageDialog *msg = gtk_message_dialog_new (dialog, GTK_DIALOG_MODAL,
+							GTK_MESSAGE_WARNING, GTK_BUTTONS_NONE, "Files already exist!");
+					gtk_dialog_add_buttons (msg, "Overwrite all", 1, "Choose another <filename>", 2, "Cancel", 3, NULL);
+					gtk_message_dialog_format_secondary_text (msg, "Your pages are saved as <filename><page number>.jpg\nSome files (eg. %s%d.jpg) having such names already exist in the folder selected !\nClick the appropriate option.", fileNamePrefix, i);
+					gint result = gtk_dialog_run (GTK_DIALOG (msg));
+					if (result == 1)
+					{
+						//Overwrite ie. save direclty with the default file name
+						save_whiteboards (gtkwb, fileNamePrefix, folder);
+						gtk_widget_destroy(msg);
+						break;
+					}
+					else if (result == 2)
+					{
+						//rename
+						// open a new rename dialog 
+
+						GtkDialog *renameDialog = gtk_dialog_new ();
+						GtkWidget *textEntry =  gtk_entry_new();
+						gtk_entry_set_max_length (GTK_ENTRY (textEntry), 20);
+						gtk_entry_set_text (GTK_ENTRY (textEntry), fileNamePrefix);
+						gtk_box_pack_start (GTK_BOX (renameDialog->vbox), textEntry, 1, 1, 0);
+						gtk_widget_show (textEntry);
+						gtk_dialog_add_button (renameDialog, "OK", 4);
+
+						gtk_widget_destroy(msg);
+						gint inresult = gtk_dialog_run (GTK_DIALOG (renameDialog));
+
+						if (inresult == 4)
+						{
+							char *text = gtk_entry_get_text (textEntry); 	
+							// blank spaces to be handled here
+							gint len = strlen (text);
+							fileNamePrefix = (char*) g_malloc0 (len);
+							strcpy (fileNamePrefix, text);
+
+							gtk_widget_destroy(renameDialog);
+							//gtk_widget_destroy(msg);
+							continue;
+						}	
+						else
+						{
+							gtk_widget_destroy(renameDialog);
+						}
+						break;
+					}
+					else
+					{
+						gtk_widget_destroy(msg);		
+					}
+				}
+				else
+				{
+					// save directly
+					save_whiteboards (gtkwb, fileNamePrefix, folder);
+					break;
+				}
+			}
+			g_free(folder);
+		}
+		else if (response == GTK_RESPONSE_CANCEL)
+		{
+			break;
+		}
+
 	}
-	/*
-	else
-		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), filename_for_existing_document);
-	*/
-#else
-	dialog = gtk_file_selection_new(_("Save File"));
-	gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog), "whiteboard.jpg");
-#endif
-	result = gtk_dialog_run(GTK_DIALOG(dialog));
-
-	if(result == GTK_RESPONSE_ACCEPT)
-	{
-		char *filename;
-
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-#else
-		filename = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(dialog)));
-#endif
-		gtk_widget_destroy(dialog);
-
-		/* Makes an icon from the whiteboard's canvas 'image' */
-		pixbuf = gdk_pixbuf_get_from_drawable(NULL,
-											  (GdkDrawable*)(gtkwb->pixmap),
-											  gdk_drawable_get_colormap(gtkwb->pixmap),
-											  0, 0,
-											  0, 0,
-											  gtkwb->width, gtkwb->height);
-
-		if(gdk_pixbuf_save(pixbuf, filename, "jpeg", NULL, "quality", "100", NULL))
-			purple_debug_info("gtkwhiteboard", "File Saved...\n");
-		else
-			purple_debug_info("gtkwhiteboard", "File not Saved... Error\n");
-		g_free(filename);
-	}
-	else if(result == GTK_RESPONSE_CANCEL)
-	{
-		gtk_widget_destroy(dialog);
-
-		purple_debug_info("gtkwhiteboard", "File not Saved... Canceled\n");
-	}
+	gtk_widget_destroy(dialog);
 }
 
 static void pidgin_whiteboard_set_canvas_as_icon(PidginWhiteboard *gtkwb)
@@ -3328,30 +4483,30 @@ static void pidgin_whiteboard_set_canvas_as_icon(PidginWhiteboard *gtkwb)
 
 	/* Makes an icon from the whiteboard's canvas 'image' */
 	pixbuf = gdk_pixbuf_get_from_drawable(NULL,
-										  (GdkDrawable*)(gtkwb->pixmap),
-										  gdk_drawable_get_colormap(gtkwb->pixmap),
-										  0, 0,
-										  0, 0,
-										  gtkwb->width, gtkwb->height);
+			(GdkDrawable*)(gtkwb->pixmap),
+			gdk_drawable_get_colormap(gtkwb->pixmap),
+			0, 0,
+			0, 0,
+			gtkwb->width, gtkwb->height);
 
 	gtk_window_set_icon((GtkWindow*)(gtkwb->window), pixbuf);
 }
 
 static void pidgin_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color)
 {
-    color->red   = (color_rgb >> 8) | 0xFF;
-    color->green = (color_rgb & 0xFF00) | 0xFF;
-    color->blue  = ((color_rgb & 0xFF) << 8) | 0xFF;
+	color->red   = (color_rgb >> 8) | 0xFF;
+	color->green = (color_rgb & 0xFF00) | 0xFF;
+	color->blue  = ((color_rgb & 0xFF) << 8) | 0xFF;
 }
 
 static void pidgin_whiteboard_rgb24_to_rgb48_fill(int color_rgb, GdkColor *color)
 {
-    color->red   = color_rgb >> 16;
-    color->green = (color_rgb & 0xFF00) >> 8;
-    color->blue  = color_rgb & 0xFF;
+	color->red   = color_rgb >> 16;
+	color->green = (color_rgb & 0xFF00) >> 8;
+	color->blue  = color_rgb & 0xFF;
 }
 
-static void
+	static void
 change_color_cb(GtkColorSelection *selection, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
@@ -3384,18 +4539,18 @@ static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
 	GtkColorSelectionDialog *dialog;
-	
+
 	dialog = (GtkColorSelectionDialog *)gtk_color_selection_dialog_new(_("Select color"));
 
 	g_signal_connect(G_OBJECT(dialog->colorsel), "color-changed",
-					G_CALLBACK(change_color_cb), gtkwb);
+			G_CALLBACK(change_color_cb), gtkwb);
 
 
 	gtk_widget_destroy(dialog->cancel_button);
 	gtk_widget_destroy(dialog->help_button);
 
 	g_signal_connect(G_OBJECT(dialog->ok_button), "clicked",
-					G_CALLBACK(color_selection_dialog_destroy), dialog);
+			G_CALLBACK(color_selection_dialog_destroy), dialog);
 
 	gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(dialog->colorsel), TRUE);
 
@@ -3405,102 +4560,102 @@ static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 	gtk_widget_show_all(GTK_WIDGET(dialog));
 }
 /*
-	int temp;
-	int xstep;
-	int ystep;
-	int dx;
-	int dy;
-	int error;
-	int derror;
-	int x;
-	int y;
-    int tdx,tdy;
-    GList *draw_list = wb->draw_list;
-    draw_list = g_list_append(draw_list, GINT_TO_POINTER(-2));
-    draw_list = g_list_append(draw_list, GINT_TO_POINTER(x0));
-    draw_list = g_list_append(draw_list, GINT_TO_POINTER(y0));
-    draw_list = g_list_append(draw_list, GINT_TO_POINTER(x1));
-    draw_list = g_list_append(draw_list, GINT_TO_POINTER(y1));
-    
-    purple_whiteboard_send_draw_list(wb, draw_list);
-    if(draw_list)
-        purple_whiteboard_draw_list_destroy(draw_list);
-    wb->draw_list = NULL;
-    return;
-	gboolean steep = abs(y1 - y0) > abs(x1 - x0);
-    purple_debug_info("gtkwhiteboard", "drawing line...(%d %d) to (%d %d)\n",x0,y0,x1,y1); 
+   int temp;
+   int xstep;
+   int ystep;
+   int dx;
+   int dy;
+   int error;
+   int derror;
+   int x;
+   int y;
+   int tdx,tdy;
+   GList *draw_list = wb->draw_list;
+   draw_list = g_list_append(draw_list, GINT_TO_POINTER(-2));
+   draw_list = g_list_append(draw_list, GINT_TO_POINTER(x0));
+   draw_list = g_list_append(draw_list, GINT_TO_POINTER(y0));
+   draw_list = g_list_append(draw_list, GINT_TO_POINTER(x1));
+   draw_list = g_list_append(draw_list, GINT_TO_POINTER(y1));
 
-    if(steep)
-	{
-		temp = x0; x0 = y0; y0 = temp;
-		temp = x1; x1 = y1; y1 = temp;
-	}
+   purple_whiteboard_send_draw_list(wb, draw_list);
+   if(draw_list)
+   purple_whiteboard_draw_list_destroy(draw_list);
+   wb->draw_list = NULL;
+   return;
+   gboolean steep = abs(y1 - y0) > abs(x1 - x0);
+   purple_debug_info("gtkwhiteboard", "drawing line...(%d %d) to (%d %d)\n",x0,y0,x1,y1); 
 
-	dx = abs(x1 - x0);
-	dy = abs(y1 - y0);
+   if(steep)
+   {
+   temp = x0; x0 = y0; y0 = temp;
+   temp = x1; x1 = y1; y1 = temp;
+   }
 
-	error = 0;
-	derror = dy;
+   dx = abs(x1 - x0);
+   dy = abs(y1 - y0);
 
-	x = x0;
-	y = y0;
+   error = 0;
+   derror = dy;
 
-	if(x0 < x1)
-		xstep = 1;
-	else
-		xstep = -1;
+   x = x0;
+   y = y0;
 
-	if(y0 < y1)
-		ystep = 1;
-	else
-		ystep = -1;
+   if(x0 < x1)
+   xstep = 1;
+   else
+   xstep = -1;
 
-	if(steep){
-		pidgin_whiteboard_draw_brush_point(wb, y, x, color, size);
-    }
-	else{
-		pidgin_whiteboard_draw_brush_point(wb, x, y, color, size);
-    }
-    LastX=x;
-    LastY=y;
-    tdx = x;
-    tdy = y;
-  	while(x != x1)
-	{
-		x += xstep;
-		error += derror;
-		if((error * 2) >= dx)
-		{
-			y += ystep;
-			error -= dx;
-		}
-        if(steep){
+   if(y0 < y1)
+   ystep = 1;
+   else
+   ystep = -1;
+
+   if(steep){
+   pidgin_whiteboard_draw_brush_point(wb, y, x, color, size);
+   }
+   else{
+   pidgin_whiteboard_draw_brush_point(wb, x, y, color, size);
+   }
+   LastX=x;
+   LastY=y;
+   tdx = x;
+   tdy = y;
+   while(x != x1)
+   {
+   x += xstep;
+   error += derror;
+   if((error * 2) >= dx)
+   {
+   y += ystep;
+   error -= dx;
+   }
+   if(steep){
 //            purple_debug_info("gtkwhiteboard", "(%d %d) \n",tdy,tdx);
-            draw_list = g_list_append(draw_list, GINT_TO_POINTER(tdy));
-            draw_list = g_list_append(draw_list, GINT_TO_POINTER(tdx));
-            pidgin_whiteboard_draw_brush_point(wb, y, x, color, size);
-        }
-		else{
-//            purple_debug_info("gtkwhiteboard", "(%d %d) \n",tdx,tdy);
-            draw_list = g_list_append(draw_list, GINT_TO_POINTER(tdx));
-            draw_list = g_list_append(draw_list, GINT_TO_POINTER(tdy));
- 			pidgin_whiteboard_draw_brush_point(wb, x, y, color, size);
-        }
-        tdx = x - LastX;
-        tdy = y - LastY;
-        LastX = x;
-        LastY = y;
-	}
+draw_list = g_list_append(draw_list, GINT_TO_POINTER(tdy));
+draw_list = g_list_append(draw_list, GINT_TO_POINTER(tdx));
+pidgin_whiteboard_draw_brush_point(wb, y, x, color, size);
+}
+else{
+	//            purple_debug_info("gtkwhiteboard", "(%d %d) \n",tdx,tdy);
+	draw_list = g_list_append(draw_list, GINT_TO_POINTER(tdx));
+	draw_list = g_list_append(draw_list, GINT_TO_POINTER(tdy));
+	pidgin_whiteboard_draw_brush_point(wb, x, y, color, size);
+}
+tdx = x - LastX;
+tdy = y - LastY;
+LastX = x;
+LastY = y;
+}
 
-    purple_whiteboard_send_draw_list(wb, draw_list);
+purple_whiteboard_send_draw_list(wb, draw_list);
 
-    if(draw_list)
-        purple_whiteboard_draw_list_destroy(draw_list);
+if(draw_list)
+	purple_whiteboard_draw_list_destroy(draw_list);
 
-    wb->draw_list = NULL;
-//    draw_list = g_list_append(draw_list, GINT_TO_POINTER(LastX));
-//    draw_list = g_list_append(draw_list, GINT_TO_POINTER(LastY));
-//    wb->draw_list = draw_list;
-    purple_debug_info("gtkwhiteboard", "drawing line. out..\n");
-    */
+	wb->draw_list = NULL;
+	//    draw_list = g_list_append(draw_list, GINT_TO_POINTER(LastX));
+	//    draw_list = g_list_append(draw_list, GINT_TO_POINTER(LastY));
+	//    wb->draw_list = draw_list;
+	purple_debug_info("gtkwhiteboard", "drawing line. out..\n");
+	*/
 

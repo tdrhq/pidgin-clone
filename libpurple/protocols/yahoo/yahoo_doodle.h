@@ -42,6 +42,9 @@
 #define DOODLE_CMD_DRAW     3
 #define DOODLE_CMD_EXTRA    4
 #define DOODLE_CMD_CONFIRM  5
+
+
+///////////////////
 #define DOODLE_CMD_DRAW_LINE 6
 #define DOODLE_CMD_DRAW_RECT 7
 #define DOODLE_CMD_DRAW_ARC 8
@@ -49,6 +52,13 @@
 #define DOODLE_CMD_DRAW_BRUSH 12
 #define DOODLE_CMD_DRAW_FILL 13
 #define DOODLE_CMD_DRAW_VIDEO 14
+#define DOODLE_CMD_DRAW_PAGES 15 
+#define DOODLE_CMD_DRAW_PAGESWITCH 16 
+#define DOODLE_CMD_DRAW_CLOSEPAGE 17
+#define DOODLE_CMD_DRAW_EDITPAGE 18
+#define DOODLE_CMD_DRAW_SETFONT 19
+///////////////////
+
 
 /* Doodle communication command for shutting down (also 0) */
 #define DOODLE_CMD_SHUTDOWN 0
@@ -63,9 +73,12 @@
 #define DOODLE_STATE_REQUESTED   1
 #define DOODLE_STATE_ESTABLISHED 2
 
-/* Doodle canvas dimensions */
+
+///////
 #define DOODLE_CANVAS_WIDTH  520
 #define DOODLE_CANVAS_HEIGHT 520
+///////
+
 
 /* Doodle color codes (most likely RGB) */
 /* TODO: Should be an enum and sorted by color name. */
@@ -111,11 +124,18 @@ PurpleCmdRet yahoo_doodle_purple_cmd_start(PurpleConversation *conv, const char 
 void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from,
 						  const char *command, const char *message);
 void yahoo_doodle_initiate(PurpleConnection *gc, const char *to);
+
+//
 void yahoo_doodle_start_student_session(PurpleBuddy *buddy, PurpleWhiteboard *wb );
+//
+
 void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *from);
 void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *from);
 void yahoo_doodle_command_got_draw(PurpleConnection *gc, const char *from, const char *message);
+
+//
 void yahoo_doodle_command_got_draw_shape(PurpleConnection *gc, const char *from, const char *message);
+//
 
 void yahoo_doodle_command_got_clear(PurpleConnection *gc, const char *from);
 void yahoo_doodle_command_got_extra(PurpleConnection *gc, const char *from, const char *message);

@@ -2429,6 +2429,140 @@ purple_blist_request_add_buddy(PurpleAccount *account, const char *username,
 		ui_ops->request_add_buddy(account, username, group, alias);
 }
 
+/* prekshu */
+gint 
+purple_blist_request_check_presence (PurpleAccount *account, const char *username,
+                            const char *group, const char *alias)
+{
+	xmlnode *purple, *glist, *id;
+	int alreadyThere = 0;
+	char *data;
+
+	purple = purple_util_read_xml_from_file("classroom.xml", _("class groups"));
+
+	if (purple == NULL)
+	{
+		return 0;
+	}
+	else 
+	{
+		glist = xmlnode_get_child(purple, "group");
+		if (glist) 
+		{
+			xmlnode *groupid;
+			for (groupid = xmlnode_get_child(glist, "id"); groupid != NULL;
+					groupid  = xmlnode_get_next_twin(groupid)) 
+			{
+				purple_debug_info ("GROUP ID READ", "##%s##\n", xmlnode_get_data(groupid));
+				if (!strcmp(group, xmlnode_get_data(groupid)))
+				{	
+					return 1;
+				}
+			}
+		}	
+	}
+
+	return 0;
+}	
+
+/* prekshu */
+void 
+purple_blist_request_add_to_class (PurpleAccount *account, const char *username,
+							const char *group, const char *alias)
+{
+	purple_debug_info ("REQUEST ADD TO CLASS", "ADDED\n");
+
+	xmlnode *purple, *glist, *id;
+	int alreadyThere = 0;
+	char *data;
+
+	purple = purple_util_read_xml_from_file("classroom.xml", _("class groups"));
+
+	if (purple == NULL)
+	{
+		purple_debug_info ("LIST IS NULL", "ADDED\n");
+		purple_debug_info ("CREATING classroom.xml", "ADDED\n");
+
+		purple = xmlnode_new("purple");
+		xmlnode_set_attrib(purple, "version", "1.0");
+		
+		glist = xmlnode_new_child(purple, "group");
+	}
+	else 
+	{
+		purple_debug_info ("Group", "%s\n", group);
+		purple_debug_info ("MODIFYING classroom.xml", "ADDED\n");
+
+		glist = xmlnode_get_child(purple, "group");
+		if (glist) 
+		{
+			xmlnode *groupid;
+			for (groupid = xmlnode_get_child(glist, "id"); groupid != NULL;
+					groupid  = xmlnode_get_next_twin(groupid)) 
+			{
+				purple_debug_info ("GROUP ID READ", "##%s##\n", xmlnode_get_data(groupid));
+				if (!strcmp(group, xmlnode_get_data(groupid)))
+				{	
+					alreadyThere = 1;
+					break;
+				}
+			}
+		}	
+
+	}
+	if (alreadyThere == 0)
+	{
+		id = xmlnode_new_child(glist, "id");
+		xmlnode_insert_data(id, group, -1);
+		
+		data = xmlnode_to_formatted_str(purple, NULL);
+		purple_util_write_data_to_file("classroom.xml", data, -1);
+		g_free(data);
+		xmlnode_free(purple);
+	}	
+}
+
+/* prekshu */
+void 
+purple_blist_request_remove_from_class (PurpleAccount *account, const char *username,
+							const char *group, const char *alias)
+{
+	purple_debug_info ("REQUEST REMOVE FROM CLASS", "REMOVED\n");
+
+	xmlnode *purple, *purplenew, *glist, *glistnew, *id, *newid;
+	char *data;
+
+	purple = purple_util_read_xml_from_file("classroom.xml", _("class groups"));
+
+	purple_debug_info ("MODIFYING classroom.xml", "%s REMOVED\n\n", group);
+
+	purplenew = xmlnode_new("purple");
+	xmlnode_set_attrib(purplenew, "version", "1.0");
+	glistnew = xmlnode_new_child(purplenew, "group");
+	
+	glist = xmlnode_get_child(purple, "group");
+	if (glist) 
+	{
+		xmlnode *groupid;
+		for (groupid = xmlnode_get_child(glist, "id"); groupid != NULL;
+				groupid  = xmlnode_get_next_twin(groupid)) 
+		{
+			purple_debug_info ("GROUP ID READ", "##%s##\n", xmlnode_get_data(groupid));
+			if (strcmp(group, xmlnode_get_data(groupid)))
+			{	
+				newid = xmlnode_new_child(glistnew, "id");
+				xmlnode_insert_data(newid, xmlnode_get_data(groupid), -1);
+			}
+		}
+	}	
+
+	data = xmlnode_to_formatted_str(purplenew, NULL);
+	purple_util_write_data_to_file("classroom.xml", data, -1);
+	g_free(data);
+	xmlnode_free(purple);
+	xmlnode_free(purplenew);
+}
+
 void
 purple_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 							const char *alias, const char *name)
