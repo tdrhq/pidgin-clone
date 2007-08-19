@@ -1,27 +1,27 @@
 /**
-* @file gntlog.c GNT Log API
-* @ingroup finch
-*
-* finch
-*
-* Finch is the legal property of its developers, whose names are too numerous
-* to list here.  Please refer to the COPYRIGHT file distributed with this
-* source distribution.
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * @file gntlog.c GNT Log API
+ * @ingroup finch
+ *
+ * finch
+ *
+ * Finch is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 /* Finch */
 #include "finch.h"
@@ -210,8 +210,10 @@ finch_log_list_cb(GList * list, void * data)
 		if (finch_log_data->need_continue == TRUE) {
 			append_log_viewer_logs(finch_log_data->log_viewer, list);
 		} 
-	}
-	else {
+	} else {
+		gnt_text_view_clear(GNT_TEXT_VIEW(finch_log_data->log_viewer->tv));
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(finch_log_data->log_viewer->tv),
+				_("Select a log and press enter."), GNT_TEXT_FLAG_BOLD);
 		finch_log_data->done_cb(finch_log_data);
 	}
 }
@@ -233,16 +235,11 @@ finch_log_done_cb(void *data)
 static void
 show_log(char *text, PurpleLogReadFlags *flags, gpointer *data)
 {
-
-	int h,w;
 	FinchLogViewer *lv = (FinchLogViewer *)data;
 	
 	gnt_text_view_clear(GNT_TEXT_VIEW(lv->tv));
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(lv->tv), text ? text : _("Empty Log"), GNT_TEXT_FLAG_NORMAL);
 	
-	gnt_widget_get_size(lv->tv, &w, &h);
-	gnt_text_view_scroll(GNT_TEXT_VIEW(lv->tv), h-1);
-
 	gnt_widget_draw(lv->tv);
 }
 
@@ -507,7 +504,8 @@ create_log_viewer(PurpleAccount *account, const char *screenname, const gchar * 
 	gnt_widget_set_size(tv, 45, h);
 
 	viewer->tv = tv = gnt_text_view_new();
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("Select a log to view."), GNT_TEXT_FLAG_BOLD);
+	gnt_text_view_set_flag(GNT_TEXT_VIEW(tv), GNT_TEXT_VIEW_TOP_ALIGN);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), _("Fetching logs ..."), GNT_TEXT_FLAG_BOLD);
 	gnt_box_add_widget(GNT_BOX(rightbox), tv);
 	gnt_text_view_attach_pager_widget(GNT_TEXT_VIEW(tv), win);
 
@@ -517,7 +515,7 @@ create_log_viewer(PurpleAccount *account, const char *screenname, const gchar * 
 	gnt_box_add_widget(GNT_BOX(searchbox), entry);
 	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(tv), entry);
 
-	button = gnt_button_new("Search");
+	button = gnt_button_new(_("Search"));
 	gnt_box_add_widget(GNT_BOX(searchbox), button);
 	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(tv), button);
 
@@ -527,7 +525,7 @@ create_log_viewer(PurpleAccount *account, const char *screenname, const gchar * 
 
 	aligned_box = gnt_hbox_new(FALSE);
 	gnt_box_set_alignment(GNT_BOX(aligned_box), GNT_ALIGN_RIGHT);
-	button = gnt_button_new("Close");
+	button = gnt_button_new(_("Close"));
 	gnt_box_add_widget(GNT_BOX(aligned_box), button);
 	gnt_box_add_widget(GNT_BOX(win), aligned_box);
 
@@ -558,8 +556,8 @@ finch_log_init()
 void *
 finch_log_get_handle()
 {
-		static int handle;
-		return &handle;
+	static int handle;
+	return &handle;
 }
 
 void 
