@@ -247,7 +247,13 @@ static void database_logger_sets(GHashTable *sets, PurpleLogVoidCallback cb, voi
 {
 	purple_debug_info("Database Logger", "Sets function\n");
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_SETS] != NULL) {
-	
+		DatabaseSetsOperation *op = g_new(DatabaseSetsOperation, 1);
+		op->type = PURPLE_DATABASE_LOGGER_SETS;
+		op->sets = sets;
+		op->cb = cb;
+		op->data = data;
+		op->ret_value = sets;
+		g_thread_create(db_thread, op, FALSE, NULL);
 	} else {
 		cb(data);
 	}
@@ -281,6 +287,9 @@ static void db_write_notify(gpointer data)
 	if (op->cb != NULL) {
 		op->cb(op->ret_value, op->data);
 	}
+	/* we should free message */
+	g_free(op->message);
+
 }
 
 static void db_read_notify(gpointer data) 
@@ -366,6 +375,20 @@ static char *log_get_timestamp(PurpleLog *log, time_t when)
 		return g_strdup(purple_time_format(&tm));
 }
 
+/* This function is a copy of log.c static one. May be we should make this function public */
+static void
+log_add_log_set_to_hash(GHashTable *sets, PurpleLogSet *set)
+{
+	PurpleLogSet *existing_set = g_hash_table_lookup(sets, set);
+
+	if (existing_set == NULL)
+		g_hash_table_insert(sets, set, set);
+	else if (existing_set->account == NULL && set->account != NULL)
+		g_hash_table_replace(sets, set, set);
+	else
+		purple_log_set_free(set);
+}
+
 static void lock()
 {
 	g_mutex_lock(db_mutex);
@@ -393,6 +416,7 @@ static gboolean db_process_result(dbi_result dres)
 		return FALSE;
 	}
 }
+
 static gboolean db_retrieve_int_value(dbi_result dres, int *value, const char *field_name) 
 {
 	if (dres) {
@@ -400,11 +424,22 @@ static gboolean db_retrieve_int_value(dbi_result dres, int *value, const char *f
 		while (dbi_result_next_row(dres)) {
 			*value = dbi_result_get_uint(dres, field_name);
 		}
-		dbi_result_free(dres);
-		return TRUE;
-	} else 
-		db_print_error();
-	return FALSE;
+	}
+	return db_process_result(dres);
+}
+
+static gboolean db_retrieve_string_value(dbi_result dres, char **value, const char *field_name) 
+{
+	*value = NULL;
+	if (dres) {
+		/* TODO: check if there are several rows */
+		while (dbi_result_next_row(dres)) {
+			if (*value)
+				g_free(*value);
+			*value = g_strdup(dbi_result_get_string(dres, field_name));
+		}
+	}
+	return db_process_result(dres);
 }
 
 static gboolean db_retrieve_id(dbi_result dres, int *id) 
@@ -415,9 +450,15 @@ static gboolean db_retrieve_id(dbi_result dres, int *id)
 static int db_get_protocol_id(PurpleAccount *account) 
 {
 	PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
-	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	const char *protocol_name = prpl_info->list_icon(account, NULL);
+	PurplePluginProtocolInfo *prpl_info;
+	const char *protocol_name;
 	int id = -1;
+
+	if (!prpl)
+		return id;
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	protocol_name = prpl_info->list_icon(account, NULL);
 
 	/* TODO: optimization */
 	purple_debug_info("Database logger", "get_protocol_id [new thread]\n");
@@ -440,6 +481,15 @@ static int db_get_protocol_id(PurpleAccount *account)
 	}
 
 	return id;
+}
+
+static char *db_get_protocol_name(int id)
+{
+	char *name;
+	dbi_result dres =  dbi_conn_queryf(db_logger->db_conn, 
+						"SELECT `name` FROM protocols WHERE id = %i", id);
+	db_retrieve_string_value(dres, &name, "name");
+	return name;
 }
 
 static int db_get_account_id(PurpleAccount *account) 
@@ -470,6 +520,54 @@ static int db_get_account_id(PurpleAccount *account)
 
 	g_free(account_name);
 	return id;
+}
+
+static PurpleAccount *db_get_account(int id) 
+{
+	char *protocol_name = NULL;
+	char *account_name = NULL;
+	PurpleAccount *account = NULL;
+	dbi_result dres;
+
+	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `name`, `protocolId` FROM accounts WHERE id =  %i", 
+								id);
+	if(dres) {
+		int protocol_id = -1;
+		
+		while (dbi_result_next_row(dres)) {
+			if (account_name)
+				g_free(account_name);
+			account_name = g_strdup(dbi_result_get_string(dres, "name"));
+			protocol_id = dbi_result_get_int(dres, "protocolId");
+		}
+		if (protocol_id != -1)
+			protocol_name = db_get_protocol_name(protocol_id);
+	}
+	db_process_result(dres);
+
+	if (protocol_name != NULL && account_name != NULL) {
+		GList *account_iter;
+
+		for (account_iter = purple_accounts_get_all() ; account_iter != NULL ; account_iter = account_iter->next) {
+			PurplePlugin *prpl;
+			PurplePluginProtocolInfo *prpl_info;
+
+			prpl = purple_find_prpl(purple_account_get_protocol_id((PurpleAccount *)account_iter->data));
+			if (!prpl)
+				continue;
+			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+			if (!strcmp(protocol_name, prpl_info->list_icon((PurpleAccount *)account_iter->data, NULL)) &&
+				!strcmp(((PurpleAccount *)account_iter->data)->username, account_name)) {
+					account = account_iter->data;
+					break;
+				}
+		}
+	}
+	g_free(protocol_name);
+	g_free(account_name);
+
+	return account;
 }
 
 static int db_get_buddy_id(PurpleLogType type, const char *name, PurpleAccount *account) 
@@ -703,8 +801,6 @@ static gpointer db_write(gpointer data)
 				"UPDATE conversations SET size=%i WHERE id=%i",
 				log_size, conv_info->id);
 		g_free(stripped);
-		/* we should free message */
-		g_free(message);
 	} else 
 		purple_debug_info("Database Logger", "conv_info->id == -1\n");
 
@@ -828,6 +924,49 @@ static gpointer db_total_size(gpointer data)
 
 static gpointer db_sets(gpointer data)
 {
+	DatabaseSetsOperation *op = data;
+	dbi_result dres;
+
+	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `name`, `type`, `accountId` FROM `conversations`");
+	if (dres) {
+		while(dbi_result_next_row(dres)) {
+			const char *buddy_name;
+			int type;
+			int account_id = -1;
+			PurpleAccount *account = NULL;
+			PurpleLogSet *set;
+
+			buddy_name = dbi_result_get_string(dres, "name");
+			type = dbi_result_get_uint(dres, "type");
+			account_id = dbi_result_get_int(dres, "accountId");
+
+			account = db_get_account(account_id);
+			if (account != NULL) {
+				set = g_slice_new(PurpleLogSet);
+
+				set->name = g_strdup(buddy_name);
+				switch (type){
+					case BUDDY_IM_TYPE:
+						set->type = PURPLE_LOG_IM;
+						break;
+					case BUDDY_CHAT_TYPE:
+						set->type = PURPLE_LOG_CHAT;
+						break;
+					case BUDDY_SYSTEM_TYPE:
+						set->type = PURPLE_LOG_SYSTEM;
+						break;
+					default:
+						/* let it be default value */
+						set->type = PURPLE_LOG_IM;
+				}
+				set->account = account;
+				set->buddy = (purple_find_buddy(account, buddy_name) != NULL);
+				set->normalized_name = g_strdup(purple_normalize(account, buddy_name));
+				log_add_log_set_to_hash(op->ret_value, set);
+			}
+		}
+	}
+	db_process_result(dres);
 	return NULL;
 }
 
