@@ -212,7 +212,13 @@ static void database_logger_size(PurpleLog *log, PurpleLogSizeCallback cb, void 
 {
 	purple_debug_info("Database Logger", "Size function\n");
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_SIZE] != NULL) {
-	
+		DatabaseSizeOperation *op = g_new(DatabaseSizeOperation, 1);
+		op->type = PURPLE_DATABASE_LOGGER_SIZE;
+		op->log = log;
+		op->cb = cb;
+		op->data = data;
+		op->ret_value = 0;
+		g_thread_create(db_thread, op, FALSE, NULL);
 	} else {
 		cb(0, data);
 	}
@@ -223,7 +229,15 @@ static void database_logger_total_size(PurpleLogType type, const char *name, Pur
 {
 	purple_debug_info("Database Logger", "Total size function\n");
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_TOTAL_SIZE] != NULL) {
-	
+		DatabaseTotalSizeOperation *op = g_new(DatabaseTotalSizeOperation, 1);
+		op->type = PURPLE_DATABASE_LOGGER_TOTAL_SIZE;
+		op->log_type = type;
+		op->name = name;
+		op->account = account;
+		op->cb = cb;
+		op->data = data;
+		op->ret_value = 0;
+		g_thread_create(db_thread, op, FALSE, NULL);
 	} else {
 		cb(0, data);
 	}
@@ -769,6 +783,20 @@ static gpointer db_syslog_list(gpointer data)
 
 static gpointer db_size(gpointer data)
 {
+	DatabaseSizeOperation *op = data;
+	ConversationInfo *conv_info = op->log->logger_data;
+	dbi_result dres;
+
+	purple_debug_info("Database Logger", "db_size: account = %s", purple_account_get_username(op->log->account));
+	lock();
+	op->ret_value = 0;
+	if (conv_info && conv_info->id != -1){
+		dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `size` FROM `conversations` WHERE conversationId=%i",
+							conv_info->id);
+		db_retrieve_int_value(dres, &op->ret_value, "size") ;
+	}
+	unlock();
+
 	return NULL;
 }
 
