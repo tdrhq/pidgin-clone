@@ -509,7 +509,7 @@ gboolean purple_log_is_deletable(PurpleLog *log)
 	g_return_val_if_fail(log != NULL, FALSE);
 	g_return_val_if_fail(log->logger != NULL, FALSE);
 
-	if (log->logger->remove == NULL)
+	if (log->logger->remove == NULL && log->logger->remove_nonblocking == NULL)
 		return FALSE;
 
 	if (log->logger->is_deletable != NULL)
