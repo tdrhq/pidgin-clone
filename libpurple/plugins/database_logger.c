@@ -53,7 +53,7 @@ typedef struct {
 	PurpleMessageFlags flags;
 	const char *from;
 	time_t time;
-	const char *message;
+	char *message;
 	PurpleLogSizeCallback cb;
 	void *data;
 	int ret_value;
@@ -132,7 +132,7 @@ static GMutex *db_mutex = NULL;
 static gpointer db_thread(gpointer data);
 
 static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
-							  const char *from, time_t time, const char *message,
+							  const char *from, time_t time, char *message,
 							  PurpleLogSizeCallback cb, void *data)
 {
 	purple_debug_info("Database Logger", "Write function[main thread]\n");
@@ -192,6 +192,22 @@ static void database_logger_list(PurpleLogType type, const char *sn, PurpleAccou
 	}
 }
 
+static void database_logger_list_syslog(PurpleAccount *account, PurpleLogListCallback cb, void *data)
+{
+	purple_debug_info("Database Logger", "List syslog function\n");
+	if (db_thread_func[PURPLE_DATABASE_LOGGER_LIST_SYSLOG] != NULL) {
+		DatabaseSyslogListOperation *op = g_new(DatabaseSyslogListOperation, 1);
+		op->type = PURPLE_DATABASE_LOGGER_LIST_SYSLOG;
+		op->account = account;
+		op->cb = cb;
+		op->data = data;
+		op->ret_value = NULL;
+		g_thread_create(db_thread, op, FALSE, NULL);
+	} else {
+		cb(NULL, data);
+	}
+}
+
 static void database_logger_size(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
 {
 	purple_debug_info("Database Logger", "Size function\n");
@@ -220,16 +236,6 @@ static void database_logger_sets(GHashTable *sets, PurpleLogVoidCallback cb, voi
 	
 	} else {
 		cb(data);
-	}
-}
-
-static void database_logger_list_syslog(PurpleAccount *account, PurpleLogListCallback cb, void *data)
-{
-	purple_debug_info("Database Logger", "List syslog function\n");
-	if (db_thread_func[PURPLE_DATABASE_LOGGER_LIST_SYSLOG] != NULL) {
-	
-	} else {
-		cb(NULL, data);
 	}
 }
 
@@ -318,6 +324,27 @@ static void db_remove_notify(gpointer data)
 /****************************************************************************
 * 						UTILS FUNCTIONS 
 ****************************************************************************/
+/* This function is a copy of log.c static one. May be we should make this function public */
+static char *log_get_timestamp(PurpleLog *log, time_t when)
+{
+	gboolean show_date;
+	char *date;
+	struct tm tm;
+
+	show_date = (log->type == PURPLE_LOG_SYSTEM) || (time(NULL) > when + 20*60);
+
+	date = purple_signal_emit_return_1(purple_log_get_handle(),
+	                          "log-timestamp",
+	                          log, when, show_date);
+	if (date != NULL)
+		return date;
+
+	tm = *(localtime(&when));
+	if (show_date)
+		return g_strdup(purple_date_format_long(&tm));
+	else
+		return g_strdup(purple_time_format(&tm));
+}
 
 static void lock()
 {
@@ -425,23 +452,22 @@ static int db_get_account_id(PurpleAccount *account)
 	return id;
 }
 
-static int db_get_buddy_id(PurpleLog *log) 
+static int db_get_buddy_id(PurpleLogType type, const char *name, PurpleAccount *account) 
 {
 	char *buddy_name = NULL;
 	int id = -1;
 	int buddy_type = 0;
-	PurpleAccount *account = log->account;
 
 	purple_debug_info("Database logger", "get_buddy_id[new thread]\n");
 
-	if (log->type == PURPLE_LOG_SYSTEM) {
+	if (type == PURPLE_LOG_SYSTEM) {
 		buddy_name = g_strdup(SYSTEM_LOG_BUDDY_NAME);
 		buddy_type = BUDDY_SYSTEM_TYPE;
-	} else if (log->type == PURPLE_LOG_CHAT) {
-		buddy_name = g_strdup_printf(CHAT_BUDDY_NAME_TEMPLATE, purple_normalize(account, log->name));
+	} else if (type == PURPLE_LOG_CHAT) {
+		buddy_name = g_strdup_printf(CHAT_BUDDY_NAME_TEMPLATE, purple_normalize(account, name));
 		buddy_type = BUDDY_CHAT_TYPE;
 	} else {
-		buddy_name = g_strdup(purple_normalize(account, log->name));
+		buddy_name = g_strdup(purple_normalize(account, name));
 		buddy_type = BUDDY_IM_TYPE;
 	}
 
@@ -477,6 +503,87 @@ static int db_get_conversation_size(int id)
 	db_retrieve_int_value(dres, &ret_value, "size");
 	return ret_value;
 }
+
+static void append_message_to_output(const char *ownerName, const char *message, int message_flags, 
+								time_t datetime, PurpleLog *log, char **output)
+{
+	/* txt logger formatting */
+	char *str = NULL;
+	char *concat_string = NULL;
+	char *date = log_get_timestamp(log, datetime);
+	/* need get log type from DB */
+	if(log->type == PURPLE_LOG_SYSTEM){
+		str = g_strdup_printf("---- %s @ %s ----\n", message, date);
+	} else {
+		if (message_flags & PURPLE_MESSAGE_SEND ||
+			message_flags & PURPLE_MESSAGE_RECV) {
+			if (message_flags & PURPLE_MESSAGE_AUTO_RESP) {
+				str = g_strdup_printf(_("(%s) %s <AUTO-REPLY>: %s\n"), date,
+						ownerName, message);
+			} else {
+				char *duplicate = g_strdup(message);
+				if(purple_message_meify(duplicate, -1))
+					str = g_strdup_printf("(%s) ***%s %s\n", date, ownerName,
+							duplicate);
+				else
+					str = g_strdup_printf("(%s) %s: %s\n", date, ownerName,
+							duplicate);
+				g_free(duplicate);
+			}
+		} else if (message_flags & PURPLE_MESSAGE_SYSTEM ||
+			message_flags & PURPLE_MESSAGE_ERROR ||
+			message_flags & PURPLE_MESSAGE_RAW)
+			str = g_strdup_printf("(%s) %s\n", date, message);
+		else if (message_flags & PURPLE_MESSAGE_NO_LOG) {
+			/* This shouldn't happen */
+			/* doing nothing */
+		} else if (message_flags & PURPLE_MESSAGE_WHISPER)
+			str = g_strdup_printf("(%s) *%s* %s", date, ownerName, message);
+		else
+			str = g_strdup_printf("(%s) %s%s %s\n", date, ownerName ? ownerName : "",
+					ownerName ? ":" : "", message);
+	}
+	concat_string =  g_strjoin("\n", *output, str, NULL);
+	g_free(*output);
+	g_free(date);
+	g_free(str);
+
+	*output = concat_string;
+}
+
+static GList *get_list_log(PurpleLogType type, const char *name, PurpleAccount *account)
+{
+	dbi_result dres;
+	GList *list = NULL;
+
+	dres = dbi_conn_queryf(db_logger->db_conn,
+					"SELECT `id`, `datetime` FROM `conversations` WHERE `accountId` = %i AND `buddyId` = %i",
+					db_get_account_id(account), db_get_buddy_id(type, name, account));
+	if (dres) {
+		int id;
+		time_t datetime;
+
+		purple_debug_info("Database Logger", "db_list: retrieve logs");
+		while(dbi_result_next_row(dres)) {
+			PurpleLog *log;
+			ConversationInfo *conv_info;
+			struct tm *tm;
+			id = dbi_result_get_int(dres, "id");
+			datetime = dbi_result_get_uint(dres, "datetime");
+
+			tm = localtime(&datetime);
+
+			log = purple_log_new(type, name, account, NULL, datetime, (datetime != 0) ?  tm : NULL);
+			log->logger = db_logger->logger;
+			log->logger_data = conv_info = g_slice_new0(ConversationInfo);
+			conv_info->id = id;
+			list = g_list_prepend(list, log);
+		}
+	}
+	db_process_result(dres);
+	return list;
+}
+
 /****************************************************************************
 * Main database functions which perform in thread
 ****************************************************************************/
@@ -531,7 +638,7 @@ static gpointer db_write(gpointer data)
 	PurpleMessageFlags flags = op->flags;
 	const char *from = op->from;
 	time_t time = op->time;
-	const char *message = op->message;
+	char *message = op->message;
 	ConversationInfo *conv_info = log->logger_data;
 	dbi_result dres;
 
@@ -548,7 +655,7 @@ static gpointer db_write(gpointer data)
 		/* create new conversation in log */
 		dres = dbi_conn_queryf(db_logger->db_conn, 
 			"INSERT INTO conversations(`datetime`, `size`, `accountId`, `buddyId`) VALUES(%i, %i, %i, %i )", 
-			time, 0, db_get_account_id(log->account), db_get_buddy_id(log));
+			time, 0, db_get_account_id(log->account), db_get_buddy_id(log->type, log->name, log->account));
 		db_process_result(dres);
 
 		/* we can use dbi_conn_sequence_last to get row ID generated by the last INSERT command
@@ -556,17 +663,18 @@ static gpointer db_write(gpointer data)
 		some databases need exlicit sequences*/
 		dres = dbi_conn_queryf(db_logger->db_conn, 
 			"SELECT id FROM conversations WHERE datetime = %i AND accountID = %i AND buddyId = %i", 
-									time, db_get_account_id(log->account), db_get_buddy_id(log));
+									time, db_get_account_id(log->account), db_get_buddy_id(log->type, log->name, log->account));
 		db_retrieve_id(dres, &conv_info->id);
 	}
 
 	if (conv_info->id != -1) {
+		char * stripped = purple_markup_strip_html(message);
 		int log_size = db_get_conversation_size(conv_info->id);
 		purple_debug_info("Database Logger", "insert new message[new thread]\n");
 
 		dres = dbi_conn_queryf(db_logger->db_conn, 
 				"INSERT INTO messages (`conversationId`, `ownerName`, `datetime`, `text`, `flags`) VALUES(%i, \"%s\", %i, \"%s\", %i)",
-				conv_info->id, from, time, message, flags);
+				conv_info->id, from, time, stripped, flags);
 		db_process_result(dres);
 
 		/* updating log size */
@@ -574,6 +682,9 @@ static gpointer db_write(gpointer data)
 		dres = dbi_conn_queryf(db_logger->db_conn,
 				"UPDATE conversations SET size=%i WHERE id=%i",
 				log_size, conv_info->id);
+		g_free(stripped);
+		/* we should free message */
+		g_free(message);
 	} else 
 		purple_debug_info("Database Logger", "conv_info->id == -1\n");
 
@@ -584,18 +695,75 @@ static gpointer db_write(gpointer data)
 
 static gpointer db_read(gpointer data)
 {
-	//DatabaseReadOperation *op = data;
+	DatabaseReadOperation *op = data;
+	PurpleLog *log = op->log;
+	PurpleLogReadFlags *flags = op->flags;
+	ConversationInfo *conv_info = log->logger_data;
+	dbi_result dres;
+
+	lock();
+
+	purple_debug_info("Database Logger", "db_read\n");
+
+	if (flags)
+		*flags = 0;
+
+	if (!conv_info || conv_info->id == -1)
+		op->ret_value = g_strdup(_("<font color=\"red\"><b>Unable to find conversation id!</b></font>"));
+	else {
+		purple_debug_info("Database Logger", "db_read: process query select\n");
+		dres = dbi_conn_queryf(db_logger->db_conn, 
+				"SELECT `ownerName`, `datetime`, `text`, `flags` FROM `messages` WHERE conversationId=%i ORDER BY `datatime`",
+				conv_info->id);
+		if (dres) {
+			int message_flags;
+			time_t datetime;
+			const char *ownerName;
+			const char *message;
+
+			purple_debug_info("Database Logger", "db_read: retrieving messages\n");
+
+			while(dbi_result_next_row(dres)) {
+				ownerName = dbi_result_get_string(dres, "ownerName");
+				datetime = dbi_result_get_uint(dres, "datetime");
+				message = dbi_result_get_string(dres, "text");
+				message_flags = dbi_result_get_int(dres, "flags");
+				/* we can form output as we wish */
+				append_message_to_output(ownerName, message, message_flags, datetime, log, &op->ret_value);
+			}
+		}
+		db_process_result(dres);
+	}
+
+	unlock();
 
 	return NULL;
 }
 
+
 static gpointer db_list(gpointer data)
 {
+	DatabaseListOperation *op = data;
+
+	purple_debug_info("Database Logger", "db_list: account = %s , name = %s\n", purple_account_get_username(op->account), op->sn);
+
+	lock();
+	op->ret_value = get_list_log(op->type, op->sn, op->account);
+	unlock();
+
 	return NULL;
 }
 
 static gpointer db_syslog_list(gpointer data)
 {
+	DatabaseSyslogListOperation *op = data;
+
+	purple_debug_info("Database Logger", "db_syslog_list: account = %s", purple_account_get_username(op->account));
+
+	lock();
+	op->ret_value = get_list_log(PURPLE_LOG_SYSTEM, NULL, op->account);
+	unlock();
+
 	return NULL;
 }
 
