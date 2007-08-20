@@ -771,7 +771,7 @@ static void pidgin_log_done_cb(void *data)
 
 static void pidgin_log_size_cb(int size, void *data)
 {
-	struct _pidgin_log_data * pidgin_log_data = data;
+	struct _pidgin_log_data *pidgin_log_data = data;
 
 	if (pidgin_log_data->need_continue == TRUE)
 		set_log_viewer_log_size(pidgin_log_data->log_viewer, size);
@@ -793,7 +793,6 @@ static void pidgin_log_list_cb(GList *list, void *data)
 static void pidgin_window_destroy_cb(GtkWidget *w, void *data)
 {
 	struct _pidgin_log_data *callback_data = data;
-
 	/* mark that log window has destroyed*/
 	callback_data->need_continue = FALSE;
 	/* stop progress bar pulser */
@@ -911,8 +910,7 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
 	pidgin_log_data->done_cb = pidgin_log_done_cb;
-	
-	
+
 	title = g_strdup_printf(_("Conversations with %s"), name);
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 											image, TRUE);
@@ -932,7 +930,6 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 							G_CALLBACK(pidgin_window_destroy_cb), pidgin_log_data);
 
 	pidgin_log_data->need_continue = TRUE;
-
 	for (child = contact->node.child ; child ; child = child->next) {
 		if (PURPLE_BLIST_NODE_IS_BUDDY(child)) {
 			purple_log_get_logs_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, 
@@ -967,7 +964,7 @@ void pidgin_syslog_show()
 	    when counter will be zero
 	    we free all data and make neccessary operations */
 	pidgin_log_data->counter = g_list_length(accounts);
-
+	pidgin_log_data->need_continue = TRUE;
 	for(; accounts != NULL; accounts = accounts->next) {
 
 		PurpleAccount *account = (PurpleAccount *)accounts->data;
