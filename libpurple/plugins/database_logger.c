@@ -127,9 +127,14 @@ static void (*db_notify_func[DATABASE_OPERATION_COUNT])(gpointer data);
 
 /* List of finished in thread operations, such as getting total size, reading or writing */
 static GList *db_finished_op = NULL;
-static GMutex *db_mutex = NULL;
 
-static gpointer db_thread(gpointer data);
+static GList *db_op_queue = NULL;
+
+/* GLib specific part */
+static GMutex *db_mutex = NULL;
+static GThread *db_thread_id = NULL;
+
+static void db_add_operation(gpointer data);
 
 static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  const char *from, time_t time, char *message,
@@ -147,7 +152,7 @@ static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 		op->data = data;
 		op->ret_value = 0;
 
-		g_thread_create(db_thread, op, FALSE, NULL);
+		db_add_operation(op);
 	} else {
 		cb(0, data);
 	}
@@ -164,7 +169,8 @@ static void database_logger_read(PurpleLog *log, PurpleLogReadFlags *flags,
 		op->cb = cb;
 		op->data = data;
 		op->ret_value = NULL;
-		g_thread_create(db_thread, op, FALSE, NULL);
+
+		db_add_operation(op);
 	} else {
 		cb(NULL, flags, data);
 	}
@@ -182,7 +188,8 @@ static void database_logger_list(PurpleLogType type, char *name, PurpleAccount *
 		op->cb = cb;
 		op->data = data;
 		op->ret_value = NULL;
-		g_thread_create(db_thread, op, FALSE, NULL);
+
+		db_add_operation(op);
 	} else {
 		cb(NULL, data);
 	}
@@ -197,7 +204,8 @@ static void database_logger_list_syslog(PurpleAccount *account, PurpleLogListCal
 		op->cb = cb;
 		op->data = data;
 		op->ret_value = NULL;
-		g_thread_create(db_thread, op, FALSE, NULL);
+
+		db_add_operation(op);
 	} else {
 		cb(NULL, data);
 	}
@@ -212,7 +220,8 @@ static void database_logger_size(PurpleLog *log, PurpleLogSizeCallback cb, void 
 		op->cb = cb;
 		op->data = data;
 		op->ret_value = 0;
-		g_thread_create(db_thread, op, FALSE, NULL);
+
+		db_add_operation(op);
 	} else {
 		cb(0, data);
 	}
@@ -230,7 +239,8 @@ static void database_logger_total_size(PurpleLogType type, const char *name, Pur
 		op->cb = cb;
 		op->data = data;
 		op->ret_value = 0;
-		g_thread_create(db_thread, op, FALSE, NULL);
+
+		db_add_operation(op);
 	} else {
 		cb(0, data);
 	}
@@ -245,7 +255,8 @@ static void database_logger_sets(GHashTable *sets, PurpleLogVoidCallback cb, voi
 		op->cb = cb;
 		op->data = data;
 		op->ret_value = sets;
-		g_thread_create(db_thread, op, FALSE, NULL);
+
+		db_add_operation(op);
 	} else {
 		cb(data);
 	}
@@ -260,7 +271,8 @@ static void database_logger_remove_log(PurpleLog *log, PurpleLogBooleanCallback 
 		op->cb = cb;
 		op->data = data;
 		op->ret_value = 0;
-		g_thread_create(db_thread, op, FALSE, NULL);
+
+		db_add_operation(op);
 	} else {
 		cb(FALSE, data);
 	}
@@ -875,7 +887,7 @@ static gpointer db_total_size(gpointer data)
 							db_get_account_id(op->account), db_get_buddy_id(op->log_type, op->name, op->account));
 							
 	if (dres) {
-		char *string = NULL;
+		const char *string = NULL;
 		/* TODO: check if there are several rows */
 		while (dbi_result_next_row(dres)) {
 			string = dbi_result_get_binary(dres, "SUM(`size`)");
@@ -959,28 +971,64 @@ static gpointer db_remove(gpointer data)
 	}
 	return NULL;
 }
+
 /**
  * Thread function, from which we do all operation with DB
  */
 static gpointer db_thread(gpointer data) 
 {
-	DatabaseOperation *op = data;
 	gpointer return_val = NULL;
+	GList *op_queue = NULL;
+	
+	while(TRUE) {
+		lock();
+		if (db_op_queue == NULL) {
+			unlock();
+			break;
+		}
+		op_queue = db_op_queue;
+		db_op_queue = NULL;
+		unlock();
 
-	int id = op->type;
+		for(; op_queue != NULL; op_queue = g_list_delete_link(op_queue, op_queue)) {
+			DatabaseOperation *op = op_queue->data;
+			int id = op->type;
 
-	purple_debug_info("Database Logger", "db_thread started: function id = %i\n", id);
-	return_val = db_thread_func[id](data);
+			purple_debug_info("Database Logger", "db_thread started: function id = %i\n", id);
+			return_val = db_thread_func[id](data);
 
-	/* Locking mutex, because we are going to add new 
-	   item to db_funished_op 
-	 */
+			/* Locking mutex, because we are going to add new 
+			   item to db_funished_op */
+			lock();
+			db_finished_op = g_list_append(db_finished_op, op);
+			unlock();
+		}
+	}
+
 	lock();
-	db_finished_op = g_list_append(db_finished_op, op);
+	db_thread_id = NULL;
 	unlock();
 
 	return return_val;
 }
+
+static void db_add_operation(gpointer data)
+{
+	gboolean q;
+	DatabaseOperation *op = data;
+
+	lock();
+	db_op_queue = g_list_append(db_op_queue, op);
+	unlock();
+
+	lock();
+	q = db_thread_id == NULL;
+	unlock();
+
+	if (q)
+		db_thread_id = g_thread_create(db_thread, NULL, FALSE, NULL);
+}
+
 
 /**
  * This is a callback from main thread
@@ -989,19 +1037,25 @@ static gpointer db_thread(gpointer data)
  */
 static gboolean db_main_callback(gpointer data)
 {
+	GList *op_queue = NULL;
+
 	if (!db_logger->conn_established || !db_finished_op)
 		return TRUE;
 
 	purple_debug_info("Database Logger", "Main callback: there is finished operation\n");
 
 	lock();
-	for(; db_finished_op != NULL; db_finished_op = g_list_delete_link(db_finished_op, db_finished_op)) {
-		DatabaseOperation *op = db_finished_op->data;
+	op_queue = db_finished_op;
+	db_finished_op = NULL;
+	unlock();
+
+	for(; op_queue != NULL; op_queue = g_list_delete_link(op_queue, op_queue)) {
+		DatabaseOperation *op = op_queue->data;
+
 		if (db_notify_func[op->type] != NULL)
 			db_notify_func[op->type](op);
 		g_free(op);
 	}
-	unlock();
 
 	return TRUE;
 }
