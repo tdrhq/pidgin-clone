@@ -343,16 +343,6 @@ void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, Purp
 	callback_data->read_cb = cb;
 	callback_data->data = data;
 
-	if (log->logger == html_logger)
-		*flags |= PURPLE_LOG_READ_HTML;
-	else if(log->logger == txt_logger)
-		*flags |= PURPLE_LOG_READ_TEXT;
-	else if(log->logger == old_logger)
-		*flags |= PURPLE_LOG_READ_OLD;
-	else{
-		/* We should never get here */
-	}
-
 	if (log->logger->read_nonblocking) 
 		log->logger->read_nonblocking(log, flags ? flags : &mflags, log_read_cb, callback_data);
 	else if (log->logger->read) {
@@ -1962,7 +1952,7 @@ static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	char *read;
 	PurpleLogCommonLoggerData *data = log->logger_data;
-	*flags |= PURPLE_LOG_READ_NO_NEWLINE;
+	*flags = PURPLE_LOG_READ_NO_NEWLINE;
 	if (!data || !data->path)
 		return g_strdup(_("<font color=\"red\"><b>Unable to find log path!</b></font>"));
 	if (g_file_get_contents(data->path, &read, NULL, NULL)) {
