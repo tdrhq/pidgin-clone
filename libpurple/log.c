@@ -957,7 +957,6 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogLis
 		PurpleLogLogger *logger = n->data;
 
 		if (logger->list_syslog_nonblocking) {
-			callback_data->counter++;
 			logger->list_syslog_nonblocking(account, log_list_cb, callback_data);
 		} else if (logger->list_syslog) {
 			/* Call the blocking list function instead. */
