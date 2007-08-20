@@ -1046,9 +1046,10 @@ free_search_info(SearchInfo *si)
 	g_free(si);
 }
 
-int gnt_text_view_search(GntTextView *view, const char *str)
+int gnt_text_view_search(GntTextView *view, const char *s)
 {
 	GList *itr_occ, *itr_line, *itr_seg;
+	char *str;
 	const gchar *buf = view->string->str;
 	int buf_len = view->string->len;
 	const gchar *occ;
@@ -1058,11 +1059,12 @@ int gnt_text_view_search(GntTextView *view, const char *str)
 	SearchInfo *si = view->searchinfo;
 
 	/* Could be any negative number, -42 is more interesting than -1 */
-	int search_len = g_utf8_strlen(str, -42); 
+	int search_len = g_utf8_strlen(s, -42); 
 
 	if(view->searchinfo)
 		free_search_info(si);
 	view->searchinfo = si = g_new0(SearchInfo, 1);
+	str = si->str = g_strdup(s);
 
 	while(1) { /* Find the occurences */
 		occ = g_strstr_len(buf, buf_len, str);
