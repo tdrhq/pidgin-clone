@@ -1014,7 +1014,7 @@ static gpointer db_thread(gpointer data)
 
 static void db_add_operation(gpointer data)
 {
-	gboolean q;
+	gboolean need_create_thread;
 	DatabaseOperation *op = data;
 
 	lock();
@@ -1022,10 +1022,10 @@ static void db_add_operation(gpointer data)
 	unlock();
 
 	lock();
-	q = db_thread_id == NULL;
+	need_create_thread = (db_thread_id == NULL);
 	unlock();
 
-	if (q)
+	if (need_create_thread)
 		db_thread_id = g_thread_create(db_thread, NULL, FALSE, NULL);
 }
 
