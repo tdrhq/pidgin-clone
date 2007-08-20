@@ -208,6 +208,7 @@ update_log_view(GntTree *tree, gpointer data)
 
 	if(!g_list_find(lv->months, key)) { /* Check to see if it's a month header */
 		log = (PurpleLog *)key;
+		lv->flags = 0;
 		purple_log_read_nonblocking(log,&(lv->flags),(PurpleLogReadCallback)show_log, lv);
 	}
 
@@ -381,6 +382,31 @@ destroy_viewer(GntWindow *win, FinchLogViewer *viewer)
 	log_viewers = g_list_remove(log_viewers, viewer);
 }
 
+static struct {
+	int occurences;
+	int current_position;
+	int in_progress;
+} search_data = {0,0,0};
+
+static void
+do_search(FinchLogViewer *viewer)
+{
+
+	if(search_data.in_progress){
+		search_data.current_position++;
+		if(search_data.current_position == search_data.occurences)
+			search_data.current_position = 0;
+	}
+	else {
+		search_data.occurences = gnt_text_view_search(GNT_TEXT_VIEW(viewer->tv), gnt_entry_get_text(GNT_ENTRY(viewer->entry)));
+		search_data.current_position = 0;
+		if(!search_data.occurences)
+			return;
+		search_data.in_progress = 1;
+	}
+	gnt_text_view_search_jump(GNT_TEXT_VIEW(viewer->tv), search_data.current_position);
+}
+
 static FinchLogViewer *
 create_log_viewer(PurpleAccount *account, const char *screenname, const gchar * title, gboolean need_log_size)
 {
@@ -481,6 +507,7 @@ create_log_viewer(PurpleAccount *account, const char *screenname, const gchar * 
 
 	button = gnt_button_new("Search");
 	gnt_box_add_widget(GNT_BOX(searchbox), button);
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(do_search), viewer);
 	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(tv), button);
 
 	gnt_box_add_widget(GNT_BOX(rightbox), searchbox);
