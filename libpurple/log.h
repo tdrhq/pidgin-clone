@@ -47,11 +47,22 @@ typedef enum {
 } PurpleLogType;
 
 typedef enum {
-	PURPLE_LOG_READ_NO_NEWLINE = 1
+	PURPLE_LOG_READ_NO_NEWLINE = 1,
+
+	PURPLE_LOG_READ_TEXT = 1 << 1,
+	PURPLE_LOG_READ_HTML = 1 << 2,
+	PURPLE_LOG_READ_OLD = 1 << 3
 } PurpleLogReadFlags;
 
 #include "account.h"
 #include "conversation.h"
+
+#define PURPLE_LOG_READ_FLAG_SET(flag, v) (flag |= v)
+
+#define PURPLE_LOG_READ_FLAG_IS_NO_NEWLINE(flag) (flag & PURPLE_LOG_READ_NO_NEWLINE)
+#define PURPLE_LOG_READ_FLAG_IS_HTML(flag) (flag & PURPLE_LOG_READ_HTML)
+#define PURPLE_LOG_READ_FLAG_IS_TEXT(flag) (flag & PURPLE_LOG_READ_TEXT)
+#define PURPLE_LOG_READ_FLAG_IS_OLD(flag) (flag & PURPLE_LOG_READ_OLD)
 
 typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
 
