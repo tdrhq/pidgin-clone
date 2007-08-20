@@ -6,6 +6,11 @@
 
 #include "libtest.h"
 
+int get_strlen(char* str)
+{
+	return strlen(str);
+}
+
 char* say_hello()
 {
 	return "Hello";

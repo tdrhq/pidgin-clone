@@ -7,29 +7,26 @@ class Util
 {
 	static public string build_string(IntPtr ptr)
 	{
-		int len = (int) (uint)length(ptr);
+		int len = (int) (uint)get_strlen(ptr);
 		byte[] bytes = new byte [len];
 		Marshal.Copy (ptr, bytes, 0, len);
 		return System.Text.Encoding.UTF8.GetString (bytes);
 	}
 	
-	[MethodImplAttribute(MethodImplOptions.InternalCall)]
-	private static extern int length(IntPtr s);
+	[DllImport("./libtest")]
+	private static extern int get_strlen(IntPtr s);
 }
 
 class Embed
 {
 	static void Main()
 	{
-		Dictionary<int, string> dict = new Dictionary<int, string>();
-		/*string str = Util.build_string(say_hello());
+		string str = Util.build_string(say_hello());
 		set_hello(str);
 		
 		IntPtr obj = create_struct("blah face");
-		System.Console.WriteLine(Util.build_string(print_struct_value(obj)));*/
+		System.Console.WriteLine(Util.build_string(print_struct_value(obj)));
 
-		int i = 3;
-		PrintType(i);
 	}
 
 	static void PrintType(object o)

@@ -13,7 +13,7 @@ test.o: test.c
 	gcc -c test.c `pkg-config --cflags mono`
 	
 embed.exe: embed.cs
-	mcs embed.cs
+	gmcs embed.cs
 	
 .PHONY: clean
 

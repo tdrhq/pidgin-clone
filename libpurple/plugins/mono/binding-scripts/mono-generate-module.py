@@ -40,7 +40,7 @@ def to_function_name(str):
 
 def convertname(name):
 	newname = ""
-	for w in name.split("-"):
+	for w in name.split("_"):
 		newname += w.capitalize()
 	return newname
 
@@ -85,9 +85,10 @@ class ArgType:
 		self.is_purple_object = is_purple_object(cstr) 
 
 class Property:
-	def __init__(self, propname):
+	def __init__(self, propname, csclassname):
 		self.propname = propname.strip('_')
 		self.cspropname = convertname(self.propname)
+		self.csclassname = csclassname
 
 		self.actions = {}
 
@@ -102,10 +103,40 @@ class Property:
 		"""
 
 		body = ""
+		ret_type = None
 		if self.actions.has_key('get'):
 			meth = self.actions['get']
-			body += "get { "
+			method_call = meth.func_str + "("
+			args = []
+			for a in meth.arg_type_list:
+				if a.marshall == "IntPtr" and a.csharp == self.csclassname:
+					args.append("Handle")
+
+			method_call += string.join(args, ", ") + ")"
+			body += "get {\n"
 			body += "return "
+			ret_type = meth.ret_type.csharp
+			if meth.ret_type.csharp == "string":
+				body += "Util.build_string(%s);" % (method_call)
+			elif meth.ret_type.is_purple_object:
+				body += "ObjectManager.GetObject(%s, type(%s)) as %s;" % (method_call, ret_type, ret_type)
+			else:
+				body += method_call + ";"
+
+			body += "\n}"
+
+		elif self.actions.has_key('set'):
+			meth = self.actions['set']
+			method_call = meth.func_str + "("
+			args = []
+			for a in meth.arg_type_list:
+				if a.marshall == "IntPtr" and a.csharp == self.csclassname:
+					args.append("Handle")
+
+		return property % (ret_type, self.csclassname + ":" + self.cspropname, body)
+
+	def __str__(self):
+		return self.dump()
 
 
 class Method:
@@ -120,25 +151,6 @@ class Method:
 
 		for arg in self.arg_str_list:
 			self.arg_type_list.append(ArgType(arg))
-
-	
-	def as_property(self):
-		prop = """
-			%s {
-				%s;
-			}
-		"""
-
-		body = ""
-		if self.ret_csharp_type == "void":
-			body = "Util.build_string("
-		else:
-			body =  "return "
-			if self.ret_csharp_type == "string":
-				body += "Util.build_string(%s);" % (self.func_str)
-			body += ""
-
-		#elif self.r
 
 	def as_dllimport(self):
 		dllimport = """
@@ -156,8 +168,8 @@ class Struct:
 		self.structname = structname
 		self.csname = re.sub("^Purple", "", structname)
 		func_name = to_function_name(structname)
-		self.func_nonstatic_parse_str = "([A-Za-z]+\s*\*?)\s*(%s_(get|set|new|on)(.*))\((.*)\);" % (func_name)
-		self.func_parse_str = "([A-Za-z]+\s*\*?)\s*(%s[A-Za-z0-9_]+)\((.*)\);" % (func_name)
+		self.func_nonstatic_parse_str = "(const\s+)?([A-Za-z]+\s*\*?)\s*(%s_(get|set|new|on)(.*))\((.*)\);" % (func_name)
+		self.func_parse_str = "(const\s+)?([A-Za-z]+\s*\*?)\s*(%s[A-Za-z0-9_]+)\((.*)\);" % (func_name)
 		self.func_nonstatic_parse = re.compile(self.func_nonstatic_parse_str)
 
 		self.nonstatic_methods = []
@@ -172,18 +184,19 @@ class Struct:
 		if not match:
 			return False
 
-		ret_type = match.group(1)
-		func_name = match.group(2)
-		operation = match.group(3)
-		prop_name = match.group(4)
-		args = match.group(5)
+		ret_type = match.group(2)
+		func_name = match.group(3)
+		operation = match.group(4)
+		prop_name = match.group(5)
+		args = match.group(6)
 
 		meth = Method(ret_type, func_name, args.split(','))
 
 		if operation != "new":
 			if not self.properties.has_key(prop_name):
-				self.properties[prop_name] = Property(prop_name)
+				self.properties[prop_name] = Property(prop_name, self.csname)
 
+			print operation + " " + prop_name + " " + self.csname
 			self.properties[prop_name].add(operation, meth)
 
 		self.nonstatic_methods.append(meth)
@@ -191,14 +204,14 @@ class Struct:
 		return True
 
 	def dump(self):
-		for m in self.nonstatic_methods:
-			print m
+		for m in self.properties:
+			print self.properties[m]
 		print ""	
 
 parse_struct = re.compile("struct _(Purple[A-Za-z]+).*")
 
-find_function = re.compile("[A-Za-z]+\s*\*?\s*[A-Za-z0-9_]+\(.*")
-func_parse = re.compile("([A-Za-z]+\s*\*?)\s*([A-Za-z0-9_]+)\((.*)\);")
+find_function = re.compile("(const\s+)?[A-Za-z]+\s*\*?\s*[A-Za-z0-9_]+\(.*")
+func_parse = re.compile("(const\s+)?([A-Za-z]+\s*\*?)\s*([A-Za-z0-9_]+)\((.*)\);")
 
 input = iter(sys.stdin)
 
