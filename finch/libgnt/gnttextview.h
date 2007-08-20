@@ -62,6 +62,8 @@ struct _GntTextView
 	GList *list;        /* List of GntTextLine */
 
 	GList *tags;       /* A list of tags */
+
+  void * searchinfo;  /* A struct with information on the current search */
 	GntTextViewFlag flags;
 };
 
@@ -238,7 +240,7 @@ int gnt_text_view_search(GntTextView *view, const char *str);
  *
  * @see gnt_text_view_get_search_format
  */
-void gnt_text_view_set_search_format(GntTextView *view, GntTextFormatFlags *flags);
+void gnt_text_view_set_search_format(GntTextView *view, GntTextFormatFlags flags);
 
 /**
  * Get the format to use on strings found in a search
@@ -249,7 +251,7 @@ void gnt_text_view_set_search_format(GntTextView *view, GntTextFormatFlags *flag
  *
  * @see gnt_text_view_set_search_format
  */
-GntTextFormatFlags * gnt_text_view_get_search_format(GntTextView *view);
+GntTextFormatFlags gnt_text_view_get_search_format(GntTextView *view);
 
 /**
  *

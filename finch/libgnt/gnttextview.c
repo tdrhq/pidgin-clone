@@ -485,6 +485,9 @@ gnt_text_view_get_gtype(void)
 GntWidget *gnt_text_view_new()
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_TEXT_VIEW, NULL);
+	GntTextView *view = GNT_TEXT_VIEW(widget);
+
+	view->searchinfo = NULL;
 
 	return widget;
 }
@@ -1027,20 +1030,90 @@ gnt_text_view_append_html(GntTextView *view, const char *html)
 
 }
 
+typedef struct {
+	char *str; /* search string */
+	int occurences; /* number of occurences */
+	GList *lines;  /* lines where they are found, list of int */
+	GntTextFormatFlags flags; /* used to display found strings */
+} SearchInfo;
+
+static void 
+free_search_info(SearchInfo *si)
+{
+	g_free(si->str);
+	g_list_foreach(si->lines, (GFunc)g_free, NULL);
+	g_list_free(si->lines);
+	g_free(si);
+}
 
 int gnt_text_view_search(GntTextView *view, const char *str)
 {
-	return 0;
-}
-void gnt_text_view_set_search_format(GntTextView *view, GntTextFormatFlags *flags)
-{
+	GList *itr_occ, *itr_line, *itr_seg;
+	const gchar *buf = view->string->str;
+	int buf_len = view->string->len;
+	const gchar *occ;
+	int offset;
+	int flag;
+	int i;
+	SearchInfo *si = view->searchinfo;
 
+	/* Could be any negative number, -42 is more interesting than -1 */
+	int search_len = g_utf8_strlen(str, -42); 
+
+	if(view->searchinfo)
+		free_search_info(si);
+	view->searchinfo = si = g_new0(SearchInfo, 1);
+
+	while(1) { /* Find the occurences */
+		occ = g_strstr_len(buf, buf_len, str);
+		offset = occ - view->string->str;
+		if(!occ)
+			break;
+		si->lines = g_list_append(si->lines, GINT_TO_POINTER(offset));
+
+		buf_len -= occ-buf + search_len;
+		buf = occ + search_len;
+	}
+	
+	/* Find which lines they belong to */
+	for(i = 0, itr_line = g_list_last(view->list), itr_seg = ((GntTextLine *)itr_line->data)->segments, itr_occ = si->lines;itr_occ;itr_occ = itr_occ->next){
+		flag = 1;
+		offset = GPOINTER_TO_INT(itr_occ->data);
+		for(;flag;itr_line = itr_line->prev, itr_seg = ((GntTextLine *)itr_line->data)->segments, i++){
+			for(;flag && itr_seg;itr_seg = itr_seg->next){
+				GntTextSegment *seg = itr_seg->data;
+				if(seg->start <= offset && seg->end > offset){
+					itr_occ->data = GINT_TO_POINTER(i);
+					flag = 0;
+				}
+			}
+		}
+	}	
+	
+	/* XXX: We can add the formatting stuff here later */
+
+	return si->occurences;
 }
-GntTextFormatFlags * gnt_text_view_get_search_format(GntTextView *view)
+void gnt_text_view_set_search_format(GntTextView *view, GntTextFormatFlags flags)
 {
-	return NULL;
+	SearchInfo *si = view->searchinfo;
+	si->flags = flags;
+}
+GntTextFormatFlags gnt_text_view_get_search_format(GntTextView *view)
+{
+	SearchInfo *si = view->searchinfo;
+	return si->flags;
 }
 void gnt_text_view_search_jump(GntTextView *view, int n)
 {
+	SearchInfo *si = view->searchinfo;
+	GList *line;
+
+	g_return_if_fail(si != NULL);
+
+	line = g_list_nth(si->lines, n);
+	g_return_if_fail(line != NULL);
+
+	view->list = g_list_nth_prev(g_list_last(view->list), GPOINTER_TO_INT(line->data));
 
 }

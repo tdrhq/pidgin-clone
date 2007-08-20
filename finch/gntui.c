@@ -37,10 +37,57 @@
 #include "gntstatus.h"
 #include "gntsound.h"
 
+#include "gntwindow.h"
+#include "gnttextview.h"
+#include "gntentry.h"
+
 #include <prefs.h>
 
-void gnt_ui_init()
+GntTextView *t;
+
+static void
+app(const char *str){
+	gnt_text_view_append_text_with_flags(t, str, GNT_TEXT_FLAG_NORMAL);
+}
+
+static void
+test()
 {
+	GntWidget *win;
+	GntTextView *tv;
+	GntWidget *entry;
+
+	int occ;
+
+	win = gnt_window_box_new(FALSE, TRUE);
+	t = tv = GNT_TEXT_VIEW(gnt_text_view_new());
+	app("line0\n");
+	app("line1\n");
+	app("line2\n");
+	app("line3\n");
+	app("line4\n");
+	app("test line5\n");
+	app("linetest6\n");
+	app("line7\n");
+	app("li test ne8\n");
+	app("line9\n");
+	gnt_box_add_widget(GNT_BOX(win), GNT_WIDGET(tv));
+
+	occ = gnt_text_view_search(tv, "test");
+	fprintf(stderr, "found %d occs\n", occ);
+	gnt_text_view_search_jump(tv, 1);
+
+	entry = gnt_entry_new("");
+	gnt_text_view_attach_scroll_widget(tv,entry);
+	gnt_box_add_widget(GNT_BOX(win), entry);
+
+
+	gnt_widget_show(win);
+	
+}
+
+void gnt_ui_init()
+{ 
 #ifdef STANDALONE
 	gnt_init();
 #endif
@@ -78,6 +125,7 @@ void gnt_ui_init()
 	finch_xfers_init();
 	purple_xfers_set_ui_ops(finch_xfers_get_ui_ops());
 
+	gnt_register_action(_("Test"), test);
 	gnt_register_action(_("Accounts"), finch_accounts_show_all);
 	gnt_register_action(_("Buddy List"), finch_blist_show);
 	gnt_register_action(_("Buddy Pounces"), finch_pounces_manager_show);
