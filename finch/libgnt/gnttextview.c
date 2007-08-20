@@ -1026,3 +1026,21 @@ gnt_text_view_append_html(GntTextView *view, const char *html)
 	xmlFreeDoc(doc);
 
 }
+
+
+int gnt_text_view_search(GntTextView *view, const char *str)
+{
+	return 0;
+}
+void gnt_text_view_set_search_format(GntTextView *view, GntTextFormatFlags *flags)
+{
+
+}
+GntTextFormatFlags * gnt_text_view_get_search_format(GntTextView *view)
+{
+	return NULL;
+}
+void gnt_text_view_search_jump(GntTextView *view, int n)
+{
+
+}

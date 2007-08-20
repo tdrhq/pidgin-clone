@@ -216,6 +216,49 @@ void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag);
  */
 void gnt_text_view_append_html(GntTextView *view, const char *html);
 
+/**
+ *
+ * Searches a textview for a string and formats those strings with a given format. 
+ *
+ * @param view The textview
+ * @param str The string to search for
+ *
+ * @return The number of occurences
+ *
+ * @see gnt_text_view_set_search_format
+ * @see gnt_text_view_get_search_format
+ */
+int gnt_text_view_search(GntTextView *view, const char *str);
+
+/**
+ * Set the format to use on strings found in a search
+ *
+ * @param view The text view
+ * @param flags The format to use
+ *
+ * @see gnt_text_view_get_search_format
+ */
+void gnt_text_view_set_search_format(GntTextView *view, GntTextFormatFlags *flags);
+
+/**
+ * Get the format to use on strings found in a search
+ *
+ * @param view The textview
+ *
+ * @return The format flags
+ *
+ * @see gnt_text_view_set_search_format
+ */
+GntTextFormatFlags * gnt_text_view_get_search_format(GntTextView *view);
+
+/**
+ *
+ * Jump to the nth occurence of the current search string.
+ *
+ * @param view The textview
+ * @param n The number to jump to
+ */
+void gnt_text_view_search_jump(GntTextView *view, int n);
 G_END_DECLS
 
 #endif /* GNT_TEXT_VIEW_H */
