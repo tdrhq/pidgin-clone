@@ -692,8 +692,6 @@ static gpointer db_init(gpointer data)
 		purple_debug_info("Database Logger", "Could not connect. Please check the option settings\n");
 	} else {
 
-		/* TODO: check where table has proper infrastructure */
-
 		lock();
 		db_logger->logger = purple_log_logger_new("database", _("Database Logger"), 21,
 										   NULL,
@@ -719,7 +717,6 @@ static gpointer db_init(gpointer data)
 										   database_logger_remove_log);
 		db_logger->conn_established = TRUE;
 
-		purple_debug_info("Database Logger", "Mutex UNlocked in db_init\n");
 		unlock();
 
 		purple_log_logger_add(db_logger->logger);
@@ -750,7 +747,7 @@ static gpointer db_write(gpointer data)
 
 		/* create new conversation in log */
 		dres = dbi_conn_queryf(db_logger->db_conn, 
-			"INSERT INTO conversations(`datetime`, `size`, `accountId`, `buddyId`) VALUES(%i, %i, %i, %i )", 
+			"INSERT INTO `conversations` (`datetime`, `size`, `accountId`, `buddyId`) VALUES(%i, %i, %i, %i )", 
 			time, 0, db_get_account_id(log->account), db_get_buddy_id(log->type, log->name, log->account));
 		db_process_result(dres);
 
@@ -758,7 +755,7 @@ static gpointer db_write(gpointer data)
 		when we add an account, but it seems that the result depends on database, because
 		some databases need exlicit sequences*/
 		dres = dbi_conn_queryf(db_logger->db_conn, 
-			"SELECT id FROM conversations WHERE datetime = %i AND accountID = %i AND buddyId = %i", 
+			"SELECT `id` FROM `conversations` WHERE `datetime` = %i AND `accountID` = %i AND `buddyId` = %i", 
 									time, db_get_account_id(log->account), db_get_buddy_id(log->type, log->name, log->account));
 		db_retrieve_id(dres, &conv_info->id);
 	}
@@ -769,14 +766,14 @@ static gpointer db_write(gpointer data)
 		purple_debug_info("Database Logger", "insert new message[new thread]\n");
 
 		dres = dbi_conn_queryf(db_logger->db_conn, 
-				"INSERT INTO messages (`conversationId`, `ownerName`, `datetime`, `text`, `flags`) VALUES(%i, \"%s\", %i, \"%s\", %i)",
+				"INSERT INTO `messages` (`conversationId`, `ownerName`, `datetime`, `text`, `flags`) VALUES(%i, \"%s\", %i, \"%s\", %i)",
 				conv_info->id, from, time, stripped, flags);
 		db_process_result(dres);
 
 		/* updating log size */
 		log_size += strlen(stripped);
 		dres = dbi_conn_queryf(db_logger->db_conn,
-				"UPDATE conversations SET size=%i WHERE id=%i",
+				"UPDATE `conversations` SET `size` = %i WHERE `id` = %i",
 				log_size, conv_info->id);
 		g_free(stripped);
 	} else 
@@ -804,7 +801,7 @@ static gpointer db_read(gpointer data)
 		op->ret_value = g_strdup(_("<font color=\"red\"><b>Unable to find conversation id!</b></font>"));
 	else {
 		dres = dbi_conn_queryf(db_logger->db_conn, 
-				"SELECT `ownerName`, `datetime`, `text`, `flags` FROM `messages` WHERE conversationId=%i ORDER BY `datetime`",
+				"SELECT `ownerName`, `datetime`, `text`, `flags` FROM `messages` WHERE `conversationId` = %i ORDER BY `datetime`",
 				conv_info->id);
 		if (dres) {
 			int message_flags;
@@ -867,7 +864,7 @@ static gpointer db_size(gpointer data)
 	if (conv_info && conv_info->id != -1){
 		dbi_result dres;
 
-		dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `size` FROM `conversations` WHERE conversationId=%i",
+		dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `size` FROM `conversations` WHERE `conversationId` = %i",
 							conv_info->id);
 		db_retrieve_int_value(dres, &op->ret_value, "size") ;
 	}
@@ -886,14 +883,14 @@ static gpointer db_total_size(gpointer data)
 	lock();
 
 	op->ret_value = 0;
-	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT SUM(size) FROM conversations WHERE accountId = %i AND buddyId = %i",
+	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT SUM(`size`) FROM `conversations` WHERE `accountId` = %i AND `buddyId` = %i",
 							db_get_account_id(op->account), db_get_buddy_id(op->log_type, op->name, op->account));
 							
 	if (dres) {
 		char *string = NULL;
 		/* TODO: check if there are several rows */
 		while (dbi_result_next_row(dres)) {
-			string = dbi_result_get_binary(dres, "SUM(size)");
+			string = dbi_result_get_binary(dres, "SUM(`size`)");
 			op->ret_value = atoi(string);
 		}
 	}
@@ -966,10 +963,10 @@ static gpointer db_remove(gpointer data)
 	if (conv_info && conv_info->id != -1){
 		dbi_result dres;
 
-		dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `messages` WHERE conversationId = %i",
+		dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `messages` WHERE `conversationId` = %i",
 							conv_info->id);
 		if (db_process_result(dres)) {
-			dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `conversations` WHERE id = %i",
+			dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `conversations` WHERE `id` = %i",
 								conv_info->id);
 			db_process_result(dres);
 			op->ret_value = TRUE;
