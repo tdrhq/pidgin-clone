@@ -183,15 +183,7 @@ show_log(char *text, PurpleLogReadFlags *flags, gpointer *data)
 	FinchLogViewer *lv = (FinchLogViewer *)data;
 	
 	gnt_text_view_clear(GNT_TEXT_VIEW(lv->tv));
-
-	fprintf(stderr, "flag value %d\n", *flags);
-
-	if(PURPLE_LOG_READ_FLAG_IS_HTML(*flags)) {
-		gnt_text_view_append_html(GNT_TEXT_VIEW(lv->tv), text ? text : _("<html><body>Empty Log</body></html>"));
-	}
-	else {
-		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(lv->tv), text ? text : _("Empty Log"), GNT_TEXT_FLAG_NORMAL);
-	}
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(lv->tv), text ? text : _("Empty Log"), GNT_TEXT_FLAG_NORMAL);
 	
 	gnt_widget_get_size(lv->tv, &w, &h);
 	gnt_text_view_scroll(GNT_TEXT_VIEW(lv->tv), h-1);
