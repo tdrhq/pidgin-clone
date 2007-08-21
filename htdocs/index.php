@@ -66,7 +66,7 @@ Download Pidgin<br />
 
 <!-- This will pull from somewhere else at some point -->
  <p id="lowblurb">2.1.1 has landed!  We've got a new smiley set and we've
-further cleaned up the conversation window.  Let us know what you think!</p>
+further cleaned up the conversation window.  Let us know what you think! The Changelog is <a href="ChangeLog">here.</a></p
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
