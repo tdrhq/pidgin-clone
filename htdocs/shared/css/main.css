@@ -6,26 +6,32 @@ body {
   font-size:12px;
   color: #666;
 }
+
 img {
   border: none;
 }
+
 a:link, a:visited {
   color: #E66926;
   text-decoration: underline;
 }
+
 a:hover, a:active {
   color: #E66926;
   text-decoration: none;
 }
+
 #header {
   background: url('/shared/img/header.pidgin-head.jpg') no-repeat;
   width: 800px;
   margin: 0 auto 5px;
 }
+
 #header img {
   margin-left: 125px;
   vertical-align: bottom;
 }
+
 #header ul {
   display: block;
   margin: 2px 0 0 200px;
@@ -33,9 +39,11 @@ a:hover, a:active {
   height: 40px;
   border-left: 1px solid #3F2844;
 }
+
 #header ul li:first-child a {
   border-left: 1px solid #BFABC6;
 }
+
 #header ul li {
   display: block;
   margin: 0;
@@ -45,6 +53,7 @@ a:hover, a:active {
   border-right: 1px solid #BFABC6;
   text-transform: uppercase;
 }
+
 #header ul li a:link, #header ul li a:visited, #header ul li a:active {
   display: block;
   height: 27px;
@@ -74,7 +83,7 @@ a:hover, a:active {
   overflow: none;
 }
 
-#left, #main, .box_nav ul {
+#left, #main, .box_nav ul, #newsbrief, #blogbrief {
   background-color: #FFF;
   border: 1px #DADADA;
   border-style: none solid;
@@ -89,13 +98,17 @@ a:hover, a:active {
   position: relative;
 }
 
+.box_home#right {
+  float: right;
+}
+
 .box_full {
   position: relative;
   z-index: 5;
   width: 790px;
   padding: 0;
-  margin: 0 5px 0 5px;
-  margin-bottom: -137px;
+  clear: both;
+  margin: 0 5px -137px 5px;
 }
 
 .box_full p, .box_right p {
@@ -154,6 +167,10 @@ a:hover, a:active {
   margin-bottom: -137px;
 }
 
+.box_home p {
+  clear: both;
+}
+
 .box_download {
   padding: 0;
   margin: 0 0 20px;
@@ -174,60 +191,48 @@ a:hover, a:active {
   height: 70px;
 }
 
-.box_home:before {
-  content: url('/shared/img/frame.home.top.gif');
+.box_home:before, .box_full:before, .box_nav:before, .box_right:before {
   display: block;
   height: 9px;
   overflow: hidden;
+}
+
+.box_home:after, .box_full:after, .box_nav:after, .box_right:after {
+  display: block;
+  height: 17px;
+  overflow: hidden;
+}
+
+.box_home:before {
+  content: url('/shared/img/frame.home.top.gif');
 }
 
 .box_home:after {
   content: url('/shared/img/frame.home.bottom.png');
-  display: block;
-  height: 17px;
-  overflow: hidden;
 }
 
 .box_full:before {
   content: url('/shared/img/frame.full.top.png');
-  display: block;
-  height: 9px;
-  overflow: hidden;
 }
 
 .box_full:after {
   content: url('/shared/img/frame.full.bottom.png');
-  display: block;
-  height: 17px;
-  overflow: hidden;
 }
 
 .box_nav:before {
   content: url('/shared/img/frame.nav.top.gif');
-  display: block;
-  height: 9px;
-  overflow: hidden;
 }
 
 .box_nav:after {
   content: url('/shared/img/frame.nav.bottom.png');
-  display: block;
-  height: 17px;
-  overflow: hidden;
 }
 
 .box_right:before {
   content: url('/shared/img/frame.right.top.gif');
-  display: block;
-  height: 9px;
-  overflow: hidden;
 }
 
 .box_right:after {
   content: url('/shared/img/frame.right.bottom.png');
-  display: block;
-  height: 17px;
-  overflow: hidden;
 }
 
 
@@ -311,23 +316,20 @@ a:hover, a:active {
   padding-left: 35px;
 }
 
-#main {
+#main, #blogbrief, #newsbrief {
   padding: 22px 25px 17px;
 }
 
 #main p.more {
   clear: both;
   text-align: right;
-  padding-top: 38px;
 }
 
 ul.condensed {
   margin: 26px 0 0 2px;
-}
-
-ul.condensed li {
+  width: 20%;
   float: left;
-  width: 30%;
+  padding-bottom: 38px;
 }
 
 h1 {
@@ -344,4 +346,24 @@ h1 {
   margin-top: 36px;
   text-align: center;
   background: url('/shared/img/footer.repeat.jpg') repeat-x top;
+}
+
+#lowblurb {
+  font-family: "Trebuchet MS";
+  font-size: 1.6em;
+  width: 350px;
+  clear: left;
+  margin: 0 25px 18px;
+  padding-top: 52px;
+  color: #444;
+}
+
+#newsbrief {
+  width: 343px;
+  float: left;
+  margin-right: 25px; 
+}
+
+#blogbrief {
+  border-left: none;
 }

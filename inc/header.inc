@@ -27,10 +27,12 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
   <title><? echo $page['title']; ?> | Pidgin</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-language" content="en-US" />
-  <meta name="copyright" content="Pidgin Contributors" />
-  <meta name="author" content="Pidgin Contributors" />
+  <meta name="copyright"   content="Pidgin Contributors" />
+  <meta name="author"      content="Pidgin Contributors" />
+  <meta name="designer"    content="Blend Interactive; http://blendinteractive.com" />
+  <meta name="generator"   content="Kevin Stange ;)" />
   <meta name="description" content="The home of Pidgin, Finch, and the libpurple IM client library." />
-  <meta name="keywords" content="pidgin, finch, libpurple, purple, IM, instant messaging, internet messaging, AIM, ICQ, XMMP, Jabber, Google Talk, MSN, Yahoo, Gadu-Gadu, IRC, Bonjour, SILC, SIP/SIMPLE, Zephyr, QQ, GroupWise, Sametime, Linux, Windows, GTK+" />
+  <meta name="keywords"    content="pidgin, finch, libpurple, purple, IM, instant messaging, internet messaging, AIM, ICQ, XMMP, Jabber, Google Talk, MSN, Yahoo, Gadu-Gadu, IRC, Bonjour, SILC, SIP/SIMPLE, Zephyr, QQ, GroupWise, Sametime, Linux, Windows, GTK+" />
   <link rel="stylesheet" href="/shared/css/main.css" type="text/css" />
   <!-- Correct rendering bugs from Microsoft Internet Explorer -->
   <!--[if lt IE 7]>

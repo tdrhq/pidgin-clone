@@ -25,9 +25,10 @@ Download Pidgin<br />
 </div>
 
 </div>
+
 </div>
 
-<div class="box_home">
+<div class="box_home" id="right">
 <div id="main">
 
 <h1>What is Pidgin?</h1>
@@ -38,25 +39,47 @@ Download Pidgin<br />
 
 <ul class="condensed">
   <li>AIM</li>
-  <li>ICQ</li>
-  <li>SIMPLE</li>
   <li>Bonjour</li>
-  <li>IRC</li>
-  <li>Sametime</li>
   <li>Gadu-Gadu</li>
-  <li>MSN</li>
-  <li>XMPP</li>
   <li>Google Talk</li>
-  <li>QQ</li>
-  <li>Yahoo!</li>
   <li>Groupwise</li>
+</ul>
+<ul class="condensed">
+  <li>ICQ</li>
+  <li>IRC</li>
+  <li>MSN</li>
+  <li>QQ</li>
   <li>SILC</li>
+</ul>
+<ul class="condensed">
+  <li>SIMPLE</li>
+  <li>Sametime</li>
+  <li>XMPP</li>
+  <li>Yahoo!</li>
   <li>Zephyr</li>
 </ul>
 
 <p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.gif" alt="Learn More" /></a></p>
 
 </div>
+</div>
+
+<!-- This will pull from somewhere else at some point -->
+ <p id="lowblurb">2.1.1 has landed!  We've got a new smiley set and we've
+further cleaned up the conversation window.  Let us know what you think!</p>
+
+<? /* Avoid outputting this stuff yet.
+<!-- These are not ready to go yet -->
+ <div class="box_full">
+
+<div id="newsbrief">
+Test
+</div>
+
+<div id="blogbrief">
+Test
+</div> */ ?>
+
 </div>
 
 </div>
