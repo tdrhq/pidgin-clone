@@ -65,9 +65,10 @@ Download Pidgin<br />
 </div>
 
 <!-- This will pull from somewhere else at some point -->
- <p id="lowblurb">2.1.1 is out the door!  It has been changed, and you
-should try it!</p>
+ <p id="lowblurb">Look out, it's 2.1.1!  Check out the updated smiley set and
+our tweaked conversation window and keep the feedback coming!</p>
 
+<? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
  <div class="box_full">
 
@@ -77,7 +78,7 @@ Test
 
 <div id="blogbrief">
 Test
-</div>
+</div> */ ?>
 
 </div>
 
