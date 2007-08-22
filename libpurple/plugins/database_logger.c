@@ -415,6 +415,26 @@ static gboolean db_process_result(dbi_result dres)
 	}
 }
 
+static char *db_escape_string(char *orig_string)
+{
+	char *ret_value = NULL;
+	dbi_conn_quote_string_copy(db_logger->db_conn, orig_string, &ret_value);
+	return ret_value;
+}
+
+static char *db_unescape_string(char *orig_string)
+{
+	int len = strlen(orig_string);
+	char *ret_value = NULL;
+	if (orig_string[0] == '\'' && len > 0 && orig_string[len - 1] == '\'') {
+		ret_value = g_strdup(orig_string + 1);
+		if (len > 1) ret_value[len - 2] = '\0';
+	}
+	else
+		ret_value = g_strdup(orig_string);
+	return ret_value;
+}
+
 static gboolean db_retrieve_int_value(dbi_result dres, int *value, const char *field_name) 
 {
 	if (dres) {
@@ -621,20 +641,20 @@ static void append_message_to_output(const char *ownerName, const char *message,
 	char *str = NULL;
 	char *concat_string = NULL;
 	char *date = log_get_timestamp(log, datetime);
+	char *stripped = purple_markup_strip_html(message);
 	/* need get log type from DB */
 
 	purple_debug_info("Database Logger", "append_message_to_output: ownerName = %s\n", ownerName);
-
 	if(log->type == PURPLE_LOG_SYSTEM){
-		str = g_strdup_printf("---- %s @ %s ----\n", message, date);
+		str = g_strdup_printf("---- %s @ %s ----\n", stripped, date);
 	} else {
 		if (message_flags & PURPLE_MESSAGE_SEND ||
 			message_flags & PURPLE_MESSAGE_RECV) {
 			if (message_flags & PURPLE_MESSAGE_AUTO_RESP) {
 				str = g_strdup_printf(_("(%s) %s <AUTO-REPLY>: %s\n"), date,
-						ownerName, message);
+						ownerName, stripped);
 			} else {
-				char *duplicate = g_strdup(message);
+				char *duplicate = g_strdup(stripped);
 				if(purple_message_meify(duplicate, -1))
 					str = g_strdup_printf("(%s) ***%s %s\n", date, ownerName,
 							duplicate);
@@ -646,15 +666,15 @@ static void append_message_to_output(const char *ownerName, const char *message,
 		} else if (message_flags & PURPLE_MESSAGE_SYSTEM ||
 			message_flags & PURPLE_MESSAGE_ERROR ||
 			message_flags & PURPLE_MESSAGE_RAW)
-			str = g_strdup_printf("(%s) %s\n", date, message);
+			str = g_strdup_printf("(%s) %s\n", date, stripped);
 		else if (message_flags & PURPLE_MESSAGE_NO_LOG) {
 			/* This shouldn't happen */
 			/* doing nothing */
 		} else if (message_flags & PURPLE_MESSAGE_WHISPER)
-			str = g_strdup_printf("(%s) *%s* %s\n", date, ownerName, message);
+			str = g_strdup_printf("(%s) *%s* %s\n", date, ownerName, stripped);
 		else
 			str = g_strdup_printf("(%s) %s%s %s\n", date, ownerName ? ownerName : "",
-					ownerName ? ":" : "", message);
+					ownerName ? ":" : "", stripped);
 	}
 
 	concat_string =  (*output) ? g_strconcat(*output, str, NULL) : (str != NULL ? g_strdup(str) : NULL);
@@ -773,20 +793,21 @@ static gpointer db_write(gpointer data)
 	}
 
 	if (conv_info->id != -1) {
-		char *stripped = purple_markup_strip_html(message);
 		int log_size = db_get_conversation_size(conv_info->id);
+		char *escaped_string = db_escape_string(message);
 
 		dres = dbi_conn_queryf(db_logger->db_conn, 
 				"INSERT INTO `messages` (`conversationId`, `ownerName`, `datetime`, `text`, `flags`) VALUES(%i, \"%s\", %i, \"%s\", %i)",
-				conv_info->id, from, time, stripped, flags);
+				conv_info->id, from, time, escaped_string, flags);
 		db_process_result(dres);
 
 		/* updating log size */
-		log_size += strlen(stripped);
+		log_size += strlen(escaped_string);
 		dres = dbi_conn_queryf(db_logger->db_conn,
 				"UPDATE `conversations` SET `size` = %i WHERE `id` = %i",
 				log_size, conv_info->id);
-		g_free(stripped);
+		g_free(escaped_string);
+
 	} else 
 		purple_debug_info("Database Logger", "conv_info->id == -1\n");
 
@@ -818,14 +839,18 @@ static gpointer db_read(gpointer data)
 			time_t datetime;
 			const char *ownerName;
 			const char *message;
+			char *unescaped_message;
 
 			while(dbi_result_next_row(dres)) {
 				ownerName = dbi_result_get_string(dres, "ownerName");
 				datetime = dbi_result_get_uint(dres, "datetime");
 				message = dbi_result_get_string(dres, "text");
 				message_flags = dbi_result_get_int(dres, "flags");
+
 				/* we can form output as we wish */
-				append_message_to_output(ownerName, message, message_flags, datetime, log, &op->ret_value);
+				unescaped_message = db_unescape_string(message);
+				append_message_to_output(ownerName, unescaped_message, message_flags, datetime, log, &op->ret_value);
+				g_free(unescaped_message);
 			}
 		}
 		db_process_result(dres);
@@ -1015,7 +1040,7 @@ static gpointer db_thread(gpointer data)
 
 static void db_add_operation(gpointer data)
 {
-	gboolean need_create_thread;
+	gboolean need_create_thread = FALSE;
 	DatabaseOperation *op = data;
 
 	lock();
@@ -1026,8 +1051,10 @@ static void db_add_operation(gpointer data)
 	need_create_thread = (db_thread_id == NULL);
 	unlock();
 
-	if (need_create_thread)
+	if (need_create_thread) {
+		purple_debug_info("Database Logger", " -- Thread created -- \n");
 		db_thread_id = g_thread_create(db_thread, NULL, FALSE, NULL);
+	}
 }
 
 
