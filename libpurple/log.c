@@ -65,6 +65,7 @@ struct _purple_log_callback_data {
 
 	/* need for write function */
 	char *string;
+	char *string1;
 };
 
 struct _purple_logsize_user {
@@ -308,11 +309,12 @@ void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
 	callback_data->data = data;
 	callback_data->lu = lu;
 	callback_data->string = message;
+	callback_data->string1 = g_strdup(from);
 
 	if (log->logger->write_nonblocking) 
-		(log->logger->write_nonblocking)(log, type, from, time, message, log_write_cb, callback_data);
+		(log->logger->write_nonblocking)(log, type, callback_data->string1, time, message, log_write_cb, callback_data);
 	else if (log->logger->write)
-		log_write_cb((log->logger->write)(log, type, from, time, message), callback_data);
+		log_write_cb((log->logger->write)(log, type, callback_data->string1, time, message), callback_data);
 }
 
 char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
@@ -2588,6 +2590,7 @@ static void log_write_cb(int size, void *data)
 	if (callback_data->bool_cb)
 		callback_data->bool_cb(size != 0, callback_data->data);
 
+	g_free(callback_data->string1);
 	g_free(callback_data->string);
 	g_free(callback_data);
 }
