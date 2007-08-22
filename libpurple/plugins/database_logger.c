@@ -140,6 +140,7 @@ static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  const char *from, time_t time, char *message,
 							  PurpleLogSizeCallback cb, void *data)
 {
+	purple_debug_info("Database Logger", "Database logger write functions called\n");
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_WRITE] != NULL) {
 		DatabaseWriteOperation *op = g_new(DatabaseWriteOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_WRITE;
@@ -152,6 +153,7 @@ static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 		op->data = data;
 		op->ret_value = 0;
 
+		purple_debug_info("Database Logger", "Database logger write operation was added\n");
 		db_add_operation(op);
 	} else {
 		cb(0, data);
@@ -422,7 +424,7 @@ static char *db_escape_string(char *orig_string)
 	return ret_value;
 }
 
-static char *db_unescape_string(char *orig_string)
+static char *db_unescape_string(const char *orig_string)
 {
 	int len = strlen(orig_string);
 	char *ret_value = NULL;
@@ -773,7 +775,6 @@ static gpointer db_write(gpointer data)
 	op->ret_value = 0;
 
 	if (log->logger_data == NULL) {
-		purple_debug_info("Database Logger", "Init new conversation [new thread]\n");
 		log->logger_data = conv_info = g_new(ConversationInfo, 1);
 		conv_info->id = -1;
 
@@ -1005,11 +1006,10 @@ static gpointer db_thread(gpointer data)
 {
 	gpointer return_val = NULL;
 	GList *op_queue = NULL;
-	
+
 	while(TRUE) {
 		lock();
 		if (db_op_queue == NULL) {
-			unlock();
 			break;
 		}
 		op_queue = db_op_queue;
@@ -1031,10 +1031,10 @@ static gpointer db_thread(gpointer data)
 		}
 	}
 
-	lock();
 	db_thread_id = NULL;
 	unlock();
 
+	purple_debug_info("Database Logger", "Thread finished successfully: %x\n", db_thread_id);
 	return return_val;
 }
 
@@ -1044,17 +1044,23 @@ static void db_add_operation(gpointer data)
 	DatabaseOperation *op = data;
 
 	lock();
+
 	db_op_queue = g_list_append(db_op_queue, op);
-	unlock();
-
-	lock();
 	need_create_thread = (db_thread_id == NULL);
-	unlock();
 
+	purple_debug_info("Database Logger", "before creation db_thread_id = %x\n", db_thread_id);
 	if (need_create_thread) {
+		GError *error = NULL;
 		purple_debug_info("Database Logger", " -- Thread created -- \n");
-		db_thread_id = g_thread_create(db_thread, NULL, FALSE, NULL);
+		db_thread_id = g_thread_create(db_thread, NULL, FALSE, &error);
+		if (error != NULL) {
+			purple_debug_info("Database Logger", "error: %s\n", error->message);
+			g_error_free(error);
+		}
 	}
+	purple_debug_info("Database Logger", "after creation db_thread_id = %x\n", db_thread_id);
+
+	unlock();
 }
 
 
