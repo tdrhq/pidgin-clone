@@ -732,8 +732,8 @@ static gpointer db_init(gpointer data)
 										   database_logger_sets,
 										   database_logger_remove_log);
 		db_logger->conn_established = TRUE;
-
 		purple_log_logger_add(db_logger->logger);
+
 	}
 	return NULL;
 }
@@ -801,6 +801,7 @@ static gpointer db_read(gpointer data)
 	ConversationInfo *conv_info = log->logger_data;
 	dbi_result dres;
 
+	purple_debug_info("Database Logger", "---- XXX ---- db_read \n");
 	if (flags)
 		*flags = 0;
 
@@ -994,8 +995,8 @@ static gpointer db_thread(gpointer data)
 			DatabaseOperation *op = op_queue->data;
 			int id = op->type;
 
-			purple_debug_info("Database Logger", "db_thread started: function id = %i\n", id);
-			return_val = db_thread_func[id](data);
+			if (db_thread_func[id] != NULL)
+				return_val = db_thread_func[id](op);
 
 			/* Locking mutex, because we are going to add new 
 			   item to db_funished_op */
@@ -1094,9 +1095,9 @@ plugin_load(PurplePlugin *plugin)
 
 	purple_debug_info("Database Logger", "Creating thread and making init operation\n");
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_INIT] != NULL) {
-		DatabaseOperation *op = g_new(DatabaseOperation, 1);
+		DatabaseOperation *op = g_new0(DatabaseOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_INIT;
-		g_thread_create(db_thread, op, FALSE, NULL);
+		db_add_operation(op);
 	} 
 
 	return TRUE;
