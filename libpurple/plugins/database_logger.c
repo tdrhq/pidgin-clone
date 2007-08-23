@@ -141,6 +141,9 @@ static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  PurpleLogSizeCallback cb, void *data)
 {
 	purple_debug_info("Database Logger", "Database logger write functions called\n");
+	if (log == NULL || from == NULL || message == NULL)
+		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\t from = %x\t message = %x\n", log, from, message);
+
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_WRITE] != NULL) {
 		DatabaseWriteOperation *op = g_new(DatabaseWriteOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_WRITE;
@@ -163,6 +166,9 @@ static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 static void database_logger_read(PurpleLog *log, PurpleLogReadFlags *flags,
 							PurpleLogReadCallback cb, void *data)
 {
+	if (log == NULL)
+		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\n", log);
+
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_READ] != NULL) {
 		DatabaseReadOperation *op = g_new(DatabaseReadOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_READ;
@@ -181,6 +187,9 @@ static void database_logger_read(PurpleLog *log, PurpleLogReadFlags *flags,
 static void database_logger_list(PurpleLogType type, char *name, PurpleAccount *account, 
 								PurpleLogListCallback cb, void *data)
 {
+	if (name == NULL || account == NULL)
+		purple_debug_info("Database Logger", "ERROR wrong arguments: name= %x\t account = %x\n", name, account);
+
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_LIST] != NULL) {
 		DatabaseListOperation *op = g_new(DatabaseListOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_LIST;
@@ -199,6 +208,9 @@ static void database_logger_list(PurpleLogType type, char *name, PurpleAccount *
 
 static void database_logger_list_syslog(PurpleAccount *account, PurpleLogListCallback cb, void *data)
 {
+	if (account != NULL)
+		purple_debug_info("Database Logger", "ERROR wrong arguments: account= %x\n", account);
+
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_LIST_SYSLOG] != NULL) {
 		DatabaseSyslogListOperation *op = g_new(DatabaseSyslogListOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_LIST_SYSLOG;
@@ -215,6 +227,9 @@ static void database_logger_list_syslog(PurpleAccount *account, PurpleLogListCal
 
 static void database_logger_size(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
 {
+	if (log == NULL)
+		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\n", log);
+
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_SIZE] != NULL) {
 		DatabaseSizeOperation *op = g_new(DatabaseSizeOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_SIZE;
@@ -232,6 +247,9 @@ static void database_logger_size(PurpleLog *log, PurpleLogSizeCallback cb, void 
 static void database_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account,
 									PurpleLogSizeCallback cb, void *data)
 {
+	if (name == NULL || account == NULL)
+		purple_debug_info("Database Logger", "ERROR wrong arguments: name = %x\t account = %x\n", name, account);
+
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_TOTAL_SIZE] != NULL) {
 		DatabaseTotalSizeOperation *op = g_new(DatabaseTotalSizeOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_TOTAL_SIZE;
@@ -250,6 +268,9 @@ static void database_logger_total_size(PurpleLogType type, const char *name, Pur
 
 static void database_logger_sets(GHashTable *sets, PurpleLogVoidCallback cb, void *data)
 {
+	if (sets != NULL)
+		purple_debug_info("Database Logger", "ERROR wrong arguments: sets = %x\n", sets);
+
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_SETS] != NULL) {
 		DatabaseSetsOperation *op = g_new(DatabaseSetsOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_SETS;
@@ -266,6 +287,9 @@ static void database_logger_sets(GHashTable *sets, PurpleLogVoidCallback cb, voi
 
 static void database_logger_remove_log(PurpleLog *log, PurpleLogBooleanCallback cb, void *data)
 {
+	if (log == NULL)
+		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\n", log);
+
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_REMOVE_LOG] != NULL) {
 		DatabaseRemoveLogOperation *op = g_new(DatabaseRemoveLogOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_REMOVE_LOG;
@@ -417,23 +441,10 @@ static gboolean db_process_result(dbi_result dres)
 	}
 }
 
-static char *db_escape_string(char *orig_string)
+static char *db_escape_string(const char *orig_string)
 {
 	char *ret_value = NULL;
-	dbi_conn_quote_string_copy(db_logger->db_conn, orig_string, &ret_value);
-	return ret_value;
-}
-
-static char *db_unescape_string(const char *orig_string)
-{
-	int len = strlen(orig_string);
-	char *ret_value = NULL;
-	if (orig_string[0] == '\'' && len > 0 && orig_string[len - 1] == '\'') {
-		ret_value = g_strdup(orig_string + 1);
-		if (len > 1) ret_value[len - 2] = '\0';
-	}
-	else
-		ret_value = g_strdup(orig_string);
+	dbi_conn_quote_string_copy(db_logger->db_conn, (char *)orig_string, &ret_value);
 	return ret_value;
 }
 
@@ -475,11 +486,11 @@ static int db_get_protocol_id(PurpleAccount *account)
 	const char *protocol_name;
 	int id = -1;
 
-	if (!prpl)
-		return id;
+	g_return_val_if_fail(prpl != NULL, id);
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	protocol_name = prpl_info->list_icon(account, NULL);
+	g_return_val_if_fail(prpl_info != NULL, id);
+	protocol_name = db_escape_string(prpl_info->list_icon(account, NULL));
 
 	/* TODO: optimization */
 
@@ -487,13 +498,13 @@ static int db_get_protocol_id(PurpleAccount *account)
 	    when we add an account, but it seems that the result depends on database */
 	while (id == -1) {
 		dbi_result dres = dbi_conn_queryf(db_logger->db_conn, 
-						"SELECT id FROM protocols WHERE name = \"%s\"", protocol_name);
+						"SELECT id FROM protocols WHERE name = %s", protocol_name);
 		if (!db_retrieve_id(dres, &id)) 
 			break;
 
 		/*if id not found we should insert new protocol */
 		if (id == -1) {
-			dres = dbi_conn_queryf(db_logger->db_conn, "INSERT INTO protocols(`name`) VALUES(\"%s\")", 
+			dres = dbi_conn_queryf(db_logger->db_conn, "INSERT INTO protocols(`name`) VALUES(%s)", 
 								protocol_name);
 			if (!db_process_result(dres))
 				break;
@@ -514,23 +525,27 @@ static char *db_get_protocol_name(int id)
 
 static int db_get_account_id(PurpleAccount *account) 
 {
-	char *account_name = g_strdup(purple_escape_filename(purple_normalize(account,
-				purple_account_get_username(account))));
+	char *account_name;
 	int id = -1;
+
+	g_return_val_if_fail(account != NULL, id);
+
+	account_name = db_escape_string(purple_escape_filename(purple_normalize(account,
+				purple_account_get_username(account))));
 
 	/* TODO: optimization */
 
 	/* we can use dbi_conn_sequence_last to get row ID generated by the last INSERT command
 	    when we add an account, but it seems that the result depends on database */
 	while (id == -1) {
-		dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "SELECT id FROM accounts WHERE name = \"%s\"", account_name);
+		dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "SELECT id FROM accounts WHERE name = %s", account_name);
 
 		if (!db_retrieve_id(dres, &id)) 
 			break;
 
 		/*if id not found we should insert new account */
 		if (id == -1) {
-			dres = dbi_conn_queryf(db_logger->db_conn, "INSERT INTO `accounts`(`name`, `protocolId`) VALUES(\"%s\", %i)", 
+			dres = dbi_conn_queryf(db_logger->db_conn, "INSERT INTO `accounts`(`name`, `protocolId`) VALUES(%s, %i)", 
 								account_name, db_get_protocol_id(account));
 			if (!db_process_result(dres))
 				break;
@@ -547,6 +562,8 @@ static PurpleAccount *db_get_account(int id)
 	char *account_name = NULL;
 	PurpleAccount *account = NULL;
 	dbi_result dres;
+
+	g_return_val_if_fail(id != -1, account);
 
 	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `name`, `protocolId` FROM `accounts` WHERE `id` =  %i", id);
 	if(dres) {
@@ -594,30 +611,34 @@ static int db_get_buddy_id(PurpleLogType type, const char *name, PurpleAccount *
 	int id = -1;
 	int buddy_type = 0;
 
+	g_return_val_if_fail(account != NULL, id);
+
 	/* TODO: optimization */
 
 	if (type == PURPLE_LOG_SYSTEM) {
-		buddy_name = g_strdup(SYSTEM_LOG_BUDDY_NAME);
+		buddy_name = db_escape_string(SYSTEM_LOG_BUDDY_NAME);
 		buddy_type = BUDDY_SYSTEM_TYPE;
 	} else if (type == PURPLE_LOG_CHAT) {
-		buddy_name = g_strdup_printf(CHAT_BUDDY_NAME_TEMPLATE, purple_normalize(account, name));
+		char *buddy_name_raw = g_strdup_printf(CHAT_BUDDY_NAME_TEMPLATE, purple_normalize(account, name));
+		buddy_name = db_escape_string(buddy_name_raw);
 		buddy_type = BUDDY_CHAT_TYPE;
+		g_free(buddy_name_raw);
 	} else {
-		buddy_name = g_strdup(purple_normalize(account, name));
+		buddy_name = db_escape_string(purple_normalize(account, name));
 		buddy_type = BUDDY_IM_TYPE;
 	}
 
 	/* we can use dbi_conn_sequence_last to get row ID generated by the last INSERT command
 	    when we add an account, but it seems that the result depends on database */
 	while (id == -1) {
-		dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `id` FROM `buddies` WHERE `name`= \"%s\" AND `type` = %i AND `accountID` = %i ", 
+		dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `id` FROM `buddies` WHERE `name`= %s AND `type` = %i AND `accountID` = %i ", 
 									buddy_name, buddy_type, db_get_account_id(account));
 		if (!db_retrieve_id(dres, &id)) 
 			break;
 
 		/*if id not found we should insert new account */
 		if (id == -1) {
-			dres = dbi_conn_queryf(db_logger->db_conn, "INSERT INTO `buddies` (`name`, `type`, `accountId`) VALUES(\"%s\", %i, %i)", 
+			dres = dbi_conn_queryf(db_logger->db_conn, "INSERT INTO `buddies` (`name`, `type`, `accountId`) VALUES(%s, %i, %i)", 
 								buddy_name, buddy_type, db_get_account_id(account));
 			if (!db_process_result(dres))
 				break;
@@ -631,7 +652,10 @@ static int db_get_buddy_id(PurpleLogType type, const char *name, PurpleAccount *
 static int db_get_conversation_size(int id)
 {
 	int ret_value = 0;
-	dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `size` FROM `conversations` WHERE `id` = %i", id);
+	dbi_result dres;
+	g_return_val_if_fail(id != -1, ret_value);
+
+	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `size` FROM `conversations` WHERE `id` = %i", id);
 	db_retrieve_int_value(dres, &ret_value, "size");
 	return ret_value;
 }
@@ -645,6 +669,8 @@ static void append_message_to_output(const char *ownerName, const char *message,
 	char *date = log_get_timestamp(log, datetime);
 	char *stripped = purple_markup_strip_html(message);
 	/* need get log type from DB */
+
+	g_return_if_fail(ownerName != NULL && message != NULL && log != NULL);
 
 	purple_debug_info("Database Logger", "append_message_to_output: ownerName = %s\n", ownerName);
 	if(log->type == PURPLE_LOG_SYSTEM){
@@ -693,6 +719,8 @@ static GList *get_list_log(PurpleLogType type, const char *name, PurpleAccount *
 	dbi_result dres;
 	GList *list = NULL;
 
+	g_return_val_if_fail(name != NULL && account != NULL, list);
+
 	dres = dbi_conn_queryf(db_logger->db_conn,
 					"SELECT `id`, `datetime` FROM `conversations` WHERE `accountId` = %i AND `buddyId` = %i",
 					db_get_account_id(account), db_get_buddy_id(type, name, account));
@@ -731,6 +759,8 @@ static gpointer db_init(gpointer data)
 		purple_debug_info("Database Logger", "Could not connect. Please check the option settings\n");
 	} else {
 
+		lock();
+
 		db_logger->logger = purple_log_logger_new("database", _("Database Logger"), 21,
 										   NULL,
 										   NULL,
@@ -756,6 +786,7 @@ static gpointer db_init(gpointer data)
 		db_logger->conn_established = TRUE;
 		purple_log_logger_add(db_logger->logger);
 
+		unlock();
 	}
 	return NULL;
 }
@@ -795,22 +826,24 @@ static gpointer db_write(gpointer data)
 
 	if (conv_info->id != -1) {
 		int log_size = db_get_conversation_size(conv_info->id);
-		char *escaped_string = db_escape_string(message);
+		char *escaped_message = db_escape_string(message);
+		char *escaped_from = db_escape_string(from);
 
 		dres = dbi_conn_queryf(db_logger->db_conn, 
-				"INSERT INTO `messages` (`conversationId`, `ownerName`, `datetime`, `text`, `flags`) VALUES(%i, \"%s\", %i, \"%s\", %i)",
-				conv_info->id, from, time, escaped_string, flags);
+				"INSERT INTO `messages` (`conversationId`, `ownerName`, `datetime`, `text`, `flags`) VALUES(%i, %s, %i, %s, %i)",
+				conv_info->id, escaped_from, time, escaped_message, flags);
 		db_process_result(dres);
 
 		/* updating log size */
-		log_size += strlen(escaped_string);
+		log_size += strlen(escaped_message);
 		dres = dbi_conn_queryf(db_logger->db_conn,
 				"UPDATE `conversations` SET `size` = %i WHERE `id` = %i",
 				log_size, conv_info->id);
-		g_free(escaped_string);
+		g_free(escaped_message);
+		g_free(escaped_from);
 
 	} else 
-		purple_debug_info("Database Logger", "conv_info->id == -1\n");
+		purple_debug_info("Database Logger", "ERROR: conv_info->id == -1\n");
 
 	return NULL;
 }
@@ -849,9 +882,7 @@ static gpointer db_read(gpointer data)
 				message_flags = dbi_result_get_int(dres, "flags");
 
 				/* we can form output as we wish */
-				unescaped_message = db_unescape_string(message);
-				append_message_to_output(ownerName, unescaped_message, message_flags, datetime, log, &op->ret_value);
-				g_free(unescaped_message);
+				append_message_to_output(ownerName, message, message_flags, datetime, log, &op->ret_value);
 			}
 		}
 		db_process_result(dres);
@@ -985,9 +1016,7 @@ static gpointer db_remove(gpointer data)
 
 	op->ret_value = FALSE;
 	if (conv_info && conv_info->id != -1){
-		dbi_result dres;
-
-		dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `messages` WHERE `conversationId` = %i",
+		dbi_result dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `messages` WHERE `conversationId` = %i",
 							conv_info->id);
 		if (db_process_result(dres)) {
 			dres = dbi_conn_queryf(db_logger->db_conn, "DELETE FROM `conversations` WHERE `id` = %i",
@@ -1006,12 +1035,11 @@ static gpointer db_thread(gpointer data)
 {
 	gpointer return_val = NULL;
 	GList *op_queue = NULL;
+	gboolean read_queue = TRUE;
 
-	while(TRUE) {
+	while(read_queue) {
+	
 		lock();
-		if (db_op_queue == NULL) {
-			break;
-		}
 		op_queue = db_op_queue;
 		db_op_queue = NULL;
 		unlock();
@@ -1029,8 +1057,13 @@ static gpointer db_thread(gpointer data)
 			db_finished_op = g_list_append(db_finished_op, op);
 			unlock();
 		}
+
+		lock();
+		read_queue = (db_op_queue != NULL);
+		unlock();
 	}
 
+	lock();
 	db_thread_id = NULL;
 	unlock();
 
@@ -1049,9 +1082,12 @@ static void db_add_operation(gpointer data)
 	need_create_thread = (db_thread_id == NULL);
 
 	purple_debug_info("Database Logger", "before creation db_thread_id = %x\n", db_thread_id);
+
 	if (need_create_thread) {
 		GError *error = NULL;
+
 		purple_debug_info("Database Logger", " -- Thread created -- \n");
+
 		db_thread_id = g_thread_create(db_thread, NULL, FALSE, &error);
 		if (error != NULL) {
 			purple_debug_info("Database Logger", "error: %s\n", error->message);
@@ -1072,23 +1108,31 @@ static void db_add_operation(gpointer data)
 static gboolean db_main_callback(gpointer data)
 {
 	GList *op_queue = NULL;
-
-	if (!db_logger->conn_established || !db_finished_op)
-		return TRUE;
-
-	purple_debug_info("Database Logger", "Main callback: there is finished operation\n");
+	gboolean exit_callback = TRUE;
 
 	lock();
-	op_queue = db_finished_op;
-	db_finished_op = NULL;
+	exit_callback = (!db_logger->conn_established || !db_finished_op);
 	unlock();
 
-	for(; op_queue != NULL; op_queue = g_list_delete_link(op_queue, op_queue)) {
-		DatabaseOperation *op = op_queue->data;
+	if (!exit_callback) {
 
-		if (db_notify_func[op->type] != NULL)
-			db_notify_func[op->type](op);
-		g_free(op);
+		purple_debug_info("Database Logger", "Main callback: there is finished operation\n");
+
+		lock();
+		op_queue = db_finished_op;
+		db_finished_op = NULL;
+		unlock();
+
+		for(; op_queue != NULL; op_queue = g_list_delete_link(op_queue, op_queue)) {
+			DatabaseOperation *op = op_queue->data;
+
+			if (db_notify_func[op->type] != NULL) {
+				if (op == NULL)
+					purple_debug_info("Database Logger", "ERROR: db_main_callback op == NULL\n");
+				db_notify_func[op->type](op);
+			}
+			g_free(op);
+		}
 	}
 
 	return TRUE;
