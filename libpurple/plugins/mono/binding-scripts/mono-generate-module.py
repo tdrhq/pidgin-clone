@@ -124,7 +124,7 @@ class Property:
 					args.append("Handle")
 
 			method_call += string.join(args, ", ") + ")"
-			body += "get {\n"
+			body += "get {\n\t\t\t\t"
 			body += "return "
 			ret_type = meth.ret_type.csharp
 			if meth.ret_type.csharp == "string":
@@ -134,7 +134,7 @@ class Property:
 			else:
 				body += method_call + ";"
 
-			body += "\n}\n"
+			body += "\n\t\t\t}\n"
 
 		if self.actions.has_key('set'):
 			meth = self.actions['set']
@@ -143,10 +143,10 @@ class Property:
 			for a in meth.arg_type_list:
 				if a.marshall == "IntPtr" and a.csharp == self.csclassname:
 					args.append("Handle")
-			method_call += string.join(args, ", ") + ")"
-			body += "set {\n"
+			method_call += string.join(args, ", ") + ");"
+			body += "\t\t\tset {\n\t\t\t\t"
 			body += method_call 
-			body += "\n}\n"
+			body += "\n\t\t\t}\n"
 
 		return property % (ret_type, self.cspropname, body)
 
@@ -191,8 +191,6 @@ class Struct:
 
 		self.properties = {}
 
-		print self.func_nonstatic_parse_str
-
 	def is_my_func(self, str):
 		match = self.func_nonstatic_parse.match(str)
 
@@ -211,44 +209,83 @@ class Struct:
 			if not self.properties.has_key(prop_name):
 				self.properties[prop_name] = Property(prop_name, self.csname)
 
-			print operation + " " + prop_name + " " + self.csname
 			self.properties[prop_name].add(operation, meth)
 
 		self.nonstatic_methods.append(meth)
 
 		return True
 
+	def dump_constructors(self):
+		intptr_constructor = """
+		public %s(IntPtr handle)
+			: base(handle)
+		{
+		}
+		"""
+
+		return intptr_constructor % (self.csname)
+
 	def dump(self):
-		for m in self.properties:
-			print self.properties[m]
-		print ""	
+		out = """
+using System;
+using System.Runtime.InteropServices;
 
-parse_struct = re.compile("struct _(Purple[A-Za-z]+).*")
+namespace Purple {
+	class %s : Object {
+		%s
+	}
+}
+	"""
+		body = ""
 
-find_function = re.compile("(const\s+)?[A-Za-z]+\s*\*?\s*[A-Za-z0-9_]+\(.*")
-func_parse = re.compile("(const\s+)?([A-Za-z]+\s*\*?)\s*([A-Za-z0-9_]+)\((.*)\);")
+		body += self.dump_constructors()
 
-input = iter(sys.stdin)
+		for p in self.properties:
+			body += str(self.properties[p])
 
-structs = []
+		for m in self.nonstatic_methods:
+			body += m.as_dllimport()
 
-for line in input:
-	struct_match = parse_struct.match(line)
-	func_find = find_function.match(line)
-	if struct_match:
-		print struct_match.group(1)
-		structs.append(Struct(struct_match.group(1)))
-	elif func_find:
-		func_line = line.strip()
-		while func_line.count('(') > func_line.count(')'):
-               		newline = input.next().strip()
-	                if len(newline) == 0:
-        	            break
-                	func_line += newline
+		print out % (self.csname, body)
 
-		for s in structs:
-			if s.is_my_func(func_line):
-				break
+	def __str__(self):
+		return self.structname
 
-for s in structs:
-	s.dump()
+def parse_structs_and_funcs():
+	parse_struct = re.compile("struct _(Purple[A-Za-z]+).*")
+
+	find_function = re.compile("(const\s+)?[A-Za-z]+\s*\*?\s*[A-Za-z0-9_]+\(.*")
+	func_parse = re.compile("(const\s+)?([A-Za-z]+\s*\*?)\s*([A-Za-z0-9_]+)\((.*)\);")
+
+	input = iter(sys.stdin)
+
+	structs = {} 
+
+	for line in input:
+		struct_match = parse_struct.match(line)
+		func_find = find_function.match(line)
+		if struct_match:
+			structs[struct_match.group(1)] = Struct(struct_match.group(1))
+		elif func_find:
+			func_line = line.strip()
+			while func_line.count('(') > func_line.count(')'):
+        	       		newline = input.next().strip()
+	        	        if len(newline) == 0:
+        	        	    break
+	                	func_line += newline
+
+			for k, s in structs.items():
+				if s.is_my_func(func_line):
+					break
+	
+	return structs
+
+structs = parse_structs_and_funcs()
+
+if len(sys.argv) < 2:
+	print "I need to know what you want me to make!  pass in one of the structs below as the first arg:"
+	for k, s in structs.items():
+		print s
+else:
+	struct_to_build = sys.argv[1]
+	structs[struct_to_build].dump()
