@@ -53,6 +53,10 @@ def is_purple_object(arg):
 		return False
 	return (re.match("^Purple", a[0]) and a[1].count('*') == 1)
 
+primitive_types = {
+	'gboolean': 'bool',
+}
+
 def determine_marshall_type(arg):
 	"""
 	Returns the type used to marshall between C# and C code (i.e. PurpleBuddy* -> IntPtr)
@@ -61,10 +65,14 @@ def determine_marshall_type(arg):
 	a = clean_arg(arg).split()
 	if len(a) > 1:
 		if a[1].count('*') == 1:
+			if a[0] == 'char' and len(a[1]) > 1:
+				return "string"
 			return "IntPtr"
 		return a[0]
-	else:
-		return a[0]
+
+	if a[0] in primitive_types:
+		return primitive_types[a[0]]
+	return a[0]
 
 def determine_csharp_type(arg):
 	"""
@@ -76,6 +84,9 @@ def determine_csharp_type(arg):
 		return re.sub("^Purple", "", a[0])
 	if re.match("char", a[0]) and a[1].count('*') == 1:
 		return "string"
+
+	if a[0] in primitive_types:
+		return primitive_types[a[0]]
 	return a[0]
 
 class ArgType:
@@ -123,17 +134,21 @@ class Property:
 			else:
 				body += method_call + ";"
 
-			body += "\n}"
+			body += "\n}\n"
 
-		elif self.actions.has_key('set'):
+		if self.actions.has_key('set'):
 			meth = self.actions['set']
 			method_call = meth.func_str + "("
 			args = []
 			for a in meth.arg_type_list:
 				if a.marshall == "IntPtr" and a.csharp == self.csclassname:
 					args.append("Handle")
+			method_call += string.join(args, ", ") + ")"
+			body += "set {\n"
+			body += method_call 
+			body += "\n}\n"
 
-		return property % (ret_type, self.csclassname + ":" + self.cspropname, body)
+		return property % (ret_type, self.cspropname, body)
 
 	def __str__(self):
 		return self.dump()
