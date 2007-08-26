@@ -68,7 +68,6 @@ def determine_marshall_type(arg):
 			if a[0] == 'char' and len(a[1]) > 1:
 				return "string"
 			return "IntPtr"
-		return a[0]
 
 	if a[0] in primitive_types:
 		return primitive_types[a[0]]
@@ -98,7 +97,7 @@ class ArgType:
 class Property:
 	def __init__(self, propname, csclassname):
 		self.propname = propname.strip('_')
-		self.cspropname = convertname(self.propname)
+		self.cspropname = convertname(self.propname) + "Prop"
 		self.csclassname = csclassname
 
 		self.actions = {}
@@ -140,9 +139,16 @@ class Property:
 			meth = self.actions['set']
 			method_call = meth.func_str + "("
 			args = []
+			print meth
 			for a in meth.arg_type_list:
+				print "\t" + a.csharp
 				if a.marshall == "IntPtr" and a.csharp == self.csclassname:
 					args.append("Handle")
+				if a.csharp == ret_type:
+					if a.is_purple_object:
+						args.append("value.Handle")
+					else:
+						args.append("value")
 			method_call += string.join(args, ", ") + ");"
 			body += "\t\t\tset {\n\t\t\t\t"
 			body += method_call 
@@ -176,8 +182,8 @@ class Method:
 		return dllimport % (self.ret_type.marshall, self.func_str, string.join([s.marshall for s in self.arg_type_list], ","))
 
 	def __repr__(self):
-		return self.as_dllimport() 
-
+		return self.func_str
+		
 class Struct:
 	def __init__(self, structname):
 		self.structname = structname
