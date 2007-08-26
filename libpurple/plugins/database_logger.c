@@ -136,6 +136,16 @@ static GThread *db_thread_id = NULL;
 
 static void db_add_operation(gpointer data);
 
+static const char *db_get_current_engine() 
+{
+	return purple_prefs_get_string("/plugins/core/database_logger/engine");
+}
+
+static char *db_current_pref_path(const char *pref) 
+{
+	return g_strdup_printf("/plugins/core/database_logger/%s/%s", db_get_current_engine(), pref);
+}
+
 static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  const char *from, time_t time, char *message,
 							  PurpleLogSizeCallback cb, void *data)
@@ -885,7 +895,6 @@ static gpointer db_read(gpointer data)
 			time_t datetime;
 			const char *ownerName;
 			const char *message;
-			char *unescaped_message;
 
 			while(dbi_result_next_row(dres)) {
 				ownerName = dbi_result_get_string(dres, "ownerName");
@@ -1150,6 +1159,57 @@ static gboolean db_main_callback(gpointer data)
 	return TRUE;
 }
 
+static gboolean db_create_connection()
+{
+	char *pref_path;
+	db_logger->db_conn = dbi_conn_new(db_get_current_engine());
+
+	if (db_logger->db_conn == NULL) {
+		purple_debug_info("Database Logger", "created connection is NULL\n");
+		return FALSE;
+	}
+
+	/*TODO: make customizable for several DB type*/
+	pref_path = db_current_pref_path("host");
+	dbi_conn_set_option(db_logger->db_conn, "host", purple_prefs_get_string(pref_path));
+	g_free(pref_path);
+
+	pref_path = db_current_pref_path("username");
+	dbi_conn_set_option(db_logger->db_conn, "username", purple_prefs_get_string(pref_path));
+	g_free(pref_path);
+
+	pref_path = db_current_pref_path("password");
+	dbi_conn_set_option(db_logger->db_conn, "password", purple_prefs_get_string(pref_path));
+	g_free(pref_path);
+
+	pref_path = db_current_pref_path("dbname");
+	dbi_conn_set_option(db_logger->db_conn, "dbname", purple_prefs_get_string(pref_path));
+	g_free(pref_path);
+
+	pref_path = db_current_pref_path("encoding");
+	dbi_conn_set_option(db_logger->db_conn, "encoding", purple_prefs_get_string(pref_path));
+	g_free(pref_path);
+
+	pref_path = db_current_pref_path("port");
+	dbi_conn_set_option_numeric(db_logger->db_conn, "port", purple_prefs_get_int(pref_path));
+	g_free(pref_path);
+
+	db_logger->db_callback_id = purple_timeout_add(100, db_main_callback, NULL);
+
+	purple_debug_info("Database Logger", "Creating thread and making init operation\n");
+	if (db_thread_func[PURPLE_DATABASE_LOGGER_INIT] != NULL) {
+		DatabaseOperation *op = g_new0(DatabaseOperation, 1);
+		op->type = PURPLE_DATABASE_LOGGER_INIT;
+		db_add_operation(op);
+	} 
+	return TRUE;
+}
+
+static gboolean db_close_connection()
+{
+	dbi_conn_close(db_logger->db_conn);
+}
+
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
@@ -1168,31 +1228,10 @@ plugin_load(PurplePlugin *plugin)
 #else
 	cnt = dbi_initialize(NULL);
 #endif
+
 	purple_debug_info("Database Logger", "Count of loaded drivers =  %i\n", cnt);
 
-	db_logger->db_conn = dbi_conn_new("mysql");
-	if (db_logger->db_conn == NULL) {
-		purple_debug_info("Database Logger", "created connection is NULL\n");
-		return FALSE;
-	}
-
-	/*TODO: make customizable for several DB type*/
-	dbi_conn_set_option(db_logger->db_conn, "host", "192.168.0.128");
-	dbi_conn_set_option(db_logger->db_conn, "username", "pidgin");
-	dbi_conn_set_option(db_logger->db_conn, "password", "pidgin");
-	dbi_conn_set_option(db_logger->db_conn, "dbname", "pidgin");
-	dbi_conn_set_option(db_logger->db_conn, "encoding", "UTF-8");
-
-	db_logger->db_callback_id = purple_timeout_add(100, db_main_callback, NULL);
-
-	purple_debug_info("Database Logger", "Creating thread and making init operation\n");
-	if (db_thread_func[PURPLE_DATABASE_LOGGER_INIT] != NULL) {
-		DatabaseOperation *op = g_new0(DatabaseOperation, 1);
-		op->type = PURPLE_DATABASE_LOGGER_INIT;
-		db_add_operation(op);
-	} 
-
-	return TRUE;
+	return db_create_connection();
 }
 
 static gboolean
@@ -1208,10 +1247,10 @@ plugin_unload(PurplePlugin *plugin)
 	if (db_logger->logger != NULL) 
 		purple_log_logger_remove(db_logger->logger);
 
-	dbi_conn_close(db_logger->db_conn);
-	g_free(db_logger);
-
+	db_close_connection();
 	dbi_shutdown();
+
+	g_free(db_logger);
 
 	return TRUE;
 }
@@ -1245,7 +1284,88 @@ init_plugin(PurplePlugin *plugin)
 
 	db_thread_func[PURPLE_DATABASE_LOGGER_REMOVE_LOG] = db_remove;
 	db_notify_func[PURPLE_DATABASE_LOGGER_REMOVE_LOG] = db_remove_notify;
+
+	purple_prefs_add_none("/plugins/core/database_logger");
+	purple_prefs_add_string("/plugins/core/database_logger/engine", "mysql");
+
+	/* mysql prefs part */
+	purple_prefs_add_none("/plugins/core/database_logger/mysql");
+	purple_prefs_add_string("/plugins/core/database_logger/mysql/host", "127.0.0.1");
+	purple_prefs_add_string("/plugins/core/database_logger/mysql/username", "");
+	purple_prefs_add_string("/plugins/core/database_logger/mysql/password", "");
+	purple_prefs_add_string("/plugins/core/database_logger/mysql/dbname", "");
+	purple_prefs_add_string("/plugins/core/database_logger/mysql/encoding", "");
+	purple_prefs_add_int("/plugins/core/database_logger/mysql/port", 3306);
+
 }
+
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin)
+{
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *ppref;
+	char *pref_path;
+
+	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	frame = purple_plugin_pref_frame_new();
+
+	/* Add general preferences. */
+
+	ppref = purple_plugin_pref_new_with_label(_("Database Logger Configuration"));
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	pref_path = db_current_pref_path("host");
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		pref_path, _("Hostname"));
+	purple_plugin_pref_frame_add(frame, ppref);
+	g_free(pref_path);
+
+	pref_path = db_current_pref_path("port");
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		pref_path, _("Port"));
+	purple_plugin_pref_frame_add(frame, ppref);
+	g_free(pref_path);
+
+	pref_path = db_current_pref_path("username");
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		pref_path, _("Username"));
+	purple_plugin_pref_frame_add(frame, ppref);
+	g_free(pref_path);
+
+	pref_path = db_current_pref_path("password");
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		pref_path, _("Password"));
+	purple_plugin_pref_frame_add(frame, ppref);
+	g_free(pref_path);
+
+	pref_path = db_current_pref_path("dbname");
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		pref_path, _("DB name"));
+	purple_plugin_pref_frame_add(frame, ppref);
+	g_free(pref_path);
+
+	/* XXX: maybe we should have list of possible choices */
+	pref_path = db_current_pref_path("encoding");
+	ppref = purple_plugin_pref_new_with_name_and_label(
+		pref_path, _("encoding"));
+	purple_plugin_pref_frame_add(frame, ppref);
+	g_free(pref_path);
+
+	return frame;
+}
+
+static PurplePluginUiInfo prefs_info = {
+	get_plugin_pref_frame,
+	0,   /* page_num (reserved) */
+	NULL, /* frame (reserved) */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
 
 static PurplePluginInfo info =
 {
@@ -1275,7 +1395,7 @@ static PurplePluginInfo info =
 	NULL,                                             /**< destroy        */
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
-	NULL,                                      /**< prefs_info     */
+	&prefs_info,                                      /**< prefs_info     */
 	NULL,                                             /**< actions        */
 
 	/* padding */
