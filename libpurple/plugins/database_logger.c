@@ -1155,8 +1155,11 @@ plugin_load(PurplePlugin *plugin)
 {
 	int cnt = 0;
 
-	db_logger = g_new0(DatabaseLoggerInfo, 1);
 	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	db_logger = g_new0(DatabaseLoggerInfo, 1);
+
+	g_return_val_if_fail(db_logger != NULL, FALSE);
 
 	db_mutex = g_mutex_new();
 
@@ -1198,16 +1201,17 @@ plugin_unload(PurplePlugin *plugin)
 	purple_debug_info("Database Logger", "plugin_unload\n");
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	if (db_logger != NULL)
-		dbi_conn_close(db_logger->db_conn);
-
-	dbi_shutdown();
-
 	g_mutex_free(db_mutex);
 
 	purple_timeout_remove(db_logger->db_callback_id);
-	purple_log_logger_remove(db_logger->logger);
+
+	if (db_logger->logger != NULL) 
+		purple_log_logger_remove(db_logger->logger);
+
+	dbi_conn_close(db_logger->db_conn);
 	g_free(db_logger);
+
+	dbi_shutdown();
 
 	return TRUE;
 }
