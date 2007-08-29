@@ -704,14 +704,12 @@ static void append_message_to_output(const char *ownerName, const char *message,
 				str = g_strdup_printf(_("(%s) %s <AUTO-REPLY>: %s\n"), date,
 						ownerName, stripped);
 			} else {
-				char *duplicate = g_strdup(stripped);
-				if(purple_message_meify(duplicate, -1))
+				if(purple_message_meify(stripped, -1))
 					str = g_strdup_printf("(%s) ***%s %s\n", date, ownerName,
 							duplicate);
 				else
 					str = g_strdup_printf("(%s) %s: %s\n", date, ownerName,
-							duplicate);
-				g_free(duplicate);
+							stripped);
 			}
 		} else if (message_flags & PURPLE_MESSAGE_SYSTEM ||
 			message_flags & PURPLE_MESSAGE_ERROR ||
@@ -732,6 +730,7 @@ static void append_message_to_output(const char *ownerName, const char *message,
 	g_free(*output);
 	g_free(date);
 	g_free(str);
+	g_free(stripped);
 
 	*output = concat_string;
 }
