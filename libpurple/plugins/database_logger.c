@@ -682,17 +682,16 @@ static int db_get_conversation_size(int id)
 	return ret_value;
 }
 
-static void append_message_to_output(const char *ownerName, const char *message, int message_flags, 
-								time_t datetime, PurpleLog *log, char **output)
+static char *txt_message_formatting(const char *ownerName, const char *message, int message_flags, 
+								time_t datetime, PurpleLog *log)
 {
 	/* txt logger formatting */
 	char *str = NULL;
-	char *concat_string = NULL;
 	char *date = log_get_timestamp(log, datetime);
 	char *stripped = purple_markup_strip_html(message);
 	/* need get log type from DB */
 
-	g_return_if_fail(ownerName != NULL && message != NULL && log != NULL);
+	g_return_val_if_fail(ownerName != NULL && message != NULL && log != NULL, NULL);
 
 	purple_debug_info("Database Logger", "append_message_to_output: ownerName = %s\n", ownerName);
 	if(log->type == PURPLE_LOG_SYSTEM){
@@ -706,7 +705,7 @@ static void append_message_to_output(const char *ownerName, const char *message,
 			} else {
 				if(purple_message_meify(stripped, -1))
 					str = g_strdup_printf("(%s) ***%s %s\n", date, ownerName,
-							duplicate);
+							stripped);
 				else
 					str = g_strdup_printf("(%s) %s: %s\n", date, ownerName,
 							stripped);
@@ -725,14 +724,35 @@ static void append_message_to_output(const char *ownerName, const char *message,
 					ownerName ? ":" : "", stripped);
 	}
 
-	concat_string =  (*output) ? g_strconcat(*output, str, NULL) : (str != NULL ? g_strdup(str) : NULL);
-
-	g_free(*output);
 	g_free(date);
-	g_free(str);
 	g_free(stripped);
 
-	*output = concat_string;
+	return str;
+}
+
+static char *txt_concat_messages(GList *list)
+{
+	char *result = NULL;
+	char *buffer;
+	int size = 0;
+	GList *item;
+
+	if (list == NULL)
+		return g_strdup("<font color=\"red\"><b>empty log!</b></font>");
+
+	for (item = list; item != NULL; item = g_list_next(item))
+		size += strlen((char *)item->data);
+
+	result = g_new(char, size + 1);
+	buffer = result;
+	for (item = list; item != NULL; item = g_list_next(item)) {
+		buffer = g_stpcpy(buffer, item->data);
+		g_free(item->data);
+	}
+
+	g_list_free(list);
+
+	return result;
 }
 
 static GList *get_list_log(PurpleLogType type, const char *name, PurpleAccount *account)
@@ -894,16 +914,23 @@ static gpointer db_read(gpointer data)
 			time_t datetime;
 			const char *ownerName;
 			const char *message;
+			GList *list = NULL;
 
 			while(dbi_result_next_row(dres)) {
+				char *formatted_message;
+
 				ownerName = dbi_result_get_string(dres, "ownerName");
 				datetime = db_result_get_int(dres, "datetime");
 				message = dbi_result_get_string(dres, "text");
 				message_flags = db_result_get_int(dres, "flags");
 
 				/* we can form output as we wish */
-				append_message_to_output(ownerName, message, message_flags, datetime, log, &op->ret_value);
+				formatted_message = txt_message_formatting(ownerName, message, message_flags, datetime, log);
+				if (formatted_message != NULL)
+					list = g_list_append(list, formatted_message);
+
 			}
+			op->ret_value = txt_concat_messages(list);
 		}
 		db_process_result(dres);
 	}
