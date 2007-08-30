@@ -53,7 +53,8 @@ EXTERNAL_DLLS = \
 	softokn3.dll \
 	smime3.dll \
 	ssl3.dll \
-	libdbi.dll
+	libdbi.dll \
+	libmysql.dll
 
 #build an expression for `find` to use to ignore the above files
 EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
