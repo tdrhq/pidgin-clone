@@ -49,6 +49,12 @@ typedef struct  {
 
 typedef struct {
 	DatabaseOperationType type;
+	char *error_message;
+	gboolean ret_value;
+} DatabaseInitOperation;
+
+typedef struct {
+	DatabaseOperationType type;
 	PurpleLog * log;
 	PurpleMessageFlags flags;
 	const char *from;
@@ -317,6 +323,18 @@ static void database_logger_remove_log(PurpleLog *log, PurpleLogBooleanCallback 
 /****************************************************************************
 * Notify operation which let you know that datbase operation has finished.
 ****************************************************************************/
+
+static void db_init_notify(gpointer data)
+{
+	DatabaseInitOperation *op = data;
+	if (!op->ret_value) {
+		const char *message = op->error_message;
+		if (message == NULL)
+			message = _("unknown error");
+		purple_notify_error(NULL, _("Database Logger"), _("Connection not established"), message);
+	}
+	g_free(op->error_message);
+}
 
 static void db_write_notify(gpointer data) 
 {
@@ -793,12 +811,18 @@ static GList *get_list_log(PurpleLogType type, const char *name, PurpleAccount *
 ****************************************************************************/
 /**
  * Try to connect to database and create database logger
+ * Try to connect to database and create database logger
  */
 static gpointer db_init(gpointer data) 
 {
+	DatabaseInitOperation *op = data;
 	if (dbi_conn_connect(db_logger->db_conn) < 0) {
+		const char *message = NULL;
 		purple_debug_info("Database Logger", "Could not connect. Please check the option settings\n");
 		db_print_error();
+		dbi_conn_error(db_logger->db_conn, &message);
+		op->error_message = g_strdup(message);
+		op->ret_value = FALSE;
 	} else {
 
 		lock();
@@ -830,6 +854,7 @@ static gpointer db_init(gpointer data)
 		purple_log_logger_add(db_logger->logger);
 
 		unlock();
+		op->ret_value = TRUE;
 	}
 	return NULL;
 }
@@ -1158,7 +1183,7 @@ static gboolean db_main_callback(gpointer data)
 	gboolean exit_callback = TRUE;
 
 	lock();
-	exit_callback = (!db_logger->conn_established || !db_finished_op);
+	exit_callback = (!db_finished_op);
 	unlock();
 
 	if (!exit_callback) {
@@ -1224,7 +1249,7 @@ static gboolean db_create_connection()
 
 	purple_debug_info("Database Logger", "Creating thread and making init operation\n");
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_INIT] != NULL) {
-		DatabaseOperation *op = g_new0(DatabaseOperation, 1);
+		DatabaseInitOperation *op = g_new0(DatabaseInitOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_INIT;
 		db_add_operation(op);
 	} 
@@ -1285,7 +1310,7 @@ static void
 init_plugin(PurplePlugin *plugin)
 {
 	db_thread_func[PURPLE_DATABASE_LOGGER_INIT] = db_init;
-	db_notify_func[PURPLE_DATABASE_LOGGER_INIT] = NULL;
+	db_notify_func[PURPLE_DATABASE_LOGGER_INIT] = db_init_notify;
 
 	db_thread_func[PURPLE_DATABASE_LOGGER_WRITE] = db_write;
 	db_notify_func[PURPLE_DATABASE_LOGGER_WRITE] = db_write_notify;
