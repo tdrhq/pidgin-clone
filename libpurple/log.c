@@ -885,7 +885,6 @@ void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, void *da
 	callback_data->ret_sets = g_hash_table_new_full(log_set_hash, log_set_equal,
 											(GDestroyNotify)purple_log_set_free, NULL);
 
-	purple_debug_info("LOG", "--!! purple_log_get_log_sets_nonblocking !!--\n");
 	/* if there are no any loggers we should inform UI */
 	if (loggers == NULL) {
 		callback_data->counter++;
@@ -893,8 +892,9 @@ void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, void *da
 		return;
 	}
 
-	callback_data->counter = g_slist_length(loggers);
-
+	/* +1 is need special for log_get_log_sets_common_nonblocking call */
+	callback_data->counter = g_slist_length(loggers) + 1;
+	
 	/* Get the log sets from all the loggers. */
 	for (n = loggers; n; n = n->next) {
 		PurpleLogLogger *logger = n->data;
@@ -910,7 +910,6 @@ void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, void *da
 		} 
 	}
 
-	callback_data->counter++;
 	log_get_log_sets_common_nonblocking(callback_data->ret_sets, log_hash_cb, callback_data);
 }
 
