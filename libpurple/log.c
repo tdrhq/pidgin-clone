@@ -765,7 +765,7 @@ GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *
 	return g_list_sort(logs, purple_log_compare);
 }
 
-void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void * data)
+void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void *data)
 {
 	GSList *n;
 	struct _purple_log_callback_data *callback_data;
@@ -966,6 +966,38 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogLis
 		} else 
 			log_list_cb(NULL, callback_data);
 	}
+}
+
+PurpleLogContext *purple_log_context_new(PurpleDestroyContextCallback cb)
+{
+	PurpleLogContext *context = g_new0(PurpleLogContext, 1);
+	context->destroy_context_cb = cb;
+	return context;
+}
+
+void purple_log_context_set_userdata(PurpleLogContext *context, void *data)
+{
+	g_return_if_fail(context != NULL);
+	/* XXX: what should we do if context->user_data is not NULL */
+	context->user_data = data;
+}
+
+void *purple_log_context_get_userdata(PurpleLogContext *context)
+{
+	g_return_val_if_fail(context != NULL, NULL);
+	return context->user_data;
+}
+
+void purple_log_cancel_operation(PurpleLogContext *context)
+{
+	g_return_if_fail(context);
+	context->is_cancelled = TRUE;
+}
+
+gboolean purple_log_is_cancelled_operation(PurpleLogContext *context)
+{
+	g_return_val_if_fail(context != NULL, TRUE);
+	return context->is_cancelled;
 }
 
 /****************************************************************************

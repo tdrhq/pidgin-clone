@@ -38,6 +38,7 @@ typedef struct _PurpleLog PurpleLog;
 typedef struct _PurpleLogLogger PurpleLogLogger;
 typedef struct _PurpleLogCommonLoggerData PurpleLogCommonLoggerData;
 typedef struct _PurpleLogSet PurpleLogSet;
+typedef struct _PurpleLogContext PurpleLogContext;
 
 
 typedef enum {
@@ -62,6 +63,7 @@ typedef void (*PurpleLogBooleanCallback) (gboolean, void *);
 typedef void (*PurpleLogListCallback) (GList *list, void *);
 typedef void (*PurpleLogSizeCallback) (int size, void *);
 typedef void (*PurpleLogHashTableCallback) (GHashTable *table, void *);
+typedef void (*PurpleDestroyContextCallback) (PurpleLogContext *);
 
 
 // TODO: If we want this to be merged for a minor release instead of a major,
@@ -260,6 +262,12 @@ struct _PurpleLogSet {
 
 	/* IMPORTANT: Some code in log.c allocates these without zeroing them.
 	 * IMPORTANT: Update that code if you add members here. */
+};
+
+struct _PurpleLogContext {
+	PurpleDestroyContextCallback destroy_context_cb;
+	void *user_data;
+	gboolean is_cancelled;
 };
 
 #ifdef __cplusplus
@@ -714,6 +722,42 @@ gboolean purple_log_common_deleter(PurpleLog *log);
  * @return A boolean indicating if the log is deletable.
  */
 gboolean purple_log_common_is_deletable(PurpleLog *log);
+
+/**
+ * Create log context which used for nonblocking log calls
+ * @param cb     User callback which destroy log context data. NULL is valid argument
+ *
+ *
+ .* @return A created log context
+ */
+PurpleLogContext *purple_log_context_new(PurpleDestroyContextCallback cb);
+
+/**
+ * Set user data in context
+ * @param context     PurpleLogContext, in which user data will be inserted
+ * @param data     User data
+ *
+ */
+void purple_log_context_set_userdata(PurpleLogContext *context, void *data);
+
+/**
+ * Return user data for specified context
+ *
+ * @param context Context
+ *
+ * @return User data for context or NULL if context is empty
+ */
+void *purple_log_context_get_userdata(PurpleLogContext *context);
+
+/**
+
+ */
+void purple_log_cancel_operation(PurpleLogContext *context);
+
+/**
+
+ */
+gboolean purple_log_is_cancelled_operation(PurpleLogContext *context);
 
 /*@}*/
 
