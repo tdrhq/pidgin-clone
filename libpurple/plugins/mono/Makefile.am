@@ -13,7 +13,7 @@ all: $(mono_SCRIPTS)
 
 SUFFIXES = .cs .dll
 .cs.dll: api/PurpleAPI.dll $(mono_build_sources)
-	mcs -t:library -lib:./api -out:$@ -r:PurpleAPI.dll $<
+	gmcs -t:library -lib:./api -out:$@ -r:PurpleAPI.dll $<
 
 clean-local:
 	rm -f $(mono_SCRIPTS)

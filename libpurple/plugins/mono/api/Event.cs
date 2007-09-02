@@ -13,9 +13,9 @@ namespace Purple
 			signal = s;
 		}
 	
-		public void connect(object plugin, Signal.Handler handler)
+		public void connect(IntPtr plugin, Delegate handler)
 		{
-			Signal.connect(handle, plugin, signal, handler);
+			Signal.connect(handle, signal, plugin, handler, IntPtr.Zero);
 		}
 	}
 }

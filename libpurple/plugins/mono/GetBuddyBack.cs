@@ -1,3 +1,4 @@
+using System;
 using Purple;
 
 public class GetBuddyBack : Plugin
@@ -9,19 +10,25 @@ public class GetBuddyBack : Plugin
 	{
 	}
 
-	public void HandleSig(object[] args)
+	public void HandleSig(Buddy buddy, Status oldstatus, Status newstatus)
 	{
-		Buddy buddy = (Buddy)args[0];
-		
-		Debug.debug(Debug.INFO, "buddyback", "buddy " + buddy.Name + " is back!\n");
+		//Debug.debug(Debug.INFO, "buddyback", "Caught signal!\n");
+		Debug.debug(Debug.INFO, "buddyback", "buddy " + buddy.Alias + " went from " + oldstatus.Id + " to " + newstatus.Id + "\n");
+		Debug.debug(Debug.INFO, "buddyback", "account: " + buddy.PAccount.Username + ", " + buddy.PAccount.ProtocolId + "\n");
+	}
+
+	public void BuddySignedOn(Buddy buddy)
+	{
+		Debug.debug(Debug.INFO, "buddyback", "buddy: " + buddy.Alias + " signed on\n");
 	}
 	
 	public override void Load()
 	{
 		Debug.debug(Debug.INFO, "buddyback", "loading...\n");
 		
-		/*Signal.connect(BuddyList.GetHandle(), this, "buddy-back", new Signal.Handler(HandleSig));*/
-		BuddyList.OnBuddyStatusChanged.connect(this, new Signal.Handler(HandleSig));
+		//BuddyList.OnBuddyStatusChanged.connect(this.Handle, new Signal.VOID__POINTER_POINTER_POINTER(HandleSig));
+		BuddyList.OnBuddyStatusChanged.connect(this.Handle, new BuddyList.BuddyStatusChangedHandle(HandleSig));
+		BuddyList.OnBuddySignedOn.connect(this.Handle, new BuddyList.BuddySignedOnHandle(BuddySignedOn));
 	}
 	
 	public override void Unload()

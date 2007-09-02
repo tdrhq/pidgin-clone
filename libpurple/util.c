@@ -69,6 +69,12 @@ struct _PurpleUtilFetchUrlData
 static char *custom_user_dir = NULL;
 static char *home_dir = NULL;
 
+int ml_strlen(char* s)
+{
+	return strlen(s);
+}
+
+
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
                      GList *children)

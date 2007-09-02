@@ -1,0 +1,24 @@
+all: libtest.so test embed.exe
+
+libtest.so: libtest.o
+	gcc -shared -o libtest.so libtest.o
+	
+libtest.o: libtest.c
+	gcc -c libtest.c `pkg-config --cflags glib-2.0`
+	
+test: test.o
+	gcc -o test test.o -L. -ltest `pkg-config --libs mono`
+	
+test.o: test.c
+	gcc -c test.c `pkg-config --cflags mono`
+	
+embed.exe: embed.cs
+	gmcs embed.cs
+	
+.PHONY: clean
+
+clean:
+	rm *.o
+	rm *.exe
+	rm *.so
+	rm test

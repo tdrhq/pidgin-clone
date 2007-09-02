@@ -1,3 +1,6 @@
+using System;
+using System.Runtime.CompilerServices;
+
 namespace Purple {
 	public class PluginInfo {
 		private string id;
@@ -63,5 +66,14 @@ namespace Purple {
 		public PluginInfo Info {
 			get { return info; }
 		}
+
+		public IntPtr Handle {
+			get {
+				return _plugin_get_handle(this);
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern IntPtr _plugin_get_handle(object plugin);
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using Purple;
 
 public class MPlugin : Plugin
@@ -9,13 +10,13 @@ public class MPlugin : Plugin
 	{
 	}
 
-	public void HandleSig(object[] args)
+	public void HandleSig(IntPtr p)
 	{
-		Buddy buddy = (Buddy)args[0];
+		/*Buddy buddy = (Buddy)args[0];
 		Status old_status = (Status)args[1];
 		Status status = (Status)args[2];
 		
-		Debug.debug(Debug.INFO, "mplug", "buddy " + buddy.Name + " went from " + old_status.Id + " to " + status.Id + "\n");
+		Debug.debug(Debug.INFO, "mplug", "buddy " + buddy.Name + " went from " + old_status.Id + " to " + status.Id + "\n");*/
 	}
 	
 	public override void Load()
@@ -23,7 +24,7 @@ public class MPlugin : Plugin
 		Debug.debug(Debug.INFO, "mplug", "loading...\n");
 		
 		/*Signal.connect(BuddyList.GetHandle(), this, "buddy-away", new Signal.Handler(HandleSig));*/
-		BuddyList.OnBuddyStatusChanged.connect(this, new Signal.Handler(HandleSig));
+		/*BuddyList.OnBuddyStatusChanged.connect(this.Handle, new Signal.Handler(HandleSig));*/
 	}
 	
 	public override void Unload()

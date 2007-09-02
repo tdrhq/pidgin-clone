@@ -154,6 +154,17 @@ void purple_debug_set_enabled(gboolean enabled);
  */
 gboolean purple_debug_is_enabled(void);
 
+/**
+ * Allows limiting of console debug output to specific categories.
+ *
+ * @param categroy The category to allow (or @c NULL to allow any category).
+ */
+ 
+ /*
+  * Please see comment block in debug.c for this function
+  */
+void purple_debug_add_allowed_category(gchar *category);
+
 /*@}*/
 
 /**************************************************************************/

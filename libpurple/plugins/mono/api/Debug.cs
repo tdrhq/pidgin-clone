@@ -1,5 +1,5 @@
 using System;
-using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Purple
 {
@@ -12,17 +12,17 @@ namespace Purple
 		public static int ERROR = 4;
 		public static int FATAL = 5;
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern private static void _debug(int type, string cat, string str);
+		[DllImport("libpurple")]
+		extern private static void purple_debug(int type, string cat, string str);
 		
 		public static void debug(int type, string cat, string format)
 		{
-			_debug(type, cat, format);
+			purple_debug(type, cat, format);
 		}
 		
 		public static void debug(int type, string cat, string format, params object[] args)
 		{
-			_debug(type, cat, String.Format(format, args));
+			purple_debug(type, cat, String.Format(format, args));
 		}
 	}
 }

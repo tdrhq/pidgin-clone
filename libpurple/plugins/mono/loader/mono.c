@@ -25,10 +25,7 @@
 static gboolean probe_mono_plugin(PurplePlugin *plugin)
 {
 	MonoAssembly *assm;
-	MonoMethod *m = NULL;
 	MonoObject *plugin_info;
-	gboolean found_load = FALSE, found_unload = FALSE, found_destroy = FALSE;
-	gpointer iter = NULL;
 
 	PurplePluginInfo *info;
 	PurpleMonoPlugin *mplug;
@@ -41,53 +38,40 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 		return FALSE;
 	} 
 
-	purple_debug(PURPLE_DEBUG_INFO, "mono", "Probing plugin\n");
+	purple_debug_info("mono", "Probing plugin\n");
 
 	if (ml_is_api_dll(mono_assembly_get_image(assm))) {
-		purple_debug(PURPLE_DEBUG_INFO, "mono", "Found our PurpleAPI.dll\n");
+		purple_debug_info("mono", "Found our PurpleAPI.dll\n");
 		return FALSE;
 	}
 
 	info = g_new0(PurplePluginInfo, 1);
 	mplug = g_new0(PurpleMonoPlugin, 1);
-	
-	mplug->signal_data = NULL;
 
 	mplug->assm = assm;
 
 	mplug->klass = ml_find_plugin_class(mono_assembly_get_image(mplug->assm));
 	if (!mplug->klass) {
-		purple_debug(PURPLE_DEBUG_ERROR, "mono", "no plugin class in \'%s\'\n", file);
+		purple_debug_error("mono", "no plugin class in \'%s\'\n", file);
+		g_free(info);
+		g_free(mplug);
 		return FALSE;
 	}
 
+	mplug->load = mono_class_get_method_from_name(mplug->klass, "Load", 0);
+	mplug->unload = mono_class_get_method_from_name(mplug->klass, "Unload", 0);
+	mplug->destroy = mono_class_get_method_from_name(mplug->klass, "Destroy", 0);
+
 	mplug->obj = mono_object_new(ml_get_domain(), mplug->klass);
 	if (!mplug->obj) {
-		purple_debug(PURPLE_DEBUG_ERROR, "mono", "obj not valid\n");
+		purple_debug_error("mono", "obj not valid\n");
+		g_free(info);
+		g_free(mplug);
 		return FALSE;
 	}
 
 	mono_runtime_object_init(mplug->obj);
 
-	while ((m = mono_class_get_methods(mplug->klass, &iter))) {
-		purple_debug_info("mono", "plugin method: %s\n", mono_method_get_name(m));
-		if (strcmp(mono_method_get_name(m), "Load") == 0) {
-			mplug->load = m;
-			found_load = TRUE;
-		} else if (strcmp(mono_method_get_name(m), "Unload") == 0) {
-			mplug->unload = m;
-			found_unload = TRUE;
-		} else if (strcmp(mono_method_get_name(m), "Destroy") == 0) {
-			mplug->destroy = m;
-			found_destroy = TRUE;
-		}
-	}
-
-	if (!(found_load && found_unload && found_destroy)) {
-		purple_debug(PURPLE_DEBUG_ERROR, "mono", "did not find the required methods\n");
-		return FALSE;
-	}
-	
 	plugin_info = ml_get_info_prop(mplug->obj);
 
 	/* now that the methods are filled out we can populate
@@ -112,8 +96,6 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 				
 	plugin->info = info;
 	info->extra_info = mplug;
-
-	ml_add_plugin(mplug);
 
 	return purple_plugin_register(plugin);
 }
@@ -142,9 +124,6 @@ static gboolean unload_mono_plugin(PurplePlugin *plugin)
 	mplug = (PurpleMonoPlugin*)plugin->info->extra_info;
 
 	purple_signals_disconnect_by_handle((gpointer)mplug->klass);
-	g_list_foreach(mplug->signal_data, (GFunc)g_free, NULL);
-	g_list_free(mplug->signal_data);
-	mplug->signal_data = NULL;
 
 	ml_invoke(mplug->unload, mplug->obj, NULL);
 
@@ -237,6 +216,7 @@ static PurplePluginInfo info =
 
 static void init_plugin(PurplePlugin *plugin)
 {
+	g_module_make_resident(plugin->handle);
 	ml_init();
 	
 	loader_info.exts = g_list_append(loader_info.exts, "dll");
