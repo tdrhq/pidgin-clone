@@ -57,14 +57,38 @@ typedef enum {
 typedef void (*PurpleLogSetCallback) (GHashTable *sets, PurpleLogSet *set);
 
 /* Log callback functions */
-typedef void (*PurpleLogVoidCallback) (void *);
-typedef void (*PurpleLogReadCallback) (char *text, PurpleLogReadFlags *flags, void *);
-typedef void (*PurpleLogBooleanCallback) (gboolean, void *);
-typedef void (*PurpleLogListCallback) (GList *list, void *);
-typedef void (*PurpleLogSizeCallback) (int size, void *);
-typedef void (*PurpleLogHashTableCallback) (GHashTable *table, void *);
-typedef void (*PurpleDestroyContextCallback) (PurpleLogContext *);
+typedef void (*PurpleLogFreeCallback) (PurpleLog *log, PurpleLogContext *context);
+typedef void (*PurpleLogReadCallback) (char *text, PurpleLog *log, PurpleLogReadFlags *flags, 
+									PurpleLogContext *context);
+typedef void (*PurpleLogWriteCallback) (int size, PurpleLog *log, PurpleMessageFlags flags, 
+									const char *from, time_t time, char *message, PurpleLogContext *context);
+typedef void (*PurpleLogRemoveLogCallback) (gboolean result, PurpleLog *log, PurpleLogContext *context);
+typedef void (*PurpleLogListCallback) (GList *list, PurpleLogType type, const char *name, 
+									PurpleAccount *account, PurpleLogContext *context);
+typedef void (*PurpleLogSystemListCallback) (GList *list, PurpleAccount *account, PurpleLogContext *context);
+typedef void (*PurpleLogSizeCallback) (int size, PurpleLog *log, PurpleLogContext *context);
+typedef void (*PurpleLogTotalSizeCallback) (int size, PurpleLogType type, const char *name, PurpleAccount *account, 
+										PurpleLogContext *context);
+typedef void (*PurpleLogHashTableCallback) (GHashTable *table, PurpleLogContext *context);
 
+typedef void (*PurpleLogDestroyContextCallback) (void *data);
+
+/* Logger callback functions */
+typedef void (*PurpleLogLoggerCreateLogCallback) (PurpleLog *log, void *data);
+typedef PurpleLogLoggerCreateLogCallback PurpleLogLoggerFinalizeCallback;
+
+typedef void (*PurpleLogLoggerReadCallback) (char *text, PurpleLog *log, PurpleLogReadFlags *flags, 
+									void *data);
+typedef void (*PurpleLogLoggerWriteCallback) (int size, PurpleLog *log, PurpleMessageFlags flags, 
+									char *from, time_t time, char *message, void *data);
+typedef void (*PurpleLogLoggerRemoveLogCallback) (gboolean result, PurpleLog *log, void *data);
+typedef void (*PurpleLogLoggerListCallback) (GList *list, PurpleLogType type, char *name, 
+									PurpleAccount *account, void *data);
+typedef void (*PurpleLogLoggerSystemListCallback) (GList *list, PurpleAccount *account, void *data);
+typedef void (*PurpleLogLoggerSizeCallback) (int size, PurpleLog *log, void *data);
+typedef void (*PurpleLogLoggerTotalSizeCallback) (int size, PurpleLogType type, char *name, PurpleAccount *account, 
+										void *data);
+typedef void (*PurpleLogLoggerHashTableCallback) (void *data);
 
 // TODO: If we want this to be merged for a minor release instead of a major,
 // TODO: we need to use the padding for our new functions. As there is not
@@ -96,7 +120,7 @@ struct _PurpleLogLogger {
 	/** This gets called when the log is first created.
 	    I don't think this is actually needed.
 	    Note: provides callback to make call non-blockable */
-	void (*create_nonblocking)(PurpleLog *log, PurpleLogVoidCallback cb, void *data);
+	void (*create_nonblocking)(PurpleLog *log, PurpleLogLoggerCreateLogCallback cb, PurpleLogContext *context);
 
 	/** This is used to write to the log file */
 	gsize (*write)(PurpleLog *log,
@@ -109,10 +133,10 @@ struct _PurpleLogLogger {
 	    Note: provides callback to make call non-blockable */
 	void (*write_nonblocking)(PurpleLog *log,
 		     PurpleMessageFlags type,
-		     const char *from,
+		     char *from,
 		     time_t time,
 		     char *message, 
-			 PurpleLogSizeCallback cb, 
+			 PurpleLogLoggerWriteCallback cb,
 			 void *data);
  
 	/** Called when the log is destroyed */
@@ -120,14 +144,14 @@ struct _PurpleLogLogger {
 
 	/** Called when the log is destroyed 
 	    Note: provides callback to make call non-blockable */
-	void (*finalize_nonblocking)(PurpleLog *log, PurpleLogVoidCallback cb, void *data);
+	void (*finalize_nonblocking)(PurpleLog *log, PurpleLogLoggerFinalizeCallback cb, void *data);
 
 	/** This function returns a sorted GList of available PurpleLogs */
 	GList *(*list)(PurpleLogType type, const char *name, PurpleAccount *account);
 
 	/** This function returns a sorted GList of available PurpleLogs 
 	  * Note: provides callback to make call non-blockable */
-	void (*list_nonblocking)(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, void *data);
+	void (*list_nonblocking)(PurpleLogType type, char *name, PurpleAccount *account, PurpleLogLoggerListCallback cb, void *data);
 
 	/** Given one of the logs returned by the logger's list function,
 	 *  this returns the contents of the log in GtkIMHtml markup */
@@ -136,7 +160,7 @@ struct _PurpleLogLogger {
 	/** Given one of the logs returned by the logger's list function,
 	 *  this returns the contents of the log in GtkIMHtml markup 
 	 * Note: provides callback to make call non-blockable */
-	void (*read_nonblocking)(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogReadCallback cb, void *data);
+	void (*read_nonblocking)(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogLoggerReadCallback cb, void *data);
 
 	/** Given one of the logs returned by the logger's list function,
 	 *  this returns the size of the log in bytes */
@@ -145,7 +169,7 @@ struct _PurpleLogLogger {
 	/** Given one of the logs returned by the logger's list function,
 	*  this returns the size of the log in bytes 
 	* Note: provides callback to make call non-blockable */
-	void (*size_nonblocking)(PurpleLog *log, PurpleLogSizeCallback cb, void *data);
+	void (*size_nonblocking)(PurpleLog *log, PurpleLogLoggerSizeCallback cb, void *data);
 
 	/** Returns the total size of all the logs. If this is undefined a default
 	 *  implementation is used */
@@ -154,14 +178,14 @@ struct _PurpleLogLogger {
 	/** Returns the total size of all the logs. If this is undefined a default
 	 *  implementation is used
  	 * Note: provides callback to make call non-blockable */
-	void (*total_size_nonblocking)(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogSizeCallback cb, void *data);
+	void (*total_size_nonblocking)(PurpleLogType type, char *name, PurpleAccount *account, PurpleLogLoggerTotalSizeCallback cb, void *data);
 
 	/** This function returns a sorted GList of available system PurpleLogs */
 	GList *(*list_syslog)(PurpleAccount *account);
 
 	/** This function returns a sorted GList of available system PurpleLogs 
 	   * Note: provides callback to make call non-blockable */
-	void (*list_syslog_nonblocking)(PurpleAccount *account, PurpleLogListCallback cb, void *data);
+	void (*list_syslog_nonblocking)(PurpleAccount *account, PurpleLogLoggerSystemListCallback cb, void *data);
 
 	/** Adds PurpleLogSets to a GHashTable. By passing the data in the PurpleLogSets
 	 *  to list, the caller can get every available PurpleLog from the logger.
@@ -182,15 +206,15 @@ struct _PurpleLogLogger {
 	 *  Loggers which implement this function must create a PurpleLogSet,
 	 *  then call @a cb with @a sets and the newly created PurpleLogSet. 
 	 * Note: provides callback to make call non-blockable */
-	void (*get_log_sets_nonblocking)(PurpleLogSetCallback cb, GHashTable *sets, 
-		PurpleLogVoidCallback cb1, void *data);
+	void (*get_log_sets_nonblocking)(PurpleLogSetCallback set_cb, GHashTable *sets, 
+		PurpleLogLoggerHashTableCallback cb, void *data);
 
 	/* Attempts to delete the specified log, indicating success or failure */
 	gboolean (*remove)(PurpleLog *log);
 
 	/* Attempts to delete the specified log, indicating success or failure 
 	 * Note: provides callback to make call non-blockable */
-	void (*remove_nonblocking)(PurpleLog *log, PurpleLogBooleanCallback cb, void *data);
+	void (*remove_nonblocking)(PurpleLog *log, PurpleLogLoggerRemoveLogCallback cb, void *data);
 
 	/* Tests whether a log is deletable */
 	gboolean (*is_deletable)(PurpleLog *log);
@@ -264,10 +288,13 @@ struct _PurpleLogSet {
 	 * IMPORTANT: Update that code if you add members here. */
 };
 
+/*TODO: short comments */
 struct _PurpleLogContext {
-	PurpleDestroyContextCallback destroy_context_cb;
-	void *user_data;
-	gboolean is_cancelled;
+	PurpleLogDestroyContextCallback destroy_user_data_cb;  
+	void *user_data;                                  /* user data */
+	gboolean is_cancelled;                            /* flag means should we make non-blocking callback calls with this context */
+	gboolean is_closed;                               /* flag means that this context is closed for new calls*/
+	int ref_count;                                    /* */
 };
 
 #ifdef __cplusplus
@@ -309,7 +336,7 @@ void purple_log_free(PurpleLog *log);
  * @param cb           The callback (optional: NULL value is valid)
  * @param data         User data
  */
-void purple_log_free_nonblocking(PurpleLog *log, PurpleLogVoidCallback cb, void *data);
+void purple_log_free_nonblocking(PurpleLog *log, PurpleLogFreeCallback cb, PurpleLogContext *context);
 
 /**
  * Writes to a log file. Assumes you have checked preferences already.
@@ -344,8 +371,8 @@ void purple_log_write_nonblocking(PurpleLog *log,
 		    const char *from,
 		    time_t time,
 		    char *message,
-			PurpleLogBooleanCallback cb, 
-			void *data);
+			PurpleLogWriteCallback cb, 
+			PurpleLogContext *context);
 
 /**
  * Reads from a log
@@ -366,7 +393,7 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags);
  * @param data  User data
  */
 void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, 
-								PurpleLogReadCallback cb, void *data);
+								PurpleLogReadCallback cb, PurpleLogContext *context);
 
 /**
  * Returns a list of all available logs
@@ -389,7 +416,7 @@ GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *
  * @param data                User data
  */
 void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, 
-									PurpleLogListCallback cb, void *data);
+									PurpleLogListCallback cb, PurpleLogContext *context);
 
 /**
  * Returns a GHashTable of PurpleLogSets.
@@ -426,7 +453,7 @@ GHashTable *purple_log_get_log_sets(void);
  * @param cb      The callback
  * @param data    User data
 */
-void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, void *data);
+void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, PurpleLogContext *context);
 
 /**
  * Returns a list of all available system logs
@@ -443,7 +470,7 @@ GList *purple_log_get_system_logs(PurpleAccount *account);
  * @param cb                  The callback
  * @param data                User data
  */
-void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogListCallback cb, void *data);
+void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogSystemListCallback cb, PurpleLogContext *context);
 
 /**
  * Returns the size of a log
@@ -461,7 +488,7 @@ int purple_log_get_size(PurpleLog *log);
  * @param cb                  The callback
  * @param data                User data
  */
-void purple_log_get_size_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, void *data);
+void purple_log_get_size_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, PurpleLogContext *context);
 
 /**
  * Returns the size, in bytes, of all available logs in this conversation
@@ -483,7 +510,8 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
  * @param cb                  The callback
  * @param data                User data
  */
-void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogSizeCallback cb, void *data);
+void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, 
+									PurpleLogTotalSizeCallback cb,  PurpleLogContext *context);
 
 /**
  * Tests whether a log is deletable
@@ -512,7 +540,7 @@ gboolean purple_log_delete(PurpleLog *log);
  * @param cb                  The callback (optional: NULL value is valid)
  * @param data                User data
  */
-void purple_log_delete_nonblocking(PurpleLog *log, PurpleLogBooleanCallback cb, void *data);
+void purple_log_delete_nonblocking(PurpleLog *log, PurpleLogRemoveLogCallback cb, PurpleLogContext *context);
 
 /**
  * Returns the default logger directory Purple uses for a given account
@@ -616,7 +644,7 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name,
  */
 void purple_log_common_lister_nonblocking(PurpleLogType type, const char *name, 
 								PurpleAccount *account, const char *ext, 
-								PurpleLogLogger *logger, PurpleLogListCallback cb, void *data);
+								PurpleLogLogger *logger, PurpleLogListCallback cb, PurpleLogContext *context);
 
 /**
  * Returns the total size of all the logs for a given user, with
@@ -661,7 +689,7 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name,
  */
 void purple_log_common_total_sizer_nonblocking(PurpleLogType type, const char *name,
 								PurpleAccount *account, const char *ext,
-								PurpleLogSizeCallback cb, void *data);
+								PurpleLogTotalSizeCallback cb, PurpleLogContext *context);
 
 /**
  * Returns the size of a given PurpleLog.
@@ -691,7 +719,7 @@ int purple_log_common_sizer(PurpleLog *log);
  * @param cb       The callback 
  * @param data     User data
  */
-void purple_log_common_sizer_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, void *data);
+void purple_log_common_sizer_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, PurpleLogContext *context);
 
 /**
  * Deletes a log
@@ -727,10 +755,22 @@ gboolean purple_log_common_is_deletable(PurpleLog *log);
  * Create log context which used for nonblocking log calls
  * @param cb     User callback which destroy log context data. NULL is valid argument
  *
- *
  .* @return A created log context
  */
-PurpleLogContext *purple_log_context_new(PurpleDestroyContextCallback cb);
+PurpleLogContext *purple_log_context_new(PurpleLogDestroyContextCallback cb);
+
+/**
+ * Mark context as closed, this mean that no calls will be made with this context
+ *
+ * @param context     Context
+ */
+void purple_log_context_close(PurpleLogContext *context);
+
+/**
+ * 
+ *
+ */
+gboolean purple_log_is_closed_context(PurpleLogContext *context);
 
 /**
  * Set user data in context
@@ -750,7 +790,7 @@ void purple_log_context_set_userdata(PurpleLogContext *context, void *data);
 void *purple_log_context_get_userdata(PurpleLogContext *context);
 
 /**
-
+ *
  */
 void purple_log_cancel_operation(PurpleLogContext *context);
 
