@@ -57,10 +57,10 @@ typedef struct {
 	DatabaseOperationType type;
 	PurpleLog * log;
 	PurpleMessageFlags flags;
-	const char *from;
+	char *from;
 	time_t time;
 	char *message;
-	PurpleLogSizeCallback cb;
+	PurpleLogLoggerWriteCallback cb;
 	void *data;
 	int ret_value;
 } DatabaseWriteOperation;
@@ -69,7 +69,7 @@ typedef struct {
 	DatabaseOperationType type;
 	PurpleLog * log;
 	PurpleLogReadFlags *flags;
-	PurpleLogReadCallback cb;
+	PurpleLogLoggerReadCallback cb;
 	void *data;
 	char *ret_value;
 } DatabaseReadOperation;
@@ -79,7 +79,7 @@ typedef struct {
 	PurpleLogType log_type;
 	char *name;
 	PurpleAccount *account;
-	PurpleLogListCallback cb;
+	PurpleLogLoggerListCallback cb;
 	void *data;
 	GList *ret_value;
 } DatabaseListOperation;
@@ -87,7 +87,7 @@ typedef struct {
 typedef struct {
 	DatabaseOperationType type;
 	PurpleAccount *account;
-	PurpleLogListCallback cb;
+	PurpleLogLoggerSystemListCallback cb;
 	void *data;
 	GList *ret_value;
 } DatabaseSyslogListOperation;
@@ -95,7 +95,7 @@ typedef struct {
 typedef struct {
 	DatabaseOperationType type;
 	PurpleLog *log;
-	PurpleLogSizeCallback cb;
+	PurpleLogLoggerSizeCallback cb;
 	void *data;
 	int ret_value;
 } DatabaseSizeOperation;
@@ -103,9 +103,9 @@ typedef struct {
 typedef struct {
 	DatabaseOperationType type;
 	PurpleLogType log_type;
-	const char *name;
+	char *name;
 	PurpleAccount *account;
-	PurpleLogSizeCallback cb;
+	PurpleLogLoggerTotalSizeCallback cb;
 	void *data;
 	int ret_value;
 } DatabaseTotalSizeOperation;
@@ -113,7 +113,7 @@ typedef struct {
 typedef struct {
 	DatabaseOperationType type;
 	GHashTable *sets;
-	PurpleLogVoidCallback cb;
+	PurpleLogLoggerHashTableCallback cb;
 	void *data;
 	GHashTable *ret_value;
 } DatabaseSetsOperation;
@@ -121,7 +121,7 @@ typedef struct {
 typedef struct {
 	DatabaseOperationType type;
 	PurpleLog *log;
-	PurpleLogBooleanCallback cb;
+	PurpleLogLoggerRemoveLogCallback cb;
 	void *data;
 	gboolean ret_value;
 } DatabaseRemoveLogOperation;
@@ -153,8 +153,8 @@ static char *db_current_pref_path(const char *pref)
 }
 
 static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
-							  const char *from, time_t time, char *message,
-							  PurpleLogSizeCallback cb, void *data)
+							  char *from, time_t time, char *message,
+							  PurpleLogLoggerWriteCallback cb, void *data)
 {
 	purple_debug_info("Database Logger", "Database logger write functions called\n");
 	if (log == NULL || from == NULL || message == NULL)
@@ -175,12 +175,12 @@ static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 		purple_debug_info("Database Logger", "Database logger write operation was added\n");
 		db_add_operation(op);
 	} else {
-		cb(0, data);
+		cb(0, log, type, from, time, message, data);
 	}
 }
 
 static void database_logger_read(PurpleLog *log, PurpleLogReadFlags *flags,
-							PurpleLogReadCallback cb, void *data)
+							PurpleLogLoggerReadCallback cb, void *data)
 {
 	if (log == NULL)
 		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\n", log);
@@ -196,12 +196,12 @@ static void database_logger_read(PurpleLog *log, PurpleLogReadFlags *flags,
 
 		db_add_operation(op);
 	} else {
-		cb(NULL, flags, data);
+		cb(NULL, log, flags, data);
 	}
 }
 
 static void database_logger_list(PurpleLogType type, char *name, PurpleAccount *account, 
-								PurpleLogListCallback cb, void *data)
+								PurpleLogLoggerListCallback cb, void *data)
 {
 	if (name == NULL || account == NULL)
 		purple_debug_info("Database Logger", "ERROR wrong arguments: name= %x\t account = %x\n", name, account);
@@ -218,11 +218,11 @@ static void database_logger_list(PurpleLogType type, char *name, PurpleAccount *
 
 		db_add_operation(op);
 	} else {
-		cb(NULL, data);
+		cb(NULL, type, name, account, data);
 	}
 }
 
-static void database_logger_list_syslog(PurpleAccount *account, PurpleLogListCallback cb, void *data)
+static void database_logger_list_syslog(PurpleAccount *account, PurpleLogLoggerSystemListCallback cb, void *data)
 {
 	if (account != NULL)
 		purple_debug_info("Database Logger", "ERROR wrong arguments: account= %x\n", account);
@@ -237,11 +237,11 @@ static void database_logger_list_syslog(PurpleAccount *account, PurpleLogListCal
 
 		db_add_operation(op);
 	} else {
-		cb(NULL, data);
+		cb(NULL, account, data);
 	}
 }
 
-static void database_logger_size(PurpleLog *log, PurpleLogSizeCallback cb, void *data)
+static void database_logger_size(PurpleLog *log, PurpleLogLoggerSizeCallback cb, void *data)
 {
 	if (log == NULL)
 		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\n", log);
@@ -256,12 +256,12 @@ static void database_logger_size(PurpleLog *log, PurpleLogSizeCallback cb, void 
 
 		db_add_operation(op);
 	} else {
-		cb(0, data);
+		cb(0, log, data);
 	}
 }
 
-static void database_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account,
-									PurpleLogSizeCallback cb, void *data)
+static void database_logger_total_size(PurpleLogType type, char *name, PurpleAccount *account,
+									PurpleLogLoggerTotalSizeCallback cb, void *data)
 {
 	if (name == NULL || account == NULL)
 		purple_debug_info("Database Logger", "ERROR wrong arguments: name = %x\t account = %x\n", name, account);
@@ -278,11 +278,11 @@ static void database_logger_total_size(PurpleLogType type, const char *name, Pur
 
 		db_add_operation(op);
 	} else {
-		cb(0, data);
+		cb(0, type, name, account, data);
 	}
 }
 
-static void database_logger_sets(GHashTable *sets, PurpleLogVoidCallback cb, void *data)
+static void database_logger_sets(GHashTable *sets, PurpleLogLoggerHashTableCallback cb, void *data)
 {
 	if (sets != NULL)
 		purple_debug_info("Database Logger", "ERROR wrong arguments: sets = %x\n", sets);
@@ -301,7 +301,7 @@ static void database_logger_sets(GHashTable *sets, PurpleLogVoidCallback cb, voi
 	}
 }
 
-static void database_logger_remove_log(PurpleLog *log, PurpleLogBooleanCallback cb, void *data)
+static void database_logger_remove_log(PurpleLog *log, PurpleLogLoggerRemoveLogCallback cb, void *data)
 {
 	if (log == NULL)
 		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\n", log);
@@ -316,7 +316,7 @@ static void database_logger_remove_log(PurpleLog *log, PurpleLogBooleanCallback 
 
 		db_add_operation(op);
 	} else {
-		cb(FALSE, data);
+		cb(FALSE, log, data);
 	}
 }
 
@@ -341,7 +341,8 @@ static void db_write_notify(gpointer data)
 	DatabaseWriteOperation *op = data;
 
 	if (op->cb != NULL) {
-		op->cb(op->ret_value, op->data);
+		op->cb(op->ret_value, op->log, op->flags, op->from, 
+			op->time, op->message, op->data);
 	}
 }
 
@@ -350,7 +351,7 @@ static void db_read_notify(gpointer data)
 	DatabaseReadOperation *op = data;
 
 	if (op->cb != NULL) {
-		op->cb(op->ret_value, op->flags, op->data);
+		op->cb(op->ret_value, op->log, op->flags, op->data);
 	}
 }
 
@@ -358,7 +359,7 @@ static void db_list_notify(gpointer data)
 {
 	DatabaseListOperation *op = data;
 	if (op->cb != NULL) {
-		op->cb(op->ret_value, op->data);
+		op->cb(op->ret_value, op->type, op->name, op->account, op->data);
 	}
 }
 
@@ -366,7 +367,7 @@ static void db_syslog_list_notify(gpointer data)
 {
 	DatabaseSyslogListOperation *op = data;
 	if (op->cb != NULL) {
-		op->cb(op->ret_value, op->data);
+		op->cb(op->ret_value, op->account, op->data);
 	}
 }
 
@@ -374,7 +375,7 @@ static void db_size_notify(gpointer data)
 {
 	DatabaseSizeOperation *op = data;
 	if (op->cb != NULL) {
-		op->cb(op->ret_value, op->data);
+		op->cb(op->ret_value, op->log, op->data);
 	}
 }
 
@@ -390,7 +391,7 @@ static void db_total_size_notify(gpointer data)
 {
 	DatabaseTotalSizeOperation *op = data;
 	if (op->cb != NULL) {
-		op->cb(op->ret_value, op->data);
+		op->cb(op->ret_value, op->type, op->name, op->account, op->data);
 	}
 }
 
@@ -398,7 +399,7 @@ static void db_remove_notify(gpointer data)
 {
 	DatabaseRemoveLogOperation *op = data;
 	if (op->cb != NULL) {
-		op->cb(op->ret_value, op->data);
+		op->cb(op->ret_value, op->log, op->data);
 	}
 }
 
