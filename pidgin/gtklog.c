@@ -52,11 +52,11 @@ struct log_viewer_hash_t {
 struct _pidgin_log_data {
 	PidginLogViewer *log_viewer;
 
-	PurpleLogVoidCallback done_cb;
-	int counter;
-
-	gboolean need_continue;
+	gboolean is_window_open;
 	gulong destroy_handler_id;
+
+	gpointer reserved1;
+	gpointer reserved2;
 };
 
 static guint log_viewer_hash(gconstpointer data)
@@ -132,25 +132,24 @@ static void pidgin_log_search_done_cb(void *data)
 {
 	struct _pidgin_log_data *pidgin_log_data = data;
 
-	pidgin_log_data->counter--;
+	select_first_log(pidgin_log_data->log_viewer);
+	pidgin_clear_cursor(pidgin_log_data->log_viewer->window);
 
-	if (!pidgin_log_data->counter) {
-		select_first_log(pidgin_log_data->log_viewer);
-		pidgin_clear_cursor(pidgin_log_data->log_viewer->window);
-
-		g_free(pidgin_log_data);
-	}
+	g_free(pidgin_log_data);
 }
 
-static void pidgin_log_search_cb(char *text, PurpleLogReadFlags *flags, void *data)
+static void pidgin_log_search_cb(char *text, PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogContext *context)
 {
-	gpointer *pidgin_log_data_wrapper = data;
-	struct _pidgin_log_data *pidgin_log_data = pidgin_log_data_wrapper[0];
-	char *search_term = pidgin_log_data_wrapper[2];
-	
+	struct _pidgin_log_data *pidgin_log_data;
+	char *search_term;
+
+	g_return_if_fail(context != NULL);
+
+	pidgin_log_data = purple_log_context_get_userdata(context);
+	search_term = pidgin_log_data->reserved1;
+
 	if (text && text && purple_strcasestr(text, search_term)) {
 		GtkTreeIter iter;
-		PurpleLog *log = pidgin_log_data_wrapper[1];
 
 		gtk_tree_store_append (pidgin_log_data->log_viewer->treestore, &iter, NULL);
 		gtk_tree_store_set(pidgin_log_data->log_viewer->treestore, &iter,
@@ -158,9 +157,6 @@ static void pidgin_log_search_cb(char *text, PurpleLogReadFlags *flags, void *da
 				   1, log, -1);
 	}
 	g_free(text);
-	g_free(pidgin_log_data_wrapper);
-
-	pidgin_log_data->done_cb(pidgin_log_data);
 }
 
 static void search_cb(GtkWidget *button, PidginLogViewer *lv)
@@ -168,6 +164,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	const char *search_term = gtk_entry_get_text(GTK_ENTRY(lv->entry));
 	struct _pidgin_log_data *pidgin_log_data;
 	GList *logs;
+	PurpleLogContext *read_context;
 
 	if (!(*search_term)) {
 		/* reset the tree */
@@ -195,20 +192,17 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	gtk_tree_store_clear(lv->treestore);
 	gtk_imhtml_clear(GTK_IMHTML(lv->imhtml));
 
+	read_context = purple_log_context_new(pidgin_log_search_done_cb);
+
 	pidgin_log_data= g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_search_done_cb;
-	pidgin_log_data->counter = g_list_length(lv->logs);
 	pidgin_log_data->log_viewer = lv;
+	pidgin_log_data->reserved1 = (gpointer)search_term;
+	purple_log_context_set_userdata(read_context, pidgin_log_data);
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
-		gpointer *pidgin_log_data_wrapper = g_new(gpointer, 3);
-
-		pidgin_log_data_wrapper[0] = pidgin_log_data;
-		pidgin_log_data_wrapper[1] = logs->data;
-		pidgin_log_data_wrapper[2] = (char *)search_term;
-
-		purple_log_read_nonblocking((PurpleLog*)logs->data, NULL, pidgin_log_search_cb, pidgin_log_data_wrapper);
+		purple_log_read_nonblocking((PurpleLog*)logs->data, NULL, pidgin_log_search_cb, read_context);
 	}
+	purple_log_context_close(read_context);
 }
 
 static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
@@ -284,9 +278,13 @@ static void delete_log_cleanup_cb(gpointer *data)
 	g_free(data);
 }
 
-static void pidgin_log_delete_log_cb(gboolean result, void *data)
+static void pidgin_log_delete_log_cb(gboolean result, PurpleLog *log, PurpleLogContext *context)
 {
-	gpointer *temp = data;
+	gpointer *temp;
+
+	g_return_if_fail(context != NULL);
+
+	temp = purple_log_context_get_userdata(context);
 	if (!result) {
 		purple_notify_error(NULL, NULL, "Log Deletion Failed",
 		                  "Check permissions and try again.");
@@ -319,7 +317,10 @@ static void pidgin_log_delete_log_cb(gboolean result, void *data)
 
 static void delete_log_cb(gpointer *data)
 {
-	purple_log_delete_nonblocking((PurpleLog *)data[2], pidgin_log_delete_log_cb, data);
+	PurpleLogContext *context = purple_log_context_new(NULL);
+	purple_log_context_set_userdata(context, data);
+	purple_log_delete_nonblocking((PurpleLog *)data[2], pidgin_log_delete_log_cb, context);
+	purple_log_context_close(context);
 }
 
 static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
@@ -475,11 +476,12 @@ static gboolean search_find_cb(gpointer data)
 	return FALSE;
 }
 
-static void pigdin_log_read_cb(char *text, PurpleLogReadFlags *flags, void *data)
+static void pigdin_log_read_cb(char *text, PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogContext *context)
 {
-	gpointer *temp = data;
-	struct _pidgin_log_data *pidgin_log_data = temp[0];
-	PurpleLog *log = temp[1];
+	struct _pidgin_log_data *pidgin_log_data;
+
+	g_return_if_fail(context != NULL);
+	pidgin_log_data = purple_log_context_get_userdata(context);
 
 	gtk_imhtml_clear(GTK_IMHTML(pidgin_log_data->log_viewer->imhtml));
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(pidgin_log_data->log_viewer->imhtml),
@@ -498,8 +500,6 @@ static void pigdin_log_read_cb(char *text, PurpleLogReadFlags *flags, void *data
 	}
 
 	pidgin_clear_cursor(pidgin_log_data->log_viewer->window);
-	g_free(pidgin_log_data);
-	g_free(data);
 }
 
 static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
@@ -508,7 +508,8 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	GtkTreeModel *model = GTK_TREE_MODEL(viewer->treestore);
 	PurpleLog *log = NULL;
 	struct _pidgin_log_data *pidgin_log_data;
-	gpointer *data;
+	PurpleLogContext *read_context;
+
 	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
 		return;
 
@@ -538,12 +539,11 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
 	pidgin_log_data->log_viewer = viewer;
 
-	data = g_new(gpointer, 2);
-	data[0] = pidgin_log_data;
-	data[1] = log;
+	read_context = purple_log_context_new(g_free);
+	purple_log_context_set_userdata(read_context, pidgin_log_data);
 
-	purple_log_read_nonblocking(log, &viewer->flags, pigdin_log_read_cb, data);
-
+	purple_log_read_nonblocking(log, &viewer->flags, pigdin_log_read_cb, read_context);
+	purple_log_context_close(read_context);
 }
 
 /* I want to make this smarter, but haven't come up with a cool algorithm to do so, yet.
@@ -750,51 +750,63 @@ static void pidgin_log_done_cb(void *data)
 	struct _pidgin_log_data *pidgin_log_data = data;
 	PidginLogViewer *log_viewer = pidgin_log_data->log_viewer;
 
-	pidgin_log_data->counter--;
+	if (pidgin_log_data->is_window_open) {
+		g_signal_handler_disconnect(log_viewer->window, pidgin_log_data->destroy_handler_id);
 
-	if (!pidgin_log_data->counter) {
+		purple_timeout_remove(log_viewer->pulser);
+		gtk_widget_hide(log_viewer->progress_bar);
 
-		if (pidgin_log_data->need_continue == TRUE) {
-			g_signal_handler_disconnect(log_viewer->window, pidgin_log_data->destroy_handler_id);
+		// TODO: We should only select the first log
+		// TODO: if one is not already selected.
+		select_first_log(log_viewer);
+	} 
 
-			purple_timeout_remove(log_viewer->pulser);
-			gtk_widget_hide(log_viewer->progress_bar);
-
-			// TODO: We should only select the first log
-			// TODO: if one is not already selected.
-			select_first_log(log_viewer);
-		} 
-
-		g_free(pidgin_log_data);
-	}
+	g_free(pidgin_log_data);
 }
 
-static void pidgin_log_size_cb(int size, void *data)
+static void pidgin_log_size_cb(int size, PurpleLogType type, const char *name, 
+								PurpleAccount *account, PurpleLogContext *context)
 {
-	struct _pidgin_log_data *pidgin_log_data = data;
+	struct _pidgin_log_data *pidgin_log_data;
 
-	if (pidgin_log_data->need_continue == TRUE)
+	g_return_if_fail(context != NULL);
+
+	pidgin_log_data = purple_log_context_get_userdata(context);
+
+	if (pidgin_log_data->is_window_open == TRUE)
 		set_log_viewer_log_size(pidgin_log_data->log_viewer, size);
-
-	pidgin_log_data->done_cb(pidgin_log_data);
 }
 
-static void pidgin_log_list_cb(GList *list, void *data)
+static void pidgin_log_list_cb(GList *list, PurpleLogType type, const char *name, 
+								PurpleAccount *account, PurpleLogContext *context)
 {
-	struct _pidgin_log_data *pidgin_log_data = data;
+	struct _pidgin_log_data *pidgin_log_data;
 
-	if (list != NULL) {
-		if (pidgin_log_data->need_continue == TRUE)
-			append_log_viewer_logs(pidgin_log_data->log_viewer, list);
-	} else
-		pidgin_log_data->done_cb(pidgin_log_data);
+	g_return_if_fail(context != NULL);
+
+	pidgin_log_data = purple_log_context_get_userdata(context);
+
+	if (list != NULL && pidgin_log_data->is_window_open)
+		append_log_viewer_logs(pidgin_log_data->log_viewer, list);
+}
+
+static void pidgin_log_system_list_cb(GList *list, PurpleAccount *account, PurpleLogContext *context)
+{
+	struct _pidgin_log_data *pidgin_log_data;
+
+	g_return_if_fail(context != NULL);
+
+	pidgin_log_data = purple_log_context_get_userdata(context);
+
+	if (list != NULL && pidgin_log_data->is_window_open)
+		append_log_viewer_logs(pidgin_log_data->log_viewer, list);
 }
 
 static void pidgin_window_destroy_cb(GtkWidget *w, void *data)
 {
 	struct _pidgin_log_data *callback_data = data;
 	/* mark that log window has destroyed*/
-	callback_data->need_continue = FALSE;
+	callback_data->is_window_open = FALSE;
 	/* stop progress bar pulser */
 	purple_timeout_remove(callback_data->log_viewer->pulser);
 }
@@ -805,6 +817,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	const char *name = screenname;
 	char *title;
 	struct _pidgin_log_data *pidgin_log_data;
+	PurpleLogContext *log_context;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(screenname != NULL);
@@ -843,26 +856,22 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	}
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_done_cb;
 
-	/* we should set count of nonblocking  calls
-	    when counter will be zero
-	    we free all data and make neccessary operations
-	    we have 2 nonblocking calls: 
-	    purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking  */
-
-	pidgin_log_data->counter = 2; 
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
 	g_free(title);
 	pidgin_log_data->destroy_handler_id = g_signal_connect(G_OBJECT(pidgin_log_data->log_viewer->window), "destroy", 
 							G_CALLBACK(pidgin_window_destroy_cb), pidgin_log_data);
 
-	pidgin_log_data->need_continue = TRUE;
+	pidgin_log_data->is_window_open = TRUE;
 
-	purple_log_get_logs_nonblocking(type, screenname, account, pidgin_log_list_cb, pidgin_log_data);
+	log_context = purple_log_context_new(pidgin_log_done_cb);
+	purple_log_context_set_userdata(log_context, pidgin_log_data);
+
+	purple_log_get_logs_nonblocking(type, screenname, account, pidgin_log_list_cb, log_context);
 	purple_log_get_total_size_nonblocking(type, screenname, account, 
-										pidgin_log_size_cb, pidgin_log_data);
+										pidgin_log_size_cb, log_context);
+	purple_log_context_close(log_context);
 }
 
 void pidgin_log_show_contact(PurpleContact *contact) {
@@ -874,7 +883,7 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 	const char *name = NULL;
 	char *title;
 	struct _pidgin_log_data *pidgin_log_data;
-	int buddy_list_size = 0;
+	PurpleLogContext *log_context;
 
 	g_return_if_fail(contact != NULL);
 
@@ -909,45 +918,37 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 	}
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_done_cb;
 
 	title = g_strdup_printf(_("Conversations with %s"), name);
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 											image, TRUE);
 	g_free(title);
 
-	/*XXX Maybe need to be new function in blish.h */
-	for (child = contact->node.child; child; child = child->next) 
-		buddy_list_size++;
-
-	/* we should set count of nonblocking  calls
-	    when counter will be zero
-	    we free all data and make neccessary operations 
-	    we have 2 nonblocking calls: purple_log_get_logs_nonblocking andpurple_log_get_total_size_nonblocking 
-	    so we need multiply 2 on iteration count */
-	pidgin_log_data->counter = 2 * buddy_list_size;
 	pidgin_log_data->destroy_handler_id = g_signal_connect(G_OBJECT(pidgin_log_data->log_viewer->window), "destroy", 
 							G_CALLBACK(pidgin_window_destroy_cb), pidgin_log_data);
 
-	pidgin_log_data->need_continue = TRUE;
+	pidgin_log_data->is_window_open = TRUE;
+
+	log_context = purple_log_context_new(pidgin_log_done_cb);
+	purple_log_context_set_userdata(log_context, pidgin_log_data);
+
 	for (child = contact->node.child ; child ; child = child->next) {
 		if (PURPLE_BLIST_NODE_IS_BUDDY(child)) {
 			purple_log_get_logs_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, 
-				((PurpleBuddy *)child)->account, pidgin_log_list_cb, pidgin_log_data);
+				((PurpleBuddy *)child)->account, pidgin_log_list_cb, log_context);
 			purple_log_get_total_size_nonblocking(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, 
-				((PurpleBuddy *)child)->account, pidgin_log_size_cb, pidgin_log_data);
+				((PurpleBuddy *)child)->account, pidgin_log_size_cb, log_context);
 
-		} else {
-			pidgin_log_list_cb(NULL, pidgin_log_data);
-			pidgin_log_size_cb(0, pidgin_log_data);
-		}
+		} 
 	}
+	purple_log_context_close(log_context);
 }
 
 void pidgin_syslog_show()
 {
 	GList *accounts = NULL;
 	struct _pidgin_log_data *pidgin_log_data;
+	PurpleLogContext *log_context;
 
 	if (syslog_viewer != NULL) {
 		gtk_window_present(GTK_WINDOW(syslog_viewer->window));
@@ -955,24 +956,20 @@ void pidgin_syslog_show()
 	}
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
-	pidgin_log_data->done_cb = pidgin_log_done_cb;
 	syslog_viewer = pidgin_log_data->log_viewer = display_log_viewer_nonblocking(NULL, 
 														_("System Log"), NULL, FALSE);
 
-	accounts = purple_accounts_get_all();
-	/* we should set count of nonblocking  calls
-	    when counter will be zero
-	    we free all data and make neccessary operations */
-	pidgin_log_data->counter = g_list_length(accounts);
-	pidgin_log_data->need_continue = TRUE;
-	for(; accounts != NULL; accounts = accounts->next) {
+	pidgin_log_data->is_window_open = TRUE;
 
+	log_context = purple_log_context_new(pidgin_log_done_cb);
+	purple_log_context_set_userdata(log_context, pidgin_log_data);
+
+	for(; accounts != NULL; accounts = accounts->next) {
 		PurpleAccount *account = (PurpleAccount *)accounts->data;
 		if(purple_find_prpl(purple_account_get_protocol_id(account)) != NULL)
-			purple_log_get_system_logs_nonblocking(account, pidgin_log_list_cb, pidgin_log_data);
-		else 
-			pidgin_log_list_cb(NULL, pidgin_log_data);
+			purple_log_get_system_logs_nonblocking(account, pidgin_log_system_list_cb, log_context);
 	}
+	purple_log_context_close(log_context);
 }
 
 /****************************************************************************
