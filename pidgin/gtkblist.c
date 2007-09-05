@@ -6124,12 +6124,14 @@ struct {
 } queue;
 
 static void
-total_size_for_buddy(int size, void *data)
+total_size_for_buddy(int size, PurpleLogType type, char *name, PurpleAccount *account, PurpleLogContext *context)
 {
-	PurpleBlistNode *node = data;
+	PurpleBlistNode *node;
+	g_return_if_fail(context != NULL);
+	node = purple_log_context_get_userdata(context);
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
-	
+
 	purple_blist_node_set_int(node, "log_size", size);
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		pidgin_blist_update_buddy(purple_get_blist(), node, FALSE);
@@ -6142,8 +6144,11 @@ update_log_size_cb(gpointer null)
 {
 	while (queue.updates) {
 		PurpleBuddy *buddy = queue.updates->data;
+		PurpleLogContext *context = purple_log_context_new(NULL);
+		purple_log_context_set_userdata(context, buddy);
 		purple_log_get_total_size_nonblocking(PURPLE_LOG_IM,
-				buddy->name, buddy->account, total_size_for_buddy, buddy);
+				buddy->name, buddy->account, total_size_for_buddy, context);
+		purple_log_context_close(context);
 		queue.updates = g_list_delete_link(queue.updates, queue.updates);
 	}
 	queue.timer = 0;
