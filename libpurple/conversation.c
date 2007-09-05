@@ -40,6 +40,7 @@ static GList *ims = NULL;
 static GList *chats = NULL;
 static PurpleConversationUiOps *default_ops = NULL;
 static GHashTable *histories = NULL;
+typedef void (*VoidCallback) (void *data);
 
 void
 purple_conversations_set_ui_ops(PurpleConversationUiOps *ops)
@@ -744,40 +745,38 @@ purple_conversation_is_logging(const PurpleConversation *conv)
 static void log_purple_conversation_close_logs_free_cb(void *data) 
 {
 	gpointer *callback_data = data;
-	int *counter =callback_data[0];
-	*counter--; //counter
 
-	if (!callback_data[0]) {
-		PurpleConversation *conv = callback_data[1];
-		PurpleLogVoidCallback cb = callback_data[2];
+	PurpleConversation *conv = callback_data[0];
+	VoidCallback cb = callback_data[1];
 
-		g_list_free(conv->logs);
-		conv->logs = NULL;
-		if (cb != NULL)
-			cb(callback_data[3]);
+	if (cb != NULL)
+		cb(callback_data[2]);
 
+	g_list_free(conv->logs);
+	conv->logs = NULL;
 
-		g_free(counter);
-		g_free(callback_data);
-	}
+	g_free(callback_data);
 }
 
-void purple_conversation_close_logs(PurpleConversation *conv, PurpleLogVoidCallback cb, void *data)
+void purple_conversation_close_logs(PurpleConversation *conv, VoidCallback cb, void *data)
 {
-	gpointer *callback_data = g_new(gpointer, 4);
+	gpointer *callback_data;
 	GList *logs = conv->logs;
-	int *counter = g_new(int, 1);
+	PurpleLogContext *context;
 
 	g_return_if_fail(conv != NULL);
+	context = purple_log_context_new(log_purple_conversation_close_logs_free_cb);
+	callback_data = g_new(gpointer, 3);
 
-	*counter = g_list_length(conv->logs);
-	callback_data[0] = counter;
-	callback_data[1] = conv;
-	callback_data[2] = cb;
-	callback_data[3] = data;
+	callback_data[0] = conv;
+	callback_data[1] = cb;
+	callback_data[2] = data;
+
+	purple_log_context_set_userdata(context, callback_data);
 
 	for (; logs; logs = g_list_next(logs))
-		purple_log_free_nonblocking(logs->data, log_purple_conversation_close_logs_free_cb, callback_data);
+		purple_log_free_nonblocking(logs->data, NULL, context);
+	purple_log_context_close(context);
 }
 
 PurpleConvIm *
