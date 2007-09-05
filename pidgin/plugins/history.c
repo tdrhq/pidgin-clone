@@ -44,15 +44,18 @@ static gboolean _scroll_imhtml_to_end(gpointer data)
 	return FALSE;
 }
 
-static void historize_log_read_cb(char *text, PurpleLogReadFlags *flags, void *data)
+static void historize_log_read_cb(char *text, PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogContext *context)
 {
-	struct _historize_callback_data *callback_data = data;
+	struct _historize_callback_data *callback_data;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
 	PidginConversation *gtkconv;
 	char *header;
 	char *protocol;
 	char *text_backup = NULL;
 	char *imhtml_text;
+
+	g_return_if_fail(context != NULL);
+	callback_data = purple_log_context_get_userdata(context);
 
 	gtkconv = PIDGIN_CONVERSATION(callback_data->conv);
 
@@ -119,37 +122,53 @@ static PurpleLog *get_last_log(GList *list, PurpleLog *last_log)
 	return last_log;
 }
 
-static void historize_log_list_cb(GList *list, void *data)
+static void historize_log_list_cb(GList *list, PurpleLogType type, const char *name, 
+									PurpleAccount *account, PurpleLogContext *context)
 {
-	struct _historize_callback_data *callback_data = data;
+	struct _historize_callback_data *callback_data;
+
+	g_return_if_fail(context != NULL);
+
+	callback_data = purple_log_context_get_userdata(context);
 
 	if (list != NULL)
 		callback_data->log = get_last_log(list, callback_data->log);
-	else if (callback_data->log != NULL)
-				purple_log_read_nonblocking(callback_data->log, &callback_data->flags, 
-										historize_log_read_cb, callback_data);
-	else
-		g_free(callback_data);
+	else if (callback_data->log != NULL) {
+		PurpleLogContext *read_context = purple_log_context_new(g_free);
+		purple_log_context_set_userdata(read_context, callback_data);
+		purple_log_read_nonblocking(callback_data->log, &callback_data->flags, 
+								historize_log_read_cb, read_context);
+		purple_log_context_close(read_context);
+	}
 }
 
-static void historize_log_collector_cb(GList *list, void *data)
+static void historize_log_collector_cb(GList *list, PurpleLogType type, const char *name, 
+									PurpleAccount *account, PurpleLogContext *context)
 {
-	struct _historize_callback_data *callback_data = data;
+	struct _historize_callback_data *callback_data;
+
+	g_return_if_fail(context != NULL);
+
+	callback_data = purple_log_context_get_userdata(context);
 
 	if (list != NULL)
 		callback_data->log = get_last_log(list, callback_data->log);
-	else {
-		callback_data->counter--;
+}
 
-		if (!callback_data->counter) {
-			if (callback_data->log == NULL) {
-				purple_debug_info("historize_log_collector_cb", "making purple_log_get_logs_nonblocking call");
-				purple_log_get_logs_nonblocking(PURPLE_LOG_IM, callback_data->name, 
-						callback_data->account, historize_log_list_cb, callback_data);
-			} else
-				historize_log_list_cb(NULL, callback_data);
-		}
-	}
+static void historize_log_collector_finish_cb(void *data)
+{
+	struct _historize_callback_data *callback_data = data;
+
+	PurpleLogContext *list_context = purple_log_context_new(NULL);
+	purple_log_context_set_userdata(list_context, callback_data);
+	if (callback_data->log == NULL)
+		purple_log_get_logs_nonblocking(PURPLE_LOG_IM, callback_data->name, 
+				callback_data->account, historize_log_list_cb, list_context);
+	else
+		historize_log_list_cb(NULL, PURPLE_LOG_IM, callback_data->name, 
+				callback_data->account, list_context);
+	purple_log_context_close(list_context);
+
 }
 
 static void historize(PurpleConversation *c)
@@ -165,6 +184,7 @@ static void historize(PurpleConversation *c)
 		GSList *buddies;
 		GSList *cur;
 		struct _historize_callback_data *callback_data = g_new0(struct _historize_callback_data, 1);
+		PurpleLogContext *context = purple_log_context_new(historize_log_collector_finish_cb);
 
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
@@ -184,17 +204,15 @@ static void historize(PurpleConversation *c)
 		callback_data->account = account;
 		callback_data->alias = alias;
 
+		purple_log_context_set_userdata(context, callback_data);
+
 		for (cur = buddies; cur != NULL; cur = cur->next)
 		{
 			PurpleBlistNode *node = cur->data;
 			if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 			{
 				PurpleBlistNode *node2;
-
 				alias = purple_buddy_get_contact_alias((PurpleBuddy *)node);
-
-				for (node2 = node->parent->child ; node2 != NULL ; node2 = node2->next)
-					callback_data->counter++;
 
 				/* We've found a buddy that matches this conversation.  It's part of a
 				 * PurpleContact with more than one PurpleBuddy.  Loop through the PurpleBuddies
@@ -203,19 +221,16 @@ static void historize(PurpleConversation *c)
 					purple_log_get_logs_nonblocking(PURPLE_LOG_IM,
 							purple_buddy_get_name((PurpleBuddy *)node2),
 							purple_buddy_get_account((PurpleBuddy *)node2), 
-							historize_log_collector_cb, callback_data);
-				/* free buddies list and exit */
-				g_slist_free(buddies);
-				return;
+							historize_log_collector_cb, context);
 			}
 		}
 		/* free buddies list */
 		g_slist_free(buddies);
-		purple_log_get_logs_nonblocking(PURPLE_LOG_IM, callback_data->name, 
-			callback_data->account, historize_log_list_cb, callback_data);
+		purple_log_context_close(context);
 	}
 	else if (convtype == PURPLE_CONV_TYPE_CHAT){
 		struct _historize_callback_data *callback_data;
+		PurpleLogContext *context = purple_log_context_new(NULL);
 
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
@@ -226,8 +241,10 @@ static void historize(PurpleConversation *c)
 
 		callback_data->conv = c;
 		callback_data->alias = alias;
+		purple_log_context_set_userdata(context, callback_data);
 		purple_log_get_logs_nonblocking(PURPLE_LOG_CHAT, name, account, 
-								historize_log_list_cb, callback_data);
+								historize_log_list_cb, context);
+		purple_log_context_close(context);
 	}
 }
 
