@@ -72,7 +72,7 @@ static void _qq_sys_msg_log_write(PurpleConnection *gc, gchar *msg, gchar *from)
 
 	purple_log_context_set_userdata(context, log);
 	purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM, from,
-			time(NULL), g_strdup(msg), NULL, log);
+			time(NULL), g_strdup(msg), NULL, context);
 	purple_log_context_close(context);
 }
 
