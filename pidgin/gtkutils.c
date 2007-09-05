@@ -2022,18 +2022,23 @@ static void
 pidgin_add_completion_list_finished_cb(PidginCompletionData *data);
 
 static void 
-log_get_log_sets_cb(GHashTable *sets, void *data)
+log_get_log_sets_cb(GHashTable *sets, PurpleLogContext *context)
 {
-	PidginCompletionData *data1 = data;
-	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, data1);
+	PidginCompletionData *data;
+
+	g_return_if_fail(context != NULL);
+
+	data = purple_log_context_get_userdata(context);
+
+	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, data);
 	g_hash_table_destroy(sets);
 
 #ifndef NEW_STYLE_COMPLETION
-	g_completion_add_items(data1->completion, data1->log_items);
+	g_completion_add_items(data->completion, data->log_items);
 	g_list_free(data1->log_items);
 #endif /* NEW_STYLE_COMPLETION  */
 
-	pidgin_add_completion_list_finished_cb(data1);
+	pidgin_add_completion_list_finished_cb(data);
 }
 
 static void
@@ -2042,6 +2047,7 @@ add_completion_list(PidginCompletionData *data)
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PidginFilterBuddyCompletionEntryFunc filter_func = data->filter_func;
 	gpointer user_data = data->filter_func_user_data;
+	PurpleLogContext *context;
 
 #ifdef NEW_STYLE_COMPLETION
 	gtk_list_store_clear(data->store);
@@ -2089,8 +2095,11 @@ add_completion_list(PidginCompletionData *data)
 	g_list_free(item);
 	data->log_items = NULL;
 #endif /* NEW_STYLE_COMPLETION */
+	context = purple_log_context_new(NULL);
+	purple_log_context_set_userdata(context, data);
 
-	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, data);
+	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, context);
+	purple_log_context_close(context);
 }
 
 static void
