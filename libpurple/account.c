@@ -2008,8 +2008,13 @@ purple_account_get_log(PurpleAccount *account, gboolean create)
 	return account->system_log;
 }
 
-static void purple_account_destroy_log_cb(void *data)
+static void purple_account_destroy_log_cb(PurpleLog *log, PurpleLogContext *context)
 {
+	gpointer data;
+
+	g_return_if_fail(context != NULL);
+
+	data = purple_log_context_get_userdata(context);
 	((PurpleAccount *) data)->system_log = NULL;
 }
 
@@ -2018,8 +2023,12 @@ purple_account_destroy_log(PurpleAccount *account)
 {
 	g_return_if_fail(account != NULL);
 
-	if(account->system_log)
-		purple_log_free_nonblocking(account->system_log, purple_account_destroy_log_cb, account);
+	if(account->system_log) {
+		PurpleLogContext *context = purple_log_context_new(NULL);
+		purple_log_context_set_userdata(context, account);
+		purple_log_free_nonblocking(account->system_log, purple_account_destroy_log_cb, context);
+		purple_log_context_close(context);
+	}
 }
 
 void
