@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
 */
 
 /*
@@ -416,6 +416,25 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	{
 		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
+		/*
+		 * The buffer is currently empty, so reset the current input
+		 * and output positions to the start of the buffer.  We do
+		 * this so that the next chunk of data that we put into the
+		 * buffer can be read back out of the buffer in one fell swoop.
+		 * Otherwise it gets fragmented and we have to read from the
+		 * second half of the buffer than go back and read the rest of
+		 * the chunk from the first half.
+		 *
+		 * We're using TCP, which is a stream based protocol, so this
+		 * isn't supposed to matter.  However, experience has shown
+		 * that at least the proxy file transfer code in AIM 6.1.41.2
+		 * requires that the entire OFT frame arrive all at once.  If
+		 * the frame is fragmented then AIM freaks out and aborts the
+		 * file transfer.  Somebody should teach those guys how to
+		 * write good TCP code.
+		 */
+		conn->buffer_outgoing->inptr = conn->buffer_outgoing->buffer;
+		conn->buffer_outgoing->outptr = conn->buffer_outgoing->buffer;
 		return;
 	}
 

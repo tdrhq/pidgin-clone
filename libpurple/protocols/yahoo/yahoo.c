@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -3030,6 +3030,11 @@ static void yahoo_close(PurpleConnection *gc) {
 	if (yd->ycht)
 		ycht_connection_close(yd->ycht);
 
+	g_free(yd->pending_chat_room);
+	g_free(yd->pending_chat_id);
+	g_free(yd->pending_chat_topic);
+	g_free(yd->pending_chat_goto);
+
 	g_free(yd);
 	gc->proto_data = NULL;
 }
@@ -3441,7 +3446,7 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	if (!set_cookie) {
 		struct yahoo_data *yd = gc->proto_data;
-		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.");
+		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.\n");
 		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
 	}
 
@@ -3500,7 +3505,7 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 static void yahoo_show_chat_goto(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input(gc, NULL, _("Join who in chat?"), NULL,
+	purple_request_input(gc, NULL, _("Join whom in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL,

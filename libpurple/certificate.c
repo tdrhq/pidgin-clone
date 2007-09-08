@@ -23,7 +23,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include <glib.h>
@@ -580,7 +580,12 @@ PurpleCertificateVerifier x509_singleuse = {
 	"x509",                         /* Scheme name */
 	"singleuse",                    /* Verifier name */
 	x509_singleuse_start_verify,    /* start_verification function */
-	x509_singleuse_destroy_request  /* Request cleanup operation */
+	x509_singleuse_destroy_request, /* Request cleanup operation */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 
@@ -872,7 +877,13 @@ static PurpleCertificatePool x509_ca = {
 	x509_ca_get_cert,             /* Cert retriever */
 	x509_ca_put_cert,             /* Cert writer */
 	x509_ca_delete_cert,          /* Cert remover */
-	x509_ca_get_idlist            /* idlist retriever */
+	x509_ca_get_idlist,           /* idlist retriever */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
+
 };
 
 
@@ -1034,7 +1045,12 @@ static PurpleCertificatePool x509_tls_peers = {
 	x509_tls_peers_get_cert,      /* Cert retriever */
 	x509_tls_peers_put_cert,      /* Cert writer */
 	x509_tls_peers_delete_cert,   /* Cert remover */
-	x509_tls_peers_get_idlist     /* idlist retriever */
+	x509_tls_peers_get_idlist,    /* idlist retriever */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 
@@ -1083,10 +1099,13 @@ static void
 x509_tls_cached_show_cert(x509_tls_cached_ua_ctx *c, gint id)
 {
 	PurpleCertificate *disp_crt = c->vrq->cert_chain->data;
-	purple_certificate_display_x509(disp_crt);
 
 	/* Since clicking a button closes the request, show it again */
 	x509_tls_cached_user_auth(c->vrq, c->reason);
+
+	/* Show the certificate AFTER re-opening the dialog so that this
+	   appears above the other */
+	purple_certificate_display_x509(disp_crt);
 
 	x509_tls_cached_ua_ctx_free(c);
 }
@@ -1205,7 +1224,14 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	/* Load up the cached certificate */
 	cached_crt = purple_certificate_pool_retrieve(
 		tls_peers, vrq->subject_name);
-	g_assert(cached_crt);
+	if ( !cached_crt ) {
+		purple_debug_error("certificate/x509/tls_cached",
+				   "Lookup failed on cached certificate!\n"
+				   "It was here just a second ago. Forwarding "
+				   "to cert_changed.\n");
+		/* vrq now becomes the problem of cert_changed */
+		x509_tls_cached_peer_cert_changed(vrq);
+	}
 
 	/* Now get SHA1 sums for both and compare them */
 	/* TODO: This is not an elegant way to compare certs */
@@ -1338,7 +1364,14 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 
 	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
 	g_free(ca_id);
-	g_assert(ca_crt);
+	if (!ca_crt) {
+		purple_debug_error("certificate/x509/tls_cached",
+				   "Certificate authority disappeared out "
+				   "underneath me!\n");
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_INVALID);
+		return;
+	}
 	
 	/* Check the signature */
 	if ( !purple_certificate_signed_by(end_crt, ca_crt) ) {
@@ -1375,9 +1408,11 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 						 "tls_peers");
 
 	if (tls_peers) {
-		g_assert(purple_certificate_pool_store(tls_peers,
-						       vrq->subject_name,
-						       peer_crt) );
+		if (!purple_certificate_pool_store(tls_peers,vrq->subject_name,
+						   peer_crt) ) {
+			purple_debug_error("certificate/x509/tls_cached",
+					   "FAILED to cache peer certificate\n");
+		}
 	} else {
 		purple_debug_error("certificate/x509/tls_cached",
 				   "Unable to locate tls_peers certificate "
@@ -1440,7 +1475,13 @@ static PurpleCertificateVerifier x509_tls_cached = {
 	"x509",                         /* Scheme name */
 	"tls_cached",                   /* Verifier name */
 	x509_tls_cached_start_verify,   /* Verification begin */
-	x509_tls_cached_destroy_request /* Request cleanup */
+	x509_tls_cached_destroy_request,/* Request cleanup */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
+
 };
 
 /****************************************************************************/
@@ -1790,7 +1831,6 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	GByteArray *sha_bin;
 	gchar *cn;
 	time_t activation, expiration;
-	/* Length of these buffers is dictated by 'man ctime_r' */
 	gchar *activ_str, *expir_str;
 	gchar *secondary;
 
@@ -1807,7 +1847,11 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	/* Get the certificate times */
 	/* TODO: Check the times against localtime */
 	/* TODO: errorcheck? */
-	g_assert(purple_certificate_get_times(crt, &activation, &expiration));
+	if (!purple_certificate_get_times(crt, &activation, &expiration)) {
+		purple_debug_error("certificate",
+				   "Failed to get certificate times!\n");
+		activation = expiration = 0;
+	}
 	activ_str = g_strdup(ctime(&activation));
 	expir_str = g_strdup(ctime(&expiration));
 

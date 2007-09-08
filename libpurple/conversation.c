@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "blist.h"
@@ -909,6 +909,10 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 
 	displayed = g_strdup(message);
 
+	if (who == NULL || *who == '\0')
+		who = purple_conversation_get_name(conv);
+	alias = who;
+
 	plugin_return =
 		GPOINTER_TO_INT(purple_signal_emit_return_1(
 			purple_conversations_get_handle(),
@@ -922,11 +926,6 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		g_free(displayed);
 		return;
 	}
-
-	if (who == NULL || *who == '\0')
-		who = purple_conversation_get_name(conv);
-
-	alias = who;
 
 	if (account != NULL) {
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));

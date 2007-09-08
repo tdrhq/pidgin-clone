@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #ifndef _YAHOO_H_
@@ -130,6 +130,10 @@ struct yahoo_data {
 	gboolean chat_online;
 	gboolean in_chat;
 	char *chat_name;
+	char *pending_chat_room;
+	char *pending_chat_id;
+	char *pending_chat_topic;
+	char *pending_chat_goto;
 	char *auth;
 	gsize auth_written;
 	char *cookie_y;

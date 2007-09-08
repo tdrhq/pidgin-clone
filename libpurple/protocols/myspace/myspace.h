@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #ifndef _MYSPACE_MYSPACE_H
@@ -91,12 +91,16 @@
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION         697
 
+/* Check for a newer official MySpaceIM client on startup?
+ * (Mostly useful for developers) */
+/*#define MSIM_CHECK_NEWER_VERSION*/
+
 /* Language codes from http://www.microsoft.com/globaldev/reference/oslocversion.mspx */
 #define MSIM_LANGUAGE_ID_ENGLISH    1033
 #define MSIM_LANGUAGE_NAME_ENGLISH  "ENGLISH"
 
 /* msimprpl version string of this plugin */
-#define MSIM_PRPL_VERSION_STRING    "0.16"
+#define MSIM_PRPL_VERSION_STRING    "0.18"
 
 /* Default server */
 #define MSIM_SERVER                 "im.myspace.akadns.net"
@@ -186,10 +190,10 @@ typedef struct _MsimAttentionType MsimAttentionType;
 /** A type of "attention" message (zap, nudge, buzz, etc. depending on the
  * protocol) that can be sent and received. */
 struct _MsimAttentionType {
-	PurpleStoredImage *icon;
-	const gchar *description;		/**< Shown before sending. */
+	const gchar *name;	 	        /**< Shown before sending. */
 	const gchar *incoming_description;	/**< Shown when sent. */
 	const gchar *outgoing_description;	/**< Shown when received. */
+	const gchar *icon_name;
 };
 #endif
 

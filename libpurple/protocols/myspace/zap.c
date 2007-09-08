@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "myspace.h"
@@ -126,7 +126,7 @@ msim_send_zap(MsimSession *session, const gchar *username, guint code)
 	zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", code);
 
 	if (!msim_send_bm(session, username, zap_string, MSIM_BM_ACTION)) {
-		purple_debug_info("msim_send_zap_from_menu", "msim_send_bm failed: zapping %s with %s",
+		purple_debug_info("msim_send_zap_from_menu", "msim_send_bm failed: zapping %s with %s\n",
 				username, zap_string);
 		rc = FALSE;
 	} else {

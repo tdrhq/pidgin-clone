@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PIDGIN_CONVERSATION_H_
 #define _PIDGIN_CONVERSATION_H_
@@ -245,6 +245,13 @@ pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs);
  */
 void pidgin_conv_present_conversation(PurpleConversation *conv);
 
+/**
+ * Reattach Pidgin UI to a conversation.
+ *
+ * @param conv  The conversation.
+ *
+ * @return  Wheter Pidgin UI was successfully attached.
+ */
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 
 PidginWindow *pidgin_conv_get_window(PidginConversation *gtkconv);

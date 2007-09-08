@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -1036,12 +1036,14 @@ conv_page()
 		gtk_widget_set_sensitive(hbox, FALSE);
 	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(pidgin_toggle_sensitive), hbox);
 	g_signal_connect(G_OBJECT(font_button), "font-set", G_CALLBACK(pidgin_custom_font_set), NULL);
+	gtk_widget_show_all(hbox);
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
 	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0, GTK_PACK_START);
 
 	frame = pidgin_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
+	gtk_widget_show(frame);
 	gtk_widget_set_name(imhtml, "pidgin_prefs_font_imhtml");
 	gtk_widget_set_size_request(frame, 300, -1);
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
@@ -1068,7 +1070,7 @@ conv_page()
 					 G_CALLBACK(formatting_clear_cb), NULL);
 
 
-	gtk_widget_show_all(ret);
+	gtk_widget_show(ret);
 
 	return ret;
 }
@@ -1508,6 +1510,7 @@ sound_changed2_cb(const char *name, PurplePrefType type,
 
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
+#endif /* !_WIN32 */
 
 #ifdef USE_GSTREAMER
 static void
@@ -1522,7 +1525,6 @@ sound_changed3_cb(const char *name, PurplePrefType type,
 			!strcmp(method, "esd"));
 }
 #endif /* USE_GSTREAMER */
-#endif /* !_WIN32 */
 
 
 static void
@@ -1691,9 +1693,11 @@ sound_page()
 	int j;
 	const char *file;
 	char *pref;
+#if !defined _WIN32 || defined USE_GSTREAMER
+	GtkWidget *label;
+#endif
 #ifndef _WIN32
 	GtkWidget *dd;
-	GtkWidget *label;
 	GtkWidget *entry;
 	const char *cmd;
 #endif
