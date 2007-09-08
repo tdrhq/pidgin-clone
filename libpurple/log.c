@@ -805,7 +805,6 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
 		purple_debug_info("Log", "purple_log_get_logs_nonblocking is not completed due to cancelled operation or closed context\n");
 		return;
 	}
-
 	if (context != NULL)
 		log_context_inc_ref(context);
 
@@ -1059,7 +1058,8 @@ gboolean purple_log_is_cancelled_operation(PurpleLogContext *context)
 static void log_context_free(PurpleLogContext *context)
 {
 	g_return_if_fail(context != NULL);
-	context->destroy_user_data_cb(context->user_data);
+	if (context->destroy_user_data_cb != NULL)
+		context->destroy_user_data_cb(context->user_data);
 	g_free(context);
 }
 
@@ -1078,7 +1078,7 @@ static void log_context_dec_ref(PurpleLogContext *context)
 static void log_context_dec_ref_and_free(PurpleLogContext *context)
 {
 	log_context_dec_ref(context);
-	if (!log_context_count_ref(context)) 
+	if (!log_context_count_ref(context) && purple_log_is_closed_context(context)) 
 		log_context_free(context);
 }
 
@@ -1624,7 +1624,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 static void log_get_log_sets_common_nonblocking(GHashTable *sets, PurpleLogLoggerHashTableCallback cb, void *data)
 {
 	log_get_log_sets_common(sets);
-	if (cb) 
+	if (cb != NULL) 
 		cb(data);
 }
 
@@ -2640,6 +2640,7 @@ static void log_list_cb(GList *list, PurpleLogType type, char *name, PurpleAccou
 
 	/* Pass logs up to the caller. */
 	if (list != NULL) {
+
 		if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context))
 			callback_data->cb(list, type, name, account, callback_data->context);
 		else {
@@ -2653,6 +2654,7 @@ static void log_list_cb(GList *list, PurpleLogType type, char *name, PurpleAccou
 
 	if (!callback_data->counter) {
 		/* Let the caller know we're done. */
+
 		if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context))
 			callback_data->cb(NULL, type, name, account, callback_data->context);
 
