@@ -2019,7 +2019,7 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, PidginCompletion
 }
 
 static void
-pidgin_add_completion_list_finished_cb(PidginCompletionData *data);
+pidgin_add_completion_list_finished_cb(void *data1);
 
 static void 
 log_get_log_sets_cb(GHashTable *sets, PurpleLogContext *context)
@@ -2038,7 +2038,6 @@ log_get_log_sets_cb(GHashTable *sets, PurpleLogContext *context)
 	g_list_free(data1->log_items);
 #endif /* NEW_STYLE_COMPLETION  */
 
-	pidgin_add_completion_list_finished_cb(data);
 }
 
 static void
@@ -2073,7 +2072,6 @@ add_completion_list(PidginCompletionData *data)
 				PidginBuddyCompletionEntry entry;
 				entry.is_buddy = TRUE;
 				entry.entry.buddy = (PurpleBuddy *) bnode;
-
 				if (filter_func(&entry, user_data)) {
 #ifdef NEW_STYLE_COMPLETION
 					add_screenname_autocomplete_entry(data->store,
@@ -2095,7 +2093,7 @@ add_completion_list(PidginCompletionData *data)
 	g_list_free(item);
 	data->log_items = NULL;
 #endif /* NEW_STYLE_COMPLETION */
-	context = purple_log_context_new(NULL);
+	context = purple_log_context_new(pidgin_add_completion_list_finished_cb);
 	purple_log_context_set_userdata(context, data);
 
 	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, context);
@@ -2115,9 +2113,9 @@ screenname_autocomplete_destroyed_cb(GtkWidget *widget, PidginCompletionData *da
 }
 
 static void
-pidgin_add_completion_list_finished_cb(PidginCompletionData *data)
+pidgin_add_completion_list_finished_cb(void *data1)
 {
-
+	PidginCompletionData *data = data1;
 	if (data->destroy_handler_id) {
 
 	#ifdef NEW_STYLE_COMPLETION
@@ -2190,9 +2188,6 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	}
 	data->store = store;
 
-	add_completion_list(data);
-
-
 #else /* !NEW_STYLE_COMPLETION */
 
 	data = g_new0(PidginCompletionData, 1);
@@ -2209,10 +2204,9 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	data->completion = g_completion_new(NULL);
 	data->completion_started = FALSE;
 
-	add_completion_list(data);
-
-
 #endif /* !NEW_STYLE_COMPLETION */
+
+	add_completion_list(data);
 
 	data->destroy_handler_id = g_signal_connect(G_OBJECT(entry), "destroy", 
 		G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
@@ -2233,8 +2227,6 @@ void
 pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gboolean all) {
 	pidgin_setup_screenname_autocomplete_with_filter(entry, accountopt, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(all));
 }
-
-
 
 void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 {
