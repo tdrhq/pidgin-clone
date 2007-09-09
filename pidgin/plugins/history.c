@@ -96,9 +96,6 @@ static void historize_log_read_cb(char *text, PurpleLog *log, PurpleLogReadFlags
 
 	g_object_ref(G_OBJECT(gtkconv->imhtml));
 	g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
-
-	purple_log_free_nonblocking(callback_data->log, NULL, NULL);
-	g_free(callback_data);
 }
 
 static PurpleLog *get_last_log(GList *list, PurpleLog *last_log) 
@@ -122,6 +119,14 @@ static PurpleLog *get_last_log(GList *list, PurpleLog *last_log)
 	return last_log;
 }
 
+static void historize_log_free_context_cb(void *data)
+{
+	struct _historize_callback_data *callback_data = data;
+
+	purple_log_free_nonblocking(callback_data->log, NULL, NULL);
+	g_free(callback_data);
+}
+
 static void historize_log_list_cb(GList *list, PurpleLogType type, const char *name, 
 									PurpleAccount *account, PurpleLogContext *context)
 {
@@ -134,7 +139,7 @@ static void historize_log_list_cb(GList *list, PurpleLogType type, const char *n
 	if (list != NULL)
 		callback_data->log = get_last_log(list, callback_data->log);
 	else if (callback_data->log != NULL) {
-		PurpleLogContext *read_context = purple_log_context_new(g_free);
+		PurpleLogContext *read_context = purple_log_context_new(historize_log_free_context_cb);
 		purple_log_context_set_userdata(read_context, callback_data);
 		purple_log_read_nonblocking(callback_data->log, &callback_data->flags, 
 								historize_log_read_cb, read_context);
