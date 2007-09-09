@@ -767,8 +767,10 @@ PurpleLogContext *purple_log_context_new(PurpleLogDestroyContextCallback cb);
 void purple_log_context_close(PurpleLogContext *context);
 
 /**
- * 
+ * Check whether context is closed for non-blocking calls 
  *
+ * @param context     Context
+ * @result result of check-up
  */
 gboolean purple_log_is_closed_context(PurpleLogContext *context);
 
@@ -783,19 +785,24 @@ void purple_log_context_set_userdata(PurpleLogContext *context, void *data);
 /**
  * Return user data for specified context
  *
- * @param context Context
+ * @param context     Context
  *
  * @return User data for context or NULL if context is empty
  */
 void *purple_log_context_get_userdata(PurpleLogContext *context);
 
 /**
- *
+ * Cancel all operation with this context
+ * 
+ * @param context     Context
  */
 void purple_log_cancel_operation(PurpleLogContext *context);
 
 /**
-
+ * Check where operations with this context were cancelled 
+ * 
+ * @param context     Context
+ * @return result of check-up
  */
 gboolean purple_log_is_cancelled_operation(PurpleLogContext *context);
 

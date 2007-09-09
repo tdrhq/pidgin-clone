@@ -142,11 +142,9 @@ static void log_hash_cb(void *data);
 
 static void log_total_size_list_cb(GList *list, PurpleLogType type, char *name, PurpleAccount *account, void *data);
 
-static void log_context_free(PurpleLogContext *context);
-static void log_context_inc_ref(PurpleLogContext *context);
-static void log_context_dec_ref(PurpleLogContext *context);
-static void log_context_dec_ref_and_free(PurpleLogContext *context);
-static int log_context_count_ref(PurpleLogContext *context);
+static void log_context_ref(PurpleLogContext *context);
+static void log_context_unref(PurpleLogContext *context);
+//static int log_context_count_ref(PurpleLogContext *context);
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
@@ -228,7 +226,7 @@ void purple_log_free_nonblocking(PurpleLog *log, PurpleLogFreeCallback cb, Purpl
 	}
 
 	if (context != NULL)
-		log_context_inc_ref(context);
+		log_context_ref(context);
 
 	callback_data = g_new0(_purple_log_free_callback_data, 1);
 	callback_data->context = context;
@@ -299,7 +297,7 @@ void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
 	lu->account = log->account;
 
 	if (context != NULL)
-		log_context_inc_ref(context);
+		log_context_ref(context);
 
 	callback_data = g_new0(_purple_log_write_callback_data, 1);
 	callback_data->cb = cb;
@@ -343,7 +341,7 @@ void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, Purp
 	g_return_if_fail(log->logger != NULL);
 
 	if (context != NULL)
-		log_context_inc_ref(context);
+		log_context_ref(context);
 
 	callback_data = g_new0(_purple_log_read_callback_data, 1);
 	callback_data->context = context;
@@ -379,7 +377,7 @@ void purple_log_get_size_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, P
 	}
 
 	if (context != NULL)
-		log_context_inc_ref(context);
+		log_context_ref(context);
 
 	callback_data = g_new0(_purple_log_size_callback_data, 1);
 	callback_data->context = context;
@@ -493,7 +491,7 @@ void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name,
 		_purple_log_total_size_callback_data *callback_data;
 		char *name_copy = g_strdup(name);
 		if (context != NULL)
-			log_context_inc_ref(context);
+			log_context_ref(context);
 
 		callback_data = g_new0(_purple_log_total_size_callback_data, 1);
 		callback_data->context = context;
@@ -806,7 +804,7 @@ void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, Purpl
 		return;
 	}
 	if (context != NULL)
-		log_context_inc_ref(context);
+		log_context_ref(context);
 
 	callback_data = g_new0(_purple_log_logs_callback_data, 1);
 	callback_data->context = context;
@@ -921,7 +919,7 @@ void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, PurpleLo
 	}
 
 	if (context != NULL)
-		log_context_inc_ref(context);
+		log_context_ref(context);
 
 	callback_data = g_new0(_purple_log_sets_callback_data, 1);
 	callback_data->context = context;
@@ -988,7 +986,7 @@ void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogSys
 	}
 
 	if (context != NULL)
-		log_context_inc_ref(context);
+		log_context_ref(context);
 
 	callback_data = g_new0(_purple_log_system_logs_callback_data, 1);
 	callback_data->context = context;
@@ -1014,6 +1012,20 @@ PurpleLogContext *purple_log_context_new(PurpleLogDestroyContextCallback cb)
 	PurpleLogContext *context = g_new0(PurpleLogContext, 1);
 	context->destroy_user_data_cb = cb;
 	return context;
+}
+
+static int log_context_count_ref(PurpleLogContext *context)
+{
+	g_return_val_if_fail(context != NULL, 0);
+	return context->ref_count;
+}
+
+static void log_context_free(PurpleLogContext *context)
+{
+	g_return_if_fail(context != NULL);
+	if (context->destroy_user_data_cb != NULL)
+		context->destroy_user_data_cb(context->user_data);
+	g_free(context);
 }
 
 void purple_log_context_close(PurpleLogContext *context)
@@ -1055,37 +1067,18 @@ gboolean purple_log_is_cancelled_operation(PurpleLogContext *context)
 	return context->is_cancelled;
 }
 
-static void log_context_free(PurpleLogContext *context)
-{
-	g_return_if_fail(context != NULL);
-	if (context->destroy_user_data_cb != NULL)
-		context->destroy_user_data_cb(context->user_data);
-	g_free(context);
-}
-
-static void log_context_inc_ref(PurpleLogContext *context)
+static void log_context_ref(PurpleLogContext *context)
 {
 	g_return_if_fail(context != NULL);
 	context->ref_count++;
 }
 
-static void log_context_dec_ref(PurpleLogContext *context)
+static void log_context_unref(PurpleLogContext *context)
 {
 	g_return_if_fail(context != NULL);
 	context->ref_count--;
-}
-
-static void log_context_dec_ref_and_free(PurpleLogContext *context)
-{
-	log_context_dec_ref(context);
 	if (!log_context_count_ref(context) && purple_log_is_closed_context(context)) 
 		log_context_free(context);
-}
-
-static int log_context_count_ref(PurpleLogContext *context)
-{
-	g_return_val_if_fail(context != NULL, 0);
-	return context->ref_count;
 }
 
 /****************************************************************************
@@ -2522,7 +2515,7 @@ static void log_free_cb(PurpleLog *log, void *data)
 		callback_data->cb(log, callback_data->context);
 
 	if (callback_data->context != NULL)
-		log_context_dec_ref_and_free(callback_data->context);
+		log_context_unref(callback_data->context);
 
 	if (log->tm != NULL)
 	{
@@ -2549,7 +2542,7 @@ static void log_size_cb(int size, PurpleLog *log, void *data)
 		callback_data->cb(size, log, callback_data->context);
 
 	if (callback_data->context != NULL)
-		log_context_dec_ref_and_free(callback_data->context);
+		log_context_unref(callback_data->context);
 
 	g_free(callback_data);
 }
@@ -2571,7 +2564,7 @@ static void log_total_size_cb(int size, PurpleLogType type, char *name, PurpleAc
 		g_hash_table_replace(logsize_users, callback_data->lu, GINT_TO_POINTER(callback_data->ret_int));
 
 		if (callback_data->context != NULL)
-			log_context_dec_ref_and_free(callback_data->context);
+			log_context_unref(callback_data->context);
 
 		g_free(name);
 		g_free(callback_data);
@@ -2588,7 +2581,7 @@ static void log_delete_cb(gboolean result, PurpleLog *log, void *data)
 		callback_data->cb(result, log, callback_data->context);
 
 	if (callback_data->context != NULL)
-		log_context_dec_ref_and_free(callback_data->context);
+		log_context_unref(callback_data->context);
 
 	g_free(callback_data);
 }
@@ -2659,7 +2652,7 @@ static void log_list_cb(GList *list, PurpleLogType type, char *name, PurpleAccou
 			callback_data->cb(NULL, type, name, account, callback_data->context);
 
 		if (callback_data->context != NULL)
-			log_context_dec_ref_and_free(callback_data->context);
+			log_context_unref(callback_data->context);
 
 		g_free(name);
 		g_free(callback_data);
@@ -2693,7 +2686,7 @@ static void log_system_list_cb(GList *list, PurpleAccount *account, void *data)
 			callback_data->cb(NULL, account, callback_data->context);
 
 		if (callback_data->context != NULL)
-			log_context_dec_ref_and_free(callback_data->context);
+			log_context_unref(callback_data->context);
 
 		g_free(callback_data);
 	}
@@ -2711,7 +2704,7 @@ static void log_read_cb(char *text, PurpleLog *log, PurpleLogReadFlags *flags, v
 	}
 
 	if (callback_data->context != NULL)
-		log_context_dec_ref_and_free(callback_data->context);
+		log_context_unref(callback_data->context);
 
 	g_free(callback_data);
 }
@@ -2741,7 +2734,7 @@ static void log_write_cb(int size, PurpleLog *log, PurpleMessageFlags flags,
 		callback_data->cb(size, log, flags, from, time, message, callback_data->context);
 
 	if (callback_data->context != NULL)
-		log_context_dec_ref_and_free(callback_data->context);
+		log_context_unref(callback_data->context);
 
 	g_free(from);
 	g_free(message);
@@ -2763,7 +2756,7 @@ static void log_hash_cb(void *data)
 			g_hash_table_destroy(callback_data->ret_sets);
 
 		if (callback_data->context != NULL)
-			log_context_dec_ref_and_free(callback_data->context);
+			log_context_unref(callback_data->context);
 
 		g_free(callback_data);
 	}
