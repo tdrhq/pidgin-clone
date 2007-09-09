@@ -2109,7 +2109,9 @@ repopulate_autocomplete(gpointer something, gpointer data)
 static void
 screenname_autocomplete_destroyed_cb(GtkWidget *widget, PidginCompletionData *data)
 {
-	data->destroy_handler_id = 0;
+	if (!data->destroy_handler_id)
+		g_free(data);
+	purple_signals_disconnect_by_handle(widget);
 }
 
 static void
@@ -2117,7 +2119,6 @@ pidgin_add_completion_list_finished_cb(void *data1)
 {
 	PidginCompletionData *data = data1;
 	if (data->destroy_handler_id) {
-
 	#ifdef NEW_STYLE_COMPLETION
 		GtkListStore *store = data->store;
 		GtkEntryCompletion *completion;
@@ -2149,9 +2150,6 @@ pidgin_add_completion_list_finished_cb(void *data1)
 						 G_CALLBACK(destroy_completion_data), data);
 
 	#endif
-		g_signal_handler_disconnect(data->entry, data->destroy_handler_id);
-		data->destroy_handler_id = 0;
-
 		purple_signal_connect(purple_connections_get_handle(), "signed-on", data->entry,
 							PURPLE_CALLBACK(repopulate_autocomplete), data);
 		purple_signal_connect(purple_connections_get_handle(), "signed-off", data->entry,
@@ -2161,7 +2159,9 @@ pidgin_add_completion_list_finished_cb(void *data1)
 							PURPLE_CALLBACK(repopulate_autocomplete), data);
 		purple_signal_connect(purple_accounts_get_handle(), "account-removed", data->entry,
 							PURPLE_CALLBACK(repopulate_autocomplete), data);
-	}
+		data->destroy_handler_id = 0;
+	} else 
+		g_free(data);
 }
 
 void
@@ -2205,11 +2205,10 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	data->completion_started = FALSE;
 
 #endif /* !NEW_STYLE_COMPLETION */
-
-	add_completion_list(data);
-
 	data->destroy_handler_id = g_signal_connect(G_OBJECT(entry), "destroy", 
 		G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
+
+	add_completion_list(data);
 }
 
 gboolean
