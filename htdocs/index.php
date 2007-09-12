@@ -59,6 +59,11 @@ Download Pidgin<br />
   <li>Zephyr</li>
 </ul>
 
+<p>Pidgin is free software.  It is licensed under the GNU General Public
+License (GPL) version 2.  This means you are free to use it and to modify it,
+but if you distribute your modifications you must distribute the modified
+source code as well.</p>
+
 <p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.gif" alt="Learn More" /></a></p>
 
 </div>

@@ -58,6 +58,34 @@ responsible for connecting to all the IM networks, and for managing your
 accounts and preferences. It's written in C and makes heavy use of <a
 href="http://www.gtk.org/">Glib</a>.</p>
 
+<h1>Is all of this free?</h1>
+
+<p>We believe in freedom of communication.  To support our aspirations of
+"IM Freedom," we release Pidgin, Finch, and libpurple as free software
+under the <a href="http://www.gnu.org/licenses/gpl-2.0.txt">GNU General
+Public License</a> (GPL).  We believe that giving others the freedom to modify,
+share, and augment our code contributes to the goal of bringing freedom of
+communication to the Internet.  The GPL allows us to ensure that any
+modifications to our code remain free, so that everyone may enjoy their
+benefits.</p>
+
+<h1>How can I help?</h1>
+
+<p>We always welcome feedback and contributions.  You don't need to be a
+developer to help out, but if you are, you can help us by fixing bugs in our
+code or building new functionality into it.  Our
+<a href="http://developer.pidgin.im/">development site</a> includes numerous
+resouces for getting started with libpurple, Pidgin, and Finch development.</p>
+
+<p>If you are a regular user, we encourage you to let us know about any
+problems you encounter and to provide us with suggestions for improvement.
+You can do so via our 
+<a href="http://developer.pidgin.im">support system</a>,
+<a href="irc://irc.freenode.net/pidgin">IRC channel</a>,
+<a href="xmpp:devel@conference.pidgin.im/?join">XMPP conference</a>, or
+<a href="/cgi-bin/mailman/listinfo/devel">development mailing list</a>.  We
+also encourage users to help one another solve problems and discover new
+features using any of these media.</p>
 
 </div>
 </div>
