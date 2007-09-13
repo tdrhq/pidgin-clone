@@ -75,7 +75,7 @@ benefits.</p>
 developer to help out, but if you are, you can help us by fixing bugs in our
 code or building new functionality into it.  Our
 <a href="http://developer.pidgin.im/">development site</a> includes numerous
-resouces for getting started with libpurple, Pidgin, and Finch development.</p>
+resources for getting started with libpurple, Pidgin, and Finch development.</p>
 
 <p>If you are a regular user, we encourage you to let us know about any
 problems you encounter and to provide us with suggestions for improvement.
