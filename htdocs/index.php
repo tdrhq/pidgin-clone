@@ -43,11 +43,12 @@ Download Pidgin<br />
   <li>Gadu-Gadu</li>
   <li>Google Talk</li>
   <li>Groupwise</li>
+  <li>ICQ</li>
 </ul>
 <ul class="condensed">
-  <li>ICQ</li>
   <li>IRC</li>
   <li>MSN</li>
+  <li>MySpaceIM</li>
   <li>QQ</li>
   <li>SILC</li>
 </ul>
@@ -70,8 +71,9 @@ source code as well.</p>
 </div>
 
 <!-- This will pull from somewhere else at some point -->
- <p id="lowblurb">2.1.1 has landed!  We've got a new smiley set and we've
-further cleaned up the conversation window.  Let us know what you think! The Changelog is <a href="ChangeLog">here.</a></p
+ <p id="lowblurb">Look out! 2.2.0 is here... with many improvements from our
+Google Summer of Code students and a pile of bug fixes! Check out the <a
+href="ChangeLog">ChangeLog</a> to see it all.</p
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->

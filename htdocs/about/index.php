@@ -17,7 +17,7 @@
 Pidgin is an instant messaging program for Windows, Linux, BSD, and other
 Unixes. You can talk to your friends using AIM, ICQ, Jabber/XMPP, MSN
 Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, Novell GroupWise Messenger, QQ,
-Lotus Sametime, SILC, SIMPLE, and Zephyr.</p>
+Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr.</p>
 
 <p>Pidgin can log in to multiple accounts on multiple IM networks
 simultaneously. This means that you can be chatting with friends on AIM,
