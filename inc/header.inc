@@ -51,7 +51,8 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
 </head>
 <body>
 
-<div id="header"><img src="/shared/img/logo.text.jpg" alt="Pidgin" />
+<div id="header">
+<a href="/"><img src="/shared/img/logo.text.jpg" alt="Pidgin" /></a>
 <ul>
 <?
   foreach ($sections as $name => $link) {

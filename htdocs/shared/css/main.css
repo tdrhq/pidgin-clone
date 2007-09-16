@@ -28,7 +28,7 @@ a:hover, a:active {
 }
 
 #header img {
-  margin-left: 125px;
+  padding-left: 125px;
   vertical-align: bottom;
 }
 
