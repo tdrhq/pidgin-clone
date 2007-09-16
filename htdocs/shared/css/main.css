@@ -369,7 +369,8 @@ h1 {
 }
 
 #left .linkbar {
+  position: relative;
+  top: -6px;
   text-align: right;
-  margin: -12px 26px 0 0;
-  padding-bottom: 6px;
+  margin: -6px 26px 0 0;
 }
