@@ -24,6 +24,11 @@ Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?></span></a>
 </div>
 
+<p class="linkbar">
+  <a href="/ChangeLog">ChangeLog</a>
+ (<a href="/win32/ChangeLog.win32">Windows</a>)
+</p>
+
 </div>
 
 </div>
