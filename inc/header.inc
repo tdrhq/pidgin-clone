@@ -8,7 +8,7 @@ if (!array_key_exists('abslink', $page)) {
   $page['abslink'] = FALSE;
 }
 if (!array_key_exists('siteroot', $page)) {
-  $page['siteroot'] = "http://www.pidgin.im/";
+  $page['siteroot'] = "http://www.pidgin.im";
 }
 if (!array_key_exists('title', $page)) {
   $page['title'] = 'Home';
