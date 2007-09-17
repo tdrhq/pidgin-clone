@@ -21,7 +21,7 @@ if (!array_key_exists('section', $page)) {
 $sections['Home']                  = "/";
 $sections['Download']              = "/download/";
 $sections['About']                 = "/about/";
-$sections['News']                  = "/news/";
+$sections['News']                  = "http://planet.pidgin.im/";
 $sections['Support & Development'] = "http://developer.pidgin.im/";
 
 ?>
