@@ -340,6 +340,16 @@ h1 {
   font-size: 2em;
 }
 
+h2 {
+  font-size: 1.4em;
+}
+
+h3 {
+  font-size: 1.05em;
+  font-weight: normal;
+  font-style: italic;
+}
+
 #footer {
   height: 40px;
   padding-top: 118px;
