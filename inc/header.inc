@@ -4,6 +4,12 @@ if ($page == NULL || !is_array($page)) {
   $page = array();
 }
 
+if (!array_key_exists('abslink', $page)) {
+  $page['abslink'] = FALSE;
+}
+if (!array_key_exists('siteroot', $page)) {
+  $page['siteroot'] = "http://www.pidgin.im/";
+}
 if (!array_key_exists('title', $page)) {
   $page['title'] = 'Home';
 }
@@ -57,6 +63,9 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
 <?
   foreach ($sections as $name => $link) {
     $escaped = htmlspecialchars ($name);
+    if ($page['abslink'] && !preg_match("%^[a-z]+:%", $link)) {
+      $link = $page['siteroot'] . $link;
+    }
     if ($page['section'] == $name) {
       echo '  <li class="active"><a href="' . $link . '">' . $escaped . "</a></li>\n";
     } else {
