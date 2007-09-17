@@ -24,6 +24,7 @@ also can be viewed directly at their respective sources.
   <li><a href="/~elb/blog/">Ethan Blanton</a></li>
   <li><a href="http://coderich.net/">Richard Laager</li>
   <li><a href="http://www.schierer.org/~luke/log">Luke Schierer</li>
+  <li><a href="/~kstange/blog/">Kevin Stange (Webmaster)</li>
   <li><a href="http://faceprint.com/">Nathan Walp</a>
 </ul>
 
