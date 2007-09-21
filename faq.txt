@@ -24,36 +24,6 @@ the <code>--no-verify</code> from the configure script.
 <a href="./faq-ssl.php">these notes</a> for distribution specific hints.
 </p>
 
-!ANCHOR	crash-on-start
-Q:	Why is Pidgin crashing when I start it?
-
-A:	First of all make sure you are using the most recent version of
-Pidgin. If you still have problems, try the following:
-<ul>
- <li>
-  Make sure only one version of Pidgin is installed.  "whereis pidgin"
-  can sometimes be useful for determining this.
- </li>
- <li>
-  "export GDK_USE_XFT=0" in a terminal and then run Pidgin from the same
-  terminal.
- </li>
- <li>
-  Try disabling or deleting any 3rd party plugins, especially anything
-  related to encryption.
- </li>
- <li>If you use 0.75 or higher on win32, try deleting <code>tcl.dll</code>.</li>
-</ul>
-
-!ANCHOR mtn
-Q:	Pidgin &lt;non-current version&gt; is buggy.  Pidgin MTN is buggy.  Why?
-
-A:	Non-current versions have old bugs which may be fixed in the
-current version--that's why we make new releases.  MTN is
-frequently unusable because of changes in the code.  Bugs are
-introduced during the development process and are hopefully fixed
-before a release is made.
-
 
 !SECTION	Using Pidgin
 
@@ -97,47 +67,8 @@ which Pidgin provides by either GnuTLS or the combination of NSS and NSPR
 from the Mozilla project.  Install one or both of these and recompile Pidgin,
 and see the next question.
 
-!SECTION	Gadu-Gadu Protocol
-
-Q:	What is Gadu-Gadu?
-
-A:	Gadu-Gadu is an IM protocol popular in Poland.  You can find more about
-it at <a href="http://www.gadu-gadu.pl/">www.gadu-gadu.pl</a>
-(website in Polish).
-
-!ANCHOR	libgadu
-Q:	I compiled Pidgin from source and now it doesn't have Gadu-Gadu
-support. Why?
-
-A:	We now use an external libgadu.  Install your distro's libgadu-dev
-or libgadu-devel package and rebuild Pidgin (making sure to rerun
-<code>./configure</code>).  If your distro doesn't provide libgadu, you can download it from
-<a href="http://toxygen.net/libgadu/files/libgadu-1.7.0.tar.gz">http://toxygen.net/libgadu/files/libgadu-1.7.0.tar.gz</a>.
-Unpack the tarball and run:
-<pre><code>./autogen.sh --prefix=/usr --disable-libgadu-openssl --disable-static --enable-shared
-make
-su -c "make install"</code></pre>
-
 
 !SECTION	Development
-
-!ANCHOR	contribute
-Q:	Can I help?
-
-A:	Yes!  We especially need small patches for small bugs, and lots of
-bug triaging.  There are a slew of a bug reports in Pidgin's bug report
-tracker - you could pick one and try to tackle it and submit a patch.
-We love patches.
-<p>
-Bug triaging is when you look at a bug report and determine whether it
-is a duplicate of an earlier report, or whether it is user error, or
-maybe you need to request additional information to be able to reproduce
-the bug.  SourceForge won't let random users modify the settings on bugs,
-but if you leave helpful comments we can go through and make the
-appropriate changes.  <a
-href="http://sourceforge.net/tracker/?func=browse&group_id=235&atid=100235">Dig
-in.</a>
-</p>
 
 Q:	Pidgin never leaves a core file.
 
@@ -181,11 +112,6 @@ Q:	Can I IM you guys?
 
 A:	Sure! Look at the <a href="./contactinfo.php">Contact Information</a> page!
 
-!ANCHOR	Hello
-Q:	Hello?
-
-A:	We don't know how to answer this question.  Stop asking it.
-
 Q:	Does Pidgin support secure instant messaging (encrypted IMs)?
 
 A:	Short answer: Yes, use the SILC protocol.<br/>
@@ -209,27 +135,6 @@ version will only be released if it meets a certain standard of quality
 bugs).  Therefore, some releases will take longer than others.  Major
 rewrites means lots of new bugs to work out.  The new version will be
 released as soon as it is possible to do so.
-
-!ANCHOR	version-number
-Q:	What will the next version be?
-
-A:	Starting with version 1.0.0, Pidgin version numbers have 3 parts to them.
-The format is major.minor.micro.  If we change something internally in Pidgin
-such that some plugins won't work with the newer version, we will increment
-the major version number.  If we don't increment the major version number,
-and we've added things to the Pidgin API that won't break any older stuff, we
-will increment the minor version number.  In any other cases, we will
-increment the micro version number.  Even and odd numbers have nothing to do
-with stability, and you should always be running the latest release of Pidgin
-to get new features and bug fixes.
-
-Q:	So, can I look forward to mega-sexy super functionality with Pidgin?
-
-A:	Yes, that is the intended idea.  In fact, there have been quite a number
-of unpopular geeks who have made the switch to Pidgin.  In a matter of days,
-the number of dates and awesomeness points received by the geek increased
-ten fold!  You, too, can have an exciting life with Pidgin.  Get Pidgin.  Get
-the babes.  Get uhh...  hmm.
 
 Q:	How do I change the language for the Highlight Misspelled words option?
 
