@@ -1,6 +1,6 @@
 <?
 	$page->title = 'Security Issues';
-	require('template.inc.php');
+	require('../inc/template.inc.php');
 ?>
 
 <?

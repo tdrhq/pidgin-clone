@@ -33,23 +33,6 @@ RPM of gtkspell at <a href="http://freshrpms.net/">freshrpms.net</a>.  You
 can find the source and a non-Red Hat specific RPM at <a
 href="http://gtkspell.sourceforge.net/">gtkspell.sourceforge.net</a>.
 
-Q:	What do I need to use the SILC protocol?
-
-A:	You need to install the
-<a href="http://silcnet.org/software/download/toolkit/">SILC toolkit</a>
-and the Pidgin SILC plugin.  This plugin is generally provided as a
-separate package (such as a purple-silc RPM).  If you're compiling yourself,
-see the <code>./configure --help</code> for specifying the SILC includes and libs.
-If you're compiling an SRPM, use <code>--with silc</code> to build the
-purple-silc RPM.
-<p>
- In Windows, the SILC toolkit is installed with Pidgin.
-</p>
-<p>
- Some distributions provide the SILC toolkit and include Pidgin's
- SILC plugin in their Pidgin package.
-</p>
-
 Q:	Is there some way I can compile just Pidgin, without all of these protocols?
 
 A:	Yeah.  There are actually three ways to do it.
@@ -93,17 +76,6 @@ Debian package installed, you need to remove that first.
  remove all Pidgin files from <code>/usr/local</code>.
 </p>
 
-Q:	Are the packages signed? If so, by who, and how can I get the key?
-
-A:	Yes, all packages are signed.  The signature for the
-tarball and bzip2 archive are provided by separate downloads.  The RPMs
-we provide are signed by either Ethan Blanton, Mark Doliner, or Stu
-Tomlinson.  Usually the Mandrake RPMs are signed by, Mark Doliner, the
-Fedora Core RPMs are signed by Stu Tomlinson, and the Red Hat 8 and 9 RPMs
-are signed by Ethan Blanton.
-The keys can be obtained from any key server.
-<a href="http://pgp.mit.edu/">http://pgp.mit.edu/</a> is popular.
-
 Q:	Can I run Pidgin on IRIX?
 
 A:	Sure you can - the amount of effort involved depends on which compiler you use;
@@ -140,21 +112,6 @@ running autogen.sh however gives you a healthy build dir. Configure Pidgin WITHO
 the X screensaver extension and disable the gtk- and glibtests; no source hacks are needed.
 </p>
 
-Q:	Can I run Pidgin on MacOSX?
-
-A:	Yes you can, but we do not provide a package for it.  The reason
-being that in order to use Pidgin on MacOSX, you need to install an X server and
-GTK+, which we are not prepared to support.  You can either compile Pidgin 
-(and its dependencies) yourself, or you can use the fink installer
-available from <a href="http://fink.sf.net">http://fink.sf.net</a>.  If you
-would like a native aqua interface or a user-friendly installer, we
-suggest trying <a href="http://www.adiumx.com/">Adium</a>.
-
-Q:	How do I apply the patch "something.diff"?
-
-A:	Type <code>patch -p0 &lt; something.diff</code> from inside the
-Pidgin directory.  If that doesn't work, try <code>patch -p1 &lt; something.diff</code>.
-
 !ANCHOR	crash-on-start
 Q:	Why is Pidgin crashing when I start it?
 
@@ -176,86 +133,17 @@ Pidgin. If you still have problems, try the following:
  <li>If you use 0.75 or higher on win32, try deleting <code>tcl.dll</code>.</li>
 </ul>
 
-!ANCHOR	svn
-Q:	Pidgin &lt;non-current version&gt; is buggy.  Pidgin SVN is buggy.  Why?
+!ANCHOR mtn
+Q:	Pidgin &lt;non-current version&gt; is buggy.  Pidgin MTN is buggy.  Why?
 
 A:	Non-current versions have old bugs which may be fixed in the
-current version--that's why we make new releases.  SVN is
+current version--that's why we make new releases.  MTN is
 frequently unusable because of changes in the code.  Bugs are
 introduced during the development process and are hopefully fixed
 before a release is made.
 
-Q:	Why do you always say not to use SVN?
-
-A:	That's a long story.  For starters, see the previous question.
-It is often the case that Pidgin SVN exhibits bad behavior due to
-features and bugfixes which are in a transitory state or which are not
-yet well understood.  These bad behaviors range from the harmless
-(maybe a graphical glitch in a dialog box) to the irritating (a
-particular protocol may not work), to the downright damaging (recently
-a bug in SVN destroyed the user's buddy lists).  While behaviors like
-this are acceptable to some users (particularly developers, who are
-used to such things), they tend to cause many Pidgin SVN users to
-contact Pidgin developers and report the same (usually egregious) bug
-over and over - using time which could be better spent fixing the
-bugs.
-<p>
-A second major point involves public resources - an SVN checkout is not
-a cheap operation.  As many Sourceforge users are aware, at various
-points in the recent past Sourceforge CVS has been less than pleasant
-to work with.  This is, of course, because Sourceforge hosts dozens
-and dozens of useful and active projects which use[ed] CVS as a primary
-method of source code collaboration.  Unfortunately, when too many
-users are poking around in that CVS just for the sake of poking
-around, it prevents other users who are trying to do work to improve
-those very same projects from accomplishing their tasks.  Naturally,
-this could  easily become true of Sourceforge's SVN offering as well.
-It is better for the community if an enterprising individual wishing
-to fix a particular bug [s]he has seen can get to the code and create
-a patch, even if this means that some users have to wait a few weeks
-for the next release to see what new features it might hold.
-</p>
-<p>
-The third point is not a problem which has yet come up, but it is in
-the back of the mind of the developers who bring you Pidgin.  As a
-third-party IM client, Pidgin is not a priority (and indeed may be an
-irritant) for the IM service providers.  We do our best to keep Pidgin
-playing nice and being friendly on the IM networks it uses; however,
-at times there are bugs in the protocol support.  If a few dozen
-people are using this buggy client, the IM providers are not likely to
-go out of their way to do anything about it.  However, if hundreds of
-people are pointing an ill-behaved client at an IM server, the server
-administrators may be forced to take action.  (This is particularly
-likely if the buggy behavior is damaging in some way.)  Pidgin releases
-represent code which the Pidgin developers feel is relatively
-well-behaved and stable.  This includes not only the interface seen by
-Pidgin users, but the traffic seen by IM service providers.  Pidgin SVN
-bears no such guarantees.
-</p>
-<p>
-In short, there are a lot of good reasons to <i>not</i> use
-Pidgin SVN if one does not wish to develop Pidgin, Pidgin plugins, or a
-codebase which interacts with Pidgin in some intimate way.  There are,
-however, only a few reasons <i>to</i> use Pidgin SVN outside of the
-above.  Please weigh these things carefully and decide whether you
-wish to use Pidgin SVN for a good reason which furthers the community, or
-for selfish reasons which are not entirely important.
-</p>
 
 !SECTION	Using Pidgin
-
-Q:	How do I register for a new account?
-
-A:	This depends on the protocol.
-<p><b>AIM:</b> Go to <a href="http://my.screenname.aol.com/_cqr/login/login.psp?siteId=snshomepage&amp;authLev=1&amp;mcState=initialized&amp;createSn=1">this website</a>.</p>
-<p><b>MSN</b> (including Hotmail email)<b>:</b> Go to <a href="http://registernet.passport.com/">http://registernet.passport.com/</a>.</p>
-<p><b>MSN</b> (using your own email address)<b>:</b> Go to
-<a href="http://register.passport.net/">http://register.passport.net/</a>.</p>
-<p><b>Yahoo:</b> Go to <a href="http://edit.yahoo.com/config/eval_register">http://edit.yahoo.com/config/eval_register</a>.</p>
-<p><b>Jabber:</b> See the question <a href="#jabber-register">How do I register a new Jabber account?</a> below.</p>
-<p><b>ICQ:</b> Go to <a href="http://web.icq.com/register">http://web.icq.com/register</a>.</p>
-<p><b>Gadu-Gadu:</b> Use the official client to create an account.</p>
-<p><b>Novell:</b> See your Novell server administrator.</p>
 
 Q:	How do I use AIM, MSN, Yahoo!, Jabber, ICQ, or any other protocol?
 
@@ -293,35 +181,6 @@ messages, and Pidgin's global settings are controled by the gtk theme.
 Additionally, some settings to specific parts of Pidgin can be set by a Gtk+
 theme.</p>
 
-Q:	Where did my ability to use Ctrl-Enter to send a message go?
-
-A:	Pidgin used to have an option in the preferences window which let you
-choose whether to use Enter or Ctrl-Enter to send a message. This was less than 
-optimal for many reasons, not least of which was because it only let you 
-choose between those two options. It also caused large problems for people
-who required an alternate input method (people who were typing in Chinese or 
-Japanese for example). On top of all this gtk provides an incredibly nice 
-mechanisms which allows keybindings to be set for things via the gtk theme
-files. Pidgin decided to use this gtk interface as a method of allowing
-people to use Ctrl-Enter to send but to also allow people to use anything else
-they felt like and to reduce the clutter in the User Interface. The gtk
-interface is, unfortunately, not as immediately obvious as a simple checkbox,
-however it is still simple. The example gtkrc file seen
-<a href="./gtkrc-2.0">here</a> shows you how to do it (among other things).
-
-Q:	When I click the status selector, I see blank space and have to
-scroll.  What can I do about this?
-
-A:	Edit your <code>~/.gtkrc-2.0</code> to contain the appropriate lines
-from <a href="./gtkrc-2.0">this example file</a>.  Search for "appears-as-list".
-
-Q:	The status selector has extra padding in it. How can I make it smaller?
-
-A:	Edit your <code>~/.gtkrc-2.0</code> to contain the appropriate
-lines from <a href="./gtkrc-2.0">this example file</a>.  Search for
-"xthickness".  There are two examples.  Start by trying the first one.  If that
-makes the status selector look worse, then try the second one.
-
 Q:	How do I make Pidgin use emacs-like keybindings, or assign a custom
 hotkey?
 
@@ -329,18 +188,6 @@ A:	You need to edit your <code>~/.gtkrc-2.0</code> to contain the appropriate
 lines from <a href="./gtkrc-2.0">this example file</a>.  If you are using
 <code>gtk-can-change-accels = 1</code>, then you hover over the menu item then
 press your desired key stroke.
-
-Q:	How do I make Escape close the conversation window?
-
-A:	Sadly, you can't use the hover-and-press technique just described
-for this, because Escape closes the menu.  You have to hand-edit
-<code>~/.purple/accels</code>.  Close Pidgin, and open
-<code>~/.purple/accels</code> in your favorite text editor.  Find
-<code>(gtk_accel_path "&lt;main&gt;/Conversation/Close"
-"[something]")</code>, remove the semi-colon (which is the comment
-character) from the start of the line if it is there and replace whatever
-is between the second pair of quote marks with <code>Escape</code>.  Save
-and close, and restart Pidgin.
 
 Q:	How do I use smiley themes?
 

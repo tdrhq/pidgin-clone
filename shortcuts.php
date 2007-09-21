@@ -57,7 +57,7 @@
 <table>
  <tr>
   <td width="160"><b>Escape</b></td>
-  <td>Close Window <font color="#0000DD">*</font></td>
+  <td>Close Window</td>
  </tr>
  <tr>
   <td><b>Control-W</b></td>
@@ -110,6 +110,10 @@
  <tr>
   <td><b>Control-M</b></td>
   <td>New Instant Message</td>
+ </tr>
+ <tr>
+  <td><b>Control-R</b></td>
+  <td>Reset text formatting</td>
  </tr>
  <tr>
   <td><b>Control-Z</b></td>
