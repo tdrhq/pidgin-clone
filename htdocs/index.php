@@ -25,8 +25,7 @@ Download Pidgin<br />
 </div>
 
 <p class="linkbar">
-  <a href="/ChangeLog">ChangeLog</a>
- (<a href="/win32/ChangeLog.win32">Windows</a>)
+  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a>
 </p>
 
 </div>
@@ -77,8 +76,7 @@ source code as well.</p>
 
 <!-- This will pull from somewhere else at some point -->
  <p id="lowblurb">Look out! 2.2.0 is here... with many improvements from our
-Google Summer of Code students and a pile of bug fixes! Check out the <a
-href="ChangeLog">ChangeLog</a> to see it all.</p
+Google Summer of Code students and a pile of bug fixes!  Enjoy!</p>
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
