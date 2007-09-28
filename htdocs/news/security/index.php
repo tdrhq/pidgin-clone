@@ -34,11 +34,11 @@ $vulnerabilities = array(
 		"title"        => "Smiley theme installation lack of escaping",
 		"date"         => "22 August 2004",
 		"cve"          => "CAN-2004-0784",
-		"summary"      => "Dragging a carefully crafted smiley theme filename onto Pidgin could cause arbitrary command execution.",
-		"description"  => "To install a new smiley theme, a user can drag a tarball from a graphical file manager, or a hypertext link to one from a web browser.  When a tarball is dragged, Pidgin executes a shell command to untar it.  However, it does not escape the filename before sending it to the shell.  Thus, a specially crafted filename could execute arbitrary commands if the user could be convinced to drag a file into the smiley theme selector.",
+		"summary"      => "Dragging a carefully crafted smiley theme filename onto Gaim could cause arbitrary command execution.",
+		"description"  => "To install a new smiley theme, a user can drag a tarball from a graphical file manager, or a hypertext link to one from a web browser.  When a tarball is dragged, Gaim executes a shell command to untar it.  However, it does not escape the filename before sending it to the shell.  Thus, a specially crafted filename could execute arbitrary commands if the user could be convinced to drag a file into the smiley theme selector.",
 		"fix"          => "Filenames are now escaped using g_shell_quote().",
 		"fixedversion" => "0.82",
-		"discoveredby" => "A Pidgin Crazy Patch Writer"
+		"discoveredby" => "A Gaim Crazy Patch Writer"
 	),
 	array(
 		"title"        => "Groupware message receive integer overflow",
@@ -83,8 +83,8 @@ $vulnerabilities = array(
 	array(
 		"title"        => "Content-length DOS (malloc error)",
 		"date"         => "26 August 2004",
-		"summary"      => "Posibile for a malicious web server to provide a web page with a false content-length value which could crash Pidgin.",
-		"description"  => "Remote crash.  When a remote server provides a large \"content-length\" header value, Pidgin will attempt to allocate a buffer to store the content, however this allocation attempt will cause Pidgin to crash if the length exceeds the amount of possible memory.  This happens when reading profile information on some protocols.  It also happens when smiley themes are installed via drag and drop.",
+		"summary"      => "Posibile for a malicious web server to provide a web page with a false content-length value which could crash Gaim.",
+		"description"  => "Remote crash.  When a remote server provides a large \"content-length\" header value, Gaim will attempt to allocate a buffer to store the content, however this allocation attempt will cause Gaim to crash if the length exceeds the amount of possible memory.  This happens when reading profile information on some protocols.  It also happens when smiley themes are installed via drag and drop.",
 		"fix"          => "The call to g_malloc() was replaced with a call to g_try_malloc().  If the memory could not be allocated the function returns instead of causing the application to crash.",
 		"fixedversion" => "0.82",
 		"discoveredby" => "Sean (\"infamous42md\")"
@@ -93,19 +93,19 @@ $vulnerabilities = array(
 		"title"        => "MSN File transfer DOS (malloc error)",
 		"date"         => "19 October 2004",
 		"summary"      => "Crash when accepting a large file transfer that exceeds the amount of available memory.",
-		"description"  => "Remote crash. After accepting a file transfer request, Pidgin will attempt to allocate a buffer of a size equal to the entire filesize, this allocation attempt will cause Pidgin to crash if the size exceeds the amount of available memory.",
+		"description"  => "Remote crash. After accepting a file transfer request, Gaim will attempt to allocate a buffer of a size equal to the entire filesize, this allocation attempt will cause Gaim to crash if the size exceeds the amount of available memory.",
 		"fix"          => "Don't allocate a buffer for file transfers.",
 		"fixedversion" => "1.0.2",
-		"discoveredby" => "Pidgin"
+		"discoveredby" => "Gaim"
 	),
 	array(
 		"title"        => "MSN SLP DOS (malloc error)",
 		"date"         => "19 October 2004",
 		"summary"      => "Crash when receiving malformed MSN SLP message",
-		"description"  => "Remote crash. Pidgin allocates a buffer for the payload of each message received based on the size field in the header of the message. A malicious peer could specify an invalid size that exceeds the amount of available memory.",
+		"description"  => "Remote crash. Gaim allocates a buffer for the payload of each message received based on the size field in the header of the message. A malicious peer could specify an invalid size that exceeds the amount of available memory.",
 		"fix"          => "Replace call to g_malloc() with call to g_try_malloc(). If the memory could not be allocated the function returns instead of causing the application to crash.",
 		"fixedversion" => "1.0.2",
-		"discoveredby" => "Pidgin"
+		"discoveredby" => "Gaim"
 	),
 	array(
 		"title"        => "MSN SLP buffer overflow",
@@ -115,14 +115,14 @@ $vulnerabilities = array(
 		"description"  => "Buffer overflow. memcpy was used without checking the size of the buffer before copying to it. Additionally, a logic flaw was causing the wrong buffer to be used as the destination for the copy under certain circumstances.",
 		"fix"          => "Correct the logic to select the correct buffer, and add bounds checking to prevent malformed messages causing a buffer overflow.",
 		"fixedversion" => "1.0.2",
-		"discoveredby" => "Pidgin"
+		"discoveredby" => "Gaim"
 	),
 	array(
 		"title"        => "AIM/ICQ remote denial of service",
 		"date"         => "17 February 2005",
 		"cve"          => "CAN-2005-0472",
 		"summary"      => "Client freezes when receiving certain invalid messages",
-		"description"  => "Certain malformed SNAC packets sent by other AIM or ICQ users can trigger an infinite loop in Pidgin when parsing the SNAC.  The remote user would need a custom client, able to generate malformed SNACs.",
+		"description"  => "Certain malformed SNAC packets sent by other AIM or ICQ users can trigger an infinite loop in Gaim when parsing the SNAC.  The remote user would need a custom client, able to generate malformed SNACs.",
 		"fix"          => "The OSCAR protocol plugin was modified to drop these malformed packets.",
 		"fixedversion" => "1.1.3",
 		"discoveredby" => "Brandon Scott (\"Xeon\")"
@@ -132,27 +132,27 @@ $vulnerabilities = array(
 		"date"         => "17 February 2005",
 		"cve"          => "CAN-2005-0473",
 		"summary"      => "Client crashes when receiving specific malformed HTML",
-		"description"  => "Remote crash. Receiving malformed HTML can result in an invalid memory access causing Pidgin to crash.",
+		"description"  => "Remote crash. Receiving malformed HTML can result in an invalid memory access causing Gaim to crash.",
 		"fix"          => "The HTML parsing functions were modified to correctly parse the malformed HTML.",
 		"fixedversion" => "1.1.3",
-		"discoveredby" => "Pidgin"
+		"discoveredby" => "Gaim"
 	),
 	array(
 		"title"        => "Remote DoS on receiving malformed HTML",
 		"date"         => "24 February 2005",
 		"cve"          => "CAN-2005-0208",
 		"summary"      => "Client crashes when receiving specific malformed HTML",
-		"description"  => "Remote crash. Receiving malformed HTML can result in an invalid memory access causing Pidgin to crash.",
+		"description"  => "Remote crash. Receiving malformed HTML can result in an invalid memory access causing Gaim to crash.",
 		"fix"          => "The HTML parsing functions were modified to correctly parse the malformed HTML.",
 		"fixedversion" => "1.1.4",
-		"discoveredby" => "Pidgin"
+		"discoveredby" => "Gaim"
 	),
 	array(
 		"title"        => "Remote DoS on receiving malformed HTML",
 		"date"         => "2 April 2005",
 		"cve"          => "CAN-2005-0965",
 		"summary"      => "Client crash when receiving specific malformed HTML",
-		"description"  => "The pidgin_markup_strip_html function in Pidgin 1.2.0, and possibly earlier versions, allows remote attackers to cause a denial of service (application crash) via a string that contains malformed HTML, which causes an out-of-bounds read.",
+		"description"  => "The gaim_markup_strip_html function in Gaim 1.2.0, and possibly earlier versions, allows remote attackers to cause a denial of service (application crash) via a string that contains malformed HTML, which causes an out-of-bounds read.",
 		"fix"          => "The function was changed to not allow the out-of-bounds read.",
 		"fixedversion" => "1.2.1",
 		"discoveredby" => "Jean-Yves Lefort"
@@ -162,8 +162,8 @@ $vulnerabilities = array(
 		"date"         => "2 April 2005",
 		"cve"          => "CAN-2005-0966",
 		"summary"      => "Client crash and other strange behavior when receiving specific messages over IRC",
-		"description"  => "The IRC protocol plugin in Pidgin 1.2.0, and possibly earlier versions, allows (1) remote attackers to inject arbitrary Pidgin markup via irc_msg_kick, irc_msg_mode, irc_msg_part, irc_msg_quit, (2) remote attackers to inject arbitrary Pango markup and pop up empty dialog boxes via irc_msg_invite, or (3) malicious IRC servers to cause a denial of service (application crash) by injecting certain Pango markup into irc_msg_badmode, irc_msg_banned, irc_msg_unknown, irc_msg_nochan functions.",
-		"fix"          => "The IRC protocol plugin was modified to escape appropriate messages passed to the Pidgin core.",
+		"description"  => "The IRC protocol plugin in Gaim 1.2.0, and possibly earlier versions, allows (1) remote attackers to inject arbitrary Gaim markup via irc_msg_kick, irc_msg_mode, irc_msg_part, irc_msg_quit, (2) remote attackers to inject arbitrary Pango markup and pop up empty dialog boxes via irc_msg_invite, or (3) malicious IRC servers to cause a denial of service (application crash) by injecting certain Pango markup into irc_msg_badmode, irc_msg_banned, irc_msg_unknown, irc_msg_nochan functions.",
+		"fix"          => "The IRC protocol plugin was modified to escape appropriate messages passed to the Gaim core.",
 		"fixedversion" => "1.2.1",
 		"discoveredby" => "Jean-Yves Lefort"
 	),
@@ -171,8 +171,8 @@ $vulnerabilities = array(
 		"title"        => "Jabber remote crash",
 		"date"         => "4 April 2005",
 		"cve"          => "CAN-2005-0967",
-		"summary"      => "A remote jabber user can cause Pidgin to crash by sending a specific file transfer request.",
-		"description"  => "Sending a Pidgin Jabber user a certain invalid file transfer request triggers an out-of-bounds read which causes Pidgin to crash.",
+		"summary"      => "A remote jabber user can cause Gaim to crash by sending a specific file transfer request.",
+		"description"  => "Sending a Gaim Jabber user a certain invalid file transfer request triggers an out-of-bounds read which causes Gaim to crash.",
 		"fix"          => "The invalid file transfer request is ignored.",
 		"fixedversion" => "1.2.1",
 		"discoveredby" => "Marco Alvarez"
@@ -182,7 +182,7 @@ $vulnerabilities = array(
 		"date"         => "10 May 2005",
 		"cve"          => "CAN-2005-1261",
 		"summary"      => "Specially crafted messages on certain protocols can cause a buffer overflow",
-		"description"  => "It is possible for a remote user to overflow a static buffer by sending an IM containing a very large URL (greater than 8192 bytes) to the Pidgin user.  This is not possible on all protocols, due to message length restrictions.  Jabber are SILC are known to be vulnerable.",
+		"description"  => "It is possible for a remote user to overflow a static buffer by sending an IM containing a very large URL (greater than 8192 bytes) to the Gaim user.  This is not possible on all protocols, due to message length restrictions.  Jabber are SILC are known to be vulnerable.",
 		"fix"          => "The URL parsing function was modified to not use a static buffer.",
 		"fixedversion" => "1.3.0",
 		"discoveredby" => "Stu Tomlinson"
@@ -211,7 +211,7 @@ $vulnerabilities = array(
 		"title"        => "MSN Remote DoS",
 		"date"         => "10 June 2005",
 		"cve"          => "CAN-2005-1934",
-		"summary"      => "Certain malformed MSN messages can cause pidgin to crash",
+		"summary"      => "Certain malformed MSN messages can cause gaim to crash",
 		"description"  => "Remote attackers can cause a denial of service (crash) via a malformed MSN message that leads to a memory allocation of a large size, possibly due to an integer signedness error.",
 		"fix"          => "Added a check for the invalid message.",
 		"fixedversion" => "1.3.1",
@@ -222,7 +222,7 @@ $vulnerabilities = array(
 		"date"         => "11 August 2005",
 		"cve"          => "CAN-2005-2370",
 		"summary"      => "A memory alignment bug in the Gadu-Gadu protocol plugin can result in a buffer overflow",
-		"description"  => "There was a memory alignment bug in the library Pidgin uses to access the Gadu-Gadu network.  This bug can not be exploited on x86 architectures.  This bug was recently fixed in the libgadu library, but also needed to be fixed in Pidgin because Pidgin includes a copy of the libgadu library.",
+		"description"  => "There was a memory alignment bug in the library Gaim uses to access the Gadu-Gadu network.  This bug can not be exploited on x86 architectures.  This bug was recently fixed in the libgadu library, but also needed to be fixed in Gaim because Gaim includes a copy of the libgadu library.",
 		"fix"          => "The vulnerable section of code was modified to work correctly on all architectures.",
 		"fixedversion" => "1.5.0",
 		"discoveredby" => "Marcin Owsiany and Wojtek Kaniewski"
@@ -232,8 +232,8 @@ $vulnerabilities = array(
 		"date"         => "11 August 2005",
 		"cve"          => "CAN-2005-2102",
 		"summary"      => "Invalid filenames can cause a crash on some systems",
-		"description"  => "A remote user could cause Pidgin to crash on some systems by sending the Pidgin user a file whose filename contains certain invalid characters.  It is unknown what combination of systems are affected, but it is suspected that Windows users and systems with older versions of GTK+ are especially susceptible.",
-		"fix"          => "The filename is validated as UTF-8 before Pidgin attemps to display it.",
+		"description"  => "A remote user could cause Gaim to crash on some systems by sending the Gaim user a file whose filename contains certain invalid characters.  It is unknown what combination of systems are affected, but it is suspected that Windows users and systems with older versions of GTK+ are especially susceptible.",
+		"fix"          => "The filename is validated as UTF-8 before Gaim attemps to display it.",
 		"fixedversion" => "1.5.0",
 		"discoveredby" => "Unknown"
 	),
@@ -242,7 +242,7 @@ $vulnerabilities = array(
 		"date"         => "11 August 2005",
 		"cve"          => "CAN-2005-2103",
 		"summary"      => "Remote users can cause a buffer overflow",
-		"description"  => "A remote AIM or ICQ user can cause a buffer overflow in Pidgin by setting an away message containing many AIM substitution strings (such as %t or %n).",
+		"description"  => "A remote AIM or ICQ user can cause a buffer overflow in Gaim by setting an away message containing many AIM substitution strings (such as %t or %n).",
 		"fix"          => "The substitution function was modified to use a dynamic buffer instead of one with a fixed size.",
 		"fixedversion" => "1.5.0",
 		"discoveredby" => "Brandon Perry"
@@ -278,7 +278,7 @@ if (!isset($id) || !is_int($id) || ($id < 0) || ($id >= $total)) {
 <h1>Pidgin Security Advisories</h1>
 
 <p>This page lists all potential security vulnerabilities discovered since
-August 1st, 2004 in Pidgin and its components.</p>
+August 1st, 2004 in Pidgin (or Gaim) and its components.</p>
 
 <table>
   <tr>
