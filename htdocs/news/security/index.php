@@ -246,6 +246,16 @@ $vulnerabilities = array(
 		"fix"          => "The substitution function was modified to use a dynamic buffer instead of one with a fixed size.",
 		"fixedversion" => "1.5.0",
 		"discoveredby" => "Brandon Perry"
+	),
+	array(
+		"title"        => "MSN Remote \"Nudge\" DoS",
+		"date"         => "27 September 2007",
+//		"cve"          => "CVE-2007-4996",
+		"summary"      => "MSN nudges sent from unknown buddies can cause libpurple to crash",
+		"description"  => "A remote MSN user that is not on the buddy list can cause a denial of service (crash) by sending a nudge message.  The protocol plugin attempts to look up the buddy's information and accesses an invalid memory location if the user is not on the buddy list.",
+		"fix"          => "The nudge functionality in the MSN protocol has been rewritten to avoid an unnecessary lookup of buddy information.",
+		"fixedversion" => "2.2.1",
+		"discoveredby" => "Evan Schoenberg"
 	)
 );
 /*	Template for the unfortunate future
@@ -328,12 +338,12 @@ for ($i = $start; $i >= $stop; $i--) {
 <?
 if ($start < ($total - 1)) {
 ?>
-<a href="./?offset=<?=($offset - $max_per_page) ?>">Newer</a>
+<a href="?offset=<?=($offset - $max_per_page) ?>">Newer</a>
 <?
 }
 if ($stop > 0) {
 ?>
-<a href="./?offset=<?=($offset + $max_per_page) ?>">Older</a>
+<a href="?offset=<?=($offset + $max_per_page) ?>">Older</a>
 <?
 }
 ?>
