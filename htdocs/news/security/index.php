@@ -250,7 +250,7 @@ $vulnerabilities = array(
 	array(
 		"title"        => "MSN Remote \"Nudge\" DoS",
 		"date"         => "27 September 2007",
-//		"cve"          => "CVE-2007-4996",
+		"cve"          => "CVE-2007-4996",
 		"summary"      => "MSN nudges sent from unknown buddies can cause libpurple to crash",
 		"description"  => "A remote MSN user that is not on the buddy list can cause a denial of service (crash) by sending a nudge message.  The protocol plugin attempts to look up the buddy's information and accesses an invalid memory location if the user is not on the buddy list.",
 		"fix"          => "The nudge functionality in the MSN protocol has been rewritten to avoid an unnecessary lookup of buddy information.",
