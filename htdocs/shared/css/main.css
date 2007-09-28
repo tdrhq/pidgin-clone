@@ -388,3 +388,29 @@ h3 {
 #main img {
   max-width: 530px;
 }
+
+table {
+  border: none;
+  padding: 0;
+  margin 0;
+}
+
+th {
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid #DADADA;
+  margin: 0;
+  background-color: #F6F6F6;
+  padding: 4px;
+}
+
+td {
+  padding: 4px;
+  border-bottom: 1px solid #EEE;
+  margin: 0;
+}
+
+td.date {
+  white-space: nowrap;
+  text-align: right;
+}
