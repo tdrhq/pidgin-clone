@@ -75,8 +75,10 @@ source code as well.</p>
 </div>
 
 <!-- This will pull from somewhere else at some point -->
- <p id="lowblurb">Look out! 2.2.0 is here... with many improvements from our
-Google Summer of Code students and a pile of bug fixes!  Enjoy!</p>
+<p id="lowblurb">2.2.1 is out.  It fixes a crash that can be triggered
+remotely on MSN in 2.2.0.  If you are using 2.2.0, you should upgrade
+immediately.  See our <a href="/news/security/?id=23">security advisory</a>
+for details.</p>
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
