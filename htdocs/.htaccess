@@ -3,4 +3,8 @@ Options +MultiViews
 ErrorDocument 403 /shared/403.php
 ErrorDocument 404 /shared/404.php
 
-Redirect Permanent /news/index.php http://planet.pidgin.im/
+RewriteEngine on
+
+RewriteRule ^security(.*)$ /news/security$1 [R=301,L]
+RewriteRule ^news/?$ http://planet.pidgin.im/ [R=301,L]
+
