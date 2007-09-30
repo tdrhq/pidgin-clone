@@ -20,14 +20,14 @@ if(isset($_GET['version'], $_GET['build'])) {
 	exit();
 }
 
-$dev = ((strpos($version, 'cvs') !== false) || (strpos($version, 'beta') !== false) || (strpos($version, 'dev') != false));
+$dev = ((strpos($version, 'cvs') !== false) || (strpos($version, 'beta') !== false) || (strpos($version, 'dev') != false) || (strpos($version, 'devel') != false));
 $win32 = ($build == 'purple-win32');
 if (!$win32) {
 	$win32 = ($build == 'gaim-win32');
 }
 $my_ver = str_replace('cvs', '', $version);
-$my_ver = str_replace('devel', '', $version);
-$my_ver = str_replace('dev', '', $version);
+$my_ver = str_replace('devel', '', $my_ver);
+$my_ver = str_replace('dev', '', $my_ver);
 $my_ver = preg_replace('/beta(\d+)$/', '', $my_ver);
 $my_ver = preg_replace('/-(\d+)$/', '', $my_ver);
 $cur_ver = ($win32 ? $pidgin_win32_version : $pidgin_version);
@@ -88,7 +88,10 @@ print $cur_ver . "\n";
 print parse_changelog($changelog_file, $cur_ver, $my_ver);
 
 if ($win32) {
-    print "Win32 Changes:\n\n";
-    print parse_changelog($changelog_file_win32, $cur_ver, $my_ver);
+    $text = parse_changelog($changelog_file_win32, $cur_ver, $my_ver);
+    if (preg_match("/^\s$/", $text)) {
+        print "Win32 Changes:\n\n";
+        print $text;
+    }
 }
 ?>
