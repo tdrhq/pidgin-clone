@@ -26,6 +26,7 @@ if (!$win32) {
 	$win32 = ($build == 'gaim-win32');
 }
 $my_ver = str_replace('cvs', '', $version);
+$my_ver = str_replace('devel', '', $version);
 $my_ver = str_replace('dev', '', $version);
 $my_ver = preg_replace('/beta(\d+)$/', '', $my_ver);
 $my_ver = preg_replace('/-(\d+)$/', '', $my_ver);
