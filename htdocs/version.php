@@ -89,7 +89,7 @@ print parse_changelog($changelog_file, $cur_ver, $my_ver);
 
 if ($win32) {
     $text = parse_changelog($changelog_file_win32, $cur_ver, $my_ver);
-    if (preg_match("/^\s$/", $text)) {
+    if (!preg_match("/^\s*$/", $text)) {
         print "Win32 Changes:\n\n";
         print $text;
     }
