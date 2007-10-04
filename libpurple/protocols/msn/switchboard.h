@@ -249,8 +249,16 @@ gboolean msn_switchboard_chat_invite(MsnSwitchBoard *swboard, const char *who);
 void msn_switchboard_request(MsnSwitchBoard *swboard);
 void msn_switchboard_request_add_user(MsnSwitchBoard *swboard, const char *user);
 
-/**
- * Processes peer to peer messages.
+/** Displays handwritten messages (inserts them into conversation as custom smiley)
+ *
+ * @param swboard The command processor.
+ * @param msgid     Unique ID for the message.
+ * @param data     The image data.
+ * @param passport     The email address of the sending user.
+ */
+void msn_handwritten_msg_show(MsnSwitchBoard *swboard, char* msgid, char* data, char* passport);
+ 
+/** Processes peer to peer messages.
  *
  * @param cmdproc The command processor.
  * @param msg     The message.

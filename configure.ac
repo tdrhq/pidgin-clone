@@ -579,6 +579,17 @@ if test "x$enable_gst" != "xno"; then
 	AC_SUBST(GSTREAMER_LIBS)
 fi
 
+
+
+
+
+dnl #######################################################################
+dnl # Check for libmspack (for the MSN Extras plugin)
+dnl #######################################################################
+AC_CHECK_HEADERS(mspack.h, enable_mspack="yes", enable_mspack="no")
+AC_CHECK_LIB(mspack, mspack_create_cab_decompressor, MSPACK_LIBS="-lmspack", enable_mspack="no")
+if test "x$enable_mspack" != "xno"; then
+	AC_SUBST(MSPACK_LIBS)
 dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
 dnl #######################################################################
@@ -2130,6 +2141,7 @@ echo Use XScreenSaver Extension.... : $enable_screensaver
 echo Use X Session Management...... : $enable_sm
 echo Use startup notification...... : $enable_startup_notification
 echo Build with GtkSpell support... : $enable_gtkspell
+echo Build with MsPack support..... : $enable_mspack
 echo
 echo Build with plugin support..... : $enable_plugins
 echo Build with Mono support....... : $enable_mono
