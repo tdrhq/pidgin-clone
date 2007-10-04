@@ -276,10 +276,13 @@ msn_change_status(MsnSession *session)
 	if (purple_account_get_bool(session->account, "voice_clips", TRUE))
 		client_id |= MSN_CLIENT_CAP_VOICE_CLIP;
 
-	if (msnobj == NULL){
+	if (msnobj == NULL)
+	{
 		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text,
 						 client_id);
-	}else{
+	}
+	else
+	{
 		char *msnobj_str;
 
 		msnobj_str = msn_object_to_string(msnobj);

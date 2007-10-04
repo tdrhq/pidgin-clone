@@ -23,7 +23,6 @@
  */
 #include "msn.h"
 #include "msg.h"
-#define MSN_DEBUG_MSG
 
 const GHashTable *multipartmessages;
 
@@ -107,7 +106,8 @@ msn_message_unref(MsnMessage *msg)
 	purple_debug_info("msn", "message unref (%p)[%d]\n", msg, msg->ref_count);
 #endif
 
-	if (msg->ref_count == 0){
+	if (msg->ref_count == 0)
+	{
 		msn_message_destroy(msg);
 
 		return NULL;
@@ -219,7 +219,6 @@ msn_message_parse_payload(MsnMessage *msg,
 	int partcount, part;
 	partcount=part=0;
 	g_return_if_fail(payload != NULL);
-//	purple_debug_info("MaYuan","payload:{%s}\n",payload);
 	tmp_base = tmp = g_malloc0(payload_len + 1);
 	memcpy(tmp_base, payload, payload_len);
 
@@ -236,7 +235,8 @@ msn_message_parse_payload(MsnMessage *msg,
 
 	elems = g_strsplit(tmp, line_dem, 0);
 
-	for (cur = elems; *cur != NULL; cur++){
+	for (cur = elems; *cur != NULL; cur++)
+	{
 		const char *key, *value;
 
 		tokens = g_strsplit(*cur, ": ", 2);
@@ -254,14 +254,18 @@ msn_message_parse_payload(MsnMessage *msg,
  		}
  
 		/*ignore  MIME version line*/
-		else if (!strcmp(key, "MIME-Version")){
+		else if (!strcmp(key, "MIME-Version"))
+		{
 		}
 
-		else if (!strcmp(key, "Content-Type")){
+		else if (!strcmp(key, "Content-Type"))
+		{
 			char *charset, *c;
 
-			if ((c = strchr(value, ';')) != NULL){
-				if ((charset = strchr(c, '=')) != NULL)	{
+			if ((c = strchr(value, ';')) != NULL)
+			{
+				if ((charset = strchr(c, '=')) != NULL)
+				{
 					charset++;
 					msn_message_set_charset(msg, charset);
 				}
@@ -270,7 +274,9 @@ msn_message_parse_payload(MsnMessage *msg,
 			}
 
 			msn_message_set_content_type(msg, value);
-		}else{
+		}
+		else
+		{
 			msn_message_set_attr(msg, key, value);
 		}
 
@@ -286,7 +292,8 @@ msn_message_parse_payload(MsnMessage *msg,
 	content_type = msn_message_get_content_type(msg);
 
 	if (content_type != NULL &&
-		!strcmp(content_type, "application/x-msnmsgrp2p")){
+		!strcmp(content_type, "application/x-msnmsgrp2p"))
+	{
 		MsnSlpHeader header;
 		MsnSlpFooter footer;
 		int body_len;
@@ -328,7 +335,9 @@ msn_message_parse_payload(MsnMessage *msg,
 			tmp += sizeof(footer);
 			msg->msnslp_footer.value = GUINT32_FROM_BE(footer.value);
 		}
-	}else{
+	}
+	else
+	{
 		if (payload_len - (tmp - tmp_base) > 0) {
 			msg->body_len = payload_len - (tmp - tmp_base);
 			msg->body = g_malloc0(msg->body_len + 1);
@@ -505,14 +514,16 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 	}
 	else
 	{
-		if (body != NULL){
+		if (body != NULL)
+		{
 			memcpy(n, body, body_len);
 			n += body_len;
 			*n = '\0';
 		}
 	}
 
-	if (ret_size != NULL){
+	if (ret_size != NULL)
+	{
 		*ret_size = n - base;
 
 		if (*ret_size > 1664)
@@ -551,11 +562,14 @@ msn_message_set_bin_data(MsnMessage *msg, const void *data, size_t len)
 	if (msg->body != NULL)
 		g_free(msg->body);
 
-	if (data != NULL && len > 0){
+	if (data != NULL && len > 0)
+	{
 		msg->body = g_malloc0(len + 1);
 		memcpy(msg->body, data, len);
 		msg->body_len = len;
-	}else{
+	}
+	else
+	{
 		msg->body = NULL;
 		msg->body_len = 0;
 	}
@@ -810,4 +824,3 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	g_string_free(str, TRUE);
 }
-
