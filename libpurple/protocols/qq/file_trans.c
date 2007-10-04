@@ -30,7 +30,7 @@
 
 #include "debug.h"
 #include "ft.h"
-#include "cipher.h"
+#include "md5cipher.h"
 
 #include "crypt.h"
 #include "file_trans.h"
@@ -80,15 +80,13 @@ static guint32 _encrypt_qq_uid(guint32 uid, guint32 key)
 static void _fill_filename_md5(const gchar *filename, guint8 *md5)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 
 	g_return_if_fail(filename != NULL && md5 != NULL);
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (guint8 *) filename, strlen(filename));
-	purple_cipher_context_digest(context, 16, md5, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (guint8 *) filename, strlen(filename));
+	purple_cipher_digest(cipher, 16, md5, NULL);
+	g_object_unref(G_OBJECT(cipher));
 }
 
 static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
@@ -96,7 +94,6 @@ static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 	FILE *fp;
 	guint8 *buffer;
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 
 	const gint QQ_MAX_FILE_MD5_LENGTH = 10002432;
 
@@ -111,11 +108,10 @@ static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 	g_return_if_fail(buffer != NULL);
 	fread(buffer, filelen, 1, fp);
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, buffer, filelen);
-	purple_cipher_context_digest(context, 16, md5, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, buffer, filelen);
+	purple_cipher_digest(cipher, 16, md5, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	fclose(fp);
 }

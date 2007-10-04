@@ -32,6 +32,8 @@
 #include "sync.h"
 #include "slplink.h"
 
+#include "md5cipher.h"
+
 static MsnTable *cbs_table;
 
 /**************************************************************************
@@ -406,22 +408,20 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	char buf[33];
 	const char *challenge_resp;
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar digest[16];
 	int i;
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
+	cipher = purple_md5_cipher_new();
 
-	purple_cipher_context_append(context, (const guchar *)cmd->params[1],
-							   strlen(cmd->params[1]));
+	purple_cipher_append(cipher, (const guchar *)cmd->params[1],
+						 strlen(cmd->params[1]));
 
 	challenge_resp = "VT6PX?UQTM4WM%YR";
 
-	purple_cipher_context_append(context, (const guchar *)challenge_resp,
-							   strlen(challenge_resp));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_append(cipher, (const guchar *)challenge_resp,
+						 strlen(challenge_resp));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	for (i = 0; i < 16; i++)
 		g_snprintf(buf + (i*2), 3, "%02x", digest[i]);
@@ -951,7 +951,6 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *rru;
 	const char *url;
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar digest[16];
 	FILE *fd;
 	char *buf;
@@ -970,12 +969,10 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			   time(NULL) - session->passport_info.sl,
 			   purple_connection_get_password(account->gc));
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-
-	purple_cipher_context_append(context, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (const guchar *)buf, strlen(buf));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	g_free(buf);
 

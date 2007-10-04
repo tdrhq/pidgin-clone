@@ -1,6 +1,7 @@
 EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-types.py \
+		marshallers.list \
 		purple-notifications-example \
 		purple-remote \
 		purple-send \
@@ -43,12 +44,15 @@ purple_coresources = \
 	conversation.c \
 	core.c \
 	debug.c \
+	descipher.c \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
 	idle.c \
 	imgstore.c \
 	log.c \
+	md4cipher.c \
+	md5cipher.c \
 	mime.c \
 	nat-pmp.c \
 	network.c \
@@ -65,6 +69,7 @@ purple_coresources = \
 	roomlist.c \
 	savedstatuses.c \
 	server.c \
+	sha1cipher.c \
 	signals.c \
 	dnsquery.c \
 	dnssrv.c\
@@ -93,6 +98,7 @@ purple_coreheaders = \
 	core.h \
 	dbus-maybe.h \
 	debug.h \
+	descipher.h \
 	desktopitem.h \
 	eventloop.h \
 	ft.h \
@@ -100,6 +106,8 @@ purple_coreheaders = \
 	idle.h \
 	imgstore.h \
 	log.h \
+	md4cipher.h \
+	md5cipher.h \
 	mime.h \
 	nat-pmp.h \
 	network.h \
@@ -116,6 +124,7 @@ purple_coreheaders = \
 	roomlist.h \
 	savedstatuses.h \
 	server.h \
+	sha1cipher.h \
 	signals.h \
 	dnsquery.h \
 	dnssrv.h \
@@ -131,7 +140,15 @@ purple_coreheaders = \
 	xmlnode.h \
 	whiteboard.h
 
-BUILT_SOURCES = version.h
+marshallers.h: marshallers.list
+	@echo "Generating marshallers.h"
+	$(GLIB_GENMARSHAL) --prefix=purple_marshal marshallers.list --header > marshallers.h
+
+marshallers.c: marshallers.list
+	@echo "Generation marshallers.c"
+	$(GLIB_GENMARSHAL) --prefix=purple_marshal marshallers.list --body > marshallers.c
+
+BUILT_SOURCES = version.h marshallers.h marshallers.c
 
 if ENABLE_DBUS
 
@@ -141,6 +158,8 @@ CLEANFILES = \
 	dbus-client-binding.h \
 	dbus-types.c \
 	dbus-types.h \
+	marshallers.h \
+	marshallers.c \
 	purple-client-bindings.c \
 	purple-client-bindings.h \
 	purple.service
