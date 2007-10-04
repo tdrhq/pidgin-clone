@@ -75,9 +75,8 @@
 #define MSN_TYPING_RECV_TIMEOUT 6
 #define MSN_TYPING_SEND_TIMEOUT	4
 
-#define HOTMAIL_URL "http://www.hotmail.com/cgi-bin/folders"
+#define HOTMAIL_URL "http://www.hotmail.com/cgi-bin/folders"w3
 #define PASSPORT_URL "http://lc1.law13.hotmail.passport.com/cgi-bin/dologin?login="
-/*#define PROFILE_URL "http://spaces.msn.com/profile.aspx?mem="*/
 #define PROFILE_URL "http://spaces.live.com/profile.aspx?mem="
 #define PHOTO_URL	" contactparams:photopreauthurl=\""
 

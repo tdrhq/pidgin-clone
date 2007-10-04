@@ -1434,7 +1434,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 			}
 		}
 	} else {
-		GList *accounts;
+		const GList *accounts;
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
 			PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(account));
@@ -2029,6 +2029,10 @@ pixbuf_size_prepared_cb(GdkPixbufLoader *loader, int width, int height, gpointer
 	int w, h;
 	GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MEDIUM);
 	gtk_icon_size_lookup(icon_size, &w, &h);
+	if (height > width)
+		w = width * h  / height;
+	else if (width > height)
+		h = height * w / width;
 	gdk_pixbuf_loader_set_size(loader, w, h);
 #endif
 }

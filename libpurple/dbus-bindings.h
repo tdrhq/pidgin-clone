@@ -35,9 +35,9 @@
 extern "C" {
 #endif
 
-gint purple_dbus_pointer_to_id(gpointer node);
+gint purple_dbus_pointer_to_id(gconstpointer node);
 gpointer purple_dbus_id_to_pointer(gint id, PurpleDBusType *type);
-gint  purple_dbus_pointer_to_id_error(gpointer ptr, DBusError *error);
+gint  purple_dbus_pointer_to_id_error(gconstpointer ptr, DBusError *error);
 gpointer purple_dbus_id_to_pointer_error(gint id, PurpleDBusType *type,
 				       const char *typename, DBusError *error);
 
@@ -83,14 +83,52 @@ purple_dbus_message_iter_get_args_valist (DBusMessageIter *iter,
 					int              first_arg_type,
 					va_list          var_args);
 
+/**
+ * @deprecated In 3.0.0, this method will have a signature and behavior
+ *             like that of purple_dbusify_const_GList().
+ */
 dbus_int32_t* purple_dbusify_GList(GList *list, gboolean free_memory, 
 				 dbus_int32_t *len);
+/**
+ * @deprecated In 3.0.0, this method will have a signature and behavior
+ *             like that of purple_dbusify_const_GSList().
+ */
 dbus_int32_t* purple_dbusify_GSList(GSList *list, gboolean free_memory,
 				  dbus_int32_t *len);
+
+/**
+ * @since 2.1.0
+ */
+dbus_int32_t* purple_dbusify_const_GList(const GList *list, dbus_int32_t *len);
+
+/**
+ * @since 2.1.0
+ */
+dbus_int32_t* purple_dbusify_const_GSList(const GSList *list, dbus_int32_t *len);
+
+/**
+ * @deprecated In 3.0.0, this method will have a signature and behavior
+ *             like that of purple_const_GList_to_array().
+ */
 gpointer* purple_GList_to_array(GList *list, gboolean free_memory,
 			      dbus_int32_t *len);
+/**
+ * @deprecated In 3.0.0, this method will have a signature and behavior
+ *             like that of purple_const_GSList_to_array().
+ */
 gpointer* purple_GSList_to_array(GSList *list, gboolean free_memory,
 			      dbus_int32_t *len);
+
+/**
+ * @since 2.1.0
+ */
+gpointer* purple_const_GList_to_array(const GList *list, dbus_int32_t *len);
+
+/**
+ * @since 2.1.0
+ */
+gpointer* purple_const_GSList_to_array(const GSList *list, dbus_int32_t *len);
+
 GHashTable *purple_dbus_iter_hash_table(DBusMessageIter *iter, DBusError *error);
 
 const char* empty_to_null(const char *str);
