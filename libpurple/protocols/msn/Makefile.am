@@ -85,7 +85,7 @@ else
 st =
 pkg_LTLIBRARIES   = libmsn.la
 libmsn_la_SOURCES = $(MSNSOURCES)
-libmsn_la_LIBADD  = $(GLIB_LIBS)
+libmsn_la_LIBADD  = $(GLIB_LIBS) $(MSPACK_LIBS)
 
 endif
 
