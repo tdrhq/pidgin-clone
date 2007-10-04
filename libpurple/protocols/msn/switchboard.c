@@ -33,8 +33,6 @@
 #include <mspack.h>
 #endif
 
-#define MSN_DEBUG_SB
-
 #define WINK_HTML_TEMPLATE "<h1 style=\"text-align:center\">Playing MSN Wink</h1>\n" \
 "<div style=\"width:400; height: 300; border: 1px solid black; margin:auto; text-align: center\">\n" \
 "<object type=\"application/x-shockwave-flash\" data=\"%s\" width=\"400\" height=\"300\">\n" \
