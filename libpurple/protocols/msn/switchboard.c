@@ -29,9 +29,26 @@
 
 #include "error.h"
 
+#ifdef USE_MSPACK
+#include <mspack.h>
+#endif
+
 #define MSN_DEBUG_SB
 
+#define WINK_HTML_TEMPLATE "<h1 style=\"text-align:center\">Playing MSN Wink</h1>\n" \
+"<div style=\"width:400; height: 300; border: 1px solid black; margin:auto; text-align: center\">\n" \
+"<object type=\"application/x-shockwave-flash\" data=\"%s\" width=\"400\" height=\"300\">\n" \
+"<param name=\"movie\" value=\"%s\"/>\n" \
+"<param name=\"loop\" value=\"false\"/>\n" \
+"<div style=\"padding: 5px\">\n" \
+"<h2>Your browser does not support Shockwave Flash.</h2>\n" \
+"This software is required to play winks.<p><img src=\"%s\"/></div></object></div>"
+
+#undef close
+
+
 static MsnTable *cbs_table;
+static GHashTable *datacast_table;
 
 static void msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg,
 							 MsnMsgErrorType error);
@@ -724,8 +741,8 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
-	msn_message_parse_payload(msg, payload, len,
-					MSG_LINE_DEM,MSG_BODY_DEM);
+	msg = msn_message_parse_payload(msg, payload, len, MSG_LINE_DEM,MSG_BODY_DEM);
+	if (!msg) return;
 #ifdef MSN_DEBUG_SB
 	msn_message_show_readable(msg, "SB RECV", FALSE);
 #endif
@@ -910,6 +927,70 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_free(body_final);
 }
 
+void
+msn_handwritten_msg_show(MsnSwitchBoard *swboard, char* msgid, char* data, char* passport)
+{
+	guchar *guc;
+	size_t body_len;
+	PurpleAccount *account;
+	
+	account = swboard->session->account;
+	guc = purple_base64_decode(data, &body_len);
+	if (!guc || !body_len) 
+		return;
+	
+	/*Grab the convo for this sboard. If there isn't one and it's an IM 
+		then create it, otherwise the smileys won't work*/
+	if (swboard->conv == NULL) {
+		if (swboard->current_users > 1) 
+			swboard->conv = purple_find_chat(account->gc, swboard->chat_id);
+		else {
+			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+									passport, account);
+			if (swboard->conv == NULL)
+				swboard->conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, passport);
+		}
+	}
+	swboard->flag |= MSN_SB_FLAG_IM;
+
+	/*Create the image as a custom smiley in the conversation with the GUID of the message that 
+		the image arrived in as the smiley text.*/
+	if (purple_conv_custom_smiley_add(swboard->conv, msgid, 0, "", 0)) {
+		purple_conv_custom_smiley_write(swboard->conv, msgid, guc, body_len);
+		purple_conv_custom_smiley_close(swboard->conv, msgid);
+	}
+	
+	/*And put the GUID into the convo window so that it will display...*/
+	if (swboard->current_users > 1 ||
+		((swboard->conv != NULL) &&
+		 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
+		serv_got_chat_in(account->gc, swboard->chat_id, passport, 0, msgid,
+						 time(NULL));
+	else
+		serv_got_im(account->gc, passport, msgid, 0, time(NULL));
+
+	g_free(guc);
+}
+
+/*only called from chats. Handwritten messages for IMs come as a SLP message*/
+static void
+msn_handwritten_msg(MsnSession *session, MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+	char *passport;
+	char *body, *msgid;
+	size_t body_len;
+	
+	passport = msg->remote_user;
+	msgid = msn_message_get_attr(msg, "Message-ID");
+
+	purple_debug_misc("MSN", "Displaying handwritten message from message %s", msgid);
+
+	body = msn_message_get_bin_data(msg, &body_len);
+	body = g_strndup(body+7, body_len-7);
+	msn_handwritten_msg_show(cmdproc->data, msgid, body, passport);
+	g_free(body);
+}
+
 static void
 control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
@@ -949,27 +1030,223 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 }
 
 static void
-nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+got_datacast_inform_user(MsnSwitchBoard *swboard, const char *who, const char *msg, 
+							const char *emot, const char *emot_name, 
+							size_t emot_len)
 {
-	MsnSwitchBoard *swboard;
 	char *username, *str;
 	PurpleAccount *account;
-	PurpleBuddy *buddy;
-	const char *user;
+	PurpleBuddy *b;
 
-	swboard = cmdproc->data;
-	account = cmdproc->session->account;
-	user = msg->remote_user;
+	account = swboard->session->account;
 
-	if ((buddy = purple_find_buddy(account, user)) != NULL)
-		username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
-	else
-		username = g_markup_escape_text(user, -1);
-
-	str = g_strdup_printf(_("%s just sent you a Nudge!"), username);
+	if ((b = purple_find_buddy(account, who)) != NULL)
+		username = g_markup_escape_text(purple_buddy_get_alias(b), -1);
+	else username = g_markup_escape_text(who, -1);
+	str = g_strdup_printf("%s %s", username, msg);
 	g_free(username);
-	msn_switchboard_report_user(swboard, PURPLE_MESSAGE_SYSTEM, str);
+	
+	/*Grab the convo for this sboard. If there isn't one and it's an IM 
+		then create it, otherwise the smileys won't work*/
+	if (swboard->conv == NULL) {
+		if (swboard->current_users > 1) 
+			swboard->conv = purple_find_chat(account->gc, swboard->chat_id);
+		else {
+			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+									who, account);
+			if (swboard->conv == NULL)
+				swboard->conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
+		}
+	}
+	swboard->flag |= MSN_SB_FLAG_IM;
+	
+	if (emot && purple_conv_custom_smiley_add(swboard->conv, emot_name, 0, "", 0)) {
+		purple_conv_custom_smiley_write(swboard->conv, emot_name, emot, emot_len);
+		purple_conv_custom_smiley_close(swboard->conv, emot_name);
+	}
+	purple_conversation_write(swboard->conv, NULL, str, PURPLE_MESSAGE_SYSTEM, time(NULL));
 	g_free(str);
+
+}
+static void
+got_voice_clip(MsnSlpCall *slpcall,
+			 const guchar *data, gsize size)
+{
+	FILE *f;
+	char *path, *msg;
+	purple_debug_info("msn-extras", "Got voice clip: %s\n", slpcall->data_info);
+	if (!purple_account_get_bool(slpcall->slplink->session->account, "voice_clips", FALSE)) return;
+	if ((f = purple_mkstemp(&path, TRUE))) {
+		purple_debug_info("msn-extras", "Opened file: %s\n", path);
+		fwrite(data, size, 1, f);
+		fclose(f);
+		msg = g_strdup_printf(
+						" sent a voice clip. <a href='audio://%s'>Click here to play it</a>", path);
+		got_datacast_inform_user(slpcall->slplink->swboard, slpcall->slplink->remote_user, 
+																				msg, NULL, NULL, 0);
+		g_free(msg);
+	} else {
+		purple_debug_error("msn-extras", "Couldn\'t create temp file to store sound\n");
+		got_datacast_inform_user(slpcall->slplink->swboard, slpcall->slplink->remote_user, 
+			 " sent a voice clip, but it could not be played", NULL, NULL, 0);
+	}
+	if (path) g_free(path); 
+}
+static gboolean 
+extract_wink (MsnSlpCall *slpcall, const guchar *data, gsize size) {
+#ifdef USE_MSPACK
+	struct mscab_decompressor *dec; 
+	struct mscabd_cabinet *cab; 
+	struct mscabd_file *fileincab;
+	FILE *f;
+	char *msg, *swf_msg, *emot_name, *emot;
+	size_t emot_len;
+	const gchar *tmpdir;
+	char *swf_path, *img_path, *html_path;
+	char *path, *craff;
+	if (!(f = purple_mkstemp(&path, TRUE))) {
+		purple_debug_info("msn-extras", "couldn\'t open temp file for .cab image\n");
+		return FALSE;
+	}
+	fwrite(data, size, 1, f);
+	fclose(f);
+	if (!(dec = mspack_create_cab_decompressor(NULL))) {
+		purple_debug_info("msn-extras", "couldn\'t create decompressor\n");
+		return FALSE;
+	}
+	if (!(cab = dec->open(dec, path))) {
+		purple_debug_info("msn-extras", "couldn\'t open .cab file\n");
+		return FALSE;
+	}
+	tmpdir = (gchar*)g_get_tmp_dir();
+	fileincab = cab->files;
+	swf_path = img_path = NULL;
+	while (fileincab) {
+		craff = g_build_filename(tmpdir, fileincab->filename, NULL);
+		dec->extract(dec, fileincab, craff);
+		if (strstr(fileincab->filename, ".swf")) swf_path = craff;
+		else if (strstr(fileincab->filename, ".png") || strstr(fileincab->filename, ".jpg") || 
+					strstr(fileincab->filename, ".gif"))
+			img_path = craff;
+		else g_free(craff);
+		fileincab = fileincab->next;
+	}
+	/* don't g_free(tmpdir) - it's just a ref to a global */
+	purple_debug_info("CHRIS", "Listed files\n");
+	dec->close(dec, cab);
+	mspack_destroy_cab_decompressor(dec);
+	g_free(path); 
+	purple_debug_info("CHRIS", "swf_path %s\n", swf_path);
+	emot_name = swf_msg = NULL;
+	if (swf_path) {
+		if ((f = purple_mkstemp(&html_path, FALSE))) {
+			g_fprintf(f, WINK_HTML_TEMPLATE, swf_path, swf_path, img_path);
+			fclose(f);
+			swf_msg = g_strdup_printf(
+						"<a href=\"file://%s\">Click here to view the wink in your web browser</a>", 
+						html_path);
+			g_free(html_path);
+		} else 
+			swf_msg = g_strdup_printf(
+						"<a href=\"file://%s\">Click here to view the wink in your web browser</a>", 
+						swf_path);
+	} 
+	emot_name = NULL;
+	if (img_path) {
+		if (g_file_get_contents(img_path, &emot, &emot_len, NULL)) {
+			emot_name = g_strdup_printf("{IMAGE:%s}", img_path);
+		} else {
+			emot=NULL;
+		}
+	}
+	if (emot_name) msg = g_strdup_printf(" sent a wink: %s\n%s", emot_name, swf_msg);
+	else msg = g_strdup_printf(" sent a wink\n%s", swf_msg);
+	got_datacast_inform_user(slpcall->slplink->swboard, slpcall->slplink->remote_user, 
+							msg, emot, emot_name, emot_len);
+	g_free(emot_name); 
+	/* Blows: probably the smiley code doesn't copy it.. g_free(emot); */
+	g_free(msg); g_free(swf_msg);	g_free(img_path); g_free(swf_path);
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
+static void
+got_wink(MsnSlpCall *slpcall, const guchar *data, gsize size)
+{
+	char* sound;
+	if (!purple_account_get_bool(slpcall->slplink->session->account, "winks", FALSE)) return;
+	if (!(extract_wink (slpcall, data, size)))
+		got_datacast_inform_user(slpcall->slplink->swboard, slpcall->slplink->remote_user,  
+			" sent a wink, but it could not be displayed", NULL, NULL, 0);
+}
+
+static void
+datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+	char *body, *body_str, *id, *tmp, *datapos;
+	size_t body_len;
+	MsnSlpCb datacast_cb;
+	
+	body = msn_message_get_bin_data(msg, &body_len);
+	body_str = g_strndup(body, body_len);
+	id = strstr(body_str, "ID:")+4; 
+	datapos = strstr(body_str, "Data: ")+6;
+	tmp = strchr(id, '\r'); 
+	if (tmp) id = g_strndup(id, tmp-id);
+	datacast_cb = NULL;
+	if (!strcmp(id, "2") && 
+#ifdef USE_MSPACK
+			purple_account_get_bool(cmdproc->servconn->session->account, "winks", TRUE)) 
+#else
+			purple_account_get_bool(cmdproc->servconn->session->account, "winks", FALSE)) 
+#endif
+		datacast_cb = got_wink;
+	else if (!strcmp(id, "3") &&
+			purple_account_get_bool(cmdproc->servconn->session->account, "voice_clips", TRUE)) 
+		datacast_cb = got_voice_clip;
+
+	if (datacast_cb) {
+		MsnSession *session;
+		MsnSlpLink *slplink;
+		MsnObject *obj;
+		const char *who;
+
+		session = cmdproc->servconn->session;
+
+		obj = msn_object_new_from_string(datapos);
+		who = msn_object_get_creator(obj);
+
+		slplink = msn_session_get_slplink(session, who);
+		msn_slplink_request_object(slplink, datapos, datacast_cb, NULL, obj);
+			
+		msn_object_destroy(obj);
+	}
+	else
+	{
+		MsnSwitchBoard *swboard;
+		char *username, *str;
+		PurpleAccount *account;
+		PurpleBuddy *buddy;
+		const char *user;
+
+		swboard = cmdproc->data;
+		account = cmdproc->session->account;
+		user = msg->remote_user;
+
+		if ((buddy = purple_find_buddy(account, user)) != NULL)
+			username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
+		else
+			username = g_markup_escape_text(user, -1);
+
+		str = g_strdup_printf(_("%s just sent you a Nudge!"), username);
+		g_free(username);
+		msn_switchboard_report_user(swboard, PURPLE_MESSAGE_SYSTEM, str);
+		g_free(str);
+	}
+	
+	if (tmp) g_free(id);
+	g_free(body_str);
 }
 
 /**************************************************************************
@@ -1276,7 +1553,9 @@ msn_switchboard_init(void)
 	msn_table_add_msg_type(cbs_table, "text/x-mms-animemoticon",
 	                                           msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
-						   nudge_msg);
+						   datacast_msg);
+	msn_table_add_msg_type(cbs_table, "image/gif",
+						   msn_handwritten_msg);
 #if 0
 	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
 						   msn_invite_msg);
