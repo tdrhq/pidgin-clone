@@ -111,10 +111,7 @@ struct _MsnSession
 
 	/*psm info*/
 	char *psm;
-	
-	/*first blist contact node*/
-	PurpleBlistNode *bnode;
-	
+
 	struct
 	{
 		/*t and p, get via USR TWN*/
@@ -236,11 +233,6 @@ void msn_session_set_login_step(MsnSession *session, MsnLoginStep step);
  * @param session The MSN session.
  */
 void msn_session_finish_login(MsnSession *session);
-
-/*get conversation via session,
- * If has one, return that,else create a new one;
- */
-PurpleConversation *msn_session_get_conv(MsnSession *session,const char *passport);
 
 /*post message to User*/
 void msn_session_report_user(MsnSession *session,const char *passport,
