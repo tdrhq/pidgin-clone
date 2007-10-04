@@ -96,7 +96,7 @@ msn_user_update(MsnUser *user)
 		                          "message", user->statusline,
 		                          "currentmedia", user->currentmedia, NULL);
 	} else if (user->currentmedia != NULL) {
-		purple_prpl_got_user_status(account, user->passport, "currentmedia",
+		purple_prpl_got_user_status(account, user->passport, user->status, "currentmedia",
 		                          user->currentmedia, NULL);
 	} else if (user->statusline != NULL) {
 		//char *status = g_strdup_printf("%s - %s", user->status, user->statusline);
@@ -202,7 +202,7 @@ msn_user_set_uid(MsnUser *user, const char *uid)
 }
 
 void
-msn_user_set_type(MsnUser *user, int type)
+msn_user_set_type(MsnUser *user, MsnUserType type)
 {
 	g_return_if_fail(user != NULL);
 
@@ -340,13 +340,25 @@ msn_user_is_online(PurpleAccount *account, const char *name)
 	return PURPLE_BUDDY_IS_ONLINE(buddy);
 }
 
-/*check to see if user is yahoo user?
- * TODO: we need to identify it via contact  parse
- */
 gboolean
 msn_user_is_yahoo(PurpleAccount *account, const char *name)
 {
-	return (strstr(name,"yahoo") != NULL);
+	MsnSession *session = NULL;
+	MsnUser *user;
+	PurpleConnection *gc;
+
+	gc = purple_account_get_connection(account);
+	if (gc != NULL)
+		session = gc->proto_data;
+
+	if ((session != NULL) && (session->protocol_ver == WLM_PROT_VER))
+		return FALSE;
+
+	if ((session != NULL) && (user = msn_userlist_find_user(session->userlist, name)) != NULL)
+	{
+		return (user->type == MSN_USER_TYPE_YAHOO);
+	}
+	return (strstr(name,"@yahoo.") != NULL);
 }
 
 void

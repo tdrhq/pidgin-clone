@@ -40,7 +40,7 @@ static MsnTable *cbs_table;
 
 static void msn_notification_fqy_yahoo(MsnSession *session, const char *passport);
 static void msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_len);
-static void msn_add_contact_xml(xmlnode *mlNode, const char *passport, int list_op, int type);
+static void msn_add_contact_xml(MsnSession *session, xmlnode *mlNode, const char *passport, int list_op, MsnUserType type);
 
 /**************************************************************************
  * Main
@@ -325,10 +325,9 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	g_snprintf(proto_str, sizeof(proto_str), "MSNP%d", session->protocol_ver);
 
-	for (i = 1; i < cmd->param_count -1; i++)
+	for (i = 1; i < cmd->param_count; i++)
 	{
-		purple_debug_info("MaYuan","%s,proto_str:%s\n",cmd->params[i],proto_str);
-		if (strcmp(cmd->params[i], proto_str) >= 0)
+		if (!strcmp(cmd->params[i], proto_str))
 		{
 			protocol_supported = TRUE;
 			break;
@@ -585,15 +584,15 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
  * Buddy Lists
  **************************************************************************/
 /* add contact to xmlnode */
-static void 
-msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
+static void
+msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,int list_op, MsnUserType type)
 {
 	xmlnode *d_node,*c_node;
 	char **tokens;
 	char *email,*domain;
 	char *list_op_str,*type_str;
 
-	purple_debug_info("MaYuan","passport:%s\n",passport);
+	purple_debug_info("MaYuan","passport:%s type: %d\n",passport, type);
 	tokens = g_strsplit(passport, "@", 2);
 	email = tokens[0];
 	domain = tokens[1];
@@ -628,21 +627,20 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 	purple_debug_info("MaYuan","list_op:%d\n",list_op);
 	xmlnode_set_attrib(c_node,"l",list_op_str);
 	g_free(list_op_str);
-#if 0
-	type_str = g_strdup_printf("%d",type);
-	xmlnode_set_attrib(c_node,"t",type_str);
-#else
-	if(g_strrstr(domain,"yahoo") != NULL){
-		type_str = g_strdup_printf("32");
-	}else{
-		/*passport*/
-		type_str = g_strdup_printf("1");
+
+	if (type != MSN_USER_TYPE_UNKNOWN) {
+		type_str = g_strdup_printf("%d", type);
+	} else {
+		if (msn_user_is_yahoo(session->account, passport))
+			type_str = g_strdup_printf("%d", MSN_USER_TYPE_YAHOO);
+		else
+			type_str = g_strdup_printf("%d", MSN_USER_TYPE_PASSPORT);
 	}
 	/*mobile*/
 	//type_str = g_strdup_printf("4");
 	xmlnode_set_attrib(c_node,"t",type_str);
 	g_free(type_str);
-#endif
+
 	xmlnode_insert_child(d_node, c_node);
 
 	g_strfreev(tokens);
@@ -678,7 +676,12 @@ msn_notification_dump_contact(MsnSession *session)
 	/*get the userlist*/
 	for (l = session->userlist->users; l != NULL; l = l->next){
 		user = l->data;
-		msn_add_contact_xml(adl_node, user->passport,
+
+		/* skip RL & PL during initial dump */
+		if (!(user->list_op & MSN_LIST_OP_MASK))
+			continue;
+
+		msn_add_contact_xml(session, adl_node, user->passport,
 			user->list_op & MSN_LIST_OP_MASK, user->type);
 
 		/* each ADL command may contain up to 150 contacts */
@@ -785,7 +788,7 @@ rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	char * payload;
 #endif
 
-	purple_debug_info("MaYuan","Process ADL\n");
+	purple_debug_info("MaYuan","Process RML\n");
 #if 0
 	trans = msn_transaction_new(cmdproc, "RML","");
 
@@ -1602,15 +1605,17 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		session->passport_info.sl = atol(value);
 
 	/*starting retrieve the contact list*/
-#ifdef MSN_PARTIAL_ADDRESSBOOK
-	msn_userlist_load(session);
-#endif
-	session->contact = msn_contact_new(session);
 	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
+	session->contact = msn_contact_new(session);
+#ifdef MSN_PARTIAL_LISTS
+	/* msn_userlist_load defeats all attempts at trying to detect blist sync issues */
+	msn_userlist_load(session);
 	msn_get_contact_list(session->contact, clLastChange);
-#if 0
+#else
 	/* always get the full list? */
 	msn_get_contact_list(session->contact, NULL);
+#endif
+#if 0
 	msn_contact_connect(session->contact);
 #endif
 }
@@ -1862,7 +1867,7 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 
-	msn_add_contact_xml(adl_node,who,1,1);
+	msn_add_contact_xml(notification->session,adl_node,who,1,MSN_USER_TYPE_PASSPORT);
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
@@ -1892,7 +1897,7 @@ msn_notification_rem_buddy(MsnNotification *notification, const char *list,
 	rml_node = xmlnode_new("ml");
 	rml_node->child = NULL;
 
-	msn_add_contact_xml(rml_node,who,1,1);
+	msn_add_contact_xml(notification->session,rml_node,who,1,MSN_USER_TYPE_PASSPORT);
 
 	payload = xmlnode_to_str(rml_node,&payload_len);
 	xmlnode_free(rml_node);
