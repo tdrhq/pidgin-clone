@@ -45,9 +45,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#ifndef _WIN32
-#include <strings.h>
-#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -1787,19 +1784,19 @@ static void load_conf()
 
 	while (buf_get_line(ibuf, &buf, &pnt, size)) {
 		if (*buf != '#') {
-			if (!strncasecmp(buf, "BAD ", 4))
+			if (!g_ascii_strncasecmp(buf, "BAD ", 4))
 			{
 				strncpy(bad, buf + 4, 81);
 			}
-			else if(!strncasecmp(buf, "CASE ", 5))
+			else if(!g_ascii_strncasecmp(buf, "CASE ", 5))
 			{
 				case_sensitive = *(buf+5) == '0' ? FALSE : TRUE;
 			}
-			else if(!strncasecmp(buf, "COMPLETE ", 9))
+			else if(!g_ascii_strncasecmp(buf, "COMPLETE ", 9))
 			{
 				complete = *(buf+9) == '0' ? FALSE : TRUE;
 			}
-			else if (!strncasecmp(buf, "GOOD ", 5))
+			else if (!g_ascii_strncasecmp(buf, "GOOD ", 5))
 			{
 				strncpy(good, buf + 5, 255);
 
@@ -2118,7 +2115,7 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	void *conv_handle = purple_conversations_get_handle();
-	const GList *convs;
+	GList *convs;
 
 	load_conf();
 
@@ -2137,7 +2134,7 @@ plugin_load(PurplePlugin *plugin)
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
-	const GList *convs;
+	GList *convs;
 
 	/* Detach from existing conversations */
 	for (convs = purple_get_conversations(); convs != NULL; convs = convs->next)

@@ -26,6 +26,8 @@
  *
  */
 
+#include "internal.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -37,7 +39,6 @@
 #include "conversation.h"
 #include "notify.h"
 #include "util.h"
-#include "internal.h"
 
 #include "yahoo.h"
 #include "yahoo_packet.h"
@@ -633,10 +634,10 @@ void yahoo_process_chat_goto(PurpleConnection *gc, struct yahoo_packet *pkt)
  * I think conference names are always ascii.
  */
 
-void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, const GList *who)
+void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, GList *who)
 {
 	struct yahoo_packet *pkt;
-	const GList *w;
+	GList *w;
 
 	purple_debug_misc("yahoo", "leaving conference %s\n", room);
 	
@@ -653,11 +654,11 @@ void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, c
 }
 
 static int yahoo_conf_send(PurpleConnection *gc, const char *dn, const char *room,
-							const GList *members, const char *what)
+							GList *members, const char *what)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
-	const GList *who;
+	GList *who;
 	char *msg, *msg2;
 	int utf8 = 1;
 
@@ -714,7 +715,7 @@ static void yahoo_conf_invite(PurpleConnection *gc, PurpleConversation *c,
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
-	const GList *members;
+	GList *members;
 	char *msg2 = NULL;
 
 	if (msg)
@@ -784,44 +785,6 @@ static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char 
 	g_free(eroom);
 }
 
-/* borrowed from gtkconv.c */
-static gboolean
-meify(char *message, size_t len)
-{
-	/*
-	 * Read /me-ify: If the message (post-HTML) starts with /me,
-	 * remove the "/me " part of it (including that space) and return TRUE.
-	 */
-	char *c;
-	gboolean inside_html = 0;
-
-	/* Umm.. this would be very bad if this happens. */
-	g_return_val_if_fail(message != NULL, FALSE);
-
-	if (len == -1)
-		len = strlen(message);
-
-	for (c = message; *c != '\0'; c++, len--) {
-		if (inside_html) {
-			if (*c == '>')
-				inside_html = FALSE;
-		}
-		else {
-			if (*c == '<')
-				inside_html = TRUE;
-			else
-				break;
-		}
-	}
-
-	if (*c != '\0' && !g_ascii_strncasecmp(c, "/me ", 4)) {
-		memmove(c, c + 4, len - 3);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
 static int yahoo_chat_send(PurpleConnection *gc, const char *dn, const char *room, const char *what, PurpleMessageFlags flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
@@ -838,7 +801,7 @@ static int yahoo_chat_send(PurpleConnection *gc, const char *dn, const char *roo
 
 	msg1 = g_strdup(what);
 
-	if (meify(msg1, -1))
+	if (purple_message_meify(msg1, -1))
 		me = 1;
 
 	msg2 = yahoo_html_to_codes(msg1);

@@ -581,9 +581,14 @@ pidgin_request_action(const char *title, const char *primary,
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
 
+#if GTK_CHECK_VERSION(2,10,0)
+	gtk_window_set_deletable(GTK_WINDOW(data->dialog), FALSE);
+#endif
+
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
 #ifdef _WIN32
+	else
 		gtk_window_set_title(GTK_WINDOW(dialog), PIDGIN_ALERT_TITLE);
 #endif
 
@@ -974,7 +979,7 @@ create_list_field(PurpleRequestField *field)
 	GtkTreeSelection *sel;
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
-	const GList *l;
+	GList *l;
 
 	/* Create the scrolled window */
 	sw = gtk_scrolled_window_new(NULL, NULL);

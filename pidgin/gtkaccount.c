@@ -504,7 +504,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		/* Google Talk default domain hackery! */
 		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
 		item = gtk_menu_get_active(GTK_MENU(menu));
-		if (value == NULL && g_object_get_data(G_OBJECT(item), "fake") && 
+		if (value == NULL && g_object_get_data(G_OBJECT(item), "fake") &&
 			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
 			value = "gmail.com";
 
@@ -697,7 +697,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	PurpleAccountOption *option;
 	PurpleAccount *account;
 	GtkWidget *frame, *vbox, *check, *entry, *combo, *menu, *item;
-	const GList *list, *node;
+	GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
 	GtkTreeIter iter;
@@ -1586,7 +1586,7 @@ signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 
 	account = purple_connection_get_account(gc);
 	model = GTK_TREE_MODEL(accounts_window->model);
-	index = g_list_index((GList *)purple_accounts_get_all(), account);
+	index = g_list_index(purple_accounts_get_all(), account);
 
 	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index))
 	{
@@ -1789,13 +1789,13 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 				case GTK_TREE_VIEW_DROP_INTO_OR_AFTER:
 					move_account_after(dialog->model, &dialog->drag_iter,
 									   &iter);
-					dest_index = g_list_index((GList *)purple_accounts_get_all(),
+					dest_index = g_list_index(purple_accounts_get_all(),
 											  account) + 1;
 					break;
 
 				case GTK_TREE_VIEW_DROP_BEFORE:
 				case GTK_TREE_VIEW_DROP_INTO_OR_BEFORE:
-					dest_index = g_list_index((GList *)purple_accounts_get_all(),
+					dest_index = g_list_index(purple_accounts_get_all(),
 											  account);
 
 					move_account_before(dialog->model, &dialog->drag_iter,
@@ -1814,6 +1814,10 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 static gint
 accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsWindow *dialog)
 {
+	/* Since this is called as the window is closing, we don't need
+	 * pidgin_accounts_window_hide() to also dispose of the window */
+	dialog->window = NULL;
+
 	pidgin_accounts_window_hide();
 
 	return 0;
@@ -1924,8 +1928,6 @@ ask_delete_account_cb(GtkWidget *w, AccountsWindow *dialog)
 static void
 close_accounts_cb(GtkWidget *w, AccountsWindow *dialog)
 {
-	gtk_widget_destroy(dialog->window);
-
 	pidgin_accounts_window_hide();
 }
 
@@ -2088,13 +2090,12 @@ add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook),1);
 
 	set_account(accounts_window->model, &iter, account, global_buddyicon);
-	gtk_window_present(GTK_WINDOW(pidgin_blist_get_default_gtk_blist()->window));
 }
 
 static gboolean
 populate_accounts_list(AccountsWindow *dialog)
 {
-	const GList *l;
+	GList *l;
 	gboolean ret = FALSE;
 	GdkPixbuf *global_buddyicon = NULL;
 	const char *path;
@@ -2298,7 +2299,7 @@ static void
 global_buddyicon_changed(const char *name, PurplePrefType type,
 			gconstpointer value, gpointer window)
 {
-	const GList *list;
+	GList *list;
 	for (list = purple_accounts_get_all(); list; list = list->next) {
 		account_modified_cb(list->data, window);
 	}
@@ -2402,6 +2403,9 @@ pidgin_accounts_window_hide(void)
 	if (accounts_window == NULL)
 		return;
 
+	if (accounts_window->window != NULL)
+		gtk_widget_destroy(accounts_window->window);
+
 	purple_signals_disconnect_by_handle(accounts_window);
 	purple_prefs_disconnect_by_handle(accounts_window);
 
@@ -2429,7 +2433,7 @@ add_user_cb(PidginAccountAddUserData *data)
 {
 	PurpleConnection *gc = purple_account_get_connection(data->account);
 
-	if (g_list_find((GList *)purple_connections_get_all(), gc))
+	if (g_list_find(purple_connections_get_all(), gc))
 	{
 		purple_blist_request_add_buddy(data->account, data->username,
 									 NULL, data->alias);
@@ -2685,4 +2689,5 @@ pidgin_account_uninit(void)
 	purple_signals_disconnect_by_handle(pidgin_account_get_handle());
 	purple_signals_unregister_by_instance(pidgin_account_get_handle());
 }
+
 

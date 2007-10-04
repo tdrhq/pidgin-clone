@@ -47,7 +47,7 @@ m4_define([purple_lt_current], [1])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [1])
 m4_define([purple_micro_version], [0])
-m4_define([purple_version_suffix], [])
+m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
@@ -56,7 +56,7 @@ m4_define([gnt_lt_current], [1])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [0])
 m4_define([gnt_micro_version], [0])
-m4_define([gnt_version_suffix], [])
+m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -1158,7 +1158,7 @@ if test x"$enable_dbus" = "xyes" ; then
 			dnl # no prefix given, so we look for the correct dbus system paths.
 			dnl # if a prefix is given, we use it.
 
-			serviceprefixes="$datadir $libdir /usr/share /usr/local/share"
+			serviceprefixes="$prefix/share $prefix/lib /usr/share /usr/local/share"
 			DBUS_SERVICES_DIR=""
 
 			for d in $serviceprefixes ; do
@@ -2080,6 +2080,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/icons/Makefile
 		   pidgin/pixmaps/icons/16/Makefile
 		   pidgin/pixmaps/icons/16/scalable/Makefile
+		   pidgin/pixmaps/icons/22/Makefile
+		   pidgin/pixmaps/icons/22/scalable/Makefile
 		   pidgin/pixmaps/icons/24/Makefile
 		   pidgin/pixmaps/icons/24/scalable/Makefile
 		   pidgin/pixmaps/icons/32/Makefile

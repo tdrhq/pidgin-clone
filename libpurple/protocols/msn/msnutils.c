@@ -329,7 +329,7 @@ msn_import_html(const char *html, char **attributes, char **message)
 							char *attr_dir;
 							attributes = g_strndup(c, attr_len);
 							attr_dir = purple_markup_get_css_property(attributes, "direction");
-							if (attr_dir && (!strncasecmp(attr_dir, "RTL", 3)))
+							if (attr_dir && (!g_ascii_strncasecmp(attr_dir, "RTL", 3)))
 								direction = '1';
 							g_free(attr_dir);
 							g_free(attributes);
@@ -481,7 +481,7 @@ msn_convert_iso8601(const char *timestr,struct tm tm_time)
 	struct tm ctime;
 	time_t ts;
 
-	purple_debug_info("MaYuan","convert string is{%s}\n",timestr);
+	purple_debug_info("MSNP14","convert string is{%s}\n",timestr);
 	tzset();
 	/*copy string first*/
 	memset(temp, 0, sizeof(temp));
@@ -587,5 +587,5 @@ msn_handle_chl(char *input, char *output)
 
 		output[32]='\0';
 
-//		purple_debug_info("MaYuan","chl output{%s}\n",output);
+//		purple_debug_info("MSNP14","chl output{%s}\n",output);
 }

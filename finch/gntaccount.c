@@ -31,7 +31,10 @@
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttree.h>
+#include <gntutils.h>
 #include <gntwindow.h>
+
+#include "finch.h"
 
 #include <account.h>
 #include <accountopt.h>
@@ -42,7 +45,6 @@
 
 #include "gntaccount.h"
 #include "gntblist.h"
-#include "finch.h"
 
 #include <string.h>
 
@@ -471,6 +473,14 @@ edit_account(PurpleAccount *account)
 		}
 	}
 
+	list = purple_plugins_get_protocols();
+	if (list == NULL) {
+		purple_notify_error(NULL, _("Error"),
+				_("There's no protocol plugins installed."),
+				_("(You probably forgot to 'make install'.)"));
+		return;
+	}
+
 	dialog = g_new0(AccountEditDialog, 1);
 	accountdialogs = g_list_prepend(accountdialogs, dialog);
 
@@ -488,7 +498,6 @@ edit_account(PurpleAccount *account)
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
 	dialog->protocol = combo = gnt_combo_box_new();
-	list = purple_plugins_get_protocols();
 	for (iter = list; iter; iter = iter->next)
 	{
 		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), iter->data,
@@ -641,11 +650,13 @@ reset_accounts_win(GntWidget *widget, gpointer null)
 
 void finch_accounts_show_all()
 {
-	const GList *iter;
+	GList *iter;
 	GntWidget *box, *button;
 
-	if (accounts.window)
+	if (accounts.window) {
+		gnt_window_present(accounts.window);
 		return;
+	}
 
 	accounts.window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(accounts.window), TRUE);
@@ -680,6 +691,7 @@ void finch_accounts_show_all()
 
 	button = gnt_button_new(_("Add"));
 	gnt_box_add_widget(GNT_BOX(box), button);
+	gnt_util_set_trigger_widget(GNT_WIDGET(accounts.tree), GNT_KEY_INS, button);
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(add_account_cb), NULL);
 
 	button = gnt_button_new(_("Modify"));
@@ -688,6 +700,7 @@ void finch_accounts_show_all()
 
 	button = gnt_button_new(_("Delete"));
 	gnt_box_add_widget(GNT_BOX(box), button);
+	gnt_util_set_trigger_widget(GNT_WIDGET(accounts.tree), GNT_KEY_DEL, button);
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(delete_account_cb), accounts.tree);
 	
 	gnt_box_add_widget(GNT_BOX(accounts.window), box);
@@ -734,7 +747,7 @@ account_abled_cb(PurpleAccount *account, gpointer user_data)
 
 void finch_accounts_init()
 {
-	const GList *iter;
+	GList *iter;
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-added",
 			finch_accounts_get_handle(), PURPLE_CALLBACK(account_added_callback),
@@ -831,7 +844,7 @@ add_user_cb(AddUserData *data)
 {
 	PurpleConnection *gc = purple_account_get_connection(data->account);
 
-	if (g_list_find((GList *)purple_connections_get_all(), gc))
+	if (g_list_find(purple_connections_get_all(), gc))
 	{
 		purple_blist_request_add_buddy(data->account, data->username,
 									 NULL, data->alias);

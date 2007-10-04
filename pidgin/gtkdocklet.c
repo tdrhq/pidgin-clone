@@ -109,8 +109,7 @@ get_pending_list(guint max)
 static gboolean
 docklet_update_status()
 {
-	GList *convs;
-	const GList *l;
+	GList *convs, *l;
 	int count;
 	PurpleSavedStatus *saved_status;
 	PurpleStatusPrimitive newstatus = PURPLE_STATUS_OFFLINE;
@@ -214,7 +213,8 @@ docklet_update_status()
 static gboolean
 online_account_supports_chat()
 {
-	const GList *c = purple_connections_get_all();
+	GList *c = NULL;
+	c = purple_connections_get_all();
 
 	while(c != NULL) {
 		PurpleConnection *gc = c->data;
@@ -636,7 +636,7 @@ pidgin_docklet_init()
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/blink", FALSE);
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/docklet/show", "always");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/docklet/show", "pending");
 	purple_prefs_connect_callback(docklet_handle, PIDGIN_PREFS_ROOT "/docklet/show",
 				    docklet_show_pref_changed_cb, NULL);
 
