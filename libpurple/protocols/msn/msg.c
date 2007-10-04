@@ -24,6 +24,8 @@
 #include "msn.h"
 #include "msg.h"
 
+const GHashTable *multipartmessages;
+
 MsnMessage *
 msn_message_new(MsnMsgType type)
 {
@@ -204,16 +206,18 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 	}
 }
 
-void
+MsnMessage *
 msn_message_parse_payload(MsnMessage *msg,
 						  const char *payload, size_t payload_len,
 						  const char *line_dem,const char *body_dem)
 {
 	char *tmp_base, *tmp;
-	const char *content_type;
+	const char *content_type, *messageid;
 	char *end;
 	char **elems, **cur, **tokens;
 
+	int partcount, part;
+	partcount=part=0;
 	g_return_if_fail(payload != NULL);
 	tmp_base = tmp = g_malloc0(payload_len + 1);
 	memcpy(tmp_base, payload, payload_len);
@@ -240,14 +244,21 @@ msn_message_parse_payload(MsnMessage *msg,
 		key = tokens[0];
 		value = tokens[1];
 
-		/*if not MIME content ,then return*/
-		if (!strcmp(key, "MIME-Version"))
+		/*Get a count of chunks (this implies this is the first part of a multipart message*/
+		if (!strcmp(key, "Chunks")){
+			msg->partcount = partcount = atoi(value);
+		}
+		/*Get a chunk no (this implies this is part of a multipart message*/
+		else if (!strcmp(key, "Chunk")){
+			part = atoi(value);
+ 		}
+ 
+		/*ignore  MIME version line*/
+		else if (!strcmp(key, "MIME-Version"))
 		{
-			g_strfreev(tokens);
-			continue;
 		}
 
-		if (!strcmp(key, "Content-Type"))
+		else if (!strcmp(key, "Content-Type"))
 		{
 			char *charset, *c;
 
@@ -335,6 +346,32 @@ msn_message_parse_payload(MsnMessage *msg,
 	}
 
 	g_free(tmp_base);
+	
+	if (partcount) {
+		if (!multipartmessages)
+			multipartmessages = g_hash_table_new(g_str_hash, g_str_equal);
+		messageid = msn_message_get_attr(msg, "Message-ID");
+		g_hash_table_insert(multipartmessages, messageid, msg);
+		return NULL;
+	}
+	if (part) {
+		MsnMessage *multipart;
+		messageid = msn_message_get_attr(msg, "Message-ID");
+		if (multipartmessages)
+			multipart = g_hash_table_lookup(multipartmessages, messageid);
+		if (multipart) {
+			multipart->body = g_realloc(multipart->body, multipart->body_len + msg->body_len);
+			memcpy(multipart->body+multipart->body_len, msg->body, msg->body_len);
+			multipart->body_len+=msg->body_len;
+			msn_message_destroy(msg);
+			if (multipart->partcount==part+1) {
+				g_hash_table_remove(multipartmessages, messageid);
+				return multipart;
+			}
+		} 
+		return NULL;
+	}
+	return msg;
 }
 
 MsnMessage *
