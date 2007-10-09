@@ -42,6 +42,7 @@ request_example_la_LDFLAGS    = -module -avoid-version
 signals_test_la_LDFLAGS       = -module -avoid-version
 simple_la_LDFLAGS             = -module -avoid-version
 statenotify_la_LDFLAGS        = -module -avoid-version
+translation_example_la_LDFLAGS = -module -avoid-version
 
 # this can't be in a conditional otherwise automake 1.4 yells
 dbus_example_la_LDFLAGS       = -module -avoid-version
@@ -69,7 +70,8 @@ noinst_LTLIBRARIES = \
 	pluginpref_example.la \
 	request_example.la \
 	signals_test.la \
-	simple.la
+	simple.la \
+	tranlsation_example.la
 
 autoaccept_la_SOURCES         = autoaccept.c
 buddynote_la_SOURCES          = buddynote.c
@@ -89,6 +91,7 @@ request_example_la_SOURCES    = request_example.c
 signals_test_la_SOURCES       = signals-test.c
 simple_la_SOURCES             = simple.c
 statenotify_la_SOURCES        = statenotify.c
+translation_example_la_SOURCES = request_example.c
 
 autoaccept_la_LIBADD         = $(GLIB_LIBS)
 buddynote_la_LIBADD          = $(GLIB_LIBS)
@@ -106,6 +109,7 @@ request_example_la_LIBADD    = $(GLIB_LIBS)
 signals_test_la_LIBADD       = $(GLIB_LIBS)
 simple_la_LIBADD             = $(GLIB_LIBS)
 statenotify_la_LIBADD        = $(GLIB_LIBS)
+translation_example_la_LIBADD = $(GLIB_LIBS)
 
 if ENABLE_DBUS
 
