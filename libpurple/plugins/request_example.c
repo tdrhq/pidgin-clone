@@ -41,6 +41,15 @@
 # define PURPLE_PLUGINS
 #endif
 
+/* This is a *temporary* hack that I will remove before this gets merged
+ * to im.pidgin.pidgin. TODO: remove this hack! */
+#define _(string) (string)
+
+#include <notify.h>
+#include <plugin.h>
+#include <request.h>
+#include <version.h>
+
 #define PLUGIN_ID "core-requestexample"
 #define PLUGIN_AUTHOR "John Bailey <rekkanoryo@cpw.pidgin.im>"
 
@@ -53,6 +62,7 @@ ok_cancel_ok_cb(gpointer ignored)
 		"You clicked OK on the previous dialog and proceeded to this one.");
 }
 
+static void
 ok_cancel_cancel_cb(gpointer ignored)
 {
 	purple_notify_info(request_example, "Canceled", "You canceled.",
@@ -144,4 +154,4 @@ init_plugin(PurplePlugin *plugin)
 {
 }
 
-PURPLE_INIT_PLUGIN(notifyexample, init_plugin, info)
+PURPLE_INIT_PLUGIN(requestexample, init_plugin, info)
