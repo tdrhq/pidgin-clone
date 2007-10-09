@@ -24,39 +24,40 @@ SUBDIRS = \
 
 plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
-autoaccept_la_LDFLAGS       = -module -avoid-version
-buddynote_la_LDFLAGS        = -module -avoid-version
-ciphertest_la_LDFLAGS		= -module -avoid-version
-codeinline_la_LDFLAGS		= -module -avoid-version
-debug_example_la_LDFLAGS    = -module -avoid-version
-helloworld_la_LDFLAGS       = -module -avoid-version
-idle_la_LDFLAGS             = -module -avoid-version
-joinpart_la_LDFLAGS         = -module -avoid-version
-log_reader_la_LDFLAGS       = -module -avoid-version
-newline_la_LDFLAGS          = -module -avoid-version
-notify_example_la_LDFLAGS   = -module -avoid-version
-offlinemsg_la_LDFLAGS       = -module -avoid-version
+autoaccept_la_LDFLAGS         = -module -avoid-version
+buddynote_la_LDFLAGS          = -module -avoid-version
+ciphertest_la_LDFLAGS         = -module -avoid-version
+codeinline_la_LDFLAGS         = -module -avoid-version
+debug_example_la_LDFLAGS      = -module -avoid-version
+helloworld_la_LDFLAGS         = -module -avoid-version
+idle_la_LDFLAGS               = -module -avoid-version
+joinpart_la_LDFLAGS           = -module -avoid-version
+log_reader_la_LDFLAGS         = -module -avoid-version
+newline_la_LDFLAGS            = -module -avoid-version
+notify_example_la_LDFLAGS     = -module -avoid-version
+offlinemsg_la_LDFLAGS         = -module -avoid-version
 pluginpref_example_la_LDFLAGS = -module -avoid-version
-psychic_la_LDFLAGS          = -module -avoid-version
-signals_test_la_LDFLAGS		= -module -avoid-version
-simple_la_LDFLAGS			= -module -avoid-version
-statenotify_la_LDFLAGS      = -module -avoid-version
+psychic_la_LDFLAGS            = -module -avoid-version
+request_example_la_LDFLAGS    = -module -avoid-version
+signals_test_la_LDFLAGS       = -module -avoid-version
+simple_la_LDFLAGS             = -module -avoid-version
+statenotify_la_LDFLAGS        = -module -avoid-version
 
 # this can't be in a conditional otherwise automake 1.4 yells
-dbus_example_la_LDFLAGS     = -module -avoid-version
+dbus_example_la_LDFLAGS       = -module -avoid-version
 
 if PLUGINS
 
 plugin_LTLIBRARIES = \
-	autoaccept.la       \
-	buddynote.la        \
-	idle.la             \
-	joinpart.la         \
-	log_reader.la       \
-	newline.la          \
-	offlinemsg.la       \
-	psychic.la          \
-	statenotify.la      \
+	autoaccept.la \
+	buddynote.la \
+	idle.la \
+	joinpart.la \
+	log_reader.la \
+	newline.la \
+	offlinemsg.la \
+	psychic.la \
+	statenotify.la \
 	$(DBUS_LTLIB)
 
 noinst_LTLIBRARIES = \
@@ -66,42 +67,45 @@ noinst_LTLIBRARIES = \
 	helloworld.la \
 	notify_example.la \
 	pluginpref_example.la \
+	request_example.la \
 	signals_test.la \
 	simple.la
 
-autoaccept_la_SOURCES       = autoaccept.c
-buddynote_la_SOURCES        = buddynote.c
-ciphertest_la_SOURCES		= ciphertest.c
-codeinline_la_SOURCES		= codeinline.c
-debug_example_la_SOURCES = debug_example.c
-helloworld_la_SOURCES       = helloworld.c
-idle_la_SOURCES             = idle.c
-joinpart_la_SOURCES         = joinpart.c
-log_reader_la_SOURCES       = log_reader.c
-newline_la_SOURCES          = newline.c
-notify_example_la_SOURCES   = notify_example.c
-offlinemsg_la_SOURCES       = offlinemsg.c
+autoaccept_la_SOURCES         = autoaccept.c
+buddynote_la_SOURCES          = buddynote.c
+ciphertest_la_SOURCES         = ciphertest.c
+codeinline_la_SOURCES         = codeinline.c
+debug_example_la_SOURCES      = debug_example.c
+helloworld_la_SOURCES         = helloworld.c
+idle_la_SOURCES               = idle.c
+joinpart_la_SOURCES           = joinpart.c
+log_reader_la_SOURCES         = log_reader.c
+newline_la_SOURCES            = newline.c
+notify_example_la_SOURCES     = notify_example.c
+offlinemsg_la_SOURCES         = offlinemsg.c
 pluginpref_example_la_SOURCES = pluginpref_example.c
-psychic_la_SOURCES          = psychic.c
-signals_test_la_SOURCES		= signals-test.c
-simple_la_SOURCES			= simple.c
-statenotify_la_SOURCES      = statenotify.c
+psychic_la_SOURCES            = psychic.c
+request_example_la_SOURCES    = request_example.c
+signals_test_la_SOURCES       = signals-test.c
+simple_la_SOURCES             = simple.c
+statenotify_la_SOURCES        = statenotify.c
 
-autoaccept_la_LIBADD        = $(GLIB_LIBS)
-buddynote_la_LIBADD         = $(GLIB_LIBS)
-ciphertest_la_LIBADD		= $(GLIB_LIBS)
-codeinline_la_LIBADD		= $(GLIB_LIBS)
-idle_la_LIBADD              = $(GLIB_LIBS)
-joinpart_la_LIBADD          = $(GLIB_LIBS)
-log_reader_la_LIBADD        = $(GLIB_LIBS)
-newline_la_LIBADD           = $(GLIB_LIBS)
-notify_example_la_LIBADD    = $(GLIB_LIBS)
-offlinemsg_la_LIBADD        = $(GLIB_LIBS)
+autoaccept_la_LIBADD         = $(GLIB_LIBS)
+buddynote_la_LIBADD          = $(GLIB_LIBS)
+ciphertest_la_LIBADD         = $(GLIB_LIBS)
+codeinline_la_LIBADD         = $(GLIB_LIBS)
+idle_la_LIBADD               = $(GLIB_LIBS)
+joinpart_la_LIBADD           = $(GLIB_LIBS)
+log_reader_la_LIBADD         = $(GLIB_LIBS)
+newline_la_LIBADD            = $(GLIB_LIBS)
+notify_example_la_LIBADD     = $(GLIB_LIBS)
+offlinemsg_la_LIBADD         = $(GLIB_LIBS)
 pluginpref_example_la_LIBADD = $(GLIB_LIBS)
-psychic_la_LIBADD           = $(GLIB_LIBS)
-signals_test_la_LIBADD		= $(GLIB_LIBS)
-simple_la_LIBADD			= $(GLIB_LIBS)
-statenotify_la_LIBADD       = $(GLIB_LIBS)
+psychic_la_LIBADD            = $(GLIB_LIBS)
+request_example_la_LIBADD    = $(GLIB_LIBS)
+signals_test_la_LIBADD       = $(GLIB_LIBS)
+simple_la_LIBADD             = $(GLIB_LIBS)
+statenotify_la_LIBADD        = $(GLIB_LIBS)
 
 if ENABLE_DBUS
 
