@@ -55,13 +55,13 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
     <link rel="stylesheet" href="/shared/css/ie7.css" type="text/css" />
   <![endif]-->
 
-</head>
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
 </script>
 <script type="text/javascript">
 _uacct = "UA-1802520-1";
 urchinTracker();
 </script>
+</head>
 <body>
 
 <div id="header">
