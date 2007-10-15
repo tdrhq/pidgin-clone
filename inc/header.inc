@@ -56,6 +56,12 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
   <![endif]-->
 
 </head>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-1802520-1";
+urchinTracker();
+</script>
 <body>
 
 <div id="header">
