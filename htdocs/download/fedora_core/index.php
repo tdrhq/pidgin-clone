@@ -30,6 +30,9 @@ above in /etc/yum.repos.d/</p>
 
 <p>You can then use "yum install pidgin", or the Package Manager (pirut) to install Pidgin.</p>
 
+<p><i>We do <b>not</b> provide packages for Fedora 7.  If you use Fedora 7, please
+wait for the Fedora developers to release updated packages.</i></p>
+
 </div>
 
 </div>
