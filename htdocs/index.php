@@ -90,9 +90,9 @@ Test
 
 <div id="blogbrief">
 Test
-</div> */ ?>
-
 </div>
+
+</div> */ ?>
 
 </div>
 
