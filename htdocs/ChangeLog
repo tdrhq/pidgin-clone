@@ -1,5 +1,82 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.2.3:
+	Pidgin:
+	* Attempt to avoid focusing windows prompted by external events
+
+version 2.2.2 (10/23/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
+		NOTE: Due to the way this release was made, it is possible that
+			  bugs marked as fixed in 2.2.1 or 2.2.2 will not be fixed
+			  until the next release.
+
+	* Various bug and memory leak fixes
+	* Look for a default prefs.xml in the CSIDL_COMMON_APPDATA directory
+	  (e.g. c:\Documents and Settings\All Users\
+	        Application Data\purple\prefs.xml) on Windows, similarly to
+	  how this is done on other platforms.
+
+version 2.2.1 (09/29/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
+		NOTE: Due to the backporting that happened for the actual
+		      release, it is possible bugs marked as fixed in 2.2.1
+		      will not be fixed until 2.2.2.
+
+	libpurple:
+	* A few build issues on Solaris were fixed.
+	* Cancelling the password prompt for an account will no longer leave
+	  it in an ambiguous state.  (It will be disabled.)
+	* Fixed an erroneous size display for MSN file transfers. (galt)
+	* Fixed multiple memory leaks, particularly in XMPP and MySpace
+	  protocols
+	* Fixed remembering proxy preferences and status scores
+	* Gmail notifications are better tracked
+
+	Pidgin:
+	* Fixed keyboard tab reordering to move tabs one step instead of two.
+	* You should no longer lose proxy settings when Pidgin is restarted.
+	* Fixed detection of X11 when compiling
+
+	Finch:
+	* Pressing 'Insert' in the buddylist will bring up the 'Add Buddy'
+	  dialog.
+
+version 2.2.0 (09/13/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
+
+	Libpurple:
+	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
+	  Code)
+	* XMPP enhancements. See
+	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
+	  Monitzer, Google Summer of Code for Adium)
+	* Certificate management. Libpurple will validate certificates on
+	  SSL-encrypted protocols (William Ehlhardt, Google Summer of Code)
+	* Some adjustments were made to fix sending messages when using
+	  the MSN HTTP method. (Laszlo Pandy)
+	* Yahoo! Chat is fixed.
+	* Some AIM file transfer issues between Pidgin and other clients
+	  have been fixed. (Kyryll A Mirnenko)
+	* Properly restore idle status and time for AIM and ICQ accounts
+	  when they reconnect after being disconnected.
+
+	Pidgin:
+	* Insert Horizontal Rules and Strikethrough text from toolbar.
+	* Option to show protocol icons in the buddy list, from the
+	  Buddies > Show menu. (Justin Heiner)
+	* Ability to build with native, non-X11 GTK+ on OSX. (Anders
+	  Hasselqvist)
+	* Remember the 'Enable Sounds' setting for a conversation.
+	* Right-clicking the empty space in the formatting toolbar
+	  allows you to toggle back to the old "ungrouped" version.
+	* Protocols supporting account registration via Pidgin now show
+	  a descriptive checkbox instead of a vague "Register" button.
+	* Fixed a bug where a tab would be shown on single conversations
+	  when tabs were disabled.
+
+	Finch:
+	* Per-conversation mute and logging options (accessible from the menu).
+
 version 2.1.1 (08/20/2007):
 	Yahoo:
 	* Added an account action to open your inbox in the yahoo prpl.
@@ -2205,6 +2282,6 @@ version 0.8.0  (04/31/1999):
 	* Add/Remove buddy from conversation window
 	* Scroll-Wheel Mice work in Conversation Window
 	* Fixed WindowMaker Appicon
-	* Version Number in About Box
+	* version Number in About Box
 	* Gaim Slogan in about box :)
 	* Created Changelog File :)
