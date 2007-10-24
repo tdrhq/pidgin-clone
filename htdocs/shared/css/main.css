@@ -1,5 +1,5 @@
 body {
-  background: url('/shared/img/header.repeat.jpg') repeat-x top;
+  background: url('/shared/img/header.repeat.jpg') #FFF repeat-x top;
   margin: 0;
   padding: 0;
   font-family: Tahoma, sans-serif;
@@ -28,7 +28,7 @@ a:hover, a:active {
 }
 
 #header img {
-  margin-left: 125px;
+  padding-left: 125px;
   vertical-align: bottom;
 }
 
@@ -340,6 +340,16 @@ h1 {
   font-size: 2em;
 }
 
+h2 {
+  font-size: 1.4em;
+}
+
+h3 {
+  font-size: 1.05em;
+  font-weight: normal;
+  font-style: italic;
+}
+
 #footer {
   height: 40px;
   padding-top: 118px;
@@ -366,4 +376,41 @@ h1 {
 
 #blogbrief {
   border-left: none;
+}
+
+#left .linkbar {
+  position: relative;
+  top: -6px;
+  text-align: right;
+  margin: -6px 26px 0 0;
+}
+
+#main img {
+  max-width: 530px;
+}
+
+table {
+  border: none;
+  padding: 0;
+  margin 0;
+}
+
+th {
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid #DADADA;
+  margin: 0;
+  background-color: #F6F6F6;
+  padding: 4px;
+}
+
+td {
+  padding: 4px;
+  border-bottom: 1px solid #EEE;
+  margin: 0;
+}
+
+td.date {
+  white-space: nowrap;
+  text-align: right;
 }

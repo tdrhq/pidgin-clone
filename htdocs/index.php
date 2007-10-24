@@ -19,10 +19,14 @@
 <div id="download">
 <img src="/shared/img/logo.pidgin.png" alt="[Pidgin Logo]" id="logo" width="107" height="185" />
 <a href="/download/">
-<img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="64" height"67" />
+<img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="64" height="67" />
 Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?></span></a>
 </div>
+
+<p class="linkbar">
+  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a>
+</p>
 
 </div>
 
@@ -43,11 +47,12 @@ Download Pidgin<br />
   <li>Gadu-Gadu</li>
   <li>Google Talk</li>
   <li>Groupwise</li>
+  <li>ICQ</li>
 </ul>
 <ul class="condensed">
-  <li>ICQ</li>
   <li>IRC</li>
   <li>MSN</li>
+  <li>MySpaceIM</li>
   <li>QQ</li>
   <li>SILC</li>
 </ul>
@@ -59,14 +64,21 @@ Download Pidgin<br />
   <li>Zephyr</li>
 </ul>
 
+<p>Pidgin is free software.  It is licensed under the GNU General Public
+License (GPL) version 2.  This means you are free to use it and to modify it,
+but if you distribute your modifications you must distribute the modified
+source code as well.</p>
+
 <p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.gif" alt="Learn More" /></a></p>
 
 </div>
 </div>
 
 <!-- This will pull from somewhere else at some point -->
- <p id="lowblurb">2.1.1 has landed!  We've got a new smiley set and we've
-further cleaned up the conversation window.  Let us know what you think! The Changelog is <a href="ChangeLog">here.</a></p
+<p id="lowblurb">2.2.1 is out.  It fixes a crash that can be triggered
+remotely on MSN in 2.2.0.  If you are using 2.2.0, you should upgrade
+immediately.  See our <a href="/news/security/?id=23">security advisory</a>
+for details.</p>
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
@@ -78,9 +90,9 @@ Test
 
 <div id="blogbrief">
 Test
-</div> */ ?>
-
 </div>
+
+</div> */ ?>
 
 </div>
 

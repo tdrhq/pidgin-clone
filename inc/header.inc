@@ -4,6 +4,12 @@ if ($page == NULL || !is_array($page)) {
   $page = array();
 }
 
+if (!array_key_exists('abslink', $page)) {
+  $page['abslink'] = FALSE;
+}
+if (!array_key_exists('siteroot', $page)) {
+  $page['siteroot'] = "http://www.pidgin.im";
+}
 if (!array_key_exists('title', $page)) {
   $page['title'] = 'Home';
 }
@@ -15,7 +21,7 @@ if (!array_key_exists('section', $page)) {
 $sections['Home']                  = "/";
 $sections['Download']              = "/download/";
 $sections['About']                 = "/about/";
-$sections['News']                  = "/news/";
+$sections['News']                  = "http://planet.pidgin.im/";
 $sections['Support & Development'] = "http://developer.pidgin.im/";
 
 ?>
@@ -32,7 +38,9 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
   <meta name="designer"    content="Blend Interactive; http://blendinteractive.com" />
   <meta name="generator"   content="Kevin Stange ;)" />
   <meta name="description" content="The home of Pidgin, Finch, and the libpurple IM client library." />
-  <meta name="keywords"    content="pidgin, finch, libpurple, purple, IM, instant messaging, internet messaging, AIM, ICQ, XMMP, Jabber, Google Talk, MSN, Yahoo, Gadu-Gadu, IRC, Bonjour, SILC, SIP/SIMPLE, Zephyr, QQ, GroupWise, Sametime, Linux, Windows, GTK+" />
+  <meta name="keywords"    content="pidgin, finch, libpurple, purple, IM, instant messaging, internet messaging, AIM, ICQ, XMMP, Jabber, Google Talk, MSN, Yahoo, Gadu-Gadu, IRC, Bonjour, SILC, SIP/SIMPLE, Zephyr, QQ, GroupWise, Sametime, MySpaceIM, MySpace, Linux, Windows, GTK+" />
+  <link rel="alternate" href="http://planet.pidgin.im/rss20.xml" type="application/rss+xml" title="Pidgin News" />
+  <link rel="shortcut icon" href="/shared/img/favicon.png" type="image/png" />
   <link rel="stylesheet" href="/shared/css/main.css" type="text/css" />
   <!-- Correct rendering bugs from Microsoft Internet Explorer -->
   <!--[if lt IE 7]>
@@ -47,14 +55,24 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
     <link rel="stylesheet" href="/shared/css/ie7.css" type="text/css" />
   <![endif]-->
 
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-1802520-1";
+urchinTracker();
+</script>
 </head>
 <body>
 
-<div id="header"><img src="/shared/img/logo.text.jpg" alt="Pidgin" />
+<div id="header">
+<a href="/"><img src="/shared/img/logo.text.jpg" alt="Pidgin" /></a>
 <ul>
 <?
   foreach ($sections as $name => $link) {
     $escaped = htmlspecialchars ($name);
+    if ($page['abslink'] && !preg_match("%^[a-z]+:%", $link)) {
+      $link = $page['siteroot'] . $link;
+    }
     if ($page['section'] == $name) {
       echo '  <li class="active"><a href="' . $link . '">' . $escaped . "</a></li>\n";
     } else {

@@ -18,6 +18,9 @@ if (!array_key_exists('subsect', $page)) {
 <?
   foreach ($sub_sections as $name => $link) {
     $escaped = htmlspecialchars ($name);
+    if ($page['abslink'] && !preg_match("%^[a-z]+:%", $link)) {
+      $link = $page['siteroot'] . $link;
+    }
     if ($page['subsect'] == $name) {
       echo '  <li class="active"><a href="' . $link . '">' . $escaped . "</a></li>\n";
     } else {
