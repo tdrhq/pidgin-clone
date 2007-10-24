@@ -259,11 +259,11 @@ $vulnerabilities = array(
 	),
 	array(
 		"title"        => "NULL pointer dereference in parsing invalid HTML",
-		"date"         => "4 October 2007",
+		"date"         => "24 October 2007",
 		"cve"          => "CVE-2007-4999",
 		"summary"      => "Receiving invalid HTML can cause libpurple 2.1.0 through 2.2.1 to crash",
-		"description"  => "A remote user can cause a denial of service (crash) by sending a message with invalid HTML.  It is believed that this crash can be triggered only when using HTML logging, and it requires the remote user to be able to send invalid HTML.  This is possible on AIM and may be possible on some XMPP networks.  Other protocols and networks may also be affected.",
-		"fix"          => "The affected function, purple_markup_html_to_xhtml(), has been patched to fix the vulnerability.",
+		"description"  => "A remote user can cause a denial of service (crash) by sending a message with invalid HTML.  It is believed that this crash can be triggered only when using HTML logging.",
+		"fix"          => "The affected function has been patched to fix the vulnerability.",
 		"fixedversion" => "2.2.2",
 		"discoveredby" => "Jeffrey Rosen"
 	)
