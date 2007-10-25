@@ -75,9 +75,9 @@ source code as well.</p>
 </div>
 
 <!-- This will pull from somewhere else at some point -->
-<p id="lowblurb">2.2.1 is out.  It fixes a crash that can be triggered
-remotely on MSN in 2.2.0.  If you are using 2.2.0, you should upgrade
-immediately.  See our <a href="/news/security/?id=23">security advisory</a>
+<p id="lowblurb">2.2.2 is here.  We fixed another remote crash that
+affects versions 2.1.0 through 2.2.1 of Pidgin, so you should upgrade
+right away.  See our <a href="/news/security/?id=24">security advisory</a>
 for details.</p>
 
 <? /* Avoid outputting this stuff yet.
