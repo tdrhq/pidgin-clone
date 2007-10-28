@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -172,8 +172,8 @@ static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, PurpleReque
 		data->values = g_slist_delete_link(data->values, data->values);
 	}
 	if (data->actions) {
-		hasActions = TRUE;
 		GList *action;
+		hasActions = TRUE;
 		for(action = data->actions; action; action = g_list_next(action)) {
 			g_free(action->data);
 		}
@@ -367,9 +367,9 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 
 			g_free(value);
 		}
-        
-        if(field && xmlnode_get_child(fn, "required"))
-            purple_request_field_set_required(field,TRUE);
+
+		if(field && xmlnode_get_child(fn, "required"))
+			purple_request_field_set_required(field,TRUE);
 	}
 	
 	if(actions != NULL) {

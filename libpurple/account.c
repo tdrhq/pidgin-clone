@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "account.h"
@@ -1740,15 +1740,6 @@ const char *
 purple_account_get_protocol_id(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
-	/*
-	 * HACK by Seanegan
-	 */
-	if (!strcmp(account->protocol_id, "prpl-oscar")) {
-		if (isdigit(account->username[0]))
-			return "prpl-icq";
-		else
-			return "prpl-aim";
-	}
 	return account->protocol_id;
 }
 

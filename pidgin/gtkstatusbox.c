@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 /*
@@ -1394,7 +1394,7 @@ pidgin_status_box_popup(PidginStatusBox *box)
 		return;
 	}
 	gtk_grab_add (box->popup_window);
-	box->popup_in_progress = TRUE;
+//	box->popup_in_progress = TRUE;
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (box->toggle_button),
 				      TRUE);
 
@@ -1590,14 +1590,15 @@ treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, PidginStatu
 		    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (status_box->toggle_button))) {
 			pidgin_status_box_popdown (status_box);
 			return TRUE;
+		} else if (ewidget == status_box->toggle_button) {
+			status_box->popup_in_progress = TRUE;		
 		}
 
 		/* released outside treeview */
-		if (ewidget != status_box->toggle_button)
-			{
+		if (ewidget != status_box->toggle_button) {
 				pidgin_status_box_popdown (status_box);
 				return TRUE;
-			}
+		}
 
 		return FALSE;
 	}

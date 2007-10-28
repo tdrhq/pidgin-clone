@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -74,6 +74,11 @@ static struct StockIcon
 	{ PIDGIN_STOCK_SIGN_OFF,        NULL,      GTK_STOCK_CLOSE            },
 	{ PIDGIN_STOCK_TYPED,           "pidgin",  "typed.png"                },
 	{ PIDGIN_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
+#if GTK_CHECK_VERSION(2,8,0)
+	{ PIDGIN_STOCK_INFO,            NULL,      GTK_STOCK_INFO             },
+#else
+	{ PIDGIN_STOCK_INFO,            "buttons", "info.png"                 },
+#endif
 };
 
 static const GtkStockItem stock_items[] =

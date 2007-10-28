@@ -23,9 +23,9 @@ EXTRA_DIST = \
 		win32/giowin32.c \
 		win32/win32dep.h
 
-# if USE_GCONFTOOL
-# GCONF_DIR=gconf
-# endif
+if USE_GCONFTOOL
+GCONF_DIR=gconf
+endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple.pc
@@ -37,6 +37,7 @@ purple_coresources = \
 	accountopt.c \
 	blist.c \
 	buddyicon.c \
+	certificate.c \
 	cipher.c \
 	circbuffer.c \
 	cmds.c \
@@ -90,6 +91,7 @@ purple_coreheaders = \
 	accountopt.h \
 	blist.h \
 	buddyicon.h \
+	certificate.h \
 	cipher.h \
 	circbuffer.h \
 	cmds.h \

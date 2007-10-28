@@ -2243,6 +2243,7 @@ AC_OUTPUT([Makefile
 		   libpurple/version.h
 		   share/Makefile
 		   share/sounds/Makefile
+		   share/ca-certs/Makefile
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc

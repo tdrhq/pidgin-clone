@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -910,13 +910,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			else
 				username = g_markup_escape_text(im->from, -1);
 
-#ifdef YAHOO_USE_ATTENTION_API
 			serv_got_attention(gc, username, YAHOO_BUZZ);
-#else
-			str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
 
-			purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, im->time);
-#endif
 			g_free(username);
 			g_free(str);
 			g_free(m);
@@ -970,7 +965,6 @@ struct yahoo_add_request {
 	PurpleConnection *gc;
 	char *id;
 	char *who;
-	char *msg;
 	int protocol;
 };
 
@@ -988,7 +982,6 @@ yahoo_buddy_add_authorize_cb(gpointer data) {
 
 	g_free(add_req->id);
 	g_free(add_req->who);
-	g_free(add_req->msg);
 	g_free(add_req);
 }
 
@@ -1019,7 +1012,6 @@ yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg) {
 
 	g_free(add_req->id);
 	g_free(add_req->who);
-	g_free(add_req->msg);
 	g_free(add_req);
 }
 
@@ -1133,10 +1125,18 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 			l = l->next;
 		}
 
-		if (add_req->id) {
-			char *alias = NULL;
+		if (add_req->id && add_req->who) {
+			char *alias = NULL, *dec_msg = NULL;
+
+			if (!yahoo_privacy_check(gc, add_req->who)) {
+				purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
+						  add_req->who);
+				yahoo_buddy_add_deny_cb(add_req, NULL);
+				return;
+			}
+
 			if (msg)
-				add_req->msg = yahoo_string_decode(gc, msg, FALSE);
+				dec_msg = yahoo_string_decode(gc, msg, FALSE);
 
 			if (firstname && lastname)
 				alias = g_strdup_printf("%s %s", firstname, lastname);
@@ -1145,20 +1145,19 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 			else if (lastname)
 				alias = g_strdup(lastname);
 
-
 			/* DONE! this is almost exactly the same as what MSN does,
 			 * this should probably be moved to the core.
 			 */
 			 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
-						    alias, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
+						    alias, dec_msg, purple_find_buddy(purple_connection_get_account(gc), add_req->who) != NULL,
 						    yahoo_buddy_add_authorize_cb,
 						    yahoo_buddy_add_deny_reason_cb,
 						    add_req);
 			g_free(alias);
+			g_free(dec_msg);
 		} else {
 			g_free(add_req->id);
 			g_free(add_req->who);
-			/*g_free(add_req->msg);*/
 			g_free(add_req);
 		}
 	} else {
@@ -1166,6 +1165,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 	}
 }
 
+/* I don't think this happens anymore in Version 15 */
 static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt) {
 	struct yahoo_add_request *add_req;
 	char *msg = NULL;
@@ -1193,22 +1193,31 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
-	if (add_req->id) {
+	if (add_req->id && add_req->who) {
+		char *dec_msg = NULL;
+
+		if (!yahoo_privacy_check(gc, add_req->who)) {
+			purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
+					  add_req->who);
+			yahoo_buddy_add_deny_cb(add_req, NULL);
+			return;
+		}
+
 		if (msg)
-			add_req->msg = yahoo_string_decode(gc, msg, FALSE);
+			dec_msg = yahoo_string_decode(gc, msg, FALSE);
 
 		/* DONE! this is almost exactly the same as what MSN does,
 		 * this should probably be moved to the core.
 		 */
 		 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
-                                                    NULL, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
+                                                    NULL, dec_msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
 						    yahoo_buddy_add_authorize_cb,
 						    yahoo_buddy_add_deny_reason_cb,
                                                     add_req);
+		g_free(dec_msg);
 	} else {
 		g_free(add_req->id);
 		g_free(add_req->who);
-		/*g_free(add_req->msg);*/
 		g_free(add_req);
 	}
 }
@@ -3010,6 +3019,11 @@ static void yahoo_close(PurpleConnection *gc) {
 	if (yd->ycht)
 		ycht_connection_close(yd->ycht);
 
+	g_free(yd->pending_chat_room);
+	g_free(yd->pending_chat_id);
+	g_free(yd->pending_chat_topic);
+	g_free(yd->pending_chat_goto);
+
 	g_free(yd);
 	gc->proto_data = NULL;
 }
@@ -3421,7 +3435,7 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	if (!set_cookie) {
 		struct yahoo_data *yd = gc->proto_data;
-		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.");
+		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.\n");
 		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
 	}
 
@@ -3480,7 +3494,7 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 static void yahoo_show_chat_goto(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input(gc, NULL, _("Join who in chat?"), NULL,
+	purple_request_input(gc, NULL, _("Join whom in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL,
@@ -4012,22 +4026,11 @@ static void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
 static PurpleCmdRet
 yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data) {
 	PurpleAccount *account = purple_conversation_get_account(c);
-#ifndef YAHOO_USE_ATTENTION_API
-	const char *username = purple_account_get_username(account);
-#endif
 
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-#ifdef YAHOO_USE_ATTENTION_API
 	serv_send_attention(account->gc, c->name, YAHOO_BUZZ);
-#else
-
-	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
-	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
-	purple_conv_im_send(PURPLE_CONV_IM(c), "<ding>");
-	purple_conversation_write(c, NULL, _("You have just sent a Buzz!"), PURPLE_MESSAGE_SYSTEM, time(NULL));
-#endif
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -4090,9 +4093,7 @@ gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint 
 
 	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
 	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
-	/* TODO: find out how to send a <ding> without showing up as a blank line on
-	 * the conversation window. */
-	purple_conv_im_send(PURPLE_CONV_IM(c), "<ding>");
+	purple_conv_im_send_with_flags(PURPLE_CONV_IM(c), "<ding>", PURPLE_MESSAGE_INVISIBLE);
 
 	return TRUE;
 }
@@ -4106,9 +4107,9 @@ GList *yahoo_attention_types(PurpleAccount *account)
 		/* Yahoo only supports one attention command: the 'buzz'. */
 		/* This is index number YAHOO_BUZZ. */
 		attn = g_new0(PurpleAttentionType, 1);
-		attn->name = _("buzz");
-		attn->incoming_description = _("buzzed");
-		attn->outgoing_description = _("Buzzing");
+		attn->name = _("Buzz");
+		attn->incoming_description = _("%s has buzzed you!");
+		attn->outgoing_description = _("Buzzing %s...");
 		list = g_list_append(list, attn);
 	} 
 
@@ -4322,17 +4323,12 @@ static PurplePluginProtocolInfo prpl_info =
 	&yahoo_whiteboard_prpl_ops,
 	NULL, /* send_raw */
 	NULL, /* roomlist_room_serialize */
+	NULL, /* unregister_user */
 
-#ifdef YAHOO_USE_ATTENTION_API
 	yahoo_send_attention,
 	yahoo_attention_types,
-#else
-	NULL,
-	NULL,
-#endif
 
 	/* padding */
-	NULL,
 	NULL
 };
 

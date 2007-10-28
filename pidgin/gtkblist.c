@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -42,6 +42,7 @@
 #include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkcellrendererexpander.h"
+#include "gtkcertmgr.h"
 #include "gtkconv.h"
 #include "gtkdebug.h"
 #include "gtkdialogs.h"
@@ -124,7 +125,7 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 static PidginBuddyList *gtkblist = NULL;
 
 static gboolean pidgin_blist_refresh_timer(PurpleBuddyList *list);
-static void pidgin_blist_update_buddy(PurpleBuddyList *list, PurpleBlistNode *node, gboolean statusChange);
+static void pidgin_blist_update_buddy(PurpleBuddyList *list, PurpleBlistNode *node, gboolean status_change);
 static void pidgin_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void pidgin_blist_update(PurpleBuddyList *list, PurpleBlistNode *node);
 static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *node);
@@ -331,8 +332,10 @@ static void gtk_blist_join_chat(PurpleChat *chat)
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name,
 											   chat->account);
 
-	if (conv != NULL)
+	if (conv != NULL) {
+		pidgin_conv_attach_to_conversation(conv);
 		purple_conversation_present(conv);
+	}
 
 	serv_join_chat(chat->account->gc, chat->components);
 	g_free(chat_name);
@@ -611,6 +614,8 @@ joinchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 static void
 pidgin_blist_update_privacy_cb(PurpleBuddy *buddy)
 {
+	if (buddy->node.ui_data == NULL || ((struct _pidgin_blist_node*)buddy->node.ui_data)->row == NULL)
+		return;
 	pidgin_blist_update_buddy(purple_get_blist(), (PurpleBlistNode*)(buddy), TRUE);
 }
 
@@ -2617,6 +2622,7 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
 	struct _pidgin_blist_node *gtknode;
 	GdkRectangle mon_size;
 	int sig;
+	const char *name;
 	
 	if (node == NULL)
 		return;
@@ -2674,7 +2680,9 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
 
 	gtknode = node->ui_data;
 
+	name = gtk_window_get_title(GTK_WINDOW(gtk_widget_get_toplevel(widget)));
 	gtk_widget_set_app_paintable(gtkblist->tipwindow, TRUE);
+	gtk_window_set_title(GTK_WINDOW(gtkblist->tipwindow), name ? name : _("Buddy List"));
 	gtk_window_set_resizable(GTK_WINDOW(gtkblist->tipwindow), FALSE);
 	gtk_widget_set_name(gtkblist->tipwindow, "gtk-tooltips");
 	g_signal_connect(G_OBJECT(gtkblist->tipwindow), "expose_event",
@@ -2862,11 +2870,11 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgin_dialogs_log, 0, "<Item>", NULL },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Buddies/Show"), NULL, NULL, 0, "<Branch>", NULL},
-	{ N_("/Buddies/Show/Show _Offline Buddies"), NULL, pidgin_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
-	{ N_("/Buddies/Show/Show _Empty Groups"), NULL, pidgin_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
-	{ N_("/Buddies/Show/Show Buddy _Details"), NULL, pidgin_blist_buddy_details_cb, 1, "<CheckItem>", NULL },
-	{ N_("/Buddies/Show/Show Idle _Times"), NULL, pidgin_blist_show_idle_time_cb, 1, "<CheckItem>", NULL },
-	{ N_("/Buddies/Show/Show _Protocol Icons"), NULL, pidgin_blist_show_protocol_icons_cb, 1, "<CheckItem>", NULL },
+	{ N_("/Buddies/Show/_Offline Buddies"), NULL, pidgin_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
+	{ N_("/Buddies/Show/_Empty Groups"), NULL, pidgin_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
+	{ N_("/Buddies/Show/Buddy _Details"), NULL, pidgin_blist_buddy_details_cb, 1, "<CheckItem>", NULL },
+	{ N_("/Buddies/Show/Idle _Times"), NULL, pidgin_blist_show_idle_time_cb, 1, "<CheckItem>", NULL },
+	{ N_("/Buddies/Show/_Protocol Icons"), NULL, pidgin_blist_show_protocol_icons_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/_Sort Buddies"), NULL, NULL, 0, "<Branch>", NULL },
 	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Buddies/_Add Buddy..."), "<CTL>B", pidgin_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
@@ -2882,6 +2890,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 0, "<Item>", NULL },
+	{ N_("/Tools/_Certificates"), NULL, pidgin_certmgr_show, 0, "<Item>", NULL },
 	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
@@ -3092,7 +3101,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			purple_notify_user_info_add_pair(user_info, _("Status"), _("Offline"));
 		}
 
-		if (prpl_info && prpl_info->tooltip_text)
+		if (purple_account_is_connected(b->account) &&
+				prpl_info && prpl_info->tooltip_text)
 		{
 			/* Additional text from the PRPL */
 			prpl_info->tooltip_text(b, user_info, full);
@@ -3203,6 +3213,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 {
 	GdkPixbuf *ret;
 	const char *protoname = NULL;
+	const char *icon = NULL;
 	struct _pidgin_blist_node *gtknode = node->ui_data;
 	struct _pidgin_blist_node *gtkbuddynode = NULL;
 	PurpleBuddy *buddy = NULL;
@@ -3251,62 +3262,54 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 									     purple_buddy_get_name(buddy),
 									     purple_buddy_get_account(buddy));
 		PurplePresence *p;
+		gboolean trans;
+
 		if(conv != NULL) {
 			PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-			if(gtkconv != NULL && pidgin_conv_is_hidden(gtkconv) && size == PIDGIN_STATUS_ICON_SMALL) {
+			if((gtkconv == NULL || pidgin_conv_is_hidden(gtkconv)) && size == PIDGIN_STATUS_ICON_SMALL) {
 				return gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_MESSAGE,
 							       icon_size, "GtkTreeView");
 			}
 		}
+
 		p = purple_buddy_get_presence(buddy);
+		trans = (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL);
 
 		if (PURPLE_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGIN,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_LOGIN;
 		else if (gtkbuddynode && gtkbuddynode->recent_signonoff)
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGOUT,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_LOGOUT;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_UNAVAILABLE))
-			if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
-				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY_I,
-						icon_size, "GtkTreeView");
+			if (trans)
+				icon = PIDGIN_STOCK_STATUS_BUSY_I;
 			else
-				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY,
-						icon_size, "GtkTreeView");
+				icon = PIDGIN_STOCK_STATUS_BUSY;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AWAY))
-		        if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
-		                ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY_I,
-		                                icon_size, "GtkTreeView");
+			if (trans)
+				icon = PIDGIN_STOCK_STATUS_AWAY_I;
 		 	else
-				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY,
-						icon_size, "GtkTreeView");
+				icon = PIDGIN_STOCK_STATUS_AWAY;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_EXTENDED_AWAY))
-			if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
-		        	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA_I,
-						icon_size, "GtkTreeView");
+			if (trans)
+				icon = PIDGIN_STOCK_STATUS_XA_I;
 			else
-				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA,
-						icon_size, "GtkTreeView");
+				icon = PIDGIN_STOCK_STATUS_XA;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_OFFLINE))
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE,
-					icon_size, "GtkTreeView");
-		else if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE_I,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_OFFLINE;
+		else if (trans)
+			icon = PIDGIN_STOCK_STATUS_AVAILABLE_I;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_INVISIBLE))
-			ret = gtk_widget_render_icon(GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_INVISIBLE,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_INVISIBLE;
 		else
-			ret = gtk_widget_render_icon(GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_AVAILABLE;
 	} else if (chat) {
-		ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_CHAT,
-				icon_size, "GtkTreeView");
+		icon = PIDGIN_STOCK_STATUS_CHAT;
 	} else {
-		ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_PERSON,
-				icon_size, "GtkTreeView");
+		icon = PIDGIN_STOCK_STATUS_PERSON;
 	}
 
+	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), icon,
+			icon_size, "GtkTreeView");
 	return ret;
 }
 
@@ -3329,7 +3332,7 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 
 	if(conv != NULL) {
 		gtkconv = PIDGIN_CONVERSATION(conv);
-		if(gtkconv != NULL && pidgin_conv_is_hidden(gtkconv)) {
+		if(gtkconv == NULL || pidgin_conv_is_hidden(gtkconv)) {
 			hidden_conv = TRUE;
 		}
 	}
@@ -4588,22 +4591,22 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	/* set the Show Offline Buddies option. must be done
 	 * after the treeview or faceprint gets mad. -Robot101
 	 */
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Show Offline Buddies"))),
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Offline Buddies"))),
 			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_offline_buddies"));
 
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Show Empty Groups"))),
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Empty Groups"))),
 			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_empty_groups"));
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Tools/Mute Sounds"))),
 			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/mute"));
 
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Show Buddy Details"))),
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Buddy Details"))),
 			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons"));
 
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Show Idle Times"))),
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Idle Times"))),
 			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_idle_time"));
 
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Show Protocol Icons"))),
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show/Protocol Icons"))),
 			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"));
 
 	if(!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
@@ -5154,7 +5157,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 
 
 
-static void pidgin_blist_update_buddy(PurpleBuddyList *list, PurpleBlistNode *node, gboolean statusChange)
+static void pidgin_blist_update_buddy(PurpleBuddyList *list, PurpleBlistNode *node, gboolean status_change)
 {
 	PurpleBuddy *buddy;
 	struct _pidgin_blist_node *gtkparentnode;
@@ -5207,6 +5210,10 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		GdkPixbuf *emblem;
 		char *mark;
 		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
+		const char *name = purple_chat_get_name(chat);
+		PurpleConversation *conv =
+				purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name, chat->account);
+		gboolean hidden = (conv && !PIDGIN_CONVERSATION(conv));
 
 		if(!insert_node(list, node, &iter))
 			return;
@@ -5222,15 +5229,20 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 			avatar = NULL;
 
 		mark = g_markup_escape_text(purple_chat_get_name(chat), -1);
+		if (hidden) {
+			char *bold = g_strdup_printf("<b>%s</b>", mark);
+			g_free(mark);
+			mark = bold;
+		}
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				STATUS_ICON_COLUMN, status,
 				STATUS_ICON_VISIBLE_COLUMN, TRUE,
 				BUDDY_ICON_COLUMN, avatar ? avatar : gtkblist->empty_avatar,
 				BUDDY_ICON_VISIBLE_COLUMN,  purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons"),
-			        EMBLEM_COLUMN, emblem,
+				EMBLEM_COLUMN, emblem,
 				EMBLEM_VISIBLE_COLUMN, emblem != NULL,
-		 	        PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(chat->account, PIDGIN_PRPL_ICON_SMALL),
+				PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(chat->account, PIDGIN_PRPL_ICON_SMALL),
 				PROTOCOL_ICON_VISIBLE_COLUMN, purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"),
 				NAME_COLUMN, mark,
 				GROUP_EXPANDER_VISIBLE_COLUMN, FALSE,

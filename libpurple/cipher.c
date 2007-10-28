@@ -271,7 +271,7 @@ gchar *purple_cipher_http_digest_calculate_session_key(
 	purple_cipher_cipher_append(cipher, (guchar *)":", 1);
 	purple_cipher_cipher_append(cipher, (guchar *)password, strlen(password));
 
-	if (algorithm != NULL && !strcasecmp(algorithm, "MD5-sess"))
+	if (algorithm != NULL && !g_ascii_strcasecmp(algorithm, "MD5-sess"))
 	{
 		guchar digest[16];
 

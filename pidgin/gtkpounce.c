@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -975,7 +975,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/play-sound"));
 	}
 
-	gtk_widget_show_all(vbox2);
+	gtk_widget_show(vbox2);
 	gtk_widget_show(window);
 }
 

@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "account.h"
@@ -538,7 +538,7 @@ purple_connection_error(PurpleConnection *gc, const char *text)
 	g_return_if_fail(gc   != NULL);
 
 	if (text == NULL) {
-		purple_debug_error("connection", "purple_connection_error: check `text != NULL' failed");
+		purple_debug_error("connection", "purple_connection_error: check `text != NULL' failed\n");
 		text = _("Unknown error");
 	}
 

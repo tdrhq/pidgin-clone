@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -129,7 +129,7 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 	jbr->state = state;
 	if(jbr->status)
 		g_free(jbr->status);
-        if (status)
+	if (status)
 		jbr->status = g_markup_escape_text(status, -1);
 	else
 		jbr->status = NULL;
@@ -801,6 +801,12 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				purple_notify_user_info_add_pair(user_info, _("Operating System"), jbr->client.os);
 			}
 		}
+#if 0 
+		/* #if 0 this for now; I think this would be far more useful if we limited this to a particular set of features
+ 		 * of particular interest (-vv jumps out as one). As it is now, I don't picture people getting all excited: "Oh sweet crap!
+ 		 * So-and-so supports 'jabber:x:data' AND 'Collaborative Data Objects'!"
+ 		 */
+
 		if(jbr && jbr->caps) {
 			GString *tmp = g_string_new("");
 			GList *iter;
@@ -909,15 +915,16 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 					feature = _("Hop Check");
 				else if(g_str_has_suffix(feature, "+notify"))
 					feature = NULL;
-				
 				if(feature)
-					g_string_append_printf(tmp, "%s\n", feature);
+					g_string_append_printf(tmp, "%s<br/>", feature);
 			}
+
 			if(strlen(tmp->str) > 0)
 				purple_notify_user_info_add_pair(user_info, _("Capabilities"), tmp->str);
 			
 			g_string_free(tmp, TRUE);
 		}
+#endif
 	} else {
 		for(resources = jbi->jb->resources; resources; resources = resources->next) {
 			char *purdy = NULL;
@@ -959,6 +966,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 					purple_notify_user_info_add_pair(user_info, _("Operating System"), jbr->client.os);
 				}
 			}
+#if 0
 			if(jbr && jbr->caps) {
 				GString *tmp = g_string_new("");
 				GList *iter;
@@ -1076,6 +1084,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				
 				g_string_free(tmp, TRUE);
 			}
+#endif
 		}
 	}
 
@@ -1153,6 +1162,17 @@ void jabber_vcard_fetch_mine(JabberStream *js)
 	jabber_iq_send(iq);
 }
 
+static void
+jabber_string_escape_and_append(GString *string, const char *name, const char *value, gboolean indent)
+{
+	gchar *escaped;
+
+	escaped = g_markup_escape_text(value, -1);
+	g_string_append_printf(string, "%s<b>%s:</b> %s<br/>",
+			indent ? "&nbsp;&nbsp;" : "", name, escaped);
+	g_free(escaped);
+}
+
 static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	const char *id, *from;
@@ -1197,8 +1217,8 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 			text = xmlnode_get_data(child);
 			if(text && !strcmp(child->name, "FN")) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Full Name"), text);
+				jabber_string_escape_and_append(info_text,
+						_("Full Name"), text, FALSE);
 			} else if(!strcmp(child->name, "N")) {
 				for(child2 = child->child; child2; child2 = child2->next)
 				{
@@ -1209,17 +1229,14 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 					text2 = xmlnode_get_data(child2);
 					if(text2 && !strcmp(child2->name, "FAMILY")) {
-						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>",
-								_("Family Name"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Family Name"), text2, FALSE);
 					} else if(text2 && !strcmp(child2->name, "GIVEN")) {
-						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>",
-								_("Given Name"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Given Name"), text2, FALSE);
 					} else if(text2 && !strcmp(child2->name, "MIDDLE")) {
-						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>",
-								_("Middle Name"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Middle Name"), text2, FALSE);
 					}
 					g_free(text2);
 				}
@@ -1228,11 +1245,11 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				if(b) {
 					purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", text);
 				}
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Nickname"), text);
+				jabber_string_escape_and_append(info_text,
+						_("Nickname"), text, FALSE);
 			} else if(text && !strcmp(child->name, "BDAY")) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Birthday"), text);
+				jabber_string_escape_and_append(info_text,
+						_("Birthday"), text, FALSE);
 			} else if(!strcmp(child->name, "ADR")) {
 				gboolean address_line_added = FALSE;
 
@@ -1257,34 +1274,27 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					}
 
 					if(!strcmp(child2->name, "POBOX")) {
-						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>",
-								_("P.O. Box"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("P.O. Box"), text2, TRUE);
 					} else if(!strcmp(child2->name, "EXTADR")) {
-						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>",
-								_("Extended Address"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Extended Address"), text2, TRUE);
 					} else if(!strcmp(child2->name, "STREET")) {
-						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>",
-								_("Street Address"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Street Address"), text2, TRUE);
 					} else if(!strcmp(child2->name, "LOCALITY")) {
-						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>",
-								_("Locality"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Locality"), text2, TRUE);
 					} else if(!strcmp(child2->name, "REGION")) {
-						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>",
-								_("Region"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Region"), text2, TRUE);
 					} else if(!strcmp(child2->name, "PCODE")) {
-						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>",
-								_("Postal Code"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Postal Code"), text2, TRUE);
 					} else if(!strcmp(child2->name, "CTRY")
 								|| !strcmp(child2->name, "COUNTRY")) {
-						g_string_append_printf(info_text,
-								"&nbsp;<b>%s:</b> %s<br/>",
-								_("Country"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Country"), text2, TRUE);
 					}
 					g_free(text2);
 				}
@@ -1294,34 +1304,38 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					/* show what kind of number it is */
 					number = xmlnode_get_data(child2);
 					if(number) {
-						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>", _("Telephone"), number);
+						jabber_string_escape_and_append(info_text,
+								_("Telephone"), number, FALSE);
 						g_free(number);
 					}
 				} else if((number = xmlnode_get_data(child))) {
 					/* lots of clients (including purple) do this, but it's
 					 * out of spec */
-					g_string_append_printf(info_text,
-							"<b>%s:</b> %s<br/>", _("Telephone"), number);
+					jabber_string_escape_and_append(info_text,
+							_("Telephone"), number, FALSE);
 					g_free(number);
 				}
 			} else if(!strcmp(child->name, "EMAIL")) {
-				char *userid;
+				char *userid, *escaped;
 				if((child2 = xmlnode_get_child(child, "USERID"))) {
 					/* show what kind of email it is */
 					userid = xmlnode_get_data(child2);
 					if(userid) {
+						escaped = g_markup_escape_text(userid, -1);
 						g_string_append_printf(info_text,
-								"<b>%s:</b> <a href='mailto:%s'>%s</a><br/>",
-								_("E-Mail"), userid, userid);
+								"<b>%s:</b> <a href=\"mailto:%s\">%s</a><br/>",
+								_("E-Mail"), escaped, escaped);
+						g_free(escaped);
 						g_free(userid);
 					}
 				} else if((userid = xmlnode_get_data(child))) {
 					/* lots of clients (including purple) do this, but it's
 					 * out of spec */
-						g_string_append_printf(info_text,
-								"<b>%s:</b> <a href='mailto:%s'>%s</a><br/>",
-								_("E-Mail"), userid, userid);
+					escaped = g_markup_escape_text(userid, -1);
+					g_string_append_printf(info_text,
+							"<b>%s:</b> <a href=\"mailto:%s\">%s</a><br/>",
+							_("E-Mail"), escaped, escaped);
+					g_free(escaped);
 					g_free(userid);
 				}
 			} else if(!strcmp(child->name, "ORG")) {
@@ -1334,25 +1348,23 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 					text2 = xmlnode_get_data(child2);
 					if(text2 && !strcmp(child2->name, "ORGNAME")) {
-						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>",
-								_("Organization Name"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Organization Name"), text2, FALSE);
 					} else if(text2 && !strcmp(child2->name, "ORGUNIT")) {
-						g_string_append_printf(info_text,
-								"<b>%s:</b> %s<br/>",
-								_("Organization Unit"), text2);
+						jabber_string_escape_and_append(info_text,
+								_("Organization Unit"), text2, FALSE);
 					}
 					g_free(text2);
 				}
 			} else if(text && !strcmp(child->name, "TITLE")) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Title"), text);
+				jabber_string_escape_and_append(info_text,
+						_("Title"), text, FALSE);
 			} else if(text && !strcmp(child->name, "ROLE")) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Role"), text);
+				jabber_string_escape_and_append(info_text,
+						_("Role"), text, FALSE);
 			} else if(text && !strcmp(child->name, "DESC")) {
-				g_string_append_printf(info_text, "<b>%s:</b> %s<br/>",
-						_("Description"), text);
+				jabber_string_escape_and_append(info_text,
+						_("Description"), text, FALSE);
 			} else if(!strcmp(child->name, "PHOTO") ||
 					!strcmp(child->name, "LOGO")) {
 				char *bintext = NULL;
@@ -2286,10 +2298,10 @@ static void user_search_cb(struct user_search_info *usi, PurpleRequestFields *fi
  * in purple-i18n@lists.sourceforge.net (March 2006)
  */
 static const char * jabber_user_dir_comments [] = {
-       /* current comment from Jabber User Directory users.jabber.org */
-       N_("Find a contact by entering the search criteria in the given fields. "
-          "Note: Each field supports wild card searches (%)"),
-       NULL
+	/* current comment from Jabber User Directory users.jabber.org */
+	N_("Find a contact by entering the search criteria in the given fields. "
+	   "Note: Each field supports wild card searches (%)"),
+	NULL
 };
 #endif
 
