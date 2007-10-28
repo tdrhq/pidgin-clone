@@ -280,6 +280,10 @@ const char *purple_connection_get_password(const PurpleConnection *gc);
  */
 const char *purple_connection_get_display_name(const PurpleConnection *gc);
 
+PurpleConnectionFlags purple_connection_get_flags(const PurpleConnection *pc);
+gboolean purple_connection_wants_to_die(const PurpleConnection *pc);
+PurplePluginProtocolInfo *purple_connection_get_protocol(const PurpleConnection *pc);
+
 /**
  * Updates the connection progress.
  *
