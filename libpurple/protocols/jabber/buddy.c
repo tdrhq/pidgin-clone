@@ -19,12 +19,12 @@
  *
  */
 #include "internal.h"
-#include "cipher.h"
 #include "debug.h"
 #include "imgstore.h"
 #include "prpl.h"
 #include "notify.h"
 #include "request.h"
+#include "sha1cipher.h"
 #include "util.h"
 #include "xmlnode.h"
 
@@ -421,6 +421,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		PurpleStoredImage *img;
 
 		if ((img = purple_buddy_icons_find_account_icon(gc->account))) {
+			PurpleCipher *cipher;
 			gconstpointer avatar_data;
 			gsize avatar_len;
 			xmlnode *photo, *binval, *type;
@@ -441,9 +442,10 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 			binval = xmlnode_new_child(photo, "BINVAL");
 			enc = purple_base64_encode(avatar_data, avatar_len);
 
-			purple_cipher_digest_region("sha1", avatar_data,
-									  avatar_len, sizeof(hashval),
-									  hashval, NULL);
+			cipher = purple_sha1_cipher_new();
+			purple_cipher_append(cipher, avatar_data, avatar_len);
+			purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+			g_object_unref(G_OBJECT(cipher));
 
 			purple_imgstore_unref(img);
 
@@ -1380,14 +1382,19 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 					data = purple_base64_decode(bintext, &size);
 					if (data) {
+						PurpleCipher *cipher;
+
 						jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_add_with_id(g_memdup(data, size), size, "logo.png")));
 						g_string_append_printf(info_text,
 								"<b>%s:</b> <img id='%d'><br/>",
 								photo ? _("Photo") : _("Logo"),
 								GPOINTER_TO_INT(jbi->vcard_imgids->data));
-	
-						purple_cipher_digest_region("sha1", (guchar *)data, size,
-								sizeof(hashval), hashval, NULL);
+						
+						cipher = purple_sha1_cipher_new();
+						purple_cipher_append(cipher, (guchar *)data, size);
+						purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+						g_object_unref(G_OBJECT(cipher));
+
 						p = hash;
 						for(i=0; i<20; i++, p+=2)
 							snprintf(p, 3, "%02x", hashval[i]);
