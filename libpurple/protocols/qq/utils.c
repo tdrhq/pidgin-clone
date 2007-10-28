@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "cipher.h"
+#include "md5cipher.h"
 #include "limits.h"
 #include "stdlib.h"
 #include "string.h"
@@ -118,17 +118,15 @@ guint8 *_gen_session_md5(gint uid, guint8 *session_key)
 {
 	guint8 *src, md5_str[QQ_KEY_LENGTH];
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 
 	src = g_newa(guint8, 20);
 	memcpy(src, &uid, 4);
 	memcpy(src, session_key, QQ_KEY_LENGTH);
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, src, 20);
-	purple_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, src, 20);
+	purple_cipher_digest(cipher, sizeof(md5_str), md5_str, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	return g_memdup(md5_str, QQ_KEY_LENGTH);
 }

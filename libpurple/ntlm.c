@@ -29,7 +29,8 @@
 
 #include "util.h"
 #include "ntlm.h"
-#include "cipher.h"
+#include "descipher.h"
+#include "md4cipher.h"
 #include <string.h>
 
 #define NTLM_NEGOTIATE_NTLM2_KEY 0x00080000
@@ -184,15 +185,12 @@ setup_des_key(const guint8 key_56[], guint8 *key)
 static void
 des_ecb_encrypt(const guint8 *plaintext, guint8 *result, const guint8 *key)
 {
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
+	PurpleCipher *cipher = purple_des_cipher_new();
 	gsize outlen;
 
-	cipher = purple_ciphers_find_cipher("des");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_set_key(context, key);
-	purple_cipher_context_encrypt(context, plaintext, 8, result, &outlen);
-	purple_cipher_context_destroy(context);
+	purple_cipher_set_key(cipher, key);
+	purple_cipher_encrypt(cipher, plaintext, 8, result, &outlen);
+	g_object_unref(G_OBJECT(cipher));
 }
 
 /*
@@ -245,7 +243,6 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	unsigned char nt_hpw[21];
 	char nt_pw[128];
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	char *tmp;
 	int idx;
 	gchar *ucs2le;
@@ -334,11 +331,10 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 		nt_pw[2 * idx + 1] = 0;
 	}
 
-	cipher = purple_ciphers_find_cipher("md4");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (guint8 *)nt_pw, 2 * lennt);
-	purple_cipher_context_digest(context, 21, nt_hpw, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md4_cipher_new();
+	purple_cipher_append(cipher, (guint8 *)nt_pw, 2 * lennt);
+	purple_cipher_digest(cipher, 21, nt_hpw, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	memset(nt_hpw + 16, 0, 5);
 	calc_resp(nt_hpw, nonce, nt_resp);

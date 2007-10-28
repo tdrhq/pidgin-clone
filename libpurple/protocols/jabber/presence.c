@@ -21,11 +21,11 @@
 #include "internal.h"
 
 #include "account.h"
-#include "cipher.h"
 #include "conversation.h"
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
+#include "sha1cipher.h"
 #include "server.h"
 #include "status.h"
 #include "util.h"
@@ -339,14 +339,18 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 				(( (binval = xmlnode_get_child(photo, "BINVAL")) &&
 				(text = xmlnode_get_data(binval))) ||
 				(text = xmlnode_get_data(photo)))) {
+			PurpleCipher *cipher;
 			unsigned char hashval[20];
 			char hash[41], *p;
 			int i;
 
 			data = purple_base64_decode(text, &size);
 
-			purple_cipher_digest_region("sha1", data, size,
-					sizeof(hashval), hashval, NULL);
+			cipher = purple_sha1_cipher_new();
+			purple_cipher_append(cipher, data, size);
+			purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+			g_object_unref(G_OBJECT(cipher));
+
 			p = hash;
 			for(i=0; i<20; i++, p+=2)
 				snprintf(p, 3, "%02x", hashval[i]);
