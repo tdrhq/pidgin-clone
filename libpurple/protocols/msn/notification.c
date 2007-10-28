@@ -230,11 +230,9 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
 	{
@@ -264,14 +262,15 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		for (cur = elems; *cur != NULL; cur++)
 		{
 			tokens = g_strsplit(*cur, "=", 2);
-			if(tokens[0]&&tokens[1])
+			if(tokens[0] && tokens[1])
 			{
 				purple_debug_info("MSNP14","challenge %p,key:%s,value:%s\n",
 									session->nexus->challenge_data,tokens[0],tokens[1]);
 				g_hash_table_insert(session->nexus->challenge_data, tokens[0], tokens[1]);
-			}
-			/* Don't free each of the tokens, only the array. */
-			g_free(tokens);
+				/* Don't free each of the tokens, only the array. */
+				g_free(tokens);
+			} else
+				g_strfreev(tokens);
 		}
 
 		g_strfreev(elems);
@@ -415,7 +414,7 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
-		purple_debug_info("MSNP14","MSG payload:{%s}\n",cmd->payload);
+		purple_debug_info("MSNP14","MSG payload:{%.*s}\n",cmd->payload_len, cmd->payload);
 		cmd->payload_cb(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
@@ -466,15 +465,12 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	if(!strcmp(content_type,"text/plain")){
 		const char *value;
 		const char *body;
-		char *body_str;
 		char *body_enc;
 		char *body_final = NULL;
 		size_t body_len;
 
 		body = msn_message_get_bin_data(msg, &body_len);
-		body_str = g_strndup(body, body_len);
-		body_enc = g_markup_escape_text(body_str, -1);
-		g_free(body_str);
+		body_enc = g_markup_escape_text(body, body_len);
 
 		if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)	{
 			char *pre, *post;
@@ -487,6 +483,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		}
 		g_free(body_enc);
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
+		g_free(body_final);
 	}
 	if(!strcmp(content_type,"text/x-msmsgscontrol")){
 		if(msn_message_get_attr(msg, "TypingUser") != NULL){
@@ -737,7 +734,7 @@ msn_notification_send_fqy(MsnSession *session, const char *passport)
 	msn_cmdproc_send_trans(cmdproc, trans);
 
 	g_free(payload);
-	g_free(tokens);
+	g_strfreev(tokens);
 }
 
 static void
@@ -1616,7 +1613,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	MsnSession *session;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnUser *user;
 	const char *passport;
 	char *psm_str, *currentmedia_str, *str;
@@ -1626,7 +1622,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	passport = cmd->params[0];
 	user = msn_userlist_find_user(session->userlist, passport);
@@ -1795,7 +1790,9 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		return;
 
 	/*new a oim session*/
-	session->oim = msn_oim_new(session);
+	/* There are several things that call this */
+	if (session->oim == NULL)
+		session->oim = msn_oim_new(session);
 //	msn_oim_connect(session->oim);
 
 	table = msn_message_get_hashtable_from_body(msg);

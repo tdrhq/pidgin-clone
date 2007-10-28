@@ -1128,8 +1128,10 @@ flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 	aim_clientready(od, conn);
 
 	chatcon = find_oscar_chat_by_conn(gc, conn);
-	chatcon->id = id;
-	chatcon->conv = serv_got_joined_chat(gc, id++, chatcon->show);
+	if (chatcon) {
+		chatcon->id = id;
+		chatcon->conv = serv_got_joined_chat(gc, id++, chatcon->show);
+	}
 }
 
 static void
@@ -1261,6 +1263,7 @@ oscar_login(PurpleAccount *account)
 		gc->wants_to_die = TRUE;
 		purple_connection_error(gc, buf);
 		g_free(buf);
+		return;
 	}
 
 	if (aim_snvalid_icq((purple_account_get_username(account)))) {
@@ -1721,7 +1724,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 {
 	PurpleConnection *gc;
 	PurpleAccount *account;
-	PurplePresence *presence;
 	struct buddyinfo *bi;
 	time_t time_idle = 0, signon = 0;
 	int type = 0;
@@ -1734,7 +1736,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	gc = od->gc;
 	account = purple_connection_get_account(gc);
-	presence = purple_account_get_presence(account);
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
@@ -1801,7 +1802,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	if (have_status_message)
 	{
-		if ((status_id == OSCAR_STATUS_ID_AVAILABLE) && (info->itmsurl != NULL))
+		if ((!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE)) && (info->itmsurl != NULL))
 		{
 			char *itmsurl;
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
@@ -5006,6 +5007,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					g = purple_group_new(gname_utf8);
 					purple_blist_add_group(g, NULL);
 				}
+				g_free(gname_utf8);
 			} break;
 
 			case 0x0002: { /* Permit buddy */
