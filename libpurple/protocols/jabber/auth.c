@@ -22,9 +22,10 @@
 
 #include "account.h"
 #include "debug.h"
-#include "cipher.h"
 #include "conversation.h"
+#include "md5cipher.h"
 #include "request.h"
+#include "sha1cipher.h"
 #include "sslconn.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -562,6 +563,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
+			PurpleCipher *cipher;
 			unsigned char hashval[20];
 			char *s, h[41], *p;
 			int i;
@@ -576,8 +578,10 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
 
-			purple_cipher_digest_region("sha1", (guchar *)s, strlen(s),
-									  sizeof(hashval), hashval, NULL);
+			cipher = purple_sha1_cipher_new();
+			purple_cipher_append(cipher, (guchar *)s, strlen(s));
+			purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+			g_object_unref(G_OBJECT(cipher));
 
 			p = h;
 			for(i=0; i<20; i++, p+=2)
@@ -699,7 +703,6 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar result[16];
 	size_t a1len;
 
@@ -714,35 +717,34 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		convpasswd = g_strdup(passwd);
 	}
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
+	cipher = purple_md5_cipher_new();
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd ? convpasswd : "");
-	purple_cipher_context_append(context, (const guchar *)x, strlen(x));
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_append(cipher, (const guchar *)x, strlen(x));
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
 	g_memmove(a1, result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a1, a1len);
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)a1, a1len);
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
 
 	ha1 = purple_base16_encode(result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a2, strlen(a2));
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)a2, strlen(a2));
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
 
 	ha2 = purple_base16_encode(result, 16);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)kd, strlen(kd));
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)kd, strlen(kd));
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	z = purple_base16_encode(result, 16);
 
