@@ -1,5 +1,6 @@
 #include <glib.h>
 #include <check.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -7,29 +8,29 @@
 
 #include "tests.h"
 
-#include "../cipher.h"
+#include "../md4cipher.h"
+#include "../md5cipher.h"
+#include "../sha1cipher.h"
 
 /******************************************************************************
  * MD4 Tests
  *****************************************************************************/
 #define MD4_TEST(data, digest) { \
 	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
 	gchar cdigest[33]; \
 	gboolean ret = FALSE; \
 	\
-	cipher = purple_ciphers_find_cipher("md4"); \
-	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+	cipher = purple_md4_cipher_new(); \
+	purple_cipher_append(cipher, (guchar *)(data), strlen((data))); \
 	\
-	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
-	                                        NULL); \
+	ret = purple_cipher_digest_to_str(cipher, sizeof(cdigest), cdigest, \
+	                                  NULL); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(G_OBJECT(cipher)); \
 }
 
 START_TEST(test_md4_empty_string) {
@@ -77,22 +78,20 @@ END_TEST
  *****************************************************************************/
 #define MD5_TEST(data, digest) { \
 	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
 	gchar cdigest[33]; \
 	gboolean ret = FALSE; \
 	\
-	cipher = purple_ciphers_find_cipher("md5"); \
-	context = purple_cipher_context_new(cipher, NULL); \
-	purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+	cipher = purple_md5_cipher_new(); \
+	purple_cipher_append(cipher, (guchar *)(data), strlen((data))); \
 	\
-	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
+	ret = purple_cipher_digest_to_str(cipher, sizeof(cdigest), cdigest, \
 	                                        NULL); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(G_OBJECT(cipher)); \
 }
 
 START_TEST(test_md5_empty_string) {
@@ -139,15 +138,13 @@ END_TEST
  *****************************************************************************/
 #define SHA1_TEST(data, digest) { \
 	PurpleCipher *cipher = NULL; \
-	PurpleCipherContext *context = NULL; \
 	gchar cdigest[41]; \
 	gboolean ret = FALSE; \
 	\
-	cipher = purple_ciphers_find_cipher("sha1"); \
-	context = purple_cipher_context_new(cipher, NULL); \
+	cipher = purple_sha1_cipher_new(); \
 	\
 	if((data)) { \
-		purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+		purple_cipher_append(cipher, (guchar *)(data), strlen((data))); \
 	} else { \
 		gint j; \
 		guchar buff[1000]; \
@@ -155,17 +152,17 @@ END_TEST
 		memset(buff, 'a', 1000); \
 		\
 		for(j = 0; j < 1000; j++) \
-			purple_cipher_context_append(context, buff, 1000); \
+			purple_cipher_append(cipher, buff, 1000); \
 	} \
 	\
-	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
-	                                        NULL); \
+	ret = purple_cipher_digest_to_str(cipher, sizeof(cdigest), cdigest, \
+	                                  NULL); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	purple_cipher_context_destroy(context); \
+	g_object_unref(G_OBJECT(cipher)); \
 }
 
 START_TEST(test_sha1_a) {

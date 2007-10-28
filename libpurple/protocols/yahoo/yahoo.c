@@ -26,16 +26,17 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
-#include "cipher.h"
 #include "cmds.h"
 #include "core.h"
 #include "debug.h"
+#include "md5cipher.h"
 #include "notify.h"
 #include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"
 #include "server.h"
+#include "sha1cipher.h"
 #include "util.h"
 #include "version.h"
 
@@ -1417,7 +1418,6 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 	 */
 
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar digest[16];
 
 	char *crypt_result;
@@ -1436,19 +1436,17 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 	sv = seed[15];
 	sv = sv % 8;
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-
-	purple_cipher_context_append(context, (const guchar *)pass, strlen(pass));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (const guchar *)pass, strlen(pass));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
 
 	to_y64(password_hash, digest, 16);
 
 	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)crypt_result, strlen(crypt_result));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)crypt_result, strlen(crypt_result));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
 	to_y64(crypt_hash, digest, 16);
 
 	switch (sv) {
@@ -1492,15 +1490,15 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 			break;
 	}
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)hash_string_p, strlen(hash_string_p));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)hash_string_p, strlen(hash_string_p));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
 	to_y64(result6, digest, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)hash_string_c, strlen(hash_string_c));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)hash_string_c, strlen(hash_string_c));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(cipher));
 	to_y64(result96, digest, 16);
 
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
@@ -1524,12 +1522,9 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	struct yahoo_data *yd = gc->proto_data;
 
 	PurpleCipher			*md5_cipher;
-	PurpleCipherContext	*md5_ctx;
 	guchar				md5_digest[16];
 
-	PurpleCipher			*sha1_cipher;
-	PurpleCipherContext	*sha1_ctx1;
-	PurpleCipherContext	*sha1_ctx2;
+	PurpleCipher			*sha1_cipher1, *sha1_cipher2;
 
 	char				*alphabet1			= "FBZDWAGHrJTLMNOPpRSKUVEXYChImkwQ";
 	char				*alphabet2			= "F0E1D2C3B4A59687abcdefghijklmnop";
@@ -1579,12 +1574,9 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	memset(&magic_key_char, 0, 4);
 	memset(&comparison_src, 0, 20);
 
-	md5_cipher = purple_ciphers_find_cipher("md5");
-	md5_ctx = purple_cipher_context_new(md5_cipher, NULL);
-
-	sha1_cipher = purple_ciphers_find_cipher("sha1");
-	sha1_ctx1 = purple_cipher_context_new(sha1_cipher, NULL);
-	sha1_ctx2 = purple_cipher_context_new(sha1_cipher, NULL);
+	md5_cipher = purple_md5_cipher_new();
+	sha1_cipher1 = purple_sha1_cipher_new();
+	sha1_cipher2 = purple_sha1_cipher_new();
 
 	/*
 	 * Magic: Phase 1.  Generate what seems to be a 30 byte value (could change if base64
@@ -1720,11 +1712,11 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 			test[1] = x >> 8;
 			test[2] = y;
 
-			purple_cipher_context_reset(md5_ctx, NULL);
-			purple_cipher_context_append(md5_ctx, magic_key_char, 4);
-			purple_cipher_context_append(md5_ctx, test, 3);
-			purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),
-									   md5_digest, NULL);
+			purple_cipher_reset(md5_cipher);
+			purple_cipher_append(md5_cipher, magic_key_char, 4);
+			purple_cipher_append(md5_cipher, test, 3);
+			purple_cipher_digest(md5_cipher, sizeof(md5_digest),
+								 md5_digest, NULL);
 
 			if (!memcmp(md5_digest, comparison_src+4, 16)) {
 				leave = 1;
@@ -1755,10 +1747,10 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	enc_pass = yahoo_string_encode(gc, pass, NULL);
 
 	/* Get password and crypt hashes as per usual. */
-	purple_cipher_context_reset(md5_ctx, NULL);
-	purple_cipher_context_append(md5_ctx, (const guchar *)enc_pass, strlen(enc_pass));
-	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),
-							   md5_digest, NULL);
+	purple_cipher_reset(md5_cipher);
+	purple_cipher_append(md5_cipher, (const guchar *)enc_pass, strlen(enc_pass));
+	purple_cipher_digest(md5_cipher, sizeof(md5_digest),
+						 md5_digest, NULL);
 	to_y64(password_hash, md5_digest, 16);
 
 	crypt_result = yahoo_crypt(enc_pass, "$1$_2S43d5f$");
@@ -1766,10 +1758,10 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	g_free(enc_pass);
 	enc_pass = NULL;
 
-	purple_cipher_context_reset(md5_ctx, NULL);
-	purple_cipher_context_append(md5_ctx, (const guchar *)crypt_result, strlen(crypt_result));
-	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),
-							   md5_digest, NULL);
+	purple_cipher_reset(md5_cipher);
+	purple_cipher_append(md5_cipher, (const guchar *)crypt_result, strlen(crypt_result));
+	purple_cipher_digest(md5_cipher, sizeof(md5_digest),
+						 md5_digest, NULL);
 	to_y64(crypt_hash, md5_digest, 16);
 
 	/* Our first authentication response is based off of the password hash. */
@@ -1792,20 +1784,22 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	 * which we previously extrapolated from our challenge.
 	 */
 
-	purple_cipher_context_append(sha1_ctx1, pass_hash_xor1, 64);
-	if (y >= 3)
-		purple_cipher_context_set_option(sha1_ctx1, "sizeLo", GINT_TO_POINTER(0x1ff));
-	purple_cipher_context_append(sha1_ctx1, magic_key_char, 4);
-	purple_cipher_context_digest(sha1_ctx1, sizeof(digest1), digest1, NULL);
+	purple_cipher_append(sha1_cipher1, pass_hash_xor1, 64);
+	if (y >= 3) {
+		purple_sha1_cipher_set_size_lo(PURPLE_SHA1_CIPHER(sha1_cipher1),
+									   0x1ff);
+	}
+	purple_cipher_append(sha1_cipher1, magic_key_char, 4);
+	purple_cipher_digest(sha1_cipher1, sizeof(digest1), digest1, NULL);
 
 	/*
 	 * The second context gets the password hash XORed with 0x5c plus the SHA-1 digest
 	 * of the first context.
 	 */
 
-	purple_cipher_context_append(sha1_ctx2, pass_hash_xor2, 64);
-	purple_cipher_context_append(sha1_ctx2, digest1, 20);
-	purple_cipher_context_digest(sha1_ctx2, sizeof(digest2), digest2, NULL);
+	purple_cipher_append(sha1_cipher2, pass_hash_xor2, 64);
+	purple_cipher_append(sha1_cipher2, digest1, 20);
+	purple_cipher_digest(sha1_cipher2, sizeof(digest2), digest2, NULL);
 
 	/*
 	 * Now that we have digest2, use it to fetch characters from an alphabet to construct
@@ -1875,30 +1869,30 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	if (cnt < 64)
 		memset(&(crypt_hash_xor2[cnt]), 0x5c, 64-cnt);
 
-	purple_cipher_context_reset(sha1_ctx1, NULL);
-	purple_cipher_context_reset(sha1_ctx2, NULL);
+	purple_cipher_reset(sha1_cipher1);
+	purple_cipher_reset(sha1_cipher2);
 
 	/*
 	 * The first context gets the password hash XORed with 0x36 plus a magic value
 	 * which we previously extrapolated from our challenge.
 	 */
 
-	purple_cipher_context_append(sha1_ctx1, crypt_hash_xor1, 64);
+	purple_cipher_append(sha1_cipher1, crypt_hash_xor1, 64);
 	if (y >= 3) {
-		purple_cipher_context_set_option(sha1_ctx1, "sizeLo",
-									   GINT_TO_POINTER(0x1ff));
+		purple_sha1_cipher_set_size_lo(PURPLE_SHA1_CIPHER(sha1_cipher1),
+									   0x1ff);
 	}
-	purple_cipher_context_append(sha1_ctx1, magic_key_char, 4);
-	purple_cipher_context_digest(sha1_ctx1, sizeof(digest1), digest1, NULL);
+	purple_cipher_append(sha1_cipher1, magic_key_char, 4);
+	purple_cipher_digest(sha1_cipher1, sizeof(digest1), digest1, NULL);
 
 	/*
 	 * The second context gets the password hash XORed with 0x5c plus the SHA-1 digest
 	 * of the first context.
 	 */
 
-	purple_cipher_context_append(sha1_ctx2, crypt_hash_xor2, 64);
-	purple_cipher_context_append(sha1_ctx2, digest1, 20);
-	purple_cipher_context_digest(sha1_ctx2, sizeof(digest2), digest2, NULL);
+	purple_cipher_append(sha1_cipher2, crypt_hash_xor2, 64);
+	purple_cipher_append(sha1_cipher2, digest1, 20);
+	purple_cipher_digest(sha1_cipher2, sizeof(digest2), digest2, NULL);
 
 	/*
 	 * Now that we have digest2, use it to fetch characters from an alphabet to construct
@@ -1956,9 +1950,9 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 
 	yahoo_packet_send_and_free(pack, yd);
 
-	purple_cipher_context_destroy(md5_ctx);
-	purple_cipher_context_destroy(sha1_ctx1);
-	purple_cipher_context_destroy(sha1_ctx2);
+	g_object_unref(G_OBJECT(md5_cipher));
+	g_object_unref(G_OBJECT(sha1_cipher1));
+	g_object_unref(G_OBJECT(sha1_cipher2));
 
 	g_free(password_hash);
 	g_free(crypt_hash);
