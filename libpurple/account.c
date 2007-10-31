@@ -28,6 +28,7 @@
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
+#include "marshallers.h"
 #include "network.h"
 #include "notify.h"
 #include "pounce.h"
@@ -1278,22 +1279,24 @@ set_user_info_cb(PurpleAccount *account, const char *user_info)
 void
 purple_account_request_change_user_info(PurpleAccount *account)
 {
-	PurpleConnection *gc;
+	PurpleConnection *pc;
+	PurpleConnectionFlags flags;
 	char primary[256];
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(purple_account_is_connected(account));
 
-	gc = purple_account_get_connection(account);
+	pc = purple_account_get_connection(account);
+	flags = purple_connection_get_flags(pc);
 
 	g_snprintf(primary, sizeof(primary),
 			   _("Change user information for %s"),
 			   purple_account_get_username(account));
 
-	purple_request_input(gc, _("Set User Info"), primary, NULL,
+	purple_request_input(pc, _("Set User Info"), primary, NULL,
 					   purple_account_get_user_info(account),
-					   TRUE, FALSE, ((gc != NULL) &&
-					   (gc->flags & PURPLE_CONNECTION_HTML) ? "html" : NULL),
+					   TRUE, FALSE,
+					   (flags & PURPLE_CONNECTION_FLAGS_HTML) ? "html" : NULL,
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL,
 					   account, NULL, NULL,
@@ -1415,7 +1418,7 @@ void
 purple_account_set_enabled(PurpleAccount *account, const char *ui,
 			 gboolean value)
 {
-	PurpleConnection *gc;
+	PurpleConnection *pc;
 	gboolean was_enabled = FALSE;
 
 	g_return_if_fail(account != NULL);
@@ -1424,14 +1427,14 @@ purple_account_set_enabled(PurpleAccount *account, const char *ui,
 	was_enabled = purple_account_get_enabled(account, ui);
 
 	purple_account_set_ui_bool(account, ui, "auto-login", value);
-	gc = purple_account_get_connection(account);
+	pc = purple_account_get_connection(account);
 
 	if(was_enabled && !value)
 		purple_signal_emit(purple_accounts_get_handle(), "account-disabled", account);
 	else if(!was_enabled && value)
 		purple_signal_emit(purple_accounts_get_handle(), "account-enabled", account);
 
-	if ((gc != NULL) && (gc->wants_to_die == TRUE))
+	if ((pc != NULL) && (purple_connection_wants_to_die(pc) == TRUE))
 		return;
 
 	if (value && purple_presence_is_online(account->presence))
@@ -1676,33 +1679,36 @@ purple_account_set_ui_bool(PurpleAccount *account, const char *ui,
 static PurpleConnectionState
 purple_account_get_state(const PurpleAccount *account)
 {
-	PurpleConnection *gc;
+	PurpleConnection *pc;
 
-	g_return_val_if_fail(account != NULL, PURPLE_DISCONNECTED);
+	g_return_val_if_fail(account != NULL, PURPLE_CONNECTION_STATE_DISCONNECTED);
 
-	gc = purple_account_get_connection(account);
-	if (!gc)
-		return PURPLE_DISCONNECTED;
+	pc = purple_account_get_connection(account);
+	if (!pc)
+		return PURPLE_CONNECTION_STATE_DISCONNECTED;
 
-	return purple_connection_get_state(gc);
+	return purple_connection_get_state(pc);
 }
 
 gboolean
 purple_account_is_connected(const PurpleAccount *account)
 {
-	return (purple_account_get_state(account) == PURPLE_CONNECTED);
+	return (purple_account_get_state(account) ==
+			PURPLE_CONNECTION_STATE_CONNECTED);
 }
 
 gboolean
 purple_account_is_connecting(const PurpleAccount *account)
 {
-	return (purple_account_get_state(account) == PURPLE_CONNECTING);
+	return (purple_account_get_state(account) ==
+			PURPLE_CONNECTION_STATE_CONNECTING);
 }
 
 gboolean
 purple_account_is_disconnected(const PurpleAccount *account)
 {
-	return (purple_account_get_state(account) == PURPLE_DISCONNECTED);
+	return (purple_account_get_state(account) ==
+			PURPLE_CONNECTION_STATE_DISCONNECTED);
 }
 
 const char *
@@ -2042,99 +2048,84 @@ purple_account_destroy_log(PurpleAccount *account)
 void
 purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
+	GList *tmp = NULL;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	if (prpl_info != NULL && prpl_info->add_buddy != NULL)
-		prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
+	tmp = g_list_append(tmp, buddy);
+	purple_account_add_buddies(account, tmp);
+	g_list_free(tmp);
 }
 
 void
 purple_account_add_buddies(PurpleAccount *account, GList *buddies)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleConnection *pc = purple_account_get_connection(account);
+	GList *cur, *groups = NULL;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if(pc == NULL)
+		return;
 
-	if (prpl_info) {
-		GList *cur, *groups = NULL;
+	prpl_info = purple_connection_get_protocol(pc);
+	if(prpl_info == NULL)
+		return;
 
-		/* Make a list of what group each buddy is in */
-		for (cur = buddies; cur != NULL; cur = cur->next) {
-			PurpleBlistNode *node = cur->data;
-			groups = g_list_append(groups, node->parent->parent);
-		}
 
-		if (prpl_info->add_buddies != NULL)
-			prpl_info->add_buddies(gc, buddies, groups);
-		else if (prpl_info->add_buddy != NULL) {
-			GList *curb = buddies, *curg = groups;
-
-			while ((curb != NULL) && (curg != NULL)) {
-				prpl_info->add_buddy(gc, curb->data, curg->data);
-				curb = curb->next;
-				curg = curg->next;
-			}
-		}
-
-		g_list_free(groups);
+	/* Make a list of what group each buddy is in */
+	for (cur = buddies; cur != NULL; cur = cur->next) {
+		PurpleBlistNode *node = cur->data;
+		groups = g_list_append(groups, node->parent->parent);
 	}
+
+	prpl_info->add_buddies(pc, buddies, groups);
+
+	g_list_free(groups);
 }
 
 void
 purple_account_remove_buddy(PurpleAccount *account, PurpleBuddy *buddy,
 		PurpleGroup *group)
 {
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
+	GList *b = NULL, *g = NULL;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	b = g_list_append(b, buddy);
+	g = g_list_append(g, group);
 
-	if (prpl_info && prpl_info->remove_buddy)
-		prpl_info->remove_buddy(gc, buddy, group);
+	purple_account_remove_buddies(account, b, g);
+
+	g_list_free(b);
+	g_list_free(g);
 }
 
 void
 purple_account_remove_buddies(PurpleAccount *account, GList *buddies, GList *groups)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleConnection *pc = purple_account_get_connection(account);
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if(pc == NULL)
+		return;
 
-	if (prpl_info) {
-		if (prpl_info->remove_buddies)
-			prpl_info->remove_buddies(gc, buddies, groups);
-		else {
-			GList *curb = buddies;
-			GList *curg = groups;
-			while ((curb != NULL) && (curg != NULL)) {
-				purple_account_remove_buddy(account, curb->data, curg->data);
-				curb = curb->next;
-				curg = curg->next;
-			}
-		}
-	}
+	prpl_info = purple_connection_get_protocol(pc);
+	if(prpl_info == NULL)
+		return;
+
+	prpl_info->remove_buddies(pc, buddies, groups);
 }
 
 void
 purple_account_remove_group(PurpleAccount *account, PurpleGroup *group)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleConnection *pc = purple_account_get_connection(account);
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if(pc == NULL)
+		return;
 
-	if (prpl_info && prpl_info->remove_group)
-		prpl_info->remove_group(gc, group);
+	prpl_info = purple_connection_get_protocol(pc);
+	if(prpl_info == NULL)
+		return;
+
+	prpl_info->remove_group(pc, group);
 }
 
 void
@@ -2142,33 +2133,40 @@ purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 		const char *new_pw)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleConnection *pc = purple_account_get_connection(account);
+
+	if(pc == NULL)
+		return;
+
+	prpl_info = purple_connection_get_protocol(pc);
+	if(prpl_info == NULL)
+		return;
 
 	purple_account_set_password(account, new_pw);
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	if (prpl_info && prpl_info->change_passwd)
-		prpl_info->change_passwd(gc, orig_pw, new_pw);
+	prpl_info->change_passwd(pc, orig_pw, new_pw);
 }
 
-gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleBuddy *buddy)
+gboolean
+purple_account_supports_offline_message(PurpleAccount *account, PurpleBuddy *buddy)
 {
-	PurpleConnection *gc;
+	PurpleConnection *pc;
 	PurplePluginProtocolInfo *prpl_info;
 
 	g_return_val_if_fail(account, FALSE);
 	g_return_val_if_fail(buddy, FALSE);
 
-	gc = purple_account_get_connection(account);
-	if (gc == NULL)
+	pc = purple_account_get_connection(account);
+	if (pc == NULL)
 		return FALSE;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	if (!prpl_info || !prpl_info->offline_message)
+	prpl_info = purple_connection_get_protocol(pc);
+	if(prpl_info == NULL)
 		return FALSE;
+
+	if(!prpl_info->offline_message)
+		return FALSE;
+
 	return prpl_info->offline_message(buddy);
 }
 

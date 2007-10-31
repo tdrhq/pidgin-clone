@@ -283,6 +283,9 @@ You must have the GLib 2.0 development headers installed to build.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
+GLIB_GENMARSHAL=`pkg-config --variable=glib_genmarshal glib-2.0`
+AC_SUBST(GLIB_GENMARSHAL)
+
 AC_ARG_WITH([extraversion],
 			AC_HELP_STRING([--with-extraversion=STRING],
 						   [extra version number to be displayed in Help->About and --help (for packagers)]),
