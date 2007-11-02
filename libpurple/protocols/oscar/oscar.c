@@ -112,7 +112,7 @@ struct name_data {
 	gchar *nick;
 };
 
-static char *msgerrreason[] = {
+static const char * const msgerrreason[] = {
 	N_("Invalid error"),
 	N_("Invalid SNAC"),
 	N_("Rate to host"),
@@ -139,7 +139,7 @@ static char *msgerrreason[] = {
 	N_("Queue full"),
 	N_("Not while on AOL")
 };
-static int msgerrreasonlen = 25;
+static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
 
 /* All the libfaim->purple callback functions */
 static int purple_parse_auth_resp  (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -4766,10 +4766,11 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 	if (reason == 0x0005) {
 		purple_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
-						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few hours."));
+						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few minutes."));
 		if (od->getblisttimer > 0)
 			purple_timeout_remove(od->getblisttimer);
 		od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
+		return 1;
 	}
 
 	oscar_set_extendedstatus(gc);

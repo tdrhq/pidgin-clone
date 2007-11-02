@@ -359,7 +359,7 @@ debug_command_cb(PurpleConversation *conv,
 	PurpleCmdStatus status;
 
 	if (!g_ascii_strcasecmp(args[0], "version")) {
-		tmp = g_strdup_printf("me is using %s v%s.", "Pidgin", VERSION);
+		tmp = g_strdup_printf("me is using %s v%s.", "Pidgin", DISPLAY_VERSION);
 		markup = g_markup_escape_text(tmp, -1);
 
 		status = purple_cmd_do_command(conv, tmp, markup, error);
@@ -5040,7 +5040,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->send_history = g_list_append(NULL, NULL);
 
 	/* Setup some initial variables. */
-	gtkconv->sg       = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	gtkconv->tooltips = gtk_tooltips_new();
 	gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	gtkconv->unseen_count = 0;
@@ -6577,13 +6576,13 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			style = "color=\"#c4a000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			style = "color=\"#cc0000\"";
+			style = "color=\"#204a87\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			if (gtkconv->active_conv->type == PURPLE_CONV_TYPE_CHAT)
-				style = "color=\"#204a87\"";
-			else
 				style = "color=\"#cc0000\"";
+			else
+				style = "color=\"#204a87\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
 			style = "color=\"#888a85\"";
