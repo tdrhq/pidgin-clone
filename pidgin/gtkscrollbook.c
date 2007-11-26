@@ -146,9 +146,44 @@ switch_page_cb(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, Pid
 static void
 pidgin_scroll_book_add(GtkContainer *container, GtkWidget *widget)
 {
+	PidginScrollBook *scroll_book;
+
+	g_return_if_fail(GTK_IS_WIDGET (widget));
+	g_return_if_fail (widget->parent == NULL);
+
+	scroll_book = PIDGIN_SCROLL_BOOK(container);
+	scroll_book->children = g_list_append(scroll_book->children, widget);
 	gtk_widget_show(widget);
 	gtk_notebook_append_page(GTK_NOTEBOOK(PIDGIN_SCROLL_BOOK(container)->notebook), widget, NULL);
 	page_count_change_cb(PIDGIN_SCROLL_BOOK(container));
+}
+
+static void
+pidgin_scroll_book_remove(GtkContainer *container, GtkWidget *widget)
+{
+	int page;
+	GList *children;
+	GtkWidget *child;
+	PidginScrollBook *scroll_book;
+	g_return_if_fail(GTK_IS_WIDGET(widget));
+
+	scroll_book = PIDGIN_SCROLL_BOOK(container);
+	children = scroll_book->children;
+
+	while (children) {
+		child = children->data;
+		if (child == widget) {
+			gtk_widget_unparent (widget);
+			scroll_book->children = g_list_delete_link(scroll_book->children, children);
+			break;
+		}
+		children = children->next;
+	}
+
+	page = gtk_notebook_page_num(GTK_NOTEBOOK(PIDGIN_SCROLL_BOOK(container)->notebook), widget);
+	if (page >= 0) {
+		gtk_notebook_remove_page(GTK_NOTEBOOK(PIDGIN_SCROLL_BOOK(container)->notebook), page);
+	}
 }
 
 static void
@@ -157,10 +192,30 @@ pidgin_scroll_book_forall(GtkContainer *container,
 			   GtkCallback callback,
 			   gpointer callback_data)
 {
-	PidginScrollBook *scroll_book = PIDGIN_SCROLL_BOOK(container);
-	if (include_internals)
+#if 0
+	GList *children;
+#endif
+	PidginScrollBook *scroll_book;
+
+	g_return_if_fail(GTK_IS_CONTAINER(container));
+
+	scroll_book = PIDGIN_SCROLL_BOOK(container);
+
+	if (include_internals) {
 		(*callback)(scroll_book->hbox, callback_data);
-	(*callback)(scroll_book->notebook, callback_data);
+		(*callback)(scroll_book->notebook, callback_data);
+	}
+
+#if 0
+	children = scroll_book->children;
+
+	while (children) {
+		GtkWidget *child;
+		child = children->data;
+		children = children->next;
+		(*callback)(child, callback_data);
+	}
+#endif
 }
 
 static void
@@ -169,6 +224,7 @@ pidgin_scroll_book_class_init (PidginScrollBookClass *klass)
 	GtkContainerClass *container_class = (GtkContainerClass*)klass;
 
 	container_class->add = pidgin_scroll_book_add;
+	container_class->remove = pidgin_scroll_book_remove;
 	container_class->forall = pidgin_scroll_book_forall;	
 	
 }
