@@ -34,16 +34,35 @@
 # endif
 #endif
 
+/* Translation stuff - here because some of the Request API is defined as macros
+ * that include the use of _(), and example plugins should never include the
+ * internal.h header from libpurple.  This is here simply so this plugin will
+ * compile cleanly. */
+#ifdef ENABLE_NLS
+#  include <locale.h>
+#  include <libintl.h>
+#  define _(String) ((const char *)dgettext(PACKAGE, String))
+#  ifdef gettext_noop
+#    define N_(String) gettext_noop (String)
+#  else
+#    define N_(String) (String)
+#  endif
+#else
+#  include <locale.h>
+#  define N_(String) (String)
+#  ifndef _
+#    define _(String) ((const char *)String)
+#  endif
+#  define ngettext(Singular, Plural, Number) ((Number == 1) ? ((const char *)Singular) : ((const char *)Plural))
+#  define dngettext(Domain, Singular, Plural, Number) ((Number == 1) ? ((const char *)Singular) : ((const char *)Plural))
+#endif
+
 /* This is the required definition of PURPLE_PLUGINS as required for a plugin,
  * but we protect it with an #ifndef because config.h may define it for us
  * already and this would cause an unneeded compiler warning. */
 #ifndef PURPLE_PLUGINS
 # define PURPLE_PLUGINS
 #endif
-
-/* This is a *temporary* hack that I will remove before this gets merged
- * to im.pidgin.pidgin. TODO: remove this hack! */
-#define _(string) (string)
 
 #include <notify.h>
 #include <plugin.h>
@@ -127,6 +146,10 @@ static PurplePluginInfo info = {
 	NULL,                       /* dependencies */
 	PURPLE_PRIORITY_DEFAULT,    /* priority */
 
+	/* In the translation example, some of the following is done differently.
+	 * For the purposes of this plugin, we'll ignore it.  There is a lot of
+	 * new material to cover in this plugin, so let's leave the complexity
+	 * of translations out for now and do the bare minimum needed to compile. */
 	PLUGIN_ID,                  /* id */
 	"Request API Example",      /* name */
 	VERSION,                    /* version */
@@ -152,6 +175,9 @@ static PurplePluginInfo info = {
 static void
 init_plugin(PurplePlugin *plugin)
 {
+	/* In the translation example, there is additional magic here.  For this
+	 * plugin, we'll ignore it, because we have enough going on in this plugin
+	 * without adding more translation mess to it. */
 }
 
 PURPLE_INIT_PLUGIN(requestexample, init_plugin, info)
