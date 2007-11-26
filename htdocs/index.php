@@ -75,10 +75,7 @@ source code as well.</p>
 </div>
 
 <!-- This will pull from somewhere else at some point -->
-<p id="lowblurb">2.2.2 is here.  We fixed another remote crash that
-affects versions 2.1.0 through 2.2.1 of Pidgin, so you should upgrade
-right away.  See our <a href="/news/security/?id=24">security advisory</a>
-for details.</p>
+<p id="lowblurb">2.3.0 is here.</p>
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
