@@ -71,7 +71,7 @@ noinst_LTLIBRARIES = \
 	request_example.la \
 	signals_test.la \
 	simple.la \
-	tranlsation_example.la
+	translation_example.la
 
 autoaccept_la_SOURCES         = autoaccept.c
 buddynote_la_SOURCES          = buddynote.c
@@ -91,7 +91,7 @@ request_example_la_SOURCES    = request_example.c
 signals_test_la_SOURCES       = signals-test.c
 simple_la_SOURCES             = simple.c
 statenotify_la_SOURCES        = statenotify.c
-translation_example_la_SOURCES = request_example.c
+translation_example_la_SOURCES = translation_example.c
 
 autoaccept_la_LIBADD         = $(GLIB_LIBS)
 buddynote_la_LIBADD          = $(GLIB_LIBS)
