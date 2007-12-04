@@ -1,8 +1,9 @@
 /**
  * @file purple-desktop-item.c Functions for managing .desktop files
  * @ingroup core
- *
- * Purple is the legal property of its developers, whose names are too numerous
+ */
+
+/* Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -1154,7 +1155,7 @@ purple_desktop_item_new_from_file (const char *filename)
 
 	dfile = g_fopen(filename, "r");
 	if (!dfile) {
-		printf ("Can't open %s: %s", filename, strerror(errno));
+		printf ("Can't open %s: %s", filename, g_strerror(errno));
 		return NULL;
 	}
 	

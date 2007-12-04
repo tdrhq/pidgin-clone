@@ -1,8 +1,9 @@
 /**
  * @file gtkprivacy.c GTK+ Privacy UI
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -74,7 +75,7 @@ static struct
 	const char *text;
 	int num;
 
-} menu_entries[] =
+} const menu_entries[] =
 {
 	{ N_("Allow all users to contact me"),         PURPLE_PRIVACY_ALLOW_ALL },
 	{ N_("Allow only the users on my buddy list"), PURPLE_PRIVACY_ALLOW_BUDDYLIST },
@@ -83,7 +84,7 @@ static struct
 	{ N_("Block only the users below"),            PURPLE_PRIVACY_DENY_USERS }
 };
 
-static size_t menu_entry_count = sizeof(menu_entries) / sizeof(*menu_entries);
+static const size_t menu_entry_count = sizeof(menu_entries) / sizeof(*menu_entries);
 
 static PidginPrivacyDialog *privacy_dialog = NULL;
 

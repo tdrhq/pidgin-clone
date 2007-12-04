@@ -1,8 +1,9 @@
 /**
  * @file gtksavedstatus.c GTK+ Saved Status Editor UI
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -62,7 +63,7 @@ enum
 };
 
 /**
- * These is used for the GtkTreeView containing the list of accounts
+ * These are used for the GtkTreeView containing the list of accounts
  * at the bottom of the window when you're editing a particular
  * saved status.
  */
@@ -897,6 +898,12 @@ create_status_type_menu(PurpleStatusPrimitive type)
 
 	for (i = PURPLE_STATUS_UNSET + 1; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
 	{
+		if (i == PURPLE_STATUS_MOBILE || i == PURPLE_STATUS_TUNE)
+			/*
+			 * Special-case these.  They're intended to be independent
+			 * status types, so don't show them in the list.
+			 */
+			continue;
 		item = gtk_menu_item_new_with_label(purple_primitive_get_name_from_type(i));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}
@@ -1200,6 +1207,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 	focus_chain = g_list_prepend(focus_chain, dialog->message);
 	gtk_container_set_focus_chain(GTK_CONTAINER(hbox), focus_chain);
+	g_list_free(focus_chain);
 
 	if ((saved_status != NULL) && (purple_savedstatus_get_message(saved_status) != NULL))
 		gtk_imhtml_append_text(GTK_IMHTML(text),
@@ -1291,6 +1299,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 					 G_CALLBACK(status_editor_ok_cb), dialog);
 
 	gtk_widget_show_all(win);
+	g_object_unref(sg);
 }
 
 
@@ -1410,7 +1419,7 @@ substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 					   -1);
 	type = purple_account_get_status_type(dialog->account, id);
 	if (purple_status_type_get_attr(type, "message") != NULL)
-		message = gtk_imhtml_get_text(GTK_IMHTML(dialog->message), NULL, NULL);
+		message = gtk_imhtml_get_markup(GTK_IMHTML(dialog->message));
 	name = purple_status_type_get_name(type);
 
 	status_editor = dialog->status_editor;
@@ -1587,8 +1596,12 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 
 		status_type = list->data;
 
-		/* Only allow users to select statuses that are flagged as "user settable" */
-		if (!purple_status_type_is_user_settable(status_type))
+		/*
+		 * Only allow users to select statuses that are flagged as
+		 * "user settable" and that aren't independent.
+		 */
+		if (!purple_status_type_is_user_settable(status_type) ||
+				purple_status_type_is_independent(status_type))
 			continue;
 
 		id = purple_status_type_get_id(status_type);
@@ -1620,6 +1633,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	}
 
 	gtk_widget_show_all(win);
+	g_object_unref(sg);
 }
 
 

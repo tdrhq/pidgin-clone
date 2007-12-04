@@ -311,7 +311,9 @@ plugin_unload(PurplePlugin *plugin) {
 static gboolean
 intercept_sent(PurpleAccount *account, const char *who, char **message, void* pData)
 {
-	
+	if (message == NULL || *message == NULL || **message == '\0')
+		return FALSE;
+
 	if (0 == strncmp(*message, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))
 	{
 		purple_debug_misc("purple-musicmessaging", "Sent MM Message: %s\n", *message);
@@ -679,7 +681,7 @@ static PurplePluginInfo info = {
 
     MUSICMESSAGING_PLUGIN_ID,                            /**< id             */
     "Music Messaging",	                                 /**< name           */
-    VERSION,                                             /**< version        */
+    DISPLAY_VERSION,                                     /**< version        */
     N_("Music Messaging Plugin for collaborative composition."),
                                                          /**  summary        */
     N_("The Music Messaging Plugin allows a number of users to simultaneously work on a piece of music by editting a common score in real-time."),

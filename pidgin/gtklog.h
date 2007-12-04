@@ -1,8 +1,10 @@
 /**
  * @file gtklog.h GTK+ Log viewer
  * @ingroup pidgin
- *
- * pidgin
+ * @see @ref gtklog-signals
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this

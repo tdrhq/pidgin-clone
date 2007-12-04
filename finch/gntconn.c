@@ -1,8 +1,9 @@
 /**
  * @file gntconn.c GNT Connection API
  * @ingroup finch
- *
- * finch
+ */
+
+/* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -30,6 +31,7 @@
 #include "debug.h"
 #include "request.h"
 
+#include "gntaccount.h"
 #include "gntconn.h"
 
 #define INITIAL_RECON_DELAY_MIN  8000
@@ -87,14 +89,27 @@ do_signon(gpointer data)
 }
 
 static void
+ce_modify_account_cb(PurpleAccount *account)
+{
+	finch_account_dialog_show(account);
+}
+
+static void
+ce_enable_account_cb(PurpleAccount *account)
+{
+	purple_account_set_enabled(account, FINCH_UI, TRUE);
+}
+
+static void
 finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 {
 	FinchAutoRecon *info;
 	PurpleAccount *account = purple_connection_get_account(gc);
-
-	info = g_hash_table_lookup(hash, account);
+	GList *list;
 
 	if (!gc->wants_to_die) {
+		info = g_hash_table_lookup(hash, account);
+
 		if (info == NULL) {
 			info = g_new0(FinchAutoRecon, 1);
 			g_hash_table_insert(hash, account, info);
@@ -114,12 +129,33 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 		secondary = g_strdup_printf(_("%s\n\n"
 				"Finch will not attempt to reconnect the account until you "
 				"correct the error and re-enable the account."), text);
-		purple_notify_error(NULL, NULL, primary, secondary);
+
+		purple_request_action(account, NULL, primary, secondary, 2,
+							account, NULL, NULL,
+							account, 3,
+							_("OK"), NULL,
+							_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
+							_("Re-enable Account"), PURPLE_CALLBACK(ce_enable_account_cb));
 
 		g_free(act);
 		g_free(primary);
 		g_free(secondary);
 		purple_account_set_enabled(account, FINCH_UI, FALSE);
+	}
+
+	/* If we have any open chats, we probably want to rejoin when we get back online. */
+	list = purple_get_chats();
+	while (list) {
+		PurpleConversation *conv = list->data;
+		list = list->next;
+		if (conv->account != account ||
+				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
+			continue;
+		purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+		purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
+					"longer in this chat. You will be automatically rejoined in the chat when "
+					"the account reconnects."),
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 

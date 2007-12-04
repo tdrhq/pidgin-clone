@@ -1,8 +1,9 @@
 /**
  * @file gtkaccount.c GTK+ Account Editor UI
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -211,6 +212,9 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 		                        purple_imgstore_get_size(dialog->icon_img), NULL);
 		gdk_pixbuf_loader_close(loader, NULL);
 		pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+		if (pixbuf)
+			g_object_ref(pixbuf);
+		g_object_unref(loader);
 	}
 
 	if (pixbuf && dialog->prpl_info &&
@@ -249,9 +253,6 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 	new_plugin = purple_find_prpl(id);
 
-	if (new_plugin == dialog->plugin)
-		return;
-
 	dialog->plugin = new_plugin;
 
 	if (dialog->plugin != NULL)
@@ -268,6 +269,8 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 	add_login_options(dialog,    dialog->top_vbox);
 	add_user_options(dialog,     dialog->top_vbox);
 	add_protocol_options(dialog, dialog->bottom_vbox);
+
+	gtk_widget_grab_focus(dialog->protocol_menu);
 
 	if (!dialog->prpl_info || !dialog->prpl_info->register_user || 
 	    g_object_get_data(G_OBJECT(item), "fake")) {
@@ -1129,6 +1132,7 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 	g_list_free(dialog->user_split_entries);
 	g_list_free(dialog->protocol_opt_entries);
 	g_free(dialog->protocol_id);
+	g_object_unref(dialog->sg);
 
 	purple_imgstore_unref(dialog->icon_img);
 
@@ -1328,8 +1332,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 					break;
 
 				case PURPLE_PREF_STRING_LIST:
-					gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter);
-					gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value2, -1);
+					value2 = NULL;
+					if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter))
+						gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value2, -1);
 					purple_account_set_string(account, setting, value2);
 					break;
 
@@ -2054,8 +2059,9 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 
 		if (buddyicon_pixbuf != NULL) {
 			buddyicon = gdk_pixbuf_scale_simple(buddyicon_pixbuf, 22, 22, GDK_INTERP_HYPER);
-			g_object_unref(G_OBJECT(buddyicon_pixbuf));
 		}
+
+		g_object_unref(loader);
 	}
 
 	gtk_list_store_set(store, iter,

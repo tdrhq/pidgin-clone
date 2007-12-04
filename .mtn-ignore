@@ -1,3 +1,4 @@
+(.*/)?\.svn
 .*/?Makefile(\.in)?$
 (.*/)?TAGS$
 .*/?.*\.pc$
@@ -20,7 +21,7 @@ config.log
 config.status
 config.sub
 configure$
-finch/finch
+finch/finch$
 finch/libgnt/gntmarshal.c
 finch/libgnt/gntmarshal.h
 depcomp

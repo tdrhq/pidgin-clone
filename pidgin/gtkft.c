@@ -1,8 +1,9 @@
 /**
  * @file gtkft.c GTK+ File Transfer UI
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -911,7 +912,7 @@ pidgin_xfer_dialog_show(PidginXferDialog *dialog)
 
 		gtk_widget_show(tmp->window);
 	} else {
-		gtk_widget_show(dialog->window);
+		gtk_window_present(GTK_WINDOW(dialog->window));
 	}
 }
 

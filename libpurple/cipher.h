@@ -1,8 +1,10 @@
 /**
  * @file cipher.h Purple Cipher API
  * @ingroup core
- *
- * purple
+ * @see @ref cipher-signals
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,8 +23,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
- * @see @ref cipher-signals
  */
 #ifndef PURPLE_CIPHER_H
 #define PURPLE_CIPHER_H

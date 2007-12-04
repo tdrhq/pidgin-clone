@@ -1,8 +1,9 @@
 /**
  * @file network.h Network API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -104,6 +105,20 @@ const char *purple_network_get_local_system_ip(int fd);
  * @return The local IP address to be used.
  */
 const char *purple_network_get_my_ip(int fd);
+
+#ifndef PURPLE_DISABLE_DEPRECATED
+/**
+ * Should calls to purple_network_listen() and purple_network_listen_range()
+ * map the port externally using NAT-PMP or UPnP?
+ * The default value is TRUE
+ *
+ * @param map_external Should the open port be mapped externally?
+ * @deprecated In 3.0.0 a boolean will be added to the above functions to
+ *             perform the same function.
+ * @since 2.3.0
+ */
+void purple_network_listen_map_external(gboolean map_external);
+#endif
 
 /**
  * Attempts to open a listening port ONLY on the specified port number.

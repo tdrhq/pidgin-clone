@@ -183,6 +183,10 @@ static void historize(PurpleConversation *c)
 	PurpleConversationType convtype = purple_conversation_get_type(c);
 	const char *alias = name;
 	PidginConversation *gtkconv =  PIDGIN_CONVERSATION(c);
+	char *escaped_alias;
+	gtkconv = PIDGIN_CONVERSATION(c);
+	if (gtkconv == NULL)
+		return;
 
 	if (convtype == PURPLE_CONV_TYPE_IM && g_list_length(gtkconv->convs) < 2)
 	{
@@ -197,7 +201,7 @@ static void historize(PurpleConversation *c)
 			return;
 
 		/* Find buddies for this conversation. */
-		buddies = purple_find_buddies(account, name);
+	        buddies = purple_find_buddies(account, name);
 
 		/* If we found at least one buddy, save the first buddy's alias. */
 		if (buddies != NULL)
@@ -278,6 +282,7 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(purple_conversations_get_handle(),
 						"conversation-created",
 						plugin, PURPLE_CALLBACK(historize), NULL);
+	/* XXX: Do we want to listen to pidgin's "conversation-displayed" signal? */
 
 	purple_prefs_connect_callback(plugin, "/purple/logging/log_ims",
 								history_prefs_cb, plugin);
@@ -301,7 +306,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	HISTORY_PLUGIN_ID,
 	N_("History"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Shows recently logged conversations in new conversations."),
 	N_("When a new conversation is opened this plugin will insert "
 	   "the last conversation into the current conversation."),

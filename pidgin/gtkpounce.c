@@ -1,8 +1,9 @@
 /**
  * @file gtkpounce.c GTK+ Buddy Pounce API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -304,6 +305,13 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 	}
 	if (*command == '\0') command = NULL;
 	if (*sound   == '\0') sound   = NULL;
+
+	/* If the pounce has already been triggered, let's pretend it is a new one */
+	if (dialog->pounce != NULL
+			&& g_list_find(purple_pounces_get_all(), dialog->pounce) == NULL) {
+		purple_debug_info("gtkpounce", "Saving pounce that no longer exists; creating new pounce.\n");
+		dialog->pounce = NULL;
+	}
 
 	if (dialog->pounce == NULL)
 	{
@@ -677,6 +685,8 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_widget_set_sensitive(dialog->play_sound_browse, FALSE);
 	gtk_widget_set_sensitive(dialog->play_sound_test,   FALSE);
 
+	g_object_unref(sg);
+
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_VERTICAL);
 	gtk_size_group_add_widget(sg, dialog->open_win);
 	gtk_size_group_add_widget(sg, dialog->popup);
@@ -688,6 +698,9 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_size_group_add_widget(sg, dialog->play_sound_entry);
 	gtk_size_group_add_widget(sg, dialog->play_sound_browse);
 	gtk_size_group_add_widget(sg, dialog->play_sound_test);
+
+	g_object_unref(sg);
+	sg = NULL;
 
 	gtk_table_attach(GTK_TABLE(table), dialog->open_win,         0, 1, 0, 1,
 					 GTK_FILL, 0, 0, 0);

@@ -1,8 +1,9 @@
 /**
  * @file log.c Logging API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -1265,7 +1266,7 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 					if (!fwrite(image_data, image_byte_count, 1, image_file))
 					{
 						purple_debug_error("log", "Error writing %s: %s\n",
-						                   path, strerror(errno));
+						                   path, g_strerror(errno));
 						fclose(image_file);
 
 						/* Attempt to not leave half-written files around. */
@@ -1280,7 +1281,7 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 				else
 				{
 					purple_debug_error("log", "Unable to create file %s: %s\n",
-					                   path, strerror(errno));
+					                   path, g_strerror(errno));
 				}
 			}
 
@@ -1640,7 +1641,7 @@ gboolean purple_log_common_deleter(PurpleLog *log)
 		return TRUE;
 	else if (ret == -1)
 	{
-		purple_debug_error("log", "Failed to delete: %s - %s\n", data->path, strerror(errno));
+		purple_debug_error("log", "Failed to delete: %s - %s\n", data->path, g_strerror(errno));
 	}
 	else
 	{
@@ -1675,7 +1676,7 @@ gboolean purple_log_common_is_deletable(PurpleLog *log)
 		g_free(dirname);
 		return TRUE;
 	}
-	purple_debug_info("log", "access(%s) failed: %s\n", dirname, strerror(errno));
+	purple_debug_info("log", "access(%s) failed: %s\n", dirname, g_strerror(errno));
 	g_free(dirname);
 #else
 	/* Unless and until someone writes equivalent win32 code,
@@ -2168,7 +2169,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			if (!(index = g_fopen(pathstr, "rb")))
 			{
 				purple_debug_error("log", "Failed to open index file \"%s\" for reading: %s\n",
-				                 pathstr, strerror(errno));
+				                 pathstr, g_strerror(errno));
 
 				/* Fall through so that we'll parse the log file. */
 			}
@@ -2205,7 +2206,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 	if (!(file = g_fopen(purple_stringref_value(pathref), "rb"))) {
 		purple_debug_error("log", "Failed to open log file \"%s\" for reading: %s\n",
-		                   purple_stringref_value(pathref), strerror(errno));
+		                   purple_stringref_value(pathref), g_strerror(errno));
 		purple_stringref_unref(pathref);
 		g_free(pathstr);
 		return NULL;
@@ -2214,7 +2215,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	index_tmp = g_strdup_printf("%s.XXXXXX", pathstr);
 	if ((index_fd = g_mkstemp(index_tmp)) == -1) {
 		purple_debug_error("log", "Failed to open index temp file: %s\n",
-		                 strerror(errno));
+		                 g_strerror(errno));
 		g_free(pathstr);
 		g_free(index_tmp);
 		index = NULL;
@@ -2222,7 +2223,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		if ((index = fdopen(index_fd, "wb")) == NULL)
 		{
 			purple_debug_error("log", "Failed to fdopen() index temp file: %s\n",
-			                 strerror(errno));
+			                 g_strerror(errno));
 			close(index_fd);
 			if (index_tmp != NULL)
 			{
@@ -2358,7 +2359,7 @@ static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		if (g_rename(index_tmp, pathstr))
 		{
 			purple_debug_warning("log", "Failed to rename index temp file \"%s\" to \"%s\": %s\n",
-			                   index_tmp, pathstr, strerror(errno));
+			                   index_tmp, pathstr, g_strerror(errno));
 			g_unlink(index_tmp);
 			g_free(index_tmp);
 		}

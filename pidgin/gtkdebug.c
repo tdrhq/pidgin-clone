@@ -1,8 +1,9 @@
 /**
  * @file gtkdebug.c GTK+ Debug API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -67,7 +68,7 @@ typedef struct
 	GtkWidget *filterlevel;
 } DebugWindow;
 
-static char debug_fg_colors[][8] = {
+static const char debug_fg_colors[][8] = {
 	"#000000",    /**< All debug levels. */
 	"#666666",    /**< Misc.             */
 	"#000000",    /**< Information.      */

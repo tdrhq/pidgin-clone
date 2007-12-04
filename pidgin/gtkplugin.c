@@ -1,8 +1,9 @@
 /**
  * @file gtkplugin.c GTK+ Plugins support
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -302,7 +303,24 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 	{
 		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
-		purple_plugin_unload(plug);
+		if (!purple_plugin_unload(plug))
+		{
+			const char *primary = _("Could not unload plugin");
+			const char *reload = _("The plugin could not be unloaded now, but will be disabled at the next startup.");
+
+			if (!plug->error)
+			{
+				purple_notify_warning(NULL, NULL, primary, reload);
+			}
+			else
+			{
+				char *tmp = g_strdup_printf("%s\n\n%s", reload, plug->error);
+				purple_notify_warning(NULL, NULL, primary, tmp);
+				g_free(tmp);
+			}
+
+			purple_plugin_disable(plug);
+		}
 
 		pidgin_clear_cursor(plugin_dialog);
 	}

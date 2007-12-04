@@ -138,6 +138,8 @@ void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, 
 				irc->mode_chars = g_strdup(val + 1);
 		}
 	}
+
+	g_strfreev(features);
 }
 
 void irc_msg_luser(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -751,7 +753,10 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		}
 		purple_conversation_set_data(convo, IRC_NAMES_FLAG,
 					   GINT_TO_POINTER(FALSE));
-		purple_conversation_present(convo);
+		/* Until purple_conversation_present does something that
+                 * one would expect in Pidgin, this call produces buggy
+                 * behavior both for the /join and auto-join cases. */
+		/* purple_conversation_present(convo); */
 		return;
 	}
 
@@ -910,9 +915,9 @@ void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, c
 				  _("Your selected nickname was rejected by the server.  It probably contains invalid characters."));
 
 	} else {
-		gc->wants_to_die = TRUE;
-		purple_connection_error(purple_account_get_connection(irc->account),
-				      _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
+		purple_connection_error_reason (gc,
+				  PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+				  _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
 	}
 }
 
@@ -1063,7 +1068,7 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 		return;
 	}
 
-	msg = g_markup_escape_text(tmp, -1);
+	msg = irc_escape_privmsg(tmp, -1);
 	g_free(tmp);
 
 	tmp = irc_mirc2html(msg);

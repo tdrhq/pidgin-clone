@@ -1,8 +1,9 @@
 /*
  * @file gtksound.c GTK+ Sound
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -50,8 +51,6 @@ struct pidgin_sound_event {
 	char *def;
 };
 
-#define PLAY_SOUND_TIMEOUT 15000
-
 static guint mute_login_sounds_timeout = 0;
 static gboolean mute_login_sounds = FALSE;
 
@@ -59,7 +58,7 @@ static gboolean mute_login_sounds = FALSE;
 static gboolean gst_init_failed;
 #endif /* USE_GSTREAMER */
 
-static struct pidgin_sound_event sounds[PURPLE_NUM_SOUNDS] = {
+static const struct pidgin_sound_event sounds[PURPLE_NUM_SOUNDS] = {
 	{N_("Buddy logs in"), "login", "login.wav"},
 	{N_("Buddy logs out"), "logout", "logout.wav"},
 	{N_("Message received"), "im_recv", "receive.wav"},
@@ -117,12 +116,9 @@ play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 	if (conv != NULL && PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 	{
 		PidginConversation *gtkconv;
-		PidginWindow *win;
 		gboolean has_focus;
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
-		win = gtkconv->win;
-
 		has_focus = purple_conversation_has_focus(conv);
 
 		if (!gtkconv->make_sound ||
@@ -484,11 +480,11 @@ pidgin_sound_play_file(const char *filename)
 	}
 
 	play = gst_element_factory_make("playbin", "play");
-	
+
 	if (play == NULL) {
 		return;
 	}
-	
+
 	uri = g_strdup_printf("file://%s", filename);
 
 	g_object_set(G_OBJECT(play), "uri", uri,

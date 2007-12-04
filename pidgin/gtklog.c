@@ -1,8 +1,9 @@
 /**
  * @file gtklog.c GTK+ Log viewer
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -816,6 +817,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	PidginLogViewer *lv = NULL;
 	const char *name = screenname;
 	char *title;
+	GdkPixbuf *prpl_icon;
 	struct _pidgin_log_data *pidgin_log_data;
 	PurpleLogContext *log_context;
 
@@ -856,7 +858,12 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	}
 
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
+	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
+	display_log_viewer(ht, purple_log_get_logs(type, screenname, account),
+
+	if (prpl_icon)
+		g_object_unref(prpl_icon);
 	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
 		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
 	g_free(title);

@@ -1,8 +1,9 @@
 /**
  * @file pounce.h Buddy Pounce API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -338,7 +339,7 @@ void purple_pounces_unregister_handler(const char *ui);
 /**
  * Returns a list of all registered buddy pounces.
  *
- * @return The list of buddy pounces.
+ * @constreturn The list of buddy pounces.
  */
 GList *purple_pounces_get_all(void);
 

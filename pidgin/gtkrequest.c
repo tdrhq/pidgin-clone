@@ -1,8 +1,9 @@
 /**
  * @file gtkrequest.c GTK+ Request API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -33,6 +34,7 @@
 #include "gtkrequest.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
+#include "gtkblist.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -930,7 +932,7 @@ create_image_field(PurpleRequestField *field)
 			purple_request_field_image_get_scale_y(field) * gdk_pixbuf_get_height(buf),
 			GDK_INTERP_BILINEAR);
 	widget = gtk_image_new_from_pixbuf(scale);
-	g_object_unref(G_OBJECT(buf));
+	g_object_unref(G_OBJECT(loader));
 	g_object_unref(G_OBJECT(scale));
 
 	return widget;
@@ -998,7 +1000,6 @@ create_list_field(PurpleRequestField *field)
 
 	/* Create the tree view */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));

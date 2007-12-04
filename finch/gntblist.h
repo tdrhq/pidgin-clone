@@ -1,8 +1,9 @@
 /**
  * @file gntblist.h GNT BuddyList API
  * @ingroup finch
- *
- * finch
+ */
+
+/* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -97,6 +98,8 @@ void finch_blist_set_size(int width, int height);
  * @param name   The user to get information about.
  *
  * @return  Returns the ui-handle for the userinfo notification.
+ *
+ * @since 2.1.0
  */
 gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name);
 

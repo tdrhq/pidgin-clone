@@ -88,6 +88,19 @@ purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
 
 	g_return_if_fail(vrq);
 
+	if (st == PURPLE_CERTIFICATE_VALID) {
+		purple_debug_info("certificate",
+				  "Successfully verified certificate for %s\n",
+				  vrq->subject_name);
+	} else {
+		purple_debug_info("certificate",
+				  "Failed to verify certificate for %s\n",
+				  vrq->subject_name);
+	}
+		
+		
+		
+	
 	/* Pass the results on to the request's callback */
 	(vrq->cb)(st, vrq->cb_data);
 
@@ -540,7 +553,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 
 	/* Determine whether the name matches */
 	if (purple_certificate_check_subject_name(crt, vrq->subject_name)) {
-		cn_match = _("");
+		cn_match = "";
 	} else {
 		cn_match = _("(DOES NOT MATCH)");
 	}
@@ -1256,6 +1269,9 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 }
 
 /* For when we've never communicated with this party before */
+/* TODO: Need ways to specify possibly multiple problems with a cert, or at
+   least  reprioritize them. For example, maybe the signature ought to be
+   checked BEFORE the hostname checking? */
 static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 {
@@ -1296,7 +1312,27 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		return;
 	} /* if (name mismatch) */
 
-			
+	/* TODO: Figure out a way to check for a bad signature, as opposed to
+	   "not self-signed" */
+	if ( purple_certificate_signed_by(peer_crt, peer_crt) ) {
+		gchar *msg;
+		
+		purple_debug_info("certificate/x509/tls_cached",
+				  "Certificate for %s is self-signed.\n",
+				  vrq->subject_name);
+
+		/* Prompt the user to authenticate the certificate */
+		/* vrq will be completed by user_auth */
+		msg = g_strdup_printf(_("The certificate presented by \"%s\" "
+					"is self-signed. It cannot be "
+					"automatically checked."),
+				      vrq->subject_name);
+				      
+		x509_tls_cached_user_auth(vrq,msg);
+
+		g_free(msg);
+		return;
+	} /* if (name mismatch) */
 	
 	/* Next, check that the certificate chain is valid */
 	if ( ! purple_certificate_check_signature_chain(chain) ) {
@@ -1321,6 +1357,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		/* Okay, we're done here */
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_INVALID);
+		return;
 	} /* if (signature chain not good) */
 
 	/* Next, attempt to verify the last certificate against a CA */
@@ -1349,7 +1386,8 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Checking for a CA with DN=%s\n",
 			  ca_id);
-	if ( !purple_certificate_pool_contains(ca, ca_id) ) {
+	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
+	if ( NULL == ca_crt ) {
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Certificate Authority with DN='%s' not "
 				  "found. I'll prompt the user, I guess.\n",
@@ -1362,16 +1400,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		return;
 	}
 
-	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
 	g_free(ca_id);
-	if (!ca_crt) {
-		purple_debug_error("certificate/x509/tls_cached",
-				   "Certificate authority disappeared out "
-				   "underneath me!\n");
-		purple_certificate_verify_complete(vrq,
-						   PURPLE_CERTIFICATE_INVALID);
-		return;
-	}
 	
 	/* Check the signature */
 	if ( !purple_certificate_signed_by(end_crt, ca_crt) ) {
@@ -1437,15 +1466,14 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 	
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,tls_peers_name);
 
-	/* TODO: This should probably just prompt the user instead of throwing
-	   an angry fit */
 	if (!tls_peers) {
 		purple_debug_error("certificate/x509/tls_cached",
-				   "Couldn't find local peers cache %s\nReturning INVALID to callback\n",
+				   "Couldn't find local peers cache %s\nPrompting the user\n",
 				   tls_peers_name);
 
-		purple_certificate_verify_complete(vrq,
-						   PURPLE_CERTIFICATE_INVALID);
+
+		/* vrq now becomes the problem of unknown_peer */
+		x509_tls_cached_unknown_peer(vrq);
 		return;
 	}
 	

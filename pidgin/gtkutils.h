@@ -1,8 +1,9 @@
 /**
  * @file gtkutils.h GTK+ utility functions
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -311,7 +312,7 @@ void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidge
  * The default filter function for screenname autocomplete.
  *
  * @param completion_entry The completion entry to filter.
- * @param online_accounts  If this is @c FALSE, only the autocompletion entries
+ * @param all_accounts  If this is @c FALSE, only the autocompletion entries
  *                         which belong to an online account will be filtered.
  * @return Returns @c TRUE if the autocompletion entry is filtered.
  */
@@ -375,6 +376,8 @@ void pidgin_load_accels(void);
  *
  * @param conn   The connection to get information from.
  * @param name   The user to get information about.
+ *
+ * @since 2.1.0
  */
 void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
 
@@ -384,6 +387,8 @@ void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
  * @param conn   The connection to get information from.
  * @param name   The user to get information about.
  * @param chatid The chat id.
+ *
+ * @since 2.1.0
  */
 void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name, int chatid);
 
@@ -422,6 +427,8 @@ void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
  *
  * @param w The widget that we want to label.
  * @param l A GtkLabel that we want to use as the label for the widget.
+ *
+ * @since 2.2.0
  */
 void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
 
@@ -435,7 +442,9 @@ void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
  * @param y Address of the gint representing the vertical position
  *        where the menu shall be drawn. This is an output parameter.
  * @param push_in This is an output parameter?
- * @param user_data Not used by this particular position function.
+ * @param data Not used by this particular position function.
+ *
+ * @since 2.1.0
  */
 void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 										gboolean *push_in, gpointer data);
@@ -590,18 +599,38 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 char *pidgin_make_pretty_arrows(const char *str);
 
 /**
- * Creates a "mini-dialog" suitable for embedding in the buddy list scrollbook
- *
- * @param handle         A handle
- * @param stock_id       The ID of a stock image to use in the mini dialog
- * @param primary        The primary text
- * @param secondary      The secondary text
- * @param user_data      Data to pass to the callbacks
- * @param ...            a NULL-terminated list of button labels and callbacks
+ * The type of callbacks passed to pidgin_make_mini_dialog().
  */
-void *pidgin_make_mini_dialog(PurpleConnection *handle, const char* stock_id, 
-				const char *primary, const char *secondary,
-				void *user_data,  ...);
+typedef void (*PidginUtilMiniDialogCallback)(gpointer user_data, GtkButton *);
+
+/**
+ * Creates a #PidginMiniDialog, tied to a #PurpleConnection, suitable for
+ * embedding in the buddy list scrollbook with pidgin_blist_add_alert().
+ *
+ * @param handle         The #PurpleConnection to which this mini-dialog
+ *                       refers, or @c NULL if it does not refer to a
+ *                       connection.  If @a handle is supplied, the mini-dialog
+ *                       will be automatically removed and destroyed when the
+ *                       connection signs off.
+ * @param stock_id       The ID of a stock image to use in the mini dialog.
+ * @param primary        The primary text
+ * @param secondary      The secondary text, or @c NULL for no description.
+ * @param user_data      Data to pass to the callbacks
+ * @param ...            a <tt>NULL</tt>-terminated list of button labels
+ *                       (<tt>char *</tt>) and callbacks
+ *                       (#PidginUtilMiniDialogCallback).  @a user_data will be
+ *                       passed as the first argument.  (Callbacks may lack a
+ *                       second argument, or be @c NULL to take no action when
+ *                       the corresponding button is pressed.) When a button is
+ *                       pressed, the callback (if any) will be called; when
+ *                       the callback returns the dialog will be destroyed.
+ * @return               A #PidginMiniDialog, suitable for passing to
+ *                       pidgin_blist_add_alert().
+ * @see pidginstock.h
+ */
+GtkWidget *pidgin_make_mini_dialog(PurpleConnection *handle,
+	const char* stock_id, const char *primary, const char *secondary,
+	void *user_data, ...);
 
 /**
  * This is a callback function to be used for Ctrl+F searching in treeviews.
@@ -658,10 +687,43 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget);
  * @param ...            list of integers terminated by -1
  *
  * @return               A newly created GtkTreePath.
- *
  */
 GtkTreePath *gtk_tree_path_new_from_indices (gint first_index, ...);
 #endif
+
+/**
+ * Create a simple text GtkComboBoxEntry equivalent
+ *
+ * @param default_item   Initial contents of GtkEntry
+ * @param items          GList containing strings to add to GtkComboBox
+ *
+ * @return               A newly created text GtkComboBox containing a GtkEntry
+ *                       child.
+ *
+ * @since 2.2.0
+ */
+GtkWidget *pidgin_text_combo_box_entry_new(const char *default_item, GList *items);
+
+/**
+ * Retrieve the text from the entry of the simple text GtkComboBoxEntry equivalent
+ *
+ * @param widget         The simple text GtkComboBoxEntry equivalent widget
+ *
+ * @return               The text in the widget's entry. It must not be freed
+ *
+ * @since 2.2.0
+ */
+const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
+
+/**
+ * Set the text in the entry of the simple text GtkComboBoxEntry equivalent
+ *
+ * @param widget         The simple text GtkComboBoxEntry equivalent widget
+ * @param text           The text to set
+ *
+ * @since 2.2.0
+ */
+void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
 
 #endif /* _PIDGINUTILS_H_ */
 

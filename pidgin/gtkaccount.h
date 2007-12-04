@@ -1,8 +1,10 @@
 /**
  * @file gtkaccount.h GTK+ Account Editor UI
  * @ingroup pidgin
- *
- * pidgin
+ * @see @ref gtkaccount-signals
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
