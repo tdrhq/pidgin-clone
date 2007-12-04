@@ -112,10 +112,10 @@ typedef struct {
 
 typedef struct {
 	DatabaseOperationType type;
+	PurpleLogSetCallback set_cb;
 	GHashTable *sets;
 	PurpleLogLoggerHashTableCallback cb;
 	void *data;
-	GHashTable *ret_value;
 } DatabaseSetsOperation;
 
 typedef struct {
@@ -282,18 +282,15 @@ static void database_logger_total_size(PurpleLogType type, char *name, PurpleAcc
 	}
 }
 
-static void database_logger_sets(GHashTable *sets, PurpleLogLoggerHashTableCallback cb, void *data)
+static void database_logger_sets(PurpleLogSetCallback set_cb, GHashTable *sets, PurpleLogLoggerHashTableCallback cb, void *data)
 {
-	if (sets != NULL)
-		purple_debug_info("Database Logger", "ERROR wrong arguments: sets = %x\n", sets);
-
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_SETS] != NULL) {
 		DatabaseSetsOperation *op = g_new(DatabaseSetsOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_SETS;
+		op->set_cb = set_cb;
 		op->sets = sets;
 		op->cb = cb;
 		op->data = data;
-		op->ret_value = sets;
 
 		db_add_operation(op);
 	} else {
@@ -1037,18 +1034,27 @@ static gpointer db_sets(gpointer data)
 
 	purple_debug_info("Database Logger", "---- XXX ---- db_sets\n");
 
-	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `name`, `type`, `accountId` FROM `conversations`");
+	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `buddyId`, `accountId` FROM `conversations`");
 	if (dres) {
 		while(dbi_result_next_row(dres)) {
-			const char *buddy_name;
-			int type;
+			int buddy_id = -1;
 			int account_id = -1;
 			PurpleAccount *account = NULL;
 			PurpleLogSet *set;
 
-			buddy_name = dbi_result_get_string(dres, "name");
-			type = db_result_get_int(dres, "type");
+			buddy_id = db_result_get_int(dres, "buddyId");
 			account_id = db_result_get_int(dres, "accountId");
+
+			char* buddy_name = "";
+			int type = 0;
+			dbi_result dres2;
+			dres2 = dbi_conn_queryf(db_logger->db_conn, "SELECT `name`, `type` FROM `buddies` WHERE `id` = %i", buddy_id);
+			if(dres2) {
+				dbi_result_next_row(dres2);
+				buddy_name = dbi_result_get_string(dres2, "name");
+				type = db_result_get_int(dres2, "type");
+			} else purple_debug_info("Database Logger", "dres2 = null\n");
+			db_process_result(dres2);
 
 			account = db_get_account(account_id);
 			if (account != NULL) {
@@ -1072,7 +1078,7 @@ static gpointer db_sets(gpointer data)
 				set->account = account;
 				set->buddy = (purple_find_buddy(account, buddy_name) != NULL);
 				set->normalized_name = g_strdup(purple_normalize(account, buddy_name));
-				log_add_log_set_to_hash(op->ret_value, set);
+				op->set_cb(op->sets, set);
 			}
 		}
 	}
@@ -1199,9 +1205,8 @@ static gboolean db_main_callback(gpointer data)
 		for(; op_queue != NULL; op_queue = g_list_delete_link(op_queue, op_queue)) {
 			DatabaseOperation *op = op_queue->data;
 
-			if (db_notify_func[op->type] != NULL) {
-				if (op == NULL)
-					purple_debug_info("Database Logger", "ERROR: db_main_callback op == NULL\n");
+			if (op == NULL) purple_debug_info("Database Logger", "ERROR: db_main_callback op == NULL\n");
+			else if (db_notify_func[op->type] != NULL) {
 				db_notify_func[op->type](op);
 			}
 			g_free(op);
