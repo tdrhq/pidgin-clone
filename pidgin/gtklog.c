@@ -860,12 +860,10 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	pidgin_log_data = g_new0(struct _pidgin_log_data, 1);
 	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
-	display_log_viewer(ht, purple_log_get_logs(type, screenname, account),
+	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, prpl_icon, TRUE);
 
-	if (prpl_icon)
-		g_object_unref(prpl_icon);
-	pidgin_log_data->log_viewer = display_log_viewer_nonblocking(ht, title, 
-		gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), TRUE);
+	if (prpl_icon) g_object_unref(prpl_icon);
+
 	g_free(title);
 	pidgin_log_data->destroy_handler_id = g_signal_connect(G_OBJECT(pidgin_log_data->log_viewer->window), "destroy", 
 							G_CALLBACK(pidgin_window_destroy_cb), pidgin_log_data);

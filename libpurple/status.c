@@ -640,12 +640,11 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		if (log != NULL)
 		{
 			purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
-			               current_time, tmp, NULL, NULL);
-			               current_time, logtmp);
-		}
+			               current_time, logtmp, NULL, NULL);
+			//will free logtmp for us
+		} else g_free(logtmp);
 
 		g_free(tmp);
-		g_free(logtmp);
 	}
 }
 
