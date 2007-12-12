@@ -126,6 +126,18 @@ typedef struct {
 	gboolean ret_value;
 } DatabaseRemoveLogOperation;
 
+
+typedef struct {
+	PurpleDebugLevel level;
+	const char *category;
+	const char *message;
+} AsynchronousDebugEntry;
+GAsyncQueue* async_debug_entries = NULL;
+
+void purple_debug_commit();
+void purple_debug_store_async(PurpleDebugLevel level, const char *category, const char *format, ...);
+
+
 static DatabaseLoggerInfo *db_logger = NULL;
 
 static gpointer (*db_thread_func[DATABASE_OPERATION_COUNT])(gpointer data);
@@ -156,9 +168,9 @@ static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  char *from, time_t time, char *message,
 							  PurpleLogLoggerWriteCallback cb, void *data)
 {
-	purple_debug_info("Database Logger", "Database logger write functions called\n");
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "Database logger write functions called\n");
 	if (log == NULL || from == NULL || message == NULL)
-		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\t from = %x\t message = %x\n", log, from, message);
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "ERROR wrong arguments: log = %x\t from = %x\t message = %x\n", log, from, message);
 
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_WRITE] != NULL) {
 		DatabaseWriteOperation *op = g_new(DatabaseWriteOperation, 1);
@@ -172,7 +184,7 @@ static void database_logger_write(PurpleLog *log, PurpleMessageFlags type,
 		op->data = data;
 		op->ret_value = 0;
 
-		purple_debug_info("Database Logger", "Database logger write operation was added\n");
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "Database logger write operation was added\n");
 		db_add_operation(op);
 	} else {
 		cb(0, log, type, from, time, message, data);
@@ -183,7 +195,7 @@ static void database_logger_read(PurpleLog *log, PurpleLogReadFlags *flags,
 							PurpleLogLoggerReadCallback cb, void *data)
 {
 	if (log == NULL)
-		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\n", log);
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "ERROR wrong arguments: log = %x\n", log);
 
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_READ] != NULL) {
 		DatabaseReadOperation *op = g_new(DatabaseReadOperation, 1);
@@ -204,7 +216,7 @@ static void database_logger_list(PurpleLogType type, char *name, PurpleAccount *
 								PurpleLogLoggerListCallback cb, void *data)
 {
 	if (name == NULL || account == NULL)
-		purple_debug_info("Database Logger", "ERROR wrong arguments: name= %x\t account = %x\n", name, account);
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "ERROR wrong arguments: name= %x\t account = %x\n", name, account);
 
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_LIST] != NULL) {
 		DatabaseListOperation *op = g_new(DatabaseListOperation, 1);
@@ -225,7 +237,7 @@ static void database_logger_list(PurpleLogType type, char *name, PurpleAccount *
 static void database_logger_list_syslog(PurpleAccount *account, PurpleLogLoggerSystemListCallback cb, void *data)
 {
 	if (account != NULL)
-		purple_debug_info("Database Logger", "ERROR wrong arguments: account= %x\n", account);
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "ERROR wrong arguments: account= %x\n", account);
 
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_LIST_SYSLOG] != NULL) {
 		DatabaseSyslogListOperation *op = g_new(DatabaseSyslogListOperation, 1);
@@ -244,7 +256,7 @@ static void database_logger_list_syslog(PurpleAccount *account, PurpleLogLoggerS
 static void database_logger_size(PurpleLog *log, PurpleLogLoggerSizeCallback cb, void *data)
 {
 	if (log == NULL)
-		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\n", log);
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "ERROR wrong arguments: log = %x\n", log);
 
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_SIZE] != NULL) {
 		DatabaseSizeOperation *op = g_new(DatabaseSizeOperation, 1);
@@ -264,7 +276,7 @@ static void database_logger_total_size(PurpleLogType type, char *name, PurpleAcc
 									PurpleLogLoggerTotalSizeCallback cb, void *data)
 {
 	if (name == NULL || account == NULL)
-		purple_debug_info("Database Logger", "ERROR wrong arguments: name = %x\t account = %x\n", name, account);
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "ERROR wrong arguments: name = %x\t account = %x\n", name, account);
 
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_TOTAL_SIZE] != NULL) {
 		DatabaseTotalSizeOperation *op = g_new(DatabaseTotalSizeOperation, 1);
@@ -301,7 +313,7 @@ static void database_logger_sets(PurpleLogSetCallback set_cb, GHashTable *sets, 
 static void database_logger_remove_log(PurpleLog *log, PurpleLogLoggerRemoveLogCallback cb, void *data)
 {
 	if (log == NULL)
-		purple_debug_info("Database Logger", "ERROR wrong arguments: log = %x\n", log);
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "ERROR wrong arguments: log = %x\n", log);
 
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_REMOVE_LOG] != NULL) {
 		DatabaseRemoveLogOperation *op = g_new(DatabaseRemoveLogOperation, 1);
@@ -462,7 +474,7 @@ static void db_print_error()
 {
 	const char *message = NULL;
 	dbi_conn_error(db_logger->db_conn, &message);
-	purple_debug_info("Database Logger", "ERROR: %s\n", message);
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "ERROR: %s\n", message);
 }
 
 static gboolean db_process_result(dbi_result dres)
@@ -709,7 +721,7 @@ static char *txt_message_formatting(const char *ownerName, const char *message, 
 
 	g_return_val_if_fail(ownerName != NULL && message != NULL && log != NULL, NULL);
 
-	purple_debug_info("Database Logger", "append_message_to_output: ownerName = %s\n", ownerName);
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "append_message_to_output: ownerName = %s\n", ownerName);
 	if(log->type == PURPLE_LOG_SYSTEM){
 		str = g_strdup_printf("---- %s @ %s ----\n", stripped, date);
 	} else {
@@ -816,7 +828,7 @@ static gpointer db_init(gpointer data)
 	DatabaseInitOperation *op = data;
 	if (dbi_conn_connect(db_logger->db_conn) < 0) {
 		const char *message = NULL;
-		purple_debug_info("Database Logger", "Could not connect. Please check the option settings\n");
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "Could not connect. Please check the option settings\n");
 		db_print_error();
 		dbi_conn_error(db_logger->db_conn, &message);
 		op->error_message = g_strdup(message);
@@ -848,7 +860,7 @@ static gpointer db_init(gpointer data)
 										   database_logger_sets,
 										   database_logger_remove_log);
 		db_logger->conn_established = TRUE;
-		purple_debug_info("Database Logger", "Logger was successfully added\n");
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "Logger was successfully added\n");
 		purple_log_logger_add(db_logger->logger);
 
 		unlock();
@@ -868,7 +880,7 @@ static gpointer db_write(gpointer data)
 	ConversationInfo *conv_info = log->logger_data;
 	dbi_result dres;
 
-	purple_debug_info("Database Logger", "---- XXX ---- db_write: from = %s; message = %s\n", from, message);
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "---- XXX ---- db_write: from = %s; message = %s\n", from, message);
 	op->ret_value = 0;
 
 	if (log->logger_data == NULL) {
@@ -907,7 +919,7 @@ static gpointer db_write(gpointer data)
 		g_free(escaped_string);
 
 	} else 
-		purple_debug_info("Database Logger", "ERROR: conv_info->id == -1\n");
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "ERROR: conv_info->id == -1\n");
 
 	return NULL;
 }
@@ -920,7 +932,7 @@ static gpointer db_read(gpointer data)
 	ConversationInfo *conv_info = log->logger_data;
 	dbi_result dres;
 
-	purple_debug_info("Database Logger", "---- XXX ---- db_read \n");
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "---- XXX ---- db_read \n");
 	if (flags)
 		*flags = 0;
 
@@ -966,7 +978,7 @@ static gpointer db_list(gpointer data)
 {
 	DatabaseListOperation *op = data;
 
-	purple_debug_info("Database Logger", "---- XXX ---- db_list: account = %s , name = %s\n", purple_account_get_username(op->account), op->name);
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "---- XXX ---- db_list: account = %s , name = %s\n", purple_account_get_username(op->account), op->name);
 
 	op->ret_value = get_list_log(op->log_type, op->name, op->account);
 
@@ -977,7 +989,7 @@ static gpointer db_syslog_list(gpointer data)
 {
 	DatabaseSyslogListOperation *op = data;
 
-	purple_debug_info("Database Logger", "---- XXX ---- db_syslog_list: account = %s\n", purple_account_get_username(op->account));
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "---- XXX ---- db_syslog_list: account = %s\n", purple_account_get_username(op->account));
 
 	op->ret_value = get_list_log(PURPLE_LOG_SYSTEM, SYSTEM_LOG_BUDDY_NAME, op->account);
 
@@ -989,7 +1001,7 @@ static gpointer db_size(gpointer data)
 	DatabaseSizeOperation *op = data;
 	ConversationInfo *conv_info = op->log->logger_data;
 
-	purple_debug_info("Database Logger", "---- XXX ---- db_size: account = %s\n", purple_account_get_username(op->log->account));
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "---- XXX ---- db_size: account = %s\n", purple_account_get_username(op->log->account));
 
 	op->ret_value = 0;
 	if (conv_info && conv_info->id != -1){
@@ -1008,7 +1020,7 @@ static gpointer db_total_size(gpointer data)
 	DatabaseTotalSizeOperation *op = data;
 	dbi_result dres;
 
-	purple_debug_info("Database Logger", "---- XXX ---- db_total_size: account = %s\n", purple_account_get_username(op->account));
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "---- XXX ---- db_total_size: account = %s\n", purple_account_get_username(op->account));
 
 	op->ret_value = 0;
 	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT SUM(`size`) FROM `conversations` WHERE `accountId` = %i AND `buddyId` = %i",
@@ -1032,7 +1044,7 @@ static gpointer db_sets(gpointer data)
 	DatabaseSetsOperation *op = data;
 	dbi_result dres;
 
-	purple_debug_info("Database Logger", "---- XXX ---- db_sets\n");
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "---- XXX ---- db_sets\n");
 
 	dres = dbi_conn_queryf(db_logger->db_conn, "SELECT `buddyId`, `accountId` FROM `conversations`");
 	if (dres) {
@@ -1053,7 +1065,7 @@ static gpointer db_sets(gpointer data)
 				dbi_result_next_row(dres2);
 				buddy_name = dbi_result_get_string(dres2, "name");
 				type = db_result_get_int(dres2, "type");
-			} else purple_debug_info("Database Logger", "dres2 = null\n");
+			} else purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "dres2 = null\n");
 			db_process_result(dres2);
 
 			account = db_get_account(account_id);
@@ -1091,7 +1103,7 @@ static gpointer db_remove(gpointer data)
 	DatabaseRemoveLogOperation *op = data;
 	ConversationInfo *conv_info = op->log->logger_data;
 
-	purple_debug_info("Database Logger", "---- XXX ---- db_remove: account = %s\n", purple_account_get_username(op->log->account));
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "---- XXX ---- db_remove: account = %s\n", purple_account_get_username(op->log->account));
 
 	op->ret_value = FALSE;
 	if (conv_info && conv_info->id != -1){
@@ -1146,7 +1158,7 @@ static gpointer db_thread(gpointer data)
 	db_thread_id = NULL;
 	unlock();
 
-	purple_debug_info("Database Logger", "Thread finished successfully: %x\n", db_thread_id);
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "Thread finished successfully: %x\n", db_thread_id);
 	return return_val;
 }
 
@@ -1160,20 +1172,20 @@ static void db_add_operation(gpointer data)
 	db_op_queue = g_list_append(db_op_queue, op);
 	need_create_thread = (db_thread_id == NULL);
 
-	purple_debug_info("Database Logger", "before creation db_thread_id = %x\n", db_thread_id);
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "before creation db_thread_id = %x\n", db_thread_id);
 
 	if (need_create_thread) {
 		GError *error = NULL;
 
-		purple_debug_info("Database Logger", " -- Thread created -- \n");
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", " -- Thread created -- \n");
 
 		db_thread_id = g_thread_create(db_thread, NULL, FALSE, &error);
 		if (error != NULL) {
-			purple_debug_info("Database Logger", "error: %s\n", error->message);
+			purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "error: %s\n", error->message);
 			g_error_free(error);
 		}
 	}
-	purple_debug_info("Database Logger", "after creation db_thread_id = %x\n", db_thread_id);
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "after creation db_thread_id = %x\n", db_thread_id);
 
 	unlock();
 }
@@ -1195,22 +1207,26 @@ static gboolean db_main_callback(gpointer data)
 
 	if (!exit_callback) {
 
-		purple_debug_info("Database Logger", "Main callback: there is finished operation\n");
+		purple_debug(PURPLE_DEBUG_INFO,"Database Logger", "Main callback: there is finished operation\n");
 
 		lock();
 		op_queue = db_finished_op;
 		db_finished_op = NULL;
 		unlock();
 
+		purple_debug_commit();
+
 		for(; op_queue != NULL; op_queue = g_list_delete_link(op_queue, op_queue)) {
 			DatabaseOperation *op = op_queue->data;
 
-			if (op == NULL) purple_debug_info("Database Logger", "ERROR: db_main_callback op == NULL\n");
+			if (op == NULL) purple_debug(PURPLE_DEBUG_INFO,"Database Logger", "ERROR: db_main_callback op == NULL\n");
 			else if (db_notify_func[op->type] != NULL) {
 				db_notify_func[op->type](op);
 			}
 			g_free(op);
 		}
+
+		purple_debug_commit();
 	}
 
 	return TRUE;
@@ -1222,7 +1238,7 @@ static gboolean db_create_connection()
 	db_logger->db_conn = dbi_conn_new(db_get_current_engine());
 
 	if (db_logger->db_conn == NULL) {
-		purple_debug_info("Database Logger", "created connection is NULL\n");
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "created connection is NULL\n");
 		return FALSE;
 	}
 
@@ -1253,7 +1269,7 @@ static gboolean db_create_connection()
 
 	db_logger->db_callback_id = purple_timeout_add(100, db_main_callback, NULL);
 
-	purple_debug_info("Database Logger", "Creating thread and making init operation\n");
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "Creating thread and making init operation\n");
 	if (db_thread_func[PURPLE_DATABASE_LOGGER_INIT] != NULL) {
 		DatabaseInitOperation *op = g_new0(DatabaseInitOperation, 1);
 		op->type = PURPLE_DATABASE_LOGGER_INIT;
@@ -1279,6 +1295,7 @@ plugin_load(PurplePlugin *plugin)
 	g_return_val_if_fail(db_logger != NULL, FALSE);
 
 	db_mutex = g_mutex_new();
+	async_debug_entries = g_async_queue_new();
 
 #ifdef _WIN32
 	cnt = dbi_initialize("libdbi-drivers");
@@ -1286,7 +1303,7 @@ plugin_load(PurplePlugin *plugin)
 	cnt = dbi_initialize(NULL);
 #endif
 
-	purple_debug_info("Database Logger", "Count of loaded drivers =  %i\n", cnt);
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "Count of loaded drivers =  %i\n", cnt);
 
 	return db_create_connection();
 }
@@ -1294,10 +1311,11 @@ plugin_load(PurplePlugin *plugin)
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
-	purple_debug_info("Database Logger", "plugin_unload\n");
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "plugin_unload\n");
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	g_mutex_free(db_mutex);
+	g_async_queue_unref(async_debug_entries);
 
 	purple_timeout_remove(db_logger->db_callback_id);
 
@@ -1463,3 +1481,25 @@ static PurplePluginInfo info =
 };
 
 PURPLE_INIT_PLUGIN(database_logger, init_plugin, info)
+
+
+
+void purple_debug_commit() {
+	AsynchronousDebugEntry* entry;
+	while( (entry = (AsynchronousDebugEntry*) g_async_queue_try_pop(async_debug_entries)) != NULL ) {
+		purple_debug(entry->level,entry->category,"%s",entry->message);
+		g_free(entry->category);
+		g_free(entry->message);
+		g_free(entry);
+	}
+}
+void purple_debug_store_async(PurpleDebugLevel level, const char *category, const char *format, ...) {
+	AsynchronousDebugEntry* entry = g_new(AsynchronousDebugEntry,1);
+	entry->level = level;
+	entry->category = g_strdup(category);
+	va_list ap;
+	va_start(ap, format);
+	entry->message = g_strdup_vprintf(format, ap);
+	va_end(ap);
+	g_async_queue_push(async_debug_entries, entry);
+}
