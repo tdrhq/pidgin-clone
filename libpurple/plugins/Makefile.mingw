@@ -31,7 +31,6 @@ INCLUDE_PATHS +=	\
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
-			-L$(LIBDBI_TOP)/lib \
 			-L ~/libdbi/libdbi-0.8.2/src/.libs
 			
 
