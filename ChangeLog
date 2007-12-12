@@ -1,5 +1,21 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.3.2 (??/??/????):
+	libpurple:
+	* Fixed various problems with loss of status messages when going
+	  or returning from idle on MySpaceIM.
+	* Eliminated unmaintained Howl backend implementation for the
+	  Bonjour protocol.  Avahi (or Apple's Bonjour runtime on win32) is
+	  now required to use Bonjour.
+
+	Finch:
+	* Color is used in the buddylist to indicate status, and the conversation
+	  window to indicate various message attributes. Look at the sample gntrc
+	  file in the man-page for details.
+	* The default keybinding for dump-screen is now M-D and uses a file
+	  request dialog. M-d will properly delete-forward-word, and M-f has been
+	  fixed to imitate readline's behavior.
+
 version 2.3.0 (11/24/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.3.0
 		NOTE: Some bugs marked fixed in 2.2.1, 2.2.2 or 2.2.3 may not

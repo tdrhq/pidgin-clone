@@ -1181,14 +1181,27 @@ not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	/* TODO: This might be for us too */
-
 	MsnSession *session;
+	PurpleAccount *account;
 	PurpleConnection *gc;
 	const char *friendly;
+	char *username;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	account = session->account;
+	username = g_strdup(purple_normalize(account,
+						purple_account_get_username(account)));
+
+	/* Only set display name if our *own* friendly name changed! */
+	if (strcmp(username, purple_normalize(account, cmd->params[2])))
+	{
+		g_free(username);
+		return;
+	}
+
+	g_free(username);
+
+	gc = account->gc;
 	friendly = purple_url_decode(cmd->params[3]);
 
 	purple_connection_set_display_name(gc, friendly);
@@ -1566,6 +1579,7 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	xmlnode * root;
 	gchar * buf;
+	int xmllen;
 
 	g_return_if_fail(cmd->payload != NULL);
 
@@ -1575,10 +1589,10 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		return;
 	}
 	
-	buf = xmlnode_to_formatted_str(root, NULL);
+	buf = xmlnode_to_formatted_str(root, &xmllen);
 
 	/* get the payload content */
-	purple_debug_info("MSNP14","GCF command payload:\n%s\n",buf);
+	purple_debug_info("MSNP14","GCF command payload:\n%.*s\n", xmllen, buf);
 	
 	g_free(buf);
 	xmlnode_free(root);
@@ -1764,7 +1778,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			passport = msn_user_get_passport(session->user);
 			url = session->passport_info.file;
 
-			purple_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+			purple_notify_emails(gc, count, FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
 		}
 	}
@@ -1837,7 +1851,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			passport = msn_user_get_passport(session->user);
 			url = session->passport_info.file;
 
-			purple_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+			purple_notify_emails(gc, count, FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
 		}
 	}

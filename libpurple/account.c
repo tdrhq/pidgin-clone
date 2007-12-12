@@ -336,8 +336,13 @@ current_error_to_xmlnode(PurpleConnectionErrorInfo *err)
 	xmlnode_insert_data(child, type_str, -1);
 
 	child = xmlnode_new_child(node, "description");
-	if(err->description)
-		xmlnode_insert_data(child, err->description, -1);
+	if(err->description) {
+		char *utf8ized = purple_utf8_try_convert(err->description);
+		if(utf8ized == NULL)
+			utf8ized = purple_utf8_salvage(err->description);
+		xmlnode_insert_data(child, utf8ized, -1);
+		g_free(utf8ized);
+	}
 
 	return node;
 }
@@ -741,7 +746,7 @@ parse_current_error(xmlnode *node, PurpleAccount *account)
 
 	current_error = g_new0(PurpleConnectionErrorInfo, 1);
 	current_error->type = type;
-	current_error->description = description;
+	current_error->description = g_strdup(description);
 
 	set_current_error(account, current_error);
 }
@@ -2541,21 +2546,18 @@ purple_accounts_find(const char *name, const char *protocol_id)
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	who = g_strdup(purple_normalize(NULL, name));
-
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		account = (PurpleAccount *)l->data;
 
-		if (!strcmp(purple_normalize(NULL, purple_account_get_username(account)), who) &&
+		who = g_strdup(purple_normalize(account, name));
+		if (!strcmp(purple_normalize(account, purple_account_get_username(account)), who) &&
 			(!protocol_id || !strcmp(account->protocol_id, protocol_id))) {
-
+			g_free(who);
 			break;
 		}
-
+		g_free(who);
 		account = NULL;
 	}
-
-	g_free(who);
 
 	return account;
 }

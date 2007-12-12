@@ -752,6 +752,11 @@ do_joinchat(GtkWidget *dialog, int id, PidginJoinChatData *info)
 	{
 		case GTK_RESPONSE_OK:
 			do_join_chat(info);
+			break;
+
+		case 1:
+			pidgin_roomlist_dialog_show_with_account(info->account);
+			return;
 
 		break;
 	}
@@ -768,6 +773,8 @@ do_joinchat(GtkWidget *dialog, int id, PidginJoinChatData *info)
 static void
 joinchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 {
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnection *gc;
 	PidginJoinChatData *data;
 	GList *tmp;
 	const char *text;
@@ -788,6 +795,12 @@ joinchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 	}
 
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), GTK_RESPONSE_OK, sensitive);
+
+	gc = purple_account_get_connection(data->account);
+	prpl_info = (gc != NULL) ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
+	sensitive = (prpl_info != NULL && prpl_info->roomlist_get_list != NULL);
+
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), 1, sensitive);
 }
 
 static void
@@ -943,6 +956,7 @@ pidgin_blist_joinchat_show(void)
 
 	data->window = gtk_dialog_new_with_buttons(_("Join a Chat"),
 		NULL, GTK_DIALOG_NO_SEPARATOR,
+		_("Room _List"), 1,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		PIDGIN_STOCK_CHAT, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
@@ -1383,7 +1397,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	pidgin_append_blist_node_proto_menu(menu, buddy->account->gc, node);
 	pidgin_append_blist_node_extended_menu(menu, node);
 
-	if (!contact_expanded)
+	if (!contact_expanded && contact != NULL)
 		pidgin_append_blist_node_move_to_menu(menu, (PurpleBlistNode *)contact);
 
 	if (node->parent && node->parent->child->next && 
@@ -2536,7 +2550,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
  *
  *
  */
-#define STATUS_SIZE 22
+#define STATUS_SIZE 16 
 #define TOOLTIP_BORDER 12
 #define SMALL_SPACE 6
 #define LARGE_SPACE 12
@@ -3155,6 +3169,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		GList *cur;
 		struct proto_chat_entry *pce;
 		char *name, *value;
+		PidginBlistNode *bnode = node->ui_data;
 
 		chat = (PurpleChat *)node;
 		prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
@@ -3165,6 +3180,13 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			tmp = g_markup_escape_text(chat->account->username, -1);
 			g_string_append_printf(str, _("\n<b>Account:</b> %s"), tmp);
 			g_free(tmp);
+		}
+
+		if (bnode && bnode->conv.conv &&
+				prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC) &&
+				!purple_conv_chat_has_left(PURPLE_CONV_CHAT(bnode->conv.conv))) {
+			const char *topic = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(bnode->conv.conv));
+			g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
 		}
 
 		if (prpl_info->chat_info != NULL)
@@ -3236,7 +3258,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		/* Alias */
 		/* If there's not a contact alias, the node is being displayed with
 		 * this alias, so there's no point in showing it in the tooltip. */
-		if (full && b->alias != NULL && b->alias[0] != '\0' &&
+		if (full && c && b->alias != NULL && b->alias[0] != '\0' &&
 		    (c->alias != NULL && c->alias[0] != '\0') &&
 		    strcmp(c->alias, b->alias) != 0)
 		{
@@ -3287,13 +3309,13 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		}
 
 		/* Last Seen */
-		if (full && !PURPLE_BUDDY_IS_ONLINE(b))
+		if (full && c && !PURPLE_BUDDY_IS_ONLINE(b))
 		{
 			struct _pidgin_blist_node *gtknode = ((PurpleBlistNode *)c)->ui_data;
 			PurpleBlistNode *bnode;
 			int lastseen = 0;
 
-			if (!gtknode->contact_expanded || PURPLE_BLIST_NODE_IS_CONTACT(node))
+			if (gtknode && (!gtknode->contact_expanded || PURPLE_BLIST_NODE_IS_CONTACT(node)))
 			{
 				/* We're either looking at a buddy for a collapsed contact or
 				 * an expanded contact itself so we show the most recent
@@ -3356,6 +3378,34 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 	return g_string_free(str, FALSE);
 }
 
+static GHashTable *cached_emblems;
+
+static void _cleanup_cached_emblem(gpointer data, GObject *obj) {
+	g_hash_table_remove(cached_emblems, data);
+}
+
+static GdkPixbuf * _pidgin_blist_get_cached_emblem(gchar *path) {
+	GdkPixbuf *pb = g_hash_table_lookup(cached_emblems, path);
+
+	if (pb != NULL) {
+		/* The caller gets a reference */
+		g_object_ref(pb);
+		g_free(path);
+	} else {
+		pb = gdk_pixbuf_new_from_file(path, NULL);
+		if (pb != NULL) {
+			/* We don't want to own a ref to the pixbuf, but we need to keep clean up. */
+			/* I'm not sure if it would be better to just keep our ref and not let the emblem ever be destroyed */
+			g_object_weak_ref(G_OBJECT(pb), _cleanup_cached_emblem, path);
+			g_hash_table_insert(cached_emblems, path, pb);
+		} else
+			g_free(path);
+	}
+
+	return pb;
+}
+
+
 GdkPixbuf *
 pidgin_blist_get_emblem(PurpleBlistNode *node)
 {
@@ -3366,7 +3416,6 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	PurplePluginProtocolInfo *prpl_info;
 	const char *name = NULL;
 	char *filename, *path;
-	GdkPixbuf *ret;
 	PurplePresence *p;
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
@@ -3379,11 +3428,9 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		gtkbuddynode = node->ui_data;
 		p = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
-			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", 
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems",
 						"16", "mobile.png", NULL);
-			ret = gdk_pixbuf_new_from_file(path, NULL);
-			g_free(path);
-			return ret;
+			return _pidgin_blist_get_cached_emblem(path);
 		}
 
 		if (((struct _pidgin_blist_node*)(node->parent->ui_data))->contact_expanded) {
@@ -3395,26 +3442,22 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		return NULL;
 	}
 
+	g_return_val_if_fail(buddy != NULL, NULL);
+
 	if (!purple_privacy_check(buddy->account, purple_buddy_get_name(buddy))) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "blocked.png", NULL);
-		ret = gdk_pixbuf_new_from_file(path, NULL);
-		g_free(path);
-		return ret;
+		return _pidgin_blist_get_cached_emblem(path);
 	}
 
 	p = purple_buddy_get_presence(buddy);
 	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "mobile.png", NULL);
-		ret = gdk_pixbuf_new_from_file(path, NULL);
-		g_free(path);
-		return ret;
+		return _pidgin_blist_get_cached_emblem(path);
 	}
 
 	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "music.png", NULL);
-		ret = gdk_pixbuf_new_from_file(path, NULL);
-		g_free(path);
-		return ret;
+		return _pidgin_blist_get_cached_emblem(path);
 	}
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
@@ -3431,12 +3474,10 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	filename = g_strdup_printf("%s.png", name);
 
 	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", filename, NULL);
-	ret = gdk_pixbuf_new_from_file(path, NULL);
-
 	g_free(filename);
-	g_free(path);
 
-	return ret;
+	/* _pidgin_blist_get_cached_emblem() assumes ownership of path */
+	return _pidgin_blist_get_cached_emblem(path);
 }
 
 
@@ -3450,8 +3491,8 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 	struct _pidgin_blist_node *gtkbuddynode = NULL;
 	PurpleBuddy *buddy = NULL;
 	PurpleChat *chat = NULL;
-	GtkIconSize icon_size = gtk_icon_size_from_name((size == PIDGIN_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_SMALL :
-											 PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+	GtkIconSize icon_size = gtk_icon_size_from_name((size == PIDGIN_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL :
+											 PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC);
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
@@ -4057,7 +4098,7 @@ written_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *me
 		PurpleConversation *conv, PurpleMessageFlags flag, PurpleBlistNode *node)
 {
 	PidginBlistNode *ui = node->ui_data;
-	if (ui->conv.conv != conv || PIDGIN_CONVERSATION(conv) ||
+	if (ui->conv.conv != conv || !pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)) ||
 			!(flag & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)))
 		return;
 	ui->conv.flags |= PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
@@ -4066,11 +4107,10 @@ written_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *me
 }
 
 static void
-displayed_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *message,
-		PurpleConversation *conv, PurpleMessageFlags flag, PurpleBlistNode *node)
+displayed_msg_update_ui_cb(PidginConversation *gtkconv, PurpleBlistNode *node)
 {
 	PidginBlistNode *ui = node->ui_data;
-	if (ui->conv.conv != conv)
+	if (ui->conv.conv != gtkconv->active_conv)
 		return;
 	ui->conv.flags &= ~PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
 	pidgin_blist_update(purple_get_blist(), node);
@@ -4096,10 +4136,11 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 							ui, PURPLE_CALLBACK(conversation_deleted_update_ui_cb), ui);
 					purple_signal_connect(purple_conversations_get_handle(), "wrote-im-msg",
 							ui, PURPLE_CALLBACK(written_msg_update_ui_cb), buddy);
-					purple_signal_connect(pidgin_conversations_get_handle(), "displayed-im-msg",
+					purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
 							ui, PURPLE_CALLBACK(displayed_msg_update_ui_cb), buddy);
 				}
 			}
+			break;
 		case PURPLE_CONV_TYPE_CHAT:
 			{
 				PurpleChat *chat = purple_blist_find_chat(conv->account, conv->name);
@@ -4116,9 +4157,10 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 						ui, PURPLE_CALLBACK(conversation_deleted_update_ui_cb), ui);
 				purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg",
 						ui, PURPLE_CALLBACK(written_msg_update_ui_cb), chat);
-				purple_signal_connect(pidgin_conversations_get_handle(), "displayed-chat-msg",
+				purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
 						ui, PURPLE_CALLBACK(displayed_msg_update_ui_cb), chat);
 			}
+			break;
 		default:
 			break;
 	}
@@ -4479,12 +4521,6 @@ generic_error_enable_cb(PurpleAccount *account)
 }
 
 static void
-generic_error_ignore_cb(PurpleAccount *account)
-{
-	purple_account_clear_current_error(account);
-}
-
-static void
 generic_error_destroy_cb(GtkObject *dialog,
                          PurpleAccount *account)
 {
@@ -4522,7 +4558,6 @@ add_generic_error_dialog(PurpleAccount *account,
 		(enabled ? PURPLE_CALLBACK(purple_account_connect)
 		         : PURPLE_CALLBACK(generic_error_enable_cb)),
 		_("Modify Account"), PURPLE_CALLBACK(generic_error_modify_cb),
-		_("Ignore"), PURPLE_CALLBACK(generic_error_ignore_cb),
 		NULL);
 
 	g_free(primary);
@@ -4607,14 +4642,6 @@ reconnect_elsewhere_accounts(PidginMiniDialog *mini_dialog,
 }
 
 static void
-ignore_elsewhere_accounts(PidginMiniDialog *mini_dialog,
-                          GtkButton *button,
-                          gpointer unused)
-{
-	elsewhere_foreach_account(mini_dialog, purple_account_clear_current_error);
-}
-
-static void
 ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
@@ -4624,13 +4651,10 @@ ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 		return;
 
 	mini_dialog = priv->signed_on_elsewhere =
-		pidgin_mini_dialog_new(NULL, NULL, PIDGIN_STOCK_DISCONNECT);
+		pidgin_mini_dialog_new(_("Welcome back!"), NULL, PIDGIN_STOCK_DISCONNECT);
 
 	pidgin_mini_dialog_add_button(mini_dialog, _("Re-enable"),
 		reconnect_elsewhere_accounts, NULL);
-
-	pidgin_mini_dialog_add_button(mini_dialog, _("Ignore"),
-		ignore_elsewhere_accounts, NULL);
 
 	add_error_dialog(gtkblist, GTK_WIDGET(mini_dialog));
 
@@ -4657,11 +4681,11 @@ update_signed_on_elsewhere_minidialog_title(void)
 	}
 
 	title = g_strdup_printf(
-		ngettext("%d account was disabled because you signed on from another location.",
-			 "%d accounts were disabled because you signed on from another location.",
+		ngettext("%d account was disabled because you signed on from another location:",
+			 "%d accounts were disabled because you signed on from another location:",
 			 accounts),
 		accounts);
-	pidgin_mini_dialog_set_title(mini_dialog, title);
+	pidgin_mini_dialog_set_description(mini_dialog, title);
 	g_free(title);
 }
 
@@ -5694,7 +5718,6 @@ static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *no
 static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 {
 	PurpleGroup *group;
-	GdkColor textcolor;
 	gboolean selected;
 	char group_count[12] = "";
 	char *mark, *esc;
@@ -5702,7 +5725,6 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	GtkTreeIter iter;
 
 	group = (PurpleGroup*)gnode;
-	textcolor = gtkblist->treeview->style->fg[GTK_STATE_ACTIVE];
 
 	if (gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview)), NULL, &iter)) {
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
@@ -5717,12 +5739,7 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	}
 
 	esc = g_markup_escape_text(group->name, -1);
-	if (selected)
-		mark = g_strdup_printf("<span weight='bold'>%s</span>%s", esc, group_count);
-	else
-		mark = g_strdup_printf("<span color='#%02x%02x%02x' weight='bold'>%s</span>%s",
-				       textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
-				       esc, group_count);
+	mark = g_strdup_printf("<span weight='bold'>%s</span>%s", esc ? esc : "", group_count);
 
 	g_free(esc);
 	return mark;
@@ -5743,7 +5760,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 		return;
 
 	status = pidgin_blist_get_status_icon((PurpleBlistNode*)buddy,
-						PIDGIN_STATUS_ICON_SMALL);
+						biglist ? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
 
 	/* Speed it up if we don't want buddy icons. */
 	if(biglist)
@@ -5827,6 +5844,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 	PurpleBlistNode *cnode;
 	PurpleContact *contact;
 	PurpleBuddy *buddy;
+	gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 	struct _pidgin_blist_node *gtknode;
 
 	if (editing_blist)
@@ -5862,7 +5880,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 			char *mark;
 
 			status = pidgin_blist_get_status_icon(cnode,
-					 PIDGIN_STATUS_ICON_SMALL);
+					 biglist? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
 
 			mark = g_markup_escape_text(purple_contact_get_alias(contact), -1);
 			gtk_tree_store_set(gtkblist->treemodel, &iter,
@@ -5941,6 +5959,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		GdkPixbuf *status, *avatar, *emblem, *prpl_icon;
 		char *mark;
 		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
+		gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 		PidginBlistNode *ui;
 		PurpleConversation *conv;
 		gboolean hidden;
@@ -5950,10 +5969,11 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 
 		ui = node->ui_data;
 		conv = ui->conv.conv;
-		hidden = (conv && (ui->conv.flags & PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE));
+		hidden = (conv && (ui->conv.flags & PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE) &&
+				pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)));
 
 		status = pidgin_blist_get_status_icon(node,
-				 PIDGIN_STATUS_ICON_SMALL);
+				 biglist ? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
 		emblem = pidgin_blist_get_emblem(node);
 
 		/* Speed it up if we don't want buddy icons. */
@@ -6407,6 +6427,10 @@ add_chat_resp_cb(GtkWidget *w, int resp, PidginAddChatData *data)
 	{
 		add_chat_cb(NULL, data);
 	}
+	else if (resp == 1)
+	{
+		pidgin_roomlist_dialog_show_with_account(data->account);
+	}
 	else
 	{
 		gtk_widget_destroy(data->window);
@@ -6423,6 +6447,8 @@ add_chat_resp_cb(GtkWidget *w, int resp, PidginAddChatData *data)
 static void
 addchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 {
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnection *gc;
 	PidginAddChatData *data;
 	GList *tmp;
 	const char *text;
@@ -6443,6 +6469,12 @@ addchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 	}
 
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), GTK_RESPONSE_OK, sensitive);
+
+	gc = purple_account_get_connection(data->account);
+	prpl_info = (gc != NULL) ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
+	sensitive = (prpl_info != NULL && prpl_info->roomlist_get_list != NULL);
+
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), 1, sensitive);
 }
 
 static void
@@ -6608,6 +6640,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 
 	data->window = gtk_dialog_new_with_buttons(_("Add Chat"),
 		gtkblist ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_NO_SEPARATOR,
+		_("Room _List"), 1,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_ADD, GTK_RESPONSE_OK,
 		NULL);
@@ -6691,8 +6724,8 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	pidgin_set_accessible_label (data->group_combo, label);
 	gtk_box_pack_end(GTK_BOX(rowbox), data->group_combo, TRUE, TRUE, 0);
 	
-	data->autojoin = gtk_check_button_new_with_mnemonic(_("Autojoin when account becomes online."));
-	data->persistent = gtk_check_button_new_with_mnemonic(_("Hide chat when the window is closed."));
+	data->autojoin = gtk_check_button_new_with_mnemonic(_("Auto_join when account becomes online."));
+	data->persistent = gtk_check_button_new_with_mnemonic(_("_Hide chat when the window is closed."));
 	gtk_box_pack_start(GTK_BOX(vbox), data->autojoin, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), data->persistent, FALSE, FALSE, 0);
 
@@ -6973,6 +7006,8 @@ void pidgin_blist_init(void)
 {
 	void *gtk_blist_handle = pidgin_blist_get_handle();
 
+	cached_emblems = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
 						gtk_blist_handle, PURPLE_CALLBACK(account_signon_cb),
 						NULL);
@@ -7030,6 +7065,8 @@ void pidgin_blist_init(void)
 
 void
 pidgin_blist_uninit(void) {
+	g_hash_table_destroy(cached_emblems);
+
 	purple_signals_unregister_by_instance(pidgin_blist_get_handle());
 	purple_signals_disconnect_by_handle(pidgin_blist_get_handle());
 }

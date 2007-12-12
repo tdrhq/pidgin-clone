@@ -21,7 +21,7 @@
  */
 
 #define _GNU_SOURCE
-#if defined(__APPLE__) || defined(__unix__)
+#if (defined(__APPLE__) || defined(__unix__)) && !defined(__FreeBSD__)
 #define _XOPEN_SOURCE_EXTENDED
 #endif
 
@@ -679,8 +679,9 @@ reap_child(GPid pid, gint status, gpointer data)
 	g_free(cp);
 	clean_pid();
 	wm->mode = GNT_KP_MODE_NORMAL;
-	clear();
+	endwin();
 	setup_io();
+	refresh();
 	refresh_screen();
 }
 #endif

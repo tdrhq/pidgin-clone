@@ -20,14 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#define _GNU_SOURCE
-#if defined(__APPLE__) || defined(__unix__)
-#define _XOPEN_SOURCE_EXTENDED
-#endif
-
 #include "config.h"
 
+#ifdef USE_PYTHON
+#include <Python.h>
+#else
+#define _GNU_SOURCE
+#if (defined(__APPLE__) || defined(__unix__)) && !defined(__FreeBSD__)
+#define _XOPEN_SOURCE_EXTENDED
+#endif
+#endif
+
 #include <glib.h>
+#include <glib/gstdio.h>
 #include <ctype.h>
 #include <gmodule.h>
 #include <stdlib.h>
@@ -41,6 +46,7 @@
 #include "gntbox.h"
 #include "gntbutton.h"
 #include "gntentry.h"
+#include "gntfilesel.h"
 #include "gntlabel.h"
 #include "gntmenu.h"
 #include "gnttextview.h"
@@ -663,12 +669,12 @@ window_list(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
-static gboolean
-dump_screen(GntBindable *bindable, GList *null)
+static void
+dump_file_save(GntFileSel *fs, const char *path, const char *f, gpointer n)
 {
+	FILE *file;
 	int x, y;
 	chtype old = 0, now = 0;
-	FILE *file = fopen("dump.html", "w");
 	struct {
 		char ascii;
 		char *unicode;
@@ -689,6 +695,12 @@ dump_screen(GntBindable *bindable, GList *null)
 		{'v', "&#x2534;"},
 		{'\0', NULL}
 	};
+
+	gnt_widget_destroy(GNT_WIDGET(fs));
+
+	if ((file = g_fopen(path, "w+")) == NULL) {
+		return;
+	}
 
 	fprintf(file, "<head>\n  <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n</head>\n<body>\n");
 	fprintf(file, "<pre>");
@@ -796,6 +808,28 @@ dump_screen(GntBindable *bindable, GList *null)
 	}
 	fprintf(file, "</pre>\n</body>");
 	fclose(file);
+}
+
+static void
+dump_file_cancel(GntWidget *w, GntFileSel *fs)
+{
+	gnt_widget_destroy(GNT_WIDGET(fs));
+}
+
+static gboolean
+dump_screen(GntBindable *b, GList *null)
+{
+	GntWidget *window = gnt_file_sel_new();
+	GntFileSel *sel = GNT_FILE_SEL(window);
+
+	g_object_set(G_OBJECT(window), "vertical", TRUE, NULL);
+	gnt_box_add_widget(GNT_BOX(window), gnt_label_new("Please enter the filename to save the screenshot."));
+	gnt_box_set_title(GNT_BOX(window), "Save Screenshot...");
+
+	gnt_file_sel_set_suggested_filename(sel, "dump.html");
+	g_signal_connect(G_OBJECT(sel), "file_selected", G_CALLBACK(dump_file_save), NULL);
+	g_signal_connect(G_OBJECT(sel->cancel), "activate", G_CALLBACK(dump_file_cancel), sel);
+	gnt_widget_show(window);
 	return TRUE;
 }
 
@@ -1168,12 +1202,50 @@ ignore_keys_end(GntBindable *bindable, GList *n)
 	return ignore_keys ? !(ignore_keys = FALSE) : FALSE;
 }
 
+#ifdef USE_PYTHON
+static void
+python_script_selected(GntFileSel *fs, const char *path, const char *f, gpointer n)
+{
+	char *dir = g_path_get_dirname(path);
+	FILE *file = fopen(path, "r");
+	PyObject *pp = PySys_GetObject("path"), *dirobj = PyString_FromString(dir);
+
+	PyList_Insert(pp, 0, dirobj);
+	Py_DECREF(dirobj);
+	PyRun_SimpleFile(file, path);
+	fclose(file);
+
+	if (PyErr_Occurred()) {
+		PyErr_Print();
+	}
+	g_free(dir);
+
+	gnt_widget_destroy(GNT_WIDGET(fs));
+}
+
+static gboolean
+run_python(GntBindable *bindable, GList *n)
+{
+	GntWidget *window = gnt_file_sel_new();
+	GntFileSel *sel = GNT_FILE_SEL(window);
+
+	g_object_set(G_OBJECT(window), "vertical", TRUE, NULL);
+	gnt_box_add_widget(GNT_BOX(window), gnt_label_new("Please select the python script you want to run."));
+	gnt_box_set_title(GNT_BOX(window), "Select Python Script...");
+
+	g_signal_connect(G_OBJECT(sel), "file_selected", G_CALLBACK(python_script_selected), NULL);
+	g_signal_connect_swapped(G_OBJECT(sel->cancel), "activate", G_CALLBACK(gnt_widget_destroy), sel);
+	gnt_widget_show(window);
+	return TRUE;
+}
+#endif  /* USE_PYTHON */
+
 static gboolean
 help_for_bindable(GntWM *wm, GntBindable *bindable)
 {
 	gboolean ret = TRUE;
 	GntBindableClass *klass = GNT_BINDABLE_GET_CLASS(bindable);
- 
+
 	if (klass->help_window) {
 		gnt_wm_raise_window(wm, GNT_WIDGET(klass->help_window));
 	} else {
@@ -1241,6 +1313,9 @@ gnt_wm_destroy(GObject *obj)
 		g_object_unref(wm->workspaces->data);
 		wm->workspaces = g_list_delete_link(wm->workspaces, wm->workspaces);
 	}
+#ifdef USE_PYTHON
+	Py_Finalize();
+#endif
 }
 
 static void
@@ -1366,7 +1441,7 @@ gnt_wm_class_init(GntWMClass *klass)
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-list", window_list,
 				"\033" "w", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "dump-screen", dump_screen,
-				"\033" "d", NULL);
+				"\033" "D", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "shift-left", shift_left,
 				"\033" ",", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "shift-right", shift_right,
@@ -1411,6 +1486,12 @@ gnt_wm_class_init(GntWMClass *klass)
 				GNT_KEY_CTRL_G, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-end", ignore_keys_end, 
 				"\033" GNT_KEY_CTRL_G, NULL);
+#ifdef USE_PYTHON
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "run-python", run_python,
+				GNT_KEY_F3, NULL);
+	Py_SetProgramName("gnt");
+	Py_Initialize();
+#endif
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 
