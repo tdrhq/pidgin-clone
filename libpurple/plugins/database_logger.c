@@ -710,50 +710,58 @@ static int db_get_conversation_size(int id)
 	return ret_value;
 }
 
-static char *txt_message_formatting(const char *ownerName, const char *message, int message_flags, 
+static char *txt_message_formatting(const char *from, const char *message, int message_flags, 
 								time_t datetime, PurpleLog *log)
 {
 	/* txt logger formatting */
 	char *str = NULL;
 	char *date = log_get_timestamp(log, datetime);
-	char *stripped = purple_markup_strip_html(message);
 	/* need get log type from DB */
 
-	g_return_val_if_fail(ownerName != NULL && message != NULL && log != NULL, NULL);
+	g_return_val_if_fail(from != NULL && message != NULL && log != NULL, NULL);
 
-	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "append_message_to_output: ownerName = %s\n", ownerName);
+	purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "append_message_to_output: flags = %x from = %s\n", message_flags, from);
+
+	date = log_get_timestamp(log, time);
+
 	if(log->type == PURPLE_LOG_SYSTEM){
-		str = g_strdup_printf("---- %s @ %s ----\n", stripped, date);
+		str = g_strdup_printf("---- %s @ %s ----\n", message, date);
 	} else {
-		if (message_flags & PURPLE_MESSAGE_SEND ||
-			message_flags & PURPLE_MESSAGE_RECV) {
-			if (message_flags & PURPLE_MESSAGE_AUTO_RESP) {
-				str = g_strdup_printf(_("(%s) %s <AUTO-REPLY>: %s\n"), date,
-						ownerName, stripped);
-			} else {
-				if(purple_message_meify(stripped, -1))
-					str = g_strdup_printf("(%s) ***%s %s\n", date, ownerName,
-							stripped);
-				else
-					str = g_strdup_printf("(%s) %s: %s\n", date, ownerName,
-							stripped);
-			}
-		} else if (message_flags & PURPLE_MESSAGE_SYSTEM ||
-			message_flags & PURPLE_MESSAGE_ERROR ||
-			message_flags & PURPLE_MESSAGE_RAW)
-			str = g_strdup_printf("(%s) %s\n", date, stripped);
-		else if (message_flags & PURPLE_MESSAGE_NO_LOG) {
-			/* This shouldn't happen */
-			/* doing nothing */
-		} else if (message_flags & PURPLE_MESSAGE_WHISPER)
-			str = g_strdup_printf("(%s) *%s* %s\n", date, ownerName, stripped);
-		else
-			str = g_strdup_printf("(%s) %s%s %s\n", date, ownerName ? ownerName : "",
-					ownerName ? ":" : "", stripped);
+		if (message_flags & PURPLE_MESSAGE_SYSTEM)
+			str = g_strdup_printf("<font size=\"2\">(%s)</font><b> %s</b>\n", date, message);
+		else if (message_flags & PURPLE_MESSAGE_RAW)
+			str = g_strdup_printf("<font size=\"2\">(%s)</font> %s\n", date, message);
+		else if (message_flags & PURPLE_MESSAGE_ERROR)
+			str = g_strdup_printf("<font color=\"#FF0000\"><font size=\"2\">(%s)</font><b> %s</b></font>\n", date, message);
+		else if (message_flags & PURPLE_MESSAGE_WHISPER)
+			str = g_strdup_printf("<font color=\"#6C2585\"><font size=\"2\">(%s)</font><b> %s:</b></font> %s\n",
+					date, from, message);
+		else if (message_flags & PURPLE_MESSAGE_AUTO_RESP) {
+			if (message_flags & PURPLE_MESSAGE_SEND)
+				str = g_strdup_printf(_("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s\n"), date, from, message);
+			else if (message_flags & PURPLE_MESSAGE_RECV)
+				str = g_strdup_printf(_("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s\n"), date, from, message);
+		} else if (message_flags & PURPLE_MESSAGE_RECV) {
+			if(purple_message_meify(message, -1))
+				str = g_strdup_printf("<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s\n",
+						date, from, message);
+			else
+				str = g_strdup_printf("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s\n",
+						date, from, message);
+		} else if (message_flags & PURPLE_MESSAGE_SEND) {
+			if(purple_message_meify(message, -1))
+				str = g_strdup_printf("<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s\n",
+						date, from, message);
+			else
+				str = g_strdup_printf("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s\n",
+						date, from, message);
+		} else {
+			purple_debug_error("log", "Unhandled message message_flags.\n");
+			str = g_strdup_printf("<font size=\"2\">(%s)</font><b> %s:</b></font> %s\n",
+						date, from, message);
+		}
 	}
-
 	g_free(date);
-	g_free(stripped);
 
 	return str;
 }
@@ -905,10 +913,11 @@ static gpointer db_write(gpointer data)
 	if (conv_info->id != -1) {
 		int log_size = db_get_conversation_size(conv_info->id);
 		char *escaped_string = db_escape_string(message);
+		purple_debug_store_async(PURPLE_DEBUG_INFO,"Database Logger", "---- XXX ---- db_write: escaped_string = %s\n", escaped_string);
 
 		dres = dbi_conn_queryf(db_logger->db_conn, 
-				"INSERT INTO `messages` (`conversationId`, `ownerName`, `datetime`, `text`, `flags`) VALUES(%i, \"%s\", %i, \"%s\", %i)",
-				conv_info->id, from, time, escaped_string, flags);
+			"INSERT INTO `messages` (`conversationId`, `ownerName`, `datetime`, `text`, `flags`) VALUES(%i, \"%s\", %i, %s, %i)",
+			conv_info->id, from, time, escaped_string, flags);
 		db_process_result(dres);
 
 		/* updating log size */
