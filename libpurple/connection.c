@@ -360,24 +360,27 @@ void
 purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 {
 	PurpleConnectionUiOps *ops;
+	PurpleConnectionPrivate *pcp;
 
 	g_return_if_fail(gc != NULL);
+	
+	pcp = gc->priv;
 
-	if (gc->state == state)
+	if (pcp->state == state)
 		return;
 
-	gc->state = state;
+	pcp->state = state;
 
 	ops = purple_connections_get_ui_ops();
 
-	if (gc->state == PURPLE_CONNECTING) {
+	if (pcp->state == PURPLE_CONNECTING) {
 		connections_connecting = g_list_append(connections_connecting, gc);
 	}
 	else {
 		connections_connecting = g_list_remove(connections_connecting, gc);
 	}
 
-	if (gc->state == PURPLE_CONNECTED) {
+	if (pcp->state == PURPLE_CONNECTED) {
 		PurpleAccount *account;
 		PurplePresence *presence;
 
@@ -414,7 +417,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 		update_keepalive(gc, TRUE);
 	}
-	else if (gc->state == PURPLE_DISCONNECTED) {
+	else if (pcp->state == PURPLE_DISCONNECTED) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 
 		if (purple_prefs_get_bool("/purple/logging/log_system"))
@@ -445,7 +448,7 @@ purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(account != NULL);
 
-	gc->account = account;
+	gc->priv->account = account;
 }
 
 void
@@ -462,7 +465,7 @@ purple_connection_get_state(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, PURPLE_DISCONNECTED);
 
-	return gc->state;
+	return gc->priv->state;
 }
 
 PurpleAccount *
@@ -470,7 +473,7 @@ purple_connection_get_account(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->account;
+	return gc->priv->account;
 }
 
 const char *
@@ -835,7 +838,7 @@ purple_connection_flags_get_gtype(void) {
 			{ 0, NULL, NULL },
 		};
 
-		type = g_flags_register_static("PurpleConnectionState", values);
+		type = g_flags_register_static("PurpleConnectionFlags", values);
 	}
 
 	return type;
