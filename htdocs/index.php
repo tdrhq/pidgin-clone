@@ -18,7 +18,13 @@
 
 <div id="download">
 <img src="/shared/img/logo.pidgin.png" alt="[Pidgin Logo]" id="logo" width="107" height="185" />
-<a href="/download/">
+<script language="JavaScript"><!--
+if (navigator.platform.indexOf("Win") != -1)
+	document.write("<a href=\"/download/windows/\">");
+else
+	document.write("<a href=\"/download/\">");
+// --></script>
+<noscript><a href="/download/"></noscript>
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="64" height="67" />
 Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?></span></a>
