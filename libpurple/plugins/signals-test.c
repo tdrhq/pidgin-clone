@@ -474,20 +474,6 @@ chat_topic_changed_cb(PurpleConversation *conv, const char *who,
 					purple_conversation_get_name(conv), topic,
 					(who) ? who : "unknown");
 }
-/**************************************************************************
- * Ciphers signal callbacks
- **************************************************************************/
-static void
-cipher_added_cb(PurpleCipher *cipher, void *data) {
-	purple_debug_misc("signals test", "cipher %s added\n",
-					purple_cipher_get_name(cipher));
-}
-
-static void
-cipher_removed_cb(PurpleCipher *cipher, void *data) {
-	purple_debug_misc("signals test", "cipher %s removed\n",
-					purple_cipher_get_name(cipher));
-}
 
 /**************************************************************************
  * Core signal callbacks
@@ -586,7 +572,6 @@ plugin_load(PurplePlugin *plugin)
 	void *conn_handle     = purple_connections_get_handle();
 	void *conv_handle     = purple_conversations_get_handle();
 	void *accounts_handle = purple_accounts_get_handle();
-	void *ciphers_handle  = purple_ciphers_get_handle();
 	void *ft_handle       = purple_xfers_get_handle();
 	void *sound_handle    = purple_sounds_get_handle();
 	void *notify_handle   = purple_notify_get_handle();
@@ -696,12 +681,6 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(chat_left_cb), NULL);
 	purple_signal_connect(conv_handle, "chat-topic-changed",
 						plugin, PURPLE_CALLBACK(chat_topic_changed_cb), NULL);
-
-	/* Ciphers signals */
-	purple_signal_connect(ciphers_handle, "cipher-added",
-						plugin, PURPLE_CALLBACK(cipher_added_cb), NULL);
-	purple_signal_connect(ciphers_handle, "cipher-removed",
-						plugin, PURPLE_CALLBACK(cipher_removed_cb), NULL);
 
 	/* Core signals */
 	purple_signal_connect(core_handle, "quitting",
