@@ -27,12 +27,21 @@
 #ifndef _PURPLE_ACCOUNT_H_
 #define _PURPLE_ACCOUNT_H_
 
-#include <glib-object.h>
 #include <glib.h>
 #include <glib-object.h>
 
+#define PURPLE_TYPE_ACCOUNT				(purple_account_get_gtype())
+#define PURPLE_ACCOUNT(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT, PurpleAccount))
+#define PURPLE_ACCOUNT_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ACCOUNT, PurpleAccountClass))
+#define PURPLE_IS_ACCOUNT(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT))
+#define PURPLE_IS_ACCOUNT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ACCOUNT))
+#define PURPLE_ACCOUNT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ACCOUNT, PurpleAccountClass))
+
+typedef struct _PurpleAccount			PurpleAccount;
+typedef struct _PurpleAccountPrivate		PurpleAccountPrivate;
+typedef struct _PurpleAccountClass		PurpleAccountClass;
+
 typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
-typedef struct _PurpleAccount      PurpleAccount;
 
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
 typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
@@ -142,6 +151,12 @@ struct _PurpleAccount
 	void *registration_cb_user_data;
 
 	gpointer priv;              /**< Pointer to opaque private data. */
+};
+
+struct _PurpleAccountClass
+{
+	GObjectClass parent;
+	void (*_purple_reserved[4])(void);
 };
 
 #ifdef __cplusplus
@@ -1034,6 +1049,46 @@ void purple_accounts_init(void);
  */
 void purple_accounts_uninit(void);
 
+/*@}*/
+
+/**************************************************************************/
+/** @name Account Manager */
+/**************************************************************************/
+/*@{*/
+
+#define PURPLE_TYPE_ACCOUNT_MANAGER				(purple_account_manager_get_gtype())
+#define PURPLE_ACCOUNT_MANAGER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManager))
+#define PURPLE_ACCOUNT_MANAGER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerClass))
+#define PURPLE_IS_ACCOUNT_MANAGER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT_MANAGER))
+#define PURPLE_IS_ACCOUNT_MANAGER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ACCOUNT_MANAGER))
+#define PURPLE_ACCOUNT_MANAGER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerClass))
+
+typedef struct _PurpleAccountManager          PurpleAccountManager;
+typedef struct _PurpleAccountManagerPrivate   PurpleAccountManagerPrivate;
+typedef struct _PurpleAccountManagerClass     PurpleAccountManagerClass;
+
+struct _PurpleAccountManager
+{
+	GObject gparent;
+
+	PurpleAccountManagerPrivate *priv;
+
+	void (*_purple_reserved[4])(void);
+};
+
+struct _PurpleAccountManagerClass
+{
+	GObjectClass gparent;
+	void (*_purple_reserved[4])(void);
+};
+
+GType purple_account_manager_get_gtype(void);
+PurpleAccountManager *purple_account_manager_get(void);
+
+void purple_account_manager_add_account(PurpleAccountManager *manager, PurpleAccount *account);
+void purple_account_manager_remove_account(PurpleAccountManager *manager, PurpleAccount *account);
+void purple_account_manager_reorder_account(PurpleAccountManager *manager, PurpleAccount *account, int new_index);
+GList *purple_account_manager_get_all_accounts(PurpleAccountManager *manager);
 /*@}*/
 
 #ifdef __cplusplus
