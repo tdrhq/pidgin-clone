@@ -581,23 +581,21 @@ static void
 auth_hmac_md5(const char *challenge, size_t challenge_len, const char *key, size_t key_len, guchar *digest)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	int i;
 	/* inner padding - key XORd with ipad */
 	unsigned char k_ipad[65];    
 	/* outer padding - key XORd with opad */
 	unsigned char k_opad[65];    
 
-	cipher = purple_ciphers_find_cipher("md5");
+	cipher = purple_md5_cipher_new();
 
 	/* if key is longer than 64 bytes reset it to key=MD5(key) */
 	if (strlen(key) > 64) {
 		guchar keydigest[16];
 
-		context = purple_cipher_context_new(cipher, NULL);
-		purple_cipher_context_append(context, (const guchar *)key, strlen(key));
-		purple_cipher_context_digest(context, 16, keydigest, NULL);
-		purple_cipher_context_destroy(context);
+		purple_cipher_append(cipher, (const guchar *)key, strlen(key));
+		purple_cipher_digest(cipher, 16, keydigest, NULL);
+		purple_cipher_reset(cipher);
 
 		key = (char *)keydigest;
 		key_len = 16;
@@ -627,18 +625,16 @@ auth_hmac_md5(const char *challenge, size_t challenge_len, const char *key, size
 	}
 
 	/* perform inner MD5 */
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, k_ipad, 64); /* start with inner pad */
-	purple_cipher_context_append(context, (const guchar *)challenge, challenge_len); /* then text of datagram */
-	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 1st pass */
-	purple_cipher_context_destroy(context);
+	purple_cipher_append(cipher, k_ipad, 64); /* start with inner pad */
+	purple_cipher_append(cipher, (const guchar *)challenge, challenge_len); /* then text of datagram */
+	purple_cipher_digest(cipher, 16, digest, NULL); /* finish up 1st pass */
+	purple_cipher_reset(cipher);
 
-	/* perform outer MD5 */	
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, k_opad, 64); /* start with outer pad */
-	purple_cipher_context_append(context, digest, 16); /* then results of 1st hash */
-	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 2nd pass */
-	purple_cipher_context_destroy(context);
+	/* perform outer MD5 */
+	purple_cipher_append(cipher, k_opad, 64); /* start with outer pad */
+	purple_cipher_append(cipher, digest, 16); /* then results of 1st hash */
+	purple_cipher_digest(cipher, 16, digest, NULL); /* finish up 2nd pass */
+	g_object_unref(G_OBJECT(cipher));
 }
 
 static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)

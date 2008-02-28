@@ -64,6 +64,8 @@ GType purple_des_cipher_get_gtype(void);
 
 PurpleCipher *purple_des_cipher_new(void);
 
+int purple_des_cipher_ecb_crypt(PurpleDESCipher *des_cipher, const guint8 * from, guint8 * to, int mode);
+
 G_END_DECLS
 
 #endif /* PURPLE_DES_CIPHER_H */

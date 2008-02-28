@@ -960,7 +960,7 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 
 		cipher = purple_md5_cipher_new();
 		purple_cipher_append(cipher, buf, len);
-		purple_cipher_digest(cipher, 16, digest, NULL);
+		purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
 		g_object_unref(G_OBJECT(cipher));
 
 		byte_stream_putraw(&frame->data, digest, 0x10);
@@ -976,7 +976,7 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 		 */
 		cipher = purple_md5_cipher_new();
 		purple_cipher_append(cipher, &nil, 0);
-		purple_cipher_digest(cipher, 16, digest, NULL);
+		purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
 		g_object_unref(G_OBJECT(cipher));
 
 		byte_stream_putraw(&frame->data, digest, 0x10);

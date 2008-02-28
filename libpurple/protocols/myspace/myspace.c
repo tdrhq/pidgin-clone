@@ -105,16 +105,6 @@ static void msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userin
 gboolean 
 msim_load(PurplePlugin *plugin)
 {
-	/* If compiled to use RC4 from libpurple, check if it is really there. */
-	if (!purple_ciphers_find_cipher("rc4")) {
-		purple_debug_error("msim", "rc4 not in libpurple, but it is required - not loading MySpaceIM plugin!\n");
-		purple_notify_error(plugin, _("Missing Cipher"), 
-				_("The RC4 cipher could not be found"),
-				_("Upgrade "
-					"to a libpurple with RC4 support (>= 2.0.1). MySpaceIM "
-					"plugin will not be loaded."));
-		return FALSE;
-	}
 	return TRUE;
 }
 
@@ -395,10 +385,7 @@ static gchar *
 msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE], 
 		const gchar *email, const gchar *password, guint *response_len)
 {
-	PurpleCipherContext *key_context;
-	PurpleCipher *sha1;
-	PurpleCipherContext *rc4;
-
+	PurpleCipher *cipher;
 	guchar hash_pw[HASH_SIZE];
 	guchar key[HASH_SIZE];
 	gchar *password_utf16le, *password_utf8_lc;
@@ -439,8 +426,12 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	}
 
 	/* Compute password hash */ 
-	purple_cipher_digest_region("sha1", (guchar *)password_utf16le, 
-			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
+	cipher = purple_sha1_cipher_new();
+	purple_cipher_append(cipher, (guchar *)password_utf16le,
+						 conv_bytes_written);
+	purple_cipher_digest(cipher, sizeof(hash_pw), hash_pw, NULL);
+	purple_cipher_reset(cipher);
+
 	g_free(password_utf16le);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -451,12 +442,10 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 #endif
 
 	/* key = sha1(sha1(pw) + nonce2) */
-	sha1 = purple_ciphers_find_cipher("sha1");
-	key_context = purple_cipher_context_new(sha1, NULL);
-	purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
-	purple_cipher_context_append(key_context, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
-	purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
-	purple_cipher_context_destroy(key_context);
+	purple_cipher_append(cipher, hash_pw, HASH_SIZE);
+	purple_cipher_append(cipher, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
+	purple_cipher_digest(cipher, sizeof(key), key, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
 	purple_debug_info("msim", "key = ");
@@ -466,12 +455,12 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	purple_debug_info("msim", "\n");
 #endif
 
-	rc4 = purple_cipher_context_new_by_name("rc4", NULL);
+	cipher = purple_rc4_cipher_new();
 
 	/* Note: 'key' variable is 0x14 bytes (from SHA-1 hash), 
 	 * but only first 0x10 used for the RC4 key. */
-	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
-	purple_cipher_context_set_key(rc4, key);
+	purple_rc4_cipher_set_key_len(PURPLE_RC4_CIPHER(cipher), 0x10);
+	purple_cipher_set_key(cipher, key);
 
 	/* TODO: obtain IPs of network interfaces */
 
@@ -486,9 +475,10 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	data_out = g_new0(guchar, data_len);
 
-	purple_cipher_context_encrypt(rc4, (const guchar *)data, 
-			data_len, data_out, &data_out_len);
-	purple_cipher_context_destroy(rc4);
+	purple_cipher_encrypt(cipher, (const guchar *)data, data_len,
+						  data_out, &data_out_len);
+	g_object_unref(G_OBJECT(cipher));
+
 	g_free(data);
 
 	if (data_out_len != data_len) {

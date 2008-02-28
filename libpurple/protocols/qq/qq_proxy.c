@@ -78,9 +78,8 @@ static guint8 *_gen_pwkey(const gchar *pwd)
 	cipher = purple_md5_cipher_new();
 	purple_cipher_append(cipher, (guchar *) pwd, strlen(pwd));
 	purple_cipher_digest(cipher, sizeof(pwkey_tmp), pwkey_tmp, NULL);
-	g_object_unref(G_OBJECT(cipher));
+	purple_cipher_reset(cipher);
 
-	cipher = purple_md5_cipher_new();
 	purple_cipher_append(cipher, pwkey_tmp, QQ_KEY_LENGTH);
 	purple_cipher_digest(cipher, sizeof(pwkey_tmp), pwkey_tmp, NULL);
 	g_object_unref(G_OBJECT(cipher));

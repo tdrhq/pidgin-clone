@@ -20,9 +20,19 @@
 /******************************************************************************
  * Structs
  *****************************************************************************/
-struct _PurpleDESCipherPriv {
+struct _PurpleDESCipherPriv
+{
 	guint32 encrypt_subkeys[32];
 	guint32 decrypt_subkeys[32];
+};
+
+/******************************************************************************
+ * Enums
+ *****************************************************************************/
+enum {
+	PROP_NONE,
+	PROP_KEY,
+	PROP_LAST,
 };
 
 /******************************************************************************
@@ -358,8 +368,8 @@ purple_des_cipher_set_key(PurpleCipher *cipher, const guchar *key) {
  * Electronic Codebook Mode DES encryption/decryption of data according to
  * 'mode'.
  */
-static int
-des_ecb_crypt(PurpleDESCipher *des_cipher, const guint8 * from, guint8 * to,
+int
+purple_des_cipher_ecb_crypt(PurpleDESCipher *des_cipher, const guint8 * from, guint8 * to,
 			  int mode)
 {
 	guint32 left, right, work;
@@ -395,7 +405,7 @@ purple_des_cipher_encrypt(PurpleCipher *cipher, const guchar data[],
 	guint8 buf[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	while(offset + 8 <= len) {
-		des_ecb_crypt(des_cipher, data + offset, output + offset, 0);
+		purple_des_cipher_ecb_crypt(des_cipher, data + offset, output + offset, 0);
 		offset += 8;
 	}
 
@@ -410,7 +420,37 @@ purple_des_cipher_encrypt(PurpleCipher *cipher, const guchar data[],
 			tmp++;
 		}
 
-		des_ecb_crypt(des_cipher, buf, output + offset, 0);
+		purple_des_cipher_ecb_crypt(des_cipher, buf, output + offset, 0);
+	}
+
+	return 0;
+}
+
+static int
+purple_des_cipher_decrypt(PurpleCipher *cipher, const guchar data[],
+						  size_t len, guchar output[], size_t *outlen)
+{
+	PurpleDESCipher *des_cipher = PURPLE_DES_CIPHER(cipher);
+	int offset = 0, i = 0, tmp;
+	guint8 buf[8] = {0,0,0,0,0,0,0,0};
+
+	while(offset + 8 <= len) {
+		purple_des_cipher_ecb_crypt(des_cipher, data + offset, output + offset, 1);
+		offset += 8;
+	}
+
+	*outlen = len;
+
+	if(offset<len) {
+		*outlen += len - offset;
+		tmp = offset;
+
+		while(tmp<len) {
+			buf[i++] = data[tmp];
+			tmp++;
+		}
+
+		purple_des_cipher_ecb_crypt(des_cipher, buf, output + offset, 1);
 	}
 
 	return 0;
@@ -420,7 +460,24 @@ purple_des_cipher_encrypt(PurpleCipher *cipher, const guchar data[],
  * Object Stuff
  *****************************************************************************/
 static void
-purple_des_cipher_finalize(GObject *obj) {
+purple_des_cipher_set_property(GObject *obj, guint param_id,
+							   const GValue *value, GParamSpec *pspec)
+{
+	PurpleCipher *cipher = PURPLE_CIPHER(obj);
+
+	switch(param_id) {
+		case PROP_KEY:
+			purple_cipher_set_key(cipher, (guchar *)g_value_get_string(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
+purple_des_cipher_finalize(GObject *obj)
+{
 	PurpleDESCipher *des_cipher = PURPLE_DES_CIPHER(obj);
 
 	memset(des_cipher->priv, 0, sizeof(des_cipher->priv));
@@ -429,20 +486,29 @@ purple_des_cipher_finalize(GObject *obj) {
 }
 
 static void
-purple_des_cipher_class_init(PurpleDESCipherClass *klass) {
+purple_des_cipher_class_init(PurpleDESCipherClass *klass)
+{
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
+	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->finalize = purple_des_cipher_finalize;
+	obj_class->set_property = purple_des_cipher_set_property;
 
 	cipher_class->encrypt = purple_des_cipher_encrypt;
+	cipher_class->decrypt = purple_des_cipher_decrypt;
 	cipher_class->set_key = purple_des_cipher_set_key;
+
+	pspec = g_param_spec_string("key", "key", "key", NULL,
+								G_PARAM_WRITABLE);
+	g_object_class_install_property(obj_class, PROP_KEY, pspec);
 }
 
 static void
-purple_des_cipher_init(PurpleCipher *cipher) {
+purple_des_cipher_init(PurpleCipher *cipher)
+{
 	PurpleDESCipher *des_cipher = PURPLE_DES_CIPHER(cipher);
 
 	des_cipher->priv = g_new0(PurpleDESCipherPriv, 1);
@@ -452,7 +518,8 @@ purple_des_cipher_init(PurpleCipher *cipher) {
  * API
  *****************************************************************************/
 GType
-purple_des_cipher_get_gtype(void) {
+purple_des_cipher_get_gtype(void)
+{
 	static GType type = 0;
 
 	if(type == 0) {
@@ -478,7 +545,8 @@ purple_des_cipher_get_gtype(void) {
 }
 
 PurpleCipher *
-purple_des_cipher_new(void) {
+purple_des_cipher_new(void)
+{
 	return g_object_new(PURPLE_TYPE_DES_CIPHER, NULL);
 }
 

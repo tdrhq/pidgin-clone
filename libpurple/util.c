@@ -26,6 +26,7 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
+#include "md5cipher.h"
 #include "notify.h"
 #include "prpl.h"
 #include "prefs.h"
@@ -4691,3 +4692,160 @@ char * purple_util_format_song_info(const char *title, const char *artist, const
 	return g_string_free(string, FALSE);
 }
 
+/**************************************************************************
+ * HTTP Digest Functions
+ **************************************************************************/
+gchar *purple_http_digest_calculate_session_key(
+		const gchar *algorithm,
+		const gchar *username,
+		const gchar *realm,
+		const gchar *password,
+		const gchar *nonce,
+		const gchar *client_nonce)
+{
+	PurpleCipher *cipher;
+	gchar hash[33]; /* We only support MD5. */
+
+	g_return_val_if_fail(username != NULL, NULL);
+	g_return_val_if_fail(realm    != NULL, NULL);
+	g_return_val_if_fail(password != NULL, NULL);
+	g_return_val_if_fail(nonce    != NULL, NULL);
+
+	/* Check for a supported algorithm. */
+	g_return_val_if_fail(algorithm == NULL ||
+						 *algorithm == '\0' ||
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
+
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (guchar *)username, strlen(username));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+	purple_cipher_append(cipher, (guchar *)realm, strlen(realm));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+	purple_cipher_append(cipher, (guchar *)password, strlen(password));
+
+	if (algorithm != NULL && !g_ascii_strcasecmp(algorithm, "MD5-sess"))
+	{
+		guchar digest[16];
+
+		if (client_nonce == NULL)
+		{
+			g_object_unref(G_OBJECT(cipher));
+			purple_debug_error("cipher", "Required client_nonce missing for MD5-sess digest calculation.\n");
+			return NULL;
+		}
+
+		purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+		purple_cipher_reset(cipher);
+
+		purple_cipher_append(cipher, digest, sizeof(digest));
+		purple_cipher_append(cipher, (guchar *)":", 1);
+		purple_cipher_append(cipher, (guchar *)nonce, strlen(nonce));
+		purple_cipher_append(cipher, (guchar *)":", 1);
+		purple_cipher_append(cipher, (guchar *)client_nonce, strlen(client_nonce));
+	}
+
+	purple_cipher_digest_to_str(cipher, sizeof(hash), hash, NULL);
+	g_object_unref(G_OBJECT(cipher));
+
+	return g_strdup(hash);
+}
+
+gchar *purple_http_digest_calculate_response(
+		const gchar *algorithm,
+		const gchar *method,
+		const gchar *digest_uri,
+		const gchar *qop,
+		const gchar *entity,
+		const gchar *nonce,
+		const gchar *nonce_count,
+		const gchar *client_nonce,
+		const gchar *session_key)
+{
+	PurpleCipher *cipher;
+	static gchar hash2[33]; /* We only support MD5. */
+
+	g_return_val_if_fail(method      != NULL, NULL);
+	g_return_val_if_fail(digest_uri  != NULL, NULL);
+	g_return_val_if_fail(nonce       != NULL, NULL);
+	g_return_val_if_fail(session_key != NULL, NULL);
+
+	/* Check for a supported algorithm. */
+	g_return_val_if_fail(algorithm == NULL ||
+						 *algorithm == '\0' ||
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
+
+	/* Check for a supported "quality of protection". */
+	g_return_val_if_fail(qop == NULL ||
+						 *qop == '\0' ||
+						 g_ascii_strcasecmp(qop, "auth") ||
+						 g_ascii_strcasecmp(qop, "auth-int"), NULL);
+
+	cipher = purple_md5_cipher_new();
+
+	purple_cipher_append(cipher, (guchar *)method, strlen(method));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+	purple_cipher_append(cipher, (guchar *)digest_uri, strlen(digest_uri));
+
+	if (qop != NULL && !g_ascii_strcasecmp(qop, "auth-int"))
+	{
+		PurpleCipher *cipher2;
+		gchar entity_hash[33];
+
+		if (entity == NULL)
+		{
+			g_object_unref(G_OBJECT(cipher));
+			purple_debug_error("cipher", "Required entity missing for auth-int digest calculation.\n");
+			return NULL;
+		}
+
+		cipher2 = purple_md5_cipher_new();
+		purple_cipher_append(cipher2, (guchar *)entity, strlen(entity));
+		purple_cipher_digest_to_str(cipher2, sizeof(entity_hash), entity_hash, NULL);
+		g_object_unref(G_OBJECT(cipher2));
+
+		purple_cipher_append(cipher, (guchar *)":", 1);
+		purple_cipher_append(cipher, (guchar *)entity_hash, strlen(entity_hash));
+	}
+
+	purple_cipher_digest_to_str(cipher, sizeof(hash2), hash2, NULL);
+	purple_cipher_reset(cipher);
+
+	purple_cipher_append(cipher, (guchar *)session_key, strlen(session_key));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+	purple_cipher_append(cipher, (guchar *)nonce, strlen(nonce));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+
+	if (qop != NULL && *qop != '\0')
+	{
+		if (nonce_count == NULL)
+		{
+			g_object_unref(G_OBJECT(cipher));
+			purple_debug_error("cipher", "Required nonce_count missing for digest calculation.\n");
+			return NULL;
+		}
+
+		if (client_nonce == NULL)
+		{
+			g_object_unref(G_OBJECT(cipher));
+			purple_debug_error("cipher", "Required client_nonce missing for digest calculation.\n");
+			return NULL;
+		}
+
+		purple_cipher_append(cipher, (guchar *)nonce_count, strlen(nonce_count));
+		purple_cipher_append(cipher, (guchar *)":", 1);
+		purple_cipher_append(cipher, (guchar *)client_nonce, strlen(client_nonce));
+		purple_cipher_append(cipher, (guchar *)":", 1);
+
+		purple_cipher_append(cipher, (guchar *)qop, strlen(qop));
+
+		purple_cipher_append(cipher, (guchar *)":", 1);
+	}
+
+	purple_cipher_append(cipher, (guchar *)hash2, strlen(hash2));
+	purple_cipher_digest_to_str(cipher, sizeof(hash2), hash2, NULL);
+	g_object_unref(G_OBJECT(cipher));
+
+	return g_strdup(hash2);
+}

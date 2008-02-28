@@ -45,12 +45,17 @@ purple_coresources = \
 	conversation.c \
 	core.c \
 	debug.c \
+	descipher.c \
+	des3cipher.c \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
+	hmaccipher.c \
 	idle.c \
 	imgstore.c \
 	log.c \
+	md4cipher.c \
+	md5cipher.c \
 	mime.c \
 	nat-pmp.c \
 	network.c \
@@ -63,10 +68,12 @@ purple_coresources = \
 	privacy.c \
 	proxy.c \
 	prpl.c \
+	rc4cipher.c \
 	request.c \
 	roomlist.c \
 	savedstatuses.c \
 	server.c \
+	sha1cipher.c \
 	signals.c \
 	dnsquery.c \
 	dnssrv.c\
@@ -96,13 +103,18 @@ purple_coreheaders = \
 	core.h \
 	dbus-maybe.h \
 	debug.h \
+	descipher.h \
+	des3cipher.h \
 	desktopitem.h \
 	eventloop.h \
 	ft.h \
 	gaim-compat.h \
+	hmaccipher.h \
 	idle.h \
 	imgstore.h \
 	log.h \
+	md4cipher.h \
+	md5cipher.h \
 	mime.h \
 	nat-pmp.h \
 	network.h \
@@ -115,6 +127,7 @@ purple_coreheaders = \
 	privacy.h \
 	proxy.h \
 	prpl.h \
+	rc4cipher.h \
 	request.h \
 	roomlist.h \
 	savedstatuses.h \
@@ -122,6 +135,7 @@ purple_coreheaders = \
 	signals.h \
 	dnsquery.h \
 	dnssrv.h \
+	sha1cipher.h \
 	status.h \
 	stringref.h \
 	stun.h \
