@@ -81,7 +81,7 @@ source code as well.</p>
 </div>
 
 <!-- This will pull from somewhere else at some point -->
-<p id="lowblurb">2.3.1 is here.</p>
+<p id="lowblurb">2.4.0 is here.</p>
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
