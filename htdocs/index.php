@@ -25,7 +25,7 @@ else
 	document.write("<a href=\"/download/\">");
 // --></script>
 <noscript><a href="/download/"></noscript>
-<img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="64" height="67" />
+<img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="48" height="48" />
 Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?></span></a>
 </div>
