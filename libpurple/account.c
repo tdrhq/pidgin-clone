@@ -25,6 +25,7 @@
  */
 #include "internal.h"
 #include "account.h"
+#include "accountmanager.h"
 #include "core.h"
 #include "dbus-maybe.h"
 #include "debug.h"
@@ -469,6 +470,7 @@ save_cb(gpointer data)
 static void
 schedule_accounts_save(void)
 {
+#warning Loading and saving should really be moved to the account manager
 	if (save_timer == 0)
 		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
@@ -2568,6 +2570,8 @@ purple_accounts_reorder(PurpleAccount *account, gint new_index)
 {
 	purple_account_manager_reorder_account(purple_account_manager_get(),
 			account, new_index);
+
+	schedule_accounts_save();
 }
 
 GList *
@@ -2708,7 +2712,7 @@ purple_accounts_init(void)
 	purple_signal_register(handle, "account-alias-changed",
 						 purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-							 			PURPLE_SUBTYPE_ACCOUNT),
+										PURPLE_SUBTYPE_ACCOUNT),
 						 purple_value_new(PURPLE_TYPE_STRING));
 
 	purple_signal_register(handle, "account-authorization-requested",
@@ -2760,146 +2764,5 @@ purple_accounts_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
-}
-
-/******************************************************************************
- * PurpleAccountManager API
- *****************************************************************************/
-enum
-{
-	ACCOUNT_ADDED,
-	ACCOUNT_REMOVED,
-	ACCOUNT_MANAGER_LAST_SIGNAL
-};
-static int account_manager_signals[ACCOUNT_MANAGER_LAST_SIGNAL];
-
-struct _PurpleAccountManagerPrivate
-{
-	GList *accounts;
-};
-
-#define PURPLE_ACCOUNT_MANAGER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerPrivate))
-
-static void
-purple_account_manager_class_init(PurpleAccountManagerClass *klass)
-{
-	account_manager_signals[ACCOUNT_ADDED] =
-		g_signal_new("account-added",
-				G_OBJECT_CLASS_TYPE(klass),
-				G_SIGNAL_RUN_LAST,
-				0, NULL, NULL,
-#warning FIXME: Change this to __OBJECT when PurpleAccount is a GObject
-				purple_smarshal_VOID__POINTER,
-				G_TYPE_NONE,
-				1, G_TYPE_POINTER);//PURPLE_TYPE_ACCOUNT);
-
-	account_manager_signals[ACCOUNT_REMOVED] =
-		g_signal_new("account-removed",
-				G_OBJECT_CLASS_TYPE(klass),
-				G_SIGNAL_RUN_LAST,
-				0, NULL, NULL,
-#warning FIXME: Change this to __OBJECT when PurpleAccount is a GObject
-				purple_smarshal_VOID__POINTER,
-				G_TYPE_NONE,
-				1, G_TYPE_POINTER);//PURPLE_TYPE_ACCOUNT);
-
-	g_type_class_add_private(klass, sizeof(PurpleAccountManagerPrivate));
-}
-
-static void
-purple_account_manager_init(PurpleAccountManager *manager)
-{
-	manager->priv = PURPLE_ACCOUNT_MANAGER_GET_PRIVATE(manager);
-	manager->priv->accounts = NULL;
-}
-
-GType purple_account_manager_get_gtype(void)
-{
-	static GType type = 0;
-
-	if(type == 0) {
-		static const GTypeInfo info = {
-			sizeof(PurpleAccountManagerClass),
-			NULL,
-			NULL,
-			(GClassInitFunc)purple_account_manager_class_init,
-			NULL,
-			NULL,
-			sizeof(PurpleAccountManager),
-			0,
-			(GInstanceInitFunc)purple_account_manager_init,
-			NULL,
-		};
-
-		type = g_type_register_static(G_TYPE_OBJECT,
-				"PurpleAccountManager",
-				&info, 0);
-	}
-
-	return type;
-}
-
-PurpleAccountManager *purple_account_manager_get(void)
-{
-	static PurpleAccountManager *manager = NULL;
-	if (manager == NULL)
-		manager = g_object_new(PURPLE_TYPE_ACCOUNT_MANAGER, NULL);
-	return manager;
-}
-
-void purple_account_manager_add_account(PurpleAccountManager *manager, PurpleAccount *account)
-{
-	if (g_list_find(manager->priv->accounts, account))
-		return;
-
-	manager->priv->accounts = g_list_append(manager->priv->accounts, account);
-	g_signal_emit(manager, account_manager_signals[ACCOUNT_ADDED], 0, account);
-}
-
-void purple_account_manager_remove_account(PurpleAccountManager *manager, PurpleAccount *account)
-{
-	if (!g_list_find(manager->priv->accounts, account))
-		return;
-
-	manager->priv->accounts = g_list_remove(manager->priv->accounts, account);
-	g_signal_emit(manager, account_manager_signals[ACCOUNT_REMOVED], 0, account);
-}
-
-void purple_account_manager_reorder_account(PurpleAccountManager *manager, PurpleAccount *account, int new_index)
-{
-	gint index;
-	GList *l;
-	GList *accounts = manager->priv->accounts;
-
-	g_return_if_fail(account != NULL);
-	g_return_if_fail(new_index <= g_list_length(accounts));
-
-	index = g_list_index(accounts, account);
-
-	if (index == -1) {
-		purple_debug_error("account",
-				   "Unregistered account (%s) discovered during reorder!\n",
-				   purple_account_get_username(account));
-		return;
-	}
-
-	l = g_list_nth(accounts, index);
-
-	if (new_index > index)
-		new_index--;
-
-	/* Remove the old one. */
-	accounts = g_list_delete_link(accounts, l);
-
-	/* Insert it where it should go. */
-	accounts = g_list_insert(accounts, account, new_index);
-	manager->priv->accounts = accounts;
-
-	schedule_accounts_save();
-}
-
-GList *purple_account_manager_get_all_accounts(PurpleAccountManager *manager)
-{
-	return manager->priv->accounts;
 }
 

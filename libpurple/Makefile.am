@@ -35,6 +35,7 @@ SUBDIRS = . $(GCONF_DIR) plugins protocols tests example
 
 purple_coresources = \
 	account.c \
+	accountmanager.c \
 	accountopt.c \
 	blist.c \
 	buddyicon.c \
@@ -92,6 +93,7 @@ purple_coresources = \
 
 purple_coreheaders = \
 	account.h \
+	accountmanager.h \
 	accountopt.h \
 	blist.h \
 	buddyicon.h \

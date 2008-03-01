@@ -1051,46 +1051,6 @@ void purple_accounts_uninit(void);
 
 /*@}*/
 
-/**************************************************************************/
-/** @name Account Manager */
-/**************************************************************************/
-/*@{*/
-
-#define PURPLE_TYPE_ACCOUNT_MANAGER				(purple_account_manager_get_gtype())
-#define PURPLE_ACCOUNT_MANAGER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManager))
-#define PURPLE_ACCOUNT_MANAGER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerClass))
-#define PURPLE_IS_ACCOUNT_MANAGER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT_MANAGER))
-#define PURPLE_IS_ACCOUNT_MANAGER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ACCOUNT_MANAGER))
-#define PURPLE_ACCOUNT_MANAGER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerClass))
-
-typedef struct _PurpleAccountManager          PurpleAccountManager;
-typedef struct _PurpleAccountManagerPrivate   PurpleAccountManagerPrivate;
-typedef struct _PurpleAccountManagerClass     PurpleAccountManagerClass;
-
-struct _PurpleAccountManager
-{
-	GObject gparent;
-
-	PurpleAccountManagerPrivate *priv;
-
-	void (*_purple_reserved[4])(void);
-};
-
-struct _PurpleAccountManagerClass
-{
-	GObjectClass gparent;
-	void (*_purple_reserved[4])(void);
-};
-
-GType purple_account_manager_get_gtype(void);
-PurpleAccountManager *purple_account_manager_get(void);
-
-void purple_account_manager_add_account(PurpleAccountManager *manager, PurpleAccount *account);
-void purple_account_manager_remove_account(PurpleAccountManager *manager, PurpleAccount *account);
-void purple_account_manager_reorder_account(PurpleAccountManager *manager, PurpleAccount *account, int new_index);
-GList *purple_account_manager_get_all_accounts(PurpleAccountManager *manager);
-/*@}*/
-
 #ifdef __cplusplus
 }
 #endif
