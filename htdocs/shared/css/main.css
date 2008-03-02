@@ -291,7 +291,7 @@ a:hover, a:active {
 #download {
   position: absolute;
   left: 101px;
-  top: 157px;
+  top: 166px;
   background: url('/shared/img/balloon.middle.gif') no-repeat left 17px;
   width: 268px;
 }
@@ -309,6 +309,7 @@ a:hover, a:active {
 #download a img, .box_download a img {
   float: left;
   margin-right: 6px;
+  margin-bottom: 10px;
 }
 
 #download a {
