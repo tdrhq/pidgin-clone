@@ -76,7 +76,7 @@ License (GPL) version 2.  This means you are free to use it and to modify it,
 but if you distribute your modifications you must distribute the modified
 source code as well.</p>
 
-<p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.gif" alt="Learn More" /></a></p>
+<p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.png" alt="Learn More" width="128" height="32"/></a></p>
 
 </div>
 </div>
