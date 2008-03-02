@@ -309,13 +309,13 @@ a:hover, a:active {
 #download a img, .box_download a img {
   float: left;
   margin-right: 6px;
-  margin-top: 9px;
   margin-bottom: 10px;
 }
 
 #download a {
   display: block;
   padding-left: 35px;
+  margin-top: 9px;
 }
 
 #main, #blogbrief, #newsbrief {
