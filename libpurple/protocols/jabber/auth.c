@@ -22,10 +22,11 @@
 
 #include "account.h"
 #include "debug.h"
-#include "cipher.h"
 #include "core.h"
 #include "conversation.h"
+#include "md5cipher.h"
 #include "request.h"
+#include "sha1cipher.h"
 #include "sslconn.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -580,23 +581,21 @@ static void
 auth_hmac_md5(const char *challenge, size_t challenge_len, const char *key, size_t key_len, guchar *digest)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	int i;
 	/* inner padding - key XORd with ipad */
 	unsigned char k_ipad[65];    
 	/* outer padding - key XORd with opad */
 	unsigned char k_opad[65];    
 
-	cipher = purple_ciphers_find_cipher("md5");
+	cipher = purple_md5_cipher_new();
 
 	/* if key is longer than 64 bytes reset it to key=MD5(key) */
 	if (strlen(key) > 64) {
 		guchar keydigest[16];
 
-		context = purple_cipher_context_new(cipher, NULL);
-		purple_cipher_context_append(context, (const guchar *)key, strlen(key));
-		purple_cipher_context_digest(context, 16, keydigest, NULL);
-		purple_cipher_context_destroy(context);
+		purple_cipher_append(cipher, (const guchar *)key, strlen(key));
+		purple_cipher_digest(cipher, 16, keydigest, NULL);
+		purple_cipher_reset(cipher);
 
 		key = (char *)keydigest;
 		key_len = 16;
@@ -626,18 +625,16 @@ auth_hmac_md5(const char *challenge, size_t challenge_len, const char *key, size
 	}
 
 	/* perform inner MD5 */
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, k_ipad, 64); /* start with inner pad */
-	purple_cipher_context_append(context, (const guchar *)challenge, challenge_len); /* then text of datagram */
-	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 1st pass */
-	purple_cipher_context_destroy(context);
+	purple_cipher_append(cipher, k_ipad, 64); /* start with inner pad */
+	purple_cipher_append(cipher, (const guchar *)challenge, challenge_len); /* then text of datagram */
+	purple_cipher_digest(cipher, 16, digest, NULL); /* finish up 1st pass */
+	purple_cipher_reset(cipher);
 
-	/* perform outer MD5 */	
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, k_opad, 64); /* start with outer pad */
-	purple_cipher_context_append(context, digest, 16); /* then results of 1st hash */
-	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 2nd pass */
-	purple_cipher_context_destroy(context);
+	/* perform outer MD5 */
+	purple_cipher_append(cipher, k_opad, 64); /* start with outer pad */
+	purple_cipher_append(cipher, digest, 16); /* then results of 1st hash */
+	purple_cipher_digest(cipher, 16, digest, NULL); /* finish up 2nd pass */
+	g_object_unref(G_OBJECT(cipher));
 }
 
 static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
@@ -660,6 +657,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
+			PurpleCipher *cipher;
 			unsigned char hashval[20];
 			char *s, h[41], *p;
 			int i;
@@ -674,8 +672,10 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
 
-			purple_cipher_digest_region("sha1", (guchar *)s, strlen(s),
-									  sizeof(hashval), hashval, NULL);
+			cipher = purple_sha1_cipher_new();
+			purple_cipher_append(cipher, (guchar *)s, strlen(s));
+			purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+			g_object_unref(G_OBJECT(cipher));
 
 			p = h;
 			for(i=0; i<20; i++, p+=2)
@@ -827,7 +827,6 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar result[16];
 	size_t a1len;
 
@@ -842,35 +841,34 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		convpasswd = g_strdup(passwd);
 	}
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
+	cipher = purple_md5_cipher_new();
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd ? convpasswd : "");
-	purple_cipher_context_append(context, (const guchar *)x, strlen(x));
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_append(cipher, (const guchar *)x, strlen(x));
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
 	g_memmove(a1, result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a1, a1len);
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)a1, a1len);
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
 
 	ha1 = purple_base16_encode(result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a2, strlen(a2));
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)a2, strlen(a2));
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
 
 	ha2 = purple_base16_encode(result, 16);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)kd, strlen(kd));
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)kd, strlen(kd));
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	z = purple_base16_encode(result, 16);
 

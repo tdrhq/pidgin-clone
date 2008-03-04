@@ -19,11 +19,11 @@
  *
  */
 #include "internal.h"
-#include "cipher.h"
 #include "debug.h"
 #include "imgstore.h"
 #include "prpl.h"
 #include "notify.h"
+#include "sha1cipher.h"
 #include "request.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -425,6 +425,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		int i;
 		unsigned char hashval[20];
 		char *p, hash[41];
+		PurpleCipher *cipher;
 
 		if(!vc_node) {
 			vc_node = xmlnode_new("vCard");
@@ -444,9 +445,10 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		binval = xmlnode_new_child(photo, "BINVAL");
 		enc = purple_base64_encode(avatar_data, avatar_len);
 
-		purple_cipher_digest_region("sha1", avatar_data,
-								  avatar_len, sizeof(hashval),
-								  hashval, NULL);
+		cipher = purple_sha1_cipher_new();
+		purple_cipher_append(cipher, (guchar*)avatar_data, avatar_len);
+		purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+		g_object_unref(G_OBJECT(cipher));
 
 		purple_imgstore_unref(img);
 
@@ -509,46 +511,47 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				guint32 height = ntohl(png->ihdr.height);
 				xmlnode *publish, *item, *data, *metadata, *info;
 				char *lengthstring, *widthstring, *heightstring;
-				
+
 				/* compute the sha1 hash */
-				PurpleCipherContext *ctx;
+				PurpleCipher *cipher;
 				unsigned char digest[20];
 				char *hash;
 				char *base64avatar;
-				
-				ctx = purple_cipher_context_new_by_name("sha1", NULL);
-				purple_cipher_context_append(ctx, purple_imgstore_get_data(img), purple_imgstore_get_size(img));
-				purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
-				
+
+				cipher = purple_sha1_cipher_new();
+				purple_cipher_append(cipher, purple_imgstore_get_data(img), purple_imgstore_get_size(img));
+				purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+				g_object_unref(G_OBJECT(cipher));
+
 				/* convert digest to a string */
 				hash = g_strdup_printf("%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x",digest[0],digest[1],digest[2],digest[3],digest[4],digest[5],digest[6],digest[7],digest[8],digest[9],digest[10],digest[11],digest[12],digest[13],digest[14],digest[15],digest[16],digest[17],digest[18],digest[19]);
-				
+
 				publish = xmlnode_new("publish");
 				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEDATA);
-				
+
 				item = xmlnode_new_child(publish, "item");
 				xmlnode_set_attrib(item, "id", hash);
-				
+
 				data = xmlnode_new_child(item, "data");
 				xmlnode_set_namespace(data,AVATARNAMESPACEDATA);
-				
+
 				base64avatar = purple_base64_encode(purple_imgstore_get_data(img), purple_imgstore_get_size(img));
 				xmlnode_insert_data(data,base64avatar,-1);
 				g_free(base64avatar);
-				
+
 				/* publish the avatar itself */
 				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
-				
+
 				/* next step: publish the metadata */
 				publish = xmlnode_new("publish");
 				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
-				
+
 				item = xmlnode_new_child(publish, "item");
 				xmlnode_set_attrib(item, "id", hash);
-				
+
 				metadata = xmlnode_new_child(item, "metadata");
 				xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
-				
+
 				info = xmlnode_new_child(metadata, "info");
 				xmlnode_set_attrib(info, "id", hash);
 				xmlnode_set_attrib(info, "type", "image/png");
@@ -561,24 +564,24 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				heightstring = g_strdup_printf("%u", height);
 				xmlnode_set_attrib(info, "height", heightstring);
 				g_free(heightstring);
-				
+
 				/* publish the metadata */
 				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
-				
+
 				g_free(hash);
 			} else { /* if(img) */
 				/* remove the metadata */
 				xmlnode *metadata, *item;
 				xmlnode *publish = xmlnode_new("publish");
 				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
-				
+
 				item = xmlnode_new_child(publish, "item");
-				
+
 				metadata = xmlnode_new_child(item, "metadata");
 				xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
-				
+
 				xmlnode_new_child(metadata, "stop");
-				
+
 				/* publish the metadata */
 				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
 			}
@@ -1375,6 +1378,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				if( ((binval = xmlnode_get_child(child, "BINVAL")) &&
 						(bintext = xmlnode_get_data(binval))) ||
 						(bintext = xmlnode_get_data(child))) {
+					PurpleCipher *cipher;
 					gsize size;
 					guchar *data;
 					int i;
@@ -1389,9 +1393,12 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 								"<b>%s:</b> <img id='%d'><br/>",
 								photo ? _("Photo") : _("Logo"),
 								GPOINTER_TO_INT(jbi->vcard_imgids->data));
-	
-						purple_cipher_digest_region("sha1", (guchar *)data, size,
-								sizeof(hashval), hashval, NULL);
+
+						cipher = purple_sha1_cipher_new();
+						purple_cipher_append(cipher, (guchar *)data, size);
+						purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+						g_object_unref(G_OBJECT(cipher));
+
 						p = hash;
 						for(i=0; i<20; i++, p+=2)
 							snprintf(p, 3, "%02x", hashval[i]);
