@@ -53,6 +53,10 @@ struct _PurpleAccountManager
 struct _PurpleAccountManagerClass
 {
 	GObjectClass gparent;
+
+	void (*account_added)(PurpleAccountManager *manager, PurpleAccount *);
+	void (*account_removed)(PurpleAccountManager *manager, PurpleAccount *);
+
 	void (*_purple_reserved[4])(void);
 };
 
@@ -70,8 +74,10 @@ void purple_account_manager_add_account(PurpleAccountManager *manager, PurpleAcc
 void purple_account_manager_remove_account(PurpleAccountManager *manager, PurpleAccount *account);
 void purple_account_manager_reorder_account(PurpleAccountManager *manager, PurpleAccount *account, int new_index);
 GList *purple_account_manager_get_all_accounts(PurpleAccountManager *manager);
-/*@}*/
 
+void purple_account_manager_load_accounts(PurpleAccountManager *manager);
+
+/*@}*/
 G_END_DECLS
 
 #endif

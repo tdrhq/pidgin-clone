@@ -43,6 +43,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "accountmanager.h"
 #include "conversation.h"
 #include "debug.h"
 #include "desktopitem.h"

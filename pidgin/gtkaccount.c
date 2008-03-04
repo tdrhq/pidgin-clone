@@ -28,6 +28,7 @@
 #include "pidgin.h"
 
 #include "account.h"
+#include "accountmanager.h"
 #include "accountopt.h"
 #include "core.h"
 #include "debug.h"
