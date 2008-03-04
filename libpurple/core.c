@@ -24,6 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
+#include "accountmanager.h"
 #include "certificate.h"
 #include "connection.h"
 #include "conversation.h"
@@ -144,6 +145,7 @@ purple_core_init(const char *ui)
 	purple_buddy_icons_init();
 	purple_connections_init();
 
+	purple_account_manager_load_accounts(purple_account_manager_get());
 	purple_accounts_init();
 	purple_savedstatuses_init();
 	purple_notify_init();
