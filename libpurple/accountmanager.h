@@ -30,7 +30,7 @@
 #include <glib-object.h>
 #include "account.h"
 
-#define PURPLE_TYPE_ACCOUNT_MANAGER				(purple_account_manager_get_gtype())
+#define PURPLE_TYPE_ACCOUNT_MANAGER				(purple_account_manager_get_type())
 #define PURPLE_ACCOUNT_MANAGER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManager))
 #define PURPLE_ACCOUNT_MANAGER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerClass))
 #define PURPLE_IS_ACCOUNT_MANAGER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT_MANAGER))

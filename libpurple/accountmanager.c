@@ -48,9 +48,21 @@ struct _PurpleAccountManagerPrivate
 
 #define PURPLE_ACCOUNT_MANAGER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerPrivate))
 
+G_DEFINE_TYPE(PurpleAccountManager, purple_account_manager, G_TYPE_OBJECT)
+
+static GObject *
+purple_account_manager_constructor(GType type, guint n_cprops, GObjectConstructParam *cprops)
+{
+	static GObject *singleton = NULL;
+	if (singleton == NULL)
+		singleton = G_OBJECT_CLASS(purple_account_manager_parent_class)->constructor(type, n_cprops, cprops);
+	return singleton;
+}
+
 static void
 purple_account_manager_class_init(PurpleAccountManagerClass *klass)
 {
+	G_OBJECT_CLASS(klass)->constructor = purple_account_manager_constructor;
 	account_manager_signals[ACCOUNT_ADDED] =
 		g_signal_new("account-added",
 				G_OBJECT_CLASS_TYPE(klass),
@@ -82,32 +94,6 @@ purple_account_manager_init(PurpleAccountManager *manager)
 	manager->priv = PURPLE_ACCOUNT_MANAGER_GET_PRIVATE(manager);
 	manager->priv->accounts = NULL;
 	manager->priv->accounts_loaded = FALSE;
-}
-
-GType purple_account_manager_get_gtype(void)
-{
-	static GType type = 0;
-
-	if(type == 0) {
-		static const GTypeInfo info = {
-			sizeof(PurpleAccountManagerClass),
-			NULL,
-			NULL,
-			(GClassInitFunc)purple_account_manager_class_init,
-			NULL,
-			NULL,
-			sizeof(PurpleAccountManager),
-			0,
-			(GInstanceInitFunc)purple_account_manager_init,
-			NULL,
-		};
-
-		type = g_type_register_static(G_TYPE_OBJECT,
-				"PurpleAccountManager",
-				&info, 0);
-	}
-
-	return type;
 }
 
 PurpleAccountManager *purple_account_manager_get(void)
