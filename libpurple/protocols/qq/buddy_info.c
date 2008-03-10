@@ -299,7 +299,7 @@ static void modify_info_cancel_cb(modify_info_data *mid)
 {
 	qq_data *qd;
 
-	qd = (qq_data *) mid->gc->proto_data;
+	qd = (qq_data *) purple_account_get_connection(mid)->proto_data;
 	qd->modifying_info = FALSE;
 
 	g_strfreev((gchar **) mid->info);
@@ -331,7 +331,7 @@ static void modify_info_ok_cb(modify_info_data *mid, PurpleRequestFields *fields
 	GList *groups;
 	contact_info *info;
 
-	gc = mid->gc;
+	gc = purple_account_get_connection(mid);
 	qd = (qq_data *) gc->proto_data;
 	qd->modifying_info = FALSE;
 
@@ -497,7 +497,7 @@ static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info
 
 		/* prepare unmodifiable info */
 		mid = g_new0(modify_info_data, 1);
-		mid->gc = gc;
+		purple_account_get_connection(mid) = gc;
 		/* QQ_CONTACT_FIELDS+1 so that the array is NULL-terminated and can be g_strfreev()'ed later */
 		mid->info = (contact_info *) g_new0(gchar *, QQ_CONTACT_FIELDS+1);
 		mid->info->pager_sn = g_strdup(info->pager_sn);
@@ -599,7 +599,7 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	gint suffix_len = strlen(QQ_ICON_SUFFIX);
 	gint dir_len = strlen(buddy_icon_dir);
 	gchar *errmsg = g_strdup_printf(_("Setting custom faces is not currently supported. Please choose an image from %s."), buddy_icon_dir);
-	gboolean icon_global = purple_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
+	gboolean icon_global = purple_account_get_bool(purple_connection_get_account(gc), "use-global-buddyicon", TRUE);
 
 	if (!icon_path)
 		icon_path = "";
@@ -636,7 +636,7 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	/* tell server my icon changed */
 	_qq_send_packet_modify_face(gc, icon_num);
 	/* display in blist */
-	qq_set_buddy_icon_for_user(account, account->username, icon, icon_path);
+	qq_set_buddy_icon_for_user(account, purple_account_get_username(account), icon, icon_path);
 }
 
 
@@ -683,7 +683,7 @@ void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc)
 			purple_account_set_alias(account, alias_utf8);
 	}
 	/* update buddy list (including myself, if myself is the buddy) */
-	b = purple_find_buddy(gc->account, purple_name);
+	b = purple_find_buddy(purple_connection_get_account(gc), purple_name);
 	q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 	if (q_bud != NULL) {	/* I have this buddy */
 		q_bud->age = strtol(info->age, NULL, 10);
@@ -692,7 +692,7 @@ void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc)
 		if (alias_utf8 != NULL)
 			q_bud->nickname = g_strdup(alias_utf8);
 		qq_update_buddy_contact(gc, q_bud);
-		_qq_update_buddy_icon(gc->account, purple_name, q_bud->face);
+		_qq_update_buddy_icon(purple_connection_get_account(gc), purple_name, q_bud->face);
 	}
 	g_free(purple_name);
 	g_free(alias_utf8);

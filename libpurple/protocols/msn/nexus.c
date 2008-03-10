@@ -148,7 +148,7 @@ msn_nexus_connect(MsnNexus *nexus)
 
 	/*prepare the Windows Live ID authentication token*/
 	username = g_strdup(purple_account_get_username(session->account));
-	password = g_strndup(purple_connection_get_password(session->account->gc), 16);
+	password = g_strndup(purple_connection_get_password(purple_account_get_connection(session->account)), 16);
 
 	lc =	(char *)g_hash_table_lookup(nexus->challenge_data, "lc");
 	id =	(char *)g_hash_table_lookup(nexus->challenge_data, "id");

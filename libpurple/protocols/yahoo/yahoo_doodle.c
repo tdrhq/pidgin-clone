@@ -395,7 +395,7 @@ static void yahoo_doodle_command_send_generic(const char *type,
 	/* Make and send an acknowledge (ready) Doodle packet */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash_str(pkt, 49,  "IMVIRONMENT");
-	yahoo_packet_hash_str(pkt, 1,    purple_account_get_username(gc->account));
+	yahoo_packet_hash_str(pkt, 1,    purple_account_get_username(purple_connection_get_account(gc)));
 	yahoo_packet_hash_str(pkt, 14,   message);
 	yahoo_packet_hash_int(pkt, 13,   command);
 	yahoo_packet_hash_str(pkt, 5,    to);
@@ -501,14 +501,14 @@ void yahoo_doodle_send_draw_list(PurpleWhiteboard *wb, GList *draw_list)
 	g_return_if_fail(draw_list != NULL);
 
 	message = yahoo_doodle_build_draw_string(ds, draw_list);
-	yahoo_doodle_command_send_draw(wb->account->gc, wb->who, message, ds->imv_key);
+	yahoo_doodle_command_send_draw(purple_account_get_connection(wb->account), wb->who, message, ds->imv_key);
 	g_free(message);
 }
 
 void yahoo_doodle_clear(PurpleWhiteboard *wb)
 {
 	doodle_session *ds = wb->proto_data;
-	yahoo_doodle_command_send_clear(wb->account->gc, wb->who, ds->imv_key);
+	yahoo_doodle_command_send_clear(purple_account_get_connection(wb->account), wb->who, ds->imv_key);
 }
 
 

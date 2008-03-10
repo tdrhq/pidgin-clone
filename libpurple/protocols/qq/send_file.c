@@ -811,7 +811,7 @@ void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len,
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			    "Received a FACE ip detect from qq-%d, so he/she must be online :)\n", sender_uid);
 
-		b = purple_find_buddy(gc->account, sender_name);
+		b = purple_find_buddy(purple_connection_get_account(gc), sender_name);
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 		if (q_bud) {
 			if(0 != info->remote_real_ip) {
@@ -922,7 +922,7 @@ void qq_send_file(PurpleConnection *gc, const char *who, const char *file)
 
 	qd = (qq_data *) gc->proto_data;
 
-	xfer = purple_xfer_new (gc->account, PURPLE_XFER_SEND,
+	xfer = purple_xfer_new (purple_connection_get_account(gc), PURPLE_XFER_SEND,
 			      who);
 	if (xfer)
 	{

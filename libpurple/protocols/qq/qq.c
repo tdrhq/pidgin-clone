@@ -103,10 +103,10 @@ static void _qq_login(PurpleAccount *account)
 	gc = purple_account_get_connection(account);
 	g_return_if_fail(gc != NULL);
 
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_AUTO_RESP;
+	gc->flags |= PURPLE_CONNECTION_FLAGS_HTML | PURPLE_CONNECTION_FLAGS_NO_BGCOLOR | PURPLE_CONNECTION_FLAGS_AUTO_RESP;
 
 	qd = g_new0(qq_data, 1);
-	qd->gc = gc;
+	purple_account_get_connection(qd) = gc;
 	gc->proto_data = qd;
 
 	qq_server = purple_account_get_string(account, "server", NULL);
@@ -415,7 +415,7 @@ static void _qq_menu_block_buddy(PurpleBlistNode * node)
 	g_return_if_fail(uid > 0);
 
 	g = g_new0(gc_and_uid, 1);
-	g->gc = gc;
+	purple_account_get_connection(g) = gc;
 	g->uid = uid;
 
 	purple_request_action(gc, _("Block Buddy"),

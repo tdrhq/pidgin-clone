@@ -28,7 +28,7 @@
 #include "buddy.h"
 #include "bonjour.h"
 #include "bonjour_ft.h"
-#include "cipher.h"
+#include "sha1cipher.h"
 
 static void
 bonjour_bytestreams_init(PurpleXfer *xfer);
@@ -344,7 +344,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 		return NULL;
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 	xfer->data = xep_xfer = g_new0(XepXfer, 1);
 	xep_xfer->data = bd;
 
@@ -849,6 +849,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 static void
 bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 {
+	PurpleCipher *cipher;
 	XepXfer *xf = NULL;
 	char dstaddr[41];
 	unsigned char hashval[20];
@@ -865,8 +866,12 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 		return;
 
 	p = g_strdup_printf("%s%s%s", xf->sid, pb->name, purple_account_get_username(pb->account));
-	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p),
-				    sizeof(hashval), hashval, NULL);
+
+	cipher = purple_sha1_cipher_new();
+	purple_cipher_append(cipher, (guchar *)p, strlen(p));
+	purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+	g_object_unref(G_OBJECT(cipher));
+
 	g_free(p);
 
 	memset(dstaddr, 0, 41);

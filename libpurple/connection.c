@@ -30,22 +30,83 @@
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "log.h"
+#include "marshallers.h"
 #include "notify.h"
 #include "prefs.h"
 #include "proxy.h"
 #include "request.h"
 #include "server.h"
-#include "signals.h"
 #include "util.h"
+
+/******************************************************************************
+ * Structs
+ *****************************************************************************/
+struct _PurpleConnectionPrivate
+{
+	PurpleConnectionFlags flags;
+
+	PurpleConnectionState state;
+
+	PurpleAccount *account;
+	char *password;
+
+	gint inpa;
+
+	GSList *buddy_chats;
+
+	guint keepalive;
+
+	gboolean wants_to_die;
+	guint disconnect_timeout;
+	time_t last_received;
+	PurplePlugin *prpl;
+	char *display_name;
+};
+
+/******************************************************************************
+ * Enums
+ *****************************************************************************/
+enum
+{
+	PROP_ZERO,
+	PROP_FLAGS,
+	PROP_STATE,
+	PROP_ACCOUNT,
+#if 0
+	PROP_INPUT_WATCHER,
+	PROP_BUDDY_CHATS,
+	PROP_KEEPALIVE,
+	PROP_WANTS_TO_DIE,
+	PROP_DISCONNECT_TIMEOUT,
+#endif
+	PROP_LAST,
+};
+
+enum
+{
+	SIG_SIGNING_ON,
+	SIG_SIGNED_ON,
+	SIG_SIGNING_OFF,
+	SIG_SIGNED_OFF,
+	SIG_DISCONNECTED,
+	SIG_LAST
+};
 
 #define KEEPALIVE_INTERVAL 30
 
+#warning Do we want to use a ConnectionManager for these?
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
-static PurpleConnectionUiOps *connection_ui_ops = NULL;
 
-static int connections_handle;
+/******************************************************************************
+ * Globals
+ *****************************************************************************/
+static GObjectClass *parent_class = NULL;
+static guint signals[SIG_LAST] = { 0, };
 
+/******************************************************************************
+ * OLD CODE
+ *****************************************************************************/
 static gboolean
 send_keepalive(gpointer data)
 {
@@ -58,13 +119,13 @@ send_keepalive(gpointer data)
 	/* Only send keep-alives if we haven't heard from the
 	 * server in a while.
 	 */
-	if ((time(NULL) - gc->last_received) < KEEPALIVE_INTERVAL)
+	if ((time(NULL) - gc->priv->last_received) < KEEPALIVE_INTERVAL)
 		return TRUE;
 
-	if (gc->prpl == NULL)
+	if (gc->priv->prpl == NULL)
 		return TRUE;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->priv->prpl);
 
 	if (prpl_info && prpl_info->keepalive)
 		prpl_info->keepalive(gc);
@@ -77,22 +138,22 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (gc != NULL && gc->priv->prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->priv->prpl);
 
 	if (!prpl_info || !prpl_info->keepalive)
 		return;
 
-	if (on && !gc->keepalive)
+	if (on && !gc->priv->keepalive)
 	{
 		purple_debug_info("connection", "Activating keepalive.\n");
-		gc->keepalive = purple_timeout_add_seconds(KEEPALIVE_INTERVAL, send_keepalive, gc);
+		gc->priv->keepalive = purple_timeout_add_seconds(KEEPALIVE_INTERVAL, send_keepalive, gc);
 	}
-	else if (!on && gc->keepalive > 0)
+	else if (!on && gc->priv->keepalive > 0)
 	{
 		purple_debug_info("connection", "Deactivating keepalive.\n");
-		purple_timeout_remove(gc->keepalive);
-		gc->keepalive = 0;
+		purple_timeout_remove(gc->priv->keepalive);
+		gc->priv->keepalive = 0;
 	}
 }
 
@@ -103,7 +164,12 @@ purple_connection_new(PurpleAccount *account, gboolean regist, const char *passw
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
+#warning Bring back when PurpleAccount is GObject
+#if 0
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
+#else
 	g_return_if_fail(account != NULL);
+#endif
 
 	if (!purple_account_is_disconnected(account))
 		return;
@@ -140,25 +206,21 @@ purple_connection_new(PurpleAccount *account, gboolean regist, const char *passw
 		}
 	}
 
-	gc = g_new0(PurpleConnection, 1);
+	gc = g_object_new(PURPLE_TYPE_CONNECTION, "account", account, NULL);
 	PURPLE_DBUS_REGISTER_POINTER(gc, PurpleConnection);
 
-	gc->prpl = prpl;
-	if ((password != NULL) && (*password != '\0'))
-		gc->password = g_strdup(password);
-	purple_connection_set_account(gc, account);
-	purple_connection_set_state(gc, PURPLE_CONNECTING);
-	connections = g_list_append(connections, gc);
-	purple_account_set_connection(account, gc);
+	gc->priv->password = g_strdup(password);
 
+#if 0
 	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
+#endif
 
 	if (regist)
 	{
 		purple_debug_info("connection", "Registering.  gc = %p\n", gc);
 
 		/* set this so we don't auto-reconnect after registering */
-		gc->wants_to_die = TRUE;
+		gc->priv->wants_to_die = TRUE;
 
 		prpl_info->register_user(account);
 	}
@@ -212,15 +274,16 @@ purple_connection_new_unregister(PurpleAccount *account, const char *password, P
 	gc = g_new0(PurpleConnection, 1);
 	PURPLE_DBUS_REGISTER_POINTER(gc, PurpleConnection);
 	
-	gc->prpl = prpl;
-	if ((password != NULL) && (*password != '\0'))
-		gc->password = g_strdup(password);
+	gc->priv->prpl = prpl;
+	gc->priv->password = g_strdup(password);
 	purple_connection_set_account(gc, account);
-	purple_connection_set_state(gc, PURPLE_CONNECTING);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTING);
 	connections = g_list_append(connections, gc);
 	purple_account_set_connection(account, gc);
 	
+#if 0
 	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
+#endif
 	
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
 	
@@ -241,16 +304,18 @@ purple_connection_destroy(PurpleConnection *gc)
 
 	purple_debug_info("connection", "Disconnecting connection %p\n", gc);
 
-	if (purple_connection_get_state(gc) != PURPLE_CONNECTING)
+	if (purple_connection_get_state(gc) != PURPLE_CONNECTION_STATE_CONNECTING)
 		remove = TRUE;
 
+#if 0
 	purple_signal_emit(purple_connections_get_handle(), "signing-off", gc);
+#endif
 
-	while (gc->buddy_chats)
+	while (gc->priv->buddy_chats)
 	{
-		PurpleConversation *b = gc->buddy_chats->data;
+		PurpleConversation *b = gc->priv->buddy_chats->data;
 
-		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
+		gc->priv->buddy_chats = g_slist_remove(gc->priv->buddy_chats, b);
 		purple_conv_chat_left(PURPLE_CONV_CHAT(b));
 	}
 
@@ -258,7 +323,7 @@ purple_connection_destroy(PurpleConnection *gc)
 
 	purple_proxy_connect_cancel_with_handle(gc);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->priv->prpl);
 	if (prpl_info->close)
 		(prpl_info->close)(gc);
 
@@ -272,12 +337,14 @@ purple_connection_destroy(PurpleConnection *gc)
 
 	connections = g_list_remove(connections, gc);
 
-	purple_connection_set_state(gc, PURPLE_DISCONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_DISCONNECTED);
 
 	if (remove)
 		purple_blist_remove_account(account);
 
+#if 0
 	purple_signal_emit(purple_connections_get_handle(), "signed-off", gc);
+#endif
 
 	purple_account_request_close_with_account(account);
 	purple_request_close_with_handle(gc);
@@ -287,11 +354,11 @@ purple_connection_destroy(PurpleConnection *gc)
 
 	purple_account_set_connection(account, NULL);
 
-	g_free(gc->password);
-	g_free(gc->display_name);
+	g_free(gc->priv->password);
+	g_free(gc->priv->display_name);
 
-	if (gc->disconnect_timeout)
-		purple_timeout_remove(gc->disconnect_timeout);
+	if (gc->priv->disconnect_timeout)
+		purple_timeout_remove(gc->priv->disconnect_timeout);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(gc);
 	g_free(gc);
@@ -314,21 +381,21 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 	g_return_if_fail(gc != NULL);
 
-	if (gc->state == state)
+	if (gc->priv->state == state)
 		return;
 
-	gc->state = state;
+	gc->priv->state = state;
 
 	ops = purple_connections_get_ui_ops();
 
-	if (gc->state == PURPLE_CONNECTING) {
+	if (gc->priv->state == PURPLE_CONNECTION_STATE_CONNECTING) {
 		connections_connecting = g_list_append(connections_connecting, gc);
 	}
 	else {
 		connections_connecting = g_list_remove(connections_connecting, gc);
 	}
 
-	if (gc->state == PURPLE_CONNECTED) {
+	if (gc->priv->state == PURPLE_CONNECTION_STATE_CONNECTED) {
 		PurpleAccount *account;
 		PurplePresence *presence;
 
@@ -359,13 +426,15 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 		purple_blist_add_account(account);
 
+#if 0
 		purple_signal_emit(purple_connections_get_handle(), "signed-on", gc);
+#endif
 
 		serv_set_permit_deny(gc);
 
 		update_keepalive(gc, TRUE);
 	}
-	else if (gc->state == PURPLE_DISCONNECTED) {
+	else if (gc->priv->state == PURPLE_CONNECTION_STATE_DISCONNECTED) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 
 		if (purple_prefs_get_bool("/purple/logging/log_system"))
@@ -396,7 +465,20 @@ purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(account != NULL);
 
-	gc->account = account;
+	if (gc->priv->account == account)
+		return;
+
+	purple_account_set_connection(gc->priv->account, NULL);
+
+#if 1
+#warning Remove this after PurpleAccount is GObject
+	gc->priv->account = account;
+#else
+	gc->priv->account = g_object_ref(account);
+#endif
+	gc->priv->prpl = account ? purple_find_prpl(purple_account_get_protocol_id(account)) : NULL;
+
+	purple_account_set_connection(account, gc);
 }
 
 void
@@ -404,16 +486,24 @@ purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 {
 	g_return_if_fail(gc != NULL);
 
-	g_free(gc->display_name);
-	gc->display_name = g_strdup(name);
+	g_free(gc->priv->display_name);
+	gc->priv->display_name = g_strdup(name);
 }
 
 PurpleConnectionState
 purple_connection_get_state(const PurpleConnection *gc)
 {
-	g_return_val_if_fail(gc != NULL, PURPLE_DISCONNECTED);
+	g_return_val_if_fail(gc != NULL, PURPLE_CONNECTION_STATE_DISCONNECTED);
 
-	return gc->state;
+	return gc->priv->state;
+}
+
+PurpleConnectionFlags
+purple_connection_get_flags(PurpleConnection *gc)
+{
+	g_return_val_if_fail(gc != NULL, 0);
+
+	return gc->priv->flags;
 }
 
 PurpleAccount *
@@ -421,7 +511,7 @@ purple_connection_get_account(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->account;
+	return gc->priv->account;
 }
 
 PurplePlugin *
@@ -429,7 +519,7 @@ purple_connection_get_prpl(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->prpl;
+	return gc->priv->prpl;
 }
 
 const char *
@@ -437,7 +527,7 @@ purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->password ? gc->password : gc->account->password;
+	return purple_connection_get_password(gc) ? purple_connection_get_password(gc) : purple_account_get_password(gc->priv->account);
 }
 
 const char *
@@ -445,7 +535,7 @@ purple_connection_get_display_name(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return gc->display_name;
+	return gc->priv->display_name;
 }
 
 void
@@ -499,7 +589,7 @@ purple_connection_error(PurpleConnection *gc, const char *text)
 	 * and PURPLE_CONNECTION_ERROR_NETWORK_ERROR (which isn't) if not.  See
 	 * the documentation in connection.h.
 	 */
-	PurpleConnectionError reason = gc->wants_to_die
+	PurpleConnectionError reason = gc->priv->wants_to_die
 	                             ? PURPLE_CONNECTION_ERROR_OTHER_ERROR
 	                             : PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 	purple_connection_error_reason (gc, reason, text);
@@ -531,10 +621,10 @@ purple_connection_error_reason (PurpleConnection *gc,
 	}
 
 	/* If we've already got one error, we don't need any more */
-	if (gc->disconnect_timeout)
+	if (gc->priv->disconnect_timeout)
 		return;
 
-	gc->wants_to_die = purple_connection_error_is_fatal (reason);
+	gc->priv->wants_to_die = purple_connection_error_is_fatal (reason);
 
 	ops = purple_connections_get_ui_ops();
 
@@ -546,10 +636,12 @@ purple_connection_error_reason (PurpleConnection *gc,
 			ops->report_disconnect (gc, description);
 	}
 
+#if 0
 	purple_signal_emit(purple_connections_get_handle(), "connection-error",
 		gc, reason, description);
+#endif
 
-	gc->disconnect_timeout = purple_timeout_add(0, purple_connection_disconnect_cb,
+	gc->priv->disconnect_timeout = purple_timeout_add(0, purple_connection_disconnect_cb,
 			purple_connection_get_account(gc));
 }
 
@@ -608,85 +700,319 @@ purple_connection_error_is_fatal (PurpleConnectionError reason)
 	}
 }
 
-void
-purple_connections_disconnect_all(void)
+/******************************************************************************
+ * Object Stuff
+ *****************************************************************************/
+static void
+purple_connection_get_property(GObject *obj, guint param_id, GValue *value,
+							   GParamSpec *pspec)
 {
-	GList *l;
-	PurpleConnection *gc;
+	PurpleConnection *pc = PURPLE_CONNECTION(obj);
 
-	while ((l = purple_connections_get_all()) != NULL) {
-		gc = l->data;
-		gc->wants_to_die = TRUE;
-		purple_account_disconnect(gc->account);
+	switch(param_id) {
+		case PROP_FLAGS:
+			g_value_set_flags(value, pc->priv->flags);
+			break;
+		case PROP_STATE:
+			g_value_set_enum(value, purple_connection_get_state(pc));
+			break;
+		case PROP_ACCOUNT:
+			#warning fix me when account is an object
+			g_value_set_pointer(value, purple_connection_get_account(pc));
+			break;
+#if 0
+		case PROP_INPUT_WATCHER:
+			g_value_set_int(value, purple_connection_get_input_watcher(pc));
+			break;
+		case PROP_BUDDY_CHATS:
+			g_value_set_pointer(value, purple_connection_get_buddy_chats(pc));
+			break;
+		case PROP_KEEPALIVE:
+			g_value_set_uint(value, purple_connection_get_keepalive(pc));
+			break;
+		case PROP_WANTS_TO_DIE:
+			g_value_set_boolean(value, purple_connection_get_wants_to_die(pc));
+			break;
+		case PROP_DISCONNECT_TIMEOUT:
+			g_value_set_uint(value,
+							 purple_connection_get_disconnect_timeout(pc));
+			break;
+#endif
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
 	}
 }
 
-GList *
-purple_connections_get_all(void)
+static void
+purple_connection_set_property(GObject *obj, guint param_id,
+							   const GValue *value, GParamSpec *pspec)
 {
-	return connections;
+	PurpleConnection *pc = PURPLE_CONNECTION(obj);
+
+	switch(param_id) {
+		case PROP_FLAGS:
+			pc->priv->flags = g_value_get_flags(value);
+			break;
+		case PROP_STATE:
+			purple_connection_set_state(pc, g_value_get_enum(value));
+			break;
+		case PROP_ACCOUNT:
+			#warning fix me when account is an object
+			purple_connection_set_account(pc, g_value_get_pointer(value));
+			break;
+#if 0
+		case PROP_INPUT_WATCHER:
+			purple_connection_set_input_watcher(pc, g_value_get_int(value));
+			break;
+		case PROP_BUDDY_CHATS:
+			purple_connection_set_buddy_chats(pc, g_value_get_pointer(value));
+			break;
+		case PROP_KEEPALIVE:
+			purple_connection_set_keepalive(pc, g_value_get_uint(value));
+			break;
+		case PROP_WANTS_TO_DIE:
+			purple_connection_set_wants_to_die(pc, g_value_get_boolean(value));
+			break;
+		case PROP_DISCONNECT_TIMEOUT:
+			purple_connection_set_disconnect_timeout(pc,
+													 g_value_get_uint(value));
+			break;
+#endif
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
 }
 
-GList *
-purple_connections_get_connecting(void)
+static void
+purple_connection_finalize(GObject *obj)
 {
-	return connections_connecting;
+	PurpleConnection *pc = PURPLE_CONNECTION(obj);
+
+#warning Enable this when PurpleAccount is a GObject.
+#if 0
+	if (PURPLE_IS_ACCOUNT(pc->priv->account))
+		g_object_unref(G_OBJECT(pc->priv->account));
+#endif
+
+	g_free(pc->priv);
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
-void
-purple_connections_set_ui_ops(PurpleConnectionUiOps *ops)
+static void
+purple_connection_init(GTypeInstance *instance, gpointer klass)
 {
-	connection_ui_ops = ops;
+	PurpleConnection *pc = PURPLE_CONNECTION(instance);
+
+	pc->priv = g_new0(PurpleConnectionPrivate, 1);
+	purple_connection_set_state(pc, PURPLE_CONNECTION_STATE_CONNECTING);
 }
 
-PurpleConnectionUiOps *
-purple_connections_get_ui_ops(void)
+static void
+purple_connection_class_init(PurpleConnectionClass *klass)
 {
-	return connection_ui_ops;
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	GParamSpec *pspec;
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	obj_class->get_property = purple_connection_get_property;
+	obj_class->set_property = purple_connection_set_property;
+	obj_class->finalize = purple_connection_finalize;
+
+	pspec = g_param_spec_enum("flags", "flags",
+							  "The flags for this connection.",
+							  PURPLE_TYPE_CONNECTION_FLAGS,
+							  0,
+							  G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+	g_object_class_install_property(obj_class, PROP_FLAGS, pspec);
+
+	pspec = g_param_spec_enum("state", "state",
+							  "The state of this connection.",
+							  PURPLE_TYPE_CONNECTION_STATE,
+							  PURPLE_CONNECTION_STATE_DISCONNECTED,
+							  G_PARAM_READWRITE);
+	g_object_class_install_property(obj_class, PROP_STATE, pspec);
+
+	#warning This needs to be moved to g_param_spec_object when account is objectified
+	pspec = g_param_spec_pointer("account", "account",
+								 "The account this connection belongs to.",
+								 G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+	g_object_class_install_property(obj_class, PROP_ACCOUNT, pspec);
+
+#warning These probably doesn't need any exposing
+#if 0
+	pspec = g_param_spec_int("inpa", "inpa",
+							 "The input watcher's fd for this connection.",
+							 G_MININT, G_MAXINT, -1,
+							 G_PARAM_READWRITE);
+	g_object_class_install_property(obj_class, PROP_INPA, pspec);
+
+	pspec = g_param_spec_pointer("buddy-chats", "buddy-chats",
+								 "A list of buddy chats for this connection.",
+								 G_PARAM_READWRITE);
+	g_object_class_install_property(obj_class, PROP_BUDDY_CHATS, pspec);
+
+	pspec = g_param_spec_uint("keepalive", "keepalive",
+							  "The keepalive value for this connection.",
+							  0, G_MAXUINT, 0,
+							  G_PARAM_READWRITE);
+	g_object_class_install_property(obj_class, PROP_KEEPALIVE, pspec);
+
+#warning wants-to-die needs-to-die
+	pspec = g_param_spec_boolean("wants-to-die", "wants-to-die",
+								 "Whether or not this connection wants to "
+								 "die.",
+								 FALSE, G_PARAM_READWRITE);
+	g_object_class_install_property(obj_class, PROP_WANTS_TO_DIE, pspec);
+
+	pspec = g_param_spec_uint("disconnect-timeout", "disconnect-timeout",
+							  "The disconnect timeout handle for this "
+							  "connection.",
+							  0, G_MAXUINT, 0,
+							  G_PARAM_READWRITE);
+	g_object_class_install_property(obj_class, PROP_DISCONNECT_TIMEOUT, pspec);
+#endif
+
+	signals[SIG_SIGNING_ON] =
+		g_signal_new("signing-on",
+					 G_OBJECT_CLASS_TYPE(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(PurpleConnectionClass, signing_on),
+					 NULL, NULL,
+					 purple_smarshal_VOID__OBJECT,
+					 G_TYPE_NONE,
+					 0);
+
+	signals[SIG_SIGNED_ON] =
+		g_signal_new("signed-on",
+					 G_OBJECT_CLASS_TYPE(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(PurpleConnectionClass, signed_on),
+					 NULL, NULL,
+					 purple_smarshal_VOID__OBJECT,
+					 G_TYPE_NONE,
+					 0);
+
+	signals[SIG_SIGNING_OFF] =
+		g_signal_new("signing-off",
+					 G_OBJECT_CLASS_TYPE(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(PurpleConnectionClass, signing_off),
+					 NULL, NULL,
+					 purple_smarshal_VOID__OBJECT,
+					 G_TYPE_NONE,
+					 0);
+
+	signals[SIG_SIGNED_OFF] =
+		g_signal_new("signed-off",
+					 G_OBJECT_CLASS_TYPE(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(PurpleConnectionClass, signed_off),
+					 NULL, NULL,
+					 purple_smarshal_VOID__OBJECT,
+					 G_TYPE_NONE,
+					 0);
+
+	signals[SIG_DISCONNECTED] =
+		g_signal_new("disconnected",
+					 G_OBJECT_CLASS_TYPE(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(PurpleConnectionClass, disconnected),
+					 NULL, NULL,
+					 purple_smarshal_VOID__OBJECT,
+					 G_TYPE_NONE,
+					 0);
 }
 
-void
-purple_connections_init(void)
+/******************************************************************************
+ * API
+ *****************************************************************************/
+GType
+purple_connection_get_gtype(void)
 {
-	void *handle = purple_connections_get_handle();
+	static GType type = 0;
 
-	purple_signal_register(handle, "signing-on",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONNECTION));
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleConnectionClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_connection_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleConnection),
+			0,
+			purple_connection_init,
+			NULL,
+		};
 
-	purple_signal_register(handle, "signed-on",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONNECTION));
+		type = g_type_register_static(G_TYPE_OBJECT,
+									  "PurpleConnection",
+									  &info, 0);
+	}
 
-	purple_signal_register(handle, "signing-off",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONNECTION));
-
-	purple_signal_register(handle, "signed-off",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_CONNECTION));
-
-	purple_signal_register(handle, "connection-error",
-	                       purple_marshal_VOID__POINTER_INT_POINTER, NULL, 3,
-	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
-	                                        PURPLE_SUBTYPE_CONNECTION),
-	                       purple_value_new(PURPLE_TYPE_ENUM),
-	                       purple_value_new(PURPLE_TYPE_STRING));
-
+	return type;
 }
 
-void
-purple_connections_uninit(void)
+/******************************************************************************
+ * PurpleConnectionFlags API
+ *****************************************************************************/
+GType
+purple_connection_flags_get_gtype(void)
 {
-	purple_signals_unregister_by_instance(purple_connections_get_handle());
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GFlagsValue values[] = {
+			{ PURPLE_CONNECTION_FLAGS_HTML, "HTML", "HTML" },
+			{ PURPLE_CONNECTION_FLAGS_NO_BGCOLOR, "NO BG", "NO BG" },
+			{ PURPLE_CONNECTION_FLAGS_AUTO_RESP, "Autoresponse",
+			  "Autoresponse"
+			},
+			{ PURPLE_CONNECTION_FLAGS_FORMATTING_WBFO, "WBFO", "WBFO" },
+			{ PURPLE_CONNECTION_FLAGS_NO_NEWLINES, "No newlines",
+			  "No newlines"
+			},
+			{ PURPLE_CONNECTION_FLAGS_NO_FONTSIZE, "No fontsize",
+			  "No fontsize"
+			},
+			{ PURPLE_CONNECTION_FLAGS_NO_URLDESC, "No url desc",
+			  "No url desc"
+			},
+			{ PURPLE_CONNECTION_FLAGS_NO_IMAGES, "No images", "No images", },
+			{ 0, NULL, NULL },
+		};
+
+		type = g_flags_register_static("PurpleConnectionState", values);
+	}
+
+	return type;
 }
 
-void *
-purple_connections_get_handle(void)
+/******************************************************************************
+ * PurpleConnectionState API
+ *****************************************************************************/
+GType
+purple_connection_state_get_gtype(void)
 {
-	return &connections_handle;
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GEnumValue values[] = {
+			{ PURPLE_CONNECTION_STATE_DISCONNECTED, "Disconnected",
+			  "Disconnected"
+			},
+			{ PURPLE_CONNECTION_STATE_CONNECTING, "Connecting", "Connecting" },
+			{ PURPLE_CONNECTION_STATE_CONNECTED, "Connected", "Connected" },
+			{ 0, NULL, NULL },
+		};
+
+		type = g_enum_register_static("PurpleConnectionState", values);
+	}
+
+	return type;
 }
+

@@ -82,7 +82,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 		return;
 
 	purple_connection_set_display_name(gc, nick);
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 
 	/* If we're away then set our away message */
 	status = purple_account_get_active_status(irc->account);
@@ -103,7 +103,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (PurpleBuddy *)bnode;
-				if(b->account == gc->account) {
+				if(b->account == purple_connection_get_account(gc)) {
 					struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
 					ib->name = g_strdup(b->name);
 					g_hash_table_insert(irc->buddies, ib->name, ib);
@@ -637,7 +637,7 @@ void irc_msg_notinchan(struct irc_conn *irc, const char *name, const char *from,
 
 	purple_debug(PURPLE_DEBUG_INFO, "irc", "We're apparently not in %s, but tried to use it\n", args[1]);
 	if (convo) {
-		/*g_slist_remove(irc->gc->buddy_chats, convo);
+		/*g_slist_remove(purple_account_get_connection(irc)->buddy_chats, convo);
 		  purple_conversation_set_account(convo, NULL);*/
 		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), args[1], args[2], PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 	}
@@ -915,7 +915,7 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
-	if (purple_connection_get_state(gc) == PURPLE_CONNECTED) {
+	if (purple_connection_get_state(gc) == PURPLE_CONNECTION_STATE_CONNECTED) {
 		purple_notify_error(gc, _("Invalid nickname"),
 				  _("Invalid nickname"),
 				  _("Your selected nickname was rejected by the server.  It probably contains invalid characters."));

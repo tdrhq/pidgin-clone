@@ -423,7 +423,7 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 	stamp = msn_oim_parse_timestamp(date);
 
-	serv_got_im(rdata->oim->session->account->gc, passport, decode_msg, 0,
+	serv_got_im(purple_account_get_connection(rdata->oim->session->account), passport, decode_msg, 0,
 		stamp);
 
 	/*Now get the oim message ID from the oim_list.
@@ -492,7 +492,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 
 		/* XXX/khc: pretty sure this is wrong */
 		if (count > 0)
-			purple_notify_emails(session->account->gc, count, FALSE, NULL,
+			purple_notify_emails(purple_account_get_connection(session->account), count, FALSE, NULL,
 				NULL, &passport, &url, NULL, NULL);
 		g_free(unread);
 	}

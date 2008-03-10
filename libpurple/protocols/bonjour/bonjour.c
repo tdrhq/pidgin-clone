@@ -105,7 +105,7 @@ bonjour_login(PurpleAccount *account)
 	}
 #endif
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
+	gc->flags |= PURPLE_CONNECTION_FLAGS_HTML;
 	gc->proto_data = bd = g_new0(BonjourData, 1);
 
 	/* Start waiting for jabber connections (iChat style) */
@@ -155,7 +155,7 @@ bonjour_login(PurpleAccount *account)
 	purple_blist_add_group(bonjour_group, NULL);
 
 	/* Show the buddy list by telling Purple we have already connected */
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 }
 
 static void

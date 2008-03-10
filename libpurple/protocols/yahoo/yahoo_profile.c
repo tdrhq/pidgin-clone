@@ -695,7 +695,7 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 	PurpleBuddy *b;
 	YahooFriend *f;
 
-	b = purple_find_buddy(purple_connection_get_account(info_data->gc),
+	b = purple_find_buddy(purple_connection_get_account(info_purple_account_get_connection(data)),
 			info_data->name);
 
 	if (b) {
@@ -715,7 +715,7 @@ static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooG
 		/* Add the normal tooltip pairs */
 		yahoo_tooltip_text(b, user_info, TRUE);
 
-		if ((f = yahoo_friend_find(info_data->gc, b->name))) {
+		if ((f = yahoo_friend_find(info_purple_account_get_connection(data), b->name))) {
 			const char *ip;
 			if ((ip = yahoo_friend_get_ip(f)))
 				purple_notify_user_info_add_pair(user_info, _("IP Address"), ip);
@@ -789,7 +789,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	purple_debug_info("yahoo", "In yahoo_got_info\n");
 
-	yd = info_data->gc->proto_data;
+	yd = info_purple_account_get_connection(data)->proto_data;
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	user_info = purple_notify_user_info_new();
@@ -806,7 +806,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	 */
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0) {
 		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"), NULL);
-		purple_notify_userinfo(info_data->gc, info_data->name, 
+		purple_notify_userinfo(info_purple_account_get_connection(data), info_data->name, 
 			user_info, NULL, NULL);
 		purple_notify_user_info_destroy(user_info);
 		g_free(profile_url_text);
@@ -843,7 +843,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		purple_notify_user_info_add_pair(user_info, NULL, tmp);		
 		g_free(tmp);
 
-		purple_notify_userinfo(info_data->gc, info_data->name, 
+		purple_notify_userinfo(info_purple_account_get_connection(data), info_data->name, 
 				user_info, NULL, NULL);
 
 		g_free(profile_url_text);
@@ -935,7 +935,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		gboolean use_whole_url = FALSE;
 
 		/* use whole URL if using HTTP Proxy */
-		if ((info_data->gc->account->proxy_info) && (info_data->gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+		if ((info_purple_account_get_connection(data)->account->proxy_info) && (info_purple_account_get_connection(data)->account->proxy_info->type == PURPLE_PROXY_HTTP))
 		    use_whole_url = TRUE;
 
 		/* User-uploaded photos use a different server that requires the Host
@@ -991,7 +991,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* in to purple_markup_strip_html*/
 	char *fudged_buffer;
 
-	yd = info_data->gc->proto_data;
+	yd = info_purple_account_get_connection(data)->proto_data;
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	fudged_buffer = purple_strcasereplace(url_buffer, "</dd>", "</dd><br>");
@@ -1213,7 +1213,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 		} else if (profile_state == PROFILE_STATE_NOT_FOUND) {
 			PurpleBuddy *b = purple_find_buddy
-					(purple_connection_get_account(info_data->gc),
+					(purple_connection_get_account(info_purple_account_get_connection(data)),
 							info_data->name);
 			YahooFriend *f = NULL;
 			if (b) {
@@ -1221,7 +1221,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 				 * in which case the user may or may not actually exist.
 				 * Hence this extra step.
 				 */
-				f = yahoo_friend_find(b->account->gc, b->name);
+				f = yahoo_friend_find(purple_account_get_connection(b->account), b->name);
 			}
 			g_string_append_printf(str, "%s<br><br>",
 				f?  _("Could not retrieve the user's profile. "
@@ -1249,7 +1249,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	g_free(stripped);
 
 	/* show it to the user */
-	purple_notify_userinfo(info_data->gc, info_data->name,
+	purple_notify_userinfo(info_purple_account_get_connection(data), info_data->name,
 						  user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
 
@@ -1276,7 +1276,7 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 	PurpleUtilFetchUrlData *url_data;
 
 	data       = g_new0(YahooGetInfoData, 1);
-	data->gc   = gc;
+	purple_account_get_connection(data)   = gc;
 	data->name = g_strdup(name);
 
 	url = g_strdup_printf("%s%s",

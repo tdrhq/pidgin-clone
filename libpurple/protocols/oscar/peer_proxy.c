@@ -70,7 +70,7 @@ peer_proxy_send_create_new_conn(PeerConnection *conn)
 	frame.type = PEER_PROXY_TYPE_CREATE;
 	frame.flags = 0x0000;
 
-	account = purple_connection_get_account(conn->od->gc);
+	account = purple_connection_get_account(purple_account_get_connection(conn->od));
 	sn = purple_account_get_username(account);
 	sn_length = strlen(sn);
 	byte_stream_new(&frame.payload, 1 + sn_length + 8 + 20);
@@ -106,7 +106,7 @@ peer_proxy_send_join_existing_conn(PeerConnection *conn, guint16 pin)
 	frame.type = PEER_PROXY_TYPE_JOIN;
 	frame.flags = 0x0000;
 
-	account = purple_connection_get_account(conn->od->gc);
+	account = purple_connection_get_account(purple_account_get_connection(conn->od));
 	sn = purple_account_get_username(account);
 	sn_length = strlen(sn);
 	byte_stream_new(&frame.payload, 1 + sn_length + 2 + 8 + 20);

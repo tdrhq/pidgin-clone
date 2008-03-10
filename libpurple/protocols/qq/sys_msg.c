@@ -76,7 +76,7 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	uid = g->uid;
 	g_return_if_fail(gc != 0 && uid != 0);
 
@@ -101,7 +101,7 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	uid = g->uid;
 	g_return_if_fail(gc != 0 && uid != 0);
 
@@ -159,11 +159,11 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 
 	uid = strtol(from, NULL, 10);
 	name = uid_to_purple_name(uid);
-	b = purple_find_buddy(gc->account, name);
+	b = purple_find_buddy(purple_connection_get_account(gc), name);
 
 	if (b == NULL) {	/* the person is not in my list */
 		g = g_new0(gc_and_uid, 1);
-		g->gc = gc;
+		purple_account_get_connection(g) = gc;
 		g->uid = uid;	/* only need to get value */
 		message = g_strdup_printf(_("You have been added by %s"), from);
 		_qq_sys_msg_log_write(gc, message, from);
@@ -232,7 +232,7 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 
 	uid = strtol(from, NULL, 10);
 	g = g_new0(gc_and_uid, 1);
-	g->gc = gc;
+	purple_account_get_connection(g) = gc;
 	g->uid = uid;
 
 	name = uid_to_purple_name(uid);
@@ -256,10 +256,10 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 	g_free(reason);
 
 	/* XXX: Is this needed once the above goes through purple_account_request_authorization()? */
-	b = purple_find_buddy(gc->account, name);
+	b = purple_find_buddy(purple_connection_get_account(gc), name);
 	if (b == NULL) {	/* the person is not in my list  */
 		g2 = g_new0(gc_and_uid, 1);
-		g2->gc = gc;
+		g2purple_account_get_connection() = gc;
 		g2->uid = strtol(from, NULL, 10);
 		message = g_strdup_printf(_("%s is not in your buddy list"), from);
 		purple_request_action(gc, NULL, message,

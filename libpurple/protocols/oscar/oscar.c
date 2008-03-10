@@ -33,11 +33,11 @@
 #include "account.h"
 #include "accountopt.h"
 #include "buddyicon.h"
-#include "cipher.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
 #include "imgstore.h"
+#include "md5cipher.h"
 #include "network.h"
 #include "notify.h"
 #include "privacy.h"
@@ -980,7 +980,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 
 	conn = data;
 	od = conn->od;
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	account = purple_connection_get_account(gc);
 
 	conn->connect_data = NULL;
@@ -1059,7 +1059,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 static void
 flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 
 	aim_srv_reqpersonalinfo(od, conn);
 
@@ -1122,7 +1122,7 @@ flap_connection_established_admin(OscarData *od, FlapConnection *conn)
 static void
 flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	struct chat_connection *chatcon;
 	static int id = 1;
 
@@ -1153,7 +1153,7 @@ flap_connection_established_alert(OscarData *od, FlapConnection *conn)
 static void
 flap_connection_established_bart(OscarData *od, FlapConnection *conn)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 
 	aim_clientready(od, conn);
 
@@ -1234,7 +1234,7 @@ oscar_login(PurpleAccount *account)
 
 	gc = purple_account_get_connection(account);
 	od = gc->proto_data = oscar_data_new();
-	od->gc = gc;
+	purple_account_get_connection(od) = gc;
 
 	oscar_data_addhandler(od, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, purple_connerr, 0);
 	oscar_data_addhandler(od, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, flap_connection_established, 0);
@@ -1312,8 +1312,8 @@ oscar_login(PurpleAccount *account)
 	if (aim_snvalid_icq((purple_account_get_username(account)))) {
 		od->icq = TRUE;
 	} else {
-		gc->flags |= PURPLE_CONNECTION_HTML;
-		gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
+		gc->flags |= PURPLE_CONNECTION_FLAGS_HTML;
+		gc->flags |= PURPLE_CONNECTION_FLAGS_AUTO_RESP;
 	}
 
 	/* Connect to core Purple signals */
@@ -1367,8 +1367,8 @@ oscar_close(PurpleConnection *gc)
 static int
 purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	PurpleConnection *gc = od->gc;
-	PurpleAccount *account = gc->account;
+	PurpleConnection *gc = purple_account_get_connection(od);
+	PurpleAccount *account = purple_connection_get_account(gc);
 	char *host; int port;
 	int i;
 	FlapConnection *newconn;
@@ -1482,7 +1482,7 @@ purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 static int
 purple_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	gchar *primary;
 
@@ -1515,7 +1515,7 @@ struct pieceofcrap {
 static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 {
 	struct pieceofcrap *pos = data;
-	OscarData *od = pos->gc->proto_data;
+	OscarData *od = purple_account_get_connection(pos)->proto_data;
 	char in = '\0';
 	int x = 0;
 	unsigned char m[17];
@@ -1533,7 +1533,7 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 		char buf[256];
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), PURPLE_WEBSITE);
-		purple_notify_warning(pos->gc, NULL,
+		purple_notify_warning(purple_account_get_connection(pos), NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
 		purple_input_remove(pos->inpa);
@@ -1565,7 +1565,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	gchar *buf;
 	ssize_t result;
 
-	if (!PURPLE_CONNECTION_IS_VALID(pos->gc))
+	if (!PURPLE_CONNECTION_IS_VALID(purple_account_get_connection(pos)))
 	{
 		g_free(pos->modname);
 		g_free(pos);
@@ -1577,7 +1577,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	if (source < 0) {
 		buf = g_strdup_printf(_("You may be disconnected shortly.  "
 				"Check %s for updates."), PURPLE_WEBSITE);
-		purple_notify_warning(pos->gc, NULL,
+		purple_notify_warning(purple_account_get_connection(pos), NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
 		g_free(buf);
@@ -1660,7 +1660,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 #endif
 
 	pos = g_new0(struct pieceofcrap, 1);
-	pos->gc = od->gc;
+	purple_account_get_connection(pos) = purple_account_get_connection(od);
 	pos->conn = conn;
 
 	pos->offset = offset;
@@ -1668,7 +1668,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	pos->modname = g_strdup(modname);
 
 	/* TODO: Keep track of this return value. */
-	if (purple_proxy_connect(NULL, pos->gc->account, "pidgin.im", 80,
+	if (purple_proxy_connect(NULL, purple_account_get_connection(pos)->account, "pidgin.im", 80,
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
@@ -1676,7 +1676,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 		g_free(pos);
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
 			"Check %s for updates."), PURPLE_WEBSITE);
-		purple_notify_warning(pos->gc, NULL,
+		purple_notify_warning(purple_account_get_connection(pos), NULL,
 							_("Unable to get a valid login hash."),
 							buf);
 	}
@@ -1695,7 +1695,7 @@ purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	char *key;
 	gboolean truncate_pass;
 
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	account = purple_connection_get_account(gc);
 
 	va_start(ap, fr);
@@ -1716,7 +1716,7 @@ purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 static int
 purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	char *host, *separator;
 	int port;
@@ -1748,7 +1748,7 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		struct chat_connection *cc;
 		cc = g_new0(struct chat_connection, 1);
 		cc->conn = newconn;
-		cc->gc = gc;
+		purple_account_get_connection(cc) = gc;
 		cc->name = g_strdup(redir->chat.room);
 		cc->exchange = redir->chat.exchange;
 		cc->instance = redir->chat.instance;
@@ -1784,7 +1784,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	va_list ap;
 	aim_userinfo_t *info;
 
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	account = purple_connection_get_account(gc);
 
 	va_start(ap, fr);
@@ -1950,7 +1950,7 @@ static void purple_check_comment(OscarData *od, const char *str) {
 }
 
 static int purple_parse_offgoing(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	va_list ap;
 	aim_userinfo_t *info;
@@ -1961,13 +1961,13 @@ static int purple_parse_offgoing(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	purple_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_OFFLINE, NULL);
 	purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
-	g_hash_table_remove(od->buddyinfo, purple_normalize(gc->account, info->sn));
+	g_hash_table_remove(od->buddyinfo, purple_normalize(purple_connection_get_account(gc), info->sn));
 
 	return 1;
 }
 
 static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch1_args *args) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleMessageFlags flags = 0;
 	struct buddyinfo *bi;
@@ -2098,9 +2098,9 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	char *message = NULL;
 
 	g_return_val_if_fail(od != NULL, 0);
-	g_return_val_if_fail(od->gc != NULL, 0);
+	g_return_val_if_fail(purple_account_get_connection(od) != NULL, 0);
 
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	account = purple_connection_get_account(gc);
 	od = gc->proto_data;
 
@@ -2240,7 +2240,7 @@ purple_auth_request(struct name_data *data, char *msg)
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
 
-	gc = data->gc;
+	gc = purple_account_get_connection(data);
 	od = gc->proto_data;
 	account = purple_connection_get_account(gc);
 	buddy = purple_find_buddy(account, data->name);
@@ -2276,7 +2276,7 @@ purple_auth_request(struct name_data *data, char *msg)
 static void
 purple_auth_dontrequest(struct name_data *data)
 {
-	PurpleConnection *gc = data->gc;
+	PurpleConnection *gc = purple_account_get_connection(data);
 	PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), data->name);
 
 	/* Remove from local list */
@@ -2292,10 +2292,10 @@ purple_auth_sendrequest(PurpleConnection *gc, const char *name)
 	struct name_data *data;
 
 	data = g_new0(struct name_data, 1);
-	data->gc = gc;
+	purple_account_get_connection(data) = gc;
 	data->name = g_strdup(name);
 
-	purple_request_input(data->gc, NULL, _("Authorization Request Message:"),
+	purple_request_input(purple_account_get_connection(data), NULL, _("Authorization Request Message:"),
 					   NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_request),
 					   _("_Cancel"), G_CALLBACK(purple_auth_dontrequest),
@@ -2322,7 +2322,7 @@ static void
 purple_auth_grant(gpointer cbdata)
 {
 	struct name_data *data = cbdata;
-	PurpleConnection *gc = data->gc;
+	PurpleConnection *gc = purple_account_get_connection(data);
 	OscarData *od = gc->proto_data;
 
 	aim_ssi_sendauthreply(od, data->name, 0x01, NULL);
@@ -2334,7 +2334,7 @@ purple_auth_grant(gpointer cbdata)
 static void
 purple_auth_dontgrant(struct name_data *data, char *msg)
 {
-	PurpleConnection *gc = data->gc;
+	PurpleConnection *gc = purple_account_get_connection(data);
 	OscarData *od = gc->proto_data;
 
 	aim_ssi_sendauthreply(od, data->name, 0x00, msg ? msg : _("No reason given."));
@@ -2344,11 +2344,11 @@ static void
 purple_auth_dontgrant_msgprompt(gpointer cbdata)
 {
 	struct name_data *data = cbdata;
-	purple_request_input(data->gc, NULL, _("Authorization Denied Message:"),
+	purple_request_input(purple_account_get_connection(data), NULL, _("Authorization Denied Message:"),
 					   NULL, _("No reason given."), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_dontgrant),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
-					   purple_connection_get_account(data->gc), data->name, NULL,
+					   purple_connection_get_account(purple_account_get_connection(data)), data->name, NULL,
 					   data);
 }
 
@@ -2356,7 +2356,7 @@ purple_auth_dontgrant_msgprompt(gpointer cbdata)
 static void
 purple_icq_buddyadd(struct name_data *data)
 {
-	PurpleConnection *gc = data->gc;
+	PurpleConnection *gc = purple_account_get_connection(data);
 
 	purple_blist_request_add_buddy(purple_connection_get_account(gc), data->name, NULL, data->nick);
 
@@ -2366,7 +2366,7 @@ purple_icq_buddyadd(struct name_data *data)
 static int
 incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args, time_t t)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	gchar **msg1, **msg2;
 	int i, numtoks;
@@ -2458,7 +2458,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				purple_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
 						   args->uin);
-				data->gc = gc;
+				purple_account_get_connection(data) = gc;
 				data->name = sn;
 				data->nick = NULL;
 
@@ -2526,7 +2526,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 				for (i=0; i<num; i++) {
 					struct name_data *data = g_new(struct name_data, 1);
 					gchar *message = g_strdup_printf(_("ICQ user %u has sent you a buddy: %s (%s)"), args->uin, text[i*2+2], text[i*2+1]);
-					data->gc = gc;
+					purple_account_get_connection(data) = gc;
 					data->name = g_strdup(text[i*2+1]);
 					data->nick = g_strdup(text[i*2+2]);
 
@@ -2643,7 +2643,7 @@ static int purple_parse_incoming_im(OscarData *od, FlapConnection *conn, FlapFra
 }
 
 static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	char *buf;
 	va_list ap;
@@ -2715,7 +2715,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 	}
 
 	if (!purple_conv_present_error(userinfo->sn, account, buf))
-		purple_notify_error(od->gc, NULL, buf, NULL);
+		purple_notify_error(purple_account_get_connection(od), NULL, buf, NULL);
 	g_free(buf);
 
 	return 1;
@@ -2751,7 +2751,7 @@ purple_parse_clientauto_ch2(OscarData *od, const char *who, guint16 reason, cons
 }
 
 static int purple_parse_clientauto_ch4(OscarData *od, char *who, guint16 reason, guint32 state, char *msg) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 
 	switch(reason) {
 		case 0x0003: { /* Reply from an ICQ status message request */
@@ -2830,7 +2830,7 @@ static int purple_parse_genericerr(OscarData *od, FlapConnection *conn, FlapFram
 }
 
 static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 #ifdef TODOFT
 	OscarData *od = gc->proto_data;
 	PurpleXfer *xfer;
@@ -2865,7 +2865,7 @@ static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	if (!purple_conv_present_error(data, purple_connection_get_account(gc), buf)) {
 		g_free(buf);
 		buf = g_strdup_printf(_("Unable to send message to %s:"), data ? data : "(unknown)");
-		purple_notify_error(od->gc, NULL, buf,
+		purple_notify_error(purple_account_get_connection(od), NULL, buf,
 				  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
 	}
 	g_free(buf);
@@ -2874,7 +2874,7 @@ static int purple_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 }
 
 static int purple_parse_mtn(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	guint16 type1, type2;
 	char *sn;
@@ -2932,16 +2932,16 @@ static int purple_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	user_info = purple_notify_user_info_new();
 	buf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
 	purple_notify_user_info_add_pair(user_info, NULL, buf);
-	purple_notify_userinfo(od->gc, destn, user_info, NULL, NULL);
+	purple_notify_userinfo(purple_account_get_connection(od), destn, user_info, NULL, NULL);
 	purple_notify_user_info_destroy(user_info);
-	purple_conv_present_error(destn, purple_connection_get_account(od->gc), buf);
+	purple_conv_present_error(destn, purple_connection_get_account(purple_account_get_connection(od)), buf);
 	g_free(buf);
 
 	return 1;
 }
 
 static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleNotifyUserInfo *user_info;
 	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL;
@@ -3043,7 +3043,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 
 static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleBuddy *b;
 	PurplePresence *presence;
@@ -3104,7 +3104,7 @@ static int purple_parse_motd(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 	purple_debug_misc("oscar",
 			   "MOTD: %s (%hu)\n", msg ? msg : "Unknown", id);
 	if (id < 4)
-		purple_notify_warning(od->gc, NULL,
+		purple_notify_warning(purple_account_get_connection(od), NULL,
 							_("Your AIM connection may be lost."), NULL);
 
 	return 1;
@@ -3188,7 +3188,7 @@ static int purple_conv_chat_join(OscarData *od, FlapConnection *conn, FlapFrame 
 	va_list ap;
 	int count, i;
 	aim_userinfo_t *info;
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 
 	struct chat_connection *c = NULL;
 
@@ -3211,7 +3211,7 @@ static int purple_conv_chat_leave(OscarData *od, FlapConnection *conn, FlapFrame
 	va_list ap;
 	int count, i;
 	aim_userinfo_t *info;
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 
 	struct chat_connection *c = NULL;
 
@@ -3239,7 +3239,7 @@ static int purple_conv_chat_info_update(OscarData *od, FlapConnection *conn, Fla
 	char *roomdesc;
 	guint16 unknown_c9, unknown_d2, unknown_d5, maxmsglen, maxvisiblemsglen;
 	guint32 creationtime;
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, conn);
 
 	if (!ccon)
@@ -3270,7 +3270,7 @@ static int purple_conv_chat_info_update(OscarData *od, FlapConnection *conn, Fla
 }
 
 static int purple_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, conn);
 	gchar *utf8;
@@ -3302,7 +3302,7 @@ static int purple_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, Fl
 
 static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	va_list ap;
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	struct aim_emailinfo *emailinfo;
 	int havenewmail;
 	char *alertitle, *alerturl;
@@ -3314,7 +3314,7 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 	alerturl  = va_arg(ap, char *);
 	va_end(ap);
 
-	if ((emailinfo != NULL) && purple_account_get_check_mail(gc->account)) {
+	if ((emailinfo != NULL) && purple_account_get_check_mail(purple_connection_get_account(gc))) {
 		gchar *to = g_strdup_printf("%s%s%s", purple_account_get_username(purple_connection_get_account(gc)),
 									emailinfo->domain ? "@" : "",
 									emailinfo->domain ? emailinfo->domain : "");
@@ -3330,7 +3330,7 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 }
 
 static int purple_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	char *sn;
 	guint8 iconcsumtype, *iconcsum, *icon;
@@ -3491,7 +3491,7 @@ static int purple_selfinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	purple_connection_set_display_name(od->gc, info->sn);
+	purple_connection_set_display_name(purple_account_get_connection(od), info->sn);
 
 	/*
 	 * What's with the + 0.5?
@@ -3510,7 +3510,7 @@ static int purple_selfinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 }
 
 static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	guint16 code;
 	char *msg;
@@ -3556,7 +3556,7 @@ static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 
 static int purple_parse_locaterights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	va_list ap;
 	guint16 maxsiglen;
@@ -3605,7 +3605,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	va_list ap;
 	guint16 maxpermits, maxdenies;
 
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	od = (OscarData *)gc->proto_data;
 	account = purple_connection_get_account(gc);
 
@@ -3620,7 +3620,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	od->rights.maxpermits = (guint)maxpermits;
 	od->rights.maxdenies = (guint)maxdenies;
 
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 
 	purple_debug_info("oscar", "buddy list loaded\n");
 
@@ -3630,7 +3630,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 		serv_set_info(gc, purple_account_get_user_info(account));
 
 	if (!od->icq)
-		oscar_format_screenname(gc, account->username);
+		oscar_format_screenname(gc, purple_account_get_username(account));
 
 	/* Set our available message based on the current status */
 	status = purple_account_get_active_status(account);
@@ -3670,7 +3670,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	 * breaks mail notification for @mac.com accounts, but it gets rid
 	 * of an annoying error at signon for @anythingelse.com accounts.
 	 */
-	if ((od->authinfo->email != NULL) && ((strchr(gc->account->username, '@') == NULL)))
+	if ((od->authinfo->email != NULL) && ((strchr(purple_account_get_username(purple_connection_get_account(gc)), '@') == NULL)))
 		aim_srv_requestnew(od, SNAC_FAMILY_ALERT);
 
 	return 1;
@@ -3724,7 +3724,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	va_list ap;
 	struct aim_icq_info *info;
 
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	account = purple_connection_get_account(gc);
 
 	va_start(ap, fr);
@@ -3756,7 +3756,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	}
 	oscar_user_info_convert_and_add(account, user_info, _("First Name"), info->first);
 	oscar_user_info_convert_and_add(account, user_info, _("Last Name"), info->last);
-	if (info->email && info->email[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email))) {
+	if (info->email && info->email[0] && (utf8 = oscar_utf8_try_convert(purple_connection_get_account(gc), info->email))) {
 		buf = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", utf8, utf8);
 		purple_notify_user_info_add_pair(user_info, _("E-Mail Address"), buf);
 		g_free(buf);
@@ -3765,7 +3765,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	if (info->numaddresses && info->email2) {
 		int i;
 		for (i = 0; i < info->numaddresses; i++) {
-			if (info->email2[i] && info->email2[i][0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email2[i]))) {
+			if (info->email2[i] && info->email2[i][0] && (utf8 = oscar_utf8_try_convert(purple_connection_get_account(gc), info->email2[i]))) {
 				buf = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", utf8, utf8);
 				purple_notify_user_info_add_pair(user_info, _("E-Mail Address"), buf);
 				g_free(buf);
@@ -3801,7 +3801,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 		purple_notify_user_info_add_pair(user_info,
 													_("Age"), age);
 	}
-	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->personalwebpage))) {
+	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = oscar_utf8_try_convert(purple_connection_get_account(gc), info->personalwebpage))) {
 		buf = g_strdup_printf("<a href=\"%s\">%s</a>", utf8, utf8);
 		purple_notify_user_info_add_pair(user_info, _("Personal Web Page"), buf);
 		g_free(buf);
@@ -3861,7 +3861,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Company"), info->workcompany);
 		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Division"), info->workdivision);
 		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Position"), info->workposition);
-		if (info->workwebpage && info->workwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->workwebpage))) {
+		if (info->workwebpage && info->workwebpage[0] && (utf8 = oscar_utf8_try_convert(purple_connection_get_account(gc), info->workwebpage))) {
 			g_string_append_printf(tmp, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Web Page"), utf8, utf8);
 			g_free(utf8);
 		}
@@ -3881,7 +3881,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 
 static int purple_icqalias(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleAccount *account = purple_connection_get_account(gc);
 	gchar who[16], *utf8;
 	PurpleBuddy *b;
@@ -3895,7 +3895,7 @@ static int purple_icqalias(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 	if (info->uin && info->nick && info->nick[0] && (utf8 = oscar_utf8_try_convert(account, info->nick))) {
 		g_snprintf(who, sizeof(who), "%u", info->uin);
 		serv_got_alias(gc, who, utf8);
-		if ((b = purple_find_buddy(gc->account, who))) {
+		if ((b = purple_find_buddy(purple_connection_get_account(gc), who))) {
 			purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", utf8);
 		}
 		g_free(utf8);
@@ -3906,7 +3906,7 @@ static int purple_icqalias(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 
 static int purple_popup(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	gchar *text;
 	va_list ap;
 	char *msg, *url;
@@ -3935,7 +3935,7 @@ static void oscar_searchresults_add_buddy_cb(PurpleConnection *gc, GList *row, v
 
 static int purple_parse_searchreply(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	PurpleNotifySearchResults *results;
 	PurpleNotifySearchColumn *column;
 	gchar *secondary;
@@ -3993,14 +3993,14 @@ static int purple_parse_searcherror(OscarData *od, FlapConnection *conn, FlapFra
 	va_end(ap);
 
 	buf = g_strdup_printf(_("No results found for e-mail address %s"), email);
-	purple_notify_error(od->gc, NULL, buf, NULL);
+	purple_notify_error(purple_account_get_connection(od), NULL, buf, NULL);
 	g_free(buf);
 
 	return 1;
 }
 
 static int purple_account_confirm(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	guint16 status;
 	va_list ap;
 	char msg[256];
@@ -4022,7 +4022,7 @@ static int purple_account_confirm(OscarData *od, FlapConnection *conn, FlapFrame
 }
 
 static int purple_info_change(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	guint16 perms, err;
 	char *url, *sn, *email;
@@ -4105,9 +4105,9 @@ oscar_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState stat
 	else {
 		/* Don't send if this turkey is in our deny list */
 		GSList *list;
-		for (list=gc->account->deny; (list && aim_sncmp(name, list->data)); list=list->next);
+		for (list=purple_connection_get_account(gc)->deny; (list && aim_sncmp(name, list->data)); list=list->next);
 		if (!list) {
-			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(gc->account, name));
+			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(purple_connection_get_account(gc), name));
 			if (bi && bi->typingnot) {
 				if (state == PURPLE_TYPING)
 					aim_im_sendmtn(od, 0x0001, name, 0x0002);
@@ -4190,7 +4190,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	g_string_append(msg, "</BODY></HTML>");
 
 	/* Convert the message to a good encoding */
-	purple_plugin_oscar_convert_to_best_encoding(conn->od->gc,
+	purple_plugin_oscar_convert_to_best_encoding(purple_account_get_connection(conn->od),
 			conn->sn, msg->str, &tmp, &tmplen, &charset, &charsubset);
 	g_string_free(msg, TRUE);
 	msg = g_string_new_len(tmp, tmplen);
@@ -4260,7 +4260,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			                        "You must be Direct Connected to send IM Images."),
 			                        PURPLE_MESSAGE_ERROR, time(NULL));
 
-		buddy = purple_find_buddy(gc->account, name);
+		buddy = purple_find_buddy(purple_connection_get_account(gc), name);
 
 		bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, name));
 		if (!bi) {
@@ -4779,7 +4779,7 @@ static gboolean purple_ssi_rerequestdata(gpointer data) {
 }
 
 static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	guint16 reason;
 
@@ -4853,7 +4853,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	guint16 fmtver, numitems;
 	guint32 timestamp;
 
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	od = gc->proto_data;
 	account = purple_connection_get_account(gc);
 
@@ -4898,7 +4898,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 						if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 							continue;
 						b = (PurpleBuddy *)bnode;
-						if (b->account == gc->account) {
+						if (b->account == purple_connection_get_account(gc)) {
 							if (aim_ssi_itemlist_exists(od->ssi.local, b->name)) {
 								/* If the buddy is an ICQ user then load his nickname */
 								const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
@@ -4930,8 +4930,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		}
 
 		/* Permit list */
-		if (gc->account->permit) {
-			next = gc->account->permit;
+		if (purple_connection_get_account(gc)->permit) {
+			next = purple_connection_get_account(gc)->permit;
 			while (next != NULL) {
 				cur = next;
 				next = next->next;
@@ -4944,8 +4944,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		}
 
 		/* Deny list */
-		if (gc->account->deny) {
-			next = gc->account->deny;
+		if (purple_connection_get_account(gc)->deny) {
+			next = purple_connection_get_account(gc)->deny;
 			while (next != NULL) {
 				cur = next;
 				next = next->next;
@@ -4989,7 +4989,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 						if (g_utf8_validate(gname, -1, NULL))
 							gname_utf8 = g_strdup(gname);
 						else
-							gname_utf8 = oscar_utf8_try_convert(gc->account, gname);
+							gname_utf8 = oscar_utf8_try_convert(purple_connection_get_account(gc), gname);
 					} else
 						gname_utf8 = NULL;
 
@@ -5009,18 +5009,18 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					} else
 						alias_utf8 = NULL;
 
-					b = purple_find_buddy_in_group(gc->account, curitem->name, g);
+					b = purple_find_buddy_in_group(purple_connection_get_account(gc), curitem->name, g);
 					if (b) {
 						/* Get server stored alias */
 						purple_blist_alias_buddy(b, alias_utf8);
 					} else {
-						b = purple_buddy_new(gc->account, curitem->name, alias_utf8);
+						b = purple_buddy_new(purple_connection_get_account(gc), curitem->name, alias_utf8);
 
 						purple_debug_info("oscar",
 								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, g->name);
 						purple_blist_add_buddy(b, NULL, g, NULL);
 					}
-					if (!aim_sncmp(curitem->name, account->username)) {
+					if (!aim_sncmp(curitem->name, purple_account_get_username(account))) {
 						char *comment = aim_ssi_getcomment(od->ssi.local, gname, curitem->name);
 						if (comment != NULL)
 						{
@@ -5053,7 +5053,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					if (g_utf8_validate(gname, -1, NULL))
 						gname_utf8 = g_strdup(gname);
 					else
-						gname_utf8 = oscar_utf8_try_convert(gc->account, gname);
+						gname_utf8 = oscar_utf8_try_convert(purple_connection_get_account(gc), gname);
 				} else
 					gname_utf8 = NULL;
 
@@ -5131,7 +5131,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 }
 
 static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	struct aim_ssi_tmp *retval;
 
@@ -5192,7 +5192,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	guint16 snac_subtype, type;
 	const char *name;
 
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	account = purple_connection_get_account(gc);
 
 	va_start(ap, fr);
@@ -5277,7 +5277,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 }
 
 static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	char *sn, *msg;
 	gchar *dialog_msg, *nombre;
@@ -5292,7 +5292,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	purple_debug_info("oscar",
 			   "ssi: %s has given you permission to add him to your buddy list\n", sn);
 
-	buddy = purple_find_buddy(gc->account, sn);
+	buddy = purple_find_buddy(purple_connection_get_account(gc), sn);
 	if (buddy && (purple_buddy_get_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", sn, purple_buddy_get_alias_only(buddy));
 	else
@@ -5302,7 +5302,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	g_free(nombre);
 
 	data = g_new(struct name_data, 1);
-	data->gc = gc;
+	purple_account_get_connection(data) = gc;
 	data->name = g_strdup(sn);
 	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
@@ -5318,7 +5318,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 }
 
 static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	char *sn;
 	char *msg;
@@ -5341,7 +5341,7 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 		reason = purple_plugin_oscar_decode_im_part(account, sn, AIM_CHARSET_CUSTOM, 0x0000, msg, strlen(msg));
 
 	data = g_new(struct name_data, 1);
-	data->gc = gc;
+	purple_account_get_connection(data) = gc;
 	data->name = g_strdup(sn);
 	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
@@ -5355,7 +5355,7 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 }
 
 static int purple_ssi_authreply(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	char *sn, *msg;
 	gchar *dialog_msg, *nombre;
@@ -5371,7 +5371,7 @@ static int purple_ssi_authreply(OscarData *od, FlapConnection *conn, FlapFrame *
 	purple_debug_info("oscar",
 			   "ssi: received authorization reply from %s.  Reply is 0x%04hhx\n", sn, reply);
 
-	buddy = purple_find_buddy(gc->account, sn);
+	buddy = purple_find_buddy(purple_connection_get_account(gc), sn);
 	if (buddy && (purple_buddy_get_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", sn, purple_buddy_get_alias_only(buddy));
 	else
@@ -5393,7 +5393,7 @@ static int purple_ssi_authreply(OscarData *od, FlapConnection *conn, FlapFrame *
 }
 
 static int purple_ssi_gotadded(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	char *sn;
 	PurpleBuddy *buddy;
@@ -5402,9 +5402,9 @@ static int purple_ssi_gotadded(OscarData *od, FlapConnection *conn, FlapFrame *f
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
-	buddy = purple_find_buddy(gc->account, sn);
+	buddy = purple_find_buddy(purple_connection_get_account(gc), sn);
 	purple_debug_info("oscar", "ssi: %s added you to their buddy list\n", sn);
-	purple_account_notify_added(gc->account, sn, NULL, (buddy ? purple_buddy_get_alias_only(buddy) : NULL), NULL);
+	purple_account_notify_added(purple_connection_get_account(gc), sn, NULL, (buddy ? purple_buddy_get_alias_only(buddy) : NULL), NULL);
 
 	return 1;
 }
@@ -5622,7 +5622,7 @@ const char* oscar_list_emblem(PurpleBuddy *b)
 
 	account = b->account;
 	if (account != NULL)
-		gc = account->gc;
+		gc = purple_account_get_connection(account);
 	if (gc != NULL)
 		od = gc->proto_data;
 	if (od != NULL)
@@ -5657,7 +5657,7 @@ const char* oscar_list_emblem(PurpleBuddy *b)
 }
 
 void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full) {
-	PurpleConnection *gc = b->account->gc;
+	PurpleConnection *gc = purple_account_get_connection(b->account);
 	OscarData *od = gc->proto_data;
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od, b->name);
 
@@ -5769,7 +5769,7 @@ char *oscar_status_text(PurpleBuddy *b)
 
 
 static int oscar_icon_req(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+	PurpleConnection *gc = purple_account_get_connection(od);
 	va_list ap;
 	guint16 type;
 	guint8 flags = 0, length = 0;
@@ -5957,12 +5957,12 @@ oscar_status_types(PurpleAccount *account)
 }
 
 static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
-	PurpleConnection *gc = data->gc;
+	PurpleConnection *gc = purple_account_get_connection(data);
 	OscarData *od = gc->proto_data;
 	PurpleBuddy *b;
 	PurpleGroup *g;
 
-	if (!(b = purple_find_buddy(purple_connection_get_account(data->gc), data->name))) {
+	if (!(b = purple_find_buddy(purple_connection_get_account(purple_account_get_connection(data)), data->name))) {
 		oscar_free_name_data(data);
 		return;
 	}
@@ -5974,7 +5974,7 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 
 	aim_ssi_editcomment(od, g->name, data->name, text);
 
-	if (!aim_sncmp(data->name, gc->account->username))
+	if (!aim_sncmp(data->name, purple_account_get_username(purple_connection_get_account(gc))))
 		purple_check_comment(od, text);
 
 	oscar_free_name_data(data);
@@ -6002,9 +6002,9 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	if (!(g = purple_buddy_get_group(buddy)))
 		return;
 	comment = aim_ssi_getcomment(od->ssi.local, g->name, buddy->name);
-	comment_utf8 = comment ? oscar_utf8_try_convert(gc->account, comment) : NULL;
+	comment_utf8 = comment ? oscar_utf8_try_convert(purple_connection_get_account(gc), comment) : NULL;
 
-	data->gc = gc;
+	purple_account_get_connection(data) = gc;
 	data->name = g_strdup(purple_buddy_get_name(buddy));
 	data->nick = g_strdup(purple_buddy_get_alias_only(buddy));
 
@@ -6319,7 +6319,7 @@ static void oscar_show_awaitingauth(PurplePluginAction *action)
 				PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
-				if (buddy->account == gc->account && aim_ssi_waitingforauth(od->ssi.local, group->name, buddy->name)) {
+				if (buddy->account == purple_connection_get_account(gc) && aim_ssi_waitingforauth(od->ssi.local, group->name, buddy->name)) {
 					if (purple_buddy_get_alias_only(buddy))
 						nombre = g_strdup_printf(" %s (%s)", buddy->name, purple_buddy_get_alias_only(buddy));
 					else
@@ -6409,17 +6409,14 @@ void oscar_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 		aim_ssi_delicon(od);
 	} else {
 		PurpleCipher *cipher;
-		PurpleCipherContext *context;
 		guchar md5[16];
 		gconstpointer data = purple_imgstore_get_data(img);
 		size_t len = purple_imgstore_get_size(img);
 
-
-		cipher = purple_ciphers_find_cipher("md5");
-		context = purple_cipher_context_new(cipher, NULL);
-		purple_cipher_context_append(context, data, len);
-		purple_cipher_context_digest(context, 16, md5, NULL);
-		purple_cipher_context_destroy(context);
+		cipher = purple_md5_cipher_new();
+		purple_cipher_append(cipher, data, len);
+		purple_cipher_digest(cipher, sizeof(md5), md5, NULL);
+		g_object_unref(G_OBJECT(cipher));
 
 		aim_ssi_seticon(od, md5, 16);
 	}

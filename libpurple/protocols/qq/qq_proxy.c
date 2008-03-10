@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "cipher.h"
+#include "md5cipher.h"
 #include "debug.h"
 #include "internal.h"
 
@@ -71,20 +71,18 @@ void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 /* QQ 2003iii uses double MD5 for the pwkey to get the session key */
 static guint8 *_gen_pwkey(const gchar *pwd)
 {
-        PurpleCipher *cipher;
-        PurpleCipherContext *context;
+	PurpleCipher *cipher;
 
 	guchar pwkey_tmp[QQ_KEY_LENGTH];
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (guchar *) pwd, strlen(pwd));
-	purple_cipher_context_digest(context, sizeof(pwkey_tmp), pwkey_tmp, NULL);
-	purple_cipher_context_destroy(context);
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, pwkey_tmp, QQ_KEY_LENGTH);
-	purple_cipher_context_digest(context, sizeof(pwkey_tmp), pwkey_tmp, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (guchar *) pwd, strlen(pwd));
+	purple_cipher_digest(cipher, sizeof(pwkey_tmp), pwkey_tmp, NULL);
+	purple_cipher_reset(cipher);
+
+	purple_cipher_append(cipher, pwkey_tmp, QQ_KEY_LENGTH);
+	purple_cipher_digest(cipher, sizeof(pwkey_tmp), pwkey_tmp, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	return g_memdup(pwkey_tmp, QQ_KEY_LENGTH);
 }
@@ -204,7 +202,7 @@ static void _qq_common_clean(PurpleConnection *gc)
 	qq_group_free_all(qd);
 	qq_add_buddy_request_free(qd);
 	qq_info_query_free(qd);
-	qq_buddies_list_free(gc->account, qd);
+	qq_buddies_list_free(purple_connection_get_account(gc), qd);
 }
 
 static void no_one_calls(gpointer data, gint source, PurpleInputCondition cond)
@@ -497,7 +495,7 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 		ret = send(qd->fd, data, len, 0);
 	}
 	if (ret == -1)
-		purple_connection_error_reason(qd->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, g_strerror(errno));
+		purple_connection_error_reason(purple_account_get_connection(qd), PURPLE_CONNECTION_ERROR_NETWORK_ERROR, g_strerror(errno));
 
 	return ret;
 }

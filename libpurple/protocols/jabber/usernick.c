@@ -43,7 +43,7 @@ static void jabber_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
 	if (!nick)
 		return;
 	nickname = xmlnode_get_data(nick);
-	serv_got_alias(js->gc, from, nickname);
+	serv_got_alias(purple_account_get_connection(js), from, nickname);
 	g_free(nickname);
 }
 
@@ -73,10 +73,10 @@ static void do_nick_got_own_nick_cb(JabberStream *js, const char *from, xmlnode 
 			oldnickname = xmlnode_get_data(nick);
 	}
 	
-	purple_request_input(js->gc, _("Set User Nickname"), _("Please specify a new nickname for you."),
+	purple_request_input(purple_account_get_connection(js), _("Set User Nickname"), _("Please specify a new nickname for you."),
 		_("This information is visible to all contacts on your contact list, so choose something appropriate."),
 		oldnickname, FALSE, FALSE, NULL, _("Set"), PURPLE_CALLBACK(do_nick_set), _("Cancel"), NULL,
-		purple_connection_get_account(js->gc), NULL, NULL, js);
+		purple_connection_get_account(purple_account_get_connection(js)), NULL, NULL, js);
 	g_free(oldnickname);
 }
 

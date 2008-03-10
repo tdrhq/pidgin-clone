@@ -23,7 +23,6 @@
 #include <stdio.h>
 
 #include "internal.h"
-#include "cipher.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
@@ -474,20 +473,6 @@ chat_topic_changed_cb(PurpleConversation *conv, const char *who,
 					purple_conversation_get_name(conv), topic,
 					(who) ? who : "unknown");
 }
-/**************************************************************************
- * Ciphers signal callbacks
- **************************************************************************/
-static void
-cipher_added_cb(PurpleCipher *cipher, void *data) {
-	purple_debug_misc("signals test", "cipher %s added\n",
-					purple_cipher_get_name(cipher));
-}
-
-static void
-cipher_removed_cb(PurpleCipher *cipher, void *data) {
-	purple_debug_misc("signals test", "cipher %s removed\n",
-					purple_cipher_get_name(cipher));
-}
 
 /**************************************************************************
  * Core signal callbacks
@@ -583,10 +568,8 @@ plugin_load(PurplePlugin *plugin)
 {
 	void *core_handle     = purple_get_core();
 	void *blist_handle    = purple_blist_get_handle();
-	void *conn_handle     = purple_connections_get_handle();
 	void *conv_handle     = purple_conversations_get_handle();
 	void *accounts_handle = purple_accounts_get_handle();
-	void *ciphers_handle  = purple_ciphers_get_handle();
 	void *ft_handle       = purple_xfers_get_handle();
 	void *sound_handle    = purple_sounds_get_handle();
 	void *notify_handle   = purple_notify_get_handle();
@@ -629,6 +612,7 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(blist_handle, "blist-node-extended-menu",
 						plugin, PURPLE_CALLBACK(blist_node_extended_menu_cb), NULL);
 
+#if 0
 	/* Connection subsystem signals */
 	purple_signal_connect(conn_handle, "signing-on",
 						plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
@@ -640,6 +624,7 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
 	purple_signal_connect(conn_handle, "connection-error",
 						plugin, PURPLE_CALLBACK(connection_error_cb), NULL);
+#endif
 
 	/* Conversations subsystem signals */
 	purple_signal_connect(conv_handle, "writing-im-msg",
@@ -696,12 +681,6 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(chat_left_cb), NULL);
 	purple_signal_connect(conv_handle, "chat-topic-changed",
 						plugin, PURPLE_CALLBACK(chat_topic_changed_cb), NULL);
-
-	/* Ciphers signals */
-	purple_signal_connect(ciphers_handle, "cipher-added",
-						plugin, PURPLE_CALLBACK(cipher_added_cb), NULL);
-	purple_signal_connect(ciphers_handle, "cipher-removed",
-						plugin, PURPLE_CALLBACK(cipher_removed_cb), NULL);
 
 	/* Core signals */
 	purple_signal_connect(core_handle, "quitting",

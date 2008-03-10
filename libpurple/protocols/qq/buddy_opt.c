@@ -139,7 +139,7 @@ static void _qq_send_packet_add_buddy_auth_with_gc_and_uid(gc_and_uid *g, const 
 	guint32 uid;
 	g_return_if_fail(g != NULL);
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
@@ -155,7 +155,7 @@ static void _qq_reject_add_request_real(gc_and_uid *g, const gchar *reason)
 
 	g_return_if_fail(g != NULL);
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
@@ -171,7 +171,7 @@ void qq_approve_add_request_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
@@ -195,14 +195,14 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
 	g_free(g);
 
 	g2 = g_new0(gc_and_uid, 1);
-	g2->gc = gc;
+	g2purple_account_get_connection() = gc;
 	g2->uid = uid;
 
 	msg1 = g_strdup_printf(_("You rejected %d's request"), uid);
@@ -224,7 +224,7 @@ void qq_add_buddy_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
@@ -241,7 +241,7 @@ void qq_block_buddy_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	uid = g->uid;
 	g_return_if_fail(uid > 0);
 
@@ -395,11 +395,11 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 		if (strtol(reply, NULL, 10) > 0) {	/* need auth */
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Add buddy attempt fails, need authentication\n");
 			nombre = uid_to_purple_name(for_uid);
-			b = purple_find_buddy(gc->account, nombre);
+			b = purple_find_buddy(purple_connection_get_account(gc), nombre);
 			if (b != NULL)
 				purple_blist_remove_buddy(b);
 			g = g_new0(gc_and_uid, 1);
-			g->gc = gc;
+			purple_account_get_connection(g) = gc;
 			g->uid = for_uid;
 			msg = g_strdup_printf(_("User %d needs authentication"), for_uid);
 			purple_request_input(gc, NULL, msg,
@@ -452,7 +452,7 @@ PurpleBuddy *qq_add_buddy_by_recv_packet(PurpleConnection *gc, guint32 uid, gboo
 	qq_buddy *q_bud;
 	gchar *name, *group_name;
 
-	a = gc->account;
+	a = purple_connection_get_account(gc);
 	qd = (qq_data *) gc->proto_data;
 	g_return_val_if_fail(a != NULL && uid != 0, NULL);
 
@@ -462,7 +462,7 @@ PurpleBuddy *qq_add_buddy_by_recv_packet(PurpleConnection *gc, guint32 uid, gboo
 	g = qq_get_purple_group(group_name);
 
 	name = uid_to_purple_name(uid);
-	b = purple_find_buddy(gc->account, name);
+	b = purple_find_buddy(purple_connection_get_account(gc), name);
 	/* remove old, we can not simply return here
 	 * because there might be old local copy of this buddy */
 	if (b != NULL)
@@ -508,7 +508,7 @@ void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	if (uid > 0)
 		_qq_send_packet_add_buddy(gc, uid);
 	else {
-		b = purple_find_buddy(gc->account, buddy->name);
+		b = purple_find_buddy(purple_connection_get_account(gc), buddy->name);
 		if (b != NULL)
 			purple_blist_remove_buddy(b);
 		purple_notify_error(gc, NULL,
@@ -534,7 +534,7 @@ void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 	if (uid > 0)
 		_qq_send_packet_remove_buddy(gc, uid);
 
-	b = purple_find_buddy(gc->account, buddy->name);
+	b = purple_find_buddy(purple_connection_get_account(gc), buddy->name);
 	if (b != NULL) {
 		q_bud = (qq_buddy *) b->proto_data;
 		if (q_bud != NULL)

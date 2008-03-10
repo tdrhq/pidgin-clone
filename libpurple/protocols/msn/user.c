@@ -25,6 +25,8 @@
 #include "user.h"
 #include "slp.h"
 
+#include "sha1cipher.h"
+
 /*new a user object*/
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
@@ -246,7 +248,7 @@ msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 		msn_user_set_object(user, NULL);
 	else
 	{
-		PurpleCipherContext *ctx;
+		PurpleCipher *cipher;
 		char *buf;
 		gconstpointer data = purple_imgstore_get_data(img);
 		size_t size = purple_imgstore_get_size(img);
@@ -269,9 +271,9 @@ msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 		/* Compute the SHA1D field. */
 		memset(digest, 0, sizeof(digest));
 
-		ctx = purple_cipher_context_new_by_name("sha1", NULL);
-		purple_cipher_context_append(ctx, data, size);
-		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+		cipher = purple_sha1_cipher_new();
+		purple_cipher_append(cipher, data, size);
+		purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
 
 		base64 = purple_base64_encode(digest, sizeof(digest));
 		msn_object_set_sha1d(msnobj, base64);
@@ -291,10 +293,11 @@ msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 
 		memset(digest, 0, sizeof(digest));
 
-		purple_cipher_context_reset(ctx, NULL);
-		purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
-		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
-		purple_cipher_context_destroy(ctx);
+		purple_cipher_reset(cipher);
+		purple_cipher_append(cipher, data, strlen((char *)data));
+		purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+		g_object_unref(G_OBJECT(cipher));
+
 		g_free(buf);
 
 		base64 = purple_base64_encode(digest, sizeof(digest));

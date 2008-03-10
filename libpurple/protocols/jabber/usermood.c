@@ -135,7 +135,7 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 		}
 		status_id = jabber_buddy_state_get_status_id(resource->state);
 
-		purple_prpl_got_user_status(js->gc->account, from, status_id, "mood", _(newmood), "moodtext", moodtext?moodtext:"", NULL);
+		purple_prpl_got_user_status(purple_account_get_connection(js)->account, from, status_id, "mood", _(newmood), "moodtext", moodtext?moodtext:"", NULL);
 	}
 	g_free(moodtext);
 }

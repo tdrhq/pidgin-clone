@@ -40,7 +40,7 @@ void jabber_message_free(JabberMessage *jm)
 	g_free(jm->subject);
 	g_free(jm->body);
 	g_free(jm->xhtml);
-	g_free(jm->password);
+	g_free(purple_account_get_password(jm));
 	g_free(jm->error);
 	g_free(jm->thread_id);
 	g_list_free(jm->etc);
@@ -63,14 +63,14 @@ static void handle_chat(JabberMessage *jm)
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
+	if(jabber_find_unnormalized_conv(jm->from, purple_account_get_connection(jm->js)->account)) {
 		from = g_strdup(jm->from);
 	} else  if(jid->node) {
 		if(jid->resource) {
 			PurpleConversation *conv;
 
 			from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, jm->js->gc->account);
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, purple_account_get_connection(jm->js)->account);
 			if(conv) {
 				purple_conversation_set_name(conv, jm->from);
 				}
@@ -83,19 +83,19 @@ static void handle_chat(JabberMessage *jm)
 
 	if(!jm->xhtml && !jm->body) {
 		if(JM_STATE_COMPOSING == jm->chat_state) {
-			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPING);
+			serv_got_typing(purple_account_get_connection(jm->js), from, 0, PURPLE_TYPING);
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
-			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPED);
+			serv_got_typing(purple_account_get_connection(jm->js), from, 0, PURPLE_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
 			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-					from, jm->js->gc->account);
+					from, purple_account_get_connection(jm->js)->account);
 			if (conv && jid->node && jid->domain) {
 				char buf[256];
 				PurpleBuddy *buddy;
 
 				g_snprintf(buf, sizeof(buf), "%s@%s", jid->node, jid->domain);
 
-				if ((buddy = purple_find_buddy(jm->js->gc->account, buf))) {
+				if ((buddy = purple_find_buddy(purple_account_get_connection(jm->js)->account, buf))) {
 					const char *who;
 					char *escaped;
 
@@ -113,10 +113,10 @@ static void handle_chat(JabberMessage *jm)
 					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
-			serv_got_typing_stopped(jm->js->gc, from);
+			serv_got_typing_stopped(purple_account_get_connection(jm->js), from);
 			
 		} else {
-			serv_got_typing_stopped(jm->js->gc, from);
+			serv_got_typing_stopped(purple_account_get_connection(jm->js), from);
 		}
 	} else {
 		if(jbr) {
@@ -140,7 +140,7 @@ static void handle_chat(JabberMessage *jm)
 			jm->body = jabber_google_format_to_html(jm->body);
 			g_free(tmp);
 		}
-		serv_got_im(jm->js->gc, from, jm->xhtml ? jm->xhtml : jm->body, 0,
+		serv_got_im(purple_account_get_connection(jm->js), from, jm->xhtml ? jm->xhtml : jm->body, 0,
 				jm->sent);
 	}
 
@@ -195,7 +195,7 @@ static void handle_headline(JabberMessage *jm)
 		}
 	}
 
-	purple_notify_formatted(jm->js->gc, title, jm->subject ? jm->subject : title,
+	purple_notify_formatted(purple_account_get_connection(jm->js), title, jm->subject ? jm->subject : title,
 			NULL, body->str, NULL, NULL);
 
 	g_free(title);
@@ -235,7 +235,7 @@ static void handle_groupchat(JabberMessage *jm)
 
 	if(jm->xhtml || jm->body) {
 		if(jid->resource)
-			serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
+			serv_got_chat_in(purple_account_get_connection(jm->js), chat->id, jid->resource,
 							jm->delayed ? PURPLE_MESSAGE_DELAYED : 0,
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
@@ -260,10 +260,10 @@ static void handle_groupchat_invite(JabberMessage *jm)
 	g_hash_table_replace(components, "room", g_strdup(jid->node));
 	g_hash_table_replace(components, "server", g_strdup(jid->domain));
 	g_hash_table_replace(components, "handle", g_strdup(jm->js->user->node));
-	g_hash_table_replace(components, "password", g_strdup(jm->password));
+	g_hash_table_replace(components, "password", g_strdup(purple_account_get_password(jm)));
 
 	jabber_id_free(jid);
-	serv_got_chat_invite(jm->js->gc, jm->to, jm->from, jm->body, components);
+	serv_got_chat_invite(purple_account_get_connection(jm->js), jm->to, jm->from, jm->body, components);
 }
 
 static void handle_error(JabberMessage *jm)
@@ -276,7 +276,7 @@ static void handle_error(JabberMessage *jm)
 	buf = g_strdup_printf(_("Message delivery to %s failed: %s"),
 			jm->from, jm->error ? jm->error : "");
 
-	purple_notify_formatted(jm->js->gc, _("XMPP Message Error"), _("XMPP Message Error"), buf,
+	purple_notify_formatted(purple_account_get_connection(jm->js), _("XMPP Message Error"), _("XMPP Message Error"), buf,
 			jm->xhtml ? jm->xhtml : jm->body, NULL, NULL);
 
 	g_free(buf);
@@ -296,7 +296,7 @@ static void handle_buzz(JabberMessage *jm) {
 	if(!jm->js->allowBuzz)
 		return;
 	
-	account = purple_connection_get_account(jm->js->gc);
+	account = purple_connection_get_account(purple_account_get_connection(jm->js));
 	
 	if ((buddy = purple_find_buddy(account, jm->from)) != NULL)
 		username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
@@ -454,7 +454,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						jm->body = xmlnode_get_data(reason);
 					}
 					if((password = xmlnode_get_child(child, "password")))
-						jm->password = xmlnode_get_data(password);
+						purple_account_get_password(jm) = xmlnode_get_data(password);
 
 					jm->type = JABBER_MESSAGE_GROUPCHAT_INVITE;
 				}

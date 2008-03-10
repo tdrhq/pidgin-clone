@@ -43,9 +43,9 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [4])
-m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [4])
+m4_define([purple_lt_current], [40])
+m4_define([purple_major_version], [3])
+m4_define([purple_minor_version], [0])
 m4_define([purple_micro_version], [1])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
@@ -309,6 +309,9 @@ I can find them.
 ])])
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
+
+GLIB_GENMARSHAL=`pkg-config --variable=glib_genmarshal glib-2.0`
+AC_SUBST(GLIB_GENMARSHAL)
 
 AC_ARG_WITH([extraversion],
 			AC_HELP_STRING([--with-extraversion=STRING],

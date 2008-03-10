@@ -303,7 +303,7 @@ static void irc_login(PurpleAccount *account)
 	const char *username = purple_account_get_username(account);
 
 	gc = purple_account_get_connection(account);
-	gc->flags |= PURPLE_CONNECTION_NO_NEWLINES;
+	gc->flags |= PURPLE_CONNECTION_FLAGS_NO_NEWLINES;
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		purple_connection_error_reason (gc,
@@ -572,7 +572,7 @@ static void read_input(struct irc_conn *irc, int len)
 {
 	char *cur, *end;
 
-	irc->account->gc->last_received = time(NULL);
+	purple_account_get_connection(irc->account)->last_received = time(NULL);
 	irc->inbufused += len;
 	irc->inbuf[irc->inbufused] = '\0';
 

@@ -26,16 +26,17 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
-#include "cipher.h"
 #include "cmds.h"
 #include "core.h"
 #include "debug.h"
+#include "md5cipher.h"
 #include "notify.h"
 #include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
 #include "request.h"
 #include "server.h"
+#include "sha1cipher.h"
 #include "util.h"
 #include "version.h"
 
@@ -165,7 +166,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 1: /* we don't get the full buddy list here. */
 			if (!yd->logged_in) {
 				purple_connection_set_display_name(gc, pair->value);
-				purple_connection_set_state(gc, PURPLE_CONNECTED);
+				purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 				yd->logged_in = TRUE;
 				if (yd->picture_upload_todo) {
 					yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
@@ -309,12 +310,12 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (!name)
 				break;
 
-			b = purple_find_buddy(gc->account, name);
+			b = purple_find_buddy(purple_connection_get_account(gc), name);
 
 			if (!cksum || (cksum == -1)) {
 				if (f)
 					yahoo_friend_set_buddy_icon_need_request(f, TRUE);
-				purple_buddy_icons_set_for_user(gc->account, name, NULL, 0, NULL);
+				purple_buddy_icons_set_for_user(purple_connection_get_account(gc), name, NULL, 0, NULL);
 				break;
 			}
 
@@ -519,7 +520,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
 				purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found",
-								  account->username, norm_bud);
+								  purple_account_get_username(account), norm_bud);
 				purple_privacy_deny_add(account, norm_bud, 1);
 			}
 			break;
@@ -663,7 +664,7 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 	{
 		account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
 		purple_debug_info("yahoo", "%s privacy defaulting to PURPLE_PRIVACY_DENY_USERS.\n",
-				account->username);
+				purple_account_get_username(account));
 	}
 
 	if (yd->tmp_serv_plist) {
@@ -672,7 +673,7 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 			f = yahoo_friend_find(gc, *bud);
 			if (f) {
 				purple_debug_info("yahoo", "%s setting presence for %s to PERM_OFFLINE\n",
-						account->username, *bud);
+						purple_account_get_username(account), *bud);
 				f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
 			}
 		}
@@ -931,7 +932,7 @@ yahoo_buddy_add_authorize_cb(gpointer data)
 {
 	struct yahoo_add_request *add_req = data;
 	struct yahoo_packet *pkt;
-	struct yahoo_data *yd = add_req->gc->proto_data;
+	struct yahoo_data *yd = add_purple_account_get_connection(req)->proto_data;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, "ssiii",
@@ -950,13 +951,13 @@ yahoo_buddy_add_authorize_cb(gpointer data)
 static void
 yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg)
 {
-	struct yahoo_data *yd = add_req->gc->proto_data;
+	struct yahoo_data *yd = add_purple_account_get_connection(req)->proto_data;
 	struct yahoo_packet *pkt;
 	char *encoded_msg = NULL;
-	PurpleAccount *account = purple_connection_get_account(add_req->gc);
+	PurpleAccount *account = purple_connection_get_account(add_purple_account_get_connection(req));
 
 	if (msg && *msg)
-		encoded_msg = yahoo_string_encode(add_req->gc, msg, NULL);
+		encoded_msg = yahoo_string_encode(add_purple_account_get_connection(req), msg, NULL);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15,
 			YAHOO_STATUS_AVAILABLE, 0);
@@ -987,11 +988,11 @@ yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*m
 static void
 yahoo_buddy_add_deny_reason_cb(gpointer data) {
 	struct yahoo_add_request *add_req = data;
-	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
+	purple_request_input(add_purple_account_get_connection(req), NULL, _("Authorization denied message:"),
 			NULL, _("No reason given."), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
 			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
-			purple_connection_get_account(add_req->gc), add_req->who, NULL,
+			purple_connection_get_account(add_purple_account_get_connection(req)), add_req->who, NULL,
 			add_req);
 }
 
@@ -1062,7 +1063,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 		const char *firstname = NULL, *lastname = NULL;
 
 		add_req = g_new0(struct yahoo_add_request, 1);
-		add_req->gc = gc;
+		add_purple_account_get_connection(req) = gc;
 
 		while (l) {
 			struct yahoo_pair *pair = l->data;
@@ -1143,7 +1144,7 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 	account = purple_connection_get_account(gc);
 
 	add_req = g_new0(struct yahoo_add_request, 1);
-	add_req->gc = gc;
+	add_purple_account_get_connection(req) = gc;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -1384,7 +1385,6 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 	 */
 
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar digest[16];
 
 	char *crypt_result;
@@ -1403,19 +1403,16 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 	sv = seed[15];
 	sv = sv % 8;
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-
-	purple_cipher_context_append(context, (const guchar *)pass, strlen(pass));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (const guchar *)pass, strlen(pass));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
 	to_y64(password_hash, digest, 16);
 
 	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)crypt_result, strlen(crypt_result));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)crypt_result, strlen(crypt_result));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
 	to_y64(crypt_hash, digest, 16);
 
 	switch (sv) {
@@ -1459,15 +1456,15 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 			break;
 	}
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)hash_string_p, strlen(hash_string_p));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)hash_string_p, strlen(hash_string_p));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
 	to_y64(result6, digest, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)hash_string_c, strlen(hash_string_c));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)hash_string_c, strlen(hash_string_c));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(cipher));
 	to_y64(result96, digest, 16);
 
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
@@ -1508,12 +1505,9 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	struct yahoo_data *yd = gc->proto_data;
 
 	PurpleCipher		*md5_cipher;
-	PurpleCipherContext	*md5_ctx;
 	guchar				md5_digest[16];
 
-	PurpleCipher		*sha1_cipher;
-	PurpleCipherContext	*sha1_ctx1;
-	PurpleCipherContext	*sha1_ctx2;
+	PurpleCipher		*sha1_cipher1, *sha1_cipher2;
 
 	char				*alphabet1			= "FBZDWAGHrJTLMNOPpRSKUVEXYChImkwQ";
 	char				*alphabet2			= "F0E1D2C3B4A59687abcdefghijklmnop";
@@ -1563,12 +1557,10 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	memset(&magic_key_char, 0, 4);
 	memset(&comparison_src, 0, 20);
 
-	md5_cipher = purple_ciphers_find_cipher("md5");
-	md5_ctx = purple_cipher_context_new(md5_cipher, NULL);
+	md5_cipher = purple_md5_cipher_new();
 
-	sha1_cipher = purple_ciphers_find_cipher("sha1");
-	sha1_ctx1 = purple_cipher_context_new(sha1_cipher, NULL);
-	sha1_ctx2 = purple_cipher_context_new(sha1_cipher, NULL);
+	sha1_cipher1 = purple_sha1_cipher_new();
+	sha1_cipher2 = purple_sha1_cipher_new();
 
 	/*
 	 * Magic: Phase 1.  Generate what seems to be a 30 byte value (could change if base64
@@ -1705,10 +1697,10 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 			test[1] = x >> 8;
 			test[2] = y;
 
-			purple_cipher_context_reset(md5_ctx, NULL);
-			purple_cipher_context_append(md5_ctx, magic_key_char, 4);
-			purple_cipher_context_append(md5_ctx, test, 3);
-			purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),
+			purple_cipher_reset(md5_cipher);
+			purple_cipher_append(md5_cipher, magic_key_char, 4);
+			purple_cipher_append(md5_cipher, test, 3);
+			purple_cipher_digest(md5_cipher, sizeof(md5_digest),
 									   md5_digest, NULL);
 
 			if (!memcmp(md5_digest, comparison_src+4, 16)) {
@@ -1740,9 +1732,9 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	enc_pass = yahoo_string_encode(gc, pass, NULL);
 
 	/* Get password and crypt hashes as per usual. */
-	purple_cipher_context_reset(md5_ctx, NULL);
-	purple_cipher_context_append(md5_ctx, (const guchar *)enc_pass, strlen(enc_pass));
-	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),
+	purple_cipher_reset(md5_cipher);
+	purple_cipher_append(md5_cipher, (const guchar *)enc_pass, strlen(enc_pass));
+	purple_cipher_digest(md5_cipher, sizeof(md5_digest),
 							   md5_digest, NULL);
 	to_y64(password_hash, md5_digest, 16);
 
@@ -1751,9 +1743,9 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	g_free(enc_pass);
 	enc_pass = NULL;
 
-	purple_cipher_context_reset(md5_ctx, NULL);
-	purple_cipher_context_append(md5_ctx, (const guchar *)crypt_result, strlen(crypt_result));
-	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),
+	purple_cipher_reset(md5_cipher);
+	purple_cipher_append(md5_cipher, (const guchar *)crypt_result, strlen(crypt_result));
+	purple_cipher_digest(md5_cipher, sizeof(md5_digest),
 							   md5_digest, NULL);
 	to_y64(crypt_hash, md5_digest, 16);
 
@@ -1777,20 +1769,21 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	 * which we previously extrapolated from our challenge.
 	 */
 
-	purple_cipher_context_append(sha1_ctx1, pass_hash_xor1, 64);
+	purple_cipher_append(sha1_cipher1, pass_hash_xor1, 64);
 	if (y >= 3)
-		purple_cipher_context_set_option(sha1_ctx1, "sizeLo", GINT_TO_POINTER(0x1ff));
-	purple_cipher_context_append(sha1_ctx1, magic_key_char, 4);
-	purple_cipher_context_digest(sha1_ctx1, sizeof(digest1), digest1, NULL);
+		purple_sha1_cipher_set_size_lo(PURPLE_SHA1_CIPHER(sha1_cipher1),
+									   0x1ff);
+	purple_cipher_append(sha1_cipher1, magic_key_char, 4);
+	purple_cipher_digest(sha1_cipher1, sizeof(digest1), digest1, NULL);
 
 	/*
 	 * The second context gets the password hash XORed with 0x5c plus the SHA-1 digest
 	 * of the first context.
 	 */
 
-	purple_cipher_context_append(sha1_ctx2, pass_hash_xor2, 64);
-	purple_cipher_context_append(sha1_ctx2, digest1, 20);
-	purple_cipher_context_digest(sha1_ctx2, sizeof(digest2), digest2, NULL);
+	purple_cipher_append(sha1_cipher2, pass_hash_xor2, 64);
+	purple_cipher_append(sha1_cipher2, digest1, 20);
+	purple_cipher_digest(sha1_cipher2, sizeof(digest2), digest2, NULL);
 
 	/*
 	 * Now that we have digest2, use it to fetch characters from an alphabet to construct
@@ -1860,30 +1853,30 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	if (cnt < 64)
 		memset(&(crypt_hash_xor2[cnt]), 0x5c, 64-cnt);
 
-	purple_cipher_context_reset(sha1_ctx1, NULL);
-	purple_cipher_context_reset(sha1_ctx2, NULL);
+	purple_cipher_reset(sha1_cipher1);
+	purple_cipher_reset(sha1_cipher2);
 
 	/*
 	 * The first context gets the password hash XORed with 0x36 plus a magic value
 	 * which we previously extrapolated from our challenge.
 	 */
 
-	purple_cipher_context_append(sha1_ctx1, crypt_hash_xor1, 64);
+	purple_cipher_append(sha1_cipher1, crypt_hash_xor1, 64);
 	if (y >= 3) {
-		purple_cipher_context_set_option(sha1_ctx1, "sizeLo",
-									   GINT_TO_POINTER(0x1ff));
+		purple_sha1_cipher_set_size_lo(PURPLE_SHA1_CIPHER(sha1_cipher1),
+									   0x1ff);
 	}
-	purple_cipher_context_append(sha1_ctx1, magic_key_char, 4);
-	purple_cipher_context_digest(sha1_ctx1, sizeof(digest1), digest1, NULL);
+	purple_cipher_append(sha1_cipher1, magic_key_char, 4);
+	purple_cipher_digest(sha1_cipher1, sizeof(digest1), digest1, NULL);
 
 	/*
 	 * The second context gets the password hash XORed with 0x5c plus the SHA-1 digest
 	 * of the first context.
 	 */
 
-	purple_cipher_context_append(sha1_ctx2, crypt_hash_xor2, 64);
-	purple_cipher_context_append(sha1_ctx2, digest1, 20);
-	purple_cipher_context_digest(sha1_ctx2, sizeof(digest2), digest2, NULL);
+	purple_cipher_append(sha1_cipher2, crypt_hash_xor2, 64);
+	purple_cipher_append(sha1_cipher2, digest1, 20);
+	purple_cipher_digest(sha1_cipher2, sizeof(digest2), digest2, NULL);
 
 	/*
 	 * Now that we have digest2, use it to fetch characters from an alphabet to construct
@@ -1957,9 +1950,9 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 
 	yahoo_packet_send_and_free(pack, yd);
 
-	purple_cipher_context_destroy(md5_ctx);
-	purple_cipher_context_destroy(sha1_ctx1);
-	purple_cipher_context_destroy(sha1_ctx2);
+	g_object_unref(G_OBJECT(md5_cipher));
+	g_object_unref(G_OBJECT(sha1_cipher1));
+	g_object_unref(G_OBJECT(sha1_cipher2));
 
 	g_free(password_hash);
 	g_free(crypt_hash);
@@ -2022,7 +2015,7 @@ static void ignore_buddy(PurpleBuddy *buddy) {
 	purple_account_remove_buddy(account, buddy, group);
 	purple_blist_remove_buddy(buddy);
 
-	serv_add_deny(account->gc, name);
+	serv_add_deny(purple_account_get_connection(account), name);
 
 	g_free(name);
 }
@@ -2074,12 +2067,12 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 							  who, (ignore ? "ignoring" : "unignoring"));
 
 			if (ignore) {
-				b = purple_find_buddy(gc->account, who);
+				b = purple_find_buddy(purple_connection_get_account(gc), who);
 				g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 											   "user is on your buddy list.  Clicking \"Yes\" "
 											   "will remove and ignore the buddy."), who);
 				purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
-									  gc->account, who, NULL,
+									  purple_connection_get_account(gc), who, NULL,
 									  b,
 									  G_CALLBACK(ignore_buddy),
 									  G_CALLBACK(keep_buddy));
@@ -2108,7 +2101,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	char *msg;
 	char *url = NULL;
 	char *fullmsg;
-	PurpleAccount *account = gc->account;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 
 	while (l) {
@@ -2603,7 +2596,7 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, yd->current_status, 0);
 
-	yahoo_packet_hash_str(pkt, 1, purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))));
+	yahoo_packet_hash_str(pkt, 1, purple_normalize(purple_connection_get_account(gc), purple_account_get_username(purple_connection_get_account(gc))));
 	yahoo_packet_send_and_free(pkt, yd);
 
 	gc->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
@@ -2636,8 +2629,8 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 	pkt = yahoo_packet_new(YAHOO_SERVICE_WEBLOGIN, YAHOO_STATUS_WEBLOGIN, 0);
 
 	yahoo_packet_hash(pkt, "sss", 0,
-	                  purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))),
-	                  1, purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))),
+	                  purple_normalize(purple_connection_get_account(gc), purple_account_get_username(purple_connection_get_account(gc))),
+	                  1, purple_normalize(purple_connection_get_account(gc), purple_account_get_username(purple_connection_get_account(gc))),
 	                  6, yd->auth);
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -2979,7 +2972,7 @@ static void yahoo_login(PurpleAccount *account) {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 	PurpleStatus *status = purple_account_get_active_status(account);
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC;
+	gc->flags |= PURPLE_CONNECTION_FLAGS_HTML | PURPLE_CONNECTION_FLAGS_NO_BGCOLOR | PURPLE_CONNECTION_FLAGS_NO_URLDESC;
 
 	purple_connection_update_progress(gc, _("Connecting"), 1, 2);
 
@@ -3238,7 +3231,7 @@ static char *yahoo_status_text(PurpleBuddy *b)
 	const char *msg;
 	char *msg2;
 
-	f = yahoo_friend_find(b->account->gc, b->name);
+	f = yahoo_friend_find(purple_account_get_connection(b->account), b->name);
 	if (!f)
 		return g_strdup(_("Not on server list"));
 
@@ -3268,7 +3261,7 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	char *status = NULL;
 	const char *presence = NULL;
 
-	f = yahoo_friend_find(b->account->gc, b->name);
+	f = yahoo_friend_find(purple_account_get_connection(b->account), b->name);
 	if (!f)
 		status = g_strdup_printf("\n%s", _("Not on server list"));
 	else {
@@ -3379,7 +3372,7 @@ static GList *build_presence_submenu(YahooFriend *f, PurpleConnection *gc) {
 static void yahoo_doodle_blist_node(PurpleBlistNode *node, gpointer data)
 {
 	PurpleBuddy *b = (PurpleBuddy *)node;
-	PurpleConnection *gc = b->account->gc;
+	PurpleConnection *gc = purple_account_get_connection(b->account);
 
 	yahoo_doodle_initiate(gc, b->name);
 }
@@ -3532,7 +3525,7 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 	gboolean use_whole_url = FALSE;
 
 	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	if ((purple_connection_get_account(gc)->proxy_info) && (purple_connection_get_account(gc)->proxy_info->type == PURPLE_PROXY_HTTP))
 	    use_whole_url = TRUE;
 
 	url_data = purple_util_fetch_url_request(base_url, use_whole_url,
@@ -3626,7 +3619,7 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 	 *
 	 * If they have no set an IMVironment, then use the default.
 	 */
-	wb = purple_whiteboard_get_session(gc->account, who);
+	wb = purple_whiteboard_get_session(purple_connection_get_account(gc), who);
 	if (wb)
 		yahoo_packet_hash_str(pkt, 63, DOODLE_IMV_KEY);
 	else
@@ -4085,7 +4078,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-	serv_send_attention(account->gc, c->name, YAHOO_BUZZ);
+	serv_send_attention(purple_account_get_connection(account), c->name, YAHOO_BUZZ);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -4142,7 +4135,7 @@ gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint 
 	PurpleConversation *c;
 
 	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-			username, gc->account);
+			username, purple_connection_get_account(gc));
 
 	g_return_val_if_fail(c != NULL, FALSE);
 
