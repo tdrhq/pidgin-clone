@@ -143,7 +143,6 @@ purple_core_init(const char *ui)
 	 */
 	purple_status_init();
 	purple_buddy_icons_init();
-	purple_connections_init();
 
 	purple_account_manager_load_accounts(purple_account_manager_get());
 	purple_accounts_init();
@@ -197,7 +196,6 @@ purple_core_quit(void)
 	purple_blist_uninit();
 	purple_notify_uninit();
 	purple_conversations_uninit();
-	purple_connections_uninit();
 	purple_certificate_uninit();
 	purple_buddy_icons_uninit();
 	purple_accounts_uninit();

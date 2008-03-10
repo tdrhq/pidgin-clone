@@ -308,7 +308,7 @@ static void _qq_process_recv_normal_im_text
 	_qq_show_packet("QQ_MESG recv", data, *cursor - data);
 
 	name = uid_to_purple_name(common->sender_uid);
-	if (purple_find_buddy(gc->account, name) == NULL)
+	if (purple_find_buddy(purple_connection_get_account(gc), name) == NULL)
 		qq_add_buddy_by_recv_packet(gc, common->sender_uid, FALSE, TRUE);
 
 	purple_msg_type = (im_text->msg_type == QQ_IM_AUTO_REPLY) ? PURPLE_MESSAGE_AUTO_RESP : 0;

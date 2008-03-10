@@ -133,7 +133,7 @@ void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud)
 	g_return_if_fail(q_bud != NULL);
 
 	name = uid_to_purple_name(q_bud->uid);
-	bud = purple_find_buddy(gc->account, name);
+	bud = purple_find_buddy(purple_connection_get_account(gc), name);
 	g_return_if_fail(bud != NULL);
 
 	if (bud != NULL) {
@@ -166,12 +166,12 @@ void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud)
 			break;
 		}
 		purple_debug(PURPLE_DEBUG_INFO, "QQ", "set buddy %d to %s\n", q_bud->uid, status_id);
-		purple_prpl_got_user_status(gc->account, name, status_id, NULL);
+		purple_prpl_got_user_status(purple_connection_get_account(gc), name, status_id, NULL);
 
 		if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE && q_bud->status != QQ_BUDDY_OFFLINE)
-			purple_prpl_got_user_status(gc->account, name, "mobile", NULL);
+			purple_prpl_got_user_status(purple_connection_get_account(gc), name, "mobile", NULL);
 		else
-			purple_prpl_got_user_status_deactive(gc->account, name, "mobile");
+			purple_prpl_got_user_status_deactive(purple_connection_get_account(gc), name, "mobile");
 	} else {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "unknown buddy: %d\n", q_bud->uid);
 	}

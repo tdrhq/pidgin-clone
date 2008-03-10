@@ -52,7 +52,7 @@ static void _qq_group_exit_with_gc_and_id(gc_and_uid *g)
 	guint32 internal_group_id;
 	qq_group *group;
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	internal_group_id = g->uid;
 
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
@@ -107,7 +107,7 @@ static void _qq_group_join_auth_with_gc_and_id(gc_and_uid *g, const gchar *reaso
 	qq_group *group;
 	guint32 internal_group_id;
 
-	gc = g->gc;
+	gc = purple_account_get_connection(g);
 	internal_group_id = g->uid;
 
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
@@ -130,7 +130,7 @@ static void _qq_group_join_auth(PurpleConnection *gc, qq_group *group)
 
 	msg = g_strdup_printf("Group \"%s\" needs authentication\n", group->group_name_utf8);
 	g = g_new0(gc_and_uid, 1);
-	g->gc = gc;
+	purple_account_get_connection(g) = gc;
 	g->uid = group->internal_group_id;
 	purple_request_input(gc, NULL, msg,
 			   _("Input request here"),
@@ -353,7 +353,7 @@ void qq_group_exit(PurpleConnection *gc, GHashTable *data)
 	g_return_if_fail(internal_group_id > 0);
 
 	g = g_new0(gc_and_uid, 1);
-	g->gc = gc;
+	purple_account_get_connection(g) = gc;
 	g->uid = internal_group_id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),

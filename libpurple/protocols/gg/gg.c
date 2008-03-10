@@ -1505,7 +1505,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 				status = purple_presence_get_active_status(presence);
 
 				ggp_set_status(account, status);
-				purple_connection_set_state(gc, PURPLE_CONNECTED);
+				purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 				ggp_buddylist_send(gc);
 			}
 			break;
@@ -1712,7 +1712,7 @@ static void ggp_login(PurpleAccount *account)
 	gc->proto_data = info;
 
 	glp->uin = ggp_get_uin(account);
-	glp->password = (char *)purple_account_get_password(account);
+	purple_account_get_password(glp) = (char *)purple_account_get_password(account);
 
 	glp->async = 1;
 	glp->status = GG_STATUS_AVAIL;

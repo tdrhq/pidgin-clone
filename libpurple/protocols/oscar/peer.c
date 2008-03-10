@@ -109,7 +109,7 @@ peer_connection_new(OscarData *od, OscarCapability type, const char *sn)
 	PeerConnection *conn;
 	PurpleAccount *account;
 
-	account = purple_connection_get_account(od->gc);
+	account = purple_connection_get_account(purple_account_get_connection(od));
 
 	conn = g_new0(PeerConnection, 1);
 	conn->od = od;
@@ -611,7 +611,7 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	conn = data;
 	od = conn->od;
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 
 	purple_debug_info("oscar", "Accepting connection on listener socket.\n");
 
@@ -669,7 +669,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	}
 
 	od = conn->od;
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	account = purple_connection_get_account(gc);
 	conn->listenerfd = listenerfd;
 
@@ -760,7 +760,7 @@ peer_connection_trynext(PeerConnection *conn)
 {
 	PurpleAccount *account;
 
-	account = purple_connection_get_account(conn->od->gc);
+	account = purple_connection_get_account(purple_account_get_connection(conn->od));
 
 	/*
 	 * Close any remnants of a previous failed connection attempt.
@@ -897,7 +897,7 @@ peer_connection_propose(OscarData *od, OscarCapability type, const char *sn)
 
 				purple_debug_info("oscar", "Already have a direct IM "
 						"session with %s.\n", sn);
-				account = purple_connection_get_account(od->gc);
+				account = purple_connection_get_account(purple_account_get_connection(od));
 				conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 						sn, account);
 				if (conv != NULL)
@@ -963,7 +963,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 	PeerConnection *conn;
 	gchar *buf;
 
-	gc = od->gc;
+	gc = purple_account_get_connection(od);
 	account = purple_connection_get_account(gc);
 
 	/*

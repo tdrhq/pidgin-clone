@@ -568,7 +568,6 @@ plugin_load(PurplePlugin *plugin)
 {
 	void *core_handle     = purple_get_core();
 	void *blist_handle    = purple_blist_get_handle();
-	void *conn_handle     = purple_connections_get_handle();
 	void *conv_handle     = purple_conversations_get_handle();
 	void *accounts_handle = purple_accounts_get_handle();
 	void *ft_handle       = purple_xfers_get_handle();
@@ -613,6 +612,7 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(blist_handle, "blist-node-extended-menu",
 						plugin, PURPLE_CALLBACK(blist_node_extended_menu_cb), NULL);
 
+#if 0
 	/* Connection subsystem signals */
 	purple_signal_connect(conn_handle, "signing-on",
 						plugin, PURPLE_CALLBACK(signing_on_cb), NULL);
@@ -624,6 +624,7 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
 	purple_signal_connect(conn_handle, "connection-error",
 						plugin, PURPLE_CALLBACK(connection_error_cb), NULL);
+#endif
 
 	/* Conversations subsystem signals */
 	purple_signal_connect(conv_handle, "writing-im-msg",

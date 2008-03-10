@@ -221,7 +221,7 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	qd->last_login_time = lrop.last_login_time;
 	qd->last_login_ip = gen_ip_str(lrop.last_client_ip);
 
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 	qd->logged_in = TRUE;	/* must be defined after sev_finish_login */
 
 	/* now initiate QQ Qun, do it first as it may take longer to finish */
@@ -273,7 +273,7 @@ static gint _qq_process_login_redirect(PurpleConnection *gc, guint8 *data, gint 
 		new_server_str = gen_ip_str(lrrp.new_server_ip);
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			   "Redirected to new server: %s:%d\n", new_server_str, lrrp.new_server_port);
-		qq_connect(gc->account, new_server_str, lrrp.new_server_port, qd->use_tcp, TRUE);
+		qq_connect(purple_connection_get_account(gc), new_server_str, lrrp.new_server_port, qd->use_tcp, TRUE);
 		g_free(new_server_str);
 		ret = QQ_LOGIN_REPLY_REDIRECT;
 	}
@@ -479,8 +479,8 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 
 	switch (ret) {
 	case QQ_LOGIN_REPLY_PWD_ERROR:
-		if (!purple_account_get_remember_password(gc->account))
-			purple_account_set_password(gc->account, NULL);
+		if (!purple_account_get_remember_password(purple_connection_get_account(gc)))
+			purple_account_set_password(purple_connection_get_account(gc), NULL);
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password."));
 		break;

@@ -800,7 +800,7 @@ rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	g_free(username);
 
-	gc = account->gc;
+	gc = purple_account_get_connection(account);
 	friendly = purple_url_decode(cmd->params[3]);
 
 	purple_connection_set_display_name(gc, friendly);
@@ -1012,7 +1012,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	buf = g_strdup_printf("%s%lu%s",
 			   session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
 			   time(NULL) - session->passport_info.sl,
-			   purple_connection_get_password(account->gc));
+			   purple_connection_get_password(purple_account_get_connection(account)));
 
 	cipher = purple_md5_cipher_new();
 	purple_cipher_append(cipher, (const guchar *)buf, strlen(buf));
@@ -1244,7 +1244,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1297,7 +1297,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char *from, *subject, *tmp;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1382,7 +1382,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 		if (*buf != '\0')
-			purple_notify_info(cmdproc->session->account->gc, NULL, buf, NULL);
+			purple_notify_info(purple_account_get_connection(cmdproc->session->account), NULL, buf, NULL);
 	}
 
 	g_hash_table_destroy(table);

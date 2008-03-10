@@ -65,7 +65,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 
 	if (count == 0 || !message) {
 		if (count > 0)
-			purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
+			purple_notify_emails(purple_account_get_connection(js), count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
 		g_free(default_tos[0]);
 		return;
 	}
@@ -121,10 +121,10 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	}
 
 	if (i>0)
-		purple_notify_emails(js->gc, count, count == i, (const char**) subjects, froms, tos,
+		purple_notify_emails(purple_account_get_connection(js), count, count == i, (const char**) subjects, froms, tos,
 				urls, NULL, NULL);
 	else
-		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
+		purple_notify_emails(purple_account_get_connection(js), count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
 
 
 	g_free(to_name);
@@ -151,7 +151,7 @@ jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 	JabberIq *iq;
 
 	/* bail if the user isn't interested */
-	if (!purple_account_get_check_mail(js->gc->account))
+	if (!purple_account_get_check_mail(purple_account_get_connection(js)->account))
 		return;
 
 	type = xmlnode_get_attrib(packet, "type");
@@ -180,7 +180,7 @@ jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 void jabber_gmail_init(JabberStream *js) {
 	JabberIq *iq;
 
-	if (!purple_account_get_check_mail(js->gc->account))
+	if (!purple_account_get_check_mail(purple_account_get_connection(js)->account))
 		return;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
@@ -204,7 +204,7 @@ void jabber_google_roster_init(JabberStream *js)
 
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item)
 {
-	PurpleAccount *account = purple_connection_get_account(js->gc);
+	PurpleAccount *account = purple_connection_get_account(purple_account_get_connection(js));
 	GSList *list = account->deny;
 	const char *jid = xmlnode_get_attrib(item, "jid");
 	char *jid_norm = g_strdup(jabber_normalize(account, jid));
@@ -226,7 +226,7 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 
 gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 {
-	PurpleAccount *account = purple_connection_get_account(js->gc);
+	PurpleAccount *account = purple_connection_get_account(purple_account_get_connection(js));
 	GSList *list = account->deny;
 	const char *jid = xmlnode_get_attrib(item, "jid");
 	gboolean on_block_list = FALSE;
@@ -291,7 +291,7 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 
 	jb = jabber_buddy_find(js, who, TRUE);
 
-	buddies = purple_find_buddies(js->gc->account, who);
+	buddies = purple_find_buddies(purple_account_get_connection(js)->account, who);
 	if(!buddies)
 		return;
 
@@ -362,7 +362,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 	if (!js || !js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 		return;
 
-	buddies = purple_find_buddies(js->gc->account, who);
+	buddies = purple_find_buddies(purple_account_get_connection(js)->account, who);
 	if(!buddies)
 		return;
 
@@ -522,11 +522,11 @@ void jabber_google_presence_incoming(JabberStream *js, const char *user, JabberB
 	if (!js->googletalk)
 		return;
 	if (jbr->status && !strncmp(jbr->status, "♫ ", strlen("♫ "))) {
-		purple_prpl_got_user_status(js->gc->account, user, "tune",
+		purple_prpl_got_user_status(purple_account_get_connection(js)->account, user, "tune",
 					    PURPLE_TUNE_TITLE, jbr->status + strlen("♫ "), NULL);
 		jbr->status = NULL;
 	} else {
-		purple_prpl_got_user_status_deactive(js->gc->account, user, "tune");
+		purple_prpl_got_user_status_deactive(purple_account_get_connection(js)->account, user, "tune");
 	}
 }
 

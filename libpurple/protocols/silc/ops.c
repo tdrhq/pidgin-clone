@@ -467,7 +467,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 
 		/* Join user to channel */
 		g_snprintf(buf, sizeof(buf), "%s@%s",
-			   client_entry->username, client_entry->hostname);
+			   client_purple_account_get_username(entry), client_entry->hostname);
 		purple_conv_chat_add_user(PURPLE_CONV_CHAT(convo),
 					  g_strdup(client_entry->nickname), buf, PURPLE_CBFLAGS_NONE, TRUE);
 
@@ -853,7 +853,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 							if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 								continue;
 							b = (PurpleBuddy *)bnode;
-							if (b->account != gc->account)
+							if (b->account != purple_connection_get_account(gc))
 								continue;
 							f = purple_blist_node_get_string(bnode, "public-key");
 							if (f && !strcmp(f, buf))
@@ -1190,7 +1190,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				purple_notify_user_info_add_pair(user_info, _("Real Name"), tmp2);
 				g_free(tmp2);
 			}
-			tmp2 = g_markup_escape_text(client_entry->username, -1);
+			tmp2 = g_markup_escape_text(client_purple_account_get_username(entry), -1);
 			if (*client_entry->hostname) {
 				gchar *tmp3;
 				tmp3 = g_strdup_printf("%s@%s", tmp2, client_entry->hostname);
@@ -1291,7 +1291,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						_("User Information"),
 						buf, 1, client_entry, 2,
 						_("OK"), G_CALLBACK(silcpurple_whois_more),
-						_("_More..."), G_CALLBACK(silcpurple_whois_more), gc->account, NULL, NULL);
+						_("_More..."), G_CALLBACK(silcpurple_whois_more), purple_connection_get_account(gc), NULL, NULL);
 			else
 #endif /* 0 */
 			purple_notify_userinfo(gc, client_entry->nickname, user_info, NULL, NULL);

@@ -202,7 +202,7 @@ static void _qq_common_clean(PurpleConnection *gc)
 	qq_group_free_all(qd);
 	qq_add_buddy_request_free(qd);
 	qq_info_query_free(qd);
-	qq_buddies_list_free(gc->account, qd);
+	qq_buddies_list_free(purple_connection_get_account(gc), qd);
 }
 
 static void no_one_calls(gpointer data, gint source, PurpleInputCondition cond)
@@ -495,7 +495,7 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 		ret = send(qd->fd, data, len, 0);
 	}
 	if (ret == -1)
-		purple_connection_error_reason(qd->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, g_strerror(errno));
+		purple_connection_error_reason(purple_account_get_connection(qd), PURPLE_CONNECTION_ERROR_NETWORK_ERROR, g_strerror(errno));
 
 	return ret;
 }

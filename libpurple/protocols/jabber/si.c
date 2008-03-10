@@ -1016,7 +1016,7 @@ static void jabber_si_xfer_send_disco_cb(JabberStream *js, const char *who,
 		jabber_si_xfer_send_request(xfer);
 	} else {
 		char *msg = g_strdup_printf(_("Unable to send file to %s, user does not support file transfers"), who);
-		purple_notify_error(js->gc, _("File Send Failed"),
+		purple_notify_error(purple_account_get_connection(js), _("File Send Failed"),
 				_("File Send Failed"), msg);
 		g_free(msg);
 	}
@@ -1086,7 +1086,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 				msg = g_strdup_printf(_("Unable to send file to %s, not subscribed to user presence"), xfer->who);
 			}
 
-			purple_notify_error(jsx->js->gc, _("File Send Failed"), _("File Send Failed"), msg);
+			purple_notify_error(purple_account_get_connection(jsx->js), _("File Send Failed"), _("File Send Failed"), msg);
 			g_free(msg);
 		} else if(g_list_length(jb->resources) == 1) {
 			/* only 1 resource online (probably our most common case)
@@ -1114,9 +1114,9 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_request_fields_add_group(fields, group);
 
-			purple_request_fields(jsx->js->gc, _("Select a Resource"), msg, NULL, fields,
+			purple_request_fields(purple_account_get_connection(jsx->js), _("Select a Resource"), msg, NULL, fields,
 					_("Send File"), G_CALLBACK(resource_select_ok_cb), _("Cancel"), G_CALLBACK(resource_select_cancel_cb),
-					jsx->js->gc->account, xfer->who, NULL, xfer);
+					purple_account_get_connection(jsx->js)->account, xfer->who, NULL, xfer);
 
 			g_free(msg);
 		}
@@ -1164,7 +1164,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 
 	js = gc->proto_data;
 
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 	if (xfer)
 	{
 		xfer->data = jsx = g_new0(JabberSIXfer, 1);
@@ -1188,7 +1188,7 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 
 	js = gc->proto_data;
 
-	if(!purple_find_buddy(gc->account, who) || !jabber_buddy_find(js, who, FALSE))
+	if(!purple_find_buddy(purple_connection_get_account(gc), who) || !jabber_buddy_find(js, who, FALSE))
 		return;
 
 	xfer = jabber_si_new_xfer(gc, who);
@@ -1274,7 +1274,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	jsx->stream_id = g_strdup(stream_id);
 	jsx->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
-	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_account_get_connection(js)->account, PURPLE_XFER_RECEIVE, from);
 	if (xfer)
 	{
 		xfer->data = jsx;

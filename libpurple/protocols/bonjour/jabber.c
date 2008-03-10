@@ -118,7 +118,7 @@ static void
 _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 {
 	xmlnode *body_node, *html_node, *events_node;
-	PurpleConnection *gc = pb->account->gc;
+	PurpleConnection *gc = purple_account_get_connection(pb->account);
 	gchar *body = NULL;
 	gboolean composing_event = FALSE;
 
@@ -656,7 +656,7 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	if ((jdata->socket = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		purple_debug_error("bonjour", "Cannot open socket: %s\n", g_strerror(errno));
-		purple_connection_error_reason (jdata->account->gc,
+		purple_connection_error_reason (purple_account_get_connection(jdata->account),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Cannot open socket"));
 		return -1;
@@ -666,7 +666,7 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	if (setsockopt(jdata->socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) != 0)
 	{
 		purple_debug_error("bonjour", "Error setting socket options: %s\n", g_strerror(errno));
-		purple_connection_error_reason (jdata->account->gc,
+		purple_connection_error_reason (purple_account_get_connection(jdata->account),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Error setting socket options"));
 		return -1;
@@ -692,7 +692,7 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	if (!bind_successful)
 	{
 		purple_debug_error("bonjour", "Cannot bind socket: %s\n", g_strerror(errno));
-		purple_connection_error_reason (jdata->account->gc,
+		purple_connection_error_reason (purple_account_get_connection(jdata->account),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Could not bind socket to port"));
 		return -1;
@@ -702,7 +702,7 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	if (listen(jdata->socket, 10) != 0)
 	{
 		purple_debug_error("bonjour", "Cannot listen on socket: %s\n", g_strerror(errno));
-		purple_connection_error_reason (jdata->account->gc,
+		purple_connection_error_reason (purple_account_get_connection(jdata->account),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Could not listen on socket"));
 		return -1;
@@ -794,7 +794,7 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 		while(tmp) {
 			ip = tmp->data;
 			if (ip != NULL && g_ascii_strcasecmp(ip, bconv->ip) == 0) {
-				BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+				BonjourJabber *jdata = ((BonjourData*) purple_account_get_connection(bconv->account)->proto_data)->jabber_data;
 
 				purple_debug_info("bonjour", "Matched buddy %s to incoming conversation \"from\" attrib and IP (%s)\n",
 					purple_buddy_get_name(pb), bconv->ip);
@@ -827,7 +827,7 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 
 void
 bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
-	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+	BonjourJabber *jdata = ((BonjourData*) purple_account_get_connection(bconv->account)->proto_data)->jabber_data;
 	struct _match_buddies_by_address_t *mbba;
 
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
@@ -984,7 +984,7 @@ _async_bonjour_jabber_close_conversation_cb(gpointer data) {
 
 void
 async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv) {
-	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+	BonjourJabber *jdata = ((BonjourData*) purple_account_get_connection(bconv->account)->proto_data)->jabber_data;
 
 	jdata->pending_conversations = g_slist_remove(jdata->pending_conversations, bconv);
 
@@ -1004,8 +1004,8 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 	if (bconv != NULL) {
 		BonjourData *bd = NULL;
 
-		if(PURPLE_CONNECTION_IS_VALID(bconv->account->gc)) {
-			bd = bconv->account->gc->proto_data;
+		if(PURPLE_CONNECTION_IS_VALID(purple_account_get_connection(bconv->account))) {
+			bd = purple_account_get_connection(bconv->account)->proto_data;
 			bd->jabber_data->pending_conversations = g_slist_remove(bd->jabber_data->pending_conversations, bconv);
 		}
 
@@ -1073,7 +1073,7 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		purple_input_remove(jdata->watcher_id);
 
 	/* Close all the conversation sockets and remove all the watchers after sending end streams */
-	if (jdata->account->gc != NULL) {
+	if (purple_account_get_connection(jdata->account) != NULL) {
 		GSList *buddies, *l;
 
 		buddies = purple_find_buddies(jdata->account, NULL);
@@ -1149,7 +1149,7 @@ check_if_blocked(PurpleBuddy *pb)
 
 	for(l = acc->deny; l != NULL; l = l->next) {
 		if(!purple_utf8_strcasecmp(pb->name, (char *)l->data)) {
-			purple_debug_info("bonjour", "%s has been blocked.\n", pb->name, acc->username);
+			purple_debug_info("bonjour", "%s has been blocked.\n", pb->name, purple_account_get_username(acc));
 			blocked = TRUE;
 			break;
 		}
@@ -1167,7 +1167,7 @@ xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb)
 
 	if(connection == NULL) {
 		if(pb->account != NULL)
-			connection = (pb->account)->gc;
+			connection = (pb->account)purple_account_get_connection();
 	}
 
 	if(check_if_blocked(pb))

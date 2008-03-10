@@ -106,8 +106,8 @@ static void simple_set_status(PurpleAccount *account, PurpleStatus *status) {
 	if (!purple_status_is_active(status))
 		return;
 
-	if (account->gc)
-		sip = account->gc->proto_data;
+	if (purple_account_get_connection(account))
+		sip = purple_account_get_connection(account)->proto_data;
 
 	if (sip)
 	{
@@ -222,7 +222,7 @@ static void simple_get_buddies(PurpleConnection *gc) {
 			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode)) continue;
 			for(bnode = cnode->child; bnode; bnode = bnode->next) {
 				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode)) continue;
-				if(((PurpleBuddy*)bnode)->account == gc->account)
+				if(((PurpleBuddy*)bnode)->account == purple_connection_get_account(gc))
 					simple_add_buddy(gc, (PurpleBuddy*)bnode, (PurpleGroup *)gnode);
 			}
 		}
@@ -265,10 +265,10 @@ static gchar *auth_header(struct simple_account_data *sip,
 	const char *authuser;
 
 	authdomain = purple_account_get_string(sip->account, "authdomain", "");
-	authuser = purple_account_get_string(sip->account, "authuser", sip->username);
+	authuser = purple_account_get_string(sip->account, "authuser", purple_account_get_username(sip));
 
 	if(!authuser || strlen(authuser) < 1) {
-		authuser = sip->username;
+		authuser = purple_account_get_username(sip);
 	}
 
 	if(auth->type == 1) { /* Digest */
@@ -284,7 +284,7 @@ static gchar *auth_header(struct simple_account_data *sip,
 	} else if(auth->type == 2) { /* NTLM */
 		if(auth->nc == 3 && auth->nonce) {
 			/* TODO: Don't hardcode "purple" as the hostname */
-			ret = purple_ntlm_gen_type3(authuser, sip->password, "purple", authdomain, (const guint8 *)auth->nonce, &auth->flags);
+			ret = purple_ntlm_gen_type3(authuser, purple_account_get_password(sip), "purple", authdomain, (const guint8 *)auth->nonce, &auth->flags);
 			tmp = g_strdup_printf("NTLM qop=\"auth\", opaque=\"%s\", realm=\"%s\", targetname=\"%s\", gssapi-data=\"%s\"", auth->opaque, auth->realm, auth->target, ret);
 			g_free(ret);
 			return tmp;
@@ -327,10 +327,10 @@ static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct 
 	char *tmp;
 	gchar **parts;
 
-	authuser = purple_account_get_string(sip->account, "authuser", sip->username);
+	authuser = purple_account_get_string(sip->account, "authuser", purple_account_get_username(sip));
 
 	if(!authuser || strlen(authuser) < 1) {
-		authuser = sip->username;
+		authuser = purple_account_get_username(sip);
 	}
 
 	if(!hdr) {
@@ -388,7 +388,7 @@ static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct 
 	purple_debug(PURPLE_DEBUG_MISC, "simple", "nonce: %s realm: %s\n", auth->nonce ? auth->nonce : "(null)", auth->realm ? auth->realm : "(null)");
 	if(auth->realm) {
 		auth->digest_session_key = purple_http_digest_calculate_session_key(
-				"md5", authuser, auth->realm, sip->password, auth->nonce, NULL);
+				"md5", authuser, auth->realm, purple_account_get_password(sip), auth->nonce, NULL);
 
 		auth->nc = 1;
 	}
@@ -543,7 +543,7 @@ static void sendout_sipmsg(struct simple_account_data *sip, struct sipmsg *msg) 
 		tmp = g_slist_next(tmp);
 	}
 	g_string_append_printf(outstr, "\r\n%s", msg->body ? msg->body : "");
-	sendout_pkt(sip->gc, outstr->str);
+	sendout_pkt(purple_account_get_connection(sip), outstr->str);
 	g_string_free(outstr, TRUE);
 }
 
@@ -665,7 +665,7 @@ static void send_sip_request(PurpleConnection *gc, const gchar *method,
 			purple_network_get_my_ip(-1),
 			sip->listenport,
 			branch,
-			sip->username,
+			purple_account_get_username(sip),
 			sip->servername,
 			dialog ? dialog->ourtag : tag,
 			to,
@@ -695,7 +695,7 @@ static void send_sip_request(PurpleConnection *gc, const gchar *method,
 
 static char *get_contact(struct simple_account_data  *sip) {
 	return g_strdup_printf("<sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"",
-			       sip->username, purple_network_get_my_ip(-1),
+			       purple_account_get_username(sip), purple_network_get_my_ip(-1),
 			       sip->listenport,
 			       sip->udp ? "udp" : "tcp");
 }
@@ -706,14 +706,14 @@ static void do_register_exp(struct simple_account_data *sip, int expire) {
 	sip->reregister = time(NULL) + expire - 50;
 
 	uri = g_strdup_printf("sip:%s", sip->servername);
-	to = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
+	to = g_strdup_printf("sip:%s@%s", purple_account_get_username(sip), sip->servername);
 	contact = get_contact(sip);
 	hdr = g_strdup_printf("Contact: %s\r\nExpires: %d\r\n", contact, expire);
 	g_free(contact);
 
 	sip->registerstatus = SIMPLE_REGISTER_SENT;
 
-	send_sip_request(sip->gc, "REGISTER", uri, to, hdr, "", NULL,
+	send_sip_request(purple_account_get_connection(sip), "REGISTER", uri, to, hdr, "", NULL,
 		process_register_response);
 
 	g_free(hdr);
@@ -828,7 +828,7 @@ static void simple_subscribe_exp(struct simple_account_data *sip, struct simple_
 	g_free(tmp);
 	g_free(tmp2);
 
-	send_sip_request(sip->gc, "SUBSCRIBE", to, to, contact,"",buddy->dialog,
+	send_sip_request(purple_account_get_connection(sip), "SUBSCRIBE", to, to, contact,"",buddy->dialog,
 			 (expiration > 0) ? process_subscribe_response : NULL);
 
 	g_free(to);
@@ -918,14 +918,14 @@ static void simple_subscribe_buddylist(struct simple_account_data *sip) {
 	gchar *contact = "Event: vnd-microsoft-roaming-contacts\r\nAccept: application/vnd-microsoft-roaming-contacts+xml\r\nSupported: com.microsoft.autoextend\r\nSupported: ms-benotify\r\nProxy-Require: ms-benotify\r\nSupported: ms-piggyback-first-notify\r\n";
 	gchar *to;
 	gchar *tmp;
-	to = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
+	to = g_strdup_printf("sip:%s@%s", purple_account_get_username(sip), sip->servername);
 
 	tmp = get_contact(sip);
 
 	contact = g_strdup_printf("%sContact: %s\r\n", contact, tmp);
 	g_free(tmp);
 
-	send_sip_request(sip->gc, "SUBSCRIBE", to, to, contact, "", NULL, simple_add_lcs_contacts);
+	send_sip_request(purple_account_get_connection(sip), "SUBSCRIBE", to, to, contact, "", NULL, simple_add_lcs_contacts);
 
 	g_free(to);
 	g_free(contact);
@@ -1007,7 +1007,7 @@ static void simple_send_message(struct simple_account_data *sip, const char *to,
 	} else {
 		hdr = g_strdup("Content-Type: text/plain\r\n");
 	}
-	send_sip_request(sip->gc, "MESSAGE", fullto, fullto, hdr, msg, NULL, NULL);
+	send_sip_request(purple_account_get_connection(sip), "MESSAGE", fullto, fullto, hdr, msg, NULL, NULL);
 	g_free(hdr);
 	g_free(fullto);
 }
@@ -1035,8 +1035,8 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 
 	contenttype = sipmsg_find_header(msg, "Content-Type");
 	if(!contenttype || !strncmp(contenttype, "text/plain", 10) || !strncmp(contenttype, "text/html", 9)) {
-		serv_got_im(sip->gc, from, msg->body, 0, time(NULL));
-		send_sip_response(sip->gc, msg, 200, "OK", NULL);
+		serv_got_im(purple_account_get_connection(sip), from, msg->body, 0, time(NULL));
+		send_sip_response(purple_account_get_connection(sip), msg, 200, "OK", NULL);
 		found = TRUE;
 	}
 	if(!strncmp(contenttype, "application/im-iscomposing+xml", 30)) {
@@ -1061,18 +1061,18 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 
 		statedata = xmlnode_get_data(state);
 		if(statedata) {
-			if(strstr(statedata, "active")) serv_got_typing(sip->gc, from, 0, PURPLE_TYPING);
-			else serv_got_typing_stopped(sip->gc, from);
+			if(strstr(statedata, "active")) serv_got_typing(purple_account_get_connection(sip), from, 0, PURPLE_TYPING);
+			else serv_got_typing_stopped(purple_account_get_connection(sip), from);
 
 			g_free(statedata);
 		}
 		xmlnode_free(isc);
-		send_sip_response(sip->gc, msg, 200, "OK", NULL);
+		send_sip_response(purple_account_get_connection(sip), msg, 200, "OK", NULL);
 		found = TRUE;
 	}
 	if(!found) {
 		purple_debug_info("simple", "got unknown mime-type\n");
-		send_sip_response(sip->gc, msg, 415, "Unsupported media type", NULL);
+		send_sip_response(purple_account_get_connection(sip), msg, 415, "Unsupported media type", NULL);
 	}
 	g_free(from);
 }
@@ -1089,10 +1089,10 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 				}
 			}
 			sip->registerstatus = SIMPLE_REGISTER_COMPLETE;
-			purple_connection_set_state(sip->gc, PURPLE_CONNECTED);
+			purple_connection_set_state(purple_account_get_connection(sip), PURPLE_CONNECTION_STATE_CONNECTED);
 
 			/* get buddies from blist */
-			simple_get_buddies(sip->gc);
+			simple_get_buddies(purple_account_get_connection(sip));
 
 			subscribe_timeout(sip);
 			tmp = sipmsg_find_header(msg, "Allow-Events");
@@ -1105,9 +1105,9 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			if(sip->registerstatus != SIMPLE_REGISTER_RETRY) {
 				purple_debug_info("simple", "REGISTER retries %d\n", sip->registrar.retries);
 				if(sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
-					if (!purple_account_get_remember_password(sip->gc->account))
-						purple_account_set_password(sip->gc->account, NULL);
-					purple_connection_error_reason(sip->gc,
+					if (!purple_account_get_remember_password(purple_account_get_connection(sip)->account))
+						purple_account_set_password(purple_account_get_connection(sip)->account, NULL);
+					purple_connection_error_reason(purple_account_get_connection(sip),
 						PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 						_("Incorrect password."));
 					return TRUE;
@@ -1122,7 +1122,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			if (sip->registerstatus != SIMPLE_REGISTER_RETRY) {
 				purple_debug_info("simple", "Unrecognized return code for REGISTER.\n");
 				if (sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
-					purple_connection_error_reason(sip->gc,
+					purple_connection_error_reason(purple_account_get_connection(sip),
 						PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 						_("Unknown server response."));
 					return TRUE;
@@ -1225,7 +1225,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 			}
 			g_strfreev(ssparts);
 		}
-		send_sip_response(sip->gc, msg, 200, "OK", NULL);
+		send_sip_response(purple_account_get_connection(sip), msg, 200, "OK", NULL);
 		g_free(from);
 		return;
 	}
@@ -1263,7 +1263,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	g_free(from);
 	g_free(basicstatus_data);
 
-	send_sip_response(sip->gc, msg, 200, "OK", NULL);
+	send_sip_response(purple_account_get_connection(sip), msg, 200, "OK", NULL);
 }
 
 static unsigned int simple_typing(PurpleConnection *gc, const char *name, PurpleTypingState state) {
@@ -1319,11 +1319,11 @@ static gchar* gen_xpidf(struct simple_account_data *sip) {
 			"</address>\n"
 			"</atom>\n"
 			"</presence>\n",
-			sip->username,
+			purple_account_get_username(sip),
 			sip->servername,
-			sip->username,
+			purple_account_get_username(sip),
 			sip->servername,
-			sip->username,
+			purple_account_get_username(sip),
 			sip->servername,
 			sip->status);
 	return doc;
@@ -1341,7 +1341,7 @@ static gchar* gen_pidf(struct simple_account_data *sip, gboolean open) {
 			"<note>%s</note>\n"
 			"</tuple>\n"
 			"</presence>",
-			sip->username,
+			purple_account_get_username(sip),
 			sip->servername,
 			(open == TRUE) ? "open" : "closed",
 			(open == TRUE) ? sip->status : "");
@@ -1351,7 +1351,7 @@ static gchar* gen_pidf(struct simple_account_data *sip, gboolean open) {
 static void send_notify(struct simple_account_data *sip, struct simple_watcher *watcher) {
 	gchar *doc = watcher->needsxpidf ? gen_xpidf(sip) : gen_pidf(sip, TRUE);
 	gchar *hdr = watcher->needsxpidf ? "Event: presence\r\nContent-Type: application/xpidf+xml\r\n" : "Event: presence\r\nContent-Type: application/pidf+xml\r\n";
-	send_sip_request(sip->gc, "NOTIFY", watcher->name, watcher->name, hdr, doc, &watcher->dialog, NULL);
+	send_sip_request(purple_account_get_connection(sip), "NOTIFY", watcher->name, watcher->name, hdr, doc, &watcher->dialog, NULL);
 	g_free(doc);
 }
 
@@ -1376,7 +1376,7 @@ static gboolean process_publish_response(struct simple_account_data *sip, struct
 
 static void send_open_publish(struct simple_account_data *sip) {
 	gchar *add_headers = NULL;
-	gchar *uri = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
+	gchar *uri = g_strdup_printf("sip:%s@%s", purple_account_get_username(sip), sip->servername);
 	gchar *doc = gen_pidf(sip, TRUE);
 
 	add_headers = g_strdup_printf("%s%s%s%s%d\r\n%s",
@@ -1387,7 +1387,7 @@ static void send_open_publish(struct simple_account_data *sip) {
 		"Event: presence\r\n"
 		"Content-Type: application/pidf+xml\r\n");
 
-	send_sip_request(sip->gc, "PUBLISH", uri, uri,
+	send_sip_request(purple_account_get_connection(sip), "PUBLISH", uri, uri,
 		add_headers, doc, NULL, process_publish_response);
 	sip->republish = time(NULL) + PUBLISH_EXPIRATION - 50;
 	g_free(uri);
@@ -1396,7 +1396,7 @@ static void send_open_publish(struct simple_account_data *sip) {
 }
 
 static void send_closed_publish(struct simple_account_data *sip) {
-	gchar *uri = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
+	gchar *uri = g_strdup_printf("sip:%s@%s", purple_account_get_username(sip), sip->servername);
 	gchar *add_headers, *doc;
 
 	add_headers = g_strdup_printf("%s%s%s%s",
@@ -1408,7 +1408,7 @@ static void send_closed_publish(struct simple_account_data *sip) {
 		"Content-Type: application/pidf+xml\r\n");
 
 	doc = gen_pidf(sip, FALSE);
-	send_sip_request(sip->gc, "PUBLISH", uri, uri, add_headers,
+	send_sip_request(purple_account_get_connection(sip), "PUBLISH", uri, uri, add_headers,
 		doc, NULL, process_publish_response);
 	/*sip->republish = time(NULL) + 500;*/
 	g_free(uri);
@@ -1434,7 +1434,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 		const gchar *acceptheader = sipmsg_find_header(msg, "Accept");
 		gboolean needsxpidf = FALSE;
 		if(!purple_privacy_check(sip->account, from)) {
-			send_sip_response(sip->gc, msg, 202, "Ok", NULL);
+			send_sip_response(purple_account_get_connection(sip), msg, 202, "Ok", NULL);
 			goto privend;
 		}
 		if(acceptheader) {
@@ -1474,7 +1474,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 	sipmsg_add_header(msg, "Contact", tmp);
 	g_free(tmp);
 	purple_debug_info("simple", "got subscribe: name %s ourtag %s theirtag %s callid %s\n", watcher->name, watcher->dialog.ourtag, watcher->dialog.theirtag, watcher->dialog.callid);
-	send_sip_response(sip->gc, msg, 200, "Ok", NULL);
+	send_sip_response(purple_account_get_connection(sip), msg, 200, "Ok", NULL);
 	send_notify(sip, watcher);
 privend:
 	g_free(from);
@@ -1495,7 +1495,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 			process_incoming_subscribe(sip, msg);
 			found = TRUE;
 		} else {
-			send_sip_response(sip->gc, msg, 501, "Not implemented", NULL);
+			send_sip_response(purple_account_get_connection(sip), msg, 501, "Not implemented", NULL);
 		}
 	} else { /* response */
 		struct transaction *trans = transactions_find(sip, msg);
@@ -1517,7 +1517,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 				g_free(auth);
 				resend = sipmsg_to_string(trans->msg);
 				/* resend request */
-				sendout_pkt(sip->gc, resend);
+				sendout_pkt(purple_account_get_connection(sip), resend);
 				g_free(resend);
 			} else {
 				if(msg->response == 100) {
@@ -1561,7 +1561,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 							g_free(auth);
 							resend = sipmsg_to_string(trans->msg);
 							/* resend request */
-							sendout_pkt(sip->gc, resend);
+							sendout_pkt(purple_account_get_connection(sip), resend);
 							g_free(resend);
 						} else {
 							/* Reset any count of retries that may have
@@ -1744,7 +1744,7 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 	sip->listen_data = NULL;
 
 	if(listenfd == -1) {
-		purple_connection_error_reason(sip->gc,
+		purple_connection_error_reason(purple_account_get_connection(sip),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Could not create listen socket"));
 		return;
@@ -1755,7 +1755,7 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 	sip->listenport = purple_network_get_port_from_fd(sip->fd);
 	sip->listenfd = sip->fd;
 
-	sip->listenpa = purple_input_add(sip->fd, PURPLE_INPUT_READ, simple_udp_process, sip->gc);
+	sip->listenpa = purple_input_add(sip->fd, PURPLE_INPUT_READ, simple_udp_process, purple_account_get_connection(sip));
 
 	sip->resendtimeout = purple_timeout_add(2500, (GSourceFunc) resend_timeout, sip);
 	sip->registertimeout = purple_timeout_add((rand()%100)+10*1000, (GSourceFunc)subscribe_timeout, sip);
@@ -1769,7 +1769,7 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	sip->query_data = NULL;
 
 	if (!hosts || !hosts->data) {
-		purple_connection_error_reason(sip->gc,
+		purple_connection_error_reason(purple_account_get_connection(sip),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Couldn't resolve host"));
 		return;
@@ -1790,7 +1790,7 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	sip->listen_data = purple_network_listen_range(5060, 5160, SOCK_DGRAM,
 				simple_udp_host_resolved_listen_cb, sip);
 	if (sip->listen_data == NULL) {
-		purple_connection_error_reason(sip->gc,
+		purple_connection_error_reason(purple_account_get_connection(sip),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Could not create listen socket"));
 		return;
@@ -1805,7 +1805,7 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 
 	sip->listenfd = listenfd;
 	if(sip->listenfd == -1) {
-		purple_connection_error_reason(sip->gc,
+		purple_connection_error_reason(purple_account_get_connection(sip),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Could not create listen socket"));
 		return;
@@ -1814,13 +1814,13 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	purple_debug_info("simple", "listenfd: %d\n", sip->listenfd);
 	sip->listenport = purple_network_get_port_from_fd(sip->listenfd);
 	sip->listenpa = purple_input_add(sip->listenfd, PURPLE_INPUT_READ,
-			simple_newconn_cb, sip->gc);
+			simple_newconn_cb, purple_account_get_connection(sip));
 	purple_debug_info("simple", "connecting to %s port %d\n",
 			sip->realhostname, sip->realport);
 	/* open tcp connection to the server */
-	if (purple_proxy_connect(sip->gc, sip->account, sip->realhostname,
-			sip->realport, login_cb, sip->gc) == NULL) {
-		purple_connection_error_reason(sip->gc,
+	if (purple_proxy_connect(purple_account_get_connection(sip), sip->account, sip->realhostname,
+			sip->realport, login_cb, purple_account_get_connection(sip)) == NULL) {
+		purple_connection_error_reason(purple_account_get_connection(sip),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Couldn't create socket"));
 	}
@@ -1860,7 +1860,7 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 		sip->listen_data = purple_network_listen_range(5060, 5160, SOCK_STREAM,
 					simple_tcp_connect_listen_cb, sip);
 		if (sip->listen_data == NULL) {
-			purple_connection_error_reason(sip->gc,
+			purple_connection_error_reason(purple_account_get_connection(sip),
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Could not create listen socket"));
 			return;
@@ -1870,7 +1870,7 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 
 		sip->query_data = purple_dnsquery_a(hostname, port, simple_udp_host_resolved, sip);
 		if (sip->query_data == NULL) {
-			purple_connection_error_reason(sip->gc,
+			purple_connection_error_reason(purple_account_get_connection(sip),
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Could not resolve hostname"));
 		}
@@ -1895,7 +1895,7 @@ static void simple_login(PurpleAccount *account)
 	}
 
 	gc->proto_data = sip = g_new0(struct simple_account_data, 1);
-	sip->gc = gc;
+	purple_account_get_connection(sip) = gc;
 	sip->account = account;
 	sip->registerexpire = 900;
 	sip->udp = purple_account_get_bool(account, "udp", FALSE);
@@ -1905,9 +1905,9 @@ static void simple_login(PurpleAccount *account)
 
 	userserver = g_strsplit(username, "@", 2);
 	purple_connection_set_display_name(gc, userserver[0]);
-	sip->username = g_strdup(userserver[0]);
+	purple_account_get_username(sip) = g_strdup(userserver[0]);
 	sip->servername = g_strdup(userserver[1]);
-	sip->password = g_strdup(purple_connection_get_password(gc));
+	purple_account_get_password(sip) = g_strdup(purple_connection_get_password(gc));
 	g_strfreev(userserver);
 
 	sip->buddies = g_hash_table_new((GHashFunc)simple_ht_hash_nick, (GEqualFunc)simple_ht_equals_nick);
@@ -1958,8 +1958,8 @@ static void simple_close(PurpleConnection *gc)
 			purple_network_listen_cancel(sip->listen_data);
 
 		g_free(sip->servername);
-		g_free(sip->username);
-		g_free(sip->password);
+		g_free(purple_account_get_username(sip));
+		g_free(purple_account_get_password(sip));
 		g_free(sip->registrar.nonce);
 		g_free(sip->registrar.opaque);
 		g_free(sip->registrar.target);

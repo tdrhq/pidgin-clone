@@ -61,7 +61,7 @@ peer_odc_close(PeerConnection *conn)
 		PurpleAccount *account;
 		PurpleConversation *conv;
 
-		account = purple_connection_get_account(conn->od->gc);
+		account = purple_connection_get_account(purple_account_get_connection(conn->od));
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
 		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(tmp);
@@ -92,7 +92,7 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 		"type=0x%04x, flags=0x%04x, payload length=%u\n",
 		conn->sn, frame->type, frame->flags, frame->payload.len);
 
-	account = purple_connection_get_account(conn->od->gc);
+	account = purple_connection_get_account(purple_account_get_connection(conn->od));
 	username = purple_account_get_username(account);
 	memcpy(frame->sn, username, strlen(username));
 	memcpy(frame->cookie, conn->cookie, 8);
@@ -247,7 +247,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 	GString *newmsg;
 	PurpleMessageFlags imflags;
 
-	gc = conn->od->gc;
+	gc = purple_account_get_connection(conn->od);
 	account = purple_connection_get_account(gc);
 
 	dataend = msg + len;
@@ -490,7 +490,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 	PurpleConnection *gc;
 	OdcFrame *frame;
 
-	gc = conn->od->gc;
+	gc = purple_account_get_connection(conn->od);
 
 	frame = g_new0(OdcFrame, 1);
 	frame->type = byte_stream_get16(bs);
@@ -601,7 +601,7 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 			g_free(size1);
 			g_free(size2);
 
-			account = purple_connection_get_account(conn->od->gc);
+			account = purple_connection_get_account(purple_account_get_connection(conn->od));
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
 			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);

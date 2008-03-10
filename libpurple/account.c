@@ -1050,6 +1050,7 @@ purple_account_request_change_user_info(PurpleAccount *account)
 {
 	PurpleConnection *gc;
 	char primary[256];
+	PurpleConnectionFlags flags = 0;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(purple_account_is_connected(account));
@@ -1060,10 +1061,11 @@ purple_account_request_change_user_info(PurpleAccount *account)
 			   _("Change user information for %s"),
 			   purple_account_get_username(account));
 
+	g_object_get(G_OBJECT(gc), "flags", &flags, NULL);
 	purple_request_input(gc, _("Set User Info"), primary, NULL,
 					   purple_account_get_user_info(account),
 					   TRUE, FALSE, ((gc != NULL) &&
-					   (gc->flags & PURPLE_CONNECTION_HTML) ? "html" : NULL),
+					   (flags & PURPLE_CONNECTION_FLAGS_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL,
 					   account, NULL, NULL,
@@ -1160,7 +1162,10 @@ purple_account_set_connection(PurpleAccount *account, PurpleConnection *gc)
 {
 	g_return_if_fail(account != NULL);
 
-	account->gc = gc;
+#warning Connect and disconnect to 'signed-on' and 'connection-error' on gc and set/clear current_error.
+	if (account->gc)
+		g_object_unref(account->gc);
+	account->gc = gc ? g_object_ref(gc) : NULL;
 }
 
 void
@@ -1201,7 +1206,12 @@ purple_account_set_enabled(PurpleAccount *account, const char *ui,
 	else if(!was_enabled && value)
 		purple_signal_emit(purple_accounts_get_handle(), "account-enabled", account);
 
+#if 0
 	if ((gc != NULL) && (gc->wants_to_die == TRUE))
+#else
+#warning Do something about wants-to-die. Perhaps check if current_error is fatal?
+	if (gc != NULL)
+#endif
 		return;
 
 	if (value && purple_presence_is_online(account->presence))
@@ -1448,11 +1458,11 @@ purple_account_get_state(const PurpleAccount *account)
 {
 	PurpleConnection *gc;
 
-	g_return_val_if_fail(account != NULL, PURPLE_DISCONNECTED);
+	g_return_val_if_fail(account != NULL, PURPLE_CONNECTION_STATE_DISCONNECTED);
 
 	gc = purple_account_get_connection(account);
 	if (!gc)
-		return PURPLE_DISCONNECTED;
+		return PURPLE_CONNECTION_STATE_DISCONNECTED;
 
 	return purple_connection_get_state(gc);
 }
@@ -1460,19 +1470,19 @@ purple_account_get_state(const PurpleAccount *account)
 gboolean
 purple_account_is_connected(const PurpleAccount *account)
 {
-	return (purple_account_get_state(account) == PURPLE_CONNECTED);
+	return (purple_account_get_state(account) == PURPLE_CONNECTION_STATE_CONNECTED);
 }
 
 gboolean
 purple_account_is_connecting(const PurpleAccount *account)
 {
-	return (purple_account_get_state(account) == PURPLE_CONNECTING);
+	return (purple_account_get_state(account) == PURPLE_CONNECTION_STATE_CONNECTING);
 }
 
 gboolean
 purple_account_is_disconnected(const PurpleAccount *account)
 {
-	return (purple_account_get_state(account) == PURPLE_DISCONNECTED);
+	return (purple_account_get_state(account) == PURPLE_CONNECTION_STATE_DISCONNECTED);
 }
 
 const char *
@@ -1480,7 +1490,7 @@ purple_account_get_username(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	return account->username;
+	return purple_account_get_username(account);
 }
 
 const char *
@@ -1488,7 +1498,7 @@ purple_account_get_password(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	return account->password;
+	return purple_account_get_password(account);
 }
 
 const char *
@@ -1519,7 +1529,7 @@ const char *
 purple_account_get_protocol_id(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
-	return account->protocol_id;
+	return purple_account_get_protocol_id(account);
 }
 
 const char *
@@ -1539,7 +1549,7 @@ purple_account_get_connection(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	return account->gc;
+	return purple_account_get_connection(account);
 }
 
 gboolean
@@ -2184,7 +2194,7 @@ purple_accounts_find(const char *name, const char *protocol_id)
 
 		who = g_strdup(purple_normalize(account, name));
 		if (!strcmp(purple_normalize(account, purple_account_get_username(account)), who) &&
-			(!protocol_id || !strcmp(account->protocol_id, protocol_id))) {
+			(!protocol_id || !strcmp(purple_account_get_protocol_id(account), protocol_id))) {
 			g_free(who);
 			break;
 		}
@@ -2243,7 +2253,6 @@ void
 purple_accounts_init(void)
 {
 	void *handle = purple_accounts_get_handle();
-	void *conn_handle = purple_connections_get_handle();
 
 	purple_signal_register(handle, "account-connecting",
 						 purple_marshal_VOID__POINTER, NULL, 1,
@@ -2314,11 +2323,12 @@ purple_accounts_init(void)
 	                       purple_value_new(PURPLE_TYPE_POINTER),
 	                       purple_value_new(PURPLE_TYPE_POINTER));
 
+#if 0
 	purple_signal_connect(conn_handle, "signed-on", handle,
 	                      PURPLE_CALLBACK(signed_on_cb), NULL);
 	purple_signal_connect(conn_handle, "connection-error", handle,
 	                      PURPLE_CALLBACK(connection_error_cb), NULL);
-
+#endif
 }
 
 void

@@ -47,9 +47,9 @@ msn_complete_sync_issue(MsnAddRemData *data)
 		group = purple_find_group(data->group);
 
 	if (group != NULL)
-		buddy = purple_find_buddy_in_group(purple_connection_get_account(data->gc), data->who, group);
+		buddy = purple_find_buddy_in_group(purple_connection_get_account(purple_account_get_connection(data)), data->who, group);
 	else
-		buddy = purple_find_buddy(purple_connection_get_account(data->gc), data->who);
+		buddy = purple_find_buddy(purple_connection_get_account(purple_account_get_connection(data)), data->who);
 
 	if (buddy != NULL)
 		purple_blist_remove_buddy(buddy);
@@ -64,9 +64,9 @@ msn_add_cb(MsnAddRemData *data)
 	msn_complete_sync_issue(data);
 #endif
 
-	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
+	if (g_list_find(purple_connections_get_all(), purple_account_get_connection(data)) != NULL)
 	{
-		MsnSession *session = data->gc->proto_data;
+		MsnSession *session = purple_account_get_connection(data)->proto_data;
 		MsnUserList *userlist = session->userlist;
 
 		msn_userlist_add_buddy(userlist, data->who, data->group);
@@ -82,9 +82,9 @@ msn_rem_cb(MsnAddRemData *data)
 {
 	msn_complete_sync_issue(data);
 
-	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
+	if (g_list_find(purple_connections_get_all(), purple_account_get_connection(data)) != NULL)
 	{
-		MsnSession *session = data->gc->proto_data;
+		MsnSession *session = purple_account_get_connection(data)->proto_data;
 		MsnUserList *userlist = session->userlist;
 
 		if (data->group == NULL) {
@@ -113,7 +113,7 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 	data        = g_new0(MsnAddRemData, 1);
 	data->who   = g_strdup(passport);
 	data->group = group_name != NULL ? g_strdup(group_name) : NULL;
-	data->gc    = gc;
+	purple_account_get_connection(data)    = gc;
 
 	msg = g_strdup_printf(_("Buddy list synchronization issue in %s (%s)"),
 						  purple_account_get_username(account),

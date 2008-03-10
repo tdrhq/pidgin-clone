@@ -40,10 +40,10 @@ msim_session_new(PurpleAccount *acct)
 
 	session->magic = MSIM_SESSION_STRUCT_MAGIC;
 	session->account = acct;
-	session->gc = purple_account_get_connection(acct);
+	purple_account_get_connection(session) = purple_account_get_connection(acct);
 	session->sesskey = 0;
 	session->userid = 0;
-	session->username = NULL;
+	purple_account_get_username(session) = NULL;
 	session->fd = -1;
 
 	/* TODO: Remove. */
@@ -82,7 +82,7 @@ msim_session_destroy(MsimSession *session)
 	session->magic = -1;
 
 	g_free(session->rxbuf);
-	g_free(session->username);
+	g_free(purple_account_get_username(session));
 
 	/* TODO: Remove. */
 	g_hash_table_destroy(session->user_lookup_cb);

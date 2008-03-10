@@ -242,7 +242,7 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			/* A new peer has joined the network and uses iChat bonjour */
 			purple_debug_info("bonjour", "_browser_callback - new service\n");
 			/* Make sure it isn't us */
-			if (purple_utf8_strcasecmp(name, account->username) != 0) {
+			if (purple_utf8_strcasecmp(name, purple_account_get_username(account)) != 0) {
 				if (!avahi_service_resolver_new(avahi_service_browser_get_client(b),
 						interface, protocol, name, type, domain, AVAHI_PROTO_INET,
 						0, _resolver_callback, account)) {

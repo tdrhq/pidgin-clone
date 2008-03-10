@@ -257,7 +257,7 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 static void
 send_to_mobile_cb(MsnMobileData *data, const char *entry)
 {
-	send_to_mobile(data->gc, data->passport, entry);
+	send_to_mobile(purple_account_get_connection(data), data->passport, entry);
 	g_free(data);
 }
 
@@ -391,7 +391,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 	session = gc->proto_data;
 
 	data = g_new0(MsnMobileData, 1);
-	data->gc = gc;
+	purple_account_get_connection(data) = gc;
 	data->passport = buddy->name;
 
 	purple_request_input(gc, NULL, _("Send a mobile message."), NULL,
@@ -456,7 +456,7 @@ msn_new_xfer(PurpleConnection *gc, const char *who)
 
 	session = gc->proto_data;
 
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 	if (xfer)
 	{
 		slplink = msn_session_get_slplink(session, who);
@@ -755,7 +755,7 @@ msn_login(PurpleAccount *account)
 	session = msn_session_new(account);
 
 	gc->proto_data = session;
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_FONTSIZE | PURPLE_CONNECTION_NO_URLDESC;
+	gc->flags |= PURPLE_CONNECTION_FLAGS_HTML | PURPLE_CONNECTION_FLAGS_FORMATTING_WBFO | PURPLE_CONNECTION_FLAGS_NO_BGCOLOR | PURPLE_CONNECTION_FLAGS_NO_FONTSIZE | PURPLE_CONNECTION_FLAGS_NO_URLDESC;
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_START);
 
@@ -790,7 +790,7 @@ static gboolean
 msn_send_me_im(gpointer data)
 {
 	MsnIMData *imdata = data;
-	serv_got_im(imdata->gc, imdata->who, imdata->msg, imdata->flags, imdata->when);
+	serv_got_im(purple_account_get_connection(imdata), imdata->who, imdata->msg, imdata->flags, imdata->when);
 	g_free(imdata->msg);
 	g_free(imdata);
 	return FALSE;
@@ -801,7 +801,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			PurpleMessageFlags flags)
 {
 	PurpleAccount *account;
-	PurpleBuddy *buddy = purple_find_buddy(gc->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
@@ -866,7 +866,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(post);
 
 		serv_got_typing_stopped(gc, who);
-		imdata->gc = gc;
+		purple_account_get_connection(imdata) = gc;
 		imdata->who = who;
 		imdata->msg = body_str;
 		imdata->flags = flags;
@@ -1011,7 +1011,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	session = gc->proto_data;
 	userlist = session->userlist;
-	who = msn_normalize(gc->account, buddy->name);
+	who = msn_normalize(purple_connection_get_account(gc), buddy->name);
 
 	if (!session->logged_in)
 	{
@@ -1400,7 +1400,7 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 {
 	PurpleBuddy *b;
 
-	b = purple_find_buddy(purple_connection_get_account(info_data->gc),
+	b = purple_find_buddy(purple_connection_get_account(info_purple_account_get_connection(data)),
 						info_data->name);
 
 	if (b)
@@ -1414,9 +1414,9 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 			g_free(aliastext);
 		}
 
-		if (b->server_alias)
+		if (purple_buddy_get_server_alias(b))
 		{
-			char *nicktext = g_markup_escape_text(b->server_alias, -1);
+			char *nicktext = g_markup_escape_text(purple_buddy_get_server_alias(b), -1);
 			tmp = g_strdup_printf("<font sml=\"msn\">%s</font><br>", nicktext);
 			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
 			g_free(tmp);
@@ -1511,7 +1511,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_debug_info("msn", "In msn_got_info\n");
 
 	/* Make sure the connection is still valid */
-	if (g_list_find(purple_connections_get_all(), info_data->gc) == NULL)
+	if (g_list_find(purple_connections_get_all(), info_purple_account_get_connection(data)) == NULL)
 	{
 		purple_debug_warning("msn", "invalid connection. ignoring buddy info.\n");
 		g_free(info_data->name);
@@ -1528,7 +1528,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		purple_notify_user_info_add_pair(user_info, NULL, tmp);
 		g_free(tmp);
 
-		purple_notify_userinfo(info_data->gc, info_data->name, user_info, NULL, NULL);
+		purple_notify_userinfo(info_purple_account_get_connection(data), info_data->name, user_info, NULL, NULL);
 		purple_notify_user_info_destroy(user_info);
 
 		g_free(info_data->name);
@@ -1866,7 +1866,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		 * Let's see how long this one holds out for ... */
 		char *p = strstr(url_buffer, "<form id=\"profile_form\" name=\"profile_form\" action=\"http&#58;&#47;&#47;spaces.live.com&#47;profile.aspx&#63;cid&#61;0\"");
 		PurpleBuddy *b = purple_find_buddy
-				(purple_connection_get_account(info_data->gc), info_data->name);
+				(purple_connection_get_account(info_purple_account_get_connection(data)), info_data->name);
 		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"),
 									   ((p && b) ? _("The user has not created a public profile.") :
 										(p ? _("MSN reported not being able to find the user's profile. "
@@ -1926,7 +1926,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	/* Make sure the connection is still valid if we got here by fetching a photo url */
 	if (url_text && (error_message != NULL ||
-					 g_list_find(purple_connections_get_all(), info_data->gc) == NULL))
+					 g_list_find(purple_connections_get_all(), info_purple_account_get_connection(data)) == NULL))
 	{
 		purple_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
 		g_free(stripped);
@@ -1963,7 +1963,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	/* We continue here from msn_got_info, as if nothing has happened */
 #endif
-	purple_notify_userinfo(info_data->gc, info_data->name, user_info, NULL, NULL);
+	purple_notify_userinfo(info_purple_account_get_connection(data), info_data->name, user_info, NULL, NULL);
 
 	g_free(stripped);
 	g_free(url_buffer);
@@ -1985,7 +1985,7 @@ msn_get_info(PurpleConnection *gc, const char *name)
 	char *url;
 
 	data       = g_new0(MsnGetInfoData, 1);
-	data->gc   = gc;
+	purple_account_get_connection(data)   = gc;
 	data->name = g_strdup(name);
 
 	url = g_strdup_printf("%s%s", PROFILE_URL, name);

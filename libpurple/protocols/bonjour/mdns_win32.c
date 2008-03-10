@@ -106,7 +106,7 @@ _mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition) {
 		purple_debug_error("bonjour", "Error (%d) handling mDNS response.\n", errorCode);
 		/* This happens when the mDNSResponder goes down, I haven't seen it happen any other time (in my limited testing) */
 		if (errorCode == kDNSServiceErr_Unknown) {
-			purple_connection_error_reason(srh->account->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			purple_connection_error_reason(purple_account_get_connection(srh->account), PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Error communicating with local mDNSResponder."));
 		}
 	}
@@ -317,7 +317,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 		purple_debug_error("bonjour", "service browser - callback error (%d)\n", errorCode);
 	else if (flags & kDNSServiceFlagsAdd) {
 		/* A presence service instance has been discovered... check it isn't us! */
-		if (purple_utf8_strcasecmp(serviceName, account->username) != 0) {
+		if (purple_utf8_strcasecmp(serviceName, purple_account_get_username(account)) != 0) {
 			DNSServiceErrorType resErrorCode;
 			/* OK, lets go ahead and resolve it to add to the buddy list */
 			ResolveCallbackArgs *args = g_new0(ResolveCallbackArgs, 1);

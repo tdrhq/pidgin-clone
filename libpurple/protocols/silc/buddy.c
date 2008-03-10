@@ -165,7 +165,7 @@ silcpurple_buddy_keyagr_do(PurpleConnection *gc, const char *name,
 		if (!r)
 			return;
 		r->nick = g_strdup(name);
-		r->gc = gc;
+		purple_account_get_connection(r) = gc;
 		silc_client_get_clients(sg->client, sg->conn, name, NULL,
 					silcpurple_buddy_keyagr_resolved, r);
 		return;
@@ -313,7 +313,7 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 	a->port = port;
 
 	purple_request_action(client->application, _("Key Agreement Request"), tmp,
-			      hostname ? tmp2 : NULL, 1, gc->account, client_entry->nickname,
+			      hostname ? tmp2 : NULL, 1, purple_connection_get_account(gc), client_entry->nickname,
 			      NULL, a, 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
 			      _("No"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb));
 }
@@ -324,7 +324,7 @@ silcpurple_buddy_keyagr(PurpleBlistNode *node, gpointer data)
 	PurpleBuddy *buddy;
 
 	buddy = (PurpleBuddy *)node;
-	silcpurple_buddy_keyagr_do(buddy->account->gc, buddy->name, FALSE);
+	silcpurple_buddy_keyagr_do(purple_account_get_connection(buddy->account), buddy->name, FALSE);
 }
 
 
@@ -453,7 +453,7 @@ silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 	                     _("Set IM Password"), NULL, FALSE, TRUE, NULL,
 	                     _("OK"), G_CALLBACK(silcpurple_buddy_privkey_cb),
 	                     _("Cancel"), G_CALLBACK(silcpurple_buddy_privkey_cb),
-	                     gc->account, NULL, NULL, p);
+	                     purple_connection_get_account(gc), NULL, NULL, p);
 
 	silc_client_list_free(sg->client, sg->conn, clients);
 }
@@ -682,7 +682,7 @@ void silcpurple_get_info(PurpleConnection *gc, const char *who)
 	if (strlen(who) > 2 && who[0] == '*' && who[1] == '@')
 		nick = who + 2;
 
-	b = purple_find_buddy(gc->account, nick);
+	b = purple_find_buddy(purple_connection_get_account(gc), nick);
 	if (b) {
 		/* See if we have this buddy's public key.  If we do use that
 		   to search the details. */
@@ -1175,7 +1175,7 @@ silcpurple_add_buddy_select(SilcPurpleBuddyRes r, SilcDList clients)
 		}
 		g_snprintf(tmp, sizeof(tmp), "%s - %s (%s@%s)%s",
 			   client_entry->realname, client_entry->nickname,
-			   client_entry->username, *client_entry->hostname ?
+			   client_purple_account_get_username(entry), *client_entry->hostname ?
 			   client_entry->hostname : "",
 			   fingerprint ? tmp2 : "");
 		purple_request_field_list_add(f, tmp, client_entry);
@@ -1457,7 +1457,7 @@ void silcpurple_idle_set(PurpleConnection *gc, int idle)
 
 char *silcpurple_status_text(PurpleBuddy *b)
 {
-	SilcPurple sg = b->account->gc->proto_data;
+	SilcPurple sg = purple_account_get_connection(b->account)->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = b->proto_data;
@@ -1521,7 +1521,7 @@ char *silcpurple_status_text(PurpleBuddy *b)
 
 void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
-	SilcPurple sg = b->account->gc->proto_data;
+	SilcPurple sg = purple_account_get_connection(b->account)->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = b->proto_data;
@@ -1537,8 +1537,8 @@ void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	if (client_entry->nickname)
 		purple_notify_user_info_add_pair(user_info, _("Nickname"),
 					       client_entry->nickname);
-	if (client_entry->username && client_entry->hostname) {
-		g_snprintf(tmp, sizeof(tmp), "%s@%s", client_entry->username, client_entry->hostname);
+	if (client_purple_account_get_username(entry) && client_entry->hostname) {
+		g_snprintf(tmp, sizeof(tmp), "%s@%s", client_purple_account_get_username(entry), client_entry->hostname);
 		purple_notify_user_info_add_pair(user_info, _("Username"), tmp);
 	}
 	if (client_entry->mode) {

@@ -187,7 +187,7 @@ char *jabber_get_bare_jid(const char *in)
 
 const char *jabber_normalize(const PurpleAccount *account, const char *in)
 {
-	PurpleConnection *gc = account ? account->gc : NULL;
+	PurpleConnection *gc = account ? purple_account_get_connection(account) : NULL;
 	JabberStream *js = gc ? gc->proto_data : NULL;
 	static char buf[3072]; /* maximum legal length of a jabber jid */
 	JabberID *jid;

@@ -337,7 +337,7 @@ login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	username =
 		g_strdup(purple_url_encode(purple_account_get_username(session->account)));
 
-	password = g_strndup(purple_connection_get_password(session->account->gc), 16);
+	password = g_strndup(purple_connection_get_password(purple_account_get_connection(session->account)), 16);
 	encpass = g_strdup(purple_url_encode(password));
 	g_free(password);
 

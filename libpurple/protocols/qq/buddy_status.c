@@ -203,7 +203,7 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection 
 		} else {
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Change status OK\n");
 			name = uid_to_purple_name(qd->uid);
-			b = purple_find_buddy(gc->account, name);
+			b = purple_find_buddy(purple_connection_get_account(gc), name);
 			g_free(name);
 			q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 			qq_update_buddy_contact(gc, q_bud);
@@ -251,7 +251,7 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, PurpleConnection
 		}
 
 		name = uid_to_purple_name(s->uid);
-		b = purple_find_buddy(gc->account, name);
+		b = purple_find_buddy(purple_connection_get_account(gc), name);
 		g_free(name);
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 		if (q_bud) {

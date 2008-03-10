@@ -496,7 +496,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 			char *friendly = NULL;
 			if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
 				friendly = xmlnode_get_data(displayName);
-			purple_connection_set_display_name(session->account->gc, friendly ? purple_url_decode(friendly) : NULL);
+			purple_connection_set_display_name(purple_account_get_connection(session->account), friendly ? purple_url_decode(friendly) : NULL);
 			g_free(friendly);
 			continue; /* Not adding own account as buddy to buddylist */
 		}
@@ -697,7 +697,7 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 	if (msn_parse_addressbook(contact, resp->xml)) {
 		if (!session->logged_in) {
-			msn_send_privacy(session->account->gc);
+			msn_send_privacy(purple_account_get_connection(session->account));
 			msn_notification_dump_contact(session);
 		}
 	} else {
@@ -709,7 +709,7 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		msn_get_address_book(contact, NULL, NULL);
 		*/
 		msn_session_disconnect(session);
-		purple_connection_error_reason(session->account->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to retrieve MSN Address Book"));
+		purple_connection_error_reason(purple_account_get_connection(session->account), PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to retrieve MSN Address Book"));
 	}
 }
 

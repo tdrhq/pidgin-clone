@@ -127,7 +127,7 @@ void qq_process_recv_group_im_apply_join
 	reason = g_strdup_printf(_("Reason: %s"), reason_utf8);
 
 	g = g_new0(group_member_opt, 1);
-	g->gc = gc;
+	purple_account_get_connection(g) = gc;
 	g->internal_group_id = internal_group_id;
 	g->member = user_uid;
 

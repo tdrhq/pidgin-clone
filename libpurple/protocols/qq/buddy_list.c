@@ -312,7 +312,7 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConnecti
 			}
 
 			name = uid_to_purple_name(q_bud->uid);
-			b = purple_find_buddy(gc->account, name);
+			b = purple_find_buddy(purple_connection_get_account(gc), name);
 			g_free(name);
 
 			if (b == NULL)
