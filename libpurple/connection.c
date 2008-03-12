@@ -949,7 +949,7 @@ purple_connection_get_gtype(void)
 			NULL,
 		};
 
-		type = g_type_register_static(G_TYPE_OBJECT,
+		type = g_type_register_static(PURPLE_TYPE_OBJECT,
 									  "PurpleConnection",
 									  &info, 0);
 	}

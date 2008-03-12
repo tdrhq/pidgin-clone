@@ -65,6 +65,7 @@ purple_coresources = \
 	notify.c \
 	plugin.c \
 	pluginpref.c \
+	pobject.c \
 	pounce.c \
 	prefs.c \
 	privacy.c \
@@ -125,6 +126,7 @@ purple_coreheaders = \
 	ntlm.h \
 	plugin.h \
 	pluginpref.h \
+	pobject.h \
 	pounce.h \
 	prefs.h \
 	privacy.h \

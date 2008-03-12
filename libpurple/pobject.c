@@ -1,0 +1,100 @@
+/* purple
+ *
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+#include "pobject.h"
+
+struct _PurpleObjectPrivate
+{
+	gpointer proto_data;
+};
+
+static GObjectClass *parent_class;
+
+static void
+purple_object_dispose(GObject *obj)
+{
+	PurpleObject *pobj = PURPLE_OBJECT(obj);
+
+	if (pobj->priv->proto_data) {
+		g_warning("Purple-Object: object destroyed without unsetting the protocol data. This may lead to memory leak.\n");
+	}
+
+	/* XXX: do _notify_close_with_handle etc here */
+
+	parent_class->dispose(obj);
+}
+
+static void
+purple_object_class_init(PurpleObjectClass *klass)
+{
+	GObjectClass *gclass= G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
+
+	gclass->dispose = purple_object_dispose;
+	g_type_class_add_private(klass, sizeof(PurpleObjectPrivate));
+}
+
+static void
+purple_object_init(GTypeInstance *instance, gpointer class)
+{
+	PurpleObject *pobj = PURPLE_OBJECT(instance);
+	pobj->priv = G_TYPE_INSTANCE_GET_PRIVATE(pobj, PURPLE_TYPE_OBJECT, PurpleObjectPrivate);
+	pobj->priv->proto_data = NULL;
+}
+
+GType purple_object_get_type(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleObjectClass),
+			NULL,                    /* base_init        */
+			NULL,                    /* base_finalize    */
+			(GClassInitFunc)purple_object_class_init,
+			NULL,
+			NULL,                    /* class_data        */
+			sizeof(PurpleObject),
+			0,                       /* n_preallocs        */
+			purple_object_init,      /* instance_init    */
+			NULL                     /* value_table        */
+		};
+
+		type = g_type_register_static(G_TYPE_OBJECT,
+				"PurpleObject",
+				&info, G_TYPE_FLAG_ABSTRACT);
+	}
+
+	return type;
+}
+
+void purple_object_set_protocol_data(PurpleObject *pobj, gpointer proto_data)
+{
+	g_return_if_fail(pobj);
+	pobj->priv->proto_data = proto_data;
+}
+
+gpointer purple_object_get_protocol_data(PurpleObject *pobj)
+{
+	g_return_val_if_fail(pobj, NULL);
+	return pobj->priv->proto_data;
+}
+

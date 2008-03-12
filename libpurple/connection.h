@@ -27,8 +27,7 @@
 #ifndef PURPLE_CONNECTION_H
 #define PURPLE_CONNECTION_H
 
-#include <glib.h>
-#include <glib-object.h>
+#include "pobject.h"
 
 #define PURPLE_TYPE_CONNECTION				(purple_connection_get_gtype())
 #define PURPLE_CONNECTION(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_CONNECTION, PurpleConnection))
@@ -240,7 +239,7 @@ typedef struct
 
 struct _PurpleConnection
 {
-	GObject gparent;
+	PurpleObject gparent;
 
 	PurpleConnectionPrivate *priv;
 
@@ -252,7 +251,7 @@ struct _PurpleConnection
 
 struct _PurpleConnectionClass
 {
-	GObjectClass gparent;
+	PurpleObjectClass gparent;
 
 	void (*signing_on)(PurpleConnection *pc);
 	void (*signed_on)(PurpleConnection *pc);

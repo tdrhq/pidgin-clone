@@ -47,7 +47,6 @@ typedef enum
 	PURPLE_TYPE_INT64,        /**< 64-bit integer.                   */
 	PURPLE_TYPE_UINT64,       /**< 64-bit unsigned integer.          */
 	PURPLE_TYPE_STRING,       /**< String.                           */
-	PURPLE_TYPE_OBJECT,       /**< Object pointer.                   */
 	PURPLE_TYPE_POINTER,      /**< Generic pointer.                  */
 	PURPLE_TYPE_ENUM,         /**< Enum.                             */
 	PURPLE_TYPE_BOXED         /**< Boxed pointer with specific type. */
