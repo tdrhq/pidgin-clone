@@ -23,6 +23,7 @@
 struct _PurpleObjectPrivate
 {
 	gpointer proto_data;
+	gpointer ui_data;
 };
 
 static GObjectClass *parent_class;
@@ -34,6 +35,10 @@ purple_object_dispose(GObject *obj)
 
 	if (pobj->priv->proto_data) {
 		g_warning("Purple-Object: object destroyed without unsetting the protocol data. This may lead to memory leak.\n");
+	}
+
+	if (pobj->priv->ui_data) {
+		g_warning("Purple-Object: object destroyed without unsetting the ui data. This may lead to memory leak.\n");
 	}
 
 	/* XXX: do _notify_close_with_handle etc here */
@@ -96,6 +101,18 @@ gpointer purple_object_get_protocol_data(PurpleObject *pobj)
 {
 	g_return_val_if_fail(pobj, NULL);
 	return pobj->priv->proto_data;
+}
+
+void purple_object_set_ui_data(PurpleObject *pobj, gpointer ui_data)
+{
+	g_return_if_fail(pobj);
+	pobj->priv->ui_data = ui_data;
+}
+
+gpointer purple_object_get_ui_data(PurpleObject *pobj)
+{
+	g_return_val_if_fail(pobj, NULL);
+	return pobj->priv->ui_data;
 }
 
 int purple_object_get_int(PurpleObject *pobj, const char *prop)
