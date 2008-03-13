@@ -54,8 +54,8 @@
  ************************************************************************************/
 static void ycht_process_login(YchtConn *ycht, YchtPkt *pkt)
 {
-	PurpleConnection *gc = purple_account_get_connection(ycht);
-	struct yahoo_data *yd = gc->proto_data;
+	PurpleConnection *gc = ycht->gc;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (ycht->logged_in)
 		return;
@@ -69,8 +69,8 @@ static void ycht_process_login(YchtConn *ycht, YchtPkt *pkt)
 
 static void ycht_process_logout(YchtConn *ycht, YchtPkt *pkt)
 {
-	PurpleConnection *gc = purple_account_get_connection(ycht);
-	struct yahoo_data *yd = gc->proto_data;
+	PurpleConnection *gc = ycht->gc;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	yd->chat_online = FALSE;
 	ycht->logged_in = FALSE;
@@ -79,7 +79,7 @@ static void ycht_process_logout(YchtConn *ycht, YchtPkt *pkt)
 static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 {
 	char *room, *topic;
-	PurpleConnection *gc = purple_account_get_connection(ycht);
+	PurpleConnection *gc = ycht->gc;
 	PurpleConversation *c = NULL;
 	gboolean new_room = FALSE;
 	char **members;
@@ -115,7 +115,7 @@ static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 
 	for (i = 0; members[i]; i++) {
 		if (new_room) {
-			/*if (!strcmp(members[i], purple_connection_get_display_name(purple_account_get_connection(ycht))))
+			/*if (!strcmp(members[i], purple_connection_get_display_name(ycht->gc)))
 				continue;*/
 			purple_conv_chat_add_user(PURPLE_CONV_CHAT(c), members[i], NULL, PURPLE_CBFLAGS_NONE, TRUE);
 		} else {
@@ -134,7 +134,7 @@ static void ycht_process_chatpart(YchtConn *ycht, YchtPkt *pkt)
 	who = g_list_nth_data(pkt->data, 1);
 
 	if (who && room) {
-		PurpleConversation *c = purple_find_chat(purple_account_get_connection(ycht), YAHOO_CHAT_ID);
+		PurpleConversation *c = purple_find_chat(ycht->gc, YAHOO_CHAT_ID);
 		if (c && !purple_utf8_strcasecmp(purple_conversation_get_name(c), room))
 			purple_conv_chat_remove_user(PURPLE_CONV_CHAT(c), who, NULL);
 
@@ -145,7 +145,7 @@ static void ycht_progress_chatmsg(YchtConn *ycht, YchtPkt *pkt)
 {
 	char *who, *what, *msg;
 	PurpleConversation *c;
-	PurpleConnection *gc = purple_account_get_connection(ycht);
+	PurpleConnection *gc = ycht->gc;
 
 	who = g_list_nth_data(pkt->data, 1);
 	what = g_list_nth_data(pkt->data, 2);
@@ -174,8 +174,8 @@ static void ycht_progress_chatmsg(YchtConn *ycht, YchtPkt *pkt)
 static void ycht_progress_online_friends(YchtConn *ycht, YchtPkt *pkt)
 {
 #if 0
-	PurpleConnection *gc = purple_account_get_connection(ycht);
-	struct yahoo_data *yd = gc->proto_data;
+	PurpleConnection *gc = ycht->gc;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (ycht->logged_in)
 		return;
@@ -429,7 +429,7 @@ static void ycht_packet_free(YchtPkt *pkt)
 
 void ycht_connection_close(YchtConn *ycht)
 {
-	struct yahoo_data *yd = purple_account_get_connection(ycht)->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(ycht->gc));
 
 	if (yd) {
 		yd->ycht = NULL;
@@ -454,7 +454,7 @@ void ycht_connection_close(YchtConn *ycht)
 static void ycht_connection_error(YchtConn *ycht, const gchar *error)
 {
 
-	purple_notify_info(purple_account_get_connection(ycht), NULL, _("Connection problem with the YCHT server."), error);
+	purple_notify_info(ycht->gc, NULL, _("Connection problem with the YCHT server."), error);
 	ycht_connection_close(ycht);
 }
 
@@ -541,8 +541,8 @@ static void ycht_pending(gpointer data, gint source, PurpleInputCondition cond)
 static void ycht_got_connected(gpointer data, gint source, const gchar *error_message)
 {
 	YchtConn *ycht = data;
-	PurpleConnection *gc = purple_account_get_connection(ycht);
-	struct yahoo_data *yd = gc->proto_data;
+	PurpleConnection *gc = ycht->gc;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	YchtPkt *pkt;
 	char *buf;
 
@@ -569,11 +569,11 @@ static void ycht_got_connected(gpointer data, gint source, const gchar *error_me
 void ycht_connection_open(PurpleConnection *gc)
 {
 	YchtConn *ycht;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	ycht = g_new0(YchtConn, 1);
-	purple_account_get_connection(ycht) = gc;
+	ycht->gc = gc;
 	ycht->fd = -1;
 
 	yd->ycht = ycht;
@@ -622,7 +622,7 @@ int ycht_chat_send(YchtConn *ycht, const char *room, const char *what)
 	pkt = ycht_packet_new(YCHT_VERSION, YCHT_SERVICE_CHATMSG, 0);
 
 	msg1 = yahoo_html_to_codes(what);
-	msg2 = yahoo_string_encode(purple_account_get_connection(ycht), msg1, NULL);
+	msg2 = yahoo_string_encode(ycht->gc, msg1, NULL);
 	g_free(msg1);
 
 	buf = g_strdup_printf("%s\001%s", ycht->room, msg2);
