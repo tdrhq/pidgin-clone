@@ -98,3 +98,10 @@ gpointer purple_object_get_protocol_data(PurpleObject *pobj)
 	return pobj->priv->proto_data;
 }
 
+int purple_object_get_int(PurpleObject *pobj, const char *prop)
+{
+	int ret;
+	g_object_get(G_OBJECT(pobj), prop, &ret, NULL);
+	return ret;
+}
+

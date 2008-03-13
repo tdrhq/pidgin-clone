@@ -57,6 +57,8 @@ void purple_object_set_protocol_data(PurpleObject *pobj, gpointer proto_data);
 
 gpointer purple_object_get_protocol_data(PurpleObject *pobj);
 
+int purple_object_get_int(PurpleObject *pobj, const char *prop);
+
 G_END_DECLS
 
 #endif /* PURPLE_OBJECT_H */
