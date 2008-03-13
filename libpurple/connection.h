@@ -344,6 +344,11 @@ void purple_connection_destroy(PurpleConnection *gc);
  */
 void purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state);
 
+#define purple_connection_turn_on_flags(gc, flags) \
+	purple_connection_set_flags((gc), (flags) | purple_connection_get_flags(gc))
+
+void purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags);
+
 /**
  * Sets the connection's account.
  *
