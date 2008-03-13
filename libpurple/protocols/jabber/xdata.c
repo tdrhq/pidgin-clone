@@ -395,10 +395,10 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 	if((x = xmlnode_get_child(packet, "instructions")))
 		instructions = xmlnode_get_data(x);
 
-	handle = purple_request_fields(purple_account_get_connection(js), title, title, instructions, fields,
+	handle = purple_request_fields(js->gc, title, title, instructions, fields,
 			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
 			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb),
-			purple_connection_get_account(purple_account_get_connection(js)), /* XXX Do we have a who here? */ NULL, NULL,
+			purple_connection_get_account(js->gc), /* XXX Do we have a who here? */ NULL, NULL,
 			data);
 
 	g_free(title);
