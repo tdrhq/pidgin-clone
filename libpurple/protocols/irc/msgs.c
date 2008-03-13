@@ -87,7 +87,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	/* If we're away then set our away message */
 	status = purple_account_get_active_status(irc->account);
 	if (!purple_status_get_type(status) != PURPLE_STATUS_AVAILABLE) {
-		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 		prpl_info->set_status(irc->account, status);
 	}
 
@@ -890,12 +890,14 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 		g_free(nick);
 		return;
 	}
-	chats = gc->buddy_chats;
 
 	if (!purple_utf8_strcasecmp(nick, purple_connection_get_display_name(gc))) {
 		purple_connection_set_display_name(gc, args[0]);
 	}
 
+#warning TODO: Find out what buddy_chats do, and reimplement this stuff
+#if 0
+	chats = gc->buddy_chats;
 	while (chats) {
 		PurpleConvChat *chat = PURPLE_CONV_CHAT(chats->data);
 		/* This is ugly ... */
@@ -903,6 +905,7 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 			purple_conv_chat_rename_user(chat, nick, args[0]);
 		chats = chats->next;
 	}
+#endif
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, nick,
 						   irc->account);
@@ -1135,7 +1138,10 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 	data[0] = irc_mask_nick(from);
 	data[1] = args[0];
 	/* XXX this should have an API, I shouldn't grab this directly */
+#warning Yeah. Do something here
+#if 0
 	g_slist_foreach(gc->buddy_chats, (GFunc)irc_chat_remove_buddy, data);
+#endif
 
 	if ((ib = g_hash_table_lookup(irc->buddies, data[0])) != NULL) {
 		ib->flag = FALSE;
