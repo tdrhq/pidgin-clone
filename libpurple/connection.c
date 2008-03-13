@@ -386,6 +386,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 	gc->priv->state = state;
 
+#if 0
 	ops = purple_connections_get_ui_ops();
 
 	if (gc->priv->state == PURPLE_CONNECTION_STATE_CONNECTING) {
@@ -394,6 +395,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 	else {
 		connections_connecting = g_list_remove(connections_connecting, gc);
 	}
+#endif
 
 	if (gc->priv->state == PURPLE_CONNECTION_STATE_CONNECTED) {
 		PurpleAccount *account;
@@ -421,12 +423,12 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 			}
 		}
 
-		if (ops != NULL && ops->connected != NULL)
-			ops->connected(gc);
-
 		purple_blist_add_account(account);
 
 #if 0
+		if (ops != NULL && ops->connected != NULL)
+			ops->connected(gc);
+
 		purple_signal_emit(purple_connections_get_handle(), "signed-on", gc);
 #endif
 
@@ -454,8 +456,10 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 		purple_account_destroy_log(account);
 
+#if 0
 		if (ops != NULL && ops->disconnected != NULL)
 			ops->disconnected(gc);
+#endif
 	}
 }
 
@@ -533,7 +537,7 @@ purple_connection_get_password(const PurpleConnection *gc)
 {
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	return purple_connection_get_password(gc) ? purple_connection_get_password(gc) : purple_account_get_password(gc->priv->account);
+	return gc->priv->password ? gc->priv->password : purple_account_get_password(gc->priv->account);
 }
 
 const char *
@@ -555,10 +559,12 @@ purple_connection_update_progress(PurpleConnection *gc, const char *text,
 	g_return_if_fail(step < count);
 	g_return_if_fail(count > 1);
 
+#if 0
 	ops = purple_connections_get_ui_ops();
 
 	if (ops != NULL && ops->connect_progress != NULL)
 		ops->connect_progress(gc, text, step, count);
+#endif
 }
 
 void
@@ -575,10 +581,12 @@ purple_connection_notice(PurpleConnection *gc, const char *text)
 	g_return_if_fail(gc   != NULL);
 	g_return_if_fail(text != NULL);
 
+#if 0
 	ops = purple_connections_get_ui_ops();
 
 	if (ops != NULL && ops->notice != NULL)
 		ops->notice(gc, text);
+#endif
 }
 
 static gboolean
@@ -638,6 +646,8 @@ purple_connection_error_reason (PurpleConnection *gc,
 
 	gc->priv->wants_to_die = purple_connection_error_is_fatal (reason);
 
+#if 0
+    /* This will probably eventually move to ConnectionManager */
 	ops = purple_connections_get_ui_ops();
 
 	if (ops != NULL)
@@ -648,7 +658,6 @@ purple_connection_error_reason (PurpleConnection *gc,
 			ops->report_disconnect (gc, description);
 	}
 
-#if 0
 	purple_signal_emit(purple_connections_get_handle(), "connection-error",
 		gc, reason, description);
 #endif
@@ -1026,5 +1035,13 @@ purple_connection_state_get_gtype(void)
 	}
 
 	return type;
+}
+
+/***
+ * These should move to PurpleConnectionManager
+ */
+GList *purple_connections_get_all(void)
+{
+    return connections;
 }
 

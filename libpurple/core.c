@@ -187,7 +187,9 @@ purple_core_quit(void)
 	purple_signal_emit(purple_get_core(), "quitting");
 
 	/* Transmission ends */
+#if 0
 	purple_connections_disconnect_all();
+#endif
 
 	/* Save .xml files, remove signals, etc. */
 	purple_idle_uninit();

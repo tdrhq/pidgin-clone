@@ -1490,7 +1490,7 @@ purple_account_get_username(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	return purple_account_get_username(account);
+	return account->username;
 }
 
 const char *
@@ -1498,7 +1498,7 @@ purple_account_get_password(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	return purple_account_get_password(account);
+	return account->password;
 }
 
 const char *
@@ -1529,7 +1529,7 @@ const char *
 purple_account_get_protocol_id(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
-	return purple_account_get_protocol_id(account);
+	return account->protocol_id;
 }
 
 const char *
@@ -1549,7 +1549,7 @@ purple_account_get_connection(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
 
-	return purple_account_get_connection(account);
+	return account->gc;
 }
 
 gboolean

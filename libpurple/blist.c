@@ -2045,8 +2045,8 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy)
 {
         g_return_val_if_fail(buddy != NULL, NULL);
 
-	if ((purple_buddy_get_server_alias(buddy)) && (*purple_buddy_get_server_alias(buddy)))
-	    return purple_buddy_get_server_alias(buddy);
+	if ((buddy->server_alias) && (*buddy->server_alias))
+	    return buddy->server_alias;
 
 	return NULL;
 }

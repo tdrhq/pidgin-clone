@@ -519,11 +519,6 @@ purple_connection_error_is_fatal (PurpleConnectionError reason);
 /*@{*/
 
 /**
- * Disconnects from all connections.
- */
-void purple_connections_disconnect_all(void);
-
-/**
  * Returns a list of all active connections.  This does not
  * include connections that are in the process of connecting.
  *
@@ -531,12 +526,19 @@ void purple_connections_disconnect_all(void);
  */
 GList *purple_connections_get_all(void);
 
+#if 0
+/**
+ * Disconnects from all connections.
+ */
+void purple_connections_disconnect_all(void);
+
 /**
  * Returns a list of all connections in the process of connecting.
  *
  * @constreturn A list of connecting connections.
  */
 GList *purple_connections_get_connecting(void);
+#endif
 
 /**
  * Checks if gc is still a valid pointer to a gc.
@@ -556,6 +558,7 @@ GList *purple_connections_get_connecting(void);
 /**************************************************************************/
 /*@{*/
 
+#if 0
 /**
  * Sets the UI operations structure to be used for connections.
  *
@@ -569,6 +572,7 @@ void purple_connections_set_ui_ops(PurpleConnectionUiOps *ops);
  * @return The UI operations structure in use.
  */
 PurpleConnectionUiOps *purple_connections_get_ui_ops(void);
+#endif
 
 /*@}*/
 
