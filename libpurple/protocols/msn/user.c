@@ -346,7 +346,7 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 		b = purple_buddy_new(account, passport, NULL);
 		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
-	b->proto_data = user;
+	purple_object_set_protocol_data(PURPLE_OBJECT(b),user);
 	/*Update the blist Node info*/
 //	purple_blist_node_set_string(&(b->node), "", "");
 }
@@ -370,7 +370,7 @@ msn_user_is_yahoo(PurpleAccount *account, const char *name)
 
 	gc = purple_account_get_connection(account);
 	if (gc != NULL)
-		session = gc->proto_data;
+		session = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if ((session != NULL) && (session->protocol_ver == WLM_PROT_VER))
 		return FALSE;
