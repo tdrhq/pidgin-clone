@@ -76,7 +76,7 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	uid = g->uid;
 	g_return_if_fail(gc != 0 && uid != 0);
 
@@ -101,7 +101,7 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	uid = g->uid;
 	g_return_if_fail(gc != 0 && uid != 0);
 
@@ -163,7 +163,7 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 
 	if (b == NULL) {	/* the person is not in my list */
 		g = g_new0(gc_and_uid, 1);
-		purple_account_get_connection(g) = gc;
+		g->gc = gc;
 		g->uid = uid;	/* only need to get value */
 		message = g_strdup_printf(_("You have been added by %s"), from);
 		_qq_sys_msg_log_write(gc, message, from);
@@ -209,7 +209,7 @@ static void _qq_process_msg_sys_add_contact_approved(PurpleConnection *gc, gchar
 
 	g_return_if_fail(from != NULL && to != NULL);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_add_buddy_by_recv_packet(gc, strtol(from, NULL, 10), TRUE, TRUE);
 
 	message = g_strdup_printf(_("User %s approved your request"), from);
@@ -232,7 +232,7 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 
 	uid = strtol(from, NULL, 10);
 	g = g_new0(gc_and_uid, 1);
-	purple_account_get_connection(g) = gc;
+	g->gc = gc;
 	g->uid = uid;
 
 	name = uid_to_purple_name(uid);
@@ -259,7 +259,7 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 	b = purple_find_buddy(purple_connection_get_account(gc), name);
 	if (b == NULL) {	/* the person is not in my list  */
 		g2 = g_new0(gc_and_uid, 1);
-		g2purple_account_get_connection() = gc;
+		g2->gc = gc;
 		g2->uid = strtol(from, NULL, 10);
 		message = g_strdup_printf(_("%s is not in your buddy list"), from);
 		purple_request_action(gc, NULL, message,
@@ -284,7 +284,7 @@ void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 

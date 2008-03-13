@@ -84,21 +84,21 @@ static void _qq_group_do_nothing_with_struct(group_member_opt *g)
 static void _qq_group_reject_application_real(group_member_opt *g, gchar *msg_utf8)
 {
 	qq_group *group;
-	g_return_if_fail(g != NULL && purple_account_get_connection(g) != NULL && g->internal_group_id > 0 && g->member > 0);
-	group = qq_group_find_by_id(purple_account_get_connection(g), g->internal_group_id, QQ_INTERNAL_ID);
+	g_return_if_fail(g != NULL && g->gc != NULL && g->internal_group_id > 0 && g->member > 0);
+	group = qq_group_find_by_id(g->gc, g->internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
-	qq_send_cmd_group_auth(purple_account_get_connection(g), group, QQ_GROUP_AUTH_REQUEST_REJECT, g->member, msg_utf8);
+	qq_send_cmd_group_auth(g->gc, group, QQ_GROUP_AUTH_REQUEST_REJECT, g->member, msg_utf8);
 	g_free(g);
 }
 
 void qq_group_search_application_with_struct(group_member_opt *g)
 {
-	g_return_if_fail(g != NULL && purple_account_get_connection(g) != NULL && g->member > 0);
+	g_return_if_fail(g != NULL && g->gc != NULL && g->member > 0);
 
-	qq_send_packet_get_info(purple_account_get_connection(g), g->member, TRUE);	/* we want to see window */
-	purple_request_action(purple_account_get_connection(g), NULL, _("Do you want to approve the request?"), "",
+	qq_send_packet_get_info(g->gc, g->member, TRUE);	/* we want to see window */
+	purple_request_action(g->gc, NULL, _("Do you want to approve the request?"), "",
 					PURPLE_DEFAULT_ACTION_NONE,
-					purple_connection_get_account(purple_account_get_connection(g)), NULL, NULL,
+					purple_connection_get_account(g->gc), NULL, NULL,
 					g, 2,
 					_("Reject"), G_CALLBACK(qq_group_reject_application_with_struct),
 					_("Approve"), G_CALLBACK(qq_group_approve_application_with_struct));
@@ -107,18 +107,18 @@ void qq_group_search_application_with_struct(group_member_opt *g)
 void qq_group_reject_application_with_struct(group_member_opt *g)
 {
 	gchar *msg1, *msg2, *nombre;
-	g_return_if_fail(g != NULL && purple_account_get_connection(g) != NULL && g->member > 0);
+	g_return_if_fail(g != NULL && g->gc != NULL && g->member > 0);
 
 	msg1 = g_strdup_printf(_("You rejected %d's request"), g->member);
 	msg2 = g_strdup(_("Enter your reason:"));
 
 	nombre = uid_to_purple_name(g->member);
-	purple_request_input(purple_account_get_connection(g), /* title */ NULL, msg1, msg2,
+	purple_request_input(g->gc, /* title */ NULL, msg1, msg2,
 			   _("Sorry, you are not my type..."), /* multiline */ TRUE, /* masked */ FALSE,
 			   /* hint */ NULL,
 			   _("Send"), G_CALLBACK(_qq_group_reject_application_real),
 			   _("Cancel"), G_CALLBACK(_qq_group_do_nothing_with_struct),
-			   purple_connection_get_account(purple_account_get_connection(g)), nombre, NULL,
+			   purple_connection_get_account(g->gc), nombre, NULL,
 			   g);
 
 	g_free(msg1);
@@ -129,11 +129,11 @@ void qq_group_reject_application_with_struct(group_member_opt *g)
 void qq_group_approve_application_with_struct(group_member_opt *g)
 {
 	qq_group *group;
-	g_return_if_fail(g != NULL && purple_account_get_connection(g) != NULL && g->internal_group_id > 0 && g->member > 0);
-	group = qq_group_find_by_id(purple_account_get_connection(g), g->internal_group_id, QQ_INTERNAL_ID);
+	g_return_if_fail(g != NULL && g->gc != NULL && g->internal_group_id > 0 && g->member > 0);
+	group = qq_group_find_by_id(g->gc, g->internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
-	qq_send_cmd_group_auth(purple_account_get_connection(g), group, QQ_GROUP_AUTH_REQUEST_APPROVE, g->member, "");
-	qq_group_find_or_add_member(purple_account_get_connection(g), group, g->member);
+	qq_send_cmd_group_auth(g->gc, group, QQ_GROUP_AUTH_REQUEST_APPROVE, g->member, "");
+	qq_group_find_or_add_member(g->gc, group, g->member);
 	g_free(g);
 }
 
@@ -146,7 +146,7 @@ void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new
 	GList *list;
 
 	g_return_if_fail(group != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (new_members[0] == 0xffffffff)
 		return;
 
@@ -289,7 +289,7 @@ void qq_group_create_with_name(PurpleConnection *gc, const gchar *name)
 	qq_data *qd;
 	g_return_if_fail(name != NULL);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	data_len = 7 + 1 + strlen(name) + 2 + 1 + 1 + 4;
 	data = g_newa(guint8, data_len);
 	cursor = data;
@@ -325,13 +325,13 @@ void qq_group_create_with_name(PurpleConnection *gc, const gchar *name)
 static void qq_group_setup_with_gc_and_uid(gc_and_uid *g)
 {
 	qq_group *group;
-	g_return_if_fail(g != NULL && purple_account_get_connection(g) != NULL && g->uid > 0);
+	g_return_if_fail(g != NULL && g->gc != NULL && g->uid > 0);
 
-	group = qq_group_find_by_id(purple_account_get_connection(g), g->uid, QQ_INTERNAL_ID);
+	group = qq_group_find_by_id(g->gc, g->uid, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
 	/* TODO insert UI code here */
-	/* qq_group_detail_window_show(purple_account_get_connection(g), group); */
+	/* qq_group_detail_window_show(g->gc, group); */
 	g_free(g);
 }
 
@@ -343,8 +343,8 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 	qq_data *qd;
 
 	g_return_if_fail(data != NULL);
-	g_return_if_fail(gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	read_packet_dw(data, cursor, len, &internal_group_id);
 	read_packet_dw(data, cursor, len, &external_group_id);
@@ -361,7 +361,7 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Succeed in create Qun, external ID %d\n", group->external_group_id);
 
 	g = g_new0(gc_and_uid, 1);
-	purple_account_get_connection(g) = gc;
+	g->gc = gc;
 	g->uid = internal_group_id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),

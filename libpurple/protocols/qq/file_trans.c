@@ -260,7 +260,7 @@ static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 
 	qq_data *qd;
 	ft_info *info;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_return_val_if_fail(qd->session_key != NULL, -1);
 	info = (ft_info *) qd->xfer->data;
 	bytes = 0;
@@ -292,7 +292,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 	time_t now;
 	ft_info *info;
 	
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	info = (ft_info *) qd->xfer->data;
 
 	raw_data = g_new0 (guint8, 61);
@@ -397,7 +397,7 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 	qq_data *qd;
 	ft_info *info;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	info = (ft_info *) qd->xfer->data;
 
 	filename = (gchar *) purple_xfer_get_filename(qd->xfer);
@@ -521,7 +521,7 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 {
 	guint8 *decrypted_data;
 	gint decrypted_len;
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	guint16 packet_type;
 	guint16 seq;
 	guint8 hellobyte;
@@ -585,7 +585,7 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 
 static void _qq_recv_file_progess(PurpleConnection *gc, guint8 *buffer, guint16 len, guint32 index, guint32 offset)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleXfer *xfer = qd->xfer;
 	ft_info *info = (ft_info *) xfer->data;
 	guint32 mask;
@@ -628,7 +628,7 @@ static void _qq_recv_file_progess(PurpleConnection *gc, guint8 *buffer, guint16 
 
 static void _qq_send_file_progess(PurpleConnection *gc)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleXfer *xfer = qd->xfer;
 	ft_info *info = (ft_info *) xfer->data;
 	guint32 mask;
@@ -663,7 +663,7 @@ static void _qq_update_send_progess(PurpleConnection *gc, guint32 fragment_index
 	guint32 mask;
 	guint8 *buffer;
 	gint readbytes;
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleXfer *xfer = qd->xfer;
 	ft_info *info = (ft_info *) xfer->data;
 
@@ -723,7 +723,7 @@ static void _qq_process_recv_file_data(PurpleConnection *gc, guint8 *data, guint
 	guint32 fragment_index;
 	guint16 fragment_len;
 	guint32 fragment_offset;
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	ft_info *info = (ft_info *) qd->xfer->data;
 	
 	cursor += 1; /* skip an unknown byte */
@@ -820,7 +820,7 @@ void qq_process_recv_file(PurpleConnection *gc, guint8 *data, gint len)
 	qq_file_header fh;
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	cursor = data;
 	_qq_get_file_header(data, &cursor, len, &fh);

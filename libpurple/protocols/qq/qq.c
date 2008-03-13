@@ -103,11 +103,11 @@ static void _qq_login(PurpleAccount *account)
 	gc = purple_account_get_connection(account);
 	g_return_if_fail(gc != NULL);
 
-	gc->flags |= PURPLE_CONNECTION_FLAGS_HTML | PURPLE_CONNECTION_FLAGS_NO_BGCOLOR | PURPLE_CONNECTION_FLAGS_AUTO_RESP;
+	purple_connection_turn_on_flags(gc, PURPLE_CONNECTION_FLAGS_HTML | PURPLE_CONNECTION_FLAGS_NO_BGCOLOR | PURPLE_CONNECTION_FLAGS_AUTO_RESP);
 
 	qd = g_new0(qq_data, 1);
-	purple_account_get_connection(qd) = gc;
-	gc->proto_data = qd;
+	qd->gc = gc;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc),qd);
 
 	qq_server = purple_account_get_string(account, "server", NULL);
 	qq_port = purple_account_get_string(account, "port", NULL);
@@ -160,7 +160,7 @@ static gchar *_qq_status_text(PurpleBuddy *b)
 	qq_buddy *q_bud;
 	GString *status;
 
-	q_bud = (qq_buddy *) b->proto_data;
+	q_bud = (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 	if (q_bud == NULL)
 		return NULL;
 
@@ -201,7 +201,7 @@ static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 
 	g_return_if_fail(b != NULL);
 
-	q_bud = (qq_buddy *) b->proto_data;
+	q_bud = (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 	g_return_if_fail(q_bud != NULL);
 
 	if (PURPLE_BUDDY_IS_ONLINE(b) && q_bud != NULL)
@@ -257,7 +257,7 @@ static const char *_qq_list_emblem(PurpleBuddy *b)
 {
 	/* each char** are refering to a filename in pixmaps/purple/status/default/ */
 
-	qq_buddy *q_bud = b->proto_data;
+	qq_buddy *q_bud = purple_object_get_protocol_data(PURPLE_OBJECT(b));
 
 	if (q_bud) {
 		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
@@ -318,7 +318,7 @@ static gint _qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *mes
 
 	g_return_val_if_fail(who != NULL, -1);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_val_if_fail(strlen(message) <= QQ_MSG_IM_MAX, -E2BIG);
 
@@ -366,7 +366,7 @@ static void _qq_get_info(PurpleConnection *gc, const gchar *who)
 	guint32 uid;
 	qq_data *qd;
 
-	qd = gc->proto_data;
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	uid = purple_name_to_uid(who);
 
 	if (uid <= 0) {
@@ -385,7 +385,7 @@ static void _qq_menu_modify_my_info(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_prepare_modify_info(gc);
 }
 
@@ -415,7 +415,7 @@ static void _qq_menu_block_buddy(PurpleBlistNode * node)
 	g_return_if_fail(uid > 0);
 
 	g = g_new0(gc_and_uid, 1);
-	purple_account_get_connection(g) = gc;
+	g->gc = gc;
 	g->uid = uid;
 
 	purple_request_action(gc, _("Block Buddy"),
@@ -434,7 +434,7 @@ static void _qq_menu_show_login_info(PurplePluginAction *action)
 	qq_data *qd;
 	GString *info;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	info = g_string_new("<html><body>\n");
 
 	g_string_append_printf(info, _("<b>Current Online</b>: %d<br>\n"), qd->all_online);
@@ -515,7 +515,7 @@ static void _qq_menu_send_file(PurpleBlistNode * node, gpointer ignored)
 
 	g_return_if_fail (PURPLE_BLIST_NODE_IS_BUDDY (node));
 	buddy = (PurpleBuddy *) node;
-	q_bud = (qq_buddy *) buddy->proto_data;
+	q_bud = (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 /*	if (is_online (q_bud->status)) { */
 	gc = purple_account_get_connection (buddy->account);
 	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
@@ -600,7 +600,7 @@ static void _qq_keep_alive(PurpleConnection *gc)
 	qq_data *qd;
 	GList *list;
 
-	if (NULL == (qd = (qq_data *) gc->proto_data))
+	if (NULL == (qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc))))
 		return;
 
 	list = qd->groups;

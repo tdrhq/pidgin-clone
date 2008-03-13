@@ -99,7 +99,7 @@ static void _qq_send_packet_add_buddy(PurpleConnection *gc, guint32 uid)
 			TRUE, (guint8 *) uid_str, strlen(uid_str));
 
 	/* must be set after sending packet to get the correct send_seq */
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	req = g_new0(qq_add_buddy_request, 1);
 	req->seq = qd->send_seq;
 	req->uid = uid;
@@ -139,7 +139,7 @@ static void _qq_send_packet_add_buddy_auth_with_gc_and_uid(gc_and_uid *g, const 
 	guint32 uid;
 	g_return_if_fail(g != NULL);
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
@@ -155,7 +155,7 @@ static void _qq_reject_add_request_real(gc_and_uid *g, const gchar *reason)
 
 	g_return_if_fail(g != NULL);
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
@@ -171,7 +171,7 @@ void qq_approve_add_request_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
@@ -195,14 +195,14 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
 	g_free(g);
 
 	g2 = g_new0(gc_and_uid, 1);
-	g2purple_account_get_connection() = gc;
+	g2->gc = gc;
 	g2->uid = uid;
 
 	msg1 = g_strdup_printf(_("You rejected %d's request"), uid);
@@ -224,7 +224,7 @@ void qq_add_buddy_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	uid = g->uid;
 	g_return_if_fail(uid != 0);
 
@@ -241,7 +241,7 @@ void qq_block_buddy_with_gc_and_uid(gc_and_uid *g)
 
 	g_return_if_fail(g != NULL);
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	uid = g->uid;
 	g_return_if_fail(uid > 0);
 
@@ -262,7 +262,7 @@ void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, PurpleConnection
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 	cursor = data;
@@ -293,7 +293,7 @@ void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, PurpleConnection *
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 
@@ -322,7 +322,7 @@ void qq_process_remove_self_reply(guint8 *buf, gint buf_len, PurpleConnection *g
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 
@@ -357,7 +357,7 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
 	for_uid = 0;
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 
 	list = qd->add_buddy_request;
@@ -399,7 +399,7 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 			if (b != NULL)
 				purple_blist_remove_buddy(b);
 			g = g_new0(gc_and_uid, 1);
-			purple_account_get_connection(g) = gc;
+			g->gc = gc;
 			g->uid = for_uid;
 			msg = g_strdup_printf(_("User %d needs authentication"), for_uid);
 			purple_request_input(gc, NULL, msg,
@@ -453,7 +453,7 @@ PurpleBuddy *qq_add_buddy_by_recv_packet(PurpleConnection *gc, guint32 uid, gboo
 	gchar *name, *group_name;
 
 	a = purple_connection_get_account(gc);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_return_val_if_fail(a != NULL && uid != 0, NULL);
 
 	group_name = is_known ?
@@ -471,11 +471,11 @@ PurpleBuddy *qq_add_buddy_by_recv_packet(PurpleConnection *gc, guint32 uid, gboo
 	b = purple_buddy_new(a, name, NULL);
 
 	if (!create)
-		b->proto_data = NULL;
+		purple_object_set_protocol_data(PURPLE_OBJECT(b),NULL);
 	else {
 		q_bud = g_new0(qq_buddy, 1);
 		q_bud->uid = uid;
-		b->proto_data = q_bud;
+		purple_object_set_protocol_data(PURPLE_OBJECT(b),q_bud);
 		qd->buddies = g_list_append(qd->buddies, q_bud);
 		qq_send_packet_get_info(gc, q_bud->uid, FALSE);
 		qq_send_packet_get_buddies_online(gc, QQ_FRIENDS_ONLINE_POSITION_START);
@@ -500,7 +500,7 @@ void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	guint32 uid;
 	PurpleBuddy *b;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (!qd->logged_in)
 		return;		/* IMPORTANT ! */
 
@@ -525,7 +525,7 @@ void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 	qq_buddy *q_bud;
 	guint32 uid;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	uid = purple_name_to_uid(buddy->name);
 
 	if (!qd->logged_in)
@@ -536,7 +536,7 @@ void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 
 	b = purple_find_buddy(purple_connection_get_account(gc), buddy->name);
 	if (b != NULL) {
-		q_bud = (qq_buddy *) b->proto_data;
+		q_bud = (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 		if (q_bud != NULL)
 			qd->buddies = g_list_remove(qd->buddies, q_bud);
 		else
@@ -580,7 +580,7 @@ void qq_buddies_list_free(PurpleAccount *account, qq_data *qd)
 		name = uid_to_purple_name(p->uid);
 		b = purple_find_buddy(account, name);   	
 		if(b != NULL) 
-			b->proto_data = NULL;
+			purple_object_set_protocol_data(PURPLE_OBJECT(b),NULL);
 		else
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "qq_buddy %s not found in purple proto_data\n", name);
 		g_free(name);

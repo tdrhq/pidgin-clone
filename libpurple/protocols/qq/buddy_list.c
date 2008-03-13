@@ -66,7 +66,7 @@ void qq_send_packet_get_buddies_online(PurpleConnection *gc, guint8 position)
 	qq_data *qd;
 	guint8 *raw_data, *cursor;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	raw_data = g_newa(guint8, 5);
 	cursor = raw_data;
 
@@ -159,7 +159,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnec
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 	cursor = data;
@@ -205,7 +205,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnec
 
 			/* update buddy information */
 			b = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(fe->s->uid));
-			q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+			q_bud = (b == NULL) ? NULL : (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 
 			if (q_bud != NULL) {	/* we find one and update qq_buddy */
 				if(0 != fe->s->client_version)
@@ -257,7 +257,7 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConnecti
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 	cursor = data;
@@ -318,7 +318,7 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConnecti
 			if (b == NULL)
 				b = qq_add_buddy_by_recv_packet(gc, q_bud->uid, TRUE, FALSE);
 
-			b->proto_data = q_bud;
+			purple_object_set_protocol_data(PURPLE_OBJECT(b),q_bud);
 			qd->buddies = g_list_append(qd->buddies, q_bud);
 			qq_update_buddy_contact(gc, q_bud);
 		}
@@ -351,7 +351,7 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, PurpleC
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 	cursor = data;

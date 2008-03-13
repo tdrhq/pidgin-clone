@@ -127,7 +127,7 @@ void qq_process_recv_group_im_apply_join
 	reason = g_strdup_printf(_("Reason: %s"), reason_utf8);
 
 	g = g_new0(group_member_opt, 1);
-	purple_account_get_connection(g) = gc;
+	g->gc = gc;
 	g->internal_group_id = internal_group_id;
 	g->member = user_uid;
 
@@ -321,7 +321,7 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 	gint skip_len;
 
 	g_return_if_fail(data != NULL && data_len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	hex_dump = hex_dump_to_str(*cursor, data_len - (*cursor - data));
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "group im hex dump\n%s\n", hex_dump);

@@ -149,7 +149,7 @@ void qq_send_packet_change_status(PurpleConnection *gc)
 	account = purple_connection_get_account(gc);
 	presence = purple_account_get_presence(account);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (!qd->logged_in)
 		return;
 
@@ -191,7 +191,7 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection 
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 
@@ -205,7 +205,7 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection 
 			name = uid_to_purple_name(qd->uid);
 			b = purple_find_buddy(purple_connection_get_account(gc), name);
 			g_free(name);
-			q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+			q_bud = (b == NULL) ? NULL : (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 			qq_update_buddy_contact(gc, q_bud);
 		}
 	} else {
@@ -227,7 +227,7 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, PurpleConnection
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 	cursor = data;
@@ -253,7 +253,7 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, PurpleConnection
 		name = uid_to_purple_name(s->uid);
 		b = purple_find_buddy(purple_connection_get_account(gc), name);
 		g_free(name);
-		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+		q_bud = (b == NULL) ? NULL : (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 		if (q_bud) {
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "s->uid = %d, q_bud->uid = %d\n", s->uid , q_bud->uid);
 			if(0 != *((guint32 *)s->ip)) { 

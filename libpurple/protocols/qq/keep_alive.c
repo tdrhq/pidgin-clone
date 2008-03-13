@@ -51,7 +51,7 @@ void qq_send_packet_keep_alive(PurpleConnection *gc)
 	qq_data *qd;
 	guint8 *raw_data, *cursor;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	raw_data = g_newa(guint8, 4);
 	cursor = raw_data;
 
@@ -73,7 +73,7 @@ void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, PurpleConnection *gc
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 
@@ -108,7 +108,7 @@ void qq_refresh_all_buddy_status(PurpleConnection *gc)
 	qq_data *qd;
 	qq_buddy *q_bud;
 
-	qd = (qq_data *) (gc->proto_data);
+	qd = (qq_data *) (purple_object_get_protocol_data(PURPLE_OBJECT(gc)));
 	now = time(NULL);
 	list = qd->buddies;
 

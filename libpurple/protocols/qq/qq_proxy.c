@@ -134,14 +134,14 @@ static void _qq_got_login(gpointer data, gint source, const gchar *error_message
 		return;
 	}
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	if (source < 0) {	/* socket returns -1 */
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
 		return;
 	}
-
-	qd = (qq_data *) gc->proto_data;
 
 	/*
 	_qq_show_socket("Got login socket", source);
@@ -160,7 +160,7 @@ static void _qq_got_login(gpointer data, gint source, const gchar *error_message
 	qd->pwkey = _gen_pwkey(passwd);
 
 	qd->sendqueue_timeout = purple_timeout_add(QQ_SENDQUEUE_TIMEOUT, qq_sendqueue_timeout_callback, gc);
-	gc->inpa = purple_input_add(qd->fd, PURPLE_INPUT_READ, qq_input_pending, gc);
+	g_object_set(G_OBJECT(gc),"inpa",purple_input_add(qd->fd, PURPLE_INPUT_READ, qq_input_pending, gc),NULL);
 
 	/* Update the login progress status display */
 	buf = g_strdup_printf("Login as %d", qd->uid);
@@ -178,8 +178,9 @@ static void _qq_common_clean(PurpleConnection *gc)
 {
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	/* finish  all I/O */
 	if (qd->fd >= 0 && qd->logged_in)
@@ -191,9 +192,9 @@ static void _qq_common_clean(PurpleConnection *gc)
 		qd->sendqueue_timeout = 0;
 	}
 
-	if (gc->inpa > 0) {
-		purple_input_remove(gc->inpa);
-		gc->inpa = 0;
+	if (purple_object_get_int(PURPLE_OBJECT(gc),"inpa") > 0) {
+		purple_input_remove(purple_object_get_int(PURPLE_OBJECT(gc),"inpa"));
+		g_object_set(G_OBJECT(gc),"inpa",0,NULL);
 	}
 
 	qq_b4_packets_free(qd);
@@ -329,7 +330,7 @@ static void _qq_server_resolved(GSList *hosts, gpointer data, const char *error_
 {
 	struct PHB *phb = (struct PHB *) data;
 	PurpleConnection *gc = (PurpleConnection *) phb->data;
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct sockaddr_in addr;
 	gint addr_size, ret = -1;
 
@@ -378,7 +379,7 @@ static gint _qq_udp_proxy_connect(PurpleAccount *account,
 {
 	PurpleProxyInfo *info;
 	struct PHB *phb;
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
@@ -416,7 +417,7 @@ static gint _proxy_connect_full (PurpleAccount *account, const gchar *host, guin
 	qq_data *qd;
 
 	gc = purple_account_get_connection(account);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qd->server_ip = g_strdup(host);
 	qd->server_port = port;
 
@@ -438,12 +439,13 @@ gint qq_connect(PurpleAccount *account, const gchar *host, guint16 port,
 	g_return_val_if_fail(port > 0, -1);
 
 	gc = purple_account_get_connection(account);
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
+	g_return_val_if_fail(gc != NULL, -1);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_val_if_fail(qd != NULL, -1);
 
 	if (is_redirect)
 		_qq_common_clean(gc);
 
-	qd = (qq_data *) gc->proto_data;
 	qd->before_login_packets = g_queue_new();
 
 	return _proxy_connect_full(account, host, port, _qq_got_login, gc, use_tcp);
@@ -458,7 +460,7 @@ void qq_disconnect(PurpleConnection *gc)
 
 	_qq_common_clean(gc);
 
-	qd = gc->proto_data;
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_free(qd->inikey);
 	g_free(qd->pwkey);
 	g_free(qd->session_key);
@@ -466,7 +468,7 @@ void qq_disconnect(PurpleConnection *gc)
 	g_free(qd->my_ip);
 	g_free(qd);
 
-	gc->proto_data = NULL;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc),NULL);
 }
 
 /* send packet with proxy support */
@@ -495,7 +497,7 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 		ret = send(qd->fd, data, len, 0);
 	}
 	if (ret == -1)
-		purple_connection_error_reason(purple_account_get_connection(qd), PURPLE_CONNECTION_ERROR_NETWORK_ERROR, g_strerror(errno));
+		purple_connection_error_reason(qd->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, g_strerror(errno));
 
 	return ret;
 }

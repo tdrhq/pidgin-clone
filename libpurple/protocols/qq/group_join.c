@@ -52,7 +52,7 @@ static void _qq_group_exit_with_gc_and_id(gc_and_uid *g)
 	guint32 internal_group_id;
 	qq_group *group;
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	internal_group_id = g->uid;
 
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
@@ -107,7 +107,7 @@ static void _qq_group_join_auth_with_gc_and_id(gc_and_uid *g, const gchar *reaso
 	qq_group *group;
 	guint32 internal_group_id;
 
-	gc = purple_account_get_connection(g);
+	gc = g->gc;
 	internal_group_id = g->uid;
 
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
@@ -130,7 +130,7 @@ static void _qq_group_join_auth(PurpleConnection *gc, qq_group *group)
 
 	msg = g_strdup_printf("Group \"%s\" needs authentication\n", group->group_name_utf8);
 	g = g_new0(gc_and_uid, 1);
-	purple_account_get_connection(g) = gc;
+	g->gc = gc;
 	g->uid = group->internal_group_id;
 	purple_request_input(gc, NULL, msg,
 			   _("Input request here"),
@@ -214,7 +214,7 @@ void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, Pu
 	qq_data *qd;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	bytes = 0;
 	expected_bytes = 4;
@@ -245,7 +245,7 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, guint8 **cursor, gint le
 	qq_data *qd;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	bytes = 0;
 	expected_bytes = 4;
@@ -318,7 +318,7 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 	qq_group *group;
 
 	g_return_if_fail(data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	external_group_id_ptr = g_hash_table_lookup(data, QQ_GROUP_KEY_EXTERNAL_ID);
 	g_return_if_fail(external_group_id_ptr != NULL);
@@ -353,7 +353,7 @@ void qq_group_exit(PurpleConnection *gc, GHashTable *data)
 	g_return_if_fail(internal_group_id > 0);
 
 	g = g_new0(gc_and_uid, 1);
-	purple_account_get_connection(g) = gc;
+	g->gc = gc;
 	g->uid = internal_group_id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),
