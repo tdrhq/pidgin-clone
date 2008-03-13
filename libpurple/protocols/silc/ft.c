@@ -70,7 +70,7 @@ silcpurple_ftp_monitor(SilcClient client,
 		     void *context)
 {
 	SilcPurpleXfer xfer = context;
-	PurpleConnection *gc = purple_account_get_connection(xfer->sg);
+	PurpleConnection *gc = xfer->sg->gc;
 	char tmp[256];
 
 	if (status == SILC_CLIENT_FILE_MONITOR_CLOSED) {
@@ -213,7 +213,7 @@ silcpurple_ftp_request_result(PurpleXfer *x)
 {
 	SilcPurpleXfer xfer = x->data;
 	SilcClientFileError status;
-	PurpleConnection *gc = purple_account_get_connection(xfer->sg);
+	PurpleConnection *gc = xfer->sg->gc;
 	SilcClientConnectionParams params;
 	gboolean local = xfer->hostname ? FALSE : TRUE;
 	char *local_ip = NULL, *remote_ip = NULL;
@@ -309,7 +309,7 @@ void silcpurple_ftp_request(SilcClient client, SilcClientConnection conn,
 			    const char *hostname, SilcUInt16 port)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	SilcPurpleXfer xfer;
 
 	xfer = silc_calloc(1, sizeof(*xfer));
@@ -434,7 +434,7 @@ silcpurple_ftp_send_file_resolved(SilcClient client,
 
 PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
 {
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcDList clients;

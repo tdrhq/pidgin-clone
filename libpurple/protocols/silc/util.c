@@ -362,8 +362,8 @@ void silcpurple_show_public_key(SilcPurple sg,
 		   the next strings (short strings: 2 tabs, longer strings 1 tab,
 		   sum: 3 tabs or 24 characters) */
 		g_string_append_printf(s, _("Real Name: \t%s\n"), ident->realname);
-	if (purple_account_get_username(ident))
-		g_string_append_printf(s, _("User Name: \t%s\n"), purple_account_get_username(ident));
+	if (ident->username)
+		g_string_append_printf(s, _("User Name: \t%s\n"), ident->username);
 	if (ident->email)
 		g_string_append_printf(s, _("E-Mail: \t\t%s\n"), ident->email);
 	if (ident->host)
@@ -382,9 +382,9 @@ void silcpurple_show_public_key(SilcPurple sg,
 
 	buf = g_string_free(s, FALSE);
 
-	purple_request_action(purple_account_get_connection(sg), _("Public Key Information"),
+	purple_request_action(sg->gc, _("Public Key Information"),
 			      _("Public Key Information"),
-			      buf, 0, purple_connection_get_account(purple_account_get_connection(sg)),
+			      buf, 0, purple_connection_get_account(sg->gc),
 			      NULL, NULL, context, 1, _("Close"), callback);
 
 	g_free(buf);

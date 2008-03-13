@@ -115,7 +115,7 @@ PurpleWhiteboard *silcpurple_wb_init(SilcPurple sg, SilcClientEntry client_entry
 	if (!wb)
 		return NULL;
 
-	if (!wb->proto_data) {
+	if (!purple_object_get_protocol_data(PURPLE_OBJECT(wb))) {
 		wbs = silc_calloc(1, sizeof(*wbs));
 		if (!wbs)
 			return NULL;
@@ -125,7 +125,7 @@ PurpleWhiteboard *silcpurple_wb_init(SilcPurple sg, SilcClientEntry client_entry
 		wbs->height = SILCPURPLE_WB_HEIGHT;
 		wbs->brush_size = SILCPURPLE_WB_BRUSH_SMALL;
 		wbs->brush_color = SILCPURPLE_WB_COLOR_BLACK;
-		wb->proto_data = wbs;
+		purple_object_set_protocol_data(PURPLE_OBJECT(wb),wbs);
 
 		/* Start the whiteboard */
 		purple_whiteboard_start(wb);
@@ -146,7 +146,7 @@ PurpleWhiteboard *silcpurple_wb_init_ch(SilcPurple sg, SilcChannelEntry channel)
 	if (!wb)
 		return NULL;
 
-	if (!wb->proto_data) {
+	if (!purple_object_get_protocol_data(PURPLE_OBJECT(wb))) {
 		wbs = silc_calloc(1, sizeof(*wbs));
 		if (!wbs)
 			return NULL;
@@ -156,7 +156,7 @@ PurpleWhiteboard *silcpurple_wb_init_ch(SilcPurple sg, SilcChannelEntry channel)
 		wbs->height = SILCPURPLE_WB_HEIGHT;
 		wbs->brush_size = SILCPURPLE_WB_BRUSH_SMALL;
 		wbs->brush_color = SILCPURPLE_WB_COLOR_BLACK;
-		wb->proto_data = wbs;
+		purple_object_set_protocol_data(PURPLE_OBJECT(wb),wbs);
 
 		/* Start the whiteboard */
 		purple_whiteboard_start(wb);
@@ -245,7 +245,7 @@ silcpurple_wb_request_cb(SilcPurpleWbRequest req, gint id)
 	else
 		wb = silcpurple_wb_init_ch(req->sg, req->channel);
 
-	silcpurple_wb_parse(wb->proto_data, wb, req->message, req->message_len);
+	silcpurple_wb_parse(purple_object_get_protocol_data(PURPLE_OBJECT(wb)), wb, req->message, req->message_len);
 
   out:
 	silc_free(req->message);
@@ -263,7 +263,7 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 	SilcPurple sg;
 
 	gc = client->application;
-	sg = gc->proto_data;
+	sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* Open whiteboard automatically if requested */
 	if (purple_account_get_bool(sg->account, "open-wb", FALSE)) {
@@ -274,7 +274,7 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 		else
 			wb = silcpurple_wb_init_ch(sg, channel);
 
-		silcpurple_wb_parse(wb->proto_data, wb,
+		silcpurple_wb_parse(purple_object_get_protocol_data(PURPLE_OBJECT(wb)), wb,
 				    (unsigned char *)message,
 				    message_len);
 		return;
@@ -322,7 +322,7 @@ void silcpurple_wb_receive(SilcClient client, SilcClientConnection conn,
 	SilcPurpleWb wbs;
 
 	gc = client->application;
-        sg = gc->proto_data;
+        sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	wb = purple_whiteboard_get_session(sg->account, sender->nickname);
 	if (!wb) {
@@ -332,7 +332,7 @@ void silcpurple_wb_receive(SilcClient client, SilcClientConnection conn,
 		return;
 	}
 
-	wbs = wb->proto_data;
+	wbs = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	silcpurple_wb_parse(wbs, wb, (unsigned char *)message, message_len);
 }
 
@@ -351,7 +351,7 @@ void silcpurple_wb_receive_ch(SilcClient client, SilcClientConnection conn,
 	SilcPurpleWb wbs;
 
 	gc = client->application;
-        sg = gc->proto_data;
+        sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	wb = purple_whiteboard_get_session(sg->account, channel->channel_name);
 	if (!wb) {
@@ -361,7 +361,7 @@ void silcpurple_wb_receive_ch(SilcClient client, SilcClientConnection conn,
 		return;
 	}
 
-	wbs = wb->proto_data;
+	wbs = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	silcpurple_wb_parse(wbs, wb, (unsigned char *)message, message_len);
 }
 
@@ -369,7 +369,7 @@ void silcpurple_wb_receive_ch(SilcClient client, SilcClientConnection conn,
 
 void silcpurple_wb_send(PurpleWhiteboard *wb, GList *draw_list)
 {
-	SilcPurpleWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	SilcBuffer packet;
 	GList *list;
 	int len;
@@ -379,7 +379,7 @@ void silcpurple_wb_send(PurpleWhiteboard *wb, GList *draw_list)
 	g_return_if_fail(draw_list);
 	gc = purple_account_get_connection(wb->account);
 	g_return_if_fail(gc);
- 	sg = gc->proto_data;
+ 	sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_return_if_fail(sg);
 
 	len = SILCPURPLE_WB_HEADER;
@@ -434,20 +434,20 @@ void silcpurple_wb_start(PurpleWhiteboard *wb)
 
 void silcpurple_wb_end(PurpleWhiteboard *wb)
 {
-	silc_free(wb->proto_data);
-	wb->proto_data = NULL;
+	silc_free(purple_object_get_protocol_data(PURPLE_OBJECT(wb)));
+	purple_object_set_protocol_data(PURPLE_OBJECT(wb),NULL);
 }
 
 void silcpurple_wb_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height)
 {
-	SilcPurpleWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	*width = wbs->width;
 	*height = wbs->height;
 }
 
 void silcpurple_wb_set_dimensions(PurpleWhiteboard *wb, int width, int height)
 {
-	SilcPurpleWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	wbs->width = width > SILCPURPLE_WB_WIDTH_MAX ? SILCPURPLE_WB_WIDTH_MAX :
 			width;
 	wbs->height = height > SILCPURPLE_WB_HEIGHT_MAX ? SILCPURPLE_WB_HEIGHT_MAX :
@@ -459,14 +459,14 @@ void silcpurple_wb_set_dimensions(PurpleWhiteboard *wb, int width, int height)
 
 void silcpurple_wb_get_brush(const PurpleWhiteboard *wb, int *size, int *color)
 {
-	SilcPurpleWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	*size = wbs->brush_size;
 	*color = wbs->brush_color;
 }
 
 void silcpurple_wb_set_brush(PurpleWhiteboard *wb, int size, int color)
 {
-	SilcPurpleWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	wbs->brush_size = size;
 	wbs->brush_color = color;
 
@@ -476,7 +476,7 @@ void silcpurple_wb_set_brush(PurpleWhiteboard *wb, int size, int color)
 
 void silcpurple_wb_clear(PurpleWhiteboard *wb)
 {
-	SilcPurpleWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	SilcBuffer packet;
 	int len;
         PurpleConnection *gc;
@@ -484,7 +484,7 @@ void silcpurple_wb_clear(PurpleWhiteboard *wb)
 
 	gc = purple_account_get_connection(wb->account);
 	g_return_if_fail(gc);
- 	sg = gc->proto_data;
+ 	sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_return_if_fail(sg);
 
 	len = SILCPURPLE_WB_HEADER;
