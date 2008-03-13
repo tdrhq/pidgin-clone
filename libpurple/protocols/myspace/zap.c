@@ -109,7 +109,7 @@ msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
 	PurpleAttentionType *attn;
 	PurpleBuddy *buddy;
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* Look for this attention type, by the code index given. */
 	types = msim_attention_types(purple_connection_get_account(gc));
@@ -179,11 +179,11 @@ msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
 	/* Find the session */
 	account = buddy->account;
 	gc = purple_account_get_connection(account);
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	zap = GPOINTER_TO_INT(zap_num_ptr);
 
-	serv_send_attention(purple_account_get_connection(session), buddy->name, zap);
+	serv_send_attention(session->gc, buddy->name, zap);
 }
 
 /** Return menu, if any, for a buddy list node. */
@@ -241,7 +241,7 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 
 	zap = CLAMP(zap, 0, 9);
 
-	serv_got_attention(purple_account_get_connection(session), username, zap);
+	serv_got_attention(session->gc, username, zap);
 
 	g_free(msg_text);
 	g_free(username);

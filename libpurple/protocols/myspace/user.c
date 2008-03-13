@@ -57,16 +57,16 @@ msim_get_user_from_buddy(PurpleBuddy *buddy)
 		return NULL;
 	}
 
-	if (!buddy->proto_data) {
+	if (!purple_object_get_protocol_data(PURPLE_OBJECT(buddy))) {
 		/* No MsimUser for this buddy; make one. */
 
 		/* TODO: where is this freed? */
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
-		buddy->proto_data = (gpointer)user;
+		purple_object_set_protocol_data(PURPLE_OBJECT(buddy),(gpointer)user);
 	} 
 
-	user = (MsimUser *)(buddy->proto_data);
+	user = (MsimUser *)(purple_object_get_protocol_data(PURPLE_OBJECT(buddy)));
 
 	return user;
 }
@@ -101,8 +101,8 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 
 	/* Useful to identify the account the tooltip refers to. 
 	 *  Other prpls show this. */
-	if (purple_account_get_username(user)) {
-		purple_notify_user_info_add_pair(user_info, _("User"), purple_account_get_username(user));
+	if (user->username) {
+		purple_notify_user_info_add_pair(user_info, _("User"), user->username);
 	}
 
 	uid = purple_blist_node_get_int(&user->buddy->node, "UserID");
@@ -595,7 +595,7 @@ static void msim_check_username_availability_cb(PurpleConnection *gc, const char
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -634,7 +634,7 @@ static void msim_username_is_available_cb(MsimSession *session, MsimMessage *use
 
 	if (!body) {
 		purple_debug_info("msim_username_is_available_cb", "No body for %s?!\n", username);
-		purple_connection_error_reason(purple_account_get_connection(session), PURPLE_CONNECTION_ERROR_OTHER_ERROR, 
+		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, 
 				"An error occured while trying to set the username.\n"
 				"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
 				"fuseaction=profile.username to set your username.");
@@ -654,7 +654,7 @@ static void msim_username_is_available_cb(MsimSession *session, MsimMessage *use
 		purple_debug_info("msim_username_is_available_cb", "Username available. Prompting to Confirm.\n");
 		msim_username_to_set = g_strdup(username);
 		g_free(username);
-		purple_request_yes_no(purple_account_get_connection(session),
+		purple_request_yes_no(session->gc,
 			_("MySpaceIM - Username Available"),
 			_("This username is available. Would you like to set it?"),
 			_("ONCE SET, THIS CANNOT BE CHANGED!"),
@@ -662,13 +662,13 @@ static void msim_username_is_available_cb(MsimSession *session, MsimMessage *use
 			session->account,
 			NULL,
 			NULL,
-			purple_account_get_connection(session), 
+			session->gc, 
 			G_CALLBACK(msim_set_username_confirmed_cb), 
 			G_CALLBACK(msim_do_not_set_username_cb));
 	} else {
 		/* Looks like its in use or we have an invalid response */
 		purple_debug_info("msim_username_is_available_cb", "Username unavaiable. Prompting for new entry.\n");
-		purple_request_input(purple_account_get_connection(session), _("MySpaceIM - Please Set a Username"),
+		purple_request_input(session->gc, _("MySpaceIM - Please Set a Username"),
 			_("This username is unavailable."),
 				_("Please try another username:"),
 				"", FALSE, FALSE, NULL,
@@ -677,7 +677,7 @@ static void msim_username_is_available_cb(MsimSession *session, MsimMessage *use
 				session->account,
 				NULL,
 				NULL,
-				purple_account_get_connection(session));
+				session->gc);
 	}
 }
 
@@ -689,7 +689,7 @@ static void msim_set_username_confirmed_cb(PurpleConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -785,7 +785,7 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 	if (!body) {
 		purple_debug_info("msim_username_is_set_cb", "No body");
 		/* Error: No body! */
-		purple_connection_error_reason(purple_account_get_connection(session), PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 	}
 	username = msim_msg_get_string(body, "UserName");
 	code = msim_msg_get_integer(body,"Code");
@@ -803,7 +803,7 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 		purple_debug_info("msim_username_is_set_cb", "Username Set with return code %d\n",code);
 		if (code == 0) {
 			/* Good! */
-			purple_account_get_username(session) = username;
+			session->username = username;
 			msim_we_are_logged_on(session);
 		} else {
 			purple_debug_info("msim_username_is_set", "code is %d",code);
@@ -826,13 +826,13 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 					NULL)) {
 			/* Error! */
 			/* Can't set... Disconnect */
-			purple_connection_error_reason(purple_account_get_connection(session), PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+			purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 		}
 			
 	} else {
 		/* Error! */
 		purple_debug_info("msim","username_is_set Error: Invalid cmd/dsn/lid combination");
-		purple_connection_error_reason(purple_account_get_connection(session), PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 	}
 	g_free(errmsg);
 }
