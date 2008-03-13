@@ -534,9 +534,9 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Do not let the user change the protocol/screenname while connected. */
 	update_editable(NULL, dialog);
-	purple_signal_connect(purple_connections_get_handle(), "signing-on", dialog,
+	purple_signal_connect(NULL, "signing-on", dialog,
 					G_CALLBACK(update_editable), dialog);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off", dialog,
+	purple_signal_connect(NULL, "signed-off", dialog,
 					G_CALLBACK(update_editable), dialog);
 }
 
@@ -2564,10 +2564,10 @@ pidgin_account_init(void)
 										PURPLE_SUBTYPE_ACCOUNT));
 
 	/* Setup some purple signal handlers. */
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						pidgin_account_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+	purple_signal_connect(NULL, "signed-off",
 						pidgin_account_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 #if 0
