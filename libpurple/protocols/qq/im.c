@@ -264,7 +264,7 @@ static void _qq_process_recv_normal_im_text
 	qq_recv_normal_im_text *im_text;
 
 	g_return_if_fail(common != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* now it is QQ_NORMAL_IM_TEXT */
 	if (*cursor >= (data + len - 1)) {
@@ -308,7 +308,7 @@ static void _qq_process_recv_normal_im_text
 	_qq_show_packet("QQ_MESG recv", data, *cursor - data);
 
 	name = uid_to_purple_name(common->sender_uid);
-	if (purple_find_buddy(gc->account, name) == NULL)
+	if (purple_find_buddy(purple_connection_get_account(gc), name) == NULL)
 		qq_add_buddy_by_recv_packet(gc, common->sender_uid, FALSE, TRUE);
 
 	purple_msg_type = (im_text->msg_type == QQ_IM_AUTO_REPLY) ? PURPLE_MESSAGE_AUTO_RESP : 0;
@@ -446,7 +446,7 @@ void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint ty
 	gboolean is_bold = FALSE, is_italic = FALSE, is_underline = FALSE;
 	const gchar *start, *end, *last;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	client_tag = QQ_CLIENT;
 	normal_im_type = QQ_NORMAL_IM_TEXT;
 
@@ -564,7 +564,7 @@ void qq_process_send_im_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = gc->proto_data;
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 
@@ -593,7 +593,7 @@ void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 

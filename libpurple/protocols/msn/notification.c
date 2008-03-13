@@ -32,6 +32,8 @@
 #include "sync.h"
 #include "slplink.h"
 
+#include "md5cipher.h"
+
 static MsnTable *cbs_table;
 
 /****************************************************************************
@@ -457,7 +459,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	msn_message_show_readable(msg, "Notification", TRUE);
 #endif
 
-	gc = cmdproc->session->account->gc;
+	gc = purple_account_get_connection(cmdproc->session->account);
 	passport = msg->remote_user;
 
 	content_type = msn_message_get_content_type(msg);
@@ -546,16 +548,16 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	char buf[33];
 
 #if 0
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (const guchar *)cmd->params[1],
-							   strlen(cmd->params[1]));
+	cipher = purple_md5_cipher_new();
+
+	purple_cipher_append(context, (const guchar *)cmd->params[1],
+						 strlen(cmd->params[1]));
 	challenge_resp = MSNP13_WLM_PRODUCT_KEY;
 
-	purple_cipher_context_append(context, (const guchar *)challenge_resp,
-							   strlen(challenge_resp));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_append(cipher, (const guchar *)challenge_resp,
+						 strlen(challenge_resp));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	for (i = 0; i < 16; i++)
 	{
@@ -704,11 +706,11 @@ msn_notification_dump_contact(MsnSession *session)
 		xmlnode_free(adl_node);
 	}
 
-	display_name = purple_connection_get_display_name(session->account->gc);
+	display_name = purple_connection_get_display_name(purple_account_get_connection(session->account));
 	if (display_name 
 	    && strcmp(display_name, 
 		      purple_account_get_username(session->account))) {
-		msn_act_id(session->account->gc, display_name);
+		msn_act_id(purple_account_get_connection(session->account), display_name);
 	}
 
 }
@@ -786,7 +788,7 @@ adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 			if (list_op & MSN_LIST_RL_OP) {
 				/* someone is adding us */
-//				got_new_entry(cmdproc->session->account->gc, passport, decoded_friendly_name);
+//				got_new_entry(purple_account_get_connection(cmdproc->session->account), passport, decoded_friendly_name);
 				msn_get_contact_list(cmdproc->session->contact, MSN_PS_PENDING_LIST, NULL);
 			}
 
@@ -1201,7 +1203,7 @@ rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	g_free(username);
 
-	gc = account->gc;
+	gc = purple_account_get_connection(account);
 	friendly = purple_url_decode(cmd->params[3]);
 
 	purple_connection_set_display_name(gc, friendly);
@@ -1378,7 +1380,6 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *rru;
 	const char *url;
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar digest[16];
 	FILE *fd;
 	char *buf;
@@ -1395,14 +1396,12 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	buf = g_strdup_printf("%s%lu%s",
 			   session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
 			   time(NULL) - session->passport_info.sl,
-			   purple_connection_get_password(account->gc));
+			   purple_connection_get_password(purple_account_get_connection(account)));
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-
-	purple_cipher_context_append(context, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (const guchar *)buf, strlen(buf));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	g_free(buf);
 
@@ -1742,7 +1741,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1796,7 +1795,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *mdata, *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1875,7 +1874,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char *from, *subject, *tmp;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1960,7 +1959,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 		if (*buf != '\0')
-			purple_notify_info(cmdproc->session->account->gc, NULL, buf, NULL);
+			purple_notify_info(purple_account_get_connection(cmdproc->session->account), NULL, buf, NULL);
 	}
 
 	g_hash_table_destroy(table);
@@ -2116,4 +2115,3 @@ msn_notification_end(void)
 {
 	msn_table_destroy(cbs_table);
 }
-

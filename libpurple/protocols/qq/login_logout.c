@@ -159,7 +159,7 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	qq_data *qd;
 	qq_login_reply_ok_packet lrop;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	cursor = data;
 	bytes = 0;
 
@@ -221,7 +221,7 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	qd->last_login_time = lrop.last_login_time;
 	qd->last_login_ip = gen_ip_str(lrop.last_client_ip);
 
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 	qd->logged_in = TRUE;	/* must be defined after sev_finish_login */
 
 	/* now initiate QQ Qun, do it first as it may take longer to finish */
@@ -252,7 +252,7 @@ static gint _qq_process_login_redirect(PurpleConnection *gc, guint8 *data, gint 
 	qq_data *qd;
 	qq_login_reply_redirect_packet lrrp;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	cursor = data;
 	bytes = 0;
 	/* 000-000: reply code */
@@ -273,7 +273,7 @@ static gint _qq_process_login_redirect(PurpleConnection *gc, guint8 *data, gint 
 		new_server_str = gen_ip_str(lrrp.new_server_ip);
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			   "Redirected to new server: %s:%d\n", new_server_str, lrrp.new_server_port);
-		qq_connect(gc->account, new_server_str, lrrp.new_server_port, qd->use_tcp, TRUE);
+		qq_connect(purple_connection_get_account(gc), new_server_str, lrrp.new_server_port, qd->use_tcp, TRUE);
 		g_free(new_server_str);
 		ret = QQ_LOGIN_REPLY_REDIRECT;
 	}
@@ -303,7 +303,7 @@ void qq_send_packet_request_login_token(PurpleConnection *gc)
 	guint16 seq_ret;
 	gint bytes;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 
 	cursor = buf;
@@ -328,7 +328,7 @@ static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guin
 	gint encrypted_len, bytes;
 	gint pos;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 	raw_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH);
 	encrypted_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH + 16);	/* 16 bytes more */
@@ -385,7 +385,7 @@ void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConne
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (buf[0] == QQ_REQUEST_LOGIN_TOKEN_REPLY_OK) {
 		if (buf[1] != buf_len-2) {
@@ -416,7 +416,7 @@ void qq_send_packet_logout(PurpleConnection *gc)
 	gint i;
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	for (i = 0; i < 4; i++)
 		qq_send_cmd(gc, QQ_CMD_LOGOUT, FALSE, 0xffff, FALSE, qd->pwkey, QQ_KEY_LENGTH);
 
@@ -433,7 +433,7 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 
@@ -479,8 +479,8 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 
 	switch (ret) {
 	case QQ_LOGIN_REPLY_PWD_ERROR:
-		if (!purple_account_get_remember_password(gc->account))
-			purple_account_set_password(gc->account, NULL);
+		if (!purple_account_get_remember_password(purple_connection_get_account(gc)))
+			purple_account_set_password(purple_connection_get_account(gc), NULL);
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password."));
 		break;

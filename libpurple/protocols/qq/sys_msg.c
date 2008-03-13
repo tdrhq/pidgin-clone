@@ -159,7 +159,7 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 
 	uid = strtol(from, NULL, 10);
 	name = uid_to_purple_name(uid);
-	b = purple_find_buddy(gc->account, name);
+	b = purple_find_buddy(purple_connection_get_account(gc), name);
 
 	if (b == NULL) {	/* the person is not in my list */
 		g = g_new0(gc_and_uid, 1);
@@ -209,7 +209,7 @@ static void _qq_process_msg_sys_add_contact_approved(PurpleConnection *gc, gchar
 
 	g_return_if_fail(from != NULL && to != NULL);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_add_buddy_by_recv_packet(gc, strtol(from, NULL, 10), TRUE, TRUE);
 
 	message = g_strdup_printf(_("User %s approved your request"), from);
@@ -256,7 +256,7 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 	g_free(reason);
 
 	/* XXX: Is this needed once the above goes through purple_account_request_authorization()? */
-	b = purple_find_buddy(gc->account, name);
+	b = purple_find_buddy(purple_connection_get_account(gc), name);
 	if (b == NULL) {	/* the person is not in my list  */
 		g2 = g_new0(gc_and_uid, 1);
 		g2->gc = gc;
@@ -284,7 +284,7 @@ void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 

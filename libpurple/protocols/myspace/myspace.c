@@ -105,16 +105,6 @@ static void msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userin
 gboolean 
 msim_load(PurplePlugin *plugin)
 {
-	/* If compiled to use RC4 from libpurple, check if it is really there. */
-	if (!purple_ciphers_find_cipher("rc4")) {
-		purple_debug_error("msim", "rc4 not in libpurple, but it is required - not loading MySpaceIM plugin!\n");
-		purple_notify_error(plugin, _("Missing Cipher"), 
-				_("The RC4 cipher could not be found"),
-				_("Upgrade "
-					"to a libpurple with RC4 support (>= 2.0.1). MySpaceIM "
-					"plugin will not be loaded."));
-		return FALSE;
-	}
 	return TRUE;
 }
 
@@ -245,7 +235,7 @@ msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes)
 	g_return_val_if_fail(buf != NULL, -1);
 	g_return_val_if_fail(total_bytes >= 0, -1);
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
 	
@@ -283,13 +273,13 @@ msim_login(PurpleAccount *acct)
 	int port;
 
 	g_return_if_fail(acct != NULL);
-	g_return_if_fail(acct->username != NULL);
+	g_return_if_fail(purple_account_get_username(acct) != NULL);
 
-	purple_debug_info("msim", "logging in %s\n", acct->username);
+	purple_debug_info("msim", "logging in %s\n", purple_account_get_username(acct));
 
 	gc = purple_account_get_connection(acct);
-	gc->proto_data = msim_session_new(acct);
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc),msim_session_new(acct));
+	purple_connection_turn_on_flags(gc, PURPLE_CONNECTION_FLAGS_HTML | PURPLE_CONNECTION_FLAGS_NO_URLDESC);
 
 	/* 1. connect to server */
 	purple_connection_update_progress(gc, _("Connecting"),
@@ -357,14 +347,14 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 	purple_connection_update_progress(session->gc, _("Logging in"), 2, 4);
 
 	response_len = 0;
-	response = msim_compute_login_response(nc, account->username, account->password, &response_len);
+	response = msim_compute_login_response(nc, purple_account_get_username(account), purple_account_get_password(account), &response_len);
 
 	g_free(nc);
 
 	ret = msim_send(session,
 			"login2", MSIM_TYPE_INTEGER, MSIM_AUTH_ALGORITHM,
 			/* This is actually user's email address. */
-			"username", MSIM_TYPE_STRING, g_strdup(account->username),
+			"username", MSIM_TYPE_STRING, g_strdup(purple_account_get_username(account)),
 			/* GString will be freed in msim_msg_free() in msim_send(). */
 			"response", MSIM_TYPE_BINARY, g_string_new_len(response, response_len),
 			"clientver", MSIM_TYPE_INTEGER, MSIM_CLIENT_VERSION,
@@ -395,10 +385,7 @@ static gchar *
 msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE], 
 		const gchar *email, const gchar *password, guint *response_len)
 {
-	PurpleCipherContext *key_context;
-	PurpleCipher *sha1;
-	PurpleCipherContext *rc4;
-
+	PurpleCipher *cipher;
 	guchar hash_pw[HASH_SIZE];
 	guchar key[HASH_SIZE];
 	gchar *password_utf16le, *password_utf8_lc;
@@ -439,8 +426,12 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	}
 
 	/* Compute password hash */ 
-	purple_cipher_digest_region("sha1", (guchar *)password_utf16le, 
-			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
+	cipher = purple_sha1_cipher_new();
+	purple_cipher_append(cipher, (guchar *)password_utf16le,
+						 conv_bytes_written);
+	purple_cipher_digest(cipher, sizeof(hash_pw), hash_pw, NULL);
+	purple_cipher_reset(cipher);
+
 	g_free(password_utf16le);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -451,12 +442,10 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 #endif
 
 	/* key = sha1(sha1(pw) + nonce2) */
-	sha1 = purple_ciphers_find_cipher("sha1");
-	key_context = purple_cipher_context_new(sha1, NULL);
-	purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
-	purple_cipher_context_append(key_context, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
-	purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
-	purple_cipher_context_destroy(key_context);
+	purple_cipher_append(cipher, hash_pw, HASH_SIZE);
+	purple_cipher_append(cipher, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
+	purple_cipher_digest(cipher, sizeof(key), key, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
 	purple_debug_info("msim", "key = ");
@@ -466,12 +455,12 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	purple_debug_info("msim", "\n");
 #endif
 
-	rc4 = purple_cipher_context_new_by_name("rc4", NULL);
+	cipher = purple_rc4_cipher_new();
 
 	/* Note: 'key' variable is 0x14 bytes (from SHA-1 hash), 
 	 * but only first 0x10 used for the RC4 key. */
-	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
-	purple_cipher_context_set_key(rc4, key);
+	purple_rc4_cipher_set_key_len(PURPLE_RC4_CIPHER(cipher), 0x10);
+	purple_cipher_set_key(cipher, key);
 
 	/* TODO: obtain IPs of network interfaces */
 
@@ -486,9 +475,10 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	data_out = g_new0(guchar, data_len);
 
-	purple_cipher_context_encrypt(rc4, (const guchar *)data, 
-			data_len, data_out, &data_out_len);
-	purple_cipher_context_destroy(rc4);
+	purple_cipher_encrypt(cipher, (const guchar *)data, data_len,
+						  data_out, &data_out_len);
+	g_object_unref(G_OBJECT(cipher));
+
 	g_free(data);
 
 	if (data_out_len != data_len) {
@@ -534,7 +524,7 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 
 	/* 'flags' has many options, not used here. */
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
 
@@ -581,7 +571,7 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	g_return_val_if_fail(who != NULL, FALSE);
 	g_return_val_if_fail(text != NULL, FALSE);
 
-	from_username = session->account->username;
+	from_username = purple_account_get_username(session->account);
 
 	g_return_val_if_fail(from_username != NULL, FALSE);
 
@@ -729,8 +719,8 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 	 */
 
 	purple_debug_info("msim", "Unrecognized data on account for %s\n", 
-			(session && session->account && session->account->username) ? 
-			session->account->username : "(NULL)");
+			(session && session->account && purple_account_get_username(session->account)) ? 
+			purple_account_get_username(session->account) : "(NULL)");
 	if (note) {
 		purple_debug_info("msim", "(Note: %s)\n", note);
 	}
@@ -903,7 +893,7 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
 	g_return_val_if_fail(gc != NULL, 0);
 	g_return_val_if_fail(name != NULL, 0);
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
 
@@ -964,7 +954,7 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 		buddy = purple_buddy_new(session->account, username, NULL);
 		user->buddy = buddy;
-		buddy->proto_data = (gpointer)user;
+		purple_object_set_protocol_data(PURPLE_OBJECT(buddy),(gpointer)user);
 	}
 
 	/* Update user structure with new information */
@@ -1009,7 +999,7 @@ msim_get_info(PurpleConnection *gc, const gchar *username)
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(username != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -1050,7 +1040,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 	gchar *stripped;
 	gchar *unrecognized_msg;
 
-	session = (MsimSession *)account->gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account)));
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -1101,7 +1091,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	/* If we should be idle, set that status. Time is irrelevant here. */
 	if (purple_presence_is_idle(pres) && status_code != MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN)
-		msim_set_idle(account->gc, 1);
+		msim_set_idle(purple_account_get_connection(account), 1);
 
 }
 
@@ -1114,7 +1104,7 @@ msim_set_idle(PurpleConnection *gc, int time)
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -1609,7 +1599,7 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 	 * signedOn signal, so clients can now do anything with msimprpl, and
 	 * we're ready for it (session key, userid, username all setup). */
 	purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
-	purple_connection_set_state(session->gc, PURPLE_CONNECTED);
+	purple_connection_set_state(session->gc, PURPLE_CONNECTION_STATE_CONNECTED);
 
 	/* Set display name to username (otherwise will show email address) */
 	purple_connection_set_display_name(session->gc, session->username);
@@ -1862,7 +1852,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 				if (!purple_account_get_remember_password(session->account))
 					purple_account_set_password(session->account, NULL);
 #ifdef MSIM_MAX_PASSWORD_LENGTH
-				if (strlen(session->account->password) > MSIM_MAX_PASSWORD_LENGTH) {
+				if (strlen(purple_account_get_password(session->account)) > MSIM_MAX_PASSWORD_LENGTH) {
 					gchar *suggestion;
 
 					suggestion = g_strdup_printf(_("%s Your password is "
@@ -1871,7 +1861,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 							"MySpaceIM. Please shorten your "
 							"password at http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try again."),
 							full_errmsg, (int)
-							strlen(session->account->password),
+							strlen(purple_account_get_password(session->account)),
 							MSIM_MAX_PASSWORD_LENGTH);
 
 					/* Replace full_errmsg. */
@@ -2054,7 +2044,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	MsimMessage *msg_persist;
 	MsimMessage *body;
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n", 
 			buddy->name, (group && group->name) ? group->name : "(no group)");
 
@@ -2317,7 +2307,7 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	MsimMessage *blocklist_msg;
 	GList *blocklist_updates;
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	delbuddy_msg = msim_msg_new(
 				"delbuddy", MSIM_TYPE_BOOLEAN, TRUE,
@@ -2474,7 +2464,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 
 	gc = (PurpleConnection *)(gc_uncasted);
 	account = purple_connection_get_account(gc);
-	session = gc->proto_data;
+	session = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* libpurple/eventloop.h only defines these two */
 	if (cond != PURPLE_INPUT_READ && cond != PURPLE_INPUT_WRITE) {
@@ -2645,7 +2635,7 @@ msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 	g_return_if_fail(data != NULL);
 
 	gc = (PurpleConnection *)data;
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (source < 0) {
 		purple_connection_error_reason (gc,
@@ -2658,7 +2648,7 @@ msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 
 	session->fd = source; 
 
-	gc->inpa = purple_input_add(source, PURPLE_INPUT_READ, msim_input_cb, gc);
+	g_object_set(G_OBJECT(gc),"inpa",purple_input_add(source, PURPLE_INPUT_READ, msim_input_cb, gc),NULL);
 }
 
 			 
@@ -2676,18 +2666,18 @@ msim_close(PurpleConnection *gc)
 		return;
 	}
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (session == NULL)
 		return;
 
-	gc->proto_data = NULL;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc),NULL);
 
 	if (!MSIM_SESSION_VALID(session)) {
 		return;
 	}
 
-	if (session->gc->inpa) {
-		purple_input_remove(session->gc->inpa);
+	if (purple_object_get_int(PURPLE_OBJECT(session->gc),"inpa")) {
+		purple_input_remove(purple_object_get_int(PURPLE_OBJECT(session->gc),"inpa"));
 	}
 
 	msim_session_destroy(session);
@@ -2713,7 +2703,7 @@ msim_status_text(PurpleBuddy *buddy)
 
 	user = msim_get_user_from_buddy(buddy);
 
-	session = (MsimSession *)buddy->account->gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(buddy->account)));
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
 
 	display_name = headline = NULL;
@@ -2762,7 +2752,7 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 		MsimSession *session;
 
-		session = (MsimSession *)buddy->account->gc->proto_data;
+		session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(buddy->account)));
 
 		g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -3004,7 +2994,7 @@ static void msim_import_friends(PurplePluginAction *action)
 	gchar *group_name;
 
 	gc = (PurpleConnection *)action->context;
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	group_name = "MySpace Friends";
 
@@ -3349,7 +3339,7 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 		return FALSE;
 	}
 
-	session = (MsimSession *)account->gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account)));
 	g_return_val_if_fail(session != NULL, FALSE);
 
 	/* Lookup userid to username. TODO: push this down, to IM sending/contact 

@@ -99,7 +99,7 @@ void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, 
 	GSList *pending_id;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	read_packet_b(data, cursor, len, &search_type);
 	group = g_newa(qq_group, 1);

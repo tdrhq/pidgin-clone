@@ -65,7 +65,7 @@ gboolean jabber_ping_jid(PurpleConversation *conv, const char *jid)
 
 	purple_debug_info("jabber", "jabber_ping_jid\n");
 
-	iq = jabber_iq_new(conv->account->gc->proto_data, JABBER_IQ_GET);
+	iq = jabber_iq_new(purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(conv->account))), JABBER_IQ_GET);
 	xmlnode_set_attrib(iq->node, "to", jid);
 
 	ping = xmlnode_new_child(iq->node, "ping");

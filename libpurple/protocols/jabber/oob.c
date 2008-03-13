@@ -213,7 +213,7 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	jox->headers = g_string_new("");
 	jox->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
-	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE,
+	xfer = purple_xfer_new(purple_connection_get_account(js->gc), PURPLE_XFER_RECEIVE,
 			xmlnode_get_attrib(packet, "from"));
 	if (xfer)
 	{

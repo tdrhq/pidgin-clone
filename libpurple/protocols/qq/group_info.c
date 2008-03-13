@@ -173,7 +173,7 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 	guint8 unknown1;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	read_packet_dw(data, cursor, len, &(internal_group_id));
 	g_return_if_fail(internal_group_id > 0);

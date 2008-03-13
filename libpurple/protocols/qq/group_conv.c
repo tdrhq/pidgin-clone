@@ -38,7 +38,7 @@ void qq_group_conv_show_window(PurpleConnection *gc, qq_group *group)
 	qq_data *qd;
 
 	g_return_if_fail(group != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, 
 			group->group_name_utf8, purple_connection_get_account(gc));

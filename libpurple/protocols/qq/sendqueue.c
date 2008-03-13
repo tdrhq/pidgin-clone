@@ -92,7 +92,7 @@ gboolean qq_sendqueue_timeout_callback(gpointer data)
 	gint wait_time;
 
 	gc = (PurpleConnection *) data;
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	now = time(NULL);
 	list = qd->sendqueue;
 
