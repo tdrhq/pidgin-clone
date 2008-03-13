@@ -255,7 +255,7 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			purple_debug_info("bonjour", "_browser_callback - Remove service\n");
 			pb = purple_find_buddy(account, name);
 			if (pb != NULL) {
-				BonjourBuddy *bb = pb->proto_data;
+				BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 				AvahiBuddyImplData *b_impl;
 				GSList *l;
 				AvahiSvcResolverData *rd_search;
@@ -603,7 +603,7 @@ void _mdns_delete_buddy(BonjourBuddy *buddy) {
 
 void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 	PurpleConnection *conn = purple_account_get_connection(buddy->account);
-	BonjourData *bd = conn->proto_data;
+	BonjourData *bd = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 	AvahiSessionImplData *session_idata = bd->dns_sd_data->mdns_impl_data;
 	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
 	gchar *name;

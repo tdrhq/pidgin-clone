@@ -153,7 +153,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 
 	if (buddy == NULL) {
 		buddy = purple_buddy_new(account, bonjour_buddy->name, NULL);
-		buddy->proto_data = bonjour_buddy;
+		purple_object_set_protocol_data(PURPLE_OBJECT(buddy),bonjour_buddy);
 		purple_blist_node_set_flags((PurpleBlistNode *)buddy, PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 	}

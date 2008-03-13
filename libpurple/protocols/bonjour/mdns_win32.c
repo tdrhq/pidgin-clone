@@ -338,7 +338,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 
 				/* Is there an existing buddy? */
 				if ((pb = purple_find_buddy(account, serviceName)))
-					bb = pb->proto_data;
+					bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 				/* Is there a pending buddy? */
 				else {
 					while (tmp) {
@@ -358,7 +358,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 					if (pb == NULL)
 						pending_buddies = g_slist_prepend(pending_buddies, bb);
 					else
-						pb->proto_data = bb;
+						purple_object_set_protocol_data(PURPLE_OBJECT(pb),bb);
 				}
 
 				rd = g_new0(Win32SvcResolverData, 1);
@@ -398,7 +398,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 			GSList *l;
 			/* There may be multiple presences, we should only get rid of this one */
 			Win32SvcResolverData *rd_search;
-			BonjourBuddy *bb = pb->proto_data;
+			BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 			Win32BuddyImplData *idata;
 
 			g_return_if_fail(bb != NULL);

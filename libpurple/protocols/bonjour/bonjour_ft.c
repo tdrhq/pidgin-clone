@@ -339,7 +339,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 		return NULL;
 
 	purple_debug_info("bonjour", "Bonjour-new-xfer to %s.\n", who);
-	bd = (BonjourData*) gc->proto_data;
+	bd = (BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if(bd == NULL)
 		return NULL;
 
@@ -401,7 +401,7 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	if (buddy == NULL)
 		return;
 
-	bb = (BonjourBuddy *)buddy->proto_data;
+	bb = (BonjourBuddy *)purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 	/* Assume it is the first IP. We could do something like keep track of which one is in use or something. */
 	if (bb->ips)
 		xf->buddy_ip = g_strdup(bb->ips->data);
@@ -425,7 +425,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 	if(pc == NULL || packet == NULL || pb == NULL)
 		return;
-	bd = (BonjourData*) pc->proto_data;
+	bd = (BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(pc));
 	if(bd == NULL)
 		return;
 
@@ -465,7 +465,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 			if (!parsed_receive) {
 				purple_debug_info("bonjour", "rejecting unrecognized si SET offer.\n");
-				xep_ft_si_reject((BonjourData *)pc->proto_data, id, pb->name, "403", "cancel");
+				xep_ft_si_reject((BonjourData *)purple_object_get_protocol_data(PURPLE_OBJECT(pc)), id, pb->name, "403", "cancel");
 				/*TODO: Send Cancel (501) */
 			}
 		} else if(!strcmp(type, "result")) {
@@ -475,7 +475,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 			if(xfer == NULL) {
 				purple_debug_info("bonjour", "xfer find fail.\n");
-				xep_ft_si_reject((BonjourData *)pc->proto_data, id, pb->name, "403", "cancel");
+				xep_ft_si_reject((BonjourData *)purple_object_get_protocol_data(PURPLE_OBJECT(pc)), id, pb->name, "403", "cancel");
 			} else
 				bonjour_bytestreams_init(xfer);
 
@@ -506,7 +506,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	if(pc == NULL || packet == NULL || pb == NULL)
 		return;
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = (BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(pc));
 	if(bd == NULL)
 		return;
 
@@ -584,14 +584,14 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 	if(pc == NULL || id == NULL || from == NULL)
 		return;
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = (BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(pc));
 	if(bd == NULL)
 		return;
 
 	purple_debug_info("bonjour", "bonjour-xfer-receive.\n");
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(pc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(pc), PURPLE_XFER_RECEIVE, from);
 	xfer->data = xf = g_new0(XepXfer, 1);
 	xf->data = bd;
 	purple_xfer_set_filename(xfer, filename);
