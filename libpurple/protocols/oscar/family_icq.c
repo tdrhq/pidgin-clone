@@ -754,7 +754,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 				PurplePresence *presence;
 				PurpleStatus *status;
 
-				account = purple_connection_get_account(purple_account_get_connection(od));
+				account = purple_connection_get_account(od->gc);
 				buddy = purple_find_buddy(account, uin);
 				presence = purple_buddy_get_presence(buddy);
 				status = purple_presence_get_active_status(presence);

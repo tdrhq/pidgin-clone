@@ -2468,7 +2468,7 @@ static void parse_status_note_text(OscarData *od, guchar *cookie, char *sn, Byte
 
 	encoding = byte_stream_getstr(bs, encoding_length);
 
-	account = purple_connection_get_account(purple_account_get_connection(od));
+	account = purple_connection_get_account(od->gc);
 
 	stripped_encoding = oscar_encoding_extract(encoding);
 	status_note_text = oscar_encoding_to_utf8(account, stripped_encoding, response, response_length);
