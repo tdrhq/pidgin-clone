@@ -72,8 +72,8 @@ enum
 	PROP_FLAGS,
 	PROP_STATE,
 	PROP_ACCOUNT,
-#if 0
 	PROP_INPUT_WATCHER,
+#if 0
 	PROP_BUDDY_CHATS,
 	PROP_KEEPALIVE,
 	PROP_WANTS_TO_DIE,
@@ -331,7 +331,7 @@ purple_connection_destroy(PurpleConnection *gc)
 	buddies = purple_find_buddies(account, NULL);
 	while (buddies != NULL) {
 		PurpleBuddy *buddy = buddies->data;
-		buddy->proto_data = NULL;
+		purple_object_set_protocol_data(PURPLE_OBJECT(buddy),NULL);
 		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
@@ -457,6 +457,12 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 		if (ops != NULL && ops->disconnected != NULL)
 			ops->disconnected(gc);
 	}
+}
+
+void purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags)
+{
+	g_return_if_fail(gc);
+	gc->priv->flags = flags;
 }
 
 void
@@ -720,10 +726,10 @@ purple_connection_get_property(GObject *obj, guint param_id, GValue *value,
 			#warning fix me when account is an object
 			g_value_set_pointer(value, purple_connection_get_account(pc));
 			break;
-#if 0
 		case PROP_INPUT_WATCHER:
-			g_value_set_int(value, purple_connection_get_input_watcher(pc));
+			g_value_set_int(value, pc->priv->inpa);
 			break;
+#if 0
 		case PROP_BUDDY_CHATS:
 			g_value_set_pointer(value, purple_connection_get_buddy_chats(pc));
 			break;
@@ -761,10 +767,10 @@ purple_connection_set_property(GObject *obj, guint param_id,
 			#warning fix me when account is an object
 			purple_connection_set_account(pc, g_value_get_pointer(value));
 			break;
-#if 0
 		case PROP_INPUT_WATCHER:
-			purple_connection_set_input_watcher(pc, g_value_get_int(value));
+			pc->priv->inpa = g_value_get_int(value);
 			break;
+#if 0
 		case PROP_BUDDY_CHATS:
 			purple_connection_set_buddy_chats(pc, g_value_get_pointer(value));
 			break;
@@ -843,13 +849,13 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 	g_object_class_install_property(obj_class, PROP_ACCOUNT, pspec);
 
 #warning These probably doesn't need any exposing
-#if 0
 	pspec = g_param_spec_int("inpa", "inpa",
 							 "The input watcher's fd for this connection.",
 							 G_MININT, G_MAXINT, -1,
 							 G_PARAM_READWRITE);
-	g_object_class_install_property(obj_class, PROP_INPA, pspec);
+	g_object_class_install_property(obj_class, PROP_INPUT_WATCHER, pspec);
 
+#if 0
 	pspec = g_param_spec_pointer("buddy-chats", "buddy-chats",
 								 "A list of buddy chats for this connection.",
 								 G_PARAM_READWRITE);
