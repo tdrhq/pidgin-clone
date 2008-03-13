@@ -843,7 +843,7 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 	obj_class->set_property = purple_connection_set_property;
 	obj_class->finalize = purple_connection_finalize;
 
-	pspec = g_param_spec_enum("flags", "flags",
+	pspec = g_param_spec_flags("flags", "flags",
 							  "The flags for this connection.",
 							  PURPLE_TYPE_CONNECTION_FLAGS,
 							  0,
@@ -1007,7 +1007,7 @@ purple_connection_flags_get_gtype(void)
 			{ 0, NULL, NULL },
 		};
 
-		type = g_flags_register_static("PurpleConnectionState", values);
+		type = g_flags_register_static("PurpleConnectionFlags", values);
 	}
 
 	return type;
