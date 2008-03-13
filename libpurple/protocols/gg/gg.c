@@ -1314,10 +1314,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			_("Unable to read socket"));
 		return;
 	}
-#warning FIXME: uncomment!!
-#if 0
-	gc->last_received = time(NULL);
-#endif
+	purple_connection_received_now(gc);
 	switch (ev->type) {
 		case GG_EVENT_NONE:
 			/* Nothing happened. */

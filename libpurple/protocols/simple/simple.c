@@ -1675,10 +1675,7 @@ static void simple_input_cb(gpointer data, gint source, PurpleInputCondition con
 		if(sip->fd == source) sip->fd = -1;
 		return;
 	}
-#warning FIXME: uncomment!
-#if 0
-	gc->last_received = time(NULL);
-#endif
+	purple_connection_received_now(gc);
 	conn->inbufused += len;
 	conn->inbuf[conn->inbufused] = '\0';
 

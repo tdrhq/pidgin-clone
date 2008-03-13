@@ -433,6 +433,14 @@ void purple_connection_update_progress(PurpleConnection *gc, const char *text,
 									 size_t step, size_t count);
 
 /**
+ * Notify the connection that it has received data from the server.
+ * Should be called by the protocol plugins only.
+ *
+ * @param conn  The connection.
+ */
+void purple_connection_received_now(PurpleConnection *conn);
+
+/**
  * Displays a connection-specific notice.
  *
  * @param gc   The connection.

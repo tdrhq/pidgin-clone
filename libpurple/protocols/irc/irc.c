@@ -573,10 +573,7 @@ static void read_input(struct irc_conn *irc, int len)
 {
 	char *cur, *end;
 
-#warning FIXME: uncomment!!
-#if 0
-	purple_account_get_connection(irc->account)->last_received = time(NULL);
-#endif
+	purple_connection_received_now(purple_account_get_connection(irc->account));
 	irc->inbufused += len;
 	irc->inbuf[irc->inbufused] = '\0';
 

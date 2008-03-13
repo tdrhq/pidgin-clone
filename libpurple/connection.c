@@ -562,6 +562,12 @@ purple_connection_update_progress(PurpleConnection *gc, const char *text,
 }
 
 void
+purple_connection_received_now(PurpleConnection *conn)
+{
+    conn->priv->last_received = time(NULL);
+}
+
+void
 purple_connection_notice(PurpleConnection *gc, const char *text)
 {
 	PurpleConnectionUiOps *ops;

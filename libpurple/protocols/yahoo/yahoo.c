@@ -2498,10 +2498,7 @@ static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 				_("Server closed the connection."));
 		return;
 	}
-#warning FIXME: uncomment!!
-#if 0
-	gc->last_received = time(NULL);
-#endif
+	purple_connection_received_now(gc);
 	yd->rxqueue = g_realloc(yd->rxqueue, len + yd->rxlen);
 	memcpy(yd->rxqueue + yd->rxlen, buf, len);
 	yd->rxlen += len;

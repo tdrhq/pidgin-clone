@@ -132,7 +132,7 @@ static void toc_login(PurpleAccount *account)
 	char buf[80];
 
 	gc = purple_account_get_connection(account);
-	gc->proto_data = tdt = g_new0(struct toc_data, 1);
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc),tdt = g_new0(struct toc_data, 1));
 	gc->flags |= PURPLE_CONNECTION_FLAGS_HTML;
 	gc->flags |= PURPLE_CONNECTION_FLAGS_AUTO_RESP;
 
@@ -166,7 +166,7 @@ static void toc_login_callback(gpointer data, gint source, PurpleInputCondition 
 		return;
 	}
 
-	tdt = gc->proto_data;
+	tdt = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (source == -1) {
 		/* we didn't successfully connect. tdt->toc_fd is valid here */
@@ -207,8 +207,8 @@ static void toc_close(PurpleConnection *gc)
 	if (gc->inpa > 0)
 		purple_input_remove(gc->inpa);
 	gc->inpa = 0;
-	close(((struct toc_data *)gc->proto_data)->toc_fd);
-	g_free(gc->proto_data);
+	close(((struct toc_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc)))->toc_fd);
+	g_free(purple_object_get_protocol_data(PURPLE_OBJECT(gc)));
 }
 
 static void toc_build_config(PurpleAccount *account, char *s, int len, gboolean show)
@@ -355,7 +355,7 @@ char *escape_text(const char *msg)
 
 static int sflap_send(PurpleConnection *gc, const char *buf, int olen, int type)
 {
-	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
+	struct toc_data *tdt = (struct toc_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	int len;
 	int slen = 0;
 	int ret;
@@ -421,7 +421,7 @@ static int toc_send_raw(PurpleConnection *gc, const char *buf, int len)
 
 static int wait_reply(PurpleConnection *gc, char *buffer, size_t buflen)
 {
-	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
+	struct toc_data *tdt = (struct toc_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct sflap_hdr *hdr;
 	int ret;
 
@@ -660,7 +660,7 @@ static void toc_callback(gpointer data, gint source, PurpleInputCondition condit
 {
 	PurpleConnection *gc = (PurpleConnection *)data;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
+	struct toc_data *tdt = (struct toc_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct sflap_hdr *hdr;
 	struct signon so;
 	char buf[8 * 1024], *c;
