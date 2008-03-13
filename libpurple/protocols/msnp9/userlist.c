@@ -44,8 +44,8 @@ msn_accept_add_cb(gpointer data)
 	MsnSession *session;
 	MsnUserList *userlist;
 
-	if (PURPLE_CONNECTION_IS_VALID(purple_account_get_connection(pa))) {
-		session = purple_account_get_connection(pa)->proto_data;
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc)) {
+		session = purple_object_get_protocol_data(PURPLE_OBJECT(pa->gc));
 		userlist = session->userlist;
 
 		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
@@ -63,8 +63,8 @@ msn_cancel_add_cb(gpointer data)
 	MsnSession *session;
 	MsnUserList *userlist;
 
-	if (PURPLE_CONNECTION_IS_VALID(purple_account_get_connection(pa))) {
-		session = purple_account_get_connection(pa)->proto_data;
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc)) {
+		session = purple_object_get_protocol_data(PURPLE_OBJECT(pa->gc));
 		userlist = session->userlist;
 
 		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_BL, NULL);
@@ -83,7 +83,7 @@ got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly)
 	pa = g_new0(MsnPermitAdd, 1);
 	pa->who = g_strdup(passport);
 	pa->friendly = g_strdup(friendly);
-	purple_account_get_connection(pa) = gc;
+	pa->gc = gc;
 	
 	purple_account_request_authorization(purple_connection_get_account(gc), passport, NULL, friendly, NULL,
 					   purple_find_buddy(purple_connection_get_account(gc), passport) != NULL,
