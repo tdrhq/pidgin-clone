@@ -361,7 +361,8 @@ purple_connection_destroy(PurpleConnection *gc)
 		purple_timeout_remove(gc->priv->disconnect_timeout);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(gc);
-	g_free(gc);
+#warning TODO: Much of the above should be moved to purple_connection_finalize
+	g_object_unref(G_OBJECT(gc));
 }
 
 /*
