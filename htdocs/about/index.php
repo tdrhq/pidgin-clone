@@ -82,7 +82,8 @@ problems you encounter and to provide us with suggestions for improvement.
 You can do so via our 
 <a href="http://developer.pidgin.im">support system</a>,
 <a href="irc://irc.freenode.net/pidgin">IRC channel</a>,
-<a href="xmpp:devel@conference.pidgin.im/?join">XMPP conference</a>, or
+<a href="xmpp:devel@conference.pidgin.im/?join">XMPP conference</a>,
+<a href="/cgi-bin/mailman/listinfo/support">support mailing list</a>, or
 <a href="/cgi-bin/mailman/listinfo/devel">development mailing list</a>.  We
 also encourage users to help one another solve problems and discover new
 features using any of these media.</p>
