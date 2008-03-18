@@ -1149,7 +1149,7 @@ check_if_blocked(PurpleBuddy *pb)
 
 	for(l = acc->deny; l != NULL; l = l->next) {
 		if(!purple_utf8_strcasecmp(pb->name, (char *)l->data)) {
-			purple_debug_info("bonjour", "%s has been blocked.\n", pb->name, purple_account_get_username(acc));
+			purple_debug_info("bonjour", "%s has been blocked by %s.\n", pb->name, purple_account_get_username(acc));
 			blocked = TRUE;
 			break;
 		}
@@ -1257,3 +1257,4 @@ purple_network_get_my_ip_ext2(int fd)
 
 	return ip_ext;
 }
+

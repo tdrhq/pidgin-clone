@@ -30,6 +30,7 @@
 
 #include "util.h"
 #include "ntlm.h"
+#include "debug.h"
 #include "descipher.h"
 #include "md4cipher.h"
 #include <string.h>
@@ -288,20 +289,32 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 
 	tmp = (char *)tmsg + sizeof(struct type3_message);
 
-	ucs2le = g_convert(domain, -1, "UCS-2LE", "UTF-8", NULL, NULL, NULL);
-	memcpy(tmp, ucs2le, domainlen);
-	g_free(ucs2le);
-	tmp += domainlen;
+	ucs2le = g_convert(domain, -1, "UTF-16LE", "UTF-8", NULL, NULL, NULL);
+	if (ucs2le != NULL) {
+		memcpy(tmp, ucs2le, domainlen);
+		g_free(ucs2le);
+		tmp += domainlen;
+	} else {
+		purple_debug_info("ntlm", "Unable to encode domain in UTF-16LE.\n");
+	}
 
-	ucs2le = g_convert(username, -1, "UCS-2LE", "UTF-8", NULL, NULL, NULL);
-	memcpy(tmp, ucs2le, usernamelen);
-	g_free(ucs2le);
-	tmp += usernamelen;
+	ucs2le = g_convert(username, -1, "UTF-16LE", "UTF-8", NULL, NULL, NULL);
+	if (ucs2le != NULL) {
+		memcpy(tmp, ucs2le, usernamelen);
+		g_free(ucs2le);
+		tmp += usernamelen;
+	} else {
+		purple_debug_info("ntlm", "Unable to encode username in UTF-16LE.\n");
+	}
 
-	ucs2le = g_convert(hostname, -1, "UCS-2LE", "UTF-8", NULL, NULL, NULL);
-	memcpy(tmp, ucs2le, hostnamelen);
-	g_free(ucs2le);
-	tmp += hostnamelen;
+	ucs2le = g_convert(hostname, -1, "UTF-16LE", "UTF-8", NULL, NULL, NULL);
+	if (ucs2le != NULL) {
+		memcpy(tmp, ucs2le, hostnamelen);
+		g_free(ucs2le);
+		tmp += hostnamelen;
+	} else {
+		purple_debug_info("ntlm", "Unable to encode hostname in UTF-16LE.\n");
+	}
 
 	/* LM */
 	if (passwlen > 14)
@@ -324,7 +337,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 	tmp += 0x18;
 
 	/* NTLM */
-	/* Convert the password to UCS-2LE */
+	/* Convert the password to UTF-16LE */
 	lennt = strlen(passw);
 	for (idx = 0; idx < lennt; idx++)
 	{
@@ -357,3 +370,4 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 
 	return tmp;
 }
+

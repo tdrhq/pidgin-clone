@@ -417,7 +417,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcesn,
 	gchar *ret = NULL;
 	const gchar *charsetstr1, *charsetstr2;
 
-	purple_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%hd\n", charset, charsubset, datalen);
+	purple_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%" G_GSIZE_FORMAT "\n", charset, charsubset, datalen);
 
 	if ((datalen == 0) || (data == NULL))
 		return NULL;
@@ -2014,8 +2014,8 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 		gconstpointer data = purple_imgstore_get_data(img);
 		size_t len = purple_imgstore_get_size(img);
 		purple_debug_info("oscar",
-				   "Sending buddy icon to %s (%d bytes)\n",
-				   userinfo->sn, len);
+				"Sending buddy icon to %s (%" G_GSIZE_FORMAT " bytes)\n",
+				userinfo->sn, len);
 		aim_im_sendch2_icon(od, userinfo->sn, data, len,
 			purple_buddy_icons_get_account_icon_timestamp(account),
 			aimutil_iconsum(data, len));
@@ -6230,6 +6230,7 @@ static void oscar_format_screenname(PurpleConnection *gc, const char *nick) {
 	if (!aim_sncmp(purple_account_get_username(purple_connection_get_account(gc)), nick)) {
 		if (!flap_connection_getbytype(od, SNAC_FAMILY_ADMIN)) {
 			od->setnick = TRUE;
+			g_free(od->newsn);
 			od->newsn = g_strdup(nick);
 			aim_srv_requestnew(od, SNAC_FAMILY_ADMIN);
 		} else {
@@ -6517,7 +6518,7 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 
 	if (od->icq)
 	{
-		act = purple_plugin_action_new(_("Set User Info (URL)..."),
+		act = purple_plugin_action_new(_("Set User Info (web)..."),
 				oscar_show_set_info_icqurl);
 		menu = g_list_prepend(menu, act);
 	}
@@ -6528,11 +6529,11 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 
 	if (od->authinfo->chpassurl != NULL)
 	{
-		act = purple_plugin_action_new(_("Change Password (URL)"),
+		act = purple_plugin_action_new(_("Change Password (web)"),
 				oscar_show_chpassurl);
 		menu = g_list_prepend(menu, act);
 
-		act = purple_plugin_action_new(_("Configure IM Forwarding (URL)"),
+		act = purple_plugin_action_new(_("Configure IM Forwarding (web)"),
 				oscar_show_imforwardingurl);
 		menu = g_list_prepend(menu, act);
 	}

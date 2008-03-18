@@ -41,7 +41,9 @@ typedef struct _PurpleAccount			PurpleAccount;
 typedef struct _PurpleAccountPrivate		PurpleAccountPrivate;
 typedef struct _PurpleAccountClass		PurpleAccountClass;
 
+/** @copydoc _PurpleAccountUiOps */
 typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
+/** @copydoc _PurpleAccount */
 
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
 typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
@@ -114,6 +116,8 @@ struct _PurpleAccountUiOps
 	void (*_purple_reserved4)(void);
 };
 
+/** Structure representing an account.
+ */
 struct _PurpleAccount
 {
 	char *username;             /**< The username.                          */

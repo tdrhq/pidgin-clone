@@ -3438,6 +3438,7 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 	return FALSE;
 #endif
 #else
+#if GTK_CHECK_VERSION(2,4,0)
 	/* This finds the currently active window and makes that the parent window. */
 	GList *windows = NULL;
 	GtkWidget *parent = NULL;
@@ -3480,6 +3481,7 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 		gtk_window_set_transient_for(GTK_WINDOW(widget), GTK_WINDOW(parent));
 		return TRUE;
 	}
+#endif
 	return FALSE;
 #endif
 }
