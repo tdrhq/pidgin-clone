@@ -31,8 +31,7 @@ Download Pidgin<br />
 </div>
 
 <p class="linkbar">
-  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a> |
-  <a href="/CommitLog">CommitLog</a>
+  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a>
 </p>
 
 </div>
