@@ -31,7 +31,8 @@ Download Pidgin<br />
 </div>
 
 <p class="linkbar">
-  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a>
+  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a> |
+  <a href="http://developer.pidgin.im/wiki/FAQ" title="Frequently Asked Questions">FAQ</a>
 </p>
 
 </div>
