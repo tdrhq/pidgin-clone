@@ -513,7 +513,6 @@ void
 msn_handle_chl(char *input, char *output)
 {
 		PurpleCipher *cipher;
-		PurpleCipherContext *context;
 		char *productKey = MSNP13_WLM_PRODUCT_KEY,
 			 *productID  = MSNP13_WLM_PRODUCT_ID,
 			 *hexChars   = "0123456789abcdef",
@@ -526,15 +525,13 @@ msn_handle_chl(char *input, char *output)
 		int i;
 
 		/* Create the MD5 hash by using Purple MD5 algorithm*/
-		cipher = purple_ciphers_find_cipher("md5");
-		context = purple_cipher_context_new(cipher, NULL);
-
-		purple_cipher_context_append(context, (const guchar *)input,
-						strlen(input));
-		purple_cipher_context_append(context, (const guchar *)productKey,
-						strlen(productKey));
-		purple_cipher_context_digest(context, sizeof(md5Hash), md5Hash, NULL);
-		purple_cipher_context_destroy(context);
+		cipher = purple_md5_cipher_new();
+		purple_cipher_append(cipher, (const guchar *)input,
+							 strlen(input));
+		purple_cipher_append(cipher, (const guchar *)productKey,
+							 strlen(productKey));
+		purple_cipher_digest(cipher, sizeof(md5Hash), md5Hash, NULL);
+		g_object_unref(G_OBJECT(cipher));
 
 		/* Split it into four integers */
 		md5Parts = (unsigned int *)md5Hash;

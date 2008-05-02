@@ -44,7 +44,7 @@ gint _create_packet_head_seq(guint8 *buf, guint8 **cursor,
 
 	g_return_val_if_fail(buf != NULL && cursor != NULL && *cursor != NULL, -1);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (is_auto_seq)
 		*seq = ++(qd->send_seq);
 
@@ -81,7 +81,7 @@ gint _qq_send_packet(PurpleConnection *gc, guint8 *buf, gint len, guint16 cmd)
 	gint bytes_sent;
 	guint8 *cursor;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (qd->use_tcp) {
 		if (len > MAX_PACKET_SIZE) {
@@ -123,7 +123,7 @@ gint qq_send_cmd(PurpleConnection *gc, guint16 cmd,
 	guint16 seq_ret;
 	gint encrypted_len, bytes_written, bytes_expected, bytes_sent;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_return_val_if_fail(qd->session_key != NULL, -1);
 
 	buf = g_newa(guint8, MAX_PACKET_SIZE);

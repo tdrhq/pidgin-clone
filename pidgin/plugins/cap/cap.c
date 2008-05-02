@@ -685,10 +685,10 @@ static void add_plugin_functionality(PurplePlugin *plugin) {
 	purple_signal_connect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
 			PURPLE_CALLBACK(drawing_tooltip), NULL);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on", plugin,
+	purple_signal_connect(NULL, "signed-on", plugin,
 			PURPLE_CALLBACK(signed_on), NULL);
 	
-	purple_signal_connect(purple_connections_get_handle(), "signed-off", plugin,
+	purple_signal_connect(NULL, "signed-off", plugin,
 			PURPLE_CALLBACK(signed_off), NULL);
 
 	_signals_connected = TRUE;
@@ -730,10 +730,10 @@ static void remove_plugin_functionality(PurplePlugin *plugin) {
 	purple_signal_disconnect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
 			PURPLE_CALLBACK(drawing_tooltip));
 
-	purple_signal_disconnect(purple_connections_get_handle(), "signed-on", plugin,
+	purple_signal_disconnect(NULL, "signed-on", plugin,
 			PURPLE_CALLBACK(signed_on));
 	
-	purple_signal_disconnect(purple_connections_get_handle(), "signed-off", plugin,
+	purple_signal_disconnect(NULL, "signed-off", plugin,
 			PURPLE_CALLBACK(signed_off));
 
 	_signals_connected = FALSE;

@@ -978,7 +978,7 @@ void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 
 	g_return_if_fail(buddy != NULL);
 
-	if (!purple_strings_are_different(buddy->server_alias, alias))
+	if (!purple_strings_are_different(purple_buddy_get_server_alias(buddy), alias))
 		return;
 
 	old_alias = buddy->server_alias;
@@ -1962,7 +1962,7 @@ void purple_blist_remove_group(PurpleGroup *group)
 	{
 		PurpleConnection *gc = (PurpleConnection *)l->data;
 
-		if (purple_connection_get_state(gc) == PURPLE_CONNECTED)
+		if (purple_connection_get_state(gc) == PURPLE_CONNECTION_STATE_CONNECTED)
 			purple_account_remove_group(purple_connection_get_account(gc), group);
 	}
 
@@ -1989,10 +1989,10 @@ const char *purple_buddy_get_alias_only(PurpleBuddy *buddy)
 
 	if ((buddy->alias != NULL) && (*buddy->alias != '\0')) {
 		return buddy->alias;
-	} else if ((buddy->server_alias != NULL) &&
-		   (*buddy->server_alias != '\0')) {
+	} else if ((purple_buddy_get_server_alias(buddy) != NULL) &&
+		   (*purple_buddy_get_server_alias(buddy) != '\0')) {
 
-		return buddy->server_alias;
+		return purple_buddy_get_server_alias(buddy);
 	}
 
 	return NULL;
@@ -2016,8 +2016,8 @@ const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy)
 		return c->alias;
 
 	/* The server alias */
-	if ((buddy->server_alias) && (*buddy->server_alias))
-		return buddy->server_alias;
+	if ((purple_buddy_get_server_alias(buddy)) && (*purple_buddy_get_server_alias(buddy)))
+		return purple_buddy_get_server_alias(buddy);
 
 	/* The buddy's user name (i.e. no alias) */
 	return buddy->name;
@@ -2034,8 +2034,8 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy)
 		return buddy->alias;
 
 	/* The server alias */
-	if ((buddy->server_alias) && (*buddy->server_alias))
-		return buddy->server_alias;
+	if ((purple_buddy_get_server_alias(buddy)) && (*purple_buddy_get_server_alias(buddy)))
+		return purple_buddy_get_server_alias(buddy);
 
 	/* The buddy's user name (i.e. no alias) */
 	return buddy->name;

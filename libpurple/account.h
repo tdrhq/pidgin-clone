@@ -27,14 +27,23 @@
 #ifndef _PURPLE_ACCOUNT_H_
 #define _PURPLE_ACCOUNT_H_
 
-#include <glib-object.h>
 #include <glib.h>
 #include <glib-object.h>
+
+#define PURPLE_TYPE_ACCOUNT				(purple_account_get_gtype())
+#define PURPLE_ACCOUNT(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT, PurpleAccount))
+#define PURPLE_ACCOUNT_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ACCOUNT, PurpleAccountClass))
+#define PURPLE_IS_ACCOUNT(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT))
+#define PURPLE_IS_ACCOUNT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ACCOUNT))
+#define PURPLE_ACCOUNT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ACCOUNT, PurpleAccountClass))
+
+typedef struct _PurpleAccount			PurpleAccount;
+typedef struct _PurpleAccountPrivate		PurpleAccountPrivate;
+typedef struct _PurpleAccountClass		PurpleAccountClass;
 
 /** @copydoc _PurpleAccountUiOps */
 typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
 /** @copydoc _PurpleAccount */
-typedef struct _PurpleAccount      PurpleAccount;
 
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
 typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
@@ -146,6 +155,12 @@ struct _PurpleAccount
 	void *registration_cb_user_data;
 
 	gpointer priv;              /**< Pointer to opaque private data. */
+};
+
+struct _PurpleAccountClass
+{
+	GObjectClass parent;
+	void (*_purple_reserved[4])(void);
 };
 
 #ifdef __cplusplus

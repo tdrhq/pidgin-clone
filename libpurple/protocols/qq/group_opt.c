@@ -146,7 +146,7 @@ void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new
 	GList *list;
 
 	g_return_if_fail(group != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (new_members[0] == 0xffffffff)
 		return;
 
@@ -289,7 +289,7 @@ void qq_group_create_with_name(PurpleConnection *gc, const gchar *name)
 	qq_data *qd;
 	g_return_if_fail(name != NULL);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	data_len = 7 + 1 + strlen(name) + 2 + 1 + 1 + 4;
 	data = g_newa(guint8, data_len);
 	cursor = data;
@@ -343,8 +343,8 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 	qq_data *qd;
 
 	g_return_if_fail(data != NULL);
-	g_return_if_fail(gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	read_packet_dw(data, cursor, len, &internal_group_id);
 	read_packet_dw(data, cursor, len, &external_group_id);

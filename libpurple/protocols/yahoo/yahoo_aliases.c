@@ -60,7 +60,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 {
 	struct callback_data *cb = user_data;
 	PurpleConnection *gc = cb->gc;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
@@ -107,7 +107,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 					alias = NULL;  /* No nickname, first name or last name, then you get no alias !!  */
 
 				/*  Find the local buddy that matches */
-				b = purple_find_buddy(cb->gc->account, yid);
+				b = purple_find_buddy(purple_connection_get_account(cb->gc), yid);
 
 				/*  If we don't find a matching buddy, ignore the alias !!  */
 				if (b != NULL) {
@@ -118,7 +118,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 					yu->firstname = g_strdup(fn);
 					yu->lastname = g_strdup(ln);
 					yu->nickname = g_strdup(nn);
-					b->proto_data=yu;
+					purple_object_set_protocol_data(PURPLE_OBJECT(b),yu);
 
 					/* Finally, if we received an alias, we better update the buddy list */
 					if (alias != NULL) {
@@ -143,7 +143,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 void
 yahoo_fetch_aliases(PurpleConnection *gc)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct callback_data *cb;
 	const char *url;
 	char *request, *webpage, *webaddress;
@@ -152,7 +152,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	gboolean use_whole_url = FALSE;
 
 	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	if ((purple_connection_get_account(gc)->proxy_info) && (purple_connection_get_account(gc)->proxy_info->type == PURPLE_PROXY_HTTP))
 	    use_whole_url = TRUE;
 
 	/* Using callback_data so I have access to gc in the callback function */
@@ -192,7 +192,7 @@ yahoo_update_alias_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,const
 	PurpleConnection *gc = cb->gc;
 	struct yahoo_data *yd;
 
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (len == 0 || error_message != NULL) {
@@ -242,7 +242,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	gboolean use_whole_url = FALSE;
 
 	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	if ((purple_connection_get_account(gc)->proxy_info) && (purple_connection_get_account(gc)->proxy_info->type == PURPLE_PROXY_HTTP))
 	    use_whole_url = TRUE;
 
 	g_return_if_fail(alias != NULL);
@@ -251,14 +251,14 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 
 	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n",alias, who);
 
-	buddy = purple_find_buddy(gc->account, who);
+	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 	if (buddy == NULL || buddy->proto_data == NULL) {
 		purple_debug_info("yahoo", "Missing proto_data (get_yahoo_aliases must have failed), bailing out\n");
 		return;
 	}
 
-	yd = gc->proto_data;
-	yu = buddy->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	yu = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 
 	/* Using callback_data so I have access to gc in the callback function */
 	cb = g_new0(struct callback_data, 1);
@@ -274,7 +274,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 		converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
 		content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
 		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-		                          gc->account->username, who, yu->id, converted_alias_jp);
+		                          purple_connection_get_account(gc)->username, who, yu->id, converted_alias_jp);
 		free(converted_alias_jp);
 		g_free(alias_jp);
 	}
@@ -282,7 +282,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 		escaped_alias = g_markup_escape_text(alias, strlen(alias));
 		content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
 		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-		                          gc->account->username, who, yu->id, escaped_alias);
+		                          purple_connection_get_account(gc)->username, who, yu->id, escaped_alias);
 		g_free(escaped_alias);
 	}
 

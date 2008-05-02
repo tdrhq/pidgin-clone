@@ -22,10 +22,11 @@
 
 #include "account.h"
 #include "debug.h"
-#include "cipher.h"
 #include "core.h"
 #include "conversation.h"
+#include "md5cipher.h"
 #include "request.h"
+#include "sha1cipher.h"
 #include "sslconn.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -115,12 +116,12 @@ static void allow_plaintext_auth(PurpleAccount *account)
 {
 	purple_account_set_bool(account, "auth_plain_in_clear", TRUE);
 
-	finish_plaintext_authentication(account->gc->proto_data);
+	finish_plaintext_authentication(purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account))));
 }
 
 static void disallow_plaintext_auth(PurpleAccount *account)
 {
-	purple_connection_error_reason (account->gc,
+	purple_connection_error_reason (purple_account_get_connection(account),
 		PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 		_("Server requires plaintext authentication over an unencrypted stream"));
 }
@@ -164,7 +165,7 @@ static int jabber_sasl_cb_simple(void *ctx, int id, const char **res, unsigned *
 static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
 {
 	JabberStream *js = (JabberStream *)ctx;
-	const char *pw = purple_account_get_password(js->gc->account);
+	const char *pw = purple_account_get_password(purple_connection_get_account(js->gc));
 	size_t len;
 	static sasl_secret_t *x = NULL;
 
@@ -188,7 +189,7 @@ static void allow_cyrus_plaintext_auth(PurpleAccount *account)
 {
 	purple_account_set_bool(account, "auth_plain_in_clear", TRUE);
 
-	jabber_auth_start_cyrus(account->gc->proto_data);
+	jabber_auth_start_cyrus(purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account))));
 }
 
 static gboolean auth_pass_generic(JabberStream *js, PurpleRequestFields *fields)
@@ -201,14 +202,14 @@ static gboolean auth_pass_generic(JabberStream *js, PurpleRequestFields *fields)
 
 	if (!entry || !*entry)
 	{
-		purple_notify_error(js->gc->account, NULL, _("Password is required to sign on."), NULL);
+		purple_notify_error(purple_connection_get_account(js->gc), NULL, _("Password is required to sign on."), NULL);
 		return FALSE;
 	}
 
 	if (remember)
-		purple_account_set_remember_password(js->gc->account, TRUE);
+		purple_account_set_remember_password(purple_connection_get_account(js->gc), TRUE);
 
-	purple_account_set_password(js->gc->account, entry);
+	purple_account_set_password(purple_connection_get_account(js->gc), entry);
 
 	return TRUE;
 }
@@ -221,7 +222,7 @@ static void auth_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 	if (!PURPLE_CONNECTION_IS_VALID(conn))
 		return;
 
-	js = conn->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 
 	if (!auth_pass_generic(js, fields))
 		return;
@@ -242,7 +243,7 @@ auth_old_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 	if (!PURPLE_CONNECTION_IS_VALID(conn))
 		return;
 
-	js = conn->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 
 	if (!auth_pass_generic(js, fields))
 		return;
@@ -261,7 +262,7 @@ auth_no_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 	if (!PURPLE_CONNECTION_IS_VALID(conn))
 		return;
 
-	js = conn->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 
 	/* Disable the account as the user has canceled connecting */
 	purple_account_set_enabled(conn->account, purple_core_get_ui(), FALSE);
@@ -284,7 +285,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	if (!js->gsc) {
 		secprops.max_ssf = -1;
 		secprops.maxbufsize = 4096;
-		plaintext = purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
+		plaintext = purple_account_get_bool(purple_connection_get_account(js->gc), "auth_plain_in_clear", FALSE);
 		if (!plaintext)
 			secprops.security_flags |= SASL_SEC_NOPLAINTEXT;
 	} else {
@@ -316,8 +317,8 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 * to get one
 				 */
 
-				if (!purple_account_get_password(js->gc->account)) {
-					purple_account_request_password(js->gc->account, G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
+				if (!purple_account_get_password(purple_connection_get_account(js->gc))) {
+					purple_account_request_password(purple_connection_get_account(js->gc), G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
 					return;
 
 				/* If we've got a password, but aren't sending
@@ -326,11 +327,11 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 */
 				} else if (!plaintext) {
 					char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-							js->gc->account->username);
+							purple_connection_get_account(js->gc)->username);
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							msg,
-							1, js->gc->account, NULL, NULL, js->gc->account,
+							1, purple_connection_get_account(js->gc), NULL, NULL, purple_connection_get_account(js->gc),
 							allow_cyrus_plaintext_auth,
 							disallow_plaintext_auth);
 					g_free(msg);
@@ -445,7 +446,7 @@ jabber_sasl_build_callbacks(JabberStream *js)
 	js->sasl_cb[id].context = (void *)js;
 	id++;
 
-	if (purple_account_get_password(js->gc->account) != NULL ) {
+	if (purple_account_get_password(purple_connection_get_account(js->gc)) != NULL ) {
 		js->sasl_cb[id].id = SASL_CB_PASS;
 		js->sasl_cb[id].proc = jabber_sasl_cb_secret;
 		js->sasl_cb[id].context = (void *)js;
@@ -527,9 +528,9 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	} else if(plain) {
 		js->auth_type = JABBER_AUTH_PLAIN;
 
-		if(js->gsc == NULL && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
+		if(js->gsc == NULL && !purple_account_get_bool(purple_connection_get_account(js->gc), "auth_plain_in_clear", FALSE)) {
 			char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-					js->gc->account->username);
+					purple_connection_get_account(js->gc)->username);
 			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 					_("Plaintext Authentication"),
 					msg,
@@ -567,8 +568,8 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 					!strcmp(err_code, "401")) {
 			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			/* Clear the pasword if it isn't being saved */
-			if (!purple_account_get_remember_password(js->gc->account))
-				purple_account_set_password(js->gc->account, NULL);
+			if (!purple_account_get_remember_password(purple_connection_get_account(js->gc)))
+				purple_account_set_password(purple_connection_get_account(js->gc), NULL);
 		}
 
 		purple_connection_error_reason (js->gc, reason, msg);
@@ -585,23 +586,21 @@ static void
 auth_hmac_md5(const char *challenge, size_t challenge_len, const char *key, size_t key_len, guchar *digest)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	int i;
 	/* inner padding - key XORd with ipad */
 	unsigned char k_ipad[65];    
 	/* outer padding - key XORd with opad */
 	unsigned char k_opad[65];    
 
-	cipher = purple_ciphers_find_cipher("md5");
+	cipher = purple_md5_cipher_new();
 
 	/* if key is longer than 64 bytes reset it to key=MD5(key) */
 	if (strlen(key) > 64) {
 		guchar keydigest[16];
 
-		context = purple_cipher_context_new(cipher, NULL);
-		purple_cipher_context_append(context, (const guchar *)key, strlen(key));
-		purple_cipher_context_digest(context, 16, keydigest, NULL);
-		purple_cipher_context_destroy(context);
+		purple_cipher_append(cipher, (const guchar *)key, strlen(key));
+		purple_cipher_digest(cipher, 16, keydigest, NULL);
+		purple_cipher_reset(cipher);
 
 		key = (char *)keydigest;
 		key_len = 16;
@@ -631,18 +630,16 @@ auth_hmac_md5(const char *challenge, size_t challenge_len, const char *key, size
 	}
 
 	/* perform inner MD5 */
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, k_ipad, 64); /* start with inner pad */
-	purple_cipher_context_append(context, (const guchar *)challenge, challenge_len); /* then text of datagram */
-	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 1st pass */
-	purple_cipher_context_destroy(context);
+	purple_cipher_append(cipher, k_ipad, 64); /* start with inner pad */
+	purple_cipher_append(cipher, (const guchar *)challenge, challenge_len); /* then text of datagram */
+	purple_cipher_digest(cipher, 16, digest, NULL); /* finish up 1st pass */
+	purple_cipher_reset(cipher);
 
-	/* perform outer MD5 */	
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, k_opad, 64); /* start with outer pad */
-	purple_cipher_context_append(context, digest, 16); /* then results of 1st hash */
-	purple_cipher_context_digest(context, 16, digest, NULL); /* finish up 2nd pass */
-	purple_cipher_context_destroy(context);
+	/* perform outer MD5 */
+	purple_cipher_append(cipher, k_opad, 64); /* start with outer pad */
+	purple_cipher_append(cipher, digest, 16); /* then results of 1st hash */
+	purple_cipher_digest(cipher, 16, digest, NULL); /* finish up 2nd pass */
+	g_object_unref(G_OBJECT(cipher));
 }
 
 static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
@@ -665,6 +662,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
 		if(js->stream_id && xmlnode_get_child(query, "digest")) {
+			PurpleCipher *cipher;
 			unsigned char hashval[20];
 			char *s, h[41], *p;
 			int i;
@@ -679,8 +677,10 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
 
-			purple_cipher_digest_region("sha1", (guchar *)s, strlen(s),
-									  sizeof(hashval), hashval, NULL);
+			cipher = purple_sha1_cipher_new();
+			purple_cipher_append(cipher, (guchar *)s, strlen(s));
+			purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+			g_object_unref(G_OBJECT(cipher));
 
 			p = h;
 			for(i=0; i<20; i++, p+=2)
@@ -720,7 +720,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			jabber_iq_send(iq);
 
 		} else if(xmlnode_get_child(query, "password")) {
-			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account,
+			if(js->gsc == NULL && !purple_account_get_bool(purple_connection_get_account(js->gc),
 						"auth_plain_in_clear", FALSE)) {
 				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 											js->gc->account->username);
@@ -755,8 +755,8 @@ void jabber_auth_start_old(JabberStream *js)
 	 * password prompting here
 	 */
 
-	if (!purple_account_get_password(js->gc->account)) {
-		purple_account_request_password(js->gc->account, G_CALLBACK(auth_old_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
+	if (!purple_account_get_password(purple_connection_get_account(js->gc))) {
+		purple_account_request_password(purple_connection_get_account(js->gc), G_CALLBACK(auth_old_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
 		return;
 	}
 #endif
@@ -835,7 +835,6 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar result[16];
 	size_t a1len;
 
@@ -850,35 +849,34 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		convpasswd = g_strdup(passwd);
 	}
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
+	cipher = purple_md5_cipher_new();
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd ? convpasswd : "");
-	purple_cipher_context_append(context, (const guchar *)x, strlen(x));
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_append(cipher, (const guchar *)x, strlen(x));
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
 	g_memmove(a1, result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a1, a1len);
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)a1, a1len);
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
 
 	ha1 = purple_base16_encode(result, 16);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)a2, strlen(a2));
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)a2, strlen(a2));
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
 
 	ha2 = purple_base16_encode(result, 16);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
-	purple_cipher_context_reset(context, NULL);
-	purple_cipher_context_append(context, (const guchar *)kd, strlen(kd));
-	purple_cipher_context_digest(context, sizeof(result), result, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, (const guchar *)kd, strlen(kd));
+	purple_cipher_digest(cipher, sizeof(result), result, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	z = purple_base16_encode(result, 16);
 

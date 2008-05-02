@@ -720,7 +720,7 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 			return TCL_ERROR;
 		}
 		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefHandle,
-							    purple_connections_get_handle()));
+							    NULL));
 		break;
 	case CMD_CONN_LIST:
 		if (objc != 2) {

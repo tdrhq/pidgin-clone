@@ -171,9 +171,11 @@ purple_value_dup(const PurpleValue *value)
 			purple_value_set_string(new_value, purple_value_get_string(value));
 			break;
 
+#if 0
 		case PURPLE_TYPE_OBJECT:
 			purple_value_set_object(new_value, purple_value_get_object(value));
 			break;
+#endif
 
 		case PURPLE_TYPE_POINTER:
 			purple_value_set_pointer(new_value, purple_value_get_pointer(value));

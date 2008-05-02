@@ -504,8 +504,11 @@ wpurple_get_connected_network_count(void)
 static gboolean wpurple_network_change_thread_cb(gpointer data)
 {
 	gint new_count;
+#if 0
 	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();
-
+#else
+	PurpleConnectionUiOps *ui_ops = NULL;
+#endif
 	new_count = wpurple_get_connected_network_count();
 
 	if (new_count < 0)
@@ -616,7 +619,11 @@ nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 {
 	static libnm_glib_state prev = LIBNM_NO_DBUS;
 	libnm_glib_state current;
+#if 0
 	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();
+#else
+	PurpleConnectionUiOps *ui_ops = NULL;
+#endif
 
 	current = libnm_glib_get_network_state(ctx);
 	purple_debug_info("network","Entering nm_callback_func!\n");

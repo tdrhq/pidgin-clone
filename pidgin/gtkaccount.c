@@ -28,6 +28,7 @@
 #include "pidgin.h"
 
 #include "account.h"
+#include "accountmanager.h"
 #include "accountopt.h"
 #include "core.h"
 #include "debug.h"
@@ -141,7 +142,7 @@ typedef struct
 static AccountsWindow *accounts_window = NULL;
 static GHashTable *account_pref_wins;
 
-static void add_account_to_liststore(PurpleAccount *account, gpointer user_data);
+static void add_account_to_liststore(PurpleAccountManager *manager, PurpleAccount *account, gpointer user_data);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  PurpleAccount *account, GdkPixbuf *global_buddyicon);
 
@@ -529,9 +530,9 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Do not let the user change the protocol/screenname while connected. */
 	update_editable(NULL, dialog);
-	purple_signal_connect(purple_connections_get_handle(), "signing-on", dialog,
+	purple_signal_connect(NULL, "signing-on", dialog,
 					G_CALLBACK(update_editable), dialog);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off", dialog,
+	purple_signal_connect(NULL, "signed-off", dialog,
 					G_CALLBACK(update_editable), dialog);
 }
 
@@ -1583,7 +1584,7 @@ accounts_window_find_account_in_treemodel(GtkTreeIter *iter, PurpleAccount *acco
 }
 
 static void
-account_removed_cb(PurpleAccount *account, gpointer user_data)
+account_removed_cb(PurpleAccountManager *manager, PurpleAccount *account, gpointer user_data)
 {
 	AccountPrefsDialog *dialog;
 	GtkTreeIter iter;
@@ -2010,7 +2011,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 }
 
 static void
-add_account_to_liststore(PurpleAccount *account, gpointer user_data)
+add_account_to_liststore(PurpleAccountManager *manager, PurpleAccount *account, gpointer user_data)
 {
 	GtkTreeIter iter;
 	GdkPixbuf *global_buddyicon = user_data;
@@ -2044,7 +2045,7 @@ populate_accounts_list(AccountsWindow *dialog)
 
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		ret = TRUE;
-		add_account_to_liststore((PurpleAccount *)l->data, global_buddyicon);
+		add_account_to_liststore(NULL, (PurpleAccount *)l->data, global_buddyicon);
 	}
 
 	if (global_buddyicon != NULL)
@@ -2565,18 +2566,26 @@ pidgin_account_init(void)
 										PURPLE_SUBTYPE_ACCOUNT));
 
 	/* Setup some purple signal handlers. */
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						pidgin_account_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+	purple_signal_connect(NULL, "signed-off",
 						pidgin_account_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
+#if 0
 	purple_signal_connect(purple_accounts_get_handle(), "account-added",
 						pidgin_account_get_handle(),
 						PURPLE_CALLBACK(add_account_to_liststore), NULL);
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 						pidgin_account_get_handle(),
 						PURPLE_CALLBACK(account_removed_cb), NULL);
+#else
+	g_signal_connect(purple_account_manager_get(), "account-added",
+			G_CALLBACK(add_account_to_liststore), NULL);
+	g_signal_connect(purple_account_manager_get(), "account-removed",
+			G_CALLBACK(account_removed_cb), NULL);
+#endif
+
 	purple_signal_connect(purple_accounts_get_handle(), "account-disabled",
 						pidgin_account_get_handle(),
 						PURPLE_CALLBACK(account_abled_cb), GINT_TO_POINTER(FALSE));

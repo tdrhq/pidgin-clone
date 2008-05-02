@@ -186,7 +186,10 @@ sighandler(int sig)
 	switch (sig) {
 	case SIGHUP:
 		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+#warning FIXME: use the connection-manager
+#if 0
 		purple_connections_disconnect_all();
+#endif
 		break;
 	case SIGSEGV:
 		fprintf(stderr, "%s", segfault_message);
@@ -216,7 +219,10 @@ sighandler(int sig)
 		break;
 	default:
 		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+#warning FIXME: use the connection-manager
+#if 0
 		purple_connections_disconnect_all();
+#endif
 
 		purple_plugins_unload_all();
 
@@ -298,7 +304,9 @@ pidgin_ui_init(void)
 	purple_privacy_set_ui_ops(pidgin_privacy_get_ui_ops());
 	purple_request_set_ui_ops(pidgin_request_get_ui_ops());
 	purple_sound_set_ui_ops(pidgin_sound_get_ui_ops());
+#if 0
 	purple_connections_set_ui_ops(pidgin_connections_get_ui_ops());
+#endif
 	purple_whiteboard_set_ui_ops(pidgin_whiteboard_get_ui_ops());
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 	purple_idle_set_ui_ops(pidgin_idle_get_ui_ops());

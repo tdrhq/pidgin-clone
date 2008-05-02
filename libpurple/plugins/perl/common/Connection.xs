@@ -8,7 +8,7 @@ BOOT:
 	HV *stash = gv_stashpv("Purple::Connection::State", 1);
 
 	static const constiv *civ, const_iv[] = {
-#define const_iv(name) {#name, (IV)PURPLE_##name}
+#define const_iv(name) {#name, (IV)PURPLE_CONNECTION_STATE_##name}
 		const_iv(DISCONNECTED),
 		const_iv(CONNECTED),
 		const_iv(CONNECTING),
@@ -94,11 +94,3 @@ purple_connections_set_ui_ops(ops)
 Purple::Connection::UiOps
 purple_connections_get_ui_ops()
 
-void
-purple_connections_init()
-
-void
-purple_connections_uninit()
-
-Purple::Handle
-purple_connections_get_handle()

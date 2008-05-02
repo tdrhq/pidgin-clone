@@ -65,7 +65,7 @@ static gboolean _qq_check_packet_set_window(guint16 seq, PurpleConnection *gc)
 	qq_data *qd;
 	guint8 *byte, mask;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	byte = &(qd->window[seq / 8]);
 	mask = (1 << (seq % 8));
 
@@ -85,7 +85,7 @@ static void _qq_process_packet_default(guint8 *buf, gint buf_len, guint16 cmd, g
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 	msg_utf8 = NULL;
@@ -115,7 +115,7 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, PurpleConnection *gc)
 
 	g_return_if_fail(buf != NULL && buf_len > 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	bytes_expected = qd->use_tcp ? QQ_TCP_HEADER_LENGTH : QQ_UDP_HEADER_LENGTH;
 
 	if (buf_len < bytes_expected) {
@@ -311,7 +311,7 @@ void qq_input_pending(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 
 	/* here we have UDP proxy suppport */

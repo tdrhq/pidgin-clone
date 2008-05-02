@@ -330,7 +330,7 @@ plugin_load(PurplePlugin *plugin)
 
 	purple_blist_set_ui_ops(blist_ui_ops);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
 
 	timer = g_timeout_add(1, load_timeout, plugin);

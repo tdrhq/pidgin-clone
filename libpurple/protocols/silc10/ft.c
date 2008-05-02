@@ -70,7 +70,7 @@ silcpurple_ftp_monitor(SilcClient client,
 		     void *context)
 {
 	SilcPurpleXfer xfer = context;
-	PurpleConnection *gc = xfer->sg->gc;
+	PurpleConnection *gc = purple_account_get_connection(xfer->sg);
 	char tmp[256];
 
 	if (status == SILC_CLIENT_FILE_MONITOR_CLOSED) {
@@ -186,7 +186,7 @@ silcpurple_ftp_request_result(PurpleXfer *x)
 {
 	SilcPurpleXfer xfer = x->data;
 	SilcClientFileError status;
-	PurpleConnection *gc = xfer->sg->gc;
+	PurpleConnection *gc = purple_account_get_connection(xfer->sg);
 
 	if (purple_xfer_get_status(x) != PURPLE_XFER_STATUS_ACCEPTED)
 		return;

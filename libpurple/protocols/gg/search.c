@@ -135,7 +135,7 @@ void ggp_search_destroy(GGPSearches *searches)
 /* guint32 ggp_search_start(PurpleConnection *gc, GGPSearchForm *form) {{{ */
 guint32 ggp_search_start(PurpleConnection *gc, GGPSearchForm *form)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gg_pubdir50_t req;
 	guint seq;
 
