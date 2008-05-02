@@ -156,11 +156,11 @@ purple_builtheaders = purple.h version.h
 
 marshallers.h: marshallers.list
 	@echo "Generating marshallers.h"
-	$(GLIB_GENMARSHAL) --prefix=purple_smarshal marshallers.list --header > marshallers.h
+	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
 
 marshallers.c: marshallers.list
 	@echo "Generating marshallers.c"
-	$(GLIB_GENMARSHAL) --prefix=purple_smarshal marshallers.list --body > marshallers.c
+	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body > marshallers.c
 
 if ENABLE_DBUS
 
