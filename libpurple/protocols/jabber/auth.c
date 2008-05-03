@@ -55,7 +55,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("Server requires TLS/SSL for login.  No TLS/SSL support found."));
 			return TRUE;
-		} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE)) {
+		} else if(purple_account_get_bool(purple_connection_get_account(js->gc), "require_tls", FALSE)) {
 			purple_connection_error_reason (js->gc,
 				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("You require encryption, but no TLS/SSL support found."));
@@ -265,7 +265,7 @@ auth_no_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 
 	/* Disable the account as the user has canceled connecting */
-	purple_account_set_enabled(conn->account, purple_core_get_ui(), FALSE);
+	purple_account_set_enabled(purple_connection_get_account(conn), purple_core_get_ui(), FALSE);
 }
 
 static void jabber_auth_start_cyrus(JabberStream *js)
@@ -723,7 +723,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			if(js->gsc == NULL && !purple_account_get_bool(purple_connection_get_account(js->gc),
 						"auth_plain_in_clear", FALSE)) {
 				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-											js->gc->account->username);
+											purple_connection_get_account(js->gc)->username);
 				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 						_("Plaintext Authentication"),
 						msg,

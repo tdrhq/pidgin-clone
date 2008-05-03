@@ -43,10 +43,10 @@
 #include "util.h"
 #include "xmlnode.h"
 
-typedef struct _PurpleAccountPrivate
+struct _PurpleAccountPrivate
 {
 	PurpleConnectionErrorInfo *current_error;
-} PurpleAccountPrivate;
+};
 
 #define PURPLE_ACCOUNT_GET_PRIVATE(account) \
 	((PurpleAccountPrivate *) (account->priv))
