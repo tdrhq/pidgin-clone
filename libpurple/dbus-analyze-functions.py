@@ -494,6 +494,9 @@ class BindingSet:
             if len(words) == 0:             # empty line
                 continue
             if line[0] == "#":              # preprocessor directive
+                if words[0] == "#if" and words[1] == "0":
+                    while line != "#endif":
+                        line = self.inputiter.next().strip()
                 continue
             if words[0] in ["typedef", "struct", "enum", "static"]:
                 continue
