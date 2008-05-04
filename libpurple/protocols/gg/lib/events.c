@@ -1339,7 +1339,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			struct gg_welcome *w;
 			struct gg_login60 l;
 			unsigned int hash;
-			char *password = purple_account_get_password(sess);
+			char *password = sess->password;
 			int ret;
 			
 			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() GG_STATE_READING_KEY\n");
@@ -1406,8 +1406,8 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 	
 			free(h);
 
-			free(purple_account_get_password(sess));
-			purple_account_get_password(sess) = NULL;
+			free(sess->password);
+			sess->password = NULL;
 
 			{
 				struct in_addr dcc_ip;

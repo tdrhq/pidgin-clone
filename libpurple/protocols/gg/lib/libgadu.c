@@ -968,13 +968,13 @@ struct gg_session *gg_login(const struct gg_login_params *p)
 
 	memset(sess, 0, sizeof(struct gg_session));
 
-	if (!purple_account_get_password(p) || !p->uin) {
+	if (!p->password || !p->uin) {
 		gg_debug(GG_DEBUG_MISC, "// gg_login() invalid arguments. uin and password needed\n");
 		errno = EFAULT;
 		goto fail;
 	}
 
-	if (!(purple_account_get_password(sess) = strdup(purple_account_get_password(p)))) {
+	if (!(sess->password = strdup(p->password))) {
 		gg_debug(GG_DEBUG_MISC, "// gg_login() not enough memory for password\n");
 		goto fail;
 	}
@@ -1137,8 +1137,8 @@ struct gg_session *gg_login(const struct gg_login_params *p)
 
 fail:
 	if (sess) {
-		if (purple_account_get_password(sess))
-			free(purple_account_get_password(sess));
+		if (sess->password)
+			free(sess->password);
 		if (sess->initial_descr)
 			free(sess->initial_descr);
 		free(sess);
@@ -1161,8 +1161,8 @@ void gg_free_session(struct gg_session *sess)
 
 	/* XXX dopisaæ zwalnianie i zamykanie wszystkiego, co mog³o zostaæ */
 
-	if (purple_account_get_password(sess))
-		free(purple_account_get_password(sess));
+	if (sess->password)
+		free(sess->password);
 	
 	if (sess->initial_descr)
 		free(sess->initial_descr);
