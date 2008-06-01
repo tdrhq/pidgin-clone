@@ -30,6 +30,10 @@
 #include "gnttree.h"
 #include "gntutils.h"
 
+#ifdef USE_ENCHANT
+#include <enchant/enchant.h>
+#endif
+
 enum
 {
 	SIG_TEXT_CHANGED,
@@ -52,6 +56,15 @@ struct _GntEntryKillRing
 {
 	GString *buffer;
 	GntEntryAction last;
+};
+
+/* XXX: put #ifdef around the struct? */
+struct _GntEntryEnchant
+{
+#ifdef USE_ENCHANT
+	EnchantBroker *broker;
+	EnchantDict *dict;
+#endif
 };
 
 static guint signals[SIGS] = { 0 };
@@ -265,6 +278,85 @@ show_suggest_dropdown(GntEntry *entry)
 	return TRUE;
 }
 
+#ifdef USE_ENCHANT
+/* copy of get_beginning_of_word, but not GntEntry specific
+ * TODO: refactor with get_beginning_of_word
+ */
+static char *
+get_beginning_of_prev_word(char *here, char *start)
+{
+	char *s = here;
+	while (s > start)
+	{
+		char *t = g_utf8_find_prev_char(start, s);
+		if (g_unichar_isspace(*t) || g_unichar_ispunct(*t))
+			break;
+		s = t;
+	}
+	return s;
+}
+
+static char *
+get_beginning_of_next_word(char *here, char *end)
+{
+	char *s = here;
+	char *t;
+	gboolean got_space;
+
+	got_space = g_unichar_isspace(*s) || g_unichar_ispunct(*s);
+	while (s < end && !got_space) {
+		t = g_utf8_find_next_char(s, end);
+		if (g_unichar_isspace(*t) || g_unichar_ispunct(*t))
+			got_space = TRUE;
+		s = t;
+	}
+	if(got_space) {
+		while (s < end) {
+			t = g_utf8_find_next_char(s, end);
+			s = t;
+			if(!t)
+				break;
+			if (!g_unichar_isspace(*t) && !g_unichar_ispunct(*t))
+				break;
+		}
+	} else {
+		s = NULL;
+	}
+	return s;
+}
+
+static char *
+get_end_of_word(char *here, char *end)
+{
+	char *s = here;
+	char *t;
+
+	while (s < end) {
+		t = g_utf8_find_next_char(s, end);
+		if (!t || g_unichar_isspace(*t) || g_unichar_ispunct(*t))
+			break;
+		s = t;
+	}
+	return s;
+}
+
+static gboolean
+check_word(GntEntry *entry, char *start, char *end) {
+	gboolean retval = TRUE;
+
+	if (!entry->enchant->dict)
+		return FALSE;
+
+	if (g_unichar_isdigit(*start) == FALSE) { /* don't check numbers */
+		if (enchant_dict_check(entry->enchant->dict, start, end - start + 1) != 0) {
+			retval = FALSE;
+		}
+	}
+
+	return retval;
+}
+#endif
+
 static void
 gnt_entry_draw(GntWidget *widget)
 {
@@ -282,9 +374,86 @@ gnt_entry_draw(GntWidget *widget)
 		mvwhline(widget->window, 0, 0, gnt_ascii_only() ? '*' : ACS_BULLET,
 				g_utf8_pointer_to_offset(entry->scroll, entry->end));
 	}
-	else
-		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+	else {
+#ifdef USE_ENCHANT
+		/* TODO: maybe want to move this to a different location and use some
+		 * sort of tags to indicate areas of misspellings and then print the tags
+		 * out here so the spellchecking isn't always performed for each word on
+		 * a gnt_entry_draw */
+		char *s, *e;
+		char *str;
+		/* don't try anything if the box is empty */
+		if(entry->start != entry->end) {
+			wmove(widget->window, 0, 0);
+			/* if scroll starts on a non-letter, find the next word */
+			if(g_unichar_isspace(*entry->scroll) || g_unichar_ispunct(*entry->scroll)) {
+				s = get_beginning_of_next_word(entry->scroll, entry->end);
+				if(!s) {
+					s = entry->end;
+				}
+				str = g_strndup(entry->scroll, s - entry->scroll);
+				waddstr(widget->window, str);
+				g_free(str);
+			} else {
+				s = get_beginning_of_prev_word(entry->scroll, entry->start);
+			}
+			e = get_end_of_word(s, entry->end);
 
+			/* TODO: pick better attribute for misspelled words */
+			if(!check_word(entry, s, e)) {
+				wattron(widget->window, A_REVERSE);
+			} else {
+				wattroff(widget->window, A_REVERSE);
+			}
+			/* first word might be special case if scroll is in middle of word */
+			if(s < entry->scroll) {
+				str = g_strndup(entry->scroll, e - entry->scroll + 1);
+			} else {
+				str = g_strndup(s, e - s + 1);
+			}
+			waddstr(widget->window, str);
+			g_free(str);
+
+			s = g_utf8_find_next_char(e, entry->end);
+			while(s) {
+				/* print the whitespace and punctuation characters */
+				wattroff(widget->window, A_REVERSE);
+				e = get_beginning_of_next_word(s, entry->end);
+				if(!e && s < entry->end) {
+					/* the end is all non-letter characters */
+					str = g_strndup(s, entry->end - s + 1);
+					waddstr(widget->window, str);
+					g_free(str);
+					break;
+				} else if (e) {
+					/* there are more words */
+					str = g_strndup(s, e - s);
+					waddstr(widget->window, str);
+					g_free(str);
+					s = e;
+					e = get_end_of_word(s, entry->end);
+
+					/* TODO: pick better attribute for misspelled words */
+					if(!check_word(entry, s, e)) {
+						wattron(widget->window, A_REVERSE);
+					} else {
+						wattroff(widget->window, A_REVERSE);
+					}
+					str = g_strndup(s, e - s + 1);
+					waddstr(widget->window, str);
+					g_free(str);
+					s = g_utf8_find_next_char(e, entry->end);
+				} else {
+					break;
+				}
+			}
+		}
+#else
+		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+#endif
+	}
+
+	wattroff(widget->window, A_REVERSE);
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
 		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
@@ -944,6 +1113,46 @@ new_killring(void)
 	return kr;
 }
 
+static GntEntryEnchant *
+new_enchant(void)
+{
+	GntEntryEnchant *e = NULL;
+#ifdef USE_ENCHANT
+    const char *err;
+	const char *lang;
+
+	e = g_new0(GntEntryEnchant, 1);
+	e->broker = enchant_broker_init();
+	if (e->broker == NULL) {
+		g_warning("GntEntry: error enchant_broker_init()\n");
+	} else {
+		lang = g_getenv("LANG");
+		if (lang) {
+			if (g_strncasecmp(lang, "C", 1) == 0)
+				lang = NULL;
+			else if (lang[0] == 0)
+				lang = NULL;
+		}
+
+		if (!lang) {
+			lang = "en";
+		}
+
+		e->dict = enchant_broker_request_dict(e->broker, lang);
+
+		if (e->dict == NULL) {
+			err = enchant_broker_get_error(e->broker);
+			if(err != NULL) {
+				g_warning("GntEntry: couldn't get dictionary for %s: %s\n", lang, err);
+			} else {
+				g_warning("GntEntry: couldn't get dictionary for %s\n", lang);
+			}
+		}
+	}
+#endif
+	return e;
+}
+
 static void
 gnt_entry_init(GTypeInstance *instance, gpointer class)
 {
@@ -960,6 +1169,7 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 	entry->always = FALSE;
 	entry->suggests = NULL;
 	entry->killring = new_killring();
+	entry->enchant = new_enchant();
 
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(entry),
 			GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | GNT_WIDGET_CAN_TAKE_FOCUS);

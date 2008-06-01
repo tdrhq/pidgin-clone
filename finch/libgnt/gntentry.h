@@ -45,10 +45,14 @@
 
 #define	ENTRY_CHAR		'_'			/* The character to use to fill in the blank places */
 
+/* XXX: HACK */
+#define USE_ENCHANT
+
 typedef struct _GntEntry			GntEntry;
 typedef struct _GntEntryPriv		GntEntryPriv;
 typedef struct _GntEntryClass	GntEntryClass;
 typedef struct _GntEntryKillRing    GntEntryKillRing;
+typedef struct _GntEntryEnchant	GntEntryEnchant;
 
 typedef enum
 {
@@ -86,6 +90,9 @@ struct _GntEntry
 	gboolean always;    /* Should the list of suggestions show at all times, or only on tab-press? */
 	GntWidget *ddown;   /* The dropdown with the suggested list */
 	GntEntryKillRing *killring; /**< @since 2.3.0 */
+#ifdef USE_ENCHANT
+	GntEntryEnchant *enchant; /**< holds Enchant info for spell checking */
+#endif
 };
 
 struct _GntEntryClass
