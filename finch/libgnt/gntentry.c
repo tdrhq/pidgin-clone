@@ -381,6 +381,8 @@ gnt_entry_draw(GntWidget *widget)
 		 * out here so the spellchecking isn't always performed for each word on
 		 * a gnt_entry_draw */
 		char *s, *e;
+		int miss = gnt_color_pair(GNT_COLOR_MISSPELL);
+		int missd = gnt_color_pair(GNT_COLOR_MISSPELL_D);
 		/* only spell check if enabled and box isn't empty */
 		if(entry->spell->enable && (entry->start != entry->end)) {
 			wmove(widget->window, 0, 0);
@@ -398,9 +400,9 @@ gnt_entry_draw(GntWidget *widget)
 
 			/* TODO: pick better attribute for misspelled words */
 			if(!check_word(entry, s, e)) {
-				wattron(widget->window, A_REVERSE);
+				wattron(widget->window, (focus ? miss : missd));
 			} else {
-				wattroff(widget->window, A_REVERSE);
+				wattroff(widget->window, (focus ? miss : missd));
 			}
 			/* first word might be special case if scroll is in middle of word */
 			if(s < entry->scroll) {
@@ -412,7 +414,7 @@ gnt_entry_draw(GntWidget *widget)
 			s = g_utf8_find_next_char(e, entry->end);
 			while(s) {
 				/* print the whitespace and punctuation characters */
-				wattroff(widget->window, A_REVERSE);
+				wattroff(widget->window, (focus ? miss : missd));
 				e = get_beginning_of_next_word(s, entry->end);
 				if(!e && s < entry->end) {
 					/* the end is all non-letter characters */
@@ -426,9 +428,9 @@ gnt_entry_draw(GntWidget *widget)
 
 					/* TODO: pick better attribute for misspelled words */
 					if(!check_word(entry, s, e)) {
-						wattron(widget->window, A_REVERSE);
+						wattron(widget->window, (focus ? miss : missd));
 					} else {
-						wattroff(widget->window, A_REVERSE);
+						wattroff(widget->window, (focus ? miss : missd));
 					}
 					waddnstr(widget->window, s, e - s + 1);
 					s = g_utf8_find_next_char(e, entry->end);
@@ -437,14 +439,14 @@ gnt_entry_draw(GntWidget *widget)
 				}
 			}
 		} else {
+			wattroff(widget->window, (focus ? miss : missd));
 			mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
 		}
+		wattroff(widget->window, (focus ? miss : missd));
 #else
 		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
 #endif
 	}
-
-	wattroff(widget->window, A_REVERSE);
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
 		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
