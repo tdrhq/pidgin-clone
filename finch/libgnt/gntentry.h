@@ -52,7 +52,7 @@ typedef struct _GntEntry			GntEntry;
 typedef struct _GntEntryPriv		GntEntryPriv;
 typedef struct _GntEntryClass	GntEntryClass;
 typedef struct _GntEntryKillRing    GntEntryKillRing;
-typedef struct _GntEntryEnchant	GntEntryEnchant;
+typedef struct _GntEntrySpell	GntEntrySpell;
 
 typedef enum
 {
@@ -90,9 +90,7 @@ struct _GntEntry
 	gboolean always;    /* Should the list of suggestions show at all times, or only on tab-press? */
 	GntWidget *ddown;   /* The dropdown with the suggested list */
 	GntEntryKillRing *killring; /**< @since 2.3.0 */
-#ifdef USE_ENCHANT
-	GntEntryEnchant *enchant; /**< holds Enchant info for spell checking */
-#endif
+	GntEntrySpell *spell; /**< holds Enchant info for spell checking */
 };
 
 struct _GntEntryClass
@@ -220,6 +218,14 @@ void gnt_entry_add_suggest(GntEntry *entry, const char *text);
  * @param text   The item to remove from the suggestion list.
  */
 void gnt_entry_remove_suggest(GntEntry *entry, const char *text);
+
+/**
+ * Set whether to enable spell checking
+ *
+ * @param entry    The entry box.
+ * @param enable   @c TRUE if spell checking should be enabled.
+ */
+void gnt_entry_set_spell_enable(GntEntry *entry, gboolean enable);
 
 G_END_DECLS
 

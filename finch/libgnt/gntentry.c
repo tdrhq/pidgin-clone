@@ -58,13 +58,13 @@ struct _GntEntryKillRing
 	GntEntryAction last;
 };
 
-/* XXX: put #ifdef around the struct? */
-struct _GntEntryEnchant
+struct _GntEntrySpell
 {
 #ifdef USE_ENCHANT
 	EnchantBroker *broker;
 	EnchantDict *dict;
 #endif
+	gboolean enable;
 };
 
 static guint signals[SIGS] = { 0 };
@@ -289,7 +289,7 @@ get_beginning_of_prev_word(char *here, char *start)
 	while (s > start)
 	{
 		char *t = g_utf8_find_prev_char(start, s);
-		if (g_unichar_isspace(*t) || g_unichar_ispunct(*t))
+		if (g_unichar_isspace(g_utf8_get_char(t)) || g_unichar_ispunct(g_utf8_get_char(t)))
 			break;
 		s = t;
 	}
@@ -303,10 +303,10 @@ get_beginning_of_next_word(char *here, char *end)
 	char *t;
 	gboolean got_space;
 
-	got_space = g_unichar_isspace(*s) || g_unichar_ispunct(*s);
+	got_space = g_unichar_isspace(g_utf8_get_char(s)) || g_unichar_ispunct(g_utf8_get_char(s));
 	while (s < end && !got_space) {
 		t = g_utf8_find_next_char(s, end);
-		if (g_unichar_isspace(*t) || g_unichar_ispunct(*t))
+		if (g_unichar_isspace(g_utf8_get_char(t)) || g_unichar_ispunct(g_utf8_get_char(t)))
 			got_space = TRUE;
 		s = t;
 	}
@@ -316,7 +316,7 @@ get_beginning_of_next_word(char *here, char *end)
 			s = t;
 			if(!t)
 				break;
-			if (!g_unichar_isspace(*t) && !g_unichar_ispunct(*t))
+			if (!g_unichar_isspace(g_utf8_get_char(t)) && !g_unichar_ispunct(g_utf8_get_char(t)))
 				break;
 		}
 	} else {
@@ -333,7 +333,7 @@ get_end_of_word(char *here, char *end)
 
 	while (s < end) {
 		t = g_utf8_find_next_char(s, end);
-		if (!t || g_unichar_isspace(*t) || g_unichar_ispunct(*t))
+		if (!t || g_unichar_isspace(g_utf8_get_char(t)) || g_unichar_ispunct(g_utf8_get_char(t)))
 			break;
 		s = t;
 	}
@@ -344,11 +344,11 @@ static gboolean
 check_word(GntEntry *entry, char *start, char *end) {
 	gboolean retval = TRUE;
 
-	if (!entry->enchant->dict)
+	if (!entry->spell->dict)
 		return FALSE;
 
 	if (g_unichar_isdigit(*start) == FALSE) { /* don't check numbers */
-		if (enchant_dict_check(entry->enchant->dict, start, end - start + 1) != 0) {
+		if (enchant_dict_check(entry->spell->dict, start, end - start + 1) != 0) {
 			retval = FALSE;
 		}
 	}
@@ -381,19 +381,16 @@ gnt_entry_draw(GntWidget *widget)
 		 * out here so the spellchecking isn't always performed for each word on
 		 * a gnt_entry_draw */
 		char *s, *e;
-		char *str;
-		/* don't try anything if the box is empty */
-		if(entry->start != entry->end) {
+		/* only spell check if enabled and box isn't empty */
+		if(entry->spell->enable && (entry->start != entry->end)) {
 			wmove(widget->window, 0, 0);
 			/* if scroll starts on a non-letter, find the next word */
-			if(g_unichar_isspace(*entry->scroll) || g_unichar_ispunct(*entry->scroll)) {
+			if(g_unichar_isspace(g_utf8_get_char(entry->scroll)) || g_unichar_ispunct(g_utf8_get_char(entry->scroll))) {
 				s = get_beginning_of_next_word(entry->scroll, entry->end);
 				if(!s) {
 					s = entry->end;
 				}
-				str = g_strndup(entry->scroll, s - entry->scroll);
-				waddstr(widget->window, str);
-				g_free(str);
+				waddnstr(widget->window, entry->scroll, s - entry->scroll);
 			} else {
 				s = get_beginning_of_prev_word(entry->scroll, entry->start);
 			}
@@ -407,12 +404,10 @@ gnt_entry_draw(GntWidget *widget)
 			}
 			/* first word might be special case if scroll is in middle of word */
 			if(s < entry->scroll) {
-				str = g_strndup(entry->scroll, e - entry->scroll + 1);
+				waddnstr(widget->window, entry->scroll, e - entry->scroll + 1);
 			} else {
-				str = g_strndup(s, e - s + 1);
+				waddnstr(widget->window, s, e - s + 1);
 			}
-			waddstr(widget->window, str);
-			g_free(str);
 
 			s = g_utf8_find_next_char(e, entry->end);
 			while(s) {
@@ -421,15 +416,11 @@ gnt_entry_draw(GntWidget *widget)
 				e = get_beginning_of_next_word(s, entry->end);
 				if(!e && s < entry->end) {
 					/* the end is all non-letter characters */
-					str = g_strndup(s, entry->end - s + 1);
-					waddstr(widget->window, str);
-					g_free(str);
+					waddnstr(widget->window, s, entry->end - s + 1);
 					break;
 				} else if (e) {
 					/* there are more words */
-					str = g_strndup(s, e - s);
-					waddstr(widget->window, str);
-					g_free(str);
+					waddnstr(widget->window, s, e - s);
 					s = e;
 					e = get_end_of_word(s, entry->end);
 
@@ -439,14 +430,14 @@ gnt_entry_draw(GntWidget *widget)
 					} else {
 						wattroff(widget->window, A_REVERSE);
 					}
-					str = g_strndup(s, e - s + 1);
-					waddstr(widget->window, str);
-					g_free(str);
+					waddnstr(widget->window, s, e - s + 1);
 					s = g_utf8_find_next_char(e, entry->end);
 				} else {
 					break;
 				}
 			}
+		} else {
+			mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
 		}
 #else
 		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
@@ -997,6 +988,17 @@ gnt_entry_destroy(GntWidget *widget)
 		gnt_widget_destroy(entry->ddown->parent);
 	}
 
+	if (entry->spell) {
+#ifdef USE_ENCHANT
+		if (entry->spell->broker) {
+			if(entry->spell->dict)
+				enchant_broker_free_dict(entry->spell->broker, entry->spell->dict);
+			enchant_broker_free(entry->spell->broker);
+		}
+#endif
+		g_free(entry->spell);
+	}
+
 	jail_killring(entry->killring);
 }
 
@@ -1113,17 +1115,17 @@ new_killring(void)
 	return kr;
 }
 
-static GntEntryEnchant *
-new_enchant(void)
+static GntEntrySpell *
+new_spell(void)
 {
-	GntEntryEnchant *e = NULL;
+	GntEntrySpell *sp = NULL;
 #ifdef USE_ENCHANT
     const char *err;
 	const char *lang;
 
-	e = g_new0(GntEntryEnchant, 1);
-	e->broker = enchant_broker_init();
-	if (e->broker == NULL) {
+	sp = g_new0(GntEntrySpell, 1);
+	sp->broker = enchant_broker_init();
+	if (sp->broker == NULL) {
 		g_warning("GntEntry: error enchant_broker_init()\n");
 	} else {
 		lang = g_getenv("LANG");
@@ -1138,10 +1140,10 @@ new_enchant(void)
 			lang = "en";
 		}
 
-		e->dict = enchant_broker_request_dict(e->broker, lang);
+		sp->dict = enchant_broker_request_dict(sp->broker, lang);
 
-		if (e->dict == NULL) {
-			err = enchant_broker_get_error(e->broker);
+		if (sp->dict == NULL) {
+			err = enchant_broker_get_error(sp->broker);
 			if(err != NULL) {
 				g_warning("GntEntry: couldn't get dictionary for %s: %s\n", lang, err);
 			} else {
@@ -1150,7 +1152,7 @@ new_enchant(void)
 		}
 	}
 #endif
-	return e;
+	return sp;
 }
 
 static void
@@ -1169,7 +1171,7 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 	entry->always = FALSE;
 	entry->suggests = NULL;
 	entry->killring = new_killring();
-	entry->enchant = new_enchant();
+	entry->spell = new_spell();
 
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(entry),
 			GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | GNT_WIDGET_CAN_TAKE_FOCUS);
@@ -1360,6 +1362,13 @@ void gnt_entry_set_word_suggest(GntEntry *entry, gboolean word)
 void gnt_entry_set_always_suggest(GntEntry *entry, gboolean always)
 {
 	entry->always = always;
+}
+
+void gnt_entry_set_spell_enable(GntEntry *entry, gboolean enable)
+{
+	if(entry->spell) {
+		entry->spell->enable = enable;
+	}
 }
 
 void gnt_entry_add_suggest(GntEntry *entry, const char *text)
