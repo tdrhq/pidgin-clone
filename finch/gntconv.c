@@ -794,6 +794,7 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_entry_set_history_length(GNT_ENTRY(ggc->entry), -1);
 	gnt_entry_set_word_suggest(GNT_ENTRY(ggc->entry), TRUE);
 	gnt_entry_set_always_suggest(GNT_ENTRY(ggc->entry), FALSE);
+	gnt_entry_set_spell_enable(GNT_ENTRY(ggc->entry), TRUE);
 
 	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(ggc->tv), ggc->entry);
 	gnt_text_view_attach_pager_widget(GNT_TEXT_VIEW(ggc->tv), ggc->entry);
