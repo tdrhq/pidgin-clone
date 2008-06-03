@@ -345,8 +345,8 @@ fi
 
 dnl Check for Enchant for spell checking
 dnl (Thanks to gedit)
-AC_ARG_ENABLE([spell],
-  AS_HELP_STRING([--disable-spell],[Disable spell plugin (default: enabled)]),
+AC_ARG_ENABLE([gntspell],
+  AS_HELP_STRING([--disable-gntspell],[Disable spell checking (default: enabled)]),
   [enable_enchant=$enableval],
   [enable_enchant=yes])
  
@@ -361,13 +361,12 @@ if test "x$enable_enchant" = "xyes" ; then
     ENCHANT_LIBS="${ENCHANT_LIBS}"
 	AC_DEFINE(USE_ENCHANT, 1, [Define if enchant spell checking is enabled.])
   else
-    AC_MSG_ERROR([Enchant library not found or too old. Use --disable-spell to build without spell plugin.])
+    AC_MSG_ERROR([Enchant library not found or too old. Use --disable-gntspell to build without spell checking.])
   fi
 else
   ENCHANT_CFLAGS=
   ENCHANT_LIBS=
 fi
- 
 AC_SUBST(ENCHANT_CFLAGS)
 AC_SUBST(ENCHANT_LIBS)
 
