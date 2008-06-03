@@ -343,6 +343,34 @@ if test "x$have_libxml" = "xno"; then
 	AC_DEFINE(NO_LIBXML, 1, [Do not have libxml2.])
 fi
 
+dnl Check for Enchant for spell checking
+dnl (Thanks to gedit)
+AC_ARG_ENABLE([spell],
+  AS_HELP_STRING([--disable-spell],[Disable spell plugin (default: enabled)]),
+  [enable_enchant=$enableval],
+  [enable_enchant=yes])
+ 
+if test "x$enable_enchant" = "xyes" ; then
+ 
+  PKG_CHECK_MODULES(ENCHANT, [enchant >= 1.3.0], \
+       have_enchant=yes, have_enchant=no)
+ 
+  if test "x$have_enchant" = "xyes"; then
+ 
+    ENCHANT_CFLAGS="${ENCHANT_CFLAGS}"
+    ENCHANT_LIBS="${ENCHANT_LIBS}"
+	AC_DEFINE(USE_ENCHANT, 1, [Define if enchant spell checking is enabled.])
+  else
+    AC_MSG_ERROR([Enchant library not found or too old. Use --disable-spell to build without spell plugin.])
+  fi
+else
+  ENCHANT_CFLAGS=
+  ENCHANT_LIBS=
+fi
+ 
+AC_SUBST(ENCHANT_CFLAGS)
+AC_SUBST(ENCHANT_LIBS)
+
 AM_CONDITIONAL(PURPLE_AVAILABLE, false)
 
 AC_OUTPUT([Makefile

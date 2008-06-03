@@ -45,9 +45,6 @@
 
 #define	ENTRY_CHAR		'_'			/* The character to use to fill in the blank places */
 
-/* XXX: HACK */
-#define USE_ENCHANT
-
 typedef struct _GntEntry			GntEntry;
 typedef struct _GntEntryPriv		GntEntryPriv;
 typedef struct _GntEntryClass	GntEntryClass;
