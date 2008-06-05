@@ -31,6 +31,9 @@
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
+#include "gntmenu.h"
+#include "gntmenuitem.h"
+#include "gntmenuitemcheck.h"
 
 #ifdef USE_ENCHANT
 #include <enchant/enchant.h>
@@ -66,6 +69,7 @@ struct _GntEntrySpell
 	EnchantBroker *broker;
 	EnchantDict *dict;
 #endif
+	char *lang;
 	gboolean enable;
 };
 
@@ -1119,12 +1123,35 @@ new_killring(void)
 	return kr;
 }
 
+#ifdef USE_ENCHANT
+static void
+set_spell_language(GntEntrySpell *spell, const char *lang)
+{
+    const char *err;
+
+	if(spell->broker) {
+		if(spell->dict)
+			enchant_broker_free_dict(spell->broker, spell->dict);
+
+		spell->dict = enchant_broker_request_dict(spell->broker, lang);
+
+		if (spell->dict == NULL) {
+			err = enchant_broker_get_error(spell->broker);
+			if(err != NULL) {
+				g_warning("GntEntry: couldn't get dictionary for %s: %s\n", lang, err);
+			} else {
+				g_warning("GntEntry: couldn't get dictionary for %s\n", lang);
+			}
+		}
+	}
+}
+#endif
+
 static GntEntrySpell *
 new_spell(void)
 {
 	GntEntrySpell *sp = NULL;
 #ifdef USE_ENCHANT
-    const char *err;
 	const char *lang;
 
 	sp = g_new0(GntEntrySpell, 1);
@@ -1144,20 +1171,142 @@ new_spell(void)
 			lang = "en";
 		}
 
-		sp->dict = enchant_broker_request_dict(sp->broker, lang);
-
-		if (sp->dict == NULL) {
-			err = enchant_broker_get_error(sp->broker);
-			if(err != NULL) {
-				g_warning("GntEntry: couldn't get dictionary for %s: %s\n", lang, err);
-			} else {
-				g_warning("GntEntry: couldn't get dictionary for %s\n", lang);
-			}
-		}
+		set_spell_language(sp, lang);
 	}
 #endif
 	return sp;
 }
+
+
+#ifdef USE_ENCHANT
+typedef struct {
+	GntEntry *entry;
+	GntMenu *sub;
+	char *lang;
+} SpellLangInfo;
+
+static void
+destroy_spell_lang_info(GntWidget *widget, SpellLangInfo *sli)
+{
+	g_free(sli->lang);
+	g_free(sli);
+}
+
+static void
+context_menu_callback(GntMenuItem *item, gpointer data)
+{
+	SpellLangInfo *cur_info = (SpellLangInfo *)data;
+	if(cur_info->entry->spell) {
+		set_spell_language(cur_info->entry->spell, cur_info->lang);
+		entry_redraw(GNT_WIDGET(cur_info->entry));
+	}
+}
+
+/* callback called from enchant enchant_broker_list_dicts
+ * user_data is a (SpellLangInfo *) */
+static void
+add_lang_context(const char * const lang, const char * const name, 
+        const char * const desc, const char * const file, void * user_data)
+{
+	SpellLangInfo *cur_info = (SpellLangInfo *)user_data;
+	GntMenuItem *item;
+	SpellLangInfo *spell_info = g_new(SpellLangInfo, 1);
+
+	spell_info->entry = cur_info->entry;
+	spell_info->sub = cur_info->sub;
+	spell_info->lang = g_strdup(lang);
+	/* this destroy callback will handle the spell_info and spell_info->lang frees */
+	g_signal_connect(G_OBJECT(cur_info->sub), "destroy", G_CALLBACK(destroy_spell_lang_info), spell_info);
+
+	item = gnt_menuitem_check_new(lang);
+	if(strcmp(lang, cur_info->lang) == 0)
+		gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item), TRUE);
+	gnt_menu_add_item(GNT_MENU(spell_info->sub), GNT_MENU_ITEM(item));
+	gnt_menuitem_set_callback(item, context_menu_callback, (void*)spell_info);
+}
+
+/* callback called from enchant enchant_dict_describe
+ * user_data is a (char **)
+ * the ret_lang is freed in the create_spell_menu function */
+static void
+get_cur_lang(const char * const lang, const char * const name, 
+        const char * const desc, const char * const file, void * user_data)
+{
+	char **ret_lang = (char **)user_data;
+	*ret_lang = g_strdup(lang);
+}
+
+static void
+create_spell_menu(GntMenu *menu, GntEntry *entry)
+{
+	GntMenuItem *item;
+	GntWidget *sub;
+	SpellLangInfo cur_info;
+
+	if(entry->spell && entry->spell->broker) {
+		/* create languages menu */
+		item = gnt_menuitem_new("Set Language");
+		gnt_menu_add_item(GNT_MENU(menu), GNT_MENU_ITEM(item));
+		sub = gnt_menu_new(GNT_MENU_POPUP);
+		gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+
+		cur_info.entry = entry;
+		cur_info.sub = GNT_MENU(sub);
+		/* get the current language */
+		if(entry->spell->dict)
+			enchant_dict_describe(entry->spell->dict, get_cur_lang, (void *)&(cur_info.lang));
+
+		enchant_broker_list_dicts(entry->spell->broker, add_lang_context, (void *)&cur_info);
+
+		g_free(cur_info.lang);
+	}
+}
+
+static void
+context_menu_destroyed(GntWidget *widget, GntEntry *entry)
+{
+	/* XXX: definite possible leak */
+	entry->context = NULL;
+}
+
+static void
+draw_context_menu(GntEntry *entry)
+{
+	GntWidget *context = NULL;
+	int x, y, width;
+
+	if (entry->context)
+		return;
+
+	entry->context = context = gnt_menu_new(GNT_MENU_POPUP);
+	/*
+	g_signal_connect(G_OBJECT(context), "destroy", G_CALLBACK(context_menu_destroyed), entry);
+	g_signal_connect(G_OBJECT(context), "hide", G_CALLBACK(gnt_widget_destroy), NULL);
+	*/
+	g_signal_connect(G_OBJECT(context), "hide", G_CALLBACK(context_menu_destroyed), entry);
+
+	create_spell_menu(GNT_MENU(context), entry);
+
+	/* TODO: check if we are currently on a misspelled word and if so, generate a list of suggestions */
+
+	/* Set the position for the popup */
+	gnt_widget_get_position(GNT_WIDGET(entry), &x, &y);
+	gnt_widget_get_size(GNT_WIDGET(entry), &width, NULL);
+
+	x += entry->cursor - entry->scroll;
+	y += 1;
+
+	gnt_widget_set_position(context, x, y);
+	gnt_screen_menu_show(GNT_MENU(context));
+}
+
+static gboolean
+context_menu(GntWidget *widget, GntEntry *entry)
+{
+	draw_context_menu(entry);
+	return TRUE;
+}
+#endif
 
 static void
 gnt_entry_init(GTypeInstance *instance, gpointer class)
@@ -1183,6 +1332,10 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 
 	widget->priv.minw = 3;
 	widget->priv.minh = 1;
+
+#ifdef USE_ENCHANT
+	g_signal_connect(G_OBJECT(entry), "context-menu", G_CALLBACK(context_menu), entry);
+#endif
 
 	GNTDEBUG;
 }
@@ -1373,6 +1526,17 @@ void gnt_entry_set_spell_enable(GntEntry *entry, gboolean enable)
 	if(entry->spell) {
 		entry->spell->enable = enable;
 	}
+}
+
+void gnt_entry_set_spell_lang(GntEntry *entry, const char *lang)
+{
+#ifdef USE_ENCHANT
+	if(entry->spell) {
+		if(strcmp(lang, entry->spell->lang) != 0) {
+			set_spell_language(entry->spell, lang);
+		}
+	}
+#endif
 }
 
 void gnt_entry_add_suggest(GntEntry *entry, const char *text)

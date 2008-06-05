@@ -88,6 +88,7 @@ struct _GntEntry
 	GntWidget *ddown;   /* The dropdown with the suggested list */
 	GntEntryKillRing *killring; /**< @since 2.3.0 */
 	GntEntrySpell *spell; /**< holds Enchant info for spell checking */
+	GntWidget *context; /**< Context menu for spelling */
 };
 
 struct _GntEntryClass
@@ -223,6 +224,14 @@ void gnt_entry_remove_suggest(GntEntry *entry, const char *text);
  * @param enable   @c TRUE if spell checking should be enabled.
  */
 void gnt_entry_set_spell_enable(GntEntry *entry, gboolean enable);
+
+/**
+ * Set the language to use for spell checking
+ *
+ * @param entry    The entry box.
+ * @param lang     The string-encoded language to use for spell checking
+ */
+void gnt_entry_set_spell_lang(GntEntry *entry, const char *lang);
 
 G_END_DECLS
 
