@@ -674,7 +674,7 @@ if test "x$enable_consoleui" = "xyes"; then
 
 	if test "x$enable_enchant" = "xyes" ; then
 
-		PKG_CHECK_MODULES(ENCHANT, [enchant >= 1.3.0], \
+		PKG_CHECK_MODULES(ENCHANT, [enchant >= 1.2.0], \
 						  have_enchant=yes, have_enchant=no)
 
 		if test "x$have_enchant" = "xyes"; then
