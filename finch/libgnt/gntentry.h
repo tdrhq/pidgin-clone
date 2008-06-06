@@ -88,7 +88,6 @@ struct _GntEntry
 	GntWidget *ddown;   /* The dropdown with the suggested list */
 	GntEntryKillRing *killring; /**< @since 2.3.0 */
 	GntEntrySpell *spell; /**< holds Enchant info for spell checking */
-	GntWidget *context; /**< Context menu for spelling */
 };
 
 struct _GntEntryClass
