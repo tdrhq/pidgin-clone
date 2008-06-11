@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "config.h"
+
 #include <ctype.h>
 #include <string.h>
 
@@ -29,6 +31,13 @@
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
+#include "gntmenu.h"
+#include "gntmenuitem.h"
+#include "gntmenuitemcheck.h"
+
+#ifdef USE_ENCHANT
+#include <enchant/enchant.h>
+#endif
 
 enum
 {
@@ -52,6 +61,17 @@ struct _GntEntryKillRing
 {
 	GString *buffer;
 	GntEntryAction last;
+};
+
+struct _GntEntrySpell
+{
+#ifdef USE_ENCHANT
+	EnchantBroker *broker;
+	EnchantDict *dict;
+	char *lang;
+	gboolean enable;
+	GntWidget *context; /**< Context menu to correct spelling or change language */
+#endif
 };
 
 static guint signals[SIGS] = { 0 };
@@ -265,6 +285,85 @@ show_suggest_dropdown(GntEntry *entry)
 	return TRUE;
 }
 
+#ifdef USE_ENCHANT
+/* copy of get_beginning_of_word, but not GntEntry specific
+ * TODO: refactor with get_beginning_of_word
+ */
+static char *
+get_beginning_of_prev_word(char *here, char *start)
+{
+	char *s = here;
+	while (s > start)
+	{
+		char *t = g_utf8_find_prev_char(start, s);
+		if (g_unichar_isspace(g_utf8_get_char(t)) || g_unichar_ispunct(g_utf8_get_char(t)))
+			break;
+		s = t;
+	}
+	return s;
+}
+
+static char *
+get_beginning_of_next_word(char *here, char *end)
+{
+	char *s = here;
+	char *t;
+	gboolean got_space;
+
+	got_space = g_unichar_isspace(g_utf8_get_char(s)) || g_unichar_ispunct(g_utf8_get_char(s));
+	while (s < end && !got_space) {
+		t = g_utf8_find_next_char(s, end);
+		if (g_unichar_isspace(g_utf8_get_char(t)) || g_unichar_ispunct(g_utf8_get_char(t)))
+			got_space = TRUE;
+		s = t;
+	}
+	if (got_space) {
+		while (s < end) {
+			t = g_utf8_find_next_char(s, end);
+			s = t;
+			if (!t)
+				break;
+			if (!g_unichar_isspace(g_utf8_get_char(t)) && !g_unichar_ispunct(g_utf8_get_char(t)))
+				break;
+		}
+	} else {
+		s = NULL;
+	}
+	return s;
+}
+
+static char *
+get_end_of_word(char *here, char *end)
+{
+	char *s = here;
+	char *t;
+
+	while (s < end) {
+		t = g_utf8_find_next_char(s, end);
+		if (!t || g_unichar_isspace(g_utf8_get_char(t)) || g_unichar_ispunct(g_utf8_get_char(t)))
+			break;
+		s = t;
+	}
+	return s;
+}
+
+static gboolean
+check_word(GntEntry *entry, char *start, char *end) {
+	gboolean retval = TRUE;
+
+	if (!entry->spell->dict)
+		return FALSE;
+
+	if (g_unichar_isdigit(*start) == FALSE) { /* don't check numbers */
+		if (enchant_dict_check(entry->spell->dict, start, end - start + 1) != 0) {
+			retval = FALSE;
+		}
+	}
+
+	return retval;
+}
+#endif
+
 static void
 gnt_entry_draw(GntWidget *widget)
 {
@@ -282,9 +381,79 @@ gnt_entry_draw(GntWidget *widget)
 		mvwhline(widget->window, 0, 0, gnt_ascii_only() ? '*' : ACS_BULLET,
 				g_utf8_pointer_to_offset(entry->scroll, entry->end));
 	}
-	else
-		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+	else {
+#ifdef USE_ENCHANT
+		/* TODO: maybe want to move this to a different location and use some
+		 * sort of tags to indicate areas of misspellings and then print the tags
+		 * out here so the spellchecking isn't always performed for each word on
+		 * a gnt_entry_draw */
+		char *s, *e;
+		int miss = gnt_color_pair(GNT_COLOR_MISSPELL);
+		int missd = gnt_color_pair(GNT_COLOR_MISSPELL_D);
+		/* only spell check if enabled and box isn't empty */
+		if (entry->spell->enable && (entry->start != entry->end)) {
+			wmove(widget->window, 0, 0);
+			/* if scroll starts on a non-letter, find the next word */
+			if (g_unichar_isspace(g_utf8_get_char(entry->scroll)) || g_unichar_ispunct(g_utf8_get_char(entry->scroll))) {
+				s = get_beginning_of_next_word(entry->scroll, entry->end);
+				if (!s) {
+					s = entry->end;
+				}
+				waddnstr(widget->window, entry->scroll, s - entry->scroll);
+			} else {
+				s = get_beginning_of_prev_word(entry->scroll, entry->start);
+			}
+			e = get_end_of_word(s, entry->end);
 
+			/* TODO: pick better attribute for misspelled words */
+			if (!check_word(entry, s, e)) {
+				wattron(widget->window, (focus ? miss : missd));
+			} else {
+				wattroff(widget->window, (focus ? miss : missd));
+			}
+			/* first word might be special case if scroll is in middle of word */
+			if (s < entry->scroll) {
+				waddnstr(widget->window, entry->scroll, e - entry->scroll + 1);
+			} else {
+				waddnstr(widget->window, s, e - s + 1);
+			}
+
+			s = g_utf8_find_next_char(e, entry->end);
+			while(s) {
+				/* print the whitespace and punctuation characters */
+				wattroff(widget->window, (focus ? miss : missd));
+				e = get_beginning_of_next_word(s, entry->end);
+				if (!e && s < entry->end) {
+					/* the end is all non-letter characters */
+					waddnstr(widget->window, s, entry->end - s + 1);
+					break;
+				} else if (e) {
+					/* there are more words */
+					waddnstr(widget->window, s, e - s);
+					s = e;
+					e = get_end_of_word(s, entry->end);
+
+					/* TODO: pick better attribute for misspelled words */
+					if (!check_word(entry, s, e)) {
+						wattron(widget->window, (focus ? miss : missd));
+					} else {
+						wattroff(widget->window, (focus ? miss : missd));
+					}
+					waddnstr(widget->window, s, e - s + 1);
+					s = g_utf8_find_next_char(e, entry->end);
+				} else {
+					break;
+				}
+			}
+		} else {
+			wattroff(widget->window, (focus ? miss : missd));
+			mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+		}
+		wattroff(widget->window, (focus ? miss : missd));
+#else
+		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+#endif
+	}
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
 		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
@@ -830,6 +999,17 @@ gnt_entry_destroy(GntWidget *widget)
 		gnt_widget_destroy(entry->ddown->parent);
 	}
 
+	if (entry->spell) {
+#ifdef USE_ENCHANT
+		if (entry->spell->broker) {
+			if (entry->spell->dict)
+				enchant_broker_free_dict(entry->spell->broker, entry->spell->dict);
+			enchant_broker_free(entry->spell->broker);
+		}
+#endif
+		g_free(entry->spell);
+	}
+
 	jail_killring(entry->killring);
 }
 
@@ -946,6 +1126,243 @@ new_killring(void)
 	return kr;
 }
 
+#ifdef USE_ENCHANT
+static void
+set_spell_language(GntEntrySpell *spell, const char *lang)
+{
+    const char *err;
+
+	if (spell->broker) {
+		if (spell->dict)
+			enchant_broker_free_dict(spell->broker, spell->dict);
+
+		spell->dict = enchant_broker_request_dict(spell->broker, lang);
+
+		if (spell->dict == NULL) {
+			err = enchant_broker_get_error(spell->broker);
+			if (err != NULL) {
+				g_warning("GntEntry: couldn't get dictionary for %s: %s\n", lang, err);
+			} else {
+				g_warning("GntEntry: couldn't get dictionary for %s\n", lang);
+			}
+		}
+	}
+}
+#endif
+
+static GntEntrySpell *
+new_spell(void)
+{
+	GntEntrySpell *sp = NULL;
+#ifdef USE_ENCHANT
+	const char *lang;
+
+	sp = g_new0(GntEntrySpell, 1);
+	sp->broker = enchant_broker_init();
+	if (sp->broker == NULL) {
+		g_warning("GntEntry: error enchant_broker_init()\n");
+	} else {
+		lang = g_getenv("LANG");
+		if (lang) {
+			if (g_strncasecmp(lang, "C", 1) == 0)
+				lang = NULL;
+			else if (lang[0] == 0)
+				lang = NULL;
+		}
+
+		if (!lang) {
+			lang = "en";
+		}
+
+		set_spell_language(sp, lang);
+	}
+#endif
+	return sp;
+}
+
+
+#ifdef USE_ENCHANT
+typedef struct {
+	GntEntry *entry;
+	GntMenu *sub;
+	char *lang;
+} SpellLangInfo;
+
+static void
+destroy_spell_lang_info(GntWidget *widget, SpellLangInfo *sli)
+{
+	g_free(sli->lang);
+	g_free(sli);
+}
+
+static void
+context_menu_callback(GntMenuItem *item, gpointer data)
+{
+	SpellLangInfo *cur_info = (SpellLangInfo *)data;
+	if (cur_info->entry->spell) {
+		set_spell_language(cur_info->entry->spell, cur_info->lang);
+		entry_redraw(GNT_WIDGET(cur_info->entry));
+	}
+}
+
+static void
+spell_suggest_menu_callback(GntMenuItem *item, gpointer data)
+{
+	GntEntry *entry = (GntEntry *) data;
+	char *start = entry->cursor;
+	char *end = entry->cursor;
+	int cur_len;
+
+	/* locate start and end chars of current word */
+	start = (char*)begin_word(start, entry->start);
+	entry->cursor = start;
+	end = (char*)next_begin_word(start, entry->end);
+	cur_len = end - start;
+	
+	memmove(start, end, entry->end - end + 1);
+	entry->end -= cur_len;
+
+	gnt_entry_key_pressed(GNT_WIDGET(entry), item->text);
+}
+
+/* callback called from enchant enchant_broker_list_dicts
+ * user_data is a (SpellLangInfo *) */
+static void
+add_lang_context(const char * const lang, const char * const name, 
+        const char * const desc, const char * const file, void * user_data)
+{
+	SpellLangInfo *cur_info = (SpellLangInfo *)user_data;
+	GntMenuItem *item;
+	SpellLangInfo *spell_info = g_new(SpellLangInfo, 1);
+
+	spell_info->entry = cur_info->entry;
+	spell_info->sub = cur_info->sub;
+	spell_info->lang = g_strdup(lang);
+	/* this destroy callback will handle the spell_info and spell_info->lang frees */
+	g_signal_connect(G_OBJECT(cur_info->sub), "destroy", G_CALLBACK(destroy_spell_lang_info), spell_info);
+
+	item = gnt_menuitem_check_new(lang);
+	if (strcmp(lang, cur_info->lang) == 0)
+		gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item), TRUE);
+	gnt_menu_add_item(GNT_MENU(spell_info->sub), GNT_MENU_ITEM(item));
+	gnt_menuitem_set_callback(item, context_menu_callback, (void*)spell_info);
+}
+
+/* callback called from enchant enchant_dict_describe
+ * user_data is a (char **)
+ * the ret_lang is freed in the create_spell_menu function */
+static void
+get_cur_lang(const char * const lang, const char * const name, 
+        const char * const desc, const char * const file, void * user_data)
+{
+	char **ret_lang = (char **)user_data;
+	*ret_lang = g_strdup(lang);
+}
+
+static void
+create_spell_menu(GntMenu *menu, GntEntry *entry)
+{
+	GntMenuItem *item;
+	GntWidget *sub;
+	SpellLangInfo cur_info;
+
+	if (entry->spell && entry->spell->broker) {
+		/* create languages menu */
+		item = gnt_menuitem_new("Set Language");
+		gnt_menu_add_item(menu, GNT_MENU_ITEM(item));
+		sub = gnt_menu_new(GNT_MENU_POPUP);
+		gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+
+		cur_info.entry = entry;
+		cur_info.sub = GNT_MENU(sub);
+		/* get the current language */
+		if (entry->spell->dict)
+			enchant_dict_describe(entry->spell->dict, get_cur_lang, (void *)&(cur_info.lang));
+
+		enchant_broker_list_dicts(entry->spell->broker, add_lang_context, (void *)&cur_info);
+
+		g_free(cur_info.lang);
+	}
+}
+
+static void
+context_menu_destroyed(GntWidget *widget, GntEntry *entry)
+{
+	/* XXX: definite possible leak */
+	entry->spell->context = NULL;
+}
+
+static void
+create_spell_suggestions_menu(GntMenu *menu, GntEntry *entry, char *start, char *end)
+{
+	GntMenuItem *item;
+	char **suggs;
+    size_t n_suggs = 0;
+	int i;
+
+	if (entry->spell && entry->spell->broker) {
+		suggs = enchant_dict_suggest(entry->spell->dict, start, end - start + 1, &n_suggs);
+		if (suggs && n_suggs) {
+			for (i = 0; i < n_suggs; i++) {
+				SpellLangInfo *spell_info = g_new(SpellLangInfo, 1);
+				item = gnt_menuitem_new(suggs[i]);
+				gnt_menu_add_item(menu, item);
+				gnt_menuitem_set_callback(item, spell_suggest_menu_callback, (void *) entry);
+			}
+			enchant_dict_free_string_list(entry->spell->dict, suggs);
+		}
+	}
+}
+
+static void
+draw_context_menu(GntEntry *entry)
+{
+	GntWidget *context = NULL;
+	int x, y, width;
+	char *start, *end;
+
+	if (entry->spell->context)
+		return;
+
+	entry->spell->context = context = gnt_menu_new(GNT_MENU_POPUP);
+	/*
+	g_signal_connect(G_OBJECT(context), "destroy", G_CALLBACK(context_menu_destroyed), entry);
+	g_signal_connect(G_OBJECT(context), "hide", G_CALLBACK(gnt_widget_destroy), NULL);
+	*/
+	g_signal_connect(G_OBJECT(context), "hide", G_CALLBACK(context_menu_destroyed), entry);
+
+	/* add list of suggestions */
+	start = get_beginning_of_prev_word(entry->cursor, entry->start);
+	end = get_end_of_word(start, entry->end);
+
+	if (start != end) {
+		if (!check_word(entry, start, end)) {
+			create_spell_suggestions_menu(GNT_MENU(context), entry, start, end);
+		}
+	}
+
+	/* add lanaguages menu */
+	create_spell_menu(GNT_MENU(context), entry);
+
+	/* Set the position for the popup */
+	gnt_widget_get_position(GNT_WIDGET(entry), &x, &y);
+	gnt_widget_get_size(GNT_WIDGET(entry), &width, NULL);
+
+	x += entry->cursor - entry->scroll;
+	y += 1;
+
+	gnt_widget_set_position(context, x, y);
+	gnt_screen_menu_show(GNT_MENU(context));
+}
+
+static gboolean
+context_menu(GntWidget *widget, GntEntry *entry)
+{
+	draw_context_menu(entry);
+	return TRUE;
+}
+#endif
+
 static void
 gnt_entry_init(GTypeInstance *instance, gpointer class)
 {
@@ -962,6 +1379,7 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 	entry->always = FALSE;
 	entry->suggests = NULL;
 	entry->killring = new_killring();
+	entry->spell = new_spell();
 
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(entry),
 			GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | GNT_WIDGET_CAN_TAKE_FOCUS);
@@ -969,6 +1387,10 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 
 	widget->priv.minw = 3;
 	widget->priv.minh = 1;
+
+#ifdef USE_ENCHANT
+	g_signal_connect(G_OBJECT(entry), "context-menu", G_CALLBACK(context_menu), entry);
+#endif
 
 	GNTDEBUG;
 }
@@ -1152,6 +1574,26 @@ void gnt_entry_set_word_suggest(GntEntry *entry, gboolean word)
 void gnt_entry_set_always_suggest(GntEntry *entry, gboolean always)
 {
 	entry->always = always;
+}
+
+void gnt_entry_set_spell_enable(GntEntry *entry, gboolean enable)
+{
+#ifdef USE_ENCHANT
+	if (entry->spell) {
+		entry->spell->enable = enable;
+	}
+#endif
+}
+
+void gnt_entry_set_spell_lang(GntEntry *entry, const char *lang)
+{
+#ifdef USE_ENCHANT
+	if (entry->spell) {
+		if (strcmp(lang, entry->spell->lang) != 0) {
+			set_spell_language(entry->spell, lang);
+		}
+	}
+#endif
 }
 
 void gnt_entry_add_suggest(GntEntry *entry, const char *text)

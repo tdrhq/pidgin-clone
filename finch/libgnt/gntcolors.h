@@ -46,6 +46,8 @@ typedef enum
 	GNT_COLOR_TITLE,
 	GNT_COLOR_TITLE_D,
 	GNT_COLOR_URGENT,       /* this is for the 'urgent' windows */
+	GNT_COLOR_MISSPELL,     /* misspelled words, in focus */
+	GNT_COLOR_MISSPELL_D,   /* misspelled words, not in focus */
 	GNT_COLORS
 } GntColorType;
 
