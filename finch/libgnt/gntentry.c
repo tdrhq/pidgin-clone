@@ -1296,6 +1296,7 @@ static void
 create_spell_suggestions_menu(GntMenu *menu, GntEntry *entry, char *start, char *end)
 {
 	GntMenuItem *item;
+	GntWidget *sub;
 	char **suggs;
     size_t n_suggs = 0;
 	int i;
@@ -1303,10 +1304,14 @@ create_spell_suggestions_menu(GntMenu *menu, GntEntry *entry, char *start, char 
 	if (entry->spell && entry->spell->broker) {
 		suggs = enchant_dict_suggest(entry->spell->dict, start, end - start + 1, &n_suggs);
 		if (suggs && n_suggs) {
+			item = gnt_menuitem_new("Suggestions");
+			gnt_menu_add_item(menu, item);
+			sub = gnt_menu_new(GNT_MENU_POPUP);
+			gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 			for (i = 0; i < n_suggs; i++) {
 				SpellLangInfo *spell_info = g_new(SpellLangInfo, 1);
 				item = gnt_menuitem_new(suggs[i]);
-				gnt_menu_add_item(menu, item);
+				gnt_menu_add_item(GNT_MENU(sub), item);
 				gnt_menuitem_set_callback(item, spell_suggest_menu_callback, (void *) entry);
 			}
 			enchant_dict_free_string_list(entry->spell->dict, suggs);
