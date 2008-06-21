@@ -27,8 +27,7 @@
 #ifndef _PURPLE_ACCOUNT_H_
 #define _PURPLE_ACCOUNT_H_
 
-#include <glib.h>
-#include <glib-object.h>
+#include "pobject.h"
 
 #define PURPLE_TYPE_ACCOUNT				(purple_account_get_gtype())
 #define PURPLE_ACCOUNT(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT, PurpleAccount))
@@ -36,6 +35,8 @@
 #define PURPLE_IS_ACCOUNT(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT))
 #define PURPLE_IS_ACCOUNT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ACCOUNT))
 #define PURPLE_ACCOUNT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ACCOUNT, PurpleAccountClass))
+
+GType purple_account_get_gtype(void);
 
 typedef struct _PurpleAccount			PurpleAccount;
 typedef struct _PurpleAccountPrivate		PurpleAccountPrivate;
@@ -120,6 +121,10 @@ struct _PurpleAccountUiOps
  */
 struct _PurpleAccount
 {
+	PurpleObject parent;
+
+	PurpleAccountPrivate *priv;	
+
 	char *username;             /**< The username.                          */
 	char *alias;                /**< How you appear to yourself.            */
 	char *password;             /**< The account password.                  */
@@ -153,8 +158,6 @@ struct _PurpleAccount
 	void *ui_data;              /**< The UI can put data here.              */
 	PurpleAccountRegistrationCb registration_cb;
 	void *registration_cb_user_data;
-
-	gpointer priv;              /**< Pointer to opaque private data. */
 };
 
 struct _PurpleAccountClass

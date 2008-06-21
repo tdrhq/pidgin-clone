@@ -497,12 +497,16 @@ static void purple_account_class_init(PurpleAccountClass *klass)
 #warning TODO: create signals and properties
 }
 
-static void purple_account_init(PurpleAccount *account)
+static void purple_account_init(GTypeInstance *instance, gpointer klass)
 {
 #warning TODO: Move the initializations from _account_new to here
+
+	PurpleAccount *account = PURPLE_ACCOUNT(instance);
+
+	account->priv = g_new0(PurpleAccountPrivate, 1);
 }
 
-static GType purple_account_get_gtype(void)
+GType purple_account_get_gtype(void)
 {
 	static GType type = 0;
 
@@ -520,7 +524,7 @@ static GType purple_account_get_gtype(void)
 			NULL,
 		};
 
-		type = g_type_register_static(G_TYPE_OBJECT,
+		type = g_type_register_static(PURPLE_TYPE_OBJECT,
 				"PurpleAccount",
 				&info, 0);
 	}

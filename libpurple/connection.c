@@ -844,6 +844,13 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 	obj_class->set_property = purple_connection_set_property;
 	obj_class->finalize = purple_connection_finalize;
 
+	/* explicitly make these pure */
+	klass->signing_on = NULL;
+	klass->signed_on = NULL;
+
+	klass->signing_off = NULL;
+	klass->signed_off = NULL;
+
 	pspec = g_param_spec_flags("flags", "flags",
 							  "The flags for this connection.",
 							  PURPLE_TYPE_CONNECTION_FLAGS,
