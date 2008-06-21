@@ -298,7 +298,7 @@ purple_connection_destroy(PurpleConnection *gc)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	gboolean remove = FALSE;
 
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	account = purple_connection_get_account(gc);
 
@@ -380,7 +380,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 {
 	PurpleConnectionUiOps *ops;
 
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	if (gc->priv->state == state)
 		return;
@@ -466,14 +466,14 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 void purple_connection_set_flags(PurpleConnection *gc, PurpleConnectionFlags flags)
 {
-	g_return_if_fail(gc);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	gc->priv->flags = flags;
 }
 
 void
 purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 {
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	g_return_if_fail(account != NULL);
 
 	if (gc->priv->account == account)
@@ -495,7 +495,7 @@ purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 void
 purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 {
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
 	g_free(gc->priv->display_name);
 	gc->priv->display_name = g_strdup(name);
@@ -555,7 +555,7 @@ purple_connection_update_progress(PurpleConnection *gc, const char *text,
 {
 	PurpleConnectionUiOps *ops;
 
-	g_return_if_fail(gc   != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	g_return_if_fail(text != NULL);
 	g_return_if_fail(step < count);
 	g_return_if_fail(count > 1);
@@ -579,7 +579,7 @@ purple_connection_notice(PurpleConnection *gc, const char *text)
 {
 	PurpleConnectionUiOps *ops;
 
-	g_return_if_fail(gc   != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	g_return_if_fail(text != NULL);
 
 #if 0
@@ -623,7 +623,7 @@ purple_connection_error_reason (PurpleConnection *gc,
 {
 	PurpleConnectionUiOps *ops;
 
-	g_return_if_fail(gc   != NULL);
+	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	/* This sanity check relies on PURPLE_CONNECTION_ERROR_OTHER_ERROR
 	 * being the last member of the PurpleConnectionError enum in
 	 * connection.h; if other reasons are added after it, this check should
