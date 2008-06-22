@@ -914,7 +914,7 @@ purple_account_notify_added(PurpleAccount *account, const char *remote_user,
 {
 	PurpleAccountUiOps *ui_ops;
 
-	g_return_if_fail(account     != NULL);
+	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 	g_return_if_fail(remote_user != NULL);
 
 	ui_ops = purple_accounts_get_ui_ops();
@@ -930,7 +930,7 @@ purple_account_request_add(PurpleAccount *account, const char *remote_user,
 {
 	PurpleAccountUiOps *ui_ops;
 
-	g_return_if_fail(account     != NULL);
+	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 	g_return_if_fail(remote_user != NULL);
 
 	ui_ops = purple_accounts_get_ui_ops();
@@ -1035,7 +1035,7 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 	PurpleAccountRequestInfo *info;
 	int plugin_return;
 
-	g_return_val_if_fail(account     != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 	g_return_val_if_fail(remote_user != NULL, NULL);
 
 	ui_ops = purple_accounts_get_ui_ops();
@@ -1418,7 +1418,7 @@ purple_account_set_status_list(PurpleAccount *account, const char *status_id,
 {
 	PurpleStatus *status;
 
-	g_return_if_fail(account   != NULL);
+	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 	g_return_if_fail(status_id != NULL);
 
 	status = purple_account_get_status(account, status_id);
@@ -1839,7 +1839,7 @@ purple_account_get_proxy_info(const PurpleAccount *account)
 PurpleStatus *
 purple_account_get_active_status(const PurpleAccount *account)
 {
-	g_return_val_if_fail(account   != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 
 	return purple_presence_get_active_status(account->presence);
 }
@@ -1847,7 +1847,7 @@ purple_account_get_active_status(const PurpleAccount *account)
 PurpleStatus *
 purple_account_get_status(const PurpleAccount *account, const char *status_id)
 {
-	g_return_val_if_fail(account   != NULL, NULL);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 	g_return_val_if_fail(status_id != NULL, NULL);
 
 	return purple_presence_get_status(account->presence, status_id);
@@ -1902,7 +1902,7 @@ gboolean
 purple_account_is_status_active(const PurpleAccount *account,
 							  const char *status_id)
 {
-	g_return_val_if_fail(account   != NULL, FALSE);
+	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), FALSE);
 	g_return_val_if_fail(status_id != NULL, FALSE);
 
 	return purple_presence_is_status_active(account->presence, status_id);
