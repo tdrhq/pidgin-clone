@@ -1551,6 +1551,7 @@ static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	if (!args || !args[0]) {
+		PurpleAccount *account = purple_connection_get_account(gc);
 		topic = purple_conv_chat_get_topic (PURPLE_CONV_CHAT(conv));
 		if (topic) {
 			tmp = g_markup_escape_text(topic, -1);
@@ -1560,7 +1561,7 @@ static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), purple_connection_get_account(gc)->username, buf,
+		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), purple_account_get_username(account), buf,
 							 PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 

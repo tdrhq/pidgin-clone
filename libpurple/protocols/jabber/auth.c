@@ -529,14 +529,15 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		js->auth_type = JABBER_AUTH_PLAIN;
 
 		if(js->gsc == NULL && !purple_account_get_bool(purple_connection_get_account(js->gc), "auth_plain_in_clear", FALSE)) {
+			PurpleAccount *account = purple_connection_get_account(js->gc);
 			char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-					purple_connection_get_account(js->gc)->username);
+					purple_account_get_username(account));
 			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 					_("Plaintext Authentication"),
 					msg,
 					1,
-					purple_connection_get_account(js->gc), NULL, NULL,
-					purple_connection_get_account(js->gc), allow_plaintext_auth,
+					account, NULL, NULL,
+					account, allow_plaintext_auth,
 					disallow_plaintext_auth);
 			g_free(msg);
 			return;
@@ -722,14 +723,15 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		} else if(xmlnode_get_child(query, "password")) {
 			if(js->gsc == NULL && !purple_account_get_bool(purple_connection_get_account(js->gc),
 						"auth_plain_in_clear", FALSE)) {
+				PurpleAccount *account = purple_connection_get_account(js->gc);
 				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-											purple_connection_get_account(js->gc)->username);
+						purple_account_get_username(account));
 				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 						_("Plaintext Authentication"),
 						msg,
 						1,
-						purple_connection_get_account(js->gc), NULL, NULL,
-						purple_connection_get_account(js->gc), allow_plaintext_auth,
+						account, NULL, NULL,
+						account, allow_plaintext_auth,
 						disallow_plaintext_auth);
 				g_free(msg);
 				return;

@@ -240,9 +240,12 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	PurpleBuddy *buddy;
 	PurpleUtilFetchUrlData *url_data;
 	gboolean use_whole_url = FALSE;
+	PurpleAccount *account;
+
+	account = purple_connection_get_account(gc);
 
 	/* use whole URL if using HTTP Proxy */
-	if ((purple_connection_get_account(gc)->proxy_info) && (purple_connection_get_account(gc)->proxy_info->type == PURPLE_PROXY_HTTP))
+	if ((account->proxy_info) && (account->proxy_info->type == PURPLE_PROXY_HTTP))
 	    use_whole_url = TRUE;
 
 	g_return_if_fail(alias != NULL);
@@ -251,7 +254,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 
 	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n",alias, who);
 
-	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
+	buddy = purple_find_buddy(account, who);
 	if (buddy == NULL || buddy->proto_data == NULL) {
 		purple_debug_info("yahoo", "Missing proto_data (get_yahoo_aliases must have failed), bailing out\n");
 		return;
@@ -274,7 +277,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 		converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
 		content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
 		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-		                          purple_connection_get_account(gc)->username, who, yu->id, converted_alias_jp);
+		                          purple_account_get_username(account), who, yu->id, converted_alias_jp);
 		free(converted_alias_jp);
 		g_free(alias_jp);
 	}
@@ -282,7 +285,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 		escaped_alias = g_markup_escape_text(alias, strlen(alias));
 		content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
 		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-		                          purple_connection_get_account(gc)->username, who, yu->id, escaped_alias);
+		                          purple_account_get_username(account), who, yu->id, escaped_alias);
 		g_free(escaped_alias);
 	}
 

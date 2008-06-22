@@ -984,9 +984,9 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				if (buddy && buddy->alias)
 					their_name = buddy->alias;
 
-				if (log->account->alias)
+				if (purple_account_get_alias(log->account))
 				{
-					alias = log->account->alias;
+					alias = purple_account_get_alias(log->account);
 					alias_length = strlen(alias);
 				}
 				else
@@ -1111,8 +1111,8 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			text = g_string_append(text, "<b>");
 
 			if (name_guessed == NAME_GUESS_ME) {
-				if (log->account->alias)
-					text = g_string_append(text, log->account->alias);
+				if (purple_account_get_alias(log->account))
+					text = g_string_append(text, purple_account_get_alias(log->account));
 				else
 					text = g_string_append(text, purple_account_get_username(log->account));
 			}

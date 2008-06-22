@@ -903,7 +903,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 							purple_account_get_username(account));
 
 				if (purple_account_get_alias(account) != NULL)
-					alias = account->alias;
+					alias = purple_account_get_alias(account);
 				else if (b != NULL && strcmp(b->name, purple_buddy_get_contact_alias(b)))
 					alias = purple_buddy_get_contact_alias(b);
 				else if (purple_connection_get_display_name(gc) != NULL)

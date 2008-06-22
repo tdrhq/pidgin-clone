@@ -126,17 +126,6 @@ struct _PurpleAccount
 
 	PurpleAccountPrivate *priv;
 
-	char *username;             /**< The username.                          */
-	char *alias;                /**< How you appear to yourself.            */
-	char *password;             /**< The account password.                  */
-	char *user_info;            /**< User information.                      */
-
-	char *buddy_icon_path;      /**< The buddy icon's non-cached path.      */
-
-	gboolean remember_pass;     /**< Remember the password.                 */
-
-	char *protocol_id;          /**< The ID of the protocol.                */
-
 	PurpleConnection *gc;         /**< The connection handle.                 */
 	gboolean disconnecting;     /**< The account is currently disconnecting */
 

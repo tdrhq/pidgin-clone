@@ -3571,7 +3571,7 @@ static int purple_parse_locaterights(OscarData *od, FlapConnection *conn, FlapFr
 	od->rights.maxsiglen = od->rights.maxawaymsglen = (guint)maxsiglen;
 
 	aim_locate_setcaps(od, purple_caps);
-	oscar_set_info_and_status(account, TRUE, account->user_info, TRUE,
+	oscar_set_info_and_status(account, TRUE, purple_account_get_user_info(account), TRUE,
 							  purple_account_get_active_status(account));
 
 	return 1;
@@ -3670,7 +3670,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	 * breaks mail notification for @mac.com accounts, but it gets rid
 	 * of an annoying error at signon for @anythingelse.com accounts.
 	 */
-	if ((od->authinfo->email != NULL) && ((strchr(purple_connection_get_account(gc)->username, '@') == NULL)))
+	if ((od->authinfo->email != NULL) && ((strchr(purple_account_get_username(account), '@') == NULL)))
 		aim_srv_requestnew(od, SNAC_FAMILY_ALERT);
 
 	return 1;
@@ -5961,6 +5961,7 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	OscarData *od = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleBuddy *b;
 	PurpleGroup *g;
+	PurpleAccount *account = purple_connection_get_account(gc);
 
 	if (!(b = purple_find_buddy(purple_connection_get_account(data->gc), data->name))) {
 		oscar_free_name_data(data);
@@ -5974,7 +5975,7 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 
 	aim_ssi_editcomment(od, g->name, data->name, text);
 
-	if (!aim_sncmp(data->name, purple_connection_get_account(gc)->username))
+	if (!aim_sncmp(data->name, purple_account_get_username(account)))
 		purple_check_comment(od, text);
 
 	oscar_free_name_data(data);
