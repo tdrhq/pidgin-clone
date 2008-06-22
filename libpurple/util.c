@@ -3394,6 +3394,15 @@ purple_str_binary_to_ascii(const unsigned char *binary, guint len)
 	return g_string_free(ret, FALSE);
 }
 
+gboolean purple_util_strings_equal(const char *s1, const char *s2)
+{
+	if (s1 == s2)
+		return TRUE;
+	if (s1 && s2 && g_utf8_collate(s1, s2) == 0)
+		return TRUE;
+	return FALSE;
+}
+
 /**************************************************************************
  * URI/URL Functions
  **************************************************************************/

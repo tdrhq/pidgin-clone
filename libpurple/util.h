@@ -971,6 +971,18 @@ char *purple_str_seconds_to_string(guint sec);
  * @return A newly allocated ASCIIZ string.
  */
 char *purple_str_binary_to_ascii(const unsigned char *binary, guint len);
+
+/**
+ * Determine if two strings have the same value.
+ * This is just a convenience function to do all the @c NULL checks.
+ *
+ * @param s1 First string
+ * @param s2 Second string
+ * @return  @c TRUE if both the strings have the same value, or both are @c NULL,
+ *          @c FALSE otherwise
+ */
+gboolean purple_util_strings_equal(const char *s1, const char *s2);
+
 /*@}*/
 
 
