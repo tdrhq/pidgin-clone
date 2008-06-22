@@ -56,6 +56,7 @@ typedef void (*PurpleAccountUnregistrationCb)(PurpleAccount *account, gboolean s
 #include "proxy.h"
 #include "prpl.h"
 #include "status.h"
+#include "xmlnode.h"
 
 /**
  * Account request types.
@@ -929,6 +930,15 @@ const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount 
  * @param account The account whose error state should be cleared.
  */
 void purple_account_clear_current_error(PurpleAccount *account);
+
+/**
+ * Get an XML description of an account.
+ *
+ * @param account  The account
+ *
+ * @return  The XML description of the account.
+ */
+xmlnode * purple_account_to_xmlnode(PurpleAccount *account);
 
 /*@}*/
 

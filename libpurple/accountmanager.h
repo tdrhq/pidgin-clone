@@ -67,7 +67,7 @@ G_BEGIN_DECLS
 /**************************************************************************/
 /*@{*/
 
-GType purple_account_manager_get_gtype(void);
+GType purple_account_manager_get_type(void);
 PurpleAccountManager *purple_account_manager_get(void);
 
 void purple_account_manager_add_account(PurpleAccountManager *manager, PurpleAccount *account);

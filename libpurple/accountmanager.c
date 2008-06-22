@@ -29,6 +29,9 @@
 
 #include <string.h>
 
+static void schedule_accounts_save(PurpleAccountManager *manager);
+static void sync_accounts(PurpleAccountManager *manager);
+
 /******************************************************************************
  * PurpleAccountManager API
  *****************************************************************************/
@@ -44,6 +47,7 @@ struct _PurpleAccountManagerPrivate
 {
 	GList *accounts;
 	gboolean accounts_loaded;
+	int save_timer;
 };
 
 #define PURPLE_ACCOUNT_MANAGER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_ACCOUNT_MANAGER, PurpleAccountManagerPrivate))
@@ -60,19 +64,37 @@ purple_account_manager_constructor(GType type, guint n_cprops, GObjectConstructP
 }
 
 static void
+purple_account_manager_dispose(GObject *object)
+{
+	PurpleAccountManager *manager = PURPLE_ACCOUNT_MANAGER(object);
+	sync_accounts(manager);
+}
+
+static void
+purple_account_manager_finalize(GObject *object)
+{
+	PurpleAccountManagerPrivate *priv = PURPLE_ACCOUNT_MANAGER_GET_PRIVATE(object);
+	g_list_free(priv->accounts);
+}
+
+static void
 purple_account_manager_class_init(PurpleAccountManagerClass *klass)
 {
-	G_OBJECT_CLASS(klass)->constructor = purple_account_manager_constructor;
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	obj_class->constructor = purple_account_manager_constructor;
+	obj_class->dispose = purple_account_manager_dispose;
+	obj_class->finalize = purple_account_manager_finalize;
+
 	account_manager_signals[ACCOUNT_ADDED] =
 		g_signal_new("account-added",
 				G_OBJECT_CLASS_TYPE(klass),
 				G_SIGNAL_RUN_FIRST,
 				G_STRUCT_OFFSET(PurpleAccountManagerClass, account_added),
 				NULL, NULL,
-#warning FIXME: Change this to __OBJECT when PurpleAccount is a GObject
-				purple_smarshal_VOID__POINTER,
+				purple_smarshal_VOID__OBJECT,
 				G_TYPE_NONE,
-				1, G_TYPE_POINTER);//PURPLE_TYPE_ACCOUNT);
+				1, PURPLE_TYPE_ACCOUNT);
 
 	account_manager_signals[ACCOUNT_REMOVED] =
 		g_signal_new("account-removed",
@@ -80,10 +102,9 @@ purple_account_manager_class_init(PurpleAccountManagerClass *klass)
 				G_SIGNAL_RUN_FIRST,
 				G_STRUCT_OFFSET(PurpleAccountManagerClass, account_removed),
 				NULL, NULL,
-#warning FIXME: Change this to __OBJECT when PurpleAccount is a GObject
-				purple_smarshal_VOID__POINTER,
+				purple_smarshal_VOID__OBJECT,
 				G_TYPE_NONE,
-				1, G_TYPE_POINTER);//PURPLE_TYPE_ACCOUNT);
+				1, PURPLE_TYPE_ACCOUNT);
 
 	g_type_class_add_private(klass, sizeof(PurpleAccountManagerPrivate));
 }
@@ -111,6 +132,10 @@ void purple_account_manager_add_account(PurpleAccountManager *manager, PurpleAcc
 
 	manager->priv->accounts = g_list_append(manager->priv->accounts, account);
 	g_signal_emit(manager, account_manager_signals[ACCOUNT_ADDED], 0, account);
+
+	/* Make sure we save the accounts when something changes */
+	g_signal_connect_swapped(G_OBJECT(account), "notify", G_CALLBACK(schedule_accounts_save), manager);
+	g_signal_connect_swapped(G_OBJECT(account), "settings-changed", G_CALLBACK(schedule_accounts_save), manager);
 }
 
 void purple_account_manager_remove_account(PurpleAccountManager *manager, PurpleAccount *account)
@@ -120,6 +145,9 @@ void purple_account_manager_remove_account(PurpleAccountManager *manager, Purple
 
 	manager->priv->accounts = g_list_remove(manager->priv->accounts, account);
 	g_signal_emit(manager, account_manager_signals[ACCOUNT_REMOVED], 0, account);
+
+	g_signal_handlers_disconnect_by_func(G_OBJECT(account),
+			G_CALLBACK(schedule_accounts_save), manager);
 }
 
 void purple_account_manager_reorder_account(PurpleAccountManager *manager, PurpleAccount *account, int new_index)
@@ -151,6 +179,7 @@ void purple_account_manager_reorder_account(PurpleAccountManager *manager, Purpl
 	/* Insert it where it should go. */
 	accounts = g_list_insert(accounts, account, new_index);
 	manager->priv->accounts = accounts;
+	schedule_accounts_save(manager);
 }
 
 GList *purple_account_manager_get_all_accounts(PurpleAccountManager *manager)
@@ -585,5 +614,69 @@ void purple_account_manager_load_accounts(PurpleAccountManager *manager)
 	xmlnode_free(node);
 
 	_purple_buddy_icons_account_loaded_cb();
+}
+
+/*********************************************************************
+ * Writing to disk                                                   *
+ *********************************************************************/
+
+static xmlnode *
+accounts_to_xmlnode(PurpleAccountManager *manager)
+{
+	xmlnode *node, *child;
+	GList *cur;
+
+	node = xmlnode_new("account");
+	xmlnode_set_attrib(node, "version", "1.0");
+
+	for (cur = purple_account_manager_get_all_accounts(manager);
+			cur != NULL; cur = cur->next)
+	{
+		child = purple_account_to_xmlnode(PURPLE_ACCOUNT(cur->data));
+		xmlnode_insert_child(node, child);
+	}
+
+	return node;
+}
+
+static void
+sync_accounts(PurpleAccountManager *manager)
+{
+	xmlnode *node;
+	char *data;
+	PurpleAccountManagerPrivate *priv = PURPLE_ACCOUNT_MANAGER_GET_PRIVATE(manager);
+
+	if (priv->save_timer == 0)
+		return;
+
+	if (!priv->accounts_loaded) {
+		purple_debug_error("account", "Attempted to save accounts before "
+						 "they were read!\n");
+		return;
+	}
+
+	node = accounts_to_xmlnode(manager);
+	data = xmlnode_to_formatted_str(node, NULL);
+	purple_util_write_data_to_file("accounts.xml", data, -1);
+	g_free(data);
+	xmlnode_free(node);
+
+	g_source_remove(priv->save_timer);
+	priv->save_timer = 0;
+}
+
+static gboolean
+save_cb(gpointer data)
+{
+	sync_accounts(PURPLE_ACCOUNT_MANAGER(data));
+	return FALSE;
+}
+
+static void
+schedule_accounts_save(PurpleAccountManager *manager)
+{
+	PurpleAccountManagerPrivate *priv = PURPLE_ACCOUNT_MANAGER_GET_PRIVATE(manager);
+	if (priv->save_timer == 0)
+		priv->save_timer = purple_timeout_add_seconds(5, save_cb, manager);
 }
 
