@@ -67,14 +67,6 @@ account_status_changed(PurpleAccount *account, PurpleStatus *old, PurpleStatus *
 					purple_status_get_name(new));
 }
 
-static void
-account_alias_changed(PurpleAccount *account, const char *old, gpointer data)
-{
-	purple_debug_misc("signals test", "account-alias-changed (%s, %s, %s)\n",
-					purple_account_get_username(account),
-					old, purple_account_get_alias(account));
-}
-
 static int
 account_authorization_requested_cb(PurpleAccount *account, const char *user, gpointer data)
 {
@@ -583,8 +575,6 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(account_set_info_cb), NULL);
 	purple_signal_connect(accounts_handle, "account-status-changed",
 						plugin, PURPLE_CALLBACK(account_status_changed), NULL);
-	purple_signal_connect(accounts_handle, "account-alias-changed",
-						plugin, PURPLE_CALLBACK(account_alias_changed), NULL);
 	purple_signal_connect(accounts_handle, "account-authorization-requested",
 						plugin, PURPLE_CALLBACK(account_authorization_requested_cb), NULL);
 	purple_signal_connect(accounts_handle, "account-authorization-denied",

@@ -1401,18 +1401,17 @@ purple_account_set_enabled(PurpleAccount *account, gboolean value)
 
 	gc = purple_account_get_connection(account);
 
+	/* XXX: I don't know where to move these signals. */
 	if(was_enabled && !value)
 		purple_signal_emit(purple_accounts_get_handle(), "account-disabled", account);
 	else if(!was_enabled && value)
 		purple_signal_emit(purple_accounts_get_handle(), "account-enabled", account);
 
+#warning Do something about wants-to-die. Perhaps check if current_error is fatal?
 #if 0
 	if ((gc != NULL) && (gc->wants_to_die == TRUE))
-#else
-#warning Do something about wants-to-die. Perhaps check if current_error is fatal?
-	if (gc != NULL)
-#endif
 		return;
+#endif
 
 	if (value && purple_presence_is_online(account->presence))
 		purple_account_connect(account);
@@ -2490,12 +2489,6 @@ purple_accounts_init(void)
 										PURPLE_SUBTYPE_STATUS),
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_STATUS));
-
-	purple_signal_register(handle, "account-alias-changed",
-						 purple_marshal_VOID__POINTER_POINTER, NULL, 2,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT),
-						 purple_value_new(PURPLE_TYPE_STRING));
 
 	purple_signal_register(handle, "account-authorization-requested",
 						purple_marshal_INT__POINTER_POINTER,
