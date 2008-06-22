@@ -1399,6 +1399,9 @@ purple_account_set_enabled(PurpleAccount *account, gboolean value)
 	PURPLE_ACCOUNT_GET_PRIVATE(account)->enabled = value;
 	g_object_notify(G_OBJECT(account), PROP_ENABLED_S);
 
+	purple_account_set_ui_bool(account, purple_core_get_ui(),
+			"enabled", value);
+
 	gc = purple_account_get_connection(account);
 
 	/* XXX: I don't know where to move these signals. */
@@ -1417,6 +1420,8 @@ purple_account_set_enabled(PurpleAccount *account, gboolean value)
 		purple_account_connect(account);
 	else if (!value && !purple_account_is_disconnected(account))
 		purple_account_disconnect(account);
+
+	schedule_accounts_save();
 }
 
 void
@@ -1648,6 +1653,11 @@ purple_account_set_ui_bool(PurpleAccount *account, const char *ui,
 	table = get_ui_settings_table(account, ui);
 
 	g_hash_table_insert(table, g_strdup(name), setting);
+
+	if (strcmp(ui, purple_core_get_ui()) == 0 &&
+			strcmp(name, "enabled") == 0) {
+		purple_account_set_enabled(account, value);
+	}
 
 	schedule_accounts_save();
 }
@@ -2523,6 +2533,7 @@ purple_accounts_init(void)
 	purple_signal_connect(conn_handle, "connection-error", handle,
 	                      PURPLE_CALLBACK(connection_error_cb), NULL);
 #endif
+	accounts_loaded = TRUE;
 }
 
 void
