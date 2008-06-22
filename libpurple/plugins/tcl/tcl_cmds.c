@@ -186,12 +186,11 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		if (objc == 3) {
 			Tcl_SetObjResult(interp, 
 					 Tcl_NewBooleanObj(
-						 purple_account_get_enabled(account,
-									    purple_core_get_ui())));
+						 purple_account_get_enabled(account)));
 		} else {
 			if ((error = Tcl_GetBooleanFromObj(interp, objv[3], &b)) != TCL_OK)
 				return TCL_ERROR;
-			purple_account_set_enabled(account, purple_core_get_ui(), b);
+			purple_account_set_enabled(account, b);
 		}
 		break;
 	case CMD_ACCOUNT_FIND:

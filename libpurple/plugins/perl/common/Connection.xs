@@ -63,6 +63,8 @@ Purple::ConnectionState
 purple_connection_get_state(gc)
 	Purple::Connection gc
 
+#if 0
+
 MODULE = Purple::Connection  PACKAGE = Purple::Connections  PREFIX = purple_connections_
 PROTOTYPES: ENABLE
 
@@ -93,4 +95,6 @@ purple_connections_set_ui_ops(ops)
 
 Purple::Connection::UiOps
 purple_connections_get_ui_ops()
+
+#endif
 
