@@ -171,7 +171,7 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 		if (info != NULL)
 			g_hash_table_remove(auto_reconns, account);
 
-		purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+		purple_account_set_enabled(account, FALSE);
 	}
 
 	/* If we have any open chats, we probably want to rejoin when we get back online. */

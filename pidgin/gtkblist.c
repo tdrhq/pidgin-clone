@@ -4623,7 +4623,7 @@ static void
 generic_error_enable_cb(PurpleAccount *account)
 {
 	purple_account_clear_current_error(account);
-	purple_account_set_enabled(account, purple_core_get_ui(), TRUE);
+	purple_account_set_enabled(account, TRUE);
 }
 
 static void
@@ -4655,7 +4655,7 @@ add_generic_error_dialog(PurpleAccount *account,
 	GtkWidget *mini_dialog;
 	const char *username = purple_account_get_username(account);
 	gboolean enabled =
-		purple_account_get_enabled(account, purple_core_get_ui());
+		purple_account_get_enabled(account);
 	char *primary;
 
 	if (enabled)
@@ -4754,7 +4754,7 @@ elsewhere_foreach_account(PidginMiniDialog *mini_dialog,
 static void
 enable_account(PurpleAccount *account)
 {
-	purple_account_set_enabled(account, purple_core_get_ui(), TRUE);
+	purple_account_set_enabled(account, TRUE);
 }
 
 static void
@@ -7485,7 +7485,7 @@ enable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 	saved_status = purple_savedstatus_get_current();
 	purple_savedstatus_activate_for_account(saved_status, account);
 
-	purple_account_set_enabled(account, PIDGIN_UI, TRUE);
+	purple_account_set_enabled(account, TRUE);
 }
 
 static void
@@ -7493,7 +7493,7 @@ disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 {
 	PurpleAccount *account = data;
 
-	purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+	purple_account_set_enabled(account, FALSE);
 }
 
 void
@@ -7527,7 +7527,7 @@ pidgin_blist_update_accounts_menu(void)
 		account = accounts->data;
 		accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
 
-		if(purple_account_get_enabled(account, PIDGIN_UI)) {
+		if(purple_account_get_enabled(account)) {
 			buf = g_strconcat(purple_account_get_username(account), " (",
 					purple_account_get_protocol_name(account), ")", NULL);
 			menuitem = gtk_image_menu_item_new_with_label(buf);
@@ -7606,7 +7606,7 @@ pidgin_blist_update_accounts_menu(void)
 
 			account = accounts->data;
 
-			if(!purple_account_get_enabled(account, PIDGIN_UI)) {
+			if(!purple_account_get_enabled(account)) {
 
 				disabled_accounts = TRUE;
 

@@ -124,7 +124,7 @@ dologin_named(const char *name)
 		for (i = 0; names[i] != NULL; i++) {
 			account = purple_accounts_find(names[i], NULL);
 			if (account != NULL) { /* found a user */
-				purple_account_set_enabled(account, PIDGIN_UI, TRUE);
+				purple_account_set_enabled(account, TRUE);
 			}
 		}
 		g_strfreev(names);
@@ -135,7 +135,7 @@ dologin_named(const char *name)
 		if (accounts != NULL)
 		{
 			account = (PurpleAccount *)accounts->data;
-			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
+			purple_account_set_enabled(account, TRUE);
 		}
 	}
 }
@@ -846,7 +846,7 @@ int main(int argc, char *argv[])
 		/* disable all accounts */
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
-			purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+			purple_account_set_enabled(account, FALSE);
 		}
 		/* honor the startup status preference */
 		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
