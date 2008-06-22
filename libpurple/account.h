@@ -373,15 +373,6 @@ void purple_account_set_user_info(PurpleAccount *account, const char *user_info)
 void purple_account_set_buddy_icon_path(PurpleAccount *account, const char *path);
 
 /**
- * Sets the account's protocol ID.
- *
- * @param account     The account.
- * @param protocol_id The protocol ID.
- */
-void purple_account_set_protocol_id(PurpleAccount *account,
-								  const char *protocol_id);
-
-/**
  * Sets the account's connection.
  *
  * @param account The account.

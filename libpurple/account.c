@@ -46,6 +46,7 @@
 struct _PurpleAccountPrivate
 {
 	PurpleConnectionErrorInfo *current_error;
+	gboolean check_mail;
 	gboolean enabled;
 	PurplePlugin *prpl;
 };
@@ -384,6 +385,10 @@ enum
 	PROP_ENABLED,
 	PROP_CONNECTION,
 	PROP_PRPL,
+	PROP_USER_INFO,
+	PROP_BUDDY_ICON_PATH,
+	PROP_REMEMBER_PASSWORD,
+	PROP_CHECK_MAIL,
 	PROP_LAST
 };
 
@@ -395,6 +400,10 @@ enum
 #define PROP_ENABLED_S         "enabled"
 #define PROP_CONNECTION_S      "connection"
 #define PROP_PRPL_S            "prpl"
+#define PROP_USER_INFO_S       "userinfo"
+#define PROP_BUDDY_ICON_PATH_S "buddy-icon-path"
+#define PROP_REMEMBER_PASSWORD_S "remember-password"
+#define PROP_CHECK_MAIL_S      "check-mail"
 
 /* GObject Signal enums */
 enum
@@ -435,6 +444,20 @@ purple_account_set_property(GObject *obj, guint param_id, const GValue *value,
 #warning use _object when the prpls are GObjects
 			account->priv->prpl = g_value_get_pointer(value);
 			break;
+		case PROP_USER_INFO:
+			purple_account_set_user_info(account, g_value_get_string(value));
+			break;
+		case PROP_BUDDY_ICON_PATH:
+			purple_account_set_buddy_icon_path(account,
+					g_value_get_string(value));
+			break;
+		case PROP_REMEMBER_PASSWORD:
+			purple_account_set_remember_password(account,
+					g_value_get_boolean(value));
+			break;
+		case PROP_CHECK_MAIL:
+			purple_account_set_check_mail(account, g_value_get_boolean(value));
+			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
 			break;
@@ -471,6 +494,18 @@ purple_account_get_property(GObject *obj, guint param_id, GValue *value,
 		case PROP_PRPL:
 #warning Use _object when prpls are GObjects
 			g_value_set_pointer(value, account->priv->prpl);
+			break;
+		case PROP_USER_INFO:
+			g_value_set_string(value, purple_account_get_user_info(account));
+			break;
+		case PROP_BUDDY_ICON_PATH:
+			g_value_set_string(value, purple_account_get_buddy_icon_path(account));
+			break;
+		case PROP_REMEMBER_PASSWORD:
+			g_value_set_boolean(value, purple_account_get_remember_password(account));
+			break;
+		case PROP_CHECK_MAIL:
+			g_value_set_boolean(value, purple_account_get_check_mail(account));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -583,9 +618,33 @@ static void purple_account_class_init(PurpleAccountClass *klass)
 				G_PARAM_READWRITE)
 			);
 
+	g_object_class_install_property(obj_class, PROP_USER_INFO,
+			g_param_spec_string(PROP_USER_INFO_S, _("User information"),
+				_("Detailed user information for the account."), NULL,
+				G_PARAM_READWRITE)
+			);
+
+	g_object_class_install_property(obj_class, PROP_BUDDY_ICON_PATH,
+			g_param_spec_string(PROP_BUDDY_ICON_PATH_S, _("Buddy icon path"),
+				_("Path to the buddyicon for the account."), NULL,
+				G_PARAM_READWRITE)
+			);
+
 	g_object_class_install_property(obj_class, PROP_ENABLED,
 			g_param_spec_boolean(PROP_ENABLED_S, _("Enabled"),
 				_("Whether the account is enabled or not."), FALSE,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+			);
+
+	g_object_class_install_property(obj_class, PROP_REMEMBER_PASSWORD,
+			g_param_spec_boolean(PROP_REMEMBER_PASSWORD_S, _("Remember password"),
+				_("Whether to remember and store the password for this account."), FALSE,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+			);
+
+	g_object_class_install_property(obj_class, PROP_CHECK_MAIL,
+			g_param_spec_boolean(PROP_CHECK_MAIL_S, _("Check mail"),
+				_("Whether to check mails for this account."), FALSE,
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
 			);
 
@@ -601,6 +660,7 @@ static void purple_account_class_init(PurpleAccountClass *klass)
 				_("The protocol plugin that is responsible for the account."),
 				G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)
 			);
+
 
 	/* Setup signals */
 	signals[SIG_SETTINGS_CHANGED] =
@@ -662,8 +722,6 @@ purple_account_new(const char *username, const char *protocol_id)
 			NULL);
 
 	PURPLE_DBUS_REGISTER_POINTER(account, PurpleAccount);
-
-	purple_account_set_protocol_id(account, protocol_id);
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info != NULL && prpl_info->status_types != NULL)
@@ -1203,32 +1261,24 @@ purple_account_set_user_info(PurpleAccount *account, const char *user_info)
 {
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
+	if (purple_util_strings_equal(account->user_info, user_info))
+		return;
+
 	g_free(account->user_info);
 	account->user_info = g_strdup(user_info);
-
-	schedule_accounts_save();
+	g_object_notify(G_OBJECT(account), PROP_USER_INFO_S);
 }
 
 void purple_account_set_buddy_icon_path(PurpleAccount *account, const char *path)
 {
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
+	if (purple_util_strings_equal(account->buddy_icon_path, path))
+		return;
+
 	g_free(account->buddy_icon_path);
 	account->buddy_icon_path = g_strdup(path);
-
-	schedule_accounts_save();
-}
-
-void
-purple_account_set_protocol_id(PurpleAccount *account, const char *protocol_id)
-{
-	g_return_if_fail(account     != NULL);
-	g_return_if_fail(protocol_id != NULL);
-
-	g_free(account->protocol_id);
-	account->protocol_id = g_strdup(protocol_id);
-
-	schedule_accounts_save();
+	g_object_notify(G_OBJECT(account), PROP_BUDDY_ICON_PATH_S);
 }
 
 void
@@ -1255,17 +1305,23 @@ purple_account_set_remember_password(PurpleAccount *account, gboolean value)
 {
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
+	if (account->remember_pass == value)
+		return;
 	account->remember_pass = value;
-
-	schedule_accounts_save();
+	g_object_notify(G_OBJECT(account), PROP_REMEMBER_PASSWORD_S);
 }
 
 void
 purple_account_set_check_mail(PurpleAccount *account, gboolean value)
 {
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+
 	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
-	purple_account_set_bool(account, "check-mail", value);
+	if (priv->check_mail == value)
+		return;
+	priv->check_mail = value;
+	g_object_notify(G_OBJECT(account), PROP_CHECK_MAIL_S);
 }
 
 void
@@ -1761,7 +1817,7 @@ purple_account_get_check_mail(const PurpleAccount *account)
 {
 	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), FALSE);
 
-	return purple_account_get_bool(account, "check-mail", FALSE);
+	return PURPLE_ACCOUNT_GET_PRIVATE(account)->check_mail;
 }
 
 gboolean
@@ -2292,6 +2348,9 @@ xmlnode * purple_account_to_xmlnode(PurpleAccount *account)
 		child = xmlnode_new_child(node, "userinfo");
 		xmlnode_insert_data(child, tmp, -1);
 	}
+
+	child = xmlnode_new_child(node, "check-mail");
+	xmlnode_insert_data(child, purple_account_get_check_mail(account) ? "1" : "0", -1);
 
 	if (g_hash_table_size(account->settings) > 0)
 	{

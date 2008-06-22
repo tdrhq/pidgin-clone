@@ -540,6 +540,13 @@ parse_account(xmlnode *node)
 		g_free(data);
 	}
 
+	child = xmlnode_get_child(node, "check-mail");
+	if (child != NULL) {
+		char *value = xmlnode_get_data(child);
+		purple_account_set_check_mail(ret, value[0] == '0' ? FALSE : TRUE);
+		g_free(value);
+	}
+
 	/* Read an old buddyicon */
 	child = xmlnode_get_child(node, "buddyicon");
 	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
