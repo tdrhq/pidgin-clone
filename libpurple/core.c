@@ -211,6 +211,8 @@ purple_core_quit(void)
 	purple_dnsquery_uninit();
 	purple_imgstore_uninit();
 
+	g_object_unref(G_OBJECT(purple_account_manager_get()));
+
 	purple_debug_info("main", "Unloading all plugins\n");
 	purple_plugins_destroy_all();
 
