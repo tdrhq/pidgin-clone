@@ -407,7 +407,8 @@ msn_offline_message(const PurpleBuddy *buddy) {
 	MsnUser *user;
 	if (buddy == NULL)
 		return FALSE;
-	user = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
+	/*user = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));*/
+	user = buddy->proto_data;
 	return user && user->mobile;
 }
 
@@ -532,7 +533,8 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	PurplePresence *presence = purple_buddy_get_presence(buddy);
 	PurpleStatus *status = purple_presence_get_active_status(presence);
 
-	user = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
+	/*user = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));*/
+	user = buddy->proto_data;
 
 
 	if (purple_presence_is_online(presence))
@@ -684,7 +686,8 @@ msn_buddy_menu(PurpleBuddy *buddy)
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
-	user = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
+	/*user = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));*/
+	user = buddy->proto_data;
 
 	if (user != NULL)
 	{

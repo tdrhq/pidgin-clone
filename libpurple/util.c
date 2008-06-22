@@ -4665,7 +4665,7 @@ void purple_util_set_current_song(const char *title, const char *artist, const c
 		PurplePresence *presence;
 		PurpleStatus *tune;
 		PurpleAccount *account = list->data;
-		if (!purple_account_get_enabled(account, purple_core_get_ui()))
+		if (!purple_account_get_enabled(account))
 			continue;
 
 		presence = purple_account_get_presence(account);

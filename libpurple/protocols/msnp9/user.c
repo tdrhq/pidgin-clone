@@ -257,7 +257,8 @@ msn_user_add_group_id(MsnUser *user, int id)
 		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
 
-	purple_object_set_protocol_data(PURPLE_OBJECT(b),user);
+	/*purple_object_set_protocol_data(PURPLE_OBJECT(b),user);*/
+	b->proto_data = user;
 }
 
 void

@@ -180,7 +180,7 @@ init_libpurple(void)
 	purple_util_set_user_dir(CUSTOM_USER_DIRECTORY);
 
 	/* We do not want any debugging for now to keep the noise to a minimum. */
-	purple_debug_set_enabled(FALSE);
+	purple_debug_set_enabled(TRUE);
 
 	/* Set the core-uiops, which is used to
 	 * 	- initialize the ui specific preferences.
@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
 	purple_account_set_password(account, password);
 
 	/* It's necessary to enable the account first. */
-	purple_account_set_enabled(account, UI_ID, TRUE);
+	purple_account_set_enabled(account, TRUE);
 
 	/* Now, to connect the account(s), create a status and activate it. */
 	status = purple_savedstatus_new(NULL, PURPLE_STATUS_AVAILABLE);

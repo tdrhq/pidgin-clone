@@ -164,12 +164,7 @@ purple_connection_new(PurpleAccount *account, gboolean regist, const char *passw
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
-#warning Bring back when PurpleAccount is GObject
-#if 0
-	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
-#else
-	g_return_if_fail(account != NULL);
-#endif
+	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
 
 	if (!purple_account_is_disconnected(account))
 		return;
@@ -293,76 +288,8 @@ purple_connection_new_unregister(PurpleAccount *account, const char *password, P
 void
 purple_connection_destroy(PurpleConnection *gc)
 {
-	PurpleAccount *account;
-	GSList *buddies;
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	gboolean remove = FALSE;
-
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
-
-	account = purple_connection_get_account(gc);
-
-	purple_debug_info("connection", "Disconnecting connection %p\n", gc);
-
-	if (purple_connection_get_state(gc) != PURPLE_CONNECTION_STATE_CONNECTING)
-		remove = TRUE;
-
-#if 0
-	purple_signal_emit(purple_connections_get_handle(), "signing-off", gc);
-#endif
-
-	while (gc->priv->buddy_chats)
-	{
-		PurpleConversation *b = gc->priv->buddy_chats->data;
-
-		gc->priv->buddy_chats = g_slist_remove(gc->priv->buddy_chats, b);
-		purple_conv_chat_left(PURPLE_CONV_CHAT(b));
-	}
-
-	update_keepalive(gc, FALSE);
-
-	purple_proxy_connect_cancel_with_handle(gc);
-
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->priv->prpl);
-	if (prpl_info->close)
-		(prpl_info->close)(gc);
-
-	/* Clear out the proto data that was freed in the prpl close method*/
-	buddies = purple_find_buddies(account, NULL);
-	while (buddies != NULL) {
-		PurpleBuddy *buddy = buddies->data;
-		purple_object_set_protocol_data(PURPLE_OBJECT(buddy),NULL);
-		buddies = g_slist_delete_link(buddies, buddies);
-	}
-
-	connections = g_list_remove(connections, gc);
-
-	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_DISCONNECTED);
-
-	if (remove)
-		purple_blist_remove_account(account);
-
-#if 0
-	purple_signal_emit(purple_connections_get_handle(), "signed-off", gc);
-#endif
-
-	purple_account_request_close_with_account(account);
-	purple_request_close_with_handle(gc);
-	purple_notify_close_with_handle(gc);
-
-	purple_debug_info("connection", "Destroying connection %p\n", gc);
-
-	purple_account_set_connection(account, NULL);
-
-	g_free(gc->priv->password);
-	g_free(gc->priv->display_name);
-
-	if (gc->priv->disconnect_timeout)
-		purple_timeout_remove(gc->priv->disconnect_timeout);
-
-	PURPLE_DBUS_UNREGISTER_POINTER(gc);
-#warning TODO: Much of the above should be moved to purple_connection_finalize
-	g_object_unref(G_OBJECT(gc));
+	purple_account_set_connection(gc->priv->account, NULL);
 }
 
 /*
@@ -475,18 +402,12 @@ purple_connection_set_account(PurpleConnection *gc, PurpleAccount *account)
 {
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	g_return_if_fail(account != NULL);
+	g_return_if_fail(gc->priv->account == NULL); /* We set the account for a connection exactly once */
 
 	if (gc->priv->account == account)
 		return;
 
-	purple_account_set_connection(gc->priv->account, NULL);
-
-#if 1
-#warning Remove this after PurpleAccount is GObject
 	gc->priv->account = account;
-#else
-	gc->priv->account = g_object_ref(account);
-#endif
 	gc->priv->prpl = account ? purple_find_prpl(purple_account_get_protocol_id(account)) : NULL;
 
 	purple_account_set_connection(account, gc);
@@ -739,8 +660,7 @@ purple_connection_get_property(GObject *obj, guint param_id, GValue *value,
 			g_value_set_enum(value, purple_connection_get_state(pc));
 			break;
 		case PROP_ACCOUNT:
-			#warning fix me when account is an object
-			g_value_set_pointer(value, purple_connection_get_account(pc));
+			g_value_set_object(value, purple_connection_get_account(pc));
 			break;
 		case PROP_INPUT_WATCHER:
 			g_value_set_int(value, pc->priv->inpa);
@@ -780,8 +700,7 @@ purple_connection_set_property(GObject *obj, guint param_id,
 			purple_connection_set_state(pc, g_value_get_enum(value));
 			break;
 		case PROP_ACCOUNT:
-			#warning fix me when account is an object
-			purple_connection_set_account(pc, g_value_get_pointer(value));
+			purple_connection_set_account(pc, g_value_get_object(value));
 			break;
 		case PROP_INPUT_WATCHER:
 			pc->priv->inpa = g_value_get_int(value);
@@ -808,16 +727,87 @@ purple_connection_set_property(GObject *obj, guint param_id,
 }
 
 static void
+purple_connection_dispose(GObject *obj)
+{
+	PurpleConnection *pc = PURPLE_CONNECTION(obj);
+	PurpleAccount *account;
+	GSList *buddies;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	g_return_if_fail(PURPLE_IS_CONNECTION(pc));
+
+	account = purple_connection_get_account(pc);
+
+	purple_debug_info("connection", "Disconnecting connection %p\n", pc);
+
+
+#if 0
+	purple_signal_emit(purple_connections_get_handle(), "signing-off", pc);
+#endif
+
+	while (pc->priv->buddy_chats)
+	{
+		PurpleConversation *b = pc->priv->buddy_chats->data;
+
+		pc->priv->buddy_chats = g_slist_remove(pc->priv->buddy_chats, b);
+		purple_conv_chat_left(PURPLE_CONV_CHAT(b));
+	}
+
+	update_keepalive(pc, FALSE);
+
+	purple_proxy_connect_cancel_with_handle(pc);
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(pc->priv->prpl);
+	if (prpl_info->close)
+		(prpl_info->close)(pc);
+
+	/* Clear out the proto data that was freed in the prpl close method*/
+	buddies = purple_find_buddies(account, NULL);
+	while (buddies != NULL) {
+		PurpleBuddy *buddy = buddies->data;
+#warning Uncomment when PurpleBuddy is a GObject
+#if 0
+		purple_object_set_protocol_data(PURPLE_OBJECT(buddy),NULL);
+#endif
+		buddies = g_slist_delete_link(buddies, buddies);
+	}
+
+}
+
+static void
 purple_connection_finalize(GObject *obj)
 {
 	PurpleConnection *pc = PURPLE_CONNECTION(obj);
+	PurpleAccount *account = pc->priv->account;
+	gboolean remove = FALSE;
 
-#warning Enable this when PurpleAccount is a GObject.
+	connections = g_list_remove(connections, pc);
+
+	if (purple_connection_get_state(pc) != PURPLE_CONNECTION_STATE_CONNECTING)
+		remove = TRUE;
+	purple_connection_set_state(pc, PURPLE_CONNECTION_STATE_DISCONNECTED);
+	if (remove)
+		purple_blist_remove_account(account);
+
 #if 0
-	if (PURPLE_IS_ACCOUNT(pc->priv->account))
-		g_object_unref(G_OBJECT(pc->priv->account));
+	purple_signal_emit(purple_connections_get_handle(), "signed-off", pc);
 #endif
 
+	purple_account_request_close_with_account(account);
+	purple_request_close_with_handle(pc);
+	purple_notify_close_with_handle(pc);
+
+	purple_debug_info("connection", "Destroying connection %p\n", pc);
+
+	purple_account_set_connection(account, NULL);
+
+	g_free(pc->priv->password);
+	g_free(pc->priv->display_name);
+
+	if (pc->priv->disconnect_timeout)
+		purple_timeout_remove(pc->priv->disconnect_timeout);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(pc);
 	g_free(pc->priv);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
@@ -843,6 +833,7 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 	obj_class->get_property = purple_connection_get_property;
 	obj_class->set_property = purple_connection_set_property;
 	obj_class->finalize = purple_connection_finalize;
+	obj_class->dispose = purple_connection_dispose;
 
 	/* explicitly make these pure */
 	klass->signing_on = NULL;
@@ -865,9 +856,9 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 							  G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_STATE, pspec);
 
-	#warning This needs to be moved to g_param_spec_object when account is objectified
-	pspec = g_param_spec_pointer("account", "account",
-								 "The account this connection belongs to.",
+	pspec = g_param_spec_object("account", "account",
+								 _("The account this connection belongs to."),
+								 PURPLE_TYPE_ACCOUNT,
 								 G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_ACCOUNT, pspec);
 

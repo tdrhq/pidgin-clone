@@ -123,7 +123,7 @@ struct _PurpleAccount
 {
 	PurpleObject parent;
 
-	PurpleAccountPrivate *priv;	
+	PurpleAccountPrivate *priv;
 
 	char *username;             /**< The username.                          */
 	char *alias;                /**< How you appear to yourself.            */
@@ -162,7 +162,7 @@ struct _PurpleAccount
 
 struct _PurpleAccountClass
 {
-	GObjectClass parent;
+	PurpleObjectClass parent;
 	void (*_purple_reserved[4])(void);
 };
 
@@ -409,11 +409,9 @@ void purple_account_set_check_mail(PurpleAccount *account, gboolean value);
  * UI.
  *
  * @param account The account.
- * @param ui      The UI.
  * @param value   @c TRUE if it is enabled.
  */
-void purple_account_set_enabled(PurpleAccount *account, const char *ui,
-			      gboolean value);
+void purple_account_set_enabled(PurpleAccount *account, gboolean value);
 
 /**
  * Sets the account's proxy information.
@@ -656,8 +654,7 @@ gboolean purple_account_get_check_mail(const PurpleAccount *account);
  *
  * @return @c TRUE if it enabled on this UI.
  */
-gboolean purple_account_get_enabled(const PurpleAccount *account,
-				  const char *ui);
+gboolean purple_account_get_enabled(const PurpleAccount *account);
 
 /**
  * Returns the account's proxy information.
