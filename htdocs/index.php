@@ -18,17 +18,17 @@
 
 <div id="download">
 <img src="/shared/img/logo.pidgin.png" alt="[Pidgin Logo]" id="logo" width="107" height="185" />
-<script language="JavaScript"><!--
-if (navigator.platform.indexOf("Win") != -1)
-	document.write("<a href=\"/download/windows/\">");
-else
-	document.write("<a href=\"/download/\">");
-// --></script>
-<noscript><a href="/download/"></noscript>
+<a id="download_link" href="/download/">
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="48" height="48" />
 Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?></span></a>
 </div>
+
+<script type="text/javascript"><!--
+if (navigator.platform.indexOf("Win") != -1)
+	document.getElementById("download_link").href = "/download/windows/";
+// --></script>
+
 
 <p class="linkbar">
   <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a> |
