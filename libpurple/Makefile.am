@@ -56,6 +56,7 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
+	marshallers.c \
 	md4cipher.c \
 	md5cipher.c \
 	mime.c \
