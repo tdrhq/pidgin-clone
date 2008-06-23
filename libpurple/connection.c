@@ -89,6 +89,7 @@ enum
 	SIG_SIGNING_OFF,
 	SIG_SIGNED_OFF,
 	SIG_DISCONNECTED,
+	SIG_ERROR,
 	SIG_LAST
 };
 
@@ -206,9 +207,7 @@ purple_connection_new(PurpleAccount *account, gboolean regist, const char *passw
 
 	gc->priv->password = g_strdup(password);
 
-#if 0
-	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
-#endif
+	g_signal_emit(G_OBJECT(gc), signals[SIG_SIGNING_ON], 0);
 
 	if (regist)
 	{
@@ -265,23 +264,21 @@ purple_connection_new_unregister(PurpleAccount *account, const char *password, P
 						   "a password.\n", purple_account_get_username(account));
 		return;
 	}
-	
+
 	gc = g_new0(PurpleConnection, 1);
 	PURPLE_DBUS_REGISTER_POINTER(gc, PurpleConnection);
-	
+
 	gc->priv->prpl = prpl;
 	gc->priv->password = g_strdup(password);
 	purple_connection_set_account(gc, account);
 	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTING);
 	connections = g_list_append(connections, gc);
 	purple_account_set_connection(account, gc);
-	
-#if 0
-	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
-#endif
-	
+
+	g_signal_emit(gc, signals[SIG_SIGNING_ON], 0);
+
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
-	
+
 	prpl_info->unregister_user(account, cb, user_data);
 }
 
@@ -357,8 +354,8 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 		if (ops != NULL && ops->connected != NULL)
 			ops->connected(gc);
 
-		purple_signal_emit(purple_connections_get_handle(), "signed-on", gc);
 #endif
+		g_signal_emit(G_OBJECT(gc), signals[SIG_SIGNED_ON], 0);
 
 		serv_set_permit_deny(gc);
 
@@ -579,10 +576,8 @@ purple_connection_error_reason (PurpleConnection *gc,
 		if (ops->report_disconnect != NULL)
 			ops->report_disconnect (gc, description);
 	}
-
-	purple_signal_emit(purple_connections_get_handle(), "connection-error",
-		gc, reason, description);
 #endif
+	g_signal_emit(G_OBJECT(gc), signals[SIG_ERROR], 0, reason, description);
 
 	gc->priv->disconnect_timeout = purple_timeout_add(0, purple_connection_disconnect_cb,
 			purple_connection_get_account(gc));
@@ -740,10 +735,7 @@ purple_connection_dispose(GObject *obj)
 
 	purple_debug_info("connection", "Disconnecting connection %p\n", pc);
 
-
-#if 0
-	purple_signal_emit(purple_connections_get_handle(), "signing-off", pc);
-#endif
+	g_signal_emit(G_OBJECT(pc), signals[SIG_SIGNING_OFF], 0);
 
 	while (pc->priv->buddy_chats)
 	{
@@ -789,9 +781,7 @@ purple_connection_finalize(GObject *obj)
 	if (remove)
 		purple_blist_remove_account(account);
 
-#if 0
-	purple_signal_emit(purple_connections_get_handle(), "signed-off", pc);
-#endif
+	g_signal_emit(G_OBJECT(pc), signals[SIG_SIGNED_OFF], 0);
 
 	purple_account_request_close_with_account(account);
 	purple_request_close_with_handle(pc);
@@ -902,7 +892,7 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(PurpleConnectionClass, signing_on),
 					 NULL, NULL,
-					 purple_smarshal_VOID__OBJECT,
+					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE,
 					 0);
 
@@ -912,7 +902,7 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(PurpleConnectionClass, signed_on),
 					 NULL, NULL,
-					 purple_smarshal_VOID__OBJECT,
+					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE,
 					 0);
 
@@ -922,7 +912,7 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(PurpleConnectionClass, signing_off),
 					 NULL, NULL,
-					 purple_smarshal_VOID__OBJECT,
+					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE,
 					 0);
 
@@ -932,7 +922,7 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(PurpleConnectionClass, signed_off),
 					 NULL, NULL,
-					 purple_smarshal_VOID__OBJECT,
+					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE,
 					 0);
 
@@ -942,9 +932,19 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(PurpleConnectionClass, disconnected),
 					 NULL, NULL,
-					 purple_smarshal_VOID__OBJECT,
+					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE,
 					 0);
+
+	signals[SIG_ERROR] =
+		g_signal_new("connection-error",
+					 G_OBJECT_CLASS_TYPE(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(PurpleConnectionClass, disconnected),
+					 NULL, NULL,
+					 purple_smarshal_VOID__ENUM_STRING,
+					 G_TYPE_NONE,
+					 2, PURPLE_TYPE_CONNECTION_ERROR, G_TYPE_STRING);
 }
 
 /******************************************************************************
@@ -1022,15 +1022,49 @@ purple_connection_state_get_gtype(void)
 
 	if(type == 0) {
 		static const GEnumValue values[] = {
-			{ PURPLE_CONNECTION_STATE_DISCONNECTED, "Disconnected",
-			  "Disconnected"
-			},
-			{ PURPLE_CONNECTION_STATE_CONNECTING, "Connecting", "Connecting" },
-			{ PURPLE_CONNECTION_STATE_CONNECTED, "Connected", "Connected" },
+			{ PURPLE_CONNECTION_STATE_DISCONNECTED, "Disconnected", "Disconnected"},
+			{ PURPLE_CONNECTION_STATE_CONNECTING, "Connecting", "Connecting"},
+			{ PURPLE_CONNECTION_STATE_CONNECTED, "Connected", "Connected"},
 			{ 0, NULL, NULL },
 		};
 
 		type = g_enum_register_static("PurpleConnectionState", values);
+	}
+
+	return type;
+}
+
+/******************************************************************************
+ * PurpleConnectionError API
+ *****************************************************************************/
+GType
+purple_connection_error_get_gtype(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GEnumValue values[] = {
+			{PURPLE_CONNECTION_ERROR_NETWORK_ERROR, "Network error", ""},
+			{PURPLE_CONNECTION_ERROR_INVALID_USERNAME, "Invalid username", ""},
+			{PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, "Authentication failed", ""},
+			{PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE, "Authentication impossible", ""},
+			{PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT, "No SSL support", ""},
+			{PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR, "Encryption error", ""},
+			{PURPLE_CONNECTION_ERROR_NAME_IN_USE, "Name already in use", ""},
+			{PURPLE_CONNECTION_ERROR_INVALID_SETTINGS, "Invalid settings", ""},
+			{PURPLE_CONNECTION_ERROR_CERT_NOT_PROVIDED, "SSL certificate unavailable", ""},
+			{PURPLE_CONNECTION_ERROR_CERT_UNTRUSTED, "SSL certificate could not be trusted", ""},
+			{PURPLE_CONNECTION_ERROR_CERT_EXPIRED, "SSL certificate expired", ""},
+			{PURPLE_CONNECTION_ERROR_CERT_NOT_ACTIVATED, "SSL certificate is not yet valid", ""},
+			{PURPLE_CONNECTION_ERROR_CERT_HOSTNAME_MISMATCH, "SSL certificate did not match its hostname", ""},
+			{PURPLE_CONNECTION_ERROR_CERT_FINGERPRINT_MISMATCH, "SSL certificate fingerprint mismatch", ""},
+			{PURPLE_CONNECTION_ERROR_CERT_SELF_SIGNED, "SSL certificate is self-signed", ""},
+			{PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR, "Other SSL error", ""},
+			{PURPLE_CONNECTION_ERROR_OTHER_ERROR, "Unknown error", ""},
+			{ 0, NULL, NULL },
+		};
+
+		type = g_enum_register_static("PurpleConnectionError", values);
 	}
 
 	return type;

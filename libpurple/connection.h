@@ -146,6 +146,8 @@ typedef enum
 	PURPLE_CONNECTION_ERROR_OTHER_ERROR = 16
 } PurpleConnectionError;
 
+#define PURPLE_TYPE_CONNECTION_ERROR		(purple_connection_error_get_gtype())
+
 /** Holds the type of an error along with its description. */
 typedef struct
 {
@@ -583,6 +585,7 @@ PurpleConnectionUiOps *purple_connections_get_ui_ops(void);
 GType purple_connection_get_gtype(void);
 GType purple_connection_flags_get_gtype(void);
 GType purple_connection_state_get_gtype(void);
+GType purple_connection_error_get_gtype(void);
 
 G_END_DECLS
 
