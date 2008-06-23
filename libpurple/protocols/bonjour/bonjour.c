@@ -397,7 +397,7 @@ static void
 bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *old_group, const char *new_group)
 {
 	PurpleBlistNodeFlags oldflags;
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 
 	if (buddy == NULL)
 		return;
@@ -415,7 +415,7 @@ bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *o
 static gboolean
 bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 
 	return (buddy != NULL && buddy->proto_data != NULL);
 

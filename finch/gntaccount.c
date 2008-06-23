@@ -250,7 +250,7 @@ save_account_cb(AccountEditDialog *dialog)
 		saved_status = purple_savedstatus_get_current();
 		if (saved_status != NULL) {
 			purple_savedstatus_activate_for_account(saved_status, account);
-			purple_account_set_enabled(account, FINCH_UI, TRUE);
+			purple_account_set_enabled(account, TRUE);
 		}
 	}
 

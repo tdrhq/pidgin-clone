@@ -2182,9 +2182,7 @@ static void pidgin_blist_drag_data_get_cb(GtkWidget *widget,
 			return;
 		}
 
-		protocol =
-			PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->list_icon(buddy->account,
-														   buddy);
+		protocol = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->list_icon(buddy->account, buddy);
 
 		str = g_string_new(NULL);
 		g_string_printf(str,
@@ -2578,7 +2576,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	}
 
 	if(account && purple_account_get_connection(account)) {
-		Purpleconnection *gc = purple_account_get_connection(account);
+		PurpleConnection *gc = purple_account_get_connection(account);
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	}
 
@@ -7626,7 +7624,7 @@ pidgin_blist_update_accounts_menu(void)
 
 		account = accounts->data;
 
-		if(!purple_account_get_enabled(account, PIDGIN_UI)) {
+		if(!purple_account_get_enabled(account)) {
 			if (!disabled_accounts) {
 				menuitem = gtk_menu_item_new_with_label(_("Enable Account"));
 				gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);

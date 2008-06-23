@@ -2601,6 +2601,7 @@ redraw_icon(gpointer data)
 	PurpleConversation *conv = gtkconv->active_conv;
 	PurpleAccount *account;
 	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *conn;
 
 	GdkPixbuf *buf;
 	GdkPixbuf *scale;
@@ -2610,9 +2611,10 @@ redraw_icon(gpointer data)
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	account = purple_conversation_get_account(conv);
+	conn = account ? purple_account_get_connection(account) : NULL;
 
-	if(account && account->gc) {
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	if(account && conn) {
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(conn));
 	} else {
 		gtkconv->u.im->icon_timer = 0;
 		return FALSE;
@@ -4219,7 +4221,7 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 
 	gc      = purple_conversation_get_gc(conv);
 
-	if(!gc || !(prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)))
+	if(!gc || !(prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))))
 		return;
 
 	if(prpl_info->set_chat_topic == NULL)

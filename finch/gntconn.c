@@ -196,9 +196,8 @@ PurpleConnectionUiOps *finch_connections_get_ui_ops()
 
 void finch_connections_init()
 {
-	hash = g_hash_table_new_full(
-							g_direct_hash, g_direct_equal,
-							NULL, free_auto_recon);
+	hash = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+			NULL, free_auto_recon);
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 						finch_connection_get_handle(),

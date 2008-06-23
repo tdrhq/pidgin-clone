@@ -461,7 +461,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 			if(xfer == NULL) {
 				purple_debug_info("bonjour", "xfer find fail.\n");
-				xep_ft_si_reject((BonjourData *)pc->proto_data, id, pb->name, "403", "cancel");
+				xep_ft_si_reject((BonjourData *)purple_object_get_protocol_data(PURPLE_OBJECT(pc)), id, pb->name, "403", "cancel");
 			} else
 				bonjour_bytestreams_init(xfer);
 

@@ -3482,10 +3482,11 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	PurpleConnection *gc = user_data;
 	gboolean set_cookie = FALSE;
 	gchar *url;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd;
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
-	
+
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (error_message != NULL)

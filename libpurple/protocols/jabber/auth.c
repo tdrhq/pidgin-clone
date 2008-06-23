@@ -24,6 +24,7 @@
 #include "debug.h"
 #include "core.h"
 #include "conversation.h"
+#include "hmaccipher.h"
 #include "md5cipher.h"
 #include "request.h"
 #include "sha1cipher.h"
@@ -641,7 +642,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 		} else if(js->stream_id && xmlnode_get_child(query, "crammd5")) {
 			const char *challenge;
-			gchar digest[33];
+			guchar digest[33];
 			PurpleCipher *hmac;
 
 #warning Someone better double check this
@@ -663,7 +664,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 			x = xmlnode_new_child(query, "crammd5");
 
-			xmlnode_insert_data(x, digest, 32);
+			xmlnode_insert_data(x, (char*)digest, 32);
 
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);

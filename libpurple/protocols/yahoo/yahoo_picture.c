@@ -471,8 +471,8 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 		return;
 	}
 	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info)
-	    	&& (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	if ((account->proxy_info)
+	    	&& (account->proxy_info->type == PURPLE_PROXY_HTTP))
 		use_whole_url = TRUE;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPLOAD, YAHOO_STATUS_AVAILABLE, yd->session_id);

@@ -97,22 +97,20 @@ static int
 aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar passdigest[16];
 
-	cipher = purple_ciphers_find_cipher("md5");
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (const guchar *)password, password_len);
+	purple_cipher_digest(cipher, 16, passdigest, NULL);
 
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (const guchar *)password, password_len);
-	purple_cipher_context_digest(context, 16, passdigest, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_reset(cipher);
 
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
-	purple_cipher_context_append(context, passdigest, 16);
-	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	purple_cipher_context_digest(context, 16, digest, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_append(cipher, (const guchar *)key, strlen(key));
+	purple_cipher_append(cipher, passdigest, 16);
+	purple_cipher_append(cipher, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	purple_cipher_digest(cipher, 16, digest, NULL);
+
+	g_object_unref(G_OBJECT(cipher));
 
 	return 0;
 }

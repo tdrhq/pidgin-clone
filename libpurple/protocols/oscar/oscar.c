@@ -3792,12 +3792,9 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
-	PurplePresence *presence;
-	PurpleStatus *status;
 	struct buddyinfo *bi;
 	gchar who[16];
 	PurpleNotifyUserInfo *user_info;
-	GString *tmp;
 	gchar *utf8;
 	gchar *buf;
 	const gchar *alias;

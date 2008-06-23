@@ -1826,7 +1826,7 @@ purple_account_get_protocol_name(const PurpleAccount *account)
 
 	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 
-	p = purple_find_prpl(purple_account_get_protocol_id(account));
+	p = PURPLE_ACCOUNT_GET_PRIVATE(account)->prpl;
 
 	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
 }

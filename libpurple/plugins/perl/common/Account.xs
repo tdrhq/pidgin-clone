@@ -78,9 +78,8 @@ purple_account_set_check_mail(account, value)
     Purple::Account account
     gboolean value
 
-void purple_account_set_enabled(account, ui, value)
+void purple_account_set_enabled(account, value)
     Purple::Account account
-    const char *ui
     gboolean value
 
 void
@@ -168,9 +167,8 @@ purple_account_get_check_mail(account)
     Purple::Account account
 
 gboolean
-purple_account_get_enabled(account, ui)
+purple_account_get_enabled(account)
     Purple::Account account
-    const char *ui
 
 Purple::ProxyInfo
 purple_account_get_proxy_info(account)
