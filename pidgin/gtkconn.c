@@ -209,8 +209,6 @@ static void pidgin_connection_network_disconnected (void)
 {
 	GList *list, *l;
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = NULL;
 
 	if(gtkblist)
 		pidgin_status_box_set_network_available(PIDGIN_STATUS_BOX(gtkblist->statusbox), FALSE);
@@ -219,15 +217,7 @@ static void pidgin_connection_network_disconnected (void)
 	while (l) {
 		PurpleAccount *a = (PurpleAccount*)l->data;
 		if (!purple_account_is_disconnected(a)) {
-			gc = purple_account_get_connection(a);
-			if (gc && purple_connection_get_prpl(gc))
-				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
-			if (prpl_info) {
-				if (prpl_info->keepalive)
-					prpl_info->keepalive(gc);
-				else
-					purple_account_disconnect(a);
-			}
+			purple_account_disconnect(a);
 		}
 		l = l->next;
 	}
@@ -296,3 +286,4 @@ pidgin_connection_uninit(void)
 
 	g_hash_table_destroy(auto_reconns);
 }
+

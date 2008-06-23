@@ -62,6 +62,7 @@
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
 #include "gtksession.h"
+#include "gtksmiley.h"
 #include "gtksound.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
@@ -219,16 +220,7 @@ sighandler(int sig)
 		break;
 	default:
 		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
-#warning FIXME: use the connection-manager
-#if 0
-		purple_connections_disconnect_all();
-#endif
-
-		purple_plugins_unload_all();
-
-		if (gtk_main_level())
-			gtk_main_quit();
-		exit(0);
+		purple_core_quit();
 	}
 }
 #endif
@@ -323,6 +315,7 @@ pidgin_ui_init(void)
 	pidgin_roomlist_init();
 	pidgin_log_init();
 	pidgin_docklet_init();
+	pidgin_smileys_init();
 }
 
 static GHashTable *ui_info = NULL;
@@ -339,6 +332,7 @@ pidgin_quit(void)
 	pidgin_plugins_save();
 
 	/* Uninit */
+	pidgin_smileys_uninit();
 	pidgin_conversations_uninit();
 	pidgin_status_uninit();
 	pidgin_docklet_uninit();
@@ -907,3 +901,4 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+

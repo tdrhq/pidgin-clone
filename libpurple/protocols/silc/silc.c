@@ -572,7 +572,7 @@ silcpurple_login(PurpleAccount *account)
 
 	username = (char *)purple_account_get_username(account);
 	up = g_strsplit(username, "@", 2);
-	username = strdup(up[0]);
+	username = g_strdup(up[0]);
 	g_strfreev(up);
 
 	if (!purple_account_get_user_info(account)) {
@@ -616,12 +616,12 @@ silcpurple_login(PurpleAccount *account)
 		                             _("Cannot initialize SILC protocol"));
 		purple_object_set_protocol_data(PURPLE_OBJECT(gc),NULL);
 		silc_free(sg);
-		free(hostname);
-		free(username);
+		silc_free(hostname);
+		g_free(username);
 		return;
 	}
-	free(hostname);
-	free(username);
+	silc_free(hostname);
+	g_free(username);
 
 	/* Check the ~/.silc dir and create it, and new key pair if necessary. */
 	if (!silcpurple_check_silc_dir(gc)) {
@@ -980,7 +980,7 @@ silcpurple_attrs(PurplePluginAction *action)
 	purple_request_field_group_add_field(g, f);
 	f = purple_request_field_bool_new("contact_chat", _("Chat"), cchat);
 	purple_request_field_group_add_field(g, f);
-	f = purple_request_field_bool_new("contact_email", _("E-mail"), cemail);
+	f = purple_request_field_bool_new("contact_email", _("Email"), cemail);
 	purple_request_field_group_add_field(g, f);
 	f = purple_request_field_bool_new("contact_call", _("Phone"), ccall);
 	purple_request_field_group_add_field(g, f);
@@ -1221,7 +1221,7 @@ silcpurple_create_keypair(PurplePluginAction *action)
 	purple_request_field_group_add_field(g, f);
 	f = purple_request_field_string_new("rn", _("Real name"), realname ? realname : "", FALSE);
 	purple_request_field_group_add_field(g, f);
-	f = purple_request_field_string_new("e", _("E-mail"), tmp, FALSE);
+	f = purple_request_field_string_new("e", _("Email"), tmp, FALSE);
 	purple_request_field_group_add_field(g, f);
 	f = purple_request_field_string_new("o", _("Organization"), "", FALSE);
 	purple_request_field_group_add_field(g, f);
@@ -2068,6 +2068,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 
@@ -2107,6 +2108,15 @@ static PurplePluginInfo info =
 	NULL,
 	NULL
 };
+
+#if 0
+static SilcBool silcpurple_debug_cb(char *file, char *function, int line,
+		char *message, void *context)
+{
+	purple_debug_info("SILC", "%s:%d:%s - %s\n", file ? file : "(null)", line, function ? function : "(null)", message ? message : "(null)");
+	return TRUE;
+}
+#endif
 
 static void
 init_plugin(PurplePlugin *plugin)
@@ -2186,6 +2196,8 @@ init_plugin(PurplePlugin *plugin)
 #if 0
 silc_log_debug(TRUE);
 silc_log_set_debug_string("*client*");
+silc_log_quick(TRUE);
+silc_log_set_debug_callbacks(silcpurple_debug_cb, NULL, NULL, NULL);
 #endif
 
 }

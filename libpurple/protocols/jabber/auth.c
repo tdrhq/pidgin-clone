@@ -265,7 +265,7 @@ auth_no_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 
 	/* Disable the account as the user has canceled connecting */
-	purple_account_set_enabled(purple_connection_get_account(conn), purple_core_get_ui(), FALSE);
+	purple_account_set_enabled(purple_connection_get_account(conn), FALSE);
 }
 
 static void jabber_auth_start_cyrus(JabberStream *js)
@@ -383,6 +383,10 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
 						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
 					}
+					/* Remove space which separated this mech from the next */
+					if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
+						g_string_erase(js->sasl_mechs, 0, 1);	
+					}
 					again = TRUE;
 				}
 
@@ -496,6 +500,15 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 #ifdef HAVE_CYRUS_SASL
+		/* Don't include Google Talk's X-GOOGLE-TOKEN mechanism, as we will not
+		 * support it and including it gives a false fall-back to other mechs offerred,
+		 * leading to incorrect error handling.
+		 */
+		if (mech_name && !strcmp(mech_name, "X-GOOGLE-TOKEN")) {
+			g_free(mech_name);
+			continue;
+		}
+
 		g_string_append(js->sasl_mechs, mech_name);
 		g_string_append_c(js->sasl_mechs, ' ');
 #else
@@ -578,71 +591,6 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 }
 
-/*!
- * @brief Given the server challenge (message) and the key (password), calculate the HMAC-MD5 digest
- *
- * This is the crammd5 response.  Inspired by cyrus-sasl's _sasl_hmac_md5()
- */
-static void
-auth_hmac_md5(const char *challenge, size_t challenge_len, const char *key, size_t key_len, guchar *digest)
-{
-	PurpleCipher *cipher;
-	int i;
-	/* inner padding - key XORd with ipad */
-	unsigned char k_ipad[65];    
-	/* outer padding - key XORd with opad */
-	unsigned char k_opad[65];    
-
-	cipher = purple_md5_cipher_new();
-
-	/* if key is longer than 64 bytes reset it to key=MD5(key) */
-	if (strlen(key) > 64) {
-		guchar keydigest[16];
-
-		purple_cipher_append(cipher, (const guchar *)key, strlen(key));
-		purple_cipher_digest(cipher, 16, keydigest, NULL);
-		purple_cipher_reset(cipher);
-
-		key = (char *)keydigest;
-		key_len = 16;
-	} 
-
-	/*
-	 * the HMAC_MD5 transform looks like:
-	 *
-	 * MD5(K XOR opad, MD5(K XOR ipad, text))
-	 *
-	 * where K is an n byte key
-	 * ipad is the byte 0x36 repeated 64 times
-	 * opad is the byte 0x5c repeated 64 times
-	 * and text is the data being protected
-	 */
-
-	/* start out by storing key in pads */
-	memset(k_ipad, '\0', sizeof k_ipad);
-	memset(k_opad, '\0', sizeof k_opad);
-	memcpy(k_ipad, (void *)key, key_len);
-	memcpy(k_opad, (void *)key, key_len);
-
-	/* XOR key with ipad and opad values */
-	for (i=0; i<64; i++) {
-		k_ipad[i] ^= 0x36;
-		k_opad[i] ^= 0x5c;
-	}
-
-	/* perform inner MD5 */
-	purple_cipher_append(cipher, k_ipad, 64); /* start with inner pad */
-	purple_cipher_append(cipher, (const guchar *)challenge, challenge_len); /* then text of datagram */
-	purple_cipher_digest(cipher, 16, digest, NULL); /* finish up 1st pass */
-	purple_cipher_reset(cipher);
-
-	/* perform outer MD5 */
-	purple_cipher_append(cipher, k_opad, 64); /* start with outer pad */
-	purple_cipher_append(cipher, digest, 16); /* then results of 1st hash */
-	purple_cipher_digest(cipher, 16, digest, NULL); /* finish up 2nd pass */
-	g_object_unref(G_OBJECT(cipher));
-}
-
 static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberIq *iq;
@@ -693,12 +641,16 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 		} else if(js->stream_id && xmlnode_get_child(query, "crammd5")) {
 			const char *challenge;
-			guchar digest[16];
-			char h[17], *p;
-			int i;
+			gchar digest[33];
+			PurpleCipher *hmac;
 
-			challenge = xmlnode_get_attrib(xmlnode_get_child(query, "crammd5"), "challenge");
-			auth_hmac_md5(challenge, strlen(challenge), pw, strlen(pw), digest);
+#warning Someone better double check this
+			/* Calculate the MHAC-MD5 digest */
+			challenge = xmlnode_get_attrib(x, "challenge");
+			hmac = purple_hmac_cipher_new();
+			purple_cipher_append(hmac, (guchar*)challenge, strlen(challenge));
+			purple_cipher_digest(hmac, sizeof(digest), digest, NULL);
+			g_object_unref(G_OBJECT(hmac));
 
 			/* Create the response query */
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
@@ -711,11 +663,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 			x = xmlnode_new_child(query, "crammd5");
 
-			/* Translate the digest to a hexadecimal notation */
-			p = h;
-			for(i=0; i<16; i++, p+=2)
-				snprintf(p, 3, "%02x", digest[i]);
-			xmlnode_insert_data(x, h, -1);
+			xmlnode_insert_data(x, digest, 32);
 
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
@@ -932,6 +880,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 					_("Invalid challenge from server"));
 			}
 			g_free(js->expected_rspauth);
+			js->expected_rspauth = NULL;
 		} else {
 			/* assemble a response, and send it */
 			/* see RFC 2831 */
@@ -1112,12 +1061,18 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 			if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
 				g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
 			}
+			/* Remove space which separated this mech from the next */
+			if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
+				g_string_erase(js->sasl_mechs, 0, 1);	
+			}			
 		}
-
-		sasl_dispose(&js->sasl);
-
-		jabber_auth_start_cyrus(js);
-		return;
+		if (strlen(js->sasl_mechs->str)) {
+			/* If we have remaining mechs to try, do so */
+			sasl_dispose(&js->sasl);
+			
+			jabber_auth_start_cyrus(js);
+			return;
+		}
 	}
 #endif
 	msg = jabber_parse_error(js, packet, &reason);
@@ -1130,3 +1085,4 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 		g_free(msg);
 	}
 }
+

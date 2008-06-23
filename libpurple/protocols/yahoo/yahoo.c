@@ -778,6 +778,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				list = g_slist_append(list, im);
 				im->from = pair->value;
 				im->time = time(NULL);
+				im->utf8 = TRUE;
 			}
 			if (pair->key == 97)
 				if (im)
@@ -3480,9 +3481,12 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 {
 	PurpleConnection *gc = user_data;
 	gboolean set_cookie = FALSE;
-	char *url;
+	gchar *url;
+	struct yahoo_data *yd = gc->proto_data;
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (error_message != NULL)
 		purple_debug_error("yahoo", "Requesting mail login token failed: %s\n", error_message);
@@ -3538,7 +3542,9 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 
 	g_free(request);
 
-	if (url_data == NULL) {
+	if (url_data != NULL)
+		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+	else {
 		const char *yahoo_mail_url = (yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
 		purple_debug_error("yahoo",
 				   "Unable to request mail login token; forwarding to login screen.");
@@ -4376,7 +4382,7 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_send_attention,
 	yahoo_attention_types,
 
-	/* padding */
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 

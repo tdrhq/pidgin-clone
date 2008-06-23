@@ -57,6 +57,7 @@ typedef struct group *Purple__Group;
 #include "server.h"
 #include "sha1cipher.h"
 #include "signals.h"
+#include "smiley.h"
 #include "sound.h"
 #include "sslconn.h"
 #include "status.h"
@@ -243,6 +244,9 @@ typedef PurpleRoomlistUiOps *		Purple__Roomlist__UiOps;
 /* savedstatuses.h */
 typedef PurpleSavedStatus *		Purple__SavedStatus;
 typedef PurpleSavedStatusSub *		Purple__SavedStatus__Sub;
+
+/* smiley.h */
+typedef PurpleSmiley *		Purple__Smiley;
 
 /* sound.h */
 typedef PurpleSoundEventID		Purple__SoundEventID;

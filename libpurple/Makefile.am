@@ -78,6 +78,7 @@ purple_coresources = \
 	server.c \
 	sha1cipher.c \
 	signals.c \
+	smiley.c \
 	dnsquery.c \
 	dnssrv.c\
 	status.c \
@@ -138,6 +139,7 @@ purple_coreheaders = \
 	savedstatuses.h \
 	server.h \
 	signals.h \
+	smiley.h \
 	dnsquery.h \
 	dnssrv.h \
 	sha1cipher.h \
@@ -183,7 +185,7 @@ dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-d
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
                 connection.h conversation.h core.h ft.h log.h notify.h prefs.h roomlist.h \
-                savedstatuses.h status.h server.h util.h xmlnode.h prpl.h
+                savedstatuses.h smiley.h status.h server.h util.h xmlnode.h prpl.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
 		$(purple_builtheaders)
@@ -275,7 +277,7 @@ libpurple_la_LIBADD = \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
-	$(LIBNM_LIBS) \
+	$(NETWORKMANAGER_LIBS) \
 	$(INTLLIBS) \
 	-lm
 
@@ -289,4 +291,10 @@ AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
-	$(LIBNM_CFLAGS)
+	$(NETWORKMANAGER_CFLAGS)
+
+# INSTALL_SSL_CERTIFICATES is true when SSL_CERTIFICATES_DIR is empty.
+# We want to use SSL_CERTIFICATES_DIR when it's not empty.
+if ! INSTALL_SSL_CERTIFICATES
+AM_CPPFLAGS += -DSSL_CERTIFICATES_DIR=\"$(SSL_CERTIFICATES_DIR)\"
+endif
