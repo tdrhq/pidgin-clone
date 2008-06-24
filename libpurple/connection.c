@@ -222,6 +222,7 @@ purple_connection_new(PurpleAccount *account, gboolean regist, const char *passw
 	{
 		purple_debug_info("connection", "Connecting. gc = %p\n", gc);
 
+#warning Replace with g_signal_emit when account is gobjectified
 		purple_signal_emit(purple_accounts_get_handle(), "account-connecting", account);
 		prpl_info->login(account);
 	}
@@ -275,7 +276,7 @@ purple_connection_new_unregister(PurpleAccount *account, const char *password, P
 	connections = g_list_append(connections, gc);
 	purple_account_set_connection(account, gc);
 
-	g_signal_emit(gc, signals[SIG_SIGNING_ON], 0);
+	g_signal_emit(G_OBJECT(gc), signals[SIG_SIGNING_ON], 0);
 
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
 
