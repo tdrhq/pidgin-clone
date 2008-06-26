@@ -1004,6 +1004,8 @@ purple_connection_flags_get_gtype(void)
 			  "No url desc"
 			},
 			{ PURPLE_CONNECTION_FLAGS_NO_IMAGES, "No images", "No images", },
+			{ PURPLE_CONNECTION_FLAGS_ALLOW_CUSTOM_SMILEY,
+			    "Allow custom smileys", "Allow custom smileys", },
 			{ 0, NULL, NULL },
 		};
 
