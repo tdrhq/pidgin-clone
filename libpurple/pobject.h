@@ -63,6 +63,11 @@ gpointer purple_object_get_ui_data(PurpleObject *pobj);
 
 int purple_object_get_int(PurpleObject *pobj, const char *prop);
 
+gulong purple_type_connect(GType type, const char *signal, GCallback callback, gpointer data);
+
+gulong purple_type_connect_flags(GType type, const char *signal, GCallback callback,
+		gpointer data, GConnectFlags flags);
+
 G_END_DECLS
 
 #endif /* PURPLE_OBJECT_H */
