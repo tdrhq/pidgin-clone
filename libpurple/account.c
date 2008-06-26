@@ -419,6 +419,7 @@ enum
 /* GObject Signal enums */
 enum
 {
+	SIG_ENABLE_CHANGED,
 	SIG_SETTING_INFO,
 	SIG_SETTINGS_CHANGED,
 	SIG_LAST
@@ -676,6 +677,12 @@ static void purple_account_class_init(PurpleAccountClass *klass)
 
 
 	/* Setup signals */
+	signals[SIG_ENABLE_CHANGED] =
+		g_signal_new("enable-changed", G_OBJECT_CLASS_TYPE(klass),
+				G_SIGNAL_ACTION | G_SIGNAL_DETAILED, 0, NULL, NULL,
+				g_cclosure_marshal_VOID__VOID,
+				G_TYPE_NONE, 0);
+
 	signals[SIG_SETTINGS_CHANGED] =
 		g_signal_new("settings-changed", G_OBJECT_CLASS_TYPE(klass),
 				G_SIGNAL_ACTION | G_SIGNAL_DETAILED, 0, NULL, NULL,
@@ -1373,16 +1380,13 @@ purple_account_set_enabled(PurpleAccount *account, gboolean value)
 	PURPLE_ACCOUNT_GET_PRIVATE(account)->enabled = value;
 	g_object_notify(G_OBJECT(account), PROP_ENABLED_S);
 
+	g_signal_emit(G_OBJECT(account), signals[SIG_ENABLE_CHANGED],
+			g_quark_from_string(value ? "enabled" : "disabled"));
+
 	purple_account_set_ui_bool(account, purple_core_get_ui(),
 			"enabled", value);
 
 	gc = purple_account_get_connection(account);
-
-	/* XXX: I don't know where to move these signals. */
-	if(was_enabled && !value)
-		purple_signal_emit(purple_accounts_get_handle(), "account-disabled", account);
-	else if(!was_enabled && value)
-		purple_signal_emit(purple_accounts_get_handle(), "account-enabled", account);
 
 #warning Do something about wants-to-die. Perhaps check if current_error is fatal?
 #if 0
@@ -2602,16 +2606,6 @@ purple_accounts_init(void)
 	void *handle = purple_accounts_get_handle();
 
 	purple_signal_register(handle, "account-connecting",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT));
-
-	purple_signal_register(handle, "account-disabled",
-						 purple_marshal_VOID__POINTER, NULL, 1,
-						 purple_value_new(PURPLE_TYPE_SUBTYPE,
-										PURPLE_SUBTYPE_ACCOUNT));
-
-	purple_signal_register(handle, "account-enabled",
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT));
