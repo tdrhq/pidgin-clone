@@ -5635,10 +5635,10 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	/* Setup some purple signal handlers. */
 
 	handle = purple_accounts_get_handle();
-	purple_signal_connect(handle, "account-enabled", gtkblist,
-	                      PURPLE_CALLBACK(account_modified), gtkblist);
-	purple_signal_connect(handle, "account-disabled", gtkblist,
-	                      PURPLE_CALLBACK(account_modified), gtkblist);
+
+	purple_type_connect(PURPLE_TYPE_ACCOUNT, "enable-changed",
+			G_CALLBACK(account_modified), gtkblist);
+
 	purple_signal_connect(handle, "account-removed", gtkblist,
 	                      PURPLE_CALLBACK(account_modified), gtkblist);
 	purple_signal_connect(handle, "account-status-changed", gtkblist,
