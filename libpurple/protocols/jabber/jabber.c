@@ -705,12 +705,13 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 	if(!strcmp(type, "result")) {
 		if(js->registration) {
-		buf = g_strdup_printf(_("Registration of %s@%s successful"),
-				js->user->node, js->user->domain);
+			buf = g_strdup_printf(_("Registration of %s@%s successful"),
+					js->user->node, js->user->domain);
+#if 0
 			if(account->registration_cb)
 				(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
-		}
-		else
+#endif
+		} else
 			buf = g_strdup_printf(_("Registration to %s successful"),
 				to);
 		purple_notify_info(NULL, _("Registration Successful"),
@@ -725,8 +726,10 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		purple_notify_error(NULL, _("Registration Failed"),
 				_("Registration Failed"), msg);
 		g_free(msg);
+#if 0
 		if(account->registration_cb)
 			(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
+#endif
 	}
 	g_free(to);
 	if(js->registration)
@@ -863,8 +866,10 @@ jabber_register_cancel_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fie
 {
 	PurpleAccount *account = purple_connection_get_account(cbdata->js->gc);
 	if(account && cbdata->js->registration) {
+#if 0
 		if(account->registration_cb)
 			(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
+#endif
 		jabber_connection_schedule_close(cbdata->js);
 	}
 	g_free(cbdata->who);
@@ -921,8 +926,10 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		if(js->registration) {
 			purple_notify_error(NULL, _("Already Registered"),
 								_("Already Registered"), NULL);
+#if 0
 			if(account->registration_cb)
 				(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
+#endif
 			jabber_connection_schedule_close(js);
 			return;
 		}
@@ -946,8 +953,10 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 #if 0
 					js->gc->wants_to_die = TRUE;
 #endif
+#if 0
 					if(account->registration_cb) /* succeeded, but we have no login info */
 						(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
+#endif
 					jabber_connection_schedule_close(js);
 				}
 				return;

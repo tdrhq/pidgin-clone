@@ -934,10 +934,11 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	if (photo_url_text) {
 		PurpleUtilFetchUrlData *url_data;
 		gboolean use_whole_url = FALSE;
+		PurpleAccount *account = purple_connection_get_account(info_data->gc);
+		PurpleProxyInfo *proxy_info = purple_account_get_proxy_info(account);
 
 		/* use whole URL if using HTTP Proxy */
-		if ((purple_connection_get_account(info_data->gc)->proxy_info) &&
-				(purple_connection_get_account(info_data->gc)->proxy_info->type == PURPLE_PROXY_HTTP))
+		if (proxy_info && proxy_info->type == PURPLE_PROXY_HTTP)
 		    use_whole_url = TRUE;
 
 		/* User-uploaded photos use a different server that requires the Host

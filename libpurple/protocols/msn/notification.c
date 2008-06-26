@@ -454,7 +454,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	msn_message_show_readable(msg, "Notification", TRUE);
 #endif
 
-	gc = cmdproc->session->account->gc;
+	gc = purple_account_get_connection(cmdproc->session->account);
 	passport = msg->remote_user;
 
 	content_type = msn_message_get_content_type(msg);
@@ -658,6 +658,7 @@ msn_notification_dump_contact(MsnSession *session)
 	int payload_len;
 	int adl_count = 0;
 	const char *display_name;
+	PurpleConnection *conn;
 
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
@@ -701,7 +702,8 @@ msn_notification_dump_contact(MsnSession *session)
 		xmlnode_free(adl_node);
 	}
 
-	display_name = purple_connection_get_display_name(session->account->gc);
+	conn = purple_account_get_connection(session->account);
+	display_name = purple_connection_get_display_name(conn);
 	if (display_name
 	    && strcmp(display_name,
 		      purple_account_get_username(session->account))) {
@@ -1796,7 +1798,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1850,7 +1852,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *mdata, *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1929,7 +1931,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char *from, *subject, *tmp;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -2014,7 +2016,8 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 		if (*buf != '\0')
-			purple_notify_info(cmdproc->session->account->gc, NULL, buf, NULL);
+			purple_notify_info(purple_account_get_connection(cmdproc->session->account),
+					NULL, buf, NULL);
 	}
 
 	g_hash_table_destroy(table);

@@ -155,14 +155,16 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	gchar *request, *webpage, *webaddress;
 	PurpleUtilFetchUrlData *url_data;
 	PurpleAccount *account;
+	PurpleProxyInfo *proxy_info;
 
 	gboolean use_whole_url = FALSE;
 
 	account = purple_connection_get_account(gc);
+	proxy_info = purple_account_get_proxy_info(account);
 
 	/* use whole URL if using HTTP Proxy */
-	if ((account->proxy_info)
-	    && (account->proxy_info->type == PURPLE_PROXY_HTTP))
+	if ((proxy_info)
+	    && (proxy_info->type == PURPLE_PROXY_HTTP))
 		use_whole_url = TRUE;
 
 	/* Using callback_data so I have access to gc in the callback function */
@@ -272,15 +274,17 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	gboolean use_whole_url = FALSE;
 	YahooFriend *f;
 	PurpleAccount *account;
+	PurpleProxyInfo *proxy_info;
 
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(gc != NULL);
 
 	account = purple_connection_get_account(gc);
+	proxy_info = purple_account_get_proxy_info(account);
 
 	/* use whole URL if using HTTP Proxy */
-	if ((account->proxy_info)
-	    && (account->proxy_info->type == PURPLE_PROXY_HTTP))
+	if ((proxy_info)
+	    && (proxy_info->type == PURPLE_PROXY_HTTP))
 		use_whole_url = TRUE;
 
 	if (alias == NULL)

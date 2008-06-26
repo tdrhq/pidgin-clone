@@ -1756,8 +1756,8 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 	if (buddy != NULL)
 	{
 		if (purple_account_is_connected(conv->account))
-			pidgin_append_blist_node_proto_menu(menu, conv->account->gc,
-												  (PurpleBlistNode *)buddy);
+			pidgin_append_blist_node_proto_menu(menu, purple_account_get_connection(conv->account),
+					(PurpleBlistNode *)buddy);
 		pidgin_append_blist_node_extended_menu(menu, (PurpleBlistNode *)buddy);
 		gtk_widget_show_all(menu);
 	}
@@ -3232,7 +3232,8 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 		}
 	} else if (node) {
 		if (purple_account_is_connected(conv->account))
-			pidgin_append_blist_node_proto_menu(menu, conv->account->gc, node);
+			pidgin_append_blist_node_proto_menu(menu,
+					purple_account_get_connection(conv->account), node);
 		pidgin_append_blist_node_extended_menu(menu, node);
 	}
 

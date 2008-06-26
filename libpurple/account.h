@@ -126,28 +126,15 @@ struct _PurpleAccount
 
 	PurpleAccountPrivate *priv;
 
-	PurpleConnection *gc;         /**< The connection handle.                 */
-	gboolean disconnecting;     /**< The account is currently disconnecting */
-
-	GHashTable *settings;       /**< Protocol-specific settings.            */
-	GHashTable *ui_settings;    /**< UI-specific settings.                  */
-
-	PurpleProxyInfo *proxy_info;  /**< Proxy information.  This will be set   */
-								/*   to NULL when the account inherits      */
-								/*   proxy settings from global prefs.      */
-
 	GSList *permit;             /**< Permit list.                           */
 	GSList *deny;               /**< Deny list.                             */
 	int perm_deny;              /**< The permit/deny setting.               */
 
-	GList *status_types;        /**< Status types.                          */
-
-	PurplePresence *presence;     /**< Presence.                              */
-	PurpleLog *system_log;        /**< The system log                         */
-
-	void *ui_data;              /**< The UI can put data here.              */
+#if 0
+	/* XXX: Someone needs to explain (again?) why these are necessary */
 	PurpleAccountRegistrationCb registration_cb;
 	void *registration_cb_user_data;
+#endif
 };
 
 struct _PurpleAccountClass
@@ -189,6 +176,7 @@ void purple_account_destroy(PurpleAccount *account);
  */
 void purple_account_connect(PurpleAccount *account);
 
+#if 0
 /**
  * Sets the callback for successful registration.
  *
@@ -197,6 +185,7 @@ void purple_account_connect(PurpleAccount *account);
  * @param user_data	The user data passed to the callback
  */
 void purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegistrationCb cb, void *user_data);
+#endif
 
 /**
  * Registers an account.
@@ -535,6 +524,15 @@ gboolean purple_account_is_connecting(const PurpleAccount *account);
  * @return @c TRUE if disconnected, or @c FALSE otherwise.
  */
 gboolean purple_account_is_disconnected(const PurpleAccount *account);
+
+/**
+ * Returns whether or not the account is disconnecting.
+ *
+ * @param account The account.
+ *
+ * @return @c TRUE if disconnecting, or @c FALSE otherwise.
+ */
+gboolean purple_account_is_disconnecting(const PurpleAccount *account);
 
 /**
  * Returns the account's username.

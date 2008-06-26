@@ -3532,9 +3532,11 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 		"Content-Length: 0\r\n\r\n",
 		yd->cookie_t, yd->cookie_y);
 	gboolean use_whole_url = FALSE;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleProxyInfo *proxy_info = purple_account_get_proxy_info(account);
 
 	/* use whole URL if using HTTP Proxy */
-	if ((purple_connection_get_account(gc)->proxy_info) && (purple_connection_get_account(gc)->proxy_info->type == PURPLE_PROXY_HTTP))
+	if (proxy_info && proxy_info->type == PURPLE_PROXY_HTTP)
 	    use_whole_url = TRUE;
 
 	url_data = purple_util_fetch_url_request(base_url, use_whole_url,

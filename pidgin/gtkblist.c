@@ -1706,7 +1706,7 @@ create_buddy_menu(PurpleBlistNode *node, PurpleBuddy *b)
 
 				if(buddy == b)
 					continue;
-				if(!buddy->account->gc)
+				if(!purple_account_get_connection(buddy->account))
 					continue;
 				if(!show_offline && !PURPLE_BUDDY_IS_ONLINE(buddy))
 					continue;
@@ -1837,7 +1837,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 		if (prpl && prpl_info->get_info)
-			pidgin_retrieve_user_info(b->account->gc, b->name);
+			pidgin_retrieve_user_info(purple_account_get_connection(b->account), b->name);
 		handled = TRUE;
 	}
 

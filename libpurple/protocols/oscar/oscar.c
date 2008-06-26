@@ -4900,10 +4900,12 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	va_list ap;
 	guint16 fmtver, numitems;
 	guint32 timestamp;
+	PurplePresence *presence;
 
 	gc = od->gc;
 	od = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	account = purple_connection_get_account(gc);
+	presence = purple_account_get_presence(account);
 
 	va_start(ap, fr);
 	fmtver = (guint16)va_arg(ap, int);
@@ -5145,7 +5147,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 								   "ssi: changing permdeny from %d to %hhu\n", account->perm_deny, permdeny);
 						account->perm_deny = permdeny;
 						if (od->icq && account->perm_deny == PURPLE_PRIVACY_ALLOW_USERS) {
-							purple_presence_set_status_active(account->presence, OSCAR_STATUS_ID_INVISIBLE, TRUE);
+							purple_presence_set_status_active(presence, OSCAR_STATUS_ID_INVISIBLE, TRUE);
 						}
 					}
 				}
@@ -5713,7 +5715,7 @@ void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	if (!PURPLE_BUDDY_IS_ONLINE(b))
 		return;
 
-	gc = b->account->gc;
+	gc = purple_account_get_connection(b->account);
 	od = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	userinfo = aim_locate_finduserinfo(od, b->name);
 
