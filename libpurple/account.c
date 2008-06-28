@@ -45,35 +45,35 @@
 
 struct _PurpleAccountPrivate
 {
-	char *username;             /**< The username.                          */
-	char *alias;                /**< How you appear to yourself.            */
-	char *password;             /**< The account password.                  */
-	char *user_info;            /**< User information.                      */
+	char *username;             /**< The username. */
+	char *alias;                /**< How you appear to yourself. */
+	char *password;             /**< The account password. */
+	char *user_info;            /**< User information. */
 
-	char *buddy_icon_path;      /**< The buddy icon's non-cached path.      */
+	char *buddy_icon_path;      /**< The buddy icon's non-cached path. */
 
-	gboolean remember_pass;     /**< Remember the password.                 */
+	gboolean remember_pass;     /**< Remember the password. */
 
-	char *protocol_id;          /**< The ID of the protocol.                */
+	char *protocol_id;          /**< The ID of the protocol. */
 
-	PurpleConnection *gc;         /**< The connection handle.                 */
+	PurpleConnection *gc;       /**< The connection handle. */
 	gboolean disconnecting;     /**< The account is currently disconnecting */
 
 	PurpleProxyInfo *proxy_info;  /**< Proxy information.  This will be set   */
-								/*   to NULL when the account inherits      */
-								/*   proxy settings from global prefs.      */
+	                              /*   to NULL when the account inherits      */
+	                              /*   proxy settings from global prefs.      */
 
 	PurpleConnectionErrorInfo *current_error;
 	gboolean check_mail;
 	gboolean enabled;
 	PurplePlugin *prpl;
 
-	GHashTable *settings;       /**< Protocol-specific settings.            */
-	GHashTable *ui_settings;    /**< UI-specific settings.                  */
+	GHashTable *settings;       /**< Protocol-specific settings. */
+	GHashTable *ui_settings;    /**< UI-specific settings. */
 
-	PurplePresence *presence;     /**< Presence.                              */
-	PurpleLog *system_log;        /**< The system log                         */
-	GList *status_types;        /**< Status types.                          */
+	PurplePresence *presence;   /**< Presence. */
+	PurpleLog *system_log;      /**< The system log. */
+	GList *status_types;        /**< Status types. */
 };
 
 #define PURPLE_ACCOUNT_GET_PRIVATE(account) \
@@ -91,9 +91,7 @@ typedef struct
 		int integer;
 		char *string;
 		gboolean boolean;
-
 	} value;
-
 } PurpleAccountSetting;
 
 typedef struct
@@ -223,8 +221,7 @@ status_attr_to_xmlnode(const PurpleStatus *status, const PurpleStatusType *type,
 		gboolean boolean_value = purple_value_get_boolean(attr_value);
 		if (boolean_value == purple_value_get_boolean(default_value))
 			return NULL;
-		value = g_strdup(boolean_value ?
-								"true" : "false");
+		value = g_strdup(boolean_value ? "true" : "false");
 	}
 	else
 	{
@@ -867,7 +864,7 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
 
 	username = purple_account_get_username(account);
 	primary = g_strdup_printf(_("Enter password for %s (%s)"), username,
-								  purple_account_get_protocol_name(account));
+				purple_account_get_protocol_name(account));
 
 	fields = purple_request_fields_new();
 	group = purple_request_field_group_new(NULL);
@@ -888,7 +885,7 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
                         fields,
                         _("OK"), ok_cb,
                         _("Cancel"), cancel_cb,
-						account, NULL, NULL,
+			account, NULL, NULL,
                         user_data);
 	g_free(primary);
 }
