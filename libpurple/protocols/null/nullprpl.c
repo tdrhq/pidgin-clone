@@ -898,8 +898,10 @@ static void nullprpl_alias_buddy(PurpleConnection *gc, const char *who,
 static void nullprpl_group_buddy(PurpleConnection *gc, const char *who,
                                  const char *old_group,
                                  const char *new_group) {
+  PurpleAccount *account;
+  account = purple_connection_get_account(gc);
   purple_debug_info("nullprpl", "%s has moved %s from group %s to group %s\n",
-                    gc->account->username, who, old_group, new_group);
+                    purple_account_get_username(account), who, old_group, new_group);
 }
 
 static void nullprpl_rename_group(PurpleConnection *gc, const char *old_name,

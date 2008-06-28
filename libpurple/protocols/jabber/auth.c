@@ -327,8 +327,9 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 * plaintext auth
 				 */
 				} else if (!plaintext) {
+					PurpleAccount *account = purple_connection_get_account(js->gc);
 					char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-							purple_connection_get_account(js->gc)->username);
+								    purple_account_get_username(account));
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							msg,

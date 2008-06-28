@@ -170,7 +170,12 @@ purple_hmac_cipher_set_hash(PurpleCipher *cipher,
 {
 	PurpleHMACCipher *hmac_cipher = PURPLE_HMAC_CIPHER(cipher);
 
+#if GLIB_CHECK_VERSION(2,10,0)
 	hmac_cipher->priv->hash = g_object_ref_sink(hash);
+#else
+	hmac_cipher->priv->hash = g_object_ref(G_OBJECT(hash));
+#endif
+
 	hmac_cipher->priv->blocksize = purple_cipher_get_block_size(hash);
 
 	g_object_notify(G_OBJECT(hmac_cipher), "hash");
