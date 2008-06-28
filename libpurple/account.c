@@ -775,6 +775,8 @@ purple_account_new(const char *username, const char *protocol_id)
 				TRUE);
 	}
 
+	g_signal_emit_by_name(G_OBJECT(account), "new");
+
 	return account;
 }
 

@@ -26,6 +26,13 @@ struct _PurpleObjectPrivate
 	gpointer ui_data;
 };
 
+enum
+{
+	SIG_NEW,
+	SIG_LAST
+};
+static guint signals[SIG_LAST] = {0, };
+
 static GObjectClass *parent_class;
 
 static void
@@ -49,11 +56,20 @@ purple_object_dispose(GObject *obj)
 static void
 purple_object_class_init(PurpleObjectClass *klass)
 {
-	GObjectClass *gclass= G_OBJECT_CLASS(klass);
+	GObjectClass *gclass = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
 	gclass->dispose = purple_object_dispose;
+
+	/* Signals */
+
+	/* This signal should be emitted after an object is created, and
+	 * the essential properties for the object has been set properly. */
+	signals[SIG_NEW] = g_signal_new("new", G_OBJECT_CLASS_TYPE(klass),
+				G_SIGNAL_ACTION, 0, NULL, NULL,
+				g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+
 	g_type_class_add_private(klass, sizeof(PurpleObjectPrivate));
 }
 
@@ -127,6 +143,7 @@ int purple_object_get_int(PurpleObject *pobj, const char *prop)
  */
 typedef struct
 {
+	GType type;
 	GCallback callback;
 	gpointer user_data;
 	GConnectFlags flags;
@@ -139,6 +156,10 @@ signal_emission_hook_fn(GSignalInvocationHint *hint, guint nparams,
 {
 	PObjectConnectHook *hook = data;
 	PurpleObject *obj = PURPLE_OBJECT(g_value_get_object(pvalues + 0));
+
+	if (!G_TYPE_CHECK_INSTANCE_TYPE(obj, hook->type))
+		return TRUE;
+
 	if (g_signal_handler_find(obj,
 				G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA | G_SIGNAL_MATCH_DETAIL,
 				hint->signal_id, hook->detail, NULL,
@@ -178,6 +199,7 @@ purple_type_connect_flags(GType type, const char *detailed_signal, GCallback cal
 	hook->user_data = data;
 	hook->flags = flags;
 	hook->detail = detail;
+	hook->type = type;
 
 	return g_signal_add_emission_hook(signal_id, detail,
 			signal_emission_hook_fn, hook, g_free);
