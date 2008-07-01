@@ -82,7 +82,10 @@ source code as well.</p>
 </div>
 
 <!-- This will pull from somewhere else at some point -->
-<!-- p id="lowblurb">2.4.0 is here.</p -->
+<p class="more" id="lowblurb">We are aware of the problems connecting to ICQ with Pidgin
+2.4.2 and older. We hope to have a new release and packages out soon to fix
+this. In the meantime, if you compile Pidgin from source you can use this
+<a href="pidgin-2.4.2-icq6.patch">patch</a> to fix it.</p>
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
