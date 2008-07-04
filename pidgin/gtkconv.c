@@ -5097,7 +5097,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 	PurpleBlistNode *convnode;
-	PurpleValue *value;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		conv->ui_data = gtkconv;
@@ -5181,10 +5180,11 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		gtkconv->make_sound = TRUE;
 
 	if (convnode != NULL &&
-	    (value = g_hash_table_lookup(convnode->settings, "enable-logging")) &&
-	    purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN)
+	    purple_blist_node_has_setting(convnode, "enable-logging"))
 	{
-		purple_conversation_set_logging(conv, purple_value_get_boolean(value));
+		gboolean enable_logging = purple_blist_node_get_bool(convnode,
+			"enable-logging");
+		purple_conversation_set_logging(conv, enable_logging);
 	}
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar"))

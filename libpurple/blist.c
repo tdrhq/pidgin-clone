@@ -99,12 +99,12 @@ static void
 value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 {
 	const char *name;
-	PurpleValue *value;
+	GValue *value;
 	xmlnode *node, *child;
 	char buf[20];
 
 	name    = (const char *)key;
-	value   = (PurpleValue *)hvalue;
+	value   = (GValue *)hvalue;
 	node    = (xmlnode *)user_data;
 
 	g_return_if_fail(value != NULL);
@@ -112,19 +112,29 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 	child = xmlnode_new_child(node, "setting");
 	xmlnode_set_attrib(child, "name", name);
 
-	if (purple_value_get_type(value) == PURPLE_TYPE_INT) {
-		xmlnode_set_attrib(child, "type", "int");
-		snprintf(buf, sizeof(buf), "%d", purple_value_get_int(value));
-		xmlnode_insert_data(child, buf, -1);
-	}
-	else if (purple_value_get_type(value) == PURPLE_TYPE_STRING) {
-		xmlnode_set_attrib(child, "type", "string");
-		xmlnode_insert_data(child, purple_value_get_string(value), -1);
-	}
-	else if (purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN) {
-		xmlnode_set_attrib(child, "type", "bool");
-		snprintf(buf, sizeof(buf), "%d", purple_value_get_boolean(value));
-		xmlnode_insert_data(child, buf, -1);
+	switch (G_VALUE_TYPE(value)) {
+		case G_TYPE_INT: {
+			gint i = g_value_get_int(value);
+			xmlnode_set_attrib(child, "type", "int");
+			snprintf(buf, sizeof(buf), "%d", i);
+			xmlnode_insert_data(child, buf, -1);
+			break;
+		}
+		case G_TYPE_STRING: {
+			const gchar *s = g_value_get_string(value);
+			xmlnode_set_attrib(child, "type", "string");
+			xmlnode_insert_data(child, s, -1);
+			break;
+		}
+		case G_TYPE_BOOLEAN: {
+			gboolean b = g_value_get_boolean(value);
+			xmlnode_set_attrib(child, "type", "bool");
+			snprintf(buf, sizeof(buf), "%d", b);
+			xmlnode_insert_data(child, buf, -1);
+			break;
+		}
+		default:
+			g_assert_not_reached();
 	}
 }
 
@@ -2515,23 +2525,13 @@ purple_blist_request_add_group(void)
 		ui_ops->request_add_group();
 }
 
-static void
-purple_blist_node_setting_free(gpointer data)
-{
-	PurpleValue *value;
-
-	value = (PurpleValue *)data;
-
-	purple_value_destroy(value);
-}
-
 static void purple_blist_node_initialize_settings(PurpleBlistNode *node)
 {
 	if (node->settings)
 		return;
 
 	node->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-			(GDestroyNotify)purple_blist_node_setting_free);
+			(GDestroyNotify)purple_g_value_slice_free);
 }
 
 void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key)
@@ -2568,17 +2568,29 @@ purple_blist_node_get_type(PurpleBlistNode *node)
 	return node->type;
 }
 
+
+gboolean
+purple_blist_node_has_setting(PurpleBlistNode *node,
+                              const char *key)
+{
+	g_return_val_if_fail(node != NULL, FALSE);
+	g_return_val_if_fail(node->settings != NULL, FALSE);
+	g_return_val_if_fail(key != NULL, FALSE);
+
+	return (g_hash_table_lookup(node->settings, key) != NULL);
+}
+
 void
 purple_blist_node_set_bool(PurpleBlistNode* node, const char *key, gboolean data)
 {
-	PurpleValue *value;
+	GValue *value;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(node->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	value = purple_value_new(PURPLE_TYPE_BOOLEAN);
-	purple_value_set_boolean(value, data);
+	value = purple_g_value_slice_new(G_TYPE_BOOLEAN);
+	g_value_set_boolean(value, data);
 
 	g_hash_table_replace(node->settings, g_strdup(key), value);
 
@@ -2588,7 +2600,7 @@ purple_blist_node_set_bool(PurpleBlistNode* node, const char *key, gboolean data
 gboolean
 purple_blist_node_get_bool(PurpleBlistNode* node, const char *key)
 {
-	PurpleValue *value;
+	GValue *value;
 
 	g_return_val_if_fail(node != NULL, FALSE);
 	g_return_val_if_fail(node->settings != NULL, FALSE);
@@ -2599,22 +2611,22 @@ purple_blist_node_get_bool(PurpleBlistNode* node, const char *key)
 	if (value == NULL)
 		return FALSE;
 
-	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN, FALSE);
+	g_return_val_if_fail(G_VALUE_HOLDS_BOOLEAN(value), FALSE);
 
-	return purple_value_get_boolean(value);
+	return g_value_get_boolean(value);
 }
 
 void
 purple_blist_node_set_int(PurpleBlistNode* node, const char *key, int data)
 {
-	PurpleValue *value;
+	GValue *value;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(node->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(value, data);
+	value = purple_g_value_slice_new(G_TYPE_INT);
+	g_value_set_int(value, data);
 
 	g_hash_table_replace(node->settings, g_strdup(key), value);
 
@@ -2624,7 +2636,7 @@ purple_blist_node_set_int(PurpleBlistNode* node, const char *key, int data)
 int
 purple_blist_node_get_int(PurpleBlistNode* node, const char *key)
 {
-	PurpleValue *value;
+	GValue *value;
 
 	g_return_val_if_fail(node != NULL, 0);
 	g_return_val_if_fail(node->settings != NULL, 0);
@@ -2635,22 +2647,22 @@ purple_blist_node_get_int(PurpleBlistNode* node, const char *key)
 	if (value == NULL)
 		return 0;
 
-	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_INT, 0);
+	g_return_val_if_fail(G_VALUE_HOLDS_INT(value), 0);
 
-	return purple_value_get_int(value);
+	return g_value_get_int(value);
 }
 
 void
 purple_blist_node_set_string(PurpleBlistNode* node, const char *key, const char *data)
 {
-	PurpleValue *value;
+	GValue *value;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(node->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	value = purple_value_new(PURPLE_TYPE_STRING);
-	purple_value_set_string(value, data);
+	value = purple_g_value_slice_new(G_TYPE_STRING);
+	g_value_set_string(value, data);
 
 	g_hash_table_replace(node->settings, g_strdup(key), value);
 
@@ -2660,7 +2672,7 @@ purple_blist_node_set_string(PurpleBlistNode* node, const char *key, const char 
 const char *
 purple_blist_node_get_string(PurpleBlistNode* node, const char *key)
 {
-	PurpleValue *value;
+	GValue *value;
 
 	g_return_val_if_fail(node != NULL, NULL);
 	g_return_val_if_fail(node->settings != NULL, NULL);
@@ -2671,9 +2683,9 @@ purple_blist_node_get_string(PurpleBlistNode* node, const char *key)
 	if (value == NULL)
 		return NULL;
 
-	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_STRING, NULL);
+	g_return_val_if_fail(G_VALUE_HOLDS_STRING(value), NULL);
 
-	return purple_value_get_string(value);
+	return g_value_get_string(value);
 }
 
 GList *
