@@ -1325,6 +1325,35 @@ gchar *purple_http_digest_calculate_response(
 		const gchar *nonce_count, const gchar *client_nonce,
 		const gchar *session_key);
 
+
+/** @name Slice-allocated GValue helpers */
+/** @{ */
+
+/**
+ * @param type The type desired for the new GValue
+ * @return a newly allocated, newly initialized #GValue, to be freed with
+ *         purple_g_value_slice_free() or g_slice_free().
+ */
+GValue *purple_g_value_slice_new(GType type);
+
+/**
+ * Unsets and frees a slice-allocated GValue.
+ *
+ * @param value A GValue which was allocated with the g_slice API.
+ */
+void purple_g_value_slice_free(GValue *value);
+
+/**
+ * Makes a copy of a GValue.
+ *
+ * @param value A GValue to be copied
+ * @return a newly allocated copy of @a value, to be freed with
+ *         purple_g_value_slice_free() or g_slice_free().
+ */
+GValue *purple_g_value_slice_dup(const GValue *value);
+
+/** @} */
+
 #ifdef __cplusplus
 }
 #endif

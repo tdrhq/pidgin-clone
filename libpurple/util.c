@@ -4885,3 +4885,36 @@ gchar *purple_http_digest_calculate_response(
 
 	return g_strdup(hash2);
 }
+
+
+/****************************************************************************
+ * Slice-allocated GValue helpers
+ *****************************************************************************/
+
+GValue *
+purple_g_value_slice_new(GType type)
+{
+	GValue *ret = g_slice_new0(GValue);
+
+	g_value_init(ret, type);
+	return ret;
+}
+
+
+void
+purple_g_value_slice_free(GValue *value)
+{
+	g_value_unset(value);
+	g_slice_free(GValue, value);
+}
+
+
+GValue *
+purple_g_value_slice_dup(const GValue *value)
+{
+	GValue *ret = purple_g_value_slice_new(G_VALUE_TYPE (value));
+
+	g_value_copy(value, ret);
+	return ret;
+}
+
