@@ -388,8 +388,13 @@ gnt_entry_draw(GntWidget *widget)
 		 * out here so the spellchecking isn't always performed for each word on
 		 * a gnt_entry_draw */
 		char *s, *e;
-		int miss = gnt_color_pair(GNT_COLOR_MISSPELL);
-		int missd = gnt_color_pair(GNT_COLOR_MISSPELL_D);
+		int miss_color;
+		int count;
+		int width;
+		if (focus)
+			miss_color = gnt_color_pair(GNT_COLOR_MISSPELL);
+		else
+			miss_color = gnt_color_pair(GNT_COLOR_MISSPELL_D);
 		/* only spell check if enabled and box isn't empty */
 		if (entry->spell->enable && (entry->start != entry->end)) {
 			wmove(widget->window, 0, 0);
@@ -405,11 +410,10 @@ gnt_entry_draw(GntWidget *widget)
 			}
 			e = get_end_of_word(s, entry->end);
 
-			/* TODO: pick better attribute for misspelled words */
 			if (!check_word(entry, s, e)) {
-				wattron(widget->window, (focus ? miss : missd));
+				wattron(widget->window, miss_color);
 			} else {
-				wattroff(widget->window, (focus ? miss : missd));
+				wattroff(widget->window, miss_color);
 			}
 			/* first word might be special case if scroll is in middle of word */
 			if (s < entry->scroll) {
@@ -418,10 +422,13 @@ gnt_entry_draw(GntWidget *widget)
 				waddnstr(widget->window, s, e - s + 1);
 			}
 
+			gnt_widget_get_size(GNT_WIDGET(entry), &width, NULL);
+			count = 0;
 			s = g_utf8_find_next_char(e, entry->end);
-			while(s) {
+			while(s && count < width) {
+				count++;
 				/* print the whitespace and punctuation characters */
-				wattroff(widget->window, (focus ? miss : missd));
+				wattroff(widget->window, miss_color);
 				e = get_beginning_of_next_word(s, entry->end);
 				if (!e && s < entry->end) {
 					/* the end is all non-letter characters */
@@ -433,11 +440,10 @@ gnt_entry_draw(GntWidget *widget)
 					s = e;
 					e = get_end_of_word(s, entry->end);
 
-					/* TODO: pick better attribute for misspelled words */
 					if (!check_word(entry, s, e)) {
-						wattron(widget->window, (focus ? miss : missd));
+						wattron(widget->window, miss_color);
 					} else {
-						wattroff(widget->window, (focus ? miss : missd));
+						wattroff(widget->window, miss_color);
 					}
 					waddnstr(widget->window, s, e - s + 1);
 					s = g_utf8_find_next_char(e, entry->end);
@@ -446,10 +452,10 @@ gnt_entry_draw(GntWidget *widget)
 				}
 			}
 		} else {
-			wattroff(widget->window, (focus ? miss : missd));
+			wattroff(widget->window, miss_color);
 			mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
 		}
-		wattroff(widget->window, (focus ? miss : missd));
+		wattroff(widget->window, miss_color);
 #else
 		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
 #endif
@@ -1130,7 +1136,7 @@ new_killring(void)
 static void
 set_spell_language(GntEntrySpell *spell, const char *lang)
 {
-    const char *err;
+	const char *err;
 
 	if (spell->broker) {
 		if (spell->dict)
@@ -1298,7 +1304,7 @@ create_spell_suggestions_menu(GntMenu *menu, GntEntry *entry, char *start, char 
 	GntMenuItem *item;
 	GntWidget *sub;
 	char **suggs;
-    size_t n_suggs = 0;
+	size_t n_suggs = 0;
 	int i;
 
 	if (entry->spell && entry->spell->broker) {
@@ -1323,7 +1329,7 @@ static void
 draw_context_menu(GntEntry *entry)
 {
 	GntWidget *context = NULL;
-	int x, y, width;
+	int x, y;
 	char *start, *end;
 
 	if (entry->spell->context)
@@ -1351,7 +1357,6 @@ draw_context_menu(GntEntry *entry)
 
 	/* Set the position for the popup */
 	gnt_widget_get_position(GNT_WIDGET(entry), &x, &y);
-	gnt_widget_get_size(GNT_WIDGET(entry), &width, NULL);
 
 	x += entry->cursor - entry->scroll;
 	y += 1;
