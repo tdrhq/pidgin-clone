@@ -748,8 +748,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 			return;
 		}
 
-		away_msg = purple_value_get_string(
-			purple_status_get_attr_value(status, "message"));
+		away_msg = purple_status_get_attr_string(status, "message");
 
 		if ((away_msg != NULL) && (*away_msg != '\0')) {
 			struct last_auto_response *lar;
