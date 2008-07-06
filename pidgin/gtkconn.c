@@ -63,7 +63,7 @@ pidgin_connection_connect_progress(PurpleConnection *gc,
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
-#define FIXME: do something to check if some account is in _CONNECTING state
+#warning FIXME: do something to check if some account is in _CONNECTING state
 #if 0
 	pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
 					   (purple_connections_get_connecting() != NULL));
@@ -80,7 +80,7 @@ pidgin_connection_connected(PurpleConnection *gc)
 	account  = purple_connection_get_account(gc);
 	gtkblist = pidgin_blist_get_default_gtk_blist();
 
-#define FIXME: do something to check if some account is in _CONNECTING state
+#warning FIXME: do something to check if some account is in _CONNECTING state
 #if 0
 	if (gtkblist != NULL)
 		pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
@@ -96,7 +96,7 @@ pidgin_connection_disconnected(PurpleConnection *gc)
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
-#define FIXME: do something to check if some account is in _CONNECTING state
+#warning FIXME: do something to check if some account is in _CONNECTING state
 #if 0
 	pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
 					   (purple_connections_get_connecting() != NULL));
