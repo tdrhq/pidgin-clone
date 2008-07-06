@@ -261,7 +261,7 @@ parse_status_attrs(xmlnode *node, PurpleStatus *status)
 {
 	GList *list = NULL;
 	xmlnode *child;
-	PurpleValue *attr_value;
+	const GValue *attr_value;
 
 	for (child = xmlnode_get_child(node, "attribute"); child != NULL;
 			child = xmlnode_get_next_twin(child))
@@ -278,13 +278,13 @@ parse_status_attrs(xmlnode *node, PurpleStatus *status)
 
 		list = g_list_append(list, (char *)id);
 
-		switch (purple_value_get_type(attr_value))
+		switch (G_VALUE_TYPE(attr_value))
 		{
-			case PURPLE_TYPE_STRING:
+			case G_TYPE_STRING:
 				list = g_list_append(list, (char *)value);
 				break;
-			case PURPLE_TYPE_INT:
-			case PURPLE_TYPE_BOOLEAN:
+			case G_TYPE_INT:
+			case G_TYPE_BOOLEAN:
 			{
 				int v;
 				if (sscanf(value, "%d", &v) == 1)

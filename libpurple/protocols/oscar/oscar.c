@@ -5918,9 +5918,9 @@ oscar_status_types(PurpleAccount *account)
 										   OSCAR_STATUS_ID_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   purple_value_new(PURPLE_TYPE_STRING),
+										   purple_g_value_slice_new(G_TYPE_STRING),
 										   "itmsurl", _("iTunes Music Store Link"),
-										   purple_value_new(PURPLE_TYPE_STRING), NULL);
+										   purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE,
@@ -5932,7 +5932,7 @@ oscar_status_types(PurpleAccount *account)
 										   OSCAR_STATUS_ID_AWAY,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   purple_value_new(PURPLE_TYPE_STRING), NULL);
+										   purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
@@ -5948,21 +5948,21 @@ oscar_status_types(PurpleAccount *account)
 				OSCAR_STATUS_ID_OCCUPIED,
 				_("Occupied"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
-				purple_value_new(PURPLE_TYPE_STRING), NULL);
+				purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
 				OSCAR_STATUS_ID_DND,
 				_("Do Not Disturb"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
-				purple_value_new(PURPLE_TYPE_STRING), NULL);
+				purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_EXTENDED_AWAY,
 				OSCAR_STATUS_ID_NA,
 				_("Not Available"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
-				purple_value_new(PURPLE_TYPE_STRING), NULL);
+				purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
 	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,

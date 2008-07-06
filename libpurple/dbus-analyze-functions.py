@@ -38,6 +38,11 @@ excluded = [\
 
     # This is excluded because it'd be a ridiculous function to export.
     "purple_g_value_slice_free",
+
+    # Excluding a couple of functions which use GValues; they could be
+    # magically bound to D-Bus variants at some point.
+    "purple_status_type_add_attr",
+    "purple_status_attr_new",
     ]
 
 # This is a list of functions that return a GList* or GSList * whose elements

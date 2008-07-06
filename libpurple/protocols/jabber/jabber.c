@@ -1610,75 +1610,75 @@ GList *jabber_status_types(PurpleAccount *account)
 {
 	PurpleStatusType *type;
 	GList *types = NULL;
-	PurpleValue *priority_value;
+	GValue *priority_value;
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 1);
+	priority_value = purple_g_value_slice_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 1);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_ONLINE),
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_g_value_slice_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_g_value_slice_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_g_value_slice_new(G_TYPE_STRING),
+			"buzz", _("Allow Buzz"), purple_g_value_slice_new(G_TYPE_BOOLEAN),
 			NULL);
 	types = g_list_append(types, type);
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 1);
+	priority_value = purple_g_value_slice_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 1);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_CHAT),
 			_("Chatty"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_g_value_slice_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_g_value_slice_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_g_value_slice_new(G_TYPE_STRING),
+			"buzz", _("Allow Buzz"), purple_g_value_slice_new(G_TYPE_BOOLEAN),
 			NULL);
 	types = g_list_append(types, type);
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 0);
+	priority_value = purple_g_value_slice_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 0);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_AWAY),
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_g_value_slice_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_g_value_slice_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_g_value_slice_new(G_TYPE_STRING),
+			"buzz", _("Allow Buzz"), purple_g_value_slice_new(G_TYPE_BOOLEAN),
 			NULL);
 	types = g_list_append(types, type);
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 0);
+	priority_value = purple_g_value_slice_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 0);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_EXTENDED_AWAY,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_XA),
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_g_value_slice_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_g_value_slice_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_g_value_slice_new(G_TYPE_STRING),
+			"buzz", _("Allow Buzz"), purple_g_value_slice_new(G_TYPE_BOOLEAN),
 			NULL);
 	types = g_list_append(types, type);
 
-	priority_value = purple_value_new(PURPLE_TYPE_INT);
-	purple_value_set_int(priority_value, 0);
+	priority_value = purple_g_value_slice_new(G_TYPE_INT);
+	g_value_set_int(priority_value, 0);
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_DND),
 			_("Do Not Disturb"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
-			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
-			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
+			"mood", _("Mood"), purple_g_value_slice_new(G_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_g_value_slice_new(G_TYPE_STRING),
+			"nick", _("Nickname"), purple_g_value_slice_new(G_TYPE_STRING),
+			"buzz", _("Allow Buzz"), purple_g_value_slice_new(G_TYPE_BOOLEAN),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1690,21 +1690,21 @@ GList *jabber_status_types(PurpleAccount *account)
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),
 			NULL, FALSE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
 			"tune", NULL, TRUE, TRUE, TRUE,
-			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_g_value_slice_new(G_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_g_value_slice_new(G_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_g_value_slice_new(G_TYPE_STRING),
+			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_g_value_slice_new(G_TYPE_STRING),
+			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_g_value_slice_new(G_TYPE_STRING),
+			PURPLE_TUNE_TRACK, _("Tune Track"), purple_g_value_slice_new(G_TYPE_STRING),
+			PURPLE_TUNE_TIME, _("Tune Time"), purple_g_value_slice_new(G_TYPE_INT),
+			PURPLE_TUNE_YEAR, _("Tune Year"), purple_g_value_slice_new(G_TYPE_INT),
+			PURPLE_TUNE_URL, _("Tune URL"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 

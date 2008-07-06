@@ -3817,13 +3817,13 @@ static GList *yahoo_status_types(PurpleAccount *account)
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE,
 	                                       NULL, TRUE, TRUE, FALSE,
 	                                       "message", _("Message"),
-	                                       purple_value_new(PURPLE_TYPE_STRING), NULL);
+	                                       purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_AWAY,
 	                                       NULL, TRUE, TRUE, FALSE,
 	                                       "message", _("Message"),
-	                                       purple_value_new(PURPLE_TYPE_STRING), NULL);
+	                                       purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);

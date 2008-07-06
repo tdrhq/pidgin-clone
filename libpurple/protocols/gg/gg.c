@@ -1603,7 +1603,7 @@ static GList *ggp_status_types(PurpleAccount *account)
 
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1613,13 +1613,13 @@ static GList *ggp_status_types(PurpleAccount *account)
 	 */
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_INVISIBLE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1628,12 +1628,12 @@ static GList *ggp_status_types(PurpleAccount *account)
 	 */
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_INVISIBLE, "blocked", _("Blocked"), TRUE, FALSE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING), NULL);
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 

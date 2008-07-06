@@ -715,35 +715,35 @@ msn_status_types(PurpleAccount *account)
 
 	status = purple_status_type_new_with_attrs(
 				PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
-				"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+				"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 				NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, "brb", _("Be Right Back"), TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_UNAVAILABLE, "busy", _("Busy"), TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_UNAVAILABLE, "phone", _("On the Phone"), TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, "lunch", _("Out to Lunch"), TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
@@ -761,9 +761,9 @@ msn_status_types(PurpleAccount *account)
 
 	status = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
 			"tune", NULL, TRUE, TRUE, TRUE,
-			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Artist"), purple_g_value_slice_new(G_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Album"), purple_g_value_slice_new(G_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Title"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 

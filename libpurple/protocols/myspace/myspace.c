@@ -136,7 +136,7 @@ msim_status_types(PurpleAccount *acct)
 	/* Attributes - each status can have a message. */          \
 	"message",                                                  \
 	_("Message"),                                               \
-	purple_value_new(PURPLE_TYPE_STRING),                       \
+	purple_g_value_slice_new(G_TYPE_STRING),                    \
 	NULL);                                                      \
 	                                                            \
 	                                                            \
@@ -157,8 +157,8 @@ msim_status_types(PurpleAccount *acct)
 			TRUE,                   /* should be user_settable some day */
 			TRUE,                   /* independent */
 
-			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Artist"), purple_g_value_slice_new(G_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Title"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 
 	types = g_list_append(types, status);
