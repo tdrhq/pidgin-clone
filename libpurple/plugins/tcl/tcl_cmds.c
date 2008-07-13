@@ -291,7 +291,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 					Tcl_SetObjResult(interp, Tcl_NewStringObj("invalid attribute for account", -1));
 					return TCL_ERROR;
 				}
-				switch (g_value_get_type(value)) {
+				switch (G_VALUE_TYPE(value)) {
 				case G_TYPE_BOOLEAN:
 					error = Tcl_GetBooleanFromObj(interp, objv[i + 1], &b);
 					if (error != TCL_OK)
