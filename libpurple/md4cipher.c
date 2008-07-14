@@ -18,7 +18,7 @@
 #include <string.h>
 
 #define MD4_DIGEST_SIZE		16
-#define MD4_HMAX_BLOCK_SIZE	64
+#define MD4_HMAC_BLOCK_SIZE	64
 #define MD4_BLOCK_WORDS		16
 #define MD4_HASH_WORDS		4
 
@@ -248,6 +248,12 @@ purple_md4_cipher_digest(PurpleCipher *cipher, size_t in_len,
 	return TRUE;
 }
 
+static size_t
+purple_md4_cipher_get_block_size(PurpleCipher *cipher)
+{
+	return MD4_HMAC_BLOCK_SIZE;
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -274,6 +280,7 @@ purple_md4_cipher_class_init(PurpleMD4CipherClass *klass) {
 	cipher_class->reset = purple_md4_cipher_reset;
 	cipher_class->append = purple_md4_cipher_append;
 	cipher_class->digest = purple_md4_cipher_digest;
+	cipher_class->get_block_size = purple_md4_cipher_get_block_size;
 }
 
 static void

@@ -6,6 +6,8 @@
 
 #include <string.h>
 
+#define MD5_HMAC_BLOCK_SIZE	64
+
 /******************************************************************************
  * Structs
  *****************************************************************************/
@@ -251,6 +253,12 @@ purple_md5_cipher_digest(PurpleCipher *cipher, size_t in_len,
 	return TRUE;
 }
 
+static size_t
+purple_md5_cipher_get_block_size(PurpleCipher *cipher)
+{
+	return MD5_HMAC_BLOCK_SIZE;
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -277,6 +285,7 @@ purple_md5_cipher_class_init(PurpleMD5CipherClass *klass) {
 	cipher_class->reset = purple_md5_cipher_reset;
 	cipher_class->append = purple_md5_cipher_append;
 	cipher_class->digest = purple_md5_cipher_digest;
+	cipher_class->get_block_size = purple_md5_cipher_get_block_size;
 }
 
 static void

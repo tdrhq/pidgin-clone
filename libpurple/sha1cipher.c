@@ -5,7 +5,7 @@
 #include <string.h>
 
 #define SHA1_DIGEST_SIZE		16
-#define SHA1_HMAX_BLOCK_SIZE	64
+#define SHA1_HMAC_BLOCK_SIZE	64
 #define SHA1_BLOCK_WORDS		16
 #define SHA1_HASH_WORDS		4
 
@@ -189,6 +189,12 @@ purple_sha1_cipher_digest(PurpleCipher *cipher, size_t in_len,
 	return TRUE;
 }
 
+static size_t
+purple_sha1_cipher_get_block_size(PurpleCipher *cipher)
+{
+	return SHA1_HMAC_BLOCK_SIZE;
+}
+
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
@@ -268,6 +274,7 @@ purple_sha1_cipher_class_init(PurpleSHA1CipherClass *klass) {
 	cipher_class->reset = purple_sha1_cipher_reset;
 	cipher_class->append = purple_sha1_cipher_append;
 	cipher_class->digest = purple_sha1_cipher_digest;
+	cipher_class->get_block_size = purple_sha1_cipher_get_block_size;
 
 	pspec = g_param_spec_int("sizeHi", "sizeHi", "sizeHi",
 							 G_MININT, G_MAXINT, 0,
