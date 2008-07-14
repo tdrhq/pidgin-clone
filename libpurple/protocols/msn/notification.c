@@ -609,6 +609,7 @@ msn_notification_dump_contact(MsnSession *session)
 	int payload_len;
 	int adl_count = 0;
 	const char *display_name;
+	PurpleConnection *conn;
 
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
@@ -1726,7 +1727,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *mdata, *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
