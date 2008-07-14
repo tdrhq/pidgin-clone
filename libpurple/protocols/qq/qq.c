@@ -74,8 +74,9 @@ static void server_list_create(PurpleAccount *account) {
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Create server list\n");
 	gc = purple_account_get_connection(account);
-	g_return_if_fail(gc != NULL  && gc->proto_data != NULL);
-	qd = gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	qd->use_tcp = purple_account_get_bool(account, "use_tcp", TRUE);
 	port = purple_account_get_int(account, "port", 0);
@@ -177,8 +178,9 @@ static void qq_close(PurpleConnection *gc)
 {
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL  && gc->proto_data);
-	qd = gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	qq_disconnect(gc);
 
@@ -186,7 +188,7 @@ static void qq_close(PurpleConnection *gc)
 	
 	g_free(qd);
 
-	gc->proto_data = NULL;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc), NULL);
 }
 
 /* returns the icon name for a buddy or protocol */

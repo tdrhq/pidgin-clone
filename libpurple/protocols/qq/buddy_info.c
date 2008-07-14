@@ -313,7 +313,7 @@ void qq_prepare_modify_info(PurpleConnection *gc)
 /* send packet to modify personal information */
 static void qq_send_packet_modify_info(PurpleConnection *gc, contact_info *info)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gint bytes = 0;
 	guint8 raw_data[MAX_PACKET_SIZE - 128] = {0};
 	guint8 bar;
@@ -933,14 +933,13 @@ void qq_info_query_free(qq_data *qd)
 
 void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	guint8 buf[16] = {0};
 	gint bytes = 0;
 
 	bytes += qq_put8(buf + bytes, 0x00);
 	bytes += qq_put32(buf + bytes, uid);
 
-	qd = (qq_data *) gc->proto_data;
 	qq_send_cmd(qd, QQ_CMD_GET_LEVEL, buf, bytes);
 }
 

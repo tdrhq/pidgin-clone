@@ -125,7 +125,7 @@ static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint
 	gchar *str;
 	gint ack_len, bytes;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	
 	str = g_strdup_printf("%d", from);
 	bar = 0x1e;

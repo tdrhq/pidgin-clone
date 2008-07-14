@@ -221,7 +221,7 @@ static void _qq_send_packet_recv_im_ack(PurpleConnection *gc, guint16 seq, guint
 {
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_send_cmd_detail(qd, QQ_CMD_RECV_IM, seq, FALSE, data, 16);
 }
 

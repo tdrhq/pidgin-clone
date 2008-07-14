@@ -89,7 +89,7 @@ void qq_send_packet_get_buddies_online(PurpleConnection *gc, guint8 position)
  * server may return a position tag if list is too long for one packet */
 void qq_send_packet_get_buddies_list(PurpleConnection *gc, guint16 position)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
 
@@ -108,7 +108,7 @@ void qq_send_packet_get_buddies_list(PurpleConnection *gc, guint16 position)
 /* get all list, buddies & Quns with groupsid support */
 void qq_send_packet_get_all_list_with_group(PurpleConnection *gc, guint32 position)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
 

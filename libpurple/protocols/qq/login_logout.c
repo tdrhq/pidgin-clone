@@ -25,7 +25,7 @@
 #include "debug.h"
 #include "internal.h"
 #include "server.h"
-#include "cipher.h"
+#include "md5cipher.h"
 
 #include "buddy_info.h"
 #include "buddy_list.h"
@@ -147,18 +147,16 @@ static guint8 *gen_session_md5(gint uid, guint8 *session_key)
 {
 	guint8 *src, md5_str[QQ_KEY_LENGTH];
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 
 	src = g_newa(guint8, 20);
 	/* bug found by QuLogic */
 	memcpy(src, &uid, sizeof(uid));
 	memcpy(src + sizeof(uid), session_key, QQ_KEY_LENGTH);
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, src, 20);
-	purple_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, src, 20);
+	purple_cipher_digest(cipher, sizeof(md5_str), md5_str, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	return g_memdup(md5_str, QQ_KEY_LENGTH);
 }

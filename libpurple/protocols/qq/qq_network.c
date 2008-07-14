@@ -22,9 +22,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "cipher.h"
 #include "debug.h"
 #include "internal.h"
+#include "md5cipher.h"
 
 #ifdef _WIN32
 #define random rand
@@ -111,19 +111,16 @@ static gboolean set_new_server(qq_data *qd)
 static guint8 *encrypt_account_password(const gchar *pwd)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 
 	guchar pwkey_tmp[QQ_KEY_LENGTH];
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (guchar *) pwd, strlen(pwd));
-	purple_cipher_context_digest(context, sizeof(pwkey_tmp), pwkey_tmp, NULL);
-	purple_cipher_context_destroy(context);
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, pwkey_tmp, QQ_KEY_LENGTH);
-	purple_cipher_context_digest(context, sizeof(pwkey_tmp), pwkey_tmp, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (guchar *) pwd, strlen(pwd));
+	purple_cipher_digest(cipher, sizeof(pwkey_tmp), pwkey_tmp, NULL);
+	purple_cipher_reset(cipher);
+	purple_cipher_append(cipher, pwkey_tmp, QQ_KEY_LENGTH);
+	purple_cipher_digest(cipher, sizeof(pwkey_tmp), pwkey_tmp, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	return g_memdup(pwkey_tmp, QQ_KEY_LENGTH);
 }
@@ -140,7 +137,7 @@ static void process_cmd_unknow(PurpleConnection *gc, guint8 *buf, gint buf_len, 
 
 	qq_show_packet("Processing unknown packet", buf, buf_len);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	data_len = buf_len;
 	data = g_newa(guint8, data_len);
@@ -210,12 +207,13 @@ static gboolean reconnect_later_cb(gpointer data)
 	qq_data *qd;
 
 	gc = (PurpleConnection *) data;
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, FALSE);
-	qd = (qq_data *) gc->proto_data;
+	g_return_val_if_fail(gc != NULL, FALSE);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_val_if_fail(qd != NULL, FALSE);
 
 	qd->reconnect_timeout = 0;
 
-	qq_connect(gc->account);
+	qq_connect(purple_connection_get_account(gc));
 	return FALSE;	/* timeout callback stops */
 }
 
@@ -223,8 +221,9 @@ static void reconnect_later(PurpleConnection *gc)
 {
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	qd->reconnect_times--;
 	if (qd->reconnect_times < 0) {
@@ -342,7 +341,7 @@ static void packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 
 	g_return_if_fail(buf != NULL && buf_len > 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	prev_login_status = qd->logged_in;
 
@@ -425,15 +424,15 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 	gint jump_len;
 
 	gc = (PurpleConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	if(cond != PURPLE_INPUT_READ) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Socket error"));
 		return;
 	}
-
-	qd = (qq_data *) gc->proto_data;
 	
 	/* test code, not using tcp_rxqueue
 	memset(pkt,0, sizeof(pkt));
@@ -460,7 +459,7 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	gc->last_received = time(NULL);
+	purple_connection_received_now(gc);
 	purple_debug(PURPLE_DEBUG_INFO, "TCP_PENDING",
 			   "Read %d bytes from socket, rxlen is %d\n", buf_len, qd->tcp_rxlen);
 	qd->tcp_rxqueue = g_realloc(qd->tcp_rxqueue, buf_len + qd->tcp_rxlen);
@@ -544,7 +543,10 @@ static void udp_pending(gpointer data, gint source, PurpleInputCondition cond)
 	gint buf_len;
 
 	gc = (PurpleConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
+	g_return_if_fail(qd->fd >= 0);
 
 	if(cond != PURPLE_INPUT_READ) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -552,9 +554,6 @@ static void udp_pending(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	qd = (qq_data *) gc->proto_data;
-	g_return_if_fail(qd->fd >= 0);
-	
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 
 	/* here we have UDP proxy suppport */
@@ -565,7 +564,7 @@ static void udp_pending(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	gc->last_received = time(NULL);
+	purple_connection_received_now(gc);
 
 	if (buf_len < QQ_UDP_HEADER_LENGTH) {
 		if (buf[0] != QQ_PACKET_TAG || buf[buf_len - 1] != QQ_PACKET_TAIL) {
@@ -684,9 +683,9 @@ static gboolean trans_timeout(gpointer data)
 	int index;
 	
 	gc = (PurpleConnection *) data;
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, TRUE);
-
-	qd = (qq_data *) gc->proto_data;
+	g_return_val_if_fail(gc != NULL, TRUE);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_val_if_fail(qd != NULL, TRUE);
 	
 	index = 0;
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
@@ -759,9 +758,9 @@ static void qq_connect_cb(gpointer data, gint source, const gchar *error_message
 		return;
 	}
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(gc != NULL);
 
 	/* Connect is now complete; clear the PurpleProxyConnectData */
 	qd->connect_data = NULL;
@@ -793,9 +792,9 @@ static void qq_connect_cb(gpointer data, gint source, const gchar *error_message
 	qd->resend_timeout = purple_timeout_add(5000, trans_timeout, gc);
 	
 	if (qd->use_tcp)
-		gc->inpa = purple_input_add(qd->fd, PURPLE_INPUT_READ, tcp_pending, gc);
+		g_object_set(G_OBJECT(gc), "inpa", purple_input_add(qd->fd, PURPLE_INPUT_READ, tcp_pending, gc), NULL);
 	else
-		gc->inpa = purple_input_add(qd->fd, PURPLE_INPUT_READ, udp_pending, gc);
+		g_object_set(G_OBJECT(gc), "inpa", purple_input_add(qd->fd, PURPLE_INPUT_READ, udp_pending, gc), NULL);
 
 	/* Update the login progress status display */
 	conn_msg = g_strdup_printf("Login as %d", qd->uid);
@@ -813,9 +812,9 @@ static void udp_can_write(gpointer data, gint source, PurpleInputCondition cond)
 	int error=0, ret;
 
 	gc = (PurpleConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 
 	purple_debug_info("proxy", "Connected.\n");
@@ -862,9 +861,9 @@ static void udp_host_resolved(GSList *hosts, gpointer data, const char *error_me
 	int flags;
 
 	gc = (PurpleConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	/* udp_query_data must be set as NULL.
 	 * Otherwise purple_dnsquery_destroy in qq_disconnect cause glib double free error */
@@ -946,10 +945,9 @@ void qq_connect(PurpleAccount *account)
 	gchar *conn_msg;
 
 	gc = purple_account_get_connection(account);
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
-	qd = (qq_data *) gc->proto_data;
-
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	/* test set_new_server
 	while (set_new_server(qd)) {
@@ -1028,9 +1026,11 @@ void qq_connect(PurpleAccount *account)
 void qq_disconnect(PurpleConnection *gc)
 {
 	qq_data *qd;
+	gint inpa;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Disconnecting ...\n");
 	/* finish  all I/O */
@@ -1043,9 +1043,10 @@ void qq_disconnect(PurpleConnection *gc)
 		qd->resend_timeout = 0;
 	}
 
-	if (gc->inpa > 0) {
-		purple_input_remove(gc->inpa);
-		gc->inpa = 0;
+	g_object_get(G_OBJECT(gc), "inpa", &inpa, NULL);
+	if (inpa > 0) {
+		purple_input_remove(inpa);
+		g_object_set(G_OBJECT(gc), "inpa", 0, NULL);
 	}
 
 	if (qd->fd >= 0) {
@@ -1120,7 +1121,7 @@ void qq_disconnect(PurpleConnection *gc)
 	qq_group_free_all(qd);
 	qq_add_buddy_request_free(qd);
 	qq_info_query_free(qd);
-	qq_buddies_list_free(gc->account, qd);
+	qq_buddies_list_free(purple_connection_get_account(gc), qd);
 }
 
 static gint encap(qq_data *qd, guint8 *buf, gint maxlen, guint16 cmd, guint16 seq, 
