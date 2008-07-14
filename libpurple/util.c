@@ -4918,3 +4918,21 @@ purple_g_value_slice_dup(const GValue *value)
 	return ret;
 }
 
+const gchar *
+purple_get_host_name(void)
+{
+#if GLIB_CHECK_VERSION(2,8,0)
+	return g_get_host_name();
+#else
+	static char hostname[256];
+	int ret = gethostname(hostname, sizeof(hostname));
+	hostname[sizeof(hostname) - 1] = '\0';
+
+	if (ret == -1 || hostname[0] == '\0') {
+		purple_debug_info("purple_get_host_name: ", "could not find host name");
+		return "localhost";
+	} else {
+		return hostname;
+	}
+#endif
+}

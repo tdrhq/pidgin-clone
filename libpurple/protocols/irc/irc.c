@@ -361,11 +361,10 @@ static void irc_login(PurpleAccount *account)
 
 static gboolean do_login(PurpleConnection *gc) {
 	char *buf, *tmp = NULL;
-	char hostname[256];
+	const char *hostname;
 	const char *username, *realname;
 	struct irc_conn *irc = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	const char *pass = purple_connection_get_password(gc);
-	int ret;
 
 	if (pass && *pass) {
 		buf = irc_format(irc, "vv", "PASS", pass);
@@ -376,13 +375,7 @@ static gboolean do_login(PurpleConnection *gc) {
 		g_free(buf);
 	}
 
-
-	ret = gethostname(hostname, sizeof(hostname));
-	hostname[sizeof(hostname) - 1] = '\0';
-	if (ret < 0 || hostname[0] == '\0') {
-		purple_debug_warning("irc", "gethostname() failed -- is your hostname set?");
-		strcpy(hostname, "localhost");
-	}
+	hostname = purple_get_host_name();
 	realname = purple_account_get_string(irc->account, "realname", "");
 	username = purple_account_get_string(irc->account, "username", "");
 

@@ -130,6 +130,7 @@ purple_core_init(const char *ui)
 	purple_dbus_init();
 #endif
 
+	purple_cmds_init();
 
 	/* Since plugins get probed so early we should probably initialize their
 	 * subsystem right away too.
@@ -169,7 +170,6 @@ purple_core_init(const char *ui)
 	purple_xfers_init();
 	purple_idle_init();
 	purple_smileys_init();
-	purple_cmds_init();
 
 	/*
 	 * Call this early on to try to auto-detect our IP address and
@@ -200,7 +200,6 @@ purple_core_quit(void)
 #endif
 
 	/* Save .xml files, remove signals, etc. */
-	purple_cmds_uninit();
 	purple_smileys_uninit();
 	purple_idle_uninit();
 	purple_ssl_uninit();
@@ -234,6 +233,7 @@ purple_core_quit(void)
 	purple_dbus_uninit();
 #endif
 
+	purple_cmds_uninit();
 	purple_util_uninit();
 
 	purple_signals_uninit();
