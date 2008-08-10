@@ -71,27 +71,6 @@ purple_cipher_digest_region(name, data_sv, in_len, digest)
 	OUTPUT:
 		RETVAL
 
-gchar_own*
-purple_cipher_http_digest_calculate_response(algorithm, method, digest_uri, qop, entity, nonce, nonce_count, client_nonce, session_key)
-	const gchar* algorithm
-	const gchar* method
-	const gchar* digest_uri
-	const gchar* qop
-	const gchar* entity
-	const gchar* nonce
-	const gchar* nonce_count
-	const gchar* client_nonce
-	const gchar* session_key
-
-gchar_own*
-purple_cipher_http_digest_calculate_session_key(algorithm, username, realm, password, nonce, client_nonce)
-	const gchar* algorithm
-	const gchar* username
-	const gchar* realm
-	const gchar* password
-	const gchar* nonce
-	const gchar* client_nonce
-
 MODULE = Purple::Cipher  PACKAGE = Purple::Cipher  PREFIX = purple_cipher_
 PROTOTYPES: ENABLE
 
