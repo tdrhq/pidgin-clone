@@ -52,7 +52,7 @@ yahoo_fetch_picture_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	struct yahoo_data *yd;
 
 	d = user_data;
-	yd = d->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(d->gc));
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (error_message != NULL) {
@@ -120,12 +120,14 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		/* TODO: make this work p2p, try p2p before the url */
 		PurpleUtilFetchUrlData *url_data;
 		struct yahoo_fetch_picture_data *data;
-		PurpleBuddy *b = purple_find_buddy(gc->account, who);
+		PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), who);
 		const char *locksum = NULL;
 		gboolean use_whole_url = FALSE;
+		PurpleAccount *account = purple_connection_get_account(gc);
+		PurpleProxyInfo *proxy_info = purple_account_get_proxy_info(account);
 
 		/* use whole URL if using HTTP Proxy */
-		if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+		if (proxy_info && proxy_info->type == PURPLE_PROXY_HTTP)
 		    use_whole_url = TRUE;
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
@@ -141,7 +143,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 				"Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
 				yahoo_fetch_picture_cb, data);
 		if (url_data != NULL) {
-			yd = gc->proto_data;
+			yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 		} else {
 			g_free(data->who);
@@ -183,7 +185,7 @@ void yahoo_process_picture_update(PurpleConnection *gc, struct yahoo_packet *pkt
 			yahoo_send_picture_request(gc, who);
 		else if ((icon == 0) || (icon == 1)) {
 			YahooFriend *f;
-			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0, NULL);
+			purple_buddy_icons_set_for_user(purple_connection_get_account(gc), who, NULL, 0, NULL);
 			if ((f = yahoo_friend_find(gc, who)))
 				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
 			purple_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
@@ -215,7 +217,7 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 	}
 
 	if (who) {
-		PurpleBuddy *b = purple_find_buddy(gc->account, who);
+		PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), who);
 		const char *locksum = NULL;
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
@@ -230,7 +232,7 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 void yahoo_process_picture_upload(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GSList *l = pkt->hash;
 	char *url = NULL;
 
@@ -295,7 +297,7 @@ void yahoo_process_avatar_update(PurpleConnection *gc, struct yahoo_packet *pkt)
 			yahoo_send_picture_request(gc, who);
 		else if ((avatar == 0) || (avatar == 1)) {
 			YahooFriend *f;
-			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0, NULL);
+			purple_buddy_icons_set_for_user(purple_connection_get_account(gc), who, NULL, 0, NULL);
 			if ((f = yahoo_friend_find(gc, who)))
 				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
 			purple_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
@@ -305,7 +307,7 @@ void yahoo_process_avatar_update(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 void yahoo_send_picture_info(PurpleConnection *gc, const char *who)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct yahoo_packet *pkt;
 
 	if (!yd->picture_url) {
@@ -322,7 +324,7 @@ void yahoo_send_picture_info(PurpleConnection *gc, const char *who)
 
 void yahoo_send_picture_request(PurpleConnection *gc, const char *who)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
@@ -334,7 +336,7 @@ void yahoo_send_picture_request(PurpleConnection *gc, const char *who)
 
 void yahoo_send_picture_checksum(PurpleConnection *gc)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_CHECKSUM, YAHOO_STATUS_AVAILABLE, 0);
@@ -345,7 +347,7 @@ void yahoo_send_picture_checksum(PurpleConnection *gc)
 
 void yahoo_send_picture_update_to_user(PurpleConnection *gc, const char *who, int type)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
@@ -370,7 +372,7 @@ static void yahoo_send_picture_update_foreach(gpointer key, gpointer value, gpoi
 
 void yahoo_send_picture_update(PurpleConnection *gc, int type)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct yspufe data;
 
 	data.gc = gc;
@@ -464,9 +466,11 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	PurpleAccount *account;
 	struct yahoo_data *yd;
 	gboolean use_whole_url = FALSE;
+	PurpleProxyInfo *proxy_info;
 
 	account = purple_connection_get_account(gc);
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	proxy_info = purple_account_get_proxy_info(account);
 
 	/* Buddy icon connect is now complete; clear the PurpleProxyConnectData */
 	yd->buddy_icon_connect_data = NULL;
@@ -477,8 +481,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 		return;
 	}
 	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info)
-	    	&& (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	if (proxy_info && proxy_info->type == PURPLE_PROXY_HTTP)
 		use_whole_url = TRUE;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPLOAD, YAHOO_STATUS_AVAILABLE, yd->session_id);
@@ -534,7 +537,7 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 void yahoo_buddy_icon_upload(PurpleConnection *gc, struct yahoo_buddy_icon_upload_data *d)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (yd->buddy_icon_connect_data != NULL) {
 		/* Cancel any in-progress buddy icon upload */
@@ -579,8 +582,8 @@ static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
 
 void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	struct yahoo_data *yd = gc->proto_data;
-	PurpleAccount *account = gc->account;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	PurpleAccount *account = purple_connection_get_account(gc);
 
 	if (img == NULL) {
 		g_free(yd->picture_url);

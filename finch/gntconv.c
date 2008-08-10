@@ -1434,9 +1434,9 @@ void finch_conversation_init()
 					PURPLE_CALLBACK(buddy_signed_on_off), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", finch_conv_get_handle(),
 					PURPLE_CALLBACK(buddy_signed_on_off), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-on", finch_conv_get_handle(),
+	purple_signal_connect(NULL, "signed-on", finch_conv_get_handle(),
 					PURPLE_CALLBACK(account_signed_on_off), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off", finch_conv_get_handle(),
+	purple_signal_connect(NULL, "signed-off", finch_conv_get_handle(),
 					PURPLE_CALLBACK(account_signed_on_off), NULL);
 }
 

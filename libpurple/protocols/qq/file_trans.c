@@ -30,7 +30,6 @@
 
 #include "debug.h"
 #include "ft.h"
-#include "cipher.h"
 
 #include "crypt.h"
 #include "file_trans.h"
@@ -244,7 +243,7 @@ static gint _qq_send_file(PurpleConnection *gc, guint8 *data, gint len, guint16 
 	qq_data *qd;
 	ft_info *info;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	info = (ft_info *) qd->xfer->data;
 
@@ -274,7 +273,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 	time_t now;
 	ft_info *info;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	info = (ft_info *) qd->xfer->data;
 
 	raw_data = g_newa (guint8, 61);
@@ -380,7 +379,7 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 	qq_data *qd;
 	ft_info *info;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	info = (ft_info *) qd->xfer->data;
 
 	filename = purple_xfer_get_filename(qd->xfer);
@@ -407,7 +406,7 @@ static void _qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type,
 					_fill_file_md5(purple_xfer_get_local_filename(qd->xfer),
 							purple_xfer_get_size(qd->xfer),
 							file_md5);
-					
+
 					info->fragment_num = (filesize - 1) / QQ_FILE_FRAGMENT_MAXLEN + 1;
 					info->fragment_len = QQ_FILE_FRAGMENT_MAXLEN;
 
@@ -505,7 +504,7 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 	qq_file_header fh;
 	guint8 *decrypted_data;
 	gint decrypted_len;
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	guint16 packet_type;
 	guint16 seq;
 	guint8 hellobyte;
@@ -574,7 +573,7 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 
 static void _qq_recv_file_progess(PurpleConnection *gc, guint8 *buffer, guint16 len, guint32 index, guint32 offset)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleXfer *xfer = qd->xfer;
 	ft_info *info = (ft_info *) xfer->data;
 	guint32 mask;
@@ -617,7 +616,7 @@ static void _qq_recv_file_progess(PurpleConnection *gc, guint8 *buffer, guint16 
 
 static void _qq_send_file_progess(PurpleConnection *gc)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleXfer *xfer = qd->xfer;
 	ft_info *info = (ft_info *) xfer->data;
 	guint32 mask;
@@ -652,7 +651,7 @@ static void _qq_update_send_progess(PurpleConnection *gc, guint32 fragment_index
 	guint32 mask;
 	guint8 *buffer;
 	gint readbytes;
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleXfer *xfer = qd->xfer;
 	ft_info *info = (ft_info *) xfer->data;
 
@@ -713,7 +712,7 @@ static void _qq_process_recv_file_data(PurpleConnection *gc, guint8 *data, gint 
 	guint32 fragment_index;
 	guint16 fragment_len;
 	guint32 fragment_offset;
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	ft_info *info = (ft_info *) qd->xfer->data;
 
 	bytes = 0;
@@ -813,7 +812,7 @@ void qq_process_recv_file(PurpleConnection *gc, guint8 *data, gint len)
 	guint8 tag;
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	bytes = 0;
 	bytes += qq_get8(&tag, data + bytes);
