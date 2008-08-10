@@ -45,7 +45,7 @@ msn_accept_add_cb(gpointer data)
 	MsnUserList *userlist;
 
 	if (PURPLE_CONNECTION_IS_VALID(pa->gc)) {
-		session = pa->gc->proto_data;
+		session = purple_object_get_protocol_data(PURPLE_OBJECT(pa->gc));
 		userlist = session->userlist;
 
 		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
@@ -64,7 +64,7 @@ msn_cancel_add_cb(gpointer data)
 	MsnUserList *userlist;
 
 	if (PURPLE_CONNECTION_IS_VALID(pa->gc)) {
-		session = pa->gc->proto_data;
+		session = purple_object_get_protocol_data(PURPLE_OBJECT(pa->gc));
 		userlist = session->userlist;
 
 		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_BL, NULL);

@@ -976,6 +976,18 @@ char *purple_str_seconds_to_string(guint sec);
  * @return A newly allocated ASCIIZ string.
  */
 char *purple_str_binary_to_ascii(const unsigned char *binary, guint len);
+
+/**
+ * Determine if two strings have the same value.
+ * This is just a convenience function to do all the @c NULL checks.
+ *
+ * @param s1 First string
+ * @param s2 Second string
+ * @return  @c TRUE if both the strings have the same value, or both are @c NULL,
+ *          @c FALSE otherwise
+ */
+gboolean purple_util_strings_equal(const char *s1, const char *s2);
+
 /*@}*/
 
 
@@ -1278,6 +1290,77 @@ void purple_restore_default_signal_handlers(void);
  * @constreturn The hostname
  */
 const gchar *purple_get_host_name(void);
+
+/**
+ * Calculates a session key for HTTP Digest authentation
+ *
+ * See RFC 2617 for more information.
+ *
+ * @param algorithm    The hash algorithm to use
+ * @param username     The username provided by the user
+ * @param realm        The authentication realm provided by the server
+ * @param password     The password provided by the user
+ * @param nonce        The nonce provided by the server
+ * @param client_nonce The nonce provided by the client
+ *
+ * @return The session key, or @c NULL if an error occurred.
+ */
+gchar *purple_http_digest_calculate_session_key(
+		const gchar *algorithm, const gchar *username,
+		const gchar *realm, const gchar *password,
+		const gchar *nonce, const gchar *client_nonce);
+
+/** Calculate a response for HTTP Digest authentication
+ *
+ * See RFC 2617 for more information.
+ *
+ * @param algorithm         The hash algorithm to use
+ * @param method            The HTTP method in use
+ * @param digest_uri        The URI from the initial request
+ * @param qop               The "quality of protection"
+ * @param entity            The entity body
+ * @param nonce             The nonce provided by the server
+ * @param nonce_count       The nonce count
+ * @param client_nonce      The nonce provided by the client
+ * @param session_key       The session key from purple_cipher_http_digest_calculate_session_key()
+ *
+ * @return The hashed response, or @c NULL if an error occurred.
+ */
+gchar *purple_http_digest_calculate_response(
+		const gchar *algorithm, const gchar *method,
+		const gchar *digest_uri, const gchar *qop,
+		const gchar *entity, const gchar *nonce,
+		const gchar *nonce_count, const gchar *client_nonce,
+		const gchar *session_key);
+
+
+/** @name Slice-allocated GValue helpers */
+/** @{ */
+
+/**
+ * @param type The type desired for the new GValue
+ * @return a newly allocated, newly initialized #GValue, to be freed with
+ *         purple_g_value_slice_free() or g_slice_free().
+ */
+GValue *purple_g_value_slice_new(GType type);
+
+/**
+ * Unsets and frees a slice-allocated GValue.
+ *
+ * @param value A GValue which was allocated with the g_slice API.
+ */
+void purple_g_value_slice_free(GValue *value);
+
+/**
+ * Makes a copy of a GValue.
+ *
+ * @param value A GValue to be copied
+ * @return a newly allocated copy of @a value, to be freed with
+ *         purple_g_value_slice_free() or g_slice_free().
+ */
+GValue *purple_g_value_slice_dup(const GValue *value);
+
+/** @} */
 
 #ifdef __cplusplus
 }

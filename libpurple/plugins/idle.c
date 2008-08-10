@@ -286,7 +286,7 @@ signing_off_cb(PurpleConnection *gc, void *data)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	purple_signal_connect(purple_connections_get_handle(), "signing-off",
+	purple_signal_connect(NULL, "signing-off",
 						plugin,
 						PURPLE_CALLBACK(signing_off_cb), NULL);
 

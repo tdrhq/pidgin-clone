@@ -96,7 +96,7 @@ static int ggp_setup_proxy(PurpleAccount *account)
 static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPToken *token = info->token;
 	GGPTokenCallback cb;
 
@@ -173,7 +173,7 @@ static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
 	if (ggp_setup_proxy(account) == -1)
 		return;
 
-	info = gc->proto_data;
+	info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if ((req = gg_token(1)) == NULL) {
 		purple_notify_error(account,
@@ -203,7 +203,7 @@ static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
 static void ggp_action_buddylist_get(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	purple_debug_info("gg", "Downloading...\n");
 
@@ -220,7 +220,7 @@ static void ggp_action_buddylist_get(PurplePluginAction *action)
 static void ggp_action_buddylist_put(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	char *buddylist = ggp_buddylist_dump(purple_connection_get_account(gc));
 
@@ -243,7 +243,7 @@ static void ggp_action_buddylist_put(PurplePluginAction *action)
 static void ggp_action_buddylist_delete(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	purple_debug_info("gg", "Deleting...\n");
 
@@ -343,8 +343,7 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	purple_request_file(action, _("Load buddylist from file..."), NULL,
-			FALSE,
+	purple_request_file(action, "Load buddylist from file...", NULL, FALSE,
 			G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
 			gc);
@@ -358,7 +357,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 					     PurpleRequestFields *fields)
 {
 	PurpleAccount *account;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct gg_http *h = NULL;
 	struct gg_pubdir *s;
 	uin_t uin;
@@ -413,8 +412,11 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	purple_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
 			 _("Registration completed successfully!"), NULL);
 
+#if 0
 	if(account->registration_cb)
 		(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
+#endif
+
 	/* TODO: the currently open Accounts Window will not be updated withthe
 	 * new username and etc, we need to somehow have it refresh at this
 	 * point
@@ -424,8 +426,10 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	purple_connection_destroy(gc);
 
 exit_err:
+#if 0
 	if(account->registration_cb)
 		(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
+#endif
 
 	gg_register_free(h);
 	g_free(email);
@@ -443,7 +447,7 @@ exit_err:
 static void ggp_callback_register_account_cancel(PurpleConnection *gc,
 						 PurpleRequestFields *fields)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPToken *token = info->token;
 
 	purple_connection_destroy(gc);
@@ -465,7 +469,7 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
 
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPToken *token = info->token;
 
 
@@ -519,7 +523,7 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 /* static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer user_data) {{{ */
 static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer user_data)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPSearchForm *form = user_data;
 	guint32 seq;
 
@@ -567,7 +571,7 @@ static void ggp_callback_im(PurpleConnection *gc, GList *row, gpointer user_data
 /* static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
 static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPSearchForm *form;
 	guint32 seq;
 
@@ -682,7 +686,7 @@ static void ggp_find_buddies(PurplePluginAction *action)
 static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	PurpleAccount *account;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct gg_http *h;
 	gchar *cur, *p1, *p2, *t;
 
@@ -722,7 +726,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFie
 
 	purple_debug_info("gg", "Changing password\n");
 
-	/* XXX: this email should be a pref... */
+	/* XXX: this e-mail should be a pref... */
 	h = gg_change_passwd4(ggp_get_uin(account),
 			      "user@example.net", purple_account_get_password(account),
 			      p1, info->token->id, t, 0);
@@ -761,7 +765,7 @@ static void ggp_change_passwd_dialog(PurpleConnection *gc)
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
 
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPToken *token = info->token;
 
 	char *msg;
@@ -831,7 +835,7 @@ static void ggp_change_passwd(PurplePluginAction *action)
 /* static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
 static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleRequestField *field;
 	/* TODO: sel may be null. */
 	GList *sel;
@@ -862,7 +866,7 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 
 	buddy = (PurpleBuddy *)node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	info = gc->proto_data;
+	info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* TODO: It tmp_buddy != 0 then stop! */
 	info->tmp_buddy = ggp_str_to_uin(purple_buddy_get_name(buddy));
@@ -908,7 +912,7 @@ static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored)
 
 	buddy = (PurpleBuddy *)node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	info = gc->proto_data;
+	info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
 
@@ -1203,7 +1207,7 @@ static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
 /* static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req) {{{ */
 static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPSearchForm *form;
 	int res_count;
 	guint32 seq;
@@ -1250,7 +1254,7 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 /* static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event *ev) {{{ */
 static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleConversation *conv;
 	gchar *from;
 	gchar *msg;
@@ -1309,7 +1313,7 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
 	PurpleConnection *gc = _gc;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct gg_event *ev;
 	int i;
 
@@ -1321,7 +1325,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			_("Unable to read socket"));
 		return;
 	}
-	gc->last_received = time(NULL);
+	purple_connection_received_now(gc);
 	switch (ev->type) {
 		case GG_EVENT_NONE:
 			/* Nothing happened. */
@@ -1439,7 +1443,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
-	info = gc->proto_data;
+	info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	purple_debug_info("gg", "login_handler: session: check = %d; state = %d;\n",
 			info->session->check, info->session->state);
@@ -1480,13 +1484,15 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 	purple_debug_info("gg", "login_handler: session: check = %d; state = %d;\n",
 			info->session->check, info->session->state);
 
-	purple_input_remove(gc->inpa);
+	purple_input_remove(purple_object_get_int(PURPLE_OBJECT(gc),"inpa"));
 
 	/** XXX I think that this shouldn't be done if ev->type is GG_EVENT_CONN_FAILED or GG_EVENT_CONN_SUCCESS -datallah */
-	gc->inpa = purple_input_add(info->session->fd,
+	g_object_set(PURPLE_OBJECT(gc),"inpa",
+			purple_input_add(info->session->fd,
 				  (info->session->check == 1) ? PURPLE_INPUT_WRITE
 							      : PURPLE_INPUT_READ,
-				  ggp_async_login_handler, gc);
+				  ggp_async_login_handler, gc),
+			NULL);
 
 	switch (ev->type) {
 		case GG_EVENT_NONE:
@@ -1496,18 +1502,21 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 		case GG_EVENT_CONN_SUCCESS:
 			{
 				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
-				purple_input_remove(gc->inpa);
-				gc->inpa = purple_input_add(info->session->fd,
+				purple_input_remove(purple_object_get_int(PURPLE_OBJECT(gc),"inpa"));
+				g_object_set(PURPLE_OBJECT(gc), "inpa",
+						purple_input_add(info->session->fd,
 							  PURPLE_INPUT_READ,
-							  ggp_callback_recv, gc);
+							  ggp_callback_recv, gc),
+						NULL);
 
-				purple_connection_set_state(gc, PURPLE_CONNECTED);
+				purple_connection_set_state(gc,
+						PURPLE_CONNECTION_STATE_CONNECTED);
 				ggp_buddylist_send(gc);
 			}
 			break;
 		case GG_EVENT_CONN_FAILED:
-			purple_input_remove(gc->inpa);
-			gc->inpa = 0;
+			purple_input_remove(purple_object_get_int(PURPLE_OBJECT(gc),"inpa"));
+			g_object_set(G_OBJECT(gc),"inpa",0,NULL);
 			purple_connection_error_reason (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Connection failed."));
@@ -1598,7 +1607,7 @@ static GList *ggp_status_types(PurpleAccount *account)
 
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1608,13 +1617,13 @@ static GList *ggp_status_types(PurpleAccount *account)
 	 */
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_INVISIBLE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1623,12 +1632,12 @@ static GList *ggp_status_types(PurpleAccount *account)
 	 */
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_INVISIBLE, "blocked", _("Blocked"), TRUE, FALSE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING), NULL);
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	type = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1707,7 +1716,7 @@ static void ggp_login(PurpleAccount *account)
 	info->token = NULL;
 	info->searches = ggp_search_new();
 
-	gc->proto_data = info;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc),info);
 
 	glp->uin = ggp_get_uin(account);
 	glp->password = (char *)purple_account_get_password(account);
@@ -1727,8 +1736,10 @@ static void ggp_login(PurpleAccount *account)
 		g_free(glp);
 		return;
 	}
-	gc->inpa = purple_input_add(info->session->fd, PURPLE_INPUT_READ,
-				  ggp_async_login_handler, gc);
+	g_object_set(PURPLE_OBJECT(gc),"inpa",
+			purple_input_add(info->session->fd, PURPLE_INPUT_READ,
+				  ggp_async_login_handler, gc),
+			NULL);
 }
 /* }}} */
 
@@ -1741,10 +1752,10 @@ static void ggp_close(PurpleConnection *gc)
 		return;
 	}
 
-	if (gc->proto_data) {
+	if (purple_object_get_protocol_data(PURPLE_OBJECT(gc))) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleStatus *status;
-		GGPInfo *info = gc->proto_data;
+		GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 		status = purple_account_get_active_status(account);
 
@@ -1761,11 +1772,11 @@ static void ggp_close(PurpleConnection *gc)
 
 		ggp_search_destroy(info->searches);
 		g_free(info);
-		gc->proto_data = NULL;
+		purple_object_set_protocol_data(PURPLE_OBJECT(gc),NULL);
 	}
 
-	if (gc->inpa > 0)
-		purple_input_remove(gc->inpa);
+	if (purple_object_get_int(PURPLE_OBJECT(gc),"inpa") > 0)
+		purple_input_remove(purple_object_get_int(PURPLE_OBJECT(gc),"inpa"));
 
 	ggp_buddylist_offline(gc);
 
@@ -1777,7 +1788,7 @@ static void ggp_close(PurpleConnection *gc)
 static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 		       PurpleMessageFlags flags)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	char *tmp, *plain;
 	int ret = 0;
 
@@ -1810,7 +1821,7 @@ static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
 /* static void ggp_get_info(PurpleConnection *gc, const char *name) { {{{ */
 static void ggp_get_info(PurpleConnection *gc, const char *name)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPSearchForm *form;
 	guint32 seq;
 
@@ -1886,7 +1897,7 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 		return;
 
 	gc = purple_account_get_connection(account);
-	info = gc->proto_data;
+	info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	new_status = ggp_to_gg_status(status, &new_msg);
 
@@ -1906,7 +1917,7 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	PurpleAccount *account;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	gg_add_notify(info->session, ggp_str_to_uin(buddy->name));
 
@@ -1921,7 +1932,7 @@ static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup 
 static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 						 PurpleGroup *group)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	gg_remove_notify(info->session, ggp_str_to_uin(buddy->name));
 }
@@ -1930,7 +1941,7 @@ static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 /* static void ggp_join_chat(PurpleConnection *gc, GHashTable *data) {{{ */
 static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPChat *chat;
 	char *chat_name;
 	GList *l;
@@ -1972,7 +1983,7 @@ static char *ggp_get_chat_name(GHashTable *data) {
 static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
 	PurpleConversation *conv;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPChat *chat = NULL;
 	GList *l;
 	char *msg, *plain;
@@ -2016,7 +2027,7 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 
 	serv_got_chat_in(gc, id,
 			 purple_account_get_username(purple_connection_get_account(gc)),
-			 flags, message, time(NULL));
+			 0, message, time(NULL));
 
 	return 0;
 }
@@ -2025,7 +2036,7 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 /* static void ggp_keepalive(PurpleConnection *gc) {{{ */
 static void ggp_keepalive(PurpleConnection *gc)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* purple_debug_info("gg", "Keeping connection alive....\n"); */
 
@@ -2045,7 +2056,7 @@ static void ggp_register_user(PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	GGPInfo *info;
 
-	info = gc->proto_data = g_new0(GGPInfo, 1);
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc), info = g_new0(GGPInfo, 1));
 
 	ggp_token_request(gc, ggp_register_user_dialog);
 }
