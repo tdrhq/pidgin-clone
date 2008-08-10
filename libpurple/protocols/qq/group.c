@@ -49,7 +49,7 @@ static void _qq_group_search_cancel_callback(PurpleConnection *gc, const gchar *
 {
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	purple_roomlist_set_in_progress(qd->roomlist, FALSE);
 }
 
@@ -89,7 +89,7 @@ PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc)
 	PurpleRoomlist *rl;
 	PurpleRoomlistField *f;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	fields = NULL;
 	rl = purple_roomlist_new(purple_connection_get_account(gc));
@@ -137,7 +137,7 @@ void qq_roomlist_cancel(PurpleRoomlist *list)
 	g_return_if_fail(list != NULL);
 	gc = purple_account_get_connection(list->account);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	purple_roomlist_set_in_progress(list, FALSE);
 	purple_roomlist_unref(list);
 }

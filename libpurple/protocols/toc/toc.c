@@ -132,9 +132,9 @@ static void toc_login(PurpleAccount *account)
 	char buf[80];
 
 	gc = purple_account_get_connection(account);
-	gc->proto_data = tdt = g_new0(struct toc_data, 1);
-	gc->flags |= PURPLE_CONNECTION_HTML;
-	gc->flags |= PURPLE_CONNECTION_AUTO_RESP;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc),tdt = g_new0(struct toc_data, 1));
+	gc->flags |= PURPLE_CONNECTION_FLAGS_HTML;
+	gc->flags |= PURPLE_CONNECTION_FLAGS_AUTO_RESP;
 
 	g_snprintf(buf, sizeof buf, _("Looking up %s"),
 			purple_account_get_string(account, "server", TOC_HOST));
@@ -144,7 +144,7 @@ static void toc_login(PurpleAccount *account)
 	if (purple_proxy_connect(gc, account,
 				purple_account_get_string(account, "server", TOC_HOST),
 				purple_account_get_int(account, "port", TOC_PORT),
-				toc_login_callback, gc) != 0 || !account->gc) {
+				toc_login_callback, gc) != 0 || !purple_account_get_connection(account)) {
 		g_snprintf(buf, sizeof(buf), _("Connect to %s failed"),
 				purple_account_get_string(account, "server", TOC_HOST));
 		purple_connection_error(gc, buf);
@@ -166,7 +166,7 @@ static void toc_login_callback(gpointer data, gint source, PurpleInputCondition 
 		return;
 	}
 
-	tdt = gc->proto_data;
+	tdt = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (source == -1) {
 		/* we didn't successfully connect. tdt->toc_fd is valid here */
@@ -183,7 +183,7 @@ static void toc_login_callback(gpointer data, gint source, PurpleInputCondition 
 	if (getpeername(tdt->toc_fd, (struct sockaddr *)&name, &namelen) == 0)
 		strncpy(tdt->toc_ip, inet_ntoa(name.sin_addr), sizeof(tdt->toc_ip));
 	else
-		strncpy(tdt->toc_ip, purple_account_get_string(gc->account, "server", TOC_HOST), sizeof(tdt->toc_ip));
+		strncpy(tdt->toc_ip, purple_account_get_string(purple_connection_get_account(gc), "server", TOC_HOST), sizeof(tdt->toc_ip));
 
 	purple_debug(PURPLE_DEBUG_INFO, "toc",
 			   "Client sends \"FLAPON\\r\\n\\r\\n\"\n");
@@ -198,7 +198,7 @@ static void toc_login_callback(gpointer data, gint source, PurpleInputCondition 
 	 * toc_fd file descriptor, toc_callback is called, with gc passed as its data arg. */
 	gc->inpa = purple_input_add(tdt->toc_fd, PURPLE_INPUT_READ, toc_callback, gc);
 
-	g_snprintf(buf, sizeof(buf), _("Signon: %s"), purple_account_get_username(gc->account));
+	g_snprintf(buf, sizeof(buf), _("Signon: %s"), purple_account_get_username(purple_connection_get_account(gc)));
 	purple_connection_update_progress(gc, buf, 1, TOC_CONNECT_STEPS);
 }
 
@@ -207,8 +207,8 @@ static void toc_close(PurpleConnection *gc)
 	if (gc->inpa > 0)
 		purple_input_remove(gc->inpa);
 	gc->inpa = 0;
-	close(((struct toc_data *)gc->proto_data)->toc_fd);
-	g_free(gc->proto_data);
+	close(((struct toc_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc)))->toc_fd);
+	g_free(purple_object_get_protocol_data(PURPLE_OBJECT(gc)));
 }
 
 static void toc_build_config(PurpleAccount *account, char *s, int len, gboolean show)
@@ -355,7 +355,7 @@ char *escape_text(const char *msg)
 
 static int sflap_send(PurpleConnection *gc, const char *buf, int olen, int type)
 {
-	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
+	struct toc_data *tdt = (struct toc_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	int len;
 	int slen = 0;
 	int ret;
@@ -421,7 +421,7 @@ static int toc_send_raw(PurpleConnection *gc, const char *buf, int len)
 
 static int wait_reply(PurpleConnection *gc, char *buffer, size_t buflen)
 {
-	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
+	struct toc_data *tdt = (struct toc_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct sflap_hdr *hdr;
 	int ret;
 
@@ -646,12 +646,12 @@ parse_toc_buddy_list(PurpleAccount *account, char *config)
 		}
 	} while ((c = strtok(NULL, "\n")));
 
-	if (account->gc) {
+	if (purple_account_get_connection(account)) {
 		if (buddies != NULL) {
 			purple_account_add_buddies(account, buddies);
 			g_list_free(buddies);
 		}
-		serv_set_permit_deny(account->gc);
+		serv_set_permit_deny(purple_account_get_connection(account));
 	}
 	g_list_free(buddies);
 }
@@ -660,7 +660,7 @@ static void toc_callback(gpointer data, gint source, PurpleInputCondition condit
 {
 	PurpleConnection *gc = (PurpleConnection *)data;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	struct toc_data *tdt = (struct toc_data *)gc->proto_data;
+	struct toc_data *tdt = (struct toc_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct sflap_hdr *hdr;
 	struct signon so;
 	char buf[8 * 1024], *c;
@@ -738,7 +738,7 @@ static void toc_callback(gpointer data, gint source, PurpleInputCondition condit
 
 		tdt->state = STATE_ONLINE;
 
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 
 		/*
 		 * Add me to my buddy list so that we know the time when
@@ -798,7 +798,7 @@ static void toc_callback(gpointer data, gint source, PurpleInputCondition condit
 	} else if (!g_ascii_strcasecmp(c, "NICK")) {
 		/* ignore NICK so that things get imported/exported properly
 		c = strtok(NULL, ":");
-		g_snprintf(gc->username, sizeof(gc->username), "%s", c);
+		g_snprintf(purple_account_get_username(gc), sizeof(purple_account_get_username(gc)), "%s", c);
 		*/
 	} else if (!g_ascii_strcasecmp(c, "IM_IN")) {
 		char *away, *message;
@@ -861,7 +861,7 @@ static void toc_callback(gpointer data, gint source, PurpleInputCondition condit
 		 * If we have info for ourselves then set our display name, warning
 		 * level and official time of login.
 		 */
-		tmp = g_strdup(purple_normalize(account, purple_account_get_username(gc->account)));
+		tmp = g_strdup(purple_normalize(account, purple_account_get_username(purple_connection_get_account(gc))));
 		if (!strcmp(tmp, purple_normalize(account, c))) {
 			purple_connection_set_display_name(gc, c);
 			/* XXX - What should the second parameter be here? */
@@ -986,7 +986,7 @@ static void toc_callback(gpointer data, gint source, PurpleInputCondition condit
 		url = strtok(NULL, ":");
 
 		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s", tdt->toc_ip,
-				purple_account_get_int(gc->account, "port", TOC_PORT),
+				purple_account_get_int(purple_connection_get_account(gc), "port", TOC_PORT),
 				url);
 		purple_url_fetch(tmp, FALSE, NULL, FALSE, toc_got_info, gc);
 	} else if (!g_ascii_strcasecmp(c, "DIR_STATUS")) {
@@ -1061,7 +1061,7 @@ static void toc_callback(gpointer data, gint source, PurpleInputCondition condit
 			ft->size = totalsize;
 			ft->files = files;
 			g_snprintf(ft->UID, sizeof(ft->UID), "%s", FILE_SEND_UID);
-			ft->gc = gc;
+			purple_account_get_connection(ft) = gc;
 
 			g_free(tmp);
 			for (i--; i >= 0; i--)
@@ -1100,7 +1100,7 @@ static void toc_callback(gpointer data, gint source, PurpleInputCondition condit
 				ft->message = NULL;
 			ft->user = g_strdup(user);
 			g_snprintf(ft->UID, sizeof(ft->UID), "%s", FILE_GET_UID);
-			ft->gc = gc;
+			purple_account_get_connection(ft) = gc;
 
 			g_free(tmp);
 			for (i--; i >= 0; i--)
@@ -1152,7 +1152,7 @@ static int toc_send_im(PurpleConnection *gc, const char *name, const char *messa
 		g_free(buf1);
 		return -E2BIG;
 	}
-	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", purple_normalize(gc->account, name), buf1,
+	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", purple_normalize(purple_connection_get_account(gc), name), buf1,
 						   ((flags & PURPLE_MESSAGE_AUTO_RESP) ? " auto" : ""));
 	g_free(buf1);
 #else
@@ -1176,7 +1176,7 @@ static int toc_send_im(PurpleConnection *gc, const char *name, const char *messa
 		return -E2BIG;
 	}
 
-	buf2 = g_strdup_printf("toc2_send_im_enc %s F U en \"%s\" %s", purple_normalize(gc->account, name), buf1, 
+	buf2 = g_strdup_printf("toc2_send_im_enc %s F U en \"%s\" %s", purple_normalize(purple_connection_get_account(gc), name), buf1, 
 						   ((flags & PURPLE_MESSAGE_AUTO_RESP) ? "auto" : ""));
 	g_free(buf1);
 #endif
@@ -1190,7 +1190,7 @@ static int toc_send_im(PurpleConnection *gc, const char *name, const char *messa
 static void toc_set_config(PurpleConnection *gc)
 {
 	char *buf = g_malloc(MSG_LEN), snd[BUF_LEN * 2];
-	toc_build_config(gc->account, buf, MSG_LEN - strlen("toc_set_config \\{\\}"), FALSE);
+	toc_build_config(purple_connection_get_account(gc), buf, MSG_LEN - strlen("toc_set_config \\{\\}"), FALSE);
 	g_snprintf(snd, MSG_LEN, "toc_set_config {%s}", buf);
 	sflap_send(gc, snd, -1, TYPE_DATA);
 	g_free(buf);
@@ -1199,7 +1199,7 @@ static void toc_set_config(PurpleConnection *gc)
 static void toc_get_info(PurpleConnection *gc, const char *name)
 {
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, MSG_LEN, "toc_get_info %s", purple_normalize(gc->account, name));
+	g_snprintf(buf, MSG_LEN, "toc_get_info %s", purple_normalize(purple_connection_get_account(gc), name));
 	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
@@ -1291,7 +1291,7 @@ static void
 toc_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", purple_normalize(gc->account, buddy->name));
+	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", purple_normalize(purple_connection_get_account(gc), buddy->name));
 	sflap_send(gc, buf, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
@@ -1306,11 +1306,11 @@ static void toc_add_buddies(PurpleConnection *gc, GList *buddies, GList *groups)
 	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBuddy *buddy = cur->data;
 
-		if (strlen(purple_normalize(gc->account, buddy->name)) + n + 32 > MSG_LEN) {
+		if (strlen(purple_normalize(purple_connection_get_account(gc), buddy->name)) + n + 32 > MSG_LEN) {
 			sflap_send(gc, buf, -1, TYPE_DATA);
 			n = g_snprintf(buf, sizeof(buf), "toc_add_buddy");
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", purple_normalize(gc->account, buddy->name));
+		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", purple_normalize(purple_connection_get_account(gc), buddy->name));
 	}
 	sflap_send(gc, buf, -1, TYPE_DATA);
 }
@@ -1318,7 +1318,7 @@ static void toc_add_buddies(PurpleConnection *gc, GList *buddies, GList *groups)
 static void toc_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	char buf[BUF_LEN * 2];
-	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", purple_normalize(gc->account, buddy->name));
+	g_snprintf(buf, sizeof(buf), "toc_remove_buddy %s", purple_normalize(purple_connection_get_account(gc), buddy->name));
 	sflap_send(gc, buf, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
@@ -1333,11 +1333,11 @@ static void toc_remove_buddies(PurpleConnection *gc, GList *buddies, GList *grou
 	for (cur = buddies; cur != NULL; cur = cur->next) {
 		PurpleBuddy *buddy = cur->data;
 
-		if (strlen(purple_normalize(gc->account, buddy->name)) + n + 32 > MSG_LEN) {
+		if (strlen(purple_normalize(purple_connection_get_account(gc), buddy->name)) + n + 32 > MSG_LEN) {
 			sflap_send(gc, buf, -1, TYPE_DATA);
 			n = g_snprintf(buf, sizeof(buf), "toc_remove_buddy");
 		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", purple_normalize(gc->account, buddy->name));
+		n += g_snprintf(buf + n, sizeof(buf) - n, " %s", purple_normalize(purple_connection_get_account(gc), buddy->name));
 	}
 	sflap_send(gc, buf, -1, TYPE_DATA);
 	toc_set_config(gc);
@@ -1413,7 +1413,7 @@ static void toc_chat_invite(PurpleConnection *gc, int id, const char *message, c
 {
 	char buf[BUF_LONG];
 	g_snprintf(buf, sizeof(buf) / 2, "toc_chat_invite %d \"%s\" %s", id,
-			message ? message : "", purple_normalize(gc->account, name));
+			message ? message : "", purple_normalize(purple_connection_get_account(gc), name));
 	sflap_send(gc, buf, -1, TYPE_DATA);
 }
 
@@ -1448,7 +1448,7 @@ static void toc_chat_whisper(PurpleConnection *gc, int id, const char *who, cons
 {
 	char *buf1, *buf2;
 	buf1 = escape_text(message);
-	buf2 = g_strdup_printf("toc_chat_whisper %d %s \"%s\"", id, purple_normalize(gc->account, who), buf1);
+	buf2 = g_strdup_printf("toc_chat_whisper %d %s \"%s\"", id, purple_normalize(purple_connection_get_account(gc), who), buf1);
 	g_free(buf1);
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	g_free(buf2);
@@ -1543,9 +1543,9 @@ static GList *toc_blist_node_menu(PurpleBlistNode *node)
 static void toc_add_permit(PurpleConnection *gc, const char *who)
 {
 	char buf2[BUF_LEN * 2];
-	if (gc->account->perm_deny != 3)
+	if (purple_connection_get_account(gc)->perm_deny != 3)
 		return;
-	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", purple_normalize(gc->account, who));
+	g_snprintf(buf2, sizeof(buf2), "toc_add_permit %s", purple_normalize(purple_connection_get_account(gc), who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
@@ -1553,9 +1553,9 @@ static void toc_add_permit(PurpleConnection *gc, const char *who)
 static void toc_add_deny(PurpleConnection *gc, const char *who)
 {
 	char buf2[BUF_LEN * 2];
-	if (gc->account->perm_deny != 4)
+	if (purple_connection_get_account(gc)->perm_deny != 4)
 		return;
-	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", purple_normalize(gc->account, who));
+	g_snprintf(buf2, sizeof(buf2), "toc_add_deny %s", purple_normalize(purple_connection_get_account(gc), who));
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	toc_set_config(gc);
 }
@@ -1566,7 +1566,7 @@ static void toc_set_permit_deny(PurpleConnection *gc)
 	GSList *list;
 	int at;
 
-	switch (gc->account->perm_deny) {
+	switch (purple_connection_get_account(gc)->perm_deny) {
 	case 1:
 		/* permit all, deny none. to get here reliably we need to have been in permit
 		 * mode, and send an empty toc_add_deny message, which will switch us to deny none */
@@ -1590,9 +1590,9 @@ static void toc_set_permit_deny(PurpleConnection *gc)
 		sflap_send(gc, buf2, -1, TYPE_DATA);
 
 		at = g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
-		list = gc->account->permit;
+		list = purple_connection_get_account(gc)->permit;
 		while (list) {
-			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", purple_normalize(gc->account, list->data));
+			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", purple_normalize(purple_connection_get_account(gc), list->data));
 			if (at > MSG_LEN + 32) {	/* from out my ass comes greatness */
 				sflap_send(gc, buf2, -1, TYPE_DATA);
 				at = g_snprintf(buf2, sizeof(buf2), "toc_add_permit ");
@@ -1608,9 +1608,9 @@ static void toc_set_permit_deny(PurpleConnection *gc)
 		sflap_send(gc, buf2, -1, TYPE_DATA);
 
 		at = g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
-		list = gc->account->deny;
+		list = purple_connection_get_account(gc)->deny;
 		while (list) {
-			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", purple_normalize(gc->account, list->data));
+			at += g_snprintf(buf2 + at, sizeof(buf2) - at, "%s ", purple_normalize(purple_connection_get_account(gc), list->data));
 			if (at > MSG_LEN + 32) {	/* from out my ass comes greatness */
 				sflap_send(gc, buf2, -1, TYPE_DATA);
 				at = g_snprintf(buf2, sizeof(buf2), "toc_add_deny ");
@@ -1627,14 +1627,14 @@ static void toc_set_permit_deny(PurpleConnection *gc)
 
 static void toc_rem_permit(PurpleConnection *gc, const char *who)
 {
-	if (gc->account->perm_deny != 3)
+	if (purple_connection_get_account(gc)->perm_deny != 3)
 		return;
 	toc_set_permit_deny(gc);
 }
 
 static void toc_rem_deny(PurpleConnection *gc, const char *who)
 {
-	if (gc->account->perm_deny != 4)
+	if (purple_connection_get_account(gc)->perm_deny != 4)
 		return;
 	toc_set_permit_deny(gc);
 }
@@ -1795,7 +1795,7 @@ static void toc_send_file_callback(gpointer data, gint source, PurpleInputCondit
 			ft->file = g_fopen(ft->filename, "w");
 			if (!ft->file) {
 				buf = g_strdup_printf(_("Could not open %s for writing!"), ft->filename);
-				purple_notify_error(ft->gc, NULL, buf, g_strerror(errno));
+				purple_notify_error(purple_account_get_connection(ft), NULL, buf, g_strerror(errno));
 				g_free(buf);
 				purple_input_remove(ft->inpa);
 				close(source);
@@ -1812,7 +1812,7 @@ static void toc_send_file_callback(gpointer data, gint source, PurpleInputCondit
 			if (!ft->file) {
 				buf = g_strdup_printf("Could not open %s/%s for writing!", ft->filename,
 						ft->hdr.name);
-				purple_notify_error(ft->gc, NULL, buf, g_strerror(errno));
+				purple_notify_error(purple_account_get_connection(ft), NULL, buf, g_strerror(errno));
 				g_free(buf);
 				purple_input_remove(ft->inpa);
 				close(source);
@@ -1829,7 +1829,7 @@ static void toc_send_file_callback(gpointer data, gint source, PurpleInputCondit
 
 	rt = read(source, buf, MIN(ntohl(ft->hdr.size) - ft->recvsize, 1024));
 	if (rt < 0) {
-		purple_notify_error(ft->gc, NULL,
+		purple_notify_error(purple_account_get_connection(ft), NULL,
 						  _("File transfer failed; other side probably "
 							"canceled."), NULL);
 		purple_input_remove(ft->inpa);
@@ -1874,7 +1874,7 @@ static void toc_send_file_connect(gpointer data, gint src, PurpleInputCondition 
 	struct file_transfer *ft = data;
 
 	if (src == -1) {
-		purple_notify_error(ft->gc, NULL,
+		purple_notify_error(purple_account_get_connection(ft), NULL,
 						  _("Could not connect for transfer."), NULL);
 		g_free(ft->filename);
 		g_free(ft->cookie);
@@ -1906,15 +1906,15 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 	ft->ip = g_strdup(old_ft->ip);
 	ft->files = old_ft->files;
 	ft->port = old_ft->port;
-	ft->gc = old_ft->gc;
-	account = ft->gc->account;
+	purple_account_get_connection(ft) = old_purple_account_get_connection(ft);
+	account = purple_account_get_connection(ft)->account;
 	gtk_widget_destroy(old_ft->window);
 
 	g_snprintf(buf, sizeof(buf), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_SEND_UID);
-	sflap_send(ft->gc, buf, -1, TYPE_DATA);
+	sflap_send(purple_account_get_connection(ft), buf, -1, TYPE_DATA);
 
-	if (purple_proxy_connect(ft->gc, account, ft->ip, ft->port, toc_send_file_connect, ft) != 0) {
-		purple_notify_error(ft->gc, NULL,
+	if (purple_proxy_connect(purple_account_get_connection(ft), account, ft->ip, ft->port, toc_send_file_connect, ft) != 0) {
+		purple_notify_error(purple_account_get_connection(ft), NULL,
 						  _("Could not connect for transfer."), NULL);
 		g_free(ft->filename);
 		g_free(ft->cookie);
@@ -1981,7 +1981,7 @@ static void toc_get_file_callback(gpointer data, gint source, PurpleInputConditi
 
 		if (ft->hdr.hdrtype != htons(0x120c)) {
 			g_snprintf(buf, sizeof(buf), "%s decided to cancel the transfer", ft->user);
-			purple_notify_error(ft->gc, NULL, buf, NULL);
+			purple_notify_error(purple_account_get_connection(ft), NULL, buf, NULL);
 			purple_input_remove(ft->inpa);
 			close(source);
 			g_free(ft->filename);
@@ -2038,7 +2038,7 @@ static void toc_get_file_connect(gpointer data, gint src, PurpleInputCondition c
 	char *basename;
 
 	if (src == -1) {
-		purple_notify_error(ft->gc, NULL,
+		purple_notify_error(purple_account_get_connection(ft), NULL,
 						  _("Could not connect for transfer."), NULL);
 		fclose(ft->file);
 		g_free(ft->filename);
@@ -2071,7 +2071,7 @@ static void toc_get_file_connect(gpointer data, gint src, PurpleInputCondition c
 	hdr->lsizeoffset = 0x10;
 	g_snprintf(hdr->name, 64, "listing.txt");
 	if (write(src, hdr, 256) < 0) {
-		purple_notify_error(ft->gc, NULL,
+		purple_notify_error(purple_account_get_connection(ft), NULL,
 						  _("Could not write file header.  The file will "
 							"not be transferred."), NULL);
 		fclose(ft->file);
@@ -2100,7 +2100,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	ft->file = g_fopen(ft->filename, "r");
 	if (!ft->file) {
 		buf = g_strdup_printf("Unable to open %s for transfer.", ft->filename);
-		purple_notify_error(ft->gc, NULL, buf, NULL);
+		purple_notify_error(purple_account_get_connection(ft), NULL, buf, NULL);
 		g_free(buf);
 		g_free(ft->filename);
 		g_free(ft);
@@ -2108,7 +2108,7 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	}
 	if (g_stat(dirname, &ft->st)) {
 		buf = g_strdup_printf("Unable to examine %s.", dirname);
-		purple_notify_error(ft->gc, NULL, buf, NULL);
+		purple_notify_error(purple_account_get_connection(ft), NULL, buf, NULL);
 		g_free(buf);
 		g_free(ft->filename);
 		g_free(ft);
@@ -2118,15 +2118,15 @@ static void toc_get_file(gpointer a, struct file_transfer *old_ft)
 	ft->user = g_strdup(old_ft->user);
 	ft->ip = g_strdup(old_ft->ip);
 	ft->port = old_ft->port;
-	ft->gc = old_ft->gc;
-	account = ft->gc->account;
+	purple_account_get_connection(ft) = old_purple_account_get_connection(ft);
+	account = purple_account_get_connection(ft)->account;
 	gtk_widget_destroy(old_ft->window);
 
 	g_snprintf(buf2, sizeof(buf2), "toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
-	sflap_send(ft->gc, buf2, -1, TYPE_DATA);
+	sflap_send(purple_account_get_connection(ft), buf2, -1, TYPE_DATA);
 
-	if (purple_proxy_connect(ft->gc, account, ft->ip, ft->port, toc_get_file_connect, ft) < 0) {
-		purple_notify_error(ft->gc, NULL,
+	if (purple_proxy_connect(purple_account_get_connection(ft), account, ft->ip, ft->port, toc_get_file_connect, ft) < 0) {
+		purple_notify_error(purple_account_get_connection(ft), NULL,
 						  _("Could not connect for transfer."), NULL);
 		fclose(ft->file);
 		g_free(ft->filename);
@@ -2160,12 +2160,12 @@ static void toc_reject_ft(struct ft_request *ft) {
 
 
 static void toc_accept_ft(struct ft_request *fr) {
-	if(g_list_find(purple_connections_get_all(), fr->gc)) {
+	if(g_list_find(purple_connections_get_all(), purple_account_get_connection(fr))) {
 		GtkWidget *window;
 		char buf[BUF_LEN];
 
 		struct file_transfer *ft = g_new0(struct file_transfer, 1);
-		ft->gc = fr->gc;
+		purple_account_get_connection(ft) = purple_account_get_connection(fr);
 		ft->user = g_strdup(fr->user);
 		ft->cookie = g_strdup(fr->cookie);
 		ft->ip = g_strdup(fr->ip);
@@ -2209,14 +2209,14 @@ static void accept_file_dialog(struct ft_request *ft) {
 				"%s requests %s to accept %d file: %s (%.2f %s)%s%s",
 				"%s requests %s to accept %d files: %s (%.2f %s)%s%s",
 				ft->files),
-				ft->user, purple_account_get_username(ft->gc->account), ft->files,
+				ft->user, purple_account_get_username(purple_account_get_connection(ft)->account), ft->files,
 				ft->filename, size, sizes[index], (ft->message) ? "\n" : "",
 				(ft->message) ? ft->message : "");
 	} else {
 		g_snprintf(buf, sizeof(buf), _("%s requests you to send them a file"), ft->user);
 	}
 
-	purple_request_accept_cancel(ft->gc, NULL, buf, NULL, 
+	purple_request_accept_cancel(purple_account_get_connection(ft), NULL, buf, NULL, 
 							   PURPLE_DEFAULT_ACTION_NONE, ft,
 							   G_CALLBACK(toc_accept_ft),
 							   G_CALLBACK(toc_reject_ft));

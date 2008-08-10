@@ -790,7 +790,7 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	purple_debug_info("yahoo", "In yahoo_got_info\n");
 
-	yd = info_data->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(info_data->gc));
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	user_info = purple_notify_user_info_new();
@@ -934,9 +934,11 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	if (photo_url_text) {
 		PurpleUtilFetchUrlData *url_data;
 		gboolean use_whole_url = FALSE;
+		PurpleAccount *account = purple_connection_get_account(info_data->gc);
+		PurpleProxyInfo *proxy_info = purple_account_get_proxy_info(account);
 
 		/* use whole URL if using HTTP Proxy */
-		if ((info_data->gc->account->proxy_info) && (info_data->gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+		if (proxy_info && proxy_info->type == PURPLE_PROXY_HTTP)
 		    use_whole_url = TRUE;
 
 		/* User-uploaded photos use a different server that requires the Host
@@ -987,7 +989,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* in to purple_markup_strip_html*/
 	char *fudged_buffer;
 
-	yd = info_data->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(info_data->gc));
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	fudged_buffer = purple_strcasereplace(url_buffer, "</dd>", "</dd><br>");
@@ -1218,7 +1220,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 				 * in which case the user may or may not actually exist.
 				 * Hence this extra step.
 				 */
-				f = yahoo_friend_find(b->account->gc, b->name);
+				f = yahoo_friend_find(purple_account_get_connection(b->account), b->name);
 			}
 			g_string_append_printf(str, "%s<br><br>",
 				f?  _("Could not retrieve the user's profile. "
@@ -1267,7 +1269,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 void yahoo_get_info(PurpleConnection *gc, const char *name)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	YahooGetInfoData *data;
 	char *url;
 	PurpleUtilFetchUrlData *url_data;

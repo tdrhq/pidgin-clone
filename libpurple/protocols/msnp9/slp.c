@@ -783,10 +783,10 @@ got_emoticon(MsnSlpCall *slpcall,
 	PurpleConnection *gc;
 	const char *who;
 
-	gc = slpcall->slplink->session->account->gc;
+	gc = purple_account_get_connection(slpcall->slplink->session->account);
 	who = slpcall->slplink->remote_user;
 
-	if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, gc->account))) {
+	if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, purple_connection_get_account(gc)))) {
 
 		/* FIXME: it would be better if we wrote the data as we received it
 		          instead of all at once, calling write multiple times and
@@ -975,7 +975,7 @@ msn_queue_buddy_icon_request(MsnUser *user)
 		return;
 	}
 
-	if (!buddy_icon_cached(account->gc, obj))
+	if (!buddy_icon_cached(purple_account_get_connection(account), obj))
 	{
 		MsnUserList *userlist;
 

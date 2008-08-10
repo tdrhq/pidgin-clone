@@ -137,7 +137,7 @@ void qq_send_group_cmd(PurpleConnection *gc, qq_group *group, guint8 *raw_data, 
 
 	g_return_if_fail(raw_data != NULL && data_len > 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	qq_send_cmd(qd, QQ_CMD_GROUP_CMD, raw_data, data_len);
 
@@ -163,7 +163,7 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	len = buf_len;
 	data = g_newa(guint8, len);
 

@@ -142,7 +142,7 @@ static void
 _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 {
 	xmlnode *body_node, *html_node, *events_node;
-	PurpleConnection *gc = pb->account->gc;
+	PurpleConnection *gc = purple_account_get_connection(pb->account);
 	gchar *body = NULL;
 	gboolean composing_event = FALSE;
 
@@ -249,7 +249,7 @@ _match_buddies_by_address(gpointer key, gpointer value, gpointer data)
 	if (mbba->jdata->account == pb->account && pb->proto_data != NULL)
 	{
 		const char *ip;
-		BonjourBuddy *bb = pb->proto_data;
+		BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 		GSList *tmp = bb->ips;
 
 		while(tmp) {
@@ -267,7 +267,7 @@ static void
 _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleBuddy *pb = data;
-	BonjourBuddy *bb = pb->proto_data;
+	BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 	BonjourJabberConversation *bconv = bb->conversation;
 	int ret, writelen;
 
@@ -309,7 +309,7 @@ _send_data(PurpleBuddy *pb, char *message)
 {
 	gint ret;
 	int len = strlen(message);
-	BonjourBuddy *bb = pb->proto_data;
+	BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 	BonjourJabberConversation *bconv = bb->conversation;
 
 	/* If we're not ready to actually send, append it to the buffer */
@@ -386,7 +386,7 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 
 			bonjour_jabber_close_conversation(bconv);
 			if (bconv->pb != NULL && bconv->pb->proto_data != NULL) {
-				BonjourBuddy *bb = bconv->pb->proto_data;
+				BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(bconv->pb));
 				bb->conversation = NULL;
 			}
 
@@ -422,7 +422,7 @@ void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv) {
 		BonjourBuddy *bb = NULL;
 
 		if(bconv->pb != NULL)
-			bb = bconv->pb->proto_data;
+			bb = purple_object_get_protocol_data(PURPLE_OBJECT(bconv->pb));
 #if 0
 		if(bconv->pb != NULL) {
 			PurpleConversation *conv;
@@ -468,7 +468,7 @@ _start_stream(gpointer data, gint source, PurpleInputCondition condition)
 		BonjourBuddy *bb = NULL;
 
 		if(bconv->pb) {
-			bb = bconv->pb->proto_data;
+			bb = purple_object_get_protocol_data(PURPLE_OBJECT(bconv->pb));
 			bname = purple_buddy_get_name(bconv->pb);
 		}
 
@@ -679,7 +679,7 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	if ((jdata->socket = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		purple_debug_error("bonjour", "Cannot open socket: %s\n", g_strerror(errno));
-		purple_connection_error_reason (jdata->account->gc,
+		purple_connection_error_reason (purple_account_get_connection(jdata->account),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Cannot open socket"));
 		return -1;
@@ -707,7 +707,7 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	if (!bind_successful)
 	{
 		purple_debug_error("bonjour", "Cannot bind socket: %s\n", g_strerror(errno));
-		purple_connection_error_reason (jdata->account->gc,
+		purple_connection_error_reason (purple_account_get_connection(jdata->account),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Could not bind socket to port"));
 		return -1;
@@ -717,7 +717,7 @@ bonjour_jabber_start(BonjourJabber *jdata)
 	if (listen(jdata->socket, 10) != 0)
 	{
 		purple_debug_error("bonjour", "Cannot listen on socket: %s\n", g_strerror(errno));
-		purple_connection_error_reason (jdata->account->gc,
+		purple_connection_error_reason (purple_account_get_connection(jdata->account),
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Could not listen on socket"));
 		return -1;
@@ -743,7 +743,7 @@ static void
 _connected_to_buddy(gpointer data, gint source, const gchar *error)
 {
 	PurpleBuddy *pb = data;
-	BonjourBuddy *bb = pb->proto_data;
+	BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 
 	bb->conversation->connect_data = NULL;
 
@@ -797,8 +797,8 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 	g_return_if_fail(bconv->pb == NULL);
 
 	pb = purple_find_buddy(bconv->account, bconv->buddy_name);
-	if (pb && pb->proto_data) {
-		BonjourBuddy *bb = pb->proto_data;
+	if (pb && purple_object_get_protocol_data(PURPLE_OBJECT(pb))) {
+		BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 		const char *ip;
 		GSList *tmp = bb->ips;
 
@@ -809,7 +809,7 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 		while(tmp) {
 			ip = tmp->data;
 			if (ip != NULL && g_ascii_strcasecmp(ip, bconv->ip) == 0) {
-				BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+				BonjourJabber *jdata = ((BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(bconv->account))))->jabber_data;
 
 				purple_debug_info("bonjour", "Matched buddy %s to incoming conversation \"from\" attrib and IP (%s)\n",
 					purple_buddy_get_name(pb), bconv->ip);
@@ -842,7 +842,7 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 
 void
 bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
-	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+	BonjourJabber *jdata = ((BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(bconv->account))))->jabber_data;
 	struct _match_buddies_by_address_t *mbba;
 
 	mbba = g_new0(struct _match_buddies_by_address_t, 1);
@@ -856,7 +856,7 @@ bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv) {
 			purple_debug_error("bonjour", "More than one buddy matched for ip %s.\n", bconv->ip);
 		else {
 			PurpleBuddy *pb = mbba->matched_buddies->data;
-			BonjourBuddy *bb = pb->proto_data;
+			BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 
 			purple_debug_info("bonjour", "Matched buddy %s to incoming conversation using IP (%s)\n",
 				purple_buddy_get_name(pb), bconv->ip);
@@ -900,7 +900,7 @@ _find_or_start_conversation(BonjourJabber *jdata, const gchar *to)
 		/* You can not send a message to an offline buddy */
 		return NULL;
 
-	bb = (BonjourBuddy *) pb->proto_data;
+	bb = (BonjourBuddy *) purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 
 	/* Check if there is a previously open conversation */
 	if (bb->conversation == NULL)
@@ -954,7 +954,7 @@ bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *
 		return -10000;
 	}
 
-	bb = pb->proto_data;
+	bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 
 	message_node = xmlnode_new("message");
 	xmlnode_set_attrib(message_node, "to", bb->name);
@@ -999,13 +999,13 @@ _async_bonjour_jabber_close_conversation_cb(gpointer data) {
 
 void
 async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv) {
-	BonjourJabber *jdata = ((BonjourData*) bconv->account->gc->proto_data)->jabber_data;
+	BonjourJabber *jdata = ((BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(bconv->account))))->jabber_data;
 
 	jdata->pending_conversations = g_slist_remove(jdata->pending_conversations, bconv);
 
 	/* Disconnect this conv. from the buddy here so it can't be disposed of twice.*/
 	if(bconv->pb != NULL) {
-		BonjourBuddy *bb = bconv->pb->proto_data;
+		BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(bconv->pb));
 		if (bb->conversation == bconv)
 			bb->conversation = NULL;
 	}
@@ -1019,8 +1019,8 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 	if (bconv != NULL) {
 		BonjourData *bd = NULL;
 
-		if(PURPLE_CONNECTION_IS_VALID(bconv->account->gc)) {
-			bd = bconv->account->gc->proto_data;
+		if(PURPLE_CONNECTION_IS_VALID(purple_account_get_connection(bconv->account))) {
+			bd = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(bconv->account)));
 			bd->jabber_data->pending_conversations = g_slist_remove(bd->jabber_data->pending_conversations, bconv);
 		}
 
@@ -1088,12 +1088,12 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		purple_input_remove(jdata->watcher_id);
 
 	/* Close all the conversation sockets and remove all the watchers after sending end streams */
-	if (jdata->account->gc != NULL) {
+	if (purple_account_get_connection(jdata->account) != NULL) {
 		GSList *buddies, *l;
 
 		buddies = purple_find_buddies(jdata->account, NULL);
 		for (l = buddies; l; l = l->next) {
-			BonjourBuddy *bb = ((PurpleBuddy*) l->data)->proto_data;
+			BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(l->data));
 			if (bb != NULL) {
 				bonjour_jabber_close_conversation(bb->conversation);
 				bb->conversation = NULL;
@@ -1166,7 +1166,7 @@ check_if_blocked(PurpleBuddy *pb)
 
 	for(l = acc->deny; l != NULL; l = l->next) {
 		if(!purple_utf8_strcasecmp(pb->name, (char *)l->data)) {
-			purple_debug_info("bonjour", "%s has been blocked by %s.\n", pb->name, acc->username);
+			purple_debug_info("bonjour", "%s has been blocked by %s.\n", pb->name, purple_account_get_username(acc));
 			blocked = TRUE;
 			break;
 		}
@@ -1184,7 +1184,7 @@ xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb)
 
 	if(connection == NULL) {
 		if(pb->account != NULL)
-			connection = (pb->account)->gc;
+			connection = purple_account_get_connection(pb->account);
 	}
 
 	if(check_if_blocked(pb))
@@ -1274,3 +1274,4 @@ purple_network_get_my_ip_ext2(int fd)
 
 	return ip_ext;
 }
+

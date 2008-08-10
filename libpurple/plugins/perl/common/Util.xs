@@ -275,3 +275,29 @@ purple_util_write_data_to_file(filename, data, size)
 	const char *filename
 	const char *data
 	size_t size
+
+
+MODULE = Purple::Util  PACKAGE = Purple::Util::Http  PREFIX = purple_http_
+PROTOTYPES: ENABLE
+
+gchar *
+purple_http_digest_calculate_session_key(algorithm, username, realm, password, nonce, client_nonce)
+	const gchar *algorithm
+	const gchar *username
+	const gchar *realm
+	const gchar *password
+	const gchar *nonce
+	const gchar *client_nonce
+
+gchar *
+purple_http_digest_calculate_response(algorithm, method, digest_uri, qop, entity, nonce, nonce_count, client_nonce, session_key)
+	const gchar *algorithm
+	const gchar *method
+	const gchar *digest_uri
+	const gchar *qop
+	const gchar *entity
+	const gchar *nonce
+	const gchar *nonce_count
+	const gchar *client_nonce
+	const gchar *session_key
+

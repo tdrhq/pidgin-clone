@@ -33,6 +33,8 @@
 #include "sync.h"
 #include "slplink.h"
 
+#include "md5cipher.h"
+
 static MsnTable *cbs_table;
 
 /**************************************************************************
@@ -607,6 +609,7 @@ msn_notification_dump_contact(MsnSession *session)
 	int payload_len;
 	int adl_count = 0;
 	const char *display_name;
+	PurpleConnection *conn;
 
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
@@ -650,11 +653,12 @@ msn_notification_dump_contact(MsnSession *session)
 		xmlnode_free(adl_node);
 	}
 
-	display_name = purple_connection_get_display_name(session->account->gc);
+	conn = purple_account_get_connection(session->account);
+	display_name = purple_connection_get_display_name(conn);
 	if (display_name
 	    && strcmp(display_name,
 		      purple_account_get_username(session->account))) {
-		msn_act_id(session->account->gc, display_name);
+		msn_act_id(conn, display_name);
 	}
 
 }
@@ -1063,7 +1067,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 		id = xmlnode_get_attrib(payloadNode, "id");
 		trId = atol(id);
 		*/
-		purple_conv_present_error(who, gc->account,
+		purple_conv_present_error(who, purple_connection_get_account(gc),
 			_("Mobile message was not sent because it was too long."));
 
 	} else {
@@ -1287,15 +1291,15 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleAccount *account;
 	const char *rru;
 	const char *url;
-	PurpleCipherContext *cipher;
-	gchar digest[33];
+	PurpleCipher *cipher;
+	guchar digest[33];
 	char *buf;
 
 	gulong tmp_timestamp;
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = account->gc;
+	gc = purple_account_get_connection(account);
 
 	rru = cmd->params[1];
 	url = cmd->params[2];
@@ -1308,10 +1312,10 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			   tmp_timestamp,
 			   purple_connection_get_password(gc));
 
-	cipher = purple_cipher_context_new_by_name("md5", NULL);
-	purple_cipher_context_append(cipher, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest_to_str(cipher, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(cipher);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (const guchar *)buf, strlen(buf));
+	purple_cipher_digest_to_str(cipher, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	g_free(buf);
 
@@ -1600,7 +1604,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1654,7 +1658,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *mdata, *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1729,7 +1733,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char *from, *subject, *tmp;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1814,7 +1818,8 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 		if (*buf != '\0')
-			purple_notify_info(cmdproc->session->account->gc, NULL, buf, NULL);
+			purple_notify_info(purple_account_get_connection(cmdproc->session->account),
+					NULL, buf, NULL);
 	}
 
 	g_hash_table_destroy(table);
