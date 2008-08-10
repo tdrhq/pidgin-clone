@@ -84,6 +84,12 @@ typedef struct
 static GList *accountdialogs;
 
 static void
+account_abled_cb(PurpleAccount *account, GParamSpec *spec, gpointer tree)
+{
+	gnt_tree_set_choice(GNT_TREE(tree), account, purple_account_get_enabled(account));
+}
+
+static void
 account_add(PurpleAccount *account)
 {
 	gnt_tree_add_choice(GNT_TREE(accounts.tree), account,
@@ -92,7 +98,9 @@ account_add(PurpleAccount *account)
 				purple_account_get_protocol_name(account)),
 			NULL, NULL);
 	gnt_tree_set_choice(GNT_TREE(accounts.tree), account,
-			purple_account_get_enabled(account, FINCH_UI));
+			purple_account_get_enabled(account));
+	g_signal_connect_object(G_OBJECT(account), "notify::enabled",
+			G_CALLBACK(account_abled_cb), accounts.tree, 0);
 }
 
 static void
@@ -157,8 +165,10 @@ save_account_cb(AccountEditDialog *dialog)
 	{
 		account = dialog->account;
 
-		/* Protocol */
+#warning We need to destroy the existing account and create a new one with the changed prpl
+#if 0
 		purple_account_set_protocol_id(account, purple_plugin_get_id(plugin));
+#endif
 		purple_account_set_username(account, username->str);
 	}
 	g_string_free(username, TRUE);
@@ -240,7 +250,7 @@ save_account_cb(AccountEditDialog *dialog)
 		saved_status = purple_savedstatus_get_current();
 		if (saved_status != NULL) {
 			purple_savedstatus_activate_for_account(saved_status, account);
-			purple_account_set_enabled(account, FINCH_UI, TRUE);
+			purple_account_set_enabled(account, TRUE);
 		}
 	}
 
@@ -670,7 +680,7 @@ account_toggled(GntWidget *widget, void *key, gpointer null)
 {
 	PurpleAccount *account = key;
 
-	purple_account_set_enabled(account, FINCH_UI, gnt_tree_get_choice(GNT_TREE(widget), key));
+	purple_account_set_enabled(account, gnt_tree_get_choice(GNT_TREE(widget), key));
 }
 
 static void
@@ -773,15 +783,6 @@ account_removed_callback(PurpleAccount *account)
 	gnt_tree_remove(GNT_TREE(accounts.tree), account);
 }
 
-static void
-account_abled_cb(PurpleAccount *account, gpointer user_data)
-{
-	if (accounts.window == NULL)
-		return;
-	gnt_tree_set_choice(GNT_TREE(accounts.tree), account,
-			GPOINTER_TO_INT(user_data));
-}
-
 void finch_accounts_init()
 {
 	GList *iter;
@@ -792,17 +793,11 @@ void finch_accounts_init()
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 			finch_accounts_get_handle(), PURPLE_CALLBACK(account_removed_callback),
 			NULL);
-	purple_signal_connect(purple_accounts_get_handle(), "account-disabled",
-			finch_accounts_get_handle(),
-			PURPLE_CALLBACK(account_abled_cb), GINT_TO_POINTER(FALSE));
-	purple_signal_connect(purple_accounts_get_handle(), "account-enabled",
-			finch_accounts_get_handle(),
-			PURPLE_CALLBACK(account_abled_cb), GINT_TO_POINTER(TRUE));
 
 	iter = purple_accounts_get_all();
 	if (iter) {
 		for (; iter; iter = iter->next) {
-			if (purple_account_get_enabled(iter->data, FINCH_UI))
+			if (purple_account_get_enabled(iter->data))
 				break;
 		}
 		if (!iter)

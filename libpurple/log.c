@@ -1040,7 +1040,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 			/* Find the account for username in the list of accounts for protocol. */
 			username_unescaped = purple_unescape_filename(username);
 			for (account_iter = g_list_first(accounts) ; account_iter != NULL ; account_iter = account_iter->next) {
-				if (!strcmp(((PurpleAccount *)account_iter->data)->username, username_unescaped)) {
+				if (!strcmp(purple_account_get_username((PurpleAccount *)account_iter->data), username_unescaped)) {
 					account = account_iter->data;
 					break;
 				}

@@ -1939,12 +1939,10 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	purple_signal_connect(purple_savedstatuses_get_handle(),
 			"savedstatus-modified", status_box,
 			PURPLE_CALLBACK(saved_status_updated_cb), status_box);
-	purple_signal_connect(purple_accounts_get_handle(), "account-enabled", status_box,
-						PURPLE_CALLBACK(account_enabled_cb),
-						status_box);
-	purple_signal_connect(purple_accounts_get_handle(), "account-disabled", status_box,
-						PURPLE_CALLBACK(account_enabled_cb),
-						status_box);
+
+	purple_type_connect(PURPLE_TYPE_ACCOUNT, "enable-changed",
+		G_CALLBACK(account_enabled_cb), status_box);
+
 	purple_signal_connect(purple_accounts_get_handle(), "account-status-changed", status_box,
 						PURPLE_CALLBACK(account_status_changed_cb),
 						status_box);

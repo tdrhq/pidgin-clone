@@ -106,7 +106,7 @@ _mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition) {
 		purple_debug_error("bonjour", "Error (%d) handling mDNS response.\n", errorCode);
 		/* This happens when the mDNSResponder goes down, I haven't seen it happen any other time (in my limited testing) */
 		if (errorCode == kDNSServiceErr_Unknown) {
-			purple_connection_error_reason(srh->account->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			purple_connection_error_reason(purple_account_get_connection(srh->account), PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Error communicating with local mDNSResponder."));
 		}
 	}
@@ -315,7 +315,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 		purple_debug_error("bonjour", "service browser - callback error (%d)\n", errorCode);
 	else if (flags & kDNSServiceFlagsAdd) {
 		/* A presence service instance has been discovered... check it isn't us! */
-		if (purple_utf8_strcasecmp(serviceName, account->username) != 0) {
+		if (purple_utf8_strcasecmp(serviceName, purple_account_get_username(account)) != 0) {
 			DNSServiceErrorType resErrorCode;
 			/* OK, lets go ahead and resolve it to add to the buddy list */
 			ResolveCallbackArgs *args = g_new0(ResolveCallbackArgs, 1);
@@ -336,7 +336,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 
 				/* Is there an existing buddy? */
 				if ((pb = purple_find_buddy(account, serviceName)))
-					bb = pb->proto_data;
+					bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 				/* Is there a pending buddy? */
 				else {
 					while (tmp) {
@@ -356,7 +356,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 					if (pb == NULL)
 						pending_buddies = g_slist_prepend(pending_buddies, bb);
 					else
-						pb->proto_data = bb;
+						purple_object_set_protocol_data(PURPLE_OBJECT(pb),bb);
 				}
 
 				rd = g_new0(Win32SvcResolverData, 1);
@@ -396,7 +396,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 			GSList *l;
 			/* There may be multiple presences, we should only get rid of this one */
 			Win32SvcResolverData *rd_search;
-			BonjourBuddy *bb = pb->proto_data;
+			BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 			Win32BuddyImplData *idata;
 
 			g_return_if_fail(bb != NULL);

@@ -1,6 +1,7 @@
 EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-types.py \
+		marshallers.list \
 		purple-notifications-example \
 		purple-remote \
 		purple-send \
@@ -30,10 +31,11 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple.pc
 
-SUBDIRS = $(GCONF_DIR) plugins protocols tests . example
+SUBDIRS = . $(GCONF_DIR) plugins protocols tests example
 
 purple_coresources = \
 	account.c \
+	accountmanager.c \
 	accountopt.c \
 	blist.c \
 	buddyicon.c \
@@ -45,12 +47,18 @@ purple_coresources = \
 	conversation.c \
 	core.c \
 	debug.c \
+	descipher.c \
+	des3cipher.c \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
+	hmaccipher.c \
 	idle.c \
 	imgstore.c \
 	log.c \
+	marshallers.c \
+	md4cipher.c \
+	md5cipher.c \
 	mime.c \
 	nat-pmp.c \
 	network.c \
@@ -58,15 +66,18 @@ purple_coresources = \
 	notify.c \
 	plugin.c \
 	pluginpref.c \
+	pobject.c \
 	pounce.c \
 	prefs.c \
 	privacy.c \
 	proxy.c \
 	prpl.c \
+	rc4cipher.c \
 	request.c \
 	roomlist.c \
 	savedstatuses.c \
 	server.c \
+	sha1cipher.c \
 	signals.c \
 	smiley.c \
 	dnsquery.c \
@@ -85,6 +96,7 @@ purple_coresources = \
 
 purple_coreheaders = \
 	account.h \
+	accountmanager.h \
 	accountopt.h \
 	blist.h \
 	buddyicon.h \
@@ -97,13 +109,18 @@ purple_coreheaders = \
 	core.h \
 	dbus-maybe.h \
 	debug.h \
+	descipher.h \
+	des3cipher.h \
 	desktopitem.h \
 	eventloop.h \
 	ft.h \
 	gaim-compat.h \
+	hmaccipher.h \
 	idle.h \
 	imgstore.h \
 	log.h \
+	md4cipher.h \
+	md5cipher.h \
 	mime.h \
 	nat-pmp.h \
 	network.h \
@@ -111,11 +128,13 @@ purple_coreheaders = \
 	ntlm.h \
 	plugin.h \
 	pluginpref.h \
+	pobject.h \
 	pounce.h \
 	prefs.h \
 	privacy.h \
 	proxy.h \
 	prpl.h \
+	rc4cipher.h \
 	request.h \
 	roomlist.h \
 	savedstatuses.h \
@@ -124,6 +143,7 @@ purple_coreheaders = \
 	smiley.h \
 	dnsquery.h \
 	dnssrv.h \
+	sha1cipher.h \
 	status.h \
 	stringref.h \
 	stun.h \
@@ -137,6 +157,14 @@ purple_coreheaders = \
 
 purple_builtheaders = purple.h version.h
 
+marshallers.h: marshallers.list
+	@echo "Generating marshallers.h"
+	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
+
+marshallers.c: marshallers.list
+	@echo "Generating marshallers.c"
+	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body > marshallers.c
+
 if ENABLE_DBUS
 
 CLEANFILES = \
@@ -145,6 +173,8 @@ CLEANFILES = \
 	dbus-client-binding.h \
 	dbus-types.c \
 	dbus-types.h \
+	marshallers.c \
+	marshallers.h \
 	purple-client-bindings.c \
 	purple-client-bindings.h \
 	purple.service
@@ -215,6 +245,8 @@ BUILT_SOURCES = $(purple_builtheaders) \
 	dbus-types.c \
 	dbus-types.h \
 	dbus-bindings.c \
+	marshallers.c \
+	marshallers.h \
 	purple-client-bindings.c \
 	purple-client-bindings.h
 

@@ -1,0 +1,220 @@
+digraph {
+	labelloc="t";
+	label="Purple Object Hierarchy";
+	rankdir="RL";
+
+	node[fontname="sans",shape="box",style="filled"];
+
+	/* abstract classes */
+	node[fillcolor="palegreen"];
+
+	object_account[label="PurpleAccount"];
+
+	object_blistnode[label="PurpleBlistNode"];
+	blistnode_buddy[label="PurpleBuddy"];
+
+	connection_ssl[label="PurpleSSLConnection"];
+
+	object_eventloop[label="PurpleEventLoop"];
+
+	object_loader[label="PurpleLoader"];
+	object_logger[label="PurpleLogger"];
+	object_plugin[label="PurplePlugin"];
+	object_preferences[label="PurplePreferences"];
+	object_protocol[label="PurpleProtocol"];
+	object_sound[label="PurpleSound"];
+
+	object[label="PurpleObject"];
+
+	protocol_oscar[label="PurpleProtocolOscar"];
+
+	object_pounce_action[label="PurplePounceAction"];
+	object_pounce_event[label="PurplePounceEvent"];
+
+	object_proxy[label="PurpleProxy"];
+
+	object_roomlist[label="PurpleRoomlist"];
+
+	object_whiteboard[label="PurpleWhiteBoard"];
+
+	/* abstract done */
+	node[fillcolor="mediumseagreen"];
+	object_cipher[label="PurpleCipher"];
+
+	/* concrete */
+	node[fillcolor="powderblue"];
+	object_blist[label="PurpleBlist"];
+
+	object_connection[label="PurpleConnection"];
+	connection_ssl_gnutls[label="PurpleSSLConnectionGNUTLS"];
+	connection_ssl_nspr[label="PurpleSSLConnectionNSPR"];
+
+	blistnode_contact[label="PurpleContact"];
+	blistnode_group[label="PurpleGroup"];
+
+	object_filetransfer[label="PurpleFileTransfer"];
+
+	object_image[label="PurpleImage"];
+	image_buddy_icon[label="PurpleBuddyIcon"];
+
+	loader_mono[label="PurpleLoaderMono"];
+	loader_perl[label="PurpleLoaderPerl"];
+	loader_tcl[label="PurpleLoaderTCL"];
+
+	logger_html[label="PurpleLoggerHTML"];
+	logger_text[label="PurpleLoggerText"];
+
+	object_pounce[label="PurplePounce"];
+
+	pounce_action_open_window[label="PurplePounceActionOpenWindow"];
+	pounce_action_notification[label="PurplePounceActionNotification"];
+	pounce_action_message[label="PurplePounceActionMessage"];
+	pounce_action_command[label="PurplePounceActionCommand"];
+	pounce_action_sound[label="PurplePounceActionSound"];
+
+	pounce_event_signon[label="PurplePounceEventSignon"];
+	pounce_event_signoff[label="PurplePounceEventSignoff"];
+	pounce_event_away[label="PurplePounceEventAway"];
+	pounce_event_back[label="PurplePounceEventBack"];
+	pounce_event_idle[label="PurplePounceEventIdle"];
+	pounce_event_unidle[label="PurplePounceEventUnidle"];
+	pounce_event_message[label="PurplePounceEventMessage"];
+
+	preferences_gconf[label="PurplePreferenceGConf"];
+	preferences_xml[label="PurplePreferencesXML"];
+
+	protocol_gg[label="PurpleProtocolGaduGadu"];
+	protocol_groupwise[label="PurpleProtocolGroupWise"];
+	protocol_irc[label="PurpleProtocolIRC"];
+	protocol_meanwhile[label="PurpleProtocolMeanwhile"];
+	protocol_msn[label="PurpleMSN"];
+	protocol_oscar_aim[label="PurpleProtocolOscarAIM"];
+	protocol_oscar_icq[label="PurpleProtocolOscarICQ"];
+	protocol_silc[label="PurpleProtocolSILC"];
+	protocol_simple[label="PurpleProtocolSIMPLE"];
+	protocol_sip[label="PurpleProtocolSIP"];
+	protocol_qq[label="PurpleProtocolQQ"];
+	protocol_yahoo[label="PurpleProtocolYahoo"];
+	protocol_zephyr[label="PurpleProtocolZephyr"];
+	protocol_xmpp[label="PurpleProtocolXMPP"];
+	protocol_xmpp_gtalk[label="PurpleProtocolXMPPGTalk"];
+	protocol_xmpp_jabber[label="PurpleProtocolXMPPJabber"];
+	protocol_xmpp_livejournal[label="PurpleProtocolXMPPLiveJournal"];
+
+	proxy_env[label="PurpleProxyEnvironment"];
+	proxy_global[label="PurpleProxyGlobal"];
+	proxy_http[label="PurpleProxyHTTP"];
+	proxy_none[label="PurpleProxyNone"];
+	proxy_socks4[label="PurpleProxySOCKS4"];
+	proxy_socks5[label="PurpleProxySOCKS5"];
+
+	sound_beep[label="PurpleSoundBeep"];
+	sound_command[label="PurpleSoundCommand"];
+	sound_gstreamer[label="PurpleSoundGStreamer"];
+
+	/* concrete done */
+	node[fillcolor="cornflowerblue"];
+	cipher_des[label="PurpleDESCipher"];
+	cipher_md4[label="PurpleMD4Cipher"];
+	cipher_md5[label="PurpleMD5Cipher"];
+	cipher_sha1[label="PurpleSHA1Cipher"];
+
+	/* relationships */
+	node[style="solid"];
+	object_blist -> object;
+
+	object_account -> object;
+
+	object_blistnode -> object;
+	blistnode_buddy -> object_blistnode;
+	blistnode_contact -> object_blistnode;
+	blistnode_group -> object_blistnode;
+
+	object_cipher -> object;
+	cipher_des -> object_cipher;
+	cipher_md4 -> object_cipher;
+	cipher_md5 -> object_cipher;
+	cipher_sha1 -> object_cipher;
+
+	object_connection -> object;
+	connection_ssl -> object_connection;
+	connection_ssl_gnutls -> connection_ssl;
+	connection_ssl_nspr -> connection_ssl;
+
+	object_eventloop -> object;
+
+	object_filetransfer -> object;
+
+	object_image -> object;
+	image_buddy_icon -> object_image;
+
+	object_loader -> object;
+	loader_mono -> object_loader;
+	loader_perl -> object_loader;
+	loader_tcl -> object_loader;
+
+	object_logger -> object;
+	logger_html -> object_logger;
+	logger_text -> object_logger;
+
+	object_plugin -> object;
+
+	object_pounce -> object;
+
+	object_pounce_action -> object;
+	pounce_action_open_window -> object_pounce_action;
+	pounce_action_notification -> object_pounce_action;
+	pounce_action_message -> object_pounce_action;
+	pounce_action_command -> object_pounce_action;
+	pounce_action_sound -> object_pounce_action;
+
+	object_pounce_event -> object;
+	pounce_event_signon -> object_pounce_event;
+	pounce_event_signoff -> object_pounce_event;
+	pounce_event_away -> object_pounce_event;
+	pounce_event_back -> object_pounce_event;
+	pounce_event_idle -> object_pounce_event;
+	pounce_event_unidle -> object_pounce_event;
+	pounce_event_message -> object_pounce_event;
+
+	object_preferences -> object;
+	preferences_gconf -> object_preferences;
+	preferences_xml -> object_preferences;
+
+	object_protocol -> object;
+	protocol_gg -> object_protocol;
+	protocol_groupwise -> object_protocol;
+	protocol_irc -> object_protocol;
+	protocol_meanwhile -> object_protocol;
+	protocol_msn -> object_protocol;
+	protocol_oscar -> object_protocol;
+	protocol_qq -> object_protocol;
+	protocol_silc -> object_protocol;
+	protocol_simple -> object_protocol;
+	protocol_sip -> object_protocol;
+	protocol_yahoo -> object_protocol;
+	protocol_zephyr -> object_protocol;
+	protocol_xmpp -> object_protocol;
+	protocol_oscar_aim -> protocol_oscar;
+	protocol_oscar_icq -> protocol_oscar;
+	protocol_xmpp_gtalk -> protocol_xmpp;
+	protocol_xmpp_jabber -> protocol_xmpp;
+	protocol_xmpp_livejournal -> protocol_xmpp;
+
+	object_proxy -> object;
+	proxy_env -> object_proxy;
+	proxy_global -> object_proxy;
+	proxy_http -> object_proxy;
+	proxy_none -> object_proxy;
+	proxy_socks4 -> object_proxy;
+	proxy_socks5 -> object_proxy;
+
+	object_roomlist -> object;
+
+	object_sound -> object;
+	sound_beep -> object_sound;
+	sound_command -> object_sound;
+	sound_gstreamer -> object_sound;
+
+	object_whiteboard -> object;
+}
