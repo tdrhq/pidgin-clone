@@ -971,7 +971,7 @@ msn_queue_buddy_icon_request(MsnUser *user)
 		return;
 	}
 
-	if (!buddy_icon_cached(account->gc, obj))
+	if (!buddy_icon_cached(purple_account_get_connection(account), obj))
 	{
 		MsnUserList *userlist;
 
