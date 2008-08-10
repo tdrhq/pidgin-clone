@@ -177,7 +177,7 @@ void qq_process_group_cmd_get_group_info(guint8 *data, gint len, PurpleConnectio
 	gchar *notice;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	bytes = 0;
 	bytes += qq_get32(&(internal_group_id), data + bytes);

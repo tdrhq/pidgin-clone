@@ -30,6 +30,7 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 C_SRC =	\
 			account.c \
+			accountmanager.c \
 			accountopt.c \
 			blist.c \
 			buddyicon.c \
@@ -40,14 +41,20 @@ C_SRC =	\
 			conversation.c \
 			core.c \
 			debug.c \
+			des3cipher.c \
+			descipher.c \
 			dnsquery.c \
 			dnssrv.c \
 			eventloop.c \
 			ft.c \
 			circbuffer.c \
+			hmaccipher.c \
 			idle.c \
 			imgstore.c \
 			log.c \
+			marshallers.c \
+			md4cipher.c \
+			md5cipher.c \
 			mime.c \
 			nat-pmp.c \
 			network.c \
@@ -55,15 +62,18 @@ C_SRC =	\
 			ntlm.c \
 			plugin.c \
 			pluginpref.c \
+			pobject.c \
 			pounce.c \
 			prefs.c \
 			privacy.c \
 			proxy.c \
 			prpl.c \
+			rc4cipher.c \
 			request.c \
 			roomlist.c \
 			savedstatuses.c \
 			server.c \
+			sha1cipher.c \
 			signals.c \
 			smiley.c \
 			sound.c \
@@ -120,7 +130,13 @@ install: install_shallow all
 	sed -e 's/@PURPLE_VERSION@/$(PURPLE_VERSION)/g' \
 	    $@.in > $@
 
-$(OBJECTS): $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H)
+marshallers.h: marshallers.list
+	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $< --header > $@
+ 
+marshallers.c: marshallers.list
+	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $< --body > $@
+
+$(OBJECTS): $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H) marshallers.c marshallers.h
 
 $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
@@ -129,7 +145,7 @@ $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H)
+	rm -f $(OBJECTS) $(RC_SRC) $(PURPLE_VERSION_H) $(PURPLE_PURPLE_H) marshallers.h marshallers.c
 	rm -f $(TARGET).dll $(TARGET).dll.a $(TARGET).def
 	$(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean

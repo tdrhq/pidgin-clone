@@ -87,7 +87,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 			gboolean recursive)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	const char *type;
 	const unsigned char *data;
 	SilcUInt32 data_len;
@@ -263,7 +263,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		     SilcUInt32 message_len)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleConversation *convo = NULL;
 	char *msg, *tmp;
 
@@ -353,7 +353,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		     SilcUInt32 message_len)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleConversation *convo = NULL;
 	char *msg, *tmp;
 
@@ -430,7 +430,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 {
 	va_list va;
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleConversation *convo;
 	SilcClientEntry client_entry, client_entry2;
 	SilcChannelEntry channel;
@@ -868,7 +868,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 							if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 								continue;
 							b = (PurpleBuddy *)bnode;
-							if (b->account != gc->account)
+							if (b->account != purple_connection_get_account(gc))
 								continue;
 							f = purple_blist_node_get_string(bnode, "public-key");
 							if (f && !strcmp(f, buf))
@@ -889,7 +889,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				}
 			}
 
-			silc_free(b->proto_data);
+			silc_free(purple_object_get_protocol_data(PURPLE_OBJECT(b)));
 			b->proto_data = silc_memdup(&client_entry->id,
 						    sizeof(client_entry->id));
 			if (notify == SILC_NOTIFY_TYPE_NICK_CHANGE) {
@@ -952,7 +952,7 @@ silc_command(SilcClient client, SilcClientConnection conn,
 	     SilcUInt32 argc, unsigned char **argv)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	switch (command) {
 
@@ -1089,7 +1089,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 		   SilcStatus error, va_list ap)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleConversation *convo;
 
 	switch (command) {
@@ -1304,7 +1304,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						_("User Information"),
 						buf, 1, client_entry, 2,
 						_("OK"), G_CALLBACK(silcpurple_whois_more),
-						_("_More..."), G_CALLBACK(silcpurple_whois_more), gc->account, NULL, NULL);
+						_("_More..."), G_CALLBACK(silcpurple_whois_more), purple_connection_get_account(gc), NULL, NULL);
 			else
 #endif /* 0 */
 			purple_notify_userinfo(gc, client_entry->nickname, user_info, NULL, NULL);
@@ -1732,7 +1732,7 @@ silc_get_auth_method(SilcClient client, SilcClientConnection conn,
 		     SilcGetAuthMeth completion, void *context)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	SilcPurpleAskPassphrase internal;
 	const char *password;
 
@@ -1783,7 +1783,7 @@ silc_verify_public_key(SilcClient client, SilcClientConnection conn,
 		       SilcVerifyPublicKey completion, void *context)
 {
 	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (!sg->conn && (conn_type == SILC_CONN_SERVER ||
 			  conn_type == SILC_CONN_ROUTER)) {

@@ -34,7 +34,10 @@
 
 #include "cipher.h"
 #include "debug.h"
+#include "md5cipher.h"
 #include "plugin.h"
+#include "sha1cipher.h"
+#include "util.h"
 #include "version.h"
 
 struct test {
@@ -63,30 +66,22 @@ struct test md5_tests[8] = {
 static void
 cipher_test_md5(void) {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	gchar digest[33];
 	gboolean ret;
 	gint i = 0;
 
-	cipher = purple_ciphers_find_cipher("md5");
-	if(!cipher) {
-		purple_debug_info("cipher-test",
-						"could not find md5 cipher, not testing\n");
-		return;
-	}
+	cipher = purple_md5_cipher_new();
 
 	purple_debug_info("cipher-test", "Running md5 tests\n");
-
-	context = purple_cipher_context_new(cipher, NULL);
 
 	while(md5_tests[i].answer) {
 		purple_debug_info("cipher-test", "Test %02d:\n", i);
 		purple_debug_info("cipher-test", "Testing '%s'\n", md5_tests[i].question);
 
-		purple_cipher_context_append(context, (guchar *)md5_tests[i].question,
+		purple_cipher_append(cipher, (guchar *)md5_tests[i].question,
 								   strlen(md5_tests[i].question));
 
-		ret = purple_cipher_context_digest_to_str(context, sizeof(digest),
+		ret = purple_cipher_digest_to_str(cipher, sizeof(digest),
 												digest, NULL);
 
 		if(!ret) {
@@ -97,11 +92,11 @@ cipher_test_md5(void) {
 							md5_tests[i].answer);
 		}
 
-		purple_cipher_context_reset(context, NULL);
+		purple_cipher_reset(cipher);
 		i++;
 	}
 
-	purple_cipher_context_destroy(context);
+	g_object_unref(G_OBJECT(cipher));
 
 	purple_debug_info("cipher-test", "md5 tests completed\n\n");
 }
@@ -120,21 +115,13 @@ struct test sha1_tests[5] = {
 static void
 cipher_test_sha1(void) {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	gchar digest[41];
 	gint i = 0;
 	gboolean ret;
 
-	cipher = purple_ciphers_find_cipher("sha1");
-	if(!cipher) {
-		purple_debug_info("cipher-test",
-						"could not find sha1 cipher, not testing\n");
-		return;
-	}
+	cipher = purple_sha1_cipher_new();
 
 	purple_debug_info("cipher-test", "Running sha1 tests\n");
-
-	context = purple_cipher_context_new(cipher, NULL);
 
 	while(sha1_tests[i].answer) {
 		purple_debug_info("cipher-test", "Test %02d:\n", i);
@@ -143,7 +130,7 @@ cipher_test_sha1(void) {
 						sha1_tests[i].question : "'a'x1000, 1000 times");
 
 		if(sha1_tests[i].question) {
-			purple_cipher_context_append(context, (guchar *)sha1_tests[i].question,
+			purple_cipher_append(cipher, (guchar *)sha1_tests[i].question,
 									   strlen(sha1_tests[i].question));
 		} else {
 			gint j;
@@ -152,10 +139,10 @@ cipher_test_sha1(void) {
 			memset(buff, 'a', 1000);
 
 			for(j = 0; j < 1000; j++)
-				purple_cipher_context_append(context, buff, 1000);
+				purple_cipher_append(cipher, buff, 1000);
 		}
 
-		ret = purple_cipher_context_digest_to_str(context, sizeof(digest),
+		ret = purple_cipher_digest_to_str(cipher, sizeof(digest),
 												digest, NULL);
 
 		if(!ret) {
@@ -166,11 +153,11 @@ cipher_test_sha1(void) {
 							sha1_tests[i].answer);
 		}
 
-		purple_cipher_context_reset(context, NULL);
+		purple_cipher_reset(cipher);
 		i++;
 	}
 
-	purple_cipher_context_destroy(context);
+	g_object_unref(G_OBJECT(cipher));
 
 	purple_debug_info("cipher-test", "sha1 tests completed\n\n");
 }
@@ -194,7 +181,7 @@ cipher_test_digest(void)
 
 	purple_debug_info("cipher-test", "Running HTTP Digest tests\n");
 
-	session_key = purple_cipher_http_digest_calculate_session_key(
+	session_key = purple_http_digest_calculate_session_key(
 						algorithm, username, realm, password,
 						nonce, client_nonce);
 
@@ -210,7 +197,7 @@ cipher_test_digest(void)
 		purple_debug_info("cipher-test", "\tsession_key: Got:    %s\n", session_key);
 		purple_debug_info("cipher-test", "\tsession_key: Wanted: %s\n", "939e7578ed9e3c518a452acee763bce9");
 
-		response = purple_cipher_http_digest_calculate_response(
+		response = purple_http_digest_calculate_response(
 				algorithm, method, digest_uri, qop, entity,
 				nonce, nonce_count, client_nonce, session_key);
 
