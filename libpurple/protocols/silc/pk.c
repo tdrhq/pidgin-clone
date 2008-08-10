@@ -78,7 +78,7 @@ static void silcpurple_verify_details_cb(PublicKeyVerify verify)
 static void silcpurple_verify_details(PublicKeyVerify verify, gint id)
 {
 	PurpleConnection *gc = verify->client->application;
-	SilcPurple sg = gc->proto_data;
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	silcpurple_show_public_key(sg, verify->entity_name, verify->public_key,
 				   G_CALLBACK(silcpurple_verify_details_cb),

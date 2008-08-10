@@ -58,7 +58,7 @@ struct _PurpleStatusAttr
 {
 	char *id;
 	char *name;
-	PurpleValue *value_type;
+	GValue *value_type;
 };
 
 /**
@@ -113,7 +113,7 @@ struct _PurpleStatus
 	 * The current values of the attributes for this status.  The
 	 * key is a string containing the name of the attribute.  It is
 	 * a borrowed reference from the list of attrs in the
-	 * PurpleStatusType.  The value is a PurpleValue.
+	 * PurpleStatusType.  The value is a GValue.
 	 */
 	GHashTable *attr_values;
 };
@@ -259,7 +259,7 @@ purple_status_type_new_with_attrs(PurpleStatusPrimitive primitive,
 		const char *id, const char *name,
 		gboolean saveable, gboolean user_settable,
 		gboolean independent, const char *attr_id,
-		const char *attr_name, PurpleValue *attr_value,
+		const char *attr_name, GValue *attr_value,
 		...)
 {
 	PurpleStatusType *status_type;
@@ -310,7 +310,7 @@ purple_status_type_set_primary_attr(PurpleStatusType *status_type, const char *i
 
 void
 purple_status_type_add_attr(PurpleStatusType *status_type, const char *id,
-		const char *name, PurpleValue *value)
+		const char *name, GValue *value)
 {
 	PurpleStatusAttr *attr;
 
@@ -328,7 +328,7 @@ void
 purple_status_type_add_attrs_vargs(PurpleStatusType *status_type, va_list args)
 {
 	const char *id, *name;
-	PurpleValue *value;
+	GValue *value;
 
 	g_return_if_fail(status_type != NULL);
 
@@ -337,7 +337,7 @@ purple_status_type_add_attrs_vargs(PurpleStatusType *status_type, va_list args)
 		name = va_arg(args, const char *);
 		g_return_if_fail(name != NULL);
 
-		value = va_arg(args, PurpleValue *);
+		value = va_arg(args, GValue *);
 		g_return_if_fail(value != NULL);
 
 		purple_status_type_add_attr(status_type, id, name, value);
@@ -346,7 +346,7 @@ purple_status_type_add_attrs_vargs(PurpleStatusType *status_type, va_list args)
 
 void
 purple_status_type_add_attrs(PurpleStatusType *status_type, const char *id,
-		const char *name, PurpleValue *value, ...)
+		const char *name, GValue *value, ...)
 {
 	va_list args;
 
@@ -491,7 +491,7 @@ purple_status_type_find_with_id(GList *status_types, const char *id)
 * PurpleStatusAttr API
 **************************************************************************/
 PurpleStatusAttr *
-purple_status_attr_new(const char *id, const char *name, PurpleValue *value_type)
+purple_status_attr_new(const char *id, const char *name, GValue *value_type)
 {
 	PurpleStatusAttr *attr;
 
@@ -517,7 +517,7 @@ purple_status_attr_destroy(PurpleStatusAttr *attr)
 	g_free(attr->id);
 	g_free(attr->name);
 
-	purple_value_destroy(attr->value_type);
+	purple_g_value_slice_free(attr->value_type);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(attr);
 	g_free(attr);
@@ -539,7 +539,7 @@ purple_status_attr_get_name(const PurpleStatusAttr *attr)
 	return attr->name;
 }
 
-PurpleValue *
+GValue *
 purple_status_attr_get_value(const PurpleStatusAttr *attr)
 {
 	g_return_val_if_fail(attr != NULL, NULL);
@@ -551,6 +551,12 @@ purple_status_attr_get_value(const PurpleStatusAttr *attr)
 /**************************************************************************
 * PurpleStatus API
 **************************************************************************/
+
+/* Prototypes */
+static void purple_status_set_attr_value(PurpleStatus *status, const char *id,
+	const GValue *value);
+
+
 PurpleStatus *
 purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 {
@@ -568,13 +574,13 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 
 	status->attr_values =
 		g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
-		(GDestroyNotify)purple_value_destroy);
+		(GDestroyNotify)purple_g_value_slice_free);
 
 	for (l = purple_status_type_get_attrs(status_type); l != NULL; l = l->next)
 	{
 		PurpleStatusAttr *attr = (PurpleStatusAttr *)l->data;
-		PurpleValue *value = purple_status_attr_get_value(attr);
-		PurpleValue *new_value = purple_value_dup(value);
+		const GValue *value = purple_status_attr_get_value(attr);
+		GValue *new_value = purple_g_value_slice_dup(value);
 
 		g_hash_table_insert(status->attr_values,
 							(char *)purple_status_attr_get_id(attr),
@@ -658,7 +664,7 @@ notify_status_update(PurplePresence *presence, PurpleStatus *old_status,
 		PurpleAccount *account = purple_presence_get_account(presence);
 		PurpleAccountUiOps *ops = purple_accounts_get_ui_ops();
 
-		if (purple_account_get_enabled(account, purple_core_get_ui()))
+		if (purple_account_get_enabled(account))
 			purple_prpl_change_account_status(account, old_status, new_status);
 
 		if (ops != NULL && ops->status_changed != NULL)
@@ -759,7 +765,7 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 	while (l != NULL)
 	{
 		const gchar *id;
-		PurpleValue *value;
+		GValue *value;
 
 		id = l->data;
 		l = l->next;
@@ -775,42 +781,42 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 
 		specified_attr_ids = g_list_prepend(specified_attr_ids, (gpointer)id);
 
-		if (value->type == PURPLE_TYPE_STRING)
-		{
-			const gchar *string_data = l->data;
-			l = l->next;
-			if (((string_data == NULL) && (value->data.string_data == NULL)) ||
-				((string_data != NULL) && (value->data.string_data != NULL) &&
-				!strcmp(string_data, value->data.string_data)))
-			{
-				continue;
+		switch (G_VALUE_TYPE(value)) {
+			case G_TYPE_STRING: {
+				const gchar *string_data = l->data;
+				const gchar *current = g_value_get_string(value);
+				if (!purple_util_strings_equal(string_data, current)) {
+					purple_status_set_attr_string(status, id, string_data);
+					changed = TRUE;
+				}
+				break;
 			}
-			purple_status_set_attr_string(status, id, string_data);
-			changed = TRUE;
+			case G_TYPE_INT: {
+				gint int_data = GPOINTER_TO_INT(l->data);
+				gint current = g_value_get_int(value);
+				if (int_data != current) {
+					purple_status_set_attr_int(status, id, int_data);
+					changed = TRUE;
+				}
+				break;
+			}
+			case G_TYPE_BOOLEAN: {
+				gboolean boolean_data = GPOINTER_TO_INT(l->data);
+				gboolean current = g_value_get_boolean(value);
+				if (boolean_data != current) {
+					purple_status_set_attr_boolean(status, id, boolean_data);
+					changed = TRUE;
+				}
+				break;
+			}
+			default: {
+				/* We don't know what the data is--skip over it */
+				purple_debug_warning("status",
+					"Skipping attribute with unhandled data type %s",
+					G_VALUE_TYPE_NAME(value));
+			}
 		}
-		else if (value->type == PURPLE_TYPE_INT)
-		{
-			int int_data = GPOINTER_TO_INT(l->data);
-			l = l->next;
-			if (int_data == value->data.int_data)
-				continue;
-			purple_status_set_attr_int(status, id, int_data);
-			changed = TRUE;
-		}
-		else if (value->type == PURPLE_TYPE_BOOLEAN)
-		{
-			gboolean boolean_data = GPOINTER_TO_INT(l->data);
-			l = l->next;
-			if (boolean_data == value->data.boolean_data)
-				continue;
-			purple_status_set_attr_boolean(status, id, boolean_data);
-			changed = TRUE;
-		}
-		else
-		{
-			/* We don't know what the data is--skip over it */
-			l = l->next;
-		}
+		l = l->next;
 	}
 
 	/* Reset any unspecified attributes to their default value */
@@ -823,17 +829,8 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 		attr = l->data;
 		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp))
 		{
-			PurpleValue *default_value;
-			default_value = purple_status_attr_get_value(attr);
-			if (default_value->type == PURPLE_TYPE_STRING)
-				purple_status_set_attr_string(status, attr->id,
-						purple_value_get_string(default_value));
-			else if (default_value->type == PURPLE_TYPE_INT)
-				purple_status_set_attr_int(status, attr->id,
-						purple_value_get_int(default_value));
-			else if (default_value->type == PURPLE_TYPE_BOOLEAN)
-				purple_status_set_attr_boolean(status, attr->id,
-						purple_value_get_boolean(default_value));
+			const GValue *default_value = purple_status_attr_get_value(attr);
+			purple_status_set_attr_value(status, attr->id, default_value);
 			changed = TRUE;
 		}
 
@@ -846,66 +843,84 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 	status_has_changed(status);
 }
 
-void
-purple_status_set_attr_boolean(PurpleStatus *status, const char *id,
-		gboolean value)
+static void
+purple_status_set_attr_value(PurpleStatus *status,
+                             const char *id,
+                             const GValue *value)
 {
-	PurpleValue *attr_value;
+	GValue *attr_value;
+	const char *name;
 
 	g_return_if_fail(status != NULL);
 	g_return_if_fail(id     != NULL);
+	g_return_if_fail(value  != NULL);
 
-	/* Make sure this attribute exists and is the correct type. */
+	name = purple_status_type_get_name(purple_status_get_type(status));
 	attr_value = purple_status_get_attr_value(status, id);
-	g_return_if_fail(attr_value != NULL);
-	g_return_if_fail(purple_value_get_type(attr_value) == PURPLE_TYPE_BOOLEAN);
 
-	purple_value_set_boolean(attr_value, value);
+	if (attr_value == NULL) {
+		gchar *value_contents = g_strdup_value_contents(value);
+		purple_debug_error("status",
+			"Attempted to set nonexistant status attribute '%s' on "
+			"status '%s' to '%s'.  Fix this!\n",
+			id, name, value_contents);
+		g_free(value_contents);
+		return;
+	}
+	if (G_VALUE_TYPE(attr_value) != G_VALUE_TYPE(value)) {
+		purple_debug_error("status",
+			"Attempted to set status attribute '%s' on status '%s' "
+			"to a value of type '%s', rather than the correct type "
+			"'%s'.  Fix this!\n",
+			id, name, G_VALUE_TYPE_NAME(value),
+			G_VALUE_TYPE_NAME(attr_value));
+		return;
+	}
+
+	/* XXX: Check if the value has actually changed. If it has, and the
+	 * status is active, should this trigger 'status_has_changed'? */
+	g_value_copy(value, attr_value);
+}
+
+/* The standard idiom seems to be
+ *   GValue v = { 0, }
+ * which is good enough for all the g_value_* functions to consider it to be
+ * uninitialized, but triggers -Wmissing-field-initializers, which is included
+ * in -Wextra.  Other projects pass -Wno-missing-field-initializers; we could
+ * do that and lose this macro.
+ */
+#define UNINITIALIZED_GVALUE { 0, { { 0 }, { 0 } } }
+
+void
+purple_status_set_attr_boolean(PurpleStatus *status,
+                               const char *id,
+                               gboolean value)
+{
+	GValue val = UNINITIALIZED_GVALUE;
+	g_value_init(&val, G_TYPE_BOOLEAN);
+	g_value_set_boolean(&val, value);
+	purple_status_set_attr_value(status, id, &val);
 }
 
 void
-purple_status_set_attr_int(PurpleStatus *status, const char *id, int value)
+purple_status_set_attr_int(PurpleStatus *status,
+                           const char *id,
+                           int value)
 {
-	PurpleValue *attr_value;
-
-	g_return_if_fail(status != NULL);
-	g_return_if_fail(id     != NULL);
-
-	/* Make sure this attribute exists and is the correct type. */
-	attr_value = purple_status_get_attr_value(status, id);
-	g_return_if_fail(attr_value != NULL);
-	g_return_if_fail(purple_value_get_type(attr_value) == PURPLE_TYPE_INT);
-
-	purple_value_set_int(attr_value, value);
+	GValue val = UNINITIALIZED_GVALUE;
+	g_value_init(&val, G_TYPE_INT);
+	g_value_set_int(&val, value);
+	purple_status_set_attr_value(status, id, &val);
 }
 
 void
 purple_status_set_attr_string(PurpleStatus *status, const char *id,
 		const char *value)
 {
-	PurpleValue *attr_value;
-
-	g_return_if_fail(status != NULL);
-	g_return_if_fail(id     != NULL);
-
-	/* Make sure this attribute exists and is the correct type. */
-	attr_value = purple_status_get_attr_value(status, id);
-	/* This used to be g_return_if_fail, but it's failing a LOT, so
-	 * let's generate a log error for now. */
-	/* g_return_if_fail(attr_value != NULL); */
-	if (attr_value == NULL) {
-		purple_debug_error("status",
-				 "Attempted to set status attribute '%s' for "
-				 "status '%s', which is not legal.  Fix "
-                                 "this!\n", id,
-				 purple_status_type_get_name(purple_status_get_type(status)));
-		return;
-	}
-	g_return_if_fail(purple_value_get_type(attr_value) == PURPLE_TYPE_STRING);
-
-	/* XXX: Check if the value has actually changed. If it has, and the status
-	 * is active, should this trigger 'status_has_changed'? */
-	purple_value_set_string(attr_value, value);
+	GValue val = UNINITIALIZED_GVALUE;
+	g_value_init(&val, G_TYPE_STRING);
+	g_value_set_string(&val, value);
+	purple_status_set_attr_value(status, id, &val);
 }
 
 PurpleStatusType *
@@ -985,19 +1000,19 @@ purple_status_is_online(const PurpleStatus *status)
 			primitive != PURPLE_STATUS_OFFLINE);
 }
 
-PurpleValue *
+GValue *
 purple_status_get_attr_value(const PurpleStatus *status, const char *id)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
 
-	return (PurpleValue *)g_hash_table_lookup(status->attr_values, id);
+	return (GValue *)g_hash_table_lookup(status->attr_values, id);
 }
 
 gboolean
 purple_status_get_attr_boolean(const PurpleStatus *status, const char *id)
 {
-	const PurpleValue *value;
+	const GValue *value;
 
 	g_return_val_if_fail(status != NULL, FALSE);
 	g_return_val_if_fail(id     != NULL, FALSE);
@@ -1005,15 +1020,15 @@ purple_status_get_attr_boolean(const PurpleStatus *status, const char *id)
 	if ((value = purple_status_get_attr_value(status, id)) == NULL)
 		return FALSE;
 
-	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN, FALSE);
+	g_return_val_if_fail(G_VALUE_HOLDS_BOOLEAN(value), FALSE);
 
-	return purple_value_get_boolean(value);
+	return g_value_get_boolean(value);
 }
 
 int
 purple_status_get_attr_int(const PurpleStatus *status, const char *id)
 {
-	const PurpleValue *value;
+	const GValue *value;
 
 	g_return_val_if_fail(status != NULL, 0);
 	g_return_val_if_fail(id     != NULL, 0);
@@ -1021,15 +1036,15 @@ purple_status_get_attr_int(const PurpleStatus *status, const char *id)
 	if ((value = purple_status_get_attr_value(status, id)) == NULL)
 		return 0;
 
-	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_INT, 0);
+	g_return_val_if_fail(G_VALUE_HOLDS_INT(value), 0);
 
-	return purple_value_get_int(value);
+	return g_value_get_int(value);
 }
 
 const char *
 purple_status_get_attr_string(const PurpleStatus *status, const char *id)
 {
-	const PurpleValue *value;
+	const GValue *value;
 
 	g_return_val_if_fail(status != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
@@ -1037,9 +1052,9 @@ purple_status_get_attr_string(const PurpleStatus *status, const char *id)
 	if ((value = purple_status_get_attr_value(status, id)) == NULL)
 		return NULL;
 
-	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_STRING, NULL);
+	g_return_val_if_fail(G_VALUE_HOLDS_STRING(value), NULL);
 
-	return purple_value_get_string(value);
+	return g_value_get_string(value);
 }
 
 gint

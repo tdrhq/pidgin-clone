@@ -222,7 +222,7 @@ static void do_add_room_cb(GtkWidget *w, struct _menu_cb_info *info)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	if(gc != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	if(prpl_info != NULL && prpl_info->roomlist_room_serialize)
 		name = prpl_info->roomlist_room_serialize(info->room);
@@ -489,7 +489,7 @@ static gboolean account_filter_func(PurpleAccount *account)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	if (conn)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(conn->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(conn));
 
 	return (prpl_info && prpl_info->roomlist_get_list != NULL);
 }

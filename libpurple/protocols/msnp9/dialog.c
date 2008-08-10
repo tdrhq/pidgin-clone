@@ -62,7 +62,7 @@ msn_add_cb(MsnAddRemData *data)
 
 	msn_complete_sync_issue(data);
 
-	session = data->gc->proto_data;
+	session = purple_object_get_protocol_data(PURPLE_OBJECT(data->gc));
 	userlist = session->userlist;
 
 	msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, data->group);
@@ -80,7 +80,7 @@ msn_rem_cb(MsnAddRemData *data)
 
 	msn_complete_sync_issue(data);
 
-	session = data->gc->proto_data;
+	session = purple_object_get_protocol_data(PURPLE_OBJECT(data->gc));
 	userlist = session->userlist;
 
 	msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->group);

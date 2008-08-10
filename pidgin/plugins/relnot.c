@@ -118,7 +118,7 @@ signed_on_cb(PurpleConnection *gc, void *data) {
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
 
 	/* we don't check if we're offline */

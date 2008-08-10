@@ -135,7 +135,7 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 		}
 		status_id = jabber_buddy_state_get_status_id(resource->state);
 
-		purple_prpl_got_user_status(js->gc->account, from, status_id, "mood", _(newmood), "moodtext", moodtext?moodtext:"", NULL);
+		purple_prpl_got_user_status(purple_connection_get_account(js->gc), from, status_id, "mood", _(newmood), "moodtext", moodtext?moodtext:"", NULL);
 	}
 	g_free(moodtext);
 }
@@ -155,7 +155,7 @@ static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *f
 		return;
 	}
 
-	js = gc->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (selected_mood < 0 || selected_mood >= max_mood_idx) {
 		purple_debug_error("jabber", "Invalid mood index (%d) selected.\n", selected_mood);
