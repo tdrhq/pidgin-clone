@@ -1170,14 +1170,14 @@ not_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 {
 #if 0
 	MSN_SET_PARAMS("NOT %d\r\n%s", cmdproc->servconn->payload, payload);
-	purple_debug_misc("msn", "Notification: {%s}\n", payload);
 #endif
+	purple_debug_misc("msn", "Notification: {%s}\n", payload);
 }
 
 static void
 not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	cmdproc->servconn->payload_len = atoi(cmd->params[0]);
+	cmd->payload_len = atoi(cmd->params[0]);
 	cmdproc->last_cmd->payload_cb = not_cmd_post;
 }
 
@@ -1292,7 +1292,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *rru;
 	const char *url;
 	PurpleCipher *cipher;
-	guchar digest[33];
+	guchar creds[33];
 	char *buf;
 
 	gulong tmp_timestamp;
@@ -1308,26 +1308,27 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	tmp_timestamp = session->passport_info.mail_timestamp - session->passport_info.sl;
 
 	buf = g_strdup_printf("%s%lu%s",
-			   session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
-			   tmp_timestamp,
-			   purple_connection_get_password(gc));
+	                      session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
+	                      tmp_timestamp,
+	                      purple_connection_get_password(gc));
 
 	cipher = purple_md5_cipher_new();
 	purple_cipher_append(cipher, (const guchar *)buf, strlen(buf));
-	purple_cipher_digest_to_str(cipher, sizeof(digest), digest, NULL);
+	purple_cipher_digest_to_str(cipher, sizeof(creds), creds, NULL);
 	g_object_unref(G_OBJECT(cipher));
 
 	g_free(buf);
 
 	g_free(session->passport_info.mail_url);
-	session->passport_info.mail_url = g_strdup_printf("%s&auth=%s&creds=%s&sl=%ld&username=%s&mode=ttl&sid=%s&id=2&rru=%ssvc_mail&js=yes",
-                                                        url,
-                                                        session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
-                                                        buf,
-                                                        tmp_timestamp,
-                                                        msn_user_get_passport(session->user),
-                                                        session->passport_info.sid,
-                                                        rru);
+	session->passport_info.mail_url =
+		g_strdup_printf("%s&auth=%s&creds=%s&sl=%ld&username=%s&mode=ttl&sid=%s&id=2&rru=%s&svc=mail&js=yes",
+		                url,
+		                session->passport_info.mspauth ? purple_url_encode(session->passport_info.mspauth) : "BOGUS",
+		                creds,
+		                tmp_timestamp,
+		                msn_user_get_passport(session->user),
+		                session->passport_info.sid,
+		                rru);
 
 	/* The user wants to check his or her email */
 	if (cmd->trans && cmd->trans->data)
