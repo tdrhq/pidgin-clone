@@ -356,7 +356,7 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 	}
 
 	/* If there are manually specified bytestream proxies, query them */
-	ft_proxies = purple_account_get_string(js->gc->account, "ft_proxies", NULL);
+	ft_proxies = purple_account_get_string(purple_connection_get_account(js->gc), "ft_proxies", NULL);
 	if (ft_proxies) {
 		JabberIq *iq;
 		JabberBytestreamsStreamhost *sh;
