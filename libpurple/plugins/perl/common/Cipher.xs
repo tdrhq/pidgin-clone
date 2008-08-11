@@ -6,7 +6,6 @@ PROTOTYPES: ENABLE
 BOOT:
 {
 	HV *stash = gv_stashpv("Purple::Cipher::BatchMode", 1);
-	HV *cipher_caps = gv_stashpv("Purple::Cipher::Caps", 1);
 
 	static const constiv *civ, const_iv[] = {
 #define const_iv(name) {#name, (IV)PURPLE_CIPHER_BATCH_MODE_##name}
@@ -15,61 +14,9 @@ BOOT:
 #undef const_iv
 	};
 
-	static const constiv bm_const_iv[] = {
-#define const_iv(name) {#name, (IV)PURPLE_CIPHER_CAPS_##name}
-		const_iv(SET_OPT),
-		const_iv(GET_OPT),
-		const_iv(INIT),
-		const_iv(RESET),
-		const_iv(UNINIT),
-		const_iv(SET_IV),
-		const_iv(APPEND),
-		const_iv(DIGEST),
-		const_iv(ENCRYPT),
-		const_iv(DECRYPT),
-		const_iv(SET_SALT),
-		const_iv(GET_SALT_SIZE),
-		const_iv(SET_KEY),
-		const_iv(GET_KEY_SIZE),
-		const_iv(SET_BATCH_MODE),
-		const_iv(GET_BATCH_MODE),
-		const_iv(GET_BLOCK_SIZE),
-		const_iv(SET_KEY_WITH_LEN),
-		const_iv(UNKNOWN),
-#undef const_iv
-	};
-
 	for (civ = const_iv + sizeof(const_iv) / sizeof(const_iv[0]); civ-- > const_iv; )
 		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
-
-	for (civ = bm_const_iv + sizeof(bm_const_iv) / sizeof(bm_const_iv[0]); civ-- > bm_const_iv; )
-		newCONSTSUB(cipher_caps, (char *)civ->name, newSViv(civ->iv));
 }
-
-size_t
-purple_cipher_digest_region(name, data_sv, in_len, digest)
-	const gchar *name
-	SV *data_sv
-	size_t in_len
-	SV *digest
-	PREINIT:
-		gboolean ret;
-		guchar *buff = NULL;
-		guchar *data = NULL;
-		size_t data_len;
-	CODE:
-		data = SvPV(data_sv, data_len);
-		SvUPGRADE(digest, SVt_PV);
-		buff = SvGROW(digest, in_len);
-		ret = purple_cipher_digest_region(name, data, data_len, in_len, buff, &RETVAL);
-		if(!ret) {
-			SvSetSV_nosteal(digest, &PL_sv_undef);
-			XSRETURN_UNDEF;
-		}
-		SvCUR_set(digest, RETVAL);
-		SvPOK_only(digest);
-	OUTPUT:
-		RETVAL
 
 MODULE = Purple::Cipher  PACKAGE = Purple::Cipher  PREFIX = purple_cipher_
 PROTOTYPES: ENABLE
@@ -95,8 +42,8 @@ purple_cipher_digest(cipher, in_len, digest)
 		gboolean ret;
 		guchar *buff = NULL;
 	CODE:
-		SvUPGRADE(digest, SVt_PV);
-		buff = SvGROW(digest, in_len);
+		(void)SvUPGRADE(digest, SVt_PV);
+		buff = (guchar *)SvGROW(digest, in_len);
 		ret = purple_cipher_digest(cipher, in_len, buff, &RETVAL);
 		if(!ret) {
 			SvSetSV_nosteal(digest, &PL_sv_undef);
@@ -117,7 +64,7 @@ purple_cipher_digest_to_str(cipher, in_len, digest_s)
 		gchar *buff = NULL;
 	CODE:
 		in_len += 1; /* perl shouldn't need to care about '\0' at the end */
-		SvUPGRADE(digest_s, SVt_PV);
+		(void)SvUPGRADE(digest_s, SVt_PV);
 		buff = SvGROW(digest_s, in_len);
 		ret = purple_cipher_digest_to_str(cipher, in_len, buff, &RETVAL);
 		if(!ret) {
@@ -140,9 +87,9 @@ purple_cipher_encrypt(cipher, data_sv, output, OUTLIST size_t outlen)
 		guchar *buff = NULL;
 		guchar *data = NULL;
 	CODE:
-		data = SvPV(data_sv, datalen);
-		SvUPGRADE(output, SVt_PV);
-		buff = SvGROW(output, datalen);
+		data = (guchar *)SvPV(data_sv, datalen);
+		(void)SvUPGRADE(output, SVt_PV);
+		buff = (guchar *)SvGROW(output, datalen);
 		RETVAL = purple_cipher_encrypt(cipher, data, datalen, buff, &outlen);
 		if(outlen != 0) {
 			SvPOK_only(output);
@@ -164,9 +111,9 @@ purple_cipher_decrypt(cipher, data_sv, output, OUTLIST size_t outlen)
 		guchar *buff = NULL;
 		guchar *data = NULL;
 	CODE:
-		data = SvPV(data_sv, datalen);
-		SvUPGRADE(output, SVt_PV);
-		buff = SvGROW(output, datalen);
+		data = (guchar *)SvPV(data_sv, datalen);
+		(void)SvUPGRADE(output, SVt_PV);
+		buff = (guchar *)SvGROW(output, datalen);
 		RETVAL = purple_cipher_decrypt(cipher, data, datalen, buff, &outlen);
 		if(outlen != 0) {
 			SvPOK_only(output);
