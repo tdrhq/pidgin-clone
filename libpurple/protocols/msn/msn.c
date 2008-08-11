@@ -532,6 +532,11 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 	swboard->flag = MSN_SB_FLAG_IM;
 
+	/* Local alias > Display name > Username */
+	if ((alias = purple_account_get_alias(buddy->account)) == NULL)
+		if ((alias = purple_connection_get_display_name(gc)) == NULL)
+			alias = purple_account_get_username(buddy->account);
+
 	purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
 	                          alias, NULL, PURPLE_CBFLAGS_NONE, TRUE);
 }
@@ -591,7 +596,7 @@ msn_can_receive_file(PurpleConnection *gc, const char *who)
 	g_free(normal);
 
 	if (ret) {
-		MsnSession *session = gc->proto_data;
+		MsnSession *session = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 		if (session) {
 			MsnUser *user = msn_userlist_find_user(session->userlist, who);
 			if (user)
