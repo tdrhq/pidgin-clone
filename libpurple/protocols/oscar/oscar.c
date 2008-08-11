@@ -1899,7 +1899,7 @@ purple_handle_redirect(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 static gboolean purple_requesticqstatusnote(gpointer data)
 {
 	PurpleConnection *gc = data;
-	OscarData *od = gc->proto_data;
+	OscarData *od = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	while (od->statusnotes_queue != NULL)
 	{
