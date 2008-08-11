@@ -516,7 +516,7 @@ static void _qq_menu_show_login_info(PurplePluginAction *action)
 	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	info = g_string_new("<html><body>\n");
 
-	g_string_append_printf(info, _("<b>Current Online</b>: %d<br>\n"), qd->all_online);
+	g_string_append_printf(info, _("<b>Current Online</b>: %d<br>\n"), qd->total_online);
 	g_string_append_printf(info, _("<b>Last Refresh</b>: %s<br>\n"), ctime(&qd->last_get_online));
 
 	g_string_append(info, "<hr>\n");
@@ -524,7 +524,7 @@ static void _qq_menu_show_login_info(PurplePluginAction *action)
 	g_string_append_printf(info, _("<b>Server</b>: %s: %d<br>\n"), qd->server_name, qd->real_port);
 	g_string_append_printf(info, _("<b>Connection Mode</b>: %s<br>\n"), qd->use_tcp ? "TCP" : "UDP");
 	g_string_append_printf(info, _("<b>Real hostname</b>: %s: %d<br>\n"), qd->real_hostname, qd->real_port);
-	g_string_append_printf(info, _("<b>My Public IP</b>: %s<br>\n"), qd->my_ip);
+	g_string_append_printf(info, _("<b>My Public IP</b>: %s<br>\n"), inet_ntoa(qd->my_ip));
 
 	g_string_append(info, "<hr>\n");
 	g_string_append(info, "<i>Information below may not be accurate</i><br>\n");

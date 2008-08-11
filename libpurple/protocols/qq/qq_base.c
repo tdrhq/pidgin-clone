@@ -153,7 +153,7 @@ static gint8 process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	qq_data *qd;
 	qq_login_reply_ok_packet lrop;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	/* FIXME, check QQ_LOGIN_REPLY_OK_PACKET_LEN here */
 	bytes = 0;
 
@@ -225,7 +225,7 @@ static gint8 process_login_redirect(PurpleConnection *gc, guint8 *data, gint len
 	gint bytes;
 	qq_login_reply_redirect_packet lrrp;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	bytes = 0;
 	/* 000-000: reply code */
 	bytes += qq_get8(&lrrp.result, data + bytes);
@@ -277,8 +277,9 @@ void qq_send_packet_token(PurpleConnection *gc)
 	guint8 buf[16] = {0};
 	gint bytes = 0;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	bytes += qq_put8(buf + bytes, 0);
 	
@@ -295,8 +296,9 @@ void qq_send_packet_login(PurpleConnection *gc)
 	guint8 *encrypted_data;
 	gint encrypted_len;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	g_return_if_fail(qd->token != NULL && qd->token_len > 0);
 
@@ -360,8 +362,9 @@ guint8 qq_process_token_reply(PurpleConnection *gc, gchar *error_msg, guint8 *bu
 
 	g_return_val_if_fail(buf != NULL && buf_len != 0, -1);
 
-	g_return_val_if_fail(gc != NULL  && gc->proto_data != NULL, -1);
-	qd = (qq_data *) gc->proto_data;
+	g_return_val_if_fail(gc != NULL, -1);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_val_if_fail(qd != NULL, -1);
 
 	ret = buf[0];
 	
@@ -400,7 +403,7 @@ void qq_send_packet_logout(PurpleConnection *gc)
 	gint i;
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	for (i = 0; i < 4; i++)
 		qq_send_cmd_detail(qd, QQ_CMD_LOGOUT, 0xffff, FALSE, qd->password_twice_md5, QQ_KEY_LENGTH);
 
@@ -415,7 +418,7 @@ guint8 qq_process_login_reply(guint8 *data, gint data_len, PurpleConnection *gc)
 
 	g_return_val_if_fail(data != NULL && data_len != 0, QQ_LOGIN_REPLY_ERR_MISC);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	switch (data[0]) {
 		case QQ_LOGIN_REPLY_OK:
@@ -453,7 +456,7 @@ void qq_send_packet_keep_alive(PurpleConnection *gc)
 	guint8 raw_data[16] = {0};
 	gint bytes= 0;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* In fact, we can send whatever we like to server
 	 * with this command, server return the same result including
@@ -471,7 +474,7 @@ gboolean qq_process_keep_alive(guint8 *data, gint data_len, PurpleConnection *gc
 
 	g_return_val_if_fail(data != NULL && data_len != 0, FALSE);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* qq_show_packet("Keep alive reply packet", data, len); */
 

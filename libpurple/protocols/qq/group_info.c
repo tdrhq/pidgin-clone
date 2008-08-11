@@ -71,8 +71,9 @@ void qq_send_cmd_group_all_get_online_members(PurpleConnection *gc)
 	qq_group *group;
 	GList *list;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	list = qd->groups;
 	while (list != NULL) {

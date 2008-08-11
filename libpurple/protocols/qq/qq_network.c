@@ -1091,8 +1091,9 @@ gint qq_send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
 	gint bytes_sent;
 	guint16 seq;
 	
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
-	qd = (qq_data *) gc->proto_data;
+	g_return_val_if_fail(gc != NULL, -1);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_val_if_fail(qd != NULL, -1);
 
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 	memset(buf, 0, MAX_PACKET_SIZE);
