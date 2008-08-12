@@ -641,15 +641,17 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 			jabber_iq_send(iq);
 
-		} else if(js->stream_id && xmlnode_get_child(query, "crammd5")) {
+		} else if(js->stream_id && (x = xmlnode_get_child(query, "crammd5"))) {
 			const char *challenge;
 			guchar digest[33];
 			PurpleCipher *hmac;
 
-#warning Someone better double check this
+#warning Someone might want to triple-check this!
 			/* Calculate the MHAC-MD5 digest */
 			challenge = xmlnode_get_attrib(x, "challenge");
 			hmac = purple_hmac_cipher_new();
+			purple_cipher_set_hash(hmac, purple_md5_cipher_new());
+			purple_cipher_set_key(hmac, (guchar *)pw);
 			purple_cipher_append(hmac, (guchar*)challenge, strlen(challenge));
 			purple_cipher_digest(hmac, sizeof(digest), digest, NULL);
 			g_object_unref(G_OBJECT(hmac));
