@@ -810,8 +810,6 @@ purple_connection_init(GTypeInstance *instance, gpointer klass)
 	PurpleConnection *pc = PURPLE_CONNECTION(instance);
 
 	pc->priv = g_new0(PurpleConnectionPrivate, 1);
-	connections = g_list_append(connections, pc);
-
 	purple_connection_set_state(pc, PURPLE_CONNECTION_STATE_CONNECTING);
 }
 
