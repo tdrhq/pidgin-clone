@@ -741,7 +741,9 @@ jabber_connection_schedule_close(JabberStream *js)
 static void
 jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
+#if 0
 	PurpleAccount *account = purple_connection_get_account(js->gc);
+#endif
 	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
@@ -1032,7 +1034,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	if(xmlnode_get_child(query, "name")) {
 		if(js->registration)
 			field = purple_request_field_string_new("name", _("Name"),
-													purple_account_get_alias(purple_connection_get_account(js->gc)), FALSE);
+													purple_account_get_alias(account), FALSE);
 		else
 			field = purple_request_field_string_new("name", _("Name"), NULL, FALSE);
 		purple_request_field_group_add_field(group, field);
@@ -1104,7 +1106,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				_("Register New XMPP Account"), instructions, fields,
 				_("Register"), G_CALLBACK(jabber_register_cb),
 				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
-				purple_connection_get_account(js->gc), NULL, NULL,
+				account, NULL, NULL,
 				cbdata);
 	else {
 		char *title = registered?g_strdup_printf(_("Change Account Registration at %s"), from)
@@ -1113,7 +1115,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			  title, instructions, fields,
 			  (registered ? _("Change Registration") : _("Register")), G_CALLBACK(jabber_register_cb),
 			  _("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
-			  purple_connection_get_account(js->gc), NULL, NULL,
+			  account, NULL, NULL,
 			  cbdata);
 		g_free(title);
 	}
@@ -1551,7 +1553,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 	g_return_if_fail(b->account != NULL);
 	gc = purple_account_get_connection(b->account);
 	g_return_if_fail(gc != NULL);
-	js = purple_object_get_protocol_data(PURPLE_OBJECT(js));
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_return_if_fail(js != NULL);
 
 	jb = jabber_buddy_find(js, b->name, FALSE);
