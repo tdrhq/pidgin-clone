@@ -46,7 +46,7 @@ msn_accept_add_cb(gpointer data)
 
 	purple_debug_misc("msn", "Accepted the new buddy: %s\n", pa->who);
 
-	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
+	if (PURPLE_CONNECTION_IS_CONNECTED(pa->gc))
 	{
 		MsnSession *session = purple_object_get_protocol_data(PURPLE_OBJECT(pa->gc));
 		MsnUserList *userlist = session->userlist;
@@ -58,6 +58,7 @@ msn_accept_add_cb(gpointer data)
 
 	g_free(pa->who);
 	g_free(pa->friendly);
+	g_object_unref(G_OBJECT(pa->gc));
 	g_free(pa);
 }
 
@@ -68,7 +69,7 @@ msn_cancel_add_cb(gpointer data)
 
 	purple_debug_misc("msn", "Denied the new buddy: %s\n", pa->who);
 
-	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
+	if (PURPLE_CONNECTION_IS_CONNECTED(pa->gc))
 	{
 		MsnSession *session = purple_object_get_protocol_data(PURPLE_OBJECT(pa->gc));
 		MsnUserList *userlist = session->userlist;
@@ -82,6 +83,7 @@ msn_cancel_add_cb(gpointer data)
 
 	g_free(pa->who);
 	g_free(pa->friendly);
+	g_object_unref(G_OBJECT(pa->gc));
 	g_free(pa);
 }
 
@@ -99,7 +101,8 @@ got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly)
 	acct = purple_connection_get_account(gc);
 	purple_account_request_authorization(acct, passport, NULL, friendly, NULL,
 										 purple_find_buddy(acct, passport) != NULL,
-										 msn_accept_add_cb, msn_cancel_add_cb, pa);
+										 msn_accept_add_cb, msn_cancel_add_cb,
+										 g_object_ref(G_OBJECT(pa)));
 
 }
 
