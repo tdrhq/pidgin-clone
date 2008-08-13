@@ -32,6 +32,7 @@
 #include "buddy_list.h"
 #include "buddy_info.h"
 #include "char_conv.h"
+#include "crypt.h"
 #include "header_info.h"
 #include "qq_base.h"
 #include "qq_network.h"
@@ -282,7 +283,7 @@ void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_wi
 
 	g_return_if_fail(uid != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
 	qq_send_cmd(qd, QQ_CMD_GET_USER_INFO, (guint8 *) uid_str, strlen(uid_str));
 
@@ -301,7 +302,7 @@ void qq_prepare_modify_info(PurpleConnection *gc)
 	GList *ql;
 	qq_info_query *query;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_send_packet_get_info(gc, qd->uid, FALSE);
 	/* traverse backwards so we get the most recent info_query */
 	for (ql = g_list_last(qd->info_query); ql != NULL; ql = g_list_previous(ql)) {
@@ -314,7 +315,7 @@ void qq_prepare_modify_info(PurpleConnection *gc)
 /* send packet to modify personal information */
 static void qq_send_packet_modify_info(PurpleConnection *gc, contact_info *info)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gint bytes = 0;
 	guint8 raw_data[MAX_PACKET_SIZE - 128] = {0};
 	guint8 bar;
@@ -454,7 +455,7 @@ static void modify_info_cancel_cb(modify_info_data *mid)
 {
 	qq_data *qd;
 
-	qd = (qq_data *) mid->gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(mid->gc));
 	qd->modifying_info = FALSE;
 
 	g_strfreev((gchar **) mid->info);
@@ -487,7 +488,7 @@ static void modify_info_ok_cb(modify_info_data *mid, PurpleRequestFields *fields
 	contact_info *info;
 
 	gc = mid->gc;
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qd->modifying_info = FALSE;
 
 	info = mid->info;
@@ -618,7 +619,7 @@ static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info
 	modify_info_data *mid;
 
 	/* so we only have one dialog open at a time */
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (!qd->modifying_info) {
 		qd->modifying_info = TRUE;
 
@@ -693,7 +694,7 @@ void qq_process_modify_info_reply(guint8 *data, gint data_len, PurpleConnection 
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	data[data_len] = '\0';
 	if (qd->uid == atoi((gchar *) data)) {	/* return should be my uid */
@@ -706,7 +707,7 @@ static void _qq_send_packet_modify_face(PurpleConnection *gc, gint face_num)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurplePresence *presence = purple_account_get_presence(account);
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gint offset;
 
 	if(purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
@@ -748,7 +749,7 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	gint suffix_len = strlen(QQ_ICON_SUFFIX);
 	gint dir_len = strlen(buddy_icon_dir);
 	gchar *errmsg = g_strdup_printf(_("Setting custom faces is not currently supported. Please choose an image from %s."), buddy_icon_dir);
-	gboolean icon_global = purple_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
+	gboolean icon_global = purple_account_get_bool(purple_connection_get_account(gc), "use-global-buddyicon", TRUE);
 
 	if (!icon_path)
 		icon_path = "";
@@ -785,7 +786,7 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	/* tell server my icon changed */
 	_qq_send_packet_modify_face(gc, icon_num);
 	/* display in blist */
-	qq_set_buddy_icon_for_user(account, account->username, icon, icon_path);
+	qq_set_buddy_icon_for_user(account, purple_account_get_username(account), icon, icon_path);
 }
 
 
@@ -823,7 +824,7 @@ static void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc
 	gchar *purple_name;
 	PurpleAccount *account = purple_connection_get_account(gc);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	purple_name = uid_to_purple_name(strtol(info->uid, NULL, 10));
 
 	alias_utf8 = qq_to_utf8(info->nick, QQ_CHARSET_DEFAULT);
@@ -833,8 +834,8 @@ static void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc
 			purple_account_set_alias(account, alias_utf8);
 	}
 	/* update buddy list (including myself, if myself is the buddy) */
-	b = purple_find_buddy(gc->account, purple_name);
-	q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+	b = purple_find_buddy(purple_connection_get_account(gc), purple_name);
+	q_bud = (b == NULL) ? NULL : (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 	if (q_bud != NULL) {	/* I have this buddy */
 		q_bud->age = strtol(info->age, NULL, 10);
 		q_bud->gender = strtol(info->gender, NULL, 10);
@@ -842,7 +843,7 @@ static void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc
 		if (alias_utf8 != NULL)
 			q_bud->nickname = g_strdup(alias_utf8);
 		qq_update_buddy_contact(gc, q_bud);
-		_qq_update_buddy_icon(gc->account, purple_name, q_bud->face);
+		_qq_update_buddy_icon(purple_connection_get_account(gc), purple_name, q_bud->face);
 	}
 	g_free(purple_name);
 	g_free(alias_utf8);
@@ -860,7 +861,7 @@ void qq_process_get_info_reply(guint8 *data, gint data_len, PurpleConnection *gc
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	list = query_list = NULL;
 	info = NULL;
 
@@ -919,14 +920,13 @@ void qq_info_query_free(qq_data *qd)
 
 void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	guint8 buf[16] = {0};
 	gint bytes = 0;
 
 	bytes += qq_put8(buf + bytes, 0x00);
 	bytes += qq_put32(buf + bytes, uid);
 
-	qd = (qq_data *) gc->proto_data;
 	qq_send_cmd(qd, QQ_CMD_GET_LEVEL, buf, bytes);
 }
 
@@ -935,7 +935,7 @@ void qq_send_packet_get_buddies_levels(PurpleConnection *gc)
 	guint8 *buf;
 	guint16 size;
 	qq_buddy *q_bud;
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GList *node = qd->buddies;
 	gint bytes = 0;
 
@@ -967,7 +967,7 @@ void qq_process_get_level_reply(guint8 *decr_buf, gint decr_len, PurpleConnectio
 	qq_buddy *q_bud;
 	gint i;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gint bytes = 0;
 
 	decr_len--; 

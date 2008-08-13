@@ -220,7 +220,7 @@ static void _qq_send_packet_recv_im_ack(PurpleConnection *gc, guint16 seq, guint
 {
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_send_cmd_detail(qd, QQ_CMD_RECV_IM, seq, FALSE, data, 16);
 }
 
@@ -261,7 +261,7 @@ static void _qq_process_recv_normal_im_text(guint8 *data, gint len, qq_recv_norm
 	qq_buddy *qq_b;
 
 	g_return_if_fail(common != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* now it is QQ_NORMAL_IM_TEXT */
 	/*
@@ -306,12 +306,12 @@ static void _qq_process_recv_normal_im_text(guint8 *data, gint len, qq_recv_norm
 	}			/* if im_text->msg_type */
 
 	name = uid_to_purple_name(common->sender_uid);
-	b = purple_find_buddy(gc->account, name);
+	b = purple_find_buddy(purple_connection_get_account(gc), name);
 	if (b == NULL) {
 		qq_add_buddy_by_recv_packet(gc, common->sender_uid, FALSE, TRUE);
-		b = purple_find_buddy(gc->account, name);
+		b = purple_find_buddy(purple_connection_get_account(gc), name);
 	}
-	qq_b = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+	qq_b = (b == NULL) ? NULL : (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 	if (qq_b != NULL) {
 		qq_b->client_version = common->sender_ver; 
 	}
@@ -431,7 +431,7 @@ void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint ty
 	gboolean is_bold = FALSE, is_italic = FALSE, is_underline = FALSE;
 	const gchar *start, *end, *last;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	client_tag = QQ_CLIENT;
 	normal_im_type = QQ_NORMAL_IM_TEXT;
 
@@ -546,7 +546,7 @@ void qq_process_send_im_reply(guint8 *data, gint data_len, PurpleConnection *gc)
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	qd = gc->proto_data;
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (data[0] != QQ_SEND_IM_REPLY_OK) {
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Send IM fail\n");
@@ -566,7 +566,7 @@ void qq_process_recv_im(guint8 *data, gint data_len, guint16 seq, PurpleConnecti
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (data_len < 16) {	/* we need to ack with the first 16 bytes */
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "IM is too short\n");

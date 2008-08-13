@@ -308,7 +308,7 @@ void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 id, PurpleCon
 
 	/* FIXME: check length here */
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* qq_hex_dump(PURPLE_DEBUG_INFO, "QQ", data, data_len, "group im hex dump"); */
 

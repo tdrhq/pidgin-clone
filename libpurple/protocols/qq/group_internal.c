@@ -79,7 +79,7 @@ qq_group *qq_group_create_internal_record(PurpleConnection *gc,
         qq_data *qd;
 
         g_return_val_if_fail(internal_id > 0, NULL);
-        qd = (qq_data *) gc->proto_data;
+        qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
         group = g_new0(qq_group, 1);
         group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
@@ -149,7 +149,7 @@ qq_group *qq_group_from_hashtable(PurpleConnection *gc, GHashTable *data)
 	qq_group *group;
 
 	g_return_val_if_fail(data != NULL, NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	group = g_new0(qq_group, 1);
 	group->my_status =

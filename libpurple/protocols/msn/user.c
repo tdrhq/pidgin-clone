@@ -25,6 +25,8 @@
 #include "user.h"
 #include "slp.h"
 
+#include "sha1cipher.h"
+
 /*new a user object*/
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
@@ -295,7 +297,7 @@ msn_user_is_yahoo(PurpleAccount *account, const char *name)
 
 	gc = purple_account_get_connection(account);
 	if (gc != NULL)
-		session = gc->proto_data;
+		session = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if ((session != NULL) && (user = msn_userlist_find_user(session->userlist, name)) != NULL)
 	{
@@ -453,3 +455,4 @@ msn_user_get_client_caps(const MsnUser *user)
 
 	return user->clientcaps;
 }
+

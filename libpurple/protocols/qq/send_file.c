@@ -441,7 +441,7 @@ static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, 
 	gint filename_len, filelen_strlen, packet_len, bytes;
 	ft_info *info;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	info = g_new0(ft_info, 1);
 	info->to_uid = to_uid;
@@ -494,7 +494,7 @@ static void _qq_send_packet_file_accept(PurpleConnection *gc, guint32 to_uid)
 	gint packet_len, bytes;
 	ft_info *info;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	info = (ft_info *) qd->xfer->data;
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "I've accepted the file transfer request from %d\n", to_uid);
@@ -531,7 +531,7 @@ static void _qq_send_packet_file_notifyip(PurpleConnection *gc, guint32 to_uid)
 	guint8 *raw_data;
 	gint packet_len, bytes;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	xfer = qd->xfer;
 	info = xfer->data;
 
@@ -562,7 +562,7 @@ static void _qq_send_packet_file_reject (PurpleConnection *gc, guint32 to_uid)
 	gint packet_len, bytes;
 
 	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_reject", "start");
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	packet_len = 64;
 	raw_data = g_newa (guint8, packet_len);
@@ -586,7 +586,7 @@ static void _qq_send_packet_file_cancel (PurpleConnection *gc, guint32 to_uid)
 	gint packet_len, bytes;
 
 	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "start\n");
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	packet_len = 64;
 	raw_data = g_newa (guint8, packet_len);
@@ -689,7 +689,7 @@ void qq_process_recv_file_reject (guint8 *data, gint data_len,
 	qq_data *qd;
 
 	g_return_if_fail (data != NULL && data_len != 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_return_if_fail (qd->xfer != NULL);
 
 	/*	border has been checked before
@@ -718,7 +718,7 @@ void qq_process_recv_file_cancel (guint8 *data, gint data_len,
 	qq_data *qd;
 
 	g_return_if_fail (data != NULL && data_len != 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_return_if_fail (qd->xfer != NULL
 			&& purple_xfer_get_filename(qd->xfer) != NULL);
 
@@ -750,7 +750,7 @@ void qq_process_recv_file_accept(guint8 *data, gint data_len, guint32 sender_uid
 	PurpleXfer *xfer;
 
 	g_return_if_fail (data != NULL && data_len != 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	xfer = qd->xfer;
 	info = (ft_info *) qd->xfer->data;
 
@@ -780,7 +780,7 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 	gint bytes;
 
 	g_return_if_fail (data != NULL && data_len != 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	info = g_newa(ft_info, 1);
 	info->local_internet_ip = qd->my_ip.s_addr;
@@ -809,8 +809,8 @@ void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_ui
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			    "Received a FACE ip detect from qq-%d, so he/she must be online :)\n", sender_uid);
 
-		b = purple_find_buddy(gc->account, sender_name);
-		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
+		b = purple_find_buddy(purple_connection_get_account(gc), sender_name);
+		q_bud = (b == NULL) ? NULL : (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 		if (q_bud) {
 			if(0 != info->remote_real_ip) {
 				g_memmove(&(q_bud->ip), &info->remote_real_ip, sizeof(q_bud->ip));
@@ -887,7 +887,7 @@ void qq_process_recv_file_notify(guint8 *data, gint data_len,
 	PurpleXfer *xfer;
 
 	g_return_if_fail (data != NULL && data_len != 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	xfer = qd->xfer;
 	info = (ft_info *) qd->xfer->data;
@@ -919,9 +919,9 @@ void qq_send_file(PurpleConnection *gc, const char *who, const char *file)
 	qq_data *qd;
 	PurpleXfer *xfer;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
-	xfer = purple_xfer_new (gc->account, PURPLE_XFER_SEND,
+	xfer = purple_xfer_new (purple_connection_get_account(gc), PURPLE_XFER_SEND,
 			      who);
 	if (xfer)
 	{

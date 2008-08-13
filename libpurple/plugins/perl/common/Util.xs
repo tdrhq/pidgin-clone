@@ -69,7 +69,7 @@ purple_message_meify(SV *msg)
 	PREINIT:
 		char *message = NULL;
 		gboolean ret;
-		gssize len;
+		gsize len;
 	CODE:
 		message = SvPV(msg, len);
 		message = g_strndup(message, len);
@@ -256,7 +256,7 @@ purple_base16_decode(str)
 	CODE:
 		ret = purple_base16_decode(str, &len);
 		if(len) {
-			RETVAL = newSVpv(ret, len);
+			RETVAL = newSVpv((gchar *)ret, len);
 		} else {
 			g_free(ret);
 			XSRETURN_UNDEF;
@@ -274,7 +274,7 @@ purple_base64_decode(str)
 	CODE:
 		ret = purple_base64_decode(str, &len);
 		if(len) {
-			RETVAL = newSVpv(ret, len);
+			RETVAL = newSVpv((gchar *)ret, len);
 		} else {
 			g_free(ret);
 			XSRETURN_UNDEF;
@@ -292,7 +292,7 @@ purple_quotedp_decode(str)
 	CODE:
 		ret = purple_quotedp_decode(str, &len);
 		if(len) {
-			RETVAL = newSVpv(ret, len);
+			RETVAL = newSVpv((gchar *)ret, len);
 		} else {
 			g_free(ret);
 			XSRETURN_UNDEF;
@@ -541,4 +541,29 @@ gboolean
 purple_util_write_data_to_file_absolute(filename_full, char *data, gssize length(data))
 	const char* filename_full
 	PROTOTYPE: $$
+
+
+MODULE = Purple::Util  PACKAGE = Purple::Util::Http  PREFIX = purple_http_
+PROTOTYPES: ENABLE
+
+gchar_own *
+purple_http_digest_calculate_session_key(algorithm, username, realm, password, nonce, client_nonce)
+	const gchar *algorithm
+	const gchar *username
+	const gchar *realm
+	const gchar *password
+	const gchar *nonce
+	const gchar *client_nonce
+
+gchar_own *
+purple_http_digest_calculate_response(algorithm, method, digest_uri, qop, entity, nonce, nonce_count, client_nonce, session_key)
+	const gchar *algorithm
+	const gchar *method
+	const gchar *digest_uri
+	const gchar *qop
+	const gchar *entity
+	const gchar *nonce
+	const gchar *nonce_count
+	const gchar *client_nonce
+	const gchar *session_key
 

@@ -21,12 +21,13 @@ typedef struct group *Purple__Group;
 #include "blist.h"
 #include "buddyicon.h"
 #include "certificate.h"
-#include "cipher.h"
 #include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
+#include "des3cipher.h"
+#include "descipher.h"
 #include "desktopitem.h"
 #include "eventloop.h"
 #include "ft.h"
@@ -38,7 +39,10 @@ typedef struct group *Purple__Group;
 #include "gtkutils.h"
 #endif
 #include "idle.h"
+#include "hmaccipher.h"
 #include "imgstore.h"
+#include "md4cipher.h"
+#include "md5cipher.h"
 #include "network.h"
 #include "notify.h"
 #include "plugin.h"
@@ -48,10 +52,12 @@ typedef struct group *Purple__Group;
 #include "privacy.h"
 #include "prpl.h"
 #include "proxy.h"
+#include "rc4cipher.h"
 #include "request.h"
 #include "roomlist.h"
 #include "savedstatuses.h"
 #include "server.h"
+#include "sha1cipher.h"
 #include "signals.h"
 #include "smiley.h"
 #include "sound.h"
@@ -92,10 +98,7 @@ typedef PurpleCertificateVerificationStatus	Purple__Certificate__VerificationSta
 
 /* cipher.h */
 typedef PurpleCipher *			Purple__Cipher;
-typedef PurpleCipherCaps			Purple__CipherCaps;
-typedef PurpleCipherContext *		Purple__Cipher__Context;
-typedef PurpleCipherOps *			Purple__Cipher__Ops;
-typedef PurpleCipherBatchMode		Purple__Cipher__BatchMode;
+typedef PurpleCipherBatchMode	Purple__Cipher__BatchMode;
 
 /* cmds.h */
 typedef PurpleCmdFlag			Purple__Cmd__Flag;
@@ -290,4 +293,3 @@ typedef struct _constiv {
 	const char *name;
 	IV iv;
 } constiv;
-

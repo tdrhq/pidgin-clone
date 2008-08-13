@@ -74,7 +74,7 @@ static void process_cmd_unknow(PurpleConnection *gc,gchar *title, guint8 *data, 
 
 	qq_show_packet(title, data, data_len);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
 			data, data_len,
@@ -96,8 +96,9 @@ void qq_proc_cmd_server(PurpleConnection *gc,
 	guint8 *data;
 	gint data_len;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail (gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail (qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	data_len = qq_decrypt(data, rcved, rcved_len, qd->session_key);
@@ -138,15 +139,15 @@ static void process_cmd_login(PurpleConnection *gc, guint8 *data, gint data_len)
 	qq_data *qd;
 	guint ret_8;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail (gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail (qd != NULL);
 
 	ret_8 = qq_process_login_reply(data, data_len, gc);
 	if (ret_8 == QQ_LOGIN_REPLY_OK) {
 		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login repliess OK; everything is fine\n");
 
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 		qd->logged_in = TRUE;	/* must be defined after sev_finish_login */
 
 		/* now initiate QQ Qun, do it first as it may take longer to finish */
@@ -180,8 +181,8 @@ static void process_cmd_login(PurpleConnection *gc, guint8 *data, gint data_len)
 	}
 
 	if (ret_8 == QQ_LOGIN_REPLY_ERR_PWD) {
-		if (!purple_account_get_remember_password(gc->account)) {
-			purple_account_set_password(gc->account, NULL);
+		if (!purple_account_get_remember_password(purple_connection_get_account(gc))) {
+			purple_account_set_password(purple_connection_get_account(gc), NULL);
 		}
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password."));
@@ -233,8 +234,9 @@ void qq_proc_room_cmd_reply(PurpleConnection *gc,
 	gint bytes;
 	guint8 reply_cmd, reply;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail (gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail (qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	data_len = qq_decrypt(data, rcved, rcved_len, qd->session_key);
@@ -373,8 +375,9 @@ void qq_proc_cmd_reply(PurpleConnection *gc,
 
 	g_return_if_fail(rcved_len > 0);
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail (gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail (qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	if (cmd == QQ_CMD_TOKEN) {

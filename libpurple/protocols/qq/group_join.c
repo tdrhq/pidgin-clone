@@ -170,7 +170,7 @@ void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *g
 	qq_data *qd;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (len < 4) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
@@ -200,7 +200,7 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 	qq_data *qd;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (len < 4) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
@@ -272,7 +272,7 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 	qq_group *group;
 
 	g_return_if_fail(data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	ext_id_ptr = g_hash_table_lookup(data, QQ_GROUP_KEY_EXTERNAL_ID);
 	g_return_if_fail(ext_id_ptr != NULL);

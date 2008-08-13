@@ -296,7 +296,7 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 
 	xd = xfer->data;
 	gc = purple_account_get_connection(purple_xfer_get_account(xfer));
-	irc = gc->proto_data;
+	irc = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	purple_xfer_unref(xfer);
 
@@ -322,7 +322,7 @@ irc_dccsend_network_listen_cb(int sock, gpointer data)
 	                         xfer->filename, ntohl(addr.s_addr),
 	                         port, xfer->size);
 
-	irc_cmd_privmsg(gc->proto_data, "msg", NULL, arg);
+	irc_cmd_privmsg(purple_object_get_protocol_data(PURPLE_OBJECT(gc)), "msg", NULL, arg);
 	g_free(tmp);
 }
 

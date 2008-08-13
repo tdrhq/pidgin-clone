@@ -81,7 +81,7 @@ qq_buddy *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group, gui
 		member->uid = member_uid;
 		buddy = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(member_uid));
 		if (buddy != NULL) {
-			q_bud = (qq_buddy *) buddy->proto_data;
+			q_bud = (qq_buddy *) purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 			if (q_bud != NULL && q_bud->nickname != NULL)
 				member->nickname = g_strdup(q_bud->nickname);
 			else if (buddy->alias != NULL)
@@ -101,7 +101,7 @@ qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel)
 	qq_group *group;
 	GList *list;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	conv = purple_find_chat(gc, channel);
 	g_return_val_if_fail(conv != NULL, NULL);
@@ -128,7 +128,7 @@ qq_group *qq_room_search_ext_id(PurpleConnection *gc, guint32 ext_id)
 	qq_group *group;
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (qd->groups == NULL || ext_id <= 0)
 		return NULL;
@@ -151,7 +151,7 @@ qq_group *qq_room_search_id(PurpleConnection *gc, guint32 room_id)
 	qq_group *group;
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (qd->groups == NULL || room_id <= 0)
 		return NULL;

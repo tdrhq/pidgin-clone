@@ -118,7 +118,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 			displayed = purple_markup_linkify(message);
 	}
 
-	if (displayed && (conv->features & PURPLE_CONNECTION_HTML) &&
+	if (displayed && (conv->features & PURPLE_CONNECTION_FLAGS_HTML) &&
 		!(msgflags & PURPLE_MESSAGE_RAW)) {
 		sent = g_strdup(displayed);
 	} else
@@ -218,7 +218,7 @@ add_message_to_history(PurpleConversation *conv, const char *who, const char *al
 		if (gc)
 			me = purple_connection_get_display_name(gc);
 		if (!me)
-			me = conv->account->username;
+			me = purple_account_get_username(conv->account);
 		who = me;
 	}
 
@@ -321,7 +321,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
 	/* copy features from the connection. */
-	conv->features = gc->flags;
+	conv->features = purple_connection_get_flags(gc);
 
 	if (type == PURPLE_CONV_TYPE_IM)
 	{
@@ -354,7 +354,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 
 		chats = g_list_append(chats, conv);
 
-		if ((disp = purple_connection_get_display_name(account->gc)))
+		if ((disp = purple_connection_get_display_name(purple_account_get_connection(account))))
 			purple_conv_chat_set_nick(conv->u.chat, disp);
 		else
 			purple_conv_chat_set_nick(conv->u.chat,
@@ -626,7 +626,7 @@ purple_conversation_get_gc(const PurpleConversation *conv)
 	if (account == NULL)
 		return NULL;
 
-	return account->gc;
+	return purple_account_get_connection(account);
 }
 
 void
@@ -874,9 +874,12 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 	if (account != NULL)
 		gc = purple_account_get_connection(account);
 
+#warning I think commenting this breaks unnamed chats
+#if 0
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
 		(gc != NULL && !g_slist_find(gc->buddy_chats, conv)))
 		return;
+#endif
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 		!g_list_find(purple_get_conversations(), conv))
@@ -913,7 +916,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 							purple_account_get_username(account));
 
 				if (purple_account_get_alias(account) != NULL)
-					alias = account->alias;
+					alias = purple_account_get_alias(account);
 				else if (b != NULL && strcmp(b->name, purple_buddy_get_contact_alias(b)))
 					alias = purple_buddy_get_contact_alias(b);
 				else if (purple_connection_get_display_name(gc) != NULL)
@@ -1615,7 +1618,7 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 				}
 			} else {
 				PurpleBuddy *buddy;
-				if ((buddy = purple_find_buddy(gc->account, user)) != NULL)
+				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), user)) != NULL)
 					alias = purple_buddy_get_contact_alias(buddy);
 			}
 		}
@@ -1713,7 +1716,7 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 		}
 	} else if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		PurpleBuddy *buddy;
-		if ((buddy = purple_find_buddy(gc->account, new_user)) != NULL)
+		if ((buddy = purple_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
 			new_alias = purple_buddy_get_contact_alias(buddy);
 	}
 
@@ -1761,9 +1764,9 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
-				if ((buddy = purple_find_buddy(gc->account, old_user)) != NULL)
+				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), old_user)) != NULL)
 					old_alias = purple_buddy_get_contact_alias(buddy);
-				if ((buddy = purple_find_buddy(gc->account, new_user)) != NULL)
+				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), new_user)) != NULL)
 					new_alias = purple_buddy_get_contact_alias(buddy);
 			}
 
@@ -1838,7 +1841,7 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				PurpleBuddy *buddy;
 
-				if ((buddy = purple_find_buddy(gc->account, user)) != NULL)
+				if ((buddy = purple_find_buddy(purple_connection_get_account(gc), user)) != NULL)
 					alias = purple_buddy_get_contact_alias(buddy);
 			}
 
