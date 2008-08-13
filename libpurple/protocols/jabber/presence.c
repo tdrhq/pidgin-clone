@@ -310,9 +310,10 @@ struct _jabber_add_permit {
 static void authorize_add_cb(gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
-	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
+	if (PURPLE_CONNECTION_IS_CONNECTED(jap->gc))
 		jabber_presence_subscription_set(purple_object_get_protocol_data(PURPLE_OBJECT(jap->gc)),
 			jap->who, "subscribed");
+	g_object_unref(G_OBJECT(jap->gc));
 	g_free(jap->who);
 	g_free(jap);
 }
@@ -320,9 +321,10 @@ static void authorize_add_cb(gpointer data)
 static void deny_add_cb(gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
-	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
+	if(PURPLE_CONNECTION_IS_CONNECTED(jap->gc))
 		jabber_presence_subscription_set(purple_object_get_protocol_data(PURPLE_OBJECT(jap->gc)),
 			jap->who, "unsubscribed");
+	g_object_unref(G_OBJECT(jap->gc));
 	g_free(jap->who);
 	g_free(jap);
 }
@@ -467,7 +469,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				onlist = TRUE;
 		}
 
-		jap->gc = js->gc;
+		jap->gc = g_object_ref(js->gc);
 		jap->who = g_strdup(from);
 		jap->js = js;
 

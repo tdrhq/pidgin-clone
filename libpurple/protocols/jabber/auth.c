@@ -220,19 +220,25 @@ static void auth_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 	JabberStream *js;
 
 	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_CONNECTION_IS_VALID(conn))
+	if (purple_connection_get_state(conn) != PURPLE_CONNECTION_STATE_CONNECTING) {
+		g_object_unref(G_OBJECT(conn));
 		return;
+	}
 
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 
-	if (!auth_pass_generic(js, fields))
+	if (!auth_pass_generic(js, fields)) {
+		g_object_unref(G_OBJECT(conn));
 		return;
+	}
 
 	/* Rebuild our callbacks as we now have a password to offer */
 	jabber_sasl_build_callbacks(js);
 
 	/* Restart our connection */
 	jabber_auth_start_cyrus(js);
+
+	g_object_unref(G_OBJECT(conn));
 }
 
 static void
@@ -241,16 +247,22 @@ auth_old_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 	JabberStream *js;
 
 	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_CONNECTION_IS_VALID(conn))
+	if (purple_connection_get_state(conn) != PURPLE_CONNECTION_STATE_CONNECTING) {
+		g_object_unref(G_OBJECT(conn));
 		return;
+	}
 
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 
-	if (!auth_pass_generic(js, fields))
+	if (!auth_pass_generic(js, fields)) {
+		g_object_unref(G_OBJECT(conn));
 		return;
+	}
 
 	/* Restart our connection */
 	jabber_auth_start_old(js);
+
+	g_object_unref(G_OBJECT(conn));
 }
 
 
@@ -260,13 +272,17 @@ auth_no_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 	JabberStream *js;
 
 	/* The password prompt dialog doesn't get disposed if the account disconnects */
-	if (!PURPLE_CONNECTION_IS_VALID(conn))
+	if (purple_connection_get_state(conn) != PURPLE_CONNECTION_STATE_CONNECTING) {
+		g_object_unref(G_OBJECT(conn));
 		return;
+	}
 
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 
 	/* Disable the account as the user has canceled connecting */
 	purple_account_set_enabled(purple_connection_get_account(conn), FALSE);
+
+	g_object_unref(G_OBJECT(conn));
 }
 
 static void jabber_auth_start_cyrus(JabberStream *js)
@@ -319,7 +335,9 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 */
 
 				if (!purple_account_get_password(purple_connection_get_account(js->gc))) {
-					purple_account_request_password(purple_connection_get_account(js->gc), G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
+					purple_account_request_password(purple_connection_get_account(js->gc),
+						G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb),
+						g_object_ref(G_OBJECT(js->gc)));
 					return;
 
 				/* If we've got a password, but aren't sending
@@ -709,7 +727,9 @@ void jabber_auth_start_old(JabberStream *js)
 	 */
 
 	if (!purple_account_get_password(purple_connection_get_account(js->gc))) {
-		purple_account_request_password(purple_connection_get_account(js->gc), G_CALLBACK(auth_old_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
+		purple_account_request_password(purple_connection_get_account(js->gc),
+			G_CALLBACK(auth_old_pass_cb), G_CALLBACK(auth_no_pass_cb),
+			g_object_ref(G_OBJECT(js->gc)));
 		return;
 	}
 #endif

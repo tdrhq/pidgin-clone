@@ -416,12 +416,6 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	int len;
 	static char buf[4096];
 
-	/* TODO: It should be possible to make this check unnecessary */
-	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
-		purple_ssl_close(gsc);
-		return;
-	}
-
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
 		purple_connection_received_now(gc);
 		buf[len] = '\0';
@@ -451,9 +445,6 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	int len;
 	static char buf[4096];
-
-	if(!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
 		purple_connection_received_now(gc);
@@ -495,12 +486,6 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 {
 	PurpleConnection *gc = data;
 	JabberStream *js;
-
-	/* TODO: It should be possible to make this check unnecessary */
-	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
-		purple_ssl_close(gsc);
-		return;
-	}
 
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
@@ -544,7 +529,7 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
-	g_object_set(G_OBJECT(gc),"inpa",purple_input_add(js->fd, PURPLE_INPUT_READ, jabber_recv_cb, gc),NULL);
+	g_object_set(G_OBJECT(gc), "inpa", purple_input_add(js->fd, PURPLE_INPUT_READ, jabber_recv_cb, gc), NULL);
 }
 
 static void
@@ -554,10 +539,6 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 	PurpleConnection *gc = data;
 	JabberStream *js;
 
-	/* If the connection is already disconnected, we don't need to do anything else */
-	if(!PURPLE_CONNECTION_IS_VALID(gc))
-		return;
-
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	js->gsc = NULL;
 
@@ -566,8 +547,8 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 
 static void tls_init(JabberStream *js)
 {
-	purple_input_remove(purple_object_get_int(PURPLE_OBJECT(js->gc),"inpa"));
-	g_object_set(G_OBJECT(js->gc),"inpa",0,NULL);
+	purple_input_remove(purple_object_get_int(PURPLE_OBJECT(js->gc), "inpa"));
+	g_object_set(G_OBJECT(js->gc), "inpa", 0, NULL);
 	js->gsc = purple_ssl_connect_with_host_fd(purple_connection_get_account(js->gc), js->fd,
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
 }
@@ -1307,8 +1288,8 @@ void jabber_close(PurpleConnection *gc)
 #endif
 			purple_ssl_close(js->gsc);
 	} else if (js->fd > 0) {
-		if(purple_object_get_int(PURPLE_OBJECT(js->gc),"inpa"))
-			purple_input_remove(purple_object_get_int(PURPLE_OBJECT(js->gc),"inpa"));
+		if (purple_object_get_int(PURPLE_OBJECT(js->gc), "inpa"))
+			purple_input_remove(purple_object_get_int(PURPLE_OBJECT(js->gc), "inpa"));
 		close(js->fd);
 	}
 
