@@ -1589,8 +1589,9 @@ void gnt_entry_set_always_suggest(GntEntry *entry, gboolean always)
 void gnt_entry_set_spell_enable(GntEntry *entry, gboolean enable)
 {
 #ifdef USE_ENCHANT
-	if (entry->spell) {
+	if (entry->spell && entry->spell->enable != enable) {
 		entry->spell->enable = enable;
+		entry_redraw(GNT_WIDGET(entry));
 	}
 #endif
 }
