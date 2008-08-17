@@ -63,6 +63,28 @@ struct _GntEntryKillRing
 	GntEntryAction last;
 };
 
+#ifdef USE_ENCHANT
+typedef struct _GntEntryWord
+{
+	int start;				/**< start of word relative to entry->start */
+	int end_offset;			/**< end of word relative to start of word */
+	gboolean checked_spell; /**< Flag to indicate this word has been spell checked */
+	gboolean misspelled;    /**< Flag to indicate the word is misspelled */
+	struct _GntEntryWord *next;
+	struct _GntEntryWord *prev;
+} GntEntryWord;
+
+/* TODO: move these somewhere else */
+static void gnt_entry_free_word(GntEntryWord *w);
+static GntEntryWord *gnt_entry_word_new(void);
+static GntEntryWord *gnt_entry_word_list_append(GntEntryWord *list, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_prepend(GntEntryWord *list, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_insert_after(GntEntryWord *list, GntEntryWord *sibling, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_insert_before(GntEntryWord *list, GntEntryWord *sibling, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_pluck(GntEntryWord *list, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_free(GntEntryWord *list);
+#endif
+
 struct _GntEntrySpell
 {
 #ifdef USE_ENCHANT
@@ -70,7 +92,10 @@ struct _GntEntrySpell
 	EnchantDict *dict;
 	char *lang;
 	gboolean enable;
-	GntWidget *context; /**< Context menu to correct spelling or change language */
+	GntWidget *context;        /**< Context menu to correct spelling or change language */
+	GntEntryWord *word_list;   /**< Linked list of words */
+	GntEntryWord *cursor_word; /**< Word under the cursor position */
+	GntEntryWord *scroll_word; /**< Word under the scroll position */
 #endif
 };
 
@@ -80,6 +105,9 @@ static GntWidgetClass *parent_class = NULL;
 
 static gboolean gnt_entry_key_pressed(GntWidget *widget, const char *text);
 static void gnt_entry_set_text_internal(GntEntry *entry, const char *text);
+
+static GntEntryWord *gnt_entry_parse_words(GntEntry *entry);
+static void spell_check_words(GntEntry *entry);
 
 static gboolean
 update_kill_ring(GntEntry *entry, GntEntryAction action, const char *text, int len)
@@ -286,6 +314,13 @@ show_suggest_dropdown(GntEntry *entry)
 }
 
 #ifdef USE_ENCHANT
+static gboolean
+is_word_break(char *prev, char *wc)
+{
+	/* TODO: add pango code here */
+	return g_unichar_isspace(g_utf8_get_char(wc)) && g_unichar_ispunct(g_utf8_get_char(wc));
+}
+
 /* copy of get_beginning_of_word, but not GntEntry specific
  * TODO: refactor with get_beginning_of_word
  */
@@ -383,14 +418,11 @@ gnt_entry_draw(GntWidget *widget)
 	}
 	else {
 #ifdef USE_ENCHANT
-		/* TODO: maybe want to move this to a different location and use some
-		 * sort of tags to indicate areas of misspellings and then print the tags
-		 * out here so the spellchecking isn't always performed for each word on
-		 * a gnt_entry_draw */
-		char *s, *e;
 		int miss_color;
-		int count;
-		int width;
+		int offset;
+		GntEntryWord *it = entry->spell->word_list;
+		char *prev = entry->scroll;
+
 		if (focus)
 			miss_color = gnt_color_pair(GNT_COLOR_MISSPELL);
 		else
@@ -398,59 +430,28 @@ gnt_entry_draw(GntWidget *widget)
 		/* only spell check if enabled and box isn't empty */
 		if (entry->spell->enable && (entry->start != entry->end)) {
 			wmove(widget->window, 0, 0);
-			/* if scroll starts on a non-letter, find the next word */
-			if (g_unichar_isspace(g_utf8_get_char(entry->scroll)) || g_unichar_ispunct(g_utf8_get_char(entry->scroll))) {
-				s = get_beginning_of_next_word(entry->scroll, entry->end);
-				if (!s) {
-					s = entry->end;
+			/* iterate through the entire word list */
+			while (it) {
+				/* print the whitespace between end of previous word and start of current */
+				if (prev < (entry->start + it->start)) {
+					wattroff(widget->window, miss_color);
+					waddnstr(widget->window, prev, (entry->start + it->start) - prev);
 				}
-				waddnstr(widget->window, entry->scroll, s - entry->scroll);
-			} else {
-				s = get_beginning_of_prev_word(entry->scroll, entry->start);
-			}
-			e = get_end_of_word(s, entry->end);
+				prev = entry->start + it->start + it->end_offset + 1;
 
-			if (!check_word(entry, s, e)) {
-				wattron(widget->window, miss_color);
-			} else {
-				wattroff(widget->window, miss_color);
-			}
-			/* first word might be special case if scroll is in middle of word */
-			if (s < entry->scroll) {
-				waddnstr(widget->window, entry->scroll, e - entry->scroll + 1);
-			} else {
-				waddnstr(widget->window, s, e - s + 1);
-			}
-
-			gnt_widget_get_size(GNT_WIDGET(entry), &width, NULL);
-			count = 0;
-			s = g_utf8_find_next_char(e, entry->end);
-			while(s && count < width) {
-				count++;
-				/* print the whitespace and punctuation characters */
-				wattroff(widget->window, miss_color);
-				e = get_beginning_of_next_word(s, entry->end);
-				if (!e && s < entry->end) {
-					/* the end is all non-letter characters */
-					waddnstr(widget->window, s, entry->end - s + 1);
-					break;
-				} else if (e) {
-					/* there are more words */
-					waddnstr(widget->window, s, e - s);
-					s = e;
-					e = get_end_of_word(s, entry->end);
-
-					if (!check_word(entry, s, e)) {
-						wattron(widget->window, miss_color);
-					} else {
-						wattroff(widget->window, miss_color);
-					}
-					waddnstr(widget->window, s, e - s + 1);
-					s = g_utf8_find_next_char(e, entry->end);
+				/* TODO: special case where scroll is in middle of word */
+				if (it->checked_spell && it->misspelled) {
+					wattron(widget->window, miss_color);
 				} else {
-					break;
+					wattroff(widget->window, miss_color);
 				}
+				waddnstr(widget->window, entry->start + it->start, it->end_offset + 1);
+
+				it = it->next;
 			}
+			if (prev <= entry->end)
+				waddnstr(widget->window, prev, entry->end - prev + 1);
+
 		} else {
 			wattroff(widget->window, miss_color);
 			mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
@@ -961,6 +962,8 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				show_suggest_dropdown(entry);
 		}
 		update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
+		/* TODO: don't reparse everything everytime a key is pressed */
+		entry->spell->word_list = gnt_entry_parse_words(entry);
 		entry_redraw(widget);
 		entry_text_changed(entry);
 		return TRUE;
@@ -1138,18 +1141,24 @@ set_spell_language(GntEntrySpell *spell, const char *lang)
 {
 	const char *err;
 
-	if (spell->broker) {
-		if (spell->dict)
-			enchant_broker_free_dict(spell->broker, spell->dict);
+	if (!spell->lang || (spell->lang && (strcmp(lang, spell->lang) != 0))) {
+		if (spell->lang) {
+			g_free(spell->lang);
+		}
+		spell->lang = g_strdup(lang);
+		if (spell->broker) {
+			if (spell->dict)
+				enchant_broker_free_dict(spell->broker, spell->dict);
 
-		spell->dict = enchant_broker_request_dict(spell->broker, lang);
+			spell->dict = enchant_broker_request_dict(spell->broker, lang);
 
-		if (spell->dict == NULL) {
-			err = enchant_broker_get_error(spell->broker);
-			if (err != NULL) {
-				g_warning("GntEntry: couldn't get dictionary for %s: %s\n", lang, err);
-			} else {
-				g_warning("GntEntry: couldn't get dictionary for %s\n", lang);
+			if (spell->dict == NULL) {
+				err = enchant_broker_get_error(spell->broker);
+				if (err != NULL) {
+					g_warning("GntEntry: couldn't get dictionary for %s: %s\n", lang, err);
+				} else {
+					g_warning("GntEntry: couldn't get dictionary for %s\n", lang);
+				}
 			}
 		}
 	}
@@ -1182,6 +1191,11 @@ new_spell(void)
 
 		set_spell_language(sp, lang);
 	}
+
+	/* TODO: do these need to be explicitly set to NULL here? */
+	sp->word_list = NULL;
+	sp->cursor_word = NULL;
+	sp->scroll_word = NULL;
 #endif
 	return sp;
 }
@@ -1207,6 +1221,9 @@ context_menu_callback(GntMenuItem *item, gpointer data)
 	SpellLangInfo *cur_info = (SpellLangInfo *)data;
 	if (cur_info->entry->spell) {
 		set_spell_language(cur_info->entry->spell, cur_info->lang);
+		if (cur_info->entry->spell->enable) {
+			cur_info->entry->spell->word_list = gnt_entry_parse_words(cur_info->entry);
+		}
 		entry_redraw(GNT_WIDGET(cur_info->entry));
 	}
 }
@@ -1591,6 +1608,9 @@ void gnt_entry_set_spell_enable(GntEntry *entry, gboolean enable)
 #ifdef USE_ENCHANT
 	if (entry->spell && entry->spell->enable != enable) {
 		entry->spell->enable = enable;
+		if (enable) {
+			entry->spell->word_list = gnt_entry_parse_words(entry);
+		}
 		entry_redraw(GNT_WIDGET(entry));
 	}
 #endif
@@ -1602,6 +1622,10 @@ void gnt_entry_set_spell_lang(GntEntry *entry, const char *lang)
 	if (entry->spell) {
 		if (strcmp(lang, entry->spell->lang) != 0) {
 			set_spell_language(entry->spell, lang);
+			if (entry->spell->enable) {
+				entry->spell->word_list = gnt_entry_parse_words(entry);
+			}
+			entry_redraw(GNT_WIDGET(entry));
 		}
 	}
 #endif
@@ -1630,3 +1654,191 @@ void gnt_entry_remove_suggest(GntEntry *entry, const char *text)
 	}
 }
 
+#ifdef USE_ENCHANT
+static GntEntryWord *
+gnt_entry_parse_words(GntEntry *entry)
+{
+	char *s, *e;
+	int count;
+	int width;
+	GntEntryWord *word;
+	GntEntryWord *start = NULL;
+
+	/* only spell check if enabled and box isn't empty */
+	if (entry->spell->enable && (entry->start != entry->end)) {
+
+		/* if start begins on a non-letter, find the next word */
+		if (g_unichar_isspace(g_utf8_get_char(entry->start)) || g_unichar_ispunct(g_utf8_get_char(entry->start))) {
+			s = get_beginning_of_next_word(entry->start, entry->end);
+			if (!s) {
+				s = entry->end;
+			}
+		} else {
+			s = entry->start;
+		}
+		e = get_end_of_word(s, entry->end);
+
+		word = gnt_entry_word_new();
+		word->start = s - entry->start;
+		word->end_offset = e - s;
+		word->checked_spell = TRUE;
+		if (!check_word(entry, s, e)) {
+			word->misspelled = TRUE;
+		} else {
+			word->misspelled = FALSE;
+		}
+		/* first one is the start of the list */
+		start = word;
+		if ((entry->start + word->start <= entry->cursor) && (entry->start + word->start + word->end_offset >= entry->cursor))
+			entry->spell->cursor_word = word;
+		if ((entry->start + word->start <= entry->scroll) && (entry->start + word->start + word->end_offset >= entry->scroll))
+			entry->spell->scroll_word = word;
+
+		s = g_utf8_find_next_char(e, entry->end);
+		while (s && s != entry->end) {
+			e = get_beginning_of_next_word(s, entry->end);
+			if (e) {
+				/* there are more words */
+				s = e;
+				e = get_end_of_word(s, entry->end);
+
+				word = gnt_entry_word_new();
+				word->start = s - entry->start;
+				word->end_offset = e - s;
+				word->checked_spell = TRUE;
+				if ((entry->start + word->start <= entry->cursor) && (entry->start + word->start + word->end_offset >= entry->cursor))
+					entry->spell->cursor_word = word;
+				if ((entry->start + word->start <= entry->scroll) && (entry->start + word->start + word->end_offset >= entry->scroll))
+					entry->spell->scroll_word = word;
+
+				if (!check_word(entry, s, e)) {
+					word->misspelled = TRUE;
+				} else {
+					word->misspelled = FALSE;
+				}
+
+				gnt_entry_word_list_append(start, word);
+
+				s = g_utf8_find_next_char(e, entry->end);
+			} else {
+				break;
+			}
+		}
+	}
+
+	return start;
+}
+
+/* the GntEntryWord linked list operators */
+/* add new element to end of list */
+/* TODO: implement this in a memory pool */
+static void
+gnt_entry_free_word(GntEntryWord *w)
+{
+	g_free(w);
+}
+
+/* TODO: implement this in a memory pool */
+static GntEntryWord *
+gnt_entry_word_new(void)
+{
+	GntEntryWord *w;
+	w = g_new0(GntEntryWord, 1);
+	return w;
+}
+
+static GntEntryWord *
+gnt_entry_word_list_append(GntEntryWord *list, GntEntryWord *word)
+{
+	GntEntryWord *it = list;
+
+	if(list) {
+		while(it->next)
+			it = it->next;
+		it->next = word;
+		word->prev = it;
+	} else {
+		word->prev = NULL;
+		word->next = NULL;
+		list = word;
+	}
+
+	return list;
+}
+
+/* add new element to beginning of list */
+static GntEntryWord *
+gnt_entry_word_list_prepend(GntEntryWord *list, GntEntryWord *word)
+{
+	if(list) {
+		word->next = list;
+		word->prev = NULL;
+		list->prev = word;
+	}
+
+	return word;
+}
+
+/* add new element to after sibling */
+static GntEntryWord *
+gnt_entry_word_list_insert_after(GntEntryWord *list, GntEntryWord *sibling, GntEntryWord *word)
+{
+	if (!list) {
+		list = word;
+	} else {
+		if(sibling->next)
+			sibling->next->prev = word;
+		word->next = sibling->next;
+		word->prev = sibling;
+		sibling->next = word;
+	}
+
+	return list;
+}
+
+/* add new element to before sibling */
+static GntEntryWord *
+gnt_entry_word_list_insert_before(GntEntryWord *list, GntEntryWord *sibling, GntEntryWord *word)
+{
+	if (!list || sibling == list) {
+		list = word;
+	} else {
+		if(sibling->prev)
+			sibling->prev->next = word;
+		word->next = sibling;
+		word->prev = sibling->prev;
+		sibling->prev = word;
+	}
+
+	return list;
+}
+
+/* add new element to before sibling */
+static GntEntryWord *
+gnt_entry_word_list_pluck(GntEntryWord *list, GntEntryWord *word)
+{
+	if (list && (word == list)) {
+		list = word->next;
+		list->prev = NULL;
+	} else {
+		word->prev->next = word->next;
+	}
+
+	return list;
+}
+
+/* remove all elements in a GntEntryWord list */
+/* TODO: should this actually return anything? */
+static GntEntryWord *
+gnt_entry_word_list_free(GntEntryWord *list)
+{
+	GntEntryWord *it = list;
+	while(it) {
+		it = it->next;
+		gnt_entry_free_word(it);
+	}
+
+	return NULL;
+}
+
+#endif /* USE_ENCHANT */
