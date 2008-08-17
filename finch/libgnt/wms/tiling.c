@@ -87,6 +87,47 @@ void gntwm_init(GntWM **wm);
 
 static void (*org_new_window)(GntWM *wm, GntWidget *win);
 
+
+/* Returns the onscreen width of the character at the position
+ * taken from gntwm.c */
+static int
+reverse_char(WINDOW *d, int y, int x, gboolean set)
+{
+	chtype ch;
+	ch = mvwinch(d, y, x);
+	mvwaddch(d, y, x, (set ? ((ch) | A_REVERSE) : ((ch) & ~A_REVERSE)));
+	return 1;
+}
+
+static void
+window_reverse(GntWidget *win, gboolean set, GntWM *wm)
+{
+	int i;
+	int w, h;
+	WINDOW *d;
+
+	if (GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_NO_BORDER))
+		return;
+	
+	d = win->window;
+	gnt_widget_get_size(win, &w, &h);
+
+	if (gnt_widget_has_shadow(win)) {
+		--w;
+		--h;
+	}
+
+	/* the top and bottom */
+	for (i = 0; i < w; i += reverse_char(d, 0, i, set));
+	for (i = 0; i < w; i += reverse_char(d, h-1, i, set));
+
+	/* the left and right */
+	for (i = 0; i < h; i += reverse_char(d, i, 0, set));
+	for (i = 0; i < h; i += reverse_char(d, i, w-1, set));
+
+	gnt_wm_copy_win(win, g_hash_table_lookup(wm->nodes, win));
+}
+
 static void
 tiling_wm_new_window(GntWM *wm, GntWidget *win)
 {
@@ -111,28 +152,22 @@ tiling_wm_new_window(GntWM *wm, GntWidget *win)
 	}
 }
 
-static void
-tiling_wm_window_resized(GntWM *wm, GntNode *node)
+static gboolean
+tiling_wm_window_move_confirm(GntWM *wm, GntWidget *win, int *x, int *y)
 {
-	return;
+	return TRUE;
+}
+
+static gboolean
+tiling_wm_window_resize_confirm(GntWM *wm, GntWidget *win, int *w, int *h)
+{
+	return TRUE;
 }
 
 static gboolean
 tiling_wm_close_window(GntWM *wm, GntWidget *win)
 {
 	return FALSE;
-}
-
-static void
-tiling_wm_update_window(GntWM *wm, GntNode *node)
-{
-	return;
-}
-
-
-static void
-tiling_wm_terminal_refresh(GntWM *wm)
-{
 }
 
 static GntWidget *
@@ -148,8 +183,10 @@ get_next_window(GntWM *wm, GntWidget *win, int direction)
 		pos += direction;
 		if (pos < 0) {
 			wid = g_list_last(wm->cws->list)->data;
+			pos = g_list_length(wm->cws->list) - 1;
 		} else if (pos >= g_list_length(wm->cws->list)) {
 			wid = wm->cws->list->data;
+			pos = 0;
 		} else
 			wid = g_list_nth_data(wm->cws->list, pos);
 		visible = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(wid), "tiling-visible"));
@@ -180,10 +217,12 @@ twm_next_window(GntBindable *bindable, GList *list)
 	if (twm->current->window) {
 		g_object_set_data(G_OBJECT(twm->current->window), "tiling-visible", GINT_TO_POINTER(0));
 		gnt_ws_widget_hide(twm->current->window, wm->nodes);
+		window_reverse(twm->current->window, FALSE, wm);
 	}
 	twm->current->window = wid;
 	gnt_screen_resize_widget(wid, twm->current->width, twm->current->height);
 	gnt_screen_move_widget(wid, twm->current->x, twm->current->y);
+	window_reverse(wid, TRUE, wm);
 	/* show new window */
 	g_object_set_data(G_OBJECT(twm->current->window), "tiling-visible", GINT_TO_POINTER(1));
 	gnt_ws_widget_show(twm->current->window, wm->nodes);
@@ -243,10 +282,12 @@ twm_split(GntBindable *bindable, GList *list)
 		gnt_screen_move_widget(rgt_bot->window, rgt_bot->x, rgt_bot->y);
 		g_object_set_data(G_OBJECT(rgt_bot->window), "tiling-visible", GINT_TO_POINTER(1));
 		gnt_ws_widget_show(rgt_bot->window, wm->nodes);
+		window_reverse(rgt_bot->window, FALSE, wm);
 	}
 
 	gnt_screen_resize_widget(twm->current->window, twm->current->width, twm->current->height);
 	gnt_screen_move_widget(twm->current->window, twm->current->x, twm->current->y);
+	window_reverse(twm->current->window, TRUE, wm);
 
 	return TRUE;
 }
@@ -292,11 +333,21 @@ remove_split(GntBindable *bindable, GList *list)
 					sibling->right_bottom->width = parent->width - sibling->left_top->width;
 				}
 			}
+			if (twm->current->window) {
+				g_object_set_data(G_OBJECT(current->window), "tiling-visible", GINT_TO_POINTER(0));
+				window_reverse(current->window, FALSE, wm);
+				gnt_ws_widget_hide(current->window, wm->nodes);
+			}
 			parent->type = sibling->type;
 			parent->left_top = sibling->left_top;
 			parent->right_bottom = sibling->right_bottom;
 			twm->current = depth_search(sibling);
 		} else {
+			if (sibling->window) {
+				g_object_set_data(G_OBJECT(sibling->window), "tiling-visible", GINT_TO_POINTER(0));
+				window_reverse(sibling->window, FALSE, wm);
+				gnt_ws_widget_hide(sibling->window, wm->nodes);
+			}
 			parent->type = FRAME_SPLIT_NONE;
 			parent->left_top = NULL;
 			parent->right_bottom = NULL;
@@ -306,6 +357,7 @@ remove_split(GntBindable *bindable, GList *list)
 
 		gnt_screen_resize_widget(twm->current->window, twm->current->width, twm->current->height);
 		gnt_screen_move_widget(twm->current->window, twm->current->x, twm->current->y);
+		window_reverse(twm->current->window, TRUE, wm);
 		g_free(current);
 		g_free(sibling);
 	}
@@ -342,6 +394,7 @@ remove_all_split(GntBindable *bindable, GList *list)
 		if (twm->root.window) {
 			gnt_screen_resize_widget(twm->current->window, twm->current->width, twm->current->height);
 			gnt_screen_move_widget(twm->current->window, twm->current->x, twm->current->y);
+			window_reverse(twm->current->window, TRUE, wm);
 		}
 	}
 
@@ -408,9 +461,11 @@ twm_move_left_up(GntBindable *bindable, GList *list)
 
 	left = find_parent_with_left(twm->current, type);
 	if (left) {
+		window_reverse(twm->current->window, FALSE, wm);
 		left = find_rightmost_child(left);
 		twm->current = left;
 		if (twm->current->window) {
+			window_reverse(twm->current->window, TRUE, wm);
 			gnt_wm_raise_window(wm, twm->current->window);
 		}
 	}
@@ -429,9 +484,11 @@ twm_move_right_down(GntBindable *bindable, GList *list)
 
 	right = find_parent_with_right(twm->current, type);
 	if (right) {
+		window_reverse(twm->current->window, FALSE, wm);
 		right = find_leftmost_child(right);
 		twm->current = right;
 		if (twm->current->window) {
+			window_reverse(twm->current->window, TRUE, wm);
 			gnt_wm_raise_window(wm, twm->current->window);
 		}
 	}
@@ -447,10 +504,9 @@ tiling_wm_class_init(TilingWMClass *klass)
 	org_new_window = pclass->new_window;
 
 	pclass->new_window = tiling_wm_new_window;
-	pclass->window_resized = tiling_wm_window_resized;
+	pclass->window_resize_confirm = tiling_wm_window_resize_confirm;
+	pclass->window_move_confirm = tiling_wm_window_move_confirm;
 	pclass->close_window = tiling_wm_close_window;
-	pclass->window_update = tiling_wm_update_window;
-	pclass->terminal_refresh = tiling_wm_terminal_refresh;
 
 	/* moving between windows */
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "next-window",
@@ -464,7 +520,7 @@ tiling_wm_class_init(TilingWMClass *klass)
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "split-horizontal",
 			twm_split, "\033" "S", GINT_TO_POINTER(FRAME_SPLIT_H), NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "remove-split",
-			remove_split, "\033" "R", NULL, NULL);
+			remove_split, "\033" "D", NULL, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "remove-all-split",
 			remove_all_split, "\033" "Q", NULL, NULL);
 
