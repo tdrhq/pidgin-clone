@@ -3,12 +3,6 @@
 header("Content-Type: text/plain");
 include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
 error_reporting(0);
-/*
-Is anyone still using the data anymore?
-
-require 'inc/database.inc.php';
-require 'inc/config.inc.php';
-*/
 
 $changelog_file = 'ChangeLog';
 $changelog_file_win32 = 'win32/ChangeLog.win32';
@@ -50,23 +44,6 @@ if ($cur_ver != $my_ver || $dev == false) {
 		exit();
 	}
 }
-
-/* This code is going to let me track how quickly people upgrade,
- * for my statistics project.  Feel free to put on your tinfoil hat */
-
-/*
-Is anyone still using the data anymore?
-
-if(!$dev) {
-	$db = new Database($sql_type, $sql_server, $sql_username, $sql_password, $sql_database);
-	$db->connect();
-	$db->query("UPDATE version_track SET count=count+1 WHERE day=NOW() AND version = '$my_ver' AND build='$build' AND cur_version = '$cur_ver'");
-	if(mysql_affected_rows() == 0) {
-		$db->query("INSERT INTO version_track (day,version,build,count,cur_version) VALUES(NOW(),'$my_ver','$build',1,'$cur_ver')");
-	}
-	$db->disconnect();
-}
-*/
 
 function parse_changelog($filename, $cur_ver, $firstversion) {
     $f = fopen($filename, "r");
