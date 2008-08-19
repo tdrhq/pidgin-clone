@@ -25,12 +25,12 @@ Download Pidgin<br />
 <span class="number">Pidgin <? echo $pidgin_version; ?></span>
 </a></p>
 
-<p>To install Pidgin on Fedora Core 4, 5 or 6, save the pidgin.repo file from
+<p>To install Pidgin on Fedora Core 4, 5, 6 or 7 save the pidgin.repo file from
 above in /etc/yum.repos.d/</p>
 
 <p>You can then use "yum install pidgin", or the Package Manager (pirut) to install Pidgin.</p>
 
-<p><i>We do <b>not</b> provide packages for Fedora 7 or later.  If you use Fedora 7 or later,
+<p><i>We do <b>not</b> provide packages for Fedora 8 or later.  If you use Fedora 8 or later,
 please wait for the Fedora developers to release updated packages.</i></p>
 
 </div>
