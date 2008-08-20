@@ -527,6 +527,19 @@ find_parent_with_right(TilingFrame *frame, int type)
 }
 
 static TilingFrame *
+find_child_of_type(TilingFrame *frame, int type)
+{
+	while (frame && frame->parent) {
+		if (frame->parent->type == type) {
+			return frame;
+		}
+		frame = frame->parent;
+	}
+
+	return NULL;
+}
+
+static TilingFrame *
 find_rightmost_child(TilingFrame *frame)
 {
 	TilingFrame *child = frame;
@@ -671,57 +684,71 @@ twm_resize(GntBindable *bindable, GList *list)
 {
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
+	TilingFrame *frame;
 	int direction = GPOINTER_TO_INT(list->data);
 
 	if (wm->mode == GNT_KP_MODE_RESIZE) {
-		/* can't resize root */
-		if (twm->current->sibling) {
+		switch (direction) {
+			case RESIZE_LEFT:
+			case RESIZE_RIGHT:
+				frame = find_child_of_type(twm->current, FRAME_SPLIT_H);
+				break;
+			case RESIZE_UP:
+			case RESIZE_DOWN:
+				frame = find_child_of_type(twm->current, FRAME_SPLIT_V);
+				break;
+		}
+
+		if (frame) {
 			int xmin = 0, ymin = 0, xmax = getmaxx(stdscr), ymax = getmaxy(stdscr) - 1;
 			switch (direction) {
 				case RESIZE_LEFT:
-					if (twm->current->width > xmin) {
-						if (twm->current->x < twm->current->sibling->x) {
-							twm_propagate_x_width_change(wm, twm->current, 0, -1);
-							twm_propagate_x_width_change(wm, twm->current->sibling, -1, 1);
+					if (frame->width > xmin) {
+						if (frame->x < frame->sibling->x) {
+							twm_propagate_x_width_change(wm, frame, 0, -1);
+							twm_propagate_x_width_change(wm, frame->sibling, -1, 1);
 						} else {
-							twm_propagate_x_width_change(wm, twm->current, 1, -1);
-							twm_propagate_x_width_change(wm, twm->current->sibling, 0, 1);
+							twm_propagate_x_width_change(wm, frame, 1, -1);
+							twm_propagate_x_width_change(wm, frame->sibling, 0, 1);
 						}
 					}
 					break;
 				case RESIZE_RIGHT:
-					if (twm->current->width < xmax) {
-						if (twm->current->x < twm->current->sibling->x) {
-							twm_propagate_x_width_change(wm, twm->current, 0, 1);
-							twm_propagate_x_width_change(wm, twm->current->sibling, 1, -1);
+					if (frame->width < xmax) {
+						if (frame->x < frame->sibling->x) {
+							twm_propagate_x_width_change(wm, frame, 0, 1);
+							twm_propagate_x_width_change(wm, frame->sibling, 1, -1);
 						} else {
-							twm_propagate_x_width_change(wm, twm->current, -1, 1);
-							twm_propagate_x_width_change(wm, twm->current->sibling, 0, -1);
+							twm_propagate_x_width_change(wm, frame, -1, 1);
+							twm_propagate_x_width_change(wm, frame->sibling, 0, -1);
 						}
 					}
 					break;
 				case RESIZE_UP:
-					if (twm->current->height > ymin) {
-						if (twm->current->y < twm->current->sibling->y) {
-							twm_propagate_y_height_change(wm, twm->current, 0, -1);
-							twm_propagate_y_height_change(wm, twm->current->sibling, -1, 1);
+					if (frame->height > ymin) {
+						if (frame->y < frame->sibling->y) {
+							twm_propagate_y_height_change(wm, frame, 0, -1);
+							twm_propagate_y_height_change(wm, frame->sibling, -1, 1);
 						} else {
-							twm_propagate_y_height_change(wm, twm->current, 1, -1);
-							twm_propagate_y_height_change(wm, twm->current->sibling, 0, 1);
+							twm_propagate_y_height_change(wm, frame, 1, -1);
+							twm_propagate_y_height_change(wm, frame->sibling, 0, 1);
 						}
 					}
 					break;
 				case RESIZE_DOWN:
-					if (twm->current->height < ymax) {
-						if (twm->current->y < twm->current->sibling->y) {
-							twm_propagate_y_height_change(wm, twm->current, 0, 1);
-							twm_propagate_y_height_change(wm, twm->current->sibling, 1, -1);
+					if (frame->height < ymax) {
+						if (frame->y < frame->sibling->y) {
+							twm_propagate_y_height_change(wm, frame, 0, 1);
+							twm_propagate_y_height_change(wm, frame->sibling, 1, -1);
 						} else {
-							twm_propagate_y_height_change(wm, twm->current, -1, 1);
-							twm_propagate_y_height_change(wm, twm->current->sibling, 0, -1);
+							twm_propagate_y_height_change(wm, frame, -1, 1);
+							twm_propagate_y_height_change(wm, frame->sibling, 0, -1);
 						}
 					}
 					break;
+			}
+			if (twm->current->window) {
+				window_reverse(twm->current->window, TRUE, wm);
 			}
 		}
 		return TRUE;
