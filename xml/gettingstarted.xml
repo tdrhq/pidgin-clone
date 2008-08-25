@@ -1,0 +1,135 @@
+<chapter id="gettingstarted">
+	<title>Getting Started</title>
+
+	<para>
+		Welcome to the Pidgin User's Guide!  It's our hope that this guide will
+		address a number of concerns about Pidgin lacking user documentation.
+	</para>
+
+	<para>
+		To get started, let's summarize some of Pidgin's features:
+
+		<itemizedlist>
+			<listitem>
+				Multiprotocol support:
+				<itemizedlist>
+					<listitem>
+						AOL Instant Messenger (AIM)
+					</listitem>
+					<listitem>
+						Bonjour (formerly Rendezvous)
+					</listitem>
+					<listitem>
+						Extensible Messaging and Presence Protocol (XMPP,
+						formerly Jabber)
+					</listitem>
+					<listitem>
+						Gadu-Gadu
+					</listitem>
+					<listitem>
+						Google Talk (this is XMPP with some additional extensions)
+					</listitem>
+					<listitem>
+						ICQ
+					</listitem>
+					<listitem>
+						Internet Relay Chat (IRC)
+					</listitem>
+					<listitem>
+						MyspaceIM
+					</listitem>
+					<listitem>
+						Novell Groupwise Messenger
+					</listitem>
+					<listitem>
+						QQ
+					</listitem>
+					<listitem>
+						Sametime
+					</listitem>
+					<listitem>
+						Secure Internet Live Conferencing (SILC)
+					</listitem>
+					<listitem>
+						SIP/SIMPLE (we call this SIMPLE)
+					</listitem>
+					<listitem>
+						Windows Live Messenger (formerly MSN; we call it MSN)
+					</listitem>
+					<listitem>
+						Yahoo! Messenger (we call this Yahoo)
+					</listitem>
+					<listitem>
+						Zephyr
+					</listitem>
+				</itemizedlist>
+			</listitem>
+			<listtem>
+				Buddy icons (avatars)
+			</listitem>
+			<listitem>
+				Offline messaging on numerous protocols
+			</listitem>
+			<listitem>
+				Combining multiple buddies into a single Contact
+			</listitem>
+			<listitem>
+				Ability to use multiple IM accounts at the same time, even
+				multiple accounts using the same protocol
+			</listitem>
+			<listitem>
+				Support for &quot;Current Media&quot; or &quot;User Tune&quot;
+				on protocols supporting it
+			</listitem>
+			<listitem>
+				Multiple conversations in a single window using a tabbed interface
+			</listitem>
+			<listitem>
+				Multi-user Chats (MUCs) on all protocols which support them
+			</listitem>
+			<listitem>
+				A flexible plugin system allowing the addition or modification
+				of features
+			</listitem>
+			<listitem>
+				Smiley themes which can change the appearance of default smileys
+			</listitem>
+			<listitem>
+				Status messages on all protocols which support them
+			</listitem>
+			<listitem>
+				File transfer on numerous protocols
+			</listitem>
+			<listitem>
+				Display of buddy icons (avatars) on buddy list window
+			</listitem>
+			<listitem>
+				Comprehensive and flexible status system
+			</listitem>
+			<listitem>
+				Ability to add multi-user chats to the buddy list for convenient
+				access to frequently used chatrooms
+			</listitem>
+			<listitem>
+				Configurable sound notifications for numerous events
+			</listitem>
+		</itemizedlist>
+	</para>
+
+	<para>
+		Now let's take a look at running Pidgin for the first time.  We'll make
+		the assumption that you already know how to find and launch Pidgin by
+		using a shell or a graphical menu system such as Windows' Start menu or
+		an X11 window manager's application menus.  When you first launch Pidgin,
+		you'll see something similar to the figure below:
+		<figure>
+			<title>Pidgin First Launch Window</title>
+			<graphic fileref="../images/firstlaunchwindow.png"/>
+		</figure>
+	</para>
+
+	<para>
+		As the window says, you need to configure accounts.  We'll cover that in
+		several chapters covering creating an account for each protocol.
+	</para>
+</chapter>
