@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book id="pidgin-userguide" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<bookinfo>
+		<title>User's Guide to Pidgin</title>
+		<authorgroup>
+			<author>
+				<firstname>John</firstname>
+				<surname>Bailey</surname>
+			</author>
+		</authorgroup>
+	</bookinfo>
+
+	<xi:include href="gettingstarted.xml"/>
+	<xi:include href="aimaccount.xml"/>
+</book>

@@ -1,0 +1,91 @@
+<chapter id="aimaccount">
+	<title>Adding an AIM account</title>
+
+	<para>
+		To add an AIM account, click &quot;Add&quot; on the &quot;Accounts&quot;
+		window.  The following appears:
+		<figure>
+			<title>Add Account Dialog</title>
+			<graphic fileref="../images/addaccountdialog.png"/>
+		</figure>
+	</para>
+
+	<para>
+		Since we're adding an AIM account, the Protocol field is already set to
+		what we want. Here's a quick breakdown of what all the fields you see
+		mean:
+		<tgroup cols="2">
+			<tbody valign="center">
+				<row>
+					<entry>
+						Username
+					</entry>
+					<entry>
+						Enter the screen name you want to log in with here
+					</entry>
+				</row>
+				<row>
+					<entry>
+						Password
+					</entry>
+					<entry>
+						Enter the password for the screen name here
+					</entry>
+				</row>
+				<row>
+					<entry>
+						Remember password
+					</entry>
+					<entry>
+						If you don't want to have to type your password every
+						time you launch Pidgin,	you can feel free to click this
+						checkbox.
+					</entry>
+				</row>
+				<row>
+					<entry>
+						Local alias
+					</entry>
+					<entry>
+						This field allows you to specify a name for yourself
+						that only you will see.  You may wish to set this field
+						to something like &quot;Me&quot; or your name, initials,
+						etc.
+					</entry>
+				</row>
+				<row>
+					<entry>
+						New mail notifications
+					</entry>
+					<entry>
+						If you use AIM Mail, or otherwise have a mail account
+						tied to your screen name in such a way that the AIM
+						servers can check for new mail, checking this box will
+						display a notification when new mail arrives
+					</entry>
+				</row>
+				<row>
+					<entry>
+						Use this buddy icon for this account
+					</entry>
+					<entry>
+						This checkbox, when enabled, allows you to use the icon
+						selector below it to choose a buddy icon specific to
+						this account or to use the &quot;Remove&quot; button to
+						clear an account-specific buddy icon.  We'll discuss
+						buddy icons later.
+					</entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</para>
+
+	<para>
+		Now that we've gone over the basics, let's see what a typical AIM account
+		might look like:
+		<figure>
+			<title>A Configured AIM Account</title>
+			<graphic fileref="../images/populatedaimaccount.png"/>
+		</figure>
+	</para>
+</chapter>

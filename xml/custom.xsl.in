@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"
+				xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+				xmlns:xi="http://www.w3.org/2001/XInclude"
+>
+
+	<xsl:import href="/usr/share/xml/docbook/stylesheet/nwalsh/html/chunkfast.xsl"/>
+
+	<!--
+	<xsl:param name="html.stylesheet" select="'corpstyle.css'"/>
+	<xsl:param name="admon.graphics" select="1"/>
+	-->
+
+	<!-- output filenames use their id's -->
+	<xsl:param name="use.id.as.filename" select="1"/>
+
+	<!-- output the toc to it's own file -->
+	<xsl:param name="chunk.tocs.and.lots" select="1"/>
+
+	<!-- output to utf-8 -->
+	<xsl:param name="chunker.output.encoding" select="UTF-8"/>
+
+	<!-- some custom templates -->
+	<xsl:template match="code">
+		<programlisting>
+			<xsl:value-of select="@file"/>
+		</programlisting>
+	</xsl:template>
+</xsl:stylesheet>
