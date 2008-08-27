@@ -19,17 +19,16 @@
 			improving future releases of this document, feel free to email us at
 			<ulink url="mailto:devel@pidgin.im">devel@pidgin.im</ulink>.
 		</para>
-	</sect1>
 
-	<!--
-		Show that this "book" is licensed under the GFDL, as required
-		by said license
-	-->
-	<sect1 id="license">
-		<title>License</title>
+		<!--
+			Show that this "book" is licensed under the GFDL, as required
+			by said license
+		-->
+
+		<para><emphasis role="bold">License</emphasis></para>
 
 		<para>
-			Copyright (c)  2008  John Bailey.
+			Copyright (c)  2008  Instant Messaging Freedom, Inc.
 		</para>
 		<para>
 			Permission is granted to copy, distribute and/or modify this
@@ -43,7 +42,7 @@
 
 	<xi:include href="gettingstarted.xml"/>
 	<xi:include href="aimaccount.xml"/>
-	<xi:include href="bonjouraccount.xml">
+	<xi:include href="bonjouraccount.xml"/>
 
 	<!--
 		Include the GFDL as the last chapter - the license requires that its
