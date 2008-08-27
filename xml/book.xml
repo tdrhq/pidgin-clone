@@ -10,6 +10,44 @@
 		</authorgroup>
 	</bookinfo>
 
+	<sect1 id="intro">
+		<title>About this Guide</title>
+
+		<para>
+			This User's Guide to Pidgin is intended to help users find their way
+			around Pidgin.  We hope you find it useful!  If you have ideas for
+			improving future releases of this document, feel free to email us at
+			<ulink url="mailto:devel@pidgin.im">devel@pidgin.im</ulink>.
+		</para>
+	</sect1>
+
+	<!--
+		Show that this "book" is licensed under the GFDL, as required
+		by said license
+	-->
+	<sect1 id="license">
+		<title>License</title>
+
+		<para>
+			Copyright (c)  2008  John Bailey.
+		</para>
+		<para>
+			Permission is granted to copy, distribute and/or modify this
+			document under the terms of the GNU Free Documentation License,
+			Version 1.2	or any later version published by the Free Software
+			Foundation;	with no Invariant Sections, no Front-Cover Texts, and
+			no Back-Cover Texts.  A copy of the license is included in the
+			section entitled "GNU Free Documentation License".
+		</para>
+	</sect1>
+
 	<xi:include href="gettingstarted.xml"/>
 	<xi:include href="aimaccount.xml"/>
+	<xi:include href="bonjouraccount.xml">
+
+	<!--
+		Include the GFDL as the last chapter - the license requires that its
+		text appear as part of the work
+	-->
+	<xi:include href="gfdl.xml"/>
 </book>

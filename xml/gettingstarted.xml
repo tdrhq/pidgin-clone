@@ -3,11 +3,6 @@
 	<title>Getting Started</title>
 
 	<para>
-		Welcome to the Pidgin User's Guide!  It's our hope that this guide will
-		address a number of concerns about Pidgin lacking user documentation.
-	</para>
-
-	<para>
 		To get started, let's summarize some of Pidgin's features:
 
 		<itemizedlist>
@@ -80,7 +75,7 @@
 			</listitem>
 			<listitem>
 				Support for &quot;Current Media&quot; or &quot;User Tune&quot;
-				on protocols supporting it
+				on protocols supporting this information
 			</listitem>
 			<listitem>
 				Multiple conversations in a single window using a tabbed interface
@@ -114,6 +109,10 @@
 			<listitem>
 				Configurable sound notifications for numerous events
 			</listitem>
+			<listitem>
+				Buddy pounces allowing a variety of configurable responses to
+				events on specific buddies
+			</listitem>
 		</itemizedlist>
 	</para>
 
@@ -130,7 +129,8 @@
 	</para>
 
 	<para>
-		As the window says, you need to configure accounts.  We'll cover that in
-		several chapters covering creating an account for each protocol.
+		As the window says, you need to configure accounts.  We'll cover that
+		in the next several chapters by creating a Pidgin account for each
+		protocol.
 	</para>
 </chapter>

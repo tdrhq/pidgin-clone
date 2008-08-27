@@ -2,7 +2,8 @@ SOURCES = \
 	aimaccount.xml \
 	book.xml \
 	custom.xsl \
-	gettingstarted.xml
+	gettingstarted.xml \
+	gfdl.xml
 
 EXTRA_DIST = $(SOURCES)
 
