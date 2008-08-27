@@ -266,6 +266,46 @@ $vulnerabilities = array(
 		"fix"          => "The affected function has been patched to fix the vulnerability.",
 		"fixedversion" => "2.2.2",
 		"discoveredby" => "Jeffrey Rosen"
+	),
+	array(
+		"title"        => "MSN malformed SLP message overflow",
+		"date"         => "July 2008",
+		"cve"          => "CVE-2008-2927",
+		"summary"      => "Malformed SLP messages can cause a buffer overflow",
+		"description"  => "Multiple integer overflows in the msn_slplink_process_msg functions in the MSN protocol handler in libpurple allow remote attackers to execute arbitrary code via a malformed SLP message.",
+		"fix"          => "The affected function has been patched to fix the vulnerability.",
+		"fixedversion" => "2.4.3",
+		"discoveredby" => "Anonymous (via TippingPoint's Zero Day Initiative)"
+	),
+	array(
+		"title"        => "MSN Remote file transfer filename DoS",
+		"date"         => "25 June 2008",
+		"cve"          => "CVE-2008-2955",
+		"summary"      => "MSN file transfers with specially crafted file names can cause libpurple to crash",
+		"description"  => "A remote MSN user can cause a denial of service (crash) by sending a file with a file with a filename containing invalid characters.  The local user must then accept the file transfer to trigger a double-free.",
+		"fix"          => "A fix was applied to ensure that the double-free didn't occur.",
+		"fixedversion" => "2.4.3",
+		"discoveredby" => "Juan Pablo Lopez Yacubian"
+	),
+	array(
+		"title"        => "Remote UPnP discovery DoS",
+		"date"         => "11 May 2007",
+		"cve"          => "CVE-2008-2957",
+		"summary"      => "A malicious process could pose as a UPnP server and cause libpurple to download excessive data.",
+		"description"  => "The UPnP functionality in libpurple allows remote attackers to trigger the download of arbitrary files and cause a denial of service (memory or disk consumption) via a UDP packet that specifies an arbitrary URL.",
+		"fix"          => "UPnP related downloads are limited to 128kB",
+		"fixedversion" => "2.5.0",
+		"discoveredby" => "Andrew Hunt and Christian Grothoff"
+	),
+	array(
+		"title"        => "NSS TLS/SSL Certificates not validated",
+		"date"         => "25 July 2008",
+		"cve"          => "CVE-2008-3532",
+		"summary"      => "No validation on SSL certificates was performed for NSS SSL",
+		"description"  => "The NSS SSL implementation in libpurple does not verify SSL certificates, which makes it easier for remote attackers to trick a user into accepting an invalid server certificate for a spoofed service.",
+		"fix"          => "SSL/TLS Certificates are now verified in the NSS implementation in libpurple.",
+		"fixedversion" => "2.5.0",
+		"discoveredby" => "Josh Triplett"
 	)
 );
 /*	Template for the unfortunate future
