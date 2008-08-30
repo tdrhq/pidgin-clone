@@ -107,6 +107,8 @@ void gnt_init_colors()
 		init_pair(GNT_COLOR_HIGHLIGHT_D, GNT_COLOR_BLACK, GNT_COLOR_GRAY);
 		init_pair(GNT_COLOR_DISABLED, GNT_COLOR_GRAY, GNT_COLOR_WHITE);
 		init_pair(GNT_COLOR_URGENT, GNT_COLOR_WHITE, GNT_COLOR_RED);
+		init_pair(GNT_COLOR_MISSPELL, GNT_COLOR_WHITE, GNT_COLOR_RED);
+		init_pair(GNT_COLOR_MISSPELL_D, COLOR_RED, GNT_COLOR_GRAY);
 	}
 	else
 	{
@@ -128,6 +130,8 @@ void gnt_init_colors()
 		init_pair(GNT_COLOR_TITLE_D, COLOR_WHITE, COLOR_BLACK);
 		init_pair(GNT_COLOR_TEXT_NORMAL, COLOR_WHITE, COLOR_BLUE);
 		init_pair(GNT_COLOR_HIGHLIGHT_D, COLOR_CYAN, COLOR_BLACK);
+		init_pair(GNT_COLOR_MISSPELL, COLOR_RED, COLOR_BLUE);
+		init_pair(GNT_COLOR_MISSPELL_D, COLOR_RED, COLOR_BLACK);
 	}
 }
 
@@ -270,6 +274,10 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 				type = GNT_COLOR_DISABLED;
 			else if (strcmp(key, "urgent") == 0)
 				type = GNT_COLOR_URGENT;
+			else if (strcmp(key, "misspell") == 0)
+				type = GNT_COLOR_MISSPELL;
+			else if (strcmp(key, "misspelld") == 0)
+				type = GNT_COLOR_MISSPELL_D;
 			else {
 				g_free(key);
 				continue;
