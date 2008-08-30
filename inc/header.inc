@@ -50,7 +50,7 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
     <script src="/shared/js/ie7/ie7-standard-p.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/shared/css/ie6.css" type="text/css" />
   <![endif]-->
-  <!--[if gte IE 7]>
+  <!--[if IE 7]>
     <script defer src="/shared/js/ie7-hacks.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/shared/css/ie7.css" type="text/css" />
   <![endif]-->
