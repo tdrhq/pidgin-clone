@@ -1,6 +1,7 @@
+wms = irssi.la tiling.la
 if PURPLE_AVAILABLE
 # These custom wms depend on libpurple
-purple_wms = s.la irssi.la tiling.la
+purple_wms = s.la
 else
 purple_wms =
 endif
@@ -10,6 +11,7 @@ irssi_la_LDFLAGS         = -module -avoid-version
 tiling_la_LDFLAGS         = -module -avoid-version
 
 plugin_LTLIBRARIES = \
+	$(wms) \
 	$(purple_wms)
  
 plugindir = $(libdir)/gnt
@@ -17,18 +19,18 @@ plugindir = $(libdir)/gnt
 irssi_la_SOURCES = irssi.c
 irssi_la_LIBADD =  \
   $(GLIB_LIBS) \
-  $(top_builddir)/finch/libgnt/libgnt.la
+  ../libgnt.la
 
 s_la_SOURCES = s.c
 s_la_LIBADD =  \
   $(GLIB_LIBS) \
-  $(top_builddir)/finch/libgnt/libgnt.la \
+  ../libgnt.la \
   $(top_builddir)/libpurple/libpurple.la
 
 tiling_la_SOURCES = tiling.c
 tiling_la_LIBADD =  \
   $(GLIB_LIBS) \
-  $(top_builddir)/libgnt.la
+  ../libgnt.la
 
 EXTRA_DIST = 
 
