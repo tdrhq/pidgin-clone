@@ -1,12 +1,13 @@
 if PURPLE_AVAILABLE
 # These custom wms depend on libpurple
-purple_wms = s.la irssi.la
+purple_wms = s.la irssi.la tiling.la
 else
 purple_wms =
 endif
 
 s_la_LDFLAGS             = -module -avoid-version
 irssi_la_LDFLAGS         = -module -avoid-version
+tiling_la_LDFLAGS         = -module -avoid-version
 
 plugin_LTLIBRARIES = \
 	$(purple_wms)
@@ -23,6 +24,11 @@ s_la_LIBADD =  \
   $(GLIB_LIBS) \
   $(top_builddir)/finch/libgnt/libgnt.la \
   $(top_builddir)/libpurple/libpurple.la
+
+tiling_la_SOURCES = tiling.c
+tiling_la_LIBADD =  \
+  $(GLIB_LIBS) \
+  $(top_builddir)/libgnt.la
 
 EXTRA_DIST = 
 

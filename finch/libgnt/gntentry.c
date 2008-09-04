@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "config.h"
+
 #include <ctype.h>
 #include <string.h>
 
@@ -29,6 +31,13 @@
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
+#include "gntmenu.h"
+#include "gntmenuitem.h"
+#include "gntmenuitemcheck.h"
+
+#ifdef USE_ENCHANT
+#include <enchant/enchant.h>
+#endif
 
 enum
 {
@@ -54,12 +63,51 @@ struct _GntEntryKillRing
 	GntEntryAction last;
 };
 
+#ifdef USE_ENCHANT
+typedef struct _GntEntryWord
+{
+	int start;				/**< start of word relative to entry->start */
+	int end_offset;			/**< end of word relative to start of word */
+	gboolean checked_spell; /**< Flag to indicate this word has been spell checked */
+	gboolean misspelled;    /**< Flag to indicate the word is misspelled */
+	struct _GntEntryWord *next;
+	struct _GntEntryWord *prev;
+} GntEntryWord;
+
+/* TODO: move these somewhere else */
+static void gnt_entry_free_word(GntEntryWord *w);
+static GntEntryWord *gnt_entry_word_new(void);
+static GntEntryWord *gnt_entry_word_list_append(GntEntryWord *list, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_prepend(GntEntryWord *list, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_insert_after(GntEntryWord *list, GntEntryWord *sibling, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_insert_before(GntEntryWord *list, GntEntryWord *sibling, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_pluck(GntEntryWord *list, GntEntryWord *word);
+static GntEntryWord *gnt_entry_word_list_free(GntEntryWord *list);
+#endif
+
+struct _GntEntrySpell
+{
+#ifdef USE_ENCHANT
+	EnchantBroker *broker;
+	EnchantDict *dict;
+	char *lang;
+	gboolean enable;
+	GntWidget *context;        /**< Context menu to correct spelling or change language */
+	GntEntryWord *word_list;   /**< Linked list of words */
+	GntEntryWord *cursor_word; /**< Word under the cursor position */
+	GntEntryWord *scroll_word; /**< Word under the scroll position */
+#endif
+};
+
 static guint signals[SIGS] = { 0 };
 
 static GntWidgetClass *parent_class = NULL;
 
 static gboolean gnt_entry_key_pressed(GntWidget *widget, const char *text);
 static void gnt_entry_set_text_internal(GntEntry *entry, const char *text);
+
+static GntEntryWord *gnt_entry_parse_words(GntEntry *entry);
+static void spell_check_words(GntEntry *entry);
 
 static gboolean
 update_kill_ring(GntEntry *entry, GntEntryAction action, const char *text, int len)
@@ -174,6 +222,28 @@ max_common_prefix(const char *s, const char *t)
 	return f - s;
 }
 
+static char *
+set_cursor_position(GntEntry *entry, char *pos)
+{
+#ifdef USE_ENCHANT
+	if (entry->spell && entry->spell->enable) {
+	}
+#endif
+	entry->cursor = pos;
+	return pos;
+}
+
+static char *
+set_scroll_position(GntEntry *entry, char *pos)
+{
+#ifdef USE_ENCHANT
+	if (entry->spell && entry->spell->enable) {
+	}
+#endif
+	entry->scroll = pos;
+	return pos;
+}
+
 static gboolean
 show_suggest_dropdown(GntEntry *entry)
 {
@@ -265,6 +335,100 @@ show_suggest_dropdown(GntEntry *entry)
 	return TRUE;
 }
 
+#ifdef USE_ENCHANT
+static gboolean
+is_word_break(char *prev, char *wc)
+{
+	/* TODO: add pango code here */
+	gunichar uc = g_utf8_get_char(wc);
+	return g_unichar_isspace(uc) || g_unichar_ispunct(uc);
+}
+
+/* copy of get_beginning_of_word, but not GntEntry specific
+ * TODO: refactor with get_beginning_of_word
+ */
+static char *
+get_beginning_of_prev_word(char *here, char *start)
+{
+	char *s = here;
+	while (s > start)
+	{
+		char *t = g_utf8_find_prev_char(start, s);
+		if (is_word_break(start, t))
+			break;
+		s = t;
+	}
+	return s;
+}
+
+static char *
+get_beginning_of_next_word(char *here, char *end)
+{
+	char *s = here;
+	char *t;
+	gboolean got_space;
+
+	got_space = is_word_break(NULL, s);
+	while (s < end && !got_space) {
+		t = g_utf8_find_next_char(s, end);
+		if (is_word_break(NULL, t))
+			got_space = TRUE;
+		s = t;
+	}
+	if (got_space) {
+		while (s < end) {
+			t = g_utf8_find_next_char(s, end);
+			s = t;
+			if (!t)
+				break;
+			if (!is_word_break(NULL, t))
+				break;
+		}
+	} else {
+		s = NULL;
+	}
+	return s;
+}
+
+static char *
+get_end_of_word(char *here, char *end)
+{
+	char *s = here;
+	char *t;
+
+	while (s < end) {
+		t = g_utf8_find_next_char(s, end);
+		if (!t || is_word_break(NULL, t))
+			break;
+		s = t;
+	}
+	return s;
+}
+
+static gboolean
+check_word(GntEntry *entry, char *start, char *end)
+{
+	gboolean retval = TRUE;
+
+	if (!entry->spell->dict)
+		return FALSE;
+
+	if (g_unichar_isdigit(*start) == FALSE) { /* don't check numbers */
+		if (enchant_dict_check(entry->spell->dict, start, end - start + 1) != 0) {
+			retval = FALSE;
+		}
+	}
+
+	{
+		char *w = g_strndup(start, end - start + 1);
+		g_printerr("XX: Checking %s\n", w);
+		g_free(w);
+	}
+
+	return retval;
+}
+#endif
+
 static void
 gnt_entry_draw(GntWidget *widget)
 {
@@ -282,9 +446,51 @@ gnt_entry_draw(GntWidget *widget)
 		mvwhline(widget->window, 0, 0, gnt_ascii_only() ? '*' : ACS_BULLET,
 				g_utf8_pointer_to_offset(entry->scroll, entry->end));
 	}
-	else
-		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+	else {
+#ifdef USE_ENCHANT
+		int miss_color;
+		int offset;
+		GntEntryWord *it = entry->spell->word_list;
+		char *prev = entry->scroll;
 
+		if (focus)
+			miss_color = gnt_color_pair(GNT_COLOR_MISSPELL);
+		else
+			miss_color = gnt_color_pair(GNT_COLOR_MISSPELL_D);
+		/* only spell check if enabled and box isn't empty */
+		if (entry->spell->enable && (entry->start != entry->end)) {
+			wmove(widget->window, 0, 0);
+			/* iterate through the entire word list */
+			while (it) {
+				/* print the whitespace between end of previous word and start of current */
+				if (prev < (entry->start + it->start)) {
+					wattroff(widget->window, miss_color);
+					waddnstr(widget->window, prev, (entry->start + it->start) - prev);
+				}
+				prev = entry->start + it->start + it->end_offset + 1;
+
+				/* TODO: special case where scroll is in middle of word */
+				if (it->checked_spell && it->misspelled) {
+					wattron(widget->window, miss_color);
+				} else {
+					wattroff(widget->window, miss_color);
+				}
+				waddnstr(widget->window, entry->start + it->start, it->end_offset + 1);
+
+				it = it->next;
+			}
+			if (prev <= entry->end)
+				waddnstr(widget->window, prev, entry->end - prev + 1);
+
+		} else {
+			wattroff(widget->window, miss_color);
+			mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+		}
+		wattroff(widget->window, miss_color);
+#else
+		mvwprintw(widget->window, 0, 0, "%s", entry->scroll);
+#endif
+	}
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
 		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
@@ -333,9 +539,9 @@ move_back(GntBindable *bind, GList *null)
 	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->cursor <= entry->start)
 		return FALSE;
-	entry->cursor = g_utf8_find_prev_char(entry->start, entry->cursor);
+	set_cursor_position(entry, g_utf8_find_prev_char(entry->start, entry->cursor));
 	if (entry->cursor < entry->scroll)
-		entry->scroll = entry->cursor;
+		set_scroll_position(entry, entry->cursor);
 	update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
 	entry_redraw(GNT_WIDGET(entry));
 	return TRUE;
@@ -347,9 +553,9 @@ move_forward(GntBindable *bind, GList *list)
 	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->cursor >= entry->end)
 		return FALSE;
-	entry->cursor = g_utf8_find_next_char(entry->cursor, NULL);
+	set_cursor_position(entry, g_utf8_find_next_char(entry->cursor, NULL));
 	while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= GNT_WIDGET(entry)->priv.width)
-		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+		set_scroll_position(entry, g_utf8_find_next_char(entry->scroll, NULL));
 	update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
 	entry_redraw(GNT_WIDGET(entry));
 	return TRUE;
@@ -366,13 +572,13 @@ backspace(GntBindable *bind, GList *null)
 
 	len = entry->cursor - g_utf8_find_prev_char(entry->start, entry->cursor);
 	update_kill_ring(entry, ENTRY_DEL_BWD_CHAR, entry->cursor, -len);
-	entry->cursor -= len;
+	set_cursor_position(entry, entry->cursor - len);
 
 	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor);
 	entry->end -= len;
 
 	if (entry->scroll > entry->start)
-		entry->scroll = g_utf8_find_prev_char(entry->start, entry->scroll);
+		set_scroll_position(entry, g_utf8_find_prev_char(entry->start, entry->scroll));
 
 	entry_redraw(GNT_WIDGET(entry));
 	if (entry->ddown)
@@ -406,7 +612,7 @@ static gboolean
 move_start(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
-	entry->scroll = entry->cursor = entry->start;
+	set_scroll_position(entry, set_cursor_position(entry, entry->start));
 	entry_redraw(GNT_WIDGET(entry));
 	update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
 	return TRUE;
@@ -416,10 +622,10 @@ static gboolean
 move_end(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
-	entry->cursor = entry->end;
+	set_cursor_position(entry, entry->end);
 	/* This should be better than this */
 	while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= GNT_WIDGET(entry)->priv.width)
-		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+		set_scroll_position(entry, g_utf8_find_next_char(entry->scroll, NULL));
 	entry_redraw(GNT_WIDGET(entry));
 	update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
 	return TRUE;
@@ -530,7 +736,7 @@ del_to_home(GntBindable *bind, GList *null)
 	update_kill_ring(entry, ENTRY_DEL_BOL, entry->start, entry->cursor - entry->start);
 	memmove(entry->start, entry->cursor, entry->end - entry->cursor);
 	entry->end -= (entry->cursor - entry->start);
-	entry->cursor = entry->scroll = entry->start;
+	set_cursor_position(entry, set_scroll_position(entry, entry->start));
 	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
 	entry_redraw(GNT_WIDGET(bind));
 	entry_text_changed(entry);
@@ -601,9 +807,9 @@ move_back_word(GntBindable *bind, GList *null)
 	if (iter < entry->start)
 		return TRUE;
 	iter = begin_word(iter, entry->start);
-	entry->cursor = (char*)iter;
+	set_cursor_position(entry, (char*)iter);
 	if (entry->cursor < entry->scroll)
-		entry->scroll = entry->cursor;
+		set_scroll_position(entry, entry->cursor);
 	update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
 	entry_redraw(GNT_WIDGET(bind));
 	return TRUE;
@@ -624,11 +830,11 @@ del_prev_word(GntBindable *bind, GList *null)
 	update_kill_ring(entry, ENTRY_DEL_BWD_WORD, iter, count);
 	memmove(iter, entry->cursor, entry->end - entry->cursor);
 	entry->end -= count;
-	entry->cursor = iter;
+	set_cursor_position(entry, iter);
 	if (entry->cursor <= entry->scroll) {
-		entry->scroll = entry->cursor - widget->priv.width + 2;
+		set_scroll_position(entry, entry->cursor - widget->priv.width + 2);
 		if (entry->scroll < entry->start)
-			entry->scroll = entry->start;
+			set_scroll_position(entry, entry->start);
 	}
 	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
 	entry_redraw(widget);
@@ -642,9 +848,9 @@ move_forward_word(GntBindable *bind, GList *list)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
 	GntWidget *widget = GNT_WIDGET(bind);
-	entry->cursor = (char *)next_begin_word(entry->cursor, entry->end);
+	set_cursor_position(entry, (char *)next_begin_word(entry->cursor, entry->end));
 	while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= widget->priv.width) {
-		entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+		set_scroll_position(entry, g_utf8_find_next_char(entry->scroll, NULL));
 	}
 	update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
 	entry_redraw(widget);
@@ -681,7 +887,7 @@ transpose_chars(GntBindable *bind, GList *null)
 		return FALSE;
 
 	if (!*entry->cursor)
-		entry->cursor = g_utf8_find_prev_char(entry->start, entry->cursor);
+		set_cursor_position(entry, g_utf8_find_prev_char(entry->start, entry->cursor));
 
 	current = entry->cursor;
 	prev = g_utf8_find_prev_char(entry->start, entry->cursor);
@@ -776,16 +982,24 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				else
 					*entry->cursor = *str;
 				entry->cursor++;
+#ifdef USE_ENCHANT
+				/* XXX: If the character is a word separator, then split the
+				 * cursor_word, and update word_list */
+				if (entry->spell && entry->spell->cursor_word)
+					entry->spell->cursor_word->end_offset++;
+#endif
 				str++;
 			}
 
 			while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= widget->priv.width)
-				entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+				set_scroll_position(entry, g_utf8_find_next_char(entry->scroll, NULL));
 
 			if (entry->ddown)
 				show_suggest_dropdown(entry);
 		}
 		update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
+		/* TODO: don't reparse everything everytime a key is pressed */
+		/*entry->spell->word_list = gnt_entry_parse_words(entry);*/
 		entry_redraw(widget);
 		entry_text_changed(entry);
 		return TRUE;
@@ -828,6 +1042,17 @@ gnt_entry_destroy(GntWidget *widget)
 	if (entry->ddown)
 	{
 		gnt_widget_destroy(entry->ddown->parent);
+	}
+
+	if (entry->spell) {
+#ifdef USE_ENCHANT
+		if (entry->spell->broker) {
+			if (entry->spell->dict)
+				enchant_broker_free_dict(entry->spell->broker, entry->spell->dict);
+			enchant_broker_free(entry->spell->broker);
+		}
+#endif
+		g_free(entry->spell);
 	}
 
 	jail_killring(entry->killring);
@@ -946,6 +1171,262 @@ new_killring(void)
 	return kr;
 }
 
+#ifdef USE_ENCHANT
+static void
+set_spell_language(GntEntrySpell *spell, const char *lang)
+{
+	const char *err;
+
+	if (!spell->lang || (spell->lang && (strcmp(lang, spell->lang) != 0))) {
+		if (spell->lang) {
+			g_free(spell->lang);
+		}
+		spell->lang = g_strdup(lang);
+		if (spell->broker) {
+			if (spell->dict)
+				enchant_broker_free_dict(spell->broker, spell->dict);
+
+			spell->dict = enchant_broker_request_dict(spell->broker, lang);
+
+			if (spell->dict == NULL) {
+				err = enchant_broker_get_error(spell->broker);
+				if (err != NULL) {
+					g_warning("GntEntry: couldn't get dictionary for %s: %s\n", lang, err);
+				} else {
+					g_warning("GntEntry: couldn't get dictionary for %s\n", lang);
+				}
+			}
+		}
+	}
+}
+#endif
+
+static GntEntrySpell *
+new_spell(void)
+{
+	GntEntrySpell *sp = NULL;
+#ifdef USE_ENCHANT
+	const char *lang;
+
+	sp = g_new0(GntEntrySpell, 1);
+	sp->broker = enchant_broker_init();
+	if (sp->broker == NULL) {
+		g_warning("GntEntry: error enchant_broker_init()\n");
+	} else {
+		lang = g_getenv("LANG");
+		if (lang) {
+			if (g_strncasecmp(lang, "C", 1) == 0)
+				lang = NULL;
+			else if (lang[0] == 0)
+				lang = NULL;
+		}
+
+		if (!lang) {
+			lang = "en";
+		}
+
+		set_spell_language(sp, lang);
+	}
+
+	/* TODO: do these need to be explicitly set to NULL here? */
+	sp->word_list = NULL;
+	sp->cursor_word = NULL;
+	sp->scroll_word = NULL;
+#endif
+	return sp;
+}
+
+
+#ifdef USE_ENCHANT
+typedef struct {
+	GntEntry *entry;
+	GntMenu *sub;
+	char *lang;
+} SpellLangInfo;
+
+static void
+destroy_spell_lang_info(GntWidget *widget, SpellLangInfo *sli)
+{
+	g_free(sli->lang);
+	g_free(sli);
+}
+
+static void
+context_menu_callback(GntMenuItem *item, gpointer data)
+{
+	SpellLangInfo *cur_info = (SpellLangInfo *)data;
+	if (cur_info->entry->spell) {
+		set_spell_language(cur_info->entry->spell, cur_info->lang);
+		if (cur_info->entry->spell->enable) {
+			/* XXX: Is it necessary to recreate the word list? */
+			cur_info->entry->spell->word_list = gnt_entry_parse_words(cur_info->entry);
+		}
+		entry_redraw(GNT_WIDGET(cur_info->entry));
+	}
+}
+
+static void
+spell_suggest_menu_callback(GntMenuItem *item, gpointer data)
+{
+	GntEntry *entry = (GntEntry *) data;
+	char *start = entry->cursor;
+	char *end = entry->cursor;
+	int cur_len;
+
+	/* locate start and end chars of current word */
+	start = (char*)begin_word(start, entry->start);
+	set_cursor_position(entry, start);
+	end = (char*)next_begin_word(start, entry->end);
+	cur_len = end - start;
+
+	memmove(start, end, entry->end - end + 1);
+	entry->end -= cur_len;
+
+	gnt_entry_key_pressed(GNT_WIDGET(entry), item->text);
+}
+
+/* callback called from enchant enchant_broker_list_dicts
+ * user_data is a (SpellLangInfo *) */
+static void
+add_lang_context(const char * const lang, const char * const name, 
+        const char * const desc, const char * const file, void * user_data)
+{
+	SpellLangInfo *cur_info = (SpellLangInfo *)user_data;
+	GntMenuItem *item;
+	SpellLangInfo *spell_info = g_new(SpellLangInfo, 1);
+
+	spell_info->entry = cur_info->entry;
+	spell_info->sub = cur_info->sub;
+	spell_info->lang = g_strdup(lang);
+	/* this destroy callback will handle the spell_info and spell_info->lang frees */
+	g_signal_connect(G_OBJECT(cur_info->sub), "destroy", G_CALLBACK(destroy_spell_lang_info), spell_info);
+
+	item = gnt_menuitem_check_new(lang);
+	if (strcmp(lang, cur_info->lang) == 0)
+		gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item), TRUE);
+	gnt_menu_add_item(GNT_MENU(spell_info->sub), GNT_MENU_ITEM(item));
+	gnt_menuitem_set_callback(item, context_menu_callback, (void*)spell_info);
+}
+
+/* callback called from enchant enchant_dict_describe
+ * user_data is a (char **)
+ * the ret_lang is freed in the create_spell_menu function */
+static void
+get_cur_lang(const char * const lang, const char * const name, 
+        const char * const desc, const char * const file, void * user_data)
+{
+	char **ret_lang = (char **)user_data;
+	*ret_lang = g_strdup(lang);
+}
+
+static void
+create_spell_menu(GntMenu *menu, GntEntry *entry)
+{
+	GntMenuItem *item;
+	GntWidget *sub;
+	SpellLangInfo cur_info;
+
+	if (entry->spell && entry->spell->broker) {
+		/* create languages menu */
+		item = gnt_menuitem_new("Set Language");
+		gnt_menu_add_item(menu, GNT_MENU_ITEM(item));
+		sub = gnt_menu_new(GNT_MENU_POPUP);
+		gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+
+		cur_info.entry = entry;
+		cur_info.sub = GNT_MENU(sub);
+		/* get the current language */
+		if (entry->spell->dict)
+			enchant_dict_describe(entry->spell->dict, get_cur_lang, (void *)&(cur_info.lang));
+
+		enchant_broker_list_dicts(entry->spell->broker, add_lang_context, (void *)&cur_info);
+
+		g_free(cur_info.lang);
+	}
+}
+
+static void
+context_menu_destroyed(GntWidget *widget, GntEntry *entry)
+{
+	/* XXX: definite possible leak */
+	entry->spell->context = NULL;
+}
+
+static void
+create_spell_suggestions_menu(GntMenu *menu, GntEntry *entry, char *start, char *end)
+{
+	GntMenuItem *item;
+	GntWidget *sub;
+	char **suggs;
+	size_t n_suggs = 0;
+	int i;
+
+	if (entry->spell && entry->spell->broker) {
+		suggs = enchant_dict_suggest(entry->spell->dict, start, end - start + 1, &n_suggs);
+		if (suggs && n_suggs) {
+			item = gnt_menuitem_new("Suggestions");
+			gnt_menu_add_item(menu, item);
+			sub = gnt_menu_new(GNT_MENU_POPUP);
+			gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+			for (i = 0; i < n_suggs; i++) {
+				SpellLangInfo *spell_info = g_new(SpellLangInfo, 1);
+				item = gnt_menuitem_new(suggs[i]);
+				gnt_menu_add_item(GNT_MENU(sub), item);
+				gnt_menuitem_set_callback(item, spell_suggest_menu_callback, (void *) entry);
+			}
+			enchant_dict_free_string_list(entry->spell->dict, suggs);
+		}
+	}
+}
+
+static void
+draw_context_menu(GntEntry *entry)
+{
+	GntWidget *context = NULL;
+	int x, y;
+	char *start, *end;
+
+	if (entry->spell->context)
+		return;
+
+	entry->spell->context = context = gnt_menu_new(GNT_MENU_POPUP);
+	/*
+	g_signal_connect(G_OBJECT(context), "destroy", G_CALLBACK(context_menu_destroyed), entry);
+	g_signal_connect(G_OBJECT(context), "hide", G_CALLBACK(gnt_widget_destroy), NULL);
+	*/
+	g_signal_connect(G_OBJECT(context), "hide", G_CALLBACK(context_menu_destroyed), entry);
+
+	/* add list of suggestions */
+	start = get_beginning_of_prev_word(entry->cursor, entry->start);
+	end = get_end_of_word(start, entry->end);
+
+	if (start != end) {
+		if (!check_word(entry, start, end)) {
+			create_spell_suggestions_menu(GNT_MENU(context), entry, start, end);
+		}
+	}
+
+	/* add lanaguages menu */
+	create_spell_menu(GNT_MENU(context), entry);
+
+	/* Set the position for the popup */
+	gnt_widget_get_position(GNT_WIDGET(entry), &x, &y);
+
+	x += entry->cursor - entry->scroll;
+	y += 1;
+
+	gnt_widget_set_position(context, x, y);
+	gnt_screen_menu_show(GNT_MENU(context));
+}
+
+static gboolean
+context_menu(GntWidget *widget, GntEntry *entry)
+{
+	draw_context_menu(entry);
+	return TRUE;
+}
+#endif
+
 static void
 gnt_entry_init(GTypeInstance *instance, gpointer class)
 {
@@ -962,6 +1443,7 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 	entry->always = FALSE;
 	entry->suggests = NULL;
 	entry->killring = new_killring();
+	entry->spell = new_spell();
 
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(entry),
 			GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | GNT_WIDGET_CAN_TAKE_FOCUS);
@@ -969,6 +1451,10 @@ gnt_entry_init(GTypeInstance *instance, gpointer class)
 
 	widget->priv.minw = 3;
 	widget->priv.minh = 1;
+
+#ifdef USE_ENCHANT
+	g_signal_connect(G_OBJECT(entry), "context-menu", G_CALLBACK(context_menu), entry);
+#endif
 
 	GNTDEBUG;
 }
@@ -1041,8 +1527,8 @@ gnt_entry_set_text_internal(GntEntry *entry, const char *text)
 		snprintf(entry->start, len + 1, "%s", text);
 	entry->end = entry->start + len;
 
-	entry->scroll = entry->start + scroll;
-	entry->cursor = entry->end - cursor;
+	set_scroll_position(entry, entry->start + scroll);
+	set_cursor_position(entry, entry->end - cursor);
 
 	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(entry), GNT_WIDGET_MAPPED))
 		entry_redraw(GNT_WIDGET(entry));
@@ -1079,7 +1565,9 @@ const char *gnt_entry_get_text(GntEntry *entry)
 void gnt_entry_clear(GntEntry *entry)
 {
 	gnt_entry_set_text_internal(entry, NULL);
-	entry->scroll = entry->cursor = entry->end = entry->start;
+	entry->end = entry->start;
+	set_scroll_position(entry, entry->start);
+	set_cursor_position(entry, entry->start);
 	entry_redraw(GNT_WIDGET(entry));
 	destroy_suggest(entry);
 	entry_text_changed(entry);
@@ -1154,6 +1642,34 @@ void gnt_entry_set_always_suggest(GntEntry *entry, gboolean always)
 	entry->always = always;
 }
 
+void gnt_entry_set_spell_enable(GntEntry *entry, gboolean enable)
+{
+#ifdef USE_ENCHANT
+	if (entry->spell && entry->spell->enable != enable) {
+		entry->spell->enable = enable;
+		if (enable) {
+			entry->spell->word_list = gnt_entry_parse_words(entry);
+		}
+		entry_redraw(GNT_WIDGET(entry));
+	}
+#endif
+}
+
+void gnt_entry_set_spell_lang(GntEntry *entry, const char *lang)
+{
+#ifdef USE_ENCHANT
+	if (entry->spell) {
+		if (strcmp(lang, entry->spell->lang) != 0) {
+			set_spell_language(entry->spell, lang);
+			if (entry->spell->enable) {
+				entry->spell->word_list = gnt_entry_parse_words(entry);
+			}
+			entry_redraw(GNT_WIDGET(entry));
+		}
+	}
+#endif
+}
+
 void gnt_entry_add_suggest(GntEntry *entry, const char *text)
 {
 	GList *find;
@@ -1177,3 +1693,196 @@ void gnt_entry_remove_suggest(GntEntry *entry, const char *text)
 	}
 }
 
+#ifdef USE_ENCHANT
+static GntEntryWord *
+gnt_entry_parse_words(GntEntry *entry)
+{
+	char *s, *e;
+	int count;
+	int width;
+	GntEntryWord *word;
+	GntEntryWord *start = NULL;
+
+	if (entry->spell->word_list) {
+		/* XXX: Free entry->spell->word_list */
+		entry->spell->word_list = NULL;
+	}
+
+	/* only spell check if enabled and box isn't empty */
+	if (!entry->spell->enable || (entry->start == entry->end))
+		return start;
+
+	/* if start begins on a non-letter, find the next word */
+	if (is_word_break(entry->start, entry->start)) {
+		s = get_beginning_of_next_word(entry->start, entry->end);
+		if (!s) {
+			s = entry->end;
+		}
+	} else {
+		s = entry->start;
+	}
+#if 0
+	e = get_end_of_word(s, entry->end);
+
+	word = gnt_entry_word_new();
+	word->start = s - entry->start;
+	word->end_offset = e - s;
+	word->checked_spell = TRUE;
+	if (!check_word(entry, s, e)) {
+		word->misspelled = TRUE;
+	} else {
+		word->misspelled = FALSE;
+	}
+	/* first one is the start of the list */
+	start = word;
+	if ((entry->start + word->start <= entry->cursor) && (entry->start + word->start + word->end_offset >= entry->cursor))
+		entry->spell->cursor_word = word;
+	if ((entry->start + word->start <= entry->scroll) && (entry->start + word->start + word->end_offset >= entry->scroll))
+		entry->spell->scroll_word = word;
+
+	s = g_utf8_find_next_char(e, entry->end);
+#endif
+	while (s && s != entry->end) {
+		e = get_beginning_of_next_word(s, entry->end);
+		if (!e)
+			break;
+		/* there are more words */
+		s = e;
+		e = get_end_of_word(s, entry->end);
+
+		word = gnt_entry_word_new();
+		word->start = s - entry->start;
+		word->end_offset = e - s;
+		word->checked_spell = TRUE;
+		if ((entry->start + word->start <= entry->cursor) && (entry->start + word->start + word->end_offset >= entry->cursor))
+			entry->spell->cursor_word = word;
+		if ((entry->start + word->start <= entry->scroll) && (entry->start + word->start + word->end_offset >= entry->scroll))
+			entry->spell->scroll_word = word;
+
+		if (!check_word(entry, s, e)) {
+			word->misspelled = TRUE;
+		} else {
+			word->misspelled = FALSE;
+		}
+
+		start = gnt_entry_word_list_append(start, word);
+
+		s = g_utf8_find_next_char(e, entry->end);
+	}
+
+	return start;
+}
+
+/* the GntEntryWord linked list operators */
+/* add new element to end of list */
+/* TODO: implement this in a memory pool */
+static void
+gnt_entry_free_word(GntEntryWord *w)
+{
+	g_free(w);
+}
+
+/* TODO: implement this in a memory pool */
+static GntEntryWord *
+gnt_entry_word_new(void)
+{
+	GntEntryWord *w;
+	w = g_new0(GntEntryWord, 1);
+	return w;
+}
+
+static GntEntryWord *
+gnt_entry_word_list_append(GntEntryWord *list, GntEntryWord *word)
+{
+	GntEntryWord *it = list;
+
+	if(list) {
+		while(it->next)
+			it = it->next;
+		it->next = word;
+		word->prev = it;
+	} else {
+		word->prev = NULL;
+		word->next = NULL;
+		list = word;
+	}
+
+	return list;
+}
+
+/* add new element to beginning of list */
+static GntEntryWord *
+gnt_entry_word_list_prepend(GntEntryWord *list, GntEntryWord *word)
+{
+	if(list) {
+		word->next = list;
+		word->prev = NULL;
+		list->prev = word;
+	}
+
+	return word;
+}
+
+/* add new element to after sibling */
+static GntEntryWord *
+gnt_entry_word_list_insert_after(GntEntryWord *list, GntEntryWord *sibling, GntEntryWord *word)
+{
+	if (!list) {
+		list = word;
+	} else {
+		if(sibling->next)
+			sibling->next->prev = word;
+		word->next = sibling->next;
+		word->prev = sibling;
+		sibling->next = word;
+	}
+
+	return list;
+}
+
+/* add new element to before sibling */
+static GntEntryWord *
+gnt_entry_word_list_insert_before(GntEntryWord *list, GntEntryWord *sibling, GntEntryWord *word)
+{
+	if (!list || sibling == list) {
+		list = word;
+	} else {
+		if(sibling->prev)
+			sibling->prev->next = word;
+		word->next = sibling;
+		word->prev = sibling->prev;
+		sibling->prev = word;
+	}
+
+	return list;
+}
+
+/* add new element to before sibling */
+static GntEntryWord *
+gnt_entry_word_list_pluck(GntEntryWord *list, GntEntryWord *word)
+{
+	if (list && (word == list)) {
+		list = word->next;
+		list->prev = NULL;
+	} else {
+		word->prev->next = word->next;
+	}
+
+	return list;
+}
+
+/* remove all elements in a GntEntryWord list */
+/* TODO: should this actually return anything? */
+static GntEntryWord *
+gnt_entry_word_list_free(GntEntryWord *list)
+{
+	GntEntryWord *it = list;
+	while(it) {
+		it = it->next;
+		gnt_entry_free_word(it);
+	}
+
+	return NULL;
+}
+
+#endif /* USE_ENCHANT */
