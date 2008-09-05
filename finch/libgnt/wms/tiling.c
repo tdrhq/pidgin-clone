@@ -36,6 +36,7 @@
  *   move between splits: h,j,k,l
  *   exchange: H,J,K,L
  *   resize: r
+ *   move: m
  *   TODO:
  *   get list of non-visible windows: v
  *   get list of all windows: w
@@ -85,10 +86,10 @@ typedef struct _TilingWMClass
 } TilingWMClass;
 
 enum {
-	RESIZE_LEFT = 1,
-	RESIZE_RIGHT,
-	RESIZE_DOWN,
-	RESIZE_UP
+	DIRECTION_LEFT = 1,
+	DIRECTION_RIGHT,
+	DIRECTION_DOWN,
+	DIRECTION_UP
 };
 
 GType tiling_wm_get_gtype(void);
@@ -275,6 +276,25 @@ tiling_wm_close_window(GntWM *wm, GntWidget *win)
 	return FALSE;
 }
 
+static void
+tiling_wm_terminal_refresh(GntWM *wm)
+{
+	TilingWM *twm = (TilingWM*)wm;
+	int xmax = getmaxx(stdscr), ymax = getmaxy(stdscr) - 1;
+	if (twm->root.width != xmax) {
+		twm_propagate_x_width_change(wm, &twm->root, 0, xmax - twm->root.width);
+		if (twm->current->window) {
+			window_reverse(twm->current->window, TRUE, wm);
+		}
+	}
+	if (twm->root.height != ymax) {
+		twm_propagate_y_height_change(wm, &twm->root, 0, ymax - twm->root.height);
+		if (twm->current->window) {
+			window_reverse(twm->current->window, TRUE, wm);
+		}
+	}
+}
+
 static GntWidget *
 get_next_window(GntWM *wm, GntWidget *win, int direction)
 {
@@ -451,8 +471,10 @@ remove_split(GntBindable *bindable, GList *null)
 			twm->current = parent;
 		}
 
-		twm_move_window_to_frame(twm->current->window, twm->current);
-		window_reverse(twm->current->window, TRUE, wm);
+		if (twm->current->window) {
+			twm_move_window_to_frame(twm->current->window, twm->current);
+			window_reverse(twm->current->window, TRUE, wm);
+		}
 		g_free(current);
 		g_free(sibling);
 	}
@@ -606,14 +628,12 @@ twm_move_right_down(GntBindable *bindable, GList *list)
 	return TRUE;
 }
 
-static gboolean
-twm_exchange_left_up(GntBindable *bindable, GList *list)
+static void
+twm_exchange_left_up(GntWM *wm, int type)
 {
-	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *left;
 	GntWidget *tmp_win;
-	int type = GPOINTER_TO_INT(list->data);
 
 	left = find_parent_with_left(twm->current, type);
 	if (left) {
@@ -631,19 +651,25 @@ twm_exchange_left_up(GntBindable *bindable, GList *list)
 		}
 		twm->current = left;
 	}
+}
+
+static gboolean
+twm_exchange_left_up_key(GntBindable *bindable, GList *list)
+{
+	GntWM *wm = GNT_WM(bindable);
+	int type = GPOINTER_TO_INT(list->data);
+
+	twm_exchange_left_up(wm, type);
 
 	return TRUE;
 }
 
-
-static gboolean
-twm_exchange_right_down(GntBindable *bindable, GList *list)
+static void
+twm_exchange_right_down(GntWM *wm, int type)
 {
-	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *right;
 	GntWidget *tmp_win;
-	int type = GPOINTER_TO_INT(list->data);
 
 	right = find_parent_with_right(twm->current, type);
 	if (right) {
@@ -661,40 +687,53 @@ twm_exchange_right_down(GntBindable *bindable, GList *list)
 		}
 		twm->current = right;
 	}
+}
+
+static gboolean
+twm_exchange_right_down_key(GntBindable *bindable, GList *list)
+{
+	GntWM *wm = GNT_WM(bindable);
+	int type = GPOINTER_TO_INT(list->data);
+
+	twm_exchange_right_down(wm, type);
 
 	return TRUE;
 }
 
 static gboolean
-twm_resize_start(GntBindable *bindable, GList *null)
+twm_resize_move_start(GntBindable *bindable, GList *list)
 {
 	GntWM *wm = GNT_WM(bindable);
+	int mode = GPOINTER_TO_INT(list->data);
+
 	if (wm->_list.window || wm->menu)
 		return TRUE;
 	if (!wm->cws->ordered)
 		return TRUE;
 
-	wm->mode = GNT_KP_MODE_RESIZE;
+	wm->mode = mode;
 
 	return TRUE;
 }
 
 static gboolean
-twm_resize(GntBindable *bindable, GList *list)
+twm_resize_move(GntBindable *bindable, GList *list)
 {
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *frame;
 	int direction = GPOINTER_TO_INT(list->data);
 
+	/* resize mode */
 	if (wm->mode == GNT_KP_MODE_RESIZE) {
+		/* search up for the youngest child of the appropriate split type */
 		switch (direction) {
-			case RESIZE_LEFT:
-			case RESIZE_RIGHT:
+			case DIRECTION_LEFT:
+			case DIRECTION_RIGHT:
 				frame = find_child_of_type(twm->current, FRAME_SPLIT_H);
 				break;
-			case RESIZE_UP:
-			case RESIZE_DOWN:
+			case DIRECTION_UP:
+			case DIRECTION_DOWN:
 				frame = find_child_of_type(twm->current, FRAME_SPLIT_V);
 				break;
 		}
@@ -702,7 +741,8 @@ twm_resize(GntBindable *bindable, GList *list)
 		if (frame) {
 			int xmin = 0, ymin = 0, xmax = getmaxx(stdscr), ymax = getmaxy(stdscr) - 1;
 			switch (direction) {
-				case RESIZE_LEFT:
+				/* left decreases the width of current frame */
+				case DIRECTION_LEFT:
 					if (frame->width > xmin) {
 						if (frame->x < frame->sibling->x) {
 							twm_propagate_x_width_change(wm, frame, 0, -1);
@@ -713,7 +753,8 @@ twm_resize(GntBindable *bindable, GList *list)
 						}
 					}
 					break;
-				case RESIZE_RIGHT:
+				/* right increases the width of current frame */
+				case DIRECTION_RIGHT:
 					if (frame->width < xmax) {
 						if (frame->x < frame->sibling->x) {
 							twm_propagate_x_width_change(wm, frame, 0, 1);
@@ -724,7 +765,8 @@ twm_resize(GntBindable *bindable, GList *list)
 						}
 					}
 					break;
-				case RESIZE_UP:
+				/* up decreases the height of current frame */
+				case DIRECTION_UP:
 					if (frame->height > ymin) {
 						if (frame->y < frame->sibling->y) {
 							twm_propagate_y_height_change(wm, frame, 0, -1);
@@ -735,7 +777,8 @@ twm_resize(GntBindable *bindable, GList *list)
 						}
 					}
 					break;
-				case RESIZE_DOWN:
+				/* down increases the height of current frame */
+				case DIRECTION_DOWN:
 					if (frame->height < ymax) {
 						if (frame->y < frame->sibling->y) {
 							twm_propagate_y_height_change(wm, frame, 0, 1);
@@ -752,6 +795,25 @@ twm_resize(GntBindable *bindable, GList *list)
 			}
 		}
 		return TRUE;
+	} else if (wm->mode == GNT_KP_MODE_MOVE) {
+		/* move mode */
+		switch (direction) {
+			case DIRECTION_LEFT:
+				twm_exchange_left_up(wm, FRAME_SPLIT_H);
+				break;
+			case DIRECTION_RIGHT:
+				twm_exchange_right_down(wm, FRAME_SPLIT_H);
+				break;
+			case DIRECTION_UP:
+				twm_exchange_left_up(wm, FRAME_SPLIT_V);
+				break;
+			case DIRECTION_DOWN:
+				twm_exchange_right_down(wm, FRAME_SPLIT_V);
+				break;
+		}
+		if (twm->current->window) {
+			window_reverse(twm->current->window, TRUE, wm);
+		}
 	}
 
 	return FALSE;
@@ -768,6 +830,7 @@ tiling_wm_class_init(TilingWMClass *klass)
 	pclass->window_resize_confirm = tiling_wm_window_resize_confirm;
 	pclass->window_move_confirm = tiling_wm_window_move_confirm;
 	pclass->close_window = tiling_wm_close_window;
+	pclass->terminal_refresh = tiling_wm_terminal_refresh;
 
 	/* moving between windows */
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "next-window",
@@ -797,25 +860,27 @@ tiling_wm_class_init(TilingWMClass *klass)
 
 	/* exchange windows between frames */
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "exchange-left",
-			twm_exchange_left_up, "\033" "H", GINT_TO_POINTER(FRAME_SPLIT_H), NULL);
+			twm_exchange_left_up_key, "\033" "H", GINT_TO_POINTER(FRAME_SPLIT_H), NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "exchange-right",
-			twm_exchange_right_down, "\033" "L", GINT_TO_POINTER(FRAME_SPLIT_H), NULL);
+			twm_exchange_right_down_key, "\033" "L", GINT_TO_POINTER(FRAME_SPLIT_H), NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "exchange-down",
-			twm_exchange_right_down, "\033" "J", GINT_TO_POINTER(FRAME_SPLIT_V), NULL);
+			twm_exchange_right_down_key, "\033" "J", GINT_TO_POINTER(FRAME_SPLIT_V), NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "exchange-up",
-			twm_exchange_left_up, "\033" "K", GINT_TO_POINTER(FRAME_SPLIT_V), NULL);
+			twm_exchange_left_up_key, "\033" "K", GINT_TO_POINTER(FRAME_SPLIT_V), NULL);
 
-	/* resizing */
+	/* resizing and moving */
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "resize-start",
-			twm_resize_start, "\033" "r", NULL, NULL);
+			twm_resize_move_start, "\033" "r", GINT_TO_POINTER(GNT_KP_MODE_RESIZE), NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "move-start",
+			twm_resize_move_start, "\033" "m", GINT_TO_POINTER(GNT_KP_MODE_MOVE), NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "resize-left",
-			twm_resize, GNT_KEY_LEFT, GINT_TO_POINTER(RESIZE_LEFT), NULL);
+			twm_resize_move, GNT_KEY_LEFT, GINT_TO_POINTER(DIRECTION_LEFT), NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "resize-right",
-			twm_resize, GNT_KEY_RIGHT, GINT_TO_POINTER(RESIZE_RIGHT), NULL);
+			twm_resize_move, GNT_KEY_RIGHT, GINT_TO_POINTER(DIRECTION_RIGHT), NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "resize-down",
-			twm_resize, GNT_KEY_DOWN, GINT_TO_POINTER(RESIZE_DOWN), NULL);
+			twm_resize_move, GNT_KEY_DOWN, GINT_TO_POINTER(DIRECTION_DOWN), NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "resize-up",
-			twm_resize, GNT_KEY_UP, GINT_TO_POINTER(RESIZE_UP), NULL);
+			twm_resize_move, GNT_KEY_UP, GINT_TO_POINTER(DIRECTION_UP), NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;
@@ -837,6 +902,7 @@ void gntwm_init(GntWM **wm)
 	twm->root.right_bottom = NULL;
 	twm->root.sibling = NULL;
 	twm->root.type = FRAME_SPLIT_NONE;
+	twm->root.window = NULL;
 	twm->current = &twm->root;
 }
 
