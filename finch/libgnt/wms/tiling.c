@@ -252,8 +252,10 @@ tiling_wm_new_window(GntWM *wm, GntWidget *win)
 		}
 		twm->current->window = win;
 		twm_show_window_in_frame(wm, win, twm->current);
+		window_reverse(win, TRUE, wm);
 	}
 	org_new_window(wm, win);
+	gnt_wm_raise_window(wm, win);
 }
 
 static gboolean
