@@ -205,8 +205,6 @@ twm_propagate_y_height_change(GntWM *wm, TilingFrame *frame, int d_y, int d_heig
 	frame->height += d_height;
 	switch (frame->type) {
 		case FRAME_SPLIT_NONE:
-			frame->y += d_y;
-			frame->height += d_height;
 			if (frame->window) {
 				twm_move_window_to_frame(frame->window, frame);
 			}
