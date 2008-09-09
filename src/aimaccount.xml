@@ -1,13 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter id="aimaccount">
+<sect1 id="aimaccount">
 	<title>Adding an AIM account</title>
+
+	<para><emphasis role="bold">About AIM</emphasis></para>
+
+	<para>
+		AIM, the AOL Instant Messenger, is one of the older public IM networks,
+		and in our experience one of the most reliable.  It's the first protocol
+		Pidgin ever supported.  AOL users can talk on the AIM network, but
+		AIM-only users far outnumber them.  AIM also supports interoperability
+		with ICQ, including messaging and adding ICQ users to the AIM buddy
+		list.
+	</para>
+
+	<para>
+		AIM uses the OSCAR protocol, which has recently been opened to those IM
+		client developers who agree to the terms of use surrounding the API and
+		documentation made available.  ICQ shares the OSCAR protocol with AIM,
+		as well as overlapping servers, which is the basis of the cross-service
+		interoperability just mentioned.  We show two protocol entries, one for
+		AIM and one for ICQ, as a matter of convenience, as few people would
+		understand what OSCAR meant if we listed that instead. :)
+	</para>
+
+	<para><emphasis role="bold">Adding an AIM account</emphasis></para>
 
 	<para>
 		To add an AIM account, click &quot;Add&quot; on the &quot;Accounts&quot;
 		window.  The following appears:
 		<figure>
 			<title>Add Account Dialog</title>
-			<graphic fileref="../images/addaccountdialog.png"/>
+			<graphic fileref="../src/images/addaimaccount.png"/>
 		</figure>
 	</para>
 
@@ -82,11 +105,17 @@
 	</para>
 
 	<para>
+		You probably noticed that there is an &quot;Advanced&quot; tab on this
+		window.  You can safely ignore this for now.  We'll come back to it and
+		explain more later.
+	</para>
+
+	<para>
 		Now that we've gone over the basics, let's see what a typical AIM account
 		might look like:
 		<figure>
 			<title>A Configured AIM Account</title>
-			<graphic fileref="../images/populatedaimaccount.png"/>
+			<graphic fileref="../src/images/populatedaimaccount.png"/>
 		</figure>
 	</para>
-</chapter>
+</sect1>

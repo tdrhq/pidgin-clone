@@ -6,8 +6,8 @@ AC_PATH_PROG(XSLTPROC, [xsltproc])
 
 AC_OUTPUT([
 	Makefile
-	images/Makefile
-	xml/Makefile
-	xml/custom.xsl
+	src/custom.xsl
+	src/Makefile
+	src/images/Makefile
 ])
 

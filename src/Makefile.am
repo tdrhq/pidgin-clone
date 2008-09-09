@@ -1,9 +1,15 @@
+SUBDIRS = images
+
 SOURCES = \
+	addingaccounts.xml \
 	aimaccount.xml \
+	bonjouraccount.xml \
 	book.xml \
 	custom.xsl \
 	gettingstarted.xml \
-	gfdl.xml
+	gfdl.xml \
+	xmppaccount.xml \
+	yahooaccount.xml
 
 EXTRA_DIST = $(SOURCES)
 

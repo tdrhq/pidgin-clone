@@ -20,11 +20,6 @@
 			<ulink url="mailto:devel@pidgin.im">devel@pidgin.im</ulink>.
 		</para>
 
-		<!--
-			Show that this "book" is licensed under the GFDL, as required
-			by said license
-		-->
-
 		<para><emphasis role="bold">License</emphasis></para>
 
 		<para>
@@ -41,12 +36,7 @@
 	</sect1>
 
 	<xi:include href="gettingstarted.xml"/>
-	<xi:include href="aimaccount.xml"/>
-	<xi:include href="bonjouraccount.xml"/>
+	<xi:include href="addingaccounts.xml"/>
 
-	<!--
-		Include the GFDL as the last chapter - the license requires that its
-		text appear as part of the work
-	-->
 	<xi:include href="gfdl.xml"/>
 </book>
