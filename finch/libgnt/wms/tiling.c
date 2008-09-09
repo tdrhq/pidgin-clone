@@ -255,7 +255,9 @@ tiling_wm_new_window(GntWM *wm, GntWidget *win)
 		window_reverse(win, TRUE, wm);
 	}
 	org_new_window(wm, win);
-	gnt_wm_raise_window(wm, win);
+	if (!GNT_IS_MENU(win) && !GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
+		gnt_wm_raise_window(wm, win);
+	}
 }
 
 static gboolean
