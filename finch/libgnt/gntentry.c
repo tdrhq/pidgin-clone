@@ -1651,6 +1651,10 @@ GntWidget *gnt_entry_new(const char *text)
 	GntEntry *entry = GNT_ENTRY(widget);
 
 	gnt_entry_set_text_internal(entry, text);
+#ifdef USE_ENCHANT
+	if (text)
+		gnt_entry_parse_words(entry);
+#endif
 
 	return widget;
 }
@@ -1660,6 +1664,11 @@ gnt_entry_set_text_internal(GntEntry *entry, const char *text)
 {
 	int len;
 	int scroll, cursor;
+	gboolean changed = FALSE;
+
+	if (strncmp(SAFE(text), entry->start, entry->end - entry->start) != 0 ||
+			(entry->end == entry->start && SAFE(text)[0] != '\0'))
+		changed = TRUE;
 
 	g_free(entry->start);
 
@@ -1681,6 +1690,10 @@ gnt_entry_set_text_internal(GntEntry *entry, const char *text)
 	if (text)
 		snprintf(entry->start, len + 1, "%s", text);
 	entry->end = entry->start + len;
+#ifdef USE_ENCHANT
+	if (changed)
+		gnt_entry_parse_words(entry);
+#endif
 
 	set_scroll_position(entry, entry->start + scroll);
 	set_cursor_position(entry, entry->end - cursor);
@@ -1858,6 +1871,8 @@ gnt_entry_parse_words(GntEntry *entry)
 		g_free(start);
 	}
 	entry->spell->word_list = NULL;
+	entry->spell->cursor_word = NULL;
+	entry->spell->scroll_word = NULL;
 
 	/* only spell check if enabled and box isn't empty */
 	if (!entry->spell->enable || (entry->start == entry->end))
@@ -1895,7 +1910,7 @@ gnt_entry_parse_words(GntEntry *entry)
 		s = g_utf8_find_next_char(e, entry->end);
 	}
 
-	return start;
+	return (entry->spell->word_list = start);
 }
 
 /* the GntEntryWord linked list operators */
