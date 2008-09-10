@@ -239,7 +239,8 @@ print_words(GntEntry *e, const char *t)
 
 /* 'from' to 'to' (inclusive for both) was removed */
 static void
-entry_removed_range(GntEntry *entry, const char *from, const char *to)
+entry_removed_range(GntEntry *entry, const char *from, const char *to,
+		gboolean setcursor)
 {
 #ifdef USE_ENCHANT
 	GntEntryWord *w, *next;
@@ -298,7 +299,8 @@ entry_removed_range(GntEntry *entry, const char *from, const char *to)
 	for (; w; w = w->next) {
 		w->start -= to - rstart + 1;
 	}
-	set_cursor_position(entry, entry->cursor);
+	if (setcursor)
+		set_cursor_position(entry, entry->cursor);
 	set_scroll_position(entry, entry->scroll);
 	print_words(entry, "range");
 #endif
@@ -682,7 +684,7 @@ backspace(GntBindable *bind, GList *null)
 	update_kill_ring(entry, ENTRY_DEL_BWD_CHAR, entry->cursor, -len);
 
 	memmove(entry->cursor - len, entry->cursor, entry->end - entry->cursor + len);
-	entry_removed_range(entry, entry->cursor - len, entry->cursor - 1);
+	entry_removed_range(entry, entry->cursor - len, entry->cursor - 1, FALSE);
 	set_cursor_position(entry, entry->cursor - len);
 	entry->end -= len;
 
@@ -708,7 +710,7 @@ delkey(GntBindable *bind, GList *null)
 	len = g_utf8_find_next_char(entry->cursor, NULL) - entry->cursor;
 	update_kill_ring(entry, ENTRY_DEL_FWD_CHAR, entry->cursor, len);
 	memmove(entry->cursor, entry->cursor + len, entry->end - entry->cursor - len + 1);
-	entry_removed_range(entry, entry->cursor, entry->cursor + len - 1);
+	entry_removed_range(entry, entry->cursor, entry->cursor + len - 1, TRUE);
 	entry->end -= len;
 	entry_redraw(GNT_WIDGET(entry));
 
@@ -845,7 +847,7 @@ del_to_home(GntBindable *bind, GList *null)
 		return TRUE;
 	update_kill_ring(entry, ENTRY_DEL_BOL, entry->start, entry->cursor - entry->start);
 	memmove(entry->start, entry->cursor, entry->end - entry->cursor);
-	entry_removed_range(entry, entry->start, entry->cursor - 1);
+	entry_removed_range(entry, entry->start, entry->cursor - 1, FALSE);
 	entry->end -= (entry->cursor - entry->start);
 	set_cursor_position(entry, set_scroll_position(entry, entry->start));
 	memset(entry->end, '\0', entry->buffer - (entry->end - entry->start));
@@ -862,7 +864,7 @@ del_to_end(GntBindable *bind, GList *null)
 		return TRUE;
 	update_kill_ring(entry, ENTRY_DEL_EOL, entry->cursor, entry->end - entry->cursor);
 	memset(entry->cursor, '\0', entry->buffer - (entry->cursor - entry->start));
-	entry_removed_range(entry, entry->cursor, entry->end);
+	entry_removed_range(entry, entry->cursor, entry->end, TRUE);
 	entry->end = entry->cursor;
 	entry_redraw(GNT_WIDGET(bind));
 	entry_text_changed(entry);
@@ -941,7 +943,7 @@ del_prev_word(GntBindable *bind, GList *null)
 	count = entry->cursor - iter;
 	update_kill_ring(entry, ENTRY_DEL_BWD_WORD, iter, count);
 	memmove(iter, entry->cursor, entry->end - entry->cursor);
-	entry_removed_range(entry, iter, iter + count - 1);
+	entry_removed_range(entry, iter, iter + count - 1, FALSE);
 	entry->end -= count;
 	set_cursor_position(entry, iter);
 	if (entry->cursor <= entry->scroll) {
@@ -981,7 +983,7 @@ delete_forward_word(GntBindable *bind, GList *list)
 		return TRUE;
 	update_kill_ring(entry, ENTRY_DEL_FWD_WORD, entry->cursor, iter - entry->cursor);
 	memmove(entry->cursor, iter, len);
-	entry_removed_range(entry, entry->cursor, iter - 1);
+	entry_removed_range(entry, entry->cursor, iter - 1, TRUE);
 	len = iter - entry->cursor;
 	entry->end -= len;
 	memset(entry->end, '\0', len);
@@ -1456,7 +1458,7 @@ spell_suggest_menu_callback(GntMenuItem *item, gpointer data)
 	cur_len = end - start;
 
 	memmove(start, end, entry->end - end + 1);
-	entry_removed_range(entry, start, end - 1);
+	entry_removed_range(entry, start, end - 1, TRUE);
 	entry->end -= cur_len;
 
 	gnt_entry_key_pressed(GNT_WIDGET(entry), item->text);
@@ -1912,25 +1914,26 @@ gnt_entry_parse_words(GntEntry *entry)
 	}
 
 	while (s && s != entry->end) {
-		e = get_beginning_of_next_word(s, entry->end);
-		if (!e)
-			break;
 		/* there are more words */
-		s = e;
 		e = get_end_of_word(s, entry->end);
 
 		word = gnt_entry_word_new();
 		word->start = s - entry->start;
 		word->length = e - s + 1;
 		check_entry_word(entry, word);
-		if ((entry->start + word->start <= entry->cursor) && (entry->start + word->start + word->length >= entry->cursor))
+		if ((entry->start + word->start <= entry->cursor) && (entry->start + word->start + word->length > entry->cursor))
 			entry->spell->cursor_word = word;
-		if ((entry->start + word->start <= entry->scroll) && (entry->start + word->start + word->length >= entry->scroll))
+		if ((entry->start + word->start <= entry->scroll) && (entry->start + word->start + word->length > entry->scroll))
+			entry->spell->scroll_word = word;
+		else if (!entry->spell->scroll_word &&
+				entry->scroll < entry->start + word->start)
 			entry->spell->scroll_word = word;
 
 		start = gnt_entry_word_list_append(start, word);
 
 		s = g_utf8_find_next_char(e, entry->end);
+		if (s)
+			s = get_beginning_of_next_word(s, entry->end);
 	}
 
 	return (entry->spell->word_list = start);
