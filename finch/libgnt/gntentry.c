@@ -1088,7 +1088,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				if (entry->spell->cursor_word) {
 					if (is_word_break(entry->start, str)) {
 						/* The current word just ended. Spell check it */
-						const char *lend = entry->start + lastw->start + lastw->length + 1;
+						const char *lend = lastw ? (entry->start + lastw->start + lastw->length + 1) : NULL;
 						lastw = entry->spell->cursor_word;
 						lastw->length = entry->cursor - entry->start - lastw->start;
 						check_entry_word(entry, entry->spell->cursor_word);
@@ -1098,7 +1098,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 								/* The pressed whitespace split one word into two */
 								lastw = g_new0(GntEntryWord, 1);
 								lastw->start = n - entry->start;
-								lastw->length = lend - entry->start - lastw->start;
+								lastw->length = lend ? (lend - entry->start - lastw->start) : 0;
 								lastw->prev = entry->spell->cursor_word;
 								lastw->next = entry->spell->cursor_word->next;
 								entry->spell->cursor_word->next = lastw;
