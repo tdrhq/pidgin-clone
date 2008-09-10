@@ -1504,7 +1504,6 @@ create_spell_menu(GntMenu *menu, GntEntry *entry)
 static void
 context_menu_destroyed(GntWidget *widget, GntEntry *entry)
 {
-	/* XXX: definite possible leak */
 	entry->spell->context = NULL;
 }
 
@@ -1545,11 +1544,14 @@ draw_context_menu(GntEntry *entry)
 		return;
 
 	entry->spell->context = context = gnt_menu_new(GNT_MENU_POPUP);
-	/*
+
+#if 0
+	/* XXX: definite possible leak */
+	g_signal_connect(G_OBJECT(context), "hide", G_CALLBACK(context_menu_destroyed), entry);
+#else
 	g_signal_connect(G_OBJECT(context), "destroy", G_CALLBACK(context_menu_destroyed), entry);
 	g_signal_connect(G_OBJECT(context), "hide", G_CALLBACK(gnt_widget_destroy), NULL);
-	*/
-	g_signal_connect(G_OBJECT(context), "hide", G_CALLBACK(context_menu_destroyed), entry);
+#endif
 
 	/* add list of suggestions */
 	start = get_beginning_of_prev_word(entry->cursor, entry->start);
