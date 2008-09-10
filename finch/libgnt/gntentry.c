@@ -276,6 +276,20 @@ entry_removed_range(GntEntry *entry, const char *from, const char *to)
 		}
 	}
 
+	if (w && w->prev && w->start - (to - from + 1) == w->prev->start + w->prev->length) {
+		/* Whitespace was removed, causing two words to merge into one */
+		GntEntryWord *f = w;
+		w->prev->next = w->next;
+		w->prev->length += w->length;
+		if (w->next)
+			w->next->prev = w->prev;
+		if ((w->checked_spell && w->misspelled) ||
+				(w->prev->checked_spell && w->prev->misspelled))
+			check_entry_word(entry, w->prev);
+		w = w->next;
+		g_free(f);
+	}
+
 	for (; w; w = w->next) {
 		w->start -= to - from + 1;
 	}
