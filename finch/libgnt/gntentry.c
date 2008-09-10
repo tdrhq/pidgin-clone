@@ -243,6 +243,7 @@ entry_removed_range(GntEntry *entry, const char *from, const char *to)
 {
 #ifdef USE_ENCHANT
 	GntEntryWord *w, *next;
+	const char *rstart = from;
 	if (!entry->spell || !entry->spell->enable)
 		return;
 
@@ -276,7 +277,7 @@ entry_removed_range(GntEntry *entry, const char *from, const char *to)
 		}
 	}
 
-	if (w && w->prev && w->start - (to - from + 1) == w->prev->start + w->prev->length) {
+	if (w && w->prev && w->start - (to - rstart + 1) == w->prev->start + w->prev->length) {
 		/* Whitespace was removed, causing two words to merge into one */
 		GntEntryWord *f = w;
 		w->prev->next = w->next;
@@ -286,12 +287,16 @@ entry_removed_range(GntEntry *entry, const char *from, const char *to)
 		if ((w->checked_spell && w->misspelled) ||
 				(w->prev->checked_spell && w->prev->misspelled))
 			check_entry_word(entry, w->prev);
+		if (entry->spell->cursor_word == w)
+			entry->spell->cursor_word = w->prev;
+		if (entry->spell->scroll_word == w)
+			entry->spell->scroll_word = w->prev;
 		w = w->next;
 		g_free(f);
 	}
 
 	for (; w; w = w->next) {
-		w->start -= to - from + 1;
+		w->start -= to - rstart + 1;
 	}
 	set_cursor_position(entry, entry->cursor);
 	set_scroll_position(entry, entry->scroll);
@@ -1140,6 +1145,8 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 						lastw->next = w;
 					} else {
 						w->next = entry->spell->word_list;
+						if (entry->spell->word_list)
+							entry->spell->word_list->prev = w;
 						entry->spell->word_list = w;
 						entry->spell->scroll_word = w;
 					}
