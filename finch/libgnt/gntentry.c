@@ -97,8 +97,8 @@ struct _GntEntrySpell
 	gboolean enable;
 	GntWidget *context;        /**< Context menu to correct spelling or change language */
 	GntEntryWord *word_list;   /**< Linked list of words */
-	GntEntryWord *cursor_word; /**< Word under the cursor position */
-	GntEntryWord *scroll_word; /**< Word under the scroll position */
+	GntEntryWord *cursor_word; /**< Word under the cursor position. If 'cursor' is on a non-word character, then NULL */
+	GntEntryWord *scroll_word; /**< Word under the scroll position. If 'scroll' is on a non-word character, then the next word */
 #endif
 };
 
