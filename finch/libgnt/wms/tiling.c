@@ -54,6 +54,8 @@
 #include "gntlabel.h"
 
 #define TYPE_TILING_WM				(tiling_wm_get_gtype())
+#define MIN_FRAME_WIDTH             2
+#define MIN_FRAME_HEIGHT            2
 
 typedef struct _TilingFrame
 {
@@ -97,6 +99,8 @@ void gntwm_init(GntWM **wm);
 
 static void (*org_new_window)(GntWM *wm, GntWidget *win);
 
+static GntWidget *
+get_next_window(GntWM *wm, GntWidget *win, int direction);
 
 /* Returns the onscreen width of the character at the position
  * taken from gntwm.c */
@@ -164,7 +168,7 @@ twm_show_window_in_frame(GntWM *wm, GntWidget *win, TilingFrame *frame)
 static void
 twm_propagate_x_width_change(GntWM *wm, TilingFrame *frame, int d_x, int d_width)
 {
-	int left_width, right_width;
+	int left_width, right_width, tmp_width;
 	frame->x += d_x;
 	frame->width += d_width;
 	switch (frame->type) {
@@ -191,6 +195,18 @@ twm_propagate_x_width_change(GntWM *wm, TilingFrame *frame, int d_x, int d_width
 				left_width = d_width / 2;
 				right_width = d_width - left_width;
 			}
+			/* check to ensure if d_width is (-), that -d_width < width */
+			if (-left_width >= frame->left_top->width - MIN_FRAME_WIDTH) {
+				tmp_width = left_width;
+				left_width = -(frame->left_top->width - MIN_FRAME_WIDTH);
+				right_width += tmp_width - left_width;
+			}
+			/* if these both are true, we have problems */
+			if (-right_width >= frame->right_bottom->width - MIN_FRAME_WIDTH) {
+				tmp_width = right_width;
+				right_width = -(frame->right_bottom->width - MIN_FRAME_WIDTH);
+				left_width += tmp_width - left_width;
+			}
 			twm_propagate_x_width_change(wm, frame->left_top, d_x, left_width);
 			twm_propagate_x_width_change(wm, frame->right_bottom, d_x + left_width, right_width);
 			break;
@@ -200,7 +216,7 @@ twm_propagate_x_width_change(GntWM *wm, TilingFrame *frame, int d_x, int d_width
 static void
 twm_propagate_y_height_change(GntWM *wm, TilingFrame *frame, int d_y, int d_height)
 {
-	int top_height, bottom_height;
+	int top_height, bottom_height, tmp_height;
 	frame->y += d_y;
 	frame->height += d_height;
 	switch (frame->type) {
@@ -223,6 +239,18 @@ twm_propagate_y_height_change(GntWM *wm, TilingFrame *frame, int d_y, int d_heig
 				top_height = d_height / 2;
 				bottom_height = d_height - top_height;
 			}
+			/* check to ensure if d_height is (-), -d_height < height */
+			if (-top_height >= frame->left_top->height) {
+				tmp_height = top_height;
+				top_height = -(frame->left_top->height - MIN_FRAME_HEIGHT);
+				bottom_height += tmp_height - top_height;
+			}
+			/* if these both are true, we have problems */
+			if (-bottom_height >= frame->right_bottom->height) {
+				tmp_height = bottom_height;
+				bottom_height = -(frame->right_bottom->height - MIN_FRAME_HEIGHT);
+				top_height += tmp_height - bottom_height;
+			}
 			twm_propagate_y_height_change(wm, frame->left_top, d_y, top_height);
 			twm_propagate_y_height_change(wm, frame->right_bottom, d_y + top_height, bottom_height);
 			break;
@@ -230,6 +258,30 @@ twm_propagate_y_height_change(GntWM *wm, TilingFrame *frame, int d_y, int d_heig
 			twm_propagate_y_height_change(wm, frame->left_top, d_y, d_height);
 			twm_propagate_y_height_change(wm, frame->right_bottom, d_y, d_height);
 			break;
+	}
+}
+
+static void
+twm_set_next_window_in_current(GntWM *wm, int direction)
+{
+	TilingWM *twm = (TilingWM*)wm;
+	GntWidget *w, *wid;
+
+	w = wm->cws->ordered->data;
+	wid = get_next_window(wm, w, direction);
+
+	if (wid && wid != twm->current->window) {
+
+		/* hide previous window */
+		if (twm->current->window) {
+			twm_hide_window(wm, twm->current->window);
+		}
+
+		/* show new window */
+		twm->current->window = wid;
+		twm_show_window_in_frame(wm, wid, twm->current);
+		window_reverse(wid, TRUE, wm);
+		gnt_wm_raise_window(wm, wid);
 	}
 }
 
@@ -275,6 +327,27 @@ tiling_wm_window_resize_confirm(GntWM *wm, GntWidget *win, int *w, int *h)
 static gboolean
 tiling_wm_close_window(GntWM *wm, GntWidget *win)
 {
+	TilingWM *twm = (TilingWM*)wm;
+	GntWidget *w, *wid;
+
+	w = wm->cws->ordered->data;
+	wid = get_next_window(wm, w, 1);
+
+	if (wid != twm->current->window) {
+		/* hide previous window */
+		if (twm->current->window) {
+			twm_hide_window(wm, twm->current->window);
+		}
+
+		/* show new window */
+		twm->current->window = wid;
+		if (wid) {
+			twm_show_window_in_frame(wm, wid, twm->current);
+			window_reverse(wid, TRUE, wm);
+			gnt_wm_raise_window(wm, wid);
+		}
+	}
+
 	return FALSE;
 }
 
@@ -282,15 +355,18 @@ static void
 tiling_wm_terminal_refresh(GntWM *wm)
 {
 	TilingWM *twm = (TilingWM*)wm;
+	int changed = 0;
 	int xmax = getmaxx(stdscr), ymax = getmaxy(stdscr) - 1;
 	if (twm->root.width != xmax) {
 		twm_propagate_x_width_change(wm, &twm->root, 0, xmax - twm->root.width);
-		if (twm->current->window) {
-			window_reverse(twm->current->window, TRUE, wm);
-		}
+		changed = 1;
 	}
 	if (twm->root.height != ymax) {
 		twm_propagate_y_height_change(wm, &twm->root, 0, ymax - twm->root.height);
+		changed = 1;
+	}
+
+	if (changed) {
 		if (twm->current->window) {
 			window_reverse(twm->current->window, TRUE, wm);
 		}
@@ -319,6 +395,11 @@ get_next_window(GntWM *wm, GntWidget *win, int direction)
 		visible = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(wid), "tiling-visible"));
 	}
 
+	/* if there are no other windows, set it to NULL */
+	if (wid == win) {
+		wid = NULL;
+	}
+
 	return wid;
 }
 
@@ -326,8 +407,6 @@ static gboolean
 twm_next_window(GntBindable *bindable, GList *list)
 {
 	GntWM *wm = GNT_WM(bindable);
-	TilingWM *twm = (TilingWM*)wm;
-	GntWidget *w = NULL, *wid = NULL;
 	int direction = GPOINTER_TO_INT(list->data);
 
 	if (wm->_list.window || wm->menu)
@@ -336,23 +415,7 @@ twm_next_window(GntBindable *bindable, GList *list)
 	if (!wm->cws->ordered || !wm->cws->ordered->next)
 		return TRUE;
 
-	w = wm->cws->ordered->data;
-
-	wid = get_next_window(wm, w, direction);
-
-	if (wid && wid != twm->current->window) {
-
-		/* hide previous window */
-		if (twm->current->window) {
-			twm_hide_window(wm, twm->current->window);
-		}
-
-		/* show new window */
-		twm->current->window = wid;
-		twm_show_window_in_frame(wm, wid, twm->current);
-		window_reverse(wid, TRUE, wm);
-		gnt_wm_raise_window(wm, wid);
-	}
+	twm_set_next_window_in_current(wm, direction);
 
 	return TRUE;
 }
@@ -595,7 +658,9 @@ twm_move_left_up(GntBindable *bindable, GList *list)
 
 	left = find_parent_with_left(twm->current, type);
 	if (left) {
-		window_reverse(twm->current->window, FALSE, wm);
+		if (twm->current->window) {
+			window_reverse(twm->current->window, FALSE, wm);
+		}
 		left = find_rightmost_child(left);
 		twm->current = left;
 		if (twm->current->window) {
@@ -618,7 +683,9 @@ twm_move_right_down(GntBindable *bindable, GList *list)
 
 	right = find_parent_with_right(twm->current, type);
 	if (right) {
-		window_reverse(twm->current->window, FALSE, wm);
+		if (twm->current->window) {
+			window_reverse(twm->current->window, FALSE, wm);
+		}
 		right = find_leftmost_child(right);
 		twm->current = right;
 		if (twm->current->window) {
@@ -741,7 +808,16 @@ twm_resize_move(GntBindable *bindable, GList *list)
 		}
 
 		if (frame) {
-			int xmin = 0, ymin = 0, xmax = getmaxx(stdscr), ymax = getmaxy(stdscr) - 1;
+			int xmax, ymax;
+			int xmin = MIN_FRAME_WIDTH, ymin = MIN_FRAME_HEIGHT;
+			/* root does not have a parent, therefore it's max is getmax{x,y} */
+			if (frame->parent) {
+				xmax = frame->parent->width - MIN_FRAME_WIDTH;
+				ymax = frame->parent->height - MIN_FRAME_HEIGHT;
+			} else {
+				xmax = getmaxx(stdscr) - MIN_FRAME_WIDTH;
+				ymax = getmaxy(stdscr) - MIN_FRAME_HEIGHT - 1;
+			}
 			switch (direction) {
 				/* left decreases the width of current frame */
 				case DIRECTION_LEFT:
