@@ -328,23 +328,25 @@ static gboolean
 tiling_wm_close_window(GntWM *wm, GntWidget *win)
 {
 	TilingWM *twm = (TilingWM*)wm;
-	GntWidget *w, *wid;
+	GntWidget *wid;
 
-	w = wm->cws->ordered->data;
-	wid = get_next_window(wm, w, 1);
+	/* TODO: if it isn't current->window, need to search the tree for it */
+	if (win == twm->current->window) {
+		wid = get_next_window(wm, win, 1);
 
-	if (wid != twm->current->window) {
-		/* hide previous window */
-		if (twm->current->window) {
-			twm_hide_window(wm, twm->current->window);
-		}
+		if (wid != twm->current->window) {
+			/* hide previous window */
+			if (twm->current->window) {
+				twm_hide_window(wm, twm->current->window);
+			}
 
-		/* show new window */
-		twm->current->window = wid;
-		if (wid) {
-			twm_show_window_in_frame(wm, wid, twm->current);
-			window_reverse(wid, TRUE, wm);
-			gnt_wm_raise_window(wm, wid);
+			/* show new window */
+			twm->current->window = wid;
+			if (wid) {
+				twm_show_window_in_frame(wm, wid, twm->current);
+				window_reverse(wid, TRUE, wm);
+				gnt_wm_raise_window(wm, wid);
+			}
 		}
 	}
 
@@ -470,8 +472,11 @@ twm_split(GntBindable *bindable, GList *list)
 		twm_show_window_in_frame(wm, rgt_bot->window, rgt_bot);
 	}
 
-	twm_move_window_to_frame(twm->current->window, twm->current);
-	window_reverse(twm->current->window, TRUE, wm);
+	if (twm->current->window) {
+		twm_move_window_to_frame(twm->current->window, twm->current);
+		window_reverse(twm->current->window, TRUE, wm);
+		gnt_wm_raise_window(wm, twm->current->window);
+	}
 
 	return TRUE;
 }
