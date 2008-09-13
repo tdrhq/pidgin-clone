@@ -285,6 +285,28 @@ twm_set_next_window_in_current(GntWM *wm, int direction)
 	}
 }
 
+/* recursive function to find a frame that is currently display a given window */
+static TilingFrame *
+find_frame_by_window(TilingFrame *root, GntWidget *win)
+{
+	TilingFrame *cur = root;
+	TilingFrame *left_top, *right_bot;
+
+	if (root->window == win) return root;
+
+	if (cur->left_top) {
+		left_top = find_frame_by_window(cur->left_top, win);
+		if (left_top) return left_top;
+	}
+
+	if (cur->right_bottom) {
+		right_bot = find_frame_by_window(cur->right_bottom, win);
+		if (right_bot) return right_bot;
+	}
+
+	return NULL;
+}
+
 static void
 tiling_wm_new_window(GntWM *wm, GntWidget *win)
 {
@@ -328,24 +350,29 @@ static gboolean
 tiling_wm_close_window(GntWM *wm, GntWidget *win)
 {
 	TilingWM *twm = (TilingWM*)wm;
+	TilingFrame *frame;
 	GntWidget *wid;
 
-	/* TODO: if it isn't current->window, need to search the tree for it */
+	/* quick way to grab the current window */
 	if (win == twm->current->window) {
+		frame = twm->current;
+	} else {
+		frame = find_frame_by_window(&twm->root, win);
+	}
+
+	if (frame) {
 		wid = get_next_window(wm, win, 1);
 
-		if (wid != twm->current->window) {
-			/* hide previous window */
-			if (twm->current->window) {
-				twm_hide_window(wm, twm->current->window);
-			}
-
-			/* show new window */
-			twm->current->window = wid;
+		if (wid != frame->window) {
+			frame->window = wid;
 			if (wid) {
-				twm_show_window_in_frame(wm, wid, twm->current);
-				window_reverse(wid, TRUE, wm);
-				gnt_wm_raise_window(wm, wid);
+				/* show new window */
+				twm_show_window_in_frame(wm, wid, frame);
+				/* if the window being closed was in the current frame, bring the new one in focus */
+				if (frame == twm->current) {
+					window_reverse(wid, TRUE, wm);
+					gnt_wm_raise_window(wm, wid);
+				}
 			}
 		}
 	}
