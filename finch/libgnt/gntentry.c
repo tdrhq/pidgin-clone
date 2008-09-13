@@ -244,19 +244,22 @@ entry_removed_range(GntEntry *entry, const char *from, const char *to,
 {
 #ifdef USE_ENCHANT
 	GntEntryWord *w, *next;
-	const char *rstart = from;
+	const char *rend = to;
 	if (!entry->spell || !entry->spell->enable)
 		return;
 
 	w = entry->spell->word_list;
-	for (; w && to >= entry->start + w->start; w = next) {
+	for (; w && rend >= entry->start + w->start; w = next) {
 		next = w->next;
-		if (from < entry->start + w->start)
-			from = entry->start + w->start;
+		w->start -= rend - to;
+		if (from < entry->start + w->start) {
+			to -= (entry->start + w->start) - from;
+			w->start -= (entry->start + w->start) - from;
+		}
 		if (from >= entry->start + w->start &&
 				from < entry->start + w->start + w->length) {
 			if (to > entry->start + w->start + w->length) {
-				w->length = entry->start + w->start + w->length - from;
+				w->length = from - (entry->start + w->start);
 			} else {
 				w->length -= to - from + 1;
 			}
@@ -278,7 +281,7 @@ entry_removed_range(GntEntry *entry, const char *from, const char *to,
 		}
 	}
 
-	if (w && w->prev && w->start - (to - rstart + 1) == w->prev->start + w->prev->length) {
+	if (w && w->prev && w->start - (rend - from + 1) == w->prev->start + w->prev->length) {
 		/* Whitespace was removed, causing two words to merge into one */
 		GntEntryWord *f = w;
 		w->prev->next = w->next;
@@ -297,7 +300,7 @@ entry_removed_range(GntEntry *entry, const char *from, const char *to,
 	}
 
 	for (; w; w = w->next) {
-		w->start -= to - rstart + 1;
+		w->start -= rend - from + 1;
 	}
 	if (setcursor)
 		set_cursor_position(entry, entry->cursor);
@@ -444,7 +447,30 @@ is_word_break(const char *prev, const char *wc)
 {
 	/* TODO: add pango code here */
 	gunichar uc = g_utf8_get_char(wc);
+
+#if 1
 	return g_unichar_isspace(uc) || g_unichar_ispunct(uc);
+#else
+	/* XXX: Fix this */
+	GUnicodeType type = g_unichar_type(uc);
+	switch (type) {
+		case G_UNICODE_LOWERCASE_LETTER:
+		case G_UNICODE_MODIFIER_LETTER:
+		case G_UNICODE_OTHER_LETTER:
+		case G_UNICODE_TITLECASE_LETTER:
+		case G_UNICODE_UPPERCASE_LETTER:
+		case G_UNICODE_DECIMAL_NUMBER:
+		case G_UNICODE_LETTER_NUMBER:
+		case G_UNICODE_OTHER_NUMBER:
+		case G_UNICODE_COMBINING_MARK:
+		case G_UNICODE_ENCLOSING_MARK:
+		case G_UNICODE_NON_SPACING_MARK:
+		case G_UNICODE_FORMAT:
+			return FALSE;
+		default:
+			return TRUE;
+	}
+#endif
 }
 
 /* copy of get_beginning_of_word, but not GntEntry specific
@@ -807,6 +833,20 @@ clipboard_paste(GntBindable *bind, GList *n)
 }
 
 static gboolean
+toggle_spell(GntBindable *bind, GList *n)
+{
+#ifdef USE_ENCHANT
+	GntEntry *entry = GNT_ENTRY(bind);
+	if (!entry->spell)
+		return FALSE;
+	gnt_entry_set_spell_enable(entry, !entry->spell->enable);
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
+
+static gboolean
 suggest_show(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
@@ -1059,7 +1099,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 	{
 		const char *str, *next;
 #ifdef USE_ENCHANT
-		GntEntryWord *lastw = entry->spell->cursor_word;
+		GntEntryWord *lastw = entry->spell->cursor_word, *nextw;
 		if (!lastw) {
 			lastw = entry->spell->word_list;
 			if (lastw) {
@@ -1069,6 +1109,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 					lastw = NULL;
 			}
 		}
+		nextw = lastw ? lastw->next : NULL;
 #endif
 
 		for (str = text; *str; str = next)
@@ -1108,13 +1149,13 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 			if (entry->spell) {
 				if (entry->spell->cursor_word) {
 					if (is_word_break(entry->start, str)) {
-						/* The current word just ended. Spell check it */
-						const char *lend = lastw ? (entry->start + lastw->start + lastw->length + 1) : NULL;
-						lastw = entry->spell->cursor_word;
-						lastw->length = entry->cursor - entry->start - lastw->start;
-						check_entry_word(entry, entry->spell->cursor_word);
-						if (lastw->length > 0) {
+						if (entry->cursor > entry->start + entry->spell->cursor_word->start) {
+							/* The current word just ended. Spell check it */
+							const char *lend = lastw ? (entry->start + lastw->start + lastw->length + 1) : NULL;
 							char *n = entry->cursor + (next - str);
+							lastw = entry->spell->cursor_word;
+							lastw->length = entry->cursor - entry->start - lastw->start;
+							check_entry_word(entry, entry->spell->cursor_word);
 							if (*n && !is_word_break(entry->start, n)) {
 								/* The pressed whitespace split one word into two */
 								lastw = g_new0(GntEntryWord, 1);
@@ -1125,9 +1166,18 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 								entry->spell->cursor_word->next = lastw;
 								entry->spell->cursor_word = lastw;
 								check_entry_word(entry, lastw);
+								nextw = lastw->next;
 							} else {
+								/* The words were already seperated by whitespace. Increase the start offset
+								 * of the next word since another whitespace has been pressed */
+								nextw = entry->spell->cursor_word->next;
+								if (nextw)
+									nextw->start++;
 								entry->spell->cursor_word = NULL;
 							}
+						} else {
+							/* white space pressed at the beginning of a word */
+							entry->spell->cursor_word->start++;
 						}
 					} else {
 						/* Just the size of the current word increased */
@@ -1142,9 +1192,17 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 					w->start = entry->cursor - entry->start;
 					w->length = 1;
 					if (lastw) {
-						w->prev = lastw;
 						w->next = lastw->next;
+						if (w->next)
+							w->next->prev = w;
+						w->prev = lastw;
 						lastw->next = w;
+					} else if (nextw) {
+						w->prev = nextw->prev;
+						w->next = nextw;
+						nextw->prev = w;
+						if (w->prev)
+							w->prev->next = w;
 					} else {
 						w->next = entry->spell->word_list;
 						if (entry->spell->word_list)
@@ -1153,6 +1211,10 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 						entry->spell->scroll_word = w;
 					}
 					entry->spell->cursor_word = w;
+					nextw = w->next;
+				} else if (nextw) {
+					/* Pressing a whitespace between two seperated words */
+					nextw->start++;
 				}
 			}
 #endif
@@ -1167,11 +1229,17 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 		}
 		update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
 #ifdef USE_ENCHANT
-		if (entry->spell->cursor_word) {
-			for (lastw = entry->spell->cursor_word->next;
-					lastw; lastw = lastw->next)
-				lastw->start += (str - text);
+		if (entry->spell->cursor_word)
+			lastw = entry->spell->cursor_word->next;
+		else if (nextw)
+			lastw = nextw->next;
+		else {
+			for (lastw = entry->spell->scroll_word;
+					lastw && entry->start + lastw->start < entry->cursor; lastw = lastw->next)
+				;
 		}
+		for (; lastw; lastw = lastw->next)
+			lastw->start += (str - text);
 		print_words(entry, "press");
 #endif
 		entry_redraw(widget);
@@ -1332,6 +1400,8 @@ gnt_entry_class_init(GntEntryClass *klass)
 	gnt_bindable_register_binding(bindable, "history-next", GNT_KEY_CTRL_N, NULL);
 	gnt_bindable_class_register_action(bindable, "clipboard-paste", clipboard_paste,
 				GNT_KEY_CTRL_V, NULL);
+	gnt_bindable_class_register_action(bindable, "toggle-spell", toggle_spell,
+				NULL, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;
@@ -1354,9 +1424,7 @@ set_spell_language(GntEntry *entry, const char *lang)
 	GntEntrySpell *spell = entry->spell;
 
 	if (!spell->lang || (spell->lang && (strcmp(lang, spell->lang) != 0))) {
-		if (spell->lang) {
-			g_free(spell->lang);
-		}
+		g_free(spell->lang);
 		spell->lang = g_strdup(lang);
 		if (spell->broker) {
 			if (spell->dict)
@@ -1563,7 +1631,7 @@ draw_context_menu(GntEntry *entry)
 	int x, y;
 	char *start, *end;
 
-	if (entry->spell->context)
+	if (!entry->spell->enable || entry->spell->context)
 		return;
 
 	entry->spell->context = context = gnt_menu_new(GNT_MENU_POPUP);
