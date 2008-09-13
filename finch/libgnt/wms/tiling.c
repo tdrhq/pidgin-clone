@@ -98,6 +98,7 @@ GType tiling_wm_get_gtype(void);
 void gntwm_init(GntWM **wm);
 
 static void (*org_new_window)(GntWM *wm, GntWidget *win);
+static void (*org_give_focus)(GntWM *wm, GntWidget *win);
 
 static GntWidget *
 get_next_window(GntWM *wm, GntWidget *win, int direction);
@@ -400,6 +401,26 @@ tiling_wm_terminal_refresh(GntWM *wm)
 			window_reverse(twm->current->window, TRUE, wm);
 		}
 	}
+}
+
+static void
+tiling_wm_give_focus(GntWM *wm, GntWidget *win)
+{
+	TilingWM *twm = (TilingWM*)wm;
+	TilingFrame *frame;
+
+	if (win != twm->current->window && !GNT_IS_MENU(win)) {
+		frame = find_frame_by_window(&twm->root, win);
+		if (frame) {
+			if (twm->current->window) {
+				window_reverse(twm->current->window, FALSE, wm);
+			}
+			twm->current = frame;
+			window_reverse(win, TRUE, wm);
+		}
+	}
+
+	org_give_focus(wm, win);
 }
 
 static GntWidget *
@@ -935,12 +956,14 @@ tiling_wm_class_init(TilingWMClass *klass)
 	GntWMClass *pclass = GNT_WM_CLASS(klass);
 
 	org_new_window = pclass->new_window;
+	org_give_focus = pclass->give_focus;
 
 	pclass->new_window = tiling_wm_new_window;
 	pclass->window_resize_confirm = tiling_wm_window_resize_confirm;
 	pclass->window_move_confirm = tiling_wm_window_move_confirm;
 	pclass->close_window = tiling_wm_close_window;
 	pclass->terminal_refresh = tiling_wm_terminal_refresh;
+	pclass->give_focus = tiling_wm_give_focus;
 
 	/* moving between windows */
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "next-window",
