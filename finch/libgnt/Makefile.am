@@ -85,6 +85,7 @@ libgnt_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(GNT_LIBS) \
 	$(LIBXML_LIBS) \
+	$(ENCHANT_LIBS) \
 	$(PY_LIBS)
 
 AM_CPPFLAGS = \
@@ -92,4 +93,5 @@ AM_CPPFLAGS = \
 	$(GNT_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(LIBXML_CFLAGS) \
+	$(ENCHANT_CFLAGS) \
 	$(PY_CFLAGS)
