@@ -153,8 +153,13 @@ twm_hide_window(GntWM *wm, GntWidget *win)
 static void
 twm_move_window_to_frame(GntWidget *win, TilingFrame *frame)
 {
+	/* TODO: figure out better way to handle this
+	 * the reason resize is called twice is that the resize might not
+	 * work correctly if the width/height increases and the current x/y
+	 * restricts the width/height */
 	gnt_screen_resize_widget(win, frame->width, frame->height);
 	gnt_screen_move_widget(win, frame->x, frame->y);
+	gnt_screen_resize_widget(win, frame->width, frame->height);
 }
 
 static void
