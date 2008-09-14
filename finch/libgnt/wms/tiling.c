@@ -343,13 +343,39 @@ tiling_wm_new_window(GntWM *wm, GntWidget *win)
 static gboolean
 tiling_wm_window_move_confirm(GntWM *wm, GntWidget *win, int *x, int *y)
 {
-	return TRUE;
+	TilingWM *twm = (TilingWM*)wm;
+	TilingFrame *frame;
+
+	if (twm->current->window == win) {
+		frame = twm->current;
+	} else {
+		frame = find_frame_by_window(&twm->root, win);
+	}
+
+	if (!frame || (*x == frame->x && *y == frame->y)) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
 }
 
 static gboolean
 tiling_wm_window_resize_confirm(GntWM *wm, GntWidget *win, int *w, int *h)
 {
-	return TRUE;
+	TilingWM *twm = (TilingWM*)wm;
+	TilingFrame *frame;
+
+	if (twm->current->window == win) {
+		frame = twm->current;
+	} else {
+		frame = find_frame_by_window(&twm->root, win);
+	}
+
+	if (!frame || (*w == frame->width && *h == frame->height)) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
 }
 
 static gboolean
