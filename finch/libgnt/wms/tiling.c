@@ -103,46 +103,6 @@ static void (*org_give_focus)(GntWM *wm, GntWidget *win);
 static GntWidget *
 get_next_window(GntWM *wm, GntWidget *win, int direction);
 
-/* Returns the onscreen width of the character at the position
- * taken from gntwm.c */
-static int
-reverse_char(WINDOW *d, int y, int x, gboolean set)
-{
-	chtype ch;
-	ch = mvwinch(d, y, x);
-	mvwaddch(d, y, x, (set ? ((ch) | A_REVERSE) : ((ch) & ~A_REVERSE)));
-	return 1;
-}
-
-static void
-window_reverse(GntWidget *win, gboolean set, GntWM *wm)
-{
-	int i;
-	int w, h;
-	WINDOW *d;
-
-	if (GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_NO_BORDER))
-		return;
-	
-	d = win->window;
-	gnt_widget_get_size(win, &w, &h);
-
-	if (gnt_widget_has_shadow(win)) {
-		--w;
-		--h;
-	}
-
-	/* the top and bottom */
-	for (i = 0; i < w; i += reverse_char(d, 0, i, set));
-	for (i = 0; i < w; i += reverse_char(d, h-1, i, set));
-
-	/* the left and right */
-	for (i = 0; i < h; i += reverse_char(d, i, 0, set));
-	for (i = 0; i < h; i += reverse_char(d, i, w-1, set));
-
-	gnt_wm_copy_win(win, g_hash_table_lookup(wm->nodes, win));
-}
-
 static void
 twm_hide_window(GntWM *wm, GntWidget *win)
 {
@@ -286,7 +246,6 @@ twm_set_next_window_in_current(GntWM *wm, int direction)
 		/* show new window */
 		twm->current->window = wid;
 		twm_show_window_in_frame(wm, wid, twm->current);
-		window_reverse(wid, TRUE, wm);
 		gnt_wm_raise_window(wm, wid);
 	}
 }
@@ -332,7 +291,6 @@ tiling_wm_new_window(GntWM *wm, GntWidget *win)
 		}
 		twm->current->window = win;
 		twm_show_window_in_frame(wm, win, twm->current);
-		window_reverse(win, TRUE, wm);
 	}
 	org_new_window(wm, win);
 	if (!GNT_IS_MENU(win) && !GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
@@ -402,7 +360,6 @@ tiling_wm_close_window(GntWM *wm, GntWidget *win)
 				twm_show_window_in_frame(wm, wid, frame);
 				/* if the window being closed was in the current frame, bring the new one in focus */
 				if (frame == twm->current) {
-					window_reverse(wid, TRUE, wm);
 					gnt_wm_raise_window(wm, wid);
 				}
 			}
@@ -416,21 +373,12 @@ static void
 tiling_wm_terminal_refresh(GntWM *wm)
 {
 	TilingWM *twm = (TilingWM*)wm;
-	int changed = 0;
 	int xmax = getmaxx(stdscr), ymax = getmaxy(stdscr) - 1;
 	if (twm->root.width != xmax) {
 		twm_propagate_x_width_change(wm, &twm->root, 0, xmax - twm->root.width);
-		changed = 1;
 	}
 	if (twm->root.height != ymax) {
 		twm_propagate_y_height_change(wm, &twm->root, 0, ymax - twm->root.height);
-		changed = 1;
-	}
-
-	if (changed) {
-		if (twm->current->window) {
-			window_reverse(twm->current->window, TRUE, wm);
-		}
 	}
 }
 
@@ -443,11 +391,7 @@ tiling_wm_give_focus(GntWM *wm, GntWidget *win)
 	if (win != twm->current->window && !GNT_IS_MENU(win)) {
 		frame = find_frame_by_window(&twm->root, win);
 		if (frame) {
-			if (twm->current->window) {
-				window_reverse(twm->current->window, FALSE, wm);
-			}
 			twm->current = frame;
-			window_reverse(win, TRUE, wm);
 		}
 	}
 
@@ -553,7 +497,6 @@ twm_split(GntBindable *bindable, GList *list)
 
 	if (twm->current->window) {
 		twm_move_window_to_frame(twm->current->window, twm->current);
-		window_reverse(twm->current->window, TRUE, wm);
 		gnt_wm_raise_window(wm, twm->current->window);
 	}
 
@@ -622,7 +565,6 @@ remove_split(GntBindable *bindable, GList *null)
 
 		if (twm->current->window) {
 			twm_move_window_to_frame(twm->current->window, twm->current);
-			window_reverse(twm->current->window, TRUE, wm);
 		}
 		g_free(current);
 		g_free(sibling);
@@ -662,7 +604,6 @@ remove_all_split(GntBindable *bindable, GList *null)
 
 		if (twm->root.window) {
 			twm_move_window_to_frame(twm->current->window, twm->current);
-			window_reverse(twm->current->window, TRUE, wm);
 		}
 	}
 
@@ -742,13 +683,9 @@ twm_move_left_up(GntBindable *bindable, GList *list)
 
 	left = find_parent_with_left(twm->current, type);
 	if (left) {
-		if (twm->current->window) {
-			window_reverse(twm->current->window, FALSE, wm);
-		}
 		left = find_rightmost_child(left);
 		twm->current = left;
 		if (twm->current->window) {
-			window_reverse(twm->current->window, TRUE, wm);
 			gnt_wm_raise_window(wm, twm->current->window);
 		}
 	}
@@ -767,13 +704,9 @@ twm_move_right_down(GntBindable *bindable, GList *list)
 
 	right = find_parent_with_right(twm->current, type);
 	if (right) {
-		if (twm->current->window) {
-			window_reverse(twm->current->window, FALSE, wm);
-		}
 		right = find_leftmost_child(right);
 		twm->current = right;
 		if (twm->current->window) {
-			window_reverse(twm->current->window, TRUE, wm);
 			gnt_wm_raise_window(wm, twm->current->window);
 		}
 	}
@@ -797,7 +730,6 @@ twm_exchange_left_up(GntWM *wm, int type)
 		twm->current->window = tmp_win;
 		if (left->window) {
 			twm_move_window_to_frame(left->window, left);
-			window_reverse(left->window, TRUE, wm);
 		}
 		if (twm->current->window) {
 			twm_move_window_to_frame(twm->current->window, twm->current);
@@ -833,7 +765,6 @@ twm_exchange_right_down(GntWM *wm, int type)
 		twm->current->window = tmp_win;
 		if (right->window) {
 			twm_move_window_to_frame(right->window, right);
-			window_reverse(right->window, TRUE, wm);
 		}
 		if (twm->current->window) {
 			twm_move_window_to_frame(twm->current->window, twm->current);
@@ -952,9 +883,6 @@ twm_resize_move(GntBindable *bindable, GList *list)
 					}
 					break;
 			}
-			if (twm->current->window) {
-				window_reverse(twm->current->window, TRUE, wm);
-			}
 		}
 		return TRUE;
 	} else if (wm->mode == GNT_KP_MODE_MOVE) {
@@ -972,9 +900,6 @@ twm_resize_move(GntBindable *bindable, GList *list)
 			case DIRECTION_DOWN:
 				twm_exchange_right_down(wm, FRAME_SPLIT_V);
 				break;
-		}
-		if (twm->current->window) {
-			window_reverse(twm->current->window, TRUE, wm);
 		}
 	}
 
