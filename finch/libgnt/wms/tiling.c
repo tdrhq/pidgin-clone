@@ -37,9 +37,11 @@
  *   exchange: H,J,K,L
  *   resize: r
  *   move: m
+ *   get list of all windows: w
  *   TODO:
  *   get list of non-visible windows: v
- *   get list of all windows: w
+ *   cycle frame to next non-visible window: N
+ *   convert move (m) from an exchange to just a move
  */
 #include <stdlib.h>
 #include <string.h>
@@ -72,7 +74,7 @@ typedef struct _TilingFrame
 	struct _TilingFrame *right_bottom;
 	struct _TilingFrame *parent;
 	struct _TilingFrame *sibling;
-	GntWidget *window;
+	GQueue *windows;
 } TilingFrame;
 
 typedef struct _TilingWM
@@ -100,9 +102,6 @@ void gntwm_init(GntWM **wm);
 static void (*org_new_window)(GntWM *wm, GntWidget *win);
 static void (*org_give_focus)(GntWM *wm, GntWidget *win);
 
-static GntWidget *
-get_next_window(GntWM *wm, GntWidget *win, int direction);
-
 static void
 twm_hide_window(GntWM *wm, GntWidget *win)
 {
@@ -127,7 +126,7 @@ twm_show_window_in_frame(GntWM *wm, GntWidget *win, TilingFrame *frame)
 {
 	TilingWM *twm = (TilingWM*)wm;
 	twm_move_window_to_frame(win, frame);
-	gnt_ws_widget_show(twm->current->window, wm->nodes);
+	gnt_ws_widget_show(g_queue_peek_head(twm->current->windows), wm->nodes);
 	g_object_set_data(G_OBJECT(win), "tiling-visible", GINT_TO_POINTER(1));
 }
 
@@ -135,12 +134,14 @@ static void
 twm_propagate_x_width_change(GntWM *wm, TilingFrame *frame, int d_x, int d_width)
 {
 	int left_width, right_width, tmp_width;
+	GntWidget *win;
+
 	frame->x += d_x;
 	frame->width += d_width;
 	switch (frame->type) {
 		case FRAME_SPLIT_NONE:
-			if (frame->window) {
-				twm_move_window_to_frame(frame->window, frame);
+			if ((win = g_queue_peek_head(frame->windows))) {
+				twm_move_window_to_frame(win, frame);
 			}
 			break;
 		case FRAME_SPLIT_V:
@@ -183,12 +184,14 @@ static void
 twm_propagate_y_height_change(GntWM *wm, TilingFrame *frame, int d_y, int d_height)
 {
 	int top_height, bottom_height, tmp_height;
+	GntWidget *win;
+
 	frame->y += d_y;
 	frame->height += d_height;
 	switch (frame->type) {
 		case FRAME_SPLIT_NONE:
-			if (frame->window) {
-				twm_move_window_to_frame(frame->window, frame);
+			if ((win = g_queue_peek_head(frame->windows))) {
+				twm_move_window_to_frame(win, frame);
 			}
 			break;
 		case FRAME_SPLIT_V:
@@ -231,51 +234,67 @@ static void
 twm_set_next_window_in_current(GntWM *wm, int direction)
 {
 	TilingWM *twm = (TilingWM*)wm;
-	GntWidget *w, *wid;
+	GntWidget *next_win, *cur_win;
 
-	w = wm->cws->ordered->data;
-	wid = get_next_window(wm, w, direction);
-
-	if (wid && wid != twm->current->window) {
-
-		/* hide previous window */
-		if (twm->current->window) {
-			twm_hide_window(wm, twm->current->window);
+	if (g_queue_get_length(twm->current->windows) >= 2) {
+		if (direction > 0) {
+			cur_win = g_queue_pop_head(twm->current->windows);
+			next_win = g_queue_peek_head(twm->current->windows);
+			g_queue_push_tail(twm->current->windows, cur_win);
+		} else {
+			cur_win = g_queue_peek_head(twm->current->windows);
+			next_win = g_queue_pop_tail(twm->current->windows);
+			g_queue_push_head(twm->current->windows, next_win);
 		}
 
+		/* hide previous window */
+		twm_hide_window(wm, cur_win);
+
 		/* show new window */
-		twm->current->window = wid;
-		twm_show_window_in_frame(wm, wid, twm->current);
-		gnt_wm_raise_window(wm, wid);
+		twm_show_window_in_frame(wm, next_win, twm->current);
+		gnt_wm_raise_window(wm, next_win);
 	}
 }
 
 /* recursive function to find a frame that is currently display a given window */
 static TilingFrame *
-find_frame_by_window(TilingFrame *root, GntWidget *win)
+find_frame_by_window_recurse(TilingFrame *root, GntWidget *win)
 {
 	TilingFrame *cur = root;
 	TilingFrame *left_top, *right_bot;
+	GList *list;
 
-	if (root->window == win) return root;
+	if ((list = g_queue_find(root->windows, win))) return root;
 
 	if (cur->left_top) {
-		left_top = find_frame_by_window(cur->left_top, win);
+		left_top = find_frame_by_window_recurse(cur->left_top, win);
 		if (left_top) return left_top;
 	}
 
 	if (cur->right_bottom) {
-		right_bot = find_frame_by_window(cur->right_bottom, win);
+		right_bot = find_frame_by_window_recurse(cur->right_bottom, win);
 		if (right_bot) return right_bot;
 	}
 
 	return NULL;
 }
 
+static TilingFrame *
+find_frame_by_window(TilingWM *twm, GntWidget *win)
+{
+	/* quick shortcut since a majority of resizing will be of the current */
+	if (g_queue_peek_head(twm->current->windows) == win) {
+		return twm->current;
+	} else {
+		return find_frame_by_window_recurse(&twm->root, win);
+	}
+}
+
 static void
 tiling_wm_new_window(GntWM *wm, GntWidget *win)
 {
 	TilingWM *twm = (TilingWM*)wm;
+	GntWidget *cur_win;
 	int w, h, x, y;
 
 	if (!GNT_IS_MENU(win) && !GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
@@ -286,16 +305,13 @@ tiling_wm_new_window(GntWM *wm, GntWidget *win)
 		gnt_widget_set_position(win, x, y);
 		gnt_widget_set_size(win, w, h);
 		mvwin(win->window, x, y);
-		if (twm->current->window) {
-			twm_hide_window(wm, twm->current->window);
+		if ((cur_win = g_queue_peek_head(twm->current->windows))) {
+			twm_hide_window(wm, cur_win);
 		}
-		twm->current->window = win;
+		g_queue_push_head(twm->current->windows, win);
 		twm_show_window_in_frame(wm, win, twm->current);
 	}
 	org_new_window(wm, win);
-	if (!GNT_IS_MENU(win) && !GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
-		gnt_wm_raise_window(wm, win);
-	}
 }
 
 static gboolean
@@ -304,11 +320,7 @@ tiling_wm_window_move_confirm(GntWM *wm, GntWidget *win, int *x, int *y)
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *frame;
 
-	if (twm->current->window == win) {
-		frame = twm->current;
-	} else {
-		frame = find_frame_by_window(&twm->root, win);
-	}
+	frame = find_frame_by_window(twm, win);
 
 	if (!frame || (*x == frame->x && *y == frame->y)) {
 		return TRUE;
@@ -323,11 +335,7 @@ tiling_wm_window_resize_confirm(GntWM *wm, GntWidget *win, int *w, int *h)
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *frame;
 
-	if (twm->current->window == win) {
-		frame = twm->current;
-	} else {
-		frame = find_frame_by_window(&twm->root, win);
-	}
+	frame = find_frame_by_window(twm, win);
 
 	if (!frame || (*w == frame->width && *h == frame->height)) {
 		return TRUE;
@@ -343,19 +351,13 @@ tiling_wm_close_window(GntWM *wm, GntWidget *win)
 	TilingFrame *frame;
 	GntWidget *wid;
 
-	/* quick way to grab the current window */
-	if (win == twm->current->window) {
-		frame = twm->current;
-	} else {
-		frame = find_frame_by_window(&twm->root, win);
-	}
+	frame = find_frame_by_window(twm, win);
 
 	if (frame) {
-		wid = get_next_window(wm, win, 1);
+		if (win == g_queue_peek_head(frame->windows)) {
+			g_queue_pop_head(frame->windows);
 
-		if (wid != frame->window) {
-			frame->window = wid;
-			if (wid) {
+			if ((wid = g_queue_peek_head(frame->windows))) {
 				/* show new window */
 				twm_show_window_in_frame(wm, wid, frame);
 				/* if the window being closed was in the current frame, bring the new one in focus */
@@ -363,6 +365,9 @@ tiling_wm_close_window(GntWM *wm, GntWidget *win)
 					gnt_wm_raise_window(wm, wid);
 				}
 			}
+		} else {
+			/* not displayed window in frame, so just remove it from the queue */
+			g_queue_remove(frame->windows, win);
 		}
 	}
 
@@ -388,44 +393,17 @@ tiling_wm_give_focus(GntWM *wm, GntWidget *win)
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *frame;
 
-	if (win != twm->current->window && !GNT_IS_MENU(win)) {
-		frame = find_frame_by_window(&twm->root, win);
+	if (win != g_queue_peek_head(twm->current->windows) && !GNT_IS_MENU(win)) {
+		frame = find_frame_by_window(twm, win);
 		if (frame) {
 			twm->current = frame;
+			/* move the window to the front of the queue */
+			g_queue_remove(frame->windows, win);
+			g_queue_push_head(frame->windows, win);
 		}
 	}
 
 	org_give_focus(wm, win);
-}
-
-static GntWidget *
-get_next_window(GntWM *wm, GntWidget *win, int direction)
-{
-	GntWidget *w = NULL, *wid = NULL;
-	w = wm->cws->ordered->data;
-	int pos = g_list_index(wm->cws->list, win);
-	int visible = 1;
-
-	/* loop until non-visble window is found, or the entire list has been iterated through */
-	while (visible && wid != win) {
-		pos += direction;
-		if (pos < 0) {
-			wid = g_list_last(wm->cws->list)->data;
-			pos = g_list_length(wm->cws->list) - 1;
-		} else if (pos >= g_list_length(wm->cws->list)) {
-			wid = wm->cws->list->data;
-			pos = 0;
-		} else
-			wid = g_list_nth_data(wm->cws->list, pos);
-		visible = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(wid), "tiling-visible"));
-	}
-
-	/* if there are no other windows, set it to NULL */
-	if (wid == win) {
-		wid = NULL;
-	}
-
-	return wid;
 }
 
 static gboolean
@@ -451,6 +429,7 @@ twm_split(GntBindable *bindable, GList *list)
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *lft_top, *rgt_bot;
+	GntWidget *win;
 	int type = GPOINTER_TO_INT(list->data);
 
 	lft_top = g_new0(TilingFrame, 1);
@@ -483,21 +462,28 @@ twm_split(GntBindable *bindable, GList *list)
 	rgt_bot->sibling = lft_top;
 	lft_top->type = rgt_bot->type = FRAME_SPLIT_NONE;
 
-	lft_top->window = twm->current->window;
-	rgt_bot->window = get_next_window(wm, lft_top->window, 1);
-	twm->current->window = NULL;
+	/* Left/Top get all the windows from current */
+	lft_top->windows = twm->current->windows;
+	twm->current->windows = NULL;
+	rgt_bot->windows = g_queue_new();
+
+	/* Give the Right/Bottom 1 window */
+	if (g_queue_get_length(lft_top->windows) >= 2) {
+		win = g_queue_pop_tail(lft_top->windows);
+		g_queue_push_head(rgt_bot->windows, win);
+	}
 
 	/* set current frame to the top or left */
 	twm->current = lft_top;
 
 	/* show other window */
-	if (rgt_bot->window) {
-		twm_show_window_in_frame(wm, rgt_bot->window, rgt_bot);
+	if (win) {
+		twm_show_window_in_frame(wm, win, rgt_bot);
 	}
 
-	if (twm->current->window) {
-		twm_move_window_to_frame(twm->current->window, twm->current);
-		gnt_wm_raise_window(wm, twm->current->window);
+	if ((win = g_queue_peek_head(twm->current->windows))) {
+		twm_move_window_to_frame(win, twm->current);
+		gnt_wm_raise_window(wm, win);
 	}
 
 	return TRUE;
@@ -519,6 +505,7 @@ remove_split(GntBindable *bindable, GList *null)
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *parent, *current, *sibling;
+	GntWidget *win;
 
 	current = twm->current;
 	/* root doesn't have a sibling */
@@ -540,9 +527,7 @@ remove_split(GntBindable *bindable, GList *null)
 					twm_propagate_x_width_change(wm, sibling, 0, current->width);
 				}
 			}
-			if (current->window) {
-				twm_hide_window(wm, current->window);
-			}
+
 			parent->type = sibling->type;
 			/* parent adopts sibling's children */
 			parent->left_top = sibling->left_top;
@@ -551,20 +536,36 @@ remove_split(GntBindable *bindable, GList *null)
 			sibling->left_top->parent = parent;
 			sibling->right_bottom->parent = parent;
 			twm->current = depth_search(sibling);
+
+			/* push current windows on to the 'new current' windows queue */
+			if ((win = g_queue_pop_head(current->windows))) {
+				twm_hide_window(wm, win);
+				while (win) {
+					g_queue_push_tail(twm->current->windows, win);
+					win = g_queue_pop_head(current->windows);
+				}
+			}
+			g_queue_free(current->windows);
 		} else {
 			/* sibling is leaf node, so copy current frame's properties to the parent */
-			if (sibling->window) {
-				twm_hide_window(wm, sibling->window);
-			}
 			parent->type = FRAME_SPLIT_NONE;
 			parent->left_top = NULL;
 			parent->right_bottom = NULL;
-			parent->window = twm->current->window;
+			/* copy the sibling's window list to the end of the current */
+			parent->windows = twm->current->windows;
+			if ((win = g_queue_pop_head(sibling->windows))) {
+				twm_hide_window(wm, win);
+				while (win) {
+					g_queue_push_tail(parent->windows, win);
+					win = g_queue_pop_head(sibling->windows);
+				}
+			}
+			g_queue_free(sibling->windows);
 			twm->current = parent;
 		}
 
-		if (twm->current->window) {
-			twm_move_window_to_frame(twm->current->window, twm->current);
+		if ((win = g_queue_peek_head(twm->current->windows))) {
+			twm_move_window_to_frame(win, twm->current);
 		}
 		g_free(current);
 		g_free(sibling);
@@ -577,10 +578,17 @@ remove_split(GntBindable *bindable, GList *null)
 static void
 free_tiling_frames(GntWM *wm, TilingFrame *frame)
 {
+	TilingWM *twm = (TilingWM*)wm;
+	GntWidget *win;
 	if (frame) {
-		if (frame->window) {
-			twm_hide_window(wm, frame->window);
+		if ((win = g_queue_pop_head(frame->windows))) {
+			twm_hide_window(wm, win);
+			while (win) {
+				g_queue_push_tail(twm->root.windows, win);
+				win = g_queue_pop_head(frame->windows);
+			}
 		}
+		g_queue_free(frame->windows);
 		free_tiling_frames(wm, frame->left_top);
 		free_tiling_frames(wm, frame->right_bottom);
 		g_free(frame);
@@ -593,17 +601,20 @@ remove_all_split(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
+	GntWidget *win;
 
 	/* set the root window to the current window and remove all the children */
 	if (twm->current != &twm->root) {
-		twm->root.window = twm->current->window;
+		win = g_queue_peek_head(twm->current->windows);
 		twm->current = &twm->root;
 
 		free_tiling_frames(wm, twm->root.left_top);
 		free_tiling_frames(wm, twm->root.right_bottom);
 
-		if (twm->root.window) {
-			twm_move_window_to_frame(twm->current->window, twm->current);
+		if (win) {
+			g_queue_remove(twm->current->windows, win);
+			g_queue_push_head(twm->current->windows, win);
+			twm_move_window_to_frame(win, twm->current);
 		}
 	}
 
@@ -679,14 +690,15 @@ twm_move_left_up(GntBindable *bindable, GList *list)
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *left;
+	GntWidget *win;
 	int type = GPOINTER_TO_INT(list->data);
 
 	left = find_parent_with_left(twm->current, type);
 	if (left) {
 		left = find_rightmost_child(left);
 		twm->current = left;
-		if (twm->current->window) {
-			gnt_wm_raise_window(wm, twm->current->window);
+		if ((win = g_queue_peek_head(twm->current->windows))) {
+			gnt_wm_raise_window(wm, win);
 		}
 	}
 
@@ -700,14 +712,15 @@ twm_move_right_down(GntBindable *bindable, GList *list)
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *right;
+	GntWidget *win;
 	int type = GPOINTER_TO_INT(list->data);
 
 	right = find_parent_with_right(twm->current, type);
 	if (right) {
 		right = find_leftmost_child(right);
 		twm->current = right;
-		if (twm->current->window) {
-			gnt_wm_raise_window(wm, twm->current->window);
+		if ((win = g_queue_peek_head(twm->current->windows))) {
+			gnt_wm_raise_window(wm, win);
 		}
 	}
 
@@ -719,21 +732,23 @@ twm_exchange_left_up(GntWM *wm, int type)
 {
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *left;
-	GntWidget *tmp_win;
+	GntWidget *left_win, *cur_win;
 
 	left = find_parent_with_left(twm->current, type);
 	if (left) {
 		left = find_rightmost_child(left);
 		/* exchange the windows */
-		tmp_win = left->window;
-		left->window = twm->current->window;
-		twm->current->window = tmp_win;
-		if (left->window) {
-			twm_move_window_to_frame(left->window, left);
+		left_win = g_queue_pop_head(left->windows);
+		if (left_win) {
+			cur_win = g_queue_pop_head(twm->current->windows);
+			if (cur_win) {
+				g_queue_push_head(left->windows, cur_win);
+				twm_move_window_to_frame(cur_win, left);
+			}
+			g_queue_push_head(twm->current->windows, left_win);
+			twm_move_window_to_frame(left_win, twm->current);
 		}
-		if (twm->current->window) {
-			twm_move_window_to_frame(twm->current->window, twm->current);
-		}
+
 		twm->current = left;
 	}
 }
@@ -754,21 +769,23 @@ twm_exchange_right_down(GntWM *wm, int type)
 {
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *right;
-	GntWidget *tmp_win;
+	GntWidget *right_win, *cur_win;
 
 	right = find_parent_with_right(twm->current, type);
 	if (right) {
 		right = find_leftmost_child(right);
 		/* exchange the windows */
-		tmp_win = right->window;
-		right->window = twm->current->window;
-		twm->current->window = tmp_win;
-		if (right->window) {
-			twm_move_window_to_frame(right->window, right);
+		right_win = g_queue_pop_head(right->windows);
+		if (right_win) {
+			cur_win = g_queue_pop_head(twm->current->windows);
+			if(cur_win) {
+				g_queue_push_head(right->windows, cur_win);
+				twm_move_window_to_frame(cur_win, right);
+			}
+			g_queue_push_head(twm->current->windows, right_win);
+			twm_move_window_to_frame(right_win, twm->current);
 		}
-		if (twm->current->window) {
-			twm_move_window_to_frame(twm->current->window, twm->current);
-		}
+
 		twm->current = right;
 	}
 }
@@ -991,7 +1008,7 @@ void gntwm_init(GntWM **wm)
 	twm->root.right_bottom = NULL;
 	twm->root.sibling = NULL;
 	twm->root.type = FRAME_SPLIT_NONE;
-	twm->root.window = NULL;
+	twm->root.windows = g_queue_new();
 	twm->current = &twm->root;
 }
 
