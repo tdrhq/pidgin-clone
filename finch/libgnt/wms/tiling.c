@@ -1024,6 +1024,7 @@ twm_resize_move(GntBindable *bindable, GList *list)
 				twm_move_win_right_down(wm, FRAME_SPLIT_V);
 				break;
 		}
+		return TRUE;
 	}
 
 	return FALSE;
