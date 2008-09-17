@@ -41,7 +41,6 @@
  *   TODO:
  *   get list of non-visible windows: v
  *   cycle frame to next non-visible window: N
- *   convert move (m) from an exchange to just a move
  */
 #include <stdlib.h>
 #include <string.h>
@@ -125,8 +124,12 @@ static void
 twm_show_window_in_frame(GntWM *wm, GntWidget *win, TilingFrame *frame)
 {
 	TilingWM *twm = (TilingWM*)wm;
+	GntWidget *cur_win;
 	twm_move_window_to_frame(win, frame);
-	gnt_ws_widget_show(g_queue_peek_head(twm->current->windows), wm->nodes);
+	/* TODO: why did i have this in here? */
+	if ((cur_win = g_queue_peek_head(twm->current->windows))) {
+		gnt_ws_widget_show(cur_win, wm->nodes);
+	}
 	g_object_set_data(G_OBJECT(win), "tiling-visible", GINT_TO_POINTER(1));
 }
 
@@ -236,7 +239,8 @@ twm_set_next_window_in_current(GntWM *wm, int direction)
 	TilingWM *twm = (TilingWM*)wm;
 	GntWidget *next_win, *cur_win;
 
-	if (g_queue_get_length(twm->current->windows) >= 2) {
+	/* if there are two or more windows in the queue */
+	if (twm->current->windows->length >= 2) {
 		if (direction > 0) {
 			cur_win = g_queue_pop_head(twm->current->windows);
 			next_win = g_queue_peek_head(twm->current->windows);
@@ -256,15 +260,69 @@ twm_set_next_window_in_current(GntWM *wm, int direction)
 	}
 }
 
+static void
+twm_g_queue_remove(GQueue *q, gpointer data)
+{
+#if GLIB_CHECK_VERSION(2,4,0)
+	g_queue_remove(q, data);
+#else
+	int i;
+	gpointer head;
+	gboolean found = FALSE;
+
+	/* pop from the head and push it back on the tail, but only if it isn't the desired data to remove */
+	if (q) {
+		for (i = 0; i < q->length; i++) {
+			head = g_queue_pop_head(q);
+			if(data == head && !found) {
+				found = TRUE;
+			} else {
+				g_queue_push_tail(q, head);
+			}
+		}
+	}
+#endif
+}
+
+static gboolean
+exists_in_g_queue(GQueue *q, gpointer data)
+{
+	if (q) {
+		GList *i = q->head;
+		while(i) {
+			if(i->data == data) return TRUE;
+			i = i->next;
+		}
+	}
+	return FALSE;
+}
+
+static void
+twm_front_window(GQueue *q, gpointer win)
+{
+	int i;
+	gpointer head;
+	if (q) {
+		for (i = 0; i < q->length; i++) {
+			head = g_queue_pop_head(q);
+			if(win == head) {
+				g_queue_push_head(q, head);
+				break;
+			} else {
+				g_queue_push_tail(q, head);
+			}
+		}
+	}
+}
+
 /* recursive function to find a frame that is currently display a given window */
 static TilingFrame *
 find_frame_by_window_recurse(TilingFrame *root, GntWidget *win)
 {
 	TilingFrame *cur = root;
 	TilingFrame *left_top, *right_bot;
-	GList *list;
 
-	if ((list = g_queue_find(root->windows, win))) return root;
+	if (exists_in_g_queue(root->windows, win)) return root;
 
 	if (cur->left_top) {
 		left_top = find_frame_by_window_recurse(cur->left_top, win);
@@ -367,7 +425,7 @@ tiling_wm_close_window(GntWM *wm, GntWidget *win)
 			}
 		} else {
 			/* not displayed window in frame, so just remove it from the queue */
-			g_queue_remove(frame->windows, win);
+			twm_g_queue_remove(frame->windows, win);
 		}
 	}
 
@@ -398,8 +456,8 @@ tiling_wm_give_focus(GntWM *wm, GntWidget *win)
 		if (frame) {
 			twm->current = frame;
 			/* move the window to the front of the queue */
-			g_queue_remove(frame->windows, win);
-			g_queue_push_head(frame->windows, win);
+			twm_front_window(frame->windows, win);
+			twm_move_window_to_frame(win, frame);
 		}
 	}
 
@@ -429,7 +487,7 @@ twm_split(GntBindable *bindable, GList *list)
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *lft_top, *rgt_bot;
-	GntWidget *win;
+	GntWidget *win = NULL;
 	int type = GPOINTER_TO_INT(list->data);
 
 	lft_top = g_new0(TilingFrame, 1);
@@ -468,7 +526,7 @@ twm_split(GntBindable *bindable, GList *list)
 	rgt_bot->windows = g_queue_new();
 
 	/* Give the Right/Bottom 1 window */
-	if (g_queue_get_length(lft_top->windows) >= 2) {
+	if (lft_top->windows->length >= 2) {
 		win = g_queue_pop_tail(lft_top->windows);
 		g_queue_push_head(rgt_bot->windows, win);
 	}
@@ -607,12 +665,12 @@ remove_all_split(GntBindable *bindable, GList *null)
 	if (twm->current != &twm->root) {
 		win = g_queue_peek_head(twm->current->windows);
 		twm->current = &twm->root;
+		twm->current->windows = g_queue_new();
 
 		free_tiling_frames(wm, twm->root.left_top);
 		free_tiling_frames(wm, twm->root.right_bottom);
 
 		if (win) {
-			g_queue_remove(twm->current->windows, win);
 			g_queue_push_head(twm->current->windows, win);
 			twm_move_window_to_frame(win, twm->current);
 		}
@@ -725,6 +783,54 @@ twm_move_right_down(GntBindable *bindable, GList *list)
 	}
 
 	return TRUE;
+}
+
+static void
+twm_move_win_left_up(GntWM *wm, int type)
+{
+	TilingWM *twm = (TilingWM*)wm;
+	TilingFrame *left;
+	GntWidget *next_win, *cur_win;
+
+	if ((cur_win = g_queue_pop_head(twm->current->windows))) {
+		left = find_parent_with_left(twm->current, type);
+		if (left) {
+			left = find_rightmost_child(left);
+
+			g_queue_push_head(left->windows, cur_win);
+			twm_move_window_to_frame(cur_win, left);
+			
+			if ((next_win = g_queue_peek_head(twm->current->windows))) {
+				twm_move_window_to_frame(next_win, twm->current);
+			}
+
+			twm->current = left;
+		}
+	}
+}
+
+static void
+twm_move_win_right_down(GntWM *wm, int type)
+{
+	TilingWM *twm = (TilingWM*)wm;
+	TilingFrame *right;
+	GntWidget *next_win, *cur_win;
+
+	if ((cur_win = g_queue_pop_head(twm->current->windows))) {
+		right = find_parent_with_right(twm->current, type);
+		if (right) {
+			right = find_leftmost_child(right);
+
+			g_queue_push_head(right->windows, cur_win);
+			twm_move_window_to_frame(cur_win, right);
+			
+			if ((next_win = g_queue_peek_head(twm->current->windows))) {
+				twm_move_window_to_frame(next_win, twm->current);
+			}
+
+			twm->current = right;
+		}
+	}
 }
 
 static void
@@ -906,16 +1012,16 @@ twm_resize_move(GntBindable *bindable, GList *list)
 		/* move mode */
 		switch (direction) {
 			case DIRECTION_LEFT:
-				twm_exchange_left_up(wm, FRAME_SPLIT_H);
+				twm_move_win_left_up(wm, FRAME_SPLIT_H);
 				break;
 			case DIRECTION_RIGHT:
-				twm_exchange_right_down(wm, FRAME_SPLIT_H);
+				twm_move_win_right_down(wm, FRAME_SPLIT_H);
 				break;
 			case DIRECTION_UP:
-				twm_exchange_left_up(wm, FRAME_SPLIT_V);
+				twm_move_win_left_up(wm, FRAME_SPLIT_V);
 				break;
 			case DIRECTION_DOWN:
-				twm_exchange_right_down(wm, FRAME_SPLIT_V);
+				twm_move_win_right_down(wm, FRAME_SPLIT_V);
 				break;
 		}
 	}
