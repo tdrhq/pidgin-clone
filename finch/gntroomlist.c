@@ -259,6 +259,12 @@ size_changed_cb(GntWidget *widget, int oldw, int oldh)
 	purple_prefs_set_int(PREF_ROOT "/size/height", h);
 }
 
+static int
+room_compare(PurpleRoomlistRoom *r1, PurpleRoomlistRoom *r2)
+{
+	return g_utf8_collate(r1->name, r2->name);
+}
+
 static void
 setup_roomlist(PurpleAccount *account)
 {
@@ -300,6 +306,7 @@ setup_roomlist(PurpleAccount *account)
 	gnt_tree_set_col_width(GNT_TREE(tree), 1, 1);
 	gnt_tree_set_column_resizable(GNT_TREE(tree), 1, FALSE);
 	gnt_tree_set_search_column(GNT_TREE(tree), 0);
+	gnt_tree_set_compare_func(GNT_TREE(tree), (GCompareFunc)room_compare);
 
 	gnt_box_add_widget(GNT_BOX(window), tree);
 
