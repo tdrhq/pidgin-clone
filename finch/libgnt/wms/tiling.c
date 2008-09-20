@@ -366,10 +366,14 @@ tiling_wm_new_window(GntWM *wm, GntWidget *win)
 		if ((cur_win = g_queue_peek_head(twm->current->windows))) {
 			twm_hide_window(wm, cur_win);
 		}
-		g_queue_push_head(twm->current->windows, win);
+		g_queue_push_tail(twm->current->windows, win);
 		twm_show_window_in_frame(wm, win, twm->current);
 	}
 	org_new_window(wm, win);
+
+	if(twm->current->windows->length == 1) {
+		gnt_wm_raise_window(wm, win);
+	}
 }
 
 static gboolean
@@ -928,7 +932,7 @@ twm_resize_move(GntBindable *bindable, GList *list)
 {
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
-	TilingFrame *frame;
+	TilingFrame *frame = NULL;
 	int direction = GPOINTER_TO_INT(list->data);
 
 	/* resize mode */
