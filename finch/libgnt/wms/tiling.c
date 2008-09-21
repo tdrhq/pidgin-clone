@@ -724,23 +724,57 @@ find_child_of_type(TilingFrame *frame, int type)
 	return NULL;
 }
 
+static gboolean
+frames_adjacent(int dim1, int delta1, int dim2, int delta2)
+{
+	return ((dim1 + delta1 == dim2) || (dim2 + delta2 == dim1));
+}
+
 static TilingFrame *
-find_rightmost_child(TilingFrame *frame)
+find_closest_vertical_child(TilingFrame *frame, TilingFrame *cur)
 {
 	TilingFrame *child = frame;
-	while (child->right_bottom) {
-		child = child->right_bottom;
+
+	while (child->type != FRAME_SPLIT_NONE) {
+		if (frames_adjacent(child->left_top->x, child->left_top->width, cur->x, cur->width)) {
+			if (frames_adjacent(child->right_bottom->x, child->right_bottom->width, cur->x, cur->width)) {
+				/* both adjacent, pick the one closer */
+				if (ABS(child->left_top->y - cur->y) < ABS(child->right_bottom->y - cur->y)) {
+					child = child->left_top;
+				} else {
+					child = child->right_bottom;
+				}
+			} else {
+				child = child->left_top;
+			}
+		} else {
+			child = child->right_bottom;
+		}
 	}
 
 	return child;
 }
 
 static TilingFrame *
-find_leftmost_child(TilingFrame *frame)
+find_closest_horizontal_child(TilingFrame *frame, TilingFrame *cur)
 {
 	TilingFrame *child = frame;
-	while (child->left_top) {
-		child = child->left_top;
+
+	while (child->type != FRAME_SPLIT_NONE) {
+		if (frames_adjacent(child->left_top->y, child->left_top->height, cur->y, cur->height)) {
+			if (frames_adjacent(child->right_bottom->y, child->right_bottom->height, cur->y, cur->height)) {
+				/* both adjacent, pick the one closer */
+				if (ABS(child->left_top->x - cur->x) < ABS(child->right_bottom->x - cur->x)) {
+					child = child->left_top;
+				} else {
+					child = child->right_bottom;
+				}
+			} else {
+				child = child->left_top;
+			}
+		} else {
+			child = child->right_bottom;
+		}
 	}
 
 	return child;
@@ -757,7 +791,11 @@ twm_move_left_up(GntBindable *bindable, GList *list)
 
 	left = find_parent_with_left(twm->current, type);
 	if (left) {
-		left = find_rightmost_child(left);
+		if (type == FRAME_SPLIT_H) { /* left */
+			left = find_closest_vertical_child(left, twm->current);
+		} else { /* up */
+			left = find_closest_horizontal_child(left, twm->current);
+		}
 		twm->current = left;
 		if ((win = g_queue_peek_head(twm->current->windows))) {
 			gnt_wm_raise_window(wm, win);
@@ -779,7 +817,11 @@ twm_move_right_down(GntBindable *bindable, GList *list)
 
 	right = find_parent_with_right(twm->current, type);
 	if (right) {
-		right = find_leftmost_child(right);
+		if (type == FRAME_SPLIT_H) { /* right */
+			right = find_closest_vertical_child(right, twm->current);
+		} else { /* down */
+			right = find_closest_horizontal_child(right, twm->current);
+		}
 		twm->current = right;
 		if ((win = g_queue_peek_head(twm->current->windows))) {
 			gnt_wm_raise_window(wm, win);
@@ -799,7 +841,11 @@ twm_move_win_left_up(GntWM *wm, int type)
 	if ((cur_win = g_queue_pop_head(twm->current->windows))) {
 		left = find_parent_with_left(twm->current, type);
 		if (left) {
-			left = find_rightmost_child(left);
+			if (type == FRAME_SPLIT_H) { /* left */
+				left = find_closest_vertical_child(left, twm->current);
+			} else { /* up */
+				left = find_closest_horizontal_child(left, twm->current);
+			}
 
 			g_queue_push_head(left->windows, cur_win);
 			twm_move_window_to_frame(cur_win, left);
@@ -823,7 +869,11 @@ twm_move_win_right_down(GntWM *wm, int type)
 	if ((cur_win = g_queue_pop_head(twm->current->windows))) {
 		right = find_parent_with_right(twm->current, type);
 		if (right) {
-			right = find_leftmost_child(right);
+			if (type == FRAME_SPLIT_H) { /* right */
+				right = find_closest_vertical_child(right, twm->current);
+			} else { /* down */
+				right = find_closest_horizontal_child(right, twm->current);
+			}
 
 			g_queue_push_head(right->windows, cur_win);
 			twm_move_window_to_frame(cur_win, right);
@@ -846,7 +896,11 @@ twm_exchange_left_up(GntWM *wm, int type)
 
 	left = find_parent_with_left(twm->current, type);
 	if (left) {
-		left = find_rightmost_child(left);
+		if (type == FRAME_SPLIT_H) { /* left */
+			left = find_closest_vertical_child(left, twm->current);
+		} else { /* up */
+			left = find_closest_horizontal_child(left, twm->current);
+		}
 		/* exchange the windows */
 		left_win = g_queue_pop_head(left->windows);
 		if (left_win) {
@@ -883,7 +937,11 @@ twm_exchange_right_down(GntWM *wm, int type)
 
 	right = find_parent_with_right(twm->current, type);
 	if (right) {
-		right = find_leftmost_child(right);
+		if (type == FRAME_SPLIT_H) { /* right */
+			right = find_closest_vertical_child(right, twm->current);
+		} else { /* down */
+			right = find_closest_horizontal_child(right, twm->current);
+		}
 		/* exchange the windows */
 		right_win = g_queue_pop_head(right->windows);
 		if (right_win) {
