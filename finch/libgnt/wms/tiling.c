@@ -675,6 +675,8 @@ remove_all_split(GntBindable *bindable, GList *null)
 		free_tiling_frames(wm, twm->root.right_bottom);
 
 		if (win) {
+			/* remove it and add it to the front */
+			twm_g_queue_remove(twm->current->windows, win);
 			g_queue_push_head(twm->current->windows, win);
 			twm_move_window_to_frame(win, twm->current);
 		}
