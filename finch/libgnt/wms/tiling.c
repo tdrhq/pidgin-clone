@@ -115,9 +115,10 @@ twm_move_window_to_frame(GntWidget *win, TilingFrame *frame)
 	 * the reason resize is called twice is that the resize might not
 	 * work correctly if the width/height increases and the current x/y
 	 * restricts the width/height */
-	gnt_screen_resize_widget(win, frame->width, frame->height);
 	gnt_screen_move_widget(win, frame->x, frame->y);
-	gnt_screen_resize_widget(win, frame->width, frame->height);
+	if (gnt_widget_set_size(win, frame->width, frame->height))
+			gnt_screen_resize_widget(win, frame->width, frame->height);
+	gnt_screen_move_widget(win, frame->x, frame->y);
 }
 
 static void
@@ -370,10 +371,6 @@ tiling_wm_new_window(GntWM *wm, GntWidget *win)
 		twm_show_window_in_frame(wm, win, twm->current);
 	}
 	org_new_window(wm, win);
-
-	if(twm->current->windows->length == 1) {
-		gnt_wm_raise_window(wm, win);
-	}
 }
 
 static gboolean
@@ -402,7 +399,11 @@ tiling_wm_window_resize_confirm(GntWM *wm, GntWidget *win, int *w, int *h)
 	if (!frame || (*w == frame->width && *h == frame->height)) {
 		return TRUE;
 	} else {
-		return FALSE;
+		/* See if the widget agrees to resize itself */
+		if (gnt_widget_set_size(win, *w, *h))
+			return TRUE;
+		gnt_widget_get_size(win, w, h);
+		return TRUE;
 	}
 }
 
@@ -412,6 +413,9 @@ tiling_wm_close_window(GntWM *wm, GntWidget *win)
 	TilingWM *twm = (TilingWM*)wm;
 	TilingFrame *frame;
 	GntWidget *wid;
+
+	if (GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT))
+		return FALSE;
 
 	frame = find_frame_by_window(twm, win);
 
@@ -431,6 +435,7 @@ tiling_wm_close_window(GntWM *wm, GntWidget *win)
 			/* not displayed window in frame, so just remove it from the queue */
 			twm_g_queue_remove(frame->windows, win);
 		}
+		return TRUE;
 	}
 
 	return FALSE;
