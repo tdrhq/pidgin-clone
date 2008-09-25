@@ -540,7 +540,7 @@ check_word(GntEntry *entry, char *start, char *end)
 	gboolean retval = TRUE;
 
 	if (!entry->spell->dict)
-		return FALSE;
+		return TRUE;  /* Let's pretend the spelling is correct if we don't have no dictionary */
 
 	if (g_unichar_isdigit(*start) == FALSE) { /* don't check numbers */
 		if (enchant_dict_check(entry->spell->dict, start, end - start + 1) != 0) {
@@ -1423,16 +1423,16 @@ set_spell_language(GntEntry *entry, const char *lang)
 	GntEntryWord *w;
 	GntEntrySpell *spell = entry->spell;
 
-	if (!spell->lang || (spell->lang && (strcmp(lang, spell->lang) != 0))) {
+	if (((!spell->lang || !lang) && spell->lang != lang) || (spell->lang && lang && strcmp(lang, spell->lang) != 0)) {
 		g_free(spell->lang);
 		spell->lang = g_strdup(lang);
 		if (spell->broker) {
 			if (spell->dict)
 				enchant_broker_free_dict(spell->broker, spell->dict);
 
-			spell->dict = enchant_broker_request_dict(spell->broker, lang);
+			spell->dict = lang ? enchant_broker_request_dict(spell->broker, lang) : NULL;
 
-			if (spell->dict == NULL) {
+			if (spell->dict == NULL && lang) {
 				err = enchant_broker_get_error(spell->broker);
 				if (err != NULL) {
 					g_warning("GntEntry: couldn't get dictionary for %s: %s\n", lang, err);
@@ -1535,7 +1535,7 @@ spell_suggest_menu_callback(GntMenuItem *item, gpointer data)
 /* callback called from enchant enchant_broker_list_dicts
  * user_data is a (SpellLangInfo *) */
 static void
-add_lang_context(const char * const lang, const char * const name, 
+add_lang_context(const char * const lang, const char * const name,
         const char * const desc, const char * const file, void * user_data)
 {
 	SpellLangInfo *cur_info = (SpellLangInfo *)user_data;
@@ -1548,9 +1548,11 @@ add_lang_context(const char * const lang, const char * const name,
 	/* this destroy callback will handle the spell_info and spell_info->lang frees */
 	g_signal_connect(G_OBJECT(cur_info->sub), "destroy", G_CALLBACK(destroy_spell_lang_info), spell_info);
 
-	item = gnt_menuitem_check_new(lang);
-	if (strcmp(lang, cur_info->lang) == 0)
+	item = gnt_menuitem_check_new(lang ? lang : "None");
+	if ((lang && cur_info->lang && strcmp(lang, cur_info->lang) == 0) ||
+			(!lang && !cur_info->lang))
 		gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item), TRUE);
+
 	gnt_menu_add_item(GNT_MENU(spell_info->sub), GNT_MENU_ITEM(item));
 	gnt_menuitem_set_callback(item, context_menu_callback, (void*)spell_info);
 }
@@ -1582,11 +1584,13 @@ create_spell_menu(GntMenu *menu, GntEntry *entry)
 
 		cur_info.entry = entry;
 		cur_info.sub = GNT_MENU(sub);
+		cur_info.lang = NULL;
 		/* get the current language */
 		if (entry->spell->dict)
 			enchant_dict_describe(entry->spell->dict, get_cur_lang, (void *)&(cur_info.lang));
 
 		enchant_broker_list_dicts(entry->spell->broker, add_lang_context, (void *)&cur_info);
+		add_lang_context(NULL, NULL, NULL, NULL, &cur_info);
 
 		g_free(cur_info.lang);
 	}
