@@ -127,7 +127,7 @@ PurpleAccountManager *purple_account_manager_get(void)
 
 void purple_account_manager_add_account(PurpleAccountManager *manager, PurpleAccount *account)
 {
-	if (g_list_find(manager->priv->accounts, account))
+	if (!account || g_list_find(manager->priv->accounts, account))
 		return;
 
 	manager->priv->accounts = g_list_append(manager->priv->accounts, account);
@@ -506,6 +506,8 @@ parse_account(xmlnode *node)
 	ret = purple_account_new(name, _purple_oscar_convert(name, protocol_id)); /* XXX: */
 	g_free(name);
 	g_free(protocol_id);
+	if (!ret)
+		return ret;
 
 	/* Read the password */
 	child = xmlnode_get_child(node, "password");
