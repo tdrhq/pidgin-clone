@@ -86,6 +86,8 @@ msn_user_update(MsnUser *user)
 	PurpleAccount *account;
 	gboolean offline;
 
+	g_return_if_fail(user != NULL);
+
 	account = user->userlist->session->account;
 
 	offline = (user->status == NULL);
@@ -126,6 +128,8 @@ void
 msn_user_set_state(MsnUser *user, const char *state)
 {
 	const char *status;
+
+	g_return_if_fail(user != NULL);
 
 	if (state == NULL) {
 		user->status = NULL;
@@ -284,7 +288,7 @@ msn_user_is_online(PurpleAccount *account, const char *name)
 {
 	PurpleBuddy *buddy;
 
-	buddy =purple_find_buddy(account,name);
+	buddy = purple_find_buddy(account, name);
 	return PURPLE_BUDDY_IS_ONLINE(buddy);
 }
 

@@ -122,13 +122,8 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		struct yahoo_fetch_picture_data *data;
 		PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), who);
 		const char *locksum = NULL;
-		gboolean use_whole_url = FALSE;
-		PurpleAccount *account = purple_connection_get_account(gc);
-		PurpleProxyInfo *proxy_info = purple_account_get_proxy_info(account);
-
 		/* use whole URL if using HTTP Proxy */
-		if (proxy_info && proxy_info->type == PURPLE_PROXY_HTTP)
-		    use_whole_url = TRUE;
+		gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
 		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL && 
@@ -465,12 +460,11 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	PurpleConnection *gc = d->gc;
 	PurpleAccount *account;
 	struct yahoo_data *yd;
-	gboolean use_whole_url = FALSE;
-	PurpleProxyInfo *proxy_info;
+	/* use whole URL if using HTTP Proxy */
+	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 	account = purple_connection_get_account(gc);
 	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
-	proxy_info = purple_account_get_proxy_info(account);
 
 	/* Buddy icon connect is now complete; clear the PurpleProxyConnectData */
 	yd->buddy_icon_connect_data = NULL;
@@ -480,9 +474,6 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 		yahoo_buddy_icon_upload_data_free(d);
 		return;
 	}
-	/* use whole URL if using HTTP Proxy */
-	if (proxy_info && proxy_info->type == PURPLE_PROXY_HTTP)
-		use_whole_url = TRUE;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPLOAD, YAHOO_STATUS_AVAILABLE, yd->session_id);
 

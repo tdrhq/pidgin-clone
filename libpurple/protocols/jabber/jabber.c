@@ -42,6 +42,7 @@
 #include "auth.h"
 #include "buddy.h"
 #include "chat.h"
+#include "data.h"
 #include "disco.h"
 #include "google.h"
 #include "iq.h"
@@ -622,7 +623,7 @@ jabber_login(PurpleAccount *account)
 	JabberBuddy *my_jb = NULL;
 
 	purple_connection_set_flags(gc,
-			purple_connection_get_flags(gc) | PURPLE_CONNECTION_FLAGS_HTML);
+			purple_connection_get_flags(gc) | PURPLE_CONNECTION_FLAGS_HTML | PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY);
 	purple_object_set_protocol_data(PURPLE_OBJECT(gc), js = g_new0(JabberStream, 1));
 	js->gc = gc;
 	js->fd = -1;

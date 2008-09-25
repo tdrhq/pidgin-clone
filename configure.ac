@@ -74,8 +74,7 @@ fi
 
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
-#AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([dist-bzip2 check-news])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
@@ -1241,20 +1240,24 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_SUBST(DBUS_LIBS)
 		enable_dbus=yes
 	], [
+	enable_dbus=no
 	if test "x$force_deps" = "xyes" ; then
 		AC_MSG_ERROR([
 D-Bus development headers not found.
 Use --disable-dbus if you do not need D-Bus support.
 ])
 	fi])
+fi
 
 dnl Check for NetworkManager.h; if we don't have it, oh well
+if test "x$enable_dbus" = "xyes" ; then
 	if test "x$enable_nm" = "xyes" ; then
-		PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager], [
+		PKG_CHECK_MODULES(NETWORKMANAGER, [NetworkManager >= 0.5.0], [
 			AC_SUBST(NETWORKMANAGER_CFLAGS)
 			AC_SUBST(NETWORKMANAGER_LIBS)
 			AC_DEFINE(HAVE_NETWORKMANAGER, 1, [Define if we have NetworkManager.])
 		], [
+			enable_nm=no
 			if test "x$force_deps" = "xyes" ; then
 				AC_MSG_ERROR([
 NetworkManager development headers not found.
@@ -2021,9 +2024,12 @@ if test "$enable_tcl" = yes; then
 	TCLCONFIG=no
 	TCLCONFIGDIRS="/usr/lib \
 			/usr/lib64 \
+			/usr/lib/tcl8.5 \
 			/usr/lib/tcl8.4 \
 			/usr/lib/tcl8.3 \
 			/usr/lib/tcl8.2 \
+			/usr/lib64/tcl8.5 \
+			/usr/lib64/tcl8.4 \
 			/System/Library/Tcl/8.3 \
 			/usr/local/lib"
 	for dir in $with_tclconfig $TCLCONFIGDIRS; do
@@ -2375,7 +2381,6 @@ AC_OUTPUT([Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
 		   pidgin/pixmaps/Makefile
-		   pidgin/pixmaps/buddy_icons/qq/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
 		   pidgin/plugins/Makefile
