@@ -279,7 +279,7 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 
 static void _qq_process_msg_sys_notice(PurpleConnection *gc, gchar *from, gchar *to, gchar *msg_utf8)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gchar *title, *content;
 
 	g_return_if_fail(from != NULL && to != NULL);

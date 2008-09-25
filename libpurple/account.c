@@ -2603,7 +2603,7 @@ purple_accounts_find(const char *name, const char *protocol_id)
 
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		account = (PurpleAccount *)l->data;
-		if (protocol_id && strcmp(account->protocol_id, protocol_id))
+		if (protocol_id && strcmp(purple_account_get_protocol_id(account), protocol_id))
 		  continue;
 
 		who = g_strdup(purple_normalize(account, name));

@@ -35,7 +35,7 @@
 gboolean
 yahoo_account_use_http_proxy(PurpleConnection *conn)
 {
-	PurpleProxyInfo *ppi = purple_proxy_get_setup(conn->account);
+	PurpleProxyInfo *ppi = purple_proxy_get_setup(purple_connection_get_account(conn));
 	return (ppi->type == PURPLE_PROXY_HTTP || ppi->type == PURPLE_PROXY_USE_ENVVAR);
 }
 

@@ -152,8 +152,8 @@ static gboolean connect_check(gpointer data)
 	PurpleConnection *gc = (PurpleConnection *) data;
 	qq_data *qd;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, FALSE);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, FALSE);
 
 	if (qd->connect_watcher > 0) {
 		purple_timeout_remove(qd->connect_watcher);
@@ -180,8 +180,8 @@ gboolean qq_connect_later(gpointer data)
 	int port;
 	gchar **segments;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, FALSE);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, FALSE);
 
 	if (qd->check_watcher > 0) {
 		purple_timeout_remove(qd->check_watcher);
@@ -247,7 +247,7 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 
 	g_return_val_if_fail(buf != NULL && buf_len > 0, TRUE);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	qd->net_stat.rcved++;
 	if (qd->net_stat.rcved <= 0)	memset(&(qd->net_stat), 0, sizeof(qd->net_stat));
@@ -338,8 +338,8 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 	guint8 *jump;
 	gint jump_len;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail(gc != NULL && qd != NULL);
 
 	if(cond != PURPLE_INPUT_READ) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -464,8 +464,8 @@ static void udp_pending(gpointer data, gint source, PurpleInputCondition cond)
 	gint buf_len;
 
 	gc = (PurpleConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail(gc != NULL && qd != NULL);
 
 	if(cond != PURPLE_INPUT_READ) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -510,8 +510,8 @@ static gint udp_send_out(PurpleConnection *gc, guint8 *data, gint data_len)
 
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
 #if 0
 	purple_debug_info("UDP_SEND_OUT", "Send %d bytes to socket %d\n", data_len, qd->fd);
@@ -538,8 +538,8 @@ static void tcp_can_write(gpointer data, gint source, PurpleInputCondition cond)
 	qq_connection *conn;
 	int ret, writelen;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail(gc != NULL && qd != NULL);
 
 	conn = connection_find(qd, source);
 	g_return_if_fail(conn != NULL);
@@ -574,8 +574,8 @@ static gint tcp_send_out(PurpleConnection *gc, guint8 *data, gint data_len)
 
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
 	conn = connection_find(qd, qd->fd);
 	g_return_val_if_fail(conn, -1);
@@ -624,8 +624,8 @@ static gboolean network_timeout(gpointer data)
 	qq_data *qd;
 	gboolean is_lost_conn;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, TRUE);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, TRUE);
 
 	is_lost_conn = qq_trans_scan(gc);
 	if (is_lost_conn) {
@@ -667,8 +667,8 @@ static void do_request_token(PurpleConnection *gc)
 
 	/* _qq_show_socket("Got login socket", source); */
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail(gc != NULL && qd != NULL);
 
 	/* QQ use random seq, to minimize duplicated packets */
 	srand(time(NULL));
@@ -708,9 +708,9 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message)
 	qq_connection *conn;
 
 	gc = (PurpleConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail(gc != NULL && qd != NULL);
 
-	qd = (qq_data *) gc->proto_data;
 	account = purple_connection_get_account(gc);
 
 	/* conn_data will be destoryed */
@@ -752,10 +752,8 @@ static void udp_can_write(gpointer data, gint source, PurpleInputCondition cond)
 	int error=0, ret;
 
 	gc = (PurpleConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
-	qd = (qq_data *) gc->proto_data;
-
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail(gc != NULL && qd != NULL);
 
 	purple_debug_info("proxy", "Connected.\n");
 
@@ -801,9 +799,8 @@ static void udp_host_resolved(GSList *hosts, gpointer data, const char *error_me
 	int flags;
 
 	gc = (PurpleConnection *) data;
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail(gc != NULL && qd != NULL);
 
 	/* udp_query_data must be set as NULL.
 	 * Otherwise purple_dnsquery_destroy in qq_disconnect cause glib double free error */
@@ -886,9 +883,10 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 	qq_data *qd;
 	gchar *conn_msg;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, FALSE);
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, FALSE);
+
 	account = purple_connection_get_account(gc);
-	qd = (qq_data *) gc->proto_data;
 
 	if (server == NULL || strlen(server) == 0 || port == 0) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
@@ -946,8 +944,8 @@ void qq_disconnect(PurpleConnection *gc)
 {
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail(gc != NULL && qd != NULL);
 
 	purple_debug_info("QQ", "Disconnecting ...\n");
 
@@ -1000,7 +998,7 @@ void qq_disconnect(PurpleConnection *gc)
 	qq_group_free_all(qd);
 	qq_add_buddy_request_free(qd);
 	qq_info_query_free(qd);
-	qq_buddies_list_free(gc->account, qd);
+	qq_buddies_list_free(purple_connection_get_account(gc), qd);
 }
 
 static gint packet_encap(qq_data *qd, guint8 *buf, gint maxlen, guint16 cmd, guint16 seq,
@@ -1042,9 +1040,10 @@ static gint packet_send_out(PurpleConnection *gc, guint16 cmd, guint16 seq, guin
 	gint buf_len;
 	gint bytes_sent;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
-	qd = (qq_data *)gc->proto_data;
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
+
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 	memset(buf, 0, MAX_PACKET_SIZE);
@@ -1090,9 +1089,10 @@ static gint send_cmd_detail(PurpleConnection *gc, guint16 cmd, guint16 seq,
 	gint encrypted_len;
 	gint bytes_sent;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
-	qd = (qq_data *)gc->proto_data;
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
+
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
 	/* at most 16 bytes more */
 	encrypted_data = g_newa(guint8, data_len + 16);
@@ -1118,9 +1118,10 @@ gint qq_send_cmd_mess(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data
 	qq_data *qd;
 	guint16 seq;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
-	qd = (qq_data *) gc->proto_data;
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
+
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
 	seq = ++qd->send_seq;
 #if 1
@@ -1137,9 +1138,10 @@ gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data_len)
 	guint16 seq;
 	gboolean is_save2trans;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
-	qd = (qq_data *) gc->proto_data;
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
+
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
 	if (cmd != QQ_CMD_LOGOUT) {
 		seq = ++qd->send_seq;
@@ -1163,9 +1165,10 @@ gint qq_send_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8
 	gint encrypted_len;
 	gint bytes_sent;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
-	qd = (qq_data *)gc->proto_data;
 	g_return_val_if_fail(data != NULL && data_len > 0, -1);
+
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
 #if 1
 		purple_debug_info("QQ", "<== [SRV-%05d], %s(0x%04X), datalen %d\n",
@@ -1197,8 +1200,8 @@ static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id
 	gint bytes_sent;
 	guint16 seq;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
 	buf = g_newa(guint8, MAX_PACKET_SIZE);
 	memset(buf, 0, MAX_PACKET_SIZE);

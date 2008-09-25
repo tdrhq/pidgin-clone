@@ -302,7 +302,7 @@ void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
 
 	g_return_if_fail(uid != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_snprintf(raw_data, sizeof(raw_data), "%d", uid);
 	qq_send_cmd_mess(gc, QQ_CMD_GET_BUDDY_INFO, (guint8 *) raw_data, strlen(raw_data),
 			update_class, ship32);

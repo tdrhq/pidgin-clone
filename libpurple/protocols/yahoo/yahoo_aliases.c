@@ -265,6 +265,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	YahooFriend *f;
 	/* use whole URL if using HTTP Proxy */
 	gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
+	PurpleAccount *account;
 
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(gc != NULL);
@@ -279,6 +280,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	}
 
 	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	account = purple_connection_get_account(gc);
 
 	/* Using callback_data so I have access to gc in the callback function */
 	cb = g_new0(struct callback_data, 1);

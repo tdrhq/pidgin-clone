@@ -904,11 +904,11 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 								   const PurpleConversation *conv,
 								   const gchar *who)
 {
-	JabberStream *js = (JabberStream *) gc->proto_data;
+	JabberStream *js = (JabberStream *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	JabberBuddy *jb;
-	
+
 	if (!js) {
-		purple_debug_error("jabber", 
+		purple_debug_error("jabber",
 			"jabber_conv_support_custom_smileys: could not find stream\n");
 		return FALSE;
 	}

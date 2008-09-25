@@ -69,7 +69,7 @@ static void process_cmd_unknow(PurpleConnection *gc,const gchar *title, guint8 *
 
 	qq_show_packet(title, data, data_len);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
 			data, data_len,
@@ -90,8 +90,8 @@ void qq_proc_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *
 	guint8 *data;
 	gint data_len;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail (gc != NULL && qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	data_len = qq_decrypt(data, rcved, rcved_len, qd->session_key);
@@ -153,8 +153,8 @@ void qq_update_room(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
 	qq_group *group;
 	gint ret;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail (gc != NULL && qd != NULL);
 
 	group = qq_room_search_id(gc, room_id);
 	if (group == NULL && room_id <= 0) {
@@ -195,8 +195,8 @@ static void update_all_rooms(PurpleConnection *gc, guint8 room_cmd, guint32 room
 	gboolean is_new_turn = FALSE;
 	qq_group *next_group;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail (gc != NULL && qd != NULL);
 
 	next_group = qq_room_get_next(gc, room_id);
 	if (next_group == NULL && room_id <= 0) {
@@ -239,8 +239,8 @@ void qq_update_all(PurpleConnection *gc, guint16 cmd)
 {
 	qq_data *qd;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail (gc != NULL && qd != NULL);
 
 	switch (cmd) {
 		case 0:
@@ -275,8 +275,8 @@ static void update_all_rooms_online(PurpleConnection *gc, guint8 room_cmd, guint
 	qq_data *qd;
 	qq_group *next_group;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail (gc != NULL && qd != NULL);
 
 	next_group = qq_room_get_next_conv(gc, room_id);
 	if (next_group == NULL && room_id <= 0) {
@@ -328,8 +328,8 @@ void qq_proc_room_cmd(PurpleConnection *gc, guint16 seq,
 	gint bytes;
 	guint8 reply_cmd, reply;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail (gc != NULL && qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	data_len = qq_decrypt(data, rcved, rcved_len, qd->session_key);
@@ -472,8 +472,8 @@ void qq_proc_login_cmd(PurpleConnection *gc, guint8 *rcved, gint rcved_len)
 	gint data_len;
 	guint ret_8;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail (gc != NULL && qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	/* May use password_twice_md5 in the past version like QQ2005*/
@@ -500,7 +500,7 @@ void qq_proc_login_cmd(PurpleConnection *gc, guint8 *rcved, gint rcved_len)
 
 	purple_debug_info("QQ", "Login repliess OK; everything is fine\n");
 
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 	qd->is_login = TRUE;	/* must be defined after sev_finish_login */
 
 	/* now initiate QQ Qun, do it first as it may take longer to finish */
@@ -531,8 +531,8 @@ void qq_proc_client_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
 
 	g_return_if_fail(rcved_len > 0);
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail (gc != NULL && qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	data_len = qq_decrypt(data, rcved, rcved_len, qd->session_key);

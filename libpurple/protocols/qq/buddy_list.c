@@ -643,7 +643,7 @@ void qq_refresh_all_buddy_status(PurpleConnection *gc)
 	qq_data *qd;
 	qq_buddy *q_bud;
 
-	qd = (qq_data *) (gc->proto_data);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	now = time(NULL);
 	list = qd->buddies;
 

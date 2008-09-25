@@ -40,7 +40,7 @@ PurpleConversation *qq_room_conv_create(PurpleConnection *gc, qq_group *group)
 	PurpleConversation *conv;
 	qq_data *qd;
 
-	g_return_if_fail(group != NULL);
+	g_return_val_if_fail(group != NULL, NULL);
 	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,

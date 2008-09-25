@@ -175,7 +175,7 @@ qq_group *qq_room_get_next(PurpleConnection *gc, guint32 room_id)
 	qq_data *qd;
 	gboolean is_find = FALSE;
 	
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (qd->groups == NULL) {
 		return NULL;
@@ -209,7 +209,7 @@ qq_group *qq_room_get_next_conv(PurpleConnection *gc, guint32 room_id)
 	qq_data *qd;
 	gboolean is_find;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
  	list = qd->groups;
 	if (room_id > 0) {

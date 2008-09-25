@@ -665,7 +665,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			PurpleCipher *hmac;
 
 			/* Calculate the MHAC-MD5 digest */
-			challenge = xmlnode_get_attrib(x, "challenge");
+			challenge = xmlnode_get_attrib(xmlnode_get_child(query, "crammd5"), "challenge");
 			hmac = purple_hmac_cipher_new();
 			purple_cipher_set_hash(hmac, purple_md5_cipher_new());
 			purple_cipher_set_key(hmac, (guchar *)pw);

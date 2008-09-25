@@ -405,10 +405,12 @@ guint8 qq_process_login_reply( PurpleConnection *gc, guint8 *data, gint data_len
 	guint8 ret = data[0];
 	gchar *server_reply, *server_reply_utf8;
 	gchar *error_msg;
+	PurpleAccount *account;
 
 	g_return_val_if_fail(data != NULL && data_len != 0, QQ_LOGIN_REPLY_ERR_MISC);
 
 	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	account = purple_connection_get_account(gc);
 
 	switch (ret) {
 		case QQ_LOGIN_REPLY_OK:
@@ -433,8 +435,8 @@ guint8 qq_process_login_reply( PurpleConnection *gc, guint8 *data, gint data_len
 			g_free(server_reply);
 			g_free(server_reply_utf8);
 
-			if (!purple_account_get_remember_password(gc->account)) {
-				purple_account_set_password(gc->account, NULL);
+			if (!purple_account_get_remember_password(account)) {
+				purple_account_set_password(account, NULL);
 			}
 
 			purple_connection_error_reason(gc,

@@ -765,6 +765,7 @@ purple_connection_dispose(GObject *obj)
 		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
+	G_OBJECT_CLASS(parent_class)->dispose(obj);
 }
 
 static void

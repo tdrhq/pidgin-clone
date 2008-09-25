@@ -245,7 +245,7 @@ static gint _qq_normal_im_common_read(guint8 *data, gint len, qq_recv_normal_im_
 
 static void _qq_process_recv_news(guint8 *data, gint data_len, PurpleConnection *gc)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gint bytes;
 	guint8 *temp;
 	guint8 temp_len;

@@ -142,7 +142,7 @@ typedef struct
 static AccountsWindow *accounts_window = NULL;
 static GHashTable *account_pref_wins;
 
-static void add_account_to_liststore(PurpleAccountManager *manager, PurpleAccount *account, gpointer user_data);
+static void add_account_to_liststore(PurpleAccount *account, gpointer user_data);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  PurpleAccount *account, GdkPixbuf *global_buddyicon);
 
@@ -2029,7 +2029,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 }
 
 static void
-add_account_to_liststore(PurpleAccountManager *manager, PurpleAccount *account, gpointer user_data)
+add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 {
 	GtkTreeIter iter;
 	GdkPixbuf *global_buddyicon = user_data;
@@ -2065,7 +2065,7 @@ populate_accounts_list(AccountsWindow *dialog)
 
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		ret = TRUE;
-		add_account_to_liststore(NULL, (PurpleAccount *)l->data, global_buddyicon);
+		add_account_to_liststore(PURPLE_ACCOUNT(l->data), global_buddyicon);
 	}
 
 	if (global_buddyicon != NULL)
@@ -2597,8 +2597,10 @@ pidgin_account_init(void)
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 						pidgin_account_get_handle(),
 						PURPLE_CALLBACK(account_removed_cb), NULL);
-#else
 	g_signal_connect(purple_account_manager_get(), "account-added",
+			G_CALLBACK(add_account_to_liststore), NULL);
+#else
+	purple_type_connect(PURPLE_TYPE_ACCOUNT, "new",
 			G_CALLBACK(add_account_to_liststore), NULL);
 	g_signal_connect(purple_account_manager_get(), "account-removed",
 			G_CALLBACK(account_removed_cb), NULL);
