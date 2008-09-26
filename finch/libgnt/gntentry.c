@@ -1248,6 +1248,12 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 	}
 
 	if (text[0] == '\r' || text[0] == '\n') {
+#ifdef USE_ENCHANT
+		if (entry->spell && entry->spell->cursor_word) {
+			check_entry_word(entry, entry->spell->cursor_word);
+			entry_redraw(widget);
+		}
+#endif
 		gnt_widget_activate(widget);
 		return TRUE;
 	}

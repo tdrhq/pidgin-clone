@@ -2231,7 +2231,7 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 	{
 		/* Set the status only after you press 'Enter' */
 		remove_typing_cb(NULL);
-		return TRUE;
+		return FALSE;
 	}
 
 	ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
