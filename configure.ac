@@ -324,6 +324,12 @@ I can find them.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
+dnl #####################################
+dnl ### GLib marshall generator
+dnl #####################################
+GLIB_GENMARSHAL=`$PKG_CONFIG --variable=glib_genmarshal glib-2.0`
+AC_SUBST(GLIB_GENMARSHAL)
+
 AC_ARG_WITH([extraversion],
 			AC_HELP_STRING([--with-extraversion=STRING],
 						   [extra version number to be displayed in Help->About and --help (for packagers)]),
