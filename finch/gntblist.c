@@ -2231,7 +2231,7 @@ status_text_changed(GntEntry *entry, const char *text, gpointer null)
 	{
 		/* Set the status only after you press 'Enter' */
 		remove_typing_cb(NULL);
-		return TRUE;
+		return FALSE;
 	}
 
 	ggblist->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, NULL);
@@ -3041,6 +3041,7 @@ blist_show(PurpleBuddyList *list)
 	ggblist->status = gnt_combo_box_new();
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->status);
 	ggblist->statustext = gnt_entry_new(NULL);
+	gnt_entry_set_spell_enable(GNT_ENTRY(ggblist->statustext), TRUE);
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->statustext);
 
 	gnt_widget_show(ggblist->window);

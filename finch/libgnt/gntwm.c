@@ -1394,9 +1394,9 @@ gnt_wm_class_init(GntWMClass *klass)
 					 G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST,
 					 G_STRUCT_OFFSET(GntWMClass, close_window),
-					 NULL, NULL,
-					 g_cclosure_marshal_VOID__POINTER,
-					 G_TYPE_NONE, 1, G_TYPE_POINTER);
+					 gnt_boolean_handled_accumulator, NULL,
+					 gnt_closure_marshal_BOOLEAN__POINTER,
+					 G_TYPE_BOOLEAN, 1, G_TYPE_POINTER);
 	signals[SIG_CONFIRM_RESIZE] = 
 		g_signal_new("confirm_resize",
 					 G_TYPE_FROM_CLASS(klass),
@@ -1878,13 +1878,13 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 {
 	GntWS *s;
 	int pos;
+	gboolean ret = FALSE;
 
 	s = gnt_wm_widget_find_workspace(wm, widget);
 
 	if (g_hash_table_lookup(wm->nodes, widget) == NULL)
 		return;
 
-	g_signal_emit(wm, signals[SIG_CLOSE_WIN], 0, widget);
 	g_hash_table_remove(wm->nodes, widget);
 
 	if (wm->windows) {
@@ -1897,11 +1897,13 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 		if (pos != -1) {
 			s->list = g_list_remove(s->list, widget);
 			s->ordered = g_list_remove(s->ordered, widget);
-
-			if (s->ordered && wm->cws == s)
-				gnt_wm_raise_window(wm, s->ordered->data);
 		}
 	}
+
+	g_signal_emit(wm, signals[SIG_CLOSE_WIN], 0, widget, &ret);
+
+	if (!ret && s && s->ordered && wm->cws == s)
+		gnt_wm_raise_window(wm, s->ordered->data);
 
 	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, FALSE);
