@@ -22,8 +22,12 @@
 <p><a href="http://downloads.sourceforge.net/pidgin/pidgin-<? echo $pidgin_version; ?>.tar.bz2">
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
 Download Pidgin<br />
-<span class="number">pidgin-<? echo $pidgin_version; ?>.tar.bz2</span>
+<span class="number"><? echo $pidgin_version; ?> Source</span>
 </a></p>
+
+<p>This download is for the source code of Pidgin.</p>
+<p>If you want to <b>use</b> Pidgin, you should first look for pre-built packages from us (see the links on the left) or your operating system distribution.</p>
+<p>If you are looking to <b>modify</b> Pidgin, you may want to look at our <a href="http://developer.pidgin.im/wiki/UsingPidginMonotone">instructions for checking out the code from our repository</a>.
 
 </div>
 

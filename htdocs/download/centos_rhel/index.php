@@ -22,7 +22,7 @@
 <p><a href="http://rpm.pidgin.im/centos/pidgin.repo">
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
 Download Pidgin<br />
-<span class="number">Pidgin <? echo $pidgin_version; ?></span>
+<span class="number"><? echo $pidgin_version; ?> for CentOS / RHEL</span>
 </a></p>
 
 <p>To install Pidgin on CentOS 4 or 5, or RHEL 5, save the pidgin.repo file

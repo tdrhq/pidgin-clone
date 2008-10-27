@@ -22,7 +22,7 @@
 <p><a href="http://rpm.pidgin.im/fedora/pidgin.repo">
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
 Download Pidgin<br />
-<span class="number">Pidgin <? echo $pidgin_version; ?></span>
+<span class="number"><? echo $pidgin_version; ?> for Fedora Core</span>
 </a></p>
 
 <p>To install Pidgin on Fedora Core 4, 5, 6 or 7 save the pidgin.repo file from
