@@ -42,7 +42,7 @@ Windows' own system tray. This allows you to work with Pidgin without
 requiring the buddy list window to be open at all times.</p>
 
 <p>Pidgin is under constant development, and releases are usually frequent.
-The latest news regarding Pidgin can be found on the <a href="/news">news</a>
+The latest news regarding Pidgin can be found on the <a href="http://planet.pidgin.im/">news</a>
 page.</p>
 
 <h1>What is Finch?</h1>
