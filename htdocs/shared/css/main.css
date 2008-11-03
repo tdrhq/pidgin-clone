@@ -80,7 +80,7 @@ a:hover, a:active {
   clear: both;
   display: block;
   height: 0px;
-  overflow: none;
+  overflow: hidden;
 }
 
 #left, #main, .box_nav ul, #newsbrief, #blogbrief {
@@ -397,7 +397,7 @@ h3 {
 table {
   border: none;
   padding: 0;
-  margin 0;
+  margin: 0;
 }
 
 th {

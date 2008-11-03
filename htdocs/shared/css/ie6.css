@@ -18,27 +18,27 @@
 .box_full:after {
   content: "\A0";
   font-size: 1pt;
-  background-image: url('/shared/img/frame.full.bottom.png') bottom right;
+  background: url('/shared/img/frame.full.bottom.png') bottom right;
   margin-left: 2px;
 }
 
 .box_nav:after {
   content: "\A0";
   font-size: 1pt;
-  background-image: url('/shared/img/frame.nav.bottom.png') bottom right;
+  background: url('/shared/img/frame.nav.bottom.png') bottom right;
 }
 
 .box_right:after {
   content: "\A0";
   font-size: 1pt;
-  background-image: url('/shared/img/frame.right.bottom.png') bottom right;
+  background: url('/shared/img/frame.right.bottom.png') bottom right;
   margin-left: 1px;
 }
 
 #download:after {
   content: "\A0";
   font-size: 1pt;
-  background-image: url('/shared/img/balloon.bottom.png') bottom left;
+  background: url('/shared/img/balloon.bottom.png') bottom left;
 }
 
 .box_right {
