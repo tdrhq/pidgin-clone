@@ -27,7 +27,7 @@ Download Pidgin<br />
 
 <p>This download is for the full installer for Windows, including GTK+. This is probably what you want.</p>
 
-<p>If you already have GTK+ installed (for example, if you're running GIMP or another application using GTK+), we provide a smaller <a href="http://downloads.sourceforge.net/pidgin/pidgin-<? echo $pidgin_version; ?>-no-gtk.exe">installer without GTK+</a>. However, please be aware that we often ship updated copies of GTK+ and continuing to use an older version may cause problems with Pidgin. If you have problems, please re-install using the full installer and upgrade GTK+ before contacting us.</a>
+<p>If you already have GTK+ installed (for example, if you're running GIMP or another application using GTK+), we provide a smaller <a href="http://downloads.sourceforge.net/pidgin/pidgin-<? echo $pidgin_version; ?>-no-gtk.exe">installer without GTK+</a>. However, please be aware that we often ship updated copies of GTK+ and continuing to use an older version may cause problems with Pidgin. If you have problems, please re-install using the full installer and upgrade GTK+ before contacting us.</p>
 
 </div>
 

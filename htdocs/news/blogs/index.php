@@ -17,7 +17,7 @@
 <h1>Blogs</h1>
 
 <p>While most of our developers' blogs are syndicated on our news page, they
-also can be viewed directly at their respective sources.
+also can be viewed directly at their respective sources.</p>
 
 <ul>
   <li><a href="/~seanegan/blog/">Sean Egan</a></li>
@@ -25,7 +25,7 @@ also can be viewed directly at their respective sources.
   <li><a href="http://coderich.net/">Richard Laager</a></li>
   <li><a href="http://www.schierer.org/~luke/log">Luke Schierer</a></li>
   <li><a href="/~kstange/blog/">Kevin Stange</a> (Webmaster)</li>
-  <li><a href="http://faceprint.com/">Nathan Walp</a>
+  <li><a href="http://faceprint.com/">Nathan Walp</a></li>
 </ul>
 
 </div>
