@@ -365,11 +365,10 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 			{
 				char *msg = g_strdup_printf(_("+++ %s signed on"),
 											purple_account_get_username(account));
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
+				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
 							   purple_account_get_username(account),
 							   purple_presence_get_login_time(presence),
-							   msg);
-				g_free(msg);
+							   msg, NULL, NULL);
 			}
 		}
 
@@ -395,10 +394,9 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 			{
 				char *msg = g_strdup_printf(_("+++ %s signed off"),
 											purple_account_get_username(account));
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
+				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
 							   purple_account_get_username(account), time(NULL),
-							   msg);
-				g_free(msg);
+							   msg, NULL, NULL);
 			}
 		}
 

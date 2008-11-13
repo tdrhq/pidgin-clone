@@ -125,7 +125,6 @@ typedef struct
 
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
 	((PidginBuddyListPrivate *)((list)->priv))
-
 static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
@@ -7153,6 +7152,94 @@ static void buddy_signonoff_cb(PurpleBuddy *buddy)
 			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
 }
 
+/* {{{ Non-blocking logging stuff */
+
+struct {
+	int timer;
+	GList *updates;   /* A list of PurpleBuddy */
+} queue;
+
+static void
+total_size_for_buddy(int size, PurpleLogType type, char *name, PurpleAccount *account, PurpleLogContext *context)
+{
+	PurpleBlistNode *node;
+	g_return_if_fail(context != NULL);
+	node = purple_log_context_get_userdata(context);
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	purple_blist_node_set_int(node, "log_size", size);
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		pidgin_blist_update_buddy(purple_get_blist(), node, FALSE);
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		pidgin_blist_update_contact(purple_get_blist(), node);
+}
+
+static gboolean
+update_log_size_cb(gpointer null)
+{
+	while (queue.updates) {
+		PurpleBuddy *buddy = queue.updates->data;
+		PurpleLogContext *context = purple_log_context_new(NULL);
+		purple_log_context_set_userdata(context, buddy);
+		purple_log_get_total_size_nonblocking(PURPLE_LOG_IM,
+				buddy->name, buddy->account, total_size_for_buddy, context);
+		purple_log_context_close(context);
+		queue.updates = g_list_delete_link(queue.updates, queue.updates);
+	}
+	queue.timer = 0;
+	return FALSE;
+}
+
+static void
+queue_update_log_size(PurpleBlistNode *node)
+{
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		if (!g_list_find(queue.updates, node) && buddy_is_displayable((PurpleBuddy *)node))
+			queue.updates = g_list_prepend(queue.updates, node);
+	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		for (node = node->child; node; node = node->next) {
+			if (!g_list_find(queue.updates, node) && buddy_is_displayable((PurpleBuddy *)node))
+				queue.updates = g_list_prepend(queue.updates, node);
+		}
+	} else {
+		/* Do we want to do something for chats? */
+		return;
+	}
+
+	if (queue.timer == 0) {
+		queue.timer = purple_timeout_add_seconds(10, update_log_size_cb, NULL);
+	}
+}
+
+/* }}} Non-blocking logging stuff */
+
+static void
+wrote_msg_cb(PurpleAccount *account, const char *who, const char *message,
+		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
+{
+	PurpleBlistNode *node = NULL;
+
+	if (flags & PURPLE_MESSAGE_NO_LOG)
+		return;  /* The message didn't update the log */
+	switch (purple_conversation_get_type(conv)) {
+		case PURPLE_CONV_TYPE_IM:
+			node = (PurpleBlistNode*)purple_find_buddy(account, who);
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			node = (PurpleBlistNode*)purple_blist_find_chat(account, purple_conversation_get_name(conv));
+			break;
+		default:
+			/* get rid of compiler whining */
+			break;
+	}
+
+	if (!node)
+		return;
+
+	queue_update_log_size(node);
+}
+
 void pidgin_blist_init(void)
 {
 	void *gtk_blist_handle = pidgin_blist_get_handle();
@@ -7209,6 +7296,12 @@ void pidgin_blist_init(void)
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", gtk_blist_handle, PURPLE_CALLBACK(buddy_signonoff_cb), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-privacy-changed", gtk_blist_handle, PURPLE_CALLBACK(pidgin_blist_update_privacy_cb), NULL);
+
+	purple_signal_connect(purple_conversations_get_handle(), "wrote-im-msg", purple_blist_get_handle(),
+			G_CALLBACK(wrote_msg_cb), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg", purple_blist_get_handle(),
+			G_CALLBACK(wrote_msg_cb), NULL);
+
 }
 
 void
@@ -7275,6 +7368,16 @@ void pidgin_blist_sort_method_set(const char *id){
 		redo_buddy_list(purple_get_blist(), TRUE, FALSE);
 	} else {
 		redo_buddy_list(purple_get_blist(), FALSE, FALSE);
+	}
+	
+	if (!strcmp(id, "log_size")) {
+		PurpleBlistNode *node = purple_blist_get_root();
+
+		while (node) {
+			if (PURPLE_BLIST_NODE_IS_BUDDY(node) || PURPLE_BLIST_NODE_IS_CONTACT(node))
+				queue_update_log_size(node);
+			node = purple_blist_node_next(node, FALSE);
+		}
 	}
 }
 
@@ -7455,6 +7558,19 @@ static void sort_method_status(PurpleBlistNode *node, PurpleBuddyList *blist, Gt
 	}
 }
 
+static int get_log_size_for_node(PurpleBlistNode *node)
+{
+	int size = 0;
+
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		return purple_blist_node_get_int(node, "log_size");
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		for (node = node->child; node; node = node->next)
+			size += purple_blist_node_get_int(node, "log_size");
+	}
+	return size;
+}
+
 static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
 	GtkTreeIter more_z;
@@ -7467,11 +7583,11 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 		return;
 	}
 
-	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		PurpleBlistNode *n;
-		for (n = node->child; n; n = n->next)
-			log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy*)(n))->name, ((PurpleBuddy*)(n))->account);
-		buddy_name = purple_contact_get_alias((PurpleContact*)node);
+	if(PURPLE_BLIST_NODE_IS_CONTACT(node) || PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		log_size = get_log_size_for_node(node);
+
+		buddy_name = PURPLE_BLIST_NODE_IS_CONTACT(node) ? purple_contact_get_alias((PurpleContact*)node) : 
+														purple_buddy_get_name((PurpleBuddy *)node);
 	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		/* we don't have a reliable way of getting the log filename
 		 * from the chat info in the blist, yet */
@@ -7496,7 +7612,6 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 	do {
 		GValue val;
 		PurpleBlistNode *n;
-		PurpleBlistNode *n2;
 		int cmp;
 
 		val.g_type = 0;
@@ -7504,10 +7619,10 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 		n = g_value_get_pointer(&val);
 		this_log_size = 0;
 
-		if(PURPLE_BLIST_NODE_IS_CONTACT(n)) {
-			for (n2 = n->child; n2; n2 = n2->next)
-				this_log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy*)(n2))->name, ((PurpleBuddy*)(n2))->account);
-			this_buddy_name = purple_contact_get_alias((PurpleContact*)n);
+		if(PURPLE_BLIST_NODE_IS_CONTACT(n) || PURPLE_BLIST_NODE_IS_BUDDY(n)) {
+			this_log_size = get_log_size_for_node(n);
+			this_buddy_name = PURPLE_BLIST_NODE_IS_CONTACT(n) ? purple_contact_get_alias((PurpleContact*)n) : 
+														purple_buddy_get_name((PurpleBuddy *)n);
 		} else {
 			this_buddy_name = NULL;
 		}

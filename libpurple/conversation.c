@@ -39,6 +39,7 @@ static GList *conversations = NULL;
 static GList *ims = NULL;
 static GList *chats = NULL;
 static PurpleConversationUiOps *default_ops = NULL;
+typedef void (*VoidCallback) (void *data);
 
 void
 purple_conversations_set_ui_ops(PurpleConversationUiOps *ops)
@@ -252,17 +253,17 @@ message_history_free(GList *list)
 /**************************************************************************
  * Conversation API
  **************************************************************************/
-static void
-purple_conversation_chat_cleanup_for_rejoin(PurpleConversation *conv)
+
+static void purple_conversation_chat_cleanup_for_rejoin_cb(void *data)
 {
+	PurpleConversation *conv = data;
 	const char *disp;
 	PurpleAccount *account;
 	PurpleConnection *gc;
 
-	account = purple_conversation_get_account(conv);
-
-	purple_conversation_close_logs(conv);
 	open_log(conv);
+
+	account = purple_conversation_get_account(conv);
 
 	gc = purple_account_get_connection(account);
 
@@ -279,6 +280,13 @@ purple_conversation_chat_cleanup_for_rejoin(PurpleConversation *conv)
 	PURPLE_CONV_CHAT(conv)->left = FALSE;
 
 	purple_conversation_update(conv, PURPLE_CONV_UPDATE_CHATLEFT);
+
+}
+static void
+purple_conversation_chat_cleanup_for_rejoin(PurpleConversation *conv)
+{
+	purple_conversation_close_logs(conv, 
+		purple_conversation_chat_cleanup_for_rejoin_cb, conv);
 }
 
 PurpleConversation *
@@ -382,6 +390,15 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 					 "conversation-created", conv);
 
 	return conv;
+}
+
+static void purple_conversation_destroy_cb(void *data)
+{
+	PurpleConversation *conv = data;
+
+	PURPLE_DBUS_UNREGISTER_POINTER(conv);
+	g_free(conv);
+	conv = NULL;
 }
 
 void
@@ -517,7 +534,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 	if (ops != NULL && ops->destroy_conversation != NULL)
 		ops->destroy_conversation(conv);
 
-	purple_conversation_close_logs(conv);
+	purple_conversation_close_logs(conv, purple_conversation_destroy_cb, conv);
 
 	purple_conversation_clear_message_history(conv);
 
@@ -729,14 +746,41 @@ purple_conversation_is_logging(const PurpleConversation *conv)
 	return conv->logging;
 }
 
-void
-purple_conversation_close_logs(PurpleConversation *conv)
+static void log_purple_conversation_close_logs_free_cb(void *data) 
 {
-	g_return_if_fail(conv != NULL);
+	gpointer *callback_data = data;
 
-	g_list_foreach(conv->logs, (GFunc)purple_log_free, NULL);
+	PurpleConversation *conv = callback_data[0];
+	VoidCallback cb = callback_data[1];
+
+	if (cb != NULL)
+		cb(callback_data[2]);
+
 	g_list_free(conv->logs);
 	conv->logs = NULL;
+
+	g_free(callback_data);
+}
+
+void purple_conversation_close_logs(PurpleConversation *conv, VoidCallback cb, void *data)
+{
+	gpointer *callback_data;
+	GList *logs = conv->logs;
+	PurpleLogContext *context;
+
+	g_return_if_fail(conv != NULL);
+	context = purple_log_context_new(log_purple_conversation_close_logs_free_cb);
+	callback_data = g_new(gpointer, 3);
+
+	callback_data[0] = conv;
+	callback_data[1] = cb;
+	callback_data[2] = data;
+
+	purple_log_context_set_userdata(context, callback_data);
+
+	for (; logs; logs = g_list_next(logs))
+		purple_log_free_nonblocking(logs->data, NULL, context);
+	purple_log_context_close(context);
 }
 
 PurpleConvIm *
@@ -929,17 +973,16 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		}
 	}
 
+
 	if (!(flags & PURPLE_MESSAGE_NO_LOG) && purple_conversation_is_logging(conv)) {
 		GList *log;
 
 		if (conv->logs == NULL)
 			open_log(conv);
 
-		log = conv->logs;
-		while (log != NULL) {
-			purple_log_write((PurpleLog *)log->data, flags, alias, mtime, displayed);
-			log = log->next;
-		}
+		for (log = conv->logs; log != NULL; log = g_list_next(log))
+			purple_log_write_nonblocking((PurpleLog *)log->data, flags, alias, mtime, g_strdup(displayed),
+							NULL, NULL);
 	}
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {

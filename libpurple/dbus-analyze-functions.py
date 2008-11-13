@@ -35,6 +35,7 @@ excluded = [\
     # as pointer to a struct, instead of a pointer to an enum.  This
     # causes a compilation error. Someone should fix this script.
     "purple_log_read",
+    "purple_log_read_nonblocking",
     ]
 
 # This is a list of functions that return a GList* or GSList * whose elements

@@ -7,6 +7,9 @@
 PIDGIN_TREE_TOP := ../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
+NEEDED_DLLS = $(LIBDBI_TOP)/bin/libdbi.dll $(LIBDBI_TOP)/bin/libmysql.dll 
+
+
 PERL_PLUGIN := ./perl
 TCL_PLUGIN := ./tcl
 SSL_PLUGIN := ./ssl
@@ -23,10 +26,13 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(PIDGIN_TREE_TOP) \
 			-I$(PURPLE_TOP) \
-			-I$(PURPLE_TOP)/win32
+			-I$(PURPLE_TOP)/win32 \
+			-I$(LIBDBI_TOP)/include
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
-			-L$(PURPLE_TOP)
+			-L$(PURPLE_TOP) \
+			-L ~/libdbi/libdbi-0.8.2/src/.libs
+			
 
 ##
 ## LIBRARIES
@@ -37,7 +43,14 @@ LIBS =	\
 			-lgmodule-2.0 \
 			-lintl \
 			-lws2_32 \
-			-lpurple
+			-lpurple \
+			-ldbi
+			
+##
+## LIBDBI DRIVERS
+##
+LIBDBI_DRIVERS = \
+			$(LIBDBI_TOP)/bin/libdbdmysql.dll
 
 ##
 ## TARGET DEFINITIONS
@@ -49,11 +62,13 @@ all: $(PURPLE_DLL).a plugins
 	$(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE)
 
-install: all $(PURPLE_INSTALL_PLUGINS_DIR)
+install: all $(PURPLE_INSTALL_PLUGINS_DIR) $(PURPLE_LIBDBI_DRIVERS_DIR)
 	$(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	cp *.dll $(PURPLE_INSTALL_PLUGINS_DIR)
+	cp $(NEEDED_DLLS) $(PURPLE_INSTALL_DIR)
+	cp $(LIBDBI_DRIVERS) $(PURPLE_LIBDBI_DRIVERS_DIR)
 
 .c.dll:
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
@@ -68,7 +83,8 @@ plugins: \
 		newline.dll \
 		offlinemsg.dll \
 		psychic.dll \
-		statenotify.dll
+		statenotify.dll \
+		database_logger.dll
 
 ##
 ## CLEAN RULES

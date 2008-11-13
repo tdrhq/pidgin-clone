@@ -23,6 +23,7 @@ PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl-5.10.0
 SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.7
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
 GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
+LIBDBI_TOP ?=$(WIN32_DEV_TOP)/libdbi
 
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
@@ -32,6 +33,7 @@ PIDGIN_INSTALL_PLUGINS_DIR := $(PIDGIN_INSTALL_DIR)/plugins
 PURPLE_INSTALL_PERLMOD_DIR := $(PURPLE_INSTALL_DIR)/perlmod
 PURPLE_INSTALL_PLUGINS_DIR := $(PURPLE_INSTALL_DIR)/plugins
 PURPLE_INSTALL_PO_DIR := $(PURPLE_INSTALL_DIR)/locale
+PURPLE_LIBDBI_DRIVERS_DIR := $(PURPLE_INSTALL_DIR)/libdbi-drivers
 
 # Important (enough) locations in our source code
 PURPLE_TOP := $(PIDGIN_TREE_TOP)/libpurple

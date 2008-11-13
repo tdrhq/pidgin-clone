@@ -1007,7 +1007,7 @@ purple_account_destroy(PurpleAccount *account)
 	purple_presence_destroy(account->presence);
 
 	if(account->system_log)
-		purple_log_free(account->system_log);
+		purple_log_free_nonblocking(account->system_log, NULL, NULL);
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
 	PURPLE_DBUS_UNREGISTER_POINTER(priv->current_error);
@@ -2202,14 +2202,26 @@ purple_account_get_log(PurpleAccount *account, gboolean create)
 	return account->system_log;
 }
 
+static void purple_account_destroy_log_cb(PurpleLog *log, PurpleLogContext *context)
+{
+	gpointer data;
+
+	g_return_if_fail(context != NULL);
+
+	data = purple_log_context_get_userdata(context);
+	((PurpleAccount *) data)->system_log = NULL;
+}
+
 void
 purple_account_destroy_log(PurpleAccount *account)
 {
 	g_return_if_fail(account != NULL);
 
-	if(account->system_log){
-		purple_log_free(account->system_log);
-		account->system_log = NULL;
+	if(account->system_log) {
+		PurpleLogContext *context = purple_log_context_new(NULL);
+		purple_log_context_set_userdata(context, account);
+		purple_log_free_nonblocking(account->system_log, purple_account_destroy_log_cb, context);
+		purple_log_context_close(context);
 	}
 }
 

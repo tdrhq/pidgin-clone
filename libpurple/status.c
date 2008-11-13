@@ -638,12 +638,12 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		log = purple_account_get_log(buddy->account, FALSE);
 		if (log != NULL)
 		{
-			purple_log_write(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
-			               current_time, logtmp);
-		}
+			purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
+			               current_time, logtmp, NULL, NULL);
+			//will free logtmp for us
+		} else g_free(logtmp);
 
 		g_free(tmp);
-		g_free(logtmp);
 	}
 }
 
@@ -1249,8 +1249,9 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 				tmp2 = g_markup_escape_text(tmp, -1);
 				g_free(tmp);
 
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp2);
+				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
+					purple_buddy_get_alias(buddy), current_time, tmp2, 
+					NULL, NULL);
 				g_free(tmp2);
 			}
 		}
@@ -1336,9 +1337,10 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 
 				msg = g_markup_escape_text(tmp, -1);
 				g_free(tmp);
-				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
+				purple_log_write_nonblocking(log, PURPLE_MESSAGE_SYSTEM,
 				                 purple_account_get_username(account),
-				                 (idle ? idle_time : current_time), msg);
+				                 (idle ? idle_time : current_time), msg,
+				                 NULL, NULL);
 				g_free(msg);
 			}
 		}

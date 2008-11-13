@@ -16,6 +16,10 @@ if USE_MONO
 MONO_DIR = mono
 endif
 
+if USE_DATABASE_LOGGER
+DATABASE_LOGGER_LTLIB = database_logger.la
+endif
+
 SUBDIRS = \
 	$(MONO_DIR) \
 	$(PERL_DIR) \
@@ -44,8 +48,10 @@ statenotify_la_LDFLAGS      = -module -avoid-version
 
 # this can't be in a conditional otherwise automake 1.4 yells
 dbus_example_la_LDFLAGS     = -module -avoid-version
+database_logger_la_LDFLAGS  = -module -avoid-version
 
 if PLUGINS
+
 
 plugin_LTLIBRARIES = \
 	autoaccept.la       \
@@ -57,6 +63,7 @@ plugin_LTLIBRARIES = \
 	offlinemsg.la       \
 	psychic.la          \
 	statenotify.la      \
+	$(DATABASE_LOGGER_LTLIB) \
 	$(DBUS_LTLIB)
 
 noinst_LTLIBRARIES = \
@@ -87,6 +94,7 @@ signals_test_la_SOURCES		= signals-test.c
 simple_la_SOURCES			= simple.c
 statenotify_la_SOURCES      = statenotify.c
 
+
 autoaccept_la_LIBADD        = $(GLIB_LIBS)
 buddynote_la_LIBADD         = $(GLIB_LIBS)
 ciphertest_la_LIBADD		= $(GLIB_LIBS)
@@ -102,6 +110,14 @@ psychic_la_LIBADD           = $(GLIB_LIBS)
 signals_test_la_LIBADD		= $(GLIB_LIBS)
 simple_la_LIBADD			= $(GLIB_LIBS)
 statenotify_la_LIBADD       = $(GLIB_LIBS)
+
+
+if USE_DATABASE_LOGGER
+
+database_logger_la_SOURCES       = database_logger.c
+database_logger_la_LIBADD   = $(GLIB_LIBS) $(DBI_LIBS)
+
+endif # USE_DATABASE_LOGGER
 
 if ENABLE_DBUS
 
@@ -142,7 +158,9 @@ AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
-	$(DBUS_CFLAGS)
+	$(DBUS_CFLAGS) \
+	$(DBI_CFLAGS)
+
 
 #
 # This part allows people to build their own plugins in here.

@@ -1833,6 +1833,8 @@ typedef struct
 	PidginFilterBuddyCompletionEntryFunc filter_func;
 	gpointer filter_func_user_data;
 
+	gulong destroy_handler_id;
+
 #ifdef NEW_STYLE_COMPLETION
 	GtkListStore *store;
 #else
@@ -2085,12 +2087,34 @@ static void get_log_set_name(PurpleLogSet *set, gpointer value, PidginCompletion
 }
 
 static void
+pidgin_add_completion_list_finished_cb(void *data1);
+
+static void 
+log_get_log_sets_cb(GHashTable *sets, PurpleLogContext *context)
+{
+	PidginCompletionData *data;
+
+	g_return_if_fail(context != NULL);
+
+	data = purple_log_context_get_userdata(context);
+
+	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, data);
+	g_hash_table_destroy(sets);
+
+#ifndef NEW_STYLE_COMPLETION
+	g_completion_add_items(data->completion, data->log_items);
+	g_list_free(data1->log_items);
+#endif /* NEW_STYLE_COMPLETION  */
+
+}
+
+static void
 add_completion_list(PidginCompletionData *data)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PidginFilterBuddyCompletionEntryFunc filter_func = data->filter_func;
 	gpointer user_data = data->filter_func_user_data;
-	GHashTable *sets;
+	PurpleLogContext *context;
 
 #ifdef NEW_STYLE_COMPLETION
 	gtk_list_store_clear(data->store);
@@ -2116,7 +2140,6 @@ add_completion_list(PidginCompletionData *data)
 				PidginBuddyCompletionEntry entry;
 				entry.is_buddy = TRUE;
 				entry.entry.buddy = (PurpleBuddy *) bnode;
-
 				if (filter_func(&entry, user_data)) {
 #ifdef NEW_STYLE_COMPLETION
 					add_screenname_autocomplete_entry(data->store,
@@ -2138,22 +2161,11 @@ add_completion_list(PidginCompletionData *data)
 	g_list_free(item);
 	data->log_items = NULL;
 #endif /* NEW_STYLE_COMPLETION */
+	context = purple_log_context_new(pidgin_add_completion_list_finished_cb);
+	purple_log_context_set_userdata(context, data);
 
-	sets = purple_log_get_log_sets();
-	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, data);
-	g_hash_table_destroy(sets);
-
-#ifndef NEW_STYLE_COMPLETION
-	g_completion_add_items(data->completion, data->log_items);
-	g_list_free(data->log_items);
-#endif /* NEW_STYLE_COMPLETION */
-}
-
-static void
-screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
-{
-	g_free(data);
-	purple_signals_disconnect_by_handle(widget);
+	purple_log_get_log_sets_nonblocking(log_get_log_sets_cb, context);
+	purple_log_context_close(context);
 }
 
 static void
@@ -2162,6 +2174,63 @@ repopulate_autocomplete(gpointer something, gpointer data)
 	add_completion_list(data);
 }
 
+static void
+screenname_autocomplete_destroyed_cb(GtkWidget *widget, PidginCompletionData *data)
+{
+	if (!data->destroy_handler_id)
+		g_free(data);
+	purple_signals_disconnect_by_handle(widget);
+}
+
+static void
+pidgin_add_completion_list_finished_cb(void *data1)
+{
+	PidginCompletionData *data = data1;
+	if (data->destroy_handler_id) {
+	#ifdef NEW_STYLE_COMPLETION
+		GtkListStore *store = data->store;
+		GtkEntryCompletion *completion;
+
+		/* Sort the completion list by screenname. */
+		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
+		                                     1, GTK_SORT_ASCENDING);
+
+		completion = gtk_entry_completion_new();
+		gtk_entry_completion_set_match_func(completion, screenname_completion_match_func, NULL, NULL);
+
+		g_signal_connect(G_OBJECT(completion), "match-selected",
+			G_CALLBACK(screenname_completion_match_selected_cb), data);
+
+		gtk_entry_set_completion(GTK_ENTRY(data->entry), completion);
+		g_object_unref(completion);
+
+		gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(store));
+		g_object_unref(store);
+
+		gtk_entry_completion_set_text_column(completion, 0);
+
+	#else /* !NEW_STYLE_COMPLETION */
+		g_completion_set_compare(data->completion, g_ascii_strncasecmp);
+
+		g_signal_connect(G_OBJECT(data->entry), "event",
+						 G_CALLBACK(completion_entry_event), data);
+		g_signal_connect(G_OBJECT(data->entry), "destroy",
+						 G_CALLBACK(destroy_completion_data), data);
+
+	#endif
+		purple_signal_connect(purple_connections_get_handle(), "signed-on", data->entry,
+							PURPLE_CALLBACK(repopulate_autocomplete), data);
+		purple_signal_connect(purple_connections_get_handle(), "signed-off", data->entry,
+							PURPLE_CALLBACK(repopulate_autocomplete), data);
+
+		purple_signal_connect(purple_accounts_get_handle(), "account-added", data->entry,
+							PURPLE_CALLBACK(repopulate_autocomplete), data);
+		purple_signal_connect(purple_accounts_get_handle(), "account-removed", data->entry,
+							PURPLE_CALLBACK(repopulate_autocomplete), data);
+		data->destroy_handler_id = 0;
+	} else 
+		g_free(data);
+}
 
 void
 pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
@@ -2172,8 +2241,6 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	/* Store the displayed completion value, the screenname, the UTF-8 normalized & casefolded screenname,
 	 * the UTF-8 normalized & casefolded value for comparison, and the account. */
 	GtkListStore *store;
-
-	GtkEntryCompletion *completion;
 
 	data = g_new0(PidginCompletionData, 1);
 	store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
@@ -2188,26 +2255,6 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 		data->filter_func_user_data = user_data;
 	}
 	data->store = store;
-
-	add_completion_list(data);
-
-	/* Sort the completion list by screenname. */
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
-	                                     1, GTK_SORT_ASCENDING);
-
-	completion = gtk_entry_completion_new();
-	gtk_entry_completion_set_match_func(completion, screenname_completion_match_func, NULL, NULL);
-
-	g_signal_connect(G_OBJECT(completion), "match-selected",
-		G_CALLBACK(screenname_completion_match_selected_cb), data);
-
-	gtk_entry_set_completion(GTK_ENTRY(entry), completion);
-	g_object_unref(completion);
-
-	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(store));
-	g_object_unref(store);
-
-	gtk_entry_completion_set_text_column(completion, 0);
 
 #else /* !NEW_STYLE_COMPLETION */
 
@@ -2225,28 +2272,11 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 	data->completion = g_completion_new(NULL);
 	data->completion_started = FALSE;
 
-	add_completion_list(data);
-
-	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
-
-	g_signal_connect(G_OBJECT(entry), "event",
-					 G_CALLBACK(completion_entry_event), data);
-	g_signal_connect(G_OBJECT(entry), "destroy",
-					 G_CALLBACK(destroy_completion_data), data);
-
 #endif /* !NEW_STYLE_COMPLETION */
+	data->destroy_handler_id = g_signal_connect(G_OBJECT(entry), "destroy", 
+		G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on", entry,
-						PURPLE_CALLBACK(repopulate_autocomplete), data);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off", entry,
-						PURPLE_CALLBACK(repopulate_autocomplete), data);
-
-	purple_signal_connect(purple_accounts_get_handle(), "account-added", entry,
-						PURPLE_CALLBACK(repopulate_autocomplete), data);
-	purple_signal_connect(purple_accounts_get_handle(), "account-removed", entry,
-						PURPLE_CALLBACK(repopulate_autocomplete), data);
-
-	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
+	add_completion_list(data);
 }
 
 gboolean
@@ -2264,8 +2294,6 @@ void
 pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gboolean all) {
 	pidgin_setup_screenname_autocomplete_with_filter(entry, accountopt, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(all));
 }
-
-
 
 void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 {

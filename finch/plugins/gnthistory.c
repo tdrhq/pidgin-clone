@@ -31,29 +31,134 @@
 #include "util.h"
 #include "version.h"
 
+#include "gntconv.h"
 #include "gntplugin.h"
 #include "gntrequest.h"
+#include "gnttextview.h"
 
 #define HISTORY_PLUGIN_ID "gnt-history"
 
 #define HISTORY_SIZE (4 * 1024)
 
+struct _historize_callback_data
+{
+	int counter;
+
+	PurpleLog *log;
+
+	guint flags;
+
+	PurpleConversation *conv;
+	PurpleAccount *account;
+
+	const char *name;
+	const char *alias;
+};
+
+static void historize_log_read_cb(char *history, PurpleLogReadFlags *flags, void *data)
+{
+	struct _historize_callback_data *callback_data = data;
+	PurpleMessageFlags mflag = PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_DELAYED;
+
+	/* XXX: maybe it's a hack, but it works */
+	FinchConv * finch_conv = callback_data->conv->ui_data;
+	GntTextView *view = GNT_TEXT_VIEW(finch_conv->tv);
+	GString *buffer = view->string;
+	char *text_backup = NULL;
+	char *header = NULL;
+
+	if (*buffer->str) {
+		text_backup = strdup(buffer->str);
+		gnt_text_view_clear(view);
+	}
+
+	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), callback_data->alias,
+					 purple_date_format_full(localtime(&callback_data->log->time)));
+
+	purple_conversation_write(callback_data->conv, "", header, mflag, time(NULL));
+	g_free(header);
+
+	if (*flags & PURPLE_LOG_READ_NO_NEWLINE)
+		purple_str_strip_char(history, '\n');
+	purple_conversation_write(callback_data->conv, "", history, mflag, time(NULL));
+
+	purple_conversation_write(callback_data->conv, "", "<hr>", mflag, time(NULL));
+	g_free(history);
+
+	purple_conversation_write(callback_data->conv, "", text_backup, PURPLE_MESSAGE_NO_LOG, 
+		time(NULL));
+	g_free(text_backup);
+
+	purple_log_free_nonblocking(callback_data->log, NULL, NULL);
+	g_free(callback_data);
+}
+
+static PurpleLog *get_last_log(GList *list, PurpleLog *last_log) 
+{
+	GList *node;
+
+	if (last_log == NULL) {
+		last_log = list->data;
+		node = g_list_next(list);
+	} else 
+		node = list;
+
+	for(; node; node = g_list_next(node)) 
+		if (purple_log_compare(last_log, node->data) > 0) {
+			purple_log_free_nonblocking(last_log, NULL, NULL);
+			last_log = node->data;
+		} else
+			purple_log_free_nonblocking(node->data, NULL, NULL);
+
+	g_list_free(list);
+	return last_log;
+}
+
+static void historize_log_list_cb(GList *list, void *data)
+{
+	struct _historize_callback_data *callback_data = data;
+
+	if (list != NULL)
+		callback_data->log = get_last_log(list, callback_data->log);
+	else if (callback_data->log != NULL)
+				purple_log_read_nonblocking(callback_data->log, &callback_data->flags, 
+										historize_log_read_cb, callback_data);
+	else
+		g_free(callback_data);
+}
+
+static void historize_log_collector_cb(GList *list, void *data)
+{
+	struct _historize_callback_data *callback_data = data;
+
+	if (list != NULL)
+		callback_data->log = get_last_log(list, callback_data->log);
+	else {
+		callback_data->counter--;
+
+		if (!callback_data->counter) {
+			if (callback_data->log == NULL) {
+				purple_debug_info("historize_log_collector_cb", "making purple_log_get_logs_nonblocking call");
+				purple_log_get_logs_nonblocking(PURPLE_LOG_IM, callback_data->name, 
+						callback_data->account, historize_log_list_cb, callback_data);
+			} else
+				historize_log_list_cb(NULL, callback_data);
+		}
+	}
+}
+
 static void historize(PurpleConversation *c)
 {
 	PurpleAccount *account = purple_conversation_get_account(c);
 	const char *name = purple_conversation_get_name(c);
-	PurpleConversationType convtype;
-	GList *logs = NULL;
+	PurpleConversationType convtype = purple_conversation_get_type(c);
 	const char *alias = name;
-	PurpleLogReadFlags flags;
-	char *history;
-	char *header;
-	PurpleMessageFlags mflag;
 
-	convtype = purple_conversation_get_type(c);
-	if (convtype == PURPLE_CONV_TYPE_IM) {
+	if (convtype == PURPLE_CONV_TYPE_IM)
+	{
 		GSList *buddies;
 		GSList *cur;
+		struct _historize_callback_data *callback_data = g_new0(struct _historize_callback_data, 1);
 
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
@@ -67,7 +172,14 @@ static void historize(PurpleConversation *c)
 		if (buddies != NULL)
 			alias = purple_buddy_get_contact_alias((PurpleBuddy *)buddies->data);
 
-		for (cur = buddies; cur != NULL; cur = cur->next) {
+		callback_data->log = NULL;
+		callback_data->conv = c;
+		callback_data->name = name;
+		callback_data->account = account;
+		callback_data->alias = alias;
+
+		for (cur = buddies; cur != NULL; cur = cur->next)
+		{
 			PurpleBlistNode *node = cur->data;
 			if ((node != NULL) &&
 					((purple_blist_node_get_sibling_prev(node) != NULL) ||
@@ -76,55 +188,43 @@ static void historize(PurpleConversation *c)
 
 				alias = purple_buddy_get_contact_alias((PurpleBuddy *)node);
 
+				for (node2 = node->parent->child ; node2 != NULL ; node2 = node2->next)
+					callback_data->counter++;
+
 				/* We've found a buddy that matches this conversation.  It's part of a
 				 * PurpleContact with more than one PurpleBuddy.  Loop through the PurpleBuddies
 				 * in the contact and get all the logs. */
 				for (node2 = purple_blist_node_get_first_child(purple_blist_node_get_parent(node));
-						node2 != NULL ; node2 = purple_blist_node_get_sibling_next(node2)) {
-					logs = g_list_concat(
-							purple_log_get_logs(PURPLE_LOG_IM,
-								purple_buddy_get_name((PurpleBuddy *)node2),
-								purple_buddy_get_account((PurpleBuddy *)node2)),
-							logs);
+					 node2 != NULL ; node2 = purple_blist_node_get_sibling_next(node2)) {
+					purple_log_get_logs_nonblocking(PURPLE_LOG_IM,
+							purple_buddy_get_name((PurpleBuddy *)node2),
+							purple_buddy_get_account((PurpleBuddy *)node2), 
+							historize_log_collector_cb, callback_data);
 				}
-				break;
+				g_slist_free(buddies);
+				return;
 			}
 		}
 		g_slist_free(buddies);
+		purple_log_get_logs_nonblocking(PURPLE_LOG_IM, callback_data->name, 
+			callback_data->account, historize_log_list_cb, callback_data);
+	}
+	else if (convtype == PURPLE_CONV_TYPE_CHAT)
+	{
+		struct _historize_callback_data *callback_data;
 
-		if (logs == NULL)
-			logs = purple_log_get_logs(PURPLE_LOG_IM, name, account);
-		else
-			logs = g_list_sort(logs, purple_log_compare);
-	} else if (convtype == PURPLE_CONV_TYPE_CHAT) {
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
 		if (!purple_prefs_get_bool("/purple/logging/log_chats"))
 			return;
 
-		logs = purple_log_get_logs(PURPLE_LOG_CHAT, name, account);
+		callback_data = g_new0(struct _historize_callback_data, 1);
+
+		callback_data->conv = c;
+		callback_data->alias = alias;
+		purple_log_get_logs_nonblocking(PURPLE_LOG_CHAT, name, account, 
+								historize_log_list_cb, callback_data);
 	}
-
-	if (logs == NULL)
-		return;
-
-	mflag = PURPLE_MESSAGE_NO_LOG | PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_DELAYED;
-	history = purple_log_read((PurpleLog*)logs->data, &flags);
-
-	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), alias,
-			purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
-	purple_conversation_write(c, "", header, mflag, time(NULL));
-	g_free(header);
-
-	if (flags & PURPLE_LOG_READ_NO_NEWLINE)
-		purple_str_strip_char(history, '\n');
-	purple_conversation_write(c, "", history, mflag, time(NULL));
-	g_free(history);
-
-	purple_conversation_write(c, "", "<hr>", mflag, time(NULL));
-
-	g_list_foreach(logs, (GFunc)purple_log_free, NULL);
-	g_list_free(logs);
 }
 
 static void

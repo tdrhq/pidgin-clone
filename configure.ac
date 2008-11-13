@@ -767,6 +767,78 @@ AC_SUBST(MEANWHILE_CFLAGS)
 AC_SUBST(MEANWHILE_LIBS)
 
 dnl #######################################################################
+dnl # Check for DBI (for Database Logger)
+dnl #######################################################################
+AC_CHECK_LIB(dbi, [ dbi_initialize ], 
+[ 	
+	have_dbi="yes" 
+	DBI_LIBS="$DL_LIBS -ldbi"
+],
+[
+	AC_MSG_RESULT(no) 
+	have_dbi="no"
+])
+
+if test "x$have_dbi" = "xyes"; then
+
+AC_ARG_WITH(
+    dbi,
+    [AC_HELP_STRING([--with-dbi=PATH],[Path libdbi headers and libraries])],
+    dbi_path="$withval",
+    :)
+
+# Determine dbi include directory.
+if test -z $dbi_path; then
+    test_paths="/usr/include /usr/local/include"
+else
+    test_paths="${dbi_path}/include"
+fi
+
+for x in $test_paths ; do
+    AC_MSG_CHECKING([for dbi Includes in ${x}])
+    if test -f ${x}/dbi/dbi.h; then
+        DBI_CFLAGS="-I$x"
+        AC_MSG_RESULT([libdbi include files found])
+        break
+    else
+        AC_MSG_RESULT(no)
+    fi
+done
+
+# Determine libdbi lib directory
+if test -z $dbi_path; then
+    test_paths="/usr/lib /usr/local/lib"
+else
+    test_paths="${dbi_path}/lib"
+fi
+
+for x in $test_paths ; do
+    AC_MSG_CHECKING([for libdbi library in ${x}])
+    if test -f ${x}/libdbi.so; then
+        AC_MSG_RESULT([yes])
+        save_CFLAGS=$CFLAGS
+        save_LDFLAGS=$LDFLAGS
+        CFLAGS="$DBI_CFLAGS $CFLAGS"
+        LDFLAGS="-L$x $LDFLAGS"
+        AC_CHECK_LIB(dbi, dbi_version,
+            DBI_LDFLAGS="-L$x")
+        CFLAGS=$save_CFLAGS
+        LDFLAGS=$save_LDFLAGS
+        break
+    else
+        AC_MSG_RESULT([no])
+    fi
+done
+
+AC_SUBST(DBI_LIBS)
+AC_SUBST(DBI_CFLAGS)
+AC_SUBST(DBI_LDFLAGS)
+AM_CONDITIONAL(USE_DATABASE_LOGGER,  test -n "$DBI_CFLAGS")
+
+fi
+
+
+dnl #######################################################################
 dnl # Check for Native Avahi headers (for Bonjour)
 dnl #######################################################################
 AC_ARG_ENABLE(avahi,
