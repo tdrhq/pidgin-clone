@@ -833,9 +833,8 @@ done
 AC_SUBST(DBI_LIBS)
 AC_SUBST(DBI_CFLAGS)
 AC_SUBST(DBI_LDFLAGS)
-AM_CONDITIONAL(USE_DATABASE_LOGGER,  test -n "$DBI_CFLAGS")
-
 fi
+AM_CONDITIONAL(USE_DATABASE_LOGGER, test -n "$DBI_CFLAGS")
 
 
 dnl #######################################################################

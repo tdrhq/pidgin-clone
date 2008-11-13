@@ -50,6 +50,7 @@ static void historize_log_read_cb(char *text, PurpleLog *log, PurpleLogReadFlags
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
 	PidginConversation *gtkconv;
 	const char *header_date;
+	char *escaped_alias;
 	char *header;
 	char *protocol;
 	char *text_backup = NULL;
@@ -77,15 +78,18 @@ static void historize_log_read_cb(char *text, PurpleLog *log, PurpleLogReadFlags
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);
 
-	if (((PurpleLog *)logs->data)->tm)
-		header_date = purple_date_format_full(((PurpleLog *)logs->data)->tm);
+	if (log->tm)
+		header_date = purple_date_format_full(log->tm);
 	else
-		header_date = purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time));
+		header_date = purple_date_format_full(localtime(&log->time));
+
+	escaped_alias = g_markup_escape_text(callback_data->alias, -1);
 
 	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), escaped_alias, header_date);
 
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
 	g_free(header);
+	g_free(escaped_alias);
 
 	g_strchomp(text);
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), text, options);
