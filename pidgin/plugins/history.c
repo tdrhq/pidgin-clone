@@ -183,10 +183,9 @@ static void historize(PurpleConversation *c)
 	PurpleConversationType convtype = purple_conversation_get_type(c);
 	const char *alias = name;
 	PidginConversation *gtkconv =  PIDGIN_CONVERSATION(c);
-	char *escaped_alias;
 	gtkconv = PIDGIN_CONVERSATION(c);
-	if (gtkconv == NULL)
-		return;
+
+	g_return_if_fail(gtkconv != NULL);
 
 	if (convtype == PURPLE_CONV_TYPE_IM && g_list_length(gtkconv->convs) < 2)
 	{
@@ -201,7 +200,7 @@ static void historize(PurpleConversation *c)
 			return;
 
 		/* Find buddies for this conversation. */
-	        buddies = purple_find_buddies(account, name);
+		buddies = purple_find_buddies(account, name);
 
 		/* If we found at least one buddy, save the first buddy's alias. */
 		if (buddies != NULL)

@@ -532,6 +532,10 @@ purple_conversation_destroy(PurpleConversation *conv)
 	purple_conversation_close_logs(conv, purple_conversation_destroy_cb, conv);
 
 	purple_conversation_clear_message_history(conv);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(conv);
+	g_free(conv);
+	conv = NULL;
 }
 
 
