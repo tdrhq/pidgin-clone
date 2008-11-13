@@ -2277,7 +2277,7 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	if (old_conv == conv)
 		return;
 
-	purple_conversation_close_logs(old_conv);
+	purple_conversation_close_logs(old_conv, NULL, NULL);
 	gtkconv->active_conv = conv;
 
 	purple_conversation_set_logging(conv,

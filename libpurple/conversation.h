@@ -537,7 +537,7 @@ gboolean purple_conversation_is_logging(const PurpleConversation *conv);
  *
  * @param conv The conversation.
  */
-void purple_conversation_close_logs(PurpleConversation *conv);
+void purple_conversation_close_logs(PurpleConversation *conv, void (*cb) (void *), void *data);
 
 /**
  * Returns the specified conversation's IM-specific data.

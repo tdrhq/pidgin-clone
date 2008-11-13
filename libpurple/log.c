@@ -41,13 +41,71 @@ static PurpleLogLogger *html_logger;
 static PurpleLogLogger *txt_logger;
 static PurpleLogLogger *old_logger;
 
+typedef struct {
+	PurpleLogContext *context;
+	PurpleLogFreeCallback cb;
+} _purple_log_free_callback_data;
+
+typedef struct {
+	PurpleLogContext *context;
+	PurpleLogWriteCallback cb;
+	struct _purple_logsize_user *lu;
+} _purple_log_write_callback_data;
+
+typedef struct {
+	PurpleLogContext *context;
+	PurpleLogReadCallback cb;
+	PurpleLogReadFlags *flags;
+} _purple_log_read_callback_data;
+
+typedef struct {
+	PurpleLogContext *context;
+	PurpleLogSizeCallback cb;
+} _purple_log_size_callback_data;
+
+typedef struct {
+	PurpleLogContext *context;
+	PurpleLogTotalSizeCallback cb;
+	struct _purple_logsize_user *lu;
+	int counter;
+	int ret_int;
+} _purple_log_total_size_callback_data;
+
+typedef struct {
+	PurpleLogContext *context;
+	PurpleLogRemoveLogCallback cb;
+} _purple_log_delete_callback_data;
+
+typedef struct {
+	PurpleLogContext *context;
+	PurpleLogListCallback cb;
+	int counter;
+} _purple_log_logs_callback_data;
+
+typedef struct {
+	PurpleLogContext *context;
+	PurpleLogHashTableCallback cb;
+	int counter;
+	GHashTable *ret_sets;
+} _purple_log_sets_callback_data;
+
+typedef struct {
+	PurpleLogContext *context;
+	PurpleLogSystemListCallback cb;
+	int counter;
+} _purple_log_system_logs_callback_data;
+
 struct _purple_logsize_user {
 	char *name;
 	PurpleAccount *account;
 };
+
+typedef void (*PurpleLogVoidCallback) (PurpleLogContext *context);
+
 static GHashTable *logsize_users = NULL;
 
 static void log_get_log_sets_common(GHashTable *sets);
+static void log_get_log_sets_common_nonblocking(GHashTable *sets, PurpleLogLoggerHashTableCallback cb, void *data);
 
 static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  const char *from, time_t time, const char *message);
@@ -73,6 +131,21 @@ static GList *txt_logger_list_syslog(PurpleAccount *account);
 static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
 static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
 
+static void log_free_cb(PurpleLog *log, void *data);
+static void log_write_cb(int size, PurpleLog *log, PurpleMessageFlags flags, char *from, time_t time, char *message, void *data);
+static void log_size_cb(int size, PurpleLog *log, void *data);
+static void log_total_size_cb(int size, PurpleLogType type, char *name, PurpleAccount *account, void *data);
+static void log_delete_cb(gboolean result, PurpleLog *log, void *data);
+static void log_list_cb(GList *list, PurpleLogType type, char *name, PurpleAccount *account, void *data);
+static void log_system_list_cb(GList *list, PurpleAccount *account, void *data);
+static void log_read_cb(char *text, PurpleLog *log, PurpleLogReadFlags *flags, void *data);
+static void log_hash_cb(void *data);
+
+static void log_total_size_list_cb(GList *list, PurpleLogType type, char *name, PurpleAccount *account, void *data);
+
+static void log_context_ref(PurpleLogContext *context);
+static void log_context_unref(PurpleLogContext *context);
+//static int log_context_count_ref(PurpleLogContext *context);
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
@@ -124,7 +197,7 @@ PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *a
 
 void purple_log_free(PurpleLog *log)
 {
-	g_return_if_fail(log);
+	g_return_if_fail(log != NULL);
 	if (log->logger && log->logger->finalize)
 		log->logger->finalize(log);
 	g_free(log->name);
@@ -142,6 +215,33 @@ void purple_log_free(PurpleLog *log)
 	g_slice_free(PurpleLog, log);
 }
 
+void purple_log_free_nonblocking(PurpleLog *log, PurpleLogFreeCallback cb, PurpleLogContext *context)
+{
+	_purple_log_free_callback_data *callback_data;
+
+	g_return_if_fail(log != NULL && log->logger != NULL);
+
+	if (context != NULL && (purple_log_is_cancelled_operation(context) || purple_log_is_closed_context(context))) {
+		purple_debug_info("Log", "purple_log_free_nonblocking is not completed due to cancelled operation or closed context\n");
+		return;
+	}
+
+	if (context != NULL)
+		log_context_ref(context);
+
+	callback_data = g_new0(_purple_log_free_callback_data, 1);
+	callback_data->context = context;
+	callback_data->cb = cb;
+
+	if (log->logger->finalize_nonblocking != NULL)
+		log->logger->finalize_nonblocking(log, log_free_cb, callback_data); 
+	else if (log->logger->finalize != NULL) {
+		log->logger->finalize(log);
+		log_free_cb(log, callback_data);
+	}
+}
+
+
 void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 		    const char *from, time_t time, const char *message)
 {
@@ -149,9 +249,9 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 	gsize written, total = 0;
 	gpointer ptrsize;
 
-	g_return_if_fail(log);
-	g_return_if_fail(log->logger);
-	g_return_if_fail(log->logger->write);
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+	g_return_if_fail(log->logger->write != NULL);
 
 	written = (log->logger->write)(log, type, from, time, message);
 
@@ -164,6 +264,7 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 		total = GPOINTER_TO_INT(ptrsize);
 		total += written;
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(total));
+		purple_debug_info("log", "HASH(purple_log_write): total size %i\n", total);
 	} else {
 		g_free(lu->name);
 		g_free(lu);
@@ -171,10 +272,53 @@ void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 
 }
 
+// TODO: Should this perhaps return a boolean indicating success or failure?
+// TODO: Then the UI could display a failure message if, for example, a database
+// TODO: logger failed to log a message mid-conversation.
+void purple_log_write_nonblocking(PurpleLog *log, PurpleMessageFlags type,
+								const char *from, time_t time, char *message,
+								PurpleLogWriteCallback cb, PurpleLogContext *context)
+{
+	struct _purple_logsize_user *lu;
+	_purple_log_write_callback_data *callback_data;
+	char *from_copy;
+
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+	g_return_if_fail(log->logger->write != NULL || log->logger->write_nonblocking != NULL);
+
+	if (context != NULL && (purple_log_is_cancelled_operation(context) || purple_log_is_closed_context(context))) {
+		purple_debug_info("Log", "purple_log_write_nonblocking is not completed due to cancelled operation or closed context\n");
+		return;
+	}
+
+	lu = g_new(struct _purple_logsize_user, 1);
+
+	lu->name = g_strdup(purple_normalize(log->account, log->name));
+	lu->account = log->account;
+
+	if (context != NULL)
+		log_context_ref(context);
+
+	callback_data = g_new0(_purple_log_write_callback_data, 1);
+	callback_data->cb = cb;
+	callback_data->context = context;
+	callback_data->lu = lu;
+	from_copy = g_strdup(from);
+
+	if (log->logger->write_nonblocking) 
+		(log->logger->write_nonblocking)(log, type, from_copy, time, message, log_write_cb, callback_data);
+	else if (log->logger->write)
+		log_write_cb((log->logger->write)(log, type, from_copy, time, message), 
+					log, type, from_copy, time, message, callback_data);
+}
+
 char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	PurpleLogReadFlags mflags;
-	g_return_val_if_fail(log && log->logger, NULL);
+	g_return_val_if_fail(log != NULL, NULL);
+	g_return_val_if_fail(log->logger != NULL, NULL);
+	
 	if (log->logger->read) {
 		char *ret = (log->logger->read)(log, flags ? flags : &mflags);
 		purple_str_strip_char(ret, '\r');
@@ -183,13 +327,69 @@ char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	return g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>"));
 }
 
+
+void purple_log_read_nonblocking(PurpleLog *log, PurpleLogReadFlags *flags, PurpleLogReadCallback cb, PurpleLogContext *context)
+{
+	PurpleLogReadFlags mflags;
+	_purple_log_read_callback_data *callback_data;
+
+	if (context != NULL && (purple_log_is_cancelled_operation(context) || purple_log_is_closed_context(context))) {
+		purple_debug_info("Log", "purple_log_read_nonblocking is not completed due to cancelled operation or closed context\n");
+		return;
+	}
+
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+
+	if (context != NULL)
+		log_context_ref(context);
+
+	callback_data = g_new0(_purple_log_read_callback_data, 1);
+	callback_data->context = context;
+	callback_data->cb = cb;
+
+	if (log->logger->read_nonblocking) 
+		log->logger->read_nonblocking(log, flags ? flags : &mflags, log_read_cb, callback_data);
+	else if (log->logger->read)
+		log_read_cb((log->logger->read)(log, flags ? flags : &mflags), log, flags, callback_data);
+	else
+		log_read_cb(g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>")),  log, flags, callback_data);
+}
+
 int purple_log_get_size(PurpleLog *log)
 {
-	g_return_val_if_fail(log && log->logger, 0);
+	g_return_val_if_fail(log != NULL, 0);
+	g_return_val_if_fail(log->logger != NULL, 0);
 
 	if (log->logger->size)
 		return log->logger->size(log);
 	return 0;
+}
+
+void purple_log_get_size_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, PurpleLogContext *context)
+{
+	_purple_log_size_callback_data *callback_data;
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+
+	if (context != NULL && (purple_log_is_cancelled_operation(context) || purple_log_is_closed_context(context))) {
+		purple_debug_info("Log", "purple_log_get_size_nonblocking is not completed due to cancelled operation or closed context\n");
+		return;
+	}
+
+	if (context != NULL)
+		log_context_ref(context);
+
+	callback_data = g_new0(_purple_log_size_callback_data, 1);
+	callback_data->context = context;
+	callback_data->cb = cb;
+
+	if (log->logger->size_nonblocking)
+		log->logger->size_nonblocking(log, log_size_cb, callback_data);
+	else if (log->logger->size)
+		log_size_cb(log->logger->size(log), log, callback_data);
+	else
+		log_size_cb(0, log, callback_data);
 }
 
 static guint _purple_logsize_user_hash(struct _purple_logsize_user *lu)
@@ -222,6 +422,7 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
 
 	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
 		size = GPOINTER_TO_INT(ptrsize);
+		purple_debug_info("log", "HASH(purple_log_get_total_size): using size from hash %i {name = \"%s\"\n}", size, name);
 		g_free(lu->name);
 		g_free(lu);
 	} else {
@@ -245,9 +446,84 @@ int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccoun
 			}
 		}
 
+		purple_debug_info("log", "HASH(purple_log_get_total_size): write size to hash %i {name = \"%s\"\n}", size, name);
 		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(size));
 	}
 	return size;
+}
+
+// TODO: Would it make sense to allow the caller to pass in a list of logs, if
+// TODO: it just got them from purple_log_get_logs_nonblocking()?  Pidgin asks
+// TODO: for the total size, which means that for some loggers, we end up
+// TODO: calling list *again* needlessly (to loop over them and size them).
+// TODO: If we had a list of logs, we could loop over them and find those
+// TODO: where the logger had a size function (but no total_size function).
+// TODO: We could size just those with something like this (this ignores
+// TODO: the blocking vs. non-blocking distinction for simplicity):
+// TODO: for (...) {
+// TODO: 	if (!log->logger->total_size && log->logger->size)
+// TODO: 		Call the size function.
+void purple_log_get_total_size_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, 
+								PurpleLogTotalSizeCallback cb, PurpleLogContext *context)
+{
+	gpointer ptrsize;
+	int size = 0;
+	GSList *n;
+	struct _purple_logsize_user *lu;
+
+	g_return_if_fail(loggers != NULL);
+
+	if (context != NULL && (purple_log_is_cancelled_operation(context) || purple_log_is_closed_context(context))) {
+		purple_debug_info("Log", "purple_log_get_total_size_nonblocking is not completed due to cancelled operation or closed context\n");
+		return;
+	}
+
+	lu = g_new(struct _purple_logsize_user, 1);
+	lu->name = g_strdup(purple_normalize(account, name));
+	lu->account = account;
+
+	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
+		size = GPOINTER_TO_INT(ptrsize);
+
+		g_free(lu->name);
+		g_free(lu);
+		cb(size, type, name, account, context);
+	} else {
+		_purple_log_total_size_callback_data *callback_data;
+		char *name_copy = g_strdup(name);
+		if (context != NULL)
+			log_context_ref(context);
+
+		callback_data = g_new0(_purple_log_total_size_callback_data, 1);
+		callback_data->context = context;
+		callback_data->cb = cb;
+		callback_data->lu = lu;
+		callback_data->ret_int = 0;
+
+		/* imho, this is really the best and simplest way 
+		     especially now, because we have blocking total_size_nonblocking function 
+		     and list_nonblocking functions*/
+		callback_data->counter = g_slist_length(loggers);
+
+		for (n = loggers; n; n = n->next) {
+			PurpleLogLogger *logger = n->data;
+
+			if(logger->total_size_nonblocking) {
+				logger->total_size_nonblocking(type, name_copy, account, log_total_size_cb, callback_data);
+			} else if(logger->list_nonblocking) {
+				logger->list_nonblocking(type, name_copy, account, log_total_size_list_cb, callback_data);
+			} else if(logger->total_size) { 
+				/* As there is no any nonblocking functions we can call blocking analogs */
+				log_total_size_cb((logger->total_size)(type, name_copy, account), 
+								type, name_copy, account, callback_data);
+			} else if(logger->list) {
+				/* to prevent code duplication we reuse log_total_size_list_cb */
+				GList *logs = (logger->list)(type, name_copy, account);
+				log_total_size_list_cb(logs, type, name_copy, account, callback_data);
+			} else 
+				log_total_size_cb(0, type, name_copy, account, callback_data);
+		}
+	}
 }
 
 gboolean purple_log_is_deletable(PurpleLog *log)
@@ -255,7 +531,7 @@ gboolean purple_log_is_deletable(PurpleLog *log)
 	g_return_val_if_fail(log != NULL, FALSE);
 	g_return_val_if_fail(log->logger != NULL, FALSE);
 
-	if (log->logger->remove == NULL)
+	if (log->logger->remove == NULL && log->logger->remove_nonblocking == NULL)
 		return FALSE;
 
 	if (log->logger->is_deletable != NULL)
@@ -273,6 +549,33 @@ gboolean purple_log_delete(PurpleLog *log)
 		return log->logger->remove(log);
 
 	return FALSE;
+}
+
+void purple_log_delete_nonblocking(PurpleLog *log, PurpleLogRemoveLogCallback cb, PurpleLogContext *context)
+{
+	_purple_log_delete_callback_data *callback_data;
+	gboolean result = FALSE;
+
+	g_return_if_fail(log != NULL);
+	g_return_if_fail(log->logger != NULL);
+
+	if (context != NULL && (purple_log_is_cancelled_operation(context) || purple_log_is_closed_context(context))) {
+		purple_debug_info("Log", "purple_log_delete_nonblocking is not completed due to cancelled operation or closed context\n");
+		return;
+	}
+
+	callback_data = g_new(_purple_log_delete_callback_data, 1);
+	callback_data->context = context;
+	callback_data->cb = cb;
+
+	if (log->logger->remove_nonblocking != NULL) 
+		(log->logger->remove_nonblocking)(log, log_delete_cb, callback_data);
+	else {
+		/* As there is no nonblocking function we can call blocking analog */
+		if (log->logger->remove != NULL) 
+			result = (log->logger->remove)(log);
+		log_delete_cb(result, log, callback_data);
+	}
 }
 
 char *
@@ -385,7 +688,29 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 	if (functions >= 11)
 		logger->is_deletable = va_arg(args, void *);
 
+	/* callbacks functions */
 	if (functions >= 12)
+		logger->create_nonblocking = va_arg(args, void *);
+	if (functions >= 13)
+		logger->write_nonblocking = va_arg(args, void *);
+	if (functions >= 14)
+		logger->finalize_nonblocking = va_arg(args, void *);
+	if (functions >= 15)
+		logger->list_nonblocking = va_arg(args, void *);
+	if (functions >= 16)
+		logger->read_nonblocking = va_arg(args, void *);
+	if (functions >= 17)
+		logger->size_nonblocking = va_arg(args, void *);
+	if (functions >= 18)
+		logger->total_size_nonblocking = va_arg(args, void *);
+	if (functions >= 19)
+		logger->list_syslog_nonblocking = va_arg(args, void *);
+	if (functions >= 20)
+		logger->get_log_sets_nonblocking = va_arg(args, void *);
+	if (functions >= 21)
+		logger->remove_nonblocking = va_arg(args, void *);
+
+	if (functions >= 22)
 		purple_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
 
 	va_end(args);
@@ -402,7 +727,7 @@ void purple_log_logger_free(PurpleLogLogger *logger)
 
 void purple_log_logger_add (PurpleLogLogger *logger)
 {
-	g_return_if_fail(logger);
+	g_return_if_fail(logger != NULL);
 	if (g_slist_find(loggers, logger))
 		return;
 	loggers = g_slist_append(loggers, logger);
@@ -413,13 +738,13 @@ void purple_log_logger_add (PurpleLogLogger *logger)
 
 void purple_log_logger_remove (PurpleLogLogger *logger)
 {
-	g_return_if_fail(logger);
+	g_return_if_fail(logger != NULL);
 	loggers = g_slist_remove(loggers, logger);
 }
 
 void purple_log_logger_set (PurpleLogLogger *logger)
 {
-	g_return_if_fail(logger);
+	g_return_if_fail(logger != NULL);
 	current_logger = logger;
 }
 
@@ -436,7 +761,7 @@ GList *purple_log_logger_get_options(void)
 
 	for (n = loggers; n; n = n->next) {
 		data = n->data;
-		if (!data->write)
+		if (!data->write && !data->write_nonblocking)
 			continue;
 		list = g_list_append(list, data->name);
 		list = g_list_append(list, data->id);
@@ -459,12 +784,47 @@ GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *
 	GSList *n;
 	for (n = loggers; n; n = n->next) {
 		PurpleLogLogger *logger = n->data;
-		if (!logger->list)
-			continue;
-		logs = g_list_concat(logger->list(type, name, account), logs);
+		if (logger->list)
+			logs = g_list_concat(logger->list(type, name, account), logs);
 	}
 
 	return g_list_sort(logs, purple_log_compare);
+}
+
+void purple_log_get_logs_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, PurpleLogListCallback cb, PurpleLogContext *context)
+{
+	GSList *n;
+	_purple_log_logs_callback_data *callback_data;
+	char *name_copy;
+
+	g_return_if_fail(loggers != NULL);
+
+	if (context != NULL && (purple_log_is_cancelled_operation(context) || purple_log_is_closed_context(context))) {
+		purple_debug_info("Log", "purple_log_get_logs_nonblocking is not completed due to cancelled operation or closed context\n");
+		return;
+	}
+	if (context != NULL)
+		log_context_ref(context);
+
+	callback_data = g_new0(_purple_log_logs_callback_data, 1);
+	callback_data->context = context;
+	callback_data->cb = cb;
+	name_copy = g_strdup(name);
+
+	callback_data->counter = g_slist_length(loggers);
+
+	for (n = loggers; n; n = n->next) {
+		PurpleLogLogger *logger = n->data;
+
+		if (logger->list_nonblocking) {
+			logger->list_nonblocking(type, name_copy, account, log_list_cb, callback_data);
+		} else if (logger->list) {
+			/* Call the blocking list function instead. */
+			GList *logs = logger->list(type, name_copy, account);
+			log_list_cb(logs, type, name_copy, account, callback_data);
+		} else 
+			log_list_cb(NULL, type, name_copy, account, callback_data);
+	}
 }
 
 gint purple_log_set_compare(gconstpointer y, gconstpointer z)
@@ -546,6 +906,48 @@ GHashTable *purple_log_get_log_sets(void)
 	return sets;
 }
 
+void purple_log_get_log_sets_nonblocking(PurpleLogHashTableCallback cb, PurpleLogContext *context)
+{
+	GSList *n;
+	_purple_log_sets_callback_data *callback_data;
+
+	g_return_if_fail(loggers != NULL);
+
+	if (context != NULL && (purple_log_is_cancelled_operation(context) || purple_log_is_closed_context(context))) {
+		purple_debug_info("Log", "purple_log_get_log_sets_nonblocking is not completed due to cancelled operation or closed context\n");
+		return;
+	}
+
+	if (context != NULL)
+		log_context_ref(context);
+
+	callback_data = g_new0(_purple_log_sets_callback_data, 1);
+	callback_data->context = context;
+	callback_data->cb = cb;
+	callback_data->ret_sets = g_hash_table_new_full(log_set_hash, log_set_equal,
+											(GDestroyNotify)purple_log_set_free, NULL);
+
+	/* +1 is need special for log_get_log_sets_common_nonblocking call */
+	callback_data->counter = g_slist_length(loggers) + 1;
+	
+	/* Get the log sets from all the loggers. */
+	for (n = loggers; n; n = n->next) {
+		PurpleLogLogger *logger = n->data;
+
+		if (logger->get_log_sets_nonblocking)
+			logger->get_log_sets_nonblocking(log_add_log_set_to_hash, callback_data->ret_sets, log_hash_cb, callback_data);
+		else {
+			if (logger->get_log_sets)
+				/* As there is no nonblocking  function we can call blocking analog*/
+				logger->get_log_sets(log_add_log_set_to_hash, callback_data->ret_sets);
+
+			log_hash_cb(callback_data);
+		} 
+	}
+
+	log_get_log_sets_common_nonblocking(callback_data->ret_sets, log_hash_cb, callback_data);
+}
+
 void purple_log_set_free(PurpleLogSet *set)
 {
 	g_return_if_fail(set != NULL);
@@ -569,6 +971,114 @@ GList *purple_log_get_system_logs(PurpleAccount *account)
 	}
 
 	return g_list_sort(logs, purple_log_compare);
+}
+
+void purple_log_get_system_logs_nonblocking(PurpleAccount *account, PurpleLogSystemListCallback cb, PurpleLogContext *context)
+{
+	GSList *n;
+	_purple_log_system_logs_callback_data *callback_data;
+
+	g_return_if_fail(loggers != NULL);
+
+	if (context != NULL && (purple_log_is_cancelled_operation(context) || purple_log_is_closed_context(context))) {
+		purple_debug_info("Log", "purple_log_get_log_sets_nonblocking is not completed due to cancelled operation or closed context\n");
+		return;
+	}
+
+	if (context != NULL)
+		log_context_ref(context);
+
+	callback_data = g_new0(_purple_log_system_logs_callback_data, 1);
+	callback_data->context = context;
+	callback_data->cb = cb;
+	callback_data->counter = g_slist_length(loggers);
+
+	for (n = loggers; n; n = n->next) {
+		PurpleLogLogger *logger = n->data;
+
+		if (logger->list_syslog_nonblocking) {
+			logger->list_syslog_nonblocking(account, log_system_list_cb, callback_data);
+		} else if (logger->list_syslog) {
+			/* Call the blocking list function instead. */
+			GList *logs = logger->list_syslog(account);
+			log_system_list_cb(logs, account, callback_data);
+		} else 
+			log_system_list_cb(NULL, account, callback_data);
+	}
+}
+
+PurpleLogContext *purple_log_context_new(PurpleLogDestroyContextCallback cb)
+{
+	PurpleLogContext *context = g_new0(PurpleLogContext, 1);
+	context->destroy_user_data_cb = cb;
+	return context;
+}
+
+static int log_context_count_ref(PurpleLogContext *context)
+{
+	g_return_val_if_fail(context != NULL, 0);
+	return context->ref_count;
+}
+
+static void log_context_free(PurpleLogContext *context)
+{
+	g_return_if_fail(context != NULL);
+	if (context->destroy_user_data_cb != NULL)
+		context->destroy_user_data_cb(context->user_data);
+	g_free(context);
+}
+
+void purple_log_context_close(PurpleLogContext *context)
+{
+	g_return_if_fail(context != NULL);
+	context->is_closed = TRUE;
+	if (!log_context_count_ref(context))
+		log_context_free(context);
+}
+
+gboolean purple_log_is_closed_context(PurpleLogContext *context)
+{
+	g_return_val_if_fail(context != NULL, TRUE);
+	return context->is_closed;
+}
+
+void purple_log_context_set_userdata(PurpleLogContext *context, void *data)
+{
+	g_return_if_fail(context != NULL);
+	/* XXX: what should we do if context->user_data is not NULL */
+	context->user_data = data;
+}
+
+void *purple_log_context_get_userdata(PurpleLogContext *context)
+{
+	g_return_val_if_fail(context != NULL, NULL);
+	return context->user_data;
+}
+
+void purple_log_cancel_operation(PurpleLogContext *context)
+{
+	g_return_if_fail(context);
+	context->is_cancelled = TRUE;
+}
+
+gboolean purple_log_is_cancelled_operation(PurpleLogContext *context)
+{
+	g_return_val_if_fail(context != NULL, TRUE);
+	return context->is_cancelled;
+}
+
+static void log_context_ref(PurpleLogContext *context)
+{
+	g_return_if_fail(context != NULL);
+	context->ref_count++;
+}
+
+static void log_context_unref(PurpleLogContext *context)
+{
+	g_return_if_fail(context != NULL);
+	context->ref_count--;
+	if (!log_context_count_ref(context) && purple_log_is_closed_context(context)) 
+		log_context_free(context);
 }
 
 /****************************************************************************
@@ -617,7 +1127,7 @@ void purple_log_init(void)
 									 purple_log_common_sizer,
 									 txt_logger_total_size,
 									 txt_logger_list_syslog,
-									 NULL,
+									 NULL, 
 									 purple_log_common_deleter,
 									 purple_log_common_is_deletable);
 	purple_log_logger_add(txt_logger);
@@ -924,6 +1434,9 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 	return list;
 }
 
+// TODO: Rather than calling this multiple times with different extensions,
+// TODO: could we somehow store up all the extensions and do the loop just
+// TODO: once?  This may be possible with the non-blocking stuff...
 int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext)
 {
 	GDir *dir;
@@ -966,6 +1479,13 @@ int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAc
 	return size;
 }
 
+void purple_log_common_total_sizer_nonblocking(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext, 
+								PurpleLogTotalSizeCallback cb, PurpleLogContext *context)
+{
+	int size = purple_log_common_total_sizer(type, name, account, ext);
+	cb(size, type, name, account, context);
+}
+
 int purple_log_common_sizer(PurpleLog *log)
 {
 	struct stat st;
@@ -977,6 +1497,12 @@ int purple_log_common_sizer(PurpleLog *log)
 		st.st_size = 0;
 
 	return st.st_size;
+}
+
+void purple_log_common_sizer_nonblocking(PurpleLog *log, PurpleLogSizeCallback cb, PurpleLogContext *context)
+{
+	int size = purple_log_common_sizer(log);
+	cb(size, log, context);
 }
 
 /* This will build log sets for all loggers that use the common logger
@@ -1097,6 +1623,13 @@ static void log_get_log_sets_common(GHashTable *sets)
 	}
 	g_free(log_path);
 	g_dir_close(log_dir);
+}
+
+static void log_get_log_sets_common_nonblocking(GHashTable *sets, PurpleLogLoggerHashTableCallback cb, void *data)
+{
+	log_get_log_sets_common(sets);
+	if (cb != NULL) 
+		cb(data);
 }
 
 gboolean purple_log_common_deleter(PurpleLog *log)
@@ -1453,7 +1986,6 @@ static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAc
 	return purple_log_common_total_sizer(type, name, account, ".html");
 }
 
-
 /****************************
  ** PLAIN TEXT LOGGER *******
  ****************************/
@@ -1582,7 +2114,6 @@ static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAcc
 {
 	return purple_log_common_total_sizer(type, name, account, ".txt");
 }
-
 
 /****************
  * OLD LOGGER ***
@@ -1991,4 +2522,259 @@ static void old_logger_finalize(PurpleLog *log)
 	struct old_logger_data *data = log->logger_data;
 	purple_stringref_unref(data->pathref);
 	g_slice_free(struct old_logger_data, data);
+}
+
+static void log_free_cb(PurpleLog *log, void *data)
+{
+	_purple_log_free_callback_data *callback_data = data;
+
+	if (callback_data->cb != NULL && (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context)))
+		callback_data->cb(log, callback_data->context);
+
+	if (callback_data->context != NULL)
+		log_context_unref(callback_data->context);
+
+	if (log->tm != NULL)
+	{
+#ifdef HAVE_STRUCT_TM_TM_ZONE
+		/* XXX: This is so wrong... */
+		g_free((char *)log->tm->tm_zone);
+#endif
+		g_slice_free(struct tm, log->tm);
+	}
+
+	PURPLE_DBUS_UNREGISTER_POINTER(log);
+	g_slice_free(PurpleLog, log);
+	g_free(log->name);
+	g_free(callback_data);
+}
+
+static void log_size_cb(int size, PurpleLog *log, void *data)
+{
+	_purple_log_size_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context))
+		callback_data->cb(size, log, callback_data->context);
+
+	if (callback_data->context != NULL)
+		log_context_unref(callback_data->context);
+
+	g_free(callback_data);
+}
+
+static void log_total_size_cb(int size, PurpleLogType type, char *name, PurpleAccount *account, void *data) 
+{
+	_purple_log_total_size_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	callback_data->ret_int += size;
+
+	callback_data->counter--;
+
+	if (!callback_data->counter) {
+		if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context))
+			callback_data->cb((int)callback_data->ret_int, type, name, account, callback_data->context);
+
+		g_hash_table_replace(logsize_users, callback_data->lu, GINT_TO_POINTER(callback_data->ret_int));
+
+		if (callback_data->context != NULL)
+			log_context_unref(callback_data->context);
+
+		g_free(name);
+		g_free(callback_data);
+	}
+}
+
+static void log_delete_cb(gboolean result, PurpleLog *log, void *data)
+{
+	_purple_log_delete_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	if (callback_data->cb != NULL && (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context)))
+		callback_data->cb(result, log, callback_data->context);
+
+	if (callback_data->context != NULL)
+		log_context_unref(callback_data->context);
+
+	g_free(callback_data);
+}
+
+static void log_size_list_log_free_cb(int size, PurpleLog *log, PurpleLogContext *context)
+{
+	gpointer *callback_data = purple_log_context_get_userdata(context);
+
+	purple_log_free_nonblocking(log, NULL, NULL);
+	log_total_size_cb(size, (PurpleLogType)callback_data[1], callback_data[2], callback_data[3], callback_data[4]);
+}
+
+static void log_total_size_list_cb(GList *list, PurpleLogType type, char *name, PurpleAccount *account, void *data) 
+{
+	_purple_log_total_size_callback_data *callback_data = data;
+	g_return_if_fail(callback_data != NULL);
+
+	callback_data->counter += g_list_length(list);
+
+	while (list) {
+		PurpleLogContext *context = purple_log_context_new(g_free);
+
+		gpointer *user_data = g_new(gpointer, 4);
+		PurpleLog *log = (PurpleLog*)(list->data);
+
+		user_data[0] = (gpointer)type;
+		user_data[1] = name;
+		user_data[2] = account;
+		user_data[3] = callback_data;
+
+		purple_log_context_set_userdata(context, callback_data);
+		purple_log_get_size_nonblocking(log, log_size_list_log_free_cb, context);
+		purple_log_context_close(context);
+
+		list = g_list_delete_link(list, list);
+	}
+
+	/* extra call, we need it for destroing callback_data and calling UI callback */
+	log_total_size_cb(0, type, name, account, callback_data);
+}
+
+static void log_list_cb(GList *list, PurpleLogType type, char *name, PurpleAccount *account, void *data)
+{
+	_purple_log_logs_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	callback_data->counter--;
+
+	/* Pass logs up to the caller. */
+	if (list != NULL) {
+
+		if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context))
+			callback_data->cb(list, type, name, account, callback_data->context);
+		else {
+			GList *logs;
+			for (logs = list; logs != NULL; logs = logs->next) 
+				purple_log_free_nonblocking(logs->data, NULL, NULL);
+
+			g_list_free(list);
+		}
+	}
+
+	if (!callback_data->counter) {
+		/* Let the caller know we're done. */
+
+		if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context))
+			callback_data->cb(NULL, type, name, account, callback_data->context);
+
+		if (callback_data->context != NULL)
+			log_context_unref(callback_data->context);
+
+		g_free(name);
+		g_free(callback_data);
+	}
+}
+
+static void log_system_list_cb(GList *list, PurpleAccount *account, void *data)
+{
+	_purple_log_system_logs_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	callback_data->counter--;
+
+	/* Pass logs up to the caller. */
+	if (list != NULL) {
+		if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context))
+			callback_data->cb(list, account, callback_data->context);
+		else {
+			GList *logs;
+			for (logs = list; logs != NULL; logs = logs->next) 
+				purple_log_free_nonblocking(logs->data, NULL, NULL);
+
+			g_list_free(list);
+		}
+	}
+
+	if (!callback_data->counter) {
+		/* Let the caller know we're done. */
+		if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context))
+			callback_data->cb(NULL, account, callback_data->context);
+
+		if (callback_data->context != NULL)
+			log_context_unref(callback_data->context);
+
+		g_free(callback_data);
+	}
+}
+
+static void log_read_cb(char *text, PurpleLog *log, PurpleLogReadFlags *flags, void *data)
+{
+	_purple_log_read_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context)) {
+		purple_str_strip_char(text, '\r');
+		callback_data->cb(text, log, flags, callback_data->context);
+	}
+
+	if (callback_data->context != NULL)
+		log_context_unref(callback_data->context);
+
+	g_free(callback_data);
+}
+
+
+static void log_write_cb(int size, PurpleLog *log, PurpleMessageFlags flags,
+						char *from, time_t time, char *message, void *data)
+{
+	_purple_log_write_callback_data *callback_data = data;
+	struct _purple_logsize_user *lu;
+	gpointer ptrsize;
+	gsize total = 0;
+
+	g_return_if_fail(callback_data != NULL);
+	lu = callback_data->lu;
+
+	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
+		total = GPOINTER_TO_INT(ptrsize);
+		total += size;
+		g_hash_table_replace(logsize_users, lu, GINT_TO_POINTER(total));
+	} else {
+		g_free(lu->name);
+		g_free(lu);
+	}
+
+	if (callback_data->cb && (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context)))
+		callback_data->cb(size, log, flags, from, time, message, callback_data->context);
+
+	if (callback_data->context != NULL)
+		log_context_unref(callback_data->context);
+
+	g_free(from);
+	g_free(message);
+	g_free(callback_data);
+}
+
+static void log_hash_cb(void *data)
+{
+	_purple_log_sets_callback_data *callback_data = data;
+
+	g_return_if_fail(callback_data != NULL);
+
+	callback_data->counter--;
+
+	if (!callback_data->counter) {
+		if (callback_data->context == NULL || !purple_log_is_cancelled_operation(callback_data->context))
+			callback_data->cb(callback_data->ret_sets, callback_data->context);
+		else 
+			g_hash_table_destroy(callback_data->ret_sets);
+
+		if (callback_data->context != NULL)
+			log_context_unref(callback_data->context);
+
+		g_free(callback_data);
+	}
 }
