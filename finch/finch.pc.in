@@ -6,6 +6,8 @@ datarootdir=@datarootdir@
 datadir=@datadir@
 sysconfdir=@sysconfdir@
 
+plugindir=@libdir@/finch
+
 Name: Finch
 Description: Finch is an instant messenger application that uses libpurple for protocol support and ncurses (libgnt) for the UI.
 Version: @VERSION@
