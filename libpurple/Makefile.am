@@ -233,7 +233,7 @@ libpurple_la_SOURCES = \
 noinst_HEADERS= \
 	internal.h 
 
-libpurpleincludedir=$(includedir)/libpurple
+libpurpleincludedir=$(includedir)/purple-$(PURPLE_MAJOR_VERSION).0
 libpurpleinclude_HEADERS = \
 	$(purple_coreheaders) \
 	$(purple_builtheaders) \
@@ -253,7 +253,7 @@ libpurple_la_LIBADD = \
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
+	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION).0/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \
