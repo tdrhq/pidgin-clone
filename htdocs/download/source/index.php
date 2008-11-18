@@ -27,7 +27,7 @@ Download Pidgin<br />
 
 <p>This download is for the source code of Pidgin.</p>
 <p>If you want to <b>use</b> Pidgin, you should first look for pre-built packages from us (see the links on the left) or your operating system distribution.</p>
-<p>If you are looking to <b>modify</b> Pidgin, you may want to look at our <a href="http://developer.pidgin.im/wiki/UsingPidginMonotone">instructions for checking out the code from our repository</a></p>.
+<p>If you are looking to <b>modify</b> Pidgin, you may want to look at our <a href="http://developer.pidgin.im/wiki/UsingPidginMonotone">instructions for checking out the code from our repository</a>.</p>
 
 </div>
 
