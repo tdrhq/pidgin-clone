@@ -216,7 +216,189 @@ pidgin_smiley_themes_remove_non_existing(void)
 
 	if (!current_smiley_theme && smiley_themes) {
 		struct smiley_theme *smile = g_slist_last(smiley_themes)->data;
-		pidgin_themes_load_smiley_theme(smile->path, TRUE);
+		if (pidgin_themes_is_xml(smile->path)) {
+			pidgin_themes_load_smiley_theme_xml(smile->path, TRUE);
+		} else {
+			pidgin_themes_load_smiley_theme(smile->path, TRUE);
+		}
+	}
+}
+
+static struct smiley_theme *
+pidgin_themes_lookup_smiley_theme(const char *file)
+{
+	GSList *lst = smiley_themes;
+	
+	while (lst) {
+		struct smiley_theme *thm = lst->data;
+		if (!strcmp(thm->path, file)) {
+			return thm;
+		}
+		lst = lst->next;
+	}
+	
+	return NULL;
+}
+
+static void
+pidgin_themes_reload_smiley_theme(struct smiley_theme *theme)
+{
+	/* reload smiley theme in GtkIMHtmls */
+	GList *cnv;
+
+	if (current_smiley_theme)
+		pidgin_themes_destroy_smiley_theme_smileys(current_smiley_theme);
+	current_smiley_theme = theme;
+
+	for (cnv = purple_get_conversations(); cnv != NULL; cnv = cnv->next) {
+		PurpleConversation *conv = cnv->data;
+
+		if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
+			/* We want to see our custom smileys on our entry if we write the shortcut */
+			pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
+			pidgin_themes_smiley_themeize_custom(PIDGIN_CONVERSATION(conv)->entry);
+		}
+	}
+}
+
+gboolean pidgin_themes_is_xml(const char *file)
+{
+	if (strcmp(g_path_get_basename(file), "icondef.xml") == 0) {
+		return TRUE;
+	} else if (strcmp(g_path_get_basename(file), "theme") == 0) {
+		return FALSE;
+	} else {
+		purple_debug_error("gtkthemes", 
+			"pidgin_themes_is_xml called with invalid path\n");
+		return FALSE;
+	}
+}
+
+void pidgin_themes_load_smiley_theme_xml(const char *file, gboolean load)
+{
+	xmlnode *icondef = 
+		purple_util_read_xml_from_file_absolute(file, _("Smiley Themes"));
+	struct smiley_theme *theme = pidgin_themes_lookup_smiley_theme(file);
+	const gchar *dirname = g_path_get_dirname(file);
+	gboolean new_theme = FALSE;
+	
+	if (icondef) {
+		xmlnode *meta = NULL;
+		
+		if (strcmp(icondef->name, "icondef") != 0) {
+			purple_debug_error("gtkthemes", 
+				"icondefs.xml must contain a <icondef/> top level element\n");
+			return;
+		}
+		
+		meta = xmlnode_get_child(icondef, "meta");
+		
+		if (!theme) {
+			 new_theme = TRUE;
+			 theme = g_new0(struct smiley_theme, 1);
+			 theme->path = g_strdup(file);
+		} else if (theme == current_smiley_theme) {
+			/* don't reload the current theme */
+			return;
+		}
+		
+		if (!meta) {
+			purple_debug_error("gtkthemes", 
+				"icondef.xml contains no meta data\n");
+			if (theme) {
+				g_free(theme);
+			}
+			return;
+		} else {
+			/* parse out meta data */
+			xmlnode *name = xmlnode_get_child(meta, "name");
+			xmlnode *description = xmlnode_get_child(meta, "description");
+			xmlnode *author = xmlnode_get_child(meta, "author");
+			
+			if (name) {
+				theme->name = xmlnode_get_data(name);
+			} else {
+				/* maybe should do something better here... */
+				theme->name = g_strdup(file);
+			}
+			
+			if (description) {
+				theme->desc = xmlnode_get_data(description);
+			}
+			
+			if (author) {
+				theme->author = xmlnode_get_data(author);
+			}
+			
+			/* skip other meta elements for now (version, etc.) */
+			/* should also set the icon for the theme, from somewhere */
+		}
+		
+		if (load) {
+			/* create the "Default" list of smileys */
+			struct smiley_list *child = g_new0(struct smiley_list, 1);
+			xmlnode *icon = NULL;
+			
+			child->sml = g_strdup("default");
+			
+			for (icon = xmlnode_get_child(icondef, "icon") ; icon ;
+				 icon = xmlnode_get_next_twin(icon)) {
+				xmlnode *object = NULL;
+				xmlnode *text = NULL;
+				gboolean found_object = FALSE;
+				gchar *path = NULL;
+				gchar *filename = NULL;
+					 
+				for (object = xmlnode_get_child(icon, "object") ; object ;
+					object = xmlnode_get_next_twin(object)) {
+					const gchar *mime = xmlnode_get_attrib(object, "mime");
+						
+					if (mime && strncmp(mime, "image/", 6) == 0) {
+						found_object = TRUE;
+						break;
+					}
+				}
+					 
+				if (!found_object) {
+					purple_debug_error("gtkthemes", 
+						"icon in theme without an image object\n");
+					continue;
+				}
+				
+				filename = xmlnode_get_data_unescaped(object);
+				path = g_build_filename(dirname, filename, NULL);
+					 
+				for (text = xmlnode_get_child(icon, "text") ; text ;
+					text = xmlnode_get_next_twin(text)) {
+					gchar *smile = xmlnode_get_data_unescaped(text);
+					GtkIMHtmlSmiley *smiley =
+						gtk_imhtml_smiley_create(path, smile, FALSE, 0);
+						
+					purple_debug_info("gtkthemes",
+						"adding smiley with shortcut %s\n", smile);
+						
+					child->smileys = 
+						g_slist_append(child->smileys, (gpointer) smiley);
+					g_free(smile);
+				}
+					 
+				g_free(filename);
+				g_free(path);
+			}
+			
+			theme->list = child;
+		}
+		
+		if (new_theme) {
+			smiley_themes = g_slist_append(smiley_themes, theme);
+		}
+		
+		if (load) {
+			pidgin_themes_reload_smiley_theme(theme);
+		}
+		
+	} else {
+		purple_debug_error("gtkthemes", "parse error in icondefs.xml");
 	}
 }
 
@@ -225,25 +407,18 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 	FILE *f = g_fopen(file, "r");
 	char buf[256];
 	char *i;
-	struct smiley_theme *theme=NULL;
 	struct smiley_list *list = NULL;
-	GSList *lst = smiley_themes;
 	char *dirname;
 	gboolean new_theme = FALSE;
-
+	struct smiley_theme *theme = pidgin_themes_lookup_smiley_theme(file);
+	
+	purple_debug_info("gtkthemes", "lookup theme %p\n", theme);
+	
 	if (!f)
 		return;
-
-	while (lst) {
-		struct smiley_theme *thm = lst->data;
-		if (!strcmp(thm->path, file)) {
-			theme = thm;
-			break;
-		}
-		lst = lst->next;
-	}
-
+	
 	if (!theme) {
+		purple_debug_info("gtkthemes", "creating new theme structure\n");
 		new_theme = TRUE;
 		theme = g_new0(struct smiley_theme, 1);
 		theme->path = g_strdup(file);
@@ -346,10 +521,14 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 	}
 
 	if (new_theme) {
+		purple_debug_info("gtkthemes", "adding theme %s to list of themes\n",
+			theme->name);
 		smiley_themes = g_slist_prepend(smiley_themes, theme);
 	}
 
 	if (load) {
+		pidgin_themes_reload_smiley_theme(theme);
+#if 0
 		GList *cnv;
 
 		if (current_smiley_theme)
@@ -365,6 +544,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 				pidgin_themes_smiley_themeize_custom(PIDGIN_CONVERSATION(conv)->entry);
 			}
 		}
+#endif
 	}
 }
 
@@ -372,7 +552,7 @@ void pidgin_themes_smiley_theme_probe()
 {
 	GDir *dir;
 	const gchar *file;
-	gchar *path, *test_path;
+	gchar *path, *old_path, *test_path;
 	int l;
 	char* probedirs[3];
 
@@ -387,14 +567,31 @@ void pidgin_themes_smiley_theme_probe()
 			while ((file = g_dir_read_name(dir))) {
 				test_path = g_build_filename(probedirs[l], file, NULL);
 				if (g_file_test(test_path, G_FILE_TEST_IS_DIR)) {
-					path = g_build_filename(probedirs[l], file, "theme", NULL);
-
+					old_path = g_build_filename(probedirs[l], file, "theme", 
+						NULL);
+					path = g_build_filename(probedirs[l], file, "icondef.xml",
+						NULL);
+					
 					/* Here we check to see that the theme has proper syntax.
 					 * We set the second argument to FALSE so that it doesn't load
 					 * the theme yet.
 					 */
-					pidgin_themes_load_smiley_theme(path, FALSE);
+					purple_debug_info("gtkthemes",
+						"trying to load %s or %s\n", path, old_path);
+					if (g_file_test(path, G_FILE_TEST_IS_REGULAR)) {
+						/* load as XML format theme XEP-0038 */
+						purple_debug_info("gtkthemes",
+							"loading theme using XML format from %s\n",
+							path);
+						pidgin_themes_load_smiley_theme_xml(path, FALSE);
+					} else if (g_file_test(old_path, G_FILE_TEST_IS_REGULAR)) {
+						purple_debug_info("gtkthemes",
+							"loading theme using old format from %s\n",
+							old_path);
+						pidgin_themes_load_smiley_theme(old_path, FALSE);
+					}
 					g_free(path);
+					g_free(old_path);
 				}
 				g_free(test_path);
 			}
@@ -407,7 +604,11 @@ void pidgin_themes_smiley_theme_probe()
 
 	if (!current_smiley_theme && smiley_themes) {
 		struct smiley_theme *smile = smiley_themes->data;
-		pidgin_themes_load_smiley_theme(smile->path, TRUE);
+		if (pidgin_themes_is_xml(smile->path)) {
+			pidgin_themes_load_smiley_theme_xml(smile->path, TRUE);
+		} else {
+			pidgin_themes_load_smiley_theme(smile->path, TRUE);
+		}
 	}
 }
 

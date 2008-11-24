@@ -61,6 +61,13 @@ void pidgin_themes_smiley_theme_probe(void);
 void pidgin_themes_load_smiley_theme(const char *file, gboolean load);
 
 /**
+ * @since 2.6.0
+ */
+void pidgin_themes_load_smiley_theme_xml(const char *file, gboolean load);
+
+gboolean pidgin_themes_is_xml(const char *file);
+
+/**
  * @since 2.1.0
  */
 void pidgin_themes_remove_smiley_theme(const char *file);

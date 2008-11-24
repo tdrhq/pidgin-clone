@@ -2772,10 +2772,10 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 }
 
 xmlnode *
-purple_util_read_xml_from_file(const char *filename, const char *description)
+purple_util_read_xml_from_file_absolute(const char *filename, 
+	const char *description)
 {
 	const char *user_dir = purple_user_dir();
-	gchar *filename_full;
 	GError *error = NULL;
 	gchar *contents = NULL;
 	gsize length;
@@ -2786,20 +2786,17 @@ purple_util_read_xml_from_file(const char *filename, const char *description)
 	purple_debug_info("util", "Reading file %s from directory %s\n",
 					filename, user_dir);
 
-	filename_full = g_build_filename(user_dir, filename, NULL);
-
-	if (!g_file_test(filename_full, G_FILE_TEST_EXISTS))
+	if (!g_file_test(filename, G_FILE_TEST_EXISTS))
 	{
 		purple_debug_info("util", "File %s does not exist (this is not "
-						"necessarily an error)\n", filename_full);
-		g_free(filename_full);
+						"necessarily an error)\n", filename);
 		return NULL;
 	}
 
-	if (!g_file_get_contents(filename_full, &contents, &length, &error))
+	if (!g_file_get_contents(filename, &contents, &length, &error))
 	{
 		purple_debug_error("util", "Error reading file %s: %s\n",
-						 filename_full, error->message);
+						 filename, error->message);
 		g_error_free(error);
 	}
 
@@ -2814,7 +2811,7 @@ purple_util_read_xml_from_file(const char *filename, const char *description)
 
 			filename_temp = g_strdup_printf("%s~", filename);
 			purple_debug_error("util", "Error parsing file %s.  Renaming old "
-							 "file to %s\n", filename_full, filename_temp);
+							 "file to %s\n", filename, filename_temp);
 			purple_util_write_data_to_file(filename_temp, contents, length);
 			g_free(filename_temp);
 		}
@@ -2829,14 +2826,23 @@ purple_util_read_xml_from_file(const char *filename, const char *description)
 		title = g_strdup_printf(_("Error Reading %s"), filename);
 		msg = g_strdup_printf(_("An error was encountered reading your "
 					"%s.  They have not been loaded, and the old file "
-					"has been renamed to %s~."), description, filename_full);
+					"has been renamed to %s~."), description, filename);
 		purple_notify_error(NULL, NULL, title, msg);
 		g_free(title);
 		g_free(msg);
 	}
 
-	g_free(filename_full);
+	return node;
+	
+}
 
+xmlnode *
+purple_util_read_xml_from_file(const char *filename, const char *description)
+{
+	char *filename_full = g_build_filename(purple_user_dir(), filename, NULL);
+	xmlnode *node = 
+		purple_util_read_xml_from_file_absolute(filename_full, description);
+	g_free(filename_full);
 	return node;
 }
 
