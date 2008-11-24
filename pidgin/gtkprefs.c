@@ -2254,7 +2254,11 @@ smiley_theme_pref_cb(const char *name, PurplePrefType type,
 	for (themes = smiley_themes; themes; themes = themes->next) {
 		struct smiley_theme *smile = themes->data;
 		if (smile->name && strcmp(themename, smile->name) == 0) {
-			pidgin_themes_load_smiley_theme(smile->path, TRUE);
+			if (pidgin_themes_is_xml(smile->path)) {
+				pidgin_themes_load_smiley_theme_xml(smile->path, TRUE);
+			} else {
+				pidgin_themes_load_smiley_theme(smile->path, TRUE);
+			}
 			break;
 		}
 	}
