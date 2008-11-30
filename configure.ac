@@ -74,7 +74,7 @@ fi
 
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE([dist-bzip2])
+AM_INIT_AUTOMAKE([1.9 -Wno-portability dist-bzip2])
 
 PURPLE_MAJOR_VERSION=purple_major_version
 PURPLE_MINOR_VERSION=purple_minor_version
@@ -1038,23 +1038,23 @@ STATIC_LINK_LIBS=
 extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
-	dnl Ugly special case for "libsilcpurple.a":
+	dnl Ugly special case for "libsilcpurple.la":
 	dnl ... and Ugly special case for multi-protocol oscar
 	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.a"
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.la"
 		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
 		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
 		load_proto="$load_proto purple_init_aim_plugin();"
 		load_proto="$load_proto purple_init_icq_plugin();"
 	else
 		if test "x$i" = "xsilc"; then
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.a"
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.la"
 		elif test "x$i" = "xsilc10"; then
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libsilcpurple.a"
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libsilcpurple.la"
 		elif test "x$i" = "xmsnp9"; then
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libmsn.a"
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libmsn.la"
 		else
-			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.a"
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.la"
 		fi
 		extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
 		load_proto="$load_proto purple_init_${i}_plugin();"
@@ -1171,6 +1171,7 @@ AC_CHECK_FUNC(uname)
 
 AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
 
+DEBUG_CFLAGS="$DEBUG_CFLAGS -DPURPLE_DISABLE_DEPRECATED -DPIDGIN_DISABLE_DEPRECATED -DFINCH_DISABLE_DEPRECATED -DGNT_DISABLE_DEPRECATED"
 if test "x$GCC" = "xyes"; then
 	dnl We enable -Wall later.
 	dnl If it's set after the warning CFLAGS in the compiler invocation, it counteracts the -Wno... flags.
@@ -2411,6 +2412,7 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
+		   pidgin/pixmaps/emotes/small/16/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile

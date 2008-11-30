@@ -491,7 +491,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * command and we are processing it */
 	if (cmd->payload == NULL) {
 		cmdproc->last_cmd->payload_cb = msg_cmd_post;
-		cmd->payload_len = atoi(cmd->params[4]);
+		cmd->payload_len = atoi(cmd->params[3]);
 	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
@@ -578,7 +578,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_NETWORK_PASSPORT);
 
 	/*mobile*/
-	//type_str = g_strdup_printf("4");
+	/*type_str = g_strdup_printf("4");*/
 	xmlnode_set_attrib(c_node, "t", fmt_str);
 
 	xmlnode_insert_child(d_node, c_node);

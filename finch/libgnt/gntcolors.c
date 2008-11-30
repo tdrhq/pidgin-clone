@@ -24,6 +24,10 @@
 
 #include <ncurses.h>
 
+#include "gntinternal.h"
+#undef GNT_LOG_DOMAIN
+#define GNT_LOG_DOMAIN "Colors"
+
 #include "gntcolors.h"
 #include "gntstyle.h"
 
@@ -186,7 +190,7 @@ void gnt_colors_parse(GKeyFile *kfile)
 
 	if (error)
 	{
-		g_printerr("GntColors: %s\n", error->message);
+		gnt_warning("%s", error->message);
 		g_error_free(error);
 		error = NULL;
 	}
@@ -230,7 +234,7 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 
 	if (error)
 	{
-		g_printerr("GntColors: %s\n", error->message);
+		gnt_warning("%s", error->message);
 		g_error_free(error);
 		return;
 	}
