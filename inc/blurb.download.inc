@@ -7,7 +7,7 @@
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="48" height="48" 
 />
 Free Download<br />
-<span class="number"><? echo $pidgin_version; ?></span>
+<span class="number"><? echo $pidgin_version; ?></span> 
 <span class="number" id="os_name" style="display: none;"></span></a>
 
 <script type="text/javascript"><!--
@@ -41,4 +41,3 @@ if (navigator.platform.indexOf("Win") != -1) {
 }
 // --></script>
 </div>
-
