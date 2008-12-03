@@ -4,16 +4,32 @@
   $page['section'] = "About";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
+  include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
+
 ?>
 
 <div id="content">
+
+
+
+
 
 <div class="box_full">
 <div id="main">
 
 <h1>What is Pidgin?</h1>
 
-<p><img src="/shared/img/contact_window.png" alt="Buddy List" class="inline" width="192" height="420" />
+<div style="float:right;">
+<?
+include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
+?>
+<br/>
+<div style="text-align:center">
+<img src="/shared/img/contact_window.png" alt="Buddy List" width="192" height="420" />
+</div>
+</div>
+
+<p>
 Pidgin is an instant messaging program for Windows, Linux, BSD, and other
 Unixes. You can talk to your friends using AIM, ICQ, Jabber/XMPP, MSN
 Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, Novell GroupWise Messenger, QQ,
