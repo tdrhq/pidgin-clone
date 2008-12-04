@@ -1,7 +1,8 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "Home";
+  $page['title'] =   "Pidgin - Universal IM client";
   $page['section'] = "Home";
+  $page['description'] = "Pidgin is a free and easy to use IM client used by millions. Connect to AIM, MSN, Yahoo, and more IM networks all at once.";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
@@ -32,11 +33,11 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 <div class="box_home" id="right">
 <div id="main">
 
-<h1>What is Pidgin?</h1>
+<h1>Universal IM</h1>
 
-<p>Pidgin is a multi-protocol Instant Messaging client that allows you to use all of your IM accounts at once.</p>
+<p>Pidgin is an easy to use and free IM client used by millions. Connect to AIM, MSN, Yahoo, and more IM networks all at once.</p>
 
-<p>Pidgin can work with:</p>
+<p>Supported IM networks:</p>
 
 <ul class="condensed">
   <li>AIM</li>
@@ -60,11 +61,6 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
   <li>Yahoo!</li>
   <li>Zephyr</li>
 </ul>
-
-<p>Pidgin is free software.  It is licensed under the GNU General Public
-License (GPL) version 2.  This means you are free to use it and to modify it,
-but if you distribute your modifications you must distribute the modified
-source code as well.</p>
 
 <p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.png" alt="Learn More" width="128" height="32"/></a></p>
 

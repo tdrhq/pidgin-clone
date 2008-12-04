@@ -13,6 +13,9 @@ if (!array_key_exists('siteroot', $page)) {
 if (!array_key_exists('title', $page)) {
   $page['title'] = 'Home';
 }
+if (!array_key_exists('description', $page)) {
+  $page['description'] = 'The home of Pidgin, Finch, and the libpurple IM client library.';
+}
 if (!array_key_exists('section', $page)) {
   $page['section'] = 'Home';
 }
@@ -30,15 +33,14 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
 		"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-  <title><? echo $page['title']; ?> | Pidgin</title>
+  <title><? echo $page['title']; ?></title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-language" content="en-US" />
   <meta name="copyright"   content="Pidgin Contributors" />
   <meta name="author"      content="Pidgin Contributors" />
   <meta name="designer"    content="Blend Interactive; http://blendinteractive.com" />
   <meta name="generator"   content="Kevin Stange ;)" />
-  <meta name="description" content="The home of Pidgin, Finch, and the libpurple IM client library." />
-  <meta name="keywords"    content="pidgin, finch, libpurple, purple, IM, instant messaging, internet messaging, AIM, ICQ, XMMP, Jabber, Google Talk, MSN, Yahoo, Gadu-Gadu, IRC, Bonjour, SILC, SIP/SIMPLE, Zephyr, QQ, GroupWise, Sametime, MySpaceIM, MySpace, Linux, Windows, GTK+" />
+  <meta name="description" content="<? echo $page['description'] ?>" />
   <link rel="alternate" href="http://planet.pidgin.im/rss20.xml" type="application/rss+xml" title="Pidgin News" />
   <link rel="shortcut icon" href="/shared/img/favicon.png" type="image/png" />
   <link rel="stylesheet" href="/shared/css/main.css" type="text/css" />

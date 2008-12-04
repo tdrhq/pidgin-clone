@@ -1,7 +1,8 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "Download";
+  $page['title'] =   "Download Pidgin, the universal IM client";
   $page['section'] = "Download";
+  $page['description'] = "Download the free Pidgin IM client.  Pidgin runs on Windows and Linux/UNIX.";
   $page['subsect'] = "";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
@@ -15,10 +16,9 @@
 <div class="box_right">
 <div id="main" style="position:relative;">
 
-<h1>Download</h1>
+<h1>Download Pidgin</h1>
 
-<p>Pidgin runs on all Windows and UNIX platforms. In addition to the source
-code, we distribute binaries for Windows, Fedora Core, and CentOS / RHEL.</p>
+<p>Download the free Pidgin IM client.  Pidgin runs on Windows and Linux/UNIX.</p>
 
 <noscript>
 <ul>

@@ -1,7 +1,8 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "About";
+  $page['title'] =   "About Pidgin, the universal IM client";
   $page['section'] = "About";
+  $page['description'] = "General information about the Pidgin IM client.";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
@@ -17,7 +18,7 @@
 <div class="box_full">
 <div id="main">
 
-<h1>What is Pidgin?</h1>
+<h1>About Pidgin, the universal IM client</h1>
 
 <div style="float:right;">
 <?
@@ -29,18 +30,20 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 </div>
 </div>
 
-<p>
-Pidgin is an instant messaging program for Windows, Linux, BSD, and other
-Unixes. You can talk to your friends using AIM, ICQ, Jabber/XMPP, MSN
-Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, Novell GroupWise Messenger, QQ,
-Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr.</p>
-
-<p>Pidgin can log in to multiple accounts on multiple IM networks
+<p>Pidgin is an IM program which lets you log in to multiple accounts on multiple IM networks
 simultaneously. This means that you can be chatting with friends on AIM,
 talking to a friend on Yahoo Messenger, and sitting in an IRC channel all at
 the same time.</p>
 
-<p>Pidgin supports many features of the various networks, such as file
+<p>Pidgin runs on Windows, Linux, and other UNIX operating systems. Looking for Pidgin for OS X? Try <a
+href="http://www.adiumx.com/">Adium</a>!</p>
+
+<p>Pidgin is compatible with the following IM networks: 
+AIM, ICQ, Google Talk, Jabber/XMPP, MSN
+Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, Novell GroupWise Messenger, QQ,
+Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr.</p>
+
+<p>Pidgin supports many features of the various IM networks, such as file
 transfer, away messages, and typing notification. It also goes beyond that
 and provides many unique features. A few popular features are Buddy Pounces,
 which give the ability to notify you, send a message, play a sound, or run a
@@ -48,10 +51,6 @@ program when a specific buddy goes away, signs online, or returns from idle;
 and plugins, consisting of text replacement, a buddy ticker, extended message
 notification, iconify on away, spell checking, tabbed conversations, and more.
 </p>
-
-<p>Pidgin runs on a number of platforms, including Windows, Linux, and other
-UNIX operating systems. Looking for Pidgin for OS X? Try <a
-href="http://www.adiumx.com/">Adium</a>!</p>
 
 <p>Pidgin integrates well with GNOME 2 and KDE 3.1's system tray, as well as
 Windows' own system tray. This allows you to work with Pidgin without
