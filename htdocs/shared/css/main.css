@@ -322,11 +322,6 @@ a:hover, a:active {
   display: block;
   padding-left: 35px;
   padding-top: 3px;
-  text-decoration: none;
-}
-
-#download a:hover {
-  text-decoration: underline;
 }
 
 #main, #blogbrief, #newsbrief {

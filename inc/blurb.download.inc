@@ -6,7 +6,7 @@
 <a id="download_link" href="/download/">
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="48" height="48" 
 />
-Free Download<br />
+Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?></span> 
 <span class="number" id="os_name" style="display: none;"></span></a>
 
