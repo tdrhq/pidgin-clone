@@ -39,6 +39,7 @@
   content: "\A0";
   font-size: 1pt;
   background: url('/shared/img/balloon.bottom.png') bottom left;
+  height: 10px;
 }
 
 .box_right {
@@ -61,3 +62,17 @@
   left: 109px;
   top: 151px;
 }
+
+#download a img {
+  padding-bottom: 5px;
+}
+
+#download a {
+  padding-top: 3px;
+  text-decoration: none;
+}
+
+#download a:hover {
+  text-decoration: underline;
+}
+

@@ -283,20 +283,21 @@ a:hover, a:active {
 #download:after {
   content: url('/shared/img/balloon.bottom.png');
   display: block;
-  height: 10px;
+  height: 16px;
   overflow: hidden;
   clear: both;
+}
+
+#download {
+  background: url('/shared/img/balloon.middle.notalk.gif') no-repeat left 17px;
+  width: 268px;
 }
 
 .box_home #download {
   position: absolute;
   left: 101px;
   top: 157px;
-}
-
-#download {
   background: url('/shared/img/balloon.middle.gif') no-repeat left 17px;
-  width: 268px;
 }
 
 #download, .box_download p:first-child {
@@ -315,13 +316,13 @@ a:hover, a:active {
 }
 
 #download a img {
-  padding-bottom: 5px;
+  padding-bottom: 11px;
 }
 
 #download a {
   display: block;
   padding-left: 35px;
-  padding-top: 3px;
+  padding-top: 8px;
 }
 
 #main, #blogbrief, #newsbrief {
