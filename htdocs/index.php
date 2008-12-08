@@ -1,8 +1,8 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "Pidgin - Universal IM client";
+  $page['title'] =   "Pidgin, the universal IM client";
   $page['section'] = "Home";
-  $page['description'] = "Pidgin is a free and easy to use IM client used by millions. Connect to AIM, MSN, Yahoo, and more IM networks all at once.";
+  $page['description'] = "Pidgin is an easy to use and free IM client used by millions. Connect to AIM, Yahoo, MSN and other IM networks all at once.";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
@@ -33,7 +33,7 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 <div class="box_home" id="right">
 <div id="main">
 
-<h1>Universal IM</h1>
+<h1>IM all your friends in one place</h1>
 
 <p>Pidgin is an easy to use and free IM client used by millions. Connect to AIM, MSN, Yahoo, and more IM networks all at once.</p>
 

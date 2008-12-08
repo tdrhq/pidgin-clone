@@ -18,7 +18,7 @@
 <div class="box_full">
 <div id="main">
 
-<h1>About Pidgin, the universal IM client</h1>
+<h1>About Pidgin IM</h1>
 
 <div style="float:right;">
 <?
