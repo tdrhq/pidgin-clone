@@ -117,7 +117,7 @@ a:hover, a:active {
 }
 
 #download_new DIV {
-  font-size: 1500%;
+  font-size: 18px;
   background: url('/shared/img/bigdownload.middle.gif') repeat-y;
 }
 
