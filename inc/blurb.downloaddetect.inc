@@ -41,7 +41,7 @@
 function ConversionCount()
 {
 _uacct = 'UA-6596609-1';
-urchinTracker("/1527532502/goal");
+secondTracker._trackPageview("/1527532502/goal");
 return true;
 }
 // -->
