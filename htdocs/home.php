@@ -30,7 +30,7 @@
 
 <li>
 <strong>One single program, all of your networks</strong><br>
-Connects to AIM, Yahoo, Windows Live and more.<br>
+Connects to AIM, Yahoo, MSN and more.<br>
 <a href="/shared/img/im_networks.jpg" id="protocols" class="multibox">View supported IM networks</a>
 </li>
 <li>
@@ -82,7 +82,7 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download_new.inc");
 <div class="multiboxD screen3">Easy to use chat/IM windows</div>
 
 <a href="/shared/img/screens/plugins.jpg" id="screen6" class="multibox"></a>
-<div class="multiboxD screen6">Hundreds of plugins are available to help tweak every aspect of Pidgin</div>
+<div class="multiboxD screen6">Many plugins are available to help tweak every aspect of Pidgin</div>
 
 
 </div>
