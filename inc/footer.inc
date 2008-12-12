@@ -13,6 +13,10 @@ document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.
 var pageTracker = _gat._getTracker("UA-2814037-1");
 pageTracker._setDomainName(".pidgin.im");
 pageTracker._trackPageview();
+
+var secondTracker = _gat._getTracker("UA-6596609-1");
+secondTracker._initData();
+secondTracker._trackPageview("/1527532502/test");
 </script>
 <!-- End Google Analytics tracking code -->
 
