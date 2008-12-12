@@ -57,6 +57,10 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
     <link rel="stylesheet" href="/shared/css/ie7.css" type="text/css" />
   <![endif]-->
 
+  <?php if($page['section'] == 'Home2') { ?>
+    <?php include("multibox.header.inc"); ?>
+  <?php } ?>
+
 </head>
 <body>
 

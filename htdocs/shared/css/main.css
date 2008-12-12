@@ -90,6 +90,54 @@ a:hover, a:active {
   padding-top: 2px;
 }
 
+/* styles related to test version of home page */
+#sidebar {
+  margin-right: 250px;
+  text-align: center;
+}
+
+#main_content {
+  float: right;
+  width: 500px;
+}
+
+#main_content UL {
+  font-size: 125%;
+}
+
+#main_content LI {
+  padding-bottom: 0.8em;
+}
+
+#download_new {
+  padding: 5px 20px;
+  text-align: center;
+  width: 388px;
+  font-size: 10%;
+}
+
+#download_new DIV {
+  font-size: 1500%;
+  background: url('/shared/img/bigdownload.middle.gif') repeat-y;
+}
+
+#download_new A {
+  text-decoration: none;
+  display: block;
+  color: #000;
+}
+
+DIV.linkbar {
+  display:block;
+  padding: 5px 20px;
+  width:388px;
+  text-align:center;
+}
+
+
+/* END styles related to test version of home page */
+
+
 .box_home {
   width: 395px;
   padding: 0;
@@ -104,7 +152,7 @@ a:hover, a:active {
 
 .box_full {
   position: relative;
-  z-index: 5;
+  z-index: 1;
   width: 790px;
   padding: 0;
   clear: both;
