@@ -416,7 +416,7 @@ static void ggp_callback_register_account_cancel(PurpleConnection *gc,
 	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GGPToken *token = info->token;
 
-	purple_account_disconnect(gc->account);
+	purple_account_disconnect(purple_connection_get_account(gc));
 
 	g_free(token->id);
 	g_free(token->data);
@@ -1145,7 +1145,7 @@ static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 static void ggp_recv_image_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
 	gint imgid = 0;
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GList *entry = g_list_first(info->pending_richtext_messages);
 	gchar *handlerid = g_strdup_printf("IMGID_HANDLER-%i", ev->event.image_reply.crc32);
 
@@ -1349,7 +1349,7 @@ static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event
 
 static void ggp_send_image_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
-	GGPInfo *info = gc->proto_data;
+	GGPInfo *info = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleStoredImage *image;
 	gint imgid = GPOINTER_TO_INT(g_hash_table_lookup(info->pending_images, &ev->event.image_request.crc32));
 
