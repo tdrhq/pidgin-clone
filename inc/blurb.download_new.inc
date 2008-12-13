@@ -7,7 +7,7 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.downloaddetect.inc");
 <div>
 <a id="download_link" href="<? echo $download_link; ?>"
 <?php if (strlen($download_goal) > 0) { ?>
- onClick="javascript:pageTracker._trackPageview('<? echo $download_goal; ?>');ConversionCount();"
+ onClick="javascript:ConversionCount();"
 <?php } ?>
 >
 <strong>Download Pidgin <? echo $download_os; ?> </strong> <br />

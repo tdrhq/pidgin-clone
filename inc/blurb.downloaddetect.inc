@@ -40,7 +40,8 @@
 // run conversion tracking script
 function ConversionCount()
 {
-_uacct = 'UA-6596609-1';
+//_uacct = 'UA-6596609-1';
+pageTracker._trackPageview('<? echo $download_goal; ?>');
 secondTracker._trackPageview("/1527532502/goal");
 return true;
 }

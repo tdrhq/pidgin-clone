@@ -8,7 +8,7 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.downloaddetect.inc");
 <?php } ?>
 <a id="download_link" href="<? echo $download_link; ?>"
 <?php if (strlen($download_goal) > 0) { ?>
- onClick="javascript:pageTracker._trackPageview('<? echo $download_goal; ?>');ConversionCount();"
+ onClick="javascript:ConversionCount();"
 <?php } ?>
 >
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" width="48" height="48" />
