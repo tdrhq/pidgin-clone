@@ -73,7 +73,7 @@ text_sent_cb(GtkEntry *entry)
 	purple_debug_misc("raw", "prpl_id = %s\n", prpl_id);
 
 	if (strcmp(prpl_id, "prpl-toc") == 0) {
-		int *a = (int *)gc->proto_data;
+		int *a = (int *)purple_connection_get_protocol_data(gc);
 		unsigned short seqno = htons(a[1]++ & 0xffff);
 		unsigned short len = htons(strlen(txt) + 1);
 		write(*a, "*\002", 2);
@@ -83,7 +83,7 @@ text_sent_cb(GtkEntry *entry)
 		purple_debug(PURPLE_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
 
 	} else if (strcmp(prpl_id, "prpl-msn") == 0) {
-		MsnSession *session = gc->proto_data;
+		MsnSession *session = purple_connection_get_protocol_data(gc);
 		char buf[strlen(txt) + 3];
 
 		g_snprintf(buf, sizeof(buf), "%s\r\n", txt);

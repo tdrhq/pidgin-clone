@@ -275,6 +275,6 @@ msn_error_handle(MsnSession *session, unsigned int type)
 	if (debug)
 		purple_debug_warning("msn", "error %d: %s\n", type, buf);
 	else
-		purple_notify_error(session->account->gc, NULL, buf, NULL);
+		purple_notify_error(purple_account_get_connection(session->account), NULL, buf, NULL);
 }
 

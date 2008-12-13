@@ -135,7 +135,7 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 		}
 		status_id = jabber_buddy_state_get_status_id(resource->state);
 
-		purple_prpl_got_user_status(js->gc->account, from, status_id, "mood", _(newmood), "moodtext", moodtext?moodtext:"", NULL);
+		purple_prpl_got_user_status(purple_connection_get_account(js->gc), from, status_id, "mood", _(newmood), "moodtext", moodtext?moodtext:"", NULL);
 	}
 	g_free(moodtext);
 }
@@ -150,19 +150,23 @@ static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *f
 	const int max_mood_idx = sizeof(moodstrings) / sizeof(moodstrings[0]) - 1;
 	int selected_mood = purple_request_fields_get_choice(fields, "mood");
 
-	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
+	if (!PURPLE_CONNECTION_IS_CONNECTED(gc)) {
 		purple_debug_error("jabber", "Unable to set mood; account offline.\n");
+		g_object_unref(G_OBJECT(gc));
 		return;
 	}
 
-	js = gc->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (selected_mood < 0 || selected_mood >= max_mood_idx) {
 		purple_debug_error("jabber", "Invalid mood index (%d) selected.\n", selected_mood);
+		g_object_unref(G_OBJECT(gc));
 		return;
 	}
 
 	jabber_mood_set(js, moodstrings[selected_mood], purple_request_fields_get_string(fields, "text"));
+
+	g_object_unref(G_OBJECT(gc));
 }
 
 static void do_mood_set_mood(PurplePluginAction *action) {
@@ -198,7 +202,7 @@ static void do_mood_set_mood(PurplePluginAction *action) {
 						  _("Set"), G_CALLBACK(do_mood_set_from_fields),
 						  _("Cancel"), NULL,
 						  purple_connection_get_account(gc), NULL, NULL,
-						  gc);
+						  g_object_ref(G_OBJECT(gc)));
 	
 }
 

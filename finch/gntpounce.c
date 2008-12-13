@@ -971,10 +971,10 @@ finch_pounces_init(void)
 						FALSE);
 	purple_prefs_add_none("/finch/pounces/dialog");
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						finch_pounces_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+	purple_signal_connect(NULL, "signed-off",
 						finch_pounces_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 }

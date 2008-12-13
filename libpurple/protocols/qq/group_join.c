@@ -183,7 +183,7 @@ void qq_process_group_cmd_exit_group(guint8 *data, gint len, PurpleConnection *g
 	guint32 id;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (len < 4) {
 		purple_debug_error("QQ", "Invalid exit group reply, expect %d bytes, read %d bytes\n", 4, len);
@@ -206,7 +206,7 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, gint len, PurpleConnecti
 	gchar *msg;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (len < 4) {
 		purple_debug_error("QQ",
@@ -291,7 +291,7 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 	qq_room_data *rmd;
 
 	g_return_if_fail(data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	ext_id_str = g_hash_table_lookup(data, QQ_ROOM_KEY_EXTERNAL_ID);
 	id_str = g_hash_table_lookup(data, QQ_ROOM_KEY_INTERNAL_ID);

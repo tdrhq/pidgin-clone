@@ -45,6 +45,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "accountmanager.h"
 #include "conversation.h"
 #include "debug.h"
 #include "desktopitem.h"
@@ -845,7 +846,7 @@ account_menu_sign_on_off_cb(PurpleConnection *gc, GtkWidget *optmenu)
 }
 
 static void
-account_menu_added_removed_cb(PurpleAccount *account, GtkWidget *optmenu)
+account_menu_added_removed_cb(PurpleAccountManager *manager, PurpleAccount *account, GtkWidget *optmenu)
 {
 	regenerate_account_menu(optmenu);
 }
@@ -880,23 +881,37 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 					 G_CALLBACK(account_menu_destroyed_cb), NULL);
 
 	/* Register the purple sign on/off event callbacks. */
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						optmenu, PURPLE_CALLBACK(account_menu_sign_on_off_cb),
 						optmenu);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+	purple_signal_connect(NULL, "signed-off",
 						optmenu, PURPLE_CALLBACK(account_menu_sign_on_off_cb),
 						optmenu);
+#if 0
 	purple_signal_connect(purple_accounts_get_handle(), "account-added",
 						optmenu, PURPLE_CALLBACK(account_menu_added_removed_cb),
 						optmenu);
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 						optmenu, PURPLE_CALLBACK(account_menu_added_removed_cb),
 						optmenu);
+#else
+	g_signal_connect(purple_account_manager_get(), "account-added",
+			G_CALLBACK(account_menu_added_removed_cb), optmenu);
+	g_signal_connect(purple_account_manager_get(), "account-removed",
+			G_CALLBACK(account_menu_added_removed_cb), optmenu);
+#endif
 
 	/* Set some data. */
 	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
 	g_object_set_data(G_OBJECT(optmenu), "show_all", GINT_TO_POINTER(show_all));
 	g_object_set_data(G_OBJECT(optmenu), "filter_func", filter_func);
+
+	void disconnect(gpointer optmenu)
+	{
+		g_signal_handlers_disconnect_matched(purple_account_manager_get(),
+				G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, optmenu);
+	}
+	g_signal_connect(G_OBJECT(optmenu), "destroy", G_CALLBACK(disconnect), NULL);
 
 	return optmenu;
 }
@@ -1002,7 +1017,7 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 		return;
 	}
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(conn->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(conn));
 	if (prpl_info != NULL && prpl_info->get_cb_real_name)
 		who = prpl_info->get_cb_real_name(conn, chat, name);
 	if (prpl_info == NULL || prpl_info->get_cb_info == NULL) {
@@ -1128,7 +1143,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 					gc = (PurpleConnection *)l->data;
 					account = purple_connection_get_account(gc);
 
-					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 				}
 
 				protoname = prpl_info->list_icon(account, NULL);
@@ -1170,7 +1185,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 						gc = (PurpleConnection *)l->data;
 						account = purple_connection_get_account(gc);
 
-						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 					}
 
 					protoname = prpl_info->list_icon(account, NULL);
@@ -1582,7 +1597,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			data->account = account;
 
 			if (gc)
-				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 			if (prpl_info && prpl_info->options & OPT_PROTO_IM_IMAGE)
 				im = TRUE;
@@ -2154,10 +2169,12 @@ screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
 {
 	g_free(data);
 	purple_signals_disconnect_by_handle(widget);
+	g_signal_handlers_disconnect_matched(purple_account_manager_get(),
+			G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, data);
 }
 
 static void
-repopulate_autocomplete(gpointer something, gpointer data)
+repopulate_autocomplete(PurpleAccountManager *manager, gpointer something, gpointer data)
 {
 	add_completion_list(data);
 }
@@ -2236,15 +2253,23 @@ pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *ac
 
 #endif /* !NEW_STYLE_COMPLETION */
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on", entry,
+#if 0
+	purple_signal_connect(NULL, "signed-on", entry,
 						PURPLE_CALLBACK(repopulate_autocomplete), data);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off", entry,
+	purple_signal_connect(NULL, "signed-off", entry,
 						PURPLE_CALLBACK(repopulate_autocomplete), data);
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-added", entry,
 						PURPLE_CALLBACK(repopulate_autocomplete), data);
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed", entry,
 						PURPLE_CALLBACK(repopulate_autocomplete), data);
+#else
+#warning TODO: The autocomplete needs to be repopulated on sign-on/off too.
+	g_signal_connect(purple_account_manager_get(), "account-added",
+			G_CALLBACK(repopulate_autocomplete), data);
+	g_signal_connect(purple_account_manager_get(), "account-removed",
+			G_CALLBACK(repopulate_autocomplete), data);
+#endif
 
 	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
 }
@@ -3011,7 +3036,7 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 
 	if (first_call) {
 		first_call = FALSE;
-		purple_signal_connect(purple_connections_get_handle(), "signed-off",
+		purple_signal_connect(NULL, "signed-off",
 		                      pidgin_utils_get_handle(),
 		                      PURPLE_CALLBACK(connection_signed_off_cb), NULL);
 	}
