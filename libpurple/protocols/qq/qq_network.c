@@ -233,13 +233,14 @@ gboolean qq_connect_later(gpointer data)
 static void redirect_server(PurpleConnection *gc)
 {
 	qq_data *qd;
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (qd->check_watcher > 0) {
 			purple_timeout_remove(qd->check_watcher);
 			qd->check_watcher = 0;
 	}
-	if (qd->connect_watcher > 0)	purple_timeout_remove(qd->connect_watcher);
+	if (qd->connect_watcher > 0)
+		purple_timeout_remove(qd->connect_watcher);
 	qd->connect_watcher = purple_timeout_add_seconds(QQ_CONNECT_INTERVAL, qq_connect_later, gc);
 }
 

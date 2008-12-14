@@ -391,7 +391,7 @@ void qq_process_room_search(PurpleConnection *gc, guint8 *data, gint len, guint3
 	guint16 unknown;
 
 	g_return_if_fail(data != NULL && len > 0);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	bytes = 0;
 	bytes += qq_get8(&search_type, data + bytes);

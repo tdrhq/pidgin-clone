@@ -164,7 +164,7 @@ static void qq_buddy_free(PurpleBuddy *buddy)
 	if (purple_object_get_protocol_data(PURPLE_OBJECT(buddy)))	{
 		qq_buddy_data_free(purple_object_get_protocol_data(PURPLE_OBJECT(buddy)));
 	}
-	purple_object_set_protocol_data(PURPLE_OBJECT(buddy), NULL)
+	purple_object_set_protocol_data(PURPLE_OBJECT(buddy), NULL);
 	purple_blist_remove_buddy(buddy);
 }
 
@@ -185,7 +185,7 @@ PurpleBuddy *qq_buddy_find_or_new(PurpleConnection *gc, guint32 uid)
 {
 	PurpleBuddy *buddy;
 
-	g_return_val_if_fail(gc->account != NULL && uid != 0, NULL);
+	g_return_val_if_fail(gc != NULL && uid != 0, NULL);
 
 	buddy = qq_buddy_find(gc, uid);
 	if (buddy == NULL) {
@@ -682,10 +682,11 @@ void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	qq_data *qd;
 	guint32 uid;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
+	g_return_if_fail(gc != NULL);
 	g_return_if_fail(buddy != NULL);
-
 	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
+
 	if (!qd->is_login)
 		return;		/* IMPORTANT ! */
 
@@ -924,7 +925,7 @@ void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 		}
 	}
 
-	bd = purple_object_get_protocol_data(PURPLE_OBJECT(buddy))
+	bd = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 	if (bd) {
 		qq_buddy_data_free(bd);
 		purple_object_set_protocol_data(PURPLE_OBJECT(buddy), NULL);
@@ -1259,7 +1260,7 @@ static void server_buddy_rejected_me(PurpleConnection *gc, gchar *from, gchar *t
 	if (buddy != NULL && purple_object_get_protocol_data(PURPLE_OBJECT(buddy)) != NULL) {
 		/* Not authorized now, free buddy data */
 		qq_buddy_data_free(purple_object_get_protocol_data(PURPLE_OBJECT(buddy)));
-		purple_object_get_protocol_data(PURPLE_OBJECT(buddy), NULL);
+		purple_object_set_protocol_data(PURPLE_OBJECT(buddy), NULL);
 	}
 }
 

@@ -147,8 +147,9 @@ PurpleChat *qq_room_find_or_new(PurpleConnection *gc, guint32 id, guint32 ext_id
 	PurpleChat *chat;
 	gchar *num_str;
 
-	g_return_val_if_fail (gc != NULL && gc->proto_data != NULL, NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_val_if_fail(gc != NULL, NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_val_if_fail(qd != NULL, NULL);
 
 	g_return_val_if_fail(id != 0 && ext_id != 0, NULL);
 
@@ -180,8 +181,9 @@ void qq_room_remove(PurpleConnection *gc, guint32 id)
 	gchar *num_str;
 	guint32 ext_id;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	purple_debug_info("QQ", "Find and remove room data, id %u", id);
 	rmd = qq_room_data_find(gc, id);
@@ -251,7 +253,7 @@ qq_buddy_data *qq_room_buddy_find_or_new(PurpleConnection *gc, qq_room_data *rmd
 		member->uid = member_uid;
 		buddy = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(member_uid));
 		if (buddy != NULL) {
-			bd = (qq_buddy_data *) buddy->proto_data;
+			bd = (qq_buddy_data *) purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 			if (bd != NULL && bd->nickname != NULL)
 				member->nickname = g_strdup(bd->nickname);
 			else if (buddy->alias != NULL)
@@ -269,7 +271,7 @@ qq_room_data *qq_room_data_find(PurpleConnection *gc, guint32 room_id)
 	qq_room_data *rmd;
 	qq_data *qd;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (qd->groups == NULL || room_id <= 0)
 		return 0;
@@ -293,7 +295,7 @@ guint32 qq_room_get_next(PurpleConnection *gc, guint32 room_id)
 	qq_data *qd;
 	gboolean is_find = FALSE;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (qd->groups == NULL) {
 		return 0;
@@ -328,7 +330,7 @@ guint32 qq_room_get_next_conv(PurpleConnection *gc, guint32 room_id)
 	qq_data *qd;
 	gboolean is_find;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
  	list = qd->groups;
 	if (room_id > 0) {
@@ -374,7 +376,7 @@ void qq_room_data_initial(PurpleConnection *gc)
 	gint count;
 
 	account = purple_connection_get_account(gc);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	purple_debug_info("QQ", "Initial QQ Qun configurations\n");
 	purple_group = purple_find_group(PURPLE_GROUP_QQ_QUN);
@@ -407,8 +409,9 @@ void qq_room_data_free_all(PurpleConnection *gc)
 	qq_room_data *rmd;
 	gint count;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	count = 0;
 	while (qd->groups != NULL) {
@@ -422,3 +425,4 @@ void qq_room_data_free_all(PurpleConnection *gc)
 		purple_debug_info("QQ", "%d rooms are freed\n", count);
 	}
 }
+
