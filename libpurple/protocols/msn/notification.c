@@ -1421,7 +1421,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *rru;
 	const char *url;
 	PurpleCipher *cipher;
-	guchar creds[33];
+	gchar creds[33];
 	char *buf;
 
 	gulong tmp_timestamp;
