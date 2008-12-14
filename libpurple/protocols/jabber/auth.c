@@ -27,7 +27,6 @@
 #include "hmaccipher.h"
 #include "md5cipher.h"
 #include "request.h"
-#include "sha1cipher.h"
 #include "sslconn.h"
 #include "util.h"
 #include "xmlnode.h"

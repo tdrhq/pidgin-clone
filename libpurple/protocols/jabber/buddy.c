@@ -23,7 +23,6 @@
 #include "imgstore.h"
 #include "prpl.h"
 #include "notify.h"
-#include "sha1cipher.h"
 #include "request.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -1199,6 +1198,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	PurpleBuddy *b;
 	JabberBuddyInfo *jbi = data;
 	PurpleNotifyUserInfo *user_info;
+	PurpleAccount *account;
 
 	from = xmlnode_get_attrib(packet, "from");
 	id = xmlnode_get_attrib(packet, "id");
@@ -1219,7 +1219,8 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	user_info = jbi->user_info;
 	bare_jid = jabber_get_bare_jid(from);
 
-	b = purple_find_buddy(purple_connection_get_account(js->gc), bare_jid);
+	account = purple_connection_get_account(js->gc);
+	b = purple_find_buddy(account, bare_jid);
 
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp"))) {
@@ -1399,7 +1400,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 						purple_notify_user_info_add_pair(user_info, (photo ? _("Photo") : _("Logo")), img_text);
 
 						hash = jabber_calculate_data_sha1sum(data, size);
-						purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
+						purple_buddy_icons_set_for_user(account, bare_jid,
 								data, size, hash);
 						g_free(hash);
 						g_free(img_text);
