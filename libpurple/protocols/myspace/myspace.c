@@ -1008,7 +1008,6 @@ msim_get_info(PurpleConnection *gc, const gchar *username)
 {
 	MsimSession *session;
 	MsimUser *user;
-	guint uid;
 	gchar *user_to_lookup;
 	MsimMessage *user_msg;
 
