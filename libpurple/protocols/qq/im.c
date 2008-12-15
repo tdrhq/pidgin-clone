@@ -1260,7 +1260,7 @@ gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *what, Purpl
 	g_return_val_if_fail(qd != NULL, -1);
 	g_return_val_if_fail(who != NULL && what != NULL, -1);
 
-	purple_debug_info("QQ", "Send IM to %s, len %d:\n%s\n", who, (int)strlen(what), what);
+	purple_debug_info("QQ", "Send IM to %s, len %" G_GSIZE_FORMAT ":\n%s\n", who, strlen(what), what);
 
 	uid_to = purple_name_to_uid(who);
 	if (uid_to == qd->uid) {
