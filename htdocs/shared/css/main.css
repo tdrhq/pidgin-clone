@@ -120,13 +120,14 @@ a:hover, a:active {
 */
 
 #download_new {
-  padding: 5px 00px;
+  padding: 5px 0px;
   text-align: center;
   width: 388px;
-  font-size: 10%;
+  font-size: 1px;
 }
 
 #download_new DIV {
+  margin-top: -1px;
   font-size: 18px;
   background: url('/shared/img/bigdownload.middle.gif') repeat-y;
 }
