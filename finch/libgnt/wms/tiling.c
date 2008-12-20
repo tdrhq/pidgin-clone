@@ -33,14 +33,14 @@
  *   destroy split: D
  *   cycle frame to next window: n
  *   cycle frame to previous window: p
- *   move between splits: h,j,k,l
- *   exchange: H,J,K,L
- *   resize: r
- *   move: m
+ *   set default frame for new windows: d
+ *   move focus between frames: h,j,k,l
+ *   exchange windows between frames: H,J,K,L
+ *   resize frame: r (then arrows)
+ *   move window: m (then arrows)
  *   get list of all windows: w
  *   TODO:
  *   get list of non-visible windows: v
- *   cycle frame to next non-visible window: N
  */
 #include <stdlib.h>
 #include <string.h>
@@ -81,6 +81,7 @@ typedef struct _TilingWM
 	GntWM inherit;
 	TilingFrame root;
 	TilingFrame *current;
+	TilingFrame *default_frame;
 } TilingWM;
 
 typedef struct _TilingWMClass
@@ -357,18 +358,18 @@ tiling_wm_new_window(GntWM *wm, GntWidget *win)
 	int w, h, x, y;
 
 	if (!GNT_IS_MENU(win) && !GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
-		w = twm->current->width;
-		h = twm->current->height;
-		x = twm->current->x;
-		y = twm->current->y;
+		w = twm->default_frame->width;
+		h = twm->default_frame->height;
+		x = twm->default_frame->x;
+		y = twm->default_frame->y;
 		gnt_widget_set_position(win, x, y);
 		gnt_widget_set_size(win, w, h);
 		mvwin(win->window, x, y);
-		if ((cur_win = g_queue_peek_head(twm->current->windows))) {
+		if ((cur_win = g_queue_peek_head(twm->default_frame->windows))) {
 			twm_hide_window(wm, cur_win);
 		}
-		g_queue_push_tail(twm->current->windows, win);
-		twm_show_window_in_frame(wm, win, twm->current);
+		g_queue_push_tail(twm->default_frame->windows, win);
+		twm_show_window_in_frame(wm, win, twm->default_frame);
 	}
 	org_new_window(wm, win);
 }
@@ -540,6 +541,12 @@ twm_split(GntBindable *bindable, GList *list)
 		g_queue_push_head(rgt_bot->windows, win);
 	}
 
+	/* if the current frame is the default, change it to be the new current frame */
+	if (twm->default_frame == twm->current)
+	{
+		twm->default_frame = lft_top;
+	}
+
 	/* set current frame to the top or left */
 	twm->current = lft_top;
 
@@ -571,7 +578,7 @@ remove_split(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
 	TilingWM *twm = (TilingWM*)wm;
-	TilingFrame *parent, *current, *sibling;
+	TilingFrame *parent, *current, *sibling, *new_current;
 	GntWidget *win;
 
 	current = twm->current;
@@ -602,7 +609,16 @@ remove_split(GntBindable *bindable, GList *null)
 			/* children, meet your new parent */
 			sibling->left_top->parent = parent;
 			sibling->right_bottom->parent = parent;
-			twm->current = depth_search(sibling);
+
+			/* find the new current window */
+			new_current = depth_search(sibling);
+
+			/* if the current frame is also the default, change it to be the new current frame */
+			if (twm->default_frame == twm->current)
+			{
+				twm->default_frame = new_current;
+			}
+			twm->current = new_current;
 
 			/* push current windows on to the 'new current' windows queue */
 			if ((win = g_queue_pop_head(current->windows))) {
@@ -628,6 +644,12 @@ remove_split(GntBindable *bindable, GList *null)
 				}
 			}
 			g_queue_free(sibling->windows);
+
+			/* if the current frame is also the default, change it to be the new current frame */
+			if (twm->default_frame == twm->current)
+			{
+				twm->default_frame = parent;
+			}
 			twm->current = parent;
 		}
 
@@ -674,6 +696,7 @@ remove_all_split(GntBindable *bindable, GList *null)
 	if (twm->current != &twm->root) {
 		win = g_queue_peek_head(twm->current->windows);
 		twm->current = &twm->root;
+		twm->default_frame = &twm->root;
 		twm->current->windows = g_queue_new();
 
 		free_tiling_frames(wm, twm->root.left_top);
@@ -1099,6 +1122,14 @@ twm_resize_move(GntBindable *bindable, GList *list)
 	return FALSE;
 }
 
+static gboolean
+twm_set_default_frame(GntBindable *bindable, GList *list)
+{
+	TilingWM *twm = (TilingWM*)(bindable);
+	twm->default_frame = twm->current;
+	return TRUE;
+}
+
 static void
 tiling_wm_class_init(TilingWMClass *klass)
 {
@@ -1164,6 +1195,10 @@ tiling_wm_class_init(TilingWMClass *klass)
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "resize-up",
 			twm_resize_move, GNT_KEY_UP, GINT_TO_POINTER(DIRECTION_UP), NULL);
 
+	/* set default frame */
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "set-default",
+			twm_set_default_frame, "\033" "d", NULL, NULL);
+
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;
 }
@@ -1186,6 +1221,7 @@ void gntwm_init(GntWM **wm)
 	twm->root.type = FRAME_SPLIT_NONE;
 	twm->root.windows = g_queue_new();
 	twm->current = &twm->root;
+	twm->default_frame = &twm->root;
 }
 
 GType tiling_wm_get_gtype(void)
