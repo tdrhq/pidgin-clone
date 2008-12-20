@@ -57,12 +57,36 @@ $sections['Support & Development'] = "http://developer.pidgin.im/";
     <link rel="stylesheet" href="/shared/css/ie7.css" type="text/css" />
   <![endif]-->
 
-  <?php if($page['section'] == 'Home2') { ?>
-    <?php include("multibox.header.inc"); ?>
-  <?php } ?>
+  <?php /* if($page['section'] == 'Home2') { 
+     include("multibox.header.inc"); 
+   } */ ?>
 
 </head>
 <body>
+<?php if($page['section'] == 'Home2') { 
+  // This is a hack to differentiate between the test page and the original page
+  $page['section'] = 'Home';
+?>
+
+<!-- Begin Google Website Optimizer tracking code -->
+<script>
+_udn=".pidgin.im";
+function utmx_section(){}function utmx(){}
+(function(){var k='1527532502',d=document,l=d.location,c=d.cookie;function f(n){
+if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return c.substring(i+n.
+length+1,j<0?c.length:j)}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
+d.write('<sc'+'ript src="'+
+'http'+(l.protocol=='https:'?'s://ssl':'://www')+'.google-analytics.com'
++'/siteopt.js?v=1&utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='
++new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
+'" type="text/javascript" charset="utf-8"></sc'+'ript>')})();
+</script><script>utmx("url",'A/B');</script>
+<!-- End Google Website Optimizer tracking code -->
+
+<? } ?>
+
+
+
 
 <div id="header">
 <a href="/"><img src="/shared/img/logo.text.jpg" alt="Pidgin" /></a>

@@ -3,19 +3,29 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.downloaddetect.inc");
 ?>
 
 <div id="download_new">
-<img src="/shared/img/bigdownload.top.gif" alt="" />
+<form method="get" action="<? echo $download_link; ?>">
 <div>
-<a id="download_link" href="<? echo $download_link; ?>"
+<button type="submit" id="download_link" 
 <?php if (strlen($download_goal) > 0) { ?>
  onClick="javascript:ConversionCount();"
 <?php } ?>
 >
-<strong>Download Pidgin <? echo $download_os; ?> </strong> <br />
-
-
-version <? echo $pidgin_version; ?>
+Download Pidgin
+</button>
 </div>
+</form>
 
-<img src="/shared/img/bigdownload.bottom.gif" alt="" />
+<br />
+
+
+Version <? echo $pidgin_version; ?> <? echo $download_os; ?>
+
+<br />
+
+<div class="linkbar">
+  <a href="/download/">Other Versions</a> |
+  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a> |
+  <a href="http://developer.pidgin.im/wiki/FAQ" title="Frequently Asked Questions">FAQ</a>
+</div>
 
 </div>

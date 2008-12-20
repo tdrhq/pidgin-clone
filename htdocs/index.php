@@ -1,23 +1,7 @@
-<!-- Begin Google Website Optimizer tracking code -->
-<script>
-_udn=".pidgin.im";
-function utmx_section(){}function utmx(){}
-(function(){var k='1527532502',d=document,l=d.location,c=d.cookie;function f(n){
-if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return c.substring(i+n.
-length+1,j<0?c.length:j)}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
-d.write('<sc'+'ript src="'+
-'http'+(l.protocol=='https:'?'s://ssl':'://www')+'.google-analytics.com'
-+'/siteopt.js?v=1&utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='
-+new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
-'" type="text/javascript" charset="utf-8"></sc'+'ript>')})();
-</script><script>utmx("url",'A/B');</script>
-<!-- End Google Website Optimizer tracking code -->
-
-
 <?
   // Update these to match the current page.
   $page['title'] =   "Pidgin, the universal IM client";
-  $page['section'] = "Home";
+  $page['section'] = "Home2";
   $page['description'] = "Pidgin is an easy to use and free IM client used by millions. Connect to AIM, Yahoo, MSN and other IM networks all at once.";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
@@ -62,15 +46,11 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
   <li>Google Talk</li>
   <li>Groupwise</li>
   <li>ICQ</li>
-</ul>
-<ul class="condensed">
   <li>IRC</li>
   <li>MSN</li>
   <li>MySpaceIM</li>
   <li>QQ</li>
   <li>SILC</li>
-</ul>
-<ul class="condensed">
   <li>SIMPLE</li>
   <li>Sametime</li>
   <li>XMPP</li>

@@ -98,11 +98,6 @@ a:hover, a:active {
   height: 500px;
 }
 
-#main_content .condensed {
-  margin-top: 0px;
-  width: 20%;
-}
-
 #sidebar {
   float: right;
   width: 270px;
@@ -120,31 +115,21 @@ a:hover, a:active {
 */
 
 #download_new {
-  padding: 5px 0px;
+  padding: 5px 0px 10px 0px;
   text-align: center;
-  width: 388px;
-  font-size: 1px;
+  border: 1px solid #999;
+  background-color: #EEE;
 }
 
-#download_new DIV {
-  margin-top: -1px;
-  font-size: 18px;
-  background: url('/shared/img/bigdownload.middle.gif') repeat-y;
-}
-
-#download_new A {
-  text-decoration: none;
-  display: block;
-  color: #000;
+#download_new BUTTON {
+  font-size: 24px;
+  border-style: outset;
+  border-width: 3px;
 }
 
 DIV.linkbar {
-  display:block;
-  padding: 5px 20px;
-  width:388px;
-  text-align:center;
+  margin-top: 10px;
 }
-
 
 /* END styles related to test version of home page */
 
@@ -389,15 +374,18 @@ DIV.linkbar {
 }
 
 #main p.more {
-  clear: both;
-  text-align: right;
+  padding-top: 20px;
+  float: right;
 }
 
 ul.condensed {
-  margin: 26px 0 0 2px;
-  width: 20%;
-  float: left;
   padding-bottom: 38px;
+  display: block;
+}
+
+.condensed LI {
+  width: 30%;
+  float: left;
 }
 
 h1 {

@@ -22,26 +22,21 @@
 
 <div id="sidebar">
 <!--<a href="/shared/img/blist.jpg" id="screen0" class="multibox"> -->
-  <img src="/shared/img/blist.jpg" alt="Sample IM buddy list">
+  <img src="/shared/img/blist.jpg" alt="Sample IM buddy list" />
 <!--  </a> -->
 </div>
 
 
 <div id="main_content">
 
+<?
+include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download_new.inc");
+?>
+<br />
 
 <h1>IM <strong>all</strong> your friends in one place</h1>
 
 
-<?
-include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download_new.inc");
-?>
-
-<div class="linkbar">
-  <a href="/download/">Other Versions</a> |
-  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a> |
-  <a href="http://developer.pidgin.im/wiki/FAQ" title="Frequently Asked Questions">FAQ</a>
-</div>
 
 <?php if($_GET['v'] == "2") { ?> 
 <p>Pidgin is an easy to use and free IM client used by millions.</p>
@@ -68,9 +63,9 @@ An intuitive interface that can be extended by plugins.<br>
 
 </div>
 
-<a href="/about/"><img
+<p class="more"><a href="/about/"><img
 src="/shared/img/button.learn-more.png" alt="Learn More" width="128"
-height="32"/></a>
+height="32"/></a></p>
 
 
 <?php } else { ?>
@@ -88,15 +83,11 @@ to AIM, MSN, Yahoo, and more IM networks all at once.</p>
   <li>Google Talk</li>
   <li>Groupwise</li>
   <li>ICQ</li>
-</ul>
-<ul class="condensed">
   <li>IRC</li>
   <li>MSN</li>
   <li>MySpaceIM</li>
   <li>QQ</li>
   <li>SILC</li>
-</ul>
-<ul class="condensed">
   <li>SIMPLE</li>
   <li>Sametime</li>
   <li>XMPP</li>
@@ -104,13 +95,12 @@ to AIM, MSN, Yahoo, and more IM networks all at once.</p>
   <li>Zephyr</li>
 </ul>
 
-<a href="/about/"><img 
+<p class="more"><a href="/about/"><img 
 src="/shared/img/button.learn-more.png" alt="Learn More" width="128" 
 height="32"/></a>
+</p>
 
 <? } ?>
-
-</div>
 
 </div>
 </div>
