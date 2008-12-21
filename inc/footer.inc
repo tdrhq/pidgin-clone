@@ -15,10 +15,10 @@ pageTracker._setDomainName(".pidgin.im");
 pageTracker._initData();
 pageTracker._trackPageview();
 
-<?php if ($page['section'] == 'Home') { ?>
 var secondTracker = _gat._getTracker("UA-6596609-1");
 secondTracker._setDomainName(".pidgin.im");
 secondTracker._initData();
+<?php if ($page['section'] == 'Home') { ?>
 secondTracker._trackPageview("/1527532502/test");
 <?php } ?>
 </script>
