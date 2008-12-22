@@ -1,7 +1,7 @@
 <?
   // Update these to match the current page.
   $page['title'] =   "Pidgin, the universal IM client";
-  $page['section'] = "Home2";
+  $page['section'] = "Home"; // Set to "home2" to enable website test
   $page['description'] = "Pidgin is an easy to use and free IM client used by millions. Connect to AIM, Yahoo, MSN and other IM networks all at once.";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
@@ -32,6 +32,11 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 
 <div class="box_home" id="right">
 <div id="main">
+
+<div id="download_new"><strong>
+Current user? Take the <a href="http://www.pidgin.im/survey/index.php?sid=84494">Pidgin user survey</a></strong>
+</div>
+<br>
 
 <h1>IM all your friends in one place</h1>
 
