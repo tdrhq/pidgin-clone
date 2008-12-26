@@ -707,8 +707,9 @@ void qq_got_message(PurpleConnection *gc, const gchar *msg)
 	gchar *from;
 	time_t now = time(NULL);
 
-	g_return_if_fail(gc != NULL  && gc->proto_data != NULL);
-	qd = gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	g_return_if_fail(qd->uid > 0);
 
@@ -749,7 +750,7 @@ static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_
 	g_return_if_fail (data != NULL && len > 0);
 	g_return_if_fail(im_header != NULL);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	memset(&im_text, 0, sizeof(im_text));
 
 	/* qq_show_packet("IM text", data, len); */
@@ -780,16 +781,16 @@ static void process_im_text(PurpleConnection *gc, guint8 *data, gint len, qq_im_
 	/* qq_show_packet("IM text", (guint8 *)im_text.msg , strlen(im_text.msg) ); */
 
 	who = uid_to_purple_name(im_header->uid_from);
-	buddy = purple_find_buddy(gc->account, who);
+	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 	if (buddy == NULL) {
 		/* create no-auth buddy */
 		buddy = qq_buddy_new(gc, im_header->uid_from);
 	}
-	bd = (buddy == NULL) ? NULL : (qq_buddy_data *) buddy->proto_data;
+	bd = (buddy == NULL) ? NULL : (qq_buddy_data *) purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 	if (bd != NULL) {
 		bd->client_tag = im_header->version_from;
 		bd->face = im_text.sender_icon;
-		qq_update_buddy_icon(gc->account, who, bd->face);
+		qq_update_buddy_icon(purple_connection_get_account(gc), who, bd->face);
 	}
 
 	purple_msg_type = (im_text.msg_type == QQ_IM_AUTO_REPLY)
@@ -848,7 +849,7 @@ static void process_extend_im_text(PurpleConnection *gc, guint8 *data, gint len,
 	g_return_if_fail (data != NULL && len > 0);
 	g_return_if_fail(im_header != NULL);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	memset(&im_text, 0, sizeof(im_text));
 
 	/* qq_show_packet("Extend IM text", data, len); */
@@ -881,16 +882,16 @@ static void process_extend_im_text(PurpleConnection *gc, guint8 *data, gint len,
 	if(im_text.fragment_count == 0) 	im_text.fragment_count = 1;
 
 	who = uid_to_purple_name(im_header->uid_from);
-	buddy = purple_find_buddy(gc->account, who);
+	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 	if (buddy == NULL) {
 		/* create no-auth buddy */
 		buddy = qq_buddy_new(gc, im_header->uid_from);
 	}
-	bd = (buddy == NULL) ? NULL : (qq_buddy_data *) buddy->proto_data;
+	bd = (buddy == NULL) ? NULL : (qq_buddy_data *) purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 	if (bd != NULL) {
 		bd->client_tag = im_header->version_from;
 		bd->face = im_text.sender_icon;
-		qq_update_buddy_icon(gc->account, who, bd->face);
+		qq_update_buddy_icon(purple_connection_get_account(gc), who, bd->face);
 	}
 
 	purple_msg_type = 0;
@@ -1044,7 +1045,7 @@ static void request_send_im(PurpleConnection *gc, guint32 uid_to, gint type,
 	gint bytes;
 	time_t now;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	im_type = QQ_NORMAL_IM_TEXT;
 
 	/* purple_debug_info("QQ", "Send IM %d-%d\n", frag_count, frag_index); */
@@ -1254,10 +1255,11 @@ gint qq_send_im(PurpleConnection *gc, const gchar *who, const gchar *what, Purpl
 	guint8 frag_count, frag_index;
 	guint8 msg_id;
 
-	g_return_val_if_fail(NULL != gc && NULL != gc->proto_data, -1);
+	g_return_val_if_fail(gc != NULL, -1);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_val_if_fail(qd != NULL, -1);
 	g_return_val_if_fail(who != NULL && what != NULL, -1);
 
-	qd = (qq_data *) gc->proto_data;
 	purple_debug_info("QQ", "Send IM to %s, len %" G_GSIZE_FORMAT ":\n%s\n", who, strlen(what), what);
 
 	uid_to = purple_name_to_uid(who);

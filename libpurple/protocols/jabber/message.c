@@ -67,14 +67,14 @@ static void handle_chat(JabberMessage *jm)
 	jb = jabber_buddy_find(jm->js, jm->from, TRUE);
 	jbr = jabber_buddy_find_resource(jb, jid->resource);
 
-	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
+	if(jabber_find_unnormalized_conv(jm->from, purple_connection_get_account(jm->js->gc))) {
 		from = g_strdup(jm->from);
 	} else  if(jid->node) {
 		if(jid->resource) {
 			PurpleConversation *conv;
 
 			from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, jm->js->gc->account);
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, purple_connection_get_account(jm->js->gc));
 			if(conv) {
 				purple_conversation_set_name(conv, jm->from);
 				}
@@ -92,14 +92,14 @@ static void handle_chat(JabberMessage *jm)
 			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
 			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-					from, jm->js->gc->account);
+					from, purple_connection_get_account(jm->js->gc));
 			if (conv && jid->node && jid->domain) {
 				char buf[256];
 				PurpleBuddy *buddy;
 
 				g_snprintf(buf, sizeof(buf), "%s@%s", jid->node, jid->domain);
 
-				if ((buddy = purple_find_buddy(jm->js->gc->account, buf))) {
+				if ((buddy = purple_find_buddy(purple_connection_get_account(jm->js->gc), buf))) {
 					const char *who;
 					char *escaped;
 
@@ -908,11 +908,11 @@ jabber_conv_support_custom_smileys(const PurpleConnection *gc,
 								   const PurpleConversation *conv,
 								   const gchar *who)
 {
-	JabberStream *js = (JabberStream *) gc->proto_data;
+	JabberStream *js = (JabberStream *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	JabberBuddy *jb;
-	
+
 	if (!js) {
-		purple_debug_error("jabber", 
+		purple_debug_error("jabber",
 			"jabber_conv_support_custom_smileys: could not find stream\n");
 		return FALSE;
 	}
@@ -1096,13 +1096,13 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 
 	resource = jabber_get_resource(who);
 
-	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
+	jb = jabber_buddy_find(purple_object_get_protocol_data(PURPLE_OBJECT(gc)), who, TRUE);
 	jbr = jabber_buddy_find_resource(jb, resource);
 
 	g_free(resource);
 
 	jm = g_new0(JabberMessage, 1);
-	jm->js = gc->proto_data;
+	jm->js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->chat_state = JM_STATE_ACTIVE;
 	jm->to = g_strdup(who);
@@ -1148,14 +1148,14 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, Purp
 	if(!msg || !gc)
 		return 0;
 
-	js = gc->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	chat = jabber_chat_find_by_id(js, id);
 
 	if(!chat)
 		return 0;
 
 	jm = g_new0(JabberMessage, 1);
-	jm->js = gc->proto_data;
+	jm->js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	jm->type = JABBER_MESSAGE_GROUPCHAT;
 	jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 	jm->id = jabber_get_next_id(jm->js);
@@ -1182,7 +1182,7 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 	JabberBuddyResource *jbr;
 	char *resource = jabber_get_resource(who);
 
-	jb = jabber_buddy_find(gc->proto_data, who, TRUE);
+	jb = jabber_buddy_find(purple_object_get_protocol_data(PURPLE_OBJECT(gc)), who, TRUE);
 	jbr = jabber_buddy_find_resource(jb, resource);
 
 	g_free(resource);
@@ -1192,7 +1192,7 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 
 	/* TODO: figure out threading */
 	jm = g_new0(JabberMessage, 1);
-	jm->js = gc->proto_data;
+	jm->js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);

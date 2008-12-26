@@ -23,13 +23,14 @@
  */
 #include "internal.h"
 
-#include "cipher.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
+#include "md5cipher.h"
 #include "notify.h"
 #include "prpl.h"
 #include "prefs.h"
+#include "sha1cipher.h"
 #include "util.h"
 
 struct _PurpleUtilFetchUrlData
@@ -2916,24 +2917,19 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 char *
 purple_util_get_image_checksum(gconstpointer image_data, size_t image_len)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *cipher = NULL;
 	gchar digest[41];
 
-	context = purple_cipher_context_new_by_name("sha1", NULL);
-	if (context == NULL)
-	{
-		purple_debug_error("util", "Could not find sha1 cipher\n");
-		g_return_val_if_reached(NULL);
-	}
+	cipher = purple_sha1_cipher_new();
 
 	/* Hash the image data */
-	purple_cipher_context_append(context, image_data, image_len);
-	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
+	purple_cipher_append(cipher, image_data, image_len);
+	if (!purple_cipher_digest_to_str(cipher, sizeof(digest), digest, NULL))
 	{
 		purple_debug_error("util", "Failed to get SHA-1 digest.\n");
 		g_return_val_if_reached(NULL);
 	}
-	purple_cipher_context_destroy(context);
+	g_object_unref(G_OBJECT(cipher));
 
 	return g_strdup(digest);
 }
@@ -3430,6 +3426,15 @@ purple_str_binary_to_ascii(const unsigned char *binary, guint len)
 			g_string_append_c(ret, binary[i]);
 
 	return g_string_free(ret, FALSE);
+}
+
+gboolean purple_util_strings_equal(const char *s1, const char *s2)
+{
+	if (s1 == s2)
+		return TRUE;
+	if (s1 && s2 && g_utf8_collate(s1, s2) == 0)
+		return TRUE;
+	return FALSE;
 }
 
 /**************************************************************************
@@ -4823,7 +4828,7 @@ void purple_util_set_current_song(const char *title, const char *artist, const c
 		PurplePresence *presence;
 		PurpleStatus *tune;
 		PurpleAccount *account = list->data;
-		if (!purple_account_get_enabled(account, purple_core_get_ui()))
+		if (!purple_account_get_enabled(account))
 			continue;
 
 		presence = purple_account_get_presence(account);
@@ -4868,6 +4873,196 @@ char * purple_util_format_song_info(const char *title, const char *artist, const
 	}
 
 	return g_string_free(string, FALSE);
+}
+
+/**************************************************************************
+ * HTTP Digest Functions
+ **************************************************************************/
+gchar *purple_http_digest_calculate_session_key(
+		const gchar *algorithm,
+		const gchar *username,
+		const gchar *realm,
+		const gchar *password,
+		const gchar *nonce,
+		const gchar *client_nonce)
+{
+	PurpleCipher *cipher;
+	gchar hash[33]; /* We only support MD5. */
+
+	g_return_val_if_fail(username != NULL, NULL);
+	g_return_val_if_fail(realm    != NULL, NULL);
+	g_return_val_if_fail(password != NULL, NULL);
+	g_return_val_if_fail(nonce    != NULL, NULL);
+
+	/* Check for a supported algorithm. */
+	g_return_val_if_fail(algorithm == NULL ||
+						 *algorithm == '\0' ||
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
+
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (guchar *)username, strlen(username));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+	purple_cipher_append(cipher, (guchar *)realm, strlen(realm));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+	purple_cipher_append(cipher, (guchar *)password, strlen(password));
+
+	if (algorithm != NULL && !g_ascii_strcasecmp(algorithm, "MD5-sess"))
+	{
+		guchar digest[16];
+
+		if (client_nonce == NULL)
+		{
+			g_object_unref(G_OBJECT(cipher));
+			purple_debug_error("cipher", "Required client_nonce missing for MD5-sess digest calculation.\n");
+			return NULL;
+		}
+
+		purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+		purple_cipher_reset(cipher);
+
+		purple_cipher_append(cipher, digest, sizeof(digest));
+		purple_cipher_append(cipher, (guchar *)":", 1);
+		purple_cipher_append(cipher, (guchar *)nonce, strlen(nonce));
+		purple_cipher_append(cipher, (guchar *)":", 1);
+		purple_cipher_append(cipher, (guchar *)client_nonce, strlen(client_nonce));
+	}
+
+	purple_cipher_digest_to_str(cipher, sizeof(hash), hash, NULL);
+	g_object_unref(G_OBJECT(cipher));
+
+	return g_strdup(hash);
+}
+
+gchar *purple_http_digest_calculate_response(
+		const gchar *algorithm,
+		const gchar *method,
+		const gchar *digest_uri,
+		const gchar *qop,
+		const gchar *entity,
+		const gchar *nonce,
+		const gchar *nonce_count,
+		const gchar *client_nonce,
+		const gchar *session_key)
+{
+	PurpleCipher *cipher;
+	static gchar hash2[33]; /* We only support MD5. */
+
+	g_return_val_if_fail(method      != NULL, NULL);
+	g_return_val_if_fail(digest_uri  != NULL, NULL);
+	g_return_val_if_fail(nonce       != NULL, NULL);
+	g_return_val_if_fail(session_key != NULL, NULL);
+
+	/* Check for a supported algorithm. */
+	g_return_val_if_fail(algorithm == NULL ||
+						 *algorithm == '\0' ||
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
+
+	/* Check for a supported "quality of protection". */
+	g_return_val_if_fail(qop == NULL ||
+						 *qop == '\0' ||
+						 g_ascii_strcasecmp(qop, "auth") ||
+						 g_ascii_strcasecmp(qop, "auth-int"), NULL);
+
+	cipher = purple_md5_cipher_new();
+
+	purple_cipher_append(cipher, (guchar *)method, strlen(method));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+	purple_cipher_append(cipher, (guchar *)digest_uri, strlen(digest_uri));
+
+	if (qop != NULL && !g_ascii_strcasecmp(qop, "auth-int"))
+	{
+		PurpleCipher *cipher2;
+		gchar entity_hash[33];
+
+		if (entity == NULL)
+		{
+			g_object_unref(G_OBJECT(cipher));
+			purple_debug_error("cipher", "Required entity missing for auth-int digest calculation.\n");
+			return NULL;
+		}
+
+		cipher2 = purple_md5_cipher_new();
+		purple_cipher_append(cipher2, (guchar *)entity, strlen(entity));
+		purple_cipher_digest_to_str(cipher2, sizeof(entity_hash), entity_hash, NULL);
+		g_object_unref(G_OBJECT(cipher2));
+
+		purple_cipher_append(cipher, (guchar *)":", 1);
+		purple_cipher_append(cipher, (guchar *)entity_hash, strlen(entity_hash));
+	}
+
+	purple_cipher_digest_to_str(cipher, sizeof(hash2), hash2, NULL);
+	purple_cipher_reset(cipher);
+
+	purple_cipher_append(cipher, (guchar *)session_key, strlen(session_key));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+	purple_cipher_append(cipher, (guchar *)nonce, strlen(nonce));
+	purple_cipher_append(cipher, (guchar *)":", 1);
+
+	if (qop != NULL && *qop != '\0')
+	{
+		if (nonce_count == NULL)
+		{
+			g_object_unref(G_OBJECT(cipher));
+			purple_debug_error("cipher", "Required nonce_count missing for digest calculation.\n");
+			return NULL;
+		}
+
+		if (client_nonce == NULL)
+		{
+			g_object_unref(G_OBJECT(cipher));
+			purple_debug_error("cipher", "Required client_nonce missing for digest calculation.\n");
+			return NULL;
+		}
+
+		purple_cipher_append(cipher, (guchar *)nonce_count, strlen(nonce_count));
+		purple_cipher_append(cipher, (guchar *)":", 1);
+		purple_cipher_append(cipher, (guchar *)client_nonce, strlen(client_nonce));
+		purple_cipher_append(cipher, (guchar *)":", 1);
+
+		purple_cipher_append(cipher, (guchar *)qop, strlen(qop));
+
+		purple_cipher_append(cipher, (guchar *)":", 1);
+	}
+
+	purple_cipher_append(cipher, (guchar *)hash2, strlen(hash2));
+	purple_cipher_digest_to_str(cipher, sizeof(hash2), hash2, NULL);
+	g_object_unref(G_OBJECT(cipher));
+
+	return g_strdup(hash2);
+}
+
+
+/****************************************************************************
+ * Slice-allocated GValue helpers
+ *****************************************************************************/
+
+GValue *
+purple_g_value_slice_new(GType type)
+{
+	GValue *ret = g_slice_new0(GValue);
+
+	g_value_init(ret, type);
+	return ret;
+}
+
+
+void
+purple_g_value_slice_free(GValue *value)
+{
+	g_value_unset(value);
+	g_slice_free(GValue, value);
+}
+
+
+GValue *
+purple_g_value_slice_dup(const GValue *value)
+{
+	GValue *ret = purple_g_value_slice_new(G_VALUE_TYPE (value));
+
+	g_value_copy(value, ret);
+	return ret;
 }
 
 const gchar *
