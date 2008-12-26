@@ -19,7 +19,9 @@
 
 <div class="box_download">
 
-<p><a href="http://rpm.pidgin.im/fedora/pidgin.repo">
+<p><a href="http://rpm.pidgin.im/fedora/pidgin.repo"
+onClick="javascript:pageTracker._trackPageview('/goals/downloads/fedora_core');"
+>
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
 Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?> for Fedora Core</span>
