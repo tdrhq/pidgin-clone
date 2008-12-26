@@ -17,12 +17,12 @@
 
 <h1>General Pidgin Help</h1>
 
-New to Pidgin?  Try the <a href="http://developer.pidgin.im/wiki/Using%20Pidgin">User Guide</a>.<br>
+New to Pidgin?  Try the <a href="http://developer.pidgin.im/wiki/Using%20Pidgin">User Guide</a>.<br/>
 Also look at the <a href="http://developer.pidgin.im/wiki/FAQ">Frequently Asked Questions</a>.
 
 <h2>Need to talk to a human?</h2>
 
-Send an email: <a href="http://www.pidgin.im/cgi-bin/mailman/listinfo/support">Pidgin support mailing list</a><br>
+Send an email: <a href="http://www.pidgin.im/cgi-bin/mailman/listinfo/support">Pidgin support mailing list</a><br/>
 Chat on IRC: <a href="http://widget.mibbit.com/?settings=4102eeafa56ea5c509e3cea7434fca3f&server=irc.freenode.net&channel=%23pidgin" target="_blank">#pidgin on Freenode</a>
 
 
@@ -44,15 +44,14 @@ Chat on IRC: <a href="http://widget.mibbit.com/?settings=4102eeafa56ea5c509e3cea
 </ul>
 
 <div id="download_new">
-<strong>Pidgin Crashed?</strong><br><br>
-What to do if a crash occurs:<br>
-<a href="http://developer.pidgin.im/wiki/TipsForBugReports#WindowsUsers">On Windows</a><br>
+<strong>Pidgin Crashed?</strong><br/><br/>
+What to do if a crash occurs:<br/>
+<a href="http://developer.pidgin.im/wiki/TipsForBugReports#WindowsUsers">On Windows</a><br/>
 <a href="http://developer.pidgin.im/wiki/GetABacktrace">On Linux</a>
 
 
 
 </div>
-<br>
 
 </div>
 </div>
