@@ -23,9 +23,10 @@ if (!array_key_exists('section', $page)) {
 // Define Sections
 $sections['Download']              = "/download/";
 $sections['Plugins']               = "http://developer.pidgin.im/wiki/ThirdPartyPlugins";
+$sections['Help']                  = "/support/";
 $sections['About']                 = "/about/";
 $sections['News']                  = "http://planet.pidgin.im/";
-$sections['Support & Development'] = "http://developer.pidgin.im/";
+$sections['Development']           = "http://developer.pidgin.im/";
 
 ?>
 
