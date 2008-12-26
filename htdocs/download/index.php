@@ -38,6 +38,7 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 document.getElementById("download_wrapper").style.display = "";
 // --></script>
 
+<a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a>
 
 
 </div>

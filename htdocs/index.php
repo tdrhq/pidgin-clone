@@ -22,8 +22,8 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 ?>
 
 <p class="linkbar">
-  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a> |
-  <a href="http://developer.pidgin.im/wiki/FAQ" title="Frequently Asked Questions">FAQ</a>
+  <a href="http://developer.pidgin.im/wiki/ChangeLog">ChangeLog</a><!-- |
+  <a href="http://developer.pidgin.im/wiki/FAQ" title="Frequently Asked Questions">FAQ</a> -->
 </p>
 
 </div>
