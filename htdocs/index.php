@@ -65,6 +65,7 @@ Current user? Take the <a href="http://www.pidgin.im/survey/index.php?sid=84494"
 
 <p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.png" alt="Learn More" width="128" height="32"/></a></p>
 
+<div style="clear: both;"></div>
 </div>
 </div>
 
