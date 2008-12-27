@@ -387,7 +387,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	session = servconn->session;
 
 	len = read(servconn->fd, buf, sizeof(buf) - 1);
-	servconn->session->account->gc->last_received = time(NULL);
+	purple_connection_received_now(purple_account_get_connection(servconn->session->account));
 
 	if (len < 0 && errno == EAGAIN)
 		return;

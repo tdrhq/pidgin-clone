@@ -348,7 +348,7 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 	}
 
 	/* Send initial presence; this will trigger receipt of presence for contacts on the roster */
-	jabber_presence_send(js->gc->account, NULL);
+	jabber_presence_send(purple_connection_get_account(js->gc), NULL);
 
 	if (js->server_caps & JABBER_CAP_ADHOC) {
 		/* The server supports ad-hoc commands, so let's request the list */
@@ -361,7 +361,7 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 	}
 
 	/* If there are manually specified bytestream proxies, query them */
-	ft_proxies = purple_account_get_string(js->gc->account, "ft_proxies", NULL);
+	ft_proxies = purple_account_get_string(purple_connection_get_account(js->gc), "ft_proxies", NULL);
 	if (ft_proxies) {
 		JabberIq *iq;
 		JabberBytestreamsStreamhost *sh;

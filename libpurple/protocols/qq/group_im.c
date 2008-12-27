@@ -52,7 +52,7 @@ PurpleConversation *qq_room_conv_open(PurpleConnection *gc, qq_room_data *rmd)
 	gchar *topic_utf8;
 
 	g_return_val_if_fail(rmd != NULL, NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 			rmd->title_utf8, purple_connection_get_account(gc));
@@ -225,7 +225,7 @@ void qq_process_room_im(guint8 *data, gint data_len, guint32 id, PurpleConnectio
 
 	/* at least include im_text.msg_len */
 	g_return_if_fail(data != NULL && data_len > 23);
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* qq_show_packet("ROOM_IM", data, data_len); */
 	memset(&im_text, 0, sizeof(im_text));
@@ -374,10 +374,11 @@ int qq_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 	gboolean is_smiley_none;
 	guint8 frag_count, frag_index;
 
-	g_return_val_if_fail(NULL != gc && NULL != gc->proto_data, -1);
+	g_return_val_if_fail(gc != NULL, -1);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_val_if_fail(qd != NULL, -1);
 	g_return_val_if_fail(id != 0 && what != NULL, -1);
 
-	qd = (qq_data *) gc->proto_data;
 	purple_debug_info("QQ", "Send chat IM to %u, len %" G_GSIZE_FORMAT ":\n%s\n", id, strlen(what), what);
 
 	/* qq_show_packet("chat IM UTF8", (guint8 *)what, strlen(what)); */
