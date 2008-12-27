@@ -21,10 +21,25 @@ if (!array_key_exists('subsect', $page)) {
     if ($page['abslink'] && !preg_match("%^[a-z]+:%", $link)) {
       $link = $page['siteroot'] . $link;
     }
+
+    $external = 0;
+    // An imperfect way of detecting external URLs.  This works for our current urls.
+    if (preg_match("/com/", $link)) {
+    	$external = 1;
+    }
+    
     if ($page['subsect'] == $name) {
-      echo '  <li class="active"><a href="' . $link . '">' . $escaped . "</a></li>\n";
+      echo '  <li class="active"><a ';
+      if ($external > 0) {
+         echo 'rel=nofollow ';
+      }
+      echo 'href="' . $link . '">' . $escaped . "</a></li>\n";
     } else {
-      echo '  <li><a href="' . $link . '">' . $escaped . "</a></li>\n";
+      echo '  <li><a ';
+      if ($external > 0) {
+        echo 'rel=nofollow ';
+      }
+      echo 'href="' . $link . '">' . $escaped . "</a></li>\n";
     }
   }
 ?>
