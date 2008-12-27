@@ -63,7 +63,7 @@ Current user? Take the <a href="http://www.pidgin.im/survey/index.php?sid=84494"
   <li>Zephyr</li>
 </ul>
 
-<p class="more" style="clear:both;"><a href="/about/"><img src="/shared/img/button.learn-more.png" alt="Learn More" width="128" height="32"/></a></p>
+<p class="more"><a href="/about/"><img src="/shared/img/button.learn-more.png" alt="Learn More" width="128" height="32"/></a></p>
 
 </div>
 </div>
