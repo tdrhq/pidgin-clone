@@ -28,16 +28,17 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 
 <p>Pidgin is a chat program which lets you log in to accounts on multiple
 chat networks simultaneously. This means that you can be chatting with
-friends on MSN, talking to a friend on Google Talk, and sitting in an Yahoo
-channel all at the same time.</p>
+friends on MSN, talking to a friend on Google Talk, and sitting in a Yahoo
+chat room all at the same time.</p>
 
 <p>Pidgin runs on Windows, Linux, and other UNIX operating systems. 
 Looking for Pidgin for OS X? Try <a href="http://www.adiumx.com/">Adium</a>!</p>
 
-<p>Pidgin is compatible with the following chat networks: 
+<p>Pidgin is compatible with the following chat networks out of the box: 
 AIM, ICQ, Google Talk, Jabber/XMPP, MSN
 Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, Novell GroupWise Messenger, QQ,
-Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr.</p>
+Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr.  It can support many
+more with plugins.</p>
 
 <p>Pidgin supports many features of these chat networks, such as file
 transfers, away messages, buddy icons, custom smilies, and typing
