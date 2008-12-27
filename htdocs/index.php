@@ -40,9 +40,9 @@ Current user? Take the <a href="http://www.pidgin.im/survey/index.php?sid=84494"
 
 <h1>IM all your friends in one place</h1>
 
-<p>Pidgin is an easy to use and free IM client used by millions. Connect to AIM, MSN, Yahoo, and more IM networks all at once.</p>
+<p>Pidgin is an easy to use and free chat client used by millions. Connect to AIM, MSN, Yahoo, and more chat networks all at once.</p>
 
-<p>Supported IM networks:</p>
+<p>Supported chat networks:</p>
 
 <ul class="condensed">
   <li>AIM</li>
