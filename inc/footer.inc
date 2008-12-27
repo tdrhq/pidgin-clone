@@ -1,4 +1,5 @@
 <div id="footer">
+<a href="http://developer.pidgin.im/wiki/WhatIsLibpurple"><img src="/shared/img/button.libpurple.png" alt="libpurple" /></a>
 <a href="http://www.networkredux.com/"><img src="/shared/img/button.networkredux.jpg" alt="Hosted by NetworkRedux" title="Hosted by NetworkRedux" /></a>
 <a href="http://blendinteractive.com/"><img src="/shared/img/button.blend.png" alt="Design by Blend Interactive" title="Design by Blend Interactive" /></a>
 <a href="http://sourceforge.net/"><img src="http://sourceforge.net/sflogo.php?group_id=235&amp;type=1" width="88" height="31" alt="SourceForge.net" /></a>
