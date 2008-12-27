@@ -3,7 +3,7 @@
   $page['title'] =   "Pidgin Security Advisories";
   $page['section'] = "News";
   $page['subsect'] = "Security Advisories";
-  $page['description'] = "Security advisories for libpurple-based chat clients."
+  $page['description'] = "Security advisories for libpurple-based chat clients.";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
