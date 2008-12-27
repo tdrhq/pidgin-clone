@@ -15,4 +15,9 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.downloaddetect.inc");
 Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?></span> 
 <span class="number" id="os_name"> <? echo $download_os; ?></span></a>
+<?php include($_SERVER['DOCUMENT_ROOT'] . "/../inc/langdetect.inc"); 
+if (strlen($language) > 0 && $language != "English") {
+?>
+<span class="number"><? echo $language ?></span>
+<? } ?>
 </div>
