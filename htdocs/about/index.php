@@ -82,9 +82,9 @@ echo '<li>'.$languages[$lang].'</li>';
 ?>
 </ul>
 
-<p>If your native language is missing from this list or you've found that a
-translation contains errors, you can help us!  Take a look at our <a
-href="http://developer.pidgin.im/wiki/TipsForTranslators">tips for
+<p style="clear: both;">If your native language is missing from this list or
+you've found that a translation contains errors, you can help us!  Take a look
+at our <a href="http://developer.pidgin.im/wiki/TipsForTranslators">tips for
 translators</a>.</p>
 
 </div>
