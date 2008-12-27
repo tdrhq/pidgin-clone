@@ -1498,7 +1498,7 @@ void jabber_add_deny(PurpleConnection *gc, const char *who)
 	JabberIq *iq;
 	xmlnode *block, *item;
 
-	js = gc->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (js == NULL)
 		return;
 
@@ -1532,7 +1532,7 @@ void jabber_rem_deny(PurpleConnection *gc, const char *who)
 	JabberIq *iq;
 	xmlnode *unblock, *item;
 
-	js = gc->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (js == NULL)
 		return;
 
