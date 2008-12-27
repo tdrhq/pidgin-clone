@@ -21,14 +21,14 @@ be found at their respective sources, which may permit comments or offer
 additional historical information for the more adventurous or bored.</p>
 
 <ul>
-  <li><a href="http://theflamingbanker.blogspot.com/feeds/posts/default">John Bailey</a></li>
+  <li><a href="http://theflamingbanker.blogspot.com/">John Bailey</a></li>
   <li><a href="/~seanegan/blog/">Sean Egan</a></li>
   <li><a href="/~elb/blog/">Ethan Blanton</a></li>
-  <li><a href="http://gary-kramlich.livejournal.com/data/rss">Gary Kramlich</a></li>
-  <li><a href="http://coderich.net/">Richard Laager</a></li>
-  <li><a href="http://www.schierer.org/~luke/log">Luke Schierer</a></li>
+  <li><a href="http://gary-kramlich.livejournal.com/">Gary Kramlich</a></li>
+  <li><a href="http://coderich.net/category/open-source/pidgin/">Richard Laager</a></li>
+  <li><a href="http://www.schierer.org/~luke/log/category/personal/gaim">Luke Schierer</a></li>
   <li><a href="/~kstange/blog/">Kevin Stange</a></li>
-  <li><a href="http://faceprint.com/">Nathan Walp</a></li>
+  <li><a href="http://faceprint.com/?tags=pidgin,gaim">Nathan Walp</a></li>
 </ul>
 
 </div>
