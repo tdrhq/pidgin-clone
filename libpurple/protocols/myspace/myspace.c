@@ -2744,7 +2744,7 @@ msim_add_deny(PurpleConnection *gc, const char *name)
 	MsimSession *session;
 	MsimMessage *msg, *body;
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* Remove from buddy list */
 	msg = msim_msg_new(
@@ -2796,7 +2796,7 @@ msim_rem_deny(PurpleConnection *gc, const char *name)
 	MsimSession *session;
 	MsimMessage *msg, *body;
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/*
 	 * Remove from our list of blocked contacts, so we know they
