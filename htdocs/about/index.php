@@ -11,14 +11,10 @@
 
 <div id="content">
 
-
-
-
-
 <div class="box_full">
 <div id="main">
 
-<h1>About Pidgin Chat</h1>
+<h1>About Pidgin</h1>
 
 <div style="float:right;">
 <?
@@ -30,10 +26,10 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 </div>
 </div>
 
-<p>Pidgin is an chat program which lets you log in to accounts on multiple chat networks
-simultaneously. This means that you can be chatting with friends on MSN,
-talking to a friend on Google Talk, and sitting in an Yahoo channel all at
-the same time.</p>
+<p>Pidgin is a chat program which lets you log in to accounts on multiple
+chat networks simultaneously. This means that you can be chatting with
+friends on MSN, talking to a friend on Google Talk, and sitting in an Yahoo
+channel all at the same time.</p>
 
 <p>Pidgin runs on Windows, Linux, and other UNIX operating systems. 
 Looking for Pidgin for OS X? Try <a href="http://www.adiumx.com/">Adium</a>!</p>
@@ -43,22 +39,35 @@ AIM, ICQ, Google Talk, Jabber/XMPP, MSN
 Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, Novell GroupWise Messenger, QQ,
 Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr.</p>
 
-<p>Pidgin supports almost all features of the various chat networks, such as file
-transfer, away messages, and typing notifications.  Numerous plugins also extend Pidgin's functionality above and beyond the standard features.</p>
+<p>Pidgin supports many features of these chat networks, such as file
+transfers, away messages, buddy icons, custom smilies, and typing
+notifications.  Numerous plugins also extend Pidgin's functionality above and
+beyond the standard features.</p>
 
 <p>Pidgin integrates with the system tray on Windows, GNOME2, and KDE 3.1.</p>
 
-<p>Pidgin is under constant development, and releases are usually frequent.</p>
+<p>Pidgin is under constant development.  Releases are usually frequent and
+driven by user contributions, such as <a href="/support/">bug reports</a> and
+<a href="http://developer.pidgin.im">patches</a>.</p>
 
-Pidgin is free!  And there are no ads.  All our code is open source and licensed under the GPL.
+<p>Pidgin is free and contains no ads.  All our code is open source and
+licensed under the GNU General Public License.  This means you can get Pidgin's
+underlying code and modify it to suit your needs, as long as you publish the
+changes you make for everyone to benefit from as well.</p>
 
 <h2>Supported Languages</h2>
 
 <?php include($_SERVER['DOCUMENT_ROOT'] . "/../inc/langdetect.inc"); ?>
 
-<?php if (strlen($language) > 0) { ?>
-  Pidgin supports <strong><? echo $language ?></strong>!<br/>
+<p>Pidgin is translated into many different languages, thanks to the
+generous contributions of our volunteer translators.
+
+<?php if (strlen($language) > 0 && $language != "English") { ?>
+  You may be glad to know that Pidgin is already translated into
+  <strong><? echo $language ?></strong>!
 <?php } ?>
+
+</p>
 
 <ul class="condensed">
 <?php
@@ -71,6 +80,11 @@ echo '<li>'.$languages[$lang].'</li>';
 
 ?>
 </ul>
+
+<p>If your native language is missing from this list or you've found that a
+translation contains errors, you can help us!  Take a look at our <a
+href="http://developer.pidgin.im/wiki/TipsForTranslators">tips for
+translators</a>.</p>
 
 </div>
 </div>
