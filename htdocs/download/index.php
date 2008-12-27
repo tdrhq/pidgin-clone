@@ -1,8 +1,8 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "Download Pidgin, the universal IM client";
+  $page['title'] =   "Download Pidgin, the universal chat client";
   $page['section'] = "Download";
-  $page['description'] = "Download the free Pidgin IM client.  Pidgin runs on Windows and Linux/UNIX.";
+  $page['description'] = "Download the free Pidgin chat client.  Pidgin runs on Windows and Linux/UNIX.";
   $page['subsect'] = "";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
@@ -18,7 +18,7 @@
 
 <h1>Download Pidgin</h1>
 
-<p>Download the free Pidgin IM client.  Pidgin runs on Windows and Linux/UNIX.</p>
+<p>Download the free Pidgin chat client.  Pidgin runs on Windows and Linux/UNIX.</p>
 
 <noscript>
 <ul>

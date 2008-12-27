@@ -2,7 +2,7 @@
   // Update these to match the current page.
   $page['title'] =   "Pidgin help and support";
   $page['section'] = "Help"; // Set to "home2" to enable website test
-  $page['description'] = "Starting point for getting help and reporting problems with pidgin";
+  $page['description'] = "Starting point for getting help with the Pidgin chat client.";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");

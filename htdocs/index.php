@@ -1,8 +1,8 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "Pidgin, the universal IM client";
+  $page['title'] =   "Pidgin, the universal chat client";
   $page['section'] = "Home"; // Set to "home2" to enable website test
-  $page['description'] = "Pidgin is an easy to use and free IM client used by millions. Connect to AIM, Yahoo, MSN and other IM networks all at once.";
+  $page['description'] = "A free chat client used by millions. Connect easily to MSN, Google Talk, Yahoo, AIM and other chat networks all at once.";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");

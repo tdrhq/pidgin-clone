@@ -1,8 +1,9 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "Windows | Download";
+  $page['title'] =   "Download Pidgin for Windows";
   $page['section'] = "Download";
   $page['subsect'] = "Windows";
+  $page['description'] = "Download the free Pidgin universal chat client for Windows";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
@@ -27,11 +28,10 @@ Download Pidgin<br />
 <span class="number"><? echo $pidgin_version; ?> for Windows</span>
 </a></p>
 
-<p>This download is for the full installer for Windows, including GTK+. This is probably what you want.</p>
-
-<p>If you already have GTK+ installed (for example, if you're running GIMP or another application using GTK+), we provide a smaller <a href="http://downloads.sourceforge.net/pidgin/pidgin-<? echo $pidgin_version; ?>-no-gtk.exe">installer without GTK+</a>. However, please be aware that we often ship updated copies of GTK+ and continuing to use an older version may cause problems with Pidgin. If you have problems, please re-install using the full installer and upgrade GTK+ before contacting us.</p>
-
 </div>
+
+<p>If your GTK+ is already downloaded and up to date, we have a smaller <a href="http://downloads.sourceforge.net/pidgin/pidgin-<? echo $pidgin_version; ?>-no-gtk.exe">installer without GTK+</a>. </p>
+
 
 </div>
 </div>
