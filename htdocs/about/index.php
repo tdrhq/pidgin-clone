@@ -32,7 +32,7 @@ friends on MSN, talking to a friend on Google Talk, and sitting in a Yahoo
 chat room all at the same time.</p>
 
 <p>Pidgin runs on Windows, Linux, and other UNIX operating systems. 
-Looking for Pidgin for OS X? Try <a href="http://www.adiumx.com/">Adium</a>!</p>
+Looking for Pidgin for OS X? Try <a onclick="javascript:pageTracker._trackPageview('/external/adiumx.com');" href="http://www.adiumx.com/">Adium</a>!</p>
 
 <p>Pidgin is compatible with the following chat networks out of the box: 
 AIM, ICQ, Google Talk, Jabber/XMPP, MSN
