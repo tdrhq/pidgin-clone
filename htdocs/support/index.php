@@ -23,7 +23,7 @@ Also look at the <a href="http://developer.pidgin.im/wiki/FAQ">Frequently Asked 
 <h2>Need to talk to a human?</h2>
 
 Send an email: <a href="http://www.pidgin.im/cgi-bin/mailman/listinfo/support">Pidgin support mailing list</a><br/>
-Chat on IRC: <a onclick="javascript:pageTracker._trackPageview('/external/widget.mibbit.com');" href="http://widget.mibbit.com/?settings=4102eeafa56ea5c509e3cea7434fca3f&server=irc.freenode.net&channel=%23pidgin" target="_blank">#pidgin on Freenode</a>
+Chat on IRC: <a onclick="javascript:pageTracker._trackPageview('/external/widget.mibbit.com');" href="http://widget.mibbit.com/?settings=4102eeafa56ea5c509e3cea7434fca3f&amp;server=irc.freenode.net&amp;channel=%23pidgin" target="_blank">#pidgin on Freenode</a>
 
 
 </div>
@@ -44,8 +44,8 @@ Chat on IRC: <a onclick="javascript:pageTracker._trackPageview('/external/widget
 
 <ul>
 <li>First, don't panic.</li>
-<li><a href="http://developer.pidgin.im/query?status=new&status=pending&col=id&col=summary&order=priority&version=<? echo $pidgin_version; ?>&type=defect">Search</a> to see if it has already been reported.
-<li>Otherwise, learn how to <a href="http://developer.pidgin.im/wiki/TipsForBugReports">file a bug report</a>
+<li><a href="http://developer.pidgin.im/query?status=new&amp;status=pending&amp;col=id&amp;col=summary&amp;order=priority&amp;version=<? echo $pidgin_version; ?>&amp;type=defect">Search</a> to see if it has already been reported.</li>
+<li>Otherwise, learn how to <a href="http://developer.pidgin.im/wiki/TipsForBugReports">file a bug report</a></li>
 </ul>
 
 <div>
