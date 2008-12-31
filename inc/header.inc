@@ -90,7 +90,7 @@ d.write('<sc'+'ript src="'+
 
 
 <div id="header">
-<a href="/"><img src="/shared/img/logo.text.jpg" alt="Pidgin" /></a>
+<a href="http://www.pidgin.im/"><img src="/shared/img/logo.text.jpg" alt="Pidgin" /></a>
 <ul>
 <?
   foreach ($sections as $name => $link) {
