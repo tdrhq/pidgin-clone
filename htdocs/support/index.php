@@ -37,13 +37,19 @@ Chat on IRC: <a onClick="javascript:pageTracker._trackPageview('/external/widget
 
 <h1>I have a problem to report</h1>
 
+<div id="download_new">
+<strong>Common issues</strong><br/>
+<a href="http://developer.pidgin.im/ticket/7849">Pidgin crashes or hangs when closed</a> (Windows/2.5.3)
+</div>
+
 <ul>
 <li>First, don't panic.</li>
 <li><a href="http://developer.pidgin.im/query?status=new&status=pending&col=id&col=summary&order=priority&version=<? echo $pidgin_version; ?>&type=defect">Search</a> to see if it has already been reported.
 <li>Otherwise, learn how to <a href="http://developer.pidgin.im/wiki/TipsForBugReports">file a bug report</a>
 </ul>
 
-<div id="download_new">
+<div>
+<br/>
 <strong>Pidgin Crashed?</strong><br/><br/>
 What to do if a crash occurs:<br/>
 <a href="http://developer.pidgin.im/wiki/TipsForBugReports#WindowsUsers">On Windows</a><br/>
