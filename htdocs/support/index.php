@@ -39,7 +39,7 @@ Chat on IRC: <a onClick="javascript:pageTracker._trackPageview('/external/widget
 
 <div id="download_new">
 <strong>Common issues</strong><br/>
-<a href="http://developer.pidgin.im/ticket/7849">Pidgin crashes or hangs when closed</a> (Windows/2.5.3)
+<a href="http://developer.pidgin.im/ticket/7849">Pidgin hangs when closed</a> (Windows/2.5.3)
 </div>
 
 <ul>
