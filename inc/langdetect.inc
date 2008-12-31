@@ -72,7 +72,12 @@ $languages["zh_CN"]="Simplified Chinese";
 $languages["zh_HK"]="Hong Kong Chinese";
 $languages["zh_TW"]="Traditional Chinese";
 
-$language_code = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-$language = $languages[$language_code];
+if (empty($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
+  $language_code = "";
+  $language = "";
+} else {
+  $language_code = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+  $language = $languages[$language_code];
+}
 ?>
 
