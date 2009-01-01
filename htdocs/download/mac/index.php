@@ -19,7 +19,7 @@
 
 <div class="box_download">
 
-<p><a href="http://pdb.finkproject.org/pdb/package.php/pidgin" onClick="javascript:pageTracker._trackPageview('/external/pdb.finkproject.org');">
+<p><a href="http://pdb.finkproject.org/pdb/package.php/pidgin" onclick="javascript:pageTracker._trackPageview('/external/pdb.finkproject.org');">
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
 Find Pidgin<br />
 <span class="number">for Mac OS X via Fink</span>
