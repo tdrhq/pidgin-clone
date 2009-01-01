@@ -23,7 +23,7 @@ Also look at the <a href="http://developer.pidgin.im/wiki/FAQ">Frequently Asked 
 <h2>Need to talk to a human?</h2>
 
 Send an email: <a href="http://www.pidgin.im/cgi-bin/mailman/listinfo/support">Pidgin support mailing list</a><br/>
-Chat on IRC: <a onclick="javascript:pageTracker._trackPageview('/external/widget.mibbit.com');" href="http://widget.mibbit.com/?settings=4102eeafa56ea5c509e3cea7434fca3f&amp;server=irc.freenode.net&amp;channel=%23pidgin" target="_blank">#pidgin on Freenode</a>
+Chat on IRC: <a href="javascript:popupMibbitWidget()">#pidgin on Freenode</a>
 
 
 </div>
@@ -56,12 +56,18 @@ What to do if a crash occurs:<br/>
 <a href="http://developer.pidgin.im/wiki/GetABacktrace">On Linux</a>
 
 
-
 </div>
 
 </div>
 </div>
 
 </div>
+
+<script type="text/javascript">
+  function popupMibbitWidget() {
+    pageTracker._trackPageview('/external/widget.mibbit.com');
+    window.open('http://widget.mibbit.com/?settings=4102eeafa56ea5c509e3cea7434fca3f&amp;server=irc.freenode.net&amp;channel=%23pidgin');
+  }
+</script>
 
 <?php include($_SERVER['DOCUMENT_ROOT'] . "/../inc/footer.inc"); ?>
