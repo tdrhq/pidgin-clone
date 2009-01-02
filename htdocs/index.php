@@ -34,6 +34,9 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 <div id="main">
 
 <div id="download_new"><strong>
+NEW!  <a href="http://community.pidgin.im">Submit your ideas to Pidgin</a><br>
+<br>
+
 Current user? Take the <a href="http://www.pidgin.im/survey/index.php?sid=84494">Pidgin user survey</a></strong>
 </div>
 <br />
