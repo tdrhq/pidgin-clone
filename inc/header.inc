@@ -25,7 +25,7 @@ $sections['Download']              = "/download/";
 $sections['Plugins']               = "http://developer.pidgin.im/wiki/ThirdPartyPlugins";
 $sections['Help']                  = "/support/";
 $sections['About']                 = "/about/";
-$sections['Community']             = "http://community.pidgin.im/";
+$sections['Community']             = "http://community.pidgin.im/brainstorm/";
 // TEMPORARILY DISABLED.  If all tabs are enabled, wrapping will break in some browsers.  News will be brought back soon.
 // $sections['News']                  = "http://planet.pidgin.im/";
 $sections['Development']           = "http://developer.pidgin.im/";
