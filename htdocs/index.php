@@ -39,7 +39,7 @@ NEW!  <a href="http://community.pidgin.im/brainstorm/">Submit your ideas to Pidg
 
 Current user? Take the <a href="http://www.pidgin.im/survey/index.php?sid=84494">Pidgin user survey</a></strong>
 </div>
-<br>
+<br />
 
 <h1>IM all your friends in one place</h1>
 

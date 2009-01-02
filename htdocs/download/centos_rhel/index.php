@@ -20,7 +20,7 @@
 <div class="box_download">
 
 <p><a href="http://rpm.pidgin.im/centos/pidgin.repo"
-onClick="javascript:pageTracker._trackPageview('/goals/downloads/centos_rhel');"
+onclick="javascript:pageTracker._trackPageview('/goals/downloads/centos_rhel');"
 >
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
 Download Pidgin<br />
