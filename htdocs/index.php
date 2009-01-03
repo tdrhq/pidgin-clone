@@ -33,7 +33,7 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 <div class="box_home" id="right">
 <div id="main">
 
-<div id="download_new"><strong>
+<div class="prominent_box"><strong>
 Current user? Take the <a href="http://www.pidgin.im/survey/index.php?sid=84494">Pidgin user survey</a></strong>
 </div>
 <br />

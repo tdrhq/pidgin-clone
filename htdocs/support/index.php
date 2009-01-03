@@ -36,7 +36,7 @@ Chat on IRC: <a onclick="javascript:this.target='_blank'; pageTracker._trackPage
 
 <h1>I have a problem to report</h1>
 
-<div id="download_new">
+<div class="prominent_box">
 <strong>Common issues</strong><br/>
 <a href="http://developer.pidgin.im/ticket/7849">Pidgin hangs when closed</a> (Windows/2.5.3)
 </div>

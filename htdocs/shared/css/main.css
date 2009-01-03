@@ -114,18 +114,11 @@ a:hover, a:active {
 }
 */
 
-#download_new {
+.prominent_box {
   padding: 5px 0px 10px 0px;
   text-align: center;
   border: 1px solid #999;
   background-color: #EEE;
-}
-
-#download_new BUTTON {
-  font-size: 24px;
-  border-style: outset;
-  border-width: 3px;
-  cursor: pointer;
 }
 
 DIV.linkbar {

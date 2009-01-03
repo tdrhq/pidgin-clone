@@ -2,7 +2,7 @@
 include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.downloaddetect.inc");
 ?>
 
-<div id="download_new">
+<div class="prominent_box">
 <form method="get" action="<? echo $download_link; ?>">
 <div>
 <button type="submit" id="download_link" 
