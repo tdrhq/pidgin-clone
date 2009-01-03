@@ -1,0 +1,50 @@
+<?
+  // Update these to match the current page.
+  $page['title'] =   "<TMPL_VAR name>";
+  $page['section'] = "News";
+  $page['subsect'] = "Latest News";
+  $page['abslink'] = TRUE;
+
+  include("/srv/www/pidgin.im/inc/header.inc");
+?>
+
+<div id="content">
+
+<? include("/srv/www/pidgin.im/inc/section.news.inc"); ?>
+
+<div class="box_right">
+<div id="main">
+
+<h1><TMPL_VAR name></h1>
+
+<TMPL_LOOP Items>
+<TMPL_IF title>
+<h2<TMPL_IF title_language> lang="<TMPL_VAR title_language>"</TMPL_IF>><a href="<TMPL_VAR link ESCAPE="HTML">"><TMPL_VAR title></a></h2>
+<TMPL_ELSE>
+<h2><a href="<TMPL_VAR link ESCAPE="HTML">"><TMPL_VAR date></a></h2>
+</TMPL_IF>
+
+<h3><TMPL_IF date><TMPL_VAR date> </TMPL_IF>by <a href="<TMPL_VAR channel_link ESCAPE="HTML">" title="<TMPL_VAR channel_title_plain ESCAPE="HTML">"><TMPL_VAR channel_name></a></h3>
+<TMPL_IF xchannel_face>
+<img class="face" src="images/<TMPL_VAR channel_face ESCAPE="HTML">" width="<TMPL_VAR channel_facewidth ESCAPE="HTML">" height="<TMPL_VAR channel_faceheight ESCAPE="HTML">" alt="">
+</TMPL_IF>
+
+<div class="post"<TMPL_IF content_language> lang="<TMPL_VAR content_language>"</TMPL_IF>>
+<TMPL_VAR content>
+</div>
+
+</TMPL_LOOP>
+
+<p><strong>Last updated:</strong> <TMPL_VAR date> (<em>All times are 
+UTC.</em>)</p>
+
+<p>Powered by: <a href="http://www.planetplanet.org/"><img 
+src="images/planet.png" width="80" height="15" alt="Planet" /></a></p>
+
+</div>
+</div>
+
+</div>
+
+<?php include("/srv/www/pidgin.im/inc/footer.inc"); ?>
+
