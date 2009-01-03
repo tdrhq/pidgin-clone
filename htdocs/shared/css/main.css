@@ -115,7 +115,7 @@ a:hover, a:active {
 */
 
 .prominent_box {
-  padding: 5px 0px 10px 0px;
+  padding: 5px 4px 10px;
   text-align: center;
   border: 1px solid #999;
   background-color: #EEE;
