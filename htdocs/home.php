@@ -45,17 +45,17 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download_new.inc");
 <ul>
 
 <li>
-<strong>One single program, all of your networks</strong><br>
-Connects to AIM, Yahoo, MSN and more.<br>
+<strong>One single program, all of your networks</strong><br />
+Connects to AIM, Yahoo, MSN and more.<br />
 <a href="/shared/img/im_networks.jpg" id="protocols" target="_new">View supported IM networks</a>
 </li>
 <li>
-<strong>No ads</strong><br>
+<strong>No ads</strong><br />
 100% free and actively supported by the open source community
 </li>
 <li>
-<strong>Simple yet customizable</strong><br>
-An intuitive interface that can be extended by plugins.<br>
+<strong>Simple yet customizable</strong><br />
+An intuitive interface that can be extended by plugins.<br />
 <!--<a href="/shared/img/screens/account-options.jpg" id="screen4" class="multibox">View screenshots</a>-->
 
 </li>

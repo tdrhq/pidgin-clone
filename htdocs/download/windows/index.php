@@ -21,7 +21,7 @@
 <div class="box_download">
 
 <p><a href="http://downloads.sourceforge.net/pidgin/pidgin-<? echo $pidgin_version; ?>.exe"
-onClick="javascript:pageTracker._trackPageview('/goals/downloads/win');"
+onclick="javascript:pageTracker._trackPageview('/goals/downloads/win');"
 >
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
 Download Pidgin<br />
