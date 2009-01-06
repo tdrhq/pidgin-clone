@@ -8,7 +8,7 @@ if (!array_key_exists('abslink', $page)) {
   $page['abslink'] = FALSE;
 }
 if (!array_key_exists('siteroot', $page)) {
-  $page['siteroot'] = "http://www.pidgin.im";
+  $page['siteroot'] = "http://pidgin.im";
 }
 if (!array_key_exists('title', $page)) {
   $page['title'] = 'Home';
@@ -90,7 +90,7 @@ d.write('<sc'+'ript src="'+
 
 
 <div id="header">
-<a href="http://www.pidgin.im/"><img src="/shared/img/logo.text.jpg" alt="Pidgin" /></a>
+<a href="http://pidgin.im/"><img src="/shared/img/logo.text.jpg" alt="Pidgin" /></a>
 <ul>
 <?
   foreach ($sections as $name => $link) {
