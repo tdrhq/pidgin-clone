@@ -38,6 +38,7 @@ Chat on IRC: <a onclick="javascript:this.target='_blank'; pageTracker._trackPage
 
 <div class="prominent_box">
 <strong>Common issues</strong><br/>
+<a href="http://developer.pidgin.im/ticket/8087">Pidgin cannot connect to MSN</a> (2.5.x)<br/>
 <a href="http://developer.pidgin.im/ticket/7849">Pidgin hangs when closed</a> (Windows/2.5.3)
 </div>
 
