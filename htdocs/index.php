@@ -70,9 +70,9 @@ Current user? Take the <a href="http://pidgin.im/survey/index.php?sid=84494">Pid
 </div>
 
 <!-- This will pull from somewhere else at some point -->
-<p class="more" id="lowblurb">We are aware of the problems connecting to MSN with Pidgin
+<!-- p class="more" id="lowblurb">We are aware of the problems connecting to MSN with Pidgin
 2.5.3 and older. We hope to have a new release and packages out soon to fix
-this.</p>
+this.</p -->
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->

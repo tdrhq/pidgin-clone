@@ -73,6 +73,7 @@ generous contributions of our volunteer translators.
 <ul class="condensed">
 <?php
 
+asort($languages);
 foreach (array_keys($languages) as $lang){
 
 echo '<li>'.$languages[$lang].'</li>';
