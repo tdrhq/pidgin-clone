@@ -799,7 +799,7 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 			((PurpleGroup *)((PurpleBlistNode *)buddy)->parent->parent)->online++;
 	} else if (!purple_status_is_online(status) &&
 				purple_status_is_online(old_status)) {
-		purple_blist_node_set_int(&buddy->node, "last_seen", time(NULL));
+/*		purple_blist_node_set_int(&buddy->node, "last_seen", time(NULL)); */
 		purple_signal_emit(purple_blist_get_handle(), "buddy-signed-off", buddy);
 		((PurpleContact*)((PurpleBlistNode*)buddy)->parent)->online--;
 		if (((PurpleContact*)((PurpleBlistNode*)buddy)->parent)->online == 0)
