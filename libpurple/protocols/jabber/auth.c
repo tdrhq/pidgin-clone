@@ -394,6 +394,32 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	} while (again);
 
 	if (js->sasl_state == SASL_CONTINUE || js->sasl_state == SASL_OK) {
+	
+		/* Adium: Avoid SASL PLAIN for 10.4 compatibility, as it's broken there */
+		if (js->current_mech && (strcmp(js->current_mech, "PLAIN") == 0) && purple_prefs_get_bool("/plugins/prpl/jabber/avoid_sasl_for_plain_auth")) {
+			js->auth_type = JABBER_AUTH_PLAIN;
+			js->sasl_state = SASL_OK;
+			sasl_dispose(&js->sasl);
+			js->sasl = NULL;
+
+			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
+				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+											js->gc->account->username);
+				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
+									  _("Plaintext Authentication"),
+									  msg,
+									  2,
+									  purple_connection_get_account(js->gc), NULL, NULL,
+									  purple_connection_get_account(js->gc), allow_plaintext_auth,
+									  disallow_plaintext_auth);
+				g_free(msg);
+				return;
+			}
+			finish_plaintext_authentication(js);
+
+			return;
+		}
+
 		auth = xmlnode_new("auth");
 		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
 		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
