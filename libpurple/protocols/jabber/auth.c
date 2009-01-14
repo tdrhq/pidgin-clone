@@ -1094,6 +1094,11 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 
 #ifdef HAVE_CYRUS_SASL
 	if(js->auth_fail_count++ < 5) {
+		gboolean tried_gssapi_first = FALSE;
+
+		if (js->auth_fail_count == 1 && !strcmp(js->current_mech, "GSSAPI"))
+			tried_gssapi_first = TRUE;
+
 		if (js->current_mech && strlen(js->current_mech) > 0) {
 			char *pos;
 			if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
@@ -1110,6 +1115,17 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 			
 			jabber_auth_start_cyrus(js);
 			return;
+
+		} else if (tried_gssapi_first) {
+			/* If we tried GSSAPI first, it failed, and it was our only shot, try iq:jabber:auth
+			 * for compatibility with iChat 10.5 Server.
+			 */
+			sasl_dispose(&js->sasl);
+			js->sasl = NULL;
+
+			js->auth_type = JABBER_AUTH_IQ_AUTH;
+			jabber_auth_start_old(js);
+			return;			
 		}
 	}
 #endif
