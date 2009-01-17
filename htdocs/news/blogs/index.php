@@ -29,6 +29,7 @@ additional historical information for the more adventurous or bored.</p>
   <li><a href="http://www.schierer.org/~luke/log/category/personal/gaim">Luke Schierer</a></li>
   <li><a href="/~kstange/blog/">Kevin Stange</a></li>
   <li><a href="http://faceprint.com/?tags=pidgin,gaim">Nathan Walp</a></li>
+  <li><a href="http://blog.caseyho.com/feeds/posts/default/-/pidgin">Casey Ho</a></li>
 </ul>
 
 </div>
