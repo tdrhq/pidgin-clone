@@ -540,6 +540,8 @@ peer_connection_common_established_cb(gpointer data, gint source, const gchar *e
 
 	conn = data;
 
+	purple_debug_info("oscar", "peer_connection_common_established_cb(): source %i, verified %i", source, verified);
+	
 	if (verified)
 		conn->verified_connect_data = NULL;
 	else
@@ -692,6 +694,10 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 
 	listener_ip = purple_network_get_my_ip(bos_conn->fd);
 	listener_port = purple_network_get_port_from_fd(conn->listenerfd);
+
+	purple_debug_info("oscar", "peer_connection_establish_listener_cb(): requesting a direct connection at %s:%hu",
+		listener_ip, listener_port);
+
 	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 	{
 		aim_im_sendch2_odc_requestdirect(od,
@@ -793,6 +799,8 @@ peer_connection_trynext(PeerConnection *conn)
 			g_free(tmp);
 		}
 
+		purple_debug_info("oscar", "Attempting to connect to (verified) %s:%hu", 
+			    conn->verifiedip, conn->port);		  
 		conn->verified_connect_data = purple_proxy_connect(NULL, account,
 				conn->verifiedip, conn->port,
 				peer_connection_verified_established_cb, conn);
@@ -800,6 +808,9 @@ peer_connection_trynext(PeerConnection *conn)
 		if ((conn->verifiedip == NULL) ||
 			strcmp(conn->verifiedip, conn->clientip))
 		{
+			purple_debug_info("oscar", "Attempting to connect to (client) %s:%hu", 
+							  conn->clientip, conn->port);		  
+
 			conn->client_connect_data = purple_proxy_connect(NULL, account,
 					conn->clientip, conn->port,
 					peer_connection_client_established_cb, conn);
@@ -829,6 +840,8 @@ peer_connection_trynext(PeerConnection *conn)
 		 * that the user who connected is our friend.
 		 */
 		conn->flags |= PEER_CONNECTION_FLAG_IS_INCOMING;
+
+		purple_debug_info("oscar", "Asking remote user to connect to us...");
 
 		conn->listen_data = purple_network_listen_range(5190, 5290, SOCK_STREAM,
 				peer_connection_establish_listener_cb, conn);
@@ -865,6 +878,10 @@ peer_connection_trynext(PeerConnection *conn)
 					PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 		}
+
+		purple_debug_info("oscar", "Attempting to connect via proxy %s:%hu",
+				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
+				PEER_PROXY_PORT);
 
 		conn->verified_connect_data = purple_proxy_connect(NULL, account,
 				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
