@@ -66,8 +66,8 @@ struct _GntEntryKillRing
 #ifdef USE_ENCHANT
 typedef struct _GntEntryWord
 {
-	int start;				/**< start of word relative to entry->start */
-	int length;			/**< length of word in bytes */
+	int start;              /**< start of word relative to entry->start */
+	int length;             /**< length of word in bytes */
 	gboolean checked_spell; /**< Flag to indicate this word has been spell checked */
 	gboolean misspelled;    /**< Flag to indicate the word is misspelled */
 	struct _GntEntryWord *next;
@@ -313,6 +313,7 @@ static char *
 set_cursor_position(GntEntry *entry, char *pos)
 {
 #ifdef USE_ENCHANT
+	/* re-sync the cursor word pointer */
 	if (entry->spell && entry->spell->enable) {
 		GntEntryWord *w = entry->spell->word_list;
 		for (; w; w = w->next) {
@@ -334,6 +335,7 @@ static char *
 set_scroll_position(GntEntry *entry, char *pos)
 {
 #ifdef USE_ENCHANT
+	/* re-sync the cursor word pointer */
 	if (entry->spell && entry->spell->enable) {
 		GntEntryWord *w = entry->spell->word_list;
 		for (; w; w = w->next) {
@@ -443,16 +445,54 @@ show_suggest_dropdown(GntEntry *entry)
 
 #ifdef USE_ENCHANT
 static gboolean
-is_word_break(const char *prev, const char *wc)
+is_word_break(const char *start, const char *wc, const char *end)
 {
 	/* TODO: add pango code here */
-	gunichar uc = g_utf8_get_char(wc);
+	/* NOTES:
+	 * There are three cases to consider with word breaks.
+	 * 1) simple case where a space follows a word in a sentence.
+	 *    e.g. "This is fun."
+	 *              ^  ^
+	 * 2) punctuation follows a word in a sentence. 
+	 *    e.g. "This is fun."  "Where are you?"  "Today, she said 'Maybe' to me."
+	 *                     ^                 ^         ^         ^
+	 * 3) contractions are counter examples of #2
+	 *    e.g. "This isn't fun."
+	 *                  ^ NOT a word break
+	 *
+	 * To correclty be able to distinguish contractions from end single quotes,
+	 * a sliding window of 3 characters must be used:
+	 * "n't" and "e' " from last example of (2) and example from (3)
+	 *
+	 * Two characters cannot be used without some backtracking logic (i.e. realizing a word
+	 * break for the previous character).
+	 */
+	char *pc = NULL, *nc = NULL;
+	gunichar cur_uc, prev_uc = NULL, next_uc = NULL;
+	cur_uc = g_utf8_get_char(wc);
+	if (start)
+	{
+		pc = g_utf8_find_prev_char(start, wc);
+		if (pc) {
+			prev_uc = g_utf8_get_char(pc);
+		}
+	}
+	if (end)
+	{
+		nc = g_utf8_find_next_char(wc, end);
+		if (nc) {
+			next_uc = g_utf8_get_char(nc);
+		}
+	}
 
 #if 1
-	return g_unichar_isspace(uc) || g_unichar_ispunct(uc);
+	return g_unichar_isspace(cur_uc) ||
+		(g_unichar_ispunct(cur_uc) && (pc == NULL || nc == NULL ||
+									   g_unichar_ispunct(prev_uc) || g_unichar_ispunct(next_uc) ||
+									   g_unichar_isspace(prev_uc) || g_unichar_isspace(next_uc)));
 #else
 	/* XXX: Fix this */
-	GUnicodeType type = g_unichar_type(uc);
+	GUnicodeType type = g_unichar_type(cur_uc);
 	switch (type) {
 		case G_UNICODE_LOWERCASE_LETTER:
 		case G_UNICODE_MODIFIER_LETTER:
@@ -483,7 +523,7 @@ get_beginning_of_prev_word(char *here, char *start)
 	while (s > start)
 	{
 		char *t = g_utf8_find_prev_char(start, s);
-		if (is_word_break(start, t))
+		if (is_word_break(start, t, NULL))
 			break;
 		s = t;
 	}
@@ -497,10 +537,10 @@ get_beginning_of_next_word(char *here, char *end)
 	char *t;
 	gboolean got_space;
 
-	got_space = is_word_break(NULL, s);
+	got_space = is_word_break(NULL, s, end);
 	while (s < end && !got_space) {
 		t = g_utf8_find_next_char(s, end);
-		if (is_word_break(NULL, t))
+		if (is_word_break(NULL, t, end))
 			got_space = TRUE;
 		s = t;
 	}
@@ -510,7 +550,7 @@ get_beginning_of_next_word(char *here, char *end)
 			s = t;
 			if (!t)
 				break;
-			if (!is_word_break(NULL, t))
+			if (!is_word_break(NULL, t, end))
 				break;
 		}
 	} else {
@@ -527,7 +567,7 @@ get_end_of_word(char *here, char *end)
 
 	while (s < end) {
 		t = g_utf8_find_next_char(s, end);
-		if (!t || is_word_break(NULL, t))
+		if (!t || is_word_break(NULL, t, end))
 			break;
 		s = t;
 	}
@@ -1148,7 +1188,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 #ifdef USE_ENCHANT
 			if (entry->spell) {
 				if (entry->spell->cursor_word) {
-					if (is_word_break(entry->start, str)) {
+					if (is_word_break(entry->start, str, entry->end)) {
 						if (entry->cursor > entry->start + entry->spell->cursor_word->start) {
 							/* The current word just ended. Spell check it */
 							const char *lend = lastw ? (entry->start + lastw->start + lastw->length + 1) : NULL;
@@ -1156,7 +1196,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 							lastw = entry->spell->cursor_word;
 							lastw->length = entry->cursor - entry->start - lastw->start;
 							check_entry_word(entry, entry->spell->cursor_word);
-							if (*n && !is_word_break(entry->start, n)) {
+							if (*n && !is_word_break(entry->start, n, entry->end)) {
 								/* The pressed whitespace split one word into two */
 								lastw = g_new0(GntEntryWord, 1);
 								lastw->start = n - entry->start;
@@ -1186,7 +1226,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 								entry->spell->cursor_word->misspelled)
 							check_entry_word(entry, entry->spell->cursor_word);
 					}
-				} else if (!is_word_break(entry->start, str)) {
+				} else if (!is_word_break(entry->start, str, entry->end)) {
 					/* A new word is starting */
 					GntEntryWord *w = gnt_entry_word_new();
 					w->start = entry->cursor - entry->start;
@@ -1983,7 +2023,7 @@ gnt_entry_parse_words(GntEntry *entry)
 		return start;
 
 	/* if start begins on a non-letter, find the next word */
-	if (is_word_break(entry->start, entry->start)) {
+	if (is_word_break(entry->start, entry->start, entry->end)) {
 		s = get_beginning_of_next_word(entry->start, entry->end);
 		if (!s) {
 			s = entry->end;
