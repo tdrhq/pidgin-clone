@@ -257,6 +257,10 @@ disabled = gray; black
 .br
 urgent = green; black
 .br
+misspell = red; blue
+.br
+misspelld = red; black
+.br
 
 .br
 # Remap some keys for GntEntry

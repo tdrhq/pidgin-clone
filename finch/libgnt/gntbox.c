@@ -61,8 +61,13 @@ get_title_thingies(GntBox *box, char *title, int *p, int *r)
 	int len;
 	char *end = (char*)gnt_util_onscreen_width_to_pointer(title, widget->priv.width - 4, &len);
 	
-	if (p)
+	if (p) {
 		*p = (widget->priv.width - len) / 2;
+		if (*p == 0) {
+			*p = 1;
+			--len;
+		}
+	}
 	if (r)
 		*r = (widget->priv.width + len) / 2;
 	*end = '\0';
