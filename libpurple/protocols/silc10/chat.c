@@ -180,7 +180,7 @@ static void
 silcpurple_chat_getinfo_menu(PurpleBlistNode *node, gpointer data)
 {
 	PurpleChat *chat = (PurpleChat *)node;
-	silcpurple_chat_getinfo(chat->account->gc, chat->components);
+	silcpurple_chat_getinfo(purple_account_get_connection(chat->account), chat->components);
 }
 
 
@@ -288,10 +288,10 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 	f = purple_request_fields_get_field(fields, "list");
 	if (!purple_request_field_list_get_selected(f)) {
 		/* Add new public key */
-		purple_request_file(sg->gc, _("Open Public Key..."), NULL, FALSE,
+		purple_request_file(purple_account_get_connection(sg), _("Open Public Key..."), NULL, FALSE,
 				  G_CALLBACK(silcpurple_chat_chpk_add),
 				  G_CALLBACK(silcpurple_chat_chpk_cancel),
-				  purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+				  purple_connection_get_account(purple_account_get_connection(sg)), NULL, NULL, sgc);
 		return;
 	}
 
@@ -419,11 +419,11 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 	if (!channel_pubkeys) {
 		f = purple_request_field_list_new("list", NULL);
 		purple_request_field_group_add_field(g, f);
-		purple_request_fields(sg->gc, _("Channel Authentication"),
+		purple_request_fields(purple_account_get_connection(sg), _("Channel Authentication"),
 				    _("Channel Authentication"), t, fields,
 				    _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
 				    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
-					purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+					purple_connection_get_account(purple_account_get_connection(sg)), NULL, NULL, sgc);
 		return;
 	}
 	sgc->pubkeys = silc_buffer_copy(channel_pubkeys);
@@ -447,8 +447,8 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 		ident = silc_pkcs_decode_identifier(pubkey->identifier);
 
 		g_snprintf(tmp2, sizeof(tmp2), "%s\n  %s\n  %s",
-			   ident->realname ? ident->realname : ident->username ?
-			   ident->username : "", fingerprint, babbleprint);
+			   ident->realname ? ident->realname : purple_account_get_username(ident) ?
+			   purple_account_get_username(ident) : "", fingerprint, babbleprint);
 		purple_request_field_list_add(f, tmp2, pubkey);
 
 		silc_free(fingerprint);
@@ -458,11 +458,11 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 	}
 
 	purple_request_field_list_set_multi_select(f, FALSE);
-	purple_request_fields(sg->gc, _("Channel Authentication"),
+	purple_request_fields(purple_account_get_connection(sg), _("Channel Authentication"),
 			    _("Channel Authentication"), t, fields,
 			    _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
 			    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
-				purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+				purple_connection_get_account(purple_account_get_connection(sg)), NULL, NULL, sgc);
 
 	silc_argument_payload_free(chpks);
 }
@@ -537,7 +537,7 @@ silcpurple_chat_prv_add(SilcPurpleCharPrv p, PurpleRequestFields *fields)
 	purple_blist_node_set_string((PurpleBlistNode *)cn, "parentch", p->channel);
 
 	/* Join the group */
-	silcpurple_chat_join(sg->gc, comp);
+	silcpurple_chat_join(purple_account_get_connection(sg), comp);
 
 	silc_free(p);
 }

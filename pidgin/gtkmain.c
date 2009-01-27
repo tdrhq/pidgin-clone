@@ -125,7 +125,7 @@ dologin_named(const char *name)
 		for (i = 0; names[i] != NULL; i++) {
 			account = purple_accounts_find(names[i], NULL);
 			if (account != NULL) { /* found a user */
-				purple_account_set_enabled(account, PIDGIN_UI, TRUE);
+				purple_account_set_enabled(account, TRUE);
 			}
 		}
 		g_strfreev(names);
@@ -136,7 +136,7 @@ dologin_named(const char *name)
 		if (accounts != NULL)
 		{
 			account = (PurpleAccount *)accounts->data;
-			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
+			purple_account_set_enabled(account, TRUE);
 		}
 	}
 }
@@ -187,6 +187,10 @@ sighandler(int sig)
 	switch (sig) {
 	case SIGHUP:
 		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+#warning FIXME: use the connection-manager
+#if 0
+		purple_connections_disconnect_all();
+#endif
 		break;
 	case SIGSEGV:
 		fprintf(stderr, "%s", segfault_message);
@@ -292,7 +296,9 @@ pidgin_ui_init(void)
 	purple_privacy_set_ui_ops(pidgin_privacy_get_ui_ops());
 	purple_request_set_ui_ops(pidgin_request_get_ui_ops());
 	purple_sound_set_ui_ops(pidgin_sound_get_ui_ops());
+#if 0
 	purple_connections_set_ui_ops(pidgin_connections_get_ui_ops());
+#endif
 	purple_whiteboard_set_ui_ops(pidgin_whiteboard_get_ui_ops());
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 	purple_idle_set_ui_ops(pidgin_idle_get_ui_ops());
@@ -829,7 +835,7 @@ int main(int argc, char *argv[])
 		/* disable all accounts */
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
-			purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+			purple_account_set_enabled(account, FALSE);
 		}
 		/* honor the startup status preference */
 		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
@@ -890,3 +896,4 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+

@@ -64,7 +64,7 @@ static void process_unknow_cmd(PurpleConnection *gc,const gchar *title, guint8 *
 
 	qq_show_packet(title, data, data_len);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
 			data, data_len,
@@ -83,7 +83,7 @@ static void do_im_ack(guint8 *data, gint data_len, PurpleConnection *gc)
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	qd = gc->proto_data;
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (data[0] != 0) {
 		purple_debug_warning("QQ", "Failed sent IM\n");
@@ -96,7 +96,7 @@ static void do_im_ack(guint8 *data, gint data_len, PurpleConnection *gc)
 
 static void do_server_news(PurpleConnection *gc, guint8 *data, gint data_len)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gint bytes;
 	gchar *title, *brief, *url;
 	gchar *content;
@@ -270,7 +270,7 @@ static void process_private_msg(guint8 *data, gint data_len, guint16 seq, Purple
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (data_len < 16) {	/* we need to ack with the first 16 bytes */
 		purple_debug_error("QQ", "MSG is too short\n");
@@ -385,8 +385,7 @@ static void request_server_ack(PurpleConnection *gc, gchar *funct_str, gchar *fr
 	guint8 bar;
 
 	g_return_if_fail(funct_str != NULL && from != NULL);
-	qd = (qq_data *) gc->proto_data;
-
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	bar = 0x1e;
 	raw_data = g_newa(guint8, strlen(funct_str) + strlen(from) + 16);
@@ -404,7 +403,7 @@ static void request_server_ack(PurpleConnection *gc, gchar *funct_str, gchar *fr
 static void do_server_notice(PurpleConnection *gc, gchar *from, gchar *to,
 		guint8 *data, gint data_len)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gchar *msg, *msg_utf8;
 	gchar *title, *content;
 
@@ -442,7 +441,7 @@ static void process_server_msg(PurpleConnection *gc, guint8 *data, gint data_len
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	data_str = g_newa(guint8, data_len + 1);
 	g_memmove(data_str, data, data_len);
@@ -508,8 +507,9 @@ void qq_proc_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8 *
 	guint8 *data;
 	gint data_len;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	data_len = qq_decrypt(data, rcved, rcved_len, qd->session_key);
@@ -570,8 +570,9 @@ void qq_update_room(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
 	qq_data *qd;
 	gint ret;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	switch (room_cmd) {
 		case 0:
@@ -602,8 +603,9 @@ void qq_update_all_rooms(PurpleConnection *gc, guint8 room_cmd, guint32 room_id)
 	gboolean is_new_turn = FALSE;
 	guint32 next_id;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	next_id = qq_room_get_next(gc, room_id);
 	purple_debug_info("QQ", "Update rooms, next id %u, prev id %u\n", next_id, room_id);
@@ -649,8 +651,9 @@ void qq_update_all(PurpleConnection *gc, guint16 cmd)
 {
 	qq_data *qd;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	switch (cmd) {
 		case 0:
@@ -691,8 +694,9 @@ static void update_all_rooms_online(PurpleConnection *gc, guint8 room_cmd, guint
 	qq_data *qd;
 	guint32 next_id;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	next_id = qq_room_get_next_conv(gc, room_id);
 	if (next_id <= 0 && room_id <= 0) {
@@ -721,8 +725,9 @@ static void update_all_rooms_online(PurpleConnection *gc, guint8 room_cmd, guint
 void qq_update_online(PurpleConnection *gc, guint16 cmd)
 {
 	qq_data *qd;
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	switch (cmd) {
 		case 0:
@@ -749,8 +754,9 @@ void qq_proc_room_cmds(PurpleConnection *gc, guint16 seq,
 	gint bytes;
 	guint8 reply_cmd, reply;
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	data_len = qq_decrypt(data, rcved, rcved_len, qd->session_key);
@@ -883,8 +889,9 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 	gint data_len = 0;
 	guint ret_8 = QQ_LOGIN_REPLY_ERR;
 
-	g_return_val_if_fail (gc != NULL && gc->proto_data != NULL, QQ_LOGIN_REPLY_ERR);
-	qd = (qq_data *) gc->proto_data;
+	g_return_val_if_fail(gc != NULL, QQ_LOGIN_REPLY_ERR);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_val_if_fail(qd != NULL, QQ_LOGIN_REPLY_ERR);
 
 	g_return_val_if_fail(rcved_len > 0, QQ_LOGIN_REPLY_ERR);
 	data = g_newa(guint8, rcved_len);
@@ -1009,7 +1016,7 @@ guint8 qq_proc_login_cmds(PurpleConnection *gc,  guint16 cmd, guint16 seq,
 
 			purple_connection_update_progress(gc, _("Logging in"), QQ_CONNECT_STEPS - 1, QQ_CONNECT_STEPS);
 			purple_debug_info("QQ", "Login replies OK; everything is fine\n");
-			purple_connection_set_state(gc, PURPLE_CONNECTED);
+			purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 			qd->is_login = TRUE;	/* must be defined after sev_finish_login */
 
 			/* now initiate QQ Qun, do it first as it may take longer to finish */
@@ -1042,8 +1049,9 @@ void qq_proc_client_cmds(PurpleConnection *gc, guint16 cmd, guint16 seq,
 
 	g_return_if_fail(rcved_len > 0);
 
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	data = g_newa(guint8, rcved_len);
 	data_len = qq_decrypt(data, rcved, rcved_len, qd->session_key);

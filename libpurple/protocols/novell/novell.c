@@ -111,7 +111,7 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 		}
 
 		/* Tell Purple that we are connected */
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 
 		_sync_contact_list(user);
 
@@ -131,8 +131,8 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 				/* Don't attempt to auto-reconnect if our
 				 * password was invalid.
 				 */
-				if (!purple_account_get_remember_password(gc->account))
-					purple_account_set_password(gc->account, NULL);
+				if (!purple_account_get_remember_password(purple_connection_get_account(gc)))
+					purple_account_set_password(purple_connection_get_account(gc), NULL);
 				reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 				break;
 			default:
@@ -741,16 +741,16 @@ _get_details_resp_add_privacy_item(NMUser *user, NMERR_T ret_code,
 
 		if (allowed) {
 
-			if (!g_slist_find_custom(gc->account->permit,
+			if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 									 display_id, (GCompareFunc)purple_utf8_strcasecmp)) {
-				purple_privacy_permit_add(gc->account, display_id, TRUE);
+				purple_privacy_permit_add(purple_connection_get_account(gc), display_id, TRUE);
 			}
 
 		} else {
 
-			if (!g_slist_find_custom(gc->account->permit,
+			if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 									 display_id, (GCompareFunc)purple_utf8_strcasecmp)) {
-				purple_privacy_deny_add(gc->account, display_id, TRUE);
+				purple_privacy_deny_add(purple_connection_get_account(gc), display_id, TRUE);
 			}
 		}
 
@@ -789,10 +789,10 @@ _create_privacy_item_deny_resp_cb(NMUser *user, NMERR_T ret_code,
 
 		if (display_id) {
 
-			if (!g_slist_find_custom(gc->account->deny,
+			if (!g_slist_find_custom(purple_connection_get_account(gc)->deny,
 									 display_id, (GCompareFunc)purple_utf8_strcasecmp)) {
 
-				purple_privacy_deny_add(gc->account, display_id, TRUE);
+				purple_privacy_deny_add(purple_connection_get_account(gc), display_id, TRUE);
 			}
 
 		} else {
@@ -840,11 +840,11 @@ _create_privacy_item_permit_resp_cb(NMUser *user, NMERR_T ret_code,
 
 		if (display_id) {
 
-			if (!g_slist_find_custom(gc->account->permit,
+			if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 									 display_id,
 									 (GCompareFunc)purple_utf8_strcasecmp)) {
 
-				purple_privacy_permit_add(gc->account, display_id, TRUE);
+				purple_privacy_permit_add(purple_connection_get_account(gc), display_id, TRUE);
 			}
 
 		} else {
@@ -1400,15 +1400,15 @@ _sync_privacy_lists(NMUser *user)
 	/* Set the Purple privacy setting */
 	if (user->default_deny) {
 		if (user->allow_list == NULL) {
-			gc->account->perm_deny = PURPLE_PRIVACY_DENY_ALL;
+			purple_connection_get_account(gc)->perm_deny = PURPLE_PRIVACY_DENY_ALL;
 		} else {
-			gc->account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
+			purple_connection_get_account(gc)->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
 		}
 	} else {
 		if (user->deny_list == NULL) {
-			gc->account->perm_deny = PURPLE_PRIVACY_ALLOW_ALL;
+			purple_connection_get_account(gc)->perm_deny = PURPLE_PRIVACY_ALLOW_ALL;
 		} else {
-			gc->account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
+			purple_connection_get_account(gc)->perm_deny = PURPLE_PRIVACY_DENY_USERS;
 		}
 	}
 
@@ -1420,9 +1420,9 @@ _sync_privacy_lists(NMUser *user)
 		else
 			name =(char *)node->data;
 
-		if (!g_slist_find_custom(gc->account->permit,
+		if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 								 name, (GCompareFunc)purple_utf8_strcasecmp)) {
-			purple_privacy_permit_add(gc->account, name , TRUE);
+			purple_privacy_permit_add(purple_connection_get_account(gc), name , TRUE);
 		}
 	}
 
@@ -1433,15 +1433,15 @@ _sync_privacy_lists(NMUser *user)
 		else
 			name =(char *)node->data;
 
-		if (!g_slist_find_custom(gc->account->deny,
+		if (!g_slist_find_custom(purple_connection_get_account(gc)->deny,
 								 name, (GCompareFunc)purple_utf8_strcasecmp)) {
-			purple_privacy_deny_add(gc->account, name, TRUE);
+			purple_privacy_deny_add(purple_connection_get_account(gc), name, TRUE);
 		}
 	}
 
 
 	/*  Remove stuff */
-	for (node = gc->account->permit; node; node = node->next) {
+	for (node = purple_connection_get_account(gc)->permit; node; node = node->next) {
 		dn = nm_lookup_dn(user, (char *)node->data);
 		if (dn != NULL &&
 			!g_slist_find_custom(user->allow_list,
@@ -1452,13 +1452,13 @@ _sync_privacy_lists(NMUser *user)
 
 	if (rem_list) {
 		for (node = rem_list; node; node = node->next) {
-			purple_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
+			purple_privacy_permit_remove(purple_connection_get_account(gc), (char *)node->data, TRUE);
 		}
 		g_free(rem_list);
 		rem_list = NULL;
 	}
 
-	for (node = gc->account->deny; node; node = node->next) {
+	for (node = purple_connection_get_account(gc)->deny; node; node = node->next) {
 		dn = nm_lookup_dn(user, (char *)node->data);
 		if (dn != NULL &&
 			!g_slist_find_custom(user->deny_list,
@@ -1469,7 +1469,7 @@ _sync_privacy_lists(NMUser *user)
 
 	if (rem_list) {
 		for (node = rem_list; node; node = node->next) {
-			purple_privacy_deny_remove(gc->account, (char *)node->data, TRUE);
+			purple_privacy_deny_remove(purple_connection_get_account(gc), (char *)node->data, TRUE);
 		}
 		g_slist_free(rem_list);
 	}
@@ -1615,7 +1615,7 @@ _initiate_conference_cb(PurpleBlistNode *node, gpointer ignored)
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(buddy->account);
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -1671,7 +1671,7 @@ novell_ssl_connect_error(PurpleSslConnection * gsc,
 	NMUser *user;
 
 	gc = data;
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	user->conn->ssl_conn->data = NULL;
 
 	purple_connection_ssl_error (gc, error);
@@ -1688,7 +1688,7 @@ novell_ssl_recv_cb(gpointer data, PurpleSslConnection * gsc,
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -1722,7 +1722,7 @@ novell_ssl_connected_cb(gpointer data, PurpleSslConnection * gsc,
 	if (gc == NULL || gsc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if ((user == NULL) || (conn = user->conn) == NULL)
 		return;
 
@@ -2193,7 +2193,7 @@ novell_login(PurpleAccount * account)
 	user = nm_initialize_user(name, server, port, account, _event_callback);
 	if (user && user->conn) {
 		/* save user */
-		gc->proto_data = user;
+		purple_object_set_protocol_data(PURPLE_OBJECT(gc),user);
 
 		/* connect to the server */
 		purple_connection_update_progress(gc, _("Connecting"),
@@ -2225,7 +2225,7 @@ novell_close(PurpleConnection * gc)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user) {
 		conn = user->conn;
 		if (conn && conn->ssl_conn) {
@@ -2233,7 +2233,7 @@ novell_close(PurpleConnection * gc)
 		}
 		nm_deinitialize_user(user);
 	}
-	gc->proto_data = NULL;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc),NULL);
 }
 
 static int
@@ -2253,7 +2253,7 @@ novell_send_im(PurpleConnection * gc, const char *name,
 		message_body == NULL || *message_body == '\0')
 		return 0;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return 0;
 
@@ -2339,7 +2339,7 @@ novell_send_typing(PurpleConnection * gc, const char *name, PurpleTypingState st
 	if (gc == NULL || name == NULL)
 		return 0;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return 0;
 
@@ -2373,7 +2373,7 @@ novell_convo_closed(PurpleConnection * gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user && (dn = nm_lookup_dn(user, who))) {
 		conf = nm_find_conversation(user, dn);
 		if (conf) {
@@ -2395,7 +2395,7 @@ novell_chat_leave(PurpleConnection * gc, int id)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -2427,7 +2427,7 @@ novell_chat_invite(PurpleConnection *gc, int id,
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -2466,7 +2466,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 	if (gc == NULL || text == NULL)
 		return -1;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return -1;
 
@@ -2543,7 +2543,7 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = (NMUser *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -2602,7 +2602,7 @@ novell_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 	if (gc == NULL || buddy == NULL || group == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = (NMUser *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user && (dn = nm_lookup_dn(user, buddy->name))) {
 		if (strcmp(group->name, NM_ROOT_FOLDER_NAME) == 0) {
 			gname = "";
@@ -2635,7 +2635,7 @@ novell_remove_group(PurpleConnection * gc, PurpleGroup *group)
 	if (gc == NULL || group == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = (NMUser *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user) {
 		NMFolder *folder = nm_find_folder(user, group->name);
 
@@ -2660,7 +2660,7 @@ novell_alias_buddy(PurpleConnection * gc, const char *name, const char *alias)
 	if (gc == NULL || name == NULL || alias == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = (NMUser *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user && (dn = nm_lookup_dn(user, name))) {
 
 		/* Alias all of instances of the contact */
@@ -2717,7 +2717,7 @@ novell_group_buddy(PurpleConnection * gc,
 		old_group_name == NULL || new_group_name == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = (NMUser *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user && (dn = nm_lookup_dn(user, name))) {
 
 		/* Find the old folder */
@@ -2775,7 +2775,7 @@ novell_rename_group(PurpleConnection * gc, const char *old_name,
 		return;
 	}
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user) {
 		/* Does new folder exist already? */
 		if (nm_find_folder(user, group->name)) {
@@ -2820,7 +2820,7 @@ novell_tooltip_text(PurpleBuddy * buddy, PurpleNotifyUserInfo * user_info, gbool
 		return;
 
 	gc = purple_account_get_connection(buddy->account);
-	if (gc == NULL || (user = gc->proto_data) == NULL)
+	if (gc == NULL || (user = purple_object_get_protocol_data(PURPLE_OBJECT(gc))) == NULL)
 		return;
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
@@ -2869,7 +2869,7 @@ novell_set_idle(PurpleConnection * gc, int time)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -2898,7 +2898,7 @@ novell_get_info(PurpleConnection * gc, const char *name)
 	if (gc == NULL || name == NULL)
 		return;
 
-	user = (NMUser *) gc->proto_data;
+	user = (NMUser *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user) {
 
 		user_record = nm_find_user_record(user, name);
@@ -2927,8 +2927,8 @@ novell_status_text(PurpleBuddy * buddy)
 	if (buddy && buddy->account) {
 		PurpleConnection *gc = purple_account_get_connection(buddy->account);
 
-		if (gc && gc->proto_data) {
-			NMUser *user = gc->proto_data;
+		if (gc && purple_object_get_protocol_data(PURPLE_OBJECT(gc))) {
+			NMUser *user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 			dn = nm_lookup_dn(user, buddy->name);
 			if (dn) {
@@ -2956,19 +2956,19 @@ novell_status_types(PurpleAccount *account)
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE, NOVELL_STATUS_TYPE_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
-										   "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+										   "message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 										   NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY, NOVELL_STATUS_TYPE_AWAY,
 										   NULL, TRUE, TRUE, FALSE,
-										   "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+										   "message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 										   NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE, NOVELL_STATUS_TYPE_BUSY,
 										   _("Busy"), TRUE, TRUE, FALSE,
-										   "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+										   "message", _("Message"), purple_g_value_slice_new(G_TYPE_STRING),
 										   NULL);
 	status_types = g_list_append(status_types, type);
 
@@ -3013,7 +3013,7 @@ novell_set_status(PurpleAccount *account, PurpleStatus *status)
 		return;
 
 	gc = purple_account_get_connection(account);
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -3060,14 +3060,14 @@ novell_add_permit(PurpleConnection *gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
 	/* Remove first -- we will add it back in when we get
 	 * the okay from the server
 	 */
-	purple_privacy_permit_remove(gc->account, who, TRUE);
+	purple_privacy_permit_remove(purple_connection_get_account(gc), who, TRUE);
 
 	if (nm_user_is_privacy_locked(user)) {
 		_show_privacy_locked_error(gc, user);
@@ -3104,14 +3104,14 @@ novell_add_deny(PurpleConnection *gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
 	/* Remove first -- we will add it back in when we get
 	 * the okay from the server
 	 */
-	purple_privacy_deny_remove(gc->account, who, TRUE);
+	purple_privacy_deny_remove(purple_connection_get_account(gc), who, TRUE);
 
 	if (nm_user_is_privacy_locked(user)) {
 		_show_privacy_locked_error(gc, user);
@@ -3148,7 +3148,7 @@ novell_rem_permit(PurpleConnection *gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -3178,7 +3178,7 @@ novell_rem_deny(PurpleConnection *gc, const char *who)
 	if (gc == NULL || who == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -3213,7 +3213,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 
@@ -3229,7 +3229,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 		return;
 	}
 
-	switch (gc->account->perm_deny) {
+	switch (purple_connection_get_account(gc)->perm_deny) {
 
 		case PURPLE_PRIVACY_ALLOW_ALL:
 			rc = nm_send_set_privacy_default(user, FALSE,
@@ -3285,14 +3285,14 @@ novell_set_permit_deny(PurpleConnection *gc)
 					if (user_record) {
 						name = nm_user_record_get_display_id(user_record);
 
-						if (!g_slist_find_custom(gc->account->permit,
+						if (!g_slist_find_custom(purple_connection_get_account(gc)->permit,
 												 name, (GCompareFunc)purple_utf8_strcasecmp)) {
-							purple_privacy_permit_add(gc->account, name , TRUE);
+							purple_privacy_permit_add(purple_connection_get_account(gc), name , TRUE);
 						}
 					}
 				}
 
-				for (node = gc->account->permit; node; node = node->next) {
+				for (node = purple_connection_get_account(gc)->permit; node; node = node->next) {
 					name = NULL;
 					dn = nm_lookup_dn(user, (char *)node->data);
 					if (dn) {
@@ -3306,7 +3306,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 															 g_strdup(dn));
 						}
 					} else {
-						purple_privacy_permit_remove(gc->account, (char *)node->data, TRUE);
+						purple_privacy_permit_remove(purple_connection_get_account(gc), (char *)node->data, TRUE);
 					}
 				}
 			}
@@ -3327,14 +3327,14 @@ novell_set_permit_deny(PurpleConnection *gc)
 					if (user_record) {
 						name = nm_user_record_get_display_id(user_record);
 
-						if (!g_slist_find_custom(gc->account->deny,
+						if (!g_slist_find_custom(purple_connection_get_account(gc)->deny,
 												 name, (GCompareFunc)purple_utf8_strcasecmp)) {
-							purple_privacy_deny_add(gc->account, name , TRUE);
+							purple_privacy_deny_add(purple_connection_get_account(gc), name , TRUE);
 						}
 					}
 				}
 
-				for (node = gc->account->deny; node; node = node->next) {
+				for (node = purple_connection_get_account(gc)->deny; node; node = node->next) {
 
 					name = NULL;
 					dn = nm_lookup_dn(user, (char *)node->data);
@@ -3349,7 +3349,7 @@ novell_set_permit_deny(PurpleConnection *gc)
 															 g_strdup(name));
 						}
 					} else {
-						purple_privacy_deny_remove(gc->account, (char *)node->data, TRUE);
+						purple_privacy_deny_remove(purple_connection_get_account(gc), (char *)node->data, TRUE);
 					}
 				}
 
@@ -3441,7 +3441,7 @@ novell_keepalive(PurpleConnection *gc)
 	if (gc == NULL)
 		return;
 
-	user = gc->proto_data;
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if (user == NULL)
 		return;
 

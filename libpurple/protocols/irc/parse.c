@@ -171,7 +171,7 @@ static PurpleCmdRet irc_parse_purple_cmd(PurpleConversation *conv, const gchar *
 	if (!gc)
 		return PURPLE_CMD_RET_FAILED;
 
-	irc = gc->proto_data;
+	irc = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if ((cmdent = g_hash_table_lookup(irc->cmds, cmd)) == NULL)
 		return PURPLE_CMD_RET_FAILED;

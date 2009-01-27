@@ -66,7 +66,7 @@ msn_add_cb(MsnAddRemData *data)
 
 	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
 	{
-		MsnSession *session = data->gc->proto_data;
+		MsnSession *session = purple_object_get_protocol_data(PURPLE_OBJECT(data->gc));
 		MsnUserList *userlist = session->userlist;
 
 		msn_userlist_add_buddy(userlist, data->who, data->group);
@@ -84,7 +84,7 @@ msn_rem_cb(MsnAddRemData *data)
 
 	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
 	{
-		MsnSession *session = data->gc->proto_data;
+		MsnSession *session = purple_object_get_protocol_data(PURPLE_OBJECT(data->gc));
 		MsnUserList *userlist = session->userlist;
 
 		if (data->group == NULL) {
