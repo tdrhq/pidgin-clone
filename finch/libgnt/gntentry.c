@@ -460,15 +460,22 @@ is_word_break(const char *start, const char *wc, const char *end)
 	 *    e.g. "This isn't fun."
 	 *                  ^ NOT a word break
 	 *
-	 * To correclty be able to distinguish contractions from end single quotes,
+	 * To correctly be able to distinguish contractions from end single quotes,
 	 * a sliding window of 3 characters must be used:
 	 * "n't" and "e' " from last example of (2) and example from (3)
+	 *
+	 * This is problematic for detection while typing though.  Detection of
+	 * a contraction single quote occurs when the next letter is typed.
+	 * e.g. str(0) = "isn" and no word break was detected
+	 *      str(1) = "isn'" and the "'" is detected to be a word break
+	 *      str(2)  = "isn't" and the "'" is no longer a word break (must be updated)
 	 *
 	 * Two characters cannot be used without some backtracking logic (i.e. realizing a word
 	 * break for the previous character).
 	 */
+#if 1
 	char *pc = NULL, *nc = NULL;
-	gunichar cur_uc, prev_uc = NULL, next_uc = NULL;
+	gunichar cur_uc, prev_uc = 0, next_uc = 0;
 	cur_uc = g_utf8_get_char(wc);
 	if (start)
 	{
@@ -485,7 +492,6 @@ is_word_break(const char *start, const char *wc, const char *end)
 		}
 	}
 
-#if 1
 	return g_unichar_isspace(cur_uc) ||
 		(g_unichar_ispunct(cur_uc) && (pc == NULL || nc == NULL ||
 									   g_unichar_ispunct(prev_uc) || g_unichar_ispunct(next_uc) ||
@@ -1188,7 +1194,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 #ifdef USE_ENCHANT
 			if (entry->spell) {
 				if (entry->spell->cursor_word) {
-					if (is_word_break(entry->start, str, entry->end)) {
+					if (is_word_break(entry->start, entry->cursor, entry->end)) {
 						if (entry->cursor > entry->start + entry->spell->cursor_word->start) {
 							/* The current word just ended. Spell check it */
 							const char *lend = lastw ? (entry->start + lastw->start + lastw->length + 1) : NULL;
@@ -1226,7 +1232,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 								entry->spell->cursor_word->misspelled)
 							check_entry_word(entry, entry->spell->cursor_word);
 					}
-				} else if (!is_word_break(entry->start, str, entry->end)) {
+				} else if (!is_word_break(entry->start, entry->cursor, entry->end)) {
 					/* A new word is starting */
 					GntEntryWord *w = gnt_entry_word_new();
 					w->start = entry->cursor - entry->start;
