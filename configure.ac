@@ -2491,6 +2491,7 @@ AC_OUTPUT([Makefile
 		   libpurple/version.h
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
+		   thirdparty/Makefile
 		   finch/finch.pc
 		   finch/Makefile
 		   finch/libgnt/Makefile
