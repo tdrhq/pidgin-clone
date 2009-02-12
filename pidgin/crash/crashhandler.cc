@@ -37,14 +37,13 @@ static bool MinidumpCallback(
 {
 
 	printf("%s is dumped\n", minidump_id);
-/*
+
 	char *crash_argv[2];
-	crash_argv[0] = "crashreporter";
+	crash_argv[0] = "pidgincrashreporter";
 	// Casting like this is bad.  But at the same time, the heap
 	// is in a fubar'ed state here so allocating a copy is a really bad idea.
 	crash_argv[1] = (char *)minidump_id;
 	g_spawn_async(NULL, crash_argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD, NULL, NULL, NULL, NULL);
-*/
 	return true;
 }
 

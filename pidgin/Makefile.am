@@ -68,7 +68,7 @@ if ENABLE_GTK
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = pidgin.pc
 
-SUBDIRS = pixmaps plugins 
+SUBDIRS = pixmaps plugins crash
 
 bin_PROGRAMS = pidgin
 
@@ -130,7 +130,7 @@ pidgin_SOURCES = \
 
 if ENABLE_CRASHREPORTER
 pidgin_SOURCES += \
-	crash/crashhandler.cpp
+	crash/crashhandler.cc
 endif
 
 pidgin_headers = \

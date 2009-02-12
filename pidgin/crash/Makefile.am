@@ -1,12 +1,12 @@
 if ENABLE_CRASHREPORTER
 
-bin_PROGRAMS = crashreporter
+bin_PROGRAMS = pidgincrashreporter
 
-crashreporter_SOURCES = \
+pidgincrashreporter_SOURCES = \
 	crashreporter.c \
 	minidump_stackwalk.cc
 
-crashreporter_LDADD = $(top_srcdir)/thirdparty/google-breakpad/src/libbreakpad.la
+pidgincrashreporter_LDADD = $(top_srcdir)/thirdparty/google-breakpad/src/libbreakpad.la
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/thirdparty/google-breakpad/src
