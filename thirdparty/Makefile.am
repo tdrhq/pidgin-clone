@@ -5,7 +5,7 @@ if ENABLE_CRASHREPORTER
 AM_CPPFLAGS = -I$(top_srcdir)/thirdparty/google-breakpad/src
 
 ## Libraries
-lib_LTLIBRARIES = google-breakpad/src/libbreakpad.la
+lib_LTLIBRARIES = google-breakpad/src/libbreakpad.la google-breakpad/src/libbreakpad_client.la
 
 google_breakpad_src_libbreakpad_la_SOURCES = \
 	google-breakpad/src/google_breakpad/common/breakpad_types.h \
@@ -59,6 +59,18 @@ google_breakpad_src_libbreakpad_la_SOURCES = \
 	google-breakpad/src/processor/stackwalker_sparc.h \
 	google-breakpad/src/processor/stackwalker_x86.cc \
 	google-breakpad/src/processor/stackwalker_x86.h
+
+google_breakpad_src_libbreakpad_client_la_SOURCES = \
+	google-breakpad/src/common/convert_UTF.c \
+	google-breakpad/src/common/string_conversion.cc \
+	google-breakpad/src/common/linux/dump_symbols.cc \
+	google-breakpad/src/common/linux/file_id.cc \
+	google-breakpad/src/common/md5.c \
+	google-breakpad/src/common/linux/guid_creator.cc \
+	google-breakpad/src/client/minidump_file_writer.cc \
+	google-breakpad/src/client/linux/handler/exception_handler.cc \
+	google-breakpad/src/client/linux/handler/minidump_generator.cc \
+	google-breakpad/src/client/linux/handler/linux_thread.cc
 
 endif
 

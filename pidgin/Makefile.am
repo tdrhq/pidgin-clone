@@ -130,16 +130,6 @@ pidgin_SOURCES = \
 
 if ENABLE_CRASHREPORTER
 pidgin_SOURCES += \
-	crash/google-breakpad/common/convert_UTF.c \
-	crash/google-breakpad/common/string_conversion.cc \
-	crash/google-breakpad/common/linux/dump_symbols.cc \
-	crash/google-breakpad/common/linux/file_id.cc \
-	crash/google-breakpad/common/md5.c \
-	crash/google-breakpad/common/linux/guid_creator.cc \
-	crash/google-breakpad/client/minidump_file_writer.cc \
-	crash/google-breakpad/client/linux/handler/exception_handler.cc \
-	crash/google-breakpad/client/linux/handler/minidump_generator.cc \
-	crash/google-breakpad/client/linux/handler/linux_thread.cc \
 	crash/crashhandler.cpp
 endif
 
@@ -223,6 +213,10 @@ pidgin_LDADD = \
 	$(LIBXML_LIBS) \
 	$(GTK_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
+if ENABLE_CRASHREPORTER
+pidgin_LDADD += $(top_builddir)/thirdparty/google-breakpad/src/libbreakpad_client.la
+endif
+
 
 if USE_INTERNAL_LIBGADU
 INTGG_CFLAGS = -DUSE_INTERNAL_LIBGADU
@@ -249,7 +243,7 @@ AM_CPPFLAGS = \
 	$(INTGG_CFLAGS)
 
 if ENABLE_CRASHREPORTER
-AM_CPPFLAGS += -I$(top_srcdir)/pidgin/crash/google-breakpad
+AM_CPPFLAGS += -I$(top_srcdir)/thirdparty/google-breakpad/src
 endif
 
 endif  # ENABLE_GTK

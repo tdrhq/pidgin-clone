@@ -86,7 +86,7 @@ if INSTALL_I18N
 PO_DIR=po
 endif
 
-SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros $(PO_DIR) share/ca-certs share/sounds
+SUBDIRS = thirdparty libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros $(PO_DIR) share/ca-certs share/sounds
 
 docs: Doxyfile
 if HAVE_DOXYGEN
