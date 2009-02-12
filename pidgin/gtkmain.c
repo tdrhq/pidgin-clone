@@ -73,6 +73,10 @@
 # include <signal.h>
 #endif
 
+#ifdef ENABLE_CRASHREPORTER
+#include "crash/crashhandler.h"
+#endif
+
 #include <getopt.h>
 
 #ifdef HAVE_STARTUP_NOTIFICATION
@@ -95,7 +99,10 @@ static SnDisplay *sn_display = NULL;
  * Each list terminated with -1
  */
 static const int catch_sig_list[] = {
+#ifndef ENABLE_CRASHREPORTER
+	/* If crash reporter is enabled, it will separately handle segfaults */
 	SIGSEGV,
+#endif
 	SIGHUP,
 	SIGINT,
 	SIGTERM,
@@ -521,6 +528,11 @@ int main(int argc, char *argv[])
 #ifdef HAVE_SETLOCALE
 	/* Locale initialization is not complete here.  See gtk_init_check() */
 	setlocale(LC_ALL, "");
+#endif
+
+#ifdef ENABLE_CRASHREPORTER
+	/* Initialize the crash reporter.  The crash reporter will do it's own catching of signals */
+	pidgin_crash_init();
 #endif
 
 #ifdef HAVE_SIGNAL_H

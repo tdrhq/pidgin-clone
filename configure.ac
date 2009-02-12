@@ -745,6 +745,54 @@ Use --disable-gstreamer if you do not need GStreamer (sound) support.
 fi
 
 dnl #######################################################################
+dnl # Crash reporter checks (requires C++/libstdc++)
+dnl #######################################################################
+
+AC_ARG_ENABLE(crashreporter,
+	[AC_HELP_STRING([--disable-crashreporter], [compile without crash reporter support])],
+	enable_crashreporter="$enableval", enable_crashreporter="yes")
+if test "x$enable_crashreporter" = "xyes"; then
+	AC_PROG_CXX
+
+	CRASHREPORTER_SUPPORTED_OS="no"
+	case $target_os in
+		linux*)
+			CRASHREPORTER_SUPPORTED_OS="yes"
+		;;
+	esac
+
+	CRASHREPORTER_SUPPORTED_ARCH="no"
+	case $target_cpu in
+		*86*)
+	CRASHREPORTER_SUPPORTED_ARCH="yes" ;;
+	esac
+
+	if test x$CRASHREPORTER_SUPPORTED_OS = xyes ; then
+		if test x$CRASHREPORTER_SUPPORTED_ARCH = xyes ; then
+			AC_CHECK_LIB([stdc++], [main], [
+				enable_crashreporter="yes"
+				AC_DEFINE(ENABLE_CRASHREPORTER, 1, [Define if we are using the crash reporter])
+			], [
+				enable_crashreporter="no"
+				if test "x$force_deps" = "xyes" ; then
+					AC_MSG_ERROR([
+libstdc++ not found.
+Use --disable-crashreporter if you do not want crash reporter support.
+])
+			fi])
+
+		else
+			enable_crashreporter="no"
+		fi
+	else
+		enable_crashreporter="no"
+	fi
+
+fi
+
+AM_CONDITIONAL(ENABLE_CRASHREPORTER, test "x$enable_crashreporter" = "xyes")
+
+dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
 dnl #######################################################################
 AC_ARG_ENABLE(meanwhile,
@@ -2391,6 +2439,7 @@ AC_OUTPUT([Makefile
 		   m4macros/Makefile
 		   pidgin.apspec
 		   pidgin/Makefile
+		   pidgin/crash/Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
 		   pidgin/pixmaps/Makefile
@@ -2492,6 +2541,7 @@ echo Build with Perl support....... : $enable_perl
 echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo
+echo Build with crash reporter..... : $enable_crashreporter
 echo Print debugging messages...... : $enable_debug
 echo
 eval eval echo Pidgin will be installed in $bindir.

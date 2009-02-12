@@ -68,7 +68,7 @@ if ENABLE_GTK
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = pidgin.pc
 
-SUBDIRS = pixmaps plugins
+SUBDIRS = pixmaps plugins 
 
 bin_PROGRAMS = pidgin
 
@@ -127,6 +127,21 @@ pidgin_SOURCES = \
 	gtkwhiteboard.c \
 	minidialog.c \
 	pidgintooltip.c
+
+if ENABLE_CRASHREPORTER
+pidgin_SOURCES += \
+	crash/google-breakpad/common/convert_UTF.c \
+	crash/google-breakpad/common/string_conversion.cc \
+	crash/google-breakpad/common/linux/dump_symbols.cc \
+	crash/google-breakpad/common/linux/file_id.cc \
+	crash/google-breakpad/common/md5.c \
+	crash/google-breakpad/common/linux/guid_creator.cc \
+	crash/google-breakpad/client/minidump_file_writer.cc \
+	crash/google-breakpad/client/linux/handler/exception_handler.cc \
+	crash/google-breakpad/client/linux/handler/minidump_generator.cc \
+	crash/google-breakpad/client/linux/handler/linux_thread.cc \
+	crash/crashhandler.cpp
+endif
 
 pidgin_headers = \
 	eggtrayicon.h \
@@ -232,4 +247,9 @@ AM_CPPFLAGS = \
 	$(STARTUP_NOTIFICATION_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(INTGG_CFLAGS)
+
+if ENABLE_CRASHREPORTER
+AM_CPPFLAGS += -I$(top_srcdir)/pidgin/crash/google-breakpad
+endif
+
 endif  # ENABLE_GTK
