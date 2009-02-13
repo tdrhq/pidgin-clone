@@ -132,6 +132,14 @@ const char *purple_core_get_ui(void);
 PurpleCore *purple_get_core(void);
 
 /**
+ * Creates the core itself, but does no other initializations.
+ *
+ * This is used by purple_core_init, and to create a "safe mode" where
+ * minimal code is executed.
+ */
+void purple_core_create(const char *ui);
+
+/**
  * Sets the UI ops for the core.
  *
  * @param ops A UI ops structure for the core.

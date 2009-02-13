@@ -75,6 +75,14 @@ static PurpleCore      *_core = NULL;
 
 STATIC_PROTO_INIT
 
+void
+purple_core_create(const char *ui)
+{
+	_core = g_new0(PurpleCore, 1);
+	_core->ui = g_strdup(ui);
+	_core->reserved = NULL;
+}
+
 gboolean
 purple_core_init(const char *ui)
 {
@@ -93,9 +101,8 @@ purple_core_init(const char *ui)
 
 	g_type_init();
 
-	_core = core = g_new0(PurpleCore, 1);
-	core->ui = g_strdup(ui);
-	core->reserved = NULL;
+	purple_core_create(ui);
+	core = _core;
 
 	ops = purple_core_get_ui_ops();
 
