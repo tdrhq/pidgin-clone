@@ -4,7 +4,7 @@ bin_PROGRAMS = pidgincrashreporter
 
 pidgincrashreporter_SOURCES = \
 	crashreporter.c \
-	minidump_stackwalk.cc
+	minidump_stackwalk.cc 
 
 pidgincrashreporter_LDADD = \
 	$(top_srcdir)/thirdparty/google-breakpad/src/libbreakpad.la \
