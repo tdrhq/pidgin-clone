@@ -445,7 +445,7 @@ process_crash_info (const char *minidump_file, GHashTable *plugins)
 		purple_debug_info("crash", 
 			"found plugin corresponding to crash\n");
 
-		frame = make_frame(vbox, _("Source"));
+		frame = make_frame(vbox, _("Problem Source"));
 		label = gtk_label_new (crashed_plugin->info->name);	
 		gtk_box_pack_start(frame, label, FALSE, FALSE, 0);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
