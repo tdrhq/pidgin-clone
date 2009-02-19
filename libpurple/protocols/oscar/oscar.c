@@ -4421,7 +4421,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 	}
 	g_string_free(data, TRUE);
 
-	peer_odc_send_im(conn, msg->str, msg->len, charset, imflags);
+	peer_odc_send_im(conn, msg->str, msg->len, charset, (imflags & PURPLE_MESSAGE_AUTO_RESP));
 	g_string_free(msg, TRUE);
 }
 
