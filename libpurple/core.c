@@ -199,6 +199,14 @@ purple_core_quit(void)
 	purple_connections_disconnect_all();
 #endif
 
+	/*
+	 * Certificates must be destroyed before the SSL plugins, because
+	 * PurpleCertificates contain pointers to PurpleCertificateSchemes,
+	 * and the PurpleCertificateSchemes will be unregistered when the
+	 * SSL plugin is uninit.
+	 */
+	purple_certificate_uninit();
+
 	/* The SSL plugins must be uninit before they're unloaded */
 	purple_ssl_uninit();
 
@@ -219,7 +227,6 @@ purple_core_quit(void)
 	purple_blist_uninit();
 	purple_notify_uninit();
 	purple_conversations_uninit();
-	purple_certificate_uninit();
 	purple_buddy_icons_uninit();
 	purple_accounts_uninit();
 	purple_savedstatuses_uninit();

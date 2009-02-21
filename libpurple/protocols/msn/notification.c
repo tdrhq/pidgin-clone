@@ -626,6 +626,18 @@ msn_notification_dump_contact(MsnSession *session)
 		if (user->passport && !strcmp(user->passport, "messenger@microsoft.com"))
 			continue;
 
+		if ((user->list_op & MSN_LIST_OP_MASK) == (MSN_LIST_AL_OP | MSN_LIST_BL_OP)) {
+			/* The server will complain if we send it a user on both the
+			   Allow and Block lists. So assume they're on the Block list
+			   and remove them from the Allow list in the membership lists to
+			   stop this from happening again. */
+			purple_debug_warning("msn",
+			                     "User %s is on both Allow and Block list,"
+			                     "removing from Allow list.\n",
+			                     user->passport);
+			msn_userlist_rem_buddy_from_list(session->userlist, user->passport, MSN_LIST_AL);
+		}
+
 		msn_add_contact_xml(session, adl_node, user->passport,
 			user->list_op & MSN_LIST_OP_MASK, user->networkid);
 
@@ -1098,8 +1110,10 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		return;
 	}
 
-	serv_got_alias(gc, passport, friendly);
-	msn_user_set_friendly_name(user, friendly);
+	if (msn_user_set_friendly_name(user, friendly)) {
+		serv_got_alias(gc, passport, friendly);
+		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
+	}
 	g_free(friendly);
 
 	msn_user_set_object(user, msnobj);
@@ -1224,7 +1238,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnObject *msnobj;
 	unsigned long clientid;
 	int networkid;
-	const char *state, *passport, *friendly, *old_friendly;
+	const char *state, *passport, *friendly;
 
 	session = cmdproc->session;
 	account = session->account;
@@ -1238,11 +1252,10 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	user = msn_userlist_find_user(session->userlist, passport);
 	if (user == NULL) return;
 
-	old_friendly = msn_user_get_friendly_name(user);
-	if (!old_friendly || (old_friendly && (!friendly || strcmp(old_friendly, friendly))))
+	if (msn_user_set_friendly_name(user, friendly))
 	{
 		serv_got_alias(gc, passport, friendly);
-		msn_user_set_friendly_name(user, friendly);
+		msn_update_contact(session, passport, MSN_UPDATE_DISPLAY, friendly);
 	}
 
 	if (cmd->param_count == 6)
@@ -1623,19 +1636,25 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		return;
 	}
 
-	psm_str = msn_get_psm(cmd->payload,len);
-	msn_user_set_statusline(user, psm_str);
-	g_free(psm_str);
+	if (len != 0) {
+		psm_str = msn_get_psm(cmd->payload,len);
+		msn_user_set_statusline(user, psm_str);
+		g_free(psm_str);
 
-	str = msn_get_currentmedia(cmd->payload, len);
-	if (msn_parse_currentmedia(str, &media))
-		msn_user_set_currentmedia(user, &media);
-	else
+		str = msn_get_currentmedia(cmd->payload, len);
+		if (msn_parse_currentmedia(str, &media))
+			msn_user_set_currentmedia(user, &media);
+		else
+			msn_user_set_currentmedia(user, NULL);
+		g_free(media.title);
+		g_free(media.album);
+		g_free(media.artist);
+		g_free(str);
+
+	} else {
+		msn_user_set_statusline(user, NULL);
 		msn_user_set_currentmedia(user, NULL);
-	g_free(media.title);
-	g_free(media.album);
-	g_free(media.artist);
-	g_free(str);
+	}
 
 	msn_user_update(user);
 }
@@ -2101,6 +2120,13 @@ msn_notification_init(void)
 	msn_table_add_msg_type(cbs_table,
 						   "application/x-msmsgssystemmessage",
 						   system_msg);
+	/* generic message handlers */
+	msn_table_add_msg_type(cbs_table, "text/plain",
+						   msn_plain_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-msmsgscontrol",
+						   msn_control_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
+						   msn_datacast_msg);
 }
 
 void

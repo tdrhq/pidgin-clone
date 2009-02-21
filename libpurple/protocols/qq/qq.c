@@ -175,6 +175,7 @@ static void qq_login(PurpleAccount *account)
 
 	qd->is_show_notice = purple_account_get_bool(account, "show_notice", TRUE);
 	qd->is_show_news = purple_account_get_bool(account, "show_news", TRUE);
+	qd->is_show_chat = purple_account_get_bool(account, "show_chat", TRUE);
 
 	qd->resend_times = purple_prefs_get_int("/plugins/prpl/qq/resend_times");
 	if (qd->resend_times <= 1) qd->itv_config.resend = 4;
@@ -410,15 +411,15 @@ static GList *qq_status_types(PurpleAccount *ga)
 	GList *types = NULL;
 
 	status = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE,
-			"available", _("Available"), FALSE, TRUE, FALSE);
+			"available", _("Available"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_AWAY,
-			"away", _("Away"), FALSE, TRUE, FALSE);
+			"away", _("Away"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
-			"invisible", _("Invisible"), FALSE, TRUE, FALSE);
+			"invisible", _("Invisible"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE,
@@ -426,7 +427,7 @@ static GList *qq_status_types(PurpleAccount *ga)
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
-			"offline", _("Offline"), FALSE, TRUE, FALSE);
+			"offline", _("Offline"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_MOBILE,
@@ -1110,6 +1111,9 @@ static void init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_bool_new(_("Show server news"), "show_news", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
+	option = purple_account_option_bool_new(_("Show chat room when msg comes"), "show_chat", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
 	option = purple_account_option_int_new(_("Keep alive interval (seconds)"), "keep_alive_interval", 60);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
@@ -1119,7 +1123,6 @@ static void init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_none("/plugins/prpl/qq");
 	purple_prefs_add_bool("/plugins/prpl/qq/show_status_by_icon", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/show_fake_video", FALSE);
-	purple_prefs_add_bool("/plugins/prpl/qq/auto_popup_conversation", TRUE);
 	purple_prefs_add_bool("/plugins/prpl/qq/auto_get_authorize_info", TRUE);
 	purple_prefs_add_int("/plugins/prpl/qq/resend_interval", 3);
 	purple_prefs_add_int("/plugins/prpl/qq/resend_times", 10);

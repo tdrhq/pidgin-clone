@@ -822,19 +822,52 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 	/* Reset any unspecified attributes to their default value */
 	status_type = purple_status_get_type(status);
 	l = purple_status_type_get_attrs(status_type);
-	while (l != NULL)
-	{
+	while (l != NULL) {
 		PurpleStatusAttr *attr;
 
 		attr = l->data;
-		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp))
-		{
+		l = l->next;
+
+		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp)) {
 			const GValue *default_value = purple_status_attr_get_value(attr);
-			purple_status_set_attr_value(status, attr->id, default_value);
+			switch (G_VALUE_TYPE(value)) {
+				case G_TYPE_STRING: {
+					const gchar *cur = purple_status_get_attr_string(status, attr->id);
+					const gchar *def = g_value_get_string(default_value);
+					if (purple_util_strings_equal(cur, def))
+						continue;
+					purple_status_set_attr_string(status, attr->id, def);
+					break;
+				}
+
+				case G_TYPE_INT: {
+					gint cur = purple_status_get_attr_int(status, attr->id);
+					gint def = g_value_get_int(default_value);
+					if (cur == def)
+						continue;
+					purple_status_set_attr_int(status, attr->id, def);
+					break;
+				}
+
+				case G_TYPE_BOOLEAN: {
+					gboolean cur = purple_status_get_attr_boolean(status, attr->id);
+					gboolean def = g_value_get_boolean(default_value);
+					if (cur == def)
+						continue;
+					purple_status_set_attr_boolean(status, attr->id, def);
+					break;
+				}
+
+				default: {
+					/* We don't know what the data is--skip over it */
+					purple_debug_warning("status",
+						"Skipping attribute with unhandled data type %s",
+						G_VALUE_TYPE_NAME(value));
+					continue;
+				}
+			}
 			changed = TRUE;
 		}
-
-		l = l->next;
 	}
 	g_list_free(specified_attr_ids);
 
