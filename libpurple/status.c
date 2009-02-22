@@ -830,7 +830,7 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 
 		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp)) {
 			const GValue *default_value = purple_status_attr_get_value(attr);
-			switch (G_VALUE_TYPE(value)) {
+			switch (G_VALUE_TYPE(default_value)) {
 				case G_TYPE_STRING: {
 					const gchar *cur = purple_status_get_attr_string(status, attr->id);
 					const gchar *def = g_value_get_string(default_value);
@@ -862,7 +862,7 @@ purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 					/* We don't know what the data is--skip over it */
 					purple_debug_warning("status",
 						"Skipping attribute with unhandled data type %s",
-						G_VALUE_TYPE_NAME(value));
+						G_VALUE_TYPE_NAME(default_value));
 					continue;
 				}
 			}

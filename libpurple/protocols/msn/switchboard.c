@@ -1222,21 +1222,21 @@ msn_switchboard_init(void)
 
 	/* Register the message type callbacks. */
 	msn_table_add_msg_type(cbs_table, "text/plain",
-						   plain_msg);
+	                       msn_plain_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msmsgscontrol",
-						   control_msg);
+	                       msn_control_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-clientcaps",
-						   clientcaps_msg);
+	                       clientcaps_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-clientinfo",
-						   clientcaps_msg);
+	                       clientcaps_msg);
 	msn_table_add_msg_type(cbs_table, "application/x-msnmsgrp2p",
-						   msn_p2p_msg);
+	                       msn_p2p_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-mms-emoticon",
-						   msn_emoticon_msg);
+	                       msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-mms-animemoticon",
-	                                           msn_emoticon_msg);
+	                       msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
-						   datacast_msg);
+	                       msn_datacast_msg);
 #if 0
 	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
 						   msn_invite_msg);
