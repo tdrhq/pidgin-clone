@@ -70,9 +70,9 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 </div>
 
 <!-- This will pull from somewhere else at some point -->
-<!-- p class="more" id="lowblurb">We are aware of the problems connecting to MSN with Pidgin
-2.5.3 and older. We hope to have a new release and packages out soon to fix
-this.</p -->
+<p class="more" id="lowblurb">
+ICQ is reporting errors in some locations which are generally fixed by upgrading to 2.5.5.
+</p>
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
