@@ -47,7 +47,7 @@ m4_define([purple_lt_current], [6])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [6])
 m4_define([purple_micro_version], [0])
-m4_define([purple_version_suffix], [vv-devel])
+m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
@@ -56,7 +56,7 @@ m4_define([gnt_lt_current], [6])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [6])
 m4_define([gnt_micro_version], [0])
-m4_define([gnt_version_suffix], [vv-devel])
+m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -788,7 +788,7 @@ dnl # Check for Voice and Video support
 dnl #######################################################################
 AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
-	enable_vv="$enableval", enable_vv="yes")
+	enable_vv="$enableval", enable_vv="no")
 if test "x$enable_vv" != "xno"; then
 	if test "x$enable_farsight" != "xno" -a "x$enable_gstprops" != "xno"; then
 		AC_DEFINE(USE_VV, 1, [Use voice and video])

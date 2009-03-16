@@ -141,7 +141,8 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
 			SUPPORT_FEATURE("urn:xmpp:ping")
 			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0199.html#ns")
-
+			SUPPORT_FEATURE(JINGLE_APP_FT)
+							
 			if(!node) { /* non-caps disco#info, add all enabled extensions */
 				GList *features;
 				for(features = jabber_features; features; features = features->next) {

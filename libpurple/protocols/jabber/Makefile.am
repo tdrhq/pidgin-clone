@@ -27,6 +27,10 @@ JABBERSOURCES = auth.c \
 			  jingle/jingle.h \
 			  jingle/content.c \
 			  jingle/content.h \
+			  jingle/file-transfer.c \
+			  jingle/file-transfer.h \
+			  jingle/ibbs.c \
+			  jingle/ibbs.h \
 			  jingle/iceudp.c \
 			  jingle/iceudp.h \
 			  jingle/rawudp.c \
@@ -66,7 +70,9 @@ JABBERSOURCES = auth.c \
 			  usernick.c \
 			  usernick.h \
 			  usertune.c \
-			  usertune.h
+			  usertune.h \
+			  xfer.c \
+			  xfer.h
 
 AM_CFLAGS = $(st)
 

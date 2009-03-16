@@ -407,12 +407,10 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 	
-#ifdef USE_VV
 	if (xmlnode_get_child_with_namespace(packet, "jingle", JINGLE)) {
 		jingle_parse(js, packet);
 		return;
 	}
-#endif
 
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
 	if(!strcmp(type, "set") || !strcmp(type, "get")) {
