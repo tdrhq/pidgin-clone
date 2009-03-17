@@ -178,7 +178,8 @@ static void
 jingle_file_transfer_cancel_remote(JingleContent *content)
 {
 	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
-
+	JingleSession *session = jingle_content_get_session(content);
+	
 	purple_debug_info("jingle-ft", "cancel remote transfer\n");
 	if (xfer) {
 		jabber_iq_send(jingle_session_to_packet(
@@ -187,13 +188,15 @@ jingle_file_transfer_cancel_remote(JingleContent *content)
 	}
 
 	jingle_file_transfer_close_ibb_fp(content);
+	g_object_unref(session);
 }
 
 static void
 jingle_file_transfer_cancel_local(JingleContent *content)
 {
 	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
-
+	JingleSession *session = jingle_content_get_session(content);
+	
 	purple_debug_info("jingle-ft", "cancel local trasfer\n");
 	if (xfer) {
 		jabber_iq_send(jingle_session_to_packet(
@@ -202,13 +205,15 @@ jingle_file_transfer_cancel_local(JingleContent *content)
 	}
 
 	jingle_file_transfer_close_ibb_fp(content);
+	g_object_unref(session);
 }
 
 static void
 jingle_file_transfer_success(JingleContent *content)
 {
 	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
-
+	JingleSession *session = jingle_content_get_session(content);
+	
 	purple_debug_info("jingle-ft", "transfer received successful!\n");
 	if (xfer) {
 		purple_xfer_set_completed(xfer, TRUE);
@@ -216,13 +221,15 @@ jingle_file_transfer_success(JingleContent *content)
 	}
 
 	jingle_file_transfer_close_ibb_fp(content);
+	g_object_unref(session);
 }
 
 static void
 jingle_file_transfer_end(JingleContent *content)
 {
 	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
-
+	JingleSession *session = jingle_content_get_session(content);
+	
 	purple_debug_info("jingle-ft", "ending transfer\n");
 	if (xfer) {
 		jabber_iq_send(jingle_session_to_packet(jingle_content_get_session(content), 
@@ -232,6 +239,7 @@ jingle_file_transfer_end(JingleContent *content)
 	}
 
 	jingle_file_transfer_close_ibb_fp(content);
+	g_object_unref(session);
 }
 
 static void
@@ -321,12 +329,14 @@ jingle_file_transfer_ibb_error_callback(JingleContent *content)
 		jingle_session_get_js(jingle_content_get_session(content));
 	PurpleConnection *gc = js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
-
+	gchar *who = jingle_session_get_remote_jid(session);
+	
 	purple_debug_error("jabber", "an error occured during IBB file transfer\n");
-	purple_xfer_error(purple_xfer_get_type(xfer), account,
-		jingle_session_get_remote_jid(session),
+	purple_xfer_error(purple_xfer_get_type(xfer), account, who,
 		_("An error occured on the in-band bytestream transfer\n"));
 	purple_xfer_cancel_remote(xfer);
+	g_free(who);
+	g_object_unref(session);
 }
 
 static void
@@ -469,7 +479,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			JabberStream *js = jingle_session_get_js(session);
 			xmlnode *offer = xmlnode_get_child(description, "offer");
 			PurpleXfer *xfer = NULL;
-			const gchar *who = jingle_session_get_remote_jid(session);
+			gchar *who = jingle_session_get_remote_jid(session);
 	
 			if (offer) {
 				/* do stuff here... create the PurpleXfer etc... */
@@ -493,6 +503,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					jabber_iq_send(jingle_session_to_packet(session,
 						JINGLE_SESSION_TERMINATE));
 					g_object_unref(session);
+					g_free(who);
 					break;
 				}
 				
@@ -504,18 +515,15 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					const gchar *filename = 
 						purple_xfer_get_local_filename(xfer);
 					jingle_ibb_create_session(ibb, content, sid, who);
-					
-					
-				}	
+				}
 			}
 
 			g_object_unref(session);
+			g_free(who);
 			break;
 		}
 		case JINGLE_SESSION_TERMINATE: {
 			JingleSession *session = jingle_content_get_session(content);
-			GList *contents = jingle_session_get_contents(session);
-			JingleContent *content = (JingleContent *) contents->data;
 			PurpleXfer *xfer = 
 				jingle_file_transfer_get_xfer(content);
 
