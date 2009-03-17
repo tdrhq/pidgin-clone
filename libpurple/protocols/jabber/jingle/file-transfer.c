@@ -478,12 +478,9 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 
 				if (file)
 					xfer = jabber_xfer_create_from_xml(js->gc->account, file, 
-						who, session);
+						who, content);
 				if (xfer) {
-					GList *contents = jingle_session_get_contents(session);
-					JingleContent *content = (JingleContent *) contents->data;
 					JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer = xfer;
-					xfer->data = content;
 					/* setup callbacks */
 					purple_xfer_set_init_fnc(xfer, 
 						jingle_file_transfer_xfer_init);
