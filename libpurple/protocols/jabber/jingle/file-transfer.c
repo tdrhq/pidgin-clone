@@ -631,8 +631,6 @@ jingle_file_transfer_new_xfer(PurpleConnection *gc, const gchar *who)
 		purple_xfer_set_cancel_send_fnc(xfer, jingle_file_transfer_cancel_send);
 		purple_xfer_set_end_fnc(xfer, jingle_file_transfer_xfer_end);
 
-		js->file_transfers = g_list_append(js->file_transfers, xfer);
-
 		g_free(jid);
 		g_free(me);
 	}
