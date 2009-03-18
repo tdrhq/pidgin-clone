@@ -308,7 +308,6 @@ init_plugin(PurplePlugin *plugin)
 #ifdef USE_VV
 	jabber_add_feature("voice-v1", "http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
 #endif
-	/*jabber_add_feature("jingle-ft", JINGLE_APP_FT, NULL);*/
 }
 
 
