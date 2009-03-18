@@ -390,7 +390,6 @@ jingle_file_transfer_cancel_send(PurpleXfer *xfer)
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
 	g_object_unref(session);
 	g_object_unref(session);
-	g_object_unref(session);
 }
 
 static void
