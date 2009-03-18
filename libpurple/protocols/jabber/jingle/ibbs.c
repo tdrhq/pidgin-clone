@@ -268,6 +268,8 @@ jingle_ibb_create_session(JingleIBB *ibb, JingleContent *content,
 		jingle_ibb_data_recv_callback);
 	jabber_ibb_session_set_error_callback(session, jingle_ibb_error_callback);
 	JINGLE_IBB_GET_PRIVATE(ibb)->session = session;
+
+	g_object_unref(sess);
 }
 
 void 

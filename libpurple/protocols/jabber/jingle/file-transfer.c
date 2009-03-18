@@ -115,6 +115,11 @@ jingle_file_transfer_finalize (GObject *ft)
 	if (priv->ibb_fp) {
 		fclose(priv->ibb_fp);
 	}
+	
+	if (priv->xfer) {
+		/* remove reference in transfer */
+		priv->xfer->data = NULL;
+	}
 }
 
 static void
@@ -166,15 +171,6 @@ jingle_file_transfer_get_xfer(JingleContent *content)
 }
 
 static void
-jingle_file_transfer_close_ibb_fp(JingleContent *content)
-{
-	FILE *ibb_fp = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp;
-
-	if (ibb_fp)
-		fclose(ibb_fp);
-}
-
-static void
 jingle_file_transfer_cancel_remote(JingleContent *content)
 {
 	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
@@ -182,13 +178,13 @@ jingle_file_transfer_cancel_remote(JingleContent *content)
 	
 	purple_debug_info("jingle-ft", "cancel remote transfer\n");
 	if (xfer) {
-		jabber_iq_send(jingle_session_to_packet(
-			jingle_content_get_session(content), JINGLE_SESSION_TERMINATE));
+		jabber_iq_send(jingle_session_to_packet(session, 
+			JINGLE_SESSION_TERMINATE));
 		purple_xfer_cancel_remote(xfer);
 	}
 
-	jingle_file_transfer_close_ibb_fp(content);
 	g_object_unref(session);
+	g_object_unref(session);	/* actually close the session */
 }
 
 static void
@@ -199,13 +195,13 @@ jingle_file_transfer_cancel_local(JingleContent *content)
 	
 	purple_debug_info("jingle-ft", "cancel local trasfer\n");
 	if (xfer) {
-		jabber_iq_send(jingle_session_to_packet(
-			jingle_content_get_session(content), JINGLE_SESSION_TERMINATE));
+		jabber_iq_send(jingle_session_to_packet(session, 
+			JINGLE_SESSION_TERMINATE));
 		purple_xfer_cancel_local(xfer);
 	}
 
-	jingle_file_transfer_close_ibb_fp(content);
 	g_object_unref(session);
+	g_object_unref(session);	/* actually close the the session */
 }
 
 static void
@@ -220,7 +216,6 @@ jingle_file_transfer_success(JingleContent *content)
 		purple_xfer_end(xfer);
 	}
 
-	jingle_file_transfer_close_ibb_fp(content);
 	g_object_unref(session);
 }
 
@@ -232,14 +227,14 @@ jingle_file_transfer_end(JingleContent *content)
 	
 	purple_debug_info("jingle-ft", "ending transfer\n");
 	if (xfer) {
-		jabber_iq_send(jingle_session_to_packet(jingle_content_get_session(content), 
+		jabber_iq_send(jingle_session_to_packet(session, 
 			JINGLE_SESSION_TERMINATE));
 		purple_xfer_set_completed(xfer, TRUE);
 		purple_xfer_end(xfer);
 	}
 
-	jingle_file_transfer_close_ibb_fp(content);
 	g_object_unref(session);
+	g_object_unref(session); /* actually delete it */
 }
 
 static void
@@ -326,7 +321,7 @@ jingle_file_transfer_ibb_error_callback(JingleContent *content)
 	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
 	JingleSession *session = jingle_content_get_session(content);
 	JabberStream *js = 
-		jingle_session_get_js(jingle_content_get_session(content));
+		jingle_session_get_js(session);
 	PurpleConnection *gc = js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	gchar *who = jingle_session_get_remote_jid(session);
@@ -368,6 +363,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 				jabber_iq_send(jingle_session_to_packet(session,
 						JINGLE_SESSION_TERMINATE));
 				g_object_unref(session);
+				g_object_unref(session);
 				return;
 			}
 
@@ -381,6 +377,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			purple_xfer_start(xfer, 0, NULL, 0);
 		}
 	}
+	g_object_unref(session);
 }
 
 static void
@@ -389,7 +386,10 @@ jingle_file_transfer_cancel_send(PurpleXfer *xfer)
 	JingleSession *session = 
 		jingle_content_get_session((JingleContent *)xfer->data);
 	
+	purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_send\n");
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
+	g_object_unref(session);
+	g_object_unref(session);
 	g_object_unref(session);
 }
 
@@ -399,17 +399,20 @@ jingle_file_transfer_cancel_recv(PurpleXfer *xfer)
 	JingleSession *session = 
 		jingle_content_get_session((JingleContent *)xfer->data);
 
+	purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_recv\n");
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
+	g_object_unref(session);
 	g_object_unref(session);
 }
 
 static void
 jingle_file_transfer_xfer_end(PurpleXfer *xfer)
 {
-	JingleSession *session = 
-		jingle_content_get_session((JingleContent *)xfer->data);
-
-	g_object_unref(session);
+	if (xfer->data) {
+		JingleSession *session = 
+			jingle_content_get_session((JingleContent *)xfer->data);
+		g_object_unref(session);
+	}
 }
 
 static JingleContent *
@@ -465,6 +468,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					purple_debug_error("jingle-ft", 
 						"failed to open file for reading\n");
 					jingle_file_transfer_cancel_local(content);
+					break;
 				}
 			}
 			
@@ -503,6 +507,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					jabber_iq_send(jingle_session_to_packet(session,
 						JINGLE_SESSION_TERMINATE));
 					g_object_unref(session);
+					g_object_unref(session);
 					g_free(who);
 					break;
 				}
@@ -535,6 +540,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer = NULL;
 			}
 	
+			g_object_unref(session);
 			g_object_unref(session);
 			break;
 		}
