@@ -59,6 +59,8 @@ jingle_rawudp_candidate_copy(JingleRawUdpCandidate *candidate)
 	new_candidate->id = g_strdup(candidate->id);
 	new_candidate->ip = g_strdup(candidate->ip);
 	new_candidate->port = candidate->port;
+
+	new_candidate->rem_known = candidate->rem_known;
 	return new_candidate;
 }
 
@@ -91,6 +93,8 @@ jingle_rawudp_candidate_new(const gchar *id, guint generation, guint component, 
 	candidate->id = g_strdup(id);
 	candidate->ip = g_strdup(ip);
 	candidate->port = port;
+
+	candidate->rem_known = FALSE;
 	return candidate;
 }
 
@@ -149,7 +153,8 @@ static void
 jingle_rawudp_init (JingleRawUdp *rawudp)
 {
 	rawudp->priv = JINGLE_RAWUDP_GET_PRIVATE(rawudp);
-	memset(rawudp->priv, 0, sizeof(rawudp->priv));
+	rawudp->priv->local_candidates = NULL;
+	rawudp->priv->remote_candidates = NULL;
 }
 
 static void
@@ -157,6 +162,8 @@ jingle_rawudp_finalize (GObject *rawudp)
 {
 /*	JingleRawUdpPrivate *priv = JINGLE_RAWUDP_GET_PRIVATE(rawudp); */
 	purple_debug_info("jingle","jingle_rawudp_finalize\n");
+
+	G_OBJECT_CLASS(parent_class)->finalize(rawudp);
 }
 
 static void
@@ -277,6 +284,7 @@ jingle_rawudp_parse_internal(xmlnode *rawudp)
 				atoi(xmlnode_get_attrib(candidate, "component")),
 				xmlnode_get_attrib(candidate, "ip"),
 				atoi(xmlnode_get_attrib(candidate, "port")));
+		rawudp_candidate->rem_known = TRUE;
 		jingle_rawudp_add_remote_candidate(JINGLE_RAWUDP(transport), rawudp_candidate);
 	}
 
@@ -286,6 +294,7 @@ jingle_rawudp_parse_internal(xmlnode *rawudp)
 		rawudp_candidate = g_boxed_copy(JINGLE_TYPE_RAWUDP_CANDIDATE, rawudp_candidate);
 		rawudp_candidate->component = 2;
 		rawudp_candidate->port = rawudp_candidate->port + 1;
+		rawudp_candidate->rem_known = TRUE;
 		jingle_rawudp_add_remote_candidate(JINGLE_RAWUDP(transport), rawudp_candidate);
 	}
 
@@ -297,17 +306,25 @@ jingle_rawudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 {
 	xmlnode *node = parent_class->to_xml(transport, content, action);
 
-	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_TRANSPORT_INFO) {
+	if (action == JINGLE_SESSION_INITIATE ||
+			action == JINGLE_TRANSPORT_INFO ||
+			action == JINGLE_SESSION_ACCEPT) {
 		JingleRawUdpPrivate *priv = JINGLE_RAWUDP_GET_PRIVATE(transport);
 		GList *iter = priv->local_candidates;
 
 		for (; iter; iter = g_list_next(iter)) {
 			JingleRawUdpCandidate *candidate = iter->data;
+			xmlnode *xmltransport;
+			gchar *generation, *component, *port;
 
-			xmlnode *xmltransport = xmlnode_new_child(node, "candidate");
-			gchar *generation = g_strdup_printf("%d", candidate->generation);
-			gchar *component = g_strdup_printf("%d", candidate->component);
-			gchar *port = g_strdup_printf("%d", candidate->port);
+			if (candidate->rem_known == TRUE)
+				continue;
+			candidate->rem_known = TRUE;
+
+			xmltransport = xmlnode_new_child(node, "candidate");
+			generation = g_strdup_printf("%d", candidate->generation);
+			component = g_strdup_printf("%d", candidate->component);
+			port = g_strdup_printf("%d", candidate->port);
 
 			xmlnode_set_attrib(xmltransport, "generation", generation);
 			xmlnode_set_attrib(xmltransport, "component", component);

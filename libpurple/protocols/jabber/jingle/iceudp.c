@@ -68,6 +68,8 @@ jingle_iceudp_candidate_copy(JingleIceUdpCandidate *candidate)
 	new_candidate->username = g_strdup(candidate->username);
 	new_candidate->password = g_strdup(candidate->password);
 
+	new_candidate->rem_known = candidate->rem_known;
+
 	return new_candidate;
 }
 
@@ -119,6 +121,8 @@ jingle_iceudp_candidate_new(guint component, const gchar *foundation,
 
 	candidate->username = g_strdup(username);
 	candidate->password = g_strdup(password);
+
+	candidate->rem_known = FALSE;
 	return candidate;
 }
 
@@ -177,7 +181,8 @@ static void
 jingle_iceudp_init (JingleIceUdp *iceudp)
 {
 	iceudp->priv = JINGLE_ICEUDP_GET_PRIVATE(iceudp);
-	memset(iceudp->priv, 0, sizeof(iceudp->priv));
+	iceudp->priv->local_candidates = NULL;
+	iceudp->priv->remote_candidates = NULL;
 }
 
 static void
@@ -185,6 +190,8 @@ jingle_iceudp_finalize (GObject *iceudp)
 {
 /*	JingleIceUdpPrivate *priv = JINGLE_ICEUDP_GET_PRIVATE(iceudp); */
 	purple_debug_info("jingle","jingle_iceudp_finalize\n");
+
+	G_OBJECT_CLASS(parent_class)->finalize(iceudp);
 }
 
 static void
@@ -321,6 +328,7 @@ jingle_iceudp_parse_internal(xmlnode *iceudp)
 				xmlnode_get_attrib(candidate, "rel-addr"));
 		iceudp_candidate->relport =
 				relport != NULL ? atoi(relport) : 0;
+		iceudp_candidate->rem_known = TRUE;
 		jingle_iceudp_add_remote_candidate(JINGLE_ICEUDP(transport), iceudp_candidate);
 	}
 
@@ -332,31 +340,34 @@ jingle_iceudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 {
 	xmlnode *node = parent_class->to_xml(transport, content, action);
 
-	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_TRANSPORT_INFO ||
-			action == JINGLE_CONTENT_ADD || action == JINGLE_TRANSPORT_REPLACE) {
-		JingleIceUdpPrivate *icetransport =
-				JINGLE_ICEUDP_GET_PRIVATE(transport);
-		if (icetransport && icetransport->local_candidates) {
-			JingleIceUdpCandidate *candidate =
-					icetransport->local_candidates->data;
-			xmlnode_set_attrib(node, "pwd", candidate->password);
-			xmlnode_set_attrib(node, "ufrag", candidate->username);
-		}
-	}
-
-	if (action == JINGLE_TRANSPORT_INFO || action == JINGLE_SESSION_ACCEPT) {
+	if (action == JINGLE_SESSION_INITIATE ||
+			action == JINGLE_SESSION_ACCEPT ||
+			action == JINGLE_TRANSPORT_INFO ||
+			action == JINGLE_CONTENT_ADD ||
+			action == JINGLE_TRANSPORT_REPLACE) {
 		JingleIceUdpPrivate *priv = JINGLE_ICEUDP_GET_PRIVATE(transport);
 		GList *iter = priv->local_candidates;
+		gboolean used_candidate = FALSE;
 
 		for (; iter; iter = g_list_next(iter)) {
 			JingleIceUdpCandidate *candidate = iter->data;
+			xmlnode *xmltransport;
+			gchar *component, *generation, *network,
+					*port, *priority;
 
-			xmlnode *xmltransport = xmlnode_new_child(node, "candidate");
-			gchar *component = g_strdup_printf("%d", candidate->component);
-			gchar *generation = g_strdup_printf("%d", candidate->generation);
-			gchar *network = g_strdup_printf("%d", candidate->network);
-			gchar *port = g_strdup_printf("%d", candidate->port);
-			gchar *priority = g_strdup_printf("%d", candidate->priority);
+			if (candidate->rem_known == TRUE)
+				continue;
+
+			used_candidate = TRUE;
+			candidate->rem_known = TRUE;
+
+			xmltransport = xmlnode_new_child(node, "candidate");
+			component = g_strdup_printf("%d", candidate->component);
+			generation = g_strdup_printf("%d",
+					candidate->generation);
+			network = g_strdup_printf("%d", candidate->network);
+			port = g_strdup_printf("%d", candidate->port);
+			priority = g_strdup_printf("%d", candidate->priority);
 
 			xmlnode_set_attrib(xmltransport, "component", component);
 			xmlnode_set_attrib(xmltransport, "foundation", candidate->foundation);
@@ -387,6 +398,13 @@ jingle_iceudp_to_xml_internal(JingleTransport *transport, xmlnode *content, Jing
 			g_free(network);
 			g_free(port);
 			g_free(priority);
+		}
+
+		if (used_candidate == TRUE) {
+			JingleIceUdpCandidate *candidate =
+					priv->local_candidates->data;
+			xmlnode_set_attrib(node, "pwd", candidate->password);
+			xmlnode_set_attrib(node, "ufrag", candidate->username);
 		}
 	}
 
