@@ -120,6 +120,8 @@ jingle_file_transfer_finalize (GObject *ft)
 		/* remove reference in transfer */
 		priv->xfer->data = NULL;
 	}
+	
+	G_OBJECT_CLASS(parent_class)->finalize(ft);
 }
 
 static void
@@ -243,9 +245,8 @@ jingle_file_transfer_ibb_send_data(JingleContent *content)
 	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
 	FILE *fp = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp;
 	gsize remaining = purple_xfer_get_bytes_remaining(xfer);
-	gsize block_size = 
-		jingle_ibb_get_block_size(JINGLE_IBB(
-			jingle_content_get_transport(content)));
+	JingleTransport *transport = jingle_content_get_transport(content);
+	gsize block_size = jingle_ibb_get_block_size(JINGLE_IBB(transport));
 	gsize packet_size = remaining < block_size ? remaining : block_size;
 	gpointer data = g_malloc(packet_size);
 	int res;
@@ -256,8 +257,7 @@ jingle_file_transfer_ibb_send_data(JingleContent *content)
 	res = fread(data, packet_size, 1, fp);
 
 	if (res == 1) {
-		jingle_ibb_send_data(JINGLE_IBB(jingle_content_get_transport(content)),
-			data, packet_size);
+		jingle_ibb_send_data(JINGLE_IBB(transport), data, packet_size);
 		purple_xfer_set_bytes_sent(xfer,
 			purple_xfer_get_bytes_sent(xfer) + packet_size);
 		purple_xfer_update_progress(xfer);
@@ -265,6 +265,7 @@ jingle_file_transfer_ibb_send_data(JingleContent *content)
 		jingle_file_transfer_cancel_local(content);
 	}
 	g_free(data);
+	g_object_unref(transport);
 }
 
 /* callback functions for IBB */
@@ -362,6 +363,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 				purple_xfer_cancel_remote(xfer);
 				jabber_iq_send(jingle_session_to_packet(session,
 						JINGLE_SESSION_TERMINATE));
+				g_object_unref(transport);
 				g_object_unref(session);
 				g_object_unref(session);
 				return;
@@ -378,6 +380,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 		}
 	}
 	g_object_unref(session);
+	g_object_unref(transport);
 }
 
 static void
@@ -472,6 +475,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			}
 			
 			g_object_unref(session);
+			g_object_unref(transport);
 			break;
 		}
 		case JINGLE_SESSION_INITIATE: {
@@ -539,7 +543,6 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer = NULL;
 			}
 	
-			g_object_unref(session);
 			g_object_unref(session);
 			break;
 		}

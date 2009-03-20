@@ -206,6 +206,7 @@ jingle_ibb_data_sent_callback(JabberIBBSession *sess)
 		if (sent_cb) {
 			sent_cb(content);
 		}
+		g_object_unref(transport);
 	}
 }
 
@@ -225,6 +226,7 @@ jingle_ibb_data_recv_callback(JabberIBBSession *sess, const gpointer data,
 		if (recv_cb) {
 			recv_cb(content, data, size);
 		}
+		g_object_unref(transport);
 	}
 }
 
@@ -243,6 +245,7 @@ jingle_ibb_error_callback(JabberIBBSession *sess)
 		if (error_cb) {
 			error_cb(content);
 		}
+		g_object_unref(transport);
 	}
 }
 
