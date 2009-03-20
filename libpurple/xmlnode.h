@@ -26,6 +26,8 @@
 #ifndef _PURPLE_XMLNODE_H_
 #define _PURPLE_XMLNODE_H_
 
+#include <glib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -155,6 +157,7 @@ char *xmlnode_get_data_unescaped(xmlnode *node);
  */
 void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
 
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_XMLNODE_C_)
 /**
  * Sets a prefixed attribute for a node
  *
@@ -162,6 +165,8 @@ void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
  * @param attr   The name of the attribute to set
  * @param prefix The prefix of the attribute to ste
  * @param value  The value of the attribute
+ *
+ * @deprecated Use xmlnode_set_attrib_full instead.
  */
 void xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value);
 
@@ -172,8 +177,25 @@ void xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char 
  * @param attr  The name of the attribute to set
  * @param xmlns The namespace of the attribute to ste
  * @param value The value of the attribute
+ *
+ * @deprecated Use xmlnode_set_attrib_full instead.
  */
 void xmlnode_set_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns, const char *value);
+#endif /* PURPLE_DISABLE_DEPRECATED */
+
+/**
+ * Sets a namespaced attribute for a node
+ *
+ * @param node   The node to set an attribute for.
+ * @param attr   The name of the attribute to set
+ * @param xmlns  The namespace of the attribute to ste
+ * @param prefix The prefix of the attribute to ste
+ * @param value  The value of the attribute
+ *
+ * @since 2.6.0
+ */
+void xmlnode_set_attrib_full(xmlnode *node, const char *attr, const char *xmlns,
+	const char *prefix, const char *value);
 
 /**
  * Gets an attribute from a node.
@@ -243,7 +265,7 @@ void xmlnode_set_prefix(xmlnode *node, const char *prefix);
  * @param node The node to get the prefix from
  * @return The prefix of this node
  */
-const char *xmlnode_get_prefix(xmlnode *node);
+const char *xmlnode_get_prefix(const xmlnode *node);
 
 /**
  * Returns the node in a string of xml.
@@ -254,7 +276,7 @@ const char *xmlnode_get_prefix(xmlnode *node);
  * @return The node represented as a string.  You must
  *         g_free this string when finished using it.
  */
-char *xmlnode_to_str(xmlnode *node, int *len);
+char *xmlnode_to_str(const xmlnode *node, int *len);
 
 /**
  * Returns the node in a string of human readable xml.
@@ -266,7 +288,7 @@ char *xmlnode_to_str(xmlnode *node, int *len);
  *         tab and new line characters.  You must
  *         g_free this string when finished using it.
  */
-char *xmlnode_to_formatted_str(xmlnode *node, int *len);
+char *xmlnode_to_formatted_str(const xmlnode *node, int *len);
 
 /**
  * Creates a node from a string of XML.  Calling this on the
@@ -296,6 +318,22 @@ xmlnode *xmlnode_copy(const xmlnode *src);
  * @param node The node to free.
  */
 void xmlnode_free(xmlnode *node);
+
+/**
+ * Creates a node from a XML File.  Calling this on the
+ * root node of an XML document will parse the entire document
+ * into a tree of nodes, and return the xmlnode of the root.
+ *
+ * @param str  The string of xml.
+ * @param description  The description of the file being parsed
+ * @process  The utility that is calling xmlnode_from_file
+ *
+ * @return The new node.
+ *
+ * @since 2.6.0
+ */
+xmlnode *xmlnode_from_file(const char *dir, const char *filename,
+			   const char *description, const char *process);
 
 #ifdef __cplusplus
 }

@@ -177,13 +177,18 @@ msn_user_set_passport(MsnUser *user, const char *passport)
 	user->passport = g_strdup(passport);
 }
 
-void
+gboolean
 msn_user_set_friendly_name(MsnUser *user, const char *name)
 {
-	g_return_if_fail(user != NULL);
+	g_return_val_if_fail(user != NULL, FALSE);
+
+	if (user->friendly_name && name && !strcmp(user->friendly_name, name))
+		return FALSE;
 
 	g_free(user->friendly_name);
 	user->friendly_name = g_strdup(name);
+
+	return TRUE;
 }
 
 void
@@ -289,9 +294,8 @@ msn_user_add_group_id(MsnUser *user, const char* group_id)
 		b = purple_buddy_new(account, passport, NULL);
 		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
-	b->proto_data = user;
+	purple_buddy_set_protocol_data(b, user);
 	/*Update the blist Node info*/
-//	purple_blist_node_set_string(&(b->node), "", "");
 }
 
 /*check if the msn user is online*/
