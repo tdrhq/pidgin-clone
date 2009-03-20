@@ -110,7 +110,9 @@ jingle_ibb_finalize (GObject *ibb)
 		ibb);
 	
 	if (priv->session) {
-		/* should manually close the IBB session */
+		/* set the session's state to closed, this will prevent IBB from
+		 sending <close/>, since terminate is handled by jingle */
+		jabber_ibb_session_set_state(priv->session, JABBER_IBB_SESSION_CLOSED);
 		jabber_ibb_session_destroy(priv->session);
 		priv->session = NULL;
 	}
