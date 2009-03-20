@@ -106,13 +106,16 @@ static void
 jingle_ibb_finalize (GObject *ibb)
 {
 	JingleIBBPrivate *priv = JINGLE_IBB_GET_PRIVATE(ibb);
-	purple_debug_info("jingle","jingle_ibb_finalize\n");
+	purple_debug_info("jingle","jingle_ibb_finalize transport: %lx\n",
+		ibb);
 	
 	if (priv->session) {
 		/* should manually close the IBB session */
 		jabber_ibb_session_destroy(priv->session);
 		priv->session = NULL;
 	}
+
+	G_OBJECT_CLASS(parent_class)->finalize(ibb);
 }
 
 static void
@@ -270,6 +273,8 @@ jingle_ibb_create_session(JingleIBB *ibb, JingleContent *content,
 	jabber_ibb_session_set_data_received_callback(session,
 		jingle_ibb_data_recv_callback);
 	jabber_ibb_session_set_error_callback(session, jingle_ibb_error_callback);
+	purple_debug_info("jingle-ibb", "setting session %lx on transport %lx\n",
+		session, ibb);
 	JINGLE_IBB_GET_PRIVATE(ibb)->session = session;
 
 	g_object_unref(sess);
