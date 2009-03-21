@@ -139,6 +139,13 @@ jabber_ibb_session_get_state(const JabberIBBSession *sess)
 	return sess->state;
 }
 
+void
+jabber_ibb_session_set_state(JabberIBBSession *sess, 
+	JabberIBBSessionState state)
+{
+	sess->state = state;
+}
+
 gsize
 jabber_ibb_session_get_block_size(const JabberIBBSession *sess)
 {

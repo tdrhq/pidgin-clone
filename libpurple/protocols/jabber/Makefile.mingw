@@ -56,6 +56,8 @@ C_SRC =	\
 			jabber.c \
 			jingle/jingle.c \
 			jingle/content.c \
+			jingle/file-transfer.c \
+			jingle/ibbs.c \
 			jingle/iceudp.c \
 			jingle/rawudp.c \
 			jingle/rtp.c \
@@ -74,6 +76,7 @@ C_SRC =	\
 			usernick.c \
 			usertune.c \
 			xdata.c \
+			xfer.c \
 			win32/posix.uname.c
 
 OBJECTS = $(C_SRC:%.c=%.o)

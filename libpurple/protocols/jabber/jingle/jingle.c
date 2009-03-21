@@ -24,6 +24,8 @@
 
 #include "content.h"
 #include "debug.h"
+#include "file-transfer.h"
+#include "ibbs.h"
 #include "jingle.h"
 #include <string.h>
 #include "session.h"
@@ -41,16 +43,16 @@ jingle_get_type(const gchar *type)
 #if 0
 	else if (!strcmp(type, JINGLE_TRANSPORT_SOCKS))
 		return JINGLE_TYPE_SOCKS;
+#endif
 	else if (!strcmp(type, JINGLE_TRANSPORT_IBB))
 		return JINGLE_TYPE_IBB;
-#endif
 #ifdef USE_VV
 	else if (!strcmp(type, JINGLE_APP_RTP))
 		return JINGLE_TYPE_RTP;
 #endif
-#if 0
 	else if (!strcmp(type, JINGLE_APP_FT))
 		return JINGLE_TYPE_FT;
+#if 0
 	else if (!strcmp(type, JINGLE_APP_XML))
 		return JINGLE_TYPE_XML;
 #endif
