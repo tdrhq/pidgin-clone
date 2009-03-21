@@ -480,8 +480,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 		}
 		case JINGLE_SESSION_INITIATE: {
 			JingleSession *session = jingle_content_get_session(content);
-			JingleTransport *transport = jingle_transport_parse(
-					xmlnode_get_child(xmlcontent, "transport"));
+			JingleTransport *transport = jingle_content_get_transport(content);
 			xmlnode *description = xmlnode_get_child(xmlcontent, "description");
 			JabberStream *js = jingle_session_get_js(session);
 			xmlnode *offer = xmlnode_get_child(description, "offer");
@@ -524,6 +523,8 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 						purple_xfer_get_local_filename(xfer);
 					jingle_ibb_create_session(ibb, content, sid, who);
 				}
+				
+				g_object_unref(transport);
 			}
 
 			g_object_unref(session);
