@@ -14,10 +14,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
  
- #ifndef JINGLE_IBB_H
- #define JINGLE_IBB_H
+#ifndef JINGLE_IBB_H
+#define JINGLE_IBB_H
  
- #include <glib.h>
+#include <glib.h>
 #include <glib-object.h>
 
 #include "transport.h"
@@ -92,4 +92,4 @@ gsize jingle_ibb_get_block_size(const JingleIBB *ibb);
 
 G_END_DECLS
  
- #endif /* JINGLE_IBB_H */
+#endif /* JINGLE_IBB_H */

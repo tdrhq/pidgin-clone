@@ -32,6 +32,7 @@
 #include "iceudp.h"
 #include "rawudp.h"
 #include "rtp.h"
+#include "s5b.h"
 
 GType
 jingle_get_type(const gchar *type)
@@ -40,10 +41,8 @@ jingle_get_type(const gchar *type)
 		return JINGLE_TYPE_RAWUDP;
 	else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP))
 		return JINGLE_TYPE_ICEUDP;
-#if 0
-	else if (!strcmp(type, JINGLE_TRANSPORT_SOCKS))
-		return JINGLE_TYPE_SOCKS;
-#endif
+	else if (!strcmp(type, JINGLE_TRANSPORT_S5B))
+		return JINGLE_TYPE_S5B;
 	else if (!strcmp(type, JINGLE_TRANSPORT_IBB))
 		return JINGLE_TYPE_IBB;
 #ifdef USE_VV

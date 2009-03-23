@@ -37,6 +37,8 @@ JABBERSOURCES = auth.c \
 			  jingle/rawudp.h \
 			  jingle/rtp.c \
 			  jingle/rtp.h \
+			  jingle/s5b.c \
+			  jingle/s5b.h \
 			  jingle/session.c \
 			  jingle/session.h \
 			  jingle/transport.c \

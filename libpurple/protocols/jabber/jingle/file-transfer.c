@@ -19,6 +19,7 @@
 #include "jingle.h"
 #include "file-transfer.h"
 #include "ibbs.h"
+#include "s5b.h"
 #include "debug.h"
 #include "xmlnode.h"
 #include "xfer.h"
@@ -573,6 +574,25 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 	}
 }
 
+static void
+jingle_file_transfer_add_ibb_session_to_transport(JabberStream *js,
+	JingleTransport *transport, JingleContent *content, const gchar *jid)
+{
+	gchar *sid = jabber_get_next_id(js);
+
+	if (JINGLE_IS_IBB(transport)) {
+		jingle_ibb_create_session(JINGLE_IBB(transport), content, sid, jid);
+		jingle_ibb_set_data_sent_callback(JINGLE_IBB(transport),
+			jingle_file_transfer_ibb_data_sent_callback);
+		jingle_ibb_set_error_callback(JINGLE_IBB(transport),
+			jingle_file_transfer_ibb_error_callback);
+	} else {
+		purple_debug_error("jingle-ft",
+			"trying to setup an IBB session of a non-IBB transport\n");
+	}
+		
+	g_free(sid);
+}
 
 PurpleXfer *
 jingle_file_transfer_new_xfer(PurpleConnection *gc, const gchar *who)
@@ -588,7 +608,8 @@ jingle_file_transfer_new_xfer(PurpleConnection *gc, const gchar *who)
 		JingleContent *content;
 		JingleTransport *transport;
 		gchar *jid = NULL, *me = NULL, *sid = NULL;
-
+		const gchar *transport_type = NULL;
+			
 		/* construct JID to send to */
 		JabberBuddy *jb = jabber_buddy_find(js, who, FALSE);
 		JabberBuddyResource *jbr;
@@ -600,6 +621,21 @@ jingle_file_transfer_new_xfer(PurpleConnection *gc, const gchar *who)
 		jbr = jabber_buddy_find_resource(jb, NULL);
 		if (!jbr) {
 			purple_debug_error("jingle-rtp", "Could not find buddy's resource\n");
+		}
+		
+		if (jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_S5B)) {
+			purple_debug_info("jingle-ft", 
+				"receiver supports S5B, let's try that first\n");
+			transport_type = JINGLE_TRANSPORT_S5B;
+		} else if (jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_IBB)) {
+			purple_debug_info("jingle-ft",
+				"receiver didn't support S5B but IBB, so let's try that\n");
+			transport_type = JINGLE_TRANSPORT_IBB;
+		} else {
+			purple_debug_error("jingle-ft",
+				"receiver doesn't support S5B or IBB, bailing out "
+				"(this shouldn't happen).");
+			return NULL;
 		}
 		
 		if ((strchr(who, '/') == NULL) && jbr && (jbr->name != NULL)) {
@@ -616,20 +652,17 @@ jingle_file_transfer_new_xfer(PurpleConnection *gc, const gchar *who)
 		g_free(sid);
 		
 		/* add the content */
-		/* for now just do IBB... */
-		transport = jingle_transport_create(JINGLE_TRANSPORT_IBB);
+		transport = jingle_transport_create(transport_type);
 		content = jingle_content_create(JINGLE_APP_FT, "initiator", "session",
 			"ft-session", "sender", transport);
 		jingle_session_add_content(session, content);
 		JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer = xfer;
 
-		sid = jabber_get_next_id(js);
-		jingle_ibb_create_session(JINGLE_IBB(transport), content, sid, jid);
-		jingle_ibb_set_data_sent_callback(JINGLE_IBB(transport),
-			jingle_file_transfer_ibb_data_sent_callback);
-		jingle_ibb_set_error_callback(JINGLE_IBB(transport),
-			jingle_file_transfer_ibb_error_callback);
-		
+		if (JINGLE_IS_IBB(transport)) {
+			jingle_file_transfer_add_ibb_session_to_transport(js, transport, 
+				content, jid);
+		}
+
 		xfer->data = content;
 		purple_xfer_set_init_fnc(xfer, jingle_file_transfer_xfer_init);
 		purple_xfer_set_cancel_send_fnc(xfer, jingle_file_transfer_cancel_send);

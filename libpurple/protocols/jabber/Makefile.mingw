@@ -61,6 +61,7 @@ C_SRC =	\
 			jingle/iceudp.c \
 			jingle/rawudp.c \
 			jingle/rtp.c \
+			jingle/s5b.c \
 			jingle/session.c \
 			jingle/transport.c \
 			jutil.c \
