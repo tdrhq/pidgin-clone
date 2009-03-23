@@ -35,8 +35,9 @@ jabber_xfer_support_jingle_ft(const PurpleConnection *gc, const gchar *who)
 
 	jb = jabber_buddy_find(js, who, FALSE);
 	if (jb) {
-		/* should check for s5b or IBB, probably... */
-		return jabber_buddy_has_capability(jb, JINGLE_APP_FT);
+		return jabber_buddy_has_capability(jb, JINGLE_APP_FT) &&
+			(jabber_buddy_has_capability(jb, JINGLE_TRANSPORT_S5B) ||
+			 jabber_buddy_has_capability(jb, JINGLE_TRANSPORT_IBB));
 	} else {
 		return FALSE;
 	}
