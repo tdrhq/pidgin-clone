@@ -386,7 +386,13 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			purple_debug_error("jingle-rtp", "Could not find buddy's resource\n");
 		}
 		
-		if (jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_S5B)) {
+		if (purple_xfer_get_size(xfer) <= JINGLE_FT_IBB_THRESHOLD &&
+			jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_IBB)) {
+			purple_debug_info("jingle-ft",
+				"the file is less than 64 kB and the receiver supports IBB, "
+				"so let's go for that from the start\n");
+			transport_type = JINGLE_TRANSPORT_IBB;
+		} else if (jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_S5B)) {
 			purple_debug_info("jingle-ft", 
 				"receiver supports S5B, let's try that first\n");
 			transport_type = JINGLE_TRANSPORT_S5B;
@@ -413,7 +419,6 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 		sid = jabber_get_next_id(js);
 		session = jingle_session_create(js, sid, me, jid, TRUE);
 		g_free(sid);
-		g_free(jid);
 		g_free(me);
 		
 		/* add the content */
@@ -427,7 +432,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			jingle_file_transfer_add_ibb_session_to_transport(js, transport, 
 				content, jid);
 		}	
-
+		g_free(jid);
 		xfer->data = content;
 		
 		jabber_iq_send(jingle_session_to_packet(session, 
