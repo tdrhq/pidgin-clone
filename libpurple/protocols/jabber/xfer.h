@@ -17,7 +17,7 @@
 #ifndef JABBER_XFER_H
 #define JABBER_XFER_H
  
-#include <glib.h>
+#include "internal.h"
 
 #include "connection.h"
 #include "ft.h"
