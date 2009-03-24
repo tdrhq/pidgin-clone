@@ -34,6 +34,8 @@ struct _JingleFTPrivate {
 #define JINGLE_FT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), \
 									JINGLE_TYPE_FT, JingleFTPrivate))
 
+#define JINGLE_FT_IBB_THRESHOLD 65536
+
 static void jingle_file_transfer_class_init (JingleFTClass *klass);
 static void jingle_file_transfer_init (JingleFT *rtp);
 static void jingle_file_transfer_finalize (GObject *object);
@@ -342,7 +344,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 	JingleContent *content = (JingleContent *) xfer->data;
 	JingleSession *session = jingle_content_get_session(content);
 	JingleTransport *transport = jingle_content_get_transport(content);
-	
+		
 	if (jingle_session_is_initiator(session)) {
 		jabber_iq_send(jingle_session_to_packet(session, 
 			JINGLE_SESSION_INITIATE));
@@ -604,7 +606,7 @@ jingle_file_transfer_new_xfer(PurpleConnection *gc, const gchar *who)
 
 	if (xfer)
 	{
-		JingleSession *session;
+	JingleSession *session;
 		JingleContent *content;
 		JingleTransport *transport;
 		gchar *jid = NULL, *me = NULL, *sid = NULL;
@@ -661,7 +663,7 @@ jingle_file_transfer_new_xfer(PurpleConnection *gc, const gchar *who)
 		if (JINGLE_IS_IBB(transport)) {
 			jingle_file_transfer_add_ibb_session_to_transport(js, transport, 
 				content, jid);
-		}
+		}	
 
 		xfer->data = content;
 		purple_xfer_set_init_fnc(xfer, jingle_file_transfer_xfer_init);

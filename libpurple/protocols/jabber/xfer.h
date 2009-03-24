@@ -14,18 +14,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
  */
  
- #ifndef JABBER_XFER_H
- #define JABBER_XFER_H
+#ifndef JABBER_XFER_H
+#define JABBER_XFER_H
  
- #include "connection.h"
- #include "ft.h"
+#include <glib.h>
+
+#include "connection.h"
+#include "ft.h"
  
- PurpleXfer *jabber_xfer_new(PurpleConnection *gc, const char *who);
- void jabber_xfer_send(PurpleConnection *gc, const char *who, const char *file);
+PurpleXfer *jabber_xfer_new(PurpleConnection *gc, const char *who);
+void jabber_xfer_send(PurpleConnection *gc, const char *who, const char *file);
  
- xmlnode *jabber_xfer_create_file_element(const PurpleXfer *xfer);
- PurpleXfer *jabber_xfer_create_from_xml(const PurpleAccount *account,
+xmlnode *jabber_xfer_create_file_element(const PurpleXfer *xfer);
+PurpleXfer *jabber_xfer_create_from_xml(const PurpleAccount *account,
 	const xmlnode *file, const gchar *who, gpointer data);
  
- #endif /* JABBER_XFER_H */
+#endif /* JABBER_XFER_H */
  
