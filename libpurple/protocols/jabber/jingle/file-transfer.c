@@ -448,14 +448,17 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 		JingleSession *session = jingle_content_get_session(content);
 		JingleTransport *transport = jingle_content_get_transport(content);
 
-		jabber_iq_send(jingle_session_to_packet(session,
-			JINGLE_SESSION_ACCEPT));
 		/* ready to receive */
 		if (JINGLE_IS_IBB(transport)) {
 			/* open file and prepare for IBB */
 			/* open file to write to */
 			JingleIBB *ibb = JINGLE_IBB(transport);
 			const gchar *filename = purple_xfer_get_local_filename(xfer);
+
+			/* send a session-accept immediatly, since it's IBB */
+			jabber_iq_send(jingle_session_to_packet(session,
+				JINGLE_SESSION_ACCEPT));
+
 			JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp = 
 				g_fopen(filename, "wb");
 			if (JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp == NULL) {
@@ -479,6 +482,8 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 	
 			/* start the transfer */
 			purple_xfer_start(xfer, 0, NULL, 0);
+		} else if (JINGLE_IS_S5B(transport)) {
+			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));	
 		}
 		g_object_unref(session);
 		g_object_unref(transport);
