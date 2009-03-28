@@ -33,12 +33,14 @@ jingle_s5b_streamhost_create(const gchar *jid, const gchar *host, int port,
 {
 	JabberBytestreamsStreamhost *sh = g_new0(JabberBytestreamsStreamhost, 1);
 	
-	sh->jid = g_strdup(jid);
-	sh->host = g_strdup(host);
-	sh->port = port;
-	if (zeroconf)
-		sh->zeroconf = g_strdup(zeroconf);
-	
+	if (sh) {
+		sh->jid = g_strdup(jid);
+		sh->host = g_strdup(host);
+		sh->port = port;
+		if (zeroconf)
+			sh->zeroconf = g_strdup(zeroconf);
+	}
+
 	return sh;
 }
 
@@ -50,6 +52,22 @@ jingle_s5b_streamhost_destroy(JabberBytestreamsStreamhost *sh)
 	if (sh->zeroconf)
 		g_free(sh->zeroconf);
 	g_free(sh);
+}
+
+JabberBytestreamsStreamhost *
+jingle_s5b_streamhost_copy(const JabberBytestreamsStreamhost *sh)
+{
+	JabberBytestreamsStreamhost *new_sh = g_new0(JabberBytestreamsStreamhost, 1);
+	
+	if (new_sh) {
+		new_sh->jid = g_strdup(sh->jid);
+		new_sh->host = g_strdup(sh->host);
+		new_sh->port = sh->port;
+		if (sh->zeroconf)
+			new_sh->zeroconf = g_strdup(sh->zeroconf);
+	}
+
+	return new_sh;
 }
 
 xmlnode *
@@ -218,7 +236,7 @@ jingle_s5b_to_xml_internal(JingleTransport *transport, xmlnode *content,
 	const GList *iter;
 	JingleS5B *s5b = JINGLE_S5B(transport);
 	
-	purple_debug_info("jingle", "jingle_ibb_to_xml_internal\n");
+	purple_debug_info("jingle", "jingle_s5b_to_xml_internal\n");
 	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_SESSION_ACCEPT) {
 		for (iter = JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts; 
 			iter; 
@@ -242,6 +260,8 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 {
 	JingleS5B *s5b = ((JingleS5BListenData *) data)->s5b;
 	JingleSession *session = ((JingleS5BListenData *) data)->session;
+	JabberStream *js = jingle_session_get_js(session);
+	const GList *iter;
 	
 	JINGLE_S5B_GET_PRIVATE(s5b)->listen_data = NULL;
 	
@@ -249,7 +269,6 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 	
 	if (sock > 0) {
 		guint local_port = purple_network_get_port_from_fd(sock);
-		JabberStream *js = jingle_session_get_js(session);
 		const gchar *local_ip = purple_network_get_local_system_ip(js->fd);
 		const gchar *public_ip = purple_network_get_my_ip(js->fd);
 		const gchar *jid = g_strdup_printf("%s@%s/%s", js->user->node,
@@ -278,7 +297,23 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 		g_free(jid);
 	}
 	
-	/* should gather proxies here */
+	/* add bytestream proxies */
+	for (iter = js->bs_proxies ; iter ; iter = g_list_next(iter)) {
+		JabberBytestreamsStreamhost *sh =
+			(JabberBytestreamsStreamhost *) iter->data;
+		
+		purple_debug_info("jingle-s5b", 
+			"found local bytestream proxy jid = %s, host = %s, port %d\n",
+			sh->jid ? sh->jid : "(null)", sh->host ? sh->host : "(null)",
+			sh->port);
+		
+		/* is this check really nessesary? si.c does it so... */
+		if (sh->jid && sh->host && sh->port > 0) {
+			JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts =
+				g_list_append(JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts,
+					jingle_s5b_streamhost_copy(sh));		
+		}
+	}
 	
 	/* if we are the initiator send session-initiate */
 	if (jingle_session_is_initiator(session)) {
