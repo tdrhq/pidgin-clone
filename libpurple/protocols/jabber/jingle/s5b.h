@@ -65,6 +65,10 @@ extern "C" {
  */
 GType jingle_s5b_get_type(void);
 
+/* start discovering streamhosts, initiator will send session-initiate when
+	done, receiver will send transport-info */
+void jingle_s5b_gather_streamhosts(JingleSession *session, JingleS5B *s5b);
+
 #ifdef __cplusplus
 }
 #endif

@@ -435,8 +435,14 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 		g_free(jid);
 		xfer->data = content;
 		
-		jabber_iq_send(jingle_session_to_packet(session, 
-			JINGLE_SESSION_INITIATE));
+		if (JINGLE_IS_IBB(transport)) {
+			/* if it's IBB, send session-intitate directly */
+			jabber_iq_send(jingle_session_to_packet(session, 
+				JINGLE_SESSION_INITIATE));
+		} else if (JINGLE_IS_S5B(transport)) {
+			/* start local listen on the S5B transport */
+			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
+		}	
 	} else {
 		JingleContent *content = (JingleContent *) xfer->data;
 		JingleSession *session = jingle_content_get_session(content);
