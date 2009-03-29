@@ -44,6 +44,27 @@ jingle_s5b_streamhost_create(const gchar *jid, const gchar *host, int port,
 	return sh;
 }
 
+static JabberBytestreamsStreamhost *
+jingle_s5b_streamhost_create_from_xml(xmlnode *streamhost)
+{
+	JabberBytestreamsStreamhost *sh = NULL;
+	const gchar *jid = xmlnode_get_attrib(streamhost, "jid");
+	const gchar *host = xmlnode_get_attrib(streamhost, "host");
+	const gchar *port = xmlnode_get_attrib(streamhost, "port");
+	const gchar *zeroconf = xmlnode_get_attrib(streamhost, "zeroconf");
+
+	if (jid && host) {
+		sh = g_new0(JabberBytestreamsStreamhost, 1);
+		sh->jid = g_strdup(jid);
+		sh->host = g_strdup(host);
+		if (port)
+			sh->port = atoi(port);
+		if (zeroconf)
+			sh->zeroconf = g_strdup(zeroconf);
+	}
+	return sh;
+}
+
 static void
 jingle_s5b_streamhost_destroy(JabberBytestreamsStreamhost *sh)
 {
@@ -54,7 +75,7 @@ jingle_s5b_streamhost_destroy(JabberBytestreamsStreamhost *sh)
 	g_free(sh);
 }
 
-JabberBytestreamsStreamhost *
+static JabberBytestreamsStreamhost *
 jingle_s5b_streamhost_copy(const JabberBytestreamsStreamhost *sh)
 {
 	JabberBytestreamsStreamhost *new_sh = g_new0(JabberBytestreamsStreamhost, 1);
@@ -70,7 +91,7 @@ jingle_s5b_streamhost_copy(const JabberBytestreamsStreamhost *sh)
 	return new_sh;
 }
 
-xmlnode *
+static xmlnode *
 jingle_s5b_streamhost_to_xml(const JabberBytestreamsStreamhost *sh)
 {
 	xmlnode *streamhost = xmlnode_new("streamhost");
@@ -92,6 +113,8 @@ jingle_s5b_streamhost_to_xml(const JabberBytestreamsStreamhost *sh)
 struct _JingleS5BPrivate {
 	/* S5B stuff here... */
 	guint fd;
+	guint local_fd;
+	guint remote_fd;
 	PurpleProxyConnectData *connect_data;
 	PurpleNetworkListenData *listen_data;
 	GList *remote_streamhosts;
@@ -160,6 +183,9 @@ jingle_s5b_init (JingleS5B *s5b)
 	memset(s5b->priv, 0, sizeof(s5b->priv));
 	s5b->priv->local_streamhosts = NULL;
 	s5b->priv->remote_streamhosts = NULL;
+	s5b->priv->fd = 0;
+	s5b->priv->local_fd = 0;
+	s5b->priv->remote_fd = 0;
 }
 
 static void
@@ -224,6 +250,23 @@ jingle_s5b_parse_internal(xmlnode *s5b)
 {
 	JingleTransport *transport = parent_class->parse(s5b);
 	JingleS5BPrivate *priv = JINGLE_S5B_GET_PRIVATE(transport);
+	xmlnode *streamhost;
+	
+	for (streamhost = xmlnode_get_child(s5b, "streamhost");
+		 streamhost;
+		 streamhost = xmlnode_get_next_twin(streamhost)) {
+		JabberBytestreamsStreamhost *sh = 
+			jingle_s5b_streamhost_create_from_xml(streamhost);
+		if (sh) {
+			purple_debug_info("jingle-s5b", 
+				"adding streamhost jid = %s, host = %s, port = %d to remote "
+				"streamhosts\n", sh->jid, sh->host, sh->port);
+			priv->remote_streamhosts = 
+				g_list_append(priv->remote_streamhosts, sh);
+		}
+	}
+	
+	/* should start connection attempts here... */
 	
 	return transport;
 }
@@ -271,7 +314,7 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 		guint local_port = purple_network_get_port_from_fd(sock);
 		const gchar *local_ip = purple_network_get_local_system_ip(js->fd);
 		const gchar *public_ip = purple_network_get_my_ip(js->fd);
-		const gchar *jid = g_strdup_printf("%s@%s/%s", js->user->node,
+		gchar *jid = g_strdup_printf("%s@%s/%s", js->user->node,
 			js->user->domain, js->user->resource);
 
 		purple_debug_info("jingle-s5b", "successfully open port %d locally\n",
@@ -294,6 +337,8 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 					sh);	
 		}
 
+		JINGLE_S5B_GET_PRIVATE(s5b)->local_fd = sock;
+		
 		g_free(jid);
 	}
 	
