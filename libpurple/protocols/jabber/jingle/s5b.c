@@ -363,6 +363,9 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 					jingle_s5b_streamhost_copy(sh));		
 		}
 	}
+	/* note: even if we couldn't obtain a local port and no bytestream
+	 proxies where found above, we should not revert to IBB just yet, since
+	 the other end might have working streamhosts... */
 	
 	/* if we are the initiator send session-initiate */
 	if (jingle_session_is_initiator(session)) {
@@ -385,4 +388,10 @@ jingle_s5b_gather_streamhosts(JingleSession *session, JingleS5B *s5b)
 	JINGLE_S5B_GET_PRIVATE(s5b)->listen_data = 
 		purple_network_listen_range(0, 0, SOCK_STREAM, jingle_s5b_listen_cb,
 			data);
+	
+	if (JINGLE_S5B_GET_PRIVATE(s5b)->listen_data == NULL) {
+		/* could not listen on a local port, will try to use only proxies,
+		 if possible */
+		jingle_s5b_listen_cb(-1, data);
+	}
 }
