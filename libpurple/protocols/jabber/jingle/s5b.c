@@ -280,6 +280,10 @@ jingle_s5b_to_xml_internal(JingleTransport *transport, xmlnode *content,
 	JingleS5B *s5b = JINGLE_S5B(transport);
 	
 	purple_debug_info("jingle", "jingle_s5b_to_xml_internal\n");
+
+	/* always set "mode" to "tcp" */
+	xmlnode_set_attrib(node, "mode", "tcp");
+
 	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_SESSION_ACCEPT) {
 		for (iter = JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts; 
 			iter; 
