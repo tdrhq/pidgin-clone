@@ -543,7 +543,9 @@ jingle_file_transfer_to_xml_internal(JingleContent *ft, xmlnode *content,
 		xmlnode *offer = xmlnode_new_child(description, "offer");
 		const PurpleXfer *xfer = jingle_file_transfer_get_xfer(ft);
 		
-		xmlnode_insert_child(offer, jabber_xfer_create_file_element(xfer));
+		/* if xfer is NULL, it means it has disconnected */
+		if (xfer)
+			xmlnode_insert_child(offer, jabber_xfer_create_file_element(xfer));
 	}
 	return node;
 }
@@ -647,7 +649,8 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			if (xfer) {
 				purple_debug_info("jingle", 
 					"got session-terminate, ending transfer\n");
-				purple_xfer_end(xfer);
+				if (!purple_xfer_is_canceled(xfer))
+					purple_xfer_end(xfer);
 				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer = NULL;
 			}
 	
