@@ -65,6 +65,9 @@ extern "C" {
  */
 GType jingle_s5b_get_type(void);
 
+const gchar *jingle_s5b_get_sid(const JingleS5B *s5b);
+void jingle_s5b_set_sid(JingleS5B *s5b, const gchar *sid);
+
 /* start discovering streamhosts, initiator will send session-initiate when
 	done, receiver will send transport-info */
 void jingle_s5b_gather_streamhosts(JingleSession *session, JingleS5B *s5b);

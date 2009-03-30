@@ -440,6 +440,10 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			jabber_iq_send(jingle_session_to_packet(session, 
 				JINGLE_SESSION_INITIATE));
 		} else if (JINGLE_IS_S5B(transport)) {
+			/* generate a new sid to set for the transport */
+			sid = jabber_get_next_id(js);
+			jingle_s5b_set_sid(JINGLE_S5B(transport), sid);
+			g_free(sid);
 			/* start local listen on the S5B transport */
 			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
 		}	

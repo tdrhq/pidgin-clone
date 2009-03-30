@@ -112,6 +112,7 @@ jingle_s5b_streamhost_to_xml(const JabberBytestreamsStreamhost *sh)
 
 struct _JingleS5BPrivate {
 	/* S5B stuff here... */
+	gchar *sid;
 	guint fd;
 	guint local_fd;
 	guint remote_fd;
@@ -134,7 +135,8 @@ static xmlnode *jingle_s5b_to_xml_internal(JingleTransport *transport, xmlnode *
 static JingleTransportClass *parent_class = NULL;
 
 enum {
-	PROP_0
+	PROP_0,
+	PROP_SID
 };
 
 GType
@@ -173,6 +175,13 @@ jingle_s5b_class_init (JingleS5BClass *klass)
 	klass->parent_class.parse = jingle_s5b_parse_internal;
 	klass->parent_class.transport_type = JINGLE_TRANSPORT_S5B;
 
+	g_object_class_install_property(gobject_class, PROP_SID,
+		g_param_spec_string("sid",
+		"Session ID",
+		"The unique session ID of the S5B transport.",
+		NULL,
+		G_PARAM_READWRITE));
+	
 	g_type_class_add_private(klass, sizeof(JingleS5BPrivate));
 }
 
@@ -186,6 +195,7 @@ jingle_s5b_init (JingleS5B *s5b)
 	s5b->priv->fd = 0;
 	s5b->priv->local_fd = 0;
 	s5b->priv->remote_fd = 0;
+	s5b->priv->sid = NULL;
 }
 
 static void
@@ -193,6 +203,9 @@ jingle_s5b_finalize (GObject *s5b)
 {
 	JingleS5BPrivate *priv = JINGLE_S5B_GET_PRIVATE(s5b);
 	purple_debug_info("jingle-s5b","jingle_s5b_finalize\n");
+	
+	if (priv->sid)
+		g_free(priv->sid);
 	
 	/* free the local streamhosts */
 	while (priv->local_streamhosts) {
@@ -223,6 +236,10 @@ jingle_s5b_set_property (GObject *object, guint prop_id, const GValue *value,
 	s5b = JINGLE_S5B(object);
 
 	switch (prop_id) {
+		case PROP_SID:
+			g_free(s5b->priv->sid);
+			s5b->priv->sid = g_value_dup_string(value);
+			break;	
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
@@ -239,10 +256,27 @@ jingle_s5b_get_property (GObject *object, guint prop_id, GValue *value,
 	s5b = JINGLE_S5B(object);
 
 	switch (prop_id) {
+		case PROP_SID:
+			g_value_set_string(value, s5b->priv->sid);
+			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
 			break;
 	}
+}
+
+const gchar *
+jingle_s5b_get_sid(const JingleS5B *s5b)
+{
+	gchar *sid;
+	g_object_get((gpointer) s5b, "sid", &sid, NULL);
+	return sid;
+}
+
+void
+jingle_s5b_set_sid(JingleS5B *s5b, const gchar *sid)
+{
+	g_object_set(s5b, "sid", sid, NULL);
 }
 
 static JingleTransport *
@@ -251,6 +285,10 @@ jingle_s5b_parse_internal(xmlnode *s5b)
 	JingleTransport *transport = parent_class->parse(s5b);
 	JingleS5BPrivate *priv = JINGLE_S5B_GET_PRIVATE(transport);
 	xmlnode *streamhost;
+	
+	/* set the sid from the incoming transport */
+	jingle_s5b_set_sid(JINGLE_S5B(transport), 
+		xmlnode_get_attrib(s5b, "sid"));
 	
 	for (streamhost = xmlnode_get_child(s5b, "streamhost");
 		 streamhost;
@@ -281,6 +319,8 @@ jingle_s5b_to_xml_internal(JingleTransport *transport, xmlnode *content,
 	
 	purple_debug_info("jingle", "jingle_s5b_to_xml_internal\n");
 
+	xmlnode_set_attrib(node, "sid", jingle_s5b_get_sid(s5b));
+	
 	/* always set "mode" to "tcp" */
 	xmlnode_set_attrib(node, "mode", "tcp");
 
