@@ -119,6 +119,7 @@ struct _JingleS5BPrivate {
 	PurpleProxyConnectData *connect_data;
 	PurpleNetworkListenData *listen_data;
 	PurpleProxyInfo *ppi;
+	int watcher;
 	GList *remote_streamhosts;
 	GList *local_streamhosts;
 	GList *remaining_streamhosts; /* pointer to untested remote SHs */
@@ -353,6 +354,40 @@ typedef struct {
 } JingleS5BConnectData;
 
 static void
+jingle_s5b_send_connected_cb(gpointer data, gint source,
+		PurpleInputCondition cond)
+{
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+	int acceptfd = accept(source, NULL, 0);
+	int flags;
+	
+	purple_debug_info("jingle-s5b", "in jingle_s5b_send_connected_cb\n");
+	
+	if(acceptfd == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
+		return;
+	else if(acceptfd == -1) {
+		purple_debug_warning("jingle-s5b", "accept: %s\n", g_strerror(errno));
+		/* Don't cancel the ft - allow it to fall to the next streamhost.*/
+		return;
+	}
+
+	purple_input_remove(s5b->priv->watcher);
+	close(source);
+	s5b->priv->local_fd = -1;
+
+	flags = fcntl(acceptfd, F_GETFL);
+	fcntl(acceptfd, F_SETFL, flags | O_NONBLOCK);
+#ifndef _WIN32
+	fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
+#endif
+
+	/*
+	s5b->priv->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
+					 jingle_s5b_send_read_cb, data);
+	*/
+}
+
+static void
 jingle_s5b_listen_cb(int sock, gpointer data)
 {
 	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
@@ -361,8 +396,6 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 	const GList *iter;
 	
 	JINGLE_S5B_GET_PRIVATE(s5b)->listen_data = NULL;
-	
-	g_free(data);
 	
 	if (sock > 0) {
 		guint local_port = purple_network_get_port_from_fd(sock);
@@ -391,7 +424,11 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 					sh);	
 		}
 
-		JINGLE_S5B_GET_PRIVATE(s5b)->local_fd = sock;
+		s5b->priv->local_fd = sock;
+		
+		/* The listener for the local proxy */
+		s5b->priv->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
+			jingle_s5b_send_connected_cb, data);
 		
 		g_free(jid);
 	}
