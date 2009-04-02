@@ -71,7 +71,7 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 
 <!-- This will pull from somewhere else at some point -->
 <p class="more" id="lowblurb">
-<a href="http://www.archive.org/download/PidginVideoRelease/pidgin.ogv">Pidgin Video Release 0.1</a>
+ICQ is reporting errors in some locations which are generally fixed by upgrading to 2.5.5.
 </p>
 
 <? /* Avoid outputting this stuff yet.
