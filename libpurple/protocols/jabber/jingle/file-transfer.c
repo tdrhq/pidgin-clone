@@ -676,7 +676,14 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			JingleTransport *transport = jingle_transport_parse(
 					xmlnode_get_child(xmlcontent, "transport"));
 			
-			/* do stuff... */
+			/* if there is a <streamhost-used/>, signal local S5B transport
+			 to stop connections attempts */
+			/* if we are the receiver and sent a <streamhost-used/> to the
+			 initiator, we should give up our own listening streamhost to
+			 avoid ending up with two parallell streams */
+			/* also when receiving a <streamhost-used/> we need to check if
+			 that is not one of our local streamhosts, in which case it is
+			 a proxy, and we should connect to that */
 			
 			/* we should check for "stream-host" error (in the case of S5B) and
 			 offer a transport-replace with IBB */

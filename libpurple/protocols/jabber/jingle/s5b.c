@@ -120,6 +120,9 @@ struct _JingleS5BPrivate {
 	PurpleNetworkListenData *listen_data;
 	PurpleProxyInfo *ppi;
 	int watcher;
+	char *rxqueue;
+	size_t rxlen;
+	gsize rxmaxlen;
 	GList *remote_streamhosts;
 	GList *local_streamhosts;
 	GList *remaining_streamhosts; /* pointer to untested remote SHs */
@@ -193,13 +196,6 @@ jingle_s5b_init (JingleS5B *s5b)
 {	
 	s5b->priv = JINGLE_S5B_GET_PRIVATE(s5b);
 	memset(s5b->priv, 0, sizeof(s5b->priv));
-	s5b->priv->local_streamhosts = NULL;
-	s5b->priv->remote_streamhosts = NULL;
-	s5b->priv->fd = 0;
-	s5b->priv->local_fd = 0;
-	s5b->priv->remote_fd = 0;
-	s5b->priv->sid = NULL;
-	s5b->priv->ppi = NULL;
 }
 
 static void
@@ -354,6 +350,303 @@ typedef struct {
 } JingleS5BConnectData;
 
 static void
+jingle_s5b_send_read_again_resp_cb(gpointer data, gint source,
+	PurpleInputCondition cond)
+{
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+	int len;
+	
+	purple_debug_info("jingle-s5b", "in jingle_s5b_send_read_again_cb\n");
+	len = write(source, s5b->priv->rxqueue + s5b->priv->rxlen,
+		s5b->priv->rxmaxlen - s5b->priv->rxlen);
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len < 0) {
+		purple_input_remove(s5b->priv->watcher);
+		s5b->priv->watcher = 0;
+		g_free(s5b->priv->rxqueue);
+		s5b->priv->rxqueue = NULL;
+		close(source);
+		/* TODO: signal to the content that an error has occurred */
+		return;
+	}
+	s5b->priv->rxlen += len;
+
+	if (s5b->priv->rxlen < s5b->priv->rxmaxlen)
+		return;
+
+	purple_input_remove(s5b->priv->watcher);
+	s5b->priv->watcher = 0;
+	g_free(s5b->priv->rxqueue);
+	s5b->priv->rxqueue = NULL;
+
+	/* Before actually starting sending the file, we need to wait until the
+	 * recipient sends the IQ result with <streamhost-used/>
+	 */
+	purple_debug_info("jingle-s5b", "SOCKS5 connection negotiation completed. "
+					  "Waiting for IQ result to start file transfer.\n");
+	
+	g_free(data);
+}
+
+static void
+jingle_s5b_send_read_again_cb(gpointer data, gint source,
+	PurpleInputCondition cond)
+{
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+	JingleSession *session = ((JingleS5BConnectData *) data)->session;
+	const gchar *who = jingle_session_get_remote_jid(session);
+	JabberID *dstjid = jabber_id_new(who);
+	JabberStream *js = jingle_session_get_js(session);
+	char buffer[256];
+	int len;
+	char *dstaddr, *hash;
+	const char *host;
+
+	purple_debug_info("jingle-s5b", 
+		"in jingle_s5b_send_read_again_cb\n");
+
+	if(s5b->priv->rxlen < 5) {
+		purple_debug_info("jingle-s5b", "reading the first 5 bytes\n");
+		len = read(source, buffer, 5 - s5b->priv->rxlen);
+		if(len < 0 && errno == EAGAIN)
+			return;
+		else if(len <= 0) {
+			purple_input_remove(s5b->priv->watcher);
+			s5b->priv->watcher = 0;
+			close(source);
+			/* TODO: signal the content that an error occured */
+			return;
+		}
+		s5b->priv->rxqueue = 
+			g_realloc(s5b->priv->rxqueue, len + s5b->priv->rxlen);
+		memcpy(s5b->priv->rxqueue + s5b->priv->rxlen, buffer, len);
+		s5b->priv->rxlen += len;
+		return;
+	} else if(s5b->priv->rxqueue[0] != 0x05 || s5b->priv->rxqueue[1] != 0x01 ||
+			s5b->priv->rxqueue[3] != 0x03) {
+		purple_debug_info("jingle-s5b", "invalid socks5 stuff\n");
+		purple_input_remove(s5b->priv->watcher);
+		s5b->priv->watcher = 0;
+		close(source);
+		/* TODO: signal the content that an error occured */
+		return;
+	} else if(s5b->priv->rxlen - 5 <  s5b->priv->rxqueue[4] + 2) {
+		purple_debug_info("jingle-s5b", "reading umpteen more bytes\n");
+		len = read(source, buffer, 
+			s5b->priv->rxqueue[4] + 5 + 2 - s5b->priv->rxlen);
+		if(len < 0 && errno == EAGAIN)
+			return;
+		else if(len <= 0) {
+			purple_input_remove(s5b->priv->watcher);
+			s5b->priv->watcher = 0;
+			close(source);
+			/* TODO: signal the content that an error occured */
+			return;
+		}
+		s5b->priv->rxqueue = 
+			g_realloc(s5b->priv->rxqueue, len + s5b->priv->rxlen);
+		memcpy(s5b->priv->rxqueue + s5b->priv->rxlen, buffer, len);
+		s5b->priv->rxlen += len;
+	}
+
+	if(s5b->priv->rxlen - 5 < s5b->priv->rxqueue[4] + 2)
+		return;
+
+	purple_input_remove(s5b->priv->watcher);
+	s5b->priv->watcher = 0;
+
+	if(jingle_session_is_initiator(session))
+		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
+			js->user->node, js->user->domain, js->user->resource, 
+			dstjid->node, dstjid->domain, dstjid->resource);
+	else
+		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
+			dstjid->node, dstjid->domain, dstjid->resource,
+			js->user->node, js->user->domain, js->user->resource);
+
+	g_free(dstjid);
+		
+	/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
+	hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
+	purple_debug_info("jingle-s5b", "dstaddr: %s\n", dstaddr);
+	purple_debug_info("jingle-s5b", "expecting to receive hash %s\n", hash);
+	
+	if(s5b->priv->rxqueue[4] != 40 || strncmp(hash, s5b->priv->rxqueue+5, 40) ||
+			s5b->priv->rxqueue[45] != 0x00 || s5b->priv->rxqueue[46] != 0x00) {
+		purple_debug_error("jingle-s5b", 
+			"someone connected with the wrong info!\n");
+		close(source);
+		/* TODO: signal the content that an error occured */
+		g_free(hash);
+		g_free(dstaddr);
+		return;
+	}
+
+	g_free(hash);
+	g_free(dstaddr);
+
+	g_free(s5b->priv->rxqueue);
+	host = purple_network_get_my_ip(js->fd);
+
+	s5b->priv->rxmaxlen = 5 + strlen(host) + 2;
+	s5b->priv->rxqueue = g_malloc(s5b->priv->rxmaxlen);
+	s5b->priv->rxlen = 0;
+
+	s5b->priv->rxqueue[0] = 0x05;
+	s5b->priv->rxqueue[1] = 0x00;
+	s5b->priv->rxqueue[2] = 0x00;
+	s5b->priv->rxqueue[3] = 0x03;
+	s5b->priv->rxqueue[4] = strlen(host);
+	memcpy(s5b->priv->rxqueue + 5, host, strlen(host));
+	s5b->priv->rxqueue[5+strlen(host)] = 0x00;
+	s5b->priv->rxqueue[6+strlen(host)] = 0x00;
+
+	s5b->priv->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
+		jingle_s5b_send_read_again_resp_cb, data);
+	jingle_s5b_send_read_again_resp_cb(data, source,
+		PURPLE_INPUT_WRITE);
+}
+
+static void
+jingle_s5b_send_read_response_cb(gpointer data, gint source,
+	PurpleInputCondition cond)
+{
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+	int len;
+	
+	purple_debug_info("jingle-s5b", "in jingle_s5b_send_read_response_cb\n");
+	
+	len = write(source, s5b->priv->rxqueue + s5b->priv->rxlen, 
+		s5b->priv->rxmaxlen - s5b->priv->rxlen);
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len < 0) {
+		purple_input_remove(s5b->priv->watcher);
+		s5b->priv->watcher = 0;
+		g_free(s5b->priv->rxqueue);
+		s5b->priv->rxqueue = NULL;
+		close(source);
+		/* TODO: signal to "surrounding" content that an error has occured */
+		return;
+	}
+	s5b->priv->rxlen += len;
+
+	if (s5b->priv->rxlen < s5b->priv->rxmaxlen)
+		return;
+
+	purple_input_remove(s5b->priv->watcher);
+	s5b->priv->watcher = 0;
+
+	if (s5b->priv->rxqueue[1] == 0x00) {
+		s5b->priv->watcher = purple_input_add(source, PURPLE_INPUT_READ,
+			jingle_s5b_send_read_again_cb, data);
+		g_free(s5b->priv->rxqueue);
+		s5b->priv->rxqueue = NULL;
+	} else {
+		close(source);
+		/* TODO: signal "surrounding" content that an error has occured */
+	}
+}
+	
+static void
+jingle_s5b_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+{
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+	int i;
+	int len;
+	char buffer[256];
+
+	purple_debug_info("jingle-s5b", "in jingle_s5b_send_read_cb\n");
+	
+	s5b->priv->local_fd = source;
+	
+	if(s5b->priv->rxlen < 2) {
+		purple_debug_info("jingle-s5b", "reading those first two bytes\n");
+		len = read(source, buffer, 2 - s5b->priv->rxlen);
+		if(len < 0 && errno == EAGAIN)
+			return;
+		else if(len <= 0) {
+			purple_input_remove(s5b->priv->watcher);
+			s5b->priv->watcher = 0;
+			close(source);
+			/* TODO: signal the "surrounding" content an error has occured */
+			return;
+		}
+		s5b->priv->rxqueue = 
+			g_realloc(s5b->priv->rxqueue, len + s5b->priv->rxlen);
+		memcpy(s5b->priv->rxqueue + s5b->priv->rxlen, buffer, len);
+		s5b->priv->rxlen += len;
+		return;
+	} else if(s5b->priv->rxlen - 2 < s5b->priv->rxqueue[1]) {
+		purple_debug_info("jingle-s5b", "reading the next umpteen bytes\n");
+		len = read(source, buffer, s5b->priv->rxqueue[1] + 2 - s5b->priv->rxlen);
+		if(len < 0 && errno == EAGAIN)
+			return;
+		else if(len <= 0) {
+			purple_input_remove(s5b->priv->watcher);
+			s5b->priv->watcher = 0;
+			close(source);
+			/* TODO: signal the "surrounding" content an error has occured */
+			return;
+		}
+		s5b->priv->rxqueue = 
+			g_realloc(s5b->priv->rxqueue, len + s5b->priv->rxlen);
+		memcpy(s5b->priv->rxqueue + s5b->priv->rxlen, buffer, len);
+		s5b->priv->rxlen += len;
+	}
+
+	if(s5b->priv->rxlen -2 < s5b->priv->rxqueue[1])
+		return;
+
+	purple_input_remove(s5b->priv->watcher);
+	s5b->priv->watcher = 0;
+
+	purple_debug_info("jingle-s5b", "checking to make sure we're socks FIVE\n");
+
+	if(s5b->priv->rxqueue[0] != 0x05) {
+		purple_debug_error("jingle-s5b", "it's not socks FIVE, giving up\n");
+		close(source);
+		/* TODO: signal to the "surrounding" content that an error has occured */
+		return;
+	}
+
+	purple_debug_info("jingle-s5b", "going to test %hhu different methods\n", 
+		s5b->priv->rxqueue[1]);
+
+	for(i = 0; i < s5b->priv->rxqueue[1]; i++) {
+		purple_debug_info("jingle-s5b", "testing %hhu\n", 
+			s5b->priv->rxqueue[i+2]);
+		if(s5b->priv->rxqueue[i+2] == 0x00) {
+			g_free(s5b->priv->rxqueue);
+			s5b->priv->rxlen = 0;
+			s5b->priv->rxmaxlen = 2;
+			s5b->priv->rxqueue = g_malloc(s5b->priv->rxmaxlen);
+			s5b->priv->rxqueue[0] = 0x05;
+			s5b->priv->rxqueue[1] = 0x00;
+			s5b->priv->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
+				jingle_s5b_send_read_response_cb, data);
+			jingle_s5b_send_read_response_cb(data, source, PURPLE_INPUT_WRITE);
+			s5b->priv->rxqueue = NULL;
+			s5b->priv->rxlen = 0;
+			return;
+		}
+	}
+
+	/* question to self: is this called if there was no methods given? */
+	g_free(s5b->priv->rxqueue);
+	s5b->priv->rxlen = 0;
+	s5b->priv->rxmaxlen = 2;
+	s5b->priv->rxqueue = g_malloc(s5b->priv->rxmaxlen);
+	s5b->priv->rxqueue[0] = 0x05;
+	s5b->priv->rxqueue[1] = 0xFF;
+	s5b->priv->watcher = purple_input_add(source, PURPLE_INPUT_WRITE,
+		jingle_s5b_send_read_response_cb, data);
+	jingle_s5b_send_read_response_cb(data,
+		source, PURPLE_INPUT_WRITE);
+}
+
+static void
 jingle_s5b_send_connected_cb(gpointer data, gint source,
 		PurpleInputCondition cond)
 {
@@ -381,10 +674,8 @@ jingle_s5b_send_connected_cb(gpointer data, gint source,
 	fcntl(acceptfd, F_SETFD, FD_CLOEXEC);
 #endif
 
-	/*
 	s5b->priv->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
 					 jingle_s5b_send_read_cb, data);
-	*/
 }
 
 static void
@@ -487,8 +778,15 @@ static void
 jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	JingleS5BConnectData *cd = (JingleS5BConnectData *) data;
+	JingleS5B *s5b = cd->s5b;
 	
 	purple_debug_info("jingle-s5b", "Successful in connecting!\n");
+	
+	s5b->priv->remote_fd = source;
+	
+	/* should stop trying to connect */
+	
+	/* should send transport-info with streamhost-used */
 	
 	g_free(cd);
 }
@@ -527,8 +825,10 @@ jingle_s5b_attempt_connect_internal(JingleSession *session, JingleS5B *s5b)
 				js->user->node, js->user->domain, js->user->resource);
 
 		/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
+		purple_debug_info("jingle-s5b", "dstaddr: %s\n", dstaddr);
 		hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
-
+		purple_debug_info("jingle-s5b", "connecting with hash: %s\n", hash);
+		
 		data = g_new0(JingleS5BConnectData, 1);
 		data->session = session;
 		data->s5b = s5b;
