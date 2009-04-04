@@ -24,12 +24,15 @@
 
 #include "content.h"
 #include "debug.h"
+#include "file-transfer.h"
+#include "ibbs.h"
 #include "jingle.h"
 #include <string.h>
 #include "session.h"
 #include "iceudp.h"
 #include "rawudp.h"
 #include "rtp.h"
+#include "s5b.h"
 
 GType
 jingle_get_type(const gchar *type)
@@ -38,19 +41,17 @@ jingle_get_type(const gchar *type)
 		return JINGLE_TYPE_RAWUDP;
 	else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP))
 		return JINGLE_TYPE_ICEUDP;
-#if 0
-	else if (!strcmp(type, JINGLE_TRANSPORT_SOCKS))
-		return JINGLE_TYPE_SOCKS;
+	else if (!strcmp(type, JINGLE_TRANSPORT_S5B))
+		return JINGLE_TYPE_S5B;
 	else if (!strcmp(type, JINGLE_TRANSPORT_IBB))
 		return JINGLE_TYPE_IBB;
-#endif
 #ifdef USE_VV
 	else if (!strcmp(type, JINGLE_APP_RTP))
 		return JINGLE_TYPE_RTP;
 #endif
-#if 0
 	else if (!strcmp(type, JINGLE_APP_FT))
 		return JINGLE_TYPE_FT;
+#if 0
 	else if (!strcmp(type, JINGLE_APP_XML))
 		return JINGLE_TYPE_XML;
 #endif
