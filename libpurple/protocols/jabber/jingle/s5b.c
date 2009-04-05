@@ -775,7 +775,15 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 	} else {
 		jabber_iq_send(jingle_session_to_packet(session,
 			JINGLE_SESSION_ACCEPT));
+		/* now we can attempt to connect to the streamhosts the other end
+		 handed to us... */
+		jingle_s5b_attempt_connect(session, s5b);
+		/* Note: this is done in the respective content handler for the
+		 initiator, since the initiator needs to wait for session-accept to get
+		 streamhost candidates, while as the receiver we need to do it here,
+		 since we can't do it before having sent session-accept */
 	}
+	
 	g_object_unref(session);
 }
 

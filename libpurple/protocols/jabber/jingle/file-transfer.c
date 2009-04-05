@@ -487,8 +487,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			/* start the transfer */
 			purple_xfer_start(xfer, 0, NULL, 0);
 		} else if (JINGLE_IS_S5B(transport)) {
-			jingle_s5b_attempt_connect(session, JINGLE_S5B(transport));
-			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));	
+			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
 		}
 		g_object_unref(session);
 		g_object_unref(transport);
