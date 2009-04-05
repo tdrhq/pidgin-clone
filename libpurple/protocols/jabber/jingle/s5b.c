@@ -91,24 +91,41 @@ jingle_s5b_streamhost_copy(const JabberBytestreamsStreamhost *sh)
 	return new_sh;
 }
 
+static void
+jingle_s5b_streamhost_add_xml_internal(xmlnode *node, 
+	const JabberBytestreamsStreamhost *sh)
+{
+	gchar port[10];
+
+	if (node) {
+		g_snprintf(port, 10, "%d", sh->port);
+		xmlnode_set_attrib(node, "jid", sh->jid);
+		xmlnode_set_attrib(node, "host", sh->host);
+		xmlnode_set_attrib(node, "port", port);
+		if (sh->zeroconf)
+			xmlnode_set_attrib(node, "zeroconf", sh->zeroconf);
+	}
+}
+
 static xmlnode *
 jingle_s5b_streamhost_to_xml(const JabberBytestreamsStreamhost *sh)
 {
 	xmlnode *streamhost = xmlnode_new("streamhost");
-	gchar port[10];
 	
-	if (streamhost) {
-		g_snprintf(port, 10, "%d", sh->port);
-		xmlnode_set_attrib(streamhost, "jid", sh->jid);
-		xmlnode_set_attrib(streamhost, "host", sh->host);
-		xmlnode_set_attrib(streamhost, "port", port);
-		if (sh->zeroconf)
-			xmlnode_set_attrib(streamhost, "zeroconf", sh->zeroconf);
-	}
+	jingle_s5b_streamhost_add_xml_internal(streamhost, sh);
 	
 	return streamhost;
 }
 
+static xmlnode *
+jingle_s5b_streamhost_to_xml_used(const JabberBytestreamsStreamhost *sh)
+{
+	xmlnode *streamhost_used = xmlnode_new("streamhost-used");
+	
+	jingle_s5b_streamhost_add_xml_internal(streamhost_used, sh);
+	
+	return streamhost_used;
+}
 
 struct _JingleS5BPrivate {
 	/* S5B stuff here... */
@@ -126,6 +143,7 @@ struct _JingleS5BPrivate {
 	GList *remote_streamhosts;
 	GList *local_streamhosts;
 	GList *remaining_streamhosts; /* pointer to untested remote SHs */
+	JabberBytestreamsStreamhost *successfull_remote_streamhost;
 };
 
 #define JINGLE_S5B_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), JINGLE_TYPE_S5B, JingleS5BPrivate))
@@ -339,6 +357,11 @@ jingle_s5b_to_xml_internal(JingleTransport *transport, xmlnode *content,
 				(JabberBytestreamsStreamhost *) iter->data;
 			xmlnode_insert_child(node, jingle_s5b_streamhost_to_xml(sh));
 		}
+	} else if (action == JINGLE_TRANSPORT_ACCEPT) {
+		/* should include the chosen streamhost here... */
+		xmlnode_insert_child(node, 
+			jingle_s5b_streamhost_to_xml_used(
+				s5b->priv->successfull_remote_streamhost));
 	}
 
 	return node;
@@ -779,6 +802,7 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	JingleS5BConnectData *cd = (JingleS5BConnectData *) data;
 	JingleS5B *s5b = cd->s5b;
+	JingleSession *session = cd->session;
 	
 	purple_debug_info("jingle-s5b", "Successful in connecting!\n");
 	
@@ -786,7 +810,11 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	
 	/* should stop trying to connect */
 	
+	/* set the currently tried streamhost as the successfull one */
+	s5b->priv->successfull_remote_streamhost =
+		(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
 	/* should send transport-info with streamhost-used */
+	jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_ACCEPT));
 	
 	g_free(cd);
 }

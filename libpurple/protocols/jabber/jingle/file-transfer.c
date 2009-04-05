@@ -487,6 +487,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			/* start the transfer */
 			purple_xfer_start(xfer, 0, NULL, 0);
 		} else if (JINGLE_IS_S5B(transport)) {
+			jingle_s5b_attempt_connect(session, JINGLE_S5B(transport));
 			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));	
 		}
 		g_object_unref(session);
@@ -642,9 +643,6 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					const gchar *filename = 
 						purple_xfer_get_local_filename(xfer);
 					jingle_ibb_create_session(ibb, content, sid, who);
-				} else if (JINGLE_IS_S5B(transport)) {
-					/* attempt to connect bytestream */
-					jingle_s5b_attempt_connect(session, JINGLE_S5B(transport));
 				}
 				
 				g_object_unref(transport);
@@ -689,6 +687,11 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			 offer a transport-replace with IBB */
 			
 			g_object_unref(session);
+			break;
+		}
+		case JINGLE_TRANSPORT_ACCEPT: {
+			
+				
 			break;
 		}
 		case JINGLE_TRANSPORT_REPLACE: {
