@@ -816,13 +816,16 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	
 	purple_debug_info("jingle-s5b", "Successful in connecting!\n");
 	
+	s5b->priv->connect_data = NULL;
 	s5b->priv->remote_fd = source;
-	
-	/* should stop trying to connect */
 	
 	/* set the currently tried streamhost as the successfull one */
 	s5b->priv->successfull_remote_streamhost =
 		(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
+
+	/* should stop trying to connect */
+	jingle_s5b_stop_connection_attempts(s5b);
+	
 	/* should send transport-info with streamhost-used */
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_ACCEPT));
 	
@@ -888,4 +891,49 @@ jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b)
 {
 	s5b->priv->remaining_streamhosts = s5b->priv->remote_streamhosts;
 	jingle_s5b_attempt_connect_internal(session, s5b);
+}
+
+void
+jingle_s5b_stop_connection_attempts(JingleS5B *s5b)
+{
+	purple_debug_info("jingle-s5b", "stop connection attempts\n");
+	
+	s5b->priv->remaining_streamhosts = NULL;
+	
+	if (s5b->priv->connect_data) {
+		purple_proxy_connect_cancel(s5b->priv->connect_data);
+		s5b->priv->connect_data = NULL;
+	}
+}
+
+gboolean
+jingle_s5b_is_connected_to_remote(const JingleS5B *s5b)
+{
+	return s5b->priv->remote_fd;
+}
+
+void
+jingle_s5b_surrender(JingleS5B *s5b)
+{
+	purple_debug_info("jingle-s5b", 
+		"in jingle_s5b_surrender, using remote streamhost\n");
+	s5b->priv->fd = s5b->priv->remote_fd;
+	
+	if (s5b->priv->local_fd) {
+		close(s5b->priv->local_fd);
+		s5b->priv->local_fd = 0;
+	}
+}
+
+void
+jingle_s5b_take_command(JingleS5B *s5b)
+{
+	purple_debug_info("jingle-s5b",
+		"in jingle_s5b_take_command, using local streamhost\n");
+	s5b->priv->fd = s5b->priv->local_fd;
+	
+	if (s5b->priv->remote_fd) {
+		close(s5b->priv->remote_fd);
+		s5b->priv->remote_fd = 0;
+	}
 }

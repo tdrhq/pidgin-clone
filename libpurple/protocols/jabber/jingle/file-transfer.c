@@ -673,15 +673,6 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			JingleTransport *transport = jingle_transport_parse(
 					xmlnode_get_child(xmlcontent, "transport"));
 			
-			/* if there is a <streamhost-used/>, signal local S5B transport
-			 to stop connections attempts */
-			/* if we are the receiver and sent a <streamhost-used/> to the
-			 initiator, we should give up our own listening streamhost to
-			 avoid ending up with two parallell streams */
-			/* also when receiving a <streamhost-used/> we need to check if
-			 that is not one of our local streamhosts, in which case it is
-			 a proxy, and we should connect to that */
-			
 			/* we should check for "stream-host" error (in the case of S5B) and
 			 offer a transport-replace with IBB */
 			
@@ -689,7 +680,42 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			break;
 		}
 		case JINGLE_TRANSPORT_ACCEPT: {
+			JingleSession *session = jingle_content_get_session(content);
+			JingleTransport *transport = jingle_content_get_transport(content);
 			
+			purple_debug_info("jingle-ft",
+				"content %p\n", content);
+			purple_debug_info("jingle-ft", 
+				"got transport-accept transport %p\n", transport);
+			
+			if (JINGLE_IS_S5B(transport)) {
+				JingleS5B *s5b = JINGLE_S5B(transport);
+				xmlnode *xmltransport = xmlnode_get_child(xmlcontent, "transport");
+				xmlnode *streamhost_used = 
+					xmlnode_get_child(xmltransport, "streamhost-used");
+				
+				purple_debug_info("jingle-ft", "xmltransport %p\n", xmltransport);
+				
+				if (streamhost_used) {
+					purple_debug_info("jingle-ft", "got streamhost-used\n");
+					/* stop connection attempts */
+					jingle_s5b_stop_connection_attempts(s5b);
+
+					if (!jingle_session_is_initiator(session) &&
+						jingle_s5b_is_connected_to_remote(s5b)) {
+						/* we are the receiver and both parties could connect,
+							give up "ownership" */
+						jingle_s5b_surrender(s5b);
+					} else {
+						/* we are now the "owner" of the bytestream */
+						jingle_s5b_take_command(s5b);
+					}
+
+					/* also when receiving a <streamhost-used/> we need to check if
+					that is not one of our local streamhosts, in which case it is
+					a proxy, and we should connect to that */
+				}
+			}
 				
 			break;
 		}
