@@ -338,6 +338,30 @@ static void gtk_blist_menu_im_cb(GtkWidget *w, PurpleBuddy *b)
 	                            purple_buddy_get_name(b));
 }
 
+#ifdef USE_VV
+static void gtk_blist_menu_audio_call_cb(GtkWidget *w, PurpleBuddy *b)
+{
+	purple_prpl_initiate_media(purple_buddy_get_account(b),
+		purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO);
+}
+
+static void gtk_blist_menu_video_call_cb(GtkWidget *w, PurpleBuddy *b)
+{
+	/* if the buddy supports both audio and video, start a combined call,
+	 otherwise start a pure video session */
+	if (purple_prpl_get_media_caps(purple_buddy_get_account(b),
+			purple_buddy_get_name(b)) &
+			PURPLE_MEDIA_CAPS_AUDIO_VIDEO) {
+		purple_prpl_initiate_media(purple_buddy_get_account(b),
+			purple_buddy_get_name(b), PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
+	} else {
+		purple_prpl_initiate_media(purple_buddy_get_account(b),
+			purple_buddy_get_name(b), PURPLE_MEDIA_VIDEO);
+	}
+}
+
+#endif
+
 static void gtk_blist_menu_send_file_cb(GtkWidget *w, PurpleBuddy *b)
 {
 	PurpleAccount *account = purple_buddy_get_account(b);
@@ -1476,6 +1500,30 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	}
 	pidgin_new_item_from_stock(menu, _("I_M"), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW,
 			G_CALLBACK(gtk_blist_menu_im_cb), buddy, 0, 0, NULL);
+	
+#ifdef USE_VV
+	if (prpl_info && prpl_info->get_media_caps) {
+		PurpleAccount *account = purple_buddy_get_account(buddy);
+		const gchar *who = purple_buddy_get_name(buddy);
+		PurpleMediaCaps caps = purple_prpl_get_media_caps(account, who);
+		if (caps & PURPLE_MEDIA_CAPS_AUDIO) {
+			pidgin_new_item_from_stock(menu, _("_Audio Call"),
+				PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,
+				G_CALLBACK(gtk_blist_menu_audio_call_cb), buddy, 0, 0, NULL);
+		}
+		if (caps & PURPLE_MEDIA_CAPS_AUDIO_VIDEO) {
+			pidgin_new_item_from_stock(menu, _("Audio/_Video Call"),
+				PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,
+				G_CALLBACK(gtk_blist_menu_video_call_cb), buddy, 0, 0, NULL);
+		} else if (caps & PURPLE_MEDIA_CAPS_VIDEO) {
+			pidgin_new_item_from_stock(menu, _("_Video Call"),
+				PIDGIN_STOCK_TOOLBAR_VIDEO_CALL,
+				G_CALLBACK(gtk_blist_menu_video_call_cb), buddy, 0, 0, NULL);
+		}
+	}
+	
+#endif
+	
 	if (prpl_info && prpl_info->send_file) {
 		if (!prpl_info->can_receive_file ||
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
@@ -3898,7 +3946,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	presence = purple_buddy_get_presence(b);
 
 	/* Name is all that is needed */
-	if (aliased && biglist) {
+	if (!aliased || biglist) {
 
 		/* Status Info */
 		prpl = purple_find_prpl(purple_account_get_protocol_id(b->account));
@@ -4038,7 +4086,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 	}
 
 	/* Put it all together */
-	if (aliased && biglist && (statustext || idletime)) {
+	if ((!aliased || biglist) && (statustext || idletime)) {
 		/* using <span size='smaller'> breaks the status, so it must be seperated into <small><span>*/
 		if (name_color) {
 			text = g_strdup_printf("<span font_desc='%s' foreground='%s'>%s</span>\n"
@@ -6443,7 +6491,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 		PidginBlistNode *ui;
 		PurpleConversation *conv;
-		gboolean hidden;
+		gboolean hidden = FALSE;
 		GdkColor *bgcolor = NULL;
 		FontColorPair *pair;
 		PidginBlistTheme *theme;
@@ -6701,14 +6749,27 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 			whoalias = NULL;
 
 		g = NULL;
-		if ((grp != NULL) && (*grp != '\0') && ((g = purple_find_group(grp)) == NULL))
+		if ((grp != NULL) && (*grp != '\0'))
 		{
-			g = purple_group_new(grp);
-			purple_blist_add_group(g, NULL);
+			if ((g = purple_find_group(grp)) == NULL)
+			{
+				g = purple_group_new(grp);
+				purple_blist_add_group(g, NULL);
+			}
+
+			b = purple_find_buddy_in_group(data->account, who, g);
+		}
+		else if ((b = purple_find_buddy(data->account, who)) != NULL)
+		{
+			g = purple_buddy_get_group(b);
 		}
 
-		b = purple_buddy_new(data->account, who, whoalias);
-		purple_blist_add_buddy(b, NULL, g, NULL);
+		if (b == NULL)
+		{
+			b = purple_buddy_new(data->account, who, whoalias);
+			purple_blist_add_buddy(b, NULL, g, NULL);
+		}
+
 		purple_account_add_buddy(data->account, b);
 
 		/* Offer to merge people with the same alias. */
