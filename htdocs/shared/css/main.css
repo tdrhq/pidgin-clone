@@ -338,7 +338,7 @@ DIV.linkbar {
   background: url('/shared/img/balloon.middle.gif') no-repeat left 17px;
 }
 
-#download, .box_download p:first-child {
+#download, .download_header {
   font-size: 1.2em;
   font-weight: bold;
 }

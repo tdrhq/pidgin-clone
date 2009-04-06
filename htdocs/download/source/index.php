@@ -1,8 +1,9 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "Source | Download";
+  $page['title'] =   "Download Pidgin Source";
   $page['section'] = "Download";
   $page['subsect'] = "Source";
+  $page['description'] = "Download the source code for the free Pidgin universal chat client";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
@@ -23,7 +24,7 @@
 onclick="javascript:pageTracker._trackPageview('/goals/downloads/source');"
 >
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
-Download Pidgin<br />
+<span class="download_header">Download Pidgin</span><br />
 <span class="number"><? echo $pidgin_version; ?> Source</span>
 </a></p>
 

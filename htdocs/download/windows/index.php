@@ -24,7 +24,7 @@
 onclick="javascript:pageTracker._trackPageview('/goals/downloads/win');"
 >
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
-Download Pidgin<br />
+<span class="download_header">Download Pidgin</span><br />
 <span class="number"><? echo $pidgin_version; ?> for Windows</span>
 </a></p>
 

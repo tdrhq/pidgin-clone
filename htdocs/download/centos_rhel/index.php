@@ -1,8 +1,9 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "CentOS / RHEL | Download";
+  $page['title'] =   "Download Pidgin for CentOS / RHEL";
   $page['section'] = "Download";
   $page['subsect'] = "CentOS / RHEL";
+  $page['description'] = "Download the free Pidgin universal chat client for CentOS / RHEL";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
@@ -23,7 +24,7 @@
 onclick="javascript:pageTracker._trackPageview('/goals/downloads/centos_rhel');"
 >
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
-Download Pidgin<br />
+<span class="download_header">Download Pidgin</span><br />
 <span class="number"><? echo $pidgin_version; ?> for CentOS / RHEL</span>
 </a></p>
 

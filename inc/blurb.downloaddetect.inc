@@ -15,7 +15,7 @@
   } else if (strstr($useragent, "Ubuntu")) {
     // Once the PPA is ready to go public, we'll have a separate Ubuntu page.
     $download_os = "for Ubuntu";
-    $download_link = "/download/source/";
+    $download_link = "/download/ubuntu/";
   } else if (strstr($useragent, 'CentOS') ||
              strstr($useragent, 'RHEL')) {
     $download_os = "for CentOS / RHEL";

@@ -1,8 +1,9 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "Mac OS X | Download";
+  $page['title'] =   "Download Pidgin for Mac OS X";
   $page['section'] = "Download";
   $page['subsect'] = "Mac OS X";
+  $page['description'] = "Download the free Pidgin universal chat client for Mac OS X";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
@@ -21,7 +22,7 @@
 
 <p><a href="http://pdb.finkproject.org/pdb/package.php/pidgin" onclick="javascript:pageTracker._trackPageview('/external/pdb.finkproject.org');">
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
-Find Pidgin<br />
+<span class="download_header">Find Pidgin</span><br />
 <span class="number">for Mac OS X via Fink</span>
 </a></p>
 

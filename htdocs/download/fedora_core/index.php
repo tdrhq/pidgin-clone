@@ -1,8 +1,9 @@
 <?
   // Update these to match the current page.
-  $page['title'] =   "Fedora Core | Download";
+  $page['title'] =   "Download Pidgin for Fedora Core";
   $page['section'] = "Download";
   $page['subsect'] = "Fedora Core";
+  $page['description'] = "Download the free Pidgin universal chat client for Fedora Core";
 
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/header.inc");
   include($_SERVER['DOCUMENT_ROOT'] . "/../inc/version.inc");
@@ -23,7 +24,7 @@
 onclick="javascript:pageTracker._trackPageview('/goals/downloads/fedora_core');"
 >
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
-Download Pidgin<br />
+<span class="download_header">Download Pidgin</span><br />
 <span class="number"><? echo $pidgin_version; ?> for Fedora Core</span>
 </a></p>
 
