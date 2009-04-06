@@ -1580,12 +1580,6 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
-	/*
-	xmlnode *file, *feature, *x, *field, *option, *value;
-	const char *stream_id, *filename, *filesize_c, *profile;
-	xmlnode *si, *file, *feature, *x, *field, *option, *value;
-	const char *stream_id, *filename, *filesize_c, *profile, *from;
-	 */
 	xmlnode *file, *feature, *x, *field, *option, *value;
 	const char *stream_id, *profile;
 
