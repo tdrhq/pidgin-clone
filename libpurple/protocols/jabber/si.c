@@ -1580,13 +1580,14 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 {
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
+	/*
 	xmlnode *file, *feature, *x, *field, *option, *value;
 	const char *stream_id, *filename, *filesize_c, *profile;
 	xmlnode *si, *file, *feature, *x, *field, *option, *value;
 	const char *stream_id, *filename, *filesize_c, *profile, *from;
-	xmlnode *si, *file, *feature, *x, *field, *option, *value;
-	const char *stream_id, *profile, *from;
-	size_t filesize = 0;
+	 */
+	xmlnode *file, *feature, *x, *field, *option, *value;
+	const char *stream_id, *profile;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
 			strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer"))
@@ -1651,18 +1652,15 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	g_return_if_fail(xfer != NULL);
 
 	xfer = jabber_xfer_create_from_xml(js->gc->account, file, from, jsx);
-	if (xfer)
-	{
+	if (xfer) {
 		purple_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
 		purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
 		purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
 		purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
-	js->file_transfers = g_list_append(js->file_transfers, xfer);
+		js->file_transfers = g_list_append(js->file_transfers, xfer);
 
 		purple_xfer_request(xfer);
-	} else {
-		jabber_si_xfer_free(jsx);
 	}
 }
 

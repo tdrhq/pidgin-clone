@@ -408,6 +408,8 @@ jingle_s5b_send_read_again_resp_cb(gpointer data, gint source,
 	 */
 	purple_debug_info("jingle-s5b", "SOCKS5 connection negotiation completed. "
 					  "Waiting for IQ result to start file transfer.\n");
+	/* set the local fd as connected */
+	s5b->priv->local_fd = source;
 	
 	g_free(data);
 }
