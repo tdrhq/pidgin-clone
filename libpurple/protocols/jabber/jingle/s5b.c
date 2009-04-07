@@ -808,11 +808,33 @@ jingle_s5b_gather_streamhosts(JingleSession *session, JingleS5B *s5b)
 }
 
 static void
+jingle_s5b_transport_accept_cb(JabberStream *js, const char *from,
+	JabberIqType type, const char *id, xmlnode *packet, gpointer data)
+{
+	JingleS5BConnectData *cd = (JingleS5BConnectData *) data;
+	JingleSession *session = cd->session;
+	JingleS5B *s5b = cd->s5b;
+	
+	if (type == JABBER_IQ_RESULT) {
+		if (!(jingle_session_is_initiator(session) &&
+			jingle_s5b_remote_is_connected(s5b))) {
+			/* unless we are the initiator and the receiver could connect,
+				now we shall "surrender" to other side and signal the content
+				to start */
+			jingle_s5b_surrender(s5b);
+		}
+	}
+	
+	g_free(cd);
+}
+
+static void
 jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	JingleS5BConnectData *cd = (JingleS5BConnectData *) data;
 	JingleS5B *s5b = cd->s5b;
 	JingleSession *session = cd->session;
+	JabberIq *result = NULL;
 	
 	purple_debug_info("jingle-s5b", "Successful in connecting!\n");
 	
@@ -827,9 +849,9 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	jingle_s5b_stop_connection_attempts(s5b);
 	
 	/* should send transport-info with streamhost-used */
-	jabber_iq_send(jingle_session_to_packet(session, JINGLE_TRANSPORT_ACCEPT));
-	
-	g_free(cd);
+	result = jingle_session_to_packet(session, JINGLE_TRANSPORT_ACCEPT);
+	jabber_iq_set_callback(result, jingle_s5b_transport_accept_cb, cd);
+	jabber_iq_send(result);
 }
 	
 static void
@@ -904,6 +926,11 @@ jingle_s5b_stop_connection_attempts(JingleS5B *s5b)
 		purple_proxy_connect_cancel(s5b->priv->connect_data);
 		s5b->priv->connect_data = NULL;
 	}
+	
+	if (s5b->priv->watcher) {
+		purple_input_remove(s5b->priv->watcher);
+		s5b->priv->watcher = 0;
+	}
 }
 
 gboolean
@@ -912,6 +939,12 @@ jingle_s5b_is_connected_to_remote(const JingleS5B *s5b)
 	return s5b->priv->remote_fd;
 }
 
+gboolean
+jingle_s5b_remote_is_connected(const JingleS5B *s5b)
+{
+	return s5b->priv->local_fd;
+}
+	
 void
 jingle_s5b_surrender(JingleS5B *s5b)
 {
@@ -922,6 +955,11 @@ jingle_s5b_surrender(JingleS5B *s5b)
 	if (s5b->priv->local_fd) {
 		close(s5b->priv->local_fd);
 		s5b->priv->local_fd = 0;
+	}
+	
+	if (s5b->priv->watcher) {
+		purple_input_remove(s5b->priv->watcher);
+		s5b->priv->watcher = 0;
 	}
 }
 
@@ -935,5 +973,10 @@ jingle_s5b_take_command(JingleS5B *s5b)
 	if (s5b->priv->remote_fd) {
 		close(s5b->priv->remote_fd);
 		s5b->priv->remote_fd = 0;
+	}
+	
+	if (s5b->priv->watcher) {
+		purple_input_remove(s5b->priv->watcher);
+		s5b->priv->watcher = 0;
 	}
 }
