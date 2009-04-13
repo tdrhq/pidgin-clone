@@ -731,10 +731,10 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					/* stop connection attempts */
 					jingle_s5b_stop_connection_attempts(s5b);
 
-					if (!jingle_session_is_initiator(session) &&
+					if (jingle_session_is_initiator(session) &&
 						jingle_s5b_is_connected_to_remote(s5b)) {
-						/* we are the receiver and both parties could connect,
-							give up "ownership" */
+						/* we are the initiator and both parties could connect,
+							give up "ownership", see footnote 3 in XEP-0260 */
 						jingle_s5b_surrender(s5b);
 					} else {
 						/* we are now the "owner" of the bytestream */

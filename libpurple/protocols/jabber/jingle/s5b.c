@@ -858,9 +858,10 @@ jingle_s5b_transport_accept_cb(JabberStream *js, const char *from,
 	JingleS5B *s5b = cd->s5b;
 	
 	if (type == JABBER_IQ_RESULT) {
-		if (!(jingle_session_is_initiator(session) &&
-			jingle_s5b_remote_is_connected(s5b))) {
-			/* unless we are the initiator and the receiver could connect,
+		if ((!jingle_session_is_initiator(session) &&
+			jingle_s5b_remote_is_connected(s5b)) ||
+			!jingle_s5b_remote_is_connected(s5b)) {
+			/* unless we are the receiver and the receiver could connect,
 				now we shall "surrender" to other side and signal the content
 				to start */
 			jingle_s5b_surrender(s5b);
@@ -869,7 +870,7 @@ jingle_s5b_transport_accept_cb(JabberStream *js, const char *from,
 				s5b->priv->connect_cb(s5b->priv->connect_content);
 			} else {
 				/* some error? */
-			}	
+			}
 		}
 	}
 	
