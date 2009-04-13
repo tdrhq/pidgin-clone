@@ -2023,6 +2023,8 @@ purple_conv_chat_cb_new(const char *name, const char *alias, PurpleConvChatBuddy
 	cb->name = g_strdup(name);
 	cb->flags = flags;
 	cb->alias = g_strdup(alias);
+	cb->attributes = g_hash_table_new_full(g_str_hash, g_str_equal,
+										   g_free, g_free);
 
 	PURPLE_DBUS_REGISTER_POINTER(cb, PurpleConvChatBuddy);
 	return cb;
@@ -2055,6 +2057,7 @@ purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb)
 	g_free(cb->alias);
 	g_free(cb->alias_key);
 	g_free(cb->name);
+	g_hash_table_unref(cb->attributes);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(cb);
 	g_free(cb);
@@ -2066,6 +2069,38 @@ purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb)
 	g_return_val_if_fail(cb != NULL, NULL);
 
 	return cb->name;
+}
+
+const char *
+purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb, const char *key)
+{
+	g_return_val_if_fail(cb != NULL, NULL);
+	
+	return g_hash_table_lookup(cb->attributes, key);
+}
+
+GList *
+purple_conv_chat_cb_get_attribute_keys(PurpleConvChatBuddy *cb)
+{
+	g_return_val_if_fail(cb != NULL, NULL);
+	
+	return g_hash_table_get_keys(cb->attributes);
+}
+
+void
+purple_conv_chat_cb_set_attribute(PurpleConvChat *chat, PurpleConvChatBuddy *cb, const char *key, const char *value)
+{
+	g_return_if_fail(cb != NULL);
+	g_return_if_fail(key != NULL);
+	g_return_if_fail(value != NULL);
+	
+	g_hash_table_replace(cb->attributes, g_strdup(key), g_strdup(value));
+	
+	PurpleConversation *conv = purple_conv_chat_get_conversation(chat);
+	PurpleConversationUiOps *ops = purple_conversation_get_ui_ops(conv);
+	
+	if (ops != NULL && ops->chat_update_user != NULL)
+		ops->chat_update_user(conv, cb->name);
 }
 
 GList *

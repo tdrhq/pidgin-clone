@@ -415,6 +415,34 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	memset(&irc->whois, 0, sizeof(irc->whois));
 }
 
+void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	if (!strcmp(name, "352")) {
+		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+		if (!conv) {
+			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a WHO response for %s, which doesn't exist\n", args[1]);
+			return;
+		}
+
+		PurpleConvChatBuddy *cb = purple_conv_chat_cb_find(PURPLE_CONV_CHAT(conv), args[5]);
+		if (!cb) {
+			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Got a WHO response for %s who isn't a buddy.\n", args[5]);
+			return;
+		}
+
+		PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
+		
+		char *userhost = g_strdup_printf("%s@%s", args[2], args[3]);
+		char *realname = g_strdup(args[8]);
+		
+		purple_conv_chat_cb_set_attribute(chat, cb, "userhost", userhost);
+		purple_conv_chat_cb_set_attribute(chat, cb, "realname", realname);
+		
+		g_free(userhost);
+		g_free(realname);
+	}
+}
+
 void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	if (!irc->roomlist)
@@ -801,6 +829,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	PurpleConversation *convo;
+	PurpleConvChat *chat;
 	char *nick = irc_mask_nick(from), *userhost;
 	struct irc_buddy *ib;
 	static int id = 1;
@@ -824,6 +853,12 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		}
 		purple_conversation_set_data(convo, IRC_NAMES_FLAG,
 					   GINT_TO_POINTER(FALSE));
+		
+		// Get the real name and user host for all participants.
+		char *buf = irc_format(irc, "vc", "WHO", args[0]);
+		irc_send(irc, buf);
+		g_free(buf);
+		
 		/* Until purple_conversation_present does something that
 		 * one would expect in Pidgin, this call produces buggy
 		 * behavior both for the /join and auto-join cases. */
@@ -839,8 +874,14 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 	}
 
 	userhost = irc_mask_userhost(from);
-	purple_conv_chat_add_user(PURPLE_CONV_CHAT(convo), nick, userhost, PURPLE_CBFLAGS_NONE, TRUE);
-
+	chat = PURPLE_CONV_CHAT(convo);
+	
+	purple_conv_chat_add_user(chat, nick, userhost, PURPLE_CBFLAGS_NONE, TRUE);
+	
+	PurpleConvChatBuddy *cb = purple_conv_chat_cb_find(chat, nick);
+	
+	purple_conv_chat_cb_set_attribute(chat, cb, "userhost", userhost);
+	
 	if ((ib = g_hash_table_lookup(irc->buddies, nick)) != NULL) {
 		ib->flag = TRUE;
 		irc_buddy_status(nick, ib, irc);

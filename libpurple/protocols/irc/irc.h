@@ -160,6 +160,7 @@ void irc_msg_unavailable(struct irc_conn *irc, const char *name, const char *fro
 void irc_msg_unknown(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_wallops(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, char **args);
+void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char **args);
 
 void irc_msg_ignore(struct irc_conn *irc, const char *name, const char *from, char **args);
 
