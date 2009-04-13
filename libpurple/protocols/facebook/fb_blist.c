@@ -373,7 +373,7 @@ gboolean fb_get_buddy_list(gpointer data)
 	fba = data;
 
 	postdata = g_strdup_printf(
-			"user=%d&popped_out=false&force_render=true&buddy_list=1",
+			"user=%d&popped_out=true&force_render=true&buddy_list=1",
 			fba->uid);
 	fb_post_or_get(fba, FB_METHOD_POST, NULL, "/ajax/presence/update.php",
 			postdata, got_buddy_list_cb, NULL, FALSE);
