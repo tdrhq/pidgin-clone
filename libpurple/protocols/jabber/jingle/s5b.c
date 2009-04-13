@@ -896,7 +896,7 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	/* should stop trying to connect */
 	jingle_s5b_stop_connection_attempts(s5b);
 	
-	/* should send transport-info with streamhost-used */
+	/* should send transport-accept with streamhost-used */
 	result = jingle_session_to_packet(session, JINGLE_TRANSPORT_ACCEPT);
 	jabber_iq_set_callback(result, jingle_s5b_transport_accept_cb, cd);
 	jabber_iq_send(result);
