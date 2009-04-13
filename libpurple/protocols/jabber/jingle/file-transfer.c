@@ -271,6 +271,25 @@ jingle_file_transfer_ibb_send_data(JingleContent *content)
 	g_object_unref(transport);
 }
 
+/* callback functions for S5B */
+static void
+jingle_file_transfer_s5b_connect_callback(JingleContent *content)
+{
+	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
+	JingleTransport *transport = jingle_content_get_transport(content);
+	JingleS5B *s5b = JINGLE_S5B(transport);
+	
+	purple_debug_info("jingle-ft", 
+		"in jingle_file_transfer_s5b_connect_callback\n");
+	purple_xfer_start(xfer, jingle_s5b_get_fd(s5b), NULL, 0);
+}
+
+static void
+jingle_file_transfer_s5b_error_callback(JingleContent *content)
+{
+	
+}
+
 /* callback functions for IBB */
 static void
 jingle_file_transfer_ibb_data_sent_callback(JingleContent *content)
@@ -330,7 +349,8 @@ jingle_file_transfer_ibb_error_callback(JingleContent *content)
 	PurpleAccount *account = purple_connection_get_account(gc);
 	gchar *who = jingle_session_get_remote_jid(session);
 	
-	purple_debug_error("jabber", "an error occured during IBB file transfer\n");
+	purple_debug_error("jingle-ft", 
+		"an error occured during IBB file transfer\n");
 	purple_xfer_error(purple_xfer_get_type(xfer), account, who,
 		_("An error occured on the in-band bytestream transfer\n"));
 	purple_xfer_cancel_remote(xfer);
@@ -487,6 +507,10 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			/* start the transfer */
 			purple_xfer_start(xfer, 0, NULL, 0);
 		} else if (JINGLE_IS_S5B(transport)) {
+			jingle_s5b_set_connect_callback(JINGLE_S5B(transport),
+				jingle_file_transfer_s5b_connect_callback, content);
+			jingle_s5b_set_error_callback(JINGLE_S5B(transport),
+				jingle_file_transfer_s5b_error_callback, content);
 			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
 		}
 		g_object_unref(session);
@@ -642,6 +666,12 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					const gchar *filename = 
 						purple_xfer_get_local_filename(xfer);
 					jingle_ibb_create_session(ibb, content, sid, who);
+				} else if (JINGLE_IS_S5B(transport)) {
+					/* set S5B callbacks */
+					jingle_s5b_set_connect_callback(JINGLE_S5B(transport),
+						jingle_file_transfer_s5b_connect_callback, content);
+					jingle_s5b_set_error_callback(JINGLE_S5B(transport),
+						jingle_file_transfer_s5b_error_callback, content);
 				}
 				
 				g_object_unref(transport);
@@ -709,11 +739,14 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					} else {
 						/* we are now the "owner" of the bytestream */
 						jingle_s5b_take_command(s5b);
+						
+						/* also when receiving a <streamhost-used/> we need to 
+						 check if that is not one of our local streamhosts, 
+						 in which case it is a proxy, and we should connect to that */
+						
+						/* start transfer */
+						jingle_file_transfer_s5b_connect_callback(content);
 					}
-
-					/* also when receiving a <streamhost-used/> we need to check if
-					that is not one of our local streamhosts, in which case it is
-					a proxy, and we should connect to that */
 				}
 			}
 				

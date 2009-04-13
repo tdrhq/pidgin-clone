@@ -54,6 +54,10 @@ struct _JingleS5B
 	JingleS5BPrivate *priv;      /**< The private data of this object. */
 };
 
+/* Callbacks used for S5B */
+typedef void (JingleS5BConnectCallback)(JingleContent *) ;
+typedef void (JingleS5BErrorCallback)(JingleContent *);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -67,6 +71,14 @@ GType jingle_s5b_get_type(void);
 
 const gchar *jingle_s5b_get_sid(const JingleS5B *s5b);
 void jingle_s5b_set_sid(JingleS5B *s5b, const gchar *sid);
+
+int jingle_s5b_get_fd(const JingleS5B *s5b);
+
+void jingle_s5b_set_connect_callback(JingleS5B *s5b, 
+	JingleS5BConnectCallback *cb, JingleContent *content);
+void jingle_s5b_set_error_callback(JingleS5B *s5b, 
+	JingleS5BErrorCallback *cb, JingleContent *content);
+
 
 void jingle_s5b_add_streamhosts(JingleS5B *s5b, const xmlnode *transport);
 

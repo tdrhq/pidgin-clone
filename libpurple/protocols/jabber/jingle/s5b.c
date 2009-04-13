@@ -144,6 +144,10 @@ struct _JingleS5BPrivate {
 	GList *local_streamhosts;
 	GList *remaining_streamhosts; /* pointer to untested remote SHs */
 	JabberBytestreamsStreamhost *successfull_remote_streamhost;
+	JingleS5BConnectCallback *connect_cb;
+	JingleS5BErrorCallback *error_cb;
+	JingleContent *connect_content; /* used for the connect callback */
+	JingleContent *error_content;  /* used for the error callback */
 };
 
 #define JINGLE_S5B_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), JINGLE_TYPE_S5B, JingleS5BPrivate))
@@ -160,7 +164,10 @@ static JingleTransportClass *parent_class = NULL;
 
 enum {
 	PROP_0,
-	PROP_SID
+	PROP_SID,
+	PROP_FD,
+	PROP_CONNECT_CB,
+	PROP_ERROR_CB
 };
 
 GType
@@ -205,6 +212,16 @@ jingle_s5b_class_init (JingleS5BClass *klass)
 		"The unique session ID of the S5B transport.",
 		NULL,
 		G_PARAM_READWRITE));
+	
+	purple_debug_info("jingle-s5b", "install_property\n");
+	g_object_class_install_property(gobject_class, PROP_FD,
+		g_param_spec_int("fd",
+		"File descriptor",
+		"The file descriptor for reading/writing data on the stream",
+		G_MININT,
+		G_MAXINT,
+		0,
+		G_PARAM_READABLE));
 	
 	g_type_class_add_private(klass, sizeof(JingleS5BPrivate));
 }
@@ -280,6 +297,9 @@ jingle_s5b_get_property (GObject *object, guint prop_id, GValue *value,
 		case PROP_SID:
 			g_value_set_string(value, s5b->priv->sid);
 			break;
+		case PROP_FD:
+			g_value_set_int(value, s5b->priv->fd);
+			break;
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
 			break;
@@ -298,6 +318,28 @@ void
 jingle_s5b_set_sid(JingleS5B *s5b, const gchar *sid)
 {
 	g_object_set(s5b, "sid", sid, NULL);
+}
+
+int
+jingle_s5b_get_fd(const JingleS5B *s5b)
+{
+	int fd;
+	g_object_get((gpointer) s5b, "fd", &fd, NULL);
+	return fd;
+}
+
+void jingle_s5b_set_connect_callback(JingleS5B *s5b, 
+	JingleS5BConnectCallback *cb, JingleContent *content)
+{
+	s5b->priv->connect_cb = cb;
+	s5b->priv->connect_content = content;
+}
+	
+void jingle_s5b_set_error_callback(JingleS5B *s5b, 
+	JingleS5BErrorCallback *cb, JingleContent *content)
+{
+	s5b->priv->error_cb = cb;
+	s5b->priv->error_content = content;
 }
 
 void
@@ -822,6 +864,12 @@ jingle_s5b_transport_accept_cb(JabberStream *js, const char *from,
 				now we shall "surrender" to other side and signal the content
 				to start */
 			jingle_s5b_surrender(s5b);
+			/* start transfer */
+			if (s5b->priv->connect_cb && s5b->priv->connect_content) {
+				s5b->priv->connect_cb(s5b->priv->connect_content);
+			} else {
+				/* some error? */
+			}	
 		}
 	}
 	
