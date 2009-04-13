@@ -395,6 +395,32 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	} while (again);
 
 	if (js->sasl_state == SASL_CONTINUE || js->sasl_state == SASL_OK) {
+	
+		/* Adium: Avoid SASL PLAIN for 10.4 compatibility, as it's broken there */
+		if (js->current_mech && (strcmp(js->current_mech, "PLAIN") == 0) && purple_prefs_get_bool("/plugins/prpl/jabber/avoid_sasl_for_plain_auth")) {
+			js->auth_type = JABBER_AUTH_PLAIN;
+			js->sasl_state = SASL_OK;
+			sasl_dispose(&js->sasl);
+			js->sasl = NULL;
+
+			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
+				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+											js->gc->account->username);
+				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
+									  _("Plaintext Authentication"),
+									  msg,
+									  2,
+									  purple_connection_get_account(js->gc), NULL, NULL,
+									  purple_connection_get_account(js->gc), allow_plaintext_auth,
+									  disallow_plaintext_auth);
+				g_free(msg);
+				return;
+			}
+			finish_plaintext_authentication(js);
+
+			return;
+		}
+
 		auth = xmlnode_new("auth");
 		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
 		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
@@ -411,6 +437,24 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				g_free(enc_out);
 			}
 		}
+		
+		if (js->current_mech && (strcmp(js->current_mech, "DIGEST-MD5") == 0)) {
+			/* CYRUS-SASL's DIGEST-MD5 and Java's DIGEST-MD5 are mutually incompatible because of different interpretations of RFC2831.
+			 * This means that if we are using SASL and connecting to a Java-based server such as OpenFire, we will receive an authentication
+			 * failure if that server offers DIGEST-MD5 in such a way that SASL chooses it as the best mechanism for us.
+			 *
+			 * However, we implement our own DIGEST-MD5 for use when we're compiled without SASL support, and that implementation
+			 * works correctly. Therefore, if SASL chooses DIGEST-MD5, we switch over to our own implementation.
+			 * jabber_auth_handle_challenge() will note the auth_type and take it from there.
+			 *
+			 * SASL would change state to SASL_OK after when handling the challenge; we do so immediately to avoid an error later.
+			 */
+			js->auth_type = JABBER_AUTH_DIGEST_MD5;
+			js->sasl_state = SASL_OK;
+			sasl_dispose(&js->sasl);
+			js->sasl = NULL;
+		}
+
 		jabber_send(js, auth);
 		xmlnode_free(auth);
 	} else {
@@ -1047,6 +1091,11 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 
 #ifdef HAVE_CYRUS_SASL
 	if(js->auth_fail_count++ < 5) {
+		gboolean tried_gssapi_first = FALSE;
+
+		if (js->auth_fail_count == 1 && !strcmp(js->current_mech, "GSSAPI"))
+			tried_gssapi_first = TRUE;
+
 		if (js->current_mech && strlen(js->current_mech) > 0) {
 			char *pos;
 			if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
@@ -1063,6 +1112,17 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 
 			jabber_auth_start_cyrus(js);
 			return;
+
+		} else if (tried_gssapi_first) {
+			/* If we tried GSSAPI first, it failed, and it was our only shot, try iq:jabber:auth
+			 * for compatibility with iChat 10.5 Server.
+			 */
+			sasl_dispose(&js->sasl);
+			js->sasl = NULL;
+
+			js->auth_type = JABBER_AUTH_IQ_AUTH;
+			jabber_auth_start_old(js);
+			return;			
 		}
 	}
 #endif
