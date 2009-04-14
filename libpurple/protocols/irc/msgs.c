@@ -439,11 +439,11 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		
 		GList *keys = NULL, *values = NULL;
 		
-		g_list_append(keys, "userhost");
-		g_list_append(values, userhost);
+		keys = g_list_append(keys, "userhost");
+		values = g_list_append(values, userhost);
 		
-		g_list_append(keys, "realname");
-		g_list_append(values, realname);
+		keys = g_list_append(keys, "realname");
+		values = g_list_append(values, realname);
 		
 		purple_conv_chat_cb_set_attributes(chat, cb, keys, values);
 		
