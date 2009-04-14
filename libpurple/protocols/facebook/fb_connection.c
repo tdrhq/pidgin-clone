@@ -425,6 +425,8 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	gchar *real_url;
 	gboolean is_proxy = FALSE;
 	const gchar *user_agent;
+	const gchar* const *languages;
+	gchar *language_names;
 
 	/* TODO: Fix keepalive and use it as much as possible */
 	keepalive = FALSE;
@@ -470,6 +472,12 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 		g_string_append_printf(request, "Accept-Encoding: gzip\r\n");
 #endif
 
+	/* Tell the server what language we accept, so that we get error messages in our language (rather than our IP's) */
+	languages = g_get_language_names();
+	language_names = g_strjoinv(", ", (gchar **)languages);
+	purple_util_chrreplace(language_names, '_', '-');
+	g_string_append_printf(request, "Accept-Language: %s\r\n", language_names);
+	g_free(language_names);
 
 	purple_debug_misc("facebook", "sending request headers:\n%s\n",
 			request->str);
