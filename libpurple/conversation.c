@@ -2075,6 +2075,7 @@ const char *
 purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb, const char *key)
 {
 	g_return_val_if_fail(cb != NULL, NULL);
+	g_return_val_if_fail(key != NULL, NULL);
 	
 	return g_hash_table_lookup(cb->attributes, key);
 }
