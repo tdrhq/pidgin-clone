@@ -2057,7 +2057,7 @@ purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb)
 	g_free(cb->alias);
 	g_free(cb->alias_key);
 	g_free(cb->name);
-	g_hash_table_unref(cb->attributes);
+	g_hash_table_destroy(cb->attributes);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(cb);
 	g_free(cb);
@@ -2079,12 +2079,23 @@ purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb, const char *key)
 	return g_hash_table_lookup(cb->attributes, key);
 }
 
+static void
+append_attribute_key(gpointer key, gpointer value, gpointer user_data)
+{
+	GList **list = user_data;
+	*list = g_list_prepend(*list, key);
+}
+
 GList *
 purple_conv_chat_cb_get_attribute_keys(PurpleConvChatBuddy *cb)
 {
+	GList *keys = NULL;
+	
 	g_return_val_if_fail(cb != NULL, NULL);
 	
-	return g_hash_table_get_keys(cb->attributes);
+	g_hash_table_foreach(cb->attributes, (GHFunc)append_attribute_key, &keys);
+	
+	return keys;
 }
 
 void
