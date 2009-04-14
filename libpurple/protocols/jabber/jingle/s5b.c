@@ -927,7 +927,7 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	
 static void jingle_s5b_attempt_connect_internal(gpointer data);
 
-static void
+static gboolean
 jingle_s5b_connect_timeout_cb(gpointer data)
 {
 	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
@@ -935,6 +935,7 @@ jingle_s5b_connect_timeout_cb(gpointer data)
 	purple_debug_info("jingle-s5b", "in jingle_s5b_connect_timeout_cb\n");
 	/* cancel timeout */
 	purple_timeout_remove(s5b->priv->connect_timeout);
+	s5b->priv->connect_timeout = 0;
 	
 	/* advance streamhost "counter" */
 	if (s5b->priv->remaining_streamhosts) {
@@ -945,6 +946,8 @@ jingle_s5b_connect_timeout_cb(gpointer data)
 		 streamhost error (and potentially fallback to IBB) */
 		jingle_s5b_attempt_connect_internal(data);
 	}
+	
+	return FALSE;
 }
 
 static void
@@ -961,7 +964,6 @@ jingle_s5b_attempt_connect_internal(gpointer data)
 			(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
 		gchar *dstaddr = NULL;
 		gchar *hash = NULL;
-		JingleS5BConnectData *data = NULL;
 		
 		purple_debug_info("jingle-s5b", 
 			"attempting to connect to streamhost: %s, port: %d\n",
@@ -1100,4 +1102,24 @@ jingle_s5b_take_command(JingleS5B *s5b)
 		purple_timeout_remove(s5b->priv->connect_timeout);
 		s5b->priv->connect_timeout = 0;
 	}
+}
+
+gboolean
+jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
+{
+	gchar *me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain, 
+		js->user->resource);
+	gchar *me_bare = jabber_get_bare_jid(me);
+	gchar *bare_jid = jabber_get_bare_jid(jid);
+	gboolean equal = purple_strequal(bare_jid, me_bare);
+
+	purple_debug_info("jingle-s5b", 
+		"jingle_s5b_streamhost_is_local: comparing JIDs %s and %s\n",
+		me, jid);
+	
+	g_free(me);
+	g_free(me_bare);
+	g_free(bare_jid);
+
+	return equal;
 }

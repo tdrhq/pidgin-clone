@@ -96,6 +96,10 @@ gboolean jingle_s5b_remote_is_connected(const JingleS5B *s5b);
 void jingle_s5b_surrender(JingleS5B *s5b);
 void jingle_s5b_take_command(JingleS5B *s5b);
 
+/* returns true if the given JID represents a local (to this side) streamhost
+	used to determine if a choosen streamhost is a proxy */
+gboolean jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid);
+
 #ifdef __cplusplus
 }
 #endif

@@ -724,9 +724,10 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				xmlnode *streamhost_used = 
 					xmlnode_get_child(xmltransport, "streamhost-used");
 				
-				purple_debug_info("jingle-ft", "xmltransport %p\n", xmltransport);
-				
 				if (streamhost_used) {
+					const gchar *jid = xmlnode_get_attrib(streamhost_used, "jid");
+					JabberStream *js = jingle_session_get_js(session);
+
 					purple_debug_info("jingle-ft", "got streamhost-used\n");
 					/* stop connection attempts */
 					jingle_s5b_stop_connection_attempts(s5b);
@@ -743,9 +744,14 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 						/* also when receiving a <streamhost-used/> we need to 
 						 check if that is not one of our local streamhosts, 
 						 in which case it is a proxy, and we should connect to that */
-						
-						/* start transfer */
-						jingle_file_transfer_s5b_connect_callback(content);
+						if (jid && !jingle_s5b_streamhost_is_local(js, jid)) {
+							purple_debug_info("jingle-ft",
+								"got transport-accept on a proxy, "
+								"need to connect to the proxy\n");
+						} else {
+							/* start transfer */
+							jingle_file_transfer_s5b_connect_callback(content);
+						}
 					}
 				}
 			}
