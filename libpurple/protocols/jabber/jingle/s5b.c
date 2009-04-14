@@ -892,39 +892,6 @@ jingle_s5b_transport_accept_cb(JabberStream *js, const char *from,
 	g_free(cd);
 }
 
-static void
-jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
-{
-	JingleS5BConnectData *cd = (JingleS5BConnectData *) data;
-	JingleS5B *s5b = cd->s5b;
-	JingleSession *session = cd->session;
-	JabberIq *result = NULL;
-	
-	purple_debug_info("jingle-s5b", "Successful in connecting!\n");
-	
-	s5b->priv->connect_data = NULL;
-	s5b->priv->remote_fd = source;
-	s5b->priv->is_connected_to_remote = TRUE;
-	
-	/* cancel timeout if set */
-	if (s5b->priv->connect_timeout) {
-		purple_timeout_remove(s5b->priv->connect_timeout);
-		s5b->priv->connect_timeout = 0;
-	}
-
-	/* set the currently tried streamhost as the successfull one */
-	s5b->priv->successfull_remote_streamhost =
-		(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
-
-	/* should stop trying to connect */
-	jingle_s5b_stop_connection_attempts(s5b);
-	
-	/* should send transport-accept with streamhost-used */
-	result = jingle_session_to_packet(session, JINGLE_TRANSPORT_ACCEPT);
-	jabber_iq_set_callback(result, jingle_s5b_transport_accept_cb, cd);
-	jabber_iq_send(result);
-}
-	
 static void jingle_s5b_attempt_connect_internal(gpointer data);
 
 static gboolean
@@ -949,6 +916,49 @@ jingle_s5b_connect_timeout_cb(gpointer data)
 	
 	return FALSE;
 }
+
+
+static void
+jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
+{
+	JingleS5BConnectData *cd = (JingleS5BConnectData *) data;
+	JingleS5B *s5b = cd->s5b;
+	JingleSession *session = cd->session;
+	JabberIq *result = NULL;
+	
+	/* cancel timeout if set */
+	if (s5b->priv->connect_timeout) {
+		purple_timeout_remove(s5b->priv->connect_timeout);
+		s5b->priv->connect_timeout = 0;
+	}
+
+	if (source < 0) {
+		/* failed to connect */
+		/* trigger the a "timeout" to get to the next streamhost */
+		jingle_s5b_connect_timeout_cb(data);
+		return;
+	}
+	
+	purple_debug_info("jingle-s5b", "Successful in connecting!\n");
+	
+	s5b->priv->connect_data = NULL;
+	s5b->priv->remote_fd = source;
+	s5b->priv->is_connected_to_remote = TRUE;
+	
+	
+	/* set the currently tried streamhost as the successfull one */
+	s5b->priv->successfull_remote_streamhost =
+		(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
+
+	/* should stop trying to connect */
+	jingle_s5b_stop_connection_attempts(s5b);
+	
+	/* should send transport-accept with streamhost-used */
+	result = jingle_session_to_packet(session, JINGLE_TRANSPORT_ACCEPT);
+	jabber_iq_set_callback(result, jingle_s5b_transport_accept_cb, cd);
+	jabber_iq_send(result);
+}
+	
 
 static void
 jingle_s5b_attempt_connect_internal(gpointer data)
