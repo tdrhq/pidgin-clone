@@ -55,6 +55,7 @@ struct irc_conn {
 	char *server;
 	int fd;
 	guint timer;
+	guint who_channel_timer;
 	GHashTable *buddies;
 
 	gboolean ison_outstanding;
@@ -103,6 +104,7 @@ typedef int (*IRCCmdCallback) (struct irc_conn *irc, const char *cmd, const char
 
 int irc_send(struct irc_conn *irc, const char *buf);
 gboolean irc_blist_timeout(struct irc_conn *irc);
+gboolean irc_who_channel_timeout(struct irc_conn *irc);
 
 char *irc_escape_privmsg(const char *text, gssize length);
 
