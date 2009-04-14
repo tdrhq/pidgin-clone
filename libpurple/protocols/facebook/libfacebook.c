@@ -175,6 +175,10 @@ static GList *fb_statuses(PurpleAccount *account)
 		"message_date", _("Message changed"),
 		purple_value_new(PURPLE_TYPE_STRING), NULL);
 	types = g_list_append(types, status);
+	
+	/* Cave into feature requests and allow people to set themselves to be idle */
+	status = purple_status_type_new_full(PURPLE_STATUS_AWAY, NULL, _("Idle"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, status);
 
 	/* Offline people dont have messages */
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, NULL, _("Offline"), FALSE, TRUE, FALSE);
@@ -312,6 +316,9 @@ static void fb_close(PurpleConnection *pc)
 
 	purple_debug_info("facebook", "disconnecting account\n");
 
+	g_return_if_fail(pc != NULL);
+	g_return_if_fail(pc->proto_data != NULL);
+	
 	fba = pc->proto_data;
 
 	/* Tell Facebook that we've logged out. */
@@ -360,9 +367,6 @@ static void fb_close(PurpleConnection *pc)
 	if (fba->perpetual_messages_timer) {
 		purple_timeout_remove(fba->perpetual_messages_timer);
 	}
-	if (fba->post_form_id_refresh_timer) {
-		purple_timeout_remove(fba->post_form_id_refresh_timer);
-	}
 
 	purple_debug_info("facebook", "destroying %d incomplete connections\n",
 			g_slist_length(fba->conns));
@@ -376,10 +380,6 @@ static void fb_close(PurpleConnection *pc)
 					purple_dnsquery_get_host(dns_query));
 		fba->dns_queries = g_slist_remove(fba->dns_queries, dns_query);
 		purple_dnsquery_destroy(dns_query);
-	}
-	
-	if (fba->resending_messages != NULL) {
-		fb_cancel_resending_messages(fba);
 	}
 
 	g_hash_table_destroy(fba->cookie_table);
@@ -466,6 +466,13 @@ static void fb_set_status_p(PurpleAccount *account, PurpleStatus *status)
 {
 	const gchar *message;
 	gchar *stripped;
+	FacebookAccount *fba = account->gc->proto_data;
+
+	/* if "away" set idle */
+	if (fba && purple_status_type_get_primitive(purple_status_get_type(status)) == PURPLE_STATUS_AWAY)
+	{
+		fba->is_idle = TRUE;	
+	}
 
 	/* first check that we actually want to set this through Pidgin */
 	if (!purple_account_get_bool(account,
