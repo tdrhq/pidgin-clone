@@ -73,7 +73,7 @@ struct irc_conn {
 		char *name;
 		char *server;
 		char *serverinfo;
-		char *channels;
+		GString *channels;
 		int ircop;
 		int identified;
 		int idle;
