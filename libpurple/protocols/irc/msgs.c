@@ -437,8 +437,18 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 		char *userhost = g_strdup_printf("%s@%s", args[2], args[3]);
 		char *realname = g_strdup(args[8]);
 		
-		purple_conv_chat_cb_set_attribute(chat, cb, "userhost", userhost);
-		purple_conv_chat_cb_set_attribute(chat, cb, "realname", realname);
+		GList *keys = NULL, *values = NULL;
+		
+		g_list_append(keys, "userhost");
+		g_list_append(values, userhost);
+		
+		g_list_append(keys, "realname");
+		g_list_append(values, realname);
+		
+		purple_conv_chat_cb_set_attributes(chat, cb, keys, values);
+		
+		g_list_free(keys);
+		g_list_free(values);
 		
 		g_free(userhost);
 		g_free(realname);

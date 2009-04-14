@@ -2103,6 +2103,26 @@ purple_conv_chat_cb_set_attribute(PurpleConvChat *chat, PurpleConvChatBuddy *cb,
 		ops->chat_update_user(conv, cb->name);
 }
 
+void
+purple_conv_chat_cb_set_attributes(PurpleConvChat *chat, PurpleConvChatBuddy *cb, GList *keys, GList *values)
+{
+	g_return_if_fail(cb != NULL);
+	g_return_if_fail(keys != NULL);
+	g_return_if_fail(values != NULL);
+	
+	while (keys != NULL && values != NULL) {
+		g_hash_table_replace(cb->attributes, g_strdup(keys->data), g_strdup(values->data));
+		keys = g_list_next(keys);
+		values = g_list_next(values);
+	}
+	
+	PurpleConversation *conv = purple_conv_chat_get_conversation(chat);
+	PurpleConversationUiOps *ops = purple_conversation_get_ui_ops(conv);
+	
+	if (ops != NULL && ops->chat_update_user != NULL)
+		ops->chat_update_user(conv, cb->name);
+}
+
 GList *
 purple_conversation_get_extended_menu(PurpleConversation *conv)
 {
