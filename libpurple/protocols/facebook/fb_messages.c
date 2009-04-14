@@ -30,42 +30,11 @@ struct _FacebookOutgoingMessage {
 	gchar *message;
 	gint msg_id;
 	guint retry_count;
-	guint resend_timer;
 };
 
 static gboolean fb_send_im_fom(FacebookOutgoingMessage *msg);
-static gboolean fb_resend_im_fom(FacebookOutgoingMessage *msg);
 static gboolean fb_get_new_messages(FacebookAccount *fba);
 
-static FacebookOutgoingMessage *fb_msg_create(FacebookAccount *fba)
-{
-	FacebookOutgoingMessage *msg;
-	
-	msg = g_new0(FacebookOutgoingMessage, 1);
-	msg->fba = fba;
-	
-	return msg;
-}
-
-static void fb_msg_destroy(FacebookOutgoingMessage *msg)
-{
-	if (msg->resend_timer) {
-		purple_timeout_remove(msg->resend_timer);
-	}
-	g_free(msg->who);
-	g_free(msg->message);
-	g_free(msg);	
-}
-
-void fb_cancel_resending_messages(FacebookAccount *fba)
-{
-	while (fba->resending_messages != NULL) {
-		FacebookOutgoingMessage *msg = fba->resending_messages->data;
-		fba->resending_messages = g_slist_remove(fba->resending_messages, msg);
-		fb_msg_destroy(msg);
-	}	
-}
-								  
 static void got_new_messages(FacebookAccount *fba, gchar *data,
 		gsize data_len, gpointer userdata)
 {
@@ -136,16 +105,15 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 		/* Continue looping, waiting for more messages */
 		purple_debug_error("facebook",
 				"got data back, but it's not even json\n");
-
-		fb_get_new_messages(fba);
+				
+		purple_timeout_add_seconds(1, (GSourceFunc)fb_get_new_messages, fba);
 		return;
 	}
 
 	/* refresh means that the session or post_form_id is invalid */
 	if (g_str_equal(data, "for (;;);{\"t\":\"refresh\"}"))
 	{
-		if (fba->post_form_id_refresh_timer == 0)
-			fba->post_form_id_refresh_timer = purple_timeout_add_seconds(1, (GSourceFunc)fb_get_post_form_id, fba);
+		purple_timeout_add_seconds(1, (GSourceFunc)fb_get_post_form_id, fba);
 		return;
 	}
 
@@ -153,7 +121,7 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 	if (g_str_equal(data, "for (;;);{\"t\":\"continue\"}"))
 	{
 		/* Continue looping, waiting for more messages */
-		fb_get_new_messages(fba);
+		purple_timeout_add_seconds(1, (GSourceFunc)fb_get_new_messages, fba);
 		return;
 	}
 
@@ -239,8 +207,6 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 					purple_debug_info("facebook", "i: %d\n", i);
 					if (i == FB_LAST_MESSAGE_MAX)
 					{
-						gchar *postdata;
-
 						/* if we're here, it must be a new message */
 						fba->last_messages[fba->next_message_pointer++] = msgID;
 						if (fba->next_message_pointer >= FB_LAST_MESSAGE_MAX)
@@ -277,6 +243,7 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 
 						serv_got_im(pc, from, message_text, PURPLE_MESSAGE_RECV, atoi(message_time));
 
+						
 						/*
 						 * Acknowledge receipt of the message by simulating
 						 * focusing the window.  Not sure what the window_id
@@ -284,13 +251,18 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 						 * something internal to the Facebook javascript that
 						 * is used for maintaining UI state across page loads?
 						 */
-						postdata = g_strdup_printf(
-								"focus_chat=%s&window_id=12345&post_form_id=%s",
-								from, fba->post_form_id);
-						fb_post_or_get(fba, FB_METHOD_POST, NULL,
-								"/ajax/chat/settings.php?_ecdc=false",
-								postdata, NULL, NULL, FALSE);
-						g_free(postdata);
+						if (!fba->is_idle)
+						{
+							gchar *postdata;
+	
+							postdata = g_strdup_printf(
+									"focus_chat=%s&window_id=12345&post_form_id=%s",
+									from, fba->post_form_id);
+							fb_post_or_get(fba, FB_METHOD_POST, NULL,
+									"/ajax/chat/settings.php?_ecdc=false",
+									postdata, NULL, NULL, FALSE);
+							g_free(postdata);
+						}
 
 						g_free(message_text);
 						g_free(message_time);
@@ -433,8 +405,7 @@ static void fb_send_im_cb(FacebookAccount *fba, gchar *data, gsize data_len, gpo
 				/* there was an error, either report it or retry */
 				if (msg->retry_count++ < FB_MAX_MSG_RETRY)
 				{
-					msg->resend_timer = purple_timeout_add_seconds(1, (GSourceFunc)fb_resend_im_fom, msg);
-					fba->resending_messages = g_slist_prepend(fba->resending_messages, msg);
+					purple_timeout_add_seconds(1, (GSourceFunc)fb_send_im_fom, msg);
 					g_free(error_summary);
 					return;
 				}
@@ -451,7 +422,9 @@ static void fb_send_im_cb(FacebookAccount *fba, gchar *data, gsize data_len, gpo
 	}
 
 	g_free(error_summary);
-	fb_msg_destroy(msg);
+	g_free(msg->who);
+	g_free(msg->message);
+	g_free(msg);
 }
 
 static gboolean fb_send_im_fom(FacebookOutgoingMessage *msg)
@@ -472,24 +445,19 @@ static gboolean fb_send_im_fom(FacebookOutgoingMessage *msg)
 	return FALSE;
 }
 
-static gboolean fb_resend_im_fom(FacebookOutgoingMessage *msg)
-{
-	msg->fba->resending_messages = g_slist_remove(msg->fba->resending_messages, msg);
-
-	return fb_send_im_fom(msg);
-}
-
 int fb_send_im(PurpleConnection *pc, const gchar *who, const gchar *message, PurpleMessageFlags flags)
 {
 	FacebookOutgoingMessage *msg;
 
-	msg = fb_msg_create(pc->proto_data);
+	msg = g_new0(FacebookOutgoingMessage, 1);
+	msg->fba = pc->proto_data;
 
 	/* convert html to plaintext, removing trailing spaces */
 	msg->message = purple_markup_strip_html(message);
 	if (strlen(msg->message) > 999)
 	{
-		fb_msg_destroy(msg);
+		g_free(msg->message);
+		g_free(msg);
 		return -E2BIG;
 	}
 
@@ -583,7 +551,6 @@ static void got_form_id_page(FacebookAccount *fba, gchar *data, gsize data_len, 
 
 gboolean fb_get_post_form_id(FacebookAccount *fba)
 {
-	fba->post_form_id_refresh_timer = 0;
-	fb_post_or_get(fba, FB_METHOD_GET, NULL, "/home.php", NULL, got_form_id_page, NULL, FALSE);
+	fb_post_or_get(fba, FB_METHOD_GET, NULL, "/presence/popout.php", NULL, got_form_id_page, NULL, FALSE);
 	return FALSE;
 }
