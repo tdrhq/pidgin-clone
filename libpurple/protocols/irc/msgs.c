@@ -129,7 +129,6 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	irc_blist_timeout(irc);
 	if (!irc->timer)
 		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
-		irc->timer = purple_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 	if (!irc->who_channel_timer)
 		irc->who_channel_timer = purple_timeout_add_seconds(300, (GSourceFunc)irc_who_channel_timeout, (gpointer)irc);
 }
