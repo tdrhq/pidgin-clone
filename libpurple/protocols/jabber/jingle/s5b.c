@@ -24,6 +24,9 @@
 #include "network.h"
 #include "xmlnode.h"
 
+
+#define STREAMHOST_CONNECT_TIMEOUT_MILLIS 200
+
 /* auxillary functions to handle JabberBytestreamsStreamhosts, maybe this
  should be in a separtate module, used by si.c and other places as well */
 
@@ -136,6 +139,7 @@ struct _JingleS5BPrivate {
 	PurpleProxyConnectData *connect_data;
 	PurpleNetworkListenData *listen_data;
 	PurpleProxyInfo *ppi;
+	guint connect_timeout;
 	int watcher;
 	char *rxqueue;
 	size_t rxlen;
@@ -148,6 +152,8 @@ struct _JingleS5BPrivate {
 	JingleS5BErrorCallback *error_cb;
 	JingleContent *connect_content; /* used for the connect callback */
 	JingleContent *error_content;  /* used for the error callback */
+	gboolean is_connected_to_remote;
+	gboolean is_remote_connected;
 };
 
 #define JINGLE_S5B_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), JINGLE_TYPE_S5B, JingleS5BPrivate))
@@ -261,6 +267,9 @@ jingle_s5b_finalize (GObject *s5b)
 	if (priv->ppi)
 		purple_proxy_info_destroy(priv->ppi);
 
+	if (priv->connect_timeout)
+		purple_timeout_remove(priv->connect_timeout);
+	
 	G_OBJECT_CLASS(parent_class)->finalize(s5b);
 }
 
@@ -452,6 +461,7 @@ jingle_s5b_send_read_again_resp_cb(gpointer data, gint source,
 					  "Waiting for IQ result to start file transfer.\n");
 	/* set the local fd as connected */
 	s5b->priv->local_fd = source;
+	s5b->priv->is_remote_connected = TRUE;
 	
 	g_free(data);
 }
@@ -857,9 +867,14 @@ jingle_s5b_transport_accept_cb(JabberStream *js, const char *from,
 	JingleSession *session = cd->session;
 	JingleS5B *s5b = cd->s5b;
 	
+	purple_debug_info("jingle-s5b", 
+		"in jingle_s5b_transport_accept_cb: is connected to remote %d,"
+		" remote is connected %d\n", jingle_s5b_is_connected_to_remote(s5b),
+		jingle_s5b_remote_is_connected(s5b));
+	
 	if (type == JABBER_IQ_RESULT) {
-		if ((!jingle_session_is_initiator(session) &&
-			jingle_s5b_remote_is_connected(s5b)) ||
+		if (!(!jingle_session_is_initiator(session) &&
+			jingle_s5b_is_connected_to_remote(s5b)) ||
 			!jingle_s5b_remote_is_connected(s5b)) {
 			/* unless we are the receiver and the receiver could connect,
 				now we shall "surrender" to other side and signal the content
@@ -889,7 +904,14 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	
 	s5b->priv->connect_data = NULL;
 	s5b->priv->remote_fd = source;
+	s5b->priv->is_connected_to_remote = TRUE;
 	
+	/* cancel timeout if set */
+	if (s5b->priv->connect_timeout) {
+		purple_timeout_remove(s5b->priv->connect_timeout);
+		s5b->priv->connect_timeout = 0;
+	}
+
 	/* set the currently tried streamhost as the successfull one */
 	s5b->priv->successfull_remote_streamhost =
 		(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
@@ -903,9 +925,34 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	jabber_iq_send(result);
 }
 	
+static void jingle_s5b_attempt_connect_internal(gpointer data);
+
 static void
-jingle_s5b_attempt_connect_internal(JingleSession *session, JingleS5B *s5b)
+jingle_s5b_connect_timeout_cb(gpointer data)
 {
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+	
+	purple_debug_info("jingle-s5b", "in jingle_s5b_connect_timeout_cb\n");
+	/* cancel timeout */
+	purple_timeout_remove(s5b->priv->connect_timeout);
+	
+	/* advance streamhost "counter" */
+	if (s5b->priv->remaining_streamhosts) {
+		s5b->priv->remaining_streamhosts = 
+			s5b->priv->remaining_streamhosts->data;
+		purple_debug_info("jingle-s5b", "trying next streamhost\n");
+		/* if remaining_streamhost is NULL here, this call will result in a
+		 streamhost error (and potentially fallback to IBB) */
+		jingle_s5b_attempt_connect_internal(data);
+	}
+}
+
+static void
+jingle_s5b_attempt_connect_internal(gpointer data)
+{
+	JingleSession *session = ((JingleS5BConnectData *) data)->session;
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+	
 	if (s5b->priv->remaining_streamhosts) {
 		JabberStream *js = jingle_session_get_js(session);
 		const gchar *who = jingle_session_get_remote_jid(session);
@@ -941,10 +988,6 @@ jingle_s5b_attempt_connect_internal(JingleSession *session, JingleS5B *s5b)
 		hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
 		purple_debug_info("jingle-s5b", "connecting with hash: %s\n", hash);
 		
-		data = g_new0(JingleS5BConnectData, 1);
-		data->session = session;
-		data->s5b = s5b;
-		
 		s5b->priv->connect_data = 
 			purple_proxy_connect_socks5(NULL, s5b->priv->ppi, hash, 0, 
 				jingle_s5b_connect_cb, data);
@@ -952,16 +995,30 @@ jingle_s5b_attempt_connect_internal(JingleSession *session, JingleS5B *s5b)
 		g_free(dstaddr);
 		
 		/* add timeout */
+		/* we should add a longer timeout if the next streamhost candidate
+		 is a proxy and we have local candidates ourselves, to allow the other
+		 end a chance to connect to use before reverting to a proxy */
+		s5b->priv->connect_timeout =
+			purple_timeout_add(STREAMHOST_CONNECT_TIMEOUT_MILLIS,
+				jingle_s5b_connect_timeout_cb, data);
 		
 		g_free(dstjid);
+	} else {
+		/* send streamhost error */
+		
+		g_free(data);
 	}
 }
 
 void
 jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b)
 {
+	JingleS5BConnectData *data = g_new0(JingleS5BConnectData, 1);
+	
+	data->session = session;
+	data->s5b = s5b;
 	s5b->priv->remaining_streamhosts = s5b->priv->remote_streamhosts;
-	jingle_s5b_attempt_connect_internal(session, s5b);
+	jingle_s5b_attempt_connect_internal(data);
 }
 
 void
@@ -980,18 +1037,23 @@ jingle_s5b_stop_connection_attempts(JingleS5B *s5b)
 		purple_input_remove(s5b->priv->watcher);
 		s5b->priv->watcher = 0;
 	}
+	
+	if (s5b->priv->connect_timeout) {
+		purple_timeout_remove(s5b->priv->connect_timeout);
+		s5b->priv->connect_timeout = 0;
+	}
 }
 
 gboolean
 jingle_s5b_is_connected_to_remote(const JingleS5B *s5b)
 {
-	return s5b->priv->remote_fd;
+	return s5b->priv->is_connected_to_remote;
 }
 
 gboolean
 jingle_s5b_remote_is_connected(const JingleS5B *s5b)
 {
-	return s5b->priv->local_fd;
+	return s5b->priv->is_remote_connected;
 }
 	
 void
@@ -1010,6 +1072,11 @@ jingle_s5b_surrender(JingleS5B *s5b)
 		purple_input_remove(s5b->priv->watcher);
 		s5b->priv->watcher = 0;
 	}
+	
+	if (s5b->priv->connect_timeout) {
+		purple_timeout_remove(s5b->priv->connect_timeout);
+		s5b->priv->connect_timeout = 0;
+	}
 }
 
 void
@@ -1027,5 +1094,10 @@ jingle_s5b_take_command(JingleS5B *s5b)
 	if (s5b->priv->watcher) {
 		purple_input_remove(s5b->priv->watcher);
 		s5b->priv->watcher = 0;
+	}
+	
+	if (s5b->priv->connect_timeout) {
+		purple_timeout_remove(s5b->priv->connect_timeout);
+		s5b->priv->connect_timeout = 0;
 	}
 }
