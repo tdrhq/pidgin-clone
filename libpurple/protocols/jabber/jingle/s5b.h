@@ -88,14 +88,6 @@ void jingle_s5b_gather_streamhosts(JingleSession *session, JingleS5B *s5b);
 
 void jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b);
 
-void jingle_s5b_stop_connection_attempts(JingleS5B *s5b);
-
-gboolean jingle_s5b_is_connected_to_remote(const JingleS5B *s5b);
-gboolean jingle_s5b_remote_is_connected(const JingleS5B *s5b);
-
-void jingle_s5b_surrender(JingleS5B *s5b);
-void jingle_s5b_take_command(JingleS5B *s5b);
-
 void jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session, 
 	xmlnode *transport);
 

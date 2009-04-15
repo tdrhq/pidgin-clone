@@ -418,6 +418,88 @@ jingle_s5b_to_xml_internal(JingleTransport *transport, xmlnode *content,
 	return node;
 }
 
+static void
+jingle_s5b_surrender(JingleS5B *s5b)
+{
+	purple_debug_info("jingle-s5b", 
+		"in jingle_s5b_surrender, using remote streamhost\n");
+	s5b->priv->fd = s5b->priv->remote_fd;
+	
+	if (s5b->priv->local_fd) {
+		close(s5b->priv->local_fd);
+		s5b->priv->local_fd = 0;
+	}
+	
+	if (s5b->priv->watcher) {
+		purple_input_remove(s5b->priv->watcher);
+		s5b->priv->watcher = 0;
+	}
+	
+	if (s5b->priv->connect_timeout) {
+		purple_timeout_remove(s5b->priv->connect_timeout);
+		s5b->priv->connect_timeout = 0;
+	}
+}
+
+static void
+jingle_s5b_take_command(JingleS5B *s5b)
+{
+	purple_debug_info("jingle-s5b",
+		"in jingle_s5b_take_command, using local streamhost\n");
+	s5b->priv->fd = s5b->priv->local_fd;
+	
+	if (s5b->priv->remote_fd) {
+		close(s5b->priv->remote_fd);
+		s5b->priv->remote_fd = 0;
+	}
+	
+	if (s5b->priv->watcher) {
+		purple_input_remove(s5b->priv->watcher);
+		s5b->priv->watcher = 0;
+	}
+	
+	if (s5b->priv->connect_timeout) {
+		purple_timeout_remove(s5b->priv->connect_timeout);
+		s5b->priv->connect_timeout = 0;
+	}
+}
+
+static gboolean
+jingle_s5b_is_connected_to_remote(const JingleS5B *s5b)
+{
+	return s5b->priv->is_connected_to_remote;
+}
+
+static gboolean
+jingle_s5b_remote_is_connected(const JingleS5B *s5b)
+{
+	return s5b->priv->is_remote_connected;
+}
+
+static void
+jingle_s5b_stop_connection_attempts(JingleS5B *s5b)
+{
+	purple_debug_info("jingle-s5b", "stop connection attempts\n");
+	
+	s5b->priv->remaining_streamhosts = NULL;
+	
+	if (s5b->priv->connect_data) {
+		purple_proxy_connect_cancel(s5b->priv->connect_data);
+		s5b->priv->connect_data = NULL;
+	}
+	
+	if (s5b->priv->watcher) {
+		purple_input_remove(s5b->priv->watcher);
+		s5b->priv->watcher = 0;
+	}
+	
+	if (s5b->priv->connect_timeout) {
+		purple_timeout_remove(s5b->priv->connect_timeout);
+		s5b->priv->connect_timeout = 0;
+	}
+}
+
+
 typedef struct {
 	JingleSession *session;
 	JingleS5B *s5b;
@@ -1033,86 +1115,9 @@ jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b)
 	jingle_s5b_attempt_connect_internal(data);
 }
 
-void
-jingle_s5b_stop_connection_attempts(JingleS5B *s5b)
-{
-	purple_debug_info("jingle-s5b", "stop connection attempts\n");
-	
-	s5b->priv->remaining_streamhosts = NULL;
-	
-	if (s5b->priv->connect_data) {
-		purple_proxy_connect_cancel(s5b->priv->connect_data);
-		s5b->priv->connect_data = NULL;
-	}
-	
-	if (s5b->priv->watcher) {
-		purple_input_remove(s5b->priv->watcher);
-		s5b->priv->watcher = 0;
-	}
-	
-	if (s5b->priv->connect_timeout) {
-		purple_timeout_remove(s5b->priv->connect_timeout);
-		s5b->priv->connect_timeout = 0;
-	}
-}
 
-gboolean
-jingle_s5b_is_connected_to_remote(const JingleS5B *s5b)
-{
-	return s5b->priv->is_connected_to_remote;
-}
 
-gboolean
-jingle_s5b_remote_is_connected(const JingleS5B *s5b)
-{
-	return s5b->priv->is_remote_connected;
-}
 	
-void
-jingle_s5b_surrender(JingleS5B *s5b)
-{
-	purple_debug_info("jingle-s5b", 
-		"in jingle_s5b_surrender, using remote streamhost\n");
-	s5b->priv->fd = s5b->priv->remote_fd;
-	
-	if (s5b->priv->local_fd) {
-		close(s5b->priv->local_fd);
-		s5b->priv->local_fd = 0;
-	}
-	
-	if (s5b->priv->watcher) {
-		purple_input_remove(s5b->priv->watcher);
-		s5b->priv->watcher = 0;
-	}
-	
-	if (s5b->priv->connect_timeout) {
-		purple_timeout_remove(s5b->priv->connect_timeout);
-		s5b->priv->connect_timeout = 0;
-	}
-}
-
-void
-jingle_s5b_take_command(JingleS5B *s5b)
-{
-	purple_debug_info("jingle-s5b",
-		"in jingle_s5b_take_command, using local streamhost\n");
-	s5b->priv->fd = s5b->priv->local_fd;
-	
-	if (s5b->priv->remote_fd) {
-		close(s5b->priv->remote_fd);
-		s5b->priv->remote_fd = 0;
-	}
-	
-	if (s5b->priv->watcher) {
-		purple_input_remove(s5b->priv->watcher);
-		s5b->priv->watcher = 0;
-	}
-	
-	if (s5b->priv->connect_timeout) {
-		purple_timeout_remove(s5b->priv->connect_timeout);
-		s5b->priv->connect_timeout = 0;
-	}
-}
 
 static gboolean
 jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
