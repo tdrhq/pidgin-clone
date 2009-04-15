@@ -907,7 +907,7 @@ jingle_s5b_connect_timeout_cb(gpointer data)
 	/* advance streamhost "counter" */
 	if (s5b->priv->remaining_streamhosts) {
 		s5b->priv->remaining_streamhosts = 
-			s5b->priv->remaining_streamhosts->data;
+			g_list_next(s5b->priv->remaining_streamhosts);
 		purple_debug_info("jingle-s5b", "trying next streamhost\n");
 		/* if remaining_streamhost is NULL here, this call will result in a
 		 streamhost error (and potentially fallback to IBB) */
