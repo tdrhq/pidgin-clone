@@ -2082,6 +2082,7 @@ purple_conv_chat_cb_new(const char *name, const char *alias, PurpleConvChatBuddy
 
 	cb = g_new0(PurpleConvChatBuddy, 1);
 	cb->name = g_strdup(name);
+	cb->collate_key = g_utf8_collate_key(name, -1);
 	cb->flags = flags;
 	cb->alias = g_strdup(alias);
 	cb->attributes = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -2096,15 +2097,22 @@ purple_conv_chat_cb_find(PurpleConvChat *chat, const char *name)
 {
 	GList *l;
 	PurpleConvChatBuddy *cb = NULL;
+	char *collate_key;
 
 	g_return_val_if_fail(chat != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
+	
+	collate_key = g_utf8_collate_key(name, -1);
 
 	for (l = purple_conv_chat_get_users(chat); l; l = l->next) {
 		cb = l->data;
-		if (!g_utf8_collate(cb->name, name))
+		if (purple_strequal(cb->collate_key, collate_key)) {
+			g_free(collate_key);
 			return cb;
+		}
 	}
+	
+	g_free(collate_key);
 
 	return NULL;
 }
@@ -2118,6 +2126,7 @@ purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb)
 	g_free(cb->alias);
 	g_free(cb->alias_key);
 	g_free(cb->name);
+	g_free(cb->collate_key);
 	g_hash_table_destroy(cb->attributes);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(cb);
