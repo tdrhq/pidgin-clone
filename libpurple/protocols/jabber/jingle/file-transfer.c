@@ -464,6 +464,10 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			sid = jabber_get_next_id(js);
 			jingle_s5b_set_sid(JINGLE_S5B(transport), sid);
 			g_free(sid);
+			jingle_s5b_set_connect_callback(JINGLE_S5B(transport),
+				jingle_file_transfer_s5b_connect_callback, content);
+			jingle_s5b_set_error_callback(JINGLE_S5B(transport),
+				jingle_file_transfer_s5b_error_callback, content);
 			/* start local listen on the S5B transport */
 			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
 		}	
@@ -721,39 +725,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			if (JINGLE_IS_S5B(transport)) {
 				JingleS5B *s5b = JINGLE_S5B(transport);
 				xmlnode *xmltransport = xmlnode_get_child(xmlcontent, "transport");
-				xmlnode *streamhost_used = 
-					xmlnode_get_child(xmltransport, "streamhost-used");
-				
-				if (streamhost_used) {
-					const gchar *jid = xmlnode_get_attrib(streamhost_used, "jid");
-					JabberStream *js = jingle_session_get_js(session);
-
-					purple_debug_info("jingle-ft", "got streamhost-used\n");
-					/* stop connection attempts */
-					jingle_s5b_stop_connection_attempts(s5b);
-
-					if (jingle_session_is_initiator(session) &&
-						jingle_s5b_is_connected_to_remote(s5b)) {
-						/* we are the initiator and both parties could connect,
-							give up "ownership", see footnote 3 in XEP-0260 */
-						jingle_s5b_surrender(s5b);
-					} else {
-						/* we are now the "owner" of the bytestream */
-						jingle_s5b_take_command(s5b);
-						
-						/* also when receiving a <streamhost-used/> we need to 
-						 check if that is not one of our local streamhosts, 
-						 in which case it is a proxy, and we should connect to that */
-						if (jid && !jingle_s5b_streamhost_is_local(js, jid)) {
-							purple_debug_info("jingle-ft",
-								"got transport-accept on a proxy, "
-								"need to connect to the proxy\n");
-						} else {
-							/* start transfer */
-							jingle_file_transfer_s5b_connect_callback(content);
-						}
-					}
-				}
+				jingle_s5b_handle_transport_accept(s5b, session, xmltransport);
 			}
 				
 			break;

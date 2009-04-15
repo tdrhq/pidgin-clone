@@ -1114,7 +1114,7 @@ jingle_s5b_take_command(JingleS5B *s5b)
 	}
 }
 
-gboolean
+static gboolean
 jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
 {
 	gchar *me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain, 
@@ -1133,3 +1133,46 @@ jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
 
 	return equal;
 }
+
+void
+jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session, 
+	xmlnode *transport)
+{
+	xmlnode *streamhost_used = xmlnode_get_child(transport, "streamhost-used");
+
+	if (streamhost_used) {
+		const gchar *jid = xmlnode_get_attrib(streamhost_used, "jid");
+		JabberStream *js = jingle_session_get_js(session);
+
+		purple_debug_info("jingle-ft", "got streamhost-used\n");
+		/* stop connection attempts */
+		jingle_s5b_stop_connection_attempts(s5b);
+
+		if (jingle_session_is_initiator(session) &&
+			jingle_s5b_is_connected_to_remote(s5b)) {
+			/* we are the initiator and both parties could connect,
+			give up "ownership", see footnote 3 in XEP-0260 */
+			jingle_s5b_surrender(s5b);
+		} else {
+			/* we are now the "owner" of the bytestream */
+			jingle_s5b_take_command(s5b);
+			
+			/* also when receiving a <streamhost-used/> we need to 
+			check if that is not one of our local streamhosts, 
+			in which case it is a proxy, and we should connect to that */
+			if (jid && !jingle_s5b_streamhost_is_local(js, jid)) {
+				purple_debug_info("jingle-ft",
+					"got transport-accept on a proxy, "
+					"need to connect to the proxy\n");
+			} else {
+				/* start transfer */
+				if (s5b->priv->connect_cb && s5b->priv->connect_content) {
+					s5b->priv->connect_cb(s5b->priv->connect_content);
+				} else {
+					/* some error? */
+				}
+			}
+		}
+	}
+}
+
