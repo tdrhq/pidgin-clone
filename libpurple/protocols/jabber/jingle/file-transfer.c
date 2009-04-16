@@ -474,7 +474,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			/* start local listen on the S5B transport */
 			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
 		}	
-	} else {
+	} else if (xfer->data) {
 		JingleContent *content = (JingleContent *) xfer->data;
 		JingleSession *session = jingle_content_get_session(content);
 		JingleTransport *transport = jingle_content_get_transport(content);
@@ -706,6 +706,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				if (!purple_xfer_is_canceled(xfer))
 					purple_xfer_end(xfer);
 				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer = NULL;
+				xfer->data = NULL;
 			}
 	
 			g_object_unref(session);
