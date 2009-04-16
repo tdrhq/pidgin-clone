@@ -2,7 +2,7 @@
 <a href="http://developer.pidgin.im/wiki/WhatIsLibpurple"><img src="/shared/img/button.libpurple.png" alt="libpurple" /></a>
 <a href="http://www.networkredux.com/"><img src="/shared/img/button.networkredux.jpg" alt="Hosted by NetworkRedux" title="Hosted by NetworkRedux" /></a>
 <a href="http://blendinteractive.com/"><img src="/shared/img/button.blend.png" alt="Design by Blend Interactive" title="Design by Blend Interactive" /></a>
-<a href="http://sourceforge.net/projects/pidgin"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=235&type=12" width="120" height="30" border="0" alt="Get Pidgin at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
+<a href="http://sourceforge.net/projects/pidgin"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=235&amp;type=12" width="120" height="30" style="border:none" alt="Get Pidgin at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
 </div>
 
 <!-- Begin Google Analytics tracking code -->
