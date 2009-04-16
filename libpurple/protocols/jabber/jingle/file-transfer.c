@@ -183,6 +183,7 @@ jingle_file_transfer_cancel_remote(JingleContent *content)
 	
 	purple_debug_info("jingle-ft", "cancel remote transfer\n");
 	if (xfer) {
+		/* TODO: set a reason code */
 		jabber_iq_send(jingle_session_to_packet(session, 
 			JINGLE_SESSION_TERMINATE));
 		purple_xfer_cancel_remote(xfer);
@@ -200,6 +201,7 @@ jingle_file_transfer_cancel_local(JingleContent *content)
 	
 	purple_debug_info("jingle-ft", "cancel local trasfer\n");
 	if (xfer) {
+		/* TODO: set a reason code */
 		jabber_iq_send(jingle_session_to_packet(session, 
 			JINGLE_SESSION_TERMINATE));
 		purple_xfer_cancel_local(xfer);
@@ -225,15 +227,16 @@ jingle_file_transfer_success(JingleContent *content)
 }
 
 static void
-jingle_file_transfer_end(JingleContent *content)
+jingle_file_transfer_ibb_end(JingleContent *content)
 {
 	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
 	JingleSession *session = jingle_content_get_session(content);
 	
 	purple_debug_info("jingle-ft", "ending transfer\n");
 	if (xfer) {
-		jabber_iq_send(jingle_session_to_packet(session, 
-			JINGLE_SESSION_TERMINATE));
+		if (jingle_session_is_initiator(session)) {
+			jabber_iq_send(jingle_session_terminate_packet(session, "success"));
+		}
 		purple_xfer_set_completed(xfer, TRUE);
 		purple_xfer_end(xfer);
 	}
@@ -299,7 +302,7 @@ jingle_file_transfer_ibb_data_sent_callback(JingleContent *content)
 
 	if (remaining == 0) {
 		/* close the session */
-		jingle_file_transfer_end(content);
+		jingle_file_transfer_ibb_end(content);
 	} else {
 		/* send more... */
 		jingle_file_transfer_ibb_send_data(content);
@@ -541,6 +544,7 @@ jingle_file_transfer_cancel_recv(PurpleXfer *xfer)
 		jingle_content_get_session((JingleContent *)xfer->data);
 
 	purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_recv\n");
+	/* should probably set some reason code here... */
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
 	g_object_unref(session);
 	g_object_unref(session);
@@ -552,6 +556,10 @@ jingle_file_transfer_xfer_end(PurpleXfer *xfer)
 	if (xfer->data) {
 		JingleSession *session = 
 			jingle_content_get_session((JingleContent *)xfer->data);
+		if (jingle_session_is_initiator(session)) {
+			jabber_iq_send(jingle_session_terminate_packet(session, "success"));
+		}
+		g_object_unref(session);
 		g_object_unref(session);
 	}
 }
@@ -654,6 +662,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 						jingle_file_transfer_cancel_recv);
 					purple_xfer_request(xfer);
 				} else {
+					/* TODO: set a reason code */
 					jabber_iq_send(jingle_session_to_packet(session,
 						JINGLE_SESSION_TERMINATE));
 					g_object_unref(session);
