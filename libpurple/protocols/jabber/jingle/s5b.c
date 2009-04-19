@@ -1041,6 +1041,63 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	jabber_iq_send(result);
 }
 	
+static void
+jingle_s5b_connect_to_streamhost(JingleS5BConnectData *data, 
+	JabberBytestreamsStreamhost *sh, 
+	void (*connect_cb)(gpointer, gint, const gchar *),
+	GSourceFunc timeout_cb)
+{
+	JingleSession *session = data->session;
+	JingleS5B *s5b = data->s5b;
+	JabberStream *js = jingle_session_get_js(session);
+	const gchar *who = jingle_session_get_remote_jid(session);
+	JabberID *dstjid = jabber_id_new(who);
+
+	gchar *dstaddr = NULL;
+	gchar *hash = NULL;
+	
+	purple_debug_info("jingle-s5b", 
+		"attempting to connect to streamhost: %s, port: %d\n",
+		sh->host, sh->port);
+
+	if (s5b->priv->ppi)
+		purple_proxy_info_destroy(s5b->priv->ppi);
+	s5b->priv->ppi = purple_proxy_info_new();
+	purple_proxy_info_set_type(s5b->priv->ppi, PURPLE_PROXY_SOCKS5);
+	purple_proxy_info_set_host(s5b->priv->ppi, sh->host);
+	purple_proxy_info_set_port(s5b->priv->ppi, sh->port);
+	
+	if(jingle_session_is_initiator(session))
+		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
+			js->user->node, js->user->domain, js->user->resource, 
+			dstjid->node, dstjid->domain, dstjid->resource);
+	else
+		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
+			dstjid->node, dstjid->domain, dstjid->resource,
+			js->user->node, js->user->domain, js->user->resource);
+
+	/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
+	purple_debug_info("jingle-s5b", "dstaddr: %s\n", dstaddr);
+	hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
+	purple_debug_info("jingle-s5b", "connecting with hash: %s\n", hash);
+
+	s5b->priv->connect_data = 
+		purple_proxy_connect_socks5(NULL, s5b->priv->ppi, hash, 0, 
+			connect_cb, data);
+	g_free(hash);
+	g_free(dstaddr);
+	
+	/* add timeout */
+	/* we should add a longer timeout if the next streamhost candidate
+	is a proxy and we have local candidates ourselves, to allow the other
+	end a chance to connect to use before reverting to a proxy */
+	/* the timeout should perhaps be longer when connecting to a proxy */
+	s5b->priv->connect_timeout =
+		purple_timeout_add(STREAMHOST_CONNECT_TIMEOUT_MILLIS,
+			timeout_cb, data);
+
+	g_free(dstjid);
+}
 
 static void
 jingle_s5b_attempt_connect_internal(gpointer data)
@@ -1049,54 +1106,12 @@ jingle_s5b_attempt_connect_internal(gpointer data)
 	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
 	
 	if (s5b->priv->remaining_streamhosts) {
-		JabberStream *js = jingle_session_get_js(session);
-		const gchar *who = jingle_session_get_remote_jid(session);
-		JabberID *dstjid = jabber_id_new(who);
+		
 		JabberBytestreamsStreamhost *sh =
 			(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
-		gchar *dstaddr = NULL;
-		gchar *hash = NULL;
-		
-		purple_debug_info("jingle-s5b", 
-			"attempting to connect to streamhost: %s, port: %d\n",
-			sh->host, sh->port);
-		
-		if (s5b->priv->ppi)
-			purple_proxy_info_destroy(s5b->priv->ppi);
-		s5b->priv->ppi = purple_proxy_info_new();
-		purple_proxy_info_set_type(s5b->priv->ppi, PURPLE_PROXY_SOCKS5);
-		purple_proxy_info_set_host(s5b->priv->ppi, sh->host);
-		purple_proxy_info_set_port(s5b->priv->ppi, sh->port);
-		
-		if(jingle_session_is_initiator(session))
-			dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
-				js->user->node, js->user->domain, js->user->resource, 
-				dstjid->node, dstjid->domain, dstjid->resource);
-		else
-			dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
-				dstjid->node, dstjid->domain, dstjid->resource,
-				js->user->node, js->user->domain, js->user->resource);
 
-		/* Per XEP-0065, the 'host' must be SHA1(SID + from JID + to JID) */
-		purple_debug_info("jingle-s5b", "dstaddr: %s\n", dstaddr);
-		hash = jabber_calculate_data_sha1sum(dstaddr, strlen(dstaddr));
-		purple_debug_info("jingle-s5b", "connecting with hash: %s\n", hash);
-		
-		s5b->priv->connect_data = 
-			purple_proxy_connect_socks5(NULL, s5b->priv->ppi, hash, 0, 
-				jingle_s5b_connect_cb, data);
-		g_free(hash);
-		g_free(dstaddr);
-		
-		/* add timeout */
-		/* we should add a longer timeout if the next streamhost candidate
-		 is a proxy and we have local candidates ourselves, to allow the other
-		 end a chance to connect to use before reverting to a proxy */
-		s5b->priv->connect_timeout =
-			purple_timeout_add(STREAMHOST_CONNECT_TIMEOUT_MILLIS,
-				jingle_s5b_connect_timeout_cb, data);
-		
-		g_free(dstjid);
+		jingle_s5b_connect_to_streamhost((JingleS5BConnectData *) data, sh,
+			jingle_s5b_connect_cb, jingle_s5b_connect_timeout_cb);
 	} else {
 		/* send streamhost error */
 		
@@ -1139,6 +1154,13 @@ jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
 	return equal;
 }
 
+static void
+jingle_s5b_connect_to_proxy(JingleSession *session, JingleS5B *s5b, 
+	const gchar *jid)
+{
+	purple_debug_info("jingle-s5b", "in jingle_s5b_connect_to_proxy\n");
+}
+
 void
 jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session, 
 	xmlnode *transport)
@@ -1169,6 +1191,7 @@ jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session,
 				purple_debug_info("jingle-ft",
 					"got transport-accept on a proxy, "
 					"need to connect to the proxy\n");
+				jingle_s5b_connect_to_proxy(session, s5b, jid);
 			} else {
 				/* start transfer */
 				if (s5b->priv->connect_cb && s5b->priv->connect_content) {
