@@ -148,6 +148,7 @@ struct _JingleS5BPrivate {
 	GList *local_streamhosts;
 	GList *remaining_streamhosts; /* pointer to untested remote SHs */
 	JabberBytestreamsStreamhost *successfull_remote_streamhost;
+	JabberBytestreamsStreamhost *accepted_streamhost;
 	JingleS5BConnectCallback *connect_cb;
 	JingleS5BErrorCallback *error_cb;
 	JingleContent *connect_content; /* used for the connect callback */
@@ -849,7 +850,7 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 	const GList *iter;
 	
 	JINGLE_S5B_GET_PRIVATE(s5b)->listen_data = NULL;
-	
+
 	if (sock > 0) {
 		guint local_port = purple_network_get_port_from_fd(sock);
 		const gchar *local_ip = purple_network_get_local_system_ip(js->fd);
@@ -885,7 +886,7 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 		
 		g_free(jid);
 	}
-	
+
 	/* add bytestream proxies */
 	for (iter = js->bs_proxies ; iter ; iter = g_list_next(iter)) {
 		JabberBytestreamsStreamhost *sh =
@@ -1046,7 +1047,7 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	
 static void
 jingle_s5b_connect_to_streamhost(JingleS5BConnectData *data, 
-	JabberBytestreamsStreamhost *sh, 
+	const JabberBytestreamsStreamhost *sh, 
 	void (*connect_cb)(gpointer, gint, const gchar *),
 	GSourceFunc timeout_cb)
 {
@@ -1133,10 +1134,6 @@ jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b)
 	jingle_s5b_attempt_connect_internal(data);
 }
 
-
-
-	
-
 static gboolean
 jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
 {
@@ -1157,11 +1154,104 @@ jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
 	return equal;
 }
 
+static JabberBytestreamsStreamhost *
+jingle_s5b_find_local_streamhost(JingleS5B *s5b, const gchar *jid)
+{
+	const GList *iter = s5b->priv->local_streamhosts;
+
+	for (; iter ; iter = g_list_next(iter)) {
+		JabberBytestreamsStreamhost *sh =
+			(JabberBytestreamsStreamhost *) iter->data;
+		if (purple_strequal(sh->jid, jid)) {
+			return sh;
+		}
+	}
+	return NULL;
+}
+
+static gboolean
+jingle_s5b_proxy_timeout_cb(gpointer data)
+{
+	purple_debug_info("jingle-s5b", "timeout when connecting to proxy\n");
+	return FALSE;
+}
+
+static void
+jingle_s5b_proxy_activate_cb(JabberStream *js, const char *from,
+	JabberIqType type, const char *id, xmlnode *packet, gpointer data)
+{
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+
+	if (type == JABBER_IQ_RESULT) {
+		/* we are connected to the proxy, let's start */
+		if (s5b->priv->connect_cb && s5b->priv->connect_content) {
+			s5b->priv->connect_cb(s5b->priv->connect_content);
+		}
+	} else {
+		/* error */
+		purple_debug_error("jingle-s5b", 
+			"got an error response to the proxy activation request\n");
+	}
+	
+	g_free(data);
+}
+
+static void
+jingle_s5b_proxy_connect_cb(gpointer data, gint source, const gchar *error_message)
+{
+	JabberIq *iq = NULL;
+	xmlnode *query = NULL;
+	xmlnode *activate = NULL;
+	JingleSession *session = ((JingleS5BConnectData *) data)->session;
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+
+	purple_debug_info("jingle-s5b", "connect to bytestreams proxy\n");
+	/* cancel timeout if set */
+	if (s5b->priv->connect_timeout) {
+		purple_timeout_remove(s5b->priv->connect_timeout);
+		s5b->priv->connect_timeout = 0;
+	}
+
+	if (source < 0) {
+		/* failed to connect */
+		purple_debug_error("jingle-s5b", "failed to connect to our own proxy\n");
+		g_free(data);
+		return;
+	}
+	
+	purple_debug_info("jingle-s5b", "Successful in connecting to proxy!\n");
+	s5b->priv->fd = source;
+	
+	/* active the streamhost */
+	iq = jabber_iq_new_query(jingle_session_get_js(session), JABBER_IQ_SET, 
+		"http://jabber.org/protocol/bytestreams");
+	xmlnode_set_attrib(iq->node, "to", s5b->priv->accepted_streamhost->jid);
+	query = xmlnode_get_child(iq->node, "query");
+	xmlnode_set_attrib(query, "sid", s5b->priv->sid);
+	activate = xmlnode_new_child(query, "activate");
+	xmlnode_insert_data(activate, jingle_session_get_remote_jid(session), -1);
+	jabber_iq_set_callback(iq, jingle_s5b_proxy_activate_cb, data);
+	jabber_iq_send(iq);
+}
+
 static void
 jingle_s5b_connect_to_proxy(JingleSession *session, JingleS5B *s5b, 
-	const gchar *jid)
+	JabberBytestreamsStreamhost *sh)
 {
 	purple_debug_info("jingle-s5b", "in jingle_s5b_connect_to_proxy\n");
+	if (sh) {
+		JingleS5BConnectData *data = g_new0(JingleS5BConnectData, 1);
+
+		data->session = session;
+		data->s5b = s5b;
+		jingle_s5b_connect_to_streamhost(data, sh, jingle_s5b_proxy_connect_cb,
+			jingle_s5b_proxy_timeout_cb);
+	} else {
+		purple_debug_error("jingle-s5b", 
+			"did not find the local streamhost specified in the "
+			"transport-accept message\n");
+		/* TODO: should we offer fallback to IBB here? */
+	}
 }
 
 void
@@ -1173,7 +1263,11 @@ jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session,
 	if (streamhost_used) {
 		const gchar *jid = xmlnode_get_attrib(streamhost_used, "jid");
 		JabberStream *js = jingle_session_get_js(session);
-
+		JabberBytestreamsStreamhost *sh = 
+			jingle_s5b_find_local_streamhost(s5b, jid);
+		
+		s5b->priv->accepted_streamhost = sh;
+		
 		purple_debug_info("jingle-ft", "got streamhost-used\n");
 		/* stop connection attempts */
 		jingle_s5b_stop_connection_attempts(s5b);
@@ -1194,7 +1288,7 @@ jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session,
 				purple_debug_info("jingle-ft",
 					"got transport-accept on a proxy, "
 					"need to connect to the proxy\n");
-				jingle_s5b_connect_to_proxy(session, s5b, jid);
+				jingle_s5b_connect_to_proxy(session, s5b, sh);
 			} else {
 				/* start transfer */
 				if (s5b->priv->connect_cb && s5b->priv->connect_content) {
