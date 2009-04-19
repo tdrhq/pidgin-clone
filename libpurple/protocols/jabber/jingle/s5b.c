@@ -133,9 +133,9 @@ jingle_s5b_streamhost_to_xml_used(const JabberBytestreamsStreamhost *sh)
 struct _JingleS5BPrivate {
 	/* S5B stuff here... */
 	gchar *sid;
-	guint fd;
-	guint local_fd;
-	guint remote_fd;
+	gint fd;
+	gint local_fd;
+	gint remote_fd;
 	PurpleProxyConnectData *connect_data;
 	PurpleNetworkListenData *listen_data;
 	PurpleProxyInfo *ppi;
@@ -226,7 +226,7 @@ jingle_s5b_class_init (JingleS5BClass *klass)
 		"The file descriptor for reading/writing data on the stream",
 		G_MININT,
 		G_MAXINT,
-		0,
+		-1,
 		G_PARAM_READABLE));
 	
 	g_type_class_add_private(klass, sizeof(JingleS5BPrivate));
@@ -237,6 +237,9 @@ jingle_s5b_init (JingleS5B *s5b)
 {	
 	s5b->priv = JINGLE_S5B_GET_PRIVATE(s5b);
 	memset(s5b->priv, 0, sizeof(s5b->priv));
+	s5b->priv->fd = -1;
+	s5b->priv->local_fd = -1;
+	s5b->priv->remote_fd = -1;
 }
 
 static void
@@ -425,9 +428,9 @@ jingle_s5b_surrender(JingleS5B *s5b)
 		"in jingle_s5b_surrender, using remote streamhost\n");
 	s5b->priv->fd = s5b->priv->remote_fd;
 	
-	if (s5b->priv->local_fd) {
+	if (s5b->priv->local_fd >= 0) {
 		close(s5b->priv->local_fd);
-		s5b->priv->local_fd = 0;
+		s5b->priv->local_fd = -1;
 	}
 	
 	if (s5b->priv->watcher) {
@@ -448,9 +451,9 @@ jingle_s5b_take_command(JingleS5B *s5b)
 		"in jingle_s5b_take_command, using local streamhost\n");
 	s5b->priv->fd = s5b->priv->local_fd;
 	
-	if (s5b->priv->remote_fd) {
+	if (s5b->priv->remote_fd >= 0) {
 		close(s5b->priv->remote_fd);
-		s5b->priv->remote_fd = 0;
+		s5b->priv->remote_fd = -1;
 	}
 	
 	if (s5b->priv->watcher) {
