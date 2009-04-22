@@ -284,6 +284,7 @@ jingle_file_transfer_s5b_connect_callback(JingleContent *content)
 	
 	purple_debug_info("jingle-ft", 
 		"in jingle_file_transfer_s5b_connect_callback\n");
+	purple_debug_info("jingle-ft", "xfer->data: %p\n", xfer->data);
 	purple_xfer_start(xfer, jingle_s5b_get_fd(s5b), NULL, 0);
 }
 
@@ -456,6 +457,8 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 				content, jid);
 		}	
 		g_free(jid);
+		purple_debug_info("jingle-ft", "setting content %p on xfer %p\n", 
+			content, xfer);
 		xfer->data = content;
 		
 		if (JINGLE_IS_IBB(transport)) {
@@ -544,7 +547,6 @@ jingle_file_transfer_cancel_recv(PurpleXfer *xfer)
 		jingle_content_get_session((JingleContent *)xfer->data);
 
 	purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_recv\n");
-	/* should probably set some reason code here... */
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
 	g_object_unref(session);
 	g_object_unref(session);
@@ -553,12 +555,20 @@ jingle_file_transfer_cancel_recv(PurpleXfer *xfer)
 static void
 jingle_file_transfer_xfer_end(PurpleXfer *xfer)
 {
+	purple_debug_info("jingle-ft", 
+		"jingle_file_transfer_xfer_end xfer->data: %p\n", xfer->data); 
 	if (xfer->data) {
 		JingleSession *session = 
 			jingle_content_get_session((JingleContent *)xfer->data);
-		if (jingle_session_is_initiator(session)) {
+		/* the receiver will send a session-terminate when the whole file has
+		 been received */
+		if (!jingle_session_is_initiator(session)) {
 			jabber_iq_send(jingle_session_terminate_packet(session, "success"));
 		}
+		/* the PurpleXfer will get unref:ed after this has finished, so we
+		 disconnect it to avoid a race-condition if we get here before the
+		 getting a session-terminate when we are the initiator */
+		JINGLE_FT_GET_PRIVATE(JINGLE_FT(xfer->data))->xfer = NULL;
 		g_object_unref(session);
 		g_object_unref(session);
 	}
@@ -702,7 +712,8 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			/* do stuff here... close transfer etc... */
 			if (xfer) {
 				purple_debug_info("jingle", 
-					"got session-terminate, ending transfer\n");
+					"got session-terminate, ending transfer %p with content %p\n", 
+					xfer, xfer->data);
 				if (!purple_xfer_is_canceled(xfer))
 					purple_xfer_end(xfer);
 				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer = NULL;

@@ -25,7 +25,7 @@
 #include "xmlnode.h"
 
 
-#define STREAMHOST_CONNECT_TIMEOUT_MILLIS 200
+#define STREAMHOST_CONNECT_TIMEOUT_MILLIS 2000
 
 /* auxillary functions to handle JabberBytestreamsStreamhosts, maybe this
  should be in a separtate module, used by si.c and other places as well */
@@ -986,6 +986,11 @@ jingle_s5b_connect_timeout_cb(gpointer data)
 	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
 	
 	purple_debug_info("jingle-s5b", "in jingle_s5b_connect_timeout_cb\n");
+
+	/* cancel connect */
+	purple_proxy_connect_cancel(s5b->priv->connect_data);
+	s5b->priv->connect_data = NULL;
+
 	/* cancel timeout */
 	purple_timeout_remove(s5b->priv->connect_timeout);
 	s5b->priv->connect_timeout = 0;
