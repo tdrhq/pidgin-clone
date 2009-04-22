@@ -1234,7 +1234,11 @@ jingle_s5b_proxy_connect_cb(gpointer data, gint source, const gchar *error_messa
 	query = xmlnode_get_child(iq->node, "query");
 	xmlnode_set_attrib(query, "sid", s5b->priv->sid);
 	activate = xmlnode_new_child(query, "activate");
-	xmlnode_insert_data(activate, jingle_session_get_remote_jid(session), -1);
+	if (jingle_session_is_initiator(session)) {
+		xmlnode_insert_data(activate, jingle_session_get_remote_jid(session), -1);
+	} else {
+		xmlnode_insert_data(activate, jingle_session_get_local_jid(session), -1);
+	}
 	jabber_iq_set_callback(iq, jingle_s5b_proxy_activate_cb, data);
 	jabber_iq_send(iq);
 }
