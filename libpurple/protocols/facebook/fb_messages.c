@@ -341,13 +341,7 @@ static gboolean fb_get_new_messages(FacebookAccount *fba)
 
 	if (fba->channel_number == NULL)
 	{
-		channel_number = purple_account_get_string(fba->account, "last_channel_number", NULL);
-		if (channel_number == NULL)
-		{
-			/* channel number is probably updating */
-			fba->new_messages_check_timer = purple_timeout_add_seconds(3 - (now - fba->last_messages_download_time), (GSourceFunc)fb_get_new_messages, fba);
-			return FALSE;
-		}
+		return FALSE;
 	} else {
 		channel_number = fba->channel_number;
 	}
@@ -499,44 +493,31 @@ static void got_form_id_page(FacebookAccount *fba, gchar *data, gsize data_len, 
 	g_free(fba->post_form_id);
 	fba->post_form_id = post_form_id;
 
-	/* dodgy as search for channel server number */
-	if (!fba->channel_number)
+	/* search for channel server number. we might want to use
+         * /ajax/presence/reconnect.php in the future */
+	start_text = "\", \"channel";
+	tmp = g_strstr_len(data, data_len, start_text);
+	if (tmp == NULL)
 	{
-		start_text = "\", \"channel";
+		/* Some proxies strip whitepsace */
+		start_text = "\",\"channel";
 		tmp = g_strstr_len(data, data_len, start_text);
 		if (tmp == NULL)
 		{
-			/* Some proxies strip whitepsace */
-			start_text = "\",\"channel";
-			tmp = g_strstr_len(data, data_len, start_text);
-			if (tmp == NULL)
-			{
-				/* TODO: Is it better to pick a random channel number or to disconnect? */
-				/* MARKCONFLICT (r283,r286) */
-				channel_number = g_strdup(purple_account_get_string(fba->account, "last_channel_number", ""));
-				if (channel_number[0] == '\0')
-				{
-					purple_debug_error("facebook", "couldn't find channel\n");
-					purple_debug_misc("facebook", "page content: %s\n", data);
-					purple_connection_error_reason(fba->pc,
-							PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-							_("Chat service currently unavailable."));
-					return;
-				}
-			}
+			purple_debug_error("facebook", "couldn't find channel\n");
+			purple_debug_misc("facebook", "page content: %s\n", data);
+			purple_connection_error_reason(fba->pc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Chat service currently unavailable."));
+			return;
 		}
-
-		if (tmp != NULL)
-		{
-			tmp += strlen(start_text);
-			channel_number = g_strndup(tmp, strchr(tmp, '"') - tmp);
-		}
-
-		purple_account_set_string(fba->account, "last_channel_number", channel_number);
-
-		g_free(fba->channel_number);
-		fba->channel_number = channel_number;
 	}
+	
+	tmp += strlen(start_text);
+	channel_number = g_strndup(tmp, strchr(tmp, '"') - tmp);
+	
+	g_free(fba->channel_number);
+	fba->channel_number = channel_number;
 
 	tmp = g_strdup_printf("visibility=true&post_form_id=%s", post_form_id);
 	fb_post_or_get(fba, FB_METHOD_POST, "apps.facebook.com", "/ajax/chat/settings.php", tmp, NULL, NULL, FALSE);

@@ -103,7 +103,7 @@ static void fb_update_cookies(FacebookAccount *fba, const gchar *headers)
 	/* grab the data up until ';' */
 	cookie_start = headers;
 	while ((cookie_start = strstr(cookie_start, "\r\nSet-Cookie: ")) &&
-			(headers-cookie_start) < header_len)
+			(cookie_start - headers) < header_len)
 	{
 		cookie_start += 14;
 		cookie_end = strchr(cookie_start, '=');

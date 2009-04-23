@@ -13,6 +13,20 @@
 			<width>48</width><height>48</height>
 		</image>
 		<item>
+			<title>Version 1.50</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c42</link>
+			<description><![CDATA[So its been a while since the last version so I've bumped it up to v1.50.
+			<br/><br/>
+			This version should (hopefully) fix the bandwidth issues that people are having, as well as a crash-on-quit issue.			
+			<br/><br/>
+			Oh, and some people may be interested to try setting their status to 'idle' when they set their status to 'away'.  Maybe.  Haven't tried it :)
+			<br/><br/>
+			Download v1.50 of the plugin from:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a>]]></description>
+			<pubDate>Mon, 13 Apr 2009 00:03:29 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c42</guid>
+		</item>	
+		<item>
 			<title>Version 1.47</title>
 			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c41</link>
 			<description><![CDATA[v1.47 Gets rid of the "(via Pidgin)" but when setting status message and fixes some rare crashes

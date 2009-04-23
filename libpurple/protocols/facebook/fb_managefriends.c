@@ -130,9 +130,10 @@ static void fb_check_friend_request_cb(FacebookAccount *fba, gchar *data,
 				name, msg_plain, TRUE,
 				fb_auth_accept_cb, fb_auth_reject_cb, buddy);
 
+		g_free(name);
 		g_free(uid);
-		/* TODO: msg_plain might be leaking here? */
-
+		g_free(msg_plain);
+		
 		/* Don't display an auth request for this buddy again */
 		fba->auth_buddies = g_slist_prepend(
 				fba->auth_buddies, GINT_TO_POINTER(uid_int));
