@@ -83,7 +83,7 @@ jabber_xfer_create_file_element(const PurpleXfer *xfer)
 }
 
 PurpleXfer *
-jabber_xfer_create_from_xml(const PurpleAccount *account, const xmlnode *file,
+jabber_xfer_create_from_xml(PurpleAccount *account, xmlnode *file,
 	const gchar *who, gpointer data)
 {
 	const gchar *filename = xmlnode_get_attrib(file, "name");

@@ -881,7 +881,7 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 		
 		g_free(jid);
 	}
-
+	
 	/* add bytestream proxies */
 	for (iter = js->bs_proxies ; iter ; iter = g_list_next(iter)) {
 		JabberBytestreamsStreamhost *sh =
