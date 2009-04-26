@@ -619,14 +619,9 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 	purple_input_remove(s5b->priv->watcher);
 	s5b->priv->watcher = 0;
 
-	if(jingle_session_is_initiator(session))
-		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
-			js->user->node, js->user->domain, js->user->resource, 
-			dstjid->node, dstjid->domain, dstjid->resource);
-	else
-		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
-			dstjid->node, dstjid->domain, dstjid->resource,
-			js->user->node, js->user->domain, js->user->resource);
+	dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
+		js->user->node, js->user->domain, js->user->resource, 
+		dstjid->node, dstjid->domain, dstjid->resource);
 
 	g_free(dstjid);
 		
@@ -1052,7 +1047,7 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	
 static void
 jingle_s5b_connect_to_streamhost(JingleS5BConnectData *data, 
-	const JabberBytestreamsStreamhost *sh, 
+	const JabberBytestreamsStreamhost *sh, gboolean is_proxy,
 	void (*connect_cb)(gpointer, gint, const gchar *),
 	GSourceFunc timeout_cb)
 {
@@ -1076,7 +1071,7 @@ jingle_s5b_connect_to_streamhost(JingleS5BConnectData *data,
 	purple_proxy_info_set_host(s5b->priv->ppi, sh->host);
 	purple_proxy_info_set_port(s5b->priv->ppi, sh->port);
 	
-	if(jingle_session_is_initiator(session))
+	if (is_proxy)
 		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
 			js->user->node, js->user->domain, js->user->resource, 
 			dstjid->node, dstjid->domain, dstjid->resource);
@@ -1119,8 +1114,8 @@ jingle_s5b_attempt_connect_internal(gpointer data)
 		JabberBytestreamsStreamhost *sh =
 			(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
 
-		jingle_s5b_connect_to_streamhost((JingleS5BConnectData *) data, sh,
-			jingle_s5b_connect_cb, jingle_s5b_connect_timeout_cb);
+		jingle_s5b_connect_to_streamhost((JingleS5BConnectData *) data, sh, 
+			FALSE, jingle_s5b_connect_cb, jingle_s5b_connect_timeout_cb);
 	} else {
 		/* send streamhost error */
 		
@@ -1234,11 +1229,8 @@ jingle_s5b_proxy_connect_cb(gpointer data, gint source, const gchar *error_messa
 	query = xmlnode_get_child(iq->node, "query");
 	xmlnode_set_attrib(query, "sid", s5b->priv->sid);
 	activate = xmlnode_new_child(query, "activate");
-	if (jingle_session_is_initiator(session)) {
-		xmlnode_insert_data(activate, jingle_session_get_remote_jid(session), -1);
-	} else {
-		xmlnode_insert_data(activate, jingle_session_get_local_jid(session), -1);
-	}
+	xmlnode_insert_data(activate, jingle_session_get_remote_jid(session), -1);
+
 	jabber_iq_set_callback(iq, jingle_s5b_proxy_activate_cb, data);
 	jabber_iq_send(iq);
 }
@@ -1253,8 +1245,8 @@ jingle_s5b_connect_to_proxy(JingleSession *session, JingleS5B *s5b,
 
 		data->session = session;
 		data->s5b = s5b;
-		jingle_s5b_connect_to_streamhost(data, sh, jingle_s5b_proxy_connect_cb,
-			jingle_s5b_proxy_timeout_cb);
+		jingle_s5b_connect_to_streamhost(data, sh, TRUE, 
+			jingle_s5b_proxy_connect_cb, jingle_s5b_proxy_timeout_cb);
 	} else {
 		purple_debug_error("jingle-s5b", 
 			"did not find the local streamhost specified in the "
