@@ -1393,17 +1393,11 @@ static void jabber_si_xfer_send_disco_cb(JabberStream *js, const char *who,
 	}
 }
 
-static void do_transfer_send(PurpleXfer *xfer, const char *resource)
+static void do_transfer_send(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = xfer->data;
-	char **who_v = g_strsplit(xfer->who, "/", 2);
-	char *who;
 
-	who = g_strdup_printf("%s/%s", who_v[0], resource);
-	g_strfreev(who_v);
-	g_free(xfer->who);
-	xfer->who = who;
-	jabber_disco_info_do(jsx->js, who,
+	jabber_disco_info_do(jsx->js, xfer->who,
 			jabber_si_xfer_send_disco_cb, xfer);
 }
 
@@ -1412,7 +1406,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 	JabberSIXfer *jsx = xfer->data;
 	JabberIq *iq;
 	if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
-		do_transfer_send(xfer, xfer->who);
+		do_transfer_send(xfer);
 	} else {
 		xmlnode *si, *feature, *x, *field, *value;
 
