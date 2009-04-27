@@ -24,12 +24,15 @@
 
 #include "content.h"
 #include "debug.h"
+#include "file-transfer.h"
+#include "ibbs.h"
 #include "jingle.h"
 #include <string.h>
 #include "session.h"
 #include "iceudp.h"
 #include "rawudp.h"
 #include "rtp.h"
+#include "s5b.h"
 
 GType
 jingle_get_type(const gchar *type)
@@ -38,19 +41,17 @@ jingle_get_type(const gchar *type)
 		return JINGLE_TYPE_RAWUDP;
 	else if (!strcmp(type, JINGLE_TRANSPORT_ICEUDP))
 		return JINGLE_TYPE_ICEUDP;
-#if 0
-	else if (!strcmp(type, JINGLE_TRANSPORT_SOCKS))
-		return JINGLE_TYPE_SOCKS;
+	else if (!strcmp(type, JINGLE_TRANSPORT_S5B))
+		return JINGLE_TYPE_S5B;
 	else if (!strcmp(type, JINGLE_TRANSPORT_IBB))
 		return JINGLE_TYPE_IBB;
-#endif
 #ifdef USE_VV
 	else if (!strcmp(type, JINGLE_APP_RTP))
 		return JINGLE_TYPE_RTP;
 #endif
-#if 0
 	else if (!strcmp(type, JINGLE_APP_FT))
 		return JINGLE_TYPE_FT;
+#if 0
 	else if (!strcmp(type, JINGLE_APP_XML))
 		return JINGLE_TYPE_XML;
 #endif
@@ -247,15 +248,20 @@ jingle_handle_session_terminate(JingleSession *session, xmlnode *jingle)
 static void
 jingle_handle_transport_accept(JingleSession *session, xmlnode *jingle)
 {
-	xmlnode *content = xmlnode_get_child(jingle, "content");
+	xmlnode *xmlcontent = xmlnode_get_child(jingle, "content");
 
 	jabber_iq_send(jingle_session_create_ack(session, jingle));
 	
-	for (; content; content = xmlnode_get_next_twin(content)) {
-		const gchar *name = xmlnode_get_attrib(content, "name");
-		const gchar *creator = xmlnode_get_attrib(content, "creator");
+	for (; xmlcontent; xmlcontent = xmlnode_get_next_twin(xmlcontent)) {
+		const gchar *name = xmlnode_get_attrib(xmlcontent, "name");
+		const gchar *creator = xmlnode_get_attrib(xmlcontent, "creator");
 		JingleContent *content = jingle_session_find_content(session, name, creator);
-		jingle_content_accept_transport(content);
+		JingleTransport *pending_transport =
+			jingle_content_get_pending_transport(content);
+		if (pending_transport)
+			jingle_content_accept_transport(content);
+		jingle_content_handle_action(content, xmlcontent, JINGLE_TRANSPORT_ACCEPT);
+		g_object_unref(pending_transport);
 	}
 }
 
