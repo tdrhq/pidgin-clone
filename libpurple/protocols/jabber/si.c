@@ -1393,11 +1393,6 @@ static void jabber_si_xfer_send_disco_cb(JabberStream *js, const char *who,
 	}
 }
 
-static void resource_select_cancel_cb(PurpleXfer *xfer, PurpleRequestFields *fields)
-{
-	purple_xfer_cancel_local(xfer);
-}
-
 static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 {
 	JabberSIXfer *jsx = xfer->data;
@@ -1412,85 +1407,12 @@ static void do_transfer_send(PurpleXfer *xfer, const char *resource)
 			jabber_si_xfer_send_disco_cb, xfer);
 }
 
-static void resource_select_ok_cb(PurpleXfer *xfer, PurpleRequestFields *fields)
-{
-	PurpleRequestField *field = purple_request_fields_get_field(fields, "resource");
-	int selected_id = purple_request_field_choice_get_value(field);
-	GList *labels = purple_request_field_choice_get_labels(field);
-
-	const char *selected_label = g_list_nth_data(labels, selected_id);
-
-	do_transfer_send(xfer, selected_label);
-}
-
 static void jabber_si_xfer_init(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = xfer->data;
 	JabberIq *iq;
 	if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
-		JabberBuddy *jb;
-		JabberBuddyResource *jbr = NULL;
-		char *resource;
-
-		if(NULL != (resource = jabber_get_resource(xfer->who))) {
-			/* they've specified a resource, no need to ask or
-			 * default or anything, just do it */
-
-			do_transfer_send(xfer, resource);
-			g_free(resource);
-			return;
-		}
-
-		jb = jabber_buddy_find(jsx->js, xfer->who, TRUE);
-
-		if(!jb || !jb->resources) {
-			/* no resources online, we're trying to send to someone
-			 * whose presence we're not subscribed to, or
-			 * someone who is offline.  Let's inform the user */
-			char *msg;
-
-			if(!jb) {
-				msg = g_strdup_printf(_("Unable to send file to %s, invalid JID"), xfer->who);
-			} else if(jb->subscription & JABBER_SUB_TO) {
-				msg = g_strdup_printf(_("Unable to send file to %s, user is not online"), xfer->who);
-			} else {
-				msg = g_strdup_printf(_("Unable to send file to %s, not subscribed to user presence"), xfer->who);
-			}
-
-			purple_notify_error(jsx->js->gc, _("File Send Failed"), _("File Send Failed"), msg);
-			g_free(msg);
-		} else if(!jb->resources->next) {
-			/* only 1 resource online (probably our most common case)
-			 * so no need to ask who to send to */
-			jbr = jb->resources->data;
-
-			do_transfer_send(xfer, jbr->name);
-
-		} else {
-			/* we've got multiple resources, we need to pick one to send to */
-			GList *l;
-			char *msg = g_strdup_printf(_("Please select the resource of %s to which you would like to send a file"), xfer->who);
-			PurpleRequestFields *fields = purple_request_fields_new();
-			PurpleRequestField *field = purple_request_field_choice_new("resource", _("Resource"), 0);
-			PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
-
-			for(l = jb->resources; l; l = l->next)
-			{
-				jbr = l->data;
-
-				purple_request_field_choice_add(field, jbr->name);
-			}
-
-			purple_request_field_group_add_field(group, field);
-
-			purple_request_fields_add_group(fields, group);
-
-			purple_request_fields(jsx->js->gc, _("Select a Resource"), msg, NULL, fields,
-					_("Send File"), G_CALLBACK(resource_select_ok_cb), _("Cancel"), G_CALLBACK(resource_select_cancel_cb),
-					jsx->js->gc->account, xfer->who, NULL, xfer);
-
-			g_free(msg);
-		}
+		do_transfer_send(xfer, xfer->who);
 	} else {
 		xmlnode *si, *feature, *x, *field, *value;
 
