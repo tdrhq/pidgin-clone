@@ -983,11 +983,10 @@ jingle_s5b_connect_timeout_cb(gpointer data)
 	purple_debug_info("jingle-s5b", "in jingle_s5b_connect_timeout_cb\n");
 
 	/* cancel connect */
-	purple_proxy_connect_cancel(s5b->priv->connect_data);
+	if (s5b->priv->connect_data)
+		purple_proxy_connect_cancel(s5b->priv->connect_data);
 	s5b->priv->connect_data = NULL;
 
-	/* cancel timeout */
-	purple_timeout_remove(s5b->priv->connect_timeout);
 	s5b->priv->connect_timeout = 0;
 	
 	/* advance streamhost "counter" */
@@ -1018,6 +1017,11 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 		s5b->priv->connect_timeout = 0;
 	}
 
+	if (s5b->priv->ppi) {
+		purple_proxy_info_destroy(s5b->priv->ppi);
+		s5b->priv->ppi = NULL;
+	}
+	
 	if (source < 0) {
 		/* failed to connect */
 		/* trigger the a "timeout" to get to the next streamhost */
