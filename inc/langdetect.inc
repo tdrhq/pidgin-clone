@@ -37,6 +37,7 @@ $languages["it"]="Italian";
 $languages["ja"]="Japanese";
 $languages["ka"]="Georgian";
 $languages["kn"]="Kannada";
+$languages["km"]="Khmer";
 $languages["ko"]="Korean";
 $languages["ku"]="Kurdish";
 $languages["lo"]="Lao";
