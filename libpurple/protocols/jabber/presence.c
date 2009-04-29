@@ -604,7 +604,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 	if(jid->node && (chat = jabber_chat_find(js, jid->node, jid->domain))) {
 		static int i = 1;
-		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
 		if(state == JABBER_BUDDY_STATE_ERROR) {
 			char *title, *msg = jabber_parse_error(js, packet, NULL);
@@ -626,7 +625,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				jabber_chat_destroy(chat);
 			jabber_id_free(jid);
 			g_free(status);
-			g_free(room_jid);
 			g_free(avatar_hash);
 			return;
 		}
@@ -643,7 +641,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					jabber_chat_destroy(chat);
 				jabber_id_free(jid);
 				g_free(status);
-				g_free(room_jid);
 				g_free(avatar_hash);
 				return;
 			}
@@ -699,12 +696,14 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			}
 		} else {
 			if(!chat->conv) {
+				char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 				chat->id = i++;
 				chat->muc = muc;
 				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
 				purple_conv_chat_set_nick(PURPLE_CONV_CHAT(chat->conv), chat->handle);
 
 				jabber_chat_disco_traffic(chat);
+				g_free(room_jid);
 			}
 
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
@@ -719,7 +718,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 						flags);
 		}
-		g_free(room_jid);
 	} else {
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 									 jid->node ? "@" : "", jid->domain);
@@ -780,26 +778,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			} else {
 				jbr->idle = 0;
 			}
-
-			if(caps) {
-				/* handle XEP-0115 */
-				const char *node = xmlnode_get_attrib(caps,"node");
-				const char *ver = xmlnode_get_attrib(caps,"ver");
-				const char *hash = xmlnode_get_attrib(caps,"hash");
-				const char *ext = xmlnode_get_attrib(caps,"ext");
-
-				/* v1.3 uses: node, ver, and optionally ext.
-				 * v1.5 uses: node, ver, and hash. */
-				if (node && ver) {
-					JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
-					userdata->js = js;
-					userdata->jb = jb;
-					userdata->from = g_strdup(from);
-					jabber_caps_get_info(js, from, node, ver, hash, ext,
-					    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
-					    userdata);
-				}
-			}
 		}
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
@@ -811,6 +789,27 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 		g_free(buddy_name);
 	}
+
+	if (caps && (!type || g_str_equal(type, "available"))) {
+		/* handle Entity Capabilities (XEP-0115) */
+		const char *node = xmlnode_get_attrib(caps, "node");
+		const char *ver  = xmlnode_get_attrib(caps, "ver");
+		const char *hash = xmlnode_get_attrib(caps, "hash");
+		const char *ext  = xmlnode_get_attrib(caps, "ext");
+
+		/* v1.3 uses: node, ver, and optionally ext.
+		 * v1.5 uses: node, ver, and hash. */
+		if (node && *node && ver && *ver) {
+			JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
+			userdata->js = js;
+			userdata->jb = jb;
+			userdata->from = g_strdup(from);
+			jabber_caps_get_info(js, from, node, ver, hash, ext,
+			    (jabber_caps_get_info_cb)jabber_presence_set_capabilities,
+			    userdata);
+		}
+	}
+
 	g_free(status);
 	jabber_id_free(jid);
 	g_free(avatar_hash);
