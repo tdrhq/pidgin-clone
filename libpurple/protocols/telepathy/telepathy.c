@@ -20,6 +20,13 @@
 
 #include <glib.h>
 
+#include <telepathy-glib/connection-manager.h>
+#include <telepathy-glib/connection.h>
+#include <telepathy-glib/channel.h>
+#include <telepathy-glib/dbus.h>
+#include <telepathy-glib/debug.h>
+#include <telepathy-glib/util.h>
+
 #include "internal.h"
 
 #include "accountopt.h"
@@ -258,4 +265,51 @@ telepathy_init(PurplePlugin *plugin)
 	telepathy_prpl_info.protocol_options = g_list_append(telepathy_prpl_info.protocol_options, option);
 }
 
+/*
 PURPLE_INIT_PLUGIN(telepathy, telepathy_init, telepathy_info)
+*/
+
+static void
+list_connection_managers_cb (TpConnectionManager * const *cms,
+				  gsize n_cms,
+				  const GError *error,
+				  gpointer user_data,
+				  GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Failed to list connection managers: %s\n", error->message);
+		g_error_free((GError*)error);
+	}
+	else
+	{
+		purple_debug_info("telepathy", "Got %d connection managers\n", n_cms);
+	}
+}
+
+G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin); 
+G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
+{
+	static TpDBusDaemon *daemon = NULL;
+	GError *error = NULL;
+
+	purple_debug_info("telepathy", "Querying telepathy for connectin managers...\n");
+
+	/* the daemon is used to communicate via DBus */
+	daemon = tp_dbus_daemon_new(&error);
+	purple_debug_info("telepathy", "Querying telepathy for connectin managers...\n");
+	if (daemon == NULL)
+	{
+	    purple_debug_error("telepathy", "Cannot create DBus daemon: %s\n", error->message);
+	    g_error_free(error);
+	    return FALSE;
+	}
+	if (daemon != NULL)
+	    g_object_unref(daemon);
+	return FALSE;
+
+	tp_list_connection_managers(daemon, list_connection_managers_cb, NULL, NULL, NULL);
+
+	
+	return TRUE;
+}
