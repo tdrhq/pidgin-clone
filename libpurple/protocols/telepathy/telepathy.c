@@ -35,12 +35,15 @@
 #include "plugin.h"
 #include "version.h"
 
-#define TELEPATHY_ID "prpl-sttwister-telepathy"
+#define TELEPATHY_ID "prpl-telepathy"
 #define TELEPATHY_DISPLAY_VERSION "1.0"
 
 #define TELEPATHY_STATUS_ONLINE   "online"
 #define TELEPATHY_STATUS_AWAY     "away"
 #define TELEPATHY_STATUS_OFFLINE  "offline"
+
+static void *module_handle;
+static gchar *module_path;
 
 static void
 telepathy_input_user_info(PurplePluginAction *action)
@@ -67,8 +70,6 @@ telepathy_actions(PurplePlugin *plugin, gpointer context)
 static gboolean
 telepathy_plugin_load(PurplePlugin *plugin)
 {
-	purple_debug_info("telepathy", "Loading prpl...\n");
-
 	return TRUE;
 }
 
@@ -133,8 +134,11 @@ telepathy_close(PurpleConnection *gc)
 }
 
 static void
-telepathy_destroy(PurplePlugin *plugin) {
+telepathy_destroy(PurplePlugin *plugin)
+{
 	purple_debug_info("telepathy", "Shutting down\n");
+
+	/* TODO: Free the PurplePluginInfo */
 }
 
 static PurplePluginProtocolInfo telepathy_prpl_info =
@@ -249,33 +253,78 @@ static PurplePluginInfo telepathy_info =
 	telepathy_actions,                   
 
 	NULL,                          
-	NULL,                          
+	NULL,	
 	NULL,                          
 	NULL                           
 };                               
 
-static void                        
-telepathy_init(PurplePlugin *plugin)
-{                                  
-	PurpleAccountOption *option;
+static gboolean
+export_prpl(TpConnectionManager *cm,
+            gchar *protocol_name)
+{
+	/* create a plugin struct and copy all the information from the template */
+	PurplePlugin *plugin = purple_plugin_new(TRUE, NULL);
+	plugin->info = g_memdup(&telepathy_info, sizeof(telepathy_info));
 
-	purple_debug_info("telepathy", "Initing plugin...\n");
+	/* correct the plugin id and name */
+	plugin->info->id = g_strdup_printf("%s-%s-%s", TELEPATHY_ID, tp_connection_manager_get_name(cm), protocol_name);
+	plugin->info->name = g_strdup_printf("Telepathy/%s/%s", tp_connection_manager_get_name(cm), protocol_name);
 
-	option = purple_account_option_string_new(_("Test option"), "test", "this is default");
-	telepathy_prpl_info.protocol_options = g_list_append(telepathy_prpl_info.protocol_options, option);
+	/* this is needed to tell libpurple that these plugins also reside in the module */
+	g_module_open(module_path, G_MODULE_BIND_LOCAL);
+	plugin->handle = module_handle;
+
+	purple_debug_info("telepathy", "Exporting prpl %s\n", plugin->info->name);
+
+	/* actually load the plugin */
+	if (!purple_plugin_load(plugin))
+		return FALSE;
+	if (!purple_plugin_register(plugin))
+		return FALSE;
+
+	/* this is needed because the plugins are only added to the load queue. FIXME perhaps? */
+	purple_plugins_probe("");
+
+	return TRUE;
 }
 
-/*
-PURPLE_INIT_PLUGIN(telepathy, telepathy_init, telepathy_info)
-*/
+static void
+list_protocols_cb(TpConnectionManager *proxy,
+		  const gchar **out_Protocols,
+		  const GError *error,
+		  gpointer user_data,
+		  GObject *weak_object)
+{
+	int i;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Failed to list protocols for %s", tp_connection_manager_get_name(proxy));
+		g_error_free((GError*)error);
+	}
+	else
+	{
+		for (i = 0; out_Protocols[i] != NULL; ++i)
+		{
+			/* export telepathy supported protocol as a prpl */
+			if (!export_prpl(proxy, (gchar*)out_Protocols[i]))
+			{
+				purple_debug_error("telepathy", "Failed to load protocol %s\n", out_Protocols[i]);
+			}
+		}
+	}
+}
+
 
 static void
 list_connection_managers_cb (TpConnectionManager * const *cms,
-				  gsize n_cms,
-				  const GError *error,
-				  gpointer user_data,
-				  GObject *weak_object)
+			     gsize n_cms,
+			     const GError *error,
+			     gpointer user_data,
+			     GObject *weak_object)
 {
+	int i;
+
 	if (error != NULL)
 	{
 		purple_debug_error("telepathy", "Failed to list connection managers: %s\n", error->message);
@@ -283,7 +332,11 @@ list_connection_managers_cb (TpConnectionManager * const *cms,
 	}
 	else
 	{
-		purple_debug_info("telepathy", "Got %d connection managers\n", n_cms);
+		/* for each connection manager, query the supported protocols. They will be returned in list_protocols_cb */
+		for (i = 0; i<n_cms; ++i)
+		{
+			tp_cli_connection_manager_call_list_protocols(cms[i], -1, list_protocols_cb, NULL, NULL, NULL);
+		}
 	}
 }
 
@@ -293,23 +346,30 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 	static TpDBusDaemon *daemon = NULL;
 	GError *error = NULL;
 
-	purple_debug_info("telepathy", "Querying telepathy for connectin managers...\n");
+	/* first plugin */
+	purple_debug_info("telepathy", "Registering first plugin\n");
+	plugin->info = &(telepathy_info);
+	if (!purple_plugin_register(plugin))
+		return FALSE;
+	
+	/* keep the module handle and path, we'll use these for all exported prpls */
+	module_handle = plugin->handle;
+	module_path = plugin->path;
 
 	/* the daemon is used to communicate via DBus */
-	daemon = tp_dbus_daemon_new(&error);
-	purple_debug_info("telepathy", "Querying telepathy for connectin managers...\n");
+	daemon = tp_dbus_daemon_dup(&error);
+
 	if (daemon == NULL)
 	{
-	    purple_debug_error("telepathy", "Cannot create DBus daemon: %s\n", error->message);
-	    g_error_free(error);
-	    return FALSE;
+		purple_debug_error("telepathy", "Cannot create DBus daemon: %s\n", error->message);
+		g_error_free(error);
 	}
-	if (daemon != NULL)
-	    g_object_unref(daemon);
-	return FALSE;
 
+	/* the list of connection managers will be returned in list_connection_managers_cb */
 	tp_list_connection_managers(daemon, list_connection_managers_cb, NULL, NULL, NULL);
-
 	
+	if (daemon != NULL)
+		g_object_unref(daemon);
+
 	return TRUE;
 }
