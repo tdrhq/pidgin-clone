@@ -101,6 +101,8 @@ guint16 jabber_ibb_session_get_send_seq(const JabberIBBSession *sess);
 guint16 jabber_ibb_session_get_recv_seq(const JabberIBBSession *sess);
 
 JabberIBBSessionState jabber_ibb_session_get_state(const JabberIBBSession *sess);
+void jabber_ibb_session_set_state(JabberIBBSession *sess, 
+	JabberIBBSessionState state);
 
 gsize jabber_ibb_session_get_block_size(const JabberIBBSession *sess);
 void jabber_ibb_session_set_block_size(JabberIBBSession *sess, gsize size);
