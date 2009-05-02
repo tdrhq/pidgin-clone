@@ -515,7 +515,9 @@ jingle_s5b_send_read_again_resp_cb(gpointer data, gint source,
 {
 	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
 	int len;
-	
+
+	g_free(data);
+
 	purple_debug_info("jingle-s5b", "in jingle_s5b_send_read_again_cb\n");
 	len = write(source, s5b->priv->rxqueue + s5b->priv->rxlen,
 		s5b->priv->rxmaxlen - s5b->priv->rxlen);
@@ -549,8 +551,6 @@ jingle_s5b_send_read_again_resp_cb(gpointer data, gint source,
 	/* set the local fd as connected */
 	s5b->priv->local_fd = source;
 	s5b->priv->is_remote_connected = TRUE;
-	
-	g_free(data);
 }
 
 static void
