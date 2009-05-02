@@ -215,6 +215,8 @@ jabber_parser_close_stream(JabberStream *js)
 
 void jabber_parser_free(JabberStream *js) {
 	if (js->context) {
+		xmlSetStructuredErrorFunc(NULL, jabber_parser_structured_error_handler);
+
 		xmlParseChunk(js->context, NULL,0,1);
 		xmlFreeParserCtxt(js->context);
 		js->context = NULL;
@@ -224,6 +226,8 @@ void jabber_parser_free(JabberStream *js) {
 void jabber_parser_process(JabberStream *js, const char *buf, int len)
 {
 	int ret;
+
+	xmlSetStructuredErrorFunc(NULL, jabber_parser_structured_error_handler);
 
 	if (js->context == NULL) {
 		/* libxml inconsistently starts parsing on creating the
