@@ -291,7 +291,21 @@ jingle_file_transfer_s5b_connect_callback(JingleContent *content)
 static void
 jingle_file_transfer_s5b_error_callback(JingleContent *content)
 {
+	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
+	JingleSession *session = jingle_content_get_session(content);
+	JabberStream *js = 
+		jingle_session_get_js(session);
+	PurpleConnection *gc = js->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	gchar *who = jingle_session_get_remote_jid(session);
 	
+	purple_debug_error("jingle-ft", 
+		"an error occured during SOCKS5 file transfer\n");
+	purple_xfer_error(purple_xfer_get_type(xfer), account, who,
+		_("An error occured on the SOCKS5 transfer\n"));
+	purple_xfer_cancel_remote(xfer);
+	g_free(who);
+	g_object_unref(session);
 }
 
 /* callback functions for IBB */

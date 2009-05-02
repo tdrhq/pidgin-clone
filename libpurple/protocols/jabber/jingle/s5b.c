@@ -527,7 +527,8 @@ jingle_s5b_send_read_again_resp_cb(gpointer data, gint source,
 		g_free(s5b->priv->rxqueue);
 		s5b->priv->rxqueue = NULL;
 		close(source);
-		/* TODO: signal to the content that an error has occurred */
+		if (s5b->priv->error_cb && s5b->priv->error_content)
+			s5b->priv->error_cb(s5b->priv->error_content);
 		return;
 	}
 	s5b->priv->rxlen += len;
@@ -578,7 +579,9 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 			purple_input_remove(s5b->priv->watcher);
 			s5b->priv->watcher = 0;
 			close(source);
-			/* TODO: signal the content that an error occured */
+			if (s5b->priv->error_cb && s5b->priv->error_content)
+				s5b->priv->error_cb(s5b->priv->error_content);
+			g_free(data);
 			return;
 		}
 		s5b->priv->rxqueue = 
@@ -592,7 +595,9 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 		purple_input_remove(s5b->priv->watcher);
 		s5b->priv->watcher = 0;
 		close(source);
-		/* TODO: signal the content that an error occured */
+		if (s5b->priv->error_cb && s5b->priv->error_content)
+			s5b->priv->error_cb(s5b->priv->error_content);
+		g_free(data);
 		return;
 	} else if(s5b->priv->rxlen - 5 <  s5b->priv->rxqueue[4] + 2) {
 		purple_debug_info("jingle-s5b", "reading umpteen more bytes\n");
@@ -604,7 +609,9 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 			purple_input_remove(s5b->priv->watcher);
 			s5b->priv->watcher = 0;
 			close(source);
-			/* TODO: signal the content that an error occured */
+			if (s5b->priv->error_cb && s5b->priv->error_content)
+				s5b->priv->error_cb(s5b->priv->error_content);
+			g_free(data);
 			return;
 		}
 		s5b->priv->rxqueue = 
@@ -635,7 +642,9 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 		purple_debug_error("jingle-s5b", 
 			"someone connected with the wrong info!\n");
 		close(source);
-		/* TODO: signal the content that an error occured */
+		if (s5b->priv->error_cb && s5b->priv->error_content)
+			s5b->priv->error_cb(s5b->priv->error_content);
+		g_free(data);
 		g_free(hash);
 		g_free(dstaddr);
 		return;
@@ -685,13 +694,19 @@ jingle_s5b_send_read_response_cb(gpointer data, gint source,
 		g_free(s5b->priv->rxqueue);
 		s5b->priv->rxqueue = NULL;
 		close(source);
-		/* TODO: signal to "surrounding" content that an error has occured */
+		if (s5b->priv->error_cb && s5b->priv->error_content)
+			s5b->priv->error_cb(s5b->priv->error_content);
+		g_free(data);
 		return;
 	}
 	s5b->priv->rxlen += len;
 
-	if (s5b->priv->rxlen < s5b->priv->rxmaxlen)
+	if (s5b->priv->rxlen < s5b->priv->rxmaxlen) {
+		if (s5b->priv->error_cb && s5b->priv->error_content)
+			s5b->priv->error_cb(s5b->priv->error_content);
+		g_free(data);
 		return;
+	}
 
 	purple_input_remove(s5b->priv->watcher);
 	s5b->priv->watcher = 0;
@@ -703,7 +718,9 @@ jingle_s5b_send_read_response_cb(gpointer data, gint source,
 		s5b->priv->rxqueue = NULL;
 	} else {
 		close(source);
-		/* TODO: signal "surrounding" content that an error has occured */
+		if (s5b->priv->error_cb && s5b->priv->error_content)
+			s5b->priv->error_cb(s5b->priv->error_content);
+		g_free(data);
 	}
 }
 	
@@ -728,7 +745,9 @@ jingle_s5b_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			purple_input_remove(s5b->priv->watcher);
 			s5b->priv->watcher = 0;
 			close(source);
-			/* TODO: signal the "surrounding" content an error has occured */
+			if (s5b->priv->error_cb && s5b->priv->error_content)
+				s5b->priv->error_cb(s5b->priv->error_content);
+			g_free(data);
 			return;
 		}
 		s5b->priv->rxqueue = 
@@ -745,7 +764,9 @@ jingle_s5b_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			purple_input_remove(s5b->priv->watcher);
 			s5b->priv->watcher = 0;
 			close(source);
-			/* TODO: signal the "surrounding" content an error has occured */
+			if (s5b->priv->error_cb && s5b->priv->error_content)
+				s5b->priv->error_cb(s5b->priv->error_content);
+			g_free(data);
 			return;
 		}
 		s5b->priv->rxqueue = 
@@ -765,7 +786,9 @@ jingle_s5b_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if(s5b->priv->rxqueue[0] != 0x05) {
 		purple_debug_error("jingle-s5b", "it's not socks FIVE, giving up\n");
 		close(source);
-		/* TODO: signal to the "surrounding" content that an error has occured */
+		if (s5b->priv->error_cb && s5b->priv->error_content)
+			s5b->priv->error_cb(s5b->priv->error_content);
+		g_free(data);
 		return;
 	}
 
