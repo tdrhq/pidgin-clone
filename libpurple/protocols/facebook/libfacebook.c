@@ -261,7 +261,7 @@ static void fb_login(PurpleAccount *account)
 {
 	FacebookAccount *fba;
 	guint16 i;
-	gchar *postdata, *encoded_username, *encoded_password;
+	gchar *postdata, *encoded_username, *encoded_password, *encoded_charset_test;
 
 	/* Create account and initialize state */
 	fba = g_new0(FacebookAccount, 1);
@@ -297,12 +297,14 @@ static void fb_login(PurpleAccount *account)
 			purple_account_get_username(fba->account)));
 	encoded_password = g_strdup(purple_url_encode(
 			purple_account_get_password(fba->account)));
+	encoded_charset_test = g_strdup(purple_url_encode("€,´,€,´,水,Д,Є"));
 
 	postdata = g_strdup_printf(
-			"email=%s&pass=%s&persistent=1&login=Login&charset_test=%%E2%%AC%%C2%%B4%%E2%%82%%AC%%C2%%B4%%E6%%B0%%B4%%D0%%94%%D0%%84",
-			encoded_username, encoded_password);
+			"email=%s&pass=%s&persistent=1&login=Login&charset_test=%s",
+			encoded_username, encoded_password, encoded_charset_test);
 	g_free(encoded_username);
 	g_free(encoded_password);
+	g_free(encoded_charset_test);
 
 	fb_post_or_get(fba, FB_METHOD_POST | FB_METHOD_SSL, "login.facebook.com",
 			"/login.php", postdata, fb_login_cb, NULL, FALSE);

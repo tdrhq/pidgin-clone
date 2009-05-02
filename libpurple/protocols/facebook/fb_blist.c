@@ -318,22 +318,26 @@ static void got_buddy_list_cb(FacebookAccount *fba, gchar *data,
 			/* Turn the \/ into / */
 			tmp = g_strcompress(buddy_icon_url);
 
-			/* small icon at http://profile.ak.facebook.com/profile6/1845/74/q800753867_2878.jpg */
-			/* bigger icon at http://profile.ak.facebook.com/profile6/1845/74/n800753867_2878.jpg */
-			search_tmp = strstr(tmp, "/q");
-			if (search_tmp)
-				*(search_tmp + 1) = 'n';
-
 			if (g_str_equal(tmp, "http://static.ak.fbcdn.net/pics/q_silhouette.gif"))
+			{
 				/* User has no icon */
 				purple_buddy_icons_set_for_user(fba->account,
 						purple_buddy_get_name(buddy), NULL, 0, NULL);
+			}
 			else
+			{
+				/* small icon at http://profile.ak.facebook.com/profile6/1845/74/q800753867_2878.jpg */
+				/* bigger icon at http://profile.ak.facebook.com/profile6/1845/74/n800753867_2878.jpg */
+				search_tmp = strstr(tmp, "/q");
+				if (search_tmp)
+					*(search_tmp + 1) = 'n';
+				
 				/* Fetch their icon */
 				fb_post_or_get(fba, FB_METHOD_GET, "profile.ak.facebook.com",
 						tmp + strlen("http://profile.ak.facebook.com"), NULL,
 						buddy_icon_cb, g_strdup(purple_buddy_get_name(buddy)),
 					FALSE);
+			}
 			g_free(tmp);
 		}
 		g_free(buddy_icon_url);
