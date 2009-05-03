@@ -26,6 +26,7 @@
 
 
 #define STREAMHOST_CONNECT_TIMEOUT_MILLIS 2000
+#define STREAMHOST_CONNECT_PROXY_TIMEOUT_MILLIS 10000
 
 /* auxillary functions to handle JabberBytestreamsStreamhosts, maybe this
  should be in a separtate module, used by si.c and other places as well */
@@ -999,6 +1000,41 @@ jingle_s5b_transport_accept_cb(JabberStream *js, const char *from,
 static void jingle_s5b_attempt_connect_internal(gpointer data);
 
 static gboolean
+jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
+{
+	gchar *me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain, 
+		js->user->resource);
+	gchar *me_bare = jabber_get_bare_jid(me);
+	gchar *bare_jid = jabber_get_bare_jid(jid);
+	gboolean equal = purple_strequal(bare_jid, me_bare);
+
+	purple_debug_info("jingle-s5b", 
+		"jingle_s5b_streamhost_is_local: comparing JIDs %s and %s\n",
+		me, jid);
+	
+	g_free(me);
+	g_free(me_bare);
+	g_free(bare_jid);
+
+	return equal;
+}
+
+static gboolean
+jingle_s5b_has_local_streamhosts(JabberStream *js, JingleS5B *s5b)
+{
+	GList *iter = s5b->priv->local_streamhosts;
+
+	for (; iter; iter = g_list_next(iter)) {
+		JabberBytestreamsStreamhost *sh =
+			(JabberBytestreamsStreamhost *) iter->data;
+		if (jingle_s5b_streamhost_is_local(js, sh->jid)) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+static gboolean
 jingle_s5b_connect_timeout_cb(gpointer data)
 {
 	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
@@ -1083,9 +1119,9 @@ jingle_s5b_connect_to_streamhost(JingleS5BConnectData *data,
 	JabberStream *js = jingle_session_get_js(session);
 	const gchar *who = jingle_session_get_remote_jid(session);
 	JabberID *dstjid = jabber_id_new(who);
-
 	gchar *dstaddr = NULL;
 	gchar *hash = NULL;
+	gboolean remote_is_proxy = !purple_strequal(sh->jid, who);
 	
 	purple_debug_info("jingle-s5b", 
 		"attempting to connect to streamhost: %s, port: %d\n",
@@ -1122,9 +1158,11 @@ jingle_s5b_connect_to_streamhost(JingleS5BConnectData *data,
 	/* we should add a longer timeout if the next streamhost candidate
 	is a proxy and we have local candidates ourselves, to allow the other
 	end a chance to connect to use before reverting to a proxy */
-	/* the timeout should perhaps be longer when connecting to a proxy */
 	s5b->priv->connect_timeout =
-		purple_timeout_add(STREAMHOST_CONNECT_TIMEOUT_MILLIS,
+		purple_timeout_add(
+			remote_is_proxy && jingle_s5b_has_local_streamhosts(js, s5b) ?
+			STREAMHOST_CONNECT_PROXY_TIMEOUT_MILLIS : 
+			STREAMHOST_CONNECT_TIMEOUT_MILLIS,
 			timeout_cb, data);
 
 	g_free(dstjid);
@@ -1161,25 +1199,7 @@ jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b)
 	jingle_s5b_attempt_connect_internal(data);
 }
 
-static gboolean
-jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
-{
-	gchar *me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain, 
-		js->user->resource);
-	gchar *me_bare = jabber_get_bare_jid(me);
-	gchar *bare_jid = jabber_get_bare_jid(jid);
-	gboolean equal = purple_strequal(bare_jid, me_bare);
 
-	purple_debug_info("jingle-s5b", 
-		"jingle_s5b_streamhost_is_local: comparing JIDs %s and %s\n",
-		me, jid);
-	
-	g_free(me);
-	g_free(me_bare);
-	g_free(bare_jid);
-
-	return equal;
-}
 
 static JabberBytestreamsStreamhost *
 jingle_s5b_find_local_streamhost(JingleS5B *s5b, const gchar *jid)
