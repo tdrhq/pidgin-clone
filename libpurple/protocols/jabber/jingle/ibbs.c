@@ -29,6 +29,7 @@ struct _JingleIBBPrivate {
 	JingleIBBSentCallback *sent_cb;
 	JingleIBBDataCallback *recv_cb;
 	JingleIBBErrorCallback *error_cb;
+	guint block_size;
 };
 
 #define JINGLE_IBB_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), JINGLE_TYPE_IBB, JingleIBBPrivate))
@@ -164,7 +165,14 @@ jingle_ibb_parse_internal(xmlnode *ibb)
 	xmlnode *jingle = xmlnode_get_parent(xmlnode_get_parent(ibb));
 	const gchar *who = xmlnode_get_attrib(jingle, "initiator");
 	const gchar *sid = xmlnode_get_attrib(ibb, "sid");
-	
+	const gchar *block_size = xmlnode_get_attrib(ibb, "block-size");
+
+	if (block_size) {
+		guint block_size_int = atoi(block_size);
+		purple_debug_info("jingle-ibb", 
+			"got block-size from incoming offer = %d\n", block_size_int);
+		priv->block_size = block_size_int;
+	}
 	return transport;
 }
 
@@ -269,13 +277,18 @@ jingle_ibb_create_session(JingleIBB *ibb, JingleContent *content,
 	/* we will set the IBB session to "open" immediatly, since the Jingle
 	 negotiation defines the "open" state */
 	jabber_ibb_session_set_state(session, JABBER_IBB_SESSION_OPENED);
+	/* if the block size attribute is set, it means we got it from an incoming
+	 request, then set that */
+	if (ibb->priv->block_size) {
+		jabber_ibb_session_set_block_size(session, ibb->priv->block_size);
+	}
 	/* set callbacks... */
 	jabber_ibb_session_set_data_sent_callback(session, 
 		jingle_ibb_data_sent_callback);
 	jabber_ibb_session_set_data_received_callback(session,
 		jingle_ibb_data_recv_callback);
 	jabber_ibb_session_set_error_callback(session, jingle_ibb_error_callback);
-	purple_debug_info("jingle-ibb", "setting session %lx on transport %lx\n",
+	purple_debug_info("jingle-ibb", "setting session %p on transport %p\n",
 		session, ibb);
 	JINGLE_IBB_GET_PRIVATE(ibb)->session = session;
 
