@@ -29,6 +29,7 @@
 struct _JingleFTPrivate {
 	PurpleXfer *xfer;
 	FILE *ibb_fp; /* used to read/write from/to IBB streams */
+	gboolean remote_failed_s5b;
 };
 
 #define JINGLE_FT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), \
@@ -741,9 +742,21 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			JingleSession *session = jingle_content_get_session(content);
 			JingleTransport *transport = jingle_transport_parse(
 					xmlnode_get_child(xmlcontent, "transport"));
+			xmlnode *xmltransport = xmlnode_get_child(xmlcontent, "transport");
 			
 			/* we should check for "stream-host" error (in the case of S5B) and
 			 offer a transport-replace with IBB */
+			if (xmltransport) {
+				xmlnode *streamhost_error = 
+					xmlnode_get_child(xmltransport, "streamhost-error");
+
+				if (streamhost_error) {
+					purple_debug_info("jingle-ft", 
+						"got a streamhost-error, remote couldn't connect\n");
+					JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->
+						remote_failed_s5b = TRUE;
+				}
+			}
 			
 			g_object_unref(session);
 			break;
