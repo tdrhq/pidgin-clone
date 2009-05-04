@@ -1183,7 +1183,14 @@ jingle_s5b_attempt_connect_internal(gpointer data)
 			FALSE, jingle_s5b_connect_cb, jingle_s5b_connect_timeout_cb);
 	} else {
 		/* send streamhost error */
-		
+		JabberIq *streamhost_error =
+			jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
+		xmlnode *content = 
+			xmlnode_get_child(streamhost_error->node, "content");
+		xmlnode *transport = xmlnode_get_child(content, "transport");
+
+		xmlnode_insert_child(transport, xmlnode_new("streamhost-error"));
+		jabber_iq_send(streamhost_error);
 		g_free(data);
 	}
 }
