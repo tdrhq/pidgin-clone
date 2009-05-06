@@ -427,6 +427,9 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	const gchar *user_agent;
 	const gchar* const *languages;
 	gchar *language_names;
+	PurpleProxyInfo *proxy_info = NULL;
+	gchar *proxy_auth;
+	gchar *proxy_auth_base64;
 
 	/* TODO: Fix keepalive and use it as much as possible */
 	keepalive = FALSE;
@@ -434,15 +437,19 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	if (host == NULL)
 		host = "www.facebook.com";
 
-	if (fba && fba->account && fba->account->proxy_info &&
-		(fba->account->proxy_info->type == PURPLE_PROXY_HTTP ||
-		(fba->account->proxy_info->type == PURPLE_PROXY_USE_GLOBAL &&
-			purple_global_proxy_get_info() &&
-			purple_global_proxy_get_info()->type ==
-					PURPLE_PROXY_HTTP)))
+	if (fba && fba->account && !(method & FB_METHOD_SSL))
+	{
+		proxy_info = purple_proxy_get_setup(fba->account);
+		if (purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_GLOBAL)
+			proxy_info = purple_global_proxy_get_info();
+		if (purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_HTTP)
+		{
+			is_proxy = TRUE;
+		}	
+	}
+	if (is_proxy == TRUE)
 	{
 		real_url = g_strdup_printf("http://%s%s", host, url);
-		is_proxy = TRUE;
 	} else {
 		real_url = g_strdup(url);
 	}
@@ -455,7 +462,8 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	g_string_append_printf(request, "%s %s HTTP/1.0\r\n",
 			(method & FB_METHOD_POST) ? "POST" : "GET",
 			real_url);
-	g_string_append_printf(request, "Host: %s\r\n", host);
+	if (is_proxy == FALSE)
+		g_string_append_printf(request, "Host: %s\r\n", host);
 	g_string_append_printf(request, "Connection: %s\r\n",
 			(keepalive ? "Keep-Alive" : "close"));
 	g_string_append_printf(request, "User-Agent: %s\r\n", user_agent);
@@ -471,6 +479,18 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	if (zlib_inflate != NULL)
 		g_string_append_printf(request, "Accept-Encoding: gzip\r\n");
 #endif
+	if (is_proxy == TRUE)
+	{
+		if (purple_proxy_info_get_username(proxy_info) &&
+			purple_proxy_info_get_password(proxy_info))
+		{
+			proxy_auth = g_strdup_printf("%s:%s", purple_proxy_info_get_username(proxy_info), purple_proxy_info_get_password(proxy_info));
+			proxy_auth_base64 = purple_base64_encode(proxy_auth, strlen(proxy_auth));
+			g_string_append_printf(request, "Proxy-Authorization: Basic %s\r\n", proxy_auth_base64);
+			g_free(proxy_auth_base64);
+			g_free(proxy_auth);
+		}
+	}
 
 	/* Tell the server what language we accept, so that we get error messages in our language (rather than our IP's) */
 	languages = g_get_language_names();

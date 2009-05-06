@@ -369,6 +369,9 @@ static void fb_close(PurpleConnection *pc)
 	if (fba->perpetual_messages_timer) {
 		purple_timeout_remove(fba->perpetual_messages_timer);
 	}
+	if (fba->post_form_id_refresh_timer) {
+		purple_timeout_remove(fba->post_form_id_refresh_timer);
+	}
 
 	purple_debug_info("facebook", "destroying %d incomplete connections\n",
 			g_slist_length(fba->conns));
@@ -382,6 +385,10 @@ static void fb_close(PurpleConnection *pc)
 					purple_dnsquery_get_host(dns_query));
 		fba->dns_queries = g_slist_remove(fba->dns_queries, dns_query);
 		purple_dnsquery_destroy(dns_query);
+	}
+	
+	if (fba->resending_messages != NULL) {
+		fb_cancel_resending_messages(fba);
 	}
 
 	g_hash_table_destroy(fba->cookie_table);
