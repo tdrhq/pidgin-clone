@@ -57,6 +57,7 @@ struct _JingleS5B
 /* Callbacks used for S5B */
 typedef void (JingleS5BConnectCallback)(JingleContent *) ;
 typedef void (JingleS5BErrorCallback)(JingleContent *);
+typedef void (JingleS5BFailedConnectCallback)(JingleContent *);
 
 #ifdef __cplusplus
 extern "C" {
@@ -78,7 +79,8 @@ void jingle_s5b_set_connect_callback(JingleS5B *s5b,
 	JingleS5BConnectCallback *cb, JingleContent *content);
 void jingle_s5b_set_error_callback(JingleS5B *s5b, 
 	JingleS5BErrorCallback *cb, JingleContent *content);
-
+void jingle_s5b_set_failed_connect_callback(JingleS5B *s5b,
+	JingleS5BFailedConnectCallback *cb, JingleContent *content);
 
 void jingle_s5b_add_streamhosts(JingleS5B *s5b, const xmlnode *transport);
 
@@ -90,6 +92,8 @@ void jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b);
 
 void jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session, 
 	xmlnode *transport);
+
+gboolean jingle_s5b_has_remaining_remote_streamhosts(const JingleS5B *s5b);
 
 #ifdef __cplusplus
 }

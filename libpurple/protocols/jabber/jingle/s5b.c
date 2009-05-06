@@ -152,8 +152,10 @@ struct _JingleS5BPrivate {
 	JabberBytestreamsStreamhost *accepted_streamhost;
 	JingleS5BConnectCallback *connect_cb;
 	JingleS5BErrorCallback *error_cb;
+	JingleS5BFailedConnectCallback *failed_cb;
 	JingleContent *connect_content; /* used for the connect callback */
 	JingleContent *error_content;  /* used for the error callback */
+	JingleContent *failed_content; /* used for the failed callback */
 	gboolean is_connected_to_remote;
 	gboolean is_remote_connected;
 };
@@ -354,6 +356,13 @@ void jingle_s5b_set_error_callback(JingleS5B *s5b,
 {
 	s5b->priv->error_cb = cb;
 	s5b->priv->error_content = content;
+}
+
+void jingle_s5b_set_failed_connect_callback(JingleS5B *s5b,
+	JingleS5BFailedConnectCallback *cb, JingleContent *content)
+{
+	s5b->priv->failed_cb = cb;
+	s5b->priv->failed_content = content;
 }
 
 void
@@ -1191,6 +1200,11 @@ jingle_s5b_attempt_connect_internal(gpointer data)
 
 		xmlnode_insert_child(transport, xmlnode_new("streamhost-error"));
 		jabber_iq_send(streamhost_error);
+		
+		/* signal to the content that S5B failed (from our side) */
+		if (s5b->priv->failed_cb && s5b->priv->failed_content)
+			s5b->priv->failed_cb(s5b->priv->failed_content);
+
 		g_free(data);
 	}
 }
@@ -1356,3 +1370,8 @@ jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session,
 	}
 }
 
+gboolean
+jingle_s5b_has_remaining_remote_streamhosts(const JingleS5B *s5b)
+{
+	return s5b->priv->remaining_streamhosts != NULL;
+}

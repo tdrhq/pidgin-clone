@@ -275,40 +275,6 @@ jingle_file_transfer_ibb_send_data(JingleContent *content)
 	g_object_unref(transport);
 }
 
-/* callback functions for S5B */
-static void
-jingle_file_transfer_s5b_connect_callback(JingleContent *content)
-{
-	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
-	JingleTransport *transport = jingle_content_get_transport(content);
-	JingleS5B *s5b = JINGLE_S5B(transport);
-	
-	purple_debug_info("jingle-ft", 
-		"in jingle_file_transfer_s5b_connect_callback\n");
-	purple_debug_info("jingle-ft", "xfer->data: %p\n", xfer->data);
-	purple_xfer_start(xfer, jingle_s5b_get_fd(s5b), NULL, 0);
-}
-
-static void
-jingle_file_transfer_s5b_error_callback(JingleContent *content)
-{
-	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
-	JingleSession *session = jingle_content_get_session(content);
-	JabberStream *js = 
-		jingle_session_get_js(session);
-	PurpleConnection *gc = js->gc;
-	PurpleAccount *account = purple_connection_get_account(gc);
-	gchar *who = jingle_session_get_remote_jid(session);
-	
-	purple_debug_error("jingle-ft", 
-		"an error occured during SOCKS5 file transfer\n");
-	purple_xfer_error(purple_xfer_get_type(xfer), account, who,
-		_("An error occured on the SOCKS5 transfer\n"));
-	purple_xfer_cancel_remote(xfer);
-	g_free(who);
-	g_object_unref(session);
-}
-
 /* callback functions for IBB */
 static void
 jingle_file_transfer_ibb_data_sent_callback(JingleContent *content)
@@ -393,9 +359,98 @@ jingle_file_transfer_add_ibb_session_to_transport(JabberStream *js,
 		purple_debug_error("jingle-ft",
 			"trying to setup an IBB session of a non-IBB transport\n");
 	}
-		
+
 	g_free(sid);
 }
+
+/* callback functions for S5B */
+static void
+jingle_file_transfer_s5b_connect_callback(JingleContent *content)
+{
+	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
+	JingleTransport *transport = jingle_content_get_transport(content);
+	JingleS5B *s5b = JINGLE_S5B(transport);
+	
+	purple_debug_info("jingle-ft", 
+		"in jingle_file_transfer_s5b_connect_callback\n");
+	purple_debug_info("jingle-ft", "xfer->data: %p\n", xfer->data);
+	purple_xfer_start(xfer, jingle_s5b_get_fd(s5b), NULL, 0);
+}
+
+static void
+jingle_file_transfer_s5b_error_callback(JingleContent *content)
+{
+	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
+	JingleSession *session = jingle_content_get_session(content);
+	JabberStream *js = 
+		jingle_session_get_js(session);
+	PurpleConnection *gc = js->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	gchar *who = jingle_session_get_remote_jid(session);
+	
+	purple_debug_error("jingle-ft", 
+		"an error occured during SOCKS5 file transfer\n");
+	purple_xfer_error(purple_xfer_get_type(xfer), account, who,
+		_("An error occured on the SOCKS5 transfer\n"));
+	purple_xfer_cancel_remote(xfer);
+	g_free(who);
+	g_object_unref(session);
+}
+
+
+static void
+jingle_file_transfer_s5b_connect_failed_callback(JingleContent *content)
+{
+	/* the S5B transport has failed to connect */
+	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
+	JingleSession *session = jingle_content_get_session(content);
+
+	if (JINGLE_FT(content)->priv->remote_failed_s5b &&
+		jingle_session_is_initiator(session)) {
+		/* if the other end supports IBB, offer a transport replace */
+		gchar *who = jingle_session_get_remote_jid(session);
+		JabberStream *js = jingle_session_get_js(session);
+		JabberBuddy *jb = jabber_buddy_find(js, who, FALSE);
+		const gchar *resource = jabber_get_resource(who);
+		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
+
+		if (jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_IBB)) {
+			/* the buddy supports IBB, offer a transport replace */
+			JabberIq *transport_replace = NULL;
+			JingleTransport *new_transport = 
+				jingle_transport_create(JINGLE_TRANSPORT_IBB);
+			/* setup IBB stuff for the transport */
+			jingle_file_transfer_add_ibb_session_to_transport(
+				js, new_transport, content, who);
+			/* let the transport be pending until we get a transport-accept */
+			jingle_content_set_pending_transport(content, new_transport);
+
+			transport_replace = 
+				jingle_session_to_packet(session, JINGLE_TRANSPORT_REPLACE);
+		} else {
+			/* the buddy doesn't support IBB, terminate it */
+			JabberStream *js = jingle_session_get_js(session);
+			PurpleConnection *gc = js->gc;
+			PurpleAccount *account = purple_connection_get_account(gc);
+			JabberIq *session_terminate =
+				jingle_session_terminate_packet(session, "connectivity-error");
+
+			purple_debug_error("jingle-ft", 
+				"could not establish s5b connection, and IBB is not "
+				"available\n");
+			purple_xfer_error(purple_xfer_get_type(xfer), account, who,
+				_("Failed to establish a SOCKS5 connection\n"));
+			purple_xfer_cancel_remote(xfer);
+			
+			jabber_iq_send(session_terminate);
+			g_object_unref(session);
+		}
+		g_free(who);
+	}
+}
+
+
+
 
 static void
 jingle_file_transfer_xfer_init(PurpleXfer *xfer)
@@ -489,6 +544,8 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 				jingle_file_transfer_s5b_connect_callback, content);
 			jingle_s5b_set_error_callback(JINGLE_S5B(transport),
 				jingle_file_transfer_s5b_error_callback, content);
+			jingle_s5b_set_failed_connect_callback(JINGLE_S5B(transport),
+				jingle_file_transfer_s5b_connect_failed_callback, content);
 			/* start local listen on the S5B transport */
 			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
 		}	
@@ -536,6 +593,8 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 				jingle_file_transfer_s5b_connect_callback, content);
 			jingle_s5b_set_error_callback(JINGLE_S5B(transport),
 				jingle_file_transfer_s5b_error_callback, content);
+			jingle_s5b_set_failed_connect_callback(JINGLE_S5B(transport),
+				jingle_file_transfer_s5b_connect_failed_callback, content);
 			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
 		}
 		g_object_unref(session);
@@ -740,8 +799,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 		}
 		case JINGLE_TRANSPORT_INFO: {
 			JingleSession *session = jingle_content_get_session(content);
-			JingleTransport *transport = jingle_transport_parse(
-					xmlnode_get_child(xmlcontent, "transport"));
+			JingleTransport *transport = jingle_content_get_transport(content);
 			xmlnode *xmltransport = xmlnode_get_child(xmlcontent, "transport");
 			
 			/* we should check for "stream-host" error (in the case of S5B) and
@@ -755,6 +813,16 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 						"got a streamhost-error, remote couldn't connect\n");
 					JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->
 						remote_failed_s5b = TRUE;
+				
+					/* if we have already tried connecting to all remote
+					 streamhost candidates, or there were none, trigger
+					 the replace callback directly */
+					if (JINGLE_IS_S5B(transport) &&
+						!jingle_s5b_has_remaining_remote_streamhosts(
+							JINGLE_S5B(transport))) {
+						jingle_file_transfer_s5b_connect_failed_callback(
+							content);
+					}
 				}
 			}
 			
@@ -764,13 +832,34 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 		case JINGLE_TRANSPORT_ACCEPT: {
 			JingleSession *session = jingle_content_get_session(content);
 			JingleTransport *transport = jingle_content_get_transport(content);
-			
+			PurpleXfer *xfer = 
+				jingle_file_transfer_get_xfer(content);
+
 			purple_debug_info("jingle-ft",
 				"content %p\n", content);
 			purple_debug_info("jingle-ft", 
 				"got transport-accept transport %p\n", transport);
 			
-			if (JINGLE_IS_S5B(transport)) {
+			/* if we got a streamhost-error before, we should switch over to
+			 IBB here */
+			if (JINGLE_FT(content)->priv->remote_failed_s5b) {
+				jingle_content_accept_transport(content);
+				/* open the file, etc... */
+				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp = 
+					g_fopen(purple_xfer_get_local_filename(xfer), "rb");
+				
+				if (JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp) {
+					/* send first data */
+					purple_xfer_start(xfer, 0, NULL, 0);
+					purple_xfer_set_bytes_sent(xfer, 0);
+					purple_xfer_update_progress(xfer);
+					jingle_file_transfer_ibb_send_data(content);
+				} else {
+					purple_debug_error("jingle-ft", 
+						"failed to open file for reading\n");
+					jingle_file_transfer_cancel_local(content);
+				}
+			} else if (JINGLE_IS_S5B(transport)) {
 				JingleS5B *s5b = JINGLE_S5B(transport);
 				xmlnode *xmltransport = xmlnode_get_child(xmlcontent, "transport");
 				jingle_s5b_handle_transport_accept(s5b, session, xmltransport);
@@ -780,9 +869,56 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 		}
 		case JINGLE_TRANSPORT_REPLACE: {
 			JingleSession *session = jingle_content_get_session(content);
+			xmlnode *xmltransport = xmlnode_get_child(xmlcontent, "transport");
+			JingleTransport *new_transport =
+				jingle_transport_parse(xmltransport);
+			const gchar *sid = 
+				xmlnode_get_attrib(xmlnode_get_child(xmlcontent, 
+					"transport"), "sid");
+			gchar *who = jingle_session_get_remote_jid(session);
+			const PurpleXfer *xfer = JINGLE_FT(content)->priv->xfer;
+			const gchar *filename = purple_xfer_get_local_filename(xfer);
 			
 			/* fallback to IBB etc... */
+			if (JINGLE_IS_IBB(new_transport)) {
+				JingleIBB *ibb = JINGLE_IBB(new_transport);
+				
+				jingle_ibb_create_session(ibb, content, sid, who);
+				/* immediatly accept the new transport */
+				jingle_content_set_pending_transport(content, new_transport);
+				jingle_content_accept_transport(content);
+				
+				/* open the file and setup the callbacks */
+				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp = 
+					g_fopen(filename, "wb");
+				if (JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp == NULL) {
+					purple_debug_error("jabber", 
+						"failed to open file %s for writing: %s\n", filename, 
+						g_strerror(errno));
+					purple_xfer_cancel_remote(xfer);
+					jabber_iq_send(jingle_session_to_packet(session,
+						JINGLE_SESSION_TERMINATE));
+					g_object_unref(new_transport);
+					g_object_unref(session);
+					g_object_unref(session);
+					g_free(who);
+					return;
+				}
+
+				/* setup callbacks */
+				jingle_ibb_set_data_received_callback(ibb, 
+					jingle_file_transfer_ibb_data_recv_callback);
+				jingle_ibb_set_error_callback(ibb,
+					jingle_file_transfer_ibb_error_callback);
+	
+				/* start the transfer */
+				purple_xfer_start(xfer, 0, NULL, 0);
+				
+				/* send transport-accept */
+				
+			}
 			
+			g_free(who);
 			g_object_unref(session);
 			break;
 		}
