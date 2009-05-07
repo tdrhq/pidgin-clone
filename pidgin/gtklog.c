@@ -423,6 +423,7 @@ static gboolean search_find_cb(gpointer data)
 {
 	PidginLogViewer *viewer = data;
 	webkit_web_view_mark_text_matches (WEBKIT_WEB_VIEW (viewer->web_view), viewer->search, FALSE, 0);
+	webkit_web_view_set_highlight_text_matches (WEBKIT_WEB_VIEW (viewer->web_view), TRUE);
 	return FALSE;
 }
 
