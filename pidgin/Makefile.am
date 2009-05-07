@@ -125,6 +125,7 @@ pidgin_SOURCES = \
 	gtkstatusbox.c \
 	gtkthemes.c \
 	gtkutils.c \
+	gtkwebview.c \
 	gtkwhiteboard.c \
 	minidialog.c \
 	pidgintooltip.c
@@ -185,6 +186,7 @@ pidgin_headers = \
 	pidginstock.h \
 	gtkthemes.h \
 	gtkutils.h \
+	gtkwebview.h \
 	gtkwhiteboard.h \
 	minidialog.h \
 	pidgintooltip.h \

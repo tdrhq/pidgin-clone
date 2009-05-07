@@ -39,9 +39,10 @@
 #include "gtkdialogs.h"
 #include "gtklog.h"
 #include "gtkutils.h"
+#include "gtkwebview.h"
 #include "pidginstock.h"
 
-#include "webkit/webkitwebview.h"
+
 
 static GList *dialogwindows = NULL;
 
@@ -395,7 +396,6 @@ void pidgin_dialogs_about()
 {
 	GtkWidget *vbox;
 	GtkWidget *logo;
-	GtkWidget *frame;
 	GtkWidget *scrolled_window;
 	GtkWidget *button;
 	GtkWidget *web_view;
@@ -437,17 +437,14 @@ void pidgin_dialogs_about()
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
-        frame = gtk_frame_new(NULL);
-        gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-
 	scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+        gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrolled_window), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
-	web_view = webkit_web_view_new ();
-	gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_view));
-	gtk_container_add (GTK_CONTAINER (frame), scrolled_window);
+	web_view = gtk_webview_new ();
+	gtk_container_add (GTK_CONTAINER (scrolled_window), web_view);
 
-	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
 	str = g_string_sized_new(4096);
 
