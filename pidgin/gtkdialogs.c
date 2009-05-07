@@ -37,11 +37,11 @@
 
 #include "gtkblist.h"
 #include "gtkdialogs.h"
-#include "gtkimhtml.h"
-#include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
+
+#include "webkit/webkitwebview.h"
 
 static GList *dialogwindows = NULL;
 
@@ -436,8 +436,7 @@ void pidgin_dialogs_about()
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
-	frame = pidgin_create_imhtml(FALSE, &text, NULL, NULL);
-	gtk_imhtml_set_format_functions(GTK_IMHTML(text), GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY);
+	frame = webkit_web_view_new ();
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
 	str = g_string_sized_new(4096);
@@ -679,11 +678,9 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 
 	/* End of not to be translated section */
 
-	gtk_imhtml_append_text(GTK_IMHTML(text), str->str, GTK_IMHTML_NO_SCROLL);
+	webkit_web_view_load_html_string (frame, str->str, "");
 	g_string_free(str, TRUE);
 
-	gtk_text_buffer_get_start_iter(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
-	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
 
 	/* Close Button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(about), GTK_STOCK_CLOSE,

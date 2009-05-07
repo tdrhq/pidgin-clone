@@ -700,6 +700,8 @@ AM_CONDITIONAL(ENABLE_GNT, test "x$enable_consoleui" = "xyes")
 
 #AC_CHECK_FUNC(wcwidth, [AC_DEFINE([HAVE_WCWIDTH], [1], [Define to 1 if you have wcwidth function.])])
 
+PKG_CHECK_MODULES(WEBKIT, [webkit-1.0 >= 1.1.1]);
+
 dnl #######################################################################
 dnl # Check for LibXML2 (required)
 dnl #######################################################################

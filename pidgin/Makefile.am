@@ -208,6 +208,7 @@ pidgin_LDADD = \
 	$(GTKSPELL_LIBS) \
 	$(STARTUP_NOTIFICATION_LIBS) \
 	$(LIBXML_LIBS) \
+	$(WEBKIT_LIBS) \
 	$(GTK_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
@@ -233,5 +234,6 @@ AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
 	$(STARTUP_NOTIFICATION_CFLAGS) \
 	$(LIBXML_CFLAGS) \
+	$(WEBKIT_CFLAGS) \
 	$(INTGG_CFLAGS)
 endif  # ENABLE_GTK
