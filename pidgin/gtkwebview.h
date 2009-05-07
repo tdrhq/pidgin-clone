@@ -1,7 +1,9 @@
 
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <webkit/webkitwebview.h>
+#include <webkit/webkit.h>
+
+#include "notify.h"
 
 struct _GtkWebView
 {

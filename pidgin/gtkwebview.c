@@ -21,10 +21,29 @@ gtk_webview_class_init (GtkWebViewClass *klass, gpointer userdata)
 	/* nothing to do really */
 }
 
+static gboolean
+webview_link_clicked (WebKitWebView *view,
+                     WebKitWebFrame *frame,
+                     WebKitNetworkRequest *request,
+                     WebKitWebNavigationAction *navigation_action,
+                     WebKitWebPolicyDecision *policy_decision)
+{
+	const gchar *uri;
+	
+	uri = webkit_network_request_get_uri (request);
+
+	/* the gtk imhtml way was to create an idle cb, not sure
+	 * why, so right now just using purple_notify_uri directly */
+	purple_notify_uri (NULL, uri);
+	return TRUE;
+}
+
 static void
 gtk_webview_init (GtkWebView *view, gpointer userdata)
 {
-	/* nothing to do really */
+	g_signal_connect (view, "navigation-policy-decision-requested",
+			  G_CALLBACK (webview_link_clicked),
+			  view);
 }
 
 GType gtk_webview_get_type ()
