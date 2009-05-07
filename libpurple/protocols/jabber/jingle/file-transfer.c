@@ -427,6 +427,7 @@ jingle_file_transfer_s5b_connect_failed_callback(JingleContent *content)
 
 			transport_replace = 
 				jingle_session_to_packet(session, JINGLE_TRANSPORT_REPLACE);
+			jabber_iq_send(transport_replace);
 		} else {
 			/* the buddy doesn't support IBB, terminate it */
 			JabberStream *js = jingle_session_get_js(session);
@@ -443,10 +444,10 @@ jingle_file_transfer_s5b_connect_failed_callback(JingleContent *content)
 			purple_xfer_cancel_remote(xfer);
 			
 			jabber_iq_send(session_terminate);
-			g_object_unref(session);
 		}
 		g_free(who);
 	}
+	g_object_unref(session);
 }
 
 
