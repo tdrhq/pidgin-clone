@@ -11,6 +11,9 @@
 struct _GtkWebView
 {
 	WebKitWebView webkit_web_view;
+
+	/*< private >*/
+	GHashTable *images; /**< a map from id to temporary file for the image */
 };
 
 typedef struct _GtkWebView GtkWebView;
@@ -27,7 +30,7 @@ void
 gtk_webview_append_text (GtkWebView *message_view);
 
 void
-gtk_webview_load_html_string_with_imgstore (GtkWebView* view, const char* html, const char *loc);
+gtk_webview_load_html_string_with_imgstore (GtkWebView* view, const char* html);
 
 GtkWidget* gtk_webview_new ();
 

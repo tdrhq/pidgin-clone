@@ -1067,7 +1067,7 @@ pidgin_notify_userinfo(PurpleConnection *gc, const char *who,
 		char *linked_text = purple_markup_linkify(info);
 		g_assert (webview);
 		printf ("%s\n", linked_text);
-		gtk_webview_load_html_string_with_imgstore (GTK_WEBVIEW (webview), linked_text, "");
+		gtk_webview_load_html_string_with_imgstore (GTK_WEBVIEW (webview), linked_text);
 		g_free(linked_text);
 		g_free(key);
 		ui_handle = pinfo->window;

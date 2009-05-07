@@ -2,8 +2,12 @@
 #include <ctype.h>
 #include <string.h>
 #include <glib.h>
+#include <glib/gstdio.h>
 
 #include "gtkwebview.h"
+#include "util.h"
+
+static WebKitWebViewClass *parent_class = NULL;
 
 void
 gtk_webview_append_text (GtkWebView *message_view)
@@ -17,13 +21,51 @@ gtk_webview_new ()
 	return GTK_WIDGET(g_object_new(gtk_webview_get_type(), NULL));
 }
 
+static char*
+get_img_filename_by_id (GtkWebView* view, int id)
+{
+	char *filename = NULL;
+	FILE *file;
+	PurpleStoredImage* img;
+
+	if (!view->images)
+		view->images = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
+	
+	filename = (char*) g_hash_table_lookup (view->images, GINT_TO_POINTER (id));
+	if (filename) return filename;
+			
+	/* else get from img store */
+	file = purple_mkstemp (&filename, TRUE);
+
+	img = purple_imgstore_find_by_id (id);
+
+	fwrite (purple_imgstore_get_data (img), purple_imgstore_get_size (img), 1, file);
+	g_hash_table_insert (view->images, GINT_TO_POINTER (id), filename);
+	fclose (file);
+	return filename;
+}
+
+static void 
+clear_single_image (gpointer key, gpointer value, gpointer userdata) 
+{
+	g_unlink ((char*) value);
+}
+
+static void
+clear_images (GtkWebView* view)
+{
+	if (!view->images) return;
+	g_hash_table_foreach (view->images, clear_single_image, NULL);
+	g_hash_table_unref (view->images);
+}
+
 /*
  * Replace all <img id=""> tags with <img src="">. I hoped to never
  * write any HTML parsing code, but I'm forced to do this, until 
  * purple changes the way it works.
  */
 static char*
-replace_img_id_with_src (const char* html)
+replace_img_id_with_src (GtkWebView *view, const char* html)
 {
 	GString *buffer = g_string_sized_new (strlen (html));
 	const char* cur = html;
@@ -65,15 +107,23 @@ replace_img_id_with_src (const char* html)
 		/* let's dump this, tag and then dump the src information */
 		g_string_append_len (buffer, img, cur - img);
 
-		g_string_append_printf (buffer, " src='%s' ", purple_imgstore_get_filename (
-						purple_imgstore_find_by_id (nid)));
+		g_string_append_printf (buffer, " src='file://%s' ", get_img_filename_by_id (view, nid));
 	}
 	return g_string_free (buffer, FALSE);
 }
+
+static void
+gtk_webview_finalize (GObject *view)
+{
+	clear_images (GTK_WEBVIEW (view));
+	G_OBJECT_CLASS (parent_class)->finalize (G_OBJECT(view));
+}
+
 static void
 gtk_webview_class_init (GtkWebViewClass *klass, gpointer userdata)
 {
-	/* nothing to do really */
+	parent_class = g_type_class_ref (webkit_web_view_get_type ());
+	G_OBJECT_CLASS (klass)->finalize = gtk_webview_finalize;
 }
 
 static gboolean
@@ -101,12 +151,16 @@ gtk_webview_init (GtkWebView *view, gpointer userdata)
 			  view);
 }
 
+
 void
-gtk_webview_load_html_string_with_imgstore (GtkWebView* view, const char* html, const char *loc)
+gtk_webview_load_html_string_with_imgstore (GtkWebView* view, const char* html)
 {
-	char* html_imged = replace_img_id_with_src (html);
+	char* html_imged;
+	
+	clear_images (view);
+	html_imged = replace_img_id_with_src (view, html);
 	printf ("%s\n", html_imged);
-	webkit_web_view_load_html_string (WEBKIT_WEB_VIEW (view), html_imged, loc);
+	webkit_web_view_load_html_string (WEBKIT_WEB_VIEW (view), html_imged, "file:///");
 	g_free (html_imged);
 }
 
