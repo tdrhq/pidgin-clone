@@ -5,6 +5,9 @@
 
 #include "notify.h"
 
+#define GTK_TYPE_WEBVIEW            (gtk_webview_get_type())
+#define GTK_WEBVIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_TYPE_WEBVIEW, GtkWebView))
+
 struct _GtkWebView
 {
 	WebKitWebView webkit_web_view;
@@ -22,6 +25,9 @@ typedef struct _GtkWebViewClass GtkWebViewClass;
 
 void
 gtk_webview_append_text (GtkWebView *message_view);
+
+void
+gtk_webview_load_html_string_with_imgstore (GtkWebView* view, const char* html, const char *loc);
 
 GtkWidget* gtk_webview_new ();
 
