@@ -138,7 +138,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	if (lv->search != NULL && !strcmp(lv->search, search_term))
 	{
 		/* Searching for the same term acts as "Find Next" */
-		webkit_web_view_mark_text_matches(WEBKIT_WEB_VIEW(lv->web_view), lv->search, FALSE, 0);
+		webkit_web_view_search_text (WEBKIT_WEB_VIEW(lv->web_view), lv->search, FALSE, TRUE, TRUE);
 		return;
 	}
 
@@ -424,6 +424,7 @@ static gboolean search_find_cb(gpointer data)
 	PidginLogViewer *viewer = data;
 	webkit_web_view_mark_text_matches (WEBKIT_WEB_VIEW (viewer->web_view), viewer->search, FALSE, 0);
 	webkit_web_view_set_highlight_text_matches (WEBKIT_WEB_VIEW (viewer->web_view), TRUE);
+	webkit_web_view_search_text (WEBKIT_WEB_VIEW (viewer->web_view), viewer->search, FALSE, TRUE, TRUE);
 	return FALSE;
 }
 
