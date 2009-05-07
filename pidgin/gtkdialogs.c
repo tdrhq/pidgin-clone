@@ -395,10 +395,10 @@ void pidgin_dialogs_about()
 {
 	GtkWidget *vbox;
 	GtkWidget *logo;
-	GtkWidget *frame;
-	GtkWidget *text;
+	GtkWidget *scrolled_window;
 	GtkWidget *button;
-	GtkTextIter iter;
+	GtkWidget *web_view;
+
 	GString *str;
 	AtkObject *obj;
 	char* filename, *tmp;
@@ -436,8 +436,13 @@ void pidgin_dialogs_about()
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
-	frame = webkit_web_view_new ();
-	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+	web_view = webkit_web_view_new ();
+	gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_view));
+
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
 	str = g_string_sized_new(4096);
 
@@ -678,7 +683,7 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 
 	/* End of not to be translated section */
 
-	webkit_web_view_load_html_string (frame, str->str, "");
+	webkit_web_view_load_html_string (WEBKIT_WEB_VIEW(web_view), str->str, "");
 	g_string_free(str, TRUE);
 
 
