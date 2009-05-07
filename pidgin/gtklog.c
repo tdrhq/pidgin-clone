@@ -37,7 +37,7 @@
 #include "gtkblist.h"
 #include "gtklog.h"
 #include "gtkutils.h"
-#include <webkit/webkitwebview.h>
+#include "gtkwebview.h"
 
 static GHashTable *log_viewers = NULL;
 static void populate_log_tree(PidginLogViewer *lv);
@@ -660,7 +660,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 
-	lv->web_view = webkit_web_view_new ();
+	lv->web_view = gtk_webview_new ();
 	gtk_container_add (GTK_CONTAINER (sw), lv->web_view);
 	gtk_widget_set_name(lv->web_view, "pidgin_log_web_view");
 	gtk_widget_set_size_request(lv->web_view, 320, 200);
