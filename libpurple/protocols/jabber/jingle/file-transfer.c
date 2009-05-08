@@ -11,7 +11,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301,  USA
+ * Foundation, Inc., 51 Franklin SANSston, MA 02110-1301,  USA
  */
 
 #include "internal.h"
@@ -879,16 +879,16 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			gchar *who = jingle_session_get_remote_jid(session);
 			const PurpleXfer *xfer = JINGLE_FT(content)->priv->xfer;
 			const gchar *filename = purple_xfer_get_local_filename(xfer);
-			
+
 			/* fallback to IBB etc... */
 			if (JINGLE_IS_IBB(new_transport)) {
 				JingleIBB *ibb = JINGLE_IBB(new_transport);
-				
+
 				jingle_ibb_create_session(ibb, content, sid, who);
 				/* immediatly accept the new transport */
 				jingle_content_set_pending_transport(content, new_transport);
 				jingle_content_accept_transport(content);
-				
+
 				/* open the file and setup the callbacks */
 				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp = 
 					g_fopen(filename, "wb");
@@ -911,14 +911,15 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					jingle_file_transfer_ibb_data_recv_callback);
 				jingle_ibb_set_error_callback(ibb,
 					jingle_file_transfer_ibb_error_callback);
-	
+
 				/* start the transfer */
 				purple_xfer_start(xfer, 0, NULL, 0);
-				
+
 				/* send transport-accept */
-				
+				jabber_iq_send(jingle_session_to_packet(session,
+                    JINGLE_TRANSPORT_ACCEPT));
 			}
-			
+
 			g_free(who);
 			g_object_unref(session);
 			break;
