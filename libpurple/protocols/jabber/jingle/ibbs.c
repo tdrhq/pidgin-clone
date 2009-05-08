@@ -184,7 +184,8 @@ jingle_ibb_to_xml_internal(JingleTransport *transport, xmlnode *content,
 
 	purple_debug_info("jingle", "jingle_ibb_to_xml_internal\n");
 
-	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_TRANSPORT_INFO) {
+	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_TRANSPORT_INFO ||
+		action == JINGLE_TRANSPORT_REPLACE) {
 		JingleIBBPrivate *priv = JINGLE_IBB_GET_PRIVATE(transport);
 		if (priv->session) {
 			gchar *block_size = 
