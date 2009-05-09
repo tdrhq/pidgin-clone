@@ -164,6 +164,49 @@ gtk_webview_load_html_string_with_imgstore (GtkWebView* view, const char* html)
 	g_free (html_imged);
 }
 
+/* taken from sean's webkit plugin */
+static char *escape_message(const char *text)
+{
+        GString *str = g_string_new(NULL);
+        const char *cur = text;
+
+        while (cur && *cur) {
+                switch (*cur) {
+                case '\\':
+                        g_string_append(str, "\\\\");   
+                        break;
+                case '\"':
+                        g_string_append(str, "\\\"");
+                        break;
+                case '\r':
+                        g_string_append(str, "<br/>");
+                        break;
+                case '\n':
+                        break;
+                default:
+			g_string_append_c(str, *cur);
+		}
+		cur ++;
+	}
+	return g_string_free (str, FALSE);
+}
+
+
+/* this is a "hack", my plan is to eventually handle this 
+ * correctly using a signals and a plugin: the plugin will have
+ * the information as to what javascript function to call. It seems
+ * wrong to hardcode that here.
+ */
+void
+gtk_webview_append_html (GtkWebView* view, const char* html)
+{
+	char* escaped = escape_message (html);
+	char* script = g_strdup_printf ("document.write(\"%s\")", escaped);
+	webkit_web_view_execute_script (WEBKIT_WEB_VIEW (view), script);
+	g_free (script);
+	g_free (escaped);
+}
+
 GType gtk_webview_get_type ()
 {
 	static GType mview_type = 0;

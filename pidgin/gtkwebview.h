@@ -32,6 +32,10 @@ gtk_webview_append_text (GtkWebView *message_view);
 void
 gtk_webview_load_html_string_with_imgstore (GtkWebView* view, const char* html);
 
+void
+gtk_webview_append_html (GtkWebView* view, const char* html);
+
+
 GtkWidget* gtk_webview_new ();
 
 GType gtk_webview_get_type ();
