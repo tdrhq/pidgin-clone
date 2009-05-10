@@ -27,6 +27,8 @@ jabber_xfer_support_jingle_ft(const PurpleConnection *gc, const gchar *who)
 {
 	JabberStream *js = (JabberStream *) gc->proto_data;
 	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
+	gchar *resource = jabber_get_resource(who);
 
 	if (!js) {
 		purple_debug_error("jabber",
@@ -36,9 +38,15 @@ jabber_xfer_support_jingle_ft(const PurpleConnection *gc, const gchar *who)
 
 	jb = jabber_buddy_find(js, who, FALSE);
 	if (jb) {
-		return jabber_buddy_has_capability(jb, JINGLE_APP_FT) &&
-			(jabber_buddy_has_capability(jb, JINGLE_TRANSPORT_S5B) ||
-			 jabber_buddy_has_capability(jb, JINGLE_TRANSPORT_IBB));
+		if (resource) {
+			jbr = jabber_buddy_find_resource(jb, resource);
+			g_free(resource);
+			return jabber_resource_has_capability(jbr, JINGLE_APP_FT) &&
+				(jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_S5B) ||
+				jabber_resource_has_capability(jbr, JINGLE_TRANSPORT_IBB));
+		} else {
+			return FALSE;
+		}
 	} else {
 		return FALSE;
 	}
