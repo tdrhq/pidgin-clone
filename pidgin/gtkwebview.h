@@ -15,6 +15,7 @@ struct _GtkWebView
 	/*< private >*/
 	GHashTable *images; /**< a map from id to temporary file for the image */
 	gboolean    empty;  /**< whether anything has been appended **/
+	char *script_return; /**< the last value returned from a script **/
 };
 
 typedef struct _GtkWebView GtkWebView;

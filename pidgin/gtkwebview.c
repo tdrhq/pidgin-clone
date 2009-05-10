@@ -131,16 +131,53 @@ webview_link_clicked (WebKitWebView *view,
                      WebKitWebFrame *frame,
                      WebKitNetworkRequest *request,
                      WebKitWebNavigationAction *navigation_action,
-                     WebKitWebPolicyDecision *policy_decision)
+		      WebKitWebPolicyDecision *policy_decision)
 {
 	const gchar *uri;
-	
+
 	uri = webkit_network_request_get_uri (request);
 
+	if (g_str_has_prefix (uri, "return:")) {
+		/* dirty dirty hack to get return value of JS scripts */
+		char* return_value = g_uri_unescape_string (uri + strlen ("return:"), "");
+
+		if (GTK_WEBVIEW(view)->script_return) 
+			g_free (GTK_WEBVIEW(view)->script_return);
+
+		GTK_WEBVIEW(view)->script_return = return_value;
+		return TRUE;
+	}
+		
 	/* the gtk imhtml way was to create an idle cb, not sure
 	 * why, so right now just using purple_notify_uri directly */
 	purple_notify_uri (NULL, uri);
 	return TRUE;
+}
+
+static char*
+gtk_webview_execute_script (GtkWebView *view, const char *script)
+{
+	char *new_script;
+	char *ret; 
+
+	if (view->script_return) {
+		g_free (view->script_return);
+		view->script_return = NULL;
+	}
+
+	new_script = g_strdup_printf ("window.open (\"return:\" + escape (\"\" + (%s)), 'dummy', '')", script);
+	webkit_web_view_execute_script (WEBKIT_WEB_VIEW (view), new_script);
+	g_free (new_script);
+
+	if (!view->script_return) {
+		printf ("got nothing\n");
+		return NULL;
+	}
+	g_assert (view->script_return); /* hopefully that signal was already called */
+	
+	ret = view->script_return;
+	printf ("got a: %s\n", ret);
+	return ret;
 }
 
 static void
@@ -202,7 +239,7 @@ void
 gtk_webview_append_html (GtkWebView* view, const char* html)
 {
 	char* escaped = escape_message (html);
-	char* script = g_strdup_printf ("document.write(\"%s\")", escaped);
+	char* script = g_strdup_printf ("document.write(\"%s\\n\")", escaped);
 	printf ("script: %s\n", script);
 	webkit_web_view_execute_script (WEBKIT_WEB_VIEW (view), script);
 	view->empty = FALSE;
