@@ -5089,36 +5089,6 @@ ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
 
 static void set_typing_font(GtkWidget *widget, GtkStyle *style, PidginConversation *gtkconv)
 {
-	static PangoFontDescription *font_desc = NULL;
-	static GdkColor *color = NULL;
-	static gboolean enable = TRUE;
-
-	if (font_desc == NULL) {
-		char *string = NULL;
-		gtk_widget_style_get(widget,
-				"typing-notification-font", &string,
-				"typing-notification-color", &color,
-				"typing-notification-enable", &enable,
-				NULL);
-		font_desc = pango_font_description_from_string(string);
-		g_free(string);
-		if (color == NULL) {
-			GdkColor def = {0, 0x8888, 0x8888, 0x8888};
-			color = gdk_color_copy(&def);
-		}
-	}
-
-	gtk_text_buffer_create_tag(GTK_IMHTML(widget)->text_buffer, "TYPING-NOTIFICATION",
-			"foreground-gdk", color,
-			"font-desc", font_desc,
-			NULL);
-
-	if (!enable) {
-		g_object_set_data(G_OBJECT(widget), "disable-typing-notification", GINT_TO_POINTER(TRUE));
-		/* or may be 'gtkconv->disable_typing = TRUE;' instead? */
-	}
-
-	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), set_typing_font, gtkconv);
 }
 
 /**************************************************************************
