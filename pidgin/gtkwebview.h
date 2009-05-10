@@ -14,6 +14,7 @@ struct _GtkWebView
 
 	/*< private >*/
 	GHashTable *images; /**< a map from id to temporary file for the image */
+	gboolean    empty;  /**< whether anything has been appended **/
 };
 
 typedef struct _GtkWebView GtkWebView;
@@ -40,6 +41,6 @@ GtkWidget* gtk_webview_new ();
 
 GType gtk_webview_get_type ();
 
-
+gboolean gtk_webview_is_empty (GtkWebView *view);
 
 

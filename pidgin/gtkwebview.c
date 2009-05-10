@@ -149,6 +149,7 @@ gtk_webview_init (GtkWebView *view, gpointer userdata)
 	g_signal_connect (view, "navigation-policy-decision-requested",
 			  G_CALLBACK (webview_link_clicked),
 			  view);
+	view->empty = TRUE;
 }
 
 
@@ -204,8 +205,14 @@ gtk_webview_append_html (GtkWebView* view, const char* html)
 	char* script = g_strdup_printf ("document.write(\"%s\")", escaped);
 	printf ("script: %s\n", script);
 	webkit_web_view_execute_script (WEBKIT_WEB_VIEW (view), script);
+	view->empty = FALSE;
 	g_free (script);
 	g_free (escaped);
+}
+
+gboolean gtk_webview_is_empty (GtkWebView *view)
+{
+	return view->empty;
 }
 
 GType gtk_webview_get_type ()

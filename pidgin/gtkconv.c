@@ -5571,6 +5571,9 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	win = gtkconv->win;
 	prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
 
+	/* if the buffer is not empty add a <br> */
+	if (!gtk_webview_is_empty (gtkconv->webview))
+		gtk_webview_append_html (gtkconv->webview, "<br />");
 
 	/* First message in a conversation. */
 	if (gtkconv->newday == 0)
