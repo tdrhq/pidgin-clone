@@ -361,7 +361,6 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 
 			if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
 				/* We want to see our custom smileys on our entry if we write the shortcut */
-				pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
 				pidgin_themes_smiley_themeize_custom(PIDGIN_CONVERSATION(conv)->entry);
 			}
 		}
