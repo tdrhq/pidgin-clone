@@ -201,7 +201,7 @@ void
 gtk_webview_append_html (GtkWebView* view, const char* html)
 {
 	char* escaped = escape_message (html);
-	char* script = g_strdup_printf ("document.write(\"%s<br />\")", escaped);
+	char* script = g_strdup_printf ("document.write(\"%s\")", escaped);
 	printf ("script: %s\n", script);
 	webkit_web_view_execute_script (WEBKIT_WEB_VIEW (view), script);
 	g_free (script);
