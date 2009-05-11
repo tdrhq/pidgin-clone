@@ -47,4 +47,7 @@ gboolean gtk_webview_is_empty (GtkWebView *view);
 char*
 gtk_webview_execute_script (GtkWebView *view, const char *script);
 
+char*
+gtk_webview_get_body_innerhtml (GtkWebView *view);
+
 
