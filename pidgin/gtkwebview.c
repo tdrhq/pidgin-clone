@@ -3,6 +3,7 @@
 #include <string.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <JavaScriptCore/JavaScript.h>
 
 #include "gtkwebview.h"
 #include "util.h"
@@ -137,17 +138,6 @@ webview_link_clicked (WebKitWebView *view,
 
 	uri = webkit_network_request_get_uri (request);
 
-	if (g_str_has_prefix (uri, "return:")) {
-		/* dirty dirty hack to get return value of JS scripts */
-		char* return_value = g_uri_unescape_string (uri + strlen ("return:"), "");
-
-		if (GTK_WEBVIEW(view)->script_return) 
-			g_free (GTK_WEBVIEW(view)->script_return);
-
-		GTK_WEBVIEW(view)->script_return = return_value;
-		return TRUE;
-	}
-		
 	/* the gtk imhtml way was to create an idle cb, not sure
 	 * why, so right now just using purple_notify_uri directly */
 	purple_notify_uri (NULL, uri);
@@ -157,27 +147,19 @@ webview_link_clicked (WebKitWebView *view,
 static char*
 gtk_webview_execute_script (GtkWebView *view, const char *script)
 {
-	char *new_script;
-	char *ret; 
+	JSStringRef js_script = JSStringCreateWithUTF8CString (script);
+	JSContextRef ctxt = webkit_web_frame_get_global_context (
+		webkit_web_view_get_main_frame (WEBKIT_WEB_VIEW (view))
+		);
+	JSValueRef ret = JSEvaluateScript (ctxt, js_script, NULL, NULL, 0, NULL);
+	JSStringRef ret_as_str = JSValueToStringCopy (ctxt, ret, NULL);
 
-	if (view->script_return) {
-		g_free (view->script_return);
-		view->script_return = NULL;
-	}
+	size_t cstr_len = JSStringGetMaximumUTF8CStringSize (ret_as_str);
+	char   *cstr = g_new0(char, cstr_len + 1);
 
-	new_script = g_strdup_printf ("window.open (\"return:\" + escape (\"\" + (%s)), 'dummy', '')", script);
-	webkit_web_view_execute_script (WEBKIT_WEB_VIEW (view), new_script);
-	g_free (new_script);
+	JSStringGetUTF8CString (ret_as_str, cstr, cstr_len);
 
-	if (!view->script_return) {
-		printf ("got nothing\n");
-		return NULL;
-	}
-	g_assert (view->script_return); /* hopefully that signal was already called */
-	
-	ret = view->script_return;
-	printf ("got a: %s\n", ret);
-	return ret;
+	return cstr;
 }
 
 static void
@@ -245,6 +227,10 @@ gtk_webview_append_html (GtkWebView* view, const char* html)
 	view->empty = FALSE;
 	g_free (script);
 	g_free (escaped);
+
+	char* contents = gtk_webview_execute_script (view, "document.body.innerHTML");
+	printf ("%s\n", contents);
+	g_free (contents);
 }
 
 gboolean gtk_webview_is_empty (GtkWebView *view)
