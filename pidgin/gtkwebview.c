@@ -144,7 +144,7 @@ webview_link_clicked (WebKitWebView *view,
 	return TRUE;
 }
 
-static char*
+char*
 gtk_webview_execute_script (GtkWebView *view, const char *script)
 {
 	JSStringRef js_script = JSStringCreateWithUTF8CString (script);
