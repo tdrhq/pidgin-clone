@@ -1,4 +1,4 @@
-DIST_SUBDIRS = cap gestures gevolution musicmessaging perl ticker
+DIST_SUBDIRS = cap gevolution musicmessaging perl ticker
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
@@ -16,9 +16,6 @@ if USE_PERL
 PERL_DIR = perl
 endif
 
-if ENABLE_GESTURES
-GESTURE_DIR = gestures
-endif
 
 SUBDIRS = \
 	$(CAP_DIR) \
