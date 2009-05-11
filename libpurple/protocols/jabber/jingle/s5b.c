@@ -1078,6 +1078,10 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	JingleS5B *s5b = cd->s5b;
 	JingleSession *session = cd->session;
 	JabberIq *result = NULL;
+    
+	/* reset connect data (prevents the timeout callback to try and cancel the
+	the connect if the connection was unsuccessful */
+	s5b->priv->connect_data = NULL;
 	
 	/* cancel timeout if set */
 	if (s5b->priv->connect_timeout) {
@@ -1092,7 +1096,7 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	
 	if (source < 0) {
 		/* failed to connect */
-		/* trigger the a "timeout" to get to the next streamhost */
+		/* trigger the a "timeout" to get to the next streamhost */	
 		jingle_s5b_connect_timeout_cb(data);
 		return;
 	}
