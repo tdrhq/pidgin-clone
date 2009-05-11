@@ -159,6 +159,7 @@ gtk_webview_execute_script (GtkWebView *view, const char *script)
 
 	JSStringGetUTF8CString (ret_as_str, cstr, cstr_len);
 
+	/* TODO: I'm not sure what, if at all, I need to free here! */
 	return cstr;
 }
 
