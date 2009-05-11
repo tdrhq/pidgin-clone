@@ -21,11 +21,8 @@
 #include <glib.h>
 
 #include <telepathy-glib/connection-manager.h>
-#include <telepathy-glib/connection.h>
 #include <telepathy-glib/channel.h>
 #include <telepathy-glib/dbus.h>
-#include <telepathy-glib/debug.h>
-#include <telepathy-glib/util.h>
 
 #include "internal.h"
 
@@ -33,6 +30,7 @@
 #include "debug.h"
 #include "notify.h"
 #include "plugin.h"
+#include "prefs.h"
 #include "version.h"
 
 #define TELEPATHY_ID "prpl-telepathy"
@@ -50,6 +48,24 @@ typedef struct
 	TpConnectionManager *cm;
 	TpConnectionManagerProtocol *protocol;
 } telepathy_data;
+
+typedef struct
+{
+	const gchar *telepathy_name;
+	const gchar *dbus_type;
+	const gchar *human_name;
+} OptionMapping;
+
+static const OptionMapping options[] = {
+	{ "server", "s", N_("Server")},
+	{ "port", "q", N_("Port")},
+	{ "require-encryption", "b", N_("Require Encryption")},
+	{ "ident", "s", N_("Ident")},
+	{ "fullname", "s", N_("Full Name")},
+	{ "stun-server", "s", N_("STUN Server")},
+	{ "stun-port", "q", N_("STUN Port")},
+	{ NULL, NULL, NULL}
+};
 
 static void
 telepathy_input_user_info(PurplePluginAction *action)
@@ -82,7 +98,7 @@ telepathy_plugin_load(PurplePlugin *plugin)
 static const char *
 telepathy_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
-	return "null";
+	return "telepathy";
 }
 
 static GList *
@@ -149,18 +165,10 @@ telepathy_destroy(PurplePlugin *plugin)
 
 static PurplePluginProtocolInfo telepathy_prpl_info =
 {
-	OPT_PROTO_CHAT_TOPIC,  /* options */
+	0,  /* options */
 	NULL,               /* user_splits, initialized in nullprpl_init() */
 	NULL,               /* protocol_options, initialized in nullprpl_init() */
-	{   /* icon_spec, a PurpleBuddyIconSpec */
-	    	"png,jpg,gif",                   /* format */
-		0,                               /* min_width */
-		0,                               /* min_height */
-		128,                             /* max_width */
-		128,                             /* max_height */
-		10000,                           /* max_filesize */
-		PURPLE_ICON_SCALE_DISPLAY,       /* scale_rules */
-	},
+	NO_BUDDY_ICONS,
 	telepathy_list_icon,                  /* list_icon */
 	NULL,                                /* list_emblem */
 	NULL,                /* status_text */
@@ -266,35 +274,78 @@ static PurplePluginInfo telepathy_info =
 
 /* transform a telepathy parameter name into a user-friendly one */
 static gchar*
-telepathy_transform_param_name(gchar* param)
+telepathy_transform_param_name(const gchar* param)
 {
 	gchar *name;
 	int i,len;
 
-	if (param != NULL)
+	g_return_val_if_fail(param != NULL, NULL);
+
+	name = g_strdup(param);
+
+	/* capitalize first letter */
+	name[0] = g_ascii_toupper(name[0]);
+
+	len = strlen(name);
+	for (i = 0; i<len; ++i)
 	{
-		name = g_strdup(param);
-
-		/* capitalize first letter */
-		if (name[0] >= 'a' && name[0] <= 'z')
-			name[0] += 'A'-'a';
-
-		len = strlen(name);
-		for (i = 0; i<len; ++i)
+	    if (name[i] == '-')
+	    {
+		name[i] = ' ';
+		if (i+1 < len)
 		{
-			if (name[i] == '-')
-			{
-				name[i] = ' ';
-				if (i+1 < len)
-				{
-					name[i+1] += 'A'-'a';
-				}
-			}
+		    /* capitalize first letter of each word */
+		    name[i+1] = g_ascii_toupper(name[i+1]);
 		}
-		return name;
+	    }
 	}
+	return name;
+}
+
+/* TODO: Handle "as" types */
+static gchar *
+get_human_name(const gchar *telepathy_name,
+               const gchar *dbus_type,
+               PurplePrefType *purple_type_out)
+{
+	int i;
+
+	/* map the type */
+	if (g_strcmp0(dbus_type, "s") == 0)
+		*purple_type_out = PURPLE_PREF_STRING;
+ 	else if (g_strcmp0(dbus_type, "i") == 0 || g_strcmp0(dbus_type, "n") == 0 || g_strcmp0(dbus_type, "q") == 0)
+		*purple_type_out = PURPLE_PREF_INT;
+ 	else if (g_strcmp0(dbus_type, "b") == 0)
+		*purple_type_out = PURPLE_PREF_BOOLEAN;
 	else
-		return "";
+	{
+		purple_debug_warning("telepathy", "Unknown DBus signature \"%s\" for option \"%s\"",
+			dbus_type, telepathy_name);
+		return NULL;
+	}
+
+	/* check for a standard specification name */
+	for (i = 0; options[i].telepathy_name != NULL; ++i)
+	{
+		if (g_strcmp0(options[i].telepathy_name, telepathy_name) == 0 &&
+			g_strcmp0(options[i].dbus_type, dbus_type) == 0)
+			return g_strdup(_(options[i].human_name));
+	}
+
+	/* non-standard parameter, beatuify the name a bit */
+	return telepathy_transform_param_name(telepathy_name);
+}
+
+static int
+get_int_value(const GValue *value,
+              const gchar *signature)
+{
+	if (g_strcmp0(signature, "q") == 0)
+		return g_value_get_uint(value);
+	else if (g_strcmp0(signature, "i") == 0 && g_strcmp0(signature, "n") == 0)
+		return g_value_get_int(value);
+	else
+		return 0;
 }
 
 /* add parameters extracted from telepathy as libpurple options */
@@ -302,41 +353,28 @@ static void
 add_protocol_options(PurplePlugin *plugin,
                      TpConnectionManagerProtocol *protocol)
 {
-	gchar *signature, *name;
+	gchar *signature, *name, *human_name;
 	int i;
-	PurpleAccountOption *option;
+	PurpleAccountOption *option = NULL;
 	PurplePluginProtocolInfo *protocol_info = plugin->info->extra_info;
+	PurplePrefType *type;
+	TpConnectionManagerParam *param;
+	gboolean has_default;
 
 	/* by default, don't prompt for password, we'll unflag this if we get a password parameter */
 	protocol_info->options = protocol_info->options | OPT_PROTO_NO_PASSWORD;
 
 	for (i = 0; protocol->params[i].name != NULL; ++i)
 	{
-		name = protocol->params[i].name;
-		signature = protocol->params[i].dbus_signature;
+		param = &protocol->params[i];
+
+		name = param->name;
+		signature = param->dbus_signature;
 
 		/* check for well known parameters */
 		if (g_strcmp0(name, "account") == 0 && g_strcmp0(signature, "s") == 0)
 		{
 			/* is there anything to be done here? */
-		}
-		else if (g_strcmp0(name, "server") == 0 && g_strcmp0(signature, "s") == 0)
-		{
-			option = purple_account_option_string_new(_("Server"), name, NULL);
-			if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-			{
-				purple_account_option_set_default_string(option, g_value_get_string(&protocol->params[i].default_value));
-			}
-			protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-		}
-		else if (g_strcmp0(name, "port") == 0 && g_strcmp0(signature, "q") == 0)
-		{
-			option = purple_account_option_string_new(_("Port"), name, NULL);
-			if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-			{
-				purple_account_option_set_default_int(option, g_value_get_uint(&protocol->params[i].default_value));
-			}
-			protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
 		}
 		else if (g_strcmp0(name, "password") == 0 && g_strcmp0(signature, "s") == 0)
 		{
@@ -344,122 +382,42 @@ add_protocol_options(PurplePlugin *plugin,
 		    	protocol_info->options = protocol_info->options ^ OPT_PROTO_NO_PASSWORD;
 
 			/* is the password required? */
-			if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_REQUIRED) != TP_CONN_MGR_PARAM_FLAG_REQUIRED)
+			if ((param->flags & TP_CONN_MGR_PARAM_FLAG_REQUIRED) != TP_CONN_MGR_PARAM_FLAG_REQUIRED)
 			{
 				protocol_info->options = protocol_info->options | OPT_PROTO_PASSWORD_OPTIONAL;	
 			}
 		}
-		else if (g_strcmp0(name, "require-encryption") == 0 && g_strcmp0(signature, "b") == 0)
+		else 
 		{
-			option = purple_account_option_bool_new(_("Require encryption"), name, FALSE);
-			if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-			{
-				purple_account_option_set_default_bool(option, g_value_get_boolean(&protocol->params[i].default_value));
-			}
-			protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-		}
-		else if (g_strcmp0(name, "register") == 0 && g_strcmp0(signature, "b") == 0)
-		{
-			/* TODO: fill in register_user */
-		}
-		else if (g_strcmp0(name, "ident") == 0 && g_strcmp0(signature, "s") == 0)
-		{
-			option = purple_account_option_string_new(_("Ident"), name, NULL);
-			if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-			{
-				purple_account_option_set_default_string(option, g_value_get_string(&protocol->params[i].default_value));
-			}
-			protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-		}
-		else if (g_strcmp0(name, "fullname") == 0 && g_strcmp0(signature, "s") == 0)
-		{
-			option = purple_account_option_string_new(_("Full Name"), name, NULL);
-			if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-			{
-				purple_account_option_set_default_string(option, g_value_get_string(&protocol->params[i].default_value));
-			}
-			protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-		}
-		else if (g_strcmp0(name, "stun-server") == 0 && g_strcmp0(signature, "s") == 0)
-		{
-			option = purple_account_option_string_new(_("STUN Server"), name, NULL);
-			if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-			{
-				purple_account_option_set_default_string(option, g_value_get_string(&protocol->params[i].default_value));
-			}
-			protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-		}
-		else if (g_strcmp0(name, "stun_port") == 0 && g_strcmp0(signature, "q") == 0)
-		{
-			option = purple_account_option_int_new(_("STUN Port"), name, 0);
-			if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-			{
-				purple_account_option_set_default_int(option, g_value_get_uint(&protocol->params[i].default_value));
-			}
-			protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-		}
-		else
-		{
-			/* parameter is non-standard */
-			if (g_strcmp0(signature, "s") == 0) /* string */
-			{
-			    	option = purple_account_option_string_new(telepathy_transform_param_name(protocol->params[i].name), protocol->params[i].name, NULL);
-				if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-				{
-					purple_account_option_set_default_string(option, g_value_get_string(&protocol->params[i].default_value));
-				}
-				protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-			}
-			else if (g_strcmp0(signature, "i") == 0) /* signed 32-bit integer */
-			{
-			    	option = purple_account_option_int_new(telepathy_transform_param_name(protocol->params[i].name), protocol->params[i].name, 0);
-				if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-				{
-					purple_account_option_set_default_int(option, g_value_get_int(&protocol->params[i].default_value));
-				}
-				protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-			}
-			else if (g_strcmp0(signature, "n") == 0) /* signed 16-bit integerr */
-			{
-			    	option = purple_account_option_int_new(telepathy_transform_param_name(protocol->params[i].name), protocol->params[i].name, 0);
-				if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-				{
-					purple_account_option_set_default_int(option, g_value_get_int(&protocol->params[i].default_value));
-				}
-				protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-			}
-			else if (g_strcmp0(signature, "q") == 0) /* unsigned 16-bit integerr */
-			{
-			    	option = purple_account_option_int_new(telepathy_transform_param_name(protocol->params[i].name), protocol->params[i].name, 0);
-				if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-				{
-					purple_account_option_set_default_int(option, g_value_get_uint(&protocol->params[i].default_value));
-				}
-				protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-			}
-			else if (g_strcmp0(signature, "b") == 0) /* boolean */
-			{
-			    	option = purple_account_option_bool_new(telepathy_transform_param_name(protocol->params[i].name), protocol->params[i].name, FALSE);
-				if ((protocol->params[i].flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT) == TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT)
-				{
-					purple_account_option_set_default_bool(option, g_value_get_boolean(&protocol->params[i].default_value));
-				}
-				protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
-			}
-			else if (g_strcmp0(signature, "as") == 0) /* string array */
-			{
-			    	option = purple_account_option_list_new(telepathy_transform_param_name(protocol->params[i].name), protocol->params[i].name, NULL);
+			type = g_new(PurplePrefType, 1);
+			human_name = get_human_name(name, signature, type);
+			has_default = param->flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT;
 
+			if (*type == PURPLE_PREF_STRING)
+			{
+				option = purple_account_option_string_new(human_name, param->name, NULL);
+				if (has_default)
+					purple_account_option_set_default_string(option, g_value_get_string(&param->default_value));
+			}
+			else if (*type == PURPLE_PREF_INT)
+			{
+				option = purple_account_option_int_new(human_name, param->name, 0);
+				if (has_default)
+					purple_account_option_set_default_int(option, get_int_value(&param->default_value, signature));
+			}
+			else if (*type == PURPLE_PREF_BOOLEAN)
+			{
+				option = purple_account_option_bool_new(human_name, param->name, FALSE);
+				if (has_default)
+					purple_account_option_set_default_bool(option, g_value_get_boolean(&param->default_value));
+			}
+
+			if (option != NULL)
+			{
 				protocol_info->protocol_options = g_list_append(protocol_info->protocol_options, option);
 			}
-			else
-			{
-				purple_debug_info("telepathy", "Unknown dbus signature (%s) for %s parameter\n", signature, protocol->params[i].name);
-			}
 		}
-
 	}
-
 }
 
 static gboolean
@@ -514,11 +472,10 @@ list_connection_managers_cb (TpConnectionManager * const *cms,
 	if (error != NULL)
 	{
 		purple_debug_error("telepathy", "Failed to list connection managers: %s\n", error->message);
-		g_error_free((GError*)error);
 	}
 	else
 	{
-		/* for each connection manager, query the supported protocols. They will be returned in list_protocols_cb */
+		/* for each connection manager, query the supported protocols */
 		for (i = 0; i<n_cms; ++i)
 		{
 			for (j = 0; cms[i]->protocols[j] != NULL; ++j)
@@ -555,6 +512,7 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 	{
 		purple_debug_error("telepathy", "Cannot create DBus daemon: %s\n", error->message);
 		g_error_free(error);
+		return FALSE;
 	}
 
 	/* the list of connection managers will be returned in list_connection_managers_cb */
