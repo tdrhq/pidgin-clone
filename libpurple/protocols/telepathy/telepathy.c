@@ -23,6 +23,7 @@
 #include <telepathy-glib/connection-manager.h>
 #include <telepathy-glib/channel.h>
 #include <telepathy-glib/dbus.h>
+#include <telepathy-glib/util.h>
 
 #include "internal.h"
 
@@ -47,6 +48,8 @@ typedef struct
 {
 	TpConnectionManager *cm;
 	TpConnectionManagerProtocol *protocol;
+	TpConnection *connection;
+	PurpleConnection *gc;
 } telepathy_data;
 
 typedef struct
@@ -108,28 +111,212 @@ telepathy_status_types(PurpleAccount *acct)
 	PurpleStatusType *type;
 
 	purple_debug_info("telepathy", "Returning status types for %s: %s, %s, %s\n",
-		acct->username,
-		TELEPATHY_STATUS_ONLINE, TELEPATHY_STATUS_AWAY, TELEPATHY_STATUS_OFFLINE);
+			acct->username,
+			TELEPATHY_STATUS_ONLINE, TELEPATHY_STATUS_AWAY, TELEPATHY_STATUS_OFFLINE);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
-		TELEPATHY_STATUS_ONLINE, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
+			TELEPATHY_STATUS_ONLINE, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
 	types = g_list_prepend(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
-		TELEPATHY_STATUS_AWAY, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
+			TELEPATHY_STATUS_AWAY, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
 	types = g_list_prepend(types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
-		NULL, NULL, TRUE, TRUE, FALSE,
-		"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-		NULL);
+			NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
 	types = g_list_prepend(types, type);
 
 	return g_list_reverse(types);
+}
+
+static void
+connection_ready_cb (TpConnection *connection,
+                     const GError *error,
+                     gpointer user_data)
+{
+	if (error != NULL)
+	{
+		purple_debug_info("telepathy", "Connection ready error: %s\n", error->message);
+	}
+	else
+	{
+		purple_debug_info("telepathy", "Connection is ready!\n");
+	}
+}
+
+static void
+status_changed_cb (TpConnection *proxy,
+                   guint arg_Status,
+                   guint arg_Reason,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	PurplePlugin* plugin = user_data;
+	telepathy_data *data = plugin->extra;
+
+	if (arg_Status == TP_CONNECTION_STATUS_CONNECTED)
+	{
+		purple_debug_info("telepathy", "Connected!\n");
+
+		purple_connection_update_progress(data->gc, _("Connected"),
+				1,   /* which connection step this is */
+				2);  /* total number of steps */
+
+		purple_connection_set_state(data->gc, PURPLE_CONNECTED);
+	}
+	else if (arg_Status == TP_CONNECTION_STATUS_DISCONNECTED)
+	{
+		gchar *reason = NULL;
+		purple_debug_info("telepathy", "Disconnected! Reason: %d\n", arg_Reason);
+
+		purple_connection_set_state(data->gc, PURPLE_DISCONNECTED);
+
+		switch (arg_Reason)
+		{
+			case 2:
+				reason = "Network error";
+			break;
+
+			case 3:
+				reason = "Authentication failed";
+			break;
+
+			case 4:
+				reason = "Encryption error";
+			break;
+
+			case 5:
+				reason = "Name in use";
+			break;
+
+			case 6:
+				reason = "SSL Certificate not provided";
+			break;
+
+			case 7:
+				reason = "SSL Certificate is isnged by an untrusted certifying authority";
+			break;
+
+			case 8:
+				reason = "SSL Certificate expired";
+			break;
+
+			case 9:
+				reason = "SSL Certificate is not yet valid";
+			break;
+
+			case 10:
+				reason = "SSL Certificate hostname mismatch";
+			break;
+
+			case 11:
+				reason = "SSL Certificate fingerprint mismatch";
+			break;
+
+			case 12:
+				reason = "SSL Certificate is self-signed";
+			break;
+
+			case 13:
+				reason = "Error while validating the server's SSL Certificate";
+			break;
+		}
+
+		if (reason != NULL)
+			purple_connection_error(data->gc, reason);
+
+	}
+	else if (arg_Status == TP_CONNECTION_STATUS_CONNECTING)
+	{
+		purple_debug_info("telepathy", "Connecting! Reason: %d\n", arg_Reason);
+		purple_connection_set_state(data->gc, PURPLE_CONNECTING);
+		purple_connection_update_progress(data->gc, _("Connecting"),
+				0,   /* which connection step this is */
+				2);  /* total number of steps */
+
+	}
+}
+
+static void
+connection_connect_cb (TpConnection *proxy,
+                       const GError *error,
+                       gpointer user_data,
+                       GObject *weak_object)
+{
+	/* if this fails, something must be broken somewhere */
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Connect error: %s\n", error->message);
+	}
+}
+
+static void
+request_connection_cb (TpConnectionManager *proxy,
+                       const gchar *out_Bus_Name,
+                       const gchar *out_Object_Path,
+                       const GError *error,
+                       gpointer user_data,
+                       GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_info("telepathy", "RequestConnection error: %s\n", error->message);
+	}
+	else
+	{
+		GError *error = NULL;
+
+		PurplePlugin* plugin = user_data;
+		telepathy_data* data = plugin->extra;
+
+		TpDBusDaemon *daemon = tp_dbus_daemon_dup(&error);
+		
+		if (error != NULL)
+		{
+			purple_debug_error("telepathy", "Error creating dbus daemon: %s\n", error->message);
+			g_error_free(error);
+			return;
+		}
+
+		/* get the connection proxy straight out of the dbus interface */
+		data->connection = tp_connection_new(daemon, out_Bus_Name, out_Object_Path, &error);
+
+		if (error != NULL)
+		{
+			purple_debug_error("telepathy", "Error creating TpConenction object: %s\n", error->message);
+			g_error_free(error);
+			return;
+		}
+
+		/* this will indicate that we are actually connected */
+		tp_connection_call_when_ready(data->connection, connection_ready_cb, plugin);
+
+		/* this will indicate any connection status change, also providing a reason */
+		tp_cli_connection_connect_to_status_changed(data->connection, status_changed_cb, plugin, NULL, NULL, &error);
+
+		if (error != NULL)
+		{
+			purple_debug_error("telepathy", "Error conencting to StatusChanged: %s\n", error->message);
+			g_error_free(error);
+			tp_cli_connection_call_disconnect(data->connection, -1, NULL, NULL, NULL, NULL);
+			g_object_unref(data->connection);
+			data->connection = NULL;
+		}
+		else
+		{
+			/* do some magic now :) */
+			tp_cli_connection_call_connect(data->connection, -1, connection_connect_cb, plugin, NULL, NULL);
+		}
+
+		if (daemon != NULL)
+			g_object_unref(daemon);
+	}
 }
 
 static void
@@ -137,22 +324,78 @@ telepathy_login(PurpleAccount *acct)
 {
 	PurpleConnection *gc = purple_account_get_connection(acct);
 
+	PurplePlugin* plugin = gc->prpl;
+	telepathy_data *data = (telepathy_data*)plugin->extra;
+	GHashTable *options = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) tp_g_value_slice_free);
+	int i;
+
+	data->gc = gc;
+
 	purple_debug_info("telepathy", "Logging in as %s\n", acct->username);
+	purple_debug_info("telepathy", "Logging in as %s\n", acct->password);
 
-	purple_connection_update_progress(gc, _("Connecting"),
-		0,   /* which connection step this is */
-		2);  /* total number of steps */
+	/* some protocols might not require username or password, so check them before */
+	if (acct->username != NULL)
+		tp_asv_set_string(options, "account", acct->username);
+	if (acct->password != NULL)
+		tp_asv_set_string(options, "password", acct->password);
 
-	purple_connection_update_progress(gc, _("Connected"),
-		1,   /* which connection step this is */
-		2);  /* total number of steps */
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	/* fill in the hash table with the other options, considering the right signatures */
+	for (i = 0; data->protocol->params[i].name != NULL; ++i)
+	{
+		gchar *name;
+		gchar *signature;
+		name = data->protocol->params[i].name;
+		signature = data->protocol->params[i].dbus_signature;
+
+		/* account and password have already been added */
+		if (g_strcmp0(name, "account") != 0 && g_strcmp0(name, "password"))
+		{
+			if (g_strcmp0(signature, "s") == 0)
+			{
+				tp_asv_set_string(options, name, purple_account_get_string(acct, name, ""));
+			}
+			else if (g_strcmp0(signature, "n") == 0)
+			{
+				tp_asv_set_int32(options, name, purple_account_get_int(acct, name, 0));
+			}
+			else if (g_strcmp0(signature, "i") == 0)
+			{
+				tp_asv_set_int32(options, name, purple_account_get_int(acct, name, 0));
+			}
+			else if (g_strcmp0(signature, "q") == 0)
+			{
+				tp_asv_set_uint32(options, name, purple_account_get_int(acct, name, 0));
+			}
+			else if (g_strcmp0(signature, "b") == 0)
+			{
+				tp_asv_set_boolean(options, name, purple_account_get_bool(acct, name, FALSE));
+			}
+			else
+				purple_debug_warning("telepathy", "Unknown signature \"%s\" for \"%s\"\n", signature, name);
+		}
+	}
+
+	/* call RequestConnection with the specified parameters */
+	tp_cli_connection_manager_call_request_connection(data->cm, -1, data->protocol->name, options, request_connection_cb, plugin, NULL, NULL);
 }
 
 static void
 telepathy_close(PurpleConnection *gc)
 {
+	PurplePlugin* plugin = gc->prpl;
+	telepathy_data *data = (telepathy_data*)plugin->extra;
+
 	purple_debug_info("telepathy", "We're closing, sorry :(\n");
+
+	/* make sure the connection is closed in dbus-land, 
+	 * or else we won't be able to recreate the connection */
+	if (data->connection)
+	{
+		tp_cli_connection_call_disconnect(data->connection, -1, NULL, NULL, NULL, NULL);
+		g_object_unref(data->connection);
+		data->connection = NULL;
+	}
 }
 
 static void
@@ -160,7 +403,13 @@ telepathy_destroy(PurplePlugin *plugin)
 {
 	purple_debug_info("telepathy", "Shutting down\n");
 
-	/* TODO: Free the PurplePluginInfo */
+	/* free everything that we created */
+	if (g_strcmp0(plugin->info->id, "prpl-telepathy") != 0) {
+		g_free(plugin->info->extra_info);
+		g_free(plugin->info);
+		g_object_unref(((telepathy_data*)plugin->extra)->cm);
+		g_free(plugin->extra);
+	}
 }
 
 static PurplePluginProtocolInfo telepathy_prpl_info =
@@ -328,7 +577,7 @@ get_human_name(const gchar *telepathy_name,
 	for (i = 0; options[i].telepathy_name != NULL; ++i)
 	{
 		if (g_strcmp0(options[i].telepathy_name, telepathy_name) == 0 &&
-			g_strcmp0(options[i].dbus_type, dbus_type) == 0)
+				g_strcmp0(options[i].dbus_type, dbus_type) == 0)
 			return g_strdup(_(options[i].human_name));
 	}
 
@@ -342,7 +591,7 @@ get_int_value(const GValue *value,
 {
 	if (g_strcmp0(signature, "q") == 0)
 		return g_value_get_uint(value);
-	else if (g_strcmp0(signature, "i") == 0 && g_strcmp0(signature, "n") == 0)
+	else if (g_strcmp0(signature, "i") == 0 || g_strcmp0(signature, "n") == 0)
 		return g_value_get_int(value);
 	else
 		return 0;
@@ -357,9 +606,9 @@ add_protocol_options(PurplePlugin *plugin,
 	int i;
 	PurpleAccountOption *option = NULL;
 	PurplePluginProtocolInfo *protocol_info = plugin->info->extra_info;
-	PurplePrefType *type;
 	TpConnectionManagerParam *param;
 	gboolean has_default;
+	PurplePrefType type = PURPLE_PREF_NONE;
 
 	/* by default, don't prompt for password, we'll unflag this if we get a password parameter */
 	protocol_info->options = protocol_info->options | OPT_PROTO_NO_PASSWORD;
@@ -389,23 +638,22 @@ add_protocol_options(PurplePlugin *plugin,
 		}
 		else 
 		{
-			type = g_new(PurplePrefType, 1);
-			human_name = get_human_name(name, signature, type);
+			human_name = get_human_name(name, signature, &type);
 			has_default = param->flags & TP_CONN_MGR_PARAM_FLAG_HAS_DEFAULT;
 
-			if (*type == PURPLE_PREF_STRING)
+			if (type == PURPLE_PREF_STRING)
 			{
 				option = purple_account_option_string_new(human_name, param->name, NULL);
 				if (has_default)
 					purple_account_option_set_default_string(option, g_value_get_string(&param->default_value));
 			}
-			else if (*type == PURPLE_PREF_INT)
+			else if (type == PURPLE_PREF_INT)
 			{
 				option = purple_account_option_int_new(human_name, param->name, 0);
 				if (has_default)
 					purple_account_option_set_default_int(option, get_int_value(&param->default_value, signature));
 			}
-			else if (*type == PURPLE_PREF_BOOLEAN)
+			else if (type == PURPLE_PREF_BOOLEAN)
 			{
 				option = purple_account_option_bool_new(human_name, param->name, FALSE);
 				if (has_default)
@@ -434,6 +682,9 @@ export_prpl(TpConnectionManager *cm,
 
 	data->cm = cm;
 	data->protocol = protocol;
+	data->connection = NULL;
+	data->gc = NULL;
+	g_object_ref(data->cm);
 
 	/* correct the plugin id and name, everything else can remain the same */
 	plugin->info->id = g_strdup_printf("%s-%s-%s", TELEPATHY_ID, tp_connection_manager_get_name(cm), protocol->name);
