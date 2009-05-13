@@ -173,6 +173,7 @@ status_changed_cb (TpConnection *proxy,
 	else if (arg_Status == TP_CONNECTION_STATUS_DISCONNECTED)
 	{
 		gchar *reason = NULL;
+		PurpleConnectionError error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 		purple_debug_info("telepathy", "Disconnected! Reason: %d\n", arg_Reason);
 
 		purple_connection_set_state(data->gc, PURPLE_DISCONNECTED);
@@ -181,55 +182,73 @@ status_changed_cb (TpConnection *proxy,
 		{
 			case 2:
 				reason = "Network error";
+				error = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			break;
 
 			case 3:
 				reason = "Authentication failed";
+				error = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 
 			case 4:
 				reason = "Encryption error";
+				error = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
 			break;
 
 			case 5:
 				reason = "Name in use";
+				error = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 			break;
 
 			case 6:
 				reason = "SSL Certificate not provided";
+				error = PURPLE_CONNECTION_ERROR_CERT_NOT_PROVIDED;
 			break;
 
 			case 7:
 				reason = "SSL Certificate is isnged by an untrusted certifying authority";
+				error = PURPLE_CONNECTION_ERROR_CERT_UNTRUSTED;
 			break;
 
 			case 8:
 				reason = "SSL Certificate expired";
+				error = PURPLE_CONNECTION_ERROR_CERT_EXPIRED;
 			break;
 
 			case 9:
 				reason = "SSL Certificate is not yet valid";
+				error = PURPLE_CONNECTION_ERROR_CERT_NOT_ACTIVATED;
 			break;
 
 			case 10:
 				reason = "SSL Certificate hostname mismatch";
+				error = PURPLE_CONNECTION_ERROR_CERT_HOSTNAME_MISMATCH;
 			break;
 
 			case 11:
 				reason = "SSL Certificate fingerprint mismatch";
+				error = PURPLE_CONNECTION_ERROR_CERT_FINGERPRINT_MISMATCH;
 			break;
 
 			case 12:
 				reason = "SSL Certificate is self-signed";
+				error = PURPLE_CONNECTION_ERROR_CERT_SELF_SIGNED;
 			break;
 
 			case 13:
 				reason = "Error while validating the server's SSL Certificate";
+				error = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
 			break;
 		}
 
 		if (reason != NULL)
-			purple_connection_error(data->gc, reason);
+			purple_connection_error_reason(data->gc, error, reason);
+
+		if (data->connection)
+		{
+			g_object_unref(data->connection);
+			data->connection = NULL;
+		}
 
 	}
 	else if (arg_Status == TP_CONNECTION_STATUS_CONNECTING)
@@ -289,12 +308,11 @@ request_connection_cb (TpConnectionManager *proxy,
 
 		if (error != NULL)
 		{
-			purple_debug_error("telepathy", "Error creating TpConenction object: %s\n", error->message);
+			purple_debug_error("telepathy", "Error creating TpConnection object: %s\n", error->message);
 			g_error_free(error);
 			return;
 		}
 
-		/* this will indicate that we are actually connected */
 		tp_connection_call_when_ready(data->connection, connection_ready_cb, plugin);
 
 		/* this will indicate any connection status change, also providing a reason */
