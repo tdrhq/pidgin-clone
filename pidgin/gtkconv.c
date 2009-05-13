@@ -278,7 +278,8 @@ static void
 default_formatize(PidginConversation *c)
 {
 	PurpleConversation *conv = c->active_conv;
-	gtk_imhtml_setup_entry(GTK_IMHTML(c->entry), conv->features);
+	/* TODO: setup entry */
+	/*gtk_webview_setup_entry(GTK_IMHTML(c->entry), conv->features); */
 }
 
 static void
@@ -430,22 +431,19 @@ check_for_and_do_command(PurpleConversation *conv)
 	PidginConversation *gtkconv;
 	char *cmd;
 	const char *prefix;
-	GtkTextIter start;
 	gboolean retval = FALSE;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	prefix = pidgin_get_cmd_prefix();
 
-	cmd = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
-	gtk_text_buffer_get_start_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &start);
+	cmd = gtk_webview_get_text(GTK_WEBVIEW(gtkconv->entry_webview), NULL, NULL);
 
-	if (cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)
-	   && !gtk_text_iter_get_child_anchor(&start)) {
+	/* TODO pass the markup to the command */
+	if (cmd && (strncmp(cmd, prefix, strlen(prefix)) == 0)) {
 		PurpleCmdStatus status;
 		char *error, *cmdline, *markup, *send_history;
-		GtkTextIter end;
 
-		send_history = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
+		send_history = gtk_webview_get_markup(GTK_WEBVIEW(gtkconv->entry_webview));
 		send_history_add(gtkconv, send_history);
 		g_free(send_history);
 
@@ -458,9 +456,9 @@ check_for_and_do_command(PurpleConversation *conv)
 			return TRUE;
 		}
 
-		gtk_text_iter_forward_chars(&start, g_utf8_strlen(prefix, -1));
-		gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &end);
-		markup = gtk_imhtml_get_markup_range(GTK_IMHTML(gtkconv->entry), &start, &end);
+		/*TODO replace this with proper markup :( */
+		markup = g_strdup (cmd + strlen(prefix));
+
 		status = purple_cmd_do_command(conv, cmdline, markup, &error);
 		g_free(markup);
 
@@ -539,7 +537,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	account = purple_conversation_get_account(conv);
 
 	if (check_for_and_do_command(conv)) {
-		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+		gtk_webview_clear(GTK_WEBVIEW(gtkconv->entry_webview));
 		return;
 	}
 
@@ -550,10 +548,10 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	if (!purple_account_is_connected(account))
 		return;
 
-	buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
-	clean = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
+	buf = gtk_webview_get_markup(GTK_WEBVIEW(gtkconv->entry_webview));
+	clean = gtk_webview_get_text(GTK_WEBVIEW(gtkconv->entry_webview), NULL, NULL);
 
-	gtk_widget_grab_focus(gtkconv->entry);
+	gtk_widget_grab_focus(gtkconv->entry_webview);
 
 	if (strlen(clean) == 0) {
 		g_free(buf);
@@ -564,32 +562,15 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	purple_idle_touch();
 
 	/* XXX: is there a better way to tell if the message has images? */
-	if (GTK_IMHTML(gtkconv->entry)->im_images != NULL)
-		flags |= PURPLE_MESSAGE_IMAGES;
+	/*if (GTK_WEBVIEW(gtkconv->entry_webview)->im_images != NULL)
+	  flags |= PURPLE_MESSAGE_IMAGES;*/
 
-	gc = purple_account_get_connection(account);
-	if (gc && (conv->features & PURPLE_CONNECTION_NO_NEWLINES)) {
-		char **bufs;
-		int i;
-
-		bufs = gtk_imhtml_get_markup_lines(GTK_IMHTML(gtkconv->entry));
-		for (i = 0; bufs[i]; i++) {
-			send_history_add(gtkconv, bufs[i]);
-			if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-				purple_conv_im_send_with_flags(PURPLE_CONV_IM(conv), bufs[i], flags);
-			else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-				purple_conv_chat_send_with_flags(PURPLE_CONV_CHAT(conv), bufs[i], flags);
-		}
-
-		g_strfreev(bufs);
-
-	} else {
-		send_history_add(gtkconv, buf);
-		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-			purple_conv_im_send_with_flags(PURPLE_CONV_IM(conv), buf, flags);
-		else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-			purple_conv_chat_send_with_flags(PURPLE_CONV_CHAT(conv), buf, flags);
-	}
+	/* TODO: take care of connections with PURPLE_CONNECTION_NO_NEWLINES */
+	send_history_add(gtkconv, buf);
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
+		purple_conv_im_send_with_flags(PURPLE_CONV_IM(conv), buf, flags);
+	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+		purple_conv_chat_send_with_flags(PURPLE_CONV_CHAT(conv), buf, flags);
 
 	g_free(clean);
 	g_free(buf);
