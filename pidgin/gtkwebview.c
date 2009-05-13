@@ -228,8 +228,6 @@ gtk_webview_append_html (GtkWebView* view, const char* html)
 	view->empty = FALSE;
 	g_free (script);
 	g_free (escaped);
-
-	printf ("%s\n", gtk_webview_get_text (view));
 }
 
 char*
