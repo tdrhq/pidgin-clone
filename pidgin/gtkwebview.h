@@ -53,3 +53,6 @@ gtk_webview_get_markup (GtkWebView *view);
 
 char*
 gtk_webview_get_text (GtkWebView *view);
+
+void
+gtk_webview_clear (GtkWebView *view);

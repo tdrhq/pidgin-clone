@@ -247,6 +247,13 @@ gboolean gtk_webview_is_empty (GtkWebView *view)
 	return view->empty;
 }
 
+void
+gtk_webview_clear (GtkWebView *view)
+{
+	webkit_web_view_load_html_string (WEBKIT_WEB_VIEW (view), "", 
+					 "file:///");
+}
+
 GType gtk_webview_get_type ()
 {
 	static GType mview_type = 0;
