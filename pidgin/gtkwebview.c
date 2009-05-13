@@ -228,13 +228,20 @@ gtk_webview_append_html (GtkWebView* view, const char* html)
 	view->empty = FALSE;
 	g_free (script);
 	g_free (escaped);
+
+	printf ("%s\n", gtk_webview_get_text (view));
 }
 
 char*
-gtk_webview_get_body_innerhtml (GtkWebView *view)
+gtk_webview_get_markup (GtkWebView *view)
 {
-	char* contents = gtk_webview_execute_script (view, "document.body.innerHTML");
-	return contents;
+	return gtk_webview_execute_script (view, "document.body.innerHTML");
+}
+
+char*
+gtk_webview_get_text (GtkWebView *view)
+{
+	return gtk_webview_execute_script (view, "document.body.textContent");
 }
 
 gboolean gtk_webview_is_empty (GtkWebView *view)
