@@ -45,10 +45,10 @@
 #include "caps.h"
 #include "data.h"
 #include "ibb.h"
-
-PurplePlugin *jabber_plugin = NULL;
 #include "xfer.h"
 #include "jingle/jingle.h"
+
+PurplePlugin *jabber_plugin = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
 {
