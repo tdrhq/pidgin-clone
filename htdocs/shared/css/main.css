@@ -382,6 +382,10 @@ ul.condensed {
   float: left;
 }
 
+.code {
+  font-family: monospace;
+}
+
 h1 {
   color: #E66926;
   margin-top: 0;
