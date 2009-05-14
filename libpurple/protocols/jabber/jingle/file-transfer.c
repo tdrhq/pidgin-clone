@@ -871,22 +871,21 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 		case JINGLE_TRANSPORT_REPLACE: {
 			JingleSession *session = jingle_content_get_session(content);
 			xmlnode *xmltransport = xmlnode_get_child(xmlcontent, "transport");
-			JingleTransport *new_transport =
-				jingle_transport_parse(xmltransport);
 			const gchar *sid = 
 				xmlnode_get_attrib(xmlnode_get_child(xmlcontent, 
 					"transport"), "sid");
 			gchar *who = jingle_session_get_remote_jid(session);
 			const PurpleXfer *xfer = JINGLE_FT(content)->priv->xfer;
 			const gchar *filename = purple_xfer_get_local_filename(xfer);
-
+			JingleTransport *new_transport = 
+				jingle_content_get_pending_transport(content);
+			
 			/* fallback to IBB etc... */
-			if (JINGLE_IS_IBB(new_transport)) {
+			if (new_transport && JINGLE_IS_IBB(new_transport)) {
 				JingleIBB *ibb = JINGLE_IBB(new_transport);
 
 				jingle_ibb_create_session(ibb, content, sid, who);
 				/* immediatly accept the new transport */
-				jingle_content_set_pending_transport(content, new_transport);
 				jingle_content_accept_transport(content);
 
 				/* open the file and setup the callbacks */
@@ -920,6 +919,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
                     JINGLE_TRANSPORT_ACCEPT));
 			}
 
+			g_object_unref(new_transport);
 			g_free(who);
 			g_object_unref(session);
 			break;
