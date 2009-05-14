@@ -173,7 +173,9 @@ new_channel_cb (TpConnection *proxy,
                 gpointer user_data,
                 GObject *weak_object)
 {
-	purple_debug_info("telepathy", "NewChannel: %s - %s\n", arg_Object_Path, arg_Channel_Type);
+	purple_debug_info("telepathy", "NewChannel:\n");
+	purple_debug_info("telepathy", "  %s\n", arg_Object_Path);
+	purple_debug_info("telepathy", "  %s\n", arg_Channel_Type);
 }
 
 static void
@@ -431,19 +433,23 @@ telepathy_login(PurpleAccount *acct)
 		{
 			if (g_strcmp0(signature, "s") == 0)
 			{
-				tp_asv_set_string(options, name, purple_account_get_string(acct, name, ""));
+				if (g_strcmp0(purple_account_get_string(acct, name, ""), ""))
+					tp_asv_set_string(options, name, purple_account_get_string(acct, name, ""));
 			}
 			else if (g_strcmp0(signature, "n") == 0)
 			{
-				tp_asv_set_int32(options, name, purple_account_get_int(acct, name, 0));
+				if (purple_account_get_int(acct, name, 0) != 0)
+					tp_asv_set_int32(options, name, purple_account_get_int(acct, name, 0));
 			}
 			else if (g_strcmp0(signature, "i") == 0)
 			{
-				tp_asv_set_int32(options, name, purple_account_get_int(acct, name, 0));
+				if (purple_account_get_int(acct, name, 0) != 0)
+					tp_asv_set_int32(options, name, purple_account_get_int(acct, name, 0));
 			}
 			else if (g_strcmp0(signature, "q") == 0)
 			{
-				tp_asv_set_uint32(options, name, purple_account_get_int(acct, name, 0));
+				if (purple_account_get_int(acct, name, 0) != 0)
+					tp_asv_set_uint32(options, name, purple_account_get_int(acct, name, 0));
 			}
 			else if (g_strcmp0(signature, "b") == 0)
 			{
