@@ -916,7 +916,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 
 				/* send transport-accept */
 				jabber_iq_send(jingle_session_to_packet(session,
-                    JINGLE_TRANSPORT_ACCEPT));
+					JINGLE_TRANSPORT_ACCEPT));
 			} else {
 				/* we don't currently handle other fallback methods than IBB */
 				jabber_iq_send(jingle_session_to_packet(session,
