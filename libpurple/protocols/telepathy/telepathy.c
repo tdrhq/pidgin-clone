@@ -180,62 +180,62 @@ status_changed_cb (TpConnection *proxy,
 
 		switch (arg_Reason)
 		{
-			case 2:
+			case TP_CONNECTION_STATUS_REASON_NETWORK_ERROR:
 				reason = "Network error";
 				error = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			break;
 
-			case 3:
+			case TP_CONNECTION_STATUS_REASON_AUTHENTICATION_FAILED:
 				reason = "Authentication failed";
 				error = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			break;
 
-			case 4:
+			case TP_CONNECTION_STATUS_REASON_ENCRYPTION_ERROR:
 				reason = "Encryption error";
 				error = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
 			break;
 
-			case 5:
+			case TP_CONNECTION_STATUS_REASON_NAME_IN_USE:
 				reason = "Name in use";
 				error = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 			break;
 
-			case 6:
+			case TP_CONNECTION_STATUS_REASON_CERT_NOT_PROVIDED:
 				reason = "SSL Certificate not provided";
 				error = PURPLE_CONNECTION_ERROR_CERT_NOT_PROVIDED;
 			break;
 
-			case 7:
+			case TP_CONNECTION_STATUS_REASON_CERT_UNTRUSTED:
 				reason = "SSL Certificate is isnged by an untrusted certifying authority";
 				error = PURPLE_CONNECTION_ERROR_CERT_UNTRUSTED;
 			break;
 
-			case 8:
+			case TP_CONNECTION_STATUS_REASON_CERT_EXPIRED:
 				reason = "SSL Certificate expired";
 				error = PURPLE_CONNECTION_ERROR_CERT_EXPIRED;
 			break;
 
-			case 9:
+			case TP_CONNECTION_STATUS_REASON_CERT_NOT_ACTIVATED:
 				reason = "SSL Certificate is not yet valid";
 				error = PURPLE_CONNECTION_ERROR_CERT_NOT_ACTIVATED;
 			break;
 
-			case 10:
+			case TP_CONNECTION_STATUS_REASON_CERT_HOSTNAME_MISMATCH:
 				reason = "SSL Certificate hostname mismatch";
 				error = PURPLE_CONNECTION_ERROR_CERT_HOSTNAME_MISMATCH;
 			break;
 
-			case 11:
+			case TP_CONNECTION_STATUS_REASON_CERT_FINGERPRINT_MISMATCH:
 				reason = "SSL Certificate fingerprint mismatch";
 				error = PURPLE_CONNECTION_ERROR_CERT_FINGERPRINT_MISMATCH;
 			break;
 
-			case 12:
+			case TP_CONNECTION_STATUS_REASON_CERT_SELF_SIGNED:
 				reason = "SSL Certificate is self-signed";
 				error = PURPLE_CONNECTION_ERROR_CERT_SELF_SIGNED;
 			break;
 
-			case 13:
+			case TP_CONNECTION_STATUS_REASON_CERT_OTHER_ERROR:
 				reason = "Error while validating the server's SSL Certificate";
 				error = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
 			break;
