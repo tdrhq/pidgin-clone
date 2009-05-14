@@ -137,6 +137,46 @@ telepathy_status_types(PurpleAccount *acct)
 }
 
 static void
+unpack_channel_struct (gpointer data,
+                       gpointer user_data)
+{
+	purple_debug_info("telepathy", "  %s\n", (gchar *)g_value_get_boxed(g_value_array_get_nth(data, 0)));
+	purple_debug_info("telepathy", "  %s\n", g_value_get_string(g_value_array_get_nth(data, 1)));
+}
+
+static void
+list_channels_cb (TpConnection *proxy,
+                  const GPtrArray *out_Channel_Info,
+                  const GError *error,
+                  gpointer user_data,
+                  GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "ListChannels error: %s\n", error->message);
+	}
+	else
+	{
+		purple_debug_info("telepathy", "Channels:\n");
+
+		g_ptr_array_foreach((GPtrArray *)out_Channel_Info, unpack_channel_struct, user_data);
+	}
+}
+
+static void
+new_channel_cb (TpConnection *proxy,
+                const gchar *arg_Object_Path,
+                const gchar *arg_Channel_Type,
+                guint arg_Handle_Type,
+                guint arg_Handle,
+                gboolean arg_Suppress_Handler,
+                gpointer user_data,
+                GObject *weak_object)
+{
+	purple_debug_info("telepathy", "NewChannel: %s - %s\n", arg_Object_Path, arg_Channel_Type);
+}
+
+static void
 connection_ready_cb (TpConnection *connection,
                      const GError *error,
                      gpointer user_data)
@@ -147,7 +187,27 @@ connection_ready_cb (TpConnection *connection,
 	}
 	else
 	{
-		purple_debug_info("telepathy", "Connection is ready!\n");
+		char **interfaces, **ptr;
+		GError *error = NULL;
+
+		purple_debug_info("telepathy", "Connection is ready. Interfaces implemented:\n");
+
+		/* query interfaces */
+		g_object_get(connection, "interfaces", &interfaces, NULL);
+		for (ptr = interfaces; ptr && *ptr; ptr++)
+		{
+			purple_debug_info("telepathy", "  %s\n", *ptr);
+		}
+
+		tp_cli_connection_call_list_channels(connection, -1, list_channels_cb, user_data, NULL, NULL);
+
+		tp_cli_connection_connect_to_new_channel(connection, new_channel_cb, user_data, NULL, NULL, &error);
+
+		if (error != NULL)
+		{
+			purple_debug_error("telepathy", "Error while connecting to NewChannel signal: %s\n", error->message);
+			g_error_free(error);
+		}
 	}
 }
 
