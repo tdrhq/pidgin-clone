@@ -917,10 +917,35 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				/* send transport-accept */
 				jabber_iq_send(jingle_session_to_packet(session,
                     JINGLE_TRANSPORT_ACCEPT));
+			} else {
+				/* we don't currently handle other fallback methods than IBB */
+				jabber_iq_send(jingle_session_to_packet(session,
+					JINGLE_TRANSPORT_REJECT));
 			}
 
 			g_object_unref(new_transport);
 			g_free(who);
+			g_object_unref(session);
+			break;
+		}
+		case JINGLE_TRANSPORT_REJECT: {
+			JingleSession *session = jingle_content_get_session(content);
+			PurpleXfer *xfer = 
+				jingle_file_transfer_get_xfer(content);
+
+			/* do stuff here... close transfer etc... */
+			if (xfer) {
+				purple_debug_info("jingle", 
+					"got transport-reject, ending transfer %p with content %p\n", 
+					xfer, xfer->data);
+				if (!purple_xfer_is_canceled(xfer))
+					purple_xfer_cancel_local(xfer);
+				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer = NULL;
+				xfer->data = NULL;
+			}
+
+			jabber_iq_send(jingle_session_to_packet(session, 
+				JINGLE_SESSION_TERMINATE));
 			g_object_unref(session);
 			break;
 		}
