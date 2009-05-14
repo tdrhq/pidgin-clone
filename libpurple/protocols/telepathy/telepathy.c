@@ -27,6 +27,7 @@
 
 #include "internal.h"
 
+#include "account.h"
 #include "accountopt.h"
 #include "debug.h"
 #include "notify.h"
@@ -350,7 +351,6 @@ telepathy_login(PurpleAccount *acct)
 	data->gc = gc;
 
 	purple_debug_info("telepathy", "Logging in as %s\n", acct->username);
-	purple_debug_info("telepathy", "Logging in as %s\n", acct->password);
 
 	/* some protocols might not require username or password, so check them before */
 	if (acct->username != NULL)
@@ -686,6 +686,55 @@ add_protocol_options(PurplePlugin *plugin,
 	}
 }
 
+static void
+fix_protocol_accounts(PurplePlugin* plugin)
+{
+	PurpleAccount *account;
+	GList *iter;
+
+	for (iter = purple_accounts_get_all(); iter != NULL; iter = iter->next)
+	{
+		account = iter->data;
+
+		/* check if the protocol matches the account */
+		if (g_strcmp0(purple_account_get_protocol_id(account), plugin->info->id) == 0)
+		{
+			PurplePluginProtocolInfo* prpl_info;
+			PurpleStatusType *status_type;
+
+			purple_debug_info("telepathy", "Fixing account %s using %s\n",
+					purple_account_get_username(account), purple_account_get_protocol_id(account));
+
+
+			/* prpl-telepathy accounts are loaded before the prpl itself and thus some information
+			 * (like status types) are invalid. We need to fix those in order to make that account work.
+			 *
+			 * Following code is copied from purple_account_new() in account.c
+			 *
+			 * FIXME: this is kinda hackish
+			 */
+
+			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
+			if (prpl_info != NULL && prpl_info->status_types != NULL)
+				purple_account_set_status_types(account, prpl_info->status_types(account));
+
+			account->presence = purple_presence_new_for_account(account);
+
+			status_type = purple_account_get_status_type_with_primitive(account, PURPLE_STATUS_AVAILABLE);
+			if (status_type != NULL)
+				purple_presence_set_status_active(account->presence,
+						purple_status_type_get_id(status_type),
+						TRUE);
+			else
+				purple_presence_set_status_active(account->presence,
+						"offline",
+						TRUE);
+		}
+	}
+
+
+}
+
 static gboolean
 export_prpl(TpConnectionManager *cm,
             TpConnectionManagerProtocol *protocol)
@@ -722,6 +771,9 @@ export_prpl(TpConnectionManager *cm,
 
 	/* add the options */
 	add_protocol_options(plugin, protocol);
+
+	/* fix accounts using the current protocol */
+	fix_protocol_accounts(plugin);
 
 	/* this is needed because the plugins are only added to the load queue. FIXME perhaps? */
 	purple_plugins_probe("");
