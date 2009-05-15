@@ -23,6 +23,7 @@
 #include <telepathy-glib/connection-manager.h>
 #include <telepathy-glib/channel.h>
 #include <telepathy-glib/dbus.h>
+#include <telepathy-glib/interfaces.h>
 #include <telepathy-glib/util.h>
 
 #include "internal.h"
@@ -137,11 +138,90 @@ telepathy_status_types(PurpleAccount *acct)
 }
 
 static void
+channel_ready_cb (TpChannel *channel,
+                  const GError *error,
+                  gpointer user_data)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Channel ready error: %s\n", error->message);
+	}
+	else
+	{
+		GQuark handle_Type;
+
+		handle_Type = tp_channel_get_channel_type_id(channel);
+
+		if (handle_Type == TP_IFACE_QUARK_CHANNEL_TYPE_CONTACT_LIST)
+		{
+			const TpIntSet *members;
+			TpIntSetIter iter;
+
+			purple_debug_info("telepathy", "Handles for %s\n", tp_channel_get_identifier(channel));
+
+			members = tp_channel_group_get_members(channel);
+
+			if (members == NULL)
+			{
+				purple_debug_error("telepathy", "Error while getting member list\n");
+				return;
+			}
+
+			iter.set = members;
+			iter.element = (guint)(-1);
+
+			while (tp_intset_iter_next(&iter))
+			{
+				purple_debug_info("telepathy", "  %u\n", iter.element);
+			}
+
+		}
+	}
+}
+
+static void
+handle_new_channel (PurplePlugin *plugin,
+                    const gchar *object_Path,
+                    const gchar *channel_Type,
+		    guint handle_Type,
+		    guint handle)
+{
+	switch (handle_Type)
+	{
+		case TP_HANDLE_TYPE_LIST:
+		{
+			TpChannel *channel;
+			GError *error = NULL;
+			TpConnection *connection = ((telepathy_data *)plugin->extra)->connection;
+
+			channel = tp_channel_new(connection, object_Path, channel_Type, handle_Type, handle, &error);
+
+			if (error != NULL)
+			{
+				purple_debug_error("telepathy", "Error while creating TpChannel: %s\n", error->message);
+				g_error_free(error);
+				return;
+			}
+
+			tp_channel_call_when_ready(channel, channel_ready_cb, plugin);
+		}
+		break;
+	}
+}
+
+/* unpack an (osuu) dbus struct holding channel information*/
+static void
 unpack_channel_struct (gpointer data,
                        gpointer user_data)
 {
 	purple_debug_info("telepathy", "  %s\n", (gchar *)g_value_get_boxed(g_value_array_get_nth(data, 0)));
 	purple_debug_info("telepathy", "  %s\n", g_value_get_string(g_value_array_get_nth(data, 1)));
+
+	handle_new_channel(user_data,
+			g_value_get_boxed(g_value_array_get_nth(data, 0)), 
+			g_value_get_string(g_value_array_get_nth(data, 1)),
+			g_value_get_uint(g_value_array_get_nth(data, 2)),
+			g_value_get_uint(g_value_array_get_nth(data, 3)));
 }
 
 static void
@@ -176,6 +256,8 @@ new_channel_cb (TpConnection *proxy,
 	purple_debug_info("telepathy", "NewChannel:\n");
 	purple_debug_info("telepathy", "  %s\n", arg_Object_Path);
 	purple_debug_info("telepathy", "  %s\n", arg_Channel_Type);
+
+	handle_new_channel(user_data, (gchar *)arg_Object_Path, (gchar *)arg_Channel_Type, arg_Handle_Type, arg_Handle);
 }
 
 static void
