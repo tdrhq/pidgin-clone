@@ -107,7 +107,7 @@ static void
 jingle_ibb_finalize (GObject *ibb)
 {
 	JingleIBBPrivate *priv = JINGLE_IBB_GET_PRIVATE(ibb);
-	purple_debug_info("jingle","jingle_ibb_finalize transport: %lx\n",
+	purple_debug_info("jingle","jingle_ibb_finalize transport: %p\n",
 		ibb);
 	
 	if (priv->session) {
@@ -185,7 +185,7 @@ jingle_ibb_to_xml_internal(JingleTransport *transport, xmlnode *content,
 	purple_debug_info("jingle", "jingle_ibb_to_xml_internal\n");
 
 	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_TRANSPORT_INFO ||
-		action == JINGLE_TRANSPORT_REPLACE) {
+		action == JINGLE_TRANSPORT_REPLACE || action == JINGLE_TRANSPORT_ACCEPT) {
 		JingleIBBPrivate *priv = JINGLE_IBB_GET_PRIVATE(transport);
 		if (priv->session) {
 			gchar *block_size = 
