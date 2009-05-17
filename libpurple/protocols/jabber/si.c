@@ -35,6 +35,7 @@
 #include "ibb.h"
 #include "iq.h"
 #include "si.h"
+#include "xfer.h"
 
 #define STREAMHOST_CONNECT_TIMEOUT 15
 
@@ -1252,8 +1253,7 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = xfer->data;
 	JabberIq *iq;
-	xmlnode *si, *file, *feature, *x, *field, *option, *value;
-	char buf[32];
+	xmlnode *si, *feature, *x, *field, *option, *value;
 
 	xfer->filename = g_path_get_basename(xfer->local_filename);
 
@@ -1266,13 +1266,7 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 	xmlnode_set_attrib(si, "profile",
 			"http://jabber.org/protocol/si/profile/file-transfer");
 
-	file = xmlnode_new_child(si, "file");
-	xmlnode_set_namespace(file,
-			"http://jabber.org/protocol/si/profile/file-transfer");
-	xmlnode_set_attrib(file, "name", xfer->filename);
-	g_snprintf(buf, sizeof(buf), "%" G_GSIZE_FORMAT, xfer->size);
-	xmlnode_set_attrib(file, "size", buf);
-	/* maybe later we'll do hash and date attribs */
+	xmlnode_insert_child(si, jabber_xfer_create_file_element(xfer));
 
 	feature = xmlnode_new_child(si, "feature");
 	xmlnode_set_namespace(feature, "http://jabber.org/protocol/feature-neg");
@@ -1415,34 +1409,12 @@ static void jabber_si_xfer_send_disco_cb(JabberStream *js, const char *who,
 	}
 }
 
-static void resource_select_cancel_cb(PurpleXfer *xfer, PurpleRequestFields *fields)
-{
-	purple_xfer_cancel_local(xfer);
-}
-
-static void do_transfer_send(PurpleXfer *xfer, const char *resource)
+static void do_transfer_send(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = xfer->data;
-	char **who_v = g_strsplit(xfer->who, "/", 2);
-	char *who;
 
-	who = g_strdup_printf("%s/%s", who_v[0], resource);
-	g_strfreev(who_v);
-	g_free(xfer->who);
-	xfer->who = who;
-	jabber_disco_info_do(jsx->js, who,
+	jabber_disco_info_do(jsx->js, xfer->who,
 			jabber_si_xfer_send_disco_cb, xfer);
-}
-
-static void resource_select_ok_cb(PurpleXfer *xfer, PurpleRequestFields *fields)
-{
-	PurpleRequestField *field = purple_request_fields_get_field(fields, "resource");
-	int selected_id = purple_request_field_choice_get_value(field);
-	GList *labels = purple_request_field_choice_get_labels(field);
-
-	const char *selected_label = g_list_nth_data(labels, selected_id);
-
-	do_transfer_send(xfer, selected_label);
 }
 
 static void jabber_si_xfer_init(PurpleXfer *xfer)
@@ -1450,69 +1422,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 	JabberSIXfer *jsx = xfer->data;
 	JabberIq *iq;
 	if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
-		JabberBuddy *jb;
-		JabberBuddyResource *jbr = NULL;
-		char *resource;
-
-		if(NULL != (resource = jabber_get_resource(xfer->who))) {
-			/* they've specified a resource, no need to ask or
-			 * default or anything, just do it */
-
-			do_transfer_send(xfer, resource);
-			g_free(resource);
-			return;
-		}
-
-		jb = jabber_buddy_find(jsx->js, xfer->who, TRUE);
-
-		if(!jb || !jb->resources) {
-			/* no resources online, we're trying to send to someone
-			 * whose presence we're not subscribed to, or
-			 * someone who is offline.  Let's inform the user */
-			char *msg;
-
-			if(!jb) {
-				msg = g_strdup_printf(_("Unable to send file to %s, invalid JID"), xfer->who);
-			} else if(jb->subscription & JABBER_SUB_TO) {
-				msg = g_strdup_printf(_("Unable to send file to %s, user is not online"), xfer->who);
-			} else {
-				msg = g_strdup_printf(_("Unable to send file to %s, not subscribed to user presence"), xfer->who);
-			}
-
-			purple_notify_error(jsx->js->gc, _("File Send Failed"), _("File Send Failed"), msg);
-			g_free(msg);
-		} else if(!jb->resources->next) {
-			/* only 1 resource online (probably our most common case)
-			 * so no need to ask who to send to */
-			jbr = jb->resources->data;
-
-			do_transfer_send(xfer, jbr->name);
-
-		} else {
-			/* we've got multiple resources, we need to pick one to send to */
-			GList *l;
-			char *msg = g_strdup_printf(_("Please select the resource of %s to which you would like to send a file"), xfer->who);
-			PurpleRequestFields *fields = purple_request_fields_new();
-			PurpleRequestField *field = purple_request_field_choice_new("resource", _("Resource"), 0);
-			PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
-
-			for(l = jb->resources; l; l = l->next)
-			{
-				jbr = l->data;
-
-				purple_request_field_choice_add(field, jbr->name);
-			}
-
-			purple_request_field_group_add_field(group, field);
-
-			purple_request_fields_add_group(fields, group);
-
-			purple_request_fields(jsx->js->gc, _("Select a Resource"), msg, NULL, fields,
-					_("Send File"), G_CALLBACK(resource_select_ok_cb), _("Cancel"), G_CALLBACK(resource_select_cancel_cb),
-					jsx->js->gc->account, xfer->who, NULL, xfer);
-
-			g_free(msg);
-		}
+		do_transfer_send(xfer);
 	} else {
 		xmlnode *si, *feature, *x, *field, *value;
 
@@ -1603,8 +1513,7 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	JabberSIXfer *jsx;
 	PurpleXfer *xfer;
 	xmlnode *file, *feature, *x, *field, *option, *value;
-	const char *stream_id, *filename, *filesize_c, *profile;
-	size_t filesize = 0;
+	const char *stream_id, *profile;
 
 	if(!(profile = xmlnode_get_attrib(si, "profile")) ||
 			strcmp(profile, "http://jabber.org/protocol/si/profile/file-transfer"))
@@ -1615,12 +1524,6 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 
 	if(!(file = xmlnode_get_child(si, "file")))
 		return;
-
-	if(!(filename = xmlnode_get_attrib(file, "name")))
-		return;
-
-	if((filesize_c = xmlnode_get_attrib(file, "size")))
-		filesize = atoi(filesize_c);
 
 	if(!(feature = xmlnode_get_child(si, "feature")))
 		return;
@@ -1674,20 +1577,17 @@ void jabber_si_parse(JabberStream *js, const char *from, JabberIqType type,
 	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
 	g_return_if_fail(xfer != NULL);
 
-	xfer->data = jsx;
+	xfer = jabber_xfer_create_from_xml(js->gc->account, file, from, jsx);
+	if (xfer) {
+		purple_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
+		purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
+		purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
+		purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
 
-	purple_xfer_set_filename(xfer, filename);
-	if(filesize > 0)
-		purple_xfer_set_size(xfer, filesize);
+		js->file_transfers = g_list_append(js->file_transfers, xfer);
 
-	purple_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
-	purple_xfer_set_request_denied_fnc(xfer, jabber_si_xfer_request_denied);
-	purple_xfer_set_cancel_recv_fnc(xfer, jabber_si_xfer_cancel_recv);
-	purple_xfer_set_end_fnc(xfer, jabber_si_xfer_end);
-
-	js->file_transfers = g_list_append(js->file_transfers, xfer);
-
-	purple_xfer_request(xfer);
+		purple_xfer_request(xfer);
+	}
 }
 
 void

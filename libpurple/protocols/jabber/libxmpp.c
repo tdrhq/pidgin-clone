@@ -45,6 +45,8 @@
 #include "caps.h"
 #include "data.h"
 #include "ibb.h"
+#include "xfer.h"
+#include "jingle/jingle.h"
 
 PurplePlugin *jabber_plugin = NULL;
 
@@ -110,8 +112,8 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_roomlist_cancel,			/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
 	NULL,							/* can_receive_file */
-	jabber_si_xfer_send,			/* send_file */
-	jabber_si_new_xfer,				/* new_xfer */
+	jabber_xfer_send,				/* send_file */
+	jabber_xfer_new,				/* new_xfer */
 	jabber_offline_message,			/* offline_message */
 	NULL,							/* whiteboard_prpl_ops */
 	jabber_prpl_send_raw,			/* send_raw */
