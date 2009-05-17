@@ -844,7 +844,8 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			/* if we got a streamhost-error before, we should switch over to
 			 IBB here */
 			if (JINGLE_FT(content)->priv->remote_failed_s5b) {
-				jingle_content_accept_transport(content);
+				/* Note: the new tranport are automatically accepted from
+				 pending before this is called */
 				/* open the file, etc... */
 				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp = 
 					g_fopen(purple_xfer_get_local_filename(xfer), "rb");
