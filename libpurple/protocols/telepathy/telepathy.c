@@ -53,6 +53,7 @@ typedef struct
 	TpConnectionManagerProtocol *protocol;
 	TpConnection *connection;
 	PurpleConnection *gc;
+	PurpleAccount *acct;
 
 	/* Set when calling ListChannels, unset when callback fires.
 	 * This avoids processing a channel twice (via NewChannel signal also). */
@@ -148,11 +149,7 @@ contact_notify_cb (TpContact *contact,
 		   GParamSpec *pspec,
 		   gpointer user_data)
 {
-	purple_debug_info("telepathy", "  - %s (%s)\t\t%s - %s\n",
-			tp_contact_get_alias (contact),
-			tp_contact_get_identifier (contact),
-			tp_contact_get_presence_status (contact),
-			tp_contact_get_presence_message (contact));
+	/* TODO: Update presence and status for user */
 }
 
 
@@ -178,8 +175,21 @@ contacts_ready_cb (TpConnection *connection,
 		for (i = 0; i<n_contacts; ++i)
 		{
 			TpContact *contact = contacts[i];
+			PurpleBuddy *buddy;
+			PurplePlugin *plugin = user_data;
+			telepathy_data *data = plugin->extra;
 
 			purple_debug_info("telepathy", "  Contact ready: %s\n", tp_contact_get_alias(contact));
+
+			buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
+
+			if (buddy == NULL)
+			{
+				purple_debug_info("telepathy", "New user detected!!!\n");
+				buddy = purple_buddy_new(data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
+			}
+
+			purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 
 			g_object_ref(contact);
 
@@ -405,6 +415,8 @@ connection_ready_cb (TpConnection *connection,
 			g_error_free(error);
 			error = NULL;
 
+			purple_debug_info("telepathy", "Falling back to NewChannel signal...\n");
+
 			/* fallback to the old NewChannel method */
 			tp_cli_connection_connect_to_new_channel(connection, new_channel_cb, user_data, NULL, NULL, &error);
 
@@ -621,6 +633,7 @@ telepathy_login(PurpleAccount *acct)
 	int i;
 
 	data->gc = gc;
+	data->acct = acct;
 
 	purple_debug_info("telepathy", "Logging in as %s\n", acct->username);
 
