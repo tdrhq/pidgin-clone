@@ -318,6 +318,37 @@ list_channels_cb (TpConnection *proxy,
 }
 
 static void
+new_channels_cb (TpConnection *proxy,
+                 const GPtrArray *arg_Channels,
+                 gpointer user_data,
+                 GObject *weak_object)
+{
+	int i;
+
+	purple_debug_info("telepathy", "NewChannels:\n");
+
+	for (i = 0; i < arg_Channels->len; i++)
+	{
+		GValueArray *channel = g_ptr_array_index (arg_Channels, i);
+
+		char *object_Path = g_value_get_boxed(g_value_array_get_nth(channel, 0));
+		GHashTable *map = g_value_get_boxed(g_value_array_get_nth(channel, 1));
+
+		const char *channel_Type = tp_asv_get_string(map, TP_IFACE_CHANNEL ".ChannelType");
+
+		gboolean valid;
+
+		guint handle = tp_asv_get_uint32(map, TP_IFACE_CHANNEL ".TargetHandle", &valid);
+		guint handle_Type = tp_asv_get_uint32(map, TP_IFACE_CHANNEL ".TargetHandleType", &valid);
+
+		purple_debug_info("telepathy", "  Path: %s\n", object_Path);
+		purple_debug_info("telepathy", "  Type: %s\n", channel_Type);
+
+		handle_new_channel(user_data, object_Path, channel_Type, handle_Type, handle);
+	}
+}
+
+static void
 new_channel_cb (TpConnection *proxy,
                 const gchar *arg_Object_Path,
                 const gchar *arg_Channel_Type,
@@ -341,7 +372,6 @@ new_channel_cb (TpConnection *proxy,
 	handle_new_channel(user_data, (gchar *)arg_Object_Path, (gchar *)arg_Channel_Type, arg_Handle_Type, arg_Handle);
 }
 
-/* TODO: Use the Connection.Interface.Requests for creating channels */
 static void
 connection_ready_cb (TpConnection *connection,
                      const GError *error,
@@ -367,17 +397,29 @@ connection_ready_cb (TpConnection *connection,
 			purple_debug_info("telepathy", "  %s\n", *ptr);
 		}
 
-		tp_cli_connection_connect_to_new_channel(connection, new_channel_cb, user_data, NULL, NULL, &error);
+		tp_cli_connection_interface_requests_connect_to_new_channels(connection, new_channels_cb, user_data, NULL, NULL, &error);
+
+		if (error != NULL)
+		{
+			purple_debug_error("telepathy", "Error while connecting to NewChannels signal: %s\n", error->message);
+			g_error_free(error);
+			error = NULL;
+
+			/* fallback to the old NewChannel method */
+			tp_cli_connection_connect_to_new_channel(connection, new_channel_cb, user_data, NULL, NULL, &error);
+
+			if (error != NULL)
+			{
+				purple_debug_error("telepathy", "Error while connecting to NewChannel signal: %s\n", error->message);
+				g_error_free(error);
+				error = NULL;
+			}
+		}
 
 		tp_cli_connection_call_list_channels(connection, -1, list_channels_cb, user_data, NULL, NULL);
 
 		data->listing_channels = TRUE;
 
-		if (error != NULL)
-		{
-			purple_debug_error("telepathy", "Error while connecting to NewChannel signal: %s\n", error->message);
-			g_error_free(error);
-		}
 	}
 }
 
