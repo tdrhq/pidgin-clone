@@ -375,6 +375,7 @@ jingle_file_transfer_s5b_connect_callback(JingleContent *content)
 		"in jingle_file_transfer_s5b_connect_callback\n");
 	purple_debug_info("jingle-ft", "xfer->data: %p\n", xfer->data);
 	purple_xfer_start(xfer, jingle_s5b_get_fd(s5b), NULL, 0);
+	g_object_unref(transport);
 }
 
 static void
@@ -770,11 +771,10 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 						jingle_file_transfer_s5b_connect_callback, content);
 					jingle_s5b_set_error_callback(JINGLE_S5B(transport),
 						jingle_file_transfer_s5b_error_callback, content);
-				}
-				
-				g_object_unref(transport);
+				}	
 			}
 
+			g_object_unref(transport);
 			g_object_unref(session);
 			g_free(who);
 			break;
@@ -827,6 +827,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				}
 			}
 			
+			g_object_unref(transport);
 			g_object_unref(session);
 			break;
 		}
@@ -867,6 +868,8 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				jingle_s5b_handle_transport_accept(s5b, session, xmltransport);
 			}
 				
+			g_object_unref(session);
+			g_object_unref(transport);
 			break;
 		}
 		case JINGLE_TRANSPORT_REPLACE: {
