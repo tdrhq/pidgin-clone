@@ -53,6 +53,11 @@ typedef struct
 	TpConnectionManagerProtocol *protocol;
 	TpConnection *connection;
 	PurpleConnection *gc;
+
+	/* Set when calling ListChannels, unset when callback fires.
+	 * This avoids processing a channel twice (via NewChannel signal also). */
+	gboolean listing_channels; 
+
 } telepathy_data;
 
 typedef struct
@@ -300,6 +305,12 @@ list_channels_cb (TpConnection *proxy,
 	}
 	else
 	{
+		PurplePlugin *plugin = user_data;
+		telepathy_data *data = plugin->extra;
+		
+		/* future channels will be processed in NewChannel signal */
+		data->listing_channels = FALSE;
+
 		purple_debug_info("telepathy", "Channels:\n");
 
 		g_ptr_array_foreach((GPtrArray *)out_Channel_Info, unpack_channel_struct, user_data);
@@ -316,6 +327,13 @@ new_channel_cb (TpConnection *proxy,
                 gpointer user_data,
                 GObject *weak_object)
 {
+	PurplePlugin *plugin = user_data;
+	telepathy_data *data = plugin->extra;
+
+	/* this channel will also be processed in NewChannel, so quit */
+	if (data->listing_channels)
+		return;
+
 	purple_debug_info("telepathy", "NewChannel:\n");
 	purple_debug_info("telepathy", "  %s\n", arg_Object_Path);
 	purple_debug_info("telepathy", "  %s\n", arg_Channel_Type);
@@ -323,6 +341,7 @@ new_channel_cb (TpConnection *proxy,
 	handle_new_channel(user_data, (gchar *)arg_Object_Path, (gchar *)arg_Channel_Type, arg_Handle_Type, arg_Handle);
 }
 
+/* TODO: Use the Connection.Interface.Requests for creating channels */
 static void
 connection_ready_cb (TpConnection *connection,
                      const GError *error,
@@ -334,6 +353,8 @@ connection_ready_cb (TpConnection *connection,
 	}
 	else
 	{
+		PurplePlugin *plugin = user_data;
+		telepathy_data *data = plugin->extra;
 		char **interfaces, **ptr;
 		GError *error = NULL;
 
@@ -346,9 +367,11 @@ connection_ready_cb (TpConnection *connection,
 			purple_debug_info("telepathy", "  %s\n", *ptr);
 		}
 
+		tp_cli_connection_connect_to_new_channel(connection, new_channel_cb, user_data, NULL, NULL, &error);
+
 		tp_cli_connection_call_list_channels(connection, -1, list_channels_cb, user_data, NULL, NULL);
 
-		tp_cli_connection_connect_to_new_channel(connection, new_channel_cb, user_data, NULL, NULL, &error);
+		data->listing_channels = TRUE;
 
 		if (error != NULL)
 		{
