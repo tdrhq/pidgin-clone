@@ -22,6 +22,7 @@
 
 #include <telepathy-glib/connection-manager.h>
 #include <telepathy-glib/channel.h>
+#include <telepathy-glib/contact.h>
 #include <telepathy-glib/dbus.h>
 #include <telepathy-glib/interfaces.h>
 #include <telepathy-glib/util.h>
@@ -138,6 +139,53 @@ telepathy_status_types(PurpleAccount *acct)
 }
 
 static void
+contact_notify_cb (TpContact *contact,
+		   GParamSpec *pspec,
+		   gpointer user_data)
+{
+	purple_debug_info("telepathy", "  - %s (%s)\t\t%s - %s\n",
+			tp_contact_get_alias (contact),
+			tp_contact_get_identifier (contact),
+			tp_contact_get_presence_status (contact),
+			tp_contact_get_presence_message (contact));
+}
+
+
+static void
+contacts_ready_cb (TpConnection *connection,
+                   guint n_contacts,
+                   TpContact * const *contacts,
+                   guint n_failed,
+                   const TpHandle *failed,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Contacts ready error: %s\n", error->message);
+	}
+	else
+	{
+		int i;
+
+		purple_debug_info("telepathy", "Contacts:\n");
+		for (i = 0; i<n_contacts; ++i)
+		{
+			TpContact *contact = contacts[i];
+
+			purple_debug_info("telepathy", "  Contact ready: %s\n", tp_contact_get_alias(contact));
+
+			g_object_ref(contact);
+
+			g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), user_data);
+
+			contact_notify_cb (contact, NULL, user_data);
+		}
+	}
+}
+
+static void
 channel_ready_cb (TpChannel *channel,
                   const GError *error,
                   gpointer user_data)
@@ -154,10 +202,17 @@ channel_ready_cb (TpChannel *channel,
 
 		if (handle_Type == TP_IFACE_QUARK_CHANNEL_TYPE_CONTACT_LIST)
 		{
+			PurplePlugin *plugin = user_data;
+			telepathy_data *data = plugin->extra;
+			TpConnection *connection = data->connection;
 			const TpIntSet *members;
 			TpIntSetIter iter;
+			GArray *handles;
 
-			purple_debug_info("telepathy", "Handles for %s\n", tp_channel_get_identifier(channel));
+			static const TpContactFeature features[] = {
+				TP_CONTACT_FEATURE_ALIAS,
+				TP_CONTACT_FEATURE_PRESENCE
+			};
 
 			members = tp_channel_group_get_members(channel);
 
@@ -170,11 +225,19 @@ channel_ready_cb (TpChannel *channel,
 			iter.set = members;
 			iter.element = (guint)(-1);
 
-			while (tp_intset_iter_next(&iter))
-			{
-				purple_debug_info("telepathy", "  %u\n", iter.element);
-			}
+			handles = tp_intset_to_array (members);
 
+			/* we want to create a TpContact for each member of this channel */
+			if (handles->len)
+			{
+				tp_connection_get_contacts_by_handle (connection,
+						handles->len, (const TpHandle *) handles->data,
+						G_N_ELEMENTS (features), features,
+						contacts_ready_cb,
+						user_data, NULL, NULL);
+
+			}
+			g_array_free (handles, TRUE);
 		}
 	}
 }
