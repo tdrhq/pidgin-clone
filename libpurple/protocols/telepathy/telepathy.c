@@ -56,8 +56,12 @@ typedef struct
 	PurpleAccount *acct;
 
 	/* Set when calling ListChannels, unset when callback fires.
-	 * This avoids processing a channel twice (via NewChannel signal also). */
+	 * This avoids processing a channel twice (via NewChannel signal also).
+	 */
 	gboolean listing_channels; 
+
+	/* This will hold pointers to TpChannel for buddies that have an active conversation */
+	GHashTable *text_Channels;
 
 } telepathy_data;
 
@@ -706,16 +710,108 @@ telepathy_close(PurpleConnection *gc)
 }
 
 static void
+ensure_channel_cb (TpConnection *proxy,
+                   gboolean out_Yours,
+                   const gchar *out_Channel,
+                   GHashTable *out_Properties,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "EnsureChannel error: %s\n", error->message);
+	}
+	else
+	{
+		PurplePlugin *plugin = user_data;
+		telepathy_data *data = plugin->extra;
+		GError *error = NULL;
+		TpChannel *channel;
+		gchar *who = (gchar *)tp_asv_get_string(out_Properties, TP_IFACE_CHANNEL ".TargetID");
+
+		channel = tp_channel_new(proxy, out_Channel, NULL, TP_HANDLE_TYPE_NONE, 0, &error);
+
+		if (error != NULL)
+		{
+			purple_debug_error("telepathy", "Error creating channel proxy: %s\n", error->message);
+			return;
+		}
+
+		purple_debug_info("telepathy", "Saving TpChannel proxy for %s\n", who);
+
+		g_hash_table_insert(data->text_Channels, g_strdup(who), channel);
+	}
+}
+
+static void
+send_cb (TpChannel *proxy,
+         const GError *error,
+         gpointer user_data,
+         GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Send error: %s\n", error->message);
+	}
+	else
+	{
+		purple_debug_info("telepathy", "Send succeeded!\n");
+	}
+}
+
+static int
+telepathy_send_im (PurpleConnection *gc,
+                   const char *who,
+                   const char *message,
+                   PurpleMessageFlags flags)
+{
+	TpChannel *channel;
+	PurplePlugin* plugin = purple_connection_get_prpl(gc);
+	telepathy_data *data = plugin->extra;
+
+	purple_debug_info("telepathy", "Sending \"%s\" to %s\n", message, who);
+
+	channel = g_hash_table_lookup(data->text_Channels, who);
+
+	/* if this is the first message, we need to create the channel */
+	/* TODO: Find a way to send the first message also */
+	if (channel == NULL)
+	{
+		GHashTable *map = tp_asv_new (
+			TP_IFACE_CHANNEL ".ChannelType", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
+			TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_CONTACT,
+			TP_IFACE_CHANNEL ".TargetID", G_TYPE_STRING, who,
+			NULL);
+
+		purple_debug_info("telepathy", "Creating text channel for %s\n", who);
+
+		/* TODO: Fallback to RequestChannel if CM doesn't support the Requests interface */
+		tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1, map, ensure_channel_cb, plugin, NULL, NULL);
+	}
+	else
+	{
+		/* The channel already exists, send the message */
+		tp_cli_channel_type_text_call_send(channel, -1, TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL, message, send_cb, plugin, NULL, NULL);
+	}
+
+	return 1;
+}
+
+static void
 telepathy_destroy(PurplePlugin *plugin)
 {
 	purple_debug_info("telepathy", "Shutting down\n");
 
 	/* free everything that we created */
 	if (g_strcmp0(plugin->info->id, "prpl-telepathy") != 0) {
+		telepathy_data *data;
 		g_free(plugin->info->extra_info);
 		g_free(plugin->info);
-		g_object_unref(((telepathy_data*)plugin->extra)->cm);
-		g_free(plugin->extra);
+		data = plugin->extra;
+		g_object_unref(data->cm);
+		g_hash_table_destroy(data->text_Channels);
+		g_free(data);
 	}
 }
 
@@ -735,7 +831,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	NULL,         /* chat_info_defaults */
 	telepathy_login,                      /* login */
 	telepathy_close,                      /* close */
-	NULL,                    /* send_im */
+	telepathy_send_im,                    /* send_im */
 	NULL,                   /* set_info */
 	NULL,                /* send_typing */
 	NULL,                   /* get_info */
@@ -1041,6 +1137,7 @@ export_prpl(TpConnectionManager *cm,
 	data->connection = NULL;
 	data->gc = NULL;
 	g_object_ref(data->cm);
+	data->text_Channels = g_hash_table_new(g_str_hash, g_str_equal);
 
 	/* correct the plugin id and name, everything else can remain the same */
 	plugin->info->id = g_strdup_printf("%s-%s-%s", TELEPATHY_ID, tp_connection_manager_get_name(cm), protocol->name);
