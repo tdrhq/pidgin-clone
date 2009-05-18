@@ -429,6 +429,7 @@ jingle_file_transfer_s5b_connect_failed_callback(JingleContent *content)
 			transport_replace = 
 				jingle_session_to_packet(session, JINGLE_TRANSPORT_REPLACE);
 			jabber_iq_send(transport_replace);
+			g_object_unref(new_transport);
 		} else {
 			/* the buddy doesn't support IBB, terminate it */
 			JabberStream *js = jingle_session_get_js(session);
