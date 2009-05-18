@@ -24,7 +24,7 @@
 <p>To setup the PPA, copy-and-paste these commands into a <a href="https://help.ubuntu.com/community/UsingTheTerminal#Starting%20a%20Terminal">terminal</a>:<br /></p>
 
 <p class='code'>sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com \
-&nbsp;&nbsp;&nbsp;&nbsp;67265eb522bdd6b1c69e66ed7fb8bee0a1f19asdf6a8</p>
+&nbsp;&nbsp;&nbsp;&nbsp;67265eb522bdd6b1c69e66ed7fb8bee0a1f196a8</p>
 <p class='code'>. /etc/lsb-release</p>
 <p class='code'>echo deb http://ppa.launchpad.net/pidgin-developers/ppa/ubuntu \
 &nbsp;&nbsp;&nbsp;&nbsp;$DISTRIB_CODENAME main | \<br />
