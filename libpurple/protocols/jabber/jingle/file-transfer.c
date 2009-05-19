@@ -607,11 +607,17 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 static void
 jingle_file_transfer_cancel_send(PurpleXfer *xfer)
 {
-	JingleSession *session = 
-		jingle_content_get_session((JingleContent *)xfer->data);
-	
+	JingleContent *content = (JingleContent *) xfer->data;
+	JingleSession *session = jingle_content_get_session(content);
+	JingleTransport *transport = jingle_content_get_transport(content);
+
+	if (JINGLE_IS_S5B(transport)) {
+		jingle_s5b_stop_connection_attempts(JINGLE_S5B(transport));
+	}
+
 	purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_send\n");
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
+	g_object_unref(transport);
 	g_object_unref(session);
 	g_object_unref(session);
 }
@@ -619,11 +625,17 @@ jingle_file_transfer_cancel_send(PurpleXfer *xfer)
 static void
 jingle_file_transfer_cancel_recv(PurpleXfer *xfer)
 {
-	JingleSession *session = 
-		jingle_content_get_session((JingleContent *)xfer->data);
+	JingleContent *content = (JingleContent *) xfer->data;
+	JingleSession *session = jingle_content_get_session(content);
+	JingleTransport *transport = jingle_content_get_transport(content);
+
+	if (JINGLE_IS_S5B(transport)) {
+		jingle_s5b_stop_connection_attempts(JINGLE_S5B(transport));
+	}
 
 	purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_recv\n");
 	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
+	g_object_unref(transport);
 	g_object_unref(session);
 	g_object_unref(session);
 }

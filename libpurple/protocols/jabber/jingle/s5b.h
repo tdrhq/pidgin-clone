@@ -95,6 +95,8 @@ void jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session,
 
 gboolean jingle_s5b_has_remaining_remote_streamhosts(const JingleS5B *s5b);
 
+void jingle_s5b_stop_connection_attempts(JingleS5B *s5b);
+
 #ifdef __cplusplus
 }
 #endif

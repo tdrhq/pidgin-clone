@@ -490,13 +490,18 @@ jingle_s5b_remote_is_connected(const JingleS5B *s5b)
 	return s5b->priv->is_remote_connected;
 }
 
-static void
+void
 jingle_s5b_stop_connection_attempts(JingleS5B *s5b)
 {
 	purple_debug_info("jingle-s5b", "stop connection attempts\n");
 	
 	s5b->priv->remaining_streamhosts = NULL;
-	
+
+	if (s5b->priv->listen_data) {
+		purple_network_listen_cancel(s5b->priv->listen_data);
+		s5b->priv->listen_data;
+	}
+
 	if (s5b->priv->connect_data) {
 		purple_proxy_connect_cancel(s5b->priv->connect_data);
 		s5b->priv->connect_data = NULL;
