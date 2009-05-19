@@ -275,14 +275,15 @@ jingle_ibb_create_session(JingleIBB *ibb, JingleContent *content,
 	purple_debug_info("jingle-ibb", "creating IBB session with sid: %s,\n"
 		" who: %s\n", sid, who);
 
-	/* we will set the IBB session to "open" immediatly, since the Jingle
-	 negotiation defines the "open" state */
-	jabber_ibb_session_set_state(session, JABBER_IBB_SESSION_OPENED);
 	/* if the block size attribute is set, it means we got it from an incoming
 	 request, then set that */
 	if (ibb->priv->block_size) {
 		jabber_ibb_session_set_block_size(session, ibb->priv->block_size);
 	}
+	/* we will set the IBB session to "open" immediatly, since the Jingle
+	 negotiation defines the "open" state */
+	jabber_ibb_session_set_state(session, JABBER_IBB_SESSION_OPENED);
+
 	/* set callbacks... */
 	jabber_ibb_session_set_data_sent_callback(session, 
 		jingle_ibb_data_sent_callback);
