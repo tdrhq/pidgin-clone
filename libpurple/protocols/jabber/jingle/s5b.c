@@ -499,7 +499,7 @@ jingle_s5b_stop_connection_attempts(JingleS5B *s5b)
 
 	if (s5b->priv->listen_data) {
 		purple_network_listen_cancel(s5b->priv->listen_data);
-		s5b->priv->listen_data;
+		s5b->priv->listen_data = NULL;
 	}
 
 	if (s5b->priv->connect_data) {
