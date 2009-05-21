@@ -70,9 +70,9 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 </div>
 
 <!-- This will pull from somewhere else at some point -->
-<p class="more" id="lowblurb">
-ICQ is reporting errors in some locations which are generally fixed by upgrading to 2.5.5.
-</p>
+<!-- p class="more" id="lowblurb">
+Spontaneous news goes here!
+</p -->
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
