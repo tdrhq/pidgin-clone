@@ -313,10 +313,10 @@ $vulnerabilities = array(
 		"date"         => "2 May 2009",
 		"cve"          => "CVE-2009-1373",
 		"summary"      => "Buffer overflow is possible when initiating file transfer to a malicious buddy over XMPP",
-		"description"  => "",
-		"fix"          => "",
+		"description"  => "The XMPP SOCKS5 bytestream server was not correctly checking the bounds of a buffer when initiating an outgoing file transfer.",
+		"fix"          => "The affected function has been patched to fix the vulnerability.",
 		"fixedversion" => "2.5.6",
-		"discoveredby" => "Vercode"
+		"discoveredby" => "Veracode"
 	),
 	array(
 		"title"        => "QQ remote DoS",
