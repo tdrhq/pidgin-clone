@@ -323,8 +323,8 @@ $vulnerabilities = array(
 		"date"         => "3 May 2009",
 		"cve"          => "CVE-2009-1374",
 		"summary"      => "Possible remote denial of service when receiving a QQ packet",
-		"description"  => "decrypt_out() always writes 8 bytes past the passed in buffer, which is always allocated on the stack. We don't believe this can cause anything outside of a crash.",
-		"fix"          => "decrypt_out() is fixed to not write past the buffer.",
+		"description"  => "decrypt_out() always writes 8 bytes past the supplied buffer, which is always allocated on the stack. We don't believe this can cause anything outside of a crash.",
+		"fix"          => "decrypt_out() is fixed to not write past the end of the buffer.",
 		"fixedversion" => "2.5.6",
 		"discoveredby" => "Ka-Hing Cheung"
 	),
@@ -333,8 +333,8 @@ $vulnerabilities = array(
 		"date"         => "20 Mar 2009",
 		"cve"          => "CVE-2009-1375",
 		"summary"      => "Remote denial of service that affects several protocols",
-		"description"  => "A buffer maintained by PurpleCircBuffer may be corrupted if it's exactly full and then more bytes are added to it, leading to a crash. This structure is used by XMPP and Sametime protocol plugins",
-		"fix"          => "PurpleCircBuffer now does bounds check correctly",
+		"description"  => "A buffer maintained by PurpleCircBuffer may be corrupted if it's exactly full and then more bytes are added to it, leading to a crash. This structure is used by the XMPP and Sametime protocol plugins.",
+		"fix"          => "PurpleCircBuffer now correctly checks bounds.",
 		"fixedversion" => "2.5.6",
 		"discoveredby" => "Josef Andrysek"
 	),
@@ -343,8 +343,8 @@ $vulnerabilities = array(
 		"date"         => "2 May 2009",
 		"cve"          => "CVE-2009-1376",
 		"summary"      => "Malformed SLP messages can cause a buffer overflow",
-		"description"  => "The previous fix to <a href=\"/news/security/?id=25\">CVE-2008-2927</a> was deemed incomplete. The size check improperly casted an uint64 to size_t which can cause an integer overflow, rendering the check useless.",
-		"fix"          => "Proper variable type is now used when doing size comparison. Additionally the malformed message is now properly discarded.",
+		"description"  => "The previous fix to <a href=\"/news/security/?id=25\">CVE-2008-2927</a> was deemed incomplete. The size check improperly cast an uint64 to size_t which can cause an integer overflow, rendering the check useless.",
+		"fix"          => "The proper variable type is now used when doing size comparison. Additionally, the malformed message is now properly discarded.",
 		"fixedversion" => "2.5.6",
 		"discoveredby" => ""
 	)
