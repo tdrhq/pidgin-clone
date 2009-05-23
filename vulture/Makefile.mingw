@@ -1,0 +1,102 @@
+#
+# Makefile.mingw
+#
+# Description: MinGW Makefile for Vulture. Adapted from Pidgin's
+# Makefile.
+#
+
+PIDGIN_TREE_TOP := ..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
+
+NEEDED_DLLS = $(GTKSPELL_TOP)/gtkspell/libgtkspell.dll
+
+##
+## VARIABLE DEFINITIONS
+##
+VULTURE_TARGET := vulture
+EXE_NAME := $(EXE_TARGET).exe
+
+WINAPP := -mwindows
+
+LDFLAGS := $(WINAPP)
+
+DEFINES += -DUNICODE \
+			-D_UNICODE \
+			-D_WIN32_WINNT=0x0400 \
+			-D_WIN32_WINDOWS=0x0400 \
+			-DWINVER=0x0400 \
+			-D_WIN32_IE=0x0500
+
+##
+## INCLUDE PATHS
+##
+PURPLE_INCLUDE_PATHS =	\
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include
+
+INCLUDE_PATHS +=	\
+			$(PURPLE_INCLUDE_PATHS) \
+			-I$(PIDGIN_TOP) \
+			-I$(PIDGIN_TOP)/win32
+
+LIB_PATHS +=		-L$(GTK_TOP)/lib \
+			-L$(PURPLE_TOP) \
+			-L$(PIDGIN_TOP)
+
+##
+##  SOURCES, OBJECTS
+##
+VULTURE_C_SRC =	\
+			vulture.c
+
+# VULTURE_RC_SRC = win32/pidgin_dll_rc.rc
+VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)
+
+##
+## LIBRARIES
+##
+
+PIDGIN_LIBS =	\
+		-lglib-2.0 \
+		-lpurple \
+		-lwinmm
+
+#		-lintl \		
+#		-lgobject-2.0 \
+#		-lgthread-2.0 \
+
+include $(PIDGIN_COMMON_RULES)
+
+##
+## TARGET DEFINITIONS
+##
+.PHONY: all install install_shallow clean
+
+all: $(VULTURE_TARGET).exe
+
+install_shallow: $(VULTURE_INSTALL_DIR) $(VULTURE_TARGET).exe
+	cp $(VULTURE_TARGET).exe $(VULTURE_INSTALL_DIR)
+	cp $(NEEDED_DLLS) $(VULTURE_INSTALL_DIR)
+
+install: install_shallow all
+
+vulture.rc: vulture.rc.in $(PIDGIN_TREE_TOP)/VERSION
+	sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
+		-e 's/@ORIGINAL_FILENAME@/$(EXE_NAME)/' \
+	    $@.in > $@
+
+$(VULTURE_TARGET).exe: $(PURPLE_DLL).a $(VULTURE_OBJECTS)
+	$(CC) $(LDFLAGS) $(VULTURE_OBJECTS) $(LIB_PATHS) $(VULTURE_LIBS) -o $(VULTURE_TARGET).exe
+
+##
+## CLEAN RULES
+##
+clean:
+	rm -f $(VULTURE_OBJECTS) $(VULTURE_RC_SRC)
+	rm -f $(VULTURE_TARGET).exe
+
+include $(PIDGIN_COMMON_TARGETS)

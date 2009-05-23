@@ -26,6 +26,7 @@ GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
 
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
+VULTURE_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
 PURPLE_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
 PIDGIN_INSTALL_PERLMOD_DIR := $(PIDGIN_INSTALL_DIR)/perlmod
 PIDGIN_INSTALL_PLUGINS_DIR := $(PIDGIN_INSTALL_DIR)/plugins
@@ -41,6 +42,7 @@ PIDGIN_TOP := $(PIDGIN_TREE_TOP)/pidgin
 PIDGIN_IDLETRACK_TOP := $(PIDGIN_TOP)/win32/IdleTracker
 PIDGIN_PIXMAPS_TOP := $(PIDGIN_TOP)/pixmaps
 PIDGIN_PLUGINS_TOP := $(PIDGIN_TOP)/plugins
+VULTURE_TOP := $(PIDGIN_TREE_TOP)/vulture
 PURPLE_PO_TOP := $(PIDGIN_TREE_TOP)/po
 PURPLE_PROTOS_TOP := $(PURPLE_TOP)/protocols
 
@@ -55,6 +57,7 @@ PURPLE_PERL_DLL := $(PURPLE_PERL_TOP)/perl.dll
 PIDGIN_DLL := $(PIDGIN_TOP)/pidgin.dll
 PIDGIN_EXE := $(PIDGIN_TOP)/pidgin.exe
 PIDGIN_PORTABLE_EXE := $(PIDGIN_TOP)/pidgin-portable.exe
+VULTURE_EXE := $(VULTURE_TOP)/vulture.exe
 
 GCCWARNINGS ?= -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
 

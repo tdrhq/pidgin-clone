@@ -76,6 +76,7 @@ EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
 all: $(PIDGIN_CONFIG_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(VULTURE_TOP) -f $(MINGW_MAKEFILE)
 ifndef DISABLE_NLS
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE)
 endif
@@ -83,6 +84,7 @@ endif
 install: all $(PIDGIN_INSTALL_DIR)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(VULTURE_TOP) -f $(MINGW_MAKEFILE) install
 ifndef DISABLE_NLS
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) install
 endif
@@ -122,6 +124,7 @@ docs: Doxyfile.mingw
 
 clean:
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(VULTURE_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) clean
