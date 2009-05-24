@@ -704,15 +704,6 @@ static xmlSAXHandler xmlnode_parser_libxml = {
 	xmlnode_parser_structural_error_libxml, /* serror */
 };
 
-static void
-libpurple_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
-{
-	purple_debug_error("xmlnode", "XML parser error: "
-					   "Domain %i, code %i, level %i: %s\n",
-					   error->domain, error->code, error->level,
-					   (error->message ? error->message : "(null)"));
-}
-
 xmlnode *
 xmlnode_from_str(const char *str, gssize size)
 {
@@ -724,8 +715,6 @@ xmlnode_from_str(const char *str, gssize size)
 
 	real_size = size < 0 ? strlen(str) : size;
 	xpd = g_new0(struct _xmlnode_parser_data, 1);
-
-	xmlSetStructuredErrorFunc(NULL, libpurple_parser_structured_error_handler);
 
 	if (xmlSAXUserParseMemory(&xmlnode_parser_libxml, xpd, str, real_size) < 0) {
 		while(xpd->current && xpd->current->parent)
