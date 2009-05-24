@@ -268,3 +268,13 @@ GType gtk_webview_get_type ()
 	}
 	return mview_type;
 }
+
+/* smiley code, this doesn't really have anything to do with webview, and I hope to move this out of here. */
+
+/**
+ * Smilize a markup text 
+ */
+char* pidgin_smileize_markup (PurpleAccount* char* markup)
+{
+	
+}
