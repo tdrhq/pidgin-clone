@@ -577,7 +577,7 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 	const gchar *who = jingle_session_get_remote_jid(session);
 	JabberID *dstjid = jabber_id_new(who);
 	JabberStream *js = jingle_session_get_js(session);
-	char buffer[256];
+	char buffer[42]; /* 40 for DST.ADDR + 2 bytes for port number*/
 	int len;
 	char *dstaddr, *hash;
 	const char *host;
@@ -605,8 +605,11 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 		s5b->priv->rxlen += len;
 		return;
 	} else if(s5b->priv->rxqueue[0] != 0x05 || s5b->priv->rxqueue[1] != 0x01 ||
-			s5b->priv->rxqueue[3] != 0x03) {
-		purple_debug_info("jingle-s5b", "invalid socks5 stuff\n");
+			s5b->priv->rxqueue[3] != 0x03 || s5b->priv->rxqueue[4] != 40) {
+		purple_debug_info("jingle-s5b", 
+			"Invalid socks5 conn req. header[0x%x,0x%x,0x%x,0x%x,0x%x]\n",
+			s5b->priv->rxqueue[0], s5b->priv->rxqueue[1], s5b->priv->rxqueue[2],
+			s5b->priv->rxqueue[3], s5b->priv->rxqueue[4]);
 		purple_input_remove(s5b->priv->watcher);
 		s5b->priv->watcher = 0;
 		close(source);
@@ -615,9 +618,13 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 		g_free(data);
 		return;
 	} else if(s5b->priv->rxlen - 5 <  s5b->priv->rxqueue[4] + 2) {
-		purple_debug_info("jingle-s5b", "reading umpteen more bytes\n");
-		len = read(source, buffer, 
-			s5b->priv->rxqueue[4] + 5 + 2 - s5b->priv->rxlen);
+		purple_debug_info("jingle-s5b", 
+			"reading %u bytes for DST.ADDR + port num (trying to read %u now)\n",
+			s5b->priv->rxqueue[4] + 2,
+			s5b->priv->rxqueue[4] + 2 - (s5b->priv->rxlen - 5));
+		len = read(source, buffer,
+			s5b->priv->rxqueue[4] + 2 - (s5b->priv->rxlen - 5));
+
 		if(len < 0 && errno == EAGAIN)
 			return;
 		else if(len <= 0) {
@@ -635,6 +642,7 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 		s5b->priv->rxlen += len;
 	}
 
+	/* Have we not read all of DST.ADDR and the following 2-byte port number? */
 	if(s5b->priv->rxlen - 5 < s5b->priv->rxqueue[4] + 2)
 		return;
 
@@ -652,10 +660,19 @@ jingle_s5b_send_read_again_cb(gpointer data, gint source,
 	purple_debug_info("jingle-s5b", "dstaddr: %s\n", dstaddr);
 	purple_debug_info("jingle-s5b", "expecting to receive hash %s\n", hash);
 	
-	if(s5b->priv->rxqueue[4] != 40 || strncmp(hash, s5b->priv->rxqueue+5, 40) ||
+	if (strncmp(hash, s5b->priv->rxqueue + 5, 40) ||
 			s5b->priv->rxqueue[45] != 0x00 || s5b->priv->rxqueue[46] != 0x00) {
-		purple_debug_error("jingle-s5b", 
-			"someone connected with the wrong info!\n");
+		if (s5b->priv->rxqueue[45] != 0x00 || s5b->priv->rxqueue[46] != 0x00)
+			purple_debug_error("jingle-s5b", 
+				"Got SOCKS5 BS conn with the wrong DST.PORT "
+				" (must be 0 - got[0x%x,0x%x]).\n",
+			s5b->priv->rxqueue[45], s5b->priv->rxqueue[46]);
+		else
+			purple_debug_error("jingle-s5b", 
+				"Got SOCKS5 BS conn with the wrong DST.ADDR"
+				" (expected '%s' - got '%.40s').\n",
+			hash, s5b->priv->rxqueue + 5);
+
 		close(source);
 		if (s5b->priv->error_cb && s5b->priv->error_content)
 			s5b->priv->error_cb(s5b->priv->error_content);
@@ -726,11 +743,13 @@ jingle_s5b_send_read_response_cb(gpointer data, gint source,
 	purple_input_remove(s5b->priv->watcher);
 	s5b->priv->watcher = 0;
 
+	/* If we sent a "Success", wait for a response, otherwise give up and cancel */
 	if (s5b->priv->rxqueue[1] == 0x00) {
 		s5b->priv->watcher = purple_input_add(source, PURPLE_INPUT_READ,
 			jingle_s5b_send_read_again_cb, data);
 		g_free(s5b->priv->rxqueue);
 		s5b->priv->rxqueue = NULL;
+		s5b->priv->rxlen = 0;
 	} else {
 		close(source);
 		if (s5b->priv->error_cb && s5b->priv->error_content)
@@ -750,7 +769,8 @@ jingle_s5b_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	purple_debug_info("jingle-s5b", "in jingle_s5b_send_read_cb\n");
 	
 	s5b->priv->local_fd = source;
-	
+
+	/* Try to read the SOCKS5 header */
 	if(s5b->priv->rxlen < 2) {
 		purple_debug_info("jingle-s5b", "reading those first two bytes\n");
 		len = read(source, buffer, 2 - s5b->priv->rxlen);
@@ -771,8 +791,11 @@ jingle_s5b_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		s5b->priv->rxlen += len;
 		return;
 	} else if(s5b->priv->rxlen - 2 < s5b->priv->rxqueue[1]) {
-		purple_debug_info("jingle-s5b", "reading the next umpteen bytes\n");
-		len = read(source, buffer, s5b->priv->rxqueue[1] + 2 - s5b->priv->rxlen);
+		purple_debug_info("jingle-s5b", 
+			"reading %u bytes for auth methods (trying to read %u now)\n",
+			s5b->priv->rxqueue[1], s5b->priv->rxqueue[1] - (s5b->priv->rxlen - 2));
+		len = read(source, buffer, s5b->priv->rxqueue[1] - (s5b->priv->rxlen - 2));
+
 		if(len < 0 && errno == EAGAIN)
 			return;
 		else if(len <= 0) {
@@ -790,7 +813,8 @@ jingle_s5b_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		s5b->priv->rxlen += len;
 	}
 
-	if(s5b->priv->rxlen -2 < s5b->priv->rxqueue[1])
+	/* Have we not read all the auth. method bytes? */
+	if(s5b->priv->rxlen - 2 < s5b->priv->rxqueue[1])
 		return;
 
 	purple_input_remove(s5b->priv->watcher);
