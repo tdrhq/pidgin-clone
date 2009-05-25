@@ -1,7 +1,7 @@
 /*
  * Vulture - Win32 libpurple client
  *
- * vulture.c: Entry point and utility functions.
+ * blist.h: Buddy list.
  *
  * Copyright (C) 2009, Gregor Dick <gdick@soc.pidgin.im>
  *
@@ -20,40 +20,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#ifndef _VULTURE_BLIST_H_
+#define _VULTURE_BLIST_H_
 
-#include <windows.h>
+int VultureCreateBuddyList(int iCmdShow);
 
-#include "vulture.h"
-#include "blist.h"
-
-
-HINSTANCE g_hInstance;
-const TCHAR cg_szAppName[] = TEXT("Vulture");
-
-
-/**
- * Entry point.
- *
- * @param	hinst		Instance handle.
- * @param	hinstPrev	Always NULL.
- * @param	szCmdLine	Complete command-line, in ANSI.
- * @param	iCmdShow	Initial window state. Cf. ShowWindow.
- *
- * @return Exit code.
- */
-int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iCmdShow)
-{
-	MSG msg;
-
-	g_hInstance = hinst;
-
-	VultureCreateBuddyList(iCmdShow);
-
-	while(GetMessage(&msg, NULL, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	return msg.wParam;
-}
+#endif

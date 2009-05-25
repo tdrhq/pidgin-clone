@@ -51,7 +51,8 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 VULTURE_C_SRC =	\
-			vulture.c
+			vulture.c \
+			blist.c
 
 # VULTURE_RC_SRC = win32/pidgin_dll_rc.rc
 VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)
@@ -60,14 +61,10 @@ VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)
 ## LIBRARIES
 ##
 
-PIDGIN_LIBS =	\
+VULTURE_LIBS =	\
 		-lglib-2.0 \
 		-lpurple \
 		-lwinmm
-
-#		-lintl \		
-#		-lgobject-2.0 \
-#		-lgthread-2.0 \
 
 include $(PIDGIN_COMMON_RULES)
 
