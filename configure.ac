@@ -1097,6 +1097,7 @@ for i in $STATIC_PRPLS ; do
 	fi
 	case $i in
 		bonjour)	static_bonjour=yes ;;
+		facebook)	static_facebook=yes ;;
 		gg)			static_gg=yes ;;
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
@@ -1118,6 +1119,7 @@ for i in $STATIC_PRPLS ; do
 	esac
 done
 AM_CONDITIONAL(STATIC_BONJOUR, test "x$static_bonjour" = "xyes")
+AM_CONDITIONAL(STATIC_FACEBOOK, test "x$static_facebook" = "xyes")
 AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
@@ -1137,7 +1139,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace novell oscar qq sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour facebook gg irc jabber msn myspace novell oscar qq sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -1158,6 +1160,7 @@ AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
 	case $i in
 		bonjour)	dynamic_bonjour=yes ;;
+		facebook)	dynamic_facebook=yes ;;
 		gg)			dynamic_gg=yes ;;
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
@@ -2497,6 +2500,7 @@ AC_OUTPUT([Makefile
 		   libpurple/Makefile
 		   libpurple/protocols/Makefile
 		   libpurple/protocols/bonjour/Makefile
+		   libpurple/protocols/facebook/Makefile
 		   libpurple/protocols/gg/Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
@@ -2583,4 +2587,5 @@ fi
 echo
 echo configure complete, now type \'make\'
 echo
+
 
