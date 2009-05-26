@@ -110,6 +110,7 @@ char *replace_message_tokens(char *text, gsize len, PurpleConversation *conv, co
 			replace = purple_utf8_strftime(format ? format : "%X", NULL);
 			g_free(format);
 		} else if (!strncmp(cur, "%userIconPath%", strlen("%userIconPath%"))) {
+			char *temp; 
 			if (flags & PURPLE_MESSAGE_SEND) {
 				if (purple_account_get_bool(conv->account, "use-global-buddyicon", TRUE)) {
 					replace = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
@@ -129,6 +130,11 @@ char *replace_message_tokens(char *text, gsize len, PurpleConversation *conv, co
 								   "Incoming", "buddy_icon.png", NULL);
 				}
 			}
+			
+			/* TODO: handle relative paths here */
+			temp = replace;
+			replace = g_strdup_printf ("file://%s", temp);
+			g_free (temp);
 		} else if (!strncmp(cur, "%senderScreenName%", strlen("%senderScreenName%"))) {
 			replace = name;
 		} else if (!strncmp(cur, "%sender%", strlen("%sender%"))) {
@@ -268,12 +274,14 @@ init_theme_for_webkit (PurpleConversation *conv)
 	GtkWidget *webkit = PIDGIN_CONVERSATION(conv)->webview;
 	char *header, *footer;
 	char *template;
+	char *template_uri = g_strdup_printf ("file://%s", template_path);
 	header = replace_header_tokens(header_html, header_html_len, conv);
 	footer = replace_header_tokens(footer_html, footer_html_len, conv);
 	template = replace_template_tokens(template_html, template_html_len + header_html_len, header, footer);
-	
-	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", template_path);
 
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", template_uri);
+
+	g_free (template_uri);
 	g_free (header);
 	g_free (footer);
 	g_free (template);
@@ -408,6 +416,7 @@ struct webkit_script {
 
 static gboolean purple_webkit_execute_script(struct webkit_script *script)
 {
+	printf ("%s\n", script->script);
 	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(script->webkit), script->script);
 	g_free(script->script);
 	g_free(script);
