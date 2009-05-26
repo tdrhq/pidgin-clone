@@ -53,16 +53,16 @@ typedef struct {
 	GoogleSessionId id;
 	GoogleSessionState state;
 	PurpleMedia *media;
-	JabberStream *js; 
+	JabberStream *js;
 	char *remote_jid;
 } GoogleSession;
 
-static gboolean 
+static gboolean
 google_session_id_equal(gconstpointer a, gconstpointer b)
 {
 	GoogleSessionId *c = (GoogleSessionId*)a;
 	GoogleSessionId *d = (GoogleSessionId*)b;
-	
+
 	return !strcmp(c->id, d->id) && !strcmp(c->initiator, d->initiator);
 }
 
@@ -95,12 +95,12 @@ google_session_send_terminate(GoogleSession *session)
 	xmlnode_set_attrib(iq->node, "to", session->remote_jid);
 	sess = google_session_create_xmlnode(session, "terminate");
 	xmlnode_insert_child(iq->node, sess);
-	
+
 	jabber_iq_send(iq);
 	google_session_destroy(session);
 }
 
-static void 
+static void
 google_session_send_candidates(PurpleMedia *media, gchar *session_id,
 		gchar *participant, GoogleSession *session)
 {
@@ -383,7 +383,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	PurpleMediaCodec *codec;
 	const char *id, *encoding_name,  *clock_rate;
 	GParameter *params;
-	guint num_params;	
+	guint num_params;
 
 	if (session->state != UNINIT) {
 		purple_debug_error("jabber", "Received initiate for active session.\n");
@@ -414,8 +414,8 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	desc_element = xmlnode_get_child(sess, "description");
 
-	for (codec_element = xmlnode_get_child(desc_element, "payload-type"); 
-	     codec_element; 
+	for (codec_element = xmlnode_get_child(desc_element, "payload-type");
+	     codec_element;
 	     codec_element = xmlnode_get_next_twin(codec_element)) {
 		encoding_name = xmlnode_get_attrib(codec_element, "name");
 		id = xmlnode_get_attrib(codec_element, "id");
@@ -450,15 +450,15 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	jabber_iq_send(result);
 }
 
-static void 
+static void
 google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmlnode *sess, const char *iq_id)
 {
 	JabberIq *result;
 	GList *list = NULL;
 	xmlnode *cand;
 	static int name = 0;
-	char n[4];	
-		
+	char n[4];
+
 	for (cand = xmlnode_get_child(sess, "candidate"); cand; cand = xmlnode_get_next_twin(cand)) {
 		PurpleMediaCandidate *info;
 		const gchar *type = xmlnode_get_attrib(cand, "type");
@@ -638,7 +638,6 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	const char *to, *url;
 	const char *in_str;
 	char *to_name;
-	char *default_tos[1];
 
 	int i, count = 1, returned_count;
 
@@ -658,14 +657,18 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 
 	/* If Gmail doesn't tell us who the mail is to, let's use our JID */
 	to = xmlnode_get_attrib(packet, "to");
-	default_tos[0] = jabber_get_bare_jid(to);
 
 	message = xmlnode_get_child(child, "mail-thread-info");
 
 	if (count == 0 || !message) {
-		if (count > 0)
-			purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
-		g_free(default_tos[0]);
+		if (count > 0) {
+			char *bare_jid = jabber_get_bare_jid(to);
+			const char *default_tos[2] = { bare_jid };
+
+			purple_notify_emails(js->gc, count, FALSE, NULL, NULL, default_tos, NULL, NULL, NULL);
+			g_free(bare_jid);
+		}
+
 		return;
 	}
 
@@ -673,10 +676,10 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	 * accordingly */
 	for (returned_count = 0; message; returned_count++, message=xmlnode_get_next_twin(message));
 
-	froms    = g_new0(const char* , returned_count);
-	tos      = g_new0(const char* , returned_count);
-	subjects = g_new0(char* , returned_count);
-	urls     = g_new0(const char* , returned_count);
+	froms    = g_new0(const char* , returned_count + 1);
+	tos      = g_new0(const char* , returned_count + 1);
+	subjects = g_new0(char* , returned_count + 1);
+	urls     = g_new0(const char* , returned_count + 1);
 
 	to = xmlnode_get_attrib(packet, "to");
 	to_name = jabber_get_bare_jid(to);
@@ -726,16 +729,12 @@ jabber_gmail_parse(JabberStream *js, const char *from,
 	if (i>0)
 		purple_notify_emails(js->gc, count, count == i, (const char**) subjects, froms, tos,
 				urls, NULL, NULL);
-	else
-		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
-
 
 	g_free(to_name);
 	g_free(tos);
-	g_free(default_tos[0]);
 	g_free(froms);
-	for (; i > 0; i--)
-		g_free(subjects[i - 1]);
+	for (i = 0; i < returned_count; i++)
+		g_free(subjects[i]);
 	g_free(subjects);
 	g_free(urls);
 
@@ -763,7 +762,8 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 
 	/* Acknowledge the notification */
 	iq = jabber_iq_new(js, JABBER_IQ_RESULT);
-	xmlnode_set_attrib(iq->node, "to", from);
+	if (from)
+		xmlnode_set_attrib(iq->node, "to", from);
 	xmlnode_set_attrib(iq->node, "id", id);
 	jabber_iq_send(iq);
 
@@ -1137,7 +1137,7 @@ char *jabber_google_presence_outgoing(PurpleStatus *tune)
 }
 
 static void
-jabber_google_stun_lookup_cb(GSList *hosts, gpointer data, 
+jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 	const char *error_message)
 {
 	JabberStream *js = (JabberStream *) data;
@@ -1150,16 +1150,16 @@ jabber_google_stun_lookup_cb(GSList *hosts, gpointer data,
 	}
 
 	if (hosts && g_slist_next(hosts)) {
-		struct sockaddr *addr = g_slist_next(hosts)->data; 
+		struct sockaddr *addr = g_slist_next(hosts)->data;
 		char dst[INET6_ADDRSTRLEN];
 		int port;
 
 		if (addr->sa_family == AF_INET6) {
-			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr, 
+			inet_ntop(addr->sa_family, &((struct sockaddr_in6 *) addr)->sin6_addr,
 				dst, sizeof(dst));
 			port = ntohs(((struct sockaddr_in6 *) addr)->sin6_port);
 		} else {
-			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr, 
+			inet_ntop(addr->sa_family, &((struct sockaddr_in *) addr)->sin_addr,
 				dst, sizeof(dst));
 			port = ntohs(((struct sockaddr_in *) addr)->sin_port);
 		}
@@ -1224,12 +1224,12 @@ jabber_google_jingle_info_common(JabberStream *js, const char *from,
 
 			if (host && udp) {
 				int port = atoi(udp);
-				/* if there, would already be an ongoing query, 
+				/* if there, would already be an ongoing query,
 				 cancel it */
 				if (js->stun_query)
 					purple_dnsquery_destroy(js->stun_query);
 
-				js->stun_query = purple_dnsquery_a(host, port, 
+				js->stun_query = purple_dnsquery_a(host, port,
 					jabber_google_stun_lookup_cb, js);
 			}
 		}
@@ -1263,7 +1263,7 @@ jabber_google_handle_jingle_info(JabberStream *js, const char *from,
 void
 jabber_google_send_jingle_info(JabberStream *js)
 {
-	JabberIq *jingle_info = 
+	JabberIq *jingle_info =
 		jabber_iq_new_query(js, JABBER_IQ_GET, GOOGLE_JINGLE_INFO_NAMESPACE);
 
 	jabber_iq_set_callback(jingle_info, jabber_google_jingle_info_cb,
