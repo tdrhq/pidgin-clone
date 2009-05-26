@@ -25,6 +25,8 @@
 
 #include "vulture.h"
 #include "blist.h"
+#include "purplemain.h"
+#include "purplequeue.h"
 
 
 HINSTANCE g_hInstance;
@@ -44,16 +46,35 @@ const TCHAR cg_szAppName[] = TEXT("Vulture");
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iCmdShow)
 {
 	MSG msg;
+	HANDLE hthreadPurple;
 
 	g_hInstance = hinst;
 
-	VultureCreateBuddyList(iCmdShow);
+	if(VultureCreateBuddyList(iCmdShow) != 0)
+	{
+		return 1;
+	}
+
+	VultureInitLibpurple(&hthreadPurple);
+	if(hthreadPurple == (HANDLE)-1L)
+	{
+		return 2;
+	}
 
 	while(GetMessage(&msg, NULL, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+
+	/* UI has shut down; do the same to libpurple, waiting until it's
+	 * complete.
+	 */
+	VultureEnqueueAsyncPurpleCall(PC_QUIT, NULL);
+	WaitForSingleObject(hthreadPurple, INFINITE);
+	CloseHandle(hthreadPurple);
+
+	VultureShutDownLibpurple();
 
 	return msg.wParam;
 }
