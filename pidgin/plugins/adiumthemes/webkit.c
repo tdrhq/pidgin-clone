@@ -110,7 +110,6 @@ char *replace_message_tokens(char *text, gsize len, PurpleConversation *conv, co
 			replace = purple_utf8_strftime(format ? format : "%X", NULL);
 			g_free(format);
 		} else if (!strncmp(cur, "%userIconPath%", strlen("%userIconPath%"))) {
-			char *temp; 
 			if (flags & PURPLE_MESSAGE_SEND) {
 				if (purple_account_get_bool(conv->account, "use-global-buddyicon", TRUE)) {
 					replace = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
@@ -119,22 +118,16 @@ char *replace_message_tokens(char *text, gsize len, PurpleConversation *conv, co
 					replace = purple_imgstore_get_filename(img);
 				}
 				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
-					replace = g_build_filename(style_dir, "Contents", "Resources", 
-								   "Outgoing", "buddy_icon.png", NULL);
+					replace = g_build_filename("Outgoing", "buddy_icon.png", NULL);
 				}
 			} else if (flags & PURPLE_MESSAGE_RECV) {
 				PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
 				replace = purple_buddy_icon_get_full_path(icon);
 				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
-					replace = g_build_filename(style_dir, "Contents", "Resources",
-								   "Incoming", "buddy_icon.png", NULL);
+					replace = g_build_filename("Incoming", "buddy_icon.png", NULL);
 				}
 			}
 			
-			/* TODO: handle relative paths here */
-			temp = replace;
-			replace = g_strdup_printf ("file://%s", temp);
-			g_free (temp);
 		} else if (!strncmp(cur, "%senderScreenName%", strlen("%senderScreenName%"))) {
 			replace = name;
 		} else if (!strncmp(cur, "%sender%", strlen("%sender%"))) {
@@ -232,7 +225,8 @@ char *replace_template_tokens(char *text, int len, char *header, char *footer) {
 	GString *str = g_string_new_len(NULL, len);
 
 	char **ms = g_strsplit(text, "%@", 6);
-	
+	char *base = NULL;
+
 	if (ms[0] == NULL || ms[1] == NULL || ms[2] == NULL || ms[3] == NULL || ms[4] == NULL || ms[5] == NULL) {
 		g_strfreev(ms);
 		g_string_free(str, TRUE);
@@ -240,13 +234,20 @@ char *replace_template_tokens(char *text, int len, char *header, char *footer) {
 	}
 
 	g_string_append(str, ms[0]);
-	g_string_append(str, template_path);
+	g_string_append(str, "file://");
+	base = g_build_filename (style_dir, "Contents", "Resources", "Template.html", NULL);
+	g_string_append(str, base);
+	g_free (base);
+
 	g_string_append(str, ms[1]);
 	if (basestyle_css)
 		g_string_append(str, basestyle_css);
 	g_string_append(str, ms[2]);
-	if (css_path)
+	if (css_path) {
+		g_string_append(str, "file://");
 		g_string_append(str, css_path);
+	}
+
 	g_string_append(str, ms[3]);
 	if (header)
 		g_string_append(str, header);
@@ -256,7 +257,9 @@ char *replace_template_tokens(char *text, int len, char *header, char *footer) {
 	g_string_append(str, ms[5]);
 	
 	g_strfreev(ms);
-	return g_string_free(str, FALSE);
+	char* ret = g_string_free (str, FALSE);
+	printf ("%s\n", ret);
+	return ret;
 }
 
 GtkWidget *get_webkit(PurpleConversation *conv)
@@ -274,14 +277,18 @@ init_theme_for_webkit (PurpleConversation *conv)
 	GtkWidget *webkit = PIDGIN_CONVERSATION(conv)->webview;
 	char *header, *footer;
 	char *template;
-	char *template_uri = g_strdup_printf ("file://%s", template_path);
+
+	char* basedir = g_build_filename (style_dir, "Contents", "Resources", "Template.html", NULL);
+	char* baseuri = g_strdup_printf ("file://%s", basedir);
+
 	header = replace_header_tokens(header_html, header_html_len, conv);
 	footer = replace_header_tokens(footer_html, footer_html_len, conv);
 	template = replace_template_tokens(template_html, template_html_len + header_html_len, header, footer);
 
-	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", template_uri);
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
-	g_free (template_uri);
+	g_free (basedir);
+	g_free (baseuri);
 	g_free (header);
 	g_free (footer);
 	g_free (template);
@@ -518,16 +525,6 @@ plugin_load(PurplePlugin *plugin)
 	file = g_build_filename(style_dir, "Contents", "Resources", "Footer.html", NULL);
 	g_file_get_contents(file, &footer_html, &footer_html_len, NULL);
 
-	file = g_build_filename(style_dir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
-	if (!g_file_get_contents(file, &outgoing_content_html, &outgoing_content_html_len, NULL))
-		return FALSE;
-
-	file = g_build_filename(style_dir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
-	if (!g_file_get_contents(file, &outgoing_next_content_html, &outgoing_next_content_html_len, NULL)) {
-		outgoing_next_content_html = outgoing_content_html;
-		outgoing_next_content_html_len = outgoing_content_html_len;
-	}
-
 	file = g_build_filename(style_dir, "Contents", "Resources", "Incoming", "Content.html", NULL);
 	if (!g_file_get_contents(file, &incoming_content_html, &incoming_content_html_len, NULL))
 		return FALSE;
@@ -537,6 +534,19 @@ plugin_load(PurplePlugin *plugin)
 		incoming_next_content_html = incoming_content_html;
 		incoming_next_content_html_len = incoming_content_html_len;
 	}
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
+	if (!g_file_get_contents(file, &outgoing_content_html, &outgoing_content_html_len, NULL)) {
+		outgoing_content_html = incoming_content_html;
+		outgoing_content_html_len = incoming_content_html_len;
+	}
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
+	if (!g_file_get_contents(file, &outgoing_next_content_html, &outgoing_next_content_html_len, NULL)) {
+		outgoing_next_content_html = outgoing_content_html;
+		outgoing_next_content_html_len = outgoing_content_html_len;
+	}
+
 
 	file = g_build_filename(style_dir, "Contents", "Resources", "Status.html", NULL);
 	if (!g_file_get_contents(file, &status_html, &status_html_len, NULL))
