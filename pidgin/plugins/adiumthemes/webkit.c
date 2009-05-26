@@ -1,0 +1,700 @@
+/*
+ * Adium Webkit views
+ * Copyright (C) 2007
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ * 02111-1307, USA.
+ */
+
+/* This plugins is basically Sadrul's x-chat plugin, but with Webkit
+ * instead of xtext.
+ */
+
+#define PLUGIN_ID		"gtk-webview-adium-ims"
+#define PLUGIN_NAME		"webview-adium-ims"
+#define PLUGIN_AUTHOR		"Sean Egan <seanegan@gmail.com>"
+#define PURPLE_PLUGINS          "Hell yeah"
+
+/* System headers */
+#include <string.h>
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
+
+#include <webkit/webkit.h>
+
+/* Purple headers */
+#include <conversation.h>
+#include <notify.h>
+#include <util.h>
+#include <version.h>
+
+/* Pidgin headers */
+#include <gtkconv.h>
+#include <gtkimhtml.h>
+#include <gtkplugin.h>
+
+
+static PurpleConversationUiOps *uiops = NULL;
+
+static void (*default_write_conv)(PurpleConversation *conv, const char *name, const char *alias,
+						   const char *message, PurpleMessageFlags flags, time_t mtime);
+static void (*default_create_conversation)(PurpleConversation *conv);
+
+static void (*default_destroy_conversation)(PurpleConversation *conv);
+
+/* Cache the contents of the HTML files */
+char *template_html = NULL;                 /* This is the skeleton: some basic javascript mostly */
+char *header_html = NULL;                   /* This is the first thing to be appended to any conversation */
+char *footer_html = NULL;		    /* This is the last thing appended to the conversation */
+char *incoming_content_html = NULL;         /* This is a received message */
+char *outgoing_content_html = NULL;         /* And a sent one */
+char *incoming_next_content_html = NULL;    /* The same things, but used when someone sends multiple subsequent */
+char *outgoing_next_content_html = NULL;    /* messages in a row */
+char *status_html = NULL;                   /* Non-IM status messages */
+char *basestyle_css = NULL;		    /* Shared CSS attributes */
+
+/* Cache their lenghts too, to pass into g_string_new_len, avoiding crazy allocation */
+gsize template_html_len = 0;
+gsize header_html_len = 0;
+gsize footer_html_len = 0;
+gsize incoming_content_html_len = 0;
+gsize outgoing_content_html_len = 0;
+gsize incoming_next_content_html_len = 0;
+gsize outgoing_next_content_html_len = 0;
+gsize status_html_len = 0;
+gsize basestyle_css_len = 0;
+
+/* And their paths */
+char *style_dir = NULL;
+char *template_path = NULL;
+char *css_path = NULL;
+
+char *replace_message_tokens(char *text, gsize len, PurpleConversation *conv, const char *name, const char *alias, 
+			     const char *message, PurpleMessageFlags flags, time_t mtime)
+{
+	GString *str = g_string_new_len(NULL, len);
+	char *cur = text;
+	char *prev = cur;
+
+	while ((cur = strchr(cur, '%'))) {
+		const char *replace = NULL;
+		char *fin = NULL;
+			
+		if (!strncmp(cur, "%message%", strlen("%message%"))) {
+			replace = message;
+		} else if (!strncmp(cur, "%messageClasses%", strlen("%messageClasses%"))) {
+			replace = flags & PURPLE_MESSAGE_SEND ? "outgoing" :
+				  flags & PURPLE_MESSAGE_RECV ? "incoming" : "event";
+		} else if (!strncmp(cur, "%time", strlen("%time"))) {
+			char *format = NULL;
+			if (*(cur + strlen("%time")) == '{') {
+				char *start = cur + strlen("%time") + 1;
+				char *end = strstr(start, "}%");
+				if (!end) /* Invalid string */
+					continue;
+				format = g_strndup(start, end - start);
+				fin = end + 1;
+			} 
+			replace = purple_utf8_strftime(format ? format : "%X", NULL);
+			g_free(format);
+		} else if (!strncmp(cur, "%userIconPath%", strlen("%userIconPath%"))) {
+			if (flags & PURPLE_MESSAGE_SEND) {
+				if (purple_account_get_bool(conv->account, "use-global-buddyicon", TRUE)) {
+					replace = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
+				} else {
+					PurpleStoredImage *img = purple_buddy_icons_find_account_icon(conv->account);
+					replace = purple_imgstore_get_filename(img);
+				}
+				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
+					replace = g_build_filename(style_dir, "Contents", "Resources", 
+								   "Outgoing", "buddy_icon.png", NULL);
+				}
+			} else if (flags & PURPLE_MESSAGE_RECV) {
+				PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
+				replace = purple_buddy_icon_get_full_path(icon);
+				if (replace == NULL || !g_file_test(replace, G_FILE_TEST_EXISTS)) {
+					replace = g_build_filename(style_dir, "Contents", "Resources",
+								   "Incoming", "buddy_icon.png", NULL);
+				}
+			}
+		} else if (!strncmp(cur, "%senderScreenName%", strlen("%senderScreenName%"))) {
+			replace = name;
+		} else if (!strncmp(cur, "%sender%", strlen("%sender%"))) {
+			replace = alias;
+		} else if (!strncmp(cur, "%service%", strlen("%service%"))) {
+			replace = purple_account_get_protocol_name(conv->account);
+		} else {
+			cur++;
+			continue;
+		}
+
+		/* Here we have a replacement to make */
+		g_string_append_len(str, prev, cur - prev);
+		g_string_append(str, replace);
+
+		/* And update the pointers */
+		if (fin) {
+			prev = cur = fin + 1;	
+		} else {
+			prev = cur = strchr(cur + 1, '%') + 1;
+		}
+
+	}
+	
+	/* And wrap it up */
+	g_string_append(str, prev);
+	return g_string_free(str, FALSE);
+}
+
+char *replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
+{
+	GString *str = g_string_new_len(NULL, len);
+	char *cur = text;
+	char *prev = cur;
+
+	if (text == NULL)
+		return NULL;
+
+	while ((cur = strchr(cur, '%'))) {
+		const char *replace = NULL;
+		char *fin = NULL;
+
+  		if (!strncmp(cur, "%chatName%", strlen("%chatName%"))) {
+			replace = conv->name;
+  		} else if (!strncmp(cur, "%sourceName%", strlen("%sourceName%"))) {
+			replace = purple_account_get_alias(conv->account);
+			if (replace == NULL)
+				replace = purple_account_get_username(conv->account);
+  		} else if (!strncmp(cur, "%destinationName%", strlen("%destinationName%"))) {
+			PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
+			if (buddy) {
+				replace = purple_buddy_get_alias(buddy);
+			} else {
+				replace = conv->name;
+			}
+  		} else if (!strncmp(cur, "%incomingIconPath%", strlen("%incomingIconPath%"))) {
+			PurpleBuddyIcon *icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
+			replace = purple_buddy_icon_get_full_path(icon);
+  		} else if (!strncmp(cur, "%outgoingIconPath%", strlen("%outgoingIconPath%"))) {
+  		} else if (!strncmp(cur, "%timeOpened", strlen("%timeOpened"))) {
+			char *format = NULL;
+			if (*(cur + strlen("%timeOpened")) == '{') {
+				char *start = cur + strlen("%timeOpened") + 1;
+				char *end = strstr(start, "}%");
+				if (!end) /* Invalid string */
+					continue;
+				format = g_strndup(start, end - start);
+				fin = end + 1;
+			} 
+			replace = purple_utf8_strftime(format ? format : "%X", NULL);
+			g_free(format);
+		} else {
+		//	cur++;
+			continue;
+		}
+
+		/* Here we have a replacement to make */
+		g_string_append_len(str, prev, cur - prev);
+		g_string_append(str, replace);
+
+		/* And update the pointers */
+		if (fin) {
+			prev = cur = fin + 1;	
+		} else {
+			prev = cur = strchr(cur + 1, '%') + 1;
+		}
+	}
+	
+	/* And wrap it up */
+	g_string_append(str, prev);
+	return g_string_free(str, FALSE);
+}
+
+char *replace_template_tokens(char *text, int len, char *header, char *footer) {
+	GString *str = g_string_new_len(NULL, len);
+
+	char **ms = g_strsplit(text, "%@", 6);
+	
+	if (ms[0] == NULL || ms[1] == NULL || ms[2] == NULL || ms[3] == NULL || ms[4] == NULL || ms[5] == NULL) {
+		g_strfreev(ms);
+		g_string_free(str, TRUE);
+		return NULL;
+	}
+
+	g_string_append(str, ms[0]);
+	g_string_append(str, template_path);
+	g_string_append(str, ms[1]);
+	if (basestyle_css)
+		g_string_append(str, basestyle_css);
+	g_string_append(str, ms[2]);
+	if (css_path)
+		g_string_append(str, css_path);
+	g_string_append(str, ms[3]);
+	if (header)
+		g_string_append(str, header);
+	g_string_append(str, ms[4]);
+	if (footer)
+		g_string_append(str, footer);
+	g_string_append(str, ms[5]);
+	
+	g_strfreev(ms);
+	return g_string_free(str, FALSE);
+}
+
+GtkWidget *get_webkit(PurpleConversation *conv)
+{
+	PidginConversation *gtkconv;
+	gtkconv = PIDGIN_CONVERSATION(conv);
+	if (!gtkconv)
+		return NULL;
+	else 
+		return gtkconv->webview;
+}
+static void
+init_theme_for_webkit (PurpleConversation *conv)
+{
+	GtkWidget *webkit = PIDGIN_CONVERSATION(conv)->webview;
+	char *header, *footer;
+	char *template;
+	header = replace_header_tokens(header_html, header_html_len, conv);
+	footer = replace_header_tokens(footer_html, footer_html_len, conv);
+	template = replace_template_tokens(template_html, template_html_len + header_html_len, header, footer);
+	
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", template_path);
+
+	g_free (header);
+	g_free (footer);
+	g_free (template);
+}
+
+static gint
+gtk_smiley_tree_lookup (GtkSmileyTree *tree,
+                        const gchar   *text)
+{
+        GtkSmileyTree *t = tree;
+        const gchar *x = text;
+        gint len = 0;
+        const gchar *amp;
+        gint alen;
+
+        while (*x) {
+                gchar *pos;
+
+                if (!t->values)
+                        break;
+
+                if(*x == '&' && (amp = purple_markup_unescape_entity(x, &alen))) {
+                        gboolean matched = TRUE;
+                        /* Make sure all chars of the unescaped value match */
+                        while (*(amp + 1)) {
+                                pos = strchr (t->values->str, *amp);
+                                if (pos)
+                                        t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
+                                else {
+                                        matched = FALSE;
+                                        break;
+                                }
+                                amp++;
+                        }
+                        if (!matched)
+                                break;
+
+                        pos = strchr (t->values->str, *amp);
+                }
+                else if (*x == '<') /* Because we're all WYSIWYG now, a '<'
+                                     * char should only appear as the start of a tag.  Perhaps a safer (but costlier)
+                                     *                                      * check would be to call gtk_imhtml_is_tag on it */
+                        break;
+                else {
+                        alen = 1;
+                        pos = strchr (t->values->str, *x);
+                }
+
+                if (pos)
+                        t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
+                else
+                        break;
+
+                x += alen;
+                len += alen;
+        }
+
+        if (t->image)
+                return len;
+
+        return 0;
+}
+
+static gboolean
+gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
+                      GSList      *fonts,
+                      const gchar *text,
+                      gint        *len)
+{
+        GtkSmileyTree *tree;
+        GtkIMHtmlFontDetail *font;
+        char *sml = NULL;
+
+        if (fonts) {
+                font = fonts->data;
+                sml = font->sml;
+        }
+
+        if (!sml)
+                sml = imhtml->protocol_name;
+
+        if (!sml || !(tree = g_hash_table_lookup(imhtml->smiley_data, sml)))
+                tree = imhtml->default_smilies;
+
+        if (tree == NULL)
+                return FALSE;
+
+        *len = gtk_smiley_tree_lookup (tree, text);
+        return (*len > 0);
+}
+
+char *escape_message(char *text)
+{
+	GString *str = g_string_new(NULL);
+	char *cur = text;
+	int smileylen = 0;
+
+	while (cur && *cur) {
+		switch (*cur) {
+		case '\\':
+			g_string_append(str, "\\\\");	
+			break;
+		case '\"':
+			g_string_append(str, "\\\"");
+			break;
+		case '\r':
+			g_string_append(str, "<br/>");
+			break;
+		case '\n':
+			break;
+		default:
+			g_string_append_c(str, *cur);
+		}
+		cur++;
+	}
+	return g_string_free(str, FALSE);
+}
+
+static gboolean
+refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, PurpleConversation * conv) {
+	gboolean ret = TRUE;
+	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+        gtk_widget_grab_focus(gtkconv->entry);
+	gtk_widget_event(gtkconv->entry, event);
+	return ret;
+}
+
+struct webkit_script {
+	GtkWidget *webkit;
+	char *script;
+};
+
+static gboolean purple_webkit_execute_script(struct webkit_script *script)
+{
+	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(script->webkit), script->script);
+	g_free(script->script);
+	g_free(script);
+	return FALSE;
+}
+
+static void purple_webkit_write_conv(PurpleConversation *conv, const char *name, const char *alias,
+						   const char *message, PurpleMessageFlags flags, time_t mtime)
+{
+	PurpleConversationType type;
+	GtkWidget *webkit;
+	char *stripped;
+	char *message_html;
+	char *msg;
+	char *escape;
+	char *script;
+	char *func = "appendMessage";
+	struct webkit_script *wk_script;
+	PurpleMessageFlags old_flags = GPOINTER_TO_INT(purple_conversation_get_data(conv, "webkit-lastflags")); 
+
+	/* Don't call the usual stuff first. */
+	//default_write_conv(conv, name, alias, message, flags, mtime);
+	type = purple_conversation_get_type(conv);
+	if (type != PURPLE_CONV_TYPE_IM)
+	{
+		/* If it's chat, we have nothing to do. */
+		return;
+	}
+	/* So it's an IM. Let's play. */
+
+	webkit = get_webkit(conv);
+	stripped = g_strdup(message); //purple_markup_strip_html(message);
+
+	if (flags & PURPLE_MESSAGE_SEND && old_flags & PURPLE_MESSAGE_SEND) {
+		message_html = outgoing_next_content_html;
+		func = "appendNextMessage";
+	} else if (flags & PURPLE_MESSAGE_SEND) {
+		message_html = outgoing_content_html;
+	} else if (flags & PURPLE_MESSAGE_RECV && old_flags & PURPLE_MESSAGE_RECV) {
+		message_html = incoming_next_content_html;
+		func = "appendNextMessage";
+	} else if (flags & PURPLE_MESSAGE_RECV) {
+		message_html = incoming_content_html;
+	} else {
+		message_html = status_html;
+	}
+	purple_conversation_set_data(conv, "webkit-lastflags", GINT_TO_POINTER(flags));
+
+	msg = replace_message_tokens(message_html, 0, conv, name, alias, stripped, flags, mtime);
+	escape = escape_message(msg);
+	script = g_strdup_printf("%s(\"%s\")", func, escape);
+
+	wk_script = g_new0(struct webkit_script, 1);
+	wk_script->script = script;
+	wk_script->webkit = webkit;
+
+	g_idle_add(purple_webkit_execute_script, wk_script);
+
+	g_free(msg);
+	g_free(stripped);
+	g_free(escape);
+}
+
+
+static void
+purple_webkit_create_conv(PurpleConversation *conv)
+{
+	default_create_conversation(conv);
+	init_theme_for_webkit(conv);
+}
+
+static void
+purple_webkit_destroy_conv(PurpleConversation *conv)
+{
+	default_destroy_conversation(conv);
+}
+
+static gboolean
+plugin_load(PurplePlugin *plugin)
+{
+	GList *list;
+	char *file;
+	
+	style_dir = g_build_filename(purple_user_dir(), "style", NULL);
+
+	css_path = g_build_filename(style_dir, "Contents", "Resources", "Variants", "Blue vs Green.css", NULL, "_default.css", NULL);
+
+	template_path = g_build_filename(style_dir, "Contents", "Resources", "Template.html", NULL);
+	if (!g_file_test(template_path, G_FILE_TEST_EXISTS)) {
+		g_free(template_path);
+		template_path = g_build_filename(DATADIR, "pidgin", "webkit", "Template.html", NULL);
+	}
+	if (!g_file_get_contents(template_path, &template_html, &template_html_len, NULL))
+		return FALSE;
+	
+	file = g_build_filename(style_dir, "Contents", "Resources", "Header.html", NULL);
+	g_file_get_contents(file, &header_html, &header_html_len, NULL);
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Footer.html", NULL);
+	g_file_get_contents(file, &footer_html, &footer_html_len, NULL);
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Outgoing", "Content.html", NULL);
+	if (!g_file_get_contents(file, &outgoing_content_html, &outgoing_content_html_len, NULL))
+		return FALSE;
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Outgoing", "NextContent.html", NULL);
+	if (!g_file_get_contents(file, &outgoing_next_content_html, &outgoing_next_content_html_len, NULL)) {
+		outgoing_next_content_html = outgoing_content_html;
+		outgoing_next_content_html_len = outgoing_content_html_len;
+	}
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Incoming", "Content.html", NULL);
+	if (!g_file_get_contents(file, &incoming_content_html, &incoming_content_html_len, NULL))
+		return FALSE;
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Incoming", "NextContent.html", NULL);
+	if (!g_file_get_contents(file, &incoming_next_content_html, &incoming_next_content_html_len, NULL)) {
+		incoming_next_content_html = incoming_content_html;
+		incoming_next_content_html_len = incoming_content_html_len;
+	}
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "Status.html", NULL);
+	if (!g_file_get_contents(file, &status_html, &status_html_len, NULL))
+		return FALSE;
+
+	file = g_build_filename(style_dir, "Contents", "Resources", "main.css", NULL);
+	g_file_get_contents(file, &basestyle_css, &basestyle_css_len, NULL);
+
+	uiops = pidgin_conversations_get_conv_ui_ops();
+
+	if (uiops == NULL)
+		return FALSE;
+
+	/* Use the oh-so-useful uiops. Signals? bleh. */
+	default_write_conv = uiops->write_conv;
+	uiops->write_conv = purple_webkit_write_conv;
+
+	default_create_conversation = uiops->create_conversation;
+	uiops->create_conversation = purple_webkit_create_conv;
+
+	default_destroy_conversation = uiops->destroy_conversation;
+	uiops->destroy_conversation = purple_webkit_destroy_conv;
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(PurplePlugin *plugin)
+{
+	/* Restore the default ui-ops */
+	uiops->write_conv = default_write_conv;
+	uiops->create_conversation = default_create_conversation;
+	uiops->destroy_conversation = default_destroy_conversation;
+	
+	/* Clear up everything */
+	return TRUE;
+}
+
+static GList *
+get_theme_files() {
+	GList *ret = NULL;
+        GDir *dir, *variants;
+	char *globe = g_build_filename(DATADIR, "pidgin", "webkit", "styles", NULL);
+	const char *style_dir, *css_file;
+	char *css;
+
+	dir = g_dir_open(globe, 0, NULL);
+	while ((style_dir = g_dir_read_name(dir)) != NULL) {
+		char *variant_dir = g_build_filename(globe, style_dir, "Contents", "Resources", "Variants", NULL);
+		variants = g_dir_open(variant_dir, 0, NULL);
+		while ((css_file = g_dir_read_name(variants)) != NULL) {
+			if (!strstr(css_file, ".css")) {
+				continue;
+			}
+			css = g_build_filename(variant_dir, css_file, NULL);
+			ret = g_list_append(ret,css);
+		}
+		g_dir_close(variants);
+		g_free(variant_dir);
+	}
+	g_dir_close(dir);
+	g_free(globe);
+	return ret;	
+}
+
+static GtkWidget *
+get_config_frame(PurplePlugin *plugin) {
+	GList *themes = get_theme_files();
+	GList *theme = themes;
+	GtkTreeStore *tree_store = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
+	char *curdir = NULL;
+	GtkTreeIter parent;
+	GtkCellRenderer *rend;
+
+	while (theme) {
+		char *basename = g_path_get_basename(theme->data);
+		char *dirname = g_path_get_dirname(theme->data);
+		GtkTreeIter child;
+		if (!curdir || strcmp(curdir, dirname)) {
+			char *plist, *plist_xml;
+			int plist_len;
+			xmlnode *node;
+			g_free(curdir);
+			curdir = strdup(dirname);
+			plist = g_build_filename(curdir, "..", "..", "Info.plist", NULL);
+		        if (!g_file_get_contents(plist, &plist_xml, &plist_len, NULL)) {
+				continue;
+			}
+	                node = xmlnode_from_str(plist_xml, plist_len);
+			if (!node) continue;
+			node = xmlnode_get_child(node, "dict");
+			if (!node) continue;
+			node = xmlnode_get_child(node, "key");
+			while (node && strcmp(xmlnode_get_data(node), "CFBundleName")) {
+				node = xmlnode_get_next_twin(node);
+			}
+			if (!node) continue;
+			node = node->next;
+			while (node && node->type != XMLNODE_TYPE_TAG) {
+				node = node->next;
+			}
+			char *name = xmlnode_get_data(node);
+			gtk_tree_store_append(tree_store, &parent, NULL);
+			gtk_tree_store_set(tree_store, &parent, 0, name, -1);
+		}
+		gtk_tree_store_append(tree_store, &child, &parent);
+		gtk_tree_store_set(tree_store, &child, 0, basename, -1);
+		theme = theme->next;
+	}
+	GtkWidget *combobox = gtk_combo_box_new_with_model(tree_store);	
+	rend = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(combobox, rend, TRUE);
+	gtk_cell_layout_add_attribute(combobox, rend, "markup", 0);
+	return combobox;
+}
+
+PidginPluginUiInfo ui_info =
+{
+        get_config_frame,
+        0, /* page_num (Reserved) */
+
+        /* padding */
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
+
+
+static PurplePluginInfo info =
+{
+	PURPLE_PLUGIN_MAGIC,		/* Magic				*/
+	PURPLE_MAJOR_VERSION,		/* Purple Major Version	*/
+	PURPLE_MINOR_VERSION,		/* Purple Minor Version	*/
+	PURPLE_PLUGIN_STANDARD,		/* plugin type			*/
+PIDGIN_PLUGIN_TYPE,			/* ui requirement		*/
+	0,							/* flags				*/
+	NULL,						/* dependencies			*/
+	PURPLE_PRIORITY_DEFAULT,	/* priority				*/
+
+	PLUGIN_ID,					/* plugin id			*/
+	NULL,						/* name					*/
+	"0.1",					/* version				*/
+	NULL,						/* summary				*/
+	NULL,						/* description			*/
+	PLUGIN_AUTHOR,				/* author				*/
+	"http://pidgin.im",					/* website				*/
+
+	plugin_load,				/* load					*/
+	plugin_unload,				/* unload				*/
+	NULL,						/* destroy				*/
+
+	&ui_info,						/* ui_info				*/
+	NULL,						/* extra_info			*/
+	NULL,						/* prefs_info			*/
+	NULL,						/* actions				*/
+	NULL,						/* reserved 1			*/
+	NULL,						/* reserved 2			*/
+	NULL,						/* reserved 3			*/
+	NULL						/* reserved 4			*/
+};
+
+static void
+init_plugin(PurplePlugin *plugin) {
+	info.name = "Adium IMs";
+	info.summary = "Adium-like IMs with Pidgin";
+	info.description = "You can chat in Pidgin using Adium's WebKit view.";
+}
+
+PURPLE_INIT_PLUGIN(webkit, init_plugin, info)

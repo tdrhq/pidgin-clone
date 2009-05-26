@@ -1,4 +1,4 @@
-DIST_SUBDIRS = cap gevolution musicmessaging perl ticker
+DIST_SUBDIRS = adiumthemes cap gevolution musicmessaging perl ticker
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
@@ -23,7 +23,8 @@ SUBDIRS = \
 	$(GEVOLUTION_DIR) \
 	$(MUSICMESSAGING_DIR) \
 	$(PERL_DIR) \
-	ticker
+	ticker \
+	adiumthemes
 
 plugindir = $(libdir)/pidgin
 
