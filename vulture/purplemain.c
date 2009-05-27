@@ -39,12 +39,20 @@
 #include <process.h>
 #include <glib.h>
 
+#include "purple.h"
+
 #include "vulture.h"
 #include "purplemain.h"
 #include "purplequeue.h"
+#include "purpleevloop.h"
 
 
 static UINT CALLBACK PurpleThread(void *lpvData);
+static int InitLibpurple(void);
+static void InitUI(void);
+
+
+#define VULTURE_ID	"vulture"
 
 
 GMainLoop *g_lpgmainloop = NULL;
@@ -82,25 +90,70 @@ void VultureShutDownLibpurple(void)
  *
  * @param	lpvData		Currently unused.
  *
- * @return Always zero. This is used as the thread's exit code.
+ * @return Exit code. Zero on success; non-zero on error.
  */
 static UINT CALLBACK PurpleThread(void *lpvData)
 {
 	GSource *lpgsourceSync = VultureCreateSyncQueueSource();
 	GSource *lpgsourceAsync = VultureCreateAsyncQueueSource();
 
+	int iRet = 0;
+
 	UNREFERENCED_PARAMETER(lpvData);
 
 	g_lpgmainloop = g_main_loop_new(NULL, TRUE);
 
+	/* Poll the queues. */
 	g_source_attach(lpgsourceSync, NULL);
 	g_source_attach(lpgsourceAsync, NULL);
 
-	g_main_loop_run(g_lpgmainloop);
+	if(InitLibpurple() == 0)
+		g_main_loop_run(g_lpgmainloop);
+	else
+	{
+		/* TODO: Display a message and replace magic number. */
+		exit(1);
+	}
 
 	g_main_loop_unref(g_lpgmainloop);
 	g_source_unref(lpgsourceAsync);
 	g_source_unref(lpgsourceSync);
 
+	return iRet;
+}
+
+
+/**
+ * Begins initialising libpurple. This function will eventually pass control
+ * to InitUI which does most of the work.
+ *
+ * @return Zero on success; non-zero on error.
+ */
+static int InitLibpurple(void)
+{
+	static PurpleCoreUiOps coreuiops = 
+	{
+		NULL, NULL, InitUI, NULL,
+		/* padding */
+		NULL, NULL, NULL, NULL
+	};
+
+	VulturePurpleEventLoopSetUIOps();
+	purple_core_set_ui_ops(&coreuiops);
+
+	/* Init the core, which will eventually call InitUI. */
+	if(!purple_core_init(VULTURE_ID))
+		return 1;
+
 	return 0;
+}
+
+
+/**
+ * Initialises higher-level libpurple components.
+ *
+ * \sa InitLibpurple.
+ */
+static void InitUI(void)
+{
 }
