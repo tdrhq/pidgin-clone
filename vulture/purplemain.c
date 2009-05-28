@@ -98,8 +98,6 @@ static UINT CALLBACK PurpleThread(void *lpvData)
 	GSource *lpgsourceSync = VultureCreateSyncQueueSource();
 	GSource *lpgsourceAsync = VultureCreateAsyncQueueSource();
 
-	int iRet = 0;
-
 	UNREFERENCED_PARAMETER(lpvData);
 
 	g_lpgmainloop = g_main_loop_new(NULL, TRUE);
@@ -120,7 +118,7 @@ static UINT CALLBACK PurpleThread(void *lpvData)
 	g_source_unref(lpgsourceAsync);
 	g_source_unref(lpgsourceSync);
 
-	return iRet;
+	return 0;
 }
 
 

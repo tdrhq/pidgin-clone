@@ -103,7 +103,7 @@ static LRESULT CALLBACK BuddyListProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPAR
 	switch(uiMsg)
 	{
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		PostQuitMessage(VEC_SUCCESS);
 		return 0;
 	}
 

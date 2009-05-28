@@ -58,7 +58,7 @@ VULTURE_C_SRC =	\
 			purpleevloop.c \
 			cmdline.c
 
-# VULTURE_RC_SRC = win32/pidgin_dll_rc.rc
+VULTURE_RC_SRC = vulture-res.rc
 VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)
 
 ##
@@ -84,11 +84,6 @@ install_shallow: $(VULTURE_INSTALL_DIR) $(VULTURE_TARGET).exe
 	cp $(NEEDED_DLLS) $(VULTURE_INSTALL_DIR)
 
 install: install_shallow all
-
-vulture.rc: vulture.rc.in $(PIDGIN_TREE_TOP)/VERSION
-	sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
-		-e 's/@ORIGINAL_FILENAME@/$(EXE_NAME)/' \
-	    $@.in > $@
 
 $(VULTURE_TARGET).exe: $(PURPLE_DLL).a $(VULTURE_OBJECTS)
 	$(CC) $(LDFLAGS) $(VULTURE_OBJECTS) $(LIB_PATHS) $(VULTURE_LIBS) -o $(VULTURE_TARGET).exe
