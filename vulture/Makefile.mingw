@@ -55,7 +55,8 @@ VULTURE_C_SRC =	\
 			blist.c \
 			purplemain.c \
 			purplequeue.c \
-			purpleevloop.c
+			purpleevloop.c \
+			cmdline.c
 
 # VULTURE_RC_SRC = win32/pidgin_dll_rc.rc
 VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)

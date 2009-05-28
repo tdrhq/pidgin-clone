@@ -27,6 +27,7 @@
 #include "blist.h"
 #include "purplemain.h"
 #include "purplequeue.h"
+#include "cmdline.h"
 
 
 HINSTANCE g_hInstance;
@@ -49,6 +50,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 	HANDLE hthreadPurple;
 
 	g_hInstance = hinst;
+
+	VultureParseCommandLine();
 
 	if(VultureCreateBuddyList(iCmdShow) != 0)
 	{
@@ -75,6 +78,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 	CloseHandle(hthreadPurple);
 
 	VultureShutDownLibpurple();
+
+	VultureCommandLineCleanup();
 
 	return msg.wParam;
 }

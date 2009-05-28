@@ -45,6 +45,7 @@
 #include "purplemain.h"
 #include "purplequeue.h"
 #include "purpleevloop.h"
+#include "cmdline.h"
 
 
 static UINT CALLBACK PurpleThread(void *lpvData);
@@ -137,6 +138,11 @@ static int InitLibpurple(void)
 		/* padding */
 		NULL, NULL, NULL, NULL
 	};
+
+	gchar *szCustomUserDir;
+
+	if((szCustomUserDir = VultureGetCustomUserDir()))
+		purple_util_set_user_dir(szCustomUserDir);
 
 	VulturePurpleEventLoopSetUIOps();
 	purple_core_set_ui_ops(&coreuiops);
