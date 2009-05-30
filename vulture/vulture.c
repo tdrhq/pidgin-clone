@@ -57,7 +57,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 
 	VultureParseCommandLine();
 
-	if(VultureCreateBuddyList(iCmdShow) != 0)
+	if(VultureCreateMainWindow(iCmdShow) != 0)
 	{
 		MessageBoxFromStringTable(NULL, IDS_ERROR_BLIST, MB_ICONERROR);
 		return VEC_ERROR_BLIST;

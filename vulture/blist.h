@@ -23,6 +23,6 @@
 #ifndef _VULTURE_BLIST_H_
 #define _VULTURE_BLIST_H_
 
-int VultureCreateBuddyList(int iCmdShow);
+int VultureCreateMainWindow(int iCmdShow);
 
 #endif

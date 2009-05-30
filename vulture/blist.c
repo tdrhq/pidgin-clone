@@ -23,29 +23,35 @@
 #include <windows.h>
 
 #include "vulture.h"
+#include "resource.h"
 #include "blist.h"
 
 
-static LRESULT CALLBACK BuddyListProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 
 
-static HWND g_hwndBuddyList = NULL;
+#define BLIST_MARGIN 6
+
+
+static HWND g_hwndMain = NULL;
 
 
 /**
- * Creates the buddy list.
+ * Creates the main window, incorporating the buddy list.
  *
  * @param	iCmdShow	Initial window state. Cf. ShowWindow.
  *
  * @return Zero on success; non-zero on error.
  */
-int VultureCreateBuddyList(int iCmdShow)
+int VultureCreateMainWindow(int iCmdShow)
 {
-	const TCHAR c_szClassName[] = TEXT("VULTUREBLIST");
+	const TCHAR c_szClassName[] = TEXT("VULTUREMAIN");
 
 	WNDCLASSEX wndclassex;
 
-	if(g_hwndBuddyList)
+	if(g_hwndMain)
 		return 1;
 
 	wndclassex.cbClsExtra = 0;
@@ -56,16 +62,16 @@ int VultureCreateBuddyList(int iCmdShow)
 	wndclassex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	wndclassex.hIconSm = LoadImage(NULL, IDI_APPLICATION, IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR | LR_SHARED);
 	wndclassex.hInstance = g_hInstance;
-	wndclassex.lpfnWndProc = BuddyListProc;
+	wndclassex.lpfnWndProc = MainWndProc;
 	wndclassex.lpszClassName = c_szClassName;
-	wndclassex.lpszMenuName = NULL;
+	wndclassex.lpszMenuName = MAKEINTRESOURCE(IDM_BLIST);
 	wndclassex.style = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
 
 	if(!RegisterClassEx(&wndclassex))
 		return 2;
 
-	g_hwndBuddyList = CreateWindowEx(
-		WS_EX_OVERLAPPEDWINDOW,
+	g_hwndMain = CreateWindowEx(
+		WS_EX_WINDOWEDGE,
 		c_szClassName,
 		cg_szAppName,
 		WS_OVERLAPPEDWINDOW,
@@ -79,17 +85,17 @@ int VultureCreateBuddyList(int iCmdShow)
 		g_hInstance,
 		NULL);
 
-	if(!g_hwndBuddyList)
+	if(!g_hwndMain)
 		return 3;
 
-	ShowWindow(g_hwndBuddyList, iCmdShow);
+	ShowWindow(g_hwndMain, iCmdShow);
 
 	return 0;
 }
 
 
 /**
- * Buddy-list window procedure.
+ * Main window procedure.
  *
  * @param	hwnd	Buddy-list handle.
  * @param	uiMsg	Message ID.
@@ -98,14 +104,160 @@ int VultureCreateBuddyList(int iCmdShow)
  *
  * @return Message-specific.
  */
-static LRESULT CALLBACK BuddyListProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
+	static HWND s_hwndStatusDlg = NULL, s_hwndBListDlg = NULL;
+
 	switch(uiMsg)
 	{
+	case WM_CREATE:
+
+		s_hwndStatusDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_STATUS), hwnd, StatusDlgProc);
+		s_hwndBListDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_BLIST), hwnd, BuddyListDlgProc);
+
+		return 0;
+
+	case WM_COMMAND:
+		switch(LOWORD(wParam))
+		{
+		case IDM_BLIST_BUDDIES_CLOSE:
+			SendMessage(hwnd, WM_CLOSE, 0, 0);
+			return 0;
+		}
+
+		break;
+
+	case WM_SIZE:
+		{
+			HDWP hdwp;
+			RECT rcClient, rcStatus;
+
+			GetClientRect(hwnd, &rcClient);
+			GetWindowRect(s_hwndStatusDlg, &rcStatus);
+
+			hdwp = BeginDeferWindowPos(2);
+			hdwp = DeferWindowPos(hdwp, s_hwndStatusDlg, NULL, 0, 0, rcClient.right, rcStatus.bottom - rcStatus.top, SWP_NOACTIVATE | SWP_NOZORDER);
+			rcClient.top = rcStatus.bottom - rcStatus.top;
+			hdwp = DeferWindowPos(hdwp, s_hwndBListDlg, NULL, 0, rcClient.top, rcClient.right, rcClient.bottom - rcClient.top, SWP_NOACTIVATE | SWP_NOZORDER);
+			EndDeferWindowPos(hdwp);
+		}
+
+		return 0;
+
+	case WM_ERASEBKGND:
+		/* Don't erase background: we never see it. Reduces flicker. */
+		return 0;
+
 	case WM_DESTROY:
+		DestroyWindow(s_hwndBListDlg);
+		DestroyWindow(s_hwndStatusDlg);
 		PostQuitMessage(VEC_SUCCESS);
 		return 0;
 	}
 
 	return DefWindowProc(hwnd, uiMsg, wParam, lParam);
+}
+
+
+/**
+ * Dialogue procedure for status pane.
+ *
+ * @param	hwndDlg		Dialogue window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Usually TRUE if message processed and FALSE otherwise. There are
+ * some exceptions for particular messages.
+ */
+static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch(uiMsg)
+	{
+	case WM_INITDIALOG:
+		{
+			RECT rcIcon;
+			POINT ptIcon;
+
+			GetWindowRect(GetDlgItem(hwndDlg, IDC_BUDDY_ICON), &rcIcon);
+			ptIcon.x = rcIcon.left;
+			ptIcon.y = rcIcon.top;
+			ScreenToClient(hwndDlg, &ptIcon);
+
+			/* Move BLIST_MARGIN from left edge, and set width to
+			 * height.
+			 */
+			SetWindowPos(GetDlgItem(hwndDlg, IDC_BUDDY_ICON), NULL, BLIST_MARGIN, ptIcon.y, rcIcon.bottom - rcIcon.top, rcIcon.bottom - rcIcon.top, SWP_NOACTIVATE | SWP_NOZORDER);
+		}
+
+		/* Let the system set the focus. */
+		return TRUE;
+
+	case WM_SIZE:
+		{
+			HDWP hdwp;
+			RECT rcClient, rcCombo, rcEdit;
+			HWND hwndCombo = GetDlgItem(hwndDlg, IDC_CBEX_STATUS);
+			HWND hwndEdit = GetDlgItem(hwndDlg, IDC_EDIT_STATUSMSG);
+			POINT ptCombo;
+			int cxNew;
+
+			GetClientRect(hwndDlg, &rcClient);
+
+			/* Resize status combo and edit boxes. */
+
+			GetWindowRect(hwndCombo, &rcCombo);
+			GetWindowRect(hwndEdit, &rcEdit);
+
+			ptCombo.x = rcCombo.left;
+			ptCombo.y = rcCombo.top;
+			ScreenToClient(hwndDlg, &ptCombo);
+
+			/* Width is same for both. */
+			cxNew = rcClient.right - BLIST_MARGIN - ptCombo.x;
+
+			hdwp = BeginDeferWindowPos(2);
+			hdwp = DeferWindowPos(hdwp, hwndCombo, NULL, 0, 0, cxNew, rcCombo.bottom - rcCombo.top, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOMOVE);
+			hdwp = DeferWindowPos(hdwp, hwndEdit, NULL, 0, 0, cxNew, rcEdit.bottom - rcEdit.top, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOMOVE);
+			EndDeferWindowPos(hdwp);
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
+/**
+ * Dialogue procedure for buddy list.
+ *
+ * @param	hwndDlg		Dialogue window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Usually TRUE if message processed and FALSE otherwise. There are
+ * some exceptions for particular messages.
+ */
+static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch(uiMsg)
+	{
+	case WM_INITDIALOG:
+		/* Let the system set the focus. */
+		return TRUE;
+
+	case WM_SIZE:
+		{
+			RECT rcClient;
+
+			GetClientRect(hwndDlg, &rcClient);
+			SetWindowPos(GetDlgItem(hwndDlg, IDC_TREE_BLIST), NULL, BLIST_MARGIN, 0, rcClient.right - 2 * BLIST_MARGIN, rcClient.bottom - BLIST_MARGIN, SWP_NOACTIVATE | SWP_NOZORDER);
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
 }

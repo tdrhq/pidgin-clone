@@ -7,4 +7,4 @@
 	$(PERL) $(EXTUTILS)/xsubpp -typemap $(EXTUTILS)/typemap -typemap $(PURPLE_PERL_TOP)/common/typemap $< > $@
 
 %.o: %.rc
-	$(WINDRES) -I$(PURPLE_TOP) -i $< -o $@
+	$(WINDRES) -I$(PURPLE_TOP) $(DEFINES) -i $< -o $@
