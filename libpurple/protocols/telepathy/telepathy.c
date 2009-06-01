@@ -248,7 +248,14 @@ static void
 handle_text_channel (TpChannel *channel,
                      PurplePlugin *plugin)
 {
-	
+	telepathy_data *data = plugin->extra;
+
+	GHashTable *properties = tp_channel_borrow_immutable_properties(channel);
+	gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
+
+	purple_debug_info("telepathy", "Saving TpChannel proxy for %s\n", who);
+
+	g_hash_table_insert(data->text_Channels, g_strdup(who), channel);
 }
 
 static void
@@ -341,11 +348,11 @@ get_channels_cb (TpProxy *proxy,
 		PurplePlugin *plugin = user_data;
 		telepathy_data *data = plugin->extra;
 
-		data->listing_channels = FALSE;
-
 		/* unpack the a(oa{sv}) struct */
 		const GPtrArray *channels = g_value_get_boxed(out_Value);
 		int i;
+
+		data->listing_channels = FALSE;
 
 		for (i = 0; i < channels->len; i++)
 		{
@@ -681,26 +688,6 @@ ensure_channel_cb (TpConnection *proxy,
 	if (error != NULL)
 	{
 		purple_debug_error("telepathy", "EnsureChannel error: %s\n", error->message);
-	}
-	else
-	{
-		PurplePlugin *plugin = user_data;
-		telepathy_data *data = plugin->extra;
-		GError *error = NULL;
-		TpChannel *channel;
-		gchar *who = (gchar *)tp_asv_get_string(out_Properties, TP_IFACE_CHANNEL ".TargetID");
-
-		channel = tp_channel_new(proxy, out_Channel, NULL, TP_HANDLE_TYPE_NONE, 0, &error);
-
-		if (error != NULL)
-		{
-			purple_debug_error("telepathy", "Error creating channel proxy: %s\n", error->message);
-			return;
-		}
-
-		purple_debug_info("telepathy", "Saving TpChannel proxy for %s\n", who);
-
-		g_hash_table_insert(data->text_Channels, g_strdup(who), channel);
 	}
 }
 
