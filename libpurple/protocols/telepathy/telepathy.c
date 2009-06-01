@@ -55,6 +55,9 @@ typedef struct
 	PurpleConnection *gc;
 	PurpleAccount *acct;
 
+	/* This flag avoids having a channel processed twice via both NewChannels and quering the Channels property */
+	gboolean listing_channels;
+
 	/* This will hold pointers to TpChannel for buddies that have an active conversation */
 	GHashTable *text_Channels;
 
@@ -306,6 +309,11 @@ new_channels_cb (TpConnection *proxy,
                  GObject *weak_object)
 {
 	int i;
+	PurplePlugin *plugin = user_data;
+	telepathy_data *data =plugin->extra;
+
+	if (data->listing_channels)
+		return;
 
 	purple_debug_info("telepathy", "NewChannels:\n");
 
@@ -330,6 +338,11 @@ get_channels_cb (TpProxy *proxy,
 	}
 	else
 	{
+		PurplePlugin *plugin = user_data;
+		telepathy_data *data = plugin->extra;
+
+		data->listing_channels = FALSE;
+
 		/* unpack the a(oa{sv}) struct */
 		const GPtrArray *channels = g_value_get_boxed(out_Value);
 		int i;
@@ -356,6 +369,8 @@ connection_ready_cb (TpConnection *connection,
 	{
 		char **interfaces, **ptr;
 		GError *error = NULL;
+		PurplePlugin* plugin = user_data;
+		telepathy_data *data = plugin->extra;
 
 		purple_debug_info("telepathy", "Connection is ready. Interfaces implemented:\n");
 
@@ -373,10 +388,11 @@ connection_ready_cb (TpConnection *connection,
 			purple_debug_error("telepathy", "Error while connecting to NewChannels signal: %s\n", error->message);
 			g_error_free(error);
 			error = NULL;
-			
 			return;
 		}
 
+		data->listing_channels = TRUE;
+			
 		/* query the Channels property of the Requests interface */
 		tp_cli_dbus_properties_call_get(connection, -1, TP_IFACE_CONNECTION_INTERFACE_REQUESTS, "Channels", get_channels_cb, user_data, NULL, NULL);
 
