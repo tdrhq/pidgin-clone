@@ -23,6 +23,7 @@
 
 #include <windows.h>
 #include <commctrl.h>
+#include <glib.h>
 
 #include "vulture.h"
 #include "resource.h"
@@ -60,6 +61,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 	iccx.dwSize = sizeof(iccx);
 	iccx.dwICC = ICC_WIN95_CLASSES | ICC_USEREX_CLASSES;
 	InitCommonControlsEx(&iccx);
+
+	g_thread_init(NULL);
 
 	VultureParseCommandLine();
 

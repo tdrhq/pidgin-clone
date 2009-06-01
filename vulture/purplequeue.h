@@ -28,6 +28,8 @@
 #include <windows.h>
 #include <glib.h>
 
+#include "vulture.h"
+
 
 /** IDs of calls to libpurple. Used as values for iCallID member of
  * PURPLE_CALL.
@@ -44,6 +46,18 @@ void VultureEnqueueAsyncPurpleCall(int iCallID, void *lpvParam);
 void VultureEnqueueSyncPurpleCall(int iCallID, void *lpvParam, HANDLE heventSync);
 GSource* VultureCreateAsyncQueueSource(void);
 GSource* VultureCreateSyncQueueSource(void);
+void VulturePurpleWait(GArray *lpgarrayWaitContext);
+void VultureEnqueueMultiSyncPurpleCall(int iCallID, void *lpvParam, GArray *lpgarrayWaitContext);
+
+
+
+/**
+ * Allocates an object used to wait for several synchronous libpurple calls.
+ *
+ * @return Wait context. Pass this to VultureEnqueueMultiSyncPurpleCall and
+ * VulturePurpleWait.
+ */
+//static INLINE GArray* VultureAllocPurpleWaitContext(void) { return g_array_new(FALSE, FALSE, sizeof(HANDLE)); }
 
 
 #endif

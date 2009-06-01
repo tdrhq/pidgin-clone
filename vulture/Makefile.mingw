@@ -69,7 +69,8 @@ VULTURE_LIBS =	\
 		-lglib-2.0 \
 		-lpurple \
 		-lwinmm \
-		-lcomctl32
+		-lcomctl32 \
+		-lgthread-2.0
 
 include $(PIDGIN_COMMON_RULES)
 

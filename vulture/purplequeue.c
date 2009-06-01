@@ -323,3 +323,38 @@ GSource* VultureCreateSyncQueueSource(void)
 {
 	return &CreateQueueSource(g_lpgqSyncQueue, &g_csSyncQueue, g_heventSyncQueue, SYNC_QUEUE_PRIORITY)->gsource;
 }
+
+
+/**
+ * Waits for libpurple calls in a given context to complete, and then destroys
+ * the context.
+ *
+ * @param	lpgarrayWaitContext	Wait context.
+ */
+void VulturePurpleWait(GArray *lpgarrayWaitContext)
+{
+	int i;
+
+	WaitForMultipleObjects(lpgarrayWaitContext->len, (HANDLE*)lpgarrayWaitContext->data, TRUE, INFINITE);
+	
+	for(i = 0; i < lpgarrayWaitContext->len; i++)
+		CloseHandle(g_array_index(lpgarrayWaitContext, HANDLE, i));
+
+	g_array_free(lpgarrayWaitContext, TRUE);
+}
+
+
+/**
+ * Enqueues a synchronous call to libpurple, creating a handle for
+ * synchornisation and adding it to the given wait context.
+ *
+ * @param	iCallID			ID of the operation to perform.
+ * @param	lpvParam		Function-specific data.
+ * @param	lpgarrayWaitContext	Wait context for synchronisation.
+ */
+void VultureEnqueueMultiSyncPurpleCall(int iCallID, void *lpvParam, GArray *lpgarrayWaitContext)
+{
+	HANDLE hevent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	g_array_append_val(lpgarrayWaitContext, hevent);
+	VultureEnqueueSyncPurpleCall(iCallID, lpvParam, hevent);
+}
