@@ -55,11 +55,6 @@ typedef struct
 	PurpleConnection *gc;
 	PurpleAccount *acct;
 
-	/* Set when calling ListChannels, unset when callback fires.
-	 * This avoids processing a channel twice (via NewChannel signal also).
-	 */
-	gboolean listing_channels; 
-
 	/* This will hold pointers to TpChannel for buddies that have an active conversation */
 	GHashTable *text_Channels;
 
@@ -205,6 +200,55 @@ contacts_ready_cb (TpConnection *connection,
 }
 
 static void
+handle_list_channel (TpChannel *channel,
+                     PurplePlugin *plugin)
+{
+	telepathy_data *data = plugin->extra;
+	TpConnection *connection = data->connection;
+	const TpIntSet *members;
+	TpIntSetIter iter;
+	GArray *handles;
+
+	static const TpContactFeature features[] = {
+		TP_CONTACT_FEATURE_ALIAS,
+		TP_CONTACT_FEATURE_PRESENCE
+	};
+
+	members = tp_channel_group_get_members(channel);
+
+	if (members == NULL)
+	{
+		purple_debug_error("telepathy", "Error while getting member list\n");
+		return;
+	}
+
+	iter.set = members;
+	iter.element = (guint)(-1);
+
+	handles = tp_intset_to_array (members);
+
+	/* we want to create a TpContact for each member of this channel */
+	if (handles->len)
+	{
+		tp_connection_get_contacts_by_handle (connection,
+				handles->len, (const TpHandle *) handles->data,
+				G_N_ELEMENTS (features), features,
+				contacts_ready_cb,
+				plugin, NULL, NULL);
+
+	}
+	g_array_free (handles, TRUE);
+
+}
+
+static void
+handle_text_channel (TpChannel *channel,
+                     PurplePlugin *plugin)
+{
+	
+}
+
+static void
 channel_ready_cb (TpChannel *channel,
                   const GError *error,
                   gpointer user_data)
@@ -221,42 +265,11 @@ channel_ready_cb (TpChannel *channel,
 
 		if (handle_Type == TP_IFACE_QUARK_CHANNEL_TYPE_CONTACT_LIST)
 		{
-			PurplePlugin *plugin = user_data;
-			telepathy_data *data = plugin->extra;
-			TpConnection *connection = data->connection;
-			const TpIntSet *members;
-			TpIntSetIter iter;
-			GArray *handles;
-
-			static const TpContactFeature features[] = {
-				TP_CONTACT_FEATURE_ALIAS,
-				TP_CONTACT_FEATURE_PRESENCE
-			};
-
-			members = tp_channel_group_get_members(channel);
-
-			if (members == NULL)
-			{
-				purple_debug_error("telepathy", "Error while getting member list\n");
-				return;
-			}
-
-			iter.set = members;
-			iter.element = (guint)(-1);
-
-			handles = tp_intset_to_array (members);
-
-			/* we want to create a TpContact for each member of this channel */
-			if (handles->len)
-			{
-				tp_connection_get_contacts_by_handle (connection,
-						handles->len, (const TpHandle *) handles->data,
-						G_N_ELEMENTS (features), features,
-						contacts_ready_cb,
-						user_data, NULL, NULL);
-
-			}
-			g_array_free (handles, TRUE);
+			handle_list_channel(channel, user_data);
+		}
+		else if (handle_Type == TP_IFACE_QUARK_CHANNEL_TYPE_TEXT)
+		{
+			handle_text_channel(channel, user_data);
 		}
 	}
 }
@@ -268,27 +281,20 @@ handle_new_channel (PurplePlugin *plugin,
 		    guint handle_Type,
 		    guint handle)
 {
-	switch (handle_Type)
+	TpChannel *channel;
+	GError *error = NULL;
+	TpConnection *connection = ((telepathy_data *)plugin->extra)->connection;
+
+	channel = tp_channel_new(connection, object_Path, channel_Type, handle_Type, handle, &error);
+
+	if (error != NULL)
 	{
-		case TP_HANDLE_TYPE_LIST:
-		{
-			TpChannel *channel;
-			GError *error = NULL;
-			TpConnection *connection = ((telepathy_data *)plugin->extra)->connection;
-
-			channel = tp_channel_new(connection, object_Path, channel_Type, handle_Type, handle, &error);
-
-			if (error != NULL)
-			{
-				purple_debug_error("telepathy", "Error while creating TpChannel: %s\n", error->message);
-				g_error_free(error);
-				return;
-			}
-
-			tp_channel_call_when_ready(channel, channel_ready_cb, plugin);
-		}
-		break;
+		purple_debug_error("telepathy", "Error while creating TpChannel: %s\n", error->message);
+		g_error_free(error);
+		return;
 	}
+
+	tp_channel_call_when_ready(channel, channel_ready_cb, plugin);
 }
 
 /* unpack an (osuu) dbus struct holding channel information*/
@@ -304,31 +310,6 @@ unpack_channel_struct (gpointer data,
 			g_value_get_string(g_value_array_get_nth(data, 1)),
 			g_value_get_uint(g_value_array_get_nth(data, 2)),
 			g_value_get_uint(g_value_array_get_nth(data, 3)));
-}
-
-static void
-list_channels_cb (TpConnection *proxy,
-                  const GPtrArray *out_Channel_Info,
-                  const GError *error,
-                  gpointer user_data,
-                  GObject *weak_object)
-{
-	if (error != NULL)
-	{
-		purple_debug_error("telepathy", "ListChannels error: %s\n", error->message);
-	}
-	else
-	{
-		PurplePlugin *plugin = user_data;
-		telepathy_data *data = plugin->extra;
-		
-		/* future channels will be processed in NewChannel signal */
-		data->listing_channels = FALSE;
-
-		purple_debug_info("telepathy", "Channels:\n");
-
-		g_ptr_array_foreach((GPtrArray *)out_Channel_Info, unpack_channel_struct, user_data);
-	}
 }
 
 static void
@@ -359,31 +340,9 @@ new_channels_cb (TpConnection *proxy,
 		purple_debug_info("telepathy", "  Type: %s\n", channel_Type);
 
 		handle_new_channel(user_data, object_Path, channel_Type, handle_Type, handle);
+
+		tp_asv_dump(map);
 	}
-}
-
-static void
-new_channel_cb (TpConnection *proxy,
-                const gchar *arg_Object_Path,
-                const gchar *arg_Channel_Type,
-                guint arg_Handle_Type,
-                guint arg_Handle,
-                gboolean arg_Suppress_Handler,
-                gpointer user_data,
-                GObject *weak_object)
-{
-	PurplePlugin *plugin = user_data;
-	telepathy_data *data = plugin->extra;
-
-	/* this channel will also be processed in NewChannel, so quit */
-	if (data->listing_channels)
-		return;
-
-	purple_debug_info("telepathy", "NewChannel:\n");
-	purple_debug_info("telepathy", "  %s\n", arg_Object_Path);
-	purple_debug_info("telepathy", "  %s\n", arg_Channel_Type);
-
-	handle_new_channel(user_data, (gchar *)arg_Object_Path, (gchar *)arg_Channel_Type, arg_Handle_Type, arg_Handle);
 }
 
 static void
@@ -397,8 +356,6 @@ connection_ready_cb (TpConnection *connection,
 	}
 	else
 	{
-		PurplePlugin *plugin = user_data;
-		telepathy_data *data = plugin->extra;
 		char **interfaces, **ptr;
 		GError *error = NULL;
 
@@ -418,23 +375,9 @@ connection_ready_cb (TpConnection *connection,
 			purple_debug_error("telepathy", "Error while connecting to NewChannels signal: %s\n", error->message);
 			g_error_free(error);
 			error = NULL;
-
-			purple_debug_info("telepathy", "Falling back to NewChannel signal...\n");
-
-			/* fallback to the old NewChannel method */
-			tp_cli_connection_connect_to_new_channel(connection, new_channel_cb, user_data, NULL, NULL, &error);
-
-			if (error != NULL)
-			{
-				purple_debug_error("telepathy", "Error while connecting to NewChannel signal: %s\n", error->message);
-				g_error_free(error);
-				error = NULL;
-			}
+			
+			return;
 		}
-
-		tp_cli_connection_call_list_channels(connection, -1, list_channels_cb, user_data, NULL, NULL);
-
-		data->listing_channels = TRUE;
 
 	}
 }
