@@ -68,7 +68,8 @@ VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)
 VULTURE_LIBS =	\
 		-lglib-2.0 \
 		-lpurple \
-		-lwinmm
+		-lwinmm \
+		-lcomctl32
 
 include $(PIDGIN_COMMON_RULES)
 
