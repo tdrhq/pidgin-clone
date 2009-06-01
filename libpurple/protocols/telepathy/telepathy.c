@@ -275,17 +275,15 @@ channel_ready_cb (TpChannel *channel,
 }
 
 static void
-handle_new_channel (PurplePlugin *plugin,
-                    const gchar *object_Path,
-                    const gchar *channel_Type,
-		    guint handle_Type,
-		    guint handle)
+handle_new_channel (PurplePlugin* plugin,
+                    const GValueArray *channel_Properties)
 {
-	TpChannel *channel;
+	char *object_Path = g_value_get_boxed(g_value_array_get_nth((GValueArray *)channel_Properties, 0));
+	GHashTable *map = g_value_get_boxed(g_value_array_get_nth((GValueArray *)channel_Properties, 1));
+
 	GError *error = NULL;
 	TpConnection *connection = ((telepathy_data *)plugin->extra)->connection;
-
-	channel = tp_channel_new(connection, object_Path, channel_Type, handle_Type, handle, &error);
+	TpChannel *channel = tp_channel_new_from_properties(connection, object_Path, map, &error);
 
 	if (error != NULL)
 	{
@@ -293,23 +291,12 @@ handle_new_channel (PurplePlugin *plugin,
 		g_error_free(error);
 		return;
 	}
+	
+	purple_debug_info("telepathy", "New channel: %s\n", object_Path);
+
+	tp_asv_dump(map);
 
 	tp_channel_call_when_ready(channel, channel_ready_cb, plugin);
-}
-
-/* unpack an (osuu) dbus struct holding channel information*/
-static void
-unpack_channel_struct (gpointer data,
-                       gpointer user_data)
-{
-	purple_debug_info("telepathy", "  %s\n", (gchar *)g_value_get_boxed(g_value_array_get_nth(data, 0)));
-	purple_debug_info("telepathy", "  %s\n", g_value_get_string(g_value_array_get_nth(data, 1)));
-
-	handle_new_channel(user_data,
-			g_value_get_boxed(g_value_array_get_nth(data, 0)), 
-			g_value_get_string(g_value_array_get_nth(data, 1)),
-			g_value_get_uint(g_value_array_get_nth(data, 2)),
-			g_value_get_uint(g_value_array_get_nth(data, 3)));
 }
 
 static void
@@ -324,24 +311,35 @@ new_channels_cb (TpConnection *proxy,
 
 	for (i = 0; i < arg_Channels->len; i++)
 	{
-		GValueArray *channel = g_ptr_array_index (arg_Channels, i);
+		GValueArray *channel = g_ptr_array_index(arg_Channels, i);
 
-		char *object_Path = g_value_get_boxed(g_value_array_get_nth(channel, 0));
-		GHashTable *map = g_value_get_boxed(g_value_array_get_nth(channel, 1));
+		handle_new_channel(user_data, channel);
+	}
+}
 
-		const char *channel_Type = tp_asv_get_string(map, TP_IFACE_CHANNEL ".ChannelType");
+static void
+get_channels_cb (TpProxy *proxy,
+                 const GValue *out_Value,
+                 const GError *error,
+                 gpointer user_data,
+                 GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Get Channels error: %s\n", error->message);
+	}
+	else
+	{
+		/* unpack the a(oa{sv}) struct */
+		const GPtrArray *channels = g_value_get_boxed(out_Value);
+		int i;
 
-		gboolean valid;
+		for (i = 0; i < channels->len; i++)
+		{
+			const GValueArray *channel = g_ptr_array_index(channels, i);
+			handle_new_channel(user_data, channel);
+		}
 
-		guint handle = tp_asv_get_uint32(map, TP_IFACE_CHANNEL ".TargetHandle", &valid);
-		guint handle_Type = tp_asv_get_uint32(map, TP_IFACE_CHANNEL ".TargetHandleType", &valid);
-
-		purple_debug_info("telepathy", "  Path: %s\n", object_Path);
-		purple_debug_info("telepathy", "  Type: %s\n", channel_Type);
-
-		handle_new_channel(user_data, object_Path, channel_Type, handle_Type, handle);
-
-		tp_asv_dump(map);
 	}
 }
 
@@ -378,6 +376,9 @@ connection_ready_cb (TpConnection *connection,
 			
 			return;
 		}
+
+		/* query the Channels property of the Requests interface */
+		tp_cli_dbus_properties_call_get(connection, -1, TP_IFACE_CONNECTION_INTERFACE_REQUESTS, "Channels", get_channels_cb, user_data, NULL, NULL);
 
 	}
 }
