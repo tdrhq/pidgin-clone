@@ -286,12 +286,11 @@ list_pending_messages_cb  (TpChannel *proxy,
 
 			/* unpack the relevant info from (uuuuus) */
 			GValueArray *arr = g_ptr_array_index(out_Pending_Messages, i);
-			guint contact_Handle = g_value_get_uint(g_value_array_get_nth(arr, 2));
 			guint timestamp = g_value_get_uint(g_value_array_get_nth(arr, 1));
 			gchar *msg = (gchar *)g_value_get_string(g_value_array_get_nth(arr, 5));
 			
-			TpContact * contact = g_hash_table_lookup(data->contacts, (gpointer)contact_Handle);
-			gchar *from = (gchar *)tp_contact_get_identifier(contact);
+			/* get the identifier from channel instead of contact since contact might not be ready for offline messages */
+			gchar *from = (gchar *)tp_channel_get_identifier(proxy);
 
 			/* if a conversation was not yet establish, create a new one */
 			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, data->acct);
@@ -339,6 +338,32 @@ send_cb (TpChannel *proxy,
 }
 
 static void
+text_channel_invalidated_cb (TpProxy *self,
+                             guint    domain,
+                             gint     code,
+                             gchar   *message,
+                             gpointer user_data)
+{
+	PurplePlugin *plugin = user_data;
+	telepathy_data *data = plugin->extra;
+
+	/* remove the cached TpChannel proxy when the channel closes */
+	const gchar *who = tp_channel_get_identifier((TpChannel *)self);
+
+	telepathy_text_channel *tp_channel = NULL;
+	
+	if (data->text_Channels)
+		tp_channel = g_hash_table_lookup(data->text_Channels, who);
+
+	purple_debug_info("telepathy", "Text channel with %s closed!\n", who);
+
+	if (tp_channel)
+	{
+		tp_channel->channel = NULL;
+	}
+}
+
+static void
 handle_text_channel (TpChannel *channel,
                      PurplePlugin *plugin)
 {
@@ -370,6 +395,8 @@ handle_text_channel (TpChannel *channel,
 	{
 		purple_debug_error("telepathy", "Error connecting to Received signal: %s\n", error->message);
 	}
+
+	g_signal_connect(channel, "invalidated", G_CALLBACK(text_channel_invalidated_cb), plugin);
 
 	tp_cli_channel_type_text_call_list_pending_messages(channel, -1, TRUE, list_pending_messages_cb, plugin, NULL, NULL);
 
