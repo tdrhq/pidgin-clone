@@ -837,6 +837,13 @@ telepathy_send_im (PurpleConnection *gc,
 	}
 	else
 	{
+		/* if this is the first message, we need to create the channel */
+		GHashTable *map = tp_asv_new (
+			TP_IFACE_CHANNEL ".ChannelType", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
+			TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_CONTACT,
+			TP_IFACE_CHANNEL ".TargetID", G_TYPE_STRING, who,
+			NULL);
+
 		tp_channel = g_new0(telepathy_text_channel, 1);
 		g_hash_table_insert(data->text_Channels, g_strdup(who), tp_channel);
 
