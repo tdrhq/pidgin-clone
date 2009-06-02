@@ -60,9 +60,23 @@ typedef struct
 
 	/* This will hold pointers to TpChannel for buddies that have an active conversation */
 	GHashTable *text_Channels;
+	
+	/* This will map contact handles to TpContact */
 	GHashTable *contacts;
 
 } telepathy_data;
+
+typedef struct
+{
+	GList *pending_Messages;
+	TpChannel *channel;
+} telepathy_text_channel;
+
+static void
+destroy_text_channel(telepathy_text_channel *tp_channel)
+{
+	g_free(tp_channel);
+}
 
 typedef struct
 {
@@ -313,6 +327,18 @@ received_cb (TpChannel *proxy,
 }
 
 static void
+send_cb (TpChannel *proxy,
+         const GError *error,
+         gpointer user_data,
+         GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Send error: %s\n", error->message);
+	}
+}
+
+static void
 handle_text_channel (TpChannel *channel,
                      PurplePlugin *plugin)
 {
@@ -323,17 +349,33 @@ handle_text_channel (TpChannel *channel,
 	GHashTable *properties = tp_channel_borrow_immutable_properties(channel);
 	gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
 
+	telepathy_text_channel *tp_channel;
+
 	purple_debug_info("telepathy", "Saving TpChannel proxy for %s\n", who);
 
-	g_hash_table_insert(data->text_Channels, g_strdup(who), channel);
+	tp_channel = g_hash_table_lookup(data->text_Channels, who);
+	tp_channel->channel = channel;
 
 	tp_cli_channel_type_text_connect_to_received(channel, received_cb, plugin, NULL, NULL, &error);
-
-	tp_cli_channel_type_text_call_list_pending_messages(channel, -1, TRUE, list_pending_messages_cb, plugin, NULL, NULL);
 
 	if (error != NULL)
 	{
 		purple_debug_error("telepathy", "Error connecting to Received signal: %s\n", error->message);
+	}
+
+	tp_cli_channel_type_text_call_list_pending_messages(channel, -1, TRUE, list_pending_messages_cb, plugin, NULL, NULL);
+
+	/* send pending messages */
+	while (tp_channel->pending_Messages != NULL)
+	{
+		purple_debug_info("telepathy", "Sending pending message \"%s\" to %s\n", (gchar *)tp_channel->pending_Messages->data, who);
+
+		tp_cli_channel_type_text_call_send(channel, -1, TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL, tp_channel->pending_Messages->data, send_cb, plugin, NULL, NULL);
+
+		/* the message was duped */
+		g_free(tp_channel->pending_Messages->data);
+
+		tp_channel->pending_Messages = g_list_delete_link(tp_channel->pending_Messages, tp_channel->pending_Messages);
 	}
 }
 
@@ -504,6 +546,9 @@ status_changed_cb (TpConnection *proxy,
 				2);  /* total number of steps */
 
 		purple_connection_set_state(data->gc, PURPLE_CONNECTED);
+
+		data->text_Channels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_text_channel);
+		data->contacts = g_hash_table_new(g_direct_hash, g_direct_equal);
 	}
 	else if (arg_Status == TP_CONNECTION_STATUS_DISCONNECTED)
 	{
@@ -753,6 +798,9 @@ telepathy_close(PurpleConnection *gc)
 		g_object_unref(data->connection);
 		data->connection = NULL;
 	}
+
+	g_hash_table_destroy(data->text_Channels);
+	g_hash_table_destroy(data->contacts);
 }
 
 static void
@@ -770,50 +818,39 @@ ensure_channel_cb (TpConnection *proxy,
 	}
 }
 
-static void
-send_cb (TpChannel *proxy,
-         const GError *error,
-         gpointer user_data,
-         GObject *weak_object)
-{
-	if (error != NULL)
-	{
-		purple_debug_error("telepathy", "Send error: %s\n", error->message);
-	}
-	else
-	{
-		purple_debug_info("telepathy", "Send succeeded!\n");
-	}
-}
-
 static int
 telepathy_send_im (PurpleConnection *gc,
                    const char *who,
                    const char *message,
                    PurpleMessageFlags flags)
 {
-	TpChannel *channel;
 	PurplePlugin* plugin = purple_connection_get_prpl(gc);
 	telepathy_data *data = plugin->extra;
 
-	purple_debug_info("telepathy", "Sending \"%s\" to %s\n", message, who);
+	/* check if the channel was already created */
+	telepathy_text_channel *tp_channel = g_hash_table_lookup(data->text_Channels, who);
+	TpChannel *channel = NULL;
 
-	channel = g_hash_table_lookup(data->text_Channels, who);
-
-	/* if this is the first message, we need to create the channel */
-	/* TODO: Find a way to send the first message also */
-	if (channel == NULL)
+	if (tp_channel != NULL)
 	{
-		GHashTable *map = tp_asv_new (
-			TP_IFACE_CHANNEL ".ChannelType", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
-			TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_CONTACT,
-			TP_IFACE_CHANNEL ".TargetID", G_TYPE_STRING, who,
-			NULL);
+		channel = tp_channel->channel;
+	}
+	else
+	{
+		tp_channel = g_new0(telepathy_text_channel, 1);
+		g_hash_table_insert(data->text_Channels, g_strdup(who), tp_channel);
 
 		purple_debug_info("telepathy", "Creating text channel for %s\n", who);
 
-		/* TODO: Fallback to RequestChannel if CM doesn't support the Requests interface */
 		tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1, map, ensure_channel_cb, plugin, NULL, NULL);
+	}
+
+	purple_debug_info("telepathy", "Sending \"%s\" to %s\n", message, who);
+
+	if (channel == NULL)
+	{
+		/* add the message to the pending list */
+		tp_channel->pending_Messages = g_list_append(tp_channel->pending_Messages, g_strdup(message));
 	}
 	else
 	{
@@ -836,8 +873,6 @@ telepathy_destroy(PurplePlugin *plugin)
 		g_free(plugin->info);
 		data = plugin->extra;
 		g_object_unref(data->cm);
-		g_hash_table_destroy(data->text_Channels);
-		g_hash_table_destroy(data->contacts);
 		g_free(data);
 	}
 }
@@ -1164,8 +1199,6 @@ export_prpl(TpConnectionManager *cm,
 	data->connection = NULL;
 	data->gc = NULL;
 	g_object_ref(data->cm);
-	data->text_Channels = g_hash_table_new(g_str_hash, g_str_equal);
-	data->contacts = g_hash_table_new(g_direct_hash, g_direct_equal);
 
 	/* correct the plugin id and name, everything else can remain the same */
 	plugin->info->id = g_strdup_printf("%s-%s-%s", TELEPATHY_ID, tp_connection_manager_get_name(cm), protocol->name);
