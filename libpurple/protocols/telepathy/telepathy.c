@@ -251,30 +251,6 @@ handle_list_channel (TpChannel *channel,
 }
 
 static void
-conversation_write (PurplePlugin *plugin,
-                    const gchar *from,
-		    const gchar *msg)
-{
-	telepathy_data *data = plugin->extra;
-	PurpleAccount *acct = data->acct;
-
-	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, acct);
-
-	PurpleConvIm *im;
-
-	if (conv == NULL)
-	{
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, from);
-	}
-
-	purple_debug_info("telepathy", "Received from %s: \"%s\"\n", from, msg);
-
-	im = purple_conversation_get_im_data(conv);
-
-	purple_conv_im_write(im, from, msg, 0, 0);
-}
-
-static void
 received_cb (TpChannel *proxy,
              guint arg_ID,
              guint arg_Timestamp,
@@ -290,13 +266,27 @@ received_cb (TpChannel *proxy,
 
 	TpContact *contact = g_hash_table_lookup(data->contacts, (gpointer)arg_Sender);
 
-	purple_debug_info("telepathy", "Contact #%u says \"%s\"\n", arg_Sender, arg_Text);	
-
 	if (contact != NULL)
 	{
-		purple_debug_info("telepathy", "Contact %s says \"%s\"\n", tp_contact_get_identifier(contact), arg_Text);	
+		PurpleAccount *acct = data->acct;
+		gchar *from = (gchar *)tp_contact_get_identifier(contact);
 
-		conversation_write(user_data, tp_contact_get_identifier(contact), arg_Text);
+		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, acct);
+
+		PurpleConvIm *im;
+
+		purple_debug_info("telepathy", "Contact %s says \"%s\"\n", from, arg_Text);	
+
+		if (conv == NULL)
+		{
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, from);
+		}
+
+		im = purple_conversation_get_im_data(conv);
+
+		purple_conv_im_write(im, from, arg_Text, 0, arg_Timestamp);
+
+		//conversation_write(user_data, tp_contact_get_identifier(contact), arg_Text);
 	}
 	else
 	{
