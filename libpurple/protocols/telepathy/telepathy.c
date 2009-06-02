@@ -425,8 +425,6 @@ handle_new_channel (PurplePlugin* plugin,
 	
 	purple_debug_info("telepathy", "New channel: %s\n", object_Path);
 
-	tp_asv_dump(map);
-
 	tp_channel_call_when_ready(channel, channel_ready_cb, plugin);
 }
 
@@ -548,7 +546,7 @@ status_changed_cb (TpConnection *proxy,
 		purple_connection_set_state(data->gc, PURPLE_CONNECTED);
 
 		data->text_Channels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_text_channel);
-		data->contacts = g_hash_table_new(g_direct_hash, g_direct_equal);
+		data->contacts = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_object_unref);
 	}
 	else if (arg_Status == TP_CONNECTION_STATUS_DISCONNECTED)
 	{
@@ -556,7 +554,8 @@ status_changed_cb (TpConnection *proxy,
 		PurpleConnectionError error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 		purple_debug_info("telepathy", "Disconnected! Reason: %d\n", arg_Reason);
 
-		purple_connection_set_state(data->gc, PURPLE_DISCONNECTED);
+		if (data->gc)
+			purple_connection_set_state(data->gc, PURPLE_DISCONNECTED);
 
 		switch (arg_Reason)
 		{
@@ -621,7 +620,7 @@ status_changed_cb (TpConnection *proxy,
 			break;
 		}
 
-		if (reason != NULL)
+		if (reason != NULL && data->gc)
 			purple_connection_error_reason(data->gc, error, reason);
 
 		if (data->connection)
@@ -797,6 +796,7 @@ telepathy_close(PurpleConnection *gc)
 		tp_cli_connection_call_disconnect(data->connection, -1, NULL, NULL, NULL, NULL);
 		g_object_unref(data->connection);
 		data->connection = NULL;
+		data->gc = NULL;
 	}
 
 	g_hash_table_destroy(data->text_Channels);
