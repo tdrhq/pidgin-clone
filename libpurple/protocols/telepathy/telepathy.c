@@ -354,6 +354,14 @@ handle_text_channel (TpChannel *channel,
 	purple_debug_info("telepathy", "Saving TpChannel proxy for %s\n", who);
 
 	tp_channel = g_hash_table_lookup(data->text_Channels, who);
+
+	/* if tp_channel exists, then we requested this channel, else it's an incoming request so we must cache it */
+	if (tp_channel == NULL)
+	{
+		tp_channel = g_new0(telepathy_text_channel, 1);
+		g_hash_table_insert(data->text_Channels, who, tp_channel);
+	}
+
 	tp_channel->channel = channel;
 
 	tp_cli_channel_type_text_connect_to_received(channel, received_cb, plugin, NULL, NULL, &error);
