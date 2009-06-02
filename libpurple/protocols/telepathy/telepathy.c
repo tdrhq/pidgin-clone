@@ -60,6 +60,7 @@ typedef struct
 
 	/* This will hold pointers to TpChannel for buddies that have an active conversation */
 	GHashTable *text_Channels;
+	GHashTable *contacts;
 
 } telepathy_data;
 
@@ -180,6 +181,7 @@ contacts_ready_cb (TpConnection *connection,
 			PurpleBuddy *buddy;
 			PurplePlugin *plugin = user_data;
 			telepathy_data *data = plugin->extra;
+			guint handle;
 
 			purple_debug_info("telepathy", "  Contact ready: %s\n", tp_contact_get_alias(contact));
 
@@ -192,6 +194,10 @@ contacts_ready_cb (TpConnection *connection,
 			}
 
 			purple_blist_add_buddy(buddy, NULL, NULL, NULL);
+
+			handle = tp_contact_get_handle(contact);
+
+			g_hash_table_insert(data->contacts, (gpointer)handle, contact);
 
 			g_object_ref(contact);
 
@@ -245,10 +251,66 @@ handle_list_channel (TpChannel *channel,
 }
 
 static void
+conversation_write (PurplePlugin *plugin,
+                    const gchar *from,
+		    const gchar *msg)
+{
+	telepathy_data *data = plugin->extra;
+	PurpleAccount *acct = data->acct;
+
+	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, acct);
+
+	PurpleConvIm *im;
+
+	if (conv == NULL)
+	{
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, from);
+	}
+
+	purple_debug_info("telepathy", "Received from %s: \"%s\"\n", from, msg);
+
+	im = purple_conversation_get_im_data(conv);
+
+	purple_conv_im_write(im, from, msg, 0, 0);
+}
+
+static void
+received_cb (TpChannel *proxy,
+             guint arg_ID,
+             guint arg_Timestamp,
+             guint arg_Sender,
+             guint arg_Type,
+             guint arg_Flags,
+             const gchar *arg_Text,
+             gpointer user_data,
+             GObject *weak_object)
+{
+	PurplePlugin *plugin = user_data;
+	telepathy_data *data = plugin->extra;
+
+	TpContact *contact = g_hash_table_lookup(data->contacts, (gpointer)arg_Sender);
+
+	purple_debug_info("telepathy", "Contact #%u says \"%s\"\n", arg_Sender, arg_Text);	
+
+	if (contact != NULL)
+	{
+		purple_debug_info("telepathy", "Contact %s says \"%s\"\n", tp_contact_get_identifier(contact), arg_Text);	
+
+		conversation_write(user_data, tp_contact_get_identifier(contact), arg_Text);
+	}
+	else
+	{
+		purple_debug_info("telepathy", "contact is NULL, suck on that!\n");
+	}
+}
+
+static void
 handle_text_channel (TpChannel *channel,
                      PurplePlugin *plugin)
 {
 	telepathy_data *data = plugin->extra;
+
+	GError *error = NULL;
 
 	GHashTable *properties = tp_channel_borrow_immutable_properties(channel);
 	gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
@@ -256,6 +318,13 @@ handle_text_channel (TpChannel *channel,
 	purple_debug_info("telepathy", "Saving TpChannel proxy for %s\n", who);
 
 	g_hash_table_insert(data->text_Channels, g_strdup(who), channel);
+
+	tp_cli_channel_type_text_connect_to_received(channel, received_cb, plugin, NULL, NULL, &error);
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to Received signal: %s\n", error->message);
+	}
 }
 
 static void
@@ -758,6 +827,7 @@ telepathy_destroy(PurplePlugin *plugin)
 		data = plugin->extra;
 		g_object_unref(data->cm);
 		g_hash_table_destroy(data->text_Channels);
+		g_hash_table_destroy(data->contacts);
 		g_free(data);
 	}
 }
@@ -1085,6 +1155,7 @@ export_prpl(TpConnectionManager *cm,
 	data->gc = NULL;
 	g_object_ref(data->cm);
 	data->text_Channels = g_hash_table_new(g_str_hash, g_str_equal);
+	data->contacts = g_hash_table_new(g_direct_hash, g_direct_equal);
 
 	/* correct the plugin id and name, everything else can remain the same */
 	plugin->info->id = g_strdup_printf("%s-%s-%s", TELEPATHY_ID, tp_connection_manager_get_name(cm), protocol->name);
