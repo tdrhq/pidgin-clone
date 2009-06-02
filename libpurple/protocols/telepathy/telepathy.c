@@ -251,6 +251,53 @@ handle_list_channel (TpChannel *channel,
 }
 
 static void
+list_pending_messages_cb  (TpChannel *proxy,
+                           const GPtrArray *out_Pending_Messages,
+                           const GError *error,
+                           gpointer user_data,
+                           GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "ListPendingMessages error: %s\n", error->message);
+	}
+	else
+	{
+		int i;
+
+		for (i = 0; i<out_Pending_Messages->len; ++i)
+		{
+			PurplePlugin* plugin = user_data;
+			telepathy_data *data = plugin->extra;
+
+			/* unpack the relevant info from (uuuuus) */
+			GValueArray *arr = g_ptr_array_index(out_Pending_Messages, i);
+			guint contact_Handle = g_value_get_uint(g_value_array_get_nth(arr, 2));
+			guint timestamp = g_value_get_uint(g_value_array_get_nth(arr, 1));
+			gchar *msg = (gchar *)g_value_get_string(g_value_array_get_nth(arr, 5));
+			
+			TpContact * contact = g_hash_table_lookup(data->contacts, (gpointer)contact_Handle);
+			gchar *from = (gchar *)tp_contact_get_identifier(contact);
+
+			/* if a conversation was not yet establish, create a new one */
+			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, data->acct);
+			PurpleConvIm *im;
+
+			if (conv == NULL)
+			{
+				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, data->acct, from);
+			}
+			im = purple_conversation_get_im_data(conv);
+
+			purple_debug_info("telepathy", "Contact %s says \"%s\"\n", from, msg);
+
+			/* transmit the message to the UI */
+			purple_conv_im_write(im, from, msg, 0, timestamp);
+		}
+	}
+}
+
+static void
 received_cb (TpChannel *proxy,
              guint arg_ID,
              guint arg_Timestamp,
@@ -261,37 +308,8 @@ received_cb (TpChannel *proxy,
              gpointer user_data,
              GObject *weak_object)
 {
-	PurplePlugin *plugin = user_data;
-	telepathy_data *data = plugin->extra;
-
-	TpContact *contact = g_hash_table_lookup(data->contacts, (gpointer)arg_Sender);
-
-	if (contact != NULL)
-	{
-		PurpleAccount *acct = data->acct;
-		gchar *from = (gchar *)tp_contact_get_identifier(contact);
-
-		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, acct);
-
-		PurpleConvIm *im;
-
-		purple_debug_info("telepathy", "Contact %s says \"%s\"\n", from, arg_Text);	
-
-		if (conv == NULL)
-		{
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, from);
-		}
-
-		im = purple_conversation_get_im_data(conv);
-
-		purple_conv_im_write(im, from, arg_Text, 0, arg_Timestamp);
-
-		//conversation_write(user_data, tp_contact_get_identifier(contact), arg_Text);
-	}
-	else
-	{
-		purple_debug_info("telepathy", "contact is NULL, suck on that!\n");
-	}
+	/* check for pending messages instead to be sure we don't miss anything */
+	tp_cli_channel_type_text_call_list_pending_messages(proxy, -1, TRUE, list_pending_messages_cb, user_data, NULL, NULL);
 }
 
 static void
@@ -310,6 +328,8 @@ handle_text_channel (TpChannel *channel,
 	g_hash_table_insert(data->text_Channels, g_strdup(who), channel);
 
 	tp_cli_channel_type_text_connect_to_received(channel, received_cb, plugin, NULL, NULL, &error);
+
+	tp_cli_channel_type_text_call_list_pending_messages(channel, -1, TRUE, list_pending_messages_cb, plugin, NULL, NULL);
 
 	if (error != NULL)
 	{
