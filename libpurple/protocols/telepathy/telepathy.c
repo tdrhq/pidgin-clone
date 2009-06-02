@@ -670,16 +670,18 @@ request_connection_cb (TpConnectionManager *proxy,
                        gpointer user_data,
                        GObject *weak_object)
 {
+    	PurplePlugin* plugin = user_data;
+	telepathy_data* data = plugin->extra;
+
 	if (error != NULL)
 	{
 		purple_debug_info("telepathy", "RequestConnection error: %s\n", error->message);
+
+		purple_connection_error_reason(data->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, error->message);
 	}
 	else
 	{
 		GError *error = NULL;
-
-		PurplePlugin* plugin = user_data;
-		telepathy_data* data = plugin->extra;
 
 		TpDBusDaemon *daemon = tp_dbus_daemon_dup(&error);
 		
