@@ -35,6 +35,7 @@
 #include "notify.h"
 #include "plugin.h"
 #include "prefs.h"
+#include "util.h"
 #include "version.h"
 
 #define TELEPATHY_ID "prpl-telepathy"
@@ -884,6 +885,9 @@ telepathy_send_im (PurpleConnection *gc,
 	telepathy_text_channel *tp_channel = g_hash_table_lookup(data->text_Channels, who);
 	TpChannel *channel = NULL;
 
+	/* strip HTML */
+	char *stripped_message = purple_markup_strip_html(message);
+
 	if (tp_channel != NULL)
 	{
 		channel = tp_channel->channel;
@@ -905,18 +909,20 @@ telepathy_send_im (PurpleConnection *gc,
 		tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1, map, ensure_channel_cb, plugin, NULL, NULL);
 	}
 
-	purple_debug_info("telepathy", "Sending \"%s\" to %s\n", message, who);
+	purple_debug_info("telepathy", "Sending \"%s\" (stripped: \"%s\") to %s\n", message, stripped_message, who);
 
 	if (channel == NULL)
 	{
 		/* add the message to the pending list */
-		tp_channel->pending_Messages = g_list_append(tp_channel->pending_Messages, g_strdup(message));
+		tp_channel->pending_Messages = g_list_append(tp_channel->pending_Messages, g_strdup(stripped_message));
 	}
 	else
 	{
 		/* The channel already exists, send the message */
-		tp_cli_channel_type_text_call_send(channel, -1, TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL, message, send_cb, plugin, NULL, NULL);
+		tp_cli_channel_type_text_call_send(channel, -1, TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL, stripped_message, send_cb, plugin, NULL, NULL);
 	}
+
+	g_free(stripped_message);
 
 	return 1;
 }
