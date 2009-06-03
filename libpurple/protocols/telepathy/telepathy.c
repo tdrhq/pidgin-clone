@@ -297,16 +297,27 @@ list_pending_messages_cb  (TpChannel *proxy,
 			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, data->acct);
 			PurpleConvIm *im;
 
+			/* escape HTML special characters */
+			gchar *escaped_message = g_markup_escape_text(msg, -1);
+
+			purple_debug_info("telepathy", "Escaped: %s\n", escaped_message);
+
+			/* also change \n to <br> */
+			gchar *final_message = purple_strdup_withhtml(escaped_message);
+			g_free(escaped_message);
+
 			if (conv == NULL)
 			{
 				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, data->acct, from);
 			}
 			im = purple_conversation_get_im_data(conv);
 
-			purple_debug_info("telepathy", "Contact %s says \"%s\"\n", from, msg);
+			purple_debug_info("telepathy", "Contact %s says \"%s\" (escaped: \"%s\")\n", from, msg, final_message);
 
 			/* transmit the message to the UI */
-			purple_conv_im_write(im, from, msg, 0, timestamp);
+			purple_conv_im_write(im, from, final_message, 0, timestamp);
+
+			g_free(final_message);
 		}
 	}
 }
