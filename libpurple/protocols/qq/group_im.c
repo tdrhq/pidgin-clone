@@ -173,7 +173,7 @@ void qq_room_got_chat_in(PurpleConnection *gc,
 	g_return_if_fail(gc != NULL && room_id != 0);
 	g_return_if_fail(msg != NULL);
 
-	qd = (qq_data *)gc->proto_data;
+	qd = (qq_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	conv = purple_find_chat(gc, room_id);
 	rmd = qq_room_data_find(gc, room_id);
 	g_return_if_fail(rmd != NULL);
