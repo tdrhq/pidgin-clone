@@ -222,7 +222,7 @@ static void info_display_only(PurpleConnection *gc, gchar **segments)
 }
 
 void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
-		gint update_class, int action)
+		guint32 update_class, int action)
 {
 	qq_data *qd;
 	gchar raw_data[16] = {0};
@@ -757,7 +757,7 @@ void qq_request_get_level_2007(PurpleConnection *gc, guint32 uid)
 	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, buf, bytes);
 }
 
-void qq_request_get_buddies_level(PurpleConnection *gc, gint update_class)
+void qq_request_get_buddies_level(PurpleConnection *gc, guint32 update_class)
 {
 	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleBuddy *buddy;

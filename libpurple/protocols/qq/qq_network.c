@@ -269,7 +269,7 @@ static gboolean packet_process(PurpleConnection *gc, guint8 *buf, gint buf_len)
 	guint16 seq;		/* May be ack_seq or send_seq, depends on cmd */
 	guint8 room_cmd;
 	guint32 room_id;
-	gint update_class;
+	guint32 update_class;
 	guint32 ship32;
 	int ret;
 
@@ -1130,7 +1130,8 @@ gint qq_send_cmd_encrypted(PurpleConnection *gc, guint16 cmd, guint16 seq,
 
 /* Encrypt data with session_key, and send packet out */
 static gint send_cmd_detail(PurpleConnection *gc, guint16 cmd, guint16 seq,
-	guint8 *data, gint data_len, gboolean is_save2trans, gint update_class, guint32 ship32)
+	guint8 *data, gint data_len, gboolean is_save2trans,
+        guint32 update_class, guint32 ship32)
 {
 	qq_data *qd;
 	guint8 *encrypted;
@@ -1161,7 +1162,7 @@ static gint send_cmd_detail(PurpleConnection *gc, guint16 cmd, guint16 seq,
 }
 
 gint qq_send_cmd_mess(PurpleConnection *gc, guint16 cmd, guint8 *data, gint data_len,
-		gint update_class, guint32 ship32)
+		guint32 update_class, guint32 ship32)
 {
 	qq_data *qd;
 	guint16 seq;
@@ -1238,7 +1239,7 @@ gint qq_send_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq, guint8
 }
 
 static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
-		guint8 *data, gint data_len, gint update_class, guint32 ship32)
+		guint8 *data, gint data_len, guint32 update_class, guint32 ship32)
 {
 	qq_data *qd;
 	guint8 *buf;
@@ -1292,7 +1293,7 @@ static gint send_room_cmd(PurpleConnection *gc, guint8 room_cmd, guint32 room_id
 }
 
 gint qq_send_room_cmd_mess(PurpleConnection *gc, guint8 room_cmd, guint32 room_id,
-		guint8 *data, gint data_len, gint update_class, guint32 ship32)
+		guint8 *data, gint data_len, guint32 update_class, guint32 ship32)
 {
 	g_return_val_if_fail(room_cmd > 0, -1);
 	return send_room_cmd(gc, room_cmd, room_id, data, data_len, update_class, ship32);

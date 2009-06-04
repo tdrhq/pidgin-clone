@@ -36,6 +36,7 @@
 #include "util.h"
 
 #include "buddy_info.h"
+#include "buddy_memo.h"
 #include "buddy_opt.h"
 #include "buddy_list.h"
 #include "char_conv.h"
@@ -56,7 +57,7 @@
 #include "utils.h"
 #include "version.h"
 
-#define OPENQ_VERSION 		"0.3.2-p19" 
+#define OPENQ_VERSION 		"0.3.2-p20" 
 
 static GList *server_list_build(gchar select)
 {
@@ -113,17 +114,17 @@ static void server_list_create(PurpleAccount *account)
 	if (qd->use_tcp) {
 		qd->servers =	server_list_build('T');
 		return;
-    }
+	}
 
 	qd->servers =	server_list_build('U');
 }
 
 static void server_list_remove_all(qq_data *qd)
 {
- 	g_return_if_fail(qd != NULL);
+	g_return_if_fail(qd != NULL);
 
 	purple_debug_info("QQ", "free server list\n");
- 	g_list_free(qd->servers);
+	g_list_free(qd->servers);
 	qd->curr_server = NULL;
 }
 
@@ -151,7 +152,7 @@ static void qq_login(PurpleAccount *account)
 	if(purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
 		qd->login_mode = QQ_LOGIN_MODE_HIDDEN;
 	} else if(purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_AWAY)
-				|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_EXTENDED_AWAY)) {
+			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_EXTENDED_AWAY)) {
 		qd->login_mode = QQ_LOGIN_MODE_AWAY;
 	} else {
 		qd->login_mode = QQ_LOGIN_MODE_NORMAL;
@@ -257,27 +258,27 @@ static gchar *qq_status_text(PurpleBuddy *b)
 	status = g_string_new("");
 
 	switch(bd->status) {
-	case QQ_BUDDY_OFFLINE:
-		g_string_append(status, _("Offline"));
-		break;
-	case QQ_BUDDY_ONLINE_NORMAL:
-		g_string_append(status, _("Online"));
-		break;
-	/* TODO What does this status mean? Labelling it as offline... */
-	case QQ_BUDDY_CHANGE_TO_OFFLINE:
-		g_string_append(status, _("Offline"));
-		break;
-	case QQ_BUDDY_ONLINE_AWAY:
-		g_string_append(status, _("Away"));
-		break;
-	case QQ_BUDDY_ONLINE_INVISIBLE:
-		g_string_append(status, _("Invisible"));
-		break;
-	case QQ_BUDDY_ONLINE_BUSY:
-		g_string_append(status, _("Busy"));
-		break;
-	default:
-		g_string_printf(status, _("Unknown-%d"), bd->status);
+		case QQ_BUDDY_OFFLINE:
+			g_string_append(status, _("Offline"));
+			break;
+		case QQ_BUDDY_ONLINE_NORMAL:
+			g_string_append(status, _("Online"));
+			break;
+			/* TODO What does this status mean? Labelling it as offline... */
+		case QQ_BUDDY_CHANGE_TO_OFFLINE:
+			g_string_append(status, _("Offline"));
+			break;
+		case QQ_BUDDY_ONLINE_AWAY:
+			g_string_append(status, _("Away"));
+			break;
+		case QQ_BUDDY_ONLINE_INVISIBLE:
+			g_string_append(status, _("Invisible"));
+			break;
+		case QQ_BUDDY_ONLINE_BUSY:
+			g_string_append(status, _("Busy"));
+			break;
+		default:
+			g_string_printf(status, _("Unknown-%d"), bd->status);
 	}
 
 	return g_string_free(status, FALSE);
@@ -314,19 +315,19 @@ static void qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gbo
 	g_free(tmp);
 
 	switch (bd->gender) {
-	case QQ_BUDDY_GENDER_GG:
-		purple_notify_user_info_add_pair(user_info, _("Gender"), _("Male"));
-		break;
-	case QQ_BUDDY_GENDER_MM:
-		purple_notify_user_info_add_pair(user_info, _("Gender"), _("Female"));
-		break;
-	case QQ_BUDDY_GENDER_UNKNOWN:
-		purple_notify_user_info_add_pair(user_info, _("Gender"), _("Unknown"));
-		break;
-	default:
-		tmp = g_strdup_printf("Error (%d)", bd->gender);
-		purple_notify_user_info_add_pair(user_info, _("Gender"), tmp);
-		g_free(tmp);
+		case QQ_BUDDY_GENDER_GG:
+			purple_notify_user_info_add_pair(user_info, _("Gender"), _("Male"));
+			break;
+		case QQ_BUDDY_GENDER_MM:
+			purple_notify_user_info_add_pair(user_info, _("Gender"), _("Female"));
+			break;
+		case QQ_BUDDY_GENDER_UNKNOWN:
+			purple_notify_user_info_add_pair(user_info, _("Gender"), _("Unknown"));
+			break;
+		default:
+			tmp = g_strdup_printf("Error (%d)", bd->gender);
+			purple_notify_user_info_add_pair(user_info, _("Gender"), tmp);
+			g_free(tmp);
 	}
 
 	if (bd->level) {
@@ -364,13 +365,13 @@ static void qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gbo
 
 #ifdef DEBUG
 	tmp = g_strdup_printf( "%s (%04X)",
-										qq_get_ver_desc(bd->client_tag),
-										bd->client_tag );
+			qq_get_ver_desc(bd->client_tag),
+			bd->client_tag );
 	purple_notify_user_info_add_pair(user_info, _("Ver"), tmp);
 	g_free(tmp);
 
 	tmp = g_strdup_printf( "Ext 0x%X, Comm 0x%X",
-												bd->ext_flag, bd->comm_flag );
+			bd->ext_flag, bd->comm_flag );
 	purple_notify_user_info_add_pair(user_info, _("Flag"), tmp);
 	g_free(tmp);
 #endif
@@ -641,6 +642,7 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, _("<p><b>Original Author</b>:<br>\n"));
 	g_string_append(info, "puzzlebird<br>\n");
 	g_string_append(info, "<br>\n");
+
 	g_string_append(info, _("<p><b>Code Contributors</b>:<br>\n"));
 	g_string_append(info, "gfhuang(poppyer) : patches for libpurple 2.0.0beta2, maintainer<br>\n");
 	g_string_append(info, "Yuan Qingyun : patches for libpurple 1.5.0, maintainer<br>\n");
@@ -656,13 +658,17 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, "icesky : maintainer since 2007<br>\n");
 	g_string_append(info, "csyfek : faces, maintainer since 2007<br>\n");
 	g_string_append(info, "<br>\n");
+
 	g_string_append(info, _("<p><b>Lovely Patch Writers</b>:<br>\n"));
 	g_string_append(info, "gnap : message displaying, documentation<br>\n");
 	g_string_append(info, "manphiz : qun processing<br>\n");
 	g_string_append(info, "moo : qun processing<br>\n");
 	g_string_append(info, "Coly Li : qun processing<br>\n");
 	g_string_append(info, "Emil Alexiev : captcha verification on login based on LumaQQ for MAC (2007), login, add buddy, remove buddy, message exchange and logout<br>\n");
+	g_string_append(info, "Chengming Wang : buddy memo<br>\n");
+	g_string_append(info, "lonicerae : chat room window bugfix, server list bugfix, buddy memo<br>\n");
 	g_string_append(info, "<br>\n");
+
 	g_string_append(info, _("<p><b>Acknowledgement</b>:<br>\n"));
 	g_string_append(info, "Shufeng Tan : http://sf.net/projects/perl-oicq<br>\n");
 	g_string_append(info, "Jeff Ye : http://www.sinomac.com<br>\n");
@@ -670,11 +676,19 @@ static void action_about_openq(PurplePluginAction *action)
 	g_string_append(info, "yunfan : http://www.myswear.net<br>\n");
 	g_string_append(info, "OpenQ Team : http://openq.linuxsir.org<br>\n");
 	g_string_append(info, "LumaQQ Team : http://lumaqq.linuxsir.org<br>\n");
-	g_string_append(info, "khc(at)pidgin.im<br>\n");
-	g_string_append(info, "qulogic(at)pidgin.im<br>\n");
-	g_string_append(info, "rlaager(at)pidgin.im<br>\n");
+	g_string_append(info, "Pidgin Team : http://www.pidgin.im<br>\n");
 	g_string_append(info, "Huang Guan : http://home.xxsyzx.com<br>\n");
 	g_string_append(info, "OpenQ Google Group : http://groups.google.com/group/openq<br>\n");
+	g_string_append(info, "<br>\n");
+
+	g_string_append(info, _("<p><b>Scrupulous Testers</b>:<br>\n"));
+	g_string_append(info, "yegle<br>\n");
+	g_string_append(info, "cnzhangbx<br>\n");
+	g_string_append(info, "casparant<br>\n");
+	g_string_append(info, "wd<br>\n");
+	g_string_append(info, "x6719620<br>\n");
+	g_string_append(info, "netelk<br>\n");
+	g_string_append(info, "and more, please let me know... thank you!<br>\n");
 	g_string_append(info, "<br>\n");
 	g_string_append(info, _("<p><i>And, all the boys in the backroom...</i><br>\n"));
 	g_string_append(info, _("<i>Feel free to join us!</i> :)"));
@@ -688,22 +702,22 @@ static void action_about_openq(PurplePluginAction *action)
 }
 
 /*
-static void _qq_menu_search_or_add_permanent_group(PurplePluginAction *action)
-{
-	purple_roomlist_show_with_account(NULL);
-}
+   static void _qq_menu_search_or_add_permanent_group(PurplePluginAction *action)
+   {
+   purple_roomlist_show_with_account(NULL);
+   }
 */
 
 /*
-static void _qq_menu_create_permanent_group(PurplePluginAction * action)
-{
-	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input(gc, _("Create QQ Qun"),
-			   _("Input Qun name here"),
-			   _("Only QQ members can create permanent Qun"),
-			   "OpenQ", FALSE, FALSE, NULL,
-			   _("Create"), G_CALLBACK(qq_create_room), _("Cancel"), NULL, gc);
-}
+   static void _qq_menu_create_permanent_group(PurplePluginAction * action)
+   {
+   PurpleConnection *gc = (PurpleConnection *) action->context;
+   purple_request_input(gc, _("Create QQ Qun"),
+   _("Input Qun name here"),
+   _("Only QQ members can create permanent Qun"),
+   "OpenQ", FALSE, FALSE, NULL,
+   _("Create"), G_CALLBACK(qq_create_room), _("Cancel"), NULL, gc);
+   }
 */
 
 static void action_chat_quit(PurpleBlistNode * node)
@@ -756,11 +770,11 @@ static void _qq_menu_send_file(PurpleBlistNode * node, gpointer ignored)
 	g_return_if_fail (PURPLE_BLIST_NODE_IS_BUDDY (node));
 	buddy = (PurpleBuddy *) node;
 	bd = (qq_buddy_data *) purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
-/*	if (is_online (bd->status)) { */
+	/*	if (is_online (bd->status)) { */
 	gc = purple_account_get_connection (buddy->account);
 	g_return_if_fail(gc != NULL);
 	qq_send_file(gc, buddy->name, NULL);
-/*	} */
+	/*	} */
 }
 #endif
 
@@ -798,11 +812,11 @@ static GList *qq_actions(PurplePlugin *plugin, gpointer context)
 	act = purple_plugin_action_new(_("About OpenQ"), action_about_openq);
 	m = g_list_append(m, act);
 	/*
-	act = purple_plugin_action_new(_("Qun: Search a permanent Qun"), _qq_menu_search_or_add_permanent_group);
-	m = g_list_append(m, act);
+	   act = purple_plugin_action_new(_("Qun: Search a permanent Qun"), _qq_menu_search_or_add_permanent_group);
+	   m = g_list_append(m, act);
 
-	act = purple_plugin_action_new(_("Qun: Create a permanent Qun"), _qq_menu_create_permanent_group);
-	m = g_list_append(m, act);
+	   act = purple_plugin_action_new(_("Qun: Create a permanent Qun"), _qq_menu_create_permanent_group);
+	   m = g_list_append(m, act);
 	*/
 
 	return m;
@@ -821,6 +835,31 @@ static void qq_add_buddy_from_menu_cb(PurpleBlistNode *node, gpointer data)
 	qq_add_buddy(gc, buddy, NULL);
 }
 
+static void qq_modify_buddy_memo_from_menu_cb(PurpleBlistNode *node, gpointer data)
+{
+	PurpleBuddy *buddy;
+	qq_buddy_data *bd;
+	PurpleConnection *gc;
+	guint32 bd_uid;
+
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+	buddy = (PurpleBuddy *)node;
+	g_return_if_fail(NULL != buddy && NULL != buddy->proto_data);
+
+	gc = purple_account_get_connection(buddy->account);
+	g_return_if_fail(NULL != gc);
+
+	bd = (qq_buddy_data *)buddy->proto_data;
+	g_return_if_fail(NULL != bd);
+	bd_uid = bd->uid;
+
+	/* param: gc, uid, update_class, action
+	 * here, update_class is set to bd_uid. because some memo packages returned
+	 * without uid, which will make us confused */
+	qq_request_buddy_memo(gc, bd_uid, bd_uid, QQ_BUDDY_MEMO_MODIFY);
+}
+
 static GList *qq_buddy_menu(PurpleBuddy *buddy)
 {
 	GList *m = NULL;
@@ -833,15 +872,20 @@ static GList *qq_buddy_menu(PurpleBuddy *buddy)
 
 	if (bd == NULL) {
 		act = purple_menu_action_new(_("Add Buddy"),
-		                           PURPLE_CALLBACK(qq_add_buddy_from_menu_cb),
-		                           NULL, NULL);
+				PURPLE_CALLBACK(qq_add_buddy_from_menu_cb),
+				NULL, NULL);
 		m = g_list_append(m, act);
-
 		return m;
-
 	}
 
-/* TODO : not working, temp commented out by gfhuang */
+
+	act = purple_menu_action_new(_("Modify Buddy Memo"),
+			PURPLE_CALLBACK(qq_modify_buddy_memo_from_menu_cb),
+			NULL, NULL);
+	m = g_list_append(m, act);
+
+
+	/* TODO : not working, temp commented out by gfhuang */
 #if 0
 	if (bd && is_online(bd->status)) {
 		act = purple_menu_action_new(_("Send File"), PURPLE_CALLBACK(_qq_menu_send_file), NULL, NULL); /* add NULL by gfhuang */
@@ -1023,9 +1067,9 @@ static PurplePluginInfo info = {
 	"prpl-qq",			/**< id			*/
 	"QQ",				/**< name		*/
 	DISPLAY_VERSION,		/**< version		*/
-					/**  summary		*/
+	/**  summary		*/
 	N_("QQ Protocol Plugin"),
-					/**  description	*/
+	/**  description	*/
 	N_("QQ Protocol Plugin"),
 	NULL,				/**< author		*/
 	PURPLE_WEBSITE,		/**< homepage	*/
@@ -1054,9 +1098,9 @@ static void init_plugin(PurplePlugin *plugin)
 	GList *server_list = NULL;
 	GList *server_kv_list = NULL;
 	GList *it;
-//#ifdef DEBUG
+	/* #ifdef DEBUG */
 	GList *version_kv_list = NULL;
-//#endif
+	/* #endif */
 
 	server_list = server_list_build('A');
 
