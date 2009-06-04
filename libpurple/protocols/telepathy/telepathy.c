@@ -300,8 +300,6 @@ list_pending_messages_cb  (TpChannel *proxy,
 			/* escape HTML special characters */
 			gchar *escaped_message = g_markup_escape_text(msg, -1);
 
-			purple_debug_info("telepathy", "Escaped: %s\n", escaped_message);
-
 			/* also change \n to <br> */
 			gchar *final_message = purple_strdup_withhtml(escaped_message);
 			g_free(escaped_message);
@@ -788,11 +786,6 @@ telepathy_login(PurpleAccount *acct)
 
 	purple_debug_info("telepathy", "Logging in as %s\n", acct->username);
 
-	/* some protocols might not require username or password, so check them before */
-	if (acct->username != NULL)
-		tp_asv_set_string(options, "account", acct->username);
-	if (acct->password != NULL)
-		tp_asv_set_string(options, "password", acct->password);
 
 	/* fill in the hash table with the other options, considering the right signatures */
 	for (i = 0; data->protocol->params[i].name != NULL; ++i)
@@ -801,6 +794,12 @@ telepathy_login(PurpleAccount *acct)
 		gchar *signature;
 		name = data->protocol->params[i].name;
 		signature = data->protocol->params[i].dbus_signature;
+
+		/* some protocols might not require username or password, so check them before */
+		if (g_strcmp0(name, "account") == 0 && acct->username != NULL)
+			tp_asv_set_string(options, "account", acct->username);
+		if (g_strcmp0(name, "password") == 0 && acct->password != NULL)
+			tp_asv_set_string(options, "password", acct->password);
 
 		/* account and password have already been added */
 		if (g_strcmp0(name, "account") != 0 && g_strcmp0(name, "password"))
