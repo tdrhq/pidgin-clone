@@ -26,6 +26,7 @@
 #include "vulture.h"
 #include "purplemain.h"
 #include "purplequeue.h"
+#include "purplestatus.h"
 
 
 /** Queue node representing a libpurple call. */
@@ -168,6 +169,10 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 {
 	switch(lppurplecall->iCallID)
 	{
+	case PC_GETALLSAVEDSTATUSES:
+		PurpleGetAllSavedStatuses((GList**)lppurplecall->lpvParam);
+		break;
+
 	case PC_QUIT:
 		g_main_loop_quit(g_lpgmainloop);
 		break;

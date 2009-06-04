@@ -32,11 +32,15 @@
 
 
 /** IDs of calls to libpurple. Used as values for iCallID member of
- * PURPLE_CALL.
+ * PURPLE_CALL. Where the lpvParam element has any significance, it is
+ * documented here.
  */
 enum PURPLE_CALL_ID
 {
 	PC_QUIT,
+
+	/* (GLlist**) Used to return list of statuses. */
+	PC_GETALLSAVEDSTATUSES,
 };
 
 
@@ -57,7 +61,7 @@ void VultureEnqueueMultiSyncPurpleCall(int iCallID, void *lpvParam, GArray *lpga
  * @return Wait context. Pass this to VultureEnqueueMultiSyncPurpleCall and
  * VulturePurpleWait.
  */
-//static INLINE GArray* VultureAllocPurpleWaitContext(void) { return g_array_new(FALSE, FALSE, sizeof(HANDLE)); }
+static INLINE GArray* VultureAllocPurpleWaitContext(void) { return g_array_new(FALSE, FALSE, sizeof(HANDLE)); }
 
 
 #endif

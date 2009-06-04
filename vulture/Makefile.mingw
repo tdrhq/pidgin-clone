@@ -56,7 +56,8 @@ VULTURE_C_SRC =	\
 			purplemain.c \
 			purplequeue.c \
 			purpleevloop.c \
-			cmdline.c
+			cmdline.c \
+			purplestatus.c
 
 VULTURE_RC_SRC = vulture-res.rc
 VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)

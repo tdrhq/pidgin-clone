@@ -21,10 +21,14 @@
  */
 
 #include <windows.h>
+#include <commctrl.h>
+#include <glib.h>
 
 #include "vulture.h"
 #include "resource.h"
 #include "blist.h"
+#include "purplequeue.h"
+#include "purplestatus.h"
 
 
 static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
@@ -172,12 +176,17 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
  */
 static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
+	static GList *s_lpglistStatuses = NULL;
+
 	switch(uiMsg)
 	{
 	case WM_INITDIALOG:
 		{
 			RECT rcIcon;
 			POINT ptIcon;
+			GList *lpglistStatusRover;
+			GArray *lpgarrayWaitContext;
+			HWND hwndComboStatus = GetDlgItem(hwndDlg, IDC_CBEX_STATUS);
 
 			GetWindowRect(GetDlgItem(hwndDlg, IDC_BUDDY_ICON), &rcIcon);
 			ptIcon.x = rcIcon.left;
@@ -188,6 +197,26 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 			 * height.
 			 */
 			SetWindowPos(GetDlgItem(hwndDlg, IDC_BUDDY_ICON), NULL, BLIST_MARGIN, ptIcon.y, rcIcon.bottom - rcIcon.top, rcIcon.bottom - rcIcon.top, SWP_NOACTIVATE | SWP_NOZORDER);
+
+			/* Populate list of statuses. */
+			lpgarrayWaitContext = VultureAllocPurpleWaitContext();
+			VultureEnqueueMultiSyncPurpleCall(PC_GETALLSAVEDSTATUSES, (void*)&s_lpglistStatuses, lpgarrayWaitContext);
+			VulturePurpleWait(lpgarrayWaitContext);
+
+			for(lpglistStatusRover = s_lpglistStatuses; lpglistStatusRover; lpglistStatusRover = lpglistStatusRover->next)
+			{
+				VULTURE_SAVED_STATUS *lpvss = lpglistStatusRover->data;
+				COMBOBOXEXITEM cbexitem;
+
+				cbexitem.mask = CBEIF_TEXT | CBEIF_LPARAM;
+				cbexitem.pszText = lpvss->szTitle;
+				cbexitem.lParam = (LPARAM)lpvss;
+
+				/* Add at end of list. */
+				cbexitem.iItem = -1;
+
+				SendMessage(hwndComboStatus, CBEM_INSERTITEM, 0, (LPARAM)&cbexitem);
+			}
 		}
 
 		/* Let the system set the focus. */
@@ -222,6 +251,11 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 			EndDeferWindowPos(hdwp);
 		}
 
+		return TRUE;
+
+	case WM_DESTROY:
+		if(s_lpglistStatuses)
+				VulturePurpleFreeStatusList(s_lpglistStatuses);
 		return TRUE;
 	}
 

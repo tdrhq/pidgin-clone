@@ -52,14 +52,7 @@ void VultureParseCommandLine(void)
 	gchar **rgszArgv;
 
 	/* Get the command-line in UTF-8. */
-#ifdef UNICODE
-	szCmdLine = g_utf16_to_utf8(szCmdLineT, -1, NULL, NULL, NULL);
-#else
-	{
-		gsize cchWritten;
-		szCmdLine = g_locale_to_utf8(szCmdLineT, -1, NULL, &cchWritten, NULL);
-	}
-#endif
+	szCmdLine = VultureTCHARToUTF8(szCmdLineT);
 
 	g_shell_parse_argv(szCmdLine, &iArgc, &rgszArgv, &lpgerror);
 	
