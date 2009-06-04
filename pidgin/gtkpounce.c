@@ -478,8 +478,9 @@ static void
 reset_send_msg_entry(PidginPounceDialog *dialog, GtkWidget *dontcare)
 {
 	PurpleAccount *account = pidgin_account_option_menu_get_selected(dialog->account_menu);
+	PurpleConnection *conn = account ? purple_account_get_connection(account) : NULL;
 	gtk_imhtml_setup_entry(GTK_IMHTML(dialog->send_msg_entry),
-			(account && account->gc) ? account->gc->flags : PURPLE_CONNECTION_HTML);
+			conn ? purple_connection_get_flags(conn) : PURPLE_CONNECTION_FLAGS_HTML);
 }
 
 void
@@ -1378,9 +1379,9 @@ pidgin_pounces_manager_show(void)
 	button = pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_ADD, G_CALLBACK(pounces_manager_add_cb), dialog);
 	gtk_widget_set_sensitive(button, (purple_accounts_get_all() != NULL));
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						pounces_manager, PURPLE_CALLBACK(pounces_manager_connection_cb), button);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+	purple_signal_connect(NULL, "signed-off",
 						pounces_manager, PURPLE_CALLBACK(pounces_manager_connection_cb), button);
 
 	/* Modify button */
@@ -1518,7 +1519,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 			purple_conversation_write(conv, NULL, message,
 									PURPLE_MESSAGE_SEND, time(NULL));
 
-			serv_send_im(account->gc, (char *)pouncee, (char *)message, 0);
+			serv_send_im(purple_account_get_connection(account), (char *)pouncee, (char *)message, 0);
 		}
 	}
 
@@ -1666,10 +1667,10 @@ pidgin_pounces_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width",  520);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height", 321);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						pidgin_pounces_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+	purple_signal_connect(NULL, "signed-off",
 						pidgin_pounces_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 }

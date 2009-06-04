@@ -35,6 +35,14 @@ excluded = [\
     # as pointer to a struct, instead of a pointer to an enum.  This
     # causes a compilation error. Someone should fix this script.
     "purple_log_read",
+
+    # This is excluded because it'd be a ridiculous function to export.
+    "purple_g_value_slice_free",
+
+    # Excluding a couple of functions which use GValues; they could be
+    # magically bound to D-Bus variants at some point.
+    "purple_status_type_add_attr",
+    "purple_status_attr_new",
     ]
 
 # This is a list of functions that return a GList* or GSList * whose elements
@@ -524,6 +532,9 @@ class BindingSet:
             if len(words) == 0:             # empty line
                 continue
             if line[0] == "#":              # preprocessor directive
+                if words[0] == "#if" and words[1] == "0":
+                    while line != "#endif":
+                        line = self.inputiter.next().strip()
                 continue
             if words[0] in ["typedef", "struct", "enum", "static"]:
                 continue

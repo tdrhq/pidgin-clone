@@ -97,8 +97,8 @@ bonjour_login(PurpleAccount *account)
 	}
 #endif
 
-	gc->flags |= PURPLE_CONNECTION_HTML;
-	gc->proto_data = bd = g_new0(BonjourData, 1);
+	purple_connection_set_flags(gc, purple_connection_get_flags(gc) | PURPLE_CONNECTION_FLAGS_HTML);
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc),bd = g_new0(BonjourData, 1));
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new0(BonjourJabber, 1);
@@ -143,14 +143,14 @@ bonjour_login(PurpleAccount *account)
 	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
 
 	/* Show the buddy list by telling Purple we have already connected */
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 }
 
 static void
 bonjour_close(PurpleConnection *connection)
 {
 	PurpleGroup *bonjour_group;
-	BonjourData *bd = connection->proto_data;
+	BonjourData *bd = purple_object_get_protocol_data(PURPLE_OBJECT(connection));
 
 	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);
 
@@ -181,7 +181,7 @@ bonjour_close(PurpleConnection *connection)
 	}
 
 	g_free(bd);
-	connection->proto_data = NULL;
+	purple_object_set_protocol_data(PURPLE_OBJECT(connection),NULL);
 }
 
 static const char *
@@ -196,7 +196,7 @@ bonjour_send_im(PurpleConnection *connection, const char *to, const char *msg, P
 	if(!to || !msg)
 		return 0;
 
-	return bonjour_jabber_send_message(((BonjourData*)(connection->proto_data))->jabber_data, to, msg);
+	return bonjour_jabber_send_message(((BonjourData*)(purple_object_get_protocol_data(PURPLE_OBJECT(connection))))->jabber_data, to, msg);
 }
 
 static void
@@ -212,7 +212,7 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 	gchar *stripped;
 
 	gc = purple_account_get_connection(account);
-	bd = gc->proto_data;
+	bd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	disconnected = purple_account_is_disconnected(account);
 	type = purple_status_get_type(status);
 	primitive = purple_status_type_get_primitive(type);
@@ -279,14 +279,15 @@ bonjour_status_types(PurpleAccount *account)
 										   BONJOUR_STATUS_ID_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   purple_value_new(PURPLE_TYPE_STRING), NULL);
+										   purple_g_value_slice_new(G_TYPE_STRING),
+										   NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
 										   BONJOUR_STATUS_ID_AWAY,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   purple_value_new(PURPLE_TYPE_STRING), NULL);
+										   purple_g_value_slice_new(G_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
 	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
@@ -300,7 +301,7 @@ bonjour_status_types(PurpleAccount *account)
 static void
 bonjour_convo_closed(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 	BonjourBuddy *bb;
 
 	if (buddy == NULL || buddy->proto_data == NULL)
@@ -320,7 +321,7 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 static
 void bonjour_set_buddy_icon(PurpleConnection *conn, PurpleStoredImage *img)
 {
-	BonjourData *bd = conn->proto_data;
+	BonjourData *bd = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
 }
 
@@ -397,7 +398,7 @@ static void
 bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *old_group, const char *new_group)
 {
 	PurpleBlistNodeFlags oldflags;
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 
 	if (buddy == NULL)
 		return;
@@ -415,7 +416,7 @@ bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *o
 static gboolean
 bonjour_can_receive_file(PurpleConnection *connection, const char *who)
 {
-	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(connection), who);
 
 	return (buddy != NULL && buddy->proto_data != NULL);
 

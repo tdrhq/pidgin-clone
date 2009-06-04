@@ -37,6 +37,7 @@ finch/plugins/gnthistory.c
 finch/plugins/grouping.c
 finch/plugins/lastlog.c
 libpurple/account.c
+libpurple/accountmanager.c
 libpurple/blist.c
 libpurple/certificate.c
 libpurple/connection.c
