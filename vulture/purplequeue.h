@@ -41,6 +41,12 @@ enum PURPLE_CALL_ID
 
 	/* (GLlist**) Used to return list of statuses. */
 	PC_GETALLSAVEDSTATUSES,
+
+	/* (GLlist**) Used to return list of accounts. */
+	PC_GETALLACCOUNTS,
+
+	/* (VULTURE_ACCOUNT*) Account to update. */
+	PC_UPDATEPURPLEACCOUNT,
 };
 
 
@@ -52,6 +58,7 @@ GSource* VultureCreateAsyncQueueSource(void);
 GSource* VultureCreateSyncQueueSource(void);
 void VulturePurpleWait(GArray *lpgarrayWaitContext);
 void VultureEnqueueMultiSyncPurpleCall(int iCallID, void *lpvParam, GArray *lpgarrayWaitContext);
+void VultureSingleSyncPurpleCall(int iCallID, void *lpvParam);
 
 
 

@@ -27,6 +27,7 @@
 #include "purplemain.h"
 #include "purplequeue.h"
 #include "purplestatus.h"
+#include "purpleacct.h"
 
 
 /** Queue node representing a libpurple call. */
@@ -171,6 +172,14 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 	{
 	case PC_GETALLSAVEDSTATUSES:
 		PurpleGetAllSavedStatuses((GList**)lppurplecall->lpvParam);
+		break;
+
+	case PC_GETALLACCOUNTS:
+		PurpleGetAllAccounts((GList**)lppurplecall->lpvParam);
+		break;
+
+	case PC_UPDATEPURPLEACCOUNT:
+		PurpleApplyVultureAccount((VULTURE_ACCOUNT*)lppurplecall->lpvParam);
 		break;
 
 	case PC_QUIT:
@@ -340,7 +349,8 @@ void VulturePurpleWait(GArray *lpgarrayWaitContext)
 {
 	int i;
 
-	WaitForMultipleObjects(lpgarrayWaitContext->len, (HANDLE*)lpgarrayWaitContext->data, TRUE, INFINITE);
+	if(lpgarrayWaitContext->len > 0)
+		WaitForMultipleObjects(lpgarrayWaitContext->len, (HANDLE*)lpgarrayWaitContext->data, TRUE, INFINITE);
 	
 	for(i = 0; i < lpgarrayWaitContext->len; i++)
 		CloseHandle(g_array_index(lpgarrayWaitContext, HANDLE, i));
@@ -362,4 +372,19 @@ void VultureEnqueueMultiSyncPurpleCall(int iCallID, void *lpvParam, GArray *lpga
 	HANDLE hevent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	g_array_append_val(lpgarrayWaitContext, hevent);
 	VultureEnqueueSyncPurpleCall(iCallID, lpvParam, hevent);
+}
+
+
+/**
+ * Makes and waits for a single synchronous call to libpurple.
+ *
+ * @param	iCallID			ID of the operation to perform.
+ * @param	lpvParam		Function-specific data.
+ */
+void VultureSingleSyncPurpleCall(int iCallID, void *lpvParam)
+{
+	HANDLE hevent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	VultureEnqueueSyncPurpleCall(iCallID, lpvParam, hevent);
+	WaitForSingleObject(hevent, INFINITE);
+	CloseHandle(hevent);
 }

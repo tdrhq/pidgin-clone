@@ -53,8 +53,6 @@ static int InitLibpurple(void);
 static void InitUI(void);
 
 
-#define VULTURE_ID	"vulture"
-
 
 GMainLoop *g_lpgmainloop = NULL;
 

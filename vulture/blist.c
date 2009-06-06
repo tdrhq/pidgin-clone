@@ -29,17 +29,21 @@
 #include "blist.h"
 #include "purplequeue.h"
 #include "purplestatus.h"
+#include "acctmanager.h"
+#include "purpleacct.h"
 
 
 static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static void ManageAccounts(HWND hwndParent);
 
 
 #define BLIST_MARGIN 6
 
 
-static HWND g_hwndMain = NULL;
+HWND g_hwndMain = NULL;
+
 
 
 /**
@@ -126,6 +130,10 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		{
 		case IDM_BLIST_BUDDIES_CLOSE:
 			SendMessage(hwnd, WM_CLOSE, 0, 0);
+			return 0;
+
+		case IDM_BLIST_ACCOUNTS_MANAGE:
+			ManageAccounts(hwnd);
 			return 0;
 		}
 
@@ -294,4 +302,31 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 	}
 
 	return FALSE;
+}
+
+
+/**
+ * Shows the account manager dialogue, and updates accounts if user OKs.
+ *
+ * @param	hwndParent	Parent window handle.
+ */
+static void ManageAccounts(HWND hwndParent)
+{
+	GList *lpglistAccounts;
+
+	VultureSingleSyncPurpleCall(PC_GETALLACCOUNTS, &lpglistAccounts);
+
+	/* Show the dialogue and check whether the user OKs. */
+	if(VultureAccountManagerDlg(hwndParent, lpglistAccounts))
+	{
+		GList *lpglistRover;
+		GArray *lpgarrayWaitContext = VultureAllocPurpleWaitContext();
+
+		for(lpglistRover = lpglistAccounts; lpglistRover; lpglistRover = lpglistRover->next)
+			VultureEnqueueMultiSyncPurpleCall(PC_UPDATEPURPLEACCOUNT, lpglistRover->data, lpgarrayWaitContext);
+
+		VulturePurpleWait(lpgarrayWaitContext);		
+	}
+
+	VultureFreeAccountList(lpglistAccounts);
 }

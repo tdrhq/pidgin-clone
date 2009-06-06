@@ -1,7 +1,7 @@
 /*
  * Vulture - Win32 libpurple client
  *
- * blist.h: Buddy list.
+ * acctmanager.h: Account management, including UI.
  *
  * Copyright (C) 2009, Gregor Dick <gdick@soc.pidgin.im>
  *
@@ -20,11 +20,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _VULTURE_BLIST_H_
-#define _VULTURE_BLIST_H_
+#ifndef _VULTURE_ACCTMANAGER_H_
+#define _VULTURE_ACCTMANAGER_H_
 
-extern HWND g_hwndMain;
+#include <windows.h>
 
-int VultureCreateMainWindow(int iCmdShow);
+#include "purple.h"
+
+
+typedef struct _VULTURE_ACCOUNT
+{
+	PurpleAccount	*lppac;
+	BOOL		bEnabled;
+	LPTSTR		szUsername;
+	LPTSTR		szProtocolID;
+} VULTURE_ACCOUNT;
+
+
+BOOL VultureAccountManagerDlg(HWND hwndParent, GList *lpglistAccounts);
+
 
 #endif

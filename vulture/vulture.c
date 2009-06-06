@@ -54,6 +54,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 	MSG msg;
 	HANDLE hthreadPurple;
 	INITCOMMONCONTROLSEX iccx;
+	HACCEL haccel;
 
 	g_hInstance = hinst;
 	g_hProcHeap = GetProcessHeap();
@@ -79,10 +80,16 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 		return VEC_ERROR_BLIST;
 	}
 
+	/* For keyboard shortcuts. */
+	haccel = LoadAccelerators(hinst, MAKEINTRESOURCE(IDR_ACCEL_MAIN));
+
 	while(GetMessage(&msg, NULL, 0, 0))
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		if(!TranslateAccelerator(g_hwndMain, haccel, &msg))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
 	}
 
 	/* UI has shut down; do the same to libpurple, waiting until it's
