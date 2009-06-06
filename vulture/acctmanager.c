@@ -124,7 +124,7 @@ static INT_PTR CALLBACK AccountManagerDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM w
 				lvitem.pszText = ((VULTURE_ACCOUNT*)lpglistAccounts->data)->szProtocolID;
 				ListView_SetItem(hwndList, &lvitem);
 
-				ListView_SetCheckState(hwndList, lvitem.iImage, ((VULTURE_ACCOUNT*)lpglistAccounts->data)->bEnabled);
+				ListView_SetCheckState(hwndList, lvitem.iItem, ((VULTURE_ACCOUNT*)lpglistAccounts->data)->bEnabled);
 			}
 
 			ListView_SetColumnWidth(hwndList, 0, LVSCW_AUTOSIZE);
