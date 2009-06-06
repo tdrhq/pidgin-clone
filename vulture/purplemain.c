@@ -163,4 +163,7 @@ static int InitLibpurple(void)
  */
 static void InitUI(void)
 {
+	/* Create and load libpurple's buddy-list. */
+	purple_set_blist(purple_blist_new());
+	purple_blist_load();
 }
