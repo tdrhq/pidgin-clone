@@ -1843,10 +1843,10 @@ static void jabber_buddy_make_invisible(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
-	jabber_buddy_set_invisibility(js, buddy->name, TRUE);
+	jabber_buddy_set_invisibility(js, purple_buddy_get_name(buddy), TRUE);
 }
 
 static void jabber_buddy_make_visible(PurpleBlistNode *node, gpointer data)
@@ -1858,10 +1858,10 @@ static void jabber_buddy_make_visible(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
-	jabber_buddy_set_invisibility(js, buddy->name, FALSE);
+	jabber_buddy_set_invisibility(js, purple_buddy_get_name(buddy), FALSE);
 }
 
 static void jabber_buddy_cancel_presence_notification(PurpleBlistNode *node,
@@ -1874,11 +1874,11 @@ static void jabber_buddy_cancel_presence_notification(PurpleBlistNode *node,
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* I wonder if we should prompt the user before doing this */
-	jabber_presence_subscription_set(js, buddy->name, "unsubscribed");
+	jabber_presence_subscription_set(js, purple_buddy_get_name(buddy), "unsubscribed");
 }
 
 static void jabber_buddy_rerequest_auth(PurpleBlistNode *node, gpointer data)
@@ -1890,10 +1890,10 @@ static void jabber_buddy_rerequest_auth(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
-	jabber_presence_subscription_set(js, buddy->name, "subscribe");
+	jabber_presence_subscription_set(js, purple_buddy_get_name(buddy), "subscribe");
 }
 
 
@@ -1906,17 +1906,17 @@ static void jabber_buddy_unsubscribe(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
-	jabber_presence_subscription_set(js, buddy->name, "unsubscribe");
+	jabber_presence_subscription_set(js, purple_buddy_get_name(buddy), "unsubscribe");
 }
 
 static void jabber_buddy_login(PurpleBlistNode *node, gpointer data) {
 	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		/* simply create a directed presence of the current status */
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
-		PurpleConnection *gc = purple_account_get_connection(buddy->account);
+		PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurplePresence *gpresence = purple_account_get_presence(account);
@@ -1931,7 +1931,7 @@ static void jabber_buddy_login(PurpleBlistNode *node, gpointer data) {
 		
 		g_free(msg);
 		
-		xmlnode_set_attrib(presence, "to", buddy->name);
+		xmlnode_set_attrib(presence, "to", purple_buddy_get_name(buddy));
 		
 		jabber_send(js, presence);
 		xmlnode_free(presence);
@@ -1942,12 +1942,13 @@ static void jabber_buddy_logout(PurpleBlistNode *node, gpointer data) {
 	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		/* simply create a directed unavailable presence */
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
+		PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(buddy->account)));
 		xmlnode *presence;
 		
 		presence = jabber_presence_create_js(js, JABBER_BUDDY_STATE_UNAVAILABLE, NULL, 0);
 		
-		xmlnode_set_attrib(presence, "to", buddy->name);
+		xmlnode_set_attrib(presence, "to", purple_buddy_get_name(buddy));
 		
 		jabber_send(js, presence);
 		xmlnode_free(presence);
@@ -1956,9 +1957,10 @@ static void jabber_buddy_logout(PurpleBlistNode *node, gpointer data) {
 
 static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 {
-	PurpleConnection *gc = purple_account_get_connection(buddy->account);
+	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
-	JabberBuddy *jb = jabber_buddy_find(js, buddy->name, TRUE);
+	const char *name = purple_buddy_get_name(buddy);
+	JabberBuddy *jb = jabber_buddy_find(js, name, TRUE);
 	GList *jbrs;
 
 	GList *m = NULL;
@@ -2013,7 +2015,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	 * that gateways on the roster can be identified by having no '@' in their jid. This is a faily safe assumption, since
 	 * people don't tend to have a server or other service there.
 	 */
-	if (g_utf8_strchr(buddy->name, -1, '@') == NULL) {
+	if (g_utf8_strchr(name, -1, '@') == NULL) {
 		act = purple_menu_action_new(_("Log In"),
 									 PURPLE_CALLBACK(jabber_buddy_login),
 									 NULL, NULL);

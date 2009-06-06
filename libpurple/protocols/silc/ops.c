@@ -431,6 +431,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 	va_list va;
 	PurpleConnection *gc = client->application;
 	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleConversation *convo;
 	SilcClientEntry client_entry, client_entry2;
 	SilcChannelEntry channel;
@@ -856,19 +857,22 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				silc_free(pk);
 
 				/* Find buddy by associated public key */
-				for (gnode = purple_get_blist()->root; gnode;
-				     gnode = gnode->next) {
+				for (gnode = purple_blist_get_root(); gnode;
+				     gnode = purple_blist_node_get_sibling_next(gnode)) {
 					if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 						continue;
-					for (cnode = gnode->child; cnode; cnode = cnode->next) {
+					for (cnode = purple_blist_node_get_first_child(gnode);
+							cnode;
+							cnode = purple_blist_node_get_sibling_next(cnode)) {
 						if( !PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 							continue;
-						for (bnode = cnode->child; bnode;
-						     bnode = bnode->next) {
+						for (bnode = purple_blist_node_get_first_child(cnode);
+								bnode;
+								bnode = purple_blist_node_get_sibling_next(bnode)) {
 							if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 								continue;
 							b = (PurpleBuddy *)bnode;
-							if (b->account != purple_connection_get_account(gc))
+							if (purple_buddy_get_account(b) != account)
 								continue;
 							f = purple_blist_node_get_string(bnode, "public-key");
 							if (f && !strcmp(f, buf))
@@ -890,8 +894,8 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			}
 
 			silc_free(purple_object_get_protocol_data(PURPLE_OBJECT(b)));
-			b->proto_data = silc_memdup(&client_entry->id,
-						    sizeof(client_entry->id));
+			purple_buddy_set_protocol_data(b, silc_memdup(&client_entry->id,
+						    sizeof(client_entry->id)));
 			if (notify == SILC_NOTIFY_TYPE_NICK_CHANGE) {
 				break;
 			} else if (notify == SILC_NOTIFY_TYPE_UMODE_CHANGE) {

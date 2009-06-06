@@ -633,20 +633,16 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 		buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 	}
 
-	if (buddy == NULL) {
+	/* if the buddy is null, the api will catch it and return null here */
+	bd = purple_object_get_protocol_data(buddy);
+
+	if (buddy == NULL || bd) {
 		g_free(who);
 		g_free(alias_utf8);
 		return;
 	}
 
 	/* update buddy list (including myself, if myself is the buddy) */
-	bd = (qq_buddy_data *) purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
-	if (bd == NULL) {
-		g_free(who);
-		g_free(alias_utf8);
-		return;
-	}
-
 	bd->age = strtol(segments[QQ_INFO_AGE], NULL, 10);
 	bd->gender = strtol(segments[QQ_INFO_GENDER], NULL, 10);
 	bd->face = strtol(segments[QQ_INFO_FACE], NULL, 10);
@@ -775,8 +771,7 @@ void qq_request_get_buddies_level(PurpleConnection *gc, guint32 update_class)
 	for (it = buddies; it; it = it->next) {
 		buddy = it->data;
 		if (buddy == NULL) continue;
-		bd = (qq_buddy_data *)purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
-		if (bd == NULL) continue;
+		if ((bd = purple_object_get_protocol_data(PURPLE_OBJECT(buddy))) == NULL) continue;
 		if (bd->uid == 0) continue;	/* keep me as end of packet*/
 		if (bd->uid == qd->uid) continue;
 		bytes += qq_put32(buf + bytes, bd->uid);

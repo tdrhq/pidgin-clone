@@ -385,7 +385,7 @@ static const char *qq_list_emblem(PurpleBuddy *b)
 	qq_data *qd;
 	qq_buddy_data *buddy;
 
-	if (!b || !(account = b->account) ||
+	if (!b || !(account = purple_buddy_get_account(b)) ||
 		!(gc = purple_account_get_connection(account)) ||
 		!(qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc))))
 		return NULL;
@@ -723,8 +723,9 @@ static void action_about_openq(PurplePluginAction *action)
 static void action_chat_quit(PurpleBlistNode * node)
 {
 	PurpleChat *chat = (PurpleChat *)node;
-	PurpleConnection *gc = purple_account_get_connection(chat->account);
-	GHashTable *components = chat -> components;
+	PurpleAccount *account = purple_chat_get_account(chat);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	GHashTable *components = purple_chat_get_components(chat);
 	gchar *num_str;
 	guint32 room_id;
 
@@ -742,8 +743,9 @@ static void action_chat_quit(PurpleBlistNode * node)
 static void action_chat_get_info(PurpleBlistNode * node)
 {
 	PurpleChat *chat = (PurpleChat *)node;
-	PurpleConnection *gc = purple_account_get_connection(chat->account);
-	GHashTable *components = chat -> components;
+	PurpleAccount *account = purple_chat_get_account(chat);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	GHashTable *components = purple_chat_get_components(chat);
 	gchar *num_str;
 	guint32 room_id;
 
@@ -830,7 +832,7 @@ static void qq_add_buddy_from_menu_cb(PurpleBlistNode *node, gpointer data)
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
 	qq_add_buddy(gc, buddy, NULL);
 }
@@ -845,12 +847,12 @@ static void qq_modify_buddy_memo_from_menu_cb(PurpleBlistNode *node, gpointer da
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
-	g_return_if_fail(NULL != buddy && NULL != buddy->proto_data);
+	g_return_if_fail(NULL != buddy);
 
-	gc = purple_account_get_connection(buddy->account);
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	g_return_if_fail(NULL != gc);
 
-	bd = (qq_buddy_data *)buddy->proto_data;
+	bd = (qq_buddy_data *)purple_buddy_get_protocol_data(buddy);
 	g_return_if_fail(NULL != bd);
 	bd_uid = bd->uid;
 
@@ -864,10 +866,6 @@ static GList *qq_buddy_menu(PurpleBuddy *buddy)
 {
 	GList *m = NULL;
 	PurpleMenuAction *act;
-	/*
-	PurpleConnection *gc = purple_account_get_connection(buddy->account);
-	qq_data *qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
-	*/
 	qq_buddy_data *bd = (qq_buddy_data *)purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 
 	if (bd == NULL) {

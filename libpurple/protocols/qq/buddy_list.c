@@ -664,6 +664,7 @@ void qq_update_buddyies_status(PurpleConnection *gc)
 	for (it = buddies; it; it = it->next) {
 		buddy = it->data;
 		if (buddy == NULL) continue;
+
 		bd = (qq_buddy_data *)purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 		if (bd == NULL) continue;
 

@@ -124,7 +124,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 	g_return_if_fail(r != NULL);
 
 	pb = purple_find_buddy(account, name);
-	bb = (pb != NULL) ? pb->proto_data : NULL;
+	bb = (pb != NULL) ? purple_object_get_protocol_data(PURPLE_OBJECT(pb)) : NULL;
 
 	switch (event) {
 		case AVAHI_RESOLVER_FAILURE:

@@ -202,7 +202,7 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 		/* Next, see if on buddy list and know uid. */
 		buddy = purple_find_buddy(session->account, username);
 		if (buddy) {
-			uid = purple_blist_node_get_int(&buddy->node, "UserID");
+			uid = purple_blist_node_get_int(PURPLE_BLIST_NODE(buddy), "UserID");
 		} else {
 			uid = 0;
 		}
@@ -311,7 +311,7 @@ msim_uid2username_from_blist(PurpleAccount *account, guint wanted_uid)
 		/* See finch/gnthistory.c */
 		buddy = cur->data;
 
-		uid = purple_blist_node_get_int(&buddy->node, "UserID");
+		uid = purple_blist_node_get_int(PURPLE_BLIST_NODE(buddy), "UserID");
 		name = purple_buddy_get_name(buddy);
 
 		if (uid == wanted_uid)
@@ -383,12 +383,17 @@ msim_status_text(PurpleBuddy *buddy)
 	MsimSession *session;
 	MsimUser *user;
 	const gchar *display_name, *headline;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
 	user = msim_get_user_from_buddy(buddy);
 
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
 	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(buddy->account)));
+
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
 
 	display_name = headline = NULL;
@@ -435,7 +440,9 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 		MsimSession *session;
-
+		PurpleAccount *account = purple_buddy_get_account(buddy);
+		PurpleConnection *gc = purple_account_get_connection(account);
+ 
 		session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(buddy->account)));
 
 		g_return_if_fail(MSIM_SESSION_VALID(session));
@@ -1035,11 +1042,11 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 		 * of numbers in the buddy list.
 		 */
 		if (display_name != NULL) {
-			purple_blist_node_set_string(&buddy->node, "DisplayName", display_name);
+			purple_blist_node_set_string(PURPLE_BLIST_NODE(buddy), "DisplayName", display_name);
 			serv_got_alias(session->gc, username, display_name);
 		} else {
 			serv_got_alias(session->gc, username,
-					purple_blist_node_get_string(&buddy->node, "DisplayName"));
+					purple_blist_node_get_string(PURPLE_BLIST_NODE(buddy), "DisplayName"));
 		}
 	}
 	g_free(display_name);
@@ -1049,7 +1056,7 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 
 	user->id = uid;
 	/* Keep track of the user ID across sessions */
-	purple_blist_node_set_int(&buddy->node, "UserID", uid);
+	purple_blist_node_set_int(PURPLE_BLIST_NODE(buddy), "UserID", uid);
 
 	/* Stores a few fields in the MsimUser, relevant to the buddy itself.
 	 * AvatarURL, Headline, ContactID. */
@@ -1373,7 +1380,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		user->id = msim_msg_get_integer(msg, "f");
 
 		/* Keep track of the user ID across sessions */
-		purple_blist_node_set_int(&buddy->node, "UserID", user->id);
+		purple_blist_node_set_int(PURPLE_BLIST_NODE(buddy), "UserID", user->id);
 
 		msim_store_user_info(session, msg, NULL);
 	} else {
@@ -2627,10 +2634,14 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	MsimMessage *msg;
 	MsimMessage *msg_persist;
 	MsimMessage *body;
+	const char *name, *gname;
 
 	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	name = purple_buddy_get_name(buddy);
+	gname = group ? purple_group_get_name(group) : NULL;
+
 	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n",
-			buddy->name, (group && group->name) ? group->name : "(no group)");
+			name, gname ? gname : "(no group)");
 
 	msg = msim_msg_new(
 			"addbuddy", MSIM_TYPE_BOOLEAN, TRUE,
@@ -2639,7 +2650,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 			"reason", MSIM_TYPE_STRING, g_strdup(""),
 			NULL);
 
-	if (!msim_postprocess_outgoing(session, msg, buddy->name, "newprofileid", "reason")) {
+	if (!msim_postprocess_outgoing(session, msg, name, "newprofileid", "reason")) {
 		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("'addbuddy' command failed."));
 		msim_msg_free(msg);
 		return;
@@ -2651,7 +2662,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	body = msim_msg_new(
 			"ContactID", MSIM_TYPE_STRING, g_strdup("<uid>"),
-			"GroupName", MSIM_TYPE_STRING, g_strdup(group->name),
+			"GroupName", MSIM_TYPE_STRING, g_strdup(gname),
 			"Position", MSIM_TYPE_INTEGER, 1000,
 			"Visibility", MSIM_TYPE_INTEGER, 1,
 			"NickName", MSIM_TYPE_STRING, g_strdup(""),
@@ -2672,7 +2683,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		"body", MSIM_TYPE_DICTIONARY, body,
 		NULL);
 
-	if (!msim_postprocess_outgoing(session, msg_persist, buddy->name, "body", NULL))
+	if (!msim_postprocess_outgoing(session, msg_persist, name, "body", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("persist command failed"));
 		msim_msg_free(msg_persist);
@@ -2681,7 +2692,14 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	msim_msg_free(msg_persist);
 
 	/* Add to allow list, remove from block list */
-	msim_update_blocklist_for_buddy(session, buddy->name, TRUE, FALSE);
+	msim_update_blocklist_for_buddy(session, name, TRUE, FALSE);
+}
+
+static void
+msim_buddy_free(PurpleBuddy *buddy)
+{
+	msim_user_free(purple_buddy_get_protocol_data(buddy));
+	purple_buddy_set_protocol_data(buddy, NULL);
 }
 
 /**
@@ -2693,8 +2711,10 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	MsimSession *session;
 	MsimMessage *delbuddy_msg;
 	MsimMessage *persist_msg;
+	const char *name;
 
 	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	name = purple_buddy_get_name(buddy);
 
 	delbuddy_msg = msim_msg_new(
 				"delbuddy", MSIM_TYPE_BOOLEAN, TRUE,
@@ -2702,7 +2722,7 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 				/* 'delprofileid' with uid will be inserted here. */
 				NULL);
 
-	if (!msim_postprocess_outgoing(session, delbuddy_msg, buddy->name, "delprofileid", NULL)) {
+	if (!msim_postprocess_outgoing(session, delbuddy_msg, name, "delprofileid", NULL)) {
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("'delbuddy' command failed"));
 		msim_msg_free(delbuddy_msg);
 		return;
@@ -2721,7 +2741,7 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 			"body", MSIM_TYPE_STRING, g_strdup("ContactID=<uid>"),
 			NULL);
 
-	if (!msim_postprocess_outgoing(session, persist_msg, buddy->name, "body", NULL)) {
+	if (!msim_postprocess_outgoing(session, persist_msg, name, "body", NULL)) {
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("persist command failed"));
 		msim_msg_free(persist_msg);
 		return;
@@ -2733,15 +2753,12 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	 * doesn't seem like it would be necessary, but the official client
 	 * does it)
 	 */
-	if (!msim_update_blocklist_for_buddy(session, buddy->name, FALSE, FALSE)) {
+	if (!msim_update_blocklist_for_buddy(session, name, FALSE, FALSE)) {
 		purple_notify_error(NULL, NULL,
 				_("Failed to remove buddy"), _("blocklist command failed"));
 		return;
 	}
-	if (buddy->proto_data) {
-		msim_user_free(buddy->proto_data);
-		buddy->proto_data = NULL;
-	}
+	msim_buddy_free(buddy);
 }
 
 /**
@@ -2829,13 +2846,6 @@ msim_rem_deny(PurpleConnection *gc, const char *name)
 
 	/* Remove from our approve list and our block list */
 	msim_update_blocklist_for_buddy(session, name, FALSE, FALSE);
-}
-
-static void
-msim_buddy_free(PurpleBuddy *buddy)
-{
-	msim_user_free(buddy->proto_data);
-	buddy->proto_data = NULL;
 }
 
 /**

@@ -211,8 +211,9 @@ void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data) {
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		JabberAdHocCommands *cmd = data;
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
-		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(buddy->account)));
-		
+		PurpleAccount *account = purple_buddy_get_account(buddy);
+		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account)));
+
 		jabber_adhoc_execute(js, cmd);
 	}
 }
