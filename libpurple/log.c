@@ -36,6 +36,8 @@
 #include "imgstore.h"
 #include "time.h"
 
+#include "config.h"  // Wade-ADDED
+
 static GSList *loggers = NULL;
 
 static PurpleLogLogger *html_logger;

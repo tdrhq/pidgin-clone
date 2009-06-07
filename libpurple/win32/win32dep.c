@@ -28,6 +28,7 @@
 
 #include "debug.h"
 #include "notify.h"
+#include "config.h" // Wade-ADDED
 
 /*
  *  DEFINES & MACROS

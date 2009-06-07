@@ -23,6 +23,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#ifdef _WIN32  // Wade-ADDED
+#include "config.h"
+#endif
+
 #include "internal.h"
 #include "cipher.h"
 #include "certificate.h"
