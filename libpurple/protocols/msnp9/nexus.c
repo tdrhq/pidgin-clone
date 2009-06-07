@@ -325,6 +325,8 @@ login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	char *request_str, *head, *tail;
 	char *buffer = NULL;
 	guint32 ctint;
+	PurpleAccount *account;
+	PurpleConnection *pc;
 
 	nexus = data;
 	g_return_if_fail(nexus != NULL);
@@ -334,11 +336,13 @@ login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
-	username =
-		g_strdup(purple_url_encode(purple_account_get_username(session->account)));
+	account = session->account;
+	pc = purple_account_get_connection(account);
 
-	password = g_utf8_strncpy(g_strdup(purple_connection_get_password(session->account->gc)),
-							  purple_connection_get_password(session->account->gc), 16);
+	username = g_strdup(purple_url_encode(purple_account_get_username(account)));
+
+	password = g_utf8_strncpy(g_strdup(purple_connection_get_password(pc)),
+							  purple_connection_get_password(pc), 16);
 	encpass = g_strdup(purple_url_encode(password));
 	g_free(password);
 

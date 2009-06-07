@@ -63,8 +63,11 @@ pidgin_connection_connect_progress(PurpleConnection *gc,
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
+#warning FIXME: do something to check if some account is in _CONNECTING state
+#if 0
 	pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
 					   (purple_connections_get_connecting() != NULL));
+#endif
 	pidgin_status_box_pulse_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox));
 }
 
@@ -77,9 +80,12 @@ pidgin_connection_connected(PurpleConnection *gc)
 	account  = purple_connection_get_account(gc);
 	gtkblist = pidgin_blist_get_default_gtk_blist();
 
+#warning FIXME: do something to check if some account is in _CONNECTING state
+#if 0
 	if (gtkblist != NULL)
 		pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
 					   (purple_connections_get_connecting() != NULL));
+#endif
 
 	g_hash_table_remove(auto_reconns, account);
 }
@@ -90,8 +96,11 @@ pidgin_connection_disconnected(PurpleConnection *gc)
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
+#warning FIXME: do something to check if some account is in _CONNECTING state
+#if 0
 	pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
 					   (purple_connections_get_connecting() != NULL));
+#endif
 
 	if (purple_connections_get_all() != NULL)
 		return;
@@ -162,7 +171,7 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 		if (info != NULL)
 			g_hash_table_remove(auto_reconns, account);
 
-		purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+		purple_account_set_enabled(account, FALSE);
 	}
 
 	/* If we have any open chats, we probably want to rejoin when we get back online. */
@@ -280,3 +289,4 @@ pidgin_connection_uninit(void)
 
 	g_hash_table_destroy(auto_reconns);
 }
+

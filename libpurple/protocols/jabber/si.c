@@ -1496,7 +1496,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_request_fields(jsx->js->gc, _("Select a Resource"), msg, NULL, fields,
 					_("Send File"), G_CALLBACK(resource_select_ok_cb), _("Cancel"), G_CALLBACK(resource_select_cancel_cb),
-					jsx->js->gc->account, xfer->who, NULL, xfer);
+					purple_connection_get_account(jsx->js->gc), xfer->who, NULL, xfer);
 
 			g_free(msg);
 		}
@@ -1546,9 +1546,9 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 	PurpleXfer *xfer;
 	JabberSIXfer *jsx;
 
-	js = gc->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 	if (xfer)
 	{
 		xfer->data = jsx = g_new0(JabberSIXfer, 1);
@@ -1574,7 +1574,7 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 
 	PurpleXfer *xfer;
 
-	js = gc->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	xfer = jabber_si_new_xfer(gc, who);
 
@@ -1660,7 +1660,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	jsx->stream_id = g_strdup(stream_id);
 	jsx->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
-	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(js->gc), PURPLE_XFER_RECEIVE, from);
 	if (xfer)
 	{
 		xfer->data = jsx;

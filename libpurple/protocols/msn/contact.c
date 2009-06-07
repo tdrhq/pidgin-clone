@@ -679,7 +679,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			char *friendly = NULL;
 			if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
 				friendly = xmlnode_get_data(displayName);
-			purple_connection_set_display_name(session->account->gc, friendly ? purple_url_decode(friendly) : NULL);
+			purple_connection_set_display_name(purple_account_get_connection(session->account), friendly ? purple_url_decode(friendly) : NULL);
 			g_free(friendly);
 			continue; /* Not adding own account as buddy to buddylist */
 		}
@@ -907,7 +907,7 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	purple_debug_misc("msn", "Got the Address Book!\n");
 
 	if (msn_parse_addressbook(session, resp->xml)) {
-		msn_send_privacy(session->account->gc);
+		msn_send_privacy(purple_account_get_connection(session->account));
 		msn_notification_dump_contact(session);
 	} else {
 		/* This is making us loop infinitely when we fail to parse the

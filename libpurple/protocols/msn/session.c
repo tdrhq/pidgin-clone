@@ -440,7 +440,7 @@ msn_session_set_login_step(MsnSession *session, MsnLoginStep step)
 	if (session->logged_in)
 		return;
 
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	session->login_step = step;
 
@@ -466,7 +466,7 @@ msn_session_finish_login(MsnSession *session)
 			purple_imgstore_unref(img);
 
 		session->logged_in = TRUE;
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
+		purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 
 		/* Sync users */
 		msn_session_sync_users(session);

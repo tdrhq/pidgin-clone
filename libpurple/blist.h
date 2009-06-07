@@ -126,8 +126,14 @@ struct _PurpleBlistNode {
 	PurpleBlistNode *next;                /**< The sibling after this buddy.  */
 	PurpleBlistNode *parent;              /**< The parent of this node        */
 	PurpleBlistNode *child;               /**< The child of this node         */
-	GHashTable *settings;               /**< per-node settings              */
-	void          *ui_data;             /**< The UI can put data here.      */
+
+	/* FIXME: this should be made private */
+	GHashTable *settings;                 /**< per-node settings; keys are
+	                                           <tt>gchar *</tt>, values are
+	                                           slice-allocated
+	                                           <tt>GValue</tt>.  */
+
+	void          *ui_data;               /**< The UI can put data here.      */
 	PurpleBlistNodeFlags flags;           /**< The buddy flags                */
 };
 
@@ -999,6 +1005,16 @@ void purple_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
  * buddy list.
  */
 void purple_blist_request_add_group(void);
+
+/**
+ * Checks whether a node has a particular setting.
+ *
+ * @param node  The node in question
+ * @param key   The name of a setting
+ * @return @c TRUE if @a node has any value set for @a key, and @c FALSE
+ *         otherwise.
+ */
+gboolean purple_blist_node_has_setting(PurpleBlistNode *node, const char *key);
 
 /**
  * Associates a boolean with a node in the buddy list
