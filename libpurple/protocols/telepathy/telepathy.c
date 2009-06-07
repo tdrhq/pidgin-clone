@@ -41,7 +41,7 @@
 #define TELEPATHY_ID "prpl-telepathy"
 #define TELEPATHY_DISPLAY_VERSION "1.0"
 
-#define TELEPATHY_STATUS_ONLINE   "online"
+#define TELEPATHY_STATUS_ONLINE   "available"
 #define TELEPATHY_STATUS_AWAY     "away"
 #define TELEPATHY_STATUS_OFFLINE  "offline"
 
@@ -131,6 +131,50 @@ telepathy_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 	return "telepathy";
 }
 
+static gchar*
+telepathy_status_text(PurpleBuddy* buddy)
+{
+	const gchar *name = purple_buddy_get_name(buddy);
+
+	PurplePresence *presence = purple_buddy_get_presence(buddy);
+
+	if (presence != NULL)
+	{
+		PurpleStatus *status = purple_presence_get_active_status(presence);
+		
+		if (status != NULL)
+		{
+			const gchar *message = purple_status_get_attr_string(status, "message");
+
+			purple_debug_info("telepathy", "Returning status for %s\n", name);
+
+			if (message != NULL)
+				return g_strdup(message);
+			else
+				return NULL;
+		}
+		else
+		{
+			GList *list = purple_presence_get_statuses(presence);
+
+			if (list == NULL)
+			{
+				purple_debug_error("telepathy", "list is NULL!!\n");
+			}
+
+			purple_debug_warning("telepathy", "User %s has no active status!\n", name);
+
+			purple_presence_switch_status(presence, "offline");
+			return NULL;
+		}
+	}
+	else
+	{
+		purple_debug_error("telepathy", "User %s has no presence!\n", name);
+		return NULL;
+	}
+}
+
 static GList *
 telepathy_status_types(PurpleAccount *acct)
 {
@@ -167,7 +211,29 @@ contact_notify_cb (TpContact *contact,
 		   GParamSpec *pspec,
 		   gpointer user_data)
 {
-	/* TODO: Update presence and status for user */
+	PurplePlugin *plugin = user_data;
+	telepathy_data *data = plugin->extra;
+
+	const gchar *name = tp_contact_get_identifier(contact);
+	const gchar *presence_status = tp_contact_get_presence_status(contact);
+	const gchar *presence_message = tp_contact_get_presence_message(contact);
+	const gchar *alias = tp_contact_get_alias(contact);
+
+	PurpleBuddy *buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
+
+	if (buddy == NULL)
+	{
+		purple_debug_warning("telepathy", "Received TpContact notify for non-existent buddy (%s)!\n", name);
+		return;
+	}
+
+	purple_blist_alias_buddy(buddy, alias);
+
+	purple_debug_info("telepathy", "%s is now %s (Status: \"%s\")\n",
+			name, presence_status, presence_message);
+
+	purple_prpl_got_user_status(data->acct, name, presence_status,
+			"message", presence_message, NULL);
 }
 
 
@@ -200,25 +266,34 @@ contacts_ready_cb (TpConnection *connection,
 
 			purple_debug_info("telepathy", "  Contact ready: %s\n", tp_contact_get_alias(contact));
 
+			/* the buddy might already be stored locally */
 			buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
 
+			/* TODO: Get rid of the NO_SAVE flag so we can get that blist stored locally.
+			 * Fix setting statuses for buddies stored locally 
+			 */
 			if (buddy == NULL)
 			{
 				purple_debug_info("telepathy", "New user detected!!!\n");
 				buddy = purple_buddy_new(data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
+				purple_blist_node_set_flags((PurpleBlistNode *)buddy, PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 			}
-
-			purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 
 			handle = tp_contact_get_handle(contact);
 
-			g_hash_table_insert(data->contacts, (gpointer)handle, contact);
+			if (g_hash_table_lookup(data->contacts, (gpointer)handle) == NULL)
+			{
+				/* if we haven't cached the handle yet, the buddy isn't in the buddy list either */
+				purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 
-			g_object_ref(contact);
+				g_hash_table_insert(data->contacts, (gpointer)handle, contact);
 
-			g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), user_data);
+				purple_debug_info("telepathy", "Connecting to notify for %s\n", tp_contact_get_identifier(contact));
 
-			contact_notify_cb (contact, NULL, user_data);
+				g_object_ref(contact);
+				g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), user_data);
+				contact_notify_cb (contact, NULL, user_data);
+			}
 		}
 	}
 }
@@ -961,7 +1036,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	NO_BUDDY_ICONS,
 	telepathy_list_icon,                  /* list_icon */
 	NULL,                                /* list_emblem */
-	NULL,                /* status_text */
+	telepathy_status_text,                /* status_text */
 	NULL,               /* tooltip_text */
 	telepathy_status_types,               /* status_types */
 	NULL,            /* blist_node_menu */
