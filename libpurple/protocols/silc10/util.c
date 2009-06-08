@@ -197,9 +197,9 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 	g_snprintf(pkd, sizeof(pkd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());
 	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
 	g_snprintf(file_public_key, sizeof(file_public_key) - 1, "%s",
-		   purple_account_get_string(gc->account, "public-key", pkd));
+		   purple_account_get_string(purple_connection_get_account(gc), "public-key", pkd));
 	g_snprintf(file_private_key, sizeof(file_public_key) - 1, "%s",
-		   purple_account_get_string(gc->account, "private-key", prd));
+		   purple_account_get_string(purple_connection_get_account(gc), "private-key", prd));
 
 	if ((g_stat(file_public_key, &st)) == -1) {
 		/* If file doesn't exist */
@@ -208,7 +208,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			if (!silc_create_key_pair(SILCPURPLE_DEF_PKCS,
 					     SILCPURPLE_DEF_PKCS_LEN,
 					     file_public_key, file_private_key, NULL,
-					     (gc->password == NULL) ? "" : gc->password,
+					     (purple_connection_get_password(gc) == NULL) ? "" : purple_connection_get_password(gc),
 						 NULL, NULL, NULL, FALSE)) {
 				purple_debug_error("silc", "Couldn't create key pair\n");
 				return FALSE;
@@ -248,7 +248,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			if (!silc_create_key_pair(SILCPURPLE_DEF_PKCS,
 					     SILCPURPLE_DEF_PKCS_LEN,
 					     file_public_key, file_private_key, NULL,
-					     (gc->password == NULL) ? "" : gc->password,
+					     (purple_connection_get_password(gc) == NULL) ? "" : purple_connection_get_password(gc),
 						 NULL, NULL, NULL, FALSE)) {
 				purple_debug_error("silc", "Couldn't create key pair\n");
 				return FALSE;
@@ -353,8 +353,8 @@ void silcpurple_show_public_key(SilcPurple sg,
 		   the next strings (short strings: 2 tabs, longer strings 1 tab,
 		   sum: 3 tabs or 24 characters) */
 		g_string_append_printf(s, _("Real Name: \t%s\n"), ident->realname);
-	if (ident->username)
-		g_string_append_printf(s, _("User Name: \t%s\n"), ident->username);
+	if (purple_account_get_username(ident))
+		g_string_append_printf(s, _("User Name: \t%s\n"), purple_account_get_username(ident));
 	if (ident->email)
 		g_string_append_printf(s, _("Email: \t\t%s\n"), ident->email);
 	if (ident->host)
@@ -371,9 +371,9 @@ void silcpurple_show_public_key(SilcPurple sg,
 
 	buf = g_string_free(s, FALSE);
 
-	purple_request_action(sg->gc, _("Public Key Information"),
+	purple_request_action(purple_account_get_connection(sg), _("Public Key Information"),
 			    _("Public Key Information"),
-			    buf, 0, purple_connection_get_account(sg->gc),
+			    buf, 0, purple_connection_get_account(purple_account_get_connection(sg)),
 				NULL, NULL, context, 1, _("Close"), callback);
 
 	g_free(buf);

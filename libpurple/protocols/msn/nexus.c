@@ -26,6 +26,11 @@
 #include "nexus.h"
 #include "notification.h"
 
+#include "des3cipher.h"
+#include "hmaccipher.h"
+#include "md5cipher.h"
+#include "sha1cipher.h"
+
 /**************************************************************************
  * Valid Ticket Tokens
  **************************************************************************/
@@ -95,41 +100,41 @@ rps_create_key(const char *key, int key_len, const char *data, size_t data_len)
 	const guchar magic[] = "WS-SecureConversation";
 	const int magic_len = sizeof(magic) - 1;
 
-	PurpleCipherContext *hmac;
+	PurpleCipher *hmac;
 	guchar hash1[20], hash2[20], hash3[20], hash4[20];
 	char *result;
 
-	hmac = purple_cipher_context_new_by_name("hmac", NULL);
+	hmac = purple_hmac_cipher_new();
 
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, key_len);
-	purple_cipher_context_append(hmac, magic, magic_len);
-	purple_cipher_context_append(hmac, (guchar *)data, data_len);
-	purple_cipher_context_digest(hmac, sizeof(hash1), hash1, NULL);
+	g_object_set(G_OBJECT(hmac), "hash", purple_sha1_cipher_new(), NULL);
+	purple_cipher_set_key_with_len(hmac, (guchar *)key, key_len);
+	purple_cipher_append(hmac, magic, magic_len);
+	purple_cipher_append(hmac, (guchar *)data, data_len);
+	purple_cipher_digest(hmac, sizeof(hash1), hash1, NULL);
 
-	purple_cipher_context_reset(hmac, NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, key_len);
-	purple_cipher_context_append(hmac, hash1, 20);
-	purple_cipher_context_append(hmac, magic, magic_len);
-	purple_cipher_context_append(hmac, (guchar *)data, data_len);
-	purple_cipher_context_digest(hmac, sizeof(hash2), hash2, NULL);
+	purple_cipher_reset(hmac);
+	g_object_set(G_OBJECT(hmac), "hash", purple_sha1_cipher_new(), NULL);
+	purple_cipher_set_key_with_len(hmac, (guchar *)key, key_len);
+	purple_cipher_append(hmac, hash1, 20);
+	purple_cipher_append(hmac, magic, magic_len);
+	purple_cipher_append(hmac, (guchar *)data, data_len);
+	purple_cipher_digest(hmac, sizeof(hash2), hash2, NULL);
 
-	purple_cipher_context_reset(hmac, NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, key_len);
-	purple_cipher_context_append(hmac, hash1, 20);
-	purple_cipher_context_digest(hmac, sizeof(hash3), hash3, NULL);
+	purple_cipher_reset(hmac);
+	g_object_set(G_OBJECT(hmac), "hash", purple_sha1_cipher_new(), NULL);
+	purple_cipher_set_key_with_len(hmac, (guchar *)key, key_len);
+	purple_cipher_append(hmac, hash1, 20);
+	purple_cipher_digest(hmac, sizeof(hash3), hash3, NULL);
 
-	purple_cipher_context_reset(hmac, NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, key_len);
-	purple_cipher_context_append(hmac, hash3, sizeof(hash3));
-	purple_cipher_context_append(hmac, magic, magic_len);
-	purple_cipher_context_append(hmac, (guchar *)data, data_len);
-	purple_cipher_context_digest(hmac, sizeof(hash4), hash4, NULL);
+	purple_cipher_reset(hmac);
+	g_object_set(G_OBJECT(hmac), "hash", purple_sha1_cipher_new(), NULL);
+	purple_cipher_set_key_with_len(hmac, (guchar *)key, key_len);
+	purple_cipher_append(hmac, hash3, sizeof(hash3));
+	purple_cipher_append(hmac, magic, magic_len);
+	purple_cipher_append(hmac, (guchar *)data, data_len);
+	purple_cipher_digest(hmac, sizeof(hash4), hash4, NULL);
 
-	purple_cipher_context_destroy(hmac);
+	g_object_unref(G_OBJECT(hmac));
 
 	result = g_malloc(24);
 	memcpy(result, hash2, sizeof(hash2));
@@ -141,22 +146,22 @@ rps_create_key(const char *key, int key_len, const char *data, size_t data_len)
 static char *
 des3_cbc(const char *key, const char *iv, const char *data, int len, gboolean decrypt)
 {
-	PurpleCipherContext *des3;
+	PurpleCipher *des3;
 	char *out;
 	size_t outlen;
 
-	des3 = purple_cipher_context_new_by_name("des3", NULL);
-	purple_cipher_context_set_key(des3, (guchar *)key);
-	purple_cipher_context_set_batch_mode(des3, PURPLE_CIPHER_BATCH_MODE_CBC);
-	purple_cipher_context_set_iv(des3, (guchar *)iv, 8);
+	des3 = purple_des3_cipher_new();
+	purple_cipher_set_key(des3, (guchar *)key);
+	purple_cipher_set_batch_mode(des3, PURPLE_CIPHER_BATCH_MODE_CBC);
+	purple_cipher_set_iv(des3, (guchar *)iv, 8);
 
 	out = g_malloc(len);
 	if (decrypt)
-		purple_cipher_context_decrypt(des3, (guchar *)data, len, (guchar *)out, &outlen);
+		purple_cipher_decrypt(des3, (guchar *)data, len, (guchar *)out, &outlen);
 	else
-		purple_cipher_context_encrypt(des3, (guchar *)data, len, (guchar *)out, &outlen);
+		purple_cipher_encrypt(des3, (guchar *)data, len, (guchar *)out, &outlen);
 
-	purple_cipher_context_destroy(des3);
+	g_object_unref(G_OBJECT(des3));
 
 	return out;
 }
@@ -170,7 +175,7 @@ msn_rps_encrypt(MsnNexus *nexus)
 	MsnUsrKey *usr_key;
 	const char magic1[] = "SESSION KEY HASH";
 	const char magic2[] = "SESSION KEY ENCRYPTION";
-	PurpleCipherContext *hmac;
+	PurpleCipher *hmac;
 	size_t len;
 	guchar hash[20];
 	char *key1, *key2, *key3;
@@ -198,12 +203,12 @@ msn_rps_encrypt(MsnNexus *nexus)
 	iv[1] = rand();
 
 	len = strlen(nexus->nonce);
-	hmac = purple_cipher_context_new_by_name("hmac", NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key2, 24);
-	purple_cipher_context_append(hmac, (guchar *)nexus->nonce, len);
-	purple_cipher_context_digest(hmac, 20, hash, NULL);
-	purple_cipher_context_destroy(hmac);
+	hmac = purple_hmac_cipher_new();
+	g_object_set(G_OBJECT(hmac), "hash", purple_sha1_cipher_new(), NULL);
+	purple_cipher_set_key_with_len(hmac, (guchar *)key2, 24);
+	purple_cipher_append(hmac, (guchar *)nexus->nonce, len);
+	purple_cipher_digest(hmac, 20, hash, NULL);
+	g_object_unref(G_OBJECT(hmac));
 
 	/* We need to pad this to 72 bytes, apparently */
 	nonce_fixed = g_malloc(len + 8);
@@ -396,7 +401,7 @@ msn_nexus_connect(MsnNexus *nexus)
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	username = purple_account_get_username(session->account);
-	password = purple_connection_get_password(session->account->gc);
+	password = purple_connection_get_password(purple_account_get_connection(session->account));
 	password_xml = g_markup_escape_text(password, MIN(strlen(password), 16));
 
 	purple_debug_info("msn", "Logging on %s, with policy '%s', nonce '%s'\n",
@@ -514,8 +519,8 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	MsnSession *session = nexus->session;
 	MsnNexusUpdateData *ud;
 	MsnNexusUpdateCallback *update;
-	PurpleCipherContext *sha1;
-	PurpleCipherContext *hmac;
+	PurpleCipher *sha1;
+	PurpleCipher *hmac;
 
 	char *key;
 
@@ -566,7 +571,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	ud->nexus = nexus;
 	ud->id = id;
 
-	sha1 = purple_cipher_context_new_by_name("sha1", NULL);
+	sha1 = purple_sha1_cipher_new();
 
 	domain = g_strdup_printf(MSN_SSO_RST_TEMPLATE,
 	                         id,
@@ -574,8 +579,8 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	                         ticket_domains[id][SSO_VALID_TICKET_POLICY] != NULL ?
 	                             ticket_domains[id][SSO_VALID_TICKET_POLICY] :
 	                             nexus->policy);
-	purple_cipher_context_append(sha1, (guchar *)domain, strlen(domain));
-	purple_cipher_context_digest(sha1, 20, digest, NULL);
+	purple_cipher_append(sha1, (guchar *)domain, strlen(domain));
+	purple_cipher_digest(sha1, 20, digest, NULL);
 	domain_b64 = purple_base64_encode(digest, 20);
 
 	now = time(NULL);
@@ -586,13 +591,13 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	timestamp = g_strdup_printf(MSN_SSO_TIMESTAMP_TEMPLATE,
 	                            now_str,
 	                            purple_utf8_strftime("%Y-%m-%dT%H:%M:%SZ", tm));
-	purple_cipher_context_reset(sha1, NULL);
-	purple_cipher_context_append(sha1, (guchar *)timestamp, strlen(timestamp));
-	purple_cipher_context_digest(sha1, 20, digest, NULL);
+	purple_cipher_reset(sha1);
+	purple_cipher_append(sha1, (guchar *)timestamp, strlen(timestamp));
+	purple_cipher_digest(sha1, 20, digest, NULL);
 	timestamp_b64 = purple_base64_encode(digest, 20);
 	g_free(now_str);
 
-	purple_cipher_context_destroy(sha1);
+	g_object_unref(G_OBJECT(sha1));
 
 	signedinfo = g_strdup_printf(MSN_SSO_SIGNEDINFO_TEMPLATE,
 	                             id,
@@ -604,12 +609,12 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	nonce_b64 = purple_base64_encode((guchar *)&nonce, sizeof(nonce));
 
 	key = rps_create_key(nexus->secret, 24, (char *)nonce, sizeof(nonce));
-	hmac = purple_cipher_context_new_by_name("hmac", NULL);
-	purple_cipher_context_set_option(hmac, "hash", "sha1");
-	purple_cipher_context_set_key_with_len(hmac, (guchar *)key, 24);
-	purple_cipher_context_append(hmac, (guchar *)signedinfo, strlen(signedinfo));
-	purple_cipher_context_digest(hmac, 20, signature, NULL);
-	purple_cipher_context_destroy(hmac);
+	hmac = purple_hmac_cipher_new();
+	g_object_set(G_OBJECT(hmac), "hash", purple_sha1_cipher_new(), NULL);
+	purple_cipher_set_key_with_len(hmac, (guchar *)key, 24);
+	purple_cipher_append(hmac, (guchar *)signedinfo, strlen(signedinfo));
+	purple_cipher_digest(hmac, 20, signature, NULL);
+	g_object_unref(G_OBJECT(hmac));
 	signature_b64 = purple_base64_encode(signature, 20);
 
 	request = g_strdup_printf(MSN_SSO_TOKEN_UPDATE_TEMPLATE,
