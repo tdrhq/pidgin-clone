@@ -72,6 +72,8 @@ int main(void)
 	 * by PURPLE_FATAL_ASSERTS. */
 	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 
+	g_type_init();
+
 	sr = srunner_create (master_suite());
 
 	srunner_add_suite(sr, cipher_suite());

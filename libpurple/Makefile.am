@@ -31,10 +31,11 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple.pc
 
-SUBDIRS = $(GCONF_DIR) plugins protocols tests . example
+SUBDIRS = . $(GCONF_DIR) plugins protocols tests example
 
 purple_coresources = \
 	account.c \
+	accountmanager.c \
 	accountopt.c \
 	blist.c \
 	buddyicon.c \
@@ -46,13 +47,18 @@ purple_coresources = \
 	conversation.c \
 	core.c \
 	debug.c \
+	descipher.c \
+	des3cipher.c \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
+	hmaccipher.c \
 	idle.c \
 	imgstore.c \
 	log.c \
 	marshallers.c \
+	md4cipher.c \
+	md5cipher.c \
 	media.c \
 	mediamanager.c \
 	mime.c \
@@ -62,15 +68,18 @@ purple_coresources = \
 	notify.c \
 	plugin.c \
 	pluginpref.c \
+	pobject.c \
 	pounce.c \
 	prefs.c \
 	privacy.c \
 	proxy.c \
 	prpl.c \
+	rc4cipher.c \
 	request.c \
 	roomlist.c \
 	savedstatuses.c \
 	server.c \
+	sha1cipher.c \
 	signals.c \
 	smiley.c \
 	dnsquery.c \
@@ -94,6 +103,7 @@ purple_coresources = \
 
 purple_coreheaders = \
 	account.h \
+	accountmanager.h \
 	accountopt.h \
 	blist.h \
 	buddyicon.h \
@@ -106,14 +116,19 @@ purple_coreheaders = \
 	core.h \
 	dbus-maybe.h \
 	debug.h \
+	descipher.h \
+	des3cipher.h \
 	desktopitem.h \
 	eventloop.h \
 	ft.h \
 	gaim-compat.h \
+	hmaccipher.h \
 	idle.h \
 	imgstore.h \
 	log.h \
 	marshallers.h \
+	md4cipher.h \
+	md5cipher.h \
 	media.h \
 	media-gst.h \
 	mediamanager.h \
@@ -124,11 +139,13 @@ purple_coreheaders = \
 	ntlm.h \
 	plugin.h \
 	pluginpref.h \
+	pobject.h \
 	pounce.h \
 	prefs.h \
 	privacy.h \
 	proxy.h \
 	prpl.h \
+	rc4cipher.h \
 	request.h \
 	roomlist.h \
 	savedstatuses.h \
@@ -137,6 +154,7 @@ purple_coreheaders = \
 	smiley.h \
 	dnsquery.h \
 	dnssrv.h \
+	sha1cipher.h \
 	status.h \
 	stringref.h \
 	stun.h \
@@ -157,12 +175,15 @@ purple_builtheaders = purple.h version.h
 
 marshallers.h: marshallers.list
 	@echo "Generating marshallers.h"
-	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
+	( @GLIB_GENMARSHAL@ --prefix=purple_smarshal $(srcdir)/marshallers.list --header > purple-marshal.tmp \
+	&& mv purple-marshal.tmp marshallers.h ) \
+	|| ( rm -f purple-marshal.tmp && exit 1 )
 
-marshallers.c: marshallers.list marshallers.h
+marshallers.c: marshallers.list
 	@echo "Generating marshallers.c"
-	echo "#include \"marshallers.h\"" > marshallers.c
-	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
+	( @GLIB_GENMARSHAL@ --prefix=purple_smarshal $(srcdir)/marshallers.list --body > purple-marshal.tmp \
+	&& mv purple-marshal.tmp marshallers.c ) \
+        || ( rm -f purple-marshal.tmp && exit 1 )
 
 if ENABLE_DBUS
 

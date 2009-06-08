@@ -86,13 +86,13 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 		return;
 
 	purple_connection_set_display_name(gc, nick);
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 	account = purple_connection_get_account(gc);
 
 	/* If we're away then set our away message */
 	status = purple_account_get_active_status(irc->account);
 	if (!purple_status_get_type(status) != PURPLE_STATUS_AVAILABLE) {
-		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 		prpl_info->set_status(irc->account, status);
 	}
 
@@ -709,7 +709,7 @@ void irc_msg_notinchan(struct irc_conn *irc, const char *name, const char *from,
 
 	purple_debug(PURPLE_DEBUG_INFO, "irc", "We're apparently not in %s, but tried to use it\n", args[1]);
 	if (convo) {
-		/*g_slist_remove(irc->gc->buddy_chats, convo);
+		/*g_slist_remove(purple_account_get_connection(irc)->buddy_chats, convo);
 		  purple_conversation_set_account(convo, NULL);*/
 		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), args[1], args[2], PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 	}
@@ -964,12 +964,14 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 		g_free(nick);
 		return;
 	}
-	chats = gc->buddy_chats;
 
 	if (!purple_utf8_strcasecmp(nick, purple_connection_get_display_name(gc))) {
 		purple_connection_set_display_name(gc, args[0]);
 	}
 
+#warning TODO: Find out what buddy_chats do, and reimplement this stuff
+#if 0
+	chats = gc->buddy_chats;
 	while (chats) {
 		PurpleConvChat *chat = PURPLE_CONV_CHAT(chats->data);
 		/* This is ugly ... */
@@ -977,6 +979,7 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 			purple_conv_chat_rename_user(chat, nick, args[0]);
 		chats = chats->next;
 	}
+#endif
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, nick,
 						   irc->account);
@@ -989,7 +992,7 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
-	if (purple_connection_get_state(gc) == PURPLE_CONNECTED) {
+	if (purple_connection_get_state(gc) == PURPLE_CONNECTION_STATE_CONNECTED) {
 		purple_notify_error(gc, _("Invalid nickname"),
 				  _("Invalid nickname"),
 				  _("Your selected nickname was rejected by the server.  It probably contains invalid characters."));
@@ -1224,7 +1227,10 @@ void irc_msg_quit(struct irc_conn *irc, const char *name, const char *from, char
 	data[0] = irc_mask_nick(from);
 	data[1] = args[0];
 	/* XXX this should have an API, I shouldn't grab this directly */
+#warning Yeah. Do something here
+#if 0
 	g_slist_foreach(gc->buddy_chats, (GFunc)irc_chat_remove_buddy, data);
+#endif
 
 	if ((ib = g_hash_table_lookup(irc->buddies, data[0])) != NULL) {
 		ib->flag = FALSE;

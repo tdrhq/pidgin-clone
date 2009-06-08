@@ -734,7 +734,7 @@ jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 	JabberIq *iq;
 
 	/* bail if the user isn't interested */
-	if (!purple_account_get_check_mail(js->gc->account))
+	if (!purple_account_get_check_mail(purple_connection_get_account(js->gc)))
 		return;
 
 	type = xmlnode_get_attrib(packet, "type");
@@ -763,7 +763,7 @@ jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 void jabber_gmail_init(JabberStream *js) {
 	JabberIq *iq;
 
-	if (!purple_account_get_check_mail(js->gc->account))
+	if (!purple_account_get_check_mail(purple_connection_get_account(js->gc)))
 		return;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
@@ -868,14 +868,14 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 	JabberBuddy *jb;
 	const char *balias;
 
-	js = (JabberStream*)(gc->proto_data);
+	js = (JabberStream*)(purple_object_get_protocol_data(PURPLE_OBJECT(gc)));
 
 	if (!js || !js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 		return;
 
 	jb = jabber_buddy_find(js, who, TRUE);
 
-	buddies = purple_find_buddies(js->gc->account, who);
+	buddies = purple_find_buddies(purple_connection_get_account(js->gc), who);
 	if(!buddies)
 		return;
 
@@ -938,7 +938,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
 
-	js = (JabberStream*)(gc->proto_data);
+	js = (JabberStream*)(purple_object_get_protocol_data(PURPLE_OBJECT(gc)));
 
 	if (!js || !js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 		return;
@@ -1099,11 +1099,11 @@ void jabber_google_presence_incoming(JabberStream *js, const char *user, JabberB
 	if (!js->googletalk)
 		return;
 	if (jbr->status && !strncmp(jbr->status, "♫ ", strlen("♫ "))) {
-		purple_prpl_got_user_status(js->gc->account, user, "tune",
+		purple_prpl_got_user_status(purple_connection_get_account(js->gc), user, "tune",
 					    PURPLE_TUNE_TITLE, jbr->status + strlen("♫ "), NULL);
 		jbr->status = NULL;
 	} else {
-		purple_prpl_got_user_status_deactive(js->gc->account, user, "tune");
+		purple_prpl_got_user_status_deactive(purple_connection_get_account(js->gc), user, "tune");
 	}
 }
 

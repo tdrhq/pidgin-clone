@@ -1403,7 +1403,7 @@ conv_page(void)
 
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-	gtk_imhtml_setup_entry(GTK_IMHTML(imhtml), PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO);
+	gtk_imhtml_setup_entry(GTK_IMHTML(imhtml), PURPLE_CONNECTION_FLAGS_HTML | PURPLE_CONNECTION_FLAGS_FORMATTING_WBFO);
 
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle",
 					 G_CALLBACK(formatting_toggle_cb), toolbar);
