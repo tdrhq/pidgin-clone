@@ -76,7 +76,6 @@ typedef struct
 static void
 destroy_text_channel(telepathy_text_channel *tp_channel)
 {
-	/* TODO: unref the channel proxy */
 	g_free(tp_channel);
 }
 
@@ -417,7 +416,27 @@ send_cb (TpChannel *proxy,
 {
 	if (error != NULL)
 	{
-		/* TODO: forward the error to the conversation window */
+		PurplePlugin *plugin = user_data;
+		telepathy_data *data = plugin->extra;
+
+		const gchar *who = tp_channel_get_identifier(proxy);
+
+		gchar *error_message = g_strconcat(_("There was an error sending your message to "), who, NULL);
+		gchar *error_message2 = g_strconcat(error_message, ": ", error->message, NULL);
+
+		/* display the error in the conversation */
+		if (!purple_conv_present_error(who, data->acct, error_message2))
+		{
+			/* display as a popup if there is no active conversation with the user */
+			purple_notify_error(purple_connections_get_handle(),
+					_("Error sending message"),
+					error_message,
+					error->message);
+		}
+
+		g_free(error_message2);
+		g_free(error_message);
+			
 		purple_debug_error("telepathy", "Send error: %s\n", error->message);
 	}
 }
