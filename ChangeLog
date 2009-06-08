@@ -18,6 +18,11 @@ version 2.6.0 (??/??/2009):
 	  from you on MSN.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
+	* Gadu-Gadu accounts can specify a server to which to connect.
+	  (Krzysztof "kreez" Tobola)
+	* Modifying the MSN privacy list for buddies not added by you (i.e.
+	  spammers and other generally unwanted users) should no longer cause
+	  a 240 error and disconnection.
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
@@ -52,6 +57,11 @@ version 2.6.0 (??/??/2009):
 	  chat to avoid getting too many fetch requests).
 	* Fix an issue with Jabber (pre-XMPP) servers and the user's preference
 	  to require SSL not being respected.
+	* Fix an issue where Cyrus SASL DIGEST MD5 authentication might fail if
+	  the username, password, or realm (the JID domain) contain non-ASCII
+	  characters.
+	* Show emblem for mobile, handheld, and web clients and bots (if the other
+	  client supports it).
 
 	Yahoo:
 	* P2P file transfers.  (Sulabh Mahajan)
@@ -85,11 +95,22 @@ version 2.6.0 (??/??/2009):
 	* Always set unseen-count and unseen-state on conversations.
 	  (Joshua Stein)
 	* Fix a bug in 'Conversation Colors' plugin for RTL messages.
+	* Pressing the Left and Right arrow keys in the buddy list will expand and
+	  collapse buddy groups or contacts. (Peter Ruibal)
+	* Support saving animated custom smileys as animated images or animated
+	  custom smileys. (Andrea Piccinelli)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
 	  especially for users of braille terminals, screen readers etc.
 	* Added a TinyURL plugin, which aids copying longer URLs.
+
+	Pidgin GTK+ Theme Control Plugin:
+	* Removed mouse cursor color preferences.
+	* Added "Typing Notification Color" preference.
+	* Added "Disable Typing Notification Text" preference.
+	* Preferences have been reorganized into three tabs for Colors, Fonts, and
+	  Miscellaneous categories.
 
 version 2.5.6 (05/19/2009):
 	libpurple:

@@ -23,6 +23,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "blist.h"
+#include "core.h"
 #include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
@@ -473,7 +474,7 @@ static gboolean jabber_keepalive_timeout(PurpleConnection *gc)
 	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Ping timeout"));
-	js->keepalive_timeout = -1;
+	js->keepalive_timeout = 0;
 	return FALSE;
 }
 
@@ -481,7 +482,7 @@ void jabber_keepalive(PurpleConnection *gc)
 {
 	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
-	if (js->keepalive_timeout == -1) {
+	if (js->keepalive_timeout == 0) {
 		jabber_keepalive_ping(js);
 		js->keepalive_timeout = purple_timeout_add_seconds(120,
 				(GSourceFunc)(jabber_keepalive_timeout), gc);
@@ -758,7 +759,7 @@ jabber_login(PurpleAccount *account)
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
-	js->keepalive_timeout = -1;
+	js->keepalive_timeout = 0;
 	/* Set the default protocol version to 1.0. Overridden in parser.c. */
 	js->protocol_version = JABBER_PROTO_1_0;
 	js->sessions = NULL;
@@ -1291,7 +1292,7 @@ void jabber_register_account(PurpleAccount *account)
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->old_length = 0;
-	js->keepalive_timeout = -1;
+	js->keepalive_timeout = 0;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -1548,7 +1549,7 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_track);
 	g_free(js->expected_rspauth);
 
-	if (js->keepalive_timeout != -1)
+	if (js->keepalive_timeout != 0)
 		purple_timeout_remove(js->keepalive_timeout);
 
 	g_free(js->srv_rec);
@@ -1924,6 +1925,28 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 					!(jb->subscription & JABBER_SUB_TO)))
 			return "not-authorized";
 	}
+
+	if (jb) {
+		JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, NULL);
+		if (jbr) {
+			const gchar *client_type = 
+				jabber_resource_get_identity_category_type(jbr, "client");
+		
+			if (client_type) {
+				if (strcmp(client_type, "phone") == 0) {
+					return "mobile";
+				} else if (strcmp(client_type, "web") == 0) {
+					return "external";
+				} else if (strcmp(client_type, "handheld") == 0) {
+					return "hiptop";
+				} else if (strcmp(client_type, "bot") == 0) {
+					return "bot";
+				}
+				/* the default value "pc" falls through and has no emblem */
+			}
+		}
+	}
+		
 	return NULL;
 }
 
@@ -3405,9 +3428,26 @@ jabber_ipc_add_feature(const gchar *feature)
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
+	GHashTable *ui_info = purple_core_get_ui_info();
+	const gchar *ui_type;
+	const gchar *type = "pc"; /* default client type, if unknown or 
+								unspecified */
+
 	jabber_plugin = plugin;
 
-	jabber_add_identity("client", "pc", NULL, PACKAGE);
+	ui_type = ui_info ? g_hash_table_lookup(ui_info, "client_type") : NULL;
+	if (ui_type) {
+		if (strcmp(ui_type, "pc") == 0 ||
+			strcmp(ui_type, "console") == 0 ||
+			strcmp(ui_type, "phone") == 0 ||
+			strcmp(ui_type, "handheld") == 0 ||
+			strcmp(ui_type, "web") == 0 ||
+			strcmp(ui_type, "bot") == 0) {
+			type = ui_type;
+		}
+	}
+
+	jabber_add_identity("client", type, NULL, PACKAGE);
 
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);

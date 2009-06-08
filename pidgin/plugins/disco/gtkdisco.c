@@ -29,16 +29,12 @@
 #include "gtkutils.h"
 #include "pidgin.h"
 #include "request.h"
+#include "pidgintooltip.h"
 
 #include "gtkdisco.h"
 #include "xmppdisco.h"
 
 GList *dialogs = NULL;
-
-struct _menu_cb_info {
-	PidginDiscoList *list;
-	XmppDiscoService *service;
-};
 
 enum {
 	PIXBUF_COLUMN = 0,
@@ -69,7 +65,7 @@ PidginDiscoList *pidgin_disco_list_ref(PidginDiscoList *list)
 	g_return_val_if_fail(list != NULL, NULL);
 
 	++list->ref;
-    purple_debug_misc("xmppdisco", "reffing list, ref count now %d\n", list->ref);
+	purple_debug_misc("xmppdisco", "reffing list, ref count now %d\n", list->ref);
 
 	return list;
 }
@@ -115,7 +111,7 @@ void pidgin_disco_list_set_in_progress(PidginDiscoList *list, gboolean in_progre
 static void pidgin_disco_create_tree(PidginDiscoList *pdl);
 
 static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
-				     PidginDiscoDialog *dialog)
+                                     PidginDiscoDialog *dialog)
 {
 	dialog->account = account;
 	gtk_widget_set_sensitive(dialog->browse_button, account != NULL);
@@ -123,9 +119,7 @@ static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
 
 static void register_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
-	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "disco-info");
-
-	xmpp_disco_service_register(info->service);
+	xmpp_disco_service_register(dialog->selected);
 }
 
 static void discolist_cancel_cb(PidginDiscoList *pdl, const char *server)
@@ -212,52 +206,42 @@ static void browse_button_cb(GtkButton *button, PidginDiscoDialog *dialog)
 	g_free(server);
 }
 
-static void add_room_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
+static void add_to_blist_cb(GtkButton *button, PidginDiscoDialog *dialog)
 {
-	struct _menu_cb_info *info = g_object_get_data(G_OBJECT(button), "disco-info");
+	XmppDiscoService *service = dialog->selected;
 	PurpleAccount *account;
-	const char *name;
+	const char *jid;
 
-	g_return_if_fail(info != NULL);
+	g_return_if_fail(service != NULL);
 
-	account = purple_connection_get_account(info->list->pc);
-	name = info->service->name;
+	account = purple_connection_get_account(service->list->pc);
+	jid = service->jid;
 
-	if (info->service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
-		purple_blist_request_add_chat(account, NULL, NULL, name);
+	if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
+		purple_blist_request_add_chat(account, NULL, NULL, jid);
 	else
-		purple_blist_request_add_buddy(account, name, NULL, NULL);
+		purple_blist_request_add_buddy(account, jid, NULL, NULL);
 }
 
 static void
 selection_changed_cb(GtkTreeSelection *selection, PidginDiscoList *pdl)
 {
-	XmppDiscoService *service;
 	GtkTreeIter iter;
 	GValue val;
-	static struct _menu_cb_info *info;
 	PidginDiscoDialog *dialog = pdl->dialog;
 
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), &iter, SERVICE_COLUMN, &val);
-		service = g_value_get_pointer(&val);
-		if (!service) {
+		dialog->selected = g_value_get_pointer(&val);
+		if (!dialog->selected) {
 			gtk_widget_set_sensitive(dialog->add_button, FALSE);
 			gtk_widget_set_sensitive(dialog->register_button, FALSE);
 			return;
 		}
 
-		info = g_new0(struct _menu_cb_info, 1);
-		info->list = dialog->discolist;
-		info->service = service;
-
-		g_object_set_data_full(G_OBJECT(dialog->add_button), "disco-info",
-		                       info, g_free);
-		g_object_set_data(G_OBJECT(dialog->register_button), "disco-info", info);
-
-		gtk_widget_set_sensitive(dialog->add_button, service->flags & XMPP_DISCO_ADD);
-		gtk_widget_set_sensitive(dialog->register_button, service->flags & XMPP_DISCO_REGISTER);
+		gtk_widget_set_sensitive(dialog->add_button, dialog->selected->flags & XMPP_DISCO_ADD);
+		gtk_widget_set_sensitive(dialog->register_button, dialog->selected->flags & XMPP_DISCO_REGISTER);
 	} else {
 		gtk_widget_set_sensitive(dialog->add_button, FALSE);
 		gtk_widget_set_sensitive(dialog->register_button, FALSE);
@@ -279,6 +263,36 @@ row_expanded_cb(GtkTreeView *tree, GtkTreeIter *arg1, GtkTreePath *rg2,
 	                         &val);
 	service = g_value_get_pointer(&val);
 	xmpp_disco_service_expand(service);
+}
+
+static void
+row_activated_cb(GtkTreeView       *tree_view,
+                 GtkTreePath       *path,
+                 GtkTreeViewColumn *column,
+                 gpointer           user_data)
+{
+	PidginDiscoList *pdl = user_data;
+	GtkTreeIter iter;
+	XmppDiscoService *service;
+	GValue val;
+
+	if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(pdl->model), &iter, path))
+		return;
+
+	val.g_type = 0;
+	gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), &iter, SERVICE_COLUMN,
+	                         &val);
+	service = g_value_get_pointer(&val);
+
+	if (service->flags & XMPP_DISCO_BROWSE)
+		if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(pdl->tree), path))
+			gtk_tree_view_collapse_row(GTK_TREE_VIEW(pdl->tree), path);
+		else
+			gtk_tree_view_expand_row(GTK_TREE_VIEW(pdl->tree), path, FALSE);
+	else if (service->flags & XMPP_DISCO_ADD)
+		add_to_blist_cb(GTK_BUTTON(pdl->dialog->add_button), pdl->dialog);
+	else if (service->flags & XMPP_DISCO_REGISTER)
+		register_button_cb(GTK_BUTTON(pdl->dialog->register_button), pdl->dialog);
 }
 
 static void
@@ -317,6 +331,94 @@ static gboolean account_filter_func(PurpleAccount *account)
 	return purple_strequal(purple_account_get_protocol_id(account), XMPP_PLUGIN_ID);
 }
 
+static gboolean
+disco_paint_tooltip(GtkWidget *tipwindow, gpointer data)
+{
+	PangoLayout *layout = g_object_get_data(G_OBJECT(tipwindow), "tooltip-plugin");
+	gtk_paint_layout(tipwindow->style, tipwindow->window, GTK_STATE_NORMAL, FALSE,
+			NULL, tipwindow, "tooltip",
+			6, 6, layout);
+	return TRUE;
+}
+
+static gboolean
+disco_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
+		gpointer data, int *w, int *h)
+{
+	PidginDiscoList *pdl = data;
+	GtkTreeIter iter;
+	PangoLayout *layout;
+	int width, height;
+	XmppDiscoService *service;
+	GValue val;
+	const char *type = NULL;
+	char *markup, *jid, *name, *desc = NULL;
+
+	if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(pdl->model), &iter, path))
+		return FALSE;
+
+	val.g_type = 0;
+	gtk_tree_model_get_value(GTK_TREE_MODEL(pdl->model), &iter, SERVICE_COLUMN,
+	                         &val);
+	service = g_value_get_pointer(&val);
+
+	switch (service->type) {
+		case XMPP_DISCO_SERVICE_TYPE_UNSET:
+			type = _("Unknown");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_GATEWAY:
+			type = _("Gateway");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_DIRECTORY:
+			type = _("Directory");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_CHAT:
+			type = _("Chat");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_PUBSUB_COLLECTION:
+			type = _("PubSub Collection");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_PUBSUB_LEAF:
+			type = _("PubSub Leaf");
+			break;
+
+		case XMPP_DISCO_SERVICE_TYPE_OTHER:
+			type = _("Other");
+			break;
+	}
+
+	markup = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>\n<b>%s:</b> %s%s%s",
+	                         name = g_markup_escape_text(service->name, -1),
+	                         type,
+	                         jid = g_markup_escape_text(service->jid, -1),
+	                         service->description ? _("\n<b>Description:</b> ") : "",
+	                         service->description ? desc = g_markup_escape_text(service->description, -1) : "");
+
+	layout = gtk_widget_create_pango_layout(tipwindow, NULL);
+	pango_layout_set_markup(layout, markup, -1);
+	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
+	pango_layout_set_width(layout, 500000);
+	pango_layout_get_size(layout, &width, &height);
+	g_object_set_data_full(G_OBJECT(tipwindow), "tooltip-plugin", layout, g_object_unref);
+
+	if (w)
+		*w = PANGO_PIXELS(width) + 12;
+	if (h)
+		*h = PANGO_PIXELS(height) + 12;
+
+	g_free(markup);
+	g_free(jid);
+	g_free(name);
+	g_free(desc);
+
+	return TRUE;
+}
+
 static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 {
 	GtkCellRenderer *text_renderer, *pixbuf_renderer;
@@ -348,7 +450,7 @@ static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Name"));
 
-	gtk_tree_view_column_pack_start(column,  pixbuf_renderer, FALSE);
+	gtk_tree_view_column_pack_start(column, pixbuf_renderer, FALSE);
 	gtk_tree_view_column_set_attributes(column, pixbuf_renderer,
 			"pixbuf", PIXBUF_COLUMN, NULL);
 
@@ -373,6 +475,11 @@ static void pidgin_disco_create_tree(PidginDiscoList *pdl)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(pdl->tree), column);
 
 	g_signal_connect(G_OBJECT(pdl->tree), "row-expanded", G_CALLBACK(row_expanded_cb), pdl);
+	g_signal_connect(G_OBJECT(pdl->tree), "row-activated", G_CALLBACK(row_activated_cb), pdl);
+
+	pidgin_tooltip_setup_for_treeview(pdl->tree, pdl,
+	                                  disco_create_tooltip,
+	                                  disco_paint_tooltip);
 }
 
 void pidgin_disco_signed_off_cb(PurpleConnection *pc)
@@ -464,13 +571,15 @@ PidginDiscoDialog *pidgin_disco_dialog_new(void)
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 
 	/* stop button */
-	dialog->stop_button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_STOP,
-	                 G_CALLBACK(stop_button_cb), dialog);
+	dialog->stop_button =
+		pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_STOP,
+		                         G_CALLBACK(stop_button_cb), dialog);
 	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
 
 	/* browse button */
-	dialog->browse_button = pidgin_pixbuf_button_from_stock(_("_Browse"), GTK_STOCK_REFRESH,
-	                                                    PIDGIN_BUTTON_HORIZONTAL);
+	dialog->browse_button =
+		pidgin_pixbuf_button_from_stock(_("_Browse"), GTK_STOCK_REFRESH,
+		                                PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->browse_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->browse_button), "clicked",
 	                 G_CALLBACK(browse_button_cb), dialog);
@@ -478,22 +587,25 @@ PidginDiscoDialog *pidgin_disco_dialog_new(void)
 	gtk_widget_show(dialog->browse_button);
 
 	/* register button */
-	dialog->register_button = pidgin_dialog_add_button(GTK_DIALOG(dialog->window), _("Register"),
-	                 G_CALLBACK(register_button_cb), dialog);
+	dialog->register_button =
+		pidgin_dialog_add_button(GTK_DIALOG(dialog->window), _("Register"),
+		                         G_CALLBACK(register_button_cb), dialog);
 	gtk_widget_set_sensitive(dialog->register_button, FALSE);
 
 	/* add button */
-	dialog->add_button = pidgin_pixbuf_button_from_stock(_("_Add"), GTK_STOCK_ADD,
-	                                                    PIDGIN_BUTTON_HORIZONTAL);
+	dialog->add_button =
+		pidgin_pixbuf_button_from_stock(_("_Add"), GTK_STOCK_ADD,
+	                                    PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->add_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->add_button), "clicked",
-	                 G_CALLBACK(add_room_to_blist_cb), dialog);
+	                 G_CALLBACK(add_to_blist_cb), dialog);
 	gtk_widget_set_sensitive(dialog->add_button, FALSE);
 	gtk_widget_show(dialog->add_button);
 
 	/* close button */
-	dialog->close_button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE,
-					 G_CALLBACK(close_button_cb), dialog);
+	dialog->close_button =
+		pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE,
+		                         G_CALLBACK(close_button_cb), dialog);
 
 	/* show the dialog window and return the dialog */
 	gtk_widget_show(dialog->window);
@@ -565,14 +677,14 @@ void pidgin_disco_add_service(PidginDiscoList *pdl, XmppDiscoService *service, X
 
 	if (service->type == XMPP_DISCO_SERVICE_TYPE_GATEWAY && service->gateway_type) {
 		char *tmp = g_strconcat(service->gateway_type, ".png", NULL);
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", tmp, NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "16", tmp, NULL);
 		g_free(tmp);
 #if 0
 	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_USER) {
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "person.png", NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "16", "person.png", NULL);
 #endif
 	} else if (service->type == XMPP_DISCO_SERVICE_TYPE_CHAT)
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "22", "chat.png", NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "16", "chat.png", NULL);
 
 	if (filename) {
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
