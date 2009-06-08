@@ -490,7 +490,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	/* Publish the avatar as specified in XEP-0084 */
-	jabber_avatar_set(gc->proto_data, img);
+	jabber_avatar_set(purple_connection_get_protocol_data(gc), img);
 	/* Set the image in our vCard */
 	jabber_set_info(gc, purple_account_get_user_info(account));
 
@@ -1499,7 +1499,7 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 
 									if (jbr ==
 										jabber_buddy_find_resource(jb, NULL)) {
-										purple_prpl_got_user_idle(js->gc->account,
+										purple_prpl_got_user_idle(purple_connection_get_account(js->gc),
 											buddy_name, jbr->idle, jbr->idle);
 									}
 								}
@@ -1921,7 +1921,7 @@ static void jabber_buddy_logout(PurpleBlistNode *node, gpointer data) {
 		/* simply create a directed unavailable presence */
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
 		PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(buddy->account)));
+		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 		xmlnode *presence;
 
 		presence = jabber_presence_create_js(js, JABBER_BUDDY_STATE_UNAVAILABLE, NULL, 0);

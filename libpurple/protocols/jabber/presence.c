@@ -398,7 +398,7 @@ jabber_vcard_parse_avatar(JabberStream *js, const char *from,
 			data = purple_base64_decode(text, &size);
 			hash = jabber_calculate_data_sha1sum(data, size);
 
-			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
+			purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, data, size, hash);
 			g_free(hash);
 			g_free(text);
 		}
@@ -856,9 +856,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
+			PurpleAccount *account = purple_connection_get_account(js->gc);
+
 			jabber_google_presence_incoming(js, buddy_name, found_jbr);
-			purple_prpl_got_user_status(purple_connection_get_account(js->gc), buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
-			purple_prpl_got_user_idle(js->gc->account, buddy_name, found_jbr->idle, found_jbr->idle);
+			purple_prpl_got_user_status(account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
+			purple_prpl_got_user_idle(account, buddy_name, found_jbr->idle, found_jbr->idle);
 			if (nickname)
 				serv_got_alias(js->gc, buddy_name, nickname);
 		} else {

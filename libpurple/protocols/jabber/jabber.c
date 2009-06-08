@@ -879,7 +879,6 @@ jabber_registration_result_cb(JabberStream *js, const char *from,
 #if 0
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 #endif
-	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
 
@@ -1448,7 +1447,12 @@ void jabber_close(PurpleConnection *gc)
 	 * if we were forcibly disconnected because it will crash
 	 * on some SSL backends.
 	 */
+#warning FIXME: there needs to be a better alternative to gc:disconnect_timeout
+#if 0
 	if (!gc->disconnect_timeout) {
+#else
+	{
+#endif
 		if (js->use_bosh)
 			jabber_bosh_connection_close(js->bosh);
 		else
@@ -1631,8 +1635,6 @@ char *jabber_get_next_id(JabberStream *js)
 void jabber_idle_set(PurpleConnection *gc, int idle)
 {
 	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleStatus *status = purple_account_get_active_status(account);
 
 	js->idle = idle ? time(NULL) - idle : idle;
 
@@ -1956,9 +1958,10 @@ char *jabber_status_text(PurpleBuddy *b)
 	JabberBuddy *jb = NULL;
 	PurpleAccount *account = purple_buddy_get_account(b);
 	PurpleConnection *gc = purple_account_get_connection(account);
+	JabberStream *js = gc ? purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
 
-	if (gc && purple_object_get_protocol_data(PURPLE_OBJECT(gc)))
-		jb = jabber_buddy_find(purple_object_get_protocol_data(PURPLE_OBJECT(gc), purple_buddy_get_name(b), FALSE);
+	if (js)
+		jb = jabber_buddy_find(js, purple_buddy_get_name(b), FALSE);
 
 	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
@@ -2049,7 +2052,6 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 
 	gc = purple_account_get_connection(account);
 	g_return_if_fail(gc != NULL);
-	g_return_if_fail(gc->proto_data != NULL);
 
 	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_return_if_fail(js != NULL);
@@ -2140,7 +2142,7 @@ GList *jabber_status_types(PurpleAccount *account)
 	PurpleStatusType *type;
 	GList *types = NULL;
 	GValue *priority_value;
-	PurpleValue *buzz_enabled;
+	GValue *buzz_enabled;
 
 	priority_value = purple_g_value_slice_new(G_TYPE_INT);
 	g_value_set_int(priority_value, 1);
@@ -2893,7 +2895,8 @@ static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char *
 static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(conv->account)));
+	PurpleConnection *gc = purple_account_get_connection(conv->account);
+	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	const gchar *who;
 
 	if (!args || !args[0]) {
@@ -2911,8 +2914,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		const gchar *alias;
 		gchar *str;
 		PurpleBuddy *buddy =
-			purple_find_buddy(purple_connection_get_account(conv->account->gc),
-				who);
+			purple_find_buddy(conv->account, who);
 
 		if (buddy != NULL)
 			alias = purple_buddy_get_contact_alias(buddy);
@@ -3018,8 +3020,8 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 		      PurpleMediaSessionType type)
 {
 #ifdef USE_VV
-	JabberStream *js = (JabberStream *)
-			purple_account_get_connection(account)->proto_data;
+	JabberStream *js =
+			purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account)));
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL;
 	char *resource;
@@ -3162,8 +3164,8 @@ jabber_initiate_media(PurpleAccount *account, const char *who,
 PurpleMediaCaps jabber_get_media_caps(PurpleAccount *account, const char *who)
 {
 #ifdef USE_VV
-	JabberStream *js = (JabberStream *)
-			purple_account_get_connection(account)->proto_data;
+	JabberStream *js =
+			purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account)));
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	PurpleMediaCaps caps = PURPLE_MEDIA_CAPS_NONE;
@@ -3400,7 +3402,7 @@ jabber_ipc_contact_has_feature(PurpleAccount *account, const gchar *jid,
 
 	if (!purple_account_is_connected(account))
 		return FALSE;
-	js = gc->proto_data;
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (!(resource = jabber_get_resource(jid)) ||
 	    !(jb = jabber_buddy_find(js, jid, FALSE)) ||

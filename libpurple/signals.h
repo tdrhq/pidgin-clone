@@ -347,6 +347,8 @@ void purple_old_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
 void purple_old_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
+void purple_old_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER(
+		PurpleCallback cb, va_list args, void *data, void **return_val);
 void purple_old_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT(
 		PurpleCallback cb, va_list args, void *data, void **return_val);
 
@@ -393,6 +395,7 @@ void purple_old_marshal_POINTER__POINTER_POINTER(
 #define purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT purple_old_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT
 #define purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER purple_old_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER
 #define purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER purple_old_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER
+#define purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER purple_old_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER_POINTER
 #define purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT purple_old_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT
 #define purple_marshal_BOOLEAN__INT_POINTER purple_old_marshal_BOOLEAN__INT_POINTER
 #define purple_marshal_POINTER__POINTER_INT purple_old_marshal_POINTER__POINTER_INT
