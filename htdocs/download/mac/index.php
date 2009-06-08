@@ -30,7 +30,7 @@
 
 <p>For information on installing Fink, visit the <a href="http://finkproject.org/download" onClick="javascript:pageTracker._trackPageview('/external/finkproject.org');">Fink download page</a>.</p>
 
-<p>For a more native Mac OS X experience, you may be interested in using <a href="http://adiumx.com" onClick="javascript:pageTracker._trackPageview('/external/adiumx.com');">Adium</a> instead, which uses libpurple (the core of Pidgin) for much of its protocol support.</p>
+<p>For a more native Mac OS X experience, you may be interested in using <a href="http://adium.im" onClick="javascript:pageTracker._trackPageview('/external/adium.im');">Adium</a> instead, which uses libpurple (the core of Pidgin) for much of its protocol support.</p>
 
 </div>
 
