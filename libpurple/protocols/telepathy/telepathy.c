@@ -526,6 +526,18 @@ channel_ready_cb (TpChannel *channel,
 }
 
 static void
+channel_invalidated_cb (TpProxy *self,
+                        guint    domain,
+                        gint     code,
+                        gchar   *message,
+                        gpointer user_data)
+{
+	purple_debug_info("telepathy", "Channel invalidated: %s\n", message);	
+
+	g_object_unref(self);
+}
+
+static void
 handle_new_channel (PurplePlugin* plugin,
                     const GValueArray *channel_Properties)
 {
@@ -546,6 +558,8 @@ handle_new_channel (PurplePlugin* plugin,
 	purple_debug_info("telepathy", "New channel: %s\n", object_Path);
 
 	tp_channel_call_when_ready(channel, channel_ready_cb, plugin);
+
+	g_signal_connect(channel, "invalidated", G_CALLBACK (channel_invalidated_cb), plugin);
 }
 
 static void
