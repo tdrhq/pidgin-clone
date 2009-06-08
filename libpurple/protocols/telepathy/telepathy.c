@@ -375,6 +375,18 @@ write_message_to_conversation (const gchar *from,
 }
 
 static void
+acknowledge_pending_messages_cb (TpChannel *proxy,
+                                 const GError *error,
+				 gpointer user_data,
+				 GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "AcknowledgePendingMessages error: %s\n", error->message);
+	}
+}
+
+static void
 list_pending_messages_cb  (TpChannel *proxy,
                            const GPtrArray *out_Pending_Messages,
                            const GError *error,
@@ -389,6 +401,7 @@ list_pending_messages_cb  (TpChannel *proxy,
 	{
 		PurplePlugin *plugin = user_data;
 		telepathy_data *data = plugin->extra;
+		GArray *message_IDs;
 
 		int i;
 
@@ -407,10 +420,14 @@ list_pending_messages_cb  (TpChannel *proxy,
 			tp_channel->received_Pending_Messages = TRUE;
 		}
 
+		/* this will hold the IDs of message that will be acknowledged */
+		message_IDs = g_array_new(FALSE, FALSE, sizeof(guint));
+
 		for (i = 0; i<out_Pending_Messages->len; ++i)
 		{
 			/* unpack the relevant info from (uuuuus) */
 			GValueArray *arr = g_ptr_array_index(out_Pending_Messages, i);
+			guint msg_id = g_value_get_uint(g_value_array_get_nth(arr, 0));
 			guint timestamp = g_value_get_uint(g_value_array_get_nth(arr, 1));
 			gchar *msg = (gchar *)g_value_get_string(g_value_array_get_nth(arr, 5));
 			
@@ -418,7 +435,17 @@ list_pending_messages_cb  (TpChannel *proxy,
 			gchar *from = (gchar *)tp_channel_get_identifier(proxy);
 
 			write_message_to_conversation(from, timestamp, msg, user_data);
+
+			/* add the id to the array of acknowledge messages */
+			g_array_append_val(message_IDs, msg_id);
 		}
+
+		/* acknowledge the messages now */
+		tp_cli_channel_type_text_call_acknowledge_pending_messages(proxy, -1, message_IDs,
+				acknowledge_pending_messages_cb, user_data, NULL, NULL);
+
+		g_array_free(message_IDs, TRUE);
+
 	}
 }
 
@@ -447,11 +474,23 @@ received_cb (TpChannel *proxy,
 	}
 	else
 	{
+		GArray *message_IDs;
+
 		/* will this message get caught by ListPendingMessages? */
 		if (!tp_channel->received_Pending_Messages)
 			return;
 
 		write_message_to_conversation(who, arg_Timestamp, arg_Text, user_data);
+
+		/* acknowledge receiving the message */
+		message_IDs = g_array_new(FALSE, FALSE, sizeof(guint));
+
+		g_array_append_val(message_IDs, arg_ID);
+
+		tp_cli_channel_type_text_call_acknowledge_pending_messages(proxy, -1, message_IDs,
+				acknowledge_pending_messages_cb, user_data, NULL, NULL);
+
+		g_array_free(message_IDs, TRUE);
 
 	}
 }
