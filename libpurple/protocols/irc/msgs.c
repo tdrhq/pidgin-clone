@@ -78,7 +78,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 {
 	PurpleConnection *gc;
 	PurpleStatus *status;
-	PurpleBlistNode *gnode, *cnode, *bnode;
+	GSList *buddies;
 	PurpleAccount *account;
 
 	if ((gc = purple_account_get_connection(irc->account)) == NULL
@@ -97,33 +97,13 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	}
 
 	/* this used to be in the core, but it's not now */
-	for (gnode = purple_blist_get_root();
-	     gnode;
-	     gnode = purple_blist_node_get_sibling_next(gnode))
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies))
 	{
-		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for(cnode = purple_blist_node_get_first_child(gnode);
-		    cnode;
-		    cnode = purple_blist_node_get_sibling_next(cnode))
-		{
-			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for(bnode = purple_blist_node_get_first_child(cnode);
-			    bnode;
-			    bnode = purple_blist_node_get_sibling_next(bnode))
-			{
-				PurpleBuddy *b;
-				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (PurpleBuddy *)bnode;
-				if(purple_buddy_get_account(b) == account) {
-					struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
-					ib->name = g_strdup(purple_buddy_get_name(b));
-					g_hash_table_insert(irc->buddies, ib->name, ib);
-				}
-			}
-		}
+		PurpleBuddy *b = buddies->data;
+		struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
+		ib->name = g_strdup(purple_buddy_get_name(b));
+		g_hash_table_insert(irc->buddies, ib->name, ib);
 	}
 
 	irc_blist_timeout(irc);
@@ -1196,7 +1176,7 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 	if (!purple_utf8_strcasecmp(to, purple_connection_get_display_name(gc))) {
 		serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else {
-		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, to, irc->account);
+		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, irc_nick_skip_mode(irc, to), irc->account);
 		if (convo)
 			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)), nick, 0, msg, time(NULL));
 		else

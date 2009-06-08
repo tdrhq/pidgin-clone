@@ -526,7 +526,7 @@ aop_option_menu_get_selected(GtkWidget *optmenu, GtkWidget **p_item)
 	GtkWidget *item = gtk_menu_get_active(GTK_MENU(menu));
 	if (p_item)
 		(*p_item) = item;
-	return g_object_get_data(G_OBJECT(item), "aop_per_item_data");
+	return item ? g_object_get_data(G_OBJECT(item), "aop_per_item_data") : NULL;
 }
 
 static void
@@ -1737,8 +1737,8 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
 	return pixbuf;
 }
 
-const char *
-pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim)
+static const char *
+stock_id_from_status_primitive_idle(PurpleStatusPrimitive prim, gboolean idle)
 {
 	const char *stock = NULL;
 	switch (prim) {
@@ -1746,25 +1746,50 @@ pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim)
 			stock = NULL;
 			break;
 		case PURPLE_STATUS_UNAVAILABLE:
-			stock = PIDGIN_STOCK_STATUS_BUSY;
+			stock = idle ? PIDGIN_STOCK_STATUS_BUSY_I : PIDGIN_STOCK_STATUS_BUSY;
 			break;
 		case PURPLE_STATUS_AWAY:
-			stock = PIDGIN_STOCK_STATUS_AWAY;
+			stock = idle ? PIDGIN_STOCK_STATUS_AWAY_I : PIDGIN_STOCK_STATUS_AWAY;
 			break;
 		case PURPLE_STATUS_EXTENDED_AWAY:
-			stock = PIDGIN_STOCK_STATUS_XA;
+			stock = idle ? PIDGIN_STOCK_STATUS_XA_I : PIDGIN_STOCK_STATUS_XA;
 			break;
 		case PURPLE_STATUS_INVISIBLE:
 			stock = PIDGIN_STOCK_STATUS_INVISIBLE;
 			break;
 		case PURPLE_STATUS_OFFLINE:
-			stock = PIDGIN_STOCK_STATUS_OFFLINE;
+			stock = idle ? PIDGIN_STOCK_STATUS_OFFLINE_I : PIDGIN_STOCK_STATUS_OFFLINE;
 			break;
 		default:
-			stock = PIDGIN_STOCK_STATUS_AVAILABLE;
+			stock = idle ? PIDGIN_STOCK_STATUS_AVAILABLE_I : PIDGIN_STOCK_STATUS_AVAILABLE;
 			break;
 	}
 	return stock;
+}
+
+const char *
+pidgin_stock_id_from_status_primitive(PurpleStatusPrimitive prim)
+{
+	return stock_id_from_status_primitive_idle(prim, FALSE);
+}
+
+const char *
+pidgin_stock_id_from_presence(PurplePresence *presence)
+{
+	PurpleStatus *status;
+	PurpleStatusType *type;
+	PurpleStatusPrimitive prim;
+	gboolean idle;
+
+	g_return_val_if_fail(presence, NULL);
+
+	status = purple_presence_get_active_status(presence);
+	type = purple_status_get_type(status);
+	prim = purple_status_type_get_primitive(type);
+
+	idle = purple_presence_is_idle(presence);
+
+	return stock_id_from_status_primitive_idle(prim, idle);
 }
 
 GdkPixbuf *

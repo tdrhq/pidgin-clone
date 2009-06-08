@@ -499,11 +499,11 @@ purple_util_format_song_info(title, artist, album, unused)
 	gpointer unused
 
 const char*
-purple_util_get_image_extension(gconstpointer data, size_t length(data))
+purple_util_get_image_extension(const char *data, size_t length(data))
 	PROTOTYPE: $
 
 gchar_own*
-purple_util_get_image_filename(gconstpointer image_data, size_t length(image_data))
+purple_util_get_image_filename(const char *image_data, size_t length(image_data))
 	PROTOTYPE: $
 
 Purple::XMLNode

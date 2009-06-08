@@ -230,9 +230,9 @@ purple_core_quit(void)
 	purple_notify_uninit();
 	purple_conversations_uninit();
 	purple_buddy_icons_uninit();
-	purple_accounts_uninit();
 	purple_savedstatuses_uninit();
 	purple_status_uninit();
+	purple_accounts_uninit();
 	purple_sound_uninit();
 	purple_theme_manager_uninit();
 	purple_xfers_uninit();

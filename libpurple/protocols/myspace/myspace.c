@@ -846,8 +846,6 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 	MsimMessage *body;
 	guint old_inbox_status;
 	guint i, n;
-	const gchar *froms[5], *tos[5], *urls[5], *subjects[5];
-
 	/* Information for each new inbox message type. */
 	static struct
 	{
@@ -862,15 +860,21 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 		{ "FriendRequest", MSIM_INBOX_FRIEND_REQUEST, "http://messaging.myspace.com/index.cfm?fuseaction=mail.friendRequests", NULL },
 		{ "PictureComment", MSIM_INBOX_PICTURE_COMMENT, "http://home.myspace.com/index.cfm?fuseaction=user", NULL }
 	};
+	const gchar *froms[G_N_ELEMENTS(message_types) + 1] = { "" },
+		*tos[G_N_ELEMENTS(message_types) + 1] = { "" },
+		*urls[G_N_ELEMENTS(message_types) + 1] = { "" },
+		*subjects[G_N_ELEMENTS(message_types) + 1] = { "" };
+
+	g_return_if_fail(reply != NULL);
 
 	/* Can't write _()'d strings in array initializers. Workaround. */
+	/* khc: then use N_() in the array initializer and use _() when they are
+	   used */
 	message_types[0].text = _("New mail messages");
 	message_types[1].text = _("New blog comments");
 	message_types[2].text = _("New profile comments");
 	message_types[3].text = _("New friend requests!");
 	message_types[4].text = _("New picture comments");
-
-	g_return_if_fail(reply != NULL);
 
 	body = msim_msg_get_dictionary(reply, "body");
 
@@ -881,7 +885,7 @@ msim_check_inbox_cb(MsimSession *session, const MsimMessage *reply, gpointer dat
 
 	n = 0;
 
-	for (i = 0; i < sizeof(message_types) / sizeof(message_types[0]); ++i) {
+	for (i = 0; i < G_N_ELEMENTS(message_types); ++i) {
 		const gchar *key;
 		guint bit;
 
@@ -1113,10 +1117,6 @@ msim_got_contact_list(MsimSession *session, const MsimMessage *reply, gpointer u
 	guint buddy_count;
 
 	body = msim_msg_get_dictionary(reply, "body");
-	if (!body) {
-		/* No friends. Not an error. */
-		return;
-	}
 
 	buddy_count = 0;
 
@@ -1472,28 +1472,22 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
  * @return TRUE if successful.
  */
 static gboolean
-msim_incoming_im(MsimSession *session, MsimMessage *msg)
+msim_incoming_im(MsimSession *session, MsimMessage *msg, const gchar *username)
 {
-	gchar *username, *msg_msim_markup, *msg_purple_markup;
+	gchar *msg_msim_markup, *msg_purple_markup;
 	gchar *userid;
 	time_t time_received;
 	PurpleConversation *conv;
 
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
-	g_return_val_if_fail(msg != NULL, FALSE);
-
-	username = msim_msg_get_string(msg, "_username");
 	/* I know this isn't really a string... but we need it to be one for
 	 * purple_find_conversation_with_account(). */
 	userid = msim_msg_get_string(msg, "f");
-	g_return_val_if_fail(username != NULL, FALSE);
 
 	purple_debug_info("msim_incoming_im", "UserID is %s", userid);
 
 	if (msim_is_userid(username)) {
 		purple_debug_info("msim", "Ignoring message from spambot (%s) on account %s\n",
 				username, purple_account_get_username(session->account));
-		g_free(username);
 		return FALSE;
 	}
 
@@ -1518,14 +1512,13 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
 
 	serv_got_im(session->gc, username, msg_purple_markup, PURPLE_MESSAGE_RECV, time_received);
 
-	g_free(username);
 	g_free(msg_purple_markup);
 
 	return TRUE;
 }
 
 /**
- * Handle an incoming action message.
+ * Handle an incoming action message or an IM.
  *
  * @param session
  * @param msg
@@ -1533,7 +1526,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
  * @return TRUE if successful.
  */
 static gboolean
-msim_incoming_action(MsimSession *session, MsimMessage *msg)
+msim_incoming_action_or_im(MsimSession *session, MsimMessage *msg)
 {
 	gchar *msg_text, *username;
 	gboolean rc;
@@ -1547,7 +1540,8 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	username = msim_msg_get_string(msg, "_username");
 	g_return_val_if_fail(username != NULL, FALSE);
 
-	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%s>\n",
+	purple_debug_info("msim",
+			"msim_incoming_action_or_im: action <%s> from <%s>\n",
 			msg_text, username);
 
 	if (g_str_equal(msg_text, "%typing%")) {
@@ -1561,13 +1555,16 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	} else if (strstr(msg_text, "!!!GroupCount=")) {
 		/* TODO: support group chats. I think the number in msg_text has
 		 * something to do with the 'gid' field. */
-		purple_debug_info("msim", "msim_incoming_action: TODO: implement #4691, group chats: %s\n", msg_text);
+		purple_debug_info("msim",
+				"msim_incoming_action_or_im: "
+				"TODO: implement #4691, group chats: %s\n", msg_text);
 
 		rc = TRUE;
 	} else if (strstr(msg_text, "!!!Offline=")) {
 		/* TODO: support group chats. This one might mean a user
 		 * went offline or exited the chat. */
-		purple_debug_info("msim", "msim_incoming_action: TODO: implement #4691, group chats: %s\n", msg_text);
+		purple_debug_info("msim", "msim_incoming_action_or_im: "
+				"TODO: implement #4691, group chats: %s\n", msg_text);
 
 		rc = TRUE;
 	} else if (msim_msg_get_integer(msg, "aid") != 0) {
@@ -1578,9 +1575,7 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 
 		rc = TRUE;
 	} else {
-		msim_unrecognized(session, msg,
-				"got to msim_incoming_action but unrecognized value for 'msg'");
-		rc = FALSE;
+		rc = msim_incoming_im(session, msg, username);
 	}
 
 	g_free(msg_text);
@@ -1665,10 +1660,9 @@ msim_incoming_bm(MsimSession *session, MsimMessage *msg)
 	switch (bm) {
 		case MSIM_BM_STATUS:
 			return msim_incoming_status(session, msg);
-		case MSIM_BM_INSTANT:
-			return msim_incoming_im(session, msg);
-		case MSIM_BM_ACTION:
-			return msim_incoming_action(session, msg);
+		case MSIM_BM_INSTANT_ACTION_OR_IM:
+		case MSIM_BM_DELAYABLE_ACTION_OR_IM:
+			return msim_incoming_action_or_im(session, msg);
 		case MSIM_BM_MEDIA:
 			return msim_incoming_media(session, msg);
 		case MSIM_BM_UNOFFICIAL_CLIENT:
@@ -1676,7 +1670,8 @@ msim_incoming_bm(MsimSession *session, MsimMessage *msg)
 		default:
 			/* Not really an IM, but show it for informational
 			 * purposes during development. */
-			return msim_incoming_im(session, msg);
+			/* TODO: This is probably wrong */
+			return msim_incoming_action_or_im(session, msg);
 	}
 }
 
@@ -2289,7 +2284,7 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 
 	message_msim = html_to_msim_markup(session, message);
 
-	if (msim_send_bm(session, who, message_msim, MSIM_BM_INSTANT)) {
+	if (msim_send_bm(session, who, message_msim, MSIM_BM_DELAYABLE_ACTION_OR_IM)) {
 		/* Return 1 to have Purple show this IM as being sent, 0 to not. I always
 		 * return 1 even if the message could not be sent, since I don't know if
 		 * it has failed yet--because the IM is only sent after the userid is
@@ -2342,7 +2337,7 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
 	}
 
 	purple_debug_info("msim", "msim_send_typing(%s): %d (%s)\n", name, state, typing_str);
-	msim_send_bm(session, name, typing_str, MSIM_BM_ACTION);
+	msim_send_bm(session, name, typing_str, MSIM_BM_INSTANT_ACTION_OR_IM);
 	return 0;
 }
 

@@ -43,6 +43,7 @@
 #ifdef USE_VV
 
 #include <gst/farsight/fs-conference-iface.h>
+#include <gst/farsight/fs-element-added-notifier.h>
 
 /** @copydoc _PurpleMediaSession */
 typedef struct _PurpleMediaSession PurpleMediaSession;
@@ -1850,7 +1851,7 @@ purple_media_insert_local_candidate(PurpleMediaSession *session, const gchar *na
 #endif
 
 GList *
-purple_media_get_session_names(PurpleMedia *media)
+purple_media_get_session_ids(PurpleMedia *media)
 {
 #ifdef USE_VV
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
@@ -2380,6 +2381,18 @@ purple_media_src_pad_added_cb(FsStream *fsstream, GstPad *srcpad,
 	stream->connected_cb_id = purple_timeout_add(0,
 			(GSourceFunc)purple_media_connected_cb, stream);
 }
+
+static void
+purple_media_element_added_cb(FsElementAddedNotifier *self,
+		GstBin *bin, GstElement *element, gpointer user_data)
+{
+	/*
+	 * Hack to make H264 work with Gmail video.
+	 */
+	if (!strncmp(GST_ELEMENT_NAME(element), "x264", 4)) {
+		g_object_set(GST_OBJECT(element), "cabac", FALSE, NULL);
+	}
+}
 #endif  /* USE_VV */
 
 gboolean
@@ -2403,7 +2416,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 
 	if (!session) {
 		GError *err = NULL;
-		GList *codec_conf = NULL;
+		GList *codec_conf = NULL, *iter = NULL;
 		gchar *filename = NULL;
 		PurpleMediaSessionType session_type;
 		GstElement *src = NULL;
@@ -2419,15 +2432,6 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 			g_free(session);
 			return FALSE;
 		}
-
-	/* XXX: SPEEX has a latency of 5 or 6 seconds for me */
-#if 0
-	/* SPEEX is added through the configuration */
-		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_ANY,
-				"SPEEX", FS_MEDIA_TYPE_AUDIO, 8000));
-		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_ANY,
-				"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
-#endif
 
 		filename = g_build_filename(purple_user_dir(), "fs-codec.conf", NULL);
 		codec_conf = fs_codec_list_from_keyfile(filename, &err);
@@ -2445,6 +2449,25 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 			g_error_free(err);
 		}
 
+		/*
+		 * Add SPEEX if the configuration file doesn't exist or
+		 * there isn't a speex entry.
+		 */
+		for (iter = codec_conf; iter; iter = g_list_next(iter)) {
+			FsCodec *codec = iter->data;
+			if (!g_ascii_strcasecmp(codec->encoding_name, "speex"))
+				break;
+		}
+
+		if (iter == NULL) {
+			codec_conf = g_list_prepend(codec_conf,
+					fs_codec_new(FS_CODEC_ID_ANY,
+					"SPEEX", FS_MEDIA_TYPE_AUDIO, 8000));
+			codec_conf = g_list_prepend(codec_conf,
+					fs_codec_new(FS_CODEC_ID_ANY,
+					"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
+		}
+
 		fs_session_set_codec_preferences(session->session, codec_conf, NULL);
 
 		/*
@@ -2455,6 +2478,19 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id,
 		if (is_nice || !strcmp(transmitter, "rawudp"))
 			g_object_set(G_OBJECT(session->session),
 					"no-rtcp-timeout", 0, NULL);
+
+		/*
+		 * Hack to make x264 work with Gmail video.
+		 */
+		if (is_nice && !strcmp(sess_id, "google-video")) {
+			FsElementAddedNotifier *notifier =
+					fs_element_added_notifier_new();
+			g_signal_connect(G_OBJECT(notifier), "element-added",
+					G_CALLBACK(purple_media_element_added_cb),
+					stream);
+			fs_element_added_notifier_add(notifier,
+					GST_BIN(media->priv->conference));
+		}
 
 		fs_codec_list_destroy(codec_conf);
 
@@ -2663,13 +2699,15 @@ purple_media_get_codecs(PurpleMedia *media, const gchar *sess_id)
 }
 
 GList *
-purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, const gchar *name)
+purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id,
+                                  const gchar *participant)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	stream = purple_media_get_stream(media, sess_id, name);
-	return purple_media_candidate_list_from_fs(stream->local_candidates);
+	stream = purple_media_get_stream(media, sess_id, participant);
+	return stream ? purple_media_candidate_list_from_fs(
+			stream->local_candidates) : NULL;
 #else
 	return NULL;
 #endif
@@ -2677,20 +2715,21 @@ purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, cons
 
 void
 purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
-				   const gchar *name, GList *remote_candidates)
+                                   const gchar *participant,
+                                   GList *remote_candidates)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
 	GError *err = NULL;
 
 	g_return_if_fail(PURPLE_IS_MEDIA(media));
-	stream = purple_media_get_stream(media, sess_id, name);
+	stream = purple_media_get_stream(media, sess_id, participant);
 
 	if (stream == NULL) {
 		purple_debug_error("media",
 				"purple_media_add_remote_candidates: "
 				"couldn't find stream %s %s.\n",
-				sess_id, name);
+				sess_id, participant);
 		return;
 	}
 
@@ -2716,12 +2755,12 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 
 GList *
 purple_media_get_active_local_candidates(PurpleMedia *media,
-		const gchar *sess_id, const gchar *name)
+		const gchar *sess_id, const gchar *participant)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	stream = purple_media_get_stream(media, sess_id, name);
+	stream = purple_media_get_stream(media, sess_id, participant);
 	return purple_media_candidate_list_from_fs(
 			stream->active_local_candidates);
 #else
@@ -2731,12 +2770,12 @@ purple_media_get_active_local_candidates(PurpleMedia *media,
 
 GList *
 purple_media_get_active_remote_candidates(PurpleMedia *media,
-		const gchar *sess_id, const gchar *name)
+		const gchar *sess_id, const gchar *participant)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), NULL);
-	stream = purple_media_get_stream(media, sess_id, name);
+	stream = purple_media_get_stream(media, sess_id, participant);
 	return purple_media_candidate_list_from_fs(
 			stream->active_remote_candidates);
 #else
@@ -2746,7 +2785,8 @@ purple_media_get_active_remote_candidates(PurpleMedia *media,
 #endif
 
 gboolean
-purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const gchar *name, GList *codecs)
+purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id,
+                               const gchar *participant, GList *codecs)
 {
 #ifdef USE_VV
 	PurpleMediaStream *stream;
@@ -2755,7 +2795,7 @@ purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const g
 	GError *err = NULL;
 
 	g_return_val_if_fail(PURPLE_IS_MEDIA(media), FALSE);
-	stream = purple_media_get_stream(media, sess_id, name);
+	stream = purple_media_get_stream(media, sess_id, participant);
 
 	if (stream == NULL)
 		return FALSE;
@@ -3029,7 +3069,7 @@ purple_media_remove_output_windows(PurpleMedia *media)
 				stream->session->id, stream->participant);
 	}
 
-	iter = purple_media_get_session_names(media);
+	iter = purple_media_get_session_ids(media);
 	for (; iter; iter = g_list_delete_link(iter, iter)) {
 		gchar *session_name = iter->data;
 		purple_media_manager_remove_output_windows(

@@ -104,6 +104,7 @@ endif
 GLIB_GENMARSHAL ?= $(GTK_BIN)/glib-genmarshal
 GMSGFMT ?= $(GTK_BIN)/msgfmt
 MAKENSIS ?= makensis.exe
+MAKENSISOPT ?= /
 PERL ?= /cygdrive/c/perl/bin/perl
 WINDRES ?= windres
 STRIP ?= strip
