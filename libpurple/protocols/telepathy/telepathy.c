@@ -76,6 +76,7 @@ typedef struct
 static void
 destroy_text_channel(telepathy_text_channel *tp_channel)
 {
+	/* TODO: unref the channel proxy */
 	g_free(tp_channel);
 }
 
@@ -148,10 +149,7 @@ telepathy_status_text(PurpleBuddy* buddy)
 
 			purple_debug_info("telepathy", "Returning status for %s\n", name);
 
-			if (message != NULL)
-				return g_strdup(message);
-			else
-				return NULL;
+			return g_strdup(message);
 		}
 		else
 		{
@@ -406,6 +404,7 @@ received_cb (TpChannel *proxy,
              gpointer user_data,
              GObject *weak_object)
 {
+	/* TODO: Don't call ListPendingMessages, ack the messages by AcknowledgePendingMessages */
 	/* check for pending messages instead to be sure we don't miss anything */
 	tp_cli_channel_type_text_call_list_pending_messages(proxy, -1, TRUE, list_pending_messages_cb, user_data, NULL, NULL);
 }
@@ -418,6 +417,7 @@ send_cb (TpChannel *proxy,
 {
 	if (error != NULL)
 	{
+		/* TODO: forward the error to the conversation window */
 		purple_debug_error("telepathy", "Send error: %s\n", error->message);
 	}
 }
@@ -626,6 +626,7 @@ connection_ready_cb (TpConnection *connection,
 		{
 			purple_debug_info("telepathy", "  %s\n", *ptr);
 		}
+		g_strfreev(interfaces);
 
 		tp_cli_connection_interface_requests_connect_to_new_channels(connection, new_channels_cb, user_data, NULL, NULL, &error);
 
@@ -1339,6 +1340,8 @@ export_prpl(TpConnectionManager *cm,
 {
 	/* create a plugin struct and copy all the information from the template */
 	PurplePlugin *plugin = purple_plugin_new(TRUE, NULL);
+
+	/* TODO: telepathy_data should be connection specific, not prpl specific */
 	telepathy_data *data = g_new0(telepathy_data, 1);
 
 	plugin->info = g_memdup(&telepathy_info, sizeof(telepathy_info));
