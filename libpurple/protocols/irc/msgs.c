@@ -992,7 +992,7 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 	if (!args || !args[1])
 		return;
 
-	if (gc && purple_connection_get_state(gc) == PURPLE_CONNECTED) {
+	if (gc && purple_connection_get_state(gc) == PURPLE_CONNECTION_STATE_CONNECTED) {
 		/* We only want to do the following dance if the connection
 		   has not been successfully completed.  If it has, just
 		   notify the user that their /nick command didn't go. */
