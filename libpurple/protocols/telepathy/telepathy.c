@@ -71,6 +71,9 @@ typedef struct
 {
 	GList *pending_Messages;
 	TpChannel *channel;
+
+	/* This flag avoids having a message processed twice via both Received signal and ListPendingMessages */
+	gboolean received_Pending_Messages;
 } telepathy_text_channel;
 
 static void
@@ -338,6 +341,40 @@ handle_list_channel (TpChannel *channel,
 }
 
 static void
+write_message_to_conversation (const gchar *from,
+                               guint timestamp,
+			       const gchar *msg,
+			       gpointer user_data)
+{
+	PurplePlugin *plugin = user_data;
+	telepathy_data *data = plugin->extra;
+
+	/* if a conversation was not yet establish, create a new one */
+	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, data->acct);
+	PurpleConvIm *im;
+
+	/* escape HTML special characters */
+	gchar *escaped_message = g_markup_escape_text(msg, -1);
+
+	/* also change \n to <br> */
+	gchar *final_message = purple_strdup_withhtml(escaped_message);
+	g_free(escaped_message);
+
+	if (conv == NULL)
+	{
+	    conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, data->acct, from);
+	}
+	im = purple_conversation_get_im_data(conv);
+
+	purple_debug_info("telepathy", "Contact %s says \"%s\" (escaped: \"%s\")\n", from, msg, final_message);
+
+	/* transmit the message to the UI */
+	purple_conv_im_write(im, from, final_message, 0, timestamp);
+
+	g_free(final_message);
+}
+
+static void
 list_pending_messages_cb  (TpChannel *proxy,
                            const GPtrArray *out_Pending_Messages,
                            const GError *error,
@@ -350,13 +387,28 @@ list_pending_messages_cb  (TpChannel *proxy,
 	}
 	else
 	{
+		PurplePlugin *plugin = user_data;
+		telepathy_data *data = plugin->extra;
+
 		int i;
+
+		GHashTable *properties = tp_channel_borrow_immutable_properties(proxy);
+		gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
+
+		telepathy_text_channel *tp_channel = g_hash_table_lookup(data->text_Channels, who);
+
+		if (tp_channel == NULL)
+		{
+			purple_debug_warning("telepathy", "Received message from %s, but there's no channel struct for the buddy!\n", who);
+		}
+		else
+		{
+			/* we should now allow received_cb to handle incoming messages */
+			tp_channel->received_Pending_Messages = TRUE;
+		}
 
 		for (i = 0; i<out_Pending_Messages->len; ++i)
 		{
-			PurplePlugin* plugin = user_data;
-			telepathy_data *data = plugin->extra;
-
 			/* unpack the relevant info from (uuuuus) */
 			GValueArray *arr = g_ptr_array_index(out_Pending_Messages, i);
 			guint timestamp = g_value_get_uint(g_value_array_get_nth(arr, 1));
@@ -365,29 +417,7 @@ list_pending_messages_cb  (TpChannel *proxy,
 			/* get the identifier from channel instead of contact since contact might not be ready for offline messages */
 			gchar *from = (gchar *)tp_channel_get_identifier(proxy);
 
-			/* if a conversation was not yet establish, create a new one */
-			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, data->acct);
-			PurpleConvIm *im;
-
-			/* escape HTML special characters */
-			gchar *escaped_message = g_markup_escape_text(msg, -1);
-
-			/* also change \n to <br> */
-			gchar *final_message = purple_strdup_withhtml(escaped_message);
-			g_free(escaped_message);
-
-			if (conv == NULL)
-			{
-				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, data->acct, from);
-			}
-			im = purple_conversation_get_im_data(conv);
-
-			purple_debug_info("telepathy", "Contact %s says \"%s\" (escaped: \"%s\")\n", from, msg, final_message);
-
-			/* transmit the message to the UI */
-			purple_conv_im_write(im, from, final_message, 0, timestamp);
-
-			g_free(final_message);
+			write_message_to_conversation(from, timestamp, msg, user_data);
 		}
 	}
 }
@@ -403,9 +433,27 @@ received_cb (TpChannel *proxy,
              gpointer user_data,
              GObject *weak_object)
 {
-	/* TODO: Don't call ListPendingMessages, ack the messages by AcknowledgePendingMessages */
-	/* check for pending messages instead to be sure we don't miss anything */
-	tp_cli_channel_type_text_call_list_pending_messages(proxy, -1, TRUE, list_pending_messages_cb, user_data, NULL, NULL);
+	PurplePlugin *plugin = user_data;
+	telepathy_data *data = plugin->extra;
+
+	GHashTable *properties = tp_channel_borrow_immutable_properties(proxy);
+	gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
+
+	telepathy_text_channel *tp_channel = g_hash_table_lookup(data->text_Channels, who);
+
+	if (tp_channel == NULL)
+	{
+		purple_debug_warning("telepathy", "Received message from %s, but there's no channel struct for the buddy!\n", who);
+	}
+	else
+	{
+		/* will this message get caught by ListPendingMessages? */
+		if (!tp_channel->received_Pending_Messages)
+			return;
+
+		write_message_to_conversation(who, arg_Timestamp, arg_Text, user_data);
+
+	}
 }
 
 static void
@@ -500,9 +548,12 @@ handle_text_channel (TpChannel *channel,
 		purple_debug_error("telepathy", "Error connecting to Received signal: %s\n", error->message);
 	}
 
+	tp_channel->received_Pending_Messages = FALSE;
+
 	g_signal_connect(channel, "invalidated", G_CALLBACK(text_channel_invalidated_cb), plugin);
 
-	tp_cli_channel_type_text_call_list_pending_messages(channel, -1, TRUE, list_pending_messages_cb, plugin, NULL, NULL);
+	/* the Clear parameter is deprecated, we need to use AcknowledgePendingMessages */
+	tp_cli_channel_type_text_call_list_pending_messages(channel, -1, FALSE, list_pending_messages_cb, plugin, NULL, NULL);
 
 	/* send pending messages */
 	while (tp_channel->pending_Messages != NULL)
