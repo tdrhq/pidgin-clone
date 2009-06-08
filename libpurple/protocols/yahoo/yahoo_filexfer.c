@@ -85,7 +85,7 @@ static void yahoo_xfer_data_free(struct yahoo_xfer_data *xd)
 	GSList *l;
 
 	gc = xd->gc;
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* remove entry from map */
 	if(xd->xfer_peer_idstring) {
@@ -254,7 +254,7 @@ static void yahoo_sendfile_connected(gpointer data, gint source, const gchar *er
 	/* Assemble the tx buffer */
 	gc = xd->gc;
 	account = purple_connection_get_account(gc);
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANSFER,
 		YAHOO_STATUS_AVAILABLE, yd->session_id);
@@ -315,7 +315,7 @@ static void yahoo_xfer_init(PurpleXfer *xfer)
 
 	xfer_data = xfer->data;
 	gc = xfer_data->gc;
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	account = purple_connection_get_account(gc);
 
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
@@ -359,7 +359,7 @@ static void yahoo_xfer_init_15(PurpleXfer *xfer)
 
 	xfer_data = xfer->data;
 	gc = xfer_data->gc;
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	account = purple_connection_get_account(gc);
 
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND)	{
@@ -529,7 +529,7 @@ static void yahoo_xfer_cancel_send(PurpleXfer *xfer)
 		struct yahoo_packet *pkt;
 
 		gc = xfer_data->gc;
-		yd = gc->proto_data;
+		yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 		account = purple_connection_get_account(gc);
 		if(xfer_data->xfer_idstring_for_relay) /* hack to see if file trans acc/info packet has been received */
 		{
@@ -577,7 +577,7 @@ static void yahoo_xfer_cancel_recv(PurpleXfer *xfer)
 		struct yahoo_packet *pkt;
 
 		gc = xfer_data->gc;
-		yd = gc->proto_data;
+		yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 		account = purple_connection_get_account(gc);
 		if(!xfer_data->xfer_idstring_for_relay) /* hack to see if file trans acc/info packet has been received */
 		{
@@ -665,7 +665,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 			filesize = atol( xfer_data->size_list->data );
 
 			gc = xfer_data->gc;
-			yd = gc->proto_data;
+			yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 			/* setting up xfer_data for next file's tranfer */
 			g_free(xfer_data->host);
@@ -695,7 +695,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 			xfer_old->data = NULL;
 
 			/* Build the file transfer handle. */
-			xfer = purple_xfer_new(gc->account, PURPLE_XFER_RECEIVE, xfer_old->who);
+			xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_RECEIVE, xfer_old->who);
 
 			
 			if (xfer) {
@@ -809,7 +809,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	unsigned long filesize = 0L;
 	GSList *l;
 
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -883,7 +883,7 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	                xfer_data->host, xfer_data->port, xfer_data->path, url);
 
 	/* Build the file transfer handle. */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_RECEIVE, from);
 	if (xfer)
 	{
 		xfer->data = xfer_data;
@@ -937,7 +937,7 @@ PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who)
 	xfer_data->gc = gc;
 
 	/* Build the file transfer handle. */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 	if (xfer)
 	{
 		xfer->data = xfer_data;
@@ -995,7 +995,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 		return;
 	gc = xd->gc;
 	account = purple_connection_get_account(gc);
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if(!hosts)
 	{
@@ -1068,7 +1068,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
 	struct yahoo_xfer_data *xfer_data;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleXfer *xfer = yahoo_new_xfer(gc, who);
 
 	g_return_if_fail(xfer != NULL);
@@ -1231,7 +1231,7 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 		return;
 	if (!(xd = xfer->data))
 		return;
-	yd = xd->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(xd->gc));
 	account = purple_connection_get_account(xd->gc);
 	if ((source < 0) || (xd->path == NULL) || (xd->host == NULL)) {
 		purple_xfer_error(PURPLE_XFER_RECEIVE, purple_xfer_get_account(xfer),
@@ -1564,7 +1564,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	GSList *size_list = NULL;
 	int nooffiles = 0;
 	
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -1683,7 +1683,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	xfer_data->size_list = size_list;
 	
 	/* Build the file transfer handle. */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_RECEIVE, from);
 	xfer->message = NULL;
 
 	if (xfer)
@@ -1740,7 +1740,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 	PurpleAccount *account;
 	struct yahoo_p2p_data *p2p_data;
 
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -1846,7 +1846,7 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 	gchar *url = NULL;
 	int val_249 = 0;
 
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
 

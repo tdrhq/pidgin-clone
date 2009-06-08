@@ -62,7 +62,7 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	/* this is for doing something fun when we sign on */
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						plugin, PURPLE_CALLBACK(echo_hi), NULL);
 
 	/* this is for doing something fun when we get a message */

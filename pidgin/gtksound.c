@@ -267,7 +267,7 @@ pidgin_sound_init(void)
 	GError *error = NULL;
 #endif
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						gtk_sound_handle, PURPLE_CALLBACK(account_signon_cb),
 						NULL);
 

@@ -2198,7 +2198,7 @@ void finch_blist_init()
 	purple_prefs_connect_callback(finch_blist_get_handle(),
 			PREF_ROOT "/grouping", redraw_blist, NULL);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on", purple_blist_get_handle(),
+	purple_signal_connect(NULL, "signed-on", purple_blist_get_handle(),
 			G_CALLBACK(account_signed_on_cb), NULL);
 
 	finch_blist_install_manager(&default_manager);
@@ -3119,7 +3119,7 @@ blist_show(PurpleBuddyList *list)
 
 	gnt_widget_show(ggblist->window);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on", finch_blist_get_handle(),
+	purple_signal_connect(NULL, "signed-on", finch_blist_get_handle(),
 				PURPLE_CALLBACK(reconstruct_accounts_menu), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off", finch_blist_get_handle(),
 				PURPLE_CALLBACK(reconstruct_accounts_menu), NULL);

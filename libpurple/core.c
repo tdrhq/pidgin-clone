@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
-#include "cipher.h"
+#include "accountmanager.h"
 #include "certificate.h"
 #include "cmds.h"
 #include "connection.h"
@@ -132,7 +132,6 @@ purple_core_init(const char *ui)
 	purple_dbus_init();
 #endif
 
-	purple_ciphers_init();
 	purple_cmds_init();
 
 	/* Since plugins get probed so early we should probably initialize their
@@ -155,8 +154,8 @@ purple_core_init(const char *ui)
 	 */
 	purple_status_init();
 	purple_buddy_icons_init();
-	purple_connections_init();
 
+	purple_account_manager_load_accounts(purple_account_manager_get());
 	purple_accounts_init();
 	purple_savedstatuses_init();
 	purple_notify_init();
@@ -203,7 +202,9 @@ purple_core_quit(void)
 	purple_signal_emit(purple_get_core(), "quitting");
 
 	/* Transmission ends */
+#if 0
 	purple_connections_disconnect_all();
+#endif
 
 	/*
 	 * Certificates must be destroyed before the SSL plugins, because
@@ -226,10 +227,8 @@ purple_core_quit(void)
 	purple_idle_uninit();
 	purple_pounces_uninit();
 	purple_blist_uninit();
-	purple_ciphers_uninit();
 	purple_notify_uninit();
 	purple_conversations_uninit();
-	purple_connections_uninit();
 	purple_buddy_icons_uninit();
 	purple_accounts_uninit();
 	purple_savedstatuses_uninit();
@@ -240,6 +239,7 @@ purple_core_quit(void)
 	purple_proxy_uninit();
 	purple_dnsquery_uninit();
 	purple_imgstore_uninit();
+	g_object_unref(G_OBJECT(purple_account_manager_get()));
 	purple_network_uninit();
 
 	/* Everything after unloading all plugins must not fail if prpls aren't

@@ -230,20 +230,20 @@ PurpleStatusType *purple_status_type_new(PurpleStatusPrimitive primitive,
  *                      status type.
  * @param attr_id       The ID of the first attribute.
  * @param attr_name     The name of the first attribute.
- * @param attr_value    The value type of the first attribute attribute.
- * @param ...           Additional attribute information.
+ * @param attr_value    The value type of the first attribute attribute,
+ *                      allocated with purple_g_value_slice_new(); it will be
+ *                      owned by and ultimately freed with the returned status
+ *                      attribute.
+ * @param ...           Additional attribute information, in (id, name, value)
+ *                      triples, terminated with @c NULL.
  *
  * @return A new status type.
  */
 PurpleStatusType *purple_status_type_new_with_attrs(PurpleStatusPrimitive primitive,
-												const char *id,
-												const char *name,
-												gboolean saveable,
-												gboolean user_settable,
-												gboolean independent,
-												const char *attr_id,
-												const char *attr_name,
-												PurpleValue *attr_value, ...) G_GNUC_NULL_TERMINATED;
+	const char *id, const char *name, gboolean saveable, gboolean
+	user_settable, gboolean independent,
+	const char *attr_id, const char *attr_name, GValue *attr_value,
+	...) G_GNUC_NULL_TERMINATED;
 
 /**
  * Destroys a status type.
@@ -276,15 +276,16 @@ void purple_status_type_set_primary_attr(PurpleStatusType *status_type,
  * @param status_type The status type to add the attribute to.
  * @param id          The ID of the attribute.
  * @param name        The name presented to the user.
- * @param value       The value type of this attribute.
+ * @param value       The value type of this attribute, allocated
+ *                    with purple_g_value_slice_new(), which @a status_type
+ *                    will take ownership of and ultimately free.
  *
  * @deprecated This function isn't needed and should be removed in 3.0.0.
  *             Status type attributes should be set when the status type
  *             is created, in the call to purple_status_type_new_with_attrs.
  */
-void purple_status_type_add_attr(PurpleStatusType *status_type, const char *id,
-							   const char *name, PurpleValue *value);
-#endif
+void purple_status_type_add_attr(PurpleStatusType *status_type,
+	const char *id, const char *name, GValue *value);
 
 #if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
@@ -293,16 +294,18 @@ void purple_status_type_add_attr(PurpleStatusType *status_type, const char *id,
  * @param status_type The status type to add the attribute to.
  * @param id          The ID of the first attribute.
  * @param name        The description of the first attribute.
- * @param value       The value type of the first attribute attribute.
- * @param ...         Additional attribute information.
+ * @param value       The value type of the first attribute attribute, allocated
+ *                    with purple_g_value_slice_new(), which @a status_type
+ *                    will take ownership of and ultimately free.
+ * @param ...         Additional attribute information, terminated with @c NULL.
  *
  * @deprecated This function isn't needed and should be removed in 3.0.0.
  *             Status type attributes should be set when the status type
  *             is created, in the call to purple_status_type_new_with_attrs.
  */
-void purple_status_type_add_attrs(PurpleStatusType *status_type, const char *id,
-								const char *name, PurpleValue *value, ...) G_GNUC_NULL_TERMINATED;
-#endif
+void purple_status_type_add_attrs(PurpleStatusType *status_type,
+	const char *id, const char *name, GValue *value,
+	...) G_GNUC_NULL_TERMINATED;
 
 #if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
@@ -316,7 +319,7 @@ void purple_status_type_add_attrs(PurpleStatusType *status_type, const char *id,
  *             is created, in the call to purple_status_type_new_with_attrs.
  */
 void purple_status_type_add_attrs_vargs(PurpleStatusType *status_type,
-									  va_list args);
+	va_list args);
 #endif
 
 /**
@@ -457,12 +460,14 @@ const PurpleStatusType *purple_status_type_find_with_id(GList *status_types,
  *
  * @param id         The ID of the attribute.
  * @param name       The name presented to the user.
- * @param value_type The type of data contained in the attribute.
+ * @param value_type The type of data contained in the attribute, allocated
+ *                   with purple_g_value_slice_new(); it will become owned by
+ *                   and ultimately freed with the returned status attribute.
  *
  * @return A new status attribute.
  */
 PurpleStatusAttr *purple_status_attr_new(const char *id, const char *name,
-									 PurpleValue *value_type);
+	GValue *value_type);
 
 /**
  * Destroys a status attribute.
@@ -496,7 +501,7 @@ const char *purple_status_attr_get_name(const PurpleStatusAttr *attr);
  *
  * @return The status attribute's value.
  */
-PurpleValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
+GValue *purple_status_attr_get_value(const PurpleStatusAttr *attr);
 
 /*@}*/
 
@@ -712,10 +717,11 @@ gboolean purple_status_is_online(const PurpleStatus *status);
  * @param status The status.
  * @param id     The attribute ID.
  *
- * @return The value of the attribute.
+ * @return The value of the attribute, or @c NULL if @a status has no such
+ *         attribute.
  */
-PurpleValue *purple_status_get_attr_value(const PurpleStatus *status,
-									  const char *id);
+GValue *purple_status_get_attr_value(const PurpleStatus *status,
+	const char *id);
 
 /**
  * Returns the boolean value of an attribute in a status with the specified ID.
