@@ -261,6 +261,37 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 
 		return TRUE;
 
+
+	case WM_COMMAND:
+
+		switch(LOWORD(wParam))
+		{
+		case IDC_CBEX_STATUS:
+			if(HIWORD(wParam) == CBN_SELCHANGE)
+			{
+				/* Inform libpurple of the change in status,
+				 * and update message edit box.
+				 */
+
+				int iSel = SendDlgItemMessage(hwndDlg, IDC_CBEX_STATUS, CB_GETCURSEL, 0, 0);
+
+				if(iSel >= 0)
+				{
+					VULTURE_SAVED_STATUS *lpvss = (VULTURE_SAVED_STATUS*)SendDlgItemMessage(hwndDlg, IDC_CBEX_STATUS, CB_GETITEMDATA, iSel, 0);
+					VultureSingleSyncPurpleCall(PC_SETSAVEDSTATUS, lpvss);
+
+					SetDlgItemText(hwndDlg, IDC_EDIT_STATUSMSG, lpvss->szMessage);
+				}
+
+				return TRUE;
+			}
+
+			break;
+		}
+
+		break;
+
+
 	case WM_DESTROY:
 		if(s_lpglistStatuses)
 				VulturePurpleFreeStatusList(s_lpglistStatuses);

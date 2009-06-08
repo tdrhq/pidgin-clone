@@ -182,6 +182,10 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		PurpleApplyVultureAccount((VULTURE_ACCOUNT*)lppurplecall->lpvParam);
 		break;
 
+	case PC_SETSAVEDSTATUS:
+		purple_savedstatus_activate(((VULTURE_SAVED_STATUS*)lppurplecall->lpvParam)->lppss);
+		break;
+
 	case PC_QUIT:
 		g_main_loop_quit(g_lpgmainloop);
 		break;

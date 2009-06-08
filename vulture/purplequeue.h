@@ -47,6 +47,9 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_ACCOUNT*) Account to update. */
 	PC_UPDATEPURPLEACCOUNT,
+
+	/* (VULTURE_SAVED_STATUS*) Status to set. */
+	PC_SETSAVEDSTATUS,
 };
 
 
