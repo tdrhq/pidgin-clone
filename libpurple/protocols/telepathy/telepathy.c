@@ -59,7 +59,7 @@ typedef struct
 	/* This flag avoids having a channel processed twice via both NewChannels and quering the Channels property */
 	gboolean listing_channels;
 
-	/* This will hold pointers to TpChannel for buddies that have an active conversation */
+	/* This will hold pointers to telepathy_text_channel for buddies that have an active conversation */
 	GHashTable *text_Channels;
 	
 	/* This will map contact handles to TpContact */
