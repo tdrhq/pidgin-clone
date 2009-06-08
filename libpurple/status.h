@@ -286,6 +286,7 @@ void purple_status_type_set_primary_attr(PurpleStatusType *status_type,
  */
 void purple_status_type_add_attr(PurpleStatusType *status_type,
 	const char *id, const char *name, GValue *value);
+#endif
 
 #if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
@@ -306,6 +307,7 @@ void purple_status_type_add_attr(PurpleStatusType *status_type,
 void purple_status_type_add_attrs(PurpleStatusType *status_type,
 	const char *id, const char *name, GValue *value,
 	...) G_GNUC_NULL_TERMINATED;
+#endif
 
 #if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
