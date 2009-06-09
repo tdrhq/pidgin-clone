@@ -1722,7 +1722,7 @@ static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 		return NULL;
 
 	account = purple_buddy_get_account((PurpleBuddy *) node);
-	info = purple_object_get_protocol_data(purple_account_get_connection(account));
+	info = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account)));
 	if (info->chats) {
 		act = purple_menu_action_new(_("Add to chat"),
 			PURPLE_CALLBACK(ggp_bmenu_add_to_chat),

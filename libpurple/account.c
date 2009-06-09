@@ -2355,6 +2355,7 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
 	return prpl_info->offline_message(buddy);
 }
 
+#if 0
 static void
 signed_on_cb(PurpleConnection *gc,
              gpointer unused)
@@ -2362,6 +2363,7 @@ signed_on_cb(PurpleConnection *gc,
 	PurpleAccount *account = purple_connection_get_account(gc);
 	purple_account_clear_current_error(account);
 }
+#endif
 
 static void
 set_current_error(PurpleAccount *account,
@@ -2392,6 +2394,7 @@ set_current_error(PurpleAccount *account,
 	g_free(old_err);
 }
 
+#if 0
 static void
 connection_error_cb(PurpleConnection *gc,
                     PurpleConnectionError type,
@@ -2413,6 +2416,7 @@ connection_error_cb(PurpleConnection *gc,
 
 	set_current_error(account, err);
 }
+#endif
 
 const PurpleConnectionErrorInfo *
 purple_account_get_current_error(PurpleAccount *account)

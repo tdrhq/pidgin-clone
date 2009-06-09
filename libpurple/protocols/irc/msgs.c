@@ -34,7 +34,9 @@
 
 static char *irc_mask_nick(const char *mask);
 static char *irc_mask_userhost(const char *mask);
+#if 0
 static void irc_chat_remove_buddy(PurpleConversation *convo, char *data[2]);
+#endif
 static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *irc);
 static void irc_connected(struct irc_conn *irc, const char *nick);
 
@@ -60,6 +62,7 @@ static char *irc_mask_userhost(const char *mask)
 	return g_strdup(strchr(mask, '!') + 1);
 }
 
+#if 0
 static void irc_chat_remove_buddy(PurpleConversation *convo, char *data[2])
 {
 	char *message, *stripped;
@@ -73,6 +76,7 @@ static void irc_chat_remove_buddy(PurpleConversation *convo, char *data[2])
 
 	g_free(message);
 }
+#endif
 
 static void irc_connected(struct irc_conn *irc, const char *nick)
 {
@@ -935,7 +939,9 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	PurpleConversation *conv;
+#if 0
 	GSList *chats;
+#endif
 	char *nick = irc_mask_nick(from);
 
 	irc->nickused = FALSE;

@@ -844,7 +844,6 @@ static void
 bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 {
 	PurpleCipher *cipher;
-	PurpleAccount *account = NULL;
 	XepXfer *xf;
 	char dstaddr[41];
 	unsigned char hashval[20];

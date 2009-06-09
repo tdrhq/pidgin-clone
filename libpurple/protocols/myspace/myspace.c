@@ -443,7 +443,7 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 		PurpleAccount *account = purple_buddy_get_account(buddy);
 		PurpleConnection *gc = purple_account_get_connection(account);
  
-		session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(buddy->account)));
+		session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 		g_return_if_fail(MSIM_SESSION_VALID(session));
 

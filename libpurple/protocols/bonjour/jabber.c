@@ -802,7 +802,7 @@ bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv) {
 	g_return_if_fail(bconv->pb == NULL);
 
 	pb = purple_find_buddy(bconv->account, bconv->buddy_name);
-	if (pb && (bb = purple_object_get_protocol_data(pb))) {
+	if (pb && (bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb)))) {
 		const char *ip;
 		GSList *tmp = bb->ips;
 

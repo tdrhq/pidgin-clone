@@ -961,13 +961,13 @@ msn_datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			if (swboard->current_users > 1 ||
 				((swboard->conv != NULL) &&
 				 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
-				purple_prpl_got_attention_in_chat(account, swboard->chat_id, user, MSN_NUDGE);
+				purple_prpl_got_attention_in_chat(gc, swboard->chat_id, user, MSN_NUDGE);
 
 			else
-				purple_prpl_got_attention(account, user, MSN_NUDGE);
+				purple_prpl_got_attention(gc, user, MSN_NUDGE);
 
 		} else {
-			purple_prpl_got_attention(account, user, MSN_NUDGE);
+			purple_prpl_got_attention(gc, user, MSN_NUDGE);
 		}
 
 	} else if (!strcmp(id, "2")) {
