@@ -346,7 +346,7 @@ $vulnerabilities = array(
 		"description"  => "The previous fix to <a href=\"/news/security/?id=25\">CVE-2008-2927</a> was deemed incomplete. The size check improperly cast an uint64 to size_t which can cause an integer overflow, rendering the check useless.",
 		"fix"          => "The proper variable type is now used when doing size comparison. Additionally, the malformed message is now properly discarded.",
 		"fixedversion" => "2.5.6",
-		"discoveredby" => "Anonymous (via TippingPoint's Zero Day Initiative)"
+		"discoveredby" => "Loc VALBON (via TippingPoint's Zero Day Initiative)"
 	)
 );
 /*	Template for the unfortunate future
