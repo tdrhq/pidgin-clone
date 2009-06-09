@@ -114,7 +114,7 @@ static void update_buddy_memo(PurpleConnection *gc, guint32 bd_uid, gchar *alias
 	gchar *who;
 	g_return_if_fail(NULL != gc && NULL != alias);
 
-	account = (PurpleAccount *)gc->account;
+	account = purple_connection_get_account(gc);
 	g_return_if_fail(NULL != account);
 
 	who = uid_to_purple_name(bd_uid);

@@ -636,7 +636,7 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 	}
 
 	/* if the buddy is null, the api will catch it and return null here */
-	bd = purple_object_get_protocol_data(buddy);
+	bd = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 	/* purple_debug_info("QQ", "bd=%p\n", (void*)bd); */
 
 	if (bd == NULL || buddy == NULL) {
