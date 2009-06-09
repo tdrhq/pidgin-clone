@@ -151,6 +151,10 @@ telepathy_status_text(PurpleBuddy* buddy)
 
 			purple_debug_info("telepathy", "Returning status for %s\n", name);
 
+			/* an empty message confuses the UI, NULL is better */
+			if (g_strcmp0(message, "") == 0)
+				return NULL;
+
 			return g_strdup(message);
 		}
 		else
