@@ -1492,7 +1492,7 @@ static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data)
 	}
 
 	if( (xfer->type == PURPLE_XFER_RECEIVE) || (xd->status_15 != P2P_HEAD_REPLIED) )	{
-		yd = xd->gc->proto_data;
+		yd = purple_object_get_protocol_data(PURPLE_OBJECT(xd->gc));
 		account = purple_connection_get_account(xd->gc);
 		local_ip = purple_network_get_my_ip(listenfd);
 		xd->yahoo_local_p2p_ft_server_port = purple_network_get_port_from_fd(listenfd);
@@ -1553,7 +1553,7 @@ static void yahoo_p2p_client_send_ft_info(PurpleConnection *gc, PurpleXfer *xfer
 		return;
 
 	account = purple_connection_get_account(gc);
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	p2p_data = g_hash_table_lookup(yd->peers, xfer->who);
 	if( p2p_data->connection_type == YAHOO_P2P_WE_ARE_SERVER )

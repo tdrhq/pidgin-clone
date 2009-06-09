@@ -521,7 +521,9 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 					yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_DO_NOT_CONNECT);
 				} else {
 					/* This buddy is on the ignore list (and therefore in no group) */
-					purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found\n",account->username, norm_bud);
+					purple_debug_info("yahoo",
+					                  "%s adding %s to the deny list because of the ignore list / no group was found\n",
+					                  purple_account_get_username(account), norm_bud);
 					purple_privacy_deny_add(account, norm_bud, 1);
 				}
 			
@@ -558,7 +560,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	
 	/* Now that we have processed the buddy list, we can say yahoo has connected */
 	purple_connection_set_display_name(gc, purple_normalize(account, purple_account_get_username(account)));
-	purple_connection_set_state(gc, PURPLE_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTION_STATE_CONNECTED);
 	yd->logged_in = TRUE;
 	if (yd->picture_upload_todo) {
 		yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
@@ -725,7 +727,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 	YahooFriend *f = NULL;
 	GSList *l = pkt->hash;
 	gint val_11 = 0;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gboolean msn = FALSE;
 	char *msn_from = NULL;
 
@@ -882,7 +884,7 @@ static void yahoo_process_sms_message(PurpleConnection *gc, struct yahoo_packet 
 static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt, yahoo_pkt_type pkt_type)
 {
 	PurpleAccount *account;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GSList *l = pkt->hash;
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
@@ -1556,21 +1558,19 @@ static void to_y64(char *out, const unsigned char *in, gsize inlen)
 
 static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleAccount *account = purple_connection_get_account(gc);
 	const char *name = purple_normalize(account, purple_account_get_username(account));
 	PurpleCipher *md5_cipher;
-	PurpleCipherContext *md5_ctx;
 	guchar md5_digest[16];
 	gchar base64_string[25];
 	struct yahoo_packet *pkt;
 
 	purple_debug_info("yahoo","Authentication: In yahoo_auth16_stage3\n");
 
-	md5_cipher = purple_ciphers_find_cipher("md5");
-	md5_ctx = purple_cipher_context_new(md5_cipher, NULL);
-	purple_cipher_context_append(md5_ctx, (guchar *)crypt, strlen(crypt));
-	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest), md5_digest, NULL);
+	md5_cipher = purple_md5_cipher_new();
+	purple_cipher_append(md5_cipher, (guchar *)crypt, strlen(crypt));
+	purple_cipher_digest(md5_cipher, sizeof(md5_digest), md5_digest, NULL);
 
 	to_y64(base64_string, md5_digest, 16);
 
@@ -1602,7 +1602,7 @@ static void yahoo_auth16_stage3(PurpleConnection *gc, const char *crypt)
 		yahoo_packet_hash_int(pkt, 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
 
-	purple_cipher_context_destroy(md5_ctx);
+	g_object_unref(G_OBJECT(md5_cipher));
 }
 
 static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_data, const gchar *ret_data, size_t len, const gchar *error_message)
@@ -1620,7 +1620,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 		g_return_if_reached();
 	}
 
-	yd = (struct yahoo_data *)gc->proto_data;
+	yd = (struct yahoo_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (error_message != NULL) {
 		purple_debug_error("yahoo", "Login Failed, unable to retrieve stage 2 url: %s\n", error_message);
@@ -2052,7 +2052,7 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	char *buf;
 	YahooFriend *f;
 	GSList *l = pkt->hash;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	int protocol = 0;
 	gboolean msn = FALSE;
 
@@ -2138,7 +2138,7 @@ static void yahoo_p2p_keepalive_cb(gpointer key, gpointer value, gpointer user_d
 	PurpleConnection *gc = user_data;
 	struct yahoo_packet *pkt_to_send;
 	PurpleAccount *account;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	account = purple_connection_get_account(gc);
 
@@ -2157,7 +2157,7 @@ static void yahoo_p2p_keepalive_cb(gpointer key, gpointer value, gpointer user_d
 static gboolean yahoo_p2p_keepalive(gpointer data)
 {
 	PurpleConnection *gc = data;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_hash_table_foreach(yd->peers, yahoo_p2p_keepalive_cb, gc);
 
@@ -2203,7 +2203,7 @@ static void yahoo_p2p_process_p2pfilexfer(gpointer data, gint source, struct yah
 	if(!(p2p_data = data))
 		return ;
 
-	yd = p2p_data->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(p2p_data->gc));
 
 	/* lets see whats in the packet */
 	while (l) {
@@ -2288,7 +2288,7 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 
 	if(!(p2p_data = data))
 		return ;
-	yd = p2p_data->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(p2p_data->gc));
 
 	len = read(source, buf, sizeof(buf));
 	if ((len < 0) && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
@@ -2362,7 +2362,7 @@ static void yahoo_p2p_server_send_connected_cb(gpointer data, gint source, Purpl
 
 	if(!(p2p_data = data))
 		return ;
-	yd = p2p_data->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(p2p_data->gc));
 
 	acceptfd = accept(source, NULL, 0);
 	if(acceptfd == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
@@ -2402,7 +2402,7 @@ static gboolean yahoo_cancel_p2p_server_listen_cb(gpointer data)
 	if(!(p2p_data = data))
 		return FALSE;
 
-	yd = p2p_data->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(p2p_data->gc));
 
 	purple_debug_warning("yahoo","yahoo p2p server timeout, peer failed to connect");
 	yahoo_p2p_disconnect_destroy_data(data);
@@ -2429,7 +2429,7 @@ static void yahoo_p2p_server_listen_cb(int listenfd, gpointer data)
 		return;
 	}
 
-	yd = p2p_data->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(p2p_data->gc));
 
 	/* Add an Input Read event to the file descriptor */
 	yd->yahoo_local_p2p_server_fd = listenfd;
@@ -2450,7 +2450,7 @@ void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
 	YahooFriend *f;
 	struct yahoo_packet *pkt;
 	PurpleAccount *account;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	struct yahoo_p2p_data *p2p_data;
 
 	f = yahoo_friend_find(gc, who);
@@ -2522,7 +2522,7 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 
 	if(!(p2p_data = data))
 		return ;
-	yd = p2p_data->gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(p2p_data->gc));
 
 	if(error_message != NULL) {
 		purple_debug_warning("yahoo","p2p: %s\n",error_message);
@@ -4027,7 +4027,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 {
 	struct yahoo_sms_carrier_cb_data *sms_cb_data = user_data;
 	PurpleConnection *gc = sms_cb_data->gc;
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	char *mobile_no = NULL;
 	char *status = NULL;
 	char *carrier = NULL;
@@ -4078,7 +4078,7 @@ static void yahoo_get_sms_carrier_cb(PurpleUtilFetchUrlData *url_data, gpointer 
 
 static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 {
-	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleUtilFetchUrlData *url_data;
 	struct yahoo_sms_carrier_cb_data *sms_cb_data;
 	char *validate_request_str = NULL;
@@ -4086,6 +4086,8 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	gboolean use_whole_url = FALSE;
 	xmlnode *validate_request_root = NULL;
 	xmlnode *validate_request_child = NULL;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleProxyInfo *proxy;
 
 	if(!(sms_cb_data = data))
 		return;
@@ -4113,11 +4115,11 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 		YAHOO_CLIENT_VERSION, yd->cookie_t, yd->cookie_y, strlen(validate_request_str), validate_request_str);
 
 	/* use whole URL if using HTTP Proxy */
-	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	if ((proxy = purple_account_get_proxy_info(account)) && (proxy->type == PURPLE_PROXY_HTTP))
 	    use_whole_url = TRUE;
 
 	url_data = purple_util_fetch_url_request_len_with_account(
-			purple_connection_get_account(gc), YAHOO_SMS_CARRIER_URL, use_whole_url,
+			account, YAHOO_SMS_CARRIER_URL, use_whole_url,
 			YAHOO_CLIENT_USERAGENT, TRUE, request, FALSE, -1,
 			yahoo_get_sms_carrier_cb, data);
 
@@ -4125,7 +4127,6 @@ static void yahoo_get_sms_carrier(PurpleConnection *gc, gpointer data)
 	g_free(validate_request_str);
 
 	if (!url_data) {
-		PurpleAccount *account = purple_connection_get_account(gc);
 		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, sms_cb_data->who, account);
 		purple_conversation_write(conv, NULL, "Cant send SMS, Unable to obtain mobile carrier", PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(sms_cb_data->who);
