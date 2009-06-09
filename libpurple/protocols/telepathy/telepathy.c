@@ -270,23 +270,34 @@ contacts_ready_cb (TpConnection *connection,
 			/* the buddy might already be stored locally */
 			buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
 
-			/* TODO: Get rid of the NO_SAVE flag so we can get that blist stored locally.
-			 * Fix setting statuses for buddies stored locally 
-			 */
 			if (buddy == NULL)
 			{
 				/* Buddy was not stored locally */
 				buddy = purple_buddy_new(data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
-				purple_blist_node_set_flags((PurpleBlistNode *)buddy, PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+				purple_blist_node_set_flags((PurpleBlistNode *)buddy, 0);
+
+				purple_blist_add_buddy(buddy, NULL, NULL, NULL);
+			}
+			else
+			{
+				/* we should check if it has statuses for the presence,
+				 * since the prpl was not yet loaded when status_types was being called
+				 */
+				PurplePresence *presence = purple_buddy_get_presence(buddy);
+
+				if (presence != NULL)
+				{
+					if (purple_presence_get_statuses(presence) == NULL)
+					{
+						purple_presence_add_list(presence, purple_prpl_get_statuses(data->acct, presence));
+					}
+				}
 			}
 
 			handle = tp_contact_get_handle(contact);
 
 			if (g_hash_table_lookup(data->contacts, (gpointer)handle) == NULL)
 			{
-				/* if we haven't cached the handle yet, the buddy isn't in the buddy list either */
-				purple_blist_add_buddy(buddy, NULL, NULL, NULL);
-
 				g_hash_table_insert(data->contacts, (gpointer)handle, contact);
 
 				g_object_ref(contact);

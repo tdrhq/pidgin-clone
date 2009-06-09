@@ -814,31 +814,22 @@ PurplePresence *purple_presence_new_for_buddy(PurpleBuddy *buddy);
  */
 void purple_presence_destroy(PurplePresence *presence);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Adds a status to a presence.
  *
  * @param presence The presence.
  * @param status   The status to add.
- *
- * @deprecated This function is only used by purple_presence_add_list,
- *             and both should be removed in 3.0.0.
  */
 void purple_presence_add_status(PurplePresence *presence, PurpleStatus *status);
-#endif
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_STATUS_C_)
 /**
  * Adds a list of statuses to the presence.
  *
  * @param presence    The presence.
  * @param source_list The source list of statuses to add, which is not
  *                    modified or freed by this function.
- *
- * @deprecated This function isn't used and should be removed in 3.0.0.
  */
 void purple_presence_add_list(PurplePresence *presence, GList *source_list);
-#endif
 
 /**
  * Sets the active state of a status in a presence.
