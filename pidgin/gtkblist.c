@@ -966,7 +966,7 @@ chat_account_filter_func(PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	return (prpl_info->chat_info != NULL);
 }
@@ -4053,7 +4053,7 @@ pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased
 		if (prpl != NULL)
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (prpl_info && prpl_info->status_text && b->account->gc) {
+		if (prpl_info && prpl_info->status_text && purple_account_get_connection(b->account)) {
 			char *tmp = prpl_info->status_text(b);
 			const char *end;
 

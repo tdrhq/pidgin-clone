@@ -685,7 +685,7 @@ account_toggled(GntWidget *widget, void *key, gpointer null)
 		purple_savedstatus_activate_for_account(purple_savedstatus_get_current(),
 												account);
 
-	purple_account_set_enabled(account, FINCH_UI, enabled);
+	purple_account_set_enabled(account, enabled);
 }
 
 static gboolean
