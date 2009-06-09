@@ -848,27 +848,30 @@ status_changed_cb (TpConnection *proxy,
 			break;
 		}
 
-		if (reason != NULL && data->gc)
-			purple_connection_error_reason(data->gc, error, reason);
-
-		if (data->connection)
+		if (data)
 		{
-			g_object_unref(data->connection);
-			data->connection = NULL;
-		}
+			if (reason != NULL && data->gc)
+				purple_connection_error_reason(data->gc, error, reason);
 
-		if (data->text_Channels != NULL)
-		{
-			g_hash_table_destroy(data->text_Channels);
-			data->text_Channels = NULL;
-		}
-		if (data->contacts != NULL)
-		{
-			g_hash_table_destroy(data->contacts);
-			data->contacts = NULL;
-		}
+			if (data->connection != NULL)
+			{
+				g_object_unref(data->connection);
+				data->connection = NULL;
+			}
 
-		g_free(data);
+			if (data->text_Channels != NULL)
+			{
+				g_hash_table_destroy(data->text_Channels);
+				data->text_Channels = NULL;
+			}
+			if (data->contacts != NULL)
+			{
+				g_hash_table_destroy(data->contacts);
+				data->contacts = NULL;
+			}
+
+			g_free(data);
+		}
 
 	}
 	else if (arg_Status == TP_CONNECTION_STATUS_CONNECTING)
@@ -937,6 +940,10 @@ request_connection_cb (TpConnectionManager *proxy,
 		{
 			purple_debug_error("telepathy", "Error creating TpConnection object: %s\n", error->message);
 			g_error_free(error);
+
+			g_object_unref(connection_data->connection);
+			connection_data->connection = NULL;
+			g_free(connection_data);
 			return;
 		}
 
@@ -1027,6 +1034,8 @@ telepathy_login(PurpleAccount *acct)
 
 	/* call RequestConnection with the specified parameters */
 	tp_cli_connection_manager_call_request_connection(data->cm, -1, data->protocol->name, options, request_connection_cb, gc, NULL, NULL);
+
+	g_hash_table_destroy(options);
 }
 
 static void
@@ -1036,25 +1045,16 @@ telepathy_close(PurpleConnection *gc)
 
 	purple_debug_info("telepathy", "We're closing, sorry :(\n");
 
-	/* make sure the connection is closed in dbus-land, 
-	 * or else we won't be able to recreate the connection */
-	if (data->connection)
+	if (data)
 	{
-		tp_cli_connection_call_disconnect(data->connection, -1, NULL, NULL, NULL, NULL);
-		g_object_unref(data->connection);
-		data->connection = NULL;
-		data->gc = NULL;
-	}
+		/* make sure the connection is closed in dbus-land, 
+		 * or else we won't be able to recreate the connection */
+		if (data->connection)
+		{
+			/* this will call status_changed_cb which will free everything */
+			tp_cli_connection_call_disconnect(data->connection, -1, NULL, NULL, NULL, NULL);
+		}
 
-	if (data->text_Channels != NULL)
-	{
-		g_hash_table_destroy(data->text_Channels);
-		data->text_Channels = NULL;
-	}
-	if (data->contacts != NULL)
-	{
-		g_hash_table_destroy(data->contacts);
-		data->contacts = NULL;
 	}
 }
 
