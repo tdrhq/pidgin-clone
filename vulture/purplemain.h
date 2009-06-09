@@ -28,9 +28,37 @@
 #include <windows.h>
 #include <glib.h>
 
+#include "vulture.h"
+#include "vultureblist.h"
+
+
+/* The significance of lpvParam is given for each message. */
+enum ENUM_VULTURE_UI_MESSAGES
+{
+	/* (VULTURE_BLIST_NODE*) Node being updated. */
+	VUIMSG_UPDATEBLISTNODE,
+};
+
+
 void VultureInitLibpurple(HANDLE *lphthread);
 void VultureShutDownLibpurple(void);
 
 extern GMainLoop *g_lpgmainloop;
+
+
+/**
+ * Posts a message from libpurple to the Windows message queue of the specified
+ * window.
+ *
+ * @param	hwnd		Window.
+ * @param	iCallID		ID of the message.
+ * @param	lpvParam	Message-specific data.
+ */
+static INLINE void VulturePostUIMessage(HWND hwnd, int iMsg, void *lpvParam)
+{
+	if(IsWindow(hwnd))
+		PostMessage(hwnd, WM_PURPLEUIMSG, iMsg, (LPARAM)lpvParam);
+}
+
 
 #endif

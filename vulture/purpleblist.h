@@ -1,7 +1,7 @@
 /*
  * Vulture - Win32 libpurple client
  *
- * blist.h: Buddy list.
+ * purpleblist.h: libpurple end of buddy-list management.
  *
  * Copyright (C) 2009, Gregor Dick <gdick@soc.pidgin.im>
  *
@@ -20,11 +20,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _VULTURE_BLIST_H_
-#define _VULTURE_BLIST_H_
 
-extern HWND g_hwndMain;
+#ifndef _VULTURE_PURPLEBLIST_H_
+#define _VULTURE_PURPLEBLIST_H_
 
-int VultureCreateMainWindow(int iCmdShow);
+
+#include "purple.h"
+
+
+void PurpleBlistNewNode(PurpleBlistNode *lpblistnode);
+void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode);
+
 
 #endif

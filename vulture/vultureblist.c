@@ -1,7 +1,7 @@
 /*
  * Vulture - Win32 libpurple client
  *
- * blist.c: Buddy list.
+ * vultureblist.c: Buddy list.
  *
  * Copyright (C) 2009, Gregor Dick <gdick@soc.pidgin.im>
  *
@@ -26,11 +26,13 @@
 
 #include "vulture.h"
 #include "resource.h"
-#include "blist.h"
+#include "purple.h"
+#include "vultureblist.h"
 #include "purplequeue.h"
 #include "purplestatus.h"
 #include "acctmanager.h"
 #include "purpleacct.h"
+#include "purplemain.h"
 
 
 static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
@@ -158,6 +160,63 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 
 	case WM_ERASEBKGND:
 		/* Don't erase background: we never see it. Reduces flicker. */
+		return 0;
+
+	case WM_PURPLEUIMSG:
+		switch(wParam)
+		{
+		case VUIMSG_UPDATEBLISTNODE:
+			/* This message is SENT for convenience, so we're
+			 * allowed to use the libpurple data directly, but not
+			 * to make any libpurple calls at all (or otherwise to
+			 * wait for the libpurple thread).
+			 */
+
+			{
+				HWND hwndBlistTree = GetDlgItem(s_hwndBListDlg, IDC_TREE_BLIST);
+				VULTURE_BLIST_NODE *lpvbn = (VULTURE_BLIST_NODE*)lParam;
+
+				EnterCriticalSection(&lpvbn->cs);
+				{
+					TVITEM tvitem;
+					HTREEITEM htiParent = TreeView_GetParent(hwndBlistTree, lpvbn->hti);
+
+					/* If the parent doesn't match, we need
+					 * to recreate.
+					 */
+					if((lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti != htiParent) ||
+						(!lpvbn->lpvbnParent && htiParent))
+					{
+						TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
+						lpvbn->hti = NULL;
+					}
+
+
+					/* New node? */
+					if(!lpvbn->hti)
+					{
+						TVINSERTSTRUCT tvis;
+
+						tvis.hParent = lpvbn->lpvbnParent ? lpvbn->lpvbnParent->hti : TVI_ROOT;
+						tvis.hInsertAfter = TVI_SORT;
+						tvis.itemex.mask = TVIF_PARAM;
+						tvis.itemex.lParam = lParam;
+
+						lpvbn->hti = TreeView_InsertItem(hwndBlistTree, &tvis);
+					}
+
+					/* Set text. */
+					tvitem.mask = TVIF_TEXT | TVIF_HANDLE;
+					tvitem.hItem = lpvbn->hti;
+					tvitem.pszText = lpvbn->szNodeText;
+					TreeView_SetItem(hwndBlistTree, &tvitem);
+				}
+				LeaveCriticalSection(&lpvbn->cs);
+			}
+
+			break;
+		}
+
 		return 0;
 
 	case WM_DESTROY:

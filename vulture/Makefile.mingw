@@ -52,14 +52,15 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 VULTURE_C_SRC =	\
 			vulture.c \
-			blist.c \
+			vultureblist.c \
 			purplemain.c \
 			purplequeue.c \
 			purpleevloop.c \
 			cmdline.c \
 			purplestatus.c \
 			acctmanager.c \
-			purpleacct.c
+			purpleacct.c \
+			purpleblist.c
 
 VULTURE_RC_SRC = vulture-res.rc
 VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)

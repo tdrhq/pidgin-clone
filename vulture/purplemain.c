@@ -46,6 +46,7 @@
 #include "purplequeue.h"
 #include "purpleevloop.h"
 #include "cmdline.h"
+#include "purpleblist.h"
 
 
 static UINT CALLBACK PurpleThread(void *lpvData);
@@ -128,7 +129,7 @@ static UINT CALLBACK PurpleThread(void *lpvData)
  */
 static int InitLibpurple(void)
 {
-	static PurpleCoreUiOps coreuiops = 
+	static PurpleCoreUiOps s_coreuiops = 
 	{
 		NULL, NULL, InitUI, NULL,
 		/* padding */
@@ -141,7 +142,7 @@ static int InitLibpurple(void)
 		purple_util_set_user_dir(szCustomUserDir);
 
 	VulturePurpleEventLoopSetUIOps();
-	purple_core_set_ui_ops(&coreuiops);
+	purple_core_set_ui_ops(&s_coreuiops);
 
 	/* Init the core, which will eventually call InitUI. */
 	if(!purple_core_init(VULTURE_ID))
@@ -163,6 +164,15 @@ static int InitLibpurple(void)
  */
 static void InitUI(void)
 {
+	static PurpleBlistUiOps s_blistuiops =
+	{
+		NULL, PurpleBlistNewNode, NULL, PurpleBlistUpdateNode, NULL, NULL, NULL,
+		NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL
+	};
+
+	purple_blist_set_ui_ops(&s_blistuiops);
+
 	/* Create and load libpurple's buddy-list. */
 	purple_set_blist(purple_blist_new());
 	purple_blist_load();

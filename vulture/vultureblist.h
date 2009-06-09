@@ -1,7 +1,7 @@
 /*
  * Vulture - Win32 libpurple client
  *
- * purpleevloop.h: Low-level event-loop management for libpurple.
+ * vultureblist.h: Buddy list.
  *
  * Copyright (C) 2009, Gregor Dick <gdick@soc.pidgin.im>
  *
@@ -20,9 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _VULTURE_PURPLEEVLOOP_H_
-#define _VULTURE_PURPLEEVLOOP_H_
+#ifndef _VULTURE_VULTUREBLIST_H_
+#define _VULTURE_VULTUREBLIST_H_
 
-void VulturePurpleEventLoopSetUIOps(void);
+
+#include <windows.h>
+#include <commctrl.h>
+
+
+typedef struct _VULTURE_BLIST_NODE
+{
+	LPTSTR				szNodeText;
+	HTREEITEM			hti;
+	struct _VULTURE_BLIST_NODE	*lpvbnParent;
+	CRITICAL_SECTION		cs;
+} VULTURE_BLIST_NODE;
+
+
+#define WM_PURPLEUIMSG	WM_APP
+
+
+extern HWND g_hwndMain;
+
+
+int VultureCreateMainWindow(int iCmdShow);
+
 
 #endif

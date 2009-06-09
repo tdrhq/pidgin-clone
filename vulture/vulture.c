@@ -27,7 +27,7 @@
 
 #include "vulture.h"
 #include "resource.h"
-#include "blist.h"
+#include "vultureblist.h"
 #include "purplemain.h"
 #include "purplequeue.h"
 #include "cmdline.h"
