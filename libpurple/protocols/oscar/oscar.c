@@ -1435,7 +1435,7 @@ oscar_login(PurpleAccount *account)
 	gc = purple_account_get_connection(account);
 	purple_object_set_protocol_data(PURPLE_OBJECT(gc), od = oscar_data_new());
 	od->gc = gc;
-	purple_connection_set_protocol_data(gc, od);
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc), od);
 
 	oscar_data_addhandler(od, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR, purple_connerr, 0);
 	oscar_data_addhandler(od, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, flap_connection_established, 0);
@@ -6182,7 +6182,7 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 	const char *username;
 
 	gc = data->gc;
-	od = purple_connection_get_protocol_data(gc);
+	od = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	account = purple_connection_get_account(gc);
 
 	b = purple_find_buddy(account, data->name);
