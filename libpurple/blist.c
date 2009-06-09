@@ -136,19 +136,29 @@ value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 	child = xmlnode_new_child(node, "setting");
 	xmlnode_set_attrib(child, "name", name);
 
-	if (purple_value_get_type(value) == PURPLE_TYPE_INT) {
-		xmlnode_set_attrib(child, "type", "int");
-		g_snprintf(buf, sizeof(buf), "%d", purple_value_get_int(value));
-		xmlnode_insert_data(child, buf, -1);
-	}
-	else if (purple_value_get_type(value) == PURPLE_TYPE_STRING) {
-		xmlnode_set_attrib(child, "type", "string");
-		xmlnode_insert_data(child, purple_value_get_string(value), -1);
-	}
-	else if (purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN) {
-		xmlnode_set_attrib(child, "type", "bool");
-		g_snprintf(buf, sizeof(buf), "%d", purple_value_get_boolean(value));
-		xmlnode_insert_data(child, buf, -1);
+	switch (G_VALUE_TYPE(value)) {
+		case G_TYPE_INT: {
+			gint i = g_value_get_int(value);
+			xmlnode_set_attrib(child, "type", "int");
+			g_snprintf(buf, sizeof(buf), "%d", i);
+			xmlnode_insert_data(child, buf, -1);
+			break;
+		}
+		case G_TYPE_STRING: {
+			const gchar *s = g_value_get_string(value);
+			xmlnode_set_attrib(child, "type", "string");
+			xmlnode_insert_data(child, s, -1);
+			break;
+		}
+		case G_TYPE_BOOLEAN: {
+			gboolean b = g_value_get_boolean(value);
+			xmlnode_set_attrib(child, "type", "bool");
+			g_snprintf(buf, sizeof(buf), "%d", b);
+			xmlnode_insert_data(child, buf, -1);
+			break;
+		}
+		default:
+			g_assert_not_reached();
 	}
 }
 

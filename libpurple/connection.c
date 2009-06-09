@@ -99,7 +99,9 @@ enum
 
 #warning Do we want to use a ConnectionManager for these?
 static GList *connections = NULL;
+#if 0
 static GList *connections_connecting = NULL;
+#endif
 
 /******************************************************************************
  * Globals
@@ -322,7 +324,9 @@ _purple_connection_destroy(PurpleConnection *gc)
 void
 purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 {
+#if 0
 	PurpleConnectionUiOps *ops;
+#endif
 
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 
@@ -439,13 +443,6 @@ purple_connection_set_display_name(PurpleConnection *gc, const char *name)
 	gc->priv->display_name = g_strdup(name);
 }
 
-void
-purple_connection_set_protocol_data(PurpleConnection *connection, void *proto_data) {
-	g_return_if_fail(connection != NULL);
-
-	connection->proto_data = proto_data;
-}
-
 PurpleConnectionState
 purple_connection_get_state(const PurpleConnection *gc)
 {
@@ -498,7 +495,9 @@ void
 purple_connection_update_progress(PurpleConnection *gc, const char *text,
 								size_t step, size_t count)
 {
+#if 0
 	PurpleConnectionUiOps *ops;
+#endif
 
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	g_return_if_fail(text != NULL);
@@ -522,7 +521,9 @@ purple_connection_received_now(PurpleConnection *conn)
 void
 purple_connection_notice(PurpleConnection *gc, const char *text)
 {
+#if 0
 	PurpleConnectionUiOps *ops;
+#endif
 
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	g_return_if_fail(text != NULL);
@@ -566,7 +567,9 @@ purple_connection_error_reason (PurpleConnection *gc,
                                 PurpleConnectionError reason,
                                 const char *description)
 {
+#if 0
 	PurpleConnectionUiOps *ops;
+#endif
 
 	g_return_if_fail(PURPLE_IS_CONNECTION(gc));
 	/* This sanity check relies on PURPLE_CONNECTION_ERROR_OTHER_ERROR
@@ -783,9 +786,9 @@ purple_connection_dispose(GObject *obj)
 	/* Clear out the proto data that was freed in the prpl close method*/
 	buddies = purple_find_buddies(account, NULL);
 	while (buddies != NULL) {
-		PurpleBuddy *buddy = buddies->data;
 #warning Uncomment when PurpleBuddy is a GObject
 #if 0
+		PurpleBuddy *buddy = buddies->data;
 		purple_object_set_protocol_data(PURPLE_OBJECT(buddy),NULL);
 #endif
 		buddies = g_slist_delete_link(buddies, buddies);
@@ -880,7 +883,7 @@ purple_connection_class_init(PurpleConnectionClass *klass)
 								 G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_ACCOUNT, pspec);
 
-#warning These probably doesn't need any exposing
+#warning These probably do not need any exposing
 	pspec = g_param_spec_int("inpa", "inpa",
 							 "The input watcher's fd for this connection.",
 							 G_MININT, G_MAXINT, -1,

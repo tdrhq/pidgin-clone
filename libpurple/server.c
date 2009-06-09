@@ -880,11 +880,11 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 
 void serv_got_chat_left(PurpleConnection *g, int id)
 {
-	GSList *bcs;
 	PurpleConversation *conv = NULL;
+#if 0
+	GSList *bcs;
 	PurpleConvChat *chat = NULL;
 
-#if 0
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 		conv = (PurpleConversation *)bcs->data;
 
@@ -919,7 +919,9 @@ void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data)
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime)
 {
+#if 0
 	GSList *bcs;
+#endif
 	PurpleConversation *conv = NULL;
 	PurpleConvChat *chat = NULL;
 	char *buffy, *angel;

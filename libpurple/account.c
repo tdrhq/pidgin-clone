@@ -118,7 +118,7 @@ static void set_current_error(PurpleAccount *account,
 static void
 schedule_accounts_save(void)
 {
-#warning Remove this when it's no longer needed
+#warning Remove this when it is no longer needed
 }
 
 static void
@@ -2765,7 +2765,5 @@ purple_accounts_uninit(void)
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
-
-	for (; accounts; accounts = g_list_delete_link(accounts, accounts))
-		purple_account_destroy(accounts->data);
 }
+
