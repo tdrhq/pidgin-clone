@@ -747,13 +747,13 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 		if ((gc = tcl_validate_gc(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		switch (purple_connection_get_state(gc)) {
-		case PURPLE_DISCONNECTED:
+		case PURPLE_CONNECTION_STATE_DISCONNECTED:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("disconnected", -1));
 			break;
-		case PURPLE_CONNECTED:
+		case PURPLE_CONNECTION_STATE_CONNECTED:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("connected", -1));
 			break;
-		case PURPLE_CONNECTING:
+		case PURPLE_CONNECTION_STATE_CONNECTING:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("connecting", -1));
 			break;
 		}
@@ -1514,9 +1514,9 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	enum { CMD_STATUS_ATTR, CMD_STATUS_TYPE } cmd;
 	PurpleStatus *status;
 	PurpleStatusType *status_type;
-	GValue *value;
+	int error;
 #if !(defined PURPLE_DISABLE_DEPRECATED)
-	PurpleValue *value;
+	GValue *value;
 	const char *attr;
 	int v;
 #endif
