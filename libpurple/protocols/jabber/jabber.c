@@ -460,7 +460,7 @@ void jabber_send_signal_cb(PurpleConnection *pc, xmlnode **packet,
 		return;
 
 	txt = xmlnode_to_str(*packet, &len);
-	jabber_send_raw(purple_connection_get_protocol_data(pc), txt, len);
+	jabber_send_raw(purple_object_get_protocol_data(PURPLE_OBJECT(pc)), txt, len);
 	g_free(txt);
 }
 
@@ -2832,7 +2832,7 @@ static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
 	account = purple_conversation_get_account(conv);
 	pc = purple_account_get_connection(account);
 
-	if(!jabber_ping_jid(purple_connection_get_protocol_data(pc), args[0])) {
+	if(!jabber_ping_jid(purple_object_get_protocol_data(PURPLE_OBJECT(pc)), args[0])) {
 		*error = g_strdup_printf(_("Unable to ping user %s"), args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
