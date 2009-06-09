@@ -52,6 +52,12 @@ typedef struct
 {
 	TpConnectionManager *cm;
 	TpConnectionManagerProtocol *protocol;
+	PurplePlugin *plugin;
+
+} telepathy_data;
+
+typedef struct
+{
 	TpConnection *connection;
 	PurpleConnection *gc;
 	PurpleAccount *acct;
@@ -64,8 +70,8 @@ typedef struct
 	
 	/* This will map contact handles to TpContact */
 	GHashTable *contacts;
-
-} telepathy_data;
+	
+} telepathy_connection;
 
 typedef struct
 {
@@ -215,8 +221,7 @@ contact_notify_cb (TpContact *contact,
 		   GParamSpec *pspec,
 		   gpointer user_data)
 {
-	PurplePlugin *plugin = user_data;
-	telepathy_data *data = plugin->extra;
+	telepathy_connection *data = user_data;
 
 	const gchar *name = tp_contact_get_identifier(contact);
 	const gchar *presence_status = tp_contact_get_presence_status(contact);
@@ -264,8 +269,7 @@ contacts_ready_cb (TpConnection *connection,
 		{
 			TpContact *contact = contacts[i];
 			PurpleBuddy *buddy;
-			PurplePlugin *plugin = user_data;
-			telepathy_data *data = plugin->extra;
+			telepathy_connection *data = user_data;
 			guint handle;
 
 			purple_debug_info("telepathy", "  Contact ready: %s\n", tp_contact_get_alias(contact));
@@ -304,9 +308,8 @@ contacts_ready_cb (TpConnection *connection,
 
 static void
 handle_list_channel (TpChannel *channel,
-                     PurplePlugin *plugin)
+                     telepathy_connection *data)
 {
-	telepathy_data *data = plugin->extra;
 	TpConnection *connection = data->connection;
 	const TpIntSet *members;
 	TpIntSetIter iter;
@@ -337,7 +340,7 @@ handle_list_channel (TpChannel *channel,
 				handles->len, (const TpHandle *) handles->data,
 				G_N_ELEMENTS (features), features,
 				contacts_ready_cb,
-				plugin, NULL, NULL);
+				data, NULL, NULL);
 
 	}
 	g_array_free (handles, TRUE);
@@ -350,8 +353,7 @@ write_message_to_conversation (const gchar *from,
 			       const gchar *msg,
 			       gpointer user_data)
 {
-	PurplePlugin *plugin = user_data;
-	telepathy_data *data = plugin->extra;
+	telepathy_connection *data = user_data;
 
 	/* if a conversation was not yet establish, create a new one */
 	PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, data->acct);
@@ -403,8 +405,7 @@ list_pending_messages_cb  (TpChannel *proxy,
 	}
 	else
 	{
-		PurplePlugin *plugin = user_data;
-		telepathy_data *data = plugin->extra;
+		telepathy_connection *data = user_data;
 		GArray *message_IDs;
 
 		int i;
@@ -464,8 +465,7 @@ received_cb (TpChannel *proxy,
              gpointer user_data,
              GObject *weak_object)
 {
-	PurplePlugin *plugin = user_data;
-	telepathy_data *data = plugin->extra;
+	telepathy_connection *data = user_data;
 
 	GHashTable *properties = tp_channel_borrow_immutable_properties(proxy);
 	gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
@@ -507,8 +507,7 @@ send_cb (TpChannel *proxy,
 {
 	if (error != NULL)
 	{
-		PurplePlugin *plugin = user_data;
-		telepathy_data *data = plugin->extra;
+		telepathy_connection *data = user_data;
 
 		const gchar *who = tp_channel_get_identifier(proxy);
 
@@ -539,8 +538,7 @@ text_channel_invalidated_cb (TpProxy *self,
                              gchar   *message,
                              gpointer user_data)
 {
-	PurplePlugin *plugin = user_data;
-	telepathy_data *data = plugin->extra;
+	telepathy_connection *data = user_data;
 
 	/* remove the cached TpChannel proxy when the channel closes */
 	const gchar *who = tp_channel_get_identifier((TpChannel *)self);
@@ -560,10 +558,8 @@ text_channel_invalidated_cb (TpProxy *self,
 
 static void
 handle_text_channel (TpChannel *channel,
-                     PurplePlugin *plugin)
+                     telepathy_connection *data)
 {
-	telepathy_data *data = plugin->extra;
-
 	GError *error = NULL;
 
 	GHashTable *properties = tp_channel_borrow_immutable_properties(channel);
@@ -584,7 +580,7 @@ handle_text_channel (TpChannel *channel,
 
 	tp_channel->channel = channel;
 
-	tp_cli_channel_type_text_connect_to_received(channel, received_cb, plugin, NULL, NULL, &error);
+	tp_cli_channel_type_text_connect_to_received(channel, received_cb, data, NULL, NULL, &error);
 
 	if (error != NULL)
 	{
@@ -593,17 +589,17 @@ handle_text_channel (TpChannel *channel,
 
 	tp_channel->received_Pending_Messages = FALSE;
 
-	g_signal_connect(channel, "invalidated", G_CALLBACK(text_channel_invalidated_cb), plugin);
+	g_signal_connect(channel, "invalidated", G_CALLBACK(text_channel_invalidated_cb), data);
 
 	/* the Clear parameter is deprecated, we need to use AcknowledgePendingMessages */
-	tp_cli_channel_type_text_call_list_pending_messages(channel, -1, FALSE, list_pending_messages_cb, plugin, NULL, NULL);
+	tp_cli_channel_type_text_call_list_pending_messages(channel, -1, FALSE, list_pending_messages_cb, data, NULL, NULL);
 
 	/* send pending messages */
 	while (tp_channel->pending_Messages != NULL)
 	{
 		purple_debug_info("telepathy", "Sending pending message \"%s\" to %s\n", (gchar *)tp_channel->pending_Messages->data, who);
 
-		tp_cli_channel_type_text_call_send(channel, -1, TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL, tp_channel->pending_Messages->data, send_cb, plugin, NULL, NULL);
+		tp_cli_channel_type_text_call_send(channel, -1, TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL, tp_channel->pending_Messages->data, send_cb, data, NULL, NULL);
 
 		/* the message was duped */
 		g_free(tp_channel->pending_Messages->data);
@@ -651,14 +647,14 @@ channel_invalidated_cb (TpProxy *self,
 }
 
 static void
-handle_new_channel (PurplePlugin* plugin,
+handle_new_channel (telepathy_connection *data,
                     const GValueArray *channel_Properties)
 {
 	char *object_Path = g_value_get_boxed(g_value_array_get_nth((GValueArray *)channel_Properties, 0));
 	GHashTable *map = g_value_get_boxed(g_value_array_get_nth((GValueArray *)channel_Properties, 1));
 
 	GError *error = NULL;
-	TpConnection *connection = ((telepathy_data *)plugin->extra)->connection;
+	TpConnection *connection = data->connection;
 	TpChannel *channel = tp_channel_new_from_properties(connection, object_Path, map, &error);
 
 	if (error != NULL)
@@ -670,9 +666,9 @@ handle_new_channel (PurplePlugin* plugin,
 	
 	purple_debug_info("telepathy", "New channel: %s\n", object_Path);
 
-	tp_channel_call_when_ready(channel, channel_ready_cb, plugin);
+	tp_channel_call_when_ready(channel, channel_ready_cb, data);
 
-	g_signal_connect(channel, "invalidated", G_CALLBACK (channel_invalidated_cb), plugin);
+	g_signal_connect(channel, "invalidated", G_CALLBACK (channel_invalidated_cb), data);
 }
 
 static void
@@ -682,8 +678,7 @@ new_channels_cb (TpConnection *proxy,
                  GObject *weak_object)
 {
 	int i;
-	PurplePlugin *plugin = user_data;
-	telepathy_data *data =plugin->extra;
+	telepathy_connection *data = user_data;
 
 	if (data->listing_channels)
 		return;
@@ -711,8 +706,7 @@ get_channels_cb (TpProxy *proxy,
 	}
 	else
 	{
-		PurplePlugin *plugin = user_data;
-		telepathy_data *data = plugin->extra;
+		telepathy_connection *data = user_data;
 
 		/* unpack the a(oa{sv}) struct */
 		const GPtrArray *channels = g_value_get_boxed(out_Value);
@@ -742,8 +736,7 @@ connection_ready_cb (TpConnection *connection,
 	{
 		char **interfaces, **ptr;
 		GError *error = NULL;
-		PurplePlugin* plugin = user_data;
-		telepathy_data *data = plugin->extra;
+		telepathy_connection *data = user_data;
 
 		purple_debug_info("telepathy", "Connection is ready. Interfaces implemented:\n");
 
@@ -780,8 +773,7 @@ status_changed_cb (TpConnection *proxy,
                    gpointer user_data,
                    GObject *weak_object)
 {
-	PurplePlugin* plugin = user_data;
-	telepathy_data *data = plugin->extra;
+	telepathy_connection *data = user_data;
 
 	if (arg_Status == TP_CONNECTION_STATUS_CONNECTED)
 	{
@@ -885,6 +877,8 @@ status_changed_cb (TpConnection *proxy,
 			data->contacts = NULL;
 		}
 
+		g_free(data);
+
 	}
 	else if (arg_Status == TP_CONNECTION_STATUS_CONNECTING)
 	{
@@ -918,18 +912,18 @@ request_connection_cb (TpConnectionManager *proxy,
                        gpointer user_data,
                        GObject *weak_object)
 {
-    	PurplePlugin* plugin = user_data;
-	telepathy_data* data = plugin->extra;
+	PurpleConnection *gc = user_data;
 
 	if (error != NULL)
 	{
 		purple_debug_info("telepathy", "RequestConnection error: %s\n", error->message);
 
-		purple_connection_error_reason(data->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, error->message);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, error->message);
 	}
 	else
 	{
 		GError *error = NULL;
+		telepathy_connection *connection_data;
 
 		TpDBusDaemon *daemon = tp_dbus_daemon_dup(&error);
 		
@@ -940,8 +934,13 @@ request_connection_cb (TpConnectionManager *proxy,
 			return;
 		}
 
+		connection_data = g_new0(telepathy_connection, 1);
+
 		/* get the connection proxy straight out of the dbus interface */
-		data->connection = tp_connection_new(daemon, out_Bus_Name, out_Object_Path, &error);
+		connection_data->connection = tp_connection_new(daemon, out_Bus_Name, out_Object_Path, &error);
+		connection_data->gc = gc;
+		connection_data->acct = purple_connection_get_account(gc);
+		purple_connection_set_protocol_data(gc, connection_data);
 
 		if (error != NULL)
 		{
@@ -950,23 +949,25 @@ request_connection_cb (TpConnectionManager *proxy,
 			return;
 		}
 
-		tp_connection_call_when_ready(data->connection, connection_ready_cb, plugin);
+		tp_connection_call_when_ready(connection_data->connection, connection_ready_cb, connection_data);
 
 		/* this will indicate any connection status change, also providing a reason */
-		tp_cli_connection_connect_to_status_changed(data->connection, status_changed_cb, plugin, NULL, NULL, &error);
+		tp_cli_connection_connect_to_status_changed(connection_data->connection, status_changed_cb, connection_data, NULL, NULL, &error);
 
 		if (error != NULL)
 		{
 			purple_debug_error("telepathy", "Error conencting to StatusChanged: %s\n", error->message);
 			g_error_free(error);
-			tp_cli_connection_call_disconnect(data->connection, -1, NULL, NULL, NULL, NULL);
-			g_object_unref(data->connection);
-			data->connection = NULL;
+
+			tp_cli_connection_call_disconnect(connection_data->connection, -1, NULL, NULL, NULL, NULL);
+			g_object_unref(connection_data->connection);
+			connection_data->connection = NULL;
+			g_free(connection_data);
 		}
 		else
 		{
 			/* do some magic now :) */
-			tp_cli_connection_call_connect(data->connection, -1, connection_connect_cb, plugin, NULL, NULL);
+			tp_cli_connection_call_connect(connection_data->connection, -1, connection_connect_cb, connection_data, NULL, NULL);
 		}
 
 		if (daemon != NULL)
@@ -983,9 +984,6 @@ telepathy_login(PurpleAccount *acct)
 	telepathy_data *data = (telepathy_data*)plugin->extra;
 	GHashTable *options = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) tp_g_value_slice_free);
 	int i;
-
-	data->gc = gc;
-	data->acct = acct;
 
 	purple_debug_info("telepathy", "Logging in as %s\n", acct->username);
 
@@ -1037,14 +1035,13 @@ telepathy_login(PurpleAccount *acct)
 	}
 
 	/* call RequestConnection with the specified parameters */
-	tp_cli_connection_manager_call_request_connection(data->cm, -1, data->protocol->name, options, request_connection_cb, plugin, NULL, NULL);
+	tp_cli_connection_manager_call_request_connection(data->cm, -1, data->protocol->name, options, request_connection_cb, gc, NULL, NULL);
 }
 
 static void
 telepathy_close(PurpleConnection *gc)
 {
-	PurplePlugin* plugin = gc->prpl;
-	telepathy_data *data = (telepathy_data*)plugin->extra;
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
 
 	purple_debug_info("telepathy", "We're closing, sorry :(\n");
 
@@ -1091,8 +1088,7 @@ telepathy_send_im (PurpleConnection *gc,
                    const char *message,
                    PurpleMessageFlags flags)
 {
-	PurplePlugin* plugin = purple_connection_get_prpl(gc);
-	telepathy_data *data = plugin->extra;
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
 
 	/* check if the channel was already created */
 	telepathy_text_channel *tp_channel = g_hash_table_lookup(data->text_Channels, who);
@@ -1119,7 +1115,7 @@ telepathy_send_im (PurpleConnection *gc,
 
 		purple_debug_info("telepathy", "Creating text channel for %s\n", who);
 
-		tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1, map, ensure_channel_cb, plugin, NULL, NULL);
+		tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1, map, ensure_channel_cb, data, NULL, NULL);
 	}
 
 	purple_debug_info("telepathy", "Sending \"%s\" (stripped: \"%s\") to %s\n", message, stripped_message, who);
@@ -1132,7 +1128,7 @@ telepathy_send_im (PurpleConnection *gc,
 	else
 	{
 		/* The channel already exists, send the message */
-		tp_cli_channel_type_text_call_send(channel, -1, TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL, stripped_message, send_cb, plugin, NULL, NULL);
+		tp_cli_channel_type_text_call_send(channel, -1, TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL, stripped_message, send_cb, data, NULL, NULL);
 	}
 
 	g_free(stripped_message);
@@ -1477,8 +1473,7 @@ export_prpl(TpConnectionManager *cm,
 
 	data->cm = cm;
 	data->protocol = protocol;
-	data->connection = NULL;
-	data->gc = NULL;
+	data->plugin = plugin;
 	g_object_ref(data->cm);
 
 	/* correct the plugin id and name, everything else can remain the same */
