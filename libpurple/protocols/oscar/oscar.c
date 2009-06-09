@@ -4339,7 +4339,7 @@ oscar_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState stat
 	else {
 		/* Don't send if this turkey is in our deny list */
 		GSList *list;
-		for (list=purple_connection_get_account->deny; (list && oscar_util_name_compare(name, list->data)); list=list->next);
+		for (list=purple_connection_get_account(gc)->deny; (list && oscar_util_name_compare(name, list->data)); list=list->next);
 		if (!list) {
 			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(purple_connection_get_account(gc), name));
 			if (bi && bi->typingnot) {
@@ -5019,7 +5019,7 @@ void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup 
 
 void oscar_remove_group(PurpleConnection *gc, PurpleGroup *group)
 {
-	aim_ssi_delgroup(purple_object_get_protocol_data(gc), purple_group_get_name(group));
+	aim_ssi_delgroup(purple_object_get_protocol_data(PURPLE_OBJECT(gc)), purple_group_get_name(group));
 }
 
 static gboolean purple_ssi_rerequestdata(gpointer data) {
@@ -6315,7 +6315,7 @@ oscar_get_aim_info_cb(PurpleBlistNode *node, gpointer ignore)
 	buddy = (PurpleBuddy *)node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
-	aim_locate_getinfoshort(purple_object_get_protocol_data(PURPLE_OBJECT(gc)), purple_buddy_get_name(buddy), 0x00000003);
+	aim_locate_getinfoshort(purple_object_get_protocol_data(PURPLE_OBJECT(gc)),
 			purple_buddy_get_name(buddy), 0x00000003);
 }
 
