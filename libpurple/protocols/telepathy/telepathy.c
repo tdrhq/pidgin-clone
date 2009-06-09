@@ -155,8 +155,6 @@ telepathy_status_text(PurpleBuddy* buddy)
 		{
 			const gchar *message = purple_status_get_attr_string(status, "message");
 
-			purple_debug_info("telepathy", "Returning status for %s\n", name);
-
 			/* an empty message confuses the UI, NULL is better */
 			if (g_strcmp0(message, "") == 0)
 				return NULL;
@@ -169,7 +167,7 @@ telepathy_status_text(PurpleBuddy* buddy)
 
 			if (list == NULL)
 			{
-				purple_debug_error("telepathy", "list is NULL!!\n");
+				purple_debug_error("telepathy", "Status list for %s is NULL\n", name);
 			}
 
 			purple_debug_warning("telepathy", "User %s has no active status!\n", name);
@@ -238,9 +236,6 @@ contact_notify_cb (TpContact *contact,
 
 	purple_blist_alias_buddy(buddy, alias);
 
-	purple_debug_info("telepathy", "%s is now %s (Status: \"%s\")\n",
-			name, presence_status, presence_message);
-
 	purple_prpl_got_user_status(data->acct, name, presence_status,
 			"message", presence_message, NULL);
 }
@@ -264,15 +259,13 @@ contacts_ready_cb (TpConnection *connection,
 	{
 		int i;
 
-		purple_debug_info("telepathy", "Contacts:\n");
+		purple_debug_info("telepathy", "Contacts ready: %u (%u failed)\n", n_contacts, n_failed);
 		for (i = 0; i<n_contacts; ++i)
 		{
 			TpContact *contact = contacts[i];
 			PurpleBuddy *buddy;
 			telepathy_connection *data = user_data;
 			guint handle;
-
-			purple_debug_info("telepathy", "  Contact ready: %s\n", tp_contact_get_alias(contact));
 
 			/* the buddy might already be stored locally */
 			buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
@@ -282,7 +275,7 @@ contacts_ready_cb (TpConnection *connection,
 			 */
 			if (buddy == NULL)
 			{
-				purple_debug_info("telepathy", "New user detected!!!\n");
+				/* Buddy was not stored locally */
 				buddy = purple_buddy_new(data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
 				purple_blist_node_set_flags((PurpleBlistNode *)buddy, PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 			}
@@ -295,8 +288,6 @@ contacts_ready_cb (TpConnection *connection,
 				purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 
 				g_hash_table_insert(data->contacts, (gpointer)handle, contact);
-
-				purple_debug_info("telepathy", "Connecting to notify for %s\n", tp_contact_get_identifier(contact));
 
 				g_object_ref(contact);
 				g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), user_data);
@@ -1464,7 +1455,6 @@ export_prpl(TpConnectionManager *cm,
 	/* create a plugin struct and copy all the information from the template */
 	PurplePlugin *plugin = purple_plugin_new(TRUE, NULL);
 
-	/* TODO: telepathy_data should be connection specific, not prpl specific */
 	telepathy_data *data = g_new0(telepathy_data, 1);
 
 	plugin->info = g_memdup(&telepathy_info, sizeof(telepathy_info));
