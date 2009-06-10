@@ -436,12 +436,15 @@ list_pending_messages_cb  (TpChannel *proxy,
 			GValueArray *arr = g_ptr_array_index(out_Pending_Messages, i);
 			guint msg_id = g_value_get_uint(g_value_array_get_nth(arr, 0));
 			guint timestamp = g_value_get_uint(g_value_array_get_nth(arr, 1));
+			guint flags = g_value_get_uint(g_value_array_get_nth(arr, 4));
 			gchar *msg = (gchar *)g_value_get_string(g_value_array_get_nth(arr, 5));
 			
 			/* get the identifier from channel instead of contact since contact might not be ready for offline messages */
 			gchar *from = (gchar *)tp_channel_get_identifier(proxy);
 
-			write_message_to_conversation(from, timestamp, msg, user_data);
+			/* drop message if it's not text */
+			if ((flags & TP_CHANNEL_TEXT_MESSAGE_FLAG_NON_TEXT_CONTENT) == 0)
+				write_message_to_conversation(from, timestamp, msg, user_data);
 
 			/* add the id to the array of acknowledge messages */
 			g_array_append_val(message_IDs, msg_id);
@@ -486,7 +489,9 @@ received_cb (TpChannel *proxy,
 		if (!tp_channel->received_Pending_Messages)
 			return;
 
-		write_message_to_conversation(who, arg_Timestamp, arg_Text, user_data);
+		/* drop this message if it's not text */
+		if ((arg_Flags & TP_CHANNEL_TEXT_MESSAGE_FLAG_NON_TEXT_CONTENT) == 0)
+			write_message_to_conversation(who, arg_Timestamp, arg_Text, user_data);
 
 		/* acknowledge receiving the message */
 		message_IDs = g_array_new(FALSE, FALSE, sizeof(guint));
@@ -499,6 +504,69 @@ received_cb (TpChannel *proxy,
 		g_array_free(message_IDs, TRUE);
 
 	}
+}
+
+static void
+send_error_cb (TpChannel *proxy,
+               guint arg_Error,
+               guint arg_Timestamp,
+               guint arg_Type,
+               const gchar *arg_Text,
+               gpointer user_data,
+               GObject *weak_object)
+{
+	telepathy_connection *data = user_data;
+
+	const gchar *who = tp_channel_get_identifier(proxy);
+
+	gchar *error_reason = NULL;
+	gchar *error_message;
+	gchar *error_message2;
+
+	switch (arg_Error)
+	{
+		case TP_CHANNEL_TEXT_SEND_ERROR_UNKNOWN:
+			error_reason = (gchar *)_("Unknown error");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_OFFLINE:
+			error_reason = (gchar *)_("Contact is offline");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_INVALID_CONTACT:
+			error_reason = (gchar *)_("Contact is invalid");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_PERMISSION_DENIED:
+			error_reason = (gchar *)_("Permission denied");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_TOO_LONG:
+			error_reason = (gchar *)_("The message is too long");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_NOT_IMPLEMENTED:
+			error_reason = (gchar *)_("Not implemented");
+		break;
+	}
+
+	error_message = g_strconcat(_("There was an error sending your message to "), who, NULL);
+	error_message2 = g_strconcat(error_message, ": ", error_reason, NULL);
+
+	/* display the error in the conversation */
+	if (!purple_conv_present_error(who, data->acct, error_message2))
+	{
+		/* display as a popup if there is no active conversation with the user */
+		purple_notify_error(purple_connections_get_handle(),
+				_("Error sending message"),
+				error_message,
+				error_reason);
+	}
+
+	g_free(error_message2);
+	g_free(error_message);
+
+	purple_debug_error("telepathy", "SendError: %s\n", error_reason);
 }
 
 static void
@@ -607,6 +675,14 @@ handle_text_channel (TpChannel *channel,
 		g_free(tp_channel->pending_Messages->data);
 
 		tp_channel->pending_Messages = g_list_delete_link(tp_channel->pending_Messages, tp_channel->pending_Messages);
+	}
+
+	tp_cli_channel_type_text_connect_to_send_error(channel, send_error_cb, data, NULL, NULL, &error);
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to SendError signal: %s\n", error->message);
+		g_error_free(error);
 	}
 }
 
