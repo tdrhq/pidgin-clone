@@ -519,39 +519,39 @@ send_error_cb (TpChannel *proxy,
 
 	const gchar *who = tp_channel_get_identifier(proxy);
 
-	gchar *error_reason = NULL;
+	const gchar *error_reason = NULL;
 	gchar *error_message;
 	gchar *error_message2;
 
 	switch (arg_Error)
 	{
 		case TP_CHANNEL_TEXT_SEND_ERROR_UNKNOWN:
-			error_reason = (gchar *)_("Unknown error");
+			error_reason = _("Unknown error");
 		break;
 
 		case TP_CHANNEL_TEXT_SEND_ERROR_OFFLINE:
-			error_reason = (gchar *)_("Contact is offline");
+			error_reason = _("Contact is offline");
 		break;
 
 		case TP_CHANNEL_TEXT_SEND_ERROR_INVALID_CONTACT:
-			error_reason = (gchar *)_("Contact is invalid");
+			error_reason = _("Contact is invalid");
 		break;
 
 		case TP_CHANNEL_TEXT_SEND_ERROR_PERMISSION_DENIED:
-			error_reason = (gchar *)_("Permission denied");
+			error_reason = _("Permission denied");
 		break;
 
 		case TP_CHANNEL_TEXT_SEND_ERROR_TOO_LONG:
-			error_reason = (gchar *)_("The message is too long");
+			error_reason = _("The message is too long");
 		break;
 
 		case TP_CHANNEL_TEXT_SEND_ERROR_NOT_IMPLEMENTED:
-			error_reason = (gchar *)_("Not implemented");
+			error_reason = _("Not implemented");
 		break;
 	}
 
-	error_message = g_strconcat(_("There was an error sending your message to "), who, NULL);
-	error_message2 = g_strconcat(error_message, ": ", error_reason, NULL);
+	error_message = g_strdup_printf(_("There was an error sending your message to %s"), who);
+	error_message2 = g_strdup_printf("%s: %s", error_message, error_reason);
 
 	/* display the error in the conversation */
 	if (!purple_conv_present_error(who, data->acct, error_message2))
@@ -581,8 +581,8 @@ send_cb (TpChannel *proxy,
 
 		const gchar *who = tp_channel_get_identifier(proxy);
 
-		gchar *error_message = g_strconcat(_("There was an error sending your message to "), who, NULL);
-		gchar *error_message2 = g_strconcat(error_message, ": ", error->message, NULL);
+		gchar *error_message = g_strdup_printf(_("There was an error sending your message to %s"), who);
+		gchar *error_message2 = g_strdup_printf("%s: %s", error_message, error->message);
 
 		/* display the error in the conversation */
 		if (!purple_conv_present_error(who, data->acct, error_message2))
