@@ -67,17 +67,17 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 
 	VultureParseCommandLine();
 
+	if(VultureCreateMainWindow(iCmdShow) != 0)
+	{
+		MessageBoxFromStringTable(NULL, IDS_ERROR_BLIST, MB_ICONERROR);
+		return VEC_ERROR_BLIST;
+	}
+
 	VultureInitLibpurple(&hthreadPurple);
 	if(hthreadPurple == (HANDLE)-1L)
 	{
 		MessageBoxFromStringTable(NULL, IDS_ERROR_PURPLEINIT, MB_ICONERROR);
 		return VEC_ERROR_PURPLEINIT;
-	}
-
-	if(VultureCreateMainWindow(iCmdShow) != 0)
-	{
-		MessageBoxFromStringTable(NULL, IDS_ERROR_BLIST, MB_ICONERROR);
-		return VEC_ERROR_BLIST;
 	}
 
 	/* For keyboard shortcuts. */

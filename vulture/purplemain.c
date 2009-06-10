@@ -148,6 +148,8 @@ static int InitLibpurple(void)
 	if(!purple_core_init(VULTURE_ID))
 		return 1;
 
+	VulturePostUIMessage(g_hwndMain, VUIMSG_PURPLEINITCOMPLETE, NULL);
+
 	/* Sign in using specified or remembered state. */
 	if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
 		purple_savedstatus_activate(purple_savedstatus_get_startup());
