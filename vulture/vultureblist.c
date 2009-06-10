@@ -47,6 +47,8 @@ static void PopulateStatusList(HWND hwndComboStatus);
 
 HWND g_hwndMain = NULL;
 
+static GList *g_lpglistStatuses = NULL;
+
 
 
 /**
@@ -220,16 +222,20 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 				EnterCriticalSection(&lpvbn->cs);
 				{
 					TVITEM tvitem;
-					HTREEITEM htiParent = TreeView_GetParent(hwndBlistTree, lpvbn->hti);
 
-					/* If the parent doesn't match, we need
-					 * to recreate.
-					 */
-					if((lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti != htiParent) ||
-						(!lpvbn->lpvbnParent && htiParent))
+					if(lpvbn->hti)
 					{
-						TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
-						lpvbn->hti = NULL;
+						HTREEITEM htiParent = TreeView_GetParent(hwndBlistTree, lpvbn->hti);
+
+						/* If the parent doesn't match, we need
+						 * to recreate.
+						 */
+						if((lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti != htiParent) ||
+							(!lpvbn->lpvbnParent && htiParent))
+						{
+							TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
+							lpvbn->hti = NULL;
+						}
 					}
 
 
@@ -365,6 +371,14 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 		}
 
 		break;
+
+
+	case WM_DESTROY:
+
+		if(g_lpglistStatuses)
+			VulturePurpleFreeStatusList(g_lpglistStatuses);
+
+		return TRUE;
 	}
 
 	return FALSE;
@@ -441,16 +455,19 @@ static void PopulateStatusList(HWND hwndComboStatus)
 {
 	GList *lpglistStatusRover;
 	GArray *lpgarrayWaitContext;
-	GList *lpglistStatuses = NULL;
-	
+
+	if(g_lpglistStatuses)
+		VulturePurpleFreeStatusList(g_lpglistStatuses);
+
+	SendMessage(hwndComboStatus, CB_RESETCONTENT, 0, 0);
 
 	/* Get all statuses. */
 	lpgarrayWaitContext = VultureAllocPurpleWaitContext();
-	VultureEnqueueMultiSyncPurpleCall(PC_GETALLSAVEDSTATUSES, (void*)&lpglistStatuses, lpgarrayWaitContext);
+	VultureEnqueueMultiSyncPurpleCall(PC_GETALLSAVEDSTATUSES, (void*)&g_lpglistStatuses, lpgarrayWaitContext);
 	VulturePurpleWait(lpgarrayWaitContext);
 
 	/* Populate control. */
-	for(lpglistStatusRover = lpglistStatuses; lpglistStatusRover; lpglistStatusRover = lpglistStatusRover->next)
+	for(lpglistStatusRover = g_lpglistStatuses; lpglistStatusRover; lpglistStatusRover = lpglistStatusRover->next)
 	{
 		VULTURE_SAVED_STATUS *lpvss = lpglistStatusRover->data;
 		COMBOBOXEXITEM cbexitem;
@@ -464,6 +481,4 @@ static void PopulateStatusList(HWND hwndComboStatus)
 
 		SendMessage(hwndComboStatus, CBEM_INSERTITEM, 0, (LPARAM)&cbexitem);
 	}
-
-	VulturePurpleFreeStatusList(lpglistStatuses);
 }

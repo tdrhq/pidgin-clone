@@ -47,6 +47,8 @@ void PurpleBlistNewNode(PurpleBlistNode *lpblistnode)
 	lpvbn->szNodeText = NULL;
 	lpvbn->hti = NULL;
 	InitializeCriticalSection(&lpvbn->cs);
+
+	PurpleBlistUpdateNode(NULL, lpblistnode);
 }
 
 
@@ -62,7 +64,9 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 
 	UNREFERENCED_PARAMETER(lpbuddylist);
 
-	
+	if(!lpblistnode)
+		return;
+		
 	lpvbn = (VULTURE_BLIST_NODE*)lpblistnode->ui_data;
 
 	EnterCriticalSection(&lpvbn->cs);
@@ -79,6 +83,13 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 
 		case PURPLE_BLIST_CONTACT_NODE:
 			szNodeText = purple_contact_get_alias((PurpleContact*)lpblistnode);
+
+			if(!szNodeText || !(*szNodeText))
+			{
+				PurpleBuddy *lpbuddy = purple_contact_get_priority_buddy((PurpleContact*)lpblistnode);
+				szNodeText = purple_buddy_get_name(lpbuddy);
+			}
+
 			break;
 
 		default:
@@ -91,5 +102,8 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 	}
 	LeaveCriticalSection(&lpvbn->cs);
 
-	VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEBLISTNODE, lpvbn);
+
+	/* TODO: We should probably be less willing to give up. */
+	if(lpvbn->szNodeText)
+		VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEBLISTNODE, lpvbn);
 }
