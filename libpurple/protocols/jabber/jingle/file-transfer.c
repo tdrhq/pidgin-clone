@@ -609,15 +609,20 @@ jingle_file_transfer_cancel_send(PurpleXfer *xfer)
 {
 	JingleContent *content = (JingleContent *) xfer->data;
 	JingleSession *session = jingle_content_get_session(content);
-	JingleTransport *transport = jingle_content_get_transport(content);
 
-	if (JINGLE_IS_S5B(transport)) {
-		jingle_s5b_stop_connection_attempts(JINGLE_S5B(transport));
+	if (session) {
+		JingleTransport *transport = jingle_content_get_transport(content);
+
+		if (JINGLE_IS_S5B(transport)) {
+			jingle_s5b_stop_connection_attempts(JINGLE_S5B(transport));
+		}
+
+		purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_send\n");
+		jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
+		g_object_unref(transport);
+		/* disassociate xfer from session */
+		JINGLE_FT(content)->priv->xfer = NULL;
 	}
-
-	purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_send\n");
-	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
-	g_object_unref(transport);
 	g_object_unref(session);
 	g_object_unref(session);
 }
@@ -627,15 +632,20 @@ jingle_file_transfer_cancel_recv(PurpleXfer *xfer)
 {
 	JingleContent *content = (JingleContent *) xfer->data;
 	JingleSession *session = jingle_content_get_session(content);
-	JingleTransport *transport = jingle_content_get_transport(content);
 
-	if (JINGLE_IS_S5B(transport)) {
-		jingle_s5b_stop_connection_attempts(JINGLE_S5B(transport));
+	if (session) {
+		JingleTransport *transport = jingle_content_get_transport(content);
+
+		if (JINGLE_IS_S5B(transport)) {
+			jingle_s5b_stop_connection_attempts(JINGLE_S5B(transport));
+		}
+
+		purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_recv\n");
+		jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
+		g_object_unref(transport);
+		/* disassociate xfer from session */
+		JINGLE_FT(content)->priv->xfer = NULL;
 	}
-
-	purple_debug_info("jingle-ft", "jingle_file_transfer_cancel_recv\n");
-	jabber_iq_send(jingle_session_to_packet(session, JINGLE_SESSION_TERMINATE));
-	g_object_unref(transport);
 	g_object_unref(session);
 	g_object_unref(session);
 }
