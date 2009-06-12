@@ -41,10 +41,6 @@
 #define TELEPATHY_ID "prpl-telepathy"
 #define TELEPATHY_DISPLAY_VERSION "1.0"
 
-#define TELEPATHY_STATUS_ONLINE   "available"
-#define TELEPATHY_STATUS_AWAY     "away"
-#define TELEPATHY_STATUS_OFFLINE  "offline"
-
 static void *module_handle;
 static gchar *module_path;
 
@@ -113,6 +109,28 @@ static const OptionMapping options[] = {
 	{ NULL, NULL, NULL}
 };
 
+typedef struct
+{
+	const guint status_primitive;
+	const gchar* id;
+	const gchar* description;
+} StatusMapping;
+
+static const StatusMapping statuses[] = 
+{
+	{ PURPLE_STATUS_AVAILABLE, "available", "Available" },
+	{ PURPLE_STATUS_AWAY, "away", N_("Away") },
+	{ PURPLE_STATUS_AWAY, "brb", N_("Be right back") },
+	{ PURPLE_STATUS_UNAVAILABLE, "dnd", N_("Do not disturb") },
+	{ PURPLE_STATUS_UNAVAILABLE, "busy", N_("Busy") },
+	{ PURPLE_STATUS_EXTENDED_AWAY, "xa", N_("Extended away") },
+	{ PURPLE_STATUS_INVISIBLE, "hidden", NULL },
+	{ PURPLE_STATUS_OFFLINE, "offline", NULL },
+	{ PURPLE_STATUS_UNSET, "unknown", NULL },
+	{ PURPLE_STATUS_UNSET, "error", NULL },
+	{ 0, NULL, NULL}
+};
+
 static void
 telepathy_input_user_info(PurplePluginAction *action)
 {
@@ -147,6 +165,24 @@ telepathy_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 	return "telepathy";
 }
 
+static const gchar*
+telepathy_get_status_string(PurpleStatus *status)
+{
+	const gchar* id = purple_status_get_id(status);
+
+	int i;
+
+	for (i = 0; statuses[i].id != NULL; ++i)
+	{
+		if (statuses[i].status_primitive != PURPLE_STATUS_AVAILABLE && g_strcmp0(id, statuses[i].id) == 0)
+		{
+			return statuses[i].description;
+		}
+	}
+
+	return NULL;
+}
+
 static gchar*
 telepathy_status_text(PurpleBuddy* buddy)
 {
@@ -161,6 +197,10 @@ telepathy_status_text(PurpleBuddy* buddy)
 		if (status != NULL)
 		{
 			const gchar *message = purple_status_get_attr_string(status, "message");
+
+			/* return the description of the current status if there's no custom message */
+			if (g_strcmp0(message, "") == 0)
+				message = telepathy_get_status_string(status);
 
 			/* an empty message confuses the UI, NULL is better */
 			if (g_strcmp0(message, "") == 0)
@@ -196,27 +236,23 @@ telepathy_status_types(PurpleAccount *acct)
 	GList *types = NULL;
 	PurpleStatusType *type;
 
-	purple_debug_info("telepathy", "Returning status types for %s: %s, %s, %s\n",
-			acct->username,
-			TELEPATHY_STATUS_ONLINE, TELEPATHY_STATUS_AWAY, TELEPATHY_STATUS_OFFLINE);
+	int i;
 
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
-			TELEPATHY_STATUS_ONLINE, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			NULL);
-	types = g_list_prepend(types, type);
-
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
-			TELEPATHY_STATUS_AWAY, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			NULL);
-	types = g_list_prepend(types, type);
-
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
-			NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			NULL);
-	types = g_list_prepend(types, type);
+	for (i = 0; statuses[i].id != NULL; ++i)
+	{
+		if (statuses[i].description == NULL)
+		{
+			type = purple_status_type_new(statuses[i].status_primitive, statuses[i].id, NULL, TRUE);
+		}
+		else
+		{
+			type = purple_status_type_new_with_attrs(statuses[i].status_primitive,
+					statuses[i].id, statuses[i].description, TRUE, TRUE, FALSE,
+					"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+					NULL);
+		}
+		types = g_list_prepend(types, type);
+	}
 
 	return g_list_reverse(types);
 }
