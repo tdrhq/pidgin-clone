@@ -72,8 +72,8 @@ plugin_load(PurplePlugin *plugin)
 	}
 
 	/* Register callback. */
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-			      plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
+	purple_type_connect(PURPLE_TYPE_CONNECTION, "signed-on",
+						G_CALLBACK(signed_on_cb), NULL);
 
 	return TRUE;
 }
