@@ -230,6 +230,7 @@ telepathy_status_text(PurpleBuddy* buddy)
 	}
 }
 
+/* TODO: Do a proper query of the "status" property */
 static GList *
 telepathy_status_types(PurpleAccount *acct)
 {
@@ -1377,6 +1378,36 @@ telepathy_send_im (PurpleConnection *gc,
 }
 
 static void
+set_presence_cb (TpConnection *proxy,
+                 const GError *error,
+                 gpointer user_data,
+                 GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "SetStatus error: %s\n", error->message);
+	}
+}
+
+static void
+telepathy_set_status (PurpleAccount *account, PurpleStatus *status)
+{
+	PurpleConnection *gc = purple_account_get_connection(account);
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+
+	const gchar *presence_id = purple_status_get_id(status);
+	const gchar *presence_message = purple_status_get_attr_string(status, "message");
+
+	purple_debug_info("telepathy", "Setting status %s (%s) for %s\n", 
+			presence_id, presence_message, purple_account_get_username(account));
+
+	tp_cli_connection_interface_simple_presence_call_set_presence(data->connection, -1,
+			presence_id, presence_message, 
+			set_presence_cb, data,
+			NULL, NULL);
+}
+
+static void
 telepathy_destroy(PurplePlugin *plugin)
 {
 	purple_debug_info("telepathy", "Shutting down\n");
@@ -1412,7 +1443,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	NULL,                   /* set_info */
 	NULL,                /* send_typing */
 	NULL,                   /* get_info */
-	NULL,                 /* set_status */
+	telepathy_set_status,                 /* set_status */
 	NULL,                   /* set_idle */
 	NULL,              /* change_passwd */
 	NULL,                  /* add_buddy */
