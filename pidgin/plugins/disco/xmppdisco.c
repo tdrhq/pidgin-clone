@@ -619,8 +619,8 @@ plugin_load(PurplePlugin *plugin)
 	if (NULL == xmpp_prpl)
 		return FALSE;
 
-	purple_signal_connect(purple_connections_get_handle(), "signing-off",
-	                      plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
+	purple_type_connect(PURPLE_TYPE_CONNECTION, "signing-off",
+	                    PURPLE_CALLBACK(signed_off_cb), NULL);
 
 	iq_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
