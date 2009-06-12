@@ -33,6 +33,7 @@
 #include "acctmanager.h"
 #include "purpleacct.h"
 #include "purplemain.h"
+#include "vultureconv.h"
 
 
 static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
@@ -46,6 +47,7 @@ static void PopulateStatusList(HWND hwndComboStatus);
 
 
 HWND g_hwndMain = NULL;
+GList *g_lpglistConvContainers = NULL;
 
 static GList *g_lpglistStatuses = NULL;
 
@@ -262,14 +264,56 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 			}
 
 			break;
+
+		case VUIMSG_NEWCONVERSATION:
+			if(!g_lpglistConvContainers)
+				g_lpglistConvContainers = g_list_prepend(g_lpglistConvContainers, VultureCreateConvContainer());
+
+			/* Fall through. */
+			
+		case VUIMSG_DESTROYEDCONVERSATION:
+			/* Forward the message to the first container. */
+			SendMessage((HWND)g_lpglistConvContainers->data, uiMsg, wParam, lParam);
+
+			break;
+
+		case VUIMSG_QUIT:
+			DestroyWindow(hwnd);
+			break;
 		}
 
 		return 0;
 
+
+	case WM_CLOSE:
+		{
+			GList *lpglistRover;
+
+			for(lpglistRover = g_lpglistConvContainers; lpglistRover; lpglistRover = lpglistRover->next)
+				SendMessage((HWND)lpglistRover->data, WM_CLOSE, 0, 0);
+
+			VultureEnqueueAsyncPurpleCall(PC_QUIT, NULL);
+
+			/* Ignore the user for the rest of our life. */
+			EnableWindow(hwnd, FALSE);
+		}
+
+		/* Don't destroy the window. The core will signal this thread
+		 * to do so later.
+		 */
+		return 0;
+
+
 	case WM_DESTROY:
+		
 		DestroyWindow(s_hwndBListDlg);
 		DestroyWindow(s_hwndStatusDlg);
+
+		if(g_lpglistConvContainers)
+			g_list_free(g_lpglistConvContainers);
+
 		PostQuitMessage(VEC_SUCCESS);
+
 		return 0;
 	}
 

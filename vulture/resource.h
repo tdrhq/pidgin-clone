@@ -7,10 +7,14 @@
 #define IDD_BLIST                               105
 #define IDD_ACCOUNTS                            107
 #define IDR_ACCEL_MAIN                          109
+#define IDM_CONV                                111
+#define IDD_CONVCONT                            113
+#define IDC_TAB_CONVERSATIONS                   1001
 #define IDC_BUDDY_ICON                          1002
 #define IDC_LIST_ACCOUNTS                       1003
 #define IDC_CBEX_STATUS                         1004
 #define IDM_BLIST_BUDDIES_CLOSE                 40000
+#define IDM_CONV_CONV_CLOSE                     40000
 #define IDS_ERROR_BLIST                         40000
 #define IDM_BLIST_ACCOUNTS_MANAGE               40001
 #define IDS_ERROR_PURPLEINIT                    40001
@@ -18,6 +22,7 @@
 #define IDC_EDIT_STATUSMSG                      40003
 #define IDS_ACCMGR_PROTOCOL                     40003
 #define IDC_TREE_BLIST                          40004
+#define IDS_ERROR_CONVCONTCLASS                 40004
 #define IDC_BTN_ACCOUNT_ADD                     40005
 #define IDC_BTN_ACCOUNT_PROPERTIES              40006
 #define IDC_BTN_ACCOUNT_DELETE                  40007

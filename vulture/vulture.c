@@ -31,6 +31,7 @@
 #include "purplemain.h"
 #include "purplequeue.h"
 #include "cmdline.h"
+#include "vultureconv.h"
 
 
 HINSTANCE g_hInstance;
@@ -67,6 +68,12 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 
 	VultureParseCommandLine();
 
+	if(VultureRegisterConvContainerWindowClass() != 0)
+	{
+		MessageBoxFromStringTable(NULL, IDS_ERROR_CONVCONTCLASS, MB_ICONERROR);
+		return VEC_ERROR_CONVCONTCLASS;
+	}
+
 	if(VultureCreateMainWindow(iCmdShow) != 0)
 	{
 		MessageBoxFromStringTable(NULL, IDS_ERROR_BLIST, MB_ICONERROR);
@@ -92,10 +99,9 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 		}
 	}
 
-	/* UI has shut down; do the same to libpurple, waiting until it's
+	/* UI has shut down; wait for libpurple, waiting until it's
 	 * complete.
 	 */
-	VultureEnqueueAsyncPurpleCall(PC_QUIT, NULL);
 	WaitForSingleObject(hthreadPurple, INFINITE);
 	CloseHandle(hthreadPurple);
 

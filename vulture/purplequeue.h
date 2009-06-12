@@ -50,6 +50,9 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_SAVED_STATUS*) Status to set. */
 	PC_SETSAVEDSTATUS,
+
+	/* (VULTURE_CONVERSATION*) Conversation to destroy. */
+	PC_DESTROYCONVERSATION,
 };
 
 

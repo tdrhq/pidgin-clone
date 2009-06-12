@@ -28,6 +28,7 @@
 #include "purplequeue.h"
 #include "purplestatus.h"
 #include "purpleacct.h"
+#include "vultureconv.h"
 
 
 /** Queue node representing a libpurple call. */
@@ -186,7 +187,12 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		purple_savedstatus_activate(((VULTURE_SAVED_STATUS*)lppurplecall->lpvParam)->lppss);
 		break;
 
+	case PC_DESTROYCONVERSATION:
+		purple_conversation_destroy(((VULTURE_CONVERSATION*)lppurplecall->lpvParam)->lpconv);
+		break;
+
 	case PC_QUIT:
+		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);
 		break;
 	}

@@ -1,7 +1,7 @@
 /*
  * Vulture - Win32 libpurple client
  *
- * vultureblist.h: Buddy list.
+ * vultureconv.h: Conversation UI.
  *
  * Copyright (C) 2009, Gregor Dick <gdick@soc.pidgin.im>
  *
@@ -20,31 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _VULTURE_VULTUREBLIST_H_
-#define _VULTURE_VULTUREBLIST_H_
-
+#ifndef _VULTURE_VULTURECONV_H_
+#define _VULTURE_VULTURECONV_H_
 
 #include <windows.h>
-#include <commctrl.h>
+
+#include "purple.h"
 
 
-typedef struct _VULTURE_BLIST_NODE
+typedef struct _VULTURE_CONVERSATION
 {
-	LPTSTR				szNodeText;
-	HTREEITEM			hti;
-	struct _VULTURE_BLIST_NODE	*lpvbnParent;
-	CRITICAL_SECTION		cs;
-} VULTURE_BLIST_NODE;
+	PurpleConversation	*lpconv;
+	HWND			hwndConv;
+	HWND			hwndContainer;
+	int			iTabIndex;
+
+	/* Data still needed by the core thread after initialisation. */
+	struct
+	{
+		CRITICAL_SECTION	cs;
+		LPTSTR			szTitle;
+	} sync;
+} VULTURE_CONVERSATION;
 
 
-#define WM_PURPLEUIMSG	WM_APP
-
-
-extern HWND g_hwndMain;
-GList *g_lpglistConvContainers;
-
-
-int VultureCreateMainWindow(int iCmdShow);
-
+int VultureRegisterConvContainerWindowClass(void);
+HWND VultureCreateConvContainer(void);
 
 #endif
