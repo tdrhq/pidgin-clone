@@ -34,6 +34,7 @@
 
 
 #define CONVCONTAINERCLASS	TEXT("VULTURECONVCONTAINER")
+#define CONV_DLG_MARGIN		4
 
 
 typedef struct _CONVCONTAINERDATA
@@ -42,9 +43,15 @@ typedef struct _CONVCONTAINERDATA
 } CONVCONTAINERDATA;
 
 
+static int g_cyInput = 48;
+
+
 static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK ConvContTabDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void RecalcTabIndices(HWND hwndTabs);
+static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static void ResizeConversationWindows(HWND hwndConvContainer, HWND hwndTabs);
+static void RepositionConvControls(HWND hwndConvDlg);
 
 
 /**
@@ -152,6 +159,11 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 					tcitem.pszText = lpvconv->sync.szTitle;
 					lpvconv->iTabIndex = TabCtrl_InsertItem(hwndTabs, TabCtrl_GetItemCount(hwndTabs), &tcitem);
 				LeaveCriticalSection(&lpvconv->sync.cs);
+
+				/* Create conversation dialogue. */
+				lpvconv->hwndConv = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_IM), hwndTabs, IMDlgProc);
+
+				ResizeConversationWindows(hwnd, hwndTabs);
 			}
 
 			break;
@@ -185,6 +197,37 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 
 		return 0;
 
+
+	case WM_COMMAND:
+		switch(LOWORD(wParam))
+		{
+		case IDM_CONV_CONV_CLOSE:
+			SendMessage(hwnd, WM_CLOSE, 0, 0);
+			return 0;
+		}
+
+		break;
+
+
+	case WM_NOTIFY:
+		{
+			LPNMHDR lpnmhdr = (LPNMHDR)lParam;
+
+			if(lpnmhdr->idFrom == IDC_TAB_CONVERSATIONS && lpnmhdr->code == TCN_SELCHANGE)
+			{
+				TCITEM tcitem;
+
+				tcitem.mask = TCIF_PARAM;
+				TabCtrl_GetItem(lpnmhdr->hwndFrom, TabCtrl_GetCurSel(lpnmhdr->hwndFrom), &tcitem);
+
+				SetWindowPos(((VULTURE_CONVERSATION*)tcitem.lParam)->hwndConv, HWND_TOP, 0, 0, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
+
+				return 0;
+			}
+		}
+
+		break;
+
 	case WM_SIZE:
 		lpccd = (CONVCONTAINERDATA*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 		SetWindowPos(
@@ -195,6 +238,7 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 			LOWORD(lParam),
 			HIWORD(lParam),
 			SWP_NOZORDER | SWP_NOACTIVATE);
+		ResizeConversationWindows(hwnd, GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS));
 
 		return 0;
 
@@ -243,8 +287,6 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 
 
 
-#define CONV_CONT_TAB_MARGIN	4
-
 /**
  * Dialogue procedure for conversation tabs.
  *
@@ -268,12 +310,17 @@ static INT_PTR CALLBACK ConvContTabDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wPar
 		SetWindowPos(
 			GetDlgItem(hwndDlg, IDC_TAB_CONVERSATIONS),
 			NULL,
-			CONV_CONT_TAB_MARGIN,
-			CONV_CONT_TAB_MARGIN,
-			LOWORD(lParam) - 2 * CONV_CONT_TAB_MARGIN,
-			HIWORD(lParam) - 2 * CONV_CONT_TAB_MARGIN,
+			CONV_DLG_MARGIN,
+			CONV_DLG_MARGIN,
+			LOWORD(lParam) - 2 * CONV_DLG_MARGIN,
+			HIWORD(lParam) - 2 * CONV_DLG_MARGIN,
 			SWP_NOZORDER | SWP_NOACTIVATE);
 
+		return TRUE;
+
+	case WM_NOTIFY:
+		/* Forward to parent. */
+		SendMessage(GetParent(hwndDlg), uiMsg, wParam, lParam);
 		return TRUE;
 	}
 
@@ -298,4 +345,111 @@ static void RecalcTabIndices(HWND hwndTabs)
 		TabCtrl_GetItem(hwndTabs, i, &tcitem);
 		((VULTURE_CONVERSATION*)tcitem.lParam)->iTabIndex = i;
 	}
+}
+
+
+/**
+ * Dialogue procedure for IM dialogues. Delegates processing common with chats
+ * to ConvCommonDlgProc.
+ *
+ * @param	hwndDlg		Dialogue window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Usually TRUE if message processed and FALSE otherwise. There are
+ * some exceptions for particular messages.
+ */
+static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch(uiMsg)
+	{
+	case WM_INITDIALOG:
+		/* Let the system set the focus. */
+		return TRUE;
+
+	case WM_SIZE:
+		RepositionConvControls(hwndDlg);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
+
+/**
+ * Resizes all conversation dialogues to fit in the tabs.
+ *
+ * @param	hwndConvContainer	Conversation container window.
+ * @param	hwndTabs		Tab control.
+ */
+static void ResizeConversationWindows(HWND hwndConvContainer, HWND hwndTabs)
+{
+	int i, iCount = TabCtrl_GetItemCount(hwndTabs);
+	TCITEM tcitem;
+	RECT rc;
+	HDWP hdwp;
+
+	tcitem.mask = TCIF_PARAM;
+
+	GetWindowRect(hwndTabs, &rc);
+	TabCtrl_AdjustRect(hwndTabs, FALSE, &rc);
+	MapWindowPoints(HWND_DESKTOP, hwndTabs, (LPPOINT)(void*)&rc, 2);
+
+	hdwp = BeginDeferWindowPos(iCount);
+
+	for(i = 0; i < iCount; i++)
+	{
+		TabCtrl_GetItem(hwndTabs, i, &tcitem);
+		hdwp = DeferWindowPos(
+			hdwp,
+			((VULTURE_CONVERSATION*)tcitem.lParam)->hwndConv,
+			NULL,
+			rc.left,
+			rc.top,
+			rc.right - rc.left,
+			rc.bottom - rc.top,
+			SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+
+	EndDeferWindowPos(hdwp);
+}
+
+
+#define CONV_TOP_MARGIN		48
+
+/**
+ * Repositions and resizes controls in a conversation window.
+ *
+ * @param	hwndConvDlg	Conversation window.
+ */
+static void RepositionConvControls(HWND hwndConvDlg)
+{
+	RECT rcClient;
+	HDWP hdwp = BeginDeferWindowPos(2);
+
+	GetClientRect(hwndConvDlg, &rcClient);
+
+	hdwp = DeferWindowPos(
+		hdwp,
+		GetDlgItem(hwndConvDlg, IDC_RICHEDIT_CONV),
+		NULL,
+		CONV_DLG_MARGIN,
+		CONV_DLG_MARGIN + CONV_TOP_MARGIN,
+		rcClient.right - 2 * CONV_DLG_MARGIN,
+		rcClient.bottom - g_cyInput - 3 * CONV_DLG_MARGIN - CONV_TOP_MARGIN,
+		SWP_NOACTIVATE | SWP_NOZORDER);
+
+	hdwp = DeferWindowPos(
+		hdwp,
+		GetDlgItem(hwndConvDlg, IDC_RICHEDIT_INPUT),
+		NULL,
+		CONV_DLG_MARGIN,
+		rcClient.bottom - g_cyInput - CONV_DLG_MARGIN,
+		rcClient.right - 2 * CONV_DLG_MARGIN,
+		g_cyInput,
+		SWP_NOACTIVATE | SWP_NOZORDER);
+
+	EndDeferWindowPos(hdwp);
 }

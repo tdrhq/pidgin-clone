@@ -56,6 +56,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 	HANDLE hthreadPurple;
 	INITCOMMONCONTROLSEX iccx;
 	HACCEL haccel;
+	HANDLE hlibRichEdit;
 
 	g_hInstance = hinst;
 	g_hProcHeap = GetProcessHeap();
@@ -63,6 +64,16 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 	iccx.dwSize = sizeof(iccx);
 	iccx.dwICC = ICC_WIN95_CLASSES | ICC_USEREX_CLASSES;
 	InitCommonControlsEx(&iccx);
+
+	/* Attempt to load RichEdit. This needs to be done before the dialogue
+	 * manager tries to create any RichEdit controls.
+	 */
+	hlibRichEdit = LoadLibrary(TEXT("riched20.dll"));
+	if(!hlibRichEdit)
+	{
+		MessageBoxFromStringTable(NULL, IDS_ERROR_RICHEDIT, MB_ICONERROR);
+		return VEC_ERROR_RICHEDIT;
+	}
 
 	g_thread_init(NULL);
 
@@ -108,6 +119,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 	VultureShutDownLibpurple();
 
 	VultureCommandLineCleanup();
+
+	FreeLibrary(hlibRichEdit);
 
 	return msg.wParam;
 }

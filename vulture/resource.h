@@ -9,6 +9,7 @@
 #define IDR_ACCEL_MAIN                          109
 #define IDM_CONV                                111
 #define IDD_CONVCONT                            113
+#define IDD_IM                                  115
 #define IDC_TAB_CONVERSATIONS                   1001
 #define IDC_BUDDY_ICON                          1002
 #define IDC_LIST_ACCOUNTS                       1003
@@ -24,5 +25,10 @@
 #define IDC_TREE_BLIST                          40004
 #define IDS_ERROR_CONVCONTCLASS                 40004
 #define IDC_BTN_ACCOUNT_ADD                     40005
+#define IDS_ERROR_RICHEDIT                      40005
 #define IDC_BTN_ACCOUNT_PROPERTIES              40006
 #define IDC_BTN_ACCOUNT_DELETE                  40007
+#define IDC_RICHEDIT_CONV                       40008
+#define IDC_RICHEDIT_INPUT                      40010
+#define IDC_STATIC_NAME                         40011
+#define IDC_STATIC_STATUS                       40013
