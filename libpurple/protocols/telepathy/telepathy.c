@@ -298,6 +298,80 @@ contact_notify_cb (TpContact *contact,
 			"message", presence_message, NULL);
 }
 
+static void
+handle_contacts (telepathy_connection *connection_data,
+                 guint n_contacts,
+		 TpContact * const *contacts,
+		 guint n_failed,
+		 PurpleGroup *group)
+{
+	int i;
+
+	purple_debug_info("telepathy", "Contacts ready: %u (%u failed)\n", n_contacts, n_failed);
+
+	for (i = 0; i<n_contacts; ++i)
+	{
+		TpContact *contact = contacts[i];
+		PurpleBuddy *buddy;
+		guint handle;
+
+		/* the buddy might already be stored locally */
+		buddy = purple_find_buddy(connection_data->acct, tp_contact_get_identifier(contact));
+
+		if (buddy == NULL)
+		{
+			/* Buddy was not stored locally */
+			buddy = purple_buddy_new(connection_data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
+			purple_blist_add_buddy(buddy, NULL, group, NULL);
+		}
+		else
+		{
+			PurpleGroup *buddy_group = purple_buddy_get_group(buddy);
+			PurplePresence *presence = purple_buddy_get_presence(buddy);
+
+			/* is this buddy in the right group */
+			if (group != NULL && buddy_group != group)
+			{
+				purple_debug_info("telepathy", "Contact %s is not in the right group, moving him to %s\n",
+						tp_contact_get_identifier(contact), purple_group_get_name(group));
+
+				/* we should move the buddy to the right group */
+				purple_blist_remove_buddy(buddy);
+
+				buddy = purple_buddy_new(connection_data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
+				purple_blist_add_buddy(buddy, NULL, group, NULL);
+			}
+
+
+			/* we should check if it has statuses for the presence,
+			* since the prpl was not yet loaded when status_types was being called
+			*/
+			if (presence != NULL)
+			{
+				if (purple_presence_get_statuses(presence) == NULL)
+				{
+					purple_presence_add_list(presence, purple_prpl_get_statuses(connection_data->acct, presence));
+				}
+			}
+		}
+
+		/* save the contact data to be later accessible by using only the handle */
+		handle = tp_contact_get_handle(contact);
+
+		if (g_hash_table_lookup(connection_data->contacts, (gpointer)handle) == NULL)
+		{
+			telepathy_contact *contact_data = g_new0(telepathy_contact, 1);
+			contact_data-> contact = contact;
+
+			g_hash_table_insert(connection_data->contacts, (gpointer)handle, contact_data);
+
+			/* the notify signal will fire for any changed parameter of the contact (status, presence, avatar, alias etc.) */
+			g_object_ref(contact);
+			g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), connection_data);
+			contact_notify_cb (contact, NULL, connection_data);
+		}
+	}
+}
 
 /* this the ContactsReady callback for group channels */
 static void
@@ -318,8 +392,6 @@ group_contacts_ready_cb (TpConnection *connection,
 	}
 	else
 	{
-		int i;
-
 		PurpleGroup *group;
 
 		const gchar *group_name = tp_channel_get_identifier(data->channel);
@@ -331,67 +403,7 @@ group_contacts_ready_cb (TpConnection *connection,
 			purple_blist_add_group(group, NULL);
 		}
 
-		purple_debug_info("telepathy", "Contacts ready: %u (%u failed)\n", n_contacts, n_failed);
-		for (i = 0; i<n_contacts; ++i)
-		{
-			TpContact *contact = contacts[i];
-			PurpleBuddy *buddy;
-			guint handle;
-
-			/* the buddy might already be stored locally */
-			buddy = purple_find_buddy(data->connection_data->acct, tp_contact_get_identifier(contact));
-
-			if (buddy == NULL)
-			{
-				/* Buddy was not stored locally */
-				buddy = purple_buddy_new(data->connection_data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
-				purple_blist_add_buddy(buddy, NULL, group, NULL);
-			}
-			else
-			{
-				PurpleGroup *buddy_group = purple_buddy_get_group(buddy);
-				PurplePresence *presence = purple_buddy_get_presence(buddy);
-
-				/* is this buddy in the right group */
-				if (buddy_group != group)
-				{
-					purple_debug_info("telepathy", "Contact %s is not in the right group, moving him to %s\n",
-							tp_contact_get_identifier(contact), group_name);
-
-					/* we should move the buddy to the right group */
-					purple_blist_remove_buddy(buddy);
-
-					buddy = purple_buddy_new(data->connection_data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
-					purple_blist_add_buddy(buddy, NULL, group, NULL);
-				}
-
-
-				/* we should check if it has statuses for the presence,
-				 * since the prpl was not yet loaded when status_types was being called
-				 */
-				if (presence != NULL)
-				{
-					if (purple_presence_get_statuses(presence) == NULL)
-					{
-						purple_presence_add_list(presence, purple_prpl_get_statuses(data->connection_data->acct, presence));
-					}
-				}
-			}
-
-			handle = tp_contact_get_handle(contact);
-
-			if (g_hash_table_lookup(data->connection_data->contacts, (gpointer)handle) == NULL)
-			{
-				telepathy_contact *contact_data = g_new0(telepathy_contact, 1);
-				contact_data-> contact = contact;
-
-				g_hash_table_insert(data->connection_data->contacts, (gpointer)handle, contact_data);
-
-				g_object_ref(contact);
-				g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), data->connection_data);
-				contact_notify_cb (contact, NULL, data->connection_data);
-			}
-		}
+		handle_contacts(data->connection_data, n_contacts, contacts, n_failed, group);
 	}
 
 	/* this isn't used anywhere else except this callback */
@@ -409,64 +421,19 @@ contacts_ready_cb (TpConnection *connection,
                    gpointer user_data,
                    GObject *weak_object)
 {
+	telepathy_group *data = user_data;
+
 	if (error != NULL)
 	{
 		purple_debug_error("telepathy", "Contacts ready error: %s\n", error->message);
 	}
 	else
 	{
-		int i;
-
-		purple_debug_info("telepathy", "Contacts ready: %u (%u failed)\n", n_contacts, n_failed);
-		for (i = 0; i<n_contacts; ++i)
-		{
-			TpContact *contact = contacts[i];
-			PurpleBuddy *buddy;
-			telepathy_connection *data = user_data;
-			guint handle;
-
-			/* the buddy might already be stored locally */
-			buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
-
-			if (buddy == NULL)
-			{
-				/* Buddy was not stored locally */
-				buddy = purple_buddy_new(data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
-				purple_blist_node_set_flags((PurpleBlistNode *)buddy, 0);
-
-				purple_blist_add_buddy(buddy, NULL, NULL, NULL);
-			}
-			else
-			{
-				/* we should check if it has statuses for the presence,
-				 * since the prpl was not yet loaded when status_types was being called
-				 */
-				PurplePresence *presence = purple_buddy_get_presence(buddy);
-
-				if (presence != NULL)
-				{
-					if (purple_presence_get_statuses(presence) == NULL)
-					{
-						purple_presence_add_list(presence, purple_prpl_get_statuses(data->acct, presence));
-					}
-				}
-			}
-
-			handle = tp_contact_get_handle(contact);
-
-			if (g_hash_table_lookup(data->contacts, (gpointer)handle) == NULL)
-			{
-				telepathy_contact *contact_data = g_new0(telepathy_contact, 1);
-				contact_data->contact = contact;
-
-				g_hash_table_insert(data->contacts, (gpointer)handle, contact_data);
-
-				g_object_ref(contact);
-				g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), user_data);
-				contact_notify_cb (contact, NULL, user_data);
-			}
-		}
+		handle_contacts(data->connection_data, n_contacts, contacts, n_failed, NULL);
 	}
+
+	/* this isn't used anywhere else except this callback */
+	g_free(data);
 }
 
 static void
@@ -504,14 +471,15 @@ handle_list_channel (TpChannel *channel,
 	/* we want to create a TpContact for each member of this channel */
 	if (handles->len)
 	{
+		/* this struct is needed to pass both the connection data and the channel proxy */
+		telepathy_group *group = g_new0(telepathy_group, 1);
+
+		group->channel = channel;
+		group->connection_data = data;
+
 		if (handle_type == TP_HANDLE_TYPE_GROUP)
 		{
 			/* this is a user-defined group */
-			telepathy_group *group = g_new0(telepathy_group, 1);
-
-			group->channel = channel;
-			group->connection_data = data;
-
 			tp_connection_get_contacts_by_handle (connection,
 					handles->len, (const TpHandle *) handles->data,
 					G_N_ELEMENTS (features), features,
@@ -524,7 +492,7 @@ handle_list_channel (TpChannel *channel,
 					handles->len, (const TpHandle *) handles->data,
 					G_N_ELEMENTS (features), features,
 					contacts_ready_cb,
-					data, NULL, NULL);
+					group, NULL, NULL);
 		}
 
 	}
