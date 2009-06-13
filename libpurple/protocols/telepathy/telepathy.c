@@ -64,7 +64,7 @@ typedef struct
 	/* This will hold pointers to telepathy_text_channel for buddies that have an active conversation */
 	GHashTable *text_Channels;
 	
-	/* This will map contact handles to TpContact */
+	/* This will map contact handles to telepathy_contact */
 	GHashTable *contacts;
 	
 } telepathy_connection;
@@ -82,6 +82,20 @@ static void
 destroy_text_channel(telepathy_text_channel *tp_channel)
 {
 	g_free(tp_channel);
+}
+
+typedef struct
+{
+	TpContact *contact;
+
+} telepathy_contact;
+
+
+static void
+destroy_contact(telepathy_contact *contact_data)
+{
+	g_object_unref(contact_data->contact);
+	g_free(contact_data);
 }
 
 typedef struct
@@ -368,7 +382,10 @@ group_contacts_ready_cb (TpConnection *connection,
 
 			if (g_hash_table_lookup(data->connection_data->contacts, (gpointer)handle) == NULL)
 			{
-				g_hash_table_insert(data->connection_data->contacts, (gpointer)handle, contact);
+				telepathy_contact *contact_data = g_new0(telepathy_contact, 1);
+				contact_data-> contact = contact;
+
+				g_hash_table_insert(data->connection_data->contacts, (gpointer)handle, contact_data);
 
 				g_object_ref(contact);
 				g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), data->connection_data);
@@ -439,7 +456,10 @@ contacts_ready_cb (TpConnection *connection,
 
 			if (g_hash_table_lookup(data->contacts, (gpointer)handle) == NULL)
 			{
-				g_hash_table_insert(data->contacts, (gpointer)handle, contact);
+				telepathy_contact *contact_data = g_new0(telepathy_contact, 1);
+				contact_data->contact = contact;
+
+				g_hash_table_insert(data->contacts, (gpointer)handle, contact_data);
 
 				g_object_ref(contact);
 				g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), user_data);
@@ -1027,7 +1047,7 @@ status_changed_cb (TpConnection *proxy,
 		purple_connection_set_state(data->gc, PURPLE_CONNECTED);
 
 		data->text_Channels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_text_channel);
-		data->contacts = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_object_unref);
+		data->contacts = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GDestroyNotify) destroy_contact);
 	}
 	else if (arg_Status == TP_CONNECTION_STATUS_DISCONNECTED)
 	{
