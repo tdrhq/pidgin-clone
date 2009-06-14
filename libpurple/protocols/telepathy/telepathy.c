@@ -504,8 +504,16 @@ avatar_retrieved_cb (TpConnection *proxy,
 	telepathy_connection *data = user_data;
 	PurpleBuddyIcon *icon;
 	telepathy_contact *contact_data = g_hash_table_lookup(data->contacts, (gpointer)arg_Contact);
-	TpContact *contact = contact_data->contact;
+	TpContact *contact;
 	gpointer avatar;
+
+	if (contact_data == NULL)
+	{
+		purple_debug_warning("telepathy", "Updated avatar for handle %u which has no contact_data struct cached!\n", arg_Contact);
+		return;
+	}
+
+	contact = contact_data->contact;
 
 	if (contact == NULL)
 	{
@@ -518,6 +526,65 @@ avatar_retrieved_cb (TpConnection *proxy,
 	avatar = g_memdup(arg_Avatar->data, arg_Avatar->len);
 
 	icon = purple_buddy_icon_new(data->acct, tp_contact_get_identifier(contact), avatar, arg_Avatar->len, arg_Token);
+}
+
+static void
+avatar_updated_cb (TpConnection *proxy,
+                   guint arg_Contact,
+                   const gchar *arg_New_Avatar_Token,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	telepathy_connection *data = user_data;
+	telepathy_contact *contact_data = g_hash_table_lookup(data->contacts, (gpointer)arg_Contact);
+	TpContact *contact;
+	PurpleBuddy *buddy;
+	PurpleBuddyIcon *icon;
+
+	purple_debug_warning("telepathy", "Avatar token updated for %u: (%s)\n", arg_Contact, arg_New_Avatar_Token);	
+
+	if (contact_data == NULL)
+	{
+		purple_debug_warning("telepathy", "Updated avatar for handle %u which has no contact_data struct cached!\n", arg_Contact);
+		return;
+	}
+
+	contact = contact_data->contact;
+
+	if (contact == NULL)
+	{
+		purple_debug_warning("telepathy", "Updated avatar for handle %u which has no TpContact proxy chaced!\n", arg_Contact);
+		return;
+	}
+
+	buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
+
+	if (buddy == NULL)
+	{
+		purple_debug_warning("telepathy", "AvatarUpdated: There's no buddy named %s\n", tp_contact_get_identifier(contact));
+		return;
+	}
+
+	icon = purple_buddy_get_icon(buddy);
+
+	if (g_strcmp0(purple_buddy_icon_get_checksum(icon), arg_New_Avatar_Token) != 0)
+	{
+		/* updated the buddy avatar */
+		GArray *avatar_handles;
+
+		purple_debug_info("telepathy", "Avatar for %u (%s) has changed! Calling RequestAvatars\n", arg_Contact, tp_contact_get_identifier(contact));
+
+		avatar_handles = g_array_new(FALSE, FALSE, sizeof(guint));
+
+		g_array_append_val(avatar_handles, arg_Contact);
+
+		tp_cli_connection_interface_avatars_call_request_avatars(data->connection, -1,
+				avatar_handles,
+				request_avatars_cb, data,
+				NULL, NULL);
+
+		g_array_free(avatar_handles, TRUE);
+	}
 }
 
 static void
@@ -1092,6 +1159,17 @@ connection_ready_cb (TpConnection *connection,
 		if (error != NULL)
 		{
 			purple_debug_error("telepathy", "Error connecting to AvatarRetrieved signal: %s\n", error->message);
+			g_error_free(error);
+		}
+
+		tp_cli_connection_interface_avatars_connect_to_avatar_updated(connection,
+				avatar_updated_cb, data,
+				NULL, NULL,
+				&error);
+
+		if (error != NULL)
+		{
+			purple_debug_error("telepathy", "Error connecting to AvatarUpdated signal: %s\n", error->message);
 			g_error_free(error);
 		}
 
