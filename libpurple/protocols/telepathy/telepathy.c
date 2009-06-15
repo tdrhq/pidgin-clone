@@ -1145,29 +1145,46 @@ get_avatar_properties_cb (TpProxy *proxy,
 
 			if (g_strcmp0("SupportedAvatarMIMETypes", name) == 0)
 			{
-				/* TODO: Somehow manage to unpack the damn array. Really... I can't get it to work! */
-
 				/* This parameter is of dbus type "as"
-				 * It's exposed as a GValue holding a GPtrArray of (gchar *)s
+				 * It's exposed as a GValue holding a (gchar **)
 				 * Or is it now??? wtf!?
 				 */
 
-				/*
+				gchar *format = NULL;
+
 				int i;
-				//GPtrArray *arr = value;
-				GPtrArray *arr = g_value_get_boxed(val);
+				gchar **arr = g_value_get_boxed(val);
 
-				for (i = 0; i < arr->len; ++i)
+				for (i = 0; arr[i] != NULL; ++i)
 				{
-					//GValue *val = g_ptr_array_index(arr, i);
-					//const gchar *mime_type = g_value_get_string(val);
-					const gchar *mime_type = g_ptr_array_index(arr, i);
-					purple_debug_info("telepathy", "    %s\n", mime_type);
-				}
-				*/
+					const gchar *mime_type = arr[i];
 
-				/* until then, default to the usual types */
-				icon_spec.format = "jpeg,png,gif";
+					int j;
+
+					/* We want to get the part after the / 
+					 * Split the string using / as a delimiter and use the last part
+					 */
+					gchar **split = g_strsplit(mime_type, "/", 0);
+					gchar *old = format;
+
+					/* j will be the last non-NULL token */
+					for (j = 0; split[j] != NULL; ++j);
+					--j;
+
+
+					/* if this is the first type, don't prepend a comma */
+					if (i == 0)
+						format = g_strdup(split[j]);
+					else
+						format = g_strdup_printf("%s,%s", format, split[j]);
+
+					g_free(old);
+					g_strfreev(split);
+				}
+
+				purple_debug_info("telepathy", "    Supported types: %s\n", format);
+
+				icon_spec.format = format;
 			}
 			else if (g_strcmp0("MinimumAvatarWidth", name) == 0)
 			{
