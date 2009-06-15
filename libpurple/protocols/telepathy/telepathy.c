@@ -1110,6 +1110,92 @@ get_channels_cb (TpProxy *proxy,
 }
 
 static void
+get_avatar_properties_cb (TpProxy *proxy,
+                          GHashTable *out_Properties,
+                          const GError *error,
+                          gpointer user_data,
+                          GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error getting avatar properties: %s\n", error->message);
+	}
+	else
+	{
+		telepathy_connection *data = user_data;
+		PurplePlugin *plugin = purple_connection_get_prpl(data->gc);
+		PurplePluginProtocolInfo *prpl_info = plugin->info->extra_info;
+
+
+		GHashTableIter iter;
+		gpointer key, value;
+
+		PurpleBuddyIconSpec icon_spec = NO_BUDDY_ICONS;
+		icon_spec.scale_rules = PURPLE_ICON_SCALE_SEND;
+
+		purple_debug_info("telepathy", "Got avatar properties!\n");
+
+		g_hash_table_iter_init(&iter, out_Properties);
+
+		/* iterate over all properties */
+		while (g_hash_table_iter_next(&iter, &key, &value))
+		{
+			gchar *name = key;
+			GValue *val = value;
+
+			if (g_strcmp0("SupportedAvatarMIMETypes", name) == 0)
+			{
+				/* TODO: Somehow manage to unpack the damn array. Really... I can't get it to work! */
+
+				/* This parameter is of dbus type "as"
+				 * It's exposed as a GValue holding a GPtrArray of (gchar *)s
+				 * Or is it now??? wtf!?
+				 */
+
+				/*
+				int i;
+				//GPtrArray *arr = value;
+				GPtrArray *arr = g_value_get_boxed(val);
+
+				for (i = 0; i < arr->len; ++i)
+				{
+					//GValue *val = g_ptr_array_index(arr, i);
+					//const gchar *mime_type = g_value_get_string(val);
+					const gchar *mime_type = g_ptr_array_index(arr, i);
+					purple_debug_info("telepathy", "    %s\n", mime_type);
+				}
+				*/
+
+				/* until then, default to the usual types */
+				icon_spec.format = "jpeg,png,gif";
+			}
+			else if (g_strcmp0("MinimumAvatarWidth", name) == 0)
+			{
+				icon_spec.min_width = g_value_get_uint(val);
+			}
+			else if (g_strcmp0("MinimumAvatarHeight", name) == 0)
+			{
+				icon_spec.min_height = g_value_get_uint(val);
+			}
+			else if (g_strcmp0("MaximumAvatarWidth", name) == 0)
+			{
+				icon_spec.max_width = g_value_get_uint(val);
+			}
+			else if (g_strcmp0("MaximumAvatarHeight", name) == 0)
+			{
+				icon_spec.max_height = g_value_get_uint(val);
+			}
+			else if (g_strcmp0("MaximumAvatarBytes", name) == 0)
+			{
+				icon_spec.max_filesize = g_value_get_uint(val);
+			}
+		}
+
+		prpl_info->icon_spec = icon_spec;
+	}
+}
+
+static void
 connection_ready_cb (TpConnection *connection,
                      const GError *error,
                      gpointer user_data)
@@ -1149,6 +1235,9 @@ connection_ready_cb (TpConnection *connection,
 		/* query the Channels property of the Requests interface */
 		tp_cli_dbus_properties_call_get(connection, -1, TP_IFACE_CONNECTION_INTERFACE_REQUESTS, "Channels", get_channels_cb, user_data, NULL, NULL);
 
+
+		/* query supported avatar formats */
+		tp_cli_dbus_properties_call_get_all(connection, -1, TP_IFACE_CONNECTION_INTERFACE_AVATARS, get_avatar_properties_cb, user_data, NULL, NULL);
 
 		/* this will be fired when an avatar for a buddy has been received */
 		tp_cli_connection_interface_avatars_connect_to_avatar_retrieved(connection,
@@ -1577,6 +1666,66 @@ telepathy_set_status (PurpleAccount *account, PurpleStatus *status)
 }
 
 static void
+set_avatar_cb (TpConnection *proxy,
+               const gchar *out_Token,
+               const GError *error,
+               gpointer user_data,
+               GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "SetAvatar error: %s\n", error->message);
+	}
+}
+
+static void
+clear_avatar_cb (TpConnection *proxy,
+                 const GError *error,
+                 gpointer user_data,
+                 GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "ClearAvatar error: %s\n", error->message);
+	}
+}
+
+static void
+telepathy_set_buddy_icon (PurpleConnection *gc, PurpleStoredImage *img)
+{
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+
+	guint size = purple_imgstore_get_size(img);
+	gchar *mime_type = g_strdup_printf("images/%s", purple_imgstore_get_extension(img));
+
+	/* different .jpg and .jpeg extensions correspond to the same MIME type */
+	if (g_strcmp0(mime_type, "images/jpg") == 0)
+	{
+		g_free(mime_type);
+		mime_type = "images/jpeg";
+	}
+
+	purple_debug_info("telepathy", "Setting icon (type: %s, size: %u)\n", mime_type, size);
+
+	if (size > 0)
+	{
+		/* copy the data to a new GArray */
+		GArray *array = g_array_sized_new(FALSE, FALSE, 1, size);
+		g_array_append_vals(array, purple_imgstore_get_data(img), size);
+
+		/* set the avatar */
+		tp_cli_connection_interface_avatars_call_set_avatar(data->connection, -1, array, mime_type, set_avatar_cb, data, NULL, NULL);
+
+		g_array_free(array, FALSE);
+	}
+	else
+	{
+		/* a 0-sized avatar means we should clear our avatar */
+		tp_cli_connection_interface_avatars_call_clear_avatar(data->connection, -1, clear_avatar_cb, data, NULL, NULL);
+	}
+}
+
+static void
 telepathy_destroy(PurplePlugin *plugin)
 {
 	purple_debug_info("telepathy", "Shutting down\n");
@@ -1641,7 +1790,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	NULL,                                /* buddy_free */
 	NULL,               /* convo_closed */
 	NULL,                  /* normalize */
-	NULL,             /* set_buddy_icon */
+	telepathy_set_buddy_icon,             /* set_buddy_icon */
 	NULL,               /* remove_group */
 	NULL,                                /* get_cb_real_name */
 	NULL,             /* set_chat_topic */
