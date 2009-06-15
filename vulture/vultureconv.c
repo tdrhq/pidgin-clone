@@ -22,6 +22,7 @@
 
 #include <windows.h>
 #include <commctrl.h>
+#include <richedit.h>
 #include <glib.h>
 
 #include "vulture.h"
@@ -452,4 +453,34 @@ static void RepositionConvControls(HWND hwndConvDlg)
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
 	EndDeferWindowPos(hdwp);
+}
+
+
+/**
+ * Displays a received message in a conversation window.
+ *
+ * @param	lpvcwrite	Conversation message data structure.
+ */
+void VultureWriteConversation(VULTURE_CONV_WRITE *lpvcwrite)
+{
+	CHARRANGE charrange;
+	int cchTime;
+	LPTSTR szTime;
+	HWND hwndRichEdit = GetDlgItem(lpvcwrite->lpvconv->hwndConv, IDC_RICHEDIT_CONV);
+
+	charrange.cpMin = charrange.cpMax = -1;
+	SendMessage(hwndRichEdit, EM_EXSETSEL, 0, (LPARAM)&charrange);
+
+	/* Build the timestamp. */
+	cchTime = GetTimeFormat(LOCALE_USER_DEFAULT, 0, &lpvcwrite->systimeMsg, NULL, NULL, 0);
+	szTime = ProcHeapAlloc(cchTime * sizeof(TCHAR));
+	GetTimeFormat(LOCALE_USER_DEFAULT, 0, &lpvcwrite->systimeMsg, NULL, szTime, cchTime);
+	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)szTime);
+	ProcHeapFree(szTime);
+
+	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)TEXT(" "));
+	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)lpvcwrite->szName);
+	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)TEXT(": "));
+	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)lpvcwrite->szMessage);
+	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)TEXT("\n"));
 }

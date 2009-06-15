@@ -20,6 +20,10 @@ WINAPP := -mwindows
 
 LDFLAGS := $(WINAPP)
 
+#ifdef DEBUG
+CFLAGS += -O0
+#endif
+
 DEFINES += -DUNICODE \
 			-D_UNICODE \
 			-D_WIN32_WINNT=0x0400 \

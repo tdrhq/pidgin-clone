@@ -23,6 +23,7 @@
 #ifndef _VULTURE_VULTURECONV_H_
 #define _VULTURE_VULTURECONV_H_
 
+
 #include <windows.h>
 
 #include "purple.h"
@@ -44,7 +45,18 @@ typedef struct _VULTURE_CONVERSATION
 } VULTURE_CONVERSATION;
 
 
+typedef struct _VULTURE_CONV_WRITE
+{
+	VULTURE_CONVERSATION	*lpvconv;
+	LPTSTR			szName;
+	LPTSTR			szMessage;
+	SYSTEMTIME		systimeMsg;
+} VULTURE_CONV_WRITE;
+
+
 int VultureRegisterConvContainerWindowClass(void);
 HWND VultureCreateConvContainer(void);
+void VultureWriteConversation(VULTURE_CONV_WRITE *lpvcwrite);
+
 
 #endif

@@ -24,6 +24,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <glib.h>
+#include <time.h>
 
 #include "vulture.h"
 #include "resource.h"
@@ -171,4 +172,23 @@ int MessageBoxFromStringTable(HWND hwnd, WORD wResourceString, UINT uiType)
 	ProcHeapFree(szBuffer);
 
 	return iRet;
+}
+
+
+/**
+ * Converts a time_t to a SYSTEMTIME. Adapted from "Converting a time_t Value
+ * to a File Time" from the Windows SDK.
+ *
+ * @param	t		Time to convert.
+ * @param[out]	lpsystime	Converted time.
+ */
+void VultureTimetToSystemTime(time_t t, LPSYSTEMTIME lpsystime)
+{
+	FILETIME filetime;
+	LONGLONG ll = Int32x32To64(t, 10000000) + 116444736000000000LL;
+
+	filetime.dwLowDateTime = (DWORD)ll;
+	filetime.dwHighDateTime = ll >> 32;
+
+	FileTimeToSystemTime(&filetime, lpsystime);
 }

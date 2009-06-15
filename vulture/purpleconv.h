@@ -23,12 +23,15 @@
 #ifndef _VULTURE_PURPLECONV_H_
 #define _VULTURE_PURPLECONV_H_
 
+
 #include "purple.h"
 #include "vultureconv.h"
 
 void PurpleNewConversation(PurpleConversation *lpconv);
 void VultureFreeConversation(VULTURE_CONVERSATION *lpvconv);
 void PurpleDestroyConversation(PurpleConversation *lpconv);
+void PurpleWriteConversation(PurpleConversation *lpconv, const char *szName, const char *szAlias, const char *szMessage, PurpleMessageFlags pmflags, time_t timeMsg);
+void VultureFreeConvWrite(VULTURE_CONV_WRITE *lpvcwrite);
 
 
 #endif

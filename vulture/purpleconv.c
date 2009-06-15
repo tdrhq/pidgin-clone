@@ -22,6 +22,7 @@
 
 #include <windows.h>
 #include <glib.h>
+#include <time.h>
 
 #include "vulture.h"
 #include "purple.h"
@@ -80,4 +81,43 @@ void VultureFreeConversation(VULTURE_CONVERSATION *lpvconv)
 void PurpleDestroyConversation(PurpleConversation *lpconv)
 {
 	VulturePostUIMessage(g_hwndMain, VUIMSG_DESTROYEDCONVERSATION, (VULTURE_CONVERSATION*)lpconv->ui_data);
+}
+
+
+
+/**
+ * PurpleConversationUiOps::write_conv callback. Called when a message is to be
+ * displayed in a conversation.
+ *
+ * @param	lpconv		Conversation.
+ * @param	szName		Username.
+ * @param	szAlias		Alias.
+ * @param	szMessage	Message.
+ * @param	pmflags		Message flags.
+ * @param	timeMsg		Time of message.
+ */
+void PurpleWriteConversation(PurpleConversation *lpconv, const char *szName, const char *szAlias, const char *szMessage, PurpleMessageFlags pmflags, time_t timeMsg)
+{
+	VULTURE_CONV_WRITE *lpvcwrite = g_new(VULTURE_CONV_WRITE, 1);
+
+	lpvcwrite->lpvconv = lpconv->ui_data;
+	lpvcwrite->szName = VultureUTF8ToTCHAR(szAlias ? szAlias : szName);
+	lpvcwrite->szMessage = VultureUTF8ToTCHAR(szMessage);
+	VultureTimetToSystemTime(timeMsg, &lpvcwrite->systimeMsg);
+
+	VulturePostUIMessage(g_hwndMain, VUIMSG_WRITECONVERSATION, lpvcwrite);
+} 
+
+
+/**
+ * Called by the UI to free the data allocated by PurpleWriteConversation when
+ * the UI is done with it.
+ *
+ * @param	lpvcwrite	Data to free.
+ */
+void VultureFreeConvWrite(VULTURE_CONV_WRITE *lpvcwrite)
+{
+	g_free(lpvcwrite->szMessage);
+	g_free(lpvcwrite->szName);
+	g_free(lpvcwrite);
 }

@@ -34,6 +34,7 @@
 #include "purpleacct.h"
 #include "purplemain.h"
 #include "vultureconv.h"
+#include "purpleconv.h"
 
 
 static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
@@ -194,92 +195,104 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		break;
 
 	case WM_PURPLEUIMSG:
-		switch(wParam)
 		{
-		case VUIMSG_PURPLEINITCOMPLETE:
+			HWND hwndForward = NULL;
+
+			switch(wParam)
 			{
-				int i, iCount;
-				HMENU hmenu = GetMenu(hwnd);
-
-				PopulateStatusList(GetDlgItem(s_hwndStatusDlg, IDC_CBEX_STATUS));
-
-				EnableWindow(s_hwndStatusDlg, TRUE);
-				EnableWindow(s_hwndBListDlg, TRUE);
-
-				iCount = GetMenuItemCount(hmenu);
-				for(i = 0; i < iCount; i++)
-					EnableMenuItem(hmenu, i, MF_BYPOSITION | MF_ENABLED);
-				DrawMenuBar(hwnd);
-
-				s_hCursor = LoadCursor(NULL, IDC_ARROW);
-			}
-
-			break;
-
-		case VUIMSG_UPDATEBLISTNODE:
-			{
-				HWND hwndBlistTree = GetDlgItem(s_hwndBListDlg, IDC_TREE_BLIST);
-				VULTURE_BLIST_NODE *lpvbn = (VULTURE_BLIST_NODE*)lParam;
-
-				EnterCriticalSection(&lpvbn->cs);
+			case VUIMSG_PURPLEINITCOMPLETE:
 				{
-					TVITEM tvitem;
+					int i, iCount;
+					HMENU hmenu = GetMenu(hwnd);
 
-					if(lpvbn->hti)
-					{
-						HTREEITEM htiParent = TreeView_GetParent(hwndBlistTree, lpvbn->hti);
+					PopulateStatusList(GetDlgItem(s_hwndStatusDlg, IDC_CBEX_STATUS));
 
-						/* If the parent doesn't match, we need
-						 * to recreate.
-						 */
-						if((lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti != htiParent) ||
-							(!lpvbn->lpvbnParent && htiParent))
-						{
-							TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
-							lpvbn->hti = NULL;
-						}
-					}
+					EnableWindow(s_hwndStatusDlg, TRUE);
+					EnableWindow(s_hwndBListDlg, TRUE);
 
+					iCount = GetMenuItemCount(hmenu);
+					for(i = 0; i < iCount; i++)
+						EnableMenuItem(hmenu, i, MF_BYPOSITION | MF_ENABLED);
+					DrawMenuBar(hwnd);
 
-					/* New node? */
-					if(!lpvbn->hti)
-					{
-						TVINSERTSTRUCT tvis;
-
-						tvis.hParent = lpvbn->lpvbnParent ? lpvbn->lpvbnParent->hti : TVI_ROOT;
-						tvis.hInsertAfter = TVI_SORT;
-						tvis.itemex.mask = TVIF_PARAM;
-						tvis.itemex.lParam = lParam;
-
-						lpvbn->hti = TreeView_InsertItem(hwndBlistTree, &tvis);
-					}
-
-					/* Set text. */
-					tvitem.mask = TVIF_TEXT | TVIF_HANDLE;
-					tvitem.hItem = lpvbn->hti;
-					tvitem.pszText = lpvbn->szNodeText;
-					TreeView_SetItem(hwndBlistTree, &tvitem);
+					s_hCursor = LoadCursor(NULL, IDC_ARROW);
 				}
-				LeaveCriticalSection(&lpvbn->cs);
+
+				break;
+
+			case VUIMSG_UPDATEBLISTNODE:
+				{
+					HWND hwndBlistTree = GetDlgItem(s_hwndBListDlg, IDC_TREE_BLIST);
+					VULTURE_BLIST_NODE *lpvbn = (VULTURE_BLIST_NODE*)lParam;
+
+					EnterCriticalSection(&lpvbn->cs);
+					{
+						TVITEM tvitem;
+
+						if(lpvbn->hti)
+						{
+							HTREEITEM htiParent = TreeView_GetParent(hwndBlistTree, lpvbn->hti);
+
+							/* If the parent doesn't match, we need
+							 * to recreate.
+							 */
+							if((lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti != htiParent) ||
+								(!lpvbn->lpvbnParent && htiParent))
+							{
+								TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
+								lpvbn->hti = NULL;
+							}
+						}
+
+
+						/* New node? */
+						if(!lpvbn->hti)
+						{
+							TVINSERTSTRUCT tvis;
+
+							tvis.hParent = lpvbn->lpvbnParent ? lpvbn->lpvbnParent->hti : TVI_ROOT;
+							tvis.hInsertAfter = TVI_SORT;
+							tvis.itemex.mask = TVIF_PARAM;
+							tvis.itemex.lParam = lParam;
+
+							lpvbn->hti = TreeView_InsertItem(hwndBlistTree, &tvis);
+						}
+
+						/* Set text. */
+						tvitem.mask = TVIF_TEXT | TVIF_HANDLE;
+						tvitem.hItem = lpvbn->hti;
+						tvitem.pszText = lpvbn->szNodeText;
+						TreeView_SetItem(hwndBlistTree, &tvitem);
+					}
+					LeaveCriticalSection(&lpvbn->cs);
+				}
+
+				break;
+
+			case VUIMSG_NEWCONVERSATION:
+				if(!g_lpglistConvContainers)
+					g_lpglistConvContainers = g_list_prepend(g_lpglistConvContainers, VultureCreateConvContainer());
+
+				/* Fall through. */
+				
+			case VUIMSG_DESTROYEDCONVERSATION:
+				/* Forward the message to the first container. */
+				hwndForward = (HWND)g_lpglistConvContainers->data;
+				break;
+
+			case VUIMSG_WRITECONVERSATION:
+				VultureWriteConversation((VULTURE_CONV_WRITE*)lParam);
+				VultureFreeConvWrite((VULTURE_CONV_WRITE*)lParam);
+				break;
+
+			case VUIMSG_QUIT:
+				DestroyWindow(hwnd);
+				break;
 			}
 
-			break;
-
-		case VUIMSG_NEWCONVERSATION:
-			if(!g_lpglistConvContainers)
-				g_lpglistConvContainers = g_list_prepend(g_lpglistConvContainers, VultureCreateConvContainer());
-
-			/* Fall through. */
-			
-		case VUIMSG_DESTROYEDCONVERSATION:
-			/* Forward the message to the first container. */
-			SendMessage((HWND)g_lpglistConvContainers->data, uiMsg, wParam, lParam);
-
-			break;
-
-		case VUIMSG_QUIT:
-			DestroyWindow(hwnd);
-			break;
+			/* If we specified a window, forward the message. */
+			if(hwndForward)
+				SendMessage(hwndForward, uiMsg, wParam, lParam);
 		}
 
 		return 0;
