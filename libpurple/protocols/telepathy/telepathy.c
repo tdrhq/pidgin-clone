@@ -565,6 +565,14 @@ avatar_updated_cb (TpConnection *proxy,
 		return;
 	}
 
+	/* clear the avatar in case of an empty token */
+	if (*arg_New_Avatar_Token == 0)
+	{
+		purple_buddy_icons_set_for_user(data->acct, tp_contact_get_identifier(contact), NULL, 0, "");
+		return;
+	}
+
+
 	icon = purple_buddy_get_icon(buddy);
 
 	if (g_strcmp0(purple_buddy_icon_get_checksum(icon), arg_New_Avatar_Token) != 0)
