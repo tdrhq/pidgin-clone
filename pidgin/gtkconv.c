@@ -5547,8 +5547,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	PurpleConversationType type;
 	char *displaying;
 	gboolean plugin_return;
-	char *bracket;
-	int tag_count = 0;
 	gboolean is_rtl_message = FALSE;
 
 	g_return_if_fail(conv != NULL);
@@ -5611,8 +5609,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
 
 	/* if the buffer is not empty add a <br> */
-	if (!gtk_webview_is_empty (gtkconv->webview))
-		gtk_webview_append_html (gtkconv->webview, "<br />");
+	if (!gtk_webview_is_empty (GTK_WEBVIEW(gtkconv->webview)))
+		gtk_webview_append_html (GTK_WEBVIEW(gtkconv->webview), "<br />");
 
 	/* First message in a conversation. */
 	if (gtkconv->newday == 0)
