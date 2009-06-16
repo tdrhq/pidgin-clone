@@ -5,19 +5,12 @@
 #include <glib/gstdio.h>
 #include <JavaScriptCore/JavaScript.h>
 
-#include "gtkwebview.h"
 #include "util.h"
+#include "gtkwebview.h"
 
 static WebKitWebViewClass *parent_class = NULL;
 
-void
-gtk_webview_append_text (GtkWebView *message_view)
-{
-
-}
-
-GtkWidget*
-gtk_webview_new ()
+GtkWidget* gtk_webview_new ()
 {
 	return GTK_WIDGET(g_object_new(gtk_webview_get_type(), NULL));
 }

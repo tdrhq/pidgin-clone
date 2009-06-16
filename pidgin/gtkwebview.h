@@ -1,3 +1,5 @@
+#ifndef _PIDGIN_WEBVIEW_H_
+#define _PIDGIN_WEBVIEW_H_
 
 #include <glib.h>
 #include <gtk/gtk.h>
@@ -53,3 +55,5 @@ gtk_webview_get_markup (GtkWebView *view);
 
 char*
 gtk_webview_get_text (GtkWebView *view);
+
+#endif
