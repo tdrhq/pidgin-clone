@@ -37,9 +37,6 @@ typedef struct _VULTURE_BLIST_NODE
 } VULTURE_BLIST_NODE;
 
 
-#define WM_PURPLEUIMSG	WM_APP
-
-
 extern HWND g_hwndMain;
 GList *g_lpglistConvContainers;
 

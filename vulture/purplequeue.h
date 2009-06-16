@@ -53,6 +53,9 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_CONVERSATION*) Conversation to destroy. */
 	PC_DESTROYCONVERSATION,
+
+	/* (VULTURE_CONV_SEND*) Conversation send-message details. */
+	PC_CONVSEND,
 };
 
 

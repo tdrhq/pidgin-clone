@@ -53,6 +53,7 @@ static void RecalcTabIndices(HWND hwndTabs);
 static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void ResizeConversationWindows(HWND hwndConvContainer, HWND hwndTabs);
 static void RepositionConvControls(HWND hwndConvDlg);
+static LRESULT CALLBACK InputBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 
 
 /**
@@ -162,7 +163,7 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				LeaveCriticalSection(&lpvconv->sync.cs);
 
 				/* Create conversation dialogue. */
-				lpvconv->hwndConv = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_IM), hwndTabs, IMDlgProc);
+				lpvconv->hwndConv = CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_IM), hwndTabs, IMDlgProc, (LPARAM)lpvconv);
 
 				ResizeConversationWindows(hwnd, hwndTabs);
 			}
@@ -363,10 +364,59 @@ static void RecalcTabIndices(HWND hwndTabs)
  */
 static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
+	VULTURE_CONVERSATION *lpvconv;
+
 	switch(uiMsg)
 	{
 	case WM_INITDIALOG:
+		{
+			HWND hwndREInput = GetDlgItem(hwndDlg, IDC_RICHEDIT_INPUT);
+
+			/* Remember the conversation. */
+			lpvconv = (VULTURE_CONVERSATION*)lParam;
+			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, lParam);
+
+			/* Subclass the input box. */
+			lpvconv->wndprocInputOrig = (WNDPROC)GetWindowLongPtr(hwndREInput, GWLP_WNDPROC);
+			SetWindowLongPtr(hwndREInput, GWLP_WNDPROC, (LONG)InputBoxSubclassProc);
+		}
+		
 		/* Let the system set the focus. */
+		return TRUE;
+
+	case WM_INPUTENTER:
+		/* User pressed Enter in input box. Send message. */
+		if(GetWindowTextLength((HWND)lParam) > 0)
+		{
+			VULTURE_CONV_SEND *lpvcsend = ProcHeapAlloc(sizeof(VULTURE_CONV_SEND));
+			GETTEXTLENGTHEX gtlex;
+			GETTEXTEX gettextex;
+			int cchInput;
+
+#ifdef UNICODE
+			const UINT c_codepage = 1200;
+#else
+			const UINT c_codepage = CP_ACP;
+#endif
+
+			gtlex.flags = GTL_CLOSE | GTL_NUMCHARS;
+			gtlex.codepage = c_codepage;
+			cchInput = SendMessage((HWND)lParam, EM_GETTEXTLENGTHEX, (WPARAM)&gtlex, 0) + 1;
+			lpvcsend->szMessage = ProcHeapAlloc(cchInput * sizeof(TCHAR));
+
+			gettextex.cb = cchInput * sizeof(TCHAR);
+			gettextex.codepage = c_codepage;
+			gettextex.flags = GT_DEFAULT;
+			gettextex.lpDefaultChar = NULL;
+			gettextex.lpUsedDefChar = NULL;
+			SendMessage((HWND)lParam, EM_GETTEXTEX, (WPARAM)&gettextex, (LPARAM)lpvcsend->szMessage);
+
+			SetWindowText((HWND)lParam, TEXT(""));
+
+			lpvcsend->lpvconv = (VULTURE_CONVERSATION*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
+			VultureEnqueueAsyncPurpleCall(PC_CONVSEND, lpvcsend);
+		}
+
 		return TRUE;
 
 	case WM_SIZE:
@@ -483,4 +533,45 @@ void VultureWriteConversation(VULTURE_CONV_WRITE *lpvcwrite)
 	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)TEXT(": "));
 	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)lpvcwrite->szMessage);
 	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)TEXT("\n"));
+}
+
+
+/**
+ * Subclassing window procedure for input Rich Edit control in conversation
+ * windows.
+ *
+ * @param	hwnd		Input box window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Message-specific.
+ */
+static LRESULT CALLBACK InputBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
+	VULTURE_CONVERSATION *lpvconv;
+	HWND hwndParent = GetParent(hwnd);
+
+	/* Intercept the Enter key. */
+	if(uiMsg == WM_KEYDOWN && wParam == VK_RETURN && !(GetKeyState(VK_SHIFT) & 0x8000))
+	{
+		SendMessage(hwndParent, WM_INPUTENTER, 0, (LPARAM)hwnd);
+		return 0;
+	}
+
+	lpvconv = (VULTURE_CONVERSATION*)GetWindowLongPtr(hwndParent, GWLP_USERDATA);
+	return CallWindowProc(lpvconv->wndprocInputOrig, hwnd, uiMsg, wParam, lParam);
+}
+
+
+/**
+ * Called by the core to free the data allocated when sending a message when
+ * it's done with it.
+ *
+ * @param	lpvcsend	Data to free.
+ */
+void VultureFreeConvSend(VULTURE_CONV_SEND *lpvcsend)
+{
+	ProcHeapFree(lpvcsend->szMessage);
+	ProcHeapFree(lpvcsend);
 }

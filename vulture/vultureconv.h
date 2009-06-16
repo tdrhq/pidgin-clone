@@ -35,6 +35,7 @@ typedef struct _VULTURE_CONVERSATION
 	HWND			hwndConv;
 	HWND			hwndContainer;
 	int			iTabIndex;
+	WNDPROC			wndprocInputOrig;
 
 	/* Data still needed by the core thread after initialisation. */
 	struct
@@ -53,10 +54,17 @@ typedef struct _VULTURE_CONV_WRITE
 	SYSTEMTIME		systimeMsg;
 } VULTURE_CONV_WRITE;
 
+typedef struct _VULTURE_CONV_SEND
+{
+	VULTURE_CONVERSATION	*lpvconv;
+	LPTSTR			szMessage;
+} VULTURE_CONV_SEND;
+
 
 int VultureRegisterConvContainerWindowClass(void);
 HWND VultureCreateConvContainer(void);
 void VultureWriteConversation(VULTURE_CONV_WRITE *lpvcwrite);
+void VultureFreeConvSend(VULTURE_CONV_SEND *lpvcsend);
 
 
 #endif

@@ -32,6 +32,7 @@ void VultureFreeConversation(VULTURE_CONVERSATION *lpvconv);
 void PurpleDestroyConversation(PurpleConversation *lpconv);
 void PurpleWriteConversation(PurpleConversation *lpconv, const char *szName, const char *szAlias, const char *szMessage, PurpleMessageFlags pmflags, time_t timeMsg);
 void VultureFreeConvWrite(VULTURE_CONV_WRITE *lpvcwrite);
+void PurpleConversationSend(VULTURE_CONV_SEND *lpvcsend);
 
 
 #endif

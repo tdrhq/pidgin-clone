@@ -121,3 +121,22 @@ void VultureFreeConvWrite(VULTURE_CONV_WRITE *lpvcwrite)
 	g_free(lpvcwrite->szName);
 	g_free(lpvcwrite);
 }
+
+
+/**
+ * Sends a message.
+ *
+ * @param	lpvcsend	Details of message to send.
+ */
+void PurpleConversationSend(VULTURE_CONV_SEND *lpvcsend)
+{
+	char *szMessage = VultureTCHARToUTF8(lpvcsend->szMessage);
+
+	/* Send to IM or chat, as appropriate. */
+	if(lpvcsend->lpvconv->lpconv->type == PURPLE_CONV_TYPE_IM)
+		purple_conv_im_send(lpvcsend->lpvconv->lpconv->u.im, szMessage);
+	else
+		purple_conv_chat_send(lpvcsend->lpvconv->lpconv->u.chat, szMessage);
+
+	g_free(szMessage);
+}
