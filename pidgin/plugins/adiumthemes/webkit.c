@@ -81,7 +81,8 @@ char *style_dir = NULL;
 char *template_path = NULL;
 char *css_path = NULL;
 
-char *replace_message_tokens(char *text, gsize len, PurpleConversation *conv, const char *name, const char *alias, 
+static char *
+replace_message_tokens(char *text, gsize len, PurpleConversation *conv, const char *name, const char *alias, 
 			     const char *message, PurpleMessageFlags flags, time_t mtime)
 {
 	GString *str = g_string_new_len(NULL, len);
@@ -157,7 +158,8 @@ char *replace_message_tokens(char *text, gsize len, PurpleConversation *conv, co
 	return g_string_free(str, FALSE);
 }
 
-char *replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
+static char *
+replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
 {
 	GString *str = g_string_new_len(NULL, len);
 	char *cur = text;
@@ -221,7 +223,8 @@ char *replace_header_tokens(char *text, gsize len, PurpleConversation *conv)
 	return g_string_free(str, FALSE);
 }
 
-char *replace_template_tokens(char *text, int len, char *header, char *footer) {
+static char *
+replace_template_tokens(char *text, int len, char *header, char *footer) {
 	GString *str = g_string_new_len(NULL, len);
 
 	char **ms = g_strsplit(text, "%@", 6);
@@ -262,7 +265,8 @@ char *replace_template_tokens(char *text, int len, char *header, char *footer) {
 	return ret;
 }
 
-GtkWidget *get_webkit(PurpleConversation *conv)
+static GtkWidget *
+get_webkit(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv;
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -380,11 +384,11 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
         return (*len > 0);
 }
 
-char *escape_message(char *text)
+static char *
+escape_message(char *text)
 {
 	GString *str = g_string_new(NULL);
 	char *cur = text;
-	int smileylen = 0;
 
 	while (cur && *cur) {
 		switch (*cur) {
@@ -506,8 +510,15 @@ plugin_load(PurplePlugin *plugin)
 {
 	GList *list;
 	char *file;
-	
-	style_dir = g_build_filename(purple_user_dir(), "style", NULL);
+
+	if (g_path_is_absolute (purple_user_dir())) 
+		style_dir = g_build_filename(purple_user_dir(), "style", NULL);
+	else {
+		char* cur = g_get_current_dir ();
+		style_dir = g_build_filename (cur, purple_user_dir(), "style", NULL);
+		g_free (cur);
+	}
+
 
 	css_path = g_build_filename(style_dir, "Contents", "Resources", "Variants", "Blue vs Green.css", NULL, "_default.css", NULL);
 
