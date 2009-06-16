@@ -37,7 +37,13 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 ##  SOURCES, OBJECTS
 ##
-C_SRC =			telepathy.c
+C_SRC =			telepathy.c \
+			telepathy_avatar.c \
+			telepathy_channel.c \
+			telepathy_channel_list.c \
+			telepathy_channel_text.c \
+			telepathy_connection.c \
+			telepathy_contact.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 

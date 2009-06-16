@@ -1,0 +1,215 @@
+/**
+ * purple - Telepathy Protocol Plugin
+ *
+ * Copyright (C) 2009, Felix Kerekes <sttwister@soc.pidgin.im>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+
+#include "telepathy_contact.h"
+
+#include "debug.h"
+
+#include "telepathy_avatar.h"
+#include "telepathy_channel_list.h"
+
+void
+destroy_contact(telepathy_contact *contact_data)
+{
+	g_object_unref(contact_data->contact);
+	g_free(contact_data);
+}
+
+void
+contact_notify_cb (TpContact *contact,
+		   GParamSpec *pspec,
+		   gpointer user_data)
+{
+	telepathy_connection *data = user_data;
+
+	const gchar *name = tp_contact_get_identifier(contact);
+	const gchar *presence_status = tp_contact_get_presence_status(contact);
+	const gchar *presence_message = tp_contact_get_presence_message(contact);
+	const gchar *alias = tp_contact_get_alias(contact);
+
+	PurpleBuddy *buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
+
+	if (buddy == NULL)
+	{
+		purple_debug_warning("telepathy", "Received TpContact notify for non-existent buddy (%s)!\n", name);
+		return;
+	}
+
+	purple_blist_alias_buddy(buddy, alias);
+
+	purple_prpl_got_user_status(data->acct, name, presence_status,
+			"message", presence_message, NULL);
+}
+
+void
+handle_contacts (telepathy_connection *connection_data,
+                 guint n_contacts,
+		 TpContact * const *contacts,
+		 guint n_failed,
+		 PurpleGroup *group)
+{
+	int i;
+	GArray *avatar_handles = g_array_new(FALSE, FALSE, sizeof(guint));
+
+	purple_debug_info("telepathy", "Contacts ready: %u (%u failed)\n", n_contacts, n_failed);
+
+	for (i = 0; i<n_contacts; ++i)
+	{
+		TpContact *contact = contacts[i];
+		PurpleBuddy *buddy;
+		guint handle;
+		telepathy_contact *contact_data;
+
+		/* the buddy might already be stored locally */
+		buddy = purple_find_buddy(connection_data->acct, tp_contact_get_identifier(contact));
+
+		if (buddy == NULL)
+		{
+			/* Buddy was not stored locally */
+			buddy = purple_buddy_new(connection_data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
+			purple_blist_add_buddy(buddy, NULL, group, NULL);
+		}
+		else
+		{
+			PurpleGroup *buddy_group = purple_buddy_get_group(buddy);
+			PurplePresence *presence = purple_buddy_get_presence(buddy);
+
+			/* is this buddy in the right group */
+			if (group != NULL && buddy_group != group)
+			{
+				purple_debug_info("telepathy", "Contact %s is not in the right group, moving him to %s\n",
+						tp_contact_get_identifier(contact), purple_group_get_name(group));
+
+				/* we should move the buddy to the right group */
+				purple_blist_remove_buddy(buddy);
+
+				buddy = purple_buddy_new(connection_data->acct, tp_contact_get_identifier(contact), tp_contact_get_alias(contact));
+				purple_blist_add_buddy(buddy, NULL, group, NULL);
+			}
+
+
+			/* we should check if it has statuses for the presence,
+			* since the prpl was not yet loaded when status_types was being called
+			*/
+			if (presence != NULL)
+			{
+				if (purple_presence_get_statuses(presence) == NULL)
+				{
+					purple_presence_add_list(presence, purple_prpl_get_statuses(connection_data->acct, presence));
+				}
+			}
+		}
+
+		/* save the contact data to be later accessible by using only the handle */
+		handle = tp_contact_get_handle(contact);
+
+		contact_data = g_hash_table_lookup(connection_data->contacts, (gpointer)handle);
+
+		if (contact_data == NULL)
+		{
+			contact_data = g_new0(telepathy_contact, 1);
+			contact_data-> contact = contact;
+
+			g_hash_table_insert(connection_data->contacts, (gpointer)handle, contact_data);
+
+			/* the notify signal will fire for any changed parameter of the contact (status, presence, avatar, alias etc.) */
+			g_object_ref(contact);
+			g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), connection_data);
+			contact_notify_cb (contact, NULL, connection_data);
+		}
+
+		if (!contact_data->requested_avatar)
+		{
+			g_array_append_val(avatar_handles, handle);
+			contact_data->requested_avatar = TRUE;
+		}
+	}
+
+	tp_cli_connection_interface_avatars_call_request_avatars(connection_data->connection, -1,
+			avatar_handles,
+			request_avatars_cb, connection_data,
+			NULL, NULL);
+
+	g_array_free(avatar_handles, TRUE);
+}
+
+/* this the ContactsReady callback for group channels */
+void
+group_contacts_ready_cb (TpConnection *connection,
+                         guint n_contacts,
+                         TpContact * const *contacts,
+                         guint n_failed,
+                         const TpHandle *failed,
+                         const GError *error,
+                         gpointer user_data,
+                         GObject *weak_object)
+{
+	telepathy_group *data = user_data;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Contacts ready error: %s\n", error->message);
+	}
+	else
+	{
+		PurpleGroup *group;
+
+		const gchar *group_name = tp_channel_get_identifier(data->channel);
+		group = purple_find_group(group_name);
+
+		if (group == NULL)
+		{
+			group = purple_group_new(group_name);
+			purple_blist_add_group(group, NULL);
+		}
+
+		handle_contacts(data->connection_data, n_contacts, contacts, n_failed, group);
+	}
+
+	/* this isn't used anywhere else except this callback */
+	g_free(data);
+}
+
+/* this the ContactsReady callback for list channels */
+void
+contacts_ready_cb (TpConnection *connection,
+                   guint n_contacts,
+                   TpContact * const *contacts,
+                   guint n_failed,
+                   const TpHandle *failed,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	telepathy_group *data = user_data;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Contacts ready error: %s\n", error->message);
+	}
+	else
+	{
+		handle_contacts(data->connection_data, n_contacts, contacts, n_failed, NULL);
+	}
+
+	/* this isn't used anywhere else except this callback */
+	g_free(data);
+}
+

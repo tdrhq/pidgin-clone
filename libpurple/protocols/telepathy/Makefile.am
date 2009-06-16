@@ -3,7 +3,14 @@ EXTRA_DIST = \
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
-TELEPATHYSOURCES = telepathy.c
+TELEPATHYSOURCES = \
+	telepathy.c \
+	telepathy_avatar.c \
+	telepathy_channel.c \
+	telepathy_channel_list.c \
+	telepathy_channel_text.c \
+	telepathy_connection.c \
+	telepathy_contact.c
 
 AM_CFLAGS = $(st)
 
