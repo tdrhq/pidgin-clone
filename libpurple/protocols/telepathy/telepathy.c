@@ -935,6 +935,55 @@ text_channel_invalidated_cb (TpProxy *self,
 }
 
 static void
+chat_state_changed_cb (TpChannel *proxy,
+                       guint arg_Contact,
+                       guint arg_State,
+                       gpointer user_data,
+                       GObject *weak_object)
+{
+	telepathy_connection *data = user_data;
+
+	telepathy_contact *contact_data = g_hash_table_lookup(data->contacts, (gpointer)arg_Contact);
+
+	PurpleTypingState state;
+	const gchar *name;
+
+	if (contact_data == NULL)
+	{
+		purple_debug_warning("telepathy", "Chat state changed for %u who isn't cached!\n", arg_Contact);
+		return;
+	}
+
+	name = tp_contact_get_identifier(contact_data->contact);
+
+	purple_debug_info("telepathy", "Chat state changed for %s\n", name);
+
+	switch (arg_State)
+	{
+		case TP_CHANNEL_CHAT_STATE_PAUSED:
+			state = PURPLE_TYPED;
+		break;
+
+		case TP_CHANNEL_CHAT_STATE_COMPOSING:
+			state = PURPLE_TYPING;
+		break;
+
+		default:
+			state = PURPLE_NOT_TYPING;
+		break;
+	}
+
+	if (state == PURPLE_NOT_TYPING)
+	{
+		serv_got_typing_stopped(data->gc, name);
+	}
+	else
+	{
+		serv_got_typing(data->gc, name, -1, state);
+	}
+}
+
+static void
 handle_text_channel (TpChannel *channel,
                      telepathy_connection *data)
 {
@@ -957,6 +1006,13 @@ handle_text_channel (TpChannel *channel,
 	}
 
 	tp_channel->channel = channel;
+
+	tp_cli_channel_interface_chat_state_connect_to_chat_state_changed(channel, chat_state_changed_cb, data, NULL, NULL, &error);
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to ChatStateChanged signal: %s\n", error->message);
+	}
 
 	tp_cli_channel_type_text_connect_to_received(channel, received_cb, data, NULL, NULL, &error);
 
@@ -1375,6 +1431,8 @@ status_changed_cb (TpConnection *proxy,
 
 		if (data)
 		{
+			purple_connection_set_protocol_data(data->gc, NULL);
+
 			if (reason != NULL && data->gc)
 				purple_connection_error_reason(data->gc, error, reason);
 
@@ -1653,6 +1711,68 @@ telepathy_send_im (PurpleConnection *gc,
 }
 
 static void
+set_chat_state_cb (TpChannel *proxy,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "SetChatState error: %s\n", error->message);
+	}
+}
+
+static unsigned int
+telepathy_send_typing (PurpleConnection *gc, const char *name, PurpleTypingState state)
+{
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+	telepathy_text_channel *tp_channel = g_hash_table_lookup(data->text_Channels, name);
+
+	TpChannel *channel = NULL;
+	TpChannelChatState tp_state;
+	
+	if (tp_channel == NULL)
+	{
+		purple_debug_warning("telepathy", "Received typing notification for %s who doesn't have a cached telepathy_channel struct\n", name);
+		return 0;
+	}
+
+	channel = tp_channel->channel;
+
+	if (channel == NULL)
+	{
+		purple_debug_warning("telepathy", "Received typing notification for %s who doesn't have a cached TpChannel proxy\n", name);
+		return 0;
+	}
+
+	purple_debug_info("telepathy", "Sending typing notification to %s\n", name);
+
+	switch (state)
+	{
+		case PURPLE_NOT_TYPING:
+			tp_state = TP_CHANNEL_CHAT_STATE_INACTIVE;
+		break;
+
+		case PURPLE_TYPING:
+			tp_state = TP_CHANNEL_CHAT_STATE_COMPOSING;
+		break;
+
+		case PURPLE_TYPED:
+			tp_state = TP_CHANNEL_CHAT_STATE_PAUSED;
+		break;
+
+		default:
+			purple_debug_warning("telepathy", "Channel chat state defaulted to ACTIVE!\n");
+			tp_state = TP_CHANNEL_CHAT_STATE_ACTIVE;
+		break;
+	}
+
+	tp_cli_channel_interface_chat_state_call_set_chat_state(channel, -1, tp_state, set_chat_state_cb, data, NULL, NULL);
+
+	return 0;
+}
+
+static void
 set_presence_cb (TpConnection *proxy,
                  const GError *error,
                  gpointer user_data,
@@ -1776,7 +1896,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	telepathy_close,                      /* close */
 	telepathy_send_im,                    /* send_im */
 	NULL,                   /* set_info */
-	NULL,                /* send_typing */
+	telepathy_send_typing,                /* send_typing */
 	NULL,                   /* get_info */
 	telepathy_set_status,                 /* set_status */
 	NULL,                   /* set_idle */
