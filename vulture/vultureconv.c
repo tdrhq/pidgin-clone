@@ -174,6 +174,7 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				EnableAppropriateConvWindow(lpccd);
 
 				ResizeActiveConversationWindow(hwnd, hwndTabs);
+				RecalcTabIndices(hwndTabs);
 			}
 
 			break;
@@ -246,6 +247,13 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 		ResizeActiveConversationWindow(hwnd, GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS));
 
 		return 0;
+
+
+	case WM_ACTIVATE:
+		if(LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
+			FlashWindow(hwnd, FALSE);
+
+		break;
 
 
 	case WM_CLOSE:
@@ -504,7 +512,8 @@ static void RepositionConvControls(HWND hwndConvDlg)
 
 
 /**
- * Displays a received message in a conversation window.
+ * Displays a received message in a conversation window, and handles
+ * highlighting.
  *
  * @param	lpvcwrite	Conversation message data structure.
  */
@@ -514,6 +523,8 @@ void VultureWriteConversation(VULTURE_CONV_WRITE *lpvcwrite)
 	int cchTime;
 	LPTSTR szTime;
 	HWND hwndRichEdit = GetDlgItem(lpvcwrite->lpvconv->hwndConv, IDC_RICHEDIT_CONV);
+	CONVCONTAINERDATA *lpccd;
+	HWND hwndTabs;
 
 	charrange.cpMin = charrange.cpMax = -1;
 	SendMessage(hwndRichEdit, EM_EXSETSEL, 0, (LPARAM)&charrange);
@@ -530,6 +541,27 @@ void VultureWriteConversation(VULTURE_CONV_WRITE *lpvcwrite)
 	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)TEXT(": "));
 	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)lpvcwrite->szMessage);
 	SendMessage(hwndRichEdit, EM_REPLACESEL, 0, (LPARAM)TEXT("\n"));
+
+	if(GetForegroundWindow() != lpvcwrite->lpvconv->hwndContainer)
+	{
+#if (WINVER >= 0x0500)
+		FLASHWINFO flashwinfo;
+
+		SystemParametersInfo(SPI_GETFOREGROUNDFLASHCOUNT, 0, &flashwinfo.uCount, 0);
+		flashwinfo.cbSize = sizeof(flashwinfo);
+		flashwinfo.dwFlags = FLASHW_ALL;
+		flashwinfo.dwTimeout = 0;
+		flashwinfo.hwnd = lpvcwrite->lpvconv->hwndContainer;
+		FlashWindowEx(&flashwinfo);
+#else
+		FlashWindow(lpvcwrite->lpvconv->hwndContainer, TRUE);
+#endif
+	}
+
+	lpccd = (CONVCONTAINERDATA*)GetWindowLongPtr(lpvcwrite->lpvconv->hwndContainer, GWLP_USERDATA);
+	hwndTabs = GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS);
+	if(lpvcwrite->lpvconv->iTabIndex != TabCtrl_GetCurSel(hwndTabs))
+		TabCtrl_HighlightItem(hwndTabs, lpvcwrite->lpvconv->iTabIndex, TRUE);
 }
 
 
