@@ -41,6 +41,7 @@
 typedef struct _CONVCONTAINERDATA
 {
 	HWND	hwndTabDlg;
+	int	iSelectedTab;
 } CONVCONTAINERDATA;
 
 
@@ -51,9 +52,10 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 static INT_PTR CALLBACK ConvContTabDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void RecalcTabIndices(HWND hwndTabs);
 static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
-static void ResizeConversationWindows(HWND hwndConvContainer, HWND hwndTabs);
+static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs);
 static void RepositionConvControls(HWND hwndConvDlg);
 static LRESULT CALLBACK InputBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd);
 
 
 /**
@@ -126,16 +128,14 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 	switch(uiMsg)
 	{
 	case WM_CREATE:
-		{
-			RECT rcClient;
+		lpccd = (CONVCONTAINERDATA*)ProcHeapAlloc(sizeof(CONVCONTAINERDATA));
+		SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)lpccd);
 
-			lpccd = (CONVCONTAINERDATA*)ProcHeapAlloc(sizeof(CONVCONTAINERDATA));
-			SetWindowLongPtr(hwnd, GWL_USERDATA, (LONG_PTR)lpccd);
+		/* Create the tab control. */
+		lpccd->hwndTabDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_CONVCONT), hwnd, ConvContTabDlgProc);
 
-			/* Create the tab control. */
-			GetClientRect(hwnd, &rcClient);
-			lpccd->hwndTabDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_CONVCONT), hwnd, ConvContTabDlgProc);
-		}
+		/* No tab selected initially. */
+		lpccd->iSelectedTab = -1;
 
 		return 0;
 
@@ -162,10 +162,18 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 					lpvconv->iTabIndex = TabCtrl_InsertItem(hwndTabs, TabCtrl_GetItemCount(hwndTabs), &tcitem);
 				LeaveCriticalSection(&lpvconv->sync.cs);
 
-				/* Create conversation dialogue. */
+				/* Create conversation dialogue. It is
+				 * initially disabled and hidden.
+				 */
 				lpvconv->hwndConv = CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_IM), hwndTabs, IMDlgProc, (LPARAM)lpvconv);
+				SetWindowPos(lpvconv->hwndConv, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
 
-				ResizeConversationWindows(hwnd, hwndTabs);
+				/* Only strictly necessary if we're the only
+				 * tab.
+				 */
+				EnableAppropriateConvWindow(lpccd);
+
+				ResizeActiveConversationWindow(hwnd, hwndTabs);
 			}
 
 			break;
@@ -217,13 +225,8 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 
 			if(lpnmhdr->idFrom == IDC_TAB_CONVERSATIONS && lpnmhdr->code == TCN_SELCHANGE)
 			{
-				TCITEM tcitem;
-
-				tcitem.mask = TCIF_PARAM;
-				TabCtrl_GetItem(lpnmhdr->hwndFrom, TabCtrl_GetCurSel(lpnmhdr->hwndFrom), &tcitem);
-
-				SetWindowPos(((VULTURE_CONVERSATION*)tcitem.lParam)->hwndConv, HWND_TOP, 0, 0, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
-
+				EnableAppropriateConvWindow((CONVCONTAINERDATA*)GetWindowLongPtr(hwnd, GWLP_USERDATA));
+				ResizeActiveConversationWindow(hwnd, lpnmhdr->hwndFrom);
 				return 0;
 			}
 		}
@@ -240,7 +243,7 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 			LOWORD(lParam),
 			HIWORD(lParam),
 			SWP_NOZORDER | SWP_NOACTIVATE);
-		ResizeConversationWindows(hwnd, GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS));
+		ResizeActiveConversationWindow(hwnd, GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS));
 
 		return 0;
 
@@ -430,17 +433,16 @@ static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARA
 
 
 /**
- * Resizes all conversation dialogues to fit in the tabs.
+ * Resizes active conversation dialogue to fit in the tab.
  *
  * @param	hwndConvContainer	Conversation container window.
  * @param	hwndTabs		Tab control.
  */
-static void ResizeConversationWindows(HWND hwndConvContainer, HWND hwndTabs)
+static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs)
 {
-	int i, iCount = TabCtrl_GetItemCount(hwndTabs);
 	TCITEM tcitem;
 	RECT rc;
-	HDWP hdwp;
+	CONVCONTAINERDATA *lpccd = (CONVCONTAINERDATA*)GetWindowLongPtr(hwndConvContainer, GWLP_USERDATA);
 
 	tcitem.mask = TCIF_PARAM;
 
@@ -448,13 +450,10 @@ static void ResizeConversationWindows(HWND hwndConvContainer, HWND hwndTabs)
 	TabCtrl_AdjustRect(hwndTabs, FALSE, &rc);
 	MapWindowPoints(HWND_DESKTOP, hwndTabs, (LPPOINT)(void*)&rc, 2);
 
-	hdwp = BeginDeferWindowPos(iCount);
-
-	for(i = 0; i < iCount; i++)
+	if(lpccd->iSelectedTab >= 0)
 	{
-		TabCtrl_GetItem(hwndTabs, i, &tcitem);
-		hdwp = DeferWindowPos(
-			hdwp,
+		TabCtrl_GetItem(hwndTabs, lpccd->iSelectedTab, &tcitem);
+		SetWindowPos(
 			((VULTURE_CONVERSATION*)tcitem.lParam)->hwndConv,
 			NULL,
 			rc.left,
@@ -463,8 +462,6 @@ static void ResizeConversationWindows(HWND hwndConvContainer, HWND hwndTabs)
 			rc.bottom - rc.top,
 			SWP_NOZORDER | SWP_NOACTIVATE);
 	}
-
-	EndDeferWindowPos(hdwp);
 }
 
 
@@ -574,4 +571,40 @@ void VultureFreeConvSend(VULTURE_CONV_SEND *lpvcsend)
 {
 	ProcHeapFree(lpvcsend->szMessage);
 	ProcHeapFree(lpvcsend);
+}
+
+
+/**
+ * Enables and shows the conversation window for the selected tab, giving the
+ * focus to the input box.
+ *
+ * @param	lpccd	Container window data.
+ */
+static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd)
+{
+	TCITEM tcitem;
+	HWND hwndTabs = GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS);
+	HWND hwndConv;
+
+	tcitem.mask = TCIF_PARAM;
+
+	/* Disable old conversation. */
+	if(lpccd->iSelectedTab >= 0)
+	{
+		TabCtrl_GetItem(hwndTabs, lpccd->iSelectedTab, &tcitem);
+		hwndConv = ((VULTURE_CONVERSATION*)tcitem.lParam)->hwndConv;
+
+		EnableWindow(hwndConv, FALSE);
+		ShowWindow(hwndConv, SW_HIDE);
+	}
+
+	lpccd->iSelectedTab = TabCtrl_GetCurSel(hwndTabs);
+	TabCtrl_GetItem(hwndTabs, lpccd->iSelectedTab, &tcitem);
+	hwndConv = ((VULTURE_CONVERSATION*)tcitem.lParam)->hwndConv;
+
+	EnableWindow(hwndConv, TRUE);
+	SetWindowPos(hwndConv, HWND_TOP, 0, 0, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
+	ShowWindow(hwndConv, SW_SHOW);
+
+	SetFocus(GetDlgItem(hwndConv, IDC_RICHEDIT_INPUT));
 }
