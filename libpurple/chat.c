@@ -1,0 +1,307 @@
+/*
+ * purple
+ *
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ *
+ */
+#define _PURPLE_CHAT_C
+#define _BLIST_HELPERS_
+
+#include "internal.h"
+#include "blist.h"
+#include "conversation.h"
+#include "dbus-maybe.h"
+#include "debug.h"
+#include "notify.h"
+#include "prefs.h"
+#include "privacy.h"
+#include "prpl.h"
+#include "server.h"
+#include "signals.h"
+#include "util.h"
+#include "value.h"
+#include "xmlnode.h"
+
+static void
+chat_component_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
+{
+	const char *name;
+	const char *data;
+	xmlnode *node, *child;
+
+	name = (const char *)key;
+	data = (const char *)value;
+	node = (xmlnode *)user_data;
+
+	g_return_if_fail(data != NULL);
+
+	child = xmlnode_new_child(node, "component");
+	xmlnode_set_attrib(child, "name", name);
+	xmlnode_insert_data(child, data, -1);
+}
+
+xmlnode *
+chat_to_xmlnode(PurpleBlistNode *cnode)
+{
+	xmlnode *node, *child;
+	PurpleChat *chat;
+
+	chat = (PurpleChat *)cnode;
+
+	node = xmlnode_new("chat");
+	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(chat->account));
+	xmlnode_set_attrib(node, "account", purple_account_get_username(chat->account));
+
+	if (chat->alias != NULL)
+	{
+		child = xmlnode_new_child(node, "alias");
+		xmlnode_insert_data(child, chat->alias, -1);
+	}
+
+	/* Write chat components */
+	g_hash_table_foreach(chat->components, chat_component_to_xmlnode, node);
+
+	/* Write chat settings */
+	g_hash_table_foreach(chat->node.settings, value_to_xmlnode, node);
+
+	return node;
+}
+
+void
+parse_chat(PurpleGroup *group, xmlnode *cnode)
+{
+	PurpleChat *chat;
+	PurpleAccount *account;
+	const char *acct_name, *proto, *protocol;
+	xmlnode *x;
+	char *alias = NULL;
+	GHashTable *components;
+
+	acct_name = xmlnode_get_attrib(cnode, "account");
+	protocol = xmlnode_get_attrib(cnode, "protocol");
+	proto = xmlnode_get_attrib(cnode, "proto");
+
+	if (!acct_name || (!proto && !protocol))
+		return;
+
+	account = purple_accounts_find(acct_name, proto ? proto : protocol);
+
+	if (!account)
+		return;
+
+	if ((x = xmlnode_get_child(cnode, "alias")))
+		alias = xmlnode_get_data(x);
+
+	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+	for (x = xmlnode_get_child(cnode, "component"); x; x = xmlnode_get_next_twin(x)) {
+		const char *name;
+		char *value;
+
+		name = xmlnode_get_attrib(x, "name");
+		value = xmlnode_get_data(x);
+		g_hash_table_replace(components, g_strdup(name), value);
+	}
+
+	chat = purple_chat_new(account, alias, components);
+	purple_blist_add_chat(chat, group,
+			purple_blist_get_last_child((PurpleBlistNode*)group));
+
+	for (x = xmlnode_get_child(cnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
+		parse_setting((PurpleBlistNode*)chat, x);
+	}
+
+	g_free(alias);
+}
+
+void purple_blist_alias_chat(PurpleChat *chat, const char *alias)
+{
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	char *old_alias;
+	char *new_alias = NULL;
+
+	g_return_if_fail(chat != NULL);
+
+	if ((alias != NULL) && (*alias != '\0'))
+		new_alias = purple_utf8_strip_unprintables(alias);
+
+	if (!purple_strings_are_different(chat->alias, new_alias)) {
+		g_free(new_alias);
+		return;
+	}
+
+	old_alias = chat->alias;
+
+	if ((new_alias != NULL) && (*new_alias != '\0'))
+		chat->alias = new_alias;
+	else {
+		chat->alias = NULL;
+		g_free(new_alias); /* could be "\0" */
+	}
+
+	purple_blist_schedule_save();
+
+	if (ops && ops->update)
+		ops->update(purple_blist_get_list(), (PurpleBlistNode *)chat);
+
+	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
+					 chat, old_alias);
+	g_free(old_alias);
+}
+
+PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components)
+{
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleChat *chat;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(components != NULL, FALSE);
+
+	chat = g_new0(PurpleChat, 1);
+	chat->account = account;
+	if ((alias != NULL) && (*alias != '\0'))
+		chat->alias = purple_utf8_strip_unprintables(alias);
+	chat->components = components;
+	purple_blist_node_initialize_settings((PurpleBlistNode *)chat);
+	((PurpleBlistNode *)chat)->type = PURPLE_BLIST_CHAT_NODE;
+
+	if (ops != NULL && ops->new_node != NULL)
+		ops->new_node((PurpleBlistNode *)chat);
+
+	PURPLE_DBUS_REGISTER_POINTER(chat, PurpleChat);
+	return chat;
+}
+
+void
+purple_chat_destroy(PurpleChat *chat)
+{
+	g_hash_table_destroy(chat->components);
+	g_hash_table_destroy(chat->node.settings);
+	g_free(chat->alias);
+	PURPLE_DBUS_UNREGISTER_POINTER(chat);
+	g_free(chat);
+}
+
+const char *purple_chat_get_name(PurpleChat *chat)
+{
+	char *ret = NULL;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	if ((chat->alias != NULL) && (*chat->alias != '\0'))
+		return chat->alias;
+
+	prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info->chat_info) {
+		struct proto_chat_entry *pce;
+		GList *parts = prpl_info->chat_info(purple_account_get_connection(chat->account));
+		pce = parts->data;
+		ret = g_hash_table_lookup(chat->components, pce->identifier);
+		g_list_foreach(parts, (GFunc)g_free, NULL);
+		g_list_free(parts);
+	}
+
+	return ret;
+}
+
+PurpleChat *
+purple_blist_find_chat(PurpleAccount *account, const char *name)
+{
+	char *chat_name;
+	PurpleChat *chat;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	struct proto_chat_entry *pce;
+	PurpleBlistNode *node, *group;
+	GList *parts;
+	char *normname;
+
+	g_return_val_if_fail(purple_blist_get_list() != NULL, NULL);
+	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
+
+	if (!purple_account_is_connected(account))
+		return NULL;
+
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if (prpl_info->find_blist_chat != NULL)
+		return prpl_info->find_blist_chat(account, name);
+
+	normname = g_strdup(purple_normalize(account, name));
+	for (group = purple_blist_get_list()->root; group != NULL; group = group->next) {
+		for (node = group->child; node != NULL; node = node->next) {
+			if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+
+				chat = (PurpleChat*)node;
+
+				if (account != chat->account)
+					continue;
+
+				parts = prpl_info->chat_info(
+					purple_account_get_connection(chat->account));
+
+				pce = parts->data;
+				chat_name = g_hash_table_lookup(chat->components,
+												pce->identifier);
+				g_list_foreach(parts, (GFunc)g_free, NULL);
+				g_list_free(parts);
+
+				if (chat->account == account && chat_name != NULL &&
+					normname != NULL && !strcmp(purple_normalize(account, chat_name), normname)) {
+					g_free(normname);
+					return chat;
+				}
+			}
+		}
+	}
+
+	g_free(normname);
+	return NULL;
+}
+
+PurpleGroup *
+purple_chat_get_group(PurpleChat *chat)
+{
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return (PurpleGroup *)(((PurpleBlistNode *)chat)->parent);
+}
+
+PurpleAccount *
+purple_chat_get_account(PurpleChat *chat)
+{
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return chat->account;
+}
+
+GHashTable *
+purple_chat_get_components(PurpleChat *chat)
+{
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return chat->components;
+}
+
+

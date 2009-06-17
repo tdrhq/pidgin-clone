@@ -38,13 +38,17 @@ purple_coresources = \
 	accountmanager.c \
 	accountopt.c \
 	blist.c \
+	blist-node.c \
+	buddy.c \
 	buddyicon.c \
 	certificate.c \
+	chat.c \
 	cipher.c \
 	circbuffer.c \
 	cmds.c \
 	connection.c \
 	conversation.c \
+	contact.c \
 	core.c \
 	debug.c \
 	descipher.c \
@@ -52,6 +56,7 @@ purple_coresources = \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
+	group.c \
 	hmaccipher.c \
 	idle.c \
 	imgstore.c \

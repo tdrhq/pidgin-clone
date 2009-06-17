@@ -228,6 +228,44 @@ struct _PurpleBlistUiOps
 	void (*_purple_reserved4)(void);
 };
 
+#ifdef _BLIST_HELPERS_
+
+void value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data);
+xmlnode *contact_to_xmlnode(PurpleBlistNode *cnode);
+xmlnode *chat_to_xmlnode(PurpleBlistNode *cnode);
+xmlnode *buddy_to_xmlnode(PurpleBlistNode *bnode);
+xmlnode *group_to_xmlnode(PurpleBlistNode *bnode);
+PurpleBlistNode *purple_blist_get_last_sibling(PurpleBlistNode *node);
+PurpleBlistNode *purple_blist_get_last_child(PurpleBlistNode *node);
+void parse_setting(PurpleBlistNode *node, xmlnode *setting);
+void parse_contact(PurpleGroup *group, xmlnode *cnode);
+void parse_chat(PurpleGroup *group, xmlnode *cnode);
+void parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode);
+void parse_group(xmlnode *groupnode);
+void purple_contact_compute_priority_buddy(PurpleContact *contact);
+gboolean purple_strings_are_different(const char *one, const char *two);
+
+/* The global static members */
+struct _list_account_buddies {
+  GSList *list;
+  PurpleAccount *account;
+};
+
+struct _purple_hbuddy {
+  char *name;
+  PurpleAccount *account;
+  PurpleBlistNode *group;
+};
+
+PurpleBuddyList* purple_blist_get_list(void);
+GHashTable* purple_blist_get_buddies_cache(void);
+guint purple_blist_get_save_timer(void);
+gboolean purple_blist_get_blist_loaded(void);
+void purple_blist_node_initialize_settings(PurpleBlistNode *node);
+void purple_blist_node_destroy(PurpleBlistNode* node);
+
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -418,7 +456,7 @@ void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_stat
  */
 void purple_blist_update_node_icon(PurpleBlistNode *node);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BUDDY_C_)
 /**
  * Updates a buddy's icon.
  *
