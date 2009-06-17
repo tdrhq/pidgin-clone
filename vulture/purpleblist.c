@@ -30,6 +30,11 @@
 #include "purplemain.h"
 
 
+
+static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode);
+
+
+
 /**
  * Callback for when a new buddy-list node is created.
  *
@@ -65,6 +70,9 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 	UNREFERENCED_PARAMETER(lpbuddylist);
 
 	if(!lpblistnode)
+		return;
+
+	if(!ShouldShowNode(lpblistnode))
 		return;
 		
 	lpvbn = (VULTURE_BLIST_NODE*)lpblistnode->ui_data;
@@ -106,4 +114,49 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 	/* TODO: We should probably be less willing to give up. */
 	if(lpvbn->szNodeText)
 		VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEBLISTNODE, lpvbn);
+}
+
+
+
+/**
+ * Determines whether a buddy-list node should be shown.
+ *
+ * @param	lpblistnode	Buddy-list node.
+ */
+static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode)
+{
+	switch(lpblistnode->type)
+	{
+	case PURPLE_BLIST_GROUP_NODE:
+	case PURPLE_BLIST_CONTACT_NODE:
+		{
+			PurpleBlistNode *lpblistnodeRover;
+
+			/* Show iff any of our children should be shown. */
+			for(lpblistnodeRover = purple_blist_node_get_first_child(lpblistnode);
+				lpblistnodeRover;
+				lpblistnodeRover = purple_blist_node_get_sibling_next(lpblistnodeRover))
+			{
+				if(ShouldShowNode(lpblistnodeRover))
+					return TRUE;
+			}
+		}
+
+		break;
+
+	case PURPLE_BLIST_CHAT_NODE:
+		if(purple_account_is_connected(purple_chat_get_account((PurpleChat*)lpblistnode)))
+			return TRUE;
+		break;
+
+	case PURPLE_BLIST_BUDDY_NODE:
+		if(purple_account_is_connected(purple_buddy_get_account((PurpleBuddy*)lpblistnode)))
+			return TRUE;
+		break;
+
+	default:
+		break;
+	}
+
+	return FALSE;
 }
