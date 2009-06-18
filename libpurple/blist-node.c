@@ -320,7 +320,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 			hb->group = bnode->parent->parent;
 			g_hash_table_remove(purplebuddylist->buddies, hb);
 
-			account_buddies = g_hash_table_lookup(purple_blist_get_buddies_cache(), buddy->account);
+			account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, buddy->account);
 			g_hash_table_remove(account_buddies, hb);
 
 			g_free(hb->name);
@@ -369,7 +369,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 
 	g_hash_table_replace(purplebuddylist->buddies, hb, buddy);
 
-	account_buddies = g_hash_table_lookup(purple_blist_get_buddies_cache(), buddy->account);
+	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, buddy->account);
 
 	hb2 = g_new(struct _purple_hbuddy, 1);
 	hb2->name = g_strdup(hb->name);

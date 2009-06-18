@@ -179,7 +179,7 @@ void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name)
 	hb->group = ((PurpleBlistNode *)buddy)->parent->parent;
 	g_hash_table_remove(purplebuddylist->buddies, hb);
 	
-	account_buddies = g_hash_table_lookup(purple_blist_get_buddies_cache(), buddy->account);
+	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, buddy->account);
 	g_hash_table_remove(account_buddies, hb);
 
 	g_free(hb->name);

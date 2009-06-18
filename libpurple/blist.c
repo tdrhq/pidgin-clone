@@ -42,15 +42,6 @@ static PurpleBlistUiOps *blist_ui_ops = NULL;
 
 PurpleBuddyList *purplebuddylist = NULL;
 
-/**
- * A hash table used for efficient lookups of buddies by name.
- * PurpleAccount* => GHashTable*, with the inner hash table being
- * struct _purple_hbuddy => PurpleBuddy*
- */
-static GHashTable *buddies_cache = NULL;
-
-static guint          save_timer = 0;
-static gboolean       blist_loaded = FALSE;
 
 /*********************************************************************
  * Private utility functions                                         *
@@ -78,31 +69,13 @@ purple_blist_buddies_cache_add_account(PurpleAccount *account)
 	GHashTable *account_buddies = g_hash_table_new_full((GHashFunc)_purple_blist_hbuddy_hash,
 						(GEqualFunc)_purple_blist_hbuddy_equal,
 						(GDestroyNotify)_purple_blist_hbuddy_free_key, NULL);
-	g_hash_table_insert(buddies_cache, account, account_buddies);
+	g_hash_table_insert(purplebuddylist->buddies_cache, account, account_buddies);
 }
 
 static void
 purple_blist_buddies_cache_remove_account(const PurpleAccount *account)
 {
-	g_hash_table_remove(buddies_cache, account);
-}
-
-GHashTable* 
-purple_blist_get_buddies_cache(void)
-{
-  return buddies_cache;
-}
-
-guint 
-purple_blist_get_save_timer(void)
-{
-  return save_timer;
-}
-
-gboolean 
-purple_blist_get_blist_loaded(void)
-{
-  return blist_loaded;
+	g_hash_table_remove(purplebuddylist->buddies_cache, account);
 }
 
 /*********************************************************************
@@ -220,7 +193,7 @@ purple_blist_sync(void)
 	xmlnode *node;
 	char *data;
 
-	if (!blist_loaded)
+	if (!purplebuddylist->blist_loaded)
 	{
 		purple_debug_error("blist", "Attempted to save buddy list before it "
 						 "was read!\n");
@@ -238,15 +211,15 @@ static gboolean
 save_cb(gpointer data)
 {
 	purple_blist_sync();
-	save_timer = 0;
+	purplebuddylist->save_timer = 0;
 	return FALSE;
 }
 
 void
 purple_blist_schedule_save()
 {
-	if (save_timer == 0)
-		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
+	if (purplebuddylist->save_timer == 0)
+		purplebuddylist->save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
 
@@ -260,7 +233,7 @@ purple_blist_load()
 {
 	xmlnode *purple, *blist, *privacy;
 
-	blist_loaded = TRUE;
+	purplebuddylist->blist_loaded = TRUE;
 
 	purple = purple_util_read_xml_from_file("blist.xml", _("buddy list"));
 
@@ -348,7 +321,7 @@ PurpleBuddyList *purple_blist_new()
 					 (GEqualFunc)_purple_blist_hbuddy_equal,
 					 (GDestroyNotify)_purple_blist_hbuddy_free_key, NULL);
 
-	buddies_cache = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+	gbl->buddies_cache = g_hash_table_new_full(g_direct_hash, g_direct_equal,
 					 NULL, (GDestroyNotify)g_hash_table_destroy);
 
 	for (account = purple_accounts_get_all(); account != NULL; account = account->next)
@@ -358,6 +331,9 @@ PurpleBuddyList *purple_blist_new()
 
 	if (ui_ops != NULL && ui_ops->new_list != NULL)
 		ui_ops->new_list(gbl);
+
+  gbl->save_timer = 0;
+  gbl->blist_loaded = FALSE;
 
 	return gbl;
 }
@@ -480,7 +456,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 
 				g_hash_table_remove(purplebuddylist->buddies, hb);
 
-				account_buddies = g_hash_table_lookup(buddies_cache, b->account);
+				account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, b->account);
 				g_hash_table_remove(account_buddies, hb);
 
 				if (!purple_find_buddy_in_group(b->account, b->name, g)) {
@@ -729,7 +705,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	hb.group = gnode;
 	g_hash_table_remove(purplebuddylist->buddies, &hb);
 
-	account_buddies = g_hash_table_lookup(buddies_cache, buddy->account);
+	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, buddy->account);
 	g_hash_table_remove(account_buddies, &hb);
 
 	g_free(hb.name);
@@ -895,7 +871,7 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 		g_free(hb.name);
 	} else {
 		GSList *list = NULL;
-		GHashTable *buddies = g_hash_table_lookup(buddies_cache, account);
+		GHashTable *buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, account);
 		g_hash_table_foreach(buddies, find_acct_buddies, &list);
 		ret = list;
 	}
@@ -1230,9 +1206,9 @@ purple_blist_uninit(void)
 	if (purplebuddylist == NULL)
 		return;
 
-	if (save_timer != 0) {
-		purple_timeout_remove(save_timer);
-		save_timer = 0;
+	if (purplebuddylist->save_timer != 0) {
+		purple_timeout_remove(purplebuddylist->save_timer);
+		purplebuddylist->save_timer = 0;
 		purple_blist_sync();
 	}
 
@@ -1245,7 +1221,7 @@ purple_blist_uninit(void)
 	purplebuddylist->root = NULL;
 	
 	g_hash_table_destroy(purplebuddylist->buddies);
-	g_hash_table_destroy(buddies_cache);
+	g_hash_table_destroy(purplebuddylist->buddies_cache);
 
 	purple_signals_disconnect_by_handle(purple_blist_get_handle());
 	purple_signals_unregister_by_instance(purple_blist_get_handle());

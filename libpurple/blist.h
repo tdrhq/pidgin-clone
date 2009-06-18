@@ -193,6 +193,16 @@ struct _PurpleChat {
 struct _PurpleBuddyList {
 	PurpleBlistNode *root;          /**< The first node in the buddy list */
 	GHashTable *buddies;          /**< Every buddy in this list */
+  
+  /**
+   * A hash table used for efficient lookups of buddies by name.
+   * PurpleAccount* => GHashTable*, with the inner hash table being
+   * struct _purple_hbuddy => PurpleBuddy*
+   */
+  GHashTable *buddies_cache;
+
+  guint          save_timer;
+  gboolean       blist_loaded;
 	void *ui_data;                /**< UI-specific data. */
 };
 
@@ -258,9 +268,7 @@ struct _purple_hbuddy {
 };
 
 extern PurpleBuddyList* purplebuddylist;
-GHashTable* purple_blist_get_buddies_cache(void);
-guint purple_blist_get_save_timer(void);
-gboolean purple_blist_get_blist_loaded(void);
+
 void purple_blist_node_initialize_settings(PurpleBlistNode *node);
 void purple_blist_node_destroy(PurpleBlistNode* node);
 
