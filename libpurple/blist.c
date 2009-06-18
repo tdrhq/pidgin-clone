@@ -40,7 +40,7 @@
 
 static PurpleBlistUiOps *blist_ui_ops = NULL;
 
-static PurpleBuddyList *purplebuddylist = NULL;
+PurpleBuddyList *purplebuddylist = NULL;
 
 /**
  * A hash table used for efficient lookups of buddies by name.
@@ -85,12 +85,6 @@ static void
 purple_blist_buddies_cache_remove_account(const PurpleAccount *account)
 {
 	g_hash_table_remove(buddies_cache, account);
-}
-
-PurpleBuddyList*
-purple_blist_get_list(void)
-{
-  return purplebuddylist;
 }
 
 GHashTable* 

@@ -257,7 +257,7 @@ struct _purple_hbuddy {
   PurpleBlistNode *group;
 };
 
-PurpleBuddyList* purple_blist_get_list(void);
+extern PurpleBuddyList* purplebuddylist;
 GHashTable* purple_blist_get_buddies_cache(void);
 guint purple_blist_get_save_timer(void);
 gboolean purple_blist_get_blist_loaded(void);

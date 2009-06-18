@@ -158,7 +158,7 @@ void purple_blist_alias_chat(PurpleChat *chat, const char *alias)
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(purple_blist_get_list(), (PurpleBlistNode *)chat);
+		ops->update(purplebuddylist, (PurpleBlistNode *)chat);
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
 					 chat, old_alias);
@@ -236,7 +236,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	GList *parts;
 	char *normname;
 
-	g_return_val_if_fail(purple_blist_get_list() != NULL, NULL);
+	g_return_val_if_fail(purplebuddylist != NULL, NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
 	if (!purple_account_is_connected(account))
@@ -249,7 +249,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 		return prpl_info->find_blist_chat(account, name);
 
 	normname = g_strdup(purple_normalize(account, name));
-	for (group = purple_blist_get_list()->root; group != NULL; group = group->next) {
+	for (group = purplebuddylist->root; group != NULL; group = group->next) {
 		for (node = group->child; node != NULL; node = node->next) {
 			if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 

@@ -178,7 +178,7 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(purple_blist_get_list(), (PurpleBlistNode *)contact);
+		ops->update(purplebuddylist, (PurpleBlistNode *)contact);
 
 	for(bnode = ((PurpleBlistNode *)contact)->child; bnode != NULL; bnode = bnode->next)
 	{

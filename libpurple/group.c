@@ -85,7 +85,7 @@ parse_group(xmlnode *groupnode)
 
 	group = purple_group_new(name);
 	purple_blist_add_group(group,
-			purple_blist_get_last_sibling(purple_blist_get_list()->root));
+			purple_blist_get_last_sibling(purplebuddylist->root));
 
 	for (cnode = groupnode->child; cnode; cnode = cnode->next) {
 		if (cnode->type != XMLNODE_TYPE_TAG)
@@ -183,7 +183,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 
 	/* Update the UI */
 	if (ops && ops->update)
-		ops->update(purple_blist_get_list(), (PurpleBlistNode*)source);
+		ops->update(purplebuddylist, (PurpleBlistNode*)source);
 
 	/* Notify all PRPLs */
 	/* TODO: Is this condition needed?  Seems like it would always be TRUE */
@@ -249,10 +249,10 @@ PurpleGroup *purple_find_group(const char *name)
 {
 	PurpleBlistNode *node;
 
-	g_return_val_if_fail(purple_blist_get_list() != NULL, NULL);
+	g_return_val_if_fail(purplebuddylist != NULL, NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
-	for (node = purple_blist_get_list()->root; node != NULL; node = node->next) {
+	for (node = purplebuddylist->root; node != NULL; node = node->next) {
 		if (!purple_utf8_strcasecmp(((PurpleGroup *)node)->name, name))
 			return (PurpleGroup *)node;
 	}

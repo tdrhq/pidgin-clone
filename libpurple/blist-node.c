@@ -153,7 +153,7 @@ purple_blist_update_node_icon(PurpleBlistNode *node)
   g_return_if_fail(node != NULL);
 
   if (ops && ops->update)
-    ops->update(purple_blist_get_list(), node);
+    ops->update(purplebuddylist, node);
 }
 
 void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode *node)
@@ -171,7 +171,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 		/* Add group to blist if isn't already on it. Fixes #2752. */
 		if (!purple_find_group(group->name)) {
 			purple_blist_add_group(group,
-					purple_blist_get_last_sibling(purple_blist_get_list()->root));
+					purple_blist_get_last_sibling(purplebuddylist->root));
 		}
 	} else {
 		group = (PurpleGroup*)node->parent;
@@ -198,7 +198,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 			cnode->parent->child = cnode->next;
 
 		if (ops && ops->remove)
-			ops->remove(purple_blist_get_list(), cnode);
+			ops->remove(purplebuddylist, cnode);
 		/* ops->remove() cleaned up the cnode's ui_data, so we need to
 		 * reinitialize it */
 		if (ops && ops->new_node)
@@ -236,7 +236,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(purple_blist_get_list(), (PurpleBlistNode *)cnode);
+		ops->update(purplebuddylist, (PurpleBlistNode *)cnode);
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-added",
 			cnode);
@@ -275,7 +275,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		/* Add group to blist if isn't already on it. Fixes #2752. */
 		if (!purple_find_group(g->name)) {
 			purple_blist_add_group(g,
-					purple_blist_get_last_sibling(purple_blist_get_list()->root));
+					purple_blist_get_last_sibling(purplebuddylist->root));
 		}
 		c = purple_contact_new();
 		purple_blist_add_contact(c, g,
@@ -309,7 +309,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 			bnode->parent->child = bnode->next;
 
 		if (ops && ops->remove)
-			ops->remove(purple_blist_get_list(), bnode);
+			ops->remove(purplebuddylist, bnode);
 
 		purple_blist_schedule_save();
 
@@ -318,7 +318,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 			hb->name = g_strdup(purple_normalize(buddy->account, buddy->name));
 			hb->account = buddy->account;
 			hb->group = bnode->parent->parent;
-			g_hash_table_remove(purple_blist_get_list()->buddies, hb);
+			g_hash_table_remove(purplebuddylist->buddies, hb);
 
 			account_buddies = g_hash_table_lookup(purple_blist_get_buddies_cache(), buddy->account);
 			g_hash_table_remove(account_buddies, hb);
@@ -332,7 +332,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		} else {
 			purple_contact_invalidate_priority_buddy((PurpleContact*)bnode->parent);
 			if (ops && ops->update)
-				ops->update(purple_blist_get_list(), bnode->parent);
+				ops->update(purplebuddylist, bnode->parent);
 		}
 	}
 
@@ -367,7 +367,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	hb->account = buddy->account;
 	hb->group = ((PurpleBlistNode*)buddy)->parent->parent;
 
-	g_hash_table_replace(purple_blist_get_list()->buddies, hb, buddy);
+	g_hash_table_replace(purplebuddylist->buddies, hb, buddy);
 
 	account_buddies = g_hash_table_lookup(purple_blist_get_buddies_cache(), buddy->account);
 
@@ -383,7 +383,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(purple_blist_get_list(), (PurpleBlistNode*)buddy);
+		ops->update(purplebuddylist, (PurpleBlistNode*)buddy);
 
 	/* Signal that the buddy has been added */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-added", buddy);
@@ -447,7 +447,7 @@ purple_blist_node_destroy(PurpleBlistNode *node)
 	node->next   = NULL;
 	node->prev   = NULL;
 	if (ui_ops && ui_ops->remove)
-		ui_ops->remove(purple_blist_get_list(), node);
+		ui_ops->remove(purplebuddylist, node);
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		purple_buddy_destroy((PurpleBuddy*)node);
