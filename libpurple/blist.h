@@ -743,7 +743,7 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node);
  */
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_CONTACT_C_)
 /**
  * Sets the alias for a contact.
  *
@@ -845,7 +845,7 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
  */
 const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy);
 
-#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BLIST_C_)
+#if !(defined PURPLE_DISABLE_DEPRECATED) || (defined _PURPLE_BUDDY_C_)
 /**
  * Returns the correct alias for this user, ignoring server aliases.  Used
  * when a user-recognizable name is required.  In order: buddy's alias; buddy's
