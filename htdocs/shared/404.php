@@ -1,4 +1,6 @@
 <?
+  header('HTTP/1.1 404 Not Found');
+
   // Update these to match the current page.
   $page['title'] =   "404 Not Found";
   $page['section'] = "";
