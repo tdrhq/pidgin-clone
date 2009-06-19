@@ -197,6 +197,27 @@ telepathy_status_text(PurpleBuddy* buddy)
 	}
 }
 
+static void
+telepathy_tooltip_text (PurpleBuddy *buddy,
+                        PurpleNotifyUserInfo *user_info,
+			gboolean full)
+{
+	//const gchar *name = purple_buddy_get_name(buddy);
+	const gchar *alias = purple_buddy_get_alias(buddy);
+	gchar *status = telepathy_status_text(buddy);
+	
+	purple_debug_info("telepathy", "Showing tooltip text for %s\n",
+			purple_buddy_get_name(buddy));
+
+	purple_notify_user_info_add_pair(user_info, _("Alias"), alias);
+
+	if (status != NULL)
+	{
+		purple_notify_user_info_add_pair(user_info, _("Status"), status);
+		g_free(status);
+	}
+}
+
 /* TODO: Do a proper query of the "status" property */
 static GList *
 telepathy_status_types(PurpleAccount *acct)
@@ -415,6 +436,30 @@ telepathy_send_typing (PurpleConnection *gc, const char *name, PurpleTypingState
 }
 
 static void
+telepathy_get_info (PurpleConnection *gc, const char *who)
+{
+	PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
+	PurpleBuddy *buddy = purple_find_buddy(
+			purple_connection_get_account(gc),
+			who);
+	gchar *status = telepathy_status_text(buddy);
+
+	purple_debug_info("telepathy", "Getting info for %s\n", who);
+
+	purple_notify_user_info_add_pair(user_info,
+			_("Alias"), purple_buddy_get_alias(buddy));
+
+	if (status != NULL)
+	{
+		purple_notify_user_info_add_pair(user_info,
+				_("Status"), status);
+		g_free(status);
+	}
+
+	purple_notify_userinfo(gc, who, user_info, NULL, NULL);
+}
+
+static void
 telepathy_set_status (PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
@@ -492,7 +537,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	telepathy_list_icon,                  /* list_icon */
 	NULL,                                /* list_emblem */
 	telepathy_status_text,                /* status_text */
-	NULL,               /* tooltip_text */
+	telepathy_tooltip_text,               /* tooltip_text */
 	telepathy_status_types,               /* status_types */
 	NULL,            /* blist_node_menu */
 	NULL,                  /* chat_info */
@@ -502,7 +547,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	telepathy_send_im,                    /* send_im */
 	NULL,                   /* set_info */
 	telepathy_send_typing,                /* send_typing */
-	NULL,                   /* get_info */
+	telepathy_get_info,                   /* get_info */
 	telepathy_set_status,                 /* set_status */
 	NULL,                   /* set_idle */
 	NULL,              /* change_passwd */
