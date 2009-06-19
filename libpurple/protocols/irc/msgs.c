@@ -78,7 +78,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 {
 	PurpleConnection *gc;
 	PurpleStatus *status;
-	PurpleBlistNode *gnode, *cnode, *bnode;
+	GSList *buddies;
 	PurpleAccount *account;
 
 	if ((gc = purple_account_get_connection(irc->account)) == NULL
@@ -97,38 +97,18 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	}
 
 	/* this used to be in the core, but it's not now */
-	for (gnode = purple_blist_get_root();
-	     gnode;
-	     gnode = purple_blist_node_get_sibling_next(gnode))
+	for (buddies = purple_find_buddies(account, NULL); buddies;
+			buddies = g_slist_delete_link(buddies, buddies))
 	{
-		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for(cnode = purple_blist_node_get_first_child(gnode);
-		    cnode;
-		    cnode = purple_blist_node_get_sibling_next(cnode))
-		{
-			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for(bnode = purple_blist_node_get_first_child(cnode);
-			    bnode;
-			    bnode = purple_blist_node_get_sibling_next(bnode))
-			{
-				PurpleBuddy *b;
-				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (PurpleBuddy *)bnode;
-				if(purple_buddy_get_account(b) == account) {
-					struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
-					ib->name = g_strdup(purple_buddy_get_name(b));
-					g_hash_table_insert(irc->buddies, ib->name, ib);
-				}
-			}
-		}
+		PurpleBuddy *b = buddies->data;
+		struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
+		ib->name = g_strdup(purple_buddy_get_name(b));
+		g_hash_table_insert(irc->buddies, ib->name, ib);
 	}
 
 	irc_blist_timeout(irc);
 	if (!irc->timer)
-		irc->timer = purple_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
+		irc->timer = purple_timeout_add_seconds(45, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 }
 
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -1004,9 +984,24 @@ void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, c
 void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	char *newnick, *buf, *end;
+	PurpleConnection *gc = purple_account_get_connection(irc->account);
 
 	if (!args || !args[1])
 		return;
+
+	if (gc && purple_connection_get_state(gc) == PURPLE_CONNECTED) {
+		/* We only want to do the following dance if the connection
+		   has not been successfully completed.  If it has, just
+		   notify the user that their /nick command didn't go. */
+		buf = g_strdup_printf(_("The nickname \"%s\" is already being used."),
+				      irc->reqnick);
+		purple_notify_error(gc, _("Nickname in use"),
+				    _("Nickname in use"), buf);
+		g_free(buf);
+		g_free(irc->reqnick);
+		irc->reqnick = NULL;
+		return;
+	}
 
 	if (strlen(args[1]) < strlen(irc->reqnick) || irc->nickused)
 		newnick = g_strdup(args[1]);
@@ -1178,7 +1173,7 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 	if (!purple_utf8_strcasecmp(to, purple_connection_get_display_name(gc))) {
 		serv_got_im(gc, nick, msg, 0, time(NULL));
 	} else {
-		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, to, irc->account);
+		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, irc_nick_skip_mode(irc, to), irc->account);
 		if (convo)
 			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)), nick, 0, msg, time(NULL));
 		else

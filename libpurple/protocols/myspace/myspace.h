@@ -114,8 +114,8 @@
 #define MSIM_KEEPALIVE_INTERVAL     (3 * 60)
 /*#define MSIM_USE_KEEPALIVE*/
 
-/* Time to check if alive (milliseconds) */
-#define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)
+/* Time to check if alive (seconds) */
+#define MSIM_KEEPALIVE_INTERVAL_CHECK   30
 
 /* Time to check for new mail (milliseconds) */
 #define MSIM_MAIL_INTERVAL_CHECK    (60 * 1000)
@@ -127,12 +127,12 @@
 #define MSIM_FINAL_STRING           "\\final\\" /**< Message end marker */
 
 /* Messages */
-#define MSIM_BM_INSTANT             1
-#define MSIM_BM_STATUS              100
-#define MSIM_BM_ACTION              121
-#define MSIM_BM_MEDIA               122
-#define MSIM_BM_PROFILE             124
-#define MSIM_BM_UNOFFICIAL_CLIENT   200
+#define MSIM_BM_DELAYABLE_ACTION_OR_IM  1
+#define MSIM_BM_STATUS                  100
+#define MSIM_BM_INSTANT_ACTION_OR_IM    121
+#define MSIM_BM_MEDIA                   122
+#define MSIM_BM_PROFILE                 124
+#define MSIM_BM_UNOFFICIAL_CLIENT       200
 
 /* Authentication algorithm for login2 */
 #define MSIM_AUTH_ALGORITHM         196610

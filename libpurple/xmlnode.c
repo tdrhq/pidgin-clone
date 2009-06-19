@@ -382,7 +382,7 @@ xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const 
 }
 
 char *
-xmlnode_get_data(xmlnode *node)
+xmlnode_get_data(const xmlnode *node)
 {
 	GString *str = NULL;
 	xmlnode *c;
@@ -405,7 +405,7 @@ xmlnode_get_data(xmlnode *node)
 }
 
 char *
-xmlnode_get_data_unescaped(xmlnode *node)
+xmlnode_get_data_unescaped(const xmlnode *node)
 {
 	char *escaped = xmlnode_get_data(node);
 
@@ -647,6 +647,28 @@ xmlnode_parser_error_libxml(void *user_data, const char *msg, ...)
 	purple_debug_error("xmlnode", "Error parsing xml file: %s", errmsg);
 }
 
+static void
+xmlnode_parser_structural_error_libxml(void *user_data, xmlErrorPtr error)
+{
+	struct _xmlnode_parser_data *xpd = user_data;
+
+	if (error && (error->level == XML_ERR_ERROR ||
+	              error->level == XML_ERR_FATAL)) {
+		xpd->error = TRUE;
+		purple_debug_error("xmlnode", "XML parser error for xmlnode %p: "
+		                   "Domain %i, code %i, level %i: %s",
+		                   user_data, error->domain, error->code, error->level,
+		                   error->message ? error->message : "(null)\n");
+	} else if (error)
+		purple_debug_warning("xmlnode", "XML parser error for xmlnode %p: "
+		                     "Domain %i, code %i, level %i: %s",
+		                     user_data, error->domain, error->code, error->level,
+		                     error->message ? error->message : "(null)\n");
+	else
+		purple_debug_warning("xmlnode", "XML parser error for xmlnode %p\n",
+		                     user_data);
+}
+
 static xmlSAXHandler xmlnode_parser_libxml = {
 	NULL, /* internalSubset */
 	NULL, /* isStandalone */
@@ -679,7 +701,7 @@ static xmlSAXHandler xmlnode_parser_libxml = {
 	NULL, /* _private */
 	xmlnode_parser_element_start_libxml, /* startElementNs */
 	xmlnode_parser_element_end_libxml,   /* endElementNs   */
-	NULL, /* serror */
+	xmlnode_parser_structural_error_libxml, /* serror */
 };
 
 xmlnode *

@@ -144,7 +144,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu id it ja ka km kn ko ku lo lt mk mn my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr ga gl gu he hi hu hy id it ja ka km kn ko ku lo lt mk mn my_MM nb ne nl nn oc pa pl pt_BR pt ps ro ru si sk sl sq sr sr@latin sv sw ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -734,9 +734,13 @@ dnl #######################################################################
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.6.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
-
 You must have libxml2 >= 2.6.0 development headers installed to build.
 ])])
+PKG_CHECK_EXISTS([libxml-2.0 >= 2.6.18], , [
+	AC_MSG_WARN([
+Versions of libxml2 < 2.6.18 may contain bugs that could cause XMPP messages to be discarded.
+])])
+
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
 
@@ -802,7 +806,7 @@ AC_ARG_ENABLE(farsight,
 	[AC_HELP_STRING([--disable-farsight], [compile without farsight support])],
 	enable_farsight="$enableval", enable_farsight="yes")
 if test "x$enable_farsight" != "xno"; then
-	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.8], [
+	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 >= 0.0.9], [
 		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
 		AC_SUBST(FARSIGHT_CFLAGS)
 		AC_SUBST(FARSIGHT_LIBS)
@@ -1010,7 +1014,7 @@ if test "x$gadu_manual_check" = "xno"; then
 		gadu_includes="yes"
 		gadu_libs="yes"
 	], [
-		AC_MSG_RESULT(no)
+		gadu_includes="no"
 	])
 else
 	if test "$ac_gadu_includes" != "no"; then
@@ -1687,7 +1691,7 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
-msg_ssl="None. MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
+msg_ssl="None. MSN, Novell Groupwise, Yahoo! and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 looked_for_gnutls="no"
 dnl #
 dnl # Check for GnuTLS if it's specified.
@@ -2500,6 +2504,7 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/emotes/small/16/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
+		   pidgin/plugins/disco/Makefile
 		   pidgin/plugins/gestures/Makefile
 		   pidgin/plugins/gevolution/Makefile
 		   pidgin/plugins/musicmessaging/Makefile

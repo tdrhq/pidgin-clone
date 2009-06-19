@@ -935,7 +935,7 @@ get_display_name(PurpleBlistNode *node)
 	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
 		return purple_group_get_name((PurpleGroup*)node);
 
-	snprintf(text, sizeof(text) - 1, "%s %s", status, name);
+	g_snprintf(text, sizeof(text) - 1, "%s %s", status, name);
 
 	return text;
 }
@@ -1921,11 +1921,11 @@ key_pressed(GntWidget *widget, const char *text, FinchBlist *ggblist)
 		if (gnt_tree_is_searching(GNT_TREE(ggblist->tree)))
 			gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "end-search", NULL);
 		remove_peripherals(ggblist);
-	} else if (strcmp(text, GNT_KEY_CTRL_O) == 0) {
-		purple_prefs_set_bool(PREF_ROOT "/showoffline",
-				!purple_prefs_get_bool(PREF_ROOT "/showoffline"));
 	} else if (strcmp(text, GNT_KEY_INS) == 0) {
-		purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
+		PurpleBlistNode *node = gnt_tree_get_selection_data(GNT_TREE(ggblist->tree));
+		purple_blist_request_add_buddy(NULL, NULL,
+				node && PURPLE_BLIST_NODE_IS_GROUP(node) ? purple_group_get_name(PURPLE_GROUP(node)) : NULL,
+				NULL);
 	} else if (!gnt_tree_is_searching(GNT_TREE(ggblist->tree))) {
 		if (strcmp(text, "t") == 0) {
 			finch_blist_toggle_tag_buddy(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
@@ -2642,7 +2642,7 @@ reconstruct_grouping_menu(void)
 		char menuid[128];
 		FinchBlistManager *manager = iter->data;
 		GntMenuItem *item = gnt_menuitem_new(_(manager->name));
-		snprintf(menuid, sizeof(menuid), "grouping-%s", manager->id);
+		g_snprintf(menuid, sizeof(menuid), "grouping-%s", manager->id);
 		gnt_menuitem_set_id(GNT_MENU_ITEM(item), menuid);
 		gnt_menu_add_item(GNT_MENU(subsub), item);
 		g_object_set_data_full(G_OBJECT(item), "grouping-id", g_strdup(manager->id), g_free);
@@ -3123,6 +3123,8 @@ blist_show(PurpleBuddyList *list)
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", finch_blist_get_handle(),
 				PURPLE_CALLBACK(reconstruct_accounts_menu), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off", finch_blist_get_handle(),
+				PURPLE_CALLBACK(reconstruct_accounts_menu), NULL);
+	purple_signal_connect(purple_accounts_get_handle(), "account-actions-changed", finch_blist_get_handle(),
 				PURPLE_CALLBACK(reconstruct_accounts_menu), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-status-changed", finch_blist_get_handle(),
 				PURPLE_CALLBACK(buddy_status_changed), ggblist);

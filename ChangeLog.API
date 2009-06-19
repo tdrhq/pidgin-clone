@@ -9,6 +9,14 @@ version 2.6.0 (??/??/2009):
 		* PURPLE_CONTACT
 		* PURPLE_BUDDY
 		* PURPLE_CHAT
+		* Account signals (see account-signals.dox)
+			* account-actions-changed
+			* account-created
+			* account-destroying
+		* blist-node-added and blist-node-removed signals (see
+		  blist-signals.dox)
+		* Jabber plugin signals (see jabber-signals.dox)
+		* purple_buddy_destroy
 		* purple_buddy_get_protocol_data
 		* purple_buddy_set_protocol_data
 		* purple_buddy_get_local_buddy_alias
@@ -17,21 +25,31 @@ version 2.6.0 (??/??/2009):
 		* purple_blist_set_ui_data
 		* purple_blist_node_get_ui_data
 		* purple_blist_node_set_ui_data
+		* purple_chat_destroy
 		* purple_connection_get_protocol_data
 		* purple_connection_set_protocol_data
+		* purple_contact_destroy
+		* purple_conv_chat_invite_user
 		* purple_global_proxy_set_info
+		* purple_group_destroy
 		* purple_log_get_activity_score
+		* purple_markup_is_rtl
 		* purple_network_force_online
 		* purple_network_set_stun_server
 		* purple_network_set_turn_server
 		* purple_network_get_stun_ip
 		* purple_network_get_turn_ip
+		* purple_network_remove_port_mapping
+		* purple_proxy_connect_udp
 		* purple_prpl_get_media_caps
+		* purple_prpl_got_account_actions
 		* purple_prpl_initiate_media
 		* purple_request_field_get_group
 		* purple_request_field_get_ui_data
 		* purple_request_field_set_ui_data
 		* purple_strequal
+		* purple_utf8_strip_unprintables
+		* purple_util_fetch_url_request_len_with_account
 		* xmlnode_from_file
 		* xmlnode_get_parent
 		* xmlnode_set_attrib_full
@@ -42,8 +60,18 @@ version 2.6.0 (??/??/2009):
 		  which was completely non-deterministic.  If you want to remove
 		  the attribute with no namespace, then use NULL with
 		  xmlnode_remove_with_namespace.
+		* Plugins may now emit the jabber-sending-xmlnode signal in order
+		  to send stanzas; this method is preferred to the prpl send_raw
+		  function as other plugins listening to the signal see them.
+		* The conversation-updated signal with a PURPLE_CONV_UPDATE_TYPING
+		  update type is emitted when receiving an IM.  Previously, the
+		  typing state was modified (and the buddy-typing-stopped signal
+		  emitted), but this signal was not emitted.
+		* Added a client_type field in the get_ui_info core UI op. See
+		  core.h for details.
 
 		Deprecated:
+		* buddy-added and buddy-removed blist signals
 		* purple_buddy_get_local_alias
 		* purple_notify_user_info_remove_entry
 		* purple_status_type_set_primary_attr
@@ -56,6 +84,7 @@ version 2.6.0 (??/??/2009):
 		* purple_status_set_attr_string
 		* purple_presence_add_status
 		* purple_presence_add_list
+		* purple_util_fetch_url_request_len
 		* xmlnode_set_attrib_with_namespace
 		* xmlnode_set_attrib_with_prefix
 
@@ -66,12 +95,23 @@ version 2.6.0 (??/??/2009):
 		  gtk_imhtml_link_activate functions to process GtkIMHtmlLink
 		  objects from GtkIMHtml protocol callbacks.
 		* gtk_imhtml_set_return_inserts_newline
+		* gtk_imhtml_set_populate_primary_clipboard
 		* pidgin_blist_set_theme
 		* pidgin_blist_get_theme
 		* pidgin_prefs_labeled_password
+		* pidgin_smiley_editor_set_data
 		* pidgin_sound_is_customized
 		* pidgin_utils_init, pidgin_utils_uninit
 		* pidgin_notify_pounce_add
+		* PidginBlistTheme, PidginBlistThemeLoader API
+		* PidginIconTheme, PidginStatusIconTheme, PidginIconThemeLoader
+		  API
+		* pidgin_stock_id_from_status_primitive
+		* pidgin_stock_id_from_presence
+
+	libgnt:
+		Added:
+		* GntProgressBar and functions (Saleem Abdulrasool)
 
 	perl:
 		Changed:

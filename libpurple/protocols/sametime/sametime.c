@@ -28,8 +28,6 @@
 
 /* glib includes */
 #include <glib.h>
-#include <glib/ghash.h>
-#include <glib/glist.h>
 
 /* purple includes */
 #include "internal.h"
@@ -810,7 +808,7 @@ static gboolean blist_save_cb(gpointer data) {
 static void blist_schedule(struct mwPurplePluginData *pd) {
   if(pd->save_event) return;
 
-  pd->save_event = purple_timeout_add(BLIST_SAVE_SECONDS * 1000,
+  pd->save_event = purple_timeout_add_seconds(BLIST_SAVE_SECONDS,
 				    blist_save_cb, pd);
 }
 
@@ -1468,7 +1466,7 @@ static void session_loginRedirect(struct mwSession *session,
 
   if(purple_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
      !host || (! strcmp(current_host, host)) ||
-     (purple_proxy_connect(NULL, account, host, port, connect_cb, pd) == NULL)) {
+     (purple_proxy_connect(gc, account, host, port, connect_cb, pd) == NULL)) {
 
     /* if we're configured to force logins, or if we're being
        redirected to the already configured host, or if we couldn't

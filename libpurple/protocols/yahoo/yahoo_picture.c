@@ -126,7 +126,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		gboolean use_whole_url = yahoo_account_use_http_proxy(gc);
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
-		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL && 
+		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL &&
 				(checksum == strtol(locksum, NULL, 10)))
 			return;
 
@@ -134,6 +134,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		data->gc = gc;
 		data->who = g_strdup(who);
 		data->checksum = checksum;
+		/* TODO: Does this need to be MSIE 5.0? */
 		url_data = purple_util_fetch_url(url, use_whole_url,
 				"Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
 				yahoo_fetch_picture_cb, data);
@@ -499,13 +500,13 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 	port = purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
 	tmp = g_strdup_printf("%s:%d", host, port);
 	header = g_strdup_printf("POST %s%s/notifyft HTTP/1.1\r\n"
-		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+		"User-Agent: " YAHOO_CLIENT_USERAGENT "\r\n"
 		"Cookie: T=%s; Y=%s\r\n"
 		"Host: %s\r\n"
 		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 		"Cache-Control: no-cache\r\n\r\n",
 		use_whole_url ? "http://" : "", use_whole_url ? tmp : "",
-		yd->cookie_t, yd->cookie_y, 
+		yd->cookie_t, yd->cookie_y,
 		tmp,
 		pkt_buf_len + 4 + d->str->len);
 	g_free(tmp);
@@ -572,7 +573,7 @@ static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
 	purple_debug_misc("yahoo", "Calculated buddy icon checksum: %d\n", checksum);
 
 	return checksum;
-} 
+}
 
 void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {

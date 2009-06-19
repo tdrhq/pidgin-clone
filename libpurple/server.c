@@ -728,7 +728,6 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		im = PURPLE_CONV_IM(conv);
 
 		purple_conv_im_set_typing_state(im, state);
-		purple_conv_im_update_typing(im);
 	} else {
 		switch (state)
 		{
@@ -766,7 +765,6 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 
 		purple_conv_im_stop_typing_timeout(im);
 		purple_conv_im_set_typing_state(im, PURPLE_NOT_TYPING);
-		purple_conv_im_update_typing(im);
 	}
 	else
 	{
@@ -925,12 +923,6 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(message != NULL);
 
-	/*
-	 * XXX: Should we be setting this here, or relying on prpls to set it?
-	 */
-	if (g_strcmp0(purple_account_get_username(g->account), who))
-		flags |= PURPLE_MESSAGE_RECV;
-
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 		conv = (PurpleConversation *)bcs->data;
 
@@ -944,6 +936,15 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 	if (!conv)
 		return;
+
+	/* Did I send the message? */
+	if (purple_strequal(purple_conv_chat_get_nick(chat),
+				purple_normalize(purple_conversation_get_account(conv), who))) {
+		flags |= PURPLE_MESSAGE_SEND;
+		flags &= ~PURPLE_MESSAGE_RECV; /* Just in case some prpl sets it! */
+	} else {
+		flags |= PURPLE_MESSAGE_RECV;
+	}
 
 	/*
 	 * Make copies of the message and the sender in case plugins want

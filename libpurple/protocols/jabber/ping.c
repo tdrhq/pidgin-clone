@@ -28,10 +28,16 @@
 #include "ping.h"
 #include "iq.h"
 
-static void jabber_keepalive_pong_cb(JabberStream *js)
+static void jabber_keepalive_pong_cb(JabberStream *js, const char *from,
+                                     JabberIqType type, const char *id,
+                                     xmlnode *packet, gpointer data)
 {
-	purple_timeout_remove(js->keepalive_timeout);
-	js->keepalive_timeout = -1;
+	if (js->keepalive_timeout != 0) {
+		purple_debug_misc("jabber", "Keepalive PONG\n");
+		purple_timeout_remove(js->keepalive_timeout);
+		js->keepalive_timeout = 0;
+	} else
+		purple_debug_warning("jabber", "Keepalive PONG with no outstanding timeout!\n");
 }
 
 void
@@ -55,21 +61,23 @@ static void jabber_ping_result_cb(JabberStream *js, const char *from,
                                   JabberIqType type, const char *id,
                                   xmlnode *packet, gpointer data)
 {
-	char *own_bare_jid = g_strdup_printf("%s@%s", js->user->node,
-	                                     js->user->domain);
-
-	if (!from || !strcmp(from, own_bare_jid)) {
-		/* If the pong is from our bare JID, treat it as a return from the
-		 * keepalive functions */
-		jabber_keepalive_pong_cb(js);
-	}
-	g_free(own_bare_jid);
-
-	if (type == JABBER_IQ_RESULT) {
+	if (type == JABBER_IQ_RESULT)
 		purple_debug_info("jabber", "PONG!\n");
-	} else {
-		purple_debug_info("jabber", "(not supported)\n");
-	}
+	else
+		purple_debug_info("jabber", "ping not supported\n");
+}
+
+void jabber_keepalive_ping(JabberStream *js)
+{
+	JabberIq *iq;
+	xmlnode *ping;
+
+	iq = jabber_iq_new(js, JABBER_IQ_GET);
+	ping = xmlnode_new_child(iq->node, "ping");
+	xmlnode_set_namespace(ping, "urn:xmpp:ping");
+
+	jabber_iq_set_callback(iq, jabber_keepalive_pong_cb, NULL);
+	jabber_iq_send(iq);
 }
 
 gboolean jabber_ping_jid(JabberStream *js, const char *jid)

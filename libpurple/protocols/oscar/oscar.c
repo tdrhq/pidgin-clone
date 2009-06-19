@@ -930,7 +930,7 @@ static void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotify
 	PurpleGroup *g = NULL;
 	struct buddyinfo *bi = NULL;
 	char *tmp;
-	const char *bname, *gname = NULL;
+	const char *bname = NULL, *gname = NULL;
 
 	od = purple_connection_get_protocol_data(gc);
 	account = purple_connection_get_account(gc);
@@ -938,14 +938,14 @@ static void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotify
 	if ((user_info == NULL) || ((b == NULL) && (userinfo == NULL)))
 		return;
 
-	bname = purple_buddy_get_name(b);
 	if (userinfo == NULL)
-		userinfo = aim_locate_finduserinfo(od, bname);
+		userinfo = aim_locate_finduserinfo(od, purple_buddy_get_name(b));
 
 	if (b == NULL)
 		b = purple_find_buddy(account, userinfo->bn);
 
 	if (b != NULL) {
+		bname = purple_buddy_get_name(b);
 		g = purple_buddy_get_group(b);
 		gname = purple_group_get_name(g);
 		presence = purple_buddy_get_presence(b);
@@ -1268,7 +1268,7 @@ flap_connection_established_bos(OscarData *od, FlapConnection *conn)
 	aim_ssi_reqdata(od);
 	if (od->getblisttimer > 0)
 		purple_timeout_remove(od->getblisttimer);
-	od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
+	od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 
 	aim_locate_reqrights(od);
 	aim_buddylist_reqrights(od, conn);
@@ -1833,13 +1833,6 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	gchar *buf;
 	gssize result;
 
-	if (!PURPLE_CONNECTION_IS_VALID(pos->gc))
-	{
-		g_free(pos->modname);
-		g_free(pos);
-		return;
-	}
-
 	pos->fd = source;
 
 	if (source < 0) {
@@ -1937,8 +1930,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	pos->len = len;
 	pos->modname = g_strdup(modname);
 
-	/* TODO: Keep track of this return value. */
-	if (purple_proxy_connect(NULL, pos->gc->account, "pidgin.im", 80,
+	if (purple_proxy_connect(pos->gc, pos->gc->account, "pidgin.im", 80,
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
@@ -3566,13 +3558,16 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 	alerturl  = va_arg(ap, char *);
 	va_end(ap);
 
-	if (account != NULL && emailinfo != NULL && emailinfo->unread && havenewmail) {
+	if (account != NULL && emailinfo != NULL && purple_account_get_check_mail(account) &&
+			emailinfo->unread && havenewmail) {
 		gchar *to = g_strdup_printf("%s%s%s",
 				purple_account_get_username(account),
 				emailinfo->domain ? "@" : "",
 				emailinfo->domain ? emailinfo->domain : "");
+		const char *tos[2] = { to };
+		const char *urls[2] = { emailinfo->url };
 		purple_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL,
-				(const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
+				tos, urls, NULL, NULL);
 		g_free(to);
 	}
 
@@ -5047,7 +5042,7 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 					_("The AIM servers were temporarily unable to send "
 					"your buddy list.  Your buddy list is not lost, and "
 					"will probably become available in a few minutes."));
-		od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
+		od->getblisttimer = purple_timeout_add_seconds(30, purple_ssi_rerequestdata, od);
 		return 1;
 	}
 
@@ -5122,58 +5117,43 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	aim_ssi_cleanlist(od);
 
 	{ /* If not in server list then prune from local list */
-		PurpleBlistNode *gnode, *cnode, *bnode;
-		PurpleBuddyList *blist;
 		GSList *cur, *next;
-
+		GSList *buddies = purple_find_buddies(account, NULL);
+		
 		/* Buddies */
 		cur = NULL;
-		if ((blist = purple_get_blist()) != NULL) {
-			for (gnode = purple_blist_get_root(); gnode;
-					gnode = purple_blist_node_get_sibling_next(gnode)) {
-				const char *gname;
-				if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-					continue;
-				g = (PurpleGroup *)gnode;
-				gname = purple_group_get_name(g);
-				for (cnode = purple_blist_node_get_first_child(gnode);
-						cnode;
-						cnode = purple_blist_node_get_sibling_next(cnode)) {
-					if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-						continue;
-					for (bnode = purple_blist_node_get_first_child(cnode);
-							bnode;
-							bnode = purple_blist_node_get_sibling_next(bnode)) {
-						const char *bname;
-						if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-							continue;
-						b = (PurpleBuddy *)bnode;
-						bname = purple_buddy_get_name(b);
-						if (purple_buddy_get_account(b) == account) {
-							if (aim_ssi_itemlist_exists(od->ssi.local, bname)) {
-								/* If the buddy is an ICQ user then load his nickname */
-								const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
-								char *alias;
-								const char *balias;
-								if (servernick)
-									serv_got_alias(gc, bname, servernick);
 
-								/* Store local alias on server */
-								alias = aim_ssi_getalias(od->ssi.local, gname, bname);
-								balias = purple_buddy_get_local_buddy_alias(b);
-								if (!alias && balias && *balias)
-									aim_ssi_aliasbuddy(od, gname, bname, balias);
-								g_free(alias);
-							} else {
-								purple_debug_info("oscar",
-										"ssi: removing buddy %s from local list\n", bname);
-								/* We can't actually remove now because it will screw up our looping */
-								cur = g_slist_prepend(cur, b);
-							}
-						}
-					}
-				}
+		while(buddies) {
+			PurpleGroup *g;
+			const char *gname;
+			const char *bname;
+
+			b = buddies->data;
+			g = purple_buddy_get_group(b);
+			gname = purple_group_get_name(g);
+			bname = purple_buddy_get_name(b);
+
+			if (aim_ssi_itemlist_exists(od->ssi.local, bname)) {
+				/* If the buddy is an ICQ user then load his nickname */
+				const char *servernick = purple_blist_node_get_string((PurpleBlistNode*)b, "servernick");
+				char *alias;
+				const char *balias;
+				if (servernick)
+					serv_got_alias(gc, bname, servernick);
+
+				/* Store local alias on server */
+				alias = aim_ssi_getalias(od->ssi.local, gname, bname);
+				balias = purple_buddy_get_local_buddy_alias(b);
+				if (!alias && balias && *balias)
+					aim_ssi_aliasbuddy(od, gname, bname, balias);
+				g_free(alias);
+			} else {
+				purple_debug_info("oscar",
+						"ssi: removing buddy %s from local list\n", bname);
+				/* We can't actually remove now because it will screw up our looping */
+				cur = g_slist_prepend(cur, b);
 			}
+			buddies = g_slist_delete_link(buddies, buddies);
 		}
 
 		while (cur != NULL) {
@@ -6553,47 +6533,35 @@ static void oscar_show_awaitingauth(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	OscarData *od = purple_connection_get_protocol_data(gc);
-	gchar *nombre, *text, *tmp;
-	PurpleBlistNode *gnode, *cnode, *bnode;
+	gchar *text, *tmp;
+	GSList *buddies;
 	PurpleAccount *account;
 	int num=0;
 
 	text = g_strdup("");
 	account = purple_connection_get_account(gc);
 
-	for (gnode = purple_blist_get_root(); gnode;
-			gnode = purple_blist_node_get_sibling_next(gnode)) {
-		PurpleGroup *group = (PurpleGroup *)gnode;
-		const char *gname;
-		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		gname = purple_group_get_name(group);
-		for (cnode = purple_blist_node_get_first_child(gnode);
-				cnode;
-				cnode = purple_blist_node_get_sibling_next(cnode)) {
-			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for (bnode = purple_blist_node_get_first_child(cnode);
-					bnode;
-					bnode = purple_blist_node_get_sibling_next(bnode)) {
-				PurpleBuddy *buddy = (PurpleBuddy *)bnode;
-				const char *bname;
-				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				bname = purple_buddy_get_name(buddy);
-				if (purple_buddy_get_account(buddy) == account && aim_ssi_waitingforauth(od->ssi.local, gname, bname)) {
-					if (purple_buddy_get_alias_only(buddy))
-						nombre = g_strdup_printf(" %s (%s)", bname, purple_buddy_get_alias_only(buddy));
-					else
-						nombre = g_strdup_printf(" %s", bname);
-					tmp = g_strdup_printf("%s%s<br>", text, nombre);
-					g_free(text);
-					text = tmp;
-					g_free(nombre);
-					num++;
-				}
-			}
+	buddies = purple_find_buddies(account, NULL);
+	while (buddies) {
+		PurpleBuddy *buddy;
+		const gchar *bname, *gname;
+
+		buddy = buddies->data;
+		bname = purple_buddy_get_name(buddy);
+		gname = purple_group_get_name(purple_buddy_get_group(buddy));
+		if (aim_ssi_waitingforauth(od->ssi.local, gname, bname)) {
+			const gchar *alias = purple_buddy_get_alias_only(buddy);
+			if (alias)
+				tmp = g_strdup_printf("%s %s (%s)<br>", text, bname, alias);
+			else
+				tmp = g_strdup_printf("%s %s<br>", text, bname);
+			g_free(text);
+			text = tmp;
+
+			num++;
 		}
+
+		buddies = g_slist_delete_link(buddies, buddies);
 	}
 
 	if (!num) {
@@ -7046,6 +7014,16 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	/* Preferences */
 	purple_prefs_add_none("/plugins/prpl/oscar");
 	purple_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
+
+	/*
+	 * These two preferences will normally not be changed.  UIs can optionally
+	 * use them to override these two version fields which are sent to the
+	 * server when logging in.  AOL requested this change to allow clients to
+	 * use custom values.
+	 */
+	purple_prefs_add_string("/plugins/prpl/oscar/clientstring", NULL);
+	purple_prefs_add_int("/plugins/prpl/oscar/distid", -1);
+
 	purple_prefs_remove("/plugins/prpl/oscar/show_idle");
 	purple_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
 

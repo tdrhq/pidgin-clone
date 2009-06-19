@@ -126,10 +126,10 @@ struct _PurpleAttentionType
 typedef enum
 {
 	/**
-	 * Use a unique name, not an alias, for chat rooms.
+	 * User names are unique to a chat and are not shared between rooms.
 	 *
-	 * XMPP lets you choose what name you want for chat.
-	 * So it shouldn't be pulling the alias for when you're in chat;
+	 * XMPP lets you choose what name you want in chats, so it shouldn't
+	 * be pulling the aliases from the buddy list for the chat list;
 	 * it gets annoying.
 	 */
 	OPT_PROTO_UNIQUE_CHATNAME = 0x00000004,
@@ -464,22 +464,22 @@ struct _PurplePluginProtocolInfo
 	/**
 	 * Initiate a media session with the given contact.
 	 *
-	 * @param conn The connection to initiate the media session on.
+	 * @param account The account to initiate the media session on.
 	 * @param who The remote user to initiate the session with.
 	 * @param type The type of media session to initiate.
 	 * @return TRUE if the call succeeded else FALSE. (Doesn't imply the media session or stream will be successfully created)
 	 */
-	gboolean (*initiate_media)(PurpleConnection *gc, const char *who,
+	gboolean (*initiate_media)(PurpleAccount *account, const char *who,
 					PurpleMediaSessionType type);
 
 	/**
 	 * Checks to see if the given contact supports the given type of media session.
 	 *
-	 * @param conn The connection the contact is on.
+	 * @param account The account the contact is on.
 	 * @param who The remote user to check for media capability with.
 	 * @return The media caps the contact supports.
 	 */
-	PurpleMediaCaps (*get_media_caps)(PurpleConnection *gc,
+	PurpleMediaCaps (*get_media_caps)(PurpleAccount *account,
 					  const char *who);
 };
 
@@ -659,6 +659,20 @@ void purple_prpl_got_account_login_time(PurpleAccount *account, time_t login_tim
  */
 void purple_prpl_got_account_status(PurpleAccount *account,
 								  const char *status_id, ...) G_GNUC_NULL_TERMINATED;
+
+/**
+ * Notifies Purple that our account's actions have changed. This is only
+ * called after the initial connection. Emits the account-actions-changed
+ * signal.
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account   The account.
+ *
+ * @see account-actions-changed
+ * @since 2.6.0
+ */
+void purple_prpl_got_account_actions(PurpleAccount *account);
 
 /**
  * Notifies Purple that a buddy's idle state and time have changed.

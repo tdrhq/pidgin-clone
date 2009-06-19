@@ -353,6 +353,7 @@ static GHashTable *pidgin_ui_get_info(void)
 		g_hash_table_insert(ui_info, "version", VERSION);
 		g_hash_table_insert(ui_info, "website", "http://pidgin.im");
 		g_hash_table_insert(ui_info, "dev_website", "http://developer.pidgin.im");
+		g_hash_table_insert(ui_info, "client_type", "pc");
 	}
 
 	return ui_info;
@@ -787,7 +788,7 @@ int main(int argc, char *argv[])
 		DBusMessage *message = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE,
 				DBUS_INTERFACE_PURPLE, "PurpleBlistSetVisible");
 		gboolean tr = TRUE;
-		dbus_message_append_args(message, DBUS_TYPE_UINT32, &tr, DBUS_TYPE_INVALID);
+		dbus_message_append_args(message, DBUS_TYPE_INT32, &tr, DBUS_TYPE_INVALID);
 		dbus_connection_send_with_reply_and_block(conn, message, -1, NULL);
 		dbus_message_unref(message);
 #endif

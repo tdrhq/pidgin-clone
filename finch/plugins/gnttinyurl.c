@@ -228,12 +228,15 @@ static gboolean receiving_msg(PurpleAccount *account, char **sender, char **mess
 	if (!(*flags & PURPLE_MESSAGE_RECV) || *flags & PURPLE_MESSAGE_INVISIBLE)
 		return FALSE;
 
-	t = g_string_new(*message);
 	urls = purple_conversation_get_data(conv, "TinyURLs");
 	if (urls != NULL) /* message was cancelled somewhere? Reset. */
 		g_list_foreach(urls, free_urls, NULL);
 	g_list_free(urls);
-	urls = extract_urls(t->str);
+	urls = extract_urls(*message);
+	if (!urls)
+		return FALSE;
+
+	t = g_string_new(*message);
 	g_free(*message);
 	for (iter = urls; iter; iter = iter->next) {
 		if (g_utf8_strlen((char *)iter->data, -1) >= purple_prefs_get_int(PREF_LENGTH)) {
@@ -293,9 +296,9 @@ static void received_msg(PurpleAccount *account, char *sender, char *message,
 		cbdata->conv = conv;
 		tmp = purple_unescape_html((char *)iter->data);
 		if (g_ascii_strncasecmp(tmp, "http://", 7) && g_ascii_strncasecmp(tmp, "https://", 8)) {
-			url = g_strdup_printf("%shttp://%s", purple_prefs_get_string(PREF_URL), tmp);
+			url = g_strdup_printf("%shttp%%3A%%2F%%2F%s", purple_prefs_get_string(PREF_URL), purple_url_encode(tmp));
 		} else {
-			url = g_strdup_printf("%s%s", purple_prefs_get_string(PREF_URL), tmp);
+			url = g_strdup_printf("%s%s", purple_prefs_get_string(PREF_URL), purple_url_encode(tmp));
 		}
 		g_free(tmp);
 		purple_util_fetch_url(url, TRUE, "finch", FALSE, url_fetched, cbdata);

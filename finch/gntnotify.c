@@ -208,6 +208,9 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	void *ret;
 	static int key = 0;
 
+	if (count == 0)
+		return NULL;
+
 	if (!detailed)
 	{
 		g_string_append_printf(message,
@@ -263,7 +266,7 @@ static char *
 userinfo_hash(PurpleAccount *account, const char *who)
 {
 	char key[256];
-	snprintf(key, sizeof(key), "%s - %s", purple_account_get_username(account), purple_normalize(account, who));
+	g_snprintf(key, sizeof(key), "%s - %s", purple_account_get_username(account), purple_normalize(account, who));
 	return g_utf8_strup(key, -1);
 }
 

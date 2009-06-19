@@ -73,7 +73,8 @@ struct artist {
 /* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
 	{"Daniel 'datallah' Atallah",	NULL, NULL},
-	{"John 'rekkanoryo' Bailey",	N_("bug master"), "rekkanoryo@pidgin.im"},
+	{"Paul 'darkrain42' Aurich",	NULL, NULL },
+	{"John 'rekkanoryo' Bailey",	N_("bug master"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	NULL, NULL},
 	{"Hylke Bons",			N_("artist"), "h.bons@student.rug.nl"},
 	{"Thomas Butter",				NULL, NULL},
@@ -90,6 +91,7 @@ static const struct developer developers[] = {
 	{"Bartosz Oler",		NULL, NULL},
 	{"Etan 'deryni' Reisner",       NULL, NULL},
 	{"Tim 'marv' Ringenbach",		NULL, NULL},
+	{"Michael 'Maiku' Ruprecht",	N_("voice and video"), NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
 	{"Evan Schoenberg",		NULL, NULL},
@@ -101,7 +103,6 @@ static const struct developer developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
-	{"Paul 'darkrain42' Aurich", NULL, NULL },
 	{"Marcus 'malu' Lundblad", NULL, NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
@@ -185,6 +186,7 @@ static const struct translator translators[] = {
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
 	{N_("Hindi"),               "hi", "Ravishankar Shrivastava", "raviratlami@yahoo.com"},
 	{N_("Hungarian"),           "hu", "Kelemen Gábor", "kelemeng@gnome.hu"},
+	{N_("Armenian"),            "hy", "David Avsharyan", "avsharyan@gmail.com"},
 	{N_("Indonesian"),          "id", "Rai S. Regawa", "raireg@yahoo.com"},
 	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
@@ -222,6 +224,7 @@ static const struct translator translators[] = {
 	{N_("Sinhala"),             "si", "Danishka Navin", "snavin@redhat.com"},
 	{N_("Sinhala"),             "si", "Yajith Ajantha Dayarathna", "yajith@gmail.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
+	{N_("Swahili"),             "sw", "Paul Msegeya", "msegeya@gmail.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
 	{N_("Thai"),                "th", "Isriya Paireepairit", "markpeak@gmail.com"},
@@ -427,7 +430,7 @@ void pidgin_dialogs_about()
 #endif
 	gtk_widget_destroy(logo);
 	logo = gtk_image_new_from_pixbuf(pixbuf);
-	gdk_pixbuf_unref(pixbuf);
+	g_object_unref(G_OBJECT(pixbuf));
 	/* Insert the logo */
 	obj = gtk_widget_get_accessible(logo);
 	tmp = g_strconcat(PIDGIN_NAME, " " DISPLAY_VERSION, NULL);

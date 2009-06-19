@@ -47,6 +47,8 @@ struct _PidginSmiley
 	GtkWidget *smiley_image;
 	gchar *filename;
 	GdkPixbuf *custom_pixbuf;
+	gpointer data; /** @since 2.6.0 */
+	gsize datasize; /** @since 2.6.0 */
 };
 
 typedef struct
@@ -74,7 +76,7 @@ pidgin_smiley_destroy(PidginSmiley *smiley)
 	gtk_widget_destroy(smiley->parent);
 	g_free(smiley->filename);
 	if (smiley->custom_pixbuf)
-		gdk_pixbuf_unref(smiley->custom_pixbuf);
+		g_object_unref(G_OBJECT(smiley->custom_pixbuf));
 	g_free(smiley);
 }
 
@@ -277,7 +279,6 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 		purple_debug_info("gtksmiley", "adding a new smiley\n");
 
 		if (s->filename == NULL) {
-			/* Get the smiley from the custom pixbuf */
 			gchar *buffer = NULL;
 			gsize size = 0;
 			gchar *filename;
@@ -296,8 +297,16 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 				}
 			}
 
-			gdk_pixbuf_save_to_buffer(s->custom_pixbuf, &buffer, &size,
-				"png", NULL, "compression", "9", NULL, NULL);
+			if (s->data && s->datasize) {
+				/* Cached data & size in memory */
+				buffer = s->data;
+				size = s->datasize;
+			}
+			else {
+				/* Get the smiley from the custom pixbuf */
+				gdk_pixbuf_save_to_buffer(s->custom_pixbuf, &buffer, &size,
+					"png", NULL, "compression", "9", NULL, NULL);
+			}
 			filename = purple_util_get_image_filename(buffer, size);
 			s->filename = g_build_filename(dirname, filename, NULL);
 			purple_util_write_data_to_file_absolute(s->filename, buffer, size);
@@ -344,7 +353,7 @@ static void do_add_file_cb(const char *filename, gpointer data)
 	pixbuf = gdk_pixbuf_new_from_file_at_scale(filename, 64, 64, FALSE, NULL);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(s->smiley_image), pixbuf);
 	if (pixbuf)
-		gdk_pixbuf_unref(pixbuf);
+		g_object_unref(G_OBJECT(pixbuf));
 	gtk_widget_grab_focus(s->smile);
 }
 
@@ -459,10 +468,17 @@ void
 pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image)
 {
 	if (editor->custom_pixbuf)
-		gdk_pixbuf_unref(editor->custom_pixbuf);
-	editor->custom_pixbuf = image ? gdk_pixbuf_ref(image) : NULL;
+		g_object_unref(G_OBJECT(editor->custom_pixbuf));
+	editor->custom_pixbuf = image ? g_object_ref(G_OBJECT(image)) : NULL;
 	if (image)
 		gtk_image_set_from_pixbuf(GTK_IMAGE(editor->smiley_image), image);
+}
+
+void
+pidgin_smiley_editor_set_data(PidginSmiley *editor, gpointer *data, gsize datasize)
+{
+	editor->data = data;
+	editor->datasize = datasize;
 }
 
 /******************************************************************************

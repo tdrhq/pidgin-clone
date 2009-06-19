@@ -136,7 +136,7 @@ void xmlnode_insert_data(xmlnode *node, const char *data, gssize size);
  * @return The data from the node or NULL. This data is in raw escaped format.
  *         You must g_free this string when finished using it.
  */
-char *xmlnode_get_data(xmlnode *node);
+char *xmlnode_get_data(const xmlnode *node);
 
 /**
  * Gets unescaped data from a node.
@@ -146,7 +146,7 @@ char *xmlnode_get_data(xmlnode *node);
  * @return The data from the node, in unescaped form.   You must g_free
  *         this string when finished using it.
  */
-char *xmlnode_get_data_unescaped(xmlnode *node);
+char *xmlnode_get_data_unescaped(const xmlnode *node);
 
 /**
  * Sets an attribute for a node.
@@ -335,11 +335,14 @@ void xmlnode_free(xmlnode *node);
  * root node of an XML document will parse the entire document
  * into a tree of nodes, and return the xmlnode of the root.
  *
- * @param str  The string of xml.
- * @param description  The description of the file being parsed
- * @process  The utility that is calling xmlnode_from_file
+ * @param dir  The directory where the file is located
+ * @param filename  The filename
+ * @param description  A description of the file being parsed. Displayed to
+ * 			the user if the file cannot be read.
+ * @param process  The subsystem that is calling xmlnode_from_file. Used as
+ * 			the category for debugging.
  *
- * @return The new node.
+ * @return The new node or NULL if an error occurred.
  *
  * @since 2.6.0
  */
