@@ -317,7 +317,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 		                  name, out->str);
 		g_string_free(out, TRUE);
 	}
-
+					  
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:roster");
 
 	query = xmlnode_get_child(iq->node, "query");
