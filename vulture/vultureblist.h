@@ -23,18 +23,7 @@
 #ifndef _VULTURE_VULTUREBLIST_H_
 #define _VULTURE_VULTUREBLIST_H_
 
-
 #include <windows.h>
-#include <commctrl.h>
-
-
-typedef struct _VULTURE_BLIST_NODE
-{
-	LPTSTR				szNodeText;
-	HTREEITEM			hti;
-	struct _VULTURE_BLIST_NODE	*lpvbnParent;
-	CRITICAL_SECTION		cs;
-} VULTURE_BLIST_NODE;
 
 
 extern HWND g_hwndMain;

@@ -25,11 +25,29 @@
 #define _VULTURE_PURPLEBLIST_H_
 
 
+#include <windows.h>
+#include <commctrl.h>
+
 #include "purple.h"
+
+
+typedef struct _VULTURE_BLIST_NODE
+{
+	LPTSTR				szNodeText;
+	HTREEITEM			hti;
+	struct _VULTURE_BLIST_NODE	*lpvbnParent;
+	LONG				lRefCount;
+	CRITICAL_SECTION		cs;
+} VULTURE_BLIST_NODE;
 
 
 void PurpleBlistNewNode(PurpleBlistNode *lpblistnode);
 void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode);
+void PurpleBlistRemoveNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode);
+void VultureBListNodeRelease(VULTURE_BLIST_NODE *lpvblnode);
+
+
+static INLINE void VultureBListNodeAddRef(VULTURE_BLIST_NODE *lpvblnode) { InterlockedIncrement(&lpvblnode->lRefCount); }
 
 
 #endif

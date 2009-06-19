@@ -51,9 +51,9 @@ void PurpleBlistNewNode(PurpleBlistNode *lpblistnode)
 
 	lpvbn->szNodeText = NULL;
 	lpvbn->hti = NULL;
+	lpvbn->lRefCount = 1;
+	lpvbn->lpvbnParent = NULL;
 	InitializeCriticalSection(&lpvbn->cs);
-
-	PurpleBlistUpdateNode(NULL, lpblistnode);
 }
 
 
@@ -81,7 +81,9 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 	{
 		const char *szNodeText;
 
+		if(lpvbn->lpvbnParent) VultureBListNodeRelease(lpvbn->lpvbnParent);
 		lpvbn->lpvbnParent = lpblistnode->parent ? (VULTURE_BLIST_NODE*)lpblistnode->parent->ui_data : NULL;
+		if(lpvbn->lpvbnParent) VultureBListNodeAddRef(lpvbn->lpvbnParent);
 
 		switch(lpblistnode->type)
 		{
@@ -107,13 +109,15 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 
 		if(lpvbn->szNodeText) g_free(lpvbn->szNodeText);
 		lpvbn->szNodeText = szNodeText ? VultureUTF8ToTCHAR(szNodeText) : NULL;
+
+		/* TODO: We should probably be less willing to give up. */
+		if(lpvbn->szNodeText)
+		{
+			VultureBListNodeAddRef(lpvbn);
+			VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEBLISTNODE, lpvbn);
+		}
 	}
 	LeaveCriticalSection(&lpvbn->cs);
-
-
-	/* TODO: We should probably be less willing to give up. */
-	if(lpvbn->szNodeText)
-		VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEBLISTNODE, lpvbn);
 }
 
 
@@ -159,4 +163,42 @@ static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode)
 	}
 
 	return FALSE;
+}
+
+
+/**
+ * Callback for when a buddy-list is removed from the core's list.
+ *
+ * @param	lpbuddylist	Buddy-list. Unused.
+ * @param	lpblistnode	Buddy-list node.
+ */
+void PurpleBlistRemoveNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode)
+{
+	UNREFERENCED_PARAMETER(lpbuddylist);
+
+	if(!lpblistnode)
+		return;
+
+	VultureBListNodeRelease((VULTURE_BLIST_NODE*)lpblistnode->ui_data);
+}
+
+
+/**
+ * Releases a reference to a VULTURE_BLIST_NODE and frees the node if there are
+ * no outstanding references.
+ *
+ * @param	lpvblnode	Node to release.
+ */
+void VultureBListNodeRelease(VULTURE_BLIST_NODE *lpvblnode)
+{
+	if(InterlockedDecrement(&lpvblnode->lRefCount) == 0)
+	{
+		/* Released last reference. Free object. */
+
+		if(lpvblnode->lpvbnParent) VultureBListNodeRelease(lpvblnode->lpvbnParent);
+		if(lpvblnode->szNodeText) g_free(lpvblnode->szNodeText);
+		DeleteCriticalSection(&lpvblnode->cs);
+
+		g_free(lpvblnode);
+	}
 }

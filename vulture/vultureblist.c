@@ -28,6 +28,7 @@
 #include "resource.h"
 #include "purple.h"
 #include "vultureblist.h"
+#include "purpleblist.h"
 #include "purplequeue.h"
 #include "purplestatus.h"
 #include "acctmanager.h"
@@ -241,6 +242,11 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 							{
 								TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
 								lpvbn->hti = NULL;
+
+								/* Release the reference belonging to the pointer
+								 * cached in the tree-item.
+								 */
+								VultureBListNodeRelease(lpvbn);
 							}
 						}
 
@@ -250,10 +256,13 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 						{
 							TVINSERTSTRUCT tvis;
 
+							/* We cache this in the tree-view. */
+							VultureBListNodeAddRef(lpvbn);
+
 							tvis.hParent = lpvbn->lpvbnParent ? lpvbn->lpvbnParent->hti : TVI_ROOT;
 							tvis.hInsertAfter = TVI_SORT;
 							tvis.itemex.mask = TVIF_PARAM;
-							tvis.itemex.lParam = lParam;
+							tvis.itemex.lParam = (LPARAM)lpvbn;
 
 							lpvbn->hti = TreeView_InsertItem(hwndBlistTree, &tvis);
 						}
@@ -265,6 +274,9 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 						TreeView_SetItem(hwndBlistTree, &tvitem);
 					}
 					LeaveCriticalSection(&lpvbn->cs);
+
+					/* Release the reference for this call. */
+					VultureBListNodeRelease(lpvbn);
 				}
 
 				break;

@@ -175,7 +175,7 @@ static void InitUI(void)
 {
 	static PurpleBlistUiOps s_blistuiops =
 	{
-		NULL, PurpleBlistNewNode, NULL, PurpleBlistUpdateNode, NULL, NULL, NULL,
+		NULL, PurpleBlistNewNode, NULL, PurpleBlistUpdateNode, PurpleBlistRemoveNode, NULL, NULL,
 		NULL, NULL, NULL,
 		NULL, NULL, NULL, NULL
 	};
