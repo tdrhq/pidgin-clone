@@ -166,6 +166,7 @@ group_contacts_ready_cb (TpConnection *connection,
 	if (error != NULL)
 	{
 		purple_debug_error("telepathy", "Contacts ready error: %s\n", error->message);
+		g_free(data);
 	}
 	else
 	{
@@ -181,10 +182,10 @@ group_contacts_ready_cb (TpConnection *connection,
 		}
 
 		handle_contacts(data->connection_data, n_contacts, contacts, n_failed, group);
-	}
 
-	/* this isn't used anywhere else except this callback */
-	g_free(data);
+		g_hash_table_insert(data->connection_data->groups,
+				g_strdup(group_name), data);
+	}
 }
 
 /* this the ContactsReady callback for list channels */

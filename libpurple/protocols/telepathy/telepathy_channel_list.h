@@ -32,6 +32,8 @@ typedef struct
 
 } telepathy_group;
 
+void
+destroy_group(telepathy_group *tp_group);
 
 void
 handle_list_channel (TpChannel *channel,

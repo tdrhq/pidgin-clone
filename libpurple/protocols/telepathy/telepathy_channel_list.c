@@ -26,6 +26,12 @@
 #include "telepathy_contact.h"
 
 void
+destroy_group(telepathy_group *tp_group)
+{
+	g_free(tp_group);	
+}
+
+void
 handle_list_channel (TpChannel *channel,
                      telepathy_connection *data)
 {

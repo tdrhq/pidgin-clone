@@ -30,6 +30,7 @@
 #include "telepathy_avatar.h"
 #include "telepathy_channel.h"
 #include "telepathy_channel_text.h"
+#include "telepathy_channel_list.h"
 #include "telepathy_contact.h"
 
 void
@@ -53,6 +54,7 @@ status_changed_cb (TpConnection *proxy,
 
 		data->text_Channels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_text_channel);
 		data->contacts = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GDestroyNotify) destroy_contact);
+		data->groups = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_group);
 	}
 	else if (arg_Status == TP_CONNECTION_STATUS_DISCONNECTED)
 	{

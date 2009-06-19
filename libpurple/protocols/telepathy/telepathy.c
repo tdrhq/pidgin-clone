@@ -40,6 +40,7 @@
 
 #include "telepathy_avatar.h"
 #include "telepathy_channel.h"
+#include "telepathy_channel_list.h"
 #include "telepathy_channel_text.h"
 #include "telepathy_connection.h"
 #include "telepathy_contact.h"
@@ -478,6 +479,31 @@ telepathy_set_status (PurpleAccount *account, PurpleStatus *status)
 }
 
 static void
+telepathy_add_buddy (PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+{
+	const gchar* buddy_name = purple_buddy_get_name(buddy);
+	const gchar* group_name = purple_group_get_name(group);
+
+	telepathy_connection *connection_data = purple_connection_get_protocol_data(gc);
+	telepathy_group *tp_group = g_hash_table_lookup(connection_data->groups, group_name);
+
+	purple_debug_info("telepathy", "Adding buddy %s to group %s\n",
+			buddy_name, group_name);
+
+	if (tp_group == NULL)
+	{
+		purple_debug_info("telepathy", "Group %s does not exist. Creating it!\n",
+				group_name);
+
+		/* TODO: Create a new group for the buddy! */
+	}
+	else
+	{
+		/* TODO: Request a handle for the new buddy and add it to the group */
+	}
+}
+
+static void
 telepathy_set_buddy_icon (PurpleConnection *gc, PurpleStoredImage *img)
 {
 	telepathy_connection *data = purple_connection_get_protocol_data(gc);
@@ -551,7 +577,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	telepathy_set_status,                 /* set_status */
 	NULL,                   /* set_idle */
 	NULL,              /* change_passwd */
-	NULL,                  /* add_buddy */
+	telepathy_add_buddy,                  /* add_buddy */
 	NULL,                /* add_buddies */
 	NULL,               /* remove_buddy */
 	NULL,             /* remove_buddies */
