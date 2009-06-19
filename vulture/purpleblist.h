@@ -33,6 +33,7 @@
 
 typedef struct _VULTURE_BLIST_NODE
 {
+	PurpleBlistNode			*lpblistnode;
 	LPTSTR				szNodeText;
 	HTREEITEM			hti;
 	struct _VULTURE_BLIST_NODE	*lpvbnParent;

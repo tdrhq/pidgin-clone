@@ -49,6 +49,7 @@ void PurpleBlistNewNode(PurpleBlistNode *lpblistnode)
 
 	VULTURE_BLIST_NODE *lpvbn = (VULTURE_BLIST_NODE*)(lpblistnode->ui_data = g_new(VULTURE_BLIST_NODE, 1));
 
+	lpvbn->lpblistnode = lpblistnode;
 	lpvbn->szNodeText = NULL;
 	lpvbn->hti = NULL;
 	lpvbn->lRefCount = 1;
@@ -66,8 +67,6 @@ void PurpleBlistNewNode(PurpleBlistNode *lpblistnode)
 void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode)
 {
 	VULTURE_BLIST_NODE *lpvbn;
-
-	UNREFERENCED_PARAMETER(lpbuddylist);
 
 	if(!lpblistnode)
 		return;
@@ -113,6 +112,10 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 		/* TODO: We should probably be less willing to give up. */
 		if(lpvbn->szNodeText)
 		{
+			/* If out parent isn't showing, show it first. */
+			if(lpvbn->lpvbnParent && !lpvbn->lpvbnParent->hti)
+				PurpleBlistUpdateNode(lpbuddylist, lpvbn->lpvbnParent->lpblistnode);
+
 			VultureBListNodeAddRef(lpvbn);
 			VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEBLISTNODE, lpvbn);
 		}
