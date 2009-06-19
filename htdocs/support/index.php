@@ -23,7 +23,7 @@ Also look at the <a href="http://developer.pidgin.im/wiki/FAQ">Frequently Asked 
 <h2>Need to talk to a human?</h2>
 
 Send an email: <a href="http://pidgin.im/cgi-bin/mailman/listinfo/support">Pidgin support mailing list</a><br/>
-Chat on IRC: <a onclick="javascript:this.target='_blank'; pageTracker._trackPageview('/external/widget.mibbit.com');" href="http://widget.mibbit.com/?settings=4102eeafa56ea5c509e3cea7434fca3f&amp;server=irc.freenode.net&amp;channel=%23pidgin&amp;forcePrompt=true&amp;nick=%20">#pidgin on Freenode</a>
+Chat on IRC: <a onclick="javascript:this.target='_blank'; pageTracker._trackPageview('/external/webchat.freenode.net');" href="http://webchat.freenode.net/?channels=pidgin">#pidgin on Freenode</a>
 
 </div>
 
