@@ -36,11 +36,10 @@ Chat on IRC: <a onclick="javascript:this.target='_blank'; pageTracker._trackPage
 
 <h1>I have a problem to report</h1>
 
-<!-- div class="prominent_box">
+<div class="prominent_box">
 <strong>Common issues</strong><br/>
-<a href="http://developer.pidgin.im/ticket/8080">Pidgin cannot connect to MSN</a> (2.5.x)<br/>
-<a href="http://developer.pidgin.im/ticket/7849">Pidgin hangs when closed</a> (Windows/2.5.3)
-</div -->
+<a href="http://www.celticwolf.com/useful-information/faqs/26-pidgin-yahoo">Pidgin cannot connect to Yahoo!</a><br/>
+</div>
 
 <ul>
 <li>First, don't panic.</li>
