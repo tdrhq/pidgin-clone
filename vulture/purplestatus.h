@@ -49,7 +49,9 @@ typedef struct _VULTURE_SAVED_STATUS
 
 void PurpleGetBoxSavedStatuses(GList **lplpglistStatuses);
 void VulturePurpleFreeStatusList(GList *lpglistStatuses);
+void VultureFreeStatus(VULTURE_SAVED_STATUS *lpvss);
 void PurpleSetStatus(VULTURE_SAVED_STATUS *lpvss);
+void PurpleStatusChanged(PurpleSavedStatus *lppssNew, PurpleSavedStatus *lppssOld);
 
 
 #endif

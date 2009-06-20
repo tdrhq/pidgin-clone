@@ -43,6 +43,7 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void ManageAccounts(HWND hwndParent);
 static void PopulateStatusList(HWND hwndComboStatus);
+static void UpdateStatusUI(VULTURE_SAVED_STATUS *lpvss, HWND hwndStatusDlg);
 
 
 #define BLIST_MARGIN 6
@@ -297,6 +298,11 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 				VultureFreeConvWrite((VULTURE_CONV_WRITE*)lParam);
 				break;
 
+			case VUIMSG_STATUSCHANGED:
+				UpdateStatusUI((VULTURE_SAVED_STATUS*)lParam, s_hwndStatusDlg);
+				VultureFreeStatus((VULTURE_SAVED_STATUS*)lParam);
+				break;
+
 			case VUIMSG_QUIT:
 				DestroyWindow(hwnd);
 				break;
@@ -549,5 +555,49 @@ static void PopulateStatusList(HWND hwndComboStatus)
 		cbexitem.iItem = -1;
 
 		SendMessage(hwndComboStatus, CBEM_INSERTITEM, 0, (LPARAM)&cbexitem);
+	}
+}
+
+
+/**
+ * Updates the status combo-box and edit-box to reflect the given status.
+ *
+ * @param	lpvss		Status.
+ * @param	hwndStatusDlg	Status dialogue handle.
+ */
+static void UpdateStatusUI(VULTURE_SAVED_STATUS *lpvss, HWND hwndStatusDlg)
+{
+	HWND hwndCombo = GetDlgItem(hwndStatusDlg, IDC_CBEX_STATUS);
+	int i;
+	int iCount = SendMessage(hwndCombo, CB_GETCOUNT, 0, 0);
+	int iMatch = -1;
+
+	PopulateStatusList(hwndCombo);
+
+	if(lpvss->vsstype == VSSTYPE_FIRM)
+	{
+		/* Search for matching PurpleSavedStatus. */
+		for(i = 0; i < iCount && iMatch < 0; i++)
+		{
+			VULTURE_SAVED_STATUS *lpvssList = (VULTURE_SAVED_STATUS*)SendMessage(hwndCombo, CB_GETITEMDATA, i, 0);
+
+			if(lpvssList->vsstype == VSSTYPE_FIRM && lpvssList->lppss == lpvss->lppss)
+				iMatch = i;
+		}
+	}
+
+	/* Search for matching primitive. */
+	for(i = 0; i < iCount && iMatch < 0; i++)
+	{
+		VULTURE_SAVED_STATUS *lpvssList = (VULTURE_SAVED_STATUS*)SendMessage(hwndCombo, CB_GETITEMDATA, i, 0);
+
+		if(lpvssList->vsstype == VSSTYPE_PRIMITIVE && lpvssList->psprim == lpvss->psprim)
+			iMatch = i;
+	}
+
+	if(iMatch >= 0)
+	{
+		SendMessage(hwndCombo, CB_SETCURSEL, iMatch, 0);
+		SetDlgItemText(hwndStatusDlg, IDC_EDIT_STATUSMSG, lpvss->szMessage);
 	}
 }

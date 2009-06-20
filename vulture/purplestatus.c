@@ -25,10 +25,14 @@
 
 #include "vulture.h"
 #include "purplestatus.h"
+#include "purplemain.h"
 
 
 /* Number of populat saved statuses. */
 #define CPSS_POPULAR	6
+
+
+static void MakeVultureStatusFromPurple(PurpleSavedStatus *lppss, VULTURE_SAVED_STATUS *lpvss);
 
 
 /**
@@ -76,14 +80,7 @@ void PurpleGetBoxSavedStatuses(GList **lplpglistStatuses)
 		PurpleSavedStatus *lppss = lpglistPurpleStatuses->data;
 		VULTURE_SAVED_STATUS *lpvss = g_new(VULTURE_SAVED_STATUS, 1);
 
-		const char *szTitle = purple_savedstatus_get_title(lppss);
-		const char *szMessage = purple_savedstatus_get_message(lppss);
-
-		lpvss->psprim = purple_savedstatus_get_type(lppss);
-		lpvss->vsstype = purple_savedstatus_is_transient(lppss) ? VSSTYPE_TRANSIENT : VSSTYPE_FIRM;
-		lpvss->lppss = lppss;
-		lpvss->szTitle = szTitle ? VultureUTF8ToTCHAR(szTitle) : NULL;
-		lpvss->szMessage = szMessage ? VultureUTF8ToTCHAR(szMessage) : NULL;
+		MakeVultureStatusFromPurple(lppss, lpvss);
 
 		*lplpglistStatuses = g_list_prepend(*lplpglistStatuses, lpvss);
 	}
@@ -104,16 +101,23 @@ void VulturePurpleFreeStatusList(GList *lpglistStatuses)
 	GList *lpglistRover;
 
 	for(lpglistRover = lpglistStatuses; lpglistRover; lpglistRover = lpglistRover->next)
-	{
-		VULTURE_SAVED_STATUS *lpvss = lpglistRover->data;
-		
-		if(lpvss->szTitle) g_free(lpvss->szTitle);
-		if(lpvss->szMessage) g_free(lpvss->szMessage);
-
-		g_free(lpvss);
-	}
+		VultureFreeStatus((VULTURE_SAVED_STATUS*)lpglistRover->data);
 
 	g_list_free(lpglistStatuses);
+}
+
+
+/**
+ * Frees a VULTURE_SAVED_STATUS.
+ *
+ * @param	lpvss	Status to free.
+ */
+void VultureFreeStatus(VULTURE_SAVED_STATUS *lpvss)
+{
+	if(lpvss->szTitle) g_free(lpvss->szTitle);
+	if(lpvss->szMessage) g_free(lpvss->szMessage);
+
+	g_free(lpvss);
 }
 
 
@@ -157,4 +161,40 @@ void PurpleSetStatus(VULTURE_SAVED_STATUS *lpvss)
 
 	if(szMessage)
 		g_free(szMessage);
+}
+
+
+/**
+ * savedstatus-changed signal-handler. Called when the status is changed.
+ *
+ * @param	lppssNew	New status.
+ * @param	lppssOld	Old status.
+ */
+void PurpleStatusChanged(PurpleSavedStatus *lppssNew, PurpleSavedStatus *lppssOld)
+{
+	VULTURE_SAVED_STATUS *lpvss = g_new(VULTURE_SAVED_STATUS, 1);
+
+	MakeVultureStatusFromPurple(lppssNew, lpvss);
+
+	/* The UI will free the status we just allocated. */
+	VulturePostUIMessage(g_hwndMain, VUIMSG_STATUSCHANGED, lpvss);
+}
+
+
+/**
+ * Populate a VULTURE_SAVED_STATUS from a PurpleSavedStatus.
+ *
+ * @param	lppss	Source.
+ * @param[out]	lpvss	Destination.
+ */
+static void MakeVultureStatusFromPurple(PurpleSavedStatus *lppss, VULTURE_SAVED_STATUS *lpvss)
+{
+	const char *szTitle = purple_savedstatus_get_title(lppss);
+	const char *szMessage = purple_savedstatus_get_message(lppss);
+
+	lpvss->psprim = purple_savedstatus_get_type(lppss);
+	lpvss->vsstype = purple_savedstatus_is_transient(lppss) ? VSSTYPE_TRANSIENT : VSSTYPE_FIRM;
+	lpvss->lppss = lppss;
+	lpvss->szTitle = szTitle ? VultureUTF8ToTCHAR(szTitle) : NULL;
+	lpvss->szMessage = szMessage ? VultureUTF8ToTCHAR(szMessage) : NULL;
 }

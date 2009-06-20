@@ -50,8 +50,16 @@ enum ENUM_VULTURE_UI_MESSAGES
 	VUIMSG_WRITECONVERSATION,
 
 	VUIMSG_QUIT,
+
+	/* (VULTURE_SAVED_STATUS*) New status. */
+	VUIMSG_STATUSCHANGED,
 };
 
+/* HandlEs for reigistering signal handlERs. */
+enum ENUM_VULTURE_SIGNAL_HANDLES
+{
+	VSH_STATUS = 1,
+};
 
 void VultureInitLibpurple(HANDLE *lphthread);
 void VultureShutDownLibpurple(void);
