@@ -185,7 +185,7 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		return 0;
 
 	case WM_SETCURSOR:
-		if(LOWORD(lParam) == HTCLIENT)
+		if(s_hCursor && LOWORD(lParam) == HTCLIENT)
 		{
 			SetCursor(s_hCursor);
 
@@ -216,7 +216,7 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 						EnableMenuItem(hmenu, i, MF_BYPOSITION | MF_ENABLED);
 					DrawMenuBar(hwnd);
 
-					s_hCursor = LoadCursor(NULL, IDC_ARROW);
+					s_hCursor = NULL;
 				}
 
 				break;
