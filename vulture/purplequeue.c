@@ -173,7 +173,7 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 	switch(lppurplecall->iCallID)
 	{
 	case PC_GETALLSAVEDSTATUSES:
-		PurpleGetAllSavedStatuses((GList**)lppurplecall->lpvParam);
+		PurpleGetBoxSavedStatuses((GList**)lppurplecall->lpvParam);
 		break;
 
 	case PC_GETALLACCOUNTS:
@@ -185,7 +185,7 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		break;
 
 	case PC_SETSAVEDSTATUS:
-		purple_savedstatus_activate(((VULTURE_SAVED_STATUS*)lppurplecall->lpvParam)->lppss);
+		PurpleSetStatus((VULTURE_SAVED_STATUS*)lppurplecall->lpvParam);
 		break;
 
 	case PC_DESTROYCONVERSATION:

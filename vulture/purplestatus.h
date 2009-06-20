@@ -29,17 +29,27 @@
 #include "purple.h"
 
 
+typedef enum _VULTURE_SAVED_STATUS_TYPE
+{
+	VSSTYPE_PRIMITIVE,
+	VSSTYPE_TRANSIENT,
+	VSSTYPE_FIRM,
+} VULTURE_SAVED_STATUS_TYPE;
+
+
 typedef struct _VULTURE_SAVED_STATUS
 {
-	PurpleSavedStatus	*lppss;
-	LPTSTR			szTitle;
-	LPTSTR			szType;
-	LPTSTR			szMessage;
+	PurpleSavedStatus		*lppss;
+	LPTSTR				szTitle;
+	LPTSTR				szMessage;
+	PurpleStatusPrimitive		psprim;
+	VULTURE_SAVED_STATUS_TYPE	vsstype;
 } VULTURE_SAVED_STATUS;
 
 
-void PurpleGetAllSavedStatuses(GList **lplpglistStatuses);
+void PurpleGetBoxSavedStatuses(GList **lplpglistStatuses);
 void VulturePurpleFreeStatusList(GList *lpglistStatuses);
+void PurpleSetStatus(VULTURE_SAVED_STATUS *lpvss);
 
 
 #endif

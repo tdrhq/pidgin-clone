@@ -430,7 +430,7 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 					VULTURE_SAVED_STATUS *lpvss = (VULTURE_SAVED_STATUS*)SendDlgItemMessage(hwndDlg, IDC_CBEX_STATUS, CB_GETITEMDATA, iSel, 0);
 					VultureSingleSyncPurpleCall(PC_SETSAVEDSTATUS, lpvss);
 
-					SetDlgItemText(hwndDlg, IDC_EDIT_STATUSMSG, lpvss->szMessage);
+					SetDlgItemText(hwndDlg, IDC_EDIT_STATUSMSG, lpvss->szMessage ? lpvss->szMessage : TEXT(""));
 				}
 
 				return TRUE;
@@ -542,7 +542,7 @@ static void PopulateStatusList(HWND hwndComboStatus)
 		COMBOBOXEXITEM cbexitem;
 
 		cbexitem.mask = CBEIF_TEXT | CBEIF_LPARAM;
-		cbexitem.pszText = lpvss->szTitle;
+		cbexitem.pszText = lpvss->szTitle ? lpvss->szTitle : TEXT("");
 		cbexitem.lParam = (LPARAM)lpvss;
 
 		/* Add at end of list. */

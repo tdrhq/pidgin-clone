@@ -27,37 +27,67 @@
 #include "purplestatus.h"
 
 
+/* Number of populat saved statuses. */
+#define CPSS_POPULAR	6
+
+
 /**
- * Gets a list of VULTURE_SAVED_STATUS records representing all saved statuses.
- * Adapted from Finch.
+ * Gets a list of VULTURE_SAVED_STATUS records representing those statuses we
+ * want to show in the buddy-list window. Adapted from Finch.
  *
  * @param[out]	lplpglistStatuses	List to populate.
  */
-void PurpleGetAllSavedStatuses(GList **lplpglistStatuses)
+void PurpleGetBoxSavedStatuses(GList **lplpglistStatuses)
 {
+	const PurpleStatusPrimitive c_rgpsprim[] =
+	{
+		PURPLE_STATUS_AVAILABLE, PURPLE_STATUS_AWAY,
+		PURPLE_STATUS_INVISIBLE, PURPLE_STATUS_OFFLINE
+	};
+
 	GList *lpglistPurpleStatuses;
+	int i;
+
 
 	*lplpglistStatuses = NULL;
 
-	for(lpglistPurpleStatuses = purple_savedstatuses_get_all(); lpglistPurpleStatuses; lpglistPurpleStatuses = lpglistPurpleStatuses->next)
+	/* Primitive statuses first. */
+	for(i = 0; i < NUM_ELEMENTS(c_rgpsprim); i++)
+	{
+		VULTURE_SAVED_STATUS *lpvss = g_new(VULTURE_SAVED_STATUS, 1);
+
+		const char *szTitle = purple_primitive_get_name_from_type(c_rgpsprim[i]);
+
+		lpvss->psprim = c_rgpsprim[i];
+		lpvss->vsstype = VSSTYPE_PRIMITIVE;
+		lpvss->lppss = NULL;
+		lpvss->szTitle = szTitle ? VultureUTF8ToTCHAR(szTitle) : NULL;
+		lpvss->szMessage = NULL;
+
+		*lplpglistStatuses = g_list_prepend(*lplpglistStatuses, lpvss);
+	}
+
+
+	/* Now do popular statuses. */
+	for(lpglistPurpleStatuses = purple_savedstatuses_get_popular(CPSS_POPULAR);
+		lpglistPurpleStatuses;
+		lpglistPurpleStatuses = lpglistPurpleStatuses->next)
 	{
 		PurpleSavedStatus *lppss = lpglistPurpleStatuses->data;
-		VULTURE_SAVED_STATUS *lpvss;
-		const char *szTitle, *szType, *szMessage;
+		VULTURE_SAVED_STATUS *lpvss = g_new(VULTURE_SAVED_STATUS, 1);
 
-		lpvss = g_new(VULTURE_SAVED_STATUS, 1);
+		const char *szTitle = purple_savedstatus_get_title(lppss);
+		const char *szMessage = purple_savedstatus_get_message(lppss);
 
-		szTitle = purple_savedstatus_get_title(lppss);
-		szType = purple_primitive_get_name_from_type(purple_savedstatus_get_type(lppss));
-		szMessage = purple_savedstatus_get_message(lppss);
-
+		lpvss->psprim = purple_savedstatus_get_type(lppss);
+		lpvss->vsstype = purple_savedstatus_is_transient(lppss) ? VSSTYPE_TRANSIENT : VSSTYPE_FIRM;
 		lpvss->lppss = lppss;
 		lpvss->szTitle = szTitle ? VultureUTF8ToTCHAR(szTitle) : NULL;
-		lpvss->szType = szType ? VultureUTF8ToTCHAR(szType) : NULL;
 		lpvss->szMessage = szMessage ? VultureUTF8ToTCHAR(szMessage) : NULL;
 
 		*lplpglistStatuses = g_list_prepend(*lplpglistStatuses, lpvss);
 	}
+
 
 	/* We built the list backwards for efficiency. Fix it. */
 	*lplpglistStatuses = g_list_reverse(*lplpglistStatuses);
@@ -78,11 +108,53 @@ void VulturePurpleFreeStatusList(GList *lpglistStatuses)
 		VULTURE_SAVED_STATUS *lpvss = lpglistRover->data;
 		
 		if(lpvss->szTitle) g_free(lpvss->szTitle);
-		if(lpvss->szType) g_free(lpvss->szType);
 		if(lpvss->szMessage) g_free(lpvss->szMessage);
 
 		g_free(lpvss);
 	}
 
 	g_list_free(lpglistStatuses);
+}
+
+
+/**
+ * Sets the active status.
+ *
+ * @param	lpvss	New status.
+ */
+void PurpleSetStatus(VULTURE_SAVED_STATUS *lpvss)
+{
+	char *szMessage = NULL;
+	PurpleSavedStatus *lppss;
+
+	switch(lpvss->vsstype)
+	{
+	case VSSTYPE_FIRM:
+		/* This case is easy: we have a PurpleSavedStatus cached, so
+		 * just activate it.
+		 */
+		purple_savedstatus_activate(lpvss->lppss);
+		return;
+
+	case VSSTYPE_TRANSIENT:
+		if(lpvss->szMessage)
+			szMessage = VultureTCHARToUTF8(lpvss->szMessage);
+		break;
+
+	default:
+		break;
+	}
+
+	lppss = purple_savedstatus_find_transient_by_type_and_message(lpvss->psprim, szMessage);
+	if(!lppss)
+	{
+		/* No matching transient status, so make one. */
+		lppss = purple_savedstatus_new(NULL, lpvss->psprim);
+		purple_savedstatus_set_message(lppss, szMessage);
+	}
+
+	purple_savedstatus_activate(lppss);
+
+	if(szMessage)
+		g_free(szMessage);
 }
