@@ -1,5 +1,44 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.7 (06/20/2009):
+	* Yahoo Protocol 16 support, including new HTTPS login method; this should
+	  fix a number of login problems that have recently cropped up.  (Sulabh
+	  Mahajan, Mike "Maiku" Ruprecht)
+	* Only display the AIM "Unable to Retrieve Buddy List" message once per
+	  connection.  (Rob Taft)
+	* Blocking MSN users not on your buddy list no longer disconnects you.
+	* When performing operations on MSN, assume users are on the MSN/Passport
+	  network if we don't get network ID's for them.
+
+version 2.5.6 (05/19/2009):
+	libpurple:
+	* Improve sleep behavior by aggregation of longer timeouts on second
+	  boundaries to allow better power saving.  (Arunan Balasubramaniam)
+	* Fix various crashes on exit.
+	* Make XML parsing more resilient to interactions with other libraries.
+	  This, along with the fix for libxml2 bug 564217, fixes the crashes
+	  on connect in XMPP with recent gst-plugins-bad (see #8830 for details).
+	* Many security related fixes
+
+	IRC:
+	* Correctly handle WHOIS for users who are joined to a large number of
+	  channels.
+	* Notify the user if a /nick command fails, rather than trying
+	  fallback nicks.
+
+	MSN:
+	* Fix a race condition causing occasional Pidgin crashes.
+	* Fix some errors about the friendly name changing too fast caused
+	  by MSN/Yahoo integration buddies.
+
+	XMPP:
+	* Less likely to pop up a new conversation window in disregard of
+	  the "Hide new IM conversations" preference.
+
+	Yahoo:
+	* Fix a crash when sending very long messages.
+	* Fix a bug where UTF-8 status messages get garbled when going idle.
+
 version 2.5.5 (03/01/2009):
 	libpurple:
 	* Fix a crash when removing an account with an unknown protocol id.
