@@ -32,6 +32,7 @@
 
 <p>Once this PPA is setup, Pidgin updates will show up in Update Manager along with the usual Ubuntu updates. The PPA will need to be re-setup only after upgrading Ubuntu.</p>
 
+<p>This PPA is maintained by one developer, so please be patient. It often lags behind the source releases a couple of days.</p>
 </div>
 
 </div>
