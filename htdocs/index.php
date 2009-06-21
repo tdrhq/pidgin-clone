@@ -70,9 +70,9 @@ include($_SERVER['DOCUMENT_ROOT'] . "/../inc/blurb.download.inc");
 </div>
 
 <!-- This will pull from somewhere else at some point -->
-<!-- p class="more" id="lowblurb">
-Spontaneous news goes here!
-</p -->
+<p class="more" id="lowblurb">
+Yahoo problems are fixed in 2.5.7.
+</p>
 
 <? /* Avoid outputting this stuff yet.
 <!-- These are not ready to go yet -->
