@@ -143,33 +143,20 @@ static void fb_got_notifications_cb(FacebookAccount *fba, gchar *url_text, gsize
 
 static void find_feed_url_cb(FacebookAccount *fba, gchar *data, gsize data_len, gpointer userdata)
 {
-	const gchar *search_string = "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Your &quot;Facebook Notifications Feed\" href=\"";
-	const gchar *search_string2 = "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Your &amp;quot;Facebook Notifications Feed\" href=\"";
-	const gchar *search_string3 = "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Your &amp;quot;Facebook Notifications&amp;quot; Feed\" href=\"";
+	const gchar *search_string = "/feeds/notifications.php";
 	gchar *feed_url;
 	gchar *stripped;
 
 	purple_debug_info("facebook", "find_feed_url_cb\n");
 
+	if (!data)
+		data = "(null)";
+
 	feed_url = g_strstr_len(data, data_len, search_string);
-	if (feed_url)
+	if (!feed_url)
 	{
-		feed_url += strlen(search_string);
-	} else {
-		feed_url = g_strstr_len(data, data_len, search_string2);
-		if (feed_url)
-		{
-			feed_url += strlen(search_string2);
-		} else {
-			feed_url = g_strstr_len(data, data_len, search_string3);
-			if (feed_url)
-			{
-				feed_url += strlen(search_string3);
-			} else {
-				purple_debug_error("facebook", "received data, but could not find url on page\n");
-				return;
-			}
-		}
+		purple_debug_error("facebook", "received data, but could not find url on page\n");
+		return;
 	}
 
 	feed_url = g_strndup(feed_url, strchr(feed_url, '"') - feed_url);
@@ -177,10 +164,8 @@ static void find_feed_url_cb(FacebookAccount *fba, gchar *data, gsize data_len, 
 	/* convert &amp; to & */
 	stripped = purple_unescape_html(feed_url);
 	g_free(feed_url);
-	/* strip the host and protocol off url */
-	feed_url = g_strdup(strstr(stripped, "/feeds"));
-	g_free(stripped);
-
+	feed_url = stripped;
+	
 	purple_debug_info("facebook", "parsed feed url %s\n", feed_url);
 
 	if (feed_url && *feed_url)

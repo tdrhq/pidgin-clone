@@ -13,6 +13,31 @@
 			<width>48</width><height>48</height>
 		</image>
 		<item>
+			<title>Version 1.51</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c44</link>
+			<description><![CDATA[Version 1.51 of the pidgin-facebookchat plugin is available for download.<br/>
+			<br/>
+			Download (as usual) from:<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">
+			http://code.google.com/p/pidgin-facebookchat/downloads/list</a><br/>
+			<br/>
+			A list of the changes to the plugin is at:<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/wiki/Changelog">
+			http://code.google.com/p/pidgin-facebookchat/wiki/Changelog</a><br/>
+			<br/>
+			If you're a package maintainer, you'll want to look at my blog post:<br/>
+			<a href="http://eion.robbmob.com/blog/2009/06/12/pidgin-facebookchat-v1-51-important-changes/">
+			http://eion.robbmob.com/blog/2009/06/12/pidgin-facebookchat-v1-51-important-changes/</a><br/>
+			(Shameless plug)<br/>
+			<br/>
+			And of course, if you like this plugin feel free to leave a comment or donation at<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/wiki/Donate">
+			http://code.google.com/p/pidgin-facebookchat/wiki/Donate</a>
+			]]></description>
+			<pubDate>Sat, 13 June 2009 19:24:19 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c44</guid>
+		</item>
+		<item>
 			<title>Version 1.50</title>
 			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c42</link>
 			<description><![CDATA[So its been a while since the last version so I've bumped it up to v1.50.

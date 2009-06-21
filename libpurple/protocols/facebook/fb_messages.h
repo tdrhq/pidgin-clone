@@ -24,6 +24,7 @@
 #include "libfacebook.h"
 
 gboolean fb_get_post_form_id(FacebookAccount *fba);
+gboolean fb_reconnect(FacebookAccount *fba);
 int fb_send_im(PurpleConnection *pc, const gchar *who, const gchar *message,
 		PurpleMessageFlags flags);
 

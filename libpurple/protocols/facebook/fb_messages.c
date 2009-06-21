@@ -21,6 +21,8 @@
 #include "fb_messages.h"
 #include "fb_connection.h"
 
+#include <json-glib/json-glib.h>
+
 typedef struct _FacebookOutgoingMessage FacebookOutgoingMessage;
 
 struct _FacebookOutgoingMessage {
@@ -36,6 +38,7 @@ struct _FacebookOutgoingMessage {
 static gboolean fb_send_im_fom(FacebookOutgoingMessage *msg);
 static gboolean fb_resend_im_fom(FacebookOutgoingMessage *msg);
 static gboolean fb_get_new_messages(FacebookAccount *fba);
+static gchar *fb_replace_styled_text(const gchar *text);
 
 static FacebookOutgoingMessage *fb_msg_create(FacebookAccount *fba)
 {
@@ -69,6 +72,7 @@ void fb_cancel_resending_messages(FacebookAccount *fba)
 static void got_new_messages(FacebookAccount *fba, gchar *data,
 		gsize data_len, gpointer userdata)
 {
+	gchar *message;
 	gchar *message_text;
 	gchar *message_time;
 	gchar *from;
@@ -137,15 +141,14 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 		purple_debug_error("facebook",
 				"got data back, but it's not even json\n");
 				
-		purple_timeout_add_seconds(1, (GSourceFunc)fb_get_new_messages, fba);
+		fb_get_new_messages(fba);
 		return;
 	}
 
-	/* refresh means that the session or post_form_id is invalid */
+	/* refresh means that the channel is invalid */
 	if (g_str_equal(data, "for (;;);{\"t\":\"refresh\"}"))
 	{
-		if (fba->post_form_id_refresh_timer == 0)
-			fba->post_form_id_refresh_timer = purple_timeout_add_seconds(1, (GSourceFunc)fb_get_post_form_id, fba);
+		fb_reconnect(fba);
 		return;
 	}
 
@@ -153,7 +156,7 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 	if (g_str_equal(data, "for (;;);{\"t\":\"continue\"}"))
 	{
 		/* Continue looping, waiting for more messages */
-		purple_timeout_add_seconds(1, (GSourceFunc)fb_get_new_messages, fba);
+		fb_get_new_messages(fba);
 		return;
 	}
 
@@ -220,8 +223,6 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 			if (from && to && g_str_equal(type, "msg"))
 			{
 				/* IM message */
-				if (fba->uid != atoi(from) || fba->uid == atoi(to))
-				{
 					tmp = strstr(start, "\"msgID\":");
 					tmp += 9;
 					tmp = g_strndup(tmp, strchr(tmp, '"') - tmp);
@@ -247,9 +248,10 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 						tmp = strstr(start, "\"text\":\"");
 						tmp += 8;
 						tmp = g_strndup(tmp, strstr(tmp, "\",\"time\":") - tmp);
-						message_text = fb_convert_unicode(tmp);
+						message = fb_convert_unicode(tmp);
 						g_free(tmp);
-						tmp = fb_strdup_withhtml(message_text);
+						message_text = fb_strdup_withhtml(message);
+						tmp = fb_replace_styled_text(message_text);
 						g_free(message_text);
 						message_text = tmp;
 						purple_debug_info("facebook", "text: %s\n", message_text);
@@ -272,9 +274,12 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 								g_free(tmp);
 							}
 						}
-
-						serv_got_im(pc, from, message_text, PURPLE_MESSAGE_RECV, atoi(message_time));
-
+						
+						if (fba->uid != atoi(from) || fba->uid == atoi(to))
+							serv_got_im(pc, from, message_text, PURPLE_MESSAGE_RECV, atoi(message_time));
+						else if (!g_hash_table_remove(fba->sent_messages_hash, message))
+							serv_got_im(pc, to, message_text, PURPLE_MESSAGE_SEND, atoi(message_time));
+						g_free(message);
 						
 						/*
 						 * Acknowledge receipt of the message by simulating
@@ -283,7 +288,7 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 						 * something internal to the Facebook javascript that
 						 * is used for maintaining UI state across page loads?
 						 */
-						if (!fba->is_idle)
+						if (!fba->is_idle && fba->uid != atoi(from))
 						{
 							gchar *postdata;
 	
@@ -299,7 +304,7 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 						g_free(message_text);
 						g_free(message_time);
 					}
-				}
+				
 				start = strchr(start, '}')+1;
 			} else if (from && g_str_equal(type, "typ"))
 			{
@@ -398,10 +403,14 @@ static void fb_send_im_cb(FacebookAccount *fba, gchar *data, gsize data_len, gpo
 	FacebookOutgoingMessage *msg = user_data;
 	gchar *error_summary = NULL;
 	gchar *tmp;
+	gboolean was_an_error = FALSE;
 
 	/* NULL data crashes on Windows */
 	if (data == NULL)
+	{
+		was_an_error = TRUE;
 		data = "(null)";
+	}
 	
 	purple_debug_misc("facebook", "sent im response: %s\n", data);
 	/* for (;;);{"error":1356003,"errorSummary":"Send destination not online",
@@ -443,9 +452,15 @@ static void fb_send_im_cb(FacebookAccount *fba, gchar *data, gsize data_len, gpo
 							fba->account, msg->who);
 					purple_conversation_write(conv, NULL, error_summary,
 							PURPLE_MESSAGE_ERROR, msg->time);
+					was_an_error = TRUE;
 				}
 			}
 		}
+	}
+
+	if (was_an_error)
+	{
+		g_hash_table_remove(fba->sent_messages_hash, msg->message);
 	}
 
 	g_free(error_summary);
@@ -480,8 +495,9 @@ static gboolean fb_resend_im_fom(FacebookOutgoingMessage *msg)
 int fb_send_im(PurpleConnection *pc, const gchar *who, const gchar *message, PurpleMessageFlags flags)
 {
 	FacebookOutgoingMessage *msg;
+	FacebookAccount *fba = pc->proto_data;
 
-	msg = fb_msg_create(pc->proto_data);
+	msg = fb_msg_create(fba);
 
 	/* convert html to plaintext, removing trailing spaces */
 	msg->message = purple_markup_strip_html(message);
@@ -496,16 +512,94 @@ int fb_send_im(PurpleConnection *pc, const gchar *who, const gchar *message, Pur
 	msg->time = time(NULL);
 	msg->retry_count = 0;
 
+	//save that we're sending the message
+	g_hash_table_insert(fba->sent_messages_hash, strdup(msg->message), NULL);
+
 	fb_send_im_fom(msg);
 
-	return strlen(message);
+	/* gchar *styled_message = fb_replace_styled_text(msg->message);
+	serv_got_im(pc, msg->who, styled_message, PURPLE_MESSAGE_SEND, msg->time);
+	g_free(styled_message);
+
+	return 0; */
+	return 1;
+}
+
+void got_reconnect_json(FacebookAccount *fba, gchar *data, gsize data_len, gpointer userdata)
+{
+	gchar *new_channel_number;
+	
+	JsonParser *parser;
+	JsonNode *root;
+
+	if (data == NULL)
+		data = "(null)";	
+
+	gchar *tmp = g_strstr_len(data, data_len, "for (;;);");
+	if (tmp)
+	{
+		tmp += strlen("for (;;);");
+	}
+	
+	parser = json_parser_new();
+	if(!json_parser_load_from_data(parser, tmp, -1, NULL))
+	{
+		purple_debug_error("facebook", "couldn't parse reconnect data\n");
+		purple_debug_info("facebook", "page content: %s\n", data);
+		purple_connection_error_reason(fba->pc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Chat service currently unavailable"));
+		g_object_unref(parser);
+		return;
+	}
+	root = json_parser_get_root(parser);
+	JsonObject *objnode;
+	objnode = json_node_get_object(root);
+
+	JsonObject *payload = json_node_get_object(json_object_get_member(objnode, "payload"));
+	
+	/* eg {"host":"channel01"} */
+	const gchar *new_channel_host = json_node_get_string(json_object_get_member(payload, "host"));
+
+	if (new_channel_host == NULL)
+	{
+		purple_debug_error("facebook", "couldn't find new channel number\n");
+		purple_debug_info("facebook", "page content: %s\n", data);
+		purple_connection_error_reason(fba->pc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Chat service currently unavailable"));
+		g_object_unref(parser);
+		return;
+	}
+	
+	new_channel_number = g_strdup(&new_channel_host[7]);
+	g_free(fba->channel_number);
+	fba->channel_number = new_channel_number;
+	
+	gint new_seq = json_node_get_int(json_object_get_member(payload, "seq"));
+	fba->message_fetch_sequence = new_seq;
+	
+	/*
+	 * Now that we have a channel number we can start looping and
+	 * waiting for messages
+	 */
+	fb_get_new_messages(fba);
+	g_object_unref(parser);
+}
+
+gboolean fb_reconnect(FacebookAccount *fba)
+{
+	gchar *url = g_strdup_printf("/ajax/presence/reconnect.php?post_form_id=%s", fba->post_form_id);
+	fb_post_or_get(fba, FB_METHOD_GET, NULL, url, NULL, got_reconnect_json, NULL, FALSE);
+	g_free(url);
+	
+	return FALSE;
 }
 
 static void got_form_id_page(FacebookAccount *fba, gchar *data, gsize data_len, gpointer userdata)
 {
 	const gchar *start_text = "id=\"post_form_id\" name=\"post_form_id\" value=\"";
 	gchar *post_form_id;
-	gchar *channel_number;
 	gchar *tmp = NULL;
 	
 	/* NULL data crashes on Windows */
@@ -529,46 +623,47 @@ static void got_form_id_page(FacebookAccount *fba, gchar *data, gsize data_len, 
 	g_free(fba->post_form_id);
 	fba->post_form_id = post_form_id;
 
-	/* search for channel server number. we might want to use
-         * /ajax/presence/reconnect.php in the future */
-	start_text = "\", \"channel";
-	tmp = g_strstr_len(data, data_len, start_text);
-	if (tmp == NULL)
-	{
-		/* Some proxies strip whitepsace */
-		start_text = "\",\"channel";
-		tmp = g_strstr_len(data, data_len, start_text);
-		if (tmp == NULL)
-		{
-			purple_debug_error("facebook", "couldn't find channel\n");
-			purple_debug_misc("facebook", "page content: %s\n", data);
-			purple_connection_error_reason(fba->pc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Chat service currently unavailable."));
-			return;
-		}
-	}
-	
-	tmp += strlen(start_text);
-	channel_number = g_strndup(tmp, strchr(tmp, '"') - tmp);
-	
-	g_free(fba->channel_number);
-	fba->channel_number = channel_number;
 
 	tmp = g_strdup_printf("visibility=true&post_form_id=%s", post_form_id);
 	fb_post_or_get(fba, FB_METHOD_POST, "apps.facebook.com", "/ajax/chat/settings.php", tmp, NULL, NULL, FALSE);
 	g_free(tmp);
-
-	/*
-	 * Now that we have a channel number we can start looping and
-	 * waiting for messages
-	 */
-	fb_get_new_messages(fba);
+	
+	/* Grab new channel number */
+	fb_reconnect(fba);
 }
 
 gboolean fb_get_post_form_id(FacebookAccount *fba)
 {
-	fba->post_form_id_refresh_timer = 0;
 	fb_post_or_get(fba, FB_METHOD_GET, NULL, "/presence/popout.php", NULL, got_form_id_page, NULL, FALSE);
 	return FALSE;
 }
+
+/* Converts *text* into <b>text</b>  and _text_ into <i>text</i> */
+static gchar *fb_replace_styled_text(const gchar *text)
+{
+	if (glib_check_version(2, 14, 0))
+	{
+		return g_strdup(text);
+	} else {
+		static GRegex *underline_regex = NULL;
+		static GRegex *bold_regex = NULL;
+		gchar *midway_string;
+		gchar *output_string;
+		
+		if (underline_regex == NULL)
+		{
+			underline_regex = g_regex_new("\\b_([^_\\*]+)_\\b", G_REGEX_OPTIMIZE, 0, NULL);
+		}
+		if (bold_regex == NULL)
+		{
+			bold_regex = g_regex_new("(\\s|^)\\*([^_\\*]+)\\*(?=$|\\s)", G_REGEX_OPTIMIZE, 0, NULL);
+		}
+		
+		midway_string = g_regex_replace(underline_regex, text, -1, 0, "<u>\\1</u>", 0, NULL);
+		output_string = g_regex_replace(bold_regex, midway_string, -1, 0, "\\1<b>\\2</b>", 0, NULL);
+		g_free(midway_string);
+		
+		return output_string;
+	}
+}
+
