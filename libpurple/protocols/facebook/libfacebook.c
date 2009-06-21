@@ -262,7 +262,9 @@ static void fb_login(PurpleAccount *account)
 	FacebookAccount *fba;
 	guint16 i;
 	gchar *postdata, *encoded_username, *encoded_password, *encoded_charset_test;
-
+	const gchar* const *languages;
+	const gchar *locale;
+	
 	/* Create account and initialize state */
 	fba = g_new0(FacebookAccount, 1);
 	fba->account = account;
@@ -273,6 +275,8 @@ static void fb_login(PurpleAccount *account)
 			g_free, g_free);
 	fba->hostname_ip_cache = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
+	fba->sent_messages_hash = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, NULL);
 
 	g_hash_table_replace(fba->cookie_table, g_strdup("test_cookie"),
 			g_strdup("1"));
@@ -298,16 +302,20 @@ static void fb_login(PurpleAccount *account)
 	encoded_password = g_strdup(purple_url_encode(
 			purple_account_get_password(fba->account)));
 	encoded_charset_test = g_strdup(purple_url_encode("€,´,€,´,水,Д,Є"));
+	languages = g_get_language_names();
+	locale = languages[0];
+	if (locale == NULL || g_str_equal(locale, "C"))
+		locale = "en_US";
 
 	postdata = g_strdup_printf(
-			"email=%s&pass=%s&persistent=1&login=Login&charset_test=%s",
-			encoded_username, encoded_password, encoded_charset_test);
+			"charset_test=%s&locale=%s&email=%s&pass=%s&pass_placeHolder=Password&persistent=1&login=Login&charset_test=%s",
+			encoded_charset_test, locale, encoded_username, encoded_password, encoded_charset_test);
 	g_free(encoded_username);
 	g_free(encoded_password);
 	g_free(encoded_charset_test);
 
 	fb_post_or_get(fba, FB_METHOD_POST | FB_METHOD_SSL, "login.facebook.com",
-			"/login.php", postdata, fb_login_cb, NULL, FALSE);
+			"/login.php?login_attempt=1", postdata, fb_login_cb, NULL, FALSE);
 	g_free(postdata);
 }
 
@@ -382,6 +390,10 @@ static void fb_close(PurpleConnection *pc)
 					purple_dnsquery_get_host(dns_query));
 		fba->dns_queries = g_slist_remove(fba->dns_queries, dns_query);
 		purple_dnsquery_destroy(dns_query);
+	}
+	
+	if (fba->resending_messages != NULL) {
+		fb_cancel_resending_messages(fba);
 	}
 
 	g_hash_table_destroy(fba->cookie_table);
@@ -541,38 +553,11 @@ static GHashTable *fb_get_account_text_table(PurpleAccount *account)
 
 static gboolean plugin_load(PurplePlugin *plugin)
 {
-#ifdef HAVE_ZLIB
-	/* try dynamically loading zlib functions */
-	if (zlib_library == NULL)
-		/* zlib_library = dlopen("zlib1.dll", RTLD_LAZY); */
-		zlib_library = dlopen("libz.dll", RTLD_LAZY);
-	if (zlib_library == NULL)
-		zlib_library = dlopen("libz.so", RTLD_LAZY);
-	if (zlib_library == NULL)
-		zlib_library = dlopen("libz.dylib", RTLD_LAZY);
-	if (zlib_inflate == NULL && zlib_library != NULL)
-	{
-		zlib_inflate = (int (*)()) dlsym(zlib_library, "inflate");
-		zlib_inflateInit2_ = (int (*) ()) dlsym(zlib_library, "inflateInit2_");
-		zlib_inflateEnd = (int (*) ()) dlsym(zlib_library, "inflateEnd");
-	}
-#endif
-
 	return TRUE;
 }
 
 static gboolean plugin_unload(PurplePlugin *plugin)
 {
-#ifdef HAVE_ZLIB
-	if (zlib_library != NULL)
-	{
-		dlclose(zlib_library);
-		zlib_library = NULL;
-		zlib_inflate = NULL;
-		zlib_inflateInit2_ = NULL;
-		zlib_inflateEnd = NULL;
-	}
-#endif
 	return TRUE;
 }
 

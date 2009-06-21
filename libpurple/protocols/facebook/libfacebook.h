@@ -21,7 +21,7 @@
 #ifndef LIBFACEBOOK_H
 #define LIBFACEBOOK_H
 
-#define FACEBOOK_PLUGIN_VERSION "1.50"
+#define FACEBOOK_PLUGIN_VERSION "1.51"
 
 #include <glib.h>
 
@@ -67,12 +67,7 @@
 #include "version.h"
 
 #ifdef HAVE_ZLIB
-/* for dynamically loading gzip uncompression */
-#include <zlib.h>
-static void *zlib_library = NULL;
-static int (*zlib_inflate)(z_streamp, int) = NULL;
-static int (*zlib_inflateEnd)(z_streamp) = NULL;
-static int (*zlib_inflateInit2_)(z_streamp, int, char *, int) = NULL;
+#	include <zlib.h>
 #endif
 
 #define FB_LAST_MESSAGE_MAX 10
@@ -90,6 +85,7 @@ struct _FacebookAccount {
 	GSList *dns_queries;
 	GHashTable *cookie_table;
 	gchar *post_form_id;
+	guint post_form_id_refresh_timer;
 	gint32 uid;
 	guint buddy_list_timer;
 	guint friend_request_timer;
@@ -97,6 +93,7 @@ struct _FacebookAccount {
 	guint message_fetch_sequence;
 	gint64 last_messages[FB_LAST_MESSAGE_MAX];
 	guint16 next_message_pointer;
+	GSList *resending_messages;
 	GSList *auth_buddies;
 	GHashTable *hostname_ip_cache;
 	guint notifications_timer;
@@ -105,6 +102,8 @@ struct _FacebookAccount {
 	guint perpetual_messages_timer;
 	gchar *last_status_message;
 	gboolean is_idle;
+	GHashTable *sent_messages_hash;
+	gint last_inbox_count;
 };
 
 struct _FacebookBuddy {

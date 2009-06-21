@@ -23,40 +23,80 @@
 static void fb_attempt_connection(FacebookConnection *);
 
 #ifdef HAVE_ZLIB
-static guchar *fb_gunzip(const guchar *gzip_data, ssize_t *len_ptr)
+
+static gchar *fb_gunzip(const guchar *gzip_data, ssize_t *len_ptr)
 {
 	gsize gzip_data_len	= *len_ptr;
 	z_stream zstr;
 	int gzip_err = 0;
-	guchar *output_data;
+	gchar *data_buffer;
 	gulong gzip_len = G_MAXUINT16;
+	GString *output_string = NULL;
 
-	g_return_val_if_fail(zlib_inflate != NULL, NULL);
+	data_buffer = g_new0(gchar, gzip_len);
 
-	output_data = g_new0(guchar, gzip_len);
-
-	zstr.next_in = gzip_data;
-	zstr.avail_in = gzip_data_len;
+	zstr.next_in = NULL;
+	zstr.avail_in = 0;
 	zstr.zalloc = Z_NULL;
 	zstr.zfree = Z_NULL;
-	zstr.opaque = Z_NULL;
-	int flags = gzip_data[3];
-	int offset = 4;
-	/* if (flags & 0x04) offset += *tmp[] */
-	zstr.next_in += offset;
-	zstr.avail_in -= offset;
-	zlib_inflateInit2_(&zstr, -MAX_WBITS, ZLIB_VERSION, sizeof(z_stream));
-	zstr.next_out = output_data;
+	zstr.opaque = 0;
+	gzip_err = inflateInit2(&zstr, MAX_WBITS+32);
+	if (gzip_err != Z_OK)
+	{
+		g_free(data_buffer);
+		purple_debug_error("facebook", "no built-in gzip support in zlib\n");
+		return NULL;
+	}
+	
+	zstr.next_in = (Bytef *)gzip_data;
+	zstr.avail_in = gzip_data_len;
+	
+	zstr.next_out = (Bytef *)data_buffer;
 	zstr.avail_out = gzip_len;
-	gzip_err = zlib_inflate(&zstr, Z_FINISH);
-	zlib_inflateEnd(&zstr);
+	
+	gzip_err = inflate(&zstr, Z_SYNC_FLUSH);
 
-	purple_debug_info("facebook", "gzip len: %ld, len: %ld\n", gzip_len,
-			gzip_data_len);
-	purple_debug_info("facebook", "gzip flags: %d\n", flags);
-	purple_debug_info("facebook", "gzip error: %d\n", gzip_err);
+	if (gzip_err == Z_DATA_ERROR)
+	{
+		inflateEnd(&zstr);
+		inflateInit2(&zstr, -MAX_WBITS);
+		if (gzip_err != Z_OK)
+		{
+			g_free(data_buffer);
+			purple_debug_error("facebook", "Cannot decode gzip header\n");
+			return NULL;
+		}
+		zstr.next_in = (Bytef *)gzip_data;
+		zstr.avail_in = gzip_data_len;
+		zstr.next_out = (Bytef *)data_buffer;
+		zstr.avail_out = gzip_len;
+		gzip_err = inflate(&zstr, Z_SYNC_FLUSH);
+	}
+	output_string = g_string_new("");
+	while (gzip_err == Z_OK)
+	{
+		//append data to buffer
+		output_string = g_string_append_len(output_string, data_buffer, gzip_len - zstr.avail_out);
+		//reset buffer pointer
+		zstr.next_out = (Bytef *)data_buffer;
+		zstr.avail_out = gzip_len;
+		gzip_err = inflate(&zstr, Z_SYNC_FLUSH);
+	}
+	if (gzip_err == Z_STREAM_END)
+	{
+		output_string = g_string_append_len(output_string, data_buffer, gzip_len - zstr.avail_out);
+	} else {
+		purple_debug_error("facebook", "gzip inflate error\n");
+	}
+	inflateEnd(&zstr);
 
-	*len_ptr = gzip_len;
+	g_free(data_buffer);	
+
+	gchar *output_data = g_strdup(output_string->str);
+	*len_ptr = output_string->len;
+
+	g_string_free(output_string, TRUE);
+
 	return output_data;
 }
 #endif
@@ -152,13 +192,10 @@ static void fb_connection_process_data(FacebookConnection *fbconn)
 		if (strstr(fbconn->rx_buf, "Content-Encoding: gzip"))
 		{
 			/* we've received compressed gzip data, decompress */
-			if (zlib_inflate != NULL)
-			{
-				gchar *gunzipped;
-				gunzipped = fb_gunzip((const guchar *)tmp, &len);
-				g_free(tmp);
-				tmp = gunzipped;
-			}
+			gchar *gunzipped;
+			gunzipped = fb_gunzip((const guchar *)tmp, &len);
+			g_free(tmp);
+			tmp = gunzipped;
 		}
 #endif
 	}
@@ -427,6 +464,9 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	const gchar *user_agent;
 	const gchar* const *languages;
 	gchar *language_names;
+	PurpleProxyInfo *proxy_info = NULL;
+	gchar *proxy_auth;
+	gchar *proxy_auth_base64;
 
 	/* TODO: Fix keepalive and use it as much as possible */
 	keepalive = FALSE;
@@ -434,28 +474,36 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	if (host == NULL)
 		host = "www.facebook.com";
 
-	if (fba && fba->account && fba->account->proxy_info &&
-		(fba->account->proxy_info->type == PURPLE_PROXY_HTTP ||
-		(fba->account->proxy_info->type == PURPLE_PROXY_USE_GLOBAL &&
-			purple_global_proxy_get_info() &&
-			purple_global_proxy_get_info()->type ==
-					PURPLE_PROXY_HTTP)))
+	if (fba && fba->account && !(method & FB_METHOD_SSL))
+	{
+		proxy_info = purple_proxy_get_setup(fba->account);
+		if (purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_GLOBAL)
+			proxy_info = purple_global_proxy_get_info();
+		if (purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_HTTP)
+		{
+			is_proxy = TRUE;
+		}	
+	}
+	if (is_proxy == TRUE)
 	{
 		real_url = g_strdup_printf("http://%s%s", host, url);
-		is_proxy = TRUE;
 	} else {
 		real_url = g_strdup(url);
 	}
 
 	cookies = fb_cookies_to_string(fba);
 	user_agent = purple_account_get_string(fba->account, "user-agent", "Opera/9.50 (Windows NT 5.1; U; en-GB)");
+	
+	if (method & FB_METHOD_POST && !postdata)
+		postdata = "";
 
 	/* Build the request */
 	request = g_string_new(NULL);
 	g_string_append_printf(request, "%s %s HTTP/1.0\r\n",
 			(method & FB_METHOD_POST) ? "POST" : "GET",
 			real_url);
-	g_string_append_printf(request, "Host: %s\r\n", host);
+	if (is_proxy == FALSE)
+		g_string_append_printf(request, "Host: %s\r\n", host);
 	g_string_append_printf(request, "Connection: %s\r\n",
 			(keepalive ? "Keep-Alive" : "close"));
 	g_string_append_printf(request, "User-Agent: %s\r\n", user_agent);
@@ -468,9 +516,20 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	g_string_append_printf(request, "Accept: */*\r\n");
 	g_string_append_printf(request, "Cookie: isfbe=false;%s\r\n", cookies);
 #ifdef HAVE_ZLIB
-	if (zlib_inflate != NULL)
-		g_string_append_printf(request, "Accept-Encoding: gzip\r\n");
+	g_string_append_printf(request, "Accept-Encoding: gzip\r\n");
 #endif
+	if (is_proxy == TRUE)
+	{
+		if (purple_proxy_info_get_username(proxy_info) &&
+			purple_proxy_info_get_password(proxy_info))
+		{
+			proxy_auth = g_strdup_printf("%s:%s", purple_proxy_info_get_username(proxy_info), purple_proxy_info_get_password(proxy_info));
+			proxy_auth_base64 = purple_base64_encode((guchar *)proxy_auth, strlen(proxy_auth));
+			g_string_append_printf(request, "Proxy-Authorization: Basic %s\r\n", proxy_auth_base64);
+			g_free(proxy_auth_base64);
+			g_free(proxy_auth);
+		}
+	}
 
 	/* Tell the server what language we accept, so that we get error messages in our language (rather than our IP's) */
 	languages = g_get_language_names();
