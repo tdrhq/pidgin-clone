@@ -254,7 +254,13 @@ jingle_s5b_finalize (GObject *s5b)
 	
 	if (priv->sid)
 		g_free(priv->sid);
-	
+
+	/* remove port mapping */
+	if (priv->fd >= 0) {
+		purple_network_remove_port_mapping(priv->fd);
+		close(priv->fd);
+	}
+
 	/* free the local streamhosts */
 	while (priv->local_streamhosts) {
 		jingle_s5b_streamhost_destroy(
@@ -440,6 +446,7 @@ jingle_s5b_surrender(JingleS5B *s5b)
 	s5b->priv->fd = s5b->priv->remote_fd;
 	
 	if (s5b->priv->local_fd >= 0) {
+		purple_network_remove_port_mapping(s5b->priv->local_fd);
 		close(s5b->priv->local_fd);
 		s5b->priv->local_fd = -1;
 	}
