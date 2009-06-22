@@ -133,7 +133,7 @@ typedef enum
 /* Data Structures                                                        */
 /**************************************************************************/
 
-#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_BLIST_C_)
+#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_BLIST_NODE_C_)
 
 /**
  * A Buddy list node.  This can represent a group, a buddy, or anything else.
@@ -161,6 +161,9 @@ struct _PurpleBlistNodeClass {
   GObjectClass parent;
 };
 
+#endif
+#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_BUDDY_C_)
+
 /**
  * A buddy.  This contains everything Purple will ever need to know about someone on the buddy list.  Everything.
  */
@@ -175,6 +178,9 @@ struct _PurpleBuddy {
 	PurplePresence *presence;
 };
 
+#endif
+#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_CONTACT_C_)
+
 /**
  * A contact.  This contains everything Purple will ever need to know about a contact.
  */
@@ -188,6 +194,8 @@ struct _PurpleContact {
 	gboolean priority_valid; /**< Is priority valid? */
 };
 
+#endif
+#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_GROUP_C_)
 
 /**
  * A group.  This contains everything Purple will ever need to know about a group.
@@ -200,6 +208,9 @@ struct _PurpleGroup {
 	int online;			       /**< The number of chats and contacts in this group who are currently online */
 };
 
+#endif
+#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_CHAT_C_)
+
 /**
  * A chat.  This contains everything Purple needs to put a chat room in the
  * buddy list.
@@ -210,6 +221,9 @@ struct _PurpleChat {
 	GHashTable *components;  /**< the stuff the protocol needs to know to join the chat */
 	PurpleAccount *account; /**< The account this chat is attached to */
 };
+
+#endif
+#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_BLIST_C_)
 
 /**
  * The Buddy List
