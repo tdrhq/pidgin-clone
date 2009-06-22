@@ -37,6 +37,7 @@ typedef struct _PurpleBuddyList PurpleBuddyList;
 typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 /** @copydoc _PurpleBlistNode */
 typedef struct _PurpleBlistNode PurpleBlistNode;
+typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
 
 /** @copydoc _PurpleChat */
 typedef struct _PurpleChat PurpleChat;
@@ -78,8 +79,6 @@ typedef enum
 /**
  * @since 2.6.0
  */
-#define PURPLE_BLIST_NODE(obj) ((PurpleBlistNode *)(obj))
-
 #define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (purple_blist_node_get_flags((PurpleBlistNode*)(b)) & (f))
 #define PURPLE_BLIST_NODE_SHOULD_SAVE(b) (! PURPLE_BLIST_NODE_HAS_FLAG(b, PURPLE_BLIST_NODE_FLAG_NO_SAVE))
 
@@ -106,6 +105,26 @@ typedef enum
  */
 #define PURPLE_CHAT(obj) ((PurpleChat *)(obj))
 
+/* Template */
+/*
+#define MAMAN_TYPE                  (maman_get_type ())
+#define MAMAN(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), MAMAN_TYPE, Maman))
+#define MAMAN_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), MAMAN_TYPE))
+#define MAMAN_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), MAMAN_TYPE, MamanClass))
+#define MAMAN_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), MAMAN_TYPE))
+#define MAMAN_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), MAMAN_TYPE, MamanClass))
+*/
+
+/* GObject macros */
+
+#define PURPLE_BLIST_NODE_TYPE                  (purple_blist_node_get_gtype ())
+#define PURPLE_BLIST_NODE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNode))
+#define PURPLE_BLIST_NODE_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_NODE_TYPE))
+#define PURPLE_BLIST_NODE_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodeClass))
+#define PURPLE_BLIST_NODE_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BLIST_NODE_TYPE))
+#define PURPLE_BLIST_NODE_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodeClass))
+
+
 #include "account.h"
 #include "buddyicon.h"
 #include "status.h"
@@ -121,6 +140,7 @@ typedef enum
  * This is a base class for PurpleBuddy, PurpleContact, PurpleGroup, and for
  * anything else that wants to put itself in the buddy list. */
 struct _PurpleBlistNode {
+  GObject _parent;
 	PurpleBlistNodeType type;             /**< The type of node this is       */
 	PurpleBlistNode *prev;                /**< The sibling before this buddy. */
 	PurpleBlistNode *next;                /**< The sibling after this buddy.  */
@@ -135,6 +155,10 @@ struct _PurpleBlistNode {
 
 	void          *ui_data;               /**< The UI can put data here.      */
 	PurpleBlistNodeFlags flags;           /**< The buddy flags                */
+};
+
+struct _PurpleBlistNodeClass {
+  GObjectClass parent;
 };
 
 /**
@@ -1255,6 +1279,11 @@ void purple_blist_init(void);
  * Uninitializes the buddy list subsystem.
  */
 void purple_blist_uninit(void);
+
+/**
+ * Get the GType for PurpleBlistNode
+ */
+GType purple_blist_node_get_gtype(void);
 
 /*@}*/
 

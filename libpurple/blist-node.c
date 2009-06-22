@@ -633,3 +633,48 @@ purple_blist_node_get_extended_menu(PurpleBlistNode *n)
 			n, &menu);
 	return menu;
 }
+
+/******************/
+/*  GObject Code  */
+/******************/
+
+static void
+purple_blist_node_class_init(PurpleBlistNodeClass *klass)
+{
+
+}
+
+static void
+purple_blist_node_init(GTypeInstance *instance, gpointer class)
+{
+
+}
+
+GType
+purple_blist_node_get_gtype(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleBlistNodeClass),
+			NULL,					/* base_init		*/
+			NULL,					/* base_finalize	*/
+			(GClassInitFunc)purple_blist_node_class_init,
+			NULL,
+			NULL,					/* class_data		*/
+			sizeof(PurpleBlistNode),
+			0,						/* n_preallocs		*/
+			purple_blist_node_init,					/* instance_init	*/
+			NULL					/* value_table		*/
+		};
+
+		type = g_type_register_static(PURPLE_BLIST_NODE_TYPE,
+									  "PurpleBlistNode",
+									  &info, G_TYPE_FLAG_ABSTRACT);
+	}
+
+	return type;
+}
+
+
