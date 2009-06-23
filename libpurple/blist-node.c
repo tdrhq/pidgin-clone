@@ -669,12 +669,10 @@ purple_blist_node_get_gtype(void)
 			NULL					/* value_table		*/
 		};
 
-		type = g_type_register_static(PURPLE_BLIST_NODE_TYPE,
+		type = g_type_register_static(G_TYPE_OBJECT,
 									  "PurpleBlistNode",
 									  &info, G_TYPE_FLAG_ABSTRACT);
 	}
 
 	return type;
 }
-
-

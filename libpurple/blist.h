@@ -35,18 +35,6 @@
 typedef struct _PurpleBuddyList PurpleBuddyList;
 /** @copydoc _PurpleBlistUiOps */
 typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
-/** @copydoc _PurpleBlistNode */
-typedef struct _PurpleBlistNode PurpleBlistNode;
-typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
-
-/** @copydoc _PurpleChat */
-typedef struct _PurpleChat PurpleChat;
-/** @copydoc _PurpleGroup */
-typedef struct _PurpleGroup PurpleGroup;
-/** @copydoc _PurpleContact */
-typedef struct _PurpleContact PurpleContact;
-/** @copydoc _PurpleBuddy */
-typedef struct _PurpleBuddy PurpleBuddy;
 
 /**************************************************************************/
 /* Enumerations                                                           */
@@ -85,44 +73,55 @@ typedef enum
 #define PURPLE_BLIST_NODE_NAME(n) (purple_blist_node_get_type(n) == PURPLE_BLIST_CHAT_NODE  ? purple_chat_get_name((PurpleChat*)n) :        \
 				     purple_blist_node_get_type(n) == PURPLE_BLIST_BUDDY_NODE ? purple_buddy_get_name((PurpleBuddy*)n) : NULL)
 
-/**
- * @since 2.6.0
- */
-#define PURPLE_GROUP(obj) ((PurpleGroup *)(obj))
-
-/**
- * @since 2.6.0
- */
-#define PURPLE_CONTACT(obj) ((PurpleContact *)(obj))
-
-/**
- * @since 2.6.0
- */
-#define PURPLE_BUDDY(obj) ((PurpleBuddy *)(obj))
-
-/**
- * @since 2.6.0
- */
-#define PURPLE_CHAT(obj) ((PurpleChat *)(obj))
-
-/* Template */
-/*
-#define MAMAN_TYPE                  (maman_get_type ())
-#define MAMAN(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), MAMAN_TYPE, Maman))
-#define MAMAN_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), MAMAN_TYPE))
-#define MAMAN_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), MAMAN_TYPE, MamanClass))
-#define MAMAN_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), MAMAN_TYPE))
-#define MAMAN_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), MAMAN_TYPE, MamanClass))
-*/
-
-/* GObject macros */
-
+/** @copydoc _PurpleBlistNode */
+typedef struct _PurpleBlistNode PurpleBlistNode;
+typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
 #define PURPLE_BLIST_NODE_TYPE                  (purple_blist_node_get_gtype ())
 #define PURPLE_BLIST_NODE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNode))
 #define PURPLE_BLIST_NODE_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_NODE_TYPE))
 #define PURPLE_BLIST_NODE_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodeClass))
 #define PURPLE_BLIST_NODE_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BLIST_NODE_TYPE))
 #define PURPLE_BLIST_NODE_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodeClass))
+
+/** @copydoc _PurpleBuddy */
+typedef struct _PurpleBuddy PurpleBuddy;
+typedef struct _PurpleBuddyClass PurpleBuddyClass;
+#define PURPLE_BUDDY_TYPE                  (purple_buddy_get_gtype ())
+#define PURPLE_BUDDY(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BUDDY_TYPE, PurpleBuddy))
+#define PURPLE_BUDDY_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BUDDY_TYPE))
+#define PURPLE_BUDDY_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
+#define PURPLE_BUDDY_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BUDDY_TYPE))
+#define PURPLE_BUDDY_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
+
+/** @copydoc _PurpleContact */
+typedef struct _PurpleContact PurpleContact;
+typedef struct _PurpleContactClass PurpleContactClass;
+#define PURPLE_CONTACT_TYPE                  (purple_contact_get_gtype ())
+#define PURPLE_CONTACT(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_CONTACT_TYPE, PurpleContact))
+#define PURPLE_CONTACT_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_CONTACT_TYPE))
+#define PURPLE_CONTACT_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_CONTACT_TYPE, PurpleContactClass))
+#define PURPLE_CONTACT_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CONTACT_TYPE))
+#define PURPLE_CONTACT_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CONTACT_TYPE, PurpleContactClass))
+
+/** @copydoc _PurpleGroup */
+typedef struct _PurpleGroup PurpleGroup;
+typedef struct _PurpleGroupClass PurpleGroupClass;
+#define PURPLE_GROUP_TYPE                  (purple_group_get_gtype ())
+#define PURPLE_GROUP(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_GROUP_TYPE, PurpleGroup))
+#define PURPLE_GROUP_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_GROUP_TYPE))
+#define PURPLE_GROUP_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_GROUP_TYPE, PurpleGroupClass))
+#define PURPLE_GROUP_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_GROUP_TYPE))
+#define PURPLE_GROUP_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_GROUP_TYPE, PurpleGroupClass))
+
+/** @copydoc _PurpleChat */
+typedef struct _PurpleChat PurpleChat;
+typedef struct _PurpleChatClass PurpleChatClass;
+#define PURPLE_CHAT_TYPE                  (purple_chat_get_gtype ())
+#define PURPLE_CHAT(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_CHAT_TYPE, PurpleChat))
+#define PURPLE_CHAT_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_CHAT_TYPE))
+#define PURPLE_CHAT_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_CHAT_TYPE, PurpleChatClass))
+#define PURPLE_CHAT_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CHAT_TYPE))
+#define PURPLE_CHAT_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CHAT_TYPE, PurpleChatClass))
 
 
 #include "account.h"
@@ -178,6 +177,10 @@ struct _PurpleBuddy {
 	PurplePresence *presence;
 };
 
+struct _PurpleBuddyClass {
+  GObjectClass parent;
+};
+
 #endif
 #if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_CONTACT_C_)
 
@@ -194,6 +197,10 @@ struct _PurpleContact {
 	gboolean priority_valid; /**< Is priority valid? */
 };
 
+struct _PurpleContactClass {
+  GObjectClass parent;
+};
+
 #endif
 #if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_GROUP_C_)
 
@@ -208,6 +215,10 @@ struct _PurpleGroup {
 	int online;			       /**< The number of chats and contacts in this group who are currently online */
 };
 
+struct _PurpleGroupClass {
+  GObjectClass parent;
+};
+
 #endif
 #if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_CHAT_C_)
 
@@ -220,6 +231,10 @@ struct _PurpleChat {
 	char *alias;             /**< The display name of this chat. */
 	GHashTable *components;  /**< the stuff the protocol needs to know to join the chat */
 	PurpleAccount *account; /**< The account this chat is attached to */
+};
+
+struct _PurpleChatClass {
+  GObjectClass parent;
 };
 
 #endif
@@ -1298,6 +1313,26 @@ void purple_blist_uninit(void);
  * Get the GType for PurpleBlistNode
  */
 GType purple_blist_node_get_gtype(void);
+
+/**
+ * Get the GType for PurpleBuddy
+ */
+GType purple_buddy_get_gtype(void);
+
+/**
+ * Get the GType for PurpleGroup
+ */
+GType purple_group_get_gtype(void);
+
+/**
+ * Get the GType for PurpleContact
+ */
+GType purple_contact_get_gtype(void);
+
+/**
+ * Get the GType for PurpleChat
+ */
+GType purple_chat_get_gtype(void);
 
 /*@}*/
 

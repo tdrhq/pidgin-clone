@@ -292,7 +292,7 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	buddy = g_new0(PurpleBuddy, 1);
+	buddy = g_object_new(PURPLE_BUDDY_TYPE, NULL);
 	buddy->account  = account;
 	buddy->name     = purple_utf8_strip_unprintables(name);
 	buddy->alias    = purple_utf8_strip_unprintables(alias);
@@ -562,4 +562,47 @@ buddy_to_xmlnode(PurpleBlistNode *bnode)
 	g_hash_table_foreach(buddy->node.settings, value_to_xmlnode, node);
 
 	return node;
+}
+
+/******************/
+/*  GObject Code  */
+/******************/
+
+static void
+purple_buddy_class_init(PurpleBuddyClass *klass)
+{
+
+}
+
+static void
+purple_buddy_init(GTypeInstance *instance, gpointer class)
+{
+
+}
+
+GType
+purple_buddy_get_gtype(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleBuddyClass),
+			NULL,					/* base_init		*/
+			NULL,					/* base_finalize	*/
+			(GClassInitFunc)purple_buddy_class_init,
+			NULL,
+			NULL,					/* class_data		*/
+			sizeof(PurpleBuddy),
+			0,						/* n_preallocs		*/
+			purple_buddy_init,					/* instance_init	*/
+			NULL					/* value_table		*/
+		};
+
+		type = g_type_register_static(PURPLE_BLIST_NODE_TYPE,
+									  "PurpleBuddy",
+									  &info, G_TYPE_FLAG_ABSTRACT);
+	}
+
+	return type;
 }

@@ -282,3 +282,74 @@ int purple_blist_get_group_online_count(PurpleGroup *group)
 
 	return group->online;
 }
+
+PurpleGroup *purple_group_new(const char *name)
+{
+  PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+  PurpleGroup *group;
+
+  g_return_val_if_fail(name  != NULL, NULL);
+  g_return_val_if_fail(*name != '\0', NULL);
+
+  group = purple_find_group(name);
+  if (group != NULL)
+    return group;
+
+  group = g_object_new(PURPLE_GROUP_TYPE, NULL);
+  group->name = purple_utf8_strip_unprintables(name);
+  group->totalsize = 0;
+  group->currentsize = 0;
+  group->online = 0;
+  purple_blist_node_initialize_settings((PurpleBlistNode *)group);
+  ((PurpleBlistNode *)group)->type = PURPLE_BLIST_GROUP_NODE;
+
+  if (ops && ops->new_node)
+    ops->new_node((PurpleBlistNode *)group);
+
+  PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
+  return group;
+}
+
+
+/******************/
+/*  GObject Code  */
+/******************/
+
+static void
+purple_group_class_init(PurpleGroupClass *klass)
+{
+
+}
+
+static void
+purple_group_init(GTypeInstance *instance, gpointer class)
+{
+
+}
+
+GType
+purple_group_get_gtype(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleGroupClass),
+			NULL,					/* base_init		*/
+			NULL,					/* base_finalize	*/
+			(GClassInitFunc)purple_group_class_init,
+			NULL,
+			NULL,					/* class_data		*/
+			sizeof(PurpleGroup),
+			0,						/* n_preallocs		*/
+			purple_group_init,					/* instance_init	*/
+			NULL					/* value_table		*/
+		};
+
+		type = g_type_register_static(PURPLE_BLIST_NODE_TYPE,
+									  "PurpleGroup",
+									  &info, G_TYPE_FLAG_ABSTRACT);
+	}
+
+	return type;
+}

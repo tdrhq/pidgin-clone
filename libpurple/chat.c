@@ -173,7 +173,7 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(components != NULL, FALSE);
 
-	chat = g_new0(PurpleChat, 1);
+	chat = g_object_new(PURPLE_CHAT_TYPE, NULL);
 	chat->account = account;
 	if ((alias != NULL) && (*alias != '\0'))
 		chat->alias = purple_utf8_strip_unprintables(alias);
@@ -304,4 +304,45 @@ purple_chat_get_components(PurpleChat *chat)
 	return chat->components;
 }
 
+/******************/
+/*  GObject Code  */
+/******************/
 
+static void
+purple_chat_class_init(PurpleChatClass *klass)
+{
+
+}
+
+static void
+purple_chat_init(GTypeInstance *instance, gpointer class)
+{
+
+}
+
+GType
+purple_chat_get_gtype(void)
+{
+  static GType type = 0;
+
+  if(type == 0) {
+    static const GTypeInfo info = {
+      sizeof(PurpleChatClass),
+      NULL,					/* base_init		*/
+      NULL,					/* base_finalize	*/
+      (GClassInitFunc)purple_chat_class_init,
+      NULL,
+      NULL,					/* class_data		*/
+      sizeof(PurpleChat),
+      0,						/* n_preallocs		*/
+      purple_chat_init,					/* instance_init	*/
+      NULL					/* value_table		*/
+    };
+
+    type = g_type_register_static(PURPLE_BLIST_NODE_TYPE,
+                    "PurpleChat",
+                    &info, G_TYPE_FLAG_ABSTRACT);
+  }
+
+  return type;
+}

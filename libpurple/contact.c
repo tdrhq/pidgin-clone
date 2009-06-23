@@ -199,7 +199,7 @@ PurpleContact *purple_contact_new()
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
-	PurpleContact *contact = g_new0(PurpleContact, 1);
+	PurpleContact *contact = g_object_new(PURPLE_CONTACT_TYPE, NULL);
 	contact->totalsize = 0;
 	contact->currentsize = 0;
 	contact->online = 0;
@@ -264,33 +264,6 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact)
 	contact->priority_valid = FALSE;
 }
 
-PurpleGroup *purple_group_new(const char *name)
-{
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleGroup *group;
-
-	g_return_val_if_fail(name  != NULL, NULL);
-	g_return_val_if_fail(*name != '\0', NULL);
-
-	group = purple_find_group(name);
-	if (group != NULL)
-		return group;
-
-	group = g_new0(PurpleGroup, 1);
-	group->name = purple_utf8_strip_unprintables(name);
-	group->totalsize = 0;
-	group->currentsize = 0;
-	group->online = 0;
-	purple_blist_node_initialize_settings((PurpleBlistNode *)group);
-	((PurpleBlistNode *)group)->type = PURPLE_BLIST_GROUP_NODE;
-
-	if (ops && ops->new_node)
-		ops->new_node((PurpleBlistNode *)group);
-
-	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
-	return group;
-}
-
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 {
 	g_return_val_if_fail(contact != NULL, NULL);
@@ -299,4 +272,47 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 		purple_contact_compute_priority_buddy(contact);
 
 	return contact->priority;
+}
+
+/****************/
+/* GObject Code */
+/****************/
+
+static void
+purple_contact_class_init(PurpleContactClass *klass)
+{
+
+}
+
+static void
+purple_contact_init(GTypeInstance *instance, gpointer class)
+{
+
+}
+
+GType
+purple_contact_get_gtype(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleContactClass),
+			NULL,					/* base_init		*/
+			NULL,					/* base_finalize	*/
+			(GClassInitFunc)purple_contact_class_init,
+			NULL,
+			NULL,					/* class_data		*/
+			sizeof(PurpleContact),
+			0,						/* n_preallocs		*/
+			purple_contact_init,					/* instance_init	*/
+			NULL					/* value_table		*/
+		};
+
+		type = g_type_register_static(PURPLE_BLIST_NODE_TYPE,
+									  "PurpleContact",
+									  &info, G_TYPE_FLAG_ABSTRACT);
+	}
+
+	return type;
 }
