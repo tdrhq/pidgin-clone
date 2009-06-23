@@ -46,12 +46,15 @@ typedef struct _CONVCONTAINERDATA
 
 
 static int g_cyInput = 48;
+static int g_cxNames = 64;
 
 
 static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK ConvContTabDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void RecalcTabIndices(HWND hwndTabs);
 static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static INT_PTR CALLBACK ConvCommonDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs);
 static void RepositionConvControls(HWND hwndConvDlg);
 static LRESULT CALLBACK InputBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
@@ -165,7 +168,11 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				/* Create conversation dialogue. It is
 				 * initially disabled and hidden.
 				 */
-				lpvconv->hwndConv = CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_IM), hwndTabs, IMDlgProc, (LPARAM)lpvconv);
+				if(lpvconv->convtype == PURPLE_CONV_TYPE_IM)
+					lpvconv->hwndConv = CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_IM), hwndTabs, IMDlgProc, (LPARAM)lpvconv);
+				else
+					lpvconv->hwndConv = CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_CHAT), hwndTabs, ChatDlgProc, (LPARAM)lpvconv);
+
 				SetWindowPos(lpvconv->hwndConv, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
 
 				/* Only strictly necessary if we're the only
@@ -373,6 +380,41 @@ static void RecalcTabIndices(HWND hwndTabs)
  */
 static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
+	return ConvCommonDlgProc(hwndDlg, uiMsg, wParam, lParam);
+}
+
+
+/**
+ * Dialogue procedure for chat dialogues. Delegates processing common with IMs
+ * to ConvCommonDlgProc.
+ *
+ * @param	hwndDlg		Dialogue window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Usually TRUE if message processed and FALSE otherwise. There are
+ * some exceptions for particular messages.
+ */
+static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
+	return ConvCommonDlgProc(hwndDlg, uiMsg, wParam, lParam);
+}
+
+
+/**
+ * Handles processing common to IM and chat windows.
+ *
+ * @param	hwndDlg		Dialogue window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Usually TRUE if message processed and FALSE otherwise. There are
+ * some exceptions for particular messages.
+ */
+static INT_PTR CALLBACK ConvCommonDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
 	VULTURE_CONVERSATION *lpvconv;
 
 	switch(uiMsg)
@@ -471,7 +513,7 @@ static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs
 }
 
 
-#define CONV_TOP_MARGIN		48
+#define CONV_IM_TOP_MARGIN		48
 
 /**
  * Repositions and resizes controls in a conversation window.
@@ -481,18 +523,26 @@ static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs
 static void RepositionConvControls(HWND hwndConvDlg)
 {
 	RECT rcClient;
-	HDWP hdwp = BeginDeferWindowPos(2);
+	VULTURE_CONVERSATION *lpvconv = (VULTURE_CONVERSATION*)GetWindowLongPtr(hwndConvDlg, GWLP_USERDATA);
+	HDWP hdwp = BeginDeferWindowPos(lpvconv->convtype == PURPLE_CONV_TYPE_CHAT ? 3 : 2);
+	int cxLeft, cyTopMargin;
 
 	GetClientRect(hwndConvDlg, &rcClient);
+
+	/* Width of input and output controls. */
+	cxLeft = rcClient.right - 2 * CONV_DLG_MARGIN - (lpvconv->convtype == PURPLE_CONV_TYPE_CHAT ? (CONV_DLG_MARGIN + g_cxNames) : 0);
+
+	/* Space for buddy's name, icon and so on. */
+	cyTopMargin = lpvconv->convtype == PURPLE_CONV_TYPE_IM ? CONV_IM_TOP_MARGIN : 0;
 
 	hdwp = DeferWindowPos(
 		hdwp,
 		GetDlgItem(hwndConvDlg, IDC_RICHEDIT_CONV),
 		NULL,
 		CONV_DLG_MARGIN,
-		CONV_DLG_MARGIN + CONV_TOP_MARGIN,
-		rcClient.right - 2 * CONV_DLG_MARGIN,
-		rcClient.bottom - g_cyInput - 3 * CONV_DLG_MARGIN - CONV_TOP_MARGIN,
+		CONV_DLG_MARGIN + cyTopMargin,
+		cxLeft,
+		rcClient.bottom - g_cyInput - 3 * CONV_DLG_MARGIN - cyTopMargin,
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
 	hdwp = DeferWindowPos(
@@ -501,9 +551,22 @@ static void RepositionConvControls(HWND hwndConvDlg)
 		NULL,
 		CONV_DLG_MARGIN,
 		rcClient.bottom - g_cyInput - CONV_DLG_MARGIN,
-		rcClient.right - 2 * CONV_DLG_MARGIN,
+		cxLeft,
 		g_cyInput,
 		SWP_NOACTIVATE | SWP_NOZORDER);
+
+	if(lpvconv->convtype == PURPLE_CONV_TYPE_CHAT)
+	{
+		hdwp = DeferWindowPos(
+			hdwp,
+			GetDlgItem(hwndConvDlg, IDC_LIST_NAMES),
+			NULL,
+			2 * CONV_DLG_MARGIN + cxLeft,
+			CONV_DLG_MARGIN,
+			g_cxNames,
+			rcClient.bottom - 2 * CONV_DLG_MARGIN - cyTopMargin,
+			SWP_NOACTIVATE | SWP_NOZORDER);
+	}
 
 	EndDeferWindowPos(hdwp);
 }

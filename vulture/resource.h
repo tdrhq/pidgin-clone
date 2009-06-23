@@ -10,6 +10,8 @@
 #define IDM_CONV                                111
 #define IDD_CONVCONT                            113
 #define IDD_IM                                  115
+#define IDD_CHAT                                117
+#define IDC_LIST_NAMES                          1001
 #define IDC_TAB_CONVERSATIONS                   1001
 #define IDC_BUDDY_ICON                          1002
 #define IDC_LIST_ACCOUNTS                       1003

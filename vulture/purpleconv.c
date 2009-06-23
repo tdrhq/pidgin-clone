@@ -48,6 +48,11 @@ void PurpleNewConversation(PurpleConversation *lpconv)
 	lpvconv->lpconv = lpconv;
 	lpvconv->hwndContainer = lpvconv->hwndConv = NULL;
 
+	/* Cache this, since the UI should not mess with the PurpleConversation
+	 * directly.
+	 */
+	lpvconv->convtype = lpconv->type;
+
 	InitializeCriticalSection(&lpvconv->sync.cs);
 	lpvconv->sync.szTitle = VultureUTF8ToTCHAR(purple_conversation_get_title(lpconv));
 

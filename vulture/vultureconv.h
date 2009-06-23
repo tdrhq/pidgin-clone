@@ -36,6 +36,7 @@ typedef struct _VULTURE_CONVERSATION
 	HWND			hwndContainer;
 	int			iTabIndex;
 	WNDPROC			wndprocInputOrig;
+	PurpleConversationType	convtype;
 
 	/* Data still needed by the core thread after initialisation. */
 	struct
