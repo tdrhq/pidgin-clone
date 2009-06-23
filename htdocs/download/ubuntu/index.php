@@ -25,9 +25,8 @@
 
 <p class='code'>sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com \
 &nbsp;&nbsp;&nbsp;&nbsp;67265eb522bdd6b1c69e66ed7fb8bee0a1f196a8</p>
-<p class='code'>. /etc/lsb-release</p>
 <p class='code'>echo deb http://ppa.launchpad.net/pidgin-developers/ppa/ubuntu \
-&nbsp;&nbsp;&nbsp;&nbsp;$DISTRIB_CODENAME main | \<br />
+&nbsp;&nbsp;&nbsp;&nbsp;`lsb_release --short --codename` main | \<br />
 &nbsp;&nbsp;&nbsp;&nbsp;sudo tee /etc/apt/sources.list.d/pidgin-ppa.list</p>
 
 <p>Once this PPA is setup, Pidgin updates will show up in Update Manager along with the usual Ubuntu updates. The PPA will need to be re-setup only after upgrading Ubuntu.</p>
