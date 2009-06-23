@@ -139,7 +139,7 @@ typedef struct _PurpleChatClass PurpleChatClass;
  * This is a base class for PurpleBuddy, PurpleContact, PurpleGroup, and for
  * anything else that wants to put itself in the buddy list. */
 struct _PurpleBlistNode {
-  GObject _parent;
+  PurpleObject _parent;
 	PurpleBlistNodeType type;             /**< The type of node this is       */
 	PurpleBlistNode *prev;                /**< The sibling before this buddy. */
 	PurpleBlistNode *next;                /**< The sibling after this buddy.  */
@@ -157,7 +157,7 @@ struct _PurpleBlistNode {
 };
 
 struct _PurpleBlistNodeClass {
-  GObjectClass parent;
+  PurpleObjectClass parent;
 };
 
 #endif
@@ -178,7 +178,7 @@ struct _PurpleBuddy {
 };
 
 struct _PurpleBuddyClass {
-  GObjectClass parent;
+  PurpleBlistNodeClass parent;
 };
 
 #endif
@@ -198,7 +198,7 @@ struct _PurpleContact {
 };
 
 struct _PurpleContactClass {
-  GObjectClass parent;
+  PurpleBlistNodeClass parent;
 };
 
 #endif
@@ -216,7 +216,7 @@ struct _PurpleGroup {
 };
 
 struct _PurpleGroupClass {
-  GObjectClass parent;
+  PurpleBlistNodeClass parent;
 };
 
 #endif
@@ -234,7 +234,7 @@ struct _PurpleChat {
 };
 
 struct _PurpleChatClass {
-  GObjectClass parent;
+  PurpleBlistNodeClass parent;
 };
 
 #endif
