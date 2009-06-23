@@ -477,7 +477,7 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 		return TRUE;
 
 
-	case WM_DESTROY:
+	case WM_NCDESTROY:
 
 		if(g_lpglistStatuses)
 			VulturePurpleFreeStatusList(g_lpglistStatuses);

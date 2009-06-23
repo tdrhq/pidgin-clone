@@ -282,11 +282,9 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 		return 0;
 
 
-	case WM_DESTROY:
+	case WM_NCDESTROY:
 
 		lpccd = (CONVCONTAINERDATA*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-
-		if(lpccd->hwndTabDlg) DestroyWindow(lpccd->hwndTabDlg);
 
 		g_lpglistConvContainers = g_list_remove(g_lpglistConvContainers, hwnd);
 
