@@ -128,7 +128,8 @@ void VultureFreeStatus(VULTURE_SAVED_STATUS *lpvss)
  */
 void PurpleSetStatus(VULTURE_SAVED_STATUS *lpvss)
 {
-	char *szMessage = NULL;
+	char *szNewMessage = NULL;
+	const char *szMessage = NULL;
 	PurpleSavedStatus *lppss;
 
 	switch(lpvss->vsstype)
@@ -142,10 +143,11 @@ void PurpleSetStatus(VULTURE_SAVED_STATUS *lpvss)
 
 	case VSSTYPE_TRANSIENT:
 		if(lpvss->szMessage)
-			szMessage = VultureTCHARToUTF8(lpvss->szMessage);
+			szMessage = szNewMessage = VultureTCHARToUTF8(lpvss->szMessage);
 		break;
 
-	default:
+	case VSSTYPE_PRIMITIVE:
+		szMessage = purple_savedstatus_get_message(purple_savedstatus_get_current());
 		break;
 	}
 
@@ -159,8 +161,8 @@ void PurpleSetStatus(VULTURE_SAVED_STATUS *lpvss)
 
 	purple_savedstatus_activate(lppss);
 
-	if(szMessage)
-		g_free(szMessage);
+	if(szNewMessage)
+		g_free(szNewMessage);
 }
 
 

@@ -56,6 +56,9 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_CONV_SEND*) Conversation send-message details. */
 	PC_CONVSEND,
+
+	/* (LPTSTR*) Used to return address of buffer. */
+	PC_GETSTATUSMSG,
 };
 
 

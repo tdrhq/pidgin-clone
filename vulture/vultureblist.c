@@ -23,6 +23,8 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <glib.h>
+#include <tchar.h>
+#include <string.h>
 
 #include "vulture.h"
 #include "resource.h"
@@ -38,12 +40,20 @@
 #include "purpleconv.h"
 
 
+typedef struct _STATUSDLGDATA
+{
+	WNDPROC	wndprocStatusMsgOrig;
+} STATUSDLGDATA;
+
+
 static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void ManageAccounts(HWND hwndParent);
 static void PopulateStatusList(HWND hwndComboStatus);
 static void UpdateStatusUI(VULTURE_SAVED_STATUS *lpvss, HWND hwndStatusDlg);
+static LRESULT CALLBACK StatusMsgBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static void SetStatusMsg(HWND hwndStatusDlg);
 
 
 #define BLIST_MARGIN 6
@@ -53,6 +63,7 @@ HWND g_hwndMain = NULL;
 GList *g_lpglistConvContainers = NULL;
 
 static GList *g_lpglistStatuses = NULL;
+static HWND g_hwndStatusDlg = NULL, g_hwndBListDlg = NULL;
 
 
 
@@ -124,7 +135,6 @@ int VultureCreateMainWindow(int iCmdShow)
  */
 static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
-	static HWND s_hwndStatusDlg = NULL, s_hwndBListDlg = NULL;
 	static HCURSOR s_hCursor;
 
 	switch(uiMsg)
@@ -134,11 +144,11 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 			int i, iCount;
 			HMENU hmenu = GetMenu(hwnd);
 
-			s_hwndStatusDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_STATUS), hwnd, StatusDlgProc);
-			s_hwndBListDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_BLIST), hwnd, BuddyListDlgProc);
+			g_hwndStatusDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_STATUS), hwnd, StatusDlgProc);
+			g_hwndBListDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_BLIST), hwnd, BuddyListDlgProc);
 
-			EnableWindow(s_hwndStatusDlg, FALSE);
-			EnableWindow(s_hwndBListDlg, FALSE);
+			EnableWindow(g_hwndStatusDlg, FALSE);
+			EnableWindow(g_hwndBListDlg, FALSE);
 
 			s_hCursor = LoadCursor(NULL, IDC_WAIT);
 
@@ -170,12 +180,12 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 			RECT rcClient, rcStatus;
 
 			GetClientRect(hwnd, &rcClient);
-			GetWindowRect(s_hwndStatusDlg, &rcStatus);
+			GetWindowRect(g_hwndStatusDlg, &rcStatus);
 
 			hdwp = BeginDeferWindowPos(2);
-			hdwp = DeferWindowPos(hdwp, s_hwndStatusDlg, NULL, 0, 0, rcClient.right, rcStatus.bottom - rcStatus.top, SWP_NOACTIVATE | SWP_NOZORDER);
+			hdwp = DeferWindowPos(hdwp, g_hwndStatusDlg, NULL, 0, 0, rcClient.right, rcStatus.bottom - rcStatus.top, SWP_NOACTIVATE | SWP_NOZORDER);
 			rcClient.top = rcStatus.bottom - rcStatus.top;
-			hdwp = DeferWindowPos(hdwp, s_hwndBListDlg, NULL, 0, rcClient.top, rcClient.right, rcClient.bottom - rcClient.top, SWP_NOACTIVATE | SWP_NOZORDER);
+			hdwp = DeferWindowPos(hdwp, g_hwndBListDlg, NULL, 0, rcClient.top, rcClient.right, rcClient.bottom - rcClient.top, SWP_NOACTIVATE | SWP_NOZORDER);
 			EndDeferWindowPos(hdwp);
 		}
 
@@ -207,10 +217,10 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 					int i, iCount;
 					HMENU hmenu = GetMenu(hwnd);
 
-					PopulateStatusList(GetDlgItem(s_hwndStatusDlg, IDC_CBEX_STATUS));
+					PopulateStatusList(GetDlgItem(g_hwndStatusDlg, IDC_CBEX_STATUS));
 
-					EnableWindow(s_hwndStatusDlg, TRUE);
-					EnableWindow(s_hwndBListDlg, TRUE);
+					EnableWindow(g_hwndStatusDlg, TRUE);
+					EnableWindow(g_hwndBListDlg, TRUE);
 
 					iCount = GetMenuItemCount(hmenu);
 					for(i = 0; i < iCount; i++)
@@ -224,7 +234,7 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 
 			case VUIMSG_UPDATEBLISTNODE:
 				{
-					HWND hwndBlistTree = GetDlgItem(s_hwndBListDlg, IDC_TREE_BLIST);
+					HWND hwndBlistTree = GetDlgItem(g_hwndBListDlg, IDC_TREE_BLIST);
 					VULTURE_BLIST_NODE *lpvbn = (VULTURE_BLIST_NODE*)lParam;
 
 					EnterCriticalSection(&lpvbn->cs);
@@ -299,7 +309,7 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 				break;
 
 			case VUIMSG_STATUSCHANGED:
-				UpdateStatusUI((VULTURE_SAVED_STATUS*)lParam, s_hwndStatusDlg);
+				UpdateStatusUI((VULTURE_SAVED_STATUS*)lParam, g_hwndStatusDlg);
 				VultureFreeStatus((VULTURE_SAVED_STATUS*)lParam);
 				break;
 
@@ -337,8 +347,8 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 
 	case WM_DESTROY:
 		
-		DestroyWindow(s_hwndBListDlg);
-		DestroyWindow(s_hwndStatusDlg);
+		DestroyWindow(g_hwndBListDlg);
+		DestroyWindow(g_hwndStatusDlg);
 
 		if(g_lpglistConvContainers)
 			g_list_free(g_lpglistConvContainers);
@@ -371,6 +381,8 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 		{
 			RECT rcIcon;
 			POINT ptIcon;
+			HWND hwndStatusMsg = GetDlgItem(hwndDlg, IDC_EDIT_STATUSMSG);
+			STATUSDLGDATA *lpsdd;
 
 			GetWindowRect(GetDlgItem(hwndDlg, IDC_BUDDY_ICON), &rcIcon);
 			ptIcon.x = rcIcon.left;
@@ -381,6 +393,12 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 			 * height.
 			 */
 			SetWindowPos(GetDlgItem(hwndDlg, IDC_BUDDY_ICON), NULL, BLIST_MARGIN, ptIcon.y, rcIcon.bottom - rcIcon.top, rcIcon.bottom - rcIcon.top, SWP_NOACTIVATE | SWP_NOZORDER);
+
+			/* Subclass status message box. */
+			lpsdd = ProcHeapAlloc(sizeof(STATUSDLGDATA));
+			lpsdd->wndprocStatusMsgOrig = (WNDPROC)GetWindowLongPtr(hwndStatusMsg, GWLP_WNDPROC);
+			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG)lpsdd);
+			SetWindowLongPtr(hwndStatusMsg, GWLP_WNDPROC, (LONG)StatusMsgBoxSubclassProc);
 		}
 
 		/* Let the system set the focus. */
@@ -425,20 +443,25 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 		case IDC_CBEX_STATUS:
 			if(HIWORD(wParam) == CBN_SELCHANGE)
 			{
-				/* Inform libpurple of the change in status,
-				 * and update message edit box.
-				 */
+				/* Inform libpurple of the change in status. */
 
 				int iSel = SendDlgItemMessage(hwndDlg, IDC_CBEX_STATUS, CB_GETCURSEL, 0, 0);
 
 				if(iSel >= 0)
 				{
-					VULTURE_SAVED_STATUS *lpvss = (VULTURE_SAVED_STATUS*)SendDlgItemMessage(hwndDlg, IDC_CBEX_STATUS, CB_GETITEMDATA, iSel, 0);
-					VultureSingleSyncPurpleCall(PC_SETSAVEDSTATUS, lpvss);
-
-					SetDlgItemText(hwndDlg, IDC_EDIT_STATUSMSG, lpvss->szMessage ? lpvss->szMessage : TEXT(""));
+					VULTURE_SAVED_STATUS *lpvssList = (VULTURE_SAVED_STATUS*)SendDlgItemMessage(hwndDlg, IDC_CBEX_STATUS, CB_GETITEMDATA, iSel, 0);
+					VultureSingleSyncPurpleCall(PC_SETSAVEDSTATUS, lpvssList);
 				}
 
+				return TRUE;
+			}
+
+			break;
+
+		case IDC_EDIT_STATUSMSG:
+			if(HIWORD(wParam) == EN_KILLFOCUS)
+			{
+				SetStatusMsg(hwndDlg);
 				return TRUE;
 			}
 
@@ -448,10 +471,18 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 		break;
 
 
+	case WM_INPUTENTER:
+		SetStatusMsg(hwndDlg);
+		SendMessage(g_hwndBListDlg, WM_NEXTDLGCTL, (WPARAM)GetDlgItem(g_hwndBListDlg, IDC_TREE_BLIST), MAKELPARAM(TRUE, 0));
+		return TRUE;
+
+
 	case WM_DESTROY:
 
 		if(g_lpglistStatuses)
 			VulturePurpleFreeStatusList(g_lpglistStatuses);
+
+		ProcHeapFree((STATUSDLGDATA*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA));
 
 		return TRUE;
 	}
@@ -600,4 +631,80 @@ static void UpdateStatusUI(VULTURE_SAVED_STATUS *lpvss, HWND hwndStatusDlg)
 		SendMessage(hwndCombo, CB_SETCURSEL, iMatch, 0);
 		SetDlgItemText(hwndStatusDlg, IDC_EDIT_STATUSMSG, lpvss->szMessage);
 	}
+}
+
+
+/**
+ * Subclassing window procedure for status message edit control.
+ *
+ * @param	hwnd		Input box window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Message-specific.
+ */
+static LRESULT CALLBACK StatusMsgBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
+	STATUSDLGDATA *lpsdd;
+	HWND hwndParent = GetParent(hwnd);
+
+	/* Intercept the Enter key. */
+	if(uiMsg == WM_KEYDOWN && wParam == VK_RETURN)
+	{
+		SendMessage(hwndParent, WM_INPUTENTER, 0, (LPARAM)hwnd);
+		return 0;
+	}
+	/* Don't beep. */
+	else if(uiMsg == WM_CHAR && wParam == VK_RETURN)
+		return 0;
+
+	lpsdd = (STATUSDLGDATA*)GetWindowLongPtr(hwndParent, GWLP_USERDATA);
+	return CallWindowProc(lpsdd->wndprocStatusMsgOrig, hwnd, uiMsg, wParam, lParam);
+}
+
+
+/**
+ * Sets the current status message using the values of the UI controls.
+ *
+ * @param	hwndStatusDlg	Status dialogue window handle.
+ */
+static void SetStatusMsg(HWND hwndStatusDlg)
+{
+	HWND hwndEdit = GetDlgItem(hwndStatusDlg, IDC_EDIT_STATUSMSG);
+	VULTURE_SAVED_STATUS vss;
+	LPTSTR szOldMessage;
+
+	int cchStatus = GetWindowTextLength(hwndEdit) + 1;
+
+	if(cchStatus > 1)
+	{
+		vss.szMessage = ProcHeapAlloc(cchStatus * sizeof(TCHAR));
+		GetWindowText(hwndEdit, vss.szMessage, cchStatus);
+	}
+	else vss.szMessage =  NULL;
+
+	VultureSingleSyncPurpleCall(PC_GETSTATUSMSG, &szOldMessage);
+
+	/* Only do anything if the message has actually changed. */
+	if((vss.szMessage && !szOldMessage) ||
+		(!vss.szMessage && szOldMessage) ||
+		(vss.szMessage && szOldMessage && _tcscmp(vss.szMessage, szOldMessage) != 0))
+	{
+		int iSel = SendDlgItemMessage(hwndStatusDlg, IDC_CBEX_STATUS, CB_GETCURSEL, 0, 0);
+
+		if(iSel >= 0)
+		{
+			VULTURE_SAVED_STATUS *lpvssList = (VULTURE_SAVED_STATUS*)SendDlgItemMessage(hwndStatusDlg, IDC_CBEX_STATUS, CB_GETITEMDATA, iSel, 0);
+
+			vss.psprim = lpvssList->psprim;
+			vss.szTitle = lpvssList->szTitle;
+			vss.vsstype = VSSTYPE_TRANSIENT;
+
+			VultureSingleSyncPurpleCall(PC_SETSAVEDSTATUS, &vss);
+		}
+	}
+
+	if(szOldMessage) g_free(szOldMessage);
+	if(vss.szMessage) ProcHeapFree(vss.szMessage);
 }

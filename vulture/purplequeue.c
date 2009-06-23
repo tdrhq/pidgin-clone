@@ -197,6 +197,16 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		VultureFreeConvSend((VULTURE_CONV_SEND*)lppurplecall->lpvParam);
 		break;
 
+	case PC_GETSTATUSMSG:
+		{
+			/* Caller should g_free returned buffer if non-NULL. */
+			PurpleSavedStatus *lppss = purple_savedstatus_get_current();
+			const char *szMessage = purple_savedstatus_get_message(lppss);
+			*((LPTSTR*)lppurplecall->lpvParam) = szMessage ? VultureUTF8ToTCHAR(szMessage) : NULL;
+		}
+
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);
