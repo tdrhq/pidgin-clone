@@ -44,7 +44,7 @@
 #include <gtkconv.h>
 #include <gtkimhtml.h>
 #include <gtkplugin.h>
-
+#include <smileyparser.h>
 
 static PurpleConversationUiOps *uiops = NULL;
 
@@ -445,6 +445,7 @@ static void purple_webkit_write_conv(PurpleConversation *conv, const char *name,
 	char *escape;
 	char *script;
 	char *func = "appendMessage";
+	char *smileyed;
 	struct webkit_script *wk_script;
 	PurpleMessageFlags old_flags = GPOINTER_TO_INT(purple_conversation_get_data(conv, "webkit-lastflags")); 
 
@@ -476,7 +477,8 @@ static void purple_webkit_write_conv(PurpleConversation *conv, const char *name,
 	}
 	purple_conversation_set_data(conv, "webkit-lastflags", GINT_TO_POINTER(flags));
 
-	msg = replace_message_tokens(message_html, 0, conv, name, alias, stripped, flags, mtime);
+	smileyed = smiley_parse_markup(stripped);
+	msg = replace_message_tokens(message_html, 0, conv, name, alias, smileyed, flags, mtime);
 	escape = escape_message(msg);
 	script = g_strdup_printf("%s(\"%s\")", func, escape);
 
@@ -486,6 +488,7 @@ static void purple_webkit_write_conv(PurpleConversation *conv, const char *name,
 
 	g_idle_add(purple_webkit_execute_script, wk_script);
 
+	g_free(smileyed);
 	g_free(msg);
 	g_free(stripped);
 	g_free(escape);

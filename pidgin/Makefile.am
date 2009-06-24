@@ -128,7 +128,8 @@ pidgin_SOURCES = \
 	gtkwebview.c \
 	gtkwhiteboard.c \
 	minidialog.c \
-	pidgintooltip.c
+	pidgintooltip.c \
+	smileyparser.c
 
 pidgin_headers = \
 	eggtrayicon.h \
@@ -188,7 +189,8 @@ pidgin_headers = \
 	gtkwhiteboard.h \
 	minidialog.h \
 	pidgintooltip.h \
-	pidgin.h
+	pidgin.h \
+	smileyparser.h
 
 pidginincludedir=$(includedir)/pidgin
 pidgininclude_HEADERS = \
