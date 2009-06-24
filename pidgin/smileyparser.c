@@ -11,11 +11,10 @@ static char* get_fullpath (const char* filename)
 	else return g_build_path (g_get_current_dir (), filename, NULL);
 }
 
-static char*
-parse_for_shortcut (const char* markup, const char* shortcut, const char* file) 
+static void
+parse_for_shortcut_plaintext (const char* text, const char* shortcut, const char* file, GString* ret) 
 {
-	GString* ret = g_string_new ("");
-	const char *tmp = markup;
+	const char *tmp = text;
 
 	for(;*tmp;) {
 		const char *end = strstr (tmp, shortcut);
@@ -34,7 +33,41 @@ parse_for_shortcut (const char* markup, const char* shortcut, const char* file)
 		g_assert (strlen (tmp) >= strlen (shortcut));
 		tmp = end + strlen (shortcut);
 	}
+}
 
+static char*
+parse_for_shortcut (const char* markup, const char* shortcut, const char* file)
+{
+	GString* ret = g_string_new ("");
+	char *local_markup = g_strdup (markup);
+	char *temp = local_markup;
+	
+	for (;*temp;) {
+		char *end = strchr (temp, '<');
+		char *end_of_tag;
+
+		if (!end) {
+			parse_for_shortcut_plaintext (temp, shortcut, file, ret);
+			break;
+		}
+
+		*end = 0;
+		parse_for_shortcut_plaintext (temp, shortcut, file, ret);
+		*end = '<';
+
+		/* if this is well-formed, then there should be no '>' within
+		 * the tag. TODO: handle a comment tag better :( */
+		end_of_tag = strchr (end, '>');
+		if (!end_of_tag) {
+			g_string_append (ret, end);
+			break;
+		}
+
+		g_string_append_len (ret, end, end_of_tag-end+1);
+
+		temp = end_of_tag + 1;
+	}
+	g_free (local_markup);
 	return g_string_free (ret, FALSE);
 }
 
@@ -99,7 +132,6 @@ smiley_parse_markup (const char* markup, const char *proto_id)
 			temp = temp2;
 		}
 	}
-
 
 	return temp;
 }
