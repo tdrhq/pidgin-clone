@@ -65,11 +65,18 @@ parse_for_smiley_list (const char* markup, GHashTable* smileys)
 }
 
 char*
-smiley_parse_markup (const char* markup) 
+smiley_parse_markup (const char* markup, const char *proto_id) 
 {
 	GList *smileys = purple_smileys_get_all ();
 	char *temp = g_strdup (markup), *temp2;
+	struct smiley_list *list;
+	const char *proto_name = "default";
 
+	if (proto_id != NULL) {
+		PurplePlugin *proto;
+		proto = purple_find_prpl (proto_id);
+		proto_name = proto->info->name;
+	}
 
 	/* unnecessarily slow, but lets manage for now. */
 	for (; smileys; smileys = g_list_next (smileys)) {
@@ -85,9 +92,14 @@ smiley_parse_markup (const char* markup)
 		return temp;
 	}
 
-	temp2 = parse_for_smiley_list (temp, current_smiley_theme->list->files);
-	g_free (temp);
-	temp = temp2;
+	for (list = current_smiley_theme->list; list; list = list->next) {
+		if (g_str_equal (list->sml, proto_name)) {
+			temp2 = parse_for_smiley_list (temp, list->files);
+			g_free (temp);
+			temp = temp2;
+		}
+	}
+
 
 	return temp;
 }

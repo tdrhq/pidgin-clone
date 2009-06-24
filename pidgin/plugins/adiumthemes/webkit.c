@@ -477,7 +477,7 @@ static void purple_webkit_write_conv(PurpleConversation *conv, const char *name,
 	}
 	purple_conversation_set_data(conv, "webkit-lastflags", GINT_TO_POINTER(flags));
 
-	smileyed = smiley_parse_markup(stripped);
+	smileyed = smiley_parse_markup(stripped, conv->account->protocol_id);
 	msg = replace_message_tokens(message_html, 0, conv, name, alias, smileyed, flags, mtime);
 	escape = escape_message(msg);
 	script = g_strdup_printf("%s(\"%s\")", func, escape);
