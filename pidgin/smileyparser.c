@@ -5,10 +5,15 @@
 #include <string.h>
 #include "gtkthemes.h"
 
-static char*
-smiley_parse_markup_for_smiley (const char* markup, PurpleSmiley *smiley) 
+static char* get_fullpath (const char* filename)
 {
-	const char* shortcut = purple_smiley_get_shortcut (smiley);
+	if (g_path_is_absolute (filename)) return g_strdup (filename);
+	else return g_build_path (g_get_current_dir (), filename, NULL);
+}
+
+static char*
+parse_for_shortcut (const char* markup, const char* shortcut, const char* file) 
+{
 	GString* ret = g_string_new ("");
 	const char *tmp = markup;
 
@@ -20,7 +25,7 @@ smiley_parse_markup_for_smiley (const char* markup, PurpleSmiley *smiley)
 			g_string_append (ret, tmp);
 			break;
 		}
-		path = purple_smiley_get_full_path (smiley);
+		path = get_fullpath (file);
 		g_string_append_len (ret, tmp, end-tmp);
 		g_string_append_printf (ret,"<img alt='%s' src='%s' />",
 					shortcut, path);
@@ -33,18 +38,57 @@ smiley_parse_markup_for_smiley (const char* markup, PurpleSmiley *smiley)
 	return g_string_free (ret, FALSE);
 }
 
+static char*
+parse_for_purple_smiley (const char* markup, PurpleSmiley *smiley)
+{
+	char *file = purple_smiley_get_full_path (smiley);
+	char *ret = parse_for_shortcut (markup, purple_smiley_get_shortcut (smiley), file);
+	g_free (file);
+	return ret;
+}
+
+static char*
+parse_for_smiley_list (const char* markup, GHashTable* smileys)
+{
+	GHashTableIter iter;
+	char *key, *value;
+	char *ret = g_strdup (markup);
+
+	g_hash_table_iter_init (&iter, smileys);
+	while (g_hash_table_iter_next (&iter, (gpointer*)&key, (gpointer*)&value))
+	{
+		char* temp = parse_for_shortcut (ret, key, value);
+		g_free (ret);
+		ret = temp;
+	}
+	return ret;
+}
+
 char*
 smiley_parse_markup (const char* markup) 
 {
 	GList *smileys = purple_smileys_get_all ();
-	char *temp = g_strdup (markup);
+	char *temp = g_strdup (markup), *temp2;
+
 
 	/* unnecessarily slow, but lets manage for now. */
 	for (; smileys; smileys = g_list_next (smileys)) {
-		char* replaced = smiley_parse_markup_for_smiley (temp, PURPLE_SMILEY (smileys->data));
+		temp2 = parse_for_purple_smiley (temp, PURPLE_SMILEY (smileys->data));
 		g_free (temp);
-		temp = replaced;
+		temp = temp2;
 	}
+
+	/* now for each theme smiley, observe that this does look nasty */
+	
+	if (!current_smiley_theme || !(current_smiley_theme->list)) {
+		printf ("theme does not exist\n");
+		return temp;
+	}
+
+	temp2 = parse_for_smiley_list (temp, current_smiley_theme->list->files);
+	g_free (temp);
+	temp = temp2;
+
 	return temp;
 }
 
