@@ -19,17 +19,20 @@ parse_for_shortcut_plaintext (const char* text, const char* shortcut, const char
 	for(;*tmp;) {
 		const char *end = strstr (tmp, shortcut);
 		char *path;
+		char *escaped_path;
 
 		if (end == NULL) {
 			g_string_append (ret, tmp);
 			break;
 		}
 		path = get_fullpath (file);
+		escaped_path = g_markup_escape_text (path, -1);
+
 		g_string_append_len (ret, tmp, end-tmp);
 		g_string_append_printf (ret,"<img alt='%s' src='%s' />",
-					shortcut, path);
+					shortcut, escaped_path);
 		g_free (path);
-
+		g_free (escaped_path);
 		g_assert (strlen (tmp) >= strlen (shortcut));
 		tmp = end + strlen (shortcut);
 	}
@@ -40,6 +43,8 @@ parse_for_shortcut (const char* markup, const char* shortcut, const char* file)
 {
 	GString* ret = g_string_new ("");
 	char *local_markup = g_strdup (markup);
+	char *escaped_shortcut = g_markup_escape_text (shortcut, -1);
+
 	char *temp = local_markup;
 	
 	for (;*temp;) {
@@ -47,12 +52,12 @@ parse_for_shortcut (const char* markup, const char* shortcut, const char* file)
 		char *end_of_tag;
 
 		if (!end) {
-			parse_for_shortcut_plaintext (temp, shortcut, file, ret);
+			parse_for_shortcut_plaintext (temp, escaped_shortcut, file, ret);
 			break;
 		}
 
 		*end = 0;
-		parse_for_shortcut_plaintext (temp, shortcut, file, ret);
+		parse_for_shortcut_plaintext (temp, escaped_shortcut, file, ret);
 		*end = '<';
 
 		/* if this is well-formed, then there should be no '>' within
@@ -68,6 +73,7 @@ parse_for_shortcut (const char* markup, const char* shortcut, const char* file)
 		temp = end_of_tag + 1;
 	}
 	g_free (local_markup);
+	g_free (escaped_shortcut);
 	return g_string_free (ret, FALSE);
 }
 
