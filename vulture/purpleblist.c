@@ -220,3 +220,25 @@ void VultureBListNodeRelease(VULTURE_BLIST_NODE *lpvblnode)
 		g_free(lpvblnode);
 	}
 }
+
+
+/**
+ * Performs the processing required when a buddy-list node has been double-
+ * clicked. A close cousin of Pidgin's gtk_blist_row_activated_cb.
+ *
+ * @param	lpvbn	Node.
+ */
+void PurpleBListNodeDoubleClicked(VULTURE_BLIST_NODE *lpvbn)
+{
+	if(PURPLE_BLIST_NODE_IS_CONTACT(lpvbn->lpblistnode) || PURPLE_BLIST_NODE_IS_BUDDY(lpvbn->lpblistnode))
+	{
+		PurpleBuddy *lpbuddy;
+
+		if(PURPLE_BLIST_NODE_IS_CONTACT(lpvbn->lpblistnode))
+			lpbuddy = purple_contact_get_priority_buddy((PurpleContact*)lpvbn->lpblistnode);
+		else
+			lpbuddy = (PurpleBuddy*)lpvbn->lpblistnode;
+
+		purple_conversation_new(PURPLE_CONV_TYPE_IM, lpbuddy->account, lpbuddy->name);
+	}
+}

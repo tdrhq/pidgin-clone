@@ -30,6 +30,7 @@
 #include "purpleacct.h"
 #include "vultureconv.h"
 #include "purpleconv.h"
+#include "purpleblist.h"
 
 
 /** Queue node representing a libpurple call. */
@@ -205,6 +206,10 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 			*((LPTSTR*)lppurplecall->lpvParam) = szMessage ? VultureUTF8ToTCHAR(szMessage) : NULL;
 		}
 
+		break;
+
+	case PC_BLISTNODEDBLCLKED:
+		PurpleBListNodeDoubleClicked((VULTURE_BLIST_NODE*)lppurplecall->lpvParam);
 		break;
 
 	case PC_QUIT:

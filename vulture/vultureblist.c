@@ -518,6 +518,42 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 		}
 
 		return TRUE;
+
+	case WM_NOTIFY:
+		{
+			LPNMHDR lpnmhdr = (LPNMHDR)lParam;
+
+			if(lpnmhdr->idFrom == IDC_TREE_BLIST)
+			{
+				switch(lpnmhdr->code)
+				{
+				case NM_RETURN:
+				case NM_DBLCLK:
+					{
+						TVITEM tvitem;
+
+						/* We double-clicked or pressed
+						 * enter. If we have children,
+						 * don't do anything special.
+						 */
+						if((tvitem.hItem = TreeView_GetSelection(lpnmhdr->hwndFrom)) &&
+							!TreeView_GetChild(lpnmhdr->hwndFrom, tvitem.hItem))
+						{
+							tvitem.mask = TVIF_PARAM;
+							TreeView_GetItem(lpnmhdr->hwndFrom, &tvitem);
+							
+							VultureEnqueueAsyncPurpleCall(PC_BLISTNODEDBLCLKED, (VULTURE_BLIST_NODE*)tvitem.lParam);
+
+							return TRUE;
+						}
+					}
+
+					break;
+				}
+			}
+		}
+
+		break;
 	}
 
 	return FALSE;

@@ -59,6 +59,9 @@ enum PURPLE_CALL_ID
 
 	/* (LPTSTR*) Used to return address of buffer. */
 	PC_GETSTATUSMSG,
+
+	/* (VULTURE_BLIST_NODE*) Node double-clicked.  */
+	PC_BLISTNODEDBLCLKED,
 };
 
 
