@@ -54,6 +54,7 @@ static void PopulateStatusList(HWND hwndComboStatus);
 static void UpdateStatusUI(VULTURE_SAVED_STATUS *lpvss, HWND hwndStatusDlg);
 static LRESULT CALLBACK StatusMsgBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void SetStatusMsg(HWND hwndStatusDlg);
+static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
 
 
 #define BLIST_MARGIN 6
@@ -251,13 +252,7 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 							if((lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti != htiParent) ||
 								(!lpvbn->lpvbnParent && htiParent))
 							{
-								TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
-								lpvbn->hti = NULL;
-
-								/* Release the reference belonging to the pointer
-								 * cached in the tree-item.
-								 */
-								VultureBListNodeRelease(lpvbn);
+								RemoveBListNode(hwndBlistTree, lpvbn);
 							}
 						}
 
@@ -290,6 +285,10 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 					VultureBListNodeRelease(lpvbn);
 				}
 
+				break;
+
+			case VUIMSG_REMOVEBLISTNODE:
+				RemoveBListNode(GetDlgItem(g_hwndBListDlg, IDC_TREE_BLIST), (VULTURE_BLIST_NODE*)lParam);
 				break;
 
 			case VUIMSG_NEWCONVERSATION:
@@ -707,4 +706,22 @@ static void SetStatusMsg(HWND hwndStatusDlg)
 
 	if(szOldMessage) g_free(szOldMessage);
 	if(vss.szMessage) ProcHeapFree(vss.szMessage);
+}
+
+
+/**
+ * Removes a buddy-list node, doing the requisite housekeeping.
+ *
+ * @param	hwndStatusDlg	Buddy-list tree-view handle.
+ * @param	lpvbn		Node to delete.
+ */
+static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
+{
+	TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
+	lpvbn->hti = NULL;
+
+	/* Release the reference belonging to the pointer
+	 * cached in the tree-item.
+	 */
+	VultureBListNodeRelease(lpvbn);
 }

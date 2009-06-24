@@ -70,56 +70,64 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 
 	if(!lpblistnode)
 		return;
-
-	if(!ShouldShowNode(lpblistnode))
-		return;
 		
 	lpvbn = (VULTURE_BLIST_NODE*)lpblistnode->ui_data;
 
 	EnterCriticalSection(&lpvbn->cs);
-	{
-		const char *szNodeText;
 
-		if(lpvbn->lpvbnParent) VultureBListNodeRelease(lpvbn->lpvbnParent);
-		lpvbn->lpvbnParent = lpblistnode->parent ? (VULTURE_BLIST_NODE*)lpblistnode->parent->ui_data : NULL;
-		if(lpvbn->lpvbnParent) VultureBListNodeAddRef(lpvbn->lpvbnParent);
-
-		switch(lpblistnode->type)
+		if(ShouldShowNode(lpblistnode))
 		{
-		case PURPLE_BLIST_GROUP_NODE:
-			szNodeText = ((PurpleGroup*)lpblistnode)->name;
-			break;
+			const char *szNodeText;
 
-		case PURPLE_BLIST_CONTACT_NODE:
-			szNodeText = purple_contact_get_alias((PurpleContact*)lpblistnode);
+			if(lpvbn->lpvbnParent) VultureBListNodeRelease(lpvbn->lpvbnParent);
+			lpvbn->lpvbnParent = lpblistnode->parent ? (VULTURE_BLIST_NODE*)lpblistnode->parent->ui_data : NULL;
+			if(lpvbn->lpvbnParent) VultureBListNodeAddRef(lpvbn->lpvbnParent);
 
-			if(!szNodeText || !(*szNodeText))
+			switch(lpblistnode->type)
 			{
-				PurpleBuddy *lpbuddy = purple_contact_get_priority_buddy((PurpleContact*)lpblistnode);
-				szNodeText = purple_buddy_get_name(lpbuddy);
+			case PURPLE_BLIST_GROUP_NODE:
+				szNodeText = ((PurpleGroup*)lpblistnode)->name;
+				break;
+
+			case PURPLE_BLIST_CONTACT_NODE:
+				szNodeText = purple_contact_get_alias((PurpleContact*)lpblistnode);
+
+				if(!szNodeText || !(*szNodeText))
+				{
+					PurpleBuddy *lpbuddy = purple_contact_get_priority_buddy((PurpleContact*)lpblistnode);
+					szNodeText = purple_buddy_get_name(lpbuddy);
+				}
+
+				break;
+
+			default:
+				szNodeText = PURPLE_BLIST_NODE_NAME(lpblistnode);
+				break;
 			}
 
-			break;
+			if(lpvbn->szNodeText) g_free(lpvbn->szNodeText);
+			lpvbn->szNodeText = szNodeText ? VultureUTF8ToTCHAR(szNodeText) : NULL;
 
-		default:
-			szNodeText = PURPLE_BLIST_NODE_NAME(lpblistnode);
-			break;
+			/* TODO: We should probably be less willing to give up. */
+			if(lpvbn->szNodeText)
+			{
+				/* If our parent isn't showing, show it first. */
+				if(lpvbn->lpvbnParent && !lpvbn->lpvbnParent->hti)
+					PurpleBlistUpdateNode(lpbuddylist, lpvbn->lpvbnParent->lpblistnode);
+
+				VultureBListNodeAddRef(lpvbn);
+				VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEBLISTNODE, lpvbn);
+			}
 		}
-
-		if(lpvbn->szNodeText) g_free(lpvbn->szNodeText);
-		lpvbn->szNodeText = szNodeText ? VultureUTF8ToTCHAR(szNodeText) : NULL;
-
-		/* TODO: We should probably be less willing to give up. */
-		if(lpvbn->szNodeText)
+		else if(lpvbn->hti)
 		{
-			/* If out parent isn't showing, show it first. */
-			if(lpvbn->lpvbnParent && !lpvbn->lpvbnParent->hti)
-				PurpleBlistUpdateNode(lpbuddylist, lpvbn->lpvbnParent->lpblistnode);
+			VulturePostUIMessage(g_hwndMain, VUIMSG_REMOVEBLISTNODE, lpvbn);
 
-			VultureBListNodeAddRef(lpvbn);
-			VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEBLISTNODE, lpvbn);
+			/* The parent may need to go, too. */
+			if(lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti)
+				PurpleBlistUpdateNode(lpbuddylist, lpvbn->lpvbnParent->lpblistnode);
 		}
-	}
+
 	LeaveCriticalSection(&lpvbn->cs);
 }
 
@@ -157,8 +165,15 @@ static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode)
 		break;
 
 	case PURPLE_BLIST_BUDDY_NODE:
-		if(purple_account_is_connected(purple_buddy_get_account((PurpleBuddy*)lpblistnode)))
-			return TRUE;
+		{
+			PurpleBuddy *lpbuddy = (PurpleBuddy*)lpblistnode;
+
+			if(purple_account_is_connected(purple_buddy_get_account(lpbuddy)) &&
+				(purple_presence_is_online(lpbuddy->presence) ||
+				purple_blist_node_get_bool(lpblistnode, "show_offline")))
+				return TRUE;
+		}
+
 		break;
 
 	default:

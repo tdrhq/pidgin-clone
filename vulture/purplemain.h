@@ -53,6 +53,9 @@ enum ENUM_VULTURE_UI_MESSAGES
 
 	/* (VULTURE_SAVED_STATUS*) New status. */
 	VUIMSG_STATUSCHANGED,
+
+	/* (VULTURE_BLIST_NODE*) Node to remove. */
+	VUIMSG_REMOVEBLISTNODE,
 };
 
 /* HandlEs for reigistering signal handlERs. */
