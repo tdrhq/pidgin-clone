@@ -312,7 +312,7 @@ PurpleBuddyList *purple_blist_new()
 {
 	PurpleBlistUiOps *ui_ops;
 	GList *account;
-	PurpleBuddyList *gbl = g_new0(PurpleBuddyList, 1);
+	PurpleBuddyList *gbl = g_object_new(PURPLE_BLIST_TYPE, NULL);
 	PURPLE_DBUS_REGISTER_POINTER(gbl, PurpleBuddyList);
 
 	ui_ops = purple_blist_get_ui_ops();
@@ -1106,6 +1106,7 @@ purple_blist_get_handle(void)
 void
 purple_blist_init(void)
 {
+  #warning: Should this be moved to the PurpleBlistClass init func?
 	void *handle = purple_blist_get_handle();
 
 	purple_signal_register(handle, "buddy-status-changed",
@@ -1226,3 +1227,46 @@ purple_blist_uninit(void)
 	purple_signals_disconnect_by_handle(purple_blist_get_handle());
 	purple_signals_unregister_by_instance(purple_blist_get_handle());
 };
+
+/******************/
+/*  GObject Code  */
+/******************/
+
+static void
+purple_blist_class_init(PurpleBuddyListClass *klass)
+{
+
+}
+
+static void
+purple_blist_instance_init(GTypeInstance *instance, gpointer class)
+{
+
+}
+
+GType
+purple_blist_get_gtype(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleBuddyListClass),
+			NULL,					/* base_init		*/
+			NULL,					/* base_finalize	*/
+			(GClassInitFunc)purple_blist_class_init,
+			NULL,
+			NULL,					/* class_data		*/
+			sizeof(PurpleBuddyList),
+			0,						/* n_preallocs		*/
+			purple_blist_instance_init,					/* instance_init	*/
+			NULL					/* value_table		*/
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_OBJECT,
+									  "PurpleBlist",
+									  &info, G_TYPE_FLAG_ABSTRACT);
+	}
+
+	return type;
+}

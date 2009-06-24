@@ -31,8 +31,6 @@
 
 #include <glib.h>
 
-/** @copydoc _PurpleBuddyList */
-typedef struct _PurpleBuddyList PurpleBuddyList;
 /** @copydoc _PurpleBlistUiOps */
 typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 
@@ -122,6 +120,16 @@ typedef struct _PurpleChatClass PurpleChatClass;
 #define PURPLE_CHAT_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_CHAT_TYPE, PurpleChatClass))
 #define PURPLE_CHAT_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CHAT_TYPE))
 #define PURPLE_CHAT_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CHAT_TYPE, PurpleChatClass))
+
+/** @copydoc _PurpleBlist */
+typedef struct _PurpleBuddyList PurpleBuddyList;
+typedef struct _PurpleBuddyListClass PurpleBuddyListClass;
+#define PURPLE_BLIST_TYPE                  (purple_blist_get_gtype ())
+#define PURPLE_BLIST(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BLIST_TYPE, PurpleBlist))
+#define PURPLE_BLIST_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_TYPE))
+#define PURPLE_BLIST_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BLIST_TYPE, PurpleBlistClass))
+#define PURPLE_BLIST_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BLIST_TYPE))
+#define PURPLE_BLIST_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_TYPE, PurpleBlistClass))
 
 
 #include "account.h"
@@ -244,6 +252,7 @@ struct _PurpleChatClass {
  * The Buddy List
  */
 struct _PurpleBuddyList {
+  PurpleObject parent;
 	PurpleBlistNode *root;          /**< The first node in the buddy list */
 	GHashTable *buddies;          /**< Every buddy in this list */
   
@@ -257,6 +266,10 @@ struct _PurpleBuddyList {
   guint          save_timer;
   gboolean       blist_loaded;
 	void *ui_data;                /**< UI-specific data. */
+};
+
+struct _PurpleBuddyListClass {
+  PurpleObjectClass parent;
 };
 
 #endif /* PURPLE_HIDE_STRUCTS && PURPLE_BLIST_STRUCTS */
@@ -1333,6 +1346,11 @@ GType purple_contact_get_gtype(void);
  * Get the GType for PurpleChat
  */
 GType purple_chat_get_gtype(void);
+
+/**
+ * Get the GType for PurpleChat
+ */
+GType purple_blist_get_gtype(void);
 
 /*@}*/
 
