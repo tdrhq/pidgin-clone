@@ -80,6 +80,7 @@ gsize basestyle_css_len = 0;
 char *style_dir = NULL;
 char *template_path = NULL;
 char *css_path = NULL;
+static GList* variants = NULL;
 
 static char *
 replace_message_tokens(char *text, gsize len, PurpleConversation *conv, const char *name, const char *alias, 
@@ -508,6 +509,36 @@ purple_webkit_destroy_conv(PurpleConversation *conv)
 	default_destroy_conversation(conv);
 }
 
+static void
+variants_list_load (char* styledir)
+{
+	char* dirname = g_build_filename (styledir, "Contents", "Resources", "Variants", NULL);
+	GDir* dir = g_dir_open (dirname, 0, NULL);
+	const char* filename;
+
+	if (!dir) return;
+	while (filename = g_dir_read_name (dir)) {
+		char *name;
+		if (g_str_has_suffix (filename, ".css")) {
+			name = g_strdup (filename);
+			variants = g_list_append (variants, name);
+		}
+		
+	}
+	g_dir_close (dir);
+}
+
+static void
+variants_list_unload ()
+{
+	while (variants) {
+		GList* cur = variants;
+		variants = g_list_next (variants);
+		g_free (cur->data);
+		g_list_free_1 (cur);
+	}
+}
+
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
@@ -523,7 +554,11 @@ plugin_load(PurplePlugin *plugin)
 	}
 
 
-	css_path = g_build_filename(style_dir, "Contents", "Resources", "Variants", "Blue vs Green.css", NULL, "_default.css", NULL);
+	variants_list_load (style_dir);
+	if (!variants)
+		return FALSE;
+
+	css_path = g_build_filename(style_dir, "Contents", "Resources", "Variants", (char*) variants->data, NULL);
 
 	template_path = g_build_filename(style_dir, "Contents", "Resources", "Template.html", NULL);
 	if (!g_file_test(template_path, G_FILE_TEST_EXISTS)) {
