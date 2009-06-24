@@ -629,8 +629,8 @@ plugin_unload(PurplePlugin *plugin)
 	uiops->write_conv = default_write_conv;
 	uiops->create_conversation = default_create_conversation;
 	uiops->destroy_conversation = default_destroy_conversation;
-	
-	/* Clear up everything */
+	variants_list_unload ();
+	/* clear up everything */
 	return TRUE;
 }
 
