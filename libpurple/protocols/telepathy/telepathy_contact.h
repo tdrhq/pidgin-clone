@@ -36,6 +36,16 @@ void
 destroy_contact(telepathy_contact *contact_data);
 
 void
+add_contact_to_group_cb (TpConnection *connection,
+                         TpHandleType handle_type,
+                         guint n_handles,
+                         const TpHandle *handles,
+                         const gchar * const *ids,
+                         const GError *error,
+                         gpointer user_data,
+                         GObject *weak_object);
+
+void
 contact_notify_cb (TpContact *contact,
 		   GParamSpec *pspec,
 		   gpointer user_data);

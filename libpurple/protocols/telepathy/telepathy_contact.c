@@ -32,6 +32,75 @@ destroy_contact(telepathy_contact *contact_data)
 	g_free(contact_data);
 }
 
+static void
+add_member_cb (TpChannel *proxy,
+               const GError *error,
+               gpointer user_data,
+               GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "AddMember error: %s\n", error->message);
+	}
+	else
+	{
+		purple_debug_info("telepathy", "Member added to %s!\n",
+				tp_channel_get_identifier(proxy));
+	}
+}
+
+void
+add_contact_to_group_cb (TpConnection *connection,
+                         TpHandleType handle_type,
+                         guint n_handles,
+                         const TpHandle *handles,
+                         const gchar * const *ids,
+                         const GError *error,
+                         gpointer user_data,
+                         GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy",
+			"RequestHandle (add_contact_to_group_cb): %s\n", error->message);
+	}
+	else
+	{
+		telepathy_group *group = user_data;
+
+		const TpContactFeature features[] = {
+			TP_CONTACT_FEATURE_ALIAS,
+			TP_CONTACT_FEATURE_PRESENCE
+		};
+
+		int i;
+		GArray *arr = g_array_new(0, 0, sizeof(TpHandle));
+
+		purple_debug_info("telepathy", "Contact added!\n");
+
+		for (i = 0; i<n_handles; ++i)
+		{
+			g_array_append_val(arr, handles[i]);
+		}
+
+		/* TODO: Also add to the subscribe list */
+
+		/* this will add the buddy to the specified group */
+		tp_cli_channel_interface_group_call_add_members(group->channel, -1,
+				arr, "putzi!",
+				add_member_cb, group->connection_data,
+				NULL, NULL);
+
+		/* this will return a TpContact so we can bind it to a PurpleBuddy */
+		tp_connection_get_contacts_by_handle (connection,
+				n_handles, handles,
+				G_N_ELEMENTS (features), features,
+				group_contacts_ready_cb,
+				group, NULL, NULL);
+
+	}
+}
+
 void
 contact_notify_cb (TpContact *contact,
 		   GParamSpec *pspec,
