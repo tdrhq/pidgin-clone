@@ -99,28 +99,6 @@ static const StatusMapping statuses[] =
 	{ 0, NULL, NULL}
 };
 
-static void
-telepathy_input_user_info(PurplePluginAction *action)
-{
-    	PurpleConnection *gc = (PurpleConnection *)action->context;
-	PurpleAccount *acct = purple_connection_get_account(gc);
-	purple_debug_info("telepathy", "showing 'Set User Info' dialog for %s\n",
-		acct->username);
-
-	purple_account_request_change_user_info(acct);
-}
-
-static GList *
-telepathy_actions(PurplePlugin *plugin, gpointer context)
-{
-	PurplePluginAction *action;
-    	purple_debug_info("telepathy", "Setting actions...\n");
-	action = purple_plugin_action_new(
-		_("Set User Info..."), telepathy_input_user_info);
-	return g_list_append(NULL, action);
-}
-
-
 static gboolean
 telepathy_plugin_load(PurplePlugin *plugin)
 {
@@ -671,7 +649,7 @@ static PurplePluginInfo telepathy_info =
 	&telepathy_prpl_info,                          
 	NULL,                        
 
-	telepathy_actions,                   
+	NULL,                   
 
 	NULL,                          
 	NULL,	
