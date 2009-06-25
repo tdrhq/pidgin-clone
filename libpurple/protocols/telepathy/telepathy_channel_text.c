@@ -300,6 +300,8 @@ text_channel_invalidated_cb (TpProxy *self,
 	{
 		tp_channel->channel = NULL;
 	}
+
+	g_object_unref(self);
 }
 
 void

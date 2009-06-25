@@ -413,7 +413,7 @@ telepathy_send_typing (PurpleConnection *gc, const char *name, PurpleTypingState
 	if (!tp_proxy_has_interface_by_id (channel,
 			TP_IFACE_QUARK_CHANNEL_INTERFACE_CHAT_STATE))
 	{
-		return;
+		return 0;
 	}
 
 	purple_debug_info("telepathy", "Sending typing notification to %s\n", name);
