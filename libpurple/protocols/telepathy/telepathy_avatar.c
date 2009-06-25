@@ -25,6 +25,8 @@
 #include "telepathy_connection.h"
 #include "telepathy_contact.h"
 
+#include <string.h>
+
 void
 request_avatars_cb (TpConnection *proxy,
                     const GError *error,
@@ -173,100 +175,57 @@ get_avatar_properties_cb (TpProxy *proxy,
                           gpointer user_data,
                           GObject *weak_object)
 {
+	telepathy_connection *data = user_data;
+	PurplePlugin *plugin = purple_connection_get_prpl(data->gc);
+	PurplePluginProtocolInfo *prpl_info = plugin->info->extra_info;
+
+	GStrv formats;
+
+	PurpleBuddyIconSpec icon_spec = NO_BUDDY_ICONS;
+	icon_spec.scale_rules = PURPLE_ICON_SCALE_SEND;
+
 	if (error != NULL)
 	{
 		purple_debug_error("telepathy", "Error getting avatar properties: %s\n", error->message);
+		return;
 	}
-	else
+
+	purple_debug_info("telepathy", "Got avatar properties!\n");
+
+	/* fetch primitive types */
+	icon_spec.min_width = tp_asv_get_uint32 (out_Properties, "MinimumAvatarWidth", NULL);
+	icon_spec.min_height = tp_asv_get_uint32 (out_Properties, "MinimumAvatarHeight", NULL);
+	icon_spec.max_width = tp_asv_get_uint32 (out_Properties, "MaximumAvatarWidth", NULL);
+	icon_spec.max_height = tp_asv_get_uint32 (out_Properties, "MaximumAvatarHeight", NULL);
+	icon_spec.max_filesize = tp_asv_get_uint32 (out_Properties, "MaximumAvatarBytes", NULL);
+
+
+	/* fetch the list of supported mime types */
+	formats = tp_asv_get_boxed (out_Properties, "SupportedMimeTypes", G_TYPE_STRV);
+
+	if (formats != NULL)
 	{
-		telepathy_connection *data = user_data;
-		PurplePlugin *plugin = purple_connection_get_prpl(data->gc);
-		PurplePluginProtocolInfo *prpl_info = plugin->info->extra_info;
+		/* this will hold ONLY the extensions */
+		GPtrArray *extensions = g_ptr_array_new ();
 
-
-		GHashTableIter iter;
-		gpointer key, value;
-
-		PurpleBuddyIconSpec icon_spec = NO_BUDDY_ICONS;
-		icon_spec.scale_rules = PURPLE_ICON_SCALE_SEND;
-
-		purple_debug_info("telepathy", "Got avatar properties!\n");
-
-		g_hash_table_iter_init(&iter, out_Properties);
-
-		/* iterate over all properties */
-		while (g_hash_table_iter_next(&iter, &key, &value))
+		gchar **s;
+		for (s = formats; *s != NULL; s++)
 		{
-			gchar *name = key;
-			GValue *val = value;
-
-			if (g_strcmp0("SupportedAvatarMIMETypes", name) == 0)
-			{
-				/* This parameter is of dbus type "as"
-				 * It's exposed as a GValue holding a (gchar **)
-				 * Or is it now??? wtf!?
-				 */
-
-				gchar *format = NULL;
-
-				int i;
-				gchar **arr = g_value_get_boxed(val);
-
-				for (i = 0; arr[i] != NULL; ++i)
-				{
-					const gchar *mime_type = arr[i];
-
-					int j;
-
-					/* We want to get the part after the / 
-					 * Split the string using / as a delimiter and use the last part
-					 */
-					gchar **split = g_strsplit(mime_type, "/", 0);
-					gchar *old = format;
-
-					/* j will be the last non-NULL token */
-					for (j = 0; split[j] != NULL; ++j);
-					--j;
-
-
-					/* if this is the first type, don't prepend a comma */
-					if (i == 0)
-						format = g_strdup(split[j]);
-					else
-						format = g_strdup_printf("%s,%s", format, split[j]);
-
-					g_free(old);
-					g_strfreev(split);
-				}
-
-				purple_debug_info("telepathy", "    Supported types: %s\n", format);
-
-				icon_spec.format = format;
-			}
-			else if (g_strcmp0("MinimumAvatarWidth", name) == 0)
-			{
-				icon_spec.min_width = g_value_get_uint(val);
-			}
-			else if (g_strcmp0("MinimumAvatarHeight", name) == 0)
-			{
-				icon_spec.min_height = g_value_get_uint(val);
-			}
-			else if (g_strcmp0("MaximumAvatarWidth", name) == 0)
-			{
-				icon_spec.max_width = g_value_get_uint(val);
-			}
-			else if (g_strcmp0("MaximumAvatarHeight", name) == 0)
-			{
-				icon_spec.max_height = g_value_get_uint(val);
-			}
-			else if (g_strcmp0("MaximumAvatarBytes", name) == 0)
-			{
-				icon_spec.max_filesize = g_value_get_uint(val);
-			}
+			/* extract th extension from the MIME type */
+			if (g_str_has_prefix (*s, "image/"))
+				g_ptr_array_add (extensions, *s + strlen("image/"));
+			else
+				purple_debug_warning("telepathy", "Unkown mime type %s\n", *s);
 		}
 
-		prpl_info->icon_spec = icon_spec;
+		g_ptr_array_add(extensions, NULL);
+
+		icon_spec.format = g_strjoinv (",", (gchar **)extensions->pdata);
+
+		g_ptr_array_free (extensions, FALSE);
 	}
+
+	prpl_info->icon_spec = icon_spec;
 }
 
 void
