@@ -239,6 +239,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 void
 purple_group_destroy(PurpleGroup *group)
 {
+  /* This function is only a hack for api breakage */
   g_return_if_fail(PURPLE_IS_GROUP(group));
   g_object_unref(G_OBJECT(group));
 }

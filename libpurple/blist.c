@@ -41,6 +41,7 @@
 static PurpleBlistUiOps *blist_ui_ops = NULL;
 
 PurpleBuddyList *purplebuddylist = NULL;
+static GObjectClass *parent_class = NULL;
 
 
 /*********************************************************************
@@ -312,12 +313,12 @@ PurpleBuddyList *purple_blist_new()
 {
 	PurpleBlistUiOps *ui_ops;
 	GList *account;
-	PurpleBuddyList *gbl = g_object_new(PURPLE_BLIST_TYPE, NULL);
+	PurpleBuddyList *gbl = g_object_new(PURPLE_BUDDY_LIST_TYPE, NULL);
 	PURPLE_DBUS_REGISTER_POINTER(gbl, PurpleBuddyList);
 
 	ui_ops = purple_blist_get_ui_ops();
 
-  #warning: This has to be set here or we can\'t add the buddies cache
+  #warning: This has to be set here or we cant add the buddies cache
   if(purplebuddylist) /* In case we're creating a replacement list */
     purple_blist_destroy();
   purple_set_blist(gbl);
@@ -383,12 +384,9 @@ void purple_blist_show()
 
 void purple_blist_destroy()
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-
-	purple_debug(PURPLE_DEBUG_INFO, "blist", "Destroying\n");
-
-	if (ops && ops->destroy)
-		ops->destroy(purplebuddylist);
+  /* This function is only a hack for api breakage */
+  g_return_if_fail(purplebuddylist != NULL);
+  g_object_unref(G_OBJECT(purplebuddylist));
 }
 
 void purple_blist_set_visible(gboolean show)
@@ -1238,8 +1236,25 @@ purple_blist_uninit(void)
 /******************/
 
 static void
+purple_blist_finalize(GObject *object)
+{
+  PurpleBuddyList *purplebuddylist = PURPLE_BUDDY_LIST(object);
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+
+	purple_debug(PURPLE_DEBUG_INFO, "blist", "Destroying\n");
+
+	if (ops && ops->destroy)
+		ops->destroy(purplebuddylist);
+  parent_class->finalize(object);
+}
+
+static void
 purple_blist_class_init(PurpleBuddyListClass *klass)
 {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent(klass);
+	obj_class->finalize = purple_blist_finalize;
 
 }
 

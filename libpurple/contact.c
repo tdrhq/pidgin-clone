@@ -216,7 +216,8 @@ PurpleContact *purple_contact_new()
 void
 purple_contact_destroy(PurpleContact *contact)
 {
-	g_return_if_fail(PURPLE_IS_ACCOUNT(contact));
+  /* This function is only a hack for api breakage */
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
 	g_object_unref(G_OBJECT(contact));
 }
 

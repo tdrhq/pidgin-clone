@@ -430,6 +430,7 @@ g_return_if_fail(source != NULL);
 void
 purple_blist_node_destroy(PurpleBlistNode *node)
 {
+  /* This function is only a hack for api breakage */
 	g_return_if_fail(PURPLE_IS_BLIST_NODE(node));
 	g_object_unref(G_OBJECT(node));
 }

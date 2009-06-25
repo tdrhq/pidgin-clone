@@ -38,6 +38,8 @@
 #include "value.h"
 #include "xmlnode.h"
 
+static GObjectClass *parent_class = NULL;
+
 void
 parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 {
@@ -315,7 +317,7 @@ void
 purple_buddy_destroy(PurpleBuddy *buddy)
 {
 	g_return_if_fail(PURPLE_IS_BUDDY(buddy));
-	g_object_unref(G_OBJECT(buddy));
+  g_object_unref(G_OBJECT(buddy));
 }
 
 void
@@ -539,8 +541,6 @@ buddy_to_xmlnode(PurpleBlistNode *bnode)
 /******************/
 /*  GObject Code  */
 /******************/
-
-static GObjectClass *parent_class = NULL;
 
 /* GObject destructor function */
 static void

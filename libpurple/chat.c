@@ -191,6 +191,7 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 void
 purple_chat_destroy(PurpleChat *chat)
 {
+  /* This function is only a hack for api breakage */
 	g_return_if_fail(PURPLE_IS_CHAT(chat));
 	g_object_unref(G_OBJECT(chat));
 }

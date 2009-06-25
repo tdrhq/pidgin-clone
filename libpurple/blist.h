@@ -124,12 +124,12 @@ typedef struct _PurpleChatClass PurpleChatClass;
 /** @copydoc _PurpleBlist */
 typedef struct _PurpleBuddyList PurpleBuddyList;
 typedef struct _PurpleBuddyListClass PurpleBuddyListClass;
-#define PURPLE_BLIST_TYPE                  (purple_blist_get_gtype ())
-#define PURPLE_BLIST(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BLIST_TYPE, PurpleBlist))
-#define PURPLE_IS_BLIST(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_TYPE))
-#define PURPLE_BLIST_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BLIST_TYPE, PurpleBlistClass))
-#define PURPLE_IS_BLIST_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BLIST_TYPE))
-#define PURPLE_GET_BLIST_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_TYPE, PurpleBlistClass))
+#define PURPLE_BUDDY_LIST_TYPE                  (purple_blist_get_gtype ())
+#define PURPLE_BUDDY_LIST(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BUDDY_LIST_TYPE, PurpleBuddyList))
+#define PURPLE_IS_BUDDY_LIST(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BUDDY_LIST_TYPE))
+#define PURPLE_BUDDY_LIST_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BUDDY_LIST_TYPE, PurpleBuddyListClass))
+#define PURPLE_IS_BUDDY_LIST_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BUDDY_LIST_TYPE))
+#define PURPLE_GET_BUDDY_LIST_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BUDDY_LIST_TYPE, PurpleBuddyListClass))
 
 
 #include "account.h"
