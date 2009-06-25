@@ -80,8 +80,8 @@ gsize basestyle_css_len = 0;
 char *style_dir = NULL;
 char *template_path = NULL;
 char *css_path = NULL;
-static GList* variants = NULL;
 
+static GList* get_theme_files ();
 static char *
 replace_message_tokens(char *text, gsize len, PurpleConversation *conv, const char *name, const char *alias, 
 			     const char *message, PurpleMessageFlags flags, time_t mtime)
@@ -510,33 +510,21 @@ purple_webkit_destroy_conv(PurpleConversation *conv)
 }
 
 static void
-variants_list_load (char* styledir)
+variant_set_default ()
 {
-	char* dirname = g_build_filename (styledir, "Contents", "Resources", "Variants", NULL);
-	GDir* dir = g_dir_open (dirname, 0, NULL);
-	const char* filename;
-
-	if (!dir) return;
-	while (filename = g_dir_read_name (dir)) {
-		char *name;
-		if (g_str_has_suffix (filename, ".css")) {
-			name = g_strdup (filename);
-			variants = g_list_append (variants, name);
-		}
-		
+	GList* all = get_theme_files ();
+	GList* copy = all;
+	if (css_path) {
+		g_free (css_path);
+		css_path = NULL;
 	}
-	g_dir_close (dir);
-}
-
-static void
-variants_list_unload ()
-{
-	while (variants) {
-		GList* cur = variants;
-		variants = g_list_next (variants);
-		g_free (cur->data);
-		g_list_free_1 (cur);
+	if (all) css_path = g_strdup (all->data);
+	
+	while (all) {
+		g_free (all->data);
+		all = g_list_next(all);
 	}
+	g_list_free (copy);
 }
 
 static gboolean
@@ -553,12 +541,10 @@ plugin_load(PurplePlugin *plugin)
 		g_free (cur);
 	}
 
-
-	variants_list_load (style_dir);
-	if (!variants)
+	variant_set_default ();
+	if (!css_path)
 		return FALSE;
 
-	css_path = g_build_filename(style_dir, "Contents", "Resources", "Variants", (char*) variants->data, NULL);
 
 	template_path = g_build_filename(style_dir, "Contents", "Resources", "Template.html", NULL);
 	if (!g_file_test(template_path, G_FILE_TEST_EXISTS)) {
@@ -629,7 +615,6 @@ plugin_unload(PurplePlugin *plugin)
 	uiops->write_conv = default_write_conv;
 	uiops->create_conversation = default_create_conversation;
 	uiops->destroy_conversation = default_destroy_conversation;
-	variants_list_unload ();
 	/* clear up everything */
 	return TRUE;
 }
@@ -637,14 +622,13 @@ plugin_unload(PurplePlugin *plugin)
 static GList *
 get_theme_files() {
 	GList *ret = NULL;
-        GDir *dir, *variants;
+        GDir *variants;
 	char *globe = g_build_filename(DATADIR, "pidgin", "webkit", "styles", NULL);
-	const char *style_dir, *css_file;
+	const char *css_file;
 	char *css;
 
-	dir = g_dir_open(globe, 0, NULL);
-	while ((style_dir = g_dir_read_name(dir)) != NULL) {
-		char *variant_dir = g_build_filename(globe, style_dir, "Contents", "Resources", "Variants", NULL);
+	if (style_dir != NULL) {
+		char *variant_dir = g_build_filename(style_dir, "Contents", "Resources", "Variants", NULL);
 		variants = g_dir_open(variant_dir, 0, NULL);
 		while ((css_file = g_dir_read_name(variants)) != NULL) {
 			if (!strstr(css_file, ".css")) {
@@ -656,19 +640,30 @@ get_theme_files() {
 		g_dir_close(variants);
 		g_free(variant_dir);
 	}
-	g_dir_close(dir);
 	g_free(globe);
 	return ret;	
+}
+
+static void
+variant_changed (GtkWidget* combobox, gpointer null)
+{
+	char *name, *name_with_ext;
+	g_free (css_path);
+	name = gtk_combo_box_get_active_text (GTK_WIDGET (combobox));
+	name_with_ext = g_strdup_printf ("%s.css", name);
+	g_free (name);
+	
+	css_path = g_build_filename (style_dir, "Contents", "Resources", "Variants", name_with_ext, NULL);
+	g_free (name_with_ext);
 }
 
 static GtkWidget *
 get_config_frame(PurplePlugin *plugin) {
 	GList *themes = get_theme_files();
 	GList *theme = themes;
-	GtkTreeStore *tree_store = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
 	char *curdir = NULL;
-	GtkTreeIter parent;
-	GtkCellRenderer *rend;
+	GtkWidget *combobox = gtk_combo_box_new_text();	
+
 
 	while (theme) {
 		char *basename = g_path_get_basename(theme->data);
@@ -697,18 +692,16 @@ get_config_frame(PurplePlugin *plugin) {
 			while (node && node->type != XMLNODE_TYPE_TAG) {
 				node = node->next;
 			}
-			char *name = xmlnode_get_data(node);
-			gtk_tree_store_append(tree_store, &parent, NULL);
-			gtk_tree_store_set(tree_store, &parent, 0, name, -1);
+
 		}
-		gtk_tree_store_append(tree_store, &child, &parent);
-		gtk_tree_store_set(tree_store, &child, 0, basename, -1);
+		char *temp = g_strndup (basename, strlen(basename)-4);
+		gtk_combo_box_append_text (combobox, temp);
+		g_free (temp);
 		theme = theme->next;
 	}
-	GtkWidget *combobox = gtk_combo_box_new_with_model(tree_store);	
-	rend = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(combobox, rend, TRUE);
-	gtk_cell_layout_add_attribute(combobox, rend, "markup", 0);
+
+	g_signal_connect (G_OBJECT(combobox), "changed", G_CALLBACK(variant_changed), NULL);
+
 	return combobox;
 }
 
