@@ -161,7 +161,6 @@ purple_core_init(const char *ui)
 	purple_notify_init();
 	purple_certificate_init();
 	purple_conversations_init();
-	purple_blist_init();
 	purple_log_init();
 	purple_network_init();
 	purple_privacy_init();

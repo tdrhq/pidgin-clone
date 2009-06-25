@@ -300,11 +300,6 @@ purple_blist_load()
 }
 
 
-/*********************************************************************
- * Stuff                                                             *
- *********************************************************************/
-
-
 /*****************************************************************************
  * Public API functions                                                      *
  *****************************************************************************/
@@ -1107,10 +1102,60 @@ purple_blist_get_handle(void)
 }
 
 void
-purple_blist_init(void)
+purple_blist_uninit(void)
 {
-  #warning: Should this be moved to the PurpleBlistClass init func?
-	void *handle = purple_blist_get_handle();
+	PurpleBlistNode *node, *next_node;
+
+	/* This happens if we quit before purple_set_blist is called. */
+	if (purplebuddylist == NULL)
+		return;
+
+	if (purplebuddylist->save_timer != 0) {
+		purple_timeout_remove(purplebuddylist->save_timer);
+		purplebuddylist->save_timer = 0;
+		purple_blist_sync();
+	}
+
+	node = purple_blist_get_root();
+	while (node) {
+		next_node = node->next;
+		purple_blist_node_destroy(node);
+		node = next_node;
+	}
+	purplebuddylist->root = NULL;
+	
+	g_hash_table_destroy(purplebuddylist->buddies);
+	g_hash_table_destroy(purplebuddylist->buddies_cache);
+
+	purple_signals_disconnect_by_handle(purple_blist_get_handle());
+	purple_signals_unregister_by_instance(purple_blist_get_handle());
+};
+
+/******************/
+/*  GObject Code  */
+/******************/
+
+static void
+purple_blist_finalize(GObject *object)
+{
+  PurpleBuddyList *purplebuddylist = PURPLE_BUDDY_LIST(object);
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+
+	purple_debug(PURPLE_DEBUG_INFO, "blist", "Destroying\n");
+
+	if (ops && ops->destroy)
+		ops->destroy(purplebuddylist);
+  parent_class->finalize(object);
+}
+
+static void
+purple_blist_class_init(PurpleBuddyListClass *klass)
+{
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+  void *handle = purple_blist_get_handle();
+
+	parent_class = g_type_class_peek_parent(klass);
+	obj_class->finalize = purple_blist_finalize;
 
 	purple_signal_register(handle, "buddy-status-changed",
 	                     purple_marshal_VOID__POINTER_POINTER_POINTER, NULL,
@@ -1199,63 +1244,6 @@ purple_blist_init(void)
 			handle,
 			PURPLE_CALLBACK(purple_blist_buddies_cache_remove_account),
 			NULL);
-}
-
-void
-purple_blist_uninit(void)
-{
-	PurpleBlistNode *node, *next_node;
-
-	/* This happens if we quit before purple_set_blist is called. */
-	if (purplebuddylist == NULL)
-		return;
-
-	if (purplebuddylist->save_timer != 0) {
-		purple_timeout_remove(purplebuddylist->save_timer);
-		purplebuddylist->save_timer = 0;
-		purple_blist_sync();
-	}
-
-	node = purple_blist_get_root();
-	while (node) {
-		next_node = node->next;
-		purple_blist_node_destroy(node);
-		node = next_node;
-	}
-	purplebuddylist->root = NULL;
-	
-	g_hash_table_destroy(purplebuddylist->buddies);
-	g_hash_table_destroy(purplebuddylist->buddies_cache);
-
-	purple_signals_disconnect_by_handle(purple_blist_get_handle());
-	purple_signals_unregister_by_instance(purple_blist_get_handle());
-};
-
-/******************/
-/*  GObject Code  */
-/******************/
-
-static void
-purple_blist_finalize(GObject *object)
-{
-  PurpleBuddyList *purplebuddylist = PURPLE_BUDDY_LIST(object);
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-
-	purple_debug(PURPLE_DEBUG_INFO, "blist", "Destroying\n");
-
-	if (ops && ops->destroy)
-		ops->destroy(purplebuddylist);
-  parent_class->finalize(object);
-}
-
-static void
-purple_blist_class_init(PurpleBuddyListClass *klass)
-{
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-
-	parent_class = g_type_class_peek_parent(klass);
-	obj_class->finalize = purple_blist_finalize;
-
 }
 
 static void
