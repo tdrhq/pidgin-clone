@@ -135,7 +135,6 @@ handle_contacts (telepathy_connection *connection_data,
 		 PurpleGroup *group)
 {
 	int i;
-	GArray *avatar_handles = g_array_new(FALSE, FALSE, sizeof(guint));
 
 	purple_debug_info("telepathy", "Contacts ready: %u (%u failed)\n", n_contacts, n_failed);
 
@@ -203,20 +202,7 @@ handle_contacts (telepathy_connection *connection_data,
 			g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), connection_data);
 			contact_notify_cb (contact, NULL, connection_data);
 		}
-
-		if (!contact_data->requested_avatar)
-		{
-			g_array_append_val(avatar_handles, handle);
-			contact_data->requested_avatar = TRUE;
-		}
 	}
-
-	tp_cli_connection_interface_avatars_call_request_avatars(connection_data->connection, -1,
-			avatar_handles,
-			request_avatars_cb, connection_data,
-			NULL, NULL);
-
-	g_array_free(avatar_handles, TRUE);
 }
 
 /* this the ContactsReady callback for group channels */

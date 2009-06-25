@@ -46,23 +46,73 @@ get_known_avatar_tokens_cb (TpConnection *proxy,
                             gpointer user_data,
                             GObject *weak_object)
 {
+	telepathy_connection *data = user_data;
+	GHashTableIter iter;
+	guint handle;
+	gchar *token;
+
 	if (error != NULL)
 	{
 		purple_debug_error("telepathy", "GetAvatarTokens error: %s\n", error->message);
+		return;
 	}
-	else
+
+	g_hash_table_iter_init(&iter, out_Tokens);
+
+	/* got throught all known tokens */
+	while (g_hash_table_iter_next(&iter, (gpointer)&handle, (gpointer)&token))
 	{
-		GHashTableIter iter;
-		guint key;
-		gpointer value;
+		telepathy_contact *contact_data = g_hash_table_lookup(
+				data->contacts, (gpointer)handle);
 
-		g_hash_table_iter_init(&iter, out_Tokens);
+		purple_debug_info("telepathy", "Known token: %u -> (%s)\n", handle, (gchar *)token);	
 
-		while (g_hash_table_iter_next(&iter, (gpointer)&key, &value))
+		/* make sure there's enough information available about the contact */
+		if (contact_data && contact_data->contact)
 		{
-			purple_debug_info("telepathy", "Known token: %u -> (%s)\n", key, (gchar *)value);	
+			TpContact *contact = contact_data->contact;
+
+			PurpleBuddy* buddy = purple_find_buddy(data->acct,
+					tp_contact_get_identifier(contact));
+
+			PurpleBuddyIcon *icon;
+
+			/* clear the avatar in case of an empty token */
+			if (*token == 0)
+			{
+				purple_buddy_icons_set_for_user(data->acct,
+			    			tp_contact_get_identifier(contact),
+						NULL, 0, "");
+				continue;
+			}
+
+			icon = purple_buddy_get_icon(buddy);
+
+			/* is the cached avatar the same with this one? */
+			if (g_strcmp0(purple_buddy_icon_get_checksum(icon), token) != 0)
+			{
+				/* request a new avatar */
+				GArray *avatar_handles;
+
+				avatar_handles = g_array_new(FALSE, FALSE, sizeof(guint));
+
+				g_array_append_val(avatar_handles, handle);
+
+				tp_cli_connection_interface_avatars_call_request_avatars(
+						data->connection, -1,
+						avatar_handles,
+						request_avatars_cb, data,
+						NULL, NULL);
+
+				g_array_free(avatar_handles, TRUE);
+			}
+
 		}
 	}
+
+
+
+	
 }
 
 void
