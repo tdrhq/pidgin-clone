@@ -216,10 +216,8 @@ PurpleContact *purple_contact_new()
 void
 purple_contact_destroy(PurpleContact *contact)
 {
-	g_hash_table_destroy(contact->node.settings);
-	g_free(contact->alias);
-	PURPLE_DBUS_UNREGISTER_POINTER(contact);
-	g_free(contact);
+	g_return_if_fail(PURPLE_IS_ACCOUNT(contact));
+	g_object_unref(G_OBJECT(contact));
 }
 
 void purple_contact_set_alias(PurpleContact *contact, const char *alias)
@@ -278,10 +276,25 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 /* GObject Code */
 /****************/
 
+static GObjectClass *parent_class = NULL;
+
+static void
+purple_contact_finalize(GObject *object)
+{
+  PurpleContact *contact = PURPLE_CONTACT(object);
+	g_hash_table_destroy(contact->node.settings);
+	g_free(contact->alias);
+	PURPLE_DBUS_UNREGISTER_POINTER(contact);
+	parent_class->finalize(object);
+}
+
 static void
 purple_contact_class_init(PurpleContactClass *klass)
 {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
+	parent_class = g_type_class_peek_parent(klass);
+	obj_class->finalize = purple_contact_finalize;
 }
 
 static void

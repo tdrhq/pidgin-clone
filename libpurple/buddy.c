@@ -293,6 +293,7 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 	g_return_val_if_fail(name != NULL, NULL);
 
 	buddy = g_object_new(PURPLE_BUDDY_TYPE, NULL);
+  g_object_ref(buddy);
 	buddy->account  = account;
 	buddy->name     = purple_utf8_strip_unprintables(name);
 	buddy->alias    = purple_utf8_strip_unprintables(alias);
@@ -313,37 +314,8 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 void
 purple_buddy_destroy(PurpleBuddy *buddy)
 {
-	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
-
-	/*
-	 * Tell the owner PRPL that we're about to free the buddy so it
-	 * can free proto_data
-	 */
-	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
-	if (prpl) {
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-		if (prpl_info && prpl_info->buddy_free)
-			prpl_info->buddy_free(buddy);
-	}
-
-	/* Delete the node */
-	purple_buddy_icon_unref(buddy->icon);
-	g_hash_table_destroy(buddy->node.settings);
-	purple_presence_destroy(buddy->presence);
-	g_free(buddy->name);
-	g_free(buddy->alias);
-	g_free(buddy->server_alias);
-
-	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
-	g_free(buddy);
-
-	/* FIXME: Once PurpleBuddy is a GObject, timeout callbacks can
-	 * g_object_ref() it when connecting the callback and
-	 * g_object_unref() it in the handler.  That way, it won't
-	 * get freed while the timeout is pending and this line can
-	 * be removed. */
-	while (g_source_remove_by_user_data((gpointer *)buddy));
+	g_return_if_fail(PURPLE_IS_BUDDY(buddy));
+	g_object_unref(G_OBJECT(buddy));
 }
 
 void
@@ -568,10 +540,54 @@ buddy_to_xmlnode(PurpleBlistNode *bnode)
 /*  GObject Code  */
 /******************/
 
+static GObjectClass *parent_class = NULL;
+
+/* GObject destructor function */
+static void
+purple_buddy_finalize(GObject *object)
+{
+  PurpleBuddy *buddy = PURPLE_BUDDY(object);
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
+
+	/*
+	 * Tell the owner PRPL that we're about to free the buddy so it
+	 * can free proto_data
+	 */
+	prpl = purple_find_prpl(purple_account_get_protocol_id(buddy->account));
+	if (prpl) {
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+		if (prpl_info && prpl_info->buddy_free)
+			prpl_info->buddy_free(buddy);
+	}
+
+	/* Delete the node */
+	purple_buddy_icon_unref(buddy->icon);
+	g_hash_table_destroy(buddy->node.settings);
+	purple_presence_destroy(buddy->presence);
+	g_free(buddy->name);
+	g_free(buddy->alias);
+	g_free(buddy->server_alias);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
+
+  #warning: Uhh, need some explanation here. -Aluink
+	/* FIXME: Once PurpleBuddy is a GObject, timeout callbacks can
+	 * g_object_ref() it when connecting the callback and
+	 * g_object_unref() it in the handler.  That way, it won't
+	 * get freed while the timeout is pending and this line can
+	 * be removed. */
+	while (g_source_remove_by_user_data((gpointer *)buddy));
+  parent_class->finalize(object);
+}
+
 static void
 purple_buddy_class_init(PurpleBuddyClass *klass)
 {
+  GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
+  parent_class = g_type_class_peek_parent(klass);
+  obj_class->finalize = purple_buddy_finalize;
 }
 
 static void

@@ -317,7 +317,7 @@ PurpleBuddyList *purple_blist_new()
 
 	ui_ops = purple_blist_get_ui_ops();
 
-  #warning: This has to be set here or we can't add the buddies cache
+  #warning: This has to be set here or we can\'t add the buddies cache
   if(purplebuddylist) /* In case we're creating a replacement list */
     purple_blist_destroy();
   purple_set_blist(gbl);

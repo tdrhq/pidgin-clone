@@ -430,33 +430,8 @@ g_return_if_fail(source != NULL);
 void
 purple_blist_node_destroy(PurpleBlistNode *node)
 {
-	PurpleBlistUiOps *ui_ops;
-	PurpleBlistNode *child, *next_child;
-
-	ui_ops = purple_blist_get_ui_ops();
-	child = node->child;
-	while (child) {
-		next_child = child->next;
-		purple_blist_node_destroy(child);
-		child = next_child;
-	}
-
-	/* Allow the UI to free data */
-	node->parent = NULL;
-	node->child  = NULL;
-	node->next   = NULL;
-	node->prev   = NULL;
-	if (ui_ops && ui_ops->remove)
-		ui_ops->remove(purplebuddylist, node);
-
-	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
-		purple_buddy_destroy((PurpleBuddy*)node);
-	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
-		purple_chat_destroy((PurpleChat*)node);
-	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
-		purple_contact_destroy((PurpleContact*)node);
-	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
-		purple_group_destroy((PurpleGroup*)node);
+	g_return_if_fail(PURPLE_IS_BLIST_NODE(node));
+	g_object_unref(G_OBJECT(node));
 }
 
 void purple_blist_node_initialize_settings(PurpleBlistNode *node)
@@ -638,10 +613,49 @@ purple_blist_node_get_extended_menu(PurpleBlistNode *n)
 /*  GObject Code  */
 /******************/
 
+static GObjectClass *parent_class = NULL;
+
+static void
+purple_blist_node_finalize(GObject *object)
+{
+  PurpleBlistNode *node = PURPLE_BLIST_NODE(object);
+	PurpleBlistUiOps *ui_ops;
+	PurpleBlistNode *child, *next_child;
+
+	ui_ops = purple_blist_get_ui_ops();
+	child = node->child;
+	while (child) {
+		next_child = child->next;
+		purple_blist_node_destroy(child);
+		child = next_child;
+	}
+
+	/* Allow the UI to free data */
+	node->parent = NULL;
+	node->child  = NULL;
+	node->next   = NULL;
+	node->prev   = NULL;
+	if (ui_ops && ui_ops->remove)
+		ui_ops->remove(purplebuddylist, node);
+
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		purple_buddy_destroy((PurpleBuddy*)node);
+	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
+		purple_chat_destroy((PurpleChat*)node);
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		purple_contact_destroy((PurpleContact*)node);
+	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
+		purple_group_destroy((PurpleGroup*)node);
+  parent_class->finalize(object);
+}
+
 static void
 purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 {
+  GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
+  parent_class = g_type_class_peek_parent(klass);
+  obj_class->finalize = purple_blist_node_finalize;
 }
 
 static void

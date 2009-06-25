@@ -191,11 +191,8 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 void
 purple_chat_destroy(PurpleChat *chat)
 {
-	g_hash_table_destroy(chat->components);
-	g_hash_table_destroy(chat->node.settings);
-	g_free(chat->alias);
-	PURPLE_DBUS_UNREGISTER_POINTER(chat);
-	g_free(chat);
+	g_return_if_fail(PURPLE_IS_CHAT(chat));
+	g_object_unref(G_OBJECT(chat));
 }
 
 const char *purple_chat_get_name(PurpleChat *chat)
@@ -308,10 +305,26 @@ purple_chat_get_components(PurpleChat *chat)
 /*  GObject Code  */
 /******************/
 
+static GObjectClass *parent_class = NULL;
+
+static void
+purple_chat_finalize(GObject *object)
+{
+  PurpleChat *chat = PURPLE_CHAT(object);
+	g_hash_table_destroy(chat->components);
+	g_hash_table_destroy(chat->node.settings);
+	g_free(chat->alias);
+	PURPLE_DBUS_UNREGISTER_POINTER(chat);
+  parent_class->finalize(object);
+}
+
 static void
 purple_chat_class_init(PurpleChatClass *klass)
 {
+  GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
+  parent_class = g_type_class_peek_parent(klass);
+  obj_class->finalize = purple_chat_finalize;
 }
 
 static void

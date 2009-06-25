@@ -76,60 +76,60 @@ typedef struct _PurpleBlistNode PurpleBlistNode;
 typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
 #define PURPLE_BLIST_NODE_TYPE                  (purple_blist_node_get_gtype ())
 #define PURPLE_BLIST_NODE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNode))
-#define PURPLE_BLIST_NODE_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_NODE_TYPE))
+#define PURPLE_IS_BLIST_NODE(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_NODE_TYPE))
 #define PURPLE_BLIST_NODE_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodeClass))
-#define PURPLE_BLIST_NODE_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BLIST_NODE_TYPE))
-#define PURPLE_BLIST_NODE_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodeClass))
+#define PURPLE_IS_BLIST_NODE_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BLIST_NODE_TYPE))
+#define PURPLE_GET_BLIST_NODE_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodeClass))
 
 /** @copydoc _PurpleBuddy */
 typedef struct _PurpleBuddy PurpleBuddy;
 typedef struct _PurpleBuddyClass PurpleBuddyClass;
 #define PURPLE_BUDDY_TYPE                  (purple_buddy_get_gtype ())
 #define PURPLE_BUDDY(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BUDDY_TYPE, PurpleBuddy))
-#define PURPLE_BUDDY_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BUDDY_TYPE))
+#define PURPLE_IS_BUDDY(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BUDDY_TYPE))
 #define PURPLE_BUDDY_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
-#define PURPLE_BUDDY_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BUDDY_TYPE))
-#define PURPLE_BUDDY_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
+#define PURPLE_IS_BUDDY_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BUDDY_TYPE))
+#define PURPLE_GET_BUDDY_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
 
 /** @copydoc _PurpleContact */
 typedef struct _PurpleContact PurpleContact;
 typedef struct _PurpleContactClass PurpleContactClass;
 #define PURPLE_CONTACT_TYPE                  (purple_contact_get_gtype ())
 #define PURPLE_CONTACT(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_CONTACT_TYPE, PurpleContact))
-#define PURPLE_CONTACT_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_CONTACT_TYPE))
+#define PURPLE_IS_CONTACT(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_CONTACT_TYPE))
 #define PURPLE_CONTACT_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_CONTACT_TYPE, PurpleContactClass))
-#define PURPLE_CONTACT_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CONTACT_TYPE))
-#define PURPLE_CONTACT_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CONTACT_TYPE, PurpleContactClass))
+#define PURPLE_IS_CONTACT_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CONTACT_TYPE))
+#define PURPLE_GET_CONTACT_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CONTACT_TYPE, PurpleContactClass))
 
 /** @copydoc _PurpleGroup */
 typedef struct _PurpleGroup PurpleGroup;
 typedef struct _PurpleGroupClass PurpleGroupClass;
 #define PURPLE_GROUP_TYPE                  (purple_group_get_gtype ())
 #define PURPLE_GROUP(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_GROUP_TYPE, PurpleGroup))
-#define PURPLE_GROUP_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_GROUP_TYPE))
+#define PURPLE_IS_GROUP(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_GROUP_TYPE))
 #define PURPLE_GROUP_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_GROUP_TYPE, PurpleGroupClass))
-#define PURPLE_GROUP_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_GROUP_TYPE))
-#define PURPLE_GROUP_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_GROUP_TYPE, PurpleGroupClass))
+#define PURPLE_IS_GROUP_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_GROUP_TYPE))
+#define PURPLE_GET_GROUP_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_GROUP_TYPE, PurpleGroupClass))
 
 /** @copydoc _PurpleChat */
 typedef struct _PurpleChat PurpleChat;
 typedef struct _PurpleChatClass PurpleChatClass;
 #define PURPLE_CHAT_TYPE                  (purple_chat_get_gtype ())
 #define PURPLE_CHAT(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_CHAT_TYPE, PurpleChat))
-#define PURPLE_CHAT_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_CHAT_TYPE))
+#define PURPLE_IS_CHAT(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_CHAT_TYPE))
 #define PURPLE_CHAT_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_CHAT_TYPE, PurpleChatClass))
-#define PURPLE_CHAT_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CHAT_TYPE))
-#define PURPLE_CHAT_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CHAT_TYPE, PurpleChatClass))
+#define PURPLE_IS_CHAT_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CHAT_TYPE))
+#define PURPLE_GET_CHAT_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CHAT_TYPE, PurpleChatClass))
 
 /** @copydoc _PurpleBlist */
 typedef struct _PurpleBuddyList PurpleBuddyList;
 typedef struct _PurpleBuddyListClass PurpleBuddyListClass;
 #define PURPLE_BLIST_TYPE                  (purple_blist_get_gtype ())
 #define PURPLE_BLIST(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BLIST_TYPE, PurpleBlist))
-#define PURPLE_BLIST_IS(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_TYPE))
+#define PURPLE_IS_BLIST(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_TYPE))
 #define PURPLE_BLIST_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BLIST_TYPE, PurpleBlistClass))
-#define PURPLE_BLIST_IS_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BLIST_TYPE))
-#define PURPLE_BLIST_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_TYPE, PurpleBlistClass))
+#define PURPLE_IS_BLIST_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BLIST_TYPE))
+#define PURPLE_GET_BLIST_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_TYPE, PurpleBlistClass))
 
 
 #include "account.h"

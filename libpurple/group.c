@@ -239,10 +239,8 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 void
 purple_group_destroy(PurpleGroup *group)
 {
-	g_hash_table_destroy(group->node.settings);
-	g_free(group->name);
-	PURPLE_DBUS_UNREGISTER_POINTER(group);
-	g_free(group);
+  g_return_if_fail(PURPLE_IS_GROUP(group));
+  g_object_unref(G_OBJECT(group));
 }
 
 PurpleGroup *purple_find_group(const char *name)
@@ -315,10 +313,25 @@ PurpleGroup *purple_group_new(const char *name)
 /*  GObject Code  */
 /******************/
 
+static GObjectClass *parent_class = NULL;
+
+static void
+purple_group_finalize(GObject *object)
+{
+  PurpleGroup *group = PURPLE_GROUP(object);
+	g_hash_table_destroy(group->node.settings);
+	g_free(group->name);
+	PURPLE_DBUS_UNREGISTER_POINTER(group);
+	parent_class->finalize(object);
+}
+
 static void
 purple_group_class_init(PurpleGroupClass *klass)
 {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
+	parent_class = g_type_class_peek_parent(klass);
+	obj_class->finalize = purple_group_finalize;
 }
 
 static void
