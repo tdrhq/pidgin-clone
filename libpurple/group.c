@@ -73,33 +73,6 @@ group_to_xmlnode(PurpleBlistNode *gnode)
 	return node;
 }
 
-void
-parse_group(xmlnode *groupnode)
-{
-	const char *name = xmlnode_get_attrib(groupnode, "name");
-	PurpleGroup *group;
-	xmlnode *cnode;
-
-	if (!name)
-		name = _("Buddies");
-
-	group = purple_group_new(name);
-	purple_blist_add_group(group,
-			purple_blist_get_last_sibling(purplebuddylist->root));
-
-	for (cnode = groupnode->child; cnode; cnode = cnode->next) {
-		if (cnode->type != XMLNODE_TYPE_TAG)
-			continue;
-		if (purple_strequal(cnode->name, "setting"))
-			parse_setting((PurpleBlistNode*)group, cnode);
-		else if (purple_strequal(cnode->name, "contact") ||
-				purple_strequal(cnode->name, "person"))
-			parse_contact(group, cnode);
-		else if (purple_strequal(cnode->name, "chat"))
-			parse_chat(group, cnode);
-	}
-}
-
 /*
  * TODO: If merging, prompt the user if they want to merge.
  */
@@ -236,27 +209,22 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 	g_free(old_name);
 }
 
+PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	if (((PurpleBlistNode *)buddy)->parent == NULL)
+		return NULL;
+
+	return (PurpleGroup *)(((PurpleBlistNode*)buddy)->parent->parent);
+}
+
 void
 purple_group_destroy(PurpleGroup *group)
 {
   /* This function is only a hack for api breakage */
   g_return_if_fail(PURPLE_IS_GROUP(group));
   g_object_unref(G_OBJECT(group));
-}
-
-PurpleGroup *purple_find_group(const char *name)
-{
-	PurpleBlistNode *node;
-
-	g_return_val_if_fail(purplebuddylist != NULL, NULL);
-	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
-
-	for (node = purplebuddylist->root; node != NULL; node = node->next) {
-		if (!purple_utf8_strcasecmp(((PurpleGroup *)node)->name, name))
-			return (PurpleGroup *)node;
-	}
-
-	return NULL;
 }
 
 const char *purple_group_get_name(PurpleGroup *group)

@@ -213,6 +213,13 @@ PurpleContact *purple_contact_new()
 	return contact;
 }
 
+PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	return PURPLE_CONTACT(PURPLE_BLIST_NODE(buddy)->parent);
+}
+
 void
 purple_contact_destroy(PurpleContact *contact)
 {

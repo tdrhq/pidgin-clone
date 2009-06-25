@@ -121,16 +121,7 @@ typedef struct _PurpleChatClass PurpleChatClass;
 #define PURPLE_IS_CHAT_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CHAT_TYPE))
 #define PURPLE_GET_CHAT_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CHAT_TYPE, PurpleChatClass))
 
-/** @copydoc _PurpleBlist */
 typedef struct _PurpleBuddyList PurpleBuddyList;
-typedef struct _PurpleBuddyListClass PurpleBuddyListClass;
-#define PURPLE_BUDDY_LIST_TYPE                  (purple_blist_get_gtype ())
-#define PURPLE_BUDDY_LIST(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BUDDY_LIST_TYPE, PurpleBuddyList))
-#define PURPLE_IS_BUDDY_LIST(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BUDDY_LIST_TYPE))
-#define PURPLE_BUDDY_LIST_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BUDDY_LIST_TYPE, PurpleBuddyListClass))
-#define PURPLE_IS_BUDDY_LIST_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BUDDY_LIST_TYPE))
-#define PURPLE_GET_BUDDY_LIST_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BUDDY_LIST_TYPE, PurpleBuddyListClass))
-
 
 #include "account.h"
 #include "buddyicon.h"
@@ -248,30 +239,6 @@ struct _PurpleChatClass {
 #endif
 #if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_BLIST_C_)
 
-/**
- * The Buddy List
- */
-struct _PurpleBuddyList {
-  PurpleObject parent;
-	PurpleBlistNode *root;          /**< The first node in the buddy list */
-	GHashTable *buddies;          /**< Every buddy in this list */
-  
-  /**
-   * A hash table used for efficient lookups of buddies by name.
-   * PurpleAccount* => GHashTable*, with the inner hash table being
-   * struct _purple_hbuddy => PurpleBuddy*
-   */
-  GHashTable *buddies_cache;
-
-  guint          save_timer;
-  gboolean       blist_loaded;
-	void *ui_data;                /**< UI-specific data. */
-};
-
-struct _PurpleBuddyListClass {
-  PurpleObjectClass parent;
-};
-
 #endif /* PURPLE_HIDE_STRUCTS && PURPLE_BLIST_STRUCTS */
 
 /**
@@ -282,7 +249,7 @@ struct _PurpleBuddyListClass {
  */
 struct _PurpleBlistUiOps
 {
-	void (*new_list)(PurpleBuddyList *list); /**< Sets UI-specific data on a buddy list. */
+	void (*new_list)(); /**< Sets UI-specific data on a buddy list. */
 	void (*new_node)(PurpleBlistNode *node); /**< Sets UI-specific data on a node. */
 	void (*show)(PurpleBuddyList *list);     /**< The core will call this when it's finished doing its core stuff */
 	void (*update)(PurpleBuddyList *list,
@@ -355,13 +322,6 @@ extern "C" {
  * @return The new buddy list.
  */
 PurpleBuddyList *purple_blist_new(void);
-
-/**
- * Sets the main buddy list.
- *
- * @param blist The buddy list you want to use.
- */
-void purple_set_blist(PurpleBuddyList *blist);
 
 /**
  * Returns the main buddy list.
@@ -1313,16 +1273,6 @@ PurpleBlistUiOps *purple_blist_get_ui_ops(void);
 void *purple_blist_get_handle(void);
 
 /**
- * Initializes the buddy list subsystem.
- */
-void purple_blist_init(void);
-
-/**
- * Uninitializes the buddy list subsystem.
- */
-void purple_blist_uninit(void);
-
-/**
  * Get the GType for PurpleBlistNode
  */
 GType purple_blist_node_get_gtype(void);
@@ -1346,11 +1296,6 @@ GType purple_contact_get_gtype(void);
  * Get the GType for PurpleChat
  */
 GType purple_chat_get_gtype(void);
-
-/**
- * Get the GType for PurpleChat
- */
-GType purple_blist_get_gtype(void);
 
 /*@}*/
 

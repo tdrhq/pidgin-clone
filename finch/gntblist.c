@@ -498,7 +498,7 @@ remove_tooltip(FinchBlist *ggblist)
 static void
 node_remove(PurpleBuddyList *list, PurpleBlistNode *node)
 {
-	FinchBlist *ggblist = FINCH_GET_DATA(list);
+	FinchBlist *ggblist = purple_blist_get_ui_data();
 	PurpleBlistNode *parent;
 
 	if (ggblist == NULL || FINCH_GET_DATA(node) == NULL)
@@ -536,7 +536,7 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
            happens, so maybe someone will figure it out. */
 	g_return_if_fail(node != NULL);
 
-	if (FINCH_GET_DATA(list)== NULL)
+	if (purple_blist_get_ui_data()== NULL)
 		return;   /* XXX: this is probably the place to auto-join chats */
 
 	if (ggblist->window == NULL)
@@ -554,21 +554,21 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		PurpleBuddy *buddy = (PurpleBuddy*)node;
-		add_node((PurpleBlistNode*)buddy, FINCH_GET_DATA(list));
+		add_node((PurpleBlistNode*)buddy, purple_blist_get_ui_data());
 		node_update(list, purple_blist_node_get_parent(node));
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		add_node(node, FINCH_GET_DATA(list));
+		add_node(node, purple_blist_get_ui_data());
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if (FINCH_GET_DATA(node)== NULL) {
 			/* The core seems to expect the UI to add the buddies. */
 			for (node = purple_blist_node_get_first_child(node); node; node = purple_blist_node_get_sibling_next(node))
-				add_node(node, FINCH_GET_DATA(list));
+				add_node(node, purple_blist_get_ui_data());
 		}
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		if (!ggblist->manager->can_add_node(node))
 			node_remove(list, node);
 		else
-			add_node(node, FINCH_GET_DATA(list));
+			add_node(node, purple_blist_get_ui_data());
 	}
 	if (ggblist->tnode == node) {
 		draw_tooltip(ggblist);
@@ -582,7 +582,7 @@ new_list(PurpleBuddyList *list)
 		return;
 
 	ggblist = g_new0(FinchBlist, 1);
-	FINCH_SET_DATA(list, ggblist);
+	purple_blist_set_ui_data(ggblist);
 	ggblist->manager = finch_blist_manager_find(purple_prefs_get_string(PREF_ROOT "/grouping"));
 	if (!ggblist->manager)
 		ggblist->manager = &default_manager;
@@ -2007,7 +2007,7 @@ reset_blist_window(GntWidget *window, gpointer null)
 {
 	PurpleBlistNode *node;
 	purple_signals_disconnect_by_handle(finch_blist_get_handle());
-	FINCH_SET_DATA(purple_get_blist(), NULL);
+	purple_blist_set_ui_data(NULL);
 
 	node = purple_blist_get_root();
 	while (node) {

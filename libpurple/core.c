@@ -41,6 +41,7 @@
 #include "pounce.h"
 #include "prefs.h"
 #include "privacy.h"
+#include "private.h"
 #include "proxy.h"
 #include "savedstatuses.h"
 #include "signals.h"
@@ -127,6 +128,9 @@ purple_core_init(const char *ui)
 		if (ops->debug_ui_init != NULL)
 			ops->debug_ui_init();
 	}
+  
+  if (ops != NULL && ops->ui_init != NULL)
+    ops->ui_init();
 
 #ifdef HAVE_DBUS
 	purple_dbus_init();
@@ -164,6 +168,7 @@ purple_core_init(const char *ui)
 	purple_log_init();
 	purple_network_init();
 	purple_privacy_init();
+  purple_blist_init();
 	purple_pounces_init();
 	purple_proxy_init();
 	purple_dnsquery_init();
@@ -179,9 +184,6 @@ purple_core_init(const char *ui)
 	 * hopefully save some time later.
 	 */
 	purple_network_get_my_ip(-1);
-
-	if (ops != NULL && ops->ui_init != NULL)
-		ops->ui_init();
 
 	/* The UI may have registered some theme types, so refresh them */
 	purple_theme_manager_refresh();

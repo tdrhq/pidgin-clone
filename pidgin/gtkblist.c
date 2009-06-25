@@ -1005,7 +1005,7 @@ make_blist_request_dialog(PidginBlistRequestData *data, PurpleAccount *account,
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
 		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 
-	gtkblist = PIDGIN_BLIST(purple_get_blist());
+	gtkblist = purple_blist_get_ui_data();
 	blist_window = gtkblist ? GTK_WINDOW(gtkblist->window) : NULL;
 
 	data->window = gtk_dialog_new_with_buttons(title,
@@ -4256,7 +4256,7 @@ static gboolean pidgin_blist_refresh_timer(PurpleBuddyList *list)
 			|| !GTK_WIDGET_VISIBLE(gtkblist->window))
 		return TRUE;
 
-	for(gnode = list->root; gnode; gnode = gnode->next) {
+	for(gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
@@ -4349,7 +4349,7 @@ update_menu_bar(PidginBuddyList *gtkblist)
 static void
 sign_on_off_cb(PurpleConnection *gc, PurpleBuddyList *blist)
 {
-	PidginBuddyList *gtkblist = PIDGIN_BLIST(blist);
+	PidginBuddyList *gtkblist = purple_blist_get_ui_data();
 
 	update_menu_bar(gtkblist);
 }
@@ -4604,7 +4604,7 @@ static void pidgin_blist_new_list(PurpleBuddyList *blist)
 												g_direct_equal, NULL, g_free);
 	gtkblist->priv = g_new0(PidginBuddyListPrivate, 1);
 
-	blist->ui_data = gtkblist;
+	purple_blist_set_ui_data(gtkblist);
 }
 
 static void pidgin_blist_new_node(PurpleBlistNode *node)
@@ -5346,7 +5346,7 @@ treeview_style_set (GtkWidget *widget,
 		    gpointer data)
 {
 	PurpleBuddyList *list = data;
-	PurpleBlistNode *node = list->root;
+	PurpleBlistNode *node = purple_blist_get_root();
 	while (node) {
 		pidgin_blist_update_group(list, node);
 		node = node->next;
@@ -5609,7 +5609,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 		return;
 	}
 
-	gtkblist = PIDGIN_BLIST(list);
+	gtkblist = purple_blist_get_ui_data();
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
 	if (priv->current_theme)
@@ -5970,11 +5970,11 @@ static void redo_buddy_list(PurpleBuddyList *list, gboolean remove, gboolean rer
 {
 	PurpleBlistNode *node;
 
-	gtkblist = PIDGIN_BLIST(list);
+	gtkblist = purple_blist_get_ui_data();
 	if(!gtkblist || !gtkblist->treeview)
 		return;
 
-	node = list->root;
+	node = purple_blist_get_root();
 
 	while (node)
 	{
@@ -6007,7 +6007,7 @@ pidgin_blist_update_refresh_timeout()
 	PidginBuddyList *gtkblist;
 
 	blist = purple_get_blist();
-	gtkblist = PIDGIN_BLIST(purple_get_blist());
+	gtkblist = purple_blist_get_ui_data();
 
 	gtkblist->refresh_timer = purple_timeout_add_seconds(30,(GSourceFunc)pidgin_blist_refresh_timer, blist);
 }
@@ -6680,7 +6680,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 static void pidgin_blist_update(PurpleBuddyList *list, PurpleBlistNode *node)
 {
 	if (list)
-		gtkblist = PIDGIN_BLIST(list);
+		gtkblist = purple_blist_get_ui_data();
 	if(!gtkblist || !gtkblist->treeview || !node)
 		return;
 
@@ -6792,13 +6792,13 @@ groups_tree(void)
 	g_list_free(list);
 	list = NULL;
 
-	if (purple_get_blist()->root == NULL)
+	if (purple_blist_get_root() == NULL)
 	{
 		list  = g_list_append(list, (gpointer)_("Buddies"));
 	}
 	else
 	{
-		for (gnode = purple_get_blist()->root;
+		for (gnode = purple_blist_get_root();
 			 gnode != NULL;
 			 gnode = gnode->next)
 		{
@@ -7248,7 +7248,7 @@ static void account_signon_cb(PurpleConnection *gc, gpointer z)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleBlistNode *gnode, *cnode;
-	for(gnode = purple_get_blist()->root; gnode; gnode = gnode->next)
+	for(gnode = purple_blist_get_root(); gnode; gnode = gnode->next)
 	{
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;

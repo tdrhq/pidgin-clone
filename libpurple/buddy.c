@@ -84,25 +84,6 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 	g_free(alias);
 }
 
-static void
-append_buddy(gpointer key, gpointer value, gpointer user_data)
-{
-	GSList **list = user_data;
-	*list = g_slist_prepend(*list, value);
-}
-
-GSList *
-purple_blist_get_buddies()
-{
-	GSList *buddies = NULL;
-
-	if (!purplebuddylist)
-		return NULL;
-
-	g_hash_table_foreach(purplebuddylist->buddies, append_buddy, &buddies);
-	return buddies;
-}
-
 void
 purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 {
@@ -161,47 +142,6 @@ void
 purple_blist_update_buddy_icon(PurpleBuddy *buddy)
 {
 	purple_blist_update_node_icon((PurpleBlistNode *)buddy);
-}
-
-/*
- * TODO: Maybe remove the call to this from server.c and call it
- * from oscar.c and toc.c instead?
- */
-void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name)
-{
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	struct _purple_hbuddy *hb, *hb2;
-	GHashTable *account_buddies;
-
-	g_return_if_fail(buddy != NULL);
-
-	hb = g_new(struct _purple_hbuddy, 1);
-	hb->name = g_strdup(purple_normalize(buddy->account, buddy->name));
-	hb->account = buddy->account;
-	hb->group = ((PurpleBlistNode *)buddy)->parent->parent;
-	g_hash_table_remove(purplebuddylist->buddies, hb);
-	
-	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, buddy->account);
-	g_hash_table_remove(account_buddies, hb);
-
-	g_free(hb->name);
-	hb->name = g_strdup(purple_normalize(buddy->account, name));
-	g_hash_table_replace(purplebuddylist->buddies, hb, buddy);
-
-	hb2 = g_new(struct _purple_hbuddy, 1);
-	hb2->name = g_strdup(hb->name);
-	hb2->account = buddy->account;
-	hb2->group = ((PurpleBlistNode *)buddy)->parent->parent;
-
-	g_hash_table_replace(account_buddies, hb2, buddy);
-
-	g_free(buddy->name);
-	buddy->name = g_strdup(name);
-
-	purple_blist_schedule_save();
-
-	if (ops && ops->update)
-		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
 }
 
 void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias)
@@ -468,47 +408,10 @@ const char *purple_buddy_get_local_alias(PurpleBuddy *buddy)
 	return buddy->name;
 }
 
-PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name,
-		PurpleGroup *group)
-{
-	struct _purple_hbuddy hb;
-	PurpleBuddy *ret;
-
-	g_return_val_if_fail(purplebuddylist != NULL, NULL);
-	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
-
-	hb.name = g_strdup(purple_normalize(account, name));
-	hb.account = account;
-	hb.group = (PurpleBlistNode*)group;
-
-	ret = g_hash_table_lookup(purplebuddylist->buddies, &hb);
-	g_free(hb.name);
-
-	return ret;
-}
-
-PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy)
-{
-	g_return_val_if_fail(buddy != NULL, NULL);
-
-	return PURPLE_CONTACT(PURPLE_BLIST_NODE(buddy)->parent);
-}
-
 PurplePresence *purple_buddy_get_presence(const PurpleBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);
 	return buddy->presence;
-}
-
-PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
-{
-	g_return_val_if_fail(buddy != NULL, NULL);
-
-	if (((PurpleBlistNode *)buddy)->parent == NULL)
-		return NULL;
-
-	return (PurpleGroup *)(((PurpleBlistNode*)buddy)->parent->parent);
 }
 
 xmlnode *

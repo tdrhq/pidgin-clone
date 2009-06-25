@@ -2157,7 +2157,7 @@ add_completion_list(PidginCompletionData *data)
 	g_completion_clear_items(data->completion);
 #endif /* NEW_STYLE_COMPLETION */
 
-	for (gnode = purple_get_blist()->root; gnode != NULL; gnode = gnode->next)
+	for (gnode = purple_blist_get_root(); gnode != NULL; gnode = gnode->next)
 	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
