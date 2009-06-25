@@ -218,7 +218,7 @@ save_cb(gpointer data)
 void
 purple_blist_schedule_save()
 {
-	if (purplebuddylist->save_timer == 0)
+	if (purplebuddylist && purplebuddylist->save_timer == 0)
 		purplebuddylist->save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
@@ -316,6 +316,11 @@ PurpleBuddyList *purple_blist_new()
 	PURPLE_DBUS_REGISTER_POINTER(gbl, PurpleBuddyList);
 
 	ui_ops = purple_blist_get_ui_ops();
+
+  #warning: This has to be set here or we can't add the buddies cache
+  if(purplebuddylist) /* In case we're creating a replacement list */
+    purple_blist_destroy();
+  purple_set_blist(gbl);
 
 	gbl->buddies = g_hash_table_new_full((GHashFunc)_purple_blist_hbuddy_hash,
 					 (GEqualFunc)_purple_blist_hbuddy_equal,
@@ -1264,8 +1269,8 @@ purple_blist_get_gtype(void)
 		};
 
 		type = g_type_register_static(PURPLE_TYPE_OBJECT,
-									  "PurpleBlist",
-									  &info, G_TYPE_FLAG_ABSTRACT);
+									  "PurpleBuddyList",
+									  &info, 0);
 	}
 
 	return type;

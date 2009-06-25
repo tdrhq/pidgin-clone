@@ -601,7 +601,7 @@ purple_buddy_get_gtype(void)
 
 		type = g_type_register_static(PURPLE_BLIST_NODE_TYPE,
 									  "PurpleBuddy",
-									  &info, G_TYPE_FLAG_ABSTRACT);
+									  &info, 0);
 	}
 
 	return type;
