@@ -645,6 +645,17 @@ get_theme_files() {
 }
 
 static void
+variant_update_conversation (PurpleConversation *conv)
+{
+	PidginConversation *gtkconv = PIDGIN_CONVERSATION (conv);
+	WebKitWebView *webview = WEBKIT_WEB_VIEW (gtkconv->webview);
+	char* script = g_strdup_printf ("setStylesheet(\"mainStyle\",\"%s\")", css_path);
+	printf ("css_path: %s\n", css_path);
+	webkit_web_view_execute_script (webview, script);
+	g_free (script);
+}
+
+static void
 variant_changed (GtkWidget* combobox, gpointer null)
 {
 	char *name, *name_with_ext;
@@ -655,6 +666,13 @@ variant_changed (GtkWidget* combobox, gpointer null)
 	
 	css_path = g_build_filename (style_dir, "Contents", "Resources", "Variants", name_with_ext, NULL);
 	g_free (name_with_ext);
+
+	/* update each conversation */
+	GList *list = purple_get_conversations ();
+	while (list) {
+		variant_update_conversation (list->data);
+		list = g_list_next(list);
+	}
 }
 
 static GtkWidget *
