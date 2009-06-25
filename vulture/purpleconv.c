@@ -145,3 +145,42 @@ void PurpleConversationSend(VULTURE_CONV_SEND *lpvcsend)
 
 	g_free(szMessage);
 }
+
+
+/**
+ * Called in response to the conversation-updated signal.
+ *
+ * @param	lpconv	Conversation.
+ * @param	pcut	Type of change.
+ */
+void PurpleConvChanged(PurpleConversation *lpconv, PurpleConvUpdateType pcut)
+{
+	VULTURE_CONVERSATION *lpvconv = lpconv->ui_data;
+
+	if(!lpvconv)
+		return;
+
+	EnterCriticalSection(&lpvconv->sync.cs);
+	{
+		switch(pcut)
+		{
+		case PURPLE_CONV_UPDATE_TITLE:
+			{
+				VULTURE_CONV_CHANGED *lpvcchanged = g_new(VULTURE_CONV_CHANGED, 1);
+
+				lpvcchanged->lpvconv = lpvconv;
+				lpvcchanged->pcut = pcut;
+
+				g_free(lpvconv->sync.szTitle);
+				lpvconv->sync.szTitle = VultureUTF8ToTCHAR(purple_conversation_get_title(lpconv));
+				VulturePostUIMessage(g_hwndMain, VUIMSG_CONVCHANGED, lpvcchanged);
+			}
+
+			break;
+
+		default:
+			break;
+		}
+	}
+	LeaveCriticalSection(&lpvconv->sync.cs);
+}

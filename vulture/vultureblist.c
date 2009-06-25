@@ -312,6 +312,10 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 				VultureFreeStatus((VULTURE_SAVED_STATUS*)lParam);
 				break;
 
+			case VUIMSG_CONVCHANGED:
+				hwndForward = ((VULTURE_CONV_CHANGED*)lParam)->lpvconv->hwndContainer;
+				break;
+
 			case VUIMSG_QUIT:
 				DestroyWindow(hwnd);
 				break;

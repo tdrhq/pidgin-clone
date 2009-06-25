@@ -61,6 +61,12 @@ typedef struct _VULTURE_CONV_SEND
 	LPTSTR			szMessage;
 } VULTURE_CONV_SEND;
 
+typedef struct _VULTURE_CONV_CHANGED
+{
+	VULTURE_CONVERSATION	*lpvconv;
+	PurpleConvUpdateType	pcut;
+} VULTURE_CONV_CHANGED;
+
 
 int VultureRegisterConvContainerWindowClass(void);
 HWND VultureCreateConvContainer(void);

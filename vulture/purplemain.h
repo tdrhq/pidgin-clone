@@ -56,12 +56,16 @@ enum ENUM_VULTURE_UI_MESSAGES
 
 	/* (VULTURE_BLIST_NODE*) Node to remove. */
 	VUIMSG_REMOVEBLISTNODE,
+
+	/* (VULTURE_CONV_CHANGED*) */
+	VUIMSG_CONVCHANGED,
 };
 
 /* HandlEs for reigistering signal handlERs. */
 enum ENUM_VULTURE_SIGNAL_HANDLES
 {
 	VSH_STATUS = 1,
+	VSH_CONV,
 };
 
 void VultureInitLibpurple(HANDLE *lphthread);

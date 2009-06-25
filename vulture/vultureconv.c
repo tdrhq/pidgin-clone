@@ -59,6 +59,7 @@ static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs
 static void RepositionConvControls(HWND hwndConvDlg);
 static LRESULT CALLBACK InputBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd);
+static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs);
 
 
 /**
@@ -157,13 +158,10 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				lpvconv->hwndContainer = hwnd;
 
 				/* Create a new tab. */
-				tcitem.mask = TCIF_TEXT | TCIF_PARAM;
+				tcitem.mask = TCIF_PARAM;
 				tcitem.lParam = lParam;
 
-				EnterCriticalSection(&lpvconv->sync.cs);
-					tcitem.pszText = lpvconv->sync.szTitle;
-					lpvconv->iTabIndex = TabCtrl_InsertItem(hwndTabs, TabCtrl_GetItemCount(hwndTabs), &tcitem);
-				LeaveCriticalSection(&lpvconv->sync.cs);
+				lpvconv->iTabIndex = TabCtrl_InsertItem(hwndTabs, TabCtrl_GetItemCount(hwndTabs), &tcitem);
 
 				/* Create conversation dialogue. It is
 				 * initially disabled and hidden.
@@ -174,6 +172,11 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 					lpvconv->hwndConv = CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_CHAT), hwndTabs, ChatDlgProc, (LPARAM)lpvconv);
 
 				SetWindowPos(lpvconv->hwndConv, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
+
+				/* Set the title, both of the tab and in the
+				 * conversation window itself.
+				 */
+				SetConvTitle(lpvconv, hwndTabs);
 
 				/* Only strictly necessary if we're the only
 				 * tab.
@@ -208,6 +211,26 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 					DestroyWindow(hwnd);
 				else
 					RecalcTabIndices(hwndTabs);
+			}
+
+			break;
+
+		case VUIMSG_CONVCHANGED:
+			{
+				VULTURE_CONV_CHANGED *lpvcchanged = (VULTURE_CONV_CHANGED*)lParam;
+				HWND hwndTabs = GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS);
+
+				switch(lpvcchanged->pcut)
+				{
+				case PURPLE_CONV_UPDATE_TITLE:
+					SetConvTitle(lpvcchanged->lpvconv, hwndTabs);
+					break;
+
+				default:
+					break;
+				}
+
+				g_free(lpvcchanged);
 			}
 
 			break;
@@ -700,4 +723,24 @@ static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd)
 	ShowWindow(hwndConv, SW_SHOW);
 
 	SetFocus(GetDlgItem(hwndConv, IDC_RICHEDIT_INPUT));
+}
+
+
+/**
+ * Sets the title of a conversation in the UI, both of the tab and of the
+ * conversation window itself.
+ *
+ * @param	lpvconv		Conversation.
+ * @param	hwndTabs	Tab control.
+ */
+static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs)
+{
+	TCITEM tcitem;
+
+	EnterCriticalSection(&lpvconv->sync.cs);
+		tcitem.mask = TCIF_TEXT;
+		tcitem.pszText = lpvconv->sync.szTitle;
+		TabCtrl_SetItem(hwndTabs, lpvconv->iTabIndex, &tcitem);
+		SetDlgItemText(lpvconv->hwndConv, IDC_STATIC_NAME, lpvconv->sync.szTitle);
+	LeaveCriticalSection(&lpvconv->sync.cs);
 }
