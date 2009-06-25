@@ -484,14 +484,10 @@ telepathy_add_buddy (PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 	}
 	else
 	{
-		GPtrArray *arr = g_ptr_array_sized_new(2);
-
-		g_ptr_array_add(arr, (gchar *)buddy_name);
-		g_ptr_array_add(arr, NULL);
+		gchar const *ids[] = { buddy_name, NULL };
 
 		tp_connection_request_handles(connection_data->connection, -1,
-				TP_HANDLE_TYPE_CONTACT,
-				(const char * const *)arr->pdata,
+				TP_HANDLE_TYPE_CONTACT, ids,
 				add_contact_to_group_cb, tp_group,
 				NULL, NULL);
 	}
