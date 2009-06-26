@@ -559,6 +559,13 @@ plugin_load(PurplePlugin *plugin)
 	default_destroy_conversation = uiops->destroy_conversation;
 	uiops->destroy_conversation = purple_webkit_destroy_conv;
 
+	/* finally update each of the existing conversation windows */
+	{
+		GList* list = purple_get_conversations ();
+		for (;list; list = g_list_next(list))
+			purple_webkit_create_conv (list->data);
+			
+	}
 	return TRUE;
 }
 
