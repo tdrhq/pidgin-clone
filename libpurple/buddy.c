@@ -235,7 +235,7 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 	g_return_val_if_fail(name != NULL, NULL);
 
 	buddy = g_object_new(PURPLE_BUDDY_TYPE, NULL);
-  g_object_ref(buddy);
+	g_object_ref(buddy);
 	buddy->account  = account;
 	buddy->name     = purple_utf8_strip_unprintables(name);
 	buddy->alias    = purple_utf8_strip_unprintables(alias);
@@ -257,7 +257,7 @@ void
 purple_buddy_destroy(PurpleBuddy *buddy)
 {
 	g_return_if_fail(PURPLE_IS_BUDDY(buddy));
-  g_object_unref(G_OBJECT(buddy));
+	g_object_unref(G_OBJECT(buddy));
 }
 
 void
@@ -380,7 +380,7 @@ const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy)
 
 const char *purple_buddy_get_server_alias(PurpleBuddy *buddy)
 {
-        g_return_val_if_fail(buddy != NULL, NULL);
+	g_return_val_if_fail(buddy != NULL, NULL);
 
 	if ((buddy->server_alias) && (*buddy->server_alias))
 	    return buddy->server_alias;
@@ -449,7 +449,7 @@ buddy_to_xmlnode(PurpleBlistNode *bnode)
 static void
 purple_buddy_finalize(GObject *object)
 {
-  PurpleBuddy *buddy = PURPLE_BUDDY(object);
+	PurpleBuddy *buddy = PURPLE_BUDDY(object);
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
 
@@ -474,23 +474,23 @@ purple_buddy_finalize(GObject *object)
 
 	PURPLE_DBUS_UNREGISTER_POINTER(buddy);
 
-  #warning: Uhh, need some explanation here. -Aluink
+	#warning: Uhh, need some explanation here. -Aluink
 	/* FIXME: Once PurpleBuddy is a GObject, timeout callbacks can
 	 * g_object_ref() it when connecting the callback and
 	 * g_object_unref() it in the handler.  That way, it won't
 	 * get freed while the timeout is pending and this line can
 	 * be removed. */
 	while (g_source_remove_by_user_data((gpointer *)buddy));
-  parent_class->finalize(object);
+	parent_class->finalize(object);
 }
 
 static void
 purple_buddy_class_init(PurpleBuddyClass *klass)
 {
-  GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
-  parent_class = g_type_class_peek_parent(klass);
-  obj_class->finalize = purple_buddy_finalize;
+	parent_class = g_type_class_peek_parent(klass);
+	obj_class->finalize = purple_buddy_finalize;
 }
 
 static void
@@ -500,7 +500,7 @@ purple_buddy_init(GTypeInstance *instance, gpointer class)
 }
 
 GType
-purple_buddy_get_gtype(void)
+purple_buddy_get_type(void)
 {
 	static GType type = 0;
 

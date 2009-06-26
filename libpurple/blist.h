@@ -84,7 +84,7 @@ typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
 /** @copydoc _PurpleBuddy */
 typedef struct _PurpleBuddy PurpleBuddy;
 typedef struct _PurpleBuddyClass PurpleBuddyClass;
-#define PURPLE_BUDDY_TYPE                  (purple_buddy_get_gtype ())
+#define PURPLE_BUDDY_TYPE                  (purple_buddy_get_type ())
 #define PURPLE_BUDDY(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BUDDY_TYPE, PurpleBuddy))
 #define PURPLE_IS_BUDDY(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BUDDY_TYPE))
 #define PURPLE_BUDDY_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
@@ -94,7 +94,7 @@ typedef struct _PurpleBuddyClass PurpleBuddyClass;
 /** @copydoc _PurpleContact */
 typedef struct _PurpleContact PurpleContact;
 typedef struct _PurpleContactClass PurpleContactClass;
-#define PURPLE_CONTACT_TYPE                  (purple_contact_get_gtype ())
+#define PURPLE_CONTACT_TYPE                  (purple_contact_get_type ())
 #define PURPLE_CONTACT(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_CONTACT_TYPE, PurpleContact))
 #define PURPLE_IS_CONTACT(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_CONTACT_TYPE))
 #define PURPLE_CONTACT_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_CONTACT_TYPE, PurpleContactClass))
@@ -104,7 +104,7 @@ typedef struct _PurpleContactClass PurpleContactClass;
 /** @copydoc _PurpleGroup */
 typedef struct _PurpleGroup PurpleGroup;
 typedef struct _PurpleGroupClass PurpleGroupClass;
-#define PURPLE_GROUP_TYPE                  (purple_group_get_gtype ())
+#define PURPLE_GROUP_TYPE                  (purple_group_get_type ())
 #define PURPLE_GROUP(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_GROUP_TYPE, PurpleGroup))
 #define PURPLE_IS_GROUP(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_GROUP_TYPE))
 #define PURPLE_GROUP_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_GROUP_TYPE, PurpleGroupClass))
@@ -114,7 +114,7 @@ typedef struct _PurpleGroupClass PurpleGroupClass;
 /** @copydoc _PurpleChat */
 typedef struct _PurpleChat PurpleChat;
 typedef struct _PurpleChatClass PurpleChatClass;
-#define PURPLE_CHAT_TYPE                  (purple_chat_get_gtype ())
+#define PURPLE_CHAT_TYPE                  (purple_chat_get_type ())
 #define PURPLE_CHAT(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_CHAT_TYPE, PurpleChat))
 #define PURPLE_IS_CHAT(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_CHAT_TYPE))
 #define PURPLE_CHAT_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_CHAT_TYPE, PurpleChatClass))
@@ -138,7 +138,7 @@ typedef struct _PurpleBuddyList PurpleBuddyList;
  * This is a base class for PurpleBuddy, PurpleContact, PurpleGroup, and for
  * anything else that wants to put itself in the buddy list. */
 struct _PurpleBlistNode {
-  PurpleObject _parent;
+	PurpleObject _parent;
 	PurpleBlistNodeType type;             /**< The type of node this is       */
 	PurpleBlistNode *prev;                /**< The sibling before this buddy. */
 	PurpleBlistNode *next;                /**< The sibling after this buddy.  */
@@ -151,12 +151,12 @@ struct _PurpleBlistNode {
 	                                           slice-allocated
 	                                           <tt>GValue</tt>.  */
 
-	void          *ui_data;               /**< The UI can put data here.      */
+	void *ui_data;                        /**< The UI can put data here.      */
 	PurpleBlistNodeFlags flags;           /**< The buddy flags                */
 };
 
 struct _PurpleBlistNodeClass {
-  PurpleObjectClass parent;
+	PurpleObjectClass parent;
 };
 
 #endif
@@ -177,7 +177,7 @@ struct _PurpleBuddy {
 };
 
 struct _PurpleBuddyClass {
-  PurpleBlistNodeClass parent;
+	PurpleBlistNodeClass parent;
 };
 
 #endif
@@ -197,7 +197,7 @@ struct _PurpleContact {
 };
 
 struct _PurpleContactClass {
-  PurpleBlistNodeClass parent;
+	PurpleBlistNodeClass parent;
 };
 
 #endif
@@ -215,7 +215,7 @@ struct _PurpleGroup {
 };
 
 struct _PurpleGroupClass {
-  PurpleBlistNodeClass parent;
+	PurpleBlistNodeClass parent;
 };
 
 #endif
@@ -233,7 +233,7 @@ struct _PurpleChat {
 };
 
 struct _PurpleChatClass {
-  PurpleBlistNodeClass parent;
+	PurpleBlistNodeClass parent;
 };
 
 #endif
@@ -290,14 +290,14 @@ gboolean purple_strings_are_different(const char *one, const char *two);
 
 /* The global static members */
 struct _list_account_buddies {
-  GSList *list;
-  PurpleAccount *account;
+	GSList *list;
+	PurpleAccount *account;
 };
 
 struct _purple_hbuddy {
-  char *name;
-  PurpleAccount *account;
-  PurpleBlistNode *group;
+	char *name;
+	PurpleAccount *account;
+	PurpleBlistNode *group;
 };
 
 extern PurpleBuddyList* purplebuddylist;
@@ -1280,22 +1280,22 @@ GType purple_blist_node_get_gtype(void);
 /**
  * Get the GType for PurpleBuddy
  */
-GType purple_buddy_get_gtype(void);
+GType purple_buddy_get_type(void);
 
 /**
  * Get the GType for PurpleGroup
  */
-GType purple_group_get_gtype(void);
+GType purple_group_get_type(void);
 
 /**
  * Get the GType for PurpleContact
  */
-GType purple_contact_get_gtype(void);
+GType purple_contact_get_type(void);
 
 /**
  * Get the GType for PurpleChat
  */
-GType purple_chat_get_gtype(void);
+GType purple_chat_get_type(void);
 
 /*@}*/
 

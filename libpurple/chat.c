@@ -191,7 +191,7 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 void
 purple_chat_destroy(PurpleChat *chat)
 {
-  /* This function is only a hack for api breakage */
+	/* This function is only a hack for api breakage */
 	g_return_if_fail(PURPLE_IS_CHAT(chat));
 	g_object_unref(G_OBJECT(chat));
 }
@@ -247,21 +247,21 @@ static GObjectClass *parent_class = NULL;
 static void
 purple_chat_finalize(GObject *object)
 {
-  PurpleChat *chat = PURPLE_CHAT(object);
+	PurpleChat *chat = PURPLE_CHAT(object);
 	g_hash_table_destroy(chat->components);
 	g_hash_table_destroy(chat->node.settings);
 	g_free(chat->alias);
 	PURPLE_DBUS_UNREGISTER_POINTER(chat);
-  parent_class->finalize(object);
+	parent_class->finalize(object);
 }
 
 static void
 purple_chat_class_init(PurpleChatClass *klass)
 {
-  GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
-  parent_class = g_type_class_peek_parent(klass);
-  obj_class->finalize = purple_chat_finalize;
+	parent_class = g_type_class_peek_parent(klass);
+	obj_class->finalize = purple_chat_finalize;
 }
 
 static void
@@ -271,28 +271,28 @@ purple_chat_init(GTypeInstance *instance, gpointer class)
 }
 
 GType
-purple_chat_get_gtype(void)
+purple_chat_get_type(void)
 {
-  static GType type = 0;
+	static GType type = 0;
 
-  if(type == 0) {
-    static const GTypeInfo info = {
-      sizeof(PurpleChatClass),
-      NULL,					/* base_init		*/
-      NULL,					/* base_finalize	*/
-      (GClassInitFunc)purple_chat_class_init,
-      NULL,
-      NULL,					/* class_data		*/
-      sizeof(PurpleChat),
-      0,						/* n_preallocs		*/
-      purple_chat_init,					/* instance_init	*/
-      NULL					/* value_table		*/
-    };
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleChatClass),
+			NULL,					/* base_init		*/
+			NULL,					/* base_finalize	*/
+			(GClassInitFunc)purple_chat_class_init,
+			NULL,
+			NULL,					/* class_data		*/
+			sizeof(PurpleChat),
+			0,						/* n_preallocs		*/
+			purple_chat_init,					/* instance_init	*/
+			NULL					/* value_table		*/
+		};
 
-    type = g_type_register_static(PURPLE_BLIST_NODE_TYPE,
-                    "PurpleChat",
-                    &info, 0);
-  }
+		type = g_type_register_static(PURPLE_BLIST_NODE_TYPE,
+										"PurpleChat",
+										&info, 0);
+	}
 
-  return type;
+	return type;
 }

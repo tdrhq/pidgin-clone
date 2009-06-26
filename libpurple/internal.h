@@ -288,6 +288,16 @@ void
 _purple_buddy_icon_set_old_icons_dir(const char *dirname);
 
 /**
+ * Initializes the buddy list subsystem.
+ */
+void purple_blist_init(void);
+
+/**
+ * Uninitializes the buddy list subsystem.
+ */
+void purple_blist_uninit(void);
+
+/**
  * Creates a connection to the specified account and either connects
  * or attempts to register a new account.  If you are logging in,
  * the connection uses the current active status for this account.

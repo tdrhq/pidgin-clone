@@ -60,21 +60,21 @@ purple_blist_get_last_child(PurpleBlistNode *node)
 void
 parse_setting(PurpleBlistNode *node, xmlnode *setting)
 {
-  const char *name = xmlnode_get_attrib(setting, "name");
-  const char *type = xmlnode_get_attrib(setting, "type");
-  char *value = xmlnode_get_data(setting);
+	const char *name = xmlnode_get_attrib(setting, "name");
+	const char *type = xmlnode_get_attrib(setting, "type");
+	char *value = xmlnode_get_data(setting);
 
-  if (!value)
-    return;
+	if (!value)
+		return;
 
-  if (!type || purple_strequal(type, "string"))
-    purple_blist_node_set_string(node, name, value);
-  else if (purple_strequal(type, "bool"))
-    purple_blist_node_set_bool(node, name, atoi(value));
-  else if (purple_strequal(type, "int"))
-    purple_blist_node_set_int(node, name, atoi(value));
+	if (!type || purple_strequal(type, "string"))
+		purple_blist_node_set_string(node, name, value);
+	else if (purple_strequal(type, "bool"))
+		purple_blist_node_set_bool(node, name, atoi(value));
+	else if (purple_strequal(type, "int"))
+		purple_blist_node_set_int(node, name, atoi(value));
 
-  g_free(value);
+	g_free(value);
 }
 
 /*****************************************************************************
@@ -148,12 +148,12 @@ purple_blist_node_set_ui_data(PurpleBlistNode *node, void *ui_data) {
 void
 purple_blist_update_node_icon(PurpleBlistNode *node)
 {
-  PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
-  g_return_if_fail(node != NULL);
+	g_return_if_fail(node != NULL);
 
-  if (ops && ops->update)
-    ops->update(purplebuddylist, node);
+	if (ops && ops->update)
+		ops->update(purplebuddylist, node);
 }
 
 
@@ -196,7 +196,7 @@ g_return_if_fail(source != NULL);
 void
 purple_blist_node_destroy(PurpleBlistNode *node)
 {
-  /* This function is only a hack for api breakage */
+	/* This function is only a hack for api breakage */
 	g_return_if_fail(PURPLE_IS_BLIST_NODE(node));
 	g_object_unref(G_OBJECT(node));
 }
@@ -385,7 +385,7 @@ static GObjectClass *parent_class = NULL;
 static void
 purple_blist_node_finalize(GObject *object)
 {
-  PurpleBlistNode *node = PURPLE_BLIST_NODE(object);
+	PurpleBlistNode *node = PURPLE_BLIST_NODE(object);
 	PurpleBlistUiOps *ui_ops;
 	PurpleBlistNode *child, *next_child;
 
@@ -393,7 +393,7 @@ purple_blist_node_finalize(GObject *object)
 	child = node->child;
 	while (child) {
 		next_child = child->next;
-		purple_blist_node_destroy(child);
+		g_object_unref(child);
 		child = next_child;
 	}
 
@@ -406,23 +406,24 @@ purple_blist_node_finalize(GObject *object)
 		ui_ops->remove(purplebuddylist, node);
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
-		purple_buddy_destroy((PurpleBuddy*)node);
+		g_object_unref(node);
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
-		purple_chat_destroy((PurpleChat*)node);
+		g_object_unref(node);
 	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
-		purple_contact_destroy((PurpleContact*)node);
+		g_object_unref(node);
 	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
-		purple_group_destroy((PurpleGroup*)node);
-  parent_class->finalize(object);
+		g_object_unref(node);
+
+	parent_class->finalize(object);
 }
 
 static void
 purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 {
-  GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
-  parent_class = g_type_class_peek_parent(klass);
-  obj_class->finalize = purple_blist_node_finalize;
+	parent_class = g_type_class_peek_parent(klass);
+	obj_class->finalize = purple_blist_node_finalize;
 }
 
 static void

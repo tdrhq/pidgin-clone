@@ -222,9 +222,9 @@ PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 void
 purple_group_destroy(PurpleGroup *group)
 {
-  /* This function is only a hack for api breakage */
-  g_return_if_fail(PURPLE_IS_GROUP(group));
-  g_object_unref(G_OBJECT(group));
+	/* This function is only a hack for api breakage */
+	g_return_if_fail(PURPLE_IS_GROUP(group));
+	g_object_unref(G_OBJECT(group));
 }
 
 const char *purple_group_get_name(PurpleGroup *group)
@@ -252,29 +252,29 @@ int purple_blist_get_group_online_count(PurpleGroup *group)
 
 PurpleGroup *purple_group_new(const char *name)
 {
-  PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-  PurpleGroup *group;
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleGroup *group;
 
-  g_return_val_if_fail(name  != NULL, NULL);
-  g_return_val_if_fail(*name != '\0', NULL);
+	g_return_val_if_fail(name  != NULL, NULL);
+	g_return_val_if_fail(*name != '\0', NULL);
 
-  group = purple_find_group(name);
-  if (group != NULL)
-    return group;
+	group = purple_find_group(name);
+	if (group != NULL)
+		 return group;
 
-  group = g_object_new(PURPLE_GROUP_TYPE, NULL);
-  group->name = purple_utf8_strip_unprintables(name);
-  group->totalsize = 0;
-  group->currentsize = 0;
-  group->online = 0;
-  purple_blist_node_initialize_settings((PurpleBlistNode *)group);
-  ((PurpleBlistNode *)group)->type = PURPLE_BLIST_GROUP_NODE;
+	group = g_object_new(PURPLE_GROUP_TYPE, NULL);
+	group->name = purple_utf8_strip_unprintables(name);
+	group->totalsize = 0;
+	group->currentsize = 0;
+	group->online = 0;
+	purple_blist_node_initialize_settings((PurpleBlistNode *)group);
+	((PurpleBlistNode *)group)->type = PURPLE_BLIST_GROUP_NODE;
 
-  if (ops && ops->new_node)
-    ops->new_node((PurpleBlistNode *)group);
+	if (ops && ops->new_node)
+		ops->new_node((PurpleBlistNode *)group);
 
-  PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
-  return group;
+	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
+	return group;
 }
 
 
@@ -287,7 +287,7 @@ static GObjectClass *parent_class = NULL;
 static void
 purple_group_finalize(GObject *object)
 {
-  PurpleGroup *group = PURPLE_GROUP(object);
+	PurpleGroup *group = PURPLE_GROUP(object);
 	g_hash_table_destroy(group->node.settings);
 	g_free(group->name);
 	PURPLE_DBUS_UNREGISTER_POINTER(group);
@@ -310,7 +310,7 @@ purple_group_init(GTypeInstance *instance, gpointer class)
 }
 
 GType
-purple_group_get_gtype(void)
+purple_group_get_type(void)
 {
 	static GType type = 0;
 

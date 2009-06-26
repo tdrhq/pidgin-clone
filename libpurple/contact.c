@@ -223,7 +223,7 @@ PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy)
 void
 purple_contact_destroy(PurpleContact *contact)
 {
-  /* This function is only a hack for api breakage */
+	/* This function is only a hack for api breakage */
 	g_return_if_fail(PURPLE_IS_CONTACT(contact));
 	g_object_unref(G_OBJECT(contact));
 }
@@ -289,7 +289,7 @@ static GObjectClass *parent_class = NULL;
 static void
 purple_contact_finalize(GObject *object)
 {
-  PurpleContact *contact = PURPLE_CONTACT(object);
+	PurpleContact *contact = PURPLE_CONTACT(object);
 	g_hash_table_destroy(contact->node.settings);
 	g_free(contact->alias);
 	PURPLE_DBUS_UNREGISTER_POINTER(contact);
@@ -312,7 +312,7 @@ purple_contact_init(GTypeInstance *instance, gpointer class)
 }
 
 GType
-purple_contact_get_gtype(void)
+purple_contact_get_type(void)
 {
 	static GType type = 0;
 

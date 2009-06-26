@@ -31,7 +31,6 @@
 #include "notify.h"
 #include "prefs.h"
 #include "privacy.h"
-#include "private.h"
 #include "prpl.h"
 #include "server.h"
 #include "signals.h"
@@ -54,24 +53,24 @@ typedef struct _PurpleBuddyListClass PurpleBuddyListClass;
  * The Buddy List
  */
 struct _PurpleBuddyList {
-  PurpleObject parent;
-	PurpleBlistNode *root;          /**< The first node in the buddy list */
+PurpleObject parent;
+	PurpleBlistNode *root;        /**< The first node in the buddy list */
 	GHashTable *buddies;          /**< Every buddy in this list */
-  
-  /**
-   * A hash table used for efficient lookups of buddies by name.
-   * PurpleAccount* => GHashTable*, with the inner hash table being
-   * struct _purple_hbuddy => PurpleBuddy*
-   */
-  GHashTable *buddies_cache;
+	
+	/**
+	 * A hash table used for efficient lookups of buddies by name.
+	 * PurpleAccount* => GHashTable*, with the inner hash table being
+	 * struct _purple_hbuddy => PurpleBuddy*
+	 */
+	GHashTable *buddies_cache;
 
-  guint          save_timer;
-  gboolean       blist_loaded;
+	guint save_timer;
+	gboolean blist_loaded;
 	void *ui_data;                /**< UI-specific data. */
 };
 
 struct _PurpleBuddyListClass {
-  PurpleObjectClass parent;
+	PurpleObjectClass parent;
 };
 
 static PurpleBlistUiOps *blist_ui_ops = NULL;
@@ -274,9 +273,9 @@ parse_group(xmlnode *groupnode)
 	if (!name)
 		name = _("Buddies");
 
-  group = purple_group_new(name);
-  purple_blist_add_group(group,
-     purple_blist_get_last_sibling(purplebuddylist->root));
+	group = purple_group_new(name);
+	purple_blist_add_group(group,
+	purple_blist_get_last_sibling(purplebuddylist->root));
 
 	for (cnode = groupnode->child; cnode; cnode = cnode->next) {
 		if (cnode->type != XMLNODE_TYPE_TAG)
@@ -401,9 +400,9 @@ void purple_blist_show()
 
 void purple_blist_destroy()
 {
-  /* This function is only a hack for api breakage */
-  g_return_if_fail(purplebuddylist != NULL);
-  g_object_unref(G_OBJECT(purplebuddylist));
+	/* This function is only a hack for api breakage */
+	g_return_if_fail(purplebuddylist != NULL);
+	g_object_unref(G_OBJECT(purplebuddylist));
 }
 
 void purple_blist_set_visible(gboolean show)
@@ -1521,7 +1520,7 @@ purple_blist_get_handle(void)
 void
 purple_blist_init(void)
 {
-  purplebuddylist = g_object_new(PURPLE_BUDDY_LIST_TYPE, NULL);
+	purplebuddylist = g_object_new(PURPLE_BUDDY_LIST_TYPE, NULL);
 }
 
 void
@@ -1561,21 +1560,21 @@ purple_blist_uninit(void)
 static void
 purple_blist_finalize(GObject *object)
 {
-  PurpleBuddyList *purplebuddylist = PURPLE_BUDDY_LIST(object);
+	PurpleBuddyList *purplebuddylist = PURPLE_BUDDY_LIST(object);
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
 	purple_debug(PURPLE_DEBUG_INFO, "blist", "Destroying\n");
 
 	if (ops && ops->destroy)
 		ops->destroy(purplebuddylist);
-  parent_class->finalize(object);
+	parent_class->finalize(object);
 }
 
 static void
 purple_blist_class_init(PurpleBuddyListClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-  void *handle = purple_blist_get_handle();
+	void *handle = purple_blist_get_handle();
 
 	parent_class = g_type_class_peek_parent(klass);
 	obj_class->finalize = purple_blist_finalize;
@@ -1672,15 +1671,15 @@ purple_blist_class_init(PurpleBuddyListClass *klass)
 static void
 purple_blist_instance_init(GTypeInstance *instance, gpointer class)
 {
-  PurpleBlistUiOps *ui_ops;
+	PurpleBlistUiOps *ui_ops;
 	GList *account;
-  PurpleBuddyList *gbl = PURPLE_BUDDY_LIST(instance);
+	PurpleBuddyList *gbl = PURPLE_BUDDY_LIST(instance);
 	PURPLE_DBUS_REGISTER_POINTER(gbl, PurpleBuddyList);
 
 	ui_ops = purple_blist_get_ui_ops();
 
-  #warning: This has to be set here or we cant add the buddies cache
-  purplebuddylist = gbl;
+	#warning: This has to be set here or we cant add the buddies cache
+	purplebuddylist = gbl;
 
 	gbl->buddies = g_hash_table_new_full((GHashFunc)_purple_blist_hbuddy_hash,
 					 (GEqualFunc)_purple_blist_hbuddy_equal,
@@ -1697,8 +1696,8 @@ purple_blist_instance_init(GTypeInstance *instance, gpointer class)
 	if (ui_ops != NULL && ui_ops->new_list != NULL)
 		ui_ops->new_list(gbl);
 
-  gbl->save_timer = 0;
-  gbl->blist_loaded = FALSE;
+	gbl->save_timer = 0;
+	gbl->blist_loaded = FALSE;
 
 	purple_blist_load();
 }
