@@ -59,7 +59,7 @@ static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs
 static void RepositionConvControls(HWND hwndConvDlg);
 static LRESULT CALLBACK InputBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd);
-static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs);
+static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs, LPTSTR szTitle);
 
 
 /**
@@ -154,6 +154,7 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				VULTURE_CONVERSATION *lpvconv = (VULTURE_CONVERSATION*)lParam;
 				TCITEM tcitem;
 				HWND hwndTabs = GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS);
+				VULTURE_CONV_GET_TITLE vcgt;
 
 				lpvconv->hwndContainer = hwnd;
 
@@ -176,7 +177,9 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				/* Set the title, both of the tab and in the
 				 * conversation window itself.
 				 */
-				SetConvTitle(lpvconv, hwndTabs);
+				vcgt.lpvconv = lpvconv;
+				VultureSingleSyncPurpleCall(PC_CONVGETTITLE, &vcgt);
+				SetConvTitle(lpvconv, hwndTabs, vcgt.szTitle ? vcgt.szTitle : TEXT(""));
 
 				/* Only strictly necessary if we're the only
 				 * tab.
@@ -223,7 +226,14 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				switch(lpvcchanged->pcut)
 				{
 				case PURPLE_CONV_UPDATE_TITLE:
-					SetConvTitle(lpvcchanged->lpvconv, hwndTabs);
+					{
+						VULTURE_CONV_GET_TITLE vcgt;
+
+						vcgt.lpvconv = lpvcchanged->lpvconv;
+						VultureSingleSyncPurpleCall(PC_CONVGETTITLE, &vcgt);
+						SetConvTitle(lpvcchanged->lpvconv, hwndTabs, vcgt.szTitle ? vcgt.szTitle : TEXT(""));
+					}
+
 					break;
 
 				default:
@@ -732,15 +742,14 @@ static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd)
  *
  * @param	lpvconv		Conversation.
  * @param	hwndTabs	Tab control.
+ * @param	szTitle		New title.
  */
-static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs)
+static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs, LPTSTR szTitle)
 {
 	TCITEM tcitem;
 
-	EnterCriticalSection(&lpvconv->sync.cs);
-		tcitem.mask = TCIF_TEXT;
-		tcitem.pszText = lpvconv->sync.szTitle;
-		TabCtrl_SetItem(hwndTabs, lpvconv->iTabIndex, &tcitem);
-		SetDlgItemText(lpvconv->hwndConv, IDC_STATIC_NAME, lpvconv->sync.szTitle);
-	LeaveCriticalSection(&lpvconv->sync.cs);
+	tcitem.mask = TCIF_TEXT;
+	tcitem.pszText = szTitle;
+	TabCtrl_SetItem(hwndTabs, lpvconv->iTabIndex, &tcitem);
+	SetDlgItemText(lpvconv->hwndConv, IDC_STATIC_NAME, szTitle);
 }

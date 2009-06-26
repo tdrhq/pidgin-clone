@@ -212,6 +212,14 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		PurpleBListNodeDoubleClicked((VULTURE_BLIST_NODE*)lppurplecall->lpvParam);
 		break;
 
+	case PC_CONVGETTITLE:
+		{
+			VULTURE_CONV_GET_TITLE *lpvcgt = (VULTURE_CONV_GET_TITLE*)lppurplecall->lpvParam;
+			lpvcgt->szTitle = PurpleConvGetTitle(lpvcgt->lpvconv->lpconv);
+		}
+		
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

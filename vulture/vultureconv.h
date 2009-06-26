@@ -37,13 +37,6 @@ typedef struct _VULTURE_CONVERSATION
 	int			iTabIndex;
 	WNDPROC			wndprocInputOrig;
 	PurpleConversationType	convtype;
-
-	/* Data still needed by the core thread after initialisation. */
-	struct
-	{
-		CRITICAL_SECTION	cs;
-		LPTSTR			szTitle;
-	} sync;
 } VULTURE_CONVERSATION;
 
 
@@ -66,6 +59,12 @@ typedef struct _VULTURE_CONV_CHANGED
 	VULTURE_CONVERSATION	*lpvconv;
 	PurpleConvUpdateType	pcut;
 } VULTURE_CONV_CHANGED;
+
+typedef struct _VULTURE_CONV_GET_TITLE
+{
+	VULTURE_CONVERSATION	*lpvconv;
+	LPTSTR			szTitle;
+} VULTURE_CONV_GET_TITLE;
 
 
 int VultureRegisterConvContainerWindowClass(void);

@@ -53,9 +53,6 @@ void PurpleNewConversation(PurpleConversation *lpconv)
 	 */
 	lpvconv->convtype = lpconv->type;
 
-	InitializeCriticalSection(&lpvconv->sync.cs);
-	lpvconv->sync.szTitle = VultureUTF8ToTCHAR(purple_conversation_get_title(lpconv));
-
 	VulturePostUIMessage(g_hwndMain, VUIMSG_NEWCONVERSATION, lpvconv);
 }
 
@@ -68,8 +65,6 @@ void PurpleNewConversation(PurpleConversation *lpconv)
  */
 void VultureFreeConversation(VULTURE_CONVERSATION *lpvconv)
 {
-	g_free(lpvconv->sync.szTitle);
-	DeleteCriticalSection(&lpvconv->sync.cs);
 	g_free(lpvconv);
 }
 
@@ -156,31 +151,30 @@ void PurpleConversationSend(VULTURE_CONV_SEND *lpvcsend)
 void PurpleConvChanged(PurpleConversation *lpconv, PurpleConvUpdateType pcut)
 {
 	VULTURE_CONVERSATION *lpvconv = lpconv->ui_data;
+	VULTURE_CONV_CHANGED *lpvcchanged;
 
 	if(!lpvconv)
 		return;
 
-	EnterCriticalSection(&lpvconv->sync.cs);
-	{
-		switch(pcut)
-		{
-		case PURPLE_CONV_UPDATE_TITLE:
-			{
-				VULTURE_CONV_CHANGED *lpvcchanged = g_new(VULTURE_CONV_CHANGED, 1);
+	/* Forward the message to the UI. */
 
-				lpvcchanged->lpvconv = lpvconv;
-				lpvcchanged->pcut = pcut;
+	lpvcchanged = g_new(VULTURE_CONV_CHANGED, 1);
 
-				g_free(lpvconv->sync.szTitle);
-				lpvconv->sync.szTitle = VultureUTF8ToTCHAR(purple_conversation_get_title(lpconv));
-				VulturePostUIMessage(g_hwndMain, VUIMSG_CONVCHANGED, lpvcchanged);
-			}
+	lpvcchanged->lpvconv = lpvconv;
+	lpvcchanged->pcut = pcut;
 
-			break;
+	VulturePostUIMessage(g_hwndMain, VUIMSG_CONVCHANGED, lpvcchanged);
+}
 
-		default:
-			break;
-		}
-	}
-	LeaveCriticalSection(&lpvconv->sync.cs);
+
+/**
+ * Gets the title of a conversation.
+ *
+ * @param	lpconv	Conversation.
+ * @param	pcut	Type of change.
+ */
+LPTSTR PurpleConvGetTitle(PurpleConversation *lpconv)
+{
+	const char *szTitle = purple_conversation_get_title(lpconv);
+	return szTitle ? VultureUTF8ToTCHAR(szTitle) : NULL;
 }
