@@ -26,6 +26,8 @@
   <li><a href="/download/source/">Source</a></li>
   <li><a href="/download/fedora_core">Fedora Core</a></li>
   <li><a href="/download/centos_rhel">CentOS / RHEL</a></li>
+  <li><a href="/download/mac/">Mac OS X</a></li>
+  <li><a href="/download/ubuntu/">Ubuntu</a></li>
 </ul>
 </noscript>
 
