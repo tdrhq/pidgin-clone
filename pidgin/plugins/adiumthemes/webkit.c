@@ -81,7 +81,6 @@ char *style_dir = NULL;
 char *template_path = NULL;
 char *css_path = NULL;
 
-static GList* get_theme_files ();
 static char *
 replace_message_tokens(char *text, gsize len, PurpleConversation *conv, const char *name, const char *alias, 
 			     const char *message, PurpleMessageFlags flags, time_t mtime)
@@ -422,6 +421,34 @@ purple_webkit_destroy_conv(PurpleConversation *conv)
 	default_destroy_conversation(conv);
 }
 
+static GList*
+get_theme_files() 
+{
+	GList *ret = NULL;
+        GDir *variants;
+	char *globe = g_build_filename(DATADIR, "pidgin", "webkit", "styles", NULL);
+	const char *css_file;
+	char *css;
+
+	if (style_dir != NULL) {
+		char *variant_dir = g_build_filename(style_dir, "Contents", "Resources", "Variants", NULL);
+		variants = g_dir_open(variant_dir, 0, NULL);
+		while ((css_file = g_dir_read_name(variants)) != NULL) {
+			if (!strstr(css_file, ".css")) {
+				continue;
+			}
+			css = g_build_filename(variant_dir, css_file, NULL);
+			ret = g_list_append(ret,css);
+		}
+		g_dir_close(variants);
+		g_free(variant_dir);
+	}
+	g_free(globe);
+
+	ret = g_list_sort (ret, (GCompareFunc)g_strcmp0);
+	return ret;	
+}
+
 static void
 variant_set_default ()
 {
@@ -546,32 +573,6 @@ plugin_unload(PurplePlugin *plugin)
 	return TRUE;
 }
 
-static GList *
-get_theme_files() {
-	GList *ret = NULL;
-        GDir *variants;
-	char *globe = g_build_filename(DATADIR, "pidgin", "webkit", "styles", NULL);
-	const char *css_file;
-	char *css;
-
-	if (style_dir != NULL) {
-		char *variant_dir = g_build_filename(style_dir, "Contents", "Resources", "Variants", NULL);
-		variants = g_dir_open(variant_dir, 0, NULL);
-		while ((css_file = g_dir_read_name(variants)) != NULL) {
-			if (!strstr(css_file, ".css")) {
-				continue;
-			}
-			css = g_build_filename(variant_dir, css_file, NULL);
-			ret = g_list_append(ret,css);
-		}
-		g_dir_close(variants);
-		g_free(variant_dir);
-	}
-	g_free(globe);
-
-	ret = g_list_sort (ret, (GCompareFunc)g_strcmp0);
-	return ret;	
-}
 
 static void
 variant_update_conversation (PurpleConversation *conv)
