@@ -512,13 +512,28 @@ purple_webkit_destroy_conv(PurpleConversation *conv)
 static void
 variant_set_default ()
 {
-	GList* all = get_theme_files ();
-	GList* copy = all;
+
+	GList* all;
+	GList* copy;
+	css_path = g_strdup (purple_prefs_get_string ("/plugins/gtk/adiumthemes/csspath"));
+
+	if (g_file_test (css_path, G_FILE_TEST_EXISTS))
+		return;
+	else {
+		g_free (css_path);
+		css_path = NULL;
+	}
+	
+	all = get_theme_files ();
+	copy = all;
 	if (css_path) {
 		g_free (css_path);
 		css_path = NULL;
 	}
-	if (all) css_path = g_strdup (all->data);
+	if (all) {
+		css_path = g_strdup (all->data);
+		purple_prefs_set_string ("/plugins/gtk/adiumthemes/csspath", css_path);
+	}
 	
 	while (all) {
 		g_free (all->data);
@@ -641,6 +656,8 @@ get_theme_files() {
 		g_free(variant_dir);
 	}
 	g_free(globe);
+
+	g_list_sort (ret, strcmp);
 	return ret;	
 }
 
@@ -665,6 +682,7 @@ variant_changed (GtkWidget* combobox, gpointer null)
 	g_free (name);
 	
 	css_path = g_build_filename (style_dir, "Contents", "Resources", "Variants", name_with_ext, NULL);
+	purple_prefs_set_string ("/plugins/gtk/adiumthemes/csspath", css_path);
 	g_free (name_with_ext);
 
 	/* update each conversation */
@@ -774,6 +792,11 @@ init_plugin(PurplePlugin *plugin) {
 	info.name = "Adium IMs";
 	info.summary = "Adium-like IMs with Pidgin";
 	info.description = "You can chat in Pidgin using Adium's WebKit view.";
+
+	purple_prefs_add_none ("/plugins");
+	purple_prefs_add_none ("/plugins/gtk");
+	purple_prefs_add_none ("/plugins/gtk/adiumthemes");
+	purple_prefs_add_string ("/plugins/gtk/adiumthemes/csspath", "");
 }
 
 PURPLE_INIT_PLUGIN(webkit, init_plugin, info)
