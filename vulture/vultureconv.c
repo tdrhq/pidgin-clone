@@ -180,6 +180,7 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				vcgt.lpvconv = lpvconv;
 				VultureSingleSyncPurpleCall(PC_CONVGETTITLE, &vcgt);
 				SetConvTitle(lpvconv, hwndTabs, vcgt.szTitle ? vcgt.szTitle : TEXT(""));
+				if(vcgt.szTitle) g_free(vcgt.szTitle);
 
 				/* Only strictly necessary if we're the only
 				 * tab.
@@ -232,6 +233,7 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 						vcgt.lpvconv = lpvcchanged->lpvconv;
 						VultureSingleSyncPurpleCall(PC_CONVGETTITLE, &vcgt);
 						SetConvTitle(lpvcchanged->lpvconv, hwndTabs, vcgt.szTitle ? vcgt.szTitle : TEXT(""));
+						if(vcgt.szTitle) g_free(vcgt.szTitle);
 					}
 
 					break;
