@@ -20,7 +20,7 @@
 
 <div class="box_download">
 
-<p>Ubuntu ships Pidgin but does not update it after a release (except for security issues). For those users who desire new releases of Pidgin, we have packaged Pidgin in a PPA. If you encounter problems with these packages, try <a href="../source">building from source</a> and <a href="/support">report the bug</a>.</p>
+<p>Ubuntu ships Pidgin but does not update it after a release (except for security issues and high-severity bugs). For those users who desire new releases of Pidgin, we have packaged Pidgin in a PPA. If you encounter problems with these packages, try <a href="../source">building from source</a> and <a href="/support">report the bug</a>.</p>
 <p>To setup the PPA, copy-and-paste these commands into a <a href="https://help.ubuntu.com/community/UsingTheTerminal#Starting%20a%20Terminal">terminal</a>:<br /></p>
 
 <p class='code'>sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com \
