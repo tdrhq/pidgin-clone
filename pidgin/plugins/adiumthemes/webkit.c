@@ -296,6 +296,15 @@ init_theme_for_webkit (PurpleConversation *conv)
 	g_free (template);
 }
 
+
+/* restore the non theme version of the conversation window */
+static void
+finalize_theme_for_webkit (PurpleConversation *conv)
+{
+	GtkWidget *webview = PIDGIN_CONVERSATION(conv)->webview;
+	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webview), "", "text/html", "UTF-8", "");
+}
+
 static char *
 escape_message(char *text)
 {
@@ -556,11 +565,17 @@ plugin_load(PurplePlugin *plugin)
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
+	GList *list;
 	/* Restore the default ui-ops */
 	uiops->write_conv = default_write_conv;
 	uiops->create_conversation = default_create_conversation;
 	uiops->destroy_conversation = default_destroy_conversation;
-	/* clear up everything */
+
+	list = purple_get_conversations ();
+	while (list) {
+		finalize_theme_for_webkit(list->data);
+		list = g_list_next(list);
+	}
 	return TRUE;
 }
 
