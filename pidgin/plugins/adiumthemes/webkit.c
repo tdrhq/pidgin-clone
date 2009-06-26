@@ -261,9 +261,7 @@ replace_template_tokens(char *text, int len, char *header, char *footer) {
 	g_string_append(str, ms[5]);
 	
 	g_strfreev(ms);
-	char* ret = g_string_free (str, FALSE);
-	printf ("%s\n", ret);
-	return ret;
+	return g_string_free (str, FALSE);
 }
 
 static GtkWidget *
@@ -331,7 +329,7 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, PurpleConversation * con
 	gboolean ret = TRUE;
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
         gtk_widget_grab_focus(gtkconv->entry);
-	gtk_widget_event(gtkconv->entry, event);
+	gtk_widget_event(gtkconv->entry, (GdkEvent*) event);
 	return ret;
 }
 
@@ -340,8 +338,9 @@ struct webkit_script {
 	char *script;
 };
 
-static gboolean purple_webkit_execute_script(struct webkit_script *script)
+static gboolean purple_webkit_execute_script(gpointer _script)
 {
+	struct webkit_script *script = (struct webkit_script*) _script;
 	printf ("%s\n", script->script);
 	webkit_web_view_execute_script(WEBKIT_WEB_VIEW(script->webkit), script->script);
 	g_free(script->script);
@@ -459,7 +458,6 @@ variant_set_default ()
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	GList *list;
 	char *file;
 
 	if (g_path_is_absolute (purple_user_dir())) 
@@ -571,7 +569,7 @@ get_theme_files() {
 	}
 	g_free(globe);
 
-	g_list_sort (ret, strcmp);
+	ret = g_list_sort (ret, (GCompareFunc)g_strcmp0);
 	return ret;	
 }
 
@@ -590,8 +588,10 @@ static void
 variant_changed (GtkWidget* combobox, gpointer null)
 {
 	char *name, *name_with_ext;
+	GList *list;
+
 	g_free (css_path);
-	name = gtk_combo_box_get_active_text (GTK_WIDGET (combobox));
+	name = gtk_combo_box_get_active_text (GTK_COMBO_BOX(combobox));
 	name_with_ext = g_strdup_printf ("%s.css", name);
 	g_free (name);
 	
@@ -600,7 +600,7 @@ variant_changed (GtkWidget* combobox, gpointer null)
 	g_free (name_with_ext);
 
 	/* update each conversation */
-	GList *list = purple_get_conversations ();
+	list = purple_get_conversations ();
 	while (list) {
 		variant_update_conversation (list->data);
 		list = g_list_next(list);
@@ -618,10 +618,9 @@ get_config_frame(PurplePlugin *plugin) {
 	while (theme) {
 		char *basename = g_path_get_basename(theme->data);
 		char *dirname = g_path_get_dirname(theme->data);
-		GtkTreeIter child;
 		if (!curdir || strcmp(curdir, dirname)) {
 			char *plist, *plist_xml;
-			int plist_len;
+			gsize plist_len;
 			xmlnode *node;
 			g_free(curdir);
 			curdir = strdup(dirname);
@@ -644,17 +643,19 @@ get_config_frame(PurplePlugin *plugin) {
 			}
 
 		}
-		char *temp = g_strndup (basename, strlen(basename)-4);
-		gtk_combo_box_append_text (combobox, temp);
+		
+		{
+			char *temp = g_strndup (basename, strlen(basename)-4);
+			gtk_combo_box_append_text (GTK_COMBO_BOX(combobox), temp);
+			g_free (temp);
+		}
 		if (g_str_has_suffix (css_path, basename))
 			def = index;
 		index ++;
-		g_free (temp);
 		theme = theme->next;
 	}
 
-	gtk_combo_box_set_active (combobox, def);
-
+	gtk_combo_box_set_active (GTK_COMBO_BOX(combobox), def);
 	g_signal_connect (G_OBJECT(combobox), "changed", G_CALLBACK(variant_changed), NULL);
 
 	return combobox;
