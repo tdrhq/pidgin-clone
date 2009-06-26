@@ -25,17 +25,10 @@
 
 #include "internal.h"
 #include "blist.h"
-#include "conversation.h"
 #include "dbus-maybe.h"
 #include "debug.h"
-#include "notify.h"
-#include "prefs.h"
-#include "privacy.h"
-#include "prpl.h"
 #include "server.h"
 #include "signals.h"
-#include "util.h"
-#include "value.h"
 #include "xmlnode.h"
 
 static GType purple_blist_get_gtype(void);
