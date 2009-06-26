@@ -699,7 +699,7 @@ get_config_frame(PurplePlugin *plugin) {
 	GList *theme = themes;
 	char *curdir = NULL;
 	GtkWidget *combobox = gtk_combo_box_new_text();	
-
+	int def = -1, index = 0;
 
 	while (theme) {
 		char *basename = g_path_get_basename(theme->data);
@@ -732,9 +732,14 @@ get_config_frame(PurplePlugin *plugin) {
 		}
 		char *temp = g_strndup (basename, strlen(basename)-4);
 		gtk_combo_box_append_text (combobox, temp);
+		if (g_str_has_suffix (css_path, basename))
+			def = index;
+		index ++;
 		g_free (temp);
 		theme = theme->next;
 	}
+
+	gtk_combo_box_set_active (combobox, def);
 
 	g_signal_connect (G_OBJECT(combobox), "changed", G_CALLBACK(variant_changed), NULL);
 
