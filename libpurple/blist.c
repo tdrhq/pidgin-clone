@@ -953,30 +953,6 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 	return ret;
 }
 
-GSList *purple_group_get_accounts(PurpleGroup *group)
-{
-	GSList *l = NULL;
-	PurpleBlistNode *gnode, *cnode, *bnode;
-
-	gnode = (PurpleBlistNode *)group;
-
-	for (cnode = gnode->child;  cnode; cnode = cnode->next) {
-		if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
-			if (!g_slist_find(l, ((PurpleChat *)cnode)->account))
-				l = g_slist_append(l, ((PurpleChat *)cnode)->account);
-		} else if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
-			for (bnode = cnode->child; bnode; bnode = bnode->next) {
-				if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
-					if (!g_slist_find(l, ((PurpleBuddy *)bnode)->account))
-						l = g_slist_append(l, ((PurpleBuddy *)bnode)->account);
-				}
-			}
-		}
-	}
-
-	return l;
-}
-
 void purple_blist_add_account(PurpleAccount *account)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();

@@ -24,7 +24,7 @@
 #define _BLIST_HELPERS_
 
 #include "internal.h"
-#include "blist.h"
+#include "blist-node.h"
 #include "conversation.h"
 #include "dbus-maybe.h"
 #include "debug.h"

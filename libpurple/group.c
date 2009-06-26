@@ -209,6 +209,30 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 	g_free(old_name);
 }
 
+GSList *purple_group_get_accounts(PurpleGroup *group)
+{
+	GSList *l = NULL;
+	PurpleBlistNode *gnode, *cnode, *bnode;
+
+	gnode = (PurpleBlistNode *)group;
+
+	for (cnode = gnode->child;  cnode; cnode = cnode->next) {
+		if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
+			if (!g_slist_find(l, ((PurpleChat *)cnode)->account))
+				l = g_slist_append(l, ((PurpleChat *)cnode)->account);
+		} else if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
+			for (bnode = cnode->child; bnode; bnode = bnode->next) {
+				if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
+					if (!g_slist_find(l, ((PurpleBuddy *)bnode)->account))
+						l = g_slist_append(l, ((PurpleBuddy *)bnode)->account);
+				}
+			}
+		}
+	}
+
+	return l;
+}
+
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);
