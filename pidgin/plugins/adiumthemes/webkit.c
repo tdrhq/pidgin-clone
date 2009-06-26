@@ -323,15 +323,6 @@ escape_message(char *text)
 	return g_string_free(str, FALSE);
 }
 
-static gboolean
-refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, PurpleConversation * conv) {
-	gboolean ret = TRUE;
-	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-        gtk_widget_grab_focus(gtkconv->entry);
-	gtk_widget_event(gtkconv->entry, (GdkEvent*) event);
-	return ret;
-}
-
 struct webkit_script {
 	GtkWidget *webkit;
 	char *script;
