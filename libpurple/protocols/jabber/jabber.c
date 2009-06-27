@@ -2383,7 +2383,7 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 			PurpleChat *chat = (PurpleChat*)cnode;
 			const char *room, *server;
 			GHashTable *components;
-			if(!PURPLE_BLIST_NODE_IS_CHAT(cnode))
+			if(!PURPLE_IS_CHAT(cnode))
 				continue;
 
 			if (purple_chat_get_account(chat) != account)

@@ -52,7 +52,7 @@ contact_to_xmlnode(PurpleBlistNode *cnode)
 	{
 		if (!PURPLE_BLIST_NODE_SHOULD_SAVE(bnode))
 			continue;
-		if (PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+		if (PURPLE_IS_BUDDY(bnode))
 		{
 			child = buddy_to_xmlnode(bnode);
 			xmlnode_insert_child(node, child);
@@ -108,7 +108,7 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 	{
 		PurpleBuddy *buddy;
 
-		if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+		if (!PURPLE_IS_BUDDY(bnode))
 			continue;
 
 		buddy = (PurpleBuddy*)bnode;
@@ -197,7 +197,6 @@ PurpleContact *purple_contact_new()
 	contact->currentsize = 0;
 	contact->online = 0;
 	purple_blist_node_initialize_settings((PurpleBlistNode *)contact);
-	((PurpleBlistNode *)contact)->type = PURPLE_BLIST_CONTACT_NODE;
 
 	if (ops && ops->new_node)
 		ops->new_node((PurpleBlistNode *)contact);
@@ -246,7 +245,7 @@ gboolean purple_contact_on_account(PurpleContact *c, PurpleAccount *account)
 	for (bnode = cnode->child; bnode; bnode = bnode->next) {
 		PurpleBuddy *buddy;
 
-		if (! PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+		if (! PURPLE_IS_BUDDY(bnode))
 			continue;
 
 		buddy = (PurpleBuddy *)bnode;

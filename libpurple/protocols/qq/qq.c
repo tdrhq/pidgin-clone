@@ -729,7 +729,7 @@ static void action_chat_quit(PurpleBlistNode * node)
 	gchar *num_str;
 	guint32 room_id;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_IS_CHAT(node));
 
 	g_return_if_fail(components != NULL);
 
@@ -749,7 +749,7 @@ static void action_chat_get_info(PurpleBlistNode * node)
 	gchar *num_str;
 	guint32 room_id;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_IS_CHAT(node));
 
 	g_return_if_fail(components != NULL);
 
@@ -769,7 +769,7 @@ static void _qq_menu_send_file(PurpleBlistNode * node, gpointer ignored)
 	PurpleConnection *gc;
 	qq_buddy_data *bd;
 
-	g_return_if_fail (PURPLE_BLIST_NODE_IS_BUDDY (node));
+	g_return_if_fail (PURPLE_IS_BUDDY (node));
 	buddy = (PurpleBuddy *) node;
 	bd = (qq_buddy_data *) purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 	/*	if (is_online (bd->status)) { */
@@ -829,7 +829,7 @@ static void qq_add_buddy_from_menu_cb(PurpleBlistNode *node, gpointer data)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -844,7 +844,7 @@ static void qq_modify_buddy_memo_from_menu_cb(PurpleBlistNode *node, gpointer da
 	PurpleConnection *gc;
 	guint32 bd_uid;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
 	g_return_if_fail(NULL != buddy);
@@ -911,10 +911,10 @@ static GList *qq_chat_menu(PurpleBlistNode *node)
 /* buddy-related menu shown up with right-click */
 static GList *qq_blist_node_menu(PurpleBlistNode * node)
 {
-	if(PURPLE_BLIST_NODE_IS_CHAT(node))
+	if(PURPLE_IS_CHAT(node))
 		return qq_chat_menu(node);
 
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if(PURPLE_IS_BUDDY(node))
 		return qq_buddy_menu((PurpleBuddy *) node);
 
 	return NULL;

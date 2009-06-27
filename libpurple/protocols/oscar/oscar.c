@@ -2591,7 +2591,7 @@ purple_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -6219,7 +6219,7 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	PurpleAccount *account;
 	const char *name;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	name = purple_buddy_get_name(buddy);
@@ -6280,7 +6280,7 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 
 	node = object;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
 	account = purple_buddy_get_account(buddy);
@@ -6310,7 +6310,7 @@ oscar_get_aim_info_cb(PurpleBlistNode *node, gpointer ignore)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -6405,7 +6405,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 
 
 GList *oscar_blist_node_menu(PurpleBlistNode *node) {
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if(PURPLE_IS_BUDDY(node)) {
 		return oscar_buddy_menu((PurpleBuddy *) node);
 	} else {
 		return NULL;

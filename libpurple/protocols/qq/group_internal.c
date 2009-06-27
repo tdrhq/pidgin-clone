@@ -397,7 +397,7 @@ void qq_room_data_initial(PurpleConnection *gc)
 	     node != NULL;
 		 node = purple_blist_node_get_sibling_next(node))
 	{
-		if ( !PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		if ( !PURPLE_IS_CHAT(node)) {
 			continue;
 		}
 		/* got one */

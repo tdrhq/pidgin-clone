@@ -2159,12 +2159,12 @@ add_completion_list(PidginCompletionData *data)
 
 	for (gnode = purple_blist_get_root(); gnode != NULL; gnode = gnode->next)
 	{
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+		if (!PURPLE_IS_GROUP(gnode))
 			continue;
 
 		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
 		{
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+			if (!PURPLE_IS_CONTACT(cnode))
 				continue;
 
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)

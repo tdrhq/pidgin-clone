@@ -436,7 +436,7 @@ create_string_field(PurpleRequestField *field, GntWidget **username)
 		PurpleBlistNode *node = purple_blist_get_root();
 		gboolean offline = purple_str_has_suffix(hint, "all");
 		for (; node; node = purple_blist_node_next(node, offline)) {
-			if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+			if (!PURPLE_IS_BUDDY(node))
 				continue;
 			gnt_entry_add_suggest(GNT_ENTRY(entry), purple_buddy_get_name((PurpleBuddy*)node));
 		}
@@ -447,7 +447,7 @@ create_string_field(PurpleRequestField *field, GntWidget **username)
 		PurpleBlistNode *node;
 		for (node = purple_blist_get_root(); node;
 				node = purple_blist_node_get_sibling_next(node)) {
-			if (PURPLE_BLIST_NODE_IS_GROUP(node))
+			if (PURPLE_IS_GROUP(node))
 				gnt_entry_add_suggest(GNT_ENTRY(entry), purple_group_get_name((PurpleGroup *)node));
 		}
 	}

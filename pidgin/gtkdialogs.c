@@ -1150,12 +1150,12 @@ pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 	cnode = ((PurpleBlistNode*)group)->child;
 
 	while (cnode) {
-		if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
+		if (PURPLE_IS_CONTACT(cnode)) {
 			bnode = cnode->child;
 			cnode = cnode->next;
 			while (bnode) {
 				PurpleBuddy *buddy;
-				if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
+				if (PURPLE_IS_BUDDY(bnode)) {
 					buddy = (PurpleBuddy*)bnode;
 					bnode = bnode->next;
 					if (purple_account_is_connected(buddy->account)) {
@@ -1166,7 +1166,7 @@ pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 					bnode = bnode->next;
 				}
 			}
-		} else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
+		} else if (PURPLE_IS_CHAT(cnode)) {
 			PurpleChat *chat = (PurpleChat *)cnode;
 			cnode = cnode->next;
 			if (purple_account_is_connected(chat->account))

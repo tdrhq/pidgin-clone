@@ -172,7 +172,6 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 		chat->alias = purple_utf8_strip_unprintables(alias);
 	chat->components = components;
 	purple_blist_node_initialize_settings((PurpleBlistNode *)chat);
-	((PurpleBlistNode *)chat)->type = PURPLE_BLIST_CHAT_NODE;
 
 	if (ops != NULL && ops->new_node != NULL)
 		ops->new_node((PurpleBlistNode *)chat);

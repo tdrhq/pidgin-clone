@@ -762,9 +762,9 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 		memcpy(&node, sd->data, sizeof(node));
 
-		if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		if (PURPLE_IS_CONTACT(node))
 			buddy = purple_contact_get_priority_buddy((PurpleContact *)node);
-		else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		else if (PURPLE_IS_BUDDY(node))
 			buddy = (PurpleBuddy *)node;
 		else
 			return;
@@ -3920,7 +3920,7 @@ generate_send_to_items(PidginWindow *win)
 					PurpleBuddy *buddy = (PurpleBuddy *)node;
 					PurpleAccount *account;
 
-					if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+					if (!PURPLE_IS_BUDDY(node))
 						continue;
 
 					account = purple_buddy_get_account(buddy);
@@ -4434,21 +4434,21 @@ blist_node_aliased_cb(PurpleBlistNode *node, const char *old_alias, PurpleConver
 	if (prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)
 		return;
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+	if (PURPLE_IS_CONTACT(node))
 	{
 		PurpleBlistNode *bnode;
 
 		for(bnode = node->child; bnode; bnode = bnode->next) {
 
-			if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+			if(!PURPLE_IS_BUDDY(bnode))
 				continue;
 
 			update_chat_alias((PurpleBuddy *)bnode, conv, gc, prpl_info);
 		}
 	}
-	else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+	else if (PURPLE_IS_BUDDY(node))
 		update_chat_alias((PurpleBuddy *)node, conv, gc, prpl_info);
-	else if (PURPLE_BLIST_NODE_IS_CHAT(node) &&
+	else if (PURPLE_IS_CHAT(node) &&
 			purple_conversation_get_account(conv) == ((PurpleChat*)node)->account)
 	{
 		if (old_alias == NULL || g_utf8_collate(old_alias, purple_conversation_get_title(conv)) == 0)
@@ -4510,7 +4510,7 @@ buddy_cb_common(PurpleBuddy *buddy, PurpleConversation *conv, gboolean is_buddy)
 static void
 buddy_added_cb(PurpleBlistNode *node, PurpleConversation *conv)
 {
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (!PURPLE_IS_BUDDY(node))
 		return;
 
 	buddy_cb_common(PURPLE_BUDDY(node), conv, TRUE);
@@ -4519,7 +4519,7 @@ buddy_added_cb(PurpleBlistNode *node, PurpleConversation *conv)
 static void
 buddy_removed_cb(PurpleBlistNode *node, PurpleConversation *conv)
 {
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (!PURPLE_IS_BUDDY(node))
 		return;
 
 	/* If there's another buddy for the same "dude" on the list, do nothing. */
@@ -5026,9 +5026,9 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 
 		n = *(PurpleBlistNode **)sd->data;
 
-		if (PURPLE_BLIST_NODE_IS_CONTACT(n))
+		if (PURPLE_IS_CONTACT(n))
 			b = purple_contact_get_priority_buddy((PurpleContact*)n);
-		else if (PURPLE_BLIST_NODE_IS_BUDDY(n))
+		else if (PURPLE_IS_BUDDY(n))
 			b = (PurpleBuddy*)n;
 		else
 			return;
@@ -5163,7 +5163,7 @@ buddy_update_cb(PurpleBlistNode *bnode, gpointer null)
 	GList *list;
 
 	g_return_if_fail(bnode);
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+	if (!PURPLE_IS_BUDDY(bnode))
 		return;
 
 	for (list = pidgin_conv_windows_get_list(); list; list = list->next)

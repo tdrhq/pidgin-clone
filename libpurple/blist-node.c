@@ -97,7 +97,7 @@ PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline)
 	do
 	{
 		ret = get_next_node(ret, TRUE);
-	} while (ret && PURPLE_BLIST_NODE_IS_BUDDY(ret) &&
+	} while (ret && PURPLE_IS_BUDDY(ret) &&
 			!purple_account_is_connected(purple_buddy_get_account((PurpleBuddy *)ret)));
 
 	return ret;
@@ -160,10 +160,10 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node)
 g_return_if_fail(source != NULL);
 	g_return_if_fail(node != NULL);
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+	if (PURPLE_IS_CONTACT(node)) {
 		target = (PurpleContact *)node;
 		prev = purple_blist_get_last_child(node);
-	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	} else if (PURPLE_IS_BUDDY(node)) {
 		target = (PurpleContact *)node->parent;
 		prev = node;
 	} else {
@@ -179,7 +179,7 @@ g_return_if_fail(source != NULL);
 	while (next) {
 		cur = next;
 		next = cur->next;
-		if (PURPLE_BLIST_NODE_IS_BUDDY(cur)) {
+		if (PURPLE_IS_BUDDY(cur)) {
 			purple_blist_add_buddy((PurpleBuddy *)cur, target, NULL, prev);
 			prev = cur;
 		}
@@ -228,13 +228,6 @@ purple_blist_node_get_flags(PurpleBlistNode *node)
 	g_return_val_if_fail(node != NULL, 0);
 
 	return node->flags;
-}
-
-PurpleBlistNodeType
-purple_blist_node_get_type(PurpleBlistNode *node)
-{
-	g_return_val_if_fail(node != NULL, PURPLE_BLIST_OTHER_NODE);
-	return node->type;
 }
 
 gboolean
@@ -398,13 +391,13 @@ purple_blist_node_finalize(GObject *object)
 	if (ui_ops && ui_ops->remove)
 		ui_ops->remove(purplebuddylist, node);
 
-	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (PURPLE_IS_BUDDY(node))
 		g_object_unref(node);
-	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
+	else if (PURPLE_IS_CHAT(node))
 		g_object_unref(node);
-	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+	else if (PURPLE_IS_CONTACT(node))
 		g_object_unref(node);
-	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
+	else if (PURPLE_IS_GROUP(node))
 		g_object_unref(node);
 
 	parent_class->finalize(object);

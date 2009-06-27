@@ -1718,7 +1718,7 @@ static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 	PurpleAccount *account;
 	GGPInfo *info;
 
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (!PURPLE_IS_BUDDY(node))
 		return NULL;
 
 	account = purple_buddy_get_account((PurpleBuddy *) node);

@@ -234,7 +234,6 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 	buddy->name     = purple_utf8_strip_unprintables(name);
 	buddy->alias    = purple_utf8_strip_unprintables(alias);
 	buddy->presence = purple_presence_new_for_buddy(buddy);
-	((PurpleBlistNode *)buddy)->type = PURPLE_BLIST_BUDDY_NODE;
 
 	purple_presence_set_status_active(buddy->presence, "offline", TRUE);
 

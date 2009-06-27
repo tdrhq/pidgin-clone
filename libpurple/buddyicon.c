@@ -860,9 +860,9 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 
 	g_return_val_if_fail(node != NULL, NULL);
 
-	if (!PURPLE_BLIST_NODE_IS_CONTACT(node) &&
-	    !PURPLE_BLIST_NODE_IS_CHAT(node) &&
-	    !PURPLE_BLIST_NODE_IS_GROUP(node)) {
+	if (!PURPLE_IS_CONTACT(node) &&
+	    !PURPLE_IS_CHAT(node) &&
+	    !PURPLE_IS_GROUP(node)) {
 		return NULL;
 	}
 
@@ -889,7 +889,7 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 	else
 		g_hash_table_remove(pointer_icon_cache, node);
 
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+	if (PURPLE_IS_CONTACT(node)) {
 		PurpleBlistNode *child;
 		for (child = purple_blist_node_get_first_child(node);
 		     child;
@@ -898,7 +898,7 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 			PurpleBuddy *buddy;
 			PurpleConversation *conv;
 
-			if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
+			if (!PURPLE_IS_BUDDY(child))
 				continue;
 
 			buddy = (PurpleBuddy *)child;
@@ -912,7 +912,7 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 			 * icon changes? */
 			purple_blist_update_node_icon((PurpleBlistNode*)buddy);
 		}
-	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+	} else if (PURPLE_IS_CHAT(node)) {
 		PurpleConversation *conv = NULL;
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, purple_chat_get_name((PurpleChat*)node), purple_chat_get_account((PurpleChat*)node));
@@ -945,9 +945,9 @@ purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
 
 	g_return_val_if_fail(node != NULL, NULL);
 
-	if (!PURPLE_BLIST_NODE_IS_CONTACT(node) &&
-	    !PURPLE_BLIST_NODE_IS_CHAT(node) &&
-	    !PURPLE_BLIST_NODE_IS_GROUP(node)) {
+	if (!PURPLE_IS_CONTACT(node) &&
+	    !PURPLE_IS_CHAT(node) &&
+	    !PURPLE_IS_GROUP(node)) {
 		return NULL;
 	}
 
@@ -1173,7 +1173,7 @@ _purple_buddy_icons_blist_loaded_cb()
 
 	while (node != NULL)
 	{
-		if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		if (PURPLE_IS_BUDDY(node))
 		{
 			const char *filename;
 
@@ -1202,9 +1202,9 @@ _purple_buddy_icons_blist_loaded_cb()
 				}
 			}
 		}
-		else if (PURPLE_BLIST_NODE_IS_CONTACT(node) ||
-		         PURPLE_BLIST_NODE_IS_CHAT(node) ||
-		         PURPLE_BLIST_NODE_IS_GROUP(node))
+		else if (PURPLE_IS_CONTACT(node) ||
+		         PURPLE_IS_CHAT(node) ||
+		         PURPLE_IS_GROUP(node))
 		{
 			const char *filename;
 
