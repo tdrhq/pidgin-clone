@@ -287,8 +287,10 @@ init_theme_for_webkit (PurpleConversation *conv)
 	footer = replace_header_tokens(footer_html, footer_html_len, conv);
 	template = replace_template_tokens(template_html, template_html_len + header_html_len, header, footer);
 
-	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
+	if (!g_object_get_data (G_OBJECT(webkit), "adium-themed"))
+		webkit_web_view_load_string(WEBKIT_WEB_VIEW(webkit), template, "text/html", "UTF-8", baseuri);
 
+	g_object_set_data (G_OBJECT(webkit), "adium-themed", GINT_TO_POINTER(1));
 	g_free (basedir);
 	g_free (baseuri);
 	g_free (header);
@@ -303,6 +305,7 @@ finalize_theme_for_webkit (PurpleConversation *conv)
 {
 	GtkWidget *webview = PIDGIN_CONVERSATION(conv)->webview;
 	webkit_web_view_load_string(WEBKIT_WEB_VIEW(webview), "", "text/html", "UTF-8", "");
+	g_object_set_data (G_OBJECT(webview), "adium-themed", NULL);
 }
 
 static char *
