@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>pidgin-facebookchat Changelog</title>
+		<atom:link href="http://pidgin-facebookchat.googlecode.com/svn/trunk/rss.xml" rel="self" type="application/rss+xml" />
+		<link>http://code.google.com/p/pidgin-facebookchat/wiki/Changelog</link>
+		<description>Recent updates for the Facebook plugin for Pidgin</description>
+		<language>en-NZ</language>
+		<image>
+			<title>pidgin-facebookchat Changelog</title>
+			<url>http://pidgin-facebookchat.googlecode.com/svn/trunk/facebook48.png</url>
+			<link>http://code.google.com/p/pidgin-facebookchat/</link>
+			<width>48</width><height>48</height>
+		</image>
+		<item>
+			<title>Version 1.51</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c44</link>
+			<description><![CDATA[Version 1.51 of the pidgin-facebookchat plugin is available for download.<br/>
+			<br/>
+			Download (as usual) from:<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">
+			http://code.google.com/p/pidgin-facebookchat/downloads/list</a><br/>
+			<br/>
+			A list of the changes to the plugin is at:<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/wiki/Changelog">
+			http://code.google.com/p/pidgin-facebookchat/wiki/Changelog</a><br/>
+			<br/>
+			If you're a package maintainer, you'll want to look at my blog post:<br/>
+			<a href="http://eion.robbmob.com/blog/2009/06/12/pidgin-facebookchat-v1-51-important-changes/">
+			http://eion.robbmob.com/blog/2009/06/12/pidgin-facebookchat-v1-51-important-changes/</a><br/>
+			(Shameless plug)<br/>
+			<br/>
+			And of course, if you like this plugin feel free to leave a comment or donation at<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/wiki/Donate">
+			http://code.google.com/p/pidgin-facebookchat/wiki/Donate</a>
+			]]></description>
+			<pubDate>Sat, 13 June 2009 19:24:19 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c44</guid>
+		</item>
+		<item>
+			<title>Version 1.50</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c42</link>
+			<description><![CDATA[So its been a while since the last version so I've bumped it up to v1.50.
+			<br/><br/>
+			This version should (hopefully) fix the bandwidth issues that people are having, as well as a crash-on-quit issue.			
+			<br/><br/>
+			Oh, and some people may be interested to try setting their status to 'idle' when they set their status to 'away'.  Maybe.  Haven't tried it :)
+			<br/><br/>
+			Download v1.50 of the plugin from:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a>]]></description>
+			<pubDate>Mon, 13 Apr 2009 00:03:29 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c42</guid>
+		</item>	
+		<item>
+			<title>Version 1.47</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c41</link>
+			<description><![CDATA[v1.47 Gets rid of the "(via Pidgin)" but when setting status message and fixes some rare crashes
+			<br/><br/>
+			Download v1.47 of the plugin from:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a>]]></description>
+			<pubDate>Wed, 31 Dec 2008 18:18:18 +1300</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c41</guid>
+		</item>	
+		<item>
+			<title>Version 1.46</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c40</link>
+			<description><![CDATA[v1.46 is out, and for once we didn't have any crashes to fix :)
+			<br/><br/>
+We've added support for Pokes, we've made the idle/away stuff work properly, the buddy icons are larger for everyone, and aliases work better on buddies.
+			<br/><br/>
+Just a bit of news: this Facebook plugin is now in Meebo, thanks to Mark Doliner from Meebo who is a "Project Member" of this plugin.  Also, Casey Ho (who has been doing a fantastic job of triaging issues) has been promoted to "Project Owner" so that he can mess around with the page a bit.
+			<br/><br/>
+I just wanted to say a big public thanks to both these people for their hard work.  This plugin gets thousands of downloads and it's so exciting for me to see the plugin in Meebo so that thousands more people can enjoy the plugin :)
+			<br/><br/>
+Without futher ado, grab v1.46 of the plugin from:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a>]]></description>
+			<pubDate>Mon, 29 Dec 2008 23:00:00 +1300</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c40</guid>
+		</item>
+		<item>
+			<title>Version 1.45</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c39</link>
+			<description><![CDATA[v1.45 Fixes a couple more crashes and some memory leaks.
+			<br/><br/>
+Go get v1.45 from:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a>]]></description>
+			<pubDate>Fri, 19 Dec 2008 00:00:00 +1300</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c39</guid>
+		</item>
+		<item>
+			<title>Version 1.44</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c38</link>
+			<description><![CDATA[v1.44 Fixes a couple of crashes and might help you if you're experiencing any problems.
+			<br/><br/>
+Go get v1.44 from:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a>]]></description>
+			<pubDate>Tue, 11 Dec 2008 00:00:00 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c38</guid>
+		</item>
+		<item>
+			<title>Version 1.43</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c37</link>
+			<description><![CDATA[v1.43 is available for download.
+			<br/><br/>
+It fixes 2 major crashes, and the status message now updates properly.  Also, the .deb package should work for Finch or libpurple installs now, and not just Pidgin.
+			<br/><br/>
+Go get v1.43 from:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a>
+			<br/><br/>
+Send us developers some hard-earned love at:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/wiki/Donate">http://code.google.com/p/pidgin-facebookchat/wiki/Donate</a> ]]></description>
+			<pubDate>Mon, 8 Dec 2008 00:00:00 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c37</guid>
+		</item>
+		<item>
+			<title>Version 1.41</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c35</link>
+			<description><![CDATA[v1.41 is out, hot on the heels of version 1.40... two releases in one day.
+			<br/><br/>
+The only real reason for this update is to address a couple of minor bugs and some annoying crashes.  That should be all of them.
+Also new to the table is an RSS feed at <a href="http://pidgin-facebookchat.googlecode.com/svn/trunk/rss.xml">http://pidgin-facebookchat.googlecode.com/svn/trunk/rss.xml</a>.  I'll keep updating the issue, so that you can still be kept up-to-date by email, but now you have another option.
+			<br/><br/>
+From now on, the minimum version of Pidgin you'll need is 2.3.0.  Also, the source package has changed slightly, so if you've got any automated build scripts you might want to update them.
+			<br/><br/>
+Go download v1.41 from:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a> ]]></description>
+			<pubDate>Wed, 3 Dec 2008 17:41:09 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c36</guid>
+		</item>
+		<item>
+			<title>Version 1.40</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c35</link>
+			<description><![CDATA[So thanks to the fantastic efforts of Mark and Casey, v1.40 is now available for download.  They've fixed most of the crashes and made the plugin really really stable.
+		<br/><br/>
+Go download v1.40 from:<br/>
+<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a> ]]></description>
+			<pubDate>Wed, 3 Dec 2008 07:31:09 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c35</guid>
+		</item>
+	</channel>
+</rss>
+
