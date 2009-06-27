@@ -31,6 +31,7 @@
 #include "vultureconv.h"
 #include "purpleconv.h"
 #include "purpleblist.h"
+#include "vultureblist.h"
 
 
 /** Queue node representing a libpurple call. */
@@ -214,8 +215,16 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 
 	case PC_CONVGETTITLE:
 		{
-			VULTURE_CONV_GET_TITLE *lpvcgt = (VULTURE_CONV_GET_TITLE*)lppurplecall->lpvParam;
-			lpvcgt->szTitle = PurpleConvGetTitle(lpvcgt->lpvconv->lpconv);
+			VULTURE_CONV_GET_STRING *lpvcgetstr = (VULTURE_CONV_GET_STRING*)lppurplecall->lpvParam;
+			lpvcgetstr->sz = PurpleConvGetTitle(lpvcgetstr->lpvconv->lpconv);
+		}
+		
+		break;
+
+	case PC_IMGETSTATUSMSG:
+		{
+			VULTURE_CONV_GET_STRING *lpvcgetstr = (VULTURE_CONV_GET_STRING*)lppurplecall->lpvParam;
+			lpvcgetstr->sz = PurpleIMGetStatusText(lpvcgetstr->lpvconv->lpconv);
 		}
 		
 		break;

@@ -242,3 +242,30 @@ void PurpleBListNodeDoubleClicked(VULTURE_BLIST_NODE *lpvbn)
 		purple_conversation_new(PURPLE_CONV_TYPE_IM, lpbuddy->account, lpbuddy->name);
 	}
 }
+
+
+/**
+ * Retrieves a buddy's status text. Adapted from pidgin_blist_get_name_markup.
+ *
+ * @param	lpbuddy		Buddy.
+ */
+LPTSTR PurpleBuddyGetStatusText(PurpleBuddy *lpbuddy)
+{
+	PurplePlugin *lppluginPrpl;
+
+	/* Find prpl for buddy. */
+	if((lppluginPrpl = purple_find_prpl(purple_account_get_protocol_id(lpbuddy->account))))
+	{
+		PurplePluginProtocolInfo *lpprplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(lppluginPrpl);
+
+		/* If prpl supports status text, get the text. */
+		if(lpprplinfo && lpprplinfo->status_text)
+		{
+			char *szStatus = lpprplinfo->status_text(lpbuddy);
+
+			return szStatus ? VultureUTF8ToTCHAR(szStatus) : NULL;
+		}
+	}
+
+	return NULL;
+}

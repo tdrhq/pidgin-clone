@@ -24,6 +24,7 @@
 #define _VULTURE_VULTUREBLIST_H_
 
 #include <windows.h>
+#include <glib.h>
 
 
 extern HWND g_hwndMain;

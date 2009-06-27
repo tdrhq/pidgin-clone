@@ -154,7 +154,6 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				VULTURE_CONVERSATION *lpvconv = (VULTURE_CONVERSATION*)lParam;
 				TCITEM tcitem;
 				HWND hwndTabs = GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS);
-				VULTURE_CONV_GET_TITLE vcgt;
 
 				lpvconv->hwndContainer = hwnd;
 
@@ -165,22 +164,15 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				lpvconv->iTabIndex = TabCtrl_InsertItem(hwndTabs, TabCtrl_GetItemCount(hwndTabs), &tcitem);
 
 				/* Create conversation dialogue. It is
-				 * initially disabled and hidden.
+				 * initially disabled and hidden. The window
+				 * handle is saved by the dialogue procedure.
 				 */
 				if(lpvconv->convtype == PURPLE_CONV_TYPE_IM)
-					lpvconv->hwndConv = CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_IM), hwndTabs, IMDlgProc, (LPARAM)lpvconv);
+					CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_IM), hwndTabs, IMDlgProc, (LPARAM)lpvconv);
 				else
-					lpvconv->hwndConv = CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_CHAT), hwndTabs, ChatDlgProc, (LPARAM)lpvconv);
+					CreateDialogParam(g_hInstance, MAKEINTRESOURCE(IDD_CHAT), hwndTabs, ChatDlgProc, (LPARAM)lpvconv);
 
 				SetWindowPos(lpvconv->hwndConv, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOREPOSITION | SWP_NOSIZE);
-
-				/* Set the title, both of the tab and in the
-				 * conversation window itself.
-				 */
-				vcgt.lpvconv = lpvconv;
-				VultureSingleSyncPurpleCall(PC_CONVGETTITLE, &vcgt);
-				SetConvTitle(lpvconv, hwndTabs, vcgt.szTitle ? vcgt.szTitle : TEXT(""));
-				if(vcgt.szTitle) g_free(vcgt.szTitle);
 
 				/* Only strictly necessary if we're the only
 				 * tab.
@@ -228,12 +220,12 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 				{
 				case PURPLE_CONV_UPDATE_TITLE:
 					{
-						VULTURE_CONV_GET_TITLE vcgt;
+						VULTURE_CONV_GET_STRING vcgetstring;
 
-						vcgt.lpvconv = lpvcchanged->lpvconv;
-						VultureSingleSyncPurpleCall(PC_CONVGETTITLE, &vcgt);
-						SetConvTitle(lpvcchanged->lpvconv, hwndTabs, vcgt.szTitle ? vcgt.szTitle : TEXT(""));
-						if(vcgt.szTitle) g_free(vcgt.szTitle);
+						vcgetstring.lpvconv = lpvcchanged->lpvconv;
+						VultureSingleSyncPurpleCall(PC_CONVGETTITLE, &vcgetstring);
+						SetConvTitle(lpvcchanged->lpvconv, hwndTabs, vcgetstring.sz ? vcgetstring.sz : TEXT(""));
+						if(vcgetstring.sz) g_free(vcgetstring.sz);
 					}
 
 					break;
@@ -415,6 +407,22 @@ static void RecalcTabIndices(HWND hwndTabs)
  */
 static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
+	switch(uiMsg)
+	{
+	case WM_INITDIALOG:
+		{
+			VULTURE_CONV_GET_STRING vcgetstring;
+
+			/* Set the status text. */
+			vcgetstring.lpvconv = (VULTURE_CONVERSATION*)lParam;
+			VultureSingleSyncPurpleCall(PC_IMGETSTATUSMSG, &vcgetstring);
+			SetDlgItemText(hwndDlg, IDC_STATIC_STATUS, vcgetstring.sz ? vcgetstring.sz : TEXT(""));
+			if(vcgetstring.sz) g_free(vcgetstring.sz);
+		}
+
+		break;
+	}
+
 	return ConvCommonDlgProc(hwndDlg, uiMsg, wParam, lParam);
 }
 
@@ -456,15 +464,32 @@ static INT_PTR CALLBACK ConvCommonDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wPara
 	{
 	case WM_INITDIALOG:
 		{
+			CONVCONTAINERDATA *lpccd;
 			HWND hwndREInput = GetDlgItem(hwndDlg, IDC_RICHEDIT_INPUT);
+			VULTURE_CONV_GET_STRING vcgetstring;
+			HWND hwndTabs;
 
 			/* Remember the conversation. */
 			lpvconv = (VULTURE_CONVERSATION*)lParam;
 			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, lParam);
 
+			lpvconv->hwndConv = hwndDlg;
+
+			/* Parent data. */
+			lpccd = (CONVCONTAINERDATA*)GetWindowLongPtr(lpvconv->hwndContainer, GWLP_USERDATA);
+			hwndTabs = GetDlgItem(lpccd->hwndTabDlg, IDC_TAB_CONVERSATIONS);
+
 			/* Subclass the input box. */
 			lpvconv->wndprocInputOrig = (WNDPROC)GetWindowLongPtr(hwndREInput, GWLP_WNDPROC);
 			SetWindowLongPtr(hwndREInput, GWLP_WNDPROC, (LONG)InputBoxSubclassProc);
+
+			/* Set the title, both of the tab and in the
+			 * conversation window itself.
+			 */
+			vcgetstring.lpvconv = lpvconv;
+			VultureSingleSyncPurpleCall(PC_CONVGETTITLE, &vcgetstring);
+			SetConvTitle(lpvconv, hwndTabs, vcgetstring.sz ? vcgetstring.sz : TEXT(""));
+			if(vcgetstring.sz) g_free(vcgetstring.sz);
 		}
 		
 		/* Let the system set the focus. */

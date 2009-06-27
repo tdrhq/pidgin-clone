@@ -35,6 +35,7 @@ void VultureFreeConvWrite(VULTURE_CONV_WRITE *lpvcwrite);
 void PurpleConversationSend(VULTURE_CONV_SEND *lpvcsend);
 void PurpleConvChanged(PurpleConversation *lpconv, PurpleConvUpdateType pcut);
 LPTSTR PurpleConvGetTitle(PurpleConversation *lpconv);
+LPTSTR PurpleIMGetStatusText(PurpleConversation *lpconv);
 
 
 #endif

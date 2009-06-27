@@ -60,11 +60,11 @@ typedef struct _VULTURE_CONV_CHANGED
 	PurpleConvUpdateType	pcut;
 } VULTURE_CONV_CHANGED;
 
-typedef struct _VULTURE_CONV_GET_TITLE
+typedef struct _VULTURE_CONV_GET_STRING
 {
 	VULTURE_CONVERSATION	*lpvconv;
-	LPTSTR			szTitle;
-} VULTURE_CONV_GET_TITLE;
+	LPTSTR			sz;
+} VULTURE_CONV_GET_STRING;
 
 
 int VultureRegisterConvContainerWindowClass(void);

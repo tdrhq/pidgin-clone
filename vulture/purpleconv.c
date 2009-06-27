@@ -29,6 +29,7 @@
 #include "purpleconv.h"
 #include "vultureconv.h"
 #include "purplemain.h"
+#include "purpleblist.h"
 
 
 
@@ -171,10 +172,28 @@ void PurpleConvChanged(PurpleConversation *lpconv, PurpleConvUpdateType pcut)
  * Gets the title of a conversation.
  *
  * @param	lpconv	Conversation.
- * @param	pcut	Type of change.
  */
 LPTSTR PurpleConvGetTitle(PurpleConversation *lpconv)
 {
-	const char *szTitle = purple_conversation_get_title(lpconv);
+	const char *szTitle;
+
+	if(!lpconv)
+		return NULL;
+
+	szTitle = purple_conversation_get_title(lpconv);
 	return szTitle ? VultureUTF8ToTCHAR(szTitle) : NULL;
+}
+
+
+/**
+ * Gets the status message of our interlocutor in an IM window.
+ *
+ * @param	lpconv	Conversation.
+ */
+LPTSTR PurpleIMGetStatusText(PurpleConversation *lpconv)
+{
+	if(!lpconv || lpconv->type != PURPLE_CONV_TYPE_IM)
+		return NULL;
+
+	return PurpleBuddyGetStatusText(purple_find_buddy(lpconv->account, lpconv->name));
 }
