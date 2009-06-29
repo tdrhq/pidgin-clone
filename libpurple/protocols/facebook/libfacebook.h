@@ -21,7 +21,8 @@
 #ifndef LIBFACEBOOK_H
 #define LIBFACEBOOK_H
 
-#define FACEBOOK_PLUGIN_VERSION "1.51"
+#define FACEBOOK_PLUGIN_VERSION "1.53"
+#define FACEBOOK_PLUGIN_ID "prpl-bigbrownchunx-facebookim"
 
 #include <glib.h>
 
@@ -70,8 +71,9 @@
 #	include <zlib.h>
 #endif
 
-#define FB_LAST_MESSAGE_MAX 10
 #define FB_MAX_MSG_RETRY 2
+
+#include <json-glib/json-glib.h>
 
 typedef struct _FacebookAccount FacebookAccount;
 typedef struct _FacebookBuddy FacebookBuddy;
@@ -85,16 +87,14 @@ struct _FacebookAccount {
 	GSList *dns_queries;
 	GHashTable *cookie_table;
 	gchar *post_form_id;
-	guint post_form_id_refresh_timer;
-	gint32 uid;
+	gint64 uid;
 	guint buddy_list_timer;
 	guint friend_request_timer;
 	gchar *channel_number;
 	guint message_fetch_sequence;
-	gint64 last_messages[FB_LAST_MESSAGE_MAX];
-	guint16 next_message_pointer;
+	gint64 last_message_time;
 	GSList *resending_messages;
-	GSList *auth_buddies;
+	GHashTable *auth_buddies;
 	GHashTable *hostname_ip_cache;
 	guint notifications_timer;
 	time_t last_messages_download_time;
@@ -109,14 +109,17 @@ struct _FacebookAccount {
 struct _FacebookBuddy {
 	FacebookAccount *fba;
 	PurpleBuddy *buddy;
-	gint32 uid;
+	gint64 uid;
 	gchar *name;
 	gchar *status;
 	gchar *status_rel_time;
 	gchar *thumb_url;
 };
 
+/* TODO: move util functions into a utils file */
 gchar *fb_strdup_withhtml(const gchar *src);
 gchar *fb_convert_unicode(const gchar *input);
+JsonParser *fb_get_parser(const gchar *data, gsize data_len);
+gint64 fb_time_kludge(int initial_time);
 
 #endif /* LIBFACEBOOK_H */

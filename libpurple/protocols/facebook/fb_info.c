@@ -65,6 +65,7 @@ static void fb_get_info_cb(FacebookAccount *fba, gchar *data, gsize data_len, gp
 	FacebookBuddy *fbuddy = NULL;
 
 	purple_debug_info("facebook", "get_info_cb\n");
+	purple_debug_info("facebook", "%s\n", data);
 
 	buddy = purple_find_buddy(fba->account, uid);
 	if (buddy)
@@ -86,6 +87,33 @@ static void fb_get_info_cb(FacebookAccount *fba, gchar *data, gsize data_len, gp
 	search_start = g_strstr_len(data, data_len, "<div id=\"info_tab\" class=\"info_tab\">");
 	if (search_start == NULL)
 	{
+		search_start = g_strstr_len(data, data_len, "http:\\/\\/");
+		if (search_start)
+		{
+			search_end = strstr(search_start, "\"");
+			value_tmp = g_strndup(search_start, search_end - search_start);
+			value_tmp2 = value_tmp;
+			if (value_tmp) {
+				char * buf = g_new(char, strlen(value_tmp) + 1); 
+				char * url = buf;
+				while(*value_tmp) { 
+				if (*value_tmp=='\\') {
+						// skip escape char 
+						*buf++ = value_tmp[1]; 
+						value_tmp += 2; 
+					} else { 
+						*buf++ = *value_tmp++; 
+					}
+				}
+				*buf = 0;
+				purple_debug_info("facebook", "info url: %s\n", url);
+				fb_post_or_get(fba->pc->proto_data, FB_METHOD_GET, NULL, url, NULL, fb_get_info_cb, g_strdup(uid), FALSE);
+				g_free(uid);
+				g_free(url);
+				g_free(value_tmp2);
+				return;
+			}
+		}
 		purple_debug_warning("facebook",
 				"could not find user info, showing default");
 		purple_notify_userinfo(fba->pc, uid, user_info, NULL, NULL);
@@ -177,12 +205,16 @@ static void fb_get_info_cb(FacebookAccount *fba, gchar *data, gsize data_len, gp
 		}
 
 		/* turn html to plaintext */
-		value_tmp2 = g_strchomp(purple_markup_strip_html(value_tmp));
-		g_free(value_tmp);
+		if (strcmp(label_tmp, "AIM")) {
+			value_tmp2 = g_strchomp(purple_markup_strip_html(value_tmp));
+			g_free(value_tmp);
+			value_tmp = value_tmp2;
 
-		/* remove the silly links */
-		value_tmp = fb_remove_useless_stripped_links(value_tmp2);
-		g_free(value_tmp2);
+			/* remove the silly links */
+			value_tmp2 = fb_remove_useless_stripped_links(value_tmp);
+			g_free(value_tmp);
+			value_tmp = value_tmp2;
+		}
 
 		purple_debug_info("facebook", "label: %s\n", label_tmp);
 		purple_debug_info("facebook", "value: %s\n", value_tmp);

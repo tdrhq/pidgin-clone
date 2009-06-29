@@ -21,6 +21,7 @@
 #include "libfacebook.h"
 #include "fb_blist.h"
 #include "fb_connection.h"
+#include "fb_conversation.h"
 #include "fb_info.h"
 #include "fb_managefriends.h"
 #include "fb_messages.h"
@@ -119,6 +120,43 @@ gchar *fb_strdup_withhtml(const gchar *src)
 	return dest;
 }
 
+JsonParser *fb_get_parser(const gchar *data, gsize data_len)
+{
+	JsonParser *parser;
+
+	if (data == NULL) {
+		return NULL;
+	}
+
+	data = g_strstr_len(data, data_len, "for (;;);");
+	if (!data) {
+		return NULL;
+	} else {
+		data += strlen("for (;;);");
+	}
+
+	parser = json_parser_new();
+	if (!json_parser_load_from_data(parser, data, -1, NULL)) {
+		g_object_unref(parser);
+		return NULL;
+	}
+
+	return parser;
+}
+
+gint64 fb_time_kludge(gint initial_time)
+{
+	if (sizeof(gint) >= sizeof(gint64))
+		return initial_time;
+	
+	gint64 now_millis = (gint64) time(NULL);
+	now_millis *= 1000;
+	now_millis &= 0xFFFFFFFF00000000LL;
+	gint64 final_time = now_millis | initial_time;
+
+	return final_time;
+}
+
 /******************************************************************************/
 /* PRPL functions */
 /******************************************************************************/
@@ -177,7 +215,11 @@ static GList *fb_statuses(PurpleAccount *account)
 	types = g_list_append(types, status);
 	
 	/* Cave into feature requests and allow people to set themselves to be idle */
-	status = purple_status_type_new_full(PURPLE_STATUS_AWAY, NULL, _("Idle"), FALSE, TRUE, FALSE);
+	status = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
+		NULL, _("Idle"), FALSE, TRUE, FALSE, "message",
+		_("Message"), purple_value_new(PURPLE_TYPE_STRING),
+		"message_date", _("Message changed"),
+		purple_value_new(PURPLE_TYPE_STRING), NULL);
 	types = g_list_append(types, status);
 
 	/* Offline people dont have messages */
@@ -219,8 +261,8 @@ static void fb_login_cb(FacebookAccount *fba, gchar *response, gsize len,
 				_("Incorrect username or password."));
 		return;
 	}
-	fba->uid = atoi(user_cookie);
-	purple_debug_info("facebook", "uid %d\n", fba->uid);
+	fba->uid = atoll(user_cookie);
+	purple_debug_info("facebook", "uid %" G_GINT64_FORMAT "\n", fba->uid);
 
 	/* ok, we're logged in now! */
 	purple_connection_set_state(fba->pc, PURPLE_CONNECTED);
@@ -255,12 +297,14 @@ static void fb_login_cb(FacebookAccount *fba, gchar *response, gsize len,
 	 */
 	fba->perpetual_messages_timer = purple_timeout_add_seconds(15,
 			(GSourceFunc)fb_get_messages_failsafe, fba);
+
+	/* init conversation subsystem */
+	fb_conversation_init(fba);
 }
 
 static void fb_login(PurpleAccount *account)
 {
 	FacebookAccount *fba;
-	guint16 i;
 	gchar *postdata, *encoded_username, *encoded_password, *encoded_charset_test;
 	const gchar* const *languages;
 	const gchar *locale;
@@ -277,12 +321,11 @@ static void fb_login(PurpleAccount *account)
 			g_free, g_free);
 	fba->sent_messages_hash = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, NULL);
+	fba->auth_buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, NULL);
 
 	g_hash_table_replace(fba->cookie_table, g_strdup("test_cookie"),
 			g_strdup("1"));
-
-	for (i = 0; i < FB_LAST_MESSAGE_MAX; i++)
-		fba->last_messages[i] = 0;
 
 	account->gc->proto_data = fba;
 
@@ -330,6 +373,11 @@ static void fb_close(PurpleConnection *pc)
 	g_return_if_fail(pc->proto_data != NULL);
 	
 	fba = pc->proto_data;
+
+	purple_debug_info("facebook", "unloading plugin\n");
+
+	/* destroy conversation subsystem */
+	fb_conversation_destroy(fba);
 
 	/* Tell Facebook that we've logged out. */
 	/*
@@ -398,9 +446,9 @@ static void fb_close(PurpleConnection *pc)
 
 	g_hash_table_destroy(fba->cookie_table);
 	g_hash_table_destroy(fba->hostname_ip_cache);
+	g_hash_table_destroy(fba->auth_buddies);
 	g_free(fba->post_form_id);
 	g_free(fba->channel_number);
-	g_slist_free(fba->auth_buddies);
 	g_free(fba->last_status_message);
 	g_free(fba);
 }
@@ -419,7 +467,7 @@ static unsigned int fb_send_typing(PurpleConnection *pc, const gchar *name,
 	typing_state = (state == PURPLE_TYPING) ? 1 : 0;
 
 	/* Don't send typing notifications to self */
-	if (atoi(name) != fba->uid)
+	if (atoll(name) != fba->uid)
 	{
 		encoded_name = g_strdup(purple_url_encode(name));
 		postdata = g_strdup_printf("typ=%d&to=%s&post_form_id=%s",
@@ -462,12 +510,12 @@ static void fb_set_status_ok_cb(gpointer data, const gchar *status_text)
 	if (*status_text_new != '\0')
 	{
 		status_tmp = g_strdup(purple_url_encode(status_text_new));
-		postdata = g_strdup_printf("profile_id=%d&status=%s&post_form_id=%s",
+		postdata = g_strdup_printf("profile_id=%" G_GINT64_FORMAT "&status=%s&post_form_id=%s",
 				fba->uid, status_tmp, fba->post_form_id);
 		g_free(status_tmp);
 	}
 	else
-		postdata = g_strdup_printf("profile_id=%d&clear=1&post_form_id=%s",
+		postdata = g_strdup_printf("profile_id=%" G_GINT64_FORMAT "&clear=1&post_form_id=%s",
 				fba->uid, fba->post_form_id);
 
 	fb_post_or_get(fba, FB_METHOD_POST, NULL, "/updatestatus.php",
@@ -519,23 +567,6 @@ static void fb_buddy_free(PurpleBuddy *buddy)
 	}
 }
 
-static void fb_convo_closed(PurpleConnection *gc, const char *who)
-{
-	FacebookAccount *fba = gc->proto_data;
-	gchar *postdata;
-
-	g_return_if_fail(fba->post_form_id != NULL);
-
-	/* notify server that we closed the chat window */
-	/* close_chat=589039771&window_id=3168919846&
-	 * post_form_id=c258fe42460c7e8b61e242a37ef05afc */
-	postdata = g_strdup_printf("close_chat=%s&post_form_id=%s", who,
-			fba->post_form_id);
-	fb_post_or_get(fba, FB_METHOD_POST, NULL, "/ajax/chat/settings.php",
-			postdata, NULL, NULL, FALSE);
-	g_free(postdata);
-}
-
 static GHashTable *fb_get_account_text_table(PurpleAccount *account)
 {
 	GHashTable *table;
@@ -567,7 +598,7 @@ static void fb_set_status_cb(PurplePluginAction *action)
 	FacebookAccount *fba = pc->proto_data;
 	gchar *uid_str;
 
-	uid_str = g_strdup_printf("%d", fba->uid);
+	uid_str = g_strdup_printf("%" G_GINT64_FORMAT, fba->uid);
 
 	purple_request_input(pc, NULL, _("Set your Facebook status"),
 			purple_account_get_alias(pc->account), "is ",
@@ -658,7 +689,7 @@ static void plugin_init(PurplePlugin *plugin)
 
 static PurplePluginProtocolInfo prpl_info = {
 	/* options */
-	OPT_PROTO_UNIQUE_CHATNAME,
+	OPT_PROTO_MAIL_CHECK,
 
 	NULL,                   /* user_splits */
 	NULL,                   /* protocol_options */
@@ -705,7 +736,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                   /* group_buddy */
 	NULL,                   /* rename_group */
 	fb_buddy_free,          /* buddy_free */
-	fb_convo_closed,        /* convo_closed */
+	fb_conversation_closed, /* convo_closed */
 	purple_normalize_nocase,/* normalize */
 	NULL,                   /* set_buddy_icon */
 	NULL,                   /* remove_group */
@@ -731,29 +762,29 @@ static PurplePluginProtocolInfo prpl_info = {
 
 static PurplePluginInfo info = {
 	PURPLE_PLUGIN_MAGIC,
-	2, /* major_version */
-	3, /* minor version */
-	PURPLE_PLUGIN_PROTOCOL, /* type */
-	NULL, /* ui_requirement */
-	0, /* flags */
-	NULL, /* dependencies */
-	PURPLE_PRIORITY_DEFAULT, /* priority */
-	"prpl-bigbrownchunx-facebookim", /* id */
-	"Facebook", /* name */
-	FACEBOOK_PLUGIN_VERSION, /* version */
-	N_("Facebook Protocol Plugin"), /* summary */
-	N_("Facebook Protocol Plugin"), /* description */
-	"Eion Robb <eionrobb@gmail.com>", /* author */
-	"http://pidgin-facebookchat.googlecode.com/", /* homepage */
-	plugin_load, /* load */
-	plugin_unload, /* unload */
-	NULL, /* destroy */
-	NULL, /* ui_info */
-	&prpl_info, /* extra_info */
-	NULL, /* prefs_info */
-	fb_actions, /* actions */
+	2,						/* major_version */
+	3, 						/* minor version */
+	PURPLE_PLUGIN_PROTOCOL, 			/* type */
+	NULL, 						/* ui_requirement */
+	0, 						/* flags */
+	NULL, 						/* dependencies */
+	PURPLE_PRIORITY_DEFAULT, 			/* priority */
+	FACEBOOK_PLUGIN_ID,				/* id */
+	"Facebook", 					/* name */
+	FACEBOOK_PLUGIN_VERSION, 			/* version */
+	N_("Facebook Protocol Plugin"), 		/* summary */
+	N_("Facebook Protocol Plugin"), 		/* description */
+	"Eion Robb <eionrobb@gmail.com>", 		/* author */
+	"http://pidgin-facebookchat.googlecode.com/",	/* homepage */
+	plugin_load, 					/* load */
+	plugin_unload, 					/* unload */
+	NULL, 						/* destroy */
+	NULL, 						/* ui_info */
+	&prpl_info, 					/* extra_info */
+	NULL, 						/* prefs_info */
+	fb_actions, 					/* actions */
 
-	/* padding */
+							/* padding */
 	NULL,
 	NULL,
 	NULL,

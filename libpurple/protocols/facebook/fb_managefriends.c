@@ -25,46 +25,52 @@ static void fb_auth_accept_cb(gpointer data)
 {
 	FacebookBuddy *fbuddy = data;
 	FacebookAccount *fba = fbuddy->fba;
+	gchar *buddy_uid;
 	gchar *postdata;
 
 	g_return_if_fail(fba != NULL);
 	g_return_if_fail(fba->post_form_id != NULL);
 	g_return_if_fail(fbuddy->uid != 0);
 
+	buddy_uid = g_strdup_printf("%" G_GINT64_FORMAT, fbuddy->uid);
+
 	postdata = g_strdup_printf(
-			"type=friend_add&id=%d&action=accept&post_form_id=%s",
-			fbuddy->uid, fba->post_form_id);
+			"type=friend_add&id=%s&action=accept&post_form_id=%s",
+			buddy_uid, fba->post_form_id);
 	fb_post_or_get(fba, FB_METHOD_POST, NULL, "/ajax/reqs.php",
 			postdata, NULL, NULL, FALSE);
+
+	g_hash_table_remove(fba->auth_buddies, buddy_uid);
+	
 	g_free(postdata);
-
-	fba->auth_buddies = g_slist_remove(fba->auth_buddies,
-			GINT_TO_POINTER(fbuddy->uid));
-
 	g_free(fbuddy);
+	g_free(buddy_uid);
 }
 
 static void fb_auth_reject_cb(gpointer data)
 {
 	FacebookBuddy *fbuddy = data;
 	FacebookAccount *fba = fbuddy->fba;
+	gchar *buddy_uid;
 	gchar *postdata;
 
 	g_return_if_fail(fba != NULL);
 	g_return_if_fail(fba->post_form_id != NULL);
 	g_return_if_fail(fbuddy->uid != 0);
 
+	buddy_uid = g_strdup_printf("%" G_GINT64_FORMAT, fbuddy->uid);
+
 	postdata = g_strdup_printf(
-			"type=friend_add&id=%d&action=reject&post_form_id=%s",
-			fbuddy->uid, fba->post_form_id);
+			"type=friend_add&id=%s&action=reject&post_form_id=%s",
+			buddy_uid, fba->post_form_id);
 	fb_post_or_get(fba, FB_METHOD_POST, NULL, "/ajax/reqs.php",
 			postdata, NULL, NULL, FALSE);
+
+	g_hash_table_remove(fba->auth_buddies, buddy_uid);
+	
 	g_free(postdata);
-
-	fba->auth_buddies = g_slist_remove(fba->auth_buddies,
-			GINT_TO_POINTER(fbuddy->uid));
-
 	g_free(fbuddy);
+	g_free(buddy_uid);
 }
 
 static void fb_check_friend_request_cb(FacebookAccount *fba, gchar *data,
@@ -89,10 +95,10 @@ static void fb_check_friend_request_cb(FacebookAccount *fba, gchar *data,
 				strchr(search_start, '"') - search_start);
 		purple_debug_info("facebook", "uid: %s\n", uid);
 
-		uid_int = atoi(uid);
+		uid_int = atoll(uid);
 
-		if (g_slist_find(fba->auth_buddies,
-				GINT_TO_POINTER(uid_int)) != NULL)
+		if (g_hash_table_lookup_extended(fba->auth_buddies,
+						uid, NULL, NULL))
 		{
 			/* we've already notified the user of this friend request */
 			g_free(uid);
@@ -130,13 +136,12 @@ static void fb_check_friend_request_cb(FacebookAccount *fba, gchar *data,
 				name, msg_plain, TRUE,
 				fb_auth_accept_cb, fb_auth_reject_cb, buddy);
 
+		/* Don't display an auth request for this buddy again */
+		g_hash_table_insert(fba->auth_buddies, uid, NULL);
+		
 		g_free(name);
 		g_free(uid);
-		g_free(msg_plain);
-		
-		/* Don't display an auth request for this buddy again */
-		fba->auth_buddies = g_slist_prepend(
-				fba->auth_buddies, GINT_TO_POINTER(uid_int));
+		g_free(msg_plain);		
 	}
 }
 
@@ -171,7 +176,7 @@ void fb_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group)
 		return;
 	}
 
-	if (atoi(buddy->name) == fba->uid)
+	if (atoll(buddy->name) == fba->uid)
 	{
 		purple_account_set_bool(fba->account,
 				"facebook_hide_self", FALSE);
@@ -200,7 +205,7 @@ static void fb_remove_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGrou
 	gchar *postdata;
 	FacebookAccount *fba = pc->proto_data;
 
-	if (atoi(buddy->name) == fba->uid)
+	if (atoll(buddy->name) == fba->uid)
 	{
 		purple_account_set_bool(fba->account, "facebook_hide_self", TRUE);
 		return;

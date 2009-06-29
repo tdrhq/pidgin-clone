@@ -13,6 +13,32 @@
 			<width>48</width><height>48</height>
 		</image>
 		<item>
+			<title>Version 1.53</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c46</link>
+			<description><![CDATA[<a href="http://www.pidgin.im">Pidgin 2.5.8</a> is available and so is 1.53 of pidgin-facebookchat.
+			<br/><br/>
+			We've fixed some important things such as no more missing messages, and buddy names working.  You can see all the neat things we've done at:<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/wiki/Changelog">http://code.google.com/p/pidgin-facebookchat/wiki/Changelog</a>
+			<br/><br/>
+			Thank you all for using the plugin!  If you feel like helping me pay for my fiancées $300/month medication bills I'd really appreciate a donation.  Even one or two dollars can go a long way.  You can donate at:<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/wiki/Donate">http://code.google.com/p/pidgin-facebookchat/wiki/Donate</a>
+			<br/><br/>
+			Otherwise, go grab the update from the usual place:<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a>]]></description>
+			<pubDate>Mon, 29 June 2009 20:56:20 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c46</guid>
+		</item>
+		<item>
+			<title>Version 1.52</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c45</link>
+			<description><![CDATA[Just uploaded version 1.52 which fixes an annoying crash sometimes.  Don't forget to download 2.5.7 of Pidgin while you're at it
+			<br/><br/>
+			Download pidgin-facebookchat from:<br/>
+			http://code.google.com/p/pidgin-facebookchat/downloads/list]]></description>
+			<pubDate>Mon, 22 June 2009 19:04:56 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c45</guid>
+		</item>
+		<item>
 			<title>Version 1.51</title>
 			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c44</link>
 			<description><![CDATA[Version 1.51 of the pidgin-facebookchat plugin is available for download.<br/>

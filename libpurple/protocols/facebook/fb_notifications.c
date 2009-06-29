@@ -30,8 +30,7 @@ static void fb_got_notifications_cb(FacebookAccount *fba, gchar *url_text, gsize
 	gchar month_string[4], weekday[4];
 	guint year, month, day, hour, minute, second;
 	long timezone;
-	gchar *subject, *url, *stripped_subject;
-	gchar *search_start = (gchar *)url_text;
+	gchar *subject, *url;
 
 	month_string[3] = weekday[3] = '\0';
 	year = month = day = hour = minute = second = 0;
@@ -42,21 +41,25 @@ static void fb_got_notifications_cb(FacebookAccount *fba, gchar *url_text, gsize
 	last_fetch_time = purple_account_get_int(fba->account, "facebook_notifications_last_fetch", 0);
 	/* purple_debug_info("facebook", "last fetch time: %zu\n", last_fetch_time); */
 
-	while (search_start && (search_start = strstr(search_start, "<item>")))
+	xmlnode *rss_root = xmlnode_from_str(url_text, len);
+	if (rss_root == NULL)
 	{
-		search_start = search_start + 6;
-
-		tmp = strstr(search_start, "<pubDate>");
-		if (!tmp)
-		{
-			purple_debug_error("facebook", "couldn't find date in rss feed\n");
-			return;
-		}
-		tmp += 9;
-		tmp = g_strndup(tmp, strchr(tmp, '<')-tmp);
-
+		return;
+	}
+	xmlnode *channel = xmlnode_get_child(rss_root, "channel");
+	if (channel == NULL)
+	{
+		xmlnode_free(rss_root);
+		return;
+	}
+	xmlnode *item = xmlnode_get_child(channel, "item");
+	for (; item != NULL; item = xmlnode_get_next_twin(item))
+	{
+		xmlnode *pubDate = xmlnode_get_child(item, "pubDate");
+		if (!pubDate)
+			continue;
+		tmp = xmlnode_get_data_unescaped(pubDate);
 		/* rss times are in Thu, 19 Jun 2008 15:51:25 -1100 format */
-		/* purple_debug_info("facebook", "pre time: %s\n", tmp); */
 		sscanf(tmp, "%3s, %2u %3s %4u %2u:%2u:%2u %5ld", (char*)&weekday, &day, (char*)&month_string, &year, &hour, &minute, &second, &timezone);
 		if (g_str_equal(month_string, "Jan")) month = 0;
 		else if (g_str_equal(month_string, "Feb")) month = 1;
@@ -79,13 +82,10 @@ static void fb_got_notifications_cb(FacebookAccount *fba, gchar *url_text, gsize
 
 		if (time_of_message <= 0)
 		{
-			/* there's no cross-platform, portable way of converting string to time */
-			/* that doesn't need a new version of glib, so just cheat */
+			/* there's no cross-platform, portable way of converting string to time
+			   which doesn't need a new version of glib, so just cheat */
 			time_of_message = second + 60*minute + 3600*hour + 86400*day + 2592000*month + 31536000*(year-1970);
 		}
-
-		/* purple_debug_info("facebook", "time of message: %zu\n", time_of_message); */
-		/* purple_debug_info("facebook", "time of message: %s\n", ctime(&time_of_message)); */
 
 		if (time_of_message > newest_message)
 		{
@@ -99,40 +99,28 @@ static void fb_got_notifications_cb(FacebookAccount *fba, gchar *url_text, gsize
 			/* so if this message is older than the last one, ignore rest */
 			break;
 		}
-
-		tmp = strstr(search_start, "<link>");
-		if (!tmp)
-		{
-			url = g_strdup("");
-		} else {
-			tmp += 6;
-			url = g_strndup(tmp, strchr(tmp, '<')-tmp);
-			/* convert &amp; to & */
-			tmp = purple_unescape_html(url);
-			g_free(url);
-			url = tmp;
-		}
-
-		tmp = strstr(search_start, "<title>");
-		if (!tmp)
-		{
-			subject = g_strdup("");
-		} else {
-			tmp += 7;
-			subject = g_strndup(tmp, strchr(tmp, '<')-tmp);
-		}
-		stripped_subject = purple_unescape_html(subject);
-		g_free(subject);
-		subject = stripped_subject;
 		
-		purple_debug_info("facebook", "subject: %s\n", subject);
-
+		xmlnode *link = xmlnode_get_child(item, "link");
+		if (link)
+		{
+			url = xmlnode_get_data_unescaped(link);
+		} else {
+			url = g_strdup("");
+		}
+		
+		xmlnode *title = xmlnode_get_child(item, "title");
+		if (title)
+		{
+			subject = xmlnode_get_data_unescaped(title);
+		} else {
+			subject = g_strdup("");
+		}
+		
 		purple_notify_email(fba->pc, subject, NULL, fba->account->username, url, NULL, NULL);
 		g_free(subject);
 		g_free(url);
-
-		search_start = strstr(search_start, "</item>");
 	}
+	xmlnode_free(rss_root);
 
 	if (newest_message > last_fetch_time)
 	{

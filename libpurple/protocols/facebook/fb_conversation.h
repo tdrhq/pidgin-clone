@@ -18,15 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FACEBOOK_BLIST_H
-#define FACEBOOK_BLIST_H
+#ifndef FACEBOOK_CONVERSATION_H
+#define FACEBOOK_CONVERSATION_H
 
 #include "libfacebook.h"
 
-gboolean fb_get_buddy_list(gpointer data);
-void fb_blist_poke_buddy(PurpleBlistNode *node, gpointer data);
+void fb_conversation_init(FacebookAccount *fba);
+void fb_conversation_destroy(FacebookAccount *fba);
 
-void fb_blist_set_alias(FacebookAccount *fba, const char *id,
-		const char *name);
+void fb_conversation_closed(PurpleConnection *gc, const char *who);
+gboolean fb_conversation_is_fb(PurpleConversation *conv);
 
-#endif /* FACEBOOK_BLIST_H */
+void fb_history_fetch(FacebookAccount *fba, const char *who,
+		gboolean display_all);
+void fb_conversation_handle_message(FacebookAccount *fba, const char *from,
+	const char *to, gint64 message_time, const gchar *message_orig,
+	gboolean log);
+
+#endif /* FACEBOOK_CONVERSATION_H */
