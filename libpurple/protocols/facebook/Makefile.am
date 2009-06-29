@@ -10,6 +10,8 @@ FACEBOOK_SOURCES = \
 	fb_blist.c \
 	fb_connection.h \
 	fb_connection.c \
+	fb_conversation.h \
+	fb_conversation.c \
 	fb_info.h \
 	fb_info.c \
 	fb_managefriends.h \
@@ -19,7 +21,9 @@ FACEBOOK_SOURCES = \
 	fb_notifications.h \
 	fb_notifications.c \
 	fb_search.h \
-	fb_search.c
+	fb_search.c \
+	fb_util.h \
+	fb_util.c
 
 AM_CFLAGS = $(st)
 
