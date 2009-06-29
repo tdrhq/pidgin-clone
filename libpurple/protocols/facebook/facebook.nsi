@@ -6,7 +6,7 @@ SetCompress off
 ; todo: SetBrandingImage
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "pidgin-facebookchat"
-!define PRODUCT_VERSION "1.51"
+!define PRODUCT_VERSION "1.53"
 !define PRODUCT_PUBLISHER "Eion Robb"
 !define PRODUCT_WEB_SITE "http://pidgin-facebookchat.googlecode.com/"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"

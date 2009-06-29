@@ -38,6 +38,7 @@ struct _FacebookConnection {
 	FacebookAccount *fba;
 	FacebookMethod method;
 	gchar *hostname;
+	gchar *url;
 	GString *request;
 	FacebookProxyCallbackFunc callback;
 	gpointer user_data;

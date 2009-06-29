@@ -123,6 +123,7 @@ void fb_connection_destroy(FacebookConnection *fbconn)
 	if (fbconn->input_watcher > 0)
 		purple_input_remove(fbconn->input_watcher);
 
+	g_free(fbconn->url);
 	g_free(fbconn->hostname);
 	g_free(fbconn);
 }
@@ -153,9 +154,6 @@ static void fb_update_cookies(FacebookAccount *fba, const gchar *headers)
 		cookie_value= g_strndup(cookie_start, cookie_end-cookie_start);
 		cookie_start = cookie_end;
 
-		purple_debug_info("facebook", "got cookie %s=%s\n",
-				cookie_name, cookie_value);
-
 		g_hash_table_replace(fba->cookie_table, cookie_name,
 				cookie_value);
 	}
@@ -184,8 +182,6 @@ static void fb_connection_process_data(FacebookConnection *fbconn)
 		tmp = g_memdup(tmp, len + 1);
 		tmp[len] = '\0';
 		fbconn->rx_buf[fbconn->rx_len - len] = '\0';
-		purple_debug_misc("facebook", "response headers\n%s\n",
-				fbconn->rx_buf);
 		fb_update_cookies(fbconn->fba, fbconn->rx_buf);
 
 #ifdef HAVE_ZLIB
@@ -203,8 +199,10 @@ static void fb_connection_process_data(FacebookConnection *fbconn)
 	g_free(fbconn->rx_buf);
 	fbconn->rx_buf = NULL;
 
-	if (fbconn->callback != NULL)
+	if (fbconn->callback != NULL) {
+		purple_debug_info("facebook", "executing callback for %s\n", fbconn->url);
 		fbconn->callback(fbconn->fba, tmp, len, fbconn->user_data);
+	}
 
 	g_free(tmp);
 }
@@ -312,13 +310,13 @@ static void fb_post_or_get_connect_cb(gpointer data, gint source,
 
 	if (error_message)
 	{
+		purple_debug_error("facebook", "post_or_get_connect failure to %s\n", fbconn->url);
 		purple_debug_error("facebook", "post_or_get_connect_cb %s\n",
 				error_message);
 		fb_fatal_connection_cb(fbconn);
 		return;
 	}
 
-	purple_debug_info("facebook", "post_or_get_connect_cb\n");
 	fbconn->fd = source;
 
 	/* TODO: Check the return value of write() */
@@ -355,8 +353,6 @@ static void fb_host_lookup_cb(GSList *hosts, gpointer data,
 	gchar *ip_address;
 	FacebookAccount *fba;
 	PurpleDnsQueryData *query;
-
-	purple_debug_info("facebook", "updating cache of dns addresses\n");
 
 	/* Extract variables */
 	host_lookup_list = data;
@@ -411,9 +407,6 @@ static void fb_host_lookup_cb(GSList *hosts, gpointer data,
 		g_free(hosts->data);
 		hosts = g_slist_delete_link(hosts, hosts);
 	}
-
-	purple_debug_info("facebook", "Host %s has IP %s\n",
-			hostname, ip_address);
 
 	g_hash_table_insert(fba->hostname_ip_cache, hostname, ip_address);
 }
@@ -538,8 +531,7 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	g_string_append_printf(request, "Accept-Language: %s\r\n", language_names);
 	g_free(language_names);
 
-	purple_debug_misc("facebook", "sending request headers:\n%s\n",
-			request->str);
+	purple_debug_info("facebook", "getting url %s\n", url);
 
 	g_string_append_printf(request, "\r\n");
 	if (method & FB_METHOD_POST)
@@ -549,11 +541,11 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 	 * it in the debug log.  Without this condition a user's password is
 	 * printed in the debug log */
 	if (method == FB_METHOD_POST)
-		purple_debug_misc("facebook", "sending request data:\n%s\n",
+		purple_debug_info("facebook", "sending request data:\n%s\n",
 			postdata);
 
 	g_free(cookies);
-	g_free(real_url);
+
 	/*
 	 * Do a separate DNS lookup for the given host name and cache it
 	 * for next time.
@@ -574,9 +566,6 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 
 		host_ip = g_hash_table_lookup(fba->hostname_ip_cache, host);
 		if (host_ip != NULL) {
-			purple_debug_info("facebook",
-					"swapping original host %s with cached value of %s\n",
-					host, host_ip);
 			host = host_ip;
 		} else if (fba->account && !fba->account->disconnecting) {
 			GSList *host_lookup_list = NULL;
@@ -596,6 +585,7 @@ void fb_post_or_get(FacebookAccount *fba, FacebookMethod method,
 
 	fbconn = g_new0(FacebookConnection, 1);
 	fbconn->fba = fba;
+	fbconn->url = real_url;
 	fbconn->method = method;
 	fbconn->hostname = g_strdup(host);
 	fbconn->request = request;
