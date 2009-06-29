@@ -18,8 +18,17 @@ version 2.6.0 (??/??/2009):
 	  from you on MSN.
 	* DNS servers are re-read when DNS queries fail in case the system has
 	  moved to a new network and the old servers are not accessible.
-	* Gadu-Gadu accounts can specify a server to which to connect.
+	* GnuTLS logging (disabled by default) can be controlled through the
+	  PURPLE_GNUTLS_DEBUG environment variable, which is an integer between
+	  0 and 9 (higher is more verbose). Higher values may reveal sensitive
+	  information.
+
+	Gadu-Gadu:
+	* Accounts can specify a server to which to connect.
 	  (Krzysztof "kreez" Tobola)
+	* Correctly show tooltip status for contacts with status messages.
+	  (Krzysztof "kkszysiu" Klinikowski)
+	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
 
 	XMPP:
 	* Voice & Video support with Jingle (XEP-0166, 0167, 0176, & 0177), voice
@@ -94,6 +103,11 @@ version 2.6.0 (??/??/2009):
 	* Support saving animated custom smileys as animated images or animated
 	  custom smileys. (Andrea Piccinelli)
 	* Support for keyboard navigation on the status icon. (Li Yuan)
+	* IMG tags without 'id' attributes are turned into links to the image URL.
+	  (Dmitry Petroff)
+	* Draw the user's buddy icon at the bottom of the Buddy List with rounded
+	  corners for visual consistency with the actual icons in the Buddy List.
+	  (Kosta Arvanitis)
 
 	Finch:
 	* The hardware cursor is updated correctly. This will be useful
@@ -106,6 +120,33 @@ version 2.6.0 (??/??/2009):
 	* Added "Disable Typing Notification Text" preference.
 	* Preferences have been reorganized into three tabs for Colors, Fonts, and
 	  Miscellaneous categories.
+
+version 2.5.8 (06/27/2009):
+	ICQ:
+	* Fix misparsing a web message as an SMS message. (Yuriy Kaminskiy)
+
+	MSN:
+	* Increase NS command history size to prevent crashes on buddy lists that
+	  have a lot of buddies on other networks like Yahoo!.
+
+	MySpace:
+	* Accounts with empty buddy lists are now properly marked as connected.
+	* Fix receiving messages from users of MySpace IM's web client.
+
+	Yahoo:
+	* Fixed phantom online buddies.  They should now properly disappear when
+	  signing out.
+	* Fixed the crashes some users were seeing with cn.scs.msg.yahoo.com in
+	  2.5.7.
+	* Fixed compiling on systems with glib 2.4.x or older.
+	* Fixed an issue with file transfers.  This may not resolve all issues,
+	  but it should resolve at least some of the most common ones.
+	* The pager server will automatically update to scsa.msg.yahoo.com if the
+	  user empties the field or if it is scs.msg.yahoo.com.  This should ease
+	  the pain of transition to the new login method.
+
+	XMPP:
+	* Fix an incompatibility betweeen Prosody and libpurple clients.
 
 version 2.5.7 (06/20/2009):
 	* Yahoo Protocol 16 support, including new HTTPS login method; this should
