@@ -81,6 +81,9 @@ void VultureFreeConversation(VULTURE_CONVERSATION *lpvconv)
  */
 void PurpleDestroyConversation(PurpleConversation *lpconv)
 {
+	/* This pointer is about to become invalid. */
+	((VULTURE_CONVERSATION*)lpconv->ui_data)->lpconv = NULL;
+
 	VulturePostUIMessage(g_hwndMain, VUIMSG_DESTROYEDCONVERSATION, (VULTURE_CONVERSATION*)lpconv->ui_data);
 }
 

@@ -197,6 +197,9 @@ void PurpleBlistRemoveNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 	if(!lpblistnode)
 		return;
 
+	/* This pointer is about to become invalid. */
+	((VULTURE_BLIST_NODE*)lpblistnode->ui_data)->lpblistnode = NULL;
+
 	VultureBListNodeRelease((VULTURE_BLIST_NODE*)lpblistnode->ui_data);
 }
 
@@ -230,7 +233,8 @@ void VultureBListNodeRelease(VULTURE_BLIST_NODE *lpvblnode)
  */
 void PurpleBListNodeDoubleClicked(VULTURE_BLIST_NODE *lpvbn)
 {
-	if(PURPLE_BLIST_NODE_IS_CONTACT(lpvbn->lpblistnode) || PURPLE_BLIST_NODE_IS_BUDDY(lpvbn->lpblistnode))
+	if(lpvbn->lpblistnode &&
+		(PURPLE_BLIST_NODE_IS_CONTACT(lpvbn->lpblistnode) || PURPLE_BLIST_NODE_IS_BUDDY(lpvbn->lpblistnode)))
 	{
 		PurpleBuddy *lpbuddy;
 
@@ -254,7 +258,7 @@ LPTSTR PurpleBuddyGetStatusText(PurpleBuddy *lpbuddy)
 	PurplePlugin *lppluginPrpl;
 
 	/* Find prpl for buddy. */
-	if((lppluginPrpl = purple_find_prpl(purple_account_get_protocol_id(lpbuddy->account))))
+	if(lpbuddy && (lppluginPrpl = purple_find_prpl(purple_account_get_protocol_id(lpbuddy->account))))
 	{
 		PurplePluginProtocolInfo *lpprplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(lppluginPrpl);
 
