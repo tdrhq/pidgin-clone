@@ -1,0 +1,150 @@
+/**
+ * @file blist.h Buddy List API
+ * @ingroup core
+ * @see @ref blist-signals
+ */
+
+/* purple
+ *
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+#ifndef _PURPLE_GROUP_H_
+#define _PURPLE_GROUP_H_
+
+#include <glib.h>
+
+/** @copydoc _PurpleGroup */
+typedef struct _PurpleGroup PurpleGroup;
+typedef struct _PurpleGroupClass PurpleGroupClass;
+
+#include "buddy.h"
+#include "chat.h"
+#include "contact.h"
+
+#define PURPLE_GROUP_TYPE                  (purple_group_get_type ())
+#define PURPLE_GROUP(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_GROUP_TYPE, PurpleGroup))
+#define PURPLE_IS_GROUP(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_GROUP_TYPE))
+#define PURPLE_GROUP_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_GROUP_TYPE, PurpleGroupClass))
+#define PURPLE_IS_GROUP_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_GROUP_TYPE))
+#define PURPLE_GET_GROUP_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_GROUP_TYPE, PurpleGroupClass))
+
+#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_GROUP_C_)
+/**
+ * A group.  This contains everything Purple will ever need to know about a group.
+ */
+struct _PurpleGroup {
+	PurpleBlistNode node;                    /**< The node that this group inherits from */
+	char *name;                            /**< The name of this group. */
+	int totalsize;			       /**< The number of chats and contacts in this group */
+	int currentsize;		       /**< The number of chats and contacts in this group corresponding to online accounts */
+	int online;			       /**< The number of chats and contacts in this group who are currently online */
+};
+
+struct _PurpleGroupClass {
+	PurpleBlistNodeClass parent;
+};
+#endif
+
+/**
+ * Creates a new group
+ *
+ * You can't have more than one group with the same name.  Sorry.  If you pass
+ * this the name of a group that already exists, it will return that group.
+ *
+ * @param name   The name of the new group
+ * @return       A new group struct
+*/
+PurpleGroup *purple_group_new(const char *name);
+
+/**
+ * Destroys a group
+ *
+ * @param group  The group to destroy
+*/
+void purple_group_destroy(PurpleGroup *group);
+
+/**
+ * Returns the group of which the buddy is a member.
+ *
+ * @param buddy   The buddy
+ * @return        The group or NULL if the buddy is not in a group
+ */
+PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
+
+/**
+ * Returns a list of accounts that have buddies in this group
+ *
+ * @param g The group
+ *
+ * @return A GSList of accounts (which must be freed), or NULL if the group
+ *         has no accounts.
+ */
+GSList *purple_group_get_accounts(PurpleGroup *g);
+
+/**
+ * Determines whether an account owns any buddies in a given group
+ *
+ * @param g       The group to search through.
+ * @param account The account.
+ *
+ * @return TRUE if there are any buddies in the group, or FALSE otherwise.
+ */
+gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account);
+
+/**
+ * Returns the name of a group.
+ *
+ * @param group The group.
+ *
+ * @return The name of the group.
+ */
+const char *purple_group_get_name(PurpleGroup *group);
+
+/**
+ * Determines the total size of a group
+ *
+ * @param group  The group
+ * @param offline Count buddies in offline accounts
+ * @return The number of buddies in the group
+ */
+int purple_blist_get_group_size(PurpleGroup *group, gboolean offline);
+
+/**
+ * Returns the group of which the chat is a member.
+ *
+ * @param chat The chat.
+ *
+ * @return The parent group, or @c NULL if the chat is not in a group.
+ */
+PurpleGroup *purple_chat_get_group(PurpleChat *chat);
+
+/**
+ * Determines the number of online buddies in a group
+ *
+ * @param group The group
+ * @return The number of online buddies in the group, or 0 if the group is NULL
+ */
+int purple_blist_get_group_online_count(PurpleGroup *group);
+
+/**
+ * Get the GType for PurpleGroup
+ */
+GType purple_group_get_type(void);
+
+#endif
