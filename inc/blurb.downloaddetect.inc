@@ -10,7 +10,7 @@
 
   if (strstr($useragent, 'Win')) {
     $download_os = "for Windows";
-    $download_link = "http://downloads.sourceforge.net/pidgin/pidgin-$pidgin_version.exe";
+    $download_link = "http://sourceforge.net/projects/pidgin/files/Pidgin/pidgin-$pidgin_version.exe";
     $download_goal = "/goals/downloads/win";
   } else if (strstr($useragent, "Ubuntu")) {
     // Once the PPA is ready to go public, we'll have a separate Ubuntu page.

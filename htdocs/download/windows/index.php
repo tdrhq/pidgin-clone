@@ -20,7 +20,7 @@
 
 <div class="box_download">
 
-<p><a href="http://downloads.sourceforge.net/pidgin/pidgin-<? echo $pidgin_version; ?>.exe"
+<p><a href="http://sourceforge.net/projects/pidgin/files/Pidgin/pidgin-<? echo $pidgin_version; ?>.exe"
 onclick="javascript:pageTracker._trackPageview('/goals/downloads/win');"
 >
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
@@ -30,7 +30,7 @@ onclick="javascript:pageTracker._trackPageview('/goals/downloads/win');"
 
 </div>
 
-<p>If your GTK+ is already downloaded and up to date, we have a smaller <a href="http://downloads.sourceforge.net/pidgin/pidgin-<? echo $pidgin_version; ?>-no-gtk.exe">installer without GTK+</a>. </p>
+<p>If your GTK+ is already downloaded and up to date, we have a smaller <a href="http://sourceforge.net/projects/pidgin/files/Pidgin/pidgin-<? echo $pidgin_version; ?>-no-gtk.exe">installer without GTK+</a>. </p>
 
 
 </div>

@@ -20,7 +20,7 @@
 
 <div class="box_download">
 
-<p><a href="http://downloads.sourceforge.net/pidgin/pidgin-<? echo $pidgin_version; ?>.tar.bz2"
+<p><a href="http://sourceforge.net/projects/pidgin/files/Pidgin/pidgin-<? echo $pidgin_version; ?>.tar.bz2"
 onclick="javascript:pageTracker._trackPageview('/goals/downloads/source');"
 >
 <img src="/shared/img/button.download.png" alt="[Down Arrow]" id="downbutton" />
