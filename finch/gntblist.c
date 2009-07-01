@@ -744,7 +744,7 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 			purple_blist_add_group(grp, NULL);
 		}
 		purple_blist_add_chat(chat, grp, NULL);
-		purple_blist_alias_chat(chat, alias);
+		purple_chat_set_alias(chat, alias);
 		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gnt-autojoin", autojoin);
 		if (autojoin) {
 			join_chat(chat);
@@ -1389,7 +1389,7 @@ rename_blist_node(PurpleBlistNode *node, const char *newname)
 		purple_blist_alias_buddy((PurpleBuddy*)node, name);
 		serv_alias_buddy((PurpleBuddy*)node);
 	} else if (PURPLE_IS_CHAT(node))
-		purple_blist_alias_chat((PurpleChat*)node, name);
+		purple_chat_set_alias((PurpleChat*)node, name);
 	else if (PURPLE_IS_GROUP(node) && (name != NULL))
 		purple_blist_rename_group((PurpleGroup*)node, name);
 	else

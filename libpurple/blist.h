@@ -397,17 +397,6 @@ PurpleGroup *purple_find_group(const char *name);
 PurpleChat *purple_blist_find_chat(PurpleAccount *account, const char *name);
 
 /**
- * Returns the account the chat belongs to.
- *
- * @param chat  The chat.
- *
- * @return  The account the chat belongs to.
- *
- * @since 2.4.0
- */
-PurpleAccount *purple_chat_get_account(PurpleChat *chat);
-
-/**
  * Called when an account connects.  Tells the UI to update all the
  * buddies.
  *

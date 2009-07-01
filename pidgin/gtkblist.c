@@ -635,7 +635,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 			purple_blist_rename_group(PURPLE_GROUP(node), arg2);
 		}
 	} else if(PURPLE_IS_CHAT(node)) {
-		purple_blist_alias_chat(PURPLE_CHAT(node), arg2);
+		purple_chat_set_alias(PURPLE_CHAT(node), arg2);
 	}
 	pidgin_blist_refresh(list);
 }

@@ -123,7 +123,7 @@ parse_chat(PurpleGroup *group, xmlnode *cnode)
 	g_free(alias);
 }
 
-void purple_blist_alias_chat(PurpleChat *chat, const char *alias)
+void purple_chat_set_alias(PurpleChat *chat, const char *alias)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	char *old_alias;
@@ -156,28 +156,6 @@ void purple_blist_alias_chat(PurpleChat *chat, const char *alias)
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
 					 chat, old_alias);
 	g_free(old_alias);
-}
-
-PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components)
-{
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleChat *chat;
-
-	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(components != NULL, FALSE);
-
-	chat = g_object_new(PURPLE_CHAT_TYPE, NULL);
-	chat->account = account;
-	if ((alias != NULL) && (*alias != '\0'))
-		chat->alias = purple_utf8_strip_unprintables(alias);
-	chat->components = components;
-	purple_blist_node_initialize_settings((PurpleBlistNode *)chat);
-
-	if (ops != NULL && ops->new_node != NULL)
-		ops->new_node((PurpleBlistNode *)chat);
-
-	PURPLE_DBUS_REGISTER_POINTER(chat, PurpleChat);
-	return chat;
 }
 
 void
@@ -222,6 +200,14 @@ purple_chat_get_account(PurpleChat *chat)
 	return chat->account;
 }
 
+static void
+purple_chat_set_account(PurpleChat *chat, PurpleAccount *account)
+{
+	g_return_if_fail(chat != NULL);
+
+	chat->account = account;
+}
+
 GHashTable *
 purple_chat_get_components(PurpleChat *chat)
 {
@@ -230,11 +216,45 @@ purple_chat_get_components(PurpleChat *chat)
 	return chat->components;
 }
 
+static void
+purple_chat_set_components(PurpleChat *chat, GHashTable *components)
+{
+	g_return_if_fail(chat != NULL);
+
+	chat->components = components;
+}
+
 /******************/
 /*  GObject Code  */
 /******************/
 
+enum {
+	PROP_0,
+	PROP_ALIAS,
+	PROP_ACCOUNT,
+	PROP_COMPONENTS,
+	PROP_LAST
+};
+
+#define PROP_ALIAS_S "alias"
+#define PROP_ACCOUNT_S "account"
+#define PROP_COMPONENTS_S "components"
+
 static GObjectClass *parent_class = NULL;
+
+PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components)
+{
+	PurpleChat *chat;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(components != NULL, FALSE);
+
+	chat = g_object_new(PURPLE_CHAT_TYPE, 
+									PROP_ACCOUNT_S, account, 
+									PROP_ALIAS_S, alias, 
+									PROP_COMPONENTS_S, components);
+	return chat;
+}
 
 static void
 purple_chat_finalize(GObject *object)
@@ -248,18 +268,89 @@ purple_chat_finalize(GObject *object)
 }
 
 static void
+purple_chat_set_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleChat *chat = PURPLE_CHAT(obj);
+	switch(param_id){
+		case PROP_ALIAS:
+			purple_chat_set_alias(chat, g_value_get_string(value));
+			break;
+		case PROP_ACCOUNT:
+			purple_chat_set_account(chat, g_value_get_object(value));
+			break;
+		case PROP_COMPONENTS:
+			purple_chat_set_components(chat, g_value_get_object(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+	}
+}
+
+static void
+purple_chat_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleChat *chat = PURPLE_CHAT(obj);
+	switch(param_id){
+		case PROP_ALIAS:
+			g_value_set_string(value, purple_chat_get_name(chat));
+			break;
+		case PROP_COMPONENTS:
+			g_value_set_object(value, purple_chat_get_components(chat));
+			break;
+		case PROP_ACCOUNT:
+			g_value_set_object(value, purple_chat_get_account(chat));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
 purple_chat_class_init(PurpleChatClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 	obj_class->finalize = purple_chat_finalize;
+
+	/* Setup properties */
+	obj_class->get_property = purple_chat_get_property;
+	obj_class->set_property = purple_chat_set_property;
+
+	g_object_class_install_property(obj_class, PROP_ALIAS,
+			g_param_spec_string(PROP_ALIAS_S, _("Alias"),
+				_("The alias for the chat."), NULL,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+			);
+
+	g_object_class_install_property(obj_class, PROP_ACCOUNT,
+			g_param_spec_string(PROP_ACCOUNT_S, _("Account"),
+				_("The account for the chat."), NULL,
+				G_PARAM_CONSTRUCT_ONLY)
+			);
+
+	g_object_class_install_property(obj_class, PROP_COMPONENTS,
+			g_param_spec_string(PROP_COMPONENTS_S, _("Components"),
+				_("The components for the chat."), NULL,
+				G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY)
+			);
 }
 
 static void
 purple_chat_init(GTypeInstance *instance, gpointer class)
 {
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleChat *chat = PURPLE_CHAT(instance);
 
+	purple_blist_node_initialize_settings((PurpleBlistNode *)chat);
+
+	if (ops != NULL && ops->new_node != NULL)
+		ops->new_node((PurpleBlistNode *)chat);
+
+	PURPLE_DBUS_REGISTER_POINTER(chat, PurpleChat);
 }
 
 GType

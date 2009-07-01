@@ -88,12 +88,15 @@ void purple_chat_destroy(PurpleChat *chat);
 const char *purple_chat_get_name(PurpleChat *chat);
 
 /**
- * Aliases a chat in the buddy list.
+ * Returns the account the chat belongs to.
  *
- * @param chat  The chat whose alias will be changed.
- * @param alias The chat's new alias.
+ * @param chat  The chat.
+ *
+ * @return  The account the chat belongs to.
+ *
+ * @since 2.4.0
  */
-void purple_blist_alias_chat(PurpleChat *chat, const char *alias);
+PurpleAccount *purple_chat_get_account(PurpleChat *chat);
 
 /**
  * Get a hashtable containing information about a chat.
@@ -105,6 +108,14 @@ void purple_blist_alias_chat(PurpleChat *chat, const char *alias);
  * @since 2.4.0
  */
 GHashTable *purple_chat_get_components(PurpleChat *chat);
+
+/**
+ * Aliases a chat in the buddy list.
+ *
+ * @param chat  The chat whose alias will be changed.
+ * @param alias The chat's new alias.
+ */
+void purple_chat_set_alias(PurpleChat *chat, const char *alias);
 
 /**
  * Get the GType for PurpleChat

@@ -1036,7 +1036,7 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 static void
 pidgin_dialogs_alias_chat_cb(PurpleChat *chat, const char *new_alias)
 {
-	purple_blist_alias_chat(chat, new_alias);
+	purple_chat_set_alias(chat, new_alias);
 }
 
 void

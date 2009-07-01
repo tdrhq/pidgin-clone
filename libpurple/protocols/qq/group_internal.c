@@ -106,7 +106,7 @@ void qq_room_update_chat_info(PurpleChat *chat, qq_room_data *rmd)
 	GHashTable *components;
 
 	if (rmd->title_utf8 != NULL && strlen(rmd->title_utf8) > 0) {
-		purple_blist_alias_chat(chat, rmd->title_utf8);
+		purple_chat_set_alias(chat, rmd->title_utf8);
 	}
 
 	components = purple_chat_get_components(chat);
