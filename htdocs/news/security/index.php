@@ -347,14 +347,14 @@ $vulnerabilities = array(
 		"fix"          => "The proper variable type is now used when doing size comparison. Additionally, the malformed message is now properly discarded.",
 		"fixedversion" => "2.5.6",
 		"discoveredby" => "Loc VALBON (via TippingPoint's Zero Day Initiative)"
-	);
+	),
 	array(
 		"title"        => "ICQ parser excessive memory allocation",
 		"date"         => "28 May 2009",
 		"cve"          => "CVE-2009-1889",
 		"summary"      => "Misparsed web messages can result in excessive memory allocation",
 		"description"  => "The ICQ prpl would misparse an incoming ICQ Web Message as an SMS message in certain circumstances, leading to an excessively large allocation.",
-		"fix"          => "Yuriy's patch corrected the misparsing of such ICQ web messages so they are no longer treated as SMS messages and adds validation to avoid unnecessary memory allocations.",
+		"fix"          => "Yuriy's patch corrected the misparsing of such ICQ web messages so they are no longer treated as SMS messages and added validation to avoid unnecessary memory allocations.",
 		"fixedversion" => "2.5.8",
 		"discoveredby" => "Yuriy Kaminskiy"
 	)
