@@ -179,7 +179,7 @@ void PurpleStatusChanged(PurpleSavedStatus *lppssNew, PurpleSavedStatus *lppssOl
 	MakeVultureStatusFromPurple(lppssNew, lpvss);
 
 	/* The UI will free the status we just allocated. */
-	VulturePostUIMessage(g_hwndMain, VUIMSG_STATUSCHANGED, lpvss);
+	VulturePostUIMessage(VUIMSG_STATUSCHANGED, lpvss);
 }
 
 

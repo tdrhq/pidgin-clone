@@ -156,7 +156,7 @@ static int InitLibpurple(void)
 	if(!purple_core_init(VULTURE_ID))
 		return 1;
 
-	VulturePostUIMessage(g_hwndMain, VUIMSG_PURPLEINITCOMPLETE, NULL);
+	VulturePostUIMessage(VUIMSG_PURPLEINITCOMPLETE, NULL);
 
 	/* Sign in using specified or remembered state. */
 	if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
@@ -223,5 +223,5 @@ static void InitUI(void)
 static void Quitting(void)
 {
 	/* The core is on its way out, so tell the UI to destroy itself. */
-	VulturePostUIMessage(g_hwndMain, VUIMSG_QUIT, NULL);
+	VulturePostUIMessage(VUIMSG_QUIT, NULL);
 }

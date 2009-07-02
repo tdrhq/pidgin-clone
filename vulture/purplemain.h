@@ -79,17 +79,15 @@ extern GMainLoop *g_lpgmainloop;
 
 
 /**
- * Posts a message from libpurple to the Windows message queue of the specified
+ * Posts a message from libpurple to the Windows message queue of the main
  * window.
  *
- * @param	hwnd		Window.
  * @param	iCallID		ID of the message.
  * @param	lpvParam	Message-specific data.
  */
-static INLINE void VulturePostUIMessage(HWND hwnd, int iMsg, void *lpvParam)
+static INLINE void VulturePostUIMessage(int iMsg, void *lpvParam)
 {
-	if(IsWindow(hwnd))
-		PostMessage(hwnd, WM_PURPLEUIMSG, iMsg, (LPARAM)lpvParam);
+	PostMessage(g_hwndMain, WM_PURPLEUIMSG, iMsg, (LPARAM)lpvParam);
 }
 
 

@@ -54,7 +54,7 @@ void PurpleNewConversation(PurpleConversation *lpconv)
 	 */
 	lpvconv->convtype = lpconv->type;
 
-	VulturePostUIMessage(g_hwndMain, VUIMSG_NEWCONVERSATION, lpvconv);
+	VulturePostUIMessage(VUIMSG_NEWCONVERSATION, lpvconv);
 }
 
 
@@ -84,7 +84,7 @@ void PurpleDestroyConversation(PurpleConversation *lpconv)
 	/* This pointer is about to become invalid. */
 	((VULTURE_CONVERSATION*)lpconv->ui_data)->lpconv = NULL;
 
-	VulturePostUIMessage(g_hwndMain, VUIMSG_DESTROYEDCONVERSATION, (VULTURE_CONVERSATION*)lpconv->ui_data);
+	VulturePostUIMessage(VUIMSG_DESTROYEDCONVERSATION, (VULTURE_CONVERSATION*)lpconv->ui_data);
 }
 
 
@@ -109,7 +109,7 @@ void PurpleWriteConversation(PurpleConversation *lpconv, const char *szName, con
 	lpvcwrite->szMessage = VultureUTF8ToTCHAR(szMessage);
 	VultureTimetToSystemTime(timeMsg, &lpvcwrite->systimeMsg);
 
-	VulturePostUIMessage(g_hwndMain, VUIMSG_WRITECONVERSATION, lpvcwrite);
+	VulturePostUIMessage(VUIMSG_WRITECONVERSATION, lpvcwrite);
 } 
 
 
@@ -167,7 +167,7 @@ void PurpleConvChanged(PurpleConversation *lpconv, PurpleConvUpdateType pcut)
 	lpvcchanged->lpvconv = lpvconv;
 	lpvcchanged->pcut = pcut;
 
-	VulturePostUIMessage(g_hwndMain, VUIMSG_CONVCHANGED, lpvcchanged);
+	VulturePostUIMessage(VUIMSG_CONVCHANGED, lpvcchanged);
 }
 
 

@@ -116,12 +116,12 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 					PurpleBlistUpdateNode(lpbuddylist, lpvbn->lpvbnParent->lpblistnode);
 
 				VultureBListNodeAddRef(lpvbn);
-				VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEBLISTNODE, lpvbn);
+				VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpvbn);
 			}
 		}
 		else if(lpvbn->hti)
 		{
-			VulturePostUIMessage(g_hwndMain, VUIMSG_REMOVEBLISTNODE, lpvbn);
+			VulturePostUIMessage(VUIMSG_REMOVEBLISTNODE, lpvbn);
 
 			/* The parent may need to go, too. */
 			if(lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti)
@@ -290,5 +290,5 @@ void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, P
 	/* If so, tell the UI to update the status message in the conversation.
 	 */
 	if(lpconv)
-		VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEIMSTATUSTEXT, lpconv->ui_data);
+		VulturePostUIMessage(VUIMSG_UPDATEIMSTATUSTEXT, lpconv->ui_data);
 }
