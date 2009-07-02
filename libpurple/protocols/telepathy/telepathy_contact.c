@@ -87,7 +87,7 @@ add_contact_to_group_cb (TpConnection *connection,
 
 		/* this will add the buddy to the specified group */
 		tp_cli_channel_interface_group_call_add_members(group->channel, -1,
-				arr, "putzi!",
+				arr, NULL,
 				add_member_cb, group->connection_data,
 				NULL, NULL);
 
