@@ -190,19 +190,7 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 
 PurpleContact *purple_contact_new()
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-
-	PurpleContact *contact = g_object_new(PURPLE_CONTACT_TYPE, NULL);
-	contact->totalsize = 0;
-	contact->currentsize = 0;
-	contact->online = 0;
-	purple_blist_node_initialize_settings((PurpleBlistNode *)contact);
-
-	if (ops && ops->new_node)
-		ops->new_node((PurpleBlistNode *)contact);
-
-	PURPLE_DBUS_REGISTER_POINTER(contact, PurpleContact);
-	return contact;
+	return g_object_new(PURPLE_CONTACT_TYPE, NULL);
 }
 
 PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy)
@@ -300,7 +288,18 @@ purple_contact_class_init(PurpleContactClass *klass)
 static void
 purple_contact_init(GTypeInstance *instance, gpointer class)
 {
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleContact *contact = PURPLE_CONTACT(instance);
 
+	contact->totalsize = 0;
+	contact->currentsize = 0;
+	contact->online = 0;
+	purple_blist_node_initialize_settings((PurpleBlistNode *)contact);
+
+	if (ops && ops->new_node)
+		ops->new_node((PurpleBlistNode *)contact);
+
+	PURPLE_DBUS_REGISTER_POINTER(contact, PurpleContact);
 }
 
 GType
