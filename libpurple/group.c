@@ -267,9 +267,27 @@ int purple_blist_get_group_online_count(PurpleGroup *group)
 	return group->online;
 }
 
+static void
+purple_group_set_name(PurpleGroup *group, const char *name)
+{
+	g_return_if_fail(group != NULL);
+	group->name = purple_utf8_strip_unprintables(name);
+}
+
+/******************/
+/*  GObject Code  */
+/******************/
+
+enum {
+	PROP_0,
+	PROP_NAME,
+	PROP_LAST
+};
+
+#define PROP_NAME_S ("name")
+
 PurpleGroup *purple_group_new(const char *name)
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleGroup *group;
 
 	g_return_val_if_fail(name  != NULL, NULL);
@@ -279,24 +297,10 @@ PurpleGroup *purple_group_new(const char *name)
 	if (group != NULL)
 		 return group;
 
-	group = g_object_new(PURPLE_GROUP_TYPE, NULL);
-	group->name = purple_utf8_strip_unprintables(name);
-	group->totalsize = 0;
-	group->currentsize = 0;
-	group->online = 0;
-	purple_blist_node_initialize_settings((PurpleBlistNode *)group);
-
-	if (ops && ops->new_node)
-		ops->new_node((PurpleBlistNode *)group);
-
-	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
-	return group;
+	return g_object_new(	PURPLE_GROUP_TYPE, 
+												PROP_NAME_S, name, 
+												NULL);
 }
-
-
-/******************/
-/*  GObject Code  */
-/******************/
 
 static GObjectClass *parent_class = NULL;
 
@@ -311,18 +315,66 @@ purple_group_finalize(GObject *object)
 }
 
 static void
+purple_group_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleGroup *group = PURPLE_GROUP(obj);
+	switch(param_id){
+		case PROP_NAME:
+			purple_group_set_name(group, g_value_get_string(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+	}
+}
+
+static void
+purple_group_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleGroup *group = PURPLE_GROUP(obj);
+	switch(param_id){
+		case PROP_NAME:
+			g_value_set_string(value, purple_group_get_name(group));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+	}
+}
+
+static void
 purple_group_class_init(PurpleGroupClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 	obj_class->finalize = purple_group_finalize;
+
+	obj_class->set_property = purple_group_set_property;
+	obj_class->get_property = purple_group_get_property;
+
+	g_object_class_install_property(obj_class, PROP_NAME,
+			g_param_spec_string(PROP_NAME_S, _("Name"),
+				_("The name for the group."), NULL,
+				G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY)
+			);
 }
 
 static void
 purple_group_init(GTypeInstance *instance, gpointer class)
 {
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleGroup *group = PURPLE_GROUP(instance);
 
+	group->totalsize = 0;
+	group->currentsize = 0;
+	group->online = 0;
+	purple_blist_node_initialize_settings((PurpleBlistNode *)group);
+
+	if (ops && ops->new_node)
+		ops->new_node((PurpleBlistNode *)group);
+
+	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
 }
 
 GType
