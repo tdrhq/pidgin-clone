@@ -415,7 +415,7 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 static void
 purple_blist_node_init(GTypeInstance *instance, gpointer class)
 {
-
+	purple_blist_node_initialize_settings((PurpleBlistNode *)contact);
 }
 
 GType

@@ -568,8 +568,6 @@ purple_buddy_init(GTypeInstance *instance, gpointer class)
 
 	purple_presence_set_status_active(buddy->presence, "offline", TRUE);
 
-	purple_blist_node_initialize_settings((PurpleBlistNode *)buddy);
-
 	if (ops && ops->new_node)
 		ops->new_node((PurpleBlistNode *)buddy);
 

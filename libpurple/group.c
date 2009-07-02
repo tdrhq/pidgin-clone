@@ -369,7 +369,6 @@ purple_group_init(GTypeInstance *instance, gpointer class)
 	group->totalsize = 0;
 	group->currentsize = 0;
 	group->online = 0;
-	purple_blist_node_initialize_settings((PurpleBlistNode *)group);
 
 	if (ops && ops->new_node)
 		ops->new_node((PurpleBlistNode *)group);

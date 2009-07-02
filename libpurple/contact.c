@@ -294,7 +294,6 @@ purple_contact_init(GTypeInstance *instance, gpointer class)
 	contact->totalsize = 0;
 	contact->currentsize = 0;
 	contact->online = 0;
-	purple_blist_node_initialize_settings((PurpleBlistNode *)contact);
 
 	if (ops && ops->new_node)
 		ops->new_node((PurpleBlistNode *)contact);

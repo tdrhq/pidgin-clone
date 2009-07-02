@@ -346,8 +346,6 @@ purple_chat_init(GTypeInstance *instance, gpointer class)
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleChat *chat = PURPLE_CHAT(instance);
 
-	purple_blist_node_initialize_settings((PurpleBlistNode *)chat);
-
 	if (ops != NULL && ops->new_node != NULL)
 		ops->new_node((PurpleBlistNode *)chat);
 
