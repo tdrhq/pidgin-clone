@@ -124,7 +124,7 @@ static void update_buddy_memo(PurpleConnection *gc, guint32 bd_uid, gchar *alias
 		purple_debug_info("QQ", "Error...Can NOT find %d!\n", bd_uid);
 		return;
 	}
-	purple_blist_alias_buddy(buddy, (const char*)alias);
+	purple_buddy_set_alias(buddy, (const char*)alias);
 }
 
 static void request_change_memo(PurpleConnection *gc, guint32 bd_uid, gchar **segments)

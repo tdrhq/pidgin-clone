@@ -1010,7 +1010,7 @@ pidgin_dialogs_alias_contact(PurpleContact *contact)
 static void
 pidgin_dialogs_alias_buddy_cb(PurpleBuddy *buddy, const char *new_alias)
 {
-	purple_blist_alias_buddy(buddy, new_alias);
+	purple_buddy_set_alias(buddy, new_alias);
 	serv_alias_buddy(buddy);
 }
 

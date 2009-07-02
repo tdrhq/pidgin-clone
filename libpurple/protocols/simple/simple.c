@@ -920,7 +920,7 @@ static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct 
 			g_free(buddy_name);
 
 			purple_blist_add_buddy(b, NULL, g, NULL);
-			purple_blist_alias_buddy(b, uri);
+			purple_buddy_set_alias(b, uri);
 			bs = g_new0(struct simple_buddy, 1);
 			bs->name = g_strdup(purple_buddy_get_name(b));
 			g_hash_table_insert(sip->buddies, bs->name, bs);

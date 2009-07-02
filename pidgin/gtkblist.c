@@ -617,14 +617,14 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 			gtk_blist_auto_personize(purple_blist_node_get_parent(node), arg2);
 		} else {
 			PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
-			purple_blist_alias_buddy(buddy, arg2);
+			purple_buddy_set_alias(buddy, arg2);
 			serv_alias_buddy(buddy);
 			gtk_blist_auto_personize(purple_blist_node_get_parent(node), arg2);
 		}
 	} else if(PURPLE_IS_BUDDY(node)){
 		PurpleGroup *group = purple_buddy_get_group(PURPLE_BUDDY(node));
 
-		purple_blist_alias_buddy(PURPLE_BUDDY(node), arg2);
+		purple_buddy_set_alias(PURPLE_BUDDY(node), arg2);
 		serv_alias_buddy(PURPLE_BUDDY(node));
 		gtk_blist_auto_personize(PURPLE_BLIST_NODE(group), arg2);
 	} else if (PURPLE_IS_GROUP(node)){

@@ -252,7 +252,8 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 	chat = g_object_new(PURPLE_CHAT_TYPE, 
 									PROP_ACCOUNT_S, account, 
 									PROP_ALIAS_S, alias, 
-									PROP_COMPONENTS_S, components);
+									PROP_COMPONENTS_S, components,
+									NULL);
 	return chat;
 }
 
@@ -268,7 +269,7 @@ purple_chat_finalize(GObject *object)
 }
 
 static void
-purple_chat_set_property(GObject *obj, guint param_id, GValue *value,
+purple_chat_set_property(GObject *obj, guint param_id, const GValue *value,
 		GParamSpec *pspec)
 {
 	PurpleChat *chat = PURPLE_CHAT(obj);

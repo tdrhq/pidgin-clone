@@ -5256,7 +5256,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					b = purple_find_buddy_in_group(account, curitem->name, g);
 					if (b) {
 						/* Get server stored alias */
-						purple_blist_alias_buddy(b, alias_utf8);
+						purple_buddy_set_alias(b, alias_utf8);
 					} else {
 						b = purple_buddy_new(account, curitem->name, alias_utf8);
 
@@ -5473,7 +5473,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		 * of your buddies, so update our local buddy list with
 		 * the person's new alias.
 		 */
-		purple_blist_alias_buddy(b, alias_utf8);
+		purple_buddy_set_alias(b, alias_utf8);
 	} else if (snac_subtype == 0x0008) {
 		/*
 		 * You're logged in somewhere else and you added a buddy to

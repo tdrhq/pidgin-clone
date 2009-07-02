@@ -115,7 +115,7 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 		}
 
 		purple_blist_add_buddy(b, NULL, g, NULL);
-		purple_blist_alias_buddy(b, alias);
+		purple_buddy_set_alias(b, alias);
 
 		/* If we just learned about ourself, then fake our status,
 		 * because we won't be receiving a normal presence message
@@ -393,7 +393,7 @@ void jabber_roster_alias_change(PurpleConnection *gc, const char *name, const ch
 	PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), name);
 
 	if(b != NULL) {
-		purple_blist_alias_buddy(b, alias);
+		purple_buddy_set_alias(b, alias);
 
 		purple_debug_info("jabber", "jabber_roster_alias_change(): Aliased %s to %s\n",
 				name, alias ? alias : "(null)");

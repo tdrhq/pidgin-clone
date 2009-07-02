@@ -294,7 +294,7 @@ _get_details_resp_setup_buddy(NMUser * user, NMERR_T ret_code,
 
 		alias = purple_buddy_get_alias(buddy);
 		if (alias == NULL || *alias == '\0' || (strcmp(alias, purple_buddy_get_name(buddy)) == 0)) {
-			purple_blist_alias_buddy(buddy,
+			purple_buddy_set_alias(buddy,
 								   nm_user_record_get_full_name(user_record));
 
 			/* Tell the server about the new display name */
@@ -2696,7 +2696,7 @@ novell_alias_buddy(PurpleConnection * gc, const char *name, const char *alias)
 													 name, group);
 					balias = buddy ? purple_buddy_get_local_buddy_alias(buddy) : NULL;
 					if (balias && strcmp(balias, alias))
-						purple_blist_alias_buddy(buddy, alias);
+						purple_buddy_set_alias(buddy, alias);
 				}
 
 				/* Tell the server to alias the contact */

@@ -300,7 +300,7 @@ purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char 
 		if (purple_strequal(balias, alias))
 			continue;
 
-		purple_blist_alias_buddy(b, alias);
+		purple_buddy_set_alias(b, alias);
 	}
 }
 

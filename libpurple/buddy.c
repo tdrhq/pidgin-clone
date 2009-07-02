@@ -138,7 +138,7 @@ purple_blist_update_buddy_icon(PurpleBuddy *buddy)
 	purple_blist_update_node_icon((PurpleBlistNode *)buddy);
 }
 
-void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias)
+void purple_buddy_set_alias(PurpleBuddy *buddy, const char *alias)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleConversation *conv;
@@ -218,32 +218,6 @@ void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
 					 buddy, old_alias);
 	g_free(old_alias);
-}
-
-PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const char *alias)
-{
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleBuddy *buddy;
-
-	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
-
-	buddy = g_object_new(PURPLE_BUDDY_TYPE, NULL);
-	g_object_ref(buddy);
-	buddy->account  = account;
-	buddy->name     = purple_utf8_strip_unprintables(name);
-	buddy->alias    = purple_utf8_strip_unprintables(alias);
-	buddy->presence = purple_presence_new_for_buddy(buddy);
-
-	purple_presence_set_status_active(buddy->presence, "offline", TRUE);
-
-	purple_blist_node_initialize_settings((PurpleBlistNode *)buddy);
-
-	if (ops && ops->new_node)
-		ops->new_node((PurpleBlistNode *)buddy);
-
-	PURPLE_DBUS_REGISTER_POINTER(buddy, PurpleBuddy);
-	return buddy;
 }
 
 void
@@ -434,9 +408,47 @@ buddy_to_xmlnode(PurpleBlistNode *bnode)
 	return node;
 }
 
+static void
+purple_buddy_set_account(PurpleBuddy *buddy, PurpleAccount *account)
+{
+	g_return_if_fail(buddy != NULL);
+	buddy->account = account;
+}
+
+static void
+purple_buddy_set_name(PurpleBuddy *buddy, const char *name)
+{
+	g_return_if_fail(buddy != NULL);
+	buddy->name = g_strdup(name);
+}
+
 /******************/
 /*  GObject Code  */
 /******************/
+
+enum {
+	PROP_0,
+	PROP_ACCOUNT,
+	PROP_NAME,
+	PROP_ALIAS,
+	PROP_LAST
+};
+
+#define PROP_ACCOUNT_S "account"
+#define PROP_NAME_S "name"
+#define PROP_ALIAS_S "alias"
+
+PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const char *alias)
+{
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	return g_object_new(PURPLE_BUDDY_TYPE, 
+									PROP_ACCOUNT_S, account,
+									PROP_NAME_S, name,
+									PROP_ALIAS_S, alias,
+									NULL);
+}
 
 /* GObject destructor function */
 static void
@@ -478,18 +490,90 @@ purple_buddy_finalize(GObject *object)
 }
 
 static void
+purple_buddy_set_property(GObject *obj, guint param_id, const GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleBuddy *buddy = PURPLE_BUDDY(obj);
+	switch(param_id){
+		case PROP_ACCOUNT:
+			purple_buddy_set_account(buddy, g_value_get_object(value));
+			break;
+		case PROP_NAME:
+			purple_buddy_set_name(buddy, g_value_get_string(value));
+			break;
+		case PROP_ALIAS:
+			purple_buddy_set_alias(buddy, g_value_get_string(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+	}
+}
+
+static void
+purple_buddy_get_property(GObject *obj, guint param_id, GValue *value,
+		GParamSpec *pspec)
+{
+	PurpleBuddy *buddy = PURPLE_BUDDY(obj);
+	switch(param_id){
+		case PROP_ACCOUNT:
+			g_value_set_object(value, purple_buddy_get_account(buddy));
+			break;
+		case PROP_NAME:
+			g_value_set_string(value, purple_buddy_get_name(buddy));
+			break;
+		case PROP_ALIAS:
+			g_value_set_string(value, purple_buddy_get_name(buddy));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
+			break;
+	}
+}
+
+static void
 purple_buddy_class_init(PurpleBuddyClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 	obj_class->finalize = purple_buddy_finalize;
+
+	obj_class->set_property = purple_buddy_set_property;
+	obj_class->get_property = purple_buddy_get_property;
+
+	g_object_class_install_property(obj_class, PROP_ACCOUNT,
+			g_param_spec_string(PROP_ACCOUNT_S, _("Account"),
+				_("The account for the buddy."), NULL,
+				G_PARAM_CONSTRUCT_ONLY)
+			);
+	g_object_class_install_property(obj_class, PROP_NAME,
+			g_param_spec_string(PROP_NAME_S, _("Name"),
+				_("The name for the buddy."), NULL,
+				G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY)
+			);
+	g_object_class_install_property(obj_class, PROP_ALIAS,
+			g_param_spec_string(PROP_ALIAS_S, _("Alias"),
+				_("The alias for the buddy."), NULL,
+				G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+			);
 }
 
 static void
 purple_buddy_init(GTypeInstance *instance, gpointer class)
 {
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+	PurpleBuddy *buddy = PURPLE_BUDDY(instance);
 
+	buddy->presence = purple_presence_new_for_buddy(buddy);
+
+	purple_presence_set_status_active(buddy->presence, "offline", TRUE);
+
+	purple_blist_node_initialize_settings((PurpleBlistNode *)buddy);
+
+	if (ops && ops->new_node)
+		ops->new_node((PurpleBlistNode *)buddy);
+
+	PURPLE_DBUS_REGISTER_POINTER(buddy, PurpleBuddy);
 }
 
 GType

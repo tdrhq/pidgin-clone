@@ -165,7 +165,7 @@ gpointer purple_buddy_get_protocol_data(const PurpleBuddy *buddy);
  * @param buddy  The buddy whose alias will be changed.
  * @param alias  The buddy's alias.
  */
-void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias);
+void purple_buddy_set_alias(PurpleBuddy *buddy, const char *alias);
 
 /**
 * Returns the alias of a buddy.

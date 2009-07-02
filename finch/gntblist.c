@@ -1383,10 +1383,10 @@ rename_blist_node(PurpleBlistNode *node, const char *newname)
 		PurpleContact *contact = (PurpleContact*)node;
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
 		purple_blist_alias_contact(contact, name);
-		purple_blist_alias_buddy(buddy, name);
+		purple_buddy_set_alias(buddy, name);
 		serv_alias_buddy(buddy);
 	} else if (PURPLE_IS_BUDDY(node)) {
-		purple_blist_alias_buddy((PurpleBuddy*)node, name);
+		purple_buddy_set_alias((PurpleBuddy*)node, name);
 		serv_alias_buddy((PurpleBuddy*)node);
 	} else if (PURPLE_IS_CHAT(node))
 		purple_chat_set_alias((PurpleChat*)node, name);

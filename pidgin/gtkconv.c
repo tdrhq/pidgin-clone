@@ -8952,7 +8952,7 @@ alias_cb(GtkEntry *entry, gpointer user_data)
 		PurpleBuddy *buddy;
 		buddy = purple_find_buddy(account, name);
 		if (buddy != NULL) {
-			purple_blist_alias_buddy(buddy,
+			purple_buddy_set_alias(buddy,
                                                  gtk_entry_get_text(entry));
 		}
 		serv_alias_buddy(buddy);
