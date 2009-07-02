@@ -60,6 +60,7 @@ static void RepositionConvControls(HWND hwndConvDlg);
 static LRESULT CALLBACK InputBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd);
 static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs, LPTSTR szTitle);
+static void UpdateIMStatusText(HWND hwndDlg, VULTURE_CONVERSATION *lpvconv);
 
 
 /**
@@ -410,14 +411,15 @@ static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARA
 	switch(uiMsg)
 	{
 	case WM_INITDIALOG:
-		{
-			VULTURE_CONV_GET_STRING vcgetstring;
+		UpdateIMStatusText(hwndDlg, (VULTURE_CONVERSATION*)lParam);
+		break;
 
-			/* Set the status text. */
-			vcgetstring.lpvconv = (VULTURE_CONVERSATION*)lParam;
-			VultureSingleSyncPurpleCall(PC_IMGETSTATUSMSG, &vcgetstring);
-			SetDlgItemText(hwndDlg, IDC_STATIC_STATUS, vcgetstring.sz ? vcgetstring.sz : TEXT(""));
-			if(vcgetstring.sz) g_free(vcgetstring.sz);
+	case WM_PURPLEUIMSG:
+		switch(wParam)
+		{
+		case VUIMSG_UPDATEIMSTATUSTEXT:
+			UpdateIMStatusText(hwndDlg, (VULTURE_CONVERSATION*)lParam);
+			break;
 		}
 
 		break;
@@ -779,4 +781,22 @@ static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs, LPTSTR sz
 	tcitem.pszText = szTitle;
 	TabCtrl_SetItem(hwndTabs, lpvconv->iTabIndex, &tcitem);
 	SetDlgItemText(lpvconv->hwndConv, IDC_STATIC_NAME, szTitle);
+}
+
+
+/**
+ * Refreshes the status text in an IM window.
+ *
+ * @param	hwndDlg		IM dialogue.
+ * @param	lpvconv		Conversation.
+ */
+static void UpdateIMStatusText(HWND hwndDlg, VULTURE_CONVERSATION *lpvconv)
+{
+	VULTURE_CONV_GET_STRING vcgetstring;
+
+	/* Set the status text. */
+	vcgetstring.lpvconv = lpvconv;
+	VultureSingleSyncPurpleCall(PC_IMGETSTATUSMSG, &vcgetstring);
+	SetDlgItemText(hwndDlg, IDC_STATIC_STATUS, vcgetstring.sz ? vcgetstring.sz : TEXT(""));
+	if(vcgetstring.sz) g_free(vcgetstring.sz);
 }

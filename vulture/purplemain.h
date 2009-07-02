@@ -59,6 +59,9 @@ enum ENUM_VULTURE_UI_MESSAGES
 
 	/* (VULTURE_CONV_CHANGED*) */
 	VUIMSG_CONVCHANGED,
+
+	/* (VULTURE_CONVERSATION*) */
+	VUIMSG_UPDATEIMSTATUSTEXT,
 };
 
 /* HandlEs for reigistering signal handlERs. */
@@ -66,6 +69,7 @@ enum ENUM_VULTURE_SIGNAL_HANDLES
 {
 	VSH_STATUS = 1,
 	VSH_CONV,
+	VSH_BLIST
 };
 
 void VultureInitLibpurple(HANDLE *lphthread);

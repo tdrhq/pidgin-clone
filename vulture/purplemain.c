@@ -209,6 +209,7 @@ static void InitUI(void)
 
 	purple_signal_connect(purple_savedstatuses_get_handle(), "savedstatus-changed", GINT_TO_POINTER(VSH_STATUS), PURPLE_CALLBACK(PurpleStatusChanged), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "conversation-updated", GINT_TO_POINTER(VSH_CONV), PURPLE_CALLBACK(PurpleConvChanged), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-status-changed", GINT_TO_POINTER(VSH_BLIST), PURPLE_CALLBACK(PurpleBuddyStatusChanged), NULL);
 
 	/* Create and load libpurple's buddy-list. */
 	purple_set_blist(purple_blist_new());

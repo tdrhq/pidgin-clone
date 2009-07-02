@@ -273,3 +273,22 @@ LPTSTR PurpleBuddyGetStatusText(PurpleBuddy *lpbuddy)
 
 	return NULL;
 }
+
+
+/**
+ * Called in response to buddy-status-changed signal.
+ *
+ * @param	lpbuddy		Buddy.
+ * @param	lpstatusOld	Old status.
+ * @param	lpstatusNew	New status.
+ */
+void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, PurpleStatus *lpstatusNew)
+{
+	/* Are we speaking to this buddy? */
+	PurpleConversation *lpconv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, lpbuddy->name, lpbuddy->account);
+
+	/* If so, tell the UI to update the status message in the conversation.
+	 */
+	if(lpconv)
+		VulturePostUIMessage(g_hwndMain, VUIMSG_UPDATEIMSTATUSTEXT, lpconv->ui_data);
+}

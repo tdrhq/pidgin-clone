@@ -316,6 +316,10 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 				hwndForward = ((VULTURE_CONV_CHANGED*)lParam)->lpvconv->hwndContainer;
 				break;
 
+			case VUIMSG_UPDATEIMSTATUSTEXT:
+				hwndForward = ((VULTURE_CONVERSATION*)lParam)->hwndConv;
+				break;
+
 			case VUIMSG_QUIT:
 				DestroyWindow(hwnd);
 				break;

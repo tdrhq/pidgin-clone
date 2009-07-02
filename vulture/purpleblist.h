@@ -48,6 +48,7 @@ void PurpleBlistRemoveNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 void VultureBListNodeRelease(VULTURE_BLIST_NODE *lpvblnode);
 void PurpleBListNodeDoubleClicked(VULTURE_BLIST_NODE *lpvbn);
 LPTSTR PurpleBuddyGetStatusText(PurpleBuddy *lpbuddy);
+void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, PurpleStatus *lpstatusNew);
 
 
 static INLINE void VultureBListNodeAddRef(VULTURE_BLIST_NODE *lpvblnode) { InterlockedIncrement(&lpvblnode->lRefCount); }
