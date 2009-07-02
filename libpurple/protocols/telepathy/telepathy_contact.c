@@ -67,6 +67,7 @@ add_contact_to_group_cb (TpConnection *connection,
 	else
 	{
 		telepathy_group *group = user_data;
+		telepathy_group *subscribe_list = user_data; 
 
 		const TpContactFeature features[] = {
 			TP_CONTACT_FEATURE_ALIAS,
@@ -76,14 +77,33 @@ add_contact_to_group_cb (TpConnection *connection,
 		int i;
 		GArray *arr = g_array_new(0, 0, sizeof(TpHandle));
 
-		purple_debug_info("telepathy", "Contact added!\n");
+		purple_debug_info("telepathy", "Got handle for adding buddy!\n");
 
 		for (i = 0; i<n_handles; ++i)
 		{
 			g_array_append_val(arr, handles[i]);
 		}
 
-		/* TODO: Also add to the subscribe list */
+		/* we need to add the buddy to a group and also the subscribe list */
+
+		subscribe_list = g_hash_table_lookup(group->connection_data->lists,
+				"subscribe");
+
+		if (subscribe_list == NULL)
+		{
+			purple_debug_error("telepathy",
+					"There is no cached subscribe list!\n");
+		}
+		else
+		{
+			/* add buddy to the subscribe list */
+			tp_cli_channel_interface_group_call_add_members(
+					group->channel, -1,
+					arr, NULL,
+					add_member_cb, group->connection_data,
+					NULL, NULL);
+		}
+
 
 		/* this will add the buddy to the specified group */
 		tp_cli_channel_interface_group_call_add_members(group->channel, -1,
@@ -174,8 +194,8 @@ handle_contacts (telepathy_connection *connection_data,
 
 
 			/* we should check if it has statuses for the presence,
-			* since the prpl was not yet loaded when status_types was being called
-			*/
+			 * since the prpl was not yet loaded when status_types was being called
+			 */
 			if (presence != NULL)
 			{
 				if (purple_presence_get_statuses(presence) == NULL)
@@ -238,6 +258,7 @@ group_contacts_ready_cb (TpConnection *connection,
 
 		handle_contacts(data->connection_data, n_contacts, contacts, n_failed, group);
 
+		/* save the group in a hash table for later use */
 		g_hash_table_insert(data->connection_data->groups,
 				g_strdup(group_name), data);
 	}
@@ -263,9 +284,10 @@ contacts_ready_cb (TpConnection *connection,
 	else
 	{
 		handle_contacts(data->connection_data, n_contacts, contacts, n_failed, NULL);
-	}
 
-	/* this isn't used anywhere else except this callback */
-	g_free(data);
+		/* save the list in a hash table for later use */
+		g_hash_table_insert(data->connection_data->lists,
+				(gchar *)tp_channel_get_identifier(data->channel), data);
+	}
 }
 

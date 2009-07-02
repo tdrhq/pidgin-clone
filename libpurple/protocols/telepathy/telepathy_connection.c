@@ -55,6 +55,7 @@ status_changed_cb (TpConnection *proxy,
 		data->text_Channels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_text_channel);
 		data->contacts = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GDestroyNotify) destroy_contact);
 		data->groups = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_group);
+		data->lists = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_group);
 	}
 	else if (arg_Status == TP_CONNECTION_STATUS_DISCONNECTED)
 	{
@@ -143,10 +144,23 @@ status_changed_cb (TpConnection *proxy,
 				g_hash_table_destroy(data->text_Channels);
 				data->text_Channels = NULL;
 			}
+
 			if (data->contacts != NULL)
 			{
 				g_hash_table_destroy(data->contacts);
 				data->contacts = NULL;
+			}
+
+			if (data->groups != NULL)
+			{
+				g_hash_table_destroy(data->groups);
+				data->groups = NULL;
+			}
+
+			if (data->lists != NULL)
+			{
+				g_hash_table_destroy(data->lists);
+				data->lists = NULL;
 			}
 
 			g_free(data);

@@ -47,6 +47,9 @@ typedef struct
 
 	/* This will map group name to telepathy_group structs */
 	GHashTable *groups;
+
+	/* This will map list name to telepathy_group structs */
+	GHashTable *lists;
 	
 } telepathy_connection;
 
