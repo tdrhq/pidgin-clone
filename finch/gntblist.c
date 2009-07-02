@@ -168,7 +168,7 @@ static gboolean default_can_add_node(PurpleBlistNode *node)
 
 	if (PURPLE_IS_BUDDY(node)) {
 		PurpleBuddy *buddy = (PurpleBuddy*)node;
-		FinchBlistNode *fnode = FINCH_GET_DATA(node);
+		FinchBlistNode *fnode = purple_blist_node_get_ui_data(node);
 		if (!purple_buddy_get_contact(buddy))
 			return FALSE; /* When a new buddy is added and show-offline is set */
 		if (PURPLE_BUDDY_IS_ONLINE(buddy))
@@ -322,11 +322,11 @@ static GList *managers;
 static FinchBlistNode *
 create_finch_blist_node(PurpleBlistNode *node, gpointer row)
 {
-	FinchBlistNode *fnode = FINCH_GET_DATA(node);
+	FinchBlistNode *fnode = purple_blist_node_get_ui_data(node);
 	if (!fnode) {
 		fnode = g_new0(FinchBlistNode, 1);
 		fnode->signed_timer = 0;
-		FINCH_SET_DATA(node, fnode);
+		purple_blist_node_set_ui_data(node, fnode);
 	}
 	fnode->row = row;
 	return fnode;
@@ -335,13 +335,13 @@ create_finch_blist_node(PurpleBlistNode *node, gpointer row)
 static void
 reset_blist_node_ui_data(PurpleBlistNode *node)
 {
-	FinchBlistNode *fnode = FINCH_GET_DATA(node);
+	FinchBlistNode *fnode = purple_blist_node_get_ui_data(node);
 	if (fnode == NULL)
 		return;
 	if (fnode->signed_timer)
 		purple_timeout_remove(fnode->signed_timer);
 	g_free(fnode);
-	FINCH_SET_DATA(node, NULL);
+	purple_blist_node_set_ui_data(node, NULL);
 }
 
 static int
@@ -374,7 +374,7 @@ static GntTextFormatFlags
 get_blist_node_flag(PurpleBlistNode *node)
 {
 	GntTextFormatFlags flag = 0;
-	FinchBlistNode *fnode = FINCH_GET_DATA(node);
+	FinchBlistNode *fnode = purple_blist_node_get_ui_data(node);
 
 	if (ggblist->tagged && g_list_find(ggblist->tagged, node))
 		flag |= GNT_TEXT_FLAG_BOLD;
@@ -383,7 +383,7 @@ get_blist_node_flag(PurpleBlistNode *node)
 		flag |= GNT_TEXT_FLAG_BLINK;
 	else if (PURPLE_IS_CONTACT(node)) {
 		node = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(node)));
-		fnode = FINCH_GET_DATA(node);
+		fnode = purple_blist_node_get_ui_data(node);
 		if (fnode && fnode->signed_timer)
 			flag |= GNT_TEXT_FLAG_BLINK;
 	} else if (PURPLE_IS_GROUP(node)) {
@@ -399,7 +399,7 @@ get_blist_node_flag(PurpleBlistNode *node)
 					node = purple_blist_node_get_sibling_next(node)) {
 				PurpleBlistNode *pnode;
 				pnode = purple_contact_get_priority_buddy((PurpleContact*)node);
-				fnode = FINCH_GET_DATA(node);
+				fnode = purple_blist_node_get_ui_data(node);
 				if (fnode && fnode->signed_timer) {
 					flag |= GNT_TEXT_FLAG_BLINK;
 					break;
@@ -426,7 +426,7 @@ is_contact_online(PurpleContact *contact)
 	PurpleBlistNode *node;
 	for (node = purple_blist_node_get_first_child(((PurpleBlistNode*)contact)); node;
 			node = purple_blist_node_get_sibling_next(node)) {
-		FinchBlistNode *fnode = FINCH_GET_DATA(node);
+		FinchBlistNode *fnode = purple_blist_node_get_ui_data(node);
 		if (PURPLE_BUDDY_IS_ONLINE((PurpleBuddy*)node) ||
 				(fnode && fnode->signed_timer))
 			return TRUE;
@@ -458,7 +458,7 @@ new_node(PurpleBlistNode *node)
 static void
 add_node(PurpleBlistNode *node, FinchBlist *ggblist)
 {
-	if (FINCH_GET_DATA(node))
+	if (purple_blist_node_get_ui_data(node))
 		return;
 
 	if (!ggblist->manager->can_add_node(node))
@@ -495,7 +495,7 @@ node_remove(PurpleBuddyList *list, PurpleBlistNode *node)
 	FinchBlist *ggblist = purple_blist_get_ui_data();
 	PurpleBlistNode *parent;
 
-	if (ggblist == NULL || FINCH_GET_DATA(node) == NULL)
+	if (ggblist == NULL || purple_blist_node_get_ui_data(node) == NULL)
 		return;
 
 	if (PURPLE_IS_GROUP(node) && ggblist->new_group) {
@@ -536,7 +536,7 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
 	if (ggblist->window == NULL)
 		return;
 
-	if (FINCH_GET_DATA(node)!= NULL) {
+	if (purple_blist_node_get_ui_data(node)!= NULL) {
 		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
 				0, get_display_name(node));
 		gnt_tree_sort_row(GNT_TREE(ggblist->tree), node);
@@ -553,7 +553,7 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
 	} else if (PURPLE_IS_CHAT(node)) {
 		add_node(node, purple_blist_get_ui_data());
 	} else if (PURPLE_IS_CONTACT(node)) {
-		if (FINCH_GET_DATA(node)== NULL) {
+		if (purple_blist_node_get_ui_data(node)== NULL) {
 			/* The core seems to expect the UI to add the buddies. */
 			for (node = purple_blist_node_get_first_child(node); node; node = purple_blist_node_get_sibling_next(node))
 				add_node(node, purple_blist_get_ui_data());
@@ -818,7 +818,7 @@ add_group_cb(gpointer null, const char *group)
 
 	/* Select the group */
 	if (ggblist->tree) {
-		FinchBlistNode *fnode = FINCH_GET_DATA((PurpleBlistNode*)grp);
+		FinchBlistNode *fnode = purple_blist_node_get_ui_data((PurpleBlistNode*)grp);
 		if (!fnode)
 			add_node((PurpleBlistNode*)grp, ggblist);
 		gnt_tree_set_selected(GNT_TREE(ggblist->tree), grp);
@@ -866,7 +866,7 @@ add_group(PurpleGroup *group, FinchBlist *ggblist)
 {
 	gpointer parent;
 	PurpleBlistNode *node = (PurpleBlistNode *)group;
-	if (FINCH_GET_DATA(node))
+	if (purple_blist_node_get_ui_data(node))
 		return;
 	parent = ggblist->manager->find_parent((PurpleBlistNode*)group);
 	create_finch_blist_node(node, gnt_tree_add_row_after(GNT_TREE(ggblist->tree), group,
@@ -939,7 +939,7 @@ add_chat(PurpleChat *chat, FinchBlist *ggblist)
 {
 	gpointer parent;
 	PurpleBlistNode *node = (PurpleBlistNode *)chat;
-	if (FINCH_GET_DATA(node))
+	if (purple_blist_node_get_ui_data(node))
 		return;
 	if (!purple_account_is_connected(purple_chat_get_account(chat)))
 		return;
@@ -958,7 +958,7 @@ add_contact(PurpleContact *contact, FinchBlist *ggblist)
 	PurpleBlistNode *node = (PurpleBlistNode*)contact;
 	const char *name;
 
-	if (FINCH_GET_DATA(node))
+	if (purple_blist_node_get_ui_data(node))
 		return;
 
 	name = get_display_name(node);
@@ -981,7 +981,7 @@ add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist)
 	PurpleBlistNode *node = (PurpleBlistNode *)buddy;
 	PurpleContact *contact;
 
-	if (FINCH_GET_DATA(node))
+	if (purple_blist_node_get_ui_data(node))
 		return;
 
 	contact = purple_buddy_get_contact(buddy);
@@ -1039,7 +1039,7 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 						purple_buddy_get_account(buddy),
 						purple_buddy_get_name(buddy));
 		} else {
-			FinchConv *ggconv = FINCH_GET_DATA(conv);
+			FinchConv *ggconv = purple_conversation_get_ui_data(conv);
 			gnt_window_present(ggconv->window);
 		}
 		finch_conversation_set_active(conv);
@@ -2503,7 +2503,7 @@ static gboolean
 buddy_recent_signed_on_off(gpointer data)
 {
 	PurpleBlistNode *node = data;
-	FinchBlistNode *fnode = FINCH_GET_DATA(node);
+	FinchBlistNode *fnode = purple_blist_node_get_ui_data(node);
 
 	purple_timeout_remove(fnode->signed_timer);
 	fnode->signed_timer = 0;
@@ -2523,7 +2523,7 @@ static gboolean
 buddy_signed_on_off_cb(gpointer data)
 {
 	PurpleBlistNode *node = data;
-	FinchBlistNode *fnode = FINCH_GET_DATA(node);
+	FinchBlistNode *fnode = purple_blist_node_get_ui_data(node);
 	if (!ggblist || !fnode)
 		return FALSE;
 

@@ -44,7 +44,7 @@ group_to_xmlnode(PurpleBlistNode *gnode)
 	xmlnode_set_attrib(node, "name", group->name);
 
 	/* Write settings */
-	g_hash_table_foreach(group->node.settings, value_to_xmlnode, node);
+	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(group)), value_to_xmlnode, node);
 
 	/* Write contacts and chats */
 	for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
@@ -308,7 +308,6 @@ static void
 purple_group_finalize(GObject *object)
 {
 	PurpleGroup *group = PURPLE_GROUP(object);
-	g_hash_table_destroy(group->node.settings);
 	g_free(group->name);
 	PURPLE_DBUS_UNREGISTER_POINTER(group);
 	parent_class->finalize(object);

@@ -31,6 +31,16 @@
 #include "signals.h"
 #include "xmlnode.h"
 
+struct _PurpleBlistNodePrivate {
+	GHashTable *settings;                 /**< per-node settings; keys are
+	                                           <tt>gchar *</tt>, values are
+	                                           slice-allocated
+	                                           <tt>GValue</tt>.  */
+
+	void *ui_data;                        /**< The UI can put data here.      */
+	PurpleBlistNodeFlags flags;           /**< The buddy flags                */
+};
+
 PurpleBlistNode *
 purple_blist_get_last_sibling(PurpleBlistNode *node)
 {
@@ -126,16 +136,23 @@ PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node)
 void *
 purple_blist_node_get_ui_data(const PurpleBlistNode *node)
 {
-	g_return_val_if_fail(node, NULL);
+	PurpleBlistNodePrivate *priv;
 
-	return node->ui_data;
+	g_return_val_if_fail(node, NULL);
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	return priv->ui_data;
 }
 
 void
 purple_blist_node_set_ui_data(PurpleBlistNode *node, void *ui_data) {
+	PurpleBlistNodePrivate *priv;
+
 	g_return_if_fail(node);
 
-	node->ui_data = ui_data;
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	priv->ui_data = ui_data;
 }
   
 void
@@ -196,20 +213,27 @@ purple_blist_node_destroy(PurpleBlistNode *node)
 
 void purple_blist_node_initialize_settings(PurpleBlistNode *node)
 {
-	if (node->settings)
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	if (priv->settings)
 		return;
 
-	node->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+	priv->settings = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
 			(GDestroyNotify)purple_g_value_slice_free);
 }
 
 void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key)
 {
+	PurpleBlistNodePrivate *priv;
+
 	g_return_if_fail(node != NULL);
-	g_return_if_fail(node->settings != NULL);
+
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	g_hash_table_remove(node->settings, key);
+	g_hash_table_remove(priv->settings, key);
 
 	purple_blist_schedule_save();
 }
@@ -217,43 +241,56 @@ void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key)
 void
 purple_blist_node_set_flags(PurpleBlistNode *node, PurpleBlistNodeFlags flags)
 {
+	PurpleBlistNodePrivate *priv;
 	g_return_if_fail(node != NULL);
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
-	node->flags = flags;
+	priv->flags = flags;
 }
 
 PurpleBlistNodeFlags
 purple_blist_node_get_flags(PurpleBlistNode *node)
 {
+	PurpleBlistNodePrivate *priv;
 	g_return_val_if_fail(node != NULL, 0);
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
-	return node->flags;
+	return priv->flags;
 }
 
 gboolean
 purple_blist_node_has_setting(PurpleBlistNode *node,
                               const char *key)
 {
+	PurpleBlistNodePrivate *priv;
+
 	g_return_val_if_fail(node != NULL, FALSE);
-	g_return_val_if_fail(node->settings != NULL, FALSE);
+
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	g_return_val_if_fail(priv->settings != NULL, FALSE);
 	g_return_val_if_fail(key != NULL, FALSE);
 
-	return (g_hash_table_lookup(node->settings, key) != NULL);
+	return (g_hash_table_lookup(priv->settings, key) != NULL);
 }
 
 void
 purple_blist_node_set_bool(PurpleBlistNode* node, const char *key, gboolean data)
 {
 	GValue *value;
+	PurpleBlistNodePrivate *priv;
 
 	g_return_if_fail(node != NULL);
-	g_return_if_fail(node->settings != NULL);
+
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
 	value = purple_g_value_slice_new(G_TYPE_BOOLEAN);
 	g_value_set_boolean(value, data);
 
-	g_hash_table_replace(node->settings, g_strdup(key), value);
+	g_hash_table_replace(priv->settings, g_strdup(key), value);
 
 	purple_blist_schedule_save();
 }
@@ -262,12 +299,16 @@ gboolean
 purple_blist_node_get_bool(PurpleBlistNode* node, const char *key)
 {
 	GValue *value;
+	PurpleBlistNodePrivate *priv;
 
 	g_return_val_if_fail(node != NULL, FALSE);
-	g_return_val_if_fail(node->settings != NULL, FALSE);
+
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	g_return_val_if_fail(priv->settings != NULL, FALSE);
 	g_return_val_if_fail(key != NULL, FALSE);
 
-	value = g_hash_table_lookup(node->settings, key);
+	value = g_hash_table_lookup(priv->settings, key);
 
 	if (value == NULL)
 		return FALSE;
@@ -281,15 +322,19 @@ void
 purple_blist_node_set_int(PurpleBlistNode* node, const char *key, int data)
 {
 	GValue *value;
+	PurpleBlistNodePrivate *priv;
 
 	g_return_if_fail(node != NULL);
-	g_return_if_fail(node->settings != NULL);
+
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
 	value = purple_g_value_slice_new(G_TYPE_INT);
 	g_value_set_int(value, data);
 
-	g_hash_table_replace(node->settings, g_strdup(key), value);
+	g_hash_table_replace(priv->settings, g_strdup(key), value);
 
 	purple_blist_schedule_save();
 }
@@ -298,12 +343,16 @@ int
 purple_blist_node_get_int(PurpleBlistNode* node, const char *key)
 {
 	GValue *value;
+	PurpleBlistNodePrivate *priv;
 
 	g_return_val_if_fail(node != NULL, 0);
-	g_return_val_if_fail(node->settings != NULL, 0);
+
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	g_return_val_if_fail(priv->settings != NULL, 0);
 	g_return_val_if_fail(key != NULL, 0);
 
-	value = g_hash_table_lookup(node->settings, key);
+	value = g_hash_table_lookup(priv->settings, key);
 
 	if (value == NULL)
 		return 0;
@@ -317,29 +366,48 @@ void
 purple_blist_node_set_string(PurpleBlistNode* node, const char *key, const char *data)
 {
 	GValue *value;
+	PurpleBlistNodePrivate *priv;
 
 	g_return_if_fail(node != NULL);
-	g_return_if_fail(node->settings != NULL);
+
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	g_return_if_fail(priv->settings != NULL);
 	g_return_if_fail(key != NULL);
 
 	value = purple_g_value_slice_new(G_TYPE_STRING);
 	g_value_set_string(value, data);
 
-	g_hash_table_replace(node->settings, g_strdup(key), value);
+	g_hash_table_replace(priv->settings, g_strdup(key), value);
 
 	purple_blist_schedule_save();
 }
+
+GHashTable *
+purple_blist_node_get_settings(PurpleBlistNode *node)
+{
+	PurpleBlistNodePrivate *priv;
+	g_return_val_if_fail(node != NULL, NULL);
+
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	return priv->settings;
+}	
 
 const char *
 purple_blist_node_get_string(PurpleBlistNode* node, const char *key)
 {
 	GValue *value;
+	PurpleBlistNodePrivate *priv;
 
 	g_return_val_if_fail(node != NULL, NULL);
-	g_return_val_if_fail(node->settings != NULL, NULL);
+
+	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+
+	g_return_val_if_fail(priv->settings != NULL, NULL);
 	g_return_val_if_fail(key != NULL, NULL);
 
-	value = g_hash_table_lookup(node->settings, key);
+	value = g_hash_table_lookup(priv->settings, key);
 
 	if (value == NULL)
 		return NULL;
@@ -372,6 +440,7 @@ static void
 purple_blist_node_finalize(GObject *object)
 {
 	PurpleBlistNode *node = PURPLE_BLIST_NODE(object);
+	PurpleBlistNodePrivate *priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 	PurpleBlistUiOps *ui_ops;
 	PurpleBlistNode *child, *next_child;
 
@@ -388,6 +457,9 @@ purple_blist_node_finalize(GObject *object)
 	node->child  = NULL;
 	node->next   = NULL;
 	node->prev   = NULL;
+
+	g_hash_table_destroy(priv->settings);
+
 	if (ui_ops && ui_ops->remove)
 		ui_ops->remove(purplebuddylist, node);
 
@@ -410,12 +482,14 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 	obj_class->finalize = purple_blist_node_finalize;
+
+	g_type_class_add_private(klass, sizeof(PurpleBlistNodePrivate));
 }
 
 static void
 purple_blist_node_init(GTypeInstance *instance, gpointer class)
 {
-	purple_blist_node_initialize_settings((PurpleBlistNode *)contact);
+	purple_blist_node_initialize_settings(PURPLE_BLIST_NODE(instance));
 }
 
 GType

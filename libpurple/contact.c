@@ -60,7 +60,7 @@ contact_to_xmlnode(PurpleBlistNode *cnode)
 	}
 
 	/* Write contact settings */
-	g_hash_table_foreach(cnode->settings, value_to_xmlnode, node);
+	g_hash_table_foreach(purple_blist_node_get_settings(cnode), value_to_xmlnode, node);
 
 	return node;
 }
@@ -270,7 +270,6 @@ static void
 purple_contact_finalize(GObject *object)
 {
 	PurpleContact *contact = PURPLE_CONTACT(object);
-	g_hash_table_destroy(contact->node.settings);
 	g_free(contact->alias);
 	PURPLE_DBUS_UNREGISTER_POINTER(contact);
 	parent_class->finalize(object);

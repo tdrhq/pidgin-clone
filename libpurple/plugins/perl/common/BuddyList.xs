@@ -10,13 +10,6 @@ BOOT:
 	HV *stash = gv_stashpv("Purple::BuddyList::Node", 1);
 
 	static const constiv *civ, const_iv[] = {
-#define const_iv(name) {#name, (IV)PURPLE_BLIST_##name##_NODE}
-		const_iv(GROUP),
-		const_iv(CONTACT),
-		const_iv(BUDDY),
-		const_iv(CHAT),
-		const_iv(OTHER),
-#undef const_iv
 #define const_iv(name) {#name, (IV)PURPLE_BLIST_NODE_FLAG_##name}
 		const_iv(NO_SAVE),
 	};
@@ -27,10 +20,6 @@ BOOT:
 
 Purple::BuddyList
 purple_get_blist()
-
-void
-purple_set_blist(blist)
-	Purple::BuddyList blist
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::Find  PREFIX = purple_find_
 PROTOTYPES: ENABLE
@@ -74,11 +63,6 @@ purple_contact_new();
 Purple::BuddyList::Buddy
 purple_contact_get_priority_buddy(contact)
 	Purple::BuddyList::Contact contact
-
-void
-purple_contact_set_alias(contact, alias)
-	Purple::BuddyList::Contact contact
-	const char * alias
 
 const char *
 purple_contact_get_alias(contact)
@@ -202,7 +186,7 @@ purple_blist_rename_buddy(buddy, name)
 	const char * name
 
 void
-purple_blist_alias_buddy(buddy, alias)
+purple_buddy_set_alias(buddy, alias)
 	Purple::BuddyList::Buddy buddy
 	const char * alias
 
@@ -212,7 +196,7 @@ purple_blist_server_alias_buddy(buddy, alias)
 	const char * alias
 
 void
-purple_blist_alias_chat(chat, alias)
+purple_chat_set_alias(chat, alias)
 	Purple::BuddyList::Chat chat
 	const char * alias
 
@@ -309,10 +293,6 @@ purple_blist_node_set_flags(node, flags)
 
 Purple::BuddyList::NodeFlags
 purple_blist_node_get_flags(node)
-	Purple::BuddyList::Node node
-
-Purple::BuddyList::NodeType
-purple_blist_node_get_type(node)
 	Purple::BuddyList::Node node
 
 Purple::BuddyList::Node

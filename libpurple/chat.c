@@ -71,7 +71,7 @@ chat_to_xmlnode(PurpleBlistNode *cnode)
 	g_hash_table_foreach(chat->components, chat_component_to_xmlnode, node);
 
 	/* Write chat settings */
-	g_hash_table_foreach(chat->node.settings, value_to_xmlnode, node);
+	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(chat)), value_to_xmlnode, node);
 
 	return node;
 }
@@ -262,7 +262,6 @@ purple_chat_finalize(GObject *object)
 {
 	PurpleChat *chat = PURPLE_CHAT(object);
 	g_hash_table_destroy(chat->components);
-	g_hash_table_destroy(chat->node.settings);
 	g_free(chat->alias);
 	PURPLE_DBUS_UNREGISTER_POINTER(chat);
 	parent_class->finalize(object);

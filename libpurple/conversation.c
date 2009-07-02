@@ -582,6 +582,20 @@ purple_conversation_set_ui_ops(PurpleConversation *conv,
 	conv->ui_ops = ops;
 }
 
+void *
+purple_conversation_get_ui_data(PurpleConversation *conv)
+{
+	g_return_val_if_fail(conv != NULL, NULL);
+	return conv->ui_data;
+}
+
+void
+purple_conversation_set_ui_data(PurpleConversation *conv, void *data)
+{
+	g_return_if_fail(conv);
+	conv->ui_data = data;
+}
+
 PurpleConversationUiOps *
 purple_conversation_get_ui_ops(const PurpleConversation *conv)
 {

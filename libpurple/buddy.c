@@ -403,7 +403,7 @@ buddy_to_xmlnode(PurpleBlistNode *bnode)
 	}
 
 	/* Write buddy settings */
-	g_hash_table_foreach(buddy->node.settings, value_to_xmlnode, node);
+	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(buddy)), value_to_xmlnode, node);
 
 	return node;
 }
@@ -471,7 +471,6 @@ purple_buddy_finalize(GObject *object)
 
 	/* Delete the node */
 	purple_buddy_icon_unref(buddy->icon);
-	g_hash_table_destroy(buddy->node.settings);
 	purple_presence_destroy(buddy->presence);
 	g_free(buddy->name);
 	g_free(buddy->alias);

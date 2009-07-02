@@ -46,9 +46,6 @@ typedef enum
 #define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (purple_blist_node_get_flags((PurpleBlistNode*)(b)) & (f))
 #define PURPLE_BLIST_NODE_SHOULD_SAVE(b) (! PURPLE_BLIST_NODE_HAS_FLAG(b, PURPLE_BLIST_NODE_FLAG_NO_SAVE))
 
-/*#define PURPLE_BLIST_NODE_NAME(n) (purple_blist_node_get_type(n) == PURPLE_BLIST_CHAT_NODE  ? purple_chat_get_name((PurpleChat*)n) :        \
-				     purple_blist_node_get_type(n) == PURPLE_BLIST_BUDDY_NODE ? purple_buddy_get_name((PurpleBuddy*)n) : NULL)*/
-
 /** @copydoc _PurpleBlistNode */
 typedef struct _PurpleBlistNode PurpleBlistNode;
 typedef struct _PurpleBlistNodePrivate PurpleBlistNodePrivate;
@@ -73,13 +70,7 @@ struct _PurpleBlistNode {
 	PurpleBlistNode *parent;              /**< The parent of this node        */
 	PurpleBlistNode *child;               /**< The child of this node         */
 
-	GHashTable *settings;                 /**< per-node settings; keys are
-	                                           <tt>gchar *</tt>, values are
-	                                           slice-allocated
-	                                           <tt>GValue</tt>.  */
-
-	void *ui_data;                        /**< The UI can put data here.      */
-	PurpleBlistNodeFlags flags;           /**< The buddy flags                */
+	PurpleBlistNodePrivate *priv;         /**< The private members            */
 };
 
 struct _PurpleBlistNodeClass {
@@ -208,6 +199,15 @@ gboolean purple_blist_node_get_bool(PurpleBlistNode *node, const char *key);
  * @param value The value to set
  */
 void purple_blist_node_set_int(PurpleBlistNode *node, const char *key, int value);
+
+/**
+ * Return the settings table
+ *
+ * @param node The node
+ *
+ * @return the hash table
+ */
+GHashTable *purple_blist_node_get_settings(PurpleBlistNode *node);
 
 /**
  * Retrieves a named integer setting from a node in the buddy list

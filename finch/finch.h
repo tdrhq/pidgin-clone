@@ -30,6 +30,6 @@
 
 #define FINCH_PREFS_ROOT "/finch"
 
-#define FINCH_GET_DATA(obj)        (obj)->ui_data
-#define FINCH_SET_DATA(obj, data)  (obj)->ui_data = data
+#define FINCH_GET_DATA(obj)        ((obj)->ui_data)
+#define FINCH_SET_DATA(obj, data)  ((obj)->ui_data = data)
 
