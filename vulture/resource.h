@@ -11,6 +11,8 @@
 #define IDD_CONVCONT                            113
 #define IDD_IM                                  115
 #define IDD_CHAT                                117
+#define IDD_JOINCHAT                            119
+#define IDC_COMBO1                              1000
 #define IDC_LIST_NAMES                          1001
 #define IDC_TAB_CONVERSATIONS                   1001
 #define IDC_BUDDY_ICON                          1002
@@ -21,8 +23,10 @@
 #define IDS_ERROR_BLIST                         40000
 #define IDM_BLIST_ACCOUNTS_MANAGE               40001
 #define IDS_ERROR_PURPLEINIT                    40001
+#define IDM_BLIST_BUDDIES_JOINCHAT              40002
 #define IDS_ACCMGR_ACCOUNT                      40002
 #define IDC_EDIT_STATUSMSG                      40003
+#define IDM__1                                  40003
 #define IDS_ACCMGR_PROTOCOL                     40003
 #define IDC_TREE_BLIST                          40004
 #define IDS_ERROR_CONVCONTCLASS                 40004

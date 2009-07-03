@@ -38,6 +38,7 @@
 #include "purplemain.h"
 #include "vultureconv.h"
 #include "purpleconv.h"
+#include "vulturedlg.h"
 
 
 typedef struct _STATUSDLGDATA
@@ -164,6 +165,10 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 	case WM_COMMAND:
 		switch(LOWORD(wParam))
 		{
+		case IDM_BLIST_BUDDIES_JOINCHAT:
+			VultureJoinChatDlg(hwnd);
+			return 0;
+
 		case IDM_BLIST_BUDDIES_CLOSE:
 			SendMessage(hwnd, WM_CLOSE, 0, 0);
 			return 0;

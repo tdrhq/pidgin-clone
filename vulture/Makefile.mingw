@@ -66,7 +66,8 @@ VULTURE_C_SRC =	\
 			purpleacct.c \
 			purpleblist.c \
 			vultureconv.c \
-			purpleconv.c
+			purpleconv.c \
+			vulturedlg.c
 
 VULTURE_RC_SRC = vulture-res.rc
 VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)
