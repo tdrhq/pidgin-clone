@@ -22,14 +22,19 @@
 
 
 #include <windows.h>
+#include <commctrl.h>
 #include <glib.h>
 
 #include "vulture.h"
 #include "vulturedlg.h"
 #include "resource.h"
+#include "acctmanager.h"
+#include "purplequeue.h"
+#include "purpleacct.h"
 
 
 static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static void PopulateAccountsCombo(HWND hwndCBEx, GList *lpglistAccounts);
 
 
 /**
@@ -60,13 +65,26 @@ GHashTable* VultureJoinChatDlg(HWND hwndParent)
 static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
 	static int s_cyNonGroup = 0, s_cyButtonMargin = 0;
+	static GList *s_lpglistAccounts = NULL;
 
 	switch(uiMsg)
 	{
 	case WM_INITDIALOG:
 		{
+			VULTURE_GET_ACCOUNTS vgetaccounts;
 			RECT rcGroup, rcDlg, rcButton;
 
+			/* Get online accounts. */
+			vgetaccounts.bOnlineOnly = TRUE;
+			VultureSingleSyncPurpleCall(PC_GETACCOUNTS, &vgetaccounts);
+			s_lpglistAccounts = vgetaccounts.lpglistAccounts;
+
+			/* Populate combo and select first item. */
+			PopulateAccountsCombo(GetDlgItem(hwndDlg, IDC_CBEX_ACCOUNTS), s_lpglistAccounts);
+			if(SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCOUNT, 0, 0) > 0)
+				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_SETCURSEL, 0, 0);
+
+			/* Remember metrics. */
 			GetClientRect(hwndDlg, &rcDlg);
 			GetClientRect(GetDlgItem(hwndDlg, IDC_STATIC_DETAILS), &rcGroup);
 			GetClientRect(GetDlgItem(hwndDlg, IDOK), &rcButton);
@@ -116,7 +134,38 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 		}
 
 		return TRUE;
+
+	case WM_DESTROY:
+		VultureFreeAccountList(s_lpglistAccounts);
+		return TRUE;
 	}
 
 	return FALSE;
+}
+
+
+/**
+ * Populates a ComboBoxEx control with accounts.
+ *
+ * @param	hwndCBEx		ComboBoxEx control window handle.
+ * @param	lpglistAccounts		Accounts to add.
+ */
+static void PopulateAccountsCombo(HWND hwndCBEx, GList *lpglistAccounts)
+{
+	GList *lpglistRover;
+	COMBOBOXEXITEM cbexitem;
+
+	SendMessage(hwndCBEx, CB_RESETCONTENT, 0, 0);
+
+	cbexitem.mask = CBEIF_TEXT | CBEIF_LPARAM;
+
+	/* Add each account. */
+	for(lpglistRover = lpglistAccounts; lpglistRover; lpglistRover = lpglistRover->next)
+	{
+		VULTURE_ACCOUNT *lpvac = (VULTURE_ACCOUNT*)lpglistRover->data;
+
+		cbexitem.pszText = lpvac->szUsername;
+		cbexitem.lParam = (LPARAM)lpvac;
+		SendMessage(hwndCBEx, CBEM_INSERTITEM, 0, (LPARAM)&cbexitem);
+	}
 }

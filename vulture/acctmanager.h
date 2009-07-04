@@ -37,6 +37,13 @@ typedef struct _VULTURE_ACCOUNT
 } VULTURE_ACCOUNT;
 
 
+typedef struct _VULTURE_GET_ACCOUNTS
+{
+	GList	*lpglistAccounts;
+	BOOL	bOnlineOnly;
+} VULTURE_GET_ACCOUNTS;
+
+
 BOOL VultureAccountManagerDlg(HWND hwndParent, GList *lpglistAccounts);
 
 

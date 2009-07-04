@@ -580,23 +580,24 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
  */
 static void ManageAccounts(HWND hwndParent)
 {
-	GList *lpglistAccounts;
+	VULTURE_GET_ACCOUNTS vgetaccounts;
 
-	VultureSingleSyncPurpleCall(PC_GETALLACCOUNTS, &lpglistAccounts);
+	vgetaccounts.bOnlineOnly = FALSE;
+	VultureSingleSyncPurpleCall(PC_GETACCOUNTS, &vgetaccounts);
 
 	/* Show the dialogue and check whether the user OKs. */
-	if(VultureAccountManagerDlg(hwndParent, lpglistAccounts))
+	if(VultureAccountManagerDlg(hwndParent, vgetaccounts.lpglistAccounts))
 	{
 		GList *lpglistRover;
 		GArray *lpgarrayWaitContext = VultureAllocPurpleWaitContext();
 
-		for(lpglistRover = lpglistAccounts; lpglistRover; lpglistRover = lpglistRover->next)
+		for(lpglistRover = vgetaccounts.lpglistAccounts; lpglistRover; lpglistRover = lpglistRover->next)
 			VultureEnqueueMultiSyncPurpleCall(PC_UPDATEPURPLEACCOUNT, lpglistRover->data, lpgarrayWaitContext);
 
 		VulturePurpleWait(lpgarrayWaitContext);		
 	}
 
-	VultureFreeAccountList(lpglistAccounts);
+	VultureFreeAccountList(vgetaccounts.lpglistAccounts);
 }
 
 

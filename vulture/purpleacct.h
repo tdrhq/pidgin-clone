@@ -24,13 +24,14 @@
 #define _VULTURE_PURPLEACCT_H_
 
 
+#include <windows.h>
 #include <glib.h>
 
 #include "vulture.h"
 #include "acctmanager.h"
 
 
-void PurpleGetAllAccounts(GList **lplpglistAccounts);
+void PurpleGetAccounts(BOOL bOnlineOnly, GList **lplpglistAccounts);
 void VultureFreeAccountList(GList *lpglistAccounts);
 void PurpleApplyVultureAccount(VULTURE_ACCOUNT *lpvac);
 

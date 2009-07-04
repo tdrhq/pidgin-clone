@@ -30,12 +30,14 @@
 
 
 /**
- * Get a list of VULTURE_ACCOUNTS representing all PurpleAccounts. Free the
- * list with VultureFreeAccountList.
+ * Get a list of VULTURE_ACCOUNTs representing either all PurpleAccounts or
+ * only those online, as required. Free the list with VultureFreeAccountList.
  *
+ * @param	bOnlineOnly		Whether to retrieve online accounts
+ *					only.
  * @param[out]	lplpglistAccounts	List to populate.
  */
-void PurpleGetAllAccounts(GList **lplpglistAccounts)
+void PurpleGetAccounts(BOOL bOnlineOnly, GList **lplpglistAccounts)
 {
 	GList *lpglistPurpleAcc;
 
@@ -43,15 +45,18 @@ void PurpleGetAllAccounts(GList **lplpglistAccounts)
 
 	for(lpglistPurpleAcc = purple_accounts_get_all(); lpglistPurpleAcc; lpglistPurpleAcc = lpglistPurpleAcc->next)
 	{
-		VULTURE_ACCOUNT *lpvac = g_new(VULTURE_ACCOUNT, 1);
+		if(!bOnlineOnly || purple_account_is_connected((PurpleAccount*)lpglistPurpleAcc->data))
+		{
+			VULTURE_ACCOUNT *lpvac = g_new(VULTURE_ACCOUNT, 1);
 
-		lpvac->lppac = (PurpleAccount*)lpglistPurpleAcc->data;
-		lpvac->bEnabled = purple_account_get_enabled(lpvac->lppac, VULTURE_ID);
+			lpvac->lppac = (PurpleAccount*)lpglistPurpleAcc->data;
+			lpvac->bEnabled = purple_account_get_enabled(lpvac->lppac, VULTURE_ID);
 
-		lpvac->szUsername = VultureUTF8ToTCHAR(purple_account_get_username(lpvac->lppac));
-		lpvac->szProtocolID = VultureUTF8ToTCHAR(purple_account_get_protocol_id(lpvac->lppac));
+			lpvac->szUsername = VultureUTF8ToTCHAR(purple_account_get_username(lpvac->lppac));
+			lpvac->szProtocolID = VultureUTF8ToTCHAR(purple_account_get_protocol_id(lpvac->lppac));
 
-		*lplpglistAccounts = g_list_prepend(*lplpglistAccounts, lpvac);
+			*lplpglistAccounts = g_list_prepend(*lplpglistAccounts, lpvac);
+		}
 	}
 
 	*lplpglistAccounts = g_list_reverse(*lplpglistAccounts);

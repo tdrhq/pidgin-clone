@@ -178,8 +178,12 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		PurpleGetBoxSavedStatuses((GList**)lppurplecall->lpvParam);
 		break;
 
-	case PC_GETALLACCOUNTS:
-		PurpleGetAllAccounts((GList**)lppurplecall->lpvParam);
+	case PC_GETACCOUNTS:
+		{
+			VULTURE_GET_ACCOUNTS *lpvgetaccounts = (VULTURE_GET_ACCOUNTS*)lppurplecall->lpvParam;
+			PurpleGetAccounts(lpvgetaccounts->bOnlineOnly, &lpvgetaccounts->lpglistAccounts);
+		}
+
 		break;
 
 	case PC_UPDATEPURPLEACCOUNT:

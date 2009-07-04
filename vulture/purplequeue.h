@@ -42,8 +42,10 @@ enum PURPLE_CALL_ID
 	/* (GLlist**) Used to return list of statuses. */
 	PC_GETALLSAVEDSTATUSES,
 
-	/* (GLlist**) Used to return list of accounts. */
-	PC_GETALLACCOUNTS,
+	/* (VULTURE_GET_ACCOUNTS*) Specifies which accounts to get, and returns
+	 * them.
+	 */
+	PC_GETACCOUNTS,
 
 	/* (VULTURE_ACCOUNT*) Account to update. */
 	PC_UPDATEPURPLEACCOUNT,
