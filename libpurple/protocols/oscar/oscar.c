@@ -6232,7 +6232,7 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 
 	data = g_new(struct name_data, 1);
 
-	comment = aim_ssi_getcomment(od->ssi.local, g->name, buddy->name);
+	comment = aim_ssi_getcomment(od->ssi.local, g->name, purple_buddy_get_name(buddy));
 	comment_utf8 = comment ? oscar_utf8_try_convert(purple_connection_get_account(gc), comment) : NULL;
 
 	data->gc = gc;

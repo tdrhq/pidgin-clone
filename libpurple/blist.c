@@ -428,27 +428,26 @@ void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name)
 	g_return_if_fail(buddy != NULL);
 
 	hb = g_new(struct _purple_hbuddy, 1);
-	hb->name = g_strdup(purple_normalize(buddy->account, buddy->name));
-	hb->account = buddy->account;
+	hb->name = g_strdup(purple_normalize(purple_buddy_get_account(buddy), purple_buddy_get_name(buddy)));
+	hb->account = purple_buddy_get_account(buddy);
 	hb->group = ((PurpleBlistNode *)buddy)->parent->parent;
 	g_hash_table_remove(purplebuddylist->buddies, hb);
 	
-	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, buddy->account);
+	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, purple_buddy_get_account(buddy));
 	g_hash_table_remove(account_buddies, hb);
 
 	g_free(hb->name);
-	hb->name = g_strdup(purple_normalize(buddy->account, name));
+	hb->name = g_strdup(purple_normalize(purple_buddy_get_account(buddy), name));
 	g_hash_table_replace(purplebuddylist->buddies, hb, buddy);
 
 	hb2 = g_new(struct _purple_hbuddy, 1);
 	hb2->name = g_strdup(hb->name);
-	hb2->account = buddy->account;
+	hb2->account = purple_buddy_get_account(buddy);
 	hb2->group = ((PurpleBlistNode *)buddy)->parent->parent;
 
 	g_hash_table_replace(account_buddies, hb2, buddy);
 
-	g_free(buddy->name);
-	buddy->name = g_strdup(name);
+	purple_buddy_set_name(buddy, name);
 
 	purple_blist_schedule_save();
 
@@ -503,27 +502,27 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 				struct _purple_hbuddy *hb, *hb2;
 				
 				hb = g_new(struct _purple_hbuddy, 1);
-				hb->name = g_strdup(purple_normalize(b->account, b->name));
-				hb->account = b->account;
+				hb->name = g_strdup(purple_normalize(purple_buddy_get_account(b), purple_buddy_get_name(b)));
+				hb->account = purple_buddy_get_account(b);
 				hb->group = cnode->parent;
 
 				g_hash_table_remove(purplebuddylist->buddies, hb);
 
-				account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, b->account);
+				account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, purple_buddy_get_account(b));
 				g_hash_table_remove(account_buddies, hb);
 
-				if (!purple_find_buddy_in_group(b->account, b->name, g)) {
+				if (!purple_find_buddy_in_group(purple_buddy_get_account(b), purple_buddy_get_name(b), g)) {
 					hb->group = gnode;
 					g_hash_table_replace(purplebuddylist->buddies, hb, b);
 
 					hb2 = g_new(struct _purple_hbuddy, 1);
 					hb2->name = g_strdup(hb->name);
-					hb2->account = b->account;
+					hb2->account = purple_buddy_get_account(b);
 					hb2->group = gnode;
 
 					g_hash_table_replace(account_buddies, hb2, b);
 
-					if (purple_account_get_connection(b->account))
+					if (purple_account_get_connection(purple_buddy_get_account(b)))
 						serv_move_buddy(b, (PurpleGroup *)cnode->parent, g);
 				} else {
 					gboolean empty_contact = FALSE;
@@ -532,8 +531,8 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 					 * gonna delete it instead */
 					g_free(hb->name);
 					g_free(hb);
-					if (purple_account_get_connection(b->account))
-						purple_account_remove_buddy(b->account, b, (PurpleGroup *)cnode->parent);
+					if (purple_account_get_connection(purple_buddy_get_account(b)))
+						purple_account_remove_buddy(purple_buddy_get_account(b), b, (PurpleGroup *)cnode->parent);
 
 					if (!cnode->child->next)
 						empty_contact = TRUE;
@@ -735,7 +734,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 			if (contact->online == 0)
 				group->online--;
 		}
-		if (purple_account_is_connected(buddy->account)) {
+		if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
 			contact->currentsize--;
 			if (contact->currentsize == 0)
 				group->currentsize--;
@@ -753,12 +752,12 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	purple_blist_schedule_save();
 
 	/* Remove this buddy from the buddies hash table */
-	hb.name = g_strdup(purple_normalize(buddy->account, buddy->name));
-	hb.account = buddy->account;
+	hb.name = g_strdup(purple_normalize(purple_buddy_get_account(buddy), purple_buddy_get_name(buddy)));
+	hb.account = purple_buddy_get_account(buddy);
 	hb.group = gnode;
 	g_hash_table_remove(purplebuddylist->buddies, &hb);
 
-	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, buddy->account);
+	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, purple_buddy_get_account(buddy));
 	g_hash_table_remove(account_buddies, &hb);
 
 	g_free(hb.name);
@@ -964,7 +963,7 @@ void purple_blist_add_account(PurpleAccount *account)
 				gboolean recompute = FALSE;
 					for (bnode = cnode->child; bnode; bnode = bnode->next) {
 						if (PURPLE_IS_BUDDY(bnode) &&
-								((PurpleBuddy*)bnode)->account == account) {
+								purple_buddy_get_account(PURPLE_BUDDY(bnode)) == account) {
 							recompute = TRUE;
 							((PurpleContact*)cnode)->currentsize++;
 							if (((PurpleContact*)cnode)->currentsize == 1)
@@ -1016,7 +1015,7 @@ void purple_blist_remove_account(PurpleAccount *account)
 						continue;
 
 					buddy = (PurpleBuddy *)bnode;
-					if (account == buddy->account) {
+					if (account == purple_buddy_get_account(buddy)) {
 						PurplePresence *presence;
 
 						presence = purple_buddy_get_presence(buddy);
@@ -1224,7 +1223,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 			if (((PurpleContact*)bnode->parent)->online == 0)
 				((PurpleGroup*)bnode->parent->parent)->online--;
 		}
-		if (purple_account_is_connected(buddy->account)) {
+		if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
 			((PurpleContact*)bnode->parent)->currentsize--;
 			if (((PurpleContact*)bnode->parent)->currentsize == 0)
 				((PurpleGroup*)bnode->parent->parent)->currentsize--;
@@ -1249,12 +1248,12 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 
 		if (bnode->parent->parent != (PurpleBlistNode*)g) {
 			hb = g_new(struct _purple_hbuddy, 1);
-			hb->name = g_strdup(purple_normalize(buddy->account, buddy->name));
-			hb->account = buddy->account;
+			hb->name = g_strdup(purple_normalize(purple_buddy_get_account(buddy), purple_buddy_get_name(buddy)));
+			hb->account = purple_buddy_get_account(buddy);
 			hb->group = bnode->parent->parent;
 			g_hash_table_remove(purplebuddylist->buddies, hb);
 
-			account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, buddy->account);
+			account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, purple_buddy_get_account(buddy));
 			g_hash_table_remove(account_buddies, hb);
 
 			g_free(hb->name);
@@ -1290,24 +1289,24 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		if (++(PURPLE_CONTACT(bnode->parent)->online) == 1)
 			PURPLE_GROUP(bnode->parent->parent)->online++;
 	}
-	if (purple_account_is_connected(buddy->account)) {
+	if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
 		if (++(PURPLE_CONTACT(bnode->parent)->currentsize) == 1)
 			PURPLE_GROUP(bnode->parent->parent)->currentsize++;
 	}
 	PURPLE_CONTACT(bnode->parent)->totalsize++;
 
 	hb = g_new(struct _purple_hbuddy, 1);
-	hb->name = g_strdup(purple_normalize(buddy->account, buddy->name));
-	hb->account = buddy->account;
+	hb->name = g_strdup(purple_normalize(purple_buddy_get_account(buddy), purple_buddy_get_name(buddy)));
+	hb->account = purple_buddy_get_account(buddy);
 	hb->group = ((PurpleBlistNode*)buddy)->parent->parent;
 
 	g_hash_table_replace(purplebuddylist->buddies, hb, buddy);
 
-	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, buddy->account);
+	account_buddies = g_hash_table_lookup(purplebuddylist->buddies_cache, purple_buddy_get_account(buddy));
 
 	hb2 = g_new(struct _purple_hbuddy, 1);
 	hb2->name = g_strdup(hb->name);
-	hb2->account = buddy->account;
+	hb2->account = purple_buddy_get_account(buddy);
 	hb2->group = ((PurpleBlistNode*)buddy)->parent->parent;
 
 	g_hash_table_replace(account_buddies, hb2, buddy);

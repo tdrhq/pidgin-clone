@@ -175,7 +175,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 			for(l = moved_buddies; l; l = l->next) {
 				PurpleBuddy *buddy = (PurpleBuddy *)l->data;
 
-				if(buddy && buddy->account == account)
+				if(buddy && purple_buddy_get_account(buddy)== account)
 					buddies = g_list_append(buddies, (PurpleBlistNode *)buddy);
 			}
 
@@ -216,8 +216,8 @@ GSList *purple_group_get_accounts(PurpleGroup *group)
 		} else if (PURPLE_IS_CONTACT(cnode)) {
 			for (bnode = cnode->child; bnode; bnode = bnode->next) {
 				if (PURPLE_IS_BUDDY(bnode)) {
-					if (!g_slist_find(l, ((PurpleBuddy *)bnode)->account))
-						l = g_slist_append(l, ((PurpleBuddy *)bnode)->account);
+					if (!g_slist_find(l, purple_buddy_get_account(PURPLE_BUDDY(bnode))))
+						l = g_slist_append(l, purple_buddy_get_account(PURPLE_BUDDY(bnode)));
 				}
 			}
 		}

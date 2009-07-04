@@ -1021,10 +1021,10 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 
 	g_return_if_fail(buddy != NULL);
 
-	secondary = g_strdup_printf(_("Enter an alias for %s."), buddy->name);
+	secondary = g_strdup_printf(_("Enter an alias for %s."), purple_buddy_get_name(buddy));
 
 	purple_request_input(NULL, _("Alias Buddy"), NULL,
-					   secondary, buddy->alias, FALSE, FALSE, NULL,
+					   secondary, purple_buddy_get_alias(buddy), FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
 					   _("Cancel"), NULL,
 					   purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
@@ -1063,8 +1063,8 @@ pidgin_dialogs_remove_contact_cb(PurpleContact *contact)
 	group = (PurpleGroup*)cnode->parent;
 	for (bnode = cnode->child; bnode; bnode = bnode->next) {
 		PurpleBuddy *buddy = (PurpleBuddy*)bnode;
-		if (purple_account_is_connected(buddy->account))
-			purple_account_remove_buddy(buddy->account, buddy, group);
+		if (purple_account_is_connected(purple_buddy_get_account(buddy)))
+			purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy, group);
 	}
 	purple_blist_remove_contact(contact);
 }
@@ -1090,7 +1090,7 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 						"You are about to remove the contact containing %s "
 						"and %d other buddies from your buddy list.  Do you "
 						"want to continue?", contact->totalsize - 1),
-					buddy->name, contact->totalsize - 1);
+					purple_buddy_get_name(buddy), contact->totalsize - 1);
 
 		purple_request_action(contact, NULL, _("Remove Contact"), text, 0,
 				NULL, purple_contact_get_alias(contact), NULL,
@@ -1158,8 +1158,8 @@ pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 				if (PURPLE_IS_BUDDY(bnode)) {
 					buddy = (PurpleBuddy*)bnode;
 					bnode = bnode->next;
-					if (purple_account_is_connected(buddy->account)) {
-						purple_account_remove_buddy(buddy->account, buddy, group);
+					if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
+						purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy, group);
 						purple_blist_remove_buddy(buddy);
 					}
 				} else {
@@ -1207,12 +1207,12 @@ pidgin_dialogs_remove_buddy_cb(PurpleBuddy *buddy)
 	PurpleAccount *account;
 
 	group = purple_buddy_get_group(buddy);
-	name = g_strdup(buddy->name); /* b->name is a crasher after remove_buddy */
-	account = buddy->account;
+	name = g_strdup(purple_buddy_get_name(buddy)); /* b->name is a crasher after remove_buddy */
+	account = purple_buddy_get_account(buddy);
 
-	purple_debug_info("blist", "Removing '%s' from buddy list.\n", buddy->name);
+	purple_debug_info("blist", "Removing '%s' from buddy list.\n", purple_buddy_get_name(buddy));
 	/* TODO - Should remove from blist first... then call purple_account_remove_buddy()? */
-	purple_account_remove_buddy(buddy->account, buddy, group);
+	purple_account_remove_buddy(purple_buddy_get_account(buddy), buddy, group);
 	purple_blist_remove_buddy(buddy);
 
 	g_free(name);
@@ -1226,7 +1226,7 @@ pidgin_dialogs_remove_buddy(PurpleBuddy *buddy)
 	g_return_if_fail(buddy != NULL);
 
 	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"),
-						   buddy->name);
+						   purple_buddy_get_name(buddy));
 
 	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0,
 						purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,

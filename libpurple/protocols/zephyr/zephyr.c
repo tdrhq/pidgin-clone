@@ -812,9 +812,9 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 				purple_notify_user_info_destroy(user_info);
 			} else {
 				if (nlocs>0) 
-					purple_prpl_got_user_status(purple_connection_get_account(gc), b ? b->name : user, "available", NULL);
+					purple_prpl_got_user_status(purple_connection_get_account(gc), b ? purple_buddy_get_name(b) : user, "available", NULL);
 				else 
-					purple_prpl_got_user_status(purple_connection_get_account(gc), b ? b->name : user, "offline", NULL);
+					purple_prpl_got_user_status(purple_connection_get_account(gc), b ? purple_buddy_get_name(b) : user, "offline", NULL);
 			}
 
 			g_free(user);
@@ -1194,9 +1194,9 @@ static gint check_notify_tzc(gpointer data)
 					purple_notify_user_info_destroy(user_info);
 				} else {
 					if (nlocs>0) 
-						purple_prpl_got_user_status(purple_connection_get_account(gc), b ? b->name : user, "available", NULL);
+						purple_prpl_got_user_status(purple_connection_get_account(gc), b ? purple_buddy_get_name(b) : user, "available", NULL);
 					else 
-						purple_prpl_got_user_status(purple_connection_get_account(gc), b ? b->name : user, "offline", NULL);
+						purple_prpl_got_user_status(purple_connection_get_account(gc), b ? purple_buddy_get_name(b) : user, "offline", NULL);
 				}
 			}
 			else if (!g_ascii_strncasecmp(spewtype,"subscribed",10)) {

@@ -392,7 +392,7 @@ msim_status_text(PurpleBuddy *buddy)
 
 	account = purple_buddy_get_account(buddy);
 	gc = purple_account_get_connection(account);
-	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(buddy->account)));
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(purple_buddy_get_account(buddy))));
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
 

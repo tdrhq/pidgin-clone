@@ -118,10 +118,10 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 			continue;
 		}
 
-		if (purple_account_is_connected(buddy->account))
+		if (purple_account_is_connected(purple_buddy_get_account(buddy)))
 		{
 			int cmp = 1;
-			if (purple_account_is_connected(new_priority->account))
+			if (purple_account_is_connected(purple_buddy_get_account(new_priority)))
 				cmp = purple_presence_compare(purple_buddy_get_presence(new_priority),
 						purple_buddy_get_presence(buddy));
 
@@ -177,8 +177,8 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy->name,
-												   buddy->account);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy),
+												   purple_buddy_get_account(buddy));
 		if (conv)
 			purple_conversation_autoset_title(conv);
 	}
@@ -237,7 +237,7 @@ gboolean purple_contact_on_account(PurpleContact *c, PurpleAccount *account)
 			continue;
 
 		buddy = (PurpleBuddy *)bnode;
-		if (buddy->account == account)
+		if (purple_buddy_get_account(buddy)== account)
 			return TRUE;
 	}
 	return FALSE;

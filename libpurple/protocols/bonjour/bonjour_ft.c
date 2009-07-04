@@ -859,7 +859,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	if(!xf)
 		return;
 
-	p = g_strdup_printf("%s%s%s", xf->sid, pb->name, purple_account_get_username(pb->account));
+	p = g_strdup_printf("%s%s%s", xf->sid, purple_buddy_get_name(pb), purple_account_get_username(purple_buddy_get_account(pb)));
 
 	cipher = purple_sha1_cipher_new();
 	purple_cipher_append(cipher, (guchar *)p, strlen(p));

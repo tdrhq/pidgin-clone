@@ -769,7 +769,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		else
 			return;
 
-		if (strcmp(convprotocol, purple_account_get_protocol_id(buddy->account)))
+		if (strcmp(convprotocol, purple_account_get_protocol_id(purple_buddy_get_account(buddy))))
 		{
 			purple_notify_error(PIDGIN_CONVERSATION(info->conv), NULL,
 							  _("That buddy is not on the same protocol as this "
@@ -4375,7 +4375,7 @@ update_chat_alias(PurpleBuddy *buddy, PurpleConversation *conv, PurpleConnection
 	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
 		return;
 
-	normalized_name = g_strdup(purple_normalize(conv->account, buddy->name));
+	normalized_name = g_strdup(purple_normalize(conv->account, purple_buddy_get_name(buddy)));
 
 	do {
 		char *name;
@@ -4478,7 +4478,7 @@ buddy_cb_common(PurpleBuddy *buddy, PurpleConversation *conv, gboolean is_buddy)
 	if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
 		return;
 
-	normalized_name = g_strdup(purple_normalize(conv->account, buddy->name));
+	normalized_name = g_strdup(purple_normalize(conv->account, purple_buddy_get_name(buddy)));
 
 	do {
 		char *name;
@@ -5148,7 +5148,7 @@ pidgin_conv_find_gtkconv(PurpleConversation * conv)
 	for (bn = purple_blist_node_get_first_child(cn); bn; bn = purple_blist_node_get_sibling_next(bn)) {
 		PurpleBuddy *b = PURPLE_BUDDY(bn);
 		PurpleConversation *conv;
-		if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, b->account))) {
+		if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(b), purple_buddy_get_account(b)))) {
 			if (conv->ui_data)
 				return conv->ui_data;
 		}
@@ -7482,7 +7482,7 @@ get_gtkconv_with_contact(PurpleContact *contact)
 	{
 		PurpleBuddy *buddy = (PurpleBuddy*)node;
 		PurpleConversation *conv;
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 		if (conv)
 			return PIDGIN_CONVERSATION(conv);
 	}
@@ -7531,7 +7531,7 @@ update_buddy_status_timeout(PurpleBuddy *buddy)
 	/* To remove the signing-on/off door icon */
 	PurpleConversation *conv;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON);
 
@@ -7577,7 +7577,7 @@ update_buddy_idle_changed(PurpleBuddy *buddy, gboolean old, gboolean newidle)
 {
 	PurpleConversation *conv;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON);
 }
@@ -7587,7 +7587,7 @@ update_buddy_icon(PurpleBuddy *buddy)
 {
 	PurpleConversation *conv;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, buddy->name, buddy->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
 	if (conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_BUDDY_ICON);
 }

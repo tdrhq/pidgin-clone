@@ -31,6 +31,7 @@
 
 /** @copydoc _PurpleBuddy */
 typedef struct _PurpleBuddy PurpleBuddy;
+typedef struct _PurpleBuddyPrivate PurpleBuddyPrivate;
 typedef struct _PurpleBuddyClass PurpleBuddyClass;
 
 #include "buddyicon.h"
@@ -42,6 +43,7 @@ typedef struct _PurpleBuddyClass PurpleBuddyClass;
 #define PURPLE_BUDDY_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
 #define PURPLE_IS_BUDDY_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BUDDY_TYPE))
 #define PURPLE_GET_BUDDY_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
+#define PURPLE_BUDDY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PURPLE_BUDDY_TYPE, PurpleBuddyPrivate))
 
 #if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_BUDDY_C_)
 /**
@@ -49,19 +51,8 @@ typedef struct _PurpleBuddyClass PurpleBuddyClass;
  */
 struct _PurpleBuddy {
 	PurpleBlistNode node;                     /**< The node that this buddy inherits from */
-	char *name;                             /**< The name of the buddy. */
-	char *alias;                            /**< The user-set alias of the buddy */
-	char *server_alias;                     /**< The server-specified alias of the buddy.  (i.e. MSN "Friendly Names") */
-	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
-	PurpleBuddyIcon *icon;                    /**< The buddy icon. */
-	PurpleAccount *account;					/**< the account this buddy belongs to */
-	PurplePresence *presence;
+	PurpleBuddyPrivate *priv;               /**< The private members */
 };
-
-struct _PurpleBuddyClass {
-	PurpleBlistNodeClass parent;
-};
-
 #endif
 
 /**
@@ -136,6 +127,14 @@ PurpleAccount *purple_buddy_get_account(const PurpleBuddy *buddy);
  * @return The name.
  */
 const char *purple_buddy_get_name(const PurpleBuddy *buddy);
+
+/**
+ * Set the name of the buddy, frees existing name if not NULL.
+ *
+ * @param buddy The buddy
+ * @param name The name
+ */
+void purple_buddy_set_name(PurpleBuddy *buddy, const char *name);
 
 /**
  * Returns a buddy's icon.

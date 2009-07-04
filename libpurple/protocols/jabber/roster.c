@@ -464,7 +464,7 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		purple_debug_info("jabber", "jabber_roster_remove_buddy(): Removing %s from %s\n",
 		                  purple_buddy_get_name(buddy), purple_group_get_name(group));
 
-		jabber_roster_update(purple_object_get_protocol_data(PURPLE_OBJECT(gc)), buddy->name, groups);
+		jabber_roster_update(purple_object_get_protocol_data(PURPLE_OBJECT(gc)), purple_buddy_get_name(buddy), groups);
 		g_slist_free(groups);
 	} else {
 		JabberIq *iq = jabber_iq_new_query(purple_object_get_protocol_data(PURPLE_OBJECT(gc)), JABBER_IQ_SET,

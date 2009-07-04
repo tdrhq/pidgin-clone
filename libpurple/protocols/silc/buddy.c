@@ -1465,8 +1465,7 @@ void silcpurple_idle_set(PurpleConnection *gc, int idle)
 char *silcpurple_status_text(PurpleBuddy *b)
 {
 	PurpleAccount *account = purple_buddy_get_account(b);
-	PurpleConnection *gc = purple_account_get_connection(account);
-	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(b->account)));
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account)));
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
@@ -1531,8 +1530,7 @@ char *silcpurple_status_text(PurpleBuddy *b)
 void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	PurpleAccount *account = purple_buddy_get_account(b);
-	PurpleConnection *gc = purple_account_get_connection(account);
-	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(b->account)));
+	SilcPurple sg = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account)));
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = purple_buddy_get_protocol_data(b);
