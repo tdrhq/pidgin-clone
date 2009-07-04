@@ -12,8 +12,9 @@
 #define IDD_IM                                  115
 #define IDD_CHAT                                117
 #define IDD_JOINCHAT                            119
-#define IDC_COMBO1                              1000
+#define IDC_CBEX_ACCOUNTS                       1000
 #define IDC_LIST_NAMES                          1001
+#define IDC_STATIC_DETAILS                      1001
 #define IDC_TAB_CONVERSATIONS                   1001
 #define IDC_BUDDY_ICON                          1002
 #define IDC_LIST_ACCOUNTS                       1003

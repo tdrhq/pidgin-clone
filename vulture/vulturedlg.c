@@ -59,9 +59,22 @@ GHashTable* VultureJoinChatDlg(HWND hwndParent)
  */
 static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
+	static int s_cyNonGroup = 0, s_cyButtonMargin = 0;
+
 	switch(uiMsg)
 	{
 	case WM_INITDIALOG:
+		{
+			RECT rcGroup, rcDlg, rcButton;
+
+			GetClientRect(hwndDlg, &rcDlg);
+			GetClientRect(GetDlgItem(hwndDlg, IDC_STATIC_DETAILS), &rcGroup);
+			GetClientRect(GetDlgItem(hwndDlg, IDOK), &rcButton);
+
+			s_cyNonGroup = rcDlg.bottom - rcGroup.bottom + rcGroup.top;
+			s_cyButtonMargin = rcDlg.bottom - rcButton.top;
+		}
+
 		/* Let the system set the focus. */
 		return TRUE;
 
@@ -79,6 +92,30 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 		}
 
 		break;
+
+	case WM_SIZE:
+		{
+			RECT rcGroup, rcOK, rcCancel;
+			HDWP hdwp;
+			HWND hwndGroup = GetDlgItem(hwndDlg, IDC_STATIC_DETAILS);
+			HWND hwndOK = GetDlgItem(hwndDlg, IDOK);
+			HWND hwndCancel = GetDlgItem(hwndDlg, IDCANCEL);
+
+			GetClientRect(hwndGroup, &rcGroup);
+			GetClientRect(hwndOK, &rcOK);
+			GetClientRect(hwndCancel, &rcCancel);
+
+			/* Adjust group and buttons so that they fill the
+			 * dialogue.
+			 */
+			hdwp = BeginDeferWindowPos(3);
+			hdwp = DeferWindowPos(hdwp, hwndGroup, NULL, 0, 0, rcGroup.right - rcGroup.left, HIWORD(lParam) - s_cyNonGroup, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+			hdwp = DeferWindowPos(hdwp, hwndOK, NULL, rcOK.left, HIWORD(lParam) - s_cyButtonMargin, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+			hdwp = DeferWindowPos(hdwp, hwndCancel, NULL, rcCancel.left, HIWORD(lParam) - s_cyButtonMargin, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+			EndDeferWindowPos(hdwp);
+		}
+
+		return TRUE;
 	}
 
 	return FALSE;
