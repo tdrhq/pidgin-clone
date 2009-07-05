@@ -257,10 +257,6 @@ group_contacts_ready_cb (TpConnection *connection,
 		}
 
 		handle_contacts(data->connection_data, n_contacts, contacts, n_failed, group);
-
-		/* save the group in a hash table for later use */
-		g_hash_table_insert(data->connection_data->groups,
-				g_strdup(group_name), data);
 	}
 }
 
@@ -284,10 +280,6 @@ contacts_ready_cb (TpConnection *connection,
 	else
 	{
 		handle_contacts(data->connection_data, n_contacts, contacts, n_failed, NULL);
-
-		/* save the list in a hash table for later use */
-		g_hash_table_insert(data->connection_data->lists,
-				(gchar *)tp_channel_get_identifier(data->channel), data);
 	}
 }
 

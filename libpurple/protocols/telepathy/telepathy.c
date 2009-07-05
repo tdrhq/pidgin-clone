@@ -499,9 +499,14 @@ telepathy_add_buddy (PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 		purple_debug_info("telepathy", "Group %s does not exist. Creating it!\n",
 				group_name);
 
+		/* We need to store the buddy name so we can add it later after the group is ready */
+		g_hash_table_insert(data->buddy_to_be_added,
+				g_strdup(group_name), g_strdup(buddy_name));
+
+		/* Create the group channel */
 		tp_cli_connection_interface_requests_call_create_channel(data->connection, -1,
-				request, create_group_channel_cb, g_strdup(buddy_name), g_free,
-				NULL);
+				request, create_group_channel_cb, data,
+				NULL, NULL);
 
 		g_hash_table_destroy(request);
 	}

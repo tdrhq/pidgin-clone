@@ -50,6 +50,11 @@ typedef struct
 
 	/* This will map list name to telepathy_group structs */
 	GHashTable *lists;
+
+	/* This will map a group name to a buddy to be added to that group.
+	 * It's needed when a new group needs to be created as a request to add a buddy.
+	 */
+	GHashTable *buddy_to_be_added;
 	
 } telepathy_connection;
 
