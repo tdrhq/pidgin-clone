@@ -580,6 +580,9 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 			else
 				g_string_append(yd->tmp_serv_ilist, pair->value);
 			break;
+		case 89:
+			yd->profiles = g_strsplit(pair->value, ",", -1);
+			break;
 		case 59: /* cookies, yum */
 			yahoo_process_cookie(yd, pair->value);
 			break;
@@ -747,6 +750,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 struct _yahoo_im {
 	char *from;
+	char *active_id;
 	int time;
 	int utf8;
 	int buddy_icon;
@@ -775,6 +779,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				im->time = time(NULL);
 				im->utf8 = TRUE;
 			}
+			if (im && pair->key == 5)
+				im->active_id = pair->value;
 			if (pair->key == 97)
 				if (im)
 					im->utf8 = strtol(pair->value, NULL, 10);
@@ -864,7 +870,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			pkt2 = yahoo_packet_new(YAHOO_SERVICE_MESSAGE_ACK,
 					YAHOO_STATUS_AVAILABLE, pkt->id);
 			yahoo_packet_hash(pkt2, "ssisii",
-					1, purple_connection_get_display_name(gc),
+					1, im->active_id,  /* May not always be the connection's display name */
 					5, im->from,
 					302, 430,
 					430, im->id,
@@ -1481,11 +1487,11 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 #else
 		while (split_data[++totalelements] != NULL);	
 #endif
-		if (totalelements >= 5) {
-			response_no = strtol(split_data[1], NULL, 10);
-			crumb = g_strdup(split_data[2] + strlen("crumb="));
-			yd->cookie_y = g_strdup(split_data[3] + strlen("Y="));
-			yd->cookie_t = g_strdup(split_data[4] + strlen("T="));
+		if (totalelements >= 4) {
+			response_no = strtol(split_data[0], NULL, 10);
+			crumb = g_strdup(split_data[1] + strlen("crumb="));
+			yd->cookie_y = g_strdup(split_data[2] + strlen("Y="));
+			yd->cookie_t = g_strdup(split_data[3] + strlen("T="));
 		}
 
 		g_strfreev(split_data);
@@ -1567,9 +1573,9 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 #else
 		while (split_data[++totalelements] != NULL);	
 #endif
-		if(totalelements >= 5) {
-			response_no = strtol(split_data[1], NULL, 10);
-			token = g_strdup(split_data[2] + strlen("ymsgr="));
+		if(totalelements >= 2) {
+			response_no = strtol(split_data[0], NULL, 10);
+			token = g_strdup(split_data[1] + strlen("ymsgr="));
 		}
 
 		g_strfreev(split_data);
@@ -2172,15 +2178,13 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_PICTURE:
 		yahoo_process_picture(gc, pkt);
 		break;
-	case YAHOO_SERVICE_PICTURE_UPDATE:
-		yahoo_process_picture_update(gc, pkt);
-		break;
 	case YAHOO_SERVICE_PICTURE_CHECKSUM:
 		yahoo_process_picture_checksum(gc, pkt);
 		break;
 	case YAHOO_SERVICE_PICTURE_UPLOAD:
 		yahoo_process_picture_upload(gc, pkt);
 		break;
+	case YAHOO_SERVICE_PICTURE_UPDATE:
 	case YAHOO_SERVICE_AVATAR_UPDATE:
 		yahoo_process_avatar_update(gc, pkt);
 		break;
@@ -2815,6 +2819,7 @@ static void yahoo_close(PurpleConnection *gc) {
 	g_free(yd->pending_chat_id);
 	g_free(yd->pending_chat_topic);
 	g_free(yd->pending_chat_goto);
+	g_strfreev(yd->profiles);
 
 	g_free(yd->current_list15_grp);
 
@@ -3194,15 +3199,16 @@ static GList *yahoo_blist_node_menu(PurpleBlistNode *node)
 	}
 }
 
-static void yahoo_act_id(PurpleConnection *gc, const char *entry)
+static void yahoo_act_id(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	struct yahoo_data *yd = gc->proto_data;
+	const char *name = yd->profiles[purple_request_fields_get_choice(fields, "id")];
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_IDACT, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash_str(pkt, 3, entry);
+	yahoo_packet_hash_str(pkt, 3, name);
 	yahoo_packet_send_and_free(pkt, yd);
 
-	purple_connection_set_display_name(gc, entry);
+	purple_connection_set_display_name(gc, name);
 }
 
 static void
@@ -3284,9 +3290,28 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input(gc, NULL, _("Activate which ID?"), NULL,
-					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
+	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	const char *name = purple_connection_get_display_name(gc);
+	int iter;
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+	field = purple_request_field_choice_new("id", "Activate which ID?", 0);
+	purple_request_field_group_add_field(group, field);
+
+	for (iter = 0; yd->profiles[iter]; iter++) {
+		purple_request_field_choice_add(field, yd->profiles[iter]);
+		if (purple_strequal(yd->profiles[iter], name))
+			purple_request_field_choice_set_default_value(field, iter);
+	}
+
+	purple_request_fields(gc, NULL, _("Select the ID you want to activate"), NULL,
+					   fields,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
