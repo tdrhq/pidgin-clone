@@ -36,6 +36,14 @@ void
 destroy_group(telepathy_group *tp_group);
 
 void
+create_group_channel_cb (TpConnection *proxy,
+                         const gchar *out_Channel,
+                         GHashTable *out_Properties,
+                         const GError *error,
+                         gpointer user_data,
+                         GObject *weak_object);
+
+void
 handle_list_channel (TpChannel *channel,
                      telepathy_connection *data);
 

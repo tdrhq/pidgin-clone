@@ -469,21 +469,48 @@ telepathy_add_buddy (PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 	const gchar* buddy_name = purple_buddy_get_name(buddy);
 	const gchar* group_name = purple_group_get_name(group);
 
+	/* When adding a buddy to a new group, the PurpleGroup will automatically be created,
+	 * but we still have to check if there's an equivalent Telepathy channel.
+	 */
+
 	telepathy_connection *connection_data = purple_connection_get_protocol_data(gc);
 	telepathy_group *tp_group = g_hash_table_lookup(connection_data->groups, group_name);
 
 	purple_debug_info("telepathy", "Adding buddy %s to group %s\n",
 			buddy_name, group_name);
 
+	/* If there's no channel present, we'll have to create it before requesting a handle
+	 * for the contact.
+	 */
 	if (tp_group == NULL)
 	{
+		telepathy_connection *data = purple_connection_get_protocol_data(gc);
+
+		/* Request a contact list channel representing a group witht the specified name */
+		GHashTable *request = tp_asv_new (
+			TP_IFACE_CHANNEL ".ChannelType", G_TYPE_STRING,
+			TP_IFACE_CHANNEL_TYPE_CONTACT_LIST,
+			TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT,
+			TP_HANDLE_TYPE_GROUP,
+			TP_IFACE_CHANNEL ".TargetID", G_TYPE_STRING,
+			group_name,
+			NULL);
+
 		purple_debug_info("telepathy", "Group %s does not exist. Creating it!\n",
 				group_name);
 
-		/* TODO: Create a new group for the buddy! */
+		tp_cli_connection_interface_requests_call_create_channel(data->connection, -1,
+				request, create_group_channel_cb, g_strdup(buddy_name), g_free,
+				NULL);
+
+		g_hash_table_destroy(request);
 	}
 	else
 	{
+		/* Since the channel is created, all we have to do is request a handle and add
+		 * it to the relevant lists
+		 */
+
 		gchar const *ids[] = { buddy_name, NULL };
 
 		tp_connection_request_handles(connection_data->connection, -1,
@@ -700,7 +727,7 @@ get_human_name(const gchar *telepathy_name,
 		*purple_type_out = PURPLE_PREF_BOOLEAN;
 	else
 	{
-		purple_debug_warning("telepathy", "Unknown DBus signature \"%s\" for option \"%s\"",
+		purple_debug_warning("telepathy", "Unknown DBus signature \"%s\" for option \"%s\"\n",
 			dbus_type, telepathy_name);
 		return NULL;
 	}

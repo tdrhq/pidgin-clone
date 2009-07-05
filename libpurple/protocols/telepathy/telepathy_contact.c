@@ -67,7 +67,7 @@ add_contact_to_group_cb (TpConnection *connection,
 	else
 	{
 		telepathy_group *group = user_data;
-		telepathy_group *subscribe_list = user_data; 
+		telepathy_group *subscribe_list; 
 
 		const TpContactFeature features[] = {
 			TP_CONTACT_FEATURE_ALIAS,
@@ -98,7 +98,7 @@ add_contact_to_group_cb (TpConnection *connection,
 		{
 			/* add buddy to the subscribe list */
 			tp_cli_channel_interface_group_call_add_members(
-					group->channel, -1,
+					subscribe_list->channel, -1,
 					arr, NULL,
 					add_member_cb, group->connection_data,
 					NULL, NULL);

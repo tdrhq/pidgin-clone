@@ -20,6 +20,8 @@
 
 #include "telepathy_channel_list.h"
 
+#include <telepathy-glib/interfaces.h>
+
 #include "debug.h"
 
 #include "telepathy_avatar.h"
@@ -29,6 +31,36 @@ void
 destroy_group(telepathy_group *tp_group)
 {
 	g_free(tp_group);	
+}
+
+void
+create_group_channel_cb (TpConnection *proxy,
+                         const gchar *out_Channel,
+                         GHashTable *out_Properties,
+                         const GError *error,
+                         gpointer user_data,
+                         GObject *weak_object)
+{
+	/* the name of the buddy to add is stored in user_data */
+	gchar *buddy_name = user_data;
+	gchar const *ids[] = { buddy_name, NULL };
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "CreateChannel for group error: %s\n",
+				error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "Group channel created: %s\n", out_Channel);
+
+	/* TODO: Add the buddy to the newly created group
+
+	tp_connection_request_handles(proxy, -1,
+			TP_HANDLE_TYPE_CONTACT, ids,
+			add_contact_to_group_cb, tp_group,
+			NULL, NULL);
+	*/
 }
 
 void
