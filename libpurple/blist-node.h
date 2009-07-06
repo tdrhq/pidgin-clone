@@ -75,6 +75,14 @@ struct _PurpleBlistNode {
 
 struct _PurpleBlistNodeClass {
 	PurpleObjectClass parent;
+
+	void (*add_node)(PurpleBlistNode *parent, PurpleBlistNode *child);
+	void (*remove_node)(PurpleBlistNode *parent, PurpleBlistNode *child);
+
+	void (*purple_reserved1)(void);
+	void (*purple_reserved2)(void);
+	void (*purple_reserved3)(void);
+	void (*purple_reserved4)(void);
 };
 
 /**

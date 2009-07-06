@@ -53,6 +53,10 @@ struct _PurpleBuddy {
 	PurpleBlistNode node;                     /**< The node that this buddy inherits from */
 	PurpleBuddyPrivate *priv;               /**< The private members */
 };
+
+struct _PurpleBuddyClass {
+	PurpleBlistNodeClass parent;
+};
 #endif
 
 /**

@@ -226,6 +226,32 @@ GSList *purple_group_get_accounts(PurpleGroup *group)
 	return l;
 }
 
+static void
+purple_group_remove_node(PurpleBlistNode *parent, PurpleBlistNode *child)
+{
+	PurpleGroup *group = PURPLE_GROUP(parent);
+	PurpleContact *contact = PURPLE_CONTACT(child);
+	PurpleBlistNode *itr;
+
+#warning Consider optimizing this.
+	group->totalsize = 0;
+	group->currentsize = 0;
+	group->online = 0;
+
+	/* Update size counts */
+  for(itr	= group->node.child;itr;itr = itr->next){
+		if(PURPLE_CONTACT(itr)->online > 0)
+			group->online++;
+		if(PURPLE_CONTACT(itr)->currentsize > 0)
+			group->currentsize++;
+		group->totalsize++;
+	}
+
+	/* If the contact is empty then remove it */
+	if ((contact != NULL) && !PURPLE_BLIST_NODE(contact)->child)
+		purple_blist_remove_contact(contact);
+}
+
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);
@@ -302,7 +328,7 @@ PurpleGroup *purple_group_new(const char *name)
 												NULL);
 }
 
-static GObjectClass *parent_class = NULL;
+static PurpleBlistNodeClass *parent_class = NULL;
 
 static void
 purple_group_finalize(GObject *object)
@@ -310,7 +336,7 @@ purple_group_finalize(GObject *object)
 	PurpleGroup *group = PURPLE_GROUP(object);
 	g_free(group->name);
 	PURPLE_DBUS_UNREGISTER_POINTER(group);
-	parent_class->finalize(object);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
 static void
@@ -347,6 +373,7 @@ purple_group_class_init(PurpleGroupClass *klass)
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
+	parent_class->remove_node = purple_group_remove_node;
 	obj_class->finalize = purple_group_finalize;
 
 	obj_class->set_property = purple_group_set_property;

@@ -44,9 +44,6 @@ struct _PurpleBuddyPrivate {
 	PurplePresence *presence;
 };
 
-struct _PurpleBuddyClass {
-	PurpleBlistNodeClass parent;
-};
 void
 parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 {
@@ -97,10 +94,10 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurplePresence *presence;
 	PurpleStatus *status;
-	PurpleBlistNode *cnode;
-	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
+	PurpleBuddyPrivate *priv;
 
 	g_return_if_fail(buddy != NULL);
+	priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
 
 	presence = purple_buddy_get_presence(buddy);
 	status = purple_presence_get_active_status(presence);
@@ -112,24 +109,17 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 		!purple_status_is_online(old_status)) {
 
 		purple_signal_emit(purple_blist_get_handle(), "buddy-signed-on", buddy);
-
-		cnode = buddy->node.parent;
-		if (++(PURPLE_CONTACT(cnode)->online) == 1)
-			PURPLE_GROUP(cnode->parent)->online++;
 	} else if (!purple_status_is_online(status) &&
 				purple_status_is_online(old_status)) {
 
 		purple_blist_node_set_int(&buddy->node, "last_seen", time(NULL));
 		purple_signal_emit(purple_blist_get_handle(), "buddy-signed-off", buddy);
-
-		cnode = buddy->node.parent;
-		if (--(PURPLE_CONTACT(cnode)->online) == 0)
-			PURPLE_GROUP(cnode->parent)->online--;
 	} else {
 		purple_signal_emit(purple_blist_get_handle(),
 		                 "buddy-status-changed", buddy, old_status,
 		                 status);
 	}
+	purple_contact_buddy_status_update(purple_buddy_get_contact(buddy), status, old_status);
 
 	/*
 	 * This function used to only call the following two functions if one of
@@ -356,8 +346,8 @@ const char *purple_buddy_get_contact_alias(PurpleBuddy *buddy)
 
 	/* The contact alias */
 	c = purple_buddy_get_contact(buddy);
-	if ((c != NULL) && (c->alias != NULL))
-		return c->alias;
+	if ((c != NULL) && (purple_contact_get_alias(c)	!= NULL))
+		return purple_contact_get_alias(c);
 
 	/* The server alias */
 	if ((purple_buddy_get_server_alias(buddy)) && (*purple_buddy_get_server_alias(buddy)))
@@ -421,8 +411,8 @@ const char *purple_buddy_get_local_alias(PurpleBuddy *buddy)
 
 	/* The contact alias */
 	c = purple_buddy_get_contact(buddy);
-	if ((c != NULL) && (c->alias != NULL))
-		return c->alias;
+	if ((c != NULL) && (purple_contact_get_alias(c) != NULL))
+		return purple_contact_get_alias(c);
 
 	/* The buddy's user name (i.e. no alias) */
 	return priv->name;

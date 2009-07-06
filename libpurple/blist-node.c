@@ -430,6 +430,31 @@ purple_blist_node_get_extended_menu(PurpleBlistNode *n)
 	return menu;
 }
 
+static void
+purple_blist_node_add_node(PurpleBlistNode *parent, PurpleBlistNode *child)
+{
+}
+
+static void
+purple_blist_node_remove_node(PurpleBlistNode *group, PurpleBlistNode *child)
+{
+	PurpleBlistNodeClass *gklass = PURPLE_GET_BLIST_NODE_CLASS(group);
+	PurpleBlistNode *contact = purple_blist_node_get_parent(child);
+	PurpleBlistNodeClass *cklass = PURPLE_GET_BLIST_NODE_CLASS(contact);
+
+	/* Remove the node from its parent */
+	if (child->prev)
+		child->prev->next = child->next;
+	if (child->next)
+		child->next->prev = child->prev;
+	/* Is the child the first in the list? */
+	if ((child->parent != NULL) && (child->parent->child == child))
+		child->parent->child = child->next;
+
+	cklass->remove_node(contact, child);
+	gklass->remove_node(group, contact);
+}
+
 /******************/
 /*  GObject Code  */
 /******************/
@@ -484,6 +509,9 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 	obj_class->finalize = purple_blist_node_finalize;
 
 	g_type_class_add_private(klass, sizeof(PurpleBlistNodePrivate));
+
+	klass->add_node = purple_blist_node_add_node;
+	klass->remove_node = purple_blist_node_remove_node;
 }
 
 static void

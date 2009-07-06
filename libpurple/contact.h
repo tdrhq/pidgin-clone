@@ -31,6 +31,7 @@
 
 /** @copydoc _PurpleContact */
 typedef struct _PurpleContact PurpleContact;
+typedef struct _PurpleContactPrivate PurpleContactPrivate;
 typedef struct _PurpleContactClass PurpleContactClass;
 
 #include "buddy.h"
@@ -134,6 +135,38 @@ const char *purple_contact_get_alias(PurpleContact *contact);
  * @return The buddy's contact.
  */
 PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy);
+
+/**
+ * Returns the number of online buddies for this contact.
+ *
+ * @param contact The contact
+ * @return The # of online buddies
+ */
+int purple_contact_get_online(PurpleContact *contact);
+
+/**
+ * Sets the number of online contacts for this contact
+ *
+ * @param contact The contact
+ * @param value The number to set to
+ */
+void purple_contact_set_online(PurpleContact *contact, int value);
+
+/**
+ * Update the contact based on a buddy status change
+ *
+ * @param contact The contact
+ * @param status The current status of the buddy
+ * @param old_status The old status of the buddy
+ */
+void purple_contact_buddy_status_update(PurpleContact *contact, PurpleStatus *status, PurpleStatus *old_status);
+
+/**
+ * Returns the number of buddies that correspond to online buddies
+ *
+ * @param contact The contact
+ */
+int purple_contact_get_currentsize(PurpleContact *contact);
 
 /**
  * Merges two contacts

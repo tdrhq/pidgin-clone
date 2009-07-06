@@ -548,9 +548,9 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 			}
 		}
 
-		if (contact->online > 0)
+		if (purple_contact_get_online(contact) > 0)
 			((PurpleGroup*)cnode->parent)->online--;
-		if (contact->currentsize > 0)
+		if (purple_contact_get_currentsize(contact) > 0)
 			((PurpleGroup*)cnode->parent)->currentsize--;
 		((PurpleGroup*)cnode->parent)->totalsize--;
 
@@ -577,9 +577,9 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 		cnode->parent = gnode;
 	}
 
-	if (contact->online > 0)
+	if (purple_contact_get_online(contact) > 0)
 		g->online++;
-	if (contact->currentsize > 0)
+	if (purple_contact_get_currentsize(contact) > 0)
 		g->currentsize++;
 	g->totalsize++;
 
@@ -706,49 +706,16 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBlistNode *node, *cnode, *gnode;
-	PurpleContact *contact;
-	PurpleGroup *group;
 	struct _purple_hbuddy hb;
 	GHashTable *account_buddies;
 
 	g_return_if_fail(buddy != NULL);
 
-	node = (PurpleBlistNode *)buddy;
-	cnode = node->parent;
-	gnode = (cnode != NULL) ? cnode->parent : NULL;
-	contact = (PurpleContact *)cnode;
-	group = (PurpleGroup *)gnode;
+	node = PURPLE_BLIST_NODE(buddy);
+	cnode = purple_blist_node_get_parent(node);
+	gnode = purple_blist_node_get_parent(cnode);
 
-	/* Remove the node from its parent */
-	if (node->prev)
-		node->prev->next = node->next;
-	if (node->next)
-		node->next->prev = node->prev;
-	if ((cnode != NULL) && (cnode->child == node))
-		cnode->child = node->next;
-
-	/* Adjust size counts */
-	if (contact != NULL) {
-		if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
-			contact->online--;
-			if (contact->online == 0)
-				group->online--;
-		}
-		if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
-			contact->currentsize--;
-			if (contact->currentsize == 0)
-				group->currentsize--;
-		}
-		contact->totalsize--;
-
-		/* Re-sort the contact */
-		if (cnode->child && contact->priority == buddy) {
-			purple_contact_invalidate_priority_buddy(contact);
-			if (ops && ops->update)
-				ops->update(purplebuddylist, cnode);
-		}
-	}
-
+	PURPLE_GET_BLIST_NODE_CLASS(node)->remove_node(gnode, node);
 	purple_blist_schedule_save();
 
 	/* Remove this buddy from the buddies hash table */
@@ -773,10 +740,6 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 			PURPLE_BLIST_NODE(buddy));
 
 	purple_buddy_destroy(buddy);
-
-	/* If the contact is empty then remove it */
-	if ((contact != NULL) && !cnode->child)
-		purple_blist_remove_contact(contact);
 }
 
 void purple_blist_remove_chat(PurpleChat *chat)
