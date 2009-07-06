@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,27 +40,31 @@ namespace PurpleWrapper
 {
 	public class Prpl
 	{
+		public enum PurpleIconScaleRules
+		{
+			PURPLE_ICON_SCALE_DISPLAY = 0x01,
+			PURPLE_ICON_SCALE_SEND = 0x02
+		};
+
+		public enum PurpleProtocolOptions
+		{
+			OPT_PROTO_UNIQUE_CHATNAME = 0x00000004,
+			OPT_PROTO_CHAT_TOPIC = 0x00000008,
+			OPT_PROTO_NO_PASSWORD = 0x00000010,
+			OPT_PROTO_MAIL_CHECK = 0x00000020,
+			OPT_PROTO_IM_IMAGE = 0x00000040,
+			OPT_PROTO_PASSWORD_OPTIONAL = 0x00000080,
+			OPT_PROTO_USE_POINTSIZE = 0x00000100,
+			OPT_PROTO_REGISTER_NOSCREENNAME = 0x00000200,
+			OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400
+		};
+
 		/*
 		 * unsigned int( )
+		 * 
+		 * Could not generate a wrapper for int in file "prpl.h".
+		 * Message: The type could not be resolved (unsigned int( )).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN int(UNKNOWN );
-
-		public static unsigned Int( )
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleAttentionType * purple_attention_type_new(char * ulname, char * name, char * inc_desc, char * out_desc)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_attention_type_new(string ulname, string name, string inc_desc, string out_desc);
-
-		public static PurpleAttentionType AttentionTypeNew(string ulname, string name, string inc_desc, string out_desc)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_attention_type_set_name(PurpleAttentionType * type, char * name)
@@ -68,7 +74,7 @@ namespace PurpleWrapper
 
 		public static void AttentionTypeSetName(PurpleAttentionType type, string name)
 		{
-			throw new NotImplementedException();
+			purple_attention_type_set_name(type.Reference, name);
 		}
 
 		/*
@@ -79,7 +85,7 @@ namespace PurpleWrapper
 
 		public static void AttentionTypeSetIncomingDesc(PurpleAttentionType type, string desc)
 		{
-			throw new NotImplementedException();
+			purple_attention_type_set_incoming_desc(type.Reference, desc);
 		}
 
 		/*
@@ -90,7 +96,7 @@ namespace PurpleWrapper
 
 		public static void AttentionTypeSetOutgoingDesc(PurpleAttentionType type, string desc)
 		{
-			throw new NotImplementedException();
+			purple_attention_type_set_outgoing_desc(type.Reference, desc);
 		}
 
 		/*
@@ -101,7 +107,7 @@ namespace PurpleWrapper
 
 		public static void AttentionTypeSetIconName(PurpleAttentionType type, string name)
 		{
-			throw new NotImplementedException();
+			purple_attention_type_set_icon_name(type.Reference, name);
 		}
 
 		/*
@@ -112,7 +118,7 @@ namespace PurpleWrapper
 
 		public static void AttentionTypeSetUnlocalizedName(PurpleAttentionType type, string ulname)
 		{
-			throw new NotImplementedException();
+			purple_attention_type_set_unlocalized_name(type.Reference, ulname);
 		}
 
 		/*
@@ -123,7 +129,7 @@ namespace PurpleWrapper
 
 		public static string AttentionTypeGetName(PurpleAttentionType type)
 		{
-			throw new NotImplementedException();
+			return purple_attention_type_get_name(type.Reference);
 		}
 
 		/*
@@ -134,7 +140,7 @@ namespace PurpleWrapper
 
 		public static string AttentionTypeGetIncomingDesc(PurpleAttentionType type)
 		{
-			throw new NotImplementedException();
+			return purple_attention_type_get_incoming_desc(type.Reference);
 		}
 
 		/*
@@ -145,7 +151,7 @@ namespace PurpleWrapper
 
 		public static string AttentionTypeGetOutgoingDesc(PurpleAttentionType type)
 		{
-			throw new NotImplementedException();
+			return purple_attention_type_get_outgoing_desc(type.Reference);
 		}
 
 		/*
@@ -156,7 +162,7 @@ namespace PurpleWrapper
 
 		public static string AttentionTypeGetIconName(PurpleAttentionType type)
 		{
-			throw new NotImplementedException();
+			return purple_attention_type_get_icon_name(type.Reference);
 		}
 
 		/*
@@ -167,40 +173,19 @@ namespace PurpleWrapper
 
 		public static string AttentionTypeGetUnlocalizedName(PurpleAttentionType type)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_prpl_got_account_idle(PurpleAccount * account, gboolean idle, time_t idle_time)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prpl_got_account_idle(IntPtr account, bool idle, UNKNOWN idle_time);
-
-		public static void GotAccountIdle(PurpleAccount account, bool idle, time_t idle_time)
-		{
-			throw new NotImplementedException();
+			return purple_attention_type_get_unlocalized_name(type.Reference);
 		}
 
 		/*
 		 * void purple_prpl_got_account_login_time(PurpleAccount * account, time_t login_time)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_prpl_got_account_login_time(IntPtr account, UNKNOWN login_time);
+		private static extern void purple_prpl_got_account_login_time(IntPtr account, ulong login_time);
 
-		public static void GotAccountLoginTime(PurpleAccount account, time_t login_time)
+		public static void GotAccountLoginTime(PurpleAccount account, DateTime login_time)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_prpl_got_account_status(PurpleAccount * account, char * status_id, ...)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prpl_got_account_status(IntPtr account, string status_id, ...);
-
-		public static void GotAccountStatus(PurpleAccount account, string status_id, ...)
-		{
-			throw new NotImplementedException();
+			ulong _PurpleWrapper_arg1 = (ulong)(login_time - new DateTime(1970, 1, 1)).TotalSeconds;
+			purple_prpl_got_account_login_time(account.Reference, _PurpleWrapper_arg1);
 		}
 
 		/*
@@ -211,74 +196,15 @@ namespace PurpleWrapper
 
 		public static void GotAccountActions(PurpleAccount account)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_prpl_got_user_idle(PurpleAccount * account, char * name, gboolean idle, time_t idle_time)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prpl_got_user_idle(IntPtr account, string name, bool idle, UNKNOWN idle_time);
-
-		public static void GotUserIdle(PurpleAccount account, string name, bool idle, time_t idle_time)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_prpl_got_user_login_time(PurpleAccount * account, char * name, time_t login_time)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prpl_got_user_login_time(IntPtr account, string name, UNKNOWN login_time);
-
-		public static void GotUserLoginTime(PurpleAccount account, string name, time_t login_time)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_prpl_got_user_status(PurpleAccount * account, char * name, char * status_id, ...)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prpl_got_user_status(IntPtr account, string name, string status_id, ...);
-
-		public static void GotUserStatus(PurpleAccount account, string name, string status_id, ...)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_prpl_got_user_status_deactive(PurpleAccount * account, char * name, char * status_id)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prpl_got_user_status_deactive(IntPtr account, string name, string status_id);
-
-		public static void GotUserStatusDeactive(PurpleAccount account, string name, string status_id)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_prpl_change_account_status(PurpleAccount * account, PurpleStatus * old_status, PurpleStatus * new_status)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prpl_change_account_status(IntPtr account, IntPtr old_status, IntPtr new_status);
-
-		public static void ChangeAccountStatus(PurpleAccount account, PurpleStatus old_status, PurpleStatus new_status)
-		{
-			throw new NotImplementedException();
+			purple_prpl_got_account_actions(account.Reference);
 		}
 
 		/*
 		 * GList * purple_prpl_get_statuses(PurpleAccount * account, PurplePresence * presence)
+		 * 
+		 * Could not generate a wrapper for purple_prpl_get_statuses in file "prpl.h".
+		 * Message: The type could not be resolved (GList * purple_prpl_get_statuses(PurpleAccount * account, PurplePresence * presence)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_prpl_get_statuses(IntPtr account, IntPtr presence);
-
-		public static GList GetStatuses(PurpleAccount account, PurplePresence presence)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_prpl_send_attention(PurpleConnection * gc, char * who, guint type_code)
@@ -288,7 +214,7 @@ namespace PurpleWrapper
 
 		public static void SendAttention(PurpleConnection gc, string who, uint type_code)
 		{
-			throw new NotImplementedException();
+			purple_prpl_send_attention(gc.Reference, who, type_code);
 		}
 
 		/*
@@ -299,7 +225,7 @@ namespace PurpleWrapper
 
 		public static void GotAttention(PurpleConnection gc, string who, uint type_code)
 		{
-			throw new NotImplementedException();
+			purple_prpl_got_attention(gc.Reference, who, type_code);
 		}
 
 		/*
@@ -310,29 +236,7 @@ namespace PurpleWrapper
 
 		public static void GotAttentionInChat(PurpleConnection gc, int id, string who, uint type_code)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleMediaCaps purple_prpl_get_media_caps(PurpleAccount * account, char * who)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_prpl_get_media_caps(IntPtr account, string who);
-
-		public static PurpleMediaCaps GetMediaCaps(PurpleAccount account, string who)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_prpl_initiate_media(PurpleAccount * account, char * who, PurpleMediaSessionType type)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_prpl_initiate_media(IntPtr account, string who, UNKNOWN type);
-
-		public static bool InitiateMedia(PurpleAccount account, string who, PurpleMediaSessionType type)
-		{
-			throw new NotImplementedException();
+			purple_prpl_got_attention_in_chat(gc.Reference, id, who, type_code);
 		}
 
 		/*
@@ -343,7 +247,7 @@ namespace PurpleWrapper
 
 		public static PurplePlugin FindPrpl(string id)
 		{
-			throw new NotImplementedException();
+			return new PurplePlugin(purple_find_prpl(id));
 		}
 
 	}

@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,16 +40,17 @@ namespace PurpleWrapper
 {
 	public class Log
 	{
-		/*
-		 * PurpleLog * purple_log_new(PurpleLogType type, char * name, PurpleAccount * account, PurpleConversation * conv, time_t time, struct tm)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_log_new(UNKNOWN type, string name, IntPtr account, IntPtr conv, UNKNOWN time, UNKNOWN tm);
-
-		public static PurpleLog New(PurpleLogType type, string name, PurpleAccount account, PurpleConversation conv, time_t time, struct tm)
+		public enum PurpleLogType
 		{
-			throw new NotImplementedException();
-		}
+			PURPLE_LOG_IM,
+			PURPLE_LOG_CHAT,
+			PURPLE_LOG_SYSTEM
+		};
+
+		public enum PurpleLogReadFlags
+		{
+			PURPLE_LOG_READ_NO_NEWLINE = 1
+		};
 
 		/*
 		 * void purple_log_free(PurpleLog * log)
@@ -57,63 +60,41 @@ namespace PurpleWrapper
 
 		public static void Free(PurpleLog log)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_log_write(PurpleLog * log, PurpleMessageFlags type, char * from, time_t time, char * message)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_log_write(IntPtr log, UNKNOWN type, string from, UNKNOWN time, string message);
-
-		public static void Write(PurpleLog log, PurpleMessageFlags type, string from, time_t time, string message)
-		{
-			throw new NotImplementedException();
+			purple_log_free(log.Reference);
 		}
 
 		/*
 		 * char * purple_log_read(PurpleLog * log, PurpleLogReadFlags * flags)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern string purple_log_read(IntPtr log, IntPtr flags);
+		private static extern string purple_log_read(IntPtr log, Log.PurpleLogReadFlags flags);
 
-		public static string Read(PurpleLog log, PurpleLogReadFlags flags)
+		public static string Read(PurpleLog log, Log.PurpleLogReadFlags flags)
 		{
+			/* Unable to process flags, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
 		/*
 		 * GList * purple_log_get_logs(PurpleLogType type, char * name, PurpleAccount * account)
+		 * 
+		 * Could not generate a wrapper for purple_log_get_logs in file "log.h".
+		 * Message: The type could not be resolved (GList * purple_log_get_logs(PurpleLogType type, char * name, PurpleAccount * account)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_log_get_logs(UNKNOWN type, string name, IntPtr account);
-
-		public static GList GetLogs(PurpleLogType type, string name, PurpleAccount account)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GHashTable * purple_log_get_log_sets()
+		 * 
+		 * Could not generate a wrapper for purple_log_get_log_sets in file "log.h".
+		 * Message: The type could not be resolved (GHashTable * purple_log_get_log_sets()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_log_get_log_sets();
-
-		public static GHashTable GetLogSets()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_log_get_system_logs(PurpleAccount * account)
+		 * 
+		 * Could not generate a wrapper for purple_log_get_system_logs in file "log.h".
+		 * Message: The type could not be resolved (GList * purple_log_get_system_logs(PurpleAccount * account)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_log_get_system_logs(IntPtr account);
-
-		public static GList GetSystemLogs(PurpleAccount account)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * int purple_log_get_size(PurpleLog * log)
@@ -123,17 +104,18 @@ namespace PurpleWrapper
 
 		public static int GetSize(PurpleLog log)
 		{
-			throw new NotImplementedException();
+			return purple_log_get_size(log.Reference);
 		}
 
 		/*
 		 * int purple_log_get_total_size(PurpleLogType type, char * name, PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern int purple_log_get_total_size(UNKNOWN type, string name, IntPtr account);
+		private static extern int purple_log_get_total_size(Log.PurpleLogType type, string name, IntPtr account);
 
-		public static int GetTotalSize(PurpleLogType type, string name, PurpleAccount account)
+		public static int GetTotalSize(Log.PurpleLogType type, string name, PurpleAccount account)
 		{
+			/* Unable to process type, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -141,10 +123,11 @@ namespace PurpleWrapper
 		 * int purple_log_get_activity_score(PurpleLogType type, char * name, PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern int purple_log_get_activity_score(UNKNOWN type, string name, IntPtr account);
+		private static extern int purple_log_get_activity_score(Log.PurpleLogType type, string name, IntPtr account);
 
-		public static int GetActivityScore(PurpleLogType type, string name, PurpleAccount account)
+		public static int GetActivityScore(Log.PurpleLogType type, string name, PurpleAccount account)
 		{
+			/* Unable to process type, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -156,7 +139,7 @@ namespace PurpleWrapper
 
 		public static bool IsDeletable(PurpleLog log)
 		{
-			throw new NotImplementedException();
+			return purple_log_is_deletable(log.Reference);
 		}
 
 		/*
@@ -167,17 +150,18 @@ namespace PurpleWrapper
 
 		public static bool Delete(PurpleLog log)
 		{
-			throw new NotImplementedException();
+			return purple_log_delete(log.Reference);
 		}
 
 		/*
 		 * char * purple_log_get_log_dir(PurpleLogType type, char * name, PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern string purple_log_get_log_dir(UNKNOWN type, string name, IntPtr account);
+		private static extern string purple_log_get_log_dir(Log.PurpleLogType type, string name, IntPtr account);
 
-		public static string GetLogDir(PurpleLogType type, string name, PurpleAccount account)
+		public static string GetLogDir(Log.PurpleLogType type, string name, PurpleAccount account)
 		{
+			/* Unable to process type, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -185,22 +169,22 @@ namespace PurpleWrapper
 		 * gint purple_log_compare(gconstpointer y, gconstpointer z)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern int purple_log_compare(UNKNOWN y, UNKNOWN z);
+		private static extern int purple_log_compare(IntPtr y, IntPtr z);
 
-		public static int Compare(gconstpointer y, gconstpointer z)
+		public static int Compare(IntPtr y, IntPtr z)
 		{
-			throw new NotImplementedException();
+			return purple_log_compare(y, z);
 		}
 
 		/*
 		 * gint purple_log_set_compare(gconstpointer y, gconstpointer z)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern int purple_log_set_compare(UNKNOWN y, UNKNOWN z);
+		private static extern int purple_log_set_compare(IntPtr y, IntPtr z);
 
-		public static int SetCompare(gconstpointer y, gconstpointer z)
+		public static int SetCompare(IntPtr y, IntPtr z)
 		{
-			throw new NotImplementedException();
+			return purple_log_set_compare(y, z);
 		}
 
 		/*
@@ -211,7 +195,7 @@ namespace PurpleWrapper
 
 		public static void SetFree(PurpleLogSet set)
 		{
-			throw new NotImplementedException();
+			purple_log_set_free(set.Reference);
 		}
 
 		/*
@@ -222,29 +206,7 @@ namespace PurpleWrapper
 
 		public static void CommonWriter(PurpleLog log, string ext)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * GList * purple_log_common_lister(PurpleLogType type, char * name, PurpleAccount * account, char * ext, PurpleLogLogger * logger)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_log_common_lister(UNKNOWN type, string name, IntPtr account, string ext, IntPtr logger);
-
-		public static GList CommonLister(PurpleLogType type, string name, PurpleAccount account, string ext, PurpleLogLogger logger)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * int purple_log_common_total_sizer(PurpleLogType type, char * name, PurpleAccount * account, char * ext)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern int purple_log_common_total_sizer(UNKNOWN type, string name, IntPtr account, string ext);
-
-		public static int CommonTotalSizer(PurpleLogType type, string name, PurpleAccount account, string ext)
-		{
-			throw new NotImplementedException();
+			purple_log_common_writer(log.Reference, ext);
 		}
 
 		/*
@@ -255,7 +217,7 @@ namespace PurpleWrapper
 
 		public static int CommonSizer(PurpleLog log)
 		{
-			throw new NotImplementedException();
+			return purple_log_common_sizer(log.Reference);
 		}
 
 		/*
@@ -266,7 +228,7 @@ namespace PurpleWrapper
 
 		public static bool CommonDeleter(PurpleLog log)
 		{
-			throw new NotImplementedException();
+			return purple_log_common_deleter(log.Reference);
 		}
 
 		/*
@@ -277,18 +239,7 @@ namespace PurpleWrapper
 
 		public static bool CommonIsDeletable(PurpleLog log)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleLogLogger * purple_log_logger_new(char * id, char * name, int functions, ...)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_log_logger_new(string id, string name, int functions, ...);
-
-		public static PurpleLogLogger LoggerNew(string id, string name, int functions, ...)
-		{
-			throw new NotImplementedException();
+			return purple_log_common_is_deletable(log.Reference);
 		}
 
 		/*
@@ -299,7 +250,7 @@ namespace PurpleWrapper
 
 		public static void LoggerFree(PurpleLogLogger logger)
 		{
-			throw new NotImplementedException();
+			purple_log_logger_free(logger.Reference);
 		}
 
 		/*
@@ -310,7 +261,7 @@ namespace PurpleWrapper
 
 		public static void LoggerAdd(PurpleLogLogger logger)
 		{
-			throw new NotImplementedException();
+			purple_log_logger_add(logger.Reference);
 		}
 
 		/*
@@ -321,7 +272,7 @@ namespace PurpleWrapper
 
 		public static void LoggerRemove(PurpleLogLogger logger)
 		{
-			throw new NotImplementedException();
+			purple_log_logger_remove(logger.Reference);
 		}
 
 		/*
@@ -332,7 +283,7 @@ namespace PurpleWrapper
 
 		public static void LoggerSet(PurpleLogLogger logger)
 		{
-			throw new NotImplementedException();
+			purple_log_logger_set(logger.Reference);
 		}
 
 		/*
@@ -343,19 +294,15 @@ namespace PurpleWrapper
 
 		public static PurpleLogLogger LoggerGet()
 		{
-			throw new NotImplementedException();
+			return new PurpleLogLogger(purple_log_logger_get());
 		}
 
 		/*
 		 * GList * purple_log_logger_get_options()
+		 * 
+		 * Could not generate a wrapper for purple_log_logger_get_options in file "log.h".
+		 * Message: The type could not be resolved (GList * purple_log_logger_get_options()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_log_logger_get_options();
-
-		public static GList LoggerGetOptions()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_log_init()
@@ -365,7 +312,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_log_init();
 		}
 
 		/*
@@ -376,7 +323,7 @@ namespace PurpleWrapper
 
 		public static IntPtr GetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_log_get_handle();
 		}
 
 		/*
@@ -387,7 +334,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_log_uninit();
 		}
 
 	}

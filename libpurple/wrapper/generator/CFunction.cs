@@ -5,23 +5,13 @@ namespace Scripts
 {
     class CFunction : CTyped
     {
-        private String name;
         private List<CArgument> arguments = new List<CArgument>();
+        private bool isFunctionPointer = false;
 
-        public CFunction(String returnType, String name)
+        public CFunction(CFile file, String returnType, String name)
+            : base(file, returnType, name)
         {
-            this.name = name;
-            this.Type = returnType;
         }
-
-        public String Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
-
-
-
 
         public void AddArgument(CArgument argument)
         {
@@ -34,6 +24,12 @@ namespace Scripts
             {
                 return arguments;
             }
+        }
+
+        public bool IsFunctionPointer
+        {
+            get { return isFunctionPointer; }
+            set { isFunctionPointer = true; }
         }
 
         public override string ToString()
@@ -55,7 +51,7 @@ namespace Scripts
         public string GetCSharpPrivateFunction()
         {
             String str = "";
-            str += this.CSharpPrivateType + " " + this.Name + "(";
+            str += this.CSharpPrivateType + " " + this.SafeName + "(";
 
             for (int i = 0; i < this.Arguments.Count; i++)
             {
@@ -69,15 +65,15 @@ namespace Scripts
             return str;
         }
 
-        public string GetCSharpPublicFunction(String className)
+        public string GetCSharpPublicFunction()
         {
             String str = "";
 
-            String modifiedName = this.Name.ToLower();
+            String modifiedName = this.SafeName.ToLower();
             if (modifiedName.StartsWith("purple_"))
                 modifiedName = modifiedName.Substring(7);
-            if (modifiedName.StartsWith(className.ToLower() + "_"))
-                modifiedName = modifiedName.Substring(className.Length + 1);
+            if (modifiedName.StartsWith(this.File.FileNameAsClassName.ToLower() + "_"))
+                modifiedName = modifiedName.Substring(this.File.FileNameAsClassName.Length + 1);
 
             String finalName = "";
             finalName += Char.ToUpper(modifiedName[0]);

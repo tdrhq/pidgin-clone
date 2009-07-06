@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -39,70 +41,78 @@ namespace PurpleWrapper
 	public class Imgstore
 	{
 		/*
+		 * PurpleStoredImage * purple_imgstore_add(gpointer data, size_t size, char * filename)
+		 * 
+		 * Could not generate a wrapper for purple_imgstore_add in file "imgstore.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * purple_imgstore_add(gpointer data, size_t size, char * filename)).
+		 */
+
+		/*
+		 * PurpleStoredImage * purple_imgstore_new_from_file(char * path)
+		 * 
+		 * Could not generate a wrapper for purple_imgstore_new_from_file in file "imgstore.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * purple_imgstore_new_from_file(char * path)).
+		 */
+
+		/*
 		 * int purple_imgstore_add_with_id(gpointer data, size_t size, char * filename)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern int purple_imgstore_add_with_id(IntPtr data, UNKNOWN size, string filename);
+		private static extern int purple_imgstore_add_with_id(IntPtr data, ulong size, string filename);
 
-		public static int AddWithId(IntPtr data, size_t size, string filename)
+		public static int AddWithId(IntPtr data, ulong size, string filename)
 		{
-			throw new NotImplementedException();
+			return purple_imgstore_add_with_id(data, size, filename);
 		}
 
 		/*
 		 * PurpleStoredImage * purple_imgstore_find_by_id(int id)
+		 * 
+		 * Could not generate a wrapper for purple_imgstore_find_by_id in file "imgstore.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * purple_imgstore_find_by_id(int id)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_imgstore_find_by_id(int id);
-
-		public static PurpleStoredImage FindById(int id)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gconstpointer purple_imgstore_get_data(PurpleStoredImage * img)
+		 * 
+		 * Could not generate a wrapper for purple_imgstore_get_data in file "imgstore.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * img).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_imgstore_get_data(IntPtr img);
-
-		public static gconstpointer GetData(PurpleStoredImage img)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * size_t purple_imgstore_get_size(PurpleStoredImage * img)
+		 * 
+		 * Could not generate a wrapper for purple_imgstore_get_size in file "imgstore.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * img).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_imgstore_get_size(IntPtr img);
-
-		public static size_t GetSize(PurpleStoredImage img)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_imgstore_get_filename(PurpleStoredImage * img)
+		 * 
+		 * Could not generate a wrapper for purple_imgstore_get_filename in file "imgstore.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * img).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_imgstore_get_filename(IntPtr img);
-
-		public static string GetFilename(PurpleStoredImage img)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_imgstore_get_extension(PurpleStoredImage * img)
+		 * 
+		 * Could not generate a wrapper for purple_imgstore_get_extension in file "imgstore.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * img).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_imgstore_get_extension(IntPtr img);
 
-		public static string GetExtension(PurpleStoredImage img)
-		{
-			throw new NotImplementedException();
-		}
+		/*
+		 * PurpleStoredImage * purple_imgstore_ref(PurpleStoredImage * img)
+		 * 
+		 * Could not generate a wrapper for purple_imgstore_ref in file "imgstore.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * purple_imgstore_ref(PurpleStoredImage * img)).
+		 */
+
+		/*
+		 * PurpleStoredImage * purple_imgstore_unref(PurpleStoredImage * img)
+		 * 
+		 * Could not generate a wrapper for purple_imgstore_unref in file "imgstore.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * purple_imgstore_unref(PurpleStoredImage * img)).
+		 */
 
 		/*
 		 * void purple_imgstore_ref_by_id(int id)
@@ -112,7 +122,7 @@ namespace PurpleWrapper
 
 		public static void RefById(int id)
 		{
-			throw new NotImplementedException();
+			purple_imgstore_ref_by_id(id);
 		}
 
 		/*
@@ -123,7 +133,7 @@ namespace PurpleWrapper
 
 		public static void UnrefById(int id)
 		{
-			throw new NotImplementedException();
+			purple_imgstore_unref_by_id(id);
 		}
 
 		/*
@@ -134,7 +144,7 @@ namespace PurpleWrapper
 
 		public static IntPtr GetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_imgstore_get_handle();
 		}
 
 		/*
@@ -145,7 +155,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_imgstore_init();
 		}
 
 		/*
@@ -156,7 +166,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_imgstore_uninit();
 		}
 
 	}

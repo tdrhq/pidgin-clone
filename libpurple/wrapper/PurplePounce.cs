@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,182 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurplePounce : UnmanagedWrapper<_PurplePounce>
 	{
+		/* 
+		 * Could not generate a wrapper for PurplePounce in file "pounce.h".
+		 * Message: The type could not be resolved (GHashTable * actions).
+		 */
+
 		public PurplePounce()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurplePounce(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurplePounce)Marshal.PtrToStructure(this.Reference, typeof(_PurplePounce));
-		}
-
-		public string ui_type
-		{
-			get
-			{
-				return this.Data.ui_type;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.ui_type = value;
-			}
-		}
-
-		public PurplePounceEvent events
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurplePounceOption options
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleAccount pouncer
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public string pouncee
-		{
-			get
-			{
-				return this.Data.pouncee;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.pouncee = value;
-			}
-		}
-
-		public GHashTable actions
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public bool save
-		{
-			get
-			{
-				return this.Data.save;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.save = value;
-			}
-		}
-
-		public IntPtr data
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurplePounce
-	{
-		/*
-		 * char * ui_type
-		 */
-		string ui_type;
-
-		/*
-		 * PurplePounceEvent events
-		 */
-		UNKNOWN events;
-
-		/*
-		 * PurplePounceOption options
-		 */
-		UNKNOWN options;
-
-		/*
-		 * PurpleAccount * pouncer
-		 */
-		IntPtr pouncer;
-
-		/*
-		 * char * pouncee
-		 */
-		string pouncee;
-
-		/*
-		 * GHashTable * actions
-		 */
-		IntPtr actions;
-
-		/*
-		 * gboolean save
-		 */
-		bool save;
-
-		/*
-		 * void * data
-		 */
-		IntPtr data;
-
-	}
+	class _PurplePounce { }
 }
 

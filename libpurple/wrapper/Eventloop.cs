@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,14 +40,21 @@ namespace PurpleWrapper
 {
 	public class Eventloop
 	{
+		public enum PurpleInputCondition
+		{
+			PURPLE_INPUT_READ = 1 << 0,
+			PURPLE_INPUT_WRITE = 1 << 1
+		};
+
 		/*
 		 * guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern uint purple_timeout_add(uint interval, UNKNOWN function, IntPtr data);
+		private static extern uint purple_timeout_add(uint interval, IntPtr function, IntPtr data);
 
-		public static uint TimeoutAdd(uint interval, GSourceFunc function, IntPtr data)
+		public static uint TimeoutAdd(uint interval, /* libgobject */ IntPtr function, IntPtr data)
 		{
+			/* Unable to process function, a GObjectObject. */
 			throw new NotImplementedException();
 		}
 
@@ -53,10 +62,11 @@ namespace PurpleWrapper
 		 * guint purple_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern uint purple_timeout_add_seconds(uint interval, UNKNOWN function, IntPtr data);
+		private static extern uint purple_timeout_add_seconds(uint interval, IntPtr function, IntPtr data);
 
-		public static uint TimeoutAddSeconds(uint interval, GSourceFunc function, IntPtr data)
+		public static uint TimeoutAddSeconds(uint interval, /* libgobject */ IntPtr function, IntPtr data)
 		{
+			/* Unable to process function, a GObjectObject. */
 			throw new NotImplementedException();
 		}
 
@@ -68,18 +78,7 @@ namespace PurpleWrapper
 
 		public static bool TimeoutRemove(uint handle)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * guint purple_input_add(int fd, PurpleInputCondition cond, PurpleInputFunction func, gpointer user_data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern uint purple_input_add(int fd, UNKNOWN cond, UNKNOWN func, IntPtr user_data);
-
-		public static uint InputAdd(int fd, PurpleInputCondition cond, PurpleInputFunction func, IntPtr user_data)
-		{
-			throw new NotImplementedException();
+			return purple_timeout_remove(handle);
 		}
 
 		/*
@@ -90,19 +89,15 @@ namespace PurpleWrapper
 
 		public static bool InputRemove(uint handle)
 		{
-			throw new NotImplementedException();
+			return purple_input_remove(handle);
 		}
 
 		/*
 		 * int purple_input_get_error(int fd, int * error)
+		 * 
+		 * Could not generate a wrapper for purple_input_get_error in file "eventloop.h".
+		 * Message: The type could not be resolved (int * error).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern int purple_input_get_error(int fd, IntPtr error);
-
-		public static int InputGetError(int fd, int error)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_eventloop_set_ui_ops(PurpleEventLoopUiOps * ops)
@@ -112,7 +107,7 @@ namespace PurpleWrapper
 
 		public static void SetUiOps(PurpleEventLoopUiOps ops)
 		{
-			throw new NotImplementedException();
+			purple_eventloop_set_ui_ops(ops.Reference);
 		}
 
 		/*
@@ -123,7 +118,7 @@ namespace PurpleWrapper
 
 		public static PurpleEventLoopUiOps GetUiOps()
 		{
-			throw new NotImplementedException();
+			return new PurpleEventLoopUiOps(purple_eventloop_get_ui_ops());
 		}
 
 	}

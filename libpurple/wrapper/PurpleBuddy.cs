@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,182 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurpleBuddy : UnmanagedWrapper<_PurpleBuddy>
 	{
+		/* 
+		 * Could not generate a wrapper for PurpleBuddy in file "blist.h".
+		 * Message: The type resolved to a known struct but not a pointer to that struct (PurpleBlistNode node).
+		 */
+
 		public PurpleBuddy()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurpleBuddy(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurpleBuddy)Marshal.PtrToStructure(this.Reference, typeof(_PurpleBuddy));
-		}
-
-		public PurpleBlistNode node
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public string name
-		{
-			get
-			{
-				return this.Data.name;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.name = value;
-			}
-		}
-
-		public string alias
-		{
-			get
-			{
-				return this.Data.alias;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.alias = value;
-			}
-		}
-
-		public string server_alias
-		{
-			get
-			{
-				return this.Data.server_alias;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.server_alias = value;
-			}
-		}
-
-		public IntPtr proto_data
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleBuddyIcon icon
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleAccount account
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurplePresence presence
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleBuddy
-	{
-		/*
-		 * PurpleBlistNode node
-		 */
-		UNKNOWN node;
-
-		/*
-		 * char * name
-		 */
-		string name;
-
-		/*
-		 * char * alias
-		 */
-		string alias;
-
-		/*
-		 * char * server_alias
-		 */
-		string server_alias;
-
-		/*
-		 * void * proto_data
-		 */
-		IntPtr proto_data;
-
-		/*
-		 * PurpleBuddyIcon * icon
-		 */
-		IntPtr icon;
-
-		/*
-		 * PurpleAccount * account
-		 */
-		IntPtr account;
-
-		/*
-		 * PurplePresence * presence
-		 */
-		IntPtr presence;
-
-	}
+	class _PurpleBuddy { }
 }
 

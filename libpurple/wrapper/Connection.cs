@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,27 +40,53 @@ namespace PurpleWrapper
 {
 	public class Connection
 	{
-		/*
-		 * void purple_connection_new(PurpleAccount * account, gboolean regist, char * password)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_connection_new(IntPtr account, bool regist, string password);
-
-		public static void New(PurpleAccount account, bool regist, string password)
+		public enum PurpleConnectionFlags
 		{
-			throw new NotImplementedException();
-		}
+			PURPLE_CONNECTION_HTML = 0x0001,
+			PURPLE_CONNECTION_NO_BGCOLOR = 0x0002,
+			PURPLE_CONNECTION_AUTO_RESP = 0x0004,
+			PURPLE_CONNECTION_FORMATTING_WBFO = 0x0008,
+			PURPLE_CONNECTION_NO_NEWLINES = 0x0010,
+			PURPLE_CONNECTION_NO_FONTSIZE = 0x0020,
+			PURPLE_CONNECTION_NO_URLDESC = 0x0040,
+			PURPLE_CONNECTION_NO_IMAGES = 0x0080,
+			PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY = 0x0100
+		};
+
+		public enum PurpleConnectionState
+		{
+			PURPLE_DISCONNECTED = 0,
+			PURPLE_CONNECTED,
+			PURPLE_CONNECTING
+		};
+
+		public enum PurpleConnectionError
+		{
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR = 0,
+			PURPLE_CONNECTION_ERROR_INVALID_USERNAME = 1,
+			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED = 2,
+			PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE = 3,
+			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT = 4,
+			PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR = 5,
+			PURPLE_CONNECTION_ERROR_NAME_IN_USE = 6,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS = 7,
+			PURPLE_CONNECTION_ERROR_CERT_NOT_PROVIDED = 8,
+			PURPLE_CONNECTION_ERROR_CERT_UNTRUSTED = 9,
+			PURPLE_CONNECTION_ERROR_CERT_EXPIRED = 10,
+			PURPLE_CONNECTION_ERROR_CERT_NOT_ACTIVATED = 11,
+			PURPLE_CONNECTION_ERROR_CERT_HOSTNAME_MISMATCH = 12,
+			PURPLE_CONNECTION_ERROR_CERT_FINGERPRINT_MISMATCH = 13,
+			PURPLE_CONNECTION_ERROR_CERT_SELF_SIGNED = 14,
+			PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR = 15,
+			PURPLE_CONNECTION_ERROR_OTHER_ERROR = 16
+		};
 
 		/*
 		 * void purple_connection_new_unregister(PurpleAccount * account, char * password, PurpleAccountUnregistrationCb cb, void * user_data)
+		 * 
+		 * Could not generate a wrapper for purple_connection_new_unregister in file "connection.h".
+		 * Message: The type could not be resolved (PurpleAccountUnregistrationCb cb).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_connection_new_unregister(IntPtr account, string password, UNKNOWN cb, IntPtr user_data);
-
-		public static void NewUnregister(PurpleAccount account, string password, PurpleAccountUnregistrationCb cb, IntPtr user_data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_connection_destroy(PurpleConnection * gc)
@@ -68,17 +96,18 @@ namespace PurpleWrapper
 
 		public static void Destroy(PurpleConnection gc)
 		{
-			throw new NotImplementedException();
+			purple_connection_destroy(gc.Reference);
 		}
 
 		/*
 		 * void purple_connection_set_state(PurpleConnection * gc, PurpleConnectionState state)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_connection_set_state(IntPtr gc, UNKNOWN state);
+		private static extern void purple_connection_set_state(IntPtr gc, Connection.PurpleConnectionState state);
 
-		public static void SetState(PurpleConnection gc, PurpleConnectionState state)
+		public static void SetState(PurpleConnection gc, Connection.PurpleConnectionState state)
 		{
+			/* Unable to process state, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -90,7 +119,7 @@ namespace PurpleWrapper
 
 		public static void SetAccount(PurpleConnection gc, PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			purple_connection_set_account(gc.Reference, account.Reference);
 		}
 
 		/*
@@ -101,7 +130,7 @@ namespace PurpleWrapper
 
 		public static void SetDisplayName(PurpleConnection gc, string name)
 		{
-			throw new NotImplementedException();
+			purple_connection_set_display_name(gc.Reference, name);
 		}
 
 		/*
@@ -112,18 +141,19 @@ namespace PurpleWrapper
 
 		public static void SetProtocolData(PurpleConnection connection, IntPtr proto_data)
 		{
-			throw new NotImplementedException();
+			purple_connection_set_protocol_data(connection.Reference, proto_data);
 		}
 
 		/*
 		 * PurpleConnectionState purple_connection_get_state(PurpleConnection * gc)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_connection_get_state(IntPtr gc);
+		private static extern Connection.PurpleConnectionState purple_connection_get_state(IntPtr gc);
 
-		public static PurpleConnectionState GetState(PurpleConnection gc)
+		public static Connection.PurpleConnectionState GetState(PurpleConnection gc)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_connection_get_state, a KnownEnum. */
+			
 		}
 
 		/*
@@ -134,7 +164,18 @@ namespace PurpleWrapper
 
 		public static PurpleAccount GetAccount(PurpleConnection gc)
 		{
-			throw new NotImplementedException();
+			return new PurpleAccount(purple_connection_get_account(gc.Reference));
+		}
+
+		/*
+		 * PurplePlugin * purple_connection_get_prpl(PurpleConnection * gc)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_connection_get_prpl(IntPtr gc);
+
+		public static PurplePlugin GetPrpl(PurpleConnection gc)
+		{
+			return new PurplePlugin(purple_connection_get_prpl(gc.Reference));
 		}
 
 		/*
@@ -145,7 +186,7 @@ namespace PurpleWrapper
 
 		public static string GetPassword(PurpleConnection gc)
 		{
-			throw new NotImplementedException();
+			return purple_connection_get_password(gc.Reference);
 		}
 
 		/*
@@ -156,7 +197,7 @@ namespace PurpleWrapper
 
 		public static string GetDisplayName(PurpleConnection gc)
 		{
-			throw new NotImplementedException();
+			return purple_connection_get_display_name(gc.Reference);
 		}
 
 		/*
@@ -167,18 +208,7 @@ namespace PurpleWrapper
 
 		public static IntPtr GetProtocolData(PurpleConnection connection)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_connection_update_progress(PurpleConnection * gc, char * text, size_t step, size_t count)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_connection_update_progress(IntPtr gc, string text, UNKNOWN step, UNKNOWN count);
-
-		public static void UpdateProgress(PurpleConnection gc, string text, size_t step, size_t count)
-		{
-			throw new NotImplementedException();
+			return purple_connection_get_protocol_data(connection.Reference);
 		}
 
 		/*
@@ -189,7 +219,7 @@ namespace PurpleWrapper
 
 		public static void Notice(PurpleConnection gc, string text)
 		{
-			throw new NotImplementedException();
+			purple_connection_notice(gc.Reference, text);
 		}
 
 		/*
@@ -200,39 +230,18 @@ namespace PurpleWrapper
 
 		public static void Error(PurpleConnection gc, string reason)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_connection_error_reason(PurpleConnection * gc, PurpleConnectionError reason, char * description)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_connection_error_reason(IntPtr gc, UNKNOWN reason, string description);
-
-		public static void ErrorReason(PurpleConnection gc, PurpleConnectionError reason, string description)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_connection_ssl_error(PurpleConnection * gc, PurpleSslErrorType ssl_error)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_connection_ssl_error(IntPtr gc, UNKNOWN ssl_error);
-
-		public static void SslError(PurpleConnection gc, PurpleSslErrorType ssl_error)
-		{
-			throw new NotImplementedException();
+			purple_connection_error(gc.Reference, reason);
 		}
 
 		/*
 		 * gboolean purple_connection_error_is_fatal(PurpleConnectionError reason)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern bool purple_connection_error_is_fatal(UNKNOWN reason);
+		private static extern bool purple_connection_error_is_fatal(Connection.PurpleConnectionError reason);
 
-		public static bool ErrorIsFatal(PurpleConnectionError reason)
+		public static bool ErrorIsFatal(Connection.PurpleConnectionError reason)
 		{
+			/* Unable to process reason, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -244,52 +253,36 @@ namespace PurpleWrapper
 
 		public static void ConnectionsDisconnectAll()
 		{
-			throw new NotImplementedException();
+			purple_connections_disconnect_all();
 		}
 
 		/*
 		 * GList * purple_connections_get_all()
+		 * 
+		 * Could not generate a wrapper for purple_connections_get_all in file "connection.h".
+		 * Message: The type could not be resolved (GList * purple_connections_get_all()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_connections_get_all();
-
-		public static GList ConnectionsGetAll()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_connections_get_connecting()
+		 * 
+		 * Could not generate a wrapper for purple_connections_get_connecting in file "connection.h".
+		 * Message: The type could not be resolved (GList * purple_connections_get_connecting()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_connections_get_connecting();
-
-		public static GList ConnectionsGetConnecting()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_connections_set_ui_ops(PurpleConnectionUiOps * ops)
+		 * 
+		 * Could not generate a wrapper for purple_connections_set_ui_ops in file "connection.h".
+		 * Message: The type could not be resolved (PurpleConnectionUiOps * ops).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_connections_set_ui_ops(IntPtr ops);
-
-		public static void ConnectionsSetUiOps(PurpleConnectionUiOps ops)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleConnectionUiOps * purple_connections_get_ui_ops()
+		 * 
+		 * Could not generate a wrapper for purple_connections_get_ui_ops in file "connection.h".
+		 * Message: The type could not be resolved (PurpleConnectionUiOps * purple_connections_get_ui_ops()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_connections_get_ui_ops();
-
-		public static PurpleConnectionUiOps ConnectionsGetUiOps()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_connections_init()
@@ -299,7 +292,7 @@ namespace PurpleWrapper
 
 		public static void ConnectionsInit()
 		{
-			throw new NotImplementedException();
+			purple_connections_init();
 		}
 
 		/*
@@ -310,7 +303,7 @@ namespace PurpleWrapper
 
 		public static void ConnectionsUninit()
 		{
-			throw new NotImplementedException();
+			purple_connections_uninit();
 		}
 
 		/*
@@ -321,7 +314,7 @@ namespace PurpleWrapper
 
 		public static IntPtr ConnectionsGetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_connections_get_handle();
 		}
 
 	}

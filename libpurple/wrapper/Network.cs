@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -39,15 +41,11 @@ namespace PurpleWrapper
 	public class Network
 	{
 		/*
-		 * char * purple_network_ip_atoi(char * ip)
+		 * unsigned char * purple_network_ip_atoi(char * ip)
+		 * 
+		 * Could not generate a wrapper for purple_network_ip_atoi in file "network.h".
+		 * Message: The type could not be resolved (unsigned char * purple_network_ip_atoi(char * ip)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_network_ip_atoi(string ip);
-
-		public static string IpAtoi(string ip)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_network_set_public_ip(char * ip)
@@ -57,7 +55,7 @@ namespace PurpleWrapper
 
 		public static void SetPublicIp(string ip)
 		{
-			throw new NotImplementedException();
+			purple_network_set_public_ip(ip);
 		}
 
 		/*
@@ -68,7 +66,7 @@ namespace PurpleWrapper
 
 		public static string GetPublicIp()
 		{
-			throw new NotImplementedException();
+			return purple_network_get_public_ip();
 		}
 
 		/*
@@ -79,7 +77,7 @@ namespace PurpleWrapper
 
 		public static string GetLocalSystemIp(int fd)
 		{
-			throw new NotImplementedException();
+			return purple_network_get_local_system_ip(fd);
 		}
 
 		/*
@@ -90,7 +88,7 @@ namespace PurpleWrapper
 
 		public static string GetMyIp(int fd)
 		{
-			throw new NotImplementedException();
+			return purple_network_get_my_ip(fd);
 		}
 
 		/*
@@ -101,51 +99,25 @@ namespace PurpleWrapper
 
 		public static void ListenMapExternal(bool map_external)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleNetworkListenData * purple_network_listen(unsigned short, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_network_listen(UNKNOWN short, int socket_type, UNKNOWN cb, IntPtr cb_data);
-
-		public static PurpleNetworkListenData Listen(unsigned short, int socket_type, PurpleNetworkListenCallback cb, IntPtr cb_data)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleNetworkListenData * purple_network_listen_range(unsigned short, unsigned short, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_network_listen_range(UNKNOWN short, UNKNOWN short, int socket_type, UNKNOWN cb, IntPtr cb_data);
-
-		public static PurpleNetworkListenData ListenRange(unsigned short, unsigned short, int socket_type, PurpleNetworkListenCallback cb, IntPtr cb_data)
-		{
-			throw new NotImplementedException();
+			purple_network_listen_map_external(map_external);
 		}
 
 		/*
 		 * void purple_network_listen_cancel(PurpleNetworkListenData * listen_data)
+		 * 
+		 * Could not generate a wrapper for purple_network_listen_cancel in file "network.h".
+		 * Message: The type could not be resolved (PurpleNetworkListenData * listen_data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_network_listen_cancel(IntPtr listen_data);
-
-		public static void ListenCancel(PurpleNetworkListenData listen_data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * short purple_network_get_port_from_fd(int fd)
+		 * unsigned short purple_network_get_port_from_fd(int fd)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern short purple_network_get_port_from_fd(int fd);
+		private static extern ushort purple_network_get_port_from_fd(int fd);
 
-		public static short GetPortFromFd(int fd)
+		public static ushort GetPortFromFd(int fd)
 		{
-			throw new NotImplementedException();
+			return purple_network_get_port_from_fd(fd);
 		}
 
 		/*
@@ -156,7 +128,7 @@ namespace PurpleWrapper
 
 		public static bool IsAvailable()
 		{
-			throw new NotImplementedException();
+			return purple_network_is_available();
 		}
 
 		/*
@@ -167,7 +139,7 @@ namespace PurpleWrapper
 
 		public static void ForceOnline()
 		{
-			throw new NotImplementedException();
+			purple_network_force_online();
 		}
 
 		/*
@@ -178,7 +150,7 @@ namespace PurpleWrapper
 
 		public static IntPtr GetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_network_get_handle();
 		}
 
 		/*
@@ -189,7 +161,7 @@ namespace PurpleWrapper
 
 		public static void SetStunServer(string stun_server)
 		{
-			throw new NotImplementedException();
+			purple_network_set_stun_server(stun_server);
 		}
 
 		/*
@@ -200,7 +172,7 @@ namespace PurpleWrapper
 
 		public static string GetStunIp()
 		{
-			throw new NotImplementedException();
+			return purple_network_get_stun_ip();
 		}
 
 		/*
@@ -211,7 +183,7 @@ namespace PurpleWrapper
 
 		public static void SetTurnServer(string stun_server)
 		{
-			throw new NotImplementedException();
+			purple_network_set_turn_server(stun_server);
 		}
 
 		/*
@@ -222,7 +194,7 @@ namespace PurpleWrapper
 
 		public static string GetTurnIp()
 		{
-			throw new NotImplementedException();
+			return purple_network_get_turn_ip();
 		}
 
 		/*
@@ -233,7 +205,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_network_init();
 		}
 
 		/*
@@ -244,7 +216,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_network_uninit();
 		}
 
 	}

@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -46,7 +48,7 @@ namespace PurpleWrapper
 
 		public static bool Init(string ui)
 		{
-			throw new NotImplementedException();
+			return purple_core_init(ui);
 		}
 
 		/*
@@ -57,7 +59,7 @@ namespace PurpleWrapper
 
 		public static void Quit()
 		{
-			throw new NotImplementedException();
+			purple_core_quit();
 		}
 
 		/*
@@ -68,7 +70,7 @@ namespace PurpleWrapper
 
 		public static bool QuitCb(IntPtr unused)
 		{
-			throw new NotImplementedException();
+			return purple_core_quit_cb(unused);
 		}
 
 		/*
@@ -79,7 +81,7 @@ namespace PurpleWrapper
 
 		public static string GetVersion()
 		{
-			throw new NotImplementedException();
+			return purple_core_get_version();
 		}
 
 		/*
@@ -90,41 +92,29 @@ namespace PurpleWrapper
 
 		public static string GetUi()
 		{
-			throw new NotImplementedException();
+			return purple_core_get_ui();
 		}
 
 		/*
 		 * PurpleCore * purple_get_core()
+		 * 
+		 * Could not generate a wrapper for purple_get_core in file "core.h".
+		 * Message: The type could not be resolved (PurpleCore * purple_get_core()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_get_core();
-
-		public static PurpleCore GetCore()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_core_set_ui_ops(PurpleCoreUiOps * ops)
+		 * 
+		 * Could not generate a wrapper for purple_core_set_ui_ops in file "core.h".
+		 * Message: The type could not be resolved (PurpleCoreUiOps * ops).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_core_set_ui_ops(IntPtr ops);
-
-		public static void SetUiOps(PurpleCoreUiOps ops)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleCoreUiOps * purple_core_get_ui_ops()
+		 * 
+		 * Could not generate a wrapper for purple_core_get_ui_ops in file "core.h".
+		 * Message: The type could not be resolved (PurpleCoreUiOps * purple_core_get_ui_ops()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_core_get_ui_ops();
-
-		public static PurpleCoreUiOps GetUiOps()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gboolean purple_core_migrate()
@@ -134,7 +124,7 @@ namespace PurpleWrapper
 
 		public static bool Migrate()
 		{
-			throw new NotImplementedException();
+			return purple_core_migrate();
 		}
 
 		/*
@@ -145,8 +135,15 @@ namespace PurpleWrapper
 
 		public static bool EnsureSingleInstance()
 		{
-			throw new NotImplementedException();
+			return purple_core_ensure_single_instance();
 		}
+
+		/*
+		 * GHashTable* purple_core_get_ui_info()
+		 * 
+		 * Could not generate a wrapper for purple_core_get_ui_info in file "core.h".
+		 * Message: The type could not be resolved (GHashTable* purple_core_get_ui_info()).
+		 */
 
 	}
 }

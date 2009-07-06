@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -39,35 +41,37 @@ namespace PurpleWrapper
 	public class Server
 	{
 		/*
-		 * int serv_send_typing(PurpleConnection * gc, char * name, PurpleTypingState state)
+		 * unsigned int serv_send_typing(PurpleConnection * gc, char * name, PurpleTypingState state)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern int serv_send_typing(IntPtr gc, string name, UNKNOWN state);
+		private static extern uint serv_send_typing(IntPtr gc, string name, Conversation.PurpleTypingState state);
 
-		public static int ServSendTyping(PurpleConnection gc, string name, PurpleTypingState state)
+		public static uint ServSendTyping(PurpleConnection gc, string name, Conversation.PurpleTypingState state)
 		{
+			/* Unable to process state, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
 		/*
-		 * void serv_move_buddy( ,  ,  )
+		 * void serv_move_buddy(PurpleBuddy * , PurpleGroup * , PurpleGroup * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_move_buddy(UNKNOWN , UNKNOWN , UNKNOWN );
+		private static extern void serv_move_buddy(IntPtr , IntPtr , IntPtr );
 
-		public static void ServMoveBuddy( ,  ,  )
+		public static void ServMoveBuddy(PurpleBuddy , PurpleGroup , PurpleGroup )
 		{
-			throw new NotImplementedException();
+			serv_move_buddy(.Reference, .Reference, .Reference);
 		}
 
 		/*
-		 * int serv_send_im( ,  ,  , PurpleMessageFlags flags)
+		 * int serv_send_im(PurpleConnection * , char * , char * , PurpleMessageFlags flags)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern int serv_send_im(UNKNOWN , UNKNOWN , UNKNOWN , UNKNOWN flags);
+		private static extern int serv_send_im(IntPtr , string , string , Conversation.PurpleMessageFlags flags);
 
-		public static int ServSendIm( ,  ,  , PurpleMessageFlags flags)
+		public static int ServSendIm(PurpleConnection , string , string , Conversation.PurpleMessageFlags flags)
 		{
+			/* Unable to process flags, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -79,7 +83,7 @@ namespace PurpleWrapper
 
 		public static PurpleAttentionType GetAttentionTypeFromCode(PurpleAccount account, uint type_code)
 		{
-			throw new NotImplementedException();
+			return new PurpleAttentionType(purple_get_attention_type_from_code(account.Reference, type_code));
 		}
 
 		/*
@@ -90,7 +94,7 @@ namespace PurpleWrapper
 
 		public static void ServSendAttention(PurpleConnection gc, string who, uint type_code)
 		{
-			throw new NotImplementedException();
+			serv_send_attention(gc.Reference, who, type_code);
 		}
 
 		/*
@@ -101,139 +105,123 @@ namespace PurpleWrapper
 
 		public static void ServGotAttention(PurpleConnection gc, string who, uint type_code)
 		{
-			throw new NotImplementedException();
+			serv_got_attention(gc.Reference, who, type_code);
 		}
 
 		/*
-		 * void serv_get_info( ,  )
+		 * void serv_get_info(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_get_info(UNKNOWN , UNKNOWN );
+		private static extern void serv_get_info(IntPtr , string );
 
-		public static void ServGetInfo( ,  )
+		public static void ServGetInfo(PurpleConnection , string )
 		{
-			throw new NotImplementedException();
+			serv_get_info(.Reference, );
 		}
 
 		/*
-		 * void serv_set_info( ,  )
+		 * void serv_set_info(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_set_info(UNKNOWN , UNKNOWN );
+		private static extern void serv_set_info(IntPtr , string );
 
-		public static void ServSetInfo( ,  )
+		public static void ServSetInfo(PurpleConnection , string )
 		{
-			throw new NotImplementedException();
+			serv_set_info(.Reference, );
 		}
 
 		/*
-		 * void serv_add_permit( ,  )
+		 * void serv_add_permit(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_add_permit(UNKNOWN , UNKNOWN );
+		private static extern void serv_add_permit(IntPtr , string );
 
-		public static void ServAddPermit( ,  )
+		public static void ServAddPermit(PurpleConnection , string )
 		{
-			throw new NotImplementedException();
+			serv_add_permit(.Reference, );
 		}
 
 		/*
-		 * void serv_add_deny( ,  )
+		 * void serv_add_deny(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_add_deny(UNKNOWN , UNKNOWN );
+		private static extern void serv_add_deny(IntPtr , string );
 
-		public static void ServAddDeny( ,  )
+		public static void ServAddDeny(PurpleConnection , string )
 		{
-			throw new NotImplementedException();
+			serv_add_deny(.Reference, );
 		}
 
 		/*
-		 * void serv_rem_permit( ,  )
+		 * void serv_rem_permit(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_rem_permit(UNKNOWN , UNKNOWN );
+		private static extern void serv_rem_permit(IntPtr , string );
 
-		public static void ServRemPermit( ,  )
+		public static void ServRemPermit(PurpleConnection , string )
 		{
-			throw new NotImplementedException();
+			serv_rem_permit(.Reference, );
 		}
 
 		/*
-		 * void serv_rem_deny( ,  )
+		 * void serv_rem_deny(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_rem_deny(UNKNOWN , UNKNOWN );
+		private static extern void serv_rem_deny(IntPtr , string );
 
-		public static void ServRemDeny( ,  )
+		public static void ServRemDeny(PurpleConnection , string )
 		{
-			throw new NotImplementedException();
+			serv_rem_deny(.Reference, );
 		}
 
 		/*
-		 * void serv_set_permit_deny( )
+		 * void serv_set_permit_deny(PurpleConnection * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_set_permit_deny(UNKNOWN );
+		private static extern void serv_set_permit_deny(IntPtr );
 
-		public static void ServSetPermitDeny( )
+		public static void ServSetPermitDeny(PurpleConnection )
 		{
-			throw new NotImplementedException();
+			serv_set_permit_deny(.Reference);
 		}
 
 		/*
-		 * void serv_chat_invite( ,  ,  ,  )
+		 * void serv_chat_invite(PurpleConnection * ,  , char * , char * )
+		 * 
+		 * Could not generate a wrapper for serv_chat_invite in file "server.h".
+		 * Message: The type could not be resolved ( ).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void serv_chat_invite(UNKNOWN , UNKNOWN , UNKNOWN , UNKNOWN );
-
-		public static void ServChatInvite( ,  ,  ,  )
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * void serv_chat_leave( ,  )
+		 * void serv_chat_leave(PurpleConnection * ,  )
+		 * 
+		 * Could not generate a wrapper for serv_chat_leave in file "server.h".
+		 * Message: The type could not be resolved ( ).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void serv_chat_leave(UNKNOWN , UNKNOWN );
-
-		public static void ServChatLeave( ,  )
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * void serv_chat_whisper( ,  ,  ,  )
+		 * void serv_chat_whisper(PurpleConnection * ,  , char * , char * )
+		 * 
+		 * Could not generate a wrapper for serv_chat_whisper in file "server.h".
+		 * Message: The type could not be resolved ( ).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void serv_chat_whisper(UNKNOWN , UNKNOWN , UNKNOWN , UNKNOWN );
-
-		public static void ServChatWhisper( ,  ,  ,  )
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * int serv_chat_send( ,  ,  , PurpleMessageFlags flags)
+		 * int serv_chat_send(PurpleConnection * ,  , char * , PurpleMessageFlags flags)
+		 * 
+		 * Could not generate a wrapper for serv_chat_send in file "server.h".
+		 * Message: The type could not be resolved ( ).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern int serv_chat_send(UNKNOWN , UNKNOWN , UNKNOWN , UNKNOWN flags);
-
-		public static int ServChatSend( ,  ,  , PurpleMessageFlags flags)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * void serv_alias_buddy( )
+		 * void serv_alias_buddy(PurpleBuddy * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_alias_buddy(UNKNOWN );
+		private static extern void serv_alias_buddy(IntPtr );
 
-		public static void ServAliasBuddy( )
+		public static void ServAliasBuddy(PurpleBuddy )
 		{
-			throw new NotImplementedException();
+			serv_alias_buddy(.Reference);
 		}
 
 		/*
@@ -244,7 +232,7 @@ namespace PurpleWrapper
 
 		public static void ServGotAlias(PurpleConnection gc, string who, string alias)
 		{
-			throw new NotImplementedException();
+			serv_got_alias(gc.Reference, who, alias);
 		}
 
 		/*
@@ -255,18 +243,7 @@ namespace PurpleWrapper
 
 		public static void ServGotPrivateAlias(PurpleConnection gc, string who, string alias)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void serv_got_typing(PurpleConnection * gc, char * name, int timeout, PurpleTypingState state)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void serv_got_typing(IntPtr gc, string name, int timeout, UNKNOWN state);
-
-		public static void ServGotTyping(PurpleConnection gc, string name, int timeout, PurpleTypingState state)
-		{
-			throw new NotImplementedException();
+			purple_serv_got_private_alias(gc.Reference, who, alias);
 		}
 
 		/*
@@ -277,74 +254,29 @@ namespace PurpleWrapper
 
 		public static void ServGotTypingStopped(PurpleConnection gc, string name)
 		{
-			throw new NotImplementedException();
+			serv_got_typing_stopped(gc.Reference, name);
 		}
 
 		/*
-		 * void serv_got_im(PurpleConnection * gc, char * who, char * msg, PurpleMessageFlags flags, time_t mtime)
+		 * void serv_join_chat(PurpleConnection * , GHashTable * data)
+		 * 
+		 * Could not generate a wrapper for serv_join_chat in file "server.h".
+		 * Message: The type could not be resolved (GHashTable * data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void serv_got_im(IntPtr gc, string who, string msg, UNKNOWN flags, UNKNOWN mtime);
-
-		public static void ServGotIm(PurpleConnection gc, string who, string msg, PurpleMessageFlags flags, time_t mtime)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * void serv_join_chat( , GHashTable * data)
+		 * void serv_reject_chat(PurpleConnection * , GHashTable * data)
+		 * 
+		 * Could not generate a wrapper for serv_reject_chat in file "server.h".
+		 * Message: The type could not be resolved (GHashTable * data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void serv_join_chat(UNKNOWN , IntPtr data);
-
-		public static void ServJoinChat( , GHashTable data)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void serv_reject_chat( , GHashTable * data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void serv_reject_chat(UNKNOWN , IntPtr data);
-
-		public static void ServRejectChat( , GHashTable data)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void serv_got_chat_invite(PurpleConnection * gc, char * name, char * who, char * message, GHashTable * data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void serv_got_chat_invite(IntPtr gc, string name, string who, string message, IntPtr data);
-
-		public static void ServGotChatInvite(PurpleConnection gc, string name, string who, string message, GHashTable data)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleConversation * serv_got_joined_chat(PurpleConnection * gc, int id, char * name)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr serv_got_joined_chat(IntPtr gc, int id, string name);
-
-		public static PurpleConversation ServGotJoinedChat(PurpleConnection gc, int id, string name)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_serv_got_join_chat_failed(PurpleConnection * gc, GHashTable * data)
+		 * 
+		 * Could not generate a wrapper for purple_serv_got_join_chat_failed in file "server.h".
+		 * Message: The type could not be resolved (GHashTable * data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_serv_got_join_chat_failed(IntPtr gc, IntPtr data);
-
-		public static void ServGotJoinChatFailed(PurpleConnection gc, GHashTable data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void serv_got_chat_left(PurpleConnection * g, int id)
@@ -354,18 +286,7 @@ namespace PurpleWrapper
 
 		public static void ServGotChatLeft(PurpleConnection g, int id)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void serv_got_chat_in(PurpleConnection * g, int id, char * who, PurpleMessageFlags flags, char * message, time_t mtime)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void serv_got_chat_in(IntPtr g, int id, string who, UNKNOWN flags, string message, UNKNOWN mtime);
-
-		public static void ServGotChatIn(PurpleConnection g, int id, string who, PurpleMessageFlags flags, string message, time_t mtime)
-		{
-			throw new NotImplementedException();
+			serv_got_chat_left(g.Reference, id);
 		}
 
 		/*
@@ -376,7 +297,7 @@ namespace PurpleWrapper
 
 		public static void ServSendFile(PurpleConnection gc, string who, string file)
 		{
-			throw new NotImplementedException();
+			serv_send_file(gc.Reference, who, file);
 		}
 
 	}

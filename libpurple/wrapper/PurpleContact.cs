@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,162 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurpleContact : UnmanagedWrapper<_PurpleContact>
 	{
+		/* 
+		 * Could not generate a wrapper for PurpleContact in file "blist.h".
+		 * Message: The type resolved to a known struct but not a pointer to that struct (PurpleBlistNode node).
+		 */
+
 		public PurpleContact()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurpleContact(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurpleContact)Marshal.PtrToStructure(this.Reference, typeof(_PurpleContact));
-		}
-
-		public PurpleBlistNode node
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public string alias
-		{
-			get
-			{
-				return this.Data.alias;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.alias = value;
-			}
-		}
-
-		public int totalsize
-		{
-			get
-			{
-				return this.Data.totalsize;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.totalsize = value;
-			}
-		}
-
-		public int currentsize
-		{
-			get
-			{
-				return this.Data.currentsize;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.currentsize = value;
-			}
-		}
-
-		public int online
-		{
-			get
-			{
-				return this.Data.online;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.online = value;
-			}
-		}
-
-		public PurpleBuddy priority
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public bool priority_valid
-		{
-			get
-			{
-				return this.Data.priority_valid;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.priority_valid = value;
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleContact
-	{
-		/*
-		 * PurpleBlistNode node
-		 */
-		UNKNOWN node;
-
-		/*
-		 * char * alias
-		 */
-		string alias;
-
-		/*
-		 * int totalsize
-		 */
-		int totalsize;
-
-		/*
-		 * int currentsize
-		 */
-		int currentsize;
-
-		/*
-		 * int online
-		 */
-		int online;
-
-		/*
-		 * PurpleBuddy * priority
-		 */
-		IntPtr priority;
-
-		/*
-		 * gboolean priority_valid
-		 */
-		bool priority_valid;
-
-	}
+	class _PurpleContact { }
 }
 

@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -40,69 +42,45 @@ namespace PurpleWrapper
 	{
 		/*
 		 * PurpleDnsQueryData * purple_dnsquery_a(char * hostname, int port, PurpleDnsQueryConnectFunction callback, gpointer data)
+		 * 
+		 * Could not generate a wrapper for purple_dnsquery_a in file "dnsquery.h".
+		 * Message: The type could not be resolved (PurpleDnsQueryConnectFunction callback).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_dnsquery_a(string hostname, int port, UNKNOWN callback, IntPtr data);
-
-		public static PurpleDnsQueryData A(string hostname, int port, PurpleDnsQueryConnectFunction callback, IntPtr data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_dnsquery_destroy(PurpleDnsQueryData * query_data)
+		 * 
+		 * Could not generate a wrapper for purple_dnsquery_destroy in file "dnsquery.h".
+		 * Message: The type could not be resolved (PurpleDnsQueryData * query_data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_dnsquery_destroy(IntPtr query_data);
-
-		public static void Destroy(PurpleDnsQueryData query_data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_dnsquery_set_ui_ops(PurpleDnsQueryUiOps * ops)
+		 * 
+		 * Could not generate a wrapper for purple_dnsquery_set_ui_ops in file "dnsquery.h".
+		 * Message: The type could not be resolved (PurpleDnsQueryUiOps * ops).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_dnsquery_set_ui_ops(IntPtr ops);
-
-		public static void SetUiOps(PurpleDnsQueryUiOps ops)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleDnsQueryUiOps * purple_dnsquery_get_ui_ops()
+		 * 
+		 * Could not generate a wrapper for purple_dnsquery_get_ui_ops in file "dnsquery.h".
+		 * Message: The type could not be resolved (PurpleDnsQueryUiOps * purple_dnsquery_get_ui_ops()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_dnsquery_get_ui_ops();
-
-		public static PurpleDnsQueryUiOps GetUiOps()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_dnsquery_get_host(PurpleDnsQueryData * query_data)
+		 * 
+		 * Could not generate a wrapper for purple_dnsquery_get_host in file "dnsquery.h".
+		 * Message: The type could not be resolved (PurpleDnsQueryData * query_data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_dnsquery_get_host(IntPtr query_data);
-
-		public static string GetHost(PurpleDnsQueryData query_data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * short purple_dnsquery_get_port(PurpleDnsQueryData * query_data)
+		 * unsigned short purple_dnsquery_get_port(PurpleDnsQueryData * query_data)
+		 * 
+		 * Could not generate a wrapper for purple_dnsquery_get_port in file "dnsquery.h".
+		 * Message: The type could not be resolved (PurpleDnsQueryData * query_data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern short purple_dnsquery_get_port(IntPtr query_data);
-
-		public static short GetPort(PurpleDnsQueryData query_data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_dnsquery_init()
@@ -112,7 +90,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_dnsquery_init();
 		}
 
 		/*
@@ -123,7 +101,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_dnsquery_uninit();
 		}
 
 	}

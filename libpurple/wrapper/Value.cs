@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,445 +40,317 @@ namespace PurpleWrapper
 {
 	public class Value
 	{
-		/*
-		 * PurpleValue * purple_value_new(PurpleType type, ...)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_value_new(UNKNOWN type, ...);
-
-		public static PurpleValue New(PurpleType type, ...)
+		public enum PurpleType
 		{
-			throw new NotImplementedException();
-		}
+			PURPLE_TYPE_UNKNOWN = 0,
+			PURPLE_TYPE_SUBTYPE,
+			PURPLE_TYPE_CHAR,
+			PURPLE_TYPE_UCHAR,
+			PURPLE_TYPE_BOOLEAN,
+			PURPLE_TYPE_SHORT,
+			PURPLE_TYPE_USHORT,
+			PURPLE_TYPE_INT,
+			PURPLE_TYPE_UINT,
+			PURPLE_TYPE_LONG,
+			PURPLE_TYPE_ULONG,
+			PURPLE_TYPE_INT64,
+			PURPLE_TYPE_UINT64,
+			PURPLE_TYPE_STRING,
+			PURPLE_TYPE_OBJECT,
+			PURPLE_TYPE_POINTER,
+			PURPLE_TYPE_ENUM,
+			PURPLE_TYPE_BOXED
+		};
 
-		/*
-		 * PurpleValue * purple_value_new_outgoing(PurpleType type, ...)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_value_new_outgoing(UNKNOWN type, ...);
-
-		public static PurpleValue NewOutgoing(PurpleType type, ...)
+		public enum PurpleSubType
 		{
-			throw new NotImplementedException();
-		}
+			PURPLE_SUBTYPE_UNKNOWN = 0,
+			PURPLE_SUBTYPE_ACCOUNT,
+			PURPLE_SUBTYPE_BLIST,
+			PURPLE_SUBTYPE_BLIST_BUDDY,
+			PURPLE_SUBTYPE_BLIST_GROUP,
+			PURPLE_SUBTYPE_BLIST_CHAT,
+			PURPLE_SUBTYPE_BUDDY_ICON,
+			PURPLE_SUBTYPE_CONNECTION,
+			PURPLE_SUBTYPE_CONVERSATION,
+			PURPLE_SUBTYPE_PLUGIN,
+			PURPLE_SUBTYPE_BLIST_NODE,
+			PURPLE_SUBTYPE_CIPHER,
+			PURPLE_SUBTYPE_STATUS,
+			PURPLE_SUBTYPE_LOG,
+			PURPLE_SUBTYPE_XFER,
+			PURPLE_SUBTYPE_SAVEDSTATUS,
+			PURPLE_SUBTYPE_XMLNODE,
+			PURPLE_SUBTYPE_USERINFO,
+			PURPLE_SUBTYPE_STORED_IMAGE,
+			PURPLE_SUBTYPE_CERTIFICATEPOOL
+		};
 
 		/*
 		 * void purple_value_destroy(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_destroy in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_destroy(IntPtr value);
-
-		public static void Destroy(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleValue * purple_value_dup(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_dup in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * purple_value_dup(PurpleValue * value)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_value_dup(IntPtr value);
-
-		public static PurpleValue Dup(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleType purple_value_get_type(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_type in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_value_get_type(IntPtr value);
-
-		public static PurpleType GetType(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * int purple_value_get_subtype(PurpleValue * value)
+		 * unsigned int purple_value_get_subtype(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_subtype in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern int purple_value_get_subtype(IntPtr value);
-
-		public static int GetSubtype(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_value_get_specific_type(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_specific_type in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_value_get_specific_type(IntPtr value);
-
-		public static string GetSpecificType(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gboolean purple_value_is_outgoing(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_is_outgoing in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_value_is_outgoing(IntPtr value);
-
-		public static bool IsOutgoing(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_char(PurpleValue * value, char data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_char in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_char(IntPtr value, char data);
-
-		public static void SetChar(PurpleValue value, char data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * void purple_value_set_uchar(PurpleValue * value, unsigned char)
+		 * void purple_value_set_uchar(PurpleValue * value, unsigned char data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_uchar in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_uchar(IntPtr value, UNKNOWN char);
-
-		public static void SetUchar(PurpleValue value, unsigned char)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_boolean(PurpleValue * value, gboolean data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_boolean in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_boolean(IntPtr value, bool data);
-
-		public static void SetBoolean(PurpleValue value, bool data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_short(PurpleValue * value, short data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_short in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_short(IntPtr value, short data);
-
-		public static void SetShort(PurpleValue value, short data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * void purple_value_set_ushort(PurpleValue * value, unsigned short)
+		 * void purple_value_set_ushort(PurpleValue * value, unsigned short data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_ushort in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_ushort(IntPtr value, UNKNOWN short);
-
-		public static void SetUshort(PurpleValue value, unsigned short)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_int(PurpleValue * value, int data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_int in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_int(IntPtr value, int data);
-
-		public static void SetInt(PurpleValue value, int data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * void purple_value_set_uint(PurpleValue * value, unsigned int)
+		 * void purple_value_set_uint(PurpleValue * value, unsigned int data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_uint in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_uint(IntPtr value, UNKNOWN int);
-
-		public static void SetUint(PurpleValue value, unsigned int)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_long(PurpleValue * value, long data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_long in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_long(IntPtr value, long data);
-
-		public static void SetLong(PurpleValue value, long data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * void purple_value_set_ulong(PurpleValue * value, unsigned long)
+		 * void purple_value_set_ulong(PurpleValue * value, unsigned long data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_ulong in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_ulong(IntPtr value, UNKNOWN long);
-
-		public static void SetUlong(PurpleValue value, unsigned long)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_int64(PurpleValue * value, gint64 data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_int64 in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_int64(IntPtr value, long data);
-
-		public static void SetInt64(PurpleValue value, long data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_uint64(PurpleValue * value, guint64 data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_uint64 in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_uint64(IntPtr value, ulong data);
-
-		public static void SetUint64(PurpleValue value, ulong data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_string(PurpleValue * value, char * data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_string in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_string(IntPtr value, string data);
-
-		public static void SetString(PurpleValue value, string data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_object(PurpleValue * value, void * data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_object in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_object(IntPtr value, IntPtr data);
-
-		public static void SetObject(PurpleValue value, IntPtr data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_pointer(PurpleValue * value, void * data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_pointer in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_pointer(IntPtr value, IntPtr data);
-
-		public static void SetPointer(PurpleValue value, IntPtr data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_enum(PurpleValue * value, int data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_enum in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_enum(IntPtr value, int data);
-
-		public static void SetEnum(PurpleValue value, int data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_value_set_boxed(PurpleValue * value, void * data)
+		 * 
+		 * Could not generate a wrapper for purple_value_set_boxed in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_value_set_boxed(IntPtr value, IntPtr data);
-
-		public static void SetBoxed(PurpleValue value, IntPtr data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char purple_value_get_char(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_char in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern char purple_value_get_char(IntPtr value);
-
-		public static char GetChar(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * char purple_value_get_uchar(PurpleValue * value)
+		 * unsigned char purple_value_get_uchar(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_uchar in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern char purple_value_get_uchar(IntPtr value);
-
-		public static char GetUchar(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gboolean purple_value_get_boolean(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_boolean in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_value_get_boolean(IntPtr value);
-
-		public static bool GetBoolean(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * short purple_value_get_short(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_short in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern short purple_value_get_short(IntPtr value);
-
-		public static short GetShort(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * short purple_value_get_ushort(PurpleValue * value)
+		 * unsigned short purple_value_get_ushort(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_ushort in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern short purple_value_get_ushort(IntPtr value);
-
-		public static short GetUshort(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * int purple_value_get_int(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_int in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern int purple_value_get_int(IntPtr value);
-
-		public static int GetInt(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * int purple_value_get_uint(PurpleValue * value)
+		 * unsigned int purple_value_get_uint(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_uint in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern int purple_value_get_uint(IntPtr value);
-
-		public static int GetUint(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * long purple_value_get_long(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_long in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern long purple_value_get_long(IntPtr value);
-
-		public static long GetLong(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * long purple_value_get_ulong(PurpleValue * value)
+		 * unsigned long purple_value_get_ulong(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_ulong in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern long purple_value_get_ulong(IntPtr value);
-
-		public static long GetUlong(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gint64 purple_value_get_int64(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_int64 in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern long purple_value_get_int64(IntPtr value);
-
-		public static long GetInt64(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * guint64 purple_value_get_uint64(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_uint64 in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern ulong purple_value_get_uint64(IntPtr value);
-
-		public static ulong GetUint64(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_value_get_string(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_string in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_value_get_string(IntPtr value);
-
-		public static string GetString(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void * purple_value_get_object(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_object in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_value_get_object(IntPtr value);
-
-		public static IntPtr GetObject(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void * purple_value_get_pointer(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_pointer in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_value_get_pointer(IntPtr value);
-
-		public static IntPtr GetPointer(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * int purple_value_get_enum(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_enum in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern int purple_value_get_enum(IntPtr value);
-
-		public static int GetEnum(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void * purple_value_get_boxed(PurpleValue * value)
+		 * 
+		 * Could not generate a wrapper for purple_value_get_boxed in file "value.h".
+		 * Message: The type could not be resolved (PurpleValue * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_value_get_boxed(IntPtr value);
-
-		public static IntPtr GetBoxed(PurpleValue value)
-		{
-			throw new NotImplementedException();
-		}
 
 	}
 }

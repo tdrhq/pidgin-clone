@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -42,111 +44,104 @@ namespace PurpleWrapper
 		 * GType purple_smiley_get_type()
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_smiley_get_type();
+		private static extern IntPtr purple_smiley_get_type();
 
-		public static GType GetType()
+		public static /* libgobject */ IntPtr GetType()
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_smiley_get_type, a GObjectObject. */
+			
 		}
+
+		/*
+		 * PurpleSmiley * purple_smiley_new(PurpleStoredImage * img, char * shortcut)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_new in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * purple_smiley_new(PurpleStoredImage * img, char * shortcut)).
+		 */
+
+		/*
+		 * PurpleSmiley * purple_smiley_new_from_file(char * shortcut, char * filepath)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_new_from_file in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * purple_smiley_new_from_file(char * shortcut, char * filepath)).
+		 */
 
 		/*
 		 * void purple_smiley_delete(PurpleSmiley * smiley)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_delete in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * smiley).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_smiley_delete(IntPtr smiley);
-
-		public static void Delete(PurpleSmiley smiley)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gboolean purple_smiley_set_shortcut(PurpleSmiley * smiley, char * shortcut)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_set_shortcut in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * smiley).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_smiley_set_shortcut(IntPtr smiley, string shortcut);
-
-		public static bool SetShortcut(PurpleSmiley smiley, string shortcut)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_smiley_set_data(PurpleSmiley * smiley, guchar * smiley_data, size_t smiley_data_len)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_smiley_set_data(IntPtr smiley, IntPtr smiley_data, UNKNOWN smiley_data_len);
-
-		public static void SetData(PurpleSmiley smiley, guchar smiley_data, size_t smiley_data_len)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_smiley_get_shortcut(PurpleSmiley * smiley)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_get_shortcut in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * smiley).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_smiley_get_shortcut(IntPtr smiley);
-
-		public static string GetShortcut(PurpleSmiley smiley)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_smiley_get_checksum(PurpleSmiley * smiley)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_get_checksum in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * smiley).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_smiley_get_checksum(IntPtr smiley);
-
-		public static string GetChecksum(PurpleSmiley smiley)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleStoredImage * purple_smiley_get_stored_image(PurpleSmiley * smiley)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_get_stored_image in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * purple_smiley_get_stored_image(PurpleSmiley * smiley)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_smiley_get_stored_image(IntPtr smiley);
-
-		public static PurpleStoredImage GetStoredImage(PurpleSmiley smiley)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gconstpointer purple_smiley_get_data(PurpleSmiley * smiley, size_t * len)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_get_data in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * smiley).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_smiley_get_data(IntPtr smiley, IntPtr len);
-
-		public static gconstpointer GetData(PurpleSmiley smiley, size_t len)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_smiley_get_extension(PurpleSmiley * smiley)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_get_extension in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * smiley).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_smiley_get_extension(IntPtr smiley);
-
-		public static string GetExtension(PurpleSmiley smiley)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_smiley_get_full_path(PurpleSmiley * smiley)
+		 * 
+		 * Could not generate a wrapper for purple_smiley_get_full_path in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * smiley).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_smiley_get_full_path(IntPtr smiley);
 
-		public static string GetFullPath(PurpleSmiley smiley)
-		{
-			throw new NotImplementedException();
-		}
+		/*
+		 * GList * purple_smileys_get_all()
+		 * 
+		 * Could not generate a wrapper for purple_smileys_get_all in file "smiley.h".
+		 * Message: The type could not be resolved (GList * purple_smileys_get_all()).
+		 */
+
+		/*
+		 * PurpleSmiley * purple_smileys_find_by_shortcut(char * shortcut)
+		 * 
+		 * Could not generate a wrapper for purple_smileys_find_by_shortcut in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * purple_smileys_find_by_shortcut(char * shortcut)).
+		 */
+
+		/*
+		 * PurpleSmiley * purple_smileys_find_by_checksum(char * checksum)
+		 * 
+		 * Could not generate a wrapper for purple_smileys_find_by_checksum in file "smiley.h".
+		 * Message: The type could not be resolved (PurpleSmiley * purple_smileys_find_by_checksum(char * checksum)).
+		 */
 
 		/*
 		 * char * purple_smileys_get_storing_dir()
@@ -156,7 +151,7 @@ namespace PurpleWrapper
 
 		public static string SmileysGetStoringDir()
 		{
-			throw new NotImplementedException();
+			return purple_smileys_get_storing_dir();
 		}
 
 		/*
@@ -167,7 +162,7 @@ namespace PurpleWrapper
 
 		public static void SmileysInit()
 		{
-			throw new NotImplementedException();
+			purple_smileys_init();
 		}
 
 		/*
@@ -178,7 +173,7 @@ namespace PurpleWrapper
 
 		public static void SmileysUninit()
 		{
-			throw new NotImplementedException();
+			purple_smileys_uninit();
 		}
 
 	}

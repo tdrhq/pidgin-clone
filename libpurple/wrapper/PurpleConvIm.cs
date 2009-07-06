@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,142 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurpleConvIm : UnmanagedWrapper<_PurpleConvIm>
 	{
+		/* 
+		 * Could not generate a wrapper for PurpleConvIm in file "conversation.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
+		 */
+
 		public PurpleConvIm()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurpleConvIm(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurpleConvIm)Marshal.PtrToStructure(this.Reference, typeof(_PurpleConvIm));
-		}
-
-		public PurpleConversation conv
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleTypingState typing_state
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public uint typing_timeout
-		{
-			get
-			{
-				return this.Data.typing_timeout;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.typing_timeout = value;
-			}
-		}
-
-		public time_t type_again
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public uint send_typed_timeout
-		{
-			get
-			{
-				return this.Data.send_typed_timeout;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.send_typed_timeout = value;
-			}
-		}
-
-		public PurpleBuddyIcon icon
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleConvIm
-	{
-		/*
-		 * PurpleConversation * conv
-		 */
-		IntPtr conv;
-
-		/*
-		 * PurpleTypingState typing_state
-		 */
-		UNKNOWN typing_state;
-
-		/*
-		 * guint typing_timeout
-		 */
-		uint typing_timeout;
-
-		/*
-		 * time_t type_again
-		 */
-		UNKNOWN type_again;
-
-		/*
-		 * guint send_typed_timeout
-		 */
-		uint send_typed_timeout;
-
-		/*
-		 * PurpleBuddyIcon * icon
-		 */
-		IntPtr icon;
-
-	}
+	class _PurpleConvIm { }
 }
 

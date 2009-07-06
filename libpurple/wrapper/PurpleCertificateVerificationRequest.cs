@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,162 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurpleCertificateVerificationRequest : UnmanagedWrapper<_PurpleCertificateVerificationRequest>
 	{
+		/* 
+		 * Could not generate a wrapper for PurpleCertificateVerificationRequest in file "certificate.h".
+		 * Message: The type could not be resolved (GList * cert_chain).
+		 */
+
 		public PurpleCertificateVerificationRequest()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurpleCertificateVerificationRequest(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurpleCertificateVerificationRequest)Marshal.PtrToStructure(this.Reference, typeof(_PurpleCertificateVerificationRequest));
-		}
-
-		public PurpleCertificateVerifier verifier
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleCertificateScheme scheme
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public string subject_name
-		{
-			get
-			{
-				return this.Data.subject_name;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.subject_name = value;
-			}
-		}
-
-		public GList cert_chain
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public IntPtr data
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleCertificateVerifiedCallback cb
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public IntPtr cb_data
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleCertificateVerificationRequest
-	{
-		/*
-		 * PurpleCertificateVerifier * verifier
-		 */
-		IntPtr verifier;
-
-		/*
-		 * PurpleCertificateScheme * scheme
-		 */
-		IntPtr scheme;
-
-		/*
-		 * gchar * subject_name
-		 */
-		string subject_name;
-
-		/*
-		 * GList * cert_chain
-		 */
-		IntPtr cert_chain;
-
-		/*
-		 * gpointer data
-		 */
-		IntPtr data;
-
-		/*
-		 * PurpleCertificateVerifiedCallback cb
-		 */
-		UNKNOWN cb;
-
-		/*
-		 * gpointer cb_data
-		 */
-		IntPtr cb_data;
-
-	}
+	class _PurpleCertificateVerificationRequest { }
 }
 

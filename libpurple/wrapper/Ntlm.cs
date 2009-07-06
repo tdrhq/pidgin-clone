@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -46,30 +48,22 @@ namespace PurpleWrapper
 
 		public static string GenType1(string hostname, string domain)
 		{
-			throw new NotImplementedException();
+			return purple_ntlm_gen_type1(hostname, domain);
 		}
 
 		/*
 		 * guint8 * purple_ntlm_parse_type2(gchar * type2, guint32 * flags)
+		 * 
+		 * Could not generate a wrapper for purple_ntlm_parse_type2 in file "ntlm.h".
+		 * Message: The type could not be resolved (guint8 * purple_ntlm_parse_type2(gchar * type2, guint32 * flags)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_ntlm_parse_type2(string type2, IntPtr flags);
-
-		public static guint8 ParseType2(string type2, guint32 flags)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gchar * purple_ntlm_gen_type3(gchar * username, gchar * passw, gchar * hostname, gchar * domain, guint8 * nonce, guint32 * flags)
+		 * 
+		 * Could not generate a wrapper for purple_ntlm_gen_type3 in file "ntlm.h".
+		 * Message: The type could not be resolved (guint8 * nonce).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_ntlm_gen_type3(string username, string passw, string hostname, string domain, IntPtr nonce, IntPtr flags);
-
-		public static string GenType3(string username, string passw, string hostname, string domain, guint8 nonce, guint32 flags)
-		{
-			throw new NotImplementedException();
-		}
 
 	}
 }

@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,60 +40,67 @@ namespace PurpleWrapper
 {
 	public class Cmds
 	{
-		/*
-		 * PurpleCmdId purple_cmd_register(gchar * cmd, gchar * args, PurpleCmdPriority p, PurpleCmdFlag f, gchar * prpl_id, PurpleCmdFunc func, gchar * helpstr, void * data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_cmd_register(string cmd, string args, UNKNOWN p, UNKNOWN f, string prpl_id, UNKNOWN func, string helpstr, IntPtr data);
-
-		public static PurpleCmdId CmdRegister(string cmd, string args, PurpleCmdPriority p, PurpleCmdFlag f, string prpl_id, PurpleCmdFunc func, string helpstr, IntPtr data)
+		public enum PurpleCmdStatus
 		{
-			throw new NotImplementedException();
-		}
+			PURPLE_CMD_STATUS_OK,
+			PURPLE_CMD_STATUS_FAILED,
+			PURPLE_CMD_STATUS_NOT_FOUND,
+			PURPLE_CMD_STATUS_WRONG_ARGS,
+			PURPLE_CMD_STATUS_WRONG_PRPL,
+			PURPLE_CMD_STATUS_WRONG_TYPE
+		};
+
+		public enum PurpleCmdRet
+		{
+			PURPLE_CMD_RET_OK,
+			PURPLE_CMD_RET_FAILED,
+			PURPLE_CMD_RET_CONTINUE
+		};
+
+		public enum PurpleCmdPriority
+		{
+			PURPLE_CMD_P_VERY_LOW = -1000,
+			PURPLE_CMD_P_LOW = 0,
+			PURPLE_CMD_P_DEFAULT = 1000,
+			PURPLE_CMD_P_PRPL = 2000,
+			PURPLE_CMD_P_PLUGIN = 3000,
+			PURPLE_CMD_P_ALIAS = 4000,
+			PURPLE_CMD_P_HIGH = 5000,
+			PURPLE_CMD_P_VERY_HIGH = 6000
+		};
+
+		public enum PurpleCmdFlag
+		{
+			PURPLE_CMD_FLAG_IM = 0x01,
+			PURPLE_CMD_FLAG_CHAT = 0x02,
+			PURPLE_CMD_FLAG_PRPL_ONLY = 0x04,
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS = 0x08
+		};
 
 		/*
 		 * void purple_cmd_unregister(PurpleCmdId id)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_cmd_unregister(UNKNOWN id);
+		private static extern void purple_cmd_unregister(uint id);
 
-		public static void CmdUnregister(PurpleCmdId id)
+		public static void CmdUnregister(uint id)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleCmdStatus purple_cmd_do_command(PurpleConversation * conv, gchar * cmdline, gchar * markup, gchar ** errormsg)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_cmd_do_command(IntPtr conv, string cmdline, string markup, IntPtr errormsg);
-
-		public static PurpleCmdStatus CmdDoCommand(PurpleConversation conv, string cmdline, string markup, gchar errormsg)
-		{
-			throw new NotImplementedException();
+			purple_cmd_unregister(id);
 		}
 
 		/*
 		 * GList * purple_cmd_list(PurpleConversation * conv)
+		 * 
+		 * Could not generate a wrapper for purple_cmd_list in file "cmds.h".
+		 * Message: The type could not be resolved (GList * purple_cmd_list(PurpleConversation * conv)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_cmd_list(IntPtr conv);
-
-		public static GList CmdList(PurpleConversation conv)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_cmd_help(PurpleConversation * conv, gchar * cmd)
+		 * 
+		 * Could not generate a wrapper for purple_cmd_help in file "cmds.h".
+		 * Message: The type could not be resolved (GList * purple_cmd_help(PurpleConversation * conv, gchar * cmd)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_cmd_help(IntPtr conv, string cmd);
-
-		public static GList CmdHelp(PurpleConversation conv, string cmd)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gpointer purple_cmds_get_handle()
@@ -101,7 +110,7 @@ namespace PurpleWrapper
 
 		public static IntPtr GetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_cmds_get_handle();
 		}
 
 		/*
@@ -112,7 +121,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_cmds_init();
 		}
 
 		/*
@@ -123,7 +132,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_cmds_uninit();
 		}
 
 	}

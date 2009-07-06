@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -42,11 +44,12 @@ namespace PurpleWrapper
 		 * GType purple_theme_get_type()
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_theme_get_type();
+		private static extern IntPtr purple_theme_get_type();
 
-		public static GType GetType()
+		public static /* libgobject */ IntPtr GetType()
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_theme_get_type, a GObjectObject. */
+			
 		}
 
 		/*
@@ -57,7 +60,7 @@ namespace PurpleWrapper
 
 		public static string GetName(PurpleTheme theme)
 		{
-			throw new NotImplementedException();
+			return purple_theme_get_name(theme.Reference);
 		}
 
 		/*
@@ -68,7 +71,7 @@ namespace PurpleWrapper
 
 		public static void SetName(PurpleTheme theme, string name)
 		{
-			throw new NotImplementedException();
+			purple_theme_set_name(theme.Reference, name);
 		}
 
 		/*
@@ -79,7 +82,7 @@ namespace PurpleWrapper
 
 		public static string GetDescription(PurpleTheme theme)
 		{
-			throw new NotImplementedException();
+			return purple_theme_get_description(theme.Reference);
 		}
 
 		/*
@@ -90,7 +93,7 @@ namespace PurpleWrapper
 
 		public static void SetDescription(PurpleTheme theme, string description)
 		{
-			throw new NotImplementedException();
+			purple_theme_set_description(theme.Reference, description);
 		}
 
 		/*
@@ -101,7 +104,7 @@ namespace PurpleWrapper
 
 		public static string GetAuthor(PurpleTheme theme)
 		{
-			throw new NotImplementedException();
+			return purple_theme_get_author(theme.Reference);
 		}
 
 		/*
@@ -112,7 +115,7 @@ namespace PurpleWrapper
 
 		public static void SetAuthor(PurpleTheme theme, string author)
 		{
-			throw new NotImplementedException();
+			purple_theme_set_author(theme.Reference, author);
 		}
 
 		/*
@@ -123,7 +126,7 @@ namespace PurpleWrapper
 
 		public static string GetTypeString(PurpleTheme theme)
 		{
-			throw new NotImplementedException();
+			return purple_theme_get_type_string(theme.Reference);
 		}
 
 		/*
@@ -134,7 +137,7 @@ namespace PurpleWrapper
 
 		public static string GetDir(PurpleTheme theme)
 		{
-			throw new NotImplementedException();
+			return purple_theme_get_dir(theme.Reference);
 		}
 
 		/*
@@ -145,7 +148,7 @@ namespace PurpleWrapper
 
 		public static void SetDir(PurpleTheme theme, string dir)
 		{
-			throw new NotImplementedException();
+			purple_theme_set_dir(theme.Reference, dir);
 		}
 
 		/*
@@ -156,7 +159,7 @@ namespace PurpleWrapper
 
 		public static string GetImage(PurpleTheme theme)
 		{
-			throw new NotImplementedException();
+			return purple_theme_get_image(theme.Reference);
 		}
 
 		/*
@@ -167,7 +170,7 @@ namespace PurpleWrapper
 
 		public static string GetImageFull(PurpleTheme theme)
 		{
-			throw new NotImplementedException();
+			return purple_theme_get_image_full(theme.Reference);
 		}
 
 		/*
@@ -178,7 +181,7 @@ namespace PurpleWrapper
 
 		public static void SetImage(PurpleTheme theme, string img)
 		{
-			throw new NotImplementedException();
+			purple_theme_set_image(theme.Reference, img);
 		}
 
 	}

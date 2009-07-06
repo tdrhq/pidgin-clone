@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -46,52 +48,36 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_upnp_init();
 		}
 
 		/*
 		 * void purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
+		 * 
+		 * Could not generate a wrapper for purple_upnp_discover in file "upnp.h".
+		 * Message: The type could not be resolved (PurpleUPnPCallback cb).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_upnp_discover(UNKNOWN cb, IntPtr cb_data);
 
-		public static void Discover(PurpleUPnPCallback cb, IntPtr cb_data)
-		{
-			throw new NotImplementedException();
-		}
+		/*
+		 * PurpleUPnPControlInfo* purple_upnp_get_control_info()
+		 * 
+		 * Could not generate a wrapper for purple_upnp_get_control_info in file "upnp.h".
+		 * Message: The type could not be resolved (PurpleUPnPControlInfo* purple_upnp_get_control_info()).
+		 */
+
+		/*
+		 * gchar* purple_upnp_get_public_ip()
+		 * 
+		 * Could not generate a wrapper for purple_upnp_get_public_ip in file "upnp.h".
+		 * Message: The type could not be resolved (gchar* purple_upnp_get_public_ip()).
+		 */
 
 		/*
 		 * void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove * mapping_data)
+		 * 
+		 * Could not generate a wrapper for purple_upnp_cancel_port_mapping in file "upnp.h".
+		 * Message: The type could not be resolved (UPnPMappingAddRemove * mapping_data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_upnp_cancel_port_mapping(IntPtr mapping_data);
-
-		public static void CancelPortMapping(UPnPMappingAddRemove mapping_data)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * UPnPMappingAddRemove * purple_upnp_set_port_mapping(unsigned short,  , PurpleUPnPCallback cb, gpointer cb_data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_upnp_set_port_mapping(UNKNOWN short, UNKNOWN , UNKNOWN cb, IntPtr cb_data);
-
-		public static UPnPMappingAddRemove SetPortMapping(unsigned short,  , PurpleUPnPCallback cb, IntPtr cb_data)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * UPnPMappingAddRemove * purple_upnp_remove_port_mapping(unsigned short,  , PurpleUPnPCallback cb, gpointer cb_data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_upnp_remove_port_mapping(UNKNOWN short, UNKNOWN , UNKNOWN cb, IntPtr cb_data);
-
-		public static UPnPMappingAddRemove RemovePortMapping(unsigned short,  , PurpleUPnPCallback cb, IntPtr cb_data)
-		{
-			throw new NotImplementedException();
-		}
 
 	}
 }

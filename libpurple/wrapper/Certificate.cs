@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,27 +40,29 @@ namespace PurpleWrapper
 {
 	public class Certificate
 	{
+		public enum PurpleCertificateVerificationStatus
+		{
+			PURPLE_CERTIFICATE_INVALID = 0,
+			PURPLE_CERTIFICATE_VALID = 1
+		};
+
 		/*
-		 * void purple_certificate_verify(PurpleCertificateVerifier * verifier, gchar * subject_name, GList * cert_chain, PurpleCertificateVerifiedCallback cb, gpointer cb_data)
+		 * PurpleCertificate * purple_certificate_copy(PurpleCertificate * crt)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_certificate_verify(IntPtr verifier, string subject_name, IntPtr cert_chain, UNKNOWN cb, IntPtr cb_data);
+		private static extern IntPtr purple_certificate_copy(IntPtr crt);
 
-		public static void Verify(PurpleCertificateVerifier verifier, string subject_name, GList cert_chain, PurpleCertificateVerifiedCallback cb, IntPtr cb_data)
+		public static PurpleCertificate Copy(PurpleCertificate crt)
 		{
-			throw new NotImplementedException();
+			return new PurpleCertificate(purple_certificate_copy(crt.Reference));
 		}
 
 		/*
-		 * void purple_certificate_verify_complete(PurpleCertificateVerificationRequest * vrq, PurpleCertificateVerificationStatus st)
+		 * GList * purple_certificate_copy_list(GList * crt_list)
+		 * 
+		 * Could not generate a wrapper for purple_certificate_copy_list in file "certificate.h".
+		 * Message: The type could not be resolved (GList * purple_certificate_copy_list(GList * crt_list)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_certificate_verify_complete(IntPtr vrq, UNKNOWN st);
-
-		public static void VerifyComplete(PurpleCertificateVerificationRequest vrq, PurpleCertificateVerificationStatus st)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_certificate_destroy(PurpleCertificate * crt)
@@ -68,19 +72,15 @@ namespace PurpleWrapper
 
 		public static void Destroy(PurpleCertificate crt)
 		{
-			throw new NotImplementedException();
+			purple_certificate_destroy(crt.Reference);
 		}
 
 		/*
-		 * void purple_certificate_destroy_list( )
+		 * void purple_certificate_destroy_list(GList * crt_list)
+		 * 
+		 * Could not generate a wrapper for purple_certificate_destroy_list in file "certificate.h".
+		 * Message: The type could not be resolved (GList * crt_list).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_certificate_destroy_list(UNKNOWN );
-
-		public static void DestroyList( )
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gboolean purple_certificate_signed_by(PurpleCertificate * crt, PurpleCertificate * issuer)
@@ -90,18 +90,25 @@ namespace PurpleWrapper
 
 		public static bool SignedBy(PurpleCertificate crt, PurpleCertificate issuer)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_signed_by(crt.Reference, issuer.Reference);
 		}
 
 		/*
 		 * gboolean purple_certificate_check_signature_chain(GList * chain)
+		 * 
+		 * Could not generate a wrapper for purple_certificate_check_signature_chain in file "certificate.h".
+		 * Message: The type could not be resolved (GList * chain).
+		 */
+
+		/*
+		 * PurpleCertificate * purple_certificate_import(PurpleCertificateScheme * scheme, gchar * filename)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern bool purple_certificate_check_signature_chain(IntPtr chain);
+		private static extern IntPtr purple_certificate_import(IntPtr scheme, string filename);
 
-		public static bool CheckSignatureChain(GList chain)
+		public static PurpleCertificate Import(PurpleCertificateScheme scheme, string filename)
 		{
-			throw new NotImplementedException();
+			return new PurpleCertificate(purple_certificate_import(scheme.Reference, filename));
 		}
 
 		/*
@@ -112,7 +119,47 @@ namespace PurpleWrapper
 
 		public static bool Export(string filename, PurpleCertificate crt)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_export(filename, crt.Reference);
+		}
+
+		/*
+		 * GByteArray * purple_certificate_get_fingerprint_sha1(PurpleCertificate * crt)
+		 * 
+		 * Could not generate a wrapper for purple_certificate_get_fingerprint_sha1 in file "certificate.h".
+		 * Message: The type could not be resolved (GByteArray * purple_certificate_get_fingerprint_sha1(PurpleCertificate * crt)).
+		 */
+
+		/*
+		 * gchar * purple_certificate_get_unique_id(PurpleCertificate * crt)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_certificate_get_unique_id(IntPtr crt);
+
+		public static string GetUniqueId(PurpleCertificate crt)
+		{
+			return purple_certificate_get_unique_id(crt.Reference);
+		}
+
+		/*
+		 * gchar * purple_certificate_get_issuer_unique_id(PurpleCertificate * crt)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_certificate_get_issuer_unique_id(IntPtr crt);
+
+		public static string GetIssuerUniqueId(PurpleCertificate crt)
+		{
+			return purple_certificate_get_issuer_unique_id(crt.Reference);
+		}
+
+		/*
+		 * gchar * purple_certificate_get_subject_name(PurpleCertificate * crt)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_certificate_get_subject_name(IntPtr crt);
+
+		public static string GetSubjectName(PurpleCertificate crt)
+		{
+			return purple_certificate_get_subject_name(crt.Reference);
 		}
 
 		/*
@@ -123,18 +170,25 @@ namespace PurpleWrapper
 
 		public static bool CheckSubjectName(PurpleCertificate crt, string name)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_check_subject_name(crt.Reference, name);
 		}
 
 		/*
 		 * gboolean purple_certificate_get_times(PurpleCertificate * crt, time_t * activation, time_t * expiration)
+		 * 
+		 * Could not generate a wrapper for purple_certificate_get_times in file "certificate.h".
+		 * Message: The type could not be resolved (time_t * activation).
+		 */
+
+		/*
+		 * gchar * purple_certificate_pool_mkpath(PurpleCertificatePool * pool, gchar * id)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern bool purple_certificate_get_times(IntPtr crt, IntPtr activation, IntPtr expiration);
+		private static extern string purple_certificate_pool_mkpath(IntPtr pool, string id);
 
-		public static bool GetTimes(PurpleCertificate crt, time_t activation, time_t expiration)
+		public static string PoolMkpath(PurpleCertificatePool pool, string id)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_pool_mkpath(pool.Reference, id);
 		}
 
 		/*
@@ -145,7 +199,18 @@ namespace PurpleWrapper
 
 		public static bool PoolUsable(PurpleCertificatePool pool)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_pool_usable(pool.Reference);
+		}
+
+		/*
+		 * PurpleCertificateScheme * purple_certificate_pool_get_scheme(PurpleCertificatePool * pool)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_certificate_pool_get_scheme(IntPtr pool);
+
+		public static PurpleCertificateScheme PoolGetScheme(PurpleCertificatePool pool)
+		{
+			return new PurpleCertificateScheme(purple_certificate_pool_get_scheme(pool.Reference));
 		}
 
 		/*
@@ -156,7 +221,18 @@ namespace PurpleWrapper
 
 		public static bool PoolContains(PurpleCertificatePool pool, string id)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_pool_contains(pool.Reference, id);
+		}
+
+		/*
+		 * PurpleCertificate * purple_certificate_pool_retrieve(PurpleCertificatePool * pool, gchar * id)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_certificate_pool_retrieve(IntPtr pool, string id);
+
+		public static PurpleCertificate PoolRetrieve(PurpleCertificatePool pool, string id)
+		{
+			return new PurpleCertificate(purple_certificate_pool_retrieve(pool.Reference, id));
 		}
 
 		/*
@@ -167,7 +243,7 @@ namespace PurpleWrapper
 
 		public static bool PoolStore(PurpleCertificatePool pool, string id, PurpleCertificate crt)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_pool_store(pool.Reference, id, crt.Reference);
 		}
 
 		/*
@@ -178,19 +254,22 @@ namespace PurpleWrapper
 
 		public static bool PoolDelete(PurpleCertificatePool pool, string id)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_pool_delete(pool.Reference, id);
 		}
 
 		/*
-		 * void purple_certificate_pool_destroy_idlist(GList * idlist)
+		 * GList * purple_certificate_pool_get_idlist(PurpleCertificatePool * pool)
+		 * 
+		 * Could not generate a wrapper for purple_certificate_pool_get_idlist in file "certificate.h".
+		 * Message: The type could not be resolved (GList * purple_certificate_pool_get_idlist(PurpleCertificatePool * pool)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_certificate_pool_destroy_idlist(IntPtr idlist);
 
-		public static void PoolDestroyIdlist(GList idlist)
-		{
-			throw new NotImplementedException();
-		}
+		/*
+		 * void purple_certificate_pool_destroy_idlist(GList * idlist)
+		 * 
+		 * Could not generate a wrapper for purple_certificate_pool_destroy_idlist in file "certificate.h".
+		 * Message: The type could not be resolved (GList * idlist).
+		 */
 
 		/*
 		 * void purple_certificate_init()
@@ -200,7 +279,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_certificate_init();
 		}
 
 		/*
@@ -211,7 +290,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_certificate_uninit();
 		}
 
 		/*
@@ -222,8 +301,26 @@ namespace PurpleWrapper
 
 		public static IntPtr GetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_certificate_get_handle();
 		}
+
+		/*
+		 * PurpleCertificateScheme * purple_certificate_find_scheme(gchar * name)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_certificate_find_scheme(string name);
+
+		public static PurpleCertificateScheme FindScheme(string name)
+		{
+			return new PurpleCertificateScheme(purple_certificate_find_scheme(name));
+		}
+
+		/*
+		 * GList * purple_certificate_get_schemes()
+		 * 
+		 * Could not generate a wrapper for purple_certificate_get_schemes in file "certificate.h".
+		 * Message: The type could not be resolved (GList * purple_certificate_get_schemes()).
+		 */
 
 		/*
 		 * gboolean purple_certificate_register_scheme(PurpleCertificateScheme * scheme)
@@ -233,7 +330,7 @@ namespace PurpleWrapper
 
 		public static bool RegisterScheme(PurpleCertificateScheme scheme)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_register_scheme(scheme.Reference);
 		}
 
 		/*
@@ -244,8 +341,26 @@ namespace PurpleWrapper
 
 		public static bool UnregisterScheme(PurpleCertificateScheme scheme)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_unregister_scheme(scheme.Reference);
 		}
+
+		/*
+		 * PurpleCertificateVerifier * purple_certificate_find_verifier(gchar * scheme_name, gchar * ver_name)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_certificate_find_verifier(string scheme_name, string ver_name);
+
+		public static PurpleCertificateVerifier FindVerifier(string scheme_name, string ver_name)
+		{
+			return new PurpleCertificateVerifier(purple_certificate_find_verifier(scheme_name, ver_name));
+		}
+
+		/*
+		 * GList * purple_certificate_get_verifiers()
+		 * 
+		 * Could not generate a wrapper for purple_certificate_get_verifiers in file "certificate.h".
+		 * Message: The type could not be resolved (GList * purple_certificate_get_verifiers()).
+		 */
 
 		/*
 		 * gboolean purple_certificate_register_verifier(PurpleCertificateVerifier * vr)
@@ -255,7 +370,7 @@ namespace PurpleWrapper
 
 		public static bool RegisterVerifier(PurpleCertificateVerifier vr)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_register_verifier(vr.Reference);
 		}
 
 		/*
@@ -266,8 +381,26 @@ namespace PurpleWrapper
 
 		public static bool UnregisterVerifier(PurpleCertificateVerifier vr)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_unregister_verifier(vr.Reference);
 		}
+
+		/*
+		 * PurpleCertificatePool * purple_certificate_find_pool(gchar * scheme_name, gchar * pool_name)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_certificate_find_pool(string scheme_name, string pool_name);
+
+		public static PurpleCertificatePool FindPool(string scheme_name, string pool_name)
+		{
+			return new PurpleCertificatePool(purple_certificate_find_pool(scheme_name, pool_name));
+		}
+
+		/*
+		 * GList * purple_certificate_get_pools()
+		 * 
+		 * Could not generate a wrapper for purple_certificate_get_pools in file "certificate.h".
+		 * Message: The type could not be resolved (GList * purple_certificate_get_pools()).
+		 */
 
 		/*
 		 * gboolean purple_certificate_register_pool(PurpleCertificatePool * pool)
@@ -277,7 +410,7 @@ namespace PurpleWrapper
 
 		public static bool RegisterPool(PurpleCertificatePool pool)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_register_pool(pool.Reference);
 		}
 
 		/*
@@ -288,7 +421,7 @@ namespace PurpleWrapper
 
 		public static bool UnregisterPool(PurpleCertificatePool pool)
 		{
-			throw new NotImplementedException();
+			return purple_certificate_unregister_pool(pool.Reference);
 		}
 
 		/*
@@ -299,7 +432,7 @@ namespace PurpleWrapper
 
 		public static void DisplayX509(PurpleCertificate crt)
 		{
-			throw new NotImplementedException();
+			purple_certificate_display_x509(crt.Reference);
 		}
 
 		/*
@@ -310,7 +443,7 @@ namespace PurpleWrapper
 
 		public static void AddCaSearchPath(string path)
 		{
-			throw new NotImplementedException();
+			purple_certificate_add_ca_search_path(path);
 		}
 
 	}

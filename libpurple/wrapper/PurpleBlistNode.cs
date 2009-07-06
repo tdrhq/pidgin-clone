@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,182 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurpleBlistNode : UnmanagedWrapper<_PurpleBlistNode>
 	{
+		/* 
+		 * Could not generate a wrapper for PurpleBlistNode in file "blist.h".
+		 * Message: The type could not be resolved (GHashTable * settings).
+		 */
+
 		public PurpleBlistNode()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurpleBlistNode(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurpleBlistNode)Marshal.PtrToStructure(this.Reference, typeof(_PurpleBlistNode));
-		}
-
-		public PurpleBlistNodeType type
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleBlistNode prev
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleBlistNode next
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleBlistNode parent
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleBlistNode child
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public GHashTable settings
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public void ui_data
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleBlistNodeFlags flags
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleBlistNode
-	{
-		/*
-		 * PurpleBlistNodeType type
-		 */
-		UNKNOWN type;
-
-		/*
-		 * PurpleBlistNode * prev
-		 */
-		IntPtr prev;
-
-		/*
-		 * PurpleBlistNode * next
-		 */
-		IntPtr next;
-
-		/*
-		 * PurpleBlistNode * parent
-		 */
-		IntPtr parent;
-
-		/*
-		 * PurpleBlistNode * child
-		 */
-		IntPtr child;
-
-		/*
-		 * GHashTable * settings
-		 */
-		IntPtr settings;
-
-		/*
-		 * void          * ui_data
-		 */
-		IntPtr ui_data;
-
-		/*
-		 * PurpleBlistNodeFlags flags
-		 */
-		UNKNOWN flags;
-
-	}
+	class _PurpleBlistNode { }
 }
 

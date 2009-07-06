@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,6 +40,13 @@ namespace PurpleWrapper
 {
 	public class Sslconn
 	{
+		public enum PurpleSslErrorType
+		{
+			PURPLE_SSL_HANDSHAKE_FAILED = 1,
+			PURPLE_SSL_CONNECT_FAILED = 2,
+			PURPLE_SSL_CERTIFICATE_INVALID = 3
+		};
+
 		/*
 		 * gboolean purple_ssl_is_supported()
 		 */
@@ -46,50 +55,18 @@ namespace PurpleWrapper
 
 		public static bool SslIsSupported()
 		{
-			throw new NotImplementedException();
+			return purple_ssl_is_supported();
 		}
 
 		/*
-		 * PurpleSslConnection * purple_ssl_connect(PurpleAccount * account, char * host, int port, PurpleSslInputFunction func, PurpleSslErrorFunction error_func, void * data)
+		 * gchar * purple_ssl_strerror(PurpleSslErrorType error)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_ssl_connect(IntPtr account, string host, int port, UNKNOWN func, UNKNOWN error_func, IntPtr data);
+		private static extern string purple_ssl_strerror(Sslconn.PurpleSslErrorType error);
 
-		public static PurpleSslConnection SslConnect(PurpleAccount account, string host, int port, PurpleSslInputFunction func, PurpleSslErrorFunction error_func, IntPtr data)
+		public static string SslStrerror(Sslconn.PurpleSslErrorType error)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleSslConnection * purple_ssl_connect_fd(PurpleAccount * account, int fd, PurpleSslInputFunction func, PurpleSslErrorFunction error_func, void * data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_ssl_connect_fd(IntPtr account, int fd, UNKNOWN func, UNKNOWN error_func, IntPtr data);
-
-		public static PurpleSslConnection SslConnectFd(PurpleAccount account, int fd, PurpleSslInputFunction func, PurpleSslErrorFunction error_func, IntPtr data)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleSslConnection * purple_ssl_connect_with_host_fd(PurpleAccount * account, int fd, PurpleSslInputFunction func, PurpleSslErrorFunction error_func, char * host, void * data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_ssl_connect_with_host_fd(IntPtr account, int fd, UNKNOWN func, UNKNOWN error_func, string host, IntPtr data);
-
-		public static PurpleSslConnection SslConnectWithHostFd(PurpleAccount account, int fd, PurpleSslInputFunction func, PurpleSslErrorFunction error_func, string host, IntPtr data)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_ssl_input_add(PurpleSslConnection * gsc, PurpleSslInputFunction func, void * data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_ssl_input_add(IntPtr gsc, UNKNOWN func, IntPtr data);
-
-		public static void SslInputAdd(PurpleSslConnection gsc, PurpleSslInputFunction func, IntPtr data)
-		{
+			/* Unable to process error, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -101,52 +78,51 @@ namespace PurpleWrapper
 
 		public static void SslClose(PurpleSslConnection gsc)
 		{
-			throw new NotImplementedException();
+			purple_ssl_close(gsc.Reference);
 		}
 
 		/*
 		 * size_t purple_ssl_read(PurpleSslConnection * gsc, void * buffer, size_t len)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_ssl_read(IntPtr gsc, IntPtr buffer, UNKNOWN len);
+		private static extern ulong purple_ssl_read(IntPtr gsc, IntPtr buffer, ulong len);
 
-		public static size_t SslRead(PurpleSslConnection gsc, IntPtr buffer, size_t len)
+		public static ulong SslRead(PurpleSslConnection gsc, IntPtr buffer, ulong len)
 		{
-			throw new NotImplementedException();
+			return purple_ssl_read(gsc.Reference, buffer, len);
 		}
 
 		/*
 		 * size_t purple_ssl_write(PurpleSslConnection * gsc, void * buffer, size_t len)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_ssl_write(IntPtr gsc, IntPtr buffer, UNKNOWN len);
+		private static extern ulong purple_ssl_write(IntPtr gsc, IntPtr buffer, ulong len);
 
-		public static size_t SslWrite(PurpleSslConnection gsc, IntPtr buffer, size_t len)
+		public static ulong SslWrite(PurpleSslConnection gsc, IntPtr buffer, ulong len)
 		{
-			throw new NotImplementedException();
+			return purple_ssl_write(gsc.Reference, buffer, len);
 		}
+
+		/*
+		 * GList * purple_ssl_get_peer_certificates(PurpleSslConnection * gsc)
+		 * 
+		 * Could not generate a wrapper for purple_ssl_get_peer_certificates in file "sslconn.h".
+		 * Message: The type could not be resolved (GList * purple_ssl_get_peer_certificates(PurpleSslConnection * gsc)).
+		 */
 
 		/*
 		 * void purple_ssl_set_ops(PurpleSslOps * ops)
+		 * 
+		 * Could not generate a wrapper for purple_ssl_set_ops in file "sslconn.h".
+		 * Message: The type could not be resolved (PurpleSslOps * ops).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_ssl_set_ops(IntPtr ops);
-
-		public static void SslSetOps(PurpleSslOps ops)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleSslOps * purple_ssl_get_ops()
+		 * 
+		 * Could not generate a wrapper for purple_ssl_get_ops in file "sslconn.h".
+		 * Message: The type could not be resolved (PurpleSslOps * purple_ssl_get_ops()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_ssl_get_ops();
-
-		public static PurpleSslOps SslGetOps()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_ssl_init()
@@ -156,7 +132,7 @@ namespace PurpleWrapper
 
 		public static void SslInit()
 		{
-			throw new NotImplementedException();
+			purple_ssl_init();
 		}
 
 		/*
@@ -167,7 +143,7 @@ namespace PurpleWrapper
 
 		public static void SslUninit()
 		{
-			throw new NotImplementedException();
+			purple_ssl_uninit();
 		}
 
 	}

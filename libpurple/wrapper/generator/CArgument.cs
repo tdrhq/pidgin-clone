@@ -5,25 +5,18 @@ namespace Scripts
 {
     class CArgument : CTyped
     {
-        private String name;
-        public bool isEllipsis = false;
-        public bool isFunctionPointer = false;
+        private bool isEllipsis = false;
+        private bool isFunctionPointer = false;
         public List<CArgument> functionPointerArguments = new List<CArgument>();
 
-        public CArgument()
+        public CArgument(CFile file)
+            : base(file, "", "")
         {
         }
 
-        public CArgument(String type, String name)
+        public CArgument(CFile file, String type, String name)
+            : base(file, type, name)
         {
-            this.Type = type;
-            this.name = name;
-        }
-
-        public String Name
-        {
-            get { return name; }
-            set { name = value; }
         }
 
         public bool IsEllipsis
@@ -74,18 +67,18 @@ namespace Scripts
         public string GetCSharpPrivateFunction()
         {
             if (this.IsEllipsis)
-                return "...";
+                throw new UnableToCreateWrapperException("The function argument contains the ellipsis argument and cannot be automatically wrapped.");
             else
-                return this.CSharpPrivateType + " " + this.Name;
+                return this.CSharpPrivateType + " " + this.SafeName;
         }
 
         public string GetCSharpPublicFunction()
         {
             if (this.IsEllipsis)
-                return "...";
+                throw new UnableToCreateWrapperException("The function argument contains the ellipsis argument and cannot be automatically wrapped.");
             else
             {
-                return this.CSharpPublicType + " " + this.Name;
+                return this.CSharpPublicType + " " + this.SafeName;
             }
         }
     }

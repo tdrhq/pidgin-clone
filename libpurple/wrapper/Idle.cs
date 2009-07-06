@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -46,41 +48,34 @@ namespace PurpleWrapper
 
 		public static void Touch()
 		{
-			throw new NotImplementedException();
+			purple_idle_touch();
 		}
 
 		/*
 		 * void purple_idle_set(time_t time)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_idle_set(UNKNOWN time);
+		private static extern void purple_idle_set(ulong time);
 
-		public static void Set(time_t time)
+		public static void Set(DateTime time)
 		{
-			throw new NotImplementedException();
+			ulong _PurpleWrapper_arg0 = (ulong)(time - new DateTime(1970, 1, 1)).TotalSeconds;
+			purple_idle_set(_PurpleWrapper_arg0);
 		}
 
 		/*
 		 * void purple_idle_set_ui_ops(PurpleIdleUiOps * ops)
+		 * 
+		 * Could not generate a wrapper for purple_idle_set_ui_ops in file "idle.h".
+		 * Message: The type could not be resolved (PurpleIdleUiOps * ops).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_idle_set_ui_ops(IntPtr ops);
-
-		public static void SetUiOps(PurpleIdleUiOps ops)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleIdleUiOps * purple_idle_get_ui_ops()
+		 * 
+		 * Could not generate a wrapper for purple_idle_get_ui_ops in file "idle.h".
+		 * Message: The type could not be resolved (PurpleIdleUiOps * purple_idle_get_ui_ops()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_idle_get_ui_ops();
-
-		public static PurpleIdleUiOps GetUiOps()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_idle_init()
@@ -90,7 +85,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_idle_init();
 		}
 
 		/*
@@ -101,7 +96,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_idle_uninit();
 		}
 
 	}

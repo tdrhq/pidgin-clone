@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,182 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurpleConvChat : UnmanagedWrapper<_PurpleConvChat>
 	{
+		/* 
+		 * Could not generate a wrapper for PurpleConvChat in file "conversation.h".
+		 * Message: The type could not be resolved (GList * in_room).
+		 */
+
 		public PurpleConvChat()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurpleConvChat(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurpleConvChat)Marshal.PtrToStructure(this.Reference, typeof(_PurpleConvChat));
-		}
-
-		public PurpleConversation conv
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public GList in_room
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public GList ignored
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public char who
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public char topic
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public int id
-		{
-			get
-			{
-				return this.Data.id;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.id = value;
-			}
-		}
-
-		public string nick
-		{
-			get
-			{
-				return this.Data.nick;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.nick = value;
-			}
-		}
-
-		public bool left
-		{
-			get
-			{
-				return this.Data.left;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.left = value;
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleConvChat
-	{
-		/*
-		 * PurpleConversation * conv
-		 */
-		IntPtr conv;
-
-		/*
-		 * GList * in_room
-		 */
-		IntPtr in_room;
-
-		/*
-		 * GList * ignored
-		 */
-		IntPtr ignored;
-
-		/*
-		 * char  * who
-		 */
-		IntPtr who;
-
-		/*
-		 * char  * topic
-		 */
-		IntPtr topic;
-
-		/*
-		 * int id
-		 */
-		int id;
-
-		/*
-		 * char * nick
-		 */
-		string nick;
-
-		/*
-		 * gboolean left
-		 */
-		bool left;
-
-	}
+	class _PurpleConvChat { }
 }
 

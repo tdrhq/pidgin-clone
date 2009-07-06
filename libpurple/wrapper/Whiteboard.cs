@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -46,7 +48,7 @@ namespace PurpleWrapper
 
 		public static void SetUiOps(PurpleWhiteboardUiOps ops)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_set_ui_ops(ops.Reference);
 		}
 
 		/*
@@ -57,7 +59,7 @@ namespace PurpleWrapper
 
 		public static void SetPrplOps(PurpleWhiteboard wb, PurpleWhiteboardPrplOps ops)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_set_prpl_ops(wb.Reference, ops.Reference);
 		}
 
 		/*
@@ -68,7 +70,7 @@ namespace PurpleWrapper
 
 		public static PurpleWhiteboard Create(PurpleAccount account, string who, int state)
 		{
-			throw new NotImplementedException();
+			return new PurpleWhiteboard(purple_whiteboard_create(account.Reference, who, state));
 		}
 
 		/*
@@ -79,7 +81,7 @@ namespace PurpleWrapper
 
 		public static void Destroy(PurpleWhiteboard wb)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_destroy(wb.Reference);
 		}
 
 		/*
@@ -90,7 +92,7 @@ namespace PurpleWrapper
 
 		public static void Start(PurpleWhiteboard wb)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_start(wb.Reference);
 		}
 
 		/*
@@ -101,30 +103,22 @@ namespace PurpleWrapper
 
 		public static PurpleWhiteboard GetSession(PurpleAccount account, string who)
 		{
-			throw new NotImplementedException();
+			return new PurpleWhiteboard(purple_whiteboard_get_session(account.Reference, who));
 		}
 
 		/*
 		 * void purple_whiteboard_draw_list_destroy(GList * draw_list)
+		 * 
+		 * Could not generate a wrapper for purple_whiteboard_draw_list_destroy in file "whiteboard.h".
+		 * Message: The type could not be resolved (GList * draw_list).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_whiteboard_draw_list_destroy(IntPtr draw_list);
-
-		public static void DrawListDestroy(GList draw_list)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gboolean purple_whiteboard_get_dimensions(PurpleWhiteboard * wb, int * width, int * height)
+		 * 
+		 * Could not generate a wrapper for purple_whiteboard_get_dimensions in file "whiteboard.h".
+		 * Message: The type could not be resolved (int * width).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_whiteboard_get_dimensions(IntPtr wb, IntPtr width, IntPtr height);
-
-		public static bool GetDimensions(PurpleWhiteboard wb, int width, int height)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_whiteboard_set_dimensions(PurpleWhiteboard * wb, int width, int height)
@@ -134,7 +128,7 @@ namespace PurpleWrapper
 
 		public static void SetDimensions(PurpleWhiteboard wb, int width, int height)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_set_dimensions(wb.Reference, width, height);
 		}
 
 		/*
@@ -145,19 +139,15 @@ namespace PurpleWrapper
 
 		public static void DrawPoint(PurpleWhiteboard wb, int x, int y, int color, int size)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_draw_point(wb.Reference, x, y, color, size);
 		}
 
 		/*
 		 * void purple_whiteboard_send_draw_list(PurpleWhiteboard * wb, GList * list)
+		 * 
+		 * Could not generate a wrapper for purple_whiteboard_send_draw_list in file "whiteboard.h".
+		 * Message: The type could not be resolved (GList * list).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_whiteboard_send_draw_list(IntPtr wb, IntPtr list);
-
-		public static void SendDrawList(PurpleWhiteboard wb, GList list)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_whiteboard_draw_line(PurpleWhiteboard * wb, int x1, int y1, int x2, int y2, int color, int size)
@@ -167,7 +157,7 @@ namespace PurpleWrapper
 
 		public static void DrawLine(PurpleWhiteboard wb, int x1, int y1, int x2, int y2, int color, int size)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_draw_line(wb.Reference, x1, y1, x2, y2, color, size);
 		}
 
 		/*
@@ -178,7 +168,7 @@ namespace PurpleWrapper
 
 		public static void Clear(PurpleWhiteboard wb)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_clear(wb.Reference);
 		}
 
 		/*
@@ -189,7 +179,7 @@ namespace PurpleWrapper
 
 		public static void SendClear(PurpleWhiteboard wb)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_send_clear(wb.Reference);
 		}
 
 		/*
@@ -200,19 +190,15 @@ namespace PurpleWrapper
 
 		public static void SendBrush(PurpleWhiteboard wb, int size, int color)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_send_brush(wb.Reference, size, color);
 		}
 
 		/*
 		 * gboolean purple_whiteboard_get_brush(PurpleWhiteboard * wb, int * size, int * color)
+		 * 
+		 * Could not generate a wrapper for purple_whiteboard_get_brush in file "whiteboard.h".
+		 * Message: The type could not be resolved (int * size).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_whiteboard_get_brush(IntPtr wb, IntPtr size, IntPtr color);
-
-		public static bool GetBrush(PurpleWhiteboard wb, int size, int color)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_whiteboard_set_brush(PurpleWhiteboard * wb, int size, int color)
@@ -222,7 +208,7 @@ namespace PurpleWrapper
 
 		public static void SetBrush(PurpleWhiteboard wb, int size, int color)
 		{
-			throw new NotImplementedException();
+			purple_whiteboard_set_brush(wb.Reference, size, color);
 		}
 
 	}

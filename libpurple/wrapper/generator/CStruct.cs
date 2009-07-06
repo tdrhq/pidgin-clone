@@ -3,20 +3,14 @@ using System.Collections.Generic;
 
 namespace Scripts
 {
-    class CStruct
+    class CStruct : CNamed
     {
-        private String name;
         private List<CArgument> fields = new List<CArgument>();
 
-        public CStruct(String name)
+        public CStruct(CFile file, String name) :
+            base(file, name)
         {
-            this.name = name;
-        }
-
-        public String Name
-        {
-            get { return name; }
-            set { name = value; }
+            
         }
 
         public List<CArgument> Fields

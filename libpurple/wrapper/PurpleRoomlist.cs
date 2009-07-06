@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,162 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurpleRoomlist : UnmanagedWrapper<_PurpleRoomlist>
 	{
+		/* 
+		 * Could not generate a wrapper for PurpleRoomlist in file "roomlist.h".
+		 * Message: The type could not be resolved (GList * fields).
+		 */
+
 		public PurpleRoomlist()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurpleRoomlist(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurpleRoomlist)Marshal.PtrToStructure(this.Reference, typeof(_PurpleRoomlist));
-		}
-
-		public PurpleAccount account
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public GList fields
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public GList rooms
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public bool in_progress
-		{
-			get
-			{
-				return this.Data.in_progress;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.in_progress = value;
-			}
-		}
-
-		public IntPtr ui_data
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public IntPtr proto_data
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public uint ref
-		{
-			get
-			{
-				return this.Data.ref;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.ref = value;
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleRoomlist
-	{
-		/*
-		 * PurpleAccount * account
-		 */
-		IntPtr account;
-
-		/*
-		 * GList * fields
-		 */
-		IntPtr fields;
-
-		/*
-		 * GList * rooms
-		 */
-		IntPtr rooms;
-
-		/*
-		 * gboolean in_progress
-		 */
-		bool in_progress;
-
-		/*
-		 * gpointer ui_data
-		 */
-		IntPtr ui_data;
-
-		/*
-		 * gpointer proto_data
-		 */
-		IntPtr proto_data;
-
-		/*
-		 * guint ref
-		 */
-		uint ref;
-
-	}
+	class _PurpleRoomlist { }
 }
 

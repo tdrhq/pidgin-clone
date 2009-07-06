@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -48,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleStunNatDiscovery)Marshal.PtrToStructure(this.Reference, typeof(_PurpleStunNatDiscovery));
 		}
 
-		public PurpleStunStatus status
+		public Stun.PurpleStunStatus status
 		{
 			get
 			{
@@ -63,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public PurpleStunNatType type
+		public Stun.PurpleStunNatType type
 		{
 			get
 			{
@@ -108,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public time_t lookup_time
+		public DateTime lookup_time
 		{
 			get
 			{
@@ -132,12 +134,12 @@ namespace PurpleWrapper
 		/*
 		 * PurpleStunStatus status
 		 */
-		UNKNOWN status;
+		Stun.PurpleStunStatus status;
 
 		/*
 		 * PurpleStunNatType type
 		 */
-		UNKNOWN type;
+		Stun.PurpleStunNatType type;
 
 		/*
 		 * char publicip[16]
@@ -152,8 +154,9 @@ namespace PurpleWrapper
 		/*
 		 * time_t lookup_time
 		 */
-		UNKNOWN lookup_time;
+		ulong lookup_time;
 
 	}
+
 }
 

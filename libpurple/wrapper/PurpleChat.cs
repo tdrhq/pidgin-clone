@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,102 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurpleChat : UnmanagedWrapper<_PurpleChat>
 	{
+		/* 
+		 * Could not generate a wrapper for PurpleChat in file "blist.h".
+		 * Message: The type resolved to a known struct but not a pointer to that struct (PurpleBlistNode node).
+		 */
+
 		public PurpleChat()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurpleChat(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurpleChat)Marshal.PtrToStructure(this.Reference, typeof(_PurpleChat));
-		}
-
-		public PurpleBlistNode node
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public string alias
-		{
-			get
-			{
-				return this.Data.alias;
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				this.Data.alias = value;
-			}
-		}
-
-		public GHashTable components
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public PurpleAccount account
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleChat
-	{
-		/*
-		 * PurpleBlistNode node
-		 */
-		UNKNOWN node;
-
-		/*
-		 * char * alias
-		 */
-		string alias;
-
-		/*
-		 * GHashTable * components
-		 */
-		IntPtr components;
-
-		/*
-		 * PurpleAccount * account
-		 */
-		IntPtr account;
-
-	}
+	class _PurpleChat { }
 }
 

@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -42,11 +44,11 @@ namespace PurpleWrapper
 		 * PurpleCircBuffer * purple_circ_buffer_new(gsize growsize)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_circ_buffer_new(UNKNOWN growsize);
+		private static extern IntPtr purple_circ_buffer_new(ulong growsize);
 
-		public static PurpleCircBuffer CircBufferNew(gsize growsize)
+		public static PurpleCircBuffer CircBufferNew(ulong growsize)
 		{
-			throw new NotImplementedException();
+			return new PurpleCircBuffer(purple_circ_buffer_new(growsize));
 		}
 
 		/*
@@ -57,40 +59,40 @@ namespace PurpleWrapper
 
 		public static void CircBufferDestroy(PurpleCircBuffer buf)
 		{
-			throw new NotImplementedException();
+			purple_circ_buffer_destroy(buf.Reference);
 		}
 
 		/*
 		 * void purple_circ_buffer_append(PurpleCircBuffer * buf, gconstpointer src, gsize len)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_circ_buffer_append(IntPtr buf, UNKNOWN src, UNKNOWN len);
+		private static extern void purple_circ_buffer_append(IntPtr buf, IntPtr src, ulong len);
 
-		public static void CircBufferAppend(PurpleCircBuffer buf, gconstpointer src, gsize len)
+		public static void CircBufferAppend(PurpleCircBuffer buf, IntPtr src, ulong len)
 		{
-			throw new NotImplementedException();
+			purple_circ_buffer_append(buf.Reference, src, len);
 		}
 
 		/*
 		 * gsize purple_circ_buffer_get_max_read(PurpleCircBuffer * buf)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_circ_buffer_get_max_read(IntPtr buf);
+		private static extern ulong purple_circ_buffer_get_max_read(IntPtr buf);
 
-		public static gsize CircBufferGetMaxRead(PurpleCircBuffer buf)
+		public static ulong CircBufferGetMaxRead(PurpleCircBuffer buf)
 		{
-			throw new NotImplementedException();
+			return purple_circ_buffer_get_max_read(buf.Reference);
 		}
 
 		/*
 		 * gboolean purple_circ_buffer_mark_read(PurpleCircBuffer * buf, gsize len)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern bool purple_circ_buffer_mark_read(IntPtr buf, UNKNOWN len);
+		private static extern bool purple_circ_buffer_mark_read(IntPtr buf, ulong len);
 
-		public static bool CircBufferMarkRead(PurpleCircBuffer buf, gsize len)
+		public static bool CircBufferMarkRead(PurpleCircBuffer buf, ulong len)
 		{
-			throw new NotImplementedException();
+			return purple_circ_buffer_mark_read(buf.Reference, len);
 		}
 
 	}

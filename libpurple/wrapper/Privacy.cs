@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,71 +40,14 @@ namespace PurpleWrapper
 {
 	public class Privacy
 	{
-		/*
-		 * gboolean purple_privacy_permit_add(PurpleAccount * account, char * name, gboolean local_only)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_privacy_permit_add(IntPtr account, string name, bool local_only);
-
-		public static bool PermitAdd(PurpleAccount account, string name, bool local_only)
+		public enum PurplePrivacyType
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_privacy_permit_remove(PurpleAccount * account, char * name, gboolean local_only)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_privacy_permit_remove(IntPtr account, string name, bool local_only);
-
-		public static bool PermitRemove(PurpleAccount account, string name, bool local_only)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_privacy_deny_add(PurpleAccount * account, char * name, gboolean local_only)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_privacy_deny_add(IntPtr account, string name, bool local_only);
-
-		public static bool DenyAdd(PurpleAccount account, string name, bool local_only)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_privacy_deny_remove(PurpleAccount * account, char * name, gboolean local_only)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_privacy_deny_remove(IntPtr account, string name, bool local_only);
-
-		public static bool DenyRemove(PurpleAccount account, string name, bool local_only)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_privacy_allow(PurpleAccount * account, char * who, gboolean local, gboolean restore)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_privacy_allow(IntPtr account, string who, bool local, bool restore);
-
-		public static void Allow(PurpleAccount account, string who, bool local, bool restore)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_privacy_deny(PurpleAccount * account, char * who, gboolean local, gboolean restore)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_privacy_deny(IntPtr account, string who, bool local, bool restore);
-
-		public static void Deny(PurpleAccount account, string who, bool local, bool restore)
-		{
-			throw new NotImplementedException();
-		}
+			PURPLE_PRIVACY_ALLOW_ALL = 1,
+			PURPLE_PRIVACY_DENY_ALL,
+			PURPLE_PRIVACY_ALLOW_USERS,
+			PURPLE_PRIVACY_DENY_USERS,
+			PURPLE_PRIVACY_ALLOW_BUDDYLIST
+		};
 
 		/*
 		 * gboolean purple_privacy_check(PurpleAccount * account, char * who)
@@ -112,30 +57,22 @@ namespace PurpleWrapper
 
 		public static bool Check(PurpleAccount account, string who)
 		{
-			throw new NotImplementedException();
+			return purple_privacy_check(account.Reference, who);
 		}
 
 		/*
 		 * void purple_privacy_set_ui_ops(PurplePrivacyUiOps * ops)
+		 * 
+		 * Could not generate a wrapper for purple_privacy_set_ui_ops in file "privacy.h".
+		 * Message: The type could not be resolved (PurplePrivacyUiOps * ops).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_privacy_set_ui_ops(IntPtr ops);
-
-		public static void SetUiOps(PurplePrivacyUiOps ops)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurplePrivacyUiOps * purple_privacy_get_ui_ops()
+		 * 
+		 * Could not generate a wrapper for purple_privacy_get_ui_ops in file "privacy.h".
+		 * Message: The type could not be resolved (PurplePrivacyUiOps * purple_privacy_get_ui_ops()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_privacy_get_ui_ops();
-
-		public static PurplePrivacyUiOps GetUiOps()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_privacy_init()
@@ -145,7 +82,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_privacy_init();
 		}
 
 	}

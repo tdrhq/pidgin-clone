@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,280 +40,195 @@ namespace PurpleWrapper
 {
 	public class Pluginpref
 	{
+		public enum PurpleStringFormatType
+		{
+			PURPLE_STRING_FORMAT_TYPE_NONE = 0,
+			PURPLE_STRING_FORMAT_TYPE_MULTILINE = 1 << 0,
+			PURPLE_STRING_FORMAT_TYPE_HTML = 1 << 1
+		};
+
+		public enum PurplePluginPrefType
+		{
+			PURPLE_PLUGIN_PREF_NONE,
+			PURPLE_PLUGIN_PREF_CHOICE,
+			PURPLE_PLUGIN_PREF_INFO,
+			PURPLE_PLUGIN_PREF_STRING_FORMAT
+		};
+
 		/*
 		 * PurplePluginPrefFrame * purple_plugin_pref_frame_new()
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_frame_new in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPrefFrame * purple_plugin_pref_frame_new()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugin_pref_frame_new();
-
-		public static PurplePluginPrefFrame PluginPrefFrameNew()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_frame_destroy(PurplePluginPrefFrame * frame)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_frame_destroy in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPrefFrame * frame).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_frame_destroy(IntPtr frame);
-
-		public static void PluginPrefFrameDestroy(PurplePluginPrefFrame frame)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_frame_add(PurplePluginPrefFrame * frame, PurplePluginPref * pref)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_frame_add in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPrefFrame * frame).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_frame_add(IntPtr frame, IntPtr pref);
-
-		public static void PluginPrefFrameAdd(PurplePluginPrefFrame frame, PurplePluginPref pref)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_plugin_pref_frame_get_prefs(PurplePluginPrefFrame * frame)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_frame_get_prefs in file "pluginpref.h".
+		 * Message: The type could not be resolved (GList * purple_plugin_pref_frame_get_prefs(PurplePluginPrefFrame * frame)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugin_pref_frame_get_prefs(IntPtr frame);
-
-		public static GList PluginPrefFrameGetPrefs(PurplePluginPrefFrame frame)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurplePluginPref * purple_plugin_pref_new()
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_new in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * purple_plugin_pref_new()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugin_pref_new();
-
-		public static PurplePluginPref PluginPrefNew()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurplePluginPref * purple_plugin_pref_new_with_name(char * name)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_new_with_name in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * purple_plugin_pref_new_with_name(char * name)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugin_pref_new_with_name(string name);
-
-		public static PurplePluginPref PluginPrefNewWithName(string name)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurplePluginPref * purple_plugin_pref_new_with_label(char * label)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_new_with_label in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * purple_plugin_pref_new_with_label(char * label)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugin_pref_new_with_label(string label);
-
-		public static PurplePluginPref PluginPrefNewWithLabel(string label)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurplePluginPref * purple_plugin_pref_new_with_name_and_label(char * name, char * label)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_new_with_name_and_label in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * purple_plugin_pref_new_with_name_and_label(char * name, char * label)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugin_pref_new_with_name_and_label(string name, string label);
-
-		public static PurplePluginPref PluginPrefNewWithNameAndLabel(string name, string label)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_destroy(PurplePluginPref * pref)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_destroy in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_destroy(IntPtr pref);
-
-		public static void PluginPrefDestroy(PurplePluginPref pref)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_set_name(PurplePluginPref * pref, char * name)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_set_name in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_set_name(IntPtr pref, string name);
-
-		public static void PluginPrefSetName(PurplePluginPref pref, string name)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_plugin_pref_get_name(PurplePluginPref * pref)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_get_name in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_plugin_pref_get_name(IntPtr pref);
-
-		public static string PluginPrefGetName(PurplePluginPref pref)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_set_label(PurplePluginPref * pref, char * label)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_set_label in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_set_label(IntPtr pref, string label);
-
-		public static void PluginPrefSetLabel(PurplePluginPref pref, string label)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_plugin_pref_get_label(PurplePluginPref * pref)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_get_label in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_plugin_pref_get_label(IntPtr pref);
-
-		public static string PluginPrefGetLabel(PurplePluginPref pref)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_set_bounds(PurplePluginPref * pref, int min, int max)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_set_bounds in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_set_bounds(IntPtr pref, int min, int max);
-
-		public static void PluginPrefSetBounds(PurplePluginPref pref, int min, int max)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_get_bounds(PurplePluginPref * pref, int * min, int * max)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_get_bounds in file "pluginpref.h".
+		 * Message: The type could not be resolved (int * min).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_get_bounds(IntPtr pref, IntPtr min, IntPtr max);
-
-		public static void PluginPrefGetBounds(PurplePluginPref pref, int min, int max)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_set_type(PurplePluginPref * pref, PurplePluginPrefType type)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_set_type in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_set_type(IntPtr pref, UNKNOWN type);
-
-		public static void PluginPrefSetType(PurplePluginPref pref, PurplePluginPrefType type)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurplePluginPrefType purple_plugin_pref_get_type(PurplePluginPref * pref)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_get_type in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_plugin_pref_get_type(IntPtr pref);
-
-		public static PurplePluginPrefType PluginPrefGetType(PurplePluginPref pref)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_add_choice(PurplePluginPref * pref, char * label, gpointer choice)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_add_choice in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_add_choice(IntPtr pref, string label, IntPtr choice);
-
-		public static void PluginPrefAddChoice(PurplePluginPref pref, string label, IntPtr choice)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_plugin_pref_get_choices(PurplePluginPref * pref)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_get_choices in file "pluginpref.h".
+		 * Message: The type could not be resolved (GList * purple_plugin_pref_get_choices(PurplePluginPref * pref)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugin_pref_get_choices(IntPtr pref);
-
-		public static GList PluginPrefGetChoices(PurplePluginPref pref)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * void purple_plugin_pref_set_max_length(PurplePluginPref * pref, unsigned int)
+		 * void purple_plugin_pref_set_max_length(PurplePluginPref * pref, unsigned int max_length)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_set_max_length in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_set_max_length(IntPtr pref, UNKNOWN int);
-
-		public static void PluginPrefSetMaxLength(PurplePluginPref pref, unsigned int)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
-		 * int purple_plugin_pref_get_max_length(PurplePluginPref * pref)
+		 * unsigned int purple_plugin_pref_get_max_length(PurplePluginPref * pref)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_get_max_length in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern int purple_plugin_pref_get_max_length(IntPtr pref);
-
-		public static int PluginPrefGetMaxLength(PurplePluginPref pref)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_set_masked(PurplePluginPref * pref, gboolean mask)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_set_masked in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_set_masked(IntPtr pref, bool mask);
-
-		public static void PluginPrefSetMasked(PurplePluginPref pref, bool mask)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gboolean purple_plugin_pref_get_masked(PurplePluginPref * pref)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_get_masked in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_plugin_pref_get_masked(IntPtr pref);
-
-		public static bool PluginPrefGetMasked(PurplePluginPref pref)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_plugin_pref_set_format_type(PurplePluginPref * pref, PurpleStringFormatType format)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_set_format_type in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugin_pref_set_format_type(IntPtr pref, UNKNOWN format);
-
-		public static void PluginPrefSetFormatType(PurplePluginPref pref, PurpleStringFormatType format)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleStringFormatType purple_plugin_pref_get_format_type(PurplePluginPref * pref)
+		 * 
+		 * Could not generate a wrapper for purple_plugin_pref_get_format_type in file "pluginpref.h".
+		 * Message: The type could not be resolved (PurplePluginPref * pref).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_plugin_pref_get_format_type(IntPtr pref);
-
-		public static PurpleStringFormatType PluginPrefGetFormatType(PurplePluginPref pref)
-		{
-			throw new NotImplementedException();
-		}
 
 	}
 }

@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,16 +40,68 @@ namespace PurpleWrapper
 {
 	public class Conversation
 	{
-		/*
-		 * PurpleConversation * purple_conversation_new(PurpleConversationType type, PurpleAccount * account, char * name)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_conversation_new(UNKNOWN type, IntPtr account, string name);
-
-		public static PurpleConversation New(PurpleConversationType type, PurpleAccount account, string name)
+		public enum PurpleConversationType
 		{
-			throw new NotImplementedException();
-		}
+			PURPLE_CONV_TYPE_UNKNOWN = 0,
+			PURPLE_CONV_TYPE_IM,
+			PURPLE_CONV_TYPE_CHAT,
+			PURPLE_CONV_TYPE_MISC,
+			PURPLE_CONV_TYPE_ANY
+		};
+
+		public enum PurpleConvUpdateType
+		{
+			PURPLE_CONV_UPDATE_ADD = 0,
+			PURPLE_CONV_UPDATE_REMOVE,
+			PURPLE_CONV_UPDATE_ACCOUNT,
+			PURPLE_CONV_UPDATE_TYPING,
+			PURPLE_CONV_UPDATE_UNSEEN,
+			PURPLE_CONV_UPDATE_LOGGING,
+			PURPLE_CONV_UPDATE_TOPIC,
+			PURPLE_CONV_ACCOUNT_ONLINE,
+			PURPLE_CONV_ACCOUNT_OFFLINE,
+			PURPLE_CONV_UPDATE_AWAY,
+			PURPLE_CONV_UPDATE_ICON,
+			PURPLE_CONV_UPDATE_TITLE,
+			PURPLE_CONV_UPDATE_CHATLEFT,
+			PURPLE_CONV_UPDATE_FEATURES
+		};
+
+		public enum PurpleTypingState
+		{
+			PURPLE_NOT_TYPING = 0,
+			PURPLE_TYPING,
+			PURPLE_TYPED
+		};
+
+		public enum PurpleMessageFlags
+		{
+			PURPLE_MESSAGE_SEND = 0x0001,
+			PURPLE_MESSAGE_RECV = 0x0002,
+			PURPLE_MESSAGE_SYSTEM = 0x0004,
+			PURPLE_MESSAGE_AUTO_RESP = 0x0008,
+			PURPLE_MESSAGE_ACTIVE_ONLY = 0x0010,
+			PURPLE_MESSAGE_NICK = 0x0020,
+			PURPLE_MESSAGE_NO_LOG = 0x0040,
+			PURPLE_MESSAGE_WHISPER = 0x0080,
+			PURPLE_MESSAGE_ERROR = 0x0200,
+			PURPLE_MESSAGE_DELAYED = 0x0400,
+			PURPLE_MESSAGE_RAW = 0x0800,
+			PURPLE_MESSAGE_IMAGES = 0x1000,
+			PURPLE_MESSAGE_NOTIFY = 0x2000,
+			PURPLE_MESSAGE_NO_LINKIFY = 0x4000,
+			PURPLE_MESSAGE_INVISIBLE = 0x8000
+		};
+
+		public enum PurpleConvChatBuddyFlags
+		{
+			PURPLE_CBFLAGS_NONE = 0x0000,
+			PURPLE_CBFLAGS_VOICE = 0x0001,
+			PURPLE_CBFLAGS_HALFOP = 0x0002,
+			PURPLE_CBFLAGS_OP = 0x0004,
+			PURPLE_CBFLAGS_FOUNDER = 0x0008,
+			PURPLE_CBFLAGS_TYPING = 0x0010
+		};
 
 		/*
 		 * void purple_conversation_destroy(PurpleConversation * conv)
@@ -57,7 +111,7 @@ namespace PurpleWrapper
 
 		public static void Destroy(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			purple_conversation_destroy(conv.Reference);
 		}
 
 		/*
@@ -68,29 +122,19 @@ namespace PurpleWrapper
 
 		public static void Present(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			purple_conversation_present(conv.Reference);
 		}
 
 		/*
 		 * PurpleConversationType purple_conversation_get_type(PurpleConversation * conv)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_conversation_get_type(IntPtr conv);
+		private static extern Conversation.PurpleConversationType purple_conversation_get_type(IntPtr conv);
 
-		public static PurpleConversationType GetType(PurpleConversation conv)
+		public static Conversation.PurpleConversationType GetType(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conversation_set_ui_ops(PurpleConversation * conv, PurpleConversationUiOps * ops)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conversation_set_ui_ops(IntPtr conv, IntPtr ops);
-
-		public static void SetUiOps(PurpleConversation conv, PurpleConversationUiOps ops)
-		{
-			throw new NotImplementedException();
+			/* Unable to process purple_conversation_get_type, a KnownEnum. */
+			
 		}
 
 		/*
@@ -101,29 +145,7 @@ namespace PurpleWrapper
 
 		public static void ConversationsSetUiOps(PurpleConversationUiOps ops)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleConversationUiOps * purple_conversation_get_ui_ops(PurpleConversation * conv)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_conversation_get_ui_ops(IntPtr conv);
-
-		public static PurpleConversationUiOps GetUiOps(PurpleConversation conv)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conversation_set_account(PurpleConversation * conv, PurpleAccount * account)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conversation_set_account(IntPtr conv, IntPtr account);
-
-		public static void SetAccount(PurpleConversation conv, PurpleAccount account)
-		{
-			throw new NotImplementedException();
+			purple_conversations_set_ui_ops(ops.Reference);
 		}
 
 		/*
@@ -134,7 +156,7 @@ namespace PurpleWrapper
 
 		public static PurpleAccount GetAccount(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			return new PurpleAccount(purple_conversation_get_account(conv.Reference));
 		}
 
 		/*
@@ -145,7 +167,7 @@ namespace PurpleWrapper
 
 		public static PurpleConnection GetGc(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			return new PurpleConnection(purple_conversation_get_gc(conv.Reference));
 		}
 
 		/*
@@ -156,7 +178,7 @@ namespace PurpleWrapper
 
 		public static void SetTitle(PurpleConversation conv, string title)
 		{
-			throw new NotImplementedException();
+			purple_conversation_set_title(conv.Reference, title);
 		}
 
 		/*
@@ -167,7 +189,7 @@ namespace PurpleWrapper
 
 		public static string GetTitle(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			return purple_conversation_get_title(conv.Reference);
 		}
 
 		/*
@@ -178,7 +200,7 @@ namespace PurpleWrapper
 
 		public static void AutosetTitle(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			purple_conversation_autoset_title(conv.Reference);
 		}
 
 		/*
@@ -189,7 +211,7 @@ namespace PurpleWrapper
 
 		public static void SetName(PurpleConversation conv, string name)
 		{
-			throw new NotImplementedException();
+			purple_conversation_set_name(conv.Reference, name);
 		}
 
 		/*
@@ -200,7 +222,7 @@ namespace PurpleWrapper
 
 		public static string GetName(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			return purple_conversation_get_name(conv.Reference);
 		}
 
 		/*
@@ -211,7 +233,7 @@ namespace PurpleWrapper
 
 		public static void SetLogging(PurpleConversation conv, bool log)
 		{
-			throw new NotImplementedException();
+			purple_conversation_set_logging(conv.Reference, log);
 		}
 
 		/*
@@ -222,7 +244,7 @@ namespace PurpleWrapper
 
 		public static bool IsLogging(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			return purple_conversation_is_logging(conv.Reference);
 		}
 
 		/*
@@ -233,7 +255,7 @@ namespace PurpleWrapper
 
 		public static void CloseLogs(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			purple_conversation_close_logs(conv.Reference);
 		}
 
 		/*
@@ -244,7 +266,7 @@ namespace PurpleWrapper
 
 		public static PurpleConvIm GetImData(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			return new PurpleConvIm(purple_conversation_get_im_data(conv.Reference));
 		}
 
 		/*
@@ -255,18 +277,7 @@ namespace PurpleWrapper
 
 		public static PurpleConvChat GetChatData(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conversation_set_data(PurpleConversation * conv, char * key, gpointer data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conversation_set_data(IntPtr conv, string key, IntPtr data);
-
-		public static void SetData(PurpleConversation conv, string key, IntPtr data)
-		{
-			throw new NotImplementedException();
+			return new PurpleConvChat(purple_conversation_get_chat_data(conv.Reference));
 		}
 
 		/*
@@ -277,84 +288,40 @@ namespace PurpleWrapper
 
 		public static IntPtr GetData(PurpleConversation conv, string key)
 		{
-			throw new NotImplementedException();
+			return purple_conversation_get_data(conv.Reference, key);
 		}
 
 		/*
 		 * GList * purple_get_conversations()
+		 * 
+		 * Could not generate a wrapper for purple_get_conversations in file "conversation.h".
+		 * Message: The type could not be resolved (GList * purple_get_conversations()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_get_conversations();
-
-		public static GList GetConversations()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_get_ims()
+		 * 
+		 * Could not generate a wrapper for purple_get_ims in file "conversation.h".
+		 * Message: The type could not be resolved (GList * purple_get_ims()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_get_ims();
-
-		public static GList GetIms()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_get_chats()
+		 * 
+		 * Could not generate a wrapper for purple_get_chats in file "conversation.h".
+		 * Message: The type could not be resolved (GList * purple_get_chats()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_get_chats();
-
-		public static GList GetChats()
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleConversation * purple_find_conversation_with_account(PurpleConversationType type, char * name, PurpleAccount * account)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_find_conversation_with_account(UNKNOWN type, string name, IntPtr account);
-
-		public static PurpleConversation FindConversationWithAccount(PurpleConversationType type, string name, PurpleAccount account)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conversation_write(PurpleConversation * conv, char * who, char * message, PurpleMessageFlags flags, time_t mtime)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conversation_write(IntPtr conv, string who, string message, UNKNOWN flags, UNKNOWN mtime);
-
-		public static void Write(PurpleConversation conv, string who, string message, PurpleMessageFlags flags, time_t mtime)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conversation_set_features(PurpleConversation * conv, PurpleConnectionFlags features)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conversation_set_features(IntPtr conv, UNKNOWN features);
-
-		public static void SetFeatures(PurpleConversation conv, PurpleConnectionFlags features)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleConnectionFlags purple_conversation_get_features(PurpleConversation * conv)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_conversation_get_features(IntPtr conv);
+		private static extern Connection.PurpleConnectionFlags purple_conversation_get_features(IntPtr conv);
 
-		public static PurpleConnectionFlags GetFeatures(PurpleConversation conv)
+		public static Connection.PurpleConnectionFlags GetFeatures(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_conversation_get_features, a KnownEnum. */
+			
 		}
 
 		/*
@@ -365,41 +332,27 @@ namespace PurpleWrapper
 
 		public static bool HasFocus(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			return purple_conversation_has_focus(conv.Reference);
 		}
 
 		/*
 		 * void purple_conversation_update(PurpleConversation * conv, PurpleConvUpdateType type)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_conversation_update(IntPtr conv, UNKNOWN type);
+		private static extern void purple_conversation_update(IntPtr conv, Conversation.PurpleConvUpdateType type);
 
-		public static void Update(PurpleConversation conv, PurpleConvUpdateType type)
+		public static void Update(PurpleConversation conv, Conversation.PurpleConvUpdateType type)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conversation_foreach( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conversation_foreach(UNKNOWN );
-
-		public static void Foreach( )
-		{
+			/* Unable to process type, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
 		/*
 		 * GList * purple_conversation_get_message_history(PurpleConversation * conv)
+		 * 
+		 * Could not generate a wrapper for purple_conversation_get_message_history in file "conversation.h".
+		 * Message: The type could not be resolved (GList * purple_conversation_get_message_history(PurpleConversation * conv)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_conversation_get_message_history(IntPtr conv);
-
-		public static GList GetMessageHistory(PurpleConversation conv)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_conversation_clear_message_history(PurpleConversation * conv)
@@ -409,7 +362,7 @@ namespace PurpleWrapper
 
 		public static void ClearMessageHistory(PurpleConversation conv)
 		{
-			throw new NotImplementedException();
+			purple_conversation_clear_message_history(conv.Reference);
 		}
 
 		/*
@@ -420,7 +373,7 @@ namespace PurpleWrapper
 
 		public static string MessageGetSender(PurpleConvMessage msg)
 		{
-			throw new NotImplementedException();
+			return purple_conversation_message_get_sender(msg.Reference);
 		}
 
 		/*
@@ -431,29 +384,31 @@ namespace PurpleWrapper
 
 		public static string MessageGetMessage(PurpleConvMessage msg)
 		{
-			throw new NotImplementedException();
+			return purple_conversation_message_get_message(msg.Reference);
 		}
 
 		/*
 		 * PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage * msg)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_conversation_message_get_flags(IntPtr msg);
+		private static extern Conversation.PurpleMessageFlags purple_conversation_message_get_flags(IntPtr msg);
 
-		public static PurpleMessageFlags MessageGetFlags(PurpleConvMessage msg)
+		public static Conversation.PurpleMessageFlags MessageGetFlags(PurpleConvMessage msg)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_conversation_message_get_flags, a KnownEnum. */
+			
 		}
 
 		/*
 		 * time_t purple_conversation_message_get_timestamp(PurpleConvMessage * msg)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_conversation_message_get_timestamp(IntPtr msg);
+		private static extern ulong purple_conversation_message_get_timestamp(IntPtr msg);
 
-		public static time_t MessageGetTimestamp(PurpleConvMessage msg)
+		public static DateTime MessageGetTimestamp(PurpleConvMessage msg)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_conversation_message_get_timestamp, a DateTime. */
+			
 		}
 
 		/*
@@ -464,39 +419,32 @@ namespace PurpleWrapper
 
 		public static PurpleConversation ConvImGetConversation(PurpleConvIm im)
 		{
-			throw new NotImplementedException();
+			return new PurpleConversation(purple_conv_im_get_conversation(im.Reference));
 		}
 
 		/*
 		 * void purple_conv_im_set_icon(PurpleConvIm * im, PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_conv_im_set_icon in file "conversation.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_im_set_icon(IntPtr im, IntPtr icon);
-
-		public static void ConvImSetIcon(PurpleConvIm im, PurpleBuddyIcon icon)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleBuddyIcon * purple_conv_im_get_icon(PurpleConvIm * im)
+		 * 
+		 * Could not generate a wrapper for purple_conv_im_get_icon in file "conversation.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * purple_conv_im_get_icon(PurpleConvIm * im)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_conv_im_get_icon(IntPtr im);
-
-		public static PurpleBuddyIcon ConvImGetIcon(PurpleConvIm im)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_conv_im_set_typing_state(PurpleConvIm * im, PurpleTypingState state)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_im_set_typing_state(IntPtr im, UNKNOWN state);
+		private static extern void purple_conv_im_set_typing_state(IntPtr im, Conversation.PurpleTypingState state);
 
-		public static void ConvImSetTypingState(PurpleConvIm im, PurpleTypingState state)
+		public static void ConvImSetTypingState(PurpleConvIm im, Conversation.PurpleTypingState state)
 		{
+			/* Unable to process state, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -504,11 +452,12 @@ namespace PurpleWrapper
 		 * PurpleTypingState purple_conv_im_get_typing_state(PurpleConvIm * im)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_conv_im_get_typing_state(IntPtr im);
+		private static extern Conversation.PurpleTypingState purple_conv_im_get_typing_state(IntPtr im);
 
-		public static PurpleTypingState ConvImGetTypingState(PurpleConvIm im)
+		public static Conversation.PurpleTypingState ConvImGetTypingState(PurpleConvIm im)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_conv_im_get_typing_state, a KnownEnum. */
+			
 		}
 
 		/*
@@ -519,7 +468,7 @@ namespace PurpleWrapper
 
 		public static void ConvImStartTypingTimeout(PurpleConvIm im, int timeout)
 		{
-			throw new NotImplementedException();
+			purple_conv_im_start_typing_timeout(im.Reference, timeout);
 		}
 
 		/*
@@ -530,7 +479,7 @@ namespace PurpleWrapper
 
 		public static void ConvImStopTypingTimeout(PurpleConvIm im)
 		{
-			throw new NotImplementedException();
+			purple_conv_im_stop_typing_timeout(im.Reference);
 		}
 
 		/*
@@ -541,29 +490,30 @@ namespace PurpleWrapper
 
 		public static uint ConvImGetTypingTimeout(PurpleConvIm im)
 		{
-			throw new NotImplementedException();
+			return purple_conv_im_get_typing_timeout(im.Reference);
 		}
 
 		/*
-		 * void purple_conv_im_set_type_again(PurpleConvIm * im, unsigned int)
+		 * void purple_conv_im_set_type_again(PurpleConvIm * im, unsigned int val)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_im_set_type_again(IntPtr im, UNKNOWN int);
+		private static extern void purple_conv_im_set_type_again(IntPtr im, uint val);
 
-		public static void ConvImSetTypeAgain(PurpleConvIm im, unsigned int)
+		public static void ConvImSetTypeAgain(PurpleConvIm im, uint val)
 		{
-			throw new NotImplementedException();
+			purple_conv_im_set_type_again(im.Reference, val);
 		}
 
 		/*
 		 * time_t purple_conv_im_get_type_again(PurpleConvIm * im)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_conv_im_get_type_again(IntPtr im);
+		private static extern ulong purple_conv_im_get_type_again(IntPtr im);
 
-		public static time_t ConvImGetTypeAgain(PurpleConvIm im)
+		public static DateTime ConvImGetTypeAgain(PurpleConvIm im)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_conv_im_get_type_again, a DateTime. */
+			
 		}
 
 		/*
@@ -574,7 +524,7 @@ namespace PurpleWrapper
 
 		public static void ConvImStartSendTypedTimeout(PurpleConvIm im)
 		{
-			throw new NotImplementedException();
+			purple_conv_im_start_send_typed_timeout(im.Reference);
 		}
 
 		/*
@@ -585,7 +535,7 @@ namespace PurpleWrapper
 
 		public static void ConvImStopSendTypedTimeout(PurpleConvIm im)
 		{
-			throw new NotImplementedException();
+			purple_conv_im_stop_send_typed_timeout(im.Reference);
 		}
 
 		/*
@@ -596,7 +546,7 @@ namespace PurpleWrapper
 
 		public static uint ConvImGetSendTypedTimeout(PurpleConvIm im)
 		{
-			throw new NotImplementedException();
+			return purple_conv_im_get_send_typed_timeout(im.Reference);
 		}
 
 		/*
@@ -607,18 +557,7 @@ namespace PurpleWrapper
 
 		public static void ConvImUpdateTyping(PurpleConvIm im)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_im_write(PurpleConvIm * im, char * who, char * message, PurpleMessageFlags flags, time_t mtime)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_im_write(IntPtr im, string who, string message, UNKNOWN flags, UNKNOWN mtime);
-
-		public static void ConvImWrite(PurpleConvIm im, string who, string message, PurpleMessageFlags flags, time_t mtime)
-		{
-			throw new NotImplementedException();
+			purple_conv_im_update_typing(im.Reference);
 		}
 
 		/*
@@ -629,7 +568,7 @@ namespace PurpleWrapper
 
 		public static bool ConvPresentError(string who, PurpleAccount account, string what)
 		{
-			throw new NotImplementedException();
+			return purple_conv_present_error(who, account.Reference, what);
 		}
 
 		/*
@@ -640,7 +579,7 @@ namespace PurpleWrapper
 
 		public static void ConvImSend(PurpleConvIm im, string message)
 		{
-			throw new NotImplementedException();
+			purple_conv_im_send(im.Reference, message);
 		}
 
 		/*
@@ -651,39 +590,18 @@ namespace PurpleWrapper
 
 		public static void ConvSendConfirm(PurpleConversation conv, string message)
 		{
-			throw new NotImplementedException();
+			purple_conv_send_confirm(conv.Reference, message);
 		}
 
 		/*
 		 * void purple_conv_im_send_with_flags(PurpleConvIm * im, char * message, PurpleMessageFlags flags)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_im_send_with_flags(IntPtr im, string message, UNKNOWN flags);
+		private static extern void purple_conv_im_send_with_flags(IntPtr im, string message, Conversation.PurpleMessageFlags flags);
 
-		public static void ConvImSendWithFlags(PurpleConvIm im, string message, PurpleMessageFlags flags)
+		public static void ConvImSendWithFlags(PurpleConvIm im, string message, Conversation.PurpleMessageFlags flags)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_conv_custom_smiley_add(PurpleConversation * conv, char * smile, char * cksum_type, char * chksum, gboolean remote)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_conv_custom_smiley_add(IntPtr conv, string smile, string cksum_type, string chksum, bool remote);
-
-		public static bool ConvCustomSmileyAdd(PurpleConversation conv, string smile, string cksum_type, string chksum, bool remote)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_custom_smiley_write(PurpleConversation * conv, char * smile, guchar * data, gsize size)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_custom_smiley_write(IntPtr conv, string smile, IntPtr data, UNKNOWN size);
-
-		public static void ConvCustomSmileyWrite(PurpleConversation conv, string smile, guchar data, gsize size)
-		{
+			/* Unable to process flags, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -695,7 +613,7 @@ namespace PurpleWrapper
 
 		public static void ConvCustomSmileyClose(PurpleConversation conv, string smile)
 		{
-			throw new NotImplementedException();
+			purple_conv_custom_smiley_close(conv.Reference, smile);
 		}
 
 		/*
@@ -706,30 +624,22 @@ namespace PurpleWrapper
 
 		public static PurpleConversation ConvChatGetConversation(PurpleConvChat chat)
 		{
-			throw new NotImplementedException();
+			return new PurpleConversation(purple_conv_chat_get_conversation(chat.Reference));
 		}
 
 		/*
 		 * GList * purple_conv_chat_set_users(PurpleConvChat * chat, GList * users)
+		 * 
+		 * Could not generate a wrapper for purple_conv_chat_set_users in file "conversation.h".
+		 * Message: The type could not be resolved (GList * purple_conv_chat_set_users(PurpleConvChat * chat, GList * users)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_conv_chat_set_users(IntPtr chat, IntPtr users);
-
-		public static GList ConvChatSetUsers(PurpleConvChat chat, GList users)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_conv_chat_get_users(PurpleConvChat * chat)
+		 * 
+		 * Could not generate a wrapper for purple_conv_chat_get_users in file "conversation.h".
+		 * Message: The type could not be resolved (GList * purple_conv_chat_get_users(PurpleConvChat * chat)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_conv_chat_get_users(IntPtr chat);
-
-		public static GList ConvChatGetUsers(PurpleConvChat chat)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_conv_chat_ignore(PurpleConvChat * chat, char * name)
@@ -739,7 +649,7 @@ namespace PurpleWrapper
 
 		public static void ConvChatIgnore(PurpleConvChat chat, string name)
 		{
-			throw new NotImplementedException();
+			purple_conv_chat_ignore(chat.Reference, name);
 		}
 
 		/*
@@ -750,63 +660,22 @@ namespace PurpleWrapper
 
 		public static void ConvChatUnignore(PurpleConvChat chat, string name)
 		{
-			throw new NotImplementedException();
+			purple_conv_chat_unignore(chat.Reference, name);
 		}
 
 		/*
 		 * GList * purple_conv_chat_set_ignored(PurpleConvChat * chat, GList * ignored)
+		 * 
+		 * Could not generate a wrapper for purple_conv_chat_set_ignored in file "conversation.h".
+		 * Message: The type could not be resolved (GList * purple_conv_chat_set_ignored(PurpleConvChat * chat, GList * ignored)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_conv_chat_set_ignored(IntPtr chat, IntPtr ignored);
-
-		public static GList ConvChatSetIgnored(PurpleConvChat chat, GList ignored)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_conv_chat_get_ignored(PurpleConvChat * chat)
+		 * 
+		 * Could not generate a wrapper for purple_conv_chat_get_ignored in file "conversation.h".
+		 * Message: The type could not be resolved (GList * purple_conv_chat_get_ignored(PurpleConvChat * chat)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_conv_chat_get_ignored(IntPtr chat);
-
-		public static GList ConvChatGetIgnored(PurpleConvChat chat)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * char * purple_conv_chat_get_ignored_user(PurpleConvChat * chat, char * user)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_conv_chat_get_ignored_user(IntPtr chat, string user);
-
-		public static string ConvChatGetIgnoredUser(PurpleConvChat chat, string user)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_conv_chat_is_user_ignored(PurpleConvChat * chat, char * user)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_conv_chat_is_user_ignored(IntPtr chat, string user);
-
-		public static bool ConvChatIsUserIgnored(PurpleConvChat chat, string user)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_chat_set_topic(PurpleConvChat * chat, char * who, char * topic)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_set_topic(IntPtr chat, string who, string topic);
-
-		public static void ConvChatSetTopic(PurpleConvChat chat, string who, string topic)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_conv_chat_get_topic(PurpleConvChat * chat)
@@ -816,7 +685,7 @@ namespace PurpleWrapper
 
 		public static string ConvChatGetTopic(PurpleConvChat chat)
 		{
-			throw new NotImplementedException();
+			return purple_conv_chat_get_topic(chat.Reference);
 		}
 
 		/*
@@ -827,7 +696,7 @@ namespace PurpleWrapper
 
 		public static void ConvChatSetId(PurpleConvChat chat, int id)
 		{
-			throw new NotImplementedException();
+			purple_conv_chat_set_id(chat.Reference, id);
 		}
 
 		/*
@@ -838,18 +707,7 @@ namespace PurpleWrapper
 
 		public static int ConvChatGetId(PurpleConvChat chat)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_chat_write(PurpleConvChat * chat, char * who, char * message, PurpleMessageFlags flags, time_t mtime)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_write(IntPtr chat, string who, string message, UNKNOWN flags, UNKNOWN mtime);
-
-		public static void ConvChatWrite(PurpleConvChat chat, string who, string message, PurpleMessageFlags flags, time_t mtime)
-		{
-			throw new NotImplementedException();
+			return purple_conv_chat_get_id(chat.Reference);
 		}
 
 		/*
@@ -860,72 +718,18 @@ namespace PurpleWrapper
 
 		public static void ConvChatSend(PurpleConvChat chat, string message)
 		{
-			throw new NotImplementedException();
+			purple_conv_chat_send(chat.Reference, message);
 		}
 
 		/*
 		 * void purple_conv_chat_send_with_flags(PurpleConvChat * chat, char * message, PurpleMessageFlags flags)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_send_with_flags(IntPtr chat, string message, UNKNOWN flags);
+		private static extern void purple_conv_chat_send_with_flags(IntPtr chat, string message, Conversation.PurpleMessageFlags flags);
 
-		public static void ConvChatSendWithFlags(PurpleConvChat chat, string message, PurpleMessageFlags flags)
+		public static void ConvChatSendWithFlags(PurpleConvChat chat, string message, Conversation.PurpleMessageFlags flags)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_chat_add_user(PurpleConvChat * chat, char * user, char * extra_msg, PurpleConvChatBuddyFlags flags, gboolean new_arrival)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_add_user(IntPtr chat, string user, string extra_msg, UNKNOWN flags, bool new_arrival);
-
-		public static void ConvChatAddUser(PurpleConvChat chat, string user, string extra_msg, PurpleConvChatBuddyFlags flags, bool new_arrival)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_chat_add_users(PurpleConvChat * chat, GList * users, GList * extra_msgs, GList * flags, gboolean new_arrivals)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_add_users(IntPtr chat, IntPtr users, IntPtr extra_msgs, IntPtr flags, bool new_arrivals);
-
-		public static void ConvChatAddUsers(PurpleConvChat chat, GList users, GList extra_msgs, GList flags, bool new_arrivals)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_chat_rename_user(PurpleConvChat * chat, char * old_user, char * new_user)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_rename_user(IntPtr chat, string old_user, string new_user);
-
-		public static void ConvChatRenameUser(PurpleConvChat chat, string old_user, string new_user)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_chat_remove_user(PurpleConvChat * chat, char * user, char * reason)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_remove_user(IntPtr chat, string user, string reason);
-
-		public static void ConvChatRemoveUser(PurpleConvChat chat, string user, string reason)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_chat_remove_users(PurpleConvChat * chat, GList * users, char * reason)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_remove_users(IntPtr chat, IntPtr users, string reason);
-
-		public static void ConvChatRemoveUsers(PurpleConvChat chat, GList users, string reason)
-		{
+			/* Unable to process flags, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -937,29 +741,7 @@ namespace PurpleWrapper
 
 		public static bool ConvChatFindUser(PurpleConvChat chat, string user)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_chat_user_set_flags(PurpleConvChat * chat, char * user, PurpleConvChatBuddyFlags flags)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_user_set_flags(IntPtr chat, string user, UNKNOWN flags);
-
-		public static void ConvChatUserSetFlags(PurpleConvChat chat, string user, PurpleConvChatBuddyFlags flags)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleConvChatBuddyFlags purple_conv_chat_user_get_flags(PurpleConvChat * chat, char * user)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_conv_chat_user_get_flags(IntPtr chat, string user);
-
-		public static PurpleConvChatBuddyFlags ConvChatUserGetFlags(PurpleConvChat chat, string user)
-		{
-			throw new NotImplementedException();
+			return purple_conv_chat_find_user(chat.Reference, user);
 		}
 
 		/*
@@ -970,7 +752,7 @@ namespace PurpleWrapper
 
 		public static void ConvChatClearUsers(PurpleConvChat chat)
 		{
-			throw new NotImplementedException();
+			purple_conv_chat_clear_users(chat.Reference);
 		}
 
 		/*
@@ -981,7 +763,7 @@ namespace PurpleWrapper
 
 		public static void ConvChatSetNick(PurpleConvChat chat, string nick)
 		{
-			throw new NotImplementedException();
+			purple_conv_chat_set_nick(chat.Reference, nick);
 		}
 
 		/*
@@ -992,7 +774,7 @@ namespace PurpleWrapper
 
 		public static string ConvChatGetNick(PurpleConvChat chat)
 		{
-			throw new NotImplementedException();
+			return purple_conv_chat_get_nick(chat.Reference);
 		}
 
 		/*
@@ -1003,7 +785,7 @@ namespace PurpleWrapper
 
 		public static PurpleConversation FindChat(PurpleConnection gc, int id)
 		{
-			throw new NotImplementedException();
+			return new PurpleConversation(purple_find_chat(gc.Reference, id));
 		}
 
 		/*
@@ -1014,18 +796,7 @@ namespace PurpleWrapper
 
 		public static void ConvChatLeft(PurpleConvChat chat)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_conv_chat_invite_user(PurpleConvChat * chat, char * user, char * message, gboolean confirm)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_conv_chat_invite_user(IntPtr chat, string user, string message, bool confirm);
-
-		public static void ConvChatInviteUser(PurpleConvChat chat, string user, string message, bool confirm)
-		{
-			throw new NotImplementedException();
+			purple_conv_chat_left(chat.Reference);
 		}
 
 		/*
@@ -1036,18 +807,7 @@ namespace PurpleWrapper
 
 		public static bool ConvChatHasLeft(PurpleConvChat chat)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleConvChatBuddy * purple_conv_chat_cb_new(char * name, char * alias, PurpleConvChatBuddyFlags flags)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_conv_chat_cb_new(string name, string alias, UNKNOWN flags);
-
-		public static PurpleConvChatBuddy ConvChatCbNew(string name, string alias, PurpleConvChatBuddyFlags flags)
-		{
-			throw new NotImplementedException();
+			return purple_conv_chat_has_left(chat.Reference);
 		}
 
 		/*
@@ -1058,7 +818,7 @@ namespace PurpleWrapper
 
 		public static PurpleConvChatBuddy ConvChatCbFind(PurpleConvChat chat, string name)
 		{
-			throw new NotImplementedException();
+			return new PurpleConvChatBuddy(purple_conv_chat_cb_find(chat.Reference, name));
 		}
 
 		/*
@@ -1069,7 +829,7 @@ namespace PurpleWrapper
 
 		public static string ConvChatCbGetName(PurpleConvChatBuddy cb)
 		{
-			throw new NotImplementedException();
+			return purple_conv_chat_cb_get_name(cb.Reference);
 		}
 
 		/*
@@ -1080,19 +840,22 @@ namespace PurpleWrapper
 
 		public static void ConvChatCbDestroy(PurpleConvChatBuddy cb)
 		{
-			throw new NotImplementedException();
+			purple_conv_chat_cb_destroy(cb.Reference);
 		}
 
 		/*
-		 * gboolean purple_conversation_do_command(PurpleConversation * conv, gchar * cmdline, gchar * markup, gchar ** error)
+		 * GList * purple_conversation_get_extended_menu(PurpleConversation * conv)
+		 * 
+		 * Could not generate a wrapper for purple_conversation_get_extended_menu in file "conversation.h".
+		 * Message: The type could not be resolved (GList * purple_conversation_get_extended_menu(PurpleConversation * conv)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_conversation_do_command(IntPtr conv, string cmdline, string markup, IntPtr error);
 
-		public static bool DoCommand(PurpleConversation conv, string cmdline, string markup, gchar error)
-		{
-			throw new NotImplementedException();
-		}
+		/*
+		 * gboolean purple_conversation_do_command(PurpleConversation * conv, gchar * cmdline, gchar * markup, gchar ** error)
+		 * 
+		 * Could not generate a wrapper for purple_conversation_do_command in file "conversation.h".
+		 * Message: The type could not be resolved (gchar ** error).
+		 */
 
 		/*
 		 * void * purple_conversations_get_handle()
@@ -1102,7 +865,7 @@ namespace PurpleWrapper
 
 		public static IntPtr ConversationsGetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_conversations_get_handle();
 		}
 
 		/*
@@ -1113,7 +876,7 @@ namespace PurpleWrapper
 
 		public static void ConversationsInit()
 		{
-			throw new NotImplementedException();
+			purple_conversations_init();
 		}
 
 		/*
@@ -1124,7 +887,7 @@ namespace PurpleWrapper
 
 		public static void ConversationsUninit()
 		{
-			throw new NotImplementedException();
+			purple_conversations_uninit();
 		}
 
 	}

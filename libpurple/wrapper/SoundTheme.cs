@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -42,44 +44,12 @@ namespace PurpleWrapper
 		 * GType purple_sound_theme_get_type()
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_sound_theme_get_type();
+		private static extern IntPtr purple_sound_theme_get_type();
 
-		public static GType SoundThemeGetType()
+		public static /* libgobject */ IntPtr SoundThemeGetType()
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gchar * purple_sound_theme_get_file(PurpleSoundTheme * theme, gchar * event)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_sound_theme_get_file(IntPtr theme, string event);
-
-		public static string SoundThemeGetFile(PurpleSoundTheme theme, string event)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gchar * purple_sound_theme_get_file_full(PurpleSoundTheme * theme, gchar * event)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_sound_theme_get_file_full(IntPtr theme, string event);
-
-		public static string SoundThemeGetFileFull(PurpleSoundTheme theme, string event)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_sound_theme_set_file(PurpleSoundTheme * theme, gchar * event, gchar * filename)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_sound_theme_set_file(IntPtr theme, string event, string filename);
-
-		public static void SoundThemeSetFile(PurpleSoundTheme theme, string event, string filename)
-		{
-			throw new NotImplementedException();
+			/* Unable to process purple_sound_theme_get_type, a GObjectObject. */
+			
 		}
 
 	}

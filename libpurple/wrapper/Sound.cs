@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,6 +40,22 @@ namespace PurpleWrapper
 {
 	public class Sound
 	{
+		public enum PurpleSoundEventID
+		{
+			PURPLE_SOUND_BUDDY_ARRIVE = 0,
+			PURPLE_SOUND_BUDDY_LEAVE,
+			PURPLE_SOUND_RECEIVE,
+			PURPLE_SOUND_FIRST_RECEIVE,
+			PURPLE_SOUND_SEND,
+			PURPLE_SOUND_CHAT_JOIN,
+			PURPLE_SOUND_CHAT_LEAVE,
+			PURPLE_SOUND_CHAT_YOU_SAY,
+			PURPLE_SOUND_CHAT_SAY,
+			PURPLE_SOUND_POUNCE_DEFAULT,
+			PURPLE_SOUND_CHAT_NICK,
+			PURPLE_NUM_SOUNDS
+		};
+
 		/*
 		 * void purple_sound_play_file(char * filename, PurpleAccount * account)
 		 */
@@ -46,17 +64,18 @@ namespace PurpleWrapper
 
 		public static void PlayFile(string filename, PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			purple_sound_play_file(filename, account.Reference);
 		}
 
 		/*
 		 * void purple_sound_play_event(PurpleSoundEventID event, PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_sound_play_event(UNKNOWN event, IntPtr account);
+		private static extern void purple_sound_play_event(Sound.PurpleSoundEventID event_, IntPtr account);
 
-		public static void PlayEvent(PurpleSoundEventID event, PurpleAccount account)
+		public static void PlayEvent(Sound.PurpleSoundEventID event_, PurpleAccount account)
 		{
+			/* Unable to process event_, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -68,7 +87,7 @@ namespace PurpleWrapper
 
 		public static void SetUiOps(PurpleSoundUiOps ops)
 		{
-			throw new NotImplementedException();
+			purple_sound_set_ui_ops(ops.Reference);
 		}
 
 		/*
@@ -79,7 +98,7 @@ namespace PurpleWrapper
 
 		public static PurpleSoundUiOps GetUiOps()
 		{
-			throw new NotImplementedException();
+			return new PurpleSoundUiOps(purple_sound_get_ui_ops());
 		}
 
 		/*
@@ -90,7 +109,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_sound_init();
 		}
 
 		/*
@@ -101,7 +120,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_sound_uninit();
 		}
 
 		/*
@@ -112,7 +131,7 @@ namespace PurpleWrapper
 
 		public static IntPtr SoundsGetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_sounds_get_handle();
 		}
 
 	}

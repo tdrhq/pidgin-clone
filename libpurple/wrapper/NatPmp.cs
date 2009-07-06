@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,6 +40,12 @@ namespace PurpleWrapper
 {
 	public class NatPmp
 	{
+		public enum PurplePmpType
+		{
+			PURPLE_PMP_TYPE_UDP,
+			PURPLE_PMP_TYPE_TCP
+		};
+
 		/*
 		 * void purple_pmp_init()
 		 */
@@ -46,7 +54,7 @@ namespace PurpleWrapper
 
 		public static void PmpInit()
 		{
-			throw new NotImplementedException();
+			purple_pmp_init();
 		}
 
 		/*
@@ -57,28 +65,30 @@ namespace PurpleWrapper
 
 		public static string PmpGetPublicIp()
 		{
+			return purple_pmp_get_public_ip();
+		}
+
+		/*
+		 * gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned short publicport, int lifetime)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_pmp_create_map(NatPmp.PurplePmpType type, ushort privateport, ushort publicport, int lifetime);
+
+		public static bool PmpCreateMap(NatPmp.PurplePmpType type, ushort privateport, ushort publicport, int lifetime)
+		{
+			/* Unable to process type, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
 		/*
-		 * gboolean purple_pmp_create_map(PurplePmpType type, unsigned short, unsigned short, int lifetime)
+		 * gboolean purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern bool purple_pmp_create_map(UNKNOWN type, UNKNOWN short, UNKNOWN short, int lifetime);
+		private static extern bool purple_pmp_destroy_map(NatPmp.PurplePmpType type, ushort privateport);
 
-		public static bool PmpCreateMap(PurplePmpType type, unsigned short, unsigned short, int lifetime)
+		public static bool PmpDestroyMap(NatPmp.PurplePmpType type, ushort privateport)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_pmp_destroy_map(PurplePmpType type, unsigned short)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_pmp_destroy_map(UNKNOWN type, UNKNOWN short);
-
-		public static bool PmpDestroyMap(PurplePmpType type, unsigned short)
-		{
+			/* Unable to process type, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 

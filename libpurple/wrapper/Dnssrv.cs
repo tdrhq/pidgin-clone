@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -40,69 +42,45 @@ namespace PurpleWrapper
 	{
 		/*
 		 * PurpleSrvQueryData * purple_srv_resolve(char * protocol, char * transport, char * domain, PurpleSrvCallback cb, gpointer extradata)
+		 * 
+		 * Could not generate a wrapper for purple_srv_resolve in file "dnssrv.h".
+		 * Message: The type could not be resolved (PurpleSrvCallback cb).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_srv_resolve(string protocol, string transport, string domain, UNKNOWN cb, IntPtr extradata);
-
-		public static PurpleSrvQueryData SrvResolve(string protocol, string transport, string domain, PurpleSrvCallback cb, IntPtr extradata)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_srv_cancel(PurpleSrvQueryData * query_data)
+		 * 
+		 * Could not generate a wrapper for purple_srv_cancel in file "dnssrv.h".
+		 * Message: The type could not be resolved (PurpleSrvQueryData * query_data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_srv_cancel(IntPtr query_data);
-
-		public static void SrvCancel(PurpleSrvQueryData query_data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleSrvQueryData * purple_txt_resolve(char * owner, char * domain, PurpleTxtCallback cb, gpointer extradata)
+		 * 
+		 * Could not generate a wrapper for purple_txt_resolve in file "dnssrv.h".
+		 * Message: The type could not be resolved (PurpleTxtCallback cb).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_txt_resolve(string owner, string domain, UNKNOWN cb, IntPtr extradata);
-
-		public static PurpleSrvQueryData TxtResolve(string owner, string domain, PurpleTxtCallback cb, IntPtr extradata)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_txt_cancel(PurpleSrvQueryData * query_data)
+		 * 
+		 * Could not generate a wrapper for purple_txt_cancel in file "dnssrv.h".
+		 * Message: The type could not be resolved (PurpleSrvQueryData * query_data).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_txt_cancel(IntPtr query_data);
-
-		public static void TxtCancel(PurpleSrvQueryData query_data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gchar * purple_txt_response_get_content(PurpleTxtResponse * resp)
+		 * 
+		 * Could not generate a wrapper for purple_txt_response_get_content in file "dnssrv.h".
+		 * Message: The type could not be resolved (PurpleTxtResponse * resp).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_txt_response_get_content(IntPtr resp);
-
-		public static string TxtResponseGetContent(PurpleTxtResponse resp)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_txt_response_destroy(PurpleTxtResponse * resp)
+		 * 
+		 * Could not generate a wrapper for purple_txt_response_destroy in file "dnssrv.h".
+		 * Message: The type could not be resolved (PurpleTxtResponse * resp).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_txt_response_destroy(IntPtr resp);
-
-		public static void TxtResponseDestroy(PurpleTxtResponse resp)
-		{
-			throw new NotImplementedException();
-		}
 
 	}
 }

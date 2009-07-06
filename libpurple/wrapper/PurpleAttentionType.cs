@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,182 +40,24 @@ namespace PurpleWrapper
 {
 	public class PurpleAttentionType : UnmanagedWrapper<_PurpleAttentionType>
 	{
+		/* 
+		 * Could not generate a wrapper for PurpleAttentionType in file "prpl.h".
+		 * Message: The type could not be resolved (const char * name).
+		 */
+
 		public PurpleAttentionType()
 		{
+			throw new NotImplementedException();
 		}
 
 		public PurpleAttentionType(IntPtr refernece)
 		{
-			this.Reference = reference;
-			this.Data = (_PurpleAttentionType)Marshal.PtrToStructure(this.Reference, typeof(_PurpleAttentionType));
-		}
-
-		public const char *name
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public const char *incoming_description
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public const char *outgoing_description
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public const char *icon_name
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public const char *unlocalized_name
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public IntPtr _reserved2
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public IntPtr _reserved3
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-		}
-
-		public IntPtr _reserved4
-		{
-			get
-			{
-				throw new NotImplementedException(); /* Non-native type. */
-			}
-			set
-			{
-				if (this.Reference != IntPtr.Zero)
-					this.Reference = IntPtr.Zero;
-
-				throw new NotImplementedException(); /* Non-native type. */
-			}
+			throw new NotImplementedException();
 		}
 
 	}
-
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleAttentionType
-	{
-		/*
-		 * const char *name
-		 */
-		UNKNOWN char *name;
-
-		/*
-		 * const char *incoming_description
-		 */
-		UNKNOWN char *incoming_description;
-
-		/*
-		 * const char *outgoing_description
-		 */
-		UNKNOWN char *outgoing_description;
-
-		/*
-		 * const char *icon_name
-		 */
-		UNKNOWN char *icon_name;
-
-		/*
-		 * const char *unlocalized_name
-		 */
-		UNKNOWN char *unlocalized_name;
-
-		/*
-		 * gpointer _reserved2
-		 */
-		IntPtr _reserved2;
-
-		/*
-		 * gpointer _reserved3
-		 */
-		IntPtr _reserved3;
-
-		/*
-		 * gpointer _reserved4
-		 */
-		IntPtr _reserved4;
-
-	}
+	class _PurpleAttentionType { }
 }
 

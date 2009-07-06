@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,16 +40,26 @@ namespace PurpleWrapper
 {
 	public class Pounce
 	{
-		/*
-		 * PurplePounce * purple_pounce_new(char * ui_type, PurpleAccount * pouncer, char * pouncee, PurplePounceEvent event, PurplePounceOption option)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_pounce_new(string ui_type, IntPtr pouncer, string pouncee, UNKNOWN event, UNKNOWN option);
-
-		public static PurplePounce New(string ui_type, PurpleAccount pouncer, string pouncee, PurplePounceEvent event, PurplePounceOption option)
+		public enum PurplePounceEvent
 		{
-			throw new NotImplementedException();
-		}
+			PURPLE_POUNCE_NONE = 0x000,
+			PURPLE_POUNCE_SIGNON = 0x001,
+			PURPLE_POUNCE_SIGNOFF = 0x002,
+			PURPLE_POUNCE_AWAY = 0x004,
+			PURPLE_POUNCE_AWAY_RETURN = 0x008,
+			PURPLE_POUNCE_IDLE = 0x010,
+			PURPLE_POUNCE_IDLE_RETURN = 0x020,
+			PURPLE_POUNCE_TYPING = 0x040,
+			PURPLE_POUNCE_TYPED = 0x080,
+			PURPLE_POUNCE_TYPING_STOPPED = 0x100,
+			PURPLE_POUNCE_MESSAGE_RECEIVED = 0x200
+		};
+
+		public enum PurplePounceOption
+		{
+			PURPLE_POUNCE_OPTION_NONE = 0x00,
+			PURPLE_POUNCE_OPTION_AWAY = 0x01
+		};
 
 		/*
 		 * void purple_pounce_destroy(PurplePounce * pounce)
@@ -57,7 +69,7 @@ namespace PurpleWrapper
 
 		public static void Destroy(PurplePounce pounce)
 		{
-			throw new NotImplementedException();
+			purple_pounce_destroy(pounce.Reference);
 		}
 
 		/*
@@ -68,17 +80,18 @@ namespace PurpleWrapper
 
 		public static void DestroyAllByAccount(PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			purple_pounce_destroy_all_by_account(account.Reference);
 		}
 
 		/*
 		 * void purple_pounce_set_events(PurplePounce * pounce, PurplePounceEvent events)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_pounce_set_events(IntPtr pounce, UNKNOWN events);
+		private static extern void purple_pounce_set_events(IntPtr pounce, Pounce.PurplePounceEvent events);
 
-		public static void SetEvents(PurplePounce pounce, PurplePounceEvent events)
+		public static void SetEvents(PurplePounce pounce, Pounce.PurplePounceEvent events)
 		{
+			/* Unable to process events, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -86,10 +99,11 @@ namespace PurpleWrapper
 		 * void purple_pounce_set_options(PurplePounce * pounce, PurplePounceOption options)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_pounce_set_options(IntPtr pounce, UNKNOWN options);
+		private static extern void purple_pounce_set_options(IntPtr pounce, Pounce.PurplePounceOption options);
 
-		public static void SetOptions(PurplePounce pounce, PurplePounceOption options)
+		public static void SetOptions(PurplePounce pounce, Pounce.PurplePounceOption options)
 		{
+			/* Unable to process options, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -101,7 +115,7 @@ namespace PurpleWrapper
 
 		public static void SetPouncer(PurplePounce pounce, PurpleAccount pouncer)
 		{
-			throw new NotImplementedException();
+			purple_pounce_set_pouncer(pounce.Reference, pouncer.Reference);
 		}
 
 		/*
@@ -112,7 +126,7 @@ namespace PurpleWrapper
 
 		public static void SetPouncee(PurplePounce pounce, string pouncee)
 		{
-			throw new NotImplementedException();
+			purple_pounce_set_pouncee(pounce.Reference, pouncee);
 		}
 
 		/*
@@ -123,7 +137,7 @@ namespace PurpleWrapper
 
 		public static void SetSave(PurplePounce pounce, bool save)
 		{
-			throw new NotImplementedException();
+			purple_pounce_set_save(pounce.Reference, save);
 		}
 
 		/*
@@ -134,29 +148,7 @@ namespace PurpleWrapper
 
 		public static void ActionRegister(PurplePounce pounce, string name)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_pounce_action_set_enabled(PurplePounce * pounce, char * action, gboolean enabled)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_pounce_action_set_enabled(IntPtr pounce, string action, bool enabled);
-
-		public static void ActionSetEnabled(PurplePounce pounce, string action, bool enabled)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_pounce_action_set_attribute(PurplePounce * pounce, char * action, char * attr, char * value)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_pounce_action_set_attribute(IntPtr pounce, string action, string attr, string value);
-
-		public static void ActionSetAttribute(PurplePounce pounce, string action, string attr, string value)
-		{
-			throw new NotImplementedException();
+			purple_pounce_action_register(pounce.Reference, name);
 		}
 
 		/*
@@ -167,29 +159,31 @@ namespace PurpleWrapper
 
 		public static void SetData(PurplePounce pounce, IntPtr data)
 		{
-			throw new NotImplementedException();
+			purple_pounce_set_data(pounce.Reference, data);
 		}
 
 		/*
 		 * PurplePounceEvent purple_pounce_get_events(PurplePounce * pounce)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_pounce_get_events(IntPtr pounce);
+		private static extern Pounce.PurplePounceEvent purple_pounce_get_events(IntPtr pounce);
 
-		public static PurplePounceEvent GetEvents(PurplePounce pounce)
+		public static Pounce.PurplePounceEvent GetEvents(PurplePounce pounce)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_pounce_get_events, a KnownEnum. */
+			
 		}
 
 		/*
 		 * PurplePounceOption purple_pounce_get_options(PurplePounce * pounce)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_pounce_get_options(IntPtr pounce);
+		private static extern Pounce.PurplePounceOption purple_pounce_get_options(IntPtr pounce);
 
-		public static PurplePounceOption GetOptions(PurplePounce pounce)
+		public static Pounce.PurplePounceOption GetOptions(PurplePounce pounce)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_pounce_get_options, a KnownEnum. */
+			
 		}
 
 		/*
@@ -200,7 +194,7 @@ namespace PurpleWrapper
 
 		public static PurpleAccount GetPouncer(PurplePounce pounce)
 		{
-			throw new NotImplementedException();
+			return new PurpleAccount(purple_pounce_get_pouncer(pounce.Reference));
 		}
 
 		/*
@@ -211,7 +205,7 @@ namespace PurpleWrapper
 
 		public static string GetPouncee(PurplePounce pounce)
 		{
-			throw new NotImplementedException();
+			return purple_pounce_get_pouncee(pounce.Reference);
 		}
 
 		/*
@@ -222,29 +216,7 @@ namespace PurpleWrapper
 
 		public static bool GetSave(PurplePounce pounce)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_pounce_action_is_enabled(PurplePounce * pounce, char * action)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_pounce_action_is_enabled(IntPtr pounce, string action);
-
-		public static bool ActionIsEnabled(PurplePounce pounce, string action)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * char * purple_pounce_action_get_attribute(PurplePounce * pounce, char * action, char * attr)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_pounce_action_get_attribute(IntPtr pounce, string action, string attr);
-
-		public static string ActionGetAttribute(PurplePounce pounce, string action, string attr)
-		{
-			throw new NotImplementedException();
+			return purple_pounce_get_save(pounce.Reference);
 		}
 
 		/*
@@ -255,29 +227,7 @@ namespace PurpleWrapper
 
 		public static IntPtr GetData(PurplePounce pounce)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_pounce_execute(PurpleAccount * pouncer, char * pouncee, PurplePounceEvent events)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_pounce_execute(IntPtr pouncer, string pouncee, UNKNOWN events);
-
-		public static void Execute(PurpleAccount pouncer, string pouncee, PurplePounceEvent events)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurplePounce * purple_find_pounce(PurpleAccount * pouncer, char * pouncee, PurplePounceEvent events)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_find_pounce(IntPtr pouncer, string pouncee, UNKNOWN events);
-
-		public static PurplePounce FindPounce(PurpleAccount pouncer, string pouncee, PurplePounceEvent events)
-		{
-			throw new NotImplementedException();
+			return purple_pounce_get_data(pounce.Reference);
 		}
 
 		/*
@@ -288,18 +238,7 @@ namespace PurpleWrapper
 
 		public static bool PouncesLoad()
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_pounces_register_handler(char * ui, PurplePounceCb cb,  )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_pounces_register_handler(string ui, UNKNOWN cb, UNKNOWN );
-
-		public static void PouncesRegisterHandler(string ui, PurplePounceCb cb,  )
-		{
-			throw new NotImplementedException();
+			return purple_pounces_load();
 		}
 
 		/*
@@ -310,30 +249,22 @@ namespace PurpleWrapper
 
 		public static void PouncesUnregisterHandler(string ui)
 		{
-			throw new NotImplementedException();
+			purple_pounces_unregister_handler(ui);
 		}
 
 		/*
 		 * GList * purple_pounces_get_all()
+		 * 
+		 * Could not generate a wrapper for purple_pounces_get_all in file "pounce.h".
+		 * Message: The type could not be resolved (GList * purple_pounces_get_all()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_pounces_get_all();
-
-		public static GList PouncesGetAll()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_pounces_get_all_for_ui(char * ui)
+		 * 
+		 * Could not generate a wrapper for purple_pounces_get_all_for_ui in file "pounce.h".
+		 * Message: The type could not be resolved (GList * purple_pounces_get_all_for_ui(char * ui)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_pounces_get_all_for_ui(string ui);
-
-		public static GList PouncesGetAllForUi(string ui)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void * purple_pounces_get_handle()
@@ -343,7 +274,7 @@ namespace PurpleWrapper
 
 		public static IntPtr PouncesGetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_pounces_get_handle();
 		}
 
 		/*
@@ -354,7 +285,7 @@ namespace PurpleWrapper
 
 		public static void PouncesInit()
 		{
-			throw new NotImplementedException();
+			purple_pounces_init();
 		}
 
 		/*
@@ -365,7 +296,7 @@ namespace PurpleWrapper
 
 		public static void PouncesUninit()
 		{
-			throw new NotImplementedException();
+			purple_pounces_uninit();
 		}
 
 	}

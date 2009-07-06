@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,71 +40,13 @@ namespace PurpleWrapper
 {
 	public class Plugin
 	{
-		/*
-		 * gboolean _FUNC_NAME( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool _FUNC_NAME(UNKNOWN );
-
-		public static bool _funcName( )
+		public enum PurplePluginType
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean _FUNC_NAME( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool _FUNC_NAME(UNKNOWN );
-
-		public static bool _funcName( )
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * return purple_plugin_register( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_plugin_register(UNKNOWN );
-
-		public static return Register( )
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_init_plugin(PurplePlugin * plugin)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_init_plugin(IntPtr plugin);
-
-		public static bool InitPlugin(PurplePlugin plugin)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_init_plugin(PurplePlugin * plugin)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_init_plugin(IntPtr plugin);
-
-		public static bool InitPlugin(PurplePlugin plugin)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * return purple_plugin_register( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_plugin_register(UNKNOWN );
-
-		public static return Register( )
-		{
-			throw new NotImplementedException();
-		}
+			PURPLE_PLUGIN_UNKNOWN = -1,
+			PURPLE_PLUGIN_STANDARD = 0,
+			PURPLE_PLUGIN_LOADER,
+			PURPLE_PLUGIN_PROTOCOL
+		};
 
 		/*
 		 * PurplePlugin * purple_plugin_new(gboolean native, char * path)
@@ -112,7 +56,7 @@ namespace PurpleWrapper
 
 		public static PurplePlugin New(bool native, string path)
 		{
-			throw new NotImplementedException();
+			return new PurplePlugin(purple_plugin_new(native, path));
 		}
 
 		/*
@@ -123,7 +67,7 @@ namespace PurpleWrapper
 
 		public static PurplePlugin Probe(string filename)
 		{
-			throw new NotImplementedException();
+			return new PurplePlugin(purple_plugin_probe(filename));
 		}
 
 		/*
@@ -134,7 +78,7 @@ namespace PurpleWrapper
 
 		public static bool Register(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_register(plugin.Reference);
 		}
 
 		/*
@@ -145,7 +89,7 @@ namespace PurpleWrapper
 
 		public static bool Load(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_load(plugin.Reference);
 		}
 
 		/*
@@ -156,7 +100,7 @@ namespace PurpleWrapper
 
 		public static bool Unload(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_unload(plugin.Reference);
 		}
 
 		/*
@@ -167,7 +111,7 @@ namespace PurpleWrapper
 
 		public static void Disable(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			purple_plugin_disable(plugin.Reference);
 		}
 
 		/*
@@ -178,7 +122,7 @@ namespace PurpleWrapper
 
 		public static bool Reload(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_reload(plugin.Reference);
 		}
 
 		/*
@@ -189,7 +133,7 @@ namespace PurpleWrapper
 
 		public static void Destroy(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			purple_plugin_destroy(plugin.Reference);
 		}
 
 		/*
@@ -200,7 +144,7 @@ namespace PurpleWrapper
 
 		public static bool IsLoaded(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_is_loaded(plugin.Reference);
 		}
 
 		/*
@@ -211,7 +155,7 @@ namespace PurpleWrapper
 
 		public static bool IsUnloadable(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_is_unloadable(plugin.Reference);
 		}
 
 		/*
@@ -222,7 +166,7 @@ namespace PurpleWrapper
 
 		public static string GetId(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_get_id(plugin.Reference);
 		}
 
 		/*
@@ -233,7 +177,7 @@ namespace PurpleWrapper
 
 		public static string GetName(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_get_name(plugin.Reference);
 		}
 
 		/*
@@ -244,7 +188,7 @@ namespace PurpleWrapper
 
 		public static string GetVersion(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_get_version(plugin.Reference);
 		}
 
 		/*
@@ -255,7 +199,7 @@ namespace PurpleWrapper
 
 		public static string GetSummary(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_get_summary(plugin.Reference);
 		}
 
 		/*
@@ -266,7 +210,7 @@ namespace PurpleWrapper
 
 		public static string GetDescription(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_get_description(plugin.Reference);
 		}
 
 		/*
@@ -277,7 +221,7 @@ namespace PurpleWrapper
 
 		public static string GetAuthor(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
+			return purple_plugin_get_author(plugin.Reference);
 		}
 
 		/*
@@ -288,18 +232,7 @@ namespace PurpleWrapper
 
 		public static string GetHomepage(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_plugin_ipc_register(PurplePlugin * plugin, char * command, PurpleCallback func, PurpleSignalMarshalFunc marshal, PurpleValue * ret_value, int num_params, ...)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_plugin_ipc_register(IntPtr plugin, string command, UNKNOWN func, UNKNOWN marshal, IntPtr ret_value, int num_params, ...);
-
-		public static bool IpcRegister(PurplePlugin plugin, string command, PurpleCallback func, PurpleSignalMarshalFunc marshal, PurpleValue ret_value, int num_params, ...)
-		{
-			throw new NotImplementedException();
+			return purple_plugin_get_homepage(plugin.Reference);
 		}
 
 		/*
@@ -310,7 +243,7 @@ namespace PurpleWrapper
 
 		public static void IpcUnregister(PurplePlugin plugin, string command)
 		{
-			throw new NotImplementedException();
+			purple_plugin_ipc_unregister(plugin.Reference, command);
 		}
 
 		/*
@@ -321,29 +254,7 @@ namespace PurpleWrapper
 
 		public static void IpcUnregisterAll(PurplePlugin plugin)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * gboolean purple_plugin_ipc_get_params(PurplePlugin * plugin, char * command, PurpleValue ** ret_value, int * num_params, PurpleValue *** params)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern bool purple_plugin_ipc_get_params(IntPtr plugin, string command, IntPtr ret_value, IntPtr num_params, IntPtr params);
-
-		public static bool IpcGetParams(PurplePlugin plugin, string command, PurpleValue ret_value, int num_params, PurpleValue params)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void * purple_plugin_ipc_call(PurplePlugin * plugin, char * command, gboolean * ok, ...)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugin_ipc_call(IntPtr plugin, string command, IntPtr ok, ...);
-
-		public static IntPtr IpcCall(PurplePlugin plugin, string command, gboolean ok, ...)
-		{
-			throw new NotImplementedException();
+			purple_plugin_ipc_unregister_all(plugin.Reference);
 		}
 
 		/*
@@ -354,7 +265,7 @@ namespace PurpleWrapper
 
 		public static void PluginsAddSearchPath(string path)
 		{
-			throw new NotImplementedException();
+			purple_plugins_add_search_path(path);
 		}
 
 		/*
@@ -365,17 +276,18 @@ namespace PurpleWrapper
 
 		public static void PluginsUnloadAll()
 		{
-			throw new NotImplementedException();
+			purple_plugins_unload_all();
 		}
 
 		/*
 		 * void purple_plugins_unload(PurplePluginType type)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_plugins_unload(UNKNOWN type);
+		private static extern void purple_plugins_unload(Plugin.PurplePluginType type);
 
-		public static void PluginsUnload(PurplePluginType type)
+		public static void PluginsUnload(Plugin.PurplePluginType type)
 		{
+			/* Unable to process type, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -387,7 +299,7 @@ namespace PurpleWrapper
 
 		public static void PluginsDestroyAll()
 		{
-			throw new NotImplementedException();
+			purple_plugins_destroy_all();
 		}
 
 		/*
@@ -398,7 +310,7 @@ namespace PurpleWrapper
 
 		public static void PluginsSaveLoaded(string key)
 		{
-			throw new NotImplementedException();
+			purple_plugins_save_loaded(key);
 		}
 
 		/*
@@ -409,7 +321,7 @@ namespace PurpleWrapper
 
 		public static void PluginsLoadSaved(string key)
 		{
-			throw new NotImplementedException();
+			purple_plugins_load_saved(key);
 		}
 
 		/*
@@ -420,7 +332,7 @@ namespace PurpleWrapper
 
 		public static void PluginsProbe(string ext)
 		{
-			throw new NotImplementedException();
+			purple_plugins_probe(ext);
 		}
 
 		/*
@@ -431,73 +343,7 @@ namespace PurpleWrapper
 
 		public static bool PluginsEnabled()
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_plugins_register_probe_notify_cb( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugins_register_probe_notify_cb(UNKNOWN );
-
-		public static void PluginsRegisterProbeNotifyCb( )
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_plugins_unregister_probe_notify_cb( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugins_unregister_probe_notify_cb(UNKNOWN );
-
-		public static void PluginsUnregisterProbeNotifyCb( )
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_plugins_register_load_notify_cb( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugins_register_load_notify_cb(UNKNOWN );
-
-		public static void PluginsRegisterLoadNotifyCb( )
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_plugins_unregister_load_notify_cb( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugins_unregister_load_notify_cb(UNKNOWN );
-
-		public static void PluginsUnregisterLoadNotifyCb( )
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_plugins_register_unload_notify_cb( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugins_register_unload_notify_cb(UNKNOWN );
-
-		public static void PluginsRegisterUnloadNotifyCb( )
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_plugins_unregister_unload_notify_cb( )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_plugins_unregister_unload_notify_cb(UNKNOWN );
-
-		public static void PluginsUnregisterUnloadNotifyCb( )
-		{
-			throw new NotImplementedException();
+			return purple_plugins_enabled();
 		}
 
 		/*
@@ -508,7 +354,7 @@ namespace PurpleWrapper
 
 		public static PurplePlugin PluginsFindWithName(string name)
 		{
-			throw new NotImplementedException();
+			return new PurplePlugin(purple_plugins_find_with_name(name));
 		}
 
 		/*
@@ -519,7 +365,7 @@ namespace PurpleWrapper
 
 		public static PurplePlugin PluginsFindWithFilename(string filename)
 		{
-			throw new NotImplementedException();
+			return new PurplePlugin(purple_plugins_find_with_filename(filename));
 		}
 
 		/*
@@ -530,7 +376,7 @@ namespace PurpleWrapper
 
 		public static PurplePlugin PluginsFindWithBasename(string basename)
 		{
-			throw new NotImplementedException();
+			return new PurplePlugin(purple_plugins_find_with_basename(basename));
 		}
 
 		/*
@@ -541,41 +387,29 @@ namespace PurpleWrapper
 
 		public static PurplePlugin PluginsFindWithId(string id)
 		{
-			throw new NotImplementedException();
+			return new PurplePlugin(purple_plugins_find_with_id(id));
 		}
 
 		/*
 		 * GList * purple_plugins_get_loaded()
+		 * 
+		 * Could not generate a wrapper for purple_plugins_get_loaded in file "plugin.h".
+		 * Message: The type could not be resolved (GList * purple_plugins_get_loaded()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugins_get_loaded();
-
-		public static GList PluginsGetLoaded()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_plugins_get_protocols()
+		 * 
+		 * Could not generate a wrapper for purple_plugins_get_protocols in file "plugin.h".
+		 * Message: The type could not be resolved (GList * purple_plugins_get_protocols()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugins_get_protocols();
-
-		public static GList PluginsGetProtocols()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_plugins_get_all()
+		 * 
+		 * Could not generate a wrapper for purple_plugins_get_all in file "plugin.h".
+		 * Message: The type could not be resolved (GList * purple_plugins_get_all()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugins_get_all();
-
-		public static GList PluginsGetAll()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void * purple_plugins_get_handle()
@@ -585,7 +419,7 @@ namespace PurpleWrapper
 
 		public static IntPtr PluginsGetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_plugins_get_handle();
 		}
 
 		/*
@@ -596,7 +430,7 @@ namespace PurpleWrapper
 
 		public static void PluginsInit()
 		{
-			throw new NotImplementedException();
+			purple_plugins_init();
 		}
 
 		/*
@@ -607,18 +441,7 @@ namespace PurpleWrapper
 
 		public static void PluginsUninit()
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurplePluginAction * purple_plugin_action_new( ,  )
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_plugin_action_new(UNKNOWN , UNKNOWN );
-
-		public static PurplePluginAction ActionNew( ,  )
-		{
-			throw new NotImplementedException();
+			purple_plugins_uninit();
 		}
 
 		/*
@@ -629,7 +452,7 @@ namespace PurpleWrapper
 
 		public static void ActionFree(PurplePluginAction action)
 		{
-			throw new NotImplementedException();
+			purple_plugin_action_free(action.Reference);
 		}
 
 	}

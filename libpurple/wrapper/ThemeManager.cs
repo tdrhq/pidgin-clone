@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -42,11 +44,12 @@ namespace PurpleWrapper
 		 * GType purple_theme_manager_get_type()
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_theme_manager_get_type();
+		private static extern IntPtr purple_theme_manager_get_type();
 
-		public static GType ThemeManagerGetType()
+		public static /* libgobject */ IntPtr ThemeManagerGetType()
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_theme_manager_get_type, a GObjectObject. */
+			
 		}
 
 		/*
@@ -57,7 +60,7 @@ namespace PurpleWrapper
 
 		public static void ThemeManagerInit()
 		{
-			throw new NotImplementedException();
+			purple_theme_manager_init();
 		}
 
 		/*
@@ -68,7 +71,7 @@ namespace PurpleWrapper
 
 		public static void ThemeManagerUninit()
 		{
-			throw new NotImplementedException();
+			purple_theme_manager_uninit();
 		}
 
 		/*
@@ -79,7 +82,7 @@ namespace PurpleWrapper
 
 		public static void ThemeManagerRefresh()
 		{
-			throw new NotImplementedException();
+			purple_theme_manager_refresh();
 		}
 
 		/*
@@ -90,7 +93,7 @@ namespace PurpleWrapper
 
 		public static PurpleTheme ThemeManagerFindTheme(string name, string type)
 		{
-			throw new NotImplementedException();
+			return new PurpleTheme(purple_theme_manager_find_theme(name, type));
 		}
 
 		/*
@@ -101,7 +104,7 @@ namespace PurpleWrapper
 
 		public static void ThemeManagerAddTheme(PurpleTheme theme)
 		{
-			throw new NotImplementedException();
+			purple_theme_manager_add_theme(theme.Reference);
 		}
 
 		/*
@@ -112,7 +115,7 @@ namespace PurpleWrapper
 
 		public static void ThemeManagerRemoveTheme(PurpleTheme theme)
 		{
-			throw new NotImplementedException();
+			purple_theme_manager_remove_theme(theme.Reference);
 		}
 
 		/*
@@ -123,7 +126,7 @@ namespace PurpleWrapper
 
 		public static void ThemeManagerRegisterType(PurpleThemeLoader loader)
 		{
-			throw new NotImplementedException();
+			purple_theme_manager_register_type(loader.Reference);
 		}
 
 		/*
@@ -134,19 +137,15 @@ namespace PurpleWrapper
 
 		public static void ThemeManagerUnregisterType(PurpleThemeLoader loader)
 		{
-			throw new NotImplementedException();
+			purple_theme_manager_unregister_type(loader.Reference);
 		}
 
 		/*
 		 * void purple_theme_manager_for_each_theme(PTFunc func)
+		 * 
+		 * Could not generate a wrapper for purple_theme_manager_for_each_theme in file "theme-manager.h".
+		 * Message: The type could not be resolved (PTFunc func).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_theme_manager_for_each_theme(UNKNOWN func);
-
-		public static void ThemeManagerForEachTheme(PTFunc func)
-		{
-			throw new NotImplementedException();
-		}
 
 	}
 }

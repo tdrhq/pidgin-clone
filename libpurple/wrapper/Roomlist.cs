@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,6 +40,19 @@ namespace PurpleWrapper
 {
 	public class Roomlist
 	{
+		public enum PurpleRoomlistRoomType
+		{
+			PURPLE_ROOMLIST_ROOMTYPE_CATEGORY = 0x01,
+			PURPLE_ROOMLIST_ROOMTYPE_ROOM = 0x02
+		};
+
+		public enum PurpleRoomlistFieldType
+		{
+			PURPLE_ROOMLIST_FIELD_BOOL,
+			PURPLE_ROOMLIST_FIELD_INT,
+			PURPLE_ROOMLIST_FIELD_STRING
+		};
+
 		/*
 		 * void purple_roomlist_show_with_account(PurpleAccount * account)
 		 */
@@ -46,7 +61,7 @@ namespace PurpleWrapper
 
 		public static void ShowWithAccount(PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_show_with_account(account.Reference);
 		}
 
 		/*
@@ -57,7 +72,7 @@ namespace PurpleWrapper
 
 		public static PurpleRoomlist New(PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			return new PurpleRoomlist(purple_roomlist_new(account.Reference));
 		}
 
 		/*
@@ -68,7 +83,7 @@ namespace PurpleWrapper
 
 		public static void Ref(PurpleRoomlist list)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_ref(list.Reference);
 		}
 
 		/*
@@ -79,19 +94,15 @@ namespace PurpleWrapper
 
 		public static void Unref(PurpleRoomlist list)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_unref(list.Reference);
 		}
 
 		/*
 		 * void purple_roomlist_set_fields(PurpleRoomlist * list, GList * fields)
+		 * 
+		 * Could not generate a wrapper for purple_roomlist_set_fields in file "roomlist.h".
+		 * Message: The type could not be resolved (GList * fields).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_roomlist_set_fields(IntPtr list, IntPtr fields);
-
-		public static void SetFields(PurpleRoomlist list, GList fields)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_roomlist_set_in_progress(PurpleRoomlist * list, gboolean in_progress)
@@ -101,7 +112,7 @@ namespace PurpleWrapper
 
 		public static void SetInProgress(PurpleRoomlist list, bool in_progress)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_set_in_progress(list.Reference, in_progress);
 		}
 
 		/*
@@ -112,7 +123,7 @@ namespace PurpleWrapper
 
 		public static bool GetInProgress(PurpleRoomlist list)
 		{
-			throw new NotImplementedException();
+			return purple_roomlist_get_in_progress(list.Reference);
 		}
 
 		/*
@@ -123,7 +134,7 @@ namespace PurpleWrapper
 
 		public static void RoomAdd(PurpleRoomlist list, PurpleRoomlistRoom room)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_room_add(list.Reference, room.Reference);
 		}
 
 		/*
@@ -134,7 +145,7 @@ namespace PurpleWrapper
 
 		public static PurpleRoomlist GetList(PurpleConnection gc)
 		{
-			throw new NotImplementedException();
+			return new PurpleRoomlist(purple_roomlist_get_list(gc.Reference));
 		}
 
 		/*
@@ -145,7 +156,7 @@ namespace PurpleWrapper
 
 		public static void CancelGetList(PurpleRoomlist list)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_cancel_get_list(list.Reference);
 		}
 
 		/*
@@ -156,29 +167,25 @@ namespace PurpleWrapper
 
 		public static void ExpandCategory(PurpleRoomlist list, PurpleRoomlistRoom category)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_expand_category(list.Reference, category.Reference);
 		}
 
 		/*
-		 * PurpleRoomlistRoom * purple_roomlist_room_new(PurpleRoomlistRoomType type, gchar * name, PurpleRoomlistRoom * parent)
+		 * GList * purple_roomlist_get_fields(PurpleRoomlist * roomlist)
+		 * 
+		 * Could not generate a wrapper for purple_roomlist_get_fields in file "roomlist.h".
+		 * Message: The type could not be resolved (GList * purple_roomlist_get_fields(PurpleRoomlist * roomlist)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_roomlist_room_new(UNKNOWN type, string name, IntPtr parent);
-
-		public static PurpleRoomlistRoom RoomNew(PurpleRoomlistRoomType type, string name, PurpleRoomlistRoom parent)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_roomlist_room_add_field(PurpleRoomlist * list, PurpleRoomlistRoom * room, gconstpointer field)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_roomlist_room_add_field(IntPtr list, IntPtr room, UNKNOWN field);
+		private static extern void purple_roomlist_room_add_field(IntPtr list, IntPtr room, IntPtr field);
 
-		public static void RoomAddField(PurpleRoomlist list, PurpleRoomlistRoom room, gconstpointer field)
+		public static void RoomAddField(PurpleRoomlist list, PurpleRoomlistRoom room, IntPtr field)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_room_add_field(list.Reference, room.Reference, field);
 		}
 
 		/*
@@ -189,40 +196,71 @@ namespace PurpleWrapper
 
 		public static void RoomJoin(PurpleRoomlist list, PurpleRoomlistRoom room)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_room_join(list.Reference, room.Reference);
 		}
 
 		/*
 		 * PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom * room)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_roomlist_room_get_type(IntPtr room);
+		private static extern Roomlist.PurpleRoomlistRoomType purple_roomlist_room_get_type(IntPtr room);
 
-		public static PurpleRoomlistRoomType RoomGetType(PurpleRoomlistRoom room)
+		public static Roomlist.PurpleRoomlistRoomType RoomGetType(PurpleRoomlistRoom room)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_roomlist_room_get_type, a KnownEnum. */
+			
 		}
 
 		/*
-		 * PurpleRoomlistField * purple_roomlist_field_new(PurpleRoomlistFieldType type, gchar * label, gchar * name, gboolean hidden)
+		 * char * purple_roomlist_room_get_name(PurpleRoomlistRoom * room)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_roomlist_field_new(UNKNOWN type, string label, string name, bool hidden);
+		private static extern string purple_roomlist_room_get_name(IntPtr room);
 
-		public static PurpleRoomlistField FieldNew(PurpleRoomlistFieldType type, string label, string name, bool hidden)
+		public static string RoomGetName(PurpleRoomlistRoom room)
 		{
-			throw new NotImplementedException();
+			return purple_roomlist_room_get_name(room.Reference);
 		}
+
+		/*
+		 * PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom * room)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_roomlist_room_get_parent(IntPtr room);
+
+		public static PurpleRoomlistRoom RoomGetParent(PurpleRoomlistRoom room)
+		{
+			return new PurpleRoomlistRoom(purple_roomlist_room_get_parent(room.Reference));
+		}
+
+		/*
+		 * GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom * room)
+		 * 
+		 * Could not generate a wrapper for purple_roomlist_room_get_fields in file "roomlist.h".
+		 * Message: The type could not be resolved (GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom * room)).
+		 */
 
 		/*
 		 * PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField * field)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_roomlist_field_get_type(IntPtr field);
+		private static extern Roomlist.PurpleRoomlistFieldType purple_roomlist_field_get_type(IntPtr field);
 
-		public static PurpleRoomlistFieldType FieldGetType(PurpleRoomlistField field)
+		public static Roomlist.PurpleRoomlistFieldType FieldGetType(PurpleRoomlistField field)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_roomlist_field_get_type, a KnownEnum. */
+			
+		}
+
+		/*
+		 * char * purple_roomlist_field_get_label(PurpleRoomlistField * field)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_roomlist_field_get_label(IntPtr field);
+
+		public static string FieldGetLabel(PurpleRoomlistField field)
+		{
+			return purple_roomlist_field_get_label(field.Reference);
 		}
 
 		/*
@@ -233,7 +271,7 @@ namespace PurpleWrapper
 
 		public static bool FieldGetHidden(PurpleRoomlistField field)
 		{
-			throw new NotImplementedException();
+			return purple_roomlist_field_get_hidden(field.Reference);
 		}
 
 		/*
@@ -244,7 +282,7 @@ namespace PurpleWrapper
 
 		public static void SetUiOps(PurpleRoomlistUiOps ops)
 		{
-			throw new NotImplementedException();
+			purple_roomlist_set_ui_ops(ops.Reference);
 		}
 
 		/*
@@ -255,7 +293,7 @@ namespace PurpleWrapper
 
 		public static PurpleRoomlistUiOps GetUiOps()
 		{
-			throw new NotImplementedException();
+			return new PurpleRoomlistUiOps(purple_roomlist_get_ui_ops());
 		}
 
 	}

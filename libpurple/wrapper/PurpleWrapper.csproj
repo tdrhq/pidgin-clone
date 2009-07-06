@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8034DEA9-30CC-DEA0-3903-80210CE809FA}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Scripts</RootNamespace>
+    <AssemblyName>Scripts</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UnmanagedWrapper.cs" />
+    <Compile Include="Account.cs" />
+    <Compile Include="PurpleAccountUiOps.cs" />
+    <Compile Include="PurpleAccount.cs" />
+    <Compile Include="Accountopt.cs" />
+    <Compile Include="Blist.cs" />
+    <Compile Include="PurpleBlistNode.cs" />
+    <Compile Include="PurpleBuddy.cs" />
+    <Compile Include="PurpleContact.cs" />
+    <Compile Include="PurpleGroup.cs" />
+    <Compile Include="PurpleChat.cs" />
+    <Compile Include="PurpleBuddyList.cs" />
+    <Compile Include="PurpleBlistUiOps.cs" />
+    <Compile Include="Buddyicon.cs" />
+    <Compile Include="Certificate.cs" />
+    <Compile Include="PurpleCertificate.cs" />
+    <Compile Include="PurpleCertificatePool.cs" />
+    <Compile Include="PurpleCertificateScheme.cs" />
+    <Compile Include="PurpleCertificateVerifier.cs" />
+    <Compile Include="PurpleCertificateVerificationRequest.cs" />
+    <Compile Include="Cipher.cs" />
+    <Compile Include="PurpleCipherOps.cs" />
+    <Compile Include="Circbuffer.cs" />
+    <Compile Include="PurpleCircBuffer.cs" />
+    <Compile Include="Cmds.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Connection.cs" />
+    <Compile Include="PurpleConnection.cs" />
+    <Compile Include="Conversation.cs" />
+    <Compile Include="PurpleConversationUiOps.cs" />
+    <Compile Include="PurpleConvIm.cs" />
+    <Compile Include="PurpleConvChat.cs" />
+    <Compile Include="PurpleConvChatBuddy.cs" />
+    <Compile Include="PurpleConvMessage.cs" />
+    <Compile Include="PurpleConversation.cs" />
+    <Compile Include="Core.cs" />
+    <Compile Include="Debug.cs" />
+    <Compile Include="Desktopitem.cs" />
+    <Compile Include="Dnsquery.cs" />
+    <Compile Include="Dnssrv.cs" />
+    <Compile Include="PurpleSrvResponse.cs" />
+    <Compile Include="Eventloop.cs" />
+    <Compile Include="PurpleEventLoopUiOps.cs" />
+    <Compile Include="Ft.cs" />
+    <Compile Include="PurpleXfer.cs" />
+    <Compile Include="Idle.cs" />
+    <Compile Include="Imgstore.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="PurpleLogLogger.cs" />
+    <Compile Include="PurpleLog.cs" />
+    <Compile Include="PurpleLogCommonLoggerData.cs" />
+    <Compile Include="PurpleLogSet.cs" />
+    <Compile Include="Media.cs" />
+    <Compile Include="Mediamanager.cs" />
+    <Compile Include="Mime.cs" />
+    <Compile Include="NatPmp.cs" />
+    <Compile Include="Network.cs" />
+    <Compile Include="Notify.cs" />
+    <Compile Include="Ntlm.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="PurplePluginInfo.cs" />
+    <Compile Include="PurplePluginLoaderInfo.cs" />
+    <Compile Include="PurplePlugin.cs" />
+    <Compile Include="PurplePluginUiInfo.cs" />
+    <Compile Include="PurplePluginAction.cs" />
+    <Compile Include="Pluginpref.cs" />
+    <Compile Include="Pounce.cs" />
+    <Compile Include="PurplePounce.cs" />
+    <Compile Include="Prefs.cs" />
+    <Compile Include="Privacy.cs" />
+    <Compile Include="Proxy.cs" />
+    <Compile Include="Prpl.cs" />
+    <Compile Include="PurpleBuddyIconSpec.cs" />
+    <Compile Include="proto_chat_entry.cs" />
+    <Compile Include="PurpleAttentionType.cs" />
+    <Compile Include="PurplePluginProtocolInfo.cs" />
+    <Compile Include="PurpleClient.cs" />
+    <Compile Include="Request.cs" />
+    <Compile Include="PurpleRequestField.cs" />
+    <Compile Include="Roomlist.cs" />
+    <Compile Include="PurpleRoomlist.cs" />
+    <Compile Include="PurpleRoomlistRoom.cs" />
+    <Compile Include="PurpleRoomlistField.cs" />
+    <Compile Include="PurpleRoomlistUiOps.cs" />
+    <Compile Include="Savedstatuses.cs" />
+    <Compile Include="Server.cs" />
+    <Compile Include="Signals.cs" />
+    <Compile Include="Smiley.cs" />
+    <Compile Include="SoundThemeLoader.cs" />
+    <Compile Include="PurpleSoundThemeLoader.cs" />
+    <Compile Include="PurpleSoundThemeLoaderClass.cs" />
+    <Compile Include="SoundTheme.cs" />
+    <Compile Include="PurpleSoundTheme.cs" />
+    <Compile Include="PurpleSoundThemeClass.cs" />
+    <Compile Include="Sound.cs" />
+    <Compile Include="PurpleSoundUiOps.cs" />
+    <Compile Include="Sslconn.cs" />
+    <Compile Include="PurpleSslConnection.cs" />
+    <Compile Include="Status.cs" />
+    <Compile Include="Stringref.cs" />
+    <Compile Include="Stun.cs" />
+    <Compile Include="PurpleStunNatDiscovery.cs" />
+    <Compile Include="ThemeLoader.cs" />
+    <Compile Include="PurpleThemeLoader.cs" />
+    <Compile Include="PurpleThemeLoaderClass.cs" />
+    <Compile Include="ThemeManager.cs" />
+    <Compile Include="PurpleThemeManager.cs" />
+    <Compile Include="PurpleThemeManagerClass.cs" />
+    <Compile Include="Theme.cs" />
+    <Compile Include="PurpleTheme.cs" />
+    <Compile Include="PurpleThemeClass.cs" />
+    <Compile Include="Upnp.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="PurpleMenuAction.cs" />
+    <Compile Include="PurpleKeyValuePair.cs" />
+    <Compile Include="Value.cs" />
+    <Compile Include="Version.cs" />
+    <Compile Include="Whiteboard.cs" />
+    <Compile Include="PurpleWhiteboard.cs" />
+    <Compile Include="PurpleWhiteboardUiOps.cs" />
+    <Compile Include="PurpleWhiteboardPrplOps.cs" />
+    <Compile Include="XMLNodeClass.cs" />
+    <Compile Include="xmlnode.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

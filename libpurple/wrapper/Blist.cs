@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,6 +40,20 @@ namespace PurpleWrapper
 {
 	public class Blist
 	{
+		public enum PurpleBlistNodeType
+		{
+			PURPLE_BLIST_GROUP_NODE,
+			PURPLE_BLIST_CONTACT_NODE,
+			PURPLE_BLIST_BUDDY_NODE,
+			PURPLE_BLIST_CHAT_NODE,
+			PURPLE_BLIST_OTHER_NODE
+		};
+
+		public enum PurpleBlistNodeFlags
+		{
+			PURPLE_BLIST_NODE_FLAG_NO_SAVE = 1 << 0
+		};
+
 		/*
 		 * PurpleBuddyList * purple_blist_new()
 		 */
@@ -46,7 +62,7 @@ namespace PurpleWrapper
 
 		public static PurpleBuddyList New()
 		{
-			throw new NotImplementedException();
+			return new PurpleBuddyList(purple_blist_new());
 		}
 
 		/*
@@ -57,7 +73,7 @@ namespace PurpleWrapper
 
 		public static void SetBlist(PurpleBuddyList blist)
 		{
-			throw new NotImplementedException();
+			purple_set_blist(blist.Reference);
 		}
 
 		/*
@@ -68,7 +84,7 @@ namespace PurpleWrapper
 
 		public static PurpleBuddyList GetBlist()
 		{
-			throw new NotImplementedException();
+			return new PurpleBuddyList(purple_get_blist());
 		}
 
 		/*
@@ -79,19 +95,15 @@ namespace PurpleWrapper
 
 		public static PurpleBlistNode GetRoot()
 		{
-			throw new NotImplementedException();
+			return new PurpleBlistNode(purple_blist_get_root());
 		}
 
 		/*
 		 * GSList * purple_blist_get_buddies()
+		 * 
+		 * Could not generate a wrapper for purple_blist_get_buddies in file "blist.h".
+		 * Message: The type could not be resolved (GSList * purple_blist_get_buddies()).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_blist_get_buddies();
-
-		public static GSList GetBuddies()
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gpointer purple_blist_get_ui_data()
@@ -101,7 +113,7 @@ namespace PurpleWrapper
 
 		public static IntPtr GetUiData()
 		{
-			throw new NotImplementedException();
+			return purple_blist_get_ui_data();
 		}
 
 		/*
@@ -112,7 +124,7 @@ namespace PurpleWrapper
 
 		public static void SetUiData(IntPtr ui_data)
 		{
-			throw new NotImplementedException();
+			purple_blist_set_ui_data(ui_data);
 		}
 
 		/*
@@ -123,7 +135,7 @@ namespace PurpleWrapper
 
 		public static PurpleBlistNode NodeNext(PurpleBlistNode node, bool offline)
 		{
-			throw new NotImplementedException();
+			return new PurpleBlistNode(purple_blist_node_next(node.Reference, offline));
 		}
 
 		/*
@@ -134,7 +146,7 @@ namespace PurpleWrapper
 
 		public static PurpleBlistNode NodeGetParent(PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			return new PurpleBlistNode(purple_blist_node_get_parent(node.Reference));
 		}
 
 		/*
@@ -145,7 +157,7 @@ namespace PurpleWrapper
 
 		public static PurpleBlistNode NodeGetFirstChild(PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			return new PurpleBlistNode(purple_blist_node_get_first_child(node.Reference));
 		}
 
 		/*
@@ -156,7 +168,7 @@ namespace PurpleWrapper
 
 		public static PurpleBlistNode NodeGetSiblingNext(PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			return new PurpleBlistNode(purple_blist_node_get_sibling_next(node.Reference));
 		}
 
 		/*
@@ -167,7 +179,7 @@ namespace PurpleWrapper
 
 		public static PurpleBlistNode NodeGetSiblingPrev(PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			return new PurpleBlistNode(purple_blist_node_get_sibling_prev(node.Reference));
 		}
 
 		/*
@@ -178,7 +190,7 @@ namespace PurpleWrapper
 
 		public static IntPtr NodeGetUiData(PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			return purple_blist_node_get_ui_data(node.Reference);
 		}
 
 		/*
@@ -189,7 +201,7 @@ namespace PurpleWrapper
 
 		public static void NodeSetUiData(PurpleBlistNode node, IntPtr ui_data)
 		{
-			throw new NotImplementedException();
+			purple_blist_node_set_ui_data(node.Reference, ui_data);
 		}
 
 		/*
@@ -200,7 +212,7 @@ namespace PurpleWrapper
 
 		public static void Show()
 		{
-			throw new NotImplementedException();
+			purple_blist_show();
 		}
 
 		/*
@@ -211,7 +223,7 @@ namespace PurpleWrapper
 
 		public static void Destroy()
 		{
-			throw new NotImplementedException();
+			purple_blist_destroy();
 		}
 
 		/*
@@ -222,19 +234,15 @@ namespace PurpleWrapper
 
 		public static void SetVisible(bool show)
 		{
-			throw new NotImplementedException();
+			purple_blist_set_visible(show);
 		}
 
 		/*
 		 * void purple_blist_update_buddy_status(PurpleBuddy * buddy, PurpleStatus * old_status)
+		 * 
+		 * Could not generate a wrapper for purple_blist_update_buddy_status in file "blist.h".
+		 * Message: The type could not be resolved (PurpleStatus * old_status).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_blist_update_buddy_status(IntPtr buddy, IntPtr old_status);
-
-		public static void UpdateBuddyStatus(PurpleBuddy buddy, PurpleStatus old_status)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_blist_update_node_icon(PurpleBlistNode * node)
@@ -244,7 +252,7 @@ namespace PurpleWrapper
 
 		public static void UpdateNodeIcon(PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			purple_blist_update_node_icon(node.Reference);
 		}
 
 		/*
@@ -255,7 +263,7 @@ namespace PurpleWrapper
 
 		public static void UpdateBuddyIcon(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			purple_blist_update_buddy_icon(buddy.Reference);
 		}
 
 		/*
@@ -266,7 +274,7 @@ namespace PurpleWrapper
 
 		public static void RenameBuddy(PurpleBuddy buddy, string name)
 		{
-			throw new NotImplementedException();
+			purple_blist_rename_buddy(buddy.Reference, name);
 		}
 
 		/*
@@ -277,7 +285,7 @@ namespace PurpleWrapper
 
 		public static void AliasContact(PurpleContact contact, string alias)
 		{
-			throw new NotImplementedException();
+			purple_blist_alias_contact(contact.Reference, alias);
 		}
 
 		/*
@@ -288,7 +296,7 @@ namespace PurpleWrapper
 
 		public static void AliasBuddy(PurpleBuddy buddy, string alias)
 		{
-			throw new NotImplementedException();
+			purple_blist_alias_buddy(buddy.Reference, alias);
 		}
 
 		/*
@@ -299,7 +307,7 @@ namespace PurpleWrapper
 
 		public static void ServerAliasBuddy(PurpleBuddy buddy, string alias)
 		{
-			throw new NotImplementedException();
+			purple_blist_server_alias_buddy(buddy.Reference, alias);
 		}
 
 		/*
@@ -310,7 +318,7 @@ namespace PurpleWrapper
 
 		public static void AliasChat(PurpleChat chat, string alias)
 		{
-			throw new NotImplementedException();
+			purple_blist_alias_chat(chat.Reference, alias);
 		}
 
 		/*
@@ -321,19 +329,15 @@ namespace PurpleWrapper
 
 		public static void RenameGroup(PurpleGroup group, string name)
 		{
-			throw new NotImplementedException();
+			purple_blist_rename_group(group.Reference, name);
 		}
 
 		/*
 		 * PurpleChat * purple_chat_new(PurpleAccount * account, char * alias, GHashTable * components)
+		 * 
+		 * Could not generate a wrapper for purple_chat_new in file "blist.h".
+		 * Message: The type could not be resolved (GHashTable * components).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_chat_new(IntPtr account, string alias, IntPtr components);
-
-		public static PurpleChat ChatNew(PurpleAccount account, string alias, GHashTable components)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_chat_destroy(PurpleChat * chat)
@@ -343,7 +347,7 @@ namespace PurpleWrapper
 
 		public static void ChatDestroy(PurpleChat chat)
 		{
-			throw new NotImplementedException();
+			purple_chat_destroy(chat.Reference);
 		}
 
 		/*
@@ -354,7 +358,7 @@ namespace PurpleWrapper
 
 		public static void AddChat(PurpleChat chat, PurpleGroup group, PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			purple_blist_add_chat(chat.Reference, group.Reference, node.Reference);
 		}
 
 		/*
@@ -365,7 +369,7 @@ namespace PurpleWrapper
 
 		public static PurpleBuddy BuddyNew(PurpleAccount account, string name, string alias)
 		{
-			throw new NotImplementedException();
+			return new PurpleBuddy(purple_buddy_new(account.Reference, name, alias));
 		}
 
 		/*
@@ -376,19 +380,15 @@ namespace PurpleWrapper
 
 		public static void BuddyDestroy(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			purple_buddy_destroy(buddy.Reference);
 		}
 
 		/*
 		 * void purple_buddy_set_icon(PurpleBuddy * buddy, PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_set_icon in file "blist.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_buddy_set_icon(IntPtr buddy, IntPtr icon);
-
-		public static void BuddySetIcon(PurpleBuddy buddy, PurpleBuddyIcon icon)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleAccount * purple_buddy_get_account(PurpleBuddy * buddy)
@@ -398,7 +398,7 @@ namespace PurpleWrapper
 
 		public static PurpleAccount BuddyGetAccount(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return new PurpleAccount(purple_buddy_get_account(buddy.Reference));
 		}
 
 		/*
@@ -409,19 +409,15 @@ namespace PurpleWrapper
 
 		public static string BuddyGetName(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_get_name(buddy.Reference);
 		}
 
 		/*
 		 * PurpleBuddyIcon * purple_buddy_get_icon(PurpleBuddy * buddy)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_get_icon in file "blist.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * purple_buddy_get_icon(PurpleBuddy * buddy)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_buddy_get_icon(IntPtr buddy);
-
-		public static PurpleBuddyIcon BuddyGetIcon(PurpleBuddy buddy)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gpointer purple_buddy_get_protocol_data(PurpleBuddy * buddy)
@@ -431,7 +427,7 @@ namespace PurpleWrapper
 
 		public static IntPtr BuddyGetProtocolData(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_get_protocol_data(buddy.Reference);
 		}
 
 		/*
@@ -442,7 +438,7 @@ namespace PurpleWrapper
 
 		public static void BuddySetProtocolData(PurpleBuddy buddy, IntPtr data)
 		{
-			throw new NotImplementedException();
+			purple_buddy_set_protocol_data(buddy.Reference, data);
 		}
 
 		/*
@@ -453,19 +449,15 @@ namespace PurpleWrapper
 
 		public static PurpleContact BuddyGetContact(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return new PurpleContact(purple_buddy_get_contact(buddy.Reference));
 		}
 
 		/*
 		 * PurplePresence * purple_buddy_get_presence(PurpleBuddy * buddy)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_get_presence in file "blist.h".
+		 * Message: The type could not be resolved (PurplePresence * purple_buddy_get_presence(PurpleBuddy * buddy)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_buddy_get_presence(IntPtr buddy);
-
-		public static PurplePresence BuddyGetPresence(PurpleBuddy buddy)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_blist_add_buddy(PurpleBuddy * buddy, PurpleContact * contact, PurpleGroup * group, PurpleBlistNode * node)
@@ -475,7 +467,7 @@ namespace PurpleWrapper
 
 		public static void AddBuddy(PurpleBuddy buddy, PurpleContact contact, PurpleGroup group, PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			purple_blist_add_buddy(buddy.Reference, contact.Reference, group.Reference, node.Reference);
 		}
 
 		/*
@@ -486,7 +478,7 @@ namespace PurpleWrapper
 
 		public static PurpleGroup GroupNew(string name)
 		{
-			throw new NotImplementedException();
+			return new PurpleGroup(purple_group_new(name));
 		}
 
 		/*
@@ -497,7 +489,7 @@ namespace PurpleWrapper
 
 		public static void GroupDestroy(PurpleGroup group)
 		{
-			throw new NotImplementedException();
+			purple_group_destroy(group.Reference);
 		}
 
 		/*
@@ -508,7 +500,7 @@ namespace PurpleWrapper
 
 		public static void AddGroup(PurpleGroup group, PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			purple_blist_add_group(group.Reference, node.Reference);
 		}
 
 		/*
@@ -519,7 +511,7 @@ namespace PurpleWrapper
 
 		public static PurpleContact ContactNew()
 		{
-			throw new NotImplementedException();
+			return new PurpleContact(purple_contact_new());
 		}
 
 		/*
@@ -530,7 +522,7 @@ namespace PurpleWrapper
 
 		public static void ContactDestroy(PurpleContact contact)
 		{
-			throw new NotImplementedException();
+			purple_contact_destroy(contact.Reference);
 		}
 
 		/*
@@ -541,7 +533,7 @@ namespace PurpleWrapper
 
 		public static void AddContact(PurpleContact contact, PurpleGroup group, PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			purple_blist_add_contact(contact.Reference, group.Reference, node.Reference);
 		}
 
 		/*
@@ -552,7 +544,7 @@ namespace PurpleWrapper
 
 		public static void MergeContact(PurpleContact source, PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			purple_blist_merge_contact(source.Reference, node.Reference);
 		}
 
 		/*
@@ -563,7 +555,7 @@ namespace PurpleWrapper
 
 		public static PurpleBuddy ContactGetPriorityBuddy(PurpleContact contact)
 		{
-			throw new NotImplementedException();
+			return new PurpleBuddy(purple_contact_get_priority_buddy(contact.Reference));
 		}
 
 		/*
@@ -574,7 +566,7 @@ namespace PurpleWrapper
 
 		public static void ContactSetAlias(PurpleContact contact, string alias)
 		{
-			throw new NotImplementedException();
+			purple_contact_set_alias(contact.Reference, alias);
 		}
 
 		/*
@@ -585,7 +577,7 @@ namespace PurpleWrapper
 
 		public static string ContactGetAlias(PurpleContact contact)
 		{
-			throw new NotImplementedException();
+			return purple_contact_get_alias(contact.Reference);
 		}
 
 		/*
@@ -596,7 +588,7 @@ namespace PurpleWrapper
 
 		public static bool ContactOnAccount(PurpleContact contact, PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			return purple_contact_on_account(contact.Reference, account.Reference);
 		}
 
 		/*
@@ -607,7 +599,7 @@ namespace PurpleWrapper
 
 		public static void ContactInvalidatePriorityBuddy(PurpleContact contact)
 		{
-			throw new NotImplementedException();
+			purple_contact_invalidate_priority_buddy(contact.Reference);
 		}
 
 		/*
@@ -618,7 +610,7 @@ namespace PurpleWrapper
 
 		public static void RemoveBuddy(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			purple_blist_remove_buddy(buddy.Reference);
 		}
 
 		/*
@@ -629,7 +621,7 @@ namespace PurpleWrapper
 
 		public static void RemoveContact(PurpleContact contact)
 		{
-			throw new NotImplementedException();
+			purple_blist_remove_contact(contact.Reference);
 		}
 
 		/*
@@ -640,7 +632,7 @@ namespace PurpleWrapper
 
 		public static void RemoveChat(PurpleChat chat)
 		{
-			throw new NotImplementedException();
+			purple_blist_remove_chat(chat.Reference);
 		}
 
 		/*
@@ -651,7 +643,7 @@ namespace PurpleWrapper
 
 		public static void RemoveGroup(PurpleGroup group)
 		{
-			throw new NotImplementedException();
+			purple_blist_remove_group(group.Reference);
 		}
 
 		/*
@@ -662,7 +654,7 @@ namespace PurpleWrapper
 
 		public static string BuddyGetAliasOnly(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_get_alias_only(buddy.Reference);
 		}
 
 		/*
@@ -673,7 +665,7 @@ namespace PurpleWrapper
 
 		public static string BuddyGetServerAlias(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_get_server_alias(buddy.Reference);
 		}
 
 		/*
@@ -684,7 +676,7 @@ namespace PurpleWrapper
 
 		public static string BuddyGetContactAlias(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_get_contact_alias(buddy.Reference);
 		}
 
 		/*
@@ -695,7 +687,7 @@ namespace PurpleWrapper
 
 		public static string BuddyGetLocalAlias(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_get_local_alias(buddy.Reference);
 		}
 
 		/*
@@ -706,7 +698,7 @@ namespace PurpleWrapper
 
 		public static string BuddyGetAlias(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_get_alias(buddy.Reference);
 		}
 
 		/*
@@ -717,7 +709,7 @@ namespace PurpleWrapper
 
 		public static string BuddyGetLocalBuddyAlias(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_get_local_buddy_alias(buddy.Reference);
 		}
 
 		/*
@@ -728,7 +720,7 @@ namespace PurpleWrapper
 
 		public static string ChatGetName(PurpleChat chat)
 		{
-			throw new NotImplementedException();
+			return purple_chat_get_name(chat.Reference);
 		}
 
 		/*
@@ -739,30 +731,15 @@ namespace PurpleWrapper
 
 		public static PurpleBuddy FindBuddy(PurpleAccount account, string name)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * PurpleBuddy * purple_find_buddy_in_group(PurpleAccount * account, char * name, PurpleGroup * group)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_find_buddy_in_group(IntPtr account, string name, IntPtr group);
-
-		public static PurpleBuddy FindBuddyInGroup(PurpleAccount account, string name, PurpleGroup group)
-		{
-			throw new NotImplementedException();
+			return new PurpleBuddy(purple_find_buddy(account.Reference, name));
 		}
 
 		/*
 		 * GSList * purple_find_buddies(PurpleAccount * account, char * name)
+		 * 
+		 * Could not generate a wrapper for purple_find_buddies in file "blist.h".
+		 * Message: The type could not be resolved (GSList * purple_find_buddies(PurpleAccount * account, char * name)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_find_buddies(IntPtr account, string name);
-
-		public static GSList FindBuddies(PurpleAccount account, string name)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleGroup * purple_find_group(char * name)
@@ -772,7 +749,7 @@ namespace PurpleWrapper
 
 		public static PurpleGroup FindGroup(string name)
 		{
-			throw new NotImplementedException();
+			return new PurpleGroup(purple_find_group(name));
 		}
 
 		/*
@@ -783,7 +760,7 @@ namespace PurpleWrapper
 
 		public static PurpleChat FindChat(PurpleAccount account, string name)
 		{
-			throw new NotImplementedException();
+			return new PurpleChat(purple_blist_find_chat(account.Reference, name));
 		}
 
 		/*
@@ -794,7 +771,7 @@ namespace PurpleWrapper
 
 		public static PurpleGroup ChatGetGroup(PurpleChat chat)
 		{
-			throw new NotImplementedException();
+			return new PurpleGroup(purple_chat_get_group(chat.Reference));
 		}
 
 		/*
@@ -805,19 +782,15 @@ namespace PurpleWrapper
 
 		public static PurpleAccount ChatGetAccount(PurpleChat chat)
 		{
-			throw new NotImplementedException();
+			return new PurpleAccount(purple_chat_get_account(chat.Reference));
 		}
 
 		/*
 		 * GHashTable * purple_chat_get_components(PurpleChat * chat)
+		 * 
+		 * Could not generate a wrapper for purple_chat_get_components in file "blist.h".
+		 * Message: The type could not be resolved (GHashTable * purple_chat_get_components(PurpleChat * chat)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_chat_get_components(IntPtr chat);
-
-		public static GHashTable ChatGetComponents(PurpleChat chat)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleGroup * purple_buddy_get_group(PurpleBuddy * buddy)
@@ -827,19 +800,15 @@ namespace PurpleWrapper
 
 		public static PurpleGroup BuddyGetGroup(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return new PurpleGroup(purple_buddy_get_group(buddy.Reference));
 		}
 
 		/*
 		 * GSList * purple_group_get_accounts(PurpleGroup * g)
+		 * 
+		 * Could not generate a wrapper for purple_group_get_accounts in file "blist.h".
+		 * Message: The type could not be resolved (GSList * purple_group_get_accounts(PurpleGroup * g)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_group_get_accounts(IntPtr g);
-
-		public static GSList GroupGetAccounts(PurpleGroup g)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gboolean purple_group_on_account(PurpleGroup * g, PurpleAccount * account)
@@ -849,7 +818,7 @@ namespace PurpleWrapper
 
 		public static bool GroupOnAccount(PurpleGroup g, PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			return purple_group_on_account(g.Reference, account.Reference);
 		}
 
 		/*
@@ -860,7 +829,7 @@ namespace PurpleWrapper
 
 		public static string GroupGetName(PurpleGroup group)
 		{
-			throw new NotImplementedException();
+			return purple_group_get_name(group.Reference);
 		}
 
 		/*
@@ -871,7 +840,7 @@ namespace PurpleWrapper
 
 		public static void AddAccount(PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			purple_blist_add_account(account.Reference);
 		}
 
 		/*
@@ -882,7 +851,7 @@ namespace PurpleWrapper
 
 		public static void RemoveAccount(PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			purple_blist_remove_account(account.Reference);
 		}
 
 		/*
@@ -893,7 +862,7 @@ namespace PurpleWrapper
 
 		public static int GetGroupSize(PurpleGroup group, bool offline)
 		{
-			throw new NotImplementedException();
+			return purple_blist_get_group_size(group.Reference, offline);
 		}
 
 		/*
@@ -904,7 +873,7 @@ namespace PurpleWrapper
 
 		public static int GetGroupOnlineCount(PurpleGroup group)
 		{
-			throw new NotImplementedException();
+			return purple_blist_get_group_online_count(group.Reference);
 		}
 
 		/*
@@ -915,7 +884,7 @@ namespace PurpleWrapper
 
 		public static void Load()
 		{
-			throw new NotImplementedException();
+			purple_blist_load();
 		}
 
 		/*
@@ -926,29 +895,7 @@ namespace PurpleWrapper
 
 		public static void ScheduleSave()
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_blist_request_add_buddy(PurpleAccount * account, char * username, char * group, char * alias)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_blist_request_add_buddy(IntPtr account, string username, string group, string alias);
-
-		public static void RequestAddBuddy(PurpleAccount account, string username, string group, string alias)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_blist_request_add_chat(PurpleAccount * account, PurpleGroup * group, char * alias, char * name)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_blist_request_add_chat(IntPtr account, IntPtr group, string alias, string name);
-
-		public static void RequestAddChat(PurpleAccount account, PurpleGroup group, string alias, string name)
-		{
-			throw new NotImplementedException();
+			purple_blist_schedule_save();
 		}
 
 		/*
@@ -959,7 +906,7 @@ namespace PurpleWrapper
 
 		public static void RequestAddGroup()
 		{
-			throw new NotImplementedException();
+			purple_blist_request_add_group();
 		}
 
 		/*
@@ -970,7 +917,7 @@ namespace PurpleWrapper
 
 		public static void NodeSetBool(PurpleBlistNode node, string key, bool value)
 		{
-			throw new NotImplementedException();
+			purple_blist_node_set_bool(node.Reference, key, value);
 		}
 
 		/*
@@ -981,7 +928,7 @@ namespace PurpleWrapper
 
 		public static bool NodeGetBool(PurpleBlistNode node, string key)
 		{
-			throw new NotImplementedException();
+			return purple_blist_node_get_bool(node.Reference, key);
 		}
 
 		/*
@@ -992,7 +939,7 @@ namespace PurpleWrapper
 
 		public static void NodeSetInt(PurpleBlistNode node, string key, int value)
 		{
-			throw new NotImplementedException();
+			purple_blist_node_set_int(node.Reference, key, value);
 		}
 
 		/*
@@ -1003,18 +950,7 @@ namespace PurpleWrapper
 
 		public static int NodeGetInt(PurpleBlistNode node, string key)
 		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_blist_node_set_string(PurpleBlistNode * node, char * key, char * value)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_blist_node_set_string(IntPtr node, string key, string value);
-
-		public static void NodeSetString(PurpleBlistNode node, string key, string value)
-		{
-			throw new NotImplementedException();
+			return purple_blist_node_get_int(node.Reference, key);
 		}
 
 		/*
@@ -1025,7 +961,7 @@ namespace PurpleWrapper
 
 		public static string NodeGetString(PurpleBlistNode node, string key)
 		{
-			throw new NotImplementedException();
+			return purple_blist_node_get_string(node.Reference, key);
 		}
 
 		/*
@@ -1036,17 +972,18 @@ namespace PurpleWrapper
 
 		public static void NodeRemoveSetting(PurpleBlistNode node, string key)
 		{
-			throw new NotImplementedException();
+			purple_blist_node_remove_setting(node.Reference, key);
 		}
 
 		/*
 		 * void purple_blist_node_set_flags(PurpleBlistNode * node, PurpleBlistNodeFlags flags)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void purple_blist_node_set_flags(IntPtr node, UNKNOWN flags);
+		private static extern void purple_blist_node_set_flags(IntPtr node, Blist.PurpleBlistNodeFlags flags);
 
-		public static void NodeSetFlags(PurpleBlistNode node, PurpleBlistNodeFlags flags)
+		public static void NodeSetFlags(PurpleBlistNode node, Blist.PurpleBlistNodeFlags flags)
 		{
+			/* Unable to process flags, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
@@ -1054,34 +991,32 @@ namespace PurpleWrapper
 		 * PurpleBlistNodeFlags purple_blist_node_get_flags(PurpleBlistNode * node)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_blist_node_get_flags(IntPtr node);
+		private static extern Blist.PurpleBlistNodeFlags purple_blist_node_get_flags(IntPtr node);
 
-		public static PurpleBlistNodeFlags NodeGetFlags(PurpleBlistNode node)
+		public static Blist.PurpleBlistNodeFlags NodeGetFlags(PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_blist_node_get_flags, a KnownEnum. */
+			
 		}
 
 		/*
 		 * PurpleBlistNodeType purple_blist_node_get_type(PurpleBlistNode * node)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_blist_node_get_type(IntPtr node);
+		private static extern Blist.PurpleBlistNodeType purple_blist_node_get_type(IntPtr node);
 
-		public static PurpleBlistNodeType NodeGetType(PurpleBlistNode node)
+		public static Blist.PurpleBlistNodeType NodeGetType(PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_blist_node_get_type, a KnownEnum. */
+			
 		}
 
 		/*
 		 * GList * purple_blist_node_get_extended_menu(PurpleBlistNode * n)
+		 * 
+		 * Could not generate a wrapper for purple_blist_node_get_extended_menu in file "blist.h".
+		 * Message: The type could not be resolved (GList * purple_blist_node_get_extended_menu(PurpleBlistNode * n)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_blist_node_get_extended_menu(IntPtr n);
-
-		public static GList NodeGetExtendedMenu(PurpleBlistNode n)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_blist_set_ui_ops(PurpleBlistUiOps * ops)
@@ -1091,7 +1026,7 @@ namespace PurpleWrapper
 
 		public static void SetUiOps(PurpleBlistUiOps ops)
 		{
-			throw new NotImplementedException();
+			purple_blist_set_ui_ops(ops.Reference);
 		}
 
 		/*
@@ -1102,7 +1037,7 @@ namespace PurpleWrapper
 
 		public static PurpleBlistUiOps GetUiOps()
 		{
-			throw new NotImplementedException();
+			return new PurpleBlistUiOps(purple_blist_get_ui_ops());
 		}
 
 		/*
@@ -1113,7 +1048,7 @@ namespace PurpleWrapper
 
 		public static IntPtr GetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_blist_get_handle();
 		}
 
 		/*
@@ -1124,7 +1059,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_blist_init();
 		}
 
 		/*
@@ -1135,7 +1070,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_blist_uninit();
 		}
 
 	}

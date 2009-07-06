@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -213,18 +215,18 @@ namespace PurpleWrapper
 			}
 		}
 
-		public size_t get_salt_size
+		public ulong get_salt_size
 		{
 			get
 			{
-				throw new NotImplementedException(); /* Non-native type. */
+				return this.Data.get_salt_size;
 			}
 			set
 			{
 				if (this.Reference != IntPtr.Zero)
 					this.Reference = IntPtr.Zero;
 
-				throw new NotImplementedException(); /* Non-native type. */
+				this.Data.get_salt_size = value;
 			}
 		}
 
@@ -243,18 +245,18 @@ namespace PurpleWrapper
 			}
 		}
 
-		public size_t get_key_size
+		public ulong get_key_size
 		{
 			get
 			{
-				throw new NotImplementedException(); /* Non-native type. */
+				return this.Data.get_key_size;
 			}
 			set
 			{
 				if (this.Reference != IntPtr.Zero)
 					this.Reference = IntPtr.Zero;
 
-				throw new NotImplementedException(); /* Non-native type. */
+				this.Data.get_key_size = value;
 			}
 		}
 
@@ -273,7 +275,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public PurpleCipherBatchMode get_batch_mode
+		public Cipher.PurpleCipherBatchMode get_batch_mode
 		{
 			get
 			{
@@ -288,18 +290,18 @@ namespace PurpleWrapper
 			}
 		}
 
-		public size_t get_block_size
+		public ulong get_block_size
 		{
 			get
 			{
-				throw new NotImplementedException(); /* Non-native type. */
+				return this.Data.get_block_size;
 			}
 			set
 			{
 				if (this.Reference != IntPtr.Zero)
 					this.Reference = IntPtr.Zero;
 
-				throw new NotImplementedException(); /* Non-native type. */
+				this.Data.get_block_size = value;
 			}
 		}
 
@@ -360,17 +362,17 @@ namespace PurpleWrapper
 		void append;
 
 		/*
-		 * gboolean (*digest)(PurpleCipherContext * context, size_t in_len, guchar digest, size_t * out_len)
+		 * gboolean (*digest)(PurpleCipherContext * context, size_t in_len, guchar [], size_t * out_len)
 		 */
 		bool digest;
 
 		/*
-		 * int (*encrypt)(PurpleCipherContext * context, guchar data, size_t len, guchar output, size_t * outlen)
+		 * int (*encrypt)(PurpleCipherContext * context, guchar [], size_t len, guchar [], size_t * outlen)
 		 */
 		int encrypt;
 
 		/*
-		 * int (*decrypt)(PurpleCipherContext * context, guchar data, size_t len, guchar output, size_t * outlen)
+		 * int (*decrypt)(PurpleCipherContext * context, guchar [], size_t len, guchar [], size_t * outlen)
 		 */
 		int decrypt;
 
@@ -382,7 +384,7 @@ namespace PurpleWrapper
 		/*
 		 * size_t (*get_salt_size)(PurpleCipherContext * context)
 		 */
-		UNKNOWN get_salt_size;
+		ulong get_salt_size;
 
 		/*
 		 * void (*set_key)(PurpleCipherContext * context, guchar * key)
@@ -392,7 +394,7 @@ namespace PurpleWrapper
 		/*
 		 * size_t (*get_key_size)(PurpleCipherContext * context)
 		 */
-		UNKNOWN get_key_size;
+		ulong get_key_size;
 
 		/*
 		 * void (*set_batch_mode)(PurpleCipherContext * context, PurpleCipherBatchMode mode)
@@ -402,12 +404,12 @@ namespace PurpleWrapper
 		/*
 		 * PurpleCipherBatchMode (*get_batch_mode)(PurpleCipherContext * context)
 		 */
-		UNKNOWN get_batch_mode;
+		Cipher.PurpleCipherBatchMode get_batch_mode;
 
 		/*
 		 * size_t (*get_block_size)(PurpleCipherContext * context)
 		 */
-		UNKNOWN get_block_size;
+		ulong get_block_size;
 
 		/*
 		 * void (*set_key_with_len)(PurpleCipherContext * context, guchar * key, size_t len)
@@ -415,5 +417,6 @@ namespace PurpleWrapper
 		void set_key_with_len;
 
 	}
+
 }
 

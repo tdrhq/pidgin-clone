@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -39,146 +41,103 @@ namespace PurpleWrapper
 	public class Buddyicon
 	{
 		/*
-		 * PurpleBuddyIcon * purple_buddy_icon_new(PurpleAccount * account, char * username, void * icon_data, size_t icon_len, char * checksum)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_buddy_icon_new(IntPtr account, string username, IntPtr icon_data, UNKNOWN icon_len, string checksum);
-
-		public static PurpleBuddyIcon BuddyIconNew(PurpleAccount account, string username, IntPtr icon_data, size_t icon_len, string checksum)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
 		 * PurpleBuddyIcon * purple_buddy_icon_ref(PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_ref in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * purple_buddy_icon_ref(PurpleBuddyIcon * icon)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_buddy_icon_ref(IntPtr icon);
-
-		public static PurpleBuddyIcon BuddyIconRef(PurpleBuddyIcon icon)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleBuddyIcon * purple_buddy_icon_unref(PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_unref in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * purple_buddy_icon_unref(PurpleBuddyIcon * icon)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_buddy_icon_unref(IntPtr icon);
-
-		public static PurpleBuddyIcon BuddyIconUnref(PurpleBuddyIcon icon)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_buddy_icon_update(PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_update in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_buddy_icon_update(IntPtr icon);
-
-		public static void BuddyIconUpdate(PurpleBuddyIcon icon)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * void purple_buddy_icon_set_data(PurpleBuddyIcon * icon, guchar * data, size_t len, char * checksum)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_buddy_icon_set_data(IntPtr icon, IntPtr data, UNKNOWN len, string checksum);
-
-		public static void BuddyIconSetData(PurpleBuddyIcon icon, guchar data, size_t len, string checksum)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * PurpleAccount * purple_buddy_icon_get_account(PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_get_account in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_buddy_icon_get_account(IntPtr icon);
-
-		public static PurpleAccount BuddyIconGetAccount(PurpleBuddyIcon icon)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_buddy_icon_get_username(PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_get_username in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_buddy_icon_get_username(IntPtr icon);
-
-		public static string BuddyIconGetUsername(PurpleBuddyIcon icon)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_buddy_icon_get_checksum(PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_get_checksum in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_buddy_icon_get_checksum(IntPtr icon);
-
-		public static string BuddyIconGetChecksum(PurpleBuddyIcon icon)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gconstpointer purple_buddy_icon_get_data(PurpleBuddyIcon * icon, size_t * len)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_get_data in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_buddy_icon_get_data(IntPtr icon, IntPtr len);
-
-		public static gconstpointer BuddyIconGetData(PurpleBuddyIcon icon, size_t len)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_buddy_icon_get_extension(PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_get_extension in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern string purple_buddy_icon_get_extension(IntPtr icon);
-
-		public static string BuddyIconGetExtension(PurpleBuddyIcon icon)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_buddy_icon_get_full_path(PurpleBuddyIcon * icon)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_get_full_path in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
+		 */
+
+		/*
+		 * char * purple_buddy_icons_get_checksum_for_user(PurpleBuddy * buddy)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern string purple_buddy_icon_get_full_path(IntPtr icon);
+		private static extern string purple_buddy_icons_get_checksum_for_user(IntPtr buddy);
 
-		public static string BuddyIconGetFullPath(PurpleBuddyIcon icon)
+		public static string BuddyIconsGetChecksumForUser(PurpleBuddy buddy)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_icons_get_checksum_for_user(buddy.Reference);
 		}
 
 		/*
-		 * void purple_buddy_icons_set_for_user(PurpleAccount * account, char * username, void * icon_data, size_t icon_len, char * checksum)
+		 * PurpleBuddyIcon * purple_buddy_icons_find(PurpleAccount * account, char * username)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icons_find in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleBuddyIcon * purple_buddy_icons_find(PurpleAccount * account, char * username)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_buddy_icons_set_for_user(IntPtr account, string username, IntPtr icon_data, UNKNOWN icon_len, string checksum);
 
-		public static void BuddyIconsSetForUser(PurpleAccount account, string username, IntPtr icon_data, size_t icon_len, string checksum)
-		{
-			throw new NotImplementedException();
-		}
+		/*
+		 * PurpleStoredImage * purple_buddy_icons_find_account_icon(PurpleAccount * account)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icons_find_account_icon in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * purple_buddy_icons_find_account_icon(PurpleAccount * account)).
+		 */
 
 		/*
 		 * time_t purple_buddy_icons_get_account_icon_timestamp(PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_buddy_icons_get_account_icon_timestamp(IntPtr account);
+		private static extern ulong purple_buddy_icons_get_account_icon_timestamp(IntPtr account);
 
-		public static time_t BuddyIconsGetAccountIconTimestamp(PurpleAccount account)
+		public static DateTime BuddyIconsGetAccountIconTimestamp(PurpleAccount account)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_buddy_icons_get_account_icon_timestamp, a DateTime. */
+			
 		}
 
 		/*
@@ -189,8 +148,15 @@ namespace PurpleWrapper
 
 		public static bool BuddyIconsNodeHasCustomIcon(PurpleBlistNode node)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_icons_node_has_custom_icon(node.Reference);
 		}
+
+		/*
+		 * PurpleStoredImage * purple_buddy_icons_node_find_custom_icon(PurpleBlistNode * node)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icons_node_find_custom_icon in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * purple_buddy_icons_node_find_custom_icon(PurpleBlistNode * node)).
+		 */
 
 		/*
 		 * gboolean purple_buddy_icons_has_custom_icon(PurpleContact * contact)
@@ -200,8 +166,15 @@ namespace PurpleWrapper
 
 		public static bool BuddyIconsHasCustomIcon(PurpleContact contact)
 		{
-			throw new NotImplementedException();
+			return purple_buddy_icons_has_custom_icon(contact.Reference);
 		}
+
+		/*
+		 * PurpleStoredImage * purple_buddy_icons_find_custom_icon(PurpleContact * contact)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icons_find_custom_icon in file "buddyicon.h".
+		 * Message: The type could not be resolved (PurpleStoredImage * purple_buddy_icons_find_custom_icon(PurpleContact * contact)).
+		 */
 
 		/*
 		 * void purple_buddy_icons_set_caching(gboolean caching)
@@ -211,7 +184,7 @@ namespace PurpleWrapper
 
 		public static void BuddyIconsSetCaching(bool caching)
 		{
-			throw new NotImplementedException();
+			purple_buddy_icons_set_caching(caching);
 		}
 
 		/*
@@ -222,7 +195,7 @@ namespace PurpleWrapper
 
 		public static bool BuddyIconsIsCaching()
 		{
-			throw new NotImplementedException();
+			return purple_buddy_icons_is_caching();
 		}
 
 		/*
@@ -233,7 +206,7 @@ namespace PurpleWrapper
 
 		public static void BuddyIconsSetCacheDir(string cache_dir)
 		{
-			throw new NotImplementedException();
+			purple_buddy_icons_set_cache_dir(cache_dir);
 		}
 
 		/*
@@ -244,7 +217,7 @@ namespace PurpleWrapper
 
 		public static string BuddyIconsGetCacheDir()
 		{
-			throw new NotImplementedException();
+			return purple_buddy_icons_get_cache_dir();
 		}
 
 		/*
@@ -255,7 +228,7 @@ namespace PurpleWrapper
 
 		public static IntPtr BuddyIconsGetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_buddy_icons_get_handle();
 		}
 
 		/*
@@ -266,7 +239,7 @@ namespace PurpleWrapper
 
 		public static void BuddyIconsInit()
 		{
-			throw new NotImplementedException();
+			purple_buddy_icons_init();
 		}
 
 		/*
@@ -277,19 +250,15 @@ namespace PurpleWrapper
 
 		public static void BuddyIconsUninit()
 		{
-			throw new NotImplementedException();
+			purple_buddy_icons_uninit();
 		}
 
 		/*
 		 * void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec * spec, int * width, int * height)
+		 * 
+		 * Could not generate a wrapper for purple_buddy_icon_get_scale_size in file "buddyicon.h".
+		 * Message: The type could not be resolved (int * width).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_buddy_icon_get_scale_size(IntPtr spec, IntPtr width, IntPtr height);
-
-		public static void BuddyIconGetScaleSize(PurpleBuddyIconSpec spec, int width, int height)
-		{
-			throw new NotImplementedException();
-		}
 
 	}
 }

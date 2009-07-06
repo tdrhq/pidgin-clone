@@ -1,4 +1,4 @@
-/* purple
+/* PurpleWrapper - A .NET (CLR) wrapper for libpurple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,13 +21,15 @@
 
 /*
  * This file was auto-generated from the libpurple header files to provide a
- * clean interface between .NET/CLR and the unmanaged C library, libpurple.
+ * clean interface between .NET/CLR and the unmanaged C library libpurple.
  *
- * This code isn't complete, but completely a work in progress. :)
- * Three major things left:
- *  - Resolve the remaining UNKNOWN types.
- *  - Handle translation between delegate and function pointers.
- *  - Fill in the translation between public .NET class calls and private DllImport[] calls.
+ * This is the second major commit of the code.
+ * Next things:
+ *  - A few of the .h files have anonymous parameter names (eg: void cat(int, int).
+ *    This program will need to assign these parameters names.
+ *  - Function pointers inside structs aren't translated correctly into C#.
+ *  - Two places there are specific-length arrays (eg: char hostname[256]). The parser
+ *    does not detect them as an array.
  */
 
 using System;
@@ -38,6 +40,17 @@ namespace PurpleWrapper
 {
 	public class Prefs
 	{
+		public enum PurplePrefType
+		{
+			PURPLE_PREF_NONE,
+			PURPLE_PREF_BOOLEAN,
+			PURPLE_PREF_INT,
+			PURPLE_PREF_STRING,
+			PURPLE_PREF_STRING_LIST,
+			PURPLE_PREF_PATH,
+			PURPLE_PREF_PATH_LIST
+		};
+
 		/*
 		 * void * purple_prefs_get_handle()
 		 */
@@ -46,7 +59,7 @@ namespace PurpleWrapper
 
 		public static IntPtr GetHandle()
 		{
-			throw new NotImplementedException();
+			return purple_prefs_get_handle();
 		}
 
 		/*
@@ -57,7 +70,7 @@ namespace PurpleWrapper
 
 		public static void Init()
 		{
-			throw new NotImplementedException();
+			purple_prefs_init();
 		}
 
 		/*
@@ -68,7 +81,7 @@ namespace PurpleWrapper
 
 		public static void Uninit()
 		{
-			throw new NotImplementedException();
+			purple_prefs_uninit();
 		}
 
 		/*
@@ -79,7 +92,7 @@ namespace PurpleWrapper
 
 		public static void AddNone(string name)
 		{
-			throw new NotImplementedException();
+			purple_prefs_add_none(name);
 		}
 
 		/*
@@ -90,7 +103,7 @@ namespace PurpleWrapper
 
 		public static void AddBool(string name, bool value)
 		{
-			throw new NotImplementedException();
+			purple_prefs_add_bool(name, value);
 		}
 
 		/*
@@ -101,7 +114,7 @@ namespace PurpleWrapper
 
 		public static void AddInt(string name, int value)
 		{
-			throw new NotImplementedException();
+			purple_prefs_add_int(name, value);
 		}
 
 		/*
@@ -112,19 +125,15 @@ namespace PurpleWrapper
 
 		public static void AddString(string name, string value)
 		{
-			throw new NotImplementedException();
+			purple_prefs_add_string(name, value);
 		}
 
 		/*
 		 * void purple_prefs_add_string_list(char * name, GList * value)
+		 * 
+		 * Could not generate a wrapper for purple_prefs_add_string_list in file "prefs.h".
+		 * Message: The type could not be resolved (GList * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prefs_add_string_list(string name, IntPtr value);
-
-		public static void AddStringList(string name, GList value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_prefs_add_path(char * name, char * value)
@@ -134,19 +143,15 @@ namespace PurpleWrapper
 
 		public static void AddPath(string name, string value)
 		{
-			throw new NotImplementedException();
+			purple_prefs_add_path(name, value);
 		}
 
 		/*
 		 * void purple_prefs_add_path_list(char * name, GList * value)
+		 * 
+		 * Could not generate a wrapper for purple_prefs_add_path_list in file "prefs.h".
+		 * Message: The type could not be resolved (GList * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prefs_add_path_list(string name, IntPtr value);
-
-		public static void AddPathList(string name, GList value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_prefs_remove(char * name)
@@ -156,7 +161,7 @@ namespace PurpleWrapper
 
 		public static void Remove(string name)
 		{
-			throw new NotImplementedException();
+			purple_prefs_remove(name);
 		}
 
 		/*
@@ -167,7 +172,7 @@ namespace PurpleWrapper
 
 		public static void Rename(string oldname, string newname)
 		{
-			throw new NotImplementedException();
+			purple_prefs_rename(oldname, newname);
 		}
 
 		/*
@@ -178,7 +183,7 @@ namespace PurpleWrapper
 
 		public static void RenameBooleanToggle(string oldname, string newname)
 		{
-			throw new NotImplementedException();
+			purple_prefs_rename_boolean_toggle(oldname, newname);
 		}
 
 		/*
@@ -189,7 +194,7 @@ namespace PurpleWrapper
 
 		public static void Destroy()
 		{
-			throw new NotImplementedException();
+			purple_prefs_destroy();
 		}
 
 		/*
@@ -200,7 +205,7 @@ namespace PurpleWrapper
 
 		public static void SetGeneric(string name, IntPtr value)
 		{
-			throw new NotImplementedException();
+			purple_prefs_set_generic(name, value);
 		}
 
 		/*
@@ -211,7 +216,7 @@ namespace PurpleWrapper
 
 		public static void SetBool(string name, bool value)
 		{
-			throw new NotImplementedException();
+			purple_prefs_set_bool(name, value);
 		}
 
 		/*
@@ -222,7 +227,7 @@ namespace PurpleWrapper
 
 		public static void SetInt(string name, int value)
 		{
-			throw new NotImplementedException();
+			purple_prefs_set_int(name, value);
 		}
 
 		/*
@@ -233,19 +238,15 @@ namespace PurpleWrapper
 
 		public static void SetString(string name, string value)
 		{
-			throw new NotImplementedException();
+			purple_prefs_set_string(name, value);
 		}
 
 		/*
 		 * void purple_prefs_set_string_list(char * name, GList * value)
+		 * 
+		 * Could not generate a wrapper for purple_prefs_set_string_list in file "prefs.h".
+		 * Message: The type could not be resolved (GList * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prefs_set_string_list(string name, IntPtr value);
-
-		public static void SetStringList(string name, GList value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_prefs_set_path(char * name, char * value)
@@ -255,19 +256,15 @@ namespace PurpleWrapper
 
 		public static void SetPath(string name, string value)
 		{
-			throw new NotImplementedException();
+			purple_prefs_set_path(name, value);
 		}
 
 		/*
 		 * void purple_prefs_set_path_list(char * name, GList * value)
+		 * 
+		 * Could not generate a wrapper for purple_prefs_set_path_list in file "prefs.h".
+		 * Message: The type could not be resolved (GList * value).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern void purple_prefs_set_path_list(string name, IntPtr value);
-
-		public static void SetPathList(string name, GList value)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * gboolean purple_prefs_exists(char * name)
@@ -277,18 +274,19 @@ namespace PurpleWrapper
 
 		public static bool Exists(string name)
 		{
-			throw new NotImplementedException();
+			return purple_prefs_exists(name);
 		}
 
 		/*
 		 * PurplePrefType purple_prefs_get_type(char * name)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern UNKNOWN purple_prefs_get_type(string name);
+		private static extern Prefs.PurplePrefType purple_prefs_get_type(string name);
 
-		public static PurplePrefType GetType(string name)
+		public static Prefs.PurplePrefType GetType(string name)
 		{
-			throw new NotImplementedException();
+			/* Unable to process purple_prefs_get_type, a KnownEnum. */
+			
 		}
 
 		/*
@@ -299,7 +297,7 @@ namespace PurpleWrapper
 
 		public static bool GetBool(string name)
 		{
-			throw new NotImplementedException();
+			return purple_prefs_get_bool(name);
 		}
 
 		/*
@@ -310,7 +308,7 @@ namespace PurpleWrapper
 
 		public static int GetInt(string name)
 		{
-			throw new NotImplementedException();
+			return purple_prefs_get_int(name);
 		}
 
 		/*
@@ -321,19 +319,15 @@ namespace PurpleWrapper
 
 		public static string GetString(string name)
 		{
-			throw new NotImplementedException();
+			return purple_prefs_get_string(name);
 		}
 
 		/*
 		 * GList * purple_prefs_get_string_list(char * name)
+		 * 
+		 * Could not generate a wrapper for purple_prefs_get_string_list in file "prefs.h".
+		 * Message: The type could not be resolved (GList * purple_prefs_get_string_list(char * name)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_prefs_get_string_list(string name);
-
-		public static GList GetStringList(string name)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * char * purple_prefs_get_path(char * name)
@@ -343,41 +337,22 @@ namespace PurpleWrapper
 
 		public static string GetPath(string name)
 		{
-			throw new NotImplementedException();
+			return purple_prefs_get_path(name);
 		}
 
 		/*
 		 * GList * purple_prefs_get_path_list(char * name)
+		 * 
+		 * Could not generate a wrapper for purple_prefs_get_path_list in file "prefs.h".
+		 * Message: The type could not be resolved (GList * purple_prefs_get_path_list(char * name)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_prefs_get_path_list(string name);
-
-		public static GList GetPathList(string name)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * GList * purple_prefs_get_children_names(char * name)
+		 * 
+		 * Could not generate a wrapper for purple_prefs_get_children_names in file "prefs.h".
+		 * Message: The type could not be resolved (GList * purple_prefs_get_children_names(char * name)).
 		 */
-		[DllImport("libpurple.dll")]
-		private static extern IntPtr purple_prefs_get_children_names(string name);
-
-		public static GList GetChildrenNames(string name)
-		{
-			throw new NotImplementedException();
-		}
-
-		/*
-		 * guint purple_prefs_connect_callback(void * handle, char * name, PurplePrefCallback cb, gpointer data)
-		 */
-		[DllImport("libpurple.dll")]
-		private static extern uint purple_prefs_connect_callback(IntPtr handle, string name, UNKNOWN cb, IntPtr data);
-
-		public static uint ConnectCallback(IntPtr handle, string name, PurplePrefCallback cb, IntPtr data)
-		{
-			throw new NotImplementedException();
-		}
 
 		/*
 		 * void purple_prefs_disconnect_callback(guint callback_id)
@@ -387,7 +362,7 @@ namespace PurpleWrapper
 
 		public static void DisconnectCallback(uint callback_id)
 		{
-			throw new NotImplementedException();
+			purple_prefs_disconnect_callback(callback_id);
 		}
 
 		/*
@@ -398,7 +373,7 @@ namespace PurpleWrapper
 
 		public static void DisconnectByHandle(IntPtr handle)
 		{
-			throw new NotImplementedException();
+			purple_prefs_disconnect_by_handle(handle);
 		}
 
 		/*
@@ -409,7 +384,7 @@ namespace PurpleWrapper
 
 		public static void TriggerCallback(string name)
 		{
-			throw new NotImplementedException();
+			purple_prefs_trigger_callback(name);
 		}
 
 		/*
@@ -420,7 +395,7 @@ namespace PurpleWrapper
 
 		public static bool Load()
 		{
-			throw new NotImplementedException();
+			return purple_prefs_load();
 		}
 
 		/*
@@ -431,7 +406,7 @@ namespace PurpleWrapper
 
 		public static void UpdateOld()
 		{
-			throw new NotImplementedException();
+			purple_prefs_update_old();
 		}
 
 	}
