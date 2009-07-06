@@ -108,6 +108,7 @@ typedef enum
 
 #include "account.h"
 #include "buddyicon.h"
+#include "privacy.h"
 #include "status.h"
 
 /**************************************************************************/
@@ -143,6 +144,9 @@ struct _PurpleBuddy {
 	PurpleBuddyIcon *icon;                    /**< The buddy icon. */
 	PurpleAccount *account;					/**< the account this buddy belongs to */
 	PurplePresence *presence;
+	gboolean privacy_receive_message;		/**< Are messages from this contact allowed >**/
+	gboolean privacy_send_presence;		/**< Do we send presence to this contact >**/
+	gboolean local_only;			/**< Specifies if this contact is on any of server's lists >**/
 };
 
 /**
@@ -872,7 +876,6 @@ PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name
  */
 GSList *purple_find_buddies(PurpleAccount *account, const char *name);
 
-
 /**
  * Finds a group by name
  *
@@ -1195,6 +1198,20 @@ void purple_blist_init(void);
 void purple_blist_uninit(void);
 
 /*@}*/
+
+/**************************************************************************/
+/** @name Privacy Related Functions					  */
+/**************************************************************************/
+/*@{*/
+
+/* Return privacy contact, given name and account */
+PurpleBuddy *purple_find_privacy_contact(PurpleAccount *account, const char *name);
+
+/* Return list of privacy contacts for a given account */
+/* privacy laters: change name to be not so similar to purple_find_privacy_contact */
+GSList *purple_find_privacy_contacts(PurpleAccount *account, const char *name);
+
+/*@{*/
 
 #ifdef __cplusplus
 }

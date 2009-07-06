@@ -430,7 +430,7 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
 	PurpleConversation *c = NULL;
-	GSList *l;
+	GSList *l = NULL, *deny = NULL;
 	GList *members = NULL;
 	GList *roomies = NULL;
 	char *room = NULL;
@@ -560,9 +560,11 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 		yahoo_chat_add_users(PURPLE_CONV_CHAT(c), members);
 	}
 
-	if (account->deny && c) {
+	deny = purple_privacy_list_get_members_by_account(account, PURPLE_PRIVACY_BLOCK_BOTH_LIST);
+
+	if (deny && c) {
 		PurpleConversationUiOps *ops = purple_conversation_get_ui_ops(c);
-		for (l = account->deny; l != NULL; l = l->next) {
+		for (l = deny; l != NULL; l = l->next) {
 			for (roomies = members; roomies; roomies = roomies->next) {
 				if (!purple_utf8_strcasecmp((char *)l->data, roomies->data)) {
 					purple_debug_info("yahoo", "Ignoring room member %s in room %s\n" , (char *)roomies->data, room ? room : "");
@@ -572,6 +574,7 @@ void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 			}
 		}
 	}
+	g_slist_free(deny);
 	g_list_free(roomies);
 	g_list_free(members);
 	g_free(room);

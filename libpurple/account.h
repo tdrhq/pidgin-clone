@@ -131,17 +131,6 @@ struct _PurpleAccount
 	PurpleProxyInfo *proxy_info;  /**< Proxy information.  This will be set   */
 								/*   to NULL when the account inherits      */
 								/*   proxy settings from global prefs.      */
-
-	/*
-	 * TODO: Supplementing the next two linked lists with hash tables
-	 * should help performance a lot when these lists are long.  This
-	 * matters quite a bit for protocols like MSN, where all your
-	 * buddies are added to your permit list.  Currently we have to
-	 * iterate through the entire list if we want to check if someone
-	 * is permitted or denied.  We should do this for 3.0.0.
-	 */
-	GSList *permit;             /**< Permit list.                           */
-	GSList *deny;               /**< Deny list.                             */
 	PurplePrivacyType perm_deny;  /**< The permit/deny setting.               */
 
 	GList *status_types;        /**< Status types.                          */

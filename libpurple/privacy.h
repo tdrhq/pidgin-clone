@@ -26,6 +26,8 @@
 #ifndef _PURPLE_PRIVACY_H_
 #define _PURPLE_PRIVACY_H_
 
+#define PURPLE_PRIVACY_GROUP	"_Privacy"
+
 #include "account.h"
 
 /**
@@ -39,6 +41,16 @@ typedef enum _PurplePrivacyType
 	PURPLE_PRIVACY_DENY_USERS,
 	PURPLE_PRIVACY_ALLOW_BUDDYLIST
 } PurplePrivacyType;
+
+typedef enum _PurplePrivacyListType
+{
+	PURPLE_PRIVACY_ALLOW_LIST = 1,
+	PURPLE_PRIVACY_BLOCK_MESSAGE_LIST,
+	PURPLE_PRIVACY_BLOCK_BOTH_LIST,
+	PURPLE_PRIVACY_VISIBLE_LIST,
+	PURPLE_PRIVACY_INVISIBLE_LIST,
+	PURPLE_PRIVACY_BUDDY_LIST
+} PurplePrivacyListType;
 
 #ifdef __cplusplus
 extern "C" {
@@ -164,7 +176,7 @@ void purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local
  * @param account	The account.
  * @param who		The name of the user.
  *
- * @return @c FALSE if the specified account's privacy settings block the user or @c TRUE otherwise. The meaning of "block" is protocol-dependent and generally relates to status and/or sending of messages.
+ * @return @c FALSE if the specified account's privacy settings block the user or @c TRUE otherwise. The meaning of "block" relates to sending of messages.
  */
 gboolean purple_privacy_check(PurpleAccount *account, const char *who);
 
@@ -186,6 +198,28 @@ PurplePrivacyUiOps *purple_privacy_get_ui_ops(void);
  * Initializes the privacy subsystem.
  */
 void purple_privacy_init(void);
+
+/* privacy laters: detailed description laters */
+/* Sets the privacy settings for a contact */
+gboolean purple_privacy_update_contact(PurpleAccount *account, const char *who, gboolean local_only, gboolean receive_message, gboolean send_presence);
+
+/* Returns account specific privacy lists */
+GSList *purple_privacy_list_get_members_by_account(PurpleAccount *account, PurplePrivacyListType type);
+
+/* Sets privacy setting for receiving messages, leaves presence setting untouched */
+gboolean purple_privacy_update_message_setting(PurpleAccount *account, const char *who, gboolean receive_message);
+
+/* Sets privacy setting for sending presence, leaves message setting untouched */
+gboolean purple_privacy_update_presence_setting(PurpleAccount *account, const char *who, gboolean send_presence);
+
+/* called by prpls with all the privacy lists + buddy list. Synchronizes the local master list (blist) */
+gboolean purple_privacy_sync_lists(PurpleAccount *account, GSList *buddy_l, GSList *allow_l, GSList *block_msg_l, GSList *block_both_l, GSList *visible_l, GSList *invisible_l);
+
+/* returns if sending presence information is allowed to the contact "who" */
+gboolean purple_privacy_check_presence(PurpleAccount *account, const char *who);
+
+/* returns if receiving messages from the contact "who" is allowed */
+gboolean purple_privacy_check_message(PurpleAccount *account, const char *who);
 
 #ifdef __cplusplus
 }

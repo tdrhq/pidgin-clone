@@ -486,6 +486,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	PurpleGroup *g;
 	int protocol = 0;
 	int stealth = 0;
+	GSList *buddy_list = NULL, *block_both_list = NULL, *invisible_list = NULL;
 
 
 	ht = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_slist_free);
@@ -527,12 +528,18 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 						purple_blist_add_buddy(b, NULL, g, NULL);
 					}
 					yahoo_do_group_check(account, ht, norm_bud, yd->current_list15_grp);
+					/* Prepare buddy list to be passed to privacy subsystem */
+					buddy_list = g_slist_prepend(buddy_list, g_strdup(norm_bud));
 					if(protocol != 0) {
 						f->protocol = protocol;
 						purple_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
 					}
 					if(stealth == 2)
+					{
 						f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
+						/* Prepare invisible list to be passed to privacy subsystem */
+						invisible_list = g_slist_prepend(invisible_list, g_strdup(norm_bud));
+					}
 
 					/* set p2p status not connected and no p2p packet sent */
 					if(protocol == 0) {
@@ -543,7 +550,8 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 				} else {
 					/* This buddy is on the ignore list (and therefore in no group) */
 					purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found\n",account->username, norm_bud);
-					purple_privacy_deny_add(account, norm_bud, 1);
+					/* Prepare block list (blocks message and presence) to be passed to privacy subsystem */
+					block_both_list = g_slist_prepend(block_both_list, g_strdup(norm_bud));
 				}
 
 				protocol = 0;
@@ -587,6 +595,14 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	}
 	yahoo_set_status(account, purple_account_get_active_status(account));
 	purple_debug_info("yahoo","Authentication: Connection established\n");
+
+	/* Provide the privacy subsystem with the lists on the server*/ 
+	purple_privacy_sync_lists(account, buddy_list, NULL, NULL, block_both_list, NULL, invisible_list);
+	purple_debug_info("yahoo","Privacy Lists synchronized\n");
+
+	g_slist_free(buddy_list);
+	g_slist_free(block_both_list);
+	g_slist_free(invisible_list);
 
 	g_hash_table_destroy(ht);
 	g_free(norm_bud);
@@ -4743,25 +4759,27 @@ void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 void yahoo_set_permit_deny(PurpleConnection *gc)
 {
 	PurpleAccount *account;
-	GSList *deny;
+	GSList *deny = NULL, *l = NULL;
 
 	account = purple_connection_get_account(gc);
+	deny = purple_privacy_list_get_members_by_account(account, PURPLE_PRIVACY_BLOCK_BOTH_LIST);
 
 	switch (account->perm_deny)
 	{
 		case PURPLE_PRIVACY_ALLOW_ALL:
-			for (deny = account->deny; deny; deny = deny->next)
-				yahoo_rem_deny(gc, deny->data);
+			for (l = deny; l; l = l->next)
+				yahoo_rem_deny(gc, l->data);
 			break;
 
 		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
 		case PURPLE_PRIVACY_ALLOW_USERS:
 		case PURPLE_PRIVACY_DENY_USERS:
 		case PURPLE_PRIVACY_DENY_ALL:
-			for (deny = account->deny; deny; deny = deny->next)
-				yahoo_add_deny(gc, deny->data);
+			for (l = deny; l; l = l->next)
+				yahoo_add_deny(gc, l->data);
 			break;
 	}
+	g_slist_free(deny);
 }
 
 void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,

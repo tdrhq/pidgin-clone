@@ -92,29 +92,33 @@ static PidginPrivacyDialog *privacy_dialog = NULL;
 static void
 rebuild_allow_list(PidginPrivacyDialog *dialog)
 {
-	GSList *l;
+	GSList *l = NULL, *list = NULL;
 	GtkTreeIter iter;
 
 	gtk_list_store_clear(dialog->allow_store);
+	list = purple_privacy_list_get_members_by_account(dialog->account, PURPLE_PRIVACY_ALLOW_LIST);
 
-	for (l = dialog->account->permit; l != NULL; l = l->next) {
+	for (l = list; l != NULL; l = l->next) {
 		gtk_list_store_append(dialog->allow_store, &iter);
-		gtk_list_store_set(dialog->allow_store, &iter, 0, l->data, -1);
+		gtk_list_store_set(dialog->allow_store, &iter, 0, (char *)l->data, -1);
 	}
+	g_slist_free(list);
 }
 
 static void
 rebuild_block_list(PidginPrivacyDialog *dialog)
 {
-	GSList *l;
+	GSList *l = NULL, *list = NULL;
 	GtkTreeIter iter;
 
 	gtk_list_store_clear(dialog->block_store);
+	list = purple_privacy_list_get_members_by_account(dialog->account, PURPLE_PRIVACY_BLOCK_BOTH_LIST);
 
-	for (l = dialog->account->deny; l != NULL; l = l->next) {
+	for (l = list; l != NULL; l = l->next) {
 		gtk_list_store_append(dialog->block_store, &iter);
-		gtk_list_store_set(dialog->block_store, &iter, 0, l->data, -1);
+		gtk_list_store_set(dialog->block_store, &iter, 0, (char *)l->data, -1);
 	}
+	g_slist_free(list);
 }
 
 static void
@@ -311,11 +315,11 @@ remove_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 static void
 removeall_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 {
-	GSList *l;
+	GSList *l = NULL, *list = NULL;
 	if (dialog->in_allow_list)
-		l = dialog->account->permit;
+		l = list = purple_privacy_list_get_members_by_account(dialog->account, PURPLE_PRIVACY_ALLOW_LIST);
 	else
-		l = dialog->account->deny;
+		l = list = purple_privacy_list_get_members_by_account(dialog->account, PURPLE_PRIVACY_BLOCK_BOTH_LIST);
 	while (l) {
 		char *user;
 		user = l->data;
@@ -325,6 +329,7 @@ removeall_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 		else
 			purple_privacy_deny_remove(dialog->account, user, FALSE);
 	}
+	g_slist_free(list);
 }
 
 static void

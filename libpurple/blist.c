@@ -173,8 +173,9 @@ chat_component_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 static xmlnode *
 buddy_to_xmlnode(PurpleBlistNode *bnode)
 {
-	xmlnode *node, *child;
+	xmlnode *node, *child, *grandchild;
 	PurpleBuddy *buddy;
+	char *buf = NULL;
 
 	buddy = (PurpleBuddy *)bnode;
 
@@ -185,6 +186,20 @@ buddy_to_xmlnode(PurpleBlistNode *bnode)
 	child = xmlnode_new_child(node, "name");
 	xmlnode_insert_data(child, buddy->name, -1);
 
+	child = xmlnode_new_child(node, "privacy");
+	grandchild = xmlnode_new_child(child, "receive_message");
+	xmlnode_set_attrib(grandchild, "type", "bool");
+	buf = g_strdup_printf("%d", buddy->privacy_receive_message);
+	xmlnode_insert_data(grandchild, buf, -1);
+	grandchild = xmlnode_new_child(child, "send_presence");
+	xmlnode_set_attrib(grandchild, "type", "bool");
+	buf = g_strdup_printf("%d", buddy->privacy_send_presence);
+	xmlnode_insert_data(grandchild, buf, -1);
+	grandchild = xmlnode_new_child(child, "local_only");
+	xmlnode_set_attrib(grandchild, "type", "bool");
+	buf = g_strdup_printf("%d", buddy->local_only);
+	xmlnode_insert_data(grandchild, buf, -1);
+
 	if (buddy->alias != NULL)
 	{
 		child = xmlnode_new_child(node, "alias");
@@ -194,6 +209,7 @@ buddy_to_xmlnode(PurpleBlistNode *bnode)
 	/* Write buddy settings */
 	g_hash_table_foreach(buddy->node.settings, value_to_xmlnode, node);
 
+	g_free(buf);
 	return node;
 }
 
@@ -296,8 +312,7 @@ group_to_xmlnode(PurpleBlistNode *gnode)
 static xmlnode *
 accountprivacy_to_xmlnode(PurpleAccount *account)
 {
-	xmlnode *node, *child;
-	GSList *cur;
+	xmlnode *node;
 	char buf[10];
 
 	node = xmlnode_new("account");
@@ -305,18 +320,6 @@ accountprivacy_to_xmlnode(PurpleAccount *account)
 	xmlnode_set_attrib(node, "name", purple_account_get_username(account));
 	g_snprintf(buf, sizeof(buf), "%d", account->perm_deny);
 	xmlnode_set_attrib(node, "mode", buf);
-
-	for (cur = account->permit; cur; cur = cur->next)
-	{
-		child = xmlnode_new_child(node, "permit");
-		xmlnode_insert_data(child, cur->data, -1);
-	}
-
-	for (cur = account->deny; cur; cur = cur->next)
-	{
-		child = xmlnode_new_child(node, "block");
-		xmlnode_insert_data(child, cur->data, -1);
-	}
 
 	return node;
 }
@@ -420,9 +423,9 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 {
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
-	char *name = NULL, *alias = NULL;
+	char *name = NULL, *alias = NULL, *temp = NULL;
 	const char *acct_name, *proto, *protocol;
-	xmlnode *x;
+	xmlnode *x, *y;
 
 	acct_name = xmlnode_get_attrib(bnode, "account");
 	protocol = xmlnode_get_attrib(bnode, "protocol");
@@ -450,6 +453,28 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 	buddy = purple_buddy_new(account, name, alias);
 	purple_blist_add_buddy(buddy, contact, group,
 			purple_blist_get_last_child((PurpleBlistNode*)contact));
+
+	if ((x = xmlnode_get_child(bnode, "privacy")))
+	{
+		if ((y = xmlnode_get_child(x, "receive_message")))
+		{
+			temp = xmlnode_get_data(y);
+			buddy->privacy_receive_message = atoi(temp);
+			g_free(temp);
+		}
+		if ((y = xmlnode_get_child(x, "send_presence")))
+		{
+			temp = xmlnode_get_data(y);
+			buddy->privacy_send_presence = atoi(temp);
+			g_free(temp);
+		}
+		if ((y = xmlnode_get_child(x, "local_only")))
+		{
+			temp = xmlnode_get_data(y);
+			buddy->local_only = atoi(temp);
+			g_free(temp);
+		}
+	}
 
 	for (x = xmlnode_get_child(bnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
 		parse_setting((PurpleBlistNode*)buddy, x);
@@ -587,7 +612,6 @@ purple_blist_load()
 	if (privacy) {
 		xmlnode *anode;
 		for (anode = privacy->child; anode; anode = anode->next) {
-			xmlnode *x;
 			PurpleAccount *account;
 			int imode;
 			const char *acct_name, *proto, *mode, *protocol;
@@ -607,22 +631,6 @@ purple_blist_load()
 
 			imode = atoi(mode);
 			account->perm_deny = (imode != 0 ? imode : PURPLE_PRIVACY_ALLOW_ALL);
-
-			for (x = anode->child; x; x = x->next) {
-				char *name;
-				if (x->type != XMLNODE_TYPE_TAG)
-					continue;
-
-				if (purple_strequal(x->name, "permit")) {
-					name = xmlnode_get_data(x);
-					purple_privacy_permit_add(account, name, TRUE);
-					g_free(name);
-				} else if (purple_strequal(x->name, "block")) {
-					name = xmlnode_get_data(x);
-					purple_privacy_deny_add(account, name, TRUE);
-					g_free(name);
-				}
-			}
 		}
 	}
 
@@ -1324,6 +1332,12 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 	purple_presence_set_status_active(buddy->presence, "offline", TRUE);
 
 	purple_blist_node_initialize_settings((PurpleBlistNode *)buddy);
+
+	/* set new buddy's privacy settings, later: check if buddy exists in some privacy list, set settings accordingly, also 
+		check what local/server settings needed */
+	buddy->privacy_receive_message = TRUE;
+	buddy->privacy_send_presence = TRUE;
+	buddy->local_only = FALSE;
 
 	if (ops && ops->new_node)
 		ops->new_node((PurpleBlistNode *)buddy);
@@ -2351,6 +2365,10 @@ PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name)
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
+	/* If "name" is in PURPLE_PRIVACY_GROUP, it isn't a buddy */
+	if(purple_find_buddy_in_group(account, name, purple_find_group(PURPLE_PRIVACY_GROUP)))
+		return NULL;
+
 	hb.account = account;
 	hb.name = g_strdup(purple_normalize(account, name));
 
@@ -2386,6 +2404,22 @@ PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name
 	return ret;
 }
 
+PurpleBuddy *purple_find_privacy_contact(PurpleAccount *account, const char *name)
+{
+	PurpleBuddy *b;
+
+	g_return_val_if_fail(purplebuddylist != NULL, NULL);
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
+
+	if((b = purple_find_buddy(account, name)))
+		return b;
+	if((b = purple_find_buddy_in_group(account, name, purple_find_group(PURPLE_PRIVACY_GROUP))))
+		return b;
+
+	return NULL;
+}
+
 static void find_acct_buddies(gpointer key, gpointer value, gpointer data)
 {
 	PurpleBuddy *buddy = value;
@@ -2394,7 +2428,7 @@ static void find_acct_buddies(gpointer key, gpointer value, gpointer data)
 	*list = g_slist_prepend(*list, buddy);
 }
 
-GSList *purple_find_buddies(PurpleAccount *account, const char *name)
+GSList *purple_find_privacy_contacts(PurpleAccount *account, const char *name)
 {
 	PurpleBuddy *buddy;
 	PurpleBlistNode *node;
@@ -2423,6 +2457,30 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 	}
 
 	return ret;
+}
+
+GSList *purple_find_buddies(PurpleAccount *account, const char *name)
+{
+	GSList *l_tmp = NULL, *lp = NULL;
+	PurpleBuddy *b = NULL;
+	const char *tmp = NULL;
+
+	g_return_val_if_fail(purplebuddylist != NULL, NULL);
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
+ 
+	if (!(lp = purple_find_privacy_contacts(account, name)))
+		return NULL;
+
+	for(l_tmp = lp; l_tmp; l_tmp = l_tmp->next)
+	{
+		b = l_tmp->data;
+		tmp = purple_group_get_name( purple_buddy_get_group(b) );
+		if( strcmp(tmp, PURPLE_PRIVACY_GROUP) == 0 )
+			lp = g_slist_remove(lp, l_tmp);
+	}
+
+	return lp;
 }
 
 PurpleGroup *purple_find_group(const char *name)
