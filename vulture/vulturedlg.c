@@ -60,6 +60,7 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 static void PopulateAccountsCombo(HWND hwndCBEx, GList *lpglistAccounts);
 static HWND CreateJoinDlgLabel(HWND hwndDlg, int iFieldNum, LPCSTR szLabelUTF8);
 static HWND CreateJoinDlgEdit(HWND hwndDlg, int iFieldNum, BOOL bNumber, BOOL bSecret);
+static void UpdateJoinChatFields(HWND hwndDlg, GList **lplpglistFields, int *lpiMaxShowFields);
 
 
 /**
@@ -107,11 +108,6 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			VultureSingleSyncPurpleCall(PC_GETACCOUNTS, &vgetaccounts);
 			s_lpglistAccounts = vgetaccounts.lpglistAccounts;
 
-			/* Populate combo and select first item. */
-			PopulateAccountsCombo(GetDlgItem(hwndDlg, IDC_CBEX_ACCOUNTS), s_lpglistAccounts);
-			if(SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCOUNT, 0, 0) > 0)
-				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_SETCURSEL, 0, 0);
-
 			/* Remember metrics. */
 			GetClientRect(hwndDlg, &rcDlg);
 			GetWindowRect(GetDlgItem(hwndDlg, IDC_STATIC_DETAILS), &rcGroup);
@@ -133,6 +129,16 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			 * fields.
 			 */
 			s_iMaxShowFields = 3;
+
+			/* Populate combo and select first item. */
+			PopulateAccountsCombo(GetDlgItem(hwndDlg, IDC_CBEX_ACCOUNTS), s_lpglistAccounts);
+			if(SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCOUNT, 0, 0) > 0)
+			{
+				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_SETCURSEL, 0, 0);
+
+				/* Show fields. */
+				UpdateJoinChatFields(hwndDlg, &s_lpglistFields, &s_iMaxShowFields);
+			}
 		}
 
 		/* Let the system set the focus. */
@@ -151,76 +157,7 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 
 		case IDC_CBEX_ACCOUNTS:
 			if(HIWORD(wParam) == CBN_SELCHANGE)
-			{
-				GList *lpglistRover;
-				VULTURE_GET_CHAT_FIELDS getchatfields;
-				COMBOBOXEXITEM cbexitem;
-				int iFieldNum;
-
-				/* Destroy existing fields. */
-				for(lpglistRover = s_lpglistFields; lpglistRover; lpglistRover = lpglistRover->next)
-				{
-					JOIN_DLG_FIELD *lpjdf = lpglistRover->data;
-					DestroyWindow(lpjdf->hwndLabel);
-					DestroyWindow(lpjdf->hwndEdit);
-
-					ProcHeapFree(lpjdf);
-				}
-
-				g_list_free(s_lpglistFields);
-
-				/* Get the selected account. */
-				cbexitem.mask = CBEIF_LPARAM;
-				cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCURSEL, 0, 0);
-				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
-
-				/* Find out what we need to specify for chats
-				 * on this account.
-				 */
-				getchatfields.lpvac = (VULTURE_ACCOUNT*)cbexitem.lParam;
-				VultureSingleSyncPurpleCall(PC_GETCHATFIELDS, &getchatfields);
-				
-				s_lpglistFields = NULL;
-
-				/* Create new fields. */
-				for(lpglistRover = getchatfields.lpglistFields, iFieldNum = 0;
-					lpglistRover;
-					lpglistRover = lpglistRover->next, iFieldNum++)
-				{
-					struct proto_chat_entry *lppce = lpglistRover->data;
-					JOIN_DLG_FIELD *lpjdf = ProcHeapAlloc(sizeof(JOIN_DLG_FIELD));
-
-					lpjdf->bIsInt = lppce->is_int;
-					lpjdf->bRequired = lppce->required;
-					lpjdf->szID = lppce->identifier;
-
-					lpjdf->hwndLabel = CreateJoinDlgLabel(hwndDlg, iFieldNum, lppce->label);
-					lpjdf->hwndEdit = CreateJoinDlgEdit(hwndDlg, iFieldNum, lppce->is_int && (lppce->min >= 0), lppce->secret);
-
-					s_lpglistFields = g_list_prepend(s_lpglistFields, lpjdf);
-				}
-
-				if(iFieldNum > s_iMaxShowFields)
-				{
-					RECT rcAdjust, rcCurrent;
-
-					/* How much extra height? */
-					SetRect(&rcAdjust, 0, 0, 0, (iFieldNum - s_iMaxShowFields) * CY_JC_INCREMENT);
-					MapDialogRect(hwndDlg, &rcAdjust);
-
-					/* Get current dimensions and adjust. */
-					GetWindowRect(hwndDlg, &rcCurrent);
-					rcCurrent.bottom += rcAdjust.bottom;
-
-					SetWindowPos(hwndDlg, NULL, 0, 0, rcCurrent.right - rcCurrent.left, rcCurrent.bottom - rcCurrent.top, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
-
-					s_iMaxShowFields = iFieldNum;
-				}
-
-				s_lpglistFields = g_list_reverse(s_lpglistFields);
-
-				g_list_free(getchatfields.lpglistFields);
-			}
+				UpdateJoinChatFields(hwndDlg, &s_lpglistFields, &s_iMaxShowFields);
 
 			return TRUE;
 		}
@@ -388,4 +325,85 @@ static HWND CreateJoinDlgEdit(HWND hwndDlg, int iFieldNum, BOOL bNumber, BOOL bS
 	SendMessage(hwndEdit, WM_SETFONT, (WPARAM)hfont, FALSE);
 
 	return hwndEdit;
+}
+
+
+/**
+ * Creates an edit box for a chat parameter in the join-chat dialogue.
+ *
+ * @param		hwndDlg			Join-chat dialogue.
+ * @param[in,out]	lplpglistFields		Current list of fields, to be
+ *						replaced with new ones.
+ * @param[in,out]	lpiMaxShowFields	Room for fields in dialogue.
+ */
+static void UpdateJoinChatFields(HWND hwndDlg, GList **lplpglistFields, int *lpiMaxShowFields)
+{
+	GList *lpglistRover;
+	VULTURE_GET_CHAT_FIELDS getchatfields;
+	COMBOBOXEXITEM cbexitem;
+	int iFieldNum;
+
+	/* Destroy existing fields. */
+	for(lpglistRover = *lplpglistFields; lpglistRover; lpglistRover = lpglistRover->next)
+	{
+		JOIN_DLG_FIELD *lpjdf = lpglistRover->data;
+		DestroyWindow(lpjdf->hwndLabel);
+		DestroyWindow(lpjdf->hwndEdit);
+
+		ProcHeapFree(lpjdf);
+	}
+
+	g_list_free(*lplpglistFields);
+
+	/* Get the selected account. */
+	cbexitem.mask = CBEIF_LPARAM;
+	cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCURSEL, 0, 0);
+	SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+
+	/* Find out what we need to specify for chats
+	 * on this account.
+	 */
+	getchatfields.lpvac = (VULTURE_ACCOUNT*)cbexitem.lParam;
+	VultureSingleSyncPurpleCall(PC_GETCHATFIELDS, &getchatfields);
+	
+	*lplpglistFields = NULL;
+
+	/* Create new fields. */
+	for(lpglistRover = getchatfields.lpglistFields, iFieldNum = 0;
+		lpglistRover;
+		lpglistRover = lpglistRover->next, iFieldNum++)
+	{
+		struct proto_chat_entry *lppce = lpglistRover->data;
+		JOIN_DLG_FIELD *lpjdf = ProcHeapAlloc(sizeof(JOIN_DLG_FIELD));
+
+		lpjdf->bIsInt = lppce->is_int;
+		lpjdf->bRequired = lppce->required;
+		lpjdf->szID = lppce->identifier;
+
+		lpjdf->hwndLabel = CreateJoinDlgLabel(hwndDlg, iFieldNum, lppce->label);
+		lpjdf->hwndEdit = CreateJoinDlgEdit(hwndDlg, iFieldNum, lppce->is_int && (lppce->min >= 0), lppce->secret);
+
+		*lplpglistFields = g_list_prepend(*lplpglistFields, lpjdf);
+	}
+
+	if(iFieldNum > *lpiMaxShowFields)
+	{
+		RECT rcAdjust, rcCurrent;
+
+		/* How much extra height? */
+		SetRect(&rcAdjust, 0, 0, 0, (iFieldNum - *lpiMaxShowFields) * CY_JC_INCREMENT);
+		MapDialogRect(hwndDlg, &rcAdjust);
+
+		/* Get current dimensions and adjust. */
+		GetWindowRect(hwndDlg, &rcCurrent);
+		rcCurrent.bottom += rcAdjust.bottom;
+
+		SetWindowPos(hwndDlg, NULL, 0, 0, rcCurrent.right - rcCurrent.left, rcCurrent.bottom - rcCurrent.top, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
+
+		*lpiMaxShowFields = iFieldNum;
+	}
+
+	*lplpglistFields = g_list_reverse(*lplpglistFields);
+
+	g_list_free(getchatfields.lpglistFields);
 }
