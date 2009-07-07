@@ -33,6 +33,73 @@ destroy_contact(telepathy_contact *contact_data)
 }
 
 static void
+remove_members_cb (TpChannel *proxy,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "RemoveMembers error: %s\n", error->message);
+	}
+	else
+	{
+		purple_debug_info("telepathy", "Member removed!\n");
+	}
+}
+
+void
+remove_contact_cb (TpConnection *connection,
+                   TpHandleType handle_type,
+                   guint n_handles,
+                   const TpHandle *handles,
+                   const gchar * const *ids,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	telepathy_connection *data = user_data;
+	telepathy_group *stored_list;
+	GArray *arr;
+	int i;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy",
+				"RequestHandle (remove_contact_cb): %s\n", error->message);
+		return;
+	}
+
+	/* we are going to remove the handle from the stored list */
+	stored_list = g_hash_table_lookup(data->lists, "stored");
+	
+	arr = g_array_new(0, 0, sizeof(TpHandle));
+
+	purple_debug_info("telepathy", "Got handle for removing buddy (%u)!\n",
+		handles[0]);
+
+	for (i = 0; i<n_handles; ++i)
+	{
+	    g_array_append_val(arr, handles[i]);
+	}
+
+	if (stored_list == NULL)
+	{
+		purple_debug_error("telepathy", "There's no stored list cached!\n");
+	}
+	else
+	{
+		tp_cli_channel_interface_group_call_remove_members(stored_list->channel, -1,
+				arr, NULL,
+				remove_members_cb, data,
+				NULL, NULL);
+
+	}
+
+	g_array_free(arr, TRUE);
+}
+
+static void
 add_member_cb (TpChannel *proxy,
                const GError *error,
                gpointer user_data,
@@ -119,6 +186,7 @@ add_contact_to_group_cb (TpConnection *connection,
 				group_contacts_ready_cb,
 				group, NULL, NULL);
 
+		g_array_free(arr, TRUE);
 	}
 }
 

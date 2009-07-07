@@ -526,6 +526,22 @@ telepathy_add_buddy (PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *grou
 }
 
 static void
+telepathy_remove_buddy (PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+{
+	const gchar* buddy_name = purple_buddy_get_name(buddy);
+	telepathy_connection *connection_data = purple_connection_get_protocol_data(gc);
+	
+	gchar const *ids[] = { buddy_name, NULL };
+
+	purple_debug_info("telepathy", "Removing buddy %s\n", buddy_name);
+
+	tp_connection_request_handles(connection_data->connection, -1,
+			TP_HANDLE_TYPE_CONTACT, ids,
+			remove_contact_cb, connection_data,
+			NULL, NULL);
+}
+
+static void
 telepathy_set_buddy_icon (PurpleConnection *gc, PurpleStoredImage *img)
 {
 	telepathy_connection *data = purple_connection_get_protocol_data(gc);
@@ -601,7 +617,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	NULL,              /* change_passwd */
 	telepathy_add_buddy,                  /* add_buddy */
 	NULL,                /* add_buddies */
-	NULL,               /* remove_buddy */
+	telepathy_remove_buddy,               /* remove_buddy */
 	NULL,             /* remove_buddies */
 	NULL,                 /* add_permit */
 	NULL,                   /* add_deny */
