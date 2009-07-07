@@ -30,6 +30,7 @@ typedef struct
 	telepathy_connection *connection_data;
 	TpChannel *channel;
 	TpHandle handle;
+	const gchar *message;
 
 } telepathy_authorization_request;
 

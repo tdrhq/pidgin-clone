@@ -159,12 +159,15 @@ request_authorization_cb (TpConnection *connection,
 
 		purple_account_request_authorization(data->connection_data->acct,
 				tp_contact_get_identifier(contacts[i]), NULL,
-				tp_contact_get_alias(contacts[i]), NULL,
+				tp_contact_get_alias(contacts[i]), request->message,
 				FALSE, 
 				request_authorization_auth_cb,
 				request_authorization_deny_cb,
 				request);
 	}
+
+	g_free((gpointer)data->message);
+	g_free(data);
 }
 
 static void
@@ -221,11 +224,12 @@ members_changed_cb (TpChannel *proxy,
 
 		request->connection_data = data;
 		request->channel = proxy;
+		request->message = g_strdup(arg_Message);
 
 		tp_connection_get_contacts_by_handle(data->connection,
 				arg_Local_Pending->len, (const TpHandle*)arg_Local_Pending->data,
 				G_N_ELEMENTS (features), features,
-				request_authorization_cb, request, g_free, NULL);
+				request_authorization_cb, request, NULL, NULL);
 	}
 }
 
@@ -284,11 +288,12 @@ get_local_pending_members_with_info_cb (TpChannel *proxy,
 
 		request->connection_data = data;
 		request->channel = proxy;
+		request->message = g_strdup(message);
 
 		tp_connection_get_contacts_by_handle(data->connection,
 				1, &handle,
 				G_N_ELEMENTS (features), features,
-				request_authorization_cb, request, g_free, NULL);
+				request_authorization_cb, request, NULL, NULL);
 	}
 }
 
