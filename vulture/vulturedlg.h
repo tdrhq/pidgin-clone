@@ -27,8 +27,23 @@
 #include <windows.h>
 #include <glib.h>
 
+#include "acctmanager.h"
 
-GHashTable* VultureJoinChatDlg(HWND hwndParent);
+
+typedef struct _VULTURE_JOIN_CHAT_DATA
+{
+	VULTURE_ACCOUNT	*lpvac;
+	GHashTable	*lphashParameters;
+} VULTURE_JOIN_CHAT_DATA;
+
+typedef struct _VULTURE_GET_CHAT_FIELDS
+{
+	VULTURE_ACCOUNT	*lpvac;
+	GList		*lpglistFields;
+} VULTURE_GET_CHAT_FIELDS;
+
+
+BOOL VultureJoinChatDlg(HWND hwndParent, VULTURE_JOIN_CHAT_DATA *lpvjcd);
 
 
 #endif

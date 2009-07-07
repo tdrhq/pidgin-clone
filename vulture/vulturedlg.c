@@ -33,21 +33,46 @@
 #include "purpleacct.h"
 
 
+typedef struct _JOIN_DLG_FIELD
+{
+	LPCSTR	szID;
+	HWND	hwndLabel, hwndEdit;
+	BOOL	bIsInt, bRequired;
+} JOIN_DLG_FIELD;
+
+
+/* Dialogue co-ordinates for the join-chat fields. */
+#define X_JC_LABEL		15
+#define X_JC_EDIT		75
+#define CX_JC_LABEL		55
+#define CY_JC_LABEL		10
+#define CX_JC_EDIT		120
+#define CY_JC_EDIT		12
+#define Y_JC_LABEL_FIRST	62
+#define Y_JC_EDIT_FIRST		60
+#define CY_JC_INCREMENT		15
+
+/* First ID for dynamic join-chat controls. */
+#define IDC_JC_DYNAMIC		2000
+
+
 static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void PopulateAccountsCombo(HWND hwndCBEx, GList *lpglistAccounts);
+static HWND CreateJoinDlgLabel(HWND hwndDlg, int iFieldNum, LPCSTR szLabelUTF8);
+static HWND CreateJoinDlgEdit(HWND hwndDlg, int iFieldNum, BOOL bNumber, BOOL bSecret);
 
 
 /**
  * Displays the "Join a Chat" dialogue.
  *
  * @param	hwndParent	Parent window handle.
+ * @param[out]	lpvjcd		Details of chat to join are returned here.
  *
- * @return Hash table containing details of chat to join, and which caller is
- * responsible for freeing; or NULL if cancelled.
+ * @return TRUE iff OKed.
  */
-GHashTable* VultureJoinChatDlg(HWND hwndParent)
+BOOL VultureJoinChatDlg(HWND hwndParent, VULTURE_JOIN_CHAT_DATA *lpvjcd)
 {
-	return (GHashTable*)DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_JOINCHAT), hwndParent, JoinChatDlgProc);
+	return (BOOL)DialogBoxParam(g_hInstance, MAKEINTRESOURCE(IDD_JOINCHAT), hwndParent, JoinChatDlgProc, (LPARAM)lpvjcd);
 }
 
 
@@ -66,6 +91,9 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 {
 	static int s_cyNonGroup = 0, s_cyButtonMargin = 0;
 	static GList *s_lpglistAccounts = NULL;
+	static VULTURE_JOIN_CHAT_DATA *s_lpvjcd = NULL;
+	static GList *s_lpglistFields = NULL;
+	static int s_iMaxShowFields;
 
 	switch(uiMsg)
 	{
@@ -86,11 +114,25 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 
 			/* Remember metrics. */
 			GetClientRect(hwndDlg, &rcDlg);
-			GetClientRect(GetDlgItem(hwndDlg, IDC_STATIC_DETAILS), &rcGroup);
-			GetClientRect(GetDlgItem(hwndDlg, IDOK), &rcButton);
+			GetWindowRect(GetDlgItem(hwndDlg, IDC_STATIC_DETAILS), &rcGroup);
+			GetWindowRect(GetDlgItem(hwndDlg, IDOK), &rcButton);
+
+			MapWindowPoints(HWND_DESKTOP, hwndDlg, (LPPOINT)(LPVOID)&rcGroup, 2);
+			MapWindowPoints(HWND_DESKTOP, hwndDlg, (LPPOINT)(LPVOID)&rcButton, 2);
 
 			s_cyNonGroup = rcDlg.bottom - rcGroup.bottom + rcGroup.top;
 			s_cyButtonMargin = rcDlg.bottom - rcButton.top;
+
+			/* We return stuff here. */
+			s_lpvjcd = (VULTURE_JOIN_CHAT_DATA*)lParam;
+
+			/* No fields to start with. */
+			s_lpglistFields = NULL;
+
+			/* The dialogue is initially big enough to show three
+			 * fields.
+			 */
+			s_iMaxShowFields = 3;
 		}
 
 		/* Let the system set the focus. */
@@ -100,12 +142,86 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 		switch(LOWORD(wParam))
 		{
 		case IDOK:
-			/* TODO: return hash table. */
-			EndDialog(hwndDlg, (INT_PTR)NULL);
+			EndDialog(hwndDlg, TRUE);
 			return TRUE;
 
 		case IDCANCEL:
-			EndDialog(hwndDlg, (INT_PTR)NULL);
+			EndDialog(hwndDlg, FALSE);
+			return TRUE;
+
+		case IDC_CBEX_ACCOUNTS:
+			if(HIWORD(wParam) == CBN_SELCHANGE)
+			{
+				GList *lpglistRover;
+				VULTURE_GET_CHAT_FIELDS getchatfields;
+				COMBOBOXEXITEM cbexitem;
+				int iFieldNum;
+
+				/* Destroy existing fields. */
+				for(lpglistRover = s_lpglistFields; lpglistRover; lpglistRover = lpglistRover->next)
+				{
+					JOIN_DLG_FIELD *lpjdf = lpglistRover->data;
+					DestroyWindow(lpjdf->hwndLabel);
+					DestroyWindow(lpjdf->hwndEdit);
+
+					ProcHeapFree(lpjdf);
+				}
+
+				g_list_free(s_lpglistFields);
+
+				/* Get the selected account. */
+				cbexitem.mask = CBEIF_LPARAM;
+				cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCURSEL, 0, 0);
+				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+
+				/* Find out what we need to specify for chats
+				 * on this account.
+				 */
+				getchatfields.lpvac = (VULTURE_ACCOUNT*)cbexitem.lParam;
+				VultureSingleSyncPurpleCall(PC_GETCHATFIELDS, &getchatfields);
+				
+				s_lpglistFields = NULL;
+
+				/* Create new fields. */
+				for(lpglistRover = getchatfields.lpglistFields, iFieldNum = 0;
+					lpglistRover;
+					lpglistRover = lpglistRover->next, iFieldNum++)
+				{
+					struct proto_chat_entry *lppce = lpglistRover->data;
+					JOIN_DLG_FIELD *lpjdf = ProcHeapAlloc(sizeof(JOIN_DLG_FIELD));
+
+					lpjdf->bIsInt = lppce->is_int;
+					lpjdf->bRequired = lppce->required;
+					lpjdf->szID = lppce->identifier;
+
+					lpjdf->hwndLabel = CreateJoinDlgLabel(hwndDlg, iFieldNum, lppce->label);
+					lpjdf->hwndEdit = CreateJoinDlgEdit(hwndDlg, iFieldNum, lppce->is_int && (lppce->min >= 0), lppce->secret);
+
+					s_lpglistFields = g_list_prepend(s_lpglistFields, lpjdf);
+				}
+
+				if(iFieldNum > s_iMaxShowFields)
+				{
+					RECT rcAdjust, rcCurrent;
+
+					/* How much extra height? */
+					SetRect(&rcAdjust, 0, 0, 0, (iFieldNum - s_iMaxShowFields) * CY_JC_INCREMENT);
+					MapDialogRect(hwndDlg, &rcAdjust);
+
+					/* Get current dimensions and adjust. */
+					GetWindowRect(hwndDlg, &rcCurrent);
+					rcCurrent.bottom += rcAdjust.bottom;
+
+					SetWindowPos(hwndDlg, NULL, 0, 0, rcCurrent.right - rcCurrent.left, rcCurrent.bottom - rcCurrent.top, SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER);
+
+					s_iMaxShowFields = iFieldNum;
+				}
+
+				s_lpglistFields = g_list_reverse(s_lpglistFields);
+
+				g_list_free(getchatfields.lpglistFields);
+			}
+
 			return TRUE;
 		}
 
@@ -120,8 +236,13 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			HWND hwndCancel = GetDlgItem(hwndDlg, IDCANCEL);
 
 			GetClientRect(hwndGroup, &rcGroup);
-			GetClientRect(hwndOK, &rcOK);
-			GetClientRect(hwndCancel, &rcCancel);
+			GetWindowRect(GetDlgItem(hwndDlg, IDC_STATIC_DETAILS), &rcGroup);
+			GetWindowRect(GetDlgItem(hwndDlg, IDOK), &rcOK);
+			GetWindowRect(GetDlgItem(hwndDlg, IDCANCEL), &rcCancel);
+
+			MapWindowPoints(HWND_DESKTOP, hwndDlg, (LPPOINT)(LPVOID)&rcGroup, 2);
+			MapWindowPoints(HWND_DESKTOP, hwndDlg, (LPPOINT)(LPVOID)&rcOK, 2);
+			MapWindowPoints(HWND_DESKTOP, hwndDlg, (LPPOINT)(LPVOID)&rcCancel, 2);
 
 			/* Adjust group and buttons so that they fill the
 			 * dialogue.
@@ -136,7 +257,17 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 		return TRUE;
 
 	case WM_DESTROY:
-		VultureFreeAccountList(s_lpglistAccounts);
+		{
+			GList *lpglistRover;
+
+			VultureFreeAccountList(s_lpglistAccounts);
+
+			for(lpglistRover = s_lpglistFields; lpglistRover; lpglistRover = lpglistRover->next)
+				ProcHeapFree(lpglistRover->data);
+
+			g_list_free(s_lpglistFields);
+		}
+
 		return TRUE;
 	}
 
@@ -158,6 +289,7 @@ static void PopulateAccountsCombo(HWND hwndCBEx, GList *lpglistAccounts)
 	SendMessage(hwndCBEx, CB_RESETCONTENT, 0, 0);
 
 	cbexitem.mask = CBEIF_TEXT | CBEIF_LPARAM;
+	cbexitem.iItem = -1;
 
 	/* Add each account. */
 	for(lpglistRover = lpglistAccounts; lpglistRover; lpglistRover = lpglistRover->next)
@@ -168,4 +300,92 @@ static void PopulateAccountsCombo(HWND hwndCBEx, GList *lpglistAccounts)
 		cbexitem.lParam = (LPARAM)lpvac;
 		SendMessage(hwndCBEx, CBEM_INSERTITEM, 0, (LPARAM)&cbexitem);
 	}
+}
+
+
+/**
+ * Creates a label for a chat parameter in the join-chat dialogue.
+ *
+ * @param	hwndDlg		Join-chat dialogue.
+ * @param	iFieldNum	Zero-based field number.
+ * @param	szLabelUTF8	Label text, in UTF-8.
+ *
+ * @return Window handle for label.
+ */
+static HWND CreateJoinDlgLabel(HWND hwndDlg, int iFieldNum, LPCSTR szLabelUTF8)
+{
+	LPTSTR szLabel = VultureUTF8ToTCHAR(szLabelUTF8);
+	HWND hwndLabel;
+	RECT rc;
+	HFONT hfont;
+
+	/* We cheat slightly and use right, bottom for width, height resp. */
+	rc.left = X_JC_LABEL;
+	rc.top =  Y_JC_LABEL_FIRST + iFieldNum * CY_JC_INCREMENT;
+	rc.right = CX_JC_LABEL;
+	rc.bottom = CY_JC_LABEL;
+	MapDialogRect(hwndDlg, &rc);
+	
+	hwndLabel = CreateWindowEx(
+		0,
+		TEXT("STATIC"),
+		szLabel,
+		WS_CHILD | WS_VISIBLE,
+		rc.left, rc.top,
+		rc.right, rc.bottom,
+		hwndDlg,
+		(HMENU)(IDC_JC_DYNAMIC + iFieldNum * 2),
+		g_hInstance,
+		NULL);
+
+	g_free(szLabel);
+
+	/* Set the font, by querying the dialogue first. */
+	hfont = (HFONT)SendMessage(hwndDlg, WM_GETFONT, 0, 0);
+	SendMessage(hwndLabel, WM_SETFONT, (WPARAM)hfont, FALSE);
+
+	return hwndLabel;
+}
+
+
+/**
+ * Creates an edit box for a chat parameter in the join-chat dialogue.
+ *
+ * @param	hwndDlg		Join-chat dialogue.
+ * @param	iFieldNum	Zero-based field number.
+ * @param	bNumber		Whether the field should accept only numbers.
+ * @param	bSecret		Whether the field is password-esque.
+ *
+ * @return Window handle for edit box.
+ */
+static HWND CreateJoinDlgEdit(HWND hwndDlg, int iFieldNum, BOOL bNumber, BOOL bSecret)
+{
+	HWND hwndEdit;
+	RECT rc;
+	HFONT hfont;
+
+	/* We cheat slightly and use right, bottom for width, height resp. */
+	rc.left = X_JC_EDIT;
+	rc.top =  Y_JC_EDIT_FIRST + iFieldNum * CY_JC_INCREMENT;
+	rc.right = CX_JC_EDIT;
+	rc.bottom = CY_JC_EDIT;
+	MapDialogRect(hwndDlg, &rc);
+	
+	hwndEdit = CreateWindowEx(
+		WS_EX_CLIENTEDGE,
+		TEXT("EDIT"),
+		TEXT(""),
+		WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL | (bNumber ? ES_NUMBER : 0) | (bSecret ? ES_PASSWORD : 0),
+		rc.left, rc.top,
+		rc.right, rc.bottom,
+		hwndDlg,
+		(HMENU)(IDC_JC_DYNAMIC + iFieldNum * 2 + 1),
+		g_hInstance,
+		NULL);
+
+	/* Set the font, by querying the dialogue first. */
+	hfont = (HFONT)SendMessage(hwndDlg, WM_GETFONT, 0, 0);
+	SendMessage(hwndEdit, WM_SETFONT, (WPARAM)hfont, FALSE);
+
+	return hwndEdit;
 }

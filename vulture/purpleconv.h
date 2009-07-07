@@ -36,6 +36,7 @@ void PurpleConversationSend(VULTURE_CONV_SEND *lpvcsend);
 void PurpleConvChanged(PurpleConversation *lpconv, PurpleConvUpdateType pcut);
 LPTSTR PurpleConvGetTitle(PurpleConversation *lpconv);
 LPTSTR PurpleIMGetStatusText(PurpleConversation *lpconv);
+GList* PurpleGetChatFields(PurpleAccount *lppac);
 
 
 #endif

@@ -27,7 +27,6 @@
 #define IDM_BLIST_BUDDIES_JOINCHAT              40002
 #define IDS_ACCMGR_ACCOUNT                      40002
 #define IDC_EDIT_STATUSMSG                      40003
-#define IDM__1                                  40003
 #define IDS_ACCMGR_PROTOCOL                     40003
 #define IDC_TREE_BLIST                          40004
 #define IDS_ERROR_CONVCONTCLASS                 40004

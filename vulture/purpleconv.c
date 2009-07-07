@@ -200,3 +200,26 @@ LPTSTR PurpleIMGetStatusText(PurpleConversation *lpconv)
 
 	return PurpleBuddyGetStatusText(purple_find_buddy(lpconv->account, lpconv->name));
 }
+
+
+/**
+ * Gets the parameters required to specify a chat for a given account.
+ *
+ * @param	lppac	Account.
+ */
+GList* PurpleGetChatFields(PurpleAccount *lppac)
+{
+	PurpleConnection *lppconn;
+	GList* (*lpfnChatInfo)(PurpleConnection*);
+
+	if(!lppac)
+		return NULL;
+
+	lppconn = purple_account_get_connection(lppac);
+	lpfnChatInfo = PURPLE_PLUGIN_PROTOCOL_INFO(lppconn->prpl)->chat_info;
+
+	if(lpfnChatInfo)
+		return lpfnChatInfo(lppconn);
+
+	return NULL;
+}

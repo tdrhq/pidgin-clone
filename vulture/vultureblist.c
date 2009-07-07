@@ -166,7 +166,11 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		switch(LOWORD(wParam))
 		{
 		case IDM_BLIST_BUDDIES_JOINCHAT:
-			VultureJoinChatDlg(hwnd);
+			{
+				VULTURE_JOIN_CHAT_DATA vjcd;
+				VultureJoinChatDlg(hwnd, &vjcd);
+			}
+
 			return 0;
 
 		case IDM_BLIST_BUDDIES_CLOSE:
