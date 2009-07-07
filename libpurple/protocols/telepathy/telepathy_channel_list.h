@@ -29,6 +29,14 @@ typedef struct
 {
 	telepathy_connection *connection_data;
 	TpChannel *channel;
+	TpHandle handle;
+
+} telepathy_authorization_request;
+
+typedef struct
+{
+	telepathy_connection *connection_data;
+	TpChannel *channel;
 
 } telepathy_group;
 

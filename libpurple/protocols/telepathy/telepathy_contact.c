@@ -77,7 +77,8 @@ add_contact_to_group_cb (TpConnection *connection,
 		int i;
 		GArray *arr = g_array_new(0, 0, sizeof(TpHandle));
 
-		purple_debug_info("telepathy", "Got handle for adding buddy!\n");
+		purple_debug_info("telepathy", "Got handle for adding buddy (%u)!\n",
+				handles[0]);
 
 		for (i = 0; i<n_handles; ++i)
 		{
