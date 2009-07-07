@@ -148,7 +148,7 @@ request_authorization_cb (TpConnection *connection,
 				n_failed);
 	}
 
-	/* Prompt the user for authorisation for each contact */
+	/* Prompt the user for authorization for each contact */
 	for (i = 0; i<n_contacts; ++i)
 	{
 		telepathy_authorization_request *request = g_new0(
@@ -224,6 +224,69 @@ members_changed_cb (TpChannel *proxy,
 
 		tp_connection_get_contacts_by_handle(data->connection,
 				arg_Local_Pending->len, (const TpHandle*)arg_Local_Pending->data,
+				G_N_ELEMENTS (features), features,
+				request_authorization_cb, request, g_free, NULL);
+	}
+}
+
+static void
+get_local_pending_members_with_info_cb (TpChannel *proxy,
+                                        const GPtrArray *out_Info,
+                                        const GError *error,
+                                        gpointer user_data,
+                                        GObject *weak_object)
+{
+	telepathy_connection *data = user_data;
+	int i;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "GetLocalPending error: %s\n",
+				error->message);
+		return;
+	}
+
+	purple_debug_error("telepathy", "%u contacts are local pending!\n",
+			out_Info->len);
+
+	for (i = 0; i<out_Info->len; ++i)
+	{
+		/* Each object in the array is (uuus) */
+		GValueArray *arr = g_ptr_array_index(out_Info, i);
+
+		GValue *val;
+		guint handle;
+		const gchar *message;
+
+		telepathy_authorization_request *request;
+
+		const TpContactFeature features[] = {
+			TP_CONTACT_FEATURE_ALIAS,
+			TP_CONTACT_FEATURE_PRESENCE
+		};
+
+
+		/* Extract the handle and message */
+		val = g_value_array_get_nth(arr, 0);
+		handle = g_value_get_uint(val);
+
+		val = g_value_array_get_nth(arr, 3);
+		message = g_value_get_string(val);
+
+		purple_debug_info("telepathy", "Contact %u is local pending\n",
+				handle);
+
+		/* We've got some buddies pending local acception.
+		 * First, we request a TpContact for that handle and the prompt the user.
+		 */
+
+		request = g_new0(telepathy_authorization_request, 1);
+
+		request->connection_data = data;
+		request->channel = proxy;
+
+		tp_connection_get_contacts_by_handle(data->connection,
+				1, &handle,
 				G_N_ELEMENTS (features), features,
 				request_authorization_cb, request, g_free, NULL);
 	}
@@ -342,5 +405,9 @@ handle_list_channel (TpChannel *channel,
 				error->message);
 		g_error_free(error);
 	}
+
+	/* See if there are any contacts pending local acception */
+	tp_cli_channel_interface_group_call_get_local_pending_members_with_info(channel, -1,
+			get_local_pending_members_with_info_cb, data, NULL, NULL);
 }
 
