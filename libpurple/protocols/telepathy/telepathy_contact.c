@@ -190,27 +190,51 @@ add_contact_to_group_cb (TpConnection *connection,
 	}
 }
 
-void
-contact_notify_cb (TpContact *contact,
-		   GParamSpec *pspec,
-		   gpointer user_data)
+static void
+contact_notify_alias_cb (TpContact *contact,
+		         GParamSpec *pspec,
+          	         gpointer user_data)
 {
 	telepathy_connection *data = user_data;
 
 	const gchar *name = tp_contact_get_identifier(contact);
-	const gchar *presence_status = tp_contact_get_presence_status(contact);
-	const gchar *presence_message = tp_contact_get_presence_message(contact);
 	const gchar *alias = tp_contact_get_alias(contact);
 
 	PurpleBuddy *buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
 
 	if (buddy == NULL)
 	{
-		purple_debug_warning("telepathy", "Received TpContact notify for non-existent buddy (%s)!\n", name);
+		purple_debug_warning("telepathy", "Received TpContact alias notify"
+				" for non-existent buddy (%s)!\n", name);
 		return;
 	}
 
+	purple_debug_info("telepathy", "%s's alias changed to %s\n", name, alias);
+
 	purple_blist_alias_buddy(buddy, alias);
+}
+
+static void
+contact_notify_presence_cb (TpContact *contact,
+		            GParamSpec *pspec,
+		            gpointer user_data)
+{
+	telepathy_connection *data = user_data;
+
+	const gchar *name = tp_contact_get_identifier(contact);
+	const gchar *presence_status = tp_contact_get_presence_status(contact);
+	const gchar *presence_message = tp_contact_get_presence_message(contact);
+
+	PurpleBuddy *buddy = purple_find_buddy(data->acct, tp_contact_get_identifier(contact));
+
+	if (buddy == NULL)
+	{
+		purple_debug_warning("telepathy", "Received TpContact presence notify"
+				" for non-existent buddy (%s)!\n", name);
+		return;
+	}
+
+	purple_debug_info("telepathy", "%s is now %s\n", name, presence_status);
 
 	purple_prpl_got_user_status(data->acct, name, presence_status,
 			"message", presence_message, NULL);
@@ -286,10 +310,25 @@ handle_contacts (telepathy_connection *connection_data,
 
 			g_hash_table_insert(connection_data->contacts, (gpointer)handle, contact_data);
 
-			/* the notify signal will fire for any changed parameter of the contact (status, presence, avatar, alias etc.) */
+			/* The following signals will fire for any changed parameter of the
+			 * contact (status, presence, avatar, alias etc.).
+			 *
+			 * Are both presence-message and presence-status needed?
+			 * They always seem to trigger toghether.
+			 */
 			g_object_ref(contact);
-			g_signal_connect(contact, "notify", G_CALLBACK (contact_notify_cb), connection_data);
-			contact_notify_cb (contact, NULL, connection_data);
+
+			g_signal_connect(contact, "notify::alias",
+					G_CALLBACK (contact_notify_alias_cb), connection_data);
+
+			g_signal_connect(contact, "notify::presence-message",
+					G_CALLBACK (contact_notify_presence_cb), connection_data);
+
+			g_signal_connect(contact, "notify::presence-status",
+					G_CALLBACK (contact_notify_presence_cb), connection_data);
+
+			contact_notify_alias_cb (contact, NULL, connection_data);
+			contact_notify_presence_cb (contact, NULL, connection_data);
 		}
 	}
 }
