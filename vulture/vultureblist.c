@@ -168,7 +168,9 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		case IDM_BLIST_BUDDIES_JOINCHAT:
 			{
 				VULTURE_JOIN_CHAT_DATA vjcd;
-				VultureJoinChatDlg(hwnd, &vjcd);
+
+				if(VultureJoinChatDlg(hwnd, &vjcd))
+					VultureSingleSyncPurpleCall(PC_JOINCHAT, &vjcd);
 			}
 
 			return 0;

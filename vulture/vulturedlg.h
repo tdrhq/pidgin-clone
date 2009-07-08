@@ -32,7 +32,7 @@
 
 typedef struct _VULTURE_JOIN_CHAT_DATA
 {
-	VULTURE_ACCOUNT	*lpvac;
+	PurpleAccount	*lppac;
 	GHashTable	*lphashParameters;
 } VULTURE_JOIN_CHAT_DATA;
 

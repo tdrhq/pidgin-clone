@@ -242,6 +242,14 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		
 		break;
 
+	case PC_JOINCHAT:
+		{
+			VULTURE_JOIN_CHAT_DATA *lpvjcd = lppurplecall->lpvParam;
+			PurpleJoinAdHocChat(lpvjcd->lppac, lpvjcd->lphashParameters);
+		}
+		
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

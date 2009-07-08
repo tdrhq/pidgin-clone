@@ -24,6 +24,9 @@
 #define _VULTURE_PURPLECONV_H_
 
 
+#include <windows.h>
+#include <glib.h>
+
 #include "purple.h"
 #include "vultureconv.h"
 
@@ -37,6 +40,8 @@ void PurpleConvChanged(PurpleConversation *lpconv, PurpleConvUpdateType pcut);
 LPTSTR PurpleConvGetTitle(PurpleConversation *lpconv);
 LPTSTR PurpleIMGetStatusText(PurpleConversation *lpconv);
 GList* PurpleGetChatFields(PurpleAccount *lppac);
+void PurpleJoinAdHocChat(PurpleAccount *lppac, GHashTable *lphashParameters);
+void PurpleJoinChat(PurpleChat *lpchat);
 
 
 #endif

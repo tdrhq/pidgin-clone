@@ -223,3 +223,38 @@ GList* PurpleGetChatFields(PurpleAccount *lppac)
 
 	return NULL;
 }
+
+
+/**
+ * Joins a chat specified by a set of parameters.
+ *
+ * @param	lppac			Account.
+ * @param	lphashParameters	Parameters specifying the chat.
+ */
+void PurpleJoinAdHocChat(PurpleAccount *lppac, GHashTable *lphashParameters)
+{
+	/* Make a new chat, join it and then delete it immediately. */
+	PurpleChat *lpchat;
+
+	if(!lppac || !lphashParameters)
+		return;
+	
+	lpchat = purple_chat_new(lppac, NULL, lphashParameters);
+	PurpleJoinChat(lpchat);
+	purple_blist_remove_chat(lpchat);
+}
+
+
+/**
+ * Joins a chat.
+ *
+ * @param	lpchat	Chat to join.
+ */
+void PurpleJoinChat(PurpleChat *lpchat)
+{
+	/* TODO: Check whether there's already a conversation for this chat.
+	 * See Pidgin's gtk_blist_join_chat.
+	 */
+
+	serv_join_chat(lpchat->account->gc, lpchat->components);
+}

@@ -148,7 +148,40 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 		switch(LOWORD(wParam))
 		{
 		case IDOK:
-			EndDialog(hwndDlg, TRUE);
+			{
+				GList *lpglistRover;
+				COMBOBOXEXITEM cbexitem;
+
+				/* Get the selected account. */
+				cbexitem.mask = CBEIF_LPARAM;
+				cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCURSEL, 0, 0);
+				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+				s_lpvjcd->lppac = ((VULTURE_ACCOUNT*)cbexitem.lParam)->lppac;
+
+				/* Build hash table. */
+				s_lpvjcd->lphashParameters = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+				for(lpglistRover = s_lpglistFields; lpglistRover; lpglistRover = lpglistRover->next)
+				{
+					JOIN_DLG_FIELD *lpjdf = lpglistRover->data;
+					int cchField = GetWindowTextLength(lpjdf->hwndEdit) + 1;
+
+					if(cchField > 1)
+					{
+						LPTSTR szField = ProcHeapAlloc(cchField * sizeof(TCHAR));
+						gchar *szFieldUTF8;
+
+						GetWindowText(lpjdf->hwndEdit, szField, cchField);
+						szFieldUTF8 = VultureTCHARToUTF8(szField);
+						ProcHeapFree(szField);
+
+						g_hash_table_replace(s_lpvjcd->lphashParameters, g_strdup(lpjdf->szID), szFieldUTF8);
+					}
+				}
+
+				EndDialog(hwndDlg, TRUE);
+			}
+
 			return TRUE;
 
 		case IDCANCEL:
