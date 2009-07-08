@@ -46,7 +46,7 @@ typedef struct _CONVCONTAINERDATA
 
 
 static int g_cyInput = 48;
-static int g_cxNames = 64;
+static int g_cxNames = 128;
 
 
 static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);

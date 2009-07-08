@@ -60,6 +60,7 @@ enum VULTURE_WINDOW_MESSAGES
 
 int MessageBoxFromStringTable(HWND hwnd, WORD wResourceString, UINT uiType);
 void VultureTimetToSystemTime(time_t t, LPSYSTEMTIME lpsystime);
+LPTSTR VultureAmpersandify(LPCTSTR szUnderscored);
 
 
 

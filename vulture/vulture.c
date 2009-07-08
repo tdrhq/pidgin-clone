@@ -25,6 +25,8 @@
 #include <commctrl.h>
 #include <glib.h>
 #include <time.h>
+#include <string.h>
+#include <tchar.h>
 
 #include "vulture.h"
 #include "resource.h"
@@ -191,4 +193,49 @@ void VultureTimetToSystemTime(time_t t, LPSYSTEMTIME lpsystime)
 	filetime.dwHighDateTime = ll >> 32;
 
 	FileTimeToSystemTime(&filetime, lpsystime);
+}
+
+
+/**
+ * Converts a GTK-style accelerated string (underscores) to a Win32-style one
+ * (ampersands).
+ *
+ * @param	szUnderscored	GTK-style string.
+ *
+ * @return Win32-style string. Free it with ProcHeapFree.
+ */
+LPTSTR VultureAmpersandify(LPCTSTR szUnderscored)
+{
+	/* Worst-case size. */
+	LPTSTR szAmpersanded = ProcHeapAlloc((_tcslen(szUnderscored) + 1) * 2 * sizeof(TCHAR));
+	LPTSTR szInAmp = szAmpersanded;
+
+	for(; *szUnderscored; szUnderscored++)
+	{
+		if(*szUnderscored == TEXT('&'))
+		{
+			/* Output *extra* ampersand. */
+			*szInAmp++ = TEXT('&');
+		}
+		else if(*szUnderscored == TEXT('_'))
+		{
+			if(szUnderscored[1] == TEXT('_'))
+			{
+				/* Skip the first underscore. */
+				szUnderscored++;
+			}
+			else
+			{
+				/* Output ampersand instead. */
+				*szInAmp++ = TEXT('&');
+				continue;
+			}
+		}
+
+		*szInAmp++ = *szUnderscored;
+	}
+
+	*szInAmp = TEXT('\0');
+
+	return szAmpersanded;
 }

@@ -61,6 +61,7 @@ static void PopulateAccountsCombo(HWND hwndCBEx, GList *lpglistAccounts);
 static HWND CreateJoinDlgLabel(HWND hwndDlg, int iFieldNum, LPCSTR szLabelUTF8);
 static HWND CreateJoinDlgEdit(HWND hwndDlg, int iFieldNum, BOOL bNumber, BOOL bSecret);
 static void UpdateJoinChatFields(HWND hwndDlg, GList **lplpglistFields, int *lpiMaxShowFields);
+static void AutoEnableJoinDlgOKButton(HWND hwndDlg, GList *lpglistFields);
 
 
 /**
@@ -139,12 +140,20 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 				/* Show fields. */
 				UpdateJoinChatFields(hwndDlg, &s_lpglistFields, &s_iMaxShowFields);
 			}
+
+			AutoEnableJoinDlgOKButton(hwndDlg, s_lpglistFields);
 		}
 
 		/* Let the system set the focus. */
 		return TRUE;
 
 	case WM_COMMAND:
+		/* Should really make sure this comes from an edit control, but
+		 * no harm done.
+		 */
+		if(HIWORD(wParam) == EN_CHANGE)
+			AutoEnableJoinDlgOKButton(hwndDlg, s_lpglistFields);
+
 		switch(LOWORD(wParam))
 		{
 		case IDOK:
@@ -190,7 +199,10 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 
 		case IDC_CBEX_ACCOUNTS:
 			if(HIWORD(wParam) == CBN_SELCHANGE)
+			{
 				UpdateJoinChatFields(hwndDlg, &s_lpglistFields, &s_iMaxShowFields);
+				AutoEnableJoinDlgOKButton(hwndDlg, s_lpglistFields);
+			}
 
 			return TRUE;
 		}
@@ -284,10 +296,13 @@ static void PopulateAccountsCombo(HWND hwndCBEx, GList *lpglistAccounts)
  */
 static HWND CreateJoinDlgLabel(HWND hwndDlg, int iFieldNum, LPCSTR szLabelUTF8)
 {
-	LPTSTR szLabel = VultureUTF8ToTCHAR(szLabelUTF8);
+	LPTSTR szLabelTmp = VultureUTF8ToTCHAR(szLabelUTF8);
+	LPTSTR szLabel = VultureAmpersandify(szLabelTmp);
 	HWND hwndLabel;
 	RECT rc;
 	HFONT hfont;
+
+	g_free(szLabelTmp);
 
 	/* We cheat slightly and use right, bottom for width, height resp. */
 	rc.left = X_JC_LABEL;
@@ -308,7 +323,7 @@ static HWND CreateJoinDlgLabel(HWND hwndDlg, int iFieldNum, LPCSTR szLabelUTF8)
 		g_hInstance,
 		NULL);
 
-	g_free(szLabel);
+	ProcHeapFree(szLabel);
 
 	/* Set the font, by querying the dialogue first. */
 	hfont = (HFONT)SendMessage(hwndDlg, WM_GETFONT, 0, 0);
@@ -439,4 +454,40 @@ static void UpdateJoinChatFields(HWND hwndDlg, GList **lplpglistFields, int *lpi
 	*lplpglistFields = g_list_reverse(*lplpglistFields);
 
 	g_list_free(getchatfields.lpglistFields);
+}
+
+
+/**
+ * Enables or disables the OK button in the join-chat dialogue according to the
+ * values of the fields.
+ *
+ * @param	hwndDlg		Join-chat dialogue.
+ */
+static void AutoEnableJoinDlgOKButton(HWND hwndDlg, GList *lpglistFields)
+{
+	HWND hwndOK = GetDlgItem(hwndDlg, IDOK);
+	BOOL bEnable = TRUE;
+
+	if(lpglistFields)
+	{
+		for(; lpglistFields; lpglistFields = lpglistFields->next)
+		{
+			JOIN_DLG_FIELD *lpjdf = lpglistFields->data;
+
+			if(lpjdf->bRequired && GetWindowTextLength(lpjdf->hwndEdit) == 0)
+				bEnable = FALSE;
+		}
+	}
+	else bEnable = FALSE;
+
+	if(!bEnable)
+	{
+		/* Don't leave the focus on a disabled control. */
+		if(GetFocus() == hwndOK)
+			SendMessage(hwndDlg, WM_NEXTDLGCTL, 0, 0);
+
+		EnableWindow(hwndOK, FALSE);
+	}
+	else
+		EnableWindow(hwndOK, TRUE);
 }
