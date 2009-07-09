@@ -120,11 +120,13 @@ chat_list_pending_messages_cb  (TpChannel *proxy,
 			
 			/* Get information about the contact who sent this message */
 			const gchar *from;
-			telepathy_contact *contact = g_hash_table_lookup(
-					data->contacts, (gpointer)sender);
+			TpContact *contact = g_hash_table_lookup(
+					tp_channel->contacts, (gpointer)sender);
 
-			if (contact != NULL && contact->contact != NULL)
-				from = tp_contact_get_identifier(contact->contact);
+			/* TODO: Get rid of the unknown sender bit */
+
+			if (contact != NULL)
+				from = tp_contact_get_alias(contact);
 			else
 				from = "<Unknown Sender>";
 
@@ -178,15 +180,17 @@ chat_received_cb (TpChannel *proxy,
 		GArray *message_IDs;
 
 		/* Get information about the sender */
-		telepathy_contact *contact = g_hash_table_lookup(
-				data->contacts, (gpointer)arg_Sender);
+		TpContact *contact = g_hash_table_lookup(
+				tp_channel->contacts, (gpointer)arg_Sender);
 
 		const gchar *from;
 
+		/* TODO: Get rid of the unknown sender bit */
+
 		if (contact != NULL)
-			from = tp_contact_get_identifier(contact->contact);
+			from = tp_contact_get_alias(contact);
 		else
-			from = "<Unknown>";
+			from = "<Unknown Sender>";
 		
 
 		/* will this message get caught by ListPendingMessages? */
@@ -315,6 +319,95 @@ chat_send_cb (TpChannel *proxy,
 }
 
 static void
+chat_get_contacts_cb (TpConnection *connection,
+                      guint n_contacts,
+                      TpContact * const *contacts,
+                      guint n_failed,
+                      const TpHandle *failed,
+                      const GError *error,
+                      gpointer user_data,
+                      GObject *weak_object)
+{	
+	int i;
+	PurpleConversation *conv;
+	telepathy_room_channel *tp_channel = user_data;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "get_contacts_by_id for chatroom error: %s\n",
+				error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "Got %u contacts for chatroom (%u failed):\n",
+			n_contacts, n_failed);
+
+	conv = purple_find_chat(tp_channel->connection_data->gc,
+			tp_channel_get_handle(tp_channel->channel, NULL));
+	for (i = 0; i<n_contacts; ++i)
+	{
+		purple_debug_info("telepathy", "  %s (%s)\n",
+				tp_contact_get_identifier(contacts[i]),
+				tp_contact_get_alias(contacts[i]));
+
+		purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
+				tp_contact_get_alias(contacts[i]), NULL,
+				PURPLE_CBFLAGS_NONE, FALSE);
+
+		g_object_ref(contacts[i]);
+
+		g_hash_table_insert(tp_channel->contacts,
+				(gpointer)tp_contact_get_handle(contacts[i]),
+				contacts[i]);
+	}
+
+	/* Only after we got the member list are we ready to receive messages */
+	tp_cli_channel_type_text_call_list_pending_messages(tp_channel->channel, -1,
+			FALSE, chat_list_pending_messages_cb, tp_channel->connection_data,
+			NULL, NULL);
+
+}
+
+static void
+chat_get_all_members_cb (TpChannel *proxy,
+                         const GArray *out_Members,
+                         const GArray *out_Local_Pending,
+                         const GArray *out_Remote_Pending,
+                         const GError *error,
+                         gpointer user_data,
+                         GObject *weak_object)
+{
+	telepathy_room_channel *data = user_data;
+	int i;
+
+	const TpContactFeature features[] = {
+	    TP_CONTACT_FEATURE_ALIAS,
+	    TP_CONTACT_FEATURE_PRESENCE
+	};
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "GetAllMembers error for chatroom: %s\n",
+				error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "Got %u members for chatroom\n", out_Members->len);
+
+	for (i = 0; i<out_Members->len; ++i)
+	{
+		purple_debug_info("telepathy", "  %u\n",
+				g_array_index(out_Members, TpHandle, i));
+	}
+
+	tp_connection_get_contacts_by_handle(data->connection_data->connection,
+			out_Members->len, (TpHandle *)out_Members->data,
+			G_N_ELEMENTS (features), features,
+			chat_get_contacts_cb, user_data,
+			NULL, NULL);
+}
+
+static void
 handle_room_text_channel (TpChannel *channel,
                           telepathy_connection *data)
 {
@@ -342,6 +435,13 @@ handle_room_text_channel (TpChannel *channel,
 	}
 
 	tp_channel->channel = channel;
+	tp_channel->connection_data = data;
+	tp_channel->contacts = g_hash_table_new(g_direct_hash, g_direct_equal);
+
+	/* Get the members of the chatroom */
+	tp_cli_channel_interface_group_call_get_all_members(channel, -1,
+			chat_get_all_members_cb, tp_channel,
+			NULL, NULL);
 
 	tp_cli_channel_type_text_connect_to_received(channel,
 			chat_received_cb, data, NULL, NULL, &error);
@@ -356,10 +456,6 @@ handle_room_text_channel (TpChannel *channel,
 
 
 	g_signal_connect(channel, "invalidated", G_CALLBACK(text_channel_invalidated_cb), data);
-
-	/* the Clear parameter is deprecated, we need to use AcknowledgePendingMessages */
-	tp_cli_channel_type_text_call_list_pending_messages(channel, -1,
-			FALSE, chat_list_pending_messages_cb, data, NULL, NULL);
 
 	/* send pending messages */
 	while (tp_channel->pending_Messages != NULL)

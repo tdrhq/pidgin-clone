@@ -32,6 +32,10 @@ typedef struct
 	GList *pending_Messages;
 	TpChannel *channel;
 
+	telepathy_connection *connection_data;
+
+	GHashTable *contacts;
+
 	/* This flag avoids having a message processed twice via both Received signal and ListPendingMessages */
 	gboolean received_Pending_Messages;
 } telepathy_room_channel;
