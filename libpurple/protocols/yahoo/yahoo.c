@@ -1567,9 +1567,9 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 #else
 		while (split_data[++totalelements] != NULL);	
 #endif
-		if(totalelements >= 2) {
-			response_no = strtol(split_data[0], NULL, 10);
-			token = g_strdup(split_data[1] + strlen("ymsgr="));
+		if(totalelements >= 5) {
+			response_no = strtol(split_data[1], NULL, 10);
+			token = g_strdup(split_data[2] + strlen("ymsgr="));
 		}
 
 		g_strfreev(split_data);
