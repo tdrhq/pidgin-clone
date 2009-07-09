@@ -62,6 +62,9 @@ enum ENUM_VULTURE_UI_MESSAGES
 
 	/* (VULTURE_CONVERSATION*) */
 	VUIMSG_UPDATEIMSTATUSTEXT,
+
+	/* (VULTURE_CHAT_ADD_USERS*) */
+	VUIMSG_CHATADDUSERS,
 };
 
 /* HandlEs for reigistering signal handlERs. */

@@ -42,6 +42,8 @@ LPTSTR PurpleIMGetStatusText(PurpleConversation *lpconv);
 GList* PurpleGetChatFields(PurpleAccount *lppac);
 void PurpleJoinAdHocChat(PurpleAccount *lppac, GHashTable *lphashParameters);
 void PurpleJoinChat(PurpleChat *lpchat);
+void PurpleChatAddUsers(PurpleConversation *lpconv, GList *lpglistChatBuddies, gboolean bNewArrivals);
+void VultureFreeChatAddUsers(VULTURE_CHAT_ADD_USERS *lpvchataddusers);
 
 
 #endif

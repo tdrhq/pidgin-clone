@@ -239,3 +239,21 @@ LPTSTR VultureAmpersandify(LPCTSTR szUnderscored)
 
 	return szAmpersanded;
 }
+
+
+/**
+ * GCompareDataFunc for comparing TCHAR strings. Useful for, e.g., the binary
+ * tree containing chat participants' names.
+ *
+ * @param	lpvStr1		First string.
+ * @param	lpvStr1		Second string.
+ * @param	lpvUnused	Ignored.
+ *
+ * @return Negative/zero/positive as lpvStr1 is resp. lexicographically less
+ * than/equal to/greater than lpvStr2.
+ */
+gint VultureCompareTCHARStrings(gconstpointer lpvStr1, gconstpointer lpvStr2, gpointer lpvUnused)
+{
+	UNREFERENCED_PARAMETER(lpvUnused);
+	return _tcscmp((LPCTSTR)lpvStr1, (LPCTSTR)lpvStr2);
+}

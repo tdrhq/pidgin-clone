@@ -331,6 +331,10 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 				hwndForward = ((VULTURE_CONVERSATION*)lParam)->hwndConv;
 				break;
 
+			case VUIMSG_CHATADDUSERS:
+				hwndForward = ((VULTURE_CHAT_ADD_USERS*)lParam)->lpvconvChat->hwndConv;
+				break;
+
 			case VUIMSG_QUIT:
 				DestroyWindow(hwnd);
 				break;

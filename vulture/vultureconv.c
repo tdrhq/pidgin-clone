@@ -24,6 +24,9 @@
 #include <commctrl.h>
 #include <richedit.h>
 #include <glib.h>
+#include <string.h>
+#include <tchar.h>
+#include <stdlib.h>
 
 #include "vulture.h"
 #include "resource.h"
@@ -443,6 +446,67 @@ static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARA
  */
 static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
 {
+	VULTURE_CONVERSATION_CHAT *lpvconvchat;
+
+	switch(uiMsg)
+	{
+	case WM_INITDIALOG:
+		lpvconvchat = (VULTURE_CONVERSATION_CHAT*)lParam;
+		lpvconvchat->lpgtreePeople = g_tree_new_full(VultureCompareTCHARStrings, NULL, free, ProcHeapFree);
+		break;
+
+	case WM_PURPLEUIMSG:
+
+		lpvconvchat = (VULTURE_CONVERSATION_CHAT*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
+
+		switch(wParam)
+		{
+		case VUIMSG_CHATADDUSERS:
+			{
+				VULTURE_CHAT_ADD_USERS *lpvchataddusers = (VULTURE_CHAT_ADD_USERS*)lParam;
+				GList *lpglistRover;
+				HWND hwndTVNames = GetDlgItem(hwndDlg, IDC_TREE_NAMES);
+
+				/* Add the new users to the binary tree, and
+				 * create tree-view entries for them.
+				 */
+				for(lpglistRover = lpvchataddusers->lpglistNewUsers; lpglistRover; lpglistRover = lpglistRover->next)
+				{
+					VULTURE_CHAT_USER *lpvcu = ProcHeapAlloc(sizeof(VULTURE_CHAT_USER));
+					VULTURE_ADD_CHAT_USER *lpvaddchatuser = lpglistRover->data;
+					TVINSERTSTRUCT tvis;
+
+					lpvcu->szAlias = lpvaddchatuser->szAlias ? _tcsdup(lpvaddchatuser->szAlias) : NULL;
+					lpvcu->szAliasKey = lpvaddchatuser->szAliasKey ? _tcsdup(lpvaddchatuser->szAliasKey) : NULL;
+					lpvcu->bIsBuddy = lpvaddchatuser->bIsBuddy;
+					lpvcu->pccbflags = lpvaddchatuser->pccbflags;
+
+					/* Add to tree-view. */
+					tvis.hParent = TVI_ROOT;
+					tvis.hInsertAfter = TVI_ROOT;
+					tvis.item.mask = TVIF_PARAM | TVIF_TEXT;
+					tvis.item.pszText = lpvaddchatuser->szName;
+					tvis.item.lParam = (LPARAM)lpvcu;
+					lpvcu->hti = TreeView_InsertItem(hwndTVNames, &tvis);
+
+					/* Add to binary tree. */
+					g_tree_insert(lpvconvchat->lpgtreePeople, _tcsdup(lpvaddchatuser->szName), lpvcu);
+				}
+
+				VultureFreeChatAddUsers(lpvchataddusers);
+			}
+
+			break;
+		}
+
+		break;
+
+	case WM_DESTROY:
+		lpvconvchat = (VULTURE_CONVERSATION_CHAT*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
+		g_tree_destroy(lpvconvchat->lpgtreePeople);
+		break;
+	}
+
 	return ConvCommonDlgProc(hwndDlg, uiMsg, wParam, lParam);
 }
 
@@ -621,7 +685,7 @@ static void RepositionConvControls(HWND hwndConvDlg)
 	{
 		hdwp = DeferWindowPos(
 			hdwp,
-			GetDlgItem(hwndConvDlg, IDC_LIST_NAMES),
+			GetDlgItem(hwndConvDlg, IDC_TREE_NAMES),
 			NULL,
 			2 * CONV_DLG_MARGIN + cxLeft,
 			CONV_DLG_MARGIN,

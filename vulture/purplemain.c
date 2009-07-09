@@ -188,7 +188,7 @@ static void InitUI(void)
 		NULL,				/* write_chat		*/
 		NULL,				/* write_im		*/
 		PurpleWriteConversation,	/* write_conv		*/
-		NULL,				/* chat_add_users	*/
+		PurpleChatAddUsers,		/* chat_add_users	*/
 		NULL,				/* chat_rename_user	*/
 		NULL,				/* chat_remove_users	*/
 		NULL,				/* chat_update_user	*/

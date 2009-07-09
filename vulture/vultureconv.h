@@ -25,6 +25,8 @@
 
 
 #include <windows.h>
+#include <commctrl.h>
+#include <glib.h>
 
 #include "purple.h"
 
@@ -38,6 +40,20 @@ typedef struct _VULTURE_CONVERSATION
 	WNDPROC			wndprocInputOrig;
 	PurpleConversationType	convtype;
 } VULTURE_CONVERSATION;
+
+
+/* These two structs inherit from VULTURE_CONVERSATION. */
+
+typedef struct _VULTURE_CONVERSATION_IM
+{
+	VULTURE_CONVERSATION	vconv;
+} VULTURE_CONVERSATION_IM;
+
+typedef struct _VULTURE_CONVERSATION_CHAT
+{
+	VULTURE_CONVERSATION	vconv;
+	GTree			*lpgtreePeople;
+} VULTURE_CONVERSATION_CHAT;
 
 
 typedef struct _VULTURE_CONV_WRITE
@@ -65,6 +81,32 @@ typedef struct _VULTURE_CONV_GET_STRING
 	VULTURE_CONVERSATION	*lpvconv;
 	LPTSTR			sz;
 } VULTURE_CONV_GET_STRING;
+
+typedef struct _VULTURE_ADD_CHAT_USER
+{
+	LPTSTR				szName;
+	LPTSTR				szAlias;
+	LPTSTR				szAliasKey;
+	BOOL				bIsBuddy;
+	PurpleConvChatBuddyFlags	pccbflags;
+} VULTURE_ADD_CHAT_USER;
+
+typedef struct _VULTURE_CHAT_ADD_USERS
+{
+	VULTURE_CONVERSATION	*lpvconvChat;
+	GList			*lpglistNewUsers;
+} VULTURE_CHAT_ADD_USERS;
+
+typedef struct _VULTURE_CHAT_USER
+{
+	/* We don't store the name here. */
+
+	LPTSTR				szAlias;
+	LPTSTR				szAliasKey;
+	BOOL				bIsBuddy;
+	PurpleConvChatBuddyFlags	pccbflags;
+	HTREEITEM			hti;
+} VULTURE_CHAT_USER;
 
 
 int VultureRegisterConvContainerWindowClass(void);

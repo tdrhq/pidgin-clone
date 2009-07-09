@@ -61,13 +61,14 @@ enum VULTURE_WINDOW_MESSAGES
 int MessageBoxFromStringTable(HWND hwnd, WORD wResourceString, UINT uiType);
 void VultureTimetToSystemTime(time_t t, LPSYSTEMTIME lpsystime);
 LPTSTR VultureAmpersandify(LPCTSTR szUnderscored);
+gint VultureCompareTCHARStrings(gconstpointer lpvStr1, gconstpointer lpvStr2, gpointer lpvUnused);
 
 
 
 /** Wrappers for heap functions. */
 static INLINE LPVOID ProcHeapAlloc(DWORD cb) { return HeapAlloc(g_hProcHeap, HEAP_GENERATE_EXCEPTIONS, cb); }
 static INLINE LPVOID ProcHeapReAlloc(LPVOID lpv, DWORD cb) { return HeapReAlloc(g_hProcHeap, HEAP_GENERATE_EXCEPTIONS, lpv, cb); }
-static INLINE BOOL ProcHeapFree(LPVOID lpv) { return HeapFree(g_hProcHeap, 0, lpv); }
+static INLINE void ProcHeapFree(LPVOID lpv) { HeapFree(g_hProcHeap, 0, lpv); }
 
 
 /**

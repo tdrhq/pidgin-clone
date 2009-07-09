@@ -42,8 +42,13 @@
 void PurpleNewConversation(PurpleConversation *lpconv)
 {
 	/* The UI will eventually free this. */
-	VULTURE_CONVERSATION *lpvconv = g_new(VULTURE_CONVERSATION, 1);
+	VULTURE_CONVERSATION *lpvconv;
 	
+	if(lpconv->type == PURPLE_CONV_TYPE_IM)
+		lpvconv = (VULTURE_CONVERSATION*)g_new(VULTURE_CONVERSATION_IM, 1);
+	else
+		lpvconv = (VULTURE_CONVERSATION*)g_new(VULTURE_CONVERSATION_CHAT, 1);
+
 	lpconv->ui_data = lpvconv;
 
 	lpvconv->lpconv = lpconv;
@@ -257,4 +262,69 @@ void PurpleJoinChat(PurpleChat *lpchat)
 	 */
 
 	serv_join_chat(lpchat->account->gc, lpchat->components);
+}
+
+
+/**
+ * Called when users join a chat.
+ *
+ * @param	lpconv			Conversation.
+ * @param	lpglistChatBuddies	List of PurpleConvChatBuddy structures
+ *					describing new users.
+ * @param	bNewArrivals		Whether entrance messages are shown.
+ */
+void PurpleChatAddUsers(PurpleConversation *lpconv, GList *lpglistChatBuddies, gboolean bNewArrivals)
+{
+	VULTURE_CHAT_ADD_USERS *lpvchataddusers = g_new(VULTURE_CHAT_ADD_USERS, 1);
+	VULTURE_ADD_CHAT_USER *lpvaddchatuser;
+
+	UNREFERENCED_PARAMETER(bNewArrivals);
+
+	lpvchataddusers->lpvconvChat = lpconv->ui_data;
+	lpvchataddusers->lpglistNewUsers = NULL;
+
+	/* We make a new list for the UI's consumption. */
+	for(; lpglistChatBuddies; lpglistChatBuddies = lpglistChatBuddies->next)
+	{
+		PurpleConvChatBuddy *lppccbuddy = lpglistChatBuddies->data;
+
+		lpvaddchatuser = g_new(VULTURE_ADD_CHAT_USER, 1);
+		lpvaddchatuser->szAlias = lppccbuddy->alias ? VultureUTF8ToTCHAR(lppccbuddy->alias) : NULL;
+		lpvaddchatuser->szAliasKey = lppccbuddy->alias_key ? VultureUTF8ToTCHAR(lppccbuddy->alias_key) : NULL;
+		lpvaddchatuser->szName = VultureUTF8ToTCHAR(lppccbuddy->name);
+		lpvaddchatuser->bIsBuddy = lppccbuddy->buddy;
+		lpvaddchatuser->pccbflags = lppccbuddy->flags;
+
+		lpvchataddusers->lpglistNewUsers = g_list_prepend(lpvchataddusers->lpglistNewUsers, lpvaddchatuser);
+	}
+
+	lpvchataddusers->lpglistNewUsers = g_list_reverse(lpvchataddusers->lpglistNewUsers);
+
+	VulturePostUIMessage(VUIMSG_CHATADDUSERS, lpvchataddusers);
+}
+
+
+/**
+ * Frees a VULTURE_CHAT_ADD_USERS structure once the UI is done with it.
+ *
+ * @param	lpvchataddusers		Structure to free.
+ */
+void VultureFreeChatAddUsers(VULTURE_CHAT_ADD_USERS *lpvchataddusers)
+{
+	GList *lpglistRover;
+
+	for(lpglistRover = lpvchataddusers->lpglistNewUsers; lpglistRover; lpglistRover = lpglistRover->next)
+	{
+		VULTURE_ADD_CHAT_USER *lpvaddchatuser = lpglistRover->data;
+
+		if(lpvaddchatuser->szAlias) g_free(lpvaddchatuser->szAlias);
+		if(lpvaddchatuser->szAliasKey) g_free(lpvaddchatuser->szAliasKey);
+		if(lpvaddchatuser->szName) g_free(lpvaddchatuser->szName);
+
+		g_free(lpvaddchatuser);
+	}
+
+	g_list_free(lpvchataddusers->lpglistNewUsers);
+
+	g_free(lpvchataddusers);
 }
