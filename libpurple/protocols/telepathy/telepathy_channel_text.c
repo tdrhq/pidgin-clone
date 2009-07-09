@@ -277,7 +277,7 @@ chat_send_error_cb (TpChannel *proxy,
 	purple_debug_error("telepathy", "SendError: %s\n", error_reason);
 }
 
-static void
+void
 chat_send_cb (TpChannel *proxy,
               const GError *error,
               gpointer user_data,
@@ -333,7 +333,8 @@ handle_room_text_channel (TpChannel *channel,
 	 */
 	if (tp_channel == NULL)
 	{
-		purple_debug_info("telepathy", "Saving TpChannel proxy for \"%s\" chatroom\n", who);
+		purple_debug_info("telepathy", "Saving TpChannel proxy for \"%s\" chatroom (%u)\n",
+				who, handle);
 
 		tp_channel = g_new0(telepathy_room_channel, 1);
 		g_hash_table_insert(data->room_Channels, (gpointer)handle, tp_channel);

@@ -576,6 +576,50 @@ telepathy_join_chat (PurpleConnection *gc, GHashTable *components)
 			map, ensure_channel_cb, data, NULL, NULL);
 }
 
+static int
+telepathy_chat_send (PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
+{
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+
+	telepathy_room_channel *tp_channel = g_hash_table_lookup(
+			data->room_Channels, (gpointer)(TpHandle)id);
+
+	TpChannel *channel;
+
+	char *stripped_message;
+
+	if (tp_channel == NULL)
+	{
+		purple_debug_error("telepathy", "No telepathy_room_channel struct cached"
+				" for %d\n", id);
+		return 0;
+	}
+	
+	channel = tp_channel->channel;
+
+	if (channel == NULL)
+	{
+		purple_debug_error("telepathy", "No TpChannel proxy cached for %d\n", id);
+		return 0;
+	}
+
+	/* strip HTML */
+	stripped_message = purple_markup_strip_html(message);
+
+	purple_debug_info("telepathy", "Sending \"%s\" (stripped: \"%s\") to %s\n",
+			message, stripped_message, tp_channel_get_identifier(channel));
+
+	tp_cli_channel_type_text_call_send(channel, -1,
+		TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL, stripped_message,
+		chat_send_cb, data, NULL, NULL);
+
+	g_free(stripped_message);
+
+	serv_got_chat_in(gc, id, purple_account_get_username(data->acct), flags,
+			message, time(NULL));
+	return 1;
+}
+
 static void
 telepathy_set_buddy_icon (PurpleConnection *gc, PurpleStoredImage *img)
 {
@@ -665,7 +709,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	NULL,                /* chat_invite */
 	NULL,                 /* chat_leave */
 	NULL,               /* chat_whisper */
-	NULL,                  /* chat_send */
+	telepathy_chat_send,                  /* chat_send */
 	NULL,                                /* keepalive */
 	NULL,              /* register_user */
 	NULL,                /* get_cb_info */

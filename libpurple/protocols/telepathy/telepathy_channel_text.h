@@ -52,6 +52,12 @@ void
 destroy_text_channel(telepathy_text_channel *tp_channel);
 
 void
+chat_send_cb (TpChannel *proxy,
+              const GError *error,
+              gpointer user_data,
+              GObject *weak_object);
+
+void
 write_message_to_conversation (const gchar *from,
                                guint timestamp,
 			       const gchar *msg,
