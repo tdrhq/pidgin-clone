@@ -34,6 +34,18 @@ typedef struct
 
 	/* This flag avoids having a message processed twice via both Received signal and ListPendingMessages */
 	gboolean received_Pending_Messages;
+} telepathy_room_channel;
+
+void
+destroy_room_channel(telepathy_room_channel *tp_channel);
+
+typedef struct
+{
+	GList *pending_Messages;
+	TpChannel *channel;
+
+	/* This flag avoids having a message processed twice via both Received signal and ListPendingMessages */
+	gboolean received_Pending_Messages;
 } telepathy_text_channel;
 
 void

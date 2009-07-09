@@ -42,6 +42,9 @@ typedef struct
 	/* This will hold pointers to telepathy_text_channel for buddies that have an active conversation */
 	GHashTable *text_Channels;
 	
+	/* This will map room handles to telepathy_room_channel for active chat rooms */
+	GHashTable *room_Channels;
+	
 	/* This will map contact handles to telepathy_contact */
 	GHashTable *contacts;
 

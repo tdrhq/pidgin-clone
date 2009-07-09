@@ -30,9 +30,362 @@
 #include "telepathy_contact.h"
 
 void
+destroy_room_channel(telepathy_room_channel *tp_channel)
+{
+	g_free(tp_channel);
+}
+
+void
 destroy_text_channel(telepathy_text_channel *tp_channel)
 {
 	g_free(tp_channel);
+}
+
+static void
+write_message_to_chatroom (int id,
+                           const gchar *from,
+                           guint timestamp,
+			   const gchar *msg,
+			   gpointer user_data)
+{
+	telepathy_connection *data = user_data;
+
+	/* escape HTML special characters */
+	gchar *escaped_message = g_markup_escape_text(msg, -1);
+
+	/* also change \n to <br> */
+	gchar *final_message = purple_strdup_withhtml(escaped_message);
+	g_free(escaped_message);
+
+	purple_debug_info("telepathy", "Received from %s: \"%s\" (escaped: \"%s\")\n",
+			from, msg, final_message);
+
+	/* transmit the message to the UI */
+	serv_got_chat_in(data->gc, id, from, PURPLE_MESSAGE_RECV, final_message, timestamp);
+
+	g_free(final_message);
+}
+
+static void
+chat_list_pending_messages_cb  (TpChannel *proxy,
+                                const GPtrArray *out_Pending_Messages,
+                                const GError *error,
+                                gpointer user_data,
+                                GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "ListPendingMessages error: %s\n", error->message);
+	}
+	else
+	{
+		telepathy_connection *data = user_data;
+		GArray *message_IDs;
+
+		int i;
+
+		GHashTable *properties = tp_channel_borrow_immutable_properties(proxy);
+		gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
+		TpHandle handle = tp_channel_get_handle(proxy, NULL);
+
+		/* Get the channel struct by channel handle
+		 * (which is the same with the libpurple chat id)
+		 */
+		telepathy_room_channel *tp_channel = g_hash_table_lookup(
+				data->room_Channels, (gpointer)handle);
+
+		if (tp_channel == NULL)
+		{
+			purple_debug_warning("telepathy", "Pending message from %s,"
+					" but there's no channel struct for the chatroom!\n", who);
+		}
+		else
+		{
+			/* we should now allow received_cb to handle incoming messages */
+			tp_channel->received_Pending_Messages = TRUE;
+		}
+
+		/* this will hold the IDs of message that will be acknowledged */
+		message_IDs = g_array_new(FALSE, FALSE, sizeof(guint));
+
+		for (i = 0; i<out_Pending_Messages->len; ++i)
+		{
+			/* unpack the relevant info from (uuuuus) */
+			GValueArray *arr = g_ptr_array_index(out_Pending_Messages, i);
+			guint msg_id = g_value_get_uint(g_value_array_get_nth(arr, 0));
+			guint timestamp = g_value_get_uint(g_value_array_get_nth(arr, 1));
+			guint sender = g_value_get_uint(g_value_array_get_nth(arr, 2));
+			guint flags = g_value_get_uint(g_value_array_get_nth(arr, 4));
+			gchar *msg = (gchar *)g_value_get_string(g_value_array_get_nth(arr, 5));
+			
+			/* Get information about the contact who sent this message */
+			const gchar *from;
+			telepathy_contact *contact = g_hash_table_lookup(
+					data->contacts, (gpointer)sender);
+
+			if (contact != NULL && contact->contact != NULL)
+				from = tp_contact_get_identifier(contact->contact);
+			else
+				from = "<Unknown Sender>";
+
+			/* drop message if it's not text */
+			if ((flags & TP_CHANNEL_TEXT_MESSAGE_FLAG_NON_TEXT_CONTENT) == 0)
+				write_message_to_chatroom(handle, from, timestamp, msg, user_data);
+
+			/* add the id to the array of acknowledge messages */
+			g_array_append_val(message_IDs, msg_id);
+		}
+
+		/* acknowledge the messages now */
+		tp_cli_channel_type_text_call_acknowledge_pending_messages(proxy, -1, message_IDs,
+				acknowledge_pending_messages_cb, user_data, NULL, NULL);
+
+		g_array_free(message_IDs, TRUE);
+
+	}
+}
+
+static void
+chat_received_cb (TpChannel *proxy,
+                  guint arg_ID,
+                  guint arg_Timestamp,
+                  guint arg_Sender,
+                  guint arg_Type,
+                  guint arg_Flags,
+                  const gchar *arg_Text,
+                  gpointer user_data,
+                  GObject *weak_object)
+{
+	telepathy_connection *data = user_data;
+
+	GHashTable *properties = tp_channel_borrow_immutable_properties(proxy);
+	gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
+	TpHandle handle = tp_channel_get_handle(proxy, NULL);
+
+	/* Get the channel struct by channel handle
+	 * (which is the same with the libpurple chat id)
+	 */
+	telepathy_room_channel *tp_channel = g_hash_table_lookup(
+			data->room_Channels, (gpointer)handle);
+
+	if (tp_channel == NULL)
+	{
+		purple_debug_warning("telepathy", "Received message from %s,"
+				" but there's no channel struct for the chatroom!\n", who);
+	}
+	else
+	{
+		GArray *message_IDs;
+
+		/* Get information about the sender */
+		telepathy_contact *contact = g_hash_table_lookup(
+				data->contacts, (gpointer)arg_Sender);
+
+		const gchar *from;
+
+		if (contact != NULL)
+			from = tp_contact_get_identifier(contact->contact);
+		else
+			from = "<Unknown>";
+		
+
+		/* will this message get caught by ListPendingMessages? */
+		if (!tp_channel->received_Pending_Messages)
+			return;
+
+		/* drop this message if it's not text */
+		if ((arg_Flags & TP_CHANNEL_TEXT_MESSAGE_FLAG_NON_TEXT_CONTENT) == 0)
+			write_message_to_chatroom(handle, from, arg_Timestamp, arg_Text, user_data);
+
+		/* acknowledge receiving the message */
+		message_IDs = g_array_new(FALSE, FALSE, sizeof(guint));
+
+		g_array_append_val(message_IDs, arg_ID);
+
+		tp_cli_channel_type_text_call_acknowledge_pending_messages(proxy, -1, message_IDs,
+				acknowledge_pending_messages_cb, user_data, NULL, NULL);
+
+		g_array_free(message_IDs, TRUE);
+
+	}
+}
+
+static void
+chat_send_error_cb (TpChannel *proxy,
+               guint arg_Error,
+               guint arg_Timestamp,
+               guint arg_Type,
+               const gchar *arg_Text,
+               gpointer user_data,
+               GObject *weak_object)
+{
+	telepathy_connection *data = user_data;
+
+	const gchar *who = tp_channel_get_identifier(proxy);
+
+	const gchar *error_reason = NULL;
+	gchar *error_message;
+	gchar *error_message2;
+
+	switch (arg_Error)
+	{
+		case TP_CHANNEL_TEXT_SEND_ERROR_UNKNOWN:
+			error_reason = _("Unknown error");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_OFFLINE:
+			error_reason = _("Contact is offline");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_INVALID_CONTACT:
+			error_reason = _("Contact is invalid");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_PERMISSION_DENIED:
+			error_reason = _("Permission denied");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_TOO_LONG:
+			error_reason = _("The message is too long");
+		break;
+
+		case TP_CHANNEL_TEXT_SEND_ERROR_NOT_IMPLEMENTED:
+			error_reason = _("Not implemented");
+		break;
+	}
+
+	error_message = g_strdup_printf(_("There was an error sending your message to %s"), who);
+	error_message2 = g_strdup_printf("%s: %s", error_message, error_reason);
+
+	/* FIXME: purple_conv_present_error() only works for 1-to-1 IMs
+	 * use serv_chat_send (PurpleConnection *, int, const char *, PurpleMessageFlags flags)
+	 */
+
+	/* display the error in the conversation */
+	if (!purple_conv_present_error(who, data->acct, error_message2))
+	{
+		/* display as a popup if there is no active conversation with the user */
+		purple_notify_error(purple_connections_get_handle(),
+				_("Error sending message"),
+				error_message,
+				error_reason);
+	}
+
+	g_free(error_message2);
+	g_free(error_message);
+
+	purple_debug_error("telepathy", "SendError: %s\n", error_reason);
+}
+
+static void
+chat_send_cb (TpChannel *proxy,
+              const GError *error,
+              gpointer user_data,
+              GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		telepathy_connection *data = user_data;
+
+		const gchar *who = tp_channel_get_identifier(proxy);
+
+		gchar *error_message = g_strdup_printf(
+				_("There was an error sending your message to %s"), who);
+		gchar *error_message2 = g_strdup_printf("%s: %s", error_message, error->message);
+
+		/* FIXME: purple_conv_present_error() only works for 1-to-1 IMs
+		 * use serv_chat_send (PurpleConnection *, int, const char *, PurpleMessageFlags flags)
+		 */
+
+		/* display the error in the conversation */
+		if (!purple_conv_present_error(who, data->acct, error_message2))
+		{
+			/* display as a popup if there is no active conversation with the user */
+			purple_notify_error(purple_connections_get_handle(),
+					_("Error sending message"),
+					error_message,
+					error->message);
+		}
+
+		g_free(error_message2);
+		g_free(error_message);
+			
+		purple_debug_error("telepathy", "Send error: %s\n", error->message);
+	}
+}
+
+static void
+handle_room_text_channel (TpChannel *channel,
+                          telepathy_connection *data)
+{
+	GError *error = NULL;
+
+	GHashTable *properties = tp_channel_borrow_immutable_properties(channel);
+	gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
+	TpHandle handle = tp_channel_get_handle(channel, NULL);
+
+	telepathy_room_channel *tp_channel;
+
+	tp_channel = g_hash_table_lookup(data->room_Channels, (gpointer)handle);
+
+	/* if tp_channel exists, then we requested this channel
+	 * else it's an incoming request so we must cache it
+	 */
+	if (tp_channel == NULL)
+	{
+		purple_debug_info("telepathy", "Saving TpChannel proxy for \"%s\" chatroom\n", who);
+
+		tp_channel = g_new0(telepathy_room_channel, 1);
+		g_hash_table_insert(data->room_Channels, (gpointer)handle, tp_channel);
+		serv_got_joined_chat(data->gc, handle, who);
+	}
+
+	tp_channel->channel = channel;
+
+	tp_cli_channel_type_text_connect_to_received(channel,
+			chat_received_cb, data, NULL, NULL, &error);
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to Received signal: %s\n",
+				error->message);
+	}
+
+	tp_channel->received_Pending_Messages = FALSE;
+
+
+	g_signal_connect(channel, "invalidated", G_CALLBACK(text_channel_invalidated_cb), data);
+
+	/* the Clear parameter is deprecated, we need to use AcknowledgePendingMessages */
+	tp_cli_channel_type_text_call_list_pending_messages(channel, -1,
+			FALSE, chat_list_pending_messages_cb, data, NULL, NULL);
+
+	/* send pending messages */
+	while (tp_channel->pending_Messages != NULL)
+	{
+		purple_debug_info("telepathy", "Sending pending message \"%s\" to %s\n",
+				(gchar *)tp_channel->pending_Messages->data, who);
+
+		tp_cli_channel_type_text_call_send(channel, -1,
+				TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL,
+				tp_channel->pending_Messages->data,
+				chat_send_cb, data, NULL, NULL);
+
+		/* the message was duped */
+		g_free(tp_channel->pending_Messages->data);
+
+		tp_channel->pending_Messages = g_list_delete_link(
+				tp_channel->pending_Messages, tp_channel->pending_Messages);
+	}
+
+	tp_cli_channel_type_text_connect_to_send_error(channel,
+			chat_send_error_cb, data, NULL, NULL, &error);
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to SendError signal: %s\n", error->message);
+		g_error_free(error);
+	}
 }
 
 void
@@ -353,9 +706,9 @@ chat_state_changed_cb (TpChannel *proxy,
 	}
 }
 
-void
-handle_text_channel (TpChannel *channel,
-                     telepathy_connection *data)
+static void
+handle_im_text_channel (TpChannel *channel,
+                        telepathy_connection *data)
 {
 	GError *error = NULL;
 
@@ -417,6 +770,30 @@ handle_text_channel (TpChannel *channel,
 	{
 		purple_debug_error("telepathy", "Error connecting to SendError signal: %s\n", error->message);
 		g_error_free(error);
+	}
+}
+
+void
+handle_text_channel (TpChannel *channel,
+                     telepathy_connection *data)
+{
+	TpHandle handle;
+	TpHandleType handleType;
+
+	handle = tp_channel_get_handle(channel, &handleType);
+
+	switch (handleType)
+	{
+		case TP_HANDLE_TYPE_CONTACT:
+			handle_im_text_channel(channel, data);
+		break;
+
+		case TP_HANDLE_TYPE_ROOM:
+			handle_room_text_channel(channel, data);
+		break;
+
+		default:
+			return;
 	}
 }
 

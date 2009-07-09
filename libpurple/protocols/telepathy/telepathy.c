@@ -35,6 +35,7 @@
 #include "notify.h"
 #include "plugin.h"
 #include "prefs.h"
+#include "prpl.h"
 #include "util.h"
 #include "version.h"
 
@@ -223,6 +224,21 @@ telepathy_status_types(PurpleAccount *acct)
 	}
 
 	return g_list_reverse(types);
+}
+
+static GList *
+telepathy_chat_info(PurpleConnection *gc)
+{
+	GList *m = NULL;
+	struct proto_chat_entry *pce;
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("_Room name:");
+	pce->identifier = "room";
+	pce->required = TRUE;
+	m = g_list_append(m, pce);
+
+	return m;
 }
 
 static void
@@ -542,6 +558,25 @@ telepathy_remove_buddy (PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g
 }
 
 static void
+telepathy_join_chat (PurpleConnection *gc, GHashTable *components)
+{
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+	const gchar *name = g_hash_table_lookup(components, "room");
+
+	/* Request a room text channel */
+	GHashTable *map = tp_asv_new (
+		TP_IFACE_CHANNEL ".ChannelType", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
+		TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_ROOM,
+		TP_IFACE_CHANNEL ".TargetID", G_TYPE_STRING, name,
+		NULL);
+
+	purple_debug_info("telepathy", "Requesting room text channel for %s\n", name);
+
+	tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1,
+			map, ensure_channel_cb, data, NULL, NULL);
+}
+
+static void
 telepathy_set_buddy_icon (PurpleConnection *gc, PurpleStoredImage *img)
 {
 	telepathy_connection *data = purple_connection_get_protocol_data(gc);
@@ -604,7 +639,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	telepathy_tooltip_text,               /* tooltip_text */
 	telepathy_status_types,               /* status_types */
 	NULL,            /* blist_node_menu */
-	NULL,                  /* chat_info */
+	telepathy_chat_info,                  /* chat_info */
 	NULL,         /* chat_info_defaults */
 	telepathy_login,                      /* login */
 	telepathy_close,                      /* close */
@@ -624,7 +659,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	NULL,                 /* rem_permit */
 	NULL,                   /* rem_deny */
 	NULL,            /* set_permit_deny */
-	NULL,                  /* join_chat */
+	telepathy_join_chat,                  /* join_chat */
 	NULL,                /* reject_chat */
 	NULL,              /* get_chat_name */
 	NULL,                /* chat_invite */

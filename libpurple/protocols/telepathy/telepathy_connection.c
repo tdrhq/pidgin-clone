@@ -52,10 +52,16 @@ status_changed_cb (TpConnection *proxy,
 
 		purple_connection_set_state(data->gc, PURPLE_CONNECTED);
 
-		data->text_Channels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_text_channel);
-		data->contacts = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GDestroyNotify) destroy_contact);
-		data->groups = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_group);
-		data->lists = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) destroy_group);
+		data->text_Channels = g_hash_table_new_full(g_str_hash, g_str_equal,
+				g_free, (GDestroyNotify) destroy_text_channel);
+		data->room_Channels = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+				NULL, (GDestroyNotify) destroy_room_channel);
+		data->contacts = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+				NULL, (GDestroyNotify) destroy_contact);
+		data->groups = g_hash_table_new_full(g_str_hash, g_str_equal,
+				g_free, (GDestroyNotify) destroy_group);
+		data->lists = g_hash_table_new_full(g_str_hash, g_str_equal,
+				g_free, (GDestroyNotify) destroy_group);
 		data->buddy_to_be_added = g_hash_table_new_full(g_str_hash, g_str_equal,
 				g_free, g_free);
 	}
