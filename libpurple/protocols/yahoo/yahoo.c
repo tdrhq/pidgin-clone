@@ -1485,7 +1485,7 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 #if GLIB_CHECK_VERSION(2,6,0)
 		totalelements = g_strv_length(split_data);
 #else
-		while (split_data[++totalelements] != NULL);
+		while (split_data[++totalelements] != NULL);	
 #endif
 		if (totalelements >= 4) {
 			response_no = strtol(split_data[0], NULL, 10);
@@ -1571,11 +1571,9 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 #if GLIB_CHECK_VERSION(2,6,0)
 		totalelements = g_strv_length(split_data);
 #else
-		while (split_data[++totalelements] != NULL);
+		while (split_data[++totalelements] != NULL);	
 #endif
-		if(totalelements == 1)
-			response_no = strtol(split_data[0], NULL, 10);
-		else if(totalelements >= 2) {
+		if(totalelements >= 2) {
 			response_no = strtol(split_data[0], NULL, 10);
 			token = g_strdup(split_data[1] + strlen("ymsgr="));
 		}
@@ -1595,9 +1593,6 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 					break;
 				case 1212:
 					/* Password incorrect */
-					/* Set password to NULL. Avoids account locking. Brings dialog to enter password if clicked on Re-enable account */
-					if (!purple_account_get_remember_password(purple_connection_get_account(gc)))
-						purple_account_set_password(purple_connection_get_account(gc), NULL);
 					error_reason = g_strdup(_("Incorrect Password"));
 					error = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 					break;
