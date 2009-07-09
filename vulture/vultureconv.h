@@ -108,6 +108,12 @@ typedef struct _VULTURE_CHAT_USER
 	HTREEITEM			hti;
 } VULTURE_CHAT_USER;
 
+typedef struct _VULTURE_CHAT_RENAME_USER
+{
+	VULTURE_CONVERSATION	*lpvconvChat;
+	LPTSTR			szOldName, szNewName, szNewAlias;
+} VULTURE_CHAT_RENAME_USER;
+
 
 int VultureRegisterConvContainerWindowClass(void);
 HWND VultureCreateConvContainer(void);

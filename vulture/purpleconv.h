@@ -44,6 +44,8 @@ void PurpleJoinAdHocChat(PurpleAccount *lppac, GHashTable *lphashParameters);
 void PurpleJoinChat(PurpleChat *lpchat);
 void PurpleChatAddUsers(PurpleConversation *lpconv, GList *lpglistChatBuddies, gboolean bNewArrivals);
 void VultureFreeChatAddUsers(VULTURE_CHAT_ADD_USERS *lpvchataddusers);
+void PurpleChatRenameUser(PurpleConversation *lpconv, const char *szOldName, const char *szNewName, const char *szNewAlias);
+void VultureFreeRenameUser(VULTURE_CHAT_RENAME_USER *lpvchatrenameuser);
 
 
 #endif

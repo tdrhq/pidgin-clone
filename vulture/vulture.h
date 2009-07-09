@@ -68,7 +68,7 @@ gint VultureCompareTCHARStrings(gconstpointer lpvStr1, gconstpointer lpvStr2, gp
 /** Wrappers for heap functions. */
 static INLINE LPVOID ProcHeapAlloc(DWORD cb) { return HeapAlloc(g_hProcHeap, HEAP_GENERATE_EXCEPTIONS, cb); }
 static INLINE LPVOID ProcHeapReAlloc(LPVOID lpv, DWORD cb) { return HeapReAlloc(g_hProcHeap, HEAP_GENERATE_EXCEPTIONS, lpv, cb); }
-static INLINE void ProcHeapFree(LPVOID lpv) { HeapFree(g_hProcHeap, 0, lpv); }
+static INLINE BOOL ProcHeapFree(LPVOID lpv) { return HeapFree(g_hProcHeap, 0, lpv); }
 
 
 /**

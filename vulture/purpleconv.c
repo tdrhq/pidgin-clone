@@ -328,3 +328,39 @@ void VultureFreeChatAddUsers(VULTURE_CHAT_ADD_USERS *lpvchataddusers)
 
 	g_free(lpvchataddusers);
 }
+
+
+/**
+ * Called when a user is renamed in a chat.
+ *
+ * @param	lpconv		Conversation.
+ * @param	szOldName	Old name.
+ * @param	szNewName	New name.
+ * @param	szNewAlias	New alias. Possibly NULL.
+ */
+void PurpleChatRenameUser(PurpleConversation *lpconv, const char *szOldName, const char *szNewName, const char *szNewAlias)
+{
+	VULTURE_CHAT_RENAME_USER *lpvchatrenameuser = g_new(VULTURE_CHAT_RENAME_USER, 1);
+
+	lpvchatrenameuser->lpvconvChat = lpconv->ui_data;
+	lpvchatrenameuser->szOldName = VultureUTF8ToTCHAR(szOldName);
+	lpvchatrenameuser->szNewName = VultureUTF8ToTCHAR(szNewName);
+	lpvchatrenameuser->szNewAlias = szNewAlias ? VultureUTF8ToTCHAR(szNewAlias) : NULL;
+
+	VulturePostUIMessage(VUIMSG_CHATRENAMEUSER, lpvchatrenameuser);
+}
+
+
+/**
+ * Frees a VULTURE_CHAT_RENAME_USER structure once the UI is done with it.
+ *
+ * @param	lpvchatrenameuser		Structure to free.
+ */
+void VultureFreeRenameUser(VULTURE_CHAT_RENAME_USER *lpvchatrenameuser)
+{
+	g_free(lpvchatrenameuser->szOldName);
+	g_free(lpvchatrenameuser->szNewName);
+	if(lpvchatrenameuser->szNewAlias) g_free(lpvchatrenameuser->szNewAlias);
+
+	g_free(lpvchatrenameuser);
+}

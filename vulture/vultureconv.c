@@ -64,6 +64,7 @@ static LRESULT CALLBACK InputBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd);
 static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs, LPTSTR szTitle);
 static void UpdateIMStatusText(HWND hwndDlg, VULTURE_CONVERSATION *lpvconv);
+static void FreeChatUser(void *lpvChatUser);
 
 
 /**
@@ -452,7 +453,7 @@ static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPA
 	{
 	case WM_INITDIALOG:
 		lpvconvchat = (VULTURE_CONVERSATION_CHAT*)lParam;
-		lpvconvchat->lpgtreePeople = g_tree_new_full(VultureCompareTCHARStrings, NULL, free, ProcHeapFree);
+		lpvconvchat->lpgtreePeople = g_tree_new_full(VultureCompareTCHARStrings, NULL, free, FreeChatUser);
 		break;
 
 	case WM_PURPLEUIMSG:
@@ -494,6 +495,40 @@ static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPA
 				}
 
 				VultureFreeChatAddUsers(lpvchataddusers);
+			}
+
+			break;
+
+		case VUIMSG_CHATRENAMEUSER:
+			{
+				VULTURE_CHAT_RENAME_USER *lpvchatrenameuser = (VULTURE_CHAT_RENAME_USER*)lParam;
+				VULTURE_CHAT_USER *lpvchatuser = g_tree_lookup(lpvconvchat->lpgtreePeople, lpvchatrenameuser->szOldName);
+				VULTURE_CHAT_USER *lpvchatuserNew;
+				TVITEM tvitem;
+				HWND hwndTVNames = GetDlgItem(hwndDlg, IDC_TREE_NAMES);
+
+				tvitem.mask = TVIF_TEXT | TVIF_PARAM;
+				tvitem.hItem = lpvchatuser->hti;
+				tvitem.pszText = lpvchatrenameuser->szNewName;
+
+				/* Create new entry for this user. */
+				lpvchatuserNew = ProcHeapAlloc(sizeof(VULTURE_CHAT_USER));
+				lpvchatuserNew->szAlias = lpvchatrenameuser->szNewAlias ? _tcsdup(lpvchatrenameuser->szNewAlias) : NULL;
+				lpvchatuserNew->szAliasKey = lpvchatuser->szAliasKey ? _tcsdup(lpvchatuser->szAliasKey) : NULL;
+				lpvchatuserNew->bIsBuddy = lpvchatuser->bIsBuddy;
+				lpvchatuserNew->pccbflags = lpvchatuser->pccbflags;
+				lpvchatuserNew->hti = lpvchatuser->hti;
+
+				/* Remove old entry from binary tree. */
+				g_tree_remove(lpvconvchat->lpgtreePeople, lpvchatrenameuser->szOldName);
+
+				/* Add new entry. */
+				g_tree_insert(lpvconvchat->lpgtreePeople, lpvchatrenameuser->szNewName, lpvchatuserNew);
+
+				/* Update tree-view. */
+				TreeView_SetItem(hwndTVNames, &tvitem);
+
+				VultureFreeRenameUser(lpvchatrenameuser);
 			}
 
 			break;
@@ -863,4 +898,20 @@ static void UpdateIMStatusText(HWND hwndDlg, VULTURE_CONVERSATION *lpvconv)
 	VultureSingleSyncPurpleCall(PC_IMGETSTATUSMSG, &vcgetstring);
 	SetDlgItemText(hwndDlg, IDC_STATIC_STATUS, vcgetstring.sz ? vcgetstring.sz : TEXT(""));
 	if(vcgetstring.sz) g_free(vcgetstring.sz);
+}
+
+
+/**
+ * GDestroyNotify that frees a VULTURE_CHAT_USER structure and its contents.
+ *
+ * @param	lpvChatUser	Structure to free.
+ */
+static void FreeChatUser(void *lpvChatUser)
+{
+	VULTURE_CHAT_USER *lpvchatuser = (VULTURE_CHAT_USER*)lpvChatUser;
+
+	if(lpvchatuser->szAlias) free(lpvchatuser->szAlias);
+	if(lpvchatuser->szAliasKey) free(lpvchatuser->szAliasKey);
+
+	ProcHeapFree(lpvchatuser);
 }
