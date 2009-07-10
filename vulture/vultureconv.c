@@ -532,6 +532,28 @@ static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPA
 			}
 
 			break;
+
+		case VUIMSG_CHATREMOVEUSERS:
+			{
+				VULTURE_CHAT_REMOVE_USERS *lpvchatremoveusers = (VULTURE_CHAT_REMOVE_USERS*)lParam;
+				GList *lpglistRover;
+				HWND hwndTVNames = GetDlgItem(hwndDlg, IDC_TREE_NAMES);
+
+				for(lpglistRover = lpvchatremoveusers->lpglistNames; lpglistRover; lpglistRover = lpglistRover->next)
+				{
+					VULTURE_CHAT_USER *lpvchatuser = g_tree_lookup(lpvconvchat->lpgtreePeople, lpglistRover->data);
+
+					/* Remove from tree-view. */
+					TreeView_DeleteItem(hwndTVNames, lpvchatuser->hti);
+
+					/* Remove from binary tree. */
+					g_tree_remove(lpvconvchat->lpgtreePeople, lpglistRover->data);
+				}
+
+				VultureFreeChatRemoveUsers(lpvchatremoveusers);
+			}
+
+			break;
 		}
 
 		break;

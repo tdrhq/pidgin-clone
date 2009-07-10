@@ -190,7 +190,7 @@ static void InitUI(void)
 		PurpleWriteConversation,	/* write_conv		*/
 		PurpleChatAddUsers,		/* chat_add_users	*/
 		PurpleChatRenameUser,		/* chat_rename_user	*/
-		NULL,				/* chat_remove_users	*/
+		PurpleChatRemoveUsers,		/* chat_remove_users	*/
 		NULL,				/* chat_update_user	*/
 		NULL,				/* present		*/
 		NULL,				/* has_focus		*/

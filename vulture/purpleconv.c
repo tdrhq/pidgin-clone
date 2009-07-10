@@ -364,3 +364,43 @@ void VultureFreeRenameUser(VULTURE_CHAT_RENAME_USER *lpvchatrenameuser)
 
 	g_free(lpvchatrenameuser);
 }
+
+
+/**
+ * Called when users leave a chat.
+ *
+ * @param	lpconv		Conversation.
+ * @param	lpglistUsers	List of names of departing users.
+ */
+void PurpleChatRemoveUsers(PurpleConversation *lpconv, GList *lpglistUsers)
+{
+	VULTURE_CHAT_REMOVE_USERS *lpvchatremoveusers = g_new(VULTURE_CHAT_REMOVE_USERS, 1);
+
+	lpvchatremoveusers->lpvconvChat = lpconv->ui_data;
+	lpvchatremoveusers->lpglistNames = NULL;
+
+	for(; lpglistUsers; lpglistUsers = lpglistUsers->next)
+		lpvchatremoveusers->lpglistNames = g_list_prepend(lpvchatremoveusers->lpglistNames, VultureUTF8ToTCHAR(lpglistUsers->data));
+
+	lpvchatremoveusers->lpglistNames = g_list_reverse(lpvchatremoveusers->lpglistNames);
+
+	VulturePostUIMessage(VUIMSG_CHATREMOVEUSERS, lpvchatremoveusers);
+}
+
+
+/**
+ * Frees a VULTURE_CHAT_ADD_USERS structure once the UI is done with it.
+ *
+ * @param	lpvchataddusers		Structure to free.
+ */
+void VultureFreeChatRemoveUsers(VULTURE_CHAT_REMOVE_USERS *lpvchatremoveusers)
+{
+	GList *lpglistRover;
+
+	for(lpglistRover = lpvchatremoveusers->lpglistNames; lpglistRover; lpglistRover = lpglistRover->next)
+		g_free(lpglistRover->data);
+
+	g_list_free(lpvchatremoveusers->lpglistNames);
+
+	g_free(lpvchatremoveusers);
+}

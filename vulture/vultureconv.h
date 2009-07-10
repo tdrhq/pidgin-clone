@@ -114,6 +114,12 @@ typedef struct _VULTURE_CHAT_RENAME_USER
 	LPTSTR			szOldName, szNewName, szNewAlias;
 } VULTURE_CHAT_RENAME_USER;
 
+typedef struct _VULTURE_CHAT_REMOVE_USERS
+{
+	VULTURE_CONVERSATION	*lpvconvChat;
+	GList			*lpglistNames;
+} VULTURE_CHAT_REMOVE_USERS;
+
 
 int VultureRegisterConvContainerWindowClass(void);
 HWND VultureCreateConvContainer(void);

@@ -46,6 +46,8 @@ void PurpleChatAddUsers(PurpleConversation *lpconv, GList *lpglistChatBuddies, g
 void VultureFreeChatAddUsers(VULTURE_CHAT_ADD_USERS *lpvchataddusers);
 void PurpleChatRenameUser(PurpleConversation *lpconv, const char *szOldName, const char *szNewName, const char *szNewAlias);
 void VultureFreeRenameUser(VULTURE_CHAT_RENAME_USER *lpvchatrenameuser);
+void PurpleChatRemoveUsers(PurpleConversation *lpconv, GList *lpglistUsers);
+void VultureFreeChatRemoveUsers(VULTURE_CHAT_REMOVE_USERS *lpvchatremoveusers);
 
 
 #endif
