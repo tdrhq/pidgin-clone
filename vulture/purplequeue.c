@@ -250,6 +250,14 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		
 		break;
 
+	case PC_CHATGETTOPIC:
+		{
+			VULTURE_CONV_GET_STRING *lpvcgetstr = (VULTURE_CONV_GET_STRING*)lppurplecall->lpvParam;
+			lpvcgetstr->sz = PurpleChatGetTopic(lpvcgetstr->lpvconv->lpconv);
+		}
+		
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

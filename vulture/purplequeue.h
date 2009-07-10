@@ -65,7 +65,7 @@ enum PURPLE_CALL_ID
 	/* (VULTURE_BLIST_NODE*) Node double-clicked.  */
 	PC_BLISTNODEDBLCLKED,
 
-	/* (VULTURE_CONV_GET_TITLE*) */
+	/* (VULTURE_CONV_GET_STRING*) Retrieves the conversation's title. */
 	PC_CONVGETTITLE,
 
 	/* (VULTURE_IM_GET_STATUS_MSG*) */
@@ -76,6 +76,9 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_JOIN_CHAT_DATA*) */
 	PC_JOINCHAT,
+
+	/* (VULTURE_CONV_GET_STRING*) Retrieves the chat's topic. */
+	PC_CHATGETTOPIC,
 };
 
 

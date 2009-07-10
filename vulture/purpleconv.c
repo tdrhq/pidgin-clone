@@ -404,3 +404,20 @@ void VultureFreeChatRemoveUsers(VULTURE_CHAT_REMOVE_USERS *lpvchatremoveusers)
 
 	g_free(lpvchatremoveusers);
 }
+
+
+/**
+ * Gets the topic of a chat.
+ *
+ * @param	lpconv	Conversation.
+ */
+LPTSTR PurpleChatGetTopic(PurpleConversation *lpconv)
+{
+	const char *szTopic;
+
+	if(!lpconv)
+		return NULL;
+
+	szTopic = purple_conv_chat_get_topic(lpconv->u.chat);
+	return szTopic ? VultureUTF8ToTCHAR(szTopic) : NULL;
+}

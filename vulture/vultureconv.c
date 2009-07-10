@@ -238,6 +238,11 @@ static LRESULT CALLBACK ConvContainerWndProc(HWND hwnd, UINT uiMsg, WPARAM wPara
 					break;
 
 				default:
+					/* If we don't know what to do with it,
+					 * forward it to the conversastion
+					 * window itself.
+					 */
+					SendMessage(lpvcchanged->lpvconv->hwndConv, uiMsg, wParam, lParam);
 					break;
 				}
 
@@ -563,6 +568,23 @@ static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPA
 			}
 
 			break;
+
+		case VUIMSG_CONVCHANGED:
+			{
+				VULTURE_CONV_CHANGED *lpvcchanged = (VULTURE_CONV_CHANGED*)lParam;
+
+				if(lpvcchanged->pcut == PURPLE_CONV_UPDATE_TOPIC)
+				{
+					VULTURE_CONV_GET_STRING vcgetstring;
+
+					vcgetstring.lpvconv = lpvcchanged->lpvconv;
+					VultureSingleSyncPurpleCall(PC_CHATGETTOPIC, &vcgetstring);
+					SetDlgItemText(hwndDlg, IDC_STATIC_TOPIC, vcgetstring.sz ? vcgetstring.sz : TEXT(""));
+					if(vcgetstring.sz) g_free(vcgetstring.sz);
+				}
+			}
+
+			break;
 		}
 
 		break;
@@ -705,7 +727,7 @@ static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs
 }
 
 
-#define CONV_IM_TOP_MARGIN		48
+#define CONV_TOP_MARGIN		48
 
 /**
  * Repositions and resizes controls in a conversation window.
@@ -717,24 +739,21 @@ static void RepositionConvControls(HWND hwndConvDlg)
 	RECT rcClient;
 	VULTURE_CONVERSATION *lpvconv = (VULTURE_CONVERSATION*)GetWindowLongPtr(hwndConvDlg, GWLP_USERDATA);
 	HDWP hdwp = BeginDeferWindowPos(lpvconv->convtype == PURPLE_CONV_TYPE_CHAT ? 3 : 2);
-	int cxLeft, cyTopMargin;
+	int cxLeft;
 
 	GetClientRect(hwndConvDlg, &rcClient);
 
 	/* Width of input and output controls. */
 	cxLeft = rcClient.right - 2 * CONV_DLG_MARGIN - (lpvconv->convtype == PURPLE_CONV_TYPE_CHAT ? (CONV_DLG_MARGIN + g_cxNames) : 0);
 
-	/* Space for buddy's name, icon and so on. */
-	cyTopMargin = lpvconv->convtype == PURPLE_CONV_TYPE_IM ? CONV_IM_TOP_MARGIN : 0;
-
 	hdwp = DeferWindowPos(
 		hdwp,
 		GetDlgItem(hwndConvDlg, IDC_RICHEDIT_CONV),
 		NULL,
 		CONV_DLG_MARGIN,
-		CONV_DLG_MARGIN + cyTopMargin,
+		CONV_DLG_MARGIN + CONV_TOP_MARGIN,
 		cxLeft,
-		rcClient.bottom - g_cyInput - 3 * CONV_DLG_MARGIN - cyTopMargin,
+		rcClient.bottom - g_cyInput - 3 * CONV_DLG_MARGIN - CONV_TOP_MARGIN,
 		SWP_NOACTIVATE | SWP_NOZORDER);
 
 	hdwp = DeferWindowPos(
@@ -754,9 +773,9 @@ static void RepositionConvControls(HWND hwndConvDlg)
 			GetDlgItem(hwndConvDlg, IDC_TREE_NAMES),
 			NULL,
 			2 * CONV_DLG_MARGIN + cxLeft,
-			CONV_DLG_MARGIN,
+			CONV_DLG_MARGIN + CONV_TOP_MARGIN,
 			g_cxNames,
-			rcClient.bottom - 2 * CONV_DLG_MARGIN - cyTopMargin,
+			rcClient.bottom - 2 * CONV_DLG_MARGIN - CONV_TOP_MARGIN,
 			SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 

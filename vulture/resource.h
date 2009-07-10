@@ -38,3 +38,4 @@
 #define IDC_RICHEDIT_INPUT                      40010
 #define IDC_STATIC_NAME                         40011
 #define IDC_STATIC_STATUS                       40013
+#define IDC_STATIC_TOPIC                        40013

@@ -48,6 +48,7 @@ void PurpleChatRenameUser(PurpleConversation *lpconv, const char *szOldName, con
 void VultureFreeRenameUser(VULTURE_CHAT_RENAME_USER *lpvchatrenameuser);
 void PurpleChatRemoveUsers(PurpleConversation *lpconv, GList *lpglistUsers);
 void VultureFreeChatRemoveUsers(VULTURE_CHAT_REMOVE_USERS *lpvchatremoveusers);
+LPTSTR PurpleChatGetTopic(PurpleConversation *lpconv);
 
 
 #endif
