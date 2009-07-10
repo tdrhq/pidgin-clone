@@ -65,6 +65,8 @@ static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd);
 static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs, LPTSTR szTitle);
 static void UpdateIMStatusText(HWND hwndDlg, VULTURE_CONVERSATION *lpvconv);
 static void FreeChatUser(void *lpvChatUser);
+static int CALLBACK UserListComparator(LPARAM lParam1, LPARAM lParam2, LPARAM lParamUnused);
+static INLINE void SortUserList(HWND hwndTVUsers);
 
 
 /**
@@ -477,6 +479,7 @@ static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPA
 					VULTURE_ADD_CHAT_USER *lpvaddchatuser = lpglistRover->data;
 					TVINSERTSTRUCT tvis;
 
+					lpvcu->szName = _tcsdup(lpvaddchatuser->szName);
 					lpvcu->szAlias = lpvaddchatuser->szAlias ? _tcsdup(lpvaddchatuser->szAlias) : NULL;
 					lpvcu->szAliasKey = lpvaddchatuser->szAliasKey ? _tcsdup(lpvaddchatuser->szAliasKey) : NULL;
 					lpvcu->bIsBuddy = lpvaddchatuser->bIsBuddy;
@@ -495,6 +498,8 @@ static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPA
 				}
 
 				VultureFreeChatAddUsers(lpvchataddusers);
+
+				SortUserList(hwndTVNames);
 			}
 
 			break;
@@ -529,6 +534,8 @@ static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPA
 				TreeView_SetItem(hwndTVNames, &tvitem);
 
 				VultureFreeRenameUser(lpvchatrenameuser);
+
+				SortUserList(hwndTVNames);
 			}
 
 			break;
@@ -551,6 +558,8 @@ static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPA
 				}
 
 				VultureFreeChatRemoveUsers(lpvchatremoveusers);
+
+				SortUserList(hwndTVNames);
 			}
 
 			break;
@@ -932,8 +941,71 @@ static void FreeChatUser(void *lpvChatUser)
 {
 	VULTURE_CHAT_USER *lpvchatuser = (VULTURE_CHAT_USER*)lpvChatUser;
 
+	free(lpvchatuser->szName);
 	if(lpvchatuser->szAlias) free(lpvchatuser->szAlias);
 	if(lpvchatuser->szAliasKey) free(lpvchatuser->szAliasKey);
 
 	ProcHeapFree(lpvchatuser);
+}
+
+
+/**
+ * Comparator for comparing two user-list entries in a chat. Intended for use
+ * with TreeView_SortChildrenCB.
+ *
+ * @param	lParam1		Address of first entry's VULTURE_CHAT_USER.
+ * @param	lParam2		Address of second entry's VULTURE_CHAT_USER.
+ * @param	lParamUnused	Unused.
+ *
+ * @return Negative/zero/positive as the first entry should come resp. before/
+ * at/after the second.
+ */
+static int CALLBACK UserListComparator(LPARAM lParam1, LPARAM lParam2, LPARAM lParamUnused)
+{
+	/* Ranks in decreasing order of seniority. */
+	const int c_iRankedFlags[] =
+	{
+		PURPLE_CBFLAGS_FOUNDER,
+		PURPLE_CBFLAGS_OP,
+		PURPLE_CBFLAGS_HALFOP,
+		PURPLE_CBFLAGS_VOICE
+	};
+
+	VULTURE_CHAT_USER *lpvchatuser1 = (VULTURE_CHAT_USER*)lParam1;
+	VULTURE_CHAT_USER *lpvchatuser2 = (VULTURE_CHAT_USER*)lParam2;
+	int iRank1 = 0, iRank2 = 0;
+	int i;
+
+	UNREFERENCED_PARAMETER(lParamUnused);
+
+	/* Compute ranks based on flags. */
+	for(i = 0; i < (int)NUM_ELEMENTS(c_iRankedFlags) && !(lpvchatuser1->pccbflags & c_iRankedFlags[i]); i++)
+		iRank1++;
+
+	for(i = 0; i < (int)NUM_ELEMENTS(c_iRankedFlags) && !(lpvchatuser2->pccbflags & c_iRankedFlags[i]); i++)
+		iRank2++;
+
+	/* If ranks are different, the lower comes first. */
+	if(iRank1 != iRank2)
+		return iRank1 - iRank2;
+
+	/* If ranks are equal, compare the names. */
+	return _tcscmp(lpvchatuser1->szName, lpvchatuser2->szName);
+}
+
+
+/**
+ * Sorts the user-list in a chat.
+ *
+ * @param	hwndTVUsers	User-list window handle.
+ */
+static INLINE void SortUserList(HWND hwndTVUsers)
+{
+	TVSORTCB tvsortcb;
+
+	tvsortcb.hParent = TVI_ROOT;
+	tvsortcb.lParam = 0;
+	tvsortcb.lpfnCompare = UserListComparator;
+
+	TreeView_SortChildrenCB(hwndTVUsers, &tvsortcb, FALSE);
 }

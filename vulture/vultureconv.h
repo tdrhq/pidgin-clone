@@ -99,8 +99,7 @@ typedef struct _VULTURE_CHAT_ADD_USERS
 
 typedef struct _VULTURE_CHAT_USER
 {
-	/* We don't store the name here. */
-
+	LPTSTR				szName;
 	LPTSTR				szAlias;
 	LPTSTR				szAliasKey;
 	BOOL				bIsBuddy;
