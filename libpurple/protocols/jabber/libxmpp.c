@@ -351,6 +351,10 @@ init_plugin(PurplePlugin *plugin)
 	/* Restore the original error mode */
 	SetErrorMode(old_error_mode);
 #endif
+
+    /* Adium hack for Mac OS X 10.4 support */
+ 	purple_prefs_add_none("/plugins/prpl/jabber");
+ 	purple_prefs_add_bool("/plugins/prpl/jabber/avoid_sasl_for_plain_auth", FALSE);
 #endif
 	jabber_register_commands();
 

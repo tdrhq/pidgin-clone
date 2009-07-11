@@ -285,6 +285,7 @@ libpurple_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
 libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
 libpurple_la_LIBADD = \
 	$(STATIC_LINK_LIBS) \
+	$(KRB4_LDFLAGS) $(KRB4_LIBS) \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
@@ -293,6 +294,8 @@ libpurple_la_LIBADD = \
 	$(FARSIGHT_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(GSTINTERFACES_LIBS) \
+	$(SASL_LIBS) \
+	$(MEANWHILE_LIBS) \
 	-lm
 
 AM_CPPFLAGS = \

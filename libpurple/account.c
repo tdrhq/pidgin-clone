@@ -412,11 +412,16 @@ account_to_xmlnode(PurpleAccount *account)
 		g_hash_table_foreach(account->ui_settings, ui_setting_to_xmlnode, node);
 	}
 
+	// Adium never wants its proxy information saved to disk.
+	/*
+		
 	if ((proxy_info = purple_account_get_proxy_info(account)) != NULL)
 	{
 		child = proxy_settings_to_xmlnode(proxy_info);
 		xmlnode_insert_child(node, child);
 	}
+	
+	*/
 
 	child = current_error_to_xmlnode(priv->current_error);
 	xmlnode_insert_child(node, child);
