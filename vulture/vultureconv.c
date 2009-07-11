@@ -536,6 +536,7 @@ static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPA
 				g_tree_insert(lpvconvchat->lpgtreePeople, lpvchatrenameuser->szNewName, lpvchatuserNew);
 
 				/* Update tree-view. */
+				tvitem.lParam = (LPARAM)lpvchatuser;
 				TreeView_SetItem(hwndTVNames, &tvitem);
 
 				VultureFreeRenameUser(lpvchatrenameuser);
