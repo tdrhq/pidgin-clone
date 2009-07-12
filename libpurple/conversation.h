@@ -140,7 +140,7 @@ typedef enum
 	PURPLE_CBFLAGS_OP            = 0x0004, /**< Channel Op or Moderator      */
 	PURPLE_CBFLAGS_FOUNDER       = 0x0008, /**< Channel Founder              */
 	PURPLE_CBFLAGS_TYPING        = 0x0010, /**< Currently typing             */
-	PURPLE_CBFLAGS_AWAY			 = 0x0020  /**< Currently away				 */
+	PURPLE_CBFLAGS_AWAY          = 0x0020  /**< Currently away. @since 2.6.0 */
 } PurpleConvChatBuddyFlags;
 
 #include "account.h"
@@ -300,9 +300,10 @@ struct _PurpleConvChatBuddy
 	PurpleConvChatBuddyFlags flags;  /**< A bitwise OR of flags for this participant,
 	                                  *   such as whether they are a channel operator.
 	                                  */
-	GHashTable *attributes;			 /**< A hash table of attributes about the user, such as
-									  *   real name, user@host, etc.
-									  */
+	GHashTable *attributes;          /**< A hash table of attributes about the user,
+	                                  *   such as real name, user@host, etc.
+	                                  *   @since 2.6.0.
+	                                  */
 };
 
 /**
@@ -1365,8 +1366,10 @@ const char *purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb);
  * @param key	The key of the attribute.
  *
  * @return The value of the attribute key.
+ * @since 2.6.0
  */
-const char *purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb, const char *key);
+const char *purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb,
+		const char *key);
 
 /**
  * Get the keys of all atributes of a chat buddy
@@ -1374,9 +1377,10 @@ const char *purple_conv_chat_cb_get_attribute(PurpleConvChatBuddy *cb, const cha
  * @param cb	The chat buddy.
  *
  * @return A list of the attributes of a chat buddy.
+ * @since 2.6.0
  */
 GList *purple_conv_chat_cb_get_attribute_keys(PurpleConvChatBuddy *cb);
-	
+
 /**
  * Set an attribute of a chat buddy
  *
@@ -1384,8 +1388,11 @@ GList *purple_conv_chat_cb_get_attribute_keys(PurpleConvChatBuddy *cb);
  * @param cb	The chat buddy.
  * @param key	The key of the attribute.
  * @param value	The value of the attribute.
+ *
+ * @since 2.6.0
  */
-void purple_conv_chat_cb_set_attribute(PurpleConvChat *chat, PurpleConvChatBuddy *cb, const char *key, const char *value);
+void purple_conv_chat_cb_set_attribute(PurpleConvChat *chat,
+		PurpleConvChatBuddy *cb, const char *key, const char *value);
 
 /**
  * Set attributes of a chat buddy
@@ -1394,11 +1401,13 @@ void purple_conv_chat_cb_set_attribute(PurpleConvChat *chat, PurpleConvChatBuddy
  * @param cb	The chat buddy.
  * @param keys	A GList of the keys.
  * @param values A GList of the values.
+ *
+ * @since 2.6.0
  */
 void
-purple_conv_chat_cb_set_attributes(PurpleConvChat *chat, PurpleConvChatBuddy *cb, GList *keys, GList *values);
+purple_conv_chat_cb_set_attributes(PurpleConvChat *chat,
+		PurpleConvChatBuddy *cb, GList *keys, GList *values);
 
-	
 /**
  * Destroys a chat buddy
  *

@@ -31,6 +31,10 @@ version 2.6.0 (??/??/2009):
 		* purple_connection_set_protocol_data
 		* purple_contact_destroy
 		* purple_conv_chat_invite_user
+		* purple_conv_chat_cb_get_attribute
+		* purple_conv_chat_cb_get_attribute_keys
+		* purple_conv_chat_cb_set_attribute
+		* purple_conv_chat_cb_set_attributes
 		* purple_debug_is_unsafe
 		* purple_debug_is_verbose
 		* purple_debug_set_unsafe
@@ -79,6 +83,7 @@ version 2.6.0 (??/??/2009):
 		* Added a client_type field in the get_ui_info core UI op. See
 		  core.h for details.
 		* Added introspection of signals exposed via the D-Bus API.
+		* Added PURPLE_CBCFLAGS_AWAY to PurpleConvChatBuddyFlags enum.
 
 		Deprecated:
 		* buddy-added and buddy-removed blist signals
