@@ -446,7 +446,7 @@ void irc_msg_who(struct irc_conn *irc, const char *name, const char *from, char 
 
 		flags = cb->flags;
 
-		// (G|H)...
+		/* (G|H)... */
 		if (args[6][0] == 'G' && !(flags & PURPLE_CBFLAGS_AWAY)) {
 			purple_conv_chat_user_set_flags(chat, cb->name, flags | PURPLE_CBFLAGS_AWAY);
 		} else if(args[6][0] == 'H' && (flags & PURPLE_CBFLAGS_AWAY)) {
@@ -492,7 +492,7 @@ void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char
 		g_free(topic);
 		purple_roomlist_room_add(irc->roomlist, room);
 	}
-
+}
 
 void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
@@ -867,7 +867,7 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		purple_conversation_set_data(convo, IRC_NAMES_FLAG,
 					   GINT_TO_POINTER(FALSE));
 
-		// Get the real name and user host for all participants.
+		/* Get the real name and user host for all participants. */
 		buf = irc_format(irc, "vc", "WHO", args[0]);
 		irc_send(irc, buf);
 		g_free(buf);
