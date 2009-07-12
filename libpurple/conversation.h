@@ -304,6 +304,7 @@ struct _PurpleConvChatBuddy
 	                                  *   such as real name, user@host, etc.
 	                                  *   @since 2.6.0.
 	                                  */
+	char *collate_key;				 /**< A string by which this buddy can be compared with other collate keys. */
 };
 
 /**
