@@ -2100,7 +2100,7 @@ purple_conv_chat_cb_find(PurpleConvChat *chat, const char *name)
 
 	g_return_val_if_fail(chat != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
-	
+
 	collate_key = g_utf8_collate_key(name, -1);
 
 	for (l = purple_conv_chat_get_users(chat); l; l = l->next) {
@@ -2110,7 +2110,7 @@ purple_conv_chat_cb_find(PurpleConvChat *chat, const char *name)
 			return cb;
 		}
 	}
-	
+
 	g_free(collate_key);
 
 	return NULL;
