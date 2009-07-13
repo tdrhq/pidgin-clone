@@ -40,7 +40,8 @@ PURPLE_INCLUDE_PATHS =	\
 			-I$(PIDGIN_TREE_TOP) \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/lib/glib-2.0/include
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(GTK_TOP)/include/gtk-2.0
 
 INCLUDE_PATHS +=	\
 			$(PURPLE_INCLUDE_PATHS) \
@@ -67,7 +68,8 @@ VULTURE_C_SRC =	\
 			purpleblist.c \
 			vultureconv.c \
 			purpleconv.c \
-			vulturedlg.c
+			vulturedlg.c \
+			purplebicon.c
 
 VULTURE_RC_SRC = vulture-res.rc
 VULTURE_OBJECTS = $(VULTURE_C_SRC:%.c=%.o) $(VULTURE_RC_SRC:%.rc=%.o)
@@ -81,7 +83,9 @@ VULTURE_LIBS =	\
 		-lpurple \
 		-lwinmm \
 		-lcomctl32 \
-		-lgthread-2.0
+		-lgthread-2.0 \
+		-lgobject-2.0 \
+		-lgdk_pixbuf-2.0
 
 include $(PIDGIN_COMMON_RULES)
 
