@@ -26,6 +26,7 @@
 #include <glib.h>
 
 #include "circbuffer.h"
+#include "conversation.h"
 #include "ft.h"
 #include "roomlist.h"
 #include "sslconn.h"
@@ -57,6 +58,7 @@ struct irc_conn {
 	guint timer;
 	guint who_channel_timer;
 	GHashTable *buddies;
+	GList *who_channel_list;
 
 	gboolean ison_outstanding;
 
@@ -104,7 +106,8 @@ typedef int (*IRCCmdCallback) (struct irc_conn *irc, const char *cmd, const char
 
 int irc_send(struct irc_conn *irc, const char *buf);
 gboolean irc_blist_timeout(struct irc_conn *irc);
-gboolean irc_who_channel_timeout(struct irc_conn *irc);
+gboolean irc_who_channel(struct irc_conn *irc);
+void irc_who_channel_remove(struct irc_conn *irc, PurpleConversation *conv);
 
 char *irc_escape_privmsg(const char *text, gssize length);
 

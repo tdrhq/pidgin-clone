@@ -111,7 +111,7 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 	if (!irc->timer)
 		irc->timer = purple_timeout_add_seconds(47, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 	if (!irc->who_channel_timer)
-		irc->who_channel_timer = purple_timeout_add_seconds(307, (GSourceFunc)irc_who_channel_timeout, (gpointer)irc);
+		irc->who_channel_timer = purple_timeout_add_seconds(307, (GSourceFunc)irc_who_channel, (gpointer)irc);
 }
 
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -929,6 +929,7 @@ void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char
 		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), args[0], buf, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(buf);
 		serv_got_chat_left(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)));
+		irc_who_channel_remove(irc, convo);
 	} else {
 		buf = g_strdup_printf(_("Kicked by %s (%s)"), nick, args[2]);
 		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(convo), args[1], buf);
@@ -1145,6 +1146,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), channel, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 		serv_got_chat_left(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)));
+		irc_who_channel_remove(irc, convo);
 	} else {
 		msg = args[1] ? irc_mirc2txt(args[1]) : NULL;
 		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(convo), nick, msg);

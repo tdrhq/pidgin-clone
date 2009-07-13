@@ -218,26 +218,57 @@ static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string)
 	g_string_append_printf(string, "%s ", name);
 }
 
-static void irc_who_channel(PurpleConversation *conv, struct irc_conn *irc)
+gboolean irc_who_channel(struct irc_conn *irc)
 {
-	if (purple_conversation_get_account(conv) == irc->account &&
-			purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-		char *buf = irc_format(irc, "vc", "WHO",
-		                       purple_conversation_get_name(conv));
+	PurpleConversation *conv;
+	char *buf;
 
-		purple_debug_info("irc", "Performing periodic who on %s",
+	if (irc->who_channel_list) {
+		conv = irc->who_channel_list->data;
+
+		buf = irc_format(irc, "vc", "WHO",
+		                 purple_conversation_get_name(conv));
+
+		purple_debug_info("irc", "Performing periodic WHO on %s\n",
 		                  purple_conversation_get_name(conv));
 		irc_send(irc, buf);
 		g_free(buf);
+
+		irc->who_channel_timer = 0;
+		irc_who_channel_remove(irc, conv);
+	} else {
+		GList *chats;
+		GList *channels = NULL;
+
+		chats = purple_get_chats();
+		for ( ; chats; chats = chats->next) {
+			if (irc->account == purple_conversation_get_account(chats->data))
+				channels = g_list_prepend(channels, chats->data);
+		}
+
+		irc->who_channel_list = channels;
+		if (channels) {
+			/* Start the WHOing now */
+			irc_who_channel(irc);
+		} else {
+			/* Look again later... */
+			irc->who_channel_timer = purple_timeout_add_seconds(307, (GSourceFunc)irc_who_channel, irc);
+		}
 	}
+
+	return FALSE;
 }
 
-gboolean irc_who_channel_timeout(struct irc_conn *irc)
+void irc_who_channel_remove(struct irc_conn *irc, PurpleConversation *convo)
 {
-	/* WHO all of our channels. */
-	g_list_foreach(purple_get_chats(), (GFunc)irc_who_channel, (gpointer)irc);
+	irc->who_channel_list = g_list_remove(irc->who_channel_list, convo);
 
-	return TRUE;
+	if (irc->who_channel_timer == 0) {
+		if (irc->who_channel_list)
+			irc->who_channel_timer = purple_timeout_add_seconds(g_random_int_range(15, 25), (GSourceFunc)irc_who_channel, irc);
+		else
+			irc->who_channel_timer = purple_timeout_add_seconds(307, (GSourceFunc)irc_who_channel, irc);
+	}
 }
 
 static void irc_ison_one(struct irc_conn *irc, struct irc_buddy *ib)
@@ -522,6 +553,8 @@ static void irc_close(PurpleConnection *gc)
 		purple_timeout_remove(irc->timer);
 	if (irc->who_channel_timer)
 		purple_timeout_remove(irc->who_channel_timer);
+	if (irc->who_channel_list)
+		g_list_free(irc->who_channel_list);
 	g_hash_table_destroy(irc->cmds);
 	g_hash_table_destroy(irc->msgs);
 	g_hash_table_destroy(irc->buddies);
@@ -755,6 +788,8 @@ static void irc_chat_leave (PurpleConnection *gc, int id)
 	args[1] = NULL;
 	irc_cmd_part(irc, "part", purple_conversation_get_name(convo), args);
 	serv_got_chat_left(gc, id);
+
+	irc_who_channel_remove(irc, convo);
 }
 
 static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags)
