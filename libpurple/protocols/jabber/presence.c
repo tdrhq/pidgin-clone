@@ -107,9 +107,6 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
 	if (!purple_account_is_connected(account))
 		return;
 
-	if (!purple_status_is_active(status))
-		return;
-
 	if (purple_status_is_exclusive(status) && !purple_status_is_active(status)) {
 		/* An exclusive status can't be deactivated. You should just
 		 * activate some other exclusive status. */
@@ -1067,11 +1064,8 @@ void purple_status_to_jabber(const PurpleStatus *status, JabberBuddyState *state
 			formatted_msg = purple_status_get_attr_string(status, "message");
 
 			/* if the message is blank, then there really isn't a message */
-			if(formatted_msg && !*formatted_msg)
-				formatted_msg = NULL;
-
-			if(formatted_msg)
-				*msg = purple_markup_strip_html(formatted_msg);
+			if(formatted_msg && *formatted_msg)
+				*msg = g_strdup(formatted_msg);
 		}
 
 		if(priority)
