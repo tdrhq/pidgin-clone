@@ -20,6 +20,7 @@
 
 #include "fb_connection.h"
 #include "fb_info.h"
+#include "fb_blist.h"
 
 /*
  * TODO: Do we really want to do this?  Maybe we could just set a
@@ -130,7 +131,7 @@ static void fb_get_info_cb(FacebookAccount *fba, gchar *data, gsize data_len, gp
 		value_tmp2 = g_strndup(value_tmp, strstr(value_tmp, "</title>")-value_tmp);
 		value_tmp = g_strchomp(purple_markup_strip_html(value_tmp2));
 		purple_notify_user_info_add_pair(user_info, _("Name"), value_tmp);
-		serv_got_alias(fba->pc, uid, value_tmp);
+		fb_blist_set_alias(fba, uid, value_tmp);
 		g_free(value_tmp);
 		g_free(value_tmp2);
 	}

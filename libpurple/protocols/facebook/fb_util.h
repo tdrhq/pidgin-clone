@@ -22,8 +22,15 @@
 #define FACEBOOK_UTIL_H
 
 #include "libfacebook.h"
+#include <json-glib/json-glib.h>
+
+JsonParser *fb_get_parser(const gchar *data, gsize data_len);
+JsonObject *fb_get_json_object(JsonParser *parser, char **error_message);
 
 gchar *fb_replace_styled_text(const gchar *text);
+gchar *fb_strdup_withhtml(const gchar *src);
+gchar *fb_convert_unicode(const gchar *input);
+gint64 fb_time_kludge(int initial_time);
 
 #endif /* FACEBOOK_UTIL_H */
 

@@ -22,8 +22,7 @@
 #include "fb_connection.h"
 #include "fb_conversation.h"
 #include "fb_blist.h"
-
-#include <json-glib/json-glib.h>
+#include "fb_util.h"
 
 #include "conversation.h"
 
@@ -207,18 +206,14 @@ static void got_new_messages(FacebookAccount *fba, gchar *data,
 		return;
 	}
 
-	JsonNode *root;
-	root = json_parser_get_root(parser);
-
-	JsonObject *objnode;
-	objnode = json_node_get_object(root);
+	JsonObject *objnode = fb_get_json_object(parser, NULL);
 
 	if (json_object_has_member(objnode, "t")) {
 		const gchar* command = json_node_get_string(json_object_get_member(objnode, "t"));
 		if (g_str_equal(command, "refresh")) {
-			int seq = json_node_get_int(json_object_get_member(objnode, "seq"));
-			if (seq) {
-				fba->message_fetch_sequence = seq;	
+			if (json_object_has_member(objnode, "seq")) {
+				fba->message_fetch_sequence = json_node_get_int(
+					json_object_get_member(objnode, "seq"));
 			}
 
 			/* grab history items for all open conversations */
@@ -297,7 +292,7 @@ static gboolean fb_get_new_messages(FacebookAccount *fba)
 
 	fetch_server = g_strdup_printf("%d.channel%s.facebook.com", 0, channel_number);
 	/* use the current time in the url to get past any transparent proxy caches */
-	fetch_url = g_strdup_printf("/x/%lu/%s/p_%" G_GINT64_FORMAT "=%d", time(NULL), (fba->is_idle?"false":"true"), fba->uid, fba->message_fetch_sequence);
+	fetch_url = g_strdup_printf("/x/%lu/%s/p_%" G_GINT64_FORMAT "=%d", (gulong)time(NULL), (fba->is_idle?"false":"true"), fba->uid, fba->message_fetch_sequence);
 
 	fb_post_or_get(fba, FB_METHOD_GET, fetch_server, fetch_url, NULL, got_new_messages, fba->pc, TRUE);
 	fba->last_messages_download_time = now;
@@ -311,29 +306,12 @@ static gboolean fb_get_new_messages(FacebookAccount *fba)
 static void fb_send_im_cb(FacebookAccount *fba, gchar *data, gsize data_len, gpointer user_data)
 {
 	FacebookOutgoingMessage *msg = user_data;
-	gint error_number;
-	const gchar *error_summary;
 	JsonParser *parser;
-	JsonNode *root;
 	JsonObject *object;
 	PurpleConversation *conv;
+	gchar *error = NULL;
 
-	/* NULL data crashes on Windows */
-	if (data == NULL)
-	{
-		data = "(null)";
-	}
-	
 	purple_debug_misc("facebook", "sent im response: %s\n", data);
-	/* for (;;);{"error":1356003,"errorSummary":"Send destination not online",
-		"errorDescription":"This person is no longer online.","payload":null,
-		"bootload":[{"name":"js\/common.js.pkg.php","type":"js",
-		"src":"http:\/\/static.ak.fbcdn.net\/rsrc.php\/pkg\/59\/98936\
-		/js\/common.js.pkg.php"}]} */
-	/* for (;;);{"error":0,"errorSummary":"","errorDescription":"No error.",
-		"payload":[],"bootload":[{"name":"js\/common.js.pkg.php","type":"js",
-		"src":"http:\/\/static.ak.fbcdn.net\/rsrc.php\/pkg\/59\/98936\
-		/js\/common.js.pkg.php"}]} */
 	
 	parser = fb_get_parser(data, data_len);
 	if (!parser) {
@@ -341,15 +319,11 @@ static void fb_send_im_cb(FacebookAccount *fba, gchar *data, gsize data_len, gpo
 		purple_debug_warning("facebook", "bad data while parsing sent IM\n");
 		return;
 	}
-	root = json_parser_get_root(parser);
-	object = json_node_get_object(root);
+	object = fb_get_json_object(parser, &error);
 	
-	error_number = json_node_get_int(json_object_get_member(object, "error"));
-	error_summary = json_node_get_string(json_object_get_member(object, "errorSummary"));
-	
-	if (error_number)
+	if (error)
 	{
-		purple_debug_error("facebook", "sent im error: %s\n", error_summary);
+		purple_debug_error("facebook", "sent im error: %s\n", error);
 		/* there was an error, either report it or retry */
 		if (msg->retry_count++ < FB_MAX_MSG_RETRY)
 		{
@@ -362,7 +336,7 @@ static void fb_send_im_cb(FacebookAccount *fba, gchar *data, gsize data_len, gpo
 		{
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
 					fba->account, msg->who);
-			purple_conversation_write(conv, NULL, error_summary,
+			purple_conversation_write(conv, NULL, error,
 					PURPLE_MESSAGE_ERROR, msg->time);
 		}
 		
@@ -381,7 +355,7 @@ static gboolean fb_send_im_fom(FacebookOutgoingMessage *msg)
 	encoded_message = g_strdup(purple_url_encode(msg->message));
 	postdata = g_strdup_printf("msg_text=%s&msg_id=%d&to=%s&client_time=%lu&post_form_id=%s",
 			encoded_message, msg->msg_id, msg->who,
-			msg->time,
+			(gulong) msg->time,
 			msg->fba->post_form_id ? msg->fba->post_form_id : "0");
 	g_free(encoded_message);
 
@@ -432,7 +406,7 @@ void got_reconnect_json(FacebookAccount *fba, gchar *data, gsize data_len, gpoin
 	gchar *new_channel_number;
 	
 	JsonParser *parser;
-	JsonNode *root;
+	JsonObject *objnode;
 
 	parser = fb_get_parser(data, data_len);
 
@@ -445,9 +419,7 @@ void got_reconnect_json(FacebookAccount *fba, gchar *data, gsize data_len, gpoin
 		return;
 	}
 
-	root = json_parser_get_root(parser);
-	JsonObject *objnode;
-	objnode = json_node_get_object(root);
+	objnode = fb_get_json_object(parser, NULL);
 
 	JsonObject *payload = json_node_get_object(json_object_get_member(objnode, "payload"));
 	

@@ -12,6 +12,8 @@ FACEBOOK_SOURCES = \
 	fb_connection.c \
 	fb_conversation.h \
 	fb_conversation.c \
+	fb_friendlist.h \
+	fb_friendlist.c \
 	fb_info.h \
 	fb_info.c \
 	fb_managefriends.h \

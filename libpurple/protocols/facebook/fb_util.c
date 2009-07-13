@@ -24,9 +24,179 @@
  * UTILITY CODE                                                              *
  *****************************************************************************/
 
+gchar *fb_convert_unicode(const gchar *input)
+{
+	/* \u00e9t\u00e9 should be été */
+
+	gunichar unicode_char;
+	gchar unicode_char_str[6];
+	gint unicode_char_len;
+	gchar *next_pos;
+	gchar *input_string;
+	gchar *output_string;
+
+	if (input == NULL)
+		return NULL;
+
+	next_pos = input_string = g_strdup(input);
+
+	/* purple_debug_info("facebook", "unicode convert: in: %s\n", input); */
+	while ((next_pos = strstr(next_pos, "\\u")))
+	{
+		/* grab the unicode */
+		sscanf(next_pos, "\\u%4x", &unicode_char);
+		/* turn it to a char* */
+		unicode_char_len = g_unichar_to_utf8(unicode_char, unicode_char_str);
+		/* shove it back into the string */
+		g_memmove(next_pos, unicode_char_str, unicode_char_len);
+		/* move all the data after the \u0000 along */
+		g_stpcpy(next_pos + unicode_char_len, next_pos + 6);
+	}
+
+	/* purple_debug_info("facebook", "unicode convert: out: %s\n", input); */
+	output_string = g_strcompress(input_string);
+	g_free(input_string);
+
+	return output_string;
+}
+
+/* Like purple_strdup_withhtml, but escapes htmlentities too */
+gchar *fb_strdup_withhtml(const gchar *src)
+{
+	gulong destsize, i, j;
+	gchar *dest;
+
+	g_return_val_if_fail(src != NULL, NULL);
+
+	/* New length is (length of src) + (number of \n's * 3) + (number of &'s * 5) +
+		(number of <'s * 4) + (number of >'s *4) + (number of "'s * 6) -
+		(number of \r's) + 1 */
+	destsize = 1;
+	for (i = 0; src[i] != '\0'; i++)
+	{
+		if (src[i] == '\n' || src[i] == '<' || src[i] == '>')
+			destsize += 4;
+		else if (src[i] == '&')
+			destsize += 5;
+		else if (src[i] == '"')
+			destsize += 6;
+		else if (src[i] != '\r')
+			destsize++;
+	}
+
+	dest = g_malloc(destsize);
+
+	/* Copy stuff, ignoring \r's, because they are dumb */
+	for (i = 0, j = 0; src[i] != '\0'; i++) {
+		if (src[i] == '\n') {
+			strcpy(&dest[j], "<BR>");
+			j += 4;
+		} else if (src[i] == '<') {
+			strcpy(&dest[j], "&lt;");
+			j += 4;
+		} else if (src[i] == '>') {
+			strcpy(&dest[j], "&gt;");
+			j += 4;
+		} else if (src[i] == '&') {
+			strcpy(&dest[j], "&amp;");
+			j += 5;
+		} else if (src[i] == '"') {
+			strcpy(&dest[j], "&quot;");
+			j += 6;
+		} else if (src[i] != '\r')
+			dest[j++] = src[i];
+	}
+
+	dest[destsize-1] = '\0';
+
+	return dest;
+}
+
+gint64 fb_time_kludge(gint initial_time)
+{
+	if (sizeof(gint) >= sizeof(gint64))
+		return initial_time;
+	
+	gint64 now_millis = (gint64) time(NULL);
+	now_millis *= 1000;
+	now_millis &= 0xFFFFFFFF00000000LL;
+	gint64 final_time = now_millis | initial_time;
+
+	return final_time;
+}
+
+JsonParser *fb_get_parser(const gchar *data, gsize data_len)
+{
+	JsonParser *parser;
+
+	if (data == NULL) {
+		return NULL;
+	}
+
+	data = g_strstr_len(data, data_len, "for (;;);");
+	if (!data) {
+		return NULL;
+	} else {
+		data += strlen("for (;;);");
+	}
+
+	parser = json_parser_new();
+	if (!json_parser_load_from_data(parser, data, -1, NULL)) {
+		g_object_unref(parser);
+		return NULL;
+	}
+
+	return parser;
+}
+
+JsonObject *fb_get_json_object(JsonParser *parser, char **error_message)
+{
+	JsonNode *root;
+	root = json_parser_get_root(parser);
+	JsonObject *objnode;
+	objnode = json_node_get_object(root);
+
+	/* Sample error messages */
+	/* for (;;);{"error":1357001,"errorSummary":"Not Logged In",
+		"errorDescription":"You must be logged in to do that.",
+		"payload":null,"bootload":[{"name":"js\/common.js.pkg.php",
+		"type":"js","src":"http:\/\/static.ak.fbcdn.net\/rsrc.php\/pkg\/59\
+		/98561\/js\/common.js.pkg.php"}]} */
+	if (json_object_has_member(objnode, "error"))
+	{
+		guint32 error_number;
+		const char *summary;
+		const char *description;
+
+		error_number = json_node_get_int(
+			json_object_get_member(objnode, "error"));
+		summary = json_node_get_string(
+			json_object_get_member(objnode, "errorSummary"));
+		description = json_node_get_string(
+			json_object_get_member(objnode, "errorDescription"));
+
+		if (error_number)
+		{
+			purple_debug_error("facebook",
+				"got error from facebook of %s (%s)",
+				summary, description);
+			// Pass error message to calling function if they asked for it.
+			if (error_message) {
+				*error_message = g_strdup(description);
+			}
+		}
+	}
+
+	return objnode;
+}
+
 /* Converts *text* into <b>text</b>  and _text_ into <i>text</i> */
 gchar *fb_replace_styled_text(const gchar *text)
 {
+#ifdef __ARM_EABI__
+	return g_strdup(text);
+#else /*__ARM_EABI__*/
+#if GLIB_MAJOR_VERSION >= 2 && GLIB_MINOR_VERSION >= 14
 	if (glib_check_version(2, 14, 0))
 	{
 		return g_strdup(text);
@@ -52,13 +222,27 @@ gchar *fb_replace_styled_text(const gchar *text)
 		
 		dup_text = g_strdup(text);
 		midway_string = g_regex_replace(underline_regex, dup_text,
-			-1, 0, "<u>\\1</u>", 0, NULL);
+			strlen(dup_text), 0, "<u>\\1</u>", 0, NULL);
+		if (midway_string == NULL)
+		{
+			purple_debug_warning("facebook", "regex failed for underline\n");
+			return dup_text;
+		}
 		g_free(dup_text);
 		output_string = g_regex_replace(bold_regex, midway_string,
-			-1, 0, "\\1<b>\\2</b>", 0, NULL);
+			strlen(midway_string), 0, "\\1<b>\\2</b>", 0, NULL);
+		if (output_string == NULL)
+		{
+			purple_debug_warning("facebook", "regex failed for bold\n");
+			return midway_string;
+		}
 		g_free(midway_string);
 		
 		return output_string;
 	}
+#else /* GLIB check */
+	return g_strdup(text);
+#endif /* GLIB check */
+#endif /*__ARM_EABI__*/
 }
 

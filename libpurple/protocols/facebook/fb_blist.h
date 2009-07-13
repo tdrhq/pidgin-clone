@@ -29,4 +29,7 @@ void fb_blist_poke_buddy(PurpleBlistNode *node, gpointer data);
 void fb_blist_set_alias(FacebookAccount *fba, const char *id,
 		const char *name);
 
+void fb_blist_init(FacebookAccount *fba);
+void fb_blist_destroy(FacebookAccount *fba);
+
 #endif /* FACEBOOK_BLIST_H */

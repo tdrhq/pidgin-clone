@@ -49,7 +49,7 @@ void fb_conversation_handle_message(FacebookAccount *fba, const char *from,
 	if (fba->uid != atoll(from) || fba->uid == atoll(to)) {
 		purple_debug_info("facebook",
 			"displaying received message %lld: %s\n",
-			message_time, message_text);
+			(long long int) message_time, message_text);
 		// TODO/FIXME: cheat here by changing formatting colors.
 		// Or add an option to just disable history on conv open.  TBD.
 		serv_got_im(fba->pc, from, message_text,
@@ -68,7 +68,7 @@ void fb_conversation_handle_message(FacebookAccount *fba, const char *from,
 	{
 		purple_debug_info("facebook",
 			"displaying sent message %lld: %s\n",
-			message_time, message_text);
+			(long long int) message_time, message_text);
 
 		serv_got_im(fba->pc, to, message_text,
 			log? 
@@ -96,7 +96,6 @@ static void fb_history_fetch_cb(FacebookAccount *fba, gchar *data,
 	gsize data_len, gpointer userdata)
 {
 	JsonParser *parser;
-	JsonNode *root;
 	JsonObject *object, *payload;
 	JsonArray *history;
 	guint i;
@@ -114,10 +113,9 @@ static void fb_history_fetch_cb(FacebookAccount *fba, gchar *data,
 	min_time = atoll((char *) userdata);
 	g_free(userdata);
 	purple_debug_info("facebook", "history fetch with min time of %lld\n",
-		       min_time);	
+		       (long long int) min_time);	
 
-	root = json_parser_get_root(parser);
-	object = json_node_get_object(root);
+	object = fb_get_json_object(parser, NULL);
 	payload = json_node_get_object(
 		json_object_get_member(object, "payload"));
 	history = json_node_get_array(
@@ -159,7 +157,7 @@ static void fb_history_fetch_cb(FacebookAccount *fba, gchar *data,
 			if (message_time > min_time) {
 				purple_debug_info("facebook",
 					"displaying history message %lld\n",
-					message_time);
+					(long long int) message_time);
 				fb_conversation_handle_message(
 					fba, from, to, message_time, message,
 					min_time != 0);
@@ -188,7 +186,7 @@ void fb_history_fetch(FacebookAccount *fba, const char *who,
 	gchar *url = g_strdup_printf("/ajax/chat/history.php?id=%s", who);
 	fb_post_or_get(
 		fba, FB_METHOD_GET, NULL, url, NULL, fb_history_fetch_cb,
-		g_strdup_printf("%lld", min_time), FALSE);
+		g_strdup_printf("%lld", (long long int) min_time), FALSE);
 	g_free(url);
 }
 
@@ -224,7 +222,10 @@ static void fb_conversation_created(PurpleConversation *conv)
 	purple_debug_info("facebook", "conversation created with %s\n",
 		conv->name);
 
-	fb_history_fetch(account->gc->proto_data, conv->name, TRUE);
+	if (purple_account_get_bool(account, "facebook_show_history", TRUE))
+	{
+		fb_history_fetch(account->gc->proto_data, conv->name, TRUE);
+	}
 }
 
 gboolean fb_conversation_is_fb(PurpleConversation *conv)

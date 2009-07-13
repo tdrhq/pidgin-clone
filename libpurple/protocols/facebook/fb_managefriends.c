@@ -87,6 +87,9 @@ static void fb_check_friend_request_cb(FacebookAccount *fba, gchar *data,
 	FacebookBuddy *buddy;
 	gchar *search_start = data;
 
+	g_return_if_fail(data_len > 0);
+	g_return_if_fail(data != NULL);
+
 	/* loop through the data and look for confirm_friend_add_([0-9]*)" */
 	while ((search_start = strstr(search_start, uid_pre_text)))
 	{
@@ -169,10 +172,14 @@ void fb_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	if (!purple_account_get_bool(
 				fba->account, "facebook_manage_friends", FALSE)) {
+		/*
+		 * We used to pop up dialogs here but if a user renamed a group,
+		 * this would spawn message for each person in the buddy list.  Bad!
 		purple_notify_info(fba->pc, _("Friend not added"),
 				_("Adding Facebook friends via Pidgin is disabled"),
 				_("Either add a friend via Facebook.com or edit your account preferences"));
-		// TODO: Message here
+		*/
+		purple_debug_warning("facebook", "attempted to add %s but was blocked\n", buddy->name);
 		return;
 	}
 
@@ -197,24 +204,3 @@ void fb_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group)
 	g_free(url);
 }
 
-#if 0
-/* This code should never be reinstated in it's current form.  Period.  See
- * issue 185 for why */
-static void fb_remove_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group)
-{
-	gchar *postdata;
-	FacebookAccount *fba = pc->proto_data;
-
-	if (atoll(buddy->name) == fba->uid)
-	{
-		purple_account_set_bool(fba->account, "facebook_hide_self", TRUE);
-		return;
-	}
-
-	postdata = g_strdup_printf("uid=%s&post_form_id=%s", buddy->name, fba->post_form_id);
-
-	fb_post_or_get(fba, FB_METHOD_POST, NULL, "/ajax/removefriend.php", postdata, NULL, NULL, FALSE);
-
-	g_free(postdata);
-}
-#endif

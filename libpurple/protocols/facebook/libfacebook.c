@@ -27,135 +27,7 @@
 #include "fb_messages.h"
 #include "fb_notifications.h"
 #include "fb_search.h"
-
-/******************************************************************************/
-/* Utility functions */
-/******************************************************************************/
-
-gchar *fb_convert_unicode(const gchar *input)
-{
-	/* \u00e9t\u00e9 should be été */
-
-	gunichar unicode_char;
-	gchar unicode_char_str[6];
-	gint unicode_char_len;
-	gchar *next_pos;
-	gchar *input_string;
-	gchar *output_string;
-
-	if (input == NULL)
-		return NULL;
-
-	next_pos = input_string = g_strdup(input);
-
-	/* purple_debug_info("facebook", "unicode convert: in: %s\n", input); */
-	while ((next_pos = strstr(next_pos, "\\u")))
-	{
-		/* grab the unicode */
-		sscanf(next_pos, "\\u%4x", &unicode_char);
-		/* turn it to a char* */
-		unicode_char_len = g_unichar_to_utf8(unicode_char, unicode_char_str);
-		/* shove it back into the string */
-		g_memmove(next_pos, unicode_char_str, unicode_char_len);
-		/* move all the data after the \u0000 along */
-		g_stpcpy(next_pos + unicode_char_len, next_pos + 6);
-	}
-
-	/* purple_debug_info("facebook", "unicode convert: out: %s\n", input); */
-	output_string = g_strcompress(input_string);
-	g_free(input_string);
-
-	return output_string;
-}
-
-/* Like purple_strdup_withhtml, but escapes htmlentities too */
-gchar *fb_strdup_withhtml(const gchar *src)
-{
-	gulong destsize, i, j;
-	gchar *dest;
-
-	g_return_val_if_fail(src != NULL, NULL);
-
-	/* New length is (length of src) + (number of \n's * 3) + (number of &'s * 5) +
-		(number of <'s * 4) + (number of >'s *4) + (number of "'s * 6) -
-		(number of \r's) + 1 */
-	destsize = 1;
-	for (i = 0; src[i] != '\0'; i++)
-	{
-		if (src[i] == '\n' || src[i] == '<' || src[i] == '>')
-			destsize += 4;
-		else if (src[i] == '&')
-			destsize += 5;
-		else if (src[i] == '"')
-			destsize += 6;
-		else if (src[i] != '\r')
-			destsize++;
-	}
-
-	dest = g_malloc(destsize);
-
-	/* Copy stuff, ignoring \r's, because they are dumb */
-	for (i = 0, j = 0; src[i] != '\0'; i++) {
-		if (src[i] == '\n') {
-			strcpy(&dest[j], "<BR>");
-			j += 4;
-		} else if (src[i] == '<') {
-			strcpy(&dest[j], "&lt;");
-			j += 4;
-		} else if (src[i] == '>') {
-			strcpy(&dest[j], "&gt;");
-			j += 4;
-		} else if (src[i] == '&') {
-			strcpy(&dest[j], "&amp;");
-			j += 5;
-		} else if (src[i] == '"') {
-			strcpy(&dest[j], "&quot;");
-			j += 6;
-		} else if (src[i] != '\r')
-			dest[j++] = src[i];
-	}
-
-	dest[destsize-1] = '\0';
-
-	return dest;
-}
-
-JsonParser *fb_get_parser(const gchar *data, gsize data_len)
-{
-	JsonParser *parser;
-
-	if (data == NULL) {
-		return NULL;
-	}
-
-	data = g_strstr_len(data, data_len, "for (;;);");
-	if (!data) {
-		return NULL;
-	} else {
-		data += strlen("for (;;);");
-	}
-
-	parser = json_parser_new();
-	if (!json_parser_load_from_data(parser, data, -1, NULL)) {
-		g_object_unref(parser);
-		return NULL;
-	}
-
-	return parser;
-}
-
-gint64 fb_time_kludge(gint initial_time)
-{
-	if (sizeof(gint) >= sizeof(gint64))
-		return initial_time;
-	
-	gint64 now_millis = (gint64) time(NULL);
-	now_millis *= 1000;
-	now_millis &= 0xFFFFFFFF00000000LL;
-	gint64 final_time = now_millis | initial_time;
-
-	return final_time;
-}
+#include "fb_friendlist.h"
 
 /******************************************************************************/
 /* PRPL functions */
@@ -269,16 +141,11 @@ static void fb_login_cb(FacebookAccount *fba, gchar *response, gsize len,
 
 	/* This will kick off our long-poll message retrieval loop */
 	fb_get_post_form_id(fba);
-	fb_get_buddy_list(fba);
 	fb_check_friend_requests(fba);
 
 	/* periodically check for people adding you to their facebook friend list */
 	fba->friend_request_timer = purple_timeout_add_seconds(60 * 5,
 			fb_check_friend_requests, fba);
-
-	/* periodically check for updates to your buddy list */
-	fba->buddy_list_timer = purple_timeout_add_seconds(60,
-			fb_get_buddy_list, fba);
 
 	/* periodically check for new notifications */
 	fba->notifications_timer = purple_timeout_add_seconds(60,
@@ -297,6 +164,9 @@ static void fb_login_cb(FacebookAccount *fba, gchar *response, gsize len,
 	 */
 	fba->perpetual_messages_timer = purple_timeout_add_seconds(15,
 			(GSourceFunc)fb_get_messages_failsafe, fba);
+
+	/* init blist subsystem */
+	fb_blist_init(fba);
 
 	/* init conversation subsystem */
 	fb_conversation_init(fba);
@@ -376,6 +246,9 @@ static void fb_close(PurpleConnection *pc)
 
 	purple_debug_info("facebook", "unloading plugin\n");
 
+	/* destroy blist subsystem */
+	fb_blist_destroy(fba);
+
 	/* destroy conversation subsystem */
 	fb_conversation_destroy(fba);
 
@@ -410,9 +283,6 @@ static void fb_close(PurpleConnection *pc)
 			postdata, NULL, NULL, FALSE);
 	g_free(postdata);
 
-	if (fba->buddy_list_timer) {
-		purple_timeout_remove(fba->buddy_list_timer);
-	}
 	if (fba->friend_request_timer) {
 		purple_timeout_remove(fba->friend_request_timer);
 	}
@@ -518,7 +388,7 @@ static void fb_set_status_ok_cb(gpointer data, const gchar *status_text)
 		postdata = g_strdup_printf("profile_id=%" G_GINT64_FORMAT "&clear=1&post_form_id=%s",
 				fba->uid, fba->post_form_id);
 
-	fb_post_or_get(fba, FB_METHOD_POST, NULL, "/updatestatus.php",
+	fb_post_or_get(fba, FB_METHOD_POST, NULL, "/ajax/updatestatus.php",
 			postdata, NULL, NULL, FALSE);
 
 	g_free(postdata);
@@ -567,6 +437,7 @@ static void fb_buddy_free(PurpleBuddy *buddy)
 	}
 }
 
+#if PURPLE_MAJOR_VERSION >= 2 && PURPLE_MINOR_VERSION >= 5
 static GHashTable *fb_get_account_text_table(PurpleAccount *account)
 {
 	GHashTable *table;
@@ -577,6 +448,7 @@ static GHashTable *fb_get_account_text_table(PurpleAccount *account)
 
 	return table;
 }
+#endif
 
 /******************************************************************************/
 /* Plugin functions */
@@ -615,6 +487,17 @@ static void fb_display_plugin_info(PurplePluginAction *action)
 			_("Version"), FACEBOOK_PLUGIN_VERSION);
 }
 
+static void fb_refresh_blist(PurplePluginAction *action)
+{
+	PurpleConnection *pc;
+	FacebookAccount *fba;
+
+	pc = (PurpleConnection *) action->context;
+	fba = pc->proto_data;
+
+	fb_get_buddy_list(fba);
+}
+
 static GList *fb_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
@@ -632,6 +515,11 @@ static GList *fb_actions(PurplePlugin *plugin, gpointer context)
 			fb_search_users);
 	m = g_list_append(m, act);
 
+	// TODO: remove, this is for testing.  REMOVE.
+	act = purple_plugin_action_new(_("Refresh buddy list..."),
+			fb_refresh_blist);
+	m = g_list_append(m, act);
+
 	return m;
 }
 
@@ -646,8 +534,8 @@ static GList *fb_node_menu(PurpleBlistNode *node)
 		buddy = (PurpleBuddy *)node;
 		
 		act = purple_menu_action_new(_("_Poke"),
-										PURPLE_CALLBACK(fb_blist_poke_buddy),
-										NULL, NULL);
+				PURPLE_CALLBACK(fb_blist_poke_buddy),
+				NULL, NULL);
 		m = g_list_append(m, act);
 	}
 	return m;
@@ -674,17 +562,35 @@ static void plugin_init(PurplePlugin *plugin)
 	PurplePluginProtocolInfo *prpl_info = info->extra_info;
 
 	/* Add options to the advanced screen in the account settings */
-	option = purple_account_option_bool_new(_("Hide myself in the Buddy List"), "facebook_hide_self", TRUE);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	option = purple_account_option_bool_new(
+		_("Show history in new conversations"),
+		"facebook_show_history", TRUE);
+	prpl_info->protocol_options = g_list_append(
+		prpl_info->protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Set Facebook status through Pidgin status"), "facebook_set_status_through_pidgin", FALSE);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	option = purple_account_option_bool_new(
+		_("Hide myself in the Buddy List"),
+		"facebook_hide_self", TRUE);
+	prpl_info->protocol_options = g_list_append(
+		prpl_info->protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Show Facebook notifications as e-mails in Pidgin"), "facebook_get_notifications", TRUE);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	option = purple_account_option_bool_new(
+		_("Set Facebook status through Pidgin status"),
+		"facebook_set_status_through_pidgin", FALSE);
+	prpl_info->protocol_options = g_list_append(
+		prpl_info->protocol_options, option);
 
-	option = purple_account_option_bool_new(_("Edit Facebook friends from Pidgin"), "facebook_manage_friends", FALSE);
-	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+	option = purple_account_option_bool_new(
+		_("Show Facebook notifications as e-mails in Pidgin"),
+		"facebook_get_notifications", TRUE);
+	prpl_info->protocol_options = g_list_append(
+		prpl_info->protocol_options, option);
+
+	option = purple_account_option_bool_new(
+		_("Edit Facebook friends from Pidgin"),
+		"facebook_manage_friends", FALSE);
+	prpl_info->protocol_options = g_list_append(
+		prpl_info->protocol_options, option);
 }
 
 static PurplePluginProtocolInfo prpl_info = {
@@ -714,7 +620,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                   /* change_passwd */
 	fb_add_buddy,           /* add_buddy */
 	NULL,                   /* add_buddies */
-	NULL,                   /* remove_buddy */
+	fb_buddy_remove,        /* remove_buddy */
 	NULL,                   /* remove_buddies */
 	NULL,                   /* add_permit */
 	NULL,                   /* add_deny */
@@ -733,13 +639,13 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                   /* get_cb_info */
 	NULL,                   /* get_cb_away */
 	NULL,                   /* alias_buddy */
-	NULL,                   /* group_buddy */
-	NULL,                   /* rename_group */
+	fb_group_buddy_move,    /* group_buddy */
+	fb_group_rename,        /* rename_group */
 	fb_buddy_free,          /* buddy_free */
 	fb_conversation_closed, /* convo_closed */
 	purple_normalize_nocase,/* normalize */
 	NULL,                   /* set_buddy_icon */
-	NULL,                   /* remove_group */
+	fb_group_remove,        /* remove_group */
 	NULL,                   /* get_cb_real_name */
 	NULL,                   /* set_chat_topic */
 	NULL,                   /* find_blist_chat */
@@ -756,8 +662,12 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                   /* unregister_user */
 	NULL,                   /* send_attention */
 	NULL,                   /* attention_types */
+#if PURPLE_MAJOR_VERSION >= 2 && PURPLE_MINOR_VERSION >= 5
 	sizeof(PurplePluginProtocolInfo), /* struct_size */
 	fb_get_account_text_table, /* get_account_text_table */
+#else
+	(gpointer) sizeof(PurplePluginProtocolInfo)
+#endif
 };
 
 static PurplePluginInfo info = {
