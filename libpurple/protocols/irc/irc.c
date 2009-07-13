@@ -40,7 +40,6 @@
 #define PING_TIMEOUT 60
 
 static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
-static void irc_who_channel(PurpleConversation *conv, struct irc_conn *irc);
 
 static const char *irc_blist_icon(PurpleAccount *a, PurpleBuddy *b);
 static GList *irc_status_types(PurpleAccount *account);
@@ -219,24 +218,26 @@ static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string)
 	g_string_append_printf(string, "%s ", name);
 }
 
-
-gboolean irc_who_channel_timeout(struct irc_conn *irc)
-{
-	// WHO all of our channels.
-	g_list_foreach(purple_get_conversations(), (GFunc)irc_who_channel, (gpointer)irc);
-	
-	return TRUE;
-}
-
 static void irc_who_channel(PurpleConversation *conv, struct irc_conn *irc)
 {
-	if (purple_conversation_get_account(conv) == irc->account && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-		char *buf = irc_format(irc, "vc", "WHO", purple_conversation_get_name(conv));
-		
-		purple_debug(PURPLE_DEBUG_INFO, "irc", "Performing periodic who on %s", purple_conversation_get_name(conv));
+	if (purple_conversation_get_account(conv) == irc->account &&
+			purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		char *buf = irc_format(irc, "vc", "WHO",
+		                       purple_conversation_get_name(conv));
+
+		purple_debug_info("irc", "Performing periodic who on %s",
+		                  purple_conversation_get_name(conv));
 		irc_send(irc, buf);
 		g_free(buf);
 	}
+}
+
+gboolean irc_who_channel_timeout(struct irc_conn *irc)
+{
+	/* WHO all of our channels. */
+	g_list_foreach(purple_get_chats(), (GFunc)irc_who_channel, (gpointer)irc);
+
+	return TRUE;
 }
 
 static void irc_ison_one(struct irc_conn *irc, struct irc_buddy *ib)
