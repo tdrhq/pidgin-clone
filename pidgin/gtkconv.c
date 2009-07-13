@@ -3990,12 +3990,12 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	gboolean is_me = FALSE;
 	gboolean is_buddy;
 	gchar *tmp, *alias_key, *name, *alias;
-	int flags;
+	PurpleConvChatBuddyFlags flags;
 	GdkColor *color = NULL;
 
 	alias = cb->alias;
 	name  = cb->name;
-	flags = GPOINTER_TO_INT(cb->flags);
+	flags = cb->flags;
 
 	chat    = PURPLE_CONV_CHAT(conv);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -4333,6 +4333,12 @@ sort_chat_users(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer us
 	                   CHAT_USERS_FLAGS_COLUMN, &f2,
 	                   CHAT_USERS_WEIGHT_COLUMN, &buddy2,
 	                   -1);
+
+	/* Only sort by membership levels */
+	f1 &= PURPLE_CBFLAGS_VOICE | PURPLE_CBFLAGS_HALFOP | PURPLE_CBFLAGS_OP |
+			PURPLE_CBFLAGS_FOUNDER;
+	f2 &= PURPLE_CBFLAGS_VOICE | PURPLE_CBFLAGS_HALFOP | PURPLE_CBFLAGS_OP |
+			PURPLE_CBFLAGS_FOUNDER;
 
 	if (user1 == NULL || user2 == NULL) {
 		if (!(user1 == NULL && user2 == NULL))
@@ -6056,7 +6062,6 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 	PurpleConvChat *chat;
 	PidginConversation *gtkconv;
 	PidginChatPane *gtkchat;
-	PurpleConvChatBuddyFlags flags;
 	PurpleConvChatBuddy *cbuddy;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -6075,7 +6080,7 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 	while (f != 0) {
 		char *val;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &val, CHAT_USERS_FLAGS_COLUMN, &flags, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &val, -1);
 
 		if (!purple_utf8_strcasecmp(old_name, val)) {
 			gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
@@ -6166,7 +6171,6 @@ static void
 pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 {
 	PurpleConvChat *chat;
-	PurpleConvChatBuddyFlags flags;
 	PurpleConvChatBuddy *cbuddy;
 	PidginConversation *gtkconv;
 	PidginChatPane *gtkchat;
@@ -6208,8 +6212,6 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 	}
 
 	g_return_if_fail(alias != NULL);
-
-	flags = purple_conv_chat_user_get_flags(chat, user);
 
 	cbuddy = purple_conv_chat_cb_find(chat, user);
 	if (cbuddy)
