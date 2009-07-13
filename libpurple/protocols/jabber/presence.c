@@ -59,38 +59,44 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	g_free(chat_full_jid);
 }
 
-void jabber_presence_fake_to_self(JabberStream *js, const PurpleStatus *gstatus) {
-	char *my_base_jid;
+void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
+{
+	PurpleAccount *account;
+	const char *username;
 
-	if(!js->user)
-		return;
+	g_return_if_fail(js->user != NULL);
 
-	my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	if(purple_find_buddy(js->gc->account, my_base_jid)) {
-		JabberBuddy *jb;
+	account = purple_connection_get_account(js->gc);
+	username = purple_account_get_username(account);
+	if (status == NULL)
+		status = purple_account_get_active_status(account);
+
+	if (purple_find_buddy(account, username)) {
+		JabberBuddy *jb = jabber_buddy_find(js, username, TRUE);
 		JabberBuddyResource *jbr;
-		if((jb = jabber_buddy_find(js, my_base_jid, TRUE))) {
-			JabberBuddyState state;
-			char *msg;
-			int priority;
+		JabberBuddyState state;
+		char *msg;
+		int priority;
 
-			purple_status_to_jabber(gstatus, &state, &msg, &priority);
+		g_return_if_fail(jb != NULL);
 
-			if (state == JABBER_BUDDY_STATE_UNAVAILABLE || state == JABBER_BUDDY_STATE_UNKNOWN) {
-				jabber_buddy_remove_resource(jb, js->user->resource);
-			} else {
-				jabber_buddy_track_resource(jb, js->user->resource, priority, state, msg);
-			}
-			if((jbr = jabber_buddy_find_resource(jb, NULL))) {
-				purple_prpl_got_user_status(js->gc->account, my_base_jid, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
-			} else {
-				purple_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg, NULL);
-			}
+		purple_status_to_jabber(status, &state, &msg, &priority);
 
-			g_free(msg);
+		if (state == JABBER_BUDDY_STATE_UNAVAILABLE ||
+				state == JABBER_BUDDY_STATE_UNKNOWN) {
+			jabber_buddy_remove_resource(jb, js->user->resource);
+		} else {
+			jabber_buddy_track_resource(jb, js->user->resource, priority,
+			                            state, msg);
 		}
+
+		if ((jbr = jabber_buddy_find_resource(jb, NULL))) {
+			purple_prpl_got_user_status(js->gc->account, username, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
+		} else {
+			purple_prpl_got_user_status(js->gc->account, username, "offline", msg ? "message" : NULL, msg, NULL);
+		}
+		g_free(msg);
 	}
-	g_free(my_base_jid);
 }
 
 void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
@@ -99,9 +105,6 @@ void jabber_set_status(PurpleAccount *account, PurpleStatus *status)
 	JabberStream *js;
 
 	if (!purple_account_is_connected(account))
-		return;
-
-	if (!purple_status_is_active(status))
 		return;
 
 	if (purple_status_is_exclusive(status) && !purple_status_is_active(status)) {
@@ -133,7 +136,7 @@ void jabber_presence_send(JabberStream *js, gboolean force)
 	status = purple_presence_get_active_status(p);
 
 	/* we don't want to send presence before we've gotten our roster */
-	if(!js->roster_parsed) {
+	if (js->state != JABBER_STREAM_CONNECTED) {
 		purple_debug_info("jabber", "attempt to send presence before roster retrieved\n");
 		return;
 	}
@@ -441,6 +444,9 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 	jbr->caps.info = info;
 	jbr->caps.exts = exts;
 
+	if (info == NULL)
+		goto out;
+
 	if (!jbr->commands_fetched && jabber_resource_has_capability(jbr, "http://jabber.org/protocol/commands")) {
 		JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
 		xmlnode *query = xmlnode_get_child_with_namespace(iq->node, "query", "http://jabber.org/protocol/disco#items");
@@ -452,6 +458,12 @@ jabber_presence_set_capabilities(JabberCapsClientInfo *info, GList *exts,
 		jbr->commands_fetched = TRUE;
 	}
 
+	if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/chatstates"))
+		jbr->chat_states = JABBER_CHAT_STATES_SUPPORTED;
+	else
+		jbr->chat_states = JABBER_CHAT_STATES_UNSUPPORTED;
+
+out:
 	g_free(userdata->from);
 	g_free(userdata);
 }
@@ -601,7 +613,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			/* The rest of the cases used to check xmlns individually. */
 			continue;
 		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
-			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
+			/* XXX: compare the time.  urn:xmpp:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
 			stamp = xmlnode_get_attrib(y, "stamp");
 		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
@@ -609,10 +621,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if (g_str_equal(y->name, "nick") && g_str_equal(xmlns, "http://jabber.org/protocol/nick")) {
 			nickname = xmlnode_get_data(y);
 		} else if(!strcmp(y->name, "x")) {
-			if(!strcmp(xmlns, "jabber:x:delay")) {
-				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
-				delayed = TRUE;
-				stamp = xmlnode_get_attrib(y, "stamp");
+			if(!strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
 			} else if(!strcmp(xmlns, "vcard-temp:x:update")) {
 				xmlnode *photo = xmlnode_get_child(y, "photo");
 				if(photo) {

@@ -1627,7 +1627,8 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 
 			break;
 		case JABBER_STREAM_CONNECTED:
-			/* now we can alert the core that we're ready to send status */
+			/* Send initial presence */
+			jabber_presence_send(js, TRUE);
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			break;
 	}
@@ -1974,13 +1975,16 @@ char *jabber_status_text(PurpleBuddy *b)
 		ret = g_strdup(jb->error_msg);
 	} else {
 		PurplePresence *presence = purple_buddy_get_presence(b);
-		PurpleStatus *status =purple_presence_get_active_status(presence);
+		PurpleStatus *status = purple_presence_get_active_status(presence);
 		char *stripped;
 
 		if(!(stripped = purple_markup_strip_html(purple_status_get_attr_string(status, "message")))) {
 			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 				PurpleStatus *status = purple_presence_get_status(presence, "tune");
-				stripped = g_strdup(purple_status_get_attr_string(status, PURPLE_TUNE_TITLE));
+				const char *title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+				const char *artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+				const char *album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+				stripped = purple_util_format_song_info(title, artist, album, NULL);
 			}
 		}
 
@@ -3435,8 +3439,9 @@ jabber_init_plugin(PurplePlugin *plugin)
 {
 	GHashTable *ui_info = purple_core_get_ui_info();
 	const gchar *ui_type;
-	const gchar *type = "pc"; /* default client type, if unknown or 
+	const gchar *type = "pc"; /* default client type, if unknown or
 								unspecified */
+	const gchar *ui_name = NULL;
 
 	jabber_plugin = plugin;
 
@@ -3452,12 +3457,16 @@ jabber_init_plugin(PurplePlugin *plugin)
 		}
 	}
 
-	jabber_add_identity("client", type, NULL, PACKAGE);
+	if (ui_info)
+		ui_name = g_hash_table_lookup(ui_info, "name");
+	if (ui_name == NULL)
+		ui_name = PACKAGE;
+
+	jabber_add_identity("client", type, NULL, ui_name);
 
 	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);
 	jabber_add_feature("jabber:iq:oob", 0);
-	jabber_add_feature("jabber:iq:time", 0);
 	jabber_add_feature("urn:xmpp:time", 0);
 	jabber_add_feature("jabber:iq:version", 0);
 	jabber_add_feature("jabber:x:conference", 0);

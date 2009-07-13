@@ -1724,8 +1724,8 @@ static void yahoo_auth16_stage2(PurpleUtilFetchUrlData *unused, gpointer user_da
 					break;
 			}
 			if(error_reason) {
-				purple_debug_error("yahoo", "Authentication error: %s\n",
-				                   error_reason);
+				purple_debug_error("yahoo", "Authentication error: %s. "
+				                   "Code %d\n", error_reason, response_no);
 				purple_connection_error_reason(gc, error, error_reason);
 				g_free(error_reason);
 				g_free(auth_data->seed);
@@ -1829,8 +1829,8 @@ static void yahoo_auth16_stage1_cb(PurpleUtilFetchUrlData *unused, gpointer user
 					error = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 					break;
 			}
-			purple_debug_error("yahoo", "Authentication error: %s\n",
-			                   error_reason);
+			purple_debug_error("yahoo", "Authentication error: %s. Code %d\n",
+			                   error_reason, response_no);
 			purple_connection_error_reason(gc, error, error_reason);
 			g_free(error_reason);
 			g_free(auth_data->seed);
@@ -3411,6 +3411,7 @@ void yahoo_login(PurpleAccount *account) {
 
 	purple_connection_set_display_name(gc, purple_account_get_username(account));
 
+	yd->gc = gc;
 	yd->yahoo_local_p2p_server_fd = -1;
 	yd->fd = -1;
 	yd->txhandler = 0;

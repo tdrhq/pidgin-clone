@@ -30,6 +30,9 @@ version 2.6.0 (??/??/2009):
 	* Don't do IPv6 address lookups if the computer does not have an IPv6
 	  address configured.
 	* Add support for receiving audio clips on MSN.
+	* Fix a leak when the UI provides its own DNS resolving UI op.
+	  (Aman Gupta)
+	* Don't fork a DNS resolver process to resolve IP addresses.  (Aman Gupta)
 
 	AIM and ICQ:
 	* Preliminary support for a new authentication scheme called
@@ -45,7 +48,7 @@ version 2.6.0 (??/??/2009):
 	* Correctly show tooltip status for contacts with status messages.
 	  (Krzysztof "kkszysiu" Klinikowski)
 	* Support for fetching buddy icons.  (Krzysztof "kkszysiu" Klinikowski)
-	* Support connection progress steps in Gadu-Gadu (Krzysztof "kkszysiu"
+	* Support connection progress steps in Gadu-Gadu.  (Krzysztof "kkszysiu"
 	  Klinikowski)
 
 	XMPP:
@@ -91,6 +94,12 @@ version 2.6.0 (??/??/2009):
 	* New XMPP and Google Talk accounts require SSL by default.
 	* Display kicks (and the reasons given) in chat rooms when an occupant is
 	  kicked.
+	* Fix issues with case-sensitivity of XMPP roster and case-insensitive
+	  Purple groups.
+	* For contacts who advertise Entity Capabilities, only send rich text
+	  markup if they support it.
+	* Removed support for obsoleted XEP-0022 (Message Events) and XEP-0091
+	  (Legacy Entity Time).
 
 	Yahoo!/Yahoo! JAPAN:
 	* P2P file transfers.  (Sulabh Mahajan)
