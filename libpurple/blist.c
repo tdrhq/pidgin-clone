@@ -910,7 +910,7 @@ void purple_blist_remove_group(PurpleGroup *group)
 	node = (PurpleBlistNode *)group;
 
 	/* Make sure the group is empty */
-	if (node->child)
+	if (purple_blist_node_is_empty(node))
 		return;
 
 	/* Remove the node from its parent */

@@ -265,6 +265,13 @@ void purple_blist_node_set_int(PurpleBlistNode *node, const char *key, int value
 GHashTable *purple_blist_node_get_settings(PurpleBlistNode *node);
 
 /**
+ * Returns whether a node has any children or not
+ *
+ * @return the empty state
+ */
+gboolean purple_blist_node_is_empty(PurpleBlistNode *node);
+
+/**
  * Retrieves a named integer setting from a node in the buddy list
  *
  * @param node  The node to retrieve the data from

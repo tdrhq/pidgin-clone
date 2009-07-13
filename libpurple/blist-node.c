@@ -493,6 +493,12 @@ purple_blist_node_strip(PurpleBlistNode *node)
 	node->parent = node->child = node->next = node->prev = NULL;
 }
 
+gboolean
+purple_blist_node_is_empty(PurpleBlistNode *node)
+{
+	return node->child;
+}
+
 /******************/
 /*  GObject Code  */
 /******************/
