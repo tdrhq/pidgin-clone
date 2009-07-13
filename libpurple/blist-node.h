@@ -76,8 +76,8 @@ struct _PurpleBlistNode {
 struct _PurpleBlistNodeClass {
 	PurpleObjectClass parent;
 
-	void (*add_node)(PurpleBlistNode *parent, PurpleBlistNode *child);
-	void (*remove_node)(PurpleBlistNode *parent, PurpleBlistNode *child);
+	void (*add_node)(PurpleBlistNode *parent, PurpleBlistNode *child, PurpleBlistNode *location);
+	void (*remove_node)(PurpleBlistNode *child);
 
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
@@ -150,6 +150,53 @@ PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
  * @see purple_blist_node_next
  */
 PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node);
+
+/**
+ * Check whether a node is contained in a parent node. Simply checks if the node's parent is the other node.
+ *
+ * @param parent The containing node
+ * @param node The node to check with.
+ * @return Returns TRUE if node's parent is parent.
+ */
+gboolean purple_blist_node_contains(PurpleBlistNode *parent, PurpleBlistNode *node);
+
+/**
+ * Add a node as the first child of a given node.
+ *
+ * @param parent The parent node
+ * @param child The child node to add to parent
+ */
+void purple_blist_node_add_child(PurpleBlistNode *parent, PurpleBlistNode *child);
+
+/**
+ * Add a node before a given node.
+ *
+ * @param node The node to add
+ * @param location The node to insert before, not NULL
+ */
+void purple_blist_node_add_sibling_before(PurpleBlistNode *node, PurpleBlistNode *location);
+
+/**
+ * Add a node after a given node.
+ *
+ * @param node The node to add
+ * @param location The node to insert after, not NULL
+ */
+void purple_blist_node_add_sibling_after(PurpleBlistNode *node, PurpleBlistNode *location);
+
+/**
+ * Remove a node from its parent
+ *
+ * @param node The node to remove
+ */
+void purple_blist_node_remove(PurpleBlistNode *node);
+
+/**
+ * Isolate a node by making all its references NULL.
+ *
+ * @param node The node to isolate
+ */
+void purple_blist_node_strip(PurpleBlistNode *node);
 
 /**
  * Returns the UI data of a given node.

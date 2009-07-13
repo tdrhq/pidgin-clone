@@ -291,7 +291,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 /**
  * Adds a new group to the buddy list.
  *
- * The new group will be inserted after insert or prepended to the list if
+ * The new group will be inserted after node or prepended to the list if
  * node is NULL.
  *
  * @param group  The group

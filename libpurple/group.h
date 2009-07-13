@@ -143,6 +143,22 @@ PurpleGroup *purple_chat_get_group(PurpleChat *chat);
 int purple_blist_get_group_online_count(PurpleGroup *group);
 
 /**
+ * Update the counts based on a changed online/offline status of a contact
+ *
+ * @param group The group to alter
+ * @param contact The contact that's changed
+ */
+void purple_group_contact_updated(PurpleGroup *group, PurpleContact *contact);
+
+/**
+ * Get a list of all the buddies in this group
+ *
+ * @param group The group
+ * @return a list of buddies
+ */
+GList *purple_group_get_buddies(PurpleGroup *group);
+
+/**
  * Get the GType for PurpleGroup
  */
 GType purple_group_get_type(void);

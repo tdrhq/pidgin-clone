@@ -66,142 +66,6 @@ group_to_xmlnode(PurpleBlistNode *gnode)
 	return node;
 }
 
-/*
- * TODO: If merging, prompt the user if they want to merge.
- */
-void purple_blist_rename_group(PurpleGroup *source, const char *name)
-{
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleGroup *dest;
-	gchar *old_name;
-	gchar *new_name;
-	GList *moved_buddies = NULL;
-	GSList *accts;
-
-	g_return_if_fail(source != NULL);
-	g_return_if_fail(name != NULL);
-
-	new_name = purple_utf8_strip_unprintables(name);
-
-	if (*new_name == '\0' || purple_strequal(new_name, source->name)) {
-		g_free(new_name);
-		return;
-	}
-
-	dest = purple_find_group(new_name);
-	if (dest != NULL && purple_utf8_strcasecmp(source->name, dest->name) != 0) {
-		/* We're merging two groups */
-		PurpleBlistNode *prev, *child, *next;
-
-		prev = purple_blist_get_last_child((PurpleBlistNode*)dest);
-		child = ((PurpleBlistNode*)source)->child;
-
-		/*
-		 * TODO: This seems like a dumb way to do this... why not just
-		 * append all children from the old group to the end of the new
-		 * one?  PRPLs might be expecting to receive an add_buddy() for
-		 * each moved buddy...
-		 */
-		while (child)
-		{
-			next = child->next;
-			if (PURPLE_IS_CONTACT(child)) {
-				PurpleBlistNode *bnode;
-				purple_blist_add_contact((PurpleContact *)child, dest, prev);
-				for (bnode = child->child; bnode != NULL; bnode = bnode->next) {
-					purple_blist_add_buddy((PurpleBuddy *)bnode, (PurpleContact *)child,
-							NULL, bnode->prev);
-					moved_buddies = g_list_append(moved_buddies, bnode);
-				}
-				prev = child;
-			} else if (PURPLE_IS_CHAT(child)) {
-				purple_blist_add_chat((PurpleChat *)child, dest, prev);
-				prev = child;
-			} else {
-				purple_debug(PURPLE_DEBUG_ERROR, "blist",
-						"Unknown child type in group %s\n", source->name);
-			}
-			child = next;
-		}
-
-		/* Make a copy of the old group name and then delete the old group */
-		old_name = g_strdup(source->name);
-		purple_blist_remove_group(source);
-		source = dest;
-		g_free(new_name);
-	} else {
-		/* A simple rename */
-		PurpleBlistNode *cnode, *bnode;
-
-		/* Build a GList of all buddies in this group */
-		for (cnode = ((PurpleBlistNode *)source)->child; cnode != NULL; cnode = cnode->next) {
-			if (PURPLE_IS_CONTACT(cnode))
-				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
-					moved_buddies = g_list_append(moved_buddies, bnode);
-		}
-
-		old_name = source->name;
-		source->name = new_name;
-	}
-
-	/* Save our changes */
-	purple_blist_schedule_save();
-
-	/* Update the UI */
-	if (ops && ops->update)
-		ops->update(purplebuddylist, (PurpleBlistNode*)source);
-
-	/* Notify all PRPLs */
-	/* TODO: Is this condition needed?  Seems like it would always be TRUE */
-	if(old_name && !purple_strequal(source->name, old_name)) {
-		for (accts = purple_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {
-			PurpleAccount *account = accts->data;
-			PurpleConnection *gc = NULL;
-			PurplePlugin *prpl = NULL;
-			PurplePluginProtocolInfo *prpl_info = NULL;
-			GList *l = NULL, *buddies = NULL;
-
-			gc = purple_account_get_connection(account);
-
-			if(gc)
-				prpl = purple_connection_get_prpl(gc);
-
-			if(gc && prpl)
-				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-			if(!prpl_info)
-				continue;
-
-			for(l = moved_buddies; l; l = l->next) {
-				PurpleBuddy *buddy = (PurpleBuddy *)l->data;
-
-				if(buddy && purple_buddy_get_account(buddy)== account)
-					buddies = g_list_append(buddies, (PurpleBlistNode *)buddy);
-			}
-
-			if(prpl_info->rename_group) {
-				prpl_info->rename_group(gc, old_name, source, buddies);
-			} else {
-				GList *cur, *groups = NULL;
-
-				/* Make a list of what the groups each buddy is in */
-				for(cur = buddies; cur; cur = cur->next) {
-					PurpleBlistNode *node = (PurpleBlistNode *)cur->data;
-					groups = g_list_prepend(groups, node->parent->parent);
-				}
-
-				purple_account_remove_buddies(account, buddies, groups);
-				g_list_free(groups);
-				purple_account_add_buddies(account, buddies);
-			}
-
-			g_list_free(buddies);
-		}
-	}
-	g_list_free(moved_buddies);
-	g_free(old_name);
-}
-
 GSList *purple_group_get_accounts(PurpleGroup *group)
 {
 	GSList *l = NULL;
@@ -227,11 +91,16 @@ GSList *purple_group_get_accounts(PurpleGroup *group)
 }
 
 static void
-purple_group_remove_node(PurpleBlistNode *parent, PurpleBlistNode *child)
+purple_group_remove_node(PurpleBlistNode *child)
 {
-	PurpleGroup *group = PURPLE_GROUP(parent);
-	PurpleContact *contact = PURPLE_CONTACT(child);
+	PurpleGroup *group;
+	PurpleContact *contact;
 	PurpleBlistNode *itr;
+
+	g_return_if_fail(child);
+	g_return_if_fail(purple_blist_node_get_parent(child));
+	group = PURPLE_GROUP(child->parent);
+	contact = PURPLE_CONTACT(child);
 
 #warning Consider optimizing this.
 	group->totalsize = 0;
@@ -291,6 +160,57 @@ int purple_blist_get_group_online_count(PurpleGroup *group)
 		return 0;
 
 	return group->online;
+}
+
+GList *purple_group_get_buddies(PurpleGroup *group)
+{
+	GList *buddies = NULL;
+	PurpleBlistNode *gnode;
+	PurpleBlistNode *itr;
+
+	g_return_val_if_fail(group,NULL);
+
+	gnode = PURPLE_BLIST_NODE(group);
+	for(itr = gnode->child;itr;itr = itr->next){
+		if(PURPLE_IS_CONTACT(itr)){
+			buddies = g_list_concat(buddies, purple_contact_get_buddies(PURPLE_CONTACT(itr)));
+		}
+	}
+
+	return buddies;
+}
+
+void
+purple_group_contact_updated(PurpleGroup *group, PurpleContact *contact)
+{
+	g_return_if_fail(group);
+	g_return_if_fail(contact);
+
+	if (purple_contact_get_online(contact) > 0)
+		group->online++;
+	else
+		group->online--;
+
+	if (purple_contact_get_currentsize(contact) > 0)
+		group->currentsize++;
+	else
+		group->currentsize--;
+}
+
+static void
+purple_group_add_contact(PurpleGroup *group, PurpleContact *contact, PurpleBlistNode *node)
+{
+	g_return_if_fail(group);
+	g_return_if_fail(contact);
+
+	if (node && (PURPLE_IS_CONTACT(node) ||
+				PURPLE_IS_CHAT(node))) {
+		purple_blist_node_add_sibling_after(PURPLE_BLIST_NODE(contact), node);
+	} else {
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(group), PURPLE_BLIST_NODE(contact));
+	}	
+	purple_group_contact_updated(group, contact);
+	group->totalsize++;
 }
 
 static void

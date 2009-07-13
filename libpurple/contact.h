@@ -128,6 +128,14 @@ void purple_contact_set_alias(PurpleContact *contact, const char *alias);
 const char *purple_contact_get_alias(PurpleContact *contact);
 
 /**
+ * Get a list of buddies for this contact
+ *
+ * @param contact The contact
+ * @return the list of buddies
+ */
+GList *purple_contact_get_buddies(PurpleContact *contact);
+
+/**
  * Returns a buddy's contact.
  *
  * @param buddy The buddy.

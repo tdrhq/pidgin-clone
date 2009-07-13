@@ -430,18 +430,50 @@ purple_blist_node_get_extended_menu(PurpleBlistNode *n)
 	return menu;
 }
 
-static void
-purple_blist_node_add_node(PurpleBlistNode *parent, PurpleBlistNode *child)
+gboolean
+purple_blist_node_contains(PurpleBlistNode *parent, PurpleBlistNode *node)
 {
+	return node->parent == parent;
 }
 
-static void
-purple_blist_node_remove_node(PurpleBlistNode *group, PurpleBlistNode *child)
+void
+purple_blist_node_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 {
-	PurpleBlistNodeClass *gklass = PURPLE_GET_BLIST_NODE_CLASS(group);
-	PurpleBlistNode *contact = purple_blist_node_get_parent(child);
-	PurpleBlistNodeClass *cklass = PURPLE_GET_BLIST_NODE_CLASS(contact);
+	if (parent->child)
+		parent->child->prev = child;
+	child->prev = NULL;
+	child->next = parent->child;
+	parent->child = child;
+	child->parent = parent;
+}
 
+void
+purple_blist_node_add_sibling_before(PurpleBlistNode *child, PurpleBlistNode *location)
+{
+	g_return_if_fail(location);
+	g_return_if_fail(child);
+	child->next = location;
+	child->prev = location->prev;
+	location->prev->next = child;
+	location->prev = child;
+}
+
+void
+purple_blist_node_add_sibling_after(PurpleBlistNode *child, PurpleBlistNode *location)
+{
+	g_return_if_fail(child);
+	g_return_if_fail(location);
+	if (location->next)
+		location->next->prev = child;
+	child->next = location->next;
+	child->prev = location;
+	child->parent = location->parent;
+	location->next = child;
+}
+
+void
+purple_blist_node_remove(PurpleBlistNode *child)
+{
 	/* Remove the node from its parent */
 	if (child->prev)
 		child->prev->next = child->next;
@@ -451,8 +483,14 @@ purple_blist_node_remove_node(PurpleBlistNode *group, PurpleBlistNode *child)
 	if ((child->parent != NULL) && (child->parent->child == child))
 		child->parent->child = child->next;
 
-	cklass->remove_node(contact, child);
-	gklass->remove_node(group, contact);
+	purple_blist_node_strip(child);
+}
+
+void
+purple_blist_node_strip(PurpleBlistNode *node)
+{
+	g_return_if_fail(node);
+	node->parent = node->child = node->next = node->prev = NULL;
 }
 
 /******************/
@@ -500,6 +538,13 @@ purple_blist_node_finalize(GObject *object)
 	parent_class->finalize(object);
 }
 
+static void *
+purple_blist_node_handle()
+{
+	static int handle;
+	return &handle;
+}
+
 static void
 purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 {
@@ -510,8 +555,17 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 
 	g_type_class_add_private(klass, sizeof(PurpleBlistNodePrivate));
 
-	klass->add_node = purple_blist_node_add_node;
-	klass->remove_node = purple_blist_node_remove_node;
+	klass->add_node = purple_blist_node_add_child;
+	klass->remove_node = purple_blist_node_remove;
+
+	purple_signal_register( purple_blist_node_handle(),
+													"node-updated",
+													purple_marshal_VOID__POINTER,
+													NULL,
+													1,
+													purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_BLIST_NODE));
+
+
 }
 
 static void

@@ -280,6 +280,24 @@ gboolean purple_contact_on_account(PurpleContact *c, PurpleAccount *account)
 	return FALSE;
 }
 
+GList *purple_contact_get_buddies(PurpleContact *contact)
+{
+	GList *buddies = NULL;
+	PurpleBlistNode *cnode;
+	PurpleBlistNode *itr;
+
+	g_return_val_if_fail(contact, NULL);
+	cnode = PURPLE_BLIST_NODE(contact);
+
+	for(itr = cnode->child;itr;itr = itr->next){
+		if(PURPLE_IS_BUDDY(itr)){
+			buddies = g_list_append(buddies,itr);
+		}
+	}
+
+	return buddies;
+}
+
 void purple_contact_invalidate_priority_buddy(PurpleContact *contact)
 {
 	g_return_if_fail(contact != NULL);
@@ -298,18 +316,19 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 }
 
 static void
-purple_contact_add_buddy(PurpleBlistNode *parent, PurpleBlistNode *child)
+purple_contact_add_buddy(PurpleBlistNode *parent, PurpleBlistNode *child, PurpleBlistNode *location)
 {
 
 }
 
 static void
-purple_contact_remove_buddy(PurpleBlistNode *parent, PurpleBlistNode *child)
+purple_contact_remove_buddy(PurpleBlistNode *child)
 {
-	PurpleContact *contact = PURPLE_CONTACT(parent);
+	PurpleContact *contact;
 	PurpleBuddy *buddy = PURPLE_BUDDY(child);
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	g_return_if_fail(contact);
+	g_return_if_fail(purple_blist_node_get_parent(child));
+	contact = PURPLE_CONTACT(purple_blist_node_get_parent(child));
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy))
 		contact->online--;
@@ -317,14 +336,15 @@ purple_contact_remove_buddy(PurpleBlistNode *parent, PurpleBlistNode *child)
 		contact->currentsize--;
 	contact->totalsize--;
 
-#warning The ui calls haven't been thought out yet, as to where they ought to go.
+	/* emit a node-updated signal here */
+
+#warning The ui calls havent been thought out yet, as to where they ought to go.
 	/* Re-sort the contact */
 	if (purple_blist_node_get_first_child(PURPLE_BLIST_NODE(contact)) && contact->priority == buddy) {
 		purple_contact_invalidate_priority_buddy(contact);
 		if (ops && ops->update)
 			ops->update(purplebuddylist, PURPLE_BLIST_NODE(contact));
 	}
-
 }
 
 /****************/
