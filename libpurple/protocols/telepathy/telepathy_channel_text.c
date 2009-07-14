@@ -67,6 +67,54 @@ write_message_to_chatroom (int id,
 }
 
 static void
+chat_got_message (telepathy_room_channel *tp_channel,
+                  guint arg_ID,
+                  guint arg_Timestamp,
+                  guint arg_Sender,
+                  guint arg_Type,
+                  guint arg_Flags,
+                  const gchar *arg_Text)
+{
+	TpChannel *channel = tp_channel->channel;
+
+	TpHandle handle = tp_channel_get_handle(channel, NULL);
+
+	GArray *message_IDs;
+
+	/* Get information about the contact who sent this message */
+	const gchar *from;
+	TpContact *contact = g_hash_table_lookup(
+			tp_channel->contacts, (gpointer)arg_Sender);
+
+	/* TODO: Get rid of the unknown sender bit */
+
+	purple_debug_info("telepathy", "received %s from %u\n", arg_Text, arg_Sender);
+
+	if (contact != NULL)
+		from = tp_contact_get_alias(contact);
+	else
+		from = "<Unknown Sender>";
+
+	/* drop message if it's not text */
+	if ((arg_Flags & TP_CHANNEL_TEXT_MESSAGE_FLAG_NON_TEXT_CONTENT) == 0)
+			write_message_to_chatroom(handle, from,
+					arg_Timestamp, arg_Text, tp_channel->connection_data);
+
+	/* this will hold the IDs of message that will be acknowledged */
+	message_IDs = g_array_new(FALSE, FALSE, sizeof(guint));
+
+	/* add the id to the array of acknowledge messages */
+	g_array_append_val(message_IDs, arg_ID);
+
+	/* acknowledge the messages now */
+	tp_cli_channel_type_text_call_acknowledge_pending_messages(channel, -1, message_IDs,
+			acknowledge_pending_messages_cb, tp_channel->connection_data, NULL, NULL);
+
+	g_array_free(message_IDs, TRUE);
+
+}
+
+static void
 chat_list_pending_messages_cb  (TpChannel *proxy,
                                 const GPtrArray *out_Pending_Messages,
                                 const GError *error,
@@ -80,12 +128,10 @@ chat_list_pending_messages_cb  (TpChannel *proxy,
 	else
 	{
 		telepathy_connection *data = user_data;
-		GArray *message_IDs;
 
 		int i;
 
-		GHashTable *properties = tp_channel_borrow_immutable_properties(proxy);
-		gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
+		const gchar *who = tp_channel_get_identifier(proxy);
 		TpHandle handle = tp_channel_get_handle(proxy, NULL);
 
 		/* Get the channel struct by channel handle
@@ -105,45 +151,21 @@ chat_list_pending_messages_cb  (TpChannel *proxy,
 			tp_channel->received_Pending_Messages = TRUE;
 		}
 
-		/* this will hold the IDs of message that will be acknowledged */
-		message_IDs = g_array_new(FALSE, FALSE, sizeof(guint));
-
 		for (i = 0; i<out_Pending_Messages->len; ++i)
 		{
 			/* unpack the relevant info from (uuuuus) */
 			GValueArray *arr = g_ptr_array_index(out_Pending_Messages, i);
+
 			guint msg_id = g_value_get_uint(g_value_array_get_nth(arr, 0));
 			guint timestamp = g_value_get_uint(g_value_array_get_nth(arr, 1));
 			guint sender = g_value_get_uint(g_value_array_get_nth(arr, 2));
+			guint type = g_value_get_uint(g_value_array_get_nth(arr, 3));
 			guint flags = g_value_get_uint(g_value_array_get_nth(arr, 4));
 			gchar *msg = (gchar *)g_value_get_string(g_value_array_get_nth(arr, 5));
-			
-			/* Get information about the contact who sent this message */
-			const gchar *from;
-			TpContact *contact = g_hash_table_lookup(
-					tp_channel->contacts, (gpointer)sender);
 
-			/* TODO: Get rid of the unknown sender bit */
-
-			if (contact != NULL)
-				from = tp_contact_get_alias(contact);
-			else
-				from = "<Unknown Sender>";
-
-			/* drop message if it's not text */
-			if ((flags & TP_CHANNEL_TEXT_MESSAGE_FLAG_NON_TEXT_CONTENT) == 0)
-				write_message_to_chatroom(handle, from, timestamp, msg, user_data);
-
-			/* add the id to the array of acknowledge messages */
-			g_array_append_val(message_IDs, msg_id);
+			/* Forward the message to purple-land */
+			chat_got_message(tp_channel, msg_id, timestamp, sender, type, flags, msg);
 		}
-
-		/* acknowledge the messages now */
-		tp_cli_channel_type_text_call_acknowledge_pending_messages(proxy, -1, message_IDs,
-				acknowledge_pending_messages_cb, user_data, NULL, NULL);
-
-		g_array_free(message_IDs, TRUE);
-
 	}
 }
 
@@ -177,40 +199,14 @@ chat_received_cb (TpChannel *proxy,
 	}
 	else
 	{
-		GArray *message_IDs;
-
-		/* Get information about the sender */
-		TpContact *contact = g_hash_table_lookup(
-				tp_channel->contacts, (gpointer)arg_Sender);
-
-		const gchar *from;
-
-		/* TODO: Get rid of the unknown sender bit */
-
-		if (contact != NULL)
-			from = tp_contact_get_alias(contact);
-		else
-			from = "<Unknown Sender>";
-		
-
-		/* will this message get caught by ListPendingMessages? */
-		if (!tp_channel->received_Pending_Messages)
-			return;
-
-		/* drop this message if it's not text */
-		if ((arg_Flags & TP_CHANNEL_TEXT_MESSAGE_FLAG_NON_TEXT_CONTENT) == 0)
-			write_message_to_chatroom(handle, from, arg_Timestamp, arg_Text, user_data);
-
-		/* acknowledge receiving the message */
-		message_IDs = g_array_new(FALSE, FALSE, sizeof(guint));
-
-		g_array_append_val(message_IDs, arg_ID);
-
-		tp_cli_channel_type_text_call_acknowledge_pending_messages(proxy, -1, message_IDs,
-				acknowledge_pending_messages_cb, user_data, NULL, NULL);
-
-		g_array_free(message_IDs, TRUE);
-
+		/* Forward the message to purple-land */
+		chat_got_message(tp_channel,
+				arg_ID,
+				arg_Timestamp,
+				arg_Sender,
+				arg_Type,
+				arg_Flags,
+				arg_Text);
 	}
 }
 
