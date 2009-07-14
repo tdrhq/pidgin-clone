@@ -88,8 +88,6 @@ chat_got_message (telepathy_room_channel *tp_channel,
 
 	/* TODO: Get rid of the unknown sender bit */
 
-	purple_debug_info("telepathy", "received %s from %u\n", arg_Text, arg_Sender);
-
 	if (contact != NULL)
 		from = tp_contact_get_alias(contact);
 	else
@@ -400,6 +398,34 @@ chat_get_all_members_cb (TpChannel *proxy,
 }
 
 static void
+room_channel_invalidated_cb (TpProxy *self,
+                             guint    domain,
+                             gint     code,
+                             gchar   *message,
+                             gpointer user_data)
+{
+	telepathy_connection *data = user_data;
+
+	/* remove the cached TpChannel proxy when the channel closes */
+	TpHandle handle = tp_channel_get_handle((TpChannel *)self, NULL);
+
+	telepathy_room_channel *tp_channel = NULL;
+	
+	if (data->text_Channels)
+		tp_channel = g_hash_table_lookup(data->room_Channels, (gpointer)handle);
+
+	purple_debug_info("telepathy", "Chatroom channel with handle %u closed!\n", handle);
+
+	if (tp_channel)
+	{
+		tp_channel->channel = NULL;
+	}
+
+	g_object_unref(self);
+}
+
+
+static void
 handle_room_text_channel (TpChannel *channel,
                           telepathy_connection *data)
 {
@@ -445,7 +471,7 @@ handle_room_text_channel (TpChannel *channel,
 	}
 
 
-	g_signal_connect(channel, "invalidated", G_CALLBACK(text_channel_invalidated_cb), data);
+	g_signal_connect(channel, "invalidated", G_CALLBACK(room_channel_invalidated_cb), data);
 
 	/* send pending messages */
 	while (tp_channel->pending_Messages != NULL)
