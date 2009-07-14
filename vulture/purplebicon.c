@@ -111,7 +111,7 @@ HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy, int cxMax, int cyMax)
 	bmi.bmiHeader.biYPelsPerMeter = 0;
 
 	/* Scanlines must start on DWORD boundaries. */
-	cbDIBRowstride = (4 * cx * iChannels + 3) / 4;
+	cbDIBRowstride = 4 * ((cx * iChannels + 3) / 4);
 
 	lpbyBits = ProcHeapAlloc(cbDIBRowstride * cy);
 
