@@ -473,24 +473,6 @@ handle_room_text_channel (TpChannel *channel,
 
 	g_signal_connect(channel, "invalidated", G_CALLBACK(room_channel_invalidated_cb), data);
 
-	/* send pending messages */
-	while (tp_channel->pending_Messages != NULL)
-	{
-		purple_debug_info("telepathy", "Sending pending message \"%s\" to %s\n",
-				(gchar *)tp_channel->pending_Messages->data, who);
-
-		tp_cli_channel_type_text_call_send(channel, -1,
-				TP_CHANNEL_TEXT_MESSAGE_TYPE_NORMAL,
-				tp_channel->pending_Messages->data,
-				chat_send_cb, data, NULL, NULL);
-
-		/* the message was duped */
-		g_free(tp_channel->pending_Messages->data);
-
-		tp_channel->pending_Messages = g_list_delete_link(
-				tp_channel->pending_Messages, tp_channel->pending_Messages);
-	}
-
 	tp_cli_channel_type_text_connect_to_send_error(channel,
 			chat_send_error_cb, data, NULL, NULL, &error);
 

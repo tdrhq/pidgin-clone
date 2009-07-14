@@ -29,7 +29,6 @@
 
 typedef struct
 {
-	GList *pending_Messages;
 	TpChannel *channel;
 
 	telepathy_connection *connection_data;
