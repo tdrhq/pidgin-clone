@@ -438,6 +438,130 @@ room_channel_invalidated_cb (TpProxy *self,
 	g_object_unref(self);
 }
 
+static void
+chat_members_joined (TpConnection *connection,
+                     guint n_contacts,
+                     TpContact * const *contacts,
+                     guint n_failed,
+                     const TpHandle *failed,
+                     const GError *error,
+                     gpointer user_data,
+                     GObject *weak_object)
+{
+	telepathy_room_channel *tp_channel = user_data;
+	telepathy_connection *connection_data = tp_channel->connection_data;
+	PurpleConversation *conv;
+
+	int i;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error getting TpContact for members joining"
+				" chatroom: %s\n", error->message);
+		return;
+	}
+
+	if (n_failed > 0)
+	{
+		purple_debug_error("telepathy", "Failed getting TpContact for %u members joining"
+				" chatroom", n_failed);
+	}
+
+	conv = purple_find_chat(connection_data->gc,
+			tp_channel_get_handle(tp_channel->channel, NULL));
+
+	if (conv == NULL)
+	{
+		purple_debug_error("telepathy", "There's no conversation to add members to!\n");
+	}
+
+	for (i = 0; i<n_contacts; ++i)
+	{
+		TpContact *contact = contacts[i];
+
+		purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
+				tp_contact_get_alias(contact), NULL,
+				PURPLE_CBFLAGS_NONE, FALSE);
+
+		g_object_ref(contacts[i]);
+
+		g_hash_table_insert(tp_channel->contacts,
+				(gpointer)tp_contact_get_handle(contact),
+				contact);
+	}
+}
+
+
+static void
+chat_members_changed_cb (TpChannel *proxy,
+                         const gchar *arg_Message,
+                         const GArray *arg_Added,
+                         const GArray *arg_Removed,
+                         const GArray *arg_Local_Pending,
+                         const GArray *arg_Remote_Pending,
+                         guint arg_Actor,
+                         guint arg_Reason,
+                         gpointer user_data,
+                         GObject *weak_object)
+{
+	telepathy_room_channel *tp_channel = user_data;
+	telepathy_connection *connection_data = tp_channel->connection_data;
+
+	/* Members joined the charoom */
+	if (arg_Added->len > 0)
+	{
+		const TpContactFeature features[] = {
+			TP_CONTACT_FEATURE_ALIAS,
+			TP_CONTACT_FEATURE_PRESENCE
+		};
+
+		purple_debug_info("telepathy", "%u users joined chatroom!\n", arg_Added->len);
+
+		/* Request TpContact objects and then we can add them to the chatroom */
+		tp_connection_get_contacts_by_handle(connection_data->connection,
+				arg_Added->len, (TpHandle *)arg_Added->data,
+				G_N_ELEMENTS (features), features,
+				chat_members_joined, tp_channel,
+				NULL, NULL);
+	}
+
+	/* Members left the chatroom */
+	if (arg_Removed->len > 0)
+	{
+		int i;
+
+		purple_debug_info("telepathy", "%u users left chatroom!\n", arg_Removed->len);
+
+		for (i = 0; i<arg_Removed->len; ++i)
+		{
+			/* Get the TpContact cached in the channel struct */
+			TpHandle handle = g_array_index(arg_Removed, TpHandle, i);
+			TpContact *contact = g_hash_table_lookup(tp_channel->contacts,
+					(gpointer)handle);
+
+			PurpleConversation *conv;
+			const gchar *alias;
+
+			if (contact == NULL)
+			{
+				purple_debug_error("telepathy", "Handle %u left chatroom but"
+						" was not cached!\n", handle);
+				continue;
+			}
+
+			g_hash_table_remove(tp_channel->contacts, (gpointer)handle);
+
+			alias = tp_contact_get_alias(contact);
+
+			/* Remove the member from the chatroom in libpurple land */
+			conv = purple_find_chat(connection_data->gc,
+					tp_channel_get_handle(tp_channel->channel, NULL));
+			purple_conv_chat_remove_user(PURPLE_CONV_CHAT(conv), alias, NULL);
+
+			g_object_unref(contact);
+		}
+	}
+}
 
 static void
 handle_room_text_channel (TpChannel *channel,
@@ -469,6 +593,18 @@ handle_room_text_channel (TpChannel *channel,
 	tp_channel->channel = channel;
 	tp_channel->connection_data = data;
 	tp_channel->contacts = g_hash_table_new(g_direct_hash, g_direct_equal);
+
+	/* This will notify us of users joining or leaving */
+	tp_cli_channel_interface_group_connect_to_members_changed(channel,
+			chat_members_changed_cb, tp_channel,
+			NULL, NULL, &error);
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to MembersChanged signal: %s\n",
+				error->message);
+	}
+
 
 	/* Get the members of the chatroom */
 	tp_cli_channel_interface_group_call_get_all_members(channel, -1,
