@@ -413,18 +413,7 @@ room_channel_invalidated_cb (TpProxy *self,
 	/* remove the cached TpChannel proxy when the channel closes */
 	TpHandle handle = tp_channel_get_handle((TpChannel *)self, NULL);
 
-	telepathy_room_channel *tp_channel = NULL;
-	
-	if (connection_data->text_Channels)
-		tp_channel = g_hash_table_lookup(connection_data->room_Channels,
-				(gpointer)handle);
-
 	purple_debug_info("telepathy", "Chatroom channel with handle %u closed!\n", handle);
-
-	if (tp_channel)
-	{
-		tp_channel->channel = NULL;
-	}
 
 	/* Unref all the contacts in the chatroom */
 	g_hash_table_iter_init (&iter, data->contacts);
@@ -435,7 +424,7 @@ room_channel_invalidated_cb (TpProxy *self,
 
 	g_hash_table_destroy(data->contacts);
 
-	g_object_unref(self);
+	g_hash_table_remove(connection_data->room_Channels, (gpointer)handle);
 }
 
 static void
@@ -898,8 +887,6 @@ text_channel_invalidated_cb (TpProxy *self,
 	{
 		tp_channel->channel = NULL;
 	}
-
-	g_object_unref(self);
 }
 
 void

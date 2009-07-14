@@ -576,6 +576,17 @@ telepathy_join_chat (PurpleConnection *gc, GHashTable *components)
 			map, ensure_channel_cb, data, NULL, NULL);
 }
 
+static void
+telepathy_chat_leave (PurpleConnection *gc, int id)
+{
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+
+	telepathy_room_channel *tp_channel = g_hash_table_lookup(
+			data->room_Channels, (gpointer)(TpHandle)id);
+
+	tp_cli_channel_call_close(tp_channel->channel, -1, NULL, NULL, NULL, NULL);
+}
+
 static int
 telepathy_chat_send (PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
@@ -707,7 +718,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	NULL,                /* reject_chat */
 	NULL,              /* get_chat_name */
 	NULL,                /* chat_invite */
-	NULL,                 /* chat_leave */
+	telepathy_chat_leave,                 /* chat_leave */
 	NULL,               /* chat_whisper */
 	telepathy_chat_send,                  /* chat_send */
 	NULL,                                /* keepalive */
