@@ -577,12 +577,77 @@ telepathy_join_chat (PurpleConnection *gc, GHashTable *components)
 }
 
 static void
+invite_contact_to_chatroom_cb (TpConnection *connection,
+                               TpHandleType handle_type,
+                               guint n_handles,
+                               const TpHandle *handles,
+                               const gchar * const *ids,
+                               const GError *error,
+                               gpointer user_data,
+                               GObject *weak_object)
+{
+	telepathy_room_channel *tp_channel = user_data;
+	GArray *arr;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error while requesting handle for inviting"
+				" contact to chatroom: %s\n", error->message);
+		return;
+	}
+
+	arr = g_array_new(0, 0, sizeof(TpHandle));
+
+	g_array_append_val(arr, handles[0]);
+
+	tp_cli_channel_interface_group_call_add_members(tp_channel->channel, -1,
+			arr, NULL,
+			NULL, NULL,
+			NULL, NULL);
+
+	g_array_free(arr, TRUE);
+
+}
+
+static void
+telepathy_chat_invite (PurpleConnection *gc, int id, const char *message, const char *who)
+{
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+	
+	telepathy_room_channel *tp_channel = g_hash_table_lookup(
+			data->room_Channels, (gpointer)(TpHandle)id);
+
+	gchar const *ids[] = { who, NULL };
+
+	if (tp_channel == NULL)
+	{
+		purple_debug_error("telepathy", "No telepathy_room_channel struct cached"
+				" for %d\n", id);
+		return;
+	}
+
+	purple_debug_info("telepathy", "Inviting %s to chatroom\n", who);
+
+	tp_connection_request_handles(data->connection, -1,
+			TP_HANDLE_TYPE_CONTACT, ids,
+			invite_contact_to_chatroom_cb, tp_channel,
+			NULL, NULL);
+}
+
+static void
 telepathy_chat_leave (PurpleConnection *gc, int id)
 {
 	telepathy_connection *data = purple_connection_get_protocol_data(gc);
 
 	telepathy_room_channel *tp_channel = g_hash_table_lookup(
 			data->room_Channels, (gpointer)(TpHandle)id);
+
+	if (tp_channel == NULL)
+	{
+		purple_debug_error("telepathy", "No telepathy_room_channel struct cached"
+				" for %d\n", id);
+		return;
+	}
 
 	tp_cli_channel_call_close(tp_channel->channel, -1, NULL, NULL, NULL, NULL);
 }
@@ -717,7 +782,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	telepathy_join_chat,                  /* join_chat */
 	NULL,                /* reject_chat */
 	NULL,              /* get_chat_name */
-	NULL,                /* chat_invite */
+	telepathy_chat_invite,                /* chat_invite */
 	telepathy_chat_leave,                 /* chat_leave */
 	NULL,               /* chat_whisper */
 	telepathy_chat_send,                  /* chat_send */
