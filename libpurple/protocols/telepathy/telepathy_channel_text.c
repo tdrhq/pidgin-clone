@@ -144,11 +144,7 @@ chat_list_pending_messages_cb  (TpChannel *proxy,
 		{
 			purple_debug_warning("telepathy", "Pending message from %s,"
 					" but there's no channel struct for the chatroom!\n", who);
-		}
-		else
-		{
-			/* we should now allow received_cb to handle incoming messages */
-			tp_channel->received_Pending_Messages = TRUE;
+			return;
 		}
 
 		for (i = 0; i<out_Pending_Messages->len; ++i)
@@ -447,8 +443,6 @@ handle_room_text_channel (TpChannel *channel,
 		purple_debug_error("telepathy", "Error connecting to Received signal: %s\n",
 				error->message);
 	}
-
-	tp_channel->received_Pending_Messages = FALSE;
 
 
 	g_signal_connect(channel, "invalidated", G_CALLBACK(text_channel_invalidated_cb), data);

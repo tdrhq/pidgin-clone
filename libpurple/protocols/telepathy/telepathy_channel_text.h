@@ -36,8 +36,6 @@ typedef struct
 
 	GHashTable *contacts;
 
-	/* This flag avoids having a message processed twice via both Received signal and ListPendingMessages */
-	gboolean received_Pending_Messages;
 } telepathy_room_channel;
 
 void
