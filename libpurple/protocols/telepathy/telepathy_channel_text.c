@@ -404,15 +404,20 @@ room_channel_invalidated_cb (TpProxy *self,
                              gchar   *message,
                              gpointer user_data)
 {
-	telepathy_connection *data = user_data;
+	telepathy_room_channel *data = user_data;
+	telepathy_connection *connection_data = data->connection_data;
+
+	GHashTableIter iter;
+	gpointer key, value;
 
 	/* remove the cached TpChannel proxy when the channel closes */
 	TpHandle handle = tp_channel_get_handle((TpChannel *)self, NULL);
 
 	telepathy_room_channel *tp_channel = NULL;
 	
-	if (data->text_Channels)
-		tp_channel = g_hash_table_lookup(data->room_Channels, (gpointer)handle);
+	if (connection_data->text_Channels)
+		tp_channel = g_hash_table_lookup(connection_data->room_Channels,
+				(gpointer)handle);
 
 	purple_debug_info("telepathy", "Chatroom channel with handle %u closed!\n", handle);
 
@@ -420,6 +425,15 @@ room_channel_invalidated_cb (TpProxy *self,
 	{
 		tp_channel->channel = NULL;
 	}
+
+	/* Unref all the contacts in the chatroom */
+	g_hash_table_iter_init (&iter, data->contacts);
+	while (g_hash_table_iter_next (&iter, &key, &value)) 
+	{
+		g_object_unref(value);
+	}
+
+	g_hash_table_destroy(data->contacts);
 
 	g_object_unref(self);
 }
@@ -471,7 +485,7 @@ handle_room_text_channel (TpChannel *channel,
 	}
 
 
-	g_signal_connect(channel, "invalidated", G_CALLBACK(room_channel_invalidated_cb), data);
+	g_signal_connect(channel, "invalidated", G_CALLBACK(room_channel_invalidated_cb), tp_channel);
 
 	tp_cli_channel_type_text_connect_to_send_error(channel,
 			chat_send_error_cb, data, NULL, NULL, &error);
