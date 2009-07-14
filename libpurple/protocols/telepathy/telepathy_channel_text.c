@@ -481,7 +481,7 @@ chat_members_joined (TpConnection *connection,
 
 		purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
 				tp_contact_get_alias(contact), NULL,
-				PURPLE_CBFLAGS_NONE, FALSE);
+				PURPLE_CBFLAGS_NONE, TRUE);
 
 		g_object_ref(contacts[i]);
 
