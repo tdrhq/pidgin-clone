@@ -39,6 +39,7 @@ typedef struct _VULTURE_CONVERSATION
 	int			iTabIndex;
 	WNDPROC			wndprocInputOrig;
 	PurpleConversationType	convtype;
+	HBITMAP			hbmIcon;
 } VULTURE_CONVERSATION;
 
 

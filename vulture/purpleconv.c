@@ -53,6 +53,7 @@ void PurpleNewConversation(PurpleConversation *lpconv)
 
 	lpvconv->lpconv = lpconv;
 	lpvconv->hwndContainer = lpvconv->hwndConv = NULL;
+	lpvconv->hbmIcon = NULL;
 
 	/* Cache this, since the UI should not mess with the PurpleConversation
 	 * directly.

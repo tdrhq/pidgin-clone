@@ -32,13 +32,17 @@
 
 
 /**
- * Retrieves the buddy icon for a buddy.
+ * Retrieves the buddy icon for a buddy. It is scaled, with its aspect ratio
+ * maintained, so as not to exceed the specified dimensions, unless either of
+ * these is non-positive, in which case no scaling is performed.
  *
  * @param	lpbuddy		Buddy.
+ * @param	cxMax		Maximum width.
+ * @param	cyMax		Maximum height.
  *
  * @return Bitmap handle, or NULL on error.
  */
-HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy)
+HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy, int cxMax, int cyMax)
 {
 	GdkPixbuf *lppixbuf;
 	GdkPixbufLoader *lppbloader;
@@ -47,13 +51,17 @@ HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy)
 	size_t cbBuddyIconData;
 	guchar *lpucPixbufPixels;
 	int cbPixbufRowstride, cbDIBRowstride;
-	int cx, cy;
-	HDC hdc;
-	HBITMAP hbitmap;
+	int cx, cy, cxScaled, cyScaled;
+	HDC hdc, hdcScreen;
+	HBITMAP hbitmap, hbmOld;
 	BITMAPINFO bmi;
 	BYTE *lpbyBits;
 	int iRow;
 	int iChannels, iBitsPerSample;
+	GError *lpgerror = NULL;
+
+	if(!lpbuddy)
+		return NULL;
 
 	lpbuddyicon = purple_buddy_icons_find(lpbuddy->account, lpbuddy->name);
 
@@ -63,7 +71,7 @@ HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy)
 	lpvBuddyIconData = purple_buddy_icon_get_data(lpbuddyicon, &cbBuddyIconData);
 
 	lppbloader = gdk_pixbuf_loader_new();
-	gdk_pixbuf_loader_write(lppbloader, lpvBuddyIconData, cbBuddyIconData, NULL);
+	if(!gdk_pixbuf_loader_write(lppbloader, lpvBuddyIconData, cbBuddyIconData, &lpgerror))
 	gdk_pixbuf_loader_close(lppbloader, NULL);
 
 	lppixbuf = gdk_pixbuf_loader_get_pixbuf(lppbloader);
@@ -103,15 +111,15 @@ HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy)
 	bmi.bmiHeader.biYPelsPerMeter = 0;
 
 	/* Scanlines must start on DWORD boundaries. */
-	cbDIBRowstride = (4 * cx * sizeof(DWORD) + 3) / 4;
+	cbDIBRowstride = (4 * cx * iChannels + 3) / 4;
 
 	lpbyBits = ProcHeapAlloc(cbDIBRowstride * cy);
 
 	/* Bottom-up DIB. */
 	for(iRow = 0; iRow < cy; iRow++)
 	{
-		int cbDIBRowOffest = (cy - iRow) * cbDIBRowstride;
-		int cbPixbufRowOffest = (cy - iRow) * cbDIBRowstride;
+		int cbDIBRowOffest = (cy - iRow - 1) * cbDIBRowstride;
+		int cbPixbufRowOffest = iRow * cbPixbufRowstride;
 		int iCol;
 
 		for(iCol = 0; iCol < cx; iCol++)
@@ -124,20 +132,71 @@ HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy)
 
 			/* Blue, green, red. */
 			for(iChan = 0; iChan < 3; iChan++)
-				lpbyBits[cbDIBRowOffest + iChan] = lpucPixbufPixels[cbPixbufRowOffest + (2 - iChan)];
+				lpbyBits[cbDIBRowOffest + iCol * iChannels + iChan] = lpucPixbufPixels[cbPixbufRowOffest + iCol * iChannels + (2 - iChan)];
 
 			if(iChannels == 4)
-				lpbyBits[cbDIBRowOffest + 3] = lpucPixbufPixels[cbPixbufRowOffest + 3];
+				lpbyBits[cbDIBRowOffest + iCol * iChannels + 3] = lpucPixbufPixels[cbPixbufRowOffest + iCol * iChannels + 3];
 		}
 	}
 
 	g_object_unref(lppixbuf);
 
-	hdc = GetDC(NULL);
-	hbitmap = CreateDIBitmap(hdc, &bmi.bmiHeader, CBM_INIT, lpbyBits, &bmi, DIB_RGB_COLORS);
-	ReleaseDC(NULL, hdc);
+	/* Scale if necessary. */
+	if(cxMax > 0 && cyMax > 0 && (cx > cxMax || cy > cyMax))
+	{
+		if(cx * cyMax > cy * cxMax)
+		{
+			/* Scale to fit width. */
+			cxScaled = cxMax;
+			cyScaled = MulDiv(cy, cxMax, cx);
+		}
+		else
+		{
+			/* Scaled to fit height. */
+			cxScaled = MulDiv(cx, cyMax, cy);
+			cyScaled = cyMax;
+		}
+	}
+	else
+	{
+		cxScaled = cx;
+		cyScaled = cy;
+	}
+
+	hdcScreen = GetDC(NULL);
+	hdc = CreateCompatibleDC(hdcScreen);
+
+	hbitmap = CreateCompatibleBitmap(hdcScreen, cxScaled, cyScaled);
+	hbmOld = SelectObject(hdc, hbitmap);
+	SetStretchBltMode(hdc, COLORONCOLOR);
+	StretchDIBits(hdc, 0, 0, cxScaled, cyScaled, 0, 0, cx, cy, lpbyBits, &bmi, DIB_RGB_COLORS, SRCCOPY);
+	SelectObject(hdc, hbmOld);
+	
+	DeleteDC(hdc);
+	ReleaseDC(NULL, hdcScreen);
 
 	ProcHeapFree(lpbyBits);
 
 	return hbitmap;
+}
+
+
+/**
+ * Retrieves the buddy icon to be shown for an IM. It is scaled, with its
+ * aspect ratio maintained, so as not to exceed the specified dimensions,
+ * unless either of these is non-positive, in which case no scaling is
+ * performed.
+ *
+ * @param	lpconv	IM conversation.
+ * @param	cxMax	Maximum width.
+ * @param	cyMax	Maximum height.
+ *
+ * @return Bitmap handle, or NULL on error.
+ */
+HBITMAP PurpleGetIMBuddyIcon(PurpleConversation *lpconv, int cxMax, int cyMax)
+{
+	if(!lpconv || lpconv->type != PURPLE_CONV_TYPE_IM)
+		return NULL;
+
+	return PurpleGetBuddyIcon(purple_find_buddy(lpconv->account, lpconv->name), cxMax, cyMax);
 }

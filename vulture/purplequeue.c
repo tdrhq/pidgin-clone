@@ -33,6 +33,8 @@
 #include "purpleblist.h"
 #include "vultureblist.h"
 #include "vulturedlg.h"
+#include "vulturebicon.h"
+#include "purplebicon.h"
 
 
 /** Queue node representing a libpurple call. */
@@ -254,6 +256,14 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		{
 			VULTURE_CONV_GET_STRING *lpvcgetstr = (VULTURE_CONV_GET_STRING*)lppurplecall->lpvParam;
 			lpvcgetstr->sz = PurpleChatGetTopic(lpvcgetstr->lpvconv->lpconv);
+		}
+		
+		break;
+
+	case PC_GETIMBUDDYICON:
+		{
+			VULTURE_GET_IM_BUDDY_ICON *lpvgetimbicon = lppurplecall->lpvParam;
+			lpvgetimbicon->hbmIcon = PurpleGetIMBuddyIcon(lpvgetimbicon->lpvconv->lpconv, lpvgetimbicon->cxMax, lpvgetimbicon->cyMax);
 		}
 		
 		break;

@@ -79,6 +79,9 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_CONV_GET_STRING*) Retrieves the chat's topic. */
 	PC_CHATGETTOPIC,
+
+	/* (VULTURE_GET_IM_BUDDY_ICON*) */
+	PC_GETIMBUDDYICON,
 };
 
 

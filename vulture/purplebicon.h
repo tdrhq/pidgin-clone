@@ -29,7 +29,8 @@
 #include "purple.h"
 
 
-HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy);
+HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy, int cxMax, int cyMax);
+HBITMAP PurpleGetIMBuddyIcon(PurpleConversation *lpconv, int cxMax, int cyMax);
 
 
 #endif

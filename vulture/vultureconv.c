@@ -35,6 +35,7 @@
 #include "vultureblist.h"
 #include "purplemain.h"
 #include "purplequeue.h"
+#include "vulturebicon.h"
 
 
 #define CONVCONTAINERCLASS	TEXT("VULTURECONVCONTAINER")
@@ -59,7 +60,7 @@ static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARA
 static INT_PTR CALLBACK ChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK ConvCommonDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs);
-static void RepositionConvControls(HWND hwndConvDlg);
+static void RepositionConvControls(HWND hwndConvDlg, VULTURE_CONVERSATION *lpvconv);
 static LRESULT CALLBACK InputBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void EnableAppropriateConvWindow(CONVCONTAINERDATA *lpccd);
 static void SetConvTitle(VULTURE_CONVERSATION *lpvconv, HWND hwndTabs, LPTSTR szTitle);
@@ -67,6 +68,7 @@ static void UpdateIMStatusText(HWND hwndDlg, VULTURE_CONVERSATION *lpvconv);
 static void FreeChatUser(void *lpvChatUser);
 static int CALLBACK UserListComparator(LPARAM lParam1, LPARAM lParam2, LPARAM lParamUnused);
 static INLINE void SortUserList(HWND hwndTVUsers);
+static void UpdateIMIcon(HWND hwndDlg, VULTURE_CONVERSATION *lpvconv);
 
 
 /**
@@ -423,6 +425,12 @@ static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARA
 	{
 	case WM_INITDIALOG:
 		UpdateIMStatusText(hwndDlg, (VULTURE_CONVERSATION*)lParam);
+
+		/* Get the icon control to the right size. */
+		RepositionConvControls(hwndDlg, (VULTURE_CONVERSATION*)lParam);
+
+		UpdateIMIcon(hwndDlg, (VULTURE_CONVERSATION*)lParam);
+
 		break;
 
 	case WM_PURPLEUIMSG:
@@ -430,6 +438,16 @@ static INT_PTR CALLBACK IMDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARA
 		{
 		case VUIMSG_UPDATEIMSTATUSTEXT:
 			UpdateIMStatusText(hwndDlg, (VULTURE_CONVERSATION*)lParam);
+			break;
+
+		case VUIMSG_CONVCHANGED:
+			{
+				VULTURE_CONV_CHANGED *lpvcchanged = (VULTURE_CONV_CHANGED*)lParam;
+
+				if(lpvcchanged->pcut == PURPLE_CONV_UPDATE_ICON)
+					UpdateIMIcon(hwndDlg, lpvcchanged->lpvconv);
+			}
+
 			break;
 		}
 
@@ -686,7 +704,27 @@ static INT_PTR CALLBACK ConvCommonDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wPara
 		return TRUE;
 
 	case WM_SIZE:
-		RepositionConvControls(hwndDlg);
+		RepositionConvControls(hwndDlg, (VULTURE_CONVERSATION*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA));
+		return TRUE;
+
+	case WM_DESTROY:
+		{
+			/* Get handle to bitmap in icon control. */
+			HBITMAP hbmPrev = (HBITMAP)SendDlgItemMessage(hwndDlg, IDC_STATIC_ICON, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)NULL);
+
+			lpvconv = (VULTURE_CONVERSATION*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
+			
+			/* On Windows >= XP, the static control sometimes makes
+			 * a copy of the bitmap we send it, in which case we
+			 * have *two* bitmaps to free now.
+			 */
+			if(hbmPrev != lpvconv->hbmIcon && hbmPrev)
+				DeleteObject(hbmPrev);
+
+			if(lpvconv->hbmIcon)
+				DeleteObject(lpvconv->hbmIcon);
+		}
+
 		return TRUE;
 	}
 
@@ -734,18 +772,28 @@ static void ResizeActiveConversationWindow(HWND hwndConvContainer, HWND hwndTabs
  * Repositions and resizes controls in a conversation window.
  *
  * @param	hwndConvDlg	Conversation window.
+ * @param	lpvconv		Conversation.
  */
-static void RepositionConvControls(HWND hwndConvDlg)
+static void RepositionConvControls(HWND hwndConvDlg, VULTURE_CONVERSATION *lpvconv)
 {
 	RECT rcClient;
-	VULTURE_CONVERSATION *lpvconv = (VULTURE_CONVERSATION*)GetWindowLongPtr(hwndConvDlg, GWLP_USERDATA);
-	HDWP hdwp = BeginDeferWindowPos(lpvconv->convtype == PURPLE_CONV_TYPE_CHAT ? 3 : 2);
+	HDWP hdwp = BeginDeferWindowPos(lpvconv->convtype == PURPLE_CONV_TYPE_CHAT ? 4 : 3);
 	int cxLeft;
 
 	GetClientRect(hwndConvDlg, &rcClient);
 
 	/* Width of input and output controls. */
 	cxLeft = rcClient.right - 2 * CONV_DLG_MARGIN - (lpvconv->convtype == PURPLE_CONV_TYPE_CHAT ? (CONV_DLG_MARGIN + g_cxNames) : 0);
+
+	hdwp = DeferWindowPos(
+		hdwp,
+		GetDlgItem(hwndConvDlg, IDC_STATIC_ICON),
+		NULL,
+		CONV_DLG_MARGIN,
+		CONV_DLG_MARGIN,
+		CONV_TOP_MARGIN - 2 * CONV_DLG_MARGIN,
+		CONV_TOP_MARGIN - 2 * CONV_DLG_MARGIN,
+		SWP_NOACTIVATE | SWP_NOZORDER);
 
 	hdwp = DeferWindowPos(
 		hdwp,
@@ -1028,4 +1076,43 @@ static INLINE void SortUserList(HWND hwndTVUsers)
 	tvsortcb.lpfnCompare = UserListComparator;
 
 	TreeView_SortChildrenCB(hwndTVUsers, &tvsortcb, FALSE);
+}
+
+
+/**
+ * Updates the icon in an IM window.
+ *
+ * @param	hwndDlg		IM dialogue window handle.
+ * @param	lpvconv		Conversation.
+ */
+static void UpdateIMIcon(HWND hwndDlg, VULTURE_CONVERSATION *lpvconv)
+{
+	VULTURE_GET_IM_BUDDY_ICON vgetimbicon;
+	HBITMAP hbmPrev;
+	RECT rcIcon;
+
+	GetClientRect(GetDlgItem(hwndDlg, IDC_STATIC_ICON), &rcIcon);
+	vgetimbicon.cxMax = rcIcon.right - rcIcon.left;
+	vgetimbicon.cyMax = rcIcon.bottom - rcIcon.top;
+
+	vgetimbicon.lpvconv = lpvconv;
+	VultureSingleSyncPurpleCall(PC_GETIMBUDDYICON, &vgetimbicon);
+
+	/* Set new bitmap and retrieve handle to
+	 * old one.
+	 */
+	hbmPrev = (HBITMAP)SendDlgItemMessage(hwndDlg, IDC_STATIC_ICON, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)vgetimbicon.hbmIcon);
+
+	/* On Windows >= XP, the static control
+	 * sometimes makes a copy of the bitmap
+	 * we send it, in which case we have
+	 * *two* bitmaps to free now.
+	 */
+	if(hbmPrev != lpvconv->hbmIcon && hbmPrev)
+		DeleteObject(hbmPrev);
+
+	if(lpvconv->hbmIcon)
+		DeleteObject(lpvconv->hbmIcon);
+
+	lpvconv->hbmIcon = vgetimbicon.hbmIcon;
 }

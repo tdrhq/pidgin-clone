@@ -19,3 +19,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+
+#ifndef _VULTURE_VULTUREBICON_H_
+#define _VULTURE_VULTUREBICON_H_
+
+
+#include <windows.h>
+
+#include "vultureconv.h"
+
+
+typedef struct _VULTURE_GET_IM_BUDDY_ICON
+{
+	VULTURE_CONVERSATION	*lpvconv;
+	int			cxMax, cyMax;
+	HBITMAP			hbmIcon;
+} VULTURE_GET_IM_BUDDY_ICON;
+
+
+#endif
