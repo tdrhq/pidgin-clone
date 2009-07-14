@@ -42,6 +42,13 @@ destroy_room_channel(telepathy_room_channel *tp_channel);
 
 typedef struct
 {
+	telepathy_room_channel *tp_channel;
+	gchar *msg;
+
+} telepathy_chat_invitation;
+
+typedef struct
+{
 	GList *pending_Messages;
 	TpChannel *channel;
 

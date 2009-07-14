@@ -586,26 +586,33 @@ invite_contact_to_chatroom_cb (TpConnection *connection,
                                gpointer user_data,
                                GObject *weak_object)
 {
-	telepathy_room_channel *tp_channel = user_data;
+	telepathy_chat_invitation *invitation = user_data;
+	telepathy_room_channel *tp_channel = invitation->tp_channel;
 	GArray *arr;
 
 	if (error != NULL)
 	{
 		purple_debug_error("telepathy", "Error while requesting handle for inviting"
 				" contact to chatroom: %s\n", error->message);
+		g_free(invitation->msg);
 		return;
 	}
 
 	arr = g_array_new(0, 0, sizeof(TpHandle));
 
+	/* Send the invitation by calling AddMembers with the handle. If the contact
+	 * accepts it, he will just join the chat, nothing more we need to do.
+	 */
 	g_array_append_val(arr, handles[0]);
 
 	tp_cli_channel_interface_group_call_add_members(tp_channel->channel, -1,
-			arr, NULL,
+			arr, invitation->msg,
 			NULL, NULL,
 			NULL, NULL);
 
 	g_array_free(arr, TRUE);
+
+	g_free(invitation->msg);
 
 }
 
@@ -619,19 +626,25 @@ telepathy_chat_invite (PurpleConnection *gc, int id, const char *message, const 
 
 	gchar const *ids[] = { who, NULL };
 
+	telepathy_chat_invitation *invitation;
+
 	if (tp_channel == NULL)
 	{
 		purple_debug_error("telepathy", "No telepathy_room_channel struct cached"
 				" for %d\n", id);
 		return;
 	}
-
+	
 	purple_debug_info("telepathy", "Inviting %s to chatroom\n", who);
 
+	invitation = g_new(telepathy_chat_invitation, 1);
+	invitation->tp_channel = tp_channel;
+	invitation->msg = g_strdup(message);
+
+	/* Request a handle that will be passed to AddMembers for this group */
 	tp_connection_request_handles(data->connection, -1,
 			TP_HANDLE_TYPE_CONTACT, ids,
-			invite_contact_to_chatroom_cb, tp_channel,
-			NULL, NULL);
+			invite_contact_to_chatroom_cb, invitation, g_free, NULL);
 }
 
 static void
