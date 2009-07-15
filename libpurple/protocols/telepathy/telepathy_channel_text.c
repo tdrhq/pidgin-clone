@@ -113,6 +113,97 @@ chat_got_message (telepathy_room_channel *tp_channel,
 }
 
 static void
+get_contacts_for_scrollback_cb (TpConnection *connection,
+                                guint n_contacts,
+                                TpContact * const *contacts,
+                                guint n_failed,
+                                const TpHandle *failed,
+                                const GError *error,
+                                gpointer user_data,
+                                GObject *weak_object)
+{
+	telepathy_scrollback_messages *tp_messages = user_data;
+	telepathy_room_channel *tp_channel = tp_messages->channel_data;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error while getting contacts for scrollback: %s\n",
+				error->message);
+	}
+	else
+	{
+		int i;
+
+		if (n_failed > 0)
+		{
+			purple_debug_info("telepathy", "Failed to fetch %u contacts for scrollback\n",
+					n_failed);
+		}
+		/* Cache the contacts */
+		for (i = 0; i<n_contacts; ++i)
+		{
+			TpContact *contact = contacts[i];
+
+			TpHandle handle = tp_contact_get_handle(contact);
+
+			g_hash_table_insert(tp_channel->contacts, (gpointer)handle, contact);
+		}
+
+		/* We are now ready to print the messages */
+		for (i = 0; i<tp_messages->messages->len; ++i)
+		{
+			telepathy_message tp_message = g_array_index(tp_messages->messages,
+					telepathy_message, i);
+
+			chat_got_message(tp_channel, 
+					tp_message.msg_id,
+					tp_message.timestamp,
+					tp_message.sender,
+					tp_message.type,
+					tp_message.flags,
+					tp_message.msg);
+
+			g_free(tp_message.msg);
+		}
+
+		/* Remove the cached contacts */
+		for (i = 0; i<n_contacts; ++i)
+		{
+			TpContact *contact = contacts[i];
+
+			TpHandle handle = tp_contact_get_handle(contact);
+
+			g_hash_table_remove(tp_channel->contacts, (gpointer)handle);
+		}
+		
+	}
+
+	g_array_free(tp_messages->messages, TRUE);
+	g_array_free(tp_messages->handles, TRUE);
+
+	g_free(tp_messages);
+}
+
+static void
+chat_got_scrollback_messages (telepathy_connection *data,
+                              telepathy_scrollback_messages *tp_messages)
+{
+	GArray *handles = tp_messages->handles;
+
+	const TpContactFeature features[] = {
+		TP_CONTACT_FEATURE_ALIAS,
+	};
+
+	purple_debug_info("telepathy", "Requesting %u contacts for scrollback\n", handles->len);
+
+	tp_connection_get_contacts_by_handle(data->connection,
+			handles->len, (TpHandle *)handles->data,
+			G_N_ELEMENTS (features), features,
+			get_contacts_for_scrollback_cb, tp_messages,
+			NULL, NULL);
+}
+
+static void
 chat_list_pending_messages_cb  (TpChannel *proxy,
                                 const GPtrArray *out_Pending_Messages,
                                 const GError *error,
@@ -138,6 +229,8 @@ chat_list_pending_messages_cb  (TpChannel *proxy,
 		telepathy_room_channel *tp_channel = g_hash_table_lookup(
 				data->room_Channels, (gpointer)handle);
 
+		telepathy_scrollback_messages *tp_messages;
+		
 		if (tp_channel == NULL)
 		{
 			purple_debug_warning("telepathy", "Pending message from %s,"
@@ -145,21 +238,61 @@ chat_list_pending_messages_cb  (TpChannel *proxy,
 			return;
 		}
 
+		/* We need to check if we already know who sent the messages. In case of
+		 * scrollback messages, the user that sent the message might not be in
+		 * the channel when we join, so we must request a TpContact for that handle.
+		 * 
+		 * In order to keep the chronology of the messages, we'll check the sender
+		 * of all the messages, and only after that can we print all messages.
+		 */
+
+
+		/* This struct will keep all the messages and the handles we need to query */
+		tp_messages = g_new(telepathy_scrollback_messages, 1);
+
+		/* This will keep the messages, including all information */
+		tp_messages->messages = g_array_new(FALSE, FALSE, sizeof(telepathy_message));
+
+		/* This will keep the handles of the contacts that we need to query */
+		tp_messages->handles = g_array_new(TRUE, FALSE, sizeof(TpHandle));
+
+		tp_messages->channel_data = tp_channel;
+
 		for (i = 0; i<out_Pending_Messages->len; ++i)
 		{
 			/* unpack the relevant info from (uuuuus) */
 			GValueArray *arr = g_ptr_array_index(out_Pending_Messages, i);
 
-			guint msg_id = g_value_get_uint(g_value_array_get_nth(arr, 0));
-			guint timestamp = g_value_get_uint(g_value_array_get_nth(arr, 1));
-			guint sender = g_value_get_uint(g_value_array_get_nth(arr, 2));
-			guint type = g_value_get_uint(g_value_array_get_nth(arr, 3));
-			guint flags = g_value_get_uint(g_value_array_get_nth(arr, 4));
-			gchar *msg = (gchar *)g_value_get_string(g_value_array_get_nth(arr, 5));
+			telepathy_message tp_message;
+			TpContact *contact;
 
-			/* Forward the message to purple-land */
-			chat_got_message(tp_channel, msg_id, timestamp, sender, type, flags, msg);
+			tp_message.msg_id = g_value_get_uint(g_value_array_get_nth(arr, 0));
+			tp_message.timestamp = g_value_get_uint(g_value_array_get_nth(arr, 1));
+			tp_message.sender = g_value_get_uint(g_value_array_get_nth(arr, 2));
+			tp_message.type = g_value_get_uint(g_value_array_get_nth(arr, 3));
+			tp_message.flags = g_value_get_uint(g_value_array_get_nth(arr, 4));
+			tp_message.msg = g_strdup(g_value_get_string(g_value_array_get_nth(arr, 5)));
+
+			/* Save the message in the array */
+			g_array_append_val(tp_messages->messages, tp_message);
+
+			/* We must check if the sender of this message has already been cached */
+			contact = g_hash_table_lookup(
+					tp_channel->contacts, (gpointer)tp_message.sender);
+
+			if (contact == NULL)
+			{
+				/* We don't know this handle, so we'll request a contact for it */
+				purple_debug_info("telepathy", "Handle %u is not known, "
+						"requesting a contact for scrollback\n",
+						tp_message.sender);
+
+				g_array_append_val(tp_messages->handles, tp_message.sender);
+			}
 		}
+
+		/* Fetch the needed contacts and finally print those messages */
+		chat_got_scrollback_messages(data, tp_messages);
 	}
 }
 

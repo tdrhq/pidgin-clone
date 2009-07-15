@@ -44,6 +44,26 @@ destroy_room_channel(telepathy_room_channel *tp_channel);
 
 typedef struct
 {
+	guint msg_id;
+	guint timestamp;
+	guint sender;
+	guint type;
+	guint flags;
+	gchar *msg;
+
+} telepathy_message;
+
+typedef struct
+{
+	GArray *messages;
+	GArray *handles;
+
+	telepathy_room_channel *channel_data;
+
+} telepathy_scrollback_messages;
+
+typedef struct
+{
 	telepathy_room_channel *tp_channel;
 	gchar *msg;
 
