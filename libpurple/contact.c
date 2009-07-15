@@ -173,7 +173,7 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(purplebuddylist, (PurpleBlistNode *)contact);
+		ops->update(purple_blist_get_list(), (PurpleBlistNode *)contact);
 
 	for(bnode = ((PurpleBlistNode *)contact)->child; bnode != NULL; bnode = bnode->next)
 	{
@@ -316,7 +316,13 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 }
 
 static void
-purple_contact_add_buddy(PurpleBlistNode *parent, PurpleBlistNode *child, PurpleBlistNode *location)
+purple_contact_add_buddy_child(PurpleBlistNode *parent, PurpleBlistNode *child)
+{
+
+}
+
+static void
+purple_contact_add_buddy_sibling(PurpleBlistNode *child, PurpleBlistNode *location)
 {
 
 }
@@ -343,7 +349,7 @@ purple_contact_remove_buddy(PurpleBlistNode *child)
 	if (purple_blist_node_get_first_child(PURPLE_BLIST_NODE(contact)) && contact->priority == buddy) {
 		purple_contact_invalidate_priority_buddy(contact);
 		if (ops && ops->update)
-			ops->update(purplebuddylist, PURPLE_BLIST_NODE(contact));
+			ops->update(purple_blist_get_list(), PURPLE_BLIST_NODE(contact));
 	}
 }
 
@@ -367,8 +373,9 @@ purple_contact_class_init(PurpleContactClass *klass)
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
-	parent_class->add_node = purple_contact_add_buddy;
-	parent_class->remove_node = purple_contact_remove_buddy;
+	parent_class->add_sibling = purple_contact_add_buddy_sibling;
+	parent_class->add_child = purple_contact_add_buddy_child;
+	parent_class->remove = purple_contact_remove_buddy;
 
 	obj_class->finalize = purple_contact_finalize;
 }

@@ -133,7 +133,7 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 	 */
 	purple_contact_invalidate_priority_buddy(purple_buddy_get_contact(buddy));
 	if (ops && ops->update)
-		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
+		ops->update(purple_blist_get_list(), (PurpleBlistNode *)buddy);
 }
 
 void
@@ -172,7 +172,7 @@ void purple_buddy_set_alias(PurpleBuddy *buddy, const char *alias)
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
+		ops->update(purple_blist_get_list(), (PurpleBlistNode *)buddy);
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, priv->name,
 											   priv->account);
@@ -227,7 +227,7 @@ void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
+		ops->update(purple_blist_get_list(), (PurpleBlistNode *)buddy);
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, priv->name,
 											   priv->account);

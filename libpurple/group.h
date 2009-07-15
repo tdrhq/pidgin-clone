@@ -36,6 +36,7 @@ typedef struct _PurpleGroupClass PurpleGroupClass;
 #include "buddy.h"
 #include "chat.h"
 #include "contact.h"
+#include "blist-node.h"
 
 #define PURPLE_GROUP_TYPE                  (purple_group_get_type ())
 #define PURPLE_GROUP(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_GROUP_TYPE, PurpleGroup))

@@ -50,6 +50,7 @@ typedef enum
 typedef struct _PurpleBlistNode PurpleBlistNode;
 typedef struct _PurpleBlistNodePrivate PurpleBlistNodePrivate;
 typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
+
 #define PURPLE_BLIST_NODE_TYPE                  (purple_blist_node_get_gtype ())
 #define PURPLE_BLIST_NODE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNode))
 #define PURPLE_IS_BLIST_NODE(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_NODE_TYPE))
@@ -76,8 +77,9 @@ struct _PurpleBlistNode {
 struct _PurpleBlistNodeClass {
 	PurpleObjectClass parent;
 
-	void (*add_node)(PurpleBlistNode *parent, PurpleBlistNode *child, PurpleBlistNode *location);
-	void (*remove_node)(PurpleBlistNode *child);
+	void (*add_sibling)(PurpleBlistNode *child, PurpleBlistNode *location);
+	void (*add_child)(PurpleBlistNode *parent, PurpleBlistNode *child);
+	void (*remove)(PurpleBlistNode *child);
 
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
@@ -174,15 +176,7 @@ void purple_blist_node_add_child(PurpleBlistNode *parent, PurpleBlistNode *child
  * @param node The node to add
  * @param location The node to insert before, not NULL
  */
-void purple_blist_node_add_sibling_before(PurpleBlistNode *node, PurpleBlistNode *location);
-
-/**
- * Add a node after a given node.
- *
- * @param node The node to add
- * @param location The node to insert after, not NULL
- */
-void purple_blist_node_add_sibling_after(PurpleBlistNode *node, PurpleBlistNode *location);
+void purple_blist_node_add_sibling(PurpleBlistNode *node, PurpleBlistNode *location);
 
 /**
  * Remove a node from its parent
@@ -318,6 +312,13 @@ void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key);
  * @param flags The flags to set.  This is a bitmask.
  */
 void purple_blist_node_set_flags(PurpleBlistNode *node, PurpleBlistNodeFlags flags);
+
+/**
+ * Get the blist-node handle
+ *
+ * @return the handle
+ */
+void *purple_blist_node_get_handle(void);
 
 /**
  * Get the current flags on a given node.

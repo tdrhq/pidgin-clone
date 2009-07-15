@@ -1363,7 +1363,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 	purple_debug_info("msim", "msim_status: %s's status code = %d\n", username, status_code);
 	status_headline = msim_msg_get_string_from_element(g_list_nth_data(list, MSIM_STATUS_ORDINAL_HEADLINE));
 
-	blist = purple_get_blist();
+	blist = purple_blist_get_list();
 
 	/* Add buddy if not found.
 	 * TODO: Could this be responsible for #3444? */

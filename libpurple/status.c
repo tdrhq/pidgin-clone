@@ -1341,7 +1341,7 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 	 */
 
 	if (ops != NULL && ops->update != NULL)
-		ops->update(purple_get_blist(), (PurpleBlistNode *)buddy);
+		ops->update(purple_blist_get_list(), (PurpleBlistNode *)buddy);
 }
 
 void

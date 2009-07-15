@@ -31,6 +31,8 @@
 #include "signals.h"
 #include "xmlnode.h"
 
+static PurpleBlistNodeClass *parent_class = NULL;
+
 xmlnode *
 group_to_xmlnode(PurpleBlistNode *gnode)
 {
@@ -95,30 +97,35 @@ purple_group_remove_node(PurpleBlistNode *child)
 {
 	PurpleGroup *group;
 	PurpleContact *contact;
-	PurpleBlistNode *itr;
+	PurpleChat *chat;
 
 	g_return_if_fail(child);
 	g_return_if_fail(purple_blist_node_get_parent(child));
 	group = PURPLE_GROUP(child->parent);
-	contact = PURPLE_CONTACT(child);
 
-#warning Consider optimizing this.
-	group->totalsize = 0;
-	group->currentsize = 0;
-	group->online = 0;
-
-	/* Update size counts */
-  for(itr	= group->node.child;itr;itr = itr->next){
-		if(PURPLE_CONTACT(itr)->online > 0)
-			group->online++;
-		if(PURPLE_CONTACT(itr)->currentsize > 0)
-			group->currentsize++;
-		group->totalsize++;
+	if(PURPLE_IS_CHAT(child)){
+		chat = PURPLE_CHAT(child);
+		if (purple_account_is_connected(chat->account)) {
+			group->online--;
+			group->currentsize--;
+		}
+	} else if(PURPLE_IS_CONTACT(child)){
+		contact = PURPLE_CONTACT(child);
+		if(purple_contact_get_online(contact) > 0)
+			group->online--;
+		if(purple_contact_get_currentsize(contact) > 0)
+			group->currentsize--;
+	} else {
+		g_warn_if_reached();
 	}
+	group->totalsize--;
 
-	/* If the contact is empty then remove it */
-	if ((contact != NULL) && !PURPLE_BLIST_NODE(contact)->child)
-		purple_blist_remove_contact(contact);
+	parent_class->remove(child);
+
+	purple_blist_schedule_save();
+
+	purple_signal_emit(purple_blist_node_get_handle(), "node-removed", child);
+	g_object_unref(G_OBJECT(child));
 }
 
 PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
@@ -205,7 +212,7 @@ purple_group_add_contact(PurpleGroup *group, PurpleContact *contact, PurpleBlist
 
 	if (node && (PURPLE_IS_CONTACT(node) ||
 				PURPLE_IS_CHAT(node))) {
-		purple_blist_node_add_sibling_after(PURPLE_BLIST_NODE(contact), node);
+		purple_blist_node_add_sibling(PURPLE_BLIST_NODE(contact), node);
 	} else {
 		purple_blist_node_add_child(PURPLE_BLIST_NODE(group), PURPLE_BLIST_NODE(contact));
 	}	
@@ -248,7 +255,6 @@ PurpleGroup *purple_group_new(const char *name)
 												NULL);
 }
 
-static PurpleBlistNodeClass *parent_class = NULL;
 
 static void
 purple_group_finalize(GObject *object)
@@ -291,11 +297,13 @@ static void
 purple_group_class_init(PurpleGroupClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+	PurpleBlistNodeClass *bklass = PURPLE_BLIST_NODE_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
-	parent_class->remove_node = purple_group_remove_node;
-	obj_class->finalize = purple_group_finalize;
+	
+	bklass->remove = purple_group_remove_node;
 
+	obj_class->finalize = purple_group_finalize;
 	obj_class->set_property = purple_group_set_property;
 	obj_class->get_property = purple_group_get_property;
 

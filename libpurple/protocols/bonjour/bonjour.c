@@ -173,7 +173,7 @@ bonjour_close(PurpleConnection *connection)
 
 	/* Delete the bonjour group */
 	if (bonjour_group != NULL)
-		purple_blist_remove_group(bonjour_group);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(bonjour_group));
 
 	/* Cancel any file transfers */
 	while (bd != NULL && bd->xfer_lists) {

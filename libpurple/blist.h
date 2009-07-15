@@ -112,8 +112,6 @@ struct _purple_hbuddy {
 	PurpleBlistNode *group;
 };
 
-extern PurpleBuddyList* purplebuddylist;
-
 void purple_blist_node_initialize_settings(PurpleBlistNode *node);
 void purple_blist_node_destroy(PurpleBlistNode* node);
 
@@ -140,7 +138,7 @@ PurpleBuddyList *purple_blist_new(void);
  *
  * @return The main buddy list.
  */
-PurpleBuddyList *purple_get_blist(void);
+PurpleBuddyList *purple_blist_get_list(void);
 
 /**
  * Returns the root node of the main buddy list.
@@ -338,14 +336,6 @@ void purple_blist_remove_contact(PurpleContact *contact);
  * @param chat   The chat to be removed
  */
 void purple_blist_remove_chat(PurpleChat *chat);
-
-/**
- * Removes a group from the buddy list and frees the memory allocated to it and to
- * its children
- *
- * @param group   The group to be removed
- */
-void purple_blist_remove_group(PurpleGroup *group);
 
 /**
  * Finds the buddy struct given a name and an account
