@@ -561,19 +561,41 @@ static void
 telepathy_join_chat (PurpleConnection *gc, GHashTable *components)
 {
 	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+
 	const gchar *name = g_hash_table_lookup(components, "room");
+	telepathy_room_channel *tp_channel = g_hash_table_lookup(components, "tp_channel");
 
-	/* Request a room text channel */
-	GHashTable *map = tp_asv_new (
-		TP_IFACE_CHANNEL ".ChannelType", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
-		TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_ROOM,
-		TP_IFACE_CHANNEL ".TargetID", G_TYPE_STRING, name,
-		NULL);
+	/* Is this a channel the user requested? */
+	if (tp_channel == NULL)
+	{
+		/* Request a room text channel */
+		GHashTable *map = tp_asv_new (
+			TP_IFACE_CHANNEL ".ChannelType",G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
+			TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_ROOM,
+			TP_IFACE_CHANNEL ".TargetID", G_TYPE_STRING, name,
+			NULL);
 
-	purple_debug_info("telepathy", "Requesting room text channel for %s\n", name);
+		purple_debug_info("telepathy", "Requesting room text channel for %s\n", name);
 
-	tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1,
-			map, ensure_channel_cb, data, NULL, NULL);
+		tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1,
+				map, ensure_channel_cb, data, NULL, NULL);
+	}
+	else
+	{
+		/* This is an invitation request confirmation */
+		GArray *arr = g_array_new(FALSE, FALSE, sizeof(TpHandle));
+
+		g_array_append_val(arr, tp_channel->self_handle);
+
+		purple_debug_info("telepathy", "Adding self handle to chatroom group\n");
+
+		tp_cli_channel_interface_group_call_add_members(tp_channel->channel, -1,
+				arr, NULL, add_members_cb, data, NULL, NULL);
+
+		g_array_free(arr, TRUE);
+
+		handle_room_text_channel(tp_channel->channel, data, TRUE);
+	}
 }
 
 static void
@@ -614,6 +636,17 @@ invite_contact_to_chatroom_cb (TpConnection *connection,
 
 	g_free(invitation->msg);
 
+}
+
+static void
+telepathy_reject_chat (PurpleConnection *gc, GHashTable *components)
+{
+	telepathy_room_channel *tp_channel = g_hash_table_lookup(components, "tp_channel");
+
+	if (tp_channel != NULL)
+	{
+		tp_cli_channel_call_close(tp_channel->channel, -1, NULL, NULL, NULL, NULL);
+	}
 }
 
 static void
@@ -793,7 +826,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	NULL,                   /* rem_deny */
 	NULL,            /* set_permit_deny */
 	telepathy_join_chat,                  /* join_chat */
-	NULL,                /* reject_chat */
+	telepathy_reject_chat,                /* reject_chat */
 	NULL,              /* get_chat_name */
 	telepathy_chat_invite,                /* chat_invite */
 	telepathy_chat_leave,                 /* chat_leave */

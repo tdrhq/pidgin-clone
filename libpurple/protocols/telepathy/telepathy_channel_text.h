@@ -35,6 +35,8 @@ typedef struct
 
 	GHashTable *contacts;
 
+	TpHandle self_handle;
+
 } telepathy_room_channel;
 
 void
@@ -59,6 +61,11 @@ typedef struct
 void
 destroy_text_channel(telepathy_text_channel *tp_channel);
 
+void
+handle_room_text_channel (TpChannel *channel,
+                          telepathy_connection *data,
+                          gboolean invitation);
+	
 void
 chat_send_cb (TpChannel *proxy,
               const GError *error,

@@ -311,6 +311,15 @@ connection_ready_cb (TpConnection *connection,
 		}
 		g_strfreev(interfaces);
 
+
+		/* The self handle is useful in a number of possible scenarios,
+		 * we need to keep track of it.
+		 */
+		data->self_handle = tp_connection_get_self_handle(connection);
+
+		purple_debug_info("telepathy", "Self Handle: %u\n", data->self_handle);
+
+
 		tp_cli_connection_interface_requests_connect_to_new_channels(connection, new_channels_cb, user_data, NULL, NULL, &error);
 
 		if (error != NULL)

@@ -51,7 +51,7 @@ create_group_channel_cb (TpConnection *proxy,
 	purple_debug_info("telepathy", "Group channel created: %s\n", out_Channel);
 }
 
-static void
+void
 add_members_cb (TpChannel *proxy,
                 const GError *error,
                 gpointer user_data,

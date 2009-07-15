@@ -336,19 +336,23 @@ chat_get_contacts_cb (TpConnection *connection,
 			tp_channel_get_handle(tp_channel->channel, NULL));
 	for (i = 0; i<n_contacts; ++i)
 	{
+		TpHandle handle = tp_contact_get_handle(contacts[i]);
+
 		purple_debug_info("telepathy", "  %s (%s)\n",
 				tp_contact_get_identifier(contacts[i]),
 				tp_contact_get_alias(contacts[i]));
 
-		purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
-				tp_contact_get_alias(contacts[i]), NULL,
-				PURPLE_CBFLAGS_NONE, FALSE);
+		/* Make sure we are not duplicating any contact */
+		if (!g_hash_table_lookup(tp_channel->contacts, (gpointer)handle))
+		{
+			purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
+					tp_contact_get_alias(contacts[i]), NULL,
+					PURPLE_CBFLAGS_NONE, FALSE);
 
-		g_object_ref(contacts[i]);
+			g_object_ref(contacts[i]);
 
-		g_hash_table_insert(tp_channel->contacts,
-				(gpointer)tp_contact_get_handle(contacts[i]),
-				contacts[i]);
+			g_hash_table_insert(tp_channel->contacts, (gpointer)handle, contacts[i]);
+		}
 	}
 
 	/* Only after we got the member list are we ready to receive messages */
@@ -395,6 +399,30 @@ chat_get_all_members_cb (TpChannel *proxy,
 			G_N_ELEMENTS (features), features,
 			chat_get_contacts_cb, user_data,
 			NULL, NULL);
+
+	if (out_Local_Pending->len > 0)
+	{
+		purple_debug_info("telepathy", "Got %u local pending members\n",
+				out_Local_Pending->len);
+
+		for (i = 0; i<out_Local_Pending->len; ++i)
+		{
+			purple_debug_info("telepathy", "  %u\n",
+					g_array_index(out_Local_Pending, TpHandle, i));
+		}
+	}
+
+	if (out_Remote_Pending->len > 0)
+	{
+		purple_debug_info("telepathy", "Got %u remote pending members\n",
+				out_Remote_Pending->len);
+
+		for (i = 0; i<out_Remote_Pending->len; ++i)
+		{
+			purple_debug_info("telepathy", "  %u\n",
+					g_array_index(out_Remote_Pending, TpHandle, i));
+		}
+	}
 }
 
 static void
@@ -552,19 +580,62 @@ chat_members_changed_cb (TpChannel *proxy,
 	}
 }
 
-static void
+void
 handle_room_text_channel (TpChannel *channel,
-                          telepathy_connection *data)
+                          telepathy_connection *data,
+                          gboolean invitation)
 {
 	GError *error = NULL;
 
 	GHashTable *properties = tp_channel_borrow_immutable_properties(channel);
+
 	gchar *who = (gchar *)tp_asv_get_string(properties, TP_IFACE_CHANNEL ".TargetID");
+
+	TpHandle initiator_handle = tp_asv_get_uint32(properties,
+			TP_IFACE_CHANNEL ".InitiatorHandle", NULL);
+
 	TpHandle handle = tp_channel_get_handle(channel, NULL);
 
 	telepathy_room_channel *tp_channel;
 
 	tp_channel = g_hash_table_lookup(data->room_Channels, (gpointer)handle);
+
+
+	/* Is this an invitation we have not yet handled? */
+	if (initiator_handle != data->self_handle && !invitation)
+	{
+		gchar *initiator_id = (gchar *)tp_asv_get_string(properties,
+				TP_IFACE_CHANNEL ".InitiatorID");
+
+		/* Create a hash table for prompting the user */
+		GHashTable *chat_data = g_hash_table_new(g_str_hash, g_str_equal);
+
+		purple_debug_info("telepathy", "We have been invited by %s\n",
+				initiator_id);
+
+		/* Include information about the channel */
+		tp_channel = g_new0(telepathy_room_channel, 1);
+
+		tp_channel->channel = channel;
+		tp_channel->connection_data = data;
+		tp_channel->self_handle = tp_channel_group_get_self_handle(channel);
+
+		g_hash_table_insert(data->room_Channels, (gpointer)handle, tp_channel);
+
+		/* Fill in the actual information */
+		g_hash_table_insert(chat_data, "room", g_strdup(who));
+		g_hash_table_insert(chat_data, "tp_channel", tp_channel);
+
+		/* Prompt the user. Depending on his action, telepathy_join_chat() or
+		 * telepathy_reject_chat() will be called along with the hash table
+		 */
+		serv_got_chat_invite(data->gc, who, initiator_id, NULL, chat_data);
+
+		/* Return to wait for user input. If he accepts the invitation, this function
+		 * will be called again with the invitation flag set.
+		 */
+		return;
+	}
 
 	/* if tp_channel exists, then we requested this channel
 	 * else it's an incoming request so we must cache it
@@ -575,12 +646,15 @@ handle_room_text_channel (TpChannel *channel,
 				who, handle);
 
 		tp_channel = g_new0(telepathy_room_channel, 1);
+
+		tp_channel->channel = channel;
+		tp_channel->connection_data = data;
+		tp_channel->self_handle = tp_channel_group_get_self_handle(channel);
+
 		g_hash_table_insert(data->room_Channels, (gpointer)handle, tp_channel);
-		serv_got_joined_chat(data->gc, handle, who);
 	}
 
-	tp_channel->channel = channel;
-	tp_channel->connection_data = data;
+	serv_got_joined_chat(data->gc, handle, who);
 	tp_channel->contacts = g_hash_table_new(g_direct_hash, g_direct_equal);
 
 	/* This will notify us of users joining or leaving */
@@ -1021,7 +1095,7 @@ handle_text_channel (TpChannel *channel,
 		break;
 
 		case TP_HANDLE_TYPE_ROOM:
-			handle_room_text_channel(channel, data);
+			handle_room_text_channel(channel, data, FALSE);
 		break;
 
 		default:

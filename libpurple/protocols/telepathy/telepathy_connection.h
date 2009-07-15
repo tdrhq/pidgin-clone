@@ -36,6 +36,8 @@ typedef struct
 	PurpleConnection *gc;
 	PurpleAccount *acct;
 
+	TpHandle self_handle;
+
 	/* This flag avoids having a channel processed twice via both NewChannels and quering the Channels property */
 	gboolean listing_channels;
 

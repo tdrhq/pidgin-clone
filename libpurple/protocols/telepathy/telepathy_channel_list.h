@@ -53,6 +53,12 @@ create_group_channel_cb (TpConnection *proxy,
                          GObject *weak_object);
 
 void
+add_members_cb (TpChannel *proxy,
+                const GError *error,
+                gpointer user_data,
+                GObject *weak_object);
+
+void
 handle_list_channel (TpChannel *channel,
                      telepathy_connection *data);
 
