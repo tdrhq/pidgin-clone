@@ -29,6 +29,20 @@
 
 typedef struct
 {
+	guint id;
+	gchar *name;
+	gchar *signature;
+	guint flags;
+
+	GValue *value;
+
+} telepathy_property;
+
+void
+destroy_property(telepathy_property *tp_property);
+
+typedef struct
+{
 	TpChannel *channel;
 
 	telepathy_connection *connection_data;
@@ -36,6 +50,10 @@ typedef struct
 	GHashTable *contacts;
 
 	TpHandle self_handle;
+
+	/* This will map property IDs to telepathy_property structs */
+	GHashTable *properties;
+
 
 } telepathy_room_channel;
 

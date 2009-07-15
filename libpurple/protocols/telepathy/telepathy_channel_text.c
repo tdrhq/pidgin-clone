@@ -30,6 +30,14 @@
 #include "telepathy_contact.h"
 
 void
+destroy_property(telepathy_property *tp_property)
+{
+	g_free(tp_property->name);
+	g_free(tp_property->signature);
+	g_free(tp_property);
+}
+
+void
 destroy_room_channel(telepathy_room_channel *tp_channel)
 {
 	g_free(tp_channel);
@@ -585,6 +593,9 @@ room_channel_invalidated_cb (TpProxy *self,
 
 	g_hash_table_destroy(data->contacts);
 
+	if (data->properties != NULL)
+		g_hash_table_destroy(data->properties);
+
 	g_hash_table_remove(connection_data->room_Channels, (gpointer)handle);
 }
 
@@ -713,6 +724,160 @@ chat_members_changed_cb (TpChannel *proxy,
 	}
 }
 
+static void
+get_properties_cb (TpProxy *proxy,
+                   const GPtrArray *out_Values,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	telepathy_room_channel *tp_channel = user_data;
+
+	int i;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error getting properties: %s\n",
+				error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "Got %u properties!\n", out_Values->len);
+
+	for (i = 0; i<out_Values->len; ++i)
+	{
+		GValueArray *arr = g_ptr_array_index(out_Values, i);
+
+		guint id = g_value_get_uint(g_value_array_get_nth(arr, 0));
+		GValue *val = g_value_dup_boxed(g_value_array_get_nth(arr, 1));
+
+		telepathy_property *tp_property = g_hash_table_lookup(tp_channel->properties,
+				(gpointer)id);
+
+		if (tp_property != NULL)
+		{
+			purple_debug_info("telepathy", "Got value for property %u\n", id);
+
+			tp_property->value = val;
+		}
+	}
+}
+
+static void
+list_properties_cb (TpProxy *proxy,
+                    const GPtrArray *out_Available_Properties,
+                    const GError *error,
+                    gpointer user_data,
+                    GObject *weak_object)
+{
+	telepathy_room_channel *tp_channel = user_data;
+
+	int i;
+	GArray *properties;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error listing parameters: %s\n",
+				error->message);
+		return;
+	}
+
+	tp_channel->properties = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+			NULL, (GDestroyNotify) destroy_property);
+
+	/* This will hold the properties we are interested in */
+	properties = g_array_new(FALSE, FALSE, sizeof(guint));
+
+	for (i = 0; i<out_Available_Properties->len; ++i)
+	{
+		GValueArray *arr = g_ptr_array_index(out_Available_Properties, i);
+
+		telepathy_property *tp_property = g_new(telepathy_property, 1);
+
+		/* Each property is packed as a (ussu) */
+		tp_property->id = g_value_get_uint(g_value_array_get_nth(arr, 0));
+		tp_property->name = g_strdup(g_value_get_string(g_value_array_get_nth(arr, 1)));
+		tp_property->signature = g_strdup(g_value_get_string(
+				g_value_array_get_nth(arr, 2)));
+		tp_property->flags = g_value_get_uint(g_value_array_get_nth(arr, 3));
+
+		purple_debug_info("telepathy", "Got property %u: %s\n",
+				tp_property->id, tp_property->name);
+
+		g_hash_table_insert(tp_channel->properties, (gpointer)tp_property->id, tp_property);
+
+		if (tp_property->flags & TP_PROPERTY_FLAG_READ)
+		{
+			g_array_append_val(properties, tp_property->id);
+		}
+	}
+
+	tp_cli_properties_interface_call_get_properties(tp_channel->channel, -1,
+			properties,
+			get_properties_cb, tp_channel,
+			NULL, NULL);
+
+	g_array_free(properties, TRUE);
+}
+
+static void
+property_flags_changed_cb (TpProxy *proxy,
+                           const GPtrArray *arg_Properties,
+                           gpointer user_data,
+                           GObject *weak_object)
+{
+	telepathy_room_channel *tp_channel = user_data;
+
+	int i;
+
+	for (i = 0; i<arg_Properties->len; ++i)
+	{
+		GValueArray *arr = g_ptr_array_index(arg_Properties, i);
+
+		guint id = g_value_get_uint(g_value_array_get_nth(arr, 0));
+		guint flags = g_value_get_uint(g_value_array_get_nth(arr, 1));
+
+		telepathy_property *tp_property = g_hash_table_lookup(tp_channel->properties,
+				(gpointer)id);
+
+		if (tp_property != NULL)
+		{
+			purple_debug_info("telepathy", "Property flags for %u changed!\n", id);
+
+			tp_property->flags = flags;
+		}
+	}
+}
+
+static void
+properties_changed_cb (TpProxy *proxy,
+                       const GPtrArray *arg_Properties,
+                       gpointer user_data,
+                       GObject *weak_object)
+{
+	telepathy_room_channel *tp_channel = user_data;
+
+	int i;
+
+	for (i = 0; i<arg_Properties->len; ++i)
+	{
+		GValueArray *arr = g_ptr_array_index(arg_Properties, i);
+
+		guint id = g_value_get_uint(g_value_array_get_nth(arr, 0));
+		GValue *val = g_value_get_boxed(g_value_array_get_nth(arr, 1));
+
+		telepathy_property *tp_property = g_hash_table_lookup(tp_channel->properties,
+				(gpointer)id);
+
+		if (tp_property != NULL)
+		{
+			purple_debug_info("telepathy", "Property %u changed!\n", id);
+
+			tp_property->value = val;
+		}
+	}
+}
+
 void
 handle_room_text_channel (TpChannel *channel,
                           telepathy_connection *data,
@@ -835,6 +1000,35 @@ handle_room_text_channel (TpChannel *channel,
 		purple_debug_error("telepathy", "Error connecting to SendError signal: %s\n", error->message);
 		g_error_free(error);
 	}
+
+
+	/* Get the properties of the interface and make sure to keep them updated */
+	tp_cli_properties_interface_call_list_properties(channel, -1,
+			list_properties_cb, tp_channel,
+			NULL, NULL);
+	
+	tp_cli_properties_interface_connect_to_property_flags_changed(channel,
+			property_flags_changed_cb, tp_channel,
+			NULL, NULL, &error);
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to PropertyFlagsChanged signal: %s\n",
+				error->message);
+		g_error_free(error);
+	}
+
+	tp_cli_properties_interface_connect_to_properties_changed(channel,
+			properties_changed_cb, tp_channel,
+			NULL, NULL, &error);
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to PropertiesChanged signal: %s\n",
+				error->message);
+		g_error_free(error);
+	}
+
 }
 
 void
