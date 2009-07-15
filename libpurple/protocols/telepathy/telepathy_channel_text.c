@@ -606,6 +606,10 @@ handle_room_text_channel (TpChannel *channel,
 	{
 		gchar *initiator_id = (gchar *)tp_asv_get_string(properties,
 				TP_IFACE_CHANNEL ".InitiatorID");
+		
+		TpHandle actor;
+		TpChannelGroupChangeReason reason;
+		const gchar *message;
 
 		/* Create a hash table for prompting the user */
 		GHashTable *chat_data = g_hash_table_new(g_str_hash, g_str_equal);
@@ -620,6 +624,10 @@ handle_room_text_channel (TpChannel *channel,
 		tp_channel->connection_data = data;
 		tp_channel->self_handle = tp_channel_group_get_self_handle(channel);
 
+		/* Get details about the invitation like message */
+		tp_channel_group_get_local_pending_info(channel, tp_channel->self_handle,
+				&actor, &reason, &message);
+
 		g_hash_table_insert(data->room_Channels, (gpointer)handle, tp_channel);
 
 		/* Fill in the actual information */
@@ -629,7 +637,7 @@ handle_room_text_channel (TpChannel *channel,
 		/* Prompt the user. Depending on his action, telepathy_join_chat() or
 		 * telepathy_reject_chat() will be called along with the hash table
 		 */
-		serv_got_chat_invite(data->gc, who, initiator_id, NULL, chat_data);
+		serv_got_chat_invite(data->gc, who, initiator_id, message, chat_data);
 
 		/* Return to wait for user input. If he accepts the invitation, this function
 		 * will be called again with the invitation flag set.
