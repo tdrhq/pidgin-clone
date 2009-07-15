@@ -179,15 +179,15 @@ purple_builtheaders = purple.h version.h marshallers.h
 
 marshallers.h: marshallers.list
 	@echo "Generating marshallers.h"
-	( @GLIB_GENMARSHAL@ --prefix=purple_smarshal $(srcdir)/marshallers.list --header > purple-marshal.tmp \
-	&& mv purple-marshal.tmp marshallers.h ) \
-	|| ( rm -f purple-marshal.tmp && exit 1 )
+	( @GLIB_GENMARSHAL@ --prefix=purple_smarshal $(srcdir)/marshallers.list --header > purple-marshal.h.tmp \
+	&& mv purple-marshal.h.tmp marshallers.h ) \
+	|| ( rm -f purple-marshal.h.tmp && exit 1 )
 
 marshallers.c: marshallers.list
 	@echo "Generating marshallers.c"
-	( @GLIB_GENMARSHAL@ --prefix=purple_smarshal $(srcdir)/marshallers.list --body > purple-marshal.tmp \
-	&& mv purple-marshal.tmp marshallers.c ) \
-        || ( rm -f purple-marshal.tmp && exit 1 )
+	( @GLIB_GENMARSHAL@ --prefix=purple_smarshal $(srcdir)/marshallers.list --body > purple-marshal.c.tmp \
+	&& mv purple-marshal.c.tmp marshallers.c ) \
+        || ( rm -f purple-marshal.c.tmp && exit 1 )
 
 if ENABLE_DBUS
 
