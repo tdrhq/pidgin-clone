@@ -83,6 +83,8 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 			lpvbn->lpvbnParent = lpblistnode->parent ? (VULTURE_BLIST_NODE*)lpblistnode->parent->ui_data : NULL;
 			if(lpvbn->lpvbnParent) VultureBListNodeAddRef(lpvbn->lpvbnParent);
 
+			lpvbn->nodetype = lpblistnode->type;
+
 			switch(lpblistnode->type)
 			{
 			case PURPLE_BLIST_GROUP_NODE:
@@ -231,7 +233,7 @@ void VultureBListNodeRelease(VULTURE_BLIST_NODE *lpvblnode)
  *
  * @param	lpvbn	Node.
  */
-void PurpleBListNodeDoubleClicked(VULTURE_BLIST_NODE *lpvbn)
+void PurpleBListNodeActivated(VULTURE_BLIST_NODE *lpvbn)
 {
 	if(lpvbn->lpblistnode &&
 		(PURPLE_BLIST_NODE_IS_CONTACT(lpvbn->lpblistnode) || PURPLE_BLIST_NODE_IS_BUDDY(lpvbn->lpblistnode)))

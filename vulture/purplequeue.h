@@ -63,7 +63,7 @@ enum PURPLE_CALL_ID
 	PC_GETSTATUSMSG,
 
 	/* (VULTURE_BLIST_NODE*) Node double-clicked.  */
-	PC_BLISTNODEDBLCLKED,
+	PC_BLISTNODEACTIVATED,
 
 	/* (VULTURE_CONV_GET_STRING*) Retrieves the conversation's title. */
 	PC_CONVGETTITLE,

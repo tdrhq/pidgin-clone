@@ -60,6 +60,11 @@ static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
 
 #define BLIST_MARGIN 6
 
+enum CONTEXT_MENU_INDICES
+{
+	CMI_BUDDY = 0,
+};
+
 
 HWND g_hwndMain = NULL;
 GList *g_lpglistConvContainers = NULL;
@@ -550,6 +555,30 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 
 		return TRUE;
 
+	case WM_COMMAND:
+		switch(LOWORD(wParam))
+		{
+		case IDM_BLIST_CONTEXT_IM:
+			{
+				TVITEM tvitem;
+				HWND hwndBlist = GetDlgItem(hwndDlg, IDC_TREE_BLIST);
+
+				if((tvitem.hItem = TreeView_GetSelection(hwndBlist)))
+				{
+					tvitem.mask = TVIF_PARAM;
+					TreeView_GetItem(hwndBlist, &tvitem);
+					
+					VultureEnqueueAsyncPurpleCall(PC_BLISTNODEACTIVATED, (VULTURE_BLIST_NODE*)tvitem.lParam);
+
+					return TRUE;
+				}
+			}
+
+			break;
+		}
+
+		break;
+
 	case WM_NOTIFY:
 		{
 			LPNMHDR lpnmhdr = (LPNMHDR)lParam;
@@ -573,7 +602,58 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 							tvitem.mask = TVIF_PARAM;
 							TreeView_GetItem(lpnmhdr->hwndFrom, &tvitem);
 							
-							VultureEnqueueAsyncPurpleCall(PC_BLISTNODEDBLCLKED, (VULTURE_BLIST_NODE*)tvitem.lParam);
+							VultureEnqueueAsyncPurpleCall(PC_BLISTNODEACTIVATED, (VULTURE_BLIST_NODE*)tvitem.lParam);
+
+							return TRUE;
+						}
+					}
+
+					break;
+
+				case NM_RCLICK:
+					{
+						TVITEM tvitem;
+
+						tvitem.hItem = TreeView_GetDropHilight(lpnmhdr->hwndFrom);
+						if(!tvitem.hItem) tvitem.hItem = TreeView_GetSelection(lpnmhdr->hwndFrom);
+
+						if(tvitem.hItem)
+						{
+							VULTURE_BLIST_NODE *lpvblistnode;
+							HMENU hmenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDM_BLIST_CONTEXT));
+							int iMenuIndex = -1;
+
+							/* Really select this node. */
+							TreeView_SelectItem(lpnmhdr->hwndFrom, tvitem.hItem);
+
+							tvitem.mask = TVIF_PARAM;
+							TreeView_GetItem(lpnmhdr->hwndFrom, &tvitem);
+
+							lpvblistnode = (VULTURE_BLIST_NODE*)tvitem.lParam;
+
+							EnterCriticalSection(&lpvblistnode->cs);
+
+								switch(lpvblistnode->nodetype)
+								{
+								case PURPLE_BLIST_BUDDY_NODE:
+									iMenuIndex = CMI_BUDDY;
+									break;
+
+								default:
+									break;
+								}
+
+							LeaveCriticalSection(&lpvblistnode->cs);
+
+							if(iMenuIndex >= 0)
+							{
+								POINT ptMouse;
+
+								GetCursorPos(&ptMouse);
+								TrackPopupMenu(GetSubMenu(hmenu, iMenuIndex), TPM_RIGHTBUTTON, ptMouse.x, ptMouse.y, 0, hwndDlg, NULL);
+							}
+
+							DestroyMenu(hmenu);
 
 							return TRUE;
 						}

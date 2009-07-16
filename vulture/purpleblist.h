@@ -34,6 +34,7 @@
 typedef struct _VULTURE_BLIST_NODE
 {
 	PurpleBlistNode			*lpblistnode;
+	PurpleBlistNodeType		nodetype;
 	LPTSTR				szNodeText;
 	HTREEITEM			hti;
 	struct _VULTURE_BLIST_NODE	*lpvbnParent;
@@ -46,7 +47,7 @@ void PurpleBlistNewNode(PurpleBlistNode *lpblistnode);
 void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode);
 void PurpleBlistRemoveNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode);
 void VultureBListNodeRelease(VULTURE_BLIST_NODE *lpvblnode);
-void PurpleBListNodeDoubleClicked(VULTURE_BLIST_NODE *lpvbn);
+void PurpleBListNodeActivated(VULTURE_BLIST_NODE *lpvbn);
 LPTSTR PurpleBuddyGetStatusText(PurpleBuddy *lpbuddy);
 void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, PurpleStatus *lpstatusNew);
 

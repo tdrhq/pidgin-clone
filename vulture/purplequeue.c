@@ -216,8 +216,8 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 
 		break;
 
-	case PC_BLISTNODEDBLCLKED:
-		PurpleBListNodeDoubleClicked((VULTURE_BLIST_NODE*)lppurplecall->lpvParam);
+	case PC_BLISTNODEACTIVATED:
+		PurpleBListNodeActivated((VULTURE_BLIST_NODE*)lppurplecall->lpvParam);
 		break;
 
 	case PC_CONVGETTITLE:
