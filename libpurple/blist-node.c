@@ -435,9 +435,20 @@ purple_blist_node_contains(PurpleBlistNode *parent, PurpleBlistNode *node)
 {
 	return node->parent == parent;
 }
-
 void
 purple_blist_node_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
+{
+	PurpleBlistNodeClass *klass;
+
+	g_return_if_fail(PURPLE_IS_BLIST_NODE(parent));
+	g_return_if_fail(PURPLE_IS_BLIST_NODE(child));
+
+	klass = PURPLE_GET_BLIST_NODE_CLASS(parent);
+	if(klass && klass->add_child)
+		klass->add_sibling(parent, child);
+}
+static void
+purple_blist_node_real_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 {
 	if (parent->child)
 		parent->child->prev = child;
@@ -447,8 +458,8 @@ purple_blist_node_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 	child->parent = parent;
 }
 
-void
-purple_blist_node_add_sibling(PurpleBlistNode *child, PurpleBlistNode *location)
+static void
+purple_blist_node_real_add_sibling(PurpleBlistNode *child, PurpleBlistNode *location)
 {
 	g_return_if_fail(child);
 	g_return_if_fail(location);
@@ -460,8 +471,22 @@ purple_blist_node_add_sibling(PurpleBlistNode *child, PurpleBlistNode *location)
 	location->next = child;
 }
 
+void
+purple_blist_node_add_sibling(PurpleBlistNode *child, PurpleBlistNode *location)
+{
+	PurpleBlistNodeClass *klass;
+
+	g_return_if_fail(PURPLE_IS_BLIST_NODE(child));
+	g_return_if_fail(PURPLE_IS_BLIST_NODE(location));
+	g_return_if_fail(PURPLE_IS_BLIST_NODE(location->parent));
+
+	klass = PURPLE_GET_BLIST_NODE_CLASS(location->parent);
+	if(klass && klass->add_sibling)
+		klass->add_sibling(child, location);
+}
+
 static void
-purple_blist_node_cls_remove(PurpleBlistNode *child)
+purple_blist_node_real_remove(PurpleBlistNode *child)
 {
 	/* Remove the node from its parent */
 	if (child->prev)
@@ -551,9 +576,9 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 
 	g_type_class_add_private(klass, sizeof(PurpleBlistNodePrivate));
 
-	klass->add_child = purple_blist_node_add_child;
-	klass->add_sibling = purple_blist_node_add_sibling;
-	klass->remove = purple_blist_node_cls_remove;
+	klass->add_child = purple_blist_node_real_add_child;
+	klass->add_sibling = purple_blist_node_real_add_sibling;
+	klass->remove = purple_blist_node_real_remove;
 
 	purple_signal_register( purple_blist_node_handle(),
 													"group-removed",
