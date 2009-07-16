@@ -43,8 +43,6 @@ typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
 /**************************************************************************/
 /* Enumerations                                                           */
 /**************************************************************************/
-typedef struct _PurpleBuddyList PurpleBuddyList;
-
 #include "account.h"
 #include "buddyicon.h"
 #include "status.h"
@@ -122,20 +120,6 @@ extern "C" {
 /** @name Buddy List API                                                  */
 /**************************************************************************/
 /*@{*/
-
-/**
- * Creates a new buddy list
- *
- * @return The new buddy list.
- */
-PurpleBuddyList *purple_blist_new(void);
-
-/**
- * Returns the main buddy list.
- *
- * @return The main buddy list.
- */
-PurpleBuddyList *purple_blist_get_list(void);
 
 /**
  * Returns the root node of the main buddy list.

@@ -34,6 +34,7 @@
 static GType purple_blist_get_gtype(void);
 
 /** @copydoc _PurpleBlist */
+typedef struct _PurpleBuddyList PurpleBuddyList;
 typedef struct _PurpleBuddyListClass PurpleBuddyListClass;
 #define PURPLE_BUDDY_LIST_TYPE                  (purple_blist_get_gtype ())
 #define PURPLE_BUDDY_LIST(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BUDDY_LIST_TYPE, PurpleBuddyList))
@@ -70,6 +71,24 @@ static PurpleBlistUiOps *blist_ui_ops = NULL;
 static PurpleBlistNodeClass *parent_class = NULL;
 
 static void purple_blist_buddies_cache_add_account(PurpleAccount *account);
+
+PurpleBuddyList *
+purple_blist_get_list()
+{
+	static PurpleBuddyList *list = NULL;
+	if(!list){
+		GList *account;
+		PurpleBlistUiOps *ui_ops = purple_blist_get_ui_ops();
+		list = g_object_new(PURPLE_BUDDY_LIST_TYPE, NULL);
+		for (account = purple_accounts_get_all(); account != NULL; account = account->next)	{
+			purple_blist_buddies_cache_add_account(account->data);
+		}
+
+		if (ui_ops != NULL && ui_ops->new_list != NULL)
+			ui_ops->new_list(list);
+	}
+	return list;
+}
 
 /*********************************************************************
  * Private utility functions                                         *
@@ -359,24 +378,6 @@ purple_blist_load()
 /*****************************************************************************
  * Public API functions                                                      *
  *****************************************************************************/
-
-PurpleBuddyList *
-purple_blist_get_list()
-{
-	static PurpleBuddyList *list = NULL;
-	if(!list){
-		GList *account;
-		PurpleBlistUiOps *ui_ops = purple_blist_get_ui_ops();
-		list = g_object_new(PURPLE_BUDDY_LIST_TYPE, NULL);
-		for (account = purple_accounts_get_all(); account != NULL; account = account->next)	{
-			purple_blist_buddies_cache_add_account(account->data);
-		}
-
-		if (ui_ops != NULL && ui_ops->new_list != NULL)
-			ui_ops->new_list(list);
-	}
-	return list;
-}
 
 PurpleBlistNode *
 purple_blist_get_root()
