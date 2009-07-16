@@ -778,6 +778,88 @@ telepathy_set_buddy_icon (PurpleConnection *gc, PurpleStoredImage *img)
 }
 
 static void
+set_properties_cb (TpProxy *proxy,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_info("telepathy", "SetProperties error: %s\n", error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "SetProperties succeeded!\n");
+}
+
+static void
+telepathy_set_chat_topic (PurpleConnection *gc, int id, const char *topic)
+{
+	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+	telepathy_room_channel *tp_channel = g_hash_table_lookup(data->room_Channels, (gpointer)id);
+
+	telepathy_property *tp_property;
+
+	GPtrArray *arr;
+
+	GValueArray *val_arr;
+
+	GValue *topic_val;
+	GValue *id_val;
+	GValue *variant_val;
+
+	if (tp_channel == NULL)
+	{
+		purple_debug_error("telepathy", "There is no cached telepathy_room_channel for"
+				" updating status!\n");
+		return;
+	}
+
+	tp_property = g_hash_table_lookup(tp_channel->properties_by_name,
+			"subject");
+
+	if (tp_property == NULL)
+	{
+		purple_debug_warning("telepathy", "Chatroom does not have a \"subject\" proprety!\n");
+		return;
+	}
+
+	purple_debug_info("telepathy", "Setting topic for chatroom to %s\n", topic);
+
+	/* This is the array of properties to set. DBus signature: a(uv) */
+	arr = g_ptr_array_sized_new(1);
+
+	/* This represents a single property to set. DBus signature: (uv) */
+	val_arr = g_value_array_new(2);
+
+	/* Turn everything into GValues */
+	id_val = tp_g_value_slice_new_uint(tp_property->id);
+
+	topic_val = tp_g_value_slice_new_string(topic);
+	variant_val = tp_g_value_slice_new_boxed(G_TYPE_VALUE, topic_val);
+
+	/* Fill in the DBus struct */
+	g_value_array_append(val_arr, id_val);
+	g_value_array_append(val_arr, variant_val);
+
+	/* Add it to the array */
+	g_ptr_array_add(arr, val_arr);
+
+	/* Finally change that property */
+	tp_cli_properties_interface_call_set_properties(tp_channel->channel, -1,
+			arr, set_properties_cb, tp_channel, NULL, NULL);
+	
+	/* Free everything */
+	tp_g_value_slice_free(variant_val);
+	tp_g_value_slice_free(id_val);
+	tp_g_value_slice_free(topic_val);
+
+	g_value_array_free(val_arr);
+
+	g_ptr_array_free(arr, TRUE);
+}
+
+static void
 telepathy_destroy(PurplePlugin *plugin)
 {
 	purple_debug_info("telepathy", "Shutting down\n");
@@ -795,7 +877,7 @@ telepathy_destroy(PurplePlugin *plugin)
 
 static PurplePluginProtocolInfo telepathy_prpl_info =
 {
-	0,  /* options */
+	OPT_PROTO_CHAT_TOPIC,  /* options */
 	NULL,               /* user_splits, initialized in nullprpl_init() */
 	NULL,               /* protocol_options, initialized in nullprpl_init() */
 	NO_BUDDY_ICONS,
@@ -845,7 +927,7 @@ static PurplePluginProtocolInfo telepathy_prpl_info =
 	telepathy_set_buddy_icon,             /* set_buddy_icon */
 	NULL,               /* remove_group */
 	NULL,                                /* get_cb_real_name */
-	NULL,             /* set_chat_topic */
+	telepathy_set_chat_topic,             /* set_chat_topic */
 	NULL,                                /* find_blist_chat */
 	NULL,          /* roomlist_get_list */
 	NULL,            /* roomlist_cancel */
