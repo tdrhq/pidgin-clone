@@ -29,6 +29,10 @@
 #include "fb_search.h"
 #include "fb_friendlist.h"
 
+static void fb_login_cb(FacebookAccount *fba, gchar *response, gsize len,
+		gpointer userdata);
+static void fb_close(PurpleConnection *pc);
+
 /******************************************************************************/
 /* PRPL functions */
 /******************************************************************************/
@@ -114,10 +118,103 @@ static gboolean fb_get_messages_failsafe(FacebookAccount *fba)
 	return TRUE;
 }
 
+void fb_login_captcha_ok_cb(PurpleConnection *pc, PurpleRequestFields *fields)
+{
+	gint birthday_year, birthday_month, birthday_day;
+	gchar *postdata, *encoded_username, *encoded_password, *encoded_charset_test,
+			*encoded_auth_token, *encoded_persist_data;
+	const gchar* const *languages;
+	const gchar *locale;
+	FacebookAccount *fba = pc->proto_data;
+
+	birthday_year = purple_request_fields_get_integer(fields, "birthday_year");
+	birthday_month = purple_request_fields_get_integer(fields, "birthday_month");
+	birthday_day = purple_request_fields_get_integer(fields, "birthday_day");
+		
+	encoded_username = g_strdup(purple_url_encode(
+			purple_account_get_username(fba->account)));
+	encoded_password = g_strdup(purple_url_encode(
+			purple_account_get_password(fba->account)));
+	encoded_auth_token = g_strdup(purple_url_encode(
+			fba->auth_token));
+	encoded_persist_data = g_strdup(purple_url_encode(
+			fba->persist_data));
+	encoded_charset_test = g_strdup(purple_url_encode("€,´,€,´,水,Д,Є"));
+	languages = g_get_language_names();
+	locale = languages[0];
+	if (locale == NULL || g_str_equal(locale, "C"))
+		locale = "en_US";
+
+	postdata = g_strdup_printf(
+			"charset_test=%s&locale=%s&email=%s&pass=%s&persistent=1&login=Login&charset_test=%s&version=1.0&return_session=0&t_auth_token=%s&answered_captcha=1&captcha_persist_data=%s&birthday_captcha_day=%d&birthday_captcha_month=%d&birthday_captcha_year=%d",
+			encoded_charset_test, locale, encoded_username, encoded_password, encoded_charset_test, encoded_auth_token, encoded_persist_data, birthday_day, birthday_month, birthday_year);
+	g_free(encoded_username);
+	g_free(encoded_password);
+	g_free(encoded_charset_test);
+	g_free(encoded_auth_token);
+	g_free(encoded_persist_data);
+
+	fb_post_or_get(fba, FB_METHOD_POST | FB_METHOD_SSL, "login.facebook.com",
+			"/login.php?login_attempt=1", postdata, fb_login_cb, NULL, FALSE);
+	g_free(postdata);
+	
+	g_free(fba->auth_token);
+	g_free(fba->persist_data);
+	fba->auth_token = NULL;
+	fba->persist_data = NULL;
+}
+
 static void fb_login_cb(FacebookAccount *fba, gchar *response, gsize len,
 		gpointer userdata)
 {
 	gchar *user_cookie;
+	
+	if (len && g_strstr_len(response, len, "captcha"))
+	{
+		purple_connection_update_progress(fba->pc, _("Handling Captcha"), 2, 4);
+		
+		const gchar *persist_data_start = "<input type=\"hidden\" name=\"captcha_persist_data\" value=\"";
+		gchar *persist_data = g_strstr_len(response, len, persist_data_start);
+		if (persist_data)
+		{
+			persist_data += strlen(persist_data_start);
+			fba->persist_data = g_strndup(persist_data, strchr(persist_data, '"') - persist_data);
+		}
+		
+		const gchar *auth_token_start = "<input type=\"hidden\" name=\"t_auth_token\" value=\"";
+		gchar *auth_token = g_strstr_len(response, len, auth_token_start);
+		if (auth_token)
+		{
+			auth_token += strlen(auth_token);
+			fba->auth_token = g_strndup(auth_token, strchr(auth_token, '"') - auth_token);
+		}
+		
+		PurpleRequestFields *fields;
+		PurpleRequestFieldGroup *group;
+		PurpleRequestField *field;
+		
+		fields = purple_request_fields_new();
+		group = purple_request_field_group_new(NULL);
+		purple_request_fields_add_group(fields, group);
+		
+		field = purple_request_field_int_new("birthday_year", _("Year"), 0);
+		purple_request_field_group_add_field(group, field);
+		field = purple_request_field_int_new("birthday_month", _("Month"), 0);
+		purple_request_field_group_add_field(group, field);
+		field = purple_request_field_int_new("birthday_day", _("Day"), 0);
+		purple_request_field_group_add_field(group, field);
+		
+		purple_request_fields(fba->pc, 
+			_("Facebook Captcha"), _("Facebook Captcha"), 
+			_("Facebook thinks you're not you.  To prove you are, please enter your date of birth"), 
+			fields, 
+			_("OK"), G_CALLBACK(fb_login_captcha_ok_cb), 
+			_("Logout"), G_CALLBACK(fb_close), 
+			fba->account, NULL, NULL, fba->pc	 
+		);
+		
+		return;
+	}
 
 	purple_connection_update_progress(fba->pc, _("Authenticating"), 2, 3);
 
@@ -320,6 +417,8 @@ static void fb_close(PurpleConnection *pc)
 	g_free(fba->post_form_id);
 	g_free(fba->channel_number);
 	g_free(fba->last_status_message);
+	g_free(fba->auth_token);
+	g_free(fba->persist_data);
 	g_free(fba);
 }
 

@@ -108,6 +108,8 @@ struct _FacebookAccount {
 	gboolean is_idle;
 	GHashTable *sent_messages_hash;
 	gint last_inbox_count;
+	gchar *auth_token;
+	gchar *persist_data;
 };
 
 struct _FacebookBuddy {
