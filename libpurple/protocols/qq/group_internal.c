@@ -393,9 +393,9 @@ void qq_room_data_initial(PurpleConnection *gc)
 	}
 
 	count = 0;
-	for (node = purple_blist_node_get_first_child((PurpleBlistNode *)purple_group);
+	for (node = purple_blist_node_first_child((PurpleBlistNode *)purple_group);
 	     node != NULL;
-		 node = purple_blist_node_get_sibling_next(node))
+		 node = purple_blist_node_next(node))
 	{
 		if ( !PURPLE_IS_CHAT(node)) {
 			continue;

@@ -59,12 +59,12 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 		return;
 
 	/* Go through and remove all buddies that belong to this account */
-	for (cnode = purple_blist_node_get_first_child((PurpleBlistNode *) bonjour_group); cnode; cnode = cnodenext) {
-		cnodenext = purple_blist_node_get_sibling_next(cnode);
+	for (cnode = purple_blist_node_first_child((PurpleBlistNode *) bonjour_group); cnode; cnode = cnodenext) {
+		cnodenext = purple_blist_node_next(cnode);
 		if (!PURPLE_IS_CONTACT(cnode))
 			continue;
-		for (bnode = purple_blist_node_get_first_child(cnode); bnode; bnode = bnodenext) {
-			bnodenext = purple_blist_node_get_sibling_next(bnode);
+		for (bnode = purple_blist_node_first_child(cnode); bnode; bnode = bnodenext) {
+			bnodenext = purple_blist_node_next(bnode);
 			if (!PURPLE_IS_BUDDY(bnode))
 				continue;
 			buddy = (PurpleBuddy *) bnode;

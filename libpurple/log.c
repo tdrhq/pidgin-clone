@@ -2018,21 +2018,21 @@ static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets)
 		/* Search the buddy list to find the account and to determine if this is a buddy. */
 		for (gnode = purple_blist_get_root();
 		     !found && gnode != NULL;
-			 gnode = purple_blist_node_get_sibling_next(gnode))
+			 gnode = purple_blist_node_next(gnode))
 		{
 			if (!PURPLE_IS_GROUP(gnode))
 				continue;
 
-			for (cnode = purple_blist_node_get_first_child(gnode);
+			for (cnode = purple_blist_node_first_child(gnode);
 			     !found && cnode != NULL;
-				 cnode = purple_blist_node_get_sibling_next(cnode))
+				 cnode = purple_blist_node_next(cnode))
 			{
 				if (!PURPLE_IS_CONTACT(cnode))
 					continue;
 
-				for (bnode = purple_blist_node_get_first_child(cnode);
+				for (bnode = purple_blist_node_first_child(cnode);
 				     !found && bnode != NULL;
-					 bnode = purple_blist_node_get_sibling_next(bnode))
+					 bnode = purple_blist_node_next(bnode))
 				{
 					PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 

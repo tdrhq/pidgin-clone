@@ -100,7 +100,7 @@ purple_group_remove_node(PurpleBlistNode *child)
 	PurpleChat *chat;
 
 	g_return_if_fail(child);
-	g_return_if_fail(purple_blist_node_get_parent(child));
+	g_return_if_fail(purple_blist_node_parent(child));
 	group = PURPLE_GROUP(child->parent);
 
 	if(PURPLE_IS_CHAT(child)){

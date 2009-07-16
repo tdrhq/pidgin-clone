@@ -891,9 +891,9 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 
 	if (PURPLE_IS_CONTACT(node)) {
 		PurpleBlistNode *child;
-		for (child = purple_blist_node_get_first_child(node);
+		for (child = purple_blist_node_first_child(node);
 		     child;
-			 child = purple_blist_node_get_sibling_next(child))
+			 child = purple_blist_node_next(child))
 		{
 			PurpleBuddy *buddy;
 			PurpleConversation *conv;
@@ -1231,7 +1231,7 @@ _purple_buddy_icons_blist_loaded_cb()
 				}
 			}
 		}
-		node = purple_blist_node_next(node, TRUE);
+		node = purple_blist_node_next_online(node, TRUE);
 	}
 }
 

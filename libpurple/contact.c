@@ -333,8 +333,8 @@ purple_contact_remove_buddy(PurpleBlistNode *child)
 	PurpleContact *contact;
 	PurpleBuddy *buddy = PURPLE_BUDDY(child);
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	g_return_if_fail(purple_blist_node_get_parent(child));
-	contact = PURPLE_CONTACT(purple_blist_node_get_parent(child));
+	g_return_if_fail(purple_blist_node_parent(child));
+	contact = PURPLE_CONTACT(purple_blist_node_parent(child));
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy))
 		contact->online--;
@@ -346,7 +346,7 @@ purple_contact_remove_buddy(PurpleBlistNode *child)
 
 #warning The ui calls havent been thought out yet, as to where they ought to go.
 	/* Re-sort the contact */
-	if (purple_blist_node_get_first_child(PURPLE_BLIST_NODE(contact)) && contact->priority == buddy) {
+	if (purple_blist_node_first_child(PURPLE_BLIST_NODE(contact)) && contact->priority == buddy) {
 		purple_contact_invalidate_priority_buddy(contact);
 		if (ops && ops->update)
 			ops->update(PURPLE_BLIST_NODE(contact));

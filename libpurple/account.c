@@ -2543,19 +2543,19 @@ purple_accounts_delete(PurpleAccount *account)
 	/* Remove this account's buddies */
 	for (gnode = purple_blist_get_root();
 	     gnode != NULL;
-		 gnode = purple_blist_node_get_sibling_next(gnode))
+		 gnode = purple_blist_node_next(gnode))
 	{
 		if (!PURPLE_IS_GROUP(gnode))
 			continue;
 
-		cnode = purple_blist_node_get_first_child(gnode);
+		cnode = purple_blist_node_first_child(gnode);
 		while (cnode) {
-			PurpleBlistNode *cnode_next = purple_blist_node_get_sibling_next(cnode);
+			PurpleBlistNode *cnode_next = purple_blist_node_next(cnode);
 
 			if(PURPLE_IS_CONTACT(cnode)) {
-				bnode = purple_blist_node_get_first_child(cnode);
+				bnode = purple_blist_node_first_child(cnode);
 				while (bnode) {
-					PurpleBlistNode *bnode_next = purple_blist_node_get_sibling_next(bnode);
+					PurpleBlistNode *bnode_next = purple_blist_node_next(bnode);
 
 					if (PURPLE_IS_BUDDY(bnode)) {
 						PurpleBuddy *b = (PurpleBuddy *)bnode;

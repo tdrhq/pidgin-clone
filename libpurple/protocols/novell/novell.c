@@ -1238,19 +1238,19 @@ _remove_purple_buddies(NMUser *user)
 	const char *gname = NULL;
 
 	for (gnode = purple_blist_get_root(); gnode;
-			gnode = purple_blist_node_get_sibling_next(gnode)) {
+			gnode = purple_blist_node_next(gnode)) {
 		if (!PURPLE_IS_GROUP(gnode))
 			continue;
 		group = (PurpleGroup *) gnode;
 		gname = purple_group_get_name(group);
-		for (cnode = purple_blist_node_get_first_child(gnode);
+		for (cnode = purple_blist_node_first_child(gnode);
 				cnode;
-				cnode = purple_blist_node_get_sibling_next(cnode)) {
+				cnode = purple_blist_node_next(cnode)) {
 			if (!PURPLE_IS_CONTACT(cnode))
 				continue;
-			for (bnode = purple_blist_node_get_first_child(cnode);
+			for (bnode = purple_blist_node_first_child(cnode);
 					bnode;
-					bnode = purple_blist_node_get_sibling_next(bnode)) {
+					bnode = purple_blist_node_next(bnode)) {
 				if (!PURPLE_IS_BUDDY(bnode))
 					continue;
 				buddy = (PurpleBuddy *) bnode;

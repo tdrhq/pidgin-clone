@@ -72,7 +72,7 @@ static PurpleBlistNodeClass *parent_class = NULL;
 
 static void purple_blist_buddies_cache_add_account(PurpleAccount *account);
 
-PurpleBuddyList *
+static PurpleBuddyList *
 purple_blist_get_list()
 {
 	static PurpleBuddyList *list = NULL;
@@ -213,7 +213,7 @@ blist_to_xmlnode(void)
 
 	/* Write groups */
 	child = xmlnode_new_child(node, "blist");
-	gnode = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list));
+	gnode = purple_blist_node_first_child(PURPLE_BLIST_NODE(list));
 	for (; gnode != NULL; gnode = gnode->next)
 	{
 		if (!PURPLE_BLIST_NODE_SHOULD_SAVE(gnode))
@@ -288,7 +288,7 @@ parse_group(xmlnode *groupnode)
 
 	group = purple_group_new(name);
 	purple_blist_add_group(group,
-	purple_blist_node_get_first_child(PURPLE_BLIST_NODE(purple_blist_get_list())));
+	purple_blist_node_first_child(PURPLE_BLIST_NODE(purple_blist_get_list())));
 
 	for (cnode = groupnode->child; cnode; cnode = cnode->next) {
 		if (cnode->type != XMLNODE_TYPE_TAG)
@@ -623,7 +623,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 		if (g == NULL) {
 			g = purple_group_new(_("Buddies"));
 			purple_blist_add_group(g,
-					purple_blist_node_get_first_child(lnode));
+					purple_blist_node_first_child(lnode));
 		}
 	}
 
@@ -837,8 +837,8 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	g_return_if_fail(buddy != NULL);
 
 	node = PURPLE_BLIST_NODE(buddy);
-	cnode = purple_blist_node_get_parent(node);
-	gnode = purple_blist_node_get_parent(cnode);
+	cnode = purple_blist_node_parent(node);
+	gnode = purple_blist_node_parent(cnode);
 
 	purple_blist_node_remove(node);
 	
@@ -964,7 +964,7 @@ PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name)
 	hb.account = account;
 	hb.name = g_strdup(purple_normalize(account, name));
 
-	group = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list));
+	group = purple_blist_node_first_child(PURPLE_BLIST_NODE(list));
 	for (;group; group = group->next) {
 		hb.group = group;
 		if ((buddy = g_hash_table_lookup(list->buddies, &hb))) {
@@ -1000,7 +1000,7 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 		hb.name = g_strdup(purple_normalize(account, name));
 		hb.account = account;
 		
-		node = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list));
+		node = purple_blist_node_first_child(PURPLE_BLIST_NODE(list));
 		for (; node != NULL; node = node->next) {
 			hb.group = node;
 			if ((buddy = g_hash_table_lookup(list->buddies, &hb)) != NULL)
@@ -1027,7 +1027,7 @@ void purple_blist_add_account(PurpleAccount *account)
 	if (!ops || !ops->update)
 		return;
 	
-	gnode = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list));
+	gnode = purple_blist_node_first_child(PURPLE_BLIST_NODE(list));
 	for (; gnode; gnode = gnode->next) {
 		if (!PURPLE_IS_GROUP(gnode))
 			continue;
@@ -1071,7 +1071,7 @@ void purple_blist_remove_account(PurpleAccount *account)
 	GList *list = NULL, *iter = NULL;
 	PurpleBuddyList *blist = purple_blist_get_list();
 
-	gnode = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(blist));
+	gnode = purple_blist_node_first_child(PURPLE_BLIST_NODE(blist));
 	for (; gnode; gnode = gnode->next) {
 		if (!PURPLE_IS_GROUP(gnode))
 			continue;
@@ -1178,7 +1178,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 		/* Add group to blist if isn't already on it. Fixes #2752. */
 		if (!purple_find_group(group->name)) {
 			purple_blist_add_group(group,
-					purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list)));
+					purple_blist_node_first_child(PURPLE_BLIST_NODE(list)));
 		}
 	} else {
 		group = (PurpleGroup*)node->parent;
@@ -1275,7 +1275,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		/* Add group to blist if isn't already on it. Fixes #2752. */
 		if (!purple_find_group(g->name)) {
 			purple_blist_add_group(g,
-					purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list)));
+					purple_blist_node_first_child(PURPLE_BLIST_NODE(list)));
 		}
 		c = purple_contact_new();
 		purple_blist_add_contact(c, g,
@@ -1417,7 +1417,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 		return prpl_info->find_blist_chat(account, name);
 
 	normname = g_strdup(purple_normalize(account, name));
-	group = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list));
+	group = purple_blist_node_first_child(PURPLE_BLIST_NODE(list));
 	for (; group != NULL; group = group->next) {
 		for (node = group->child; node != NULL; node = node->next) {
 			if (PURPLE_IS_CHAT(node)) {

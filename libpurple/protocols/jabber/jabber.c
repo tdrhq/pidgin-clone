@@ -2376,10 +2376,10 @@ PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 		return NULL;
 
 	for(gnode = purple_blist_get_root(); gnode;
-			gnode = purple_blist_node_get_sibling_next(gnode)) {
-		for(cnode = purple_blist_node_get_first_child(gnode);
+			gnode = purple_blist_node_next(gnode)) {
+		for(cnode = purple_blist_node_first_child(gnode);
 				cnode;
-				cnode = purple_blist_node_get_sibling_next(cnode)) {
+				cnode = purple_blist_node_next(cnode)) {
 			PurpleChat *chat = (PurpleChat*)cnode;
 			const char *room, *server;
 			GHashTable *components;

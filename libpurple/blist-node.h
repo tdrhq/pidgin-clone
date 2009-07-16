@@ -75,11 +75,15 @@ struct _PurpleBlistNode {
 };
 
 struct _PurpleBlistNodeClass {
-	PurpleObjectClass parent;
+	PurpleObjectClass _parent;
 
 	void (*add_sibling)(PurpleBlistNode *child, PurpleBlistNode *location);
 	void (*add_child)(PurpleBlistNode *parent, PurpleBlistNode *child);
 	void (*remove)(PurpleBlistNode *child);
+	PurpleBlistNode *(*first_child)(PurpleBlistNode *parent);
+	PurpleBlistNode *(*parent)(PurpleBlistNode *child);
+	PurpleBlistNode *(*next)(PurpleBlistNode *node);
+	PurpleBlistNode *(*prev)(PurpleBlistNode *node);
 
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
@@ -99,7 +103,7 @@ struct _PurpleBlistNodeClass {
  * @see purple_blist_node_get_sibling_next
  * @see purple_blist_node_get_sibling_prev
  */
-PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline);
+PurpleBlistNode *purple_blist_node_next_online(PurpleBlistNode *node, gboolean offline);
 
 /**
  * Returns the parent node of a given node.
@@ -112,7 +116,7 @@ PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline)
  * @see purple_blist_node_get_sibling_prev
  * @see purple_blist_node_next
  */
-PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
+PurpleBlistNode *purple_blist_node_parent(PurpleBlistNode *node);
 
 /**
  * Returns the the first child node of a given node.
@@ -125,7 +129,7 @@ PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
  * @see purple_blist_node_get_sibling_prev
  * @see purple_blist_node_next
  */
-PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
+PurpleBlistNode *purple_blist_node_first_child(PurpleBlistNode *node);
 
 /**
  * Returns the sibling node of a given node.
@@ -138,7 +142,7 @@ PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
  * @see purple_blist_node_get_sibling_prev
  * @see purple_blist_node_next
  */
-PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
+PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node);
 
 /**
  * Returns the previous sibling node of a given node.
@@ -151,10 +155,10 @@ PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
  * @see purple_blist_node_get_sibling_next
  * @see purple_blist_node_next
  */
-PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node);
+PurpleBlistNode *purple_blist_node_prev(PurpleBlistNode *node);
 
 /**
- * Check whether a node is contained in a parent node. Simply checks if the node's parent is the other node.
+ * Check whether a node is contained in a parent node.
  *
  * @param parent The containing node
  * @param node The node to check with.
