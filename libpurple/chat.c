@@ -151,7 +151,7 @@ void purple_chat_set_alias(PurpleChat *chat, const char *alias)
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(purple_blist_get_list(), (PurpleBlistNode *)chat);
+		ops->update(PURPLE_BLIST_NODE(chat));
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
 					 chat, old_alias);

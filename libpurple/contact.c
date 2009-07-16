@@ -173,7 +173,7 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(purple_blist_get_list(), (PurpleBlistNode *)contact);
+		ops->update(PURPLE_BLIST_NODE(contact));
 
 	for(bnode = ((PurpleBlistNode *)contact)->child; bnode != NULL; bnode = bnode->next)
 	{
@@ -349,7 +349,7 @@ purple_contact_remove_buddy(PurpleBlistNode *child)
 	if (purple_blist_node_get_first_child(PURPLE_BLIST_NODE(contact)) && contact->priority == buddy) {
 		purple_contact_invalidate_priority_buddy(contact);
 		if (ops && ops->update)
-			ops->update(purple_blist_get_list(), PURPLE_BLIST_NODE(contact));
+			ops->update(PURPLE_BLIST_NODE(contact));
 	}
 }
 

@@ -194,7 +194,7 @@ blist_to_xmlnode(void)
 
 	/* Write groups */
 	child = xmlnode_new_child(node, "blist");
-	gnode = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list))
+	gnode = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list));
 	for (; gnode != NULL; gnode = gnode->next)
 	{
 		if (!PURPLE_BLIST_NODE_SHOULD_SAVE(gnode))
@@ -417,7 +417,7 @@ void purple_blist_set_visible(gboolean show)
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
 	if (ops && ops->set_visible)
-		ops->set_visible(purple_blist_get_list(), show);
+		ops->set_visible(show);
 }
 
 
@@ -504,7 +504,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 
 	/* Update the UI */
 	if (ops && ops->update)
-		ops->update(purple_blist_get_list(), (PurpleBlistNode*)source);
+		ops->update(PURPLE_BLIST_NODE(source));
 
 	/* Notify all PRPLs */
 	/* TODO: Is this condition needed?  Seems like it would always be TRUE */
@@ -595,7 +595,7 @@ void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name)
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(list, (PurpleBlistNode *)buddy);
+		ops->update(PURPLE_BLIST_NODE(buddy));
 }
 
 void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node)
@@ -701,7 +701,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 		PURPLE_GROUP(cnode->parent)->totalsize--;
 
 		if (ops && ops->remove)
-			ops->remove(list, cnode);
+			ops->remove(cnode);
 
 		purple_blist_schedule_save();
 	}
@@ -714,10 +714,10 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 	if (ops && ops->update)
 	{
 		if (cnode->child)
-			ops->update(list, cnode);
+			ops->update(cnode);
 
 		for (bnode = cnode->child; bnode; bnode = bnode->next)
-			ops->update(list, bnode);
+			ops->update(bnode);
 	}
 }
 
@@ -758,7 +758,7 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 		/* This is just being moved */
 
 		if (ops && ops->remove)
-			ops->remove(list, (PurpleBlistNode *)group);
+			ops->remove(PURPLE_BLIST_NODE(group));
 
 		purple_blist_node_remove(gnode);
 	}
@@ -773,9 +773,9 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 	purple_blist_schedule_save();
 
 	if (ops && ops->update) {
-		ops->update(list, gnode);
+		ops->update(gnode);
 		for (node = gnode->child; node; node = node->next)
-			ops->update(list, node);
+			ops->update(node);
 	}
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-added",
@@ -815,7 +815,7 @@ void purple_blist_remove_contact(PurpleContact *contact)
 
 		/* Update the UI */
 		if (ops && ops->remove)
-			ops->remove(purple_blist_get_list(), node);
+			ops->remove(node);
 
 		purple_signal_emit(purple_blist_get_handle(), "blist-node-removed",
 				PURPLE_BLIST_NODE(contact));
@@ -856,7 +856,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 
 	/* Update the UI */
 	if (ops && ops->remove)
-		ops->remove(list, node);
+		ops->remove(node);
 
 	/* Signal that the buddy has been removed before freeing the memory for it */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-removed", buddy);
@@ -896,7 +896,7 @@ void purple_blist_remove_chat(PurpleChat *chat)
 
 	/* Update the UI */
 	if (ops && ops->remove)
-		ops->remove(purple_blist_get_list(), node);
+		ops->remove(node);
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-removed",
 			PURPLE_BLIST_NODE(chat));
@@ -921,7 +921,7 @@ purple_blist_remove_group(PurpleGroup *group)
 
 	/* Update the UI */
 	if (ops && ops->remove)
-		ops->remove(purple_blist_get_list(), node);
+		ops->remove(node);
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-removed",
 			PURPLE_BLIST_NODE(group));
@@ -1007,10 +1007,10 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 		}
 		g_free(hb.name);
 	} else {
-		GSList *list = NULL;
+		GSList *glist = NULL;
 		GHashTable *buddies = g_hash_table_lookup(list->buddies_cache, account);
-		g_hash_table_foreach(buddies, find_acct_buddies, &list);
-		ret = list;
+		g_hash_table_foreach(buddies, find_acct_buddies, &glist);
+		ret = glist;
 	}
 
 	return ret;
@@ -1026,7 +1026,7 @@ void purple_blist_add_account(PurpleAccount *account)
 	if (!ops || !ops->update)
 		return;
 	
-	gnode = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list))
+	gnode = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list));
 	for (; gnode; gnode = gnode->next) {
 		if (!PURPLE_IS_GROUP(gnode))
 			continue;
@@ -1040,22 +1040,22 @@ void purple_blist_add_account(PurpleAccount *account)
 							((PurpleContact*)cnode)->currentsize++;
 							if (((PurpleContact*)cnode)->currentsize == 1)
 								((PurpleGroup*)gnode)->currentsize++;
-							ops->update(list, bnode);
+							ops->update(bnode);
 						}
 					}
 					if (recompute ||
 							purple_blist_node_get_bool(cnode, "show_offline")) {
 						purple_contact_invalidate_priority_buddy((PurpleContact*)cnode);
-						ops->update(list, cnode);
+						ops->update(cnode);
 					}
 			} else if (PURPLE_IS_CHAT(cnode) &&
 					((PurpleChat*)cnode)->account == account) {
 				((PurpleGroup *)gnode)->online++;
 				((PurpleGroup *)gnode)->currentsize++;
-				ops->update(list, cnode);
+				ops->update(cnode);
 			}
 		}
-		ops->update(list, gnode);
+		ops->update(gnode);
 	}
 }
 
@@ -1068,9 +1068,9 @@ void purple_blist_remove_account(PurpleAccount *account)
 	PurpleContact *contact;
 	PurpleGroup *group;
 	GList *list = NULL, *iter = NULL;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *blist = purple_blist_get_list();
 
-	gnode = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(list))
+	gnode = purple_blist_node_get_first_child(PURPLE_BLIST_NODE(blist));
 	for (; gnode; gnode = gnode->next) {
 		if (!PURPLE_IS_GROUP(gnode))
 			continue;
@@ -1114,14 +1114,14 @@ void purple_blist_remove_account(PurpleAccount *account)
 							recompute = TRUE;
 
 						if (ops && ops->remove) {
-							ops->remove(list, bnode);
+							ops->remove(bnode);
 						}
 					}
 				}
 				if (recompute) {
 					purple_contact_invalidate_priority_buddy(contact);
 					if (ops && ops->update)
-						ops->update(list, cnode);
+						ops->update(cnode);
 				}
 			} else if (PURPLE_IS_CHAT(cnode)) {
 				chat = (PurpleChat *)cnode;
@@ -1131,7 +1131,7 @@ void purple_blist_remove_account(PurpleAccount *account)
 					group->online--;
 
 					if (ops && ops->remove)
-						ops->remove(list, cnode);
+						ops->remove(cnode);
 				}
 			}
 		}
@@ -1196,7 +1196,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 		PURPLE_GET_BLIST_NODE_CLASS(cnode->parent)->remove(cnode);
 
 		if (ops && ops->remove)
-			ops->remove(list, cnode);
+			ops->remove(cnode);
 		/* ops->remove() cleaned up the cnode's ui_data, so we need to
 		 * reinitialize it */
 		if (ops && ops->new_node)
@@ -1234,7 +1234,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(list, (PurpleBlistNode *)cnode);
+		ops->update(PURPLE_BLIST_NODE(cnode));
 
 	purple_signal_emit(purple_blist_get_handle(), "blist-node-added",
 			cnode);
@@ -1308,7 +1308,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 			bnode->parent->child = bnode->next;
 
 		if (ops && ops->remove)
-			ops->remove(list, bnode);
+			ops->remove(bnode);
 
 		purple_blist_schedule_save();
 
@@ -1331,7 +1331,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		} else {
 			purple_contact_invalidate_priority_buddy((PurpleContact*)bnode->parent);
 			if (ops && ops->update)
-				ops->update(list, bnode->parent);
+				ops->update(bnode->parent);
 		}
 	}
 
@@ -1382,7 +1382,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	purple_blist_schedule_save();
 
 	if (ops && ops->update)
-		ops->update(list, (PurpleBlistNode*)buddy);
+		ops->update(PURPLE_BLIST_NODE(buddy));
 
 	/* Signal that the buddy has been added */
 	purple_signal_emit(purple_blist_get_handle(), "buddy-added", buddy);

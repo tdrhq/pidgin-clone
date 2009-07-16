@@ -163,7 +163,7 @@ purple_blist_update_node_icon(PurpleBlistNode *node)
 	g_return_if_fail(node != NULL);
 
 	if (ops && ops->update)
-		ops->update(purple_blist_get_list(), node);
+		ops->update(node);
 }
 
 

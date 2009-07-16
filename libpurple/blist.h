@@ -63,14 +63,11 @@ struct _PurpleBlistUiOps
 {
 	void (*new_list)(); /**< Sets UI-specific data on a buddy list. */
 	void (*new_node)(PurpleBlistNode *node); /**< Sets UI-specific data on a node. */
-	void (*show)(PurpleBuddyList *list);     /**< The core will call this when it's finished doing its core stuff */
-	void (*update)(PurpleBuddyList *list,
-		       PurpleBlistNode *node);       /**< This will update a node in the buddy list. */
-	void (*remove)(PurpleBuddyList *list,
-		       PurpleBlistNode *node);       /**< This removes a node from the list */
-	void (*destroy)(PurpleBuddyList *list);  /**< When the list is destroyed, this is called to destroy the UI. */
-	void (*set_visible)(PurpleBuddyList *list,
-			    gboolean show);            /**< Hides or unhides the buddy list */
+	void (*show)();     /**< The core will call this when it's finished doing its core stuff */
+	void (*update)(PurpleBlistNode *node);       /**< This will update a node in the buddy list. */
+	void (*remove)(PurpleBlistNode *node);       /**< This removes a node from the list */
+	void (*destroy)();  /**< When the list is destroyed, this is called to destroy the UI. */
+	void (*set_visible)(gboolean show);            /**< Hides or unhides the buddy list */
 	void (*request_add_buddy)(PurpleAccount *account, const char *username,
 							  const char *group, const char *alias);
 	void (*request_add_chat)(PurpleAccount *account, PurpleGroup *group,
