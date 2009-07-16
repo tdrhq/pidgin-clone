@@ -75,7 +75,7 @@ parse_contact(PurpleGroup *group, xmlnode *cnode)
 	const char *alias;
 
 	purple_blist_add_contact(contact, group,
-			purple_blist_get_last_child((PurpleBlistNode*)group));
+			purple_blist_get_last_child(PURPLE_BLIST_NODE(group)));
 
 	if ((alias = xmlnode_get_attrib(cnode, "alias"))) {
 		purple_blist_alias_contact(contact, alias);
@@ -87,11 +87,11 @@ parse_contact(PurpleGroup *group, xmlnode *cnode)
 		if (purple_strequal(x->name, "buddy"))
 			parse_buddy(group, contact, x);
 		else if (purple_strequal(x->name, "setting"))
-			parse_setting((PurpleBlistNode*)contact, x);
+			parse_setting(PURPLE_BLIST_NODE(contact), x);
 	}
 
 	/* if the contact is empty, don't keep it around.  it causes problems */
-	if (!((PurpleBlistNode*)contact)->child)
+	if (!(PURPLE_BLIST_NODE(contact))->child)
 		purple_blist_remove_contact(contact);
 }
 
@@ -104,7 +104,7 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 	g_return_if_fail(contact != NULL);
 
 	contact->priority = NULL;
-	for (bnode = ((PurpleBlistNode*)contact)->child;
+	for (bnode = (PURPLE_BLIST_NODE(contact))->child;
 			bnode != NULL;
 			bnode = bnode->next)
 	{
@@ -175,7 +175,7 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	if (ops && ops->update)
 		ops->update(PURPLE_BLIST_NODE(contact));
 
-	for(bnode = ((PurpleBlistNode *)contact)->child; bnode != NULL; bnode = bnode->next)
+	for(bnode = (PURPLE_BLIST_NODE(contact))->child; bnode != NULL; bnode = bnode->next)
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 
@@ -391,7 +391,7 @@ purple_contact_init(GTypeInstance *instance, gpointer class)
 	contact->online = 0;
 
 	if (ops && ops->new_node)
-		ops->new_node((PurpleBlistNode *)contact);
+		ops->new_node(PURPLE_BLIST_NODE(contact));
 
 	PURPLE_DBUS_REGISTER_POINTER(contact, PurpleContact);
 }

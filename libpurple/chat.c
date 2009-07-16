@@ -114,10 +114,10 @@ parse_chat(PurpleGroup *group, xmlnode *cnode)
 
 	chat = purple_chat_new(account, alias, components);
 	purple_blist_add_chat(chat, group,
-			purple_blist_get_last_child((PurpleBlistNode*)group));
+			purple_blist_get_last_child(PURPLE_BLIST_NODE(group)));
 
 	for (x = xmlnode_get_child(cnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
-		parse_setting((PurpleBlistNode*)chat, x);
+		parse_setting(PURPLE_BLIST_NODE(chat), x);
 	}
 
 	g_free(alias);
@@ -346,7 +346,7 @@ purple_chat_init(GTypeInstance *instance, gpointer class)
 	PurpleChat *chat = PURPLE_CHAT(instance);
 
 	if (ops != NULL && ops->new_node != NULL)
-		ops->new_node((PurpleBlistNode *)chat);
+		ops->new_node(PURPLE_BLIST_NODE(chat));
 
 	PURPLE_DBUS_REGISTER_POINTER(chat, PurpleChat);
 }

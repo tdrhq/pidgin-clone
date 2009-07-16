@@ -73,7 +73,7 @@ GSList *purple_group_get_accounts(PurpleGroup *group)
 	GSList *l = NULL;
 	PurpleBlistNode *gnode, *cnode, *bnode;
 
-	gnode = (PurpleBlistNode *)group;
+	gnode = PURPLE_BLIST_NODE(group);
 
 	for (cnode = gnode->child;  cnode; cnode = cnode->next) {
 		if (PURPLE_IS_CHAT(cnode)) {
@@ -132,10 +132,10 @@ PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);
 
-	if (((PurpleBlistNode *)buddy)->parent == NULL)
+	if ((PURPLE_BLIST_NODE(buddy))->parent == NULL)
 		return NULL;
 
-	return (PurpleGroup *)(((PurpleBlistNode*)buddy)->parent->parent);
+	return (PurpleGroup *)((PURPLE_BLIST_NODE(buddy))->parent->parent);
 }
 
 void
@@ -325,7 +325,7 @@ purple_group_init(GTypeInstance *instance, gpointer class)
 	group->online = 0;
 
 	if (ops && ops->new_node)
-		ops->new_node((PurpleBlistNode *)group);
+		ops->new_node(PURPLE_BLIST_NODE(group));
 
 	PURPLE_DBUS_REGISTER_POINTER(group, PurpleGroup);
 }

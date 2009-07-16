@@ -78,10 +78,10 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 
 	buddy = purple_buddy_new(account, name, alias);
 	purple_blist_add_buddy(buddy, contact, group,
-	purple_blist_get_last_child((PurpleBlistNode*)contact));
+	purple_blist_get_last_child(PURPLE_BLIST_NODE(contact)));
 
 	for (x = xmlnode_get_child(bnode, "setting"); x; x = xmlnode_get_next_twin(x)) {
-		parse_setting((PurpleBlistNode*)buddy, x);
+		parse_setting(PURPLE_BLIST_NODE(buddy), x);
 	}
 
 	g_free(name);
@@ -139,7 +139,7 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 void
 purple_blist_update_buddy_icon(PurpleBuddy *buddy)
 {
-	purple_blist_update_node_icon((PurpleBlistNode *)buddy);
+	purple_blist_update_node_icon(PURPLE_BLIST_NODE(buddy));
 }
 
 void purple_buddy_set_alias(PurpleBuddy *buddy, const char *alias)
@@ -261,7 +261,7 @@ purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 
 	purple_signal_emit(purple_blist_get_handle(), "buddy-icon-changed", buddy);
 
-	purple_blist_update_node_icon((PurpleBlistNode*)buddy);
+	purple_blist_update_node_icon(PURPLE_BLIST_NODE(buddy));
 }
 
 PurpleAccount *
@@ -614,7 +614,7 @@ purple_buddy_init(GTypeInstance *instance, gpointer class)
 	purple_presence_set_status_active(priv->presence, "offline", TRUE);
 
 	if (ops && ops->new_node)
-		ops->new_node((PurpleBlistNode *)buddy);
+		ops->new_node(PURPLE_BLIST_NODE(buddy));
 
 	PURPLE_DBUS_REGISTER_POINTER(buddy, PurpleBuddy);
 }
