@@ -21,6 +21,7 @@
 #include "telepathy_channel_text.h"
 
 #include <telepathy-glib/interfaces.h>
+#include <telepathy-glib/util.h>
 
 #include "internal.h"
 
@@ -34,6 +35,9 @@ destroy_property(telepathy_property *tp_property)
 {
 	g_free(tp_property->name);
 	g_free(tp_property->signature);
+
+	tp_g_value_slice_free(tp_property->value);
+
 	g_free(tp_property);
 }
 
@@ -596,6 +600,9 @@ room_channel_invalidated_cb (TpProxy *self,
 	if (data->properties != NULL)
 		g_hash_table_destroy(data->properties);
 
+	if (data->properties_by_name != NULL)
+		g_hash_table_destroy(data->properties_by_name);
+
 	g_hash_table_remove(connection_data->room_Channels, (gpointer)handle);
 }
 
@@ -725,6 +732,94 @@ chat_members_changed_cb (TpChannel *proxy,
 }
 
 static void
+room_property_updated (telepathy_room_channel *tp_channel,
+                       telepathy_property *tp_property)
+{
+	telepathy_connection *connection_data = tp_channel->connection_data;
+
+	/* The chat subject or topic has changed */
+	if (g_strcmp0(tp_property->name, "subject") == 0)
+	{
+		PurpleConnection *gc = connection_data->gc;
+
+		telepathy_property *tp_property2;
+		guint timestamp = 0;
+		const gchar *contact_alias = NULL;
+		gchar *msg;
+
+		/* Get the subject string */
+		gchar *topic = (gchar *)g_value_get_string(tp_property->value);
+
+		/* Make sure there is a chat opened for changing its topic */
+		PurpleConversation *conv = purple_find_chat(gc,
+				tp_channel_get_handle(tp_channel->channel, NULL));
+
+		if (conv == NULL)
+		{
+			purple_debug_error("telepathy", "There is no conversation for changing topic!\n");
+			return;
+		}
+		
+		purple_debug_info("telepathy", "Got topic for chatroom!\n");
+
+		/* Also look for subject-contact and subject-timestamp */
+		tp_property2 = g_hash_table_lookup(tp_channel->properties_by_name, "subject-contact");
+
+		/* Extract the alias of the contact that set the subject */
+		if (tp_property2 != NULL)
+		{
+			TpHandle handle;
+			TpContact *contact;
+
+			handle = g_value_get_uint(tp_property2->value);
+
+			contact = g_hash_table_lookup(tp_channel->contacts, (gpointer)handle);
+
+			if (contact != NULL)
+				contact_alias = tp_contact_get_alias(contact);
+		}
+		else
+		{
+			purple_debug_warning("telepathy", "subject-contact property does not exist!\n");
+		}
+
+		/* Extract the time the topic was set, or use the current time on failure */
+		tp_property2 = g_hash_table_lookup(tp_channel->properties_by_name, "subject-timestamp");
+
+		if (tp_property2 != NULL)
+		{
+			timestamp = g_value_get_uint(tp_property2->value);
+		}
+		else
+		{
+			purple_debug_warning("telepathy", "subject-timestamp property does not exist!\n");
+		}
+
+		if (timestamp == 0)
+			timestamp = time(NULL);
+
+
+		/* Build a message to show to the conversation */
+		if (contact_alias != NULL)
+		{
+			msg = g_strdup_printf("%s has set the topic to: %s", contact_alias, topic);
+		}
+		else
+		{
+			msg = g_strdup_printf("The topic is: %s", topic);
+		}
+
+
+		/* Update the topic and show a message in the conversation */
+		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(conv), contact_alias, topic);
+
+		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), "", msg, PURPLE_MESSAGE_SYSTEM, timestamp);
+
+		g_free(msg);
+	}
+}
+
+static void
 get_properties_cb (TpProxy *proxy,
                    const GPtrArray *out_Values,
                    const GError *error,
@@ -758,7 +853,9 @@ get_properties_cb (TpProxy *proxy,
 		{
 			purple_debug_info("telepathy", "Got value for property %u\n", id);
 
-			tp_property->value = val;
+			tp_property->value = tp_g_value_slice_dup(val);
+
+			room_property_updated(tp_channel, tp_property);
 		}
 	}
 }
@@ -785,6 +882,12 @@ list_properties_cb (TpProxy *proxy,
 	tp_channel->properties = g_hash_table_new_full(g_direct_hash, g_direct_equal,
 			NULL, (GDestroyNotify) destroy_property);
 
+	/* This is just to provide an easier way to access specific properties,
+	 * the structs will be free'd by using the id map.
+	 */
+	tp_channel->properties_by_name = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, NULL);
+
 	/* This will hold the properties we are interested in */
 	properties = g_array_new(FALSE, FALSE, sizeof(guint));
 
@@ -792,7 +895,7 @@ list_properties_cb (TpProxy *proxy,
 	{
 		GValueArray *arr = g_ptr_array_index(out_Available_Properties, i);
 
-		telepathy_property *tp_property = g_new(telepathy_property, 1);
+		telepathy_property *tp_property = g_new0(telepathy_property, 1);
 
 		/* Each property is packed as a (ussu) */
 		tp_property->id = g_value_get_uint(g_value_array_get_nth(arr, 0));
@@ -805,6 +908,9 @@ list_properties_cb (TpProxy *proxy,
 				tp_property->id, tp_property->name);
 
 		g_hash_table_insert(tp_channel->properties, (gpointer)tp_property->id, tp_property);
+
+		g_hash_table_insert(tp_channel->properties_by_name,
+				g_strdup(tp_property->name), tp_property);
 
 		if (tp_property->flags & TP_PROPERTY_FLAG_READ)
 		{
@@ -859,6 +965,10 @@ properties_changed_cb (TpProxy *proxy,
 
 	int i;
 
+	/* We first updated all the properties, and then signal the change in order to 
+	 * take actions. We do this so all properties are updated when taking action.
+	 * For example, we'd also liked to know who changed the subject when it's changed.
+	 */
 	for (i = 0; i<arg_Properties->len; ++i)
 	{
 		GValueArray *arr = g_ptr_array_index(arg_Properties, i);
@@ -873,7 +983,26 @@ properties_changed_cb (TpProxy *proxy,
 		{
 			purple_debug_info("telepathy", "Property %u changed!\n", id);
 
-			tp_property->value = val;
+			if (tp_property->value != NULL)
+				tp_g_value_slice_free(tp_property->value);
+
+			tp_property->value = tp_g_value_slice_dup(val);
+		}
+	}
+
+	/* We can now safely signal that properties have been changed */
+	for (i = 0; i<arg_Properties->len; ++i)
+	{
+		GValueArray *arr = g_ptr_array_index(arg_Properties, i);
+
+		guint id = g_value_get_uint(g_value_array_get_nth(arr, 0));
+		
+		telepathy_property *tp_property = g_hash_table_lookup(tp_channel->properties,
+				(gpointer)id);
+
+		if (tp_property != NULL)
+		{
+			room_property_updated(tp_channel, tp_property);
 		}
 	}
 }

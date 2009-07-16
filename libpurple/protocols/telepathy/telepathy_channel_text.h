@@ -54,6 +54,9 @@ typedef struct
 	/* This will map property IDs to telepathy_property structs */
 	GHashTable *properties;
 
+	/* This will map property names to telepathy_property structs */
+	GHashTable *properties_by_name;
+
 
 } telepathy_room_channel;
 
