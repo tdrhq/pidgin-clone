@@ -21,7 +21,7 @@
 #ifndef LIBFACEBOOK_H
 #define LIBFACEBOOK_H
 
-#define FACEBOOK_PLUGIN_VERSION "1.54"
+#define FACEBOOK_PLUGIN_VERSION "1.60"
 #define FACEBOOK_PLUGIN_ID "prpl-bigbrownchunx-facebookim"
 
 #include <glib.h>

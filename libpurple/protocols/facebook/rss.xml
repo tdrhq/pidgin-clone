@@ -13,6 +13,18 @@
 			<width>48</width><height>48</height>
 		</image>
 		<item>
+			<title>Version 1.60</title>
+			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c48</link>
+			<description><![CDATA[Hi all, sorry for the recent weirdness with the plugin.  v1.60 is out which addresses the major bit of these problems.<br/>
+			Changelog:<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/wiki/Changelog">http://code.google.com/p/pidgin-facebookchat/wiki/Changelog</a><br/>
+			Download:<br/>
+			<a href="http://code.google.com/p/pidgin-facebookchat/downloads/list">http://code.google.com/p/pidgin-facebookchat/downloads/list</a><br/>
+			(apologies to you RSS readers out there who missed out on v1.54)]]></description>
+			<pubDate>Fri, 17 July 2009 22:05:20 +1200</pubDate>
+			<guid isPermaLink="true">http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c48</guid>
+		</item>
+		<item>
 			<title>Version 1.53</title>
 			<link>http://code.google.com/p/pidgin-facebookchat/issues/detail?id=24#c46</link>
 			<description><![CDATA[<a href="http://www.pidgin.im">Pidgin 2.5.8</a> is available and so is 1.53 of pidgin-facebookchat.

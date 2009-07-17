@@ -120,7 +120,7 @@ gint64 fb_time_kludge(gint initial_time)
 	gint64 now_millis = (gint64) time(NULL);
 	now_millis *= 1000;
 	now_millis &= 0xFFFFFFFF00000000LL;
-	gint64 final_time = now_millis | initial_time;
+	gint64 final_time = now_millis | ((guint)initial_time);
 
 	return final_time;
 }
