@@ -52,9 +52,9 @@ typedef struct _JabberSIXfer {
 	char *iq_id;
 
 	enum {
-		STREAM_METHOD_UNKNOWN = 0,
+		STREAM_METHOD_UNKNOWN     = 0,
 		STREAM_METHOD_BYTESTREAMS = 2 << 1,
-		STREAM_METHOD_IBB = 2 << 2,
+		STREAM_METHOD_IBB         = 2 << 2,
 		STREAM_METHOD_UNSUPPORTED = 2 << 31
 	} stream_method;
 
@@ -1373,6 +1373,31 @@ static void jabber_si_xfer_cancel_send(PurpleXfer *xfer)
 
 static void jabber_si_xfer_request_denied(PurpleXfer *xfer)
 {
+	JabberSIXfer *jsx = (JabberSIXfer *) xfer->data;
+	JabberStream *js = jsx->js;
+
+	/*
+	 * TODO: It's probably an error if jsx->iq_id == NULL. g_return_if_fail
+	 * might be warranted.
+	 */
+	if (jsx->iq_id && !jsx->accepted) {
+		JabberIq *iq;
+		xmlnode *error, *child;
+		iq = jabber_iq_new(js, JABBER_IQ_ERROR);
+		xmlnode_set_attrib(iq->node, "to", xfer->who);
+		jabber_iq_set_id(iq, jsx->iq_id);
+
+		error = xmlnode_new_child(iq->node, "error");
+		xmlnode_set_attrib(error, "type", "cancel");
+		child = xmlnode_new_child(error, "forbidden");
+		xmlnode_set_namespace(child, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		child = xmlnode_new_child(error, "text");
+		xmlnode_set_namespace(child, "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_insert_data(child, "Offer Declined", -1);
+
+		jabber_iq_send(iq);
+	}
+
 	jabber_si_xfer_free(xfer);
 	purple_debug(PURPLE_DEBUG_INFO, "jabber", "in jabber_si_xfer_request_denied\n");
 }
@@ -1415,6 +1440,7 @@ static void jabber_si_xfer_send_disco_cb(JabberStream *js, const char *who,
 		purple_notify_error(js->gc, _("File Send Failed"),
 				_("File Send Failed"), msg);
 		g_free(msg);
+		purple_xfer_cancel_local(xfer);
 	}
 }
 
@@ -1439,6 +1465,8 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 		xmlnode_set_attrib(iq->node, "to", xfer->who);
 		if(jsx->iq_id)
 			jabber_iq_set_id(iq, jsx->iq_id);
+		else
+			purple_debug_error("jabber", "Sending SI result with new IQ id.\n");
 
 		jsx->accepted = TRUE;
 

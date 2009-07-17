@@ -168,7 +168,7 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 	jbr->priority = priority;
 	jbr->state = state;
 	g_free(jbr->status);
-	jbr->status = status != NULL ? g_markup_escape_text(status, -1) : NULL;
+	jbr->status = g_strdup(status);
 
 	return jbr;
 }
