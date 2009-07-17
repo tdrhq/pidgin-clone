@@ -40,7 +40,7 @@ group_to_xmlnode(PurpleBlistNode *gnode)
 	PurpleGroup *group;
 	PurpleBlistNode *cnode;
 
-	group = (PurpleGroup *)gnode;
+	group = PURPLE_GROUP(gnode);
 
 	node = xmlnode_new("group");
 	xmlnode_set_attrib(node, "name", group->name);
@@ -135,7 +135,7 @@ PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
 	if ((PURPLE_BLIST_NODE(buddy))->parent == NULL)
 		return NULL;
 
-	return (PurpleGroup *)((PURPLE_BLIST_NODE(buddy))->parent->parent);
+	return PURPLE_GROUP(PURPLE_BLIST_NODE(buddy)->parent->parent);
 }
 
 void
