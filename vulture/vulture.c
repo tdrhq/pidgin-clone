@@ -257,3 +257,24 @@ gint VultureCompareTCHARStrings(gconstpointer lpvStr1, gconstpointer lpvStr2, gp
 	UNREFERENCED_PARAMETER(lpvUnused);
 	return _tcscmp((LPCTSTR)lpvStr1, (LPCTSTR)lpvStr2);
 }
+
+
+/**
+ * Finds the position of a menu item given its ID.
+ *
+ * @param	hmenu	Menu.
+ * @param	uiID	ID of desired menu item.
+ *
+ * @return Index of item, or negative if not found.
+ */
+int VultureGetMenuPosFromID(HMENU hmenu, UINT uiID)
+{
+	int iCount = GetMenuItemCount(hmenu);
+	int i;
+
+	for(i = 0; i < iCount; i++)
+		if(GetMenuItemID(hmenu, i) == uiID)
+			return i;
+
+	return -1;
+}

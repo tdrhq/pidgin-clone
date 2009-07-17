@@ -45,9 +45,13 @@
 #define IDM_BLIST_CONTEXT_SHOWOFFLINE           40206
 #define IDM_BLIST_CONTEXT_ALIAS                 40207
 #define IDM_BLIST_CONTEXT_REMOVE                40208
+#define IDM_BLIST_CONTEXT_BLOCK                 40209
 
 #define IDM_CONV                                1003
 #define IDM_CONV_CONV_CLOSE                     40401
+
+/* For dynamic menu items not sent as WM_COMMAND notifications. */
+#define IDM_DYNAMIC_FIRST			50000
 
 
 #define IDR_ACCEL_MAIN                          2001

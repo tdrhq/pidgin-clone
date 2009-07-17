@@ -30,6 +30,22 @@
 
 #include "vulture.h"
 #include "vultureblist.h"
+#include "purpleblist.h"
+
+
+typedef struct _VULTURE_MENU_ACTION
+{
+	void		(*lpfnCallback)(gpointer lpvObject, gpointer lpvData);
+	gpointer	lpvObject;
+	gpointer	lpvData;
+} VULTURE_MENU_ACTION;
+
+typedef struct _VULTURE_MAKE_CONTEXT_MENU
+{
+	HMENU			hmenu;
+	VULTURE_BLIST_NODE	*lpvblistnode;
+	GList			**lplpglistVMA;
+} VULTURE_MAKE_CONTEXT_MENU;
 
 
 /* The significance of lpvParam is given for each message. */
@@ -83,6 +99,7 @@ enum ENUM_VULTURE_SIGNAL_HANDLES
 
 void VultureInitLibpurple(HANDLE *lphthread);
 void VultureShutDownLibpurple(void);
+void PurpleInsertDynamicMenu(HMENU hmenu, int iIndex, UINT *lpuiNextID, GList *lpglistPMA, GList **lplpglistVMA, gpointer lpvObject);
 
 extern GMainLoop *g_lpgmainloop;
 

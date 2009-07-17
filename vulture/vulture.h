@@ -62,6 +62,7 @@ int MessageBoxFromStringTable(HWND hwnd, WORD wResourceString, UINT uiType);
 void VultureTimetToSystemTime(time_t t, LPSYSTEMTIME lpsystime);
 LPTSTR VultureAmpersandify(LPCTSTR szUnderscored);
 gint VultureCompareTCHARStrings(gconstpointer lpvStr1, gconstpointer lpvStr2, gpointer lpvUnused);
+int VultureGetMenuPosFromID(HMENU hmenu, UINT uiID);
 
 
 

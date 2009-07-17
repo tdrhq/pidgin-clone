@@ -268,6 +268,14 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		
 		break;
 
+	case PC_MAKEBUDDYMENU:
+		{
+			VULTURE_MAKE_CONTEXT_MENU *lpvmcm = lppurplecall->lpvParam;
+			PurpleMakeBuddyMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode, lpvmcm->lplpglistVMA);
+		}
+
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

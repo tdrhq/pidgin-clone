@@ -225,3 +225,89 @@ static void Quitting(void)
 	/* The core is on its way out, so tell the UI to destroy itself. */
 	VulturePostUIMessage(VUIMSG_QUIT, NULL);
 }
+
+
+/**
+ * Inserts items from a list of PurpleMenuActions into a Win32 menu. Inspired
+ * by pidgin_append_menu_action.
+ *
+ * @param[in,out]	hmenu		Menu to add to.
+ * @param		iIndex		Index of item before which to insert
+ *					our stuff.
+ * @param[in,out]	lpuiNextID	First ID of new menu item. We increment
+ *					this each time we use it, so that it's
+ *					ready for the next call once we've
+ *					finished.
+ * @param		lpglistPMA	List of PurpleMenuAction structures
+ *					describing the new menu items.
+ * @param[in,out]	lplpglistVMA	Our own item-data will be added to this
+ *					list, which should be g_freed once the
+ *					menu has been destroyed.
+ */
+void PurpleInsertDynamicMenu(HMENU hmenu, int iIndex, UINT *lpuiNextID, GList *lpglistPMA, GList **lplpglistVMA, gpointer lpvObject)
+{
+	GList *lpglistRover;
+
+	for(lpglistRover = lpglistPMA; lpglistRover; lpglistRover = lpglistRover->next)
+	{
+		PurpleMenuAction *lppma = lpglistRover->data;
+		MENUITEMINFO mii;
+
+		mii.cbSize = sizeof(mii);
+		mii.dwTypeData = NULL;
+		
+		if(lppma)
+		{
+			LPTSTR szNameTemp = VultureUTF8ToTCHAR(lppma->label);
+
+			mii.fMask = MIIM_FTYPE | MIIM_STRING;
+			mii.fType = MFT_STRING;
+			mii.dwTypeData = VultureAmpersandify(szNameTemp);
+
+			g_free(szNameTemp);
+
+			if(lppma->children)
+			{
+				/* We're a submenu. Recur. */
+
+				mii.fMask |= MIIM_SUBMENU;
+				mii.hSubMenu = CreateMenu();
+				PurpleInsertDynamicMenu(mii.hSubMenu, 0, lpuiNextID, lppma->children, lplpglistVMA, lpvObject);
+
+				g_list_free(lppma->children);
+			}
+			else
+			{
+				/* Normal menu item. */
+
+				VULTURE_MENU_ACTION *lpvma = g_new(VULTURE_MENU_ACTION, 1);
+
+				lpvma->lpfnCallback = lppma->callback;
+				lpvma->lpvData = lppma->data;
+				lpvma->lpvObject = lpvObject;
+
+				mii.fMask |= MIIM_ID | MIIM_DATA;
+				mii.wID = (*lpuiNextID)++;
+				mii.dwItemData = (ULONG_PTR)lpvma;
+
+				/* Add the item-data to the list for ease of
+				 * freeing.
+				 */
+				*lplpglistVMA = g_list_prepend(*lplpglistVMA, lpvma);
+			}
+
+			g_free(lppma);
+		}
+		else
+		{
+			/* Separator. */
+			mii.fMask = MIIM_FTYPE;
+			mii.fType = MFT_SEPARATOR;
+		}
+
+		InsertMenuItem(hmenu, iIndex, TRUE, &mii);
+
+		if(mii.dwTypeData)
+			ProcHeapFree(mii.dwTypeData);
+	}
+}

@@ -56,6 +56,7 @@ static void UpdateStatusUI(VULTURE_SAVED_STATUS *lpvss, HWND hwndStatusDlg);
 static LRESULT CALLBACK StatusMsgBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void SetStatusMsg(HWND hwndStatusDlg);
 static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
+static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
 
 
 #define BLIST_MARGIN 6
@@ -555,30 +556,6 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 
 		return TRUE;
 
-	case WM_COMMAND:
-		switch(LOWORD(wParam))
-		{
-		case IDM_BLIST_CONTEXT_IM:
-			{
-				TVITEM tvitem;
-				HWND hwndBlist = GetDlgItem(hwndDlg, IDC_TREE_BLIST);
-
-				if((tvitem.hItem = TreeView_GetSelection(hwndBlist)))
-				{
-					tvitem.mask = TVIF_PARAM;
-					TreeView_GetItem(hwndBlist, &tvitem);
-					
-					VultureEnqueueAsyncPurpleCall(PC_BLISTNODEACTIVATED, (VULTURE_BLIST_NODE*)tvitem.lParam);
-
-					return TRUE;
-				}
-			}
-
-			break;
-		}
-
-		break;
-
 	case WM_NOTIFY:
 		{
 			LPNMHDR lpnmhdr = (LPNMHDR)lParam;
@@ -621,7 +598,8 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 						{
 							VULTURE_BLIST_NODE *lpvblistnode;
 							HMENU hmenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDM_BLIST_CONTEXT));
-							int iMenuIndex = -1;
+							HMENU hmenuSubmenu = NULL;
+							GList *lpglistVMA = NULL;
 
 							/* Really select this node. */
 							TreeView_SelectItem(lpnmhdr->hwndFrom, tvitem.hItem);
@@ -631,29 +609,48 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 
 							lpvblistnode = (VULTURE_BLIST_NODE*)tvitem.lParam;
 
-							EnterCriticalSection(&lpvblistnode->cs);
-
-								switch(lpvblistnode->nodetype)
-								{
-								case PURPLE_BLIST_BUDDY_NODE:
-									iMenuIndex = CMI_BUDDY;
-									break;
-
-								default:
-									break;
-								}
-
-							LeaveCriticalSection(&lpvblistnode->cs);
-
-							if(iMenuIndex >= 0)
+							/* Reading lpvblistnode->nodetype is atomic and so
+							 * we don't need our critical section.
+							 */
+							switch(lpvblistnode->nodetype)
 							{
-								POINT ptMouse;
+							case PURPLE_BLIST_BUDDY_NODE:
+								{
+									VULTURE_MAKE_CONTEXT_MENU vmcm;
 
-								GetCursorPos(&ptMouse);
-								TrackPopupMenu(GetSubMenu(hmenu, iMenuIndex), TPM_RIGHTBUTTON, ptMouse.x, ptMouse.y, 0, hwndDlg, NULL);
+									vmcm.hmenu = hmenuSubmenu = GetSubMenu(hmenu, CMI_BUDDY);
+									vmcm.lpvblistnode = lpvblistnode;
+									vmcm.lplpglistVMA = &lpglistVMA;
+
+									VultureSingleSyncPurpleCall(PC_MAKEBUDDYMENU, &vmcm);
+								}
+								
+								break;
+
+							default:
+								break;
 							}
 
+							if(hmenuSubmenu)
+							{
+								POINT ptMouse;
+								int iCmd;
+
+								GetCursorPos(&ptMouse);
+								iCmd = TrackPopupMenu(hmenuSubmenu, TPM_RIGHTBUTTON | TPM_RETURNCMD, ptMouse.x, ptMouse.y, 0, hwndDlg, NULL);
+
+								if(iCmd != 0)
+									RunBuddyMenuCmd(lpvblistnode, hmenuSubmenu, iCmd);
+							}
+
+							/* Destroy menu. This will also destroy our modifications. */
 							DestroyMenu(hmenu);
+
+							/* Clean up any extra data we might have as a result of
+							 * having modified the menu.
+							 */
+							g_list_foreach(lpglistVMA, (GFunc)g_free, NULL);
+							g_list_free(lpglistVMA);
 
 							return TRUE;
 						}
@@ -872,4 +869,24 @@ static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
 	 * cached in the tree-item.
 	 */
 	VultureBListNodeRelease(lpvbn);
+}
+
+
+/**
+ * Executes a menu command from the context menu for a buddy node in the buddy
+ * list.
+ *
+ * @param	lpvblistnode	List node to which the context menu relates.
+ * @param	hmenu		Context menu.
+ * @param	iCmd		Command ID.
+ */
+static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
+{
+	UNREFERENCED_PARAMETER(hmenu);
+
+	switch(iCmd)
+	{
+	case IDM_BLIST_CONTEXT_IM:
+		VultureEnqueueAsyncPurpleCall(PC_BLISTNODEACTIVATED, lpvblistnode);
+	}
 }
