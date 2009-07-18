@@ -64,6 +64,8 @@ static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int i
 enum CONTEXT_MENU_INDICES
 {
 	CMI_BUDDY = 0,
+	CMI_CONTACT_COMPOSITE,
+	CMI_CONTACT_BASIC,
 };
 
 
@@ -627,6 +629,24 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 								
 								break;
 
+							case PURPLE_BLIST_CONTACT_NODE:
+								if(TreeView_GetChild(lpnmhdr->hwndFrom, tvitem.hItem))
+								{
+									hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_BASIC);
+								}
+								else
+								{
+									VULTURE_MAKE_CONTEXT_MENU vmcm;
+
+									vmcm.hmenu = hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_COMPOSITE);
+									vmcm.lpvblistnode = lpvblistnode;
+									vmcm.lplpglistVMA = &lpglistVMA;
+
+									VultureSingleSyncPurpleCall(PC_MAKEBUDDYMENU, &vmcm);
+								}
+
+								break;
+
 							default:
 								break;
 							}
@@ -640,7 +660,17 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 								iCmd = TrackPopupMenu(hmenuSubmenu, TPM_RIGHTBUTTON | TPM_RETURNCMD, ptMouse.x, ptMouse.y, 0, hwndDlg, NULL);
 
 								if(iCmd != 0)
-									RunBuddyMenuCmd(lpvblistnode, hmenuSubmenu, iCmd);
+								{
+									switch(lpvblistnode->nodetype)
+									{
+									case PURPLE_BLIST_BUDDY_NODE:
+									case PURPLE_BLIST_CONTACT_NODE:
+										RunBuddyMenuCmd(lpvblistnode, hmenuSubmenu, iCmd);
+										break;
+									default:
+										break;
+									}
+								}
 							}
 
 							/* Destroy menu. This will also destroy our modifications. */
@@ -873,8 +903,8 @@ static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
 
 
 /**
- * Executes a menu command from the context menu for a buddy node in the buddy
- * list.
+ * Executes a menu command from the context menu for a buddy or contact node in
+ * the buddy list.
  *
  * @param	lpvblistnode	List node to which the context menu relates.
  * @param	hmenu		Context menu.

@@ -46,6 +46,9 @@
 #define IDM_BLIST_CONTEXT_ALIAS                 40207
 #define IDM_BLIST_CONTEXT_REMOVE                40208
 #define IDM_BLIST_CONTEXT_BLOCK                 40209
+#define IDM_BLIST_CONTEXT_CUSTOMICON            40210
+#define IDM_BLIST_CONTEXT_REMOVEICON            40211
+#define IDM_BLIST_CONTEXT_SHOWBUDDIES           40212
 
 #define IDM_CONV                                1003
 #define IDM_CONV_CONV_CLOSE                     40401
