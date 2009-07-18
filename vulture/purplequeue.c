@@ -276,6 +276,15 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 
 		break;
 
+
+	case PC_PERFORMMENUACTION:
+		{
+			VULTURE_MENU_ACTION *lpvma = lppurplecall->lpvParam;
+			lpvma->lpfnCallback(lpvma->lpvObject, lpvma->lpvData);
+		}
+
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

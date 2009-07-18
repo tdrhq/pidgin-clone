@@ -888,5 +888,23 @@ static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int i
 	{
 	case IDM_BLIST_CONTEXT_IM:
 		VultureEnqueueAsyncPurpleCall(PC_BLISTNODEACTIVATED, lpvblistnode);
+		break;
+
+	default:
+		/* Not a static command that we recongise; might be a dynamic
+		 * command.
+		 */
+		if(iCmd >= IDM_DYNAMIC_FIRST)
+		{
+			MENUITEMINFO mii;
+
+			mii.cbSize = sizeof(mii);
+			mii.fMask = MIIM_DATA;
+			GetMenuItemInfo(hmenu, iCmd, FALSE, &mii);
+
+			VultureSingleSyncPurpleCall(PC_PERFORMMENUACTION, (VULTURE_MENU_ACTION*)mii.dwItemData);
+		}
+
+		break;
 	}
 }
