@@ -682,6 +682,9 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 							g_list_foreach(lpglistVMA, (GFunc)g_free, NULL);
 							g_list_free(lpglistVMA);
 
+							/* Allow default right-click processing. */
+							SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, TRUE);
+
 							return TRUE;
 						}
 					}
