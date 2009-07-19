@@ -43,13 +43,10 @@
 #define PURPLE_GCIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_GCIPHER, PurpleGCipherClass))
 
 typedef struct _PurpleGCipher		PurpleGCipher;
-typedef struct _PurpleGCipherPriv	PurpleGCipherPriv;
 typedef struct _PurpleGCipherClass	PurpleGCipherClass;
 
 struct _PurpleGCipher {
 	GObject gparent;
-
-	PurpleGCipherPriv *priv;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -76,7 +73,7 @@ GType purple_gcipher_get_gtype(void);
  * @param cipher  The cipher
  * @returns The type of the cipher
  */
-GChecksumType purple_gcipher_get_type(PurpleGCipher *cipher);
+GChecksumType purple_gcipher_get_checksum_type(PurpleGCipher *cipher);
 
 G_END_DECLS
 

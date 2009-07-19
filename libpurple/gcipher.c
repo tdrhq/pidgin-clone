@@ -24,14 +24,16 @@
 #if GLIB_CHECK_VERSION(2,16,0)
 #include "gcipher.h"
 
+#define PURPLE_GCIPHER_GET_PRIVATE(obj) \
+	(G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_GCIPHER, PurpleGCipherPrivate))
 
 /*******************************************************************************
  * Structs
  ******************************************************************************/
-struct _PurpleGCipherPriv {
+typedef struct {
 	GChecksum *checksum;
 	GChecksumType type;
-};
+} PurpleGCipherPrivate;
 
 /******************************************************************************
  * Enums
@@ -48,61 +50,69 @@ enum {
 static GObjectClass *parent_class = NULL;
 
 /******************************************************************************
+ * Helpers
+ *****************************************************************************/
+static void
+purple_gcipher_set_checksum_type(PurpleGCipher *cipher, GChecksumType type)
+{
+	PurpleGCipherPrivate *priv = PURPLE_GCIPHER_GET_PRIVATE(cipher);
+
+	priv->type = type;
+}
+
+/******************************************************************************
  * Object Stuff
  *****************************************************************************/
 static void
 purple_gcipher_reset(PurpleCipher *cipher)
 {
-	PurpleGCipher *gcipher = PURPLE_GCIPHER(cipher);
-	GChecksum *checksum = gcipher->priv->checksum;
+	PurpleGCipherPrivate *priv = PURPLE_GCIPHER_GET_PRIVATE(cipher);
 
+	if(priv->checksum) {
 #if GLIB_CHECK_VERSION(2,18,0)
-	g_checksum_reset(checksum);
+		g_checksum_reset(priv->checksum);
 #else
-	g_checksum_free(checksum);
-	checksum = gcipher->priv->checksum =
-		g_checksum_new(purple_gcipher_get_type(gcipher));
+		g_checksum_free(priv->checksum);
+		priv->checksum = g_checksum_new(priv->type);
 #endif
+	}
 }
 
 static void
 purple_gcipher_append(PurpleCipher *cipher, const guchar *data, size_t len)
 {
-	PurpleGCipher *gcipher = PURPLE_GCIPHER(cipher);
-	GChecksum *checksum = gcipher->priv->checksum;
+	PurpleGCipherPrivate *priv = PURPLE_GCIPHER_GET_PRIVATE(cipher);
 
 	while (len >= G_MAXSSIZE) {
-		g_checksum_update(checksum, data, G_MAXSSIZE);
+		g_checksum_update(priv->checksum, data, G_MAXSSIZE);
 		len -= G_MAXSSIZE;
 		data += G_MAXSSIZE;
 	}
 
 	if (len)
-		g_checksum_update(checksum, data, len);
+		g_checksum_update(priv->checksum, data, len);
 }
 
 static gboolean
 purple_gcipher_digest(PurpleCipher *cipher, size_t in_len,
 						guchar digest[16], size_t *out_len)
 {
-	PurpleGCipher *gcipher = PURPLE_GCIPHER(cipher);
-	GChecksum *checksum = gcipher->priv->checksum;
+	PurpleGCipherPrivate *priv = PURPLE_GCIPHER_GET_PRIVATE(cipher);
 
-	const gssize required_length = g_checksum_type_get_length(gcipher->priv->type);
+	const gssize required_length = g_checksum_type_get_length(priv->type);
 
 	g_return_val_if_fail(in_len >= required_length, FALSE);
-	g_return_val_if_fail(checksum != NULL, FALSE);
+	g_return_val_if_fail(priv->checksum != NULL, FALSE);
 
-	g_checksum_get_digest(checksum, digest, &in_len);
+	g_checksum_get_digest(priv->checksum, digest, &in_len);
 
-	purple_gcipher_reset(cipher);
+	purple_cipher_reset(cipher);
 
 	if (out_len)
 		*out_len = in_len;
 
 	return TRUE;
 }
-
 
 /******************************************************************************
  * Object Stuff
@@ -111,12 +121,11 @@ static void
 purple_gcipher_set_property(GObject *obj, guint param_id,
                             const GValue *value, GParamSpec *pspec)
 {
-	PurpleGCipher *gcipher = PURPLE_GCIPHER(obj);
-	PurpleGCipherPriv *priv = gcipher->priv;
+	PurpleGCipher *cipher = PURPLE_GCIPHER(obj);
 
 	switch(param_id) {
 		case PROP_GCHECKSUM_TYPE:
-			priv->type = g_value_get_int(value);
+			purple_gcipher_set_checksum_type(cipher, g_value_get_int(value));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -132,7 +141,7 @@ purple_gcipher_get_property(GObject *obj, guint param_id, GValue *value,
 
 	switch(param_id) {
 		case PROP_GCHECKSUM_TYPE:
-			g_value_set_int(value, purple_gcipher_get_type(gcipher));
+			g_value_set_int(value, purple_gcipher_get_checksum_type(gcipher));
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
 			break;
@@ -140,12 +149,14 @@ purple_gcipher_get_property(GObject *obj, guint param_id, GValue *value,
 }
 
 static void
-purple_gcipher_finalize(GObject *obj)
-{
-	PurpleGCipher *gcipher = PURPLE_GCIPHER(obj);
+purple_gcipher_finalize(GObject *obj) {
+	PurpleGCipherPrivate *priv = PURPLE_GCIPHER_GET_PRIVATE(obj);
 
-	g_checksum_free(gcipher->priv->checksum);
-	g_free(gcipher->priv);
+	g_checksum_reset(priv->checksum);
+	g_checksum_free(priv->checksum);
+	priv->checksum = NULL;
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
 static void
@@ -157,6 +168,8 @@ purple_gcipher_class_init(PurpleGCipherClass *klass)
 
 	parent_class = g_type_class_peek_parent(klass);
 
+	g_type_class_add_private(klass, sizeof(PurpleGCipherPrivate));
+
 	obj_class->set_property = purple_gcipher_set_property;
 	obj_class->get_property = purple_gcipher_get_property;
 	obj_class->finalize = purple_gcipher_finalize;
@@ -165,20 +178,11 @@ purple_gcipher_class_init(PurpleGCipherClass *klass)
 	cipher_class->append = purple_gcipher_append;
 	cipher_class->digest = purple_gcipher_digest;
 
-	pspec = g_param_spec_int("checksum_type", _("Checksum Type"),
-			_("The GChecksumType for this cipher"),
+	pspec = g_param_spec_int("checksum_type", "Checksum Type",
+			"The GChecksumType for this cipher",
 			0, G_MAXINT, 0, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_GCHECKSUM_TYPE, pspec);
 }
-
-static void
-purple_gcipher_init(PurpleCipher *cipher)
-{
-	PurpleGCipher *gcipher = PURPLE_GCIPHER(cipher);
-
-	gcipher->priv = g_new0(PurpleGCipherPriv, 1);
-}
-
 
 /******************************************************************************
  * PurpleCipher API
@@ -197,7 +201,7 @@ purple_gcipher_get_gtype(void) {
 			NULL,
 			sizeof(PurpleGCipher),
 			0,
-			(GInstanceInitFunc)purple_gcipher_init,
+			NULL,
 			NULL
 		};
 
@@ -210,11 +214,15 @@ purple_gcipher_get_gtype(void) {
 }
 
 GChecksumType
-purple_gcipher_get_type(PurpleGCipher *cipher)
+purple_gcipher_get_checksum_type(PurpleGCipher *cipher)
 {
+	PurpleGCipherPrivate *priv = NULL;
+
 	g_return_val_if_fail(PURPLE_IS_GCIPHER(cipher), -1);
 
-	return cipher->priv->type;
+	priv = PURPLE_GCIPHER_GET_PRIVATE(cipher);
+
+	return priv->type;
 }
 
 #endif /* GLIB_CHECK_VERSION(2,16,0) */
