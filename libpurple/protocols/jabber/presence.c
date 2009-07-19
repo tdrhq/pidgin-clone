@@ -81,7 +81,8 @@ void jabber_presence_fake_to_self(JabberStream *js, PurpleStatus *status)
 		g_return_if_fail(jb != NULL);
 
 		purple_status_to_jabber(status, &state, &msg, &priority);
-				purple_prpl_got_user_status(purple_connection_get_account(js->gc), my_base_jid, "offline", msg ? "message" : NULL, msg, NULL);
+				purple_prpl_got_user_status(purple_connection_get_account(js->gc),
+				username, "offline", msg ? "message" : NULL, msg, NULL);
 
 		if (state == JABBER_BUDDY_STATE_UNAVAILABLE ||
 				state == JABBER_BUDDY_STATE_UNKNOWN) {

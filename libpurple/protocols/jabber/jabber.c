@@ -917,9 +917,12 @@ jabber_login(PurpleAccount *account)
 	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
 	PurpleStoredImage *image;
+	PurpleConnectionFlags flags;
 
-	gc->flags |= PURPLE_CONNECTION_HTML |
-		PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
+	flags = PURPLE_CONNECTION_FLAGS_HTML |
+		PURPLE_CONNECTION_FLAGS_ALLOW_CUSTOM_SMILEY;
+	purple_connection_turn_on_flags(gc, flags);
+
 	js = jabber_stream_new(account);
 	if (js == NULL)
 		return;

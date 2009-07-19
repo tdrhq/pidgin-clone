@@ -421,7 +421,8 @@ void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 	purple_debug_info("jabber", "jabber_roster_group_change(): Moving %s from %s to %s\n",
 	                  name, old_group, new_group);
 
-	jabber_roster_update(gc->proto_data, name, groups);
+	jabber_roster_update(purple_object_get_protocol_data(PURPLE_OBJECT(gc)),
+			name, groups);
 }
 
 void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
