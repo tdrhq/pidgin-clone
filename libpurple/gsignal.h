@@ -31,7 +31,7 @@ typedef struct _PurpleGSignalHandle PurpleGSignalHandle;
 G_BEGIN_DECLS
 
 #define purple_g_signal_connect(type, name, callback, data) \
-	(purple_g_signal_connect_flags((type), (name), 0, (callback), (data))
+	(purple_g_signal_connect_flags((type), (name), 0, (callback), (data)))
 
 PurpleGSignalHandle *purple_g_signal_connect_flags(GType type, const gchar *name, GConnectFlags flags, GCallback callback, gpointer data);
 void purple_g_signal_disconnect(PurpleGSignalHandle *handle);
