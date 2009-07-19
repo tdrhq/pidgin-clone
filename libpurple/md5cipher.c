@@ -3,6 +3,7 @@
  * Copyright (C) 2001-2003  Christophe Devine <c.devine@cr0.net>
  */
 #include "md5cipher.h"
+#include "gcipher.h"
 
 #include <string.h>
 
@@ -11,12 +12,13 @@
 /******************************************************************************
  * Structs
  *****************************************************************************/
+#if !GLIB_CHECK_VERSION(2,16,0)
 struct _PurpleMD5CipherPriv {
 	guint32 total[2];
 	guint32 state[4];
 	guchar buffer[64];
 };
-
+#endif
 /******************************************************************************
  * Globals
  *****************************************************************************/
@@ -42,6 +44,7 @@ static GObjectClass *parent_class = NULL;
 /******************************************************************************
  * Cipher Stuff
  *****************************************************************************/
+#if !GLIB_CHECK_VERSION(2,16,0)
 static void
 purple_md5_cipher_reset(PurpleCipher *cipher) {
 	PurpleMD5Cipher *md5_cipher = PURPLE_MD5_CIPHER(cipher);
@@ -252,6 +255,7 @@ purple_md5_cipher_digest(PurpleCipher *cipher, size_t in_len,
 
 	return TRUE;
 }
+#endif /* !GLIB_CHECK_VERSION(2,16,0) */
 
 static size_t
 purple_md5_cipher_get_block_size(PurpleCipher *cipher)
@@ -262,6 +266,7 @@ purple_md5_cipher_get_block_size(PurpleCipher *cipher)
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
+#if !GLIB_CHECK_VERSION(2,16,0)
 static void
 purple_md5_cipher_finalize(GObject *obj) {
 	PurpleCipher *cipher = PURPLE_CIPHER(obj);
@@ -272,29 +277,36 @@ purple_md5_cipher_finalize(GObject *obj) {
 
 	g_free(md5_cipher->priv);
 }
+#endif /* GLIB_CHECK_VERSION(2,16,0) */
 
 static void
 purple_md5_cipher_class_init(PurpleMD5CipherClass *klass) {
+#if !GLIB_CHECK_VERSION(2,16,0)
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+#endif
 	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
+#if !GLIB_CHECK_VERSION(2,16,0)
 	obj_class->finalize = purple_md5_cipher_finalize;
 
 	cipher_class->reset = purple_md5_cipher_reset;
 	cipher_class->append = purple_md5_cipher_append;
 	cipher_class->digest = purple_md5_cipher_digest;
+#endif
 	cipher_class->get_block_size = purple_md5_cipher_get_block_size;
 }
 
 static void
 purple_md5_cipher_init(PurpleCipher *cipher) {
+#if !GLIB_CHECK_VERSION(2,16,0)
 	PurpleMD5Cipher *md5_cipher = PURPLE_MD5_CIPHER(cipher);
 
 	md5_cipher->priv = g_new0(PurpleMD5CipherPriv, 1);
 
 	purple_md5_cipher_reset(cipher);
+#endif
 }
 
 /******************************************************************************
@@ -318,7 +330,11 @@ purple_md5_cipher_get_gtype(void) {
 			NULL,
 		};
 
+#if GLIB_CHECK_VERSION(2,16,0)
+		type = g_type_register_static(PURPLE_TYPE_GCIPHER,
+#else
 		type = g_type_register_static(PURPLE_TYPE_CIPHER,
+#endif
 									  "PurpleMD5Cipher",
 									  &info, 0);
 	}
@@ -328,5 +344,11 @@ purple_md5_cipher_get_gtype(void) {
 
 PurpleCipher *
 purple_md5_cipher_new(void) {
-	return g_object_new(PURPLE_TYPE_MD5_CIPHER, NULL);
+#if GLIB_CHECK_VERSION(2,16,0)
+	return g_object_new(PURPLE_TYPE_MD5_CIPHER,
+		"checksum_type", G_CHECKSUM_MD5,
+		NULL);
+#else
+	return g_object_new(PURPLE_TYPE_MD5_CIPHER);
+#endif
 }

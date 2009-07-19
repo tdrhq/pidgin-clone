@@ -64,13 +64,6 @@ GType purple_sha1_cipher_get_gtype(void);
 
 PurpleCipher *purple_sha1_cipher_new(void);
 
-gint32 purple_sha1_cipher_get_size_hi(PurpleSHA1Cipher *sha1_cipher);
-void purple_sha1_cipher_set_size_hi(PurpleSHA1Cipher *sha1_cipher, gint32 size_high);
-gint32 purple_sha1_cipher_get_size_lo(PurpleSHA1Cipher *sha1_cipher);
-void purple_sha1_cipher_set_size_lo(PurpleSHA1Cipher *sha1_cipher, gint32 size_low);
-gint32 purple_sha1_cipher_get_len_w(PurpleSHA1Cipher *sha1_cipher);
-void purple_sha1_cipher_set_len_w(PurpleSHA1Cipher *sha1_cipher, gint32 lenw);
-
 G_END_DECLS
 
 #endif /* PURPLE_SHA1_CIPHER_H */

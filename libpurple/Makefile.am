@@ -57,6 +57,7 @@ purple_coresources = \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
+	gcipher.c \
 	group.c \
 	hmaccipher.c \
 	idle.c \
@@ -130,6 +131,7 @@ purple_coreheaders = \
 	eventloop.h \
 	ft.h \
 	gaim-compat.h \
+	gcipher.h \
 	hmaccipher.h \
 	idle.h \
 	imgstore.h \
