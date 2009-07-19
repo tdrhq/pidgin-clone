@@ -67,13 +67,8 @@ static void
 purple_hmac_cipher_reset(PurpleCipher *cipher) {
 	PurpleHMACCipherPrivate *priv = PURPLE_HMAC_CIPHER_GET_PRIVATE(cipher);
 
-	if(PURPLE_IS_CIPHER(priv->hash)) {
+	if(PURPLE_IS_CIPHER(priv->hash))
 		purple_cipher_reset(priv->hash);
-
-		g_object_unref(G_OBJECT(priv->hash));
-
-		priv->hash = NULL;
-	}
 
 	if(priv->opad) {
 		g_free(priv->opad);

@@ -3689,7 +3689,7 @@ char *yahoo_status_text(PurpleBuddy *b)
 
 	account = purple_buddy_get_account(b);
 	gc = purple_account_get_connection(account);
-	if (!gc || !purple_connection_get_protocol_data(gc))
+	if (!gc || !purple_object_get_protocol_data(PURPLE_OBJECT(gc)))
 		return NULL;
 
 	f = yahoo_friend_find(gc, purple_buddy_get_name(b));
@@ -3958,8 +3958,8 @@ GList *yahoo_blist_node_menu(PurpleBlistNode *node)
 
 static void yahoo_act_id(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	const char *name = yd->profiles[purple_request_fields_get_choice(fields, "id")];
 	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	const char *name = yd->profiles[purple_request_fields_get_choice(fields, "id")];
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_IDACT, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash_str(pkt, 3, name);
@@ -4057,7 +4057,7 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	const char *name = purple_connection_get_display_name(gc);
 	int iter;
 

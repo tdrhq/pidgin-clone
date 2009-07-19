@@ -653,12 +653,13 @@ static void auth_old_cb(JabberStream *js, const char *from,
 		} else if(js->stream_id && (x = xmlnode_get_child(query, "crammd5"))) {
 			const char *challenge;
 			guchar digest[33];
-			PurpleCipher *hmac;
+			PurpleCipher *hmac, *md5;
 
 			/* Calculate the MHAC-MD5 digest */
 			challenge = xmlnode_get_attrib(x, "challenge");
-			hmac = purple_hmac_cipher_new();
-			purple_cipher_set_hash(hmac, purple_md5_cipher_new());
+			md5 = purple_md5_cipher_new();
+			hmac = purple_hmac_cipher_new(md5);
+			g_object_unref(G_OBJECT(md5));
 			purple_cipher_set_key(hmac, (guchar *)pw);
 			purple_cipher_append(hmac, (guchar*)challenge, strlen(challenge));
 			purple_cipher_digest(hmac, sizeof(digest), digest, NULL);

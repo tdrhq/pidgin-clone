@@ -1952,7 +1952,7 @@ static void
 purple_parse_auth_securid_request_yes_cb(gpointer user_data, const char *msg)
 {
 	PurpleConnection *gc = user_data;
-	OscarData *od = purple_connection_get_protocol_data(gc);
+	OscarData *od = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	aim_auth_securid_send(od, msg);
 }

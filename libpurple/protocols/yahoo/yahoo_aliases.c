@@ -454,7 +454,7 @@ yahoo_set_userinfo_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	xmlnode *node = xmlnode_new("ab");
 	xmlnode *ct = xmlnode_new_child(node, "ct");
-	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleAccount *account;
 	PurpleUtilFetchUrlData *url_data;
 	char *webaddress, *webpage;
@@ -594,7 +594,7 @@ void yahoo_set_userinfo_for_buddy(PurpleConnection *gc, PurpleBuddy *buddy)
 
 void yahoo_set_userinfo(PurpleConnection *gc)
 {
-	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleRequestFields *fields = request_fields_from_personal_details(&yd->ypd,
 					purple_connection_get_display_name(gc));
 	purple_request_fields(gc, NULL, _("Set User Info"), NULL, fields,
@@ -692,7 +692,7 @@ void yahoo_process_contact_details(PurpleConnection *gc, struct yahoo_packet *pk
 {
 	GSList *l = pkt->hash;
 	const char *who = NULL, *xml = NULL;
-	struct yahoo_data *yd = purple_connection_get_protocol_data(gc);
+	struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	for (; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
