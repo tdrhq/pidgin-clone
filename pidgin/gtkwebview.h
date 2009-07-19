@@ -56,4 +56,6 @@ gtk_webview_get_markup (GtkWebView *view);
 char*
 gtk_webview_get_text (GtkWebView *view);
 
+char* 
+gtk_webview_quote_js_string (const char* str);
 #endif

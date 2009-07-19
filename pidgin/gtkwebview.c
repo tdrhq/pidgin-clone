@@ -179,9 +179,9 @@ gtk_webview_load_html_string_with_imgstore (GtkWebView* view, const char* html)
 }
 
 /* taken from sean's webkit plugin */
-static char *escape_message(const char *text)
+char *gtk_webview_quote_js_string(const char *text)
 {
-        GString *str = g_string_new(NULL);
+        GString *str = g_string_new("\"");
         const char *cur = text;
 
         while (cur && *cur) {
@@ -202,6 +202,7 @@ static char *escape_message(const char *text)
 		}
 		cur ++;
 	}
+	g_string_append_c (str, '"');
 	return g_string_free (str, FALSE);
 }
 
@@ -214,8 +215,8 @@ static char *escape_message(const char *text)
 void
 gtk_webview_append_html (GtkWebView* view, const char* html)
 {
-	char* escaped = escape_message (html);
-	char* script = g_strdup_printf ("document.write(\"%s\\n\")", escaped);
+	char* escaped = gtk_webview_quote_js_string (html);
+	char* script = g_strdup_printf ("document.write(%s)", escaped);
 	printf ("script: %s\n", script);
 	webkit_web_view_execute_script (WEBKIT_WEB_VIEW (view), script);
 	view->empty = FALSE;
