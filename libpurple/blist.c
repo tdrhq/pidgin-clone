@@ -468,9 +468,9 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 			next = child->next;
 			if (PURPLE_IS_CONTACT(child)) {
 				PurpleBlistNode *bnode;
-				purple_blist_add_contact((PurpleContact *)child, dest, prev);
+				purple_blist_add_contact(PURPLE_CONTACT(child), dest, prev);
 				for (bnode = child->child; bnode != NULL; bnode = bnode->next) {
-					purple_blist_add_buddy((PurpleBuddy *)bnode, (PurpleContact *)child,
+					purple_blist_add_buddy((PurpleBuddy *)bnode, PURPLE_CONTACT(child),
 							NULL, bnode->prev);
 					moved_buddies = g_list_append(moved_buddies, bnode);
 				}
@@ -1037,15 +1037,15 @@ void purple_blist_add_account(PurpleAccount *account)
 						if (PURPLE_IS_BUDDY(bnode) &&
 								purple_buddy_get_account(PURPLE_BUDDY(bnode)) == account) {
 							recompute = TRUE;
-							((PurpleContact*)cnode)->currentsize++;
-							if (((PurpleContact*)cnode)->currentsize == 1)
+							(PURPLE_CONTACT(cnode))->currentsize++;
+							if ((PURPLE_CONTACT(cnode))->currentsize == 1)
 								(PURPLE_GROUP(gnode))->currentsize++;
 							ops->update(bnode);
 						}
 					}
 					if (recompute ||
 							purple_blist_node_get_bool(cnode, "show_offline")) {
-						purple_contact_invalidate_priority_buddy((PurpleContact*)cnode);
+						purple_contact_invalidate_priority_buddy(PURPLE_CONTACT(cnode));
 						ops->update(cnode);
 					}
 			} else if (PURPLE_IS_CHAT(cnode) &&
@@ -1080,7 +1080,7 @@ void purple_blist_remove_account(PurpleAccount *account)
 		for (cnode = gnode->child; cnode; cnode = cnode->next) {
 			if (PURPLE_IS_CONTACT(cnode)) {
 				gboolean recompute = FALSE;
-				contact = (PurpleContact *)cnode;
+				contact = PURPLE_CONTACT(cnode);
 
 				for (bnode = cnode->child; bnode; bnode = bnode->next) {
 					if (!PURPLE_IS_BUDDY(bnode))
@@ -1149,7 +1149,7 @@ gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account)
 	PurpleBlistNode *cnode;
 	for (cnode = (PURPLE_BLIST_NODE(g))->child; cnode; cnode = cnode->next) {
 		if (PURPLE_IS_CONTACT(cnode)) {
-			if(purple_contact_on_account((PurpleContact *) cnode, account))
+			if(purple_contact_on_account(PURPLE_CONTACT(cnode), account))
 				return TRUE;
 		} else if (PURPLE_IS_CHAT(cnode)) {
 			PurpleChat *chat = (PurpleChat *)cnode;
