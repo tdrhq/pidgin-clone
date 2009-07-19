@@ -65,7 +65,7 @@ struct _PurpleUtilFetchUrlData
 	gboolean got_headers;
 	gboolean has_explicit_data_len;
 	char *webdata;
-	unsigned long len;
+	gsize len;
 	unsigned long data_len;
 	gssize max_len;
 	gboolean chunked;
@@ -1572,8 +1572,9 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("h5");
 				ALLOW_TAG("h6");
 				/* we only allow html to start the message */
-				if(c == html)
+				if(c == html) {
 					ALLOW_TAG("html");
+				}
 				ALLOW_TAG_ALT("i", "em");
 				ALLOW_TAG_ALT("italic", "em");
 				ALLOW_TAG("li");
@@ -2967,10 +2968,10 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 }
 
 /*
- * TODO: Consider using something faster than SHA-1, such as MD5, MD4
- *       or CRC32.  Are there security implications to that?  Would
- *       probably be a good idea to benchmark some algorithms with
- *       3KB-10KB chunks of data (typical buddy icon sizes).
+ * We thought about using non-cryptographic hashes like CRC32 here.
+ * They would be faster, but we think using something more secure is
+ * important, so that it is more difficult for someone to maliciously
+ * replace one buddy's icon with something else.
  */
 char *
 purple_util_get_image_checksum(gconstpointer image_data, size_t image_len)
@@ -3099,13 +3100,15 @@ purple_fd_get_ip(int fd)
 {
 	struct sockaddr addr;
 	socklen_t namelen = sizeof(addr);
+	struct in_addr in;
 
 	g_return_val_if_fail(fd != 0, NULL);
 
 	if (getsockname(fd, &addr, &namelen))
 		return NULL;
 
-	return g_strdup(inet_ntoa(((struct sockaddr_in *)&addr)->sin_addr));
+	in = ((struct sockaddr_in *)&addr)->sin_addr;
+	return g_strdup(inet_ntoa(in));
 }
 
 
@@ -4445,7 +4448,7 @@ purple_email_is_valid(const char *address)
 }
 
 gboolean
-purple_ip_address_is_valid(const char *ip)
+purple_ipv4_address_is_valid(const char *ip)
 {
 	int c, o1, o2, o3, o4;
 	char end;
@@ -4456,6 +4459,58 @@ purple_ip_address_is_valid(const char *ip)
 	if (c != 4 || o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 || o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255)
 		return FALSE;
 	return TRUE;
+}
+
+gboolean
+purple_ipv6_address_is_valid(const gchar *ip)
+{
+	const gchar *c;
+	gboolean double_colon = FALSE;
+	gint chunks = 1;
+	gint in = 0;
+
+	g_return_val_if_fail(ip != NULL, FALSE);
+
+	if (*ip == '\0')
+		return FALSE;
+
+	for (c = ip; *c; ++c) {
+		if ((*c >= '0' && *c <= '9') ||
+		        (*c >= 'a' && *c <= 'f') ||
+		        (*c >= 'A' && *c <= 'F')) {
+			if (++in > 4)
+				/* Only four hex digits per chunk */
+				return FALSE;
+			continue;
+		} else if (*c == ':') {
+			/* The start of a new chunk */
+			++chunks;
+			in = 0;
+			if (*(c + 1) == ':') {
+				/*
+				 * '::' indicates a consecutive series of chunks full
+				 * of zeroes. There can be only one of these per address.
+				 */
+				if (double_colon)
+					return FALSE;
+				double_colon = TRUE;
+			}
+		} else
+			return FALSE;
+	}
+
+	/*
+	 * Either we saw a '::' and there were fewer than 8 chunks -or-
+	 * we didn't see a '::' and saw exactly 8 chunks.
+	 */
+	return (double_colon && chunks < 8) || (!double_colon && chunks == 8);
+}
+
+/* TODO 3.0.0: Add ipv6 check, too */
+gboolean
+purple_ip_address_is_valid(const char *ip)
+{
+	return purple_ipv4_address_is_valid(ip);
 }
 
 /* Stolen from gnome_uri_list_extract_uris */

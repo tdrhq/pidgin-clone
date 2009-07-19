@@ -3251,7 +3251,7 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 				purple_blist_node_set_flags((PurpleBlistNode *)buddy,
 						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 				g_object_set_data_full(G_OBJECT(gtkconv->webview), "transient_buddy",
-						buddy, (GDestroyNotify)purple_blist_remove_buddy);
+						buddy, (GDestroyNotify)purple_buddy_destroy);
 			}
 		}
 	}
@@ -4879,6 +4879,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_widget_show_all(webview_sw);
 
 	gtk_widget_set_name(gtkconv->webview, "pidgin_conv_webview");
+	g_object_set_data(G_OBJECT(gtkconv->webview), "gtkconv", gtkconv);
 
 	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(webview_sw),
 	                               &webview_sw_hscroll, NULL);
@@ -6644,12 +6645,20 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 		icon = purple_conv_im_get_icon(PURPLE_CONV_IM(conv));
 
 		if (icon == NULL)
+		{
+			gtk_widget_set_size_request(gtkconv->u.im->icon_container,
+			                            -1, BUDDYICON_SIZE_MIN);
 			return;
+		}
 
 		data = purple_buddy_icon_get_data(icon, &len);
 
 		if (data == NULL)
+		{
+			gtk_widget_set_size_request(gtkconv->u.im->icon_container,
+			                            -1, BUDDYICON_SIZE_MIN);
 			return;
+		}
 	}
 
 	loader = gdk_pixbuf_loader_new();
