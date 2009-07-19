@@ -1449,7 +1449,7 @@ finish_auth_request(MsnAddReqData *data, char *msg)
 	g_free(data);
 
 	account = purple_connection_get_account(pc);
-	session = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	session = purple_object_get_protocol_data(PURPLE_OBJECT(pc));
 	userlist = session->userlist;
 
 	who = msn_normalize(account, purple_buddy_get_name(buddy));

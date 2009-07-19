@@ -843,6 +843,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 static void
 bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 {
+	PurpleAccount *account = NULL;
 	PurpleCipher *cipher;
 	XepXfer *xf;
 	char dstaddr[41];
@@ -859,7 +860,9 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	if(!xf)
 		return;
 
-	p = g_strdup_printf("%s%s%s", xf->sid, purple_buddy_get_name(pb), purple_account_get_username(purple_buddy_get_account(pb)));
+	account = purple_buddy_get_account(pb);
+
+	p = g_strdup_printf("%s%s%s", xf->sid, purple_buddy_get_name(pb), purple_account_get_username(account));
 
 	cipher = purple_sha1_cipher_new();
 	purple_cipher_append(cipher, (guchar *)p, strlen(p));

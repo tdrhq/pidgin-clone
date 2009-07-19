@@ -949,9 +949,11 @@ datacast_inform_user(MsnSwitchBoard *swboard, const char *who,
 	g_free(username);
 
 	if (swboard->conv == NULL) {
-		if (swboard->current_users > 1) 
-			swboard->conv = purple_find_chat(account->gc, swboard->chat_id);
-		else {
+		if (swboard->current_users > 1) {
+			PurpleConnection *pc = purple_account_get_connection(account);
+
+			swboard->conv = purple_find_chat(pc, swboard->chat_id);
+		} else {
 			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 									who, account);
 			if (swboard->conv == NULL)

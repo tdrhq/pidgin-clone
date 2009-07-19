@@ -1208,9 +1208,12 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 	}
 
 	if (user->invite_message) {
+		PurpleAccount *account = session->account;
+		PurpleConnection *pc = purple_account_get_connection(account);
 		char *tmp;
+
 		body = g_markup_escape_text(user->invite_message, -1);
-		tmp = g_markup_escape_text(purple_connection_get_display_name(session->account->gc), -1);
+		tmp = g_markup_escape_text(purple_connection_get_display_name(pc), -1);
 		invite = g_strdup_printf(MSN_CONTACT_INVITE_MESSAGE_XML, body, tmp);
 		g_free(body);
 		g_free(tmp);
