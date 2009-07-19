@@ -1,5 +1,30 @@
-#include "signals.h"
+/* purple
+ *
+ * Purple is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
+ */
+#include "gsignal.h"
 
+#include "debug.h"
+
+/******************************************************************************
+ * Structs
+ *****************************************************************************/
 struct _PurpleGSignalHandle {
 	guint signal_id;
 	gulong hook_id;
@@ -14,6 +39,9 @@ typedef struct {
 	GType return_type;
 } PurpleGSignalData;
 
+/******************************************************************************
+ * Helpers
+ *****************************************************************************/
 static gboolean
 purple_g_signal_emission_hook(GSignalInvocationHint *hint, guint n_params,
 							  const GValue *pvalues, gpointer data)
@@ -51,8 +79,14 @@ purple_g_signal_emission_hook(GSignalInvocationHint *hint, guint n_params,
 	return TRUE;
 }
 
+/******************************************************************************
+ * PurpleGSignal API
+ *****************************************************************************/
 PurpleGSignalHandle *
-purple_g_signal_connect(GType t, const gchar *n, GCallback cb, gpointer d) {
+purple_g_signal_connect_flags(GType type, const gchar *name,
+                               GConnectFlags flags,
+                               GCallback callback, gpointer data)
+{
 	PurpleGSignalData *sd = NULL;
 	PurpleGSignalHandle *handle = NULL;
 	GQuark detail = 0;
@@ -61,12 +95,31 @@ purple_g_signal_connect(GType t, const gchar *n, GCallback cb, gpointer d) {
 	gulong hook_id = 0;
 	gpointer *klass = NULL;
 
-	klass = g_type_class_ref(t);
+	klass = g_type_class_ref(type);
 
-	if(!g_signal_parse_name(n, t, &signal_id, &detail, TRUE))
-		return 0;
+	if(!g_signal_parse_name(name, type, &signal_id, &detail, TRUE)) {
+		purple_debug_warning("gsignal",
+		                     "Failed to find information for signal '%s' on "
+		                     "type '%s'!\n",
+		                     name, g_type_name(type));
+
+
+		g_type_class_unref(klass);
+
+		return NULL;
+	}
 
 	g_signal_query(signal_id, &query);
+
+	if(query.signal_id == 0) {
+		purple_debug_warning("gsignal",
+		                     "Failed to query signal '%s' on type '%s'!\n",
+		                     name, g_type_name(type));
+
+		g_type_class_unref(klass);
+
+		return NULL;
+	}
 
 	sd = g_new(PurpleGSignalData, 1);
 	sd->callback = cb;
