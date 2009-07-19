@@ -3601,38 +3601,7 @@ typing_animation(gpointer data) {
 static void
 update_typing_message(PidginConversation *gtkconv, const char *message)
 {
-	GtkTextBuffer *buffer;
-	GtkTextMark *stmark, *enmark;
-
-	if (g_object_get_data(G_OBJECT(gtkconv->webview), "disable-typing-notification"))
-		return;
-
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->webview));
-	stmark = gtk_text_buffer_get_mark(buffer, "typing-notification-start");
-	enmark = gtk_text_buffer_get_mark(buffer, "typing-notification-end");
-	if (stmark && enmark) {
-		GtkTextIter start, end;
-		gtk_text_buffer_get_iter_at_mark(buffer, &start, stmark);
-		gtk_text_buffer_get_iter_at_mark(buffer, &end, enmark);
-		gtk_text_buffer_delete_mark(buffer, stmark);
-		gtk_text_buffer_delete_mark(buffer, enmark);
-		gtk_text_buffer_delete(buffer, &start, &end);
-	} else if (message && *message == '\n' && message[1] == ' ' && message[2] == '\0')
-		message = NULL;
-
-#ifdef RESERVE_LINE
-	if (!message)
-		message = "\n ";   /* The blank space is required to avoid a GTK+/Pango bug */
-#endif
-
-	if (message) {
-		GtkTextIter iter;
-		gtk_text_buffer_get_end_iter(buffer, &iter);
-		gtk_text_buffer_create_mark(buffer, "typing-notification-start", &iter, TRUE);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, message, -1, "TYPING-NOTIFICATION", NULL);
-		gtk_text_buffer_get_end_iter(buffer, &iter);
-		gtk_text_buffer_create_mark(buffer, "typing-notification-end", &iter, TRUE);
-	}
+	/* this is not handled at all */
 }
 
 static void
@@ -5620,21 +5589,21 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_webview_append_html (GTK_WEBVIEW(gtkconv->webview), message);
 	} else if (flags & PURPLE_MESSAGE_SYSTEM) {
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT %s><FONT SIZE=\"2\"><!--%s --></FONT><B>%s</B></FONT>",
+			   "<font %s><font size=\"2\"><span class='timestamp'>%s</span></font><b>%s</b></font>",
 			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 
 	} else if (flags & PURPLE_MESSAGE_ERROR) {
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--%s --></FONT><B>%s</B></FONT></FONT>",
+			   "<font color=\"#ff0000\"><font %s><font size=\"2\"><span class='timestamp'>%s</span> </font><b>%s</b></font></font>",
 			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 
 	} else if (flags & PURPLE_MESSAGE_NO_LOG) {
 		g_snprintf(buf2, BUF_LONG,
-			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B>",
+			   "<b><font %s color=\"#777777\">%s</font></b>",
 			   sml_attrib ? sml_attrib : "", displaying);
 
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
@@ -5707,7 +5676,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 		g_free(alias_escaped);
 
-		g_snprintf(buf2, BUF_LONG, "<FONT %s>%s</FONT> ", sml_attrib ? sml_attrib : "", str);
+		g_snprintf(buf2, BUF_LONG, "<font %s>%s</font> ", sml_attrib ? sml_attrib : "", str);
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 
 		g_free(str);
