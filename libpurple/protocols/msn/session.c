@@ -312,6 +312,29 @@ msn_session_sync_users(MsnSession *session)
 	}
 }
 
+/* Sync FL, AL, BL with the privacy subsystem */
+static void
+msn_session_sync_privacy_lists(MsnSession *session)
+{
+	GList *l = NULL;
+	MsnUser *tmp = NULL;
+	GSList *buddy_l = NULL, *allow_l = NULL, *block_both_l = NULL;
+
+	for (l = session->userlist->users; l != NULL; l = l->next)
+	{
+		tmp = (MsnUser *)l->data;
+
+		if (tmp->list_op & MSN_LIST_FL_OP)
+			buddy_l = g_slist_prepend(buddy_l, tmp->passport);
+		if (tmp->list_op & MSN_LIST_AL_OP)
+			allow_l = g_slist_prepend(allow_l, tmp->passport);
+		if (tmp->list_op & MSN_LIST_BL_OP)
+			block_both_l = g_slist_prepend(block_both_l, tmp->passport);
+	}
+	purple_privacy_sync_lists(session->account, buddy_l, allow_l, NULL, block_both_l, NULL, NULL);
+	purple_debug_info("msn","Privacy Lists synchronized\n");
+}
+
 void
 msn_session_set_error(MsnSession *session, MsnErrorType error,
 					  const char *info)
@@ -446,6 +469,7 @@ msn_session_finish_login(MsnSession *session)
 
 		/* Sync users */
 		msn_session_sync_users(session);
+		msn_session_sync_privacy_lists(session);
 	}
 
 	msn_change_status(session);

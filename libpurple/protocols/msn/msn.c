@@ -785,6 +785,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		}
 	}
 
+	/* Privacy laters: */
 	/* XXX: This is being shown in non-full tooltips because the
 	 * XXX: blocked icon overlay isn't always accurate for MSN.
 	 * XXX: This can die as soon as purple_privacy_check() knows that

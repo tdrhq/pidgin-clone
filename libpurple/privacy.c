@@ -40,6 +40,8 @@ purple_privacy_permit_add(PurpleAccount *account, const char *who,
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
+	purple_debug_info("Privacy","In purple_privacy_permit_add\n"); /* remove me laters */
+
 	name = g_strdup(purple_normalize(account, who));
 
 	purple_privacy_update_contact(account, name, local_only, TRUE, TRUE);
@@ -74,6 +76,8 @@ purple_privacy_permit_remove(PurpleAccount *account, const char *who,
  
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
+
+	purple_debug_info("Privacy","In purple_privacy_permit_remove\n"); /* remove me laters */
 
 	name = g_strdup(purple_normalize(account, who));
 
@@ -120,6 +124,8 @@ purple_privacy_deny_add(PurpleAccount *account, const char *who,
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
+	purple_debug_info("Privacy","In purple_privacy_deny_add\n"); /* remove me laters */
+
 	name = g_strdup(purple_normalize(account, who));
 	purple_privacy_update_contact(account, name, local_only, TRUE, TRUE);
 
@@ -150,6 +156,8 @@ purple_privacy_deny_remove(PurpleAccount *account, const char *who,
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
+
+	purple_debug_info("Privacy","In purple_privacy_deny_remove\n"); /* remove me laters */
 
 	name = g_strdup(purple_normalize(account, who));
 

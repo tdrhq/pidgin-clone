@@ -175,20 +175,6 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		serv_got_alias(gc, passport, store);
 	}
 
-	if (list_op & MSN_LIST_AL_OP)
-	{
-		/* These are users who are allowed to see our status. */
-		purple_privacy_deny_remove(account, passport, TRUE);
-		purple_privacy_permit_add(account, passport, TRUE);
-	}
-
-	if (list_op & MSN_LIST_BL_OP)
-	{
-		/* These are users who are not allowed to see our status. */
-		purple_privacy_permit_remove(account, passport, TRUE);
-		purple_privacy_deny_add(account, passport, TRUE);
-	}
-
 	if (list_op & MSN_LIST_RL_OP)
 	{
 		/* These are users who have us on their buddy list. */
@@ -736,18 +722,7 @@ msn_userlist_load(MsnSession *session)
 		purple_buddy_set_protocol_data(buddy, user);
 		msn_user_set_op(user, MSN_LIST_FL_OP);
 	}
-	for (l = session->account->permit; l != NULL; l = l->next)
-	{
-		user = msn_userlist_find_add_user(session->userlist,
-						(char *)l->data,NULL);
-		msn_user_set_op(user, MSN_LIST_AL_OP);
-	}
-	for (l = session->account->deny; l != NULL; l = l->next)
-	{
-		user = msn_userlist_find_add_user(session->userlist,
-						(char *)l->data,NULL);
-		msn_user_set_op(user, MSN_LIST_BL_OP);
-	}
 
+	/* Privacy laters: Sync privacy lists */
 }
 
