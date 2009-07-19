@@ -67,7 +67,7 @@ purple_g_signal_emission_hook(GSignalInvocationHint *hint, guint n_params,
 	g_signal_connect_closure_by_id(obj, hint->signal_id, sd->detail, closure, after);
 
 	if(sd->return_type != G_TYPE_NONE) {
-		GValue ret = { 0, };
+		GValue ret;
 
 		g_value_init(&ret, sd->return_type);
 
@@ -84,8 +84,8 @@ purple_g_signal_emission_hook(GSignalInvocationHint *hint, guint n_params,
  *****************************************************************************/
 PurpleGSignalHandle *
 purple_g_signal_connect_flags(GType type, const gchar *name,
-                               GConnectFlags flags,
-                               GCallback callback, gpointer data)
+							  GConnectFlags flags,
+							  GCallback callback, gpointer data)
 {
 	PurpleGSignalData *sd = NULL;
 	PurpleGSignalHandle *handle = NULL;
@@ -122,11 +122,11 @@ purple_g_signal_connect_flags(GType type, const gchar *name,
 	}
 
 	sd = g_new(PurpleGSignalData, 1);
-	sd->callback = cb;
-	sd->user_data = d;
+	sd->callback = callback;
+	sd->user_data = data;
 	sd->flags = 0;
 	sd->detail = detail;
-	sd->type = t;
+	sd->type = type;
 	sd->return_type = query.return_type;
 
 	hook_id = g_signal_add_emission_hook(signal_id, detail,

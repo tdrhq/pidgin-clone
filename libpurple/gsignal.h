@@ -36,7 +36,7 @@ G_BEGIN_DECLS
 PurpleGSignalHandle *purple_g_signal_connect_flags(GType type, const gchar *name, GConnectFlags flags, GCallback callback, gpointer data);
 void purple_g_signal_disconnect(PurpleGSignalHandle *handle);
 
-GType purple_g_signal_handle_get_gtype(void);
+GType purple_g_signal_handle_get_type(void);
 PurpleGSignalHandle *purple_g_signal_handle_new(guint signal_id, gulong hook_id);
 PurpleGSignalHandle *purple_g_signal_handle_copy(const PurpleGSignalHandle *handle);
 void purple_g_signal_handle_free(PurpleGSignalHandle *handle);
