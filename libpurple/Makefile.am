@@ -87,6 +87,7 @@ purple_coresources = \
 	savedstatuses.c \
 	server.c \
 	sha1cipher.c \
+	sha256cipher.c \
 	signals.c \
 	smiley.c \
 	dnsquery.c \
@@ -166,6 +167,7 @@ purple_coreheaders = \
 	dnsquery.h \
 	dnssrv.h \
 	sha1cipher.h \
+	sha256cipher.h \
 	status.h \
 	stringref.h \
 	stun.h \
