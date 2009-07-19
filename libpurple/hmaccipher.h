@@ -36,13 +36,10 @@
 #define PURPLE_HMAC_CIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_HMAC_CIPHER, PurpleHMACCipherClass))
 
 typedef struct _PurpleHMACCipher				PurpleHMACCipher;
-typedef struct _PurpleHMACCipherPriv			PurpleHMACCipherPriv;
 typedef struct _PurpleHMACCipherClass			PurpleHMACCipherClass;
 
 struct _PurpleHMACCipher {
 	PurpleCipher gparent;
-
-	PurpleHMACCipherPriv *priv;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -63,7 +60,9 @@ G_BEGIN_DECLS
 
 GType purple_hmac_cipher_get_gtype(void);
 
-PurpleCipher *purple_hmac_cipher_new(void);
+PurpleCipher *purple_hmac_cipher_new(PurpleCipher *hash_cipher);
+
+PurpleCipher *purple_hmac_cipher_get_hash(const PurpleHMACCipher *cipher);
 
 G_END_DECLS
 
