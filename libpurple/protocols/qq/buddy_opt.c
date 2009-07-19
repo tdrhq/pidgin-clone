@@ -1017,7 +1017,6 @@ void qq_process_buddy_check_code(PurpleConnection *gc, guint8 *data, gint data_l
 	guint16 flag1, flag2;
 
 	g_return_if_fail(data != NULL && data_len >= 5);
-	g_return_if_fail(uid != 0);
 
 	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 

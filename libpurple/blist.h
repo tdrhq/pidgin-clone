@@ -167,6 +167,10 @@ void purple_blist_show(void);
 
 /**
  * Destroys the buddy list window.
+ *
+ * @deprecated The UI is responsible for cleaning up the
+ *             PurpleBuddyList->ui_data. purple_blist_uninit() will free the
+ *             PurpleBuddyList* itself.
  */
 void purple_blist_destroy(void);
 

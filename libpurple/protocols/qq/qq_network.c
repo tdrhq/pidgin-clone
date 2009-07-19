@@ -208,7 +208,7 @@ gboolean qq_connect_later(gpointer data)
 		if ( set_new_server(qd) != TRUE) {
 			purple_connection_error_reason(gc,
 					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-					_("Unable to connect."));
+					_("Unable to connect"));
 			return FALSE;
 		}
 		qd->connect_retry = QQ_CONNECT_MAX;
@@ -233,7 +233,7 @@ gboolean qq_connect_later(gpointer data)
 	if ( !connect_to_server(gc, tmp_server, port) ) {
 			purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Unable to connect."));
+				_("Unable to connect"));
 	}
 
 	g_free(tmp_server);
@@ -390,7 +390,7 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 			/* No worries */
 			return;
 
-		error_msg = g_strdup_printf(_("Lost connection with server:\n%s"), g_strerror(errno));
+		error_msg = g_strdup_printf(_("Lost connection with server: %s"), g_strerror(errno));
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				error_msg);
@@ -398,7 +398,7 @@ static void tcp_pending(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	} else if (buf_len == 0) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Server closed the connection."));
+				_("Server closed the connection"));
 		return;
 	}
 
@@ -586,9 +586,11 @@ static void tcp_can_write(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	else if (ret < 0) {
 		/* TODO: what to do here - do we really have to disconnect? */
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		        _("Write Error"));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -630,11 +632,13 @@ static gint tcp_send_out(PurpleConnection *gc, guint8 *data, gint data_len)
 		ret = 0;
 	} else if (ret <= 0) {
 		/* TODO: what to do here - do we really have to disconnect? */
+		gchar *tmp = g_strdup_printf(_("Lost connection with server: %s"),
+				g_strerror(errno));
 		purple_debug_error("TCP_SEND_OUT",
 			"Send to socket %d failed: %d, %s\n", qd->fd, errno, g_strerror(errno));
 		purple_connection_error_reason(gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				g_strerror(errno));
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
+		g_free(tmp);
 		return ret;
 	}
 
@@ -664,7 +668,7 @@ static gboolean network_timeout(gpointer data)
 	if (is_lost_conn) {
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Connection lost"));
+			_("Lost connection with server"));
 		return TRUE;
 	}
 
@@ -862,7 +866,7 @@ static void udp_host_resolved(GSList *hosts, gpointer data, const char *error_me
 	if (!hosts || !hosts->data) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Couldn't resolve host"));
+				_("Unable to resolve hostname"));
 		return;
 	}
 
@@ -940,7 +944,7 @@ gboolean connect_to_server(PurpleConnection *gc, gchar *server, gint port)
 
 	account = purple_connection_get_account(gc);
 
-	if (server == NULL || strlen(server) == 0 || port == 0) {
+	if (server == NULL || server[0] == '\0' || port == 0) {
 		purple_connection_error_reason(gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Invalid server or port"));

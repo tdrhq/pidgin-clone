@@ -325,7 +325,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 
 	case SILC_CLIENT_CONN_ERROR:
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                             _("Error during connecting to SILC Server"));
+		                             _("Error connecting to SILC Server"));
 		g_unlink(silcpurple_session_file(purple_account_get_username(sg->account)));
 		break;
 
@@ -348,7 +348,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 
 	case SILC_CLIENT_CONN_ERROR_TIMEOUT:
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                             _("Connection Timeout"));
+		                             _("Connection timed out"));
 		break;
 	}
 
@@ -447,7 +447,7 @@ static void silcpurple_continue_running(SilcPurple sg)
 				 silcpurple_login_connected, gc) == NULL)
 	{
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                             _("Unable to create connection"));
+		                             _("Unable to connect"));
 		purple_object_set_protocol_data(PURPLE_OBJECT(gc), NULL);
 		silc_free(sg);
 		return;
@@ -491,7 +491,7 @@ static void silcpurple_got_password_cb(PurpleConnection *gc, PurpleRequestFields
 				password,
 				&sg->public_key, &sg->private_key)) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                             _("Could not load SILC key pair"));
+		                             _("Unable to load SILC key pair"));
 		purple_object_set_protocol_data(PURPLE_OBJECT(gc), NULL);
 		silc_free(sg);
 		return;
@@ -507,7 +507,7 @@ static void silcpurple_no_password_cb(PurpleConnection *gc, PurpleRequestFields 
 		return;
 	sg = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-			_("Could not load SILC key pair"));
+			_("Unable to load SILC key pair"));
 	purple_object_set_protocol_data(PURPLE_OBJECT(gc), NULL);
 	silc_free(sg);
 }
@@ -531,7 +531,7 @@ static void silcpurple_running(SilcClient client, void *context)
 				(purple_connection_get_password(gc) == NULL) ? "" : purple_connection_get_password(gc),
 				&sg->public_key, &sg->private_key)) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                             _("Could not load SILC key pair"));
+		                             _("Unable to not load SILC key pair"));
 		purple_object_set_protocol_data(PURPLE_OBJECT(gc),NULL);
 		silc_free(sg);
 		return;
@@ -614,7 +614,7 @@ silcpurple_login(PurpleAccount *account)
 	if (!silc_client_init(client, username, hostname, realname,
 			      silcpurple_running, sg)) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                             _("Cannot initialize SILC protocol"));
+		                             _("Unable to initialize SILC protocol"));
 		purple_object_set_protocol_data(PURPLE_OBJECT(gc),NULL);
 		silc_free(sg);
 		silc_free(hostname);

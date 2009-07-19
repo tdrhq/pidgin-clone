@@ -539,11 +539,20 @@ purple_connection_notice(PurpleConnection *gc, const char *text)
 static gboolean
 purple_connection_disconnect_cb(gpointer data)
 {
-	PurpleAccount *account = data;
-	char *password = g_strdup(purple_account_get_password(account));
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	char *password;
+
+	account = data;
+	gc = purple_account_get_connection(account);
+
+	gc->disconnect_timeout = 0;
+
+	password = g_strdup(purple_account_get_password(account));
 	purple_account_disconnect(account);
 	purple_account_set_password(account, password);
 	g_free(password);
+
 	return FALSE;
 }
 
@@ -590,7 +599,7 @@ purple_connection_error_reason (PurpleConnection *gc,
 	}
 
 	/* If we've already got one error, we don't need any more */
-	if (gc->priv->disconnect_timeout)
+	if (gc->priv->disconnect_timeout > 0)
 		return;
 
 	gc->priv->wants_to_die = purple_connection_error_is_fatal (reason);

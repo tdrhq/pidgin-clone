@@ -28,6 +28,8 @@ typedef struct _JabberID {
 	char *resource;
 } JabberID;
 
+#include "jabber.h"
+
 JabberID* jabber_id_new(const char *str);
 void jabber_id_free(JabberID *jid);
 
@@ -42,8 +44,13 @@ gboolean jabber_is_own_server(JabberStream *js, const char *jid);
 /* Returns true if JID is the bare JID of our account. */
 gboolean jabber_is_own_account(JabberStream *js, const char *jid);
 
+/* Try to convert an IDNA domain name to something we can pass to a DNS lookup.
+ * If IDN support is not available, returns a copy of the input string.
+ */
+gchar *jabber_try_idna_to_ascii(const gchar *input);
+
 gboolean jabber_nodeprep_validate(const char *);
-gboolean jabber_nameprep_validate(const char *);
+gboolean jabber_domain_validate(const char *);
 gboolean jabber_resourceprep_validate(const char *);
 
 PurpleConversation *jabber_find_unnormalized_conv(const char *name, PurpleAccount *account);

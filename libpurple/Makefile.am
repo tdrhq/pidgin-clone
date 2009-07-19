@@ -1,5 +1,6 @@
 EXTRA_DIST = \
 		dbus-analyze-functions.py \
+		dbus-analyze-signals.py \
 		dbus-analyze-types.py \
 		marshallers.list \
 		purple-notifications-example \
@@ -61,7 +62,6 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
-	marshallers.c \
 	md4cipher.c \
 	md5cipher.c \
 	media.c \
@@ -105,6 +105,9 @@ purple_coresources = \
 	version.c \
 	xmlnode.c \
 	whiteboard.c
+
+purple_builtsources = \
+	marshallers.c
 
 purple_coreheaders = \
 	account.h \
@@ -195,6 +198,7 @@ CLEANFILES = \
 	dbus-bindings.c \
 	dbus-client-binding.c \
 	dbus-client-binding.h \
+	dbus-signals.c \
 	dbus-types.c \
 	dbus-types.h \
 	marshallers.c \
@@ -215,6 +219,10 @@ dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
 		$(purple_builtheaders)
 dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
+# We should probably make this better
+dbus_signals = $(addprefix $(srcdir)/, $(purple_coresources)) \
+	$(srcdir)/protocols/irc/irc.c \
+	$(srcdir)/protocols/jabber/libxmpp.c
 
 dbus-types.c: dbus-analyze-types.py $(purple_build_coreheaders)
 	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@
@@ -225,8 +233,11 @@ dbus-types.h: dbus-analyze-types.py $(purple_build_coreheaders)
 dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py > $@
 
-dbus-server.$(OBJEXT): dbus-bindings.c dbus-types.c dbus-types.h
-dbus-server.lo: dbus-bindings.c dbus-types.c dbus-types.h
+dbus-signals.c: dbus-analyze-signals.py $(dbus_signals)
+	cat $(dbus_signals) | $(PYTHON) $(srcdir)/dbus-analyze-signals.py > $@
+
+dbus-server.$(OBJEXT): dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
+dbus-server.lo: dbus-bindings.c dbus-signals.c dbus-types.c dbus-types.h
 $(libpurple_la_OBJECTS): dbus-types.h
 
 # libpurple-client
@@ -266,17 +277,17 @@ purple-client-example.$(OBJEXT): purple-client-bindings.h
 bin_SCRIPTS = purple-remote purple-send purple-send-async purple-url-handler
 
 BUILT_SOURCES = $(purple_builtheaders) \
+	$(purple_builtsources) \
+	dbus-bindings.c \
+	dbus-signals.c \
 	dbus-types.c \
 	dbus-types.h \
-	dbus-bindings.c \
-	marshallers.c \
-	marshallers.h \
 	purple-client-bindings.c \
 	purple-client-bindings.h
 
 else
 
-BUILT_SOURCES = $(purple_builtheaders)
+BUILT_SOURCES = $(purple_builtheaders) $(purple_builtsources)
 
 endif
 
@@ -284,6 +295,7 @@ lib_LTLIBRARIES = libpurple.la $(libpurple_client_lib)
 
 libpurple_la_SOURCES = \
 	$(purple_coresources) \
+	$(purple_builtsources) \
 	$(dbus_sources)
 
 noinst_HEADERS= \
