@@ -1,7 +1,5 @@
 #include "signals.h"
 
-#include <stdio.h>
-
 struct _PurpleGSignalHandle {
 	guint signal_id;
 	gulong hook_id;
@@ -25,13 +23,10 @@ purple_g_signal_emission_hook(GSignalInvocationHint *hint, guint n_params,
 	gboolean swap = FALSE, after = FALSE;
 	GClosure *closure = NULL;
 
-	printf("fn: purple_signal_emission_hook\n");
 	obj = g_value_get_object(pvalues);
 
-	if(!G_TYPE_CHECK_INSTANCE_TYPE(obj, sd->type)) {
-		printf("wrong instance type!\n");
+	if(!G_TYPE_CHECK_INSTANCE_TYPE(obj, sd->type))
 		return TRUE;
-	}
 
 	swap = (sd->flags & G_CONNECT_SWAPPED);
 	after = (sd->flags & G_CONNECT_AFTER);
