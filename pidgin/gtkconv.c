@@ -5676,6 +5676,12 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 		g_free(alias_escaped);
 
+		/* timestamp */ 
+		{
+			g_snprintf (buf2, BUF_LONG, "<font size='2'>%s </font>", mdate);
+
+			gtk_webview_append_html (GTK_WEBVIEW(gtkconv->webview), buf2);
+		}
 		g_snprintf(buf2, BUF_LONG, "<font %s>%s</font> ", sml_attrib ? sml_attrib : "", str);
 		gtk_webview_append_html(GTK_WEBVIEW(gtkconv->webview), buf2);
 
