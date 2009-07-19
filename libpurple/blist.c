@@ -431,8 +431,6 @@ void purple_blist_set_visible(gboolean show)
 		ops->set_visible(show);
 }
 
-
-
 gboolean
 purple_strings_are_different(const char *one, const char *two)
 {
@@ -480,9 +478,9 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 			next = child->next;
 			if (PURPLE_IS_CONTACT(child)) {
 				PurpleBlistNode *bnode;
-				purple_blist_add_contact((PurpleContact *)child, dest, prev);
+				purple_blist_add_contact(PURPLE_CONTACT(child), dest, prev);
 				for (bnode = child->child; bnode != NULL; bnode = bnode->next) {
-					purple_blist_add_buddy((PurpleBuddy *)bnode, (PurpleContact *)child,
+					purple_blist_add_buddy((PurpleBuddy *)bnode, PURPLE_CONTACT(child),
 							NULL, bnode->prev);
 					moved_buddies = g_list_append(moved_buddies, bnode);
 				}
@@ -635,7 +633,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 
 	if (node && (PURPLE_IS_CONTACT(node) ||
 				PURPLE_IS_CHAT(node)))
-		g = (PurpleGroup*)node->parent;
+		g = PURPLE_GROUP(node->parent);
 	else if (group)
 		g = group;
 	else {
@@ -689,7 +687,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 					g_hash_table_replace(account_buddies, hb2, b);
 
 					if (purple_account_get_connection(purple_buddy_get_account(b)))
-						serv_move_buddy(b, (PurpleGroup *)cnode->parent, g);
+						serv_move_buddy(b, PURPLE_GROUP(cnode->parent), g);
 				} else {
 					/* If it's already in the group, then we don't move it there,
 					 * we just remove it from the contact.*/
@@ -700,7 +698,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 					g_free(hb->name);
 					g_free(hb);
 					if (purple_account_get_connection(purple_buddy_get_account(b)))
-						purple_account_remove_buddy(purple_buddy_get_account(b), b, (PurpleGroup *)cnode->parent);
+						purple_account_remove_buddy(purple_buddy_get_account(b), b, PURPLE_GROUP(cnode->parent));
 
 					/* Since we removed it from the contact, the cnode might be empty */
 					if (!cnode->child->next)
@@ -900,7 +898,7 @@ void purple_blist_remove_chat(PurpleChat *chat)
 
 	node = PURPLE_BLIST_NODE(chat);
 	gnode = node->parent;
-	group = (PurpleGroup *)gnode;
+	group = PURPLE_GROUP(gnode);
 
 	if (gnode != NULL)
 	{
@@ -1067,21 +1065,21 @@ void purple_blist_add_account(PurpleAccount *account)
 						if (PURPLE_IS_BUDDY(bnode) &&
 								purple_buddy_get_account(PURPLE_BUDDY(bnode)) == account) {
 							recompute = TRUE;
-							((PurpleContact*)cnode)->currentsize++;
-							if (((PurpleContact*)cnode)->currentsize == 1)
-								((PurpleGroup*)gnode)->currentsize++;
+							(PURPLE_CONTACT(cnode))->currentsize++;
+							if ((PURPLE_CONTACT(cnode))->currentsize == 1)
+								(PURPLE_GROUP(gnode))->currentsize++;
 							ops->update(bnode);
 						}
 					}
 					if (recompute ||
 							purple_blist_node_get_bool(cnode, "show_offline")) {
-						purple_contact_invalidate_priority_buddy((PurpleContact*)cnode);
+						purple_contact_invalidate_priority_buddy(PURPLE_CONTACT(cnode));
 						ops->update(cnode);
 					}
 			} else if (PURPLE_IS_CHAT(cnode) &&
 					((PurpleChat*)cnode)->account == account) {
-				((PurpleGroup *)gnode)->online++;
-				((PurpleGroup *)gnode)->currentsize++;
+				(PURPLE_GROUP(gnode))->online++;
+				(PURPLE_GROUP(gnode))->currentsize++;
 				ops->update(cnode);
 			}
 		}
@@ -1105,12 +1103,12 @@ void purple_blist_remove_account(PurpleAccount *account)
 		if (!PURPLE_IS_GROUP(gnode))
 			continue;
 
-		group = (PurpleGroup *)gnode;
+		group = PURPLE_GROUP(gnode);
 
 		for (cnode = gnode->child; cnode; cnode = cnode->next) {
 			if (PURPLE_IS_CONTACT(cnode)) {
 				gboolean recompute = FALSE;
-				contact = (PurpleContact *)cnode;
+				contact = PURPLE_CONTACT(cnode);
 
 				for (bnode = cnode->child; bnode; bnode = bnode->next) {
 					if (!PURPLE_IS_BUDDY(bnode))
@@ -1179,7 +1177,7 @@ gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account)
 	PurpleBlistNode *cnode;
 	for (cnode = (PURPLE_BLIST_NODE(g))->child; cnode; cnode = cnode->next) {
 		if (PURPLE_IS_CONTACT(cnode)) {
-			if(purple_contact_on_account((PurpleContact *) cnode, account))
+			if(purple_contact_on_account(PURPLE_CONTACT(cnode), account))
 				return TRUE;
 		} else if (PURPLE_IS_CHAT(cnode)) {
 			PurpleChat *chat = (PurpleChat *)cnode;
@@ -1210,7 +1208,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 					purple_blist_node_first_child(PURPLE_BLIST_NODE(list)));
 		}
 	} else {
-		group = (PurpleGroup*)node->parent;
+		group = PURPLE_GROUP(node->parent);
 	}
 
 
@@ -1242,10 +1240,10 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 		cnode->prev = node;
 		cnode->parent = node->parent;
 		node->next = cnode;
-		((PurpleGroup *)node->parent)->totalsize++;
+		(PURPLE_GROUP(node->parent))->totalsize++;
 		if (purple_account_is_connected(chat->account)) {
-			((PurpleGroup *)node->parent)->online++;
-			((PurpleGroup *)node->parent)->currentsize++;
+			(PURPLE_GROUP(node->parent))->online++;
+			(PURPLE_GROUP(node->parent))->currentsize++;
 		}
 	} else {
 		if ((PURPLE_BLIST_NODE(group))->child)
@@ -1293,7 +1291,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 
 	if (node && PURPLE_IS_BUDDY(node)) {
 		c = (PurpleContact*)node->parent;
-		g = (PurpleGroup*)node->parent->parent;
+		g = PURPLE_GROUP(node->parent->parent);
 	} else if (contact) {
 		c = contact;
 		g = PURPLE_GROUP(PURPLE_BLIST_NODE(c)->parent);
@@ -1317,18 +1315,18 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 			((PurpleContact*)bnode->parent)->online--;
 			if (((PurpleContact*)bnode->parent)->online == 0)
-				((PurpleGroup*)bnode->parent->parent)->online--;
+				(PURPLE_GROUP(bnode->parent->parent))->online--;
 		}
 		if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
 			((PurpleContact*)bnode->parent)->currentsize--;
 			if (((PurpleContact*)bnode->parent)->currentsize == 0)
-				((PurpleGroup*)bnode->parent->parent)->currentsize--;
+				(PURPLE_GROUP(bnode->parent->parent))->currentsize--;
 		}
 		((PurpleContact*)bnode->parent)->totalsize--;
 		/* the group totalsize will be taken care of by remove_contact below */
 
 		if (bnode->parent->parent != PURPLE_BLIST_NODE(g))
-			serv_move_buddy(buddy, (PurpleGroup *)bnode->parent->parent, g);
+			serv_move_buddy(buddy, PURPLE_GROUP(bnode->parent->parent), g);
 
 		if (bnode->next)
 			bnode->next->prev = bnode->prev;
@@ -1502,7 +1500,7 @@ purple_chat_get_group(PurpleChat *chat)
 {
 	g_return_val_if_fail(chat != NULL, NULL);
 
-	return (PurpleGroup *)((PURPLE_BLIST_NODE(chat))->parent);
+	return PURPLE_GROUP(((PURPLE_BLIST_NODE(chat))->parent));
 }
 
 static void

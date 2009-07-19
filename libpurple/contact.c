@@ -40,7 +40,7 @@ contact_to_xmlnode(PurpleBlistNode *cnode)
 	PurpleContact *contact;
 	PurpleBlistNode *bnode;
 
-	contact = (PurpleContact *)cnode;
+	contact = PURPLE_CONTACT(cnode);
 
 	node = xmlnode_new("contact");
 
