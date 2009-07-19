@@ -110,12 +110,6 @@ struct _PurpleCipherClass {
 	/** The set key with length function */
 	void (*set_key_with_len)(PurpleCipher *cipher, const guchar *key, size_t len);
 
-	/** The get hash function */
-	PurpleCipher *(*get_hash)(PurpleCipher *cipher);
-
-	/** The set hash function */
-	void (*set_hash)(PurpleCipher *cipher, PurpleCipher *hash);
-
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
@@ -275,24 +269,6 @@ size_t purple_cipher_get_block_size(PurpleCipher *cipher);
  *
  */
 void purple_cipher_set_key_with_len(PurpleCipher *cipher, const guchar *key, size_t len);
-
-/**
- * Sets the internal hash of a cipher
- *
- * @param cipher   The cipher whose hash to set
- * @param hash	   The internal hash the cipher should use
- *
- */
-void purple_cipher_set_hash(PurpleCipher *cipher, PurpleCipher *hash);
-
-/**
- * Gets the internal hash of a cipher
- *
- * @param cipher   The cipher whose hash to get
- *
- * @return The internal hash the cipher is using.
- */
-PurpleCipher *purple_cipher_get_hash(PurpleCipher *cipher);
 
 /*@}*/
 

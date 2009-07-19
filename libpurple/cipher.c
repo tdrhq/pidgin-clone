@@ -320,32 +320,3 @@ purple_cipher_set_key_with_len(PurpleCipher *cipher,
 		klass->set_key_with_len(cipher, key, len);
 }
 
-void
-purple_cipher_set_hash(PurpleCipher *cipher,
-					   PurpleCipher *hash)
-{
-	PurpleCipherClass *klass = NULL;
-
-	g_return_if_fail(PURPLE_IS_CIPHER(cipher));
-	g_return_if_fail(PURPLE_IS_CIPHER(hash));
-
-	klass = PURPLE_CIPHER_GET_CLASS(cipher);
-
-	if(klass && klass->set_hash)
-		klass->set_hash(cipher, hash);
-}
-
-PurpleCipher *
-purple_cipher_get_hash(PurpleCipher *cipher)
-{
-	PurpleCipherClass *klass = NULL;
-
-	g_return_val_if_fail(PURPLE_IS_CIPHER(cipher), NULL);
-
-	klass = PURPLE_CIPHER_GET_CLASS(cipher);
-
-	if(klass && klass->get_hash)
-		return klass->get_hash(cipher);
-
-	return NULL;
-}
