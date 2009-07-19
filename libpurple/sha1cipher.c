@@ -1,6 +1,7 @@
 /*
  */
 #include "sha1cipher.h"
+#include "gcipher.h"
 
 #include <string.h>
 
@@ -9,9 +10,11 @@
 #define SHA1_BLOCK_WORDS		16
 #define SHA1_HASH_WORDS		4
 
+
 /******************************************************************************
  * Structs
  *****************************************************************************/
+#if !GLIB_CHECK_VERSION(2,16,0)
 struct _PurpleSHA1CipherPriv {
 	guint32 H[5];
 	guint32 W[80];
@@ -21,15 +24,12 @@ struct _PurpleSHA1CipherPriv {
 	guint32 sizeHi;
 	guint32 sizeLo;
 };
-
+#endif
 /******************************************************************************
  * Enums
  *****************************************************************************/
 enum {
 	PROP_ZERO,
-	PROP_SIZE_HI,
-	PROP_SIZE_LO,
-	PROP_LEN_W,
 	PROP_LAST,
 };
 
@@ -46,6 +46,8 @@ static GObjectClass *parent_class = NULL;
 /******************************************************************************
  * Cipher Stuff
  *****************************************************************************/
+
+#if !GLIB_CHECK_VERSION(2,16,0)
 static void
 purple_sha1_cipher_reset(PurpleCipher *cipher) {
 	PurpleSHA1Cipher *sha1_cipher = PURPLE_SHA1_CIPHER(cipher);
@@ -188,6 +190,7 @@ purple_sha1_cipher_digest(PurpleCipher *cipher, size_t in_len,
 
 	return TRUE;
 }
+#endif /* !GLIB_CHECK_VERSION */
 
 static size_t
 purple_sha1_cipher_get_block_size(PurpleCipher *cipher)
@@ -198,56 +201,7 @@ purple_sha1_cipher_get_block_size(PurpleCipher *cipher)
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
-static void
-purple_sha1_cipher_set_property(GObject *obj, guint param_id,
-								const GValue *value, GParamSpec *pspec)
-{
-	PurpleSHA1Cipher *sha1_cipher = PURPLE_SHA1_CIPHER(obj);
-
-	switch(param_id) {
-		case PROP_SIZE_HI:
-			purple_sha1_cipher_set_size_hi(sha1_cipher,
-										   g_value_get_int(value));
-			break;
-		case PROP_SIZE_LO:
-			purple_sha1_cipher_set_size_lo(sha1_cipher,
-										   g_value_get_int(value));
-			break;
-		case PROP_LEN_W:
-			purple_sha1_cipher_set_len_w(sha1_cipher,
-										 g_value_get_int(value));
-			break;
-		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
-			break;
-	}
-}
-
-static void
-purple_sha1_cipher_get_property(GObject *obj, guint param_id, GValue *value,
-								GParamSpec *pspec)
-{
-	PurpleSHA1Cipher *sha1_cipher = PURPLE_SHA1_CIPHER(obj);
-
-	switch(param_id) {
-		case PROP_SIZE_HI:
-			g_value_set_int(value,
-							purple_sha1_cipher_get_size_hi(sha1_cipher));
-			break;
-		case PROP_SIZE_LO:
-			g_value_set_int(value,
-							purple_sha1_cipher_get_size_lo(sha1_cipher));
-			break;
-		case PROP_LEN_W:
-			g_value_set_int(value,
-							purple_sha1_cipher_get_len_w(sha1_cipher));
-			break;
-		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
-			break;
-	}
-}
-
+#if !GLIB_CHECK_VERSION(2,16,0)
 static void
 purple_sha1_cipher_finalize(GObject *obj) {
 	PurpleCipher *cipher = PURPLE_CIPHER(obj);
@@ -258,47 +212,36 @@ purple_sha1_cipher_finalize(GObject *obj) {
 
 	g_free(sha1_cipher->priv);
 }
+#endif /* !GLIB_CHECK_VERSION(2,16,0) */
 
 static void
 purple_sha1_cipher_class_init(PurpleSHA1CipherClass *klass) {
+#if !GLIB_CHECK_VERSION(2,16,0)
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+#endif
 	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
-	GParamSpec *pspec = NULL;
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	obj_class->set_property = purple_sha1_cipher_set_property;
-	obj_class->get_property = purple_sha1_cipher_get_property;
+#if !GLIB_CHECK_VERSION(2,16,0)
 	obj_class->finalize = purple_sha1_cipher_finalize;
 
 	cipher_class->reset = purple_sha1_cipher_reset;
 	cipher_class->append = purple_sha1_cipher_append;
 	cipher_class->digest = purple_sha1_cipher_digest;
+#endif
 	cipher_class->get_block_size = purple_sha1_cipher_get_block_size;
-
-	pspec = g_param_spec_int("sizeHi", "sizeHi", "sizeHi",
-							 G_MININT, G_MAXINT, 0,
-							 G_PARAM_READWRITE);
-	g_object_class_install_property(obj_class, PROP_SIZE_HI, pspec);
-
-	pspec = g_param_spec_int("sizeLo", "sizeLo", "sizeLo",
-							 G_MININT, G_MAXINT, 0,
-							 G_PARAM_READWRITE);
-	g_object_class_install_property(obj_class, PROP_SIZE_LO, pspec);
-
-	pspec = g_param_spec_int("lenW", "lenW", "lenW",
-							 G_MININT, G_MAXINT, 0,
-							 G_PARAM_READWRITE);
-	g_object_class_install_property(obj_class, PROP_LEN_W, pspec);
 }
 
 static void
 purple_sha1_cipher_init(PurpleCipher *cipher) {
+#if !GLIB_CHECK_VERSION(2,16,0)
 	PurpleSHA1Cipher *sha1_cipher = PURPLE_SHA1_CIPHER(cipher);
 
 	sha1_cipher->priv = g_new0(PurpleSHA1CipherPriv, 1);
 
 	purple_sha1_cipher_reset(cipher);
+#endif
 }
 
 /******************************************************************************
@@ -322,7 +265,11 @@ purple_sha1_cipher_get_gtype(void) {
 			NULL,
 		};
 
+#if GLIB_CHECK_VERSION(2,16,0)
+		type = g_type_register_static(PURPLE_TYPE_GCIPHER,
+#else
 		type = g_type_register_static(PURPLE_TYPE_CIPHER,
+#endif
 									  "PurpleSHA1Cipher",
 									  &info, 0);
 	}
@@ -332,58 +279,12 @@ purple_sha1_cipher_get_gtype(void) {
 
 PurpleCipher *
 purple_sha1_cipher_new(void) {
+#if GLIB_CHECK_VERSION(2,16,0)
+	return g_object_new(PURPLE_TYPE_SHA1_CIPHER,
+			"checksum_type", G_CHECKSUM_SHA1,
+			NULL);
+#else
 	return g_object_new(PURPLE_TYPE_SHA1_CIPHER, NULL);
-}
-
-gint32
-purple_sha1_cipher_get_size_hi(PurpleSHA1Cipher *sha1_cipher) {
-	g_return_val_if_fail(PURPLE_IS_SHA1_CIPHER(sha1_cipher), 0);
-
-	return sha1_cipher->priv->sizeHi;
-}
-
-void
-purple_sha1_cipher_set_size_hi(PurpleSHA1Cipher *sha1_cipher,
-								 gint32 size_high)
-{
-	g_return_if_fail(PURPLE_IS_SHA1_CIPHER(sha1_cipher));
-
-	sha1_cipher->priv->sizeHi = size_high;
-
-	g_object_notify(G_OBJECT(sha1_cipher), "sizeHi");
-}
-
-gint32
-purple_sha1_cipher_get_size_lo(PurpleSHA1Cipher *sha1_cipher) {
-	g_return_val_if_fail(PURPLE_IS_SHA1_CIPHER(sha1_cipher), 0);
-
-	return sha1_cipher->priv->sizeLo;
-}
-
-void
-purple_sha1_cipher_set_size_lo(PurpleSHA1Cipher *sha1_cipher,
-								gint32 size_low)
-{
-	g_return_if_fail(PURPLE_IS_SHA1_CIPHER(sha1_cipher));
-
-	sha1_cipher->priv->sizeLo = size_low;
-
-	g_object_notify(G_OBJECT(sha1_cipher), "sizeLo");
-}
-
-gint32
-purple_sha1_cipher_get_len_w(PurpleSHA1Cipher *sha1_cipher) {
-	g_return_val_if_fail(PURPLE_IS_SHA1_CIPHER(sha1_cipher), 0);
-
-	return sha1_cipher->priv->lenW;
-}
-
-void
-purple_sha1_cipher_set_len_w(PurpleSHA1Cipher *sha1_cipher, gint32 lenw) {
-	g_return_if_fail(PURPLE_IS_SHA1_CIPHER(sha1_cipher));
-
-	sha1_cipher->priv->lenW = lenw;
-
-	g_object_notify(G_OBJECT(sha1_cipher), "lenW");
+#endif
 }
 
