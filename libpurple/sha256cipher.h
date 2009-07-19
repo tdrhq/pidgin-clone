@@ -26,6 +26,7 @@
 #define PURPLE_SHA256_CIPHER_H
 
 #include <cipher.h>
+#include <ghash.h>
 
 #define PURPLE_TYPE_SHA256_CIPHER				(purple_sha256_cipher_get_gtype())
 #define PURPLE_SHA256_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_SHA256_CIPHER, PurpleSHA256Cipher))
@@ -39,7 +40,11 @@ typedef struct _PurpleSHA256CipherPriv			PurpleSHA256CipherPriv;
 typedef struct _PurpleSHA256CipherClass		PurpleSHA256CipherClass;
 
 struct _PurpleSHA256Cipher {
-	PurpleCipher gparent;
+#if GLIB_CHECK_VERSION(2,16,0)
+	PurpleGHash parent;
+#else
+	PurpleCipher parent;
+#endif
 
 	PurpleSHA256CipherPriv *priv;
 
@@ -50,7 +55,11 @@ struct _PurpleSHA256Cipher {
 };
 
 struct _PurpleSHA256CipherClass {
-	PurpleCipherClass gparent;
+#if GLIB_CHECK_VERSION(2,16,0)
+	PurpleGHash parent;
+#else
+	PurpleCipherClass parent;
+#endif
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);

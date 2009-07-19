@@ -3,7 +3,6 @@
  * Copyright (C) 2001-2003  Christophe Devine <c.devine@cr0.net>
  */
 #include "md5cipher.h"
-#include "gcipher.h"
 
 #include <string.h>
 
@@ -330,11 +329,14 @@ purple_md5_cipher_get_gtype(void) {
 			NULL,
 		};
 
+		GType parent = G_TYPE_INVALID;
 #if GLIB_CHECK_VERSION(2,16,0)
-		type = g_type_register_static(PURPLE_TYPE_GCIPHER,
+		parent = PURPLE_TYPE_G_HASH;
 #else
-		type = g_type_register_static(PURPLE_TYPE_CIPHER,
+		parent = PURPLE_TYPE_CIPHER;
 #endif
+
+		type = g_type_register_static(parent,
 									  "PurpleMD5Cipher",
 									  &info, 0);
 	}

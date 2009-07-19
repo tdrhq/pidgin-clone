@@ -1,5 +1,5 @@
 /**
- * @file gcipher.h Purple Cipher API
+ * @file ghash.h Purple GHash API
  * @ingroup core
  */
 
@@ -23,30 +23,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef PURPLE_GCIPHER_H
-#define PURPLE_GCIPHER_H
+#ifndef PURPLE_GHASH_H
+#define PURPLE_GHASH_H
 
 #include <cipher.h>
 #include <glib.h>
 #if GLIB_CHECK_VERSION(2,16,0)
 
-/*******************************************************************************
- * New Cipher Header
- ******************************************************************************/
 #include <glib-object.h>
 
-#define PURPLE_TYPE_GCIPHER				(purple_gcipher_get_gtype())
-#define PURPLE_GCIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_GCIPHER, PurpleGCipher))
-#define PURPLE_GCIPHER_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_GCIPHER, PurpleGCipherClass))
-#define PURPLE_IS_GCIPHER(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_GCIPHER))
-#define PURPLE_IS_GCIPHER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_GCIPHER))
-#define PURPLE_GCIPHER_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_GCIPHER, PurpleGCipherClass))
+#define PURPLE_TYPE_G_HASH				(purple_g_hash_get_type())
+#define PURPLE_G_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_G_HASH, PurpleGHash))
+#define PURPLE_G_HASH_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_G_HASH, PurpleGHashClass))
+#define PURPLE_IS_G_HASH(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_G_HASH))
+#define PURPLE_IS_G_HASH_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_G_HASH))
+#define PURPLE_G_HASH_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_G_HASH, PurpleGHashClass))
 
-typedef struct _PurpleGCipher		PurpleGCipher;
-typedef struct _PurpleGCipherClass	PurpleGCipherClass;
+typedef struct _PurpleGHash				PurpleGHash;
+typedef struct _PurpleGHashClass		PurpleGHashClass;
 
-struct _PurpleGCipher {
-	GObject gparent;
+struct _PurpleGHash {
+	PurpleCipher parent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -54,8 +51,8 @@ struct _PurpleGCipher {
 	void (*_purple_reserved4)(void);
 };
 
-struct _PurpleGCipherClass {
-	GObjectClass gparent;
+struct _PurpleGHashClass {
+	PurpleCipherClass parent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -65,17 +62,17 @@ struct _PurpleGCipherClass {
 
 G_BEGIN_DECLS
 
-GType purple_gcipher_get_gtype(void);
+GType purple_g_hash_get_type(void);
 
 /**
- * Gets the type of a cipher
+ * Gets the type of a hash
  *
- * @param cipher  The cipher
+ * @param hash  The hash
  * @returns The type of the cipher
  */
-GChecksumType purple_gcipher_get_checksum_type(PurpleGCipher *cipher);
+GChecksumType purple_g_hash_get_checksum_type(PurpleGHash *hash);
 
 G_END_DECLS
 
 #endif /* GLIB_CHECK_VERSION */
-#endif /* PURPLE_GCIPHER_H */
+#endif /* PURPLE_G_HASH_H */

@@ -1,7 +1,6 @@
 /*
  */
 #include "sha1cipher.h"
-#include "gcipher.h"
 
 #include <string.h>
 
@@ -251,7 +250,7 @@ GType
 purple_sha1_cipher_get_gtype(void) {
 	static GType type = 0;
 
-	if(type == 0) {
+	if(G_UNLIKELY(type == 0)) {
 		static const GTypeInfo info = {
 			sizeof(PurpleSHA1CipherClass),
 			NULL,
@@ -265,11 +264,15 @@ purple_sha1_cipher_get_gtype(void) {
 			NULL,
 		};
 
+		GType parent = G_TYPE_INVALID;
+
 #if GLIB_CHECK_VERSION(2,16,0)
-		type = g_type_register_static(PURPLE_TYPE_GCIPHER,
+		parent = PURPLE_TYPE_G_HASH;
 #else
-		type = g_type_register_static(PURPLE_TYPE_CIPHER,
+		parent = PURPLE_TYPE_CIPHER;
 #endif
+
+		type = g_type_register_static(parent,
 									  "PurpleSHA1Cipher",
 									  &info, 0);
 	}

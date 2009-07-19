@@ -26,6 +26,7 @@
 #define PURPLE_MD5_CIPHER_H
 
 #include <cipher.h>
+#include <ghash.h>
 
 #define PURPLE_TYPE_MD5_CIPHER				(purple_md5_cipher_get_gtype())
 #define PURPLE_MD5_CIPHER(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MD5_CIPHER, PurpleMD5Cipher))
@@ -39,7 +40,11 @@ typedef struct _PurpleMD5CipherPriv			PurpleMD5CipherPriv;
 typedef struct _PurpleMD5CipherClass		PurpleMD5CipherClass;
 
 struct _PurpleMD5Cipher {
-	PurpleCipher gparent;
+#if GLIB_CHECK_VERSION(2,16,0)
+	PurpleGHash parent;
+#else
+	PurpleCipher parent;
+#endif
 
 	PurpleMD5CipherPriv *priv;
 
@@ -50,7 +55,11 @@ struct _PurpleMD5Cipher {
 };
 
 struct _PurpleMD5CipherClass {
-	PurpleCipherClass gparent;
+#if GLIB_CHECK_VERSION(2,16,0)
+	PurpleGHash parent;
+#else
+	PurpleCipherClass parent;
+#endif
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
