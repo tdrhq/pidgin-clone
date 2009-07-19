@@ -700,8 +700,8 @@ static gboolean jabber_login_connect(JabberStream *js, const char *domain, const
 	else
 		js->serverFQDN = g_strdup(host);
 
-	if (purple_proxy_connect(js->gc, purple_connection_get_account(js->gc), host,
-			port, jabber_login_callback, js->gc) == NULL) {
+	if (purple_proxy_connect(js->gc, purple_connection_get_account(js->gc),
+			host, port, jabber_login_callback, js->gc) == NULL) {
 		if (fatal_failure) {
 			purple_connection_error_reason(js->gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
