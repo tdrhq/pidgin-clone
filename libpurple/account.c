@@ -114,6 +114,8 @@ static GList *handles = NULL;
 
 static void set_current_error(PurpleAccount *account,
 	PurpleConnectionErrorInfo *new_err);
+static void purple_account_set_protocol(PurpleAccount *account,
+	PurplePlugin *prpl);
 
 static void
 schedule_accounts_save(void)
@@ -469,12 +471,9 @@ purple_account_set_property(GObject *obj, guint param_id, const GValue *value,
 			purple_account_set_connection(account,
 				PURPLE_CONNECTION(g_value_get_object(value)));
 			break;
-		case PROP_PRPL: {
+		case PROP_PRPL:
 #warning use _object when the prpls are GObjects
-				PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-				priv->prpl = g_value_get_pointer(value);
-				priv->protocol_id = g_strdup(purple_plugin_get_id(priv->prpl));
-			}
+			purple_account_set_protocol(account, g_value_get_pointer(value));
 			break;
 		case PROP_USER_INFO:
 			purple_account_set_user_info(account, g_value_get_string(value));
@@ -509,6 +508,7 @@ migrate_yahoo_japan(PurpleAccount *account)
 
 	if(purple_strequal(purple_account_get_protocol_id(account), "prpl-yahoo")) {
 		if(purple_account_get_bool(account, "yahoojp", FALSE)) {
+			PurplePlugin *prpl;
 			const char *serverjp = purple_account_get_string(account, "serverjp", NULL);
 			const char *xferjp_host = purple_account_get_string(account, "xferjp_host", NULL);
 
@@ -518,7 +518,10 @@ migrate_yahoo_japan(PurpleAccount *account)
 			purple_account_set_string(account, "server", serverjp);
 			purple_account_set_string(account, "xfer_host", xferjp_host);
 
-			purple_account_set_protocol_id(account, "prpl-yahoojp");
+			prpl = purple_find_prpl("prpl-yahoojp");
+			g_return_if_fail(prpl != NULL);
+
+			purple_account_set_protocol(account, prpl);
 		}
 
 		/* these should always be nuked */
@@ -1621,12 +1624,15 @@ account_setting_value_changed(PurpleAccount *account, const char *name,
 }
 
 void
-purple_account_remove_setting(PurpleAccount *account, const char *setting)
+purple_account_remove_setting(PurpleAccount *account, const char *name)
 {
-	g_return_if_fail(account != NULL);
-	g_return_if_fail(setting != NULL);
+	PurpleAccountPrivate *priv;
 
-	g_hash_table_remove(account->settings, setting);
+	g_return_if_fail(PURPLE_IS_ACCOUNT(account));
+	g_return_if_fail(name != NULL);
+
+	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	g_hash_table_remove(priv->settings, name);
 }
 
 void
@@ -1932,6 +1938,17 @@ purple_account_get_buddy_icon_path(const PurpleAccount *account)
 	g_return_val_if_fail(PURPLE_IS_ACCOUNT(account), NULL);
 
 	return PURPLE_ACCOUNT_GET_PRIVATE(account)->buddy_icon_path;
+}
+
+static void
+purple_account_set_protocol(PurpleAccount *account, PurplePlugin *prpl)
+{
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+
+	g_free(priv->protocol_id);
+
+	priv->prpl = prpl;
+	priv->protocol_id = g_strdup(purple_plugin_get_id(prpl));
 }
 
 const char *
@@ -2817,9 +2834,6 @@ void
 purple_accounts_uninit(void)
 {
 	gpointer handle = purple_accounts_get_handle();
-
-	for (; accounts; accounts = g_list_delete_link(accounts, accounts))
-		purple_account_destroy(accounts->data);
 
 	purple_signals_disconnect_by_handle(handle);
 	purple_signals_unregister_by_instance(handle);
