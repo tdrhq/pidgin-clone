@@ -40,6 +40,7 @@
 #include "util.h"
 #include "version.h"
 
+#include "telepathy.h"
 #include "telepathy_account.h"
 #include "telepathy_avatar.h"
 #include "telepathy_channel.h"
@@ -48,10 +49,6 @@
 #include "telepathy_connection.h"
 #include "telepathy_contact.h"
 #include "telepathy_utils.h"
-
-static void *module_handle;
-static gchar *module_path;
-static TpAccountManager *account_Manager;
 
 static gboolean
 telepathy_plugin_load(PurplePlugin *plugin)

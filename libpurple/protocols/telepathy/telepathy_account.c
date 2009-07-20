@@ -20,11 +20,12 @@
 
 #include "telepathy_account.h"
 
+#include "telepathy.h"
 #include "telepathy_utils.h"
 
 #include <telepathy-glib/account.h>
+#include <telepathy-glib/account-manager.h>
 #include <telepathy-glib/connection-manager.h>
-#include <telepathy-glib/dbus.h>
 #include <telepathy-glib/interfaces.h>
 #include <telepathy-glib/util.h>
 
@@ -50,17 +51,17 @@ update_parameters_cb (TpAccount *proxy,
 }
 
 static void
-save_account_parameters (telepathy_account *account_data,
-                         TpConnectionManagerParam *params)
+build_parameters_from_purple_account (PurpleAccount *account,
+                                      TpConnectionManagerParam *params,
+				      GHashTable **out_Params,
+				      GPtrArray **out_Unset)
 {
-	PurpleAccount *account = account_data->account;
-
-	int i;
-	
 	GHashTable *params_hash = g_hash_table_new_full (g_str_hash, g_str_equal,
 			NULL, (GDestroyNotify) tp_g_value_slice_free);
 
 	GPtrArray *unset = g_ptr_array_new();
+	
+	int i;
 
 	/* Loop over all parameters */
 	for (i = 0; params[i].name != NULL; ++i)
@@ -132,6 +133,21 @@ save_account_parameters (telepathy_account *account_data,
 	}
 
 	g_ptr_array_add(unset, NULL);
+
+	*out_Params = params_hash;
+	*out_Unset = unset;
+}
+
+static void
+save_account_parameters (telepathy_account *account_data,
+                         TpConnectionManagerParam *params)
+{
+	PurpleAccount *account = account_data->account;
+
+	GHashTable *params_hash;
+	GPtrArray *unset;
+	
+	build_parameters_from_purple_account(account, params, &params_hash, &unset);
 
 	/* Upload the new parameters to AccountManager */
 	tp_cli_account_call_update_parameters(account_data->tp_account, -1,
@@ -258,6 +274,14 @@ get_account_properties_cb (TpProxy *proxy,
 				" creating it!\n", display_name);
 
 		account = purple_account_new(display_name, protocol_id);
+
+		if (account == NULL)
+		{
+			purple_debug_error("telepathy", "Error creating PurpleAccount!\n");
+			return;
+		}
+
+		purple_account_register(account);
 	}
 	else
 	{
@@ -267,7 +291,6 @@ get_account_properties_cb (TpProxy *proxy,
 
 	account_data->account = account;
 
-	purple_account_set_string(account, "objpath", account_data->obj_Path);
 	purple_account_set_int(account, "tp_account_data", (int)account_data);
 
 	/* Sync the parameters with PurpleAccount's parameters */
@@ -328,6 +351,107 @@ account_destroying_cb (PurpleAccount *account,
 
 		g_free(account_data);
 	}
+}
+
+static void
+create_account_cb (TpAccountManager *proxy,
+                   const gchar *out_Account,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	telepathy_account *account_data = user_data;
+	TpAccount *tp_account;
+	TpDBusDaemon *daemon;
+	GError *err = NULL;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "CreateAccount error: %s\n",
+				error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "Account created!\n");
+
+	daemon = tp_dbus_daemon_dup(&err);
+
+	if (err != NULL)
+	{
+		purple_debug_error("telepathy", "Error dupping DBus daemon for new account:%s\n",
+				error->message);
+		return;
+	}
+
+	tp_account = tp_account_new(daemon, out_Account, &err);
+
+	if (err != NULL)
+	{
+		purple_debug_error("telepathy", "Error creating proxy for new Account:%s\n",
+				error->message);
+		return;
+	}
+
+	account_data->obj_Path = (gchar *)out_Account;
+	account_data->tp_account = tp_account;
+}
+
+static void
+account_added_cb (PurpleAccount *account,
+                  gpointer user_data)
+{
+	gchar *protocol_id = g_strndup(purple_account_get_protocol_id(account),
+			strlen(TELEPATHY_ID));
+
+	PurplePlugin *plugin;
+	telepathy_data *data;
+	GHashTable *params_hash;
+	GPtrArray *unset;
+	telepathy_account *account_data;
+
+	if (g_strcmp0(protocol_id, TELEPATHY_ID) != 0)
+	{
+		/* This is not a Telepathy account, we don't care about it */
+		g_free(protocol_id);
+		return;
+	}
+
+	g_free(protocol_id);
+
+	purple_debug_info("telepathy", "Telepathy account created!\n");
+
+	plugin = purple_find_prpl(
+		purple_account_get_protocol_id(account));
+
+	if (plugin == NULL)
+	{
+		purple_debug_error("telepathy", "No PurplePlugin for new Telepathy account!\n");
+		return;
+	}
+
+	data = plugin->extra;
+
+	build_parameters_from_purple_account(account, data->protocol->params,
+			&params_hash, &unset);
+
+	account_data = g_new0(telepathy_account, 1);
+
+	account_data->account = account;
+	account_data->cm = (gchar *)tp_connection_manager_get_name(data->cm);
+	account_data->protocol = data->protocol->name;
+
+	purple_account_set_int(account, "tp_account_data", (int)account_data);
+
+	tp_cli_account_manager_call_create_account(account_Manager, -1,
+			account_data->cm, account_data->protocol,
+			tp_asv_get_string(params_hash, "account"), params_hash,
+			NULL,
+			create_account_cb, account_data,
+			NULL, NULL);
+
+	g_hash_table_destroy(params_hash);
+	g_ptr_array_free(unset, TRUE);
+
 }
 
 void
@@ -405,6 +529,11 @@ get_valid_accounts_cb (TpProxy *proxy,
 		purple_signal_connect(purple_accounts_get_handle(), "account-destroying",
 				purple_accounts_get_handle(),
 				PURPLE_CALLBACK(account_destroying_cb),
+				NULL);
+
+		purple_signal_connect(purple_accounts_get_handle(), "account-added",
+				purple_accounts_get_handle(),
+				PURPLE_CALLBACK(account_added_cb),
 				NULL);
 	}
 
