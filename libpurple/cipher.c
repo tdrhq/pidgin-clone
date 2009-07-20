@@ -35,8 +35,19 @@ static GObjectClass *parent_class = NULL;
  * Object Stuff
  *****************************************************************************/
 static void
+purple_cipher_finalize(obj) {
+	purple_cipher_reset(obj);
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
+}
+
+static void
 purple_cipher_class_init(PurpleCipherClass *klass) {
+	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
 	parent_class = g_type_class_peek_parent(klass);
+
+	obj_class->finalize = purple_cipher_finalize;
 }
 
 /******************************************************************************
