@@ -282,7 +282,7 @@ void PurpleInsertDynamicMenu(HMENU hmenu, int iIndex, UINT *lpuiNextID, GList *l
 
 				VULTURE_MENU_ACTION *lpvma = g_new(VULTURE_MENU_ACTION, 1);
 
-				lpvma->lpfnCallback = lppma->callback;
+				lpvma->lpfnCallback = (void (*)(gpointer, gpointer))lppma->callback;
 				lpvma->lpvData = lppma->data;
 				lpvma->lpvObject = lpvObject;
 
