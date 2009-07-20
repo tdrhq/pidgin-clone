@@ -64,7 +64,7 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
-	md4cipher.c \
+	md4hash.c \
 	md5cipher.c \
 	media.c \
 	mediamanager.c \
@@ -139,7 +139,7 @@ purple_coreheaders = \
 	idle.h \
 	imgstore.h \
 	log.h \
-	md4cipher.h \
+	md4hash.h \
 	md5cipher.h \
 	media.h \
 	media-gst.h \
