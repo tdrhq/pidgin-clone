@@ -60,6 +60,7 @@ purple_coresources = \
 	ghash.c \
 	group.c \
 	gsignal.c \
+	hash.c \
 	hmaccipher.c \
 	idle.c \
 	imgstore.c \
@@ -135,6 +136,7 @@ purple_coreheaders = \
 	gaim-compat.h \
 	ghash.h \
 	gsignal.h \
+	hash.h \
 	hmaccipher.h \
 	idle.h \
 	imgstore.h \

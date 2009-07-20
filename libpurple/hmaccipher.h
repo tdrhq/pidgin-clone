@@ -56,6 +56,20 @@ struct _PurpleHMACCipherClass {
 	void (*_purple_reserved4)(void);
 };
 
+#define PURPLE_TYPE_HMAC_FUNCTION			(purple_hmac_function_get_type())
+#define PURPLE_HMAC_FUNCTION(obj)			(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_HMAC_FUNCTION, PurpleHMACFunction))
+#define PURPLE_IS_HMAC_FUNCTION(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_HMAC_FUNCTION))
+#define PURPLE_HMAC_FUNCTION_GET_IFACE(obj)	(G_TYPE_INSTANCE_GET_INTERFACE((obj), PURPLE_TYPE_HMAC_FUNCTION, PurpleHMACFunctionIface))
+
+typedef struct _PurpleHMACFunction			PurpleHMACFunction;
+typedef struct _PurpleHMACFunctionIface		PurpleHMACFunctionIface;
+
+struct _PurpleHMACFunctionIface {
+	GTypeInterface parent;
+
+	size_t (*get_block_size)(const PurpleHMACFunction *function);
+};
+
 G_BEGIN_DECLS
 
 GType purple_hmac_cipher_get_gtype(void);
@@ -63,6 +77,10 @@ GType purple_hmac_cipher_get_gtype(void);
 PurpleCipher *purple_hmac_cipher_new(PurpleCipher *hash_cipher);
 
 PurpleCipher *purple_hmac_cipher_get_hash(const PurpleHMACCipher *cipher);
+
+GType purple_hmac_function_get_type(void);
+
+size_t purple_hmac_function_get_block_size(const PurpleHMACFunction *function);
 
 G_END_DECLS
 

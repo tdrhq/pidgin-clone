@@ -25,7 +25,7 @@
 #ifndef PURPLE_MD4_HASH_H
 #define PURPLE_MD4_HASH_H
 
-#include <cipher.h>
+#include <hash.h>
 
 #define PURPLE_TYPE_MD4_HASH				(purple_md4_hash_get_gtype())
 #define PURPLE_MD4_HASH(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_MD4_HASH, PurpleMD4Hash))
@@ -38,7 +38,7 @@ typedef struct _PurpleMD4Hash				PurpleMD4Hash;
 typedef struct _PurpleMD4HashClass		PurpleMD4HashClass;
 
 struct _PurpleMD4Hash {
-	PurpleCipher parent;
+	PurpleHash parent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -47,7 +47,7 @@ struct _PurpleMD4Hash {
 };
 
 struct _PurpleMD4HashClass {
-	PurpleCipherClass parent;
+	PurpleHashClass parent;
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
@@ -59,7 +59,7 @@ G_BEGIN_DECLS
 
 GType purple_md4_hash_get_gtype(void);
 
-PurpleCipher *purple_md4_hash_new(void);
+PurpleHash *purple_md4_hash_new(void);
 
 G_END_DECLS
 

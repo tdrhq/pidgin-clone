@@ -15,6 +15,8 @@
  */
 #include "md4hash.h"
 
+#include "hmaccipher.h"
+
 #include <string.h>
 
 #define MD4_DIGEST_SIZE		16
@@ -155,8 +157,8 @@ md4_transform(guint32 *hash, guint32 const *in) {
 }
 
 static inline void
-md4_transform_helper(PurpleCipher *cipher) {
-	PurpleMD4HashPrivate *priv = PURPLE_MD4_HASH_GET_PRIVATE(cipher);
+md4_transform_helper(PurpleHash *hash) {
+	PurpleMD4HashPrivate *priv = PURPLE_MD4_HASH_GET_PRIVATE(hash);
 
 	le32_to_cpu_array(priv->block, sizeof(priv->block) / sizeof(guint32));
 	md4_transform(priv->hash, priv->block);
@@ -166,8 +168,8 @@ md4_transform_helper(PurpleCipher *cipher) {
  * Hash Stuff
  *****************************************************************************/
 static void
-purple_md4_hash_reset(PurpleCipher *cipher) {
-	PurpleMD4HashPrivate *priv = PURPLE_MD4_HASH_GET_PRIVATE(cipher);
+purple_md4_hash_reset(PurpleHash *hash) {
+	PurpleMD4HashPrivate *priv = PURPLE_MD4_HASH_GET_PRIVATE(hash);
 
 	priv->hash[0] = 0x67452301;
 	priv->hash[1] = 0xefcdab89;
@@ -180,8 +182,8 @@ purple_md4_hash_reset(PurpleCipher *cipher) {
 }
 
 static void
-purple_md4_hash_append(PurpleCipher *cipher, const guchar *data, size_t len) {
-	PurpleMD4HashPrivate *priv = PURPLE_MD4_HASH_GET_PRIVATE(cipher);
+purple_md4_hash_append(PurpleHash *hash, const guchar *data, size_t len) {
+	PurpleMD4HashPrivate *priv = PURPLE_MD4_HASH_GET_PRIVATE(hash);
 	const guint32 avail = sizeof(priv->block) - (priv->byte_count & 0x3f);
 
 	priv->byte_count += len;
@@ -197,13 +199,13 @@ purple_md4_hash_append(PurpleCipher *cipher, const guchar *data, size_t len) {
 		   (sizeof(priv->block) - avail),
 		   data, avail);
 
-	md4_transform_helper(cipher);
+	md4_transform_helper(hash);
 	data += avail;
 	len -= avail;
 
 	while(len >= sizeof(priv->block)) {
 		memcpy(priv->block, data, sizeof(priv->block));
-		md4_transform_helper(cipher);
+		md4_transform_helper(hash);
 		data += sizeof(priv->block);
 		len -= sizeof(priv->block);
 	}
@@ -212,10 +214,10 @@ purple_md4_hash_append(PurpleCipher *cipher, const guchar *data, size_t len) {
 }
 
 static gboolean
-purple_md4_hash_digest(PurpleCipher *cipher, size_t in_len, guchar digest[16],
+purple_md4_hash_digest(PurpleHash *hash, size_t in_len, guchar digest[16],
 					   size_t *out_len)
 {
-	PurpleMD4HashPrivate *priv = PURPLE_MD4_HASH_GET_PRIVATE(cipher);
+	PurpleMD4HashPrivate *priv = PURPLE_MD4_HASH_GET_PRIVATE(hash);
 	const unsigned int offset = priv->byte_count & 0x3f;
 	gchar *p = (gchar *)priv->block + offset;
 	gint padding = 56 - (offset + 1);
@@ -230,7 +232,7 @@ purple_md4_hash_digest(PurpleCipher *cipher, size_t in_len, guchar digest[16],
 
 	if(padding < 0) {
 		memset(p, 0x00, padding + sizeof(guint64));
-		md4_transform_helper(cipher);
+		md4_transform_helper(hash);
 		p = (gchar *)priv->block;
 		padding = 56;
 	}
@@ -248,26 +250,33 @@ purple_md4_hash_digest(PurpleCipher *cipher, size_t in_len, guchar digest[16],
 	return TRUE;
 }
 
-static size_t
-purple_md4_hash_get_block_size(PurpleCipher *cipher) {
-	return MD4_HMAC_BLOCK_SIZE;
-}
-
 /******************************************************************************
  * Object Stuff
  *****************************************************************************/
 static void
 purple_md4_hash_class_init(PurpleMD4HashClass *klass) {
-	PurpleCipherClass *cipher_class = PURPLE_CIPHER_CLASS(klass);
+	PurpleHashClass *hash_class = PURPLE_HASH_CLASS(klass);
 
 	parent_class = g_type_class_peek_parent(klass);
 
 	g_type_class_add_private(klass, sizeof(PurpleMD4HashPrivate));
 
-	cipher_class->reset = purple_md4_hash_reset;
-	cipher_class->append = purple_md4_hash_append;
-	cipher_class->digest = purple_md4_hash_digest;
-	cipher_class->get_block_size = purple_md4_hash_get_block_size;
+	hash_class->reset = purple_md4_hash_reset;
+	hash_class->append = purple_md4_hash_append;
+	hash_class->digest = purple_md4_hash_digest;
+}
+
+/******************************************************************************
+ * HMACFunction Stuff
+ *****************************************************************************/
+static size_t
+purple_md4_hash_get_block_size(const PurpleHMACFunction *function) {
+	return MD4_HMAC_BLOCK_SIZE;
+}
+
+static void
+purple_md4_hash_hmac_function_init(PurpleHMACFunctionIface *iface) {
+	iface->get_block_size = purple_md4_hash_get_block_size;
 }
 
 /******************************************************************************
@@ -291,15 +300,23 @@ purple_md4_hash_get_gtype(void) {
 			NULL,
 		};
 
-		type = g_type_register_static(PURPLE_TYPE_CIPHER,
-									  "PurpleMD4Cipher",
+		static const GInterfaceInfo hmac_info = {
+			(GInterfaceInitFunc)purple_md4_hash_hmac_function_init,
+			NULL,
+			NULL
+		};
+
+		type = g_type_register_static(PURPLE_TYPE_HASH,
+									  "PurpleMD4Hash",
 									  &info, 0);
+
+		g_type_add_interface_static(type, PURPLE_TYPE_HMAC_FUNCTION, &hmac_info);
 	}
 
 	return type;
 }
 
-PurpleCipher *
+PurpleHash *
 purple_md4_hash_new(void) {
 	return g_object_new(PURPLE_TYPE_MD4_HASH, NULL);
 }

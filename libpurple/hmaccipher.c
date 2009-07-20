@@ -267,7 +267,7 @@ purple_hmac_cipher_class_init(PurpleHMACCipherClass *klass) {
 }
 
 /******************************************************************************
- * API
+ * PurpleHMACCipher API
  *****************************************************************************/
 GType
 purple_hmac_cipher_get_gtype(void) {
@@ -316,5 +316,49 @@ purple_hmac_cipher_get_hash(const PurpleHMACCipher *cipher) {
 		return priv->hash;
 
 	return NULL;
+}
+
+/******************************************************************************
+ * PurpleHMACFunction API
+ *****************************************************************************/
+GType
+purple_hmac_function_get_type(void) {
+	static GType type = 0;
+
+	if(G_UNLIKELY(type == 0)) {
+		static const GTypeInfo info = {
+			sizeof(PurpleHMACFunctionIface),
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			NULL,
+			0,
+			0,
+			NULL,
+			NULL,
+		};
+
+		type = g_type_register_static(G_TYPE_INTERFACE,
+									  "PurpleHMACFunction",
+									  &info, 0);
+
+	}
+
+	return type;
+}
+
+size_t
+purple_hmac_function_get_block_size(const PurpleHMACFunction *function) {
+	PurpleHMACFunctionIface *iface = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_HMAC_FUNCTION(function), -1);
+
+	iface = PURPLE_HMAC_FUNCTION_GET_IFACE(function);
+
+	if(iface && iface->get_block_size)
+		return iface->get_block_size(function);
+
+	return -1;
 }
 
