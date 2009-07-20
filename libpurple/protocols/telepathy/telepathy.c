@@ -20,6 +20,7 @@
 
 #include <glib.h>
 
+#include <telepathy-glib/account-manager.h>
 #include <telepathy-glib/connection-manager.h>
 #include <telepathy-glib/channel.h>
 #include <telepathy-glib/contact.h>
@@ -39,6 +40,7 @@
 #include "util.h"
 #include "version.h"
 
+#include "telepathy_account.h"
 #include "telepathy_avatar.h"
 #include "telepathy_channel.h"
 #include "telepathy_channel_list.h"
@@ -51,6 +53,7 @@
 
 static void *module_handle;
 static gchar *module_path;
+static TpAccountManager *account_Manager;
 
 typedef struct
 {
@@ -1284,6 +1287,20 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 	/* the list of connection managers will be returned in list_connection_managers_cb */
 	tp_list_connection_managers(daemon, list_connection_managers_cb, NULL, NULL, NULL);
 	
+	/* Create an AccountManager interface */
+	account_Manager = tp_account_manager_new(daemon);
+
+	if (account_Manager == NULL)
+	{
+		purple_debug_error("telepathy", "There is no AccountManager interface!\n");
+		return FALSE;
+	}
+
+	/* Get all valid accounts from AccountManager */
+	tp_cli_dbus_properties_call_get(account_Manager, -1,
+			TP_IFACE_ACCOUNT_MANAGER, "ValidAccounts",
+			get_valid_accounts_cb, NULL, NULL, NULL);
+
 	if (daemon != NULL)
 		g_object_unref(daemon);
 

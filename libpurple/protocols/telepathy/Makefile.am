@@ -5,6 +5,7 @@ pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 TELEPATHYSOURCES = \
 	telepathy.c \
+	telepathy_account.c \
 	telepathy_avatar.c \
 	telepathy_channel.c \
 	telepathy_channel_list.c \
