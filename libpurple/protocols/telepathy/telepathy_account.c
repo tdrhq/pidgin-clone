@@ -20,6 +20,8 @@
 
 #include "telepathy_account.h"
 
+#include "telepathy_utils.h"
+
 #include <telepathy-glib/account.h>
 #include <telepathy-glib/dbus.h>
 #include <telepathy-glib/interfaces.h>
@@ -28,12 +30,65 @@
 #include "debug.h"
 
 static void
+set_account_parameters (PurpleAccount *account,
+                        GHashTable *parameters)
+{
+	GHashTableIter iter;
+	gpointer key, value;
+
+	/* Loop over all parameters */
+	g_hash_table_iter_init (&iter, parameters);
+	while (g_hash_table_iter_next (&iter, &key, &value)) 
+	{
+		gchar *name = key;
+		GValue *val = value;
+
+		/* Username and password are special properties */
+		if (g_strcmp0(name, "account") == 0)
+		{
+			purple_account_set_username(account, g_value_get_string(val));
+		}
+		else if (g_strcmp0(name, "password") == 0)
+		{
+			purple_account_set_password(account, g_value_get_string(val));
+		}
+		else
+		{
+			/* Save the parameters in the account */
+			if (G_VALUE_HOLDS_BOOLEAN(val))
+			{
+				purple_account_set_bool(account, name, g_value_get_boolean(val));
+			}
+			else if (G_VALUE_HOLDS_INT(val))
+			{
+				purple_account_set_int(account, name, g_value_get_int(val));
+			}
+			else if (G_VALUE_HOLDS_UINT(val))
+			{
+				purple_account_set_int(account, name, g_value_get_uint(val));
+			}
+			else if (G_VALUE_HOLDS_STRING(val))
+			{
+				purple_account_set_string(account, name, g_value_get_string(val));
+			}
+			else
+			{
+				purple_debug_warning("telepathy", "Unknown value type for %s\n",
+						name);
+			}
+		}
+	}
+}
+                        
+static void
 get_account_properties_cb (TpProxy *proxy,
                            GHashTable *out_Properties,
                            const GError *error,
                            gpointer user_data,
                            GObject *weak_object)
 {
+	gchar *obj_Path = user_data;
+
 	GHashTable *parameters;
 	const gchar *display_name;
 	gchar **tokens;
@@ -58,17 +113,17 @@ get_account_properties_cb (TpProxy *proxy,
 		return;
 	}
 
-	display_name = g_value_get_string(g_hash_table_lookup(parameters, "account"));
+	display_name = tp_asv_get_string(parameters, "account");
 
 	/* Parse the object path to find the connection manager and the protocol.
 	 * The object path looks like "/org/freedesktop/Telepathy/Account/cm/proto/acct"
 	 */
-	tokens = g_strsplit(user_data, "/", 8);
+	tokens = g_strsplit(obj_Path, "/", 8);
 
 	cm = tokens[5];
 	proto = tokens[6];
 
-	protocol_id = g_strdup_printf("prpl-telepathy-%s-%s", cm, proto);
+	protocol_id = g_strdup_printf("%s-%s-%s", TELEPATHY_ID, cm, proto);
 	
 	g_strfreev(tokens);
 
@@ -83,12 +138,19 @@ get_account_properties_cb (TpProxy *proxy,
 	{
 		purple_debug_info("telepathy", "Account %s does not exist in purple-land,"
 				" creating it!\n", display_name);
+
+		account = purple_account_new(display_name, protocol_id);
 	}
 	else
 	{
-		purple_debug_info("telepathy", "Account %s DOES exist in purple-land,"
-				" creating it!\n", display_name);
+		purple_debug_info("telepathy", "Account %s DOES exist in purple-land\n",
+				display_name);
 	}
+
+	purple_account_set_string(account, "objpath", obj_Path);
+
+	/* Sync the parameters with PurpleAccount's parameters */
+	set_account_parameters(account, parameters);
 }
 
 void

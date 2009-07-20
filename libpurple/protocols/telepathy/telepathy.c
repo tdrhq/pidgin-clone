@@ -47,9 +47,7 @@
 #include "telepathy_channel_text.h"
 #include "telepathy_connection.h"
 #include "telepathy_contact.h"
-
-#define TELEPATHY_ID "prpl-telepathy"
-#define TELEPATHY_DISPLAY_VERSION "1.0"
+#include "telepathy_utils.h"
 
 static void *module_handle;
 static gchar *module_path;
@@ -62,46 +60,6 @@ typedef struct
 	PurplePlugin *plugin;
 
 } telepathy_data;
-
-typedef struct
-{
-	const gchar *telepathy_name;
-	const gchar *dbus_type;
-	const gchar *human_name;
-} OptionMapping;
-
-static const OptionMapping options[] = {
-	{ "server", "s", N_("Server")},
-	{ "port", "q", N_("Port")},
-	{ "require-encryption", "b", N_("Require Encryption")},
-	{ "ident", "s", N_("Ident")},
-	{ "fullname", "s", N_("Full Name")},
-	{ "stun-server", "s", N_("STUN Server")},
-	{ "stun-port", "q", N_("STUN Port")},
-	{ NULL, NULL, NULL}
-};
-
-typedef struct
-{
-	const guint status_primitive;
-	const gchar* id;
-	const gchar* description;
-} StatusMapping;
-
-static const StatusMapping statuses[] = 
-{
-	{ PURPLE_STATUS_AVAILABLE, "available", "Available" },
-	{ PURPLE_STATUS_AWAY, "away", N_("Away") },
-	{ PURPLE_STATUS_AWAY, "brb", N_("Be right back") },
-	{ PURPLE_STATUS_UNAVAILABLE, "dnd", N_("Do not disturb") },
-	{ PURPLE_STATUS_UNAVAILABLE, "busy", N_("Busy") },
-	{ PURPLE_STATUS_EXTENDED_AWAY, "xa", N_("Extended away") },
-	{ PURPLE_STATUS_INVISIBLE, "hidden", NULL },
-	{ PURPLE_STATUS_OFFLINE, "offline", NULL },
-	{ PURPLE_STATUS_UNSET, "unknown", NULL },
-	{ PURPLE_STATUS_UNSET, "error", NULL },
-	{ 0, NULL, NULL}
-};
 
 static gboolean
 telepathy_plugin_load(PurplePlugin *plugin)
@@ -247,6 +205,8 @@ telepathy_chat_info(PurpleConnection *gc)
 static void
 telepathy_login(PurpleAccount *acct)
 {
+	purple_debug_info("telepathy", "Object path: %s\n",
+			purple_account_get_string(acct, "objpath", NULL));
 	PurpleConnection *gc = purple_account_get_connection(acct);
 
 	PurplePlugin* plugin = gc->prpl;
@@ -986,36 +946,6 @@ static PurplePluginInfo telepathy_info =
 	NULL,                          
 	NULL                           
 };                               
-
-/* transform a telepathy parameter name into a user-friendly one */
-static gchar*
-telepathy_transform_param_name(const gchar* param)
-{
-	gchar *name;
-	int i,len;
-
-	g_return_val_if_fail(param != NULL, NULL);
-
-	name = g_strdup(param);
-
-	/* capitalize first letter */
-	name[0] = g_ascii_toupper(name[0]);
-
-	len = strlen(name);
-	for (i = 0; i<len; ++i)
-	{
-	    if (name[i] == '-')
-	    {
-		name[i] = ' ';
-		if (i+1 < len)
-		{
-		    /* capitalize first letter of each word */
-		    name[i+1] = g_ascii_toupper(name[i+1]);
-		}
-	    }
-	}
-	return name;
-}
 
 /* TODO: Handle "as" types */
 static gchar *
