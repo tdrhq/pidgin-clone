@@ -273,11 +273,17 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		
 		break;
 
-	case PC_MAKEBUDDYMENU:
+	case PC_MAKECONTEXTMENU:
 		{
 			VULTURE_MAKE_CONTEXT_MENU *lpvmcm = lppurplecall->lpvParam;
 			
-			PurpleMakeBuddyMenu(lpvmcm->hmenu, EFFECTIVE_BUDDY(lpvmcm->lpvblistnode->lpblistnode), lpvmcm->lplpglistVMA);
+			if(lpvmcm->lpvblistnode->lpblistnode)
+			{
+				if(PURPLE_BLIST_NODE_IS_BUDDY(lpvmcm->lpvblistnode->lpblistnode) || PURPLE_BLIST_NODE_IS_CONTACT(lpvmcm->lpvblistnode->lpblistnode))
+					PurpleMakeBuddyMenu(lpvmcm->hmenu, EFFECTIVE_BUDDY(lpvmcm->lpvblistnode->lpblistnode), lpvmcm->lplpglistVMA);
+				else if(PURPLE_BLIST_NODE_IS_CHAT(lpvmcm->lpvblistnode->lpblistnode))
+					PurpleMakeChatMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode, lpvmcm->lplpglistVMA);
+			}
 		}
 
 		break;

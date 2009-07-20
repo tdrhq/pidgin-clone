@@ -57,6 +57,8 @@ static LRESULT CALLBACK StatusMsgBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM w
 static void SetStatusMsg(HWND hwndStatusDlg);
 static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
 static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
+static BOOL RunCommonMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
+static void RunChatMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
 
 
 #define BLIST_MARGIN 6
@@ -66,6 +68,7 @@ enum CONTEXT_MENU_INDICES
 	CMI_BUDDY = 0,
 	CMI_CONTACT_COMPOSITE,
 	CMI_CONTACT_BASIC,
+	CMI_CHAT,
 };
 
 
@@ -602,6 +605,7 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 							HMENU hmenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDM_BLIST_CONTEXT));
 							HMENU hmenuSubmenu = NULL;
 							GList *lpglistVMA = NULL;
+							BOOL bExtraItems;
 
 							/* Really select this node. */
 							TreeView_SelectItem(lpnmhdr->hwndFrom, tvitem.hItem);
@@ -611,44 +615,47 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 
 							lpvblistnode = (VULTURE_BLIST_NODE*)tvitem.lParam;
 
+							/* Assume we need to ask the core for extra items. */
+							bExtraItems = TRUE;
+
 							/* Reading lpvblistnode->nodetype is atomic and so
 							 * we don't need our critical section.
 							 */
 							switch(lpvblistnode->nodetype)
 							{
 							case PURPLE_BLIST_BUDDY_NODE:
-								{
-									VULTURE_MAKE_CONTEXT_MENU vmcm;
-
-									vmcm.hmenu = hmenuSubmenu = GetSubMenu(hmenu, CMI_BUDDY);
-									vmcm.lpvblistnode = lpvblistnode;
-									vmcm.lplpglistVMA = &lpglistVMA;
-
-									VultureSingleSyncPurpleCall(PC_MAKEBUDDYMENU, &vmcm);
-								}
-								
+								hmenuSubmenu = GetSubMenu(hmenu, CMI_BUDDY);
 								break;
 
 							case PURPLE_BLIST_CONTACT_NODE:
 								if(TreeView_GetChild(lpnmhdr->hwndFrom, tvitem.hItem))
 								{
 									hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_BASIC);
+									bExtraItems = FALSE;
 								}
 								else
-								{
-									VULTURE_MAKE_CONTEXT_MENU vmcm;
+									hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_COMPOSITE);
 
-									vmcm.hmenu = hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_COMPOSITE);
-									vmcm.lpvblistnode = lpvblistnode;
-									vmcm.lplpglistVMA = &lpglistVMA;
+								break;
 
-									VultureSingleSyncPurpleCall(PC_MAKEBUDDYMENU, &vmcm);
-								}
-
+							case PURPLE_BLIST_CHAT_NODE:
+								hmenuSubmenu = GetSubMenu(hmenu, CMI_CHAT);
 								break;
 
 							default:
+								bExtraItems = FALSE;
 								break;
+							}
+
+							if(bExtraItems)
+							{
+								VULTURE_MAKE_CONTEXT_MENU vmcm;
+
+								vmcm.hmenu = hmenuSubmenu;
+								vmcm.lpvblistnode = lpvblistnode;
+								vmcm.lplpglistVMA = &lpglistVMA;
+
+								VultureSingleSyncPurpleCall(PC_MAKECONTEXTMENU, &vmcm);
 							}
 
 							if(hmenuSubmenu)
@@ -666,6 +673,9 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 									case PURPLE_BLIST_BUDDY_NODE:
 									case PURPLE_BLIST_CONTACT_NODE:
 										RunBuddyMenuCmd(lpvblistnode, hmenuSubmenu, iCmd);
+										break;
+									case PURPLE_BLIST_CHAT_NODE:
+										RunChatMenuCmd(lpvblistnode, hmenuSubmenu, iCmd);
 										break;
 									default:
 										break;
@@ -917,17 +927,37 @@ static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
  */
 static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
 {
+	if(RunCommonMenuCmd(lpvblistnode, hmenu, iCmd))
+		return;
+
+	switch(iCmd)
+	{
+	case IDM_BLIST_CONTEXT_SHOWOFFLINE:
+		VultureEnqueueAsyncPurpleCall(PC_TOGGLESHOWOFFLINE, lpvblistnode);
+		break;
+	}
+}
+
+
+/**
+ * Determines whether a menu command is one of those common to various sorts of
+ * context menu, and if so, executes it.
+ *
+ * @param	lpvblistnode	List node to which the context menu relates.
+ * @param	hmenu		Context menu.
+ * @param	iCmd		Command ID.
+ *
+ * @return TRUE iff we processed the command.
+ */
+static BOOL RunCommonMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
+{
 	UNREFERENCED_PARAMETER(hmenu);
 
 	switch(iCmd)
 	{
-	case IDM_BLIST_CONTEXT_IM:
+	case IDM_BLIST_CONTEXT_ACTIVATE:
 		VultureEnqueueAsyncPurpleCall(PC_BLISTNODEACTIVATED, lpvblistnode);
-		break;
-
-	case IDM_BLIST_CONTEXT_SHOWOFFLINE:
-		VultureEnqueueAsyncPurpleCall(PC_TOGGLESHOWOFFLINE, lpvblistnode);
-		break;
+		return TRUE;
 
 	default:
 		/* Not a static command that we recongise; might be a dynamic
@@ -942,8 +972,27 @@ static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int i
 			GetMenuItemInfo(hmenu, iCmd, FALSE, &mii);
 
 			VultureSingleSyncPurpleCall(PC_PERFORMMENUACTION, (VULTURE_MENU_ACTION*)mii.dwItemData);
+
+			return TRUE;
 		}
 
 		break;
 	}
+
+	return FALSE;
+}
+
+
+/**
+ * Executes a menu command from the context menu for a chat node in the buddy
+ * list.
+ *
+ * @param	lpvblistnode	List node to which the context menu relates.
+ * @param	hmenu		Context menu.
+ * @param	iCmd		Command ID.
+ */
+static void RunChatMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
+{
+	if(RunCommonMenuCmd(lpvblistnode, hmenu, iCmd))
+		return;
 }

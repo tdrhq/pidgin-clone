@@ -37,7 +37,7 @@
 #define IDM_BLIST_BUDDIES_JOINCHAT              40002
 
 #define IDM_BLIST_CONTEXT                       1002
-#define IDM_BLIST_CONTEXT_IM                    40201
+#define IDM_BLIST_CONTEXT_ACTIVATE              40201
 #define IDM_BLIST_CONTEXT_GETINFO               40202
 #define IDM_BLIST_CONTEXT_SENDFILE              40203
 #define IDM_BLIST_CONTEXT_ADDPOUNCE     	40204
@@ -49,6 +49,8 @@
 #define IDM_BLIST_CONTEXT_CUSTOMICON            40210
 #define IDM_BLIST_CONTEXT_REMOVEICON            40211
 #define IDM_BLIST_CONTEXT_SHOWBUDDIES           40212
+#define IDM_BLIST_CONTEXT_AUTOJOIN              40213
+#define IDM_BLIST_CONTEXT_PROPERTIES            40214
 
 #define IDM_CONV                                1003
 #define IDM_CONV_CONV_CLOSE                     40401

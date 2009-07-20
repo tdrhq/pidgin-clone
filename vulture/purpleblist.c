@@ -34,6 +34,7 @@
 
 
 static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode);
+static void AddCommonMenuItems(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA, PurpleConnection *lpconnection, int iProtoIndex, int iExtendedIndex);
 
 
 
@@ -319,17 +320,42 @@ void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, P
  */
 void PurpleMakeBuddyMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA)
 {
-	GList *lpglistPMA;
-	PurplePluginProtocolInfo *lpprplinfo;
-	PurpleConnection *lpconnection;
-	UINT uiNextID = IDM_DYNAMIC_FIRST;
-
 	*lplpglistVMA = NULL;
 
 	if(!lpblistnode)
 		return;
 
-	lpconnection = ((PurpleBuddy*)lpblistnode)->account->gc;
+	AddCommonMenuItems(
+		hmenu,
+		lpblistnode,
+		lplpglistVMA,
+		((PurpleBuddy*)lpblistnode)->account->gc,
+		VultureGetMenuPosFromID(hmenu, IDM_BLIST_CONTEXT_VIEWLOG) + 1,
+		VultureGetMenuPosFromID(hmenu, IDM_BLIST_CONTEXT_BLOCK));
+
+	/* Enable/disable/check stuff as appropriate. */
+	CheckMenuItem(hmenu, IDM_BLIST_CONTEXT_SHOWOFFLINE, purple_blist_node_get_bool(lpblistnode, "show_offline") ? MF_CHECKED : MF_UNCHECKED);
+}
+
+
+/**
+ * Adds dynamic menu items common to various sorts of buddy-list node.
+ *
+ * @param[in,out]	hmenu		Menu to add to.
+ * @param		lpblistnode	List node.
+ * @param[in,out]	lplpglistVMA	VMA pointers will be appended to this
+ *					list as necessary. Free them later.
+ * @param		lpconnect	Connection for node.
+ * @param		iProtoIndex	Menu index at which to insert prpl-
+ *					specific menu items.
+ * @param		iExtendedIndex	Menu index at which to insert extended
+ *					menu items.
+ */
+static void AddCommonMenuItems(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA, PurpleConnection *lpconnection, int iProtoIndex, int iExtendedIndex)
+{
+	GList *lpglistPMA;
+	PurplePluginProtocolInfo *lpprplinfo;
+	UINT uiNextID = IDM_DYNAMIC_FIRST;
 
 	if(lpconnection &&
 		(lpprplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(lpconnection->prpl)) &&
@@ -337,15 +363,46 @@ void PurpleMakeBuddyMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplp
 	{
 		/* Insert at the bottom of the first section. */
 		lpglistPMA = lpprplinfo->blist_node_menu(lpblistnode);
-		PurpleInsertDynamicMenu(hmenu, VultureGetMenuPosFromID(hmenu, IDM_BLIST_CONTEXT_VIEWLOG) + 1, &uiNextID, lpglistPMA, lplpglistVMA, lpblistnode);
+		PurpleInsertDynamicMenu(hmenu, iProtoIndex, &uiNextID, lpglistPMA, lplpglistVMA, lpblistnode);
 		g_list_free(lpglistPMA);
 	}
 
 	/* Insert at the top of the second section. */
 	lpglistPMA = purple_blist_node_get_extended_menu(lpblistnode);
-	PurpleInsertDynamicMenu(hmenu, VultureGetMenuPosFromID(hmenu, IDM_BLIST_CONTEXT_BLOCK), &uiNextID, lpglistPMA, lplpglistVMA, lpblistnode);
+	PurpleInsertDynamicMenu(hmenu, iExtendedIndex, &uiNextID, lpglistPMA, lplpglistVMA, lpblistnode);
 	g_list_free(lpglistPMA);
+}
 
-	/* Enable/disable/check stuff as appropriate. */
-	CheckMenuItem(hmenu, IDM_BLIST_CONTEXT_SHOWOFFLINE, purple_blist_node_get_bool(lpblistnode, "show_offline") ? MF_CHECKED : MF_UNCHECKED);
+
+/**
+ * Builds the context menu for a chat node.
+ *
+ * @param[in,out]	hmenu		Basic menu loaded from the resources,
+ *					which will be augmented.
+ * @param		lpblistnode	Buddy-list node for a buddy (not
+ *					contact).
+ * @param[out]		lplpglistVMA	Used to return a list populated with
+ *					pointers to item-data for the menu
+ *					items that we add, which the caller
+ *					should g_free (and then g_list_free)
+ *					once it's done with the menu, but which
+ *					otherwise it probably doesn't care
+ *					about.
+ */
+void PurpleMakeChatMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA)
+{
+	int iIndex = VultureGetMenuPosFromID(hmenu, IDM_BLIST_CONTEXT_VIEWLOG) + 1;
+
+	*lplpglistVMA = NULL;
+
+	if(!lpblistnode)
+		return;
+
+	AddCommonMenuItems(
+		hmenu,
+		lpblistnode,
+		lplpglistVMA,
+		((PurpleChat*)lpblistnode)->account->gc,
+		iIndex,
+		iIndex);
 }
