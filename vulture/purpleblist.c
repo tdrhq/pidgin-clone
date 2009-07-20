@@ -29,6 +29,7 @@
 #include "vultureblist.h"
 #include "purplemain.h"
 #include "resource.h"
+#include "purpleconv.h"
 
 
 
@@ -236,8 +237,10 @@ void VultureBListNodeRelease(VULTURE_BLIST_NODE *lpvblnode)
  */
 void PurpleBListNodeActivated(VULTURE_BLIST_NODE *lpvbn)
 {
-	if(lpvbn->lpblistnode &&
-		(PURPLE_BLIST_NODE_IS_CONTACT(lpvbn->lpblistnode) || PURPLE_BLIST_NODE_IS_BUDDY(lpvbn->lpblistnode)))
+	if(!lpvbn->lpblistnode)
+		return;
+
+	if(PURPLE_BLIST_NODE_IS_CONTACT(lpvbn->lpblistnode) || PURPLE_BLIST_NODE_IS_BUDDY(lpvbn->lpblistnode))
 	{
 		PurpleBuddy *lpbuddy;
 
@@ -248,6 +251,8 @@ void PurpleBListNodeActivated(VULTURE_BLIST_NODE *lpvbn)
 
 		purple_conversation_new(PURPLE_CONV_TYPE_IM, lpbuddy->account, lpbuddy->name);
 	}
+	else if(PURPLE_BLIST_NODE_IS_CHAT(lpvbn->lpblistnode))
+		PurpleJoinChat((PurpleChat*)lpvbn->lpblistnode);
 }
 
 
