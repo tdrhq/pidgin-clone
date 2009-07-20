@@ -65,6 +65,11 @@ static gboolean QueueCheck(GSource *lpgsource);
 static gboolean QueueDispatch(GSource *lpgsource, GSourceFunc gsfCallback, gpointer lpvData);
 
 
+#define EFFECTIVE_BUDDY(lpblistnode) \
+	((lpblistnode) && PURPLE_BLIST_NODE_IS_CONTACT(lpblistnode) ? \
+				(PurpleBlistNode*)purple_contact_get_priority_buddy((PurpleContact*)(lpblistnode)) : \
+				(lpblistnode))
+
 #define ASYNC_QUEUE_PRIORITY	G_PRIORITY_DEFAULT
 #define SYNC_QUEUE_PRIORITY	(G_PRIORITY_DEFAULT - 1)
 
@@ -271,7 +276,8 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 	case PC_MAKEBUDDYMENU:
 		{
 			VULTURE_MAKE_CONTEXT_MENU *lpvmcm = lppurplecall->lpvParam;
-			PurpleMakeBuddyMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode, lpvmcm->lplpglistVMA);
+			
+			PurpleMakeBuddyMenu(lpvmcm->hmenu, EFFECTIVE_BUDDY(lpvmcm->lpvblistnode->lpblistnode), lpvmcm->lplpglistVMA);
 		}
 
 		break;
@@ -281,6 +287,19 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		{
 			VULTURE_MENU_ACTION *lpvma = lppurplecall->lpvParam;
 			lpvma->lpfnCallback(lpvma->lpvObject, lpvma->lpvData);
+		}
+
+		break;
+
+	case PC_TOGGLESHOWOFFLINE:
+		{
+			PurpleBlistNode *lpblistnodeBuddy = EFFECTIVE_BUDDY(((VULTURE_BLIST_NODE*)lppurplecall->lpvParam)->lpblistnode);
+
+			if(lpblistnodeBuddy)
+			{
+				purple_blist_node_set_bool(lpblistnodeBuddy, "show_offline", !purple_blist_node_get_bool(lpblistnodeBuddy, "show_offline"));
+				PurpleBlistUpdateNode(NULL, lpblistnodeBuddy);
+			}
 		}
 
 		break;

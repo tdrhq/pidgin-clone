@@ -682,7 +682,9 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 							g_list_foreach(lpglistVMA, (GFunc)g_free, NULL);
 							g_list_free(lpglistVMA);
 
-							/* Allow default right-click processing. */
+							/* Prevent spurious right-click messages being sent
+							 * elsewhere.
+							 */
 							SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, TRUE);
 
 							return TRUE;
@@ -921,6 +923,10 @@ static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int i
 	{
 	case IDM_BLIST_CONTEXT_IM:
 		VultureEnqueueAsyncPurpleCall(PC_BLISTNODEACTIVATED, lpvblistnode);
+		break;
+
+	case IDM_BLIST_CONTEXT_SHOWOFFLINE:
+		VultureEnqueueAsyncPurpleCall(PC_TOGGLESHOWOFFLINE, lpvblistnode);
 		break;
 
 	default:

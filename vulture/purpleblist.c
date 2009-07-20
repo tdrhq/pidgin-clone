@@ -302,7 +302,8 @@ void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, P
  *
  * @param[in,out]	hmenu		Basic menu loaded from the resources,
  *					which will be augmented.
- * @param		lpblistnode	Buddy-list node.
+ * @param		lpblistnode	Buddy-list node for a buddy (not
+ *					contact).
  * @param[out]		lplpglistVMA	Used to return a list populated with
  *					pointers to item-data for the menu
  *					items that we add, which the caller
@@ -315,13 +316,15 @@ void PurpleMakeBuddyMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplp
 {
 	GList *lpglistPMA;
 	PurplePluginProtocolInfo *lpprplinfo;
-	PurpleConnection *lpconnection = ((PurpleBuddy*)lpblistnode)->account->gc;
+	PurpleConnection *lpconnection;
 	UINT uiNextID = IDM_DYNAMIC_FIRST;
 
 	*lplpglistVMA = NULL;
 
 	if(!lpblistnode)
 		return;
+
+	lpconnection = ((PurpleBuddy*)lpblistnode)->account->gc;
 
 	if(lpconnection &&
 		(lpprplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(lpconnection->prpl)) &&
@@ -337,4 +340,7 @@ void PurpleMakeBuddyMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplp
 	lpglistPMA = purple_blist_node_get_extended_menu(lpblistnode);
 	PurpleInsertDynamicMenu(hmenu, VultureGetMenuPosFromID(hmenu, IDM_BLIST_CONTEXT_BLOCK), &uiNextID, lpglistPMA, lplpglistVMA, lpblistnode);
 	g_list_free(lpglistPMA);
+
+	/* Enable/disable/check stuff as appropriate. */
+	CheckMenuItem(hmenu, IDM_BLIST_CONTEXT_SHOWOFFLINE, purple_blist_node_get_bool(lpblistnode, "show_offline") ? MF_CHECKED : MF_UNCHECKED);
 }
