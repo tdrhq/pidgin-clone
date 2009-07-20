@@ -21,7 +21,19 @@
 #ifndef _TELEPATHY_ACCOUNT_H_
 #define _TELEPATHY_ACCOUNT_H_
 
-#include <telepathy-glib/proxy.h>
+#include <telepathy-glib/account.h>
+
+#include "account.h"
+
+typedef struct
+{
+	TpAccount *tp_account;
+	PurpleAccount *account;	
+
+	gchar *obj_Path;
+	gchar *cm, *protocol;
+
+} telepathy_account;
 
 void
 get_valid_accounts_cb (TpProxy *proxy,

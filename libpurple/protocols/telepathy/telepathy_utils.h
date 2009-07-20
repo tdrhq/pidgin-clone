@@ -23,12 +23,22 @@
 
 #include <glib.h>
 
+#include <telepathy-glib/connection-manager.h>
+
 #include "internal.h"
 
 #include "status.h"
 
 #define TELEPATHY_ID "prpl-telepathy"
 #define TELEPATHY_DISPLAY_VERSION "1.0"
+
+typedef struct
+{
+	TpConnectionManager *cm;
+	TpConnectionManagerProtocol *protocol;
+	PurplePlugin *plugin;
+
+} telepathy_data;
 
 typedef struct
 {

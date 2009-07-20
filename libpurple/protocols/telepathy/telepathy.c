@@ -53,14 +53,6 @@ static void *module_handle;
 static gchar *module_path;
 static TpAccountManager *account_Manager;
 
-typedef struct
-{
-	TpConnectionManager *cm;
-	TpConnectionManagerProtocol *protocol;
-	PurplePlugin *plugin;
-
-} telepathy_data;
-
 static gboolean
 telepathy_plugin_load(PurplePlugin *plugin)
 {
@@ -205,8 +197,6 @@ telepathy_chat_info(PurpleConnection *gc)
 static void
 telepathy_login(PurpleAccount *acct)
 {
-	purple_debug_info("telepathy", "Object path: %s\n",
-			purple_account_get_string(acct, "objpath", NULL));
 	PurpleConnection *gc = purple_account_get_connection(acct);
 
 	PurplePlugin* plugin = gc->prpl;

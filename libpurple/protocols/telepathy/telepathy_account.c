@@ -23,11 +23,126 @@
 #include "telepathy_utils.h"
 
 #include <telepathy-glib/account.h>
+#include <telepathy-glib/connection-manager.h>
 #include <telepathy-glib/dbus.h>
 #include <telepathy-glib/interfaces.h>
+#include <telepathy-glib/util.h>
 
 #include "account.h"
 #include "debug.h"
+#include "../../../pidgin/gtkaccount.h"
+
+static void
+update_parameters_cb (TpAccount *proxy,
+                      const gchar **out_Reconnect_Required,
+                      const GError *error,
+                      gpointer user_data,
+                      GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "UpdateParameters error: %s\n",
+				error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "UpdateParameters succeeded!\n");
+}
+
+static void
+save_account_parameters (telepathy_account *account_data,
+                         TpConnectionManagerParam *params)
+{
+	PurpleAccount *account = account_data->account;
+
+	int i;
+	
+	GHashTable *params_hash = g_hash_table_new_full (g_str_hash, g_str_equal,
+			NULL, (GDestroyNotify) tp_g_value_slice_free);
+
+	GPtrArray *unset = g_ptr_array_new();
+
+	/* Loop over all parameters */
+	for (i = 0; params[i].name != NULL; ++i)
+	{
+		gchar *name = params[i].name;
+		const gchar *signature = params[i].dbus_signature;
+
+		/* Some protocols might not require username or password, so check them before */
+		if (g_strcmp0(name, "account") == 0 && account->username != NULL)
+			tp_asv_set_string(params_hash, "account", account->username);
+		if (g_strcmp0(name, "password") == 0 && account->password != NULL)
+			tp_asv_set_string(params_hash, "password", account->password);
+
+		/* Account and password are handled in particular */
+		if (g_strcmp0(name, "account") != 0 && g_strcmp0(name, "password"))
+		{
+			/* Check the type of the parameter and update the hash table,
+			 * or add it to the unset array if it's default
+			 */
+			if (g_strcmp0(signature, "s") == 0)
+			{
+				if (g_strcmp0(purple_account_get_string(account, name, ""), ""))
+					tp_asv_set_string(params_hash, name,
+							purple_account_get_string(account, name, ""));
+				else
+					g_ptr_array_add(unset, name);
+			}
+			else if (g_strcmp0(signature, "n") == 0)
+			{
+				if (purple_account_get_int(account, name, 0) != 0)
+					tp_asv_set_int32(params_hash, name,
+							purple_account_get_int(account, name, 0));
+				else
+					g_ptr_array_add(unset, name);
+			}
+			else if (g_strcmp0(signature, "i") == 0)
+			{
+				if (purple_account_get_int(account, name, 0) != 0)
+					tp_asv_set_int32(params_hash, name,
+							purple_account_get_int(account, name, 0));
+				else
+					g_ptr_array_add(unset, name);
+			}
+			else if (g_strcmp0(signature, "u") == 0)
+			{
+				if (purple_account_get_int(account, name, 0) != 0)
+					tp_asv_set_uint32(params_hash, name,
+							purple_account_get_int(account, name, 0));
+				else
+					g_ptr_array_add(unset, name);
+			}
+			else if (g_strcmp0(signature, "q") == 0)
+			{
+				if (purple_account_get_int(account, name, 0) != 0)
+					tp_asv_set_uint32(params_hash, name,
+							purple_account_get_int(account, name, 0));
+				else
+					g_ptr_array_add(unset, name);
+			}
+			else if (g_strcmp0(signature, "b") == 0)
+			{
+				tp_asv_set_boolean(params_hash, name,
+						purple_account_get_bool(account, name, FALSE));
+			}
+			else
+				purple_debug_warning("telepathy", "Unknown signature \"%s\" for"
+						" \"%s\"\n", signature, name);
+		}
+	}
+
+	g_ptr_array_add(unset, NULL);
+
+	/* Upload the new parameters to AccountManager */
+	tp_cli_account_call_update_parameters(account_data->tp_account, -1,
+			params_hash, (const gchar **)unset->pdata,
+			update_parameters_cb, account_data,
+			NULL, NULL);
+
+	g_ptr_array_free(unset, TRUE);
+
+	g_hash_table_destroy(params_hash);
+}
 
 static void
 set_account_parameters (PurpleAccount *account,
@@ -87,7 +202,7 @@ get_account_properties_cb (TpProxy *proxy,
                            gpointer user_data,
                            GObject *weak_object)
 {
-	gchar *obj_Path = user_data;
+	telepathy_account *account_data = user_data;
 
 	GHashTable *parameters;
 	const gchar *display_name;
@@ -118,13 +233,16 @@ get_account_properties_cb (TpProxy *proxy,
 	/* Parse the object path to find the connection manager and the protocol.
 	 * The object path looks like "/org/freedesktop/Telepathy/Account/cm/proto/acct"
 	 */
-	tokens = g_strsplit(obj_Path, "/", 8);
+	tokens = g_strsplit(account_data->obj_Path, "/", 8);
 
 	cm = tokens[5];
 	proto = tokens[6];
 
 	protocol_id = g_strdup_printf("%s-%s-%s", TELEPATHY_ID, cm, proto);
 	
+	account_data->cm = g_strdup(cm);
+	account_data->protocol = g_strdup(proto);
+
 	g_strfreev(tokens);
 
 	/* Check if the account already exists in purple-land. If not, we need to manually
@@ -147,10 +265,69 @@ get_account_properties_cb (TpProxy *proxy,
 				display_name);
 	}
 
-	purple_account_set_string(account, "objpath", obj_Path);
+	account_data->account = account;
+
+	purple_account_set_string(account, "objpath", account_data->obj_Path);
+	purple_account_set_int(account, "tp_account_data", (int)account_data);
 
 	/* Sync the parameters with PurpleAccount's parameters */
 	set_account_parameters(account, parameters);
+}
+
+static void
+account_modified_cb (PurpleAccount *account,
+                     gpointer user_data)
+{
+	telepathy_account *account_data = (telepathy_account*)purple_account_get_int(
+			account, "tp_account_data", 0);
+
+	PurplePlugin *plugin;
+	telepathy_data *data;
+
+	if (account_data == NULL)
+	{
+		/* This doesn't seem to be a prpl-telepathy account, so there's nothing to do */
+		return;
+	}
+
+	/* We need to find the plugin of this account in order to have access to the
+	 * Connection Manager proxy and the protocol parameters.
+	 */
+	plugin = purple_find_prpl(g_strdup_printf("%s-%s-%s", TELEPATHY_ID, 
+			account_data->cm, account_data->protocol));
+
+	if (plugin == NULL)
+	{
+		purple_debug_info("telepathy", "There's no plugin for modifiying PurpleAccount\n");
+		return;
+	}
+
+	data = plugin->extra;
+
+	/* Save the parameters in AccountManager */
+	save_account_parameters(account_data, data->protocol->params);
+}
+
+static void
+account_destroying_cb (PurpleAccount *account,
+                       gpointer user_data)
+{
+	telepathy_account *account_data;
+
+	/* Save the changes to AccountManager and destroy the alocated struct */
+	account_modified_cb(account, user_data);
+	
+	account_data = (telepathy_account*)purple_account_get_int(
+			account, "tp_account_data", 0);
+
+	if (account_data != NULL)
+	{
+		g_free(account_data->obj_Path);
+		g_free(account_data->cm);
+		g_free(account_data->protocol);
+
+		g_free(account_data);
+	}
 }
 
 void
@@ -191,6 +368,7 @@ get_valid_accounts_cb (TpProxy *proxy,
 	{
 		gchar *obj_Path = g_ptr_array_index(accounts, i);
 		TpAccount *account;
+		telepathy_account *account_data;
 
 		purple_debug_info("telepathy", "  %s\n", obj_Path);
 
@@ -205,9 +383,29 @@ get_valid_accounts_cb (TpProxy *proxy,
 			continue;
 		}
 
+		account_data = g_new0(telepathy_account, 1);
+
+		account_data->tp_account = account;
+		account_data->obj_Path = g_strdup(obj_Path);
+
 		/* Get all properties and sync the accounts with libpurple */
 		tp_cli_dbus_properties_call_get_all(account, -1, TP_IFACE_ACCOUNT,
-				get_account_properties_cb, g_strdup(obj_Path), g_free, NULL);
+				get_account_properties_cb, account_data, NULL, NULL);
+
+		/* FIXME: Is purple_accounts_get_handle() the right one to pass as the handle?
+		 * I honestly have no idea, seems to fail with a NULL :|
+		 *
+		 * FIXME: account-modified is Pidgin-dependent
+		 */
+		purple_signal_connect(pidgin_account_get_handle(), "account-modified",
+				purple_accounts_get_handle(),
+				PURPLE_CALLBACK(account_modified_cb),
+				NULL);
+
+		purple_signal_connect(purple_accounts_get_handle(), "account-destroying",
+				purple_accounts_get_handle(),
+				PURPLE_CALLBACK(account_destroying_cb),
+				NULL);
 	}
 
 	if (daemon)
