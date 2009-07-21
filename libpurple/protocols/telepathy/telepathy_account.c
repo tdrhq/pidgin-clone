@@ -366,6 +366,20 @@ purple_account_destroying_cb (PurpleAccount *account,
 }
 
 static void
+account_removed_cb (TpAccount *proxy,
+                    gpointer user_data,
+                    GObject *weak_object)
+{
+	telepathy_account *account_data = user_data;
+
+	purple_debug_info("telepathy", "Account %s removed!\n",
+			purple_account_get_username(account_data->account));	
+
+	if (account_data->account)
+		purple_accounts_remove(account_data->account);
+}
+
+static void
 create_account_cb (TpAccountManager *proxy,
                    const gchar *out_Account,
                    const GError *error,
@@ -402,6 +416,16 @@ create_account_cb (TpAccountManager *proxy,
 		purple_debug_error("telepathy", "Error creating proxy for new Account:%s\n",
 				error->message);
 		return;
+	}
+
+	tp_cli_account_connect_to_removed(tp_account,
+			account_removed_cb, account_data, NULL, NULL, &err);
+
+	if (err != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to Removed: %s\n",
+				err->message);
+		g_error_free(err);
 	}
 
 	account_data->obj_Path = g_strdup((gchar *)out_Account);
@@ -495,7 +519,7 @@ purple_account_removed_cb (PurpleAccount *account,
 {
 	telepathy_account *account_data;
 
-	purple_debug_info("telepathy", "Account removed!\n");
+	purple_debug_info("telepathy", "PurpleAccount removed!\n");
 
 	account_data = (telepathy_account*)purple_account_get_int(
 			account, "tp_account_data", 0);
@@ -504,9 +528,12 @@ purple_account_removed_cb (PurpleAccount *account,
 	{
 		purple_account_set_int(account, "tp_account_data", 0);
 
-		tp_cli_account_call_remove(account_data->tp_account, -1,
-				remove_account_cb, account_data,
-				NULL, NULL);
+		if (account_data->tp_account)
+		{
+			tp_cli_account_call_remove(account_data->tp_account, -1,
+					remove_account_cb, account_data,
+					NULL, NULL);
+		}
 	}
 }
 
@@ -571,6 +598,18 @@ get_valid_accounts_cb (TpProxy *proxy,
 		/* Get all properties and sync the accounts with libpurple */
 		tp_cli_dbus_properties_call_get_all(account, -1, TP_IFACE_ACCOUNT,
 				get_account_properties_cb, account_data, NULL, NULL);
+
+		tp_cli_account_connect_to_removed(account,
+				account_removed_cb, account_data,
+				NULL, NULL, &err);
+
+		if (err != NULL)
+		{
+			purple_debug_error("telepathy", "Error connecting to Removed: %s\n",
+					err->message);
+			g_error_free(err);
+			continue;
+		}
 
 	}
 
