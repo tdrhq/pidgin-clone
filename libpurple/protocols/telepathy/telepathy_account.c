@@ -437,8 +437,8 @@ account_added_cb (PurpleAccount *account,
 	account_data = g_new0(telepathy_account, 1);
 
 	account_data->account = account;
-	account_data->cm = (gchar *)tp_connection_manager_get_name(data->cm);
-	account_data->protocol = data->protocol->name;
+	account_data->cm = g_strdup((gchar *)tp_connection_manager_get_name(data->cm));
+	account_data->protocol = g_strdup(data->protocol->name);
 
 	purple_account_set_int(account, "tp_account_data", (int)account_data);
 
@@ -516,27 +516,27 @@ get_valid_accounts_cb (TpProxy *proxy,
 		tp_cli_dbus_properties_call_get_all(account, -1, TP_IFACE_ACCOUNT,
 				get_account_properties_cb, account_data, NULL, NULL);
 
-		/* FIXME: Is purple_accounts_get_handle() the right one to pass as the handle?
-		 * I honestly have no idea, seems to fail with a NULL :|
-		 *
-		 * FIXME: account-modified is Pidgin-dependent
-		 */
-		purple_signal_connect(pidgin_account_get_handle(), "account-modified",
-				purple_accounts_get_handle(),
-				PURPLE_CALLBACK(account_modified_cb),
-				NULL);
-
-		purple_signal_connect(purple_accounts_get_handle(), "account-destroying",
-				purple_accounts_get_handle(),
-				PURPLE_CALLBACK(account_destroying_cb),
-				NULL);
-
-		purple_signal_connect(purple_accounts_get_handle(), "account-added",
-				purple_accounts_get_handle(),
-				PURPLE_CALLBACK(account_added_cb),
-				NULL);
 	}
 
+	/* FIXME: Is purple_accounts_get_handle() the right one to pass as the handle?
+	 * I honestly have no idea, seems to fail with a NULL :|
+	 *
+	 * FIXME: account-modified is Pidgin-dependent
+	 */
+	purple_signal_connect(pidgin_account_get_handle(), "account-modified",
+		purple_accounts_get_handle(),
+		PURPLE_CALLBACK(account_modified_cb),
+		NULL);
+
+	purple_signal_connect(purple_accounts_get_handle(), "account-destroying",
+		purple_accounts_get_handle(),
+		PURPLE_CALLBACK(account_destroying_cb),
+		NULL);
+
+	purple_signal_connect(purple_accounts_get_handle(), "account-added",
+		purple_accounts_get_handle(),
+		PURPLE_CALLBACK(account_added_cb),
+		NULL);
 	if (daemon)
 		g_object_unref(daemon);
 
