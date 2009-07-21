@@ -308,8 +308,8 @@ get_account_properties_cb (TpProxy *proxy,
 }
 
 static void
-account_modified_cb (PurpleAccount *account,
-                     gpointer user_data)
+purple_account_modified_cb (PurpleAccount *account,
+                            gpointer user_data)
 {
 	telepathy_account *account_data = (telepathy_account*)purple_account_get_int(
 			account, "tp_account_data", 0);
@@ -344,13 +344,13 @@ account_modified_cb (PurpleAccount *account,
 }
 
 static void
-account_destroying_cb (PurpleAccount *account,
-                       gpointer user_data)
+purple_account_destroying_cb (PurpleAccount *account,
+                              gpointer user_data)
 {
 	telepathy_account *account_data;
 
 	/* Save the changes to AccountManager and destroy the alocated struct */
-	account_modified_cb(account, user_data);
+	purple_account_modified_cb(account, user_data);
 	
 	account_data = (telepathy_account*)purple_account_get_int(
 			account, "tp_account_data", 0);
@@ -409,8 +409,8 @@ create_account_cb (TpAccountManager *proxy,
 }
 
 static void
-account_added_cb (PurpleAccount *account,
-                  gpointer user_data)
+purple_account_added_cb (PurpleAccount *account,
+                         gpointer user_data)
 {
 	gchar *protocol_id = g_strndup(purple_account_get_protocol_id(account),
 			strlen(TELEPATHY_ID));
@@ -490,8 +490,8 @@ remove_account_cb (TpAccount *proxy,
 }
 
 static void
-account_removed_cb (PurpleAccount *account,
-                    gpointer user_data)
+purple_account_removed_cb (PurpleAccount *account,
+                           gpointer user_data)
 {
 	telepathy_account *account_data;
 
@@ -581,22 +581,22 @@ get_valid_accounts_cb (TpProxy *proxy,
 	 */
 	purple_signal_connect(pidgin_account_get_handle(), "account-modified",
 		purple_accounts_get_handle(),
-		PURPLE_CALLBACK(account_modified_cb),
+		PURPLE_CALLBACK(purple_account_modified_cb),
 		NULL);
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-destroying",
 		purple_accounts_get_handle(),
-		PURPLE_CALLBACK(account_destroying_cb),
+		PURPLE_CALLBACK(purple_account_destroying_cb),
 		NULL);
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-added",
 		purple_accounts_get_handle(),
-		PURPLE_CALLBACK(account_added_cb),
+		PURPLE_CALLBACK(purple_account_added_cb),
 		NULL);
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 		purple_accounts_get_handle(),
-		PURPLE_CALLBACK(account_removed_cb),
+		PURPLE_CALLBACK(purple_account_removed_cb),
 		NULL);
 
 	if (daemon)
