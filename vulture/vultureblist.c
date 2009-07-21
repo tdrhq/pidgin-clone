@@ -930,13 +930,16 @@ static void SetStatusMsg(HWND hwndStatusDlg)
  */
 static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
 {
-	TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
-	lpvbn->hti = NULL;
+	if(lpvbn->hti)
+	{
+		TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
+		lpvbn->hti = NULL;
 
-	/* Release the reference belonging to the pointer
-	 * cached in the tree-item.
-	 */
-	VultureBListNodeRelease(lpvbn);
+		/* Release the reference belonging to the pointer
+		 * cached in the tree-item.
+		 */
+		VultureBListNodeRelease(lpvbn);
+	}
 }
 
 

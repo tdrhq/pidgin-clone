@@ -45,19 +45,7 @@ static void AddCommonMenuItems(HMENU hmenu, PurpleBlistNode *lpblistnode, GList 
  */
 void PurpleBlistNewNode(PurpleBlistNode *lpblistnode)
 {
-	/* As this is the first time we've seen this node, allocate some state
-	 * data. The UI will free this when it removes the corresponding UI
-	 * node.
-	 */
-
-	VULTURE_BLIST_NODE *lpvbn = (VULTURE_BLIST_NODE*)(lpblistnode->ui_data = g_new(VULTURE_BLIST_NODE, 1));
-
-	lpvbn->lpblistnode = lpblistnode;
-	lpvbn->szNodeText = NULL;
-	lpvbn->hti = NULL;
-	lpvbn->lRefCount = 1;
-	lpvbn->lpvbnParent = NULL;
-	InitializeCriticalSection(&lpvbn->cs);
+	lpblistnode->ui_data = NULL;
 }
 
 
@@ -73,8 +61,19 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 
 	if(!lpblistnode)
 		return;
-		
+
 	lpvbn = (VULTURE_BLIST_NODE*)lpblistnode->ui_data;
+
+	if(!lpvbn)
+	{
+		lpvbn = (VULTURE_BLIST_NODE*)(lpblistnode->ui_data = g_new(VULTURE_BLIST_NODE, 1));
+		lpvbn->lpblistnode = lpblistnode;
+		lpvbn->szNodeText = NULL;
+		lpvbn->hti = NULL;
+		lpvbn->lRefCount = 1;
+		lpvbn->lpvbnParent = NULL;
+		InitializeCriticalSection(&lpvbn->cs);
+	}
 
 	EnterCriticalSection(&lpvbn->cs);
 
@@ -205,15 +204,24 @@ static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode)
  */
 void PurpleBlistRemoveNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode)
 {
+	VULTURE_BLIST_NODE *lpvbn;
+
 	UNREFERENCED_PARAMETER(lpbuddylist);
 
 	if(!lpblistnode)
 		return;
 
+	lpvbn = lpblistnode->ui_data;
+
 	/* This pointer is about to become invalid. */
-	((VULTURE_BLIST_NODE*)lpblistnode->ui_data)->lpblistnode = NULL;
+	lpvbn->lpblistnode = NULL;
+
+	if(lpvbn->hti)
+		VulturePostUIMessage(VUIMSG_REMOVEBLISTNODE, lpvbn);
 
 	VultureBListNodeRelease((VULTURE_BLIST_NODE*)lpblistnode->ui_data);
+
+	lpblistnode->ui_data = NULL;
 }
 
 
