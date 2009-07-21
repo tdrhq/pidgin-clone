@@ -313,6 +313,8 @@ account_modified_cb (PurpleAccount *account,
 		return;
 	}
 
+	purple_debug_info("telepathy", "Account modified!\n");
+
 	/* We need to find the plugin of this account in order to have access to the
 	 * Connection Manager proxy and the protocol parameters.
 	 */
@@ -454,6 +456,42 @@ account_added_cb (PurpleAccount *account,
 
 }
 
+static void
+remove_account_cb (TpAccount *proxy,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Remove error: %s\n", error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "Remove succeeded!\n");
+}
+
+static void
+account_removed_cb (PurpleAccount *account,
+                    gpointer user_data)
+{
+	telepathy_account *account_data;
+
+	purple_debug_info("telepathy", "Account removed!\n");
+
+	account_data = (telepathy_account*)purple_account_get_int(
+			account, "tp_account_data", 0);
+
+	if (account_data != NULL)
+	{
+		purple_account_set_int(account, "tp_account_data", 0);
+
+		tp_cli_account_call_remove(account_data->tp_account, -1,
+				remove_account_cb, account_data,
+				NULL, NULL);
+	}
+}
+
 void
 get_valid_accounts_cb (TpProxy *proxy,
                        const GValue *out_Value,
@@ -537,6 +575,12 @@ get_valid_accounts_cb (TpProxy *proxy,
 		purple_accounts_get_handle(),
 		PURPLE_CALLBACK(account_added_cb),
 		NULL);
+
+	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
+		purple_accounts_get_handle(),
+		PURPLE_CALLBACK(account_removed_cb),
+		NULL);
+
 	if (daemon)
 		g_object_unref(daemon);
 
