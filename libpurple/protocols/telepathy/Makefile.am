@@ -10,6 +10,7 @@ TELEPATHYSOURCES = \
 	telepathy_channel.c \
 	telepathy_channel_list.c \
 	telepathy_channel_text.c \
+	telepathy_client.c \
 	telepathy_connection.c \
 	telepathy_contact.c \
 	telepathy_utils.c
