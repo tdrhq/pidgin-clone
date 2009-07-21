@@ -56,9 +56,9 @@ static void UpdateStatusUI(VULTURE_SAVED_STATUS *lpvss, HWND hwndStatusDlg);
 static LRESULT CALLBACK StatusMsgBoxSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void SetStatusMsg(HWND hwndStatusDlg);
 static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
-static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
-static BOOL RunCommonMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
-static void RunChatMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
+static void RunBuddyMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
+static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
+static void RunChatMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
 
 
 #define BLIST_MARGIN 6
@@ -672,10 +672,10 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 									{
 									case PURPLE_BLIST_BUDDY_NODE:
 									case PURPLE_BLIST_CONTACT_NODE:
-										RunBuddyMenuCmd(lpvblistnode, hmenuSubmenu, iCmd);
+										RunBuddyMenuCmd(lpnmhdr->hwndFrom, lpvblistnode, hmenuSubmenu, iCmd);
 										break;
 									case PURPLE_BLIST_CHAT_NODE:
-										RunChatMenuCmd(lpvblistnode, hmenuSubmenu, iCmd);
+										RunChatMenuCmd(lpnmhdr->hwndFrom, lpvblistnode, hmenuSubmenu, iCmd);
 										break;
 									default:
 										break;
@@ -702,6 +702,29 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 					}
 
 					break;
+
+				case TVN_ENDLABELEDIT:
+					{
+						/* Label-editing in the buddy-
+						 * list has finished. Alias the
+						 * node if appropriate.
+						 */
+
+						VULTURE_ALIAS_NODE valiasnode;
+						LPNMTVDISPINFO lpnmtvdispinfo = (LPNMTVDISPINFO)lParam;
+
+						/* Make sure editing wasn't
+						 * cancelled.
+						 */
+						if(lpnmtvdispinfo->item.pszText)
+						{
+							valiasnode.lpvblistnode = (VULTURE_BLIST_NODE*)lpnmtvdispinfo->item.lParam;
+							valiasnode.szAlias = lpnmtvdispinfo->item.pszText;
+							VultureSingleSyncPurpleCall(PC_ALIASNODE, &valiasnode);
+						}
+					}
+
+					return TRUE;
 				}
 			}
 		}
@@ -921,13 +944,14 @@ static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
  * Executes a menu command from the context menu for a buddy or contact node in
  * the buddy list.
  *
+ * @param	hwndBuddies	Buddy-list tree-view.
  * @param	lpvblistnode	List node to which the context menu relates.
  * @param	hmenu		Context menu.
  * @param	iCmd		Command ID.
  */
-static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
+static void RunBuddyMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
 {
-	if(RunCommonMenuCmd(lpvblistnode, hmenu, iCmd))
+	if(RunCommonMenuCmd(hwndBuddies, lpvblistnode, hmenu, iCmd))
 		return;
 
 	switch(iCmd)
@@ -943,13 +967,14 @@ static void RunBuddyMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int i
  * Determines whether a menu command is one of those common to various sorts of
  * context menu, and if so, executes it.
  *
+ * @param	hwndBuddies	Buddy-list tree-view.
  * @param	lpvblistnode	List node to which the context menu relates.
  * @param	hmenu		Context menu.
  * @param	iCmd		Command ID.
  *
  * @return TRUE iff we processed the command.
  */
-static BOOL RunCommonMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
+static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
 {
 	UNREFERENCED_PARAMETER(hmenu);
 
@@ -957,6 +982,10 @@ static BOOL RunCommonMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int 
 	{
 	case IDM_BLIST_CONTEXT_ACTIVATE:
 		VultureEnqueueAsyncPurpleCall(PC_BLISTNODEACTIVATED, lpvblistnode);
+		return TRUE;
+
+	case IDM_BLIST_CONTEXT_ALIAS:
+		SendMessage(hwndBuddies, TVM_EDITLABEL, 0, (LPARAM)lpvblistnode->hti);
 		return TRUE;
 
 	default:
@@ -987,12 +1016,13 @@ static BOOL RunCommonMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int 
  * Executes a menu command from the context menu for a chat node in the buddy
  * list.
  *
+ * @param	hwndBuddies	Buddy-list tree-view.
  * @param	lpvblistnode	List node to which the context menu relates.
  * @param	hmenu		Context menu.
  * @param	iCmd		Command ID.
  */
-static void RunChatMenuCmd(VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
+static void RunChatMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
 {
-	if(RunCommonMenuCmd(lpvblistnode, hmenu, iCmd))
+	if(RunCommonMenuCmd(hwndBuddies, lpvblistnode, hmenu, iCmd))
 		return;
 }

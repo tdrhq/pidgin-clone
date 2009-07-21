@@ -105,6 +105,14 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 
 				break;
 
+			case PURPLE_BLIST_BUDDY_NODE:
+				szNodeText = purple_buddy_get_alias((PurpleBuddy*)lpblistnode);
+
+				if(szNodeText && *szNodeText)
+					break;
+
+				/* Otherwise, fall through. */
+
 			default:
 				szNodeText = PURPLE_BLIST_NODE_NAME(lpblistnode);
 				break;
@@ -405,4 +413,32 @@ void PurpleMakeChatMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpg
 		((PurpleChat*)lpblistnode)->account->gc,
 		iIndex,
 		iIndex);
+}
+
+
+/**
+ * Sets the alias or name of a buddy-list node, as appropriate for the type.
+ *
+ * @param	lpblistnode	Buddy-list node.
+ * @param	szAlias		New alias/name.
+ */
+void PurpleBlistAliasNode(PurpleBlistNode *lpblistnode, LPCTSTR szAlias)
+{
+	gchar *szAliasUTF8;
+
+	if(!lpblistnode)
+		return;
+
+	szAliasUTF8 = VultureTCHARToUTF8(szAlias);
+
+	if(PURPLE_BLIST_NODE_IS_BUDDY(lpblistnode))
+		purple_blist_alias_buddy((PurpleBuddy*)lpblistnode, szAliasUTF8);
+	else if(PURPLE_BLIST_NODE_IS_CONTACT(lpblistnode))
+		purple_blist_alias_contact((PurpleContact*)lpblistnode, szAliasUTF8);
+	else if(PURPLE_BLIST_NODE_IS_CHAT(lpblistnode))
+		purple_blist_alias_chat((PurpleChat*)lpblistnode, szAliasUTF8);
+	else if(PURPLE_BLIST_NODE_IS_GROUP(lpblistnode))
+		purple_blist_rename_group((PurpleGroup*)lpblistnode, szAliasUTF8);
+
+	g_free(szAliasUTF8);
 }

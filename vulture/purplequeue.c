@@ -310,6 +310,14 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 
 		break;
 
+	case PC_ALIASNODE:
+		{
+			VULTURE_ALIAS_NODE *lpvaliasnode = lppurplecall->lpvParam;
+			PurpleBlistAliasNode(lpvaliasnode->lpvblistnode->lpblistnode, lpvaliasnode->szAlias);
+		}
+
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

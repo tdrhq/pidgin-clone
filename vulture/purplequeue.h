@@ -91,6 +91,9 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_BLIST_NODE*) Buddy or contact node. */
 	PC_TOGGLESHOWOFFLINE,
+
+	/* (VULTURE_ALIAS_NODE*) */
+	PC_ALIASNODE,
 };
 
 

@@ -24,7 +24,28 @@
 #define _VULTURE_VULTUREBLIST_H_
 
 #include <windows.h>
+#include <commctrl.h>
 #include <glib.h>
+
+#include "purple.h"
+
+
+typedef struct _VULTURE_BLIST_NODE
+{
+	PurpleBlistNode			*lpblistnode;
+	PurpleBlistNodeType		nodetype;
+	LPTSTR				szNodeText;
+	HTREEITEM			hti;
+	struct _VULTURE_BLIST_NODE	*lpvbnParent;
+	LONG				lRefCount;
+	CRITICAL_SECTION		cs;
+} VULTURE_BLIST_NODE;
+
+typedef struct _VULTURE_ALIAS_NODE
+{
+	VULTURE_BLIST_NODE *lpvblistnode;
+	LPTSTR szAlias;
+} VULTURE_ALIAS_NODE;
 
 
 extern HWND g_hwndMain;

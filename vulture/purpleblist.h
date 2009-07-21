@@ -26,21 +26,9 @@
 
 
 #include <windows.h>
-#include <commctrl.h>
 
+#include "vultureblist.h"
 #include "purple.h"
-
-
-typedef struct _VULTURE_BLIST_NODE
-{
-	PurpleBlistNode			*lpblistnode;
-	PurpleBlistNodeType		nodetype;
-	LPTSTR				szNodeText;
-	HTREEITEM			hti;
-	struct _VULTURE_BLIST_NODE	*lpvbnParent;
-	LONG				lRefCount;
-	CRITICAL_SECTION		cs;
-} VULTURE_BLIST_NODE;
 
 
 void PurpleBlistNewNode(PurpleBlistNode *lpblistnode);
@@ -52,6 +40,7 @@ LPTSTR PurpleBuddyGetStatusText(PurpleBuddy *lpbuddy);
 void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, PurpleStatus *lpstatusNew);
 void PurpleMakeBuddyMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA);
 void PurpleMakeChatMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA);
+void PurpleBlistAliasNode(PurpleBlistNode *lpblistnode, LPCTSTR szAlias);
 
 
 static INLINE void VultureBListNodeAddRef(VULTURE_BLIST_NODE *lpvblnode) { InterlockedIncrement(&lpvblnode->lRefCount); }
