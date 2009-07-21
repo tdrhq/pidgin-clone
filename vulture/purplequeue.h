@@ -94,6 +94,9 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_ALIAS_NODE*) */
 	PC_ALIASNODE,
+
+	/* (VULTURE_BLIST_NODE*) Chat node. */
+	PC_TOGGLEAUTOJOIN,
 };
 
 

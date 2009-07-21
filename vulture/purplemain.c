@@ -49,6 +49,7 @@
 #include "purpleblist.h"
 #include "purpleconv.h"
 #include "purplestatus.h"
+#include "purpleacct.h"
 
 
 static UINT CALLBACK PurpleThread(void *lpvData);
@@ -210,6 +211,7 @@ static void InitUI(void)
 	purple_signal_connect(purple_savedstatuses_get_handle(), "savedstatus-changed", GINT_TO_POINTER(VSH_STATUS), PURPLE_CALLBACK(PurpleStatusChanged), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "conversation-updated", GINT_TO_POINTER(VSH_CONV), PURPLE_CALLBACK(PurpleConvChanged), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-status-changed", GINT_TO_POINTER(VSH_BLIST), PURPLE_CALLBACK(PurpleBuddyStatusChanged), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-on", GINT_TO_POINTER(VSH_BLIST), PURPLE_CALLBACK(PurpleAccountSignedOn), NULL);
 
 	/* Create and load libpurple's buddy-list. */
 	purple_set_blist(purple_blist_new());

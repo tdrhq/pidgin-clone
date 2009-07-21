@@ -318,6 +318,23 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 
 		break;
 
+	case PC_TOGGLEAUTOJOIN:
+		{
+			if(((VULTURE_BLIST_NODE*)lppurplecall->lpvParam)->lpblistnode)
+			{
+				purple_blist_node_set_bool(
+					((VULTURE_BLIST_NODE*)lppurplecall->lpvParam)->lpblistnode,
+					"vulture-autojoin",
+					!purple_blist_node_get_bool(
+						((VULTURE_BLIST_NODE*)lppurplecall->lpvParam)->lpblistnode,
+						"vulture-autojoin"
+						)
+					);
+			}
+		}
+
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

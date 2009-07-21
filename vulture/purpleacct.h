@@ -34,6 +34,7 @@
 void PurpleGetAccounts(BOOL bOnlineOnly, GList **lplpglistAccounts);
 void VultureFreeAccountList(GList *lpglistAccounts);
 void PurpleApplyVultureAccount(VULTURE_ACCOUNT *lpvac);
+void PurpleAccountSignedOn(PurpleConnection *lpconnection, gpointer lpvUnused);
 
 
 #endif

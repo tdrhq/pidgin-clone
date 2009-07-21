@@ -413,6 +413,9 @@ void PurpleMakeChatMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpg
 		((PurpleChat*)lpblistnode)->account->gc,
 		iIndex,
 		iIndex);
+
+	/* Enable/disable/check stuff as appropriate. */
+	CheckMenuItem(hmenu, IDM_BLIST_CONTEXT_AUTOJOIN, purple_blist_node_get_bool(lpblistnode, "vulture-autojoin") ? MF_CHECKED : MF_UNCHECKED);
 }
 
 

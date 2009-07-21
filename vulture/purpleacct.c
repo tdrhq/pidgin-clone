@@ -27,6 +27,7 @@
 #include "purple.h"
 #include "purpleacct.h"
 #include "acctmanager.h"
+#include "purpleconv.h"
 
 
 /**
@@ -102,4 +103,44 @@ void PurpleApplyVultureAccount(VULTURE_ACCOUNT *lpvac)
 
 	g_free(szProtocolID);
 	g_free(szUsername);
+}
+
+
+/**
+ * Called in response to the signed-on account signal. Modelled on Pidgin's
+ * account_signon_cb.
+ *
+ * @param	lpconnection	Connection for the account.
+ * @param	lpvUnused	Ignored.
+ */
+void PurpleAccountSignedOn(PurpleConnection *lpconnection, gpointer lpvUnused)
+{
+	PurpleAccount *lpaccount = purple_connection_get_account(lpconnection);
+	PurpleBlistNode *lpblistnodeGroup;
+
+	UNREFERENCED_PARAMETER(lpvUnused);
+
+	/* Loop through all groups. */
+	for(lpblistnodeGroup = purple_get_blist()->root; lpblistnodeGroup; lpblistnodeGroup = lpblistnodeGroup->next)
+	{
+		if(PURPLE_BLIST_NODE_IS_GROUP(lpblistnodeGroup))
+		{
+			PurpleBlistNode *lpblistnodeChat;
+
+			/* Loop through all chats in this group belonging to
+			 * this account, autojoining any that request it.
+			 */
+			for(lpblistnodeChat = lpblistnodeGroup->child; lpblistnodeChat; lpblistnodeChat = lpblistnodeChat->next)
+			{
+				PurpleChat *lpchat = (PurpleChat*)lpblistnodeChat;
+
+				if(PURPLE_BLIST_NODE_IS_CHAT(lpblistnodeChat) &&
+					lpchat->account == lpaccount &&
+					purple_blist_node_get_bool((PurpleBlistNode*)lpchat, "vulture-autojoin"))
+				{
+					PurpleJoinChat(lpchat);
+				}
+			}
+		}
+	}
 }

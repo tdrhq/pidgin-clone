@@ -1025,4 +1025,11 @@ static void RunChatMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, H
 {
 	if(RunCommonMenuCmd(hwndBuddies, lpvblistnode, hmenu, iCmd))
 		return;
+
+	switch(iCmd)
+	{
+	case IDM_BLIST_CONTEXT_AUTOJOIN:
+		VultureEnqueueAsyncPurpleCall(PC_TOGGLEAUTOJOIN, lpvblistnode);
+		break;
+	}
 }
