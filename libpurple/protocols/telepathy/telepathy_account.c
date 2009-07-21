@@ -392,7 +392,7 @@ create_account_cb (TpAccountManager *proxy,
 		return;
 	}
 
-	account_data->obj_Path = (gchar *)out_Account;
+	account_data->obj_Path = g_strdup((gchar *)out_Account);
 	account_data->tp_account = tp_account;
 }
 
