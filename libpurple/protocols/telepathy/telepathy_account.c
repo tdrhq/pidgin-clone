@@ -167,6 +167,9 @@ set_account_parameters (PurpleAccount *account,
 	GHashTableIter iter;
 	gpointer key, value;
 
+	purple_debug_info("telepathy", "Setting parameters for %s\n",
+			purple_account_get_username(account));
+
 	/* Loop over all parameters */
 	g_hash_table_iter_init (&iter, parameters);
 	while (g_hash_table_iter_next (&iter, &key, &value)) 
@@ -266,22 +269,25 @@ get_account_properties_cb (TpProxy *proxy,
 	 */
 	account = purple_accounts_find(display_name, protocol_id);
 
-	g_free(protocol_id);
-
 	if (account == NULL)
 	{
-		purple_debug_info("telepathy", "Account %s does not exist in purple-land,"
-				" creating it!\n", display_name);
+		purple_debug_info("telepathy", "Account %s (%s) does not exist in purple-land,"
+				" creating it!\n", display_name, protocol_id);
+
+		if (purple_find_prpl(protocol_id) == NULL)
+		{
+			purple_debug_warning("telepathy", "Prpl %s is not loaded for %s!\n",
+					protocol_id, display_name);
+		}
 
 		account = purple_account_new(display_name, protocol_id);
 
 		if (account == NULL)
 		{
 			purple_debug_error("telepathy", "Error creating PurpleAccount!\n");
+			g_free(protocol_id);
 			return;
 		}
-
-		purple_account_register(account);
 	}
 	else
 	{
@@ -289,9 +295,13 @@ get_account_properties_cb (TpProxy *proxy,
 				display_name);
 	}
 
+	g_free(protocol_id);
+
 	account_data->account = account;
 
 	purple_account_set_int(account, "tp_account_data", (int)account_data);
+
+	purple_accounts_add(account);
 
 	/* Sync the parameters with PurpleAccount's parameters */
 	set_account_parameters(account, parameters);
@@ -419,6 +429,14 @@ account_added_cb (PurpleAccount *account,
 	}
 
 	g_free(protocol_id);
+
+	if (purple_account_get_int(account, "tp_account_data", 0) != 0)
+	{
+		/* This account was automaticaly pulled from AccountManager by the prpl,
+		 * we should leave it alone.
+		 */
+		return;
+	}
 
 	purple_debug_info("telepathy", "Telepathy account created!\n");
 

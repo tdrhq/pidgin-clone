@@ -1171,6 +1171,15 @@ list_connection_managers_cb (TpConnectionManager * const *cms,
 			}
 		}
 	}
+
+	/* Get all valid accounts from AccountManager. We should only do this after all
+	 * prpls have been exported, in case there's a new account discovered that needs
+	 * the prpl to be loaded.
+	 */
+	tp_cli_dbus_properties_call_get(account_Manager, -1,
+			TP_IFACE_ACCOUNT_MANAGER, "ValidAccounts",
+			get_valid_accounts_cb, NULL, NULL, NULL);
+
 }
 
 /* TODO: Check for staticly linked module */
@@ -1201,9 +1210,6 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 		return FALSE;
 	}
 
-	/* the list of connection managers will be returned in list_connection_managers_cb */
-	tp_list_connection_managers(daemon, list_connection_managers_cb, NULL, NULL, NULL);
-	
 	/* Create an AccountManager interface */
 	account_Manager = tp_account_manager_new(daemon);
 
@@ -1213,11 +1219,9 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 		return FALSE;
 	}
 
-	/* Get all valid accounts from AccountManager */
-	tp_cli_dbus_properties_call_get(account_Manager, -1,
-			TP_IFACE_ACCOUNT_MANAGER, "ValidAccounts",
-			get_valid_accounts_cb, NULL, NULL, NULL);
-
+	/* the list of connection managers will be returned in list_connection_managers_cb */
+	tp_list_connection_managers(daemon, list_connection_managers_cb, NULL, NULL, NULL);
+	
 	if (daemon != NULL)
 		g_object_unref(daemon);
 
