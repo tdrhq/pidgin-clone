@@ -181,7 +181,7 @@ client_get_property (GObject *object,
 						g_strdup (tp_proxy_get_object_path (channel)));
 			}
 
-			g_value_set_boxed (value, accounts);
+			g_value_take_boxed (value, accounts);
 
 			break;
 		}
