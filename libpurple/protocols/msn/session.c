@@ -333,6 +333,10 @@ msn_session_sync_privacy_lists(MsnSession *session)
 	}
 	purple_privacy_sync_lists(session->account, buddy_l, allow_l, NULL, block_both_l, NULL, NULL);
 	purple_debug_info("msn","Privacy Lists synchronized\n");
+
+	g_slist_free(buddy_l);
+	g_slist_free(allow_l);
+	g_slist_free(block_both_l);
 }
 
 void
