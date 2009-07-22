@@ -33,6 +33,8 @@ typedef struct
 	gchar *obj_Path;
 	gchar *cm, *protocol;
 
+        GHashTable *properties;
+
 } telepathy_account;
 
 void

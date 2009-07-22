@@ -303,6 +303,9 @@ get_account_properties_cb (TpProxy *proxy,
 
 	purple_accounts_add(account);
 
+	tp_g_hash_table_update(account_data->properties, out_Properties,
+			(GBoxedCopyFunc)g_strdup, (GBoxedCopyFunc)tp_g_value_slice_dup);
+
 	/* Sync the parameters with PurpleAccount's parameters */
 	set_account_parameters(account, parameters);
 }
@@ -360,6 +363,7 @@ purple_account_destroying_cb (PurpleAccount *account,
 		g_free(account_data->obj_Path);
 		g_free(account_data->cm);
 		g_free(account_data->protocol);
+		g_hash_table_destroy(account_data->properties);
 
 		g_free(account_data);
 	}
@@ -377,6 +381,50 @@ account_removed_cb (TpAccount *proxy,
 
 	if (account_data->account)
 		purple_accounts_remove(account_data->account);
+}
+
+static void
+account_get_all_cb (TpProxy *proxy,
+                    GHashTable *out_Properties,
+                    const GError *error,
+                    gpointer user_data,
+                    GObject *weak_object)
+{
+	telepathy_account *account_data = user_data;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "GetAll error: %s\n", error->message);
+		return;
+	}
+
+	tp_g_hash_table_update(account_data->properties, out_Properties,
+			(GBoxedCopyFunc)g_strdup, (GBoxedCopyFunc)tp_g_value_slice_dup);
+
+}
+
+static void
+account_property_changed_cb (TpAccount *proxy,
+                             GHashTable *arg_Properties,
+                             gpointer user_data,
+                             GObject *weak_object)
+{
+	telepathy_account *account_data = user_data;
+
+	GHashTableIter iter;
+	gpointer key, value;
+
+	purple_debug_info("telepathy", "Properties changed for account %s\n",
+		purple_account_get_username(account_data->account));
+
+	g_hash_table_iter_init (&iter, arg_Properties);
+	while (g_hash_table_iter_next (&iter, &key, &value)) 
+	{
+		purple_debug_info("telepathy", "  %s\n", (gchar *)key);
+	}
+
+	tp_g_hash_table_update(account_data->properties, arg_Properties,
+			(GBoxedCopyFunc)g_strdup, (GBoxedCopyFunc)tp_g_value_slice_dup);
 }
 
 static void
@@ -430,6 +478,24 @@ create_account_cb (TpAccountManager *proxy,
 
 	account_data->obj_Path = g_strdup((gchar *)out_Account);
 	account_data->tp_account = tp_account;
+
+
+	tp_cli_account_connect_to_account_property_changed(tp_account,
+		account_property_changed_cb, account_data,
+		NULL, NULL, &err);
+
+	if (err != NULL)
+	{
+		purple_debug_error("telepathy", "Error connecting to"
+			" AccountPropertyChanged: %s\n", err->message);
+		g_error_free(err);
+		err = NULL;
+	}
+
+	tp_cli_dbus_properties_call_get_all(tp_account, -1, 
+			TP_IFACE_ACCOUNT,
+			account_get_all_cb, account_data,
+			NULL, NULL);
 }
 
 static void
@@ -483,6 +549,8 @@ purple_account_added_cb (PurpleAccount *account,
 	account_data->account = account;
 	account_data->cm = g_strdup((gchar *)tp_connection_manager_get_name(data->cm));
 	account_data->protocol = g_strdup(data->protocol->name);
+	account_data->properties = g_hash_table_new_full (g_str_hash, g_str_equal,
+		NULL, (GDestroyNotify) tp_g_value_slice_free);
 
 	purple_account_set_int(account, "tp_account_data", (int)account_data);
 
@@ -594,8 +662,22 @@ get_valid_accounts_cb (TpProxy *proxy,
 
 		account_data->tp_account = account;
 		account_data->obj_Path = g_strdup(obj_Path);
+		account_data->properties = g_hash_table_new_full (g_str_hash, g_str_equal,
+			NULL, (GDestroyNotify) tp_g_value_slice_free);
 
 		/* Get all properties and sync the accounts with libpurple */
+		tp_cli_account_connect_to_account_property_changed(account,
+				account_property_changed_cb, account_data,
+				NULL, NULL, &err);
+
+		if (err != NULL)
+		{
+			purple_debug_error("telepathy", "Error connecting to"
+				" AccountPropertyChanged: %s\n", err->message);
+			g_error_free(err);
+			err = NULL;
+		}
+
 		tp_cli_dbus_properties_call_get_all(account, -1, TP_IFACE_ACCOUNT,
 				get_account_properties_cb, account_data, NULL, NULL);
 
