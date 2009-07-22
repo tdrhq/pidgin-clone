@@ -36,6 +36,13 @@ typedef struct
 } telepathy_account;
 
 void
+update_parameters_cb (TpAccount *proxy,
+                      const gchar **out_Reconnect_Required,
+                      const GError *error,
+                      gpointer user_data,
+                      GObject *weak_object);
+
+void
 get_valid_accounts_cb (TpProxy *proxy,
                        const GValue *out_Value,
                        const GError *error,

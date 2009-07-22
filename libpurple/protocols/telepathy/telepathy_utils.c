@@ -22,6 +22,23 @@
 
 #include "internal.h"
 
+#include "debug.h"
+
+void
+set_properties_cb (TpProxy *proxy,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_info("telepathy", "SetProperties error: %s\n", error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "SetProperties succeeded!\n");
+}
+
 /* transform a telepathy parameter name into a user-friendly one */
 gchar*
 telepathy_transform_param_name(const gchar* param)

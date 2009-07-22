@@ -46,6 +46,7 @@
 #include "telepathy_channel.h"
 #include "telepathy_channel_list.h"
 #include "telepathy_channel_text.h"
+#include "telepathy_client.h"
 #include "telepathy_connection.h"
 #include "telepathy_contact.h"
 #include "telepathy_utils.h"
@@ -193,6 +194,43 @@ telepathy_chat_info(PurpleConnection *gc)
 
 static void
 telepathy_login(PurpleAccount *acct)
+{
+	GValueArray *initial_presence;
+
+	telepathy_account *account_data = (telepathy_account*)purple_account_get_int(
+			acct, "tp_account_data", 0);
+
+	purple_debug_info("telepathy", "Connecting to account %s\n",
+			purple_account_get_username(acct));
+
+	if (account_data == NULL)
+	{
+		purple_debug_error("telepathy", "Account %s doesn't have tp_account_data\n",
+				purple_account_get_username(acct));
+		return;
+	}
+
+
+	initial_presence = g_value_array_new(3);
+	g_value_array_append(initial_presence, tp_g_value_slice_new_uint(2)); /* online */
+	g_value_array_append(initial_presence, tp_g_value_slice_new_string("online"));
+	g_value_array_append(initial_presence, tp_g_value_slice_new_string("Woot I'm online"));
+
+	tp_cli_dbus_properties_call_set(account_data->tp_account, -1,
+		TP_IFACE_ACCOUNT, "Enabled", tp_g_value_slice_new_boolean(TRUE),
+		NULL, NULL, NULL, NULL);
+
+	tp_cli_dbus_properties_call_set(account_data->tp_account, -1,
+		TP_IFACE_ACCOUNT, "RequestedPresence",
+		tp_g_value_slice_new_boxed(G_TYPE_VALUE_ARRAY, initial_presence),
+		NULL, NULL, NULL, NULL);
+
+	g_value_array_free(initial_presence);
+
+}
+
+static void
+telepathy_login_old(PurpleAccount *acct)
 {
 	PurpleConnection *gc = purple_account_get_connection(acct);
 
@@ -728,21 +766,6 @@ telepathy_set_buddy_icon (PurpleConnection *gc, PurpleStoredImage *img)
 }
 
 static void
-set_properties_cb (TpProxy *proxy,
-                   const GError *error,
-                   gpointer user_data,
-                   GObject *weak_object)
-{
-	if (error != NULL)
-	{
-		purple_debug_info("telepathy", "SetProperties error: %s\n", error->message);
-		return;
-	}
-
-	purple_debug_info("telepathy", "SetProperties succeeded!\n");
-}
-
-static void
 telepathy_set_chat_topic (PurpleConnection *gc, int id, const char *topic)
 {
 	telepathy_connection *data = purple_connection_get_protocol_data(gc);
@@ -1224,6 +1247,9 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 	
 	if (daemon != NULL)
 		g_object_unref(daemon);
+
+	/* Create the Client.Handler object */
+	telepathy_client_dup_singleton();
 
 	return TRUE;
 }

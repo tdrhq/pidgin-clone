@@ -33,7 +33,7 @@
 #include "debug.h"
 #include "../../../pidgin/gtkaccount.h"
 
-static void
+void
 update_parameters_cb (TpAccount *proxy,
                       const gchar **out_Reconnect_Required,
                       const GError *error,

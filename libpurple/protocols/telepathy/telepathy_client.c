@@ -20,16 +20,15 @@
 
 #include "telepathy_client.h"
 
-#include <telepathy-glib/enums.h>
 #include <telepathy-glib/connection.h>
-#include <telepathy-glib/util.h>
 #include <telepathy-glib/dbus.h>
-#include <telepathy-glib/proxy-subclass.h>
 #include <telepathy-glib/gtypes.h>
 #include <telepathy-glib/defs.h>
 #include <telepathy-glib/svc-client.h>
 #include <telepathy-glib/svc-generic.h>
 #include <telepathy-glib/interfaces.h>
+
+#include "debug.h"
 
 #define CLIENT_BUS_NAME TP_CLIENT_BUS_NAME_BASE "prpl_telepathy"
 #define CLIENT_OBJECT_PATH TP_CLIENT_OBJECT_PATH_BASE "prpl_telepathy"
@@ -163,8 +162,6 @@ client_get_property (GObject *object,
 			g_ptr_array_add (filters, filter);
 
 			g_value_take_boxed (value, filters);
-
-			g_value_set_boxed (value, filters);
 
 			break;
 		}
@@ -314,7 +311,6 @@ telepathy_client_handle_channels (TpSvcClientHandler *self,
 	{
 		/* TODO: Put the channel in priv->channels */
 
-		/*
 		GValueArray *arr = g_ptr_array_index (channels, i);
 		const gchar *object_path;
 		GHashTable *properties;
@@ -322,6 +318,9 @@ telepathy_client_handle_channels (TpSvcClientHandler *self,
 		object_path = g_value_get_boxed (g_value_array_get_nth (arr, 0));
 		properties = g_value_get_boxed (g_value_array_get_nth (arr, 1));
 
+		purple_debug_info("telepathy", "HandleChannels: %s\n", object_path);
+
+		/*
 		client_connection_new_channel_with_properties (client,
 			connection, object_path, properties);
 		*/

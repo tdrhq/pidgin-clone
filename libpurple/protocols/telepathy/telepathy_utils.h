@@ -69,6 +69,12 @@ static const StatusMapping statuses[] =
 	{ 0, NULL, NULL}
 };
 
+void
+set_properties_cb (TpProxy *proxy,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object);
+
 gchar*
 telepathy_transform_param_name(const gchar* param);
 
