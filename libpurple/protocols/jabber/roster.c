@@ -148,6 +148,7 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 void jabber_roster_parse(JabberStream *js, const char *from,
                          JabberIqType type, const char *id, xmlnode *query)
 {
+	GSList *block_l = NULL;	/* Used to sync with privacy subsystem in case of Gtalk */
 	xmlnode *item, *group;
 
 	if(from) {
@@ -235,7 +236,7 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 			GSList *groups = NULL;
 
 			if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
-				if (!jabber_google_roster_incoming(js, item))
+				if (!jabber_google_roster_incoming(js, item, &block_l))
 					continue;
 
 			for(group = xmlnode_get_child(item, "group"); group; group = xmlnode_get_next_twin(group)) {
@@ -254,6 +255,26 @@ void jabber_roster_parse(JabberStream *js, const char *from,
 	}
 
 	js->currently_parsing_roster_push = FALSE;
+
+	/* In case of Gtalk, sync with the privacy subsystem now */
+	if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+	{
+		PurpleBuddy *b = NULL;
+		GSList *buddy_l = NULL, *buddies = NULL; 
+		for(buddies = purple_find_buddies(js->gc->account, NULL); buddies; buddies = g_slist_delete_link(buddies, buddies))
+		{
+			/* Privacy laters: check if this list is the local list or the one sync with the server */
+			b = buddies->data;
+			buddy_l = g_slist_prepend(buddy_l, b->name);
+		}
+
+		/* Provide the privacy subsystem with the lists on the server */
+		purple_privacy_sync_lists(js->gc->account, buddy_l, NULL, NULL, block_l, NULL, NULL);
+		purple_debug_info("jabber","Privacy Lists synchronized\n");
+
+		g_slist_free(block_l);
+		g_slist_free(buddy_l);
+	}
 
 	/* if we're just now parsing the roster for the first time,
 	 * then now would be the time to declare ourselves connected and

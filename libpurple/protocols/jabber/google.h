@@ -39,9 +39,10 @@ void jabber_google_roster_init(JabberStream *js);
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item);
 
 /* Returns FALSE if this should short-circuit processing of this roster item, or TRUE
- * if this roster item should continue to be processed
+ * if this roster item should continue to be processed. The item is added to the block_l
+ * if it has been blocked. block_l is used to sync with the privacy system.
  */
-gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item);
+gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item, gpointer block_l);
 
 void jabber_google_presence_incoming(JabberStream *js, const char *who, JabberBuddyResource *jbr);
 char *jabber_google_presence_outgoing(PurpleStatus *tune);

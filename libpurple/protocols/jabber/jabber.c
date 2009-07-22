@@ -1681,11 +1681,11 @@ void jabber_blocklist_parse_push(JabberStream *js, const char *from,
 	item = xmlnode_get_child(child, "item");
 	if (!is_block && item == NULL) {
 		/* Unblock everyone */
+		GSList *l = NULL, *block_both_l = purple_privacy_list_get_members_by_account(account, PURPLE_PRIVACY_BLOCK_BOTH_LIST);
 		purple_debug_info("jabber", "Received unblock push. Unblocking everyone.\n");
 
-		while (account->deny != NULL) {
-			purple_privacy_deny_remove(account, account->deny->data, TRUE);
-		}
+		for(l = block_both_l; l; l=l->next)
+			purple_privacy_deny_remove(account, (char *)l->data, TRUE);
 	} else if (item == NULL) {
 		/* An empty <block/> is bogus */
 		xmlnode *error, *x;
@@ -1723,6 +1723,8 @@ static void jabber_blocklist_parse(JabberStream *js, const char *from,
 {
 	xmlnode *blocklist, *item;
 	PurpleAccount *account;
+	GSList *buddy_l = NULL, *block_both_l = NULL, *buddies = NULL;
+	PurpleBuddy *b = NULL;
 
 	blocklist = xmlnode_get_child_with_namespace(packet,
 			"blocklist", "urn:xmpp:blocking");
@@ -1735,19 +1737,27 @@ static void jabber_blocklist_parse(JabberStream *js, const char *from,
 	if (account->perm_deny != PURPLE_PRIVACY_DENY_USERS)
 		account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
 
-	/*
-	 * TODO: When account->deny is something more than a hash table, this can
-	 * be re-written to find the set intersection and difference.
-	 */
-	while (account->deny)
-		purple_privacy_deny_remove(account, account->deny->data, TRUE);
+	/* Privacy: We receive the block list here, to sync with the privacy subsystem, we need to have the buddy list too */
+	for(buddies = purple_find_buddies(account, NULL); buddies; buddies = g_slist_delete_link(buddies, buddies))
+	{
+		b = buddies->data;
+		buddy_l = g_slist_prepend(buddy_l, b->name);
+	}
 
 	item = xmlnode_get_child(blocklist, "item");
 	while (item != NULL) {
 		const char *jid = xmlnode_get_attrib(item, "jid");
-		purple_privacy_deny_add(account, jid, TRUE);
+		block_both_l = g_slist_prepend(block_both_l, (char *)jid);
+		purple_debug_info("jabber","Adding %s to the block list", jid);
 		item = xmlnode_get_next_twin(item);
 	}
+	
+	/* Provide the privacy subsystem with the lists on the server*/ 
+	purple_privacy_sync_lists(account, buddy_l, NULL, NULL, block_both_l, NULL, NULL);
+	purple_debug_info("jabber","Privacy Lists synchronized\n");
+
+	g_slist_free(block_both_l);
+	g_slist_free(buddy_l);
 }
 
 void jabber_request_block_list(JabberStream *js)

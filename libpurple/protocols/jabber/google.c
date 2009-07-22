@@ -984,7 +984,7 @@ void jabber_google_roster_init(JabberStream *js)
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	GSList *list = account->deny;
+	GSList *list = purple_privacy_list_get_members_by_account(js->gc->account, PURPLE_PRIVACY_BLOCK_BOTH_LIST);
 	const char *jid = xmlnode_get_attrib(item, "jid");
 	char *jid_norm = g_strdup(jabber_normalize(account, jid));
 
@@ -996,22 +996,19 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 			xmlnode_set_attrib(query, "gr:ext", "2");
 			return;
 		}
-		list = list->next;
+		list = g_slist_delete_link(list, list);
 	}
 
 	g_free(jid_norm);
 
 }
 
-gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
+gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item, gpointer block_l)
 {
+	GSList **list = block_l;
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	GSList *list = account->deny;
 	const char *jid = xmlnode_get_attrib(item, "jid");
-	gboolean on_block_list = FALSE;
-
 	char *jid_norm;
-
 	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", "google:roster");
 	const char *subscription = xmlnode_get_attrib(item, "subscription");
 
@@ -1024,14 +1021,6 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
  	jid_norm = g_strdup(jabber_normalize(account, jid));
 
-	while (list) {
-		if (!strcmp(jid_norm, (char*)list->data)) {
-			on_block_list = TRUE;
-			break;
-		}
-		list = list->next;
-	}
-
 	if (grt && (*grt == 'H' || *grt == 'h')) {
 		PurpleBuddy *buddy = purple_find_buddy(account, jid_norm);
 		if (buddy)
@@ -1040,12 +1029,9 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 		return FALSE;
 	}
 
-	if (!on_block_list && (grt && (*grt == 'B' || *grt == 'b'))) {
+	if (grt && (*grt == 'B' || *grt == 'b')) {
 		purple_debug_info("jabber", "Blocking %s\n", jid_norm);
-		purple_privacy_deny_add(account, jid_norm, TRUE);
-	} else if (on_block_list && (!grt || (*grt != 'B' && *grt != 'b' ))){
-		purple_debug_info("jabber", "Unblocking %s\n", jid_norm);
-		purple_privacy_deny_remove(account, jid_norm, TRUE);
+		*list = g_slist_prepend(*list, g_strdup(jid_norm));
 	}
 
 	g_free(jid_norm);
