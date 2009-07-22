@@ -34,10 +34,14 @@
 #define CLIENT_BUS_NAME TP_CLIENT_BUS_NAME_BASE "prpl_telepathy"
 #define CLIENT_OBJECT_PATH TP_CLIENT_OBJECT_PATH_BASE "prpl_telepathy"
 
+#define TELEPATHY_GET_PRIV(obj,type) ((type##Priv *) ((type *) obj)->priv)
 #define GET_PRIV(obj) TELEPATHY_GET_PRIV (obj, TelepathyClient)
+
 typedef struct
 {
 	/* TODO: Fill this in or delete it */
+	  GList *channels;
+
 } TelepathyClientPriv;
 
 static void telepathy_client_client_handler_iface_init (gpointer g_iface,
@@ -99,7 +103,8 @@ client_constructor (GType type,
 static void
 client_finalize (GObject *object)
 {
-	TelepathyClientPriv *priv = GET_PRIV (object);
+	//TelepathyClientPriv *priv = GET_PRIV (object);
+
 }
 
 static void
@@ -233,3 +238,48 @@ telepathy_client_dup_singleton (void)
   return TELEPATHY_CLIENT (g_object_new (TELEPATHY_TYPE_CLIENT, NULL));
 }
 
+static void
+telepathy_client_handle_channels (TpSvcClientHandler *self,
+                                  const gchar *account_path,
+                                  const gchar *connection_path,
+                                  const GPtrArray *channels,
+                                  const GPtrArray *requests_satisfied,
+                                  guint64 timestamp,
+                                  GHashTable *handler_info,
+                                  DBusGMethodInvocation *context)
+{
+	TelepathyClient *client = TELEPATHY_CLIENT (self);
+	TelepathyClientPriv *priv = GET_PRIV (client);
+
+	int i;
+
+	for (i = 0; i < channels->len ; i++)
+	{
+		/* TODO: Try to do something here! */
+
+		/*
+		GValueArray *arr = g_ptr_array_index (channels, i);
+		const gchar *object_path;
+		GHashTable *properties;
+
+		object_path = g_value_get_boxed (g_value_array_get_nth (arr, 0));
+		properties = g_value_get_boxed (g_value_array_get_nth (arr, 1));
+
+		client_connection_new_channel_with_properties (client,
+			connection, object_path, properties);
+		*/
+	}
+
+	tp_svc_client_handler_return_from_handle_channels (context);
+}
+
+
+static void
+telepathy_client_client_handler_iface_init (gpointer g_iface,
+                                            gpointer g_iface_data)
+{
+	TpSvcClientHandlerClass *klass = (TpSvcClientHandlerClass *) g_iface;
+
+	tp_svc_client_handler_implement_handle_channels (klass,
+		telepathy_client_handle_channels);
+}
