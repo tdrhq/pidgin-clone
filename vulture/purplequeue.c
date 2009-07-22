@@ -335,6 +335,18 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 
 		break;
 
+	case PC_REMOVEBLISTNODE:
+		PurpleDeleteBlistNode(((VULTURE_BLIST_NODE*)lppurplecall->lpvParam)->lpblistnode);
+		break;
+
+	case PC_BLISTNODEHASCHILDREN:
+		{
+			VULTURE_BLIST_NODE_GET_BOOL *lpvbngetbool = lppurplecall->lpvParam;
+			lpvbngetbool->bReturn = lpvbngetbool->lpvblistnode->lpblistnode && lpvbngetbool->lpvblistnode->lpblistnode->child;
+		}
+
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

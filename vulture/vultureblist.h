@@ -43,9 +43,15 @@ typedef struct _VULTURE_BLIST_NODE
 
 typedef struct _VULTURE_ALIAS_NODE
 {
-	VULTURE_BLIST_NODE *lpvblistnode;
-	LPTSTR szAlias;
+	VULTURE_BLIST_NODE	*lpvblistnode;
+	LPTSTR			szAlias;
 } VULTURE_ALIAS_NODE;
+
+typedef struct _VULTURE_BLIST_NODE_GET_BOOL
+{
+	VULTURE_BLIST_NODE	*lpvblistnode;
+	BOOL			bReturn;
+} VULTURE_BLIST_NODE_GET_BOOL;
 
 
 extern HWND g_hwndMain;

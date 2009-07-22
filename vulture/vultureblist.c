@@ -59,6 +59,7 @@ static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
 static void RunBuddyMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
 static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
 static void RunChatMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
+static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode);
 
 
 #define BLIST_MARGIN 6
@@ -614,6 +615,7 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 							TreeView_GetItem(lpnmhdr->hwndFrom, &tvitem);
 
 							lpvblistnode = (VULTURE_BLIST_NODE*)tvitem.lParam;
+							VultureBListNodeAddRef(lpvblistnode);
 
 							/* Assume we need to ask the core for extra items. */
 							bExtraItems = TRUE;
@@ -682,6 +684,8 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 									}
 								}
 							}
+
+							VultureBListNodeRelease(lpvblistnode);
 
 							/* Destroy menu. This will also destroy our modifications. */
 							DestroyMenu(hmenu);
@@ -991,6 +995,10 @@ static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode,
 		SendMessage(hwndBuddies, TVM_EDITLABEL, 0, (LPARAM)lpvblistnode->hti);
 		return TRUE;
 
+	case IDM_BLIST_CONTEXT_REMOVE:
+		RemoveNodeRequest(hwndBuddies, lpvblistnode);
+		return TRUE;
+
 	default:
 		/* Not a static command that we recongise; might be a dynamic
 		 * command.
@@ -1035,4 +1043,34 @@ static void RunChatMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, H
 		VultureEnqueueAsyncPurpleCall(PC_TOGGLEAUTOJOIN, lpvblistnode);
 		break;
 	}
+}
+
+
+/**
+ * Deletes a buddy-list node, prompting the user first if necessary.
+ *
+ * @param	hwndBuddies	Buddy-list tree-view.
+ * @param	lpvblistnode	List node to delete.
+ */
+static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode)
+{
+	VULTURE_BLIST_NODE_GET_BOOL vblngetbool;
+	BOOL bDelete = TRUE;
+
+	vblngetbool.lpvblistnode = lpvblistnode;
+	VultureSingleSyncPurpleCall(PC_BLISTNODEHASCHILDREN, &vblngetbool);
+
+	/* If we have any children, prompt before deleting. */
+	if(vblngetbool.bReturn)
+	{
+		EnterCriticalSection(&lpvblistnode->cs);
+			if(lpvblistnode->nodetype == PURPLE_BLIST_GROUP_NODE)
+				bDelete = MessageBoxFromStringTable(g_hwndMain, IDS_QUERY_DELGROUP, MB_ICONEXCLAMATION | MB_YESNO);
+			else if(lpvblistnode->nodetype == PURPLE_BLIST_CONTACT_NODE)
+				bDelete = MessageBoxFromStringTable(g_hwndMain, IDS_QUERY_DELCONTACT, MB_ICONEXCLAMATION | MB_YESNO);
+		LeaveCriticalSection(&lpvblistnode->cs);
+	}
+
+	if(bDelete)
+		VultureSingleSyncPurpleCall(PC_REMOVEBLISTNODE, lpvblistnode);
 }

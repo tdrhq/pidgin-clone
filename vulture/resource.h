@@ -68,3 +68,5 @@
 #define IDS_ACCMGR_PROTOCOL                     4
 #define IDS_ERROR_CONVCONTCLASS                 5
 #define IDS_ERROR_RICHEDIT                      6
+#define IDS_QUERY_DELGROUP                      7
+#define IDS_QUERY_DELCONTACT                    8

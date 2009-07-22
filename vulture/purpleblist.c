@@ -35,6 +35,7 @@
 
 static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode);
 static void AddCommonMenuItems(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA, PurpleConnection *lpconnection, int iProtoIndex, int iExtendedIndex);
+static void DeleteBuddyFromAccount(PurpleBuddy *lpbuddy);
 
 
 
@@ -213,11 +214,19 @@ void PurpleBlistRemoveNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 
 	lpvbn = lpblistnode->ui_data;
 
-	/* This pointer is about to become invalid. */
-	lpvbn->lpblistnode = NULL;
+	EnterCriticalSection(&lpvbn->cs);
+	{
+		/* This pointer is about to become invalid. */
+		lpvbn->lpblistnode = NULL;
 
-	if(lpvbn->hti)
-		VulturePostUIMessage(VUIMSG_REMOVEBLISTNODE, lpvbn);
+		if(lpvbn->hti)
+			VulturePostUIMessage(VUIMSG_REMOVEBLISTNODE, lpvbn);
+
+		/* The parent may need to go, too. */
+		if(lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti)
+			PurpleBlistUpdateNode(lpbuddylist, lpvbn->lpvbnParent->lpblistnode);
+	}
+	LeaveCriticalSection(&lpvbn->cs);
 
 	VultureBListNodeRelease((VULTURE_BLIST_NODE*)lpblistnode->ui_data);
 
@@ -452,4 +461,101 @@ void PurpleBlistAliasNode(PurpleBlistNode *lpblistnode, LPCTSTR szAlias)
 		purple_blist_rename_group((PurpleGroup*)lpblistnode, szAliasUTF8);
 
 	g_free(szAliasUTF8);
+}
+
+
+/**
+ * Removes a buddy-list from libpurple's buddy list.
+ *
+ * @param	lpblistnode	Buddy-list node.
+ */
+void PurpleDeleteBlistNode(PurpleBlistNode *lpblistnode)
+{
+	if(!lpblistnode)
+		return;
+
+	if(PURPLE_BLIST_NODE_IS_CHAT(lpblistnode))
+	{
+		/* Chats are easy, since they only exist in the buddy list and
+		 * have no children.
+		 */
+		purple_blist_remove_chat((PurpleChat*)lpblistnode);
+	}
+	else if(PURPLE_BLIST_NODE_IS_BUDDY(lpblistnode))
+	{
+		DeleteBuddyFromAccount((PurpleBuddy*)lpblistnode);
+		purple_blist_remove_buddy((PurpleBuddy*)lpblistnode);
+	}
+	else if(PURPLE_BLIST_NODE_IS_CONTACT(lpblistnode))
+	{
+		PurpleBlistNode *lpblistnodeBuddies;
+
+		/* Remove any buddies from their respective accounts. */
+		for(lpblistnodeBuddies = lpblistnode->child;
+			lpblistnodeBuddies;
+			lpblistnodeBuddies = lpblistnodeBuddies->next)
+		{
+			if(PURPLE_BLIST_NODE_IS_BUDDY(lpblistnodeBuddies))
+				DeleteBuddyFromAccount((PurpleBuddy*)lpblistnodeBuddies);
+		}
+
+		purple_blist_remove_contact((PurpleContact*)lpblistnode);
+	}
+	else if(PURPLE_BLIST_NODE_IS_GROUP(lpblistnode))
+	{
+		PurpleBlistNode *lpblistnodeInGroup = lpblistnode->child;
+
+		/* Traverse tree, deleting everything, and being careful with
+		 * the list pointers.
+		 */
+		while(lpblistnodeInGroup)
+		{
+			if(PURPLE_BLIST_NODE_IS_CONTACT(lpblistnodeInGroup))
+			{
+				PurpleContact *lpcontact = (PurpleContact*)lpblistnodeInGroup;
+				PurpleBlistNode *lpblistnodeBuddies = lpblistnode->child;
+				lpblistnodeInGroup = lpblistnodeInGroup->next;
+
+				while(lpblistnodeBuddies)
+				{
+					if(PURPLE_BLIST_NODE_IS_BUDDY(lpblistnodeBuddies))
+					{
+						PurpleBuddy *lpbuddy = (PurpleBuddy*)lpblistnodeBuddies;
+						lpblistnodeBuddies = lpblistnodeBuddies->next;
+
+						DeleteBuddyFromAccount(lpbuddy);
+						purple_blist_remove_buddy(lpbuddy);
+					}
+					else
+						lpblistnodeBuddies = lpblistnodeBuddies->next;
+				}
+
+				purple_blist_remove_contact(lpcontact);
+			}
+			else if(PURPLE_BLIST_NODE_IS_CHAT(lpblistnodeInGroup))
+			{
+				PurpleChat *lpchat = (PurpleChat*)lpblistnodeInGroup;
+				lpblistnodeInGroup = lpblistnodeInGroup->next;
+				purple_blist_remove_chat(lpchat);
+			}
+			else
+				lpblistnodeInGroup = lpblistnodeInGroup->next;
+		}
+
+		purple_blist_remove_group((PurpleGroup*)lpblistnode);
+	}
+}
+
+
+/**
+ * Removes a buddy from its account, if that account is connected.
+ *
+ * @param	lpbuddy		Buddy.
+ */
+static void DeleteBuddyFromAccount(PurpleBuddy *lpbuddy)
+{
+	PurpleAccount *lpaccount = purple_buddy_get_account(lpbuddy);
+
+	if(purple_account_is_connected(lpaccount))
+		purple_account_remove_buddy(lpaccount, lpbuddy, purple_buddy_get_group(lpbuddy));
 }

@@ -41,7 +41,7 @@ IDM_CONV MENU
 
 #define CONTEXT_ALIAS_REMOVE \
 	MENUITEM "Set &alias", IDM_BLIST_CONTEXT_ALIAS, MFT_STRING \
-	MENUITEM "&Remove from buddy list", IDM_BLIST_CONTEXT_REMOVE, MFT_STRING, MFS_GRAYED
+	MENUITEM "&Remove from buddy list", IDM_BLIST_CONTEXT_REMOVE, MFT_STRING
 
 #define BUDDY_CONTACT_COMMON \
 	MENUITEM "Start &conversation", IDM_BLIST_CONTEXT_ACTIVATE, MFT_STRING, MFS_DEFAULT \
@@ -210,6 +210,8 @@ STRINGTABLE
     IDS_ACCMGR_PROTOCOL           "Protocol"
     IDS_ERROR_CONVCONTCLASS       "Couldn't register conversation container class."
     IDS_ERROR_RICHEDIT            "Couldn't load RichEdit."
+    IDS_QUERY_DELGROUP            "Deleting this group will also delete everything contained in it. Do you wish to continue?"
+    IDS_QUERY_DELCONTACT          "Deleting this contact will also delete all buddies associated with it. Do you wish to continue?"
 }
 
 
