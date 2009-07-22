@@ -4404,9 +4404,7 @@ oscar_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState stat
 	}
 	else {
 		/* Don't send if this turkey is in our deny list */
-		GSList *list;
-		for (list=gc->account->deny; (list && oscar_util_name_compare(name, list->data)); list=list->next);
-		if (!list) {
+		if (purple_privacy_check(purple_connection_get_account(gc), name)) {
 			struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(gc->account, name));
 			if (bi && bi->typingnot) {
 				if (state == PURPLE_TYPING)
@@ -5170,6 +5168,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	va_list ap;
 	guint16 fmtver, numitems;
 	guint32 timestamp;
+	GSList *buddy_l = NULL, *allow_l = NULL, *block_both_l = NULL;
 
 	gc = od->gc;
 	od = purple_connection_get_protocol_data(gc);
@@ -5193,7 +5192,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	aim_ssi_cleanlist(od);
 
 	{ /* If not in server list then prune from local list */
-		GSList *cur, *next;
+		GSList *cur;
 		GSList *buddies = purple_find_buddies(account, NULL);
 		
 		/* Buddies */
@@ -5238,33 +5237,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			purple_blist_remove_buddy(b);
 		}
 
-		/* Permit list */
-		if (account->permit) {
-			next = account->permit;
-			while (next != NULL) {
-				cur = next;
-				next = next->next;
-				if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, AIM_SSI_TYPE_PERMIT)) {
-					purple_debug_info("oscar",
-							"ssi: removing permit %s from local list\n", (const char *)cur->data);
-					purple_privacy_permit_remove(account, cur->data, TRUE);
-				}
-			}
-		}
+		/* Later we sync lists with the privacy subsystem, which take cares of the sync between local lists and lists on the server */
 
-		/* Deny list */
-		if (account->deny) {
-			next = account->deny;
-			while (next != NULL) {
-				cur = next;
-				next = next->next;
-				if (!aim_ssi_itemlist_finditem(od->ssi.local, NULL, cur->data, AIM_SSI_TYPE_DENY)) {
-					purple_debug_info("oscar",
-							"ssi: removing deny %s from local list\n", (const char *)cur->data);
-					purple_privacy_deny_remove(account, cur->data, TRUE);
-				}
-			}
-		}
 		/* Presence settings (idle time visibility) */
 		tmp = aim_ssi_getpresence(od->ssi.local);
 		if (tmp != 0xFFFFFFFF) {
@@ -5348,6 +5322,9 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 								OSCAR_STATUS_ID_MOBILE, NULL);
 					}
 
+					/* Build buddy list to sync with the privacy subsystem */
+					buddy_l = g_slist_prepend(buddy_l, curitem->name);
+
 					g_free(gname_utf8);
 					g_free(alias_utf8);
 				}
@@ -5376,25 +5353,17 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			case 0x0002: { /* Permit buddy */
 				if (curitem->name) {
 					/* if (!find_permdeny_by_name(gc->permit, curitem->name)) { AAA */
-					GSList *list;
-					for (list=account->permit; (list && oscar_util_name_compare(curitem->name, list->data)); list=list->next);
-					if (!list) {
-						purple_debug_info("oscar",
-								   "ssi: adding permit buddy %s to local list\n", curitem->name);
-						purple_privacy_permit_add(account, curitem->name, TRUE);
-					}
+					/* Build allow list to sync with the privacy subsystem */
+					allow_l = g_slist_prepend(allow_l, curitem->name);
+					purple_debug_info("oscar", "ssi: adding permit buddy %s to local list\n", curitem->name);
 				}
 			} break;
 
 			case 0x0003: { /* Deny buddy */
 				if (curitem->name) {
-					GSList *list;
-					for (list=account->deny; (list && oscar_util_name_compare(curitem->name, list->data)); list=list->next);
-					if (!list) {
-						purple_debug_info("oscar",
-								   "ssi: adding deny buddy %s to local list\n", curitem->name);
-						purple_privacy_deny_add(account, curitem->name, TRUE);
-					}
+					/* Build block_both list to sync with the privacy subsystem */
+					block_both_l = g_slist_prepend(block_both_l, curitem->name);
+					purple_debug_info("oscar", "ssi: adding deny buddy %s to local list\n", curitem->name);
 				}
 			} break;
 
@@ -5430,6 +5399,10 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	purple_debug_info("oscar",
 			   "ssi: activating server-stored buddy list\n");
 	aim_ssi_enable(od);
+
+	/* Provide the privacy subsystem with the lists on the server*/
+	purple_privacy_sync_lists(account, buddy_l, allow_l, NULL, block_both_l, NULL, NULL);
+	purple_debug_info("oscar","Privacy Lists synchronized\n");
 
 	/*
 	 * Make sure our server-stored icon is updated correctly in
