@@ -89,7 +89,7 @@ namespace PurpleWrapper
 		/*
 		 * GObject parent
 		 */
-		IntPtr parent;
+		/* Cannot generate struct for type GObjectObject */
 
 		/*
 		 * gpointer priv

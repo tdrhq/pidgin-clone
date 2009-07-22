@@ -42,7 +42,7 @@ namespace PurpleWrapper
 	{
 		/* 
 		 * Could not generate a wrapper for PurplePluginUiInfo in file "plugin.h".
-		 * Message: The type could not be resolved (PurplePluginPrefFrame * (*get_plugin_pref_frame)(PurplePlugin * plugin)).
+		 * Message: The type could not be resolved (PurplePluginPrefFrame * frame).
 		 */
 
 		public PurplePluginUiInfo()

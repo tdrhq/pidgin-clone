@@ -50,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleAccountUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleAccountUiOps));
 		}
 
-		public void notify_added
+		public IntPtr notify_added
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void status_changed
+		public IntPtr status_changed
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void request_add
+		public IntPtr request_add
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void close_account_request
+		public IntPtr close_account_request
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved1
+		public IntPtr _purple_reserved1
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved2
+		public IntPtr _purple_reserved2
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved3
+		public IntPtr _purple_reserved3
 		{
 			get
 			{
@@ -170,7 +170,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved4
+		public IntPtr _purple_reserved4
 		{
 			get
 			{
@@ -194,17 +194,17 @@ namespace PurpleWrapper
 		/*
 		 * void (*notify_added)(PurpleAccount * account, char * remote_user, char * id, char * alias, char * message)
 		 */
-		void notify_added;
+		IntPtr notify_added;
 
 		/*
 		 * void (*status_changed)(PurpleAccount * account, PurpleStatus * status)
 		 */
-		void status_changed;
+		IntPtr status_changed;
 
 		/*
 		 * void (*request_add)(PurpleAccount * account, char * remote_user, char * id, char * alias, char * message)
 		 */
-		void request_add;
+		IntPtr request_add;
 
 		/*
 		 * void * (*request_authorize)(PurpleAccount * account, char * remote_user, char * id, char * alias, char * message, gboolean on_list, PurpleAccountRequestAuthorizationCb authorize_cb, PurpleAccountRequestAuthorizationCb deny_cb, void * user_data)
@@ -214,27 +214,27 @@ namespace PurpleWrapper
 		/*
 		 * void (*close_account_request)(void * ui_handle)
 		 */
-		void close_account_request;
+		IntPtr close_account_request;
 
 		/*
-		 * void (*purple_reserved1)()
+		 * void (*_purple_reserved1)()
 		 */
-		void purple_reserved1;
+		IntPtr _purple_reserved1;
 
 		/*
-		 * void (*purple_reserved2)()
+		 * void (*_purple_reserved2)()
 		 */
-		void purple_reserved2;
+		IntPtr _purple_reserved2;
 
 		/*
-		 * void (*purple_reserved3)()
+		 * void (*_purple_reserved3)()
 		 */
-		void purple_reserved3;
+		IntPtr _purple_reserved3;
 
 		/*
-		 * void (*purple_reserved4)()
+		 * void (*_purple_reserved4)()
 		 */
-		void purple_reserved4;
+		IntPtr _purple_reserved4;
 
 	}
 

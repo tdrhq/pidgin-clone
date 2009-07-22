@@ -74,7 +74,7 @@ namespace PurpleWrapper
 		/*
 		 * GObjectClass parent_class
 		 */
-		IntPtr parent_class;
+		/* Cannot generate struct for type GObjectObject */
 
 	}
 

@@ -24,7 +24,7 @@ namespace Scripts
             }
             set
             {
-                if (value.Length > 0 && value[0] == '_')
+                if (value.Length > 0 && value[0] == '_' && !value.Contains("purple_reserved"))
                     name = value.Substring(1);
                 else
                     name = value;

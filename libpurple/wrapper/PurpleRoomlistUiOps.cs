@@ -50,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleRoomlistUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleRoomlistUiOps));
 		}
 
-		public void show_with_account
+		public IntPtr show_with_account
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void create
+		public IntPtr create
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_fields
+		public IntPtr set_fields
 		{
 			get
 			{
@@ -95,7 +95,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void add_room
+		public IntPtr add_room
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void in_progress
+		public IntPtr in_progress
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void destroy
+		public IntPtr destroy
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved1
+		public IntPtr _purple_reserved1
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved2
+		public IntPtr _purple_reserved2
 		{
 			get
 			{
@@ -170,7 +170,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved3
+		public IntPtr _purple_reserved3
 		{
 			get
 			{
@@ -185,7 +185,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved4
+		public IntPtr _purple_reserved4
 		{
 			get
 			{
@@ -209,52 +209,52 @@ namespace PurpleWrapper
 		/*
 		 * void (*show_with_account)(PurpleAccount * account)
 		 */
-		void show_with_account;
+		IntPtr show_with_account;
 
 		/*
 		 * void (*create)(PurpleRoomlist * list)
 		 */
-		void create;
+		IntPtr create;
 
 		/*
 		 * void (*set_fields)(PurpleRoomlist * list, GList * fields)
 		 */
-		void set_fields;
+		IntPtr set_fields;
 
 		/*
 		 * void (*add_room)(PurpleRoomlist * list, PurpleRoomlistRoom * room)
 		 */
-		void add_room;
+		IntPtr add_room;
 
 		/*
 		 * void (*in_progress)(PurpleRoomlist * list, gboolean flag)
 		 */
-		void in_progress;
+		IntPtr in_progress;
 
 		/*
 		 * void (*destroy)(PurpleRoomlist * list)
 		 */
-		void destroy;
+		IntPtr destroy;
 
 		/*
-		 * void (*purple_reserved1)()
+		 * void (*_purple_reserved1)()
 		 */
-		void purple_reserved1;
+		IntPtr _purple_reserved1;
 
 		/*
-		 * void (*purple_reserved2)()
+		 * void (*_purple_reserved2)()
 		 */
-		void purple_reserved2;
+		IntPtr _purple_reserved2;
 
 		/*
-		 * void (*purple_reserved3)()
+		 * void (*_purple_reserved3)()
 		 */
-		void purple_reserved3;
+		IntPtr _purple_reserved3;
 
 		/*
-		 * void (*purple_reserved4)()
+		 * void (*_purple_reserved4)()
 		 */
-		void purple_reserved4;
+		IntPtr _purple_reserved4;
 
 	}
 

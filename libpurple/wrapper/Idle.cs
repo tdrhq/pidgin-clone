@@ -59,8 +59,8 @@ namespace PurpleWrapper
 
 		public static void Set(DateTime time)
 		{
-			ulong _PurpleWrapper_arg0 = (ulong)(time - new DateTime(1970, 1, 1)).TotalSeconds;
-			purple_idle_set(_PurpleWrapper_arg0);
+			ulong _PurpleWrapper_param0 = (ulong)(time - new DateTime(1970, 1, 1)).TotalSeconds;
+			purple_idle_set(_PurpleWrapper_param0);
 		}
 
 		/*

@@ -50,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleWhiteboardUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleWhiteboardUiOps));
 		}
 
-		public void create
+		public IntPtr create
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void destroy
+		public IntPtr destroy
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_dimensions
+		public IntPtr set_dimensions
 		{
 			get
 			{
@@ -95,7 +95,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_brush
+		public IntPtr set_brush
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void draw_point
+		public IntPtr draw_point
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void draw_line
+		public IntPtr draw_line
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void clear
+		public IntPtr clear
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved1
+		public IntPtr _purple_reserved1
 		{
 			get
 			{
@@ -170,7 +170,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved2
+		public IntPtr _purple_reserved2
 		{
 			get
 			{
@@ -185,7 +185,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved3
+		public IntPtr _purple_reserved3
 		{
 			get
 			{
@@ -200,7 +200,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved4
+		public IntPtr _purple_reserved4
 		{
 			get
 			{
@@ -224,57 +224,57 @@ namespace PurpleWrapper
 		/*
 		 * void (*create)(PurpleWhiteboard * wb)
 		 */
-		void create;
+		IntPtr create;
 
 		/*
 		 * void (*destroy)(PurpleWhiteboard * wb)
 		 */
-		void destroy;
+		IntPtr destroy;
 
 		/*
 		 * void (*set_dimensions)(PurpleWhiteboard * wb, int width, int height)
 		 */
-		void set_dimensions;
+		IntPtr set_dimensions;
 
 		/*
 		 * void (*set_brush)(PurpleWhiteboard * wb, int size, int color)
 		 */
-		void set_brush;
+		IntPtr set_brush;
 
 		/*
 		 * void (*draw_point)(PurpleWhiteboard * wb, int x, int y, int color, int size)
 		 */
-		void draw_point;
+		IntPtr draw_point;
 
 		/*
 		 * void (*draw_line)(PurpleWhiteboard * wb, int x1, int y1, int x2, int y2, int color, int size)
 		 */
-		void draw_line;
+		IntPtr draw_line;
 
 		/*
 		 * void (*clear)(PurpleWhiteboard * wb)
 		 */
-		void clear;
+		IntPtr clear;
 
 		/*
-		 * void (*purple_reserved1)()
+		 * void (*_purple_reserved1)()
 		 */
-		void purple_reserved1;
+		IntPtr _purple_reserved1;
 
 		/*
-		 * void (*purple_reserved2)()
+		 * void (*_purple_reserved2)()
 		 */
-		void purple_reserved2;
+		IntPtr _purple_reserved2;
 
 		/*
-		 * void (*purple_reserved3)()
+		 * void (*_purple_reserved3)()
 		 */
-		void purple_reserved3;
+		IntPtr _purple_reserved3;
 
 		/*
-		 * void (*purple_reserved4)()
+		 * void (*_purple_reserved4)()
 		 */
-		void purple_reserved4;
+		IntPtr _purple_reserved4;
 
 	}
 

@@ -134,27 +134,27 @@ namespace PurpleWrapper
 		/*
 		 * char * name
 		 */
-		string name;
+		IntPtr name;
 
 		/*
 		 * char * alias
 		 */
-		string alias;
+		IntPtr alias;
 
 		/*
 		 * char * alias_key
 		 */
-		string alias_key;
+		IntPtr alias_key;
 
 		/*
 		 * gboolean buddy
 		 */
-		bool buddy;
+		IntPtr buddy;
 
 		/*
 		 * PurpleConvChatBuddyFlags flags
 		 */
-		Conversation.PurpleConvChatBuddyFlags flags;
+		/* Cannot generate struct for type KnownEnum */
 
 	}
 

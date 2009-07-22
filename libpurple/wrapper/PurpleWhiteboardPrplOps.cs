@@ -50,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleWhiteboardPrplOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleWhiteboardPrplOps));
 		}
 
-		public void start
+		public IntPtr start
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void end
+		public IntPtr end
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void get_dimensions
+		public IntPtr get_dimensions
 		{
 			get
 			{
@@ -95,7 +95,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_dimensions
+		public IntPtr set_dimensions
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void get_brush
+		public IntPtr get_brush
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_brush
+		public IntPtr set_brush
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void send_draw_list
+		public IntPtr send_draw_list
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void clear
+		public IntPtr clear
 		{
 			get
 			{
@@ -170,7 +170,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved1
+		public IntPtr _purple_reserved1
 		{
 			get
 			{
@@ -185,7 +185,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved2
+		public IntPtr _purple_reserved2
 		{
 			get
 			{
@@ -200,7 +200,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved3
+		public IntPtr _purple_reserved3
 		{
 			get
 			{
@@ -215,7 +215,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved4
+		public IntPtr _purple_reserved4
 		{
 			get
 			{
@@ -239,62 +239,62 @@ namespace PurpleWrapper
 		/*
 		 * void (*start)(PurpleWhiteboard * wb)
 		 */
-		void start;
+		IntPtr start;
 
 		/*
 		 * void (*end)(PurpleWhiteboard * wb)
 		 */
-		void end;
+		IntPtr end;
 
 		/*
 		 * void (*get_dimensions)(PurpleWhiteboard * wb, int * width, int * height)
 		 */
-		void get_dimensions;
+		IntPtr get_dimensions;
 
 		/*
 		 * void (*set_dimensions)(PurpleWhiteboard * wb, int width, int height)
 		 */
-		void set_dimensions;
+		IntPtr set_dimensions;
 
 		/*
 		 * void (*get_brush)(PurpleWhiteboard * wb, int * size, int * color)
 		 */
-		void get_brush;
+		IntPtr get_brush;
 
 		/*
 		 * void (*set_brush)(PurpleWhiteboard * wb, int size, int color)
 		 */
-		void set_brush;
+		IntPtr set_brush;
 
 		/*
 		 * void (*send_draw_list)(PurpleWhiteboard * wb, GList * draw_list)
 		 */
-		void send_draw_list;
+		IntPtr send_draw_list;
 
 		/*
 		 * void (*clear)(PurpleWhiteboard * wb)
 		 */
-		void clear;
+		IntPtr clear;
 
 		/*
-		 * void (*purple_reserved1)()
+		 * void (*_purple_reserved1)()
 		 */
-		void purple_reserved1;
+		IntPtr _purple_reserved1;
 
 		/*
-		 * void (*purple_reserved2)()
+		 * void (*_purple_reserved2)()
 		 */
-		void purple_reserved2;
+		IntPtr _purple_reserved2;
 
 		/*
-		 * void (*purple_reserved3)()
+		 * void (*_purple_reserved3)()
 		 */
-		void purple_reserved3;
+		IntPtr _purple_reserved3;
 
 		/*
-		 * void (*purple_reserved4)()
+		 * void (*_purple_reserved4)()
 		 */
-		void purple_reserved4;
+		IntPtr _purple_reserved4;
 
 	}
 

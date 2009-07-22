@@ -50,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleBlistUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleBlistUiOps));
 		}
 
-		public void new_list
+		public IntPtr new_list
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void new_node
+		public IntPtr new_node
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void show
+		public IntPtr show
 		{
 			get
 			{
@@ -95,7 +95,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void update
+		public IntPtr update
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void remove
+		public IntPtr remove
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void destroy
+		public IntPtr destroy
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_visible
+		public IntPtr set_visible
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void request_add_buddy
+		public IntPtr request_add_buddy
 		{
 			get
 			{
@@ -170,7 +170,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void request_add_chat
+		public IntPtr request_add_chat
 		{
 			get
 			{
@@ -185,7 +185,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void request_add_group
+		public IntPtr request_add_group
 		{
 			get
 			{
@@ -200,7 +200,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved1
+		public IntPtr _purple_reserved1
 		{
 			get
 			{
@@ -215,7 +215,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved2
+		public IntPtr _purple_reserved2
 		{
 			get
 			{
@@ -230,7 +230,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved3
+		public IntPtr _purple_reserved3
 		{
 			get
 			{
@@ -245,7 +245,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved4
+		public IntPtr _purple_reserved4
 		{
 			get
 			{
@@ -269,72 +269,72 @@ namespace PurpleWrapper
 		/*
 		 * void (*new_list)(PurpleBuddyList * list)
 		 */
-		void new_list;
+		IntPtr new_list;
 
 		/*
 		 * void (*new_node)(PurpleBlistNode * node)
 		 */
-		void new_node;
+		IntPtr new_node;
 
 		/*
 		 * void (*show)(PurpleBuddyList * list)
 		 */
-		void show;
+		IntPtr show;
 
 		/*
 		 * void (*update)(PurpleBuddyList * list, PurpleBlistNode * node)
 		 */
-		void update;
+		IntPtr update;
 
 		/*
 		 * void (*remove)(PurpleBuddyList * list, PurpleBlistNode * node)
 		 */
-		void remove;
+		IntPtr remove;
 
 		/*
 		 * void (*destroy)(PurpleBuddyList * list)
 		 */
-		void destroy;
+		IntPtr destroy;
 
 		/*
 		 * void (*set_visible)(PurpleBuddyList * list, gboolean show)
 		 */
-		void set_visible;
+		IntPtr set_visible;
 
 		/*
 		 * void (*request_add_buddy)(PurpleAccount * account, char * username, char * group, char * alias)
 		 */
-		void request_add_buddy;
+		IntPtr request_add_buddy;
 
 		/*
 		 * void (*request_add_chat)(PurpleAccount * account, PurpleGroup * group, char * alias, char * name)
 		 */
-		void request_add_chat;
+		IntPtr request_add_chat;
 
 		/*
 		 * void (*request_add_group)()
 		 */
-		void request_add_group;
+		IntPtr request_add_group;
 
 		/*
-		 * void (*purple_reserved1)()
+		 * void (*_purple_reserved1)()
 		 */
-		void purple_reserved1;
+		IntPtr _purple_reserved1;
 
 		/*
-		 * void (*purple_reserved2)()
+		 * void (*_purple_reserved2)()
 		 */
-		void purple_reserved2;
+		IntPtr _purple_reserved2;
 
 		/*
-		 * void (*purple_reserved3)()
+		 * void (*_purple_reserved3)()
 		 */
-		void purple_reserved3;
+		IntPtr _purple_reserved3;
 
 		/*
-		 * void (*purple_reserved4)()
+		 * void (*_purple_reserved4)()
 		 */
-		void purple_reserved4;
+		IntPtr _purple_reserved4;
 
 	}
 

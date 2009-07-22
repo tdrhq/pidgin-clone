@@ -119,22 +119,22 @@ namespace PurpleWrapper
 		/*
 		 * char hostname[256]
 		 */
-		char hostname[256];
+		IntPtr hostname[256];
 
 		/*
 		 * int port
 		 */
-		int port;
+		IntPtr port;
 
 		/*
 		 * int weight
 		 */
-		int weight;
+		IntPtr weight;
 
 		/*
 		 * int pref
 		 */
-		int pref;
+		IntPtr pref;
 
 	}
 

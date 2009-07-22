@@ -89,7 +89,7 @@ namespace PurpleWrapper
 		/*
 		 * gchar * key
 		 */
-		string key;
+		IntPtr key;
 
 		/*
 		 * void * value

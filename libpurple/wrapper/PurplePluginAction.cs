@@ -65,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void callback
+		public IntPtr callback
 		{
 			get
 			{
@@ -134,17 +134,17 @@ namespace PurpleWrapper
 		/*
 		 * char * label
 		 */
-		string label;
+		IntPtr label;
 
 		/*
 		 * void (*callback)(PurplePluginAction * )
 		 */
-		void callback;
+		IntPtr callback;
 
 		/*
 		 * PurplePlugin * plugin
 		 */
-		IntPtr plugin;
+		/* Cannot generate struct for type PointerToKnownStruct */
 
 		/*
 		 * gpointer context

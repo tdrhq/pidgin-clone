@@ -119,22 +119,22 @@ namespace PurpleWrapper
 		/*
 		 * PurpleRoomlistFieldType type
 		 */
-		Roomlist.PurpleRoomlistFieldType type;
+		/* Cannot generate struct for type KnownEnum */
 
 		/*
 		 * gchar * label
 		 */
-		string label;
+		IntPtr label;
 
 		/*
 		 * gchar * name
 		 */
-		string name;
+		IntPtr name;
 
 		/*
 		 * gboolean hidden
 		 */
-		bool hidden;
+		IntPtr hidden;
 
 	}
 

@@ -134,27 +134,27 @@ namespace PurpleWrapper
 		/*
 		 * PurpleLogType type
 		 */
-		Log.PurpleLogType type;
+		/* Cannot generate struct for type KnownEnum */
 
 		/*
 		 * char * name
 		 */
-		string name;
+		IntPtr name;
 
 		/*
 		 * PurpleAccount * account
 		 */
-		IntPtr account;
+		/* Cannot generate struct for type PointerToKnownStruct */
 
 		/*
 		 * gboolean buddy
 		 */
-		bool buddy;
+		IntPtr buddy;
 
 		/*
 		 * char * normalized_name
 		 */
-		string normalized_name;
+		IntPtr normalized_name;
 
 	}
 

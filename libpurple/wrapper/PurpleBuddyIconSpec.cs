@@ -164,37 +164,37 @@ namespace PurpleWrapper
 		/*
 		 * char * format
 		 */
-		string format;
+		IntPtr format;
 
 		/*
 		 * int min_width
 		 */
-		int min_width;
+		IntPtr min_width;
 
 		/*
 		 * int min_height
 		 */
-		int min_height;
+		IntPtr min_height;
 
 		/*
 		 * int max_width
 		 */
-		int max_width;
+		IntPtr max_width;
 
 		/*
 		 * int max_height
 		 */
-		int max_height;
+		IntPtr max_height;
 
 		/*
 		 * size_t max_filesize
 		 */
-		ulong max_filesize;
+		IntPtr max_filesize;
 
 		/*
 		 * PurpleIconScaleRules scale_rules
 		 */
-		Prpl.PurpleIconScaleRules scale_rules;
+		/* Cannot generate struct for type KnownEnum */
 
 	}
 

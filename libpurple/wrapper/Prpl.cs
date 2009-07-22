@@ -184,8 +184,8 @@ namespace PurpleWrapper
 
 		public static void GotAccountLoginTime(PurpleAccount account, DateTime login_time)
 		{
-			ulong _PurpleWrapper_arg1 = (ulong)(login_time - new DateTime(1970, 1, 1)).TotalSeconds;
-			purple_prpl_got_account_login_time(account.Reference, _PurpleWrapper_arg1);
+			ulong _PurpleWrapper_param1 = (ulong)(login_time - new DateTime(1970, 1, 1)).TotalSeconds;
+			purple_prpl_got_account_login_time(account.Reference, _PurpleWrapper_param1);
 		}
 
 		/*

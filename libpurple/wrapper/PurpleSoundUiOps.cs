@@ -50,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleSoundUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleSoundUiOps));
 		}
 
-		public void init
+		public IntPtr init
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void uninit
+		public IntPtr uninit
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void play_file
+		public IntPtr play_file
 		{
 			get
 			{
@@ -95,7 +95,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void play_event
+		public IntPtr play_event
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved1
+		public IntPtr _purple_reserved1
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved2
+		public IntPtr _purple_reserved2
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved3
+		public IntPtr _purple_reserved3
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved4
+		public IntPtr _purple_reserved4
 		{
 			get
 			{
@@ -179,42 +179,42 @@ namespace PurpleWrapper
 		/*
 		 * void (*init)()
 		 */
-		void init;
+		IntPtr init;
 
 		/*
 		 * void (*uninit)()
 		 */
-		void uninit;
+		IntPtr uninit;
 
 		/*
 		 * void (*play_file)(char * filename)
 		 */
-		void play_file;
+		IntPtr play_file;
 
 		/*
 		 * void (*play_event)(PurpleSoundEventID event)
 		 */
-		void play_event;
+		IntPtr play_event;
 
 		/*
-		 * void (*purple_reserved1)()
+		 * void (*_purple_reserved1)()
 		 */
-		void purple_reserved1;
+		IntPtr _purple_reserved1;
 
 		/*
-		 * void (*purple_reserved2)()
+		 * void (*_purple_reserved2)()
 		 */
-		void purple_reserved2;
+		IntPtr _purple_reserved2;
 
 		/*
-		 * void (*purple_reserved3)()
+		 * void (*_purple_reserved3)()
 		 */
-		void purple_reserved3;
+		IntPtr _purple_reserved3;
 
 		/*
-		 * void (*purple_reserved4)()
+		 * void (*_purple_reserved4)()
 		 */
-		void purple_reserved4;
+		IntPtr _purple_reserved4;
 
 	}
 

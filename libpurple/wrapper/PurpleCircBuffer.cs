@@ -149,32 +149,32 @@ namespace PurpleWrapper
 		/*
 		 * gchar * buffer
 		 */
-		string buffer;
+		IntPtr buffer;
 
 		/*
 		 * gsize growsize
 		 */
-		ulong growsize;
+		IntPtr growsize;
 
 		/*
 		 * gsize buflen
 		 */
-		ulong buflen;
+		IntPtr buflen;
 
 		/*
 		 * gsize bufused
 		 */
-		ulong bufused;
+		IntPtr bufused;
 
 		/*
 		 * gchar * inptr
 		 */
-		string inptr;
+		IntPtr inptr;
 
 		/*
 		 * gchar * outptr
 		 */
-		string outptr;
+		IntPtr outptr;
 
 	}
 

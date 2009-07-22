@@ -488,7 +488,29 @@ namespace Scripts
                             sb.AppendLine("\t\t/*");
                             sb.AppendLine("\t\t * " + argument.ToString());
                             sb.AppendLine("\t\t */");
-                            sb.AppendLine("\t\t" + argument.GetCSharpPrivateFunction() + ";");
+
+                            if (argument.IsFunctionPointer)
+                                sb.AppendLine("\t\tIntPtr " + argument.SafeName + ";");
+                            else
+                            {
+                                switch (argument.Category)
+                                {
+                                    case CTyped.TypeCategory.Native:
+                                    case CTyped.TypeCategory.VoidPointer:
+                                        sb.AppendLine("\t\tIntPtr " + argument.SafeName + ";");
+                                        break;
+
+                                    case CTyped.TypeCategory.DateTime:
+                                        sb.AppendLine("\t\tulong " + argument.SafeName + ";");
+                                        break;
+
+                                    default:
+                                        sb.AppendLine("\t\t/* Cannot generate struct for type " + argument.Category.ToString() + " */");
+                                        break;
+                                }
+                            }
+
+                            //sb.AppendLine("\t\t" + argument.GetCSharpPrivateFunction() + ";");
                             sb.AppendLine();
                         }
 
@@ -594,8 +616,8 @@ namespace Scripts
                                     break;
 
                                 case CTyped.TypeCategory.DateTime:
-                                    sb.AppendLine("\t\t\tulong _PurpleWrapper_arg" + i + " = (ulong)(" + arg.SafeName + " - new DateTime(1970, 1, 1)).TotalSeconds;");
-                                    functionArgs[i] = "_PurpleWrapper_arg" + i;
+                                    sb.AppendLine("\t\t\tulong _PurpleWrapper_param" + i + " = (ulong)(" + arg.SafeName + " - new DateTime(1970, 1, 1)).TotalSeconds;");
+                                    functionArgs[i] = "_PurpleWrapper_param" + i;
                                     break;
 
                                 default:

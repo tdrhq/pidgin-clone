@@ -89,7 +89,7 @@ namespace PurpleWrapper
 		/*
 		 * PurpleCertificateScheme *  scheme
 		 */
-		IntPtr  scheme;
+		/* Cannot generate struct for type PointerToKnownStruct */
 
 		/*
 		 * gpointer data

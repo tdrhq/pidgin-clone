@@ -149,17 +149,17 @@ namespace PurpleWrapper
 		/*
 		 * char * who
 		 */
-		string who;
+		IntPtr who;
 
 		/*
 		 * char * what
 		 */
-		string what;
+		IntPtr what;
 
 		/*
 		 * PurpleMessageFlags flags
 		 */
-		Conversation.PurpleMessageFlags flags;
+		/* Cannot generate struct for type KnownEnum */
 
 		/*
 		 * time_t when
@@ -169,12 +169,12 @@ namespace PurpleWrapper
 		/*
 		 * PurpleConversation * conv
 		 */
-		IntPtr conv;
+		/* Cannot generate struct for type PointerToKnownStruct */
 
 		/*
 		 * char * alias
 		 */
-		string alias;
+		IntPtr alias;
 
 	}
 

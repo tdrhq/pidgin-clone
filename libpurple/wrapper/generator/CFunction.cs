@@ -58,7 +58,7 @@ namespace Scripts
                 if (i != 0)
                     str += ", ";
 
-                str += this.Arguments[i].GetCSharpPrivateFunction();
+                str += this.Arguments[i].GetCSharpPrivateFunction(i);
             }
 
             str += ")";
@@ -99,7 +99,7 @@ namespace Scripts
                 if (i != 0)
                     str += ", ";
 
-                str += this.Arguments[i].GetCSharpPublicFunction();
+                str += this.Arguments[i].GetCSharpPublicFunction(i);
             }
 
             str += ")";

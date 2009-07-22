@@ -56,9 +56,9 @@ namespace PurpleWrapper
 		 * void serv_move_buddy(PurpleBuddy * , PurpleGroup * , PurpleGroup * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_move_buddy(IntPtr , IntPtr , IntPtr );
+		private static extern void serv_move_buddy(IntPtr _PurpleWrapper_arg0, IntPtr _PurpleWrapper_arg1, IntPtr _PurpleWrapper_arg2);
 
-		public static void ServMoveBuddy(PurpleBuddy , PurpleGroup , PurpleGroup )
+		public static void ServMoveBuddy(PurpleBuddy _PurpleWrapper_arg0, PurpleGroup _PurpleWrapper_arg1, PurpleGroup _PurpleWrapper_arg2)
 		{
 			serv_move_buddy(.Reference, .Reference, .Reference);
 		}
@@ -67,9 +67,9 @@ namespace PurpleWrapper
 		 * int serv_send_im(PurpleConnection * , char * , char * , PurpleMessageFlags flags)
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern int serv_send_im(IntPtr , string , string , Conversation.PurpleMessageFlags flags);
+		private static extern int serv_send_im(IntPtr _PurpleWrapper_arg0, string _PurpleWrapper_arg1, string _PurpleWrapper_arg2, Conversation.PurpleMessageFlags flags);
 
-		public static int ServSendIm(PurpleConnection , string , string , Conversation.PurpleMessageFlags flags)
+		public static int ServSendIm(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1, string _PurpleWrapper_arg2, Conversation.PurpleMessageFlags flags)
 		{
 			/* Unable to process flags, a KnownEnum. */
 			throw new NotImplementedException();
@@ -112,9 +112,9 @@ namespace PurpleWrapper
 		 * void serv_get_info(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_get_info(IntPtr , string );
+		private static extern void serv_get_info(IntPtr _PurpleWrapper_arg0, string _PurpleWrapper_arg1);
 
-		public static void ServGetInfo(PurpleConnection , string )
+		public static void ServGetInfo(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
 			serv_get_info(.Reference, );
 		}
@@ -123,9 +123,9 @@ namespace PurpleWrapper
 		 * void serv_set_info(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_set_info(IntPtr , string );
+		private static extern void serv_set_info(IntPtr _PurpleWrapper_arg0, string _PurpleWrapper_arg1);
 
-		public static void ServSetInfo(PurpleConnection , string )
+		public static void ServSetInfo(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
 			serv_set_info(.Reference, );
 		}
@@ -134,9 +134,9 @@ namespace PurpleWrapper
 		 * void serv_add_permit(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_add_permit(IntPtr , string );
+		private static extern void serv_add_permit(IntPtr _PurpleWrapper_arg0, string _PurpleWrapper_arg1);
 
-		public static void ServAddPermit(PurpleConnection , string )
+		public static void ServAddPermit(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
 			serv_add_permit(.Reference, );
 		}
@@ -145,9 +145,9 @@ namespace PurpleWrapper
 		 * void serv_add_deny(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_add_deny(IntPtr , string );
+		private static extern void serv_add_deny(IntPtr _PurpleWrapper_arg0, string _PurpleWrapper_arg1);
 
-		public static void ServAddDeny(PurpleConnection , string )
+		public static void ServAddDeny(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
 			serv_add_deny(.Reference, );
 		}
@@ -156,9 +156,9 @@ namespace PurpleWrapper
 		 * void serv_rem_permit(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_rem_permit(IntPtr , string );
+		private static extern void serv_rem_permit(IntPtr _PurpleWrapper_arg0, string _PurpleWrapper_arg1);
 
-		public static void ServRemPermit(PurpleConnection , string )
+		public static void ServRemPermit(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
 			serv_rem_permit(.Reference, );
 		}
@@ -167,9 +167,9 @@ namespace PurpleWrapper
 		 * void serv_rem_deny(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_rem_deny(IntPtr , string );
+		private static extern void serv_rem_deny(IntPtr _PurpleWrapper_arg0, string _PurpleWrapper_arg1);
 
-		public static void ServRemDeny(PurpleConnection , string )
+		public static void ServRemDeny(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
 			serv_rem_deny(.Reference, );
 		}
@@ -178,9 +178,9 @@ namespace PurpleWrapper
 		 * void serv_set_permit_deny(PurpleConnection * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_set_permit_deny(IntPtr );
+		private static extern void serv_set_permit_deny(IntPtr _PurpleWrapper_arg0);
 
-		public static void ServSetPermitDeny(PurpleConnection )
+		public static void ServSetPermitDeny(PurpleConnection _PurpleWrapper_arg0)
 		{
 			serv_set_permit_deny(.Reference);
 		}
@@ -217,9 +217,9 @@ namespace PurpleWrapper
 		 * void serv_alias_buddy(PurpleBuddy * )
 		 */
 		[DllImport("libpurple.dll")]
-		private static extern void serv_alias_buddy(IntPtr );
+		private static extern void serv_alias_buddy(IntPtr _PurpleWrapper_arg0);
 
-		public static void ServAliasBuddy(PurpleBuddy )
+		public static void ServAliasBuddy(PurpleBuddy _PurpleWrapper_arg0)
 		{
 			serv_alias_buddy(.Reference);
 		}

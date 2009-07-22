@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved1
+		public IntPtr _purple_reserved1
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved2
+		public IntPtr _purple_reserved2
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved3
+		public IntPtr _purple_reserved3
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved4
+		public IntPtr _purple_reserved4
 		{
 			get
 			{
@@ -179,42 +179,42 @@ namespace PurpleWrapper
 		/*
 		 * gchar * scheme_name
 		 */
-		string scheme_name;
+		IntPtr scheme_name;
 
 		/*
 		 * gchar * name
 		 */
-		string name;
+		IntPtr name;
 
 		/*
 		 * void (* start_verification)(PurpleCertificateVerificationRequest *vrq)
 		 */
-		void (* start_verification)(PurpleCertificateVerificationRequest *vrq);
+		/* Cannot generate struct for type Void */
 
 		/*
 		 * void (* destroy_request)(PurpleCertificateVerificationRequest *vrq)
 		 */
-		void (* destroy_request)(PurpleCertificateVerificationRequest *vrq);
+		/* Cannot generate struct for type Void */
 
 		/*
-		 * void (*purple_reserved1)()
+		 * void (*_purple_reserved1)()
 		 */
-		void purple_reserved1;
+		IntPtr _purple_reserved1;
 
 		/*
-		 * void (*purple_reserved2)()
+		 * void (*_purple_reserved2)()
 		 */
-		void purple_reserved2;
+		IntPtr _purple_reserved2;
 
 		/*
-		 * void (*purple_reserved3)()
+		 * void (*_purple_reserved3)()
 		 */
-		void purple_reserved3;
+		IntPtr _purple_reserved3;
 
 		/*
-		 * void (*purple_reserved4)()
+		 * void (*_purple_reserved4)()
 		 */
-		void purple_reserved4;
+		IntPtr _purple_reserved4;
 
 	}
 

@@ -50,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleConversationUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleConversationUiOps));
 		}
 
-		public void create_conversation
+		public IntPtr create_conversation
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void destroy_conversation
+		public IntPtr destroy_conversation
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void write_chat
+		public IntPtr write_chat
 		{
 			get
 			{
@@ -95,7 +95,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void write_im
+		public IntPtr write_im
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void write_conv
+		public IntPtr write_conv
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void chat_add_users
+		public IntPtr chat_add_users
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void chat_rename_user
+		public IntPtr chat_rename_user
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void chat_remove_users
+		public IntPtr chat_remove_users
 		{
 			get
 			{
@@ -170,7 +170,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void chat_update_user
+		public IntPtr chat_update_user
 		{
 			get
 			{
@@ -185,7 +185,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void present
+		public IntPtr present
 		{
 			get
 			{
@@ -200,7 +200,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public bool has_focus
+		public IntPtr has_focus
 		{
 			get
 			{
@@ -215,7 +215,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public bool custom_smiley_add
+		public IntPtr custom_smiley_add
 		{
 			get
 			{
@@ -230,7 +230,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void custom_smiley_write
+		public IntPtr custom_smiley_write
 		{
 			get
 			{
@@ -245,7 +245,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void custom_smiley_close
+		public IntPtr custom_smiley_close
 		{
 			get
 			{
@@ -260,7 +260,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void send_confirm
+		public IntPtr send_confirm
 		{
 			get
 			{
@@ -275,7 +275,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved1
+		public IntPtr _purple_reserved1
 		{
 			get
 			{
@@ -290,7 +290,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved2
+		public IntPtr _purple_reserved2
 		{
 			get
 			{
@@ -305,7 +305,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved3
+		public IntPtr _purple_reserved3
 		{
 			get
 			{
@@ -320,7 +320,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved4
+		public IntPtr _purple_reserved4
 		{
 			get
 			{
@@ -344,97 +344,97 @@ namespace PurpleWrapper
 		/*
 		 * void (*create_conversation)(PurpleConversation * conv)
 		 */
-		void create_conversation;
+		IntPtr create_conversation;
 
 		/*
 		 * void (*destroy_conversation)(PurpleConversation * conv)
 		 */
-		void destroy_conversation;
+		IntPtr destroy_conversation;
 
 		/*
 		 * void (*write_chat)(PurpleConversation * conv, char * who, char * message, PurpleMessageFlags flags, time_t mtime)
 		 */
-		void write_chat;
+		IntPtr write_chat;
 
 		/*
 		 * void (*write_im)(PurpleConversation * conv, char * who, char * message, PurpleMessageFlags flags, time_t mtime)
 		 */
-		void write_im;
+		IntPtr write_im;
 
 		/*
 		 * void (*write_conv)(PurpleConversation * conv, char * name, char * alias, char * message, PurpleMessageFlags flags, time_t mtime)
 		 */
-		void write_conv;
+		IntPtr write_conv;
 
 		/*
 		 * void (*chat_add_users)(PurpleConversation * conv, GList * cbuddies, gboolean new_arrivals)
 		 */
-		void chat_add_users;
+		IntPtr chat_add_users;
 
 		/*
 		 * void (*chat_rename_user)(PurpleConversation * conv, char * old_name, char * new_name, char * new_alias)
 		 */
-		void chat_rename_user;
+		IntPtr chat_rename_user;
 
 		/*
 		 * void (*chat_remove_users)(PurpleConversation * conv, GList * users)
 		 */
-		void chat_remove_users;
+		IntPtr chat_remove_users;
 
 		/*
 		 * void (*chat_update_user)(PurpleConversation * conv, char * user)
 		 */
-		void chat_update_user;
+		IntPtr chat_update_user;
 
 		/*
 		 * void (*present)(PurpleConversation * conv)
 		 */
-		void present;
+		IntPtr present;
 
 		/*
 		 * gboolean (*has_focus)(PurpleConversation * conv)
 		 */
-		bool has_focus;
+		IntPtr has_focus;
 
 		/*
 		 * gboolean (*custom_smiley_add)(PurpleConversation * conv, char * smile, gboolean remote)
 		 */
-		bool custom_smiley_add;
+		IntPtr custom_smiley_add;
 
 		/*
 		 * void (*custom_smiley_write)(PurpleConversation * conv, char * smile, guchar * data, gsize size)
 		 */
-		void custom_smiley_write;
+		IntPtr custom_smiley_write;
 
 		/*
 		 * void (*custom_smiley_close)(PurpleConversation * conv, char * smile)
 		 */
-		void custom_smiley_close;
+		IntPtr custom_smiley_close;
 
 		/*
 		 * void (*send_confirm)(PurpleConversation * conv, char * message)
 		 */
-		void send_confirm;
+		IntPtr send_confirm;
 
 		/*
-		 * void (*purple_reserved1)()
+		 * void (*_purple_reserved1)()
 		 */
-		void purple_reserved1;
+		IntPtr _purple_reserved1;
 
 		/*
-		 * void (*purple_reserved2)()
+		 * void (*_purple_reserved2)()
 		 */
-		void purple_reserved2;
+		IntPtr _purple_reserved2;
 
 		/*
-		 * void (*purple_reserved3)()
+		 * void (*_purple_reserved3)()
 		 */
-		void purple_reserved3;
+		IntPtr _purple_reserved3;
 
 		/*
-		 * void (*purple_reserved4)()
+		 * void (*_purple_reserved4)()
 		 */
-		void purple_reserved4;
+		IntPtr _purple_reserved4;
 
 	}
 

@@ -66,20 +66,61 @@ namespace Scripts
 
         public string GetCSharpPrivateFunction()
         {
-            if (this.IsEllipsis)
-                throw new UnableToCreateWrapperException("The function argument contains the ellipsis argument and cannot be automatically wrapped.");
-            else
-                return this.CSharpPrivateType + " " + this.SafeName;
+            return GetCSharpFunction(CSharpFunctionType.Private, 0, false);
+        }
+
+        public string GetCSharpPrivateFunction(int argumentNumber)
+        {
+            return GetCSharpFunction(CSharpFunctionType.Private, argumentNumber, true);
         }
 
         public string GetCSharpPublicFunction()
+        {
+            return GetCSharpFunction(CSharpFunctionType.Public, 0, false);
+        }
+
+        public string GetCSharpPublicFunction(int argumentNumber)
+        {
+            return GetCSharpFunction(CSharpFunctionType.Public, argumentNumber, true);
+        }
+
+        private enum CSharpFunctionType { Public, Private };
+
+        private string GetCSharpFunction(CSharpFunctionType functionType, int argumentNumber, bool argumentNumberSupplied)
         {
             if (this.IsEllipsis)
                 throw new UnableToCreateWrapperException("The function argument contains the ellipsis argument and cannot be automatically wrapped.");
             else
             {
-                return this.CSharpPublicType + " " + this.SafeName;
+                String result = "";
+
+                if (this.IsFunctionPointer)
+                    result = "IntPtr";
+                else
+                {
+                    switch (functionType)
+                    {
+                        case CSharpFunctionType.Private:
+                            result = this.CSharpPrivateType;
+                            break;
+
+                        case CSharpFunctionType.Public:
+                            result = this.CSharpPublicType;
+                            break;
+                    }
+                }
+
+                if (this.SafeName == "")
+                {
+                    if (argumentNumberSupplied)
+                        result += " _PurpleWrapper_arg" + argumentNumber;
+                }
+                else
+                    result += " " + this.SafeName;
+
+                return result;
             }
+
         }
     }
 }

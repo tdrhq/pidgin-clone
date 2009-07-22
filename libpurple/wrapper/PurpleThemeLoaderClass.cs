@@ -89,12 +89,12 @@ namespace PurpleWrapper
 		/*
 		 * GObjectClass parent_class
 		 */
-		IntPtr parent_class;
+		/* Cannot generate struct for type GObjectObject */
 
 		/*
 		 * PurpleTheme * ((*purple_theme_loader_build)(const gchar*))
 		 */
-		IntPtr ((*purple_theme_loader_build)(const gchar*));
+		/* Cannot generate struct for type PointerToKnownStruct */
 
 	}
 

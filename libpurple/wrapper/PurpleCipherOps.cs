@@ -50,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleCipherOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleCipherOps));
 		}
 
-		public void set_option
+		public IntPtr set_option
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void init
+		public IntPtr init
 		{
 			get
 			{
@@ -95,7 +95,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void reset
+		public IntPtr reset
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void uninit
+		public IntPtr uninit
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_iv
+		public IntPtr set_iv
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void append
+		public IntPtr append
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public bool digest
+		public IntPtr digest
 		{
 			get
 			{
@@ -170,7 +170,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public int encrypt
+		public IntPtr encrypt
 		{
 			get
 			{
@@ -185,7 +185,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public int decrypt
+		public IntPtr decrypt
 		{
 			get
 			{
@@ -200,7 +200,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_salt
+		public IntPtr set_salt
 		{
 			get
 			{
@@ -215,7 +215,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public ulong get_salt_size
+		public IntPtr get_salt_size
 		{
 			get
 			{
@@ -230,7 +230,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_key
+		public IntPtr set_key
 		{
 			get
 			{
@@ -245,7 +245,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public ulong get_key_size
+		public IntPtr get_key_size
 		{
 			get
 			{
@@ -260,7 +260,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_batch_mode
+		public IntPtr set_batch_mode
 		{
 			get
 			{
@@ -275,7 +275,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public Cipher.PurpleCipherBatchMode get_batch_mode
+		public IntPtr get_batch_mode
 		{
 			get
 			{
@@ -290,7 +290,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public ulong get_block_size
+		public IntPtr get_block_size
 		{
 			get
 			{
@@ -305,7 +305,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void set_key_with_len
+		public IntPtr set_key_with_len
 		{
 			get
 			{
@@ -329,7 +329,7 @@ namespace PurpleWrapper
 		/*
 		 * void (*set_option)(PurpleCipherContext * context, gchar * name, void * value)
 		 */
-		void set_option;
+		IntPtr set_option;
 
 		/*
 		 * void * (*get_option)(PurpleCipherContext * context, gchar * name)
@@ -339,82 +339,82 @@ namespace PurpleWrapper
 		/*
 		 * void (*init)(PurpleCipherContext * context, void * extra)
 		 */
-		void init;
+		IntPtr init;
 
 		/*
 		 * void (*reset)(PurpleCipherContext * context, void * extra)
 		 */
-		void reset;
+		IntPtr reset;
 
 		/*
 		 * void (*uninit)(PurpleCipherContext * context)
 		 */
-		void uninit;
+		IntPtr uninit;
 
 		/*
 		 * void (*set_iv)(PurpleCipherContext * context, guchar * iv, size_t len)
 		 */
-		void set_iv;
+		IntPtr set_iv;
 
 		/*
 		 * void (*append)(PurpleCipherContext * context, guchar * data, size_t len)
 		 */
-		void append;
+		IntPtr append;
 
 		/*
 		 * gboolean (*digest)(PurpleCipherContext * context, size_t in_len, guchar [], size_t * out_len)
 		 */
-		bool digest;
+		IntPtr digest;
 
 		/*
 		 * int (*encrypt)(PurpleCipherContext * context, guchar [], size_t len, guchar [], size_t * outlen)
 		 */
-		int encrypt;
+		IntPtr encrypt;
 
 		/*
 		 * int (*decrypt)(PurpleCipherContext * context, guchar [], size_t len, guchar [], size_t * outlen)
 		 */
-		int decrypt;
+		IntPtr decrypt;
 
 		/*
 		 * void (*set_salt)(PurpleCipherContext * context, guchar * salt)
 		 */
-		void set_salt;
+		IntPtr set_salt;
 
 		/*
 		 * size_t (*get_salt_size)(PurpleCipherContext * context)
 		 */
-		ulong get_salt_size;
+		IntPtr get_salt_size;
 
 		/*
 		 * void (*set_key)(PurpleCipherContext * context, guchar * key)
 		 */
-		void set_key;
+		IntPtr set_key;
 
 		/*
 		 * size_t (*get_key_size)(PurpleCipherContext * context)
 		 */
-		ulong get_key_size;
+		IntPtr get_key_size;
 
 		/*
 		 * void (*set_batch_mode)(PurpleCipherContext * context, PurpleCipherBatchMode mode)
 		 */
-		void set_batch_mode;
+		IntPtr set_batch_mode;
 
 		/*
 		 * PurpleCipherBatchMode (*get_batch_mode)(PurpleCipherContext * context)
 		 */
-		Cipher.PurpleCipherBatchMode get_batch_mode;
+		IntPtr get_batch_mode;
 
 		/*
 		 * size_t (*get_block_size)(PurpleCipherContext * context)
 		 */
-		ulong get_block_size;
+		IntPtr get_block_size;
 
 		/*
 		 * void (*set_key_with_len)(PurpleCipherContext * context, guchar * key, size_t len)
 		 */
-		void set_key_with_len;
+		IntPtr set_key_with_len;
 
 	}
 

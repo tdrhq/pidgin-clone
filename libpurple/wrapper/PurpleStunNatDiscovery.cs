@@ -134,22 +134,22 @@ namespace PurpleWrapper
 		/*
 		 * PurpleStunStatus status
 		 */
-		Stun.PurpleStunStatus status;
+		/* Cannot generate struct for type KnownEnum */
 
 		/*
 		 * PurpleStunNatType type
 		 */
-		Stun.PurpleStunNatType type;
+		/* Cannot generate struct for type KnownEnum */
 
 		/*
 		 * char publicip[16]
 		 */
-		char publicip[16];
+		IntPtr publicip[16];
 
 		/*
 		 * char * servername
 		 */
-		string servername;
+		IntPtr servername;
 
 		/*
 		 * time_t lookup_time

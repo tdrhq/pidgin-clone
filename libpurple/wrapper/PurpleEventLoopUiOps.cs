@@ -50,7 +50,7 @@ namespace PurpleWrapper
 			this.Data = (_PurpleEventLoopUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleEventLoopUiOps));
 		}
 
-		public uint timeout_add
+		public IntPtr timeout_add
 		{
 			get
 			{
@@ -65,7 +65,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public bool timeout_remove
+		public IntPtr timeout_remove
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public uint input_add
+		public IntPtr input_add
 		{
 			get
 			{
@@ -95,7 +95,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public bool input_remove
+		public IntPtr input_remove
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public int input_get_error
+		public IntPtr input_get_error
 		{
 			get
 			{
@@ -125,7 +125,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public uint timeout_add_seconds
+		public IntPtr timeout_add_seconds
 		{
 			get
 			{
@@ -140,7 +140,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved2
+		public IntPtr _purple_reserved2
 		{
 			get
 			{
@@ -155,7 +155,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved3
+		public IntPtr _purple_reserved3
 		{
 			get
 			{
@@ -170,7 +170,7 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void purple_reserved4
+		public IntPtr _purple_reserved4
 		{
 			get
 			{
@@ -194,47 +194,47 @@ namespace PurpleWrapper
 		/*
 		 * guint (*timeout_add)(guint interval, GSourceFunc function, gpointer data)
 		 */
-		uint timeout_add;
+		IntPtr timeout_add;
 
 		/*
 		 * gboolean (*timeout_remove)(guint handle)
 		 */
-		bool timeout_remove;
+		IntPtr timeout_remove;
 
 		/*
 		 * guint (*input_add)(int fd, PurpleInputCondition cond, PurpleInputFunction func, gpointer user_data)
 		 */
-		uint input_add;
+		IntPtr input_add;
 
 		/*
 		 * gboolean (*input_remove)(guint handle)
 		 */
-		bool input_remove;
+		IntPtr input_remove;
 
 		/*
 		 * int (*input_get_error)(int fd, int * error)
 		 */
-		int input_get_error;
+		IntPtr input_get_error;
 
 		/*
 		 * guint (*timeout_add_seconds)(guint interval, GSourceFunc function, gpointer data)
 		 */
-		uint timeout_add_seconds;
+		IntPtr timeout_add_seconds;
 
 		/*
-		 * void (*purple_reserved2)()
+		 * void (*_purple_reserved2)()
 		 */
-		void purple_reserved2;
+		IntPtr _purple_reserved2;
 
 		/*
-		 * void (*purple_reserved3)()
+		 * void (*_purple_reserved3)()
 		 */
-		void purple_reserved3;
+		IntPtr _purple_reserved3;
 
 		/*
-		 * void (*purple_reserved4)()
+		 * void (*_purple_reserved4)()
 		 */
-		void purple_reserved4;
+		IntPtr _purple_reserved4;
 
 	}
 
