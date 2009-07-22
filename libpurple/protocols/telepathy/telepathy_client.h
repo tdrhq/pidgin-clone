@@ -21,6 +21,35 @@
 #ifndef _TELEPATHY_CLIENT_H_
 #define _TELEPATHY_CLIENT_H_
 
+#include <glib.h>
+#include <gio/gio.h>
 
+#include <telepathy-glib/dbus-properties-mixin.h>
+
+#define TELEPATHY_TYPE_CLIENT         (telepathy_client_get_type ())
+#define TELEPATHY_CLIENT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), TELEPATHY_TYPE_CLIENT, TelepathyClient))
+#define TELEPATHY_CLIENT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), TELEPATHY_TYPE_CLIENT, TelepathyClientClass))
+#define TELEPATHY_IS_CLIENT(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), TELEPATHY_TYPE_CLIENT))
+#define TELEPATHY_IS_CLIENT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), TELEPATHY_TYPE_CLIENT))
+#define TELEPATHY_CLIENT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TELEPATHY_TYPE_CLIENT, TelepathyClientClass))
+
+typedef struct _TelepathyClient      TelepathyClient;
+typedef struct _TelepathyClientClass TelepathyClientClass;
+
+typedef struct 
+{
+	GObject parent;
+	gpointer priv;
+} _TelepathyClient;
+
+typedef struct 
+{
+	GObjectClass parent_class;
+	TpDBusPropertiesMixinClass dbus_props_class;
+} _TelepathyClientClass;
+
+GType telepathy_client_get_type (void) G_GNUC_CONST;
+
+TelepathyClient *    telepathy_client_dup_singleton (void);
 
 #endif /* _TELEPATHY_CLIENT_H_ */
