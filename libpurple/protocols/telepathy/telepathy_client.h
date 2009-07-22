@@ -33,20 +33,8 @@
 #define TELEPATHY_IS_CLIENT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), TELEPATHY_TYPE_CLIENT))
 #define TELEPATHY_CLIENT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TELEPATHY_TYPE_CLIENT, TelepathyClientClass))
 
-//typedef struct _TelepathyClient      TelepathyClient;
-//typedef struct _TelepathyClientClass TelepathyClientClass;
-
-typedef struct 
-{
-	GObject parent;
-	gpointer priv;
-} TelepathyClient;
-
-typedef struct 
-{
-	GObjectClass parent_class;
-	TpDBusPropertiesMixinClass dbus_props_class;
-} TelepathyClientClass;
+typedef struct _TelepathyClient      TelepathyClient;
+typedef struct _TelepathyClientClass TelepathyClientClass;
 
 GType telepathy_client_get_type (void) G_GNUC_CONST;
 

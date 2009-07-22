@@ -34,8 +34,7 @@
 #define CLIENT_BUS_NAME TP_CLIENT_BUS_NAME_BASE "prpl_telepathy"
 #define CLIENT_OBJECT_PATH TP_CLIENT_OBJECT_PATH_BASE "prpl_telepathy"
 
-#define TELEPATHY_GET_PRIV(obj,type) ((type##Priv *) ((type *) obj)->priv)
-#define GET_PRIV(obj) TELEPATHY_GET_PRIV (obj, TelepathyClient)
+#define TELEPATHY_ARRAY_TYPE_OBJECT (telepathy_type_dbus_ao ())
 
 typedef struct
 {
@@ -43,6 +42,18 @@ typedef struct
 	  GList *channels;
 
 } TelepathyClientPriv;
+
+struct _TelepathyClient
+{
+	GObject parent;
+	TelepathyClientPriv *priv;
+};
+
+struct _TelepathyClientClass
+{
+	GObjectClass parent_class;
+	TpDBusPropertiesMixinClass dbus_props_class;
+};
 
 static void telepathy_client_client_handler_iface_init (gpointer g_iface,
 	gpointer g_iface_data);
@@ -101,9 +112,21 @@ client_constructor (GType type,
 }
 
 static void
+client_dispose (GObject *object)
+{
+	/* TODO: Close all channels */
+	/*
+	TelepathyClientPriv *priv = GET_PRIV (object);
+	*/
+
+}
+
+static void
 client_finalize (GObject *object)
 {
-	//TelepathyClientPriv *priv = GET_PRIV (object);
+	/*
+	TelepathyClientPriv *priv = GET_PRIV (object);
+	*/
 
 }
 
@@ -114,7 +137,7 @@ client_get_property (GObject *object,
                      GParamSpec *pspec)
 {
 	TelepathyClient *client = TELEPATHY_CLIENT (object);
-	TelepathyClientPriv *priv = GET_PRIV (client);
+	TelepathyClientPriv *priv = client->priv;
 
 	switch (property_id)
 	{
@@ -125,9 +148,21 @@ client_get_property (GObject *object,
 		case PROP_CHANNEL_FILTER:
 		{
 			GPtrArray *filters = g_ptr_array_new ();
-			GHashTable *filter = g_hash_table_new (NULL, NULL);
+			GHashTable *filter;
 
+			filter = tp_asv_new (
+				TP_IFACE_CHANNEL ".Type", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
+				TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_CONTACT,
+				NULL);
 			g_ptr_array_add (filters, filter);
+
+			filter = tp_asv_new (
+				TP_IFACE_CHANNEL ".Type", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
+				TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_ROOM,
+				NULL);
+			g_ptr_array_add (filters, filter);
+
+			g_value_take_boxed (value, filters);
 
 			g_value_set_boxed (value, filters);
 
@@ -160,6 +195,17 @@ client_get_property (GObject *object,
 	}
 }
 
+static GType
+telepathy_type_dbus_ao (void)
+{
+  static GType t = 0;
+
+  if (G_UNLIKELY (t == 0))
+     t = dbus_g_type_get_collection ("GPtrArray", DBUS_TYPE_G_OBJECT_PATH);
+
+  return t;
+}
+
 static void
 telepathy_client_class_init (TelepathyClientClass *klass)
 {
@@ -167,29 +213,38 @@ telepathy_client_class_init (TelepathyClientClass *klass)
 	GParamSpec *param_spec;
 
 	static TpDBusPropertiesMixinPropImpl client_props[] = {
-		{ "Interfaces", "interfaces", NULL },
-		{ NULL }
+		{ "Interfaces", "interfaces", NULL, NULL, NULL, NULL },
+		{ NULL, NULL, NULL, NULL, NULL, NULL  }
 	};
 	static TpDBusPropertiesMixinPropImpl client_handler_props[] = {
-		{ "HandlerChannelFilter", "channel-filter", NULL },
-		{ "HandledChannels", "channels", NULL },
-		{ NULL }
+		{ "HandlerChannelFilter", "channel-filter", NULL, NULL, NULL, NULL },
+		{ "HandledChannels", "channels", NULL, NULL, NULL, NULL },
+		{ NULL, NULL, NULL, NULL, NULL, NULL }
 	};
 
 	static TpDBusPropertiesMixinIfaceImpl prop_interfaces[] = {
 		{ TP_IFACE_CLIENT,
 			tp_dbus_properties_mixin_getter_gobject_properties,
 			NULL,
-			client_props
+			client_props,
+			NULL,
+			NULL,
+			{ NULL },
+			NULL
 		},
 		{ TP_IFACE_CLIENT_HANDLER,
 			tp_dbus_properties_mixin_getter_gobject_properties,
 			NULL,
-			client_handler_props
+			client_handler_props,
+			NULL,
+			NULL,
+			{ NULL },
+			NULL
 		},
-		{ NULL }
+		{ NULL, NULL, NULL, NULL, NULL, NULL, { NULL }, NULL }
 	};
 
+	object_class->dispose = client_dispose;
 	object_class->finalize = client_finalize;
 	object_class->constructor = client_constructor;
 
@@ -226,16 +281,16 @@ telepathy_client_class_init (TelepathyClientClass *klass)
 static void
 telepathy_client_init (TelepathyClient *client)
 {
-  TelepathyClientPriv *priv = G_TYPE_INSTANCE_GET_PRIVATE (client,
-    TELEPATHY_TYPE_CLIENT, TelepathyClientPriv);
+	TelepathyClientPriv *priv = G_TYPE_INSTANCE_GET_PRIVATE (client,
+		TELEPATHY_TYPE_CLIENT, TelepathyClientPriv);
 
-  client->priv = priv;
+	client->priv = priv;
 }
 
 TelepathyClient *
 telepathy_client_dup_singleton (void)
 {
-  return TELEPATHY_CLIENT (g_object_new (TELEPATHY_TYPE_CLIENT, NULL));
+	return TELEPATHY_CLIENT (g_object_new (TELEPATHY_TYPE_CLIENT, NULL));
 }
 
 static void
@@ -248,14 +303,16 @@ telepathy_client_handle_channels (TpSvcClientHandler *self,
                                   GHashTable *handler_info,
                                   DBusGMethodInvocation *context)
 {
+	/*
 	TelepathyClient *client = TELEPATHY_CLIENT (self);
-	TelepathyClientPriv *priv = GET_PRIV (client);
+	TelepathyClientPriv *priv = client->priv;
+	*/
 
 	int i;
 
 	for (i = 0; i < channels->len ; i++)
 	{
-		/* TODO: Try to do something here! */
+		/* TODO: Put the channel in priv->channels */
 
 		/*
 		GValueArray *arr = g_ptr_array_index (channels, i);
