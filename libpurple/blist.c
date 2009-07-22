@@ -2467,7 +2467,6 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 
 	g_return_val_if_fail(purplebuddylist != NULL, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
-	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
  
 	if (!(lp = purple_find_privacy_contacts(account, name)))
 		return NULL;
