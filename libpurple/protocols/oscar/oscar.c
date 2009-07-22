@@ -5413,6 +5413,10 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	oscar_set_icon(gc, img);
 	purple_imgstore_unref(img);
 
+	g_slist_free(buddy_l);
+	g_slist_free(allow_l);
+	g_slist_free(block_both_l);
+
 	return 1;
 }
 
