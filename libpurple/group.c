@@ -93,17 +93,10 @@ GSList *purple_group_get_accounts(PurpleGroup *group)
 }
 
 static void
-purple_group_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
+purple_group_add_update(PurpleGroup *group, PurpleBlistNode *child)
 {
-	PurpleGroup *group;
 	PurpleChat *chat;
 	PurpleContact *contact;
-
-	g_return_if_fail(parent);
-	g_return_if_fail(child);
-	group = PURPLE_GROUP(parent);
-
-	parent_class->add_child(parent, child);
 
 	if(PURPLE_IS_CHAT(child)){
 		chat = PURPLE_CHAT(child);
@@ -126,6 +119,26 @@ purple_group_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 	purple_blist_schedule_save();
 	purple_signal_emit(purple_blist_node_get_handle(), "node-added", child);
 
+}
+
+static void
+purple_group_add_sibling(PurpleBlistNode *node, PurpleBlistNode *location)
+{
+	g_return_if_fail(node);
+	g_return_if_fail(PURPLE_IS_GROUP(purple_blist_node_parent(location)));
+
+	parent_class->add_sibling(node, location);
+	purple_group_add_update(PURPLE_GROUP(purple_blist_node_parent(location)), node);
+}
+
+static void
+purple_group_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
+{
+	g_return_if_fail(parent);
+	g_return_if_fail(child);
+
+	parent_class->add_child(parent, child);
+	purple_group_add_update(PURPLE_GROUP(parent), child);
 }
 
 static void
@@ -325,7 +338,7 @@ purple_group_class_init(PurpleGroupClass *klass)
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = PURPLE_BLIST_NODE_CLASS(klass);	
-	/* parent_class->add_sibling = purple_group_add_sibling; */
+	parent_class->add_sibling = purple_group_add_sibling;
 	parent_class->add_child = purple_group_add_child;
 	parent_class->remove = purple_group_remove_node;
 
