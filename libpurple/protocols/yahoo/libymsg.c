@@ -4777,8 +4777,12 @@ void yahoo_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_typ
 			yahoo_add_deny(gc, who);
 			break;
 		case PURPLE_PRIVACY_VISIBLE_LIST:
+			/* Privacy laters: check */
+			yahoo_friend_update_presence(gc, who, YAHOO_PRESENCE_ONLINE);
+			break;
 		case PURPLE_PRIVACY_INVISIBLE_LIST:
-			/* Privacy laters */
+			/* Privacy laters: check */
+			yahoo_friend_update_presence(gc, who, YAHOO_PRESENCE_PERM_OFFLINE);
 			break;
 	}
 	return;
@@ -4805,8 +4809,12 @@ void yahoo_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_
 			yahoo_rem_deny(gc, who);
 			break;
 		case PURPLE_PRIVACY_VISIBLE_LIST:
+			/* Privacy laters */
+			yahoo_friend_update_presence(gc, who, YAHOO_PRESENCE_PERM_OFFLINE);
+			break;
 		case PURPLE_PRIVACY_INVISIBLE_LIST:
 			/* Privacy laters */
+			yahoo_friend_update_presence(gc, who, YAHOO_PRESENCE_ONLINE);
 			break;
 	}
 	return;
