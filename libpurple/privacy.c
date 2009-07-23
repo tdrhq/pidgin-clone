@@ -47,7 +47,7 @@ purple_privacy_permit_add(PurpleAccount *account, const char *who,
 	purple_privacy_update_contact(account, name, local_only, TRUE, TRUE);
 
 	if (!local_only && purple_account_is_connected(account))
-		serv_add_permit(purple_account_get_connection(account), name);
+		serv_privacy_list_add(purple_account_get_connection(account), PURPLE_PRIVACY_ALLOW_LIST, name);
 
 	if (privacy_ops != NULL && privacy_ops->permit_added != NULL)
 		privacy_ops->permit_added(account, name);
@@ -100,7 +100,7 @@ purple_privacy_permit_remove(PurpleAccount *account, const char *who,
 	/* privacy laters: we have freed the buddy, check if some function in following statements don't require any data that we freed */
 
 	if (!local_only && purple_account_is_connected(account))
-		serv_rem_permit(purple_account_get_connection(account), name);
+		serv_privacy_list_remove(purple_account_get_connection(account), PURPLE_PRIVACY_ALLOW_LIST, name);
 
 	if (privacy_ops != NULL && privacy_ops->permit_removed != NULL)
 		privacy_ops->permit_removed(account, name);
@@ -130,7 +130,7 @@ purple_privacy_deny_add(PurpleAccount *account, const char *who,
 	purple_privacy_update_contact(account, name, local_only, TRUE, TRUE);
 
 	if (!local_only && purple_account_is_connected(account))
-		serv_add_deny(purple_account_get_connection(account), name);
+		serv_privacy_list_add(purple_account_get_connection(account), PURPLE_PRIVACY_BLOCK_BOTH_LIST, name);
 
 	if (privacy_ops != NULL && privacy_ops->deny_added != NULL)
 		privacy_ops->deny_added(account, name);
@@ -184,7 +184,7 @@ purple_privacy_deny_remove(PurpleAccount *account, const char *who,
 	/* privacy laters: we have freed the buddy, check if some function in following statements don't require any data that we freed */
 
 	if (!local_only && purple_account_is_connected(account))
-		serv_rem_deny(purple_account_get_connection(account), name);
+		serv_privacy_list_remove(purple_account_get_connection(account), PURPLE_PRIVACY_BLOCK_BOTH_LIST, name);
 
 	if (privacy_ops != NULL && privacy_ops->deny_removed != NULL)
 		privacy_ops->deny_removed(account, name);

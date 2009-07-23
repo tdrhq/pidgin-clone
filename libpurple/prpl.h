@@ -67,6 +67,7 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "imgstore.h"
 #include "media.h"
 #include "notify.h"
+#include "privacy.h"
 #include "proxy.h"
 #include "plugin.h"
 #include "roomlist.h"
@@ -309,10 +310,8 @@ struct _PurplePluginProtocolInfo
 	void (*add_buddies)(PurpleConnection *, GList *buddies, GList *groups);
 	void (*remove_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
 	void (*remove_buddies)(PurpleConnection *, GList *buddies, GList *groups);
-	void (*add_permit)(PurpleConnection *, const char *name);
-	void (*add_deny)(PurpleConnection *, const char *name);
-	void (*rem_permit)(PurpleConnection *, const char *name);
-	void (*rem_deny)(PurpleConnection *, const char *name);
+	void (*privacy_list_add)(PurpleConnection *, PurplePrivacyListType list_type, const char *name);
+	void (*privacy_list_remove)(PurpleConnection *, PurplePrivacyListType list_type, const char *name);
 	void (*set_permit_deny)(PurpleConnection *);
 	void (*join_chat)(PurpleConnection *, GHashTable *components);
 	void (*reject_chat)(PurpleConnection *, GHashTable *components);

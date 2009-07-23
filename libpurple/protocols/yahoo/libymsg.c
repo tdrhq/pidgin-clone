@@ -1963,7 +1963,7 @@ static void ignore_buddy(PurpleBuddy *buddy) {
 	purple_account_remove_buddy(account, buddy, group);
 	purple_blist_remove_buddy(buddy);
 
-	serv_add_deny(purple_account_get_connection(account), name);
+	serv_privacy_list_add(purple_account_get_connection(account), PURPLE_PRIVACY_BLOCK_BOTH_LIST, name);
 
 	g_free(name);
 }
@@ -4725,7 +4725,7 @@ void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g
 	g_free(cg);
 }
 
-void yahoo_add_deny(PurpleConnection *gc, const char *who) {
+static void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 
@@ -4741,7 +4741,7 @@ void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
+static void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 
@@ -4754,6 +4754,62 @@ void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "2");
 	yahoo_packet_send_and_free(pkt, yd);
+}
+
+void yahoo_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who)
+{
+	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+
+	if (!yd->logged_in)
+		return;
+
+	if (!who || who[0] == '\0')
+		return;
+
+	switch(list_type)
+	{
+		case PURPLE_PRIVACY_ALLOW_LIST:
+		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
+		case PURPLE_PRIVACY_BUDDY_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
+		case PURPLE_PRIVACY_BLOCK_BOTH_LIST:
+			yahoo_add_deny(gc, who);
+			break;
+		case PURPLE_PRIVACY_VISIBLE_LIST:
+		case PURPLE_PRIVACY_INVISIBLE_LIST:
+			/* Privacy laters */
+			break;
+	}
+	return;
+}
+
+void yahoo_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who)
+{
+	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+
+	if (!yd->logged_in)
+		return;
+
+	if (!who || who[0] == '\0')
+		return;
+
+	switch(list_type)
+	{
+		case PURPLE_PRIVACY_ALLOW_LIST:
+		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
+		case PURPLE_PRIVACY_BUDDY_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
+		case PURPLE_PRIVACY_BLOCK_BOTH_LIST:
+			yahoo_rem_deny(gc, who);
+			break;
+		case PURPLE_PRIVACY_VISIBLE_LIST:
+		case PURPLE_PRIVACY_INVISIBLE_LIST:
+			/* Privacy laters */
+			break;
+	}
+	return;
 }
 
 void yahoo_set_permit_deny(PurpleConnection *gc)

@@ -376,7 +376,7 @@ void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 	}
 }
 
-void serv_add_permit(PurpleConnection *gc, const char *name)
+void serv_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_type, const char *name)
 {
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
@@ -387,11 +387,11 @@ void serv_add_permit(PurpleConnection *gc, const char *name)
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if(prpl_info && prpl_info->add_permit)
-		prpl_info->add_permit(gc, name);
+	if(prpl_info && prpl_info->privacy_list_add)
+		prpl_info->privacy_list_add(gc, list_type, name);
 }
 
-void serv_add_deny(PurpleConnection *gc, const char *name)
+void serv_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_type, const char *name)
 {
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
@@ -402,38 +402,8 @@ void serv_add_deny(PurpleConnection *gc, const char *name)
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if(prpl_info && prpl_info->add_deny)
-		prpl_info->add_deny(gc, name);
-}
-
-void serv_rem_permit(PurpleConnection *gc, const char *name)
-{
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
-
-	if(gc)
-		prpl = purple_connection_get_prpl(gc);
-
-	if(prpl)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if(prpl_info && prpl_info->rem_permit)
-		prpl_info->rem_permit(gc, name);
-}
-
-void serv_rem_deny(PurpleConnection *gc, const char *name)
-{
-	PurplePlugin *prpl = NULL;
-	PurplePluginProtocolInfo *prpl_info = NULL;
-
-	if(gc)
-		prpl = purple_connection_get_prpl(gc);
-
-	if(prpl)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-
-	if(prpl_info && prpl_info->rem_deny)
-		prpl_info->rem_deny(gc, name);
+	if(prpl_info && prpl_info->privacy_list_remove)
+		prpl_info->privacy_list_remove(gc, list_type, name);
 }
 
 void serv_set_permit_deny(PurpleConnection *gc)

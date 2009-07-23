@@ -28,6 +28,7 @@
 
 #include "account.h"
 #include "conversation.h"
+#include "privacy.h"
 #include "prpl.h"
 
 #ifdef __cplusplus
@@ -90,10 +91,8 @@ void serv_got_attention(PurpleConnection *gc, const char *who, guint type_code);
 void serv_get_info(PurpleConnection *, const char *);
 void serv_set_info(PurpleConnection *, const char *);
 
-void serv_add_permit(PurpleConnection *, const char *);
-void serv_add_deny(PurpleConnection *, const char *);
-void serv_rem_permit(PurpleConnection *, const char *);
-void serv_rem_deny(PurpleConnection *, const char *);
+void serv_privacy_list_add(PurpleConnection *, PurplePrivacyListType list_type, const char *name);
+void serv_privacy_list_remove(PurpleConnection *, PurplePrivacyListType list_type, const char *name);
 void serv_set_permit_deny(PurpleConnection *);
 void serv_chat_invite(PurpleConnection *, int, const char *, const char *);
 void serv_chat_leave(PurpleConnection *, int);

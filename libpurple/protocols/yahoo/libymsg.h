@@ -27,6 +27,7 @@
 
 #include "circbuffer.h"
 #include "cmds.h"
+#include "privacy.h"
 #include "prpl.h"
 
 #define YAHOO_PAGER_HOST "scsa.msg.yahoo.com"
@@ -310,8 +311,8 @@ void yahoo_set_status(PurpleAccount *account, PurpleStatus *status);
 void yahoo_set_idle(PurpleConnection *gc, int idle);
 void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g);
 void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
-void yahoo_add_deny(PurpleConnection *gc, const char *who);
-void yahoo_rem_deny(PurpleConnection *gc, const char *who);
+void yahoo_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who);
+void yahoo_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who);
 void yahoo_set_permit_deny(PurpleConnection *gc);
 void yahoo_keepalive(PurpleConnection *gc);
 void yahoo_change_buddys_group(PurpleConnection *gc, const char *who, const char *old_group, const char *new_group);

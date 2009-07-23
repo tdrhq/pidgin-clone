@@ -115,10 +115,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* add_buddies */
 	yahoo_remove_buddy,
 	NULL, /* remove_buddies */
-	NULL, /* add_permit */
-	yahoo_add_deny,
-	NULL, /* rem_permit */
-	yahoo_rem_deny,
+	yahoo_privacy_list_add, /* add to privacy lists */
+	yahoo_privacy_list_remove, /* remove from privacy lists */
 	yahoo_set_permit_deny,
 	yahoo_c_join,
 	NULL, /* reject chat invite */
