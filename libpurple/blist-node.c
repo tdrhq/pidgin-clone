@@ -416,6 +416,19 @@ purple_blist_node_contains(PurpleBlistNode *parent, PurpleBlistNode *node)
 	return node->parent == parent;
 }
 
+PurpleBlistNode *
+purple_blist_node_find_container(PurpleBlistNode *node, GType type)
+{
+	PurpleBlistNode *parent;
+
+	g_return_val_if_fail(node, NULL);
+
+	parent = purple_blist_node_parent(node);
+	while(parent && !G_TYPE_CHECK_INSTANCE_TYPE(parent,type))
+		parent = purple_blist_node_parent(parent);
+	return parent;
+}
+				
 static void
 purple_blist_node_real_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 {

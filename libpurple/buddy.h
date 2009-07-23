@@ -36,6 +36,7 @@ typedef struct _PurpleBuddyClass PurpleBuddyClass;
 
 #include "buddyicon.h"
 #include "status.h"
+#include "group.h"
 
 #define PURPLE_BUDDY_TYPE                  (purple_buddy_get_type ())
 #define PURPLE_BUDDY(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BUDDY_TYPE, PurpleBuddy))
@@ -113,6 +114,14 @@ const char *purple_buddy_get_server_alias(PurpleBuddy *buddy);
  * @since 2.6.0
  */
 const char *purple_buddy_get_local_buddy_alias(PurpleBuddy *buddy);
+
+/**
+ * Returns the group of which the buddy is a member.
+ *
+ * @param buddy   The buddy
+ * @return        The group or NULL if the buddy is not in a group
+ */
+PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
 
 /**
  * Returns a buddy's account.

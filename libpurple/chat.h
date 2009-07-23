@@ -118,6 +118,15 @@ GHashTable *purple_chat_get_components(PurpleChat *chat);
 void purple_chat_set_alias(PurpleChat *chat, const char *alias);
 
 /**
+ * Returns the group of which the chat is a member.
+ *
+ * @param chat The chat.
+ *
+ * @return The parent group, or @c NULL if the chat is not in a group.
+*/
+PurpleGroup *purple_chat_get_group(PurpleChat *chat);
+
+/**
  * Get the GType for PurpleChat
  */
 GType purple_chat_get_type(void);

@@ -59,7 +59,6 @@ typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
 #define PURPLE_GET_BLIST_NODE_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodeClass))
 #define PURPLE_BLIST_NODE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodePrivate))
 
-
 /**
  * A Buddy list node.  This can represent a group, a buddy, or anything else.
  * This is a base class for PurpleBuddy, PurpleContact, PurpleGroup, and for
@@ -333,6 +332,14 @@ void *purple_blist_node_get_handle(void);
  */
 PurpleBlistNodeFlags purple_blist_node_get_flags(PurpleBlistNode *node);
 
+/**
+ * Get the container of a given type for this node.
+ *
+ * @param node The node to find a container for
+ * @param type The type of container we are looking for
+ * @return the container if one is found, else NULL
+ */
+PurpleBlistNode *purple_blist_node_find_container(PurpleBlistNode *node, GType type);
 /*@}*/
 
 /**

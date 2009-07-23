@@ -339,6 +339,14 @@ purple_chat_class_init(PurpleChatClass *klass)
 			);
 }
 
+PurpleGroup *
+purple_chat_get_group(PurpleChat *chat)
+{
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return PURPLE_GROUP(purple_blist_node_find_container(PURPLE_BLIST_NODE(chat), PURPLE_GROUP_TYPE));
+}
+
 static void
 purple_chat_init(GTypeInstance *instance, gpointer class)
 {
