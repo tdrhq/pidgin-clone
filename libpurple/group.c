@@ -93,6 +93,42 @@ GSList *purple_group_get_accounts(PurpleGroup *group)
 }
 
 static void
+purple_group_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
+{
+	PurpleGroup *group;
+	PurpleChat *chat;
+	PurpleContact *contact;
+
+	g_return_if_fail(parent);
+	g_return_if_fail(child);
+	group = PURPLE_GROUP(parent);
+
+	parent_class->add_child(parent, child);
+
+	if(PURPLE_IS_CHAT(child)){
+		chat = PURPLE_CHAT(child);
+		if (purple_account_is_connected(chat->account)) {
+			group->online++;
+			group->currentsize++;
+		}
+	} else if(PURPLE_IS_CONTACT(child)){
+		contact = PURPLE_CONTACT(child);
+		if(purple_contact_get_online(contact) > 0)
+			group->online++;
+		if(purple_contact_get_currentsize(contact) > 0)
+			group->currentsize++;
+	} else {
+		#warning: is this an ok case?
+		g_warn_if_reached();
+	}
+	group->totalsize++;
+
+	purple_blist_schedule_save();
+	purple_signal_emit(purple_blist_node_get_handle(), "node-added", child);
+
+}
+
+static void
 purple_group_remove_node(PurpleBlistNode *child)
 {
 	PurpleGroup *group;
@@ -116,6 +152,7 @@ purple_group_remove_node(PurpleBlistNode *child)
 		if(purple_contact_get_currentsize(contact) > 0)
 			group->currentsize--;
 	} else {
+		#warning: Is this an ok case?
 		g_warn_if_reached();
 	}
 	group->totalsize--;
@@ -125,7 +162,6 @@ purple_group_remove_node(PurpleBlistNode *child)
 	purple_blist_schedule_save();
 
 	purple_signal_emit(purple_blist_node_get_handle(), "node-removed", child);
-	g_object_unref(G_OBJECT(child));
 }
 
 void
@@ -287,11 +323,13 @@ static void
 purple_group_class_init(PurpleGroupClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-	PurpleBlistNodeClass *bklass = PURPLE_BLIST_NODE_CLASS(klass);
+
+	parent_class = PURPLE_BLIST_NODE_CLASS(klass);	
+	/* parent_class->add_sibling = purple_group_add_sibling; */
+	parent_class->add_child = purple_group_add_child;
+	parent_class->remove = purple_group_remove_node;
 
 	parent_class = g_type_class_peek_parent(klass);
-	
-	bklass->remove = purple_group_remove_node;
 
 	obj_class->finalize = purple_group_finalize;
 	obj_class->set_property = purple_group_set_property;
