@@ -128,16 +128,6 @@ purple_group_remove_node(PurpleBlistNode *child)
 	g_object_unref(G_OBJECT(child));
 }
 
-PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy)
-{
-	g_return_val_if_fail(buddy != NULL, NULL);
-
-	if ((PURPLE_BLIST_NODE(buddy))->parent == NULL)
-		return NULL;
-
-	return PURPLE_GROUP(PURPLE_BLIST_NODE(buddy)->parent->parent);
-}
-
 void
 purple_group_destroy(PurpleGroup *group)
 {

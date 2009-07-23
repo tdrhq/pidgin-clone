@@ -81,14 +81,6 @@ PurpleGroup *purple_group_new(const char *name);
 void purple_group_destroy(PurpleGroup *group);
 
 /**
- * Returns the group of which the buddy is a member.
- *
- * @param buddy   The buddy
- * @return        The group or NULL if the buddy is not in a group
- */
-PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
-
-/**
  * Returns a list of accounts that have buddies in this group
  *
  * @param g The group
@@ -125,15 +117,6 @@ const char *purple_group_get_name(PurpleGroup *group);
  * @return The number of buddies in the group
  */
 int purple_blist_get_group_size(PurpleGroup *group, gboolean offline);
-
-/**
- * Returns the group of which the chat is a member.
- *
- * @param chat The chat.
- *
- * @return The parent group, or @c NULL if the chat is not in a group.
- */
-PurpleGroup *purple_chat_get_group(PurpleChat *chat);
 
 /**
  * Determines the number of online buddies in a group

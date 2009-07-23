@@ -531,6 +531,15 @@ purple_buddy_finalize(GObject *object)
 	parent_class->finalize(object);
 }
 
+PurpleGroup *
+purple_buddy_get_group(PurpleBuddy *buddy)
+{
+	g_return_val_if_fail(buddy != NULL, NULL);
+
+	return PURPLE_GROUP(purple_blist_node_find_container(PURPLE_BLIST_NODE(buddy), PURPLE_GROUP_TYPE));
+
+}
+
 static void
 purple_buddy_set_property(GObject *obj, guint param_id, const GValue *value,
 		GParamSpec *pspec)

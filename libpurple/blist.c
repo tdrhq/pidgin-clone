@@ -1495,14 +1495,6 @@ PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name
 	return ret;
 }
 
-PurpleGroup *
-purple_chat_get_group(PurpleChat *chat)
-{
-	g_return_val_if_fail(chat != NULL, NULL);
-
-	return PURPLE_GROUP(((PURPLE_BLIST_NODE(chat))->parent));
-}
-
 static void
 append_buddy(gpointer key, gpointer value, gpointer user_data)
 {
