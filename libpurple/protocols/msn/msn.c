@@ -1576,6 +1576,52 @@ msn_rem_deny(PurpleConnection *gc, const char *who)
 		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_AL);
 }
 
+static void msn_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_type, const char *name)
+{
+	if (!name || name[0] == '\0')
+		return;
+
+	switch(list_type)
+	{
+		case PURPLE_PRIVACY_BUDDY_LIST:
+		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
+		case PURPLE_PRIVACY_VISIBLE_LIST:
+		case PURPLE_PRIVACY_INVISIBLE_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
+		case PURPLE_PRIVACY_BLOCK_BOTH_LIST:
+			msn_add_deny(gc, name);
+			break;
+		case PURPLE_PRIVACY_ALLOW_LIST:
+			msn_add_permit(gc, name);
+			break;
+	}
+	return;
+}
+
+static void msn_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_type, const char *name)
+{
+	if (!name || name[0] == '\0')
+		return;
+
+	switch(list_type)
+	{
+		case PURPLE_PRIVACY_BUDDY_LIST:
+		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
+		case PURPLE_PRIVACY_VISIBLE_LIST:
+		case PURPLE_PRIVACY_INVISIBLE_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
+		case PURPLE_PRIVACY_BLOCK_BOTH_LIST:
+			msn_rem_deny(gc, name);
+			break;
+		case PURPLE_PRIVACY_ALLOW_LIST:
+			msn_rem_permit(gc, name);
+			break;
+	}
+	return;
+}
+
 static void
 msn_set_permit_deny(PurpleConnection *gc)
 {
@@ -2538,10 +2584,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	msn_rem_buddy,			/* remove_buddy */
 	NULL,					/* remove_buddies */
-	msn_add_permit,			/* add_permit */
-	msn_add_deny,			/* add_deny */
-	msn_rem_permit,			/* rem_permit */
-	msn_rem_deny,			/* rem_deny */
+	msn_privacy_list_add,		/* privacy_list_add */
+	msn_privacy_list_remove,	/* privacy_list_remove */
 	msn_set_permit_deny,	/* set_permit_deny */
 	NULL,					/* join_chat */
 	NULL,					/* reject chat invite */
