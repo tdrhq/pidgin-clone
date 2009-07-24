@@ -42,6 +42,7 @@ void PurpleMakeBuddyMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplp
 void PurpleMakeChatMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA);
 void PurpleBlistAliasNode(PurpleBlistNode *lpblistnode, LPCTSTR szAlias);
 void PurpleDeleteBlistNode(PurpleBlistNode *lpblistnode);
+void PurpleCommonMakeMenu(HMENU hmenu, PurpleBlistNode *lpblistnode);
 
 
 static INLINE void VultureBListNodeAddRef(VULTURE_BLIST_NODE *lpvblnode) { InterlockedIncrement(&lpvblnode->lRefCount); }

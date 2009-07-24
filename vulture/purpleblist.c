@@ -437,6 +437,19 @@ void PurpleMakeChatMenu(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpg
 
 
 /**
+ * Sets up common context menu items/
+ *
+ * @param[in,out]	hmenu		Menu.
+ * @param		lpblistnode	Buddy-list node.
+ */
+void PurpleCommonMakeMenu(HMENU hmenu, PurpleBlistNode *lpblistnode)
+{
+	if(!PURPLE_BLIST_NODE_IS_BUDDY(lpblistnode))
+		EnableMenuItem(hmenu, IDM_BLIST_CONTEXT_REMOVEICON, purple_buddy_icons_node_has_custom_icon(lpblistnode) ? MF_ENABLED : MF_GRAYED);
+}
+
+
+/**
  * Sets the alias or name of a buddy-list node, as appropriate for the type.
  *
  * @param	lpblistnode	Buddy-list node.

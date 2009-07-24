@@ -278,3 +278,78 @@ int VultureGetMenuPosFromID(HMENU hmenu, UINT uiID)
 
 	return -1;
 }
+
+
+/**
+ * Displays the Open common dialogue box.
+ *
+ * @param	hwnd			Parent window.
+ * @param[out]	szFileNameReturn	Filename is returned here. May be
+ *					clobbered even if cancelled.
+ * @param	cchFileNameReturn	Length of filename buffer.
+ * @param	szTitle			Title of dialogue.
+ * @param	szFilter		Type filter string.
+ * @param	szDefExt		Default extension, without the dot.
+ * @param	szInitFileName		Initial filename.
+ * @param	iFlags			Additional flags for the comdlg32
+ *					library call. See its documentation.
+ *
+ * @return Nonzero if the user selects a file and OKs; zero if cancelled or on
+ * error.
+ */
+int VultureCommDlgOpen(HWND hwnd, LPTSTR szFileNameReturn, UINT cchFileNameReturn, LPCTSTR szTitle, LPCTSTR szFilter, LPCTSTR szDefExt, LPCTSTR szInitFilename, int iFlags)
+{
+	OPENFILENAME ofn;
+
+	_tcsncpy(szFileNameReturn, szInitFilename ? szInitFilename : TEXT(""), cchFileNameReturn - 1);
+	szFileNameReturn[cchFileNameReturn - 1] = TEXT('\0');
+
+	ofn.Flags = iFlags;
+	ofn.hwndOwner = hwnd;
+	ofn.lpstrFilter = szFilter;
+	ofn.nFilterIndex = 1;
+	ofn.lpstrDefExt = szDefExt;
+	ofn.lpstrFile = szFileNameReturn;
+	ofn.nMaxFile = cchFileNameReturn;
+	ofn.lpfnHook = NULL;
+	ofn.lpstrCustomFilter = NULL;
+	ofn.lpstrFileTitle = NULL;
+	ofn.lpstrInitialDir = NULL;
+	ofn.lpTemplateName = NULL;
+	ofn.lpstrTitle = szTitle;
+	ofn.lStructSize = sizeof(ofn);
+
+	return GetOpenFileName(&ofn);
+}
+
+
+/**
+ * Loads a string from the string table and replaces tabs with NULs. This gets
+ * around a limitation of the resource compiler.
+ *
+ * Parameters:
+ *   @param		unStringID	ID of string resource.
+ *   @param[out]	szFilter	Buffer in which to return string.
+ *   @param		cchFilter	Size of buffer in characters, including
+ *					space for terminators (both of them!).
+ */
+void VultureLoadAndFormatFilterString(USHORT unStringID, LPTSTR szFilter, UINT cchFilter)
+{
+	TCHAR *szInFilter = szFilter;
+
+	/* Get filter string from string table. The string is terminated with
+	 * *two* NULs.
+	 */
+	LoadString(g_hInstance, unStringID, szFilter, cchFilter-1);
+	szFilter[cchFilter - 1] = TEXT('\0');
+
+	/* Replace tabs with NULs. The resource format doesn't doesn't support
+	 * NULs embedded in strings, so we have to do it.
+	 */
+	do
+	{
+		if(*szInFilter == TEXT('\t'))
+			*szInFilter = TEXT('\0');
+	}
+	while(*(++szInFilter));
+}

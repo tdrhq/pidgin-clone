@@ -55,10 +55,13 @@ IDM_CONV MENU
 	MENUITEM "&Block", IDM_BLIST_CONTEXT_BLOCK, MFT_STRING, MFS_GRAYED \
 	MENUITEM "Show when &offline", IDM_BLIST_CONTEXT_SHOWOFFLINE, MFT_STRING
 
+#define CONTEXT_CUSTOMICON \
+	MENUITEM "Set custom &icon...", IDM_BLIST_CONTEXT_CUSTOMICON, MFT_STRING \
+	MENUITEM "Remo&ve custom icon", IDM_BLIST_CONTEXT_REMOVEICON, MFT_STRING
+
 #define CONTACT_TAIL \
 	MENUITEM "", 0, MFT_SEPARATOR \
-	MENUITEM "Set custom &icon...", IDM_BLIST_CONTEXT_CUSTOMICON, MFT_STRING, MFS_GRAYED \
-	MENUITEM "Remo&ve custom icon", IDM_BLIST_CONTEXT_REMOVEICON, MFT_STRING, MFS_GRAYED \
+	CONTEXT_CUSTOMICON \
 	CONTEXT_ALIAS_REMOVE \
 	MENUITEM "", 0, MFT_SEPARATOR \
 	MENUITEM "Sho&w individual buddies", IDM_BLIST_CONTEXT_SHOWBUDDIES, MFT_STRING, MFS_GRAYED
@@ -91,6 +94,8 @@ IDM_BLIST_CONTEXT MENUEX
 		CONTEXT_VIEWLOG
 		MENUITEM "", 0, MFT_SEPARATOR
 		CONTEXT_ALIAS_REMOVE
+		CONTEXT_CUSTOMICON
+		MENUITEM "", 0, MFT_SEPARATOR
 		MENUITEM "&Properties", IDM_BLIST_CONTEXT_PROPERTIES, MFT_STRING, MFS_GRAYED
 	}
 }
@@ -202,7 +207,6 @@ FONT 8, "Ms Shell Dlg"
 //
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 STRINGTABLE
-
 {
     IDS_ERROR_BLIST               "Couldn't initialise buddy list."
     IDS_ERROR_PURPLEINIT          "Couldn't initialise libpurple."
@@ -212,6 +216,8 @@ STRINGTABLE
     IDS_ERROR_RICHEDIT            "Couldn't load RichEdit."
     IDS_QUERY_DELGROUP            "Deleting this group will also delete everything contained in it. Do you wish to continue?"
     IDS_QUERY_DELCONTACT          "Deleting this contact will also delete all buddies associated with it. Do you wish to continue?"
+    IDS_BUDDYICON_FILTER          "Image Files\t*.bmp;*.png;*.gif;*.jpg\tAll Files (*.*)\t*.*\t"
+    IDS_BUDDYICON_TITLE           "Choose Custom Icon"
 }
 
 

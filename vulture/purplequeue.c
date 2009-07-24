@@ -279,10 +279,15 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 			
 			if(lpvmcm->lpvblistnode->lpblistnode)
 			{
-				if(PURPLE_BLIST_NODE_IS_BUDDY(lpvmcm->lpvblistnode->lpblistnode) || PURPLE_BLIST_NODE_IS_CONTACT(lpvmcm->lpvblistnode->lpblistnode))
-					PurpleMakeBuddyMenu(lpvmcm->hmenu, EFFECTIVE_BUDDY(lpvmcm->lpvblistnode->lpblistnode), lpvmcm->lplpglistVMA);
-				else if(PURPLE_BLIST_NODE_IS_CHAT(lpvmcm->lpvblistnode->lpblistnode))
-					PurpleMakeChatMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode, lpvmcm->lplpglistVMA);
+				if(lpvmcm->bExtraItems)
+				{
+					if(PURPLE_BLIST_NODE_IS_BUDDY(lpvmcm->lpvblistnode->lpblistnode) || PURPLE_BLIST_NODE_IS_CONTACT(lpvmcm->lpvblistnode->lpblistnode))
+						PurpleMakeBuddyMenu(lpvmcm->hmenu, EFFECTIVE_BUDDY(lpvmcm->lpvblistnode->lpblistnode), lpvmcm->lplpglistVMA);
+					else if(PURPLE_BLIST_NODE_IS_CHAT(lpvmcm->lpvblistnode->lpblistnode))
+						PurpleMakeChatMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode, lpvmcm->lplpglistVMA);
+				}
+
+				PurpleCommonMakeMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode);
 			}
 		}
 
@@ -343,6 +348,29 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		{
 			VULTURE_BLIST_NODE_GET_BOOL *lpvbngetbool = lppurplecall->lpvParam;
 			lpvbngetbool->bReturn = lpvbngetbool->lpvblistnode->lpblistnode && lpvbngetbool->lpvblistnode->lpblistnode->child;
+		}
+
+		break;
+
+	case PC_SETCUSTOMICON:
+		{
+			VULTURE_BLIST_NODE_STRING_PAIR *lpvblnstringpair = lppurplecall->lpvParam;
+
+			if(lpvblnstringpair->lpvblistnode->lpblistnode)
+			{
+				if(lpvblnstringpair->sz)
+				{
+					gchar *szFilename = VultureTCHARToUTF8(lpvblnstringpair->sz);
+
+					purple_buddy_icons_node_set_custom_icon_from_file(lpvblnstringpair->lpvblistnode->lpblistnode, szFilename);
+
+					g_free(szFilename);
+				}
+				else
+				{
+					purple_buddy_icons_node_set_custom_icon(lpvblnstringpair->lpvblistnode->lpblistnode, NULL, 0);
+				}
+			}
 		}
 
 		break;

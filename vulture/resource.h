@@ -70,3 +70,5 @@
 #define IDS_ERROR_RICHEDIT                      6
 #define IDS_QUERY_DELGROUP                      7
 #define IDS_QUERY_DELCONTACT                    8
+#define IDS_BUDDYICON_FILTER                    9
+#define IDS_BUDDYICON_TITLE                     10

@@ -606,7 +606,7 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 							HMENU hmenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDM_BLIST_CONTEXT));
 							HMENU hmenuSubmenu = NULL;
 							GList *lpglistVMA = NULL;
-							BOOL bExtraItems;
+							VULTURE_MAKE_CONTEXT_MENU vmcm;
 
 							/* Really select this node. */
 							TreeView_SelectItem(lpnmhdr->hwndFrom, tvitem.hItem);
@@ -618,7 +618,7 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 							VultureBListNodeAddRef(lpvblistnode);
 
 							/* Assume we need to ask the core for extra items. */
-							bExtraItems = TRUE;
+							vmcm.bExtraItems = TRUE;
 
 							/* Reading lpvblistnode->nodetype is atomic and so
 							 * we don't need our critical section.
@@ -633,7 +633,7 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 								if(TreeView_GetChild(lpnmhdr->hwndFrom, tvitem.hItem))
 								{
 									hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_BASIC);
-									bExtraItems = FALSE;
+									vmcm.bExtraItems = FALSE;
 								}
 								else
 									hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_COMPOSITE);
@@ -645,20 +645,15 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 								break;
 
 							default:
-								bExtraItems = FALSE;
+								vmcm.bExtraItems = FALSE;
 								break;
 							}
 
-							if(bExtraItems)
-							{
-								VULTURE_MAKE_CONTEXT_MENU vmcm;
+							vmcm.hmenu = hmenuSubmenu;
+							vmcm.lpvblistnode = lpvblistnode;
+							vmcm.lplpglistVMA = &lpglistVMA;
 
-								vmcm.hmenu = hmenuSubmenu;
-								vmcm.lpvblistnode = lpvblistnode;
-								vmcm.lplpglistVMA = &lpglistVMA;
-
-								VultureSingleSyncPurpleCall(PC_MAKECONTEXTMENU, &vmcm);
-							}
+							VultureSingleSyncPurpleCall(PC_MAKECONTEXTMENU, &vmcm);
 
 							if(hmenuSubmenu)
 							{
@@ -998,6 +993,38 @@ static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode,
 	case IDM_BLIST_CONTEXT_REMOVE:
 		RemoveNodeRequest(hwndBuddies, lpvblistnode);
 		return TRUE;
+
+	case IDM_BLIST_CONTEXT_CUSTOMICON:
+		{
+			TCHAR szFilename[MAX_PATH];
+			TCHAR szFilter[256];
+			TCHAR szTitle[256];
+
+			VultureLoadAndFormatFilterString(IDS_BUDDYICON_FILTER, szFilter, NUM_ELEMENTS(szFilter));
+			LoadString(g_hInstance, IDS_BUDDYICON_TITLE, szTitle, NUM_ELEMENTS(szTitle));
+
+			if(VultureCommDlgOpen(g_hwndMain, szFilename, NUM_ELEMENTS(szFilename), szTitle, szFilter, TEXT("png"), NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY))
+			{
+				VULTURE_BLIST_NODE_STRING_PAIR vblnstringpairNewIcon;
+
+				vblnstringpairNewIcon.lpvblistnode = lpvblistnode;
+				vblnstringpairNewIcon.sz = szFilename;
+
+				VultureSingleSyncPurpleCall(PC_SETCUSTOMICON, &vblnstringpairNewIcon);
+			}
+		}
+
+		return TRUE;
+
+	case IDM_BLIST_CONTEXT_REMOVEICON:
+		{
+			VULTURE_BLIST_NODE_STRING_PAIR vblnstringpairNewIcon;
+
+			vblnstringpairNewIcon.lpvblistnode = lpvblistnode;
+			vblnstringpairNewIcon.sz = NULL;
+
+			VultureSingleSyncPurpleCall(PC_SETCUSTOMICON, &vblnstringpairNewIcon);
+		}
 
 	default:
 		/* Not a static command that we recongise; might be a dynamic

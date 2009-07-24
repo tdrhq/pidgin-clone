@@ -45,6 +45,7 @@ typedef struct _VULTURE_MAKE_CONTEXT_MENU
 	HMENU			hmenu;
 	VULTURE_BLIST_NODE	*lpvblistnode;
 	GList			**lplpglistVMA;
+	BOOL			bExtraItems;
 } VULTURE_MAKE_CONTEXT_MENU;
 
 

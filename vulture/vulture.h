@@ -63,6 +63,8 @@ void VultureTimetToSystemTime(time_t t, LPSYSTEMTIME lpsystime);
 LPTSTR VultureAmpersandify(LPCTSTR szUnderscored);
 gint VultureCompareTCHARStrings(gconstpointer lpvStr1, gconstpointer lpvStr2, gpointer lpvUnused);
 int VultureGetMenuPosFromID(HMENU hmenu, UINT uiID);
+int VultureCommDlgOpen(HWND hwnd, LPTSTR szFileNameReturn, UINT cchFileNameReturn, LPCTSTR szTitle, LPCTSTR szFilter, LPCTSTR szDefExt, LPCTSTR szInitFilename, int iFlags);
+void VultureLoadAndFormatFilterString(USHORT unStringID, LPTSTR szFilter, UINT cchFilter);
 
 
 

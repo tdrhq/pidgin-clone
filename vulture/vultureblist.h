@@ -53,6 +53,12 @@ typedef struct _VULTURE_BLIST_NODE_GET_BOOL
 	BOOL			bReturn;
 } VULTURE_BLIST_NODE_GET_BOOL;
 
+typedef struct _VULTURE_BLIST_NODE_STRING_PAIR
+{
+	VULTURE_BLIST_NODE	*lpvblistnode;
+	LPTSTR			sz;
+} VULTURE_BLIST_NODE_STRING_PAIR;
+
 
 extern HWND g_hwndMain;
 GList *g_lpglistConvContainers;

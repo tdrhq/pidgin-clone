@@ -30,6 +30,9 @@
 #include "purplebicon.h"
 
 
+static HBITMAP GetBuddyIcon(gconstpointer lpvBuddyIconData, size_t cbBuddyIconData, int cxMax, int cyMax);
+
+
 
 /**
  * Retrieves the buddy icon for a buddy. It is scaled, with its aspect ratio
@@ -42,13 +45,10 @@
  *
  * @return Bitmap handle, or NULL on error.
  */
-HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy, int cxMax, int cyMax)
+static HBITMAP GetBuddyIcon(gconstpointer lpvBuddyIconData, size_t cbBuddyIconData, int cxMax, int cyMax)
 {
 	GdkPixbuf *lppixbuf;
 	GdkPixbufLoader *lppbloader;
-	PurpleBuddyIcon *lpbuddyicon;
-	gconstpointer lpvBuddyIconData;
-	size_t cbBuddyIconData;
 	guchar *lpucPixbufPixels;
 	int cbPixbufRowstride, cbDIBRowstride;
 	int cx, cy, cxScaled, cyScaled;
@@ -59,16 +59,6 @@ HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy, int cxMax, int cyMax)
 	int iRow;
 	int iChannels, iBitsPerSample;
 	GError *lpgerror = NULL;
-
-	if(!lpbuddy)
-		return NULL;
-
-	lpbuddyicon = purple_buddy_icons_find(lpbuddy->account, lpbuddy->name);
-
-	if(!lpbuddyicon)
-		return NULL;
-
-	lpvBuddyIconData = purple_buddy_icon_get_data(lpbuddyicon, &cbBuddyIconData);
 
 	lppbloader = gdk_pixbuf_loader_new();
 	if(!gdk_pixbuf_loader_write(lppbloader, lpvBuddyIconData, cbBuddyIconData, &lpgerror))
@@ -195,8 +185,93 @@ HBITMAP PurpleGetBuddyIcon(PurpleBuddy *lpbuddy, int cxMax, int cyMax)
  */
 HBITMAP PurpleGetIMBuddyIcon(PurpleConversation *lpconv, int cxMax, int cyMax)
 {
+	PurpleBuddy *lpbuddy;
+	PurpleContact *lpcontact;
+	PurpleStoredImage *lpstoredimg;
+	gconstpointer lpvBuddyIconData = NULL;
+	size_t cbBuddyIconData;
+	PurpleBuddyIcon *lpbuddyicon = NULL;
+	HBITMAP hbitmap = NULL;
+
 	if(!lpconv || lpconv->type != PURPLE_CONV_TYPE_IM)
 		return NULL;
 
-	return PurpleGetBuddyIcon(purple_find_buddy(lpconv->account, lpconv->name), cxMax, cyMax);
+	/* First we attempt to load the custom icon for the buddy's contact. */
+	if((lpbuddy = purple_find_buddy(lpconv->account, purple_conversation_get_name(lpconv))) &&
+		(lpcontact = purple_buddy_get_contact(lpbuddy)) &&
+		(lpstoredimg = purple_buddy_icons_node_find_custom_icon((PurpleBlistNode*)lpcontact)))
+	{
+		lpvBuddyIconData = purple_imgstore_get_data(lpstoredimg);
+		cbBuddyIconData = purple_imgstore_get_size(lpstoredimg);
+	}
+
+	if(!lpvBuddyIconData &&
+		(lpbuddyicon = purple_conv_im_get_icon(PURPLE_CONV_IM(lpconv))))
+	{
+		lpvBuddyIconData = purple_buddy_icon_get_data(lpbuddyicon, &cbBuddyIconData);
+	}
+
+
+	if(lpvBuddyIconData)
+		hbitmap = GetBuddyIcon(lpvBuddyIconData, cbBuddyIconData, cxMax, cyMax);
+
+	/* These are safe even when their arguments are NULL. */
+	purple_imgstore_unref(lpstoredimg);
+	purple_buddy_icon_unref(lpbuddyicon);
+
+	return hbitmap;
+}
+
+
+/**
+ * Retrieves the buddy icon to be shown for a buddy-list node. It is scaled,
+ * with its aspect ratio maintained, so as not to exceed the specified
+ * dimensions, unless either of these is non-positive, in which case no scaling
+ * is performed.
+ *
+ * @param	lpconv	IM conversation.
+ * @param	cxMax	Maximum width.
+ * @param	cyMax	Maximum height.
+ *
+ * @return Bitmap handle, or NULL on error.
+ */
+HBITMAP PurpleGetBlistNodeIcon(PurpleBlistNode *lpblistnode, int cxMax, int cyMax)
+{
+	PurpleStoredImage *lpstoredimg;
+	gconstpointer lpvBuddyIconData = NULL;
+	size_t cbBuddyIconData;
+	PurpleBuddy *lpbuddy = NULL;
+	HBITMAP hbitmap = NULL;
+	PurpleBuddyIcon *lpbuddyicon = NULL;
+
+	if(!lpblistnode)
+		return NULL;
+
+	/* First we attempt to load a custom icon for the node. */
+	if((lpstoredimg = purple_buddy_icons_node_find_custom_icon(lpblistnode)))
+	{
+		lpvBuddyIconData = purple_imgstore_get_data(lpstoredimg);
+		cbBuddyIconData = purple_imgstore_get_size(lpstoredimg);
+	}
+
+	if(!lpvBuddyIconData)
+	{
+		/* If that failed, fall back to a buddy if we can. */
+		if(PURPLE_BLIST_NODE_IS_BUDDY(lpblistnode))
+			lpbuddy = (PurpleBuddy*)lpblistnode;
+		else if(PURPLE_BLIST_NODE_IS_CONTACT(lpblistnode))
+			lpbuddy = purple_contact_get_priority_buddy((PurpleContact*)lpblistnode);
+
+		if(lpbuddy && (lpbuddyicon = purple_buddy_icons_find(lpbuddy->account, lpbuddy->name)))
+			lpvBuddyIconData = purple_buddy_icon_get_data(lpbuddyicon, &cbBuddyIconData);
+	}
+
+	if(lpvBuddyIconData)
+		hbitmap = GetBuddyIcon(lpvBuddyIconData, cbBuddyIconData, cxMax, cyMax);
+
+	/* These are safe even when their arguments are NULL. */
+	purple_imgstore_unref(lpstoredimg);
+	purple_buddy_icon_unref(lpbuddyicon);
+
+	return hbitmap;
 }
