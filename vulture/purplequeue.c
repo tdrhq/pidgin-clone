@@ -277,18 +277,20 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		{
 			VULTURE_MAKE_CONTEXT_MENU *lpvmcm = lppurplecall->lpvParam;
 			
-			if(lpvmcm->lpvblistnode->lpblistnode)
-			{
-				if(lpvmcm->bExtraItems)
+			EnterCriticalSection(&lpvmcm->lpvblistnode->cs);
+				if(lpvmcm->lpvblistnode->lpblistnode)
 				{
-					if(PURPLE_BLIST_NODE_IS_BUDDY(lpvmcm->lpvblistnode->lpblistnode) || PURPLE_BLIST_NODE_IS_CONTACT(lpvmcm->lpvblistnode->lpblistnode))
-						PurpleMakeBuddyMenu(lpvmcm->hmenu, EFFECTIVE_BUDDY(lpvmcm->lpvblistnode->lpblistnode), lpvmcm->lplpglistVMA);
-					else if(PURPLE_BLIST_NODE_IS_CHAT(lpvmcm->lpvblistnode->lpblistnode))
-						PurpleMakeChatMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode, lpvmcm->lplpglistVMA);
-				}
+					if(lpvmcm->bExtraItems)
+					{
+						if(PURPLE_BLIST_NODE_IS_BUDDY(lpvmcm->lpvblistnode->lpblistnode) || PURPLE_BLIST_NODE_IS_CONTACT(lpvmcm->lpvblistnode->lpblistnode))
+							PurpleMakeBuddyMenu(lpvmcm->hmenu, EFFECTIVE_BUDDY(lpvmcm->lpvblistnode->lpblistnode), lpvmcm->lplpglistVMA);
+						else if(PURPLE_BLIST_NODE_IS_CHAT(lpvmcm->lpvblistnode->lpblistnode))
+							PurpleMakeChatMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode, lpvmcm->lplpglistVMA);
+					}
 
-				PurpleCommonMakeMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode);
-			}
+					PurpleCommonMakeMenu(lpvmcm->hmenu, lpvmcm->lpvblistnode->lpblistnode);
+				}
+			LeaveCriticalSection(&lpvmcm->lpvblistnode->cs);
 		}
 
 		break;
@@ -356,19 +358,40 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		{
 			VULTURE_BLIST_NODE_STRING_PAIR *lpvblnstringpair = lppurplecall->lpvParam;
 
-			if(lpvblnstringpair->lpvblistnode->lpblistnode)
-			{
-				if(lpvblnstringpair->sz)
+			EnterCriticalSection(&lpvblnstringpair->lpvblistnode->cs);
+				if(lpvblnstringpair->lpvblistnode->lpblistnode)
 				{
-					gchar *szFilename = VultureTCHARToUTF8(lpvblnstringpair->sz);
+					if(lpvblnstringpair->sz)
+					{
+						gchar *szFilename = VultureTCHARToUTF8(lpvblnstringpair->sz);
 
-					purple_buddy_icons_node_set_custom_icon_from_file(lpvblnstringpair->lpvblistnode->lpblistnode, szFilename);
+						purple_buddy_icons_node_set_custom_icon_from_file(lpvblnstringpair->lpvblistnode->lpblistnode, szFilename);
 
-					g_free(szFilename);
+						g_free(szFilename);
+					}
+					else
+					{
+						purple_buddy_icons_node_set_custom_icon(lpvblnstringpair->lpvblistnode->lpblistnode, NULL, 0);
+					}
 				}
-				else
+			LeaveCriticalSection(&lpvblnstringpair->lpvblistnode->cs);
+		}
+
+		break;
+
+	case PC_UPDATEBLISTCHILDREN:
+		{
+			PurpleBlistNode *lpblistnode = ((VULTURE_BLIST_NODE*)lppurplecall->lpvParam)->lpblistnode;
+			
+			if(lpblistnode)
+			{
+				PurpleBlistNode *lpblistnodeChild;
+
+				for(lpblistnodeChild = purple_blist_node_get_first_child(lpblistnode);
+					lpblistnodeChild;
+					lpblistnodeChild = purple_blist_node_get_sibling_next(lpblistnodeChild))
 				{
-					purple_buddy_icons_node_set_custom_icon(lpvblnstringpair->lpvblistnode->lpblistnode, NULL, 0);
+					PurpleBlistUpdateNode(purple_get_blist(), lpblistnodeChild);
 				}
 			}
 		}

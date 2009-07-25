@@ -620,34 +620,33 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 							/* Assume we need to ask the core for extra items. */
 							vmcm.bExtraItems = TRUE;
 
-							/* Reading lpvblistnode->nodetype is atomic and so
-							 * we don't need our critical section.
-							 */
-							switch(lpvblistnode->nodetype)
-							{
-							case PURPLE_BLIST_BUDDY_NODE:
-								hmenuSubmenu = GetSubMenu(hmenu, CMI_BUDDY);
-								break;
-
-							case PURPLE_BLIST_CONTACT_NODE:
-								if(TreeView_GetChild(lpnmhdr->hwndFrom, tvitem.hItem))
+							EnterCriticalSection(&lpvblistnode->cs);
+								switch(lpvblistnode->nodetype)
 								{
-									hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_BASIC);
+								case PURPLE_BLIST_BUDDY_NODE:
+									hmenuSubmenu = GetSubMenu(hmenu, CMI_BUDDY);
+									break;
+
+								case PURPLE_BLIST_CONTACT_NODE:
+									if(lpvblistnode->bExpanded)
+									{
+										hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_BASIC);
+										vmcm.bExtraItems = FALSE;
+									}
+									else
+										hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_COMPOSITE);
+
+									break;
+
+								case PURPLE_BLIST_CHAT_NODE:
+									hmenuSubmenu = GetSubMenu(hmenu, CMI_CHAT);
+									break;
+
+								default:
 									vmcm.bExtraItems = FALSE;
+									break;
 								}
-								else
-									hmenuSubmenu = GetSubMenu(hmenu, CMI_CONTACT_COMPOSITE);
-
-								break;
-
-							case PURPLE_BLIST_CHAT_NODE:
-								hmenuSubmenu = GetSubMenu(hmenu, CMI_CHAT);
-								break;
-
-							default:
-								vmcm.bExtraItems = FALSE;
-								break;
-							}
+							LeaveCriticalSection(&lpvblistnode->cs);
 
 							vmcm.hmenu = hmenuSubmenu;
 							vmcm.lpvblistnode = lpvblistnode;
@@ -931,8 +930,10 @@ static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
 {
 	if(lpvbn->hti)
 	{
-		TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
-		lpvbn->hti = NULL;
+		EnterCriticalSection(&lpvbn->cs);
+			TreeView_DeleteItem(hwndBlistTree, lpvbn->hti);
+			lpvbn->hti = NULL;
+		LeaveCriticalSection(&lpvbn->cs);
 
 		/* Release the reference belonging to the pointer
 		 * cached in the tree-item.
@@ -960,6 +961,35 @@ static void RunBuddyMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, 
 	{
 	case IDM_BLIST_CONTEXT_SHOWOFFLINE:
 		VultureEnqueueAsyncPurpleCall(PC_TOGGLESHOWOFFLINE, lpvblistnode);
+		break;
+
+	case IDM_BLIST_CONTEXT_COLLAPSE:
+		EnterCriticalSection(&lpvblistnode->cs);
+		{
+			HTREEITEM hti;
+
+			lpvblistnode->bExpanded = FALSE;
+
+			while((hti = TreeView_GetChild(hwndBuddies, lpvblistnode->hti)))
+			{
+				TVITEM tvi;
+
+				tvi.hItem = hti;
+				tvi.mask = TVIF_PARAM;
+				TreeView_GetItem(hwndBuddies, &tvi);
+
+				RemoveBListNode(hwndBuddies, (VULTURE_BLIST_NODE*)tvi.lParam);
+			}
+		}
+		LeaveCriticalSection(&lpvblistnode->cs);
+
+		break;
+
+	case IDM_BLIST_CONTEXT_EXPAND:
+		lpvblistnode->bExpanded = TRUE;
+		VultureSingleSyncPurpleCall(PC_UPDATEBLISTCHILDREN, lpvblistnode);
+		PostMessage(hwndBuddies, TVM_EXPAND, TVE_EXPAND, (LPARAM)lpvblistnode->hti);
+
 		break;
 	}
 }

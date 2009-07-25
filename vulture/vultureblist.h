@@ -39,6 +39,7 @@ typedef struct _VULTURE_BLIST_NODE
 	struct _VULTURE_BLIST_NODE	*lpvbnParent;
 	LONG				lRefCount;
 	CRITICAL_SECTION		cs;
+	BOOL				bExpanded;
 } VULTURE_BLIST_NODE;
 
 typedef struct _VULTURE_ALIAS_NODE

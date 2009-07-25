@@ -73,6 +73,7 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 		lpvbn->hti = NULL;
 		lpvbn->lRefCount = 1;
 		lpvbn->lpvbnParent = NULL;
+		lpvbn->bExpanded = FALSE;
 		InitializeCriticalSection(&lpvbn->cs);
 	}
 
@@ -128,8 +129,19 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 				if(lpvbn->lpvbnParent && !lpvbn->lpvbnParent->hti)
 					PurpleBlistUpdateNode(lpbuddylist, lpvbn->lpvbnParent->lpblistnode);
 
-				VultureBListNodeAddRef(lpvbn);
-				VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpvbn);
+				/* If we're a buddy and our contact is
+				 * collapsed, give up at the last minute. We
+				 * still needed all the processing for other
+				 * nodes as if we'd been visible, but we want
+				 * to stop short of actually showing ourselves.
+				 */
+				if(!PURPLE_BLIST_NODE_IS_BUDDY(lpblistnode) ||
+					(lpblistnode->parent->ui_data &&
+					((VULTURE_BLIST_NODE*)lpblistnode->parent->ui_data)->bExpanded))
+				{
+					VultureBListNodeAddRef(lpvbn);
+					VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpvbn);
+				}
 			}
 		}
 		else if(lpvbn->hti)
@@ -170,30 +182,22 @@ static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode)
 			}
 		}
 
-		break;
+		return FALSE;
 
 	case PURPLE_BLIST_CHAT_NODE:
-		if(purple_account_is_connected(purple_chat_get_account((PurpleChat*)lpblistnode)))
-			return TRUE;
-		break;
+		return purple_account_is_connected(purple_chat_get_account((PurpleChat*)lpblistnode));
 
 	case PURPLE_BLIST_BUDDY_NODE:
 		{
 			PurpleBuddy *lpbuddy = (PurpleBuddy*)lpblistnode;
-
-			if(purple_account_is_connected(purple_buddy_get_account(lpbuddy)) &&
+			return purple_account_is_connected(purple_buddy_get_account(lpbuddy)) &&
 				(purple_presence_is_online(lpbuddy->presence) ||
-				purple_blist_node_get_bool(lpblistnode, "show_offline")))
-				return TRUE;
+				purple_blist_node_get_bool(lpblistnode, "show_offline"));
 		}
 
-		break;
-
 	default:
-		break;
+		return FALSE;
 	}
-
-	return FALSE;
 }
 
 

@@ -48,9 +48,10 @@
 #define IDM_BLIST_CONTEXT_BLOCK                 40209
 #define IDM_BLIST_CONTEXT_CUSTOMICON            40210
 #define IDM_BLIST_CONTEXT_REMOVEICON            40211
-#define IDM_BLIST_CONTEXT_SHOWBUDDIES           40212
+#define IDM_BLIST_CONTEXT_EXPAND                40212
 #define IDM_BLIST_CONTEXT_AUTOJOIN              40213
 #define IDM_BLIST_CONTEXT_PROPERTIES            40214
+#define IDM_BLIST_CONTEXT_COLLAPSE              40215
 
 #define IDM_CONV                                1003
 #define IDM_CONV_CONV_CLOSE                     40401
