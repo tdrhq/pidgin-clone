@@ -246,8 +246,8 @@ PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTabl
 {
 	PurpleChat *chat;
 
-	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(components != NULL, FALSE);
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(components != NULL, NULL);
 
 	chat = g_object_new(PURPLE_CHAT_TYPE, 
 									PROP_ACCOUNT_S, account, 

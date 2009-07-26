@@ -3412,7 +3412,7 @@ void yahoo_login(PurpleAccount *account) {
 	const char *server = NULL;
 	int pager_port = 0;
 
-	purple_object_set_protocol_data(PURPLE_OBJECT(gc), yd = g_new0(struct yahoo_data, 1));
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc), yd = g_new0(YahooData, 1));
 	purple_connection_set_flags(gc,
 			purple_connection_get_flags(gc) | PURPLE_CONNECTION_FLAGS_HTML |
 			PURPLE_CONNECTION_FLAGS_NO_BGCOLOR | PURPLE_CONNECTION_FLAGS_NO_URLDESC);
@@ -4001,7 +4001,7 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	}
 
 	if (!set_cookie) {
-		struct yahoo_data *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+		YahooData *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.\n");
 		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
 	}
