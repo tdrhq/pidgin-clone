@@ -432,6 +432,23 @@ PurpleConversationUiOps *purple_conversation_get_ui_ops(
 		const PurpleConversation *conv);
 
 /**
+ * Returns the ui_data for this conversation
+ *
+ * @param conv The conversation
+ *
+ * @return the ui_data
+ */
+void *purple_conversation_get_ui_data(PurpleConversation *conv);
+
+/**
+ * Sets the ui_data for this conversation
+ *
+ * @param conv The conversation
+ * @param data The ui_data
+ */
+void purple_conversation_set_ui_data(PurpleConversation *conv, void *data);
+
+/**
  * Sets the specified conversation's purple_account.
  *
  * This purple_account represents the user using purple, not the person the user

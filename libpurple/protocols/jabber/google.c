@@ -907,7 +907,7 @@ jabber_gmail_poke(JabberStream *js, const char *from, JabberIqType type,
 	JabberIq *iq;
 
 	/* bail if the user isn't interested */
-	if (!purple_account_get_check_mail(js->gc->account))
+	if (!purple_account_get_check_mail(purple_connection_get_account(js->gc)))
 		return;
 
 	/* Is this an initial incoming mail notification? If so, send a request for more info */
@@ -1057,14 +1057,14 @@ void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who)
 	JabberBuddy *jb;
 	const char *balias;
 
-	js = (JabberStream*)(gc->proto_data);
+	js = (JabberStream*)(purple_object_get_protocol_data(PURPLE_OBJECT(gc)));
 
 	if (!js || !(js->server_caps & JABBER_CAP_GOOGLE_ROSTER))
 		return;
 
 	jb = jabber_buddy_find(js, who, TRUE);
 
-	buddies = purple_find_buddies(js->gc->account, who);
+	buddies = purple_find_buddies(purple_connection_get_account(js->gc), who);
 	if(!buddies)
 		return;
 
@@ -1127,7 +1127,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
 
-	js = (JabberStream*)(gc->proto_data);
+	js = (JabberStream*)(purple_object_get_protocol_data(PURPLE_OBJECT(gc)));
 
 	if (!js || !(js->server_caps & JABBER_CAP_GOOGLE_ROSTER))
 		return;
@@ -1288,12 +1288,12 @@ void jabber_google_presence_incoming(JabberStream *js, const char *user, JabberB
 	if (!js->googletalk)
 		return;
 	if (jbr->status && purple_str_has_prefix(jbr->status, "♫ ")) {
-		purple_prpl_got_user_status(js->gc->account, user, "tune",
+		purple_prpl_got_user_status(purple_connection_get_account(js->gc), user, "tune",
 					    PURPLE_TUNE_TITLE, jbr->status + strlen("♫ "), NULL);
 		g_free(jbr->status);
 		jbr->status = NULL;
 	} else {
-		purple_prpl_got_user_status_deactive(js->gc->account, user, "tune");
+		purple_prpl_got_user_status_deactive(purple_connection_get_account(js->gc), user, "tune");
 	}
 }
 

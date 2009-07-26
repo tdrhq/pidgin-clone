@@ -197,9 +197,9 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 	g_snprintf(pkd, sizeof(pkd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());
 	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
 	g_snprintf(file_public_key, sizeof(file_public_key) - 1, "%s",
-		   purple_account_get_string(gc->account, "public-key", pkd));
+		   purple_account_get_string(purple_connection_get_account(gc), "public-key", pkd));
 	g_snprintf(file_private_key, sizeof(file_public_key) - 1, "%s",
-		   purple_account_get_string(gc->account, "private-key", prd));
+		   purple_account_get_string(purple_connection_get_account(gc), "private-key", prd));
 
 	if ((g_stat(file_public_key, &st)) == -1) {
 		/* If file doesn't exist */
@@ -209,8 +209,8 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  SILCPURPLE_DEF_PKCS_LEN,
 						  file_public_key,
 						  file_private_key, NULL,
-						  (gc->password == NULL)
-						  ? "" : gc->password,
+						  (purple_connection_get_password(gc) == NULL)
+						  ? "" : purple_connection_get_password(gc),
 						  NULL, NULL, FALSE)) {
 				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				                             _("Unable to create SILC key pair"));
@@ -252,8 +252,8 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  SILCPURPLE_DEF_PKCS_LEN,
 						  file_public_key,
 						  file_private_key, NULL,
-						  (gc->password == NULL)
-						  ? "" : gc->password,
+						  (purple_connection_get_password(gc) == NULL)
+						  ? "" : purple_connection_get_password(gc),
 						  NULL, NULL, FALSE)) {
 				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 				                             _("Unable to create SILC key pair"));

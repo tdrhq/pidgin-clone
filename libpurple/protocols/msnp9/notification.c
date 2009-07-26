@@ -408,22 +408,20 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	char buf[33];
 	const char *challenge_resp;
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar digest[16];
 	int i;
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
+	cipher = purple_md5_cipher_new();
 
-	purple_cipher_context_append(context, (const guchar *)cmd->params[1],
-							   strlen(cmd->params[1]));
+	purple_cipher_append(cipher, (const guchar *)cmd->params[1],
+						 strlen(cmd->params[1]));
 
 	challenge_resp = "VT6PX?UQTM4WM%YR";
 
-	purple_cipher_context_append(context, (const guchar *)challenge_resp,
-							   strlen(challenge_resp));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	purple_cipher_append(cipher, (const guchar *)challenge_resp,
+						 strlen(challenge_resp));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	for (i = 0; i < 16; i++)
 		g_snprintf(buf + (i*2), 3, "%02x", digest[i]);
@@ -803,7 +801,7 @@ rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	g_free(username);
 
-	gc = account->gc;
+	gc = purple_account_get_connection(account);
 	friendly = purple_url_decode(cmd->params[3]);
 
 	purple_connection_set_display_name(gc, friendly);
@@ -999,7 +997,6 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *rru;
 	const char *url;
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	guchar digest[16];
 	FILE *fd;
 	char *buf;
@@ -1016,14 +1013,12 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	buf = g_strdup_printf("%s%lu%s",
 			   session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
 			   time(NULL) - session->passport_info.sl,
-			   purple_connection_get_password(account->gc));
+			   purple_connection_get_password(purple_account_get_connection(account)));
 
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-
-	purple_cipher_context_append(context, (const guchar *)buf, strlen(buf));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (const guchar *)buf, strlen(buf));
+	purple_cipher_digest(cipher, sizeof(digest), digest, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	g_free(buf);
 
@@ -1250,7 +1245,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *unread;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1300,7 +1295,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char *from, *subject, *tmp;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	gc = purple_account_get_connection(session->account);
 
 	if (strcmp(msg->remote_user, "Hotmail"))
 		/* This isn't an official message. */
@@ -1385,7 +1380,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 		if (*buf != '\0')
-			purple_notify_info(cmdproc->session->account->gc, NULL, buf, NULL);
+			purple_notify_info(purple_account_get_connection(cmdproc->session->account), NULL, buf, NULL);
 	}
 
 	g_hash_table_destroy(table);

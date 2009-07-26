@@ -35,7 +35,7 @@
 gboolean
 yahoo_account_use_http_proxy(PurpleConnection *conn)
 {
-	PurpleProxyInfo *ppi = purple_proxy_get_setup(conn->account);
+	PurpleProxyInfo *ppi = purple_proxy_get_setup(purple_connection_get_account(conn));
 	return (ppi->type == PURPLE_PROXY_HTTP || ppi->type == PURPLE_PROXY_USE_ENVVAR);
 }
 
@@ -53,7 +53,7 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
 	gchar *t1,*t2,*t3;
 	GSList *tmp;
 	GSList *cookies;
-	cookies = ((YahooData*)(gc->proto_data))->cookies;
+	cookies = ((YahooData*)(purple_object_get_protocol_data(PURPLE_OBJECT(gc))))->cookies;
 	tmp = cookies;
 	while(tmp)
 	{
@@ -118,7 +118,7 @@ gchar* yahoo_get_cookies(PurpleConnection *gc)
  */
 char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	char *ret;
 	const char *to_codeset;
 
@@ -147,7 +147,7 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
  */
 char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 {
-	YahooData *yd = gc->proto_data;
+	YahooData *yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	char *ret;
 	const char *from_codeset;
 

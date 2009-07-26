@@ -265,7 +265,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 			swboard->chat_id = msn_switchboard_get_chat_id();
 			swboard->flag |= MSN_SB_FLAG_IM;
-			swboard->conv = serv_got_joined_chat(account->gc,
+			swboard->conv = serv_got_joined_chat(purple_account_get_connection(account),
 												 swboard->chat_id,
 												 "MSN Chat");
 
@@ -735,7 +735,7 @@ iro_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnSwitchBoard *swboard;
 
 	account = cmdproc->session->account;
-	gc = account->gc;
+	gc = purple_account_get_connection(account);
 	swboard = cmdproc->data;
 
 	swboard->total_users = atoi(cmd->params[2]);
@@ -756,7 +756,7 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = account->gc;
+	gc = purple_account_get_connection(account);
 	swboard = cmdproc->data;
 
 	msn_switchboard_add_user(swboard, passport);
@@ -839,7 +839,7 @@ out_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 
-	gc = cmdproc->session->account->gc;
+	gc = purple_account_get_connection(cmdproc->session->account);
 	swboard = cmdproc->data;
 
 	if (swboard->current_users > 1)
@@ -1251,17 +1251,17 @@ msn_switchboard_init(void)
 
 	/* Register the message type callbacks. */
 	msn_table_add_msg_type(cbs_table, "text/plain",
-						   msn_plain_msg);
+	                       msn_plain_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msmsgscontrol",
-						   msn_control_msg);
+	                       msn_control_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-clientcaps",
-						   clientcaps_msg);
+	                       clientcaps_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-clientinfo",
-						   clientcaps_msg);
+	                       clientcaps_msg);
 	msn_table_add_msg_type(cbs_table, "application/x-msnmsgrp2p",
-						   msn_p2p_msg);
+	                       msn_p2p_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-mms-emoticon",
-						   msn_emoticon_msg);
+	                       msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-mms-animemoticon",
 	                       msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",

@@ -42,7 +42,8 @@
 #include "plugin.h"
 #include "accountopt.h"
 #include "version.h"
-#include "cipher.h"     /* for SHA-1 */
+#include "sha1cipher.h"
+#include "rc4cipher.h"
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
 #include "request.h"    /* For dialogs used in setting the username */

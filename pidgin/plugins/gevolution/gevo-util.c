@@ -104,7 +104,7 @@ gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
 
 		gc = purple_account_get_connection(account);
 
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 		if (!strcmp("aim", prpl_info->list_icon(account, buddy)))
 		{

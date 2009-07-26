@@ -321,10 +321,10 @@ purple_idle_init()
 	purple_signal_connect(purple_conversations_get_handle(), "sent-im-msg",
 						purple_idle_get_handle(),
 						PURPLE_CALLBACK(im_msg_sent_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signing-on",
+	purple_signal_connect(NULL, "signing-on",
 						purple_idle_get_handle(),
 						PURPLE_CALLBACK(signing_on_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signing-off",
+	purple_signal_connect(NULL, "signing-off",
 						purple_idle_get_handle(),
 						PURPLE_CALLBACK(signing_off_cb), NULL);
 

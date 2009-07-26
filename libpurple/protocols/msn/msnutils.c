@@ -24,7 +24,7 @@
 #include "msn.h"
 #include "msnutils.h"
 
-#include "cipher.h"
+#include "md5cipher.h"
 
 char *rand_guid(void);
 
@@ -490,7 +490,6 @@ void
 msn_handle_chl(char *input, char *output)
 {
 	PurpleCipher *cipher;
-	PurpleCipherContext *context;
 	const guchar productKey[] = MSNP15_WLM_PRODUCT_KEY;
 	const guchar productID[]  = MSNP15_WLM_PRODUCT_ID;
 	const char hexChars[]     = "0123456789abcdef";
@@ -507,13 +506,11 @@ msn_handle_chl(char *input, char *output)
 	int i;
 
 	/* Create the MD5 hash by using Purple MD5 algorithm */
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-
-	purple_cipher_context_append(context, (guchar *)input, strlen(input));
-	purple_cipher_context_append(context, productKey, sizeof(productKey) - 1);
-	purple_cipher_context_digest(context, sizeof(md5Hash), md5Hash, NULL);
-	purple_cipher_context_destroy(context);
+	cipher = purple_md5_cipher_new();
+	purple_cipher_append(cipher, (guchar *)input, strlen(input));
+	purple_cipher_append(cipher, productKey, sizeof(productKey) - 1);
+	purple_cipher_digest(cipher, sizeof(md5Hash), md5Hash, NULL);
+	g_object_unref(G_OBJECT(cipher));
 
 	/* Split it into four integers */
 	md5Parts = (unsigned int *)md5Hash;
@@ -579,4 +576,3 @@ msn_handle_chl(char *input, char *output)
 
 	output[32] = '\0';
 }
-

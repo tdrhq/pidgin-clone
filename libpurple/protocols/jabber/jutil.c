@@ -20,10 +20,10 @@
  */
 #include "internal.h"
 #include "account.h"
-#include "cipher.h"
 #include "conversation.h"
 #include "debug.h"
 #include "server.h"
+#include "sha1cipher.h"
 #include "util.h"
 #include "xmlnode.h"
 
@@ -500,8 +500,8 @@ char *jabber_get_bare_jid(const char *in)
 
 const char *jabber_normalize(const PurpleAccount *account, const char *in)
 {
-	PurpleConnection *gc = account ? account->gc : NULL;
-	JabberStream *js = gc ? gc->proto_data : NULL;
+	PurpleConnection *gc = account ? purple_account_get_connection(account) : NULL;
+	JabberStream *js = gc ? purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
 	static char buf[3072]; /* maximum legal length of a jabber jid */
 	JabberID *jid;
 
@@ -591,24 +591,24 @@ jabber_find_unnormalized_conv(const char *name, PurpleAccount *account)
 char *
 jabber_calculate_data_sha1sum(gconstpointer data, size_t len)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *sha1;
 	static gchar digest[41];
 
-	context = purple_cipher_context_new_by_name("sha1", NULL);
-	if (context == NULL)
+	sha1 = purple_sha1_cipher_new();
+	if (sha1 == NULL)
 	{
 		purple_debug_error("jabber", "Could not find sha1 cipher\n");
 		g_return_val_if_reached(NULL);
 	}
 
 	/* Hash the data */
-	purple_cipher_context_append(context, data, len);
-	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
+	purple_cipher_append(sha1, data, len);
+	if (!purple_cipher_digest_to_str(sha1, sizeof(digest), digest, NULL))
 	{
 		purple_debug_error("jabber", "Failed to get SHA-1 digest.\n");
 		g_return_val_if_reached(NULL);
 	}
-	purple_cipher_context_destroy(context);
+	g_object_unref(G_OBJECT(sha1));
 
 	return g_strdup(digest);
 }

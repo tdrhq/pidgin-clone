@@ -213,7 +213,8 @@ void jabber_oob_parse(JabberStream *js, const char *from, JabberIqType type,
 	jox->headers = g_string_new("");
 	jox->iq_id = g_strdup(id);
 
-	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(js->gc), PURPLE_XFER_RECEIVE,
+			from);
 	if (xfer)
 	{
 		xfer->data = jox;
