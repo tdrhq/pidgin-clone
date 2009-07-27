@@ -388,8 +388,10 @@ telepathy_get_info (PurpleConnection *gc, const char *who)
 static void
 telepathy_set_status (PurpleAccount *account, PurpleStatus *status)
 {
-	PurpleConnection *gc = purple_account_get_connection(account);
-	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+	telepathy_account *account_data = (telepathy_account*)purple_account_get_int(
+			account, "tp_account_data", 0);
+
+	GValueArray *initial_presence;
 
 	const gchar *presence_id = purple_status_get_id(status);
 	const gchar *presence_message = purple_status_get_attr_string(status, "message");
@@ -397,10 +399,15 @@ telepathy_set_status (PurpleAccount *account, PurpleStatus *status)
 	purple_debug_info("telepathy", "Setting status %s (%s) for %s\n", 
 			presence_id, presence_message, purple_account_get_username(account));
 
-	tp_cli_connection_interface_simple_presence_call_set_presence(data->connection, -1,
-			presence_id, presence_message, 
-			set_presence_cb, data,
-			NULL, NULL);
+	initial_presence = purple_status_to_telepathy_status(
+		purple_account_get_active_status(account));
+
+	tp_cli_dbus_properties_call_set(account_data->tp_account, -1,
+		TP_IFACE_ACCOUNT, "RequestedPresence",
+		tp_g_value_slice_new_boxed(G_TYPE_VALUE_ARRAY, initial_presence),
+		NULL, NULL, NULL, NULL);
+
+	g_value_array_free(initial_presence);
 }
 
 static void
