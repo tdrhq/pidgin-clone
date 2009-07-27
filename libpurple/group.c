@@ -116,6 +116,7 @@ purple_group_add_update(PurpleGroup *group, PurpleBlistNode *child)
 	}
 	group->totalsize++;
 
+	#warning Is this schedule save necessary?
 	purple_blist_schedule_save();
 	purple_signal_emit(purple_blist_node_get_handle(), "node-added", child);
 

@@ -170,7 +170,8 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 		g_free(new_alias); /* could be "\0" */
 	}
 
-	purple_blist_schedule_save();
+	if (ops && ops->save_node)
+		ops->save_node(PURPLE_BLIST_NODE(contact));
 
 	if (ops && ops->update)
 		ops->update(PURPLE_BLIST_NODE(contact));

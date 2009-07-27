@@ -550,7 +550,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 
 	/* Save our changes */
 	if (ops && ops->save_node)
-		ops->save_node((PurpleBlistNode*) source);
+		ops->save_node(PURPLE_BLIST_NODE(source));
 
 	/* Update the UI */
 	if (ops && ops->update)
@@ -625,7 +625,7 @@ void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name)
 	hb->account = purple_buddy_get_account(buddy);
 	hb->group = (PURPLE_BLIST_NODE(buddy))->parent->parent;
 	g_hash_table_remove(list->buddies, hb);
-	
+
 	account_buddies = g_hash_table_lookup(list->buddies_cache, purple_buddy_get_account(buddy));
 	g_hash_table_remove(account_buddies, hb);
 
@@ -643,7 +643,7 @@ void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name)
 	purple_buddy_set_name(buddy, name);
 
 	if (ops && ops->save_node)
-		ops->save_node((PurpleBlistNode*) buddy);
+		ops->save_node(PURPLE_BLIST_NODE(buddy));
 
 	if (ops && ops->update)
 		ops->update(PURPLE_BLIST_NODE(buddy));
@@ -1279,8 +1279,6 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 		 * reinitialize it */
 		if (ops && ops->new_node)
 			ops->new_node(cnode);
-
-		purple_blist_schedule_save();
 	}
 
 	if (node != NULL) {
@@ -1309,7 +1307,8 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 		}
 	}
 
-	purple_blist_schedule_save();
+	if (ops && ops->save_node)
+		ops->save_node(PURPLE_BLIST_NODE(cnode));
 
 	if (ops && ops->update)
 		ops->update(PURPLE_BLIST_NODE(cnode));
@@ -1360,7 +1359,6 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	}
 
 	cnode = PURPLE_BLIST_NODE(c);
-	PurpleBlistUiOps *ops;
 
 	if (bnode->parent) {
 		if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
@@ -1457,7 +1455,8 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 
 	purple_contact_invalidate_priority_buddy(purple_buddy_get_contact(buddy));
 
-	purple_blist_schedule_save();
+	if (ops && ops->save_node)
+		ops->save_node(PURPLE_BLIST_NODE(buddy));
 
 	if (ops && ops->update)
 		ops->update(PURPLE_BLIST_NODE(buddy));
@@ -1541,6 +1540,8 @@ PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name
 
 	ret = g_hash_table_lookup(purple_blist_get_list()->buddies, &hb);
 	g_free(hb.name);
+
+	return ret;
 }
 
 static void

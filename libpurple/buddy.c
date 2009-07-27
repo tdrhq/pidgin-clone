@@ -169,7 +169,8 @@ void purple_buddy_set_alias(PurpleBuddy *buddy, const char *alias)
 		g_free(new_alias); /* could be "\0" */
 	}
 
-	purple_blist_schedule_save();
+	if (ops && ops->save_node)
+		ops->save_node(PURPLE_BLIST_NODE(buddy));
 
 	if (ops && ops->update)
 		ops->update(PURPLE_BLIST_NODE(buddy));
@@ -224,7 +225,8 @@ void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 		g_free(new_alias); /* could be "\0"; */
 	}
 
-	purple_blist_schedule_save();
+	if (ops && ops->save_node)
+		ops->save_node(PURPLE_BLIST_NODE(buddy));
 
 	if (ops && ops->update)
 		ops->update(PURPLE_BLIST_NODE(buddy));

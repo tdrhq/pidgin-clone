@@ -205,6 +205,7 @@ void purple_blist_node_initialize_settings(PurpleBlistNode *node)
 void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key)
 {
 	PurpleBlistNodePrivate *priv;
+	PurpleBlistUiOps *ops;
 
 	g_return_if_fail(node != NULL);
 
@@ -215,7 +216,9 @@ void purple_blist_node_remove_setting(PurpleBlistNode *node, const char *key)
 
 	g_hash_table_remove(priv->settings, key);
 
-	purple_blist_schedule_save();
+	ops = purple_blist_get_ui_ops();
+	if (ops && ops->save_node)
+		ops->save_node(node);
 }
 
 void
@@ -259,6 +262,7 @@ purple_blist_node_set_bool(PurpleBlistNode* node, const char *key, gboolean data
 {
 	GValue *value;
 	PurpleBlistNodePrivate *priv;
+	PurpleBlistUiOps *ops;
 
 	g_return_if_fail(node != NULL);
 
@@ -272,7 +276,9 @@ purple_blist_node_set_bool(PurpleBlistNode* node, const char *key, gboolean data
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
 
-	purple_blist_schedule_save();
+	ops = purple_blist_get_ui_ops();
+	if (ops && ops->save_node)
+		ops->save_node(node);
 }
 
 gboolean
@@ -303,6 +309,7 @@ purple_blist_node_set_int(PurpleBlistNode* node, const char *key, int data)
 {
 	GValue *value;
 	PurpleBlistNodePrivate *priv;
+	PurpleBlistUiOps *ops;
 
 	g_return_if_fail(node != NULL);
 
@@ -316,7 +323,9 @@ purple_blist_node_set_int(PurpleBlistNode* node, const char *key, int data)
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
 
-	purple_blist_schedule_save();
+	ops = purple_blist_get_ui_ops();
+	if (ops && ops->save_node)
+		ops->save_node(node);
 }
 
 int
@@ -347,6 +356,7 @@ purple_blist_node_set_string(PurpleBlistNode* node, const char *key, const char 
 {
 	GValue *value;
 	PurpleBlistNodePrivate *priv;
+	PurpleBlistUiOps *ops;
 
 	g_return_if_fail(node != NULL);
 
@@ -360,7 +370,9 @@ purple_blist_node_set_string(PurpleBlistNode* node, const char *key, const char 
 
 	g_hash_table_replace(priv->settings, g_strdup(key), value);
 
-	purple_blist_schedule_save();
+	ops = purple_blist_get_ui_ops();
+	if (ops && ops->save_node)
+		ops->save_node(node);
 }
 
 GHashTable *
@@ -372,7 +384,7 @@ purple_blist_node_get_settings(PurpleBlistNode *node)
 	priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
 
 	return priv->settings;
-}	
+}
 
 const char *
 purple_blist_node_get_string(PurpleBlistNode* node, const char *key)
