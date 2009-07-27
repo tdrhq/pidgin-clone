@@ -240,3 +240,10 @@ IDR_ACCEL_MAIN ACCELERATORS
 //
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 1                  RT_MANIFEST    ".\\manifest.xml"
+
+
+
+//
+// Bitmap resources
+//
+IDB_STATUS_ICONS        BITMAP "res\\status.bmp"

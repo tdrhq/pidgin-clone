@@ -63,6 +63,9 @@
 #define IDR_ACCEL_MAIN                          2001
 
 
+#define IDB_STATUS_ICONS                        3001
+
+
 #define IDS_ERROR_BLIST                         1
 #define IDS_ERROR_PURPLEINIT                    2
 #define IDS_ACCMGR_ACCOUNT                      3

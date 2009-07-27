@@ -63,6 +63,7 @@ static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode
 
 
 #define BLIST_MARGIN 6
+#define CX_STATUSICON 16
 
 enum CONTEXT_MENU_INDICES
 {
@@ -72,12 +73,23 @@ enum CONTEXT_MENU_INDICES
 	CMI_CHAT,
 };
 
+enum STATUS_ICONS
+{
+	SICON_AVAILABLE = 0,
+	SICON_AWAY,
+	SICON_BUSY,
+	SICON_INVISIBLE,
+	SICON_OFFLINE,
+	SICON_EXTAWAY,
+};
+
 
 HWND g_hwndMain = NULL;
 GList *g_lpglistConvContainers = NULL;
 
 static GList *g_lpglistStatuses = NULL;
 static HWND g_hwndStatusDlg = NULL, g_hwndBListDlg = NULL;
+static HIMAGELIST g_himlStatusIcons = NULL;
 
 
 
@@ -157,6 +169,9 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		{
 			int i, iCount;
 			HMENU hmenu = GetMenu(hwnd);
+
+			/* Load and initialise image lists. */
+			g_himlStatusIcons = ImageList_LoadImage(g_hInstance, MAKEINTRESOURCE(IDB_STATUS_ICONS), CX_STATUSICON, 0, 0, IMAGE_BITMAP, LR_CREATEDIBSECTION);
 
 			g_hwndStatusDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_STATUS), hwnd, StatusDlgProc);
 			g_hwndBListDlg = CreateDialog(g_hInstance, MAKEINTRESOURCE(IDD_BLIST), hwnd, BuddyListDlgProc);
@@ -395,8 +410,11 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		if(g_lpglistConvContainers)
 			g_list_free(g_lpglistConvContainers);
 
-		PostQuitMessage(VEC_SUCCESS);
+		return 0;
 
+	case WM_NCDESTROY:
+		ImageList_Destroy(g_himlStatusIcons);
+		PostQuitMessage(VEC_SUCCESS);
 		return 0;
 	}
 
@@ -441,6 +459,12 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 			lpsdd->wndprocStatusMsgOrig = (WNDPROC)GetWindowLongPtr(hwndStatusMsg, GWLP_WNDPROC);
 			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG)lpsdd);
 			SetWindowLongPtr(hwndStatusMsg, GWLP_WNDPROC, (LONG)StatusMsgBoxSubclassProc);
+
+			/* Set the combo's image-lists, and tell it to
+			 * recalculate its size.
+			 */
+			SendDlgItemMessage(hwndDlg, IDC_CBEX_STATUS, CBEM_SETIMAGELIST, 0, (LPARAM)g_himlStatusIcons);
+			SetWindowPos(GetDlgItem(hwndDlg, IDC_CBEX_STATUS), NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 		}
 
 		/* Let the system set the focus. */
@@ -769,8 +793,22 @@ static void ManageAccounts(HWND hwndParent)
  */
 static void PopulateStatusList(HWND hwndComboStatus)
 {
+	static GHashTable *s_lpghashStatusIcons = NULL;
+
 	GList *lpglistStatusRover;
 	GArray *lpgarrayWaitContext;
+
+	/* Initialise the lookup table of status icons the first time. */
+	if(!s_lpghashStatusIcons)
+	{
+		s_lpghashStatusIcons = g_hash_table_new(NULL, NULL);
+		g_hash_table_insert(s_lpghashStatusIcons, (gpointer)PURPLE_STATUS_AVAILABLE, (gpointer)SICON_AVAILABLE);
+		g_hash_table_insert(s_lpghashStatusIcons, (gpointer)PURPLE_STATUS_AWAY, (gpointer)SICON_AWAY);
+		g_hash_table_insert(s_lpghashStatusIcons, (gpointer)PURPLE_STATUS_UNAVAILABLE, (gpointer)SICON_BUSY);
+		g_hash_table_insert(s_lpghashStatusIcons, (gpointer)PURPLE_STATUS_INVISIBLE, (gpointer)SICON_INVISIBLE);
+		g_hash_table_insert(s_lpghashStatusIcons, (gpointer)PURPLE_STATUS_OFFLINE, (gpointer)SICON_OFFLINE);
+		g_hash_table_insert(s_lpghashStatusIcons, (gpointer)PURPLE_STATUS_EXTENDED_AWAY, (gpointer)SICON_EXTAWAY);
+	}
 
 	if(g_lpglistStatuses)
 		VulturePurpleFreeStatusList(g_lpglistStatuses);
@@ -791,6 +829,12 @@ static void PopulateStatusList(HWND hwndComboStatus)
 		cbexitem.mask = CBEIF_TEXT | CBEIF_LPARAM;
 		cbexitem.pszText = lpvss->szTitle ? lpvss->szTitle : TEXT("");
 		cbexitem.lParam = (LPARAM)lpvss;
+
+		if(g_hash_table_lookup_extended(s_lpghashStatusIcons, (gpointer)lpvss->psprim, NULL, (gpointer*)&cbexitem.iImage))
+		{
+			cbexitem.iSelectedImage = cbexitem.iImage;
+			cbexitem.mask |= CBEIF_IMAGE | CBEIF_SELECTEDIMAGE;
+		}
 
 		/* Add at end of list. */
 		cbexitem.iItem = -1;
