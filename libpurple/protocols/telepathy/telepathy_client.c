@@ -76,6 +76,7 @@ enum
 {
 	PROP_INTERFACES = 1,
 	PROP_CHANNEL_FILTER,
+	PROP_BYPASS_APPROVAL,
 	PROP_CHANNELS
 };
 
@@ -166,6 +167,13 @@ client_get_property (GObject *object,
 			break;
 		}
 
+		case PROP_BYPASS_APPROVAL:
+		{
+			g_value_set_boolean (value, TRUE);
+
+			break;
+		}
+
 		case PROP_CHANNELS:
 		{
 			GPtrArray *accounts;
@@ -215,6 +223,7 @@ telepathy_client_class_init (TelepathyClientClass *klass)
 	};
 	static TpDBusPropertiesMixinPropImpl client_handler_props[] = {
 		{ "HandlerChannelFilter", "channel-filter", NULL, NULL, NULL, NULL },
+		{ "BypassApproval", "bypass-approval", NULL, NULL, NULL, NULL },
 		{ "HandledChannels", "channels", NULL, NULL, NULL, NULL },
 		{ NULL, NULL, NULL, NULL, NULL, NULL }
 	};
@@ -259,6 +268,13 @@ telepathy_client_class_init (TelepathyClientClass *klass)
 		G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property (object_class,
 		PROP_CHANNEL_FILTER, param_spec);
+
+	param_spec = g_param_spec_boolean ("bypass-approval", "bypass-approval",
+		"Ignore approvers and automatically handle channels",
+		TRUE,
+		G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+	g_object_class_install_property (object_class,
+		PROP_BYPASS_APPROVAL, param_spec);
 
 	param_spec = g_param_spec_boxed ("channels", "channels",
 		"List of channels we're handling",
