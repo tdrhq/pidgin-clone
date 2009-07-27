@@ -344,7 +344,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 		nt_pw[2 * idx + 1] = 0;
 	}
 
-	cipher = purple_md4_hash_new();
+	cipher = PURPLE_CIPHER(purple_md4_hash_new());
 	purple_cipher_append(cipher, (guint8 *)nt_pw, 2 * lennt);
 	purple_cipher_digest(cipher, 21, nt_hpw, NULL);
 	g_object_unref(G_OBJECT(cipher));
