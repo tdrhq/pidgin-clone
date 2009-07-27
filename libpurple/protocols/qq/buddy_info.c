@@ -65,13 +65,13 @@ static const gchar *publish_types[] = {
 static const gchar *genders[] = {
 	N_("Private"),
 	N_("Male"),
-	N_("Female"),
+	N_("Female")
 };
 
 static const gchar *genders_zh[] = {
 	"-",
 	"\xc4\xd0",
-	"\xc5\xae",
+	"\xc5\xae"
 };
 
 #define QQ_FACES	    134
@@ -229,7 +229,7 @@ void qq_request_buddy_info(PurpleConnection *gc, guint32 uid,
 
 	g_return_if_fail(uid != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	g_snprintf(raw_data, sizeof(raw_data), "%u", uid);
 	qq_send_cmd_mess(gc, QQ_CMD_GET_BUDDY_INFO, (guint8 *) raw_data, strlen(raw_data),
 			update_class, action);
@@ -279,8 +279,8 @@ static void info_modify_ok_cb(modify_info_request *info_request, PurpleRequestFi
 	int choice_num;
 
 	gc = info_request->gc;
-	g_return_if_fail(gc != NULL && info_request->gc);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	segments = info_request->segments;
 	g_return_if_fail(segments != NULL);
 
@@ -397,7 +397,7 @@ static void info_modify_dialogue(PurpleConnection *gc, gchar **segments, int icl
 	gchar *utf8_title, *utf8_prim;
 	int index;
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	/* Keep one dialog once a time */
 	purple_request_close_with_handle(gc);
 
@@ -454,7 +454,7 @@ void qq_process_change_info(PurpleConnection *gc, guint8 *data, gint data_len)
 	qq_data *qd;
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	data[data_len] = '\0';
 	if (qd->uid != atoi((gchar *) data)) {	/* return should be my uid */
@@ -467,7 +467,7 @@ static void request_set_buddy_icon(PurpleConnection *gc, gint face_num)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurplePresence *presence = purple_account_get_presence(account);
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	gint offset;
 
 	if(purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
@@ -628,7 +628,8 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 	gchar *alias_utf8;
 
 	PurpleAccount *account = purple_connection_get_account(gc);
-	qd = (qq_data *)purple_connection_get_protocol_data(gc);
+
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	uid = strtoul(segments[QQ_INFO_UID], NULL, 10);
 	who = uid_to_purple_name(uid);
@@ -644,12 +645,12 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 		/* add me to buddy list */
 		buddy = qq_buddy_find_or_new(gc, uid);
 	} else {
-		buddy = purple_find_buddy(gc->account, who);
+		buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 		/* purple_debug_info("QQ", "buddy=%p\n", (void*)buddy); */
 	}
 
 	/* if the buddy is null, the api will catch it and return null here */
-	bd = purple_buddy_get_protocol_data(buddy);
+	bd = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 	/* purple_debug_info("QQ", "bd=%p\n", (void*)bd); */
 
 	if (bd == NULL || buddy == NULL) {
@@ -672,7 +673,7 @@ static void update_buddy_info(PurpleConnection *gc, gchar **segments)
 	purple_blist_server_alias_buddy(buddy, bd->nickname);
 
 	/* convert face num from packet (0-299) to local face (1-100) */
-	qq_update_buddy_icon(gc->account, who, bd->face);
+	qq_update_buddy_icon(purple_connection_get_account(gc), who, bd->face);
 
 	g_free(who);
 	g_free(alias_utf8);
@@ -688,7 +689,7 @@ void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, Purp
 
 	g_return_if_fail(data != NULL && data_len != 0);
 
-	qd = (qq_data *) gc->proto_data;
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	if (qd->client_version >= 2008) {
 		field_count = QQ_INFO_LAST;
@@ -746,7 +747,7 @@ void qq_process_get_buddy_info(guint8 *data, gint data_len, guint32 action, Purp
 
 void qq_request_get_level(PurpleConnection *gc, guint32 uid)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	guint8 buf[16] = {0};
 	gint bytes = 0;
 
@@ -772,7 +773,7 @@ void qq_request_get_level_2007(PurpleConnection *gc, guint32 uid)
 
 void qq_request_get_buddies_level(PurpleConnection *gc, guint32 update_class)
 {
-	qq_data *qd = (qq_data *) gc->proto_data;
+	qq_data *qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	PurpleBuddy *buddy;
 	qq_buddy_data *bd;
 	guint8 *buf;
@@ -788,7 +789,7 @@ void qq_request_get_buddies_level(PurpleConnection *gc, guint32 update_class)
 	for (it = buddies; it; it = it->next) {
 		buddy = it->data;
 		if (buddy == NULL) continue;
-		if ((bd = purple_buddy_get_protocol_data(buddy)) == NULL) continue;
+		if ((bd = purple_object_get_protocol_data(PURPLE_OBJECT(buddy))) == NULL) continue;
 		if (bd->uid == 0) continue;	/* keep me as end of packet*/
 		if (bd->uid == qd->uid) continue;
 		bytes += qq_put32(buf + bytes, bd->uid);

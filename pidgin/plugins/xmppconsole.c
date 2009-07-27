@@ -193,7 +193,7 @@ static void message_send_cb(GtkWidget *widget, gpointer p)
 	gc = console->gc;
 
 	if (gc)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_get_start_iter(buffer, &start);
@@ -629,7 +629,7 @@ signed_on_cb(PurpleConnection *gc)
 	if (!console)
 		return;
 
-	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), purple_account_get_username(gc->account));
+	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), purple_account_get_username(purple_connection_get_account(gc)));
 	console->accounts = g_list_append(console->accounts, gc);
 	console->count++;
 
@@ -660,7 +660,7 @@ signed_off_cb(PurpleConnection *gc)
 
 	gtk_combo_box_remove_text(GTK_COMBO_BOX(console->dropdown), i);
 	console->accounts = g_list_remove(console->accounts, gc);
-	printf("%s\n", purple_account_get_username(gc->account));
+	printf("%s\n", purple_account_get_username(purple_connection_get_account(gc)));
 	console->count--;
 
 	if (gc == console->gc) {
@@ -684,9 +684,9 @@ plugin_load(PurplePlugin *plugin)
 			    PURPLE_CALLBACK(xmlnode_received_cb), NULL);
 	purple_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
 			    PURPLE_CALLBACK(xmlnode_sent_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 			    plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+	purple_signal_connect(NULL, "signed-off",
 			    plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
 
 	return TRUE;
@@ -712,16 +712,18 @@ static void
 dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 {
 	PurpleAccount *account;
+	PurpleConnection *conn;
 
 	if (!console)
 		return;
 
 	account = purple_accounts_find(gtk_combo_box_get_active_text(GTK_COMBO_BOX(console->dropdown)),
 				    "prpl-jabber");
-	if (!account || !account->gc)
+	conn = account ? purple_account_get_connection(account) : NULL;
+	if (!account || !conn)
 		return;
 
-	console->gc = account->gc;
+	console->gc = conn;
 	gtk_imhtml_clear(GTK_IMHTML(console->imhtml));
 }
 

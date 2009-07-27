@@ -172,7 +172,7 @@ setup_buddy_list_suggestion(GntEntry *entry, gboolean offline)
 {
 	PurpleBlistNode *node = purple_blist_get_root();
 	for (; node; node = purple_blist_node_next(node, offline)) {
-		if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+		if (!PURPLE_IS_BUDDY(node))
 			continue;
 		gnt_entry_add_suggest(entry, purple_buddy_get_name((PurpleBuddy*)node));
 	}
@@ -972,10 +972,10 @@ finch_pounces_init(void)
 						FALSE);
 	purple_prefs_add_none("/finch/pounces/dialog");
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+	purple_signal_connect(NULL, "signed-on",
 						finch_pounces_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+	purple_signal_connect(NULL, "signed-off",
 						finch_pounces_get_handle(),
 						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 }

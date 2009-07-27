@@ -180,7 +180,7 @@ init_libpurple(void)
 	purple_util_set_user_dir(CUSTOM_USER_DIRECTORY);
 
 	/* We do not want any debugging for now to keep the noise to a minimum. */
-	purple_debug_set_enabled(FALSE);
+	purple_debug_set_enabled(TRUE);
 
 	/* Set the core-uiops, which is used to
 	 * 	- initialize the ui specific preferences.
@@ -210,10 +210,6 @@ init_libpurple(void)
 		abort();
 	}
 
-	/* Create and load the buddylist. */
-	purple_set_blist(purple_blist_new());
-	purple_blist_load();
-
 	/* Load the preferences. */
 	purple_prefs_load();
 
@@ -229,14 +225,14 @@ static void
 signed_on(PurpleConnection *gc, gpointer null)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	printf("Account connected: %s %s\n", account->username, account->protocol_id);
+	printf("Account connected: %s %s\n", purple_account_get_username(account), purple_account_get_protocol_id(account));
 }
 
 static void
 connect_to_signals_for_demonstration_purposes_only(void)
 {
 	static int handle;
-	purple_signal_connect(purple_connections_get_handle(), "signed-on", &handle,
+	purple_signal_connect(NULL, "signed-on", &handle,
 				PURPLE_CALLBACK(signed_on), NULL);
 }
 
@@ -298,7 +294,7 @@ int main(int argc, char *argv[])
 	purple_account_set_password(account, password);
 
 	/* It's necessary to enable the account first. */
-	purple_account_set_enabled(account, UI_ID, TRUE);
+	purple_account_set_enabled(account, TRUE);
 
 	/* Now, to connect the account(s), create a status and activate it. */
 	status = purple_savedstatus_new(NULL, PURPLE_STATUS_AVAILABLE);

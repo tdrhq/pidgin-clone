@@ -118,7 +118,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	PurpleAccount *account;
 	PurpleStatus *status;
 	PurpleStatusType *status_type;
-	PurpleValue *value;
+	const GValue *value;
 	char *attr_id;
 	int error;
 	int b, i;
@@ -186,12 +186,11 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 		if (objc == 3) {
 			Tcl_SetObjResult(interp, 
 					 Tcl_NewBooleanObj(
-						 purple_account_get_enabled(account,
-									    purple_core_get_ui())));
+						 purple_account_get_enabled(account)));
 		} else {
 			if ((error = Tcl_GetBooleanFromObj(interp, objv[3], &b)) != TCL_OK)
 				return TCL_ERROR;
-			purple_account_set_enabled(account, purple_core_get_ui(), b);
+			purple_account_set_enabled(account, b);
 		}
 		break;
 	case CMD_ACCOUNT_FIND:
@@ -292,22 +291,22 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 					Tcl_SetObjResult(interp, Tcl_NewStringObj("invalid attribute for account", -1));
 					return TCL_ERROR;
 				}
-				switch (purple_value_get_type(value)) {
-				case PURPLE_TYPE_BOOLEAN:
+				switch (G_VALUE_TYPE(value)) {
+				case G_TYPE_BOOLEAN:
 					error = Tcl_GetBooleanFromObj(interp, objv[i + 1], &b);
 					if (error != TCL_OK)
 						return error;
 					l = g_list_append(l, attr_id);
 					l = g_list_append(l, GINT_TO_POINTER(b));
 					break;
-				case PURPLE_TYPE_INT:
+				case G_TYPE_INT:
 					error = Tcl_GetIntFromObj(interp, objv[i + 1], &b);
 					if (error != TCL_OK)
 						return error;
 					l = g_list_append(l, attr_id);
 					l = g_list_append(l, GINT_TO_POINTER(b));
 					break;
-				case PURPLE_TYPE_STRING:
+				case G_TYPE_STRING:
 					l = g_list_append(l, attr_id);
 					l = g_list_append(l, Tcl_GetString(objv[i + 1]));
 					break;
@@ -726,7 +725,7 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 			return TCL_ERROR;
 		}
 		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefHandle,
-							    purple_connections_get_handle()));
+							    NULL));
 		break;
 	case CMD_CONN_LIST:
 		if (objc != 2) {
@@ -748,13 +747,13 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 		if ((gc = tcl_validate_gc(objv[2], interp)) == NULL)
 			return TCL_ERROR;
 		switch (purple_connection_get_state(gc)) {
-		case PURPLE_DISCONNECTED:
+		case PURPLE_CONNECTION_STATE_DISCONNECTED:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("disconnected", -1));
 			break;
-		case PURPLE_CONNECTED:
+		case PURPLE_CONNECTION_STATE_CONNECTED:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("connected", -1));
 			break;
-		case PURPLE_CONNECTING:
+		case PURPLE_CONNECTION_STATE_CONNECTING:
 			Tcl_SetObjResult(interp, Tcl_NewStringObj("connecting", -1));
 			break;
 		}
@@ -1517,7 +1516,7 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	PurpleStatusType *status_type;
 	int error;
 #if !(defined PURPLE_DISABLE_DEPRECATED)
-	PurpleValue *value;
+	GValue *value;
 	const char *attr;
 	int v;
 #endif
@@ -1546,30 +1545,30 @@ int tcl_cmd_status(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 					 Tcl_NewStringObj("no such attribute", -1));
 			return TCL_ERROR;
 		}
-		switch (purple_value_get_type(value)) {
-		case PURPLE_TYPE_BOOLEAN:
+		switch (G_VALUE_TYPE(value)) {
+		case G_TYPE_BOOLEAN:
 			if (objc == 4) {
 				Tcl_SetObjResult(interp,
-						 Tcl_NewBooleanObj(purple_value_get_boolean(value)));
+						 Tcl_NewBooleanObj(g_value_get_boolean(value)));
 			} else {
 				if ((error = Tcl_GetBooleanFromObj(interp, objv[4], &v)) != TCL_OK)
 					return error;
 				purple_status_set_attr_boolean(status, attr, v);
 			}
 			break;
-		case PURPLE_TYPE_INT:
+		case G_TYPE_INT:
 			if (objc == 4) {
-				Tcl_SetObjResult(interp, Tcl_NewIntObj(purple_value_get_int(value)));
+				Tcl_SetObjResult(interp, Tcl_NewIntObj(g_value_get_int(value)));
 			} else {
 				if ((error = Tcl_GetIntFromObj(interp, objv[4], &v)) != TCL_OK)
 					return error;
 				purple_status_set_attr_int(status, attr, v );
 			}
 			break;
-		case PURPLE_TYPE_STRING:
+		case G_TYPE_STRING:
 			if (objc == 4)
 				Tcl_SetObjResult(interp,
-						 Tcl_NewStringObj(purple_value_get_string(value), -1));
+						 Tcl_NewStringObj(g_value_get_string(value), -1));
 			else
 				purple_status_set_attr_string(status, attr, Tcl_GetString(objv[4]));
 			break;

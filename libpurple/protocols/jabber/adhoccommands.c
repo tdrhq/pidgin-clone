@@ -221,11 +221,11 @@ jabber_adhoc_parse(JabberStream *js, const char *from,
 }
 
 void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data) {
-	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if (PURPLE_IS_BUDDY(node)) {
 		JabberAdHocCommands *cmd = data;
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
 		PurpleAccount *account = purple_buddy_get_account(buddy);
-		JabberStream *js = purple_account_get_connection(account)->proto_data;
+		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(purple_account_get_connection(account)));
 
 		jabber_adhoc_execute(js, cmd);
 	}
@@ -316,7 +316,7 @@ static void jabber_adhoc_server_execute(PurplePluginAction *action) {
 	JabberAdHocCommands *cmd = action->user_data;
 	if(cmd) {
 		PurpleConnection *gc = (PurpleConnection *) action->context;
-		JabberStream *js = gc->proto_data;
+		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 		jabber_adhoc_execute(js, cmd);
 	}

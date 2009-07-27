@@ -98,7 +98,7 @@ ce_modify_account_cb(PurpleAccount *account)
 static void
 ce_enable_account_cb(PurpleAccount *account)
 {
-	purple_account_set_enabled(account, FINCH_UI, TRUE);
+	purple_account_set_enabled(account, TRUE);
 }
 
 static void
@@ -142,7 +142,7 @@ finch_connection_report_disconnect(PurpleConnection *gc, PurpleConnectionError r
 		g_free(act);
 		g_free(primary);
 		g_free(secondary);
-		purple_account_set_enabled(account, FINCH_UI, FALSE);
+		purple_account_set_enabled(account, FALSE);
 	}
 
 	/* If we have any open chats, we probably want to rejoin when we get back online. */
@@ -197,9 +197,8 @@ PurpleConnectionUiOps *finch_connections_get_ui_ops()
 
 void finch_connections_init()
 {
-	hash = g_hash_table_new_full(
-							g_direct_hash, g_direct_equal,
-							NULL, free_auto_recon);
+	hash = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+			NULL, free_auto_recon);
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 						finch_connection_get_handle(),

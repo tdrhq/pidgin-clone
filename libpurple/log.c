@@ -1103,7 +1103,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 			/* Find the account for username in the list of accounts for protocol. */
 			username_unescaped = purple_unescape_filename(username);
 			for (account_iter = g_list_first(accounts) ; account_iter != NULL ; account_iter = account_iter->next) {
-				if (purple_strequal(((PurpleAccount *)account_iter->data)->username, username_unescaped)) {
+				if (purple_strequal(purple_account_get_username((PurpleAccount *)account_iter->data), username_unescaped)) {
 					account = account_iter->data;
 					break;
 				}
@@ -2018,21 +2018,21 @@ static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets)
 		/* Search the buddy list to find the account and to determine if this is a buddy. */
 		for (gnode = purple_blist_get_root();
 		     !found && gnode != NULL;
-			 gnode = purple_blist_node_get_sibling_next(gnode))
+			 gnode = purple_blist_node_next(gnode))
 		{
-			if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+			if (!PURPLE_IS_GROUP(gnode))
 				continue;
 
-			for (cnode = purple_blist_node_get_first_child(gnode);
+			for (cnode = purple_blist_node_first_child(gnode);
 			     !found && cnode != NULL;
-				 cnode = purple_blist_node_get_sibling_next(cnode))
+				 cnode = purple_blist_node_next(cnode))
 			{
-				if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+				if (!PURPLE_IS_CONTACT(cnode))
 					continue;
 
-				for (bnode = purple_blist_node_get_first_child(cnode);
+				for (bnode = purple_blist_node_first_child(cnode);
 				     !found && bnode != NULL;
-					 bnode = purple_blist_node_get_sibling_next(bnode))
+					 bnode = purple_blist_node_next(bnode))
 				{
 					PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 

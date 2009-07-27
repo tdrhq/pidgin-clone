@@ -454,7 +454,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 {
 	PurpleStoredImage *img;
 	JabberIq *iq;
-	JabberStream *js = purple_connection_get_protocol_data(gc);
+	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	xmlnode *vc_node;
 	const struct tag_attr *tag_attr;
 
@@ -477,7 +477,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		vc_node = NULL;
 	}
 
-	if ((img = purple_buddy_icons_find_account_icon(gc->account))) {
+	if ((img = purple_buddy_icons_find_account_icon(purple_connection_get_account(gc)))) {
 		gconstpointer avatar_data;
 		gsize avatar_len;
 		xmlnode *photo, *binval, *type;
@@ -531,7 +531,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	PurpleAccount *account = purple_connection_get_account(gc);
 
 	/* Publish the avatar as specified in XEP-0084 */
-	jabber_avatar_set(gc->proto_data, img);
+	jabber_avatar_set(purple_object_get_protocol_data(PURPLE_OBJECT(gc)), img);
 	/* Set the image in our vCard */
 	jabber_set_info(gc, purple_account_get_user_info(account));
 
@@ -617,7 +617,7 @@ void jabber_setup_set_info(PurplePluginAction *action)
 	/*
 	 * Get existing, XML-formatted, user info
 	 */
-	if((user_info = purple_account_get_user_info(gc->account)) != NULL)
+	if((user_info = purple_account_get_user_info(purple_connection_get_account(gc))) != NULL)
 		x_vc_data = xmlnode_from_str(user_info, -1);
 
 	/*
@@ -930,6 +930,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 	PurpleBuddy *b;
 	JabberBuddyInfo *jbi = data;
 	PurpleNotifyUserInfo *user_info;
+	PurpleAccount *account;
 
 	if(!jbi)
 		return;
@@ -947,7 +948,8 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 	user_info = jbi->user_info;
 	bare_jid = jabber_get_bare_jid(from);
 
-	b = purple_find_buddy(js->gc->account, bare_jid);
+	account = purple_connection_get_account(js->gc);
+	b = purple_find_buddy(account, bare_jid);
 
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp"))) {
@@ -961,6 +963,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 
 			text = xmlnode_get_data(child);
 			if(text && !strcmp(child->name, "FN")) {
+				/* If we havne't found a name yet, use this one as the serverside name */
 				if (!serverside_alias)
 					serverside_alias = g_strdup(text);
 
@@ -1126,7 +1129,7 @@ static void jabber_vcard_parse(JabberStream *js, const char *from,
 						purple_notify_user_info_add_pair(user_info, (photo ? _("Photo") : _("Logo")), img_text);
 
 						hash = jabber_calculate_data_sha1sum(data, size);
-						purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
+						purple_buddy_icons_set_for_user(account, bare_jid,
 								data, size, hash);
 						g_free(hash);
 						g_free(img_text);
@@ -1260,7 +1263,7 @@ static void jabber_last_parse(JabberStream *js, const char *from,
 
 									if (jbr ==
 										jabber_buddy_find_resource(jb, NULL)) {
-										purple_prpl_got_user_idle(js->gc->account,
+										purple_prpl_got_user_idle(purple_connection_get_account(js->gc),
 											buddy_name, jbr->idle, jbr->idle);
 									}
 								}
@@ -1545,7 +1548,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 
 void jabber_buddy_get_info(PurpleConnection *gc, const char *who)
 {
-	JabberStream *js = purple_connection_get_protocol_data(gc);
+	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	JabberID *jid = jabber_id_new(who);
 
 	if (!jid)
@@ -1602,11 +1605,11 @@ static void jabber_buddy_make_invisible(PurpleBlistNode *node, gpointer data)
 	PurpleConnection *gc;
 	JabberStream *js;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	js = purple_connection_get_protocol_data(gc);
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	jabber_buddy_set_invisibility(js, purple_buddy_get_name(buddy), TRUE);
 }
@@ -1617,11 +1620,11 @@ static void jabber_buddy_make_visible(PurpleBlistNode *node, gpointer data)
 	PurpleConnection *gc;
 	JabberStream *js;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	js = purple_connection_get_protocol_data(gc);
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	jabber_buddy_set_invisibility(js, purple_buddy_get_name(buddy), FALSE);
 }
@@ -1633,11 +1636,11 @@ static void jabber_buddy_cancel_presence_notification(PurpleBlistNode *node,
 	PurpleConnection *gc;
 	JabberStream *js;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	js = purple_connection_get_protocol_data(gc);
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* I wonder if we should prompt the user before doing this */
 	jabber_presence_subscription_set(js, purple_buddy_get_name(buddy), "unsubscribed");
@@ -1649,11 +1652,11 @@ static void jabber_buddy_rerequest_auth(PurpleBlistNode *node, gpointer data)
 	PurpleConnection *gc;
 	JabberStream *js;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	js = purple_connection_get_protocol_data(gc);
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	jabber_presence_subscription_set(js, purple_buddy_get_name(buddy), "subscribe");
 }
@@ -1665,21 +1668,21 @@ static void jabber_buddy_unsubscribe(PurpleBlistNode *node, gpointer data)
 	PurpleConnection *gc;
 	JabberStream *js;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	js = purple_connection_get_protocol_data(gc);
+	js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	jabber_presence_subscription_set(js, purple_buddy_get_name(buddy), "unsubscribe");
 }
 
 static void jabber_buddy_login(PurpleBlistNode *node, gpointer data) {
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if(PURPLE_IS_BUDDY(node)) {
 		/* simply create a directed presence of the current status */
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
 		PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-		JabberStream *js = purple_connection_get_protocol_data(gc);
+		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 		PurpleAccount *account = purple_connection_get_account(gc);
 		PurplePresence *gpresence = purple_account_get_presence(account);
 		PurpleStatus *status = purple_presence_get_active_status(gpresence);
@@ -1701,11 +1704,11 @@ static void jabber_buddy_login(PurpleBlistNode *node, gpointer data) {
 }
 
 static void jabber_buddy_logout(PurpleBlistNode *node, gpointer data) {
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if(PURPLE_IS_BUDDY(node)) {
 		/* simply create a directed unavailable presence */
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
 		PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-		JabberStream *js = purple_connection_get_protocol_data(gc);
+		JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 		xmlnode *presence;
 
 		presence = jabber_presence_create_js(js, JABBER_BUDDY_STATE_UNAVAILABLE, NULL, 0);
@@ -1720,7 +1723,7 @@ static void jabber_buddy_logout(PurpleBlistNode *node, gpointer data) {
 static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 {
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
-	JabberStream *js = purple_connection_get_protocol_data(gc);
+	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	const char *name = purple_buddy_get_name(buddy);
 	JabberBuddy *jb = jabber_buddy_find(js, name, TRUE);
 	GList *jbrs;
@@ -1807,7 +1810,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 GList *
 jabber_blist_node_menu(PurpleBlistNode *node)
 {
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if(PURPLE_IS_BUDDY(node)) {
 		return jabber_buddy_menu((PurpleBuddy *) node);
 	} else {
 		return NULL;
@@ -2248,7 +2251,7 @@ void jabber_user_search(JabberStream *js, const char *directory)
 void jabber_user_search_begin(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	JabberStream *js = purple_connection_get_protocol_data(gc);
+	JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	purple_request_input(gc, _("Enter a User Directory"), _("Enter a User Directory"),
 			_("Select a user directory to search"),

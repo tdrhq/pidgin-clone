@@ -255,7 +255,7 @@ silcpurple_login(PurpleAccount *account)
 	char *realname;
 	int i;
 
-	gc = account->gc;
+	gc = purple_account_get_connection(account);
 	if (!gc)
 		return;
 	gc->proto_data = NULL;
@@ -277,11 +277,11 @@ silcpurple_login(PurpleAccount *account)
 	if (purple_account_get_username(account)) {
 		const char *u = purple_account_get_username(account);
 		char **up = g_strsplit(u, "@", 2);
-		client->username = strdup(up[0]);
+		purple_account_get_username(client) = strdup(up[0]);
 		g_strfreev(up);
 	} else {
-		client->username = silc_get_username();
-		purple_account_set_username(account, client->username);
+		purple_account_get_username(client) = silc_get_username();
+		purple_account_set_username(account, purple_account_get_username(client));
 	}
 	realname = silc_get_real_name();
 	if (purple_account_get_user_info(account)) {
@@ -296,7 +296,7 @@ silcpurple_login(PurpleAccount *account)
 	}
 	client->hostname = silc_net_localhost();
 
-	purple_connection_set_display_name(gc, client->username);
+	purple_connection_set_display_name(gc, purple_account_get_username(client));
 
 	/* Register requested cipher and HMAC */
 	cipher = purple_account_get_string(account, "cipher", SILC_DEFAULT_CIPHER);
@@ -334,7 +334,7 @@ silcpurple_login(PurpleAccount *account)
 	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
 	if (!silc_load_key_pair((char *)purple_account_get_string(account, "public-key", pkd),
 							(char *)purple_account_get_string(account, "private-key", prd),
-				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
+				(purple_connection_get_password(gc) == NULL) ? "" : purple_connection_get_password(gc), &client->pkcs,
 				&client->public_key, &client->private_key)) {
 		g_snprintf(pkd, sizeof(pkd), _("Unable to load SILC key pair: %s"), g_strerror(errno));
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
@@ -347,7 +347,7 @@ silcpurple_login(PurpleAccount *account)
 		return;
 	memset(sg, 0, sizeof(*sg));
 	sg->client = client;
-	sg->gc = gc;
+	purple_account_get_connection(sg) = gc;
 	sg->account = account;
 	gc->proto_data = sg;
 
@@ -759,7 +759,7 @@ silcpurple_attrs(PurplePluginAction *action)
 			    fields,
 			    _("OK"), G_CALLBACK(silcpurple_attrs_cb),
 			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel),
-				gc->account, NULL, NULL, gc);
+				purple_connection_get_account(gc), NULL, NULL, gc);
 }
 
 static void
@@ -922,9 +922,9 @@ silcpurple_create_keypair(PurplePluginAction *action)
 	g_snprintf(pkd2, sizeof(pkd2), "%s" G_DIR_SEPARATOR_S"public_key.pub", silcpurple_silcdir());
 	g_snprintf(prd2, sizeof(prd2), "%s" G_DIR_SEPARATOR_S"private_key.prv", silcpurple_silcdir());
 	g_snprintf(pkd, sizeof(pkd) - 1, "%s",
-		   purple_account_get_string(gc->account, "public-key", pkd2));
+		   purple_account_get_string(purple_connection_get_account(gc), "public-key", pkd2));
 	g_snprintf(prd, sizeof(prd) - 1, "%s",
-		   purple_account_get_string(gc->account, "private-key", prd2));
+		   purple_account_get_string(purple_connection_get_account(gc), "private-key", prd2));
 
 	fields = purple_request_fields_new();
 
@@ -965,7 +965,7 @@ silcpurple_create_keypair(PurplePluginAction *action)
 			    _("Create New SILC Key Pair"), NULL, fields,
 			    _("Generate Key Pair"), G_CALLBACK(silcpurple_create_keypair_cb),
 			    _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel),
-				gc->account, NULL, NULL, gc);
+				purple_connection_get_account(gc), NULL, NULL, gc);
 
 	g_strfreev(u);
 	silc_free(hostname);
@@ -983,7 +983,7 @@ silcpurple_change_passwd(PurpleConnection *gc, const char *old, const char *new)
 {
 	char prd[256];
 	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.pub", silcpurple_silcdir());
-	silc_change_private_key_passphrase(purple_account_get_string(gc->account,
+	silc_change_private_key_passphrase(purple_account_get_string(purple_connection_get_account(gc),
 								   "private-key",
 								   prd), old ? old : "", new ? new : "");
 }
@@ -1263,7 +1263,7 @@ static PurpleCmdRet silcpurple_cmd_chat_part(PurpleConversation *conv,
 
 	if(args && args[0])
 		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[0],
-									gc->account);
+									purple_connection_get_account(gc));
 
 	if (convo != NULL)
 		id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo));
@@ -1301,7 +1301,7 @@ static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), gc->account->username, buf,
+		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), purple_account_get_username(purple_connection_get_account(gc)), buf,
 							 PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 

@@ -93,8 +93,9 @@ static void server_list_create(PurpleAccount *account)
 	const gchar *custom_server;
 
 	gc = purple_account_get_connection(account);
-	g_return_if_fail(gc != NULL  && gc->proto_data != NULL);
-	qd = gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	gpi = purple_proxy_get_setup(account);
 
@@ -139,12 +140,13 @@ static void qq_login(PurpleAccount *account)
 	gc = purple_account_get_connection(account);
 	g_return_if_fail(gc != NULL);
 
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_AUTO_RESP;
+	purple_connection_turn_on_flags(gc,
+		PURPLE_CONNECTION_FLAGS_HTML | PURPLE_CONNECTION_FLAGS_NO_BGCOLOR | PURPLE_CONNECTION_FLAGS_AUTO_RESP);
 
 	qd = g_new0(qq_data, 1);
 	memset(qd, 0, sizeof(qq_data));
 	qd->gc = gc;
-	gc->proto_data = qd;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc), qd);
 
 	presence = purple_account_get_presence(account);
 	if(purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
@@ -208,8 +210,9 @@ static void qq_close(PurpleConnection *gc)
 {
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL  && gc->proto_data);
-	qd = gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	if (qd->check_watcher > 0) {
 		purple_timeout_remove(qd->check_watcher);
@@ -232,7 +235,7 @@ static void qq_close(PurpleConnection *gc)
 	server_list_remove_all(qd);
 
 	g_free(qd);
-	gc->proto_data = NULL;
+	purple_object_set_protocol_data(PURPLE_OBJECT(gc), NULL);
 }
 
 /* returns the icon name for a buddy or protocol */
@@ -248,7 +251,7 @@ static gchar *qq_status_text(PurpleBuddy *b)
 	qq_buddy_data *bd;
 	GString *status;
 
-	bd = purple_buddy_get_protocol_data(b);
+	bd = (qq_buddy_data *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 	if (bd == NULL)
 		return NULL;
 
@@ -291,7 +294,7 @@ static void qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gbo
 
 	g_return_if_fail(b != NULL);
 
-	bd = purple_buddy_get_protocol_data(b);
+	bd = (qq_buddy_data *) purple_object_get_protocol_data(PURPLE_OBJECT(b));
 	if (bd == NULL)
 		return;
 
@@ -384,10 +387,10 @@ static const char *qq_list_emblem(PurpleBuddy *b)
 
 	if (!b || !(account = purple_buddy_get_account(b)) ||
 		!(gc = purple_account_get_connection(account)) ||
-		!(qd = purple_connection_get_protocol_data(gc)))
+		!(qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc))))
 		return NULL;
 
-	buddy = purple_buddy_get_protocol_data(b);
+	buddy = (qq_buddy_data *)purple_object_get_protocol_data(PURPLE_OBJECT(b));
 	if (!buddy) {
 		return "not-authorized";
 	}
@@ -449,7 +452,7 @@ static void qq_show_buddy_info(PurpleConnection *gc, const gchar *who)
 	guint32 uid;
 	qq_data *qd;
 
-	qd = gc->proto_data;
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	uid = purple_name_to_uid(who);
 
 	if (uid <= 0) {
@@ -471,8 +474,9 @@ static void action_update_all_rooms(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	if ( !qd->is_login ) {
 		return;
@@ -488,8 +492,9 @@ static void action_change_icon(PurplePluginAction *action)
 	gchar *icon_name;
 	gchar *icon_path;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	if ( !qd->is_login ) {
 		return;
@@ -513,8 +518,9 @@ static void action_modify_info_base(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_BASE);
 }
 
@@ -523,8 +529,9 @@ static void action_modify_info_ext(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_EXT);
 }
 
@@ -533,8 +540,9 @@ static void action_modify_info_addr(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_ADDR);
 }
 
@@ -543,16 +551,20 @@ static void action_modify_info_contact(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	qq_data *qd;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 	qq_request_buddy_info(gc, qd->uid, 0, QQ_BUDDY_INFO_MODIFY_CONTACT);
 }
 
 static void action_change_password(PurplePluginAction *action)
 {
-	PurpleConnection *gc = (PurpleConnection *) action->context;
+/*	PurpleConnection *gc = (PurpleConnection *) action->context;
+	qq_data *qd;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
+	g_return_if_fail(gc != NULL);
+	qd = (qd_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);*/
 	purple_notify_uri(NULL, "https://password.qq.com");
 }
 
@@ -565,8 +577,9 @@ static void action_show_account_info(PurplePluginAction *action)
 	struct tm *tm_local;
 	int index;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 	info = g_string_new("<html><body>");
 
 	tm_local = localtime(&qd->login_time);
@@ -621,8 +634,9 @@ static void action_about_openq(PurplePluginAction *action)
 	GString *info;
 	gchar *title;
 
-	g_return_if_fail(NULL != gc && NULL != gc->proto_data);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL);
+	qd = (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+	g_return_if_fail(qd != NULL);
 
 	info = g_string_new("<html><body>");
 	g_string_append(info, _("<p><b>Original Author</b>:<br>\n"));
@@ -715,7 +729,7 @@ static void action_chat_quit(PurpleBlistNode * node)
 	gchar *num_str;
 	guint32 room_id;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_IS_CHAT(node));
 
 	g_return_if_fail(components != NULL);
 
@@ -735,7 +749,7 @@ static void action_chat_get_info(PurpleBlistNode * node)
 	gchar *num_str;
 	guint32 room_id;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_IS_CHAT(node));
 
 	g_return_if_fail(components != NULL);
 
@@ -755,12 +769,12 @@ static void _qq_menu_send_file(PurpleBlistNode * node, gpointer ignored)
 	PurpleConnection *gc;
 	qq_buddy_data *bd;
 
-	g_return_if_fail (PURPLE_BLIST_NODE_IS_BUDDY (node));
+	g_return_if_fail (PURPLE_IS_BUDDY (node));
 	buddy = (PurpleBuddy *) node;
-	bd = (qq_buddy_data *) buddy->proto_data;
+	bd = (qq_buddy_data *) purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 	/*	if (is_online (bd->status)) { */
 	gc = purple_account_get_connection (buddy->account);
-	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
+	g_return_if_fail(gc != NULL);
 	qq_send_file(gc, buddy->name, NULL);
 	/*	} */
 }
@@ -815,7 +829,7 @@ static void qq_add_buddy_from_menu_cb(PurpleBlistNode *node, gpointer data)
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *) node;
 	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
@@ -830,7 +844,7 @@ static void qq_modify_buddy_memo_from_menu_cb(PurpleBlistNode *node, gpointer da
 	PurpleConnection *gc;
 	guint32 bd_uid;
 
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_IS_BUDDY(node));
 
 	buddy = (PurpleBuddy *)node;
 	g_return_if_fail(NULL != buddy);
@@ -852,7 +866,7 @@ static GList *qq_buddy_menu(PurpleBuddy *buddy)
 {
 	GList *m = NULL;
 	PurpleMenuAction *act;
-	qq_buddy_data *bd = purple_buddy_get_protocol_data(buddy);
+	qq_buddy_data *bd = (qq_buddy_data *)purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 
 	if (bd == NULL) {
 		act = purple_menu_action_new(_("Add Buddy"),
@@ -897,10 +911,10 @@ static GList *qq_chat_menu(PurpleBlistNode *node)
 /* buddy-related menu shown up with right-click */
 static GList *qq_blist_node_menu(PurpleBlistNode * node)
 {
-	if(PURPLE_BLIST_NODE_IS_CHAT(node))
+	if(PURPLE_IS_CHAT(node))
 		return qq_chat_menu(node);
 
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if(PURPLE_IS_BUDDY(node))
 		return qq_buddy_menu((PurpleBuddy *) node);
 
 	return NULL;
@@ -942,7 +956,7 @@ static void qq_get_chat_buddy_info(PurpleConnection *gc, gint channel, const gch
 		return;
 	}
 
-	qd = gc->proto_data;
+	qd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	uid = purple_name_to_uid(uid_str);
 	g_free(uid_str);
 

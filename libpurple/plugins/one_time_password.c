@@ -24,6 +24,7 @@
 #include "version.h"
 #include "account.h"
 #include "accountopt.h"
+#include "gsignal.h"
 
 #define PLUGIN_ID "core-one_time_password"
 #define PREF_NAME PLUGIN_ID "_enabled"
@@ -72,8 +73,8 @@ plugin_load(PurplePlugin *plugin)
 	}
 
 	/* Register callback. */
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-			      plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
+	purple_g_signal_connect(PURPLE_TYPE_CONNECTION, "signed-on",
+							G_CALLBACK(signed_on_cb), NULL);
 
 	return TRUE;
 }

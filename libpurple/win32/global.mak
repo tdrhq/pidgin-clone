@@ -101,6 +101,7 @@ DLL_LD_FLAGS += -Wl,--enable-auto-image-base
 ifeq "$(origin CC)" "default"
   CC := gcc.exe
 endif
+GLIB_GENMARSHAL ?= $(GTK_BIN)/glib-genmarshal
 GMSGFMT ?= $(GTK_BIN)/msgfmt
 MAKENSIS ?= makensis.exe
 MAKENSISOPT ?= /

@@ -30,7 +30,7 @@ static MsnTable *cbs_table;
 static void
 blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	PurpleConnection *gc = cmdproc->session->account->gc;
+	PurpleConnection *gc = purple_account_get_connection(cmdproc->session->account);
 	const char *list_name;
 
 	list_name = cmd->params[0];
@@ -43,7 +43,7 @@ blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		 *
 		 * In other words, deny some.
 		 */
-		gc->account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
+		purple_connection_get_account(gc)->perm_deny = PURPLE_PRIVACY_DENY_USERS;
 	}
 	else
 	{
@@ -52,7 +52,7 @@ blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		 *
 		 * In other words, permit some.
 		 */
-		gc->account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
+		purple_connection_get_account(gc)->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
 	}
 }
 

@@ -27,13 +27,24 @@
 #ifndef _PURPLE_ACCOUNT_H_
 #define _PURPLE_ACCOUNT_H_
 
-#include <glib.h>
-#include <glib-object.h>
+#include "pobject.h"
+
+#define PURPLE_TYPE_ACCOUNT				(purple_account_get_gtype())
+#define PURPLE_ACCOUNT(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), PURPLE_TYPE_ACCOUNT, PurpleAccount))
+#define PURPLE_ACCOUNT_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), PURPLE_TYPE_ACCOUNT, PurpleAccountClass))
+#define PURPLE_IS_ACCOUNT(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), PURPLE_TYPE_ACCOUNT))
+#define PURPLE_IS_ACCOUNT_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), PURPLE_TYPE_ACCOUNT))
+#define PURPLE_ACCOUNT_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), PURPLE_TYPE_ACCOUNT, PurpleAccountClass))
+
+GType purple_account_get_gtype(void);
+
+typedef struct _PurpleAccount			PurpleAccount;
+typedef struct _PurpleAccountPrivate		PurpleAccountPrivate;
+typedef struct _PurpleAccountClass		PurpleAccountClass;
 
 /** @copydoc _PurpleAccountUiOps */
 typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
 /** @copydoc _PurpleAccount */
-typedef struct _PurpleAccount      PurpleAccount;
 
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
 typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
@@ -46,6 +57,7 @@ typedef void (*PurpleAccountUnregistrationCb)(PurpleAccount *account, gboolean s
 #include "proxy.h"
 #include "prpl.h"
 #include "status.h"
+#include "xmlnode.h"
 
 /**
  * Account request types.
@@ -111,26 +123,9 @@ struct _PurpleAccountUiOps
  */
 struct _PurpleAccount
 {
-	char *username;             /**< The username.                          */
-	char *alias;                /**< How you appear to yourself.            */
-	char *password;             /**< The account password.                  */
-	char *user_info;            /**< User information.                      */
+	PurpleObject parent;
 
-	char *buddy_icon_path;      /**< The buddy icon's non-cached path.      */
-
-	gboolean remember_pass;     /**< Remember the password.                 */
-
-	char *protocol_id;          /**< The ID of the protocol.                */
-
-	PurpleConnection *gc;         /**< The connection handle.                 */
-	gboolean disconnecting;     /**< The account is currently disconnecting */
-
-	GHashTable *settings;       /**< Protocol-specific settings.            */
-	GHashTable *ui_settings;    /**< UI-specific settings.                  */
-
-	PurpleProxyInfo *proxy_info;  /**< Proxy information.  This will be set   */
-								/*   to NULL when the account inherits      */
-								/*   proxy settings from global prefs.      */
+	PurpleAccountPrivate *priv;
 
 	/*
 	 * TODO: Supplementing the next two linked lists with hash tables
@@ -144,16 +139,17 @@ struct _PurpleAccount
 	GSList *deny;               /**< Deny list.                             */
 	PurplePrivacyType perm_deny;  /**< The permit/deny setting.               */
 
-	GList *status_types;        /**< Status types.                          */
-
-	PurplePresence *presence;     /**< Presence.                              */
-	PurpleLog *system_log;        /**< The system log                         */
-
-	void *ui_data;              /**< The UI can put data here.              */
+#if 0
+	/* XXX: Someone needs to explain (again?) why these are necessary */
 	PurpleAccountRegistrationCb registration_cb;
 	void *registration_cb_user_data;
+#endif
+};
 
-	gpointer priv;              /**< Pointer to opaque private data. */
+struct _PurpleAccountClass
+{
+	PurpleObjectClass parent;
+	void (*_purple_reserved[4])(void);
 };
 
 #ifdef __cplusplus
@@ -189,6 +185,7 @@ void purple_account_destroy(PurpleAccount *account);
  */
 void purple_account_connect(PurpleAccount *account);
 
+#if 0
 /**
  * Sets the callback for successful registration.
  *
@@ -197,6 +194,7 @@ void purple_account_connect(PurpleAccount *account);
  * @param user_data	The user data passed to the callback
  */
 void purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegistrationCb cb, void *user_data);
+#endif
 
 /**
  * Registers an account.
@@ -362,15 +360,6 @@ void purple_account_set_user_info(PurpleAccount *account, const char *user_info)
 void purple_account_set_buddy_icon_path(PurpleAccount *account, const char *path);
 
 /**
- * Sets the account's protocol ID.
- *
- * @param account     The account.
- * @param protocol_id The protocol ID.
- */
-void purple_account_set_protocol_id(PurpleAccount *account,
-								  const char *protocol_id);
-
-/**
  * Sets the account's connection.
  *
  * @param account The account.
@@ -399,11 +388,9 @@ void purple_account_set_check_mail(PurpleAccount *account, gboolean value);
  * UI.
  *
  * @param account The account.
- * @param ui      The UI.
  * @param value   @c TRUE if it is enabled.
  */
-void purple_account_set_enabled(PurpleAccount *account, const char *ui,
-			      gboolean value);
+void purple_account_set_enabled(PurpleAccount *account, gboolean value);
 
 /**
  * Sets the account's proxy information.
@@ -558,6 +545,15 @@ gboolean purple_account_is_connecting(const PurpleAccount *account);
 gboolean purple_account_is_disconnected(const PurpleAccount *account);
 
 /**
+ * Returns whether or not the account is disconnecting.
+ *
+ * @param account The account.
+ *
+ * @return @c TRUE if disconnecting, or @c FALSE otherwise.
+ */
+gboolean purple_account_is_disconnecting(const PurpleAccount *account);
+
+/**
  * Returns the account's username.
  *
  * @param account The account.
@@ -656,8 +652,7 @@ gboolean purple_account_get_check_mail(const PurpleAccount *account);
  *
  * @return @c TRUE if it enabled on this UI.
  */
-gboolean purple_account_get_enabled(const PurpleAccount *account,
-				  const char *ui);
+gboolean purple_account_get_enabled(const PurpleAccount *account);
 
 /**
  * Returns the account's proxy information.
@@ -932,6 +927,15 @@ const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount 
  * @param account The account whose error state should be cleared.
  */
 void purple_account_clear_current_error(PurpleAccount *account);
+
+/**
+ * Get an XML description of an account.
+ *
+ * @param account  The account
+ *
+ * @return  The XML description of the account.
+ */
+xmlnode * purple_account_to_xmlnode(PurpleAccount *account);
 
 /*@}*/
 

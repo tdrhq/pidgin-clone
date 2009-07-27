@@ -552,8 +552,11 @@ wpurple_get_connected_network_count(void)
 static gboolean wpurple_network_change_thread_cb(gpointer data)
 {
 	gint new_count;
+#if 0
 	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();
-
+#else
+	PurpleConnectionUiOps *ui_ops = NULL;
+#endif
 	new_count = wpurple_get_connected_network_count();
 
 	if (new_count < 0)
@@ -740,7 +743,11 @@ static void
 nm_update_state(NMState state)
 {
 	NMState prev = nm_state;
+#if 0
 	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();
+#else
+	PurpleConnectionUiOps *ui_ops = NULL;
+#endif
 
 	have_nm_state = TRUE;
 	nm_state = state;

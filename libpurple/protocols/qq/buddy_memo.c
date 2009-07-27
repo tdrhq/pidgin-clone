@@ -114,17 +114,17 @@ static void update_buddy_memo(PurpleConnection *gc, guint32 bd_uid, gchar *alias
 	gchar *who;
 	g_return_if_fail(NULL != gc && NULL != alias);
 
-	account = (PurpleAccount *)gc->account;
+	account = purple_connection_get_account(gc);
 	g_return_if_fail(NULL != account);
 
 	who = uid_to_purple_name(bd_uid);
 	buddy = purple_find_buddy(account, who);
-	if (buddy == NULL || buddy->proto_data == NULL) {
+	if (buddy == NULL || purple_buddy_get_protocol_data(buddy) == NULL) {
 		g_free(who);
 		purple_debug_info("QQ", "Error...Can NOT find %d!\n", bd_uid);
 		return;
 	}
-	purple_blist_alias_buddy(buddy, (const char*)alias);
+	purple_buddy_set_alias(buddy, (const char*)alias);
 }
 
 static void request_change_memo(PurpleConnection *gc, guint32 bd_uid, gchar **segments)

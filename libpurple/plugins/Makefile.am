@@ -26,7 +26,6 @@ plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 autoaccept_la_LDFLAGS       = -module -avoid-version
 buddynote_la_LDFLAGS        = -module -avoid-version
-ciphertest_la_LDFLAGS		= -module -avoid-version
 codeinline_la_LDFLAGS		= -module -avoid-version
 debug_example_la_LDFLAGS    = -module -avoid-version
 helloworld_la_LDFLAGS       = -module -avoid-version
@@ -61,7 +60,6 @@ plugin_LTLIBRARIES = \
 	$(DBUS_LTLIB)
 
 noinst_LTLIBRARIES = \
-	ciphertest.la \
 	codeinline.la \
 	debug_example.la \
 	helloworld.la \
@@ -73,7 +71,6 @@ noinst_LTLIBRARIES = \
 
 autoaccept_la_SOURCES       = autoaccept.c
 buddynote_la_SOURCES        = buddynote.c
-ciphertest_la_SOURCES		= ciphertest.c
 codeinline_la_SOURCES		= codeinline.c
 debug_example_la_SOURCES = debug_example.c
 helloworld_la_SOURCES       = helloworld.c
@@ -92,7 +89,6 @@ statenotify_la_SOURCES      = statenotify.c
 
 autoaccept_la_LIBADD        = $(GLIB_LIBS)
 buddynote_la_LIBADD         = $(GLIB_LIBS)
-ciphertest_la_LIBADD		= $(GLIB_LIBS)
 codeinline_la_LIBADD		= $(GLIB_LIBS)
 idle_la_LIBADD              = $(GLIB_LIBS)
 joinpart_la_LIBADD          = $(GLIB_LIBS)

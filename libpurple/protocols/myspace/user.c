@@ -52,14 +52,15 @@ msim_get_user_from_buddy(PurpleBuddy *buddy, gboolean create)
 		return NULL;
 	}
 
-	user = purple_buddy_get_protocol_data(buddy);
+	user = purple_object_get_protocol_data(PURPLE_OBJECT(buddy));
 	if (create && !user) {
 		/* No MsimUser for this buddy; make one. */
 
 		user = g_new0(MsimUser, 1);
 		user->buddy = buddy;
 		user->id = purple_blist_node_get_int(&buddy->node, "UserID");
-		purple_buddy_set_protocol_data(buddy, user);
+		user->id = purple_blist_node_get_int((PurpleBlistNode*)buddy, "UserID");
+		purple_object_set_protocol_data(PURPLE_OBJECT(buddy),(gpointer)user);
 	}
 
 	return user;
@@ -756,7 +757,7 @@ static void msim_set_username_confirmed_cb(PurpleConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -853,7 +854,7 @@ static void msim_check_username_availability_cb(PurpleConnection *gc, const char
 
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)gc->proto_data;
+	session = (MsimSession *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
