@@ -30,6 +30,9 @@
 #include "conversation.h"
 #include "prpl.h"
 
+#include "group.h"
+#include "buddy.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

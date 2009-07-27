@@ -112,8 +112,8 @@ static qq_transaction *trans_create(PurpleConnection *gc, gint fd,
 	qq_data *qd;
 	qq_transaction *trans;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, NULL);
 
 	trans = g_new0(qq_transaction, 1);
 
@@ -138,10 +138,10 @@ static qq_transaction *trans_create(PurpleConnection *gc, gint fd,
 /* Remove a packet with seq from send trans */
 static void trans_remove(PurpleConnection *gc, qq_transaction *trans)
 {
-	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_data *qd;
 
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_if_fail(gc != NULL && qd != NULL);
 
 	g_return_if_fail(trans != NULL);
 #if 0
@@ -163,8 +163,8 @@ static qq_transaction *trans_find(PurpleConnection *gc, guint16 cmd, guint16 seq
 	GList *list;
 	qq_transaction *trans;
 
-	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, NULL);
-	qd = (qq_data *) gc->proto_data;
+	qd = gc ? (qq_data *) purple_object_get_protocol_data(PURPLE_OBJECT(gc)) : NULL;
+	g_return_val_if_fail(gc != NULL && qd != NULL, NULL);
 
 	list = qd->transactions;
 	while (list != NULL) {
@@ -181,7 +181,7 @@ static qq_transaction *trans_find(PurpleConnection *gc, guint16 cmd, guint16 seq
 void qq_trans_add_client_cmd(PurpleConnection *gc,
 	guint16 cmd, guint16 seq, guint8 *data, gint data_len, guint32 update_class, guint32 ship32)
 {
-	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_data *qd = (qq_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_transaction *trans = trans_create(gc, qd->fd, cmd, seq, data, data_len, update_class, ship32);
 
 	if (cmd == QQ_CMD_TOKEN || cmd == QQ_CMD_LOGIN || cmd == QQ_CMD_KEEP_ALIVE) {
@@ -221,7 +221,7 @@ void qq_trans_add_room_cmd(PurpleConnection *gc,
 		guint16 seq, guint8 room_cmd, guint32 room_id, guint8 *data, gint data_len,
 		guint32 update_class, guint32 ship32)
 {
-	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_data *qd = (qq_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_transaction *trans = trans_create(gc, qd->fd, QQ_CMD_ROOM, seq, data, data_len,
 			update_class, ship32);
 
@@ -238,7 +238,7 @@ void qq_trans_add_room_cmd(PurpleConnection *gc,
 void qq_trans_add_server_cmd(PurpleConnection *gc, guint16 cmd, guint16 seq,
 		guint8 *rcved, gint rcved_len)
 {
-	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_data *qd = (qq_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_transaction *trans = trans_create(gc, qd->fd, cmd, seq, rcved, rcved_len, QQ_CMD_CLASS_NONE, 0);
 
 	trans->flag = QQ_TRANS_IS_SERVER;
@@ -275,7 +275,7 @@ void qq_trans_add_server_reply(PurpleConnection *gc, guint16 cmd, guint16 seq,
 void qq_trans_add_remain(PurpleConnection *gc, guint16 cmd, guint16 seq,
 		guint8 *data, gint data_len)
 {
-	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_data *qd = (qq_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_transaction *trans = trans_create(gc, qd->fd, cmd, seq, data, data_len, QQ_CMD_CLASS_NONE, 0);
 
 	trans->flag = QQ_TRANS_IS_SERVER;
@@ -291,7 +291,7 @@ void qq_trans_add_remain(PurpleConnection *gc, guint16 cmd, guint16 seq,
 
 void qq_trans_process_remained(PurpleConnection *gc)
 {
-	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_data *qd = (qq_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GList *curr;
 	GList *next;
 	qq_transaction *trans;
@@ -328,7 +328,7 @@ void qq_trans_process_remained(PurpleConnection *gc)
 
 gboolean qq_trans_scan(PurpleConnection *gc)
 {
-	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_data *qd = (qq_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	GList *curr;
 	GList *next;
 	qq_transaction *trans;
@@ -396,7 +396,7 @@ gboolean qq_trans_scan(PurpleConnection *gc)
 /* clean up send trans and free all contents */
 void qq_trans_remove_all(PurpleConnection *gc)
 {
-	qq_data *qd = (qq_data *)gc->proto_data;
+	qq_data *qd = (qq_data *)purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	qq_transaction *trans;
 	gint count = 0;
 

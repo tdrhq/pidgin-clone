@@ -124,7 +124,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 	g_return_if_fail(r != NULL);
 
 	pb = purple_find_buddy(account, name);
-	bb = (pb != NULL) ? purple_buddy_get_protocol_data(pb) : NULL;
+	bb = (pb != NULL) ? purple_object_get_protocol_data(PURPLE_OBJECT(pb)) : NULL;
 
 	switch (event) {
 		case AVAHI_RESOLVER_FAILURE:
@@ -239,7 +239,7 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			/* A new peer has joined the network and uses iChat bonjour */
 			purple_debug_info("bonjour", "_browser_callback - new service\n");
 			/* Make sure it isn't us */
-			if (purple_utf8_strcasecmp(name, account->username) != 0) {
+			if (purple_utf8_strcasecmp(name, purple_account_get_username(account)) != 0) {
 				if (!avahi_service_resolver_new(avahi_service_browser_get_client(b),
 						interface, protocol, name, type, domain, AVAHI_PROTO_INET,
 						0, _resolver_callback, account)) {
@@ -252,7 +252,7 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			purple_debug_info("bonjour", "_browser_callback - Remove service\n");
 			pb = purple_find_buddy(account, name);
 			if (pb != NULL) {
-				BonjourBuddy *bb = purple_buddy_get_protocol_data(pb);
+				BonjourBuddy *bb = purple_object_get_protocol_data(PURPLE_OBJECT(pb));
 				AvahiBuddyImplData *b_impl;
 				GSList *l;
 				AvahiSvcResolverData *rd_search;
@@ -600,7 +600,7 @@ void _mdns_delete_buddy(BonjourBuddy *buddy) {
 
 void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 	PurpleConnection *conn = purple_account_get_connection(buddy->account);
-	BonjourData *bd = conn->proto_data;
+	BonjourData *bd = purple_object_get_protocol_data(PURPLE_OBJECT(conn));
 	AvahiSessionImplData *session_idata = bd->dns_sd_data->mdns_impl_data;
 	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
 	gchar *name;

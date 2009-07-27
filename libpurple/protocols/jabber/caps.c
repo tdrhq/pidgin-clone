@@ -20,10 +20,12 @@
  */
 
 #include "internal.h"
+#include "cipher.h"
+#include "md5cipher.h"
+#include "sha1cipher.h"
 
 #include "debug.h"
 #include "caps.h"
-#include "cipher.h"
 #include "iq.h"
 #include "presence.h"
 #include "util.h"
@@ -457,9 +459,9 @@ jabber_caps_client_iqcb(JabberStream *js, const char *from, JabberIqType type,
 	if (userdata->hash) {
 		gchar *hash = NULL;
 		if (!strcmp(userdata->hash, "sha-1")) {
-			hash = jabber_caps_calculate_hash(info, "sha1");
+			hash = jabber_caps_calculate_hash(info, PURPLE_CIPHER(purple_sha1_cipher_new()));
 		} else if (!strcmp(userdata->hash, "md5")) {
-			hash = jabber_caps_calculate_hash(info, "md5");
+			hash = jabber_caps_calculate_hash(info, PURPLE_CIPHER(purple_md5_cipher_new()));
 		}
 
 		if (!hash || strcmp(hash, userdata->ver)) {
@@ -847,16 +849,15 @@ jabber_caps_verification_append(GString *verification, const gchar *str)
 	return g_string_append_c(verification, '<');
 }
 
-gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
+gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, PurpleCipher *hasher)
 {
 	GList *node;
 	GString *verification;
-	PurpleCipherContext *context;
 	guint8 checksum[20];
 	gsize checksum_size = 20;
 	gboolean success;
 
-	if (!info || !(context = purple_cipher_context_new_by_name(hash, NULL)))
+	if (!info)
 		return NULL;
 
 	/* sort identities, features and x-data forms */
@@ -925,13 +926,13 @@ gchar *jabber_caps_calculate_hash(JabberCapsClientInfo *info, const char *hash)
 	}
 
 	/* generate hash */
-	purple_cipher_context_append(context, (guchar*)verification->str, verification->len);
+	purple_cipher_append(hasher, (guchar*)verification->str, verification->len);
 
-	success = purple_cipher_context_digest(context, verification->len,
-	                                       checksum, &checksum_size);
+	success = purple_cipher_digest(hasher, verification->len,
+	                               checksum, &checksum_size);
 
 	g_string_free(verification, TRUE);
-	purple_cipher_context_destroy(context);
+	g_object_unref(hasher);
 
 	return (success ? purple_base64_encode(checksum, checksum_size) : NULL);
 }
@@ -964,7 +965,7 @@ void jabber_caps_calculate_own_hash(JabberStream *js) {
 	info.forms = NULL;
 
 	g_free(js->caps_hash);
-	js->caps_hash = jabber_caps_calculate_hash(&info, "sha1");
+	js->caps_hash = jabber_caps_calculate_hash(&info, purple_sha1_cipher_new());
 	g_list_free(info.identities);
 	g_list_free(features);
 }
@@ -986,7 +987,8 @@ void jabber_caps_broadcast_change()
 		const char *prpl_id = purple_account_get_protocol_id(account);
 		if (!strcmp("prpl-jabber", prpl_id) && purple_account_is_connected(account)) {
 			PurpleConnection *gc = purple_account_get_connection(account);
-			jabber_presence_send(gc->proto_data, TRUE);
+			JabberStream *js = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
+			jabber_presence_send(js, TRUE);
 		}
 	}
 

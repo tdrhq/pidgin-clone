@@ -161,7 +161,7 @@ static void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *f
 		*/
 
 		wb = purple_whiteboard_create(account, from, DOODLE_STATE_REQUESTED);
-		ds = wb->proto_data;
+		ds = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 		ds->imv_key = g_strdup(imv_key);
 
 		yahoo_doodle_command_send_ready(gc, from, imv_key);
@@ -191,7 +191,7 @@ static void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *fro
 
 	if(wb->state == DOODLE_STATE_REQUESTING)
 	{
-		doodle_session *ds = wb->proto_data;
+		doodle_session *ds = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 		purple_whiteboard_start(wb);
 
 		wb->state = DOODLE_STATE_ESTABLISHED;
@@ -389,12 +389,12 @@ static void yahoo_doodle_command_send_generic(const char *type,
 
 	purple_debug_info("yahoo", "doodle: Sent %s (%s)\n", type, to);
 
-	yd = gc->proto_data;
+	yd = purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 
 	/* Make and send an acknowledge (ready) Doodle packet */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, yd->session_id);
 	yahoo_packet_hash_str(pkt, 49,  "IMVIRONMENT");
-	yahoo_packet_hash_str(pkt, 1,    purple_account_get_username(gc->account));
+	yahoo_packet_hash_str(pkt, 1,    purple_account_get_username(purple_connection_get_account(gc)));
 	yahoo_packet_hash_str(pkt, 14,   message);
 	yahoo_packet_hash_int(pkt, 13,   command);
 	yahoo_packet_hash_str(pkt, 5,    to);
@@ -450,13 +450,13 @@ void yahoo_doodle_start(PurpleWhiteboard *wb)
 	ds->brush_size  = DOODLE_BRUSH_SMALL;
 	ds->brush_color = DOODLE_COLOR_RED;
 
-	wb->proto_data = ds;
+	purple_object_set_protocol_data(PURPLE_OBJECT(wb),ds);
 }
 
 void yahoo_doodle_end(PurpleWhiteboard *wb)
 {
 	PurpleConnection *gc = purple_account_get_connection(wb->account);
-	doodle_session *ds = wb->proto_data;
+	doodle_session *ds = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 
 	/* g_debug_debug("yahoo", "doodle: yahoo_doodle_end()\n"); */
 
@@ -464,7 +464,7 @@ void yahoo_doodle_end(PurpleWhiteboard *wb)
 		yahoo_doodle_command_send_shutdown(gc, wb->who);
 
 	g_free(ds->imv_key);
-	g_free(wb->proto_data);
+	g_free(purple_object_get_protocol_data(PURPLE_OBJECT(wb)));
 }
 
 void yahoo_doodle_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height)
@@ -494,20 +494,20 @@ static char *yahoo_doodle_build_draw_string(doodle_session *ds, GList *draw_list
 
 void yahoo_doodle_send_draw_list(PurpleWhiteboard *wb, GList *draw_list)
 {
-	doodle_session *ds = wb->proto_data;
+	doodle_session *ds = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	char *message;
 
 	g_return_if_fail(draw_list != NULL);
 
 	message = yahoo_doodle_build_draw_string(ds, draw_list);
-	yahoo_doodle_command_send_draw(wb->account->gc, wb->who, message, ds->imv_key);
+	yahoo_doodle_command_send_draw(purple_account_get_connection(wb->account), wb->who, message, ds->imv_key);
 	g_free(message);
 }
 
 void yahoo_doodle_clear(PurpleWhiteboard *wb)
 {
-	doodle_session *ds = wb->proto_data;
-	yahoo_doodle_command_send_clear(wb->account->gc, wb->who, ds->imv_key);
+	doodle_session *ds = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
+	yahoo_doodle_command_send_clear(purple_account_get_connection(wb->account), wb->who, ds->imv_key);
 }
 
 
@@ -560,14 +560,14 @@ void yahoo_doodle_draw_stroke(PurpleWhiteboard *wb, GList *draw_list)
 
 void yahoo_doodle_get_brush(const PurpleWhiteboard *wb, int *size, int *color)
 {
-	doodle_session *ds = wb->proto_data;
+	doodle_session *ds = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	*size = ds->brush_size;
 	*color = ds->brush_color;
 }
 
 void yahoo_doodle_set_brush(PurpleWhiteboard *wb, int size, int color)
 {
-	doodle_session *ds = wb->proto_data;
+	doodle_session *ds = purple_object_get_protocol_data(PURPLE_OBJECT(wb));
 	ds->brush_size = size;
 	ds->brush_color = color;
 

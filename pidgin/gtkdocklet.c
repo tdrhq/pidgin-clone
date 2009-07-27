@@ -190,7 +190,7 @@ docklet_update_status(void)
 		PurpleAccount *account = (PurpleAccount*)l->data;
 		PurpleStatus *account_status;
 
-		if (!purple_account_get_enabled(account, PIDGIN_UI))
+		if (!purple_account_get_enabled(account))
 			continue;
 
 		if (purple_account_is_disconnected(account))
@@ -229,7 +229,7 @@ online_account_supports_chat(void)
 
 	while(c != NULL) {
 		PurpleConnection *gc = c->data;
-		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 		if (prpl_info != NULL && prpl_info->chat_info != NULL)
 			return TRUE;
 		c = c->next;
@@ -266,7 +266,7 @@ static void
 docklet_signed_on_cb(PurpleConnection *gc)
 {
 	if (!enable_join_chat) {
-		if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
+		if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->chat_info != NULL)
 			enable_join_chat = TRUE;
 	}
 	docklet_update_status();
@@ -276,7 +276,7 @@ static void
 docklet_signed_off_cb(PurpleConnection *gc)
 {
 	if (enable_join_chat) {
-		if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
+		if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->chat_info != NULL)
 			enable_join_chat = online_account_supports_chat();
 	}
 	docklet_update_status();
@@ -833,7 +833,7 @@ pidgin_docklet_get_handle()
 void
 pidgin_docklet_init()
 {
-	void *conn_handle = purple_connections_get_handle();
+	void *conn_handle = NULL;
 	void *conv_handle = purple_conversations_get_handle();
 	void *accounts_handle = purple_accounts_get_handle();
 	void *status_handle = purple_savedstatuses_get_handle();

@@ -128,6 +128,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	int val = -EINVAL;
 	const gchar *auto_reply_pref = NULL;
+	PurpleConnectionFlags cflags;
 
 	g_return_val_if_fail(gc != NULL, val);
 
@@ -150,7 +151,8 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	 * this only reset lar->sent if we're away AND idle?
 	 */
 	auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
-	if((gc->flags & PURPLE_CONNECTION_AUTO_RESP) &&
+	cflags = purple_connection_get_flags(gc);
+	if((cflags & PURPLE_CONNECTION_FLAGS_AUTO_RESP) &&
 			!purple_presence_is_available(presence) &&
 			!purple_strequal(auto_reply_pref, "never")) {
 
@@ -298,7 +300,7 @@ purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char 
 		if (purple_strequal(balias, alias))
 			continue;
 
-		purple_blist_alias_buddy(b, alias);
+		purple_buddy_set_alias(b, alias);
 	}
 }
 
@@ -605,7 +607,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	 * We should update the conversation window buttons and menu,
 	 * if it exists.
 	 */
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, gc->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, purple_connection_get_account(gc));
 
 	/*
 	 * Make copies of the message and the sender in case plugins want
@@ -616,7 +618,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	plugin_return = GPOINTER_TO_INT(
 		purple_signal_emit_return_1(purple_conversations_get_handle(),
-								  "receiving-im-msg", gc->account,
+								  "receiving-im-msg", purple_connection_get_account(gc),
 								  &angel, &buffy, conv, &flags));
 
 	if (!buffy || !angel || plugin_return) {
@@ -628,12 +630,12 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	name = angel;
 	message = buffy;
 
-	purple_signal_emit(purple_conversations_get_handle(), "received-im-msg", gc->account,
+	purple_signal_emit(purple_conversations_get_handle(), "received-im-msg", purple_connection_get_account(gc),
 					 name, message, conv, flags);
 
 	/* search for conversation again in case it was created by received-im-msg handler */
 	if (conv == NULL)
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, purple_connection_get_account(gc));
 
 	if (conv == NULL)
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
@@ -650,7 +652,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	 *  - or we're not idle and the 'only auto respond if idle' pref
 	 *    is set
 	 */
-	if (gc->flags & PURPLE_CONNECTION_AUTO_RESP)
+	if (purple_connection_get_flags(gc) & PURPLE_CONNECTION_FLAGS_AUTO_RESP)
 	{
 		PurplePresence *presence;
 		PurpleStatus *status;
@@ -677,8 +679,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 			return;
 		}
 
-		away_msg = purple_value_get_string(
-			purple_status_get_attr_value(status, "message"));
+		away_msg = purple_status_get_attr_string(status, "message");
 
 		if ((away_msg != NULL) && (*away_msg != '\0')) {
 			struct last_auto_response *lar;
@@ -723,7 +724,7 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 	PurpleConversation *conv;
 	PurpleConvIm *im = NULL;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, purple_connection_get_account(gc));
 	if (conv != NULL) {
 		im = PURPLE_CONV_IM(conv);
 
@@ -733,15 +734,15 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		{
 			case PURPLE_TYPING:
 				purple_signal_emit(purple_conversations_get_handle(),
-								   "buddy-typing", gc->account, name);
+								   "buddy-typing", purple_connection_get_account(gc), name);
 				break;
 			case PURPLE_TYPED:
 				purple_signal_emit(purple_conversations_get_handle(),
-								   "buddy-typed", gc->account, name);
+								   "buddy-typed", purple_connection_get_account(gc), name);
 				break;
 			case PURPLE_NOT_TYPING:
 				purple_signal_emit(purple_conversations_get_handle(),
-								   "buddy-typing-stopped", gc->account, name);
+								   "buddy-typing-stopped", purple_connection_get_account(gc), name);
 				break;
 		}
 	}
@@ -755,7 +756,7 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 	PurpleConversation *conv;
 	PurpleConvIm *im;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, purple_connection_get_account(gc));
 	if (conv != NULL)
 	{
 		im = PURPLE_CONV_IM(conv);
@@ -769,7 +770,7 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 	else
 	{
 		purple_signal_emit(purple_conversations_get_handle(),
-						 "buddy-typing-stopped", gc->account, name);
+						 "buddy-typing-stopped", purple_connection_get_account(gc), name);
 	}
 }
 
@@ -870,8 +871,10 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 
 	chat = PURPLE_CONV_CHAT(conv);
 
+#if 0
 	if (!g_slist_find(gc->buddy_chats, conv))
 		gc->buddy_chats = g_slist_append(gc->buddy_chats, conv);
+#endif
 
 	purple_conv_chat_set_id(chat, id);
 
@@ -882,8 +885,9 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 
 void serv_got_chat_left(PurpleConnection *g, int id)
 {
-	GSList *bcs;
 	PurpleConversation *conv = NULL;
+#if 0
+	GSList *bcs;
 	PurpleConvChat *chat = NULL;
 
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
@@ -904,6 +908,7 @@ void serv_got_chat_left(PurpleConnection *g, int id)
 			   purple_conversation_get_name(conv));
 
 	g->buddy_chats = g_slist_remove(g->buddy_chats, conv);
+#endif
 
 	purple_conv_chat_left(PURPLE_CONV_CHAT(conv));
 
@@ -919,15 +924,19 @@ void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data)
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime)
 {
+#if 0
 	GSList *bcs;
+#endif
 	PurpleConversation *conv = NULL;
 	PurpleConvChat *chat = NULL;
 	char *buffy, *angel;
 	int plugin_return;
+	PurpleAccount *account;
 
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(message != NULL);
 
+#if 0
 	for (bcs = g->buddy_chats; bcs != NULL; bcs = bcs->next) {
 		conv = (PurpleConversation *)bcs->data;
 
@@ -941,6 +950,7 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 	if (!conv)
 		return;
+#endif
 
 	/* Did I send the message? */
 	if (purple_strequal(purple_conv_chat_get_nick(chat),
@@ -958,9 +968,10 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	buffy = g_strdup(message);
 	angel = g_strdup(who);
 
+	account = purple_connection_get_account(g);
 	plugin_return = GPOINTER_TO_INT(
 		purple_signal_emit_return_1(purple_conversations_get_handle(),
-								  "receiving-chat-msg", g->account,
+								  "receiving-chat-msg", account,
 								  &angel, &buffy, conv, &flags));
 
 	if (!buffy || !angel || plugin_return) {
@@ -972,7 +983,7 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 	who = angel;
 	message = buffy;
 
-	purple_signal_emit(purple_conversations_get_handle(), "received-chat-msg", g->account,
+	purple_signal_emit(purple_conversations_get_handle(), "received-chat-msg", account,
 					 who, message, conv, flags);
 
 	purple_conv_chat_write(chat, who, message, flags, mtime);

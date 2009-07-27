@@ -58,7 +58,9 @@ void gnt_ui_init()
 
 	/* Connections */
 	finch_connections_init();
+#if 0
 	purple_connections_set_ui_ops(finch_connections_get_ui_ops());
+#endif
 
 	/* Initialize the buddy list */
 	finch_blist_init();
@@ -116,7 +118,9 @@ void gnt_ui_uninit()
 	purple_accounts_set_ui_ops(NULL);
 	finch_accounts_uninit();
 
+#if 0
 	purple_connections_set_ui_ops(NULL);
+#endif
 	finch_connections_uninit();
 
 	purple_blist_set_ui_ops(NULL);

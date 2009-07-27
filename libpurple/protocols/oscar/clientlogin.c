@@ -38,6 +38,8 @@
 
 #include "cipher.h"
 #include "core.h"
+#include "hmaccipher.h"
+#include "sha256cipher.h"
 
 #include "oscar.h"
 
@@ -111,15 +113,18 @@ static const char *oscar_auth_url_encode(const char *str)
  */
 static gchar *hmac_sha256(const char *key, const char *message)
 {
-	PurpleCipherContext *context;
+	PurpleCipher *hmac, *sha256;
 	guchar digest[32];
 
-	context = purple_cipher_context_new_by_name("hmac", NULL);
-	purple_cipher_context_set_option(context, "hash", "sha256");
-	purple_cipher_context_set_key(context, (guchar *)key);
-	purple_cipher_context_append(context, (guchar *)message, strlen(message));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
+	sha256 = purple_sha256_cipher_new();
+	hmac = purple_hmac_cipher_new(sha256);
+	g_object_unref(G_OBJECT(sha256));
+	
+	purple_cipher_set_key(hmac, (guchar *)key);
+	purple_cipher_append(hmac, (guchar *)message, strlen(message));
+	purple_cipher_digest(hmac, sizeof(digest), digest, NULL);
+
+	g_object_unref(G_OBJECT(hmac));
 
 	return purple_base64_encode(digest, sizeof(digest));
 }

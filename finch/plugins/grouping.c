@@ -33,8 +33,7 @@ static FinchBlistManager *default_manager;
 /**
  * Online/Offline
  */
-static PurpleBlistNode online = {.type = PURPLE_BLIST_OTHER_NODE},
-					   offline = {.type = PURPLE_BLIST_OTHER_NODE};
+static PurpleGroup online, offline;
 
 static gboolean on_offline_init()
 {
@@ -50,34 +49,24 @@ static gboolean on_offline_init()
 
 static gboolean on_offline_can_add_node(PurpleBlistNode *node)
 {
-	switch (purple_blist_node_get_type(node)) {
-		case PURPLE_BLIST_CONTACT_NODE:
-			{
-				PurpleContact *contact = (PurpleContact*)node;
-				if (contact->currentsize > 0)
-					return TRUE;
-				return FALSE;
-			}
-			break;
-		case PURPLE_BLIST_BUDDY_NODE:
-			{
-				PurpleBuddy *buddy = (PurpleBuddy*)node;
-				if (PURPLE_BUDDY_IS_ONLINE(buddy))
-					return TRUE;
-				if (purple_prefs_get_bool("/finch/blist/showoffline") &&
-						purple_account_is_connected(purple_buddy_get_account(buddy)))
-					return TRUE;
-				return FALSE;
-			}
-			break;
-		case PURPLE_BLIST_CHAT_NODE:
-			{
-				PurpleChat *chat = (PurpleChat*)node;
-				return purple_account_is_connected(purple_chat_get_account(chat));
-			}
-			break;
-		default:
-			return FALSE;
+	if(PURPLE_IS_CONTACT(node)){
+		PurpleContact *contact = (PurpleContact*)node;
+		if (contact->currentsize > 0)
+			return TRUE;
+		return FALSE;
+	} else if(PURPLE_IS_BUDDY(node)){
+		PurpleBuddy *buddy = (PurpleBuddy*)node;
+		if (PURPLE_BUDDY_IS_ONLINE(buddy))
+			return TRUE;
+		if (purple_prefs_get_bool("/finch/blist/showoffline") &&
+				purple_account_is_connected(purple_buddy_get_account(buddy)))
+			return TRUE;
+		return FALSE;
+	} else if(PURPLE_IS_CHAT(node)){
+		PurpleChat *chat = (PurpleChat*)node;
+		return purple_account_is_connected(purple_chat_get_account(chat));
+	} else {
+		return FALSE;
 	}
 }
 
@@ -85,20 +74,14 @@ static gpointer on_offline_find_parent(PurpleBlistNode *node)
 {
 	gpointer ret = NULL;
 
-	switch (purple_blist_node_get_type(node)) {
-		case PURPLE_BLIST_CONTACT_NODE:
-			node = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(node)));
-			ret = PURPLE_BUDDY_IS_ONLINE((PurpleBuddy*)node) ? &online : &offline;
-			break;
-		case PURPLE_BLIST_BUDDY_NODE:
-			ret = purple_blist_node_get_parent(node);
-			finch_blist_manager_add_node(ret);
-			break;
-		case PURPLE_BLIST_CHAT_NODE:
-			ret = &online;
-			break;
-		default:
-			break;
+	if(PURPLE_IS_CONTACT(node)){
+		node = PURPLE_BLIST_NODE(purple_contact_get_priority_buddy(PURPLE_CONTACT(node)));
+		ret = PURPLE_BUDDY_IS_ONLINE((PurpleBuddy*)node) ? &online : &offline;
+	} else if(PURPLE_IS_BUDDY(node)){
+		ret = purple_blist_node_get_parent(node);
+		finch_blist_manager_add_node(ret);
+	} else if(PURPLE_IS_CHAT(node)){
+		ret = &online;
 	}
 	return ret;
 }
@@ -107,12 +90,12 @@ static gboolean on_offline_create_tooltip(gpointer selected_row, GString **body,
 {
 	PurpleBlistNode *node = selected_row;
 
-	if (purple_blist_node_get_type(node) == PURPLE_BLIST_OTHER_NODE) {
+	if (node == PURPLE_BLIST_NODE(&online) || node == PURPLE_BLIST_NODE(&offline)) {
 		/* There should be some easy way of getting the total online count,
 		 * or total number of chats. Doing a loop here will probably be pretty
 		 * expensive. */
 		if (body)
-			*body = g_string_new(node == &online ? _("Online Buddies") : _("Offline Buddies"));
+			*body = g_string_new(node == PURPLE_BLIST_NODE(&online) ? _("Online Buddies") : _("Offline Buddies"));
 		return TRUE;
 	} else {
 		return default_manager ? default_manager->create_tooltip(selected_row, body, tool_title) : FALSE;
@@ -134,7 +117,7 @@ static FinchBlistManager on_offline =
 /**
  * Meebo-like Grouping.
  */
-static PurpleBlistNode meebo = {.type = PURPLE_BLIST_OTHER_NODE};
+static PurpleGroup meebo;
 static gboolean meebo_init()
 {
 	GntTree *tree = finch_blist_get_tree();
@@ -147,7 +130,7 @@ static gboolean meebo_init()
 
 static gpointer meebo_find_parent(PurpleBlistNode *node)
 {
-	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+	if (PURPLE_IS_CONTACT(node)) {
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
 		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy)) {
 			return &meebo;
@@ -194,13 +177,8 @@ static gpointer no_group_find_parent(PurpleBlistNode *node)
 {
 	gpointer ret = NULL;
 
-	switch (purple_blist_node_get_type(node)) {
-		case PURPLE_BLIST_BUDDY_NODE:
-			ret = purple_blist_node_get_parent(node);
-			finch_blist_manager_add_node(ret);
-			break;
-		default:
-			break;
+	if(PURPLE_IS_BUDDY(node)){
+		finch_blist_manager_add_node(ret = purple_blist_node_get_parent(node));
 	}
 	return ret;
 }
@@ -247,7 +225,7 @@ nested_group_find_parent(PurpleBlistNode *node)
 	PurpleBlistNode *ret, *parent;
 	GntTree *tree;
 
-	if (!PURPLE_BLIST_NODE_IS_GROUP(node))
+	if (!PURPLE_IS_GROUP(node))
 		return default_manager->find_parent(node);
 
 	group = (PurpleGroup *)node;
@@ -266,9 +244,9 @@ nested_group_find_parent(PurpleBlistNode *node)
 			finch_blist_manager_add_node(ret);
 			parent = ret;
 		} else if (!(ret = g_hash_table_lookup(groups, name))) {
+			#warning: This is a problem, PurpleBlistNode is abstract...
 			ret = g_new0(PurpleBlistNode, 1);
 			g_hash_table_insert(groups, g_strdup(name), ret);
-			ret->type = PURPLE_BLIST_OTHER_NODE;
 			gnt_tree_add_row_last(tree, ret,
 					gnt_tree_create_row(tree, name), parent);
 			parent = ret;
@@ -285,8 +263,8 @@ static gboolean
 nested_group_create_tooltip(gpointer selected_row, GString **body, char **title)
 {
 	PurpleBlistNode *node = selected_row;
-	if (!node ||
-			purple_blist_node_get_type(node) != PURPLE_BLIST_OTHER_NODE)
+#warning: Someone check this logic, not sure if it still works
+	if (!node) 
 		return default_manager->create_tooltip(selected_row, body, title);
 	if (body)
 		*body = g_string_new(_("Nested Subgroup"));  /* Perhaps list the child groups/subgroups? */
@@ -299,7 +277,7 @@ nested_group_can_add_node(PurpleBlistNode *node)
 	PurpleBlistNode *group;
 	int len;
 
-	if (!PURPLE_BLIST_NODE_IS_GROUP(node))
+	if (!PURPLE_IS_GROUP(node))
 		return default_manager->can_add_node(node);
 
 	if (default_manager->can_add_node(node))

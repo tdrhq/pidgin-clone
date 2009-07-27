@@ -115,7 +115,7 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	PurpleBuddyList *list = purple_get_blist();
-	void *conn_handle = purple_connections_get_handle();
+	void *conn_handle = NULL;
 
 	if (!check_timeout(NULL)) {
 		purple_debug_warning("mailchk", "Could not read $MAIL or /var/spool/mail/$USER\n");

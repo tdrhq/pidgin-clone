@@ -62,7 +62,7 @@ purple_prpl_send_raw(gc, str)
 PREINIT:
 	PurplePluginProtocolInfo *prpl_info;
 CODE:
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	if (prpl_info && prpl_info->send_raw != NULL) {
 		RETVAL = prpl_info->send_raw(gc, str, strlen(str));
 	} else {

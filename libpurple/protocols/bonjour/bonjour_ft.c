@@ -28,7 +28,7 @@
 #include "buddy.h"
 #include "bonjour.h"
 #include "bonjour_ft.h"
-#include "cipher.h"
+#include "sha1cipher.h"
 
 static void
 bonjour_bytestreams_init(PurpleXfer *xfer);
@@ -327,12 +327,12 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 		return NULL;
 
 	purple_debug_info("bonjour", "Bonjour-new-xfer to %s.\n", who);
-	bd = (BonjourData*) gc->proto_data;
+	bd = (BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(gc));
 	if(bd == NULL)
 		return NULL;
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
+	xfer = purple_xfer_new(purple_connection_get_account(gc), PURPLE_XFER_SEND, who);
 	xfer->data = xep_xfer = g_new0(XepXfer, 1);
 	xep_xfer->data = bd;
 
@@ -415,7 +415,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = (BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(pc));
 	if(bd == NULL)
 		return;
 
@@ -456,8 +456,6 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			}
 
 			if (!parsed_receive) {
-				BonjourData *bd = purple_connection_get_protocol_data(pc);
-
 				purple_debug_info("bonjour", "rejecting unrecognized si SET offer.\n");
 				xep_ft_si_reject(bd, id, name, "403", "cancel");
 				/*TODO: Send Cancel (501) */
@@ -468,7 +466,6 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			xfer = bonjour_si_xfer_find(bd, id, name);
 
 			if(xfer == NULL) {
-				BonjourData *bd = purple_connection_get_protocol_data(pc);
 				purple_debug_info("bonjour", "xfer find fail.\n");
 				xep_ft_si_reject(bd, id, name, "403", "cancel");
 			} else
@@ -499,7 +496,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	g_return_if_fail(packet != NULL);
 	g_return_if_fail(pb != NULL);
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = (BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(pc));
 	if(bd == NULL)
 		return;
 
@@ -581,14 +578,14 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 	if(pc == NULL || id == NULL || from == NULL)
 		return;
 
-	bd = (BonjourData*) pc->proto_data;
+	bd = (BonjourData*) purple_object_get_protocol_data(PURPLE_OBJECT(pc));
 	if(bd == NULL)
 		return;
 
 	purple_debug_info("bonjour", "bonjour-xfer-receive.\n");
 
 	/* Build the file transfer handle */
-	xfer = purple_xfer_new(pc->account, PURPLE_XFER_RECEIVE, from);
+	xfer = purple_xfer_new(purple_connection_get_account(pc), PURPLE_XFER_RECEIVE, from);
 	xfer->data = xf = g_new0(XepXfer, 1);
 	xf->data = bd;
 	purple_xfer_set_filename(xfer, filename);
@@ -847,9 +844,9 @@ static void
 bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 {
 	PurpleAccount *account = NULL;
+	PurpleCipher *cipher;
 	XepXfer *xf;
 	char dstaddr[41];
-	const gchar *name = NULL;
 	unsigned char hashval[20];
 	char *p;
 	int i;
@@ -863,12 +860,15 @@ bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 	if(!xf)
 		return;
 
-	name = purple_buddy_get_name(pb);
 	account = purple_buddy_get_account(pb);
 
-	p = g_strdup_printf("%s%s%s", xf->sid, name, purple_account_get_username(account));
-	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p),
-				    sizeof(hashval), hashval, NULL);
+	p = g_strdup_printf("%s%s%s", xf->sid, purple_buddy_get_name(pb), purple_account_get_username(account));
+
+	cipher = purple_sha1_cipher_new();
+	purple_cipher_append(cipher, (guchar *)p, strlen(p));
+	purple_cipher_digest(cipher, sizeof(hashval), hashval, NULL);
+	g_object_unref(G_OBJECT(cipher));
+
 	g_free(p);
 
 	memset(dstaddr, 0, 41);

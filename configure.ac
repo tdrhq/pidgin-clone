@@ -43,11 +43,11 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [6])
-m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [6])
+m4_define([purple_lt_current], [40])
+m4_define([purple_major_version], [3])
+m4_define([purple_minor_version], [0])
 m4_define([purple_micro_version], [0])
-m4_define([purple_version_suffix], [devel])
+m4_define([purple_version_suffix], [gobject-devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
@@ -324,7 +324,10 @@ I can find them.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
-GLIB_GENMARSHAL=`pkg-config --variable=glib_genmarshal glib-2.0`
+dnl #####################################
+dnl ### GLib marshall generator
+dnl #####################################
+GLIB_GENMARSHAL=`$PKG_CONFIG --variable=glib_genmarshal glib-2.0`
 AC_SUBST(GLIB_GENMARSHAL)
 
 AC_ARG_WITH([extraversion],

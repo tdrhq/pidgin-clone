@@ -687,7 +687,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			char *friendly = NULL;
 			if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
 				friendly = xmlnode_get_data(displayName);
-			purple_connection_set_display_name(session->account->gc, friendly ? purple_url_decode(friendly) : NULL);
+			purple_connection_set_display_name(purple_account_get_connection(session->account), friendly ? purple_url_decode(friendly) : NULL);
 			g_free(friendly);
 			continue; /* Not adding own account as buddy to buddylist */
 		}
@@ -917,7 +917,7 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	purple_debug_misc("msn", "Got the Address Book!\n");
 
 	if (msn_parse_addressbook(session, resp->xml)) {
-		msn_send_privacy(session->account->gc);
+		msn_send_privacy(purple_account_get_connection(session->account));
 		msn_notification_dump_contact(session);
 	} else {
 		/* This is making us loop infinitely when we fail to parse the
@@ -1208,9 +1208,12 @@ msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state,
 	}
 
 	if (user->invite_message) {
+		PurpleAccount *account = session->account;
+		PurpleConnection *pc = purple_account_get_connection(account);
 		char *tmp;
+
 		body = g_markup_escape_text(user->invite_message, -1);
-		tmp = g_markup_escape_text(purple_connection_get_display_name(session->account->gc), -1);
+		tmp = g_markup_escape_text(purple_connection_get_display_name(pc), -1);
 		invite = g_strdup_printf(MSN_CONTACT_INVITE_MESSAGE_XML, body, tmp);
 		g_free(body);
 		g_free(tmp);

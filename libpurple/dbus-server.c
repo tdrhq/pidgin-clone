@@ -747,7 +747,9 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 			break;
 		case PURPLE_TYPE_SUBTYPE: /* registered pointers only! */
 		case PURPLE_TYPE_POINTER:
+#if 0
 		case PURPLE_TYPE_OBJECT:
+#endif
 		case PURPLE_TYPE_BOXED:
 			val = my_arg(gpointer);
 			id = purple_dbus_pointer_to_id(val);
