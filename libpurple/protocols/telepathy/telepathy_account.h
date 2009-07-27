@@ -25,10 +25,14 @@
 
 #include "account.h"
 
+#include "telepathy_connection.h"
+
 typedef struct
 {
 	TpAccount *tp_account;
 	PurpleAccount *account;	
+
+	telepathy_connection *connection_data;
 
 	gchar *obj_Path;
 	gchar *cm, *protocol;
@@ -36,6 +40,10 @@ typedef struct
         GHashTable *properties;
 
 } telepathy_account;
+
+void
+account_properties_changed (telepathy_account *account_data,
+                            GHashTable *properties);
 
 void
 update_parameters_cb (TpAccount *proxy,

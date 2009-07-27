@@ -30,8 +30,48 @@
 #include <telepathy-glib/util.h>
 
 #include "account.h"
+#include "core.h"
 #include "debug.h"
 #include "../../../pidgin/gtkaccount.h"
+
+void
+account_properties_changed (telepathy_account *account_data,
+                            GHashTable *properties)
+{
+	GHashTableIter iter;
+	gpointer key, val;
+
+	purple_debug_info("telepathy", "account_properties_changed!\n");
+
+	g_hash_table_iter_init (&iter, properties);
+	while (g_hash_table_iter_next (&iter, &key, &val)) 
+	{
+		GValue *value = val;
+
+		if (g_strcmp0(key, "Connection") == 0)
+		{
+			gchar *connection_object = g_value_get_boxed(value);
+
+			if (g_strcmp0(connection_object, "/") != 0)
+				got_connection_object(connection_object, account_data);
+		}
+		else if (g_strcmp0(key, "ConnectionStatus") == 0)
+		{
+			guint status = g_value_get_uint(value);
+			guint reason = g_value_get_uint(g_hash_table_lookup(
+				account_data->properties, "ConnectionStatusReason"));
+
+			connection_status_changed(account_data, status, reason);
+		}
+		else if (g_strcmp0(key, "Enabled") == 0)
+		{
+			PurpleAccount *acct = account_data->account;
+
+			purple_account_set_enabled(acct, purple_core_get_ui(),
+				g_value_get_boolean(value));
+		}
+	}
+}
 
 void
 update_parameters_cb (TpAccount *proxy,
@@ -308,6 +348,8 @@ get_account_properties_cb (TpProxy *proxy,
 
 	/* Sync the parameters with PurpleAccount's parameters */
 	set_account_parameters(account, parameters);
+
+	account_properties_changed(account_data, out_Properties);
 }
 
 static void
@@ -401,6 +443,8 @@ account_get_all_cb (TpProxy *proxy,
 	tp_g_hash_table_update(account_data->properties, out_Properties,
 			(GBoxedCopyFunc)g_strdup, (GBoxedCopyFunc)tp_g_value_slice_dup);
 
+	account_properties_changed(account_data, out_Properties);
+
 }
 
 static void
@@ -425,6 +469,8 @@ account_property_changed_cb (TpAccount *proxy,
 
 	tp_g_hash_table_update(account_data->properties, arg_Properties,
 			(GBoxedCopyFunc)g_strdup, (GBoxedCopyFunc)tp_g_value_slice_dup);
+
+	account_properties_changed(account_data, arg_Properties);
 }
 
 static void

@@ -56,7 +56,7 @@ typedef struct
 
 static const StatusMapping statuses[] = 
 {
-	{ PURPLE_STATUS_AVAILABLE, "available", "Available" },
+	{ PURPLE_STATUS_AVAILABLE, "available", N_("Available") },
 	{ PURPLE_STATUS_AWAY, "away", N_("Away") },
 	{ PURPLE_STATUS_AWAY, "brb", N_("Be right back") },
 	{ PURPLE_STATUS_UNAVAILABLE, "dnd", N_("Do not disturb") },
@@ -68,6 +68,9 @@ static const StatusMapping statuses[] =
 	{ PURPLE_STATUS_UNSET, "error", NULL },
 	{ 0, NULL, NULL}
 };
+
+GValueArray *
+purple_status_to_telepathy_status(PurpleStatus *status);
 
 void
 set_properties_cb (TpProxy *proxy,

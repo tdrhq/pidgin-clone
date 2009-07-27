@@ -20,9 +20,32 @@
 
 #include "telepathy_utils.h"
 
+#include <telepathy-glib/util.h>
+
 #include "internal.h"
 
 #include "debug.h"
+
+/* TODO: Check for other types of statuses too */
+GValueArray *
+purple_status_to_telepathy_status(PurpleStatus *status)
+{
+	GValueArray *presence = g_value_array_new(3);
+
+	PurpleStatusType *type = purple_status_get_type(status);
+	const gchar *status_id = purple_status_get_id(status);
+	const gchar *presence_message = purple_status_get_attr_string(status, "message");
+
+	if (purple_status_type_get_primitive(type) == PURPLE_STATUS_AVAILABLE)
+		g_value_array_append(presence, tp_g_value_slice_new_uint(2)); /* online */
+	else
+		g_value_array_append(presence, tp_g_value_slice_new_uint(1)); /* offline */
+
+	g_value_array_append(presence, tp_g_value_slice_new_string(status_id));
+	g_value_array_append(presence, tp_g_value_slice_new_string(presence_message));
+
+	return presence;
+}
 
 void
 set_properties_cb (TpProxy *proxy,

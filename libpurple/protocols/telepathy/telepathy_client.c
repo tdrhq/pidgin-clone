@@ -151,13 +151,13 @@ client_get_property (GObject *object,
 			GHashTable *filter;
 
 			filter = tp_asv_new (
-				TP_IFACE_CHANNEL ".Type", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
+				TP_IFACE_CHANNEL ".ChannelType", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
 				TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_CONTACT,
 				NULL);
 			g_ptr_array_add (filters, filter);
 
 			filter = tp_asv_new (
-				TP_IFACE_CHANNEL ".Type", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
+				TP_IFACE_CHANNEL ".ChannelType", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
 				TP_IFACE_CHANNEL ".TargetHandleType", G_TYPE_UINT, TP_HANDLE_TYPE_ROOM,
 				NULL);
 			g_ptr_array_add (filters, filter);

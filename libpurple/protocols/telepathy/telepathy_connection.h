@@ -64,6 +64,15 @@ typedef struct
 } telepathy_connection;
 
 void
+connection_status_changed (gpointer account_data,
+                           guint status,
+			   guint reason);
+
+void
+got_connection_object (gchar *connection_object,
+                       gpointer account_data);
+
+void
 status_changed_cb (TpConnection *proxy,
                    guint arg_Status,
 		   guint arg_Reason,

@@ -211,10 +211,8 @@ telepathy_login(PurpleAccount *acct)
 	}
 
 
-	initial_presence = g_value_array_new(3);
-	g_value_array_append(initial_presence, tp_g_value_slice_new_uint(2)); /* online */
-	g_value_array_append(initial_presence, tp_g_value_slice_new_string("online"));
-	g_value_array_append(initial_presence, tp_g_value_slice_new_string("Woot I'm online"));
+	initial_presence = purple_status_to_telepathy_status(
+		purple_account_get_active_status(acct));
 
 	tp_cli_dbus_properties_call_set(account_data->tp_account, -1,
 		TP_IFACE_ACCOUNT, "Enabled", tp_g_value_slice_new_boolean(TRUE),
@@ -230,88 +228,26 @@ telepathy_login(PurpleAccount *acct)
 }
 
 static void
-telepathy_login_old(PurpleAccount *acct)
-{
-	PurpleConnection *gc = purple_account_get_connection(acct);
-
-	PurplePlugin* plugin = gc->prpl;
-	telepathy_data *data = (telepathy_data*)plugin->extra;
-	GHashTable *options = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) tp_g_value_slice_free);
-	int i;
-
-	purple_debug_info("telepathy", "Logging in as %s\n", acct->username);
-
-
-	/* fill in the hash table with the other options, considering the right signatures */
-	for (i = 0; data->protocol->params[i].name != NULL; ++i)
-	{
-		gchar *name;
-		gchar *signature;
-		name = data->protocol->params[i].name;
-		signature = data->protocol->params[i].dbus_signature;
-
-		/* some protocols might not require username or password, so check them before */
-		if (g_strcmp0(name, "account") == 0 && acct->username != NULL)
-			tp_asv_set_string(options, "account", acct->username);
-		if (g_strcmp0(name, "password") == 0 && acct->password != NULL)
-			tp_asv_set_string(options, "password", acct->password);
-
-		/* account and password have already been added */
-		if (g_strcmp0(name, "account") != 0 && g_strcmp0(name, "password"))
-		{
-			if (g_strcmp0(signature, "s") == 0)
-			{
-				if (g_strcmp0(purple_account_get_string(acct, name, ""), ""))
-					tp_asv_set_string(options, name, purple_account_get_string(acct, name, ""));
-			}
-			else if (g_strcmp0(signature, "n") == 0)
-			{
-				if (purple_account_get_int(acct, name, 0) != 0)
-					tp_asv_set_int32(options, name, purple_account_get_int(acct, name, 0));
-			}
-			else if (g_strcmp0(signature, "i") == 0)
-			{
-				if (purple_account_get_int(acct, name, 0) != 0)
-					tp_asv_set_int32(options, name, purple_account_get_int(acct, name, 0));
-			}
-			else if (g_strcmp0(signature, "q") == 0)
-			{
-				if (purple_account_get_int(acct, name, 0) != 0)
-					tp_asv_set_uint32(options, name, purple_account_get_int(acct, name, 0));
-			}
-			else if (g_strcmp0(signature, "b") == 0)
-			{
-				tp_asv_set_boolean(options, name, purple_account_get_bool(acct, name, FALSE));
-			}
-			else
-				purple_debug_warning("telepathy", "Unknown signature \"%s\" for \"%s\"\n", signature, name);
-		}
-	}
-
-	/* call RequestConnection with the specified parameters */
-	tp_cli_connection_manager_call_request_connection(data->cm, -1, data->protocol->name, options, request_connection_cb, gc, NULL, NULL);
-
-	g_hash_table_destroy(options);
-}
-
-static void
 telepathy_close(PurpleConnection *gc)
 {
-	telepathy_connection *data = purple_connection_get_protocol_data(gc);
+	PurpleAccount *acct = purple_connection_get_account(gc);
 
-	purple_debug_info("telepathy", "We're closing, sorry :(\n");
+	telepathy_account *account_data = (telepathy_account*)purple_account_get_int(
+			acct, "tp_account_data", 0);
 
-	if (data)
+	purple_debug_info("telepathy", "Disabling account %s\n",
+			purple_account_get_username(acct));
+
+	if (account_data == NULL)
 	{
-		/* make sure the connection is closed in dbus-land, 
-		 * or else we won't be able to recreate the connection */
-		if (data->connection)
-		{
-			/* this will call status_changed_cb which will free everything */
-			tp_cli_connection_call_disconnect(data->connection, -1, NULL, NULL, NULL, NULL);
-		}
-
+		purple_debug_error("telepathy", "Account %s doesn't have tp_account_data\n",
+				purple_account_get_username(acct));
+		return;
 	}
+
+	tp_cli_dbus_properties_call_set(account_data->tp_account, -1,
+		TP_IFACE_ACCOUNT, "Enabled", tp_g_value_slice_new_boolean(FALSE),
+		NULL, NULL, NULL, NULL);
 }
 
 static int
