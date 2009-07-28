@@ -6112,32 +6112,78 @@ void oscar_set_permit_deny(PurpleConnection *gc) {
 		aim_ssi_setpermdeny(od, perm_deny, 0xffffffff);
 }
 
-void oscar_add_permit(PurpleConnection *gc, const char *who) {
+static void oscar_add_permit(PurpleConnection *gc, const char *who) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	purple_debug_info("oscar", "ssi: About to add a permit\n");
 	if (od->ssi.received_data)
 		aim_ssi_addpermit(od, who);
 }
 
-void oscar_add_deny(PurpleConnection *gc, const char *who) {
+static void oscar_add_deny(PurpleConnection *gc, const char *who) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	purple_debug_info("oscar", "ssi: About to add a deny\n");
 	if (od->ssi.received_data)
 		aim_ssi_adddeny(od, who);
 }
 
-void oscar_rem_permit(PurpleConnection *gc, const char *who) {
+static void oscar_rem_permit(PurpleConnection *gc, const char *who) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	purple_debug_info("oscar", "ssi: About to delete a permit\n");
 	if (od->ssi.received_data)
 		aim_ssi_delpermit(od, who);
 }
 
-void oscar_rem_deny(PurpleConnection *gc, const char *who) {
+static void oscar_rem_deny(PurpleConnection *gc, const char *who) {
 	OscarData *od = purple_connection_get_protocol_data(gc);
 	purple_debug_info("oscar", "ssi: About to delete a deny\n");
 	if (od->ssi.received_data)
 		aim_ssi_deldeny(od, who);
+}
+
+void oscar_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who)
+{
+	if (!who || who[0] == '\0')
+		return;
+
+	switch(list_type)
+	{
+		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
+		case PURPLE_PRIVACY_BUDDY_LIST:
+		case PURPLE_PRIVACY_VISIBLE_LIST:
+		case PURPLE_PRIVACY_INVISIBLE_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
+		case PURPLE_PRIVACY_ALLOW_LIST:
+			oscar_add_permit(gc, who);
+			break;
+		case PURPLE_PRIVACY_BLOCK_BOTH_LIST:
+			oscar_add_deny(gc, who);
+			break;
+	}
+	return;
+}
+
+void oscar_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who)
+{
+	if (!who || who[0] == '\0')
+		return;
+
+	switch(list_type)
+	{
+		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
+		case PURPLE_PRIVACY_BUDDY_LIST:
+		case PURPLE_PRIVACY_VISIBLE_LIST:
+		case PURPLE_PRIVACY_INVISIBLE_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
+		case PURPLE_PRIVACY_ALLOW_LIST:
+			oscar_rem_permit(gc, who);
+			break;
+		case PURPLE_PRIVACY_BLOCK_BOTH_LIST:
+			oscar_rem_deny(gc, who);
+			break;
+	}
+	return;
 }
 
 GList *

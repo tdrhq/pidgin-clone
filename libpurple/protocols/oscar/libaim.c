@@ -55,10 +55,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	oscar_remove_buddy,		/* remove_buddy */
 	NULL,					/* remove_buddies */
-	oscar_add_permit,		/* add_permit */
-	oscar_add_deny,			/* add_deny */
-	oscar_rem_permit,		/* rem_permit */
-	oscar_rem_deny,			/* rem_deny */
+	oscar_privacy_list_add,		/* privacy_list_add */
+	oscar_privacy_list_remove,	/* privcay_list_remove */
 	oscar_set_permit_deny,	/* set_permit_deny */
 	oscar_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
