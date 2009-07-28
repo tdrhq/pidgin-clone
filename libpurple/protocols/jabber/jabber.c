@@ -1775,7 +1775,7 @@ void jabber_request_block_list(JabberStream *js)
 	jabber_iq_send(iq);
 }
 
-void jabber_add_deny(PurpleConnection *gc, const char *who)
+static void jabber_add_deny(PurpleConnection *gc, const char *who)
 {
 	JabberStream *js;
 	JabberIq *iq;
@@ -1809,7 +1809,7 @@ void jabber_add_deny(PurpleConnection *gc, const char *who)
 	jabber_iq_send(iq);
 }
 
-void jabber_rem_deny(PurpleConnection *gc, const char *who)
+static void jabber_rem_deny(PurpleConnection *gc, const char *who)
 {
 	JabberStream *js;
 	JabberIq *iq;
@@ -1837,6 +1837,48 @@ void jabber_rem_deny(PurpleConnection *gc, const char *who)
 	xmlnode_set_attrib(item, "jid", who);
 
 	jabber_iq_send(iq);
+}
+
+void jabber_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who)
+{
+	if (!who || who[0] == '\0')
+		return;
+
+	switch(list_type)
+	{
+		case PURPLE_PRIVACY_ALLOW_LIST:
+		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
+		case PURPLE_PRIVACY_BUDDY_LIST:
+		case PURPLE_PRIVACY_VISIBLE_LIST:
+		case PURPLE_PRIVACY_INVISIBLE_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
+		case PURPLE_PRIVACY_BLOCK_BOTH_LIST:
+			jabber_add_deny(gc, who);
+			break;
+	}
+	return;
+}
+
+void jabber_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who)
+{
+	if (!who || who[0] == '\0')
+		return;
+
+	switch(list_type)
+	{
+		case PURPLE_PRIVACY_ALLOW_LIST:
+		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
+		case PURPLE_PRIVACY_BUDDY_LIST:
+		case PURPLE_PRIVACY_VISIBLE_LIST:
+		case PURPLE_PRIVACY_INVISIBLE_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
+		case PURPLE_PRIVACY_BLOCK_BOTH_LIST:
+			jabber_rem_deny(gc, who);
+			break;
+	}
+	return;
 }
 
 void jabber_add_feature(const char *namespace, JabberFeatureEnabled cb) {
