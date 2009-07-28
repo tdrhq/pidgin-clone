@@ -3471,6 +3471,10 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature(JINGLE_APP_RTP_SUPPORT_VIDEO, jabber_video_enabled);
 	jabber_add_feature(JINGLE_TRANSPORT_ICEUDP, 0);
 #endif
+	/* Jingle file transfers */
+	jabber_add_feature(JINGLE_APP_FT, 0);
+	jabber_add_feature(JINGLE_TRANSPORT_S5B, 0);
+	jabber_add_feature(JINGLE_TRANSPORT_IBB, 0);
 
 	/* IPC functions */
 	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
