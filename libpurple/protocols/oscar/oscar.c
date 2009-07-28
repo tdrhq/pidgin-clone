@@ -6149,9 +6149,11 @@ void oscar_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_typ
 	{
 		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
 		case PURPLE_PRIVACY_BUDDY_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
 		case PURPLE_PRIVACY_VISIBLE_LIST:
 		case PURPLE_PRIVACY_INVISIBLE_LIST:
-			/* either not supported or not the right place to edit the list */
+			/* privacy laters: do something acout these lists for ICQ */
 			break;
 		case PURPLE_PRIVACY_ALLOW_LIST:
 			oscar_add_permit(gc, who);
@@ -6172,9 +6174,11 @@ void oscar_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_
 	{
 		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
 		case PURPLE_PRIVACY_BUDDY_LIST:
+			/* either not supported or not the right place to edit the list */
+			break;
 		case PURPLE_PRIVACY_VISIBLE_LIST:
 		case PURPLE_PRIVACY_INVISIBLE_LIST:
-			/* either not supported or not the right place to edit the list */
+			/* privacy laters: do something acout these lists for ICQ */
 			break;
 		case PURPLE_PRIVACY_ALLOW_LIST:
 			oscar_rem_permit(gc, who);
