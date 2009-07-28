@@ -250,7 +250,7 @@ get_local_pending_members_with_info_cb (TpChannel *proxy,
 		return;
 	}
 
-	purple_debug_error("telepathy", "%u contacts are local pending!\n",
+	purple_debug_info("telepathy", "%u contacts are local pending!\n",
 			out_Info->len);
 
 	for (i = 0; i<out_Info->len; ++i)
