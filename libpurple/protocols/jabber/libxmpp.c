@@ -78,8 +78,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* add_buddies */
 	jabber_roster_remove_buddy,		/* remove_buddy */
 	NULL,							/* remove_buddies */
-	jabber_privacy_list_add,		/* add_permit */
-	jabber_privacy_list_remove,				/* add_deny */
+	jabber_privacy_list_add,		/* privacy_list_add */
+	jabber_privacy_list_remove,		/* privacy_list_remove */
 	NULL,							/* set_permit_deny */
 	jabber_chat_join,				/* join_chat */
 	NULL,							/* reject_chat */
