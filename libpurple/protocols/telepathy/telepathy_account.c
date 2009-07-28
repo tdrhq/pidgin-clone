@@ -525,6 +525,9 @@ create_account_cb (TpAccountManager *proxy,
 	account_data->obj_Path = g_strdup((gchar *)out_Account);
 	account_data->tp_account = tp_account;
 
+	purple_debug_info("telepathy", "Caching account %s\n", out_Account);
+
+	g_hash_table_insert(accounts_Hash_Table, g_strdup(out_Account), account_data);
 
 	tp_cli_account_connect_to_account_property_changed(tp_account,
 		account_property_changed_cb, account_data,
@@ -710,6 +713,10 @@ get_valid_accounts_cb (TpProxy *proxy,
 		account_data->obj_Path = g_strdup(obj_Path);
 		account_data->properties = g_hash_table_new_full (g_str_hash, g_str_equal,
 			NULL, (GDestroyNotify) tp_g_value_slice_free);
+
+		purple_debug_info("telepathy", "Caching account %s\n", obj_Path);
+
+		g_hash_table_insert(accounts_Hash_Table, g_strdup(obj_Path), account_data);
 
 		/* Get all properties and sync the accounts with libpurple */
 		tp_cli_account_connect_to_account_property_changed(account,

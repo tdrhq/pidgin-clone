@@ -78,7 +78,26 @@ handle_new_channel (telepathy_connection *data,
 
 	GError *error = NULL;
 	TpConnection *connection = data->connection;
-	TpChannel *channel = tp_channel_new_from_properties(connection, object_Path, map, &error);
+
+	TpChannel *channel;
+	const gchar *channel_Type = g_value_get_string(
+		g_hash_table_lookup(map, TP_IFACE_CHANNEL ".ChannelType"));
+
+	if (channel_Type == NULL)
+	{
+		purple_debug_error("telepathy", "Channel has no type!\n");
+		return;
+	}
+
+	/* We only listen to contact list channels via the NewChannels signal */
+	if (g_strcmp0(channel_Type, TP_IFACE_CHANNEL_TYPE_CONTACT_LIST) != 0)
+	{
+		purple_debug_info("telepathy", "NewChannels received non contact list channel (%s),"
+			" dropping it!\n", channel_Type);
+		return;
+	}
+
+	channel = tp_channel_new_from_properties(connection, object_Path, map, &error);
 
 	if (error != NULL)
 	{
@@ -105,8 +124,6 @@ new_channels_cb (TpConnection *proxy,
 
 	if (data->listing_channels)
 		return;
-
-	purple_debug_info("telepathy", "NewChannels:\n");
 
 	for (i = 0; i < arg_Channels->len; i++)
 	{

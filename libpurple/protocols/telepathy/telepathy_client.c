@@ -30,6 +30,11 @@
 
 #include "debug.h"
 
+#include "telepathy.h"
+#include "telepathy_account.h"
+#include "telepathy_channel.h"
+#include "telepathy_connection.h"
+
 #define CLIENT_BUS_NAME TP_CLIENT_BUS_NAME_BASE "prpl_telepathy"
 #define CLIENT_OBJECT_PATH TP_CLIENT_OBJECT_PATH_BASE "prpl_telepathy"
 
@@ -330,16 +335,50 @@ telepathy_client_handle_channels (TpSvcClientHandler *self,
 		GValueArray *arr = g_ptr_array_index (channels, i);
 		const gchar *object_path;
 		GHashTable *properties;
+		telepathy_account *account_data;
+		telepathy_connection *connection_data;
+		TpChannel *channel;
+		GError *error = NULL;
 
 		object_path = g_value_get_boxed (g_value_array_get_nth (arr, 0));
 		properties = g_value_get_boxed (g_value_array_get_nth (arr, 1));
 
 		purple_debug_info("telepathy", "HandleChannels: %s\n", object_path);
 
-		/*
-		client_connection_new_channel_with_properties (client,
-			connection, object_path, properties);
-		*/
+		account_data = g_hash_table_lookup(accounts_Hash_Table, account_path);
+
+		if (account_data == NULL)
+		{
+			purple_debug_error("telepathy", "Received channel, but account (%s)"
+				" is not cached!\n", account_path);
+			return;
+		}
+
+		connection_data = account_data->connection_data;
+
+		if (connection_data == NULL)
+		{
+			purple_debug_error("telepathy", "Received channel, but account's connection"
+				" is not cached!\n");
+		}
+
+		channel = tp_channel_new_from_properties(connection_data->connection,
+			object_path, properties, &error);
+
+		if (error != NULL)
+		{
+			purple_debug_error("telepathy", "Error while creating TpChannel: %s\n",
+				error->message);
+			g_error_free(error);
+			return;
+		}
+
+		purple_debug_info("telepathy", "New channel: %s\n", object_path);
+
+		tp_channel_call_when_ready(channel, channel_ready_cb, connection_data);
+
+		g_signal_connect(channel, "invalidated",
+			G_CALLBACK (channel_invalidated_cb), connection_data);
 	}
 
 	tp_svc_client_handler_return_from_handle_channels (context);

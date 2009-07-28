@@ -1191,6 +1191,8 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 	if (daemon != NULL)
 		g_object_unref(daemon);
 
+	accounts_Hash_Table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+
 	/* Create the Client.Handler object */
 	telepathy_client_dup_singleton();
 

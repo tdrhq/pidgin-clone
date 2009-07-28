@@ -21,8 +21,12 @@
 #ifndef _TELEPATHY_H_
 #define _TELEPATHY_H_
 
+#include <glib.h>
+
 #include <telepathy-glib/account-manager.h>
 #include <telepathy-glib/connection-manager.h>
+
+#include "plugin.h"
 
 #define TELEPATHY_ID "prpl-telepathy"
 #define TELEPATHY_DISPLAY_VERSION "1.0"
@@ -30,6 +34,9 @@
 void *module_handle;
 gchar *module_path;
 TpAccountManager *account_Manager;
+
+/* This maps account object path to account_data struct */
+GHashTable *accounts_Hash_Table;
 
 typedef struct
 {
