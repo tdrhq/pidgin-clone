@@ -219,6 +219,7 @@ STRINGTABLE
     IDS_QUERY_DELCONTACT          "Deleting this contact will also delete all buddies associated with it. Do you wish to continue?"
     IDS_BUDDYICON_FILTER          "Image Files\t*.bmp;*.png;*.gif;*.jpg\tAll Files (*.*)\t*.*\t"
     IDS_BUDDYICON_TITLE           "Choose Custom Icon"
+    IDS_OFFLINE                   "Offline"
 }
 
 

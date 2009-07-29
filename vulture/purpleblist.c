@@ -36,6 +36,7 @@
 static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode);
 static void AddCommonMenuItems(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA, PurpleConnection *lpconnection, int iProtoIndex, int iExtendedIndex);
 static void DeleteBuddyFromAccount(PurpleBuddy *lpbuddy);
+static void UpdateStatusText(PurpleBlistNode *lpblistnode);
 
 
 
@@ -74,6 +75,7 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 		lpvbn->lRefCount = 1;
 		lpvbn->lpvbnParent = NULL;
 		lpvbn->bExpanded = FALSE;
+		lpvbn->szStatusText = NULL;
 		InitializeCriticalSection(&lpvbn->cs);
 	}
 
@@ -88,6 +90,8 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 			if(lpvbn->lpvbnParent) VultureBListNodeAddRef(lpvbn->lpvbnParent);
 
 			lpvbn->nodetype = lpblistnode->type;
+
+			UpdateStatusText(lpblistnode);
 
 			switch(lpblistnode->type)
 			{
@@ -107,6 +111,12 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 				break;
 
 			case PURPLE_BLIST_BUDDY_NODE:
+
+				/* Maybe our contact needs to update its status
+				 * text.
+				 */
+				UpdateStatusText(lpblistnode->parent);
+
 				szNodeText = purple_buddy_get_alias((PurpleBuddy*)lpblistnode);
 
 				if(szNodeText && *szNodeText)
@@ -129,18 +139,21 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 				if(lpvbn->lpvbnParent && !lpvbn->lpvbnParent->hti)
 					PurpleBlistUpdateNode(lpbuddylist, lpvbn->lpvbnParent->lpblistnode);
 
-				/* If we're a buddy and our contact is
-				 * collapsed, give up at the last minute. We
-				 * still needed all the processing for other
-				 * nodes as if we'd been visible, but we want
-				 * to stop short of actually showing ourselves.
+				/* Update either our own node or our parent's,
+				 * if we're a collapsed buddy.
 				 */
 				if(!PURPLE_BLIST_NODE_IS_BUDDY(lpblistnode) ||
-					(lpblistnode->parent->ui_data &&
+					(lpblistnode->parent &&
+					lpblistnode->parent->ui_data &&
 					((VULTURE_BLIST_NODE*)lpblistnode->parent->ui_data)->bExpanded))
 				{
 					VultureBListNodeAddRef(lpvbn);
 					VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpvbn);
+				}
+				else if(lpblistnode->parent && lpblistnode->parent->ui_data)
+				{
+					VultureBListNodeAddRef(lpblistnode->parent->ui_data);
+					VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpblistnode->parent->ui_data);
 				}
 			}
 		}
@@ -252,6 +265,7 @@ void VultureBListNodeRelease(VULTURE_BLIST_NODE *lpvblnode)
 
 		if(lpvblnode->lpvbnParent) VultureBListNodeRelease(lpvblnode->lpvbnParent);
 		if(lpvblnode->szNodeText) g_free(lpvblnode->szNodeText);
+		if(lpvblnode->szStatusText) g_free(lpvblnode->szStatusText);
 		DeleteCriticalSection(&lpvblnode->cs);
 
 		g_free(lpvblnode);
@@ -295,18 +309,30 @@ LPTSTR PurpleBuddyGetStatusText(PurpleBuddy *lpbuddy)
 {
 	PurplePlugin *lppluginPrpl;
 
-	/* Find prpl for buddy. */
-	if(lpbuddy && (lppluginPrpl = purple_find_prpl(purple_account_get_protocol_id(lpbuddy->account))))
+	if(!lpbuddy)
+		return NULL;
+
+	if(PURPLE_BUDDY_IS_ONLINE(lpbuddy))
 	{
-		PurplePluginProtocolInfo *lpprplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(lppluginPrpl);
-
-		/* If prpl supports status text, get the text. */
-		if(lpprplinfo && lpprplinfo->status_text)
+		/* Find prpl for buddy. */
+		if((lppluginPrpl = purple_find_prpl(purple_account_get_protocol_id(lpbuddy->account))))
 		{
-			char *szStatus = lpprplinfo->status_text(lpbuddy);
+			PurplePluginProtocolInfo *lpprplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(lppluginPrpl);
 
-			return szStatus ? VultureUTF8ToTCHAR(szStatus) : NULL;
+			/* If prpl supports status text, get the text. */
+			if(lpprplinfo && lpprplinfo->status_text)
+			{
+				char *szStatus = lpprplinfo->status_text(lpbuddy);
+
+				return szStatus ? VultureUTF8ToTCHAR(szStatus) : NULL;
+			}
 		}
+	}
+	else
+	{
+		TCHAR szBuffer[128];
+		LoadString(g_hInstance, IDS_OFFLINE, szBuffer, NUM_ELEMENTS(szBuffer));
+		return g_memdup(szBuffer, sizeof(szBuffer));
 	}
 
 	return NULL;
@@ -322,8 +348,27 @@ LPTSTR PurpleBuddyGetStatusText(PurpleBuddy *lpbuddy)
  */
 void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, PurpleStatus *lpstatusNew)
 {
+	PurpleConversation *lpconv;
+	VULTURE_BLIST_NODE *lpvbnContact = ((PurpleBlistNode*)lpbuddy)->parent ? ((PurpleBlistNode*)lpbuddy)->parent->ui_data : NULL;
+
+	UpdateStatusText((PurpleBlistNode*)lpbuddy);
+	UpdateStatusText(((PurpleBlistNode*)lpbuddy)->parent);
+
+	if(lpvbnContact)
+	{
+		if(lpvbnContact->bExpanded)
+		{
+			VULTURE_BLIST_NODE *lpvbn = ((PurpleBlistNode*)lpbuddy)->ui_data;
+			VultureBListNodeAddRef(lpvbn);
+			VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, ((PurpleBlistNode*)lpbuddy)->ui_data);
+		}
+
+		VultureBListNodeAddRef(lpvbnContact);
+		VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpvbnContact);
+	}
+
 	/* Are we speaking to this buddy? */
-	PurpleConversation *lpconv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, lpbuddy->name, lpbuddy->account);
+	lpconv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, lpbuddy->name, lpbuddy->account);
 
 	/* If so, tell the UI to update the status message in the conversation.
 	 */
@@ -575,4 +620,37 @@ static void DeleteBuddyFromAccount(PurpleBuddy *lpbuddy)
 
 	if(purple_account_is_connected(lpaccount))
 		purple_account_remove_buddy(lpaccount, lpbuddy, purple_buddy_get_group(lpbuddy));
+}
+
+
+/**
+ * Updates the status text cached in a buddy-list node.
+ *
+ * @param	lpblistnode	Buddy-list node.
+ */
+static void UpdateStatusText(PurpleBlistNode *lpblistnode)
+{
+	VULTURE_BLIST_NODE *lpvblistnode;
+
+	if(!lpblistnode || !lpblistnode->ui_data)
+		return;
+
+	lpvblistnode = lpblistnode->ui_data;
+
+	EnterCriticalSection(&lpvblistnode->cs);
+	{
+		if(lpvblistnode->szStatusText) g_free(lpvblistnode->szStatusText);
+		lpvblistnode->szStatusText = NULL;
+
+		if(PURPLE_BLIST_NODE_IS_BUDDY(lpblistnode))
+			lpvblistnode->szStatusText = PurpleBuddyGetStatusText((PurpleBuddy*)lpblistnode);
+		else if(PURPLE_BLIST_NODE_IS_CONTACT(lpblistnode))
+		{
+			PurpleBuddy *lpbuddy = purple_contact_get_priority_buddy((PurpleContact*)lpblistnode);
+
+			if(lpbuddy)
+				lpvblistnode->szStatusText = PurpleBuddyGetStatusText(lpbuddy);
+		}
+	}
+	LeaveCriticalSection(&lpvblistnode->cs);
 }

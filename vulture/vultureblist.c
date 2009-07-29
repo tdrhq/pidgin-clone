@@ -60,6 +60,8 @@ static void RunBuddyMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, 
 static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
 static void RunChatMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd);
 static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode);
+static void UpdateBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
+static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw);
 
 
 #define BLIST_MARGIN 6
@@ -272,56 +274,10 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 				break;
 
 			case VUIMSG_UPDATEBLISTNODE:
-				{
-					HWND hwndBlistTree = GetDlgItem(g_hwndBListDlg, IDC_TREE_BLIST);
-					VULTURE_BLIST_NODE *lpvbn = (VULTURE_BLIST_NODE*)lParam;
+				UpdateBListNode(GetDlgItem(g_hwndBListDlg, IDC_TREE_BLIST), (VULTURE_BLIST_NODE*)lParam);
 
-					EnterCriticalSection(&lpvbn->cs);
-					{
-						TVITEM tvitem;
-
-						if(lpvbn->hti)
-						{
-							HTREEITEM htiParent = TreeView_GetParent(hwndBlistTree, lpvbn->hti);
-
-							/* If the parent doesn't match, we need
-							 * to recreate.
-							 */
-							if((lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti != htiParent) ||
-								(!lpvbn->lpvbnParent && htiParent))
-							{
-								RemoveBListNode(hwndBlistTree, lpvbn);
-							}
-						}
-
-
-						/* New node? */
-						if(!lpvbn->hti)
-						{
-							TVINSERTSTRUCT tvis;
-
-							/* We cache this in the tree-view. */
-							VultureBListNodeAddRef(lpvbn);
-
-							tvis.hParent = lpvbn->lpvbnParent ? lpvbn->lpvbnParent->hti : TVI_ROOT;
-							tvis.hInsertAfter = TVI_SORT;
-							tvis.itemex.mask = TVIF_PARAM;
-							tvis.itemex.lParam = (LPARAM)lpvbn;
-
-							lpvbn->hti = TreeView_InsertItem(hwndBlistTree, &tvis);
-						}
-
-						/* Set text. */
-						tvitem.mask = TVIF_TEXT | TVIF_HANDLE;
-						tvitem.hItem = lpvbn->hti;
-						tvitem.pszText = lpvbn->szNodeText;
-						TreeView_SetItem(hwndBlistTree, &tvitem);
-					}
-					LeaveCriticalSection(&lpvbn->cs);
-
-					/* Release the reference for this call. */
-					VultureBListNodeRelease(lpvbn);
-				}
+				/* Release the reference for this call. */
+				VultureBListNodeRelease((VULTURE_BLIST_NODE*)lParam);
 
 				break;
 
@@ -747,6 +703,31 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 					}
 
 					return TRUE;
+
+				case NM_CUSTOMDRAW:
+					{
+						LPNMTVCUSTOMDRAW lpnmtvcdraw = (LPNMTVCUSTOMDRAW)lParam;
+
+						switch(lpnmtvcdraw->nmcd.dwDrawStage)
+						{
+						case CDDS_PREPAINT:
+							/* Ask for notifications for each item. */
+							SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, CDRF_NOTIFYITEMDRAW);
+							break;
+
+						case CDDS_ITEMPREPAINT:
+							/* Tell me when you've finished painting. */
+							SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, CDRF_NOTIFYPOSTPAINT);
+							break;
+
+						case CDDS_ITEMPOSTPAINT:
+							DrawBListNodeExtra(lpnmtvcdraw);
+							SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, CDRF_DODEFAULT);
+							break;
+						}
+					}
+
+					return TRUE;
 				}
 			}
 		}
@@ -967,7 +948,7 @@ static void SetStatusMsg(HWND hwndStatusDlg)
 /**
  * Removes a buddy-list node, doing the requisite housekeeping.
  *
- * @param	hwndStatusDlg	Buddy-list tree-view handle.
+ * @param	hwndBlistTree	Buddy-list tree-view handle.
  * @param	lpvbn		Node to delete.
  */
 static void RemoveBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
@@ -1027,12 +1008,18 @@ static void RunBuddyMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, 
 		}
 		LeaveCriticalSection(&lpvblistnode->cs);
 
+		/* Update tree node. */
+		UpdateBListNode(hwndBuddies, lpvblistnode);
+
 		break;
 
 	case IDM_BLIST_CONTEXT_EXPAND:
 		lpvblistnode->bExpanded = TRUE;
 		VultureSingleSyncPurpleCall(PC_UPDATEBLISTCHILDREN, lpvblistnode);
 		PostMessage(hwndBuddies, TVM_EXPAND, TVE_EXPAND, (LPARAM)lpvblistnode->hti);
+
+		/* Update tree node. */
+		UpdateBListNode(hwndBuddies, lpvblistnode);
 
 		break;
 	}
@@ -1174,4 +1161,117 @@ static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode
 
 	if(bDelete)
 		VultureSingleSyncPurpleCall(PC_REMOVEBLISTNODE, lpvblistnode);
+}
+
+
+/**
+ * Updates a buddy-list node in the tree, according to its data.
+ *
+ * @param	hwndBlistTree	Buddy-list tree-view handle.
+ * @param	lpvbn		Node to update.
+ */
+static void UpdateBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
+{
+	EnterCriticalSection(&lpvbn->cs);
+	{
+		TVITEMEX tvitemex;
+
+		if(lpvbn->hti)
+		{
+			HTREEITEM htiParent = TreeView_GetParent(hwndBlistTree, lpvbn->hti);
+
+			/* If the parent doesn't match, we need
+			 * to recreate.
+			 */
+			if((lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti != htiParent) ||
+				(!lpvbn->lpvbnParent && htiParent))
+			{
+				RemoveBListNode(hwndBlistTree, lpvbn);
+			}
+		}
+
+
+		/* New node? */
+		if(!lpvbn->hti)
+		{
+			TVINSERTSTRUCT tvis;
+
+			/* We cache this in the tree-view. */
+			VultureBListNodeAddRef(lpvbn);
+
+			tvis.hParent = lpvbn->lpvbnParent ? lpvbn->lpvbnParent->hti : TVI_ROOT;
+			tvis.hInsertAfter = TVI_SORT;
+			tvis.itemex.mask = TVIF_PARAM;
+			tvis.itemex.lParam = (LPARAM)lpvbn;
+
+			lpvbn->hti = TreeView_InsertItem(hwndBlistTree, &tvis);
+		}
+
+		/* Set text and height. */
+		tvitemex.mask = TVIF_HANDLE | TVIF_INTEGRAL;
+		tvitemex.hItem = lpvbn->hti;
+		tvitemex.iIntegral =
+			((lpvbn->nodetype == PURPLE_BLIST_CONTACT_NODE && lpvbn->bExpanded) || lpvbn->nodetype == PURPLE_BLIST_GROUP_NODE) ?
+			1 :
+			2;
+		TreeView_SetItem(hwndBlistTree, &tvitemex);
+	}
+	LeaveCriticalSection(&lpvbn->cs);
+}
+
+
+/**
+ * Draws custom stuff for a buddy-list node.
+ *
+ * @param	lpnmtvcdraw	Custom-draw data for node.
+ */
+static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw)
+{
+	RECT rcText, rcClient;
+	COLORREF crOldFG, crOldBG;
+	VULTURE_BLIST_NODE *lpvblistnode = (VULTURE_BLIST_NODE*)lpnmtvcdraw->nmcd.lItemlParam;
+
+	GetClientRect(lpnmtvcdraw->nmcd.hdr.hwndFrom, &rcClient);
+
+	/* Get the rectangle in which the control would render its text if it
+	 * were doing so itself, and extend it to the right width.
+	 */
+	TreeView_GetItemRect(lpnmtvcdraw->nmcd.hdr.hwndFrom, (HTREEITEM)lpnmtvcdraw->nmcd.dwItemSpec, &rcText, TRUE);
+	rcText.right = rcClient.right;
+	InflateRect(&rcText, -1, -1);
+
+	crOldBG = SetBkColor(lpnmtvcdraw->nmcd.hdc, lpnmtvcdraw->clrTextBk);
+	crOldFG = SetTextColor(lpnmtvcdraw->nmcd.hdc, lpnmtvcdraw->clrText);
+
+	EnterCriticalSection(&lpvblistnode->cs);
+	{
+		if(lpvblistnode->szStatusText &&
+			((lpvblistnode->nodetype == PURPLE_BLIST_CONTACT_NODE && !lpvblistnode->bExpanded) ||
+			lpvblistnode->nodetype == PURPLE_BLIST_BUDDY_NODE))
+		{
+			HTREEITEM htiSel, htiDrop;
+
+			/* Render main text. */
+			if(lpvblistnode->szNodeText)
+				DrawText(lpnmtvcdraw->nmcd.hdc, lpvblistnode->szNodeText, -1, &rcText, DT_END_ELLIPSIS | DT_SINGLELINE);
+
+			/* Render secondary text. */
+			htiSel = TreeView_GetSelection(lpnmtvcdraw->nmcd.hdr.hwndFrom);
+			htiDrop = TreeView_GetDropHilight(lpnmtvcdraw->nmcd.hdr.hwndFrom);
+			if(htiDrop != (HTREEITEM)lpnmtvcdraw->nmcd.dwItemSpec &&
+				 (htiSel != (HTREEITEM)lpnmtvcdraw->nmcd.dwItemSpec || htiDrop != NULL))
+				SetTextColor(lpnmtvcdraw->nmcd.hdc, 0x808080);
+			DrawText(lpnmtvcdraw->nmcd.hdc, lpvblistnode->szStatusText, -1, &rcText, DT_BOTTOM | DT_END_ELLIPSIS | DT_SINGLELINE);
+		}
+		else
+		{
+			/* No secondary text; render main text only. */
+			if(lpvblistnode->szNodeText)
+				DrawText(lpnmtvcdraw->nmcd.hdc, lpvblistnode->szNodeText, -1, &rcText, DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+		}
+	}
+	LeaveCriticalSection(&lpvblistnode->cs);
+
+	SetTextColor(lpnmtvcdraw->nmcd.hdc, crOldFG);
+	SetBkColor(lpnmtvcdraw->nmcd.hdc, crOldBG);
 }

@@ -76,3 +76,4 @@
 #define IDS_QUERY_DELCONTACT                    8
 #define IDS_BUDDYICON_FILTER                    9
 #define IDS_BUDDYICON_TITLE                     10
+#define IDS_OFFLINE                             11

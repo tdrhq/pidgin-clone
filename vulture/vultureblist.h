@@ -35,10 +35,13 @@ typedef struct _VULTURE_BLIST_NODE
 	PurpleBlistNode			*lpblistnode;
 	PurpleBlistNodeType		nodetype;
 	LPTSTR				szNodeText;
+	LPTSTR				szStatusText;
 	HTREEITEM			hti;
 	struct _VULTURE_BLIST_NODE	*lpvbnParent;
 	LONG				lRefCount;
 	CRITICAL_SECTION		cs;
+
+	/* For contacts. */
 	BOOL				bExpanded;
 } VULTURE_BLIST_NODE;
 
