@@ -64,8 +64,10 @@ static void UpdateBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
 static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw);
 
 
-#define BLIST_MARGIN 6
-#define CX_STATUSICON 16
+#define BLIST_MARGIN		6
+#define CX_STATUSICON		16
+#define CY_STATUSICON		16
+#define CX_BLISTNODEINTSPACER	8
 
 enum CONTEXT_MENU_INDICES
 {
@@ -73,16 +75,6 @@ enum CONTEXT_MENU_INDICES
 	CMI_CONTACT_COMPOSITE,
 	CMI_CONTACT_BASIC,
 	CMI_CHAT,
-};
-
-enum STATUS_ICONS
-{
-	SICON_AVAILABLE = 0,
-	SICON_AWAY,
-	SICON_BUSY,
-	SICON_INVISIBLE,
-	SICON_OFFLINE,
-	SICON_EXTAWAY,
 };
 
 
@@ -1245,6 +1237,39 @@ static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw)
 
 	EnterCriticalSection(&lpvblistnode->cs);
 	{
+		/* Draw icon. */
+		if(lpvblistnode->nodetype != PURPLE_BLIST_GROUP_NODE)
+		{
+			int xIcon = rcText.left;
+			int yIcon = (rcText.bottom + rcText.top - CY_STATUSICON) / 2;
+			int iIndex = -1;
+
+			/* Adjust text rectangle for icon. */
+			rcText.left += CX_STATUSICON + CX_BLISTNODEINTSPACER;
+
+			switch(lpvblistnode->nodetype)
+			{
+			case PURPLE_BLIST_CONTACT_NODE:
+				if(lpvblistnode->bExpanded)
+					iIndex = SICON_PERSON;
+				else
+					/* Fall through. */
+			case PURPLE_BLIST_BUDDY_NODE:
+					iIndex = lpvblistnode->iStatusIcon;
+				break;
+
+			case PURPLE_BLIST_CHAT_NODE:
+				iIndex = SICON_CHAT;
+				break;
+
+			default:
+				break;
+			}
+
+			if(iIndex >= 0)
+				ImageList_Draw(g_himlStatusIcons, iIndex, lpnmtvcdraw->nmcd.hdc, xIcon, yIcon, ILD_NORMAL);
+		}
+
 		if(lpvblistnode->szStatusText &&
 			((lpvblistnode->nodetype == PURPLE_BLIST_CONTACT_NODE && !lpvblistnode->bExpanded) ||
 			lpvblistnode->nodetype == PURPLE_BLIST_BUDDY_NODE))

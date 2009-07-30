@@ -41,6 +41,9 @@ typedef struct _VULTURE_BLIST_NODE
 	LONG				lRefCount;
 	CRITICAL_SECTION		cs;
 
+	/* For contacts and buddies. */
+	int				iStatusIcon;
+
 	/* For contacts. */
 	BOOL				bExpanded;
 } VULTURE_BLIST_NODE;
@@ -62,6 +65,22 @@ typedef struct _VULTURE_BLIST_NODE_STRING_PAIR
 	VULTURE_BLIST_NODE	*lpvblistnode;
 	LPTSTR			sz;
 } VULTURE_BLIST_NODE_STRING_PAIR;
+
+
+
+enum VULTURE_STATUS_ICONS
+{
+	SICON_AVAILABLE = 0,
+	SICON_AWAY,
+	SICON_BUSY,
+	SICON_INVISIBLE,
+	SICON_OFFLINE,
+	SICON_EXTAWAY,
+	SICON_LOGIN,
+	SICON_LOGOUT,
+	SICON_PERSON,
+	SICON_CHAT
+};
 
 
 extern HWND g_hwndMain;

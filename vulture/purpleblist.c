@@ -36,7 +36,8 @@
 static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode);
 static void AddCommonMenuItems(HMENU hmenu, PurpleBlistNode *lpblistnode, GList **lplpglistVMA, PurpleConnection *lpconnection, int iProtoIndex, int iExtendedIndex);
 static void DeleteBuddyFromAccount(PurpleBuddy *lpbuddy);
-static void UpdateStatusText(PurpleBlistNode *lpblistnode);
+static void UpdateCachedStatus(PurpleBlistNode *lpblistnode);
+static int GetStatusIconIndex(PurpleBuddy *lpbuddy);
 
 
 
@@ -76,6 +77,7 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 		lpvbn->lpvbnParent = NULL;
 		lpvbn->bExpanded = FALSE;
 		lpvbn->szStatusText = NULL;
+		lpvbn->iStatusIcon = 0;
 		InitializeCriticalSection(&lpvbn->cs);
 	}
 
@@ -91,7 +93,7 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 
 			lpvbn->nodetype = lpblistnode->type;
 
-			UpdateStatusText(lpblistnode);
+			UpdateCachedStatus(lpblistnode);
 
 			switch(lpblistnode->type)
 			{
@@ -115,7 +117,7 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 				/* Maybe our contact needs to update its status
 				 * text.
 				 */
-				UpdateStatusText(lpblistnode->parent);
+				UpdateCachedStatus(lpblistnode->parent);
 
 				szNodeText = purple_buddy_get_alias((PurpleBuddy*)lpblistnode);
 
@@ -351,8 +353,8 @@ void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, P
 	PurpleConversation *lpconv;
 	VULTURE_BLIST_NODE *lpvbnContact = ((PurpleBlistNode*)lpbuddy)->parent ? ((PurpleBlistNode*)lpbuddy)->parent->ui_data : NULL;
 
-	UpdateStatusText((PurpleBlistNode*)lpbuddy);
-	UpdateStatusText(((PurpleBlistNode*)lpbuddy)->parent);
+	UpdateCachedStatus((PurpleBlistNode*)lpbuddy);
+	UpdateCachedStatus(((PurpleBlistNode*)lpbuddy)->parent);
 
 	if(lpvbnContact)
 	{
@@ -624,11 +626,11 @@ static void DeleteBuddyFromAccount(PurpleBuddy *lpbuddy)
 
 
 /**
- * Updates the status text cached in a buddy-list node.
+ * Updates the status information cached in a buddy-list node.
  *
  * @param	lpblistnode	Buddy-list node.
  */
-static void UpdateStatusText(PurpleBlistNode *lpblistnode)
+static void UpdateCachedStatus(PurpleBlistNode *lpblistnode)
 {
 	VULTURE_BLIST_NODE *lpvblistnode;
 
@@ -643,14 +645,49 @@ static void UpdateStatusText(PurpleBlistNode *lpblistnode)
 		lpvblistnode->szStatusText = NULL;
 
 		if(PURPLE_BLIST_NODE_IS_BUDDY(lpblistnode))
+		{
 			lpvblistnode->szStatusText = PurpleBuddyGetStatusText((PurpleBuddy*)lpblistnode);
+			lpvblistnode->iStatusIcon = GetStatusIconIndex((PurpleBuddy*)lpblistnode);
+		}
 		else if(PURPLE_BLIST_NODE_IS_CONTACT(lpblistnode))
 		{
 			PurpleBuddy *lpbuddy = purple_contact_get_priority_buddy((PurpleContact*)lpblistnode);
 
 			if(lpbuddy)
+			{
 				lpvblistnode->szStatusText = PurpleBuddyGetStatusText(lpbuddy);
+				lpvblistnode->iStatusIcon = GetStatusIconIndex(lpbuddy);
+			}
 		}
 	}
 	LeaveCriticalSection(&lpvblistnode->cs);
+}
+
+
+/**
+ * Retrieves the status icon index for a buddy.
+ *
+ * @param	lpbuddy		Buddy.
+ */
+static int GetStatusIconIndex(PurpleBuddy *lpbuddy)
+{
+	const struct { PurpleStatusPrimitive statusprim; int iIndex; } c_rgprimiconpair[] =
+	{
+		{PURPLE_STATUS_UNAVAILABLE, SICON_BUSY},
+		{PURPLE_STATUS_AWAY, SICON_AWAY},
+		{PURPLE_STATUS_EXTENDED_AWAY, SICON_EXTAWAY},
+		{PURPLE_STATUS_OFFLINE, SICON_OFFLINE},
+		{PURPLE_STATUS_INVISIBLE, SICON_INVISIBLE}
+	};
+
+	PurplePresence *lppresence = purple_buddy_get_presence(lpbuddy);
+	int i;
+
+	for(i = 0; i < (int)NUM_ELEMENTS(c_rgprimiconpair); i++)
+	{
+		if(purple_presence_is_status_primitive_active(lppresence, c_rgprimiconpair[i].statusprim))
+			return c_rgprimiconpair[i].iIndex;
+	}
+
+	return SICON_AVAILABLE;
 }
