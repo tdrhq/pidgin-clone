@@ -47,7 +47,7 @@ void VultureParseCommandLine(void)
 {
 	gchar *szCmdLine;
 	LPTSTR szCmdLineT = GetCommandLine();
-	GError *lpgerror;
+	GError *lpgerror = NULL;
 	gint iArgc;
 	gchar **rgszArgv;
 
