@@ -88,6 +88,9 @@ enum ENUM_VULTURE_UI_MESSAGES
 
 	/* (VULTURE_CHAT_REMOVE_USERS*) */
 	VUIMSG_CHATREMOVEUSERS,
+
+	/* (VULTURE_BLIST_NODE*) Node whose cache should be invalidated. */
+	VUIMSG_INVALIDATEICONCACHE,
 };
 
 /* HandlEs for reigistering signal handlERs. */

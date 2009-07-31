@@ -37,5 +37,11 @@ typedef struct _VULTURE_GET_IM_BUDDY_ICON
 	HBITMAP			hbmIcon;
 } VULTURE_GET_IM_BUDDY_ICON;
 
+typedef struct _VULTURE_GET_BLIST_NODE_ICON
+{
+	VULTURE_BLIST_NODE	*lpvblistnode;
+	HBITMAP			hbmIcon;
+} VULTURE_GET_BLIST_NODE_ICON;
+
 
 #endif

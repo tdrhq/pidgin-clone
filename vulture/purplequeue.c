@@ -398,6 +398,16 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 
 		break;
 
+	case PC_GETBLISTNODEICON:
+		{
+			VULTURE_GET_BLIST_NODE_ICON *lpvgblnicon = lppurplecall->lpvParam;
+			lpvgblnicon->hbmIcon = lpvgblnicon->lpvblistnode ?
+				PurpleGetBlistNodeIcon(lpvgblnicon->lpvblistnode->lpblistnode, -1, -1) :
+				NULL;
+		}
+		
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

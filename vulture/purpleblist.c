@@ -78,6 +78,7 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 		lpvbn->bExpanded = FALSE;
 		lpvbn->szStatusText = NULL;
 		lpvbn->iStatusIcon = 0;
+		lpvbn->ui.bIconCacheValid = FALSE;
 		InitializeCriticalSection(&lpvbn->cs);
 	}
 
@@ -361,8 +362,9 @@ void PurpleBuddyStatusChanged(PurpleBuddy *lpbuddy, PurpleStatus *lpstatusOld, P
 		if(lpvbnContact->bExpanded)
 		{
 			VULTURE_BLIST_NODE *lpvbn = ((PurpleBlistNode*)lpbuddy)->ui_data;
+
 			VultureBListNodeAddRef(lpvbn);
-			VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, ((PurpleBlistNode*)lpbuddy)->ui_data);
+			VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpvbn);
 		}
 
 		VultureBListNodeAddRef(lpvbnContact);
@@ -690,4 +692,39 @@ static int GetStatusIconIndex(PurpleBuddy *lpbuddy)
 	}
 
 	return SICON_AVAILABLE;
+}
+
+
+/**
+ * Called in response to buddy-icon-changed signal.
+ *
+ * @param	lpbuddy		Buddy.
+ */
+void PurpleBuddyIconChanged(PurpleBuddy *lpbuddy)
+{
+	VULTURE_BLIST_NODE *lpvbnContact = ((PurpleBlistNode*)lpbuddy)->parent ? ((PurpleBlistNode*)lpbuddy)->parent->ui_data : NULL;
+
+	if(lpvbnContact)
+	{
+		if(lpvbnContact->bExpanded)
+		{
+			VULTURE_BLIST_NODE *lpvbn = ((PurpleBlistNode*)lpbuddy)->ui_data;
+
+			VultureBListNodeAddRef(lpvbn);
+			VulturePostUIMessage(VUIMSG_INVALIDATEICONCACHE, lpvbn);
+
+			VultureBListNodeAddRef(lpvbn);
+			VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpvbn);
+		}
+
+		VultureBListNodeAddRef(lpvbnContact);
+		VulturePostUIMessage(VUIMSG_INVALIDATEICONCACHE, lpvbnContact);
+
+		VultureBListNodeAddRef(lpvbnContact);
+		VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpvbnContact);
+	}
+
+	/* We don't need to update any conversations showing our icon: this
+	 * will be done in response to the conversation-updated signal.
+	 */
 }

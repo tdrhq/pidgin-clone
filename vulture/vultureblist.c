@@ -39,6 +39,7 @@
 #include "vultureconv.h"
 #include "purpleconv.h"
 #include "vulturedlg.h"
+#include "vulturebicon.h"
 
 
 typedef struct _STATUSDLGDATA
@@ -62,6 +63,8 @@ static void RunChatMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, H
 static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode);
 static void UpdateBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
 static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw);
+static HBITMAP GetBListNodeIcon(VULTURE_BLIST_NODE *lpvblistnode);
+static void InvalidateBListNodeIconCache(VULTURE_BLIST_NODE *lpvblistnode);
 
 
 #define BLIST_MARGIN		6
@@ -316,6 +319,18 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 
 			case VUIMSG_CHATREMOVEUSERS:
 				hwndForward = ((VULTURE_CHAT_REMOVE_USERS*)lParam)->lpvconvChat->hwndConv;
+				break;
+
+			case VUIMSG_INVALIDATEICONCACHE:
+				{
+					VULTURE_BLIST_NODE *lpvblistnode = (VULTURE_BLIST_NODE*)lParam;
+
+					InvalidateBListNodeIconCache(lpvblistnode);
+
+					/* Release the reference for this call. */
+					VultureBListNodeRelease(lpvblistnode);
+				}
+
 				break;
 
 			case VUIMSG_QUIT:
@@ -1060,6 +1075,8 @@ static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode,
 			{
 				VULTURE_BLIST_NODE_STRING_PAIR vblnstringpairNewIcon;
 
+				InvalidateBListNodeIconCache(lpvblistnode);
+
 				vblnstringpairNewIcon.lpvblistnode = lpvblistnode;
 				vblnstringpairNewIcon.sz = szFilename;
 
@@ -1072,6 +1089,8 @@ static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode,
 	case IDM_BLIST_CONTEXT_REMOVEICON:
 		{
 			VULTURE_BLIST_NODE_STRING_PAIR vblnstringpairNewIcon;
+
+			InvalidateBListNodeIconCache(lpvblistnode);
 
 			vblnstringpairNewIcon.lpvblistnode = lpvblistnode;
 			vblnstringpairNewIcon.sz = NULL;
@@ -1164,51 +1183,60 @@ static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode
  */
 static void UpdateBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
 {
-	EnterCriticalSection(&lpvbn->cs);
+	TVITEMEX tvitemex;
+
+	if(lpvbn->hti)
 	{
-		TVITEMEX tvitemex;
+		HTREEITEM htiParent = TreeView_GetParent(hwndBlistTree, lpvbn->hti);
 
-		if(lpvbn->hti)
+		/* If the parent doesn't match, we need
+		 * to recreate.
+		 */
+		EnterCriticalSection(&lpvbn->cs);
 		{
-			HTREEITEM htiParent = TreeView_GetParent(hwndBlistTree, lpvbn->hti);
-
-			/* If the parent doesn't match, we need
-			 * to recreate.
-			 */
 			if((lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti != htiParent) ||
 				(!lpvbn->lpvbnParent && htiParent))
 			{
 				RemoveBListNode(hwndBlistTree, lpvbn);
 			}
 		}
+		LeaveCriticalSection(&lpvbn->cs);
+	}
 
 
-		/* New node? */
-		if(!lpvbn->hti)
+	/* New node? */
+	if(!lpvbn->hti)
+	{
+		TVINSERTSTRUCT tvis;
+
+		/* We cache this in the tree-view. */
+		VultureBListNodeAddRef(lpvbn);
+
+		EnterCriticalSection(&lpvbn->cs);
 		{
-			TVINSERTSTRUCT tvis;
-
-			/* We cache this in the tree-view. */
-			VultureBListNodeAddRef(lpvbn);
-
 			tvis.hParent = lpvbn->lpvbnParent ? lpvbn->lpvbnParent->hti : TVI_ROOT;
 			tvis.hInsertAfter = TVI_SORT;
 			tvis.itemex.mask = TVIF_PARAM;
 			tvis.itemex.lParam = (LPARAM)lpvbn;
-
-			lpvbn->hti = TreeView_InsertItem(hwndBlistTree, &tvis);
 		}
+		LeaveCriticalSection(&lpvbn->cs);
 
-		/* Set text and height. */
+		lpvbn->hti = TreeView_InsertItem(hwndBlistTree, &tvis);
+	}
+
+	/* Set height. */
+	EnterCriticalSection(&lpvbn->cs);
+	{
 		tvitemex.mask = TVIF_HANDLE | TVIF_INTEGRAL;
 		tvitemex.hItem = lpvbn->hti;
 		tvitemex.iIntegral =
 			((lpvbn->nodetype == PURPLE_BLIST_CONTACT_NODE && lpvbn->bExpanded) || lpvbn->nodetype == PURPLE_BLIST_GROUP_NODE) ?
 			1 :
 			2;
-		TreeView_SetItem(hwndBlistTree, &tvitemex);
 	}
 	LeaveCriticalSection(&lpvbn->cs);
+
+	TreeView_SetItem(hwndBlistTree, &tvitemex);
 }
 
 
@@ -1222,6 +1250,7 @@ static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw)
 	RECT rcText, rcClient;
 	COLORREF crOldFG, crOldBG;
 	VULTURE_BLIST_NODE *lpvblistnode = (VULTURE_BLIST_NODE*)lpnmtvcdraw->nmcd.lItemlParam;
+	HBITMAP hbmIcon;
 
 	GetClientRect(lpnmtvcdraw->nmcd.hdr.hwndFrom, &rcClient);
 
@@ -1235,9 +1264,12 @@ static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw)
 	crOldBG = SetBkColor(lpnmtvcdraw->nmcd.hdc, lpnmtvcdraw->clrTextBk);
 	crOldFG = SetTextColor(lpnmtvcdraw->nmcd.hdc, lpnmtvcdraw->clrText);
 
+	/* This call must be made outside the CS. */
+	hbmIcon = GetBListNodeIcon(lpvblistnode);
+
 	EnterCriticalSection(&lpvblistnode->cs);
 	{
-		/* Draw icon. */
+		/* Draw status icon. */
 		if(lpvblistnode->nodetype != PURPLE_BLIST_GROUP_NODE)
 		{
 			int xIcon = rcText.left;
@@ -1270,6 +1302,53 @@ static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw)
 				ImageList_Draw(g_himlStatusIcons, iIndex, lpnmtvcdraw->nmcd.hdc, xIcon, yIcon, ILD_NORMAL);
 		}
 
+		/* Draw main icon. */
+		if(hbmIcon)
+		{
+			BITMAP bitmap;
+			HDC hdcMem;
+			HBITMAP hbmOld;
+			int iEdge = rcText.bottom - rcText.top;
+			int xScaled, yScaled, cxScaled, cyScaled;
+			int iOldStretchMode;
+
+			GetObject(hbmIcon, sizeof(bitmap), &bitmap);
+
+			/* Adjust text rectangle at the right-hand edge. */
+			rcText.right -= iEdge + CX_BLISTNODEINTSPACER;
+
+			/* Calculate dimensions. */
+			if(bitmap.bmWidth <= iEdge && bitmap.bmHeight <= iEdge)
+			{
+				/* We fit entirely in the room available. */
+				cxScaled = bitmap.bmWidth;
+				cyScaled = bitmap.bmHeight;
+			}
+			else if(bitmap.bmWidth > bitmap.bmHeight)
+			{
+				/* Scale to fit width. */
+				cxScaled = iEdge;
+				cyScaled = MulDiv(bitmap.bmHeight, iEdge, bitmap.bmWidth);
+			}
+			else
+			{
+				/* Scale to fit height. */
+				cxScaled = MulDiv(bitmap.bmWidth, iEdge, bitmap.bmHeight);
+				cyScaled = iEdge;
+			}
+
+			xScaled = rcText.right + CX_BLISTNODEINTSPACER + (iEdge - cxScaled) / 2;
+			yScaled = rcText.top + (iEdge - cyScaled) / 2;
+
+			hdcMem = CreateCompatibleDC(lpnmtvcdraw->nmcd.hdc);
+			hbmOld = SelectObject(hdcMem, hbmIcon);
+			iOldStretchMode = SetStretchBltMode(lpnmtvcdraw->nmcd.hdc, COLORONCOLOR);
+			StretchBlt(lpnmtvcdraw->nmcd.hdc, xScaled, yScaled, cxScaled, cyScaled, hdcMem, 0, 0, bitmap.bmWidth, bitmap.bmHeight, SRCCOPY);
+			SetStretchBltMode(lpnmtvcdraw->nmcd.hdc, iOldStretchMode);
+			SelectObject(hdcMem, hbmOld);
+			DeleteDC(hdcMem);
+		}
+
 		if(lpvblistnode->szStatusText &&
 			((lpvblistnode->nodetype == PURPLE_BLIST_CONTACT_NODE && !lpvblistnode->bExpanded) ||
 			lpvblistnode->nodetype == PURPLE_BLIST_BUDDY_NODE))
@@ -1299,4 +1378,43 @@ static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw)
 
 	SetTextColor(lpnmtvcdraw->nmcd.hdc, crOldFG);
 	SetBkColor(lpnmtvcdraw->nmcd.hdc, crOldBG);
+}
+
+
+/**
+ * Retrieves the icon to display for a buddy-list node. This may make a call to
+ * the core, so beware of deadlocks.
+ *
+ * @param	lpvblistnode	Buddy-list node.
+ */
+static HBITMAP GetBListNodeIcon(VULTURE_BLIST_NODE *lpvblistnode)
+{
+	if(!lpvblistnode->ui.bIconCacheValid)
+	{
+		VULTURE_GET_BLIST_NODE_ICON vgblnicon;
+
+		vgblnicon.lpvblistnode = lpvblistnode;
+		VultureSingleSyncPurpleCall(PC_GETBLISTNODEICON, &vgblnicon);
+		lpvblistnode->ui.hbmIconCache = vgblnicon.hbmIcon;
+		lpvblistnode->ui.bIconCacheValid = TRUE;
+	}
+
+	return lpvblistnode->ui.hbmIconCache;
+}
+
+
+/**
+ * Invalidates the icon cache for a buddy-list node, freeing the cached bitmap.
+ *
+ * @param	lpvblistnode	Buddy-list node.
+ */
+static void InvalidateBListNodeIconCache(VULTURE_BLIST_NODE *lpvblistnode)
+{
+	if(lpvblistnode->ui.bIconCacheValid)
+	{
+		if(lpvblistnode->ui.hbmIconCache)
+			DeleteObject(lpvblistnode->ui.hbmIconCache);
+
+		lpvblistnode->ui.bIconCacheValid = FALSE;
+	}
 }

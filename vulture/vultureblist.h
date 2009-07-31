@@ -41,6 +41,13 @@ typedef struct _VULTURE_BLIST_NODE
 	LONG				lRefCount;
 	CRITICAL_SECTION		cs;
 
+	/* Things only the UI is allowed to touch after creation. */
+	struct
+	{
+		HBITMAP			hbmIconCache;
+		BOOL			bIconCacheValid;
+	} ui;
+
 	/* For contacts and buddies. */
 	int				iStatusIcon;
 
