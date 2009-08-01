@@ -521,13 +521,6 @@ jingle_s5b_to_xml_internal(JingleTransport *transport, xmlnode *content,
 				(JingleS5BCandidate *) iter->data;
 			xmlnode_insert_child(node, jingle_s5b_candidate_to_xml(cand));
 		}
-	} else if (action == JINGLE_TRANSPORT_INFO) {
-		/* should include the chosen streamhost here... */
-		if (s5b->priv->successful_remote_candidate) {
-			xmlnode_insert_child(node, 
-				jingle_s5b_candidate_to_xml_used(
-					s5b->priv->successful_remote_candidate));
-		}
 	}
 
 	return node;
@@ -599,21 +592,11 @@ jingle_s5b_stop_connection_attempts(JingleS5B *s5b)
 	
 	s5b->priv->remaining_candidates = NULL;
 
-	if (s5b->priv->listen_data) {
-		purple_network_listen_cancel(s5b->priv->listen_data);
-		s5b->priv->listen_data = NULL;
-	}
-
 	if (s5b->priv->connect_data) {
 		purple_proxy_connect_cancel(s5b->priv->connect_data);
 		s5b->priv->connect_data = NULL;
 	}
-	
-	if (s5b->priv->watcher) {
-		purple_input_remove(s5b->priv->watcher);
-		s5b->priv->watcher = 0;
-	}
-	
+
 	if (s5b->priv->connect_timeout) {
 		purple_timeout_remove(s5b->priv->connect_timeout);
 		s5b->priv->connect_timeout = 0;
@@ -1132,6 +1115,37 @@ jingle_s5b_has_local_candidates(JabberStream *js, JingleS5B *s5b)
 	return FALSE;
 }
 
+static JabberIq *
+jingle_s5b_create_candidate_error(JingleSession *session)
+{
+	JabberIq *candidate_error =
+		jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
+	xmlnode *jingle = xmlnode_get_child(candidate_error->node, "jingle");
+	xmlnode *content = xmlnode_get_child(jingle, "content");
+	xmlnode *transport = xmlnode_get_child(content, "transport");
+
+	xmlnode_insert_child(transport, xmlnode_new("candidate-error"));
+	return candidate_error;
+}
+
+static JabberIq *
+jingle_s5b_create_candidate_used(JingleSession *session, JingleS5B *s5b)
+{
+	JabberIq *candidate_used =
+		jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
+	xmlnode *jingle = xmlnode_get_child(candidate_used->node, "jingle");
+	xmlnode *content = xmlnode_get_child(jingle, "content");
+	xmlnode *transport = xmlnode_get_child(content, "transport");
+
+	if (s5b->priv->successful_remote_candidate) {
+		xmlnode_insert_child(transport, 
+			jingle_s5b_candidate_to_xml_used(
+				s5b->priv->successful_remote_candidate));
+	}
+	return candidate_used;
+}
+
+
 static gboolean
 jingle_s5b_connect_timeout_cb(gpointer data)
 {
@@ -1205,7 +1219,7 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	jingle_s5b_stop_connection_attempts(s5b);
 	
 	/* should send transport-info with candidate-used */
-	result = jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
+	result = jingle_s5b_create_candidate_used(session, s5b);
 	jabber_iq_send(result);
 	g_free(cd);
 }
@@ -1365,16 +1379,7 @@ jingle_s5b_attempt_connect_internal(gpointer data)
 			FALSE, jingle_s5b_connect_cb, jingle_s5b_connect_timeout_cb);
 	} else {
 		/* send candidate error */
-		JabberIq *candidate_error =
-			jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
-		xmlnode *jingle = 
-		  xmlnode_get_child(candidate_error->node, "jingle");
-		xmlnode *content = 
-			xmlnode_get_child(jingle, "content");
-		xmlnode *transport = xmlnode_get_child(content, "transport");
-
-		xmlnode_insert_child(transport, xmlnode_new("candidate-error"));
-		jabber_iq_send(candidate_error);
+		jabber_iq_send(jingle_s5b_create_candidate_error(session));
 		
 		/* if the other end could connect to us (they sent a "candidate-used")
 		 we should use that */
@@ -1445,9 +1450,12 @@ jingle_s5b_handle_transport_info(JingleS5B *s5b, JingleSession *session,
 		const gchar *cid = xmlnode_get_attrib(candidate_used, "cid");
 		JingleS5BCandidate *cand =
 			jingle_s5b_find_local_candidate(s5b, cid);
-		JingleS5BCandidate *next_to_try =
-			(JingleS5BCandidate *) s5b->priv->remaining_candidates->data;
-		
+		JingleS5BCandidate *next_to_try = NULL;
+
+		if (s5b->priv->remaining_candidates)
+			next_to_try = 
+				(JingleS5BCandidate *) s5b->priv->remaining_candidates->data;
+
 		s5b->priv->accepted_candidate = cand;
 		
 		purple_debug_info("jingle-ft", "got candidate-used\n");
@@ -1455,26 +1463,19 @@ jingle_s5b_handle_transport_info(JingleS5B *s5b, JingleSession *session,
 		 higher priority */
 		if (!next_to_try || next_to_try->priority < cand->priority) {
 			/* we don't have any remaining candidates to try, send a
-			 candidate-error */
-			/* send candidate error */
-			JabberIq *candidate_error =
-				jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
-			xmlnode *jingle = 
-				xmlnode_get_child(candidate_error->node, "jingle");
-			xmlnode *content = 
-				xmlnode_get_child(jingle, "content");
-			xmlnode *transport = xmlnode_get_child(content, "transport");
-
-			xmlnode_insert_child(transport, xmlnode_new("candidate-error"));
-			jabber_iq_send(candidate_error);
-			
+			 candidate-error if we aren't connected to the other client */
+			if (!s5b->priv->successful_remote_candidate) {
+				jabber_iq_send(jingle_s5b_create_candidate_error(session));
+			}
+	
 			jingle_s5b_stop_connection_attempts(s5b);
 
 			/* if we could not connect to the remote, or if we could and that
 			 candidate has a lower priority, we have "won",
 			 if the candidates have the same priority, we have won if we are
 			 the initiator */
-			if (!s5b->priv->remaining_candidates ||
+			if ((!s5b->priv->remaining_candidates 
+				 && !s5b->priv->successful_remote_candidate) ||
 				(s5b->priv->successful_remote_candidate
 				 && s5b->priv->successful_remote_candidate->priority < cand->priority) ||
 				(s5b->priv->successful_remote_candidate
