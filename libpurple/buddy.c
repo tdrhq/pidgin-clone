@@ -32,7 +32,7 @@
 #include "xmlnode.h"
 #include "buddy.h"
 
-static GObjectClass *parent_class = NULL;
+static PurpleBlistNodeClass *parent_class = NULL;
 
 struct _PurpleBuddyPrivate {
 	char *name;                             /**< The name of the buddy. */
@@ -466,6 +466,22 @@ purple_buddy_set_account(PurpleBuddy *buddy, PurpleAccount *account)
 	priv->account = account;
 }
 
+static gboolean
+purple_buddy_is_online(PurpleBlistNode *node)
+{
+	PurpleBuddy *buddy;
+	PurplePresence *presence;
+	PurpleStatus *status;
+
+	g_return_val_if_fail(node, FALSE);
+	buddy = PURPLE_BUDDY(node);
+
+	presence = purple_buddy_get_presence(buddy);
+	status = purple_presence_get_active_status(presence);
+	return purple_status_is_online(status);
+
+}
+
 /******************/
 /*  GObject Code  */
 /******************/
@@ -530,7 +546,7 @@ purple_buddy_finalize(GObject *object)
 	 * get freed while the timeout is pending and this line can
 	 * be removed. */
 	while (g_source_remove_by_user_data((gpointer *)buddy));
-	parent_class->finalize(object);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
 PurpleGroup *
@@ -587,6 +603,10 @@ static void
 purple_buddy_class_init(PurpleBuddyClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = PURPLE_BLIST_NODE_CLASS(klass);
+	parent_class->is_online = purple_buddy_is_online;
+
 
 	parent_class = g_type_class_peek_parent(klass);
 	obj_class->finalize = purple_buddy_finalize;

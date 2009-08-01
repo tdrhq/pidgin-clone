@@ -170,7 +170,7 @@ void purple_contact_set_online(PurpleContact *contact, int value);
 void purple_contact_buddy_status_update(PurpleContact *contact, PurpleStatus *status, PurpleStatus *old_status);
 
 /**
- * Returns the number of buddies that correspond to online buddies
+ * Returns the number of buddies that correspond to online accounts
  *
  * @param contact The contact
  */

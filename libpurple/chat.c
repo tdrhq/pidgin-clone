@@ -225,6 +225,15 @@ purple_chat_set_components(PurpleChat *chat, GHashTable *components)
 	chat->components = components;
 }
 
+static gboolean
+purple_chat_is_online(PurpleBlistNode *node)
+{
+	PurpleChat *chat;
+
+	g_return_val_if_fail(node, FALSE);
+	return purple_account_is_connected(PURPLE_CHAT(chat)->account);
+}
+
 /******************/
 /*  GObject Code  */
 /******************/
@@ -241,7 +250,7 @@ enum {
 #define PROP_ACCOUNT_S "account"
 #define PROP_COMPONENTS_S "components"
 
-static GObjectClass *parent_class = NULL;
+static PurpleBlistNodeClass *parent_class = NULL;
 
 PurpleChat *purple_chat_new(PurpleAccount *account, const char *alias, GHashTable *components)
 {
@@ -265,7 +274,7 @@ purple_chat_finalize(GObject *object)
 	g_hash_table_destroy(chat->components);
 	g_free(chat->alias);
 	PURPLE_DBUS_UNREGISTER_POINTER(chat);
-	parent_class->finalize(object);
+	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
 static void
@@ -313,6 +322,9 @@ static void
 purple_chat_class_init(PurpleChatClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = PURPLE_BLIST_NODE_CLASS(klass);
+	parent_class->is_online = purple_chat_is_online;
 
 	parent_class = g_type_class_peek_parent(klass);
 	obj_class->finalize = purple_chat_finalize;

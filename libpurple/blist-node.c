@@ -614,6 +614,18 @@ purple_blist_node_prev(PurpleBlistNode *node)
 	return NULL;
 }
 
+gboolean
+purple_blist_node_is_online(PurpleBlistNode *node)
+{
+	PurpleBlistNodeClass *klass;
+
+	g_return_val_if_fail(PURPLE_IS_BLIST_NODE(node), FALSE);
+	klass = PURPLE_GET_BLIST_NODE_CLASS(node);
+	if(klass && klass->is_online)
+		return klass->is_online(node);
+	return FALSE;
+}
+
 /******************/
 /*  GObject Code  */
 /******************/
@@ -671,6 +683,7 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 	klass->parent = purple_blist_node_real_parent;
 	klass->next = purple_blist_node_real_next;
 	klass->prev = purple_blist_node_real_prev;
+	klass->is_online = NULL;
 
 	purple_signal_register( purple_blist_node_handle(),
 													"group-removed",

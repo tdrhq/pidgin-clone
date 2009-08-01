@@ -93,10 +93,45 @@ GSList *purple_group_get_accounts(PurpleGroup *group)
 }
 
 static void
-purple_group_add_update(PurpleGroup *group, PurpleBlistNode *child)
+purple_group_child_updated(PurpleGroup *group, PurpleBlistNode *child)
 {
 	PurpleChat *chat;
 	PurpleContact *contact;
+
+	g_return_if_fail(group);
+	g_return_if_fail(child);
+	
+	if(PURPLE_IS_CHAT(child)){
+		chat = PURPLE_CHAT(child);
+		if (purple_account_is_connected(chat->account)) {
+			group->online++;
+			group->currentsize++;
+		}
+	} else if(PURPLE_IS_CONTACT(child)){
+		contact = PURPLE_CONTACT(child);
+		if(purple_contact_get_online(contact) > 0)
+			group->online++;
+		if(purple_contact_get_currentsize(contact) == 1)/* Just came online */
+			group->currentsize++;
+	} else {
+		g_warn_if_reached();
+	}
+}
+
+static void
+purple_group_add_child_helper(PurpleGroup *group, PurpleBlistNode *child)
+{
+
+	PurpleChat *chat;
+	PurpleContact *contact;
+
+	g_return_if_fail(PURPLE_IS_GROUP(group));
+
+	purple_signal_connect(purple_blist_node_get_handle(), "node-updated", /* What to connect to */
+		group, /* Object receiving the signal */
+		PURPLE_CALLBACK(purple_group_child_updated), /* Callback function */
+		group /* Data to pass to the callback function */
+	);
 
 	if(PURPLE_IS_CHAT(child)){
 		chat = PURPLE_CHAT(child);
@@ -119,6 +154,11 @@ purple_group_add_update(PurpleGroup *group, PurpleBlistNode *child)
 	#warning Is this schedule save necessary?
 	purple_blist_schedule_save();
 	purple_signal_emit(purple_blist_node_get_handle(), "node-added", child);
+	purple_signal_connect(purple_blist_node_get_handle(), "node-updated", /* What to connect to */
+		group, /* Object receiving the signal */
+		PURPLE_CALLBACK(purple_group_child_updated), /* Callback function */
+		group /* Data to pass to the callback function */
+	);
 
 }
 
@@ -127,19 +167,21 @@ purple_group_add_sibling(PurpleBlistNode *node, PurpleBlistNode *location)
 {
 	g_return_if_fail(node);
 	g_return_if_fail(PURPLE_IS_GROUP(purple_blist_node_parent(location)));
+	
+	purple_group_add_child_helper(PURPLE_GROUP(purple_blist_node_parent(location)), node);
 
 	parent_class->add_sibling(node, location);
-	purple_group_add_update(PURPLE_GROUP(purple_blist_node_parent(location)), node);
 }
 
 static void
 purple_group_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 {
-	g_return_if_fail(parent);
+	g_return_if_fail(PURPLE_IS_GROUP(parent));
 	g_return_if_fail(child);
 
+	purple_group_add_child_helper(PURPLE_GROUP(parent), child);
+
 	parent_class->add_child(parent, child);
-	purple_group_add_update(PURPLE_GROUP(parent), child);
 }
 
 static void
@@ -227,39 +269,6 @@ GList *purple_group_get_buddies(PurpleGroup *group)
 	return buddies;
 }
 
-void
-purple_group_contact_updated(PurpleGroup *group, PurpleContact *contact)
-{
-	g_return_if_fail(group);
-	g_return_if_fail(contact);
-
-	if (purple_contact_get_online(contact) > 0)
-		group->online++;
-	else
-		group->online--;
-
-	if (purple_contact_get_currentsize(contact) > 0)
-		group->currentsize++;
-	else
-		group->currentsize--;
-}
-
-static void
-purple_group_add_contact(PurpleGroup *group, PurpleContact *contact, PurpleBlistNode *node)
-{
-	g_return_if_fail(group);
-	g_return_if_fail(contact);
-
-	if (node && (PURPLE_IS_CONTACT(node) ||
-				PURPLE_IS_CHAT(node))) {
-		purple_blist_node_add_sibling(PURPLE_BLIST_NODE(contact), node);
-	} else {
-		purple_blist_node_add_child(PURPLE_BLIST_NODE(group), PURPLE_BLIST_NODE(contact));
-	}	
-	purple_group_contact_updated(group, contact);
-	group->totalsize++;
-}
-
 static void
 purple_group_set_name(PurpleGroup *group, const char *name)
 {
@@ -300,6 +309,7 @@ static void
 purple_group_finalize(GObject *object)
 {
 	PurpleGroup *group = PURPLE_GROUP(object);
+	purple_signals_disconnect_by_handle(group);
 	g_free(group->name);
 	PURPLE_DBUS_UNREGISTER_POINTER(group);
 	G_OBJECT_CLASS(parent_class)->finalize(object);

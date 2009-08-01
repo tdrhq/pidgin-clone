@@ -317,8 +317,29 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 }
 
 static void
+purple_contact_child_update(PurpleContact *contact, PurpleBlistNode *child)
+{
+	g_return_if_fail(contact);
+	g_return_if_fail(child);
+
+	if(purple_blist_node_is_online(child)){
+		contact->online++;
+	} else {
+		contact->online--;
+	}
+}
+
+static void
 purple_contact_add_buddy_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 {
+	PurpleContact *contact;
+	
+	g_return_if_fail(parent);
+	g_return_if_fail(child);
+
+	contact = PURPLE_CONTACT(parent);
+
+	purple_contact_child_update(contact, child);
 
 }
 
@@ -326,6 +347,13 @@ static void
 purple_contact_add_buddy_sibling(PurpleBlistNode *child, PurpleBlistNode *location)
 {
 
+}
+
+static gboolean
+purple_contact_is_online(PurpleBlistNode *contact)
+{
+	g_return_val_if_fail(contact, FALSE);
+	return purple_contact_get_online(PURPLE_CONTACT(contact)) > 0;
 }
 
 static void
@@ -344,6 +372,8 @@ purple_contact_remove_buddy(PurpleBlistNode *child)
 	contact->totalsize--;
 
 	/* emit a node-updated signal here */
+
+	purple_signal_emit(purple_blist_node_get_handle(), "node-updated", contact);
 
 #warning The ui calls havent been thought out yet, as to where they ought to go.
 	/* Re-sort the contact */
@@ -377,6 +407,7 @@ purple_contact_class_init(PurpleContactClass *klass)
 	parent_class->add_sibling = purple_contact_add_buddy_sibling;
 	parent_class->add_child = purple_contact_add_buddy_child;
 	parent_class->remove = purple_contact_remove_buddy;
+	parent_class->is_online = purple_contact_is_online;
 
 	obj_class->finalize = purple_contact_finalize;
 }

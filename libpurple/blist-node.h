@@ -83,6 +83,7 @@ struct _PurpleBlistNodeClass {
 	PurpleBlistNode *(*parent)(PurpleBlistNode *child);
 	PurpleBlistNode *(*next)(PurpleBlistNode *node);
 	PurpleBlistNode *(*prev)(PurpleBlistNode *node);
+	gboolean (*is_online)(PurpleBlistNode *node);
 
 	void (*purple_reserved1)(void);
 	void (*purple_reserved2)(void);
@@ -267,6 +268,13 @@ GHashTable *purple_blist_node_get_settings(PurpleBlistNode *node);
  * @return the empty state
  */
 gboolean purple_blist_node_is_empty(PurpleBlistNode *node);
+
+/**
+ * Returns if a blist-node is online
+ *
+ * @return the online status
+ */
+gboolean purple_blist_node_is_online(PurpleBlistNode *node);
 
 /**
  * Retrieves a named integer setting from a node in the buddy list
