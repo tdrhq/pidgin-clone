@@ -317,12 +317,12 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 }
 
 static void
-purple_contact_child_update(PurpleContact *contact, PurpleBlistNode *child)
+purple_contact_child_updated(PurpleContact *contact, PurpleBuddy *child)
 {
-	g_return_if_fail(contact);
-	g_return_if_fail(child);
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
+	g_return_if_fail(PURPLE_IS_BUDDY(child));
 
-	if(purple_blist_node_is_online(child)){
+	if(purple_blist_node_is_online(PURPLE_BLIST_NODE(child))){
 		contact->online++;
 	} else {
 		contact->online--;
@@ -330,29 +330,50 @@ purple_contact_child_update(PurpleContact *contact, PurpleBlistNode *child)
 }
 
 static void
+purple_contact_add_helper(PurpleContact *contact, PurpleBuddy *buddy)
+{
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
+	g_return_if_fail(PURPLE_IS_BUDDY(buddy));
+
+	#warning: gotta be a better way than just repeating this over and over
+	purple_signal_connect(purple_blist_node_get_handle(), "node-updated", /* What to connect to */
+		contact, /* Object receiving the signal */
+		PURPLE_CALLBACK(purple_contact_child_updated), /* Callback function */
+		contact /* Data to pass to the callback function */
+	);
+
+	purple_contact_child_updated(contact, buddy);
+}
+
+static void
 purple_contact_add_buddy_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 {
-	PurpleContact *contact;
-	
-	g_return_if_fail(parent);
-	g_return_if_fail(child);
+	g_return_if_fail(PURPLE_IS_CONTACT(parent));
+	g_return_if_fail(PURPLE_IS_BUDDY(child));
 
-	contact = PURPLE_CONTACT(parent);
-
-	purple_contact_child_update(contact, child);
+	purple_contact_add_helper(PURPLE_CONTACT(parent), PURPLE_BUDDY(child));
+	parent_class->add_child(parent, child);
 
 }
 
 static void
 purple_contact_add_buddy_sibling(PurpleBlistNode *child, PurpleBlistNode *location)
 {
+	PurpleContact *contact;
 
+	g_return_if_fail(PURPLE_IS_CONTACT(purple_blist_node_parent(location)));
+	g_return_if_fail(PURPLE_IS_BUDDY(child));
+
+	contact = PURPLE_CONTACT(purple_blist_node_parent(location));
+
+	purple_contact_add_helper(contact, PURPLE_BUDDY(child));
+	parent_class->add_sibling(child, location);
 }
 
 static gboolean
 purple_contact_is_online(PurpleBlistNode *contact)
 {
-	g_return_val_if_fail(contact, FALSE);
+	g_return_val_if_fail(PURPLE_IS_CONTACT(contact), FALSE);
 	return purple_contact_get_online(PURPLE_CONTACT(contact)) > 0;
 }
 
@@ -394,6 +415,7 @@ purple_contact_finalize(GObject *object)
 {
 	PurpleContact *contact = PURPLE_CONTACT(object);
 	g_free(contact->alias);
+	purple_signals_disconnect_by_handle(contact);
 	PURPLE_DBUS_UNREGISTER_POINTER(contact);
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
