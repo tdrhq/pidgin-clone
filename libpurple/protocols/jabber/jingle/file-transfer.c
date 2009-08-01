@@ -549,7 +549,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			jingle_s5b_set_failed_connect_callback(JINGLE_S5B(transport),
 				jingle_file_transfer_s5b_connect_failed_callback, content);
 			/* start local listen on the S5B transport */
-			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
+			jingle_s5b_gather_candidates(session, JINGLE_S5B(transport));
 		}	
 	} else if (xfer->data) {
 		JingleContent *content = (JingleContent *) xfer->data;
@@ -597,7 +597,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 				jingle_file_transfer_s5b_error_callback, content);
 			jingle_s5b_set_failed_connect_callback(JINGLE_S5B(transport),
 				jingle_file_transfer_s5b_connect_failed_callback, content);
-			jingle_s5b_gather_streamhosts(session, JINGLE_S5B(transport));
+			jingle_s5b_gather_candidates(session, JINGLE_S5B(transport));
 		}
 		g_object_unref(session);
 		g_object_unref(transport);
@@ -730,9 +730,9 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					break;
 				}
 			} else if (JINGLE_IS_S5B(transport)) {
-				/* add the receiver's streamhost (this must be done here since
-					parse is not called on the existing transport */
-				jingle_s5b_add_streamhosts(JINGLE_S5B(transport),
+				/* add the receiver's streamhost candidates (this must be done 
+					here since parse is not called on the existing transport */
+				jingle_s5b_add_candidates(JINGLE_S5B(transport),
 					xmlnode_get_child(xmlcontent, "transport"));
 				/* attempt to connect bytestream */
 				jingle_s5b_attempt_connect(session, JINGLE_S5B(transport));
@@ -748,7 +748,6 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			xmlnode *description = xmlnode_get_child(xmlcontent, "description");
 			JabberStream *js = jingle_session_get_js(session);
 			xmlnode *offer = xmlnode_get_child(description, "offer");
-			PurpleXfer *xfer = NULL;
 			gchar *who = jingle_session_get_remote_jid(session);
 	
 			if (offer) {
@@ -828,24 +827,18 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			/* we should check for "stream-host" error (in the case of S5B) and
 			 offer a transport-replace with IBB */
 			if (xmltransport) {
-				xmlnode *streamhost_error = 
-					xmlnode_get_child(xmltransport, "streamhost-error");
+				xmlnode *candidate_error = 
+					xmlnode_get_child(xmltransport, "candidate-error");
 
-				if (streamhost_error) {
+				if (candidate_error) {
 					purple_debug_info("jingle-ft", 
 						"got a streamhost-error, remote couldn't connect\n");
 					JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->
 						remote_failed_s5b = TRUE;
-				
-					/* if we have already tried connecting to all remote
-					 streamhost candidates, or there were none, trigger
-					 the replace callback directly */
-					if (JINGLE_IS_S5B(transport) &&
-						!jingle_s5b_has_remaining_remote_streamhosts(
-							JINGLE_S5B(transport))) {
-						jingle_file_transfer_s5b_connect_failed_callback(
-							content);
-					}
+				}
+				if (JINGLE_IS_S5B(transport)) {
+					jingle_s5b_handle_transport_info(JINGLE_S5B(transport),
+						session, xmltransport);
 				}
 			}
 			
@@ -884,12 +877,8 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 						"failed to open file for reading\n");
 					jingle_file_transfer_cancel_local(content);
 				}
-			} else if (JINGLE_IS_S5B(transport)) {
-				JingleS5B *s5b = JINGLE_S5B(transport);
-				xmlnode *xmltransport = xmlnode_get_child(xmlcontent, "transport");
-				jingle_s5b_handle_transport_accept(s5b, session, xmltransport);
 			}
-				
+	
 			g_object_unref(session);
 			g_object_unref(transport);
 			break;
@@ -901,7 +890,7 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				xmlnode_get_attrib(xmlnode_get_child(xmlcontent, 
 					"transport"), "sid");
 			gchar *who = jingle_session_get_remote_jid(session);
-			const PurpleXfer *xfer = JINGLE_FT(content)->priv->xfer;
+			PurpleXfer *xfer = JINGLE_FT(content)->priv->xfer;
 			const gchar *filename = purple_xfer_get_local_filename(xfer);
 			JingleTransport *new_transport = 
 				jingle_content_get_pending_transport(content);
@@ -983,13 +972,11 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 PurpleXfer *
 jingle_file_transfer_new_xfer(PurpleConnection *gc, const gchar *who)
 {
-	JabberStream *js = gc->proto_data;
 	PurpleXfer *xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
 
 	purple_debug_info("jingle-ft", "jingle_file_transfer_new_xfer\n");
 
-	if (xfer)
-	{
+	if (xfer) {
 		purple_xfer_set_init_fnc(xfer, jingle_file_transfer_xfer_init);
 		purple_xfer_set_cancel_send_fnc(xfer, jingle_file_transfer_cancel_send);
 		purple_xfer_set_end_fnc(xfer, jingle_file_transfer_xfer_end);
@@ -1002,7 +989,6 @@ jingle_file_transfer_new_xfer(PurpleConnection *gc, const gchar *who)
 void 
 jingle_file_transfer_send(PurpleConnection *gc, const char *who, const char *file)
 {
-	JabberStream *js = gc->proto_data;
 	PurpleXfer *xfer = jingle_file_transfer_new_xfer(gc, who);
 
 	purple_debug_info("jingle-ft", "jingle_file_transfer_send\n");

@@ -82,18 +82,18 @@ void jingle_s5b_set_error_callback(JingleS5B *s5b,
 void jingle_s5b_set_failed_connect_callback(JingleS5B *s5b,
 	JingleS5BFailedConnectCallback *cb, JingleContent *content);
 
-void jingle_s5b_add_streamhosts(JingleS5B *s5b, const xmlnode *transport);
+void jingle_s5b_add_candidates(JingleS5B *s5b, const xmlnode *transport);
 
 /* start discovering streamhosts, initiator will send session-initiate when
 	done, receiver will send transport-info */
-void jingle_s5b_gather_streamhosts(JingleSession *session, JingleS5B *s5b);
+void jingle_s5b_gather_candidates(JingleSession *session, JingleS5B *s5b);
 
 void jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b);
 
-void jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session, 
+void jingle_s5b_handle_transport_info(JingleS5B *s5b, JingleSession *session, 
 	xmlnode *transport);
 
-gboolean jingle_s5b_has_remaining_remote_streamhosts(const JingleS5B *s5b);
+gboolean jingle_s5b_has_remaining_remote_candidates(const JingleS5B *s5b);
 
 void jingle_s5b_stop_connection_attempts(JingleS5B *s5b);
 

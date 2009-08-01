@@ -31,104 +31,182 @@
 /* auxillary functions to handle JabberBytestreamsStreamhosts, maybe this
  should be in a separtate module, used by si.c and other places as well */
 
-static JabberBytestreamsStreamhost *
-jingle_s5b_streamhost_create(const gchar *jid, const gchar *host, int port,
-	const gchar *zeroconf)
+typedef enum {
+	JINGLE_S5B_CANDIDATE_TYPE_DIRECT,
+	JINGLE_S5B_CANDIDATE_TYPE_ASSISTED,
+	JINGLE_S5B_CANDIDATE_TYPE_TUNNEL,
+	JINGLE_S5B_CANDIDATE_TYPE_PROXY,
+	JINGLE_S5B_CANDIDATE_TYPE_UNKNOWN
+} JingleS5BCandidateType;
+
+typedef struct {
+	gchar *cid;
+	gchar *host;
+	gchar *jid;
+	guint16 port;
+	guint priority;
+	JingleS5BCandidateType type;
+} JingleS5BCandidate;
+
+static guint
+jingle_s5b_candidate_get_prio(JingleS5BCandidateType type)
 {
-	JabberBytestreamsStreamhost *sh = g_new0(JabberBytestreamsStreamhost, 1);
-	
-	if (sh) {
-		sh->jid = g_strdup(jid);
-		sh->host = g_strdup(host);
-		sh->port = port;
-		if (zeroconf)
-			sh->zeroconf = g_strdup(zeroconf);
+	guint type_preference;
+
+	switch (type) {
+		case JINGLE_S5B_CANDIDATE_TYPE_DIRECT:
+			type_preference = 126;
+			break;
+		case JINGLE_S5B_CANDIDATE_TYPE_ASSISTED:
+			type_preference = 120;
+			break;
+		case JINGLE_S5B_CANDIDATE_TYPE_TUNNEL:
+			type_preference = 110;
+			break;
+		case JINGLE_S5B_CANDIDATE_TYPE_PROXY:
+			type_preference = 10;
+			break;
+		default:
+			type_preference = 0;
+			break;
 	}
 
-	return sh;
+	/* we set "local preference" to 0 (see XEP-0260) */
+	return 65536 * type_preference;
 }
 
-static JabberBytestreamsStreamhost *
-jingle_s5b_streamhost_create_from_xml(xmlnode *streamhost)
+static JingleS5BCandidate *
+jingle_s5b_candidate_create(JabberStream *js, const gchar *jid, const gchar *host,
+	guint16 port, JingleS5BCandidateType type)  
 {
-	JabberBytestreamsStreamhost *sh = NULL;
-	const gchar *jid = xmlnode_get_attrib(streamhost, "jid");
-	const gchar *host = xmlnode_get_attrib(streamhost, "host");
-	const gchar *port = xmlnode_get_attrib(streamhost, "port");
-	const gchar *zeroconf = xmlnode_get_attrib(streamhost, "zeroconf");
+	JingleS5BCandidate *candidate = g_new0(JingleS5BCandidate, 1);
+	
+	if (candidate) {
+		candidate->cid = jabber_get_next_id(js);
+		candidate->jid = g_strdup(jid);
+		candidate->host = g_strdup(host);
+		candidate->port = port;
+		candidate->type = type;
+		candidate->priority = jingle_s5b_candidate_get_prio(type);
+	}
 
-	if (jid && host) {
-		sh = g_new0(JabberBytestreamsStreamhost, 1);
-		sh->jid = g_strdup(jid);
-		sh->host = g_strdup(host);
+	return candidate;
+}
+
+static JingleS5BCandidate *
+jingle_s5b_candidate_create_from_xml(xmlnode *candidate)
+{
+	JingleS5BCandidate *cand = NULL;
+	const gchar *cid = xmlnode_get_attrib(candidate, "cid");
+	const gchar *jid = xmlnode_get_attrib(candidate, "jid");
+	const gchar *host = xmlnode_get_attrib(candidate, "host");
+	const gchar *port = xmlnode_get_attrib(candidate, "port");
+	const gchar *priority = xmlnode_get_attrib(candidate, "priority");
+	const gchar *type = xmlnode_get_attrib(candidate, "type");
+
+	if (cid && host && priority) {
+		cand = g_new0(JingleS5BCandidate, 1);
+		cand->cid = g_strdup(cid);
+		cand->jid = g_strdup(jid);
+		cand->host = g_strdup(host);
 		if (port)
-			sh->port = atoi(port);
-		if (zeroconf)
-			sh->zeroconf = g_strdup(zeroconf);
+			cand->port = atoi(port);
+		if (priority)
+			cand->priority = atoi(priority);
+
+		if (purple_strequal(type, "direct"))
+			cand->type = JINGLE_S5B_CANDIDATE_TYPE_DIRECT;
+		else if (purple_strequal(type, "assisted"))
+			cand->type = JINGLE_S5B_CANDIDATE_TYPE_ASSISTED;
+		else if (purple_strequal(type, "tunnel"))
+			cand->type = JINGLE_S5B_CANDIDATE_TYPE_TUNNEL;
+		else if (purple_strequal(type, "proxy"))
+			cand->type = JINGLE_S5B_CANDIDATE_TYPE_PROXY;
+		else
+			cand->type = JINGLE_S5B_CANDIDATE_TYPE_UNKNOWN;
 	}
-	return sh;
+	return cand;
 }
 
 static void
-jingle_s5b_streamhost_destroy(JabberBytestreamsStreamhost *sh)
+jingle_s5b_candidate_destroy(JingleS5BCandidate *candidate)
 {
-	g_free(sh->jid);
-	g_free(sh->host);
-	if (sh->zeroconf)
-		g_free(sh->zeroconf);
-	g_free(sh);
+	g_free(candidate->cid);
+	g_free(candidate->jid);
+	g_free(candidate->host);
+	g_free(candidate);
 }
 
-static JabberBytestreamsStreamhost *
-jingle_s5b_streamhost_copy(const JabberBytestreamsStreamhost *sh)
+static JingleS5BCandidate *
+jingle_s5b_candidate_copy(const JingleS5BCandidate *candidate)
 {
-	JabberBytestreamsStreamhost *new_sh = g_new0(JabberBytestreamsStreamhost, 1);
+	JingleS5BCandidate *new_cand = g_new0(JingleS5BCandidate, 1);
 	
-	if (new_sh) {
-		new_sh->jid = g_strdup(sh->jid);
-		new_sh->host = g_strdup(sh->host);
-		new_sh->port = sh->port;
-		if (sh->zeroconf)
-			new_sh->zeroconf = g_strdup(sh->zeroconf);
+	if (new_cand) {
+		new_cand->cid = g_strdup(candidate->cid);
+		new_cand->jid = g_strdup(candidate->jid);
+		new_cand->host = g_strdup(candidate->host);
+		new_cand->port = candidate->port;
+		new_cand->priority = candidate->priority;
+		new_cand->type = candidate->type;
 	}
 
-	return new_sh;
+	return new_cand;
 }
 
 static void
-jingle_s5b_streamhost_add_xml_internal(xmlnode *node, 
-	const JabberBytestreamsStreamhost *sh)
+jingle_s5b_candidate_add_xml_internal(xmlnode *node, 
+	const JingleS5BCandidate *cand)
 {
 	gchar port[10];
+	gchar priority[10];
 
 	if (node) {
-		g_snprintf(port, 10, "%d", sh->port);
-		xmlnode_set_attrib(node, "jid", sh->jid);
-		xmlnode_set_attrib(node, "host", sh->host);
+		g_snprintf(port, 10, "%d", cand->port);
+		g_snprintf(priority, 10, "%d", cand->priority);
+		xmlnode_set_attrib(node, "cid", cand->cid);
+		xmlnode_set_attrib(node, "jid", cand->jid);
+		xmlnode_set_attrib(node, "host", cand->host);
 		xmlnode_set_attrib(node, "port", port);
-		if (sh->zeroconf)
-			xmlnode_set_attrib(node, "zeroconf", sh->zeroconf);
+		xmlnode_set_attrib(node, "priority", priority);
+
+		switch (cand->type) {
+			case JINGLE_S5B_CANDIDATE_TYPE_DIRECT:
+				xmlnode_set_attrib(node, "type", "direct");
+				break;
+			case JINGLE_S5B_CANDIDATE_TYPE_ASSISTED:
+				xmlnode_set_attrib(node, "type", "assisted");
+				break;
+			case JINGLE_S5B_CANDIDATE_TYPE_TUNNEL:
+				xmlnode_set_attrib(node, "type", "tunnel");
+				break;
+			case JINGLE_S5B_CANDIDATE_TYPE_PROXY:
+				xmlnode_set_attrib(node, "type", "proxy");
+				break;
+			default:
+				break;
+		}
 	}
 }
 
 static xmlnode *
-jingle_s5b_streamhost_to_xml(const JabberBytestreamsStreamhost *sh)
+jingle_s5b_candidate_to_xml(const JingleS5BCandidate *cand)
 {
-	xmlnode *streamhost = xmlnode_new("streamhost");
+	xmlnode *candidate = xmlnode_new("candidate");
 	
-	jingle_s5b_streamhost_add_xml_internal(streamhost, sh);
+	jingle_s5b_candidate_add_xml_internal(candidate, cand);
 	
-	return streamhost;
+	return candidate;
 }
 
 static xmlnode *
-jingle_s5b_streamhost_to_xml_used(const JabberBytestreamsStreamhost *sh)
+jingle_s5b_candidate_to_xml_used(const JingleS5BCandidate *cand)
 {
-	xmlnode *streamhost_used = xmlnode_new("streamhost-used");
+	xmlnode *candidate_used = xmlnode_new("candidate-used");
+
+	xmlnode_set_attrib(candidate_used, "cid", cand->cid);
 	
-	jingle_s5b_streamhost_add_xml_internal(streamhost_used, sh);
-	
-	return streamhost_used;
+	return candidate_used;
 }
 
 struct _JingleS5BPrivate {
@@ -145,11 +223,11 @@ struct _JingleS5BPrivate {
 	char *rxqueue;
 	size_t rxlen;
 	gsize rxmaxlen;
-	GList *remote_streamhosts;
-	GList *local_streamhosts;
-	GList *remaining_streamhosts; /* pointer to untested remote SHs */
-	JabberBytestreamsStreamhost *successfull_remote_streamhost;
-	JabberBytestreamsStreamhost *accepted_streamhost;
+	GList *remote_candidates;
+	GList *local_candidates;
+	GList *remaining_candidates; /* pointer to untested remote SHs */
+	JingleS5BCandidate *successful_remote_candidate;
+	JingleS5BCandidate *accepted_candidate;
 	JingleS5BConnectCallback *connect_cb;
 	JingleS5BErrorCallback *error_cb;
 	JingleS5BFailedConnectCallback *failed_cb;
@@ -262,19 +340,19 @@ jingle_s5b_finalize (GObject *s5b)
 	}
 
 	/* free the local streamhosts */
-	while (priv->local_streamhosts) {
-		jingle_s5b_streamhost_destroy(
-			(JabberBytestreamsStreamhost *)priv->local_streamhosts->data);
-		priv->local_streamhosts = g_list_delete_link(priv->local_streamhosts, 
-			priv->local_streamhosts);
+	while (priv->local_candidates) {
+		jingle_s5b_candidate_destroy(
+			(JingleS5BCandidate *)priv->local_candidates->data);
+		priv->local_candidates = g_list_delete_link(priv->local_candidates, 
+			priv->local_candidates);
 	}
 	
 	/* free the remote streamhosts */
-	while (priv->local_streamhosts) {
-		jingle_s5b_streamhost_destroy(
-			(JabberBytestreamsStreamhost *)priv->remote_streamhosts->data);
-		priv->remote_streamhosts = g_list_delete_link(priv->remote_streamhosts, 
-			priv->remote_streamhosts);
+	while (priv->remote_candidates) {
+		jingle_s5b_candidate_destroy(
+			(JingleS5BCandidate *)priv->remote_candidates->data);
+		priv->remote_candidates = g_list_delete_link(priv->remote_candidates, 
+			priv->remote_candidates);
 	}
 	
 	if (priv->ppi)
@@ -371,22 +449,37 @@ void jingle_s5b_set_failed_connect_callback(JingleS5B *s5b,
 	s5b->priv->failed_content = content;
 }
 
-void
-jingle_s5b_add_streamhosts(JingleS5B *s5b, const xmlnode *transport)
+static void
+jingle_s5b_add_remote_candidate(JingleS5B *s5b, JingleS5BCandidate *cand)
 {
-	xmlnode *streamhost;
+	GList *iter = s5b->priv->remote_candidates;
 	
-	for (streamhost = xmlnode_get_child(transport, "streamhost");
-		 streamhost;
-		 streamhost = xmlnode_get_next_twin(streamhost)) {
-		JabberBytestreamsStreamhost *sh = 
-			jingle_s5b_streamhost_create_from_xml(streamhost);
-		if (sh) {
+	for (; iter ; iter = g_list_next(iter)) {
+		JingleS5BCandidate *curr_cand = (JingleS5BCandidate *) iter->data;
+
+		if (cand->priority > curr_cand->priority)
+			break;
+	}
+
+	s5b->priv->remote_candidates =
+		g_list_insert_before(s5b->priv->remote_candidates, iter, cand);
+}
+
+void
+jingle_s5b_add_candidates(JingleS5B *s5b, const xmlnode *transport)
+{
+	xmlnode *candidate;
+	
+	for (candidate = xmlnode_get_child(transport, "candidate");
+		 candidate;
+		 candidate = xmlnode_get_next_twin(candidate)) {
+		JingleS5BCandidate *cand = 
+			jingle_s5b_candidate_create_from_xml(candidate);
+		if (cand) {
 			purple_debug_info("jingle-s5b", 
-				"adding streamhost jid = %s, host = %s, port = %d to remote "
-				"streamhosts\n", sh->jid, sh->host, sh->port);
-			s5b->priv->remote_streamhosts = 
-				g_list_append(s5b->priv->remote_streamhosts, sh);
+				"adding streamhost cid = %s, jid = %s, host = %s, port = %d to remote "
+				"candidates\n", cand->cid, cand->jid, cand->host, cand->port);
+			jingle_s5b_add_remote_candidate(s5b, cand);
 		}
 	}
 }
@@ -400,7 +493,7 @@ jingle_s5b_parse_internal(xmlnode *s5b)
 	jingle_s5b_set_sid(JINGLE_S5B(transport), 
 		xmlnode_get_attrib(s5b, "sid"));
 	
-	jingle_s5b_add_streamhosts(JINGLE_S5B(transport), s5b);
+	jingle_s5b_add_candidates(JINGLE_S5B(transport), s5b);
 	
 	return transport;
 }
@@ -421,18 +514,20 @@ jingle_s5b_to_xml_internal(JingleTransport *transport, xmlnode *content,
 	xmlnode_set_attrib(node, "mode", "tcp");
 
 	if (action == JINGLE_SESSION_INITIATE || action == JINGLE_SESSION_ACCEPT) {
-		for (iter = JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts; 
+		for (iter = JINGLE_S5B_GET_PRIVATE(s5b)->local_candidates; 
 			iter; 
 			iter = g_list_next(iter)) {
-			JabberBytestreamsStreamhost *sh = 
-				(JabberBytestreamsStreamhost *) iter->data;
-			xmlnode_insert_child(node, jingle_s5b_streamhost_to_xml(sh));
+			JingleS5BCandidate *cand = 
+				(JingleS5BCandidate *) iter->data;
+			xmlnode_insert_child(node, jingle_s5b_candidate_to_xml(cand));
 		}
-	} else if (action == JINGLE_TRANSPORT_ACCEPT) {
+	} else if (action == JINGLE_TRANSPORT_INFO) {
 		/* should include the chosen streamhost here... */
-		xmlnode_insert_child(node, 
-			jingle_s5b_streamhost_to_xml_used(
-				s5b->priv->successfull_remote_streamhost));
+		if (s5b->priv->successful_remote_candidate) {
+			xmlnode_insert_child(node, 
+				jingle_s5b_candidate_to_xml_used(
+					s5b->priv->successful_remote_candidate));
+		}
 	}
 
 	return node;
@@ -502,7 +597,7 @@ jingle_s5b_stop_connection_attempts(JingleS5B *s5b)
 {
 	purple_debug_info("jingle-s5b", "stop connection attempts\n");
 	
-	s5b->priv->remaining_streamhosts = NULL;
+	s5b->priv->remaining_candidates = NULL;
 
 	if (s5b->priv->listen_data) {
 		purple_network_listen_cancel(s5b->priv->listen_data);
@@ -566,7 +661,7 @@ jingle_s5b_send_read_again_resp_cb(gpointer data, gint source,
 	s5b->priv->rxqueue = NULL;
 
 	/* Before actually starting sending the file, we need to wait until the
-	 * recipient sends the IQ result with <streamhost-used/>
+	 * recipient sends the IQ result with <candidate-used/>
 	 */
 	purple_debug_info("jingle-s5b", "SOCKS5 connection negotiation completed. "
 					  "Waiting for IQ result to start file transfer.\n");
@@ -926,20 +1021,22 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 			local_port);
 
 		if (!purple_strequal(local_ip, "0.0.0.0")) {
-			JabberBytestreamsStreamhost *sh =
-				jingle_s5b_streamhost_create(jid, local_ip, local_port, NULL);
-			JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts =
-				g_list_append(JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts,
-					sh);
+			JingleS5BCandidate *cand =
+				jingle_s5b_candidate_create(js, jid, local_ip, local_port,
+					JINGLE_S5B_CANDIDATE_TYPE_DIRECT);
+			JINGLE_S5B_GET_PRIVATE(s5b)->local_candidates =
+				g_list_append(JINGLE_S5B_GET_PRIVATE(s5b)->local_candidates,
+					cand);
 		}
 
 		if (!purple_strequal(local_ip, public_ip) && 
 			!purple_strequal(public_ip, "0.0.0.0")) {
-			JabberBytestreamsStreamhost *sh =
-				jingle_s5b_streamhost_create(jid, public_ip, local_port, NULL);
-			JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts =
-				g_list_append(JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts,
-					sh);	
+			JingleS5BCandidate *cand =
+				jingle_s5b_candidate_create(js, jid, public_ip, local_port,
+					JINGLE_S5B_CANDIDATE_TYPE_ASSISTED);
+			JINGLE_S5B_GET_PRIVATE(s5b)->local_candidates =
+				g_list_append(JINGLE_S5B_GET_PRIVATE(s5b)->local_candidates,
+					cand);	
 		}
 
 		s5b->priv->local_fd = sock;
@@ -963,9 +1060,12 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 		
 		/* is this check really nessesary? si.c does it so... */
 		if (sh->jid && sh->host && sh->port > 0) {
-			JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts =
-				g_list_append(JINGLE_S5B_GET_PRIVATE(s5b)->local_streamhosts,
-					jingle_s5b_streamhost_copy(sh));		
+			JingleS5BCandidate *cand =
+				jingle_s5b_candidate_create(js, sh->jid, sh->host, sh->port,
+					JINGLE_S5B_CANDIDATE_TYPE_PROXY);
+			JINGLE_S5B_GET_PRIVATE(s5b)->local_candidates =
+				g_list_append(JINGLE_S5B_GET_PRIVATE(s5b)->local_candidates,
+					cand);	
 		}
 	}
 	/* note: even if we couldn't obtain a local port and no bytestream
@@ -992,7 +1092,7 @@ jingle_s5b_listen_cb(int sock, gpointer data)
 }
 
 void
-jingle_s5b_gather_streamhosts(JingleSession *session, JingleS5B *s5b)
+jingle_s5b_gather_candidates(JingleSession *session, JingleS5B *s5b)
 {
 	JingleS5BConnectData *data = g_new0(JingleS5BConnectData, 1);
 	data->session = session;
@@ -1009,70 +1109,23 @@ jingle_s5b_gather_streamhosts(JingleSession *session, JingleS5B *s5b)
 	}
 }
 
-static void
-jingle_s5b_transport_accept_cb(JabberStream *js, const char *from,
-	JabberIqType type, const char *id, xmlnode *packet, gpointer data)
-{
-	JingleS5BConnectData *cd = (JingleS5BConnectData *) data;
-	JingleSession *session = cd->session;
-	JingleS5B *s5b = cd->s5b;
-	
-	purple_debug_info("jingle-s5b", 
-		"in jingle_s5b_transport_accept_cb: is connected to remote %d,"
-		" remote is connected %d\n", jingle_s5b_is_connected_to_remote(s5b),
-		jingle_s5b_remote_is_connected(s5b));
-	
-	if (type == JABBER_IQ_RESULT) {
-		if (!(!jingle_session_is_initiator(session) &&
-			jingle_s5b_is_connected_to_remote(s5b)) ||
-			!jingle_s5b_remote_is_connected(s5b)) {
-			/* unless we are the receiver and the receiver could connect,
-				now we shall "surrender" to other side and signal the content
-				to start */
-			jingle_s5b_surrender(s5b);
-			/* start transfer */
-			if (s5b->priv->connect_cb && s5b->priv->connect_content) {
-				s5b->priv->connect_cb(s5b->priv->connect_content);
-			} else {
-				/* some error? */
-			}
-		}
-	}
-	
-	g_free(cd);
-}
-
 static void jingle_s5b_attempt_connect_internal(gpointer data);
 
 static gboolean
-jingle_s5b_streamhost_is_local(JabberStream *js, const gchar *jid)
+jingle_s5b_candidate_is_local(const JingleS5BCandidate *cand)
 {
-	gchar *me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain, 
-		js->user->resource);
-	gchar *me_bare = jabber_get_bare_jid(me);
-	gchar *bare_jid = jabber_get_bare_jid(jid);
-	gboolean equal = purple_strequal(bare_jid, me_bare);
-
-	purple_debug_info("jingle-s5b", 
-		"jingle_s5b_streamhost_is_local: comparing JIDs %s and %s\n",
-		me, jid);
-	
-	g_free(me);
-	g_free(me_bare);
-	g_free(bare_jid);
-
-	return equal;
+	return cand->type != JINGLE_S5B_CANDIDATE_TYPE_PROXY;
 }
 
 static gboolean
-jingle_s5b_has_local_streamhosts(JabberStream *js, JingleS5B *s5b)
+jingle_s5b_has_local_candidates(JabberStream *js, JingleS5B *s5b)
 {
-	GList *iter = s5b->priv->local_streamhosts;
+	GList *iter = s5b->priv->local_candidates;
 
 	for (; iter; iter = g_list_next(iter)) {
-		JabberBytestreamsStreamhost *sh =
-			(JabberBytestreamsStreamhost *) iter->data;
-		if (jingle_s5b_streamhost_is_local(js, sh->jid)) {
+		JingleS5BCandidate *cand =
+			(JingleS5BCandidate *) iter->data;
+		if (jingle_s5b_candidate_is_local(cand)) {
 			return TRUE;
 		}
 	}
@@ -1094,9 +1147,9 @@ jingle_s5b_connect_timeout_cb(gpointer data)
 	s5b->priv->connect_timeout = 0;
 	
 	/* advance streamhost "counter" */
-	if (s5b->priv->remaining_streamhosts) {
-		s5b->priv->remaining_streamhosts = 
-			g_list_next(s5b->priv->remaining_streamhosts);
+	if (s5b->priv->remaining_candidates) {
+		s5b->priv->remaining_candidates = 
+			g_list_next(s5b->priv->remaining_candidates);
 		purple_debug_info("jingle-s5b", "trying next streamhost\n");
 		/* if remaining_streamhost is NULL here, this call will result in a
 		 streamhost error (and potentially fallback to IBB) */
@@ -1145,23 +1198,22 @@ jingle_s5b_connect_cb(gpointer data, gint source, const gchar *error_message)
 	
 	
 	/* set the currently tried streamhost as the successfull one */
-	s5b->priv->successfull_remote_streamhost =
-		(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
+	s5b->priv->successful_remote_candidate =
+		(JingleS5BCandidate *) s5b->priv->remaining_candidates->data;
 
 	/* should stop trying to connect */
 	jingle_s5b_stop_connection_attempts(s5b);
 	
-	/* should send transport-accept with streamhost-used */
-	result = jingle_session_to_packet(session, JINGLE_TRANSPORT_ACCEPT);
-	jabber_iq_set_callback(result, jingle_s5b_transport_accept_cb, cd);
+	/* should send transport-info with candidate-used */
+	result = jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
 	jabber_iq_send(result);
+	g_free(cd);
 }
 	
 static void
-jingle_s5b_connect_to_streamhost(JingleS5BConnectData *data, 
-	const JabberBytestreamsStreamhost *sh, gboolean is_proxy,
-	void (*connect_cb)(gpointer, gint, const gchar *),
-	GSourceFunc timeout_cb)
+jingle_s5b_connect_to_candidate(JingleS5BConnectData *data, 
+	const JingleS5BCandidate *cand, gboolean is_local_proxy,
+	void (*connect_cb)(gpointer, gint, const gchar *), GSourceFunc timeout_cb)
 {
 	JingleSession *session = data->session;
 	JingleS5B *s5b = data->s5b;
@@ -1170,20 +1222,19 @@ jingle_s5b_connect_to_streamhost(JingleS5BConnectData *data,
 	JabberID *dstjid = jabber_id_new(who);
 	gchar *dstaddr = NULL;
 	gchar *hash = NULL;
-	gboolean remote_is_proxy = !purple_strequal(sh->jid, who);
 	
 	purple_debug_info("jingle-s5b", 
 		"attempting to connect to streamhost: %s, port: %d\n",
-		sh->host, sh->port);
+		cand->host, cand->port);
 
 	if (s5b->priv->ppi)
 		purple_proxy_info_destroy(s5b->priv->ppi);
 	s5b->priv->ppi = purple_proxy_info_new();
 	purple_proxy_info_set_type(s5b->priv->ppi, PURPLE_PROXY_SOCKS5);
-	purple_proxy_info_set_host(s5b->priv->ppi, sh->host);
-	purple_proxy_info_set_port(s5b->priv->ppi, sh->port);
+	purple_proxy_info_set_host(s5b->priv->ppi, cand->host);
+	purple_proxy_info_set_port(s5b->priv->ppi, cand->port);
 	
-	if (is_proxy)
+	if (is_local_proxy)
 		dstaddr = g_strdup_printf("%s%s@%s/%s%s@%s/%s", s5b->priv->sid, 
 			js->user->node, js->user->domain, js->user->resource, 
 			dstjid->node, dstjid->domain, dstjid->resource);
@@ -1208,75 +1259,9 @@ jingle_s5b_connect_to_streamhost(JingleS5BConnectData *data,
 	is a proxy and we have local candidates ourselves, to allow the other
 	end a chance to connect to use before reverting to a proxy */
 	s5b->priv->connect_timeout =
-		purple_timeout_add(
-			remote_is_proxy && jingle_s5b_has_local_streamhosts(js, s5b) ?
-			STREAMHOST_CONNECT_PROXY_TIMEOUT_MILLIS : 
-			STREAMHOST_CONNECT_TIMEOUT_MILLIS,
-			timeout_cb, data);
+		purple_timeout_add(STREAMHOST_CONNECT_TIMEOUT_MILLIS, timeout_cb, data);
 
 	g_free(dstjid);
-}
-
-static void
-jingle_s5b_attempt_connect_internal(gpointer data)
-{
-	JingleSession *session = ((JingleS5BConnectData *) data)->session;
-	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
-	
-	if (s5b->priv->remaining_streamhosts) {
-		
-		JabberBytestreamsStreamhost *sh =
-			(JabberBytestreamsStreamhost *) s5b->priv->remaining_streamhosts->data;
-
-		jingle_s5b_connect_to_streamhost((JingleS5BConnectData *) data, sh, 
-			FALSE, jingle_s5b_connect_cb, jingle_s5b_connect_timeout_cb);
-	} else {
-		/* send streamhost error */
-		JabberIq *streamhost_error =
-			jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
-		xmlnode *jingle = 
-		  xmlnode_get_child(streamhost_error->node, "jingle");
-		xmlnode *content = 
-			xmlnode_get_child(jingle, "content");
-		xmlnode *transport = xmlnode_get_child(content, "transport");
-
-		xmlnode_insert_child(transport, xmlnode_new("streamhost-error"));
-		jabber_iq_send(streamhost_error);
-		
-		/* signal to the content that S5B failed (from our side) */
-		if (s5b->priv->failed_cb && s5b->priv->failed_content)
-			s5b->priv->failed_cb(s5b->priv->failed_content);
-
-		g_free(data);
-	}
-}
-
-void
-jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b)
-{
-	JingleS5BConnectData *data = g_new0(JingleS5BConnectData, 1);
-	
-	data->session = session;
-	data->s5b = s5b;
-	s5b->priv->remaining_streamhosts = s5b->priv->remote_streamhosts;
-	jingle_s5b_attempt_connect_internal(data);
-}
-
-
-
-static JabberBytestreamsStreamhost *
-jingle_s5b_find_local_streamhost(JingleS5B *s5b, const gchar *jid)
-{
-	const GList *iter = s5b->priv->local_streamhosts;
-
-	for (; iter ; iter = g_list_next(iter)) {
-		JabberBytestreamsStreamhost *sh =
-			(JabberBytestreamsStreamhost *) iter->data;
-		if (purple_strequal(sh->jid, jid)) {
-			return sh;
-		}
-	}
-	return NULL;
 }
 
 static gboolean
@@ -1335,7 +1320,7 @@ jingle_s5b_proxy_connect_cb(gpointer data, gint source, const gchar *error_messa
 	/* active the streamhost */
 	iq = jabber_iq_new_query(jingle_session_get_js(session), JABBER_IQ_SET, 
 		"http://jabber.org/protocol/bytestreams");
-	xmlnode_set_attrib(iq->node, "to", s5b->priv->accepted_streamhost->jid);
+	xmlnode_set_attrib(iq->node, "to", s5b->priv->accepted_candidate->jid);
 	query = xmlnode_get_child(iq->node, "query");
 	xmlnode_set_attrib(query, "sid", s5b->priv->sid);
 	activate = xmlnode_new_child(query, "activate");
@@ -1347,15 +1332,15 @@ jingle_s5b_proxy_connect_cb(gpointer data, gint source, const gchar *error_messa
 
 static void
 jingle_s5b_connect_to_proxy(JingleSession *session, JingleS5B *s5b, 
-	JabberBytestreamsStreamhost *sh)
+	JingleS5BCandidate *cand)
 {
 	purple_debug_info("jingle-s5b", "in jingle_s5b_connect_to_proxy\n");
-	if (sh) {
+	if (cand) {
 		JingleS5BConnectData *data = g_new0(JingleS5BConnectData, 1);
 
 		data->session = session;
 		data->s5b = s5b;
-		jingle_s5b_connect_to_streamhost(data, sh, TRUE, 
+		jingle_s5b_connect_to_candidate(data, cand, TRUE, 
 			jingle_s5b_proxy_connect_cb, jingle_s5b_proxy_timeout_cb);
 	} else {
 		purple_debug_error("jingle-s5b", 
@@ -1365,41 +1350,44 @@ jingle_s5b_connect_to_proxy(JingleSession *session, JingleS5B *s5b,
 	}
 }
 
-void
-jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session, 
-	xmlnode *transport)
+
+static void
+jingle_s5b_attempt_connect_internal(gpointer data)
 {
-	xmlnode *streamhost_used = xmlnode_get_child(transport, "streamhost-used");
+	JingleSession *session = ((JingleS5BConnectData *) data)->session;
+	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
+	
+	if (s5b->priv->remaining_candidates) {
+		JingleS5BCandidate *cand =
+			(JingleS5BCandidate *) s5b->priv->remaining_candidates->data;
 
-	if (streamhost_used) {
-		const gchar *jid = xmlnode_get_attrib(streamhost_used, "jid");
-		JabberStream *js = jingle_session_get_js(session);
-		JabberBytestreamsStreamhost *sh = 
-			jingle_s5b_find_local_streamhost(s5b, jid);
-		
-		s5b->priv->accepted_streamhost = sh;
-		
-		purple_debug_info("jingle-ft", "got streamhost-used\n");
-		/* stop connection attempts */
-		jingle_s5b_stop_connection_attempts(s5b);
+		jingle_s5b_connect_to_candidate((JingleS5BConnectData *) data, cand, 
+			FALSE, jingle_s5b_connect_cb, jingle_s5b_connect_timeout_cb);
+	} else {
+		/* send candidate error */
+		JabberIq *candidate_error =
+			jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
+		xmlnode *jingle = 
+		  xmlnode_get_child(candidate_error->node, "jingle");
+		xmlnode *content = 
+			xmlnode_get_child(jingle, "content");
+		xmlnode *transport = xmlnode_get_child(content, "transport");
 
-		if (jingle_session_is_initiator(session) &&
-			jingle_s5b_is_connected_to_remote(s5b)) {
-			/* we are the initiator and both parties could connect,
-			give up "ownership", see footnote 3 in XEP-0260 */
-			jingle_s5b_surrender(s5b);
-		} else {
-			/* we are now the "owner" of the bytestream */
+		xmlnode_insert_child(transport, xmlnode_new("candidate-error"));
+		jabber_iq_send(candidate_error);
+		
+		/* if the other end could connect to us (they sent a "candidate-used")
+		 we should use that */
+		if (s5b->priv->accepted_candidate) {
+			JingleS5BCandidate *cand = s5b->priv->accepted_candidate;
+
 			jingle_s5b_take_command(s5b);
-			
-			/* also when receiving a <streamhost-used/> we need to 
-			check if that is not one of our local streamhosts, 
-			in which case it is a proxy, and we should connect to that */
-			if (jid && !jingle_s5b_streamhost_is_local(js, jid)) {
+
+			if (!jingle_s5b_candidate_is_local(cand)) {
 				purple_debug_info("jingle-ft",
-					"got transport-accept on a proxy, "
-					"need to connect to the proxy\n");
-				jingle_s5b_connect_to_proxy(session, s5b, sh);
+					"the remote connected to us through a proxy, "
+						"need to connect to the proxy\n");
+				jingle_s5b_connect_to_proxy(session, s5b, cand);
 			} else {
 				/* start transfer */
 				if (s5b->priv->connect_cb && s5b->priv->connect_content) {
@@ -1408,12 +1396,137 @@ jingle_s5b_handle_transport_accept(JingleS5B *s5b, JingleSession *session,
 					/* some error? */
 				}
 			}
+		} else {
+			/* signal to the content that S5B failed (from our side) */
+			if (s5b->priv->failed_cb && s5b->priv->failed_content)
+				s5b->priv->failed_cb(s5b->priv->failed_content);
+		}
+		g_free(data);
+	}
+}
+
+void
+jingle_s5b_attempt_connect(JingleSession *session, JingleS5B *s5b)
+{
+	JingleS5BConnectData *data = g_new0(JingleS5BConnectData, 1);
+	
+	data->session = session;
+	data->s5b = s5b;
+	s5b->priv->remaining_candidates = s5b->priv->remote_candidates;
+	jingle_s5b_attempt_connect_internal(data);
+}
+
+
+
+static JingleS5BCandidate *
+jingle_s5b_find_local_candidate(JingleS5B *s5b, const gchar *cid)
+{
+	const GList *iter = s5b->priv->local_candidates;
+
+	for (; iter ; iter = g_list_next(iter)) {
+		JingleS5BCandidate *cand =
+			(JingleS5BCandidate *) iter->data;
+		if (purple_strequal(cand->cid, cid)) {
+			return cand;
+		}
+	}
+	return NULL;
+}
+
+
+void
+jingle_s5b_handle_transport_info(JingleS5B *s5b, JingleSession *session, 
+	xmlnode *transport)
+{
+	xmlnode *candidate_used = xmlnode_get_child(transport, "candidate-used");
+	xmlnode *candidate_error = xmlnode_get_child(transport, "candidate-error");
+	
+	if (candidate_used) {
+		const gchar *cid = xmlnode_get_attrib(candidate_used, "cid");
+		JingleS5BCandidate *cand =
+			jingle_s5b_find_local_candidate(s5b, cid);
+		JingleS5BCandidate *next_to_try =
+			(JingleS5BCandidate *) s5b->priv->remaining_candidates->data;
+		
+		s5b->priv->accepted_candidate = cand;
+		
+		purple_debug_info("jingle-ft", "got candidate-used\n");
+		/* stop connection attempts, unless there is remaining candidates of
+		 higher priority */
+		if (!next_to_try || next_to_try->priority < cand->priority) {
+			/* we don't have any remaining candidates to try, send a
+			 candidate-error */
+			/* send candidate error */
+			JabberIq *candidate_error =
+				jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
+			xmlnode *jingle = 
+				xmlnode_get_child(candidate_error->node, "jingle");
+			xmlnode *content = 
+				xmlnode_get_child(jingle, "content");
+			xmlnode *transport = xmlnode_get_child(content, "transport");
+
+			xmlnode_insert_child(transport, xmlnode_new("candidate-error"));
+			jabber_iq_send(candidate_error);
+			
+			jingle_s5b_stop_connection_attempts(s5b);
+
+			/* if we could not connect to the remote, or if we could and that
+			 candidate has a lower priority, we have "won",
+			 if the candidates have the same priority, we have won if we are
+			 the initiator */
+			if (!s5b->priv->remaining_candidates ||
+				(s5b->priv->successful_remote_candidate
+				 && s5b->priv->successful_remote_candidate->priority < cand->priority) ||
+				(s5b->priv->successful_remote_candidate
+				 && s5b->priv->successful_remote_candidate->priority == cand->priority
+				 && jingle_session_is_initiator(session))) {
+				/* we are now the "owner" of the bytestream */
+				jingle_s5b_take_command(s5b);
+
+				/* also when receiving a <streamhost-used/> we need to 
+				check if that is not one of our local streamhosts, 
+				in which case it is a proxy, and we should connect to that */
+				if (!jingle_s5b_candidate_is_local(cand)) {
+					purple_debug_info("jingle-ft",
+						"got transport-accept on a proxy, "
+						"need to connect to the proxy\n");
+					jingle_s5b_connect_to_proxy(session, s5b, cand);
+				} else {
+					/* start transfer */
+					if (s5b->priv->connect_cb && s5b->priv->connect_content) {
+						s5b->priv->connect_cb(s5b->priv->connect_content);
+					} else {
+						/* some error? */
+					}
+				}
+			} else {
+				jingle_s5b_surrender(s5b);
+				/* start the transfer */
+				if (s5b->priv->connect_cb && s5b->priv->connect_content) {
+						s5b->priv->connect_cb(s5b->priv->connect_content);
+				} else {
+					/* some error? */
+				}
+			}
+		}
+	} else if (candidate_error) {
+		if (s5b->priv->failed_cb && !s5b->priv->successful_remote_candidate &&
+			!s5b->priv->remaining_candidates) {
+			s5b->priv->failed_cb(s5b->priv->failed_content);
+		} else if (s5b->priv->successful_remote_candidate) {
+			jingle_s5b_surrender(s5b);
+			/* start the transfer */
+			if (s5b->priv->connect_cb && s5b->priv->connect_content) {
+				s5b->priv->connect_cb(s5b->priv->connect_content);
+			} else {
+				/* some error? */
+			}
 		}
 	}
 }
 
 gboolean
-jingle_s5b_has_remaining_remote_streamhosts(const JingleS5B *s5b)
+jingle_s5b_has_remaining_remote_candidates(const JingleS5B *s5b)
 {
-	return s5b->priv->remaining_streamhosts != NULL;
+	return s5b->priv->remaining_candidates != NULL;
 }
