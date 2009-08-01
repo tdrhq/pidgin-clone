@@ -43,6 +43,8 @@ typedef struct _PurpleBuddyListClass PurpleBuddyListClass;
 #define PURPLE_IS_BUDDY_LIST_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BUDDY_LIST_TYPE))
 #define PURPLE_GET_BUDDY_LIST_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BUDDY_LIST_TYPE, PurpleBuddyListClass))
 
+#define PURPLE_BLIST (purple_blist_get_list())
+
 /**
  * The Buddy List
  */
@@ -126,13 +128,13 @@ purple_blist_buddies_cache_add_account(PurpleAccount *account)
 	GHashTable *account_buddies = g_hash_table_new_full((GHashFunc)_purple_blist_hbuddy_hash,
 						(GEqualFunc)_purple_blist_hbuddy_equal,
 						(GDestroyNotify)_purple_blist_hbuddy_free_key, NULL);
-	g_hash_table_insert(purple_blist_get_list()->buddies_cache, account, account_buddies);
+	g_hash_table_insert(PURPLE_BLIST->buddies_cache, account, account_buddies);
 }
 
 static void
 purple_blist_buddies_cache_remove_account(const PurpleAccount *account)
 {
-	g_hash_table_remove(purple_blist_get_list()->buddies_cache, account);
+	g_hash_table_remove(PURPLE_BLIST->buddies_cache, account);
 }
 
 /*********************************************************************
@@ -216,7 +218,7 @@ blist_to_xmlnode(void)
 	xmlnode *node, *child, *grandchild;
 	PurpleBlistNode *gnode;
 	GList *cur;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 
 	node = xmlnode_new("purple");
 	xmlnode_set_attrib(node, "version", "1.0");
@@ -252,7 +254,7 @@ purple_blist_sync(void)
 	xmlnode *node;
 	char *data;
 
-	if (!purple_blist_get_list()->blist_loaded)
+	if (!PURPLE_BLIST->blist_loaded)
 	{
 		purple_debug_error("blist", "Attempted to save buddy list before it "
 						 "was read!\n");
@@ -270,15 +272,15 @@ static gboolean
 save_cb(gpointer data)
 {
 	purple_blist_sync();
-	purple_blist_get_list()->save_timer = 0;
+	PURPLE_BLIST->save_timer = 0;
 	return FALSE;
 }
 
 static void
 _purple_blist_schedule_save()
 {
-	if (purple_blist_get_list()->save_timer == 0)
-		purple_blist_get_list()->save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
+	if (PURPLE_BLIST->save_timer == 0)
+		PURPLE_BLIST->save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
 static void
@@ -327,7 +329,7 @@ parse_group(xmlnode *groupnode)
 
 	group = purple_group_new(name);
 	purple_blist_add_group(group,
-	purple_blist_node_first_child(PURPLE_BLIST_NODE(purple_blist_get_list())));
+	purple_blist_node_first_child(PURPLE_BLIST_NODE(PURPLE_BLIST)));
 
 	for (cnode = groupnode->child; cnode; cnode = cnode->next) {
 		if (cnode->type != XMLNODE_TYPE_TAG)
@@ -348,7 +350,7 @@ purple_blist_load()
 {
 	xmlnode *purple, *blist, *privacy;
 
-	purple_blist_get_list()->blist_loaded = TRUE;
+	PURPLE_BLIST->blist_loaded = TRUE;
 
 	purple = purple_util_read_xml_from_file("blist.xml", _("buddy list"));
 
@@ -421,19 +423,19 @@ purple_blist_load()
 PurpleBlistNode *
 purple_blist_get_root()
 {
-	return PURPLE_BLIST_NODE(purple_blist_get_list());
+	return PURPLE_BLIST_NODE(PURPLE_BLIST);
 }
 
 void *
 purple_blist_get_ui_data()
 {
-	return purple_blist_get_list()->ui_data;
+	return PURPLE_BLIST->ui_data;
 }
 
 void
 purple_blist_set_ui_data(void *ui_data)
 {
-	purple_blist_get_list()->ui_data = ui_data;
+	PURPLE_BLIST->ui_data = ui_data;
 }
 
 void purple_blist_show()
@@ -441,15 +443,15 @@ void purple_blist_show()
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
 	if (ops && ops->show)
-		ops->show(purple_blist_get_list());
+		ops->show(PURPLE_BLIST);
 }
 
 void purple_blist_destroy()
 {
 	/* This function is only a hack for api breakage */
 	#warning this needs to go
-	g_return_if_fail(purple_blist_get_list() != NULL);
-	g_object_unref(G_OBJECT(purple_blist_get_list()));
+	g_return_if_fail(PURPLE_BLIST != NULL);
+	g_object_unref(G_OBJECT(PURPLE_BLIST));
 }
 
 void purple_blist_set_visible(gboolean show)
@@ -531,7 +533,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 		source = dest;
 		g_free(new_name);
 	} else {
-		PurpleBuddyList *list = purple_blist_get_list();
+		PurpleBuddyList *list = PURPLE_BLIST;
 		gchar *key;
 
 		/* A simple rename */
@@ -614,7 +616,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *name)
 void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 	struct _purple_hbuddy *hb, *hb2;
 	GHashTable *account_buddies;
 
@@ -653,7 +655,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleGroup *g;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 	PurpleBlistNode *lnode = PURPLE_BLIST_NODE(list);
 	PurpleBlistNode *gnode, *cnode, *bnode;
 
@@ -801,7 +803,7 @@ void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node)
 {
 	PurpleBlistUiOps *ops;
 	PurpleBlistNode *gnode = PURPLE_BLIST_NODE(group);
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 	gchar *key;
 
 	g_return_if_fail(group != NULL);
@@ -896,7 +898,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBlistNode *node, *cnode, *gnode;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 	struct _purple_hbuddy hb;
 	GHashTable *account_buddies;
 
@@ -976,7 +978,7 @@ void purple_blist_remove_chat(PurpleChat *chat)
 static void
 purple_blist_remove_group(PurpleGroup *group)
 {
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBlistNode *node;
 	GList *l;
@@ -1021,7 +1023,7 @@ PurpleGroup *purple_find_group(const char *name)
 
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
-	list = purple_blist_get_list();
+	list = PURPLE_BLIST;
 
 	key = g_utf8_collate_key(name, -1);
 	group = g_hash_table_lookup(list->groups_cache, key);
@@ -1034,7 +1036,7 @@ PurpleBuddy *purple_find_buddy(PurpleAccount *account, const char *name)
 {
 	PurpleBuddy *buddy;
 	struct _purple_hbuddy hb;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 	PurpleBlistNode *group;
 
 	g_return_val_if_fail(account != NULL, NULL);
@@ -1068,7 +1070,7 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name)
 	PurpleBuddy *buddy;
 	PurpleBlistNode *node;
 	GSList *ret = NULL;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
@@ -1098,7 +1100,7 @@ void purple_blist_add_account(PurpleAccount *account)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 
 
 	if (!ops || !ops->update)
@@ -1146,7 +1148,7 @@ void purple_blist_remove_account(PurpleAccount *account)
 	PurpleContact *contact;
 	PurpleGroup *group;
 	GList *list = NULL, *iter = NULL;
-	PurpleBuddyList *blist = purple_blist_get_list();
+	PurpleBuddyList *blist = PURPLE_BLIST;
 
 	gnode = purple_blist_node_first_child(PURPLE_BLIST_NODE(blist));
 	for (; gnode; gnode = gnode->next) {
@@ -1243,7 +1245,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 {
 	PurpleBlistNode *cnode = PURPLE_BLIST_NODE(chat);
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(PURPLE_IS_CHAT(PURPLE_BLIST_NODE(chat)));
@@ -1325,7 +1327,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	struct _purple_hbuddy *hb, *hb2;
 	GHashTable *account_buddies;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 
 	g_return_if_fail(buddy != NULL);
 	g_return_if_fail(PURPLE_IS_BUDDY(PURPLE_BLIST_NODE(buddy)));
@@ -1479,7 +1481,7 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 	PurpleBlistNode *node, *group;
 	GList *parts;
 	char *normname;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
@@ -1538,7 +1540,7 @@ PurpleBuddy *purple_find_buddy_in_group(PurpleAccount *account, const char *name
 	hb.account = account;
 	hb.group = PURPLE_BLIST_NODE(group);
 
-	ret = g_hash_table_lookup(purple_blist_get_list()->buddies, &hb);
+	ret = g_hash_table_lookup(PURPLE_BLIST->buddies, &hb);
 	g_free(hb.name);
 
 	return ret;
@@ -1556,7 +1558,7 @@ purple_blist_get_buddies()
 {
 	GSList *buddies = NULL;
 
-	g_hash_table_foreach(purple_blist_get_list()->buddies, append_buddy, &buddies);
+	g_hash_table_foreach(PURPLE_BLIST->buddies, append_buddy, &buddies);
 	return buddies;
 }
 
@@ -1650,7 +1652,7 @@ void
 purple_blist_uninit(void)
 {
 	PurpleBlistNode *node, *next_node;
-	PurpleBuddyList *list = purple_blist_get_list();
+	PurpleBuddyList *list = PURPLE_BLIST;
 
 	if (list->save_timer != 0) {
 		purple_timeout_remove(list->save_timer);
