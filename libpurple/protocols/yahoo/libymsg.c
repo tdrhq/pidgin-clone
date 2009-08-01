@@ -976,7 +976,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		return;
 	}
 
-	/** TODO: It seems that this check should be per IM, not global */
+	/* TODO: It seems that this check should be per IM, not global */
 	/* Check for the Doodle IMV */
 	if (im != NULL && imv!= NULL && im->from != NULL)
 	{
@@ -3767,7 +3767,7 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	if (presence != NULL)
 		purple_notify_user_info_add_pair(user_info, _("Presence"), presence);
 
-	if (full) {
+	if (f && full) {
 		YahooPersonalDetails *ypd = &f->ypd;
 		int i;
 		struct {
