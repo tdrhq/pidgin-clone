@@ -38,26 +38,95 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: blist.h
+	 * Structure: PurpleBuddyList
+	 */
 	public class PurpleBuddyList : UnmanagedWrapper<_PurpleBuddyList>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleBuddyList in file "blist.h".
-		 * Message: The type could not be resolved (GHashTable * buddies).
-		 */
-
 		public PurpleBuddyList()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleBuddyList(IntPtr refernece)
+		public PurpleBuddyList(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleBuddyList)Marshal.PtrToStructure(this.Reference, typeof(_PurpleBuddyList));
+		}
+
+		/*
+		 * Argument Name: root
+		 * Argument Type: PurpleBlistNode *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleBlistNode root
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: buddies
+		 * Argument Type: GHashTable *
+		 * Argument Category: PointerToGHashTable
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleBuddyList.buddies in file "blist.h".
+		 * Message: Unable to provide a type for HashTable as no function information was provided in code.
+		 */
+
+		/*
+		 * Argument Name: ui_data
+		 * Argument Type: void *
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr ui_data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleBuddyList { }
+	public class _PurpleBuddyList
+	{
+		/*
+		 * PurpleBlistNode * root
+		 */
+		public IntPtr root;
+
+		/*
+		 * GHashTable * buddies
+		 */
+		public IntPtr buddies;
+
+		/*
+		 * void * ui_data
+		 */
+		public IntPtr ui_data;
+
+	}
+
 }
 

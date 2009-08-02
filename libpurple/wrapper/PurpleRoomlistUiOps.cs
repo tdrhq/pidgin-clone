@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: roomlist.h
+	 * Structure: PurpleRoomlistUiOps
+	 */
 	public class PurpleRoomlistUiOps : UnmanagedWrapper<_PurpleRoomlistUiOps>
 	{
 		public PurpleRoomlistUiOps()
 		{
 		}
 
-		public PurpleRoomlistUiOps(IntPtr refernece)
+		public PurpleRoomlistUiOps(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleRoomlistUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleRoomlistUiOps));
 		}
 
+		/*
+		 * Argument Name: show_with_account
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr show_with_account
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: create
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr create
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: set_fields
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr set_fields
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: add_room
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr add_room
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: in_progress
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr in_progress
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: destroy
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr destroy
 		{
 			get
@@ -140,6 +175,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved1
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved1
 		{
 			get
@@ -155,6 +195,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved2
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved2
 		{
 			get
@@ -170,6 +215,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved3
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved3
 		{
 			get
@@ -185,6 +235,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved4
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved4
 		{
 			get
@@ -204,57 +259,57 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleRoomlistUiOps
+	public class _PurpleRoomlistUiOps
 	{
 		/*
 		 * void (*show_with_account)(PurpleAccount * account)
 		 */
-		IntPtr show_with_account;
+		public IntPtr show_with_account;
 
 		/*
 		 * void (*create)(PurpleRoomlist * list)
 		 */
-		IntPtr create;
+		public IntPtr create;
 
 		/*
 		 * void (*set_fields)(PurpleRoomlist * list, GList * fields)
 		 */
-		IntPtr set_fields;
+		public IntPtr set_fields;
 
 		/*
 		 * void (*add_room)(PurpleRoomlist * list, PurpleRoomlistRoom * room)
 		 */
-		IntPtr add_room;
+		public IntPtr add_room;
 
 		/*
 		 * void (*in_progress)(PurpleRoomlist * list, gboolean flag)
 		 */
-		IntPtr in_progress;
+		public IntPtr in_progress;
 
 		/*
 		 * void (*destroy)(PurpleRoomlist * list)
 		 */
-		IntPtr destroy;
+		public IntPtr destroy;
 
 		/*
 		 * void (*_purple_reserved1)()
 		 */
-		IntPtr _purple_reserved1;
+		public IntPtr _purple_reserved1;
 
 		/*
 		 * void (*_purple_reserved2)()
 		 */
-		IntPtr _purple_reserved2;
+		public IntPtr _purple_reserved2;
 
 		/*
 		 * void (*_purple_reserved3)()
 		 */
-		IntPtr _purple_reserved3;
+		public IntPtr _purple_reserved3;
 
 		/*
 		 * void (*_purple_reserved4)()
 		 */
-		IntPtr _purple_reserved4;
+		public IntPtr _purple_reserved4;
 
 	}
 

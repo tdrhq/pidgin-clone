@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: sslconn.h
+	 */
 	public class Sslconn
 	{
 		public enum PurpleSslErrorType
@@ -47,6 +51,15 @@ namespace PurpleWrapper
 			PURPLE_SSL_CERTIFICATE_INVALID = 3
 		};
 
+		public delegate void PurpleSslInputFunction(/* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg0, IntPtr _PurpleWrapper_arg1, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg2);
+		public delegate void PurpleSslErrorFunction(IntPtr _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg2);
+
+		/*
+		 * Function Name: purple_ssl_is_supported
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_ssl_is_supported()
 		 */
@@ -58,6 +71,12 @@ namespace PurpleWrapper
 			return purple_ssl_is_supported();
 		}
 
+		/*
+		 * Function Name: purple_ssl_strerror
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_ssl_strerror(PurpleSslErrorType error)
 		 */
@@ -71,6 +90,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_ssl_close
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_ssl_close(PurpleSslConnection * gsc)
 		 */
 		[DllImport("libpurple.dll")]
@@ -81,6 +106,12 @@ namespace PurpleWrapper
 			purple_ssl_close(gsc.Reference);
 		}
 
+		/*
+		 * Function Name: purple_ssl_read
+		 * Function Type: size_t
+		 * Function RawType: size_t
+		 * Function Category: Native
+		 */
 		/*
 		 * size_t purple_ssl_read(PurpleSslConnection * gsc, void * buffer, size_t len)
 		 */
@@ -93,6 +124,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_ssl_write
+		 * Function Type: size_t
+		 * Function RawType: size_t
+		 * Function Category: Native
+		 */
+		/*
 		 * size_t purple_ssl_write(PurpleSslConnection * gsc, void * buffer, size_t len)
 		 */
 		[DllImport("libpurple.dll")]
@@ -104,26 +141,60 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_ssl_get_peer_certificates
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_ssl_get_peer_certificates(PurpleSslConnection * gsc)
 		 * 
 		 * Could not generate a wrapper for purple_ssl_get_peer_certificates in file "sslconn.h".
-		 * Message: The type could not be resolved (GList * purple_ssl_get_peer_certificates(PurpleSslConnection * gsc)).
+		 * Message: Unknown inner-type of argument 0 of purple_ssl_get_peer_certificates
 		 */
 
+		/*
+		 * Function Name: purple_ssl_set_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_ssl_set_ops(PurpleSslOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_ssl_set_ops in file "sslconn.h".
-		 * Message: The type could not be resolved (PurpleSslOps * ops).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_ssl_set_ops(IntPtr ops);
+
+		public static void SslSetOps(/* Resolved as PointerToUnknownStruct to PurpleSslOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleSslOps * purple_ssl_get_ops()
-		 * 
-		 * Could not generate a wrapper for purple_ssl_get_ops in file "sslconn.h".
-		 * Message: The type could not be resolved (PurpleSslOps * purple_ssl_get_ops()).
+		 * Function Name: purple_ssl_get_ops
+		 * Function Type: PurpleSslOps *
+		 * Function RawType: PurpleSslOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleSslOps * purple_ssl_get_ops()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_ssl_get_ops();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleSslOps */ IntPtr SslGetOps()
+		{
+			/* Unable to process the return value of purple_ssl_get_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_ssl_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_ssl_init()
 		 */
@@ -135,6 +206,12 @@ namespace PurpleWrapper
 			purple_ssl_init();
 		}
 
+		/*
+		 * Function Name: purple_ssl_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_ssl_uninit()
 		 */

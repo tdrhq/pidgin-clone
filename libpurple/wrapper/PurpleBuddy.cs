@@ -38,26 +38,223 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: blist.h
+	 * Structure: PurpleBuddy
+	 */
 	public class PurpleBuddy : UnmanagedWrapper<_PurpleBuddy>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleBuddy in file "blist.h".
-		 * Message: The type resolved to a known struct but not a pointer to that struct (PurpleBlistNode node).
-		 */
-
 		public PurpleBuddy()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleBuddy(IntPtr refernece)
+		public PurpleBuddy(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleBuddy)Marshal.PtrToStructure(this.Reference, typeof(_PurpleBuddy));
+		}
+
+		/*
+		 * Argument Name: node
+		 * Argument Type: PurpleBlistNode
+		 * Argument Category: KnownStruct
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleBuddy.node in file "blist.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleBlistNode node).
+		 */
+
+		/*
+		 * Argument Name: name
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string name
+		{
+			get
+			{
+				return this.Data.name;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.name = value;
+			}
+		}
+
+		/*
+		 * Argument Name: alias
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string alias
+		{
+			get
+			{
+				return this.Data.alias;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.alias = value;
+			}
+		}
+
+		/*
+		 * Argument Name: server_alias
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string server_alias
+		{
+			get
+			{
+				return this.Data.server_alias;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.server_alias = value;
+			}
+		}
+
+		/*
+		 * Argument Name: proto_data
+		 * Argument Type: void *
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr proto_data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: icon
+		 * Argument Type: PurpleBuddyIcon *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: account
+		 * Argument Type: PurpleAccount *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleAccount account
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: presence
+		 * Argument Type: PurplePresence *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to PurplePresence */ IntPtr presence
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleBuddy { }
+	public class _PurpleBuddy
+	{
+		/*
+		 * PurpleBlistNode node
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleBuddy.node in file "blist.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleBlistNode node).
+		 */
+
+		/*
+		 * char * name
+		 */
+		public string name;
+
+		/*
+		 * char * alias
+		 */
+		public string alias;
+
+		/*
+		 * char * server_alias
+		 */
+		public string server_alias;
+
+		/*
+		 * void * proto_data
+		 */
+		public IntPtr proto_data;
+
+		/*
+		 * PurpleBuddyIcon * icon
+		 */
+		public IntPtr icon;
+
+		/*
+		 * PurpleAccount * account
+		 */
+		public IntPtr account;
+
+		/*
+		 * PurplePresence * presence
+		 */
+		public IntPtr presence;
+
+	}
+
 }
 

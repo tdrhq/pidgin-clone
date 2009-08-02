@@ -8,7 +8,7 @@ namespace Scripts
 {
     class WrapperGenerator
     {
-        private String path = @"C:\Users\Wade\Desktop\gen-test\";
+        private String path = @"../../../";
 
         public void ParseHFilesInDirectory(String directory)
         {
@@ -39,24 +39,28 @@ namespace Scripts
                                                   RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace);
 
             Regex structInternalRegex = new Regex(@"(?<VariableType>   " +
-                                                  @"      ( const \s+ unsigned \s+ \w+ \s+ [\*]+ )    |" +
-                                                  @"      ( const \s+ unsigned \s+ \w+ \s+       )    |" +
-                                                  @"      ( const \s+              \w+ \s+ [\*]+ )    |" +
-                                                  @"      ( const \s+              \w+ \s+       )    |" +
-                                                  @"      (           unsigned \s+ \w+ \s+ [\*]+ )    |" +
-                                                  @"      (           unsigned \s+ \w+ \s+       )    |" +
-                                                  @"      (                        \w+ \s+ [\*]+ )    |" +
-                                                  @"      (                        \w+ \s+       )     " +
+                                                  @"      ( const \s+ unsigned \s+ \w+ \s* [\*]+ \s* )    |" +
+                                                  @"      ( const \s+ unsigned \s+ \w+ \s+           )    |" +
+                                                  @"      ( const \s+              \w+ \s* [\*]+ \s* )    |" +
+                                                  @"      ( const \s+              \w+ \s+           )    |" +
+                                                  @"      (           unsigned \s+ \w+ \s* [\*]+ \s* )    |" +
+                                                  @"      (           unsigned \s+ \w+ \s+           )    |" +
+                                                  @"      (                        \w+ \s* [\*]+ \s* )    |" +
+                                                  @"      (                        \w+ \s+           )     " +
                                                   @")" +
-                                                  @"(  ( \( \* (?<Name> \w+ ) \) \s* \( (?<FunctionPointerArguments> .*?) \) )" +
+                                                  @"(  ( \(+ \* \s* (?<Name> \w+ ) \) \s* \( (?<FunctionPointerArguments> .*?) \)+ )" +
                                                   @"    |  (?<Name> .*? ) ) ;", RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace);
 
             Regex functionRegEx =
                 new Regex(@"(?<ReturnType> " +
-                          @"     ( unsigned \s+ \w+ \s* [\*]+ \s* )     | " +
-                          @"     ( unsigned \s+ \w+ \s+           )     | " +
-                          @"     (              \w+ \s* [\*]+ \s* )     | " +
-                          @"     (              \w+ \s+           )       " +
+                          @"     ( const unsigned \s+ \w+ \s* [\*]+ \s* )     | " +
+                          @"     ( const unsigned \s+ \w+ \s+           )     | " +
+                          @"     ( const              \w+ \s* [\*]+ \s* )     | " +
+                          @"     ( const              \w+ \s+           )     | " +
+                          @"     (       unsigned \s+ \w+ \s* [\*]+ \s* )     | " +
+                          @"     (       unsigned \s+ \w+ \s+           )     | " +
+                          @"     (                    \w+ \s* [\*]+ \s* )     | " +
+                          @"     (                    \w+ \s+           )       " +
                           @")" +
                           @"(?<Name>\w+?) \s* \( (?<ParameterList> [a-zA-Z0-9_,\* ]*) \)", RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace);
             
@@ -87,6 +91,8 @@ namespace Scripts
             String fullFile = reader.ReadToEnd();
             reader.Close();
 
+            Logger.Log("Reading " + path + "...");
+            Logger.AddPrefix("  ");
 
             CFile currentFile = new CFile(fileInfo.Name);
 
@@ -97,27 +103,34 @@ namespace Scripts
                     commentMatch.Groups["Comment"].Length);
             }
 
+            Logger.Log("Beginning to read all structs in file:");
+            Logger.AddPrefix("  ");
             foreach (Match match in structRegex.Matches(fullFile))
             {
                 Logger.Log("Reading struct [" + match.Groups[0].Value + "]...");
+                Logger.AddPrefix("  ");
                 CStruct structObject = new CStruct(currentFile, match.Groups["StructName"].Value);
 
                 String internalStructData = match.Groups["StructInternal"].Value;
 
                 if (internalStructData != null)
                 {
+                    int argumentNumber = 0;
+
                     foreach (Match internalStructMatch in structInternalRegex.Matches(internalStructData))
                     {
                         Logger.Log("Reading struct element: [" + internalStructMatch.Groups[0].Value + "]...");
                         string elementType = internalStructMatch.Groups["VariableType"].Value.Trim();
                         string name = internalStructMatch.Groups["Name"].Value;
 
-                        CArgument argument = new CArgument(currentFile, elementType, name);
+                        CArgument argument = new CArgument(currentFile, elementType, name, argumentNumber);
+                        argumentNumber++;
 
                         string functionPointerArguments = internalStructMatch.Groups["FunctionPointerArguments"].Value;
                         if (functionPointerArguments != "")
                         {
                             argument.IsFunctionPointer = true;
+                            int innerArgumentNumber = 0;
 
                             String[] functionPointerArgumentsList = functionPointerArguments.Split(',');
                             foreach (String functionPointerArgument in functionPointerArgumentsList)
@@ -132,13 +145,8 @@ namespace Scripts
                                     Match parameterMatch = functionArgumentsRegEx.Match(currentArgument);
                                     functionPointerArgumentObject.Type = parameterMatch.Groups["VariableType"].Value.Trim();
                                     functionPointerArgumentObject.Name = parameterMatch.Groups["VariableName"].Value;
-
-                                    if (functionPointerArgumentObject.Name.Contains("["))
-                                    {
-                                        // TODO: Array size (eg: "char hostname[256]")
-                                        functionPointerArgumentObject.IsArray = true;
-                                        functionPointerArgumentObject.Name = functionPointerArgumentObject.Name.Substring(functionPointerArgumentObject.Name.IndexOf("["));
-                                    }
+                                    functionPointerArgumentObject.ArgumentNumber = innerArgumentNumber;
+                                    innerArgumentNumber++;
                                 }
 
                                 argument.AddFunctionPointerArgument(functionPointerArgumentObject);
@@ -147,15 +155,22 @@ namespace Scripts
 
                         structObject.AddField(argument);
                     }
+
+                    Logger.RemovePrefix();
                 }
 
                 //Console.WriteLine(structObject.ToString()); Console.WriteLine();
                 currentFile.addStruct(structObject);
             }
+            Logger.RemovePrefix();
 
+            Logger.Log("Beginning to read all functions in file:");
+            Logger.AddPrefix("  ");
             foreach (Match match in functionRegEx.Matches(fullFile))
             {
                 Logger.Log("Reading function [" + match.Groups[0].Value + "]...");
+                Logger.AddPrefix("  ");
+
                 String functionReturnType = match.Groups["ReturnType"].Value.Trim();
                 String functionName = match.Groups["Name"].Value;
                 String parameterList = match.Groups["ParameterList"].Value;
@@ -166,17 +181,36 @@ namespace Scripts
                 if (currentFile.FileName == "plugin.h")
                 {
                     if (functionName == "_FUNC_NAME" || functionName == "purple_init_plugin")
+                    {
+                        Logger.RemovePrefix();
                         continue;
+                    }
 
                     if (functionReturnType == "return")
+                    {
+                        Logger.RemovePrefix();
                         continue;
+                    }
+                }
+                else if (currentFile.FileName == "prpl.h")
+                {
+                    if (functionReturnType == "unsigned" && functionName == "int")
+                    {
+                        Logger.RemovePrefix();
+                        continue;
+                    }
                 }
 
                 if (functionReturnType == "typedef" || functionReturnType == "define")
+                {
+                    Logger.Log("Function ignored as it's a typedef'd type (possibly a function pointer?)");
+                    Logger.RemovePrefix();
                     continue;
+                }
 
 
                 CFunction function = new CFunction(currentFile, functionReturnType, functionName);
+                int argumentNumber = 0;
 
                 String[] functionParameters = parameterList.Split(',');
                 foreach (String functionParameterInList in functionParameters)
@@ -195,12 +229,8 @@ namespace Scripts
                         Match parameterMatch = functionArgumentsRegEx.Match(functionParameter);
                         argument.Type = parameterMatch.Groups["VariableType"].Value.Trim();
                         argument.Name = parameterMatch.Groups["VariableName"].Value;
-
-                        if (argument.Name.EndsWith("[]"))
-                        {
-                            argument.Name = argument.Name.Substring(0, argument.Name.Length - 2);
-                            argument.IsArray = true;
-                        }
+                        argument.ArgumentNumber = argumentNumber;
+                        argumentNumber++;
                     }
 
                     function.AddArgument(argument);
@@ -211,11 +241,16 @@ namespace Scripts
                 //Console.WriteLine(function.GetCSharpPrivateFunction());
                 //Console.WriteLine(function.GetCSharpPublicFunction());
                 //Console.WriteLine();
+                Logger.RemovePrefix();
             }
+            Logger.RemovePrefix();
 
+            Logger.Log("Beginning to read all enums in file:");
+            Logger.AddPrefix("  ");
             foreach (Match match in enumRegex.Matches(fullFile))
             {
                 Logger.Log("Reading enum [" + match.Groups[0].Value + "]...");
+                Logger.AddPrefix("  ");
                 CEnum enumeration = new CEnum(currentFile, match.Groups["Name"].Value);
 
                 foreach (Match enumElementMatch in enumInternalRegex.Matches(match.Groups["EnumInternalPlusClose"].Value))
@@ -226,18 +261,24 @@ namespace Scripts
 
                 currentFile.AddEnum(enumeration);
                 //Console.WriteLine(enumeration.ToString());
+                Logger.RemovePrefix();
             }
+            Logger.RemovePrefix();
 
-
+            Logger.Log("Beginning to read all function pointers in file:");
+            Logger.AddPrefix("  ");
             foreach (Match match in functionPointerRegex.Matches(fullFile))
             {
                 Logger.Log("Reading function pointer [" + match.Groups[0].Value + "]...");
+                Logger.AddPrefix("  ");
                 CFunction function = new CFunction(currentFile, match.Groups["ReturnType"].Value, match.Groups["Name"].Value);
                 function.IsFunctionPointer = true;
 
                 string functionPointerArguments = match.Groups["FunctionPointerArguments"].Value;
                 if (functionPointerArguments != "")
                 {
+                    int argumentNumber = 0;
+
                     String[] functionPointerArgumentsList = functionPointerArguments.Split(',');
                     foreach (String functionPointerArgument in functionPointerArgumentsList)
                     {
@@ -251,6 +292,9 @@ namespace Scripts
                             Match parameterMatch = functionArgumentsRegEx.Match(currentArgument);
                             functionPointerArgumentObject.Type = parameterMatch.Groups["VariableType"].Value.Trim();
                             functionPointerArgumentObject.Name = parameterMatch.Groups["VariableName"].Value;
+                            functionPointerArgumentObject.ArgumentNumber = argumentNumber;
+
+                            argumentNumber++;
                         }
 
                         function.AddArgument(functionPointerArgumentObject);
@@ -259,9 +303,12 @@ namespace Scripts
 
                 currentFile.addFunctionPointer(function);
                 //Console.WriteLine(function.ToString());
+                Logger.RemovePrefix();
             }
+            Logger.RemovePrefix();
 
             CFile.FileCollection.Add(currentFile);
+            Logger.RemovePrefix();
         }
 
         public void WriteBaseClasses()
@@ -270,7 +317,7 @@ namespace Scripts
             
             writer.WriteLine("using System;");
             writer.WriteLine();
-            writer.WriteLine("namespace UnmanagedWrapper");
+            writer.WriteLine("namespace PurpleWrapper");
             writer.WriteLine("{");
             writer.WriteLine("    public abstract class UnmanagedWrapper<T>");
             writer.WriteLine("    {");
@@ -309,7 +356,7 @@ namespace Scripts
             writer.WriteLine("    <ProductVersion>9.0.30729</ProductVersion>");
             writer.WriteLine("    <SchemaVersion>2.0</SchemaVersion>");
             writer.WriteLine("    <ProjectGuid>{8034DEA9-30CC-DEA0-3903-80210CE809FA}</ProjectGuid>");
-            writer.WriteLine("    <OutputType>Exe</OutputType>");
+            writer.WriteLine("    <OutputType>Library</OutputType>");
             writer.WriteLine("    <AppDesignerFolder>Properties</AppDesignerFolder>");
             writer.WriteLine("    <RootNamespace>Scripts</RootNamespace>");
             writer.WriteLine("    <AssemblyName>Scripts</AssemblyName>");
@@ -419,29 +466,38 @@ namespace Scripts
                     structureStringBuilder.AppendLine();
                     structureStringBuilder.AppendLine("namespace PurpleWrapper");
                     structureStringBuilder.AppendLine("{");
+                    structureStringBuilder.AppendLine();
+                    structureStringBuilder.AppendLine("\t/*");
+                    structureStringBuilder.AppendLine("\t * File: " + file.FileName);
+                    structureStringBuilder.AppendLine("\t * Structure: " + structure.Name);
+                    structureStringBuilder.AppendLine("\t */");
                     structureStringBuilder.AppendLine("\tpublic class " + structure.Name + " : UnmanagedWrapper<_" + structure.Name + ">");
                     structureStringBuilder.AppendLine("\t{");
 
 
-                    try
+                    StringBuilder sb = new StringBuilder();
+
+                    sb.AppendLine("\t\tpublic " + structure.Name + "()");
+                    sb.AppendLine("\t\t{");
+                    sb.AppendLine("\t\t}");
+                    sb.AppendLine();
+
+                    sb.AppendLine("\t\tpublic " + structure.Name + "(IntPtr reference)");
+                    sb.AppendLine("\t\t{");
+                    sb.AppendLine("\t\t\tthis.Reference = reference;");
+                    sb.AppendLine("\t\t\tthis.Data = (_" + structure.Name + ")Marshal.PtrToStructure(this.Reference, typeof(_" + structure.Name + "));");
+                    sb.AppendLine("\t\t}");
+                    sb.AppendLine();
+
+                    foreach (CArgument argument in structure.Fields)
                     {
-                        StringBuilder sb = new StringBuilder();
+                        sb.AppendLine("\t\t/*");
+                        sb.AppendLine("\t\t * Argument Name: " + argument.Name);
+                        sb.AppendLine("\t\t * Argument Type: " + argument.Type);
+                        sb.AppendLine("\t\t * Argument Category: " + argument.Category.ToString());
+                        sb.AppendLine("\t\t */");
 
-                        sb.AppendLine("\t\tpublic " + structure.Name + "()");
-                        sb.AppendLine("\t\t{");
-                        sb.AppendLine("\t\t}");
-                        sb.AppendLine();
-
-                        sb.AppendLine("\t\tpublic " + structure.Name + "(IntPtr refernece)");
-                        sb.AppendLine("\t\t{");
-                        sb.AppendLine("\t\t\tthis.Reference = reference;");
-                        sb.AppendLine("\t\t\tthis.Data = (_" + structure.Name + ")Marshal.PtrToStructure(this.Reference, typeof(_" + structure.Name + "));");
-                        sb.AppendLine("\t\t}");
-                        sb.AppendLine();
-
-
-
-                        foreach (CArgument argument in structure.Fields)
+                        try
                         {
                             sb.AppendLine("\t\tpublic " + argument.GetCSharpPublicFunction());
                             sb.AppendLine("\t\t{");
@@ -451,7 +507,7 @@ namespace Scripts
                             sb.AppendLine("\t\t\tget");
                             sb.AppendLine("\t\t\t{");
                             if (argument.IsTypeNative)
-                                sb.AppendLine("\t\t\t\treturn this.Data." + argument.Name + ";");
+                                sb.AppendLine("\t\t\t\treturn this.Data." + argument.SafeName + ";");
                             else
                                 sb.AppendLine("\t\t\t\tthrow new NotImplementedException(); /* Non-native type. */");
                             sb.AppendLine("\t\t\t}");
@@ -465,7 +521,7 @@ namespace Scripts
                             sb.AppendLine();
 
                             if (argument.IsTypeNative)
-                                sb.AppendLine("\t\t\t\tthis.Data." + argument.Name + " = value;");
+                                sb.AppendLine("\t\t\t\tthis.Data." + argument.SafeName + " = value;");
                             else
                                 sb.AppendLine("\t\t\t\tthrow new NotImplementedException(); /* Non-native type. */");
 
@@ -473,80 +529,53 @@ namespace Scripts
                             sb.AppendLine("\t\t}");
                             sb.AppendLine();
                         }
+                        catch (UnableToCreateWrapperException e)
+                        {
+                            sb.AppendLine("\t\t/*");
+                            sb.AppendLine("\t\t * Could not generate a wrapper for " + structure.Name + "." + argument.Name + " in file \"" + structure.File.FileName + "\".");
+                            sb.AppendLine("\t\t * Message: " + e.Message);
+                            sb.AppendLine("\t\t */");
+                            sb.AppendLine();
+                        }
+                    }
 
-                        sb.AppendLine("\t}");
-                        sb.AppendLine();
-                        sb.AppendLine();
+                    sb.AppendLine("\t}");
+                    sb.AppendLine();
+                    sb.AppendLine();
 
 
-                        sb.AppendLine("\t[StructLayout(LayoutKind.Sequential)]");
-                        sb.AppendLine("\tclass _" + structure.Name);
-                        sb.AppendLine("\t{");
+                    sb.AppendLine("\t[StructLayout(LayoutKind.Sequential)]");
+                    sb.AppendLine("\tpublic class _" + structure.Name);
+                    sb.AppendLine("\t{");
 
-                        foreach (CArgument argument in structure.Fields)
+                    foreach (CArgument argument in structure.Fields)
+                    {
+                        try
                         {
                             sb.AppendLine("\t\t/*");
                             sb.AppendLine("\t\t * " + argument.ToString());
                             sb.AppendLine("\t\t */");
 
                             if (argument.IsFunctionPointer)
-                                sb.AppendLine("\t\tIntPtr " + argument.SafeName + ";");
+                                sb.AppendLine("\t\tpublic IntPtr " + argument.SafeName + ";");
                             else
-                            {
-                                switch (argument.Category)
-                                {
-                                    case CTyped.TypeCategory.Native:
-                                    case CTyped.TypeCategory.VoidPointer:
-                                        sb.AppendLine("\t\tIntPtr " + argument.SafeName + ";");
-                                        break;
+                                sb.AppendLine("\t\tpublic " + argument.CSharpInternalAPIType + " " + argument.SafeName + ";");
 
-                                    case CTyped.TypeCategory.DateTime:
-                                        sb.AppendLine("\t\tulong " + argument.SafeName + ";");
-                                        break;
-
-                                    default:
-                                        sb.AppendLine("\t\t/* Cannot generate struct for type " + argument.Category.ToString() + " */");
-                                        break;
-                                }
-                            }
-
-                            //sb.AppendLine("\t\t" + argument.GetCSharpPrivateFunction() + ";");
                             sb.AppendLine();
                         }
-
-                        sb.AppendLine("\t}");
-
-                        structureStringBuilder.AppendLine(sb.ToString());
-                    }
-                    catch (UnableToCreateWrapperException e)
-                    {
-                        Console.WriteLine("Could not generate a wrapper for " + structure.Name + " in file \"" + structure.File.FileName + "\".");
-                        Console.WriteLine("Message: " + e.Message);
-
-                        structureStringBuilder.AppendLine("\t\t/* ");
-                        structureStringBuilder.AppendLine("\t\t * " + "Could not generate a wrapper for " + structure.Name + " in file \"" + structure.File.FileName + "\".");
-                        structureStringBuilder.AppendLine("\t\t * " + "Message: " + e.Message);
-                        structureStringBuilder.AppendLine("\t\t */");
-                        structureStringBuilder.AppendLine();
-
-                        structureStringBuilder.AppendLine("\t\tpublic " + structure.Name + "()");
-                        structureStringBuilder.AppendLine("\t\t{");
-                        structureStringBuilder.AppendLine("\t\t\tthrow new NotImplementedException();");
-                        structureStringBuilder.AppendLine("\t\t}");
-                        structureStringBuilder.AppendLine();
-
-                        structureStringBuilder.AppendLine("\t\tpublic " + structure.Name + "(IntPtr refernece)");
-                        structureStringBuilder.AppendLine("\t\t{");
-                        structureStringBuilder.AppendLine("\t\t\tthrow new NotImplementedException();");
-                        structureStringBuilder.AppendLine("\t\t}");
-                        structureStringBuilder.AppendLine();
-
-                        structureStringBuilder.AppendLine("\t}");
-                        structureStringBuilder.AppendLine();
-                        structureStringBuilder.AppendLine("\t[StructLayout(LayoutKind.Sequential)]");
-                        structureStringBuilder.AppendLine("\tclass _" + structure.Name + " { }");
+                        catch (UnableToCreateWrapperException e)
+                        {
+                            sb.AppendLine("\t\t/*");
+                            sb.AppendLine("\t\t * Could not generate a wrapper for " + structure.Name + "." + argument.Name + " in file \"" + structure.File.FileName + "\".");
+                            sb.AppendLine("\t\t * Message: " + e.Message);
+                            sb.AppendLine("\t\t */");
+                            sb.AppendLine();
+                        }
                     }
 
+                    sb.AppendLine("\t}");
+
+                    structureStringBuilder.AppendLine(sb.ToString());
                     structureStringBuilder.AppendLine("}");
 
 
@@ -572,6 +601,10 @@ namespace Scripts
                 writer.WriteLine("namespace PurpleWrapper");
                 writer.WriteLine("{");
 
+                writer.WriteLine();
+                writer.WriteLine("\t/*");
+                writer.WriteLine("\t * File: " + file.FileName);
+                writer.WriteLine("\t */");
                 writer.WriteLine("\tpublic class " + file.FileNameAsClassName);
                 writer.WriteLine("\t{");
 
@@ -581,8 +614,38 @@ namespace Scripts
                 }
 
 
+                /* Write function pointer delegates */
+                foreach (CFunction function in file.FunctionPointers)
+                {
+                    String delegateString = "\t\t";
+
+                    delegateString += "public delegate " + function.CSharpExternalAPIType + " " + function.SafeName + "(";
+
+                    if (function.Arguments.Count > 0)
+                    {
+                        foreach (CArgument functionArgument in function.Arguments)
+                        {
+                            // TODO: Split delegate into public/private pair?
+                            delegateString += functionArgument.GetCSharpPrivateFunction() + ", ";
+                        }
+
+                        delegateString = delegateString.Substring(0, delegateString.Length - 2);
+                    }
+                    delegateString += ");";
+
+                    writer.WriteLine(delegateString);
+                }
+                writer.WriteLine();
+
                 foreach (CFunction function in file.Functions)
                 {
+                    writer.WriteLine("\t\t/*");
+                    writer.WriteLine("\t\t * Function Name: " + function.Name);
+                    writer.WriteLine("\t\t * Function Type: " + function.Type);
+                    writer.WriteLine("\t\t * Function RawType: " + function.RawType);
+                    writer.WriteLine("\t\t * Function Category: " + function.Category);
+                    writer.WriteLine("\t\t */");
+
                     try
                     {
                         StringBuilder sb = new StringBuilder();
@@ -607,21 +670,21 @@ namespace Scripts
                             switch (arg.Category)
                             {
                                 case CTyped.TypeCategory.PointerToKnownStruct:
-                                    functionArgs[i] = arg.SafeName + ".Reference";
+                                    functionArgs[i] = arg.GetArgumentSafeName() + ".Reference";
                                     break;
 
                                 case CTyped.TypeCategory.Native:
                                 case CTyped.TypeCategory.VoidPointer:
-                                    functionArgs[i] = arg.SafeName;
+                                    functionArgs[i] = arg.GetArgumentSafeName();
                                     break;
 
                                 case CTyped.TypeCategory.DateTime:
-                                    sb.AppendLine("\t\t\tulong _PurpleWrapper_param" + i + " = (ulong)(" + arg.SafeName + " - new DateTime(1970, 1, 1)).TotalSeconds;");
+                                    sb.AppendLine("\t\t\tulong _PurpleWrapper_param" + i + " = (ulong)(" + arg.GetArgumentSafeName() + " - new DateTime(1970, 1, 1)).TotalSeconds;");
                                     functionArgs[i] = "_PurpleWrapper_param" + i;
                                     break;
 
                                 default:
-                                    sb.AppendLine("\t\t\t/* Unable to process " + arg.SafeName + ", a " + arg.Category.ToString() + ". */");
+                                    sb.AppendLine("\t\t\t/* Unable to process " + arg.Name + ", a " + arg.Category.ToString() + ". */");
                                     allArgsCanBeUsed = false;
                                     break;
                             }
@@ -662,7 +725,8 @@ namespace Scripts
                                     break;
 
                                 default:
-                                    sb.AppendLine("\t\t\t/* Unable to process " + function.SafeName + ", a " + function.Category.ToString() + ". */");
+                                    sb.AppendLine("\t\t\t/* Unable to process the return value of " + function.SafeName + ", a " + function.Category.ToString() + ". */");
+                                    allArgsCanBeUsed = false;
                                     break;
 
                             }

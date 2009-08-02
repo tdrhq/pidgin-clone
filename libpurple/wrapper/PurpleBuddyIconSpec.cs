@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: prpl.h
+	 * Structure: PurpleBuddyIconSpec
+	 */
 	public class PurpleBuddyIconSpec : UnmanagedWrapper<_PurpleBuddyIconSpec>
 	{
 		public PurpleBuddyIconSpec()
 		{
 		}
 
-		public PurpleBuddyIconSpec(IntPtr refernece)
+		public PurpleBuddyIconSpec(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleBuddyIconSpec)Marshal.PtrToStructure(this.Reference, typeof(_PurpleBuddyIconSpec));
 		}
 
+		/*
+		 * Argument Name: format
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string format
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: min_width
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public int min_width
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: min_height
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public int min_height
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: max_width
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public int max_width
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: max_height
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public int max_height
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: max_filesize
+		 * Argument Type: size_t
+		 * Argument Category: Native
+		 */
 		public ulong max_filesize
 		{
 			get
@@ -140,6 +175,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: scale_rules
+		 * Argument Type: PurpleIconScaleRules
+		 * Argument Category: KnownEnum
+		 */
 		public Prpl.PurpleIconScaleRules scale_rules
 		{
 			get
@@ -159,42 +199,42 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleBuddyIconSpec
+	public class _PurpleBuddyIconSpec
 	{
 		/*
 		 * char * format
 		 */
-		IntPtr format;
+		public string format;
 
 		/*
 		 * int min_width
 		 */
-		IntPtr min_width;
+		public int min_width;
 
 		/*
 		 * int min_height
 		 */
-		IntPtr min_height;
+		public int min_height;
 
 		/*
 		 * int max_width
 		 */
-		IntPtr max_width;
+		public int max_width;
 
 		/*
 		 * int max_height
 		 */
-		IntPtr max_height;
+		public int max_height;
 
 		/*
 		 * size_t max_filesize
 		 */
-		IntPtr max_filesize;
+		public ulong max_filesize;
 
 		/*
 		 * PurpleIconScaleRules scale_rules
 		 */
-		/* Cannot generate struct for type KnownEnum */
+		public Prpl.PurpleIconScaleRules scale_rules;
 
 	}
 

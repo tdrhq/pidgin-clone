@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: privacy.h
+	 */
 	public class Privacy
 	{
 		public enum PurplePrivacyType
@@ -49,6 +53,13 @@ namespace PurpleWrapper
 			PURPLE_PRIVACY_ALLOW_BUDDYLIST
 		};
 
+
+		/*
+		 * Function Name: purple_privacy_check
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_privacy_check(PurpleAccount * account, char * who)
 		 */
@@ -61,19 +72,47 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_privacy_set_ui_ops(PurplePrivacyUiOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_privacy_set_ui_ops in file "privacy.h".
-		 * Message: The type could not be resolved (PurplePrivacyUiOps * ops).
+		 * Function Name: purple_privacy_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_privacy_set_ui_ops(PurplePrivacyUiOps * ops)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_privacy_set_ui_ops(IntPtr ops);
+
+		public static void SetUiOps(/* Resolved as PointerToUnknownStruct to PurplePrivacyUiOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurplePrivacyUiOps * purple_privacy_get_ui_ops()
-		 * 
-		 * Could not generate a wrapper for purple_privacy_get_ui_ops in file "privacy.h".
-		 * Message: The type could not be resolved (PurplePrivacyUiOps * purple_privacy_get_ui_ops()).
+		 * Function Name: purple_privacy_get_ui_ops
+		 * Function Type: PurplePrivacyUiOps *
+		 * Function RawType: PurplePrivacyUiOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurplePrivacyUiOps * purple_privacy_get_ui_ops()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_privacy_get_ui_ops();
 
+		public static /* Resolved as PointerToUnknownStruct to PurplePrivacyUiOps */ IntPtr GetUiOps()
+		{
+			/* Unable to process the return value of purple_privacy_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_privacy_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_privacy_init()
 		 */

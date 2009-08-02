@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: request.h
+	 */
 	public class Request
 	{
 		public enum PurpleRequestType
@@ -63,48 +67,116 @@ namespace PurpleWrapper
 			PURPLE_REQUEST_FIELD_ACCOUNT
 		};
 
+		public delegate void PurpleRequestInputCb(IntPtr _PurpleWrapper_arg0, string _PurpleWrapper_arg1);
+		public delegate void PurpleRequestActionCb(IntPtr _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1);
+		public delegate void PurpleRequestChoiceCb(IntPtr _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1);
+		public delegate void PurpleRequestFieldsCb(IntPtr _PurpleWrapper_arg0, IntPtr fields);
+		public delegate void PurpleRequestFileCb(IntPtr _PurpleWrapper_arg0, string filename);
+
+		/*
+		 * Function Name: purple_request_fields_new
+		 * Function Type: PurpleRequestFields *
+		 * Function RawType: PurpleRequestFields
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleRequestFields * purple_request_fields_new()
-		 * 
-		 * Could not generate a wrapper for purple_request_fields_new in file "request.h".
-		 * Message: The type could not be resolved (PurpleRequestFields * purple_request_fields_new()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_request_fields_new();
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleRequestFields */ IntPtr FieldsNew()
+		{
+			/* Unable to process the return value of purple_request_fields_new, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_request_fields_destroy(PurpleRequestFields * fields)
-		 * 
-		 * Could not generate a wrapper for purple_request_fields_destroy in file "request.h".
-		 * Message: The type could not be resolved (PurpleRequestFields * fields).
+		 * Function Name: purple_request_fields_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_request_fields_destroy(PurpleRequestFields * fields)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_request_fields_destroy(IntPtr fields);
 
+		public static void FieldsDestroy(/* Resolved as PointerToUnknownStruct to PurpleRequestFields */ IntPtr fields)
+		{
+			/* Unable to process fields, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_request_fields_get_groups
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_request_fields_get_groups(PurpleRequestFields * fields)
 		 * 
 		 * Could not generate a wrapper for purple_request_fields_get_groups in file "request.h".
-		 * Message: The type could not be resolved (GList * purple_request_fields_get_groups(PurpleRequestFields * fields)).
+		 * Message: Unknown inner-type of argument 0 of purple_request_fields_get_groups
 		 */
 
+		/*
+		 * Function Name: purple_request_fields_get_required
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_request_fields_get_required(PurpleRequestFields * fields)
 		 * 
 		 * Could not generate a wrapper for purple_request_fields_get_required in file "request.h".
-		 * Message: The type could not be resolved (GList * purple_request_fields_get_required(PurpleRequestFields * fields)).
+		 * Message: Unknown inner-type of argument 0 of purple_request_fields_get_required
 		 */
 
+		/*
+		 * Function Name: purple_request_field_group_new
+		 * Function Type: PurpleRequestFieldGroup *
+		 * Function RawType: PurpleRequestFieldGroup
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleRequestFieldGroup * purple_request_field_group_new(char * title)
-		 * 
-		 * Could not generate a wrapper for purple_request_field_group_new in file "request.h".
-		 * Message: The type could not be resolved (PurpleRequestFieldGroup * purple_request_field_group_new(char * title)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_request_field_group_new(string title);
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleRequestFieldGroup */ IntPtr FieldGroupNew(string title)
+		{
+			/* Unable to process the return value of purple_request_field_group_new, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_request_field_group_destroy(PurpleRequestFieldGroup * group)
-		 * 
-		 * Could not generate a wrapper for purple_request_field_group_destroy in file "request.h".
-		 * Message: The type could not be resolved (PurpleRequestFieldGroup * group).
+		 * Function Name: purple_request_field_group_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_request_field_group_destroy(PurpleRequestFieldGroup * group)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_request_field_group_destroy(IntPtr group);
 
+		public static void FieldGroupDestroy(/* Resolved as PointerToUnknownStruct to PurpleRequestFieldGroup */ IntPtr group)
+		{
+			/* Unable to process group, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_request_field_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_request_field_destroy(PurpleRequestField * field)
 		 */
@@ -117,6 +189,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_set_label
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_request_field_set_label(PurpleRequestField * field, char * label)
 		 */
 		[DllImport("libpurple.dll")]
@@ -127,6 +205,12 @@ namespace PurpleWrapper
 			purple_request_field_set_label(field.Reference, label);
 		}
 
+		/*
+		 * Function Name: purple_request_field_set_visible
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_request_field_set_visible(PurpleRequestField * field, gboolean visible)
 		 */
@@ -139,6 +223,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_get_type
+		 * Function Type: PurpleRequestFieldType
+		 * Function RawType: PurpleRequestFieldType
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurpleRequestFieldType purple_request_field_get_type(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -146,17 +236,34 @@ namespace PurpleWrapper
 
 		public static Request.PurpleRequestFieldType FieldGetType(PurpleRequestField field)
 		{
-			/* Unable to process purple_request_field_get_type, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_request_field_get_type, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
 		/*
-		 * PurpleRequestFieldGroup * purple_request_field_get_group(PurpleRequestField * field)
-		 * 
-		 * Could not generate a wrapper for purple_request_field_get_group in file "request.h".
-		 * Message: The type could not be resolved (PurpleRequestFieldGroup * purple_request_field_get_group(PurpleRequestField * field)).
+		 * Function Name: purple_request_field_get_group
+		 * Function Type: PurpleRequestFieldGroup *
+		 * Function RawType: PurpleRequestFieldGroup
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleRequestFieldGroup * purple_request_field_get_group(PurpleRequestField * field)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_request_field_get_group(IntPtr field);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleRequestFieldGroup */ IntPtr FieldGetGroup(PurpleRequestField field)
+		{
+			/* Unable to process the return value of purple_request_field_get_group, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_request_field_get_id
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_request_field_get_id(PurpleRequestField * field)
 		 */
@@ -169,6 +276,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_get_label
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_request_field_get_label(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -179,6 +292,12 @@ namespace PurpleWrapper
 			return purple_request_field_get_label(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_field_is_visible
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_request_field_is_visible(PurpleRequestField * field)
 		 */
@@ -191,6 +310,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_get_type_hint
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_request_field_get_type_hint(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -201,6 +326,12 @@ namespace PurpleWrapper
 			return purple_request_field_get_type_hint(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_field_is_required
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_request_field_is_required(PurpleRequestField * field)
 		 */
@@ -213,6 +344,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_get_ui_data
+		 * Function Type: gpointer
+		 * Function RawType: gpointer
+		 * Function Category: VoidPointer
+		 */
+		/*
 		 * gpointer purple_request_field_get_ui_data(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -223,6 +360,12 @@ namespace PurpleWrapper
 			return purple_request_field_get_ui_data(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_field_string_get_value
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_request_field_string_get_value(PurpleRequestField * field)
 		 */
@@ -235,6 +378,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_string_is_multiline
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_request_field_string_is_multiline(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -245,6 +394,12 @@ namespace PurpleWrapper
 			return purple_request_field_string_is_multiline(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_field_string_is_masked
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_request_field_string_is_masked(PurpleRequestField * field)
 		 */
@@ -257,6 +412,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_string_is_editable
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_request_field_string_is_editable(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -267,6 +428,12 @@ namespace PurpleWrapper
 			return purple_request_field_string_is_editable(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_field_int_set_value
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_request_field_int_set_value(PurpleRequestField * field, int value)
 		 */
@@ -279,6 +446,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_int_get_default_value
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
+		/*
 		 * int purple_request_field_int_get_default_value(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -289,6 +462,12 @@ namespace PurpleWrapper
 			return purple_request_field_int_get_default_value(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_field_int_get_value
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * int purple_request_field_int_get_value(PurpleRequestField * field)
 		 */
@@ -301,6 +480,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_bool_get_value
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_request_field_bool_get_value(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -311,6 +496,12 @@ namespace PurpleWrapper
 			return purple_request_field_bool_get_value(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_field_choice_set_value
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_request_field_choice_set_value(PurpleRequestField * field, int value)
 		 */
@@ -323,6 +514,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_choice_get_default_value
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
+		/*
 		 * int purple_request_field_choice_get_default_value(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -333,6 +530,12 @@ namespace PurpleWrapper
 			return purple_request_field_choice_get_default_value(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_field_choice_get_value
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * int purple_request_field_choice_get_value(PurpleRequestField * field)
 		 */
@@ -345,12 +548,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_choice_get_labels
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_request_field_choice_get_labels(PurpleRequestField * field)
 		 * 
 		 * Could not generate a wrapper for purple_request_field_choice_get_labels in file "request.h".
-		 * Message: The type could not be resolved (GList * purple_request_field_choice_get_labels(PurpleRequestField * field)).
+		 * Message: Unknown inner-type of argument 0 of purple_request_field_choice_get_labels
 		 */
 
+		/*
+		 * Function Name: purple_request_field_list_new
+		 * Function Type: PurpleRequestField *
+		 * Function RawType: PurpleRequestField
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleRequestField * purple_request_field_list_new(char * id, char * text)
 		 */
@@ -363,6 +578,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_list_clear_selected
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_request_field_list_clear_selected(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -374,12 +595,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_list_get_items
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_request_field_list_get_items(PurpleRequestField * field)
 		 * 
 		 * Could not generate a wrapper for purple_request_field_list_get_items in file "request.h".
-		 * Message: The type could not be resolved (GList * purple_request_field_list_get_items(PurpleRequestField * field)).
+		 * Message: Unknown inner-type of argument 0 of purple_request_field_list_get_items
 		 */
 
+		/*
+		 * Function Name: purple_request_field_image_set_scale
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_request_field_image_set_scale(PurpleRequestField * field, unsigned int x, unsigned int y)
 		 */
@@ -392,6 +625,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_image_get_buffer
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_request_field_image_get_buffer(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -402,6 +641,12 @@ namespace PurpleWrapper
 			return purple_request_field_image_get_buffer(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_field_image_get_size
+		 * Function Type: gsize
+		 * Function RawType: gsize
+		 * Function Category: Native
+		 */
 		/*
 		 * gsize purple_request_field_image_get_size(PurpleRequestField * field)
 		 */
@@ -414,6 +659,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_image_get_scale_x
+		 * Function Type: unsigned int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
+		/*
 		 * unsigned int purple_request_field_image_get_scale_x(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -425,6 +676,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_field_image_get_scale_y
+		 * Function Type: unsigned int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
+		/*
 		 * unsigned int purple_request_field_image_get_scale_y(PurpleRequestField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -435,6 +692,12 @@ namespace PurpleWrapper
 			return purple_request_field_image_get_scale_y(field.Reference);
 		}
 
+		/*
+		 * Function Name: purple_request_close
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_request_close(PurpleRequestType type, void * uihandle)
 		 */
@@ -448,6 +711,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_request_close_with_handle
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_request_close_with_handle(void * handle)
 		 */
 		[DllImport("libpurple.dll")]
@@ -459,18 +728,40 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_request_set_ui_ops(PurpleRequestUiOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_request_set_ui_ops in file "request.h".
-		 * Message: The type could not be resolved (PurpleRequestUiOps * ops).
+		 * Function Name: purple_request_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_request_set_ui_ops(PurpleRequestUiOps * ops)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_request_set_ui_ops(IntPtr ops);
+
+		public static void SetUiOps(/* Resolved as PointerToUnknownStruct to PurpleRequestUiOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleRequestUiOps * purple_request_get_ui_ops()
-		 * 
-		 * Could not generate a wrapper for purple_request_get_ui_ops in file "request.h".
-		 * Message: The type could not be resolved (PurpleRequestUiOps * purple_request_get_ui_ops()).
+		 * Function Name: purple_request_get_ui_ops
+		 * Function Type: PurpleRequestUiOps *
+		 * Function RawType: PurpleRequestUiOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleRequestUiOps * purple_request_get_ui_ops()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_request_get_ui_ops();
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleRequestUiOps */ IntPtr GetUiOps()
+		{
+			/* Unable to process the return value of purple_request_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

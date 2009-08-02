@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: proxy.h
+	 */
 	public class Proxy
 	{
 		public enum PurpleProxyType
@@ -50,104 +54,267 @@ namespace PurpleWrapper
 			PURPLE_PROXY_USE_ENVVAR
 		};
 
+		public delegate void PurpleProxyConnectFunction(IntPtr data, int source, string error_message);
+
+		/*
+		 * Function Name: purple_proxy_info_new
+		 * Function Type: PurpleProxyInfo *
+		 * Function RawType: PurpleProxyInfo
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleProxyInfo * purple_proxy_info_new()
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_new in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * purple_proxy_info_new()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_proxy_info_new();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr InfoNew()
+		{
+			/* Unable to process the return value of purple_proxy_info_new, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_proxy_info_destroy(PurpleProxyInfo * info)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_destroy in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_proxy_info_destroy(IntPtr info);
 
+		public static void InfoDestroy(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_set_type
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_proxy_info_set_type(PurpleProxyInfo * info, PurpleProxyType type)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_set_type in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_proxy_info_set_type(IntPtr info, Proxy.PurpleProxyType type);
 
+		public static void InfoSetType(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info, Proxy.PurpleProxyType type)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			/* Unable to process type, a KnownEnum. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_set_host
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_proxy_info_set_host(PurpleProxyInfo * info, char * host)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_set_host in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_proxy_info_set_host(IntPtr info, string host);
 
+		public static void InfoSetHost(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info, string host)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_set_port
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_proxy_info_set_port(PurpleProxyInfo * info, int port)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_set_port in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_proxy_info_set_port(IntPtr info, int port);
 
+		public static void InfoSetPort(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info, int port)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_set_username
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_proxy_info_set_username(PurpleProxyInfo * info, char * username)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_set_username in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_proxy_info_set_username(IntPtr info, string username);
 
+		public static void InfoSetUsername(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info, string username)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_set_password
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_proxy_info_set_password(PurpleProxyInfo * info, char * password)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_set_password in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_proxy_info_set_password(IntPtr info, string password);
 
+		public static void InfoSetPassword(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info, string password)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_get_type
+		 * Function Type: PurpleProxyType
+		 * Function RawType: PurpleProxyType
+		 * Function Category: KnownEnum
+		 */
 		/*
 		 * PurpleProxyType purple_proxy_info_get_type(PurpleProxyInfo * info)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_get_type in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern Proxy.PurpleProxyType purple_proxy_info_get_type(IntPtr info);
 
+		public static Proxy.PurpleProxyType InfoGetType(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_get_host
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_proxy_info_get_host(PurpleProxyInfo * info)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_get_host in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_proxy_info_get_host(IntPtr info);
 
+		public static string InfoGetHost(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_get_port
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * int purple_proxy_info_get_port(PurpleProxyInfo * info)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_get_port in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern int purple_proxy_info_get_port(IntPtr info);
 
+		public static int InfoGetPort(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_get_username
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_proxy_info_get_username(PurpleProxyInfo * info)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_get_username in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_proxy_info_get_username(IntPtr info);
 
+		public static string InfoGetUsername(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_info_get_password
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_proxy_info_get_password(PurpleProxyInfo * info)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_info_get_password in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_proxy_info_get_password(IntPtr info);
 
+		public static string InfoGetPassword(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_global_proxy_get_info
+		 * Function Type: PurpleProxyInfo *
+		 * Function RawType: PurpleProxyInfo
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleProxyInfo * purple_global_proxy_get_info()
-		 * 
-		 * Could not generate a wrapper for purple_global_proxy_get_info in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * purple_global_proxy_get_info()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_global_proxy_get_info();
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr GlobalProxyGetInfo()
+		{
+			/* Unable to process the return value of purple_global_proxy_get_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_global_proxy_set_info(PurpleProxyInfo * info)
-		 * 
-		 * Could not generate a wrapper for purple_global_proxy_set_info in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * info).
+		 * Function Name: purple_global_proxy_set_info
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_global_proxy_set_info(PurpleProxyInfo * info)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_global_proxy_set_info(IntPtr info);
 
+		public static void GlobalProxySetInfo(/* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr info)
+		{
+			/* Unable to process info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_proxy_get_handle()
 		 */
@@ -160,6 +327,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_proxy_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_proxy_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -170,6 +343,12 @@ namespace PurpleWrapper
 			purple_proxy_init();
 		}
 
+		/*
+		 * Function Name: purple_proxy_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_proxy_uninit()
 		 */
@@ -182,19 +361,47 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * PurpleProxyInfo * purple_proxy_get_setup(PurpleAccount * account)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_get_setup in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyInfo * purple_proxy_get_setup(PurpleAccount * account)).
+		 * Function Name: purple_proxy_get_setup
+		 * Function Type: PurpleProxyInfo *
+		 * Function RawType: PurpleProxyInfo
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleProxyInfo * purple_proxy_get_setup(PurpleAccount * account)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_proxy_get_setup(IntPtr account);
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleProxyInfo */ IntPtr GetSetup(PurpleAccount account)
+		{
+			/* Unable to process the return value of purple_proxy_get_setup, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_proxy_connect_cancel(PurpleProxyConnectData * connect_data)
-		 * 
-		 * Could not generate a wrapper for purple_proxy_connect_cancel in file "proxy.h".
-		 * Message: The type could not be resolved (PurpleProxyConnectData * connect_data).
+		 * Function Name: purple_proxy_connect_cancel
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_proxy_connect_cancel(PurpleProxyConnectData * connect_data)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_proxy_connect_cancel(IntPtr connect_data);
 
+		public static void ConnectCancel(/* Resolved as PointerToUnknownStruct to PurpleProxyConnectData */ IntPtr connect_data)
+		{
+			/* Unable to process connect_data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_proxy_connect_cancel_with_handle
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_proxy_connect_cancel_with_handle(void * handle)
 		 */

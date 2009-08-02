@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: stun.h
+	 */
 	public class Stun
 	{
 		public enum PurpleStunStatus
@@ -58,13 +62,32 @@ namespace PurpleWrapper
 			PURPLE_STUN_NAT_TYPE_SYMMETRIC
 		};
 
+		public delegate void StunCallback(IntPtr _PurpleWrapper_arg0);
+
+		/*
+		 * Function Name: purple_stun_discover
+		 * Function Type: PurpleStunNatDiscovery *
+		 * Function RawType: PurpleStunNatDiscovery
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleStunNatDiscovery * purple_stun_discover(StunCallback cb)
-		 * 
-		 * Could not generate a wrapper for purple_stun_discover in file "stun.h".
-		 * Message: The type could not be resolved (StunCallback cb).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_stun_discover(IntPtr cb);
 
+		public static PurpleStunNatDiscovery Discover(Stun.StunCallback cb)
+		{
+			/* Unable to process cb, a KnownFunctionPointer. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_stun_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_stun_init()
 		 */

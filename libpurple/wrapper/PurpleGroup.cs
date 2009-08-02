@@ -38,26 +38,148 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: blist.h
+	 * Structure: PurpleGroup
+	 */
 	public class PurpleGroup : UnmanagedWrapper<_PurpleGroup>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleGroup in file "blist.h".
-		 * Message: The type resolved to a known struct but not a pointer to that struct (PurpleBlistNode node).
-		 */
-
 		public PurpleGroup()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleGroup(IntPtr refernece)
+		public PurpleGroup(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleGroup)Marshal.PtrToStructure(this.Reference, typeof(_PurpleGroup));
+		}
+
+		/*
+		 * Argument Name: node
+		 * Argument Type: PurpleBlistNode
+		 * Argument Category: KnownStruct
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleGroup.node in file "blist.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleBlistNode node).
+		 */
+
+		/*
+		 * Argument Name: name
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string name
+		{
+			get
+			{
+				return this.Data.name;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.name = value;
+			}
+		}
+
+		/*
+		 * Argument Name: totalsize
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
+		public int totalsize
+		{
+			get
+			{
+				return this.Data.totalsize;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.totalsize = value;
+			}
+		}
+
+		/*
+		 * Argument Name: currentsize
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
+		public int currentsize
+		{
+			get
+			{
+				return this.Data.currentsize;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.currentsize = value;
+			}
+		}
+
+		/*
+		 * Argument Name: online
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
+		public int online
+		{
+			get
+			{
+				return this.Data.online;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.online = value;
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleGroup { }
+	public class _PurpleGroup
+	{
+		/*
+		 * PurpleBlistNode node
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleGroup.node in file "blist.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleBlistNode node).
+		 */
+
+		/*
+		 * char * name
+		 */
+		public string name;
+
+		/*
+		 * int totalsize
+		 */
+		public int totalsize;
+
+		/*
+		 * int currentsize
+		 */
+		public int currentsize;
+
+		/*
+		 * int online
+		 */
+		public int online;
+
+	}
+
 }
 

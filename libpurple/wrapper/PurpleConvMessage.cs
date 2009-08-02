@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: conversation.h
+	 * Structure: PurpleConvMessage
+	 */
 	public class PurpleConvMessage : UnmanagedWrapper<_PurpleConvMessage>
 	{
 		public PurpleConvMessage()
 		{
 		}
 
-		public PurpleConvMessage(IntPtr refernece)
+		public PurpleConvMessage(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleConvMessage)Marshal.PtrToStructure(this.Reference, typeof(_PurpleConvMessage));
 		}
 
+		/*
+		 * Argument Name: who
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string who
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: what
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string what
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: flags
+		 * Argument Type: PurpleMessageFlags
+		 * Argument Category: KnownEnum
+		 */
 		public Conversation.PurpleMessageFlags flags
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: when
+		 * Argument Type: time_t
+		 * Argument Category: DateTime
+		 */
 		public DateTime when
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: conv
+		 * Argument Type: PurpleConversation *
+		 * Argument Category: PointerToKnownStruct
+		 */
 		public PurpleConversation conv
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: alias
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string alias
 		{
 			get
@@ -144,37 +179,37 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleConvMessage
+	public class _PurpleConvMessage
 	{
 		/*
 		 * char * who
 		 */
-		IntPtr who;
+		public string who;
 
 		/*
 		 * char * what
 		 */
-		IntPtr what;
+		public string what;
 
 		/*
 		 * PurpleMessageFlags flags
 		 */
-		/* Cannot generate struct for type KnownEnum */
+		public Conversation.PurpleMessageFlags flags;
 
 		/*
 		 * time_t when
 		 */
-		ulong when;
+		public ulong when;
 
 		/*
 		 * PurpleConversation * conv
 		 */
-		/* Cannot generate struct for type PointerToKnownStruct */
+		public IntPtr conv;
 
 		/*
 		 * char * alias
 		 */
-		IntPtr alias;
+		public string alias;
 
 	}
 

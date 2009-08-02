@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: prpl.h
+	 */
 	public class Prpl
 	{
 		public enum PurpleIconScaleRules
@@ -59,13 +63,13 @@ namespace PurpleWrapper
 			OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400
 		};
 
-		/*
-		 * unsigned int( )
-		 * 
-		 * Could not generate a wrapper for int in file "prpl.h".
-		 * Message: The type could not be resolved (unsigned int( )).
-		 */
 
+		/*
+		 * Function Name: purple_attention_type_set_name
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_attention_type_set_name(PurpleAttentionType * type, char * name)
 		 */
@@ -78,6 +82,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_attention_type_set_incoming_desc
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_attention_type_set_incoming_desc(PurpleAttentionType * type, char * desc)
 		 */
 		[DllImport("libpurple.dll")]
@@ -88,6 +98,12 @@ namespace PurpleWrapper
 			purple_attention_type_set_incoming_desc(type.Reference, desc);
 		}
 
+		/*
+		 * Function Name: purple_attention_type_set_outgoing_desc
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_attention_type_set_outgoing_desc(PurpleAttentionType * type, char * desc)
 		 */
@@ -100,6 +116,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_attention_type_set_icon_name
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_attention_type_set_icon_name(PurpleAttentionType * type, char * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -110,6 +132,12 @@ namespace PurpleWrapper
 			purple_attention_type_set_icon_name(type.Reference, name);
 		}
 
+		/*
+		 * Function Name: purple_attention_type_set_unlocalized_name
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_attention_type_set_unlocalized_name(PurpleAttentionType * type, char * ulname)
 		 */
@@ -122,6 +150,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_attention_type_get_name
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_attention_type_get_name(PurpleAttentionType * type)
 		 */
 		[DllImport("libpurple.dll")]
@@ -132,6 +166,12 @@ namespace PurpleWrapper
 			return purple_attention_type_get_name(type.Reference);
 		}
 
+		/*
+		 * Function Name: purple_attention_type_get_incoming_desc
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_attention_type_get_incoming_desc(PurpleAttentionType * type)
 		 */
@@ -144,6 +184,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_attention_type_get_outgoing_desc
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_attention_type_get_outgoing_desc(PurpleAttentionType * type)
 		 */
 		[DllImport("libpurple.dll")]
@@ -154,6 +200,12 @@ namespace PurpleWrapper
 			return purple_attention_type_get_outgoing_desc(type.Reference);
 		}
 
+		/*
+		 * Function Name: purple_attention_type_get_icon_name
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_attention_type_get_icon_name(PurpleAttentionType * type)
 		 */
@@ -166,6 +218,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_attention_type_get_unlocalized_name
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_attention_type_get_unlocalized_name(PurpleAttentionType * type)
 		 */
 		[DllImport("libpurple.dll")]
@@ -176,6 +234,12 @@ namespace PurpleWrapper
 			return purple_attention_type_get_unlocalized_name(type.Reference);
 		}
 
+		/*
+		 * Function Name: purple_prpl_got_account_login_time
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prpl_got_account_login_time(PurpleAccount * account, time_t login_time)
 		 */
@@ -189,6 +253,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prpl_got_account_actions
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prpl_got_account_actions(PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
@@ -200,12 +270,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prpl_get_statuses
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_prpl_get_statuses(PurpleAccount * account, PurplePresence * presence)
 		 * 
 		 * Could not generate a wrapper for purple_prpl_get_statuses in file "prpl.h".
-		 * Message: The type could not be resolved (GList * purple_prpl_get_statuses(PurpleAccount * account, PurplePresence * presence)).
+		 * Message: Unknown inner-type of argument 0 of purple_prpl_get_statuses
 		 */
 
+		/*
+		 * Function Name: purple_prpl_send_attention
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prpl_send_attention(PurpleConnection * gc, char * who, guint type_code)
 		 */
@@ -218,6 +300,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prpl_got_attention
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prpl_got_attention(PurpleConnection * gc, char * who, guint type_code)
 		 */
 		[DllImport("libpurple.dll")]
@@ -229,6 +317,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prpl_got_attention_in_chat
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prpl_got_attention_in_chat(PurpleConnection * gc, int id, char * who, guint type_code)
 		 */
 		[DllImport("libpurple.dll")]
@@ -239,6 +333,12 @@ namespace PurpleWrapper
 			purple_prpl_got_attention_in_chat(gc.Reference, id, who, type_code);
 		}
 
+		/*
+		 * Function Name: purple_find_prpl
+		 * Function Type: PurplePlugin *
+		 * Function RawType: PurplePlugin
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurplePlugin * purple_find_prpl(char * id)
 		 */

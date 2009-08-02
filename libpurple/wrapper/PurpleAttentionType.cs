@@ -38,26 +38,230 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: prpl.h
+	 * Structure: PurpleAttentionType
+	 */
 	public class PurpleAttentionType : UnmanagedWrapper<_PurpleAttentionType>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleAttentionType in file "prpl.h".
-		 * Message: The type could not be resolved (const char * name).
-		 */
-
 		public PurpleAttentionType()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleAttentionType(IntPtr refernece)
+		public PurpleAttentionType(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleAttentionType)Marshal.PtrToStructure(this.Reference, typeof(_PurpleAttentionType));
+		}
+
+		/*
+		 * Argument Name: name
+		 * Argument Type: const char *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to char */ IntPtr name
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: incoming_description
+		 * Argument Type: const char *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to char */ IntPtr incoming_description
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: outgoing_description
+		 * Argument Type: const char *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to char */ IntPtr outgoing_description
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: icon_name
+		 * Argument Type: const char *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to char */ IntPtr icon_name
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: unlocalized_name
+		 * Argument Type: const char *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to char */ IntPtr unlocalized_name
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: reserved2
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr reserved2
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: reserved3
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr reserved3
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: reserved4
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr reserved4
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleAttentionType { }
+	public class _PurpleAttentionType
+	{
+		/*
+		 * const char * name
+		 */
+		public IntPtr name;
+
+		/*
+		 * const char * incoming_description
+		 */
+		public IntPtr incoming_description;
+
+		/*
+		 * const char * outgoing_description
+		 */
+		public IntPtr outgoing_description;
+
+		/*
+		 * const char * icon_name
+		 */
+		public IntPtr icon_name;
+
+		/*
+		 * const char * unlocalized_name
+		 */
+		public IntPtr unlocalized_name;
+
+		/*
+		 * gpointer reserved2
+		 */
+		public IntPtr reserved2;
+
+		/*
+		 * gpointer reserved3
+		 */
+		public IntPtr reserved3;
+
+		/*
+		 * gpointer reserved4
+		 */
+		public IntPtr reserved4;
+
+	}
+
 }
 

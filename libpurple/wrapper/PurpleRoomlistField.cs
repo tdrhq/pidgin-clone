@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: roomlist.h
+	 * Structure: PurpleRoomlistField
+	 */
 	public class PurpleRoomlistField : UnmanagedWrapper<_PurpleRoomlistField>
 	{
 		public PurpleRoomlistField()
 		{
 		}
 
-		public PurpleRoomlistField(IntPtr refernece)
+		public PurpleRoomlistField(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleRoomlistField)Marshal.PtrToStructure(this.Reference, typeof(_PurpleRoomlistField));
 		}
 
+		/*
+		 * Argument Name: type
+		 * Argument Type: PurpleRoomlistFieldType
+		 * Argument Category: KnownEnum
+		 */
 		public Roomlist.PurpleRoomlistFieldType type
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: label
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
 		public string label
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: name
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
 		public string name
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: hidden
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
 		public bool hidden
 		{
 			get
@@ -114,27 +139,27 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleRoomlistField
+	public class _PurpleRoomlistField
 	{
 		/*
 		 * PurpleRoomlistFieldType type
 		 */
-		/* Cannot generate struct for type KnownEnum */
+		public Roomlist.PurpleRoomlistFieldType type;
 
 		/*
 		 * gchar * label
 		 */
-		IntPtr label;
+		public string label;
 
 		/*
 		 * gchar * name
 		 */
-		IntPtr name;
+		public string name;
 
 		/*
 		 * gboolean hidden
 		 */
-		IntPtr hidden;
+		public bool hidden;
 
 	}
 

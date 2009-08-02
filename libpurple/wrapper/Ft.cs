@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: ft.h
+	 */
 	public class Ft
 	{
 		public enum PurpleXferType
@@ -58,13 +62,26 @@ namespace PurpleWrapper
 			PURPLE_XFER_STATUS_CANCEL_REMOTE
 		};
 
+
+		/*
+		 * Function Name: purple_xfers_get_all
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_xfers_get_all()
 		 * 
 		 * Could not generate a wrapper for purple_xfers_get_all in file "ft.h".
-		 * Message: The type could not be resolved (GList * purple_xfers_get_all()).
+		 * Message: Unknown inner-type of argument 0 of purple_xfers_get_all
 		 */
 
+		/*
+		 * Function Name: purple_xfer_ref
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_ref(PurpleXfer * xfer)
 		 */
@@ -77,6 +94,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_unref
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_xfer_unref(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -87,6 +110,12 @@ namespace PurpleWrapper
 			purple_xfer_unref(xfer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_xfer_request
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_request(PurpleXfer * xfer)
 		 */
@@ -99,6 +128,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_request_accepted
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_xfer_request_accepted(PurpleXfer * xfer, char * filename)
 		 */
 		[DllImport("libpurple.dll")]
@@ -109,6 +144,12 @@ namespace PurpleWrapper
 			purple_xfer_request_accepted(xfer.Reference, filename);
 		}
 
+		/*
+		 * Function Name: purple_xfer_request_denied
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_request_denied(PurpleXfer * xfer)
 		 */
@@ -121,6 +162,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_get_type
+		 * Function Type: PurpleXferType
+		 * Function RawType: PurpleXferType
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurpleXferType purple_xfer_get_type(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -128,10 +175,16 @@ namespace PurpleWrapper
 
 		public static Ft.PurpleXferType XferGetType(PurpleXfer xfer)
 		{
-			/* Unable to process purple_xfer_get_type, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_xfer_get_type, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_xfer_get_account
+		 * Function Type: PurpleAccount *
+		 * Function RawType: PurpleAccount
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleAccount * purple_xfer_get_account(PurpleXfer * xfer)
 		 */
@@ -144,6 +197,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_get_remote_user
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_xfer_get_remote_user(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -155,6 +214,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_get_status
+		 * Function Type: PurpleXferStatusType
+		 * Function RawType: PurpleXferStatusType
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurpleXferStatusType purple_xfer_get_status(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -162,10 +227,16 @@ namespace PurpleWrapper
 
 		public static Ft.PurpleXferStatusType XferGetStatus(PurpleXfer xfer)
 		{
-			/* Unable to process purple_xfer_get_status, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_xfer_get_status, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_xfer_is_canceled
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_xfer_is_canceled(PurpleXfer * xfer)
 		 */
@@ -178,6 +249,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_is_completed
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_xfer_is_completed(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -188,6 +265,12 @@ namespace PurpleWrapper
 			return purple_xfer_is_completed(xfer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_xfer_get_filename
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_xfer_get_filename(PurpleXfer * xfer)
 		 */
@@ -200,6 +283,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_get_local_filename
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_xfer_get_local_filename(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -210,6 +299,12 @@ namespace PurpleWrapper
 			return purple_xfer_get_local_filename(xfer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_xfer_get_bytes_sent
+		 * Function Type: size_t
+		 * Function RawType: size_t
+		 * Function Category: Native
+		 */
 		/*
 		 * size_t purple_xfer_get_bytes_sent(PurpleXfer * xfer)
 		 */
@@ -222,6 +317,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_get_bytes_remaining
+		 * Function Type: size_t
+		 * Function RawType: size_t
+		 * Function Category: Native
+		 */
+		/*
 		 * size_t purple_xfer_get_bytes_remaining(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -232,6 +333,12 @@ namespace PurpleWrapper
 			return purple_xfer_get_bytes_remaining(xfer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_xfer_get_size
+		 * Function Type: size_t
+		 * Function RawType: size_t
+		 * Function Category: Native
+		 */
 		/*
 		 * size_t purple_xfer_get_size(PurpleXfer * xfer)
 		 */
@@ -244,6 +351,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_get_progress
+		 * Function Type: double
+		 * Function RawType: double
+		 * Function Category: Native
+		 */
+		/*
 		 * double purple_xfer_get_progress(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -254,6 +367,12 @@ namespace PurpleWrapper
 			return purple_xfer_get_progress(xfer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_xfer_get_local_port
+		 * Function Type: unsigned int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * unsigned int purple_xfer_get_local_port(PurpleXfer * xfer)
 		 */
@@ -266,6 +385,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_get_remote_ip
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_xfer_get_remote_ip(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -276,6 +401,12 @@ namespace PurpleWrapper
 			return purple_xfer_get_remote_ip(xfer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_xfer_get_remote_port
+		 * Function Type: unsigned int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * unsigned int purple_xfer_get_remote_port(PurpleXfer * xfer)
 		 */
@@ -288,6 +419,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_get_start_time
+		 * Function Type: time_t
+		 * Function RawType: time_t
+		 * Function Category: DateTime
+		 */
+		/*
 		 * time_t purple_xfer_get_start_time(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -295,10 +432,16 @@ namespace PurpleWrapper
 
 		public static DateTime XferGetStartTime(PurpleXfer xfer)
 		{
-			/* Unable to process purple_xfer_get_start_time, a DateTime. */
-			
+			/* Unable to process the return value of purple_xfer_get_start_time, a DateTime. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_xfer_get_end_time
+		 * Function Type: time_t
+		 * Function RawType: time_t
+		 * Function Category: DateTime
+		 */
 		/*
 		 * time_t purple_xfer_get_end_time(PurpleXfer * xfer)
 		 */
@@ -307,10 +450,16 @@ namespace PurpleWrapper
 
 		public static DateTime XferGetEndTime(PurpleXfer xfer)
 		{
-			/* Unable to process purple_xfer_get_end_time, a DateTime. */
-			
+			/* Unable to process the return value of purple_xfer_get_end_time, a DateTime. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_xfer_set_completed
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_set_completed(PurpleXfer * xfer, gboolean completed)
 		 */
@@ -323,6 +472,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_set_message
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_xfer_set_message(PurpleXfer * xfer, char * message)
 		 */
 		[DllImport("libpurple.dll")]
@@ -333,6 +488,12 @@ namespace PurpleWrapper
 			purple_xfer_set_message(xfer.Reference, message);
 		}
 
+		/*
+		 * Function Name: purple_xfer_set_filename
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_set_filename(PurpleXfer * xfer, char * filename)
 		 */
@@ -345,6 +506,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_set_local_filename
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_xfer_set_local_filename(PurpleXfer * xfer, char * filename)
 		 */
 		[DllImport("libpurple.dll")]
@@ -355,6 +522,12 @@ namespace PurpleWrapper
 			purple_xfer_set_local_filename(xfer.Reference, filename);
 		}
 
+		/*
+		 * Function Name: purple_xfer_set_size
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_set_size(PurpleXfer * xfer, size_t size)
 		 */
@@ -367,6 +540,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_set_bytes_sent
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_xfer_set_bytes_sent(PurpleXfer * xfer, size_t bytes_sent)
 		 */
 		[DllImport("libpurple.dll")]
@@ -378,26 +557,65 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * PurpleXferUiOps * purple_xfer_get_ui_ops(PurpleXfer * xfer)
-		 * 
-		 * Could not generate a wrapper for purple_xfer_get_ui_ops in file "ft.h".
-		 * Message: The type could not be resolved (PurpleXferUiOps * purple_xfer_get_ui_ops(PurpleXfer * xfer)).
+		 * Function Name: purple_xfer_get_ui_ops
+		 * Function Type: PurpleXferUiOps *
+		 * Function RawType: PurpleXferUiOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleXferUiOps * purple_xfer_get_ui_ops(PurpleXfer * xfer)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_xfer_get_ui_ops(IntPtr xfer);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleXferUiOps */ IntPtr XferGetUiOps(PurpleXfer xfer)
+		{
+			/* Unable to process the return value of purple_xfer_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_xfer_read
+		 * Function Type: gssize
+		 * Function RawType: gssize
+		 * Function Category: Native
+		 */
 		/*
 		 * gssize purple_xfer_read(PurpleXfer * xfer, guchar ** buffer)
-		 * 
-		 * Could not generate a wrapper for purple_xfer_read in file "ft.h".
-		 * Message: The type could not be resolved (guchar ** buffer).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern long purple_xfer_read(IntPtr xfer, IntPtr buffer);
+
+		public static long XferRead(PurpleXfer xfer, /* Resolved as PointerToUnknownStruct to guchar */ IntPtr buffer)
+		{
+			/* Unable to process buffer, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * gssize purple_xfer_write(PurpleXfer * xfer, guchar * buffer, gsize size)
-		 * 
-		 * Could not generate a wrapper for purple_xfer_write in file "ft.h".
-		 * Message: The type could not be resolved (guchar * buffer).
+		 * Function Name: purple_xfer_write
+		 * Function Type: gssize
+		 * Function RawType: gssize
+		 * Function Category: Native
 		 */
+		/*
+		 * gssize purple_xfer_write(PurpleXfer * xfer, guchar * buffer, gsize size)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern long purple_xfer_write(IntPtr xfer, IntPtr buffer, ulong size);
 
+		public static long XferWrite(PurpleXfer xfer, /* Resolved as PointerToUnknownStruct to guchar */ IntPtr buffer, ulong size)
+		{
+			/* Unable to process buffer, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_xfer_end
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_end(PurpleXfer * xfer)
 		 */
@@ -410,6 +628,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_add
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_xfer_add(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -420,6 +644,12 @@ namespace PurpleWrapper
 			purple_xfer_add(xfer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_xfer_cancel_local
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_cancel_local(PurpleXfer * xfer)
 		 */
@@ -432,6 +662,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_cancel_remote
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_xfer_cancel_remote(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -442,6 +678,12 @@ namespace PurpleWrapper
 			purple_xfer_cancel_remote(xfer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_xfer_error
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_error(PurpleXferType type, PurpleAccount * account, char * who, char * msg)
 		 */
@@ -455,6 +697,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfer_update_progress
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_xfer_update_progress(PurpleXfer * xfer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -465,6 +713,12 @@ namespace PurpleWrapper
 			purple_xfer_update_progress(xfer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_xfer_conversation_write
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfer_conversation_write(PurpleXfer * xfer, char * message, gboolean is_error)
 		 */
@@ -477,6 +731,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfers_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
+		/*
 		 * void * purple_xfers_get_handle()
 		 */
 		[DllImport("libpurple.dll")]
@@ -487,6 +747,12 @@ namespace PurpleWrapper
 			return purple_xfers_get_handle();
 		}
 
+		/*
+		 * Function Name: purple_xfers_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_xfers_init()
 		 */
@@ -499,6 +765,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_xfers_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_xfers_uninit()
 		 */
 		[DllImport("libpurple.dll")]
@@ -510,18 +782,40 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_xfers_set_ui_ops(PurpleXferUiOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_xfers_set_ui_ops in file "ft.h".
-		 * Message: The type could not be resolved (PurpleXferUiOps * ops).
+		 * Function Name: purple_xfers_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_xfers_set_ui_ops(PurpleXferUiOps * ops)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_xfers_set_ui_ops(IntPtr ops);
+
+		public static void XfersSetUiOps(/* Resolved as PointerToUnknownStruct to PurpleXferUiOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleXferUiOps * purple_xfers_get_ui_ops()
-		 * 
-		 * Could not generate a wrapper for purple_xfers_get_ui_ops in file "ft.h".
-		 * Message: The type could not be resolved (PurpleXferUiOps * purple_xfers_get_ui_ops()).
+		 * Function Name: purple_xfers_get_ui_ops
+		 * Function Type: PurpleXferUiOps *
+		 * Function RawType: PurpleXferUiOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleXferUiOps * purple_xfers_get_ui_ops()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_xfers_get_ui_ops();
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleXferUiOps */ IntPtr XfersGetUiOps()
+		{
+			/* Unable to process the return value of purple_xfers_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

@@ -38,8 +38,19 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: whiteboard.h
+	 */
 	public class Whiteboard
 	{
+
+		/*
+		 * Function Name: purple_whiteboard_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_whiteboard_set_ui_ops(PurpleWhiteboardUiOps * ops)
 		 */
@@ -52,6 +63,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_whiteboard_set_prpl_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_whiteboard_set_prpl_ops(PurpleWhiteboard * wb, PurpleWhiteboardPrplOps * ops)
 		 */
 		[DllImport("libpurple.dll")]
@@ -62,6 +79,12 @@ namespace PurpleWrapper
 			purple_whiteboard_set_prpl_ops(wb.Reference, ops.Reference);
 		}
 
+		/*
+		 * Function Name: purple_whiteboard_create
+		 * Function Type: PurpleWhiteboard *
+		 * Function RawType: PurpleWhiteboard
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleWhiteboard * purple_whiteboard_create(PurpleAccount * account, char * who, int state)
 		 */
@@ -74,6 +97,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_whiteboard_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_whiteboard_destroy(PurpleWhiteboard * wb)
 		 */
 		[DllImport("libpurple.dll")]
@@ -84,6 +113,12 @@ namespace PurpleWrapper
 			purple_whiteboard_destroy(wb.Reference);
 		}
 
+		/*
+		 * Function Name: purple_whiteboard_start
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_whiteboard_start(PurpleWhiteboard * wb)
 		 */
@@ -96,6 +131,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_whiteboard_get_session
+		 * Function Type: PurpleWhiteboard *
+		 * Function RawType: PurpleWhiteboard
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleWhiteboard * purple_whiteboard_get_session(PurpleAccount * account, char * who)
 		 */
 		[DllImport("libpurple.dll")]
@@ -107,19 +148,43 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_whiteboard_draw_list_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_whiteboard_draw_list_destroy(GList * draw_list)
 		 * 
 		 * Could not generate a wrapper for purple_whiteboard_draw_list_destroy in file "whiteboard.h".
-		 * Message: The type could not be resolved (GList * draw_list).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
 		/*
-		 * gboolean purple_whiteboard_get_dimensions(PurpleWhiteboard * wb, int * width, int * height)
-		 * 
-		 * Could not generate a wrapper for purple_whiteboard_get_dimensions in file "whiteboard.h".
-		 * Message: The type could not be resolved (int * width).
+		 * Function Name: purple_whiteboard_get_dimensions
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
 		 */
+		/*
+		 * gboolean purple_whiteboard_get_dimensions(PurpleWhiteboard * wb, int * width, int * height)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_whiteboard_get_dimensions(IntPtr wb, IntPtr width, IntPtr height);
 
+		public static bool GetDimensions(PurpleWhiteboard wb, /* Resolved as PointerToUnknownStruct to int */ IntPtr width, /* Resolved as PointerToUnknownStruct to int */ IntPtr height)
+		{
+			/* Unable to process width, a PointerToUnknownStruct. */
+			/* Unable to process height, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_whiteboard_set_dimensions
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_whiteboard_set_dimensions(PurpleWhiteboard * wb, int width, int height)
 		 */
@@ -132,6 +197,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_whiteboard_draw_point
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_whiteboard_draw_point(PurpleWhiteboard * wb, int x, int y, int color, int size)
 		 */
 		[DllImport("libpurple.dll")]
@@ -143,12 +214,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_whiteboard_send_draw_list
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_whiteboard_send_draw_list(PurpleWhiteboard * wb, GList * list)
 		 * 
 		 * Could not generate a wrapper for purple_whiteboard_send_draw_list in file "whiteboard.h".
-		 * Message: The type could not be resolved (GList * list).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_whiteboard_draw_line
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_whiteboard_draw_line(PurpleWhiteboard * wb, int x1, int y1, int x2, int y2, int color, int size)
 		 */
@@ -161,6 +244,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_whiteboard_clear
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_whiteboard_clear(PurpleWhiteboard * wb)
 		 */
 		[DllImport("libpurple.dll")]
@@ -171,6 +260,12 @@ namespace PurpleWrapper
 			purple_whiteboard_clear(wb.Reference);
 		}
 
+		/*
+		 * Function Name: purple_whiteboard_send_clear
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_whiteboard_send_clear(PurpleWhiteboard * wb)
 		 */
@@ -183,6 +278,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_whiteboard_send_brush
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_whiteboard_send_brush(PurpleWhiteboard * wb, int size, int color)
 		 */
 		[DllImport("libpurple.dll")]
@@ -194,12 +295,30 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * gboolean purple_whiteboard_get_brush(PurpleWhiteboard * wb, int * size, int * color)
-		 * 
-		 * Could not generate a wrapper for purple_whiteboard_get_brush in file "whiteboard.h".
-		 * Message: The type could not be resolved (int * size).
+		 * Function Name: purple_whiteboard_get_brush
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
 		 */
+		/*
+		 * gboolean purple_whiteboard_get_brush(PurpleWhiteboard * wb, int * size, int * color)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_whiteboard_get_brush(IntPtr wb, IntPtr size, IntPtr color);
 
+		public static bool GetBrush(PurpleWhiteboard wb, /* Resolved as PointerToUnknownStruct to int */ IntPtr size, /* Resolved as PointerToUnknownStruct to int */ IntPtr color)
+		{
+			/* Unable to process size, a PointerToUnknownStruct. */
+			/* Unable to process color, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_whiteboard_set_brush
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_whiteboard_set_brush(PurpleWhiteboard * wb, int size, int color)
 		 */

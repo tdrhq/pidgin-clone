@@ -38,26 +38,205 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: plugin.h
+	 * Structure: PurplePluginUiInfo
+	 */
 	public class PurplePluginUiInfo : UnmanagedWrapper<_PurplePluginUiInfo>
 	{
-		/* 
-		 * Could not generate a wrapper for PurplePluginUiInfo in file "plugin.h".
-		 * Message: The type could not be resolved (PurplePluginPrefFrame * frame).
-		 */
-
 		public PurplePluginUiInfo()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurplePluginUiInfo(IntPtr refernece)
+		public PurplePluginUiInfo(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurplePluginUiInfo)Marshal.PtrToStructure(this.Reference, typeof(_PurplePluginUiInfo));
+		}
+
+		/*
+		 * Argument Name: get_plugin_pref_frame
+		 * Argument Type: PurplePluginPrefFrame *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public IntPtr get_plugin_pref_frame
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: page_num
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
+		public int page_num
+		{
+			get
+			{
+				return this.Data.page_num;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.page_num = value;
+			}
+		}
+
+		/*
+		 * Argument Name: frame
+		 * Argument Type: PurplePluginPrefFrame *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to PurplePluginPrefFrame */ IntPtr frame
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: _purple_reserved1
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr _purple_reserved1
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: _purple_reserved2
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr _purple_reserved2
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: _purple_reserved3
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr _purple_reserved3
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: _purple_reserved4
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr _purple_reserved4
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurplePluginUiInfo { }
+	public class _PurplePluginUiInfo
+	{
+		/*
+		 * PurplePluginPrefFrame * (*get_plugin_pref_frame)(PurplePlugin * plugin)
+		 */
+		public IntPtr get_plugin_pref_frame;
+
+		/*
+		 * int page_num
+		 */
+		public int page_num;
+
+		/*
+		 * PurplePluginPrefFrame * frame
+		 */
+		public IntPtr frame;
+
+		/*
+		 * void (*_purple_reserved1)()
+		 */
+		public IntPtr _purple_reserved1;
+
+		/*
+		 * void (*_purple_reserved2)()
+		 */
+		public IntPtr _purple_reserved2;
+
+		/*
+		 * void (*_purple_reserved3)()
+		 */
+		public IntPtr _purple_reserved3;
+
+		/*
+		 * void (*_purple_reserved4)()
+		 */
+		public IntPtr _purple_reserved4;
+
+	}
+
 }
 

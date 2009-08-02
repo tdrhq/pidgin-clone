@@ -38,26 +38,195 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: whiteboard.h
+	 * Structure: PurpleWhiteboard
+	 */
 	public class PurpleWhiteboard : UnmanagedWrapper<_PurpleWhiteboard>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleWhiteboard in file "whiteboard.h".
-		 * Message: The type could not be resolved (GList * draw_list).
-		 */
-
 		public PurpleWhiteboard()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleWhiteboard(IntPtr refernece)
+		public PurpleWhiteboard(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleWhiteboard)Marshal.PtrToStructure(this.Reference, typeof(_PurpleWhiteboard));
 		}
+
+		/*
+		 * Argument Name: state
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
+		public int state
+		{
+			get
+			{
+				return this.Data.state;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.state = value;
+			}
+		}
+
+		/*
+		 * Argument Name: account
+		 * Argument Type: PurpleAccount *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleAccount account
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: who
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string who
+		{
+			get
+			{
+				return this.Data.who;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.who = value;
+			}
+		}
+
+		/*
+		 * Argument Name: ui_data
+		 * Argument Type: void *
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr ui_data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: proto_data
+		 * Argument Type: void *
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr proto_data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: prpl_ops
+		 * Argument Type: PurpleWhiteboardPrplOps *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleWhiteboardPrplOps prpl_ops
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: draw_list
+		 * Argument Type: GList *
+		 * Argument Category: PointerToGList
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleWhiteboard.draw_list in file "whiteboard.h".
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
+		 */
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleWhiteboard { }
+	public class _PurpleWhiteboard
+	{
+		/*
+		 * int state
+		 */
+		public int state;
+
+		/*
+		 * PurpleAccount * account
+		 */
+		public IntPtr account;
+
+		/*
+		 * char * who
+		 */
+		public string who;
+
+		/*
+		 * void * ui_data
+		 */
+		public IntPtr ui_data;
+
+		/*
+		 * void * proto_data
+		 */
+		public IntPtr proto_data;
+
+		/*
+		 * PurpleWhiteboardPrplOps * prpl_ops
+		 */
+		public IntPtr prpl_ops;
+
+		/*
+		 * GList * draw_list
+		 */
+		public IntPtr draw_list;
+
+	}
+
 }
 

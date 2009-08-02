@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: account.h
+	 * Structure: PurpleAccountUiOps
+	 */
 	public class PurpleAccountUiOps : UnmanagedWrapper<_PurpleAccountUiOps>
 	{
 		public PurpleAccountUiOps()
 		{
 		}
 
-		public PurpleAccountUiOps(IntPtr refernece)
+		public PurpleAccountUiOps(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleAccountUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleAccountUiOps));
 		}
 
+		/*
+		 * Argument Name: notify_added
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr notify_added
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: status_changed
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr status_changed
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: request_add
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr request_add
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: request_authorize
+		 * Argument Type: void *
+		 * Argument Category: VoidPointer
+		 */
 		public IntPtr request_authorize
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: close_account_request
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr close_account_request
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved1
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved1
 		{
 			get
@@ -140,6 +175,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved2
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved2
 		{
 			get
@@ -155,6 +195,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved3
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved3
 		{
 			get
@@ -170,6 +215,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved4
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved4
 		{
 			get
@@ -189,52 +239,52 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleAccountUiOps
+	public class _PurpleAccountUiOps
 	{
 		/*
 		 * void (*notify_added)(PurpleAccount * account, char * remote_user, char * id, char * alias, char * message)
 		 */
-		IntPtr notify_added;
+		public IntPtr notify_added;
 
 		/*
 		 * void (*status_changed)(PurpleAccount * account, PurpleStatus * status)
 		 */
-		IntPtr status_changed;
+		public IntPtr status_changed;
 
 		/*
 		 * void (*request_add)(PurpleAccount * account, char * remote_user, char * id, char * alias, char * message)
 		 */
-		IntPtr request_add;
+		public IntPtr request_add;
 
 		/*
 		 * void * (*request_authorize)(PurpleAccount * account, char * remote_user, char * id, char * alias, char * message, gboolean on_list, PurpleAccountRequestAuthorizationCb authorize_cb, PurpleAccountRequestAuthorizationCb deny_cb, void * user_data)
 		 */
-		IntPtr request_authorize;
+		public IntPtr request_authorize;
 
 		/*
 		 * void (*close_account_request)(void * ui_handle)
 		 */
-		IntPtr close_account_request;
+		public IntPtr close_account_request;
 
 		/*
 		 * void (*_purple_reserved1)()
 		 */
-		IntPtr _purple_reserved1;
+		public IntPtr _purple_reserved1;
 
 		/*
 		 * void (*_purple_reserved2)()
 		 */
-		IntPtr _purple_reserved2;
+		public IntPtr _purple_reserved2;
 
 		/*
 		 * void (*_purple_reserved3)()
 		 */
-		IntPtr _purple_reserved3;
+		public IntPtr _purple_reserved3;
 
 		/*
 		 * void (*_purple_reserved4)()
 		 */
-		IntPtr _purple_reserved4;
+		public IntPtr _purple_reserved4;
 
 	}
 

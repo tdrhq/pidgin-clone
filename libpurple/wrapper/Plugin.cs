@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: plugin.h
+	 */
 	public class Plugin
 	{
 		public enum PurplePluginType
@@ -48,6 +52,13 @@ namespace PurpleWrapper
 			PURPLE_PLUGIN_PROTOCOL
 		};
 
+
+		/*
+		 * Function Name: purple_plugin_new
+		 * Function Type: PurplePlugin *
+		 * Function RawType: PurplePlugin
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurplePlugin * purple_plugin_new(gboolean native, char * path)
 		 */
@@ -60,6 +71,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugin_probe
+		 * Function Type: PurplePlugin *
+		 * Function RawType: PurplePlugin
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurplePlugin * purple_plugin_probe(char * filename)
 		 */
 		[DllImport("libpurple.dll")]
@@ -70,6 +87,12 @@ namespace PurpleWrapper
 			return new PurplePlugin(purple_plugin_probe(filename));
 		}
 
+		/*
+		 * Function Name: purple_plugin_register
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_plugin_register(PurplePlugin * plugin)
 		 */
@@ -82,6 +105,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugin_load
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_plugin_load(PurplePlugin * plugin)
 		 */
 		[DllImport("libpurple.dll")]
@@ -92,6 +121,12 @@ namespace PurpleWrapper
 			return purple_plugin_load(plugin.Reference);
 		}
 
+		/*
+		 * Function Name: purple_plugin_unload
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_plugin_unload(PurplePlugin * plugin)
 		 */
@@ -104,6 +139,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugin_disable
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_plugin_disable(PurplePlugin * plugin)
 		 */
 		[DllImport("libpurple.dll")]
@@ -114,6 +155,12 @@ namespace PurpleWrapper
 			purple_plugin_disable(plugin.Reference);
 		}
 
+		/*
+		 * Function Name: purple_plugin_reload
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_plugin_reload(PurplePlugin * plugin)
 		 */
@@ -126,6 +173,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugin_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_plugin_destroy(PurplePlugin * plugin)
 		 */
 		[DllImport("libpurple.dll")]
@@ -136,6 +189,12 @@ namespace PurpleWrapper
 			purple_plugin_destroy(plugin.Reference);
 		}
 
+		/*
+		 * Function Name: purple_plugin_is_loaded
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_plugin_is_loaded(PurplePlugin * plugin)
 		 */
@@ -148,6 +207,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugin_is_unloadable
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_plugin_is_unloadable(PurplePlugin * plugin)
 		 */
 		[DllImport("libpurple.dll")]
@@ -158,6 +223,12 @@ namespace PurpleWrapper
 			return purple_plugin_is_unloadable(plugin.Reference);
 		}
 
+		/*
+		 * Function Name: purple_plugin_get_id
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_plugin_get_id(PurplePlugin * plugin)
 		 */
@@ -170,6 +241,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugin_get_name
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_plugin_get_name(PurplePlugin * plugin)
 		 */
 		[DllImport("libpurple.dll")]
@@ -180,6 +257,12 @@ namespace PurpleWrapper
 			return purple_plugin_get_name(plugin.Reference);
 		}
 
+		/*
+		 * Function Name: purple_plugin_get_version
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_plugin_get_version(PurplePlugin * plugin)
 		 */
@@ -192,6 +275,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugin_get_summary
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_plugin_get_summary(PurplePlugin * plugin)
 		 */
 		[DllImport("libpurple.dll")]
@@ -202,6 +291,12 @@ namespace PurpleWrapper
 			return purple_plugin_get_summary(plugin.Reference);
 		}
 
+		/*
+		 * Function Name: purple_plugin_get_description
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_plugin_get_description(PurplePlugin * plugin)
 		 */
@@ -214,6 +309,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugin_get_author
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_plugin_get_author(PurplePlugin * plugin)
 		 */
 		[DllImport("libpurple.dll")]
@@ -224,6 +325,12 @@ namespace PurpleWrapper
 			return purple_plugin_get_author(plugin.Reference);
 		}
 
+		/*
+		 * Function Name: purple_plugin_get_homepage
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_plugin_get_homepage(PurplePlugin * plugin)
 		 */
@@ -236,6 +343,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugin_ipc_unregister
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_plugin_ipc_unregister(PurplePlugin * plugin, char * command)
 		 */
 		[DllImport("libpurple.dll")]
@@ -246,6 +359,12 @@ namespace PurpleWrapper
 			purple_plugin_ipc_unregister(plugin.Reference, command);
 		}
 
+		/*
+		 * Function Name: purple_plugin_ipc_unregister_all
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_plugin_ipc_unregister_all(PurplePlugin * plugin)
 		 */
@@ -258,6 +377,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_add_search_path
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_plugins_add_search_path(char * path)
 		 */
 		[DllImport("libpurple.dll")]
@@ -269,6 +394,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_unload_all
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_plugins_unload_all()
 		 */
 		[DllImport("libpurple.dll")]
@@ -279,6 +410,12 @@ namespace PurpleWrapper
 			purple_plugins_unload_all();
 		}
 
+		/*
+		 * Function Name: purple_plugins_unload
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_plugins_unload(PurplePluginType type)
 		 */
@@ -292,6 +429,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_destroy_all
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_plugins_destroy_all()
 		 */
 		[DllImport("libpurple.dll")]
@@ -302,6 +445,12 @@ namespace PurpleWrapper
 			purple_plugins_destroy_all();
 		}
 
+		/*
+		 * Function Name: purple_plugins_save_loaded
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_plugins_save_loaded(char * key)
 		 */
@@ -314,6 +463,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_load_saved
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_plugins_load_saved(char * key)
 		 */
 		[DllImport("libpurple.dll")]
@@ -324,6 +479,12 @@ namespace PurpleWrapper
 			purple_plugins_load_saved(key);
 		}
 
+		/*
+		 * Function Name: purple_plugins_probe
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_plugins_probe(char * ext)
 		 */
@@ -336,6 +497,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_enabled
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_plugins_enabled()
 		 */
 		[DllImport("libpurple.dll")]
@@ -346,6 +513,12 @@ namespace PurpleWrapper
 			return purple_plugins_enabled();
 		}
 
+		/*
+		 * Function Name: purple_plugins_find_with_name
+		 * Function Type: PurplePlugin *
+		 * Function RawType: PurplePlugin
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurplePlugin * purple_plugins_find_with_name(char * name)
 		 */
@@ -358,6 +531,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_find_with_filename
+		 * Function Type: PurplePlugin *
+		 * Function RawType: PurplePlugin
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurplePlugin * purple_plugins_find_with_filename(char * filename)
 		 */
 		[DllImport("libpurple.dll")]
@@ -368,6 +547,12 @@ namespace PurpleWrapper
 			return new PurplePlugin(purple_plugins_find_with_filename(filename));
 		}
 
+		/*
+		 * Function Name: purple_plugins_find_with_basename
+		 * Function Type: PurplePlugin *
+		 * Function RawType: PurplePlugin
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurplePlugin * purple_plugins_find_with_basename(char * basename)
 		 */
@@ -380,6 +565,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_find_with_id
+		 * Function Type: PurplePlugin *
+		 * Function RawType: PurplePlugin
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurplePlugin * purple_plugins_find_with_id(char * id)
 		 */
 		[DllImport("libpurple.dll")]
@@ -391,26 +582,50 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_get_loaded
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_plugins_get_loaded()
 		 * 
 		 * Could not generate a wrapper for purple_plugins_get_loaded in file "plugin.h".
-		 * Message: The type could not be resolved (GList * purple_plugins_get_loaded()).
+		 * Message: Unknown inner-type of argument 0 of purple_plugins_get_loaded
 		 */
 
+		/*
+		 * Function Name: purple_plugins_get_protocols
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_plugins_get_protocols()
 		 * 
 		 * Could not generate a wrapper for purple_plugins_get_protocols in file "plugin.h".
-		 * Message: The type could not be resolved (GList * purple_plugins_get_protocols()).
+		 * Message: Unknown inner-type of argument 0 of purple_plugins_get_protocols
 		 */
 
+		/*
+		 * Function Name: purple_plugins_get_all
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_plugins_get_all()
 		 * 
 		 * Could not generate a wrapper for purple_plugins_get_all in file "plugin.h".
-		 * Message: The type could not be resolved (GList * purple_plugins_get_all()).
+		 * Message: Unknown inner-type of argument 0 of purple_plugins_get_all
 		 */
 
+		/*
+		 * Function Name: purple_plugins_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_plugins_get_handle()
 		 */
@@ -423,6 +638,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_plugins_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -434,6 +655,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_plugins_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_plugins_uninit()
 		 */
 		[DllImport("libpurple.dll")]
@@ -444,6 +671,12 @@ namespace PurpleWrapper
 			purple_plugins_uninit();
 		}
 
+		/*
+		 * Function Name: purple_plugin_action_free
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_plugin_action_free(PurplePluginAction * action)
 		 */

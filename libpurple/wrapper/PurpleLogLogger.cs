@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: log.h
+	 * Structure: PurpleLogLogger
+	 */
 	public class PurpleLogLogger : UnmanagedWrapper<_PurpleLogLogger>
 	{
 		public PurpleLogLogger()
 		{
 		}
 
-		public PurpleLogLogger(IntPtr refernece)
+		public PurpleLogLogger(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleLogLogger)Marshal.PtrToStructure(this.Reference, typeof(_PurpleLogLogger));
 		}
 
+		/*
+		 * Argument Name: name
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string name
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: id
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string id
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: create
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr create
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: write
+		 * Argument Type: gsize
+		 * Argument Category: Native
+		 */
 		public IntPtr write
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: finalize
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr finalize
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: list
+		 * Argument Type: GList *
+		 * Argument Category: PointerToGList
+		 */
 		public IntPtr list
 		{
 			get
@@ -140,6 +175,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: read
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public IntPtr read
 		{
 			get
@@ -155,6 +195,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: size
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public IntPtr size
 		{
 			get
@@ -170,6 +215,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: total_size
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public IntPtr total_size
 		{
 			get
@@ -185,6 +235,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: list_syslog
+		 * Argument Type: GList *
+		 * Argument Category: PointerToGList
+		 */
 		public IntPtr list_syslog
 		{
 			get
@@ -200,6 +255,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: get_log_sets
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr get_log_sets
 		{
 			get
@@ -215,6 +275,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: remove
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
 		public IntPtr remove
 		{
 			get
@@ -230,6 +295,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: is_deletable
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
 		public IntPtr is_deletable
 		{
 			get
@@ -245,6 +315,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved1
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved1
 		{
 			get
@@ -260,6 +335,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved2
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved2
 		{
 			get
@@ -275,6 +355,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved3
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved3
 		{
 			get
@@ -290,6 +375,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved4
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved4
 		{
 			get
@@ -309,92 +399,92 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleLogLogger
+	public class _PurpleLogLogger
 	{
 		/*
 		 * char * name
 		 */
-		IntPtr name;
+		public string name;
 
 		/*
 		 * char * id
 		 */
-		IntPtr id;
+		public string id;
 
 		/*
 		 * void (*create)(PurpleLog * log)
 		 */
-		IntPtr create;
+		public IntPtr create;
 
 		/*
 		 * gsize (*write)(PurpleLog * log, PurpleMessageFlags type, char * from, time_t time, char * message)
 		 */
-		IntPtr write;
+		public IntPtr write;
 
 		/*
 		 * void (*finalize)(PurpleLog * log)
 		 */
-		IntPtr finalize;
+		public IntPtr finalize;
 
 		/*
 		 * GList * (*list)(PurpleLogType type, char * name, PurpleAccount * account)
 		 */
-		IntPtr list;
+		public IntPtr list;
 
 		/*
 		 * char * (*read)(PurpleLog * log, PurpleLogReadFlags * flags)
 		 */
-		IntPtr read;
+		public IntPtr read;
 
 		/*
 		 * int (*size)(PurpleLog * log)
 		 */
-		IntPtr size;
+		public IntPtr size;
 
 		/*
 		 * int (*total_size)(PurpleLogType type, char * name, PurpleAccount * account)
 		 */
-		IntPtr total_size;
+		public IntPtr total_size;
 
 		/*
 		 * GList * (*list_syslog)(PurpleAccount * account)
 		 */
-		IntPtr list_syslog;
+		public IntPtr list_syslog;
 
 		/*
 		 * void (*get_log_sets)(PurpleLogSetCallback cb, GHashTable * sets)
 		 */
-		IntPtr get_log_sets;
+		public IntPtr get_log_sets;
 
 		/*
 		 * gboolean (*remove)(PurpleLog * log)
 		 */
-		IntPtr remove;
+		public IntPtr remove;
 
 		/*
 		 * gboolean (*is_deletable)(PurpleLog * log)
 		 */
-		IntPtr is_deletable;
+		public IntPtr is_deletable;
 
 		/*
 		 * void (*_purple_reserved1)()
 		 */
-		IntPtr _purple_reserved1;
+		public IntPtr _purple_reserved1;
 
 		/*
 		 * void (*_purple_reserved2)()
 		 */
-		IntPtr _purple_reserved2;
+		public IntPtr _purple_reserved2;
 
 		/*
 		 * void (*_purple_reserved3)()
 		 */
-		IntPtr _purple_reserved3;
+		public IntPtr _purple_reserved3;
 
 		/*
 		 * void (*_purple_reserved4)()
 		 */
-		IntPtr _purple_reserved4;
+		public IntPtr _purple_reserved4;
 
 	}
 

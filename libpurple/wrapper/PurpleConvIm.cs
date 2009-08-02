@@ -38,26 +38,180 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: conversation.h
+	 * Structure: PurpleConvIm
+	 */
 	public class PurpleConvIm : UnmanagedWrapper<_PurpleConvIm>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleConvIm in file "conversation.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
-		 */
-
 		public PurpleConvIm()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleConvIm(IntPtr refernece)
+		public PurpleConvIm(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleConvIm)Marshal.PtrToStructure(this.Reference, typeof(_PurpleConvIm));
+		}
+
+		/*
+		 * Argument Name: conv
+		 * Argument Type: PurpleConversation *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleConversation conv
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: typing_state
+		 * Argument Type: PurpleTypingState
+		 * Argument Category: KnownEnum
+		 */
+		public Conversation.PurpleTypingState typing_state
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: typing_timeout
+		 * Argument Type: guint
+		 * Argument Category: Native
+		 */
+		public uint typing_timeout
+		{
+			get
+			{
+				return this.Data.typing_timeout;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.typing_timeout = value;
+			}
+		}
+
+		/*
+		 * Argument Name: type_again
+		 * Argument Type: time_t
+		 * Argument Category: DateTime
+		 */
+		public DateTime type_again
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: send_typed_timeout
+		 * Argument Type: guint
+		 * Argument Category: Native
+		 */
+		public uint send_typed_timeout
+		{
+			get
+			{
+				return this.Data.send_typed_timeout;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.send_typed_timeout = value;
+			}
+		}
+
+		/*
+		 * Argument Name: icon
+		 * Argument Type: PurpleBuddyIcon *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleConvIm { }
+	public class _PurpleConvIm
+	{
+		/*
+		 * PurpleConversation * conv
+		 */
+		public IntPtr conv;
+
+		/*
+		 * PurpleTypingState typing_state
+		 */
+		public Conversation.PurpleTypingState typing_state;
+
+		/*
+		 * guint typing_timeout
+		 */
+		public uint typing_timeout;
+
+		/*
+		 * time_t type_again
+		 */
+		public ulong type_again;
+
+		/*
+		 * guint send_typed_timeout
+		 */
+		public uint send_typed_timeout;
+
+		/*
+		 * PurpleBuddyIcon * icon
+		 */
+		public IntPtr icon;
+
+	}
+
 }
 

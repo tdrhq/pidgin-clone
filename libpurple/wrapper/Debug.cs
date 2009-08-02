@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: debug.h
+	 */
 	public class Debug
 	{
 		public enum PurpleDebugLevel
@@ -50,6 +54,13 @@ namespace PurpleWrapper
 			PURPLE_DEBUG_FATAL
 		};
 
+
+		/*
+		 * Function Name: purple_debug_set_enabled
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_debug_set_enabled(gboolean enabled)
 		 */
@@ -62,6 +73,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_debug_is_enabled
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_debug_is_enabled()
 		 */
 		[DllImport("libpurple.dll")]
@@ -73,19 +90,47 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_debug_set_ui_ops(PurpleDebugUiOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_debug_set_ui_ops in file "debug.h".
-		 * Message: The type could not be resolved (PurpleDebugUiOps * ops).
+		 * Function Name: purple_debug_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_debug_set_ui_ops(PurpleDebugUiOps * ops)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_debug_set_ui_ops(IntPtr ops);
+
+		public static void SetUiOps(/* Resolved as PointerToUnknownStruct to PurpleDebugUiOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleDebugUiOps * purple_debug_get_ui_ops()
-		 * 
-		 * Could not generate a wrapper for purple_debug_get_ui_ops in file "debug.h".
-		 * Message: The type could not be resolved (PurpleDebugUiOps * purple_debug_get_ui_ops()).
+		 * Function Name: purple_debug_get_ui_ops
+		 * Function Type: PurpleDebugUiOps *
+		 * Function RawType: PurpleDebugUiOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleDebugUiOps * purple_debug_get_ui_ops()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_debug_get_ui_ops();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleDebugUiOps */ IntPtr GetUiOps()
+		{
+			/* Unable to process the return value of purple_debug_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_debug_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_debug_init()
 		 */

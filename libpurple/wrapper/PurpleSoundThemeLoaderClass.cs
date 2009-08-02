@@ -38,26 +38,48 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: sound-theme-loader.h
+	 * Structure: PurpleSoundThemeLoaderClass
+	 */
 	public class PurpleSoundThemeLoaderClass : UnmanagedWrapper<_PurpleSoundThemeLoaderClass>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleSoundThemeLoaderClass in file "sound-theme-loader.h".
-		 * Message: The type resolved to a known struct but not a pointer to that struct (PurpleThemeLoaderClass parent_class).
-		 */
-
 		public PurpleSoundThemeLoaderClass()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleSoundThemeLoaderClass(IntPtr refernece)
+		public PurpleSoundThemeLoaderClass(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleSoundThemeLoaderClass)Marshal.PtrToStructure(this.Reference, typeof(_PurpleSoundThemeLoaderClass));
 		}
+
+		/*
+		 * Argument Name: parent_class
+		 * Argument Type: PurpleThemeLoaderClass
+		 * Argument Category: KnownStruct
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleSoundThemeLoaderClass.parent_class in file "sound-theme-loader.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleThemeLoaderClass parent_class).
+		 */
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleSoundThemeLoaderClass { }
+	public class _PurpleSoundThemeLoaderClass
+	{
+		/*
+		 * PurpleThemeLoaderClass parent_class
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleSoundThemeLoaderClass.parent_class in file "sound-theme-loader.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleThemeLoaderClass parent_class).
+		 */
+
+	}
+
 }
 

@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: cipher.h
+	 */
 	public class Cipher
 	{
 		public enum PurpleCipherBatchMode
@@ -69,48 +73,116 @@ namespace PurpleWrapper
 			PURPLE_CIPHER_CAPS_UNKNOWN = 1 << 19
 		};
 
+
+		/*
+		 * Function Name: purple_cipher_get_name
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_cipher_get_name(PurpleCipher * cipher)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_get_name in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipher * cipher).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_cipher_get_name(IntPtr cipher);
 
+		public static string GetName(/* Resolved as PointerToUnknownStruct to PurpleCipher */ IntPtr cipher)
+		{
+			/* Unable to process cipher, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_get_capabilities
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
+		 */
 		/*
 		 * guint purple_cipher_get_capabilities(PurpleCipher * cipher)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_get_capabilities in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipher * cipher).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern uint purple_cipher_get_capabilities(IntPtr cipher);
 
+		public static uint GetCapabilities(/* Resolved as PointerToUnknownStruct to PurpleCipher */ IntPtr cipher)
+		{
+			/* Unable to process cipher, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_ciphers_find_cipher
+		 * Function Type: PurpleCipher *
+		 * Function RawType: PurpleCipher
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleCipher * purple_ciphers_find_cipher(gchar * name)
-		 * 
-		 * Could not generate a wrapper for purple_ciphers_find_cipher in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipher * purple_ciphers_find_cipher(gchar * name)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_ciphers_find_cipher(string name);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleCipher */ IntPtr CiphersFindCipher(string name)
+		{
+			/* Unable to process the return value of purple_ciphers_find_cipher, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_ciphers_register_cipher
+		 * Function Type: PurpleCipher *
+		 * Function RawType: PurpleCipher
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleCipher * purple_ciphers_register_cipher(gchar * name, PurpleCipherOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_ciphers_register_cipher in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipher * purple_ciphers_register_cipher(gchar * name, PurpleCipherOps * ops)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_ciphers_register_cipher(string name, IntPtr ops);
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleCipher */ IntPtr CiphersRegisterCipher(string name, PurpleCipherOps ops)
+		{
+			/* Unable to process the return value of purple_ciphers_register_cipher, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * gboolean purple_ciphers_unregister_cipher(PurpleCipher * cipher)
-		 * 
-		 * Could not generate a wrapper for purple_ciphers_unregister_cipher in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipher * cipher).
+		 * Function Name: purple_ciphers_unregister_cipher
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
 		 */
+		/*
+		 * gboolean purple_ciphers_unregister_cipher(PurpleCipher * cipher)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_ciphers_unregister_cipher(IntPtr cipher);
 
+		public static bool CiphersUnregisterCipher(/* Resolved as PointerToUnknownStruct to PurpleCipher */ IntPtr cipher)
+		{
+			/* Unable to process cipher, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_ciphers_get_ciphers
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_ciphers_get_ciphers()
 		 * 
 		 * Could not generate a wrapper for purple_ciphers_get_ciphers in file "cipher.h".
-		 * Message: The type could not be resolved (GList * purple_ciphers_get_ciphers()).
+		 * Message: Unknown inner-type of argument 0 of purple_ciphers_get_ciphers
 		 */
 
+		/*
+		 * Function Name: purple_ciphers_get_handle
+		 * Function Type: gpointer
+		 * Function RawType: gpointer
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * gpointer purple_ciphers_get_handle()
 		 */
@@ -123,6 +195,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_ciphers_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_ciphers_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -133,6 +211,12 @@ namespace PurpleWrapper
 			purple_ciphers_init();
 		}
 
+		/*
+		 * Function Name: purple_ciphers_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_ciphers_uninit()
 		 */
@@ -145,130 +229,334 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_cipher_context_set_option(PurpleCipherContext * context, gchar * name, gpointer value)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_set_option in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
+		 * Function Name: purple_cipher_context_set_option
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_cipher_context_set_option(PurpleCipherContext * context, gchar * name, gpointer value)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_set_option(IntPtr context, string name, IntPtr value);
 
+		public static void ContextSetOption(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, string name, IntPtr value)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_get_option
+		 * Function Type: gpointer
+		 * Function RawType: gpointer
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * gpointer purple_cipher_context_get_option(PurpleCipherContext * context, gchar * name)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_get_option in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_cipher_context_get_option(IntPtr context, string name);
 
+		public static IntPtr ContextGetOption(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, string name)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_new
+		 * Function Type: PurpleCipherContext *
+		 * Function RawType: PurpleCipherContext
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleCipherContext * purple_cipher_context_new(PurpleCipher * cipher, void * extra)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_new in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * purple_cipher_context_new(PurpleCipher * cipher, void * extra)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_cipher_context_new(IntPtr cipher, IntPtr extra);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr ContextNew(/* Resolved as PointerToUnknownStruct to PurpleCipher */ IntPtr cipher, IntPtr extra)
+		{
+			/* Unable to process cipher, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_new_by_name
+		 * Function Type: PurpleCipherContext *
+		 * Function RawType: PurpleCipherContext
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleCipherContext * purple_cipher_context_new_by_name(gchar * name, void * extra)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_new_by_name in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * purple_cipher_context_new_by_name(gchar * name, void * extra)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_cipher_context_new_by_name(string name, IntPtr extra);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr ContextNewByName(string name, IntPtr extra)
+		{
+			/* Unable to process the return value of purple_cipher_context_new_by_name, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_reset
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cipher_context_reset(PurpleCipherContext * context, gpointer extra)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_reset in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_reset(IntPtr context, IntPtr extra);
 
+		public static void ContextReset(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, IntPtr extra)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cipher_context_destroy(PurpleCipherContext * context)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_destroy in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_destroy(IntPtr context);
 
+		public static void ContextDestroy(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_set_iv
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cipher_context_set_iv(PurpleCipherContext * context, guchar * iv, size_t len)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_set_iv in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_set_iv(IntPtr context, IntPtr iv, ulong len);
 
+		public static void ContextSetIv(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, /* Resolved as PointerToUnknownStruct to guchar */ IntPtr iv, ulong len)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			/* Unable to process iv, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_append
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cipher_context_append(PurpleCipherContext * context, guchar * data, size_t len)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_append in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_append(IntPtr context, IntPtr data, ulong len);
 
+		public static void ContextAppend(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, /* Resolved as PointerToUnknownStruct to guchar */ IntPtr data, ulong len)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			/* Unable to process data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_set_salt
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cipher_context_set_salt(PurpleCipherContext * context, guchar * salt)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_set_salt in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_set_salt(IntPtr context, IntPtr salt);
 
+		public static void ContextSetSalt(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, /* Resolved as PointerToUnknownStruct to guchar */ IntPtr salt)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			/* Unable to process salt, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_get_salt_size
+		 * Function Type: size_t
+		 * Function RawType: size_t
+		 * Function Category: Native
+		 */
 		/*
 		 * size_t purple_cipher_context_get_salt_size(PurpleCipherContext * context)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_get_salt_size in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern ulong purple_cipher_context_get_salt_size(IntPtr context);
 
+		public static ulong ContextGetSaltSize(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_set_key
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cipher_context_set_key(PurpleCipherContext * context, guchar * key)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_set_key in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_set_key(IntPtr context, IntPtr key);
 
+		public static void ContextSetKey(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, /* Resolved as PointerToUnknownStruct to guchar */ IntPtr key)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			/* Unable to process key, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_get_key_size
+		 * Function Type: size_t
+		 * Function RawType: size_t
+		 * Function Category: Native
+		 */
 		/*
 		 * size_t purple_cipher_context_get_key_size(PurpleCipherContext * context)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_get_key_size in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern ulong purple_cipher_context_get_key_size(IntPtr context);
 
+		public static ulong ContextGetKeySize(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_set_batch_mode
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cipher_context_set_batch_mode(PurpleCipherContext * context, PurpleCipherBatchMode mode)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_set_batch_mode in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_set_batch_mode(IntPtr context, Cipher.PurpleCipherBatchMode mode);
 
+		public static void ContextSetBatchMode(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, Cipher.PurpleCipherBatchMode mode)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			/* Unable to process mode, a KnownEnum. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_get_batch_mode
+		 * Function Type: PurpleCipherBatchMode
+		 * Function RawType: PurpleCipherBatchMode
+		 * Function Category: KnownEnum
+		 */
 		/*
 		 * PurpleCipherBatchMode purple_cipher_context_get_batch_mode(PurpleCipherContext * context)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_get_batch_mode in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern Cipher.PurpleCipherBatchMode purple_cipher_context_get_batch_mode(IntPtr context);
 
+		public static Cipher.PurpleCipherBatchMode ContextGetBatchMode(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_get_block_size
+		 * Function Type: size_t
+		 * Function RawType: size_t
+		 * Function Category: Native
+		 */
 		/*
 		 * size_t purple_cipher_context_get_block_size(PurpleCipherContext * context)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_get_block_size in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern ulong purple_cipher_context_get_block_size(IntPtr context);
 
+		public static ulong ContextGetBlockSize(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_set_key_with_len
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cipher_context_set_key_with_len(PurpleCipherContext * context, guchar * key, size_t len)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_set_key_with_len in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_set_key_with_len(IntPtr context, IntPtr key, ulong len);
 
+		public static void ContextSetKeyWithLen(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, /* Resolved as PointerToUnknownStruct to guchar */ IntPtr key, ulong len)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			/* Unable to process key, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_cipher_context_set_data
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cipher_context_set_data(PurpleCipherContext * context, gpointer data)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_set_data in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_cipher_context_set_data(IntPtr context, IntPtr data);
+
+		public static void ContextSetData(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context, IntPtr data)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * gpointer purple_cipher_context_get_data(PurpleCipherContext * context)
-		 * 
-		 * Could not generate a wrapper for purple_cipher_context_get_data in file "cipher.h".
-		 * Message: The type could not be resolved (PurpleCipherContext * context).
+		 * Function Name: purple_cipher_context_get_data
+		 * Function Type: gpointer
+		 * Function RawType: gpointer
+		 * Function Category: VoidPointer
 		 */
+		/*
+		 * gpointer purple_cipher_context_get_data(PurpleCipherContext * context)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_cipher_context_get_data(IntPtr context);
+
+		public static IntPtr ContextGetData(/* Resolved as PointerToUnknownStruct to PurpleCipherContext */ IntPtr context)
+		{
+			/* Unable to process context, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

@@ -38,40 +38,79 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: mediamanager.h
+	 */
 	public class Mediamanager
 	{
+
+		/*
+		 * Function Name: purple_media_manager_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_media_manager_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_media_manager_get_type();
 
-		public static /* libgobject */ IntPtr MediaManagerGetType()
+		public static /* libobject */ IntPtr MediaManagerGetType()
 		{
-			/* Unable to process purple_media_manager_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_media_manager_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
 		/*
-		 * PurpleMediaManager * purple_media_manager_get()
-		 * 
-		 * Could not generate a wrapper for purple_media_manager_get in file "mediamanager.h".
-		 * Message: The type could not be resolved (PurpleMediaManager * purple_media_manager_get()).
+		 * Function Name: purple_media_manager_get
+		 * Function Type: PurpleMediaManager *
+		 * Function RawType: PurpleMediaManager
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleMediaManager * purple_media_manager_get()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_media_manager_get();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleMediaManager */ IntPtr MediaManagerGet()
+		{
+			/* Unable to process the return value of purple_media_manager_get, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_manager_get_media
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_media_manager_get_media(PurpleMediaManager * manager)
 		 * 
 		 * Could not generate a wrapper for purple_media_manager_get_media in file "mediamanager.h".
-		 * Message: The type could not be resolved (GList * purple_media_manager_get_media(PurpleMediaManager * manager)).
+		 * Message: Unknown inner-type of argument 0 of purple_media_manager_get_media
 		 */
 
 		/*
-		 * PurpleMediaCaps purple_media_manager_get_ui_caps(PurpleMediaManager * manager)
-		 * 
-		 * Could not generate a wrapper for purple_media_manager_get_ui_caps in file "mediamanager.h".
-		 * Message: The type could not be resolved (PurpleMediaManager * manager).
+		 * Function Name: purple_media_manager_get_ui_caps
+		 * Function Type: PurpleMediaCaps
+		 * Function RawType: PurpleMediaCaps
+		 * Function Category: KnownEnum
 		 */
+		/*
+		 * PurpleMediaCaps purple_media_manager_get_ui_caps(PurpleMediaManager * manager)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern Media.PurpleMediaCaps purple_media_manager_get_ui_caps(IntPtr manager);
+
+		public static Media.PurpleMediaCaps MediaManagerGetUiCaps(/* Resolved as PointerToUnknownStruct to PurpleMediaManager */ IntPtr manager)
+		{
+			/* Unable to process manager, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

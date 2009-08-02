@@ -38,8 +38,19 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: core.h
+	 */
 	public class Core
 	{
+
+		/*
+		 * Function Name: purple_core_init
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_core_init(char * ui)
 		 */
@@ -52,6 +63,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_core_quit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_core_quit()
 		 */
 		[DllImport("libpurple.dll")]
@@ -62,6 +79,12 @@ namespace PurpleWrapper
 			purple_core_quit();
 		}
 
+		/*
+		 * Function Name: purple_core_quit_cb
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_core_quit_cb(gpointer unused)
 		 */
@@ -74,6 +97,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_core_get_version
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_core_get_version()
 		 */
 		[DllImport("libpurple.dll")]
@@ -84,6 +113,12 @@ namespace PurpleWrapper
 			return purple_core_get_version();
 		}
 
+		/*
+		 * Function Name: purple_core_get_ui
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_core_get_ui()
 		 */
@@ -96,26 +131,65 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * PurpleCore * purple_get_core()
-		 * 
-		 * Could not generate a wrapper for purple_get_core in file "core.h".
-		 * Message: The type could not be resolved (PurpleCore * purple_get_core()).
+		 * Function Name: purple_get_core
+		 * Function Type: PurpleCore *
+		 * Function RawType: PurpleCore
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleCore * purple_get_core()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_get_core();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleCore */ IntPtr GetCore()
+		{
+			/* Unable to process the return value of purple_get_core, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_core_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_core_set_ui_ops(PurpleCoreUiOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_core_set_ui_ops in file "core.h".
-		 * Message: The type could not be resolved (PurpleCoreUiOps * ops).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_core_set_ui_ops(IntPtr ops);
+
+		public static void SetUiOps(/* Resolved as PointerToUnknownStruct to PurpleCoreUiOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleCoreUiOps * purple_core_get_ui_ops()
-		 * 
-		 * Could not generate a wrapper for purple_core_get_ui_ops in file "core.h".
-		 * Message: The type could not be resolved (PurpleCoreUiOps * purple_core_get_ui_ops()).
+		 * Function Name: purple_core_get_ui_ops
+		 * Function Type: PurpleCoreUiOps *
+		 * Function RawType: PurpleCoreUiOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleCoreUiOps * purple_core_get_ui_ops()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_core_get_ui_ops();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleCoreUiOps */ IntPtr GetUiOps()
+		{
+			/* Unable to process the return value of purple_core_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_core_migrate
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_core_migrate()
 		 */
@@ -128,6 +202,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_core_ensure_single_instance
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_core_ensure_single_instance()
 		 */
 		[DllImport("libpurple.dll")]
@@ -139,11 +219,22 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * GHashTable* purple_core_get_ui_info()
-		 * 
-		 * Could not generate a wrapper for purple_core_get_ui_info in file "core.h".
-		 * Message: The type could not be resolved (GHashTable* purple_core_get_ui_info()).
+		 * Function Name: purple_core_get_ui_info
+		 * Function Type: GHashTable*
+		 * Function RawType: GHashTable*
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * GHashTable* purple_core_get_ui_info()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_core_get_ui_info();
+
+		public static /* Resolved as PointerToUnknownStruct to GHashTable* */ IntPtr GetUiInfo()
+		{
+			/* Unable to process the return value of purple_core_get_ui_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

@@ -38,26 +38,120 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: util.h
+	 * Structure: PurpleMenuAction
+	 */
 	public class PurpleMenuAction : UnmanagedWrapper<_PurpleMenuAction>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleMenuAction in file "util.h".
-		 * Message: The struct contains an object that resolves to a function pointer (PurpleCallback callback).
-		 */
-
 		public PurpleMenuAction()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleMenuAction(IntPtr refernece)
+		public PurpleMenuAction(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleMenuAction)Marshal.PtrToStructure(this.Reference, typeof(_PurpleMenuAction));
 		}
+
+		/*
+		 * Argument Name: label
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string label
+		{
+			get
+			{
+				return this.Data.label;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.label = value;
+			}
+		}
+
+		/*
+		 * Argument Name: callback
+		 * Argument Type: PurpleCallback
+		 * Argument Category: KnownFunctionPointer
+		 */
+		public Signals.PurpleCallback callback
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: data
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: children
+		 * Argument Type: GList *
+		 * Argument Category: PointerToGList
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleMenuAction.children in file "util.h".
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
+		 */
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleMenuAction { }
+	public class _PurpleMenuAction
+	{
+		/*
+		 * char * label
+		 */
+		public string label;
+
+		/*
+		 * PurpleCallback callback
+		 */
+		public IntPtr callback;
+
+		/*
+		 * gpointer data
+		 */
+		public IntPtr data;
+
+		/*
+		 * GList * children
+		 */
+		public IntPtr children;
+
+	}
+
 }
 

@@ -38,26 +38,73 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: sound-theme.h
+	 * Structure: PurpleSoundTheme
+	 */
 	public class PurpleSoundTheme : UnmanagedWrapper<_PurpleSoundTheme>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleSoundTheme in file "sound-theme.h".
-		 * Message: The type resolved to a known struct but not a pointer to that struct (PurpleTheme parent).
-		 */
-
 		public PurpleSoundTheme()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleSoundTheme(IntPtr refernece)
+		public PurpleSoundTheme(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleSoundTheme)Marshal.PtrToStructure(this.Reference, typeof(_PurpleSoundTheme));
+		}
+
+		/*
+		 * Argument Name: parent
+		 * Argument Type: PurpleTheme
+		 * Argument Category: KnownStruct
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleSoundTheme.parent in file "sound-theme.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleTheme parent).
+		 */
+
+		/*
+		 * Argument Name: priv
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr priv
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleSoundTheme { }
+	public class _PurpleSoundTheme
+	{
+		/*
+		 * PurpleTheme parent
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleSoundTheme.parent in file "sound-theme.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleTheme parent).
+		 */
+
+		/*
+		 * gpointer priv
+		 */
+		public IntPtr priv;
+
+	}
+
 }
 

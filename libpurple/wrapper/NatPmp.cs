@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: nat-pmp.h
+	 */
 	public class NatPmp
 	{
 		public enum PurplePmpType
@@ -46,6 +50,13 @@ namespace PurpleWrapper
 			PURPLE_PMP_TYPE_TCP
 		};
 
+
+		/*
+		 * Function Name: purple_pmp_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_pmp_init()
 		 */
@@ -58,6 +69,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pmp_get_public_ip
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_pmp_get_public_ip()
 		 */
 		[DllImport("libpurple.dll")]
@@ -68,6 +85,12 @@ namespace PurpleWrapper
 			return purple_pmp_get_public_ip();
 		}
 
+		/*
+		 * Function Name: purple_pmp_create_map
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned short publicport, int lifetime)
 		 */
@@ -80,6 +103,12 @@ namespace PurpleWrapper
 			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_pmp_destroy_map
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 		 */

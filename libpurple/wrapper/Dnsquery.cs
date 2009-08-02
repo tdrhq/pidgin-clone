@@ -38,50 +38,130 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: dnsquery.h
+	 */
 	public class Dnsquery
 	{
+		public delegate void PurpleDnsQueryConnectFunction(IntPtr hosts, IntPtr data, string error_message);
+		public delegate void PurpleDnsQueryResolvedCallback(IntPtr query_data, IntPtr hosts);
+		public delegate void PurpleDnsQueryFailedCallback(IntPtr query_data, string error_message);
+
+		/*
+		 * Function Name: purple_dnsquery_a
+		 * Function Type: PurpleDnsQueryData *
+		 * Function RawType: PurpleDnsQueryData
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleDnsQueryData * purple_dnsquery_a(char * hostname, int port, PurpleDnsQueryConnectFunction callback, gpointer data)
-		 * 
-		 * Could not generate a wrapper for purple_dnsquery_a in file "dnsquery.h".
-		 * Message: The type could not be resolved (PurpleDnsQueryConnectFunction callback).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_dnsquery_a(string hostname, int port, IntPtr callback, IntPtr data);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleDnsQueryData */ IntPtr A(string hostname, int port, Dnsquery.PurpleDnsQueryConnectFunction callback, IntPtr data)
+		{
+			/* Unable to process callback, a KnownFunctionPointer. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_dnsquery_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_dnsquery_destroy(PurpleDnsQueryData * query_data)
-		 * 
-		 * Could not generate a wrapper for purple_dnsquery_destroy in file "dnsquery.h".
-		 * Message: The type could not be resolved (PurpleDnsQueryData * query_data).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_dnsquery_destroy(IntPtr query_data);
 
+		public static void Destroy(/* Resolved as PointerToUnknownStruct to PurpleDnsQueryData */ IntPtr query_data)
+		{
+			/* Unable to process query_data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_dnsquery_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_dnsquery_set_ui_ops(PurpleDnsQueryUiOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_dnsquery_set_ui_ops in file "dnsquery.h".
-		 * Message: The type could not be resolved (PurpleDnsQueryUiOps * ops).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_dnsquery_set_ui_ops(IntPtr ops);
 
+		public static void SetUiOps(/* Resolved as PointerToUnknownStruct to PurpleDnsQueryUiOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_dnsquery_get_ui_ops
+		 * Function Type: PurpleDnsQueryUiOps *
+		 * Function RawType: PurpleDnsQueryUiOps
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleDnsQueryUiOps * purple_dnsquery_get_ui_ops()
-		 * 
-		 * Could not generate a wrapper for purple_dnsquery_get_ui_ops in file "dnsquery.h".
-		 * Message: The type could not be resolved (PurpleDnsQueryUiOps * purple_dnsquery_get_ui_ops()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_dnsquery_get_ui_ops();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleDnsQueryUiOps */ IntPtr GetUiOps()
+		{
+			/* Unable to process the return value of purple_dnsquery_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_dnsquery_get_host
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_dnsquery_get_host(PurpleDnsQueryData * query_data)
-		 * 
-		 * Could not generate a wrapper for purple_dnsquery_get_host in file "dnsquery.h".
-		 * Message: The type could not be resolved (PurpleDnsQueryData * query_data).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_dnsquery_get_host(IntPtr query_data);
+
+		public static string GetHost(/* Resolved as PointerToUnknownStruct to PurpleDnsQueryData */ IntPtr query_data)
+		{
+			/* Unable to process query_data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * unsigned short purple_dnsquery_get_port(PurpleDnsQueryData * query_data)
-		 * 
-		 * Could not generate a wrapper for purple_dnsquery_get_port in file "dnsquery.h".
-		 * Message: The type could not be resolved (PurpleDnsQueryData * query_data).
+		 * Function Name: purple_dnsquery_get_port
+		 * Function Type: unsigned short
+		 * Function RawType: short
+		 * Function Category: Native
 		 */
+		/*
+		 * unsigned short purple_dnsquery_get_port(PurpleDnsQueryData * query_data)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern ushort purple_dnsquery_get_port(IntPtr query_data);
 
+		public static ushort GetPort(/* Resolved as PointerToUnknownStruct to PurpleDnsQueryData */ IntPtr query_data)
+		{
+			/* Unable to process query_data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_dnsquery_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_dnsquery_init()
 		 */
@@ -93,6 +173,12 @@ namespace PurpleWrapper
 			purple_dnsquery_init();
 		}
 
+		/*
+		 * Function Name: purple_dnsquery_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_dnsquery_uninit()
 		 */

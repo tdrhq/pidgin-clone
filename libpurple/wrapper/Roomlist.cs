@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: roomlist.h
+	 */
 	public class Roomlist
 	{
 		public enum PurpleRoomlistRoomType
@@ -53,6 +57,13 @@ namespace PurpleWrapper
 			PURPLE_ROOMLIST_FIELD_STRING
 		};
 
+
+		/*
+		 * Function Name: purple_roomlist_show_with_account
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_roomlist_show_with_account(PurpleAccount * account)
 		 */
@@ -65,6 +76,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_new
+		 * Function Type: PurpleRoomlist *
+		 * Function RawType: PurpleRoomlist
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleRoomlist * purple_roomlist_new(PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
@@ -75,6 +92,12 @@ namespace PurpleWrapper
 			return new PurpleRoomlist(purple_roomlist_new(account.Reference));
 		}
 
+		/*
+		 * Function Name: purple_roomlist_ref
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_roomlist_ref(PurpleRoomlist * list)
 		 */
@@ -87,6 +110,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_unref
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_roomlist_unref(PurpleRoomlist * list)
 		 */
 		[DllImport("libpurple.dll")]
@@ -98,12 +127,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_set_fields
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_roomlist_set_fields(PurpleRoomlist * list, GList * fields)
 		 * 
 		 * Could not generate a wrapper for purple_roomlist_set_fields in file "roomlist.h".
-		 * Message: The type could not be resolved (GList * fields).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_roomlist_set_in_progress
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_roomlist_set_in_progress(PurpleRoomlist * list, gboolean in_progress)
 		 */
@@ -116,6 +157,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_get_in_progress
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_roomlist_get_in_progress(PurpleRoomlist * list)
 		 */
 		[DllImport("libpurple.dll")]
@@ -126,6 +173,12 @@ namespace PurpleWrapper
 			return purple_roomlist_get_in_progress(list.Reference);
 		}
 
+		/*
+		 * Function Name: purple_roomlist_room_add
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_roomlist_room_add(PurpleRoomlist * list, PurpleRoomlistRoom * room)
 		 */
@@ -138,6 +191,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_get_list
+		 * Function Type: PurpleRoomlist *
+		 * Function RawType: PurpleRoomlist
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleRoomlist * purple_roomlist_get_list(PurpleConnection * gc)
 		 */
 		[DllImport("libpurple.dll")]
@@ -148,6 +207,12 @@ namespace PurpleWrapper
 			return new PurpleRoomlist(purple_roomlist_get_list(gc.Reference));
 		}
 
+		/*
+		 * Function Name: purple_roomlist_cancel_get_list
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_roomlist_cancel_get_list(PurpleRoomlist * list)
 		 */
@@ -160,6 +225,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_expand_category
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_roomlist_expand_category(PurpleRoomlist * list, PurpleRoomlistRoom * category)
 		 */
 		[DllImport("libpurple.dll")]
@@ -171,12 +242,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_get_fields
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_roomlist_get_fields(PurpleRoomlist * roomlist)
 		 * 
 		 * Could not generate a wrapper for purple_roomlist_get_fields in file "roomlist.h".
-		 * Message: The type could not be resolved (GList * purple_roomlist_get_fields(PurpleRoomlist * roomlist)).
+		 * Message: Unknown inner-type of argument 0 of purple_roomlist_get_fields
 		 */
 
+		/*
+		 * Function Name: purple_roomlist_room_add_field
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_roomlist_room_add_field(PurpleRoomlist * list, PurpleRoomlistRoom * room, gconstpointer field)
 		 */
@@ -189,6 +272,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_room_join
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_roomlist_room_join(PurpleRoomlist * list, PurpleRoomlistRoom * room)
 		 */
 		[DllImport("libpurple.dll")]
@@ -200,6 +289,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_room_get_type
+		 * Function Type: PurpleRoomlistRoomType
+		 * Function RawType: PurpleRoomlistRoomType
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom * room)
 		 */
 		[DllImport("libpurple.dll")]
@@ -207,10 +302,16 @@ namespace PurpleWrapper
 
 		public static Roomlist.PurpleRoomlistRoomType RoomGetType(PurpleRoomlistRoom room)
 		{
-			/* Unable to process purple_roomlist_room_get_type, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_roomlist_room_get_type, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_roomlist_room_get_name
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_roomlist_room_get_name(PurpleRoomlistRoom * room)
 		 */
@@ -223,6 +324,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_room_get_parent
+		 * Function Type: PurpleRoomlistRoom *
+		 * Function RawType: PurpleRoomlistRoom
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom * room)
 		 */
 		[DllImport("libpurple.dll")]
@@ -234,12 +341,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_room_get_fields
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom * room)
 		 * 
 		 * Could not generate a wrapper for purple_roomlist_room_get_fields in file "roomlist.h".
-		 * Message: The type could not be resolved (GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom * room)).
+		 * Message: Unknown inner-type of argument 0 of purple_roomlist_room_get_fields
 		 */
 
+		/*
+		 * Function Name: purple_roomlist_field_get_type
+		 * Function Type: PurpleRoomlistFieldType
+		 * Function RawType: PurpleRoomlistFieldType
+		 * Function Category: KnownEnum
+		 */
 		/*
 		 * PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField * field)
 		 */
@@ -248,10 +367,16 @@ namespace PurpleWrapper
 
 		public static Roomlist.PurpleRoomlistFieldType FieldGetType(PurpleRoomlistField field)
 		{
-			/* Unable to process purple_roomlist_field_get_type, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_roomlist_field_get_type, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_roomlist_field_get_label
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_roomlist_field_get_label(PurpleRoomlistField * field)
 		 */
@@ -264,6 +389,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_field_get_hidden
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField * field)
 		 */
 		[DllImport("libpurple.dll")]
@@ -275,6 +406,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_roomlist_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_roomlist_set_ui_ops(PurpleRoomlistUiOps * ops)
 		 */
 		[DllImport("libpurple.dll")]
@@ -285,6 +422,12 @@ namespace PurpleWrapper
 			purple_roomlist_set_ui_ops(ops.Reference);
 		}
 
+		/*
+		 * Function Name: purple_roomlist_get_ui_ops
+		 * Function Type: PurpleRoomlistUiOps *
+		 * Function RawType: PurpleRoomlistUiOps
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleRoomlistUiOps * purple_roomlist_get_ui_ops()
 		 */

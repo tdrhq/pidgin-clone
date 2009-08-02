@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: connection.h
+	 */
 	public class Connection
 	{
 		public enum PurpleConnectionFlags
@@ -81,13 +85,31 @@ namespace PurpleWrapper
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR = 16
 		};
 
+
+		/*
+		 * Function Name: purple_connection_new_unregister
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_connection_new_unregister(PurpleAccount * account, char * password, PurpleAccountUnregistrationCb cb, void * user_data)
-		 * 
-		 * Could not generate a wrapper for purple_connection_new_unregister in file "connection.h".
-		 * Message: The type could not be resolved (PurpleAccountUnregistrationCb cb).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_connection_new_unregister(IntPtr account, string password, IntPtr cb, IntPtr user_data);
 
+		public static void NewUnregister(PurpleAccount account, string password, Account.PurpleAccountUnregistrationCb cb, IntPtr user_data)
+		{
+			/* Unable to process cb, a KnownFunctionPointer. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_connection_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_connection_destroy(PurpleConnection * gc)
 		 */
@@ -99,6 +121,12 @@ namespace PurpleWrapper
 			purple_connection_destroy(gc.Reference);
 		}
 
+		/*
+		 * Function Name: purple_connection_set_state
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_connection_set_state(PurpleConnection * gc, PurpleConnectionState state)
 		 */
@@ -112,6 +140,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connection_set_account
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_connection_set_account(PurpleConnection * gc, PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
@@ -122,6 +156,12 @@ namespace PurpleWrapper
 			purple_connection_set_account(gc.Reference, account.Reference);
 		}
 
+		/*
+		 * Function Name: purple_connection_set_display_name
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_connection_set_display_name(PurpleConnection * gc, char * name)
 		 */
@@ -134,6 +174,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connection_set_protocol_data
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_connection_set_protocol_data(PurpleConnection * connection, void * proto_data)
 		 */
 		[DllImport("libpurple.dll")]
@@ -145,6 +191,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connection_get_state
+		 * Function Type: PurpleConnectionState
+		 * Function RawType: PurpleConnectionState
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurpleConnectionState purple_connection_get_state(PurpleConnection * gc)
 		 */
 		[DllImport("libpurple.dll")]
@@ -152,10 +204,16 @@ namespace PurpleWrapper
 
 		public static Connection.PurpleConnectionState GetState(PurpleConnection gc)
 		{
-			/* Unable to process purple_connection_get_state, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_connection_get_state, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_connection_get_account
+		 * Function Type: PurpleAccount *
+		 * Function RawType: PurpleAccount
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleAccount * purple_connection_get_account(PurpleConnection * gc)
 		 */
@@ -168,6 +226,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connection_get_prpl
+		 * Function Type: PurplePlugin *
+		 * Function RawType: PurplePlugin
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurplePlugin * purple_connection_get_prpl(PurpleConnection * gc)
 		 */
 		[DllImport("libpurple.dll")]
@@ -178,6 +242,12 @@ namespace PurpleWrapper
 			return new PurplePlugin(purple_connection_get_prpl(gc.Reference));
 		}
 
+		/*
+		 * Function Name: purple_connection_get_password
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_connection_get_password(PurpleConnection * gc)
 		 */
@@ -190,6 +260,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connection_get_display_name
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_connection_get_display_name(PurpleConnection * gc)
 		 */
 		[DllImport("libpurple.dll")]
@@ -200,6 +276,12 @@ namespace PurpleWrapper
 			return purple_connection_get_display_name(gc.Reference);
 		}
 
+		/*
+		 * Function Name: purple_connection_get_protocol_data
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_connection_get_protocol_data(PurpleConnection * connection)
 		 */
@@ -212,6 +294,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connection_notice
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_connection_notice(PurpleConnection * gc, char * text)
 		 */
 		[DllImport("libpurple.dll")]
@@ -223,6 +311,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connection_error
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_connection_error(PurpleConnection * gc, char * reason)
 		 */
 		[DllImport("libpurple.dll")]
@@ -233,6 +327,12 @@ namespace PurpleWrapper
 			purple_connection_error(gc.Reference, reason);
 		}
 
+		/*
+		 * Function Name: purple_connection_error_is_fatal
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_connection_error_is_fatal(PurpleConnectionError reason)
 		 */
@@ -246,6 +346,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connections_disconnect_all
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_connections_disconnect_all()
 		 */
 		[DllImport("libpurple.dll")]
@@ -257,33 +363,73 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connections_get_all
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_connections_get_all()
 		 * 
 		 * Could not generate a wrapper for purple_connections_get_all in file "connection.h".
-		 * Message: The type could not be resolved (GList * purple_connections_get_all()).
+		 * Message: Unknown inner-type of argument 0 of purple_connections_get_all
 		 */
 
+		/*
+		 * Function Name: purple_connections_get_connecting
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_connections_get_connecting()
 		 * 
 		 * Could not generate a wrapper for purple_connections_get_connecting in file "connection.h".
-		 * Message: The type could not be resolved (GList * purple_connections_get_connecting()).
+		 * Message: Unknown inner-type of argument 0 of purple_connections_get_connecting
 		 */
 
+		/*
+		 * Function Name: purple_connections_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_connections_set_ui_ops(PurpleConnectionUiOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_connections_set_ui_ops in file "connection.h".
-		 * Message: The type could not be resolved (PurpleConnectionUiOps * ops).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_connections_set_ui_ops(IntPtr ops);
+
+		public static void ConnectionsSetUiOps(/* Resolved as PointerToUnknownStruct to PurpleConnectionUiOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleConnectionUiOps * purple_connections_get_ui_ops()
-		 * 
-		 * Could not generate a wrapper for purple_connections_get_ui_ops in file "connection.h".
-		 * Message: The type could not be resolved (PurpleConnectionUiOps * purple_connections_get_ui_ops()).
+		 * Function Name: purple_connections_get_ui_ops
+		 * Function Type: PurpleConnectionUiOps *
+		 * Function RawType: PurpleConnectionUiOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleConnectionUiOps * purple_connections_get_ui_ops()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_connections_get_ui_ops();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleConnectionUiOps */ IntPtr ConnectionsGetUiOps()
+		{
+			/* Unable to process the return value of purple_connections_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_connections_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_connections_init()
 		 */
@@ -296,6 +442,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_connections_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_connections_uninit()
 		 */
 		[DllImport("libpurple.dll")]
@@ -306,6 +458,12 @@ namespace PurpleWrapper
 			purple_connections_uninit();
 		}
 
+		/*
+		 * Function Name: purple_connections_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_connections_get_handle()
 		 */

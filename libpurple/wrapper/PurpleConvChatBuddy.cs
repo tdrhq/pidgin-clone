@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: conversation.h
+	 * Structure: PurpleConvChatBuddy
+	 */
 	public class PurpleConvChatBuddy : UnmanagedWrapper<_PurpleConvChatBuddy>
 	{
 		public PurpleConvChatBuddy()
 		{
 		}
 
-		public PurpleConvChatBuddy(IntPtr refernece)
+		public PurpleConvChatBuddy(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleConvChatBuddy)Marshal.PtrToStructure(this.Reference, typeof(_PurpleConvChatBuddy));
 		}
 
+		/*
+		 * Argument Name: name
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string name
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: alias
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string alias
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: alias_key
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string alias_key
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: buddy
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
 		public bool buddy
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: flags
+		 * Argument Type: PurpleConvChatBuddyFlags
+		 * Argument Category: KnownEnum
+		 */
 		public Conversation.PurpleConvChatBuddyFlags flags
 		{
 			get
@@ -129,32 +159,32 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleConvChatBuddy
+	public class _PurpleConvChatBuddy
 	{
 		/*
 		 * char * name
 		 */
-		IntPtr name;
+		public string name;
 
 		/*
 		 * char * alias
 		 */
-		IntPtr alias;
+		public string alias;
 
 		/*
 		 * char * alias_key
 		 */
-		IntPtr alias_key;
+		public string alias_key;
 
 		/*
 		 * gboolean buddy
 		 */
-		IntPtr buddy;
+		public bool buddy;
 
 		/*
 		 * PurpleConvChatBuddyFlags flags
 		 */
-		/* Cannot generate struct for type KnownEnum */
+		public Conversation.PurpleConvChatBuddyFlags flags;
 
 	}
 

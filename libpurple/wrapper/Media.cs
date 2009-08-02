@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: media.h
+	 */
 	public class Media
 	{
 		public enum PurpleMediaCaps
@@ -103,318 +107,674 @@ namespace PurpleWrapper
 			PURPLE_MEDIA_NETWORK_PROTOCOL_TCP
 		};
 
+
+		/*
+		 * Function Name: purple_media_session_type_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_media_session_type_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_media_session_type_get_type();
 
-		public static /* libgobject */ IntPtr SessionTypeGetType()
+		public static /* libobject */ IntPtr SessionTypeGetType()
 		{
-			/* Unable to process purple_media_session_type_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_media_session_type_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_media_candidate_type_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_media_candidate_type_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_media_candidate_type_get_type();
 
-		public static /* libgobject */ IntPtr CandidateTypeGetType()
+		public static /* libobject */ IntPtr CandidateTypeGetType()
 		{
-			/* Unable to process purple_media_candidate_type_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_media_candidate_type_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_media_network_protocol_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_media_network_protocol_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_media_network_protocol_get_type();
 
-		public static /* libgobject */ IntPtr NetworkProtocolGetType()
+		public static /* libobject */ IntPtr NetworkProtocolGetType()
 		{
-			/* Unable to process purple_media_network_protocol_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_media_network_protocol_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_media_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_media_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_media_get_type();
 
-		public static /* libgobject */ IntPtr GetType()
+		public static /* libobject */ IntPtr GetType()
 		{
-			/* Unable to process purple_media_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_media_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_media_state_changed_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_media_state_changed_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_media_state_changed_get_type();
 
-		public static /* libgobject */ IntPtr StateChangedGetType()
+		public static /* libobject */ IntPtr StateChangedGetType()
 		{
-			/* Unable to process purple_media_state_changed_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_media_state_changed_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_media_info_type_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_media_info_type_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_media_info_type_get_type();
 
-		public static /* libgobject */ IntPtr InfoTypeGetType()
+		public static /* libobject */ IntPtr InfoTypeGetType()
 		{
-			/* Unable to process purple_media_info_type_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_media_info_type_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_media_candidate_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_media_candidate_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_media_candidate_get_type();
 
-		public static /* libgobject */ IntPtr CandidateGetType()
+		public static /* libobject */ IntPtr CandidateGetType()
 		{
-			/* Unable to process purple_media_candidate_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_media_candidate_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_media_candidate_list_copy
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_media_candidate_list_copy(GList * candidates)
 		 * 
 		 * Could not generate a wrapper for purple_media_candidate_list_copy in file "media.h".
-		 * Message: The type could not be resolved (GList * purple_media_candidate_list_copy(GList * candidates)).
+		 * Message: Unknown inner-type of argument 0 of purple_media_candidate_list_copy
 		 */
 
+		/*
+		 * Function Name: purple_media_candidate_list_free
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_media_candidate_list_free(GList * candidates)
 		 * 
 		 * Could not generate a wrapper for purple_media_candidate_list_free in file "media.h".
-		 * Message: The type could not be resolved (GList * candidates).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_media_candidate_get_foundation
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_media_candidate_get_foundation(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_foundation in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_media_candidate_get_foundation(IntPtr candidate);
 
+		public static string CandidateGetFoundation(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_candidate_get_component_id
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
+		 */
 		/*
 		 * guint purple_media_candidate_get_component_id(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_component_id in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern uint purple_media_candidate_get_component_id(IntPtr candidate);
 
+		public static uint CandidateGetComponentId(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_candidate_get_ip
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_media_candidate_get_ip(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_ip in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_media_candidate_get_ip(IntPtr candidate);
 
+		public static string CandidateGetIp(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_candidate_get_port
+		 * Function Type: guint16
+		 * Function RawType: guint16
+		 * Function Category: Native
+		 */
 		/*
 		 * guint16 purple_media_candidate_get_port(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_port in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern ushort purple_media_candidate_get_port(IntPtr candidate);
 
+		public static ushort CandidateGetPort(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_candidate_get_base_ip
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_media_candidate_get_base_ip(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_base_ip in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_media_candidate_get_base_ip(IntPtr candidate);
 
+		public static string CandidateGetBaseIp(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_candidate_get_base_port
+		 * Function Type: guint16
+		 * Function RawType: guint16
+		 * Function Category: Native
+		 */
 		/*
 		 * guint16 purple_media_candidate_get_base_port(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_base_port in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern ushort purple_media_candidate_get_base_port(IntPtr candidate);
 
+		public static ushort CandidateGetBasePort(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_candidate_get_priority
+		 * Function Type: guint32
+		 * Function RawType: guint32
+		 * Function Category: Native
+		 */
 		/*
 		 * guint32 purple_media_candidate_get_priority(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_priority in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern uint purple_media_candidate_get_priority(IntPtr candidate);
 
+		public static uint CandidateGetPriority(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_candidate_get_username
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_media_candidate_get_username(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_username in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_media_candidate_get_username(IntPtr candidate);
 
+		public static string CandidateGetUsername(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_candidate_get_password
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_media_candidate_get_password(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_password in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_media_candidate_get_password(IntPtr candidate);
+
+		public static string CandidateGetPassword(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * guint purple_media_candidate_get_ttl(PurpleMediaCandidate * candidate)
-		 * 
-		 * Could not generate a wrapper for purple_media_candidate_get_ttl in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCandidate * candidate).
+		 * Function Name: purple_media_candidate_get_ttl
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
 		 */
+		/*
+		 * guint purple_media_candidate_get_ttl(PurpleMediaCandidate * candidate)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern uint purple_media_candidate_get_ttl(IntPtr candidate);
 
+		public static uint CandidateGetTtl(/* Resolved as PointerToUnknownStruct to PurpleMediaCandidate */ IntPtr candidate)
+		{
+			/* Unable to process candidate, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_codec_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_media_codec_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_media_codec_get_type();
 
-		public static /* libgobject */ IntPtr CodecGetType()
+		public static /* libobject */ IntPtr CodecGetType()
 		{
-			/* Unable to process purple_media_codec_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_media_codec_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
 		/*
-		 * guint purple_media_codec_get_id(PurpleMediaCodec * codec)
-		 * 
-		 * Could not generate a wrapper for purple_media_codec_get_id in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCodec * codec).
+		 * Function Name: purple_media_codec_get_id
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
 		 */
+		/*
+		 * guint purple_media_codec_get_id(PurpleMediaCodec * codec)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern uint purple_media_codec_get_id(IntPtr codec);
 
+		public static uint CodecGetId(/* Resolved as PointerToUnknownStruct to PurpleMediaCodec */ IntPtr codec)
+		{
+			/* Unable to process codec, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_codec_get_encoding_name
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_media_codec_get_encoding_name(PurpleMediaCodec * codec)
-		 * 
-		 * Could not generate a wrapper for purple_media_codec_get_encoding_name in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCodec * codec).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_media_codec_get_encoding_name(IntPtr codec);
 
+		public static string CodecGetEncodingName(/* Resolved as PointerToUnknownStruct to PurpleMediaCodec */ IntPtr codec)
+		{
+			/* Unable to process codec, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_codec_get_clock_rate
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
+		 */
 		/*
 		 * guint purple_media_codec_get_clock_rate(PurpleMediaCodec * codec)
-		 * 
-		 * Could not generate a wrapper for purple_media_codec_get_clock_rate in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCodec * codec).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern uint purple_media_codec_get_clock_rate(IntPtr codec);
+
+		public static uint CodecGetClockRate(/* Resolved as PointerToUnknownStruct to PurpleMediaCodec */ IntPtr codec)
+		{
+			/* Unable to process codec, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * guint purple_media_codec_get_channels(PurpleMediaCodec * codec)
-		 * 
-		 * Could not generate a wrapper for purple_media_codec_get_channels in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCodec * codec).
+		 * Function Name: purple_media_codec_get_channels
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
 		 */
+		/*
+		 * guint purple_media_codec_get_channels(PurpleMediaCodec * codec)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern uint purple_media_codec_get_channels(IntPtr codec);
 
+		public static uint CodecGetChannels(/* Resolved as PointerToUnknownStruct to PurpleMediaCodec */ IntPtr codec)
+		{
+			/* Unable to process codec, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_codec_get_optional_parameters
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_media_codec_get_optional_parameters(PurpleMediaCodec * codec)
 		 * 
 		 * Could not generate a wrapper for purple_media_codec_get_optional_parameters in file "media.h".
-		 * Message: The type could not be resolved (GList * purple_media_codec_get_optional_parameters(PurpleMediaCodec * codec)).
+		 * Message: Unknown inner-type of argument 0 of purple_media_codec_get_optional_parameters
 		 */
 
 		/*
-		 * gchar * purple_media_codec_to_string(PurpleMediaCodec * codec)
-		 * 
-		 * Could not generate a wrapper for purple_media_codec_to_string in file "media.h".
-		 * Message: The type could not be resolved (PurpleMediaCodec * codec).
+		 * Function Name: purple_media_codec_to_string
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
 		 */
+		/*
+		 * gchar * purple_media_codec_to_string(PurpleMediaCodec * codec)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_media_codec_to_string(IntPtr codec);
 
+		public static string CodecToString(/* Resolved as PointerToUnknownStruct to PurpleMediaCodec */ IntPtr codec)
+		{
+			/* Unable to process codec, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_codec_list_copy
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_media_codec_list_copy(GList * codecs)
 		 * 
 		 * Could not generate a wrapper for purple_media_codec_list_copy in file "media.h".
-		 * Message: The type could not be resolved (GList * purple_media_codec_list_copy(GList * codecs)).
+		 * Message: Unknown inner-type of argument 0 of purple_media_codec_list_copy
 		 */
 
+		/*
+		 * Function Name: purple_media_codec_list_free
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_media_codec_list_free(GList * codecs)
 		 * 
 		 * Could not generate a wrapper for purple_media_codec_list_free in file "media.h".
-		 * Message: The type could not be resolved (GList * codecs).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_media_get_session_ids
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_media_get_session_ids(PurpleMedia * media)
 		 * 
 		 * Could not generate a wrapper for purple_media_get_session_ids in file "media.h".
-		 * Message: The type could not be resolved (GList * purple_media_get_session_ids(PurpleMedia * media)).
+		 * Message: Unknown inner-type of argument 0 of purple_media_get_session_ids
 		 */
 
+		/*
+		 * Function Name: purple_media_get_account
+		 * Function Type: PurpleAccount *
+		 * Function RawType: PurpleAccount
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleAccount * purple_media_get_account(PurpleMedia * media)
-		 * 
-		 * Could not generate a wrapper for purple_media_get_account in file "media.h".
-		 * Message: The type could not be resolved (PurpleMedia * media).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_media_get_account(IntPtr media);
 
+		public static PurpleAccount GetAccount(/* Resolved as PointerToUnknownStruct to PurpleMedia */ IntPtr media)
+		{
+			/* Unable to process media, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_get_prpl_data
+		 * Function Type: gpointer
+		 * Function RawType: gpointer
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * gpointer purple_media_get_prpl_data(PurpleMedia * media)
-		 * 
-		 * Could not generate a wrapper for purple_media_get_prpl_data in file "media.h".
-		 * Message: The type could not be resolved (PurpleMedia * media).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_media_get_prpl_data(IntPtr media);
 
+		public static IntPtr GetPrplData(/* Resolved as PointerToUnknownStruct to PurpleMedia */ IntPtr media)
+		{
+			/* Unable to process media, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_set_prpl_data
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_media_set_prpl_data(PurpleMedia * media, gpointer prpl_data)
-		 * 
-		 * Could not generate a wrapper for purple_media_set_prpl_data in file "media.h".
-		 * Message: The type could not be resolved (PurpleMedia * media).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_media_set_prpl_data(IntPtr media, IntPtr prpl_data);
 
+		public static void SetPrplData(/* Resolved as PointerToUnknownStruct to PurpleMedia */ IntPtr media, IntPtr prpl_data)
+		{
+			/* Unable to process media, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_get_session_type
+		 * Function Type: PurpleMediaSessionType
+		 * Function RawType: PurpleMediaSessionType
+		 * Function Category: KnownEnum
+		 */
 		/*
 		 * PurpleMediaSessionType purple_media_get_session_type(PurpleMedia * media, gchar * sess_id)
-		 * 
-		 * Could not generate a wrapper for purple_media_get_session_type in file "media.h".
-		 * Message: The type could not be resolved (PurpleMedia * media).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern Media.PurpleMediaSessionType purple_media_get_session_type(IntPtr media, string sess_id);
+
+		public static Media.PurpleMediaSessionType GetSessionType(/* Resolved as PointerToUnknownStruct to PurpleMedia */ IntPtr media, string sess_id)
+		{
+			/* Unable to process media, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * _PurpleMediaManager * purple_media_get_manager(PurpleMedia * media)
-		 * 
-		 * Could not generate a wrapper for purple_media_get_manager in file "media.h".
-		 * Message: The type could not be resolved (_PurpleMediaManager * purple_media_get_manager(PurpleMedia * media)).
+		 * Function Name: purple_media_get_manager
+		 * Function Type: _PurpleMediaManager *
+		 * Function RawType: _PurpleMediaManager
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * _PurpleMediaManager * purple_media_get_manager(PurpleMedia * media)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_media_get_manager(IntPtr media);
 
+		public static /* Resolved as PointerToUnknownStruct to _PurpleMediaManager */ IntPtr GetManager(/* Resolved as PointerToUnknownStruct to PurpleMedia */ IntPtr media)
+		{
+			/* Unable to process media, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_get_codecs
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_media_get_codecs(PurpleMedia * media, gchar * sess_id)
 		 * 
 		 * Could not generate a wrapper for purple_media_get_codecs in file "media.h".
-		 * Message: The type could not be resolved (GList * purple_media_get_codecs(PurpleMedia * media, gchar * sess_id)).
+		 * Message: Unknown inner-type of argument 0 of purple_media_get_codecs
 		 */
 
+		/*
+		 * Function Name: purple_media_set_send_codec
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_media_set_send_codec(PurpleMedia * media, gchar * sess_id, PurpleMediaCodec * codec)
-		 * 
-		 * Could not generate a wrapper for purple_media_set_send_codec in file "media.h".
-		 * Message: The type could not be resolved (PurpleMedia * media).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_media_set_send_codec(IntPtr media, string sess_id, IntPtr codec);
 
+		public static bool SetSendCodec(/* Resolved as PointerToUnknownStruct to PurpleMedia */ IntPtr media, string sess_id, /* Resolved as PointerToUnknownStruct to PurpleMediaCodec */ IntPtr codec)
+		{
+			/* Unable to process media, a PointerToUnknownStruct. */
+			/* Unable to process codec, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_codecs_ready
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_media_codecs_ready(PurpleMedia * media, gchar * sess_id)
-		 * 
-		 * Could not generate a wrapper for purple_media_codecs_ready in file "media.h".
-		 * Message: The type could not be resolved (PurpleMedia * media).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_media_codecs_ready(IntPtr media, string sess_id);
 
+		public static bool CodecsReady(/* Resolved as PointerToUnknownStruct to PurpleMedia */ IntPtr media, string sess_id)
+		{
+			/* Unable to process media, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_media_set_input_volume
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_media_set_input_volume(PurpleMedia * media, gchar * session_id, double level)
-		 * 
-		 * Could not generate a wrapper for purple_media_set_input_volume in file "media.h".
-		 * Message: The type could not be resolved (PurpleMedia * media).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_media_set_input_volume(IntPtr media, string session_id, double level);
+
+		public static void SetInputVolume(/* Resolved as PointerToUnknownStruct to PurpleMedia */ IntPtr media, string session_id, double level)
+		{
+			/* Unable to process media, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_media_remove_output_windows(PurpleMedia * media)
-		 * 
-		 * Could not generate a wrapper for purple_media_remove_output_windows in file "media.h".
-		 * Message: The type could not be resolved (PurpleMedia * media).
+		 * Function Name: purple_media_remove_output_windows
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_media_remove_output_windows(PurpleMedia * media)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_media_remove_output_windows(IntPtr media);
+
+		public static void RemoveOutputWindows(/* Resolved as PointerToUnknownStruct to PurpleMedia */ IntPtr media)
+		{
+			/* Unable to process media, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

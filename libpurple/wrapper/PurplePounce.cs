@@ -38,26 +38,220 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: pounce.h
+	 * Structure: PurplePounce
+	 */
 	public class PurplePounce : UnmanagedWrapper<_PurplePounce>
 	{
-		/* 
-		 * Could not generate a wrapper for PurplePounce in file "pounce.h".
-		 * Message: The type could not be resolved (GHashTable * actions).
-		 */
-
 		public PurplePounce()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurplePounce(IntPtr refernece)
+		public PurplePounce(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurplePounce)Marshal.PtrToStructure(this.Reference, typeof(_PurplePounce));
+		}
+
+		/*
+		 * Argument Name: ui_type
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string ui_type
+		{
+			get
+			{
+				return this.Data.ui_type;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.ui_type = value;
+			}
+		}
+
+		/*
+		 * Argument Name: events
+		 * Argument Type: PurplePounceEvent
+		 * Argument Category: KnownEnum
+		 */
+		public Pounce.PurplePounceEvent events
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: options
+		 * Argument Type: PurplePounceOption
+		 * Argument Category: KnownEnum
+		 */
+		public Pounce.PurplePounceOption options
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: pouncer
+		 * Argument Type: PurpleAccount *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleAccount pouncer
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: pouncee
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string pouncee
+		{
+			get
+			{
+				return this.Data.pouncee;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.pouncee = value;
+			}
+		}
+
+		/*
+		 * Argument Name: actions
+		 * Argument Type: GHashTable *
+		 * Argument Category: PointerToGHashTable
+		 */
+		/*
+		 * Could not generate a wrapper for PurplePounce.actions in file "pounce.h".
+		 * Message: Unable to provide a type for HashTable as no function information was provided in code.
+		 */
+
+		/*
+		 * Argument Name: save
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
+		public bool save
+		{
+			get
+			{
+				return this.Data.save;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.save = value;
+			}
+		}
+
+		/*
+		 * Argument Name: data
+		 * Argument Type: void *
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurplePounce { }
+	public class _PurplePounce
+	{
+		/*
+		 * char * ui_type
+		 */
+		public string ui_type;
+
+		/*
+		 * PurplePounceEvent events
+		 */
+		public Pounce.PurplePounceEvent events;
+
+		/*
+		 * PurplePounceOption options
+		 */
+		public Pounce.PurplePounceOption options;
+
+		/*
+		 * PurpleAccount * pouncer
+		 */
+		public IntPtr pouncer;
+
+		/*
+		 * char * pouncee
+		 */
+		public string pouncee;
+
+		/*
+		 * GHashTable * actions
+		 */
+		public IntPtr actions;
+
+		/*
+		 * gboolean save
+		 */
+		public bool save;
+
+		/*
+		 * void * data
+		 */
+		public IntPtr data;
+
+	}
+
 }
 

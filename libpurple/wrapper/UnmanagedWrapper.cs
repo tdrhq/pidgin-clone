@@ -1,6 +1,6 @@
 using System;
 
-namespace UnmanagedWrapper
+namespace PurpleWrapper
 {
     public abstract class UnmanagedWrapper<T>
     {

@@ -38,26 +38,210 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: conversation.h
+	 * Structure: PurpleConvChat
+	 */
 	public class PurpleConvChat : UnmanagedWrapper<_PurpleConvChat>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleConvChat in file "conversation.h".
-		 * Message: The type could not be resolved (GList * in_room).
-		 */
-
 		public PurpleConvChat()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleConvChat(IntPtr refernece)
+		public PurpleConvChat(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleConvChat)Marshal.PtrToStructure(this.Reference, typeof(_PurpleConvChat));
+		}
+
+		/*
+		 * Argument Name: conv
+		 * Argument Type: PurpleConversation *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleConversation conv
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: in_room
+		 * Argument Type: GList *
+		 * Argument Category: PointerToGList
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleConvChat.in_room in file "conversation.h".
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
+		 */
+
+		/*
+		 * Argument Name: ignored
+		 * Argument Type: GList *
+		 * Argument Category: PointerToGList
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleConvChat.ignored in file "conversation.h".
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
+		 */
+
+		/*
+		 * Argument Name: who
+		 * Argument Type: char  *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to char */ IntPtr who
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: topic
+		 * Argument Type: char  *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to char */ IntPtr topic
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: id
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
+		public int id
+		{
+			get
+			{
+				return this.Data.id;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.id = value;
+			}
+		}
+
+		/*
+		 * Argument Name: nick
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string nick
+		{
+			get
+			{
+				return this.Data.nick;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.nick = value;
+			}
+		}
+
+		/*
+		 * Argument Name: left
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
+		public bool left
+		{
+			get
+			{
+				return this.Data.left;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.left = value;
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleConvChat { }
+	public class _PurpleConvChat
+	{
+		/*
+		 * PurpleConversation * conv
+		 */
+		public IntPtr conv;
+
+		/*
+		 * GList * in_room
+		 */
+		public IntPtr in_room;
+
+		/*
+		 * GList * ignored
+		 */
+		public IntPtr ignored;
+
+		/*
+		 * char  * who
+		 */
+		public IntPtr who;
+
+		/*
+		 * char  * topic
+		 */
+		public IntPtr topic;
+
+		/*
+		 * int id
+		 */
+		public int id;
+
+		/*
+		 * char * nick
+		 */
+		public string nick;
+
+		/*
+		 * gboolean left
+		 */
+		public bool left;
+
+	}
+
 }
 

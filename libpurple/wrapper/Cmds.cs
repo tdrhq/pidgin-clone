@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: cmds.h
+	 */
 	public class Cmds
 	{
 		public enum PurpleCmdStatus
@@ -77,6 +81,14 @@ namespace PurpleWrapper
 			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS = 0x08
 		};
 
+		public delegate Cmds.PurpleCmdRet PurpleCmdFunc(IntPtr _PurpleWrapper_arg0, string cmd, IntPtr args, IntPtr error, IntPtr data);
+
+		/*
+		 * Function Name: purple_cmd_unregister
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cmd_unregister(PurpleCmdId id)
 		 */
@@ -89,19 +101,37 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_cmd_list
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_cmd_list(PurpleConversation * conv)
 		 * 
 		 * Could not generate a wrapper for purple_cmd_list in file "cmds.h".
-		 * Message: The type could not be resolved (GList * purple_cmd_list(PurpleConversation * conv)).
+		 * Message: Unknown inner-type of argument 0 of purple_cmd_list
 		 */
 
+		/*
+		 * Function Name: purple_cmd_help
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_cmd_help(PurpleConversation * conv, gchar * cmd)
 		 * 
 		 * Could not generate a wrapper for purple_cmd_help in file "cmds.h".
-		 * Message: The type could not be resolved (GList * purple_cmd_help(PurpleConversation * conv, gchar * cmd)).
+		 * Message: Unknown inner-type of argument 0 of purple_cmd_help
 		 */
 
+		/*
+		 * Function Name: purple_cmds_get_handle
+		 * Function Type: gpointer
+		 * Function RawType: gpointer
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * gpointer purple_cmds_get_handle()
 		 */
@@ -114,6 +144,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_cmds_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_cmds_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -124,6 +160,12 @@ namespace PurpleWrapper
 			purple_cmds_init();
 		}
 
+		/*
+		 * Function Name: purple_cmds_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_cmds_uninit()
 		 */

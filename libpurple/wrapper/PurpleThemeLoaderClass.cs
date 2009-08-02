@@ -38,19 +38,29 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: theme-loader.h
+	 * Structure: PurpleThemeLoaderClass
+	 */
 	public class PurpleThemeLoaderClass : UnmanagedWrapper<_PurpleThemeLoaderClass>
 	{
 		public PurpleThemeLoaderClass()
 		{
 		}
 
-		public PurpleThemeLoaderClass(IntPtr refernece)
+		public PurpleThemeLoaderClass(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleThemeLoaderClass)Marshal.PtrToStructure(this.Reference, typeof(_PurpleThemeLoaderClass));
 		}
 
-		public /* libgobject */ IntPtr parent_class
+		/*
+		 * Argument Name: parent_class
+		 * Argument Type: GObjectClass
+		 * Argument Category: GObjectObject
+		 */
+		public /* libobject */ IntPtr parent_class
 		{
 			get
 			{
@@ -65,7 +75,12 @@ namespace PurpleWrapper
 			}
 		}
 
-		public PurpleTheme ((*purple_theme_loader_build)(const gchar*))
+		/*
+		 * Argument Name: purple_theme_loader_build
+		 * Argument Type: PurpleTheme *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public IntPtr purple_theme_loader_build
 		{
 			get
 			{
@@ -84,17 +99,17 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleThemeLoaderClass
+	public class _PurpleThemeLoaderClass
 	{
 		/*
 		 * GObjectClass parent_class
 		 */
-		/* Cannot generate struct for type GObjectObject */
+		public IntPtr parent_class;
 
 		/*
-		 * PurpleTheme * ((*purple_theme_loader_build)(const gchar*))
+		 * PurpleTheme * (*purple_theme_loader_build)(gchar* )
 		 */
-		/* Cannot generate struct for type PointerToKnownStruct */
+		public IntPtr purple_theme_loader_build;
 
 	}
 

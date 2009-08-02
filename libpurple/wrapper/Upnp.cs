@@ -38,8 +38,20 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: upnp.h
+	 */
 	public class Upnp
 	{
+		public delegate void PurpleUPnPCallback(bool success, IntPtr data);
+
+		/*
+		 * Function Name: purple_upnp_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_upnp_init()
 		 */
@@ -52,32 +64,76 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
-		 * 
-		 * Could not generate a wrapper for purple_upnp_discover in file "upnp.h".
-		 * Message: The type could not be resolved (PurpleUPnPCallback cb).
+		 * Function Name: purple_upnp_discover
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_upnp_discover(PurpleUPnPCallback cb, gpointer cb_data)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_upnp_discover(IntPtr cb, IntPtr cb_data);
 
+		public static void Discover(Upnp.PurpleUPnPCallback cb, IntPtr cb_data)
+		{
+			/* Unable to process cb, a KnownFunctionPointer. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_upnp_get_control_info
+		 * Function Type: PurpleUPnPControlInfo*
+		 * Function RawType: PurpleUPnPControlInfo*
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleUPnPControlInfo* purple_upnp_get_control_info()
-		 * 
-		 * Could not generate a wrapper for purple_upnp_get_control_info in file "upnp.h".
-		 * Message: The type could not be resolved (PurpleUPnPControlInfo* purple_upnp_get_control_info()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_upnp_get_control_info();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleUPnPControlInfo* */ IntPtr GetControlInfo()
+		{
+			/* Unable to process the return value of purple_upnp_get_control_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_upnp_get_public_ip
+		 * Function Type: gchar*
+		 * Function RawType: gchar*
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * gchar* purple_upnp_get_public_ip()
-		 * 
-		 * Could not generate a wrapper for purple_upnp_get_public_ip in file "upnp.h".
-		 * Message: The type could not be resolved (gchar* purple_upnp_get_public_ip()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_upnp_get_public_ip();
+
+		public static /* Resolved as PointerToUnknownStruct to gchar* */ IntPtr GetPublicIp()
+		{
+			/* Unable to process the return value of purple_upnp_get_public_ip, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove * mapping_data)
-		 * 
-		 * Could not generate a wrapper for purple_upnp_cancel_port_mapping in file "upnp.h".
-		 * Message: The type could not be resolved (UPnPMappingAddRemove * mapping_data).
+		 * Function Name: purple_upnp_cancel_port_mapping
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_upnp_cancel_port_mapping(UPnPMappingAddRemove * mapping_data)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_upnp_cancel_port_mapping(IntPtr mapping_data);
+
+		public static void CancelPortMapping(/* Resolved as PointerToUnknownStruct to UPnPMappingAddRemove */ IntPtr mapping_data)
+		{
+			/* Unable to process mapping_data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

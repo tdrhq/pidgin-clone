@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: prefs.h
+	 */
 	public class Prefs
 	{
 		public enum PurplePrefType
@@ -51,6 +55,14 @@ namespace PurpleWrapper
 			PURPLE_PREF_PATH_LIST
 		};
 
+		public delegate void PurplePrefCallback(string name, Prefs.PurplePrefType type, IntPtr val, IntPtr data);
+
+		/*
+		 * Function Name: purple_prefs_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_prefs_get_handle()
 		 */
@@ -63,6 +75,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -73,6 +91,12 @@ namespace PurpleWrapper
 			purple_prefs_init();
 		}
 
+		/*
+		 * Function Name: purple_prefs_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_uninit()
 		 */
@@ -85,6 +109,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_add_none
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_add_none(char * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -95,6 +125,12 @@ namespace PurpleWrapper
 			purple_prefs_add_none(name);
 		}
 
+		/*
+		 * Function Name: purple_prefs_add_bool
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_add_bool(char * name, gboolean value)
 		 */
@@ -107,6 +143,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_add_int
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_add_int(char * name, int value)
 		 */
 		[DllImport("libpurple.dll")]
@@ -117,6 +159,12 @@ namespace PurpleWrapper
 			purple_prefs_add_int(name, value);
 		}
 
+		/*
+		 * Function Name: purple_prefs_add_string
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_add_string(char * name, char * value)
 		 */
@@ -129,12 +177,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_add_string_list
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_add_string_list(char * name, GList * value)
 		 * 
 		 * Could not generate a wrapper for purple_prefs_add_string_list in file "prefs.h".
-		 * Message: The type could not be resolved (GList * value).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_prefs_add_path
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_add_path(char * name, char * value)
 		 */
@@ -147,12 +207,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_add_path_list
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_add_path_list(char * name, GList * value)
 		 * 
 		 * Could not generate a wrapper for purple_prefs_add_path_list in file "prefs.h".
-		 * Message: The type could not be resolved (GList * value).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_prefs_remove
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_remove(char * name)
 		 */
@@ -165,6 +237,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_rename
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_rename(char * oldname, char * newname)
 		 */
 		[DllImport("libpurple.dll")]
@@ -175,6 +253,12 @@ namespace PurpleWrapper
 			purple_prefs_rename(oldname, newname);
 		}
 
+		/*
+		 * Function Name: purple_prefs_rename_boolean_toggle
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_rename_boolean_toggle(char * oldname, char * newname)
 		 */
@@ -187,6 +271,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_destroy()
 		 */
 		[DllImport("libpurple.dll")]
@@ -197,6 +287,12 @@ namespace PurpleWrapper
 			purple_prefs_destroy();
 		}
 
+		/*
+		 * Function Name: purple_prefs_set_generic
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_set_generic(char * name, gpointer value)
 		 */
@@ -209,6 +305,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_set_bool
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_set_bool(char * name, gboolean value)
 		 */
 		[DllImport("libpurple.dll")]
@@ -219,6 +321,12 @@ namespace PurpleWrapper
 			purple_prefs_set_bool(name, value);
 		}
 
+		/*
+		 * Function Name: purple_prefs_set_int
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_set_int(char * name, int value)
 		 */
@@ -231,6 +339,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_set_string
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_set_string(char * name, char * value)
 		 */
 		[DllImport("libpurple.dll")]
@@ -242,12 +356,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_set_string_list
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_set_string_list(char * name, GList * value)
 		 * 
 		 * Could not generate a wrapper for purple_prefs_set_string_list in file "prefs.h".
-		 * Message: The type could not be resolved (GList * value).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_prefs_set_path
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_set_path(char * name, char * value)
 		 */
@@ -260,12 +386,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_set_path_list
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_set_path_list(char * name, GList * value)
 		 * 
 		 * Could not generate a wrapper for purple_prefs_set_path_list in file "prefs.h".
-		 * Message: The type could not be resolved (GList * value).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_prefs_exists
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_prefs_exists(char * name)
 		 */
@@ -278,6 +416,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_get_type
+		 * Function Type: PurplePrefType
+		 * Function RawType: PurplePrefType
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurplePrefType purple_prefs_get_type(char * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -285,10 +429,16 @@ namespace PurpleWrapper
 
 		public static Prefs.PurplePrefType GetType(string name)
 		{
-			/* Unable to process purple_prefs_get_type, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_prefs_get_type, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_prefs_get_bool
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_prefs_get_bool(char * name)
 		 */
@@ -301,6 +451,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_get_int
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
+		/*
 		 * int purple_prefs_get_int(char * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -311,6 +467,12 @@ namespace PurpleWrapper
 			return purple_prefs_get_int(name);
 		}
 
+		/*
+		 * Function Name: purple_prefs_get_string
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_prefs_get_string(char * name)
 		 */
@@ -323,12 +485,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_get_string_list
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_prefs_get_string_list(char * name)
 		 * 
 		 * Could not generate a wrapper for purple_prefs_get_string_list in file "prefs.h".
-		 * Message: The type could not be resolved (GList * purple_prefs_get_string_list(char * name)).
+		 * Message: Unknown inner-type of argument 0 of purple_prefs_get_string_list
 		 */
 
+		/*
+		 * Function Name: purple_prefs_get_path
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_prefs_get_path(char * name)
 		 */
@@ -341,19 +515,37 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_get_path_list
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_prefs_get_path_list(char * name)
 		 * 
 		 * Could not generate a wrapper for purple_prefs_get_path_list in file "prefs.h".
-		 * Message: The type could not be resolved (GList * purple_prefs_get_path_list(char * name)).
+		 * Message: Unknown inner-type of argument 0 of purple_prefs_get_path_list
 		 */
 
+		/*
+		 * Function Name: purple_prefs_get_children_names
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_prefs_get_children_names(char * name)
 		 * 
 		 * Could not generate a wrapper for purple_prefs_get_children_names in file "prefs.h".
-		 * Message: The type could not be resolved (GList * purple_prefs_get_children_names(char * name)).
+		 * Message: Unknown inner-type of argument 0 of purple_prefs_get_children_names
 		 */
 
+		/*
+		 * Function Name: purple_prefs_disconnect_callback
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_disconnect_callback(guint callback_id)
 		 */
@@ -366,6 +558,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_disconnect_by_handle
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_prefs_disconnect_by_handle(void * handle)
 		 */
 		[DllImport("libpurple.dll")]
@@ -376,6 +574,12 @@ namespace PurpleWrapper
 			purple_prefs_disconnect_by_handle(handle);
 		}
 
+		/*
+		 * Function Name: purple_prefs_trigger_callback
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_trigger_callback(char * name)
 		 */
@@ -388,6 +592,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_prefs_load
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_prefs_load()
 		 */
 		[DllImport("libpurple.dll")]
@@ -398,6 +608,12 @@ namespace PurpleWrapper
 			return purple_prefs_load();
 		}
 
+		/*
+		 * Function Name: purple_prefs_update_old
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_prefs_update_old()
 		 */

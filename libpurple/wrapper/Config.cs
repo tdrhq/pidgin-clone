@@ -38,8 +38,19 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: config.h
+	 */
 	public class Config
 	{
+
+		/*
+		 * Function Name: static_proto_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void static_proto_init()
 		 */

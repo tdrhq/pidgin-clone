@@ -38,112 +38,272 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: accountopt.h
+	 */
 	public class Accountopt
 	{
+
+		/*
+		 * Function Name: purple_account_option_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_account_option_destroy(PurpleAccountOption * option)
-		 * 
-		 * Could not generate a wrapper for purple_account_option_destroy in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountOption * option).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_account_option_destroy(IntPtr option);
+
+		public static void AccountOptionDestroy(/* Resolved as PointerToUnknownStruct to PurpleAccountOption */ IntPtr option)
+		{
+			/* Unable to process option, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_account_option_set_masked(PurpleAccountOption * option, gboolean masked)
-		 * 
-		 * Could not generate a wrapper for purple_account_option_set_masked in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountOption * option).
+		 * Function Name: purple_account_option_set_masked
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_account_option_set_masked(PurpleAccountOption * option, gboolean masked)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_account_option_set_masked(IntPtr option, bool masked);
 
+		public static void AccountOptionSetMasked(/* Resolved as PointerToUnknownStruct to PurpleAccountOption */ IntPtr option, bool masked)
+		{
+			/* Unable to process option, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_account_option_set_list
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_account_option_set_list(PurpleAccountOption * option, GList * values)
 		 * 
 		 * Could not generate a wrapper for purple_account_option_set_list in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountOption * option).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_account_option_get_type
+		 * Function Type: PurplePrefType
+		 * Function RawType: PurplePrefType
+		 * Function Category: KnownEnum
+		 */
 		/*
 		 * PurplePrefType purple_account_option_get_type(PurpleAccountOption * option)
-		 * 
-		 * Could not generate a wrapper for purple_account_option_get_type in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountOption * option).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern Prefs.PurplePrefType purple_account_option_get_type(IntPtr option);
 
+		public static Prefs.PurplePrefType AccountOptionGetType(/* Resolved as PointerToUnknownStruct to PurpleAccountOption */ IntPtr option)
+		{
+			/* Unable to process option, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_account_option_get_text
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_account_option_get_text(PurpleAccountOption * option)
-		 * 
-		 * Could not generate a wrapper for purple_account_option_get_text in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountOption * option).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_account_option_get_text(IntPtr option);
 
+		public static string AccountOptionGetText(/* Resolved as PointerToUnknownStruct to PurpleAccountOption */ IntPtr option)
+		{
+			/* Unable to process option, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_account_option_get_setting
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_account_option_get_setting(PurpleAccountOption * option)
-		 * 
-		 * Could not generate a wrapper for purple_account_option_get_setting in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountOption * option).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_account_option_get_setting(IntPtr option);
 
+		public static string AccountOptionGetSetting(/* Resolved as PointerToUnknownStruct to PurpleAccountOption */ IntPtr option)
+		{
+			/* Unable to process option, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_account_option_get_default_bool
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_account_option_get_default_bool(PurpleAccountOption * option)
-		 * 
-		 * Could not generate a wrapper for purple_account_option_get_default_bool in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountOption * option).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_account_option_get_default_bool(IntPtr option);
 
+		public static bool AccountOptionGetDefaultBool(/* Resolved as PointerToUnknownStruct to PurpleAccountOption */ IntPtr option)
+		{
+			/* Unable to process option, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_account_option_get_default_int
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * int purple_account_option_get_default_int(PurpleAccountOption * option)
-		 * 
-		 * Could not generate a wrapper for purple_account_option_get_default_int in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountOption * option).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern int purple_account_option_get_default_int(IntPtr option);
+
+		public static int AccountOptionGetDefaultInt(/* Resolved as PointerToUnknownStruct to PurpleAccountOption */ IntPtr option)
+		{
+			/* Unable to process option, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * gboolean purple_account_option_get_masked(PurpleAccountOption * option)
-		 * 
-		 * Could not generate a wrapper for purple_account_option_get_masked in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountOption * option).
+		 * Function Name: purple_account_option_get_masked
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
 		 */
+		/*
+		 * gboolean purple_account_option_get_masked(PurpleAccountOption * option)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_account_option_get_masked(IntPtr option);
 
+		public static bool AccountOptionGetMasked(/* Resolved as PointerToUnknownStruct to PurpleAccountOption */ IntPtr option)
+		{
+			/* Unable to process option, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_account_option_get_list
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_account_option_get_list(PurpleAccountOption * option)
 		 * 
 		 * Could not generate a wrapper for purple_account_option_get_list in file "accountopt.h".
-		 * Message: The type could not be resolved (GList * purple_account_option_get_list(PurpleAccountOption * option)).
+		 * Message: Unknown inner-type of argument 0 of purple_account_option_get_list
 		 */
 
+		/*
+		 * Function Name: purple_account_user_split_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_account_user_split_destroy(PurpleAccountUserSplit * split)
-		 * 
-		 * Could not generate a wrapper for purple_account_user_split_destroy in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountUserSplit * split).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_account_user_split_destroy(IntPtr split);
 
+		public static void AccountUserSplitDestroy(/* Resolved as PointerToUnknownStruct to PurpleAccountUserSplit */ IntPtr split)
+		{
+			/* Unable to process split, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_account_user_split_get_text
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_account_user_split_get_text(PurpleAccountUserSplit * split)
-		 * 
-		 * Could not generate a wrapper for purple_account_user_split_get_text in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountUserSplit * split).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_account_user_split_get_text(IntPtr split);
 
+		public static string AccountUserSplitGetText(/* Resolved as PointerToUnknownStruct to PurpleAccountUserSplit */ IntPtr split)
+		{
+			/* Unable to process split, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_account_user_split_get_separator
+		 * Function Type: char
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char purple_account_user_split_get_separator(PurpleAccountUserSplit * split)
-		 * 
-		 * Could not generate a wrapper for purple_account_user_split_get_separator in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountUserSplit * split).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern char purple_account_user_split_get_separator(IntPtr split);
 
+		public static char AccountUserSplitGetSeparator(/* Resolved as PointerToUnknownStruct to PurpleAccountUserSplit */ IntPtr split)
+		{
+			/* Unable to process split, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_account_user_split_get_reverse
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_account_user_split_get_reverse(PurpleAccountUserSplit * split)
-		 * 
-		 * Could not generate a wrapper for purple_account_user_split_get_reverse in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountUserSplit * split).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_account_user_split_get_reverse(IntPtr split);
+
+		public static bool AccountUserSplitGetReverse(/* Resolved as PointerToUnknownStruct to PurpleAccountUserSplit */ IntPtr split)
+		{
+			/* Unable to process split, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_account_user_split_set_reverse(PurpleAccountUserSplit * split, gboolean reverse)
-		 * 
-		 * Could not generate a wrapper for purple_account_user_split_set_reverse in file "accountopt.h".
-		 * Message: The type could not be resolved (PurpleAccountUserSplit * split).
+		 * Function Name: purple_account_user_split_set_reverse
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_account_user_split_set_reverse(PurpleAccountUserSplit * split, gboolean reverse)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_account_user_split_set_reverse(IntPtr split, bool reverse);
+
+		public static void AccountUserSplitSetReverse(/* Resolved as PointerToUnknownStruct to PurpleAccountUserSplit */ IntPtr split, bool reverse)
+		{
+			/* Unable to process split, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

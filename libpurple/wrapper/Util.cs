@@ -38,8 +38,20 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: util.h
+	 */
 	public class Util
 	{
+		public delegate void PurpleUtilFetchUrlCallback(IntPtr url_data, IntPtr user_data, string url_text, ulong len, string error_message);
+
+		/*
+		 * Function Name: purple_menu_action_free
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_menu_action_free(PurpleMenuAction * act)
 		 */
@@ -52,6 +64,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_util_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_util_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -62,6 +80,12 @@ namespace PurpleWrapper
 			purple_util_init();
 		}
 
+		/*
+		 * Function Name: purple_util_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_util_uninit()
 		 */
@@ -74,47 +98,119 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * gchar * purple_base16_encode(guchar * data, gsize len)
-		 * 
-		 * Could not generate a wrapper for purple_base16_encode in file "util.h".
-		 * Message: The type could not be resolved (guchar * data).
+		 * Function Name: purple_base16_encode
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
 		 */
+		/*
+		 * gchar * purple_base16_encode(guchar * data, gsize len)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_base16_encode(IntPtr data, ulong len);
 
+		public static string Base16Encode(/* Resolved as PointerToUnknownStruct to guchar */ IntPtr data, ulong len)
+		{
+			/* Unable to process data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_base16_decode
+		 * Function Type: guchar *
+		 * Function RawType: guchar
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * guchar * purple_base16_decode(char * str, gsize * ret_len)
-		 * 
-		 * Could not generate a wrapper for purple_base16_decode in file "util.h".
-		 * Message: The type could not be resolved (guchar * purple_base16_decode(char * str, gsize * ret_len)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_base16_decode(string str, IntPtr ret_len);
 
+		public static /* Resolved as PointerToUnknownStruct to guchar */ IntPtr Base16Decode(string str, /* Resolved as PointerToUnknownStruct to gsize */ IntPtr ret_len)
+		{
+			/* Unable to process ret_len, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_base16_encode_chunked
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_base16_encode_chunked(guchar * data, gsize len)
-		 * 
-		 * Could not generate a wrapper for purple_base16_encode_chunked in file "util.h".
-		 * Message: The type could not be resolved (guchar * data).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_base16_encode_chunked(IntPtr data, ulong len);
 
+		public static string Base16EncodeChunked(/* Resolved as PointerToUnknownStruct to guchar */ IntPtr data, ulong len)
+		{
+			/* Unable to process data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_base64_encode
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_base64_encode(guchar * data, gsize len)
-		 * 
-		 * Could not generate a wrapper for purple_base64_encode in file "util.h".
-		 * Message: The type could not be resolved (guchar * data).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_base64_encode(IntPtr data, ulong len);
 
+		public static string Base64Encode(/* Resolved as PointerToUnknownStruct to guchar */ IntPtr data, ulong len)
+		{
+			/* Unable to process data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_base64_decode
+		 * Function Type: guchar *
+		 * Function RawType: guchar
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * guchar * purple_base64_decode(char * str, gsize * ret_len)
-		 * 
-		 * Could not generate a wrapper for purple_base64_decode in file "util.h".
-		 * Message: The type could not be resolved (guchar * purple_base64_decode(char * str, gsize * ret_len)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_base64_decode(string str, IntPtr ret_len);
+
+		public static /* Resolved as PointerToUnknownStruct to guchar */ IntPtr Base64Decode(string str, /* Resolved as PointerToUnknownStruct to gsize */ IntPtr ret_len)
+		{
+			/* Unable to process ret_len, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * guchar * purple_quotedp_decode(char * str, gsize * ret_len)
-		 * 
-		 * Could not generate a wrapper for purple_quotedp_decode in file "util.h".
-		 * Message: The type could not be resolved (guchar * purple_quotedp_decode(char * str, gsize * ret_len)).
+		 * Function Name: purple_quotedp_decode
+		 * Function Type: guchar *
+		 * Function RawType: guchar
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * guchar * purple_quotedp_decode(char * str, gsize * ret_len)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_quotedp_decode(string str, IntPtr ret_len);
 
+		public static /* Resolved as PointerToUnknownStruct to guchar */ IntPtr QuotedpDecode(string str, /* Resolved as PointerToUnknownStruct to gsize */ IntPtr ret_len)
+		{
+			/* Unable to process ret_len, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_mime_decode_field
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_mime_decode_field(char * str)
 		 */
@@ -127,47 +223,89 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_utf8_strftime
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_utf8_strftime(char * format, struct tm)
 		 * 
 		 * Could not generate a wrapper for purple_utf8_strftime in file "util.h".
-		 * Message: The struct contains an inner-struct or innter-union and cannot be automatically wrapped.
+		 * Message: The struct contains an inner-struct or inner-union and cannot be automatically wrapped.
 		 */
 
+		/*
+		 * Function Name: purple_get_tzoff_str
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_get_tzoff_str(struct tm, gboolean iso)
 		 * 
 		 * Could not generate a wrapper for purple_get_tzoff_str in file "util.h".
-		 * Message: The struct contains an inner-struct or innter-union and cannot be automatically wrapped.
+		 * Message: The struct contains an inner-struct or inner-union and cannot be automatically wrapped.
 		 */
 
+		/*
+		 * Function Name: purple_date_format_short
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_date_format_short(struct tm)
 		 * 
 		 * Could not generate a wrapper for purple_date_format_short in file "util.h".
-		 * Message: The struct contains an inner-struct or innter-union and cannot be automatically wrapped.
+		 * Message: The struct contains an inner-struct or inner-union and cannot be automatically wrapped.
 		 */
 
+		/*
+		 * Function Name: purple_date_format_long
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_date_format_long(struct tm)
 		 * 
 		 * Could not generate a wrapper for purple_date_format_long in file "util.h".
-		 * Message: The struct contains an inner-struct or innter-union and cannot be automatically wrapped.
+		 * Message: The struct contains an inner-struct or inner-union and cannot be automatically wrapped.
 		 */
 
+		/*
+		 * Function Name: purple_date_format_full
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_date_format_full(struct tm)
 		 * 
 		 * Could not generate a wrapper for purple_date_format_full in file "util.h".
-		 * Message: The struct contains an inner-struct or innter-union and cannot be automatically wrapped.
+		 * Message: The struct contains an inner-struct or inner-union and cannot be automatically wrapped.
 		 */
 
+		/*
+		 * Function Name: purple_time_format
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_time_format(struct tm)
 		 * 
 		 * Could not generate a wrapper for purple_time_format in file "util.h".
-		 * Message: The struct contains an inner-struct or innter-union and cannot be automatically wrapped.
+		 * Message: The struct contains an inner-struct or inner-union and cannot be automatically wrapped.
 		 */
 
+		/*
+		 * Function Name: purple_markup_strip_html
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_markup_strip_html(char * str)
 		 */
@@ -180,6 +318,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_markup_linkify
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_markup_linkify(char * str)
 		 */
 		[DllImport("libpurple.dll")]
@@ -190,6 +334,12 @@ namespace PurpleWrapper
 			return purple_markup_linkify(str);
 		}
 
+		/*
+		 * Function Name: purple_unescape_html
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_unescape_html(char * html)
 		 */
@@ -202,6 +352,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_markup_slice
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_markup_slice(char * str, guint x, guint y)
 		 */
 		[DllImport("libpurple.dll")]
@@ -212,6 +368,12 @@ namespace PurpleWrapper
 			return purple_markup_slice(str, x, y);
 		}
 
+		/*
+		 * Function Name: purple_markup_get_tag_name
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_markup_get_tag_name(char * tag)
 		 */
@@ -224,12 +386,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * char * purple_markup_unescape_entity(char * text, int * length)
-		 * 
-		 * Could not generate a wrapper for purple_markup_unescape_entity in file "util.h".
-		 * Message: The type could not be resolved (int * length).
+		 * Function Name: purple_markup_unescape_entity
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
 		 */
+		/*
+		 * char * purple_markup_unescape_entity(char * text, int * length)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_markup_unescape_entity(string text, IntPtr length);
 
+		public static string MarkupUnescapeEntity(string text, /* Resolved as PointerToUnknownStruct to int */ IntPtr length)
+		{
+			/* Unable to process length, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_markup_get_css_property
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_markup_get_css_property(gchar * style, gchar * opt)
 		 */
@@ -242,6 +421,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_markup_is_rtl
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_markup_is_rtl(char * html)
 		 */
 		[DllImport("libpurple.dll")]
@@ -252,6 +437,12 @@ namespace PurpleWrapper
 			return purple_markup_is_rtl(html);
 		}
 
+		/*
+		 * Function Name: purple_home_dir
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_home_dir()
 		 */
@@ -264,6 +455,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_user_dir
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_user_dir()
 		 */
 		[DllImport("libpurple.dll")]
@@ -274,6 +471,12 @@ namespace PurpleWrapper
 			return purple_user_dir();
 		}
 
+		/*
+		 * Function Name: purple_util_set_user_dir
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_util_set_user_dir(char * dir)
 		 */
@@ -286,6 +489,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_build_dir
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
+		/*
 		 * int purple_build_dir(char * path, int mode)
 		 */
 		[DllImport("libpurple.dll")]
@@ -296,6 +505,12 @@ namespace PurpleWrapper
 			return purple_build_dir(path, mode);
 		}
 
+		/*
+		 * Function Name: purple_util_write_data_to_file_absolute
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_util_write_data_to_file_absolute(char * filename_full, char * data, gssize size)
 		 */
@@ -308,12 +523,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * FILE * purple_mkstemp(char ** path, gboolean binary)
-		 * 
-		 * Could not generate a wrapper for purple_mkstemp in file "util.h".
-		 * Message: The type could not be resolved (FILE * purple_mkstemp(char ** path, gboolean binary)).
+		 * Function Name: purple_mkstemp
+		 * Function Type: FILE *
+		 * Function RawType: FILE
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * FILE * purple_mkstemp(char ** path, gboolean binary)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_mkstemp(IntPtr path, bool binary);
 
+		public static /* Resolved as PointerToUnknownStruct to FILE */ IntPtr Mkstemp(/* Resolved as PointerToUnknownStruct to char */ IntPtr path, bool binary)
+		{
+			/* Unable to process path, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_util_get_image_extension
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_util_get_image_extension(gconstpointer data, size_t len)
 		 */
@@ -326,6 +558,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_util_get_image_checksum
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_util_get_image_checksum(gconstpointer image_data, size_t image_len)
 		 */
 		[DllImport("libpurple.dll")]
@@ -336,6 +574,12 @@ namespace PurpleWrapper
 			return purple_util_get_image_checksum(image_data, image_len);
 		}
 
+		/*
+		 * Function Name: purple_util_get_image_filename
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
 		 */
@@ -348,6 +592,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_program_is_valid
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_program_is_valid(char * program)
 		 */
 		[DllImport("libpurple.dll")]
@@ -358,6 +608,12 @@ namespace PurpleWrapper
 			return purple_program_is_valid(program);
 		}
 
+		/*
+		 * Function Name: purple_running_gnome
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_running_gnome()
 		 */
@@ -370,6 +626,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_running_kde
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_running_kde()
 		 */
 		[DllImport("libpurple.dll")]
@@ -380,6 +642,12 @@ namespace PurpleWrapper
 			return purple_running_kde();
 		}
 
+		/*
+		 * Function Name: purple_running_osx
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_running_osx()
 		 */
@@ -392,6 +660,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_fd_get_ip
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_fd_get_ip(int fd)
 		 */
 		[DllImport("libpurple.dll")]
@@ -402,6 +676,12 @@ namespace PurpleWrapper
 			return purple_fd_get_ip(fd);
 		}
 
+		/*
+		 * Function Name: purple_strequal
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_strequal(gchar * left, gchar * right)
 		 */
@@ -414,6 +694,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_normalize
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_normalize(PurpleAccount * account, char * str)
 		 */
 		[DllImport("libpurple.dll")]
@@ -424,6 +710,12 @@ namespace PurpleWrapper
 			return purple_normalize(account.Reference, str);
 		}
 
+		/*
+		 * Function Name: purple_normalize_nocase
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_normalize_nocase(PurpleAccount * account, char * str)
 		 */
@@ -436,6 +728,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_str_has_prefix
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_str_has_prefix(char * s, char * p)
 		 */
 		[DllImport("libpurple.dll")]
@@ -446,6 +744,12 @@ namespace PurpleWrapper
 			return purple_str_has_prefix(s, p);
 		}
 
+		/*
+		 * Function Name: purple_str_has_suffix
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_str_has_suffix(char * s, char * x)
 		 */
@@ -458,6 +762,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_strdup_withhtml
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_strdup_withhtml(gchar * src)
 		 */
 		[DllImport("libpurple.dll")]
@@ -468,6 +778,12 @@ namespace PurpleWrapper
 			return purple_strdup_withhtml(src);
 		}
 
+		/*
+		 * Function Name: purple_str_add_cr
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_str_add_cr(char * str)
 		 */
@@ -480,6 +796,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_str_strip_char
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_str_strip_char(char * str, char thechar)
 		 */
 		[DllImport("libpurple.dll")]
@@ -490,6 +812,12 @@ namespace PurpleWrapper
 			purple_str_strip_char(str, thechar);
 		}
 
+		/*
+		 * Function Name: purple_utf8_ncr_encode
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_utf8_ncr_encode(char * in)
 		 */
@@ -502,6 +830,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_utf8_ncr_decode
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_utf8_ncr_decode(char * in)
 		 */
 		[DllImport("libpurple.dll")]
@@ -512,6 +846,12 @@ namespace PurpleWrapper
 			return purple_utf8_ncr_decode(in_);
 		}
 
+		/*
+		 * Function Name: purple_strcasestr
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_strcasestr(char * haystack, char * needle)
 		 */
@@ -524,6 +864,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_str_size_to_units
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_str_size_to_units(size_t size)
 		 */
 		[DllImport("libpurple.dll")]
@@ -534,6 +880,12 @@ namespace PurpleWrapper
 			return purple_str_size_to_units(size);
 		}
 
+		/*
+		 * Function Name: purple_str_seconds_to_string
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_str_seconds_to_string(guint sec)
 		 */
@@ -546,12 +898,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * char * purple_str_binary_to_ascii(unsigned char * binary, guint len)
-		 * 
-		 * Could not generate a wrapper for purple_str_binary_to_ascii in file "util.h".
-		 * Message: The type could not be resolved (unsigned char * binary).
+		 * Function Name: purple_str_binary_to_ascii
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
 		 */
+		/*
+		 * char * purple_str_binary_to_ascii(unsigned char * binary, guint len)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_str_binary_to_ascii(IntPtr binary, uint len);
 
+		public static string StrBinaryToAscii(/* Resolved as PointerToUnknownStruct to char */ IntPtr binary, uint len)
+		{
+			/* Unable to process binary, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_got_protocol_handler_uri
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_got_protocol_handler_uri(char * uri)
 		 */
@@ -564,12 +933,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_util_fetch_url_cancel(PurpleUtilFetchUrlData * url_data)
-		 * 
-		 * Could not generate a wrapper for purple_util_fetch_url_cancel in file "util.h".
-		 * Message: The type could not be resolved (PurpleUtilFetchUrlData * url_data).
+		 * Function Name: purple_util_fetch_url_cancel
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_util_fetch_url_cancel(PurpleUtilFetchUrlData * url_data)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_util_fetch_url_cancel(IntPtr url_data);
 
+		public static void FetchUrlCancel(/* Resolved as PointerToUnknownStruct to PurpleUtilFetchUrlData */ IntPtr url_data)
+		{
+			/* Unable to process url_data, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_url_decode
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_url_decode(char * str)
 		 */
@@ -582,6 +968,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_url_encode
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_url_encode(char * str)
 		 */
 		[DllImport("libpurple.dll")]
@@ -592,6 +984,12 @@ namespace PurpleWrapper
 			return purple_url_encode(str);
 		}
 
+		/*
+		 * Function Name: purple_email_is_valid
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_email_is_valid(char * address)
 		 */
@@ -604,6 +1002,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_ip_address_is_valid
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_ip_address_is_valid(char * ip)
 		 */
 		[DllImport("libpurple.dll")]
@@ -615,19 +1019,37 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_uri_list_extract_uris
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_uri_list_extract_uris(gchar * uri_list)
 		 * 
 		 * Could not generate a wrapper for purple_uri_list_extract_uris in file "util.h".
-		 * Message: The type could not be resolved (GList * purple_uri_list_extract_uris(gchar * uri_list)).
+		 * Message: Unknown inner-type of argument 0 of purple_uri_list_extract_uris
 		 */
 
+		/*
+		 * Function Name: purple_uri_list_extract_filenames
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_uri_list_extract_filenames(gchar * uri_list)
 		 * 
 		 * Could not generate a wrapper for purple_uri_list_extract_filenames in file "util.h".
-		 * Message: The type could not be resolved (GList * purple_uri_list_extract_filenames(gchar * uri_list)).
+		 * Message: Unknown inner-type of argument 0 of purple_uri_list_extract_filenames
 		 */
 
+		/*
+		 * Function Name: purple_utf8_try_convert
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_utf8_try_convert(char * str)
 		 */
@@ -640,6 +1062,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_utf8_salvage
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_utf8_salvage(char * str)
 		 */
 		[DllImport("libpurple.dll")]
@@ -650,6 +1078,12 @@ namespace PurpleWrapper
 			return purple_utf8_salvage(str);
 		}
 
+		/*
+		 * Function Name: purple_utf8_strip_unprintables
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_utf8_strip_unprintables(gchar * str)
 		 */
@@ -662,6 +1096,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_gai_strerror
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_gai_strerror(gint errnum)
 		 */
 		[DllImport("libpurple.dll")]
@@ -672,6 +1112,12 @@ namespace PurpleWrapper
 			return purple_gai_strerror(errnum);
 		}
 
+		/*
+		 * Function Name: purple_utf8_strcasecmp
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * int purple_utf8_strcasecmp(char * a, char * b)
 		 */
@@ -684,6 +1130,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_utf8_has_word
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_utf8_has_word(char * haystack, char * needle)
 		 */
 		[DllImport("libpurple.dll")]
@@ -695,12 +1147,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_print_utf8_to_console(FILE * filestream, char * message)
-		 * 
-		 * Could not generate a wrapper for purple_print_utf8_to_console in file "util.h".
-		 * Message: The type could not be resolved (FILE * filestream).
+		 * Function Name: purple_print_utf8_to_console
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_print_utf8_to_console(FILE * filestream, char * message)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_print_utf8_to_console(IntPtr filestream, string message);
 
+		public static void PrintUtf8ToConsole(/* Resolved as PointerToUnknownStruct to FILE */ IntPtr filestream, string message)
+		{
+			/* Unable to process filestream, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_message_meify
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_message_meify(char * message, gssize len)
 		 */
@@ -713,6 +1182,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_text_strip_mnemonic
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_text_strip_mnemonic(char * in)
 		 */
 		[DllImport("libpurple.dll")]
@@ -723,6 +1198,12 @@ namespace PurpleWrapper
 			return purple_text_strip_mnemonic(in_);
 		}
 
+		/*
+		 * Function Name: purple_unescape_filename
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_unescape_filename(char * str)
 		 */
@@ -735,6 +1216,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_escape_filename
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_escape_filename(char * str)
 		 */
 		[DllImport("libpurple.dll")]
@@ -745,6 +1232,12 @@ namespace PurpleWrapper
 			return purple_escape_filename(str);
 		}
 
+		/*
+		 * Function Name: purple_oscar_convert
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_oscar_convert(char * act, char * protocol)
 		 */
@@ -757,6 +1250,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_restore_default_signal_handlers
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_restore_default_signal_handlers()
 		 */
 		[DllImport("libpurple.dll")]
@@ -767,6 +1266,12 @@ namespace PurpleWrapper
 			purple_restore_default_signal_handlers();
 		}
 
+		/*
+		 * Function Name: purple_get_host_name
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_get_host_name()
 		 */

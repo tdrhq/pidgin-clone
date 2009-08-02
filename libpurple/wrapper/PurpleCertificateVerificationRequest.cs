@@ -38,26 +38,195 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: certificate.h
+	 * Structure: PurpleCertificateVerificationRequest
+	 */
 	public class PurpleCertificateVerificationRequest : UnmanagedWrapper<_PurpleCertificateVerificationRequest>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleCertificateVerificationRequest in file "certificate.h".
-		 * Message: The type could not be resolved (GList * cert_chain).
-		 */
-
 		public PurpleCertificateVerificationRequest()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleCertificateVerificationRequest(IntPtr refernece)
+		public PurpleCertificateVerificationRequest(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleCertificateVerificationRequest)Marshal.PtrToStructure(this.Reference, typeof(_PurpleCertificateVerificationRequest));
+		}
+
+		/*
+		 * Argument Name: verifier
+		 * Argument Type: PurpleCertificateVerifier *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleCertificateVerifier verifier
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: scheme
+		 * Argument Type: PurpleCertificateScheme *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleCertificateScheme scheme
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: subject_name
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
+		public string subject_name
+		{
+			get
+			{
+				return this.Data.subject_name;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.subject_name = value;
+			}
+		}
+
+		/*
+		 * Argument Name: cert_chain
+		 * Argument Type: GList *
+		 * Argument Category: PointerToGList
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleCertificateVerificationRequest.cert_chain in file "certificate.h".
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
+		 */
+
+		/*
+		 * Argument Name: data
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: cb
+		 * Argument Type: PurpleCertificateVerifiedCallback
+		 * Argument Category: KnownFunctionPointer
+		 */
+		public Certificate.PurpleCertificateVerifiedCallback cb
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: cb_data
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr cb_data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleCertificateVerificationRequest { }
+	public class _PurpleCertificateVerificationRequest
+	{
+		/*
+		 * PurpleCertificateVerifier * verifier
+		 */
+		public IntPtr verifier;
+
+		/*
+		 * PurpleCertificateScheme * scheme
+		 */
+		public IntPtr scheme;
+
+		/*
+		 * gchar * subject_name
+		 */
+		public string subject_name;
+
+		/*
+		 * GList * cert_chain
+		 */
+		public IntPtr cert_chain;
+
+		/*
+		 * gpointer data
+		 */
+		public IntPtr data;
+
+		/*
+		 * PurpleCertificateVerifiedCallback cb
+		 */
+		public IntPtr cb;
+
+		/*
+		 * gpointer cb_data
+		 */
+		public IntPtr cb_data;
+
+	}
+
 }
 

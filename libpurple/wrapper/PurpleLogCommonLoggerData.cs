@@ -38,26 +38,105 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: log.h
+	 * Structure: PurpleLogCommonLoggerData
+	 */
 	public class PurpleLogCommonLoggerData : UnmanagedWrapper<_PurpleLogCommonLoggerData>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleLogCommonLoggerData in file "log.h".
-		 * Message: The type could not be resolved (FILE * file).
-		 */
-
 		public PurpleLogCommonLoggerData()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleLogCommonLoggerData(IntPtr refernece)
+		public PurpleLogCommonLoggerData(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleLogCommonLoggerData)Marshal.PtrToStructure(this.Reference, typeof(_PurpleLogCommonLoggerData));
+		}
+
+		/*
+		 * Argument Name: path
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string path
+		{
+			get
+			{
+				return this.Data.path;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.path = value;
+			}
+		}
+
+		/*
+		 * Argument Name: file
+		 * Argument Type: FILE *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to FILE */ IntPtr file
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: extra_data
+		 * Argument Type: void *
+		 * Argument Category: VoidPointer
+		 */
+		public IntPtr extra_data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleLogCommonLoggerData { }
+	public class _PurpleLogCommonLoggerData
+	{
+		/*
+		 * char * path
+		 */
+		public string path;
+
+		/*
+		 * FILE * file
+		 */
+		public IntPtr file;
+
+		/*
+		 * void * extra_data
+		 */
+		public IntPtr extra_data;
+
+	}
+
 }
 

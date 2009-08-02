@@ -38,8 +38,21 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: signals.h
+	 */
 	public class Signals
 	{
+		public delegate void PurpleCallback();
+		public delegate void PurpleSignalMarshalFunc(IntPtr cb, /* Unresolved: [Category: Unknown], [Name: va_list args] */ IntPtr args, IntPtr data, IntPtr return_val);
+
+		/*
+		 * Function Name: purple_signal_unregister
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_signal_unregister(void * instance, char * signal)
 		 */
@@ -52,6 +65,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_signals_unregister_by_instance
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_signals_unregister_by_instance(void * instance)
 		 */
 		[DllImport("libpurple.dll")]
@@ -62,6 +81,12 @@ namespace PurpleWrapper
 			purple_signals_unregister_by_instance(instance);
 		}
 
+		/*
+		 * Function Name: purple_signals_disconnect_by_handle
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_signals_disconnect_by_handle(void * handle)
 		 */
@@ -74,12 +99,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_signal_emit_vargs(void * instance, char * signal, va_list args)
-		 * 
-		 * Could not generate a wrapper for purple_signal_emit_vargs in file "signals.h".
-		 * Message: The type could not be resolved (va_list args).
+		 * Function Name: purple_signal_emit_vargs
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_signal_emit_vargs(void * instance, char * signal, va_list args)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_signal_emit_vargs(IntPtr instance, string signal, /* Unresolved: [Category: Unknown], [Name: va_list args] */ IntPtr args);
 
+		public static void SignalEmitVargs(IntPtr instance, string signal, /* Unresolved: [Category: Unknown], [Name: va_list args] */ IntPtr args)
+		{
+			/* Unable to process args, a Unknown. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_signals_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_signals_init()
 		 */
@@ -91,6 +133,12 @@ namespace PurpleWrapper
 			purple_signals_init();
 		}
 
+		/*
+		 * Function Name: purple_signals_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_signals_uninit()
 		 */

@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: eventloop.h
+	 * Structure: PurpleEventLoopUiOps
+	 */
 	public class PurpleEventLoopUiOps : UnmanagedWrapper<_PurpleEventLoopUiOps>
 	{
 		public PurpleEventLoopUiOps()
 		{
 		}
 
-		public PurpleEventLoopUiOps(IntPtr refernece)
+		public PurpleEventLoopUiOps(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleEventLoopUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleEventLoopUiOps));
 		}
 
+		/*
+		 * Argument Name: timeout_add
+		 * Argument Type: guint
+		 * Argument Category: Native
+		 */
 		public IntPtr timeout_add
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: timeout_remove
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
 		public IntPtr timeout_remove
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: input_add
+		 * Argument Type: guint
+		 * Argument Category: Native
+		 */
 		public IntPtr input_add
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: input_remove
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
 		public IntPtr input_remove
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: input_get_error
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public IntPtr input_get_error
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: timeout_add_seconds
+		 * Argument Type: guint
+		 * Argument Category: Native
+		 */
 		public IntPtr timeout_add_seconds
 		{
 			get
@@ -140,6 +175,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved2
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved2
 		{
 			get
@@ -155,6 +195,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved3
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved3
 		{
 			get
@@ -170,6 +215,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved4
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved4
 		{
 			get
@@ -189,52 +239,52 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleEventLoopUiOps
+	public class _PurpleEventLoopUiOps
 	{
 		/*
 		 * guint (*timeout_add)(guint interval, GSourceFunc function, gpointer data)
 		 */
-		IntPtr timeout_add;
+		public IntPtr timeout_add;
 
 		/*
 		 * gboolean (*timeout_remove)(guint handle)
 		 */
-		IntPtr timeout_remove;
+		public IntPtr timeout_remove;
 
 		/*
 		 * guint (*input_add)(int fd, PurpleInputCondition cond, PurpleInputFunction func, gpointer user_data)
 		 */
-		IntPtr input_add;
+		public IntPtr input_add;
 
 		/*
 		 * gboolean (*input_remove)(guint handle)
 		 */
-		IntPtr input_remove;
+		public IntPtr input_remove;
 
 		/*
 		 * int (*input_get_error)(int fd, int * error)
 		 */
-		IntPtr input_get_error;
+		public IntPtr input_get_error;
 
 		/*
 		 * guint (*timeout_add_seconds)(guint interval, GSourceFunc function, gpointer data)
 		 */
-		IntPtr timeout_add_seconds;
+		public IntPtr timeout_add_seconds;
 
 		/*
 		 * void (*_purple_reserved2)()
 		 */
-		IntPtr _purple_reserved2;
+		public IntPtr _purple_reserved2;
 
 		/*
 		 * void (*_purple_reserved3)()
 		 */
-		IntPtr _purple_reserved3;
+		public IntPtr _purple_reserved3;
 
 		/*
 		 * void (*_purple_reserved4)()
 		 */
-		IntPtr _purple_reserved4;
+		public IntPtr _purple_reserved4;
 
 	}
 

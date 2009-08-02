@@ -38,8 +38,19 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: idle.h
+	 */
 	public class Idle
 	{
+
+		/*
+		 * Function Name: purple_idle_touch
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_idle_touch()
 		 */
@@ -51,6 +62,12 @@ namespace PurpleWrapper
 			purple_idle_touch();
 		}
 
+		/*
+		 * Function Name: purple_idle_set
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_idle_set(time_t time)
 		 */
@@ -64,19 +81,47 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_idle_set_ui_ops(PurpleIdleUiOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_idle_set_ui_ops in file "idle.h".
-		 * Message: The type could not be resolved (PurpleIdleUiOps * ops).
+		 * Function Name: purple_idle_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_idle_set_ui_ops(PurpleIdleUiOps * ops)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_idle_set_ui_ops(IntPtr ops);
+
+		public static void SetUiOps(/* Resolved as PointerToUnknownStruct to PurpleIdleUiOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleIdleUiOps * purple_idle_get_ui_ops()
-		 * 
-		 * Could not generate a wrapper for purple_idle_get_ui_ops in file "idle.h".
-		 * Message: The type could not be resolved (PurpleIdleUiOps * purple_idle_get_ui_ops()).
+		 * Function Name: purple_idle_get_ui_ops
+		 * Function Type: PurpleIdleUiOps *
+		 * Function RawType: PurpleIdleUiOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleIdleUiOps * purple_idle_get_ui_ops()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_idle_get_ui_ops();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleIdleUiOps */ IntPtr GetUiOps()
+		{
+			/* Unable to process the return value of purple_idle_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_idle_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_idle_init()
 		 */
@@ -88,6 +133,12 @@ namespace PurpleWrapper
 			purple_idle_init();
 		}
 
+		/*
+		 * Function Name: purple_idle_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_idle_uninit()
 		 */

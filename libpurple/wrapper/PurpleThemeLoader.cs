@@ -38,19 +38,29 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: theme-loader.h
+	 * Structure: PurpleThemeLoader
+	 */
 	public class PurpleThemeLoader : UnmanagedWrapper<_PurpleThemeLoader>
 	{
 		public PurpleThemeLoader()
 		{
 		}
 
-		public PurpleThemeLoader(IntPtr refernece)
+		public PurpleThemeLoader(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleThemeLoader)Marshal.PtrToStructure(this.Reference, typeof(_PurpleThemeLoader));
 		}
 
-		public /* libgobject */ IntPtr parent
+		/*
+		 * Argument Name: parent
+		 * Argument Type: GObject
+		 * Argument Category: GObjectObject
+		 */
+		public /* libobject */ IntPtr parent
 		{
 			get
 			{
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: priv
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
 		public IntPtr priv
 		{
 			get
@@ -84,17 +99,17 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleThemeLoader
+	public class _PurpleThemeLoader
 	{
 		/*
 		 * GObject parent
 		 */
-		/* Cannot generate struct for type GObjectObject */
+		public IntPtr parent;
 
 		/*
 		 * gpointer priv
 		 */
-		IntPtr priv;
+		public IntPtr priv;
 
 	}
 

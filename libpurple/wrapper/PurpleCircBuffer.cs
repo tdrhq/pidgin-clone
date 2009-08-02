@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: circbuffer.h
+	 * Structure: PurpleCircBuffer
+	 */
 	public class PurpleCircBuffer : UnmanagedWrapper<_PurpleCircBuffer>
 	{
 		public PurpleCircBuffer()
 		{
 		}
 
-		public PurpleCircBuffer(IntPtr refernece)
+		public PurpleCircBuffer(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleCircBuffer)Marshal.PtrToStructure(this.Reference, typeof(_PurpleCircBuffer));
 		}
 
+		/*
+		 * Argument Name: buffer
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
 		public string buffer
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: growsize
+		 * Argument Type: gsize
+		 * Argument Category: Native
+		 */
 		public ulong growsize
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: buflen
+		 * Argument Type: gsize
+		 * Argument Category: Native
+		 */
 		public ulong buflen
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: bufused
+		 * Argument Type: gsize
+		 * Argument Category: Native
+		 */
 		public ulong bufused
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: inptr
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
 		public string inptr
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: outptr
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
 		public string outptr
 		{
 			get
@@ -144,37 +179,37 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleCircBuffer
+	public class _PurpleCircBuffer
 	{
 		/*
 		 * gchar * buffer
 		 */
-		IntPtr buffer;
+		public string buffer;
 
 		/*
 		 * gsize growsize
 		 */
-		IntPtr growsize;
+		public ulong growsize;
 
 		/*
 		 * gsize buflen
 		 */
-		IntPtr buflen;
+		public ulong buflen;
 
 		/*
 		 * gsize bufused
 		 */
-		IntPtr bufused;
+		public ulong bufused;
 
 		/*
 		 * gchar * inptr
 		 */
-		IntPtr inptr;
+		public string inptr;
 
 		/*
 		 * gchar * outptr
 		 */
-		IntPtr outptr;
+		public string outptr;
 
 	}
 

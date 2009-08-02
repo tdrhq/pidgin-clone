@@ -38,26 +38,245 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: plugin.h
+	 * Structure: PurplePluginLoaderInfo
+	 */
 	public class PurplePluginLoaderInfo : UnmanagedWrapper<_PurplePluginLoaderInfo>
 	{
-		/* 
-		 * Could not generate a wrapper for PurplePluginLoaderInfo in file "plugin.h".
-		 * Message: The type could not be resolved (GList * exts).
-		 */
-
 		public PurplePluginLoaderInfo()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurplePluginLoaderInfo(IntPtr refernece)
+		public PurplePluginLoaderInfo(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurplePluginLoaderInfo)Marshal.PtrToStructure(this.Reference, typeof(_PurplePluginLoaderInfo));
+		}
+
+		/*
+		 * Argument Name: exts
+		 * Argument Type: GList *
+		 * Argument Category: PointerToGList
+		 */
+		/*
+		 * Could not generate a wrapper for PurplePluginLoaderInfo.exts in file "plugin.h".
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
+		 */
+
+		/*
+		 * Argument Name: probe
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
+		public IntPtr probe
+		{
+			get
+			{
+				return this.Data.probe;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.probe = value;
+			}
+		}
+
+		/*
+		 * Argument Name: load
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
+		public IntPtr load
+		{
+			get
+			{
+				return this.Data.load;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.load = value;
+			}
+		}
+
+		/*
+		 * Argument Name: unload
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
+		public IntPtr unload
+		{
+			get
+			{
+				return this.Data.unload;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.unload = value;
+			}
+		}
+
+		/*
+		 * Argument Name: destroy
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr destroy
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: _purple_reserved1
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr _purple_reserved1
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: _purple_reserved2
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr _purple_reserved2
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: _purple_reserved3
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr _purple_reserved3
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: _purple_reserved4
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr _purple_reserved4
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurplePluginLoaderInfo { }
+	public class _PurplePluginLoaderInfo
+	{
+		/*
+		 * GList * exts
+		 */
+		public IntPtr exts;
+
+		/*
+		 * gboolean (*probe)(PurplePlugin * plugin)
+		 */
+		public IntPtr probe;
+
+		/*
+		 * gboolean (*load)(PurplePlugin * plugin)
+		 */
+		public IntPtr load;
+
+		/*
+		 * gboolean (*unload)(PurplePlugin * plugin)
+		 */
+		public IntPtr unload;
+
+		/*
+		 * void (*destroy)(PurplePlugin * plugin)
+		 */
+		public IntPtr destroy;
+
+		/*
+		 * void (*_purple_reserved1)()
+		 */
+		public IntPtr _purple_reserved1;
+
+		/*
+		 * void (*_purple_reserved2)()
+		 */
+		public IntPtr _purple_reserved2;
+
+		/*
+		 * void (*_purple_reserved3)()
+		 */
+		public IntPtr _purple_reserved3;
+
+		/*
+		 * void (*_purple_reserved4)()
+		 */
+		public IntPtr _purple_reserved4;
+
+	}
+
 }
 

@@ -38,8 +38,19 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: purple-client.h
+	 */
 	public class PurpleClient
 	{
+
+		/*
+		 * Function Name: purple_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_init()
 		 */

@@ -38,33 +38,48 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: dnssrv.h
+	 * Structure: PurpleSrvResponse
+	 */
 	public class PurpleSrvResponse : UnmanagedWrapper<_PurpleSrvResponse>
 	{
 		public PurpleSrvResponse()
 		{
 		}
 
-		public PurpleSrvResponse(IntPtr refernece)
+		public PurpleSrvResponse(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleSrvResponse)Marshal.PtrToStructure(this.Reference, typeof(_PurpleSrvResponse));
 		}
 
-		public char hostname[256]
+		/*
+		 * Argument Name: hostname
+		 * Argument Type: char
+		 * Argument Category: Native
+		 */
+		public string[] hostname
 		{
 			get
 			{
-				return this.Data.hostname[256];
+				return this.Data.hostname;
 			}
 			set
 			{
 				if (this.Reference != IntPtr.Zero)
 					this.Reference = IntPtr.Zero;
 
-				this.Data.hostname[256] = value;
+				this.Data.hostname = value;
 			}
 		}
 
+		/*
+		 * Argument Name: port
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public int port
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: weight
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public int weight
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: pref
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public int pref
 		{
 			get
@@ -114,27 +139,27 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleSrvResponse
+	public class _PurpleSrvResponse
 	{
 		/*
-		 * char hostname[256]
+		 * char hostname
 		 */
-		IntPtr hostname[256];
+		public string[] hostname;
 
 		/*
 		 * int port
 		 */
-		IntPtr port;
+		public int port;
 
 		/*
 		 * int weight
 		 */
-		IntPtr weight;
+		public int weight;
 
 		/*
 		 * int pref
 		 */
-		IntPtr pref;
+		public int pref;
 
 	}
 

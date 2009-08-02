@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: xmlnode.h
+	 */
 	public class XMLNodeClass
 	{
 		public enum XMLNodeType
@@ -47,6 +51,13 @@ namespace PurpleWrapper
 			XMLNODE_TYPE_DATA
 		};
 
+
+		/*
+		 * Function Name: xmlnode_new
+		 * Function Type: xmlnode *
+		 * Function RawType: xmlnode
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * xmlnode * xmlnode_new(char * name)
 		 */
@@ -59,6 +70,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_new_child
+		 * Function Type: xmlnode *
+		 * Function RawType: xmlnode
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * xmlnode * xmlnode_new_child(xmlnode * parent, char * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -69,6 +86,12 @@ namespace PurpleWrapper
 			return new xmlnode(xmlnode_new_child(parent.Reference, name));
 		}
 
+		/*
+		 * Function Name: xmlnode_insert_child
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void xmlnode_insert_child(xmlnode * parent, xmlnode * child)
 		 */
@@ -81,6 +104,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_get_child
+		 * Function Type: xmlnode *
+		 * Function RawType: xmlnode
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * xmlnode * xmlnode_get_child(xmlnode * parent, char * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -91,6 +120,12 @@ namespace PurpleWrapper
 			return new xmlnode(xmlnode_get_child(parent.Reference, name));
 		}
 
+		/*
+		 * Function Name: xmlnode_get_child_with_namespace
+		 * Function Type: xmlnode *
+		 * Function RawType: xmlnode
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * xmlnode * xmlnode_get_child_with_namespace(xmlnode * parent, char * name, char * xmlns)
 		 */
@@ -103,6 +138,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_get_next_twin
+		 * Function Type: xmlnode *
+		 * Function RawType: xmlnode
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * xmlnode * xmlnode_get_next_twin(xmlnode * node)
 		 */
 		[DllImport("libpurple.dll")]
@@ -113,6 +154,12 @@ namespace PurpleWrapper
 			return new xmlnode(xmlnode_get_next_twin(node.Reference));
 		}
 
+		/*
+		 * Function Name: xmlnode_insert_data
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void xmlnode_insert_data(xmlnode * node, char * data, gssize size)
 		 */
@@ -125,6 +172,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_get_data
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * xmlnode_get_data(xmlnode * node)
 		 */
 		[DllImport("libpurple.dll")]
@@ -135,6 +188,12 @@ namespace PurpleWrapper
 			return xmlnode_get_data(node.Reference);
 		}
 
+		/*
+		 * Function Name: xmlnode_get_data_unescaped
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * xmlnode_get_data_unescaped(xmlnode * node)
 		 */
@@ -147,6 +206,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_set_attrib
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void xmlnode_set_attrib(xmlnode * node, char * attr, char * value)
 		 */
 		[DllImport("libpurple.dll")]
@@ -157,6 +222,12 @@ namespace PurpleWrapper
 			xmlnode_set_attrib(node.Reference, attr, value);
 		}
 
+		/*
+		 * Function Name: xmlnode_set_attrib_with_prefix
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void xmlnode_set_attrib_with_prefix(xmlnode * node, char * attr, char * prefix, char * value)
 		 */
@@ -169,6 +240,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_set_attrib_with_namespace
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void xmlnode_set_attrib_with_namespace(xmlnode * node, char * attr, char * xmlns, char * value)
 		 */
 		[DllImport("libpurple.dll")]
@@ -179,6 +256,12 @@ namespace PurpleWrapper
 			xmlnode_set_attrib_with_namespace(node.Reference, attr, xmlns, value);
 		}
 
+		/*
+		 * Function Name: xmlnode_get_attrib
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * xmlnode_get_attrib(xmlnode * node, char * attr)
 		 */
@@ -191,6 +274,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_get_attrib_with_namespace
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * xmlnode_get_attrib_with_namespace(xmlnode * node, char * attr, char * xmlns)
 		 */
 		[DllImport("libpurple.dll")]
@@ -201,6 +290,12 @@ namespace PurpleWrapper
 			return xmlnode_get_attrib_with_namespace(node.Reference, attr, xmlns);
 		}
 
+		/*
+		 * Function Name: xmlnode_remove_attrib
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void xmlnode_remove_attrib(xmlnode * node, char * attr)
 		 */
@@ -213,6 +308,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_remove_attrib_with_namespace
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void xmlnode_remove_attrib_with_namespace(xmlnode * node, char * attr, char * xmlns)
 		 */
 		[DllImport("libpurple.dll")]
@@ -223,6 +324,12 @@ namespace PurpleWrapper
 			xmlnode_remove_attrib_with_namespace(node.Reference, attr, xmlns);
 		}
 
+		/*
+		 * Function Name: xmlnode_set_namespace
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void xmlnode_set_namespace(xmlnode * node, char * xmlns)
 		 */
@@ -235,6 +342,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_get_namespace
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * xmlnode_get_namespace(xmlnode * node)
 		 */
 		[DllImport("libpurple.dll")]
@@ -245,6 +358,12 @@ namespace PurpleWrapper
 			return xmlnode_get_namespace(node.Reference);
 		}
 
+		/*
+		 * Function Name: xmlnode_set_prefix
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void xmlnode_set_prefix(xmlnode * node, char * prefix)
 		 */
@@ -257,6 +376,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_get_prefix
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * xmlnode_get_prefix(xmlnode * node)
 		 */
 		[DllImport("libpurple.dll")]
@@ -267,6 +392,12 @@ namespace PurpleWrapper
 			return xmlnode_get_prefix(node.Reference);
 		}
 
+		/*
+		 * Function Name: xmlnode_get_parent
+		 * Function Type: xmlnode *
+		 * Function RawType: xmlnode
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * xmlnode * xmlnode_get_parent(xmlnode * child)
 		 */
@@ -279,19 +410,47 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * char * xmlnode_to_str(xmlnode * node, int * len)
-		 * 
-		 * Could not generate a wrapper for xmlnode_to_str in file "xmlnode.h".
-		 * Message: The type could not be resolved (int * len).
+		 * Function Name: xmlnode_to_str
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
 		 */
+		/*
+		 * char * xmlnode_to_str(xmlnode * node, int * len)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string xmlnode_to_str(IntPtr node, IntPtr len);
+
+		public static string XmlnodeToStr(xmlnode node, /* Resolved as PointerToUnknownStruct to int */ IntPtr len)
+		{
+			/* Unable to process len, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * char * xmlnode_to_formatted_str(xmlnode * node, int * len)
-		 * 
-		 * Could not generate a wrapper for xmlnode_to_formatted_str in file "xmlnode.h".
-		 * Message: The type could not be resolved (int * len).
+		 * Function Name: xmlnode_to_formatted_str
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
 		 */
+		/*
+		 * char * xmlnode_to_formatted_str(xmlnode * node, int * len)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string xmlnode_to_formatted_str(IntPtr node, IntPtr len);
 
+		public static string XmlnodeToFormattedStr(xmlnode node, /* Resolved as PointerToUnknownStruct to int */ IntPtr len)
+		{
+			/* Unable to process len, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: xmlnode_from_str
+		 * Function Type: xmlnode *
+		 * Function RawType: xmlnode
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * xmlnode * xmlnode_from_str(char * str, gssize size)
 		 */
@@ -304,6 +463,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: xmlnode_copy
+		 * Function Type: xmlnode *
+		 * Function RawType: xmlnode
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * xmlnode * xmlnode_copy(xmlnode * src)
 		 */
 		[DllImport("libpurple.dll")]
@@ -314,6 +479,12 @@ namespace PurpleWrapper
 			return new xmlnode(xmlnode_copy(src.Reference));
 		}
 
+		/*
+		 * Function Name: xmlnode_free
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void xmlnode_free(xmlnode * node)
 		 */

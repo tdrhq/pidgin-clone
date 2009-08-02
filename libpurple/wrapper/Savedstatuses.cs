@@ -38,8 +38,19 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: savedstatuses.h
+	 */
 	public class Savedstatuses
 	{
+
+		/*
+		 * Function Name: purple_savedstatus_delete
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_savedstatus_delete(char * title)
 		 */
@@ -52,47 +63,109 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_savedstatus_delete_by_status(PurpleSavedStatus * saved_status)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_delete_by_status in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * saved_status).
+		 * Function Name: purple_savedstatus_delete_by_status
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_savedstatus_delete_by_status(PurpleSavedStatus * saved_status)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_savedstatus_delete_by_status(IntPtr saved_status);
 
+		public static void SavedstatusDeleteByStatus(/* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr saved_status)
+		{
+			/* Unable to process saved_status, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatuses_get_all
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_savedstatuses_get_all()
 		 * 
 		 * Could not generate a wrapper for purple_savedstatuses_get_all in file "savedstatuses.h".
-		 * Message: The type could not be resolved (GList * purple_savedstatuses_get_all()).
+		 * Message: Unknown inner-type of argument 0 of purple_savedstatuses_get_all
 		 */
 
+		/*
+		 * Function Name: purple_savedstatuses_get_popular
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_savedstatuses_get_popular(unsigned int how_many)
 		 * 
 		 * Could not generate a wrapper for purple_savedstatuses_get_popular in file "savedstatuses.h".
-		 * Message: The type could not be resolved (GList * purple_savedstatuses_get_popular(unsigned int how_many)).
+		 * Message: Unknown inner-type of argument 0 of purple_savedstatuses_get_popular
 		 */
 
+		/*
+		 * Function Name: purple_savedstatus_get_current
+		 * Function Type: PurpleSavedStatus *
+		 * Function RawType: PurpleSavedStatus
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleSavedStatus * purple_savedstatus_get_current()
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_get_current in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * purple_savedstatus_get_current()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_savedstatus_get_current();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr SavedstatusGetCurrent()
+		{
+			/* Unable to process the return value of purple_savedstatus_get_current, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_get_default
+		 * Function Type: PurpleSavedStatus *
+		 * Function RawType: PurpleSavedStatus
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleSavedStatus * purple_savedstatus_get_default()
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_get_default in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * purple_savedstatus_get_default()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_savedstatus_get_default();
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr SavedstatusGetDefault()
+		{
+			/* Unable to process the return value of purple_savedstatus_get_default, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleSavedStatus * purple_savedstatus_get_idleaway()
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_get_idleaway in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * purple_savedstatus_get_idleaway()).
+		 * Function Name: purple_savedstatus_get_idleaway
+		 * Function Type: PurpleSavedStatus *
+		 * Function RawType: PurpleSavedStatus
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleSavedStatus * purple_savedstatus_get_idleaway()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_savedstatus_get_idleaway();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr SavedstatusGetIdleaway()
+		{
+			/* Unable to process the return value of purple_savedstatus_get_idleaway, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_is_idleaway
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_savedstatus_is_idleaway()
 		 */
@@ -105,6 +178,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_savedstatus_set_idleaway
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_savedstatus_set_idleaway(gboolean idleaway)
 		 */
 		[DllImport("libpurple.dll")]
@@ -116,103 +195,264 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * PurpleSavedStatus * purple_savedstatus_get_startup()
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_get_startup in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * purple_savedstatus_get_startup()).
+		 * Function Name: purple_savedstatus_get_startup
+		 * Function Type: PurpleSavedStatus *
+		 * Function RawType: PurpleSavedStatus
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleSavedStatus * purple_savedstatus_get_startup()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_savedstatus_get_startup();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr SavedstatusGetStartup()
+		{
+			/* Unable to process the return value of purple_savedstatus_get_startup, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_find
+		 * Function Type: PurpleSavedStatus *
+		 * Function RawType: PurpleSavedStatus
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleSavedStatus * purple_savedstatus_find(char * title)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_find in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * purple_savedstatus_find(char * title)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_savedstatus_find(string title);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr SavedstatusFind(string title)
+		{
+			/* Unable to process the return value of purple_savedstatus_find, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_find_by_creation_time
+		 * Function Type: PurpleSavedStatus *
+		 * Function RawType: PurpleSavedStatus
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleSavedStatus * purple_savedstatus_find_by_creation_time(time_t creation_time)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_find_by_creation_time in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * purple_savedstatus_find_by_creation_time(time_t creation_time)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_savedstatus_find_by_creation_time(ulong creation_time);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr SavedstatusFindByCreationTime(DateTime creation_time)
+		{
+			ulong _PurpleWrapper_param0 = (ulong)(creation_time - new DateTime(1970, 1, 1)).TotalSeconds;
+			/* Unable to process the return value of purple_savedstatus_find_by_creation_time, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_find_transient_by_type_and_message
+		 * Function Type: PurpleSavedStatus *
+		 * Function RawType: PurpleSavedStatus
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleSavedStatus * purple_savedstatus_find_transient_by_type_and_message(PurpleStatusPrimitive type, char * message)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_find_transient_by_type_and_message in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * purple_savedstatus_find_transient_by_type_and_message(PurpleStatusPrimitive type, char * message)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_savedstatus_find_transient_by_type_and_message(Status.PurpleStatusPrimitive type, string message);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr SavedstatusFindTransientByTypeAndMessage(Status.PurpleStatusPrimitive type, string message)
+		{
+			/* Unable to process type, a KnownEnum. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_is_transient
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_savedstatus_is_transient(PurpleSavedStatus * saved_status)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_is_transient in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * saved_status).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_savedstatus_is_transient(IntPtr saved_status);
 
+		public static bool SavedstatusIsTransient(/* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr saved_status)
+		{
+			/* Unable to process saved_status, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_get_title
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_savedstatus_get_title(PurpleSavedStatus * saved_status)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_get_title in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * saved_status).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_savedstatus_get_title(IntPtr saved_status);
 
+		public static string SavedstatusGetTitle(/* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr saved_status)
+		{
+			/* Unable to process saved_status, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_get_type
+		 * Function Type: PurpleStatusPrimitive
+		 * Function RawType: PurpleStatusPrimitive
+		 * Function Category: KnownEnum
+		 */
 		/*
 		 * PurpleStatusPrimitive purple_savedstatus_get_type(PurpleSavedStatus * saved_status)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_get_type in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * saved_status).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern Status.PurpleStatusPrimitive purple_savedstatus_get_type(IntPtr saved_status);
 
+		public static Status.PurpleStatusPrimitive SavedstatusGetType(/* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr saved_status)
+		{
+			/* Unable to process saved_status, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_get_message
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_savedstatus_get_message(PurpleSavedStatus * saved_status)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_get_message in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * saved_status).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_savedstatus_get_message(IntPtr saved_status);
 
+		public static string SavedstatusGetMessage(/* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr saved_status)
+		{
+			/* Unable to process saved_status, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_get_creation_time
+		 * Function Type: time_t
+		 * Function RawType: time_t
+		 * Function Category: DateTime
+		 */
 		/*
 		 * time_t purple_savedstatus_get_creation_time(PurpleSavedStatus * saved_status)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_get_creation_time in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * saved_status).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern ulong purple_savedstatus_get_creation_time(IntPtr saved_status);
 
+		public static DateTime SavedstatusGetCreationTime(/* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr saved_status)
+		{
+			/* Unable to process saved_status, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_has_substatuses
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_savedstatus_has_substatuses(PurpleSavedStatus * saved_status)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_has_substatuses in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * saved_status).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_savedstatus_has_substatuses(IntPtr saved_status);
 
+		public static bool SavedstatusHasSubstatuses(/* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr saved_status)
+		{
+			/* Unable to process saved_status, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_substatus_get_type
+		 * Function Type: PurpleStatusType *
+		 * Function RawType: PurpleStatusType
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleStatusType * purple_savedstatus_substatus_get_type(PurpleSavedStatusSub * substatus)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_substatus_get_type in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleStatusType * purple_savedstatus_substatus_get_type(PurpleSavedStatusSub * substatus)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_savedstatus_substatus_get_type(IntPtr substatus);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleStatusType */ IntPtr SavedstatusSubstatusGetType(/* Resolved as PointerToUnknownStruct to PurpleSavedStatusSub */ IntPtr substatus)
+		{
+			/* Unable to process substatus, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_substatus_get_message
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_savedstatus_substatus_get_message(PurpleSavedStatusSub * substatus)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_substatus_get_message in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatusSub * substatus).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_savedstatus_substatus_get_message(IntPtr substatus);
 
+		public static string SavedstatusSubstatusGetMessage(/* Resolved as PointerToUnknownStruct to PurpleSavedStatusSub */ IntPtr substatus)
+		{
+			/* Unable to process substatus, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatus_activate
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_savedstatus_activate(PurpleSavedStatus * saved_status)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_activate in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * saved_status).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_savedstatus_activate(IntPtr saved_status);
+
+		public static void SavedstatusActivate(/* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr saved_status)
+		{
+			/* Unable to process saved_status, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_savedstatus_activate_for_account(PurpleSavedStatus * saved_status, PurpleAccount * account)
-		 * 
-		 * Could not generate a wrapper for purple_savedstatus_activate_for_account in file "savedstatuses.h".
-		 * Message: The type could not be resolved (PurpleSavedStatus * saved_status).
+		 * Function Name: purple_savedstatus_activate_for_account
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_savedstatus_activate_for_account(PurpleSavedStatus * saved_status, PurpleAccount * account)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_savedstatus_activate_for_account(IntPtr saved_status, IntPtr account);
 
+		public static void SavedstatusActivateForAccount(/* Resolved as PointerToUnknownStruct to PurpleSavedStatus */ IntPtr saved_status, PurpleAccount account)
+		{
+			/* Unable to process saved_status, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_savedstatuses_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_savedstatuses_get_handle()
 		 */
@@ -225,6 +465,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_savedstatuses_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_savedstatuses_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -235,6 +481,12 @@ namespace PurpleWrapper
 			purple_savedstatuses_init();
 		}
 
+		/*
+		 * Function Name: purple_savedstatuses_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_savedstatuses_uninit()
 		 */

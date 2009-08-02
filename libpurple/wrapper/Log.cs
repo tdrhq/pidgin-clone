@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: log.h
+	 */
 	public class Log
 	{
 		public enum PurpleLogType
@@ -52,6 +56,14 @@ namespace PurpleWrapper
 			PURPLE_LOG_READ_NO_NEWLINE = 1
 		};
 
+		public delegate void PurpleLogSetCallback(IntPtr sets, IntPtr set);
+
+		/*
+		 * Function Name: purple_log_free
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_log_free(PurpleLog * log)
 		 */
@@ -63,6 +75,12 @@ namespace PurpleWrapper
 			purple_log_free(log.Reference);
 		}
 
+		/*
+		 * Function Name: purple_log_read
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_log_read(PurpleLog * log, PurpleLogReadFlags * flags)
 		 */
@@ -76,26 +94,50 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_get_logs
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_log_get_logs(PurpleLogType type, char * name, PurpleAccount * account)
 		 * 
 		 * Could not generate a wrapper for purple_log_get_logs in file "log.h".
-		 * Message: The type could not be resolved (GList * purple_log_get_logs(PurpleLogType type, char * name, PurpleAccount * account)).
+		 * Message: Unknown inner-type of argument 0 of purple_log_get_logs
 		 */
 
+		/*
+		 * Function Name: purple_log_get_log_sets
+		 * Function Type: GHashTable *
+		 * Function RawType: GHashTable
+		 * Function Category: PointerToGHashTable
+		 */
 		/*
 		 * GHashTable * purple_log_get_log_sets()
 		 * 
 		 * Could not generate a wrapper for purple_log_get_log_sets in file "log.h".
-		 * Message: The type could not be resolved (GHashTable * purple_log_get_log_sets()).
+		 * Message: Unknown inner-type of argument 0 of purple_log_get_log_sets
 		 */
 
+		/*
+		 * Function Name: purple_log_get_system_logs
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_log_get_system_logs(PurpleAccount * account)
 		 * 
 		 * Could not generate a wrapper for purple_log_get_system_logs in file "log.h".
-		 * Message: The type could not be resolved (GList * purple_log_get_system_logs(PurpleAccount * account)).
+		 * Message: Unknown inner-type of argument 0 of purple_log_get_system_logs
 		 */
 
+		/*
+		 * Function Name: purple_log_get_size
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * int purple_log_get_size(PurpleLog * log)
 		 */
@@ -107,6 +149,12 @@ namespace PurpleWrapper
 			return purple_log_get_size(log.Reference);
 		}
 
+		/*
+		 * Function Name: purple_log_get_total_size
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * int purple_log_get_total_size(PurpleLogType type, char * name, PurpleAccount * account)
 		 */
@@ -120,6 +168,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_get_activity_score
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
+		/*
 		 * int purple_log_get_activity_score(PurpleLogType type, char * name, PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
@@ -132,6 +186,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_is_deletable
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_log_is_deletable(PurpleLog * log)
 		 */
 		[DllImport("libpurple.dll")]
@@ -143,6 +203,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_delete
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_log_delete(PurpleLog * log)
 		 */
 		[DllImport("libpurple.dll")]
@@ -153,6 +219,12 @@ namespace PurpleWrapper
 			return purple_log_delete(log.Reference);
 		}
 
+		/*
+		 * Function Name: purple_log_get_log_dir
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_log_get_log_dir(PurpleLogType type, char * name, PurpleAccount * account)
 		 */
@@ -166,6 +238,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_compare
+		 * Function Type: gint
+		 * Function RawType: gint
+		 * Function Category: Native
+		 */
+		/*
 		 * gint purple_log_compare(gconstpointer y, gconstpointer z)
 		 */
 		[DllImport("libpurple.dll")]
@@ -176,6 +254,12 @@ namespace PurpleWrapper
 			return purple_log_compare(y, z);
 		}
 
+		/*
+		 * Function Name: purple_log_set_compare
+		 * Function Type: gint
+		 * Function RawType: gint
+		 * Function Category: Native
+		 */
 		/*
 		 * gint purple_log_set_compare(gconstpointer y, gconstpointer z)
 		 */
@@ -188,6 +272,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_set_free
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_log_set_free(PurpleLogSet * set)
 		 */
 		[DllImport("libpurple.dll")]
@@ -198,6 +288,12 @@ namespace PurpleWrapper
 			purple_log_set_free(set.Reference);
 		}
 
+		/*
+		 * Function Name: purple_log_common_writer
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_log_common_writer(PurpleLog * log, char * ext)
 		 */
@@ -210,6 +306,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_common_sizer
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
+		/*
 		 * int purple_log_common_sizer(PurpleLog * log)
 		 */
 		[DllImport("libpurple.dll")]
@@ -220,6 +322,12 @@ namespace PurpleWrapper
 			return purple_log_common_sizer(log.Reference);
 		}
 
+		/*
+		 * Function Name: purple_log_common_deleter
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_log_common_deleter(PurpleLog * log)
 		 */
@@ -232,6 +340,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_common_is_deletable
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_log_common_is_deletable(PurpleLog * log)
 		 */
 		[DllImport("libpurple.dll")]
@@ -242,6 +356,12 @@ namespace PurpleWrapper
 			return purple_log_common_is_deletable(log.Reference);
 		}
 
+		/*
+		 * Function Name: purple_log_logger_free
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_log_logger_free(PurpleLogLogger * logger)
 		 */
@@ -254,6 +374,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_logger_add
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_log_logger_add(PurpleLogLogger * logger)
 		 */
 		[DllImport("libpurple.dll")]
@@ -264,6 +390,12 @@ namespace PurpleWrapper
 			purple_log_logger_add(logger.Reference);
 		}
 
+		/*
+		 * Function Name: purple_log_logger_remove
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_log_logger_remove(PurpleLogLogger * logger)
 		 */
@@ -276,6 +408,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_logger_set
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_log_logger_set(PurpleLogLogger * logger)
 		 */
 		[DllImport("libpurple.dll")]
@@ -286,6 +424,12 @@ namespace PurpleWrapper
 			purple_log_logger_set(logger.Reference);
 		}
 
+		/*
+		 * Function Name: purple_log_logger_get
+		 * Function Type: PurpleLogLogger *
+		 * Function RawType: PurpleLogLogger
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleLogLogger * purple_log_logger_get()
 		 */
@@ -298,12 +442,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_logger_get_options
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_log_logger_get_options()
 		 * 
 		 * Could not generate a wrapper for purple_log_logger_get_options in file "log.h".
-		 * Message: The type could not be resolved (GList * purple_log_logger_get_options()).
+		 * Message: Unknown inner-type of argument 0 of purple_log_logger_get_options
 		 */
 
+		/*
+		 * Function Name: purple_log_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_log_init()
 		 */
@@ -316,6 +472,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_log_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
+		/*
 		 * void * purple_log_get_handle()
 		 */
 		[DllImport("libpurple.dll")]
@@ -326,6 +488,12 @@ namespace PurpleWrapper
 			return purple_log_get_handle();
 		}
 
+		/*
+		 * Function Name: purple_log_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_log_uninit()
 		 */

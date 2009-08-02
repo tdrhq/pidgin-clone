@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: whiteboard.h
+	 * Structure: PurpleWhiteboardUiOps
+	 */
 	public class PurpleWhiteboardUiOps : UnmanagedWrapper<_PurpleWhiteboardUiOps>
 	{
 		public PurpleWhiteboardUiOps()
 		{
 		}
 
-		public PurpleWhiteboardUiOps(IntPtr refernece)
+		public PurpleWhiteboardUiOps(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleWhiteboardUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleWhiteboardUiOps));
 		}
 
+		/*
+		 * Argument Name: create
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr create
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: destroy
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr destroy
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: set_dimensions
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr set_dimensions
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: set_brush
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr set_brush
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: draw_point
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr draw_point
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: draw_line
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr draw_line
 		{
 			get
@@ -140,6 +175,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: clear
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr clear
 		{
 			get
@@ -155,6 +195,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved1
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved1
 		{
 			get
@@ -170,6 +215,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved2
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved2
 		{
 			get
@@ -185,6 +235,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved3
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved3
 		{
 			get
@@ -200,6 +255,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved4
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved4
 		{
 			get
@@ -219,62 +279,62 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleWhiteboardUiOps
+	public class _PurpleWhiteboardUiOps
 	{
 		/*
 		 * void (*create)(PurpleWhiteboard * wb)
 		 */
-		IntPtr create;
+		public IntPtr create;
 
 		/*
 		 * void (*destroy)(PurpleWhiteboard * wb)
 		 */
-		IntPtr destroy;
+		public IntPtr destroy;
 
 		/*
 		 * void (*set_dimensions)(PurpleWhiteboard * wb, int width, int height)
 		 */
-		IntPtr set_dimensions;
+		public IntPtr set_dimensions;
 
 		/*
 		 * void (*set_brush)(PurpleWhiteboard * wb, int size, int color)
 		 */
-		IntPtr set_brush;
+		public IntPtr set_brush;
 
 		/*
 		 * void (*draw_point)(PurpleWhiteboard * wb, int x, int y, int color, int size)
 		 */
-		IntPtr draw_point;
+		public IntPtr draw_point;
 
 		/*
 		 * void (*draw_line)(PurpleWhiteboard * wb, int x1, int y1, int x2, int y2, int color, int size)
 		 */
-		IntPtr draw_line;
+		public IntPtr draw_line;
 
 		/*
 		 * void (*clear)(PurpleWhiteboard * wb)
 		 */
-		IntPtr clear;
+		public IntPtr clear;
 
 		/*
 		 * void (*_purple_reserved1)()
 		 */
-		IntPtr _purple_reserved1;
+		public IntPtr _purple_reserved1;
 
 		/*
 		 * void (*_purple_reserved2)()
 		 */
-		IntPtr _purple_reserved2;
+		public IntPtr _purple_reserved2;
 
 		/*
 		 * void (*_purple_reserved3)()
 		 */
-		IntPtr _purple_reserved3;
+		public IntPtr _purple_reserved3;
 
 		/*
 		 * void (*_purple_reserved4)()
 		 */
-		IntPtr _purple_reserved4;
+		public IntPtr _purple_reserved4;
 
 	}
 

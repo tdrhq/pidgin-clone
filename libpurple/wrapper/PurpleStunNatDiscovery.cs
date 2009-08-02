@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: stun.h
+	 * Structure: PurpleStunNatDiscovery
+	 */
 	public class PurpleStunNatDiscovery : UnmanagedWrapper<_PurpleStunNatDiscovery>
 	{
 		public PurpleStunNatDiscovery()
 		{
 		}
 
-		public PurpleStunNatDiscovery(IntPtr refernece)
+		public PurpleStunNatDiscovery(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleStunNatDiscovery)Marshal.PtrToStructure(this.Reference, typeof(_PurpleStunNatDiscovery));
 		}
 
+		/*
+		 * Argument Name: status
+		 * Argument Type: PurpleStunStatus
+		 * Argument Category: KnownEnum
+		 */
 		public Stun.PurpleStunStatus status
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: type
+		 * Argument Type: PurpleStunNatType
+		 * Argument Category: KnownEnum
+		 */
 		public Stun.PurpleStunNatType type
 		{
 			get
@@ -80,21 +95,31 @@ namespace PurpleWrapper
 			}
 		}
 
-		public char publicip[16]
+		/*
+		 * Argument Name: publicip
+		 * Argument Type: char
+		 * Argument Category: Native
+		 */
+		public string[] publicip
 		{
 			get
 			{
-				return this.Data.publicip[16];
+				return this.Data.publicip;
 			}
 			set
 			{
 				if (this.Reference != IntPtr.Zero)
 					this.Reference = IntPtr.Zero;
 
-				this.Data.publicip[16] = value;
+				this.Data.publicip = value;
 			}
 		}
 
+		/*
+		 * Argument Name: servername
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string servername
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: lookup_time
+		 * Argument Type: time_t
+		 * Argument Category: DateTime
+		 */
 		public DateTime lookup_time
 		{
 			get
@@ -129,32 +159,32 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleStunNatDiscovery
+	public class _PurpleStunNatDiscovery
 	{
 		/*
 		 * PurpleStunStatus status
 		 */
-		/* Cannot generate struct for type KnownEnum */
+		public Stun.PurpleStunStatus status;
 
 		/*
 		 * PurpleStunNatType type
 		 */
-		/* Cannot generate struct for type KnownEnum */
+		public Stun.PurpleStunNatType type;
 
 		/*
-		 * char publicip[16]
+		 * char publicip
 		 */
-		IntPtr publicip[16];
+		public string[] publicip;
 
 		/*
 		 * char * servername
 		 */
-		IntPtr servername;
+		public string servername;
 
 		/*
 		 * time_t lookup_time
 		 */
-		ulong lookup_time;
+		public ulong lookup_time;
 
 	}
 

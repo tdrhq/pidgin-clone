@@ -51,14 +51,14 @@ namespace Scripts
         public string GetCSharpPrivateFunction()
         {
             String str = "";
-            str += this.CSharpPrivateType + " " + this.SafeName + "(";
+            str += this.CSharpInternalAPIType + " " + this.SafeName + "(";
 
             for (int i = 0; i < this.Arguments.Count; i++)
             {
                 if (i != 0)
                     str += ", ";
 
-                str += this.Arguments[i].GetCSharpPrivateFunction(i);
+                str += this.Arguments[i].GetCSharpPrivateFunction();
             }
 
             str += ")";
@@ -92,14 +92,14 @@ namespace Scripts
 
 
 
-            str += this.CSharpPublicType + " " + finalName + "(";
+            str += this.GetCSharpExternalAPIType(this.Name, 0) + " " + finalName + "(";
 
             for (int i = 0; i < this.Arguments.Count; i++)
             {
                 if (i != 0)
                     str += ", ";
 
-                str += this.Arguments[i].GetCSharpPublicFunction(i);
+                str += this.Arguments[i].GetCSharpPublicFunction();
             }
 
             str += ")";

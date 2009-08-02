@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: log.h
+	 * Structure: PurpleLogSet
+	 */
 	public class PurpleLogSet : UnmanagedWrapper<_PurpleLogSet>
 	{
 		public PurpleLogSet()
 		{
 		}
 
-		public PurpleLogSet(IntPtr refernece)
+		public PurpleLogSet(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleLogSet)Marshal.PtrToStructure(this.Reference, typeof(_PurpleLogSet));
 		}
 
+		/*
+		 * Argument Name: type
+		 * Argument Type: PurpleLogType
+		 * Argument Category: KnownEnum
+		 */
 		public Log.PurpleLogType type
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: name
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string name
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: account
+		 * Argument Type: PurpleAccount *
+		 * Argument Category: PointerToKnownStruct
+		 */
 		public PurpleAccount account
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: buddy
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
 		public bool buddy
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: normalized_name
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string normalized_name
 		{
 			get
@@ -129,32 +159,32 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleLogSet
+	public class _PurpleLogSet
 	{
 		/*
 		 * PurpleLogType type
 		 */
-		/* Cannot generate struct for type KnownEnum */
+		public Log.PurpleLogType type;
 
 		/*
 		 * char * name
 		 */
-		IntPtr name;
+		public string name;
 
 		/*
 		 * PurpleAccount * account
 		 */
-		/* Cannot generate struct for type PointerToKnownStruct */
+		public IntPtr account;
 
 		/*
 		 * gboolean buddy
 		 */
-		IntPtr buddy;
+		public bool buddy;
 
 		/*
 		 * char * normalized_name
 		 */
-		IntPtr normalized_name;
+		public string normalized_name;
 
 	}
 

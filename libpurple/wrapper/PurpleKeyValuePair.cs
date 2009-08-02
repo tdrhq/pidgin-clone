@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: util.h
+	 * Structure: PurpleKeyValuePair
+	 */
 	public class PurpleKeyValuePair : UnmanagedWrapper<_PurpleKeyValuePair>
 	{
 		public PurpleKeyValuePair()
 		{
 		}
 
-		public PurpleKeyValuePair(IntPtr refernece)
+		public PurpleKeyValuePair(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleKeyValuePair)Marshal.PtrToStructure(this.Reference, typeof(_PurpleKeyValuePair));
 		}
 
+		/*
+		 * Argument Name: key
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
 		public string key
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: value
+		 * Argument Type: void *
+		 * Argument Category: VoidPointer
+		 */
 		public IntPtr value
 		{
 			get
@@ -84,17 +99,17 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleKeyValuePair
+	public class _PurpleKeyValuePair
 	{
 		/*
 		 * gchar * key
 		 */
-		IntPtr key;
+		public string key;
 
 		/*
 		 * void * value
 		 */
-		IntPtr value;
+		public IntPtr value;
 
 	}
 

@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: cipher.h
+	 * Structure: PurpleCipherOps
+	 */
 	public class PurpleCipherOps : UnmanagedWrapper<_PurpleCipherOps>
 	{
 		public PurpleCipherOps()
 		{
 		}
 
-		public PurpleCipherOps(IntPtr refernece)
+		public PurpleCipherOps(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleCipherOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleCipherOps));
 		}
 
+		/*
+		 * Argument Name: set_option
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr set_option
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: get_option
+		 * Argument Type: void *
+		 * Argument Category: VoidPointer
+		 */
 		public IntPtr get_option
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: init
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr init
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: reset
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr reset
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: uninit
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr uninit
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: set_iv
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr set_iv
 		{
 			get
@@ -140,6 +175,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: append
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr append
 		{
 			get
@@ -155,6 +195,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: digest
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
 		public IntPtr digest
 		{
 			get
@@ -170,6 +215,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: encrypt
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public IntPtr encrypt
 		{
 			get
@@ -185,6 +235,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: decrypt
+		 * Argument Type: int
+		 * Argument Category: Native
+		 */
 		public IntPtr decrypt
 		{
 			get
@@ -200,6 +255,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: set_salt
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr set_salt
 		{
 			get
@@ -215,6 +275,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: get_salt_size
+		 * Argument Type: size_t
+		 * Argument Category: Native
+		 */
 		public IntPtr get_salt_size
 		{
 			get
@@ -230,6 +295,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: set_key
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr set_key
 		{
 			get
@@ -245,6 +315,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: get_key_size
+		 * Argument Type: size_t
+		 * Argument Category: Native
+		 */
 		public IntPtr get_key_size
 		{
 			get
@@ -260,6 +335,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: set_batch_mode
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr set_batch_mode
 		{
 			get
@@ -275,6 +355,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: get_batch_mode
+		 * Argument Type: PurpleCipherBatchMode
+		 * Argument Category: KnownEnum
+		 */
 		public IntPtr get_batch_mode
 		{
 			get
@@ -290,6 +375,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: get_block_size
+		 * Argument Type: size_t
+		 * Argument Category: Native
+		 */
 		public IntPtr get_block_size
 		{
 			get
@@ -305,6 +395,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: set_key_with_len
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr set_key_with_len
 		{
 			get
@@ -324,97 +419,97 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleCipherOps
+	public class _PurpleCipherOps
 	{
 		/*
 		 * void (*set_option)(PurpleCipherContext * context, gchar * name, void * value)
 		 */
-		IntPtr set_option;
+		public IntPtr set_option;
 
 		/*
 		 * void * (*get_option)(PurpleCipherContext * context, gchar * name)
 		 */
-		IntPtr get_option;
+		public IntPtr get_option;
 
 		/*
 		 * void (*init)(PurpleCipherContext * context, void * extra)
 		 */
-		IntPtr init;
+		public IntPtr init;
 
 		/*
 		 * void (*reset)(PurpleCipherContext * context, void * extra)
 		 */
-		IntPtr reset;
+		public IntPtr reset;
 
 		/*
 		 * void (*uninit)(PurpleCipherContext * context)
 		 */
-		IntPtr uninit;
+		public IntPtr uninit;
 
 		/*
 		 * void (*set_iv)(PurpleCipherContext * context, guchar * iv, size_t len)
 		 */
-		IntPtr set_iv;
+		public IntPtr set_iv;
 
 		/*
 		 * void (*append)(PurpleCipherContext * context, guchar * data, size_t len)
 		 */
-		IntPtr append;
+		public IntPtr append;
 
 		/*
-		 * gboolean (*digest)(PurpleCipherContext * context, size_t in_len, guchar [], size_t * out_len)
+		 * gboolean (*digest)(PurpleCipherContext * context, size_t in_len, guchar digest[], size_t * out_len)
 		 */
-		IntPtr digest;
+		public IntPtr digest;
 
 		/*
-		 * int (*encrypt)(PurpleCipherContext * context, guchar [], size_t len, guchar [], size_t * outlen)
+		 * int (*encrypt)(PurpleCipherContext * context, guchar data[], size_t len, guchar output[], size_t * outlen)
 		 */
-		IntPtr encrypt;
+		public IntPtr encrypt;
 
 		/*
-		 * int (*decrypt)(PurpleCipherContext * context, guchar [], size_t len, guchar [], size_t * outlen)
+		 * int (*decrypt)(PurpleCipherContext * context, guchar data[], size_t len, guchar output[], size_t * outlen)
 		 */
-		IntPtr decrypt;
+		public IntPtr decrypt;
 
 		/*
 		 * void (*set_salt)(PurpleCipherContext * context, guchar * salt)
 		 */
-		IntPtr set_salt;
+		public IntPtr set_salt;
 
 		/*
 		 * size_t (*get_salt_size)(PurpleCipherContext * context)
 		 */
-		IntPtr get_salt_size;
+		public IntPtr get_salt_size;
 
 		/*
 		 * void (*set_key)(PurpleCipherContext * context, guchar * key)
 		 */
-		IntPtr set_key;
+		public IntPtr set_key;
 
 		/*
 		 * size_t (*get_key_size)(PurpleCipherContext * context)
 		 */
-		IntPtr get_key_size;
+		public IntPtr get_key_size;
 
 		/*
 		 * void (*set_batch_mode)(PurpleCipherContext * context, PurpleCipherBatchMode mode)
 		 */
-		IntPtr set_batch_mode;
+		public IntPtr set_batch_mode;
 
 		/*
 		 * PurpleCipherBatchMode (*get_batch_mode)(PurpleCipherContext * context)
 		 */
-		IntPtr get_batch_mode;
+		public IntPtr get_batch_mode;
 
 		/*
 		 * size_t (*get_block_size)(PurpleCipherContext * context)
 		 */
-		IntPtr get_block_size;
+		public IntPtr get_block_size;
 
 		/*
 		 * void (*set_key_with_len)(PurpleCipherContext * context, guchar * key, size_t len)
 		 */
-		IntPtr set_key_with_len;
+		public IntPtr set_key_with_len;
 
 	}
 

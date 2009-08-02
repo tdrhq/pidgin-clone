@@ -9,6 +9,7 @@ namespace Scripts
     {
         private string type;
         private bool isArray;
+        private int arraySize;
 
         public enum TypeCategory
         {
@@ -25,7 +26,10 @@ namespace Scripts
             KnownFunctionPointer,
             KnownFunction,
             KnownStruct,
-            KnownArgument
+            KnownArgument,
+            PointerToGList,
+            PointerToGHashTable,
+            PointerToGSList
         };
 
 
@@ -33,6 +37,26 @@ namespace Scripts
             : base(file, name)
         {
             this.Type = type;
+
+            if (name.Contains("["))
+            {
+                this.ArraySize = int.Parse(name.Substring(name.IndexOf("[") + 1, name.IndexOf("]") - name.IndexOf("[") - 1));
+                this.IsArray = true;
+                this.Name = name.Substring(0, name.IndexOf("["));
+            }
+
+            if (name.EndsWith("[]"))
+            {
+                name = name.Substring(0, name.Length - 2);
+                this.IsArray = true;
+                this.ArraySize = -1;
+            }
+        }
+
+        public int ArraySize
+        {
+            get { return arraySize; }
+            set { arraySize = value; }
         }
 
         public String Type
@@ -145,6 +169,12 @@ namespace Scripts
                     return TypeCategory.GObjectObject;
                 else if (this.Type == "struct" || this.Type == "union")
                     return TypeCategory.InnerStruct;
+                else if (this.Type == "GList *")
+                    return TypeCategory.PointerToGList;
+                else if (this.Type == "GHashTable *")
+                    return TypeCategory.PointerToGHashTable;
+                else if (this.Type == "GSList *")
+                    return TypeCategory.PointerToGSList;
                 else
                 {
                     CNamed resolvedType = this.ResolvedType;
@@ -185,7 +215,7 @@ namespace Scripts
             }
         }
 
-        public String CSharpPrivateType
+        public String CSharpInternalAPIType
         {
             get
             {
@@ -201,6 +231,10 @@ namespace Scripts
                     case TypeCategory.PointerToUnknownStruct:
                     case TypeCategory.VoidPointer:
                     case TypeCategory.GObjectObject:
+                    case TypeCategory.KnownFunctionPointer:
+                    case TypeCategory.PointerToGSList:
+                    case TypeCategory.PointerToGList:
+                    case TypeCategory.PointerToGHashTable:
                         str = "IntPtr";
                         break;
 
@@ -213,7 +247,7 @@ namespace Scripts
                         break;
 
                     case TypeCategory.InnerStruct:
-                        throw new UnableToCreateWrapperException("The struct contains an inner-struct or innter-union and cannot be automatically wrapped.");
+                        throw new UnableToCreateWrapperException("The struct contains an inner-struct or inner-union and cannot be automatically wrapped.");
                         break;
 
                     case TypeCategory.KnownStruct:
@@ -228,43 +262,10 @@ namespace Scripts
                         break;
 
                     default:
-                        throw new UnableToCreateWrapperException("The type could not be resolved (" + this.ToString() + ").");
+                        str = "/* Unresolved: [Category: " + this.Category.ToString() + "], [Name: " + this.ToString() + "] */ IntPtr";
+                        //throw new UnableToCreateWrapperException("The type could not be resolved (" + this.ToString() + ").");
                         break;
                 }
-
-                /*
-                if (this.IsTypeNative)
-                    str = this.NativeType;
-                else if (this.IsTypePointer)
-                    str = "IntPtr";
-                else if (this.IsTypeVoid)
-                    str = "void";
-                else if (this.IsTypeTime)
-                    str = "ulong";
-                else if (this.Type == "GObject" || this.Type == "GObjectClass" || this.Type == "GType" || this.Type == "GCallback" || this.Type == "GSourceFunc")
-                    str = "IntPtr";  // TODO: Find out if this is the correct typecast (or even if this works)...
-                else if (this.Type == "struct" || this.Type == "union")
-                    throw new UnableToCreateWrapperException("The struct contains an inner-struct or innter-union and cannot be automatically wrapped.");
-                else
-                {
-                    CNamed resolvedType = CFile.LookUpName(this.Type);
-
-                    if (resolvedType is CFunction)
-                    {
-                        if (((CFunction)resolvedType).IsFunctionPointer)
-                            str = "IntPtr";
-                        else
-                            throw new UnableToCreateWrapperException("The struct contains an object that resolves to a function that is not a function pointer (" + this.ToString() + ").");
-                    }
-                    else if (resolvedType is CEnum)
-                    {
-                        CEnum resolvedEnum = (CEnum)resolvedType;
-                        str = resolvedEnum.File.FileNameAsClassName + "." + resolvedEnum.Name;
-                    }
-                    else
-                        throw new UnableToCreateWrapperException("The type could not be resolved (" + this.ToString() + ").");
-                }
-                */
 
                 if (this.IsArray)
                     str += "[]";
@@ -273,49 +274,132 @@ namespace Scripts
             }
         }
 
-        public String CSharpPublicType
+        private enum APIType { External, Internal };
+
+        private string GetCSharpAPIType(APIType apiType, string functionName, int argumentNumber)
+        {
+            if (this.Category == TypeCategory.PointerToGSList ||
+                this.Category == TypeCategory.PointerToGList ||
+                this.Category == TypeCategory.PointerToGHashTable)
+            {
+                string returnStructureInnerValueType = PurpleTranslations.GetListElementType(functionName, argumentNumber);
+
+                // TODO: ManagedWrappers
+
+                if (returnStructureInnerValueType == null)
+                    throw new UnableToCreateWrapperException("Unknown inner-type of argument " + argumentNumber + " of " + functionName);
+
+                if (this.Category == TypeCategory.PointerToGSList)
+                {
+                    if (apiType == APIType.External)
+                        return "IList<" + returnStructureInnerValueType + ">";
+                    else
+                        return "GSList<" + returnStructureInnerValueType + ">";
+                }
+                else if (this.Category == TypeCategory.PointerToGList)
+                {
+                    if (apiType == APIType.External)
+                        return "IList<" + returnStructureInnerValueType + ">";
+                    else
+                        return "GSList<" + returnStructureInnerValueType + ">";
+                }
+                else
+                {
+                    if (apiType == APIType.External)
+                        return "IDictionary<string, " + returnStructureInnerValueType + ">";
+                    else
+                        return "GHashTable<" + returnStructureInnerValueType + ">";
+                }
+            }
+            else
+            {
+                if (apiType == APIType.External)
+                    return this.CSharpExternalAPIType;
+                else
+                    return this.CSharpInternalAPIType;
+            }
+        }
+
+        public string GetCSharpExternalAPIType(string functionName, int argumentNumber)
+        {
+            return GetCSharpAPIType(APIType.External, functionName, argumentNumber);
+        }
+
+
+        public String CSharpExternalAPIType
         {
             get
             {
                 String str;
 
-                if (this.IsTypeNative)
-                    str = this.NativeType;
-                else if (this.Type == "void *" || this.Type == "gpointer" || this.Type == "gconstpointer")
-                    str = "IntPtr";
-                else if (this.IsTypeTime)
-                    str = "DateTime";
-                else if (this.IsTypeVoid)
-                    str = "void";
-                else if (this.Type == "GObject" || this.Type == "GObjectClass" || this.Type == "GType" || this.Type == "GCallback" || this.Type == "GSourceFunc")
-                    str = "/* libgobject */ IntPtr";  // TODO: Find out if this is the correct typecast (or even if this works)...
-                else if (this.Type == "struct" || this.Type == "union")
-                    throw new UnableToCreateWrapperException("The struct contains an inner-struct or innter-union and cannot be automatically wrapped.");
-                else
+                switch (this.Category)
                 {
-                    CNamed resolvedType = CFile.LookUpName(this.RawType);
+                    case TypeCategory.Native:
+                        str = this.NativeType;
+                        break;
 
-                    if (resolvedType is CFunction)
-                    {
-                        if (((CFunction)resolvedType).IsFunctionPointer)
-                            throw new UnableToCreateWrapperException("The struct contains an object that resolves to a function pointer (" + this.ToString() + ").");
-                        else
-                            throw new UnableToCreateWrapperException("The struct contains an object that resolves to a function that is not a function pointer (" + this.ToString() + ").");
-                    }
-                    else if (resolvedType is CEnum)
-                    {
-                        CEnum resolvedEnum = (CEnum)resolvedType;
-                        str = resolvedEnum.File.FileNameAsClassName + "." + resolvedEnum.Name;
-                    }
-                    else if (resolvedType is CStruct)
-                    {
-                        if (this.IsTypePointer)
-                            str = this.RawType;
-                        else
-                            throw new UnableToCreateWrapperException("The type resolved to a known struct but not a pointer to that struct (" + this.ToString() + ").");
-                    }
-                    else
-                        throw new UnableToCreateWrapperException("The type could not be resolved (" + this.ToString() + ").");
+                    case TypeCategory.VoidPointer:
+                        str = "IntPtr";
+                        break;
+
+                    case TypeCategory.Void:
+                        str = "void";
+                        break;
+
+                    case TypeCategory.DateTime:
+                        str = "DateTime";
+                        break;
+
+                    case TypeCategory.GObjectObject:
+                        str = "/* libobject */ IntPtr";
+                        break;
+
+                    case TypeCategory.InnerStruct:
+                        throw new UnableToCreateWrapperException("The struct contains an inner-struct or inner-union and cannot be automatically wrapped.");
+                        break;
+
+                    case TypeCategory.KnownStruct:
+                        throw new UnableToCreateWrapperException("The struct contains an object that resolves to a function that is not a function pointer (" + this.ToString() + ").");
+                        break;
+
+                    case TypeCategory.PointerToKnownStruct:
+                        str = this.ResolvedType.SafeName;
+                        break;
+
+                    case TypeCategory.PointerToUnknownStruct:
+                        str = "/* Resolved as PointerToUnknownStruct to " + this.RawType + " */ IntPtr";
+                        break;
+
+                    case TypeCategory.KnownEnum:
+                        {
+                            CEnum resolvedEnum = (CEnum)this.ResolvedType;
+                            str = resolvedEnum.File.FileNameAsClassName + "." + resolvedEnum.SafeName;
+                        }
+                        break;
+
+                    case TypeCategory.KnownFunctionPointer:
+                        {
+                            CFunction resolvedFunctionPointer = (CFunction)this.ResolvedType;
+                            str = resolvedFunctionPointer.File.FileNameAsClassName + "." + resolvedFunctionPointer.SafeName;
+                        }
+                        break;
+
+                    case TypeCategory.PointerToGSList:
+                        throw new UnableToCreateWrapperException("Unable to provide a type for GSList as no function information was provided in code.");
+                        break;
+
+                    case TypeCategory.PointerToGList:
+                        throw new UnableToCreateWrapperException("Unable to provide a type for GList as no function information was provided in code.");
+                        break;
+
+                    case TypeCategory.PointerToGHashTable:
+                        throw new UnableToCreateWrapperException("Unable to provide a type for HashTable as no function information was provided in code.");
+                        break;
+
+                    default:
+                        str = "/* Unresolved: [Category: " + this.Category.ToString() + "], [Name: " + this.ToString() + "] */ IntPtr";
+                        //throw new UnableToCreateWrapperException("The type could not be resolved (" + this.ToString() + ").");
+                        break;
                 }
 
                 if (this.IsArray)
@@ -329,6 +413,9 @@ namespace Scripts
         {
             get
             {
+                if (this.Type == "char" && this.IsArray)
+                    return "string";
+
                 switch (this.Type)
                 {
                     case "gboolean":

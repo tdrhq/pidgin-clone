@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: sound.h
+	 */
 	public class Sound
 	{
 		public enum PurpleSoundEventID
@@ -56,6 +60,13 @@ namespace PurpleWrapper
 			PURPLE_NUM_SOUNDS
 		};
 
+
+		/*
+		 * Function Name: purple_sound_play_file
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_sound_play_file(char * filename, PurpleAccount * account)
 		 */
@@ -68,6 +79,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_sound_play_event
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_sound_play_event(PurpleSoundEventID event, PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
@@ -75,10 +92,16 @@ namespace PurpleWrapper
 
 		public static void PlayEvent(Sound.PurpleSoundEventID event_, PurpleAccount account)
 		{
-			/* Unable to process event_, a KnownEnum. */
+			/* Unable to process event, a KnownEnum. */
 			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_sound_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_sound_set_ui_ops(PurpleSoundUiOps * ops)
 		 */
@@ -91,6 +114,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_sound_get_ui_ops
+		 * Function Type: PurpleSoundUiOps *
+		 * Function RawType: PurpleSoundUiOps
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleSoundUiOps * purple_sound_get_ui_ops()
 		 */
 		[DllImport("libpurple.dll")]
@@ -101,6 +130,12 @@ namespace PurpleWrapper
 			return new PurpleSoundUiOps(purple_sound_get_ui_ops());
 		}
 
+		/*
+		 * Function Name: purple_sound_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_sound_init()
 		 */
@@ -113,6 +148,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_sound_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_sound_uninit()
 		 */
 		[DllImport("libpurple.dll")]
@@ -123,6 +164,12 @@ namespace PurpleWrapper
 			purple_sound_uninit();
 		}
 
+		/*
+		 * Function Name: purple_sounds_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_sounds_get_handle()
 		 */

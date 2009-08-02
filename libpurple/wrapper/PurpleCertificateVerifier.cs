@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: certificate.h
+	 * Structure: PurpleCertificateVerifier
+	 */
 	public class PurpleCertificateVerifier : UnmanagedWrapper<_PurpleCertificateVerifier>
 	{
 		public PurpleCertificateVerifier()
 		{
 		}
 
-		public PurpleCertificateVerifier(IntPtr refernece)
+		public PurpleCertificateVerifier(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleCertificateVerifier)Marshal.PtrToStructure(this.Reference, typeof(_PurpleCertificateVerifier));
 		}
 
+		/*
+		 * Argument Name: scheme_name
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
 		public string scheme_name
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: name
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
 		public string name
 		{
 			get
@@ -80,7 +95,12 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void (* start_verification)(PurpleCertificateVerificationRequest *vrq)
+		/*
+		 * Argument Name: start_verification
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr start_verification
 		{
 			get
 			{
@@ -95,7 +115,12 @@ namespace PurpleWrapper
 			}
 		}
 
-		public void (* destroy_request)(PurpleCertificateVerificationRequest *vrq)
+		/*
+		 * Argument Name: destroy_request
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
+		public IntPtr destroy_request
 		{
 			get
 			{
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved1
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved1
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved2
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved2
 		{
 			get
@@ -140,6 +175,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved3
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved3
 		{
 			get
@@ -155,6 +195,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved4
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved4
 		{
 			get
@@ -174,47 +219,47 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleCertificateVerifier
+	public class _PurpleCertificateVerifier
 	{
 		/*
 		 * gchar * scheme_name
 		 */
-		IntPtr scheme_name;
+		public string scheme_name;
 
 		/*
 		 * gchar * name
 		 */
-		IntPtr name;
+		public string name;
 
 		/*
-		 * void (* start_verification)(PurpleCertificateVerificationRequest *vrq)
+		 * void (*start_verification)(PurpleCertificateVerificationRequest * vrq)
 		 */
-		/* Cannot generate struct for type Void */
+		public IntPtr start_verification;
 
 		/*
-		 * void (* destroy_request)(PurpleCertificateVerificationRequest *vrq)
+		 * void (*destroy_request)(PurpleCertificateVerificationRequest * vrq)
 		 */
-		/* Cannot generate struct for type Void */
+		public IntPtr destroy_request;
 
 		/*
 		 * void (*_purple_reserved1)()
 		 */
-		IntPtr _purple_reserved1;
+		public IntPtr _purple_reserved1;
 
 		/*
 		 * void (*_purple_reserved2)()
 		 */
-		IntPtr _purple_reserved2;
+		public IntPtr _purple_reserved2;
 
 		/*
 		 * void (*_purple_reserved3)()
 		 */
-		IntPtr _purple_reserved3;
+		public IntPtr _purple_reserved3;
 
 		/*
 		 * void (*_purple_reserved4)()
 		 */
-		IntPtr _purple_reserved4;
+		public IntPtr _purple_reserved4;
 
 	}
 

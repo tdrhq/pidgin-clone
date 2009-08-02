@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: pounce.h
+	 */
 	public class Pounce
 	{
 		public enum PurplePounceEvent
@@ -61,6 +65,14 @@ namespace PurpleWrapper
 			PURPLE_POUNCE_OPTION_AWAY = 0x01
 		};
 
+		public delegate void PurplePounceCb(IntPtr _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1, IntPtr _PurpleWrapper_arg2);
+
+		/*
+		 * Function Name: purple_pounce_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_pounce_destroy(PurplePounce * pounce)
 		 */
@@ -73,6 +85,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounce_destroy_all_by_account
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_pounce_destroy_all_by_account(PurpleAccount * account)
 		 */
 		[DllImport("libpurple.dll")]
@@ -83,6 +101,12 @@ namespace PurpleWrapper
 			purple_pounce_destroy_all_by_account(account.Reference);
 		}
 
+		/*
+		 * Function Name: purple_pounce_set_events
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_pounce_set_events(PurplePounce * pounce, PurplePounceEvent events)
 		 */
@@ -96,6 +120,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounce_set_options
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_pounce_set_options(PurplePounce * pounce, PurplePounceOption options)
 		 */
 		[DllImport("libpurple.dll")]
@@ -108,6 +138,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounce_set_pouncer
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_pounce_set_pouncer(PurplePounce * pounce, PurpleAccount * pouncer)
 		 */
 		[DllImport("libpurple.dll")]
@@ -118,6 +154,12 @@ namespace PurpleWrapper
 			purple_pounce_set_pouncer(pounce.Reference, pouncer.Reference);
 		}
 
+		/*
+		 * Function Name: purple_pounce_set_pouncee
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_pounce_set_pouncee(PurplePounce * pounce, char * pouncee)
 		 */
@@ -130,6 +172,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounce_set_save
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_pounce_set_save(PurplePounce * pounce, gboolean save)
 		 */
 		[DllImport("libpurple.dll")]
@@ -140,6 +188,12 @@ namespace PurpleWrapper
 			purple_pounce_set_save(pounce.Reference, save);
 		}
 
+		/*
+		 * Function Name: purple_pounce_action_register
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_pounce_action_register(PurplePounce * pounce, char * name)
 		 */
@@ -152,6 +206,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounce_set_data
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_pounce_set_data(PurplePounce * pounce, void * data)
 		 */
 		[DllImport("libpurple.dll")]
@@ -163,6 +223,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounce_get_events
+		 * Function Type: PurplePounceEvent
+		 * Function RawType: PurplePounceEvent
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurplePounceEvent purple_pounce_get_events(PurplePounce * pounce)
 		 */
 		[DllImport("libpurple.dll")]
@@ -170,10 +236,16 @@ namespace PurpleWrapper
 
 		public static Pounce.PurplePounceEvent GetEvents(PurplePounce pounce)
 		{
-			/* Unable to process purple_pounce_get_events, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_pounce_get_events, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_pounce_get_options
+		 * Function Type: PurplePounceOption
+		 * Function RawType: PurplePounceOption
+		 * Function Category: KnownEnum
+		 */
 		/*
 		 * PurplePounceOption purple_pounce_get_options(PurplePounce * pounce)
 		 */
@@ -182,10 +254,16 @@ namespace PurpleWrapper
 
 		public static Pounce.PurplePounceOption GetOptions(PurplePounce pounce)
 		{
-			/* Unable to process purple_pounce_get_options, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_pounce_get_options, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_pounce_get_pouncer
+		 * Function Type: PurpleAccount *
+		 * Function RawType: PurpleAccount
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleAccount * purple_pounce_get_pouncer(PurplePounce * pounce)
 		 */
@@ -198,6 +276,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounce_get_pouncee
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_pounce_get_pouncee(PurplePounce * pounce)
 		 */
 		[DllImport("libpurple.dll")]
@@ -208,6 +292,12 @@ namespace PurpleWrapper
 			return purple_pounce_get_pouncee(pounce.Reference);
 		}
 
+		/*
+		 * Function Name: purple_pounce_get_save
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_pounce_get_save(PurplePounce * pounce)
 		 */
@@ -220,6 +310,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounce_get_data
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
+		/*
 		 * void * purple_pounce_get_data(PurplePounce * pounce)
 		 */
 		[DllImport("libpurple.dll")]
@@ -230,6 +326,12 @@ namespace PurpleWrapper
 			return purple_pounce_get_data(pounce.Reference);
 		}
 
+		/*
+		 * Function Name: purple_pounces_load
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_pounces_load()
 		 */
@@ -242,6 +344,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounces_unregister_handler
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_pounces_unregister_handler(char * ui)
 		 */
 		[DllImport("libpurple.dll")]
@@ -253,19 +361,37 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounces_get_all
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_pounces_get_all()
 		 * 
 		 * Could not generate a wrapper for purple_pounces_get_all in file "pounce.h".
-		 * Message: The type could not be resolved (GList * purple_pounces_get_all()).
+		 * Message: Unknown inner-type of argument 0 of purple_pounces_get_all
 		 */
 
+		/*
+		 * Function Name: purple_pounces_get_all_for_ui
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_pounces_get_all_for_ui(char * ui)
 		 * 
 		 * Could not generate a wrapper for purple_pounces_get_all_for_ui in file "pounce.h".
-		 * Message: The type could not be resolved (GList * purple_pounces_get_all_for_ui(char * ui)).
+		 * Message: Unknown inner-type of argument 0 of purple_pounces_get_all_for_ui
 		 */
 
+		/*
+		 * Function Name: purple_pounces_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_pounces_get_handle()
 		 */
@@ -278,6 +404,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_pounces_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_pounces_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -288,6 +420,12 @@ namespace PurpleWrapper
 			purple_pounces_init();
 		}
 
+		/*
+		 * Function Name: purple_pounces_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_pounces_uninit()
 		 */

@@ -8,15 +8,23 @@ namespace Scripts
         private bool isEllipsis = false;
         private bool isFunctionPointer = false;
         public List<CArgument> functionPointerArguments = new List<CArgument>();
+        int argumentNumber = -1;
 
         public CArgument(CFile file)
             : base(file, "", "")
         {
         }
 
-        public CArgument(CFile file, String type, String name)
+        public CArgument(CFile file, String type, String name, int argumentNumber)
             : base(file, type, name)
         {
+            this.ArgumentNumber = argumentNumber;
+        }
+
+        public int ArgumentNumber
+        {
+            get { return argumentNumber; }
+            set { argumentNumber = value; }
         }
 
         public bool IsEllipsis
@@ -64,29 +72,38 @@ namespace Scripts
                 return this.Type + " " + this.Name;
         }
 
-        public string GetCSharpPrivateFunction()
+        public string GetArgumentSafeName()
         {
-            return GetCSharpFunction(CSharpFunctionType.Private, 0, false);
+            if (this.SafeName == "")
+                return "_PurpleWrapper_arg" + this.ArgumentNumber;
+            else
+                return this.SafeName;
         }
 
-        public string GetCSharpPrivateFunction(int argumentNumber)
+        public string GetCSharpPrivateFunction()
         {
-            return GetCSharpFunction(CSharpFunctionType.Private, argumentNumber, true);
+            return GetCSharpFunction(CSharpFunctionType.Private, null);
+        }
+
+        public string GetCSharpPrivateFunction(String functionName)
+        {
+            return GetCSharpFunction(CSharpFunctionType.Private, functionName);
         }
 
         public string GetCSharpPublicFunction()
         {
-            return GetCSharpFunction(CSharpFunctionType.Public, 0, false);
+            return GetCSharpFunction(CSharpFunctionType.Public, null);
         }
 
-        public string GetCSharpPublicFunction(int argumentNumber)
+        public string GetCSharpPublicFunction(String functionName)
         {
-            return GetCSharpFunction(CSharpFunctionType.Public, argumentNumber, true);
+            return GetCSharpFunction(CSharpFunctionType.Public, functionName);
         }
 
         private enum CSharpFunctionType { Public, Private };
 
-        private string GetCSharpFunction(CSharpFunctionType functionType, int argumentNumber, bool argumentNumberSupplied)
+        // NEXT: Function Name
+        private string GetCSharpFunction(CSharpFunctionType functionType, String functionName)
         {
             if (this.IsEllipsis)
                 throw new UnableToCreateWrapperException("The function argument contains the ellipsis argument and cannot be automatically wrapped.");
@@ -101,23 +118,16 @@ namespace Scripts
                     switch (functionType)
                     {
                         case CSharpFunctionType.Private:
-                            result = this.CSharpPrivateType;
+                            result = this.CSharpInternalAPIType;
                             break;
 
                         case CSharpFunctionType.Public:
-                            result = this.CSharpPublicType;
+                            result = this.CSharpExternalAPIType;
                             break;
                     }
                 }
 
-                if (this.SafeName == "")
-                {
-                    if (argumentNumberSupplied)
-                        result += " _PurpleWrapper_arg" + argumentNumber;
-                }
-                else
-                    result += " " + this.SafeName;
-
+                result += " " + this.GetArgumentSafeName();
                 return result;
             }
 

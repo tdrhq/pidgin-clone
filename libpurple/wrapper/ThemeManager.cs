@@ -38,20 +38,38 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: theme-manager.h
+	 */
 	public class ThemeManager
 	{
+		public delegate void PTFunc(IntPtr _PurpleWrapper_arg0);
+
+		/*
+		 * Function Name: purple_theme_manager_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_theme_manager_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_theme_manager_get_type();
 
-		public static /* libgobject */ IntPtr ThemeManagerGetType()
+		public static /* libobject */ IntPtr ThemeManagerGetType()
 		{
-			/* Unable to process purple_theme_manager_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_theme_manager_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_theme_manager_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_theme_manager_init()
 		 */
@@ -64,6 +82,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_manager_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_theme_manager_uninit()
 		 */
 		[DllImport("libpurple.dll")]
@@ -74,6 +98,12 @@ namespace PurpleWrapper
 			purple_theme_manager_uninit();
 		}
 
+		/*
+		 * Function Name: purple_theme_manager_refresh
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_theme_manager_refresh()
 		 */
@@ -86,6 +116,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_manager_find_theme
+		 * Function Type: PurpleTheme *
+		 * Function RawType: PurpleTheme
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleTheme * purple_theme_manager_find_theme(gchar * name, gchar * type)
 		 */
 		[DllImport("libpurple.dll")]
@@ -96,6 +132,12 @@ namespace PurpleWrapper
 			return new PurpleTheme(purple_theme_manager_find_theme(name, type));
 		}
 
+		/*
+		 * Function Name: purple_theme_manager_add_theme
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_theme_manager_add_theme(PurpleTheme * theme)
 		 */
@@ -108,6 +150,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_manager_remove_theme
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_theme_manager_remove_theme(PurpleTheme * theme)
 		 */
 		[DllImport("libpurple.dll")]
@@ -118,6 +166,12 @@ namespace PurpleWrapper
 			purple_theme_manager_remove_theme(theme.Reference);
 		}
 
+		/*
+		 * Function Name: purple_theme_manager_register_type
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_theme_manager_register_type(PurpleThemeLoader * loader)
 		 */
@@ -130,6 +184,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_manager_unregister_type
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_theme_manager_unregister_type(PurpleThemeLoader * loader)
 		 */
 		[DllImport("libpurple.dll")]
@@ -141,11 +201,22 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_theme_manager_for_each_theme(PTFunc func)
-		 * 
-		 * Could not generate a wrapper for purple_theme_manager_for_each_theme in file "theme-manager.h".
-		 * Message: The type could not be resolved (PTFunc func).
+		 * Function Name: purple_theme_manager_for_each_theme
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_theme_manager_for_each_theme(PTFunc func)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_theme_manager_for_each_theme(IntPtr func);
+
+		public static void ThemeManagerForEachTheme(ThemeManager.PTFunc func)
+		{
+			/* Unable to process func, a KnownFunctionPointer. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

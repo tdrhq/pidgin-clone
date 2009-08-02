@@ -38,8 +38,19 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: server.h
+	 */
 	public class Server
 	{
+
+		/*
+		 * Function Name: serv_send_typing
+		 * Function Type: unsigned int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * unsigned int serv_send_typing(PurpleConnection * gc, char * name, PurpleTypingState state)
 		 */
@@ -53,6 +64,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: serv_move_buddy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void serv_move_buddy(PurpleBuddy * , PurpleGroup * , PurpleGroup * )
 		 */
 		[DllImport("libpurple.dll")]
@@ -60,9 +77,15 @@ namespace PurpleWrapper
 
 		public static void ServMoveBuddy(PurpleBuddy _PurpleWrapper_arg0, PurpleGroup _PurpleWrapper_arg1, PurpleGroup _PurpleWrapper_arg2)
 		{
-			serv_move_buddy(.Reference, .Reference, .Reference);
+			serv_move_buddy(_PurpleWrapper_arg0.Reference, _PurpleWrapper_arg1.Reference, _PurpleWrapper_arg2.Reference);
 		}
 
+		/*
+		 * Function Name: serv_send_im
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * int serv_send_im(PurpleConnection * , char * , char * , PurpleMessageFlags flags)
 		 */
@@ -76,6 +99,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_get_attention_type_from_code
+		 * Function Type: PurpleAttentionType *
+		 * Function RawType: PurpleAttentionType
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleAttentionType * purple_get_attention_type_from_code(PurpleAccount * account, guint type_code)
 		 */
 		[DllImport("libpurple.dll")]
@@ -86,6 +115,12 @@ namespace PurpleWrapper
 			return new PurpleAttentionType(purple_get_attention_type_from_code(account.Reference, type_code));
 		}
 
+		/*
+		 * Function Name: serv_send_attention
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_send_attention(PurpleConnection * gc, char * who, guint type_code)
 		 */
@@ -98,6 +133,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: serv_got_attention
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void serv_got_attention(PurpleConnection * gc, char * who, guint type_code)
 		 */
 		[DllImport("libpurple.dll")]
@@ -109,6 +150,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: serv_get_info
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void serv_get_info(PurpleConnection * , char * )
 		 */
 		[DllImport("libpurple.dll")]
@@ -116,9 +163,15 @@ namespace PurpleWrapper
 
 		public static void ServGetInfo(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
-			serv_get_info(.Reference, );
+			serv_get_info(_PurpleWrapper_arg0.Reference, _PurpleWrapper_arg1);
 		}
 
+		/*
+		 * Function Name: serv_set_info
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_set_info(PurpleConnection * , char * )
 		 */
@@ -127,9 +180,15 @@ namespace PurpleWrapper
 
 		public static void ServSetInfo(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
-			serv_set_info(.Reference, );
+			serv_set_info(_PurpleWrapper_arg0.Reference, _PurpleWrapper_arg1);
 		}
 
+		/*
+		 * Function Name: serv_add_permit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_add_permit(PurpleConnection * , char * )
 		 */
@@ -138,9 +197,15 @@ namespace PurpleWrapper
 
 		public static void ServAddPermit(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
-			serv_add_permit(.Reference, );
+			serv_add_permit(_PurpleWrapper_arg0.Reference, _PurpleWrapper_arg1);
 		}
 
+		/*
+		 * Function Name: serv_add_deny
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_add_deny(PurpleConnection * , char * )
 		 */
@@ -149,9 +214,15 @@ namespace PurpleWrapper
 
 		public static void ServAddDeny(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
-			serv_add_deny(.Reference, );
+			serv_add_deny(_PurpleWrapper_arg0.Reference, _PurpleWrapper_arg1);
 		}
 
+		/*
+		 * Function Name: serv_rem_permit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_rem_permit(PurpleConnection * , char * )
 		 */
@@ -160,9 +231,15 @@ namespace PurpleWrapper
 
 		public static void ServRemPermit(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
-			serv_rem_permit(.Reference, );
+			serv_rem_permit(_PurpleWrapper_arg0.Reference, _PurpleWrapper_arg1);
 		}
 
+		/*
+		 * Function Name: serv_rem_deny
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_rem_deny(PurpleConnection * , char * )
 		 */
@@ -171,9 +248,15 @@ namespace PurpleWrapper
 
 		public static void ServRemDeny(PurpleConnection _PurpleWrapper_arg0, string _PurpleWrapper_arg1)
 		{
-			serv_rem_deny(.Reference, );
+			serv_rem_deny(_PurpleWrapper_arg0.Reference, _PurpleWrapper_arg1);
 		}
 
+		/*
+		 * Function Name: serv_set_permit_deny
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_set_permit_deny(PurpleConnection * )
 		 */
@@ -182,37 +265,88 @@ namespace PurpleWrapper
 
 		public static void ServSetPermitDeny(PurpleConnection _PurpleWrapper_arg0)
 		{
-			serv_set_permit_deny(.Reference);
+			serv_set_permit_deny(_PurpleWrapper_arg0.Reference);
 		}
 
 		/*
-		 * void serv_chat_invite(PurpleConnection * ,  , char * , char * )
-		 * 
-		 * Could not generate a wrapper for serv_chat_invite in file "server.h".
-		 * Message: The type could not be resolved ( ).
+		 * Function Name: serv_chat_invite
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void serv_chat_invite(PurpleConnection * ,  , char * , char * )
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void serv_chat_invite(IntPtr _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1, string _PurpleWrapper_arg2, string _PurpleWrapper_arg3);
 
+		public static void ServChatInvite(PurpleConnection _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1, string _PurpleWrapper_arg2, string _PurpleWrapper_arg3)
+		{
+			/* Unable to process , a Unknown. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: serv_chat_leave
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_chat_leave(PurpleConnection * ,  )
-		 * 
-		 * Could not generate a wrapper for serv_chat_leave in file "server.h".
-		 * Message: The type could not be resolved ( ).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void serv_chat_leave(IntPtr _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1);
 
+		public static void ServChatLeave(PurpleConnection _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1)
+		{
+			/* Unable to process , a Unknown. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: serv_chat_whisper
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_chat_whisper(PurpleConnection * ,  , char * , char * )
-		 * 
-		 * Could not generate a wrapper for serv_chat_whisper in file "server.h".
-		 * Message: The type could not be resolved ( ).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void serv_chat_whisper(IntPtr _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1, string _PurpleWrapper_arg2, string _PurpleWrapper_arg3);
+
+		public static void ServChatWhisper(PurpleConnection _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1, string _PurpleWrapper_arg2, string _PurpleWrapper_arg3)
+		{
+			/* Unable to process , a Unknown. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * int serv_chat_send(PurpleConnection * ,  , char * , PurpleMessageFlags flags)
-		 * 
-		 * Could not generate a wrapper for serv_chat_send in file "server.h".
-		 * Message: The type could not be resolved ( ).
+		 * Function Name: serv_chat_send
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
 		 */
+		/*
+		 * int serv_chat_send(PurpleConnection * ,  , char * , PurpleMessageFlags flags)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern int serv_chat_send(IntPtr _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1, string _PurpleWrapper_arg2, Conversation.PurpleMessageFlags flags);
 
+		public static int ServChatSend(PurpleConnection _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1, string _PurpleWrapper_arg2, Conversation.PurpleMessageFlags flags)
+		{
+			/* Unable to process , a Unknown. */
+			/* Unable to process flags, a KnownEnum. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: serv_alias_buddy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_alias_buddy(PurpleBuddy * )
 		 */
@@ -221,9 +355,15 @@ namespace PurpleWrapper
 
 		public static void ServAliasBuddy(PurpleBuddy _PurpleWrapper_arg0)
 		{
-			serv_alias_buddy(.Reference);
+			serv_alias_buddy(_PurpleWrapper_arg0.Reference);
 		}
 
+		/*
+		 * Function Name: serv_got_alias
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_got_alias(PurpleConnection * gc, char * who, char * alias)
 		 */
@@ -236,6 +376,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_serv_got_private_alias
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_serv_got_private_alias(PurpleConnection * gc, char * who, char * alias)
 		 */
 		[DllImport("libpurple.dll")]
@@ -246,6 +392,12 @@ namespace PurpleWrapper
 			purple_serv_got_private_alias(gc.Reference, who, alias);
 		}
 
+		/*
+		 * Function Name: serv_got_typing_stopped
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_got_typing_stopped(PurpleConnection * gc, char * name)
 		 */
@@ -258,26 +410,50 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: serv_join_chat
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void serv_join_chat(PurpleConnection * , GHashTable * data)
 		 * 
 		 * Could not generate a wrapper for serv_join_chat in file "server.h".
-		 * Message: The type could not be resolved (GHashTable * data).
+		 * Message: Unable to provide a type for HashTable as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: serv_reject_chat
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_reject_chat(PurpleConnection * , GHashTable * data)
 		 * 
 		 * Could not generate a wrapper for serv_reject_chat in file "server.h".
-		 * Message: The type could not be resolved (GHashTable * data).
+		 * Message: Unable to provide a type for HashTable as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_serv_got_join_chat_failed
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_serv_got_join_chat_failed(PurpleConnection * gc, GHashTable * data)
 		 * 
 		 * Could not generate a wrapper for purple_serv_got_join_chat_failed in file "server.h".
-		 * Message: The type could not be resolved (GHashTable * data).
+		 * Message: Unable to provide a type for HashTable as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: serv_got_chat_left
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_got_chat_left(PurpleConnection * g, int id)
 		 */
@@ -289,6 +465,12 @@ namespace PurpleWrapper
 			serv_got_chat_left(g.Reference, id);
 		}
 
+		/*
+		 * Function Name: serv_send_file
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void serv_send_file(PurpleConnection * gc, char * who, char * file)
 		 */

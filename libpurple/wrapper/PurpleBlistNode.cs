@@ -38,26 +38,220 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: blist.h
+	 * Structure: PurpleBlistNode
+	 */
 	public class PurpleBlistNode : UnmanagedWrapper<_PurpleBlistNode>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleBlistNode in file "blist.h".
-		 * Message: The type could not be resolved (GHashTable * settings).
-		 */
-
 		public PurpleBlistNode()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleBlistNode(IntPtr refernece)
+		public PurpleBlistNode(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleBlistNode)Marshal.PtrToStructure(this.Reference, typeof(_PurpleBlistNode));
+		}
+
+		/*
+		 * Argument Name: type
+		 * Argument Type: PurpleBlistNodeType
+		 * Argument Category: KnownEnum
+		 */
+		public Blist.PurpleBlistNodeType type
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: prev
+		 * Argument Type: PurpleBlistNode *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleBlistNode prev
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: next
+		 * Argument Type: PurpleBlistNode *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleBlistNode next
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: parent
+		 * Argument Type: PurpleBlistNode *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleBlistNode parent
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: child
+		 * Argument Type: PurpleBlistNode *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleBlistNode child
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: settings
+		 * Argument Type: GHashTable *
+		 * Argument Category: PointerToGHashTable
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleBlistNode.settings in file "blist.h".
+		 * Message: Unable to provide a type for HashTable as no function information was provided in code.
+		 */
+
+		/*
+		 * Argument Name: ui_data
+		 * Argument Type: void          *
+		 * Argument Category: PointerToUnknownStruct
+		 */
+		public /* Resolved as PointerToUnknownStruct to void */ IntPtr ui_data
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: flags
+		 * Argument Type: PurpleBlistNodeFlags
+		 * Argument Category: KnownEnum
+		 */
+		public Blist.PurpleBlistNodeFlags flags
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleBlistNode { }
+	public class _PurpleBlistNode
+	{
+		/*
+		 * PurpleBlistNodeType type
+		 */
+		public Blist.PurpleBlistNodeType type;
+
+		/*
+		 * PurpleBlistNode * prev
+		 */
+		public IntPtr prev;
+
+		/*
+		 * PurpleBlistNode * next
+		 */
+		public IntPtr next;
+
+		/*
+		 * PurpleBlistNode * parent
+		 */
+		public IntPtr parent;
+
+		/*
+		 * PurpleBlistNode * child
+		 */
+		public IntPtr child;
+
+		/*
+		 * GHashTable * settings
+		 */
+		public IntPtr settings;
+
+		/*
+		 * void          * ui_data
+		 */
+		public IntPtr ui_data;
+
+		/*
+		 * PurpleBlistNodeFlags flags
+		 */
+		public Blist.PurpleBlistNodeFlags flags;
+
+	}
+
 }
 

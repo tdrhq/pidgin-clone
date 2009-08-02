@@ -38,26 +38,145 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: roomlist.h
+	 * Structure: PurpleRoomlistRoom
+	 */
 	public class PurpleRoomlistRoom : UnmanagedWrapper<_PurpleRoomlistRoom>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleRoomlistRoom in file "roomlist.h".
-		 * Message: The type could not be resolved (GList * fields).
-		 */
-
 		public PurpleRoomlistRoom()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleRoomlistRoom(IntPtr refernece)
+		public PurpleRoomlistRoom(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleRoomlistRoom)Marshal.PtrToStructure(this.Reference, typeof(_PurpleRoomlistRoom));
+		}
+
+		/*
+		 * Argument Name: type
+		 * Argument Type: PurpleRoomlistRoomType
+		 * Argument Category: KnownEnum
+		 */
+		public Roomlist.PurpleRoomlistRoomType type
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: name
+		 * Argument Type: gchar *
+		 * Argument Category: Native
+		 */
+		public string name
+		{
+			get
+			{
+				return this.Data.name;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.name = value;
+			}
+		}
+
+		/*
+		 * Argument Name: fields
+		 * Argument Type: GList *
+		 * Argument Category: PointerToGList
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleRoomlistRoom.fields in file "roomlist.h".
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
+		 */
+
+		/*
+		 * Argument Name: parent
+		 * Argument Type: PurpleRoomlistRoom *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleRoomlistRoom parent
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+		}
+
+		/*
+		 * Argument Name: expanded_once
+		 * Argument Type: gboolean
+		 * Argument Category: Native
+		 */
+		public bool expanded_once
+		{
+			get
+			{
+				return this.Data.expanded_once;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.expanded_once = value;
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleRoomlistRoom { }
+	public class _PurpleRoomlistRoom
+	{
+		/*
+		 * PurpleRoomlistRoomType type
+		 */
+		public Roomlist.PurpleRoomlistRoomType type;
+
+		/*
+		 * gchar * name
+		 */
+		public string name;
+
+		/*
+		 * GList * fields
+		 */
+		public IntPtr fields;
+
+		/*
+		 * PurpleRoomlistRoom * parent
+		 */
+		public IntPtr parent;
+
+		/*
+		 * gboolean expanded_once
+		 */
+		public bool expanded_once;
+
+	}
+
 }
 

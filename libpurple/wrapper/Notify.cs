@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: notify.h
+	 */
 	public class Notify
 	{
 		public enum PurpleNotifyType
@@ -76,167 +80,425 @@ namespace PurpleWrapper
 			PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_HEADER
 		};
 
+		public delegate void PurpleNotifyCloseCallback(IntPtr user_data);
+		public delegate void PurpleNotifySearchResultsCallback(IntPtr c, IntPtr row, IntPtr user_data);
+
+		/*
+		 * Function Name: purple_notify_searchresults_free
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_searchresults_free(PurpleNotifySearchResults * results)
-		 * 
-		 * Could not generate a wrapper for purple_notify_searchresults_free in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifySearchResults * results).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_searchresults_free(IntPtr results);
 
+		public static void SearchresultsFree(/* Resolved as PointerToUnknownStruct to PurpleNotifySearchResults */ IntPtr results)
+		{
+			/* Unable to process results, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_searchresults_new
+		 * Function Type: PurpleNotifySearchResults *
+		 * Function RawType: PurpleNotifySearchResults
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleNotifySearchResults * purple_notify_searchresults_new()
-		 * 
-		 * Could not generate a wrapper for purple_notify_searchresults_new in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifySearchResults * purple_notify_searchresults_new()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_notify_searchresults_new();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleNotifySearchResults */ IntPtr SearchresultsNew()
+		{
+			/* Unable to process the return value of purple_notify_searchresults_new, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_searchresults_column_new
+		 * Function Type: PurpleNotifySearchColumn *
+		 * Function RawType: PurpleNotifySearchColumn
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleNotifySearchColumn * purple_notify_searchresults_column_new(char * title)
-		 * 
-		 * Could not generate a wrapper for purple_notify_searchresults_column_new in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifySearchColumn * purple_notify_searchresults_column_new(char * title)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_notify_searchresults_column_new(string title);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleNotifySearchColumn */ IntPtr SearchresultsColumnNew(string title)
+		{
+			/* Unable to process the return value of purple_notify_searchresults_column_new, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_searchresults_get_rows_count
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
+		 */
 		/*
 		 * guint purple_notify_searchresults_get_rows_count(PurpleNotifySearchResults * results)
-		 * 
-		 * Could not generate a wrapper for purple_notify_searchresults_get_rows_count in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifySearchResults * results).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern uint purple_notify_searchresults_get_rows_count(IntPtr results);
 
+		public static uint SearchresultsGetRowsCount(/* Resolved as PointerToUnknownStruct to PurpleNotifySearchResults */ IntPtr results)
+		{
+			/* Unable to process results, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_searchresults_get_columns_count
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
+		 */
 		/*
 		 * guint purple_notify_searchresults_get_columns_count(PurpleNotifySearchResults * results)
-		 * 
-		 * Could not generate a wrapper for purple_notify_searchresults_get_columns_count in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifySearchResults * results).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern uint purple_notify_searchresults_get_columns_count(IntPtr results);
 
+		public static uint SearchresultsGetColumnsCount(/* Resolved as PointerToUnknownStruct to PurpleNotifySearchResults */ IntPtr results)
+		{
+			/* Unable to process results, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_new
+		 * Function Type: PurpleNotifyUserInfo *
+		 * Function RawType: PurpleNotifyUserInfo
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleNotifyUserInfo * purple_notify_user_info_new()
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_new in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * purple_notify_user_info_new()).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_notify_user_info_new();
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr UserInfoNew()
+		{
+			/* Unable to process the return value of purple_notify_user_info_new, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_notify_user_info_destroy(PurpleNotifyUserInfo * user_info)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_destroy in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
+		 * Function Name: purple_notify_user_info_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_notify_user_info_destroy(PurpleNotifyUserInfo * user_info)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_destroy(IntPtr user_info);
 
+		public static void UserInfoDestroy(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_get_entries
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_notify_user_info_get_entries(PurpleNotifyUserInfo * user_info)
 		 * 
 		 * Could not generate a wrapper for purple_notify_user_info_get_entries in file "notify.h".
-		 * Message: The type could not be resolved (GList * purple_notify_user_info_get_entries(PurpleNotifyUserInfo * user_info)).
+		 * Message: Unknown inner-type of argument 0 of purple_notify_user_info_get_entries
 		 */
 
+		/*
+		 * Function Name: purple_notify_user_info_get_text_with_newline
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo * user_info, char * newline)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_get_text_with_newline in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_notify_user_info_get_text_with_newline(IntPtr user_info, string newline);
 
+		public static string UserInfoGetTextWithNewline(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info, string newline)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_add_pair
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_add_pair(PurpleNotifyUserInfo * user_info, char * label, char * value)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_add_pair in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_add_pair(IntPtr user_info, string label, string value);
 
+		public static void UserInfoAddPair(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info, string label, string value)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_prepend_pair
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo * user_info, char * label, char * value)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_prepend_pair in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_prepend_pair(IntPtr user_info, string label, string value);
 
+		public static void UserInfoPrependPair(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info, string label, string value)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_remove_entry
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_remove_entry(PurpleNotifyUserInfo * user_info, PurpleNotifyUserInfoEntry * user_info_entry)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_remove_entry in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_remove_entry(IntPtr user_info, IntPtr user_info_entry);
 
+		public static void UserInfoRemoveEntry(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info, /* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfoEntry */ IntPtr user_info_entry)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			/* Unable to process user_info_entry, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_entry_new
+		 * Function Type: PurpleNotifyUserInfoEntry *
+		 * Function RawType: PurpleNotifyUserInfoEntry
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleNotifyUserInfoEntry * purple_notify_user_info_entry_new(char * label, char * value)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_entry_new in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfoEntry * purple_notify_user_info_entry_new(char * label, char * value)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_notify_user_info_entry_new(string label, string value);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfoEntry */ IntPtr UserInfoEntryNew(string label, string value)
+		{
+			/* Unable to process the return value of purple_notify_user_info_entry_new, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_add_section_break
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_add_section_break(PurpleNotifyUserInfo * user_info)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_add_section_break in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_add_section_break(IntPtr user_info);
 
+		public static void UserInfoAddSectionBreak(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_prepend_section_break
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_prepend_section_break(PurpleNotifyUserInfo * user_info)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_prepend_section_break in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_prepend_section_break(IntPtr user_info);
 
+		public static void UserInfoPrependSectionBreak(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_add_section_header
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_add_section_header(PurpleNotifyUserInfo * user_info, char * label)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_add_section_header in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_add_section_header(IntPtr user_info, string label);
 
+		public static void UserInfoAddSectionHeader(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info, string label)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_prepend_section_header
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_prepend_section_header(PurpleNotifyUserInfo * user_info, char * label)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_prepend_section_header in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_prepend_section_header(IntPtr user_info, string label);
 
+		public static void UserInfoPrependSectionHeader(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info, string label)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_remove_last_item
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_remove_last_item(PurpleNotifyUserInfo * user_info)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_remove_last_item in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfo * user_info).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_remove_last_item(IntPtr user_info);
 
+		public static void UserInfoRemoveLastItem(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfo */ IntPtr user_info)
+		{
+			/* Unable to process user_info, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_entry_get_label
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_notify_user_info_entry_get_label(PurpleNotifyUserInfoEntry * user_info_entry)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_entry_get_label in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfoEntry * user_info_entry).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_notify_user_info_entry_get_label(IntPtr user_info_entry);
 
+		public static string UserInfoEntryGetLabel(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfoEntry */ IntPtr user_info_entry)
+		{
+			/* Unable to process user_info_entry, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_entry_set_label
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_entry_set_label(PurpleNotifyUserInfoEntry * user_info_entry, char * label)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_entry_set_label in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfoEntry * user_info_entry).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_entry_set_label(IntPtr user_info_entry, string label);
 
+		public static void UserInfoEntrySetLabel(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfoEntry */ IntPtr user_info_entry, string label)
+		{
+			/* Unable to process user_info_entry, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_entry_get_value
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_notify_user_info_entry_get_value(PurpleNotifyUserInfoEntry * user_info_entry)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_entry_get_value in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfoEntry * user_info_entry).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_notify_user_info_entry_get_value(IntPtr user_info_entry);
 
+		public static string UserInfoEntryGetValue(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfoEntry */ IntPtr user_info_entry)
+		{
+			/* Unable to process user_info_entry, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_user_info_entry_set_value
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_user_info_entry_set_value(PurpleNotifyUserInfoEntry * user_info_entry, char * value)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_entry_set_value in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfoEntry * user_info_entry).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_user_info_entry_set_value(IntPtr user_info_entry, string value);
+
+		public static void UserInfoEntrySetValue(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfoEntry */ IntPtr user_info_entry, string value)
+		{
+			/* Unable to process user_info_entry, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotifyUserInfoEntry * user_info_entry)
-		 * 
-		 * Could not generate a wrapper for purple_notify_user_info_entry_get_type in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUserInfoEntry * user_info_entry).
+		 * Function Name: purple_notify_user_info_entry_get_type
+		 * Function Type: PurpleNotifyUserInfoEntryType
+		 * Function RawType: PurpleNotifyUserInfoEntryType
+		 * Function Category: KnownEnum
 		 */
+		/*
+		 * PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotifyUserInfoEntry * user_info_entry)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern Notify.PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(IntPtr user_info_entry);
 
+		public static Notify.PurpleNotifyUserInfoEntryType UserInfoEntryGetType(/* Resolved as PointerToUnknownStruct to PurpleNotifyUserInfoEntry */ IntPtr user_info_entry)
+		{
+			/* Unable to process user_info_entry, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_uri
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_notify_uri(void * handle, char * uri)
 		 */
@@ -248,6 +510,12 @@ namespace PurpleWrapper
 			return purple_notify_uri(handle, uri);
 		}
 
+		/*
+		 * Function Name: purple_notify_close
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_close(PurpleNotifyType type, void * ui_handle)
 		 */
@@ -261,6 +529,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_notify_close_with_handle
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_notify_close_with_handle(void * handle)
 		 */
 		[DllImport("libpurple.dll")]
@@ -272,19 +546,47 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_notify_set_ui_ops(PurpleNotifyUiOps * ops)
-		 * 
-		 * Could not generate a wrapper for purple_notify_set_ui_ops in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUiOps * ops).
+		 * Function Name: purple_notify_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_notify_set_ui_ops(PurpleNotifyUiOps * ops)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_notify_set_ui_ops(IntPtr ops);
+
+		public static void SetUiOps(/* Resolved as PointerToUnknownStruct to PurpleNotifyUiOps */ IntPtr ops)
+		{
+			/* Unable to process ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleNotifyUiOps * purple_notify_get_ui_ops()
-		 * 
-		 * Could not generate a wrapper for purple_notify_get_ui_ops in file "notify.h".
-		 * Message: The type could not be resolved (PurpleNotifyUiOps * purple_notify_get_ui_ops()).
+		 * Function Name: purple_notify_get_ui_ops
+		 * Function Type: PurpleNotifyUiOps *
+		 * Function RawType: PurpleNotifyUiOps
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleNotifyUiOps * purple_notify_get_ui_ops()
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_notify_get_ui_ops();
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleNotifyUiOps */ IntPtr GetUiOps()
+		{
+			/* Unable to process the return value of purple_notify_get_ui_ops, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_notify_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_notify_get_handle()
 		 */
@@ -297,6 +599,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_notify_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_notify_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -307,6 +615,12 @@ namespace PurpleWrapper
 			purple_notify_init();
 		}
 
+		/*
+		 * Function Name: purple_notify_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_notify_uninit()
 		 */

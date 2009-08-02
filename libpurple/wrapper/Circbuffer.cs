@@ -38,8 +38,19 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: circbuffer.h
+	 */
 	public class Circbuffer
 	{
+
+		/*
+		 * Function Name: purple_circ_buffer_new
+		 * Function Type: PurpleCircBuffer *
+		 * Function RawType: PurpleCircBuffer
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleCircBuffer * purple_circ_buffer_new(gsize growsize)
 		 */
@@ -52,6 +63,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_circ_buffer_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_circ_buffer_destroy(PurpleCircBuffer * buf)
 		 */
 		[DllImport("libpurple.dll")]
@@ -62,6 +79,12 @@ namespace PurpleWrapper
 			purple_circ_buffer_destroy(buf.Reference);
 		}
 
+		/*
+		 * Function Name: purple_circ_buffer_append
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_circ_buffer_append(PurpleCircBuffer * buf, gconstpointer src, gsize len)
 		 */
@@ -74,6 +97,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_circ_buffer_get_max_read
+		 * Function Type: gsize
+		 * Function RawType: gsize
+		 * Function Category: Native
+		 */
+		/*
 		 * gsize purple_circ_buffer_get_max_read(PurpleCircBuffer * buf)
 		 */
 		[DllImport("libpurple.dll")]
@@ -84,6 +113,12 @@ namespace PurpleWrapper
 			return purple_circ_buffer_get_max_read(buf.Reference);
 		}
 
+		/*
+		 * Function Name: purple_circ_buffer_mark_read
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_circ_buffer_mark_read(PurpleCircBuffer * buf, gsize len)
 		 */

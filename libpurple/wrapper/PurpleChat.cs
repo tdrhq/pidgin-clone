@@ -38,26 +38,113 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: blist.h
+	 * Structure: PurpleChat
+	 */
 	public class PurpleChat : UnmanagedWrapper<_PurpleChat>
 	{
-		/* 
-		 * Could not generate a wrapper for PurpleChat in file "blist.h".
-		 * Message: The type resolved to a known struct but not a pointer to that struct (PurpleBlistNode node).
-		 */
-
 		public PurpleChat()
 		{
-			throw new NotImplementedException();
 		}
 
-		public PurpleChat(IntPtr refernece)
+		public PurpleChat(IntPtr reference)
 		{
-			throw new NotImplementedException();
+			this.Reference = reference;
+			this.Data = (_PurpleChat)Marshal.PtrToStructure(this.Reference, typeof(_PurpleChat));
+		}
+
+		/*
+		 * Argument Name: node
+		 * Argument Type: PurpleBlistNode
+		 * Argument Category: KnownStruct
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleChat.node in file "blist.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleBlistNode node).
+		 */
+
+		/*
+		 * Argument Name: alias
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
+		public string alias
+		{
+			get
+			{
+				return this.Data.alias;
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				this.Data.alias = value;
+			}
+		}
+
+		/*
+		 * Argument Name: components
+		 * Argument Type: GHashTable *
+		 * Argument Category: PointerToGHashTable
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleChat.components in file "blist.h".
+		 * Message: Unable to provide a type for HashTable as no function information was provided in code.
+		 */
+
+		/*
+		 * Argument Name: account
+		 * Argument Type: PurpleAccount *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleAccount account
+		{
+			get
+			{
+				throw new NotImplementedException(); /* Non-native type. */
+			}
+			set
+			{
+				if (this.Reference != IntPtr.Zero)
+					this.Reference = IntPtr.Zero;
+
+				throw new NotImplementedException(); /* Non-native type. */
+			}
 		}
 
 	}
 
+
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleChat { }
+	public class _PurpleChat
+	{
+		/*
+		 * PurpleBlistNode node
+		 */
+		/*
+		 * Could not generate a wrapper for PurpleChat.node in file "blist.h".
+		 * Message: The struct contains an object that resolves to a function that is not a function pointer (PurpleBlistNode node).
+		 */
+
+		/*
+		 * char * alias
+		 */
+		public string alias;
+
+		/*
+		 * GHashTable * components
+		 */
+		public IntPtr components;
+
+		/*
+		 * PurpleAccount * account
+		 */
+		public IntPtr account;
+
+	}
+
 }
 

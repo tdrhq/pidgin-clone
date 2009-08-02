@@ -38,19 +38,29 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: certificate.h
+	 * Structure: PurpleCertificate
+	 */
 	public class PurpleCertificate : UnmanagedWrapper<_PurpleCertificate>
 	{
 		public PurpleCertificate()
 		{
 		}
 
-		public PurpleCertificate(IntPtr refernece)
+		public PurpleCertificate(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleCertificate)Marshal.PtrToStructure(this.Reference, typeof(_PurpleCertificate));
 		}
 
-		public PurpleCertificateScheme  scheme
+		/*
+		 * Argument Name: scheme
+		 * Argument Type: PurpleCertificateScheme *
+		 * Argument Category: PointerToKnownStruct
+		 */
+		public PurpleCertificateScheme scheme
 		{
 			get
 			{
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: data
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
 		public IntPtr data
 		{
 			get
@@ -84,17 +99,17 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleCertificate
+	public class _PurpleCertificate
 	{
 		/*
-		 * PurpleCertificateScheme *  scheme
+		 * PurpleCertificateScheme * scheme
 		 */
-		/* Cannot generate struct for type PointerToKnownStruct */
+		public IntPtr scheme;
 
 		/*
 		 * gpointer data
 		 */
-		IntPtr data;
+		public IntPtr data;
 
 	}
 

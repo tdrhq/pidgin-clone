@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: conversation.h
+	 */
 	public class Conversation
 	{
 		public enum PurpleConversationType
@@ -103,6 +107,13 @@ namespace PurpleWrapper
 			PURPLE_CBFLAGS_TYPING = 0x0010
 		};
 
+
+		/*
+		 * Function Name: purple_conversation_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conversation_destroy(PurpleConversation * conv)
 		 */
@@ -115,6 +126,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_present
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conversation_present(PurpleConversation * conv)
 		 */
 		[DllImport("libpurple.dll")]
@@ -126,6 +143,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_get_type
+		 * Function Type: PurpleConversationType
+		 * Function RawType: PurpleConversationType
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurpleConversationType purple_conversation_get_type(PurpleConversation * conv)
 		 */
 		[DllImport("libpurple.dll")]
@@ -133,10 +156,16 @@ namespace PurpleWrapper
 
 		public static Conversation.PurpleConversationType GetType(PurpleConversation conv)
 		{
-			/* Unable to process purple_conversation_get_type, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_conversation_get_type, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_conversations_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conversations_set_ui_ops(PurpleConversationUiOps * ops)
 		 */
@@ -149,6 +178,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_get_account
+		 * Function Type: PurpleAccount *
+		 * Function RawType: PurpleAccount
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleAccount * purple_conversation_get_account(PurpleConversation * conv)
 		 */
 		[DllImport("libpurple.dll")]
@@ -159,6 +194,12 @@ namespace PurpleWrapper
 			return new PurpleAccount(purple_conversation_get_account(conv.Reference));
 		}
 
+		/*
+		 * Function Name: purple_conversation_get_gc
+		 * Function Type: PurpleConnection *
+		 * Function RawType: PurpleConnection
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleConnection * purple_conversation_get_gc(PurpleConversation * conv)
 		 */
@@ -171,6 +212,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_set_title
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conversation_set_title(PurpleConversation * conv, char * title)
 		 */
 		[DllImport("libpurple.dll")]
@@ -181,6 +228,12 @@ namespace PurpleWrapper
 			purple_conversation_set_title(conv.Reference, title);
 		}
 
+		/*
+		 * Function Name: purple_conversation_get_title
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_conversation_get_title(PurpleConversation * conv)
 		 */
@@ -193,6 +246,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_autoset_title
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conversation_autoset_title(PurpleConversation * conv)
 		 */
 		[DllImport("libpurple.dll")]
@@ -203,6 +262,12 @@ namespace PurpleWrapper
 			purple_conversation_autoset_title(conv.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conversation_set_name
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conversation_set_name(PurpleConversation * conv, char * name)
 		 */
@@ -215,6 +280,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_get_name
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_conversation_get_name(PurpleConversation * conv)
 		 */
 		[DllImport("libpurple.dll")]
@@ -225,6 +296,12 @@ namespace PurpleWrapper
 			return purple_conversation_get_name(conv.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conversation_set_logging
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conversation_set_logging(PurpleConversation * conv, gboolean log)
 		 */
@@ -237,6 +314,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_is_logging
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_conversation_is_logging(PurpleConversation * conv)
 		 */
 		[DllImport("libpurple.dll")]
@@ -247,6 +330,12 @@ namespace PurpleWrapper
 			return purple_conversation_is_logging(conv.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conversation_close_logs
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conversation_close_logs(PurpleConversation * conv)
 		 */
@@ -259,6 +348,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_get_im_data
+		 * Function Type: PurpleConvIm *
+		 * Function RawType: PurpleConvIm
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleConvIm * purple_conversation_get_im_data(PurpleConversation * conv)
 		 */
 		[DllImport("libpurple.dll")]
@@ -269,6 +364,12 @@ namespace PurpleWrapper
 			return new PurpleConvIm(purple_conversation_get_im_data(conv.Reference));
 		}
 
+		/*
+		 * Function Name: purple_conversation_get_chat_data
+		 * Function Type: PurpleConvChat *
+		 * Function RawType: PurpleConvChat
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleConvChat * purple_conversation_get_chat_data(PurpleConversation * conv)
 		 */
@@ -281,6 +382,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_get_data
+		 * Function Type: gpointer
+		 * Function RawType: gpointer
+		 * Function Category: VoidPointer
+		 */
+		/*
 		 * gpointer purple_conversation_get_data(PurpleConversation * conv, char * key)
 		 */
 		[DllImport("libpurple.dll")]
@@ -292,26 +399,50 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_get_conversations
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_get_conversations()
 		 * 
 		 * Could not generate a wrapper for purple_get_conversations in file "conversation.h".
-		 * Message: The type could not be resolved (GList * purple_get_conversations()).
+		 * Message: Unknown inner-type of argument 0 of purple_get_conversations
 		 */
 
+		/*
+		 * Function Name: purple_get_ims
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_get_ims()
 		 * 
 		 * Could not generate a wrapper for purple_get_ims in file "conversation.h".
-		 * Message: The type could not be resolved (GList * purple_get_ims()).
+		 * Message: Unknown inner-type of argument 0 of purple_get_ims
 		 */
 
+		/*
+		 * Function Name: purple_get_chats
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_get_chats()
 		 * 
 		 * Could not generate a wrapper for purple_get_chats in file "conversation.h".
-		 * Message: The type could not be resolved (GList * purple_get_chats()).
+		 * Message: Unknown inner-type of argument 0 of purple_get_chats
 		 */
 
+		/*
+		 * Function Name: purple_conversation_get_features
+		 * Function Type: PurpleConnectionFlags
+		 * Function RawType: PurpleConnectionFlags
+		 * Function Category: KnownEnum
+		 */
 		/*
 		 * PurpleConnectionFlags purple_conversation_get_features(PurpleConversation * conv)
 		 */
@@ -320,10 +451,16 @@ namespace PurpleWrapper
 
 		public static Connection.PurpleConnectionFlags GetFeatures(PurpleConversation conv)
 		{
-			/* Unable to process purple_conversation_get_features, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_conversation_get_features, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_conversation_has_focus
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_conversation_has_focus(PurpleConversation * conv)
 		 */
@@ -335,6 +472,12 @@ namespace PurpleWrapper
 			return purple_conversation_has_focus(conv.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conversation_update
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conversation_update(PurpleConversation * conv, PurpleConvUpdateType type)
 		 */
@@ -348,12 +491,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_get_message_history
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_conversation_get_message_history(PurpleConversation * conv)
 		 * 
 		 * Could not generate a wrapper for purple_conversation_get_message_history in file "conversation.h".
-		 * Message: The type could not be resolved (GList * purple_conversation_get_message_history(PurpleConversation * conv)).
+		 * Message: Unknown inner-type of argument 0 of purple_conversation_get_message_history
 		 */
 
+		/*
+		 * Function Name: purple_conversation_clear_message_history
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conversation_clear_message_history(PurpleConversation * conv)
 		 */
@@ -366,6 +521,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_message_get_sender
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_conversation_message_get_sender(PurpleConvMessage * msg)
 		 */
 		[DllImport("libpurple.dll")]
@@ -376,6 +537,12 @@ namespace PurpleWrapper
 			return purple_conversation_message_get_sender(msg.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conversation_message_get_message
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_conversation_message_get_message(PurpleConvMessage * msg)
 		 */
@@ -388,6 +555,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_message_get_flags
+		 * Function Type: PurpleMessageFlags
+		 * Function RawType: PurpleMessageFlags
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage * msg)
 		 */
 		[DllImport("libpurple.dll")]
@@ -395,10 +568,16 @@ namespace PurpleWrapper
 
 		public static Conversation.PurpleMessageFlags MessageGetFlags(PurpleConvMessage msg)
 		{
-			/* Unable to process purple_conversation_message_get_flags, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_conversation_message_get_flags, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_conversation_message_get_timestamp
+		 * Function Type: time_t
+		 * Function RawType: time_t
+		 * Function Category: DateTime
+		 */
 		/*
 		 * time_t purple_conversation_message_get_timestamp(PurpleConvMessage * msg)
 		 */
@@ -407,10 +586,16 @@ namespace PurpleWrapper
 
 		public static DateTime MessageGetTimestamp(PurpleConvMessage msg)
 		{
-			/* Unable to process purple_conversation_message_get_timestamp, a DateTime. */
-			
+			/* Unable to process the return value of purple_conversation_message_get_timestamp, a DateTime. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_conv_im_get_conversation
+		 * Function Type: PurpleConversation *
+		 * Function RawType: PurpleConversation
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleConversation * purple_conv_im_get_conversation(PurpleConvIm * im)
 		 */
@@ -423,19 +608,47 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_conv_im_set_icon(PurpleConvIm * im, PurpleBuddyIcon * icon)
-		 * 
-		 * Could not generate a wrapper for purple_conv_im_set_icon in file "conversation.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
+		 * Function Name: purple_conv_im_set_icon
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_conv_im_set_icon(PurpleConvIm * im, PurpleBuddyIcon * icon)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_conv_im_set_icon(IntPtr im, IntPtr icon);
+
+		public static void ConvImSetIcon(PurpleConvIm im, /* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleBuddyIcon * purple_conv_im_get_icon(PurpleConvIm * im)
-		 * 
-		 * Could not generate a wrapper for purple_conv_im_get_icon in file "conversation.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * purple_conv_im_get_icon(PurpleConvIm * im)).
+		 * Function Name: purple_conv_im_get_icon
+		 * Function Type: PurpleBuddyIcon *
+		 * Function RawType: PurpleBuddyIcon
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleBuddyIcon * purple_conv_im_get_icon(PurpleConvIm * im)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_conv_im_get_icon(IntPtr im);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr ConvImGetIcon(PurpleConvIm im)
+		{
+			/* Unable to process the return value of purple_conv_im_get_icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_conv_im_set_typing_state
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conv_im_set_typing_state(PurpleConvIm * im, PurpleTypingState state)
 		 */
@@ -449,6 +662,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_im_get_typing_state
+		 * Function Type: PurpleTypingState
+		 * Function RawType: PurpleTypingState
+		 * Function Category: KnownEnum
+		 */
+		/*
 		 * PurpleTypingState purple_conv_im_get_typing_state(PurpleConvIm * im)
 		 */
 		[DllImport("libpurple.dll")]
@@ -456,10 +675,16 @@ namespace PurpleWrapper
 
 		public static Conversation.PurpleTypingState ConvImGetTypingState(PurpleConvIm im)
 		{
-			/* Unable to process purple_conv_im_get_typing_state, a KnownEnum. */
-			
+			/* Unable to process the return value of purple_conv_im_get_typing_state, a KnownEnum. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_conv_im_start_typing_timeout
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conv_im_start_typing_timeout(PurpleConvIm * im, int timeout)
 		 */
@@ -472,6 +697,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_im_stop_typing_timeout
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_im_stop_typing_timeout(PurpleConvIm * im)
 		 */
 		[DllImport("libpurple.dll")]
@@ -482,6 +713,12 @@ namespace PurpleWrapper
 			purple_conv_im_stop_typing_timeout(im.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conv_im_get_typing_timeout
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
+		 */
 		/*
 		 * guint purple_conv_im_get_typing_timeout(PurpleConvIm * im)
 		 */
@@ -494,6 +731,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_im_set_type_again
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_im_set_type_again(PurpleConvIm * im, unsigned int val)
 		 */
 		[DllImport("libpurple.dll")]
@@ -505,6 +748,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_im_get_type_again
+		 * Function Type: time_t
+		 * Function RawType: time_t
+		 * Function Category: DateTime
+		 */
+		/*
 		 * time_t purple_conv_im_get_type_again(PurpleConvIm * im)
 		 */
 		[DllImport("libpurple.dll")]
@@ -512,10 +761,16 @@ namespace PurpleWrapper
 
 		public static DateTime ConvImGetTypeAgain(PurpleConvIm im)
 		{
-			/* Unable to process purple_conv_im_get_type_again, a DateTime. */
-			
+			/* Unable to process the return value of purple_conv_im_get_type_again, a DateTime. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_conv_im_start_send_typed_timeout
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conv_im_start_send_typed_timeout(PurpleConvIm * im)
 		 */
@@ -528,6 +783,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_im_stop_send_typed_timeout
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_im_stop_send_typed_timeout(PurpleConvIm * im)
 		 */
 		[DllImport("libpurple.dll")]
@@ -538,6 +799,12 @@ namespace PurpleWrapper
 			purple_conv_im_stop_send_typed_timeout(im.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conv_im_get_send_typed_timeout
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
+		 */
 		/*
 		 * guint purple_conv_im_get_send_typed_timeout(PurpleConvIm * im)
 		 */
@@ -550,6 +817,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_im_update_typing
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_im_update_typing(PurpleConvIm * im)
 		 */
 		[DllImport("libpurple.dll")]
@@ -560,6 +833,12 @@ namespace PurpleWrapper
 			purple_conv_im_update_typing(im.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conv_present_error
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_conv_present_error(char * who, PurpleAccount * account, char * what)
 		 */
@@ -572,6 +851,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_im_send
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_im_send(PurpleConvIm * im, char * message)
 		 */
 		[DllImport("libpurple.dll")]
@@ -583,6 +868,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_send_confirm
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_send_confirm(PurpleConversation * conv, char * message)
 		 */
 		[DllImport("libpurple.dll")]
@@ -593,6 +884,12 @@ namespace PurpleWrapper
 			purple_conv_send_confirm(conv.Reference, message);
 		}
 
+		/*
+		 * Function Name: purple_conv_im_send_with_flags
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conv_im_send_with_flags(PurpleConvIm * im, char * message, PurpleMessageFlags flags)
 		 */
@@ -606,6 +903,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_custom_smiley_close
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_custom_smiley_close(PurpleConversation * conv, char * smile)
 		 */
 		[DllImport("libpurple.dll")]
@@ -616,6 +919,12 @@ namespace PurpleWrapper
 			purple_conv_custom_smiley_close(conv.Reference, smile);
 		}
 
+		/*
+		 * Function Name: purple_conv_chat_get_conversation
+		 * Function Type: PurpleConversation *
+		 * Function RawType: PurpleConversation
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleConversation * purple_conv_chat_get_conversation(PurpleConvChat * chat)
 		 */
@@ -628,19 +937,37 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_chat_set_users
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_conv_chat_set_users(PurpleConvChat * chat, GList * users)
 		 * 
 		 * Could not generate a wrapper for purple_conv_chat_set_users in file "conversation.h".
-		 * Message: The type could not be resolved (GList * purple_conv_chat_set_users(PurpleConvChat * chat, GList * users)).
+		 * Message: Unknown inner-type of argument 0 of purple_conv_chat_set_users
 		 */
 
+		/*
+		 * Function Name: purple_conv_chat_get_users
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_conv_chat_get_users(PurpleConvChat * chat)
 		 * 
 		 * Could not generate a wrapper for purple_conv_chat_get_users in file "conversation.h".
-		 * Message: The type could not be resolved (GList * purple_conv_chat_get_users(PurpleConvChat * chat)).
+		 * Message: Unknown inner-type of argument 0 of purple_conv_chat_get_users
 		 */
 
+		/*
+		 * Function Name: purple_conv_chat_ignore
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conv_chat_ignore(PurpleConvChat * chat, char * name)
 		 */
@@ -653,6 +980,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_chat_unignore
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_chat_unignore(PurpleConvChat * chat, char * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -664,19 +997,37 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_chat_set_ignored
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_conv_chat_set_ignored(PurpleConvChat * chat, GList * ignored)
 		 * 
 		 * Could not generate a wrapper for purple_conv_chat_set_ignored in file "conversation.h".
-		 * Message: The type could not be resolved (GList * purple_conv_chat_set_ignored(PurpleConvChat * chat, GList * ignored)).
+		 * Message: Unknown inner-type of argument 0 of purple_conv_chat_set_ignored
 		 */
 
+		/*
+		 * Function Name: purple_conv_chat_get_ignored
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
 		/*
 		 * GList * purple_conv_chat_get_ignored(PurpleConvChat * chat)
 		 * 
 		 * Could not generate a wrapper for purple_conv_chat_get_ignored in file "conversation.h".
-		 * Message: The type could not be resolved (GList * purple_conv_chat_get_ignored(PurpleConvChat * chat)).
+		 * Message: Unknown inner-type of argument 0 of purple_conv_chat_get_ignored
 		 */
 
+		/*
+		 * Function Name: purple_conv_chat_get_topic
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_conv_chat_get_topic(PurpleConvChat * chat)
 		 */
@@ -689,6 +1040,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_chat_set_id
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_chat_set_id(PurpleConvChat * chat, int id)
 		 */
 		[DllImport("libpurple.dll")]
@@ -699,6 +1056,12 @@ namespace PurpleWrapper
 			purple_conv_chat_set_id(chat.Reference, id);
 		}
 
+		/*
+		 * Function Name: purple_conv_chat_get_id
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
+		 */
 		/*
 		 * int purple_conv_chat_get_id(PurpleConvChat * chat)
 		 */
@@ -711,6 +1074,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_chat_send
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_chat_send(PurpleConvChat * chat, char * message)
 		 */
 		[DllImport("libpurple.dll")]
@@ -721,6 +1090,12 @@ namespace PurpleWrapper
 			purple_conv_chat_send(chat.Reference, message);
 		}
 
+		/*
+		 * Function Name: purple_conv_chat_send_with_flags
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conv_chat_send_with_flags(PurpleConvChat * chat, char * message, PurpleMessageFlags flags)
 		 */
@@ -734,6 +1109,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_chat_find_user
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_conv_chat_find_user(PurpleConvChat * chat, char * user)
 		 */
 		[DllImport("libpurple.dll")]
@@ -744,6 +1125,12 @@ namespace PurpleWrapper
 			return purple_conv_chat_find_user(chat.Reference, user);
 		}
 
+		/*
+		 * Function Name: purple_conv_chat_clear_users
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conv_chat_clear_users(PurpleConvChat * chat)
 		 */
@@ -756,6 +1143,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_chat_set_nick
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conv_chat_set_nick(PurpleConvChat * chat, char * nick)
 		 */
 		[DllImport("libpurple.dll")]
@@ -766,6 +1159,12 @@ namespace PurpleWrapper
 			purple_conv_chat_set_nick(chat.Reference, nick);
 		}
 
+		/*
+		 * Function Name: purple_conv_chat_get_nick
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_conv_chat_get_nick(PurpleConvChat * chat)
 		 */
@@ -778,6 +1177,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_find_chat
+		 * Function Type: PurpleConversation *
+		 * Function RawType: PurpleConversation
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleConversation * purple_find_chat(PurpleConnection * gc, int id)
 		 */
 		[DllImport("libpurple.dll")]
@@ -788,6 +1193,12 @@ namespace PurpleWrapper
 			return new PurpleConversation(purple_find_chat(gc.Reference, id));
 		}
 
+		/*
+		 * Function Name: purple_conv_chat_left
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conv_chat_left(PurpleConvChat * chat)
 		 */
@@ -800,6 +1211,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_chat_has_left
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_conv_chat_has_left(PurpleConvChat * chat)
 		 */
 		[DllImport("libpurple.dll")]
@@ -810,6 +1227,12 @@ namespace PurpleWrapper
 			return purple_conv_chat_has_left(chat.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conv_chat_cb_find
+		 * Function Type: PurpleConvChatBuddy *
+		 * Function RawType: PurpleConvChatBuddy
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleConvChatBuddy * purple_conv_chat_cb_find(PurpleConvChat * chat, char * name)
 		 */
@@ -822,6 +1245,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conv_chat_cb_get_name
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_conv_chat_cb_get_name(PurpleConvChatBuddy * cb)
 		 */
 		[DllImport("libpurple.dll")]
@@ -832,6 +1261,12 @@ namespace PurpleWrapper
 			return purple_conv_chat_cb_get_name(cb.Reference);
 		}
 
+		/*
+		 * Function Name: purple_conv_chat_cb_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conv_chat_cb_destroy(PurpleConvChatBuddy * cb)
 		 */
@@ -844,19 +1279,42 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversation_get_extended_menu
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_conversation_get_extended_menu(PurpleConversation * conv)
 		 * 
 		 * Could not generate a wrapper for purple_conversation_get_extended_menu in file "conversation.h".
-		 * Message: The type could not be resolved (GList * purple_conversation_get_extended_menu(PurpleConversation * conv)).
+		 * Message: Unknown inner-type of argument 0 of purple_conversation_get_extended_menu
 		 */
 
 		/*
-		 * gboolean purple_conversation_do_command(PurpleConversation * conv, gchar * cmdline, gchar * markup, gchar ** error)
-		 * 
-		 * Could not generate a wrapper for purple_conversation_do_command in file "conversation.h".
-		 * Message: The type could not be resolved (gchar ** error).
+		 * Function Name: purple_conversation_do_command
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
 		 */
+		/*
+		 * gboolean purple_conversation_do_command(PurpleConversation * conv, gchar * cmdline, gchar * markup, gchar ** error)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_conversation_do_command(IntPtr conv, string cmdline, string markup, IntPtr error);
 
+		public static bool DoCommand(PurpleConversation conv, string cmdline, string markup, /* Resolved as PointerToUnknownStruct to gchar */ IntPtr error)
+		{
+			/* Unable to process error, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_conversations_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_conversations_get_handle()
 		 */
@@ -869,6 +1327,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_conversations_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_conversations_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -879,6 +1343,12 @@ namespace PurpleWrapper
 			purple_conversations_init();
 		}
 
+		/*
+		 * Function Name: purple_conversations_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_conversations_uninit()
 		 */

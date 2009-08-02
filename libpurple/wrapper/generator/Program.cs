@@ -9,8 +9,8 @@ namespace Scripts
             WrapperGenerator wrapperGen = new WrapperGenerator();
 
             Console.WriteLine("Parsing .h files...");
-            wrapperGen.ParseHFilesInDirectory(@"C:\Users\Wade\Desktop\pidgin-src\im.pidgin.soc.2009.penguin.visualstudio\libpurple");
-            //wrapperGen.ParseHFile(@"C:\Users\Wade\Desktop\pidgin-src\im.pidgin.soc.2009.penguin.visualstudio\libpurple\plugin.h");
+            wrapperGen.ParseHFilesInDirectory(@"../../../../");
+            //wrapperGen.ParseHFile(@"../../../../plugin.h");
 
             Console.WriteLine("Writing struct data...");
             wrapperGen.GenerateStructFiles();
@@ -21,6 +21,12 @@ namespace Scripts
             Console.WriteLine("Writing base classes and visual studio project file...");
             wrapperGen.WriteVisualStudioProjectFile();
             wrapperGen.WriteBaseClasses();
+
+            /*
+            Console.WriteLine();
+            Console.WriteLine("Finding \"PurpleAccountRegistrationCb\"...");
+            Console.WriteLine(CFile.LookUpName("PurpleAccountRegistrationCb").ToString());
+            */
 
             Logger.CloseLog();
 

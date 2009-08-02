@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: desktopitem.h
+	 */
 	public class Desktopitem
 	{
 		public enum PurpleDesktopItemType
@@ -53,45 +57,96 @@ namespace PurpleWrapper
 			PURPLE_DESKTOP_ITEM_TYPE_SERVICE_TYPE
 		};
 
+
+		/*
+		 * Function Name: purple_desktop_item_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_desktop_item_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_desktop_item_get_type();
 
-		public static /* libgobject */ IntPtr DesktopItemGetType()
+		public static /* libobject */ IntPtr DesktopItemGetType()
 		{
-			/* Unable to process purple_desktop_item_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_desktop_item_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
 		/*
-		 * PurpleDesktopItem * purple_desktop_item_new_from_file(char * filename)
-		 * 
-		 * Could not generate a wrapper for purple_desktop_item_new_from_file in file "desktopitem.h".
-		 * Message: The type could not be resolved (PurpleDesktopItem * purple_desktop_item_new_from_file(char * filename)).
+		 * Function Name: purple_desktop_item_new_from_file
+		 * Function Type: PurpleDesktopItem *
+		 * Function RawType: PurpleDesktopItem
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleDesktopItem * purple_desktop_item_new_from_file(char * filename)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_desktop_item_new_from_file(string filename);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleDesktopItem */ IntPtr DesktopItemNewFromFile(string filename)
+		{
+			/* Unable to process the return value of purple_desktop_item_new_from_file, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_desktop_item_get_entry_type
+		 * Function Type: PurpleDesktopItemType
+		 * Function RawType: PurpleDesktopItemType
+		 * Function Category: KnownEnum
+		 */
 		/*
 		 * PurpleDesktopItemType purple_desktop_item_get_entry_type(PurpleDesktopItem * item)
-		 * 
-		 * Could not generate a wrapper for purple_desktop_item_get_entry_type in file "desktopitem.h".
-		 * Message: The type could not be resolved (PurpleDesktopItem * item).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern Desktopitem.PurpleDesktopItemType purple_desktop_item_get_entry_type(IntPtr item);
 
+		public static Desktopitem.PurpleDesktopItemType DesktopItemGetEntryType(/* Resolved as PointerToUnknownStruct to PurpleDesktopItem */ IntPtr item)
+		{
+			/* Unable to process item, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_desktop_item_copy
+		 * Function Type: PurpleDesktopItem *
+		 * Function RawType: PurpleDesktopItem
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleDesktopItem * purple_desktop_item_copy(PurpleDesktopItem * item)
-		 * 
-		 * Could not generate a wrapper for purple_desktop_item_copy in file "desktopitem.h".
-		 * Message: The type could not be resolved (PurpleDesktopItem * purple_desktop_item_copy(PurpleDesktopItem * item)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_desktop_item_copy(IntPtr item);
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleDesktopItem */ IntPtr DesktopItemCopy(/* Resolved as PointerToUnknownStruct to PurpleDesktopItem */ IntPtr item)
+		{
+			/* Unable to process item, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * void purple_desktop_item_unref(PurpleDesktopItem * item)
-		 * 
-		 * Could not generate a wrapper for purple_desktop_item_unref in file "desktopitem.h".
-		 * Message: The type could not be resolved (PurpleDesktopItem * item).
+		 * Function Name: purple_desktop_item_unref
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_desktop_item_unref(PurpleDesktopItem * item)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_desktop_item_unref(IntPtr item);
+
+		public static void DesktopItemUnref(/* Resolved as PointerToUnknownStruct to PurpleDesktopItem */ IntPtr item)
+		{
+			/* Unable to process item, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

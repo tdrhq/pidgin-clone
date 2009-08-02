@@ -11,7 +11,7 @@
 /* #undef ENABLE_MONO */
 
 /* always defined to indicate that i18n is enabled */
-#define ENABLE_NLS 1
+/* #define ENABLE_NLS 1 */
 
 /* Define if you have the external 'altzone' variable. */
 /* #undef HAVE_ALTZONE */

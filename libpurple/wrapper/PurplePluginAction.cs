@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: plugin.h
+	 * Structure: PurplePluginAction
+	 */
 	public class PurplePluginAction : UnmanagedWrapper<_PurplePluginAction>
 	{
 		public PurplePluginAction()
 		{
 		}
 
-		public PurplePluginAction(IntPtr refernece)
+		public PurplePluginAction(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurplePluginAction)Marshal.PtrToStructure(this.Reference, typeof(_PurplePluginAction));
 		}
 
+		/*
+		 * Argument Name: label
+		 * Argument Type: char *
+		 * Argument Category: Native
+		 */
 		public string label
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: callback
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr callback
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: plugin
+		 * Argument Type: PurplePlugin *
+		 * Argument Category: PointerToKnownStruct
+		 */
 		public PurplePlugin plugin
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: context
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
 		public IntPtr context
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: user_data
+		 * Argument Type: gpointer
+		 * Argument Category: VoidPointer
+		 */
 		public IntPtr user_data
 		{
 			get
@@ -129,32 +159,32 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurplePluginAction
+	public class _PurplePluginAction
 	{
 		/*
 		 * char * label
 		 */
-		IntPtr label;
+		public string label;
 
 		/*
 		 * void (*callback)(PurplePluginAction * )
 		 */
-		IntPtr callback;
+		public IntPtr callback;
 
 		/*
 		 * PurplePlugin * plugin
 		 */
-		/* Cannot generate struct for type PointerToKnownStruct */
+		public IntPtr plugin;
 
 		/*
 		 * gpointer context
 		 */
-		IntPtr context;
+		public IntPtr context;
 
 		/*
 		 * gpointer user_data
 		 */
-		IntPtr user_data;
+		public IntPtr user_data;
 
 	}
 

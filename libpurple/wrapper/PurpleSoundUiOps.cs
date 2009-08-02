@@ -38,18 +38,28 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: sound.h
+	 * Structure: PurpleSoundUiOps
+	 */
 	public class PurpleSoundUiOps : UnmanagedWrapper<_PurpleSoundUiOps>
 	{
 		public PurpleSoundUiOps()
 		{
 		}
 
-		public PurpleSoundUiOps(IntPtr refernece)
+		public PurpleSoundUiOps(IntPtr reference)
 		{
 			this.Reference = reference;
 			this.Data = (_PurpleSoundUiOps)Marshal.PtrToStructure(this.Reference, typeof(_PurpleSoundUiOps));
 		}
 
+		/*
+		 * Argument Name: init
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr init
 		{
 			get
@@ -65,6 +75,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: uninit
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr uninit
 		{
 			get
@@ -80,6 +95,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: play_file
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr play_file
 		{
 			get
@@ -95,6 +115,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: play_event
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr play_event
 		{
 			get
@@ -110,6 +135,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved1
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved1
 		{
 			get
@@ -125,6 +155,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved2
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved2
 		{
 			get
@@ -140,6 +175,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved3
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved3
 		{
 			get
@@ -155,6 +195,11 @@ namespace PurpleWrapper
 			}
 		}
 
+		/*
+		 * Argument Name: _purple_reserved4
+		 * Argument Type: void
+		 * Argument Category: Void
+		 */
 		public IntPtr _purple_reserved4
 		{
 			get
@@ -174,47 +219,47 @@ namespace PurpleWrapper
 
 
 	[StructLayout(LayoutKind.Sequential)]
-	class _PurpleSoundUiOps
+	public class _PurpleSoundUiOps
 	{
 		/*
 		 * void (*init)()
 		 */
-		IntPtr init;
+		public IntPtr init;
 
 		/*
 		 * void (*uninit)()
 		 */
-		IntPtr uninit;
+		public IntPtr uninit;
 
 		/*
 		 * void (*play_file)(char * filename)
 		 */
-		IntPtr play_file;
+		public IntPtr play_file;
 
 		/*
 		 * void (*play_event)(PurpleSoundEventID event)
 		 */
-		IntPtr play_event;
+		public IntPtr play_event;
 
 		/*
 		 * void (*_purple_reserved1)()
 		 */
-		IntPtr _purple_reserved1;
+		public IntPtr _purple_reserved1;
 
 		/*
 		 * void (*_purple_reserved2)()
 		 */
-		IntPtr _purple_reserved2;
+		public IntPtr _purple_reserved2;
 
 		/*
 		 * void (*_purple_reserved3)()
 		 */
-		IntPtr _purple_reserved3;
+		public IntPtr _purple_reserved3;
 
 		/*
 		 * void (*_purple_reserved4)()
 		 */
-		IntPtr _purple_reserved4;
+		public IntPtr _purple_reserved4;
 
 	}
 

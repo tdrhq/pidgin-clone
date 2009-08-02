@@ -35,7 +35,7 @@ namespace Scripts
         {
             get
             {
-                if (this.Name == "in" || this.Name == "event")
+                if (this.Name == "in" || this.Name == "event" || this.Name == "ref")
                     return this.Name + "_";
                 else
                     return this.Name;

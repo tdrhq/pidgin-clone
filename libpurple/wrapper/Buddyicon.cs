@@ -38,71 +38,182 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: buddyicon.h
+	 */
 	public class Buddyicon
 	{
+
+		/*
+		 * Function Name: purple_buddy_icon_ref
+		 * Function Type: PurpleBuddyIcon *
+		 * Function RawType: PurpleBuddyIcon
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleBuddyIcon * purple_buddy_icon_ref(PurpleBuddyIcon * icon)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_ref in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * purple_buddy_icon_ref(PurpleBuddyIcon * icon)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_buddy_icon_ref(IntPtr icon);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr BuddyIconRef(/* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icon_unref
+		 * Function Type: PurpleBuddyIcon *
+		 * Function RawType: PurpleBuddyIcon
+		 * Function Category: PointerToUnknownStruct
+		 */
 		/*
 		 * PurpleBuddyIcon * purple_buddy_icon_unref(PurpleBuddyIcon * icon)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_unref in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * purple_buddy_icon_unref(PurpleBuddyIcon * icon)).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_buddy_icon_unref(IntPtr icon);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr BuddyIconUnref(/* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icon_update
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_buddy_icon_update(PurpleBuddyIcon * icon)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_update in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_buddy_icon_update(IntPtr icon);
 
+		public static void BuddyIconUpdate(/* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icon_get_account
+		 * Function Type: PurpleAccount *
+		 * Function RawType: PurpleAccount
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleAccount * purple_buddy_icon_get_account(PurpleBuddyIcon * icon)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_get_account in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_buddy_icon_get_account(IntPtr icon);
 
+		public static PurpleAccount BuddyIconGetAccount(/* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icon_get_username
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_buddy_icon_get_username(PurpleBuddyIcon * icon)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_get_username in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_buddy_icon_get_username(IntPtr icon);
 
+		public static string BuddyIconGetUsername(/* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icon_get_checksum
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_buddy_icon_get_checksum(PurpleBuddyIcon * icon)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_get_checksum in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_buddy_icon_get_checksum(IntPtr icon);
 
+		public static string BuddyIconGetChecksum(/* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icon_get_data
+		 * Function Type: gconstpointer
+		 * Function RawType: gconstpointer
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * gconstpointer purple_buddy_icon_get_data(PurpleBuddyIcon * icon, size_t * len)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_get_data in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_buddy_icon_get_data(IntPtr icon, IntPtr len);
 
+		public static IntPtr BuddyIconGetData(/* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon, /* Resolved as PointerToUnknownStruct to size_t */ IntPtr len)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			/* Unable to process len, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icon_get_extension
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_buddy_icon_get_extension(PurpleBuddyIcon * icon)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_get_extension in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
 		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_buddy_icon_get_extension(IntPtr icon);
+
+		public static string BuddyIconGetExtension(/* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * char * purple_buddy_icon_get_full_path(PurpleBuddyIcon * icon)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_get_full_path in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * icon).
+		 * Function Name: purple_buddy_icon_get_full_path
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
 		 */
+		/*
+		 * char * purple_buddy_icon_get_full_path(PurpleBuddyIcon * icon)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern string purple_buddy_icon_get_full_path(IntPtr icon);
 
+		public static string BuddyIconGetFullPath(/* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr icon)
+		{
+			/* Unable to process icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icons_get_checksum_for_user
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_buddy_icons_get_checksum_for_user(PurpleBuddy * buddy)
 		 */
@@ -115,19 +226,47 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * PurpleBuddyIcon * purple_buddy_icons_find(PurpleAccount * account, char * username)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icons_find in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleBuddyIcon * purple_buddy_icons_find(PurpleAccount * account, char * username)).
+		 * Function Name: purple_buddy_icons_find
+		 * Function Type: PurpleBuddyIcon *
+		 * Function RawType: PurpleBuddyIcon
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleBuddyIcon * purple_buddy_icons_find(PurpleAccount * account, char * username)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_buddy_icons_find(IntPtr account, string username);
+
+		public static /* Resolved as PointerToUnknownStruct to PurpleBuddyIcon */ IntPtr BuddyIconsFind(PurpleAccount account, string username)
+		{
+			/* Unable to process the return value of purple_buddy_icons_find, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 		/*
-		 * PurpleStoredImage * purple_buddy_icons_find_account_icon(PurpleAccount * account)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icons_find_account_icon in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleStoredImage * purple_buddy_icons_find_account_icon(PurpleAccount * account)).
+		 * Function Name: purple_buddy_icons_find_account_icon
+		 * Function Type: PurpleStoredImage *
+		 * Function RawType: PurpleStoredImage
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleStoredImage * purple_buddy_icons_find_account_icon(PurpleAccount * account)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_buddy_icons_find_account_icon(IntPtr account);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleStoredImage */ IntPtr BuddyIconsFindAccountIcon(PurpleAccount account)
+		{
+			/* Unable to process the return value of purple_buddy_icons_find_account_icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icons_get_account_icon_timestamp
+		 * Function Type: time_t
+		 * Function RawType: time_t
+		 * Function Category: DateTime
+		 */
 		/*
 		 * time_t purple_buddy_icons_get_account_icon_timestamp(PurpleAccount * account)
 		 */
@@ -136,10 +275,16 @@ namespace PurpleWrapper
 
 		public static DateTime BuddyIconsGetAccountIconTimestamp(PurpleAccount account)
 		{
-			/* Unable to process purple_buddy_icons_get_account_icon_timestamp, a DateTime. */
-			
+			/* Unable to process the return value of purple_buddy_icons_get_account_icon_timestamp, a DateTime. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_buddy_icons_node_has_custom_icon
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_buddy_icons_node_has_custom_icon(PurpleBlistNode * node)
 		 */
@@ -152,12 +297,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * PurpleStoredImage * purple_buddy_icons_node_find_custom_icon(PurpleBlistNode * node)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icons_node_find_custom_icon in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleStoredImage * purple_buddy_icons_node_find_custom_icon(PurpleBlistNode * node)).
+		 * Function Name: purple_buddy_icons_node_find_custom_icon
+		 * Function Type: PurpleStoredImage *
+		 * Function RawType: PurpleStoredImage
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleStoredImage * purple_buddy_icons_node_find_custom_icon(PurpleBlistNode * node)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_buddy_icons_node_find_custom_icon(IntPtr node);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleStoredImage */ IntPtr BuddyIconsNodeFindCustomIcon(PurpleBlistNode node)
+		{
+			/* Unable to process the return value of purple_buddy_icons_node_find_custom_icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icons_has_custom_icon
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_buddy_icons_has_custom_icon(PurpleContact * contact)
 		 */
@@ -170,12 +332,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * PurpleStoredImage * purple_buddy_icons_find_custom_icon(PurpleContact * contact)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icons_find_custom_icon in file "buddyicon.h".
-		 * Message: The type could not be resolved (PurpleStoredImage * purple_buddy_icons_find_custom_icon(PurpleContact * contact)).
+		 * Function Name: purple_buddy_icons_find_custom_icon
+		 * Function Type: PurpleStoredImage *
+		 * Function RawType: PurpleStoredImage
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * PurpleStoredImage * purple_buddy_icons_find_custom_icon(PurpleContact * contact)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_buddy_icons_find_custom_icon(IntPtr contact);
 
+		public static /* Resolved as PointerToUnknownStruct to PurpleStoredImage */ IntPtr BuddyIconsFindCustomIcon(PurpleContact contact)
+		{
+			/* Unable to process the return value of purple_buddy_icons_find_custom_icon, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_buddy_icons_set_caching
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_buddy_icons_set_caching(gboolean caching)
 		 */
@@ -188,6 +367,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_buddy_icons_is_caching
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_buddy_icons_is_caching()
 		 */
 		[DllImport("libpurple.dll")]
@@ -198,6 +383,12 @@ namespace PurpleWrapper
 			return purple_buddy_icons_is_caching();
 		}
 
+		/*
+		 * Function Name: purple_buddy_icons_set_cache_dir
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_buddy_icons_set_cache_dir(char * cache_dir)
 		 */
@@ -210,6 +401,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_buddy_icons_get_cache_dir
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
+		/*
 		 * char * purple_buddy_icons_get_cache_dir()
 		 */
 		[DllImport("libpurple.dll")]
@@ -220,6 +417,12 @@ namespace PurpleWrapper
 			return purple_buddy_icons_get_cache_dir();
 		}
 
+		/*
+		 * Function Name: purple_buddy_icons_get_handle
+		 * Function Type: void *
+		 * Function RawType: void
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * void * purple_buddy_icons_get_handle()
 		 */
@@ -232,6 +435,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_buddy_icons_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_buddy_icons_init()
 		 */
 		[DllImport("libpurple.dll")]
@@ -242,6 +451,12 @@ namespace PurpleWrapper
 			purple_buddy_icons_init();
 		}
 
+		/*
+		 * Function Name: purple_buddy_icons_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_buddy_icons_uninit()
 		 */
@@ -254,11 +469,23 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec * spec, int * width, int * height)
-		 * 
-		 * Could not generate a wrapper for purple_buddy_icon_get_scale_size in file "buddyicon.h".
-		 * Message: The type could not be resolved (int * width).
+		 * Function Name: purple_buddy_icon_get_scale_size
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
 		 */
+		/*
+		 * void purple_buddy_icon_get_scale_size(PurpleBuddyIconSpec * spec, int * width, int * height)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern void purple_buddy_icon_get_scale_size(IntPtr spec, IntPtr width, IntPtr height);
+
+		public static void BuddyIconGetScaleSize(PurpleBuddyIconSpec spec, /* Resolved as PointerToUnknownStruct to int */ IntPtr width, /* Resolved as PointerToUnknownStruct to int */ IntPtr height)
+		{
+			/* Unable to process width, a PointerToUnknownStruct. */
+			/* Unable to process height, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
 
 	}
 }

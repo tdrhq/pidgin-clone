@@ -38,18 +38,29 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: sound-theme.h
+	 */
 	public class SoundTheme
 	{
+
+		/*
+		 * Function Name: purple_sound_theme_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_sound_theme_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_sound_theme_get_type();
 
-		public static /* libgobject */ IntPtr SoundThemeGetType()
+		public static /* libobject */ IntPtr SoundThemeGetType()
 		{
-			/* Unable to process purple_sound_theme_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_sound_theme_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
 	}

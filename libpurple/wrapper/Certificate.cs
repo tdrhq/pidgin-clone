@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: certificate.h
+	 */
 	public class Certificate
 	{
 		public enum PurpleCertificateVerificationStatus
@@ -46,6 +50,14 @@ namespace PurpleWrapper
 			PURPLE_CERTIFICATE_VALID = 1
 		};
 
+		public delegate void PurpleCertificateVerifiedCallback(Certificate.PurpleCertificateVerificationStatus st, IntPtr userdata);
+
+		/*
+		 * Function Name: purple_certificate_copy
+		 * Function Type: PurpleCertificate *
+		 * Function RawType: PurpleCertificate
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleCertificate * purple_certificate_copy(PurpleCertificate * crt)
 		 */
@@ -58,12 +70,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_copy_list
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_certificate_copy_list(GList * crt_list)
 		 * 
 		 * Could not generate a wrapper for purple_certificate_copy_list in file "certificate.h".
-		 * Message: The type could not be resolved (GList * purple_certificate_copy_list(GList * crt_list)).
+		 * Message: Unknown inner-type of argument 0 of purple_certificate_copy_list
 		 */
 
+		/*
+		 * Function Name: purple_certificate_destroy
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_certificate_destroy(PurpleCertificate * crt)
 		 */
@@ -76,12 +100,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_destroy_list
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_certificate_destroy_list(GList * crt_list)
 		 * 
 		 * Could not generate a wrapper for purple_certificate_destroy_list in file "certificate.h".
-		 * Message: The type could not be resolved (GList * crt_list).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_certificate_signed_by
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_certificate_signed_by(PurpleCertificate * crt, PurpleCertificate * issuer)
 		 */
@@ -94,12 +130,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_check_signature_chain
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_certificate_check_signature_chain(GList * chain)
 		 * 
 		 * Could not generate a wrapper for purple_certificate_check_signature_chain in file "certificate.h".
-		 * Message: The type could not be resolved (GList * chain).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_certificate_import
+		 * Function Type: PurpleCertificate *
+		 * Function RawType: PurpleCertificate
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleCertificate * purple_certificate_import(PurpleCertificateScheme * scheme, gchar * filename)
 		 */
@@ -112,6 +160,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_export
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_certificate_export(gchar * filename, PurpleCertificate * crt)
 		 */
 		[DllImport("libpurple.dll")]
@@ -123,12 +177,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * GByteArray * purple_certificate_get_fingerprint_sha1(PurpleCertificate * crt)
-		 * 
-		 * Could not generate a wrapper for purple_certificate_get_fingerprint_sha1 in file "certificate.h".
-		 * Message: The type could not be resolved (GByteArray * purple_certificate_get_fingerprint_sha1(PurpleCertificate * crt)).
+		 * Function Name: purple_certificate_get_fingerprint_sha1
+		 * Function Type: GByteArray *
+		 * Function RawType: GByteArray
+		 * Function Category: PointerToUnknownStruct
 		 */
+		/*
+		 * GByteArray * purple_certificate_get_fingerprint_sha1(PurpleCertificate * crt)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern IntPtr purple_certificate_get_fingerprint_sha1(IntPtr crt);
 
+		public static /* Resolved as PointerToUnknownStruct to GByteArray */ IntPtr GetFingerprintSha1(PurpleCertificate crt)
+		{
+			/* Unable to process the return value of purple_certificate_get_fingerprint_sha1, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_certificate_get_unique_id
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_certificate_get_unique_id(PurpleCertificate * crt)
 		 */
@@ -141,6 +212,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_get_issuer_unique_id
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_certificate_get_issuer_unique_id(PurpleCertificate * crt)
 		 */
 		[DllImport("libpurple.dll")]
@@ -151,6 +228,12 @@ namespace PurpleWrapper
 			return purple_certificate_get_issuer_unique_id(crt.Reference);
 		}
 
+		/*
+		 * Function Name: purple_certificate_get_subject_name
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_certificate_get_subject_name(PurpleCertificate * crt)
 		 */
@@ -163,6 +246,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_check_subject_name
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_certificate_check_subject_name(PurpleCertificate * crt, gchar * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -174,12 +263,30 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * gboolean purple_certificate_get_times(PurpleCertificate * crt, time_t * activation, time_t * expiration)
-		 * 
-		 * Could not generate a wrapper for purple_certificate_get_times in file "certificate.h".
-		 * Message: The type could not be resolved (time_t * activation).
+		 * Function Name: purple_certificate_get_times
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
 		 */
+		/*
+		 * gboolean purple_certificate_get_times(PurpleCertificate * crt, time_t * activation, time_t * expiration)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern bool purple_certificate_get_times(IntPtr crt, IntPtr activation, IntPtr expiration);
 
+		public static bool GetTimes(PurpleCertificate crt, /* Resolved as PointerToUnknownStruct to time_t */ IntPtr activation, /* Resolved as PointerToUnknownStruct to time_t */ IntPtr expiration)
+		{
+			/* Unable to process activation, a PointerToUnknownStruct. */
+			/* Unable to process expiration, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_certificate_pool_mkpath
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_certificate_pool_mkpath(PurpleCertificatePool * pool, gchar * id)
 		 */
@@ -192,6 +299,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_pool_usable
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_certificate_pool_usable(PurpleCertificatePool * pool)
 		 */
 		[DllImport("libpurple.dll")]
@@ -202,6 +315,12 @@ namespace PurpleWrapper
 			return purple_certificate_pool_usable(pool.Reference);
 		}
 
+		/*
+		 * Function Name: purple_certificate_pool_get_scheme
+		 * Function Type: PurpleCertificateScheme *
+		 * Function RawType: PurpleCertificateScheme
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleCertificateScheme * purple_certificate_pool_get_scheme(PurpleCertificatePool * pool)
 		 */
@@ -214,6 +333,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_pool_contains
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_certificate_pool_contains(PurpleCertificatePool * pool, gchar * id)
 		 */
 		[DllImport("libpurple.dll")]
@@ -224,6 +349,12 @@ namespace PurpleWrapper
 			return purple_certificate_pool_contains(pool.Reference, id);
 		}
 
+		/*
+		 * Function Name: purple_certificate_pool_retrieve
+		 * Function Type: PurpleCertificate *
+		 * Function RawType: PurpleCertificate
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleCertificate * purple_certificate_pool_retrieve(PurpleCertificatePool * pool, gchar * id)
 		 */
@@ -236,6 +367,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_pool_store
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_certificate_pool_store(PurpleCertificatePool * pool, gchar * id, PurpleCertificate * crt)
 		 */
 		[DllImport("libpurple.dll")]
@@ -246,6 +383,12 @@ namespace PurpleWrapper
 			return purple_certificate_pool_store(pool.Reference, id, crt.Reference);
 		}
 
+		/*
+		 * Function Name: purple_certificate_pool_delete
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_certificate_pool_delete(PurpleCertificatePool * pool, gchar * id)
 		 */
@@ -258,19 +401,37 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_pool_get_idlist
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_certificate_pool_get_idlist(PurpleCertificatePool * pool)
 		 * 
 		 * Could not generate a wrapper for purple_certificate_pool_get_idlist in file "certificate.h".
-		 * Message: The type could not be resolved (GList * purple_certificate_pool_get_idlist(PurpleCertificatePool * pool)).
+		 * Message: Unknown inner-type of argument 0 of purple_certificate_pool_get_idlist
 		 */
 
+		/*
+		 * Function Name: purple_certificate_pool_destroy_idlist
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_certificate_pool_destroy_idlist(GList * idlist)
 		 * 
 		 * Could not generate a wrapper for purple_certificate_pool_destroy_idlist in file "certificate.h".
-		 * Message: The type could not be resolved (GList * idlist).
+		 * Message: Unable to provide a type for GList as no function information was provided in code.
 		 */
 
+		/*
+		 * Function Name: purple_certificate_init
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_certificate_init()
 		 */
@@ -283,6 +444,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_uninit
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_certificate_uninit()
 		 */
 		[DllImport("libpurple.dll")]
@@ -293,6 +460,12 @@ namespace PurpleWrapper
 			purple_certificate_uninit();
 		}
 
+		/*
+		 * Function Name: purple_certificate_get_handle
+		 * Function Type: gpointer
+		 * Function RawType: gpointer
+		 * Function Category: VoidPointer
+		 */
 		/*
 		 * gpointer purple_certificate_get_handle()
 		 */
@@ -305,6 +478,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_find_scheme
+		 * Function Type: PurpleCertificateScheme *
+		 * Function RawType: PurpleCertificateScheme
+		 * Function Category: PointerToKnownStruct
+		 */
+		/*
 		 * PurpleCertificateScheme * purple_certificate_find_scheme(gchar * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -316,12 +495,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_get_schemes
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_certificate_get_schemes()
 		 * 
 		 * Could not generate a wrapper for purple_certificate_get_schemes in file "certificate.h".
-		 * Message: The type could not be resolved (GList * purple_certificate_get_schemes()).
+		 * Message: Unknown inner-type of argument 0 of purple_certificate_get_schemes
 		 */
 
+		/*
+		 * Function Name: purple_certificate_register_scheme
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_certificate_register_scheme(PurpleCertificateScheme * scheme)
 		 */
@@ -334,6 +525,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_unregister_scheme
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_certificate_unregister_scheme(PurpleCertificateScheme * scheme)
 		 */
 		[DllImport("libpurple.dll")]
@@ -344,6 +541,12 @@ namespace PurpleWrapper
 			return purple_certificate_unregister_scheme(scheme.Reference);
 		}
 
+		/*
+		 * Function Name: purple_certificate_find_verifier
+		 * Function Type: PurpleCertificateVerifier *
+		 * Function RawType: PurpleCertificateVerifier
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleCertificateVerifier * purple_certificate_find_verifier(gchar * scheme_name, gchar * ver_name)
 		 */
@@ -356,12 +559,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_get_verifiers
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_certificate_get_verifiers()
 		 * 
 		 * Could not generate a wrapper for purple_certificate_get_verifiers in file "certificate.h".
-		 * Message: The type could not be resolved (GList * purple_certificate_get_verifiers()).
+		 * Message: Unknown inner-type of argument 0 of purple_certificate_get_verifiers
 		 */
 
+		/*
+		 * Function Name: purple_certificate_register_verifier
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_certificate_register_verifier(PurpleCertificateVerifier * vr)
 		 */
@@ -374,6 +589,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_unregister_verifier
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_certificate_unregister_verifier(PurpleCertificateVerifier * vr)
 		 */
 		[DllImport("libpurple.dll")]
@@ -384,6 +605,12 @@ namespace PurpleWrapper
 			return purple_certificate_unregister_verifier(vr.Reference);
 		}
 
+		/*
+		 * Function Name: purple_certificate_find_pool
+		 * Function Type: PurpleCertificatePool *
+		 * Function RawType: PurpleCertificatePool
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleCertificatePool * purple_certificate_find_pool(gchar * scheme_name, gchar * pool_name)
 		 */
@@ -396,12 +623,24 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_get_pools
+		 * Function Type: GList *
+		 * Function RawType: GList
+		 * Function Category: PointerToGList
+		 */
+		/*
 		 * GList * purple_certificate_get_pools()
 		 * 
 		 * Could not generate a wrapper for purple_certificate_get_pools in file "certificate.h".
-		 * Message: The type could not be resolved (GList * purple_certificate_get_pools()).
+		 * Message: Unknown inner-type of argument 0 of purple_certificate_get_pools
 		 */
 
+		/*
+		 * Function Name: purple_certificate_register_pool
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_certificate_register_pool(PurpleCertificatePool * pool)
 		 */
@@ -414,6 +653,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_unregister_pool
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_certificate_unregister_pool(PurpleCertificatePool * pool)
 		 */
 		[DllImport("libpurple.dll")]
@@ -425,6 +670,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_certificate_display_x509
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_certificate_display_x509(PurpleCertificate * crt)
 		 */
 		[DllImport("libpurple.dll")]
@@ -435,6 +686,12 @@ namespace PurpleWrapper
 			purple_certificate_display_x509(crt.Reference);
 		}
 
+		/*
+		 * Function Name: purple_certificate_add_ca_search_path
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_certificate_add_ca_search_path(char * path)
 		 */

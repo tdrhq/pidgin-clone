@@ -38,20 +38,37 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: theme.h
+	 */
 	public class Theme
 	{
+
+		/*
+		 * Function Name: purple_theme_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_theme_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_theme_get_type();
 
-		public static /* libgobject */ IntPtr GetType()
+		public static /* libobject */ IntPtr GetType()
 		{
-			/* Unable to process purple_theme_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_theme_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_theme_get_name
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_theme_get_name(PurpleTheme * theme)
 		 */
@@ -64,6 +81,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_set_name
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_theme_set_name(PurpleTheme * theme, gchar * name)
 		 */
 		[DllImport("libpurple.dll")]
@@ -74,6 +97,12 @@ namespace PurpleWrapper
 			purple_theme_set_name(theme.Reference, name);
 		}
 
+		/*
+		 * Function Name: purple_theme_get_description
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_theme_get_description(PurpleTheme * theme)
 		 */
@@ -86,6 +115,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_set_description
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_theme_set_description(PurpleTheme * theme, gchar * description)
 		 */
 		[DllImport("libpurple.dll")]
@@ -96,6 +131,12 @@ namespace PurpleWrapper
 			purple_theme_set_description(theme.Reference, description);
 		}
 
+		/*
+		 * Function Name: purple_theme_get_author
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_theme_get_author(PurpleTheme * theme)
 		 */
@@ -108,6 +149,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_set_author
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
+		/*
 		 * void purple_theme_set_author(PurpleTheme * theme, gchar * author)
 		 */
 		[DllImport("libpurple.dll")]
@@ -118,6 +165,12 @@ namespace PurpleWrapper
 			purple_theme_set_author(theme.Reference, author);
 		}
 
+		/*
+		 * Function Name: purple_theme_get_type_string
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_theme_get_type_string(PurpleTheme * theme)
 		 */
@@ -130,6 +183,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_get_dir
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_theme_get_dir(PurpleTheme * theme)
 		 */
 		[DllImport("libpurple.dll")]
@@ -140,6 +199,12 @@ namespace PurpleWrapper
 			return purple_theme_get_dir(theme.Reference);
 		}
 
+		/*
+		 * Function Name: purple_theme_set_dir
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_theme_set_dir(PurpleTheme * theme, gchar * dir)
 		 */
@@ -152,6 +217,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_get_image
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_theme_get_image(PurpleTheme * theme)
 		 */
 		[DllImport("libpurple.dll")]
@@ -163,6 +234,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_theme_get_image_full
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
+		/*
 		 * gchar * purple_theme_get_image_full(PurpleTheme * theme)
 		 */
 		[DllImport("libpurple.dll")]
@@ -173,6 +250,12 @@ namespace PurpleWrapper
 			return purple_theme_get_image_full(theme.Reference);
 		}
 
+		/*
+		 * Function Name: purple_theme_set_image
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_theme_set_image(PurpleTheme * theme, gchar * img)
 		 */

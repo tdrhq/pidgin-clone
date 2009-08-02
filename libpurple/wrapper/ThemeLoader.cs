@@ -38,20 +38,37 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: theme-loader.h
+	 */
 	public class ThemeLoader
 	{
+
+		/*
+		 * Function Name: purple_theme_loader_get_type
+		 * Function Type: GType
+		 * Function RawType: GType
+		 * Function Category: GObjectObject
+		 */
 		/*
 		 * GType purple_theme_loader_get_type()
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern IntPtr purple_theme_loader_get_type();
 
-		public static /* libgobject */ IntPtr ThemeLoaderGetType()
+		public static /* libobject */ IntPtr ThemeLoaderGetType()
 		{
-			/* Unable to process purple_theme_loader_get_type, a GObjectObject. */
-			
+			/* Unable to process the return value of purple_theme_loader_get_type, a GObjectObject. */
+			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_theme_loader_get_type_string
+		 * Function Type: gchar *
+		 * Function RawType: gchar
+		 * Function Category: Native
+		 */
 		/*
 		 * gchar * purple_theme_loader_get_type_string(PurpleThemeLoader * self)
 		 */
@@ -63,6 +80,12 @@ namespace PurpleWrapper
 			return purple_theme_loader_get_type_string(self.Reference);
 		}
 
+		/*
+		 * Function Name: purple_theme_loader_build
+		 * Function Type: PurpleTheme *
+		 * Function RawType: PurpleTheme
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleTheme * purple_theme_loader_build(PurpleThemeLoader * loader, gchar * dir)
 		 */

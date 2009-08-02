@@ -38,6 +38,10 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: eventloop.h
+	 */
 	public class Eventloop
 	{
 		public enum PurpleInputCondition
@@ -46,30 +50,50 @@ namespace PurpleWrapper
 			PURPLE_INPUT_WRITE = 1 << 1
 		};
 
+		public delegate void PurpleInputFunction(/* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg0, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg1, /* Unresolved: [Category: Unknown], [Name:  ] */ IntPtr _PurpleWrapper_arg2);
+
+		/*
+		 * Function Name: purple_timeout_add
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
+		 */
 		/*
 		 * guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data)
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern uint purple_timeout_add(uint interval, IntPtr function, IntPtr data);
 
-		public static uint TimeoutAdd(uint interval, /* libgobject */ IntPtr function, IntPtr data)
+		public static uint TimeoutAdd(uint interval, /* libobject */ IntPtr function, IntPtr data)
 		{
 			/* Unable to process function, a GObjectObject. */
 			throw new NotImplementedException();
 		}
 
 		/*
+		 * Function Name: purple_timeout_add_seconds
+		 * Function Type: guint
+		 * Function RawType: guint
+		 * Function Category: Native
+		 */
+		/*
 		 * guint purple_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data)
 		 */
 		[DllImport("libpurple.dll")]
 		private static extern uint purple_timeout_add_seconds(uint interval, IntPtr function, IntPtr data);
 
-		public static uint TimeoutAddSeconds(uint interval, /* libgobject */ IntPtr function, IntPtr data)
+		public static uint TimeoutAddSeconds(uint interval, /* libobject */ IntPtr function, IntPtr data)
 		{
 			/* Unable to process function, a GObjectObject. */
 			throw new NotImplementedException();
 		}
 
+		/*
+		 * Function Name: purple_timeout_remove
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
 		/*
 		 * gboolean purple_timeout_remove(guint handle)
 		 */
@@ -82,6 +106,12 @@ namespace PurpleWrapper
 		}
 
 		/*
+		 * Function Name: purple_input_remove
+		 * Function Type: gboolean
+		 * Function RawType: gboolean
+		 * Function Category: Native
+		 */
+		/*
 		 * gboolean purple_input_remove(guint handle)
 		 */
 		[DllImport("libpurple.dll")]
@@ -93,12 +123,29 @@ namespace PurpleWrapper
 		}
 
 		/*
-		 * int purple_input_get_error(int fd, int * error)
-		 * 
-		 * Could not generate a wrapper for purple_input_get_error in file "eventloop.h".
-		 * Message: The type could not be resolved (int * error).
+		 * Function Name: purple_input_get_error
+		 * Function Type: int
+		 * Function RawType: int
+		 * Function Category: Native
 		 */
+		/*
+		 * int purple_input_get_error(int fd, int * error)
+		 */
+		[DllImport("libpurple.dll")]
+		private static extern int purple_input_get_error(int fd, IntPtr error);
 
+		public static int InputGetError(int fd, /* Resolved as PointerToUnknownStruct to int */ IntPtr error)
+		{
+			/* Unable to process error, a PointerToUnknownStruct. */
+			throw new NotImplementedException();
+		}
+
+		/*
+		 * Function Name: purple_eventloop_set_ui_ops
+		 * Function Type: void
+		 * Function RawType: void
+		 * Function Category: Void
+		 */
 		/*
 		 * void purple_eventloop_set_ui_ops(PurpleEventLoopUiOps * ops)
 		 */
@@ -110,6 +157,12 @@ namespace PurpleWrapper
 			purple_eventloop_set_ui_ops(ops.Reference);
 		}
 
+		/*
+		 * Function Name: purple_eventloop_get_ui_ops
+		 * Function Type: PurpleEventLoopUiOps *
+		 * Function RawType: PurpleEventLoopUiOps
+		 * Function Category: PointerToKnownStruct
+		 */
 		/*
 		 * PurpleEventLoopUiOps * purple_eventloop_get_ui_ops()
 		 */

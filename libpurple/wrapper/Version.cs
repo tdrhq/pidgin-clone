@@ -38,8 +38,19 @@ using System.Runtime.InteropServices;
 
 namespace PurpleWrapper
 {
+
+	/*
+	 * File: version.h
+	 */
 	public class Version
 	{
+
+		/*
+		 * Function Name: purple_version_check
+		 * Function Type: char *
+		 * Function RawType: char
+		 * Function Category: Native
+		 */
 		/*
 		 * char * purple_version_check(guint required_major, guint required_minor, guint required_micro)
 		 */
