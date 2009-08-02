@@ -1145,12 +1145,26 @@ jingle_s5b_create_candidate_used(JingleSession *session, JingleS5B *s5b)
 	return candidate_used;
 }
 
+static JabberIq *
+jingle_s5b_create_activated(JingleSession *session, JingleS5B *s5b)
+{
+	JabberIq *activated =
+		jingle_session_to_packet(session, JINGLE_TRANSPORT_INFO);
+	xmlnode *jingle = xmlnode_get_child(activated->node, "jingle");
+	xmlnode *content = xmlnode_get_child(jingle, "content");
+	xmlnode *transport = xmlnode_get_child(content, "transport");
+
+	xmlnode_insert_child(transport, xmlnode_new("activated"));
+	xmlnode_set_attrib(xmlnode_get_child(transport, "activated"), "cid",
+		s5b->priv->accepted_candidate->cid);
+	return activated;
+}
 
 static gboolean
 jingle_s5b_connect_timeout_cb(gpointer data)
 {
 	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
-	
+
 	purple_debug_info("jingle-s5b", "in jingle_s5b_connect_timeout_cb\n");
 
 	/* cancel connect */
@@ -1289,10 +1303,13 @@ static void
 jingle_s5b_proxy_activate_cb(JabberStream *js, const char *from,
 	JabberIqType type, const char *id, xmlnode *packet, gpointer data)
 {
+	JingleSession *session = ((JingleS5BConnectData *) data)->session;  
 	JingleS5B *s5b = ((JingleS5BConnectData *) data)->s5b;
 
 	if (type == JABBER_IQ_RESULT) {
 		/* we are connected to the proxy, let's start */
+		/* send the <activated/> message to the other end */
+		jabber_iq_send(jingle_s5b_create_activated(session, s5b));
 		if (s5b->priv->connect_cb && s5b->priv->connect_content) {
 			s5b->priv->connect_cb(s5b->priv->connect_content);
 		}
@@ -1445,7 +1462,8 @@ jingle_s5b_handle_transport_info(JingleS5B *s5b, JingleSession *session,
 {
 	xmlnode *candidate_used = xmlnode_get_child(transport, "candidate-used");
 	xmlnode *candidate_error = xmlnode_get_child(transport, "candidate-error");
-	
+	xmlnode *activated = xmlnode_get_child(transport, "activated");
+
 	if (candidate_used) {
 		const gchar *cid = xmlnode_get_attrib(candidate_used, "cid");
 		JingleS5BCandidate *cand =
@@ -1503,11 +1521,16 @@ jingle_s5b_handle_transport_info(JingleS5B *s5b, JingleSession *session,
 			} else {
 				jingle_s5b_surrender(s5b);
 				/* start the transfer */
-				if (s5b->priv->connect_cb && s5b->priv->connect_content) {
+				/* if the candidate is a non-proxy */
+				if (s5b->priv->successful_remote_candidate->type !=
+					JINGLE_S5B_CANDIDATE_TYPE_PROXY) {
+					if (s5b->priv->connect_cb && s5b->priv->connect_content) {
 						s5b->priv->connect_cb(s5b->priv->connect_content);
-				} else {
-					/* some error? */
+					} else {
+						/* some error? */
+					}
 				}
+				/* otherwise wait for the <activated/> message */ 
 			}
 		}
 	} else if (candidate_error) {
@@ -1521,6 +1544,14 @@ jingle_s5b_handle_transport_info(JingleS5B *s5b, JingleSession *session,
 				s5b->priv->connect_cb(s5b->priv->connect_content);
 			} else {
 				/* some error? */
+			}
+		}
+	} else if (activated) {
+		const gchar *cid = xmlnode_get_attrib(activated, "cid");
+
+		if (purple_strequal(cid, s5b->priv->successful_remote_candidate->cid)) {
+			if (s5b->priv->connect_cb && s5b->priv->connect_content) {
+				s5b->priv->connect_cb(s5b->priv->connect_content);
 			}
 		}
 	}
