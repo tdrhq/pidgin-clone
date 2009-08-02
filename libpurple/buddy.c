@@ -607,7 +607,6 @@ purple_buddy_class_init(PurpleBuddyClass *klass)
 	parent_class = PURPLE_BLIST_NODE_CLASS(klass);
 	parent_class->is_online = purple_buddy_is_online;
 
-
 	parent_class = g_type_class_peek_parent(klass);
 	obj_class->finalize = purple_buddy_finalize;
 
@@ -639,7 +638,8 @@ purple_buddy_init(GTypeInstance *instance, gpointer class)
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBuddy *buddy = PURPLE_BUDDY(instance);
 	PurpleBuddyPrivate *priv = PURPLE_BUDDY_GET_PRIVATE(buddy);
-
+	
+	buddy->priv = priv;
 	priv->presence = purple_presence_new_for_buddy(buddy);
 
 	purple_presence_set_status_active(priv->presence, "offline", TRUE);

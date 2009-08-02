@@ -77,8 +77,8 @@ GSList *purple_group_get_accounts(PurpleGroup *group)
 
 	for (cnode = gnode->child;  cnode; cnode = cnode->next) {
 		if (PURPLE_IS_CHAT(cnode)) {
-			if (!g_slist_find(l, ((PurpleChat *)cnode)->account))
-				l = g_slist_append(l, ((PurpleChat *)cnode)->account);
+			if (!g_slist_find(l, purple_chat_get_account(PURPLE_CHAT(cnode))))
+				l = g_slist_append(l, purple_chat_get_account(PURPLE_CHAT(cnode)));
 		} else if (PURPLE_IS_CONTACT(cnode)) {
 			for (bnode = cnode->child; bnode; bnode = bnode->next) {
 				if (PURPLE_IS_BUDDY(bnode)) {
@@ -103,7 +103,7 @@ purple_group_child_updated(PurpleGroup *group, PurpleBlistNode *child)
 	
 	if(PURPLE_IS_CHAT(child)){
 		chat = PURPLE_CHAT(child);
-		if (purple_account_is_connected(chat->account)) {
+		if (purple_account_is_connected(purple_chat_get_account(chat))) {
 			group->online++;
 			group->currentsize++;
 		}
@@ -135,7 +135,7 @@ purple_group_add_child_helper(PurpleGroup *group, PurpleBlistNode *child)
 
 	if(PURPLE_IS_CHAT(child)){
 		chat = PURPLE_CHAT(child);
-		if (purple_account_is_connected(chat->account)) {
+		if (purple_account_is_connected(purple_chat_get_account(chat))) {
 			group->online++;
 			group->currentsize++;
 		}
@@ -197,7 +197,7 @@ purple_group_remove_node(PurpleBlistNode *child)
 
 	if(PURPLE_IS_CHAT(child)){
 		chat = PURPLE_CHAT(child);
-		if (purple_account_is_connected(chat->account)) {
+		if (purple_account_is_connected(purple_chat_get_account(chat))) {
 			group->online--;
 			group->currentsize--;
 		}

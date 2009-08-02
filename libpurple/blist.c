@@ -24,12 +24,12 @@
 #define _BLIST_HELPERS_
 
 #include "internal.h"
-#include "blist.h"
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "server.h"
 #include "signals.h"
 #include "xmlnode.h"
+#include "chat.h"
 
 static GType purple_blist_get_gtype(void);
 
@@ -940,6 +940,7 @@ void purple_blist_remove_chat(PurpleChat *chat)
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBlistNode *node, *gnode;
 	PurpleGroup *group;
+	PurpleAccount *account;
 
 	g_return_if_fail(chat != NULL);
 
@@ -953,7 +954,8 @@ void purple_blist_remove_chat(PurpleChat *chat)
 		purple_blist_node_remove(node);
 
 		/* Adjust size counts */
-		if (purple_account_is_connected(chat->account)) {
+		account = purple_chat_get_account(chat);
+		if (purple_account_is_connected(account)) {
 			group->online--;
 			group->currentsize--;
 		}
@@ -1129,7 +1131,7 @@ void purple_blist_add_account(PurpleAccount *account)
 						ops->update(cnode);
 					}
 			} else if (PURPLE_IS_CHAT(cnode) &&
-					((PurpleChat*)cnode)->account == account) {
+					purple_chat_get_account(PURPLE_CHAT(cnode)) == account) {
 				(PURPLE_GROUP(gnode))->online++;
 				(PURPLE_GROUP(gnode))->currentsize++;
 				ops->update(cnode);
@@ -1206,7 +1208,7 @@ void purple_blist_remove_account(PurpleAccount *account)
 			} else if (PURPLE_IS_CHAT(cnode)) {
 				chat = (PurpleChat *)cnode;
 
-				if(chat->account == account) {
+				if(purple_chat_get_account(chat) == account) {
 					group->currentsize--;
 					group->online--;
 
@@ -1233,8 +1235,8 @@ gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account)
 				return TRUE;
 		} else if (PURPLE_IS_CHAT(cnode)) {
 			PurpleChat *chat = (PurpleChat *)cnode;
-			if ((!account && purple_account_is_connected(chat->account))
-					|| chat->account == account)
+			if ((!account && purple_account_is_connected(purple_chat_get_account(chat)))
+					|| purple_chat_get_account(chat) == account)
 				return TRUE;
 		}
 	}
@@ -1291,7 +1293,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 		cnode->parent = node->parent;
 		node->next = cnode;
 		(PURPLE_GROUP(node->parent))->totalsize++;
-		if (purple_account_is_connected(chat->account)) {
+		if (purple_account_is_connected(purple_chat_get_account(chat))) {
 			(PURPLE_GROUP(node->parent))->online++;
 			(PURPLE_GROUP(node->parent))->currentsize++;
 		}
@@ -1303,7 +1305,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 		(PURPLE_BLIST_NODE(group))->child = cnode;
 		cnode->parent = PURPLE_BLIST_NODE(group);
 		group->totalsize++;
-		if (purple_account_is_connected(chat->account)) {
+		if (purple_account_is_connected(purple_chat_get_account(chat))) {
 			group->online++;
 			group->currentsize++;
 		}
@@ -1473,7 +1475,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 PurpleChat *
 purple_blist_find_chat(PurpleAccount *account, const char *name)
 {
-	char *chat_name;
+	const char *chat_name;
 	PurpleChat *chat;
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info = NULL;
@@ -1502,19 +1504,21 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 
 				chat = (PurpleChat*)node;
 
-				if (account != chat->account)
+				if (account != purple_chat_get_account(chat))
 					continue;
 
 				parts = prpl_info->chat_info(
-					purple_account_get_connection(chat->account));
+					purple_account_get_connection(purple_chat_get_account(chat)));
 
 				pce = parts->data;
-				chat_name = g_hash_table_lookup(chat->components,
-												pce->identifier);
+#warning not sure if this is right, old code below
+				chat_name = purple_chat_get_name(chat);
+/*				chat_name = g_hash_table_lookup(chat->components,
+												pce->identifier);*/
 				g_list_foreach(parts, (GFunc)g_free, NULL);
 				g_list_free(parts);
 
-				if (chat->account == account && chat_name != NULL &&
+				if (purple_chat_get_account(chat) == account && chat_name != NULL &&
 					normname != NULL && !strcmp(purple_normalize(account, chat_name), normname)) {
 					g_free(normname);
 					return chat;

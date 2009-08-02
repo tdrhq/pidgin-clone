@@ -27,13 +27,15 @@
 #ifndef _PURPLE_CHAT_H_
 #define _PURPLE_CHAT_H_
 
-#include <glib.h>
 
 /** @copydoc _PurpleChat */
 typedef struct _PurpleChat PurpleChat;
+typedef struct _PurpleChatPrivate PurpleChatPrivate;
 typedef struct _PurpleChatClass PurpleChatClass;
 
 #include "blist-node.h"
+#include "account.h"
+#include "xmlnode.h"
 
 #define PURPLE_CHAT_TYPE                  (purple_chat_get_type ())
 #define PURPLE_CHAT(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_CHAT_TYPE, PurpleChat))
@@ -42,23 +44,18 @@ typedef struct _PurpleChatClass PurpleChatClass;
 #define PURPLE_IS_CHAT_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CHAT_TYPE))
 #define PURPLE_GET_CHAT_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CHAT_TYPE, PurpleChatClass))
 
-#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_CHAT_C_)
-
 /**
  * A chat.  This contains everything Purple needs to put a chat room in the
  * buddy list.
  */
 struct _PurpleChat {
 	PurpleBlistNode node;      /**< The node that this chat inherits from */
-	char *alias;             /**< The display name of this chat. */
-	GHashTable *components;  /**< the stuff the protocol needs to know to join the chat */
-	PurpleAccount *account; /**< The account this chat is attached to */
+	PurpleChatPrivate *priv;
 };
 
 struct _PurpleChatClass {
 	PurpleBlistNodeClass parent;
 };
-#endif
 
 /**
  * Creates a new chat for the buddy list
@@ -131,4 +128,6 @@ PurpleGroup *purple_chat_get_group(PurpleChat *chat);
  */
 GType purple_chat_get_type(void);
 
+xmlnode *chat_to_xmlnode(PurpleBlistNode *cnode);
+void parse_chat(PurpleGroup *group, xmlnode *cnode);
 #endif

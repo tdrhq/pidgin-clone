@@ -24,11 +24,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-
 #ifndef _PURPLE_BLIST_NODE_H_
 #define _PURPLE_BLIST_NODE_H_
 
-#include <glib.h>
 
 #define PURPLE_BUDDY_IS_ONLINE(b) \
 	((b) != NULL && purple_account_is_connected(purple_buddy_get_account(b)) && \
@@ -51,6 +49,8 @@ typedef struct _PurpleBlistNode PurpleBlistNode;
 typedef struct _PurpleBlistNodePrivate PurpleBlistNodePrivate;
 typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
 
+#include "pobject.h"
+
 #define PURPLE_BLIST_NODE_TYPE                  (purple_blist_node_get_gtype ())
 #define PURPLE_BLIST_NODE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNode))
 #define PURPLE_IS_BLIST_NODE(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PURPLE_BLIST_NODE_TYPE))
@@ -58,6 +58,7 @@ typedef struct _PurpleBlistNodeClass PurpleBlistNodeClass;
 #define PURPLE_IS_BLIST_NODE_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BLIST_NODE_TYPE))
 #define PURPLE_GET_BLIST_NODE_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodeClass))
 #define PURPLE_BLIST_NODE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PURPLE_BLIST_NODE_TYPE, PurpleBlistNodePrivate))
+
 
 /**
  * A Buddy list node.  This can represent a group, a buddy, or anything else.
@@ -363,4 +364,5 @@ GList *purple_blist_node_get_extended_menu(PurpleBlistNode *n);
  */
 GType purple_blist_node_get_gtype(void);
 
+PurpleBlistNode *purple_blist_get_last_child(PurpleBlistNode *node);
 #endif

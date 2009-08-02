@@ -705,7 +705,9 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 static void
 purple_blist_node_init(GTypeInstance *instance, gpointer class)
 {
-	purple_blist_node_initialize_settings(PURPLE_BLIST_NODE(instance));
+	PurpleBlistNode *node = PURPLE_BLIST_NODE(instance);
+	node->priv = PURPLE_BLIST_NODE_GET_PRIVATE(node);
+	purple_blist_node_initialize_settings(node);
 }
 
 GType
