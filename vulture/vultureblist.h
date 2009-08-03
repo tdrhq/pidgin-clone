@@ -30,6 +30,13 @@
 #include "purple.h"
 
 
+typedef enum _VULTURE_EDIT_NODE_STATE
+{
+	VENS_NOEDIT,
+	VENS_PREEDIT,
+	VENS_EDIT
+} VULTURE_EDIT_NODE_STATE;
+
 typedef struct _VULTURE_BLIST_NODE
 {
 	PurpleBlistNode			*lpblistnode;
@@ -46,6 +53,8 @@ typedef struct _VULTURE_BLIST_NODE
 	{
 		HBITMAP			hbmIconCache;
 		BOOL			bIconCacheValid;
+		VULTURE_EDIT_NODE_STATE	editnodestate;
+		POINT			ptText;
 	} ui;
 
 	/* For contacts and buddies. */

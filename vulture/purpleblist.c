@@ -79,6 +79,7 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 		lpvbn->szStatusText = NULL;
 		lpvbn->iStatusIcon = 0;
 		lpvbn->ui.bIconCacheValid = FALSE;
+		lpvbn->ui.editnodestate = VENS_NOEDIT;
 		InitializeCriticalSection(&lpvbn->cs);
 	}
 

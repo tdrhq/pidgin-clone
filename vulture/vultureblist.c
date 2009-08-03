@@ -697,15 +697,37 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 
 						VULTURE_ALIAS_NODE valiasnode;
 						LPNMTVDISPINFO lpnmtvdispinfo = (LPNMTVDISPINFO)lParam;
+						VULTURE_BLIST_NODE *lpvblistnode = (VULTURE_BLIST_NODE*)lpnmtvdispinfo->item.lParam;
 
 						/* Make sure editing wasn't
 						 * cancelled.
 						 */
 						if(lpnmtvdispinfo->item.pszText)
 						{
-							valiasnode.lpvblistnode = (VULTURE_BLIST_NODE*)lpnmtvdispinfo->item.lParam;
+							valiasnode.lpvblistnode = lpvblistnode;
 							valiasnode.szAlias = lpnmtvdispinfo->item.pszText;
 							VultureSingleSyncPurpleCall(PC_ALIASNODE, &valiasnode);
+						}
+
+						lpvblistnode->ui.editnodestate = VENS_NOEDIT;
+					}
+
+					return TRUE;
+
+				case TVN_BEGINLABELEDIT:
+					{
+						VULTURE_BLIST_NODE *lpvblistnode = (VULTURE_BLIST_NODE*)((LPNMTVDISPINFO)lParam)->item.lParam;
+
+						if(lpvblistnode->ui.editnodestate == VENS_PREEDIT)
+						{
+							SetWindowText(TreeView_GetEditControl(lpnmhdr->hwndFrom), lpvblistnode->szNodeText);
+							lpvblistnode->ui.editnodestate = VENS_EDIT;
+							SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, FALSE);
+						}
+						else
+						{
+							/* No secret handshake, no label edit! */
+							SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, TRUE);
 						}
 					}
 
@@ -1055,6 +1077,7 @@ static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode,
 		return TRUE;
 
 	case IDM_BLIST_CONTEXT_ALIAS:
+		lpvblistnode->ui.editnodestate = VENS_PREEDIT;
 		SendMessage(hwndBuddies, TVM_EDITLABEL, 0, (LPARAM)lpvblistnode->hti);
 		return TRUE;
 
@@ -1270,7 +1293,7 @@ static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw)
 	EnterCriticalSection(&lpvblistnode->cs);
 	{
 		/* Draw status icon. */
-		if(lpvblistnode->nodetype != PURPLE_BLIST_GROUP_NODE)
+		if(lpvblistnode->nodetype != PURPLE_BLIST_GROUP_NODE && lpvblistnode->ui.editnodestate != VENS_EDIT)
 		{
 			int xIcon = rcText.left;
 			int yIcon = (rcText.bottom + rcText.top - CY_STATUSICON) / 2;
@@ -1349,29 +1372,32 @@ static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw)
 			DeleteDC(hdcMem);
 		}
 
-		if(lpvblistnode->szStatusText &&
-			((lpvblistnode->nodetype == PURPLE_BLIST_CONTACT_NODE && !lpvblistnode->bExpanded) ||
-			lpvblistnode->nodetype == PURPLE_BLIST_BUDDY_NODE))
+		if(lpvblistnode->ui.editnodestate != VENS_EDIT)
 		{
-			HTREEITEM htiSel, htiDrop;
+			if(lpvblistnode->szStatusText &&
+				((lpvblistnode->nodetype == PURPLE_BLIST_CONTACT_NODE && !lpvblistnode->bExpanded) ||
+				lpvblistnode->nodetype == PURPLE_BLIST_BUDDY_NODE))
+			{
+				HTREEITEM htiSel, htiDrop;
 
-			/* Render main text. */
-			if(lpvblistnode->szNodeText)
-				DrawText(lpnmtvcdraw->nmcd.hdc, lpvblistnode->szNodeText, -1, &rcText, DT_END_ELLIPSIS | DT_SINGLELINE);
+				/* Render main text. */
+				if(lpvblistnode->szNodeText)
+					DrawText(lpnmtvcdraw->nmcd.hdc, lpvblistnode->szNodeText, -1, &rcText, DT_END_ELLIPSIS | DT_SINGLELINE);
 
-			/* Render secondary text. */
-			htiSel = TreeView_GetSelection(lpnmtvcdraw->nmcd.hdr.hwndFrom);
-			htiDrop = TreeView_GetDropHilight(lpnmtvcdraw->nmcd.hdr.hwndFrom);
-			if(htiDrop != (HTREEITEM)lpnmtvcdraw->nmcd.dwItemSpec &&
-				 (htiSel != (HTREEITEM)lpnmtvcdraw->nmcd.dwItemSpec || htiDrop != NULL))
-				SetTextColor(lpnmtvcdraw->nmcd.hdc, 0x808080);
-			DrawText(lpnmtvcdraw->nmcd.hdc, lpvblistnode->szStatusText, -1, &rcText, DT_BOTTOM | DT_END_ELLIPSIS | DT_SINGLELINE);
-		}
-		else
-		{
-			/* No secondary text; render main text only. */
-			if(lpvblistnode->szNodeText)
-				DrawText(lpnmtvcdraw->nmcd.hdc, lpvblistnode->szNodeText, -1, &rcText, DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+				/* Render secondary text. */
+				htiSel = TreeView_GetSelection(lpnmtvcdraw->nmcd.hdr.hwndFrom);
+				htiDrop = TreeView_GetDropHilight(lpnmtvcdraw->nmcd.hdr.hwndFrom);
+				if(htiDrop != (HTREEITEM)lpnmtvcdraw->nmcd.dwItemSpec &&
+					 (htiSel != (HTREEITEM)lpnmtvcdraw->nmcd.dwItemSpec || htiDrop != NULL))
+					SetTextColor(lpnmtvcdraw->nmcd.hdc, 0x808080);
+				DrawText(lpnmtvcdraw->nmcd.hdc, lpvblistnode->szStatusText, -1, &rcText, DT_BOTTOM | DT_END_ELLIPSIS | DT_SINGLELINE);
+			}
+			else
+			{
+				/* No secondary text; render main text only. */
+				if(lpvblistnode->szNodeText)
+					DrawText(lpnmtvcdraw->nmcd.hdc, lpvblistnode->szNodeText, -1, &rcText, DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+			}
 		}
 	}
 	LeaveCriticalSection(&lpvblistnode->cs);
