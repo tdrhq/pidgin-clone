@@ -337,6 +337,11 @@ jingle_s5b_finalize (GObject *s5b)
 	if (priv->fd >= 0) {
 		purple_network_remove_port_mapping(priv->fd);
 		close(priv->fd);
+	} else if (priv->local_fd >= 0) {
+		purple_network_remove_port_mapping(priv->local_fd);
+		close(priv->local_fd);
+	} else if (priv->remote_fd >= 0) {
+		close(priv->remote_fd);
 	}
 
 	/* free the local streamhosts */
