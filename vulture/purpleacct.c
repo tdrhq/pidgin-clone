@@ -81,6 +81,8 @@ void VultureFreeAccountList(GList *lpglistAccounts)
 		g_free(lpvac->szProtocolID);
 		g_free(lpvac);
 	}
+
+	g_list_free(lpglistAccounts);
 }
 
 
