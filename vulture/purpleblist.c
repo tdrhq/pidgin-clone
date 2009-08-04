@@ -729,3 +729,68 @@ void PurpleBuddyIconChanged(PurpleBuddy *lpbuddy)
 	 * will be done in response to the conversation-updated signal.
 	 */
 }
+
+
+/**
+ * Retrieves a list of groups from the buddy list.
+ *
+ * @return GList* of VULTURE_BLIST_NODEs representing all groups. The caller
+ * should free the list by calling VultureFreeGroupList.
+ */
+GList* PurpleGetGroups(void)
+{
+	GList *lpglistGroups = NULL;
+	PurpleBlistNode *lpblnRover;
+
+	for(lpblnRover = purple_get_blist()->root; lpblnRover; lpblnRover = lpblnRover->next)
+	{
+		if(PURPLE_BLIST_NODE_IS_GROUP(lpblnRover))
+		{
+			VULTURE_BLIST_NODE *lpvblistnode = lpblnRover->ui_data;
+			VultureBListNodeAddRef(lpvblistnode);
+			lpglistGroups = g_list_prepend(lpglistGroups, lpvblistnode);
+		}
+	}
+
+	return g_list_reverse(lpglistGroups);
+}
+
+
+/**
+ * Frees a list returned by PurpleGetGroups.
+ *
+ * @param	lpglistGroups		List to free.
+ */
+void VultureFreeGroupList(GList *lpglistGroups)
+{
+	GList *lpglistRover;
+
+	for(lpglistRover = lpglistGroups; lpglistRover; lpglistRover = lpglistRover->next)
+		VultureBListNodeRelease(lpglistRover->data);
+
+	g_list_free(lpglistGroups);
+}
+
+
+/**
+ * Adds a buddy.
+ *
+ * @param	lpvabd	New buddy's details.
+ */
+void PurpleAddBuddy(VULTURE_ADD_BUDDY_DATA *lpvabd)
+{
+	PurpleBuddy *lpbuddy;
+	gchar *szUsernameUTF8, *szAliasUTF8;
+
+	szUsernameUTF8 = VultureTCHARToUTF8(lpvabd->szUsername);
+	szAliasUTF8 = lpvabd->szAlias ? VultureTCHARToUTF8(lpvabd->szAlias) : NULL;
+
+	lpbuddy = purple_buddy_new(lpvabd->lppac, szUsernameUTF8, szAliasUTF8);
+	purple_blist_add_buddy(lpbuddy, NULL, lpvabd->lpvblistnodeGroup ? (PurpleGroup*)lpvabd->lpvblistnodeGroup->lpblistnode : NULL, NULL);
+	purple_account_add_buddy(lpvabd->lppac, lpbuddy);
+
+	PurpleBlistUpdateNode(purple_get_blist(), (PurpleBlistNode*)lpbuddy);
+
+	if(szAliasUTF8) g_free(szAliasUTF8);
+	g_free(szUsernameUTF8);
+}

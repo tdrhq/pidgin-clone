@@ -112,6 +112,12 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_GET_BLIST_NODE_ICON*) */
 	PC_GETBLISTNODEICON,
+
+	/* (GList**) Return address for list. */
+	PC_GETGROUPS,
+
+	/* (VULTURE_ADD_BUDDY_DATA*) */
+	PC_ADDBUDDY,
 };
 
 

@@ -2,24 +2,27 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDC_BTN_ACCOUNT_ADD                     40005
-#define IDC_BTN_ACCOUNT_DELETE                  40007
-#define IDC_BTN_ACCOUNT_PROPERTIES              40006
-#define IDC_BUDDY_ICON                          1002
-#define IDC_CBEX_ACCOUNTS                       1000
-#define IDC_CBEX_STATUS                         1004
-#define IDC_EDIT_STATUSMSG                      40003
-#define IDC_LIST_ACCOUNTS                       1003
-#define IDC_RICHEDIT_CONV                       40008
-#define IDC_RICHEDIT_INPUT                      40010
-#define IDC_STATIC_DETAILS                      1001
-#define IDC_STATIC_ICON                         40014
-#define IDC_STATIC_NAME                         40011
-#define IDC_STATIC_STATUS                       40013
-#define IDC_STATIC_TOPIC                        40013
-#define IDC_TAB_CONVERSATIONS                   1001
-#define IDC_TREE_BLIST                          40004
-#define IDC_TREE_NAMES                          1002
+#define IDC_BTN_ACCOUNT_ADD                     1001
+#define IDC_BTN_ACCOUNT_DELETE                  1002
+#define IDC_BTN_ACCOUNT_PROPERTIES              1003
+#define IDC_BUDDY_ICON                          1004
+#define IDC_CBEX_ACCOUNTS                       1005
+#define IDC_CBEX_STATUS                         1006
+#define IDC_EDIT_STATUSMSG                      1007
+#define IDC_LIST_ACCOUNTS                       1008
+#define IDC_RICHEDIT_CONV                       1009
+#define IDC_RICHEDIT_INPUT                      1010
+#define IDC_STATIC_DETAILS                      1011
+#define IDC_STATIC_ICON                         1012
+#define IDC_STATIC_NAME                         1013
+#define IDC_STATIC_STATUS                       1014
+#define IDC_STATIC_TOPIC                        1015
+#define IDC_TAB_CONVERSATIONS                   1016
+#define IDC_TREE_BLIST                          1017
+#define IDC_TREE_NAMES                          1018
+#define IDC_EDIT_USERNAME                       1019
+#define IDC_EDIT_ALIAS                          1020
+#define IDC_CBEX_GROUP                          1021
 
 
 #define IDD_ACCOUNTS                            101
@@ -29,12 +32,14 @@
 #define IDD_IM                                  105
 #define IDD_JOINCHAT                            106
 #define IDD_STATUS                              107
+#define IDD_ADDBUDDY                            108
 
 
 #define IDM_BLIST                               1001
 #define IDM_BLIST_ACCOUNTS_MANAGE               40001
 #define IDM_BLIST_BUDDIES_CLOSE                 40000
 #define IDM_BLIST_BUDDIES_JOINCHAT              40002
+#define IDM_BLIST_BUDDIES_ADDBUDDY              40003
 
 #define IDM_BLIST_CONTEXT                       1002
 #define IDM_BLIST_CONTEXT_ACTIVATE              40201

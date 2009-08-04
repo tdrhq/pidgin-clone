@@ -31,6 +31,16 @@
 #include "purple.h"
 
 
+
+typedef struct _VULTURE_ADD_BUDDY_DATA
+{
+	PurpleAccount		*lppac;
+	LPTSTR			szUsername;
+	LPTSTR			szAlias;
+	VULTURE_BLIST_NODE	*lpvblistnodeGroup;
+} VULTURE_ADD_BUDDY_DATA;
+
+
 void PurpleBlistNewNode(PurpleBlistNode *lpblistnode);
 void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode);
 void PurpleBlistRemoveNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblistnode);
@@ -44,6 +54,9 @@ void PurpleBlistAliasNode(PurpleBlistNode *lpblistnode, LPCTSTR szAlias);
 void PurpleDeleteBlistNode(PurpleBlistNode *lpblistnode);
 void PurpleCommonMakeMenu(HMENU hmenu, PurpleBlistNode *lpblistnode);
 void PurpleBuddyIconChanged(PurpleBuddy *lpbuddy);
+GList* PurpleGetGroups(void);
+void VultureFreeGroupList(GList *lpglistGroups);
+void PurpleAddBuddy(VULTURE_ADD_BUDDY_DATA *lpvabd);
 
 
 static INLINE void VultureBListNodeAddRef(VULTURE_BLIST_NODE *lpvblnode) { InterlockedIncrement(&lpvblnode->lRefCount); }

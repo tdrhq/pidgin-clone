@@ -27,7 +27,10 @@
 #include <windows.h>
 #include <glib.h>
 
+#include "purple.h"
 #include "acctmanager.h"
+#include "vultureblist.h"
+#include "purpleblist.h"
 
 
 typedef struct _VULTURE_JOIN_CHAT_DATA
@@ -44,6 +47,7 @@ typedef struct _VULTURE_GET_CHAT_FIELDS
 
 
 BOOL VultureJoinChatDlg(HWND hwndParent, VULTURE_JOIN_CHAT_DATA *lpvjcd);
+BOOL VultureAddBuddyDlg(HWND hwndParent, VULTURE_ADD_BUDDY_DATA *lpvabd);
 
 
 #endif

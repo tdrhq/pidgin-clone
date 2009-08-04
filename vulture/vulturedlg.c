@@ -31,6 +31,7 @@
 #include "acctmanager.h"
 #include "purplequeue.h"
 #include "purpleacct.h"
+#include "purpleblist.h"
 
 
 typedef struct _JOIN_DLG_FIELD
@@ -62,10 +63,13 @@ static HWND CreateJoinDlgLabel(HWND hwndDlg, int iFieldNum, LPCSTR szLabelUTF8);
 static HWND CreateJoinDlgEdit(HWND hwndDlg, int iFieldNum, BOOL bNumber, BOOL bSecret);
 static void UpdateJoinChatFields(HWND hwndDlg, GList **lplpglistFields, int *lpiMaxShowFields);
 static void AutoEnableJoinDlgOKButton(HWND hwndDlg, GList *lpglistFields);
+static INT_PTR CALLBACK AddBuddyDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static void AutoEnableBuddyDlgOKButton(HWND hwndDlg);
+static void PopulateGroupsCombo(HWND hwndCBEx, GList *lpglistGroups);
 
 
 /**
- * Displays the "Join a Chat" dialogue.
+ * Displays the "Join Chat" dialogue.
  *
  * @param	hwndParent	Parent window handle.
  * @param[out]	lpvjcd		Details of chat to join are returned here.
@@ -79,7 +83,7 @@ BOOL VultureJoinChatDlg(HWND hwndParent, VULTURE_JOIN_CHAT_DATA *lpvjcd)
 
 
 /**
- * Dialogue procedure for "Join a Chat" dialogue.
+ * Dialogue procedure for "Join Chat" dialogue.
  *
  * @param	hwndDlg		Dialogue window handle.
  * @param	uiMsg		Message ID.
@@ -490,4 +494,187 @@ static void AutoEnableJoinDlgOKButton(HWND hwndDlg, GList *lpglistFields)
 	}
 	else
 		EnableWindow(hwndOK, TRUE);
+}
+
+
+/**
+ * Displays the "Add Buddy" dialogue.
+ *
+ * @param	hwndParent	Parent window handle.
+ * @param[out]	lpvabd		Details of buddy to add are returned here.
+ *
+ * @return TRUE iff OKed.
+ */
+BOOL VultureAddBuddyDlg(HWND hwndParent, VULTURE_ADD_BUDDY_DATA *lpvabd)
+{
+	return (BOOL)DialogBoxParam(g_hInstance, MAKEINTRESOURCE(IDD_ADDBUDDY), hwndParent, AddBuddyDlgProc, (LPARAM)lpvabd);
+}
+
+
+/**
+ * Dialogue procedure for "Add Buddy" dialogue.
+ *
+ * @param	hwndDlg		Dialogue window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Usually TRUE if message processed and FALSE otherwise. There are
+ * some exceptions for particular messages.
+ */
+static INT_PTR CALLBACK AddBuddyDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
+	static GList *s_lpglistAccounts = NULL;
+	static GList *s_lpglistGroups = NULL;
+	static VULTURE_ADD_BUDDY_DATA *s_lpvabd = NULL;
+
+	switch(uiMsg)
+	{
+	case WM_INITDIALOG:
+		{
+			VULTURE_GET_ACCOUNTS vgetaccounts;
+
+			/* We return stuff here. */
+			s_lpvabd = (VULTURE_ADD_BUDDY_DATA*)lParam;
+
+			/* Get online accounts. */
+			vgetaccounts.bOnlineOnly = TRUE;
+			VultureSingleSyncPurpleCall(PC_GETACCOUNTS, &vgetaccounts);
+			s_lpglistAccounts = vgetaccounts.lpglistAccounts;
+
+			/* Populate combo and select first item. */
+			PopulateAccountsCombo(GetDlgItem(hwndDlg, IDC_CBEX_ACCOUNTS), s_lpglistAccounts);
+			if(SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCOUNT, 0, 0) > 0)
+				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_SETCURSEL, 0, 0);
+
+			/* Get all groups. */
+			VultureSingleSyncPurpleCall(PC_GETGROUPS, &s_lpglistGroups);
+
+			/* Populate combo and select first item. */
+			PopulateGroupsCombo(GetDlgItem(hwndDlg, IDC_CBEX_GROUP), s_lpglistGroups);
+			if(SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCOUNT, 0, 0) > 0)
+				SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_SETCURSEL, 0, 0);
+
+			AutoEnableBuddyDlgOKButton(hwndDlg);
+		}
+
+		/* Let the system set the focus. */
+		return TRUE;
+
+	case WM_COMMAND:
+		/* Should really make sure this comes from an edit control, but
+		 * no harm done.
+		 */
+		if(HIWORD(wParam) == EN_CHANGE)
+			AutoEnableBuddyDlgOKButton(hwndDlg);
+
+		switch(LOWORD(wParam))
+		{
+		case IDOK:
+			{
+				COMBOBOXEXITEM cbexitem;
+				int cch;
+
+				/* Get the selected account. */
+				cbexitem.mask = CBEIF_LPARAM;
+				cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCURSEL, 0, 0);
+				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+				s_lpvabd->lppac = ((VULTURE_ACCOUNT*)cbexitem.lParam)->lppac;
+
+				/* Get the selected group. */
+				cbexitem.mask = CBEIF_LPARAM;
+				cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCURSEL, 0, 0);
+				SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+				s_lpvabd->lpvblistnodeGroup = (VULTURE_BLIST_NODE*)cbexitem.lParam;
+
+				if(s_lpvabd->lpvblistnodeGroup)
+					VultureBListNodeAddRef(s_lpvabd->lpvblistnodeGroup);
+
+				cch = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_USERNAME)) + 1;
+				s_lpvabd->szUsername = ProcHeapAlloc(cch * sizeof(TCHAR));
+				GetDlgItemText(hwndDlg, IDC_EDIT_USERNAME, s_lpvabd->szUsername, cch);
+
+				cch = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_ALIAS)) + 1;
+				if(cch > 1)
+				{
+					s_lpvabd->szAlias = ProcHeapAlloc(cch * sizeof(TCHAR));
+					GetDlgItemText(hwndDlg, IDC_EDIT_ALIAS, s_lpvabd->szAlias, cch);
+				}
+				else
+					s_lpvabd->szAlias = NULL;
+
+				EndDialog(hwndDlg, TRUE);
+			}
+
+			return TRUE;
+
+		case IDCANCEL:
+			EndDialog(hwndDlg, FALSE);
+			return TRUE;
+		}
+
+		break;
+
+	case WM_DESTROY:
+		VultureFreeAccountList(s_lpglistAccounts);
+		VultureFreeGroupList(s_lpglistGroups);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
+/**
+ * Enables or disables the OK button in the add-buddy or IM dialogues according
+ * to the states of other controls.
+ *
+ * @param	hwndDlg		Add-buddy dialogue.
+ */
+static void AutoEnableBuddyDlgOKButton(HWND hwndDlg)
+{
+	HWND hwndOK = GetDlgItem(hwndDlg, IDOK);
+	BOOL bEnable = SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCURSEL, 0, 0) >= 0 && GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_USERNAME)) > 0;
+
+	if(!bEnable)
+	{
+		/* Don't leave the focus on a disabled control. */
+		if(GetFocus() == hwndOK)
+			SendMessage(hwndDlg, WM_NEXTDLGCTL, 0, 0);
+
+		EnableWindow(hwndOK, FALSE);
+	}
+	else
+		EnableWindow(hwndOK, TRUE);
+}
+
+
+/**
+ * Populates a ComboBoxEx control with groups.
+ *
+ * @param	hwndCBEx		ComboBoxEx control window handle.
+ * @param	lpglistGroups		Accounts to add.
+ */
+static void PopulateGroupsCombo(HWND hwndCBEx, GList *lpglistGroups)
+{
+	GList *lpglistRover;
+	COMBOBOXEXITEM cbexitem;
+
+	SendMessage(hwndCBEx, CB_RESETCONTENT, 0, 0);
+
+	cbexitem.mask = CBEIF_TEXT | CBEIF_LPARAM;
+	cbexitem.iItem = -1;
+
+	/* Add each group. */
+	for(lpglistRover = lpglistGroups; lpglistRover; lpglistRover = lpglistRover->next)
+	{
+		VULTURE_BLIST_NODE *lpvblistnode = (VULTURE_BLIST_NODE*)lpglistRover->data;
+
+		if(lpvblistnode->szNodeText)
+		{
+			cbexitem.pszText = lpvblistnode->szNodeText;
+			cbexitem.lParam = (LPARAM)lpvblistnode;
+			SendMessage(hwndCBEx, CBEM_INSERTITEM, 0, (LPARAM)&cbexitem);
+		}
+	}
 }
