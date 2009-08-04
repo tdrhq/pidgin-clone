@@ -297,6 +297,7 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 
 			case VUIMSG_REMOVEBLISTNODE:
 				RemoveBListNode(GetDlgItem(g_hwndBListDlg, IDC_TREE_BLIST), (VULTURE_BLIST_NODE*)lParam);
+				VultureBListNodeRelease((VULTURE_BLIST_NODE*)lParam);
 				break;
 
 			case VUIMSG_NEWCONVERSATION:

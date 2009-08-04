@@ -163,6 +163,7 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 		}
 		else if(lpvbn->hti)
 		{
+			VultureBListNodeAddRef(lpvbn);
 			VulturePostUIMessage(VUIMSG_REMOVEBLISTNODE, lpvbn);
 
 			/* The parent may need to go, too. */
@@ -241,7 +242,10 @@ void PurpleBlistRemoveNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 		lpvbn->lpblistnode = NULL;
 
 		if(lpvbn->hti)
+		{
+			VultureBListNodeAddRef(lpvbn);
 			VulturePostUIMessage(VUIMSG_REMOVEBLISTNODE, lpvbn);
+		}
 
 		/* The parent may need to go, too. */
 		if(lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti)
