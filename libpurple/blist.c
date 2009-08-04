@@ -1104,6 +1104,8 @@ void purple_blist_add_account(PurpleAccount *account)
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleBuddyList *list = PURPLE_BLIST;
 
+	/* There are long/nasty lines in this function, and it's sibling remove, 
+	 * for now until we can do most of this with signals */
 
 	if (!ops || !ops->update)
 		return;
@@ -1119,9 +1121,10 @@ void purple_blist_add_account(PurpleAccount *account)
 						if (PURPLE_IS_BUDDY(bnode) &&
 								purple_buddy_get_account(PURPLE_BUDDY(bnode)) == account) {
 							recompute = TRUE;
-							(PURPLE_CONTACT(cnode))->currentsize++;
-							if ((PURPLE_CONTACT(cnode))->currentsize == 1)
-								(PURPLE_GROUP(gnode))->currentsize++;
+							purple_contact_set_currentsize(PURPLE_CONTACT(cnode), 
+								purple_contact_get_currentsize(PURPLE_CONTACT(cnode))+1);
+							if (purple_contact_get_currentsize(PURPLE_CONTACT(cnode)) == 1)
+								PURPLE_GROUP(gnode)->currentsize++;
 							ops->update(bnode);
 						}
 					}
@@ -1132,8 +1135,8 @@ void purple_blist_add_account(PurpleAccount *account)
 					}
 			} else if (PURPLE_IS_CHAT(cnode) &&
 					purple_chat_get_account(PURPLE_CHAT(cnode)) == account) {
-				(PURPLE_GROUP(gnode))->online++;
-				(PURPLE_GROUP(gnode))->currentsize++;
+				PURPLE_GROUP(gnode)->online++;
+				PURPLE_GROUP(gnode)->currentsize++;
 				ops->update(cnode);
 			}
 		}
@@ -1175,22 +1178,24 @@ void purple_blist_remove_account(PurpleAccount *account)
 						presence = purple_buddy_get_presence(buddy);
 
 						if(purple_presence_is_online(presence)) {
-							contact->online--;
-							if (contact->online == 0)
+							purple_contact_set_currentsize(contact,
+								purple_contact_get_currentsize(contact)-1);
+							if (purple_contact_get_online(contact) == 0)
 								group->online--;
 
 							purple_blist_node_set_int(&buddy->node,
 													"last_seen", time(NULL));
 						}
 
-						contact->currentsize--;
-						if (contact->currentsize == 0)
+						purple_contact_set_currentsize(contact,
+							purple_contact_get_currentsize(contact)-1);
+						if (purple_contact_get_currentsize(contact) == 0)
 							group->currentsize--;
 
 						if (!g_list_find(list, presence))
 							list = g_list_prepend(list, presence);
 
-						if (contact->priority == buddy)
+						if (purple_contact_get_priority_buddy(contact) == buddy)
 							purple_contact_invalidate_priority_buddy(contact);
 						else
 							recompute = TRUE;
@@ -1366,16 +1371,16 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 
 	if (bnode->parent) {
 		if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
-			((PurpleContact*)bnode->parent)->online--;
+			/*((PurpleContact*)bnode->parent)->online--;
 			if (((PurpleContact*)bnode->parent)->online == 0)
-				(PURPLE_GROUP(bnode->parent->parent))->online--;
+				(PURPLE_GROUP(bnode->parent->parent))->online--;*/
 		}
 		if (purple_account_is_connected(purple_buddy_get_account(buddy))) {
-			((PurpleContact*)bnode->parent)->currentsize--;
+/*			((PurpleContact*)bnode->parent)->currentsize--;
 			if (((PurpleContact*)bnode->parent)->currentsize == 0)
-				(PURPLE_GROUP(bnode->parent->parent))->currentsize--;
+				(PURPLE_GROUP(bnode->parent->parent))->currentsize--;*/
 		}
-		((PurpleContact*)bnode->parent)->totalsize--;
+/*		((PurpleContact*)bnode->parent)->totalsize--;*/
 		/* the group totalsize will be taken care of by remove_contact below */
 
 		if (bnode->parent->parent != PURPLE_BLIST_NODE(g))
@@ -1431,7 +1436,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		bnode->parent = cnode;
 	}
 
-	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
+/*	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 		if (++(PURPLE_CONTACT(bnode->parent)->online) == 1)
 			PURPLE_GROUP(bnode->parent->parent)->online++;
 	}
@@ -1439,7 +1444,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		if (++(PURPLE_CONTACT(bnode->parent)->currentsize) == 1)
 			PURPLE_GROUP(bnode->parent->parent)->currentsize++;
 	}
-	PURPLE_CONTACT(bnode->parent)->totalsize++;
+	PURPLE_CONTACT(bnode->parent)->totalsize++;*/
 
 	hb = g_new(struct _purple_hbuddy, 1);
 	hb->name = g_strdup(purple_normalize(purple_buddy_get_account(buddy), purple_buddy_get_name(buddy)));

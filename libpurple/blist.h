@@ -294,6 +294,11 @@ void purple_blist_rename_group(PurpleGroup *group, const char *name);
 void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode *node);
 
 /**
+ *
+ * THIS METHOD IS BROKEN AND WILL SOON BE REMOVED
+ * IT'S ONLY AROUND TO LOOK AT THE LOGIC DURING THE
+ * REWRITE
+ *
  * Adds a new buddy to the buddy list.
  *
  * The buddy will be inserted right after node or prepended to the
@@ -305,6 +310,7 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
  * @param group   The group to add the new buddy to.
  * @param node    The insertion point.  Pass in NULL to add the node as
  *                the first child in the given group.
+ * @deprecated
  */
 void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node);
 

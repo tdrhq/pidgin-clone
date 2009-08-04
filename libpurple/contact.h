@@ -49,12 +49,7 @@ typedef struct _PurpleContactClass PurpleContactClass;
  */
 struct _PurpleContact {
 	PurpleBlistNode node;		/**< The node that this contact inherits from. */
-	char *alias;            /**< The user-set alias of the contact */
-	int totalsize;		    /**< The number of buddies in this contact */
-	int currentsize;	    /**< The number of buddies in this contact corresponding to online accounts */
-	int online;			    /**< The number of buddies in this contact who are currently online */
-	PurpleBuddy *priority;    /**< The "top" buddy for this contact */
-	gboolean priority_valid; /**< Is priority valid? */
+	PurpleContactPrivate *priv;
 };
 
 struct _PurpleContactClass {
@@ -144,6 +139,12 @@ GList *purple_contact_get_buddies(PurpleContact *contact);
  */
 PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy);
 
+/* Not sure if these will stick around, so not bothering with
+ * docs just yet 
+ */
+int purple_contact_get_totalsize(PurpleContact *contact);
+void purple_contact_set_totalsize(PurpleContact *contact, int value);
+
 /**
  * Returns the number of online buddies for this contact.
  *
@@ -168,6 +169,9 @@ void purple_contact_set_online(PurpleContact *contact, int value);
  * @param old_status The old status of the buddy
  */
 void purple_contact_buddy_status_update(PurpleContact *contact, PurpleStatus *status, PurpleStatus *old_status);
+
+/* See comments for totalsize accessors */
+void purple_contact_set_currentsize(PurpleContact *contact, int value);
 
 /**
  * Returns the number of buddies that correspond to online accounts

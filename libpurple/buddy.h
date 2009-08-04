@@ -44,7 +44,6 @@ typedef struct _PurpleBuddyClass PurpleBuddyClass;
 #define PURPLE_BUDDY_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
 #define PURPLE_IS_BUDDY_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_BUDDY_TYPE))
 #define PURPLE_GET_BUDDY_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_BUDDY_TYPE, PurpleBuddyClass))
-#define PURPLE_BUDDY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PURPLE_BUDDY_TYPE, PurpleBuddyPrivate))
 
 #if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_BUDDY_C_)
 /**

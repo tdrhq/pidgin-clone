@@ -31,22 +31,34 @@
 #include "signals.h"
 #include "xmlnode.h"
 
+#define PURPLE_CONTACT_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PURPLE_CONTACT_TYPE, PurpleContactPrivate))
+
+struct _PurpleContactPrivate {
+	char *alias;            /**< The user-set alias of the contact */
+	int totalsize;		    /**< The number of buddies in this contact */
+	int currentsize;	    /**< The number of buddies in this contact corresponding to online accounts */
+	int online;			    /**< The number of buddies in this contact who are currently online */
+	PurpleBuddy *priority;    /**< The "top" buddy for this contact */
+	gboolean priority_valid; /**< Is priority valid? */
+};
+
 static PurpleBlistNodeClass *parent_class = NULL;
 
 xmlnode *
 contact_to_xmlnode(PurpleBlistNode *cnode)
 {
 	xmlnode *node, *child;
-	PurpleContact *contact;
 	PurpleBlistNode *bnode;
+	PurpleContactPrivate *priv;
 
-	contact = PURPLE_CONTACT(cnode);
+	g_return_val_if_fail(PURPLE_IS_CONTACT(cnode), NULL);
+	priv = PURPLE_CONTACT_GET_PRIVATE(cnode);
 
 	node = xmlnode_new("contact");
 
-	if (contact->alias != NULL)
+	if (priv->alias != NULL)
 	{
-		xmlnode_set_attrib(node, "alias", contact->alias);
+		xmlnode_set_attrib(node, "alias", priv->alias);
 	}
 
 	/* Write buddies */
@@ -100,11 +112,12 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 {
 	PurpleBlistNode *bnode;
 	PurpleBuddy *new_priority = NULL;
+	PurpleContactPrivate *priv;
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
-	g_return_if_fail(contact != NULL);
-
-	contact->priority = NULL;
-	for (bnode = (PURPLE_BLIST_NODE(contact))->child;
+	priv->priority = NULL;
+	for (bnode = purple_blist_node_first_child(PURPLE_BLIST_NODE(contact));
 			bnode != NULL;
 			bnode = bnode->next)
 	{
@@ -135,8 +148,8 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 		}
 	}
 
-	contact->priority = new_priority;
-	contact->priority_valid = TRUE;
+	priv->priority = new_priority;
+	priv->priority_valid = TRUE;
 }
 
 /*****************************************************************************
@@ -150,23 +163,26 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	PurpleBlistNode *bnode;
 	char *old_alias;
 	char *new_alias = NULL;
+	PurpleContactPrivate *priv;
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
 	g_return_if_fail(contact != NULL);
 
 	if ((alias != NULL) && (*alias != '\0'))
 		new_alias = purple_utf8_strip_unprintables(alias);
 
-	if (!purple_strings_are_different(contact->alias, new_alias)) {
+	if (!purple_strings_are_different(priv->alias, new_alias)) {
 		g_free(new_alias);
 		return;
 	}
 
-	old_alias = contact->alias;
+	old_alias = priv->alias;
 
 	if ((new_alias != NULL) && (*new_alias != '\0'))
-		contact->alias = new_alias;
+		priv->alias = new_alias;
 	else {
-		contact->alias = NULL;
+		priv->alias = NULL;
 		g_free(new_alias); /* could be "\0" */
 	}
 
@@ -203,42 +219,79 @@ PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy)
 	return PURPLE_CONTACT(PURPLE_BLIST_NODE(buddy)->parent);
 }
 
+int purple_contact_get_totalsize(PurpleContact *contact)
+{
+	PurpleContactPrivate *priv;
+	g_return_val_if_fail(PURPLE_IS_CONTACT(contact), 0);
+
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
+	return priv->totalsize;
+}
+
+void purple_contact_set_totalsize(PurpleContact *contact, int value)
+{
+	PurpleContactPrivate *priv;
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
+
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
+	priv->totalsize = value;
+}
+
 int
 purple_contact_get_online(PurpleContact *contact)
 {
-	g_return_val_if_fail(contact, 0);
-	return contact->online;
+	PurpleContactPrivate *priv;
+	g_return_val_if_fail(PURPLE_IS_CONTACT(contact), 0);
+
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
+	return priv->online;
 }
 
 void
 purple_contact_set_online(PurpleContact *contact, int count)
 {
-	g_return_if_fail(contact);
-	contact->online = count;
+	PurpleContactPrivate *priv;
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
+
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
+	priv->online = count;
 }
 
 int
 purple_contact_get_currentsize(PurpleContact *contact)
 {
-	g_return_val_if_fail(contact, 0);
-	return contact->currentsize;
+	PurpleContactPrivate *priv;
+	g_return_val_if_fail(PURPLE_IS_CONTACT(contact), 0);
+
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
+	return priv->currentsize;
+}
+
+void
+purple_contact_set_currentsize(PurpleContact *contact, int value)
+{
+	PurpleContactPrivate *priv;
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
+	priv->currentsize = value;
 }
 
 void
 purple_contact_buddy_status_update(PurpleContact *contact, PurpleStatus *status, PurpleStatus *old_status)
 {
-
-	g_return_if_fail(contact);
+	PurpleContactPrivate *priv;
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
 	if (purple_status_is_online(status) &&
 		!purple_status_is_online(old_status)) {
 
-		if (++(contact->online) == 1)
+		if (++(priv->online) == 1)
 			PURPLE_GROUP(contact->node.parent)->online++;
 	} else if (!purple_status_is_online(status) &&
 				purple_status_is_online(old_status)) {
 
-		if (--(contact->online) == 0)
+		if (--(priv->online) == 0)
 			PURPLE_GROUP(contact->node.parent)->online--;
 	}
 }
@@ -253,10 +306,12 @@ purple_contact_destroy(PurpleContact *contact)
 
 const char *purple_contact_get_alias(PurpleContact* contact)
 {
-	g_return_val_if_fail(contact != NULL, NULL);
+	PurpleContactPrivate *priv;
+	g_return_val_if_fail(PURPLE_IS_CONTACT(contact), NULL);
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
-	if (contact->alias)
-		return contact->alias;
+	if (priv->alias)
+		return priv->alias;
 
 	return purple_buddy_get_alias(purple_contact_get_priority_buddy(contact));
 }
@@ -301,31 +356,37 @@ GList *purple_contact_get_buddies(PurpleContact *contact)
 
 void purple_contact_invalidate_priority_buddy(PurpleContact *contact)
 {
-	g_return_if_fail(contact != NULL);
+	PurpleContactPrivate *priv;
+	g_return_if_fail(PURPLE_IS_CONTACT(contact));
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
-	contact->priority_valid = FALSE;
+	priv->priority_valid = FALSE;
 }
 
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact)
 {
-	g_return_val_if_fail(contact != NULL, NULL);
+	PurpleContactPrivate *priv;
+	g_return_val_if_fail(PURPLE_IS_CONTACT(contact), NULL);
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
-	if (!contact->priority_valid)
+	if (!priv->priority_valid)
 		purple_contact_compute_priority_buddy(contact);
 
-	return contact->priority;
+	return priv->priority;
 }
 
 static void
 purple_contact_child_updated(PurpleContact *contact, PurpleBuddy *child)
 {
+	PurpleContactPrivate *priv;
 	g_return_if_fail(PURPLE_IS_CONTACT(contact));
 	g_return_if_fail(PURPLE_IS_BUDDY(child));
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
 	if(purple_blist_node_is_online(PURPLE_BLIST_NODE(child))){
-		contact->online++;
+		priv->online++;
 	} else {
-		contact->online--;
+		priv->online--;
 	}
 }
 
@@ -343,6 +404,7 @@ purple_contact_add_helper(PurpleContact *contact, PurpleBuddy *buddy)
 	);
 
 	purple_contact_child_updated(contact, buddy);
+	/* Need to fire a signal for the containing group can do whatever */
 }
 
 static void
@@ -352,8 +414,6 @@ purple_contact_add_buddy_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 	g_return_if_fail(PURPLE_IS_BUDDY(child));
 
 	purple_contact_add_helper(PURPLE_CONTACT(parent), PURPLE_BUDDY(child));
-	parent_class->add_child(parent, child);
-
 }
 
 static void
@@ -367,7 +427,6 @@ purple_contact_add_buddy_sibling(PurpleBlistNode *child, PurpleBlistNode *locati
 	contact = PURPLE_CONTACT(purple_blist_node_parent(location));
 
 	purple_contact_add_helper(contact, PURPLE_BUDDY(child));
-	parent_class->add_sibling(child, location);
 }
 
 static gboolean
@@ -383,14 +442,16 @@ purple_contact_remove_buddy(PurpleBlistNode *child)
 	PurpleContact *contact;
 	PurpleBuddy *buddy = PURPLE_BUDDY(child);
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	g_return_if_fail(purple_blist_node_parent(child));
+	PurpleContactPrivate *priv;
+	g_return_if_fail(PURPLE_IS_CONTACT(purple_blist_node_parent(child)));
 	contact = PURPLE_CONTACT(purple_blist_node_parent(child));
+	priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy))
-		contact->online--;
+		priv->online--;
 	if (purple_account_is_connected(purple_buddy_get_account(buddy)))
-		contact->currentsize--;
-	contact->totalsize--;
+		priv->currentsize--;
+	priv->totalsize--;
 
 	/* emit a node-updated signal here */
 
@@ -398,7 +459,7 @@ purple_contact_remove_buddy(PurpleBlistNode *child)
 
 #warning The ui calls havent been thought out yet, as to where they ought to go.
 	/* Re-sort the contact */
-	if (purple_blist_node_first_child(PURPLE_BLIST_NODE(contact)) && contact->priority == buddy) {
+	if (purple_blist_node_first_child(PURPLE_BLIST_NODE(contact)) && priv->priority == buddy) {
 		purple_contact_invalidate_priority_buddy(contact);
 		if (ops && ops->update)
 			ops->update(PURPLE_BLIST_NODE(contact));
@@ -413,10 +474,10 @@ purple_contact_remove_buddy(PurpleBlistNode *child)
 static void
 purple_contact_finalize(GObject *object)
 {
-	PurpleContact *contact = PURPLE_CONTACT(object);
-	g_free(contact->alias);
-	purple_signals_disconnect_by_handle(contact);
-	PURPLE_DBUS_UNREGISTER_POINTER(contact);
+	PurpleContactPrivate *priv = PURPLE_CONTACT_GET_PRIVATE(object);
+	g_free(priv->alias);
+	purple_signals_disconnect_by_handle(object);
+	PURPLE_DBUS_UNREGISTER_POINTER(object);
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
@@ -431,6 +492,8 @@ purple_contact_class_init(PurpleContactClass *klass)
 	parent_class->remove = purple_contact_remove_buddy;
 	parent_class->is_online = purple_contact_is_online;
 
+	g_type_class_add_private(klass, sizeof(PurpleContactPrivate));
+
 	obj_class->finalize = purple_contact_finalize;
 }
 
@@ -439,10 +502,11 @@ purple_contact_init(GTypeInstance *instance, gpointer class)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleContact *contact = PURPLE_CONTACT(instance);
+	PurpleContactPrivate *priv = contact->priv = PURPLE_CONTACT_GET_PRIVATE(contact);
 
-	contact->totalsize = 0;
-	contact->currentsize = 0;
-	contact->online = 0;
+	priv->totalsize = 0;
+	priv->currentsize = 0;
+	priv->online = 0;
 
 	if (ops && ops->new_node)
 		ops->new_node(PURPLE_BLIST_NODE(contact));

@@ -32,6 +32,8 @@
 #include "xmlnode.h"
 #include "buddy.h"
 
+#define PURPLE_BUDDY_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PURPLE_BUDDY_TYPE, PurpleBuddyPrivate))
+
 static PurpleBlistNodeClass *parent_class = NULL;
 
 struct _PurpleBuddyPrivate {
