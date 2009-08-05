@@ -335,7 +335,10 @@ jingle_s5b_finalize (GObject *s5b)
 
 	/* remove port mapping */
 	if (priv->fd >= 0) {
-		purple_network_remove_port_mapping(priv->fd);
+		if (priv->accepted_candidate &&
+			priv->accepted_candidate->type == JINGLE_S5B_CANDIDATE_TYPE_ASSISTED) {
+			purple_network_remove_port_mapping(priv->fd);
+		}
 		close(priv->fd);
 	} else if (priv->local_fd >= 0) {
 		purple_network_remove_port_mapping(priv->local_fd);
@@ -575,6 +578,12 @@ jingle_s5b_take_command(JingleS5B *s5b)
 	if (s5b->priv->connect_timeout) {
 		purple_timeout_remove(s5b->priv->connect_timeout);
 		s5b->priv->connect_timeout = 0;
+	}
+
+	/* remove port mappings for non-assisted candidates */
+	if (s5b->priv->accepted_candidate->type != 
+		JINGLE_S5B_CANDIDATE_TYPE_ASSISTED) {
+		purple_network_remove_port_mapping(s5b->priv->local_fd);
 	}
 }
 
