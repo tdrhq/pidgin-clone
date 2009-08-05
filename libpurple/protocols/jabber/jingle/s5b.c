@@ -1286,11 +1286,7 @@ jingle_s5b_connect_to_candidate(JingleS5BConnectData *data,
 			connect_cb, data);
 	g_free(hash);
 	g_free(dstaddr);
-	
-	/* add timeout */
-	/* we should add a longer timeout if the next streamhost candidate
-	is a proxy and we have local candidates ourselves, to allow the other
-	end a chance to connect to use before reverting to a proxy */
+
 	s5b->priv->connect_timeout =
 		purple_timeout_add(STREAMHOST_CONNECT_TIMEOUT_MILLIS, timeout_cb, data);
 
