@@ -187,7 +187,7 @@ HBITMAP PurpleGetIMBuddyIcon(PurpleConversation *lpconv, int cxMax, int cyMax)
 {
 	PurpleBuddy *lpbuddy;
 	PurpleContact *lpcontact;
-	PurpleStoredImage *lpstoredimg;
+	PurpleStoredImage *lpstoredimg = NULL;
 	gconstpointer lpvBuddyIconData = NULL;
 	size_t cbBuddyIconData;
 	PurpleBuddyIcon *lpbuddyicon = NULL;
