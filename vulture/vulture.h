@@ -29,6 +29,15 @@
 #include <time.h>
 
 
+/* Flags that would otherwise be accessed with purple_prefs_{g,s}et_bool but
+ * which we manage ourselves for ease of access by the UI.
+ */
+typedef struct _VULTURE_FLAGS
+{
+	BOOL	bShowOffline;
+} VULTURE_FLAGS;
+
+
 #define INLINE			__inline
 #define VULTURE_ID		"vulture"
 
@@ -38,6 +47,8 @@ extern HINSTANCE g_hInstance;
 extern HANDLE g_hProcHeap;
 
 extern const TCHAR cg_szAppName[];
+
+extern VULTURE_FLAGS g_vflags;
 
 
 enum VULTURE_EXIT_CODES

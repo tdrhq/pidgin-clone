@@ -57,6 +57,7 @@ void PurpleBuddyIconChanged(PurpleBuddy *lpbuddy);
 GList* PurpleGetGroups(void);
 void VultureFreeGroupList(GList *lpglistGroups);
 void PurpleAddBuddy(VULTURE_ADD_BUDDY_DATA *lpvabd);
+void PurpleBlistUpdateLeaves(PurpleBlistNode *lpbln);
 
 
 static INLINE void VultureBListNodeAddRef(VULTURE_BLIST_NODE *lpvblnode) { InterlockedIncrement(&lpvblnode->lRefCount); }

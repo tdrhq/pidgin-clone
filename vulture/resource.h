@@ -40,6 +40,7 @@
 #define IDM_BLIST_BUDDIES_CLOSE                 40000
 #define IDM_BLIST_BUDDIES_JOINCHAT              40002
 #define IDM_BLIST_BUDDIES_ADDBUDDY              40003
+#define IDM_BLIST_VIEW_SHOWOFFLINE              40004
 
 #define IDM_BLIST_CONTEXT                       1002
 #define IDM_BLIST_CONTEXT_ACTIVATE              40201

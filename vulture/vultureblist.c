@@ -222,12 +222,25 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 			SendMessage(hwnd, WM_CLOSE, 0, 0);
 			return 0;
 
+		case IDM_BLIST_VIEW_SHOWOFFLINE:
+			g_vflags.bShowOffline = !g_vflags.bShowOffline;
+			VultureEnqueueAsyncPurpleCall(PC_REFRESHBLIST, NULL);
+			return 0;
+
 		case IDM_BLIST_ACCOUNTS_MANAGE:
 			ManageAccounts(hwnd);
 			return 0;
 		}
 
 		break;
+
+	case WM_INITMENUPOPUP:
+		if(!HIWORD(lParam))
+		{
+			CheckMenuItem((HMENU)wParam, IDM_BLIST_VIEW_SHOWOFFLINE, g_vflags.bShowOffline ? MF_CHECKED : MF_UNCHECKED);
+		}
+
+		return 0;
 
 	case WM_SIZE:
 		{

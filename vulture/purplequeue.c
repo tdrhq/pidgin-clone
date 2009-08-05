@@ -416,6 +416,10 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		PurpleAddBuddy(lppurplecall->lpvParam);
 		break;
 
+	case PC_REFRESHBLIST:
+		PurpleBlistUpdateLeaves(purple_get_blist()->root);
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

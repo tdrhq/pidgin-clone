@@ -161,10 +161,15 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 				}
 			}
 		}
-		else if(lpvbn->hti)
+		else
 		{
-			VultureBListNodeAddRef(lpvbn);
-			VulturePostUIMessage(VUIMSG_REMOVEBLISTNODE, lpvbn);
+			/* Shouldn't show node. */
+
+			if(lpvbn->hti)
+			{
+				VultureBListNodeAddRef(lpvbn);
+				VulturePostUIMessage(VUIMSG_REMOVEBLISTNODE, lpvbn);
+			}
 
 			/* The parent may need to go, too. */
 			if(lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti)
@@ -209,7 +214,8 @@ static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode)
 		{
 			PurpleBuddy *lpbuddy = (PurpleBuddy*)lpblistnode;
 			return purple_account_is_connected(purple_buddy_get_account(lpbuddy)) &&
-				(purple_presence_is_online(lpbuddy->presence) ||
+				(g_vflags.bShowOffline ||
+				purple_presence_is_online(lpbuddy->presence) ||
 				purple_blist_node_get_bool(lpblistnode, "show_offline"));
 		}
 
@@ -797,4 +803,25 @@ void PurpleAddBuddy(VULTURE_ADD_BUDDY_DATA *lpvabd)
 
 	if(szAliasUTF8) g_free(szAliasUTF8);
 	g_free(szUsernameUTF8);
+}
+
+
+/**
+ * Updates all leaf nodes descending from a given node.
+ *
+ * @param	lpbln	Node.
+ */
+void PurpleBlistUpdateLeaves(PurpleBlistNode *lpbln)
+{
+	PurpleBlistNode *lpblnRover;
+
+	for(lpblnRover = lpbln; lpblnRover; lpblnRover = lpblnRover->next)
+	{
+		PurpleBlistNode *lpblnChild;
+
+		if((lpblnChild = purple_blist_node_get_first_child(lpblnRover)))
+			PurpleBlistUpdateLeaves(lpblnChild);
+		else
+			PurpleBlistUpdateNode(purple_get_blist(), lpblnRover);
+	}
 }

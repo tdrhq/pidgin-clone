@@ -52,10 +52,15 @@
 #include "purpleacct.h"
 
 
+#define VULTURE_PREFS_ROOT "/vulture"
+
+
 static UINT CALLBACK PurpleThread(void *lpvData);
 static int InitLibpurple(void);
 static void InitUI(void);
 static void Quitting(void);
+static void LoadFlags(void);
+static void SaveFlags(void);
 
 
 
@@ -205,6 +210,8 @@ static void InitUI(void)
 		NULL,				/* reserved		*/
 	};
 
+	LoadFlags();
+
 	purple_blist_set_ui_ops(&s_blistuiops);
 	purple_conversations_set_ui_ops(&s_convuiops);
 
@@ -225,6 +232,8 @@ static void InitUI(void)
  */
 static void Quitting(void)
 {
+	SaveFlags();
+
 	/* The core is on its way out, so tell the UI to destroy itself. */
 	VulturePostUIMessage(VUIMSG_QUIT, NULL);
 }
@@ -313,4 +322,22 @@ void PurpleInsertDynamicMenu(HMENU hmenu, int iIndex, UINT *lpuiNextID, GList *l
 		if(mii.dwTypeData)
 			ProcHeapFree(mii.dwTypeData);
 	}
+}
+
+
+/** Loads flags from libpurple's preference store. */
+static void LoadFlags(void)
+{
+	purple_prefs_add_none(VULTURE_PREFS_ROOT);
+	purple_prefs_add_none(VULTURE_PREFS_ROOT "/blist");
+	purple_prefs_add_bool(VULTURE_PREFS_ROOT "/blist/show_offline_buddies", FALSE);
+
+	g_vflags.bShowOffline = purple_prefs_get_bool(VULTURE_PREFS_ROOT "/blist/show_offline_buddies");
+}
+
+
+/** Writes flags back to libpurple's preference store. */
+static void SaveFlags(void)
+{
+	purple_prefs_set_bool(VULTURE_PREFS_ROOT "/blist/show_offline_buddies", g_vflags.bShowOffline);
 }

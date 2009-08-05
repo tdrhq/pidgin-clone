@@ -22,6 +22,12 @@ IDM_BLIST MENU
 	MENUITEM SEPARATOR
         MENUITEM "&Close", IDM_BLIST_BUDDIES_CLOSE
     }
+
+    POPUP "&View"
+    {
+	    MENUITEM "Show &Offline Buddies", IDM_BLIST_VIEW_SHOWOFFLINE
+    }
+
     POPUP "&Accounts"
     {
         MENUITEM "&Manage Accounts\tCtrl+A", IDM_BLIST_ACCOUNTS_MANAGE

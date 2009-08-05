@@ -42,6 +42,8 @@ HANDLE g_hProcHeap;
 
 const TCHAR cg_szAppName[] = TEXT("Vulture");
 
+VULTURE_FLAGS g_vflags;
+
 
 /**
  * Entry point.
