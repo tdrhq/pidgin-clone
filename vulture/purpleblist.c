@@ -90,6 +90,13 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 			const char *szNodeText;
 
 			if(lpvbn->lpvbnParent) VultureBListNodeRelease(lpvbn->lpvbnParent);
+
+			/* Parents are not necessarily initialised before
+			 * children.
+			 */
+			if(lpblistnode->parent && !lpblistnode->parent->ui_data)
+				PurpleBlistUpdateNode(lpbuddylist, lpblistnode->parent);
+
 			lpvbn->lpvbnParent = lpblistnode->parent ? (VULTURE_BLIST_NODE*)lpblistnode->parent->ui_data : NULL;
 			if(lpvbn->lpvbnParent) VultureBListNodeAddRef(lpvbn->lpvbnParent);
 
