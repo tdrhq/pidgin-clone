@@ -120,6 +120,9 @@ enum PURPLE_CALL_ID
 	PC_ADDBUDDY,
 
 	PC_REFRESHBLIST,
+
+	/* (VULTURE_ADD_BUDDY_DATA*) Username and account of person to IM. */
+	PC_STARTIM,
 };
 
 

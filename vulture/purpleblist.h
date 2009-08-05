@@ -38,6 +38,7 @@ typedef struct _VULTURE_ADD_BUDDY_DATA
 	LPTSTR			szUsername;
 	LPTSTR			szAlias;
 	VULTURE_BLIST_NODE	*lpvblistnodeGroup;
+	BOOL			bIMFieldsOnly;
 } VULTURE_ADD_BUDDY_DATA;
 
 

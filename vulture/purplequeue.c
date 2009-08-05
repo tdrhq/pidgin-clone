@@ -420,6 +420,16 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		PurpleBlistUpdateLeaves(purple_get_blist()->root);
 		break;
 
+	case PC_STARTIM:
+		{
+			VULTURE_ADD_BUDDY_DATA *lpvabd = lppurplecall->lpvParam;
+			gchar *szUsernameUTF8 = VultureTCHARToUTF8(lpvabd->szUsername);
+			purple_conversation_new(PURPLE_CONV_TYPE_IM, lpvabd->lppac, szUsernameUTF8);
+			g_free(szUsernameUTF8);
+		}
+
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

@@ -189,6 +189,21 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 	case WM_COMMAND:
 		switch(LOWORD(wParam))
 		{
+		case IDM_BLIST_BUDDIES_IM:
+			{
+				VULTURE_ADD_BUDDY_DATA vabd;
+
+				vabd.bIMFieldsOnly = TRUE;
+
+				if(VultureAddBuddyDlg(hwnd, &vabd))
+				{
+					VultureSingleSyncPurpleCall(PC_STARTIM, &vabd);
+					ProcHeapFree(vabd.szUsername);
+				}
+			}
+
+			return 0;
+
 		case IDM_BLIST_BUDDIES_JOINCHAT:
 			{
 				VULTURE_JOIN_CHAT_DATA vjcd;
@@ -202,6 +217,8 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		case IDM_BLIST_BUDDIES_ADDBUDDY:
 			{
 				VULTURE_ADD_BUDDY_DATA vabd;
+
+				vabd.bIMFieldsOnly = FALSE;
 
 				if(VultureAddBuddyDlg(hwnd, &vabd))
 				{

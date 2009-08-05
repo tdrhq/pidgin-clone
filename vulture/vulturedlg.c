@@ -498,16 +498,18 @@ static void AutoEnableJoinDlgOKButton(HWND hwndDlg, GList *lpglistFields)
 
 
 /**
- * Displays the "Add Buddy" dialogue.
+ * Displays either the "Add Buddy" or the "Send IM" dialogue.
  *
- * @param	hwndParent	Parent window handle.
- * @param[out]	lpvabd		Details of buddy to add are returned here.
+ * @param		hwndParent	Parent window handle.
+ * @param[in/out]	lpvabd		Details of buddy to add are returned
+ *					here, and bIMFieldsOnly determines
+ *					which flavour of dialogue to show.
  *
  * @return TRUE iff OKed.
  */
 BOOL VultureAddBuddyDlg(HWND hwndParent, VULTURE_ADD_BUDDY_DATA *lpvabd)
 {
-	return (BOOL)DialogBoxParam(g_hInstance, MAKEINTRESOURCE(IDD_ADDBUDDY), hwndParent, AddBuddyDlgProc, (LPARAM)lpvabd);
+	return (BOOL)DialogBoxParam(g_hInstance, MAKEINTRESOURCE(lpvabd->bIMFieldsOnly ? IDD_IMBUDDY : IDD_ADDBUDDY), hwndParent, AddBuddyDlgProc, (LPARAM)lpvabd);
 }
 
 
@@ -547,13 +549,16 @@ static INT_PTR CALLBACK AddBuddyDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			if(SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCOUNT, 0, 0) > 0)
 				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_SETCURSEL, 0, 0);
 
-			/* Get all groups. */
-			VultureSingleSyncPurpleCall(PC_GETGROUPS, &s_lpglistGroups);
+			if(!s_lpvabd->bIMFieldsOnly)
+			{
+				/* Get all groups. */
+				VultureSingleSyncPurpleCall(PC_GETGROUPS, &s_lpglistGroups);
 
-			/* Populate combo and select first item. */
-			PopulateGroupsCombo(GetDlgItem(hwndDlg, IDC_CBEX_GROUP), s_lpglistGroups);
-			if(SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCOUNT, 0, 0) > 0)
-				SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_SETCURSEL, 0, 0);
+				/* Populate combo and select first item. */
+				PopulateGroupsCombo(GetDlgItem(hwndDlg, IDC_CBEX_GROUP), s_lpglistGroups);
+				if(SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCOUNT, 0, 0) > 0)
+					SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_SETCURSEL, 0, 0);
+			}
 
 			AutoEnableBuddyDlgOKButton(hwndDlg);
 		}
@@ -581,27 +586,31 @@ static INT_PTR CALLBACK AddBuddyDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
 				s_lpvabd->lppac = ((VULTURE_ACCOUNT*)cbexitem.lParam)->lppac;
 
-				/* Get the selected group. */
-				cbexitem.mask = CBEIF_LPARAM;
-				cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCURSEL, 0, 0);
-				SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
-				s_lpvabd->lpvblistnodeGroup = (VULTURE_BLIST_NODE*)cbexitem.lParam;
-
-				if(s_lpvabd->lpvblistnodeGroup)
-					VultureBListNodeAddRef(s_lpvabd->lpvblistnodeGroup);
-
+				/* Get username. */
 				cch = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_USERNAME)) + 1;
 				s_lpvabd->szUsername = ProcHeapAlloc(cch * sizeof(TCHAR));
 				GetDlgItemText(hwndDlg, IDC_EDIT_USERNAME, s_lpvabd->szUsername, cch);
 
-				cch = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_ALIAS)) + 1;
-				if(cch > 1)
+				if(!s_lpvabd->bIMFieldsOnly)
 				{
-					s_lpvabd->szAlias = ProcHeapAlloc(cch * sizeof(TCHAR));
-					GetDlgItemText(hwndDlg, IDC_EDIT_ALIAS, s_lpvabd->szAlias, cch);
+					/* Get the selected group. */
+					cbexitem.mask = CBEIF_LPARAM;
+					cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCURSEL, 0, 0);
+					SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+					s_lpvabd->lpvblistnodeGroup = (VULTURE_BLIST_NODE*)cbexitem.lParam;
+
+					if(s_lpvabd->lpvblistnodeGroup)
+						VultureBListNodeAddRef(s_lpvabd->lpvblistnodeGroup);
+
+					cch = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_ALIAS)) + 1;
+					if(cch > 1)
+					{
+						s_lpvabd->szAlias = ProcHeapAlloc(cch * sizeof(TCHAR));
+						GetDlgItemText(hwndDlg, IDC_EDIT_ALIAS, s_lpvabd->szAlias, cch);
+					}
+					else
+						s_lpvabd->szAlias = NULL;
 				}
-				else
-					s_lpvabd->szAlias = NULL;
 
 				EndDialog(hwndDlg, TRUE);
 			}
