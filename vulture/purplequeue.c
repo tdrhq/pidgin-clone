@@ -430,6 +430,10 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 
 		break;
 
+	case PC_ADDCHAT:
+		PurpleAddChat(lppurplecall->lpvParam);
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

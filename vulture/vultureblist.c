@@ -208,6 +208,8 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 			{
 				VULTURE_JOIN_CHAT_DATA vjcd;
 
+				vjcd.bJoinFieldsOnly = TRUE;
+
 				if(VultureJoinChatDlg(hwnd, &vjcd))
 					VultureSingleSyncPurpleCall(PC_JOINCHAT, &vjcd);
 			}
@@ -230,6 +232,26 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 					ProcHeapFree(vabd.szUsername);
 					if(vabd.szAlias)
 						ProcHeapFree(vabd.szAlias);
+				}
+			}
+
+			return 0;
+
+		case IDM_BLIST_BUDDIES_ADDCHAT:
+			{
+				VULTURE_JOIN_CHAT_DATA vjcd;
+
+				vjcd.bJoinFieldsOnly = FALSE;
+
+				if(VultureJoinChatDlg(hwnd, &vjcd))
+				{
+					VultureSingleSyncPurpleCall(PC_ADDCHAT, &vjcd);
+
+					if(vjcd.lpvblistnodeGroup)
+						VultureBListNodeRelease(vjcd.lpvblistnodeGroup);
+
+					if(vjcd.szAlias)
+						ProcHeapFree(vjcd.szAlias);
 				}
 			}
 

@@ -33,12 +33,6 @@
 #include "purpleblist.h"
 
 
-typedef struct _VULTURE_JOIN_CHAT_DATA
-{
-	PurpleAccount	*lppac;
-	GHashTable	*lphashParameters;
-} VULTURE_JOIN_CHAT_DATA;
-
 typedef struct _VULTURE_GET_CHAT_FIELDS
 {
 	VULTURE_ACCOUNT	*lpvac;

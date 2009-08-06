@@ -34,6 +34,7 @@
 #define IDD_STATUS                              107
 #define IDD_ADDBUDDY                            108
 #define IDD_IMBUDDY                             109
+#define IDD_ADDCHAT                             110
 
 
 #define IDM_BLIST                               1001
@@ -43,6 +44,7 @@
 #define IDM_BLIST_BUDDIES_ADDBUDDY              40003
 #define IDM_BLIST_VIEW_SHOWOFFLINE              40004
 #define IDM_BLIST_BUDDIES_IM                    40005
+#define IDM_BLIST_BUDDIES_ADDCHAT               40006
 
 #define IDM_BLIST_CONTEXT                       1002
 #define IDM_BLIST_CONTEXT_ACTIVATE              40201

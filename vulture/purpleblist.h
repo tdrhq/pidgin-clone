@@ -32,6 +32,16 @@
 
 
 
+typedef struct _VULTURE_JOIN_CHAT_DATA
+{
+	PurpleAccount		*lppac;
+	GHashTable		*lphashParameters;
+	LPTSTR			szAlias;
+	VULTURE_BLIST_NODE	*lpvblistnodeGroup;
+	BOOL			bJoinFieldsOnly;
+} VULTURE_JOIN_CHAT_DATA;
+
+
 typedef struct _VULTURE_ADD_BUDDY_DATA
 {
 	PurpleAccount		*lppac;
@@ -59,6 +69,7 @@ GList* PurpleGetGroups(void);
 void VultureFreeGroupList(GList *lpglistGroups);
 void PurpleAddBuddy(VULTURE_ADD_BUDDY_DATA *lpvabd);
 void PurpleBlistUpdateLeaves(PurpleBlistNode *lpbln);
+void PurpleAddChat(VULTURE_JOIN_CHAT_DATA *lpvjcd);
 
 
 static INLINE void VultureBListNodeAddRef(VULTURE_BLIST_NODE *lpvblnode) { InterlockedIncrement(&lpvblnode->lRefCount); }

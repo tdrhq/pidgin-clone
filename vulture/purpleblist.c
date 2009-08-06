@@ -832,3 +832,24 @@ void PurpleBlistUpdateLeaves(PurpleBlistNode *lpbln)
 			PurpleBlistUpdateNode(purple_get_blist(), lpblnRover);
 	}
 }
+
+
+/**
+ * Adds a chat.
+ *
+ * @param	lpvjcd	New chat's details.
+ */
+void PurpleAddChat(VULTURE_JOIN_CHAT_DATA *lpvjcd)
+{
+	PurpleChat *lpchat;
+	gchar *szAliasUTF8;
+
+	szAliasUTF8 = lpvjcd->szAlias ? VultureTCHARToUTF8(lpvjcd->szAlias) : NULL;
+
+	lpchat = purple_chat_new(lpvjcd->lppac, szAliasUTF8, lpvjcd->lphashParameters);
+	purple_blist_add_chat(lpchat, lpvjcd->lpvblistnodeGroup ? (PurpleGroup*)lpvjcd->lpvblistnodeGroup->lpblistnode : NULL, NULL);
+
+	PurpleBlistUpdateNode(purple_get_blist(), (PurpleBlistNode*)lpchat);
+
+	if(szAliasUTF8) g_free(szAliasUTF8);
+}

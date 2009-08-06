@@ -53,6 +53,8 @@ typedef struct _JOIN_DLG_FIELD
 #define Y_JC_EDIT_FIRST		60
 #define CY_JC_INCREMENT		15
 
+#define ADD_CHAT_FIXED_FIELDS	2
+
 /* First ID for dynamic join-chat controls. */
 #define IDC_JC_DYNAMIC		2000
 
@@ -69,16 +71,18 @@ static void PopulateGroupsCombo(HWND hwndCBEx, GList *lpglistGroups);
 
 
 /**
- * Displays the "Join Chat" dialogue.
+ * Displays either the "Join Chat" or the "Add Chat" dialogue.
  *
- * @param	hwndParent	Parent window handle.
- * @param[out]	lpvjcd		Details of chat to join are returned here.
+ * @param		hwndParent	Parent window handle.
+ * @param[in,out]	lpvjcd		Details of chat to join are returned
+ *					here, and bJoinFieldsOnly determines
+ *					which flavour of dialogue to show.
  *
  * @return TRUE iff OKed.
  */
 BOOL VultureJoinChatDlg(HWND hwndParent, VULTURE_JOIN_CHAT_DATA *lpvjcd)
 {
-	return (BOOL)DialogBoxParam(g_hInstance, MAKEINTRESOURCE(IDD_JOINCHAT), hwndParent, JoinChatDlgProc, (LPARAM)lpvjcd);
+	return (BOOL)DialogBoxParam(g_hInstance, MAKEINTRESOURCE(lpvjcd->bJoinFieldsOnly ? IDD_JOINCHAT : IDD_ADDCHAT), hwndParent, JoinChatDlgProc, (LPARAM)lpvjcd);
 }
 
 
@@ -97,7 +101,7 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 {
 	static int s_cyNonGroup = 0, s_cyButtonMargin = 0;
 	static GList *s_lpglistAccounts = NULL;
-	static VULTURE_JOIN_CHAT_DATA *s_lpvjcd = NULL;
+	static GList *s_lpglistGroups = NULL;
 	static GList *s_lpglistFields = NULL;
 	static int s_iMaxShowFields;
 
@@ -107,6 +111,7 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 		{
 			VULTURE_GET_ACCOUNTS vgetaccounts;
 			RECT rcGroup, rcDlg, rcButton;
+			VULTURE_JOIN_CHAT_DATA *lpvjcd = (VULTURE_JOIN_CHAT_DATA*)lParam;
 
 			/* Get online accounts. */
 			vgetaccounts.bOnlineOnly = TRUE;
@@ -124,16 +129,16 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			s_cyNonGroup = rcDlg.bottom - rcGroup.bottom + rcGroup.top;
 			s_cyButtonMargin = rcDlg.bottom - rcButton.top;
 
-			/* We return stuff here. */
-			s_lpvjcd = (VULTURE_JOIN_CHAT_DATA*)lParam;
+			/* Remember our parameters. */
+			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG_PTR)lpvjcd);
 
 			/* No fields to start with. */
 			s_lpglistFields = NULL;
 
 			/* The dialogue is initially big enough to show three
-			 * fields.
+			 * fields, plus any fixed fields.
 			 */
-			s_iMaxShowFields = 3;
+			s_iMaxShowFields = 3 + (lpvjcd->bJoinFieldsOnly ? 0 : ADD_CHAT_FIXED_FIELDS);
 
 			/* Populate combo and select first item. */
 			PopulateAccountsCombo(GetDlgItem(hwndDlg, IDC_CBEX_ACCOUNTS), s_lpglistAccounts);
@@ -143,6 +148,17 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 
 				/* Show fields. */
 				UpdateJoinChatFields(hwndDlg, &s_lpglistFields, &s_iMaxShowFields);
+			}
+
+			if(!lpvjcd->bJoinFieldsOnly)
+			{
+				/* Get all groups. */
+				VultureSingleSyncPurpleCall(PC_GETGROUPS, &s_lpglistGroups);
+
+				/* Populate combo and select first item. */
+				PopulateGroupsCombo(GetDlgItem(hwndDlg, IDC_CBEX_GROUP), s_lpglistGroups);
+				if(SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCOUNT, 0, 0) > 0)
+					SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_SETCURSEL, 0, 0);
 			}
 
 			AutoEnableJoinDlgOKButton(hwndDlg, s_lpglistFields);
@@ -164,15 +180,16 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			{
 				GList *lpglistRover;
 				COMBOBOXEXITEM cbexitem;
+				VULTURE_JOIN_CHAT_DATA *lpvjcd = (VULTURE_JOIN_CHAT_DATA*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 
 				/* Get the selected account. */
 				cbexitem.mask = CBEIF_LPARAM;
 				cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCURSEL, 0, 0);
 				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
-				s_lpvjcd->lppac = ((VULTURE_ACCOUNT*)cbexitem.lParam)->lppac;
+				lpvjcd->lppac = ((VULTURE_ACCOUNT*)cbexitem.lParam)->lppac;
 
 				/* Build hash table. */
-				s_lpvjcd->lphashParameters = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+				lpvjcd->lphashParameters = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
 				for(lpglistRover = s_lpglistFields; lpglistRover; lpglistRover = lpglistRover->next)
 				{
@@ -188,8 +205,31 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 						szFieldUTF8 = VultureTCHARToUTF8(szField);
 						ProcHeapFree(szField);
 
-						g_hash_table_replace(s_lpvjcd->lphashParameters, g_strdup(lpjdf->szID), szFieldUTF8);
+						g_hash_table_replace(lpvjcd->lphashParameters, g_strdup(lpjdf->szID), szFieldUTF8);
 					}
+				}
+
+				if(!lpvjcd->bJoinFieldsOnly)
+				{
+					int cch;
+
+					/* Get the selected group. */
+					cbexitem.mask = CBEIF_LPARAM;
+					cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCURSEL, 0, 0);
+					SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+					lpvjcd->lpvblistnodeGroup = (VULTURE_BLIST_NODE*)cbexitem.lParam;
+
+					if(lpvjcd->lpvblistnodeGroup)
+						VultureBListNodeAddRef(lpvjcd->lpvblistnodeGroup);
+
+					cch = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_ALIAS)) + 1;
+					if(cch > 1)
+					{
+						lpvjcd->szAlias = ProcHeapAlloc(cch * sizeof(TCHAR));
+						GetDlgItemText(hwndDlg, IDC_EDIT_ALIAS, lpvjcd->szAlias, cch);
+					}
+					else
+						lpvjcd->szAlias = NULL;
 				}
 
 				EndDialog(hwndDlg, TRUE);
@@ -247,6 +287,7 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			GList *lpglistRover;
 
 			VultureFreeAccountList(s_lpglistAccounts);
+			VultureFreeGroupList(s_lpglistGroups);
 
 			for(lpglistRover = s_lpglistFields; lpglistRover; lpglistRover = lpglistRover->next)
 				ProcHeapFree(lpglistRover->data);
@@ -394,6 +435,7 @@ static void UpdateJoinChatFields(HWND hwndDlg, GList **lplpglistFields, int *lpi
 	VULTURE_GET_CHAT_FIELDS getchatfields;
 	COMBOBOXEXITEM cbexitem;
 	int iFieldNum;
+	VULTURE_JOIN_CHAT_DATA *lpvjcd = (VULTURE_JOIN_CHAT_DATA*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 
 	/* Destroy existing fields. */
 	for(lpglistRover = *lplpglistFields; lpglistRover; lpglistRover = lpglistRover->next)
@@ -421,7 +463,7 @@ static void UpdateJoinChatFields(HWND hwndDlg, GList **lplpglistFields, int *lpi
 	*lplpglistFields = NULL;
 
 	/* Create new fields. */
-	for(lpglistRover = getchatfields.lpglistFields, iFieldNum = 0;
+	for(lpglistRover = getchatfields.lpglistFields, iFieldNum = lpvjcd->bJoinFieldsOnly ? 0 : ADD_CHAT_FIXED_FIELDS;
 		lpglistRover;
 		lpglistRover = lpglistRover->next, iFieldNum++)
 	{
@@ -501,7 +543,7 @@ static void AutoEnableJoinDlgOKButton(HWND hwndDlg, GList *lpglistFields)
  * Displays either the "Add Buddy" or the "Send IM" dialogue.
  *
  * @param		hwndParent	Parent window handle.
- * @param[in/out]	lpvabd		Details of buddy to add are returned
+ * @param[in,out]	lpvabd		Details of buddy to add are returned
  *					here, and bIMFieldsOnly determines
  *					which flavour of dialogue to show.
  *

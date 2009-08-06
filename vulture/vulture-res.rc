@@ -20,6 +20,7 @@ IDM_BLIST MENU
         MENUITEM "&Join Chat...\tCtrl+J", IDM_BLIST_BUDDIES_JOINCHAT
         MENUITEM SEPARATOR
 	MENUITEM "&Add Buddy...\tCtrl+B", IDM_BLIST_BUDDIES_ADDBUDDY
+	MENUITEM "&Add Chat...", IDM_BLIST_BUDDIES_ADDCHAT
 	MENUITEM SEPARATOR
         MENUITEM "&Close", IDM_BLIST_BUDDIES_CLOSE
     }
@@ -152,6 +153,26 @@ FONT 8, "Ms Shell Dlg"
     EDITTEXT        IDC_EDIT_ALIAS, 75, 75, 120, 12
     LTEXT           "&Group:", IDC_STATIC, 15, 92, 50, 10, SS_LEFT
     CONTROL         "", IDC_CBEX_GROUP, "ComboBoxEx32", 0x50010003, 75, 90, 120, 90
+}
+
+
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+IDD_ADDCHAT DIALOG 0, 0, 204, 162
+STYLE DS_3DLOOK | DS_CENTER | DS_MODALFRAME | DS_SHELLFONT | WS_VISIBLE | WS_BORDER | WS_CAPTION | WS_DLGFRAME | WS_POPUP | WS_SYSMENU
+CAPTION "Add Chat"
+FONT 8, "Ms Shell Dlg"
+{
+    DEFPUSHBUTTON   "OK", IDOK, 95, 145, 50, 14, BS_DEFPUSHBUTTON
+    PUSHBUTTON      "Cancel", IDCANCEL, 150, 145, 50, 14, BS_PUSHBUTTON
+    LTEXT           "Please choose an account, and then enter the details of the chat that you wish to add to the buddy list.", IDC_STATIC, 5, 5, 195, 20, SS_LEFT
+    LTEXT           "&Account:", IDC_STATIC, 5, 32, 35, 10, SS_LEFT
+    CONTROL         "", IDC_CBEX_ACCOUNTS, "ComboBoxEx32", 0x50010003, 45, 30, 155, 90
+    GROUPBOX        "Details", IDC_STATIC_DETAILS, 5, 50, 195, 88
+    LTEXT           "&Group:", IDC_STATIC, 15, 62, 50, 10, SS_LEFT
+    CONTROL         "", IDC_CBEX_GROUP, "ComboBoxEx32", 0x50010003, 75, 60, 120, 90
+    LTEXT           "A&lias (optional):", IDC_STATIC, 15, 77, 50, 10, SS_LEFT
+    EDITTEXT        IDC_EDIT_ALIAS, 75, 75, 120, 12
 }
 
 
