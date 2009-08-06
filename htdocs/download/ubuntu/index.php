@@ -29,7 +29,9 @@
 &nbsp;&nbsp;&nbsp;&nbsp;`lsb_release --short --codename` main | \<br />
 &nbsp;&nbsp;&nbsp;&nbsp;sudo tee /etc/apt/sources.list.d/pidgin-ppa.list</p>
 
-<p>Once this PPA is setup, Pidgin updates will show up in Update Manager along with the usual Ubuntu updates. The PPA will need to be re-setup only after upgrading Ubuntu.</p>
+<p>After doing this, open Update Manager, check for updates, and then install the newly available Pidgin packages.</p>
+
+<p>Future Pidgin updates will show up in Update Manager along with the usual Ubuntu updates. The PPA will need to be re-setup only after upgrading Ubuntu.</p>
 
 <p>This PPA is maintained by one developer, so please be patient. It often lags behind the source releases a couple of days.</p>
 </div>
