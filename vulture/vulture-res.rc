@@ -37,6 +37,7 @@ IDM_BLIST MENU
 	POPUP "&View"
 	{
 		MENUITEM "Show &Offline Buddies", IDM_BLIST_VIEW_SHOWOFFLINE
+		MENUITEM "Show &Empty Groups", IDM_BLIST_VIEW_SHOWEMPTYGROUPS
 	}
 
 	POPUP "&Accounts"

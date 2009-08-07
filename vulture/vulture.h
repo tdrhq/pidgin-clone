@@ -35,6 +35,7 @@
 typedef struct _VULTURE_FLAGS
 {
 	BOOL	bShowOffline;
+	BOOL	bShowEmptyGroups;
 } VULTURE_FLAGS;
 
 

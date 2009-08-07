@@ -280,6 +280,11 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 			VultureEnqueueAsyncPurpleCall(PC_REFRESHBLIST, NULL);
 			return 0;
 
+		case IDM_BLIST_VIEW_SHOWEMPTYGROUPS:
+			g_vflags.bShowEmptyGroups = !g_vflags.bShowEmptyGroups;
+			VultureEnqueueAsyncPurpleCall(PC_REFRESHBLIST, NULL);
+			return 0;
+
 		case IDM_BLIST_ACCOUNTS_MANAGE:
 			ManageAccounts(hwnd);
 			return 0;
@@ -291,6 +296,7 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		if(!HIWORD(lParam))
 		{
 			CheckMenuItem((HMENU)wParam, IDM_BLIST_VIEW_SHOWOFFLINE, g_vflags.bShowOffline ? MF_CHECKED : MF_UNCHECKED);
+			CheckMenuItem((HMENU)wParam, IDM_BLIST_VIEW_SHOWEMPTYGROUPS, g_vflags.bShowEmptyGroups ? MF_CHECKED : MF_UNCHECKED);
 		}
 
 		return 0;

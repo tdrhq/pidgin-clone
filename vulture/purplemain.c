@@ -331,8 +331,10 @@ static void LoadFlags(void)
 	purple_prefs_add_none(VULTURE_PREFS_ROOT);
 	purple_prefs_add_none(VULTURE_PREFS_ROOT "/blist");
 	purple_prefs_add_bool(VULTURE_PREFS_ROOT "/blist/show_offline_buddies", FALSE);
+	purple_prefs_add_bool(VULTURE_PREFS_ROOT "/blist/show_empty_groups", TRUE);
 
 	g_vflags.bShowOffline = purple_prefs_get_bool(VULTURE_PREFS_ROOT "/blist/show_offline_buddies");
+	g_vflags.bShowEmptyGroups = purple_prefs_get_bool(VULTURE_PREFS_ROOT "/blist/show_empty_groups");
 }
 
 
@@ -340,4 +342,5 @@ static void LoadFlags(void)
 static void SaveFlags(void)
 {
 	purple_prefs_set_bool(VULTURE_PREFS_ROOT "/blist/show_offline_buddies", g_vflags.bShowOffline);
+	purple_prefs_set_bool(VULTURE_PREFS_ROOT "/blist/show_empty_groups", g_vflags.bShowEmptyGroups);
 }

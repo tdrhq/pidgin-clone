@@ -198,6 +198,11 @@ static BOOL ShouldShowNode(PurpleBlistNode *lpblistnode)
 	switch(lpblistnode->type)
 	{
 	case PURPLE_BLIST_GROUP_NODE:
+		if(g_vflags.bShowEmptyGroups)
+			return TRUE;
+
+		/* Fall through. */
+
 	case PURPLE_BLIST_CONTACT_NODE:
 		{
 			PurpleBlistNode *lpblistnodeRover;
