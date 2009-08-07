@@ -84,65 +84,65 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 	}
 
 	EnterCriticalSection(&lpvbn->cs);
+	{
+		const char *szNodeText;
+
+		if(lpvbn->lpvbnParent) VultureBListNodeRelease(lpvbn->lpvbnParent);
+
+		/* Parents are not necessarily initialised before
+		 * children.
+		 */
+		if(lpblistnode->parent && !lpblistnode->parent->ui_data)
+			PurpleBlistUpdateNode(lpbuddylist, lpblistnode->parent);
+
+		lpvbn->lpvbnParent = lpblistnode->parent ? (VULTURE_BLIST_NODE*)lpblistnode->parent->ui_data : NULL;
+		if(lpvbn->lpvbnParent) VultureBListNodeAddRef(lpvbn->lpvbnParent);
+
+		lpvbn->nodetype = lpblistnode->type;
+
+		UpdateCachedStatus(lpblistnode);
+
+		switch(lpblistnode->type)
+		{
+		case PURPLE_BLIST_GROUP_NODE:
+			szNodeText = ((PurpleGroup*)lpblistnode)->name;
+			break;
+
+		case PURPLE_BLIST_CONTACT_NODE:
+			szNodeText = purple_contact_get_alias((PurpleContact*)lpblistnode);
+
+			if(!szNodeText || !(*szNodeText))
+			{
+				PurpleBuddy *lpbuddy = purple_contact_get_priority_buddy((PurpleContact*)lpblistnode);
+				szNodeText = purple_buddy_get_name(lpbuddy);
+			}
+
+			break;
+
+		case PURPLE_BLIST_BUDDY_NODE:
+
+			/* Maybe our contact needs to update its status
+			 * text.
+			 */
+			UpdateCachedStatus(lpblistnode->parent);
+
+			szNodeText = purple_buddy_get_alias((PurpleBuddy*)lpblistnode);
+
+			if(szNodeText && *szNodeText)
+				break;
+
+			/* Otherwise, fall through. */
+
+		default:
+			szNodeText = PURPLE_BLIST_NODE_NAME(lpblistnode);
+			break;
+		}
+
+		if(lpvbn->szNodeText) g_free(lpvbn->szNodeText);
+		lpvbn->szNodeText = szNodeText ? VultureUTF8ToTCHAR(szNodeText) : NULL;
 
 		if(ShouldShowNode(lpblistnode))
 		{
-			const char *szNodeText;
-
-			if(lpvbn->lpvbnParent) VultureBListNodeRelease(lpvbn->lpvbnParent);
-
-			/* Parents are not necessarily initialised before
-			 * children.
-			 */
-			if(lpblistnode->parent && !lpblistnode->parent->ui_data)
-				PurpleBlistUpdateNode(lpbuddylist, lpblistnode->parent);
-
-			lpvbn->lpvbnParent = lpblistnode->parent ? (VULTURE_BLIST_NODE*)lpblistnode->parent->ui_data : NULL;
-			if(lpvbn->lpvbnParent) VultureBListNodeAddRef(lpvbn->lpvbnParent);
-
-			lpvbn->nodetype = lpblistnode->type;
-
-			UpdateCachedStatus(lpblistnode);
-
-			switch(lpblistnode->type)
-			{
-			case PURPLE_BLIST_GROUP_NODE:
-				szNodeText = ((PurpleGroup*)lpblistnode)->name;
-				break;
-
-			case PURPLE_BLIST_CONTACT_NODE:
-				szNodeText = purple_contact_get_alias((PurpleContact*)lpblistnode);
-
-				if(!szNodeText || !(*szNodeText))
-				{
-					PurpleBuddy *lpbuddy = purple_contact_get_priority_buddy((PurpleContact*)lpblistnode);
-					szNodeText = purple_buddy_get_name(lpbuddy);
-				}
-
-				break;
-
-			case PURPLE_BLIST_BUDDY_NODE:
-
-				/* Maybe our contact needs to update its status
-				 * text.
-				 */
-				UpdateCachedStatus(lpblistnode->parent);
-
-				szNodeText = purple_buddy_get_alias((PurpleBuddy*)lpblistnode);
-
-				if(szNodeText && *szNodeText)
-					break;
-
-				/* Otherwise, fall through. */
-
-			default:
-				szNodeText = PURPLE_BLIST_NODE_NAME(lpblistnode);
-				break;
-			}
-
-			if(lpvbn->szNodeText) g_free(lpvbn->szNodeText);
-			lpvbn->szNodeText = szNodeText ? VultureUTF8ToTCHAR(szNodeText) : NULL;
-
 			/* TODO: We should probably be less willing to give up. */
 			if(lpvbn->szNodeText)
 			{
@@ -182,7 +182,7 @@ void PurpleBlistUpdateNode(PurpleBuddyList *lpbuddylist, PurpleBlistNode *lpblis
 			if(lpvbn->lpvbnParent && lpvbn->lpvbnParent->hti)
 				PurpleBlistUpdateNode(lpbuddylist, lpvbn->lpvbnParent->lpblistnode);
 		}
-
+	}
 	LeaveCriticalSection(&lpvbn->cs);
 }
 
