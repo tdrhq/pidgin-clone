@@ -38,6 +38,10 @@
 #ifdef USE_VV
 #include "media-gst.h"
 
+#ifdef _WIN32
+#include <gdk/gdkwin32.h>
+#endif
+
 #include <gst/interfaces/xoverlay.h>
 
 #define PIDGIN_TYPE_MEDIA            (pidgin_media_get_type())
@@ -213,6 +217,7 @@ pidgin_media_delete_event_cb(GtkWidget *widget,
 	return FALSE;
 }
 
+#ifdef HAVE_X11
 static int
 pidgin_x_error_handler(Display *display, XErrorEvent *event)
 {
@@ -246,6 +251,7 @@ pidgin_x_error_handler(Display *display, XErrorEvent *event)
 			error_type);
 	return 0;
 }
+#endif
 
 static void
 menu_hangup(gpointer data, guint action, GtkWidget *item)
@@ -303,7 +309,9 @@ pidgin_media_init (PidginMedia *media)
 	GtkWidget *vbox;
 	media->priv = PIDGIN_MEDIA_GET_PRIVATE(media);
 
+#ifdef HAVE_X11
 	XSetErrorHandler(pidgin_x_error_handler);
+#endif
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(media), vbox);
@@ -450,10 +458,19 @@ realize_cb_cb(PidginMediaRealizeData *data)
 	PidginMediaPrivate *priv = data->gtkmedia->priv;
 	gulong window_id;
 
+#ifdef _WIN32
+	if (data->participant == NULL)
+		window_id = GDK_WINDOW_HWND(priv->local_video->window);
+	else
+		window_id = GDK_WINDOW_HWND(priv->remote_video->window);
+#elif defined(HAVE_X11)
 	if (data->participant == NULL)
 		window_id = GDK_WINDOW_XWINDOW(priv->local_video->window);
 	else
 		window_id = GDK_WINDOW_XWINDOW(priv->remote_video->window);
+#else
+#	error "Unsupported windowing system"
+#endif
 
 	purple_media_set_output_window(priv->media, data->session_id,
 			data->participant, window_id);
@@ -481,17 +498,6 @@ pidgin_media_error_cb(PidginMedia *media, const char *error, PidginMedia *gtkmed
 				PURPLE_MESSAGE_ERROR, time(NULL));
 	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
 			0, error);
-}
-
-static void
-pidgin_media_accepted_cb(PurpleMedia *media, const gchar *session_id,
-		const gchar *participant, PidginMedia *gtkmedia)
-{
-	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
-	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
-	gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
-			0, _("Call in progress."));
-	gtk_widget_show(GTK_WIDGET(gtkmedia));
 }
 
 static void
@@ -786,7 +792,7 @@ pidgin_media_state_changed_cb(PurpleMedia *media, PurpleMediaState state,
 		gchar *sid, gchar *name, PidginMedia *gtkmedia)
 {
 	purple_debug_info("gtkmedia", "state: %d sid: %s name: %s\n",
-			state, sid, name);
+			state, sid ? sid : "(null)", name ? name : "(null)");
 	if (sid == NULL && name == NULL) {
 		if (state == PURPLE_MEDIA_STATE_END) {
 			pidgin_media_emit_message(gtkmedia,
@@ -826,6 +832,12 @@ pidgin_media_stream_info_cb(PurpleMedia *media, PurpleMediaInfoType type,
 	if (type == PURPLE_MEDIA_INFO_REJECT) {
 		pidgin_media_emit_message(gtkmedia,
 				_("You have rejected the call."));
+	} else if (type == PURPLE_MEDIA_INFO_ACCEPT) {
+		pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
+		pidgin_media_emit_message(gtkmedia, _("Call in progress."));
+		gtk_statusbar_push(GTK_STATUSBAR(gtkmedia->priv->statusbar),
+				0, _("Call in progress."));
+		gtk_widget_show(GTK_WIDGET(gtkmedia));
 	}
 }
 
@@ -852,8 +864,6 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 
 			g_signal_connect(G_OBJECT(media->priv->media), "error",
 				G_CALLBACK(pidgin_media_error_cb), media);
-			g_signal_connect(G_OBJECT(media->priv->media), "accepted",
-				G_CALLBACK(pidgin_media_accepted_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "state-changed",
 				G_CALLBACK(pidgin_media_state_changed_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "stream-info",

@@ -39,6 +39,7 @@
 #ifdef USE_VV
 
 #include <gst/farsight/fs-conference-iface.h>
+#include <gst/farsight/fs-element-added-notifier.h>
 #include <gst/interfaces/xoverlay.h>
 
 /** @copydoc _PurpleMediaManagerPrivate */
@@ -229,6 +230,10 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 	g_return_val_if_fail(PURPLE_IS_MEDIA_MANAGER(manager), NULL);
 
 	if (manager->priv->pipeline == NULL) {
+		FsElementAddedNotifier *notifier;
+		gchar *filename;
+		GError *err = NULL;
+		GKeyFile *keyfile;
 		GstBus *bus;
 		manager->priv->pipeline = gst_pipeline_new(NULL);
 
@@ -240,6 +245,38 @@ purple_media_manager_get_pipeline(PurpleMediaManager *manager)
 		gst_bus_set_sync_handler(bus,
 				gst_bus_sync_signal_handler, NULL);
 		gst_object_unref(bus);
+
+		filename = g_build_filename(purple_user_dir(),
+				"fs-element.conf", NULL);
+		keyfile = g_key_file_new();
+		if (!g_key_file_load_from_file(keyfile, filename,
+				G_KEY_FILE_NONE, &err)) {
+			if (err->code == 4)
+				purple_debug_info("mediamanager",
+						"Couldn't read "
+						"fs-element.conf: %s\n",
+						err->message);
+			else
+				purple_debug_error("mediamanager",
+						"Error reading "
+						"fs-element.conf: %s\n",
+						err->message);
+			g_error_free(err);
+		}
+		g_free(filename);
+
+		/* Hack to make alsasrc stop messing up audio timestamps */
+		if (!g_key_file_has_key(keyfile,
+				"alsasrc", "slave-method", NULL)) {
+			g_key_file_set_integer(keyfile,
+					"alsasrc", "slave-method", 2);
+		}
+
+		notifier = fs_element_added_notifier_new();
+		fs_element_added_notifier_add(notifier,
+				GST_BIN(manager->priv->pipeline));
+		fs_element_added_notifier_set_properties_from_keyfile(
+				notifier, keyfile);
 
 		gst_element_set_state(manager->priv->pipeline,
 				GST_STATE_PLAYING);
@@ -780,7 +817,8 @@ purple_media_manager_remove_output_window(PurpleMediaManager *manager,
 		pad = gst_element_get_static_pad(queue, "sink");
 		peer = gst_pad_get_peer(pad);
 		gst_object_unref(pad);
-		gst_element_release_request_pad(GST_ELEMENT_PARENT(peer), peer);
+		if (peer != NULL)
+			gst_element_release_request_pad(GST_ELEMENT_PARENT(peer), peer);
 		gst_element_set_locked_state(queue, TRUE);
 		gst_element_set_state(queue, GST_STATE_NULL);
 		gst_bin_remove(GST_BIN(GST_ELEMENT_PARENT(queue)), queue);

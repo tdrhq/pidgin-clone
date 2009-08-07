@@ -156,8 +156,7 @@ static GObjectClass *parent_class = NULL;
 
 
 enum {
-	ERROR,
-	ACCEPTED,
+	S_ERROR,
 	CANDIDATES_PREPARED,
 	CODECS_CHANGED,
 	NEW_CANDIDATE,
@@ -328,14 +327,10 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Data the prpl plugin set on the media session.",
 			G_PARAM_READWRITE));
 
-	purple_media_signals[ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
+	purple_media_signals[S_ERROR] = g_signal_new("error", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__STRING,
 					 G_TYPE_NONE, 1, G_TYPE_STRING);
-	purple_media_signals[ACCEPTED] = g_signal_new("accepted", G_TYPE_FROM_CLASS(klass),
-					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
-					 purple_smarshal_VOID__STRING_STRING,
-					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 	purple_media_signals[CANDIDATES_PREPARED] = g_signal_new("candidates-prepared", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 purple_smarshal_VOID__STRING_STRING,
@@ -2110,7 +2105,7 @@ purple_media_error(PurpleMedia *media, const gchar *error, ...)
 	va_end(args);
 
 	purple_debug_error("media", "%s\n", message);
-	g_signal_emit(media, purple_media_signals[ERROR], 0, message);
+	g_signal_emit(media, purple_media_signals[S_ERROR], 0, message);
 
 	g_free(message);
 #endif
@@ -2155,9 +2150,6 @@ purple_media_stream_info(PurpleMedia *media, PurpleMediaInfoType type,
 					stream->session->type), NULL);
 			stream->accepted = TRUE;
 		}
-
-		g_signal_emit(media, purple_media_signals[ACCEPTED],
-				0, NULL, NULL);
 	} else if (local == TRUE && (type == PURPLE_MEDIA_INFO_MUTE ||
 			type == PURPLE_MEDIA_INFO_UNMUTE)) {
 		GList *sessions;
@@ -2729,7 +2721,8 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 		purple_debug_error("media",
 				"purple_media_add_remote_candidates: "
 				"couldn't find stream %s %s.\n",
-				sess_id, participant);
+				sess_id ? sess_id : "(null)",
+				participant ? participant : "(null)");
 		return;
 	}
 
