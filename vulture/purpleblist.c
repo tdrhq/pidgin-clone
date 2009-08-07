@@ -853,3 +853,24 @@ void PurpleAddChat(VULTURE_JOIN_CHAT_DATA *lpvjcd)
 
 	if(szAliasUTF8) g_free(szAliasUTF8);
 }
+
+
+/**
+ * Adds a group.
+ *
+ * @param	szGroup		Name of new group.
+ */
+void PurpleAddGroup(LPTSTR szGroup)
+{
+	PurpleGroup *lpgroup;
+	gchar *szGroupUTF8;
+
+	szGroupUTF8 = VultureTCHARToUTF8(szGroup);
+
+	lpgroup = purple_group_new(szGroupUTF8);
+	purple_blist_add_group(lpgroup, NULL);
+
+	PurpleBlistUpdateNode(purple_get_blist(), (PurpleBlistNode*)lpgroup);
+
+	if(szGroupUTF8) g_free(szGroupUTF8);
+}

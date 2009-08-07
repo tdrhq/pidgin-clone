@@ -41,6 +41,12 @@ typedef struct _JOIN_DLG_FIELD
 	BOOL	bIsInt, bRequired;
 } JOIN_DLG_FIELD;
 
+typedef struct _VULTURE_GET_STRING_DLG_DATA
+{
+	LPTSTR	sz;
+	BOOL	bAllowBlank;
+} VULTURE_GET_STRING_DLG_DATA;
+
 
 /* Dialogue co-ordinates for the join-chat fields. */
 #define X_JC_LABEL		15
@@ -68,6 +74,7 @@ static void AutoEnableJoinDlgOKButton(HWND hwndDlg, GList *lpglistFields);
 static INT_PTR CALLBACK AddBuddyDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static void AutoEnableBuddyDlgOKButton(HWND hwndDlg);
 static void PopulateGroupsCombo(HWND hwndCBEx, GList *lpglistGroups);
+static INT_PTR CALLBACK GetStringDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 
 
 /**
@@ -728,4 +735,101 @@ static void PopulateGroupsCombo(HWND hwndCBEx, GList *lpglistGroups)
 			SendMessage(hwndCBEx, CBEM_INSERTITEM, 0, (LPARAM)&cbexitem);
 		}
 	}
+}
+
+
+/**
+ * Displays either the "Add Buddy" or the "Send IM" dialogue.
+ *
+ * @param		hwndParent	Parent window handle.
+ *
+ * @return Pointer to string (which should be ProcHeapFree()d, or NULL if
+ * cancelled.
+ */
+LPTSTR VultureAddGroupDlg(HWND hwndParent)
+{
+	VULTURE_GET_STRING_DLG_DATA vgsdd;
+	vgsdd.bAllowBlank = FALSE;
+
+	return DialogBoxParam(g_hInstance, MAKEINTRESOURCE(IDD_ADDGROUP), hwndParent, GetStringDlgProc, (LPARAM)&vgsdd) ?
+		vgsdd.sz :
+		NULL;
+}
+
+
+/**
+ * Dialogue procedure for dialogues retrieving one string only.
+ *
+ * @param	hwndDlg		Dialogue window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Usually TRUE if message processed and FALSE otherwise. There are
+ * some exceptions for particular messages.
+ */
+static INT_PTR CALLBACK GetStringDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
+	VULTURE_GET_STRING_DLG_DATA *lpvgsdd;
+
+	switch(uiMsg)
+	{
+	case WM_INITDIALOG:
+		lpvgsdd = (VULTURE_GET_STRING_DLG_DATA*)lParam;
+		SetWindowLongPtr(hwndDlg, GWLP_USERDATA, lParam);
+
+		if(!lpvgsdd->bAllowBlank)
+			EnableWindow(GetDlgItem(hwndDlg, IDOK), FALSE);
+
+		/* Let the system set the focus. */
+		return TRUE;
+
+	case WM_COMMAND:
+		
+		switch(LOWORD(wParam))
+		{
+		case IDC_EDIT_STRING:
+			lpvgsdd = (VULTURE_GET_STRING_DLG_DATA*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
+			if(HIWORD(wParam) == EN_CHANGE && !lpvgsdd->bAllowBlank)
+			{
+				HWND hwndOK = GetDlgItem(hwndDlg, IDOK);
+
+				if(GetWindowTextLength((HWND)lParam) == 0)
+				{
+					/* Don't leave the focus on a disabled control. */
+					if(GetFocus() == hwndOK)
+						SendMessage(hwndDlg, WM_NEXTDLGCTL, 0, 0);
+
+					EnableWindow(hwndOK, FALSE);
+				}
+				else
+					EnableWindow(hwndOK, TRUE);
+			}
+			break;
+
+		case IDOK:
+			{
+				int cch;
+
+				lpvgsdd = (VULTURE_GET_STRING_DLG_DATA*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
+
+				/* Get username. */
+				cch = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_STRING)) + 1;
+				lpvgsdd->sz = ProcHeapAlloc(cch * sizeof(TCHAR));
+				GetDlgItemText(hwndDlg, IDC_EDIT_STRING, lpvgsdd->sz, cch);
+
+				EndDialog(hwndDlg, TRUE);
+			}
+
+			return TRUE;
+
+		case IDCANCEL:
+			EndDialog(hwndDlg, FALSE);
+			return TRUE;
+		}
+
+		break;
+	}
+
+	return FALSE;
 }

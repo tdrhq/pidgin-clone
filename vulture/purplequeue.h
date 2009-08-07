@@ -126,6 +126,9 @@ enum PURPLE_CALL_ID
 
 	/* (VULTURE_JOIN_CHAT_DATA*) */
 	PC_ADDCHAT,
+
+	/* (LPTSTR) Group name. */
+	PC_ADDGROUP,
 };
 
 

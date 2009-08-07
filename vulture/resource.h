@@ -23,6 +23,7 @@
 #define IDC_EDIT_USERNAME                       1019
 #define IDC_EDIT_ALIAS                          1020
 #define IDC_CBEX_GROUP                          1021
+#define IDC_EDIT_STRING                         1022
 
 
 #define IDD_ACCOUNTS                            101
@@ -35,6 +36,7 @@
 #define IDD_ADDBUDDY                            108
 #define IDD_IMBUDDY                             109
 #define IDD_ADDCHAT                             110
+#define IDD_ADDGROUP                            111
 
 
 #define IDM_BLIST                               1001
@@ -45,6 +47,7 @@
 #define IDM_BLIST_VIEW_SHOWOFFLINE              40004
 #define IDM_BLIST_BUDDIES_IM                    40005
 #define IDM_BLIST_BUDDIES_ADDCHAT               40006
+#define IDM_BLIST_BUDDIES_ADDGROUP              40007
 
 #define IDM_BLIST_CONTEXT                       1002
 #define IDM_BLIST_CONTEXT_ACTIVATE              40201

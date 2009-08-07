@@ -257,6 +257,20 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 
 			return 0;
 
+		case IDM_BLIST_BUDDIES_ADDGROUP:
+			{
+				LPTSTR szGroup;
+
+				if((szGroup = VultureAddGroupDlg(hwnd)))
+				{
+					VultureSingleSyncPurpleCall(PC_ADDGROUP, szGroup);
+
+					ProcHeapFree(szGroup);
+				}
+			}
+
+			return 0;
+
 		case IDM_BLIST_BUDDIES_CLOSE:
 			SendMessage(hwnd, WM_CLOSE, 0, 0);
 			return 0;

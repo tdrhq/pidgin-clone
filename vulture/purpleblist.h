@@ -70,6 +70,7 @@ void VultureFreeGroupList(GList *lpglistGroups);
 void PurpleAddBuddy(VULTURE_ADD_BUDDY_DATA *lpvabd);
 void PurpleBlistUpdateLeaves(PurpleBlistNode *lpbln);
 void PurpleAddChat(VULTURE_JOIN_CHAT_DATA *lpvjcd);
+void PurpleAddGroup(LPTSTR szGroup);
 
 
 static INLINE void VultureBListNodeAddRef(VULTURE_BLIST_NODE *lpvblnode) { InterlockedIncrement(&lpvblnode->lRefCount); }
