@@ -47,6 +47,14 @@ typedef struct _STATUSDLGDATA
 	WNDPROC	wndprocStatusMsgOrig;
 } STATUSDLGDATA;
 
+/* MinGW doesn't have NMTVKEYDOWN. */
+typedef struct _VULTURE_NMTVKEYDOWN
+{
+	NMHDR	hdr;
+	WORD	wVKey;
+	UINT	flags;
+} VULTURE_NMTVKEYDOWN;
+
 
 static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
@@ -765,6 +773,29 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 
 					break;
 
+				case TVN_KEYDOWN:
+					if(((VULTURE_NMTVKEYDOWN*)lpnmhdr)->wVKey == VK_DELETE)
+					{
+						TVITEM tvitem;
+
+						tvitem.hItem = TreeView_GetSelection(lpnmhdr->hwndFrom);
+						if(tvitem.hItem)
+						{
+							VULTURE_BLIST_NODE *lpvblistnode;
+
+							tvitem.mask = TVIF_PARAM;
+							TreeView_GetItem(lpnmhdr->hwndFrom, &tvitem);
+
+							lpvblistnode = (VULTURE_BLIST_NODE*)tvitem.lParam;
+
+							RemoveNodeRequest(lpnmhdr->hwndFrom, lpvblistnode);
+
+							return TRUE;
+						}
+					}
+
+					break;
+
 				case TVN_ENDLABELEDIT:
 					{
 						/* Label-editing in the buddy-
@@ -1286,6 +1317,8 @@ static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode
 	VULTURE_BLIST_NODE_GET_BOOL vblngetbool;
 	BOOL bDelete = TRUE;
 
+	VultureBListNodeAddRef(lpvblistnode);
+
 	vblngetbool.lpvblistnode = lpvblistnode;
 	VultureSingleSyncPurpleCall(PC_BLISTNODEHASCHILDREN, &vblngetbool);
 
@@ -1302,6 +1335,8 @@ static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode
 
 	if(bDelete)
 		VultureSingleSyncPurpleCall(PC_REMOVEBLISTNODE, lpvblistnode);
+
+	VultureBListNodeRelease(lpvblistnode);
 }
 
 
