@@ -65,6 +65,9 @@ static void UpdateBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn);
 static void DrawBListNodeExtra(LPNMTVCUSTOMDRAW lpnmtvcdraw);
 static HBITMAP GetBListNodeIcon(VULTURE_BLIST_NODE *lpvblistnode);
 static void InvalidateBListNodeIconCache(VULTURE_BLIST_NODE *lpvblistnode);
+static void RequestAddChat(HWND hwndParent, LPTSTR szAlias, LPTSTR szInitGroup);
+static void RequestAddBuddy(HWND hwndParent, LPTSTR szUsername, LPTSTR szAlias, LPTSTR szInitGroup);
+static void RequestAddGroup(HWND hwndParent);
 
 
 #define BLIST_MARGIN		6
@@ -78,6 +81,8 @@ enum CONTEXT_MENU_INDICES
 	CMI_CONTACT_COMPOSITE,
 	CMI_CONTACT_BASIC,
 	CMI_CHAT,
+	CMI_GROUP,
+	CMI_EMPTYSPACE,
 };
 
 
@@ -217,58 +222,15 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 			return 0;
 
 		case IDM_BLIST_BUDDIES_ADDBUDDY:
-			{
-				VULTURE_ADD_BUDDY_DATA vabd;
-
-				vabd.bIMFieldsOnly = FALSE;
-
-				if(VultureAddBuddyDlg(hwnd, &vabd))
-				{
-					VultureSingleSyncPurpleCall(PC_ADDBUDDY, &vabd);
-
-					if(vabd.lpvblistnodeGroup)
-						VultureBListNodeRelease(vabd.lpvblistnodeGroup);
-
-					ProcHeapFree(vabd.szUsername);
-					if(vabd.szAlias)
-						ProcHeapFree(vabd.szAlias);
-				}
-			}
-
+			RequestAddBuddy(hwnd, NULL, NULL, NULL);
 			return 0;
 
 		case IDM_BLIST_BUDDIES_ADDCHAT:
-			{
-				VULTURE_JOIN_CHAT_DATA vjcd;
-
-				vjcd.bJoinFieldsOnly = FALSE;
-
-				if(VultureJoinChatDlg(hwnd, &vjcd))
-				{
-					VultureSingleSyncPurpleCall(PC_ADDCHAT, &vjcd);
-
-					if(vjcd.lpvblistnodeGroup)
-						VultureBListNodeRelease(vjcd.lpvblistnodeGroup);
-
-					if(vjcd.szAlias)
-						ProcHeapFree(vjcd.szAlias);
-				}
-			}
-
+			RequestAddChat(hwnd, NULL, NULL);
 			return 0;
 
 		case IDM_BLIST_BUDDIES_ADDGROUP:
-			{
-				LPTSTR szGroup;
-
-				if((szGroup = VultureAddGroupDlg(hwnd)))
-				{
-					VultureSingleSyncPurpleCall(PC_ADDGROUP, szGroup);
-
-					ProcHeapFree(szGroup);
-				}
-			}
-
+			RequestAddGroup(hwnd);
 			return 0;
 
 		case IDM_BLIST_BUDDIES_CLOSE:
@@ -675,17 +637,22 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 				case NM_RCLICK:
 					{
 						TVITEM tvitem;
+						HMENU hmenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDM_BLIST_CONTEXT));
+						HMENU hmenuSubmenu = NULL;
+						GList *lpglistVMA = NULL;
+						VULTURE_MAKE_CONTEXT_MENU vmcm;
+						VULTURE_BLIST_NODE *lpvblistnode = NULL;
+						TVHITTESTINFO tvhti;
+						DWORD dwMouse;
 
-						tvitem.hItem = TreeView_GetDropHilight(lpnmhdr->hwndFrom);
-						if(!tvitem.hItem) tvitem.hItem = TreeView_GetSelection(lpnmhdr->hwndFrom);
+						dwMouse = GetMessagePos();
+						tvhti.pt.x = (short)(dwMouse & 0xFFFF);
+						tvhti.pt.y = (short)(dwMouse >> 16);
+						ScreenToClient(lpnmhdr->hwndFrom, &tvhti.pt);
+						SendMessage(lpnmhdr->hwndFrom, TVM_HITTEST, 0, (LPARAM)&tvhti);
 
-						if(tvitem.hItem)
+						if((tvitem.hItem = tvhti.hItem))
 						{
-							VULTURE_BLIST_NODE *lpvblistnode;
-							HMENU hmenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDM_BLIST_CONTEXT));
-							HMENU hmenuSubmenu = NULL;
-							GList *lpglistVMA = NULL;
-							VULTURE_MAKE_CONTEXT_MENU vmcm;
 
 							/* Really select this node. */
 							TreeView_SelectItem(lpnmhdr->hwndFrom, tvitem.hItem);
@@ -721,6 +688,10 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 									hmenuSubmenu = GetSubMenu(hmenu, CMI_CHAT);
 									break;
 
+								case PURPLE_BLIST_GROUP_NODE:
+									hmenuSubmenu = GetSubMenu(hmenu, CMI_GROUP);
+									break;
+
 								default:
 									vmcm.bExtraItems = FALSE;
 									break;
@@ -732,16 +703,24 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 							vmcm.lplpglistVMA = &lpglistVMA;
 
 							VultureSingleSyncPurpleCall(PC_MAKECONTEXTMENU, &vmcm);
+						}
+						else
+						{
+							TreeView_SelectItem(lpnmhdr->hwndFrom, NULL);
+							hmenuSubmenu = GetSubMenu(hmenu, CMI_EMPTYSPACE);
+						}
 
-							if(hmenuSubmenu)
+						if(hmenuSubmenu)
+						{
+							POINT ptMouse;
+							int iCmd;
+
+							GetCursorPos(&ptMouse);
+							iCmd = TrackPopupMenu(hmenuSubmenu, TPM_RIGHTBUTTON | TPM_RETURNCMD, ptMouse.x, ptMouse.y, 0, hwndDlg, NULL);
+
+							if(iCmd != 0)
 							{
-								POINT ptMouse;
-								int iCmd;
-
-								GetCursorPos(&ptMouse);
-								iCmd = TrackPopupMenu(hmenuSubmenu, TPM_RIGHTBUTTON | TPM_RETURNCMD, ptMouse.x, ptMouse.y, 0, hwndDlg, NULL);
-
-								if(iCmd != 0)
+								if(lpvblistnode)
 								{
 									switch(lpvblistnode->nodetype)
 									{
@@ -752,30 +731,36 @@ static INT_PTR CALLBACK BuddyListDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 									case PURPLE_BLIST_CHAT_NODE:
 										RunChatMenuCmd(lpnmhdr->hwndFrom, lpvblistnode, hmenuSubmenu, iCmd);
 										break;
+									case PURPLE_BLIST_GROUP_NODE:
+										RunCommonMenuCmd(lpnmhdr->hwndFrom, lpvblistnode, hmenuSubmenu, iCmd);
+										break;
 									default:
 										break;
 									}
 								}
+								else
+									RunCommonMenuCmd(lpnmhdr->hwndFrom, NULL, hmenuSubmenu, iCmd);
 							}
+						}
 
+						if(lpvblistnode)
 							VultureBListNodeRelease(lpvblistnode);
 
-							/* Destroy menu. This will also destroy our modifications. */
-							DestroyMenu(hmenu);
+						/* Destroy menu. This will also destroy our modifications. */
+						DestroyMenu(hmenu);
 
-							/* Clean up any extra data we might have as a result of
-							 * having modified the menu.
-							 */
-							g_list_foreach(lpglistVMA, (GFunc)g_free, NULL);
-							g_list_free(lpglistVMA);
+						/* Clean up any extra data we might have as a result of
+						 * having modified the menu.
+						 */
+						g_list_foreach(lpglistVMA, (GFunc)g_free, NULL);
+						g_list_free(lpglistVMA);
 
-							/* Prevent spurious right-click messages being sent
-							 * elsewhere.
-							 */
-							SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, TRUE);
+						/* Prevent spurious right-click messages being sent
+						 * elsewhere.
+						 */
+						SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, TRUE);
 
-							return TRUE;
-						}
+						return TRUE;
 					}
 
 					break;
@@ -1160,8 +1145,6 @@ static void RunBuddyMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, 
  */
 static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, HMENU hmenu, int iCmd)
 {
-	UNREFERENCED_PARAMETER(hmenu);
-
 	switch(iCmd)
 	{
 	case IDM_BLIST_CONTEXT_ACTIVATE:
@@ -1212,6 +1195,38 @@ static BOOL RunCommonMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode,
 
 			VultureSingleSyncPurpleCall(PC_SETCUSTOMICON, &vblnstringpairNewIcon);
 		}
+
+		return TRUE;
+
+	case IDM_BLIST_CONTEXT_ADDBUDDY:
+	case IDM_BLIST_CONTEXT_ADDCHAT:
+		{
+			LPTSTR szGroup = NULL;
+
+			if(lpvblistnode)
+			{
+				EnterCriticalSection(&lpvblistnode->cs);
+				{
+					if(lpvblistnode->nodetype == PURPLE_BLIST_GROUP_NODE && lpvblistnode->szNodeText)
+						szGroup = _tcsdup(lpvblistnode->szNodeText);
+				}
+				LeaveCriticalSection(&lpvblistnode->cs);
+			}
+
+			if(iCmd == IDM_BLIST_CONTEXT_ADDBUDDY)
+				RequestAddBuddy(g_hwndMain, NULL, NULL, szGroup);
+			else
+				RequestAddChat(g_hwndMain, NULL, szGroup);
+
+			if(szGroup)
+				free(szGroup);
+		}
+
+		return TRUE;
+
+	case IDM_BLIST_CONTEXT_ADDGROUP:
+		RequestAddGroup(g_hwndMain);
+		return TRUE;
 
 	default:
 		/* Not a static command that we recongise; might be a dynamic
@@ -1299,6 +1314,7 @@ static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode
 static void UpdateBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
 {
 	TVITEMEX tvitemex;
+	HBITMAP hbmIcon;
 
 	if(lpvbn->hti)
 	{
@@ -1340,12 +1356,13 @@ static void UpdateBListNode(HWND hwndBlistTree, VULTURE_BLIST_NODE *lpvbn)
 	}
 
 	/* Set height. */
+	hbmIcon = GetBListNodeIcon(lpvbn);
 	EnterCriticalSection(&lpvbn->cs);
 	{
 		tvitemex.mask = TVIF_HANDLE | TVIF_INTEGRAL;
 		tvitemex.hItem = lpvbn->hti;
 		tvitemex.iIntegral =
-			((lpvbn->nodetype == PURPLE_BLIST_CONTACT_NODE && lpvbn->bExpanded) || lpvbn->nodetype == PURPLE_BLIST_GROUP_NODE) ?
+			(!hbmIcon && ((lpvbn->nodetype == PURPLE_BLIST_CONTACT_NODE && lpvbn->bExpanded) || lpvbn->nodetype == PURPLE_BLIST_GROUP_NODE)) ?
 			1 :
 			2;
 	}
@@ -1534,5 +1551,82 @@ static void InvalidateBListNodeIconCache(VULTURE_BLIST_NODE *lpvblistnode)
 			DeleteObject(lpvblistnode->ui.hbmIconCache);
 
 		lpvblistnode->ui.bIconCacheValid = FALSE;
+	}
+}
+
+
+/**
+ * Shows the "Add Chat" UI and adds the chat if confirmed.
+ *
+ * @param	hwndParent	Parent window handle for dialogue.
+ * @param	szAlias		Initial alias. May be NULL.
+ * @param	szInitGroup	Initial group name. May be NULL.
+ */
+static void RequestAddChat(HWND hwndParent, LPTSTR szAlias, LPTSTR szInitGroup)
+{
+	VULTURE_JOIN_CHAT_DATA vjcd;
+
+	vjcd.bJoinFieldsOnly = FALSE;
+	vjcd.szAlias = szAlias;
+	vjcd.szInitGroup = szInitGroup;
+
+	if(VultureJoinChatDlg(hwndParent, &vjcd))
+	{
+		VultureSingleSyncPurpleCall(PC_ADDCHAT, &vjcd);
+
+		if(vjcd.lpvblistnodeGroup)
+			VultureBListNodeRelease(vjcd.lpvblistnodeGroup);
+
+		if(vjcd.szAlias)
+			ProcHeapFree(vjcd.szAlias);
+	}
+}
+
+
+/**
+ * Shows the "Add Buddy" UI and adds the buddy if confirmed.
+ *
+ * @param	hwndParent	Parent window handle for dialogue.
+ * @param	szUsername	Initial username. May be NULL.
+ * @param	szAlias		Initial alias. May be NULL.
+ * @param	szInitGroup	Initial group name. May be NULL.
+ */
+static void RequestAddBuddy(HWND hwndParent, LPTSTR szUsername, LPTSTR szAlias, LPTSTR szInitGroup)
+{
+	VULTURE_ADD_BUDDY_DATA vabd;
+
+	vabd.bIMFieldsOnly = FALSE;
+	vabd.szAlias = szAlias;
+	vabd.szInitGroup = szInitGroup;
+	vabd.szUsername = szUsername;
+
+	if(VultureAddBuddyDlg(hwndParent, &vabd))
+	{
+		VultureSingleSyncPurpleCall(PC_ADDBUDDY, &vabd);
+
+		if(vabd.lpvblistnodeGroup)
+			VultureBListNodeRelease(vabd.lpvblistnodeGroup);
+
+		ProcHeapFree(vabd.szUsername);
+		if(vabd.szAlias)
+			ProcHeapFree(vabd.szAlias);
+	}
+}
+
+
+/**
+ * Shows the "Add Group" UI and adds the group if confirmed.
+ *
+ * @param	hwndParent	Parent window handle for dialogue.
+ */
+static void RequestAddGroup(HWND hwndParent)
+{
+	LPTSTR szGroup;
+
+	if((szGroup = VultureAddGroupDlg(hwndParent)))
+	{
+		VultureSingleSyncPurpleCall(PC_ADDGROUP, szGroup);
+
+		ProcHeapFree(szGroup);
 	}
 }

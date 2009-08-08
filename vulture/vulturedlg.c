@@ -159,13 +159,25 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 
 			if(!lpvjcd->bJoinFieldsOnly)
 			{
+				if(lpvjcd->szAlias)
+					SetDlgItemText(hwndDlg, IDC_EDIT_ALIAS, lpvjcd->szAlias);
+
 				/* Get all groups. */
 				VultureSingleSyncPurpleCall(PC_GETGROUPS, &s_lpglistGroups);
 
-				/* Populate combo and select first item. */
+				/* Populate combo and select appropriate item. */
 				PopulateGroupsCombo(GetDlgItem(hwndDlg, IDC_CBEX_GROUP), s_lpglistGroups);
+
 				if(SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCOUNT, 0, 0) > 0)
-					SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_SETCURSEL, 0, 0);
+				{
+					/* Maybe override this with given group. */
+					if(lpvjcd->szInitGroup)
+					{
+						LRESULT lIndex = SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_FINDSTRINGEXACT, -1, (LPARAM)lpvjcd->szInitGroup);
+						if(lIndex != CB_ERR)
+							SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_SETCURSEL, lIndex, 0);
+					}
+				}
 			}
 
 			AutoEnableJoinDlgOKButton(hwndDlg, s_lpglistFields);
@@ -223,8 +235,17 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 					/* Get the selected group. */
 					cbexitem.mask = CBEIF_LPARAM;
 					cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCURSEL, 0, 0);
-					SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
-					lpvjcd->lpvblistnodeGroup = (VULTURE_BLIST_NODE*)cbexitem.lParam;
+					
+					if(cbexitem.iItem != CB_ERR)
+					{
+						SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+						lpvjcd->lpvblistnodeGroup = (VULTURE_BLIST_NODE*)cbexitem.lParam;
+
+						if(lpvjcd->lpvblistnodeGroup)
+							VultureBListNodeAddRef(lpvjcd->lpvblistnodeGroup);
+					}
+					else
+						lpvjcd->lpvblistnodeGroup = NULL;
 
 					if(lpvjcd->lpvblistnodeGroup)
 						VultureBListNodeAddRef(lpvjcd->lpvblistnodeGroup);
@@ -577,16 +598,16 @@ static INT_PTR CALLBACK AddBuddyDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 {
 	static GList *s_lpglistAccounts = NULL;
 	static GList *s_lpglistGroups = NULL;
-	static VULTURE_ADD_BUDDY_DATA *s_lpvabd = NULL;
 
 	switch(uiMsg)
 	{
 	case WM_INITDIALOG:
 		{
 			VULTURE_GET_ACCOUNTS vgetaccounts;
+			VULTURE_ADD_BUDDY_DATA *lpvabd = (VULTURE_ADD_BUDDY_DATA*)lParam;
 
 			/* We return stuff here. */
-			s_lpvabd = (VULTURE_ADD_BUDDY_DATA*)lParam;
+			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, lParam);
 
 			/* Get online accounts. */
 			vgetaccounts.bOnlineOnly = TRUE;
@@ -598,15 +619,31 @@ static INT_PTR CALLBACK AddBuddyDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			if(SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCOUNT, 0, 0) > 0)
 				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_SETCURSEL, 0, 0);
 
-			if(!s_lpvabd->bIMFieldsOnly)
+			/* Initial value. */
+			if(lpvabd->szUsername)
+				SetDlgItemText(hwndDlg, IDC_EDIT_USERNAME, lpvabd->szUsername);
+
+			if(!lpvabd->bIMFieldsOnly)
 			{
+				if(lpvabd->szAlias)
+					SetDlgItemText(hwndDlg, IDC_EDIT_ALIAS, lpvabd->szAlias);
+
 				/* Get all groups. */
 				VultureSingleSyncPurpleCall(PC_GETGROUPS, &s_lpglistGroups);
 
-				/* Populate combo and select first item. */
+				/* Populate combo and select appropriate item. */
 				PopulateGroupsCombo(GetDlgItem(hwndDlg, IDC_CBEX_GROUP), s_lpglistGroups);
+
 				if(SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCOUNT, 0, 0) > 0)
-					SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_SETCURSEL, 0, 0);
+				{
+					/* Maybe override this with given group. */
+					if(lpvabd->szInitGroup)
+					{
+						LRESULT lIndex = SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_FINDSTRINGEXACT, -1, (LPARAM)lpvabd->szInitGroup);
+						if(lIndex != CB_ERR)
+							SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_SETCURSEL, lIndex, 0);
+					}
+				}
 			}
 
 			AutoEnableBuddyDlgOKButton(hwndDlg);
@@ -628,37 +665,44 @@ static INT_PTR CALLBACK AddBuddyDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			{
 				COMBOBOXEXITEM cbexitem;
 				int cch;
+				VULTURE_ADD_BUDDY_DATA *lpvabd = (VULTURE_ADD_BUDDY_DATA*)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 
 				/* Get the selected account. */
 				cbexitem.mask = CBEIF_LPARAM;
 				cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCURSEL, 0, 0);
 				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
-				s_lpvabd->lppac = ((VULTURE_ACCOUNT*)cbexitem.lParam)->lppac;
+				lpvabd->lppac = ((VULTURE_ACCOUNT*)cbexitem.lParam)->lppac;
 
 				/* Get username. */
 				cch = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_USERNAME)) + 1;
-				s_lpvabd->szUsername = ProcHeapAlloc(cch * sizeof(TCHAR));
-				GetDlgItemText(hwndDlg, IDC_EDIT_USERNAME, s_lpvabd->szUsername, cch);
+				lpvabd->szUsername = ProcHeapAlloc(cch * sizeof(TCHAR));
+				GetDlgItemText(hwndDlg, IDC_EDIT_USERNAME, lpvabd->szUsername, cch);
 
-				if(!s_lpvabd->bIMFieldsOnly)
+				if(!lpvabd->bIMFieldsOnly)
 				{
 					/* Get the selected group. */
 					cbexitem.mask = CBEIF_LPARAM;
 					cbexitem.iItem = SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCURSEL, 0, 0);
-					SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
-					s_lpvabd->lpvblistnodeGroup = (VULTURE_BLIST_NODE*)cbexitem.lParam;
 
-					if(s_lpvabd->lpvblistnodeGroup)
-						VultureBListNodeAddRef(s_lpvabd->lpvblistnodeGroup);
+					if(cbexitem.iItem != CB_ERR)
+					{
+						SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+						lpvabd->lpvblistnodeGroup = (VULTURE_BLIST_NODE*)cbexitem.lParam;
+
+						if(lpvabd->lpvblistnodeGroup)
+							VultureBListNodeAddRef(lpvabd->lpvblistnodeGroup);
+					}
+					else
+						lpvabd->lpvblistnodeGroup = NULL;
 
 					cch = GetWindowTextLength(GetDlgItem(hwndDlg, IDC_EDIT_ALIAS)) + 1;
 					if(cch > 1)
 					{
-						s_lpvabd->szAlias = ProcHeapAlloc(cch * sizeof(TCHAR));
-						GetDlgItemText(hwndDlg, IDC_EDIT_ALIAS, s_lpvabd->szAlias, cch);
+						lpvabd->szAlias = ProcHeapAlloc(cch * sizeof(TCHAR));
+						GetDlgItemText(hwndDlg, IDC_EDIT_ALIAS, lpvabd->szAlias, cch);
 					}
 					else
-						s_lpvabd->szAlias = NULL;
+						lpvabd->szAlias = NULL;
 				}
 
 				EndDialog(hwndDlg, TRUE);

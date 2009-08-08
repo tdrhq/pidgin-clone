@@ -375,6 +375,9 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 					}
 				}
 			LeaveCriticalSection(&lpvblnstringpair->lpvblistnode->cs);
+
+			VultureBListNodeAddRef(lpvblnstringpair->lpvblistnode);
+			VulturePostUIMessage(VUIMSG_UPDATEBLISTNODE, lpvblnstringpair->lpvblistnode);
 		}
 
 		break;

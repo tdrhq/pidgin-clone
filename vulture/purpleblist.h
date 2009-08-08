@@ -39,6 +39,7 @@ typedef struct _VULTURE_JOIN_CHAT_DATA
 	LPTSTR			szAlias;
 	VULTURE_BLIST_NODE	*lpvblistnodeGroup;
 	BOOL			bJoinFieldsOnly;
+	LPTSTR			szInitGroup;
 } VULTURE_JOIN_CHAT_DATA;
 
 
@@ -49,6 +50,7 @@ typedef struct _VULTURE_ADD_BUDDY_DATA
 	LPTSTR			szAlias;
 	VULTURE_BLIST_NODE	*lpvblistnodeGroup;
 	BOOL			bIMFieldsOnly;
+	LPTSTR			szInitGroup;
 } VULTURE_ADD_BUDDY_DATA;
 
 
