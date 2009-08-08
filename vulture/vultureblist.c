@@ -1327,9 +1327,9 @@ static void RemoveNodeRequest(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode
 	{
 		EnterCriticalSection(&lpvblistnode->cs);
 			if(lpvblistnode->nodetype == PURPLE_BLIST_GROUP_NODE)
-				bDelete = MessageBoxFromStringTable(g_hwndMain, IDS_QUERY_DELGROUP, MB_ICONEXCLAMATION | MB_YESNO);
+				bDelete = (MessageBoxFromStringTable(g_hwndMain, IDS_QUERY_DELGROUP, MB_ICONEXCLAMATION | MB_YESNO) == IDYES);
 			else if(lpvblistnode->nodetype == PURPLE_BLIST_CONTACT_NODE)
-				bDelete = MessageBoxFromStringTable(g_hwndMain, IDS_QUERY_DELCONTACT, MB_ICONEXCLAMATION | MB_YESNO);
+				bDelete = (MessageBoxFromStringTable(g_hwndMain, IDS_QUERY_DELCONTACT, MB_ICONEXCLAMATION | MB_YESNO) == IDYES);
 		LeaveCriticalSection(&lpvblistnode->cs);
 	}
 
