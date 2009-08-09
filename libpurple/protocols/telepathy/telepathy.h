@@ -24,6 +24,7 @@
 #include <glib.h>
 
 #include <telepathy-glib/account-manager.h>
+#include <telepathy-glib/channel-dispatcher.h>
 #include <telepathy-glib/connection-manager.h>
 
 #include "plugin.h"
@@ -34,6 +35,7 @@
 void *module_handle;
 gchar *module_path;
 TpAccountManager *account_Manager;
+TpChannelDispatcher *channel_Dispatcher;
 
 /* This maps account object path to account_data struct */
 GHashTable *accounts_Hash_Table;

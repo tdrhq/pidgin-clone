@@ -1176,12 +1176,21 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 		return FALSE;
 	}
 
-	/* Create an AccountManager interface */
+	/* Create an AccountManager proxy */
 	account_Manager = tp_account_manager_new(daemon);
 
 	if (account_Manager == NULL)
 	{
-		purple_debug_error("telepathy", "There is no AccountManager interface!\n");
+		purple_debug_error("telepathy", "There is no AccountManager bus name!\n");
+		return FALSE;
+	}
+
+	/* Create an AccountManager proxy */
+	channel_Dispatcher = tp_channel_dispatcher_new(daemon);
+
+	if (channel_Dispatcher == NULL)
+	{
+		purple_debug_error("telepathy", "There is no ChannelDispatcher bus name!\n");
 		return FALSE;
 	}
 
