@@ -98,8 +98,6 @@ chat_got_message (telepathy_room_channel *tp_channel,
 	TpContact *contact = g_hash_table_lookup(
 			tp_channel->contacts, (gpointer)arg_Sender);
 
-	/* TODO: Get rid of the unknown sender bit */
-
 	if (contact != NULL)
 		from = tp_contact_get_alias(contact);
 	else

@@ -42,7 +42,6 @@
 
 typedef struct
 {
-	/* TODO: Fill this in or delete it */
 	  GList *channels;
 
 } TelepathyClientPriv;
@@ -119,11 +118,15 @@ client_constructor (GType type,
 static void
 client_dispose (GObject *object)
 {
-	/* TODO: Close all channels */
-	/*
-	TelepathyClientPriv *priv = GET_PRIV (object);
-	*/
+	TelepathyClient *client = TELEPATHY_CLIENT (object);
+	TelepathyClientPriv *priv = client->priv;
+	
+	while (priv->channels)
+	{
+		TpChannel *channel = priv->channels->data;
 
+		tp_cli_channel_call_close(channel, -1, NULL, NULL, NULL, NULL);
+	}
 }
 
 static void
@@ -283,7 +286,7 @@ telepathy_client_class_init (TelepathyClientClass *klass)
 
 	param_spec = g_param_spec_boxed ("channels", "channels",
 		"List of channels we're handling",
-		TELEPATHY_ARRAY_TYPE_OBJECT, // FIXME: What type is this???
+		TELEPATHY_ARRAY_TYPE_OBJECT, 
 		G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
 	g_object_class_install_property (object_class,
 		PROP_CHANNELS, param_spec);
@@ -321,17 +324,13 @@ telepathy_client_handle_channels (TpSvcClientHandler *self,
                                   GHashTable *handler_info,
                                   DBusGMethodInvocation *context)
 {
-	/*
 	TelepathyClient *client = TELEPATHY_CLIENT (self);
 	TelepathyClientPriv *priv = client->priv;
-	*/
 
 	int i;
 
 	for (i = 0; i < channels->len ; i++)
 	{
-		/* TODO: Put the channel in priv->channels */
-
 		GValueArray *arr = g_ptr_array_index (channels, i);
 		const gchar *object_path;
 		GHashTable *properties;
@@ -372,6 +371,8 @@ telepathy_client_handle_channels (TpSvcClientHandler *self,
 			g_error_free(error);
 			return;
 		}
+
+		priv->channels = g_list_append(priv->channels, channel);
 
 		purple_debug_info("telepathy", "New channel: %s\n", object_path);
 
