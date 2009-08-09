@@ -271,6 +271,8 @@ telepathy_send_im (PurpleConnection *gc,
 	}
 	else
 	{
+		telepathy_account *tp_account = data->account_data;
+
 		/* if this is the first message, we need to create the channel */
 		GHashTable *map = tp_asv_new (
 			TP_IFACE_CHANNEL ".ChannelType", G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
@@ -281,9 +283,11 @@ telepathy_send_im (PurpleConnection *gc,
 		tp_channel = g_new0(telepathy_text_channel, 1);
 		g_hash_table_insert(data->text_Channels, g_strdup(who), tp_channel);
 
-		purple_debug_info("telepathy", "Creating text channel for %s\n", who);
+		purple_debug_info("telepathy", "Requesting text channel for %s\n", who);
 
-		tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1, map, ensure_channel_cb, data, NULL, NULL);
+		tp_cli_channel_dispatcher_call_create_channel(channel_Dispatcher, -1,
+			tp_account->obj_Path, map, time(NULL), "",
+			create_channel_cb, data, NULL, NULL); 
 	}
 
 	purple_debug_info("telepathy", "Sending \"%s\" (stripped: \"%s\") to %s\n", message, stripped_message, who);
@@ -308,11 +312,17 @@ static unsigned int
 telepathy_send_typing (PurpleConnection *gc, const char *name, PurpleTypingState state)
 {
 	telepathy_connection *data = purple_connection_get_protocol_data(gc);
-	telepathy_text_channel *tp_channel = g_hash_table_lookup(data->text_Channels, name);
-
 	TpChannel *channel = NULL;
 	TpChannelChatState tp_state;
 	
+	if (data == NULL)
+	{
+		purple_debug_error("telepathy", "PurpleConnection has no protocol data!\n");
+		return;
+	}
+
+	telepathy_text_channel *tp_channel = g_hash_table_lookup(data->text_Channels, name);
+
 	if (tp_channel == NULL)
 	{
 		purple_debug_warning("telepathy", "Received typing notification for %s who doesn't have a cached telepathy_channel struct\n", name);

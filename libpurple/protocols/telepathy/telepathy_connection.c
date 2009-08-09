@@ -216,6 +216,7 @@ got_connection_object (gchar *connection_object,
 	connection_data->connection = tp_connection_new(daemon, NULL, connection_object, &error);
 	connection_data->gc = gc;
 	connection_data->acct = acct;
+	connection_data->account_data = account_data;
 
 	account_data->connection_data = connection_data;
 

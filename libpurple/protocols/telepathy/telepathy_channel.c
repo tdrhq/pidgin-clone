@@ -20,6 +20,8 @@
 
 #include "telepathy_channel.h"
 
+#include <telepathy-glib/channel-request.h>
+#include <telepathy-glib/dbus.h>
 #include <telepathy-glib/interfaces.h>
 
 #include "internal.h"
@@ -30,6 +32,66 @@
 #include "telepathy_channel_list.h"
 #include "telepathy_channel_text.h"
 #include "telepathy_contact.h"
+
+static void
+proceed_cb (TpChannelRequest *proxy,
+            const GError *error,
+            gpointer user_data,
+            GObject *weak_object)
+{
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "Proceed error: %s\n", error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "Proceed succeeded!\n");
+}
+
+void
+create_channel_cb (TpChannelDispatcher *proxy,
+                   const gchar *out_Request,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object)
+{
+	GError *err = NULL;
+	TpDBusDaemon *bus_daemon;
+	TpChannelRequest *request;
+
+	if (error != NULL)
+	{
+		purple_debug_error("telepathy", "CreateChannel error: %s\n", error->message);
+		return;
+	}
+
+	purple_debug_info("telepathy", "CreateChannel succeeded!\n");
+
+	bus_daemon = tp_dbus_daemon_dup(&err);
+
+	if (err != NULL)
+	{
+		purple_debug_error("telepathy", "Error dupping dbus daemon: %s\n",
+			err->message);
+		g_error_free(err);
+		g_object_unref(bus_daemon);
+		return;
+	}
+
+	request = tp_channel_request_new(bus_daemon, out_Request, NULL, &err);
+
+	if (err != NULL)
+	{
+		purple_debug_error("telepathy", "Error creating ChannelRequest proxy: %s\n",
+			err->message);
+		g_error_free(err);
+		g_object_unref(bus_daemon);
+		g_object_unref(request);
+		return;
+	}
+
+	tp_cli_channel_request_call_proceed(request, -1, proceed_cb, user_data, NULL, NULL);
+}
 
 void
 channel_ready_cb (TpChannel *channel,

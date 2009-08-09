@@ -24,8 +24,16 @@
 #include <glib.h>
 
 #include <telepathy-glib/channel.h>
+#include <telepathy-glib/channel-dispatcher.h>
 
 #include "telepathy_connection.h"
+
+void
+create_channel_cb (TpChannelDispatcher *proxy,
+                   const gchar *out_Request,
+                   const GError *error,
+                   gpointer user_data,
+                   GObject *weak_object);
 
 void
 channel_ready_cb (TpChannel *channel,
