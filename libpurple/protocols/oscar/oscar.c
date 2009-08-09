@@ -4951,7 +4951,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 		g_free(buf);
 
 		/* Remove from local list */
-		purple_blist_remove_buddy(buddy);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 
 		return;
 	}
@@ -5204,7 +5204,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 		while (cur != NULL) {
 			b = cur->data;
 			cur = g_slist_remove(cur, b);
-			purple_blist_remove_buddy(b);
+			purple_blist_node_remove(PURPLE_BLIST_NODE(b));
 		}
 
 		/* Permit list */
@@ -5274,7 +5274,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans"));
 					if (g == NULL) {
 						g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
-						purple_blist_add_group(g, NULL);
+						purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 					}
 
 					alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
@@ -5337,7 +5337,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 				if (gname_utf8 != NULL && purple_find_group(gname_utf8) == NULL) {
 					g = purple_group_new(gname_utf8);
-					purple_blist_add_group(g, NULL);
+					purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 				}
 				g_free(gname_utf8);
 			} break;
@@ -5517,7 +5517,7 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 		if (!(g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
 			g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
-			purple_blist_add_group(g, NULL);
+			purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 		}
 
 		purple_debug_info("oscar",
@@ -6266,7 +6266,7 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 
 	data = g_new(struct name_data, 1);
 
-	comment = aim_ssi_getcomment(od->ssi.local, g->name, purple_buddy_get_name(buddy));
+	comment = aim_ssi_getcomment(od->ssi.local, purple_group_get_name(g), purple_buddy_get_name(buddy));
 	comment_utf8 = comment ? oscar_utf8_try_convert(purple_connection_get_account(gc), comment) : NULL;
 
 	data->gc = gc;

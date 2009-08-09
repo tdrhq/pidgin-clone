@@ -72,7 +72,7 @@ bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 				continue;
 			purple_prpl_got_user_status(account, purple_buddy_get_name(buddy), "offline", NULL);
 			purple_account_remove_buddy(account, buddy, NULL);
-			purple_blist_remove_buddy(buddy);
+			purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 		}
 	}
 
@@ -255,7 +255,7 @@ bonjour_fake_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *gr
 	/* I suppose we could alert the user here, but it seems unnecessary. */
 
 	/* If this causes problems, it can be moved to an idle callback */
-	purple_blist_remove_buddy(buddy);
+	purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 }
 
 

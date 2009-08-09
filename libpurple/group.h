@@ -31,6 +31,7 @@
 
 /** @copydoc _PurpleGroup */
 typedef struct _PurpleGroup PurpleGroup;
+typedef struct _PurpleGroupPrivate PurpleGroupPrivate;
 typedef struct _PurpleGroupClass PurpleGroupClass;
 
 #include "buddy.h"
@@ -45,22 +46,17 @@ typedef struct _PurpleGroupClass PurpleGroupClass;
 #define PURPLE_IS_GROUP_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_GROUP_TYPE))
 #define PURPLE_GET_GROUP_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_GROUP_TYPE, PurpleGroupClass))
 
-#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_GROUP_C_)
 /**
  * A group.  This contains everything Purple will ever need to know about a group.
  */
 struct _PurpleGroup {
 	PurpleBlistNode node;                    /**< The node that this group inherits from */
-	char *name;                            /**< The name of this group. */
-	int totalsize;			       /**< The number of chats and contacts in this group */
-	int currentsize;		       /**< The number of chats and contacts in this group corresponding to online accounts */
-	int online;			       /**< The number of chats and contacts in this group who are currently online */
+	PurpleGroupPrivate *priv;
 };
 
 struct _PurpleGroupClass {
 	PurpleBlistNodeClass parent;
 };
-#endif
 
 /**
  * Creates a new group
@@ -101,13 +97,21 @@ GSList *purple_group_get_accounts(PurpleGroup *g);
 gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account);
 
 /**
+ * Set the name of this group
+ *
+ * @param group the group
+ * @param name the name to set it to
+ */
+void purple_group_set_name(PurpleGroup *group, const char *name);
+
+/**
  * Returns the name of a group.
  *
  * @param group The group.
  *
- * @return The name of the group.
+ * @return The a copy of the group name, caller is responsible for freeing it
  */
-const char *purple_group_get_name(PurpleGroup *group);
+char *purple_group_get_name(const PurpleGroup *group);
 
 /**
  * Determines the total size of a group
@@ -116,7 +120,9 @@ const char *purple_group_get_name(PurpleGroup *group);
  * @param offline Count buddies in offline accounts
  * @return The number of buddies in the group
  */
-int purple_blist_get_group_size(PurpleGroup *group, gboolean offline);
+int purple_group_get_size(const PurpleGroup *group, gboolean offline);
+
+void purple_group_set_online(PurpleGroup *group, int online);
 
 /**
  * Determines the number of online buddies in a group
@@ -124,7 +130,9 @@ int purple_blist_get_group_size(PurpleGroup *group, gboolean offline);
  * @param group The group
  * @return The number of online buddies in the group, or 0 if the group is NULL
  */
-int purple_blist_get_group_online_count(PurpleGroup *group);
+int purple_group_get_online(const PurpleGroup *group);
+
+void purple_group_set_currentsize(PurpleGroup *group, int currentsize);
 
 /**
  * Update the counts based on a changed online/offline status of a contact

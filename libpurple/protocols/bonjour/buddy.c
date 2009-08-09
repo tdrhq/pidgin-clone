@@ -144,7 +144,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 	group = purple_find_group(BONJOUR_GROUP_NAME); /* Use the buddy's domain, instead? */
 	if (group == NULL) {
 		group = purple_group_new(BONJOUR_GROUP_NAME);
-		purple_blist_add_group(group, NULL);
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(group), purple_blist_get_root());
 	}
 
 	/* Make sure the buddy exists in our buddy list */
@@ -214,7 +214,7 @@ void bonjour_buddy_signed_off(PurpleBuddy *pb) {
 		purple_buddy_set_protocol_data(pb, NULL);
 	} else {
 		purple_account_remove_buddy(purple_buddy_get_account(pb), pb, NULL);
-		purple_blist_remove_buddy(pb);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(pb));
 	}
 }
 

@@ -1026,7 +1026,7 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 			                  jid_norm);
 
 		for ( ; buddies; buddies = g_slist_delete_link(buddies, buddies)) {
-			purple_blist_remove_buddy(buddies->data);
+			purple_blist_node_remove(PURPLE_BLIST_NODE(buddies->data));
 		}
 
 		g_free(jid_norm);

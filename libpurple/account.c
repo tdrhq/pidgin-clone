@@ -2632,7 +2632,7 @@ purple_accounts_delete(PurpleAccount *account)
 						PurpleBuddy *b = (PurpleBuddy *)bnode;
 
 						if (purple_buddy_get_account(b) == account)
-							purple_blist_remove_buddy(b);
+							purple_blist_node_remove(PURPLE_BLIST_NODE(b));
 					}
 					bnode = bnode_next;
 				}
@@ -2640,7 +2640,7 @@ purple_accounts_delete(PurpleAccount *account)
 				PurpleChat *c = (PurpleChat *)cnode;
 
 				if (purple_chat_get_account(c) == account)
-					purple_blist_remove_chat(c);
+					purple_blist_node_remove(PURPLE_BLIST_NODE(c));
 			}
 			cnode = cnode_next;
 		}

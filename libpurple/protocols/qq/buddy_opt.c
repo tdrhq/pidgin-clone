@@ -81,7 +81,7 @@ PurpleGroup *qq_group_find_or_new(const gchar *group_name)
 	g = purple_find_group(group_name);
 	if (g == NULL) {
 		g = purple_group_new(group_name);
-		purple_blist_add_group(g, NULL);
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 		purple_debug_warning("QQ", "Add new group: %s\n", group_name);
 	}
 
@@ -174,7 +174,7 @@ static void qq_buddy_free(PurpleBuddy *buddy)
 		qq_buddy_data_free(bd);
 	}
 	purple_object_set_protocol_data(PURPLE_OBJECT(buddy), NULL);
-	purple_blist_remove_buddy(buddy);
+	purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 }
 
 PurpleBuddy *qq_buddy_find(PurpleConnection *gc, guint32 uid)

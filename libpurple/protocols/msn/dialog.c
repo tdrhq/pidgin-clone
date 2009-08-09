@@ -52,7 +52,7 @@ msn_complete_sync_issue(MsnAddRemData *data)
 		buddy = purple_find_buddy(purple_connection_get_account(data->gc), data->who);
 
 	if (buddy != NULL)
-		purple_blist_remove_buddy(buddy);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 }
 
 

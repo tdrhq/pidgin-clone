@@ -307,7 +307,7 @@ msn_session_sync_users(MsnSession *session)
 	}
 
 	if (to_remove != NULL) {
-		g_list_foreach(to_remove, (GFunc)purple_blist_remove_buddy, NULL);
+		g_list_foreach(to_remove, (GFunc)purple_blist_node_remove, NULL);
 		g_list_free(to_remove);
 	}
 }

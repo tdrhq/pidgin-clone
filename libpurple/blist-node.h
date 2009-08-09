@@ -168,6 +168,13 @@ PurpleBlistNode *purple_blist_node_prev(PurpleBlistNode *node);
 gboolean purple_blist_node_contains(PurpleBlistNode *parent, PurpleBlistNode *node);
 
 /**
+ * Save a blist node and its children
+ *
+ * @param node the node to save
+ */
+void purple_blist_node_save(PurpleBlistNode *node);
+
+/**
  * Add a node as the first child of a given node.
  *
  * @param parent The parent node

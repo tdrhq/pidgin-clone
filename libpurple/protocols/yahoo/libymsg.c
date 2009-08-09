@@ -407,7 +407,7 @@ static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const c
 			"Uhoh, %s isn't on the list (or not in this group), adding him to group %s.\n", name, group);
 		if (!(g = purple_find_group(group))) {
 			g = purple_group_new(group);
-			purple_blist_add_group(g, NULL);
+			purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 		}
 		b = purple_buddy_new(account, name, NULL);
 		purple_blist_add_buddy(b, NULL, g, NULL);
@@ -433,7 +433,7 @@ static void yahoo_do_group_cleanup(gpointer key, gpointer value, gpointer user_d
 		g = purple_buddy_get_group(b);
 		purple_debug_misc("yahoo", "Deleting Buddy %s from group %s.\n", name,
 				purple_group_get_name(g));
-		purple_blist_remove_buddy(b);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(b));
 	}
 }
 
@@ -522,7 +522,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 					if (!(b = purple_find_buddy(account, norm_bud))) {
 						if (!(g = purple_find_group(yd->current_list15_grp))) {
 							g = purple_group_new(yd->current_list15_grp);
-							purple_blist_add_group(g, NULL);
+							purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 						}
 						b = purple_buddy_new(account, norm_bud, NULL);
 						purple_blist_add_buddy(b, NULL, g, NULL);
@@ -679,7 +679,7 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 				if (!(b = purple_find_buddy(account, norm_bud))) {
 					if (!(g = purple_find_group(grp))) {
 						g = purple_group_new(grp);
-						purple_blist_add_group(g, NULL);
+						purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 					}
 					b = purple_buddy_new(account, norm_bud, NULL);
 					purple_blist_add_buddy(b, NULL, g, NULL);
@@ -1945,7 +1945,7 @@ static void ignore_buddy(PurpleBuddy *buddy) {
 
 	purple_debug_info("yahoo", "blist: Removing '%s' from buddy list.\n", name);
 	purple_account_remove_buddy(account, buddy, group);
-	purple_blist_remove_buddy(buddy);
+	purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 
 	serv_add_deny(purple_account_get_connection(account), name);
 

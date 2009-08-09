@@ -1506,7 +1506,7 @@ static void process_anyone(PurpleConnection *gc)
 
 	if (!(g = purple_find_group(_("Anyone")))) {
 		g = purple_group_new(_("Anyone"));
-		purple_blist_add_group(g, NULL);
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 	}
 
 	filename = g_strconcat(purple_home_dir(), "/.anyone", NULL);

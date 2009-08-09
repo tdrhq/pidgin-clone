@@ -288,7 +288,7 @@ msn_user_add_group_id(MsnUser *user, const char* group_id)
 	if ((group_id == NULL) && (g == NULL))
 	{
 		g = purple_group_new(group_name);
-		purple_blist_add_group(g, NULL);
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 	}
 
 	b = purple_find_buddy_in_group(account, passport, g);

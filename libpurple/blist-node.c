@@ -98,6 +98,27 @@ static PurpleBlistNode *get_next_node(PurpleBlistNode *node, gboolean godeep)
 	return get_next_node(node->parent, FALSE);
 }
 
+void
+purple_blist_node_save(PurpleBlistNode *node)
+{
+	PurpleBlistNode *tmp;
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
+
+	g_return_if_fail(PURPLE_IS_BLIST_NODE(node));
+
+	if (ops && ops->save_node) {
+		ops->save_node(node);
+		for (tmp = node->child; tmp; tmp = tmp->next)
+			ops->save_node(tmp);
+	}
+
+	if (ops && ops->update) {
+		ops->update(node);
+		for (tmp = node->child; tmp; tmp = tmp->next)
+			ops->update(tmp);
+	}
+}
+
 PurpleBlistNode *purple_blist_node_next_online(PurpleBlistNode *node, gboolean offline)
 {
 	PurpleBlistNode *ret = node;
@@ -686,11 +707,18 @@ purple_blist_node_class_init(PurpleBlistNodeClass *klass)
 	klass->is_online = NULL;
 
 	purple_signal_register( purple_blist_node_handle(),
-													"group-removed",
+													"node-removed",
 													purple_marshal_VOID__POINTER,
 													NULL,
 													1,
-													purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_BLIST_GROUP));
+													purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_BLIST_NODE));
+
+	purple_signal_register( purple_blist_node_handle(),
+													"node-renamed",
+													purple_marshal_VOID__POINTER_POINTER, /* old_name, new_name */
+													NULL,
+													2,
+													purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_TYPE_CHAR));
 
 	purple_signal_register( purple_blist_node_handle(),
 													"node-updated",

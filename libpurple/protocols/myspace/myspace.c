@@ -1038,7 +1038,7 @@ msim_add_contact_from_server_cb(MsimSession *session, const MsimMessage *user_lo
 	if (!group) {
 		group = purple_group_new(group_name);
 		/* Add group to beginning. See #2752. */
-		purple_blist_add_group(group, NULL);
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(group), purple_blist_get_root());
 	}
 	g_free(group_name);
 

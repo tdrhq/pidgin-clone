@@ -60,7 +60,7 @@ static void remove_purple_buddies(JabberStream *js, const char *jid)
 	buddies = purple_find_buddies(purple_connection_get_account(js->gc), jid);
 
 	for(l = buddies; l; l = l->next)
-		purple_blist_remove_buddy(l->data);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(l->data));
 
 	g_slist_free(buddies);
 }
@@ -156,7 +156,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 
 		if(!g) {
 			g = purple_group_new(groups->data);
-			purple_blist_add_group(g, NULL);
+			purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 		}
 
 		purple_blist_add_buddy(b, NULL, g, NULL);
@@ -176,7 +176,7 @@ static void add_purple_buddy_to_groups(JabberStream *js, const char *jid,
 	 * server */
 	while (pool) {
 		PurpleBuddy *b = pool->data;
-		purple_blist_remove_buddy(b);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(b));
 		pool = g_slist_delete_link(pool, pool);
 	}
 

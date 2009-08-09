@@ -116,7 +116,7 @@ lsg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if ((purple_find_group(name)) == NULL)
 	{
 		PurpleGroup *g = purple_group_new(name);
-		purple_blist_add_group(g, NULL);
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 	}
 }
 

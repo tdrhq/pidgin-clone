@@ -205,7 +205,7 @@ void qq_room_remove(PurpleConnection *gc, guint32 id)
 
 	g_return_if_fail (chat != NULL);
 
-	purple_blist_remove_chat(chat);
+	purple_blist_node_remove(PURPLE_BLIST_NODE(chat));
 }
 
 /* find a qq_buddy_data by uid, called by im.c */

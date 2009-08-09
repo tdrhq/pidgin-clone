@@ -289,7 +289,7 @@ _get_details_resp_setup_buddy(NMUser * user, NMERR_T ret_code,
 		nm_contact_set_user_record(contact, user_record);
 
 		/* Set the display id */
-		purple_blist_rename_buddy(buddy,
+		purple_buddy_set_name(buddy,
 								nm_user_record_get_display_id(user_record));
 
 		alias = purple_buddy_get_alias(buddy);
@@ -1269,7 +1269,7 @@ _remove_purple_buddies(NMUser *user)
 
 	if (rem_list) {
 		for (l = rem_list; l; l = l->next) {
-			purple_blist_remove_buddy(l->data);
+			purple_blist_node_remove(PURPLE_BLIST_NODE(l->data));
 		}
 		g_slist_free(rem_list);
 	}
@@ -1301,7 +1301,7 @@ _add_contacts_to_purple_blist(NMUser * user, NMFolder * folder)
 	group = purple_find_group(fname);
 	if (group == NULL) {
 		group = purple_group_new(fname);
-		purple_blist_add_group(group, NULL);
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(group), purple_blist_get_root());
 	}
 
 	/* Get each contact for this folder */
@@ -2571,7 +2571,7 @@ novell_add_buddy(PurpleConnection * gc, PurpleBuddy *buddy, PurpleGroup * group)
 	if (alias && strcmp(alias, bname))
 		nm_contact_set_display_name(contact, alias);
 
-	purple_blist_remove_buddy(buddy);
+	purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 	buddy = NULL;
 
 	gname = purple_group_get_name(group);

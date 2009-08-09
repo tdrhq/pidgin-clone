@@ -31,7 +31,16 @@
 #include "signals.h"
 #include "xmlnode.h"
 
+#define PURPLE_GROUP_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), PURPLE_GROUP_TYPE, PurpleGroupPrivate))
+
 static PurpleBlistNodeClass *parent_class = NULL;
+
+struct _PurpleGroupPrivate {
+	char *name;                            /**< The name of this group. */
+	int totalsize;			       /**< The number of chats and contacts in this group */
+	int currentsize;		       /**< The number of chats and contacts in this group corresponding to online accounts */
+	int online;			       /**< The number of chats and contacts in this group who are currently online */
+};
 
 xmlnode *
 group_to_xmlnode(PurpleBlistNode *gnode)
@@ -39,11 +48,14 @@ group_to_xmlnode(PurpleBlistNode *gnode)
 	xmlnode *node, *child;
 	PurpleGroup *group;
 	PurpleBlistNode *cnode;
+	PurpleGroupPrivate *priv;
+	g_return_val_if_fail(PURPLE_IS_GROUP(gnode), NULL);
+	priv = PURPLE_GROUP_GET_PRIVATE(gnode);
 
 	group = PURPLE_GROUP(gnode);
 
 	node = xmlnode_new("group");
-	xmlnode_set_attrib(node, "name", group->name);
+	xmlnode_set_attrib(node, "name", priv->name);
 
 	/* Write settings */
 	g_hash_table_foreach(purple_blist_node_get_settings(PURPLE_BLIST_NODE(group)), value_to_xmlnode, node);
@@ -97,22 +109,24 @@ purple_group_child_updated(PurpleGroup *group, PurpleBlistNode *child)
 {
 	PurpleChat *chat;
 	PurpleContact *contact;
+	PurpleGroupPrivate *priv;
+	g_return_if_fail(PURPLE_IS_GROUP(group));
+	g_return_if_fail(PURPLE_IS_CONTACT(child) || PURPLE_IS_CHAT(child));
+	priv = PURPLE_GROUP_GET_PRIVATE(group);
 
-	g_return_if_fail(group);
-	g_return_if_fail(child);
 	
 	if(PURPLE_IS_CHAT(child)){
 		chat = PURPLE_CHAT(child);
 		if (purple_account_is_connected(purple_chat_get_account(chat))) {
-			group->online++;
-			group->currentsize++;
+			priv->online++;
+			priv->currentsize++;
 		}
 	} else if(PURPLE_IS_CONTACT(child)){
 		contact = PURPLE_CONTACT(child);
 		if(purple_contact_get_online(contact) > 0)
-			group->online++;
+			priv->online++;
 		if(purple_contact_get_currentsize(contact) == 1)/* Just came online */
-			group->currentsize++;
+			priv->currentsize++;
 	} else {
 		g_warn_if_reached();
 	}
@@ -124,9 +138,15 @@ purple_group_add_child_helper(PurpleGroup *group, PurpleBlistNode *child)
 
 	PurpleChat *chat;
 	PurpleContact *contact;
-
+	PurpleGroupPrivate *priv;
 	g_return_if_fail(PURPLE_IS_GROUP(group));
+	g_return_if_fail(PURPLE_IS_CONTACT(child));
+	priv = PURPLE_GROUP_GET_PRIVATE(group);
 
+#warning: gotta be a better way than doing this over and over
+	/* Maybe when the group is created, then the children just have to emit it.
+	 * Then how will the group know if this is a child it's worried about or not?
+	 */
 	purple_signal_connect(purple_blist_node_get_handle(), "node-updated", /* What to connect to */
 		group, /* Object receiving the signal */
 		PURPLE_CALLBACK(purple_group_child_updated), /* Callback function */
@@ -136,36 +156,32 @@ purple_group_add_child_helper(PurpleGroup *group, PurpleBlistNode *child)
 	if(PURPLE_IS_CHAT(child)){
 		chat = PURPLE_CHAT(child);
 		if (purple_account_is_connected(purple_chat_get_account(chat))) {
-			group->online++;
-			group->currentsize++;
+			priv->online++;
+			priv->currentsize++;
 		}
 	} else if(PURPLE_IS_CONTACT(child)){
 		contact = PURPLE_CONTACT(child);
 		if(purple_contact_get_online(contact) > 0)
-			group->online++;
+			priv->online++;
 		if(purple_contact_get_currentsize(contact) > 0)
-			group->currentsize++;
+			priv->currentsize++;
 	} else {
 		#warning: is this an ok case?
 		g_warn_if_reached();
 	}
-	group->totalsize++;
+	priv->totalsize++;
 
 	#warning Is this schedule save necessary?
 	purple_blist_schedule_save();
 	purple_signal_emit(purple_blist_node_get_handle(), "node-added", child);
-	purple_signal_connect(purple_blist_node_get_handle(), "node-updated", /* What to connect to */
-		group, /* Object receiving the signal */
-		PURPLE_CALLBACK(purple_group_child_updated), /* Callback function */
-		group /* Data to pass to the callback function */
-	);
 
 }
 
 static void
 purple_group_add_sibling(PurpleBlistNode *node, PurpleBlistNode *location)
 {
-	g_return_if_fail(node);
+	g_return_if_fail(PURPLE_IS_CONTACT(node) || PURPLE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_IS_CONTACT(location) || PURPLE_IS_CHAT(location));
 	g_return_if_fail(PURPLE_IS_GROUP(purple_blist_node_parent(location)));
 	
 	purple_group_add_child_helper(PURPLE_GROUP(purple_blist_node_parent(location)), node);
@@ -187,31 +203,31 @@ purple_group_add_child(PurpleBlistNode *parent, PurpleBlistNode *child)
 static void
 purple_group_remove_node(PurpleBlistNode *child)
 {
-	PurpleGroup *group;
 	PurpleContact *contact;
 	PurpleChat *chat;
+	PurpleGroupPrivate *priv;
+	g_return_if_fail(PURPLE_IS_CONTACT(child) || PURPLE_IS_CHAT(child));
+	g_return_if_fail(PURPLE_IS_GROUP(purple_blist_node_parent(child)));
 
-	g_return_if_fail(child);
-	g_return_if_fail(purple_blist_node_parent(child));
-	group = PURPLE_GROUP(child->parent);
+	priv = PURPLE_GROUP_GET_PRIVATE(purple_blist_node_parent(child));
 
 	if(PURPLE_IS_CHAT(child)){
 		chat = PURPLE_CHAT(child);
 		if (purple_account_is_connected(purple_chat_get_account(chat))) {
-			group->online--;
-			group->currentsize--;
+			priv->online--;
+			priv->currentsize--;
 		}
 	} else if(PURPLE_IS_CONTACT(child)){
 		contact = PURPLE_CONTACT(child);
 		if(purple_contact_get_online(contact) > 0)
-			group->online--;
+			priv->online--;
 		if(purple_contact_get_currentsize(contact) > 0)
-			group->currentsize--;
+			priv->currentsize--;
 	} else {
 		#warning: Is this an ok case?
 		g_warn_if_reached();
 	}
-	group->totalsize--;
+	priv->totalsize--;
 
 	parent_class->remove(child);
 
@@ -228,27 +244,49 @@ purple_group_destroy(PurpleGroup *group)
 	g_object_unref(G_OBJECT(group));
 }
 
-const char *purple_group_get_name(PurpleGroup *group)
+char *
+purple_group_get_name(const PurpleGroup *group)
 {
-	g_return_val_if_fail(group != NULL, NULL);
+	PurpleGroupPrivate *priv;
+	g_return_val_if_fail(PURPLE_IS_GROUP(group), NULL);
+	priv = PURPLE_GROUP_GET_PRIVATE(group);
 
-	return group->name;
+	return strdup(priv->name);
 }
 
-int purple_blist_get_group_size(PurpleGroup *group, gboolean offline)
+int purple_group_get_size(const PurpleGroup *group, gboolean offline)
 {
-	if (!group)
-		return 0;
+	PurpleGroupPrivate *priv;
+	g_return_val_if_fail(PURPLE_IS_GROUP(group), 0);
+	priv = PURPLE_GROUP_GET_PRIVATE(group);
 
-	return offline ? group->totalsize : group->currentsize;
+	return offline ? priv->totalsize : priv->currentsize;
 }
 
-int purple_blist_get_group_online_count(PurpleGroup *group)
+void 
+purple_group_set_online(PurpleGroup *group, int online)
 {
-	if (!group)
-		return 0;
+	PurpleGroupPrivate *priv;
+	g_return_if_fail(PURPLE_IS_GROUP(group));
+	priv = PURPLE_GROUP_GET_PRIVATE(group);
+	priv->online = online;
+}
 
-	return group->online;
+int purple_group_get_online(const PurpleGroup *group)
+{
+	PurpleGroupPrivate *priv;
+	g_return_val_if_fail(PURPLE_IS_GROUP(group), 0);
+	priv = PURPLE_GROUP_GET_PRIVATE(group);
+	return priv->online;
+}
+
+void 
+purple_group_set_currentsize(PurpleGroup *group, int currentsize)
+{
+	PurpleGroupPrivate *priv;
+	g_return_if_fail(PURPLE_IS_GROUP(group));
+	priv = PURPLE_GROUP_GET_PRIVATE(group);
+	priv->currentsize = currentsize;
 }
 
 GList *purple_group_get_buddies(PurpleGroup *group)
@@ -269,11 +307,13 @@ GList *purple_group_get_buddies(PurpleGroup *group)
 	return buddies;
 }
 
-static void
+void
 purple_group_set_name(PurpleGroup *group, const char *name)
 {
+	PurpleGroupPrivate *priv;
 	g_return_if_fail(group != NULL);
-	group->name = purple_utf8_strip_unprintables(name);
+	priv = PURPLE_GROUP_GET_PRIVATE(group);
+	priv->name = purple_utf8_strip_unprintables(name);
 }
 
 /******************/
@@ -308,9 +348,11 @@ PurpleGroup *purple_group_new(const char *name)
 static void
 purple_group_finalize(GObject *object)
 {
+	PurpleGroupPrivate *priv;
 	PurpleGroup *group = PURPLE_GROUP(object);
 	purple_signals_disconnect_by_handle(group);
-	g_free(group->name);
+	priv = PURPLE_GROUP_GET_PRIVATE(group);
+	g_free(priv->name);
 	PURPLE_DBUS_UNREGISTER_POINTER(group);
 	G_OBJECT_CLASS(parent_class)->finalize(object);
 }
@@ -333,10 +375,10 @@ static void
 purple_group_get_property(GObject *obj, guint param_id, GValue *value,
 		GParamSpec *pspec)
 {
-	PurpleGroup *group = PURPLE_GROUP(obj);
+	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(obj);
 	switch(param_id){
 		case PROP_NAME:
-			g_value_set_string(value, purple_group_get_name(group));
+			g_value_set_string(value, priv->name);
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -369,12 +411,13 @@ purple_group_class_init(PurpleGroupClass *klass)
 static void
 purple_group_init(GTypeInstance *instance, gpointer class)
 {
+	PurpleGroupPrivate *priv = PURPLE_GROUP_GET_PRIVATE(instance);
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleGroup *group = PURPLE_GROUP(instance);
 
-	group->totalsize = 0;
-	group->currentsize = 0;
-	group->online = 0;
+	priv->totalsize = 0;
+	priv->currentsize = 0;
+	priv->online = 0;
 
 	if (ops && ops->new_node)
 		ops->new_node(PURPLE_BLIST_NODE(group));

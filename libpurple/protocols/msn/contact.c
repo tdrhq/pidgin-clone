@@ -592,7 +592,7 @@ msn_parse_addressbook_groups(MsnSession *session, xmlnode *node)
 		purple_debug_info("msn", "AB group_id: %s, name: %s\n", group_id, group_name ? group_name : "(null)");
 		if ((purple_find_group(group_name)) == NULL) {
 			PurpleGroup *g = purple_group_new(group_name);
-			purple_blist_add_group(g, NULL);
+			purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 		}
 		g_free(group_id);
 		g_free(group_name);
@@ -867,7 +867,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 					  MSN_INDIVIDUALS_GROUP_ID, MSN_INDIVIDUALS_GROUP_NAME);
 	if ((purple_find_group(MSN_INDIVIDUALS_GROUP_NAME)) == NULL){
 		PurpleGroup *g = purple_group_new(MSN_INDIVIDUALS_GROUP_NAME);
-		purple_blist_add_group(g, NULL);
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 	}
 
 	/*add a default No group to set up the no group Membership*/
@@ -875,7 +875,7 @@ msn_parse_addressbook(MsnSession *session, xmlnode *node)
 	purple_debug_misc("msn", "AB group_id:%s name:%s\n", MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
 	if ((purple_find_group(MSN_NON_IM_GROUP_NAME)) == NULL) {
 		PurpleGroup *g = purple_group_new(MSN_NON_IM_GROUP_NAME);
-		purple_blist_add_group(g, NULL);
+		purple_blist_node_add_child(PURPLE_BLIST_NODE(g), purple_blist_get_root());
 	}
 
 	/*Process contact List*/
@@ -998,7 +998,7 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 			g_free(str);
 			msn_userlist_rem_buddy(userlist, state->who);
 			if (buddy != NULL)
-				purple_blist_remove_buddy(buddy);
+				purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 
 		} else {
 			/* We don't know how to respond to this faultcode, so log it */
@@ -1106,7 +1106,7 @@ msn_add_contact_to_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 			g_free(str);
 			msn_userlist_rem_buddy(userlist, state->who);
 			if (buddy != NULL)
-				purple_blist_remove_buddy(buddy);
+				purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 
 		} else {
 			/* We don't know how to respond to this faultcode, so log it */

@@ -139,7 +139,7 @@ void ggp_buddylist_load(PurpleConnection *gc, char *buddylist)
 
 		if (!(group = purple_find_group(g))) {
 			group = purple_group_new(g);
-			purple_blist_add_group(group, NULL);
+			purple_blist_node_add_child(PURPLE_BLIST_NODE(group), purple_blist_get_root());
 		}
 
 		purple_blist_add_buddy(buddy, NULL, group, NULL);

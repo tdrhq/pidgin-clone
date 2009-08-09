@@ -199,7 +199,7 @@ static void simple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGro
 	const char *name = purple_buddy_get_name(buddy);
 	if(strncmp(name, "sip:", 4)) {
 		gchar *buf = g_strdup_printf("sip:%s", name);
-		purple_blist_rename_buddy(buddy, buf);
+		purple_buddy_set_name(buddy, buf);
 		g_free(buf);
 	}
 	if(!g_hash_table_lookup(sip->buddies, name)) {

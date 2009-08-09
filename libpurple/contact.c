@@ -86,7 +86,7 @@ parse_contact(PurpleGroup *group, xmlnode *cnode)
 	xmlnode *x;
 	const char *alias;
 
-	purple_blist_add_contact(contact, group,
+	purple_blist_node_add_sibling(PURPLE_BLIST_NODE(contact),
 			purple_blist_get_last_child(PURPLE_BLIST_NODE(group)));
 
 	if ((alias = xmlnode_get_attrib(cnode, "alias"))) {
@@ -104,7 +104,7 @@ parse_contact(PurpleGroup *group, xmlnode *cnode)
 
 	/* if the contact is empty, don't keep it around.  it causes problems */
 	if (!(PURPLE_BLIST_NODE(contact))->child)
-		purple_blist_remove_contact(contact);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(contact));
 }
 
 void
@@ -285,14 +285,14 @@ purple_contact_buddy_status_update(PurpleContact *contact, PurpleStatus *status,
 
 	if (purple_status_is_online(status) &&
 		!purple_status_is_online(old_status)) {
-
-		if (++(priv->online) == 1)
-			PURPLE_GROUP(contact->node.parent)->online++;
+#warning: broken, fix with signals
+		/* if (++(priv->online) == 1)
+			PURPLE_GROUP(contact->node.parent)->online++;*/
 	} else if (!purple_status_is_online(status) &&
 				purple_status_is_online(old_status)) {
 
-		if (--(priv->online) == 0)
-			PURPLE_GROUP(contact->node.parent)->online--;
+		/*if (--(priv->online) == 0)
+			PURPLE_GROUP(contact->node.parent)->online--;*/
 	}
 }
 

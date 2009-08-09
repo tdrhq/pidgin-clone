@@ -1425,7 +1425,7 @@ add_pending_buddy(MsnSession *session,
 		g_free(buf);
 
 		/* Remove from local list */
-		purple_blist_remove_buddy(buddy);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 		msn_user_destroy(user);
 	}
 	g_free(group);
@@ -1494,7 +1494,7 @@ static void
 cancel_auth_request(MsnAddReqData *data, char *msg)
 {
 	/* Remove from local list */
-	purple_blist_remove_buddy(data->buddy);
+	purple_blist_node_remove(PURPLE_BLIST_NODE(data->buddy));
 	
 	g_free(data);
 }
@@ -1515,7 +1515,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		g_free(buf);
 
 		/* Remove from local list */
-		purple_blist_remove_buddy(buddy);
+		purple_blist_node_remove(PURPLE_BLIST_NODE(buddy));
 
 		return;
 	}

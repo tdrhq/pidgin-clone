@@ -248,14 +248,6 @@ void purple_blist_update_buddy_icon(PurpleBuddy *buddy);
 #endif
 
 /**
- * Renames a buddy in the buddy list.
- *
- * @param buddy  The buddy whose name will be changed.
- * @param name   The new name of the buddy.
- */
-void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name);
-
-/**
  * Aliases a contact in the buddy list.
  *
  * @param contact The contact whose alias will be changed.
@@ -313,57 +305,6 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
  * @deprecated
  */
 void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node);
-
-/**
- * Adds a new group to the buddy list.
- *
- * The new group will be inserted after node or prepended to the list if
- * node is NULL.
- *
- * @param group  The group
- * @param node   The insertion point
- */
-void purple_blist_add_group(PurpleGroup *group, PurpleBlistNode *node);
-
-/**
- * Adds a new contact to the buddy list.
- *
- * The new contact will be inserted after insert or prepended to the list if
- * node is NULL.
- *
- * @param contact The contact
- * @param group   The group to add the contact to
- * @param node    The insertion point
- */
-void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, PurpleBlistNode *node);
-
-/**
- * Removes a buddy from the buddy list and frees the memory allocated to it.
- * This doesn't actually try to remove the buddy from the server list.
- *
- * @param buddy   The buddy to be removed
- *
- * @see purple_account_remove_buddy
- */
-void purple_blist_remove_buddy(PurpleBuddy *buddy);
-
-/**
- * Removes a contact, and any buddies it contains, and frees the memory
- * allocated to it. This calls purple_blist_remove_buddy and therefore
- * doesn't remove the buddies from the server list.
- *
- * @param contact The contact to be removed
- *
- * @see purple_blist_remove_buddy
- */
-void purple_blist_remove_contact(PurpleContact *contact);
-
-/**
- * Removes a chat from the buddy list and frees the memory allocated to it.
- *
- * @param chat   The chat to be removed
- */
-void purple_blist_remove_chat(PurpleChat *chat);
 
 /**
  * Finds the buddy struct given a name and an account
