@@ -314,14 +314,15 @@ telepathy_send_typing (PurpleConnection *gc, const char *name, PurpleTypingState
 	telepathy_connection *data = purple_connection_get_protocol_data(gc);
 	TpChannel *channel = NULL;
 	TpChannelChatState tp_state;
+	telepathy_text_channel *tp_channel;
 	
 	if (data == NULL)
 	{
 		purple_debug_error("telepathy", "PurpleConnection has no protocol data!\n");
-		return;
+		return 0;
 	}
 
-	telepathy_text_channel *tp_channel = g_hash_table_lookup(data->text_Channels, name);
+	tp_channel = g_hash_table_lookup(data->text_Channels, name);
 
 	if (tp_channel == NULL)
 	{
@@ -509,6 +510,8 @@ telepathy_join_chat (PurpleConnection *gc, GHashTable *components)
 	/* Is this a channel the user requested? */
 	if (tp_channel == NULL)
 	{
+		telepathy_account *account_data = data->account_data;
+
 		/* Request a room text channel */
 		GHashTable *map = tp_asv_new (
 			TP_IFACE_CHANNEL ".ChannelType",G_TYPE_STRING, TP_IFACE_CHANNEL_TYPE_TEXT,
@@ -518,8 +521,9 @@ telepathy_join_chat (PurpleConnection *gc, GHashTable *components)
 
 		purple_debug_info("telepathy", "Requesting room text channel for %s\n", name);
 
-		tp_cli_connection_interface_requests_call_ensure_channel(data->connection, -1,
-				map, ensure_channel_cb, data, NULL, NULL);
+		tp_cli_channel_dispatcher_call_create_channel(channel_Dispatcher, -1,
+			account_data->obj_Path, map, time(NULL), "",
+			create_channel_cb, data, NULL, NULL);
 	}
 	else
 	{
