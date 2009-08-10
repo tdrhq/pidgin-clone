@@ -461,12 +461,10 @@ connection_ready_cb (TpConnection *connection,
 
 
 		/* query supported avatar formats */
-		/*
 		tp_cli_dbus_properties_call_get_all(connection, -1,
 			TP_IFACE_CONNECTION_INTERFACE_AVATARS,
 			get_avatar_properties_cb, user_data,
 			NULL, NULL);
-			*/
 
 		/* this will be fired when an avatar for a buddy has been received */
 		tp_cli_connection_interface_avatars_connect_to_avatar_retrieved(connection,
