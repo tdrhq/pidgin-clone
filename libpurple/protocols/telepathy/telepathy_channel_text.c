@@ -206,11 +206,19 @@ chat_got_scrollback_messages (telepathy_connection *data,
 
 	purple_debug_info("telepathy", "Requesting %u contacts for scrollback\n", handles->len);
 
-	tp_connection_get_contacts_by_handle(data->connection,
-			handles->len, (TpHandle *)handles->data,
-			G_N_ELEMENTS (features), features,
-			get_contacts_for_scrollback_cb, tp_messages,
-			NULL, NULL);
+	if (handles->len > 0)
+	{
+		tp_connection_get_contacts_by_handle(data->connection,
+				handles->len, (TpHandle *)handles->data,
+				G_N_ELEMENTS (features), features,
+				get_contacts_for_scrollback_cb, tp_messages,
+				NULL, NULL);
+	}
+	else
+	{
+		get_contacts_for_scrollback_cb(data->connection,
+			0, NULL, 0, NULL, NULL, tp_messages, NULL);
+	}
 }
 
 static void
