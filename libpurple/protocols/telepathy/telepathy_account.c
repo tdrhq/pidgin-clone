@@ -636,10 +636,16 @@ purple_account_removed_cb (PurpleAccount *account,
 {
 	telepathy_account *account_data;
 
-	purple_debug_info("telepathy", "PurpleAccount removed!\n");
+	gint account_data_int = purple_account_get_int(account, "tp_account_data", 0);
 
-	account_data = (telepathy_account*)purple_account_get_int(
-			account, "tp_account_data", 0);
+	if (account_data_int == 0)
+	{
+		return;
+	}
+	
+	account_data = (telepathy_account*)account_data_int;
+
+	purple_debug_info("telepathy", "PurpleAccount removed!\n");
 
 	if (account_data != NULL)
 	{
