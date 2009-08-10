@@ -88,20 +88,6 @@ set_presence_cb (TpConnection *proxy,
                  GObject *weak_object);
 
 void
-connection_connect_cb (TpConnection *proxy,
-                       const GError *error,
-                       gpointer user_data,
-                       GObject *weak_object);
-
-void
-request_connection_cb (TpConnectionManager *proxy,
-                       const gchar *out_Bus_Name,
-                       const gchar *out_Object_Path,
-                       const GError *error,
-                       gpointer user_data,
-                       GObject *weak_object);
-
-void
 connection_ready_cb (TpConnection *connection,
                      const GError *error,
                      gpointer user_data);

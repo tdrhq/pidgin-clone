@@ -58,15 +58,6 @@ new_channels_cb (TpConnection *proxy,
                  GObject *weak_object);
 
 void
-ensure_channel_cb (TpConnection *proxy,
-                   gboolean out_Yours,
-                   const gchar *out_Channel,
-                   GHashTable *out_Properties,
-                   const GError *error,
-                   gpointer user_data,
-                   GObject *weak_object);
-
-void
 get_channels_cb (TpProxy *proxy,
                  const GValue *out_Value,
                  const GError *error,
