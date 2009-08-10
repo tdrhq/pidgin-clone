@@ -43,7 +43,6 @@ typedef struct _PurpleContactClass PurpleContactClass;
 #define PURPLE_IS_CONTACT_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_CONTACT_TYPE))
 #define PURPLE_GET_CONTACT_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_CONTACT_TYPE, PurpleContactClass))
 
-#if !(defined PURPLE_HIDE_STRUCTS) || (defined _PURPLE_CONTACT_C_)
 /**
  * A contact.  This contains everything Purple will ever need to know about a contact.
  */
@@ -55,7 +54,6 @@ struct _PurpleContact {
 struct _PurpleContactClass {
 	PurpleBlistNodeClass parent;
 };
-#endif
 
 /**
  * Creates a new contact
