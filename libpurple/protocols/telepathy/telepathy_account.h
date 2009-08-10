@@ -43,7 +43,8 @@ typedef struct
 
 void
 account_properties_changed (telepathy_account *account_data,
-                            GHashTable *properties);
+                            GHashTable *properties,
+                            gboolean first_time);
 
 void
 update_parameters_cb (TpAccount *proxy,

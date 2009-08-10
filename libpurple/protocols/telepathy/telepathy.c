@@ -32,6 +32,7 @@
 
 #include "account.h"
 #include "accountopt.h"
+#include "core.h"
 #include "debug.h"
 #include "notify.h"
 #include "plugin.h"
@@ -1117,11 +1118,11 @@ export_prpl(TpConnectionManager *cm,
 	/* add the options */
 	add_protocol_options(plugin, protocol);
 
-	/* fix accounts using the current protocol */
-	fix_protocol_accounts(plugin);
-
 	/* this is needed because the plugins are only added to the load queue. FIXME perhaps? */
 	purple_plugins_probe("");
+
+	/* fix accounts using the current protocol */
+	fix_protocol_accounts(plugin);
 
 	return TRUE;
 }

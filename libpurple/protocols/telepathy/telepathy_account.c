@@ -36,7 +36,8 @@
 
 void
 account_properties_changed (telepathy_account *account_data,
-                            GHashTable *properties)
+                            GHashTable *properties,
+			    gboolean first_time)
 {
 	GHashTableIter iter;
 	gpointer key, val;
@@ -66,6 +67,13 @@ account_properties_changed (telepathy_account *account_data,
 		else if (g_strcmp0(key, "Enabled") == 0)
 		{
 			PurpleAccount *acct = account_data->account;
+			gboolean enabled = g_value_get_boolean(value);
+
+			/* We don't want to disable the account on initialisation
+			 * because the UI might want to auto-connect the account
+			 */
+			if (first_time && !enabled)
+				return;
 
 			purple_account_set_enabled(acct, purple_core_get_ui(),
 				g_value_get_boolean(value));
@@ -349,7 +357,10 @@ get_account_properties_cb (TpProxy *proxy,
 	/* Sync the parameters with PurpleAccount's parameters */
 	set_account_parameters(account, parameters);
 
-	account_properties_changed(account_data, out_Properties);
+	account_properties_changed(account_data, out_Properties, TRUE);
+
+	if (purple_account_get_enabled(account, purple_core_get_ui()))
+		purple_account_connect(account);
 }
 
 static void
@@ -443,7 +454,7 @@ account_get_all_cb (TpProxy *proxy,
 	tp_g_hash_table_update(account_data->properties, out_Properties,
 			(GBoxedCopyFunc)g_strdup, (GBoxedCopyFunc)tp_g_value_slice_dup);
 
-	account_properties_changed(account_data, out_Properties);
+	account_properties_changed(account_data, out_Properties, TRUE);
 
 }
 
@@ -470,7 +481,7 @@ account_property_changed_cb (TpAccount *proxy,
 	tp_g_hash_table_update(account_data->properties, arg_Properties,
 			(GBoxedCopyFunc)g_strdup, (GBoxedCopyFunc)tp_g_value_slice_dup);
 
-	account_properties_changed(account_data, arg_Properties);
+	account_properties_changed(account_data, arg_Properties, FALSE);
 }
 
 static void
