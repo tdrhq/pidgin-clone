@@ -64,8 +64,6 @@ static const StatusMapping statuses[] =
 	{ PURPLE_STATUS_EXTENDED_AWAY, "xa", N_("Extended away") },
 	{ PURPLE_STATUS_INVISIBLE, "hidden", NULL },
 	{ PURPLE_STATUS_OFFLINE, "offline", NULL },
-	{ PURPLE_STATUS_UNSET, "unknown", NULL },
-	{ PURPLE_STATUS_UNSET, "error", NULL },
 	{ 0, NULL, NULL}
 };
 
