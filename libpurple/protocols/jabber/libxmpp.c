@@ -47,10 +47,10 @@
 #include "caps.h"
 #include "data.h"
 #include "ibb.h"
-
-static PurplePlugin *my_protocol = NULL;
 #include "xfer.h"
 #include "jingle/jingle.h"
+
+static PurplePlugin *my_protocol = NULL;
 
 static PurplePluginProtocolInfo prpl_info =
 {
