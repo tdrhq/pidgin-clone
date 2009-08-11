@@ -1448,9 +1448,35 @@ static void jabber_si_xfer_send_disco_cb(JabberStream *js, const char *who,
 static void do_transfer_send(PurpleXfer *xfer)
 {
 	JabberSIXfer *jsx = xfer->data;
+	JabberBuddy *jb = jabber_buddy_find(jsx->js, xfer->who, FALSE);
+	JabberBuddyResource *jbr = NULL;
 
-	jabber_disco_info_do(jsx->js, xfer->who,
+	if (jb) {
+		gchar *resource = jabber_get_resource(xfer->who);
+
+		jbr = jabber_buddy_find_resource(jb, resource);
+		g_free(resource);
+	}
+
+	if (jbr) {
+		char *msg;
+
+		if (jabber_resource_has_capability(jbr, XEP_0047_NAMESPACE))
+			jsx->stream_method |= STREAM_METHOD_IBB;
+		if (jabber_resource_has_capability(jbr, "http://jabber.org/protocol/si/profile/file-transfer")) {
+			jabber_si_xfer_send_request(xfer);
+			return;
+		}
+
+		msg = g_strdup_printf(_("Unable to send file to %s, user does not support file transfers"), xfer->who);
+		purple_notify_error(jsx->js->gc, _("File Send Failed"),
+				_("File Send Failed"), msg);
+		g_free(msg);
+		purple_xfer_cancel_local(xfer);
+	} else {
+		jabber_disco_info_do(jsx->js, xfer->who,
 			jabber_si_xfer_send_disco_cb, xfer);
+	}
 }
 
 static void jabber_si_xfer_init(PurpleXfer *xfer)
