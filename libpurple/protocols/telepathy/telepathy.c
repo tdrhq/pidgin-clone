@@ -1192,7 +1192,13 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 	}
 
 	/* Create an AccountManager proxy */
-	account_Manager = tp_account_manager_new(daemon);
+	/* account_Manager = tp_account_manager_new(daemon); */
+	account_Manager = TP_ACCOUNT_MANAGER (g_object_new (TP_TYPE_ACCOUNT_MANAGER,
+		"dbus-daemon", daemon,
+		"dbus-connection", ((TpProxy *) daemon)->dbus_connection,
+		"bus-name", "org.freedesktop.Telepathy.MissionControl5",
+		"object-path", "/org/freedesktop/Telepathy/AccountManager",
+		NULL));
 
 	if (account_Manager == NULL)
 	{
@@ -1201,7 +1207,14 @@ G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin)
 	}
 
 	/* Create an AccountManager proxy */
-	channel_Dispatcher = tp_channel_dispatcher_new(daemon);
+	/* channel_Dispatcher = tp_channel_dispatcher_new(daemon); */
+	channel_Dispatcher = TP_CHANNEL_DISPATCHER (
+		g_object_new (TP_TYPE_CHANNEL_DISPATCHER,
+		"dbus-daemon", daemon,
+		"dbus-connection", ((TpProxy *) daemon)->dbus_connection,
+		"bus-name", "org.freedesktop.Telepathy.MissionControl5",
+		"object-path", "/org/freedesktop/Telepathy/ChannelDispatcher",
+		NULL));
 
 	if (channel_Dispatcher == NULL)
 	{
