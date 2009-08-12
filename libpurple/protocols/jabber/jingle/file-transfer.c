@@ -28,7 +28,7 @@
 
 struct _JingleFTPrivate {
 	PurpleXfer *xfer;
-	FILE *ibb_fp; /* used to read/write from/to IBB streams */
+	PurpleCircBuffer *ibb_buffer;
 	gboolean remote_failed_s5b;
 };
 
@@ -116,8 +116,9 @@ jingle_file_transfer_finalize (GObject *ft)
 	JingleFTPrivate *priv = JINGLE_FT_GET_PRIVATE(ft);
 	purple_debug_info("jingle-ft","jingle_file_transfer_finalize\n");
 
-	if (priv->ibb_fp) {
-		fclose(priv->ibb_fp);
+	if (priv->ibb_buffer) {
+		purple_circ_buffer_destroy(priv->ibb_buffer);
+		priv->ibb_buffer = NULL;
 	}
 	
 	if (priv->xfer) {
@@ -246,33 +247,18 @@ jingle_file_transfer_ibb_end(JingleContent *content)
 	g_object_unref(session); /* actually delete it */
 }
 
-static void
-jingle_file_transfer_ibb_send_data(JingleContent *content)
+static gsize
+jingle_file_transfer_ibb_write(const guchar *buffer, gsize len, PurpleXfer *xfer)
 {
-	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->xfer;
-	FILE *fp = JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp;
-	gsize remaining = purple_xfer_get_bytes_remaining(xfer);
+	JingleContent *content = (JingleContent *) xfer->data;
 	JingleTransport *transport = jingle_content_get_transport(content);
-	gsize block_size = jingle_ibb_get_block_size(JINGLE_IBB(transport));
-	gsize packet_size = remaining < block_size ? remaining : block_size;
-	gpointer data = g_malloc(packet_size);
-	int res;
+	gsize packet_size = len < jingle_ibb_get_block_size(JINGLE_IBB(transport)) ?
+		len : jingle_ibb_get_block_size(JINGLE_IBB(transport));
 
-	purple_debug_info("jingle-ft", 
-		"IBB: about to read %" G_GSIZE_FORMAT " bytes from file %p\n",
-		packet_size, fp);
-	res = fread(data, packet_size, 1, fp);
-
-	if (res == 1) {
-		jingle_ibb_send_data(JINGLE_IBB(transport), data, packet_size);
-		purple_xfer_set_bytes_sent(xfer,
-			purple_xfer_get_bytes_sent(xfer) + packet_size);
-		purple_xfer_update_progress(xfer);
-	} else {
-		jingle_file_transfer_cancel_local(content);
-	}
-	g_free(data);
+	jingle_ibb_send_data(JINGLE_IBB(transport), buffer, packet_size);
 	g_object_unref(transport);
+
+	return packet_size;
 }
 
 /* callback functions for IBB */
@@ -287,7 +273,7 @@ jingle_file_transfer_ibb_data_sent_callback(JingleContent *content)
 		jingle_file_transfer_ibb_end(content);
 	} else {
 		/* send more... */
-		jingle_file_transfer_ibb_send_data(content);
+		purple_xfer_prpl_ready(xfer);
 	}
 }
 
@@ -297,30 +283,39 @@ jingle_file_transfer_ibb_data_recv_callback(JingleContent *content,
 {
 	JingleFT *ft = JINGLE_FT(content);
 	PurpleXfer *xfer = JINGLE_FT_GET_PRIVATE(ft)->xfer;
-	FILE *fp = JINGLE_FT_GET_PRIVATE(ft)->ibb_fp;
 
 	if (size <= purple_xfer_get_bytes_remaining(xfer)) {
 		purple_debug_info("jingle-ft", 
 			"about to write %" G_GSIZE_FORMAT " bytes from IBB stream\n",
 			size);
-		if(!fwrite(data, size, 1, fp)) {
-			purple_debug_error("jingle-ft", "error writing to file\n");
-			purple_xfer_cancel_remote(xfer);
-			return;
-		}
-		purple_xfer_set_bytes_sent(xfer, 
-			purple_xfer_get_bytes_sent(xfer) + size);
-		purple_xfer_update_progress(xfer);
-
-		if (purple_xfer_get_bytes_remaining(xfer) == 0) {
-			jingle_file_transfer_success(content);
-		}
+		purple_circ_buffer_append(ft->priv->ibb_buffer, data, size);
+		purple_xfer_prpl_ready(xfer);
 	} else {
 		/* sending more than intended */
 		purple_debug_error("jingle-ft",
 			"IBB file transfer send more data than expected\n");
 		jingle_file_transfer_cancel_remote(content);
 	}
+}
+
+static gsize
+jingle_file_transfer_ibb_read(guchar **out_buffer, PurpleXfer *xfer)
+{
+	JingleContent *content = (JingleContent *) xfer->data;
+	guchar *buffer;
+	gsize size;
+	gsize tmp;
+
+	size = JINGLE_FT(content)->priv->ibb_buffer->bufused;
+	*out_buffer = buffer = g_malloc(size);
+	while ((tmp = 
+			purple_circ_buffer_get_max_read(JINGLE_FT(content)->priv->ibb_buffer))) {
+		memcpy(buffer, JINGLE_FT(content)->priv->ibb_buffer->outptr, tmp);
+		buffer += tmp;
+		purple_circ_buffer_mark_read(JINGLE_FT(content)->priv->ibb_buffer, tmp);
+	}
+
+	return size;
 }
 
 static void
@@ -355,6 +350,9 @@ jingle_file_transfer_add_ibb_session_to_transport(JabberStream *js,
 			jingle_file_transfer_ibb_data_sent_callback);
 		jingle_ibb_set_error_callback(JINGLE_IBB(transport),
 			jingle_file_transfer_ibb_error_callback);
+		JINGLE_FT(content)->priv->ibb_buffer = 
+			purple_circ_buffer_new(jingle_ibb_get_block_size(
+				JINGLE_IBB(transport)));
 	} else {
 		purple_debug_error("jingle-ft",
 			"trying to setup an IBB session of a non-IBB transport\n");
@@ -550,7 +548,7 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 				jingle_file_transfer_s5b_connect_failed_callback, content);
 			/* start local listen on the S5B transport */
 			jingle_s5b_gather_candidates(session, JINGLE_S5B(transport));
-		}	
+		}
 	} else if (xfer->data) {
 		JingleContent *content = (JingleContent *) xfer->data;
 		JingleSession *session = jingle_content_get_session(content);
@@ -561,26 +559,13 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			/* open file and prepare for IBB */
 			/* open file to write to */
 			JingleIBB *ibb = JINGLE_IBB(transport);
-			const gchar *filename = purple_xfer_get_local_filename(xfer);
 
 			/* send a session-accept immediatly, since it's IBB */
 			jabber_iq_send(jingle_session_to_packet(session,
 				JINGLE_SESSION_ACCEPT));
 
-			JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp = 
-				g_fopen(filename, "wb");
-			if (JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp == NULL) {
-				purple_debug_error("jabber", 
-					"failed to open file %s for writing: %s\n", filename, 
-					g_strerror(errno));
-				purple_xfer_cancel_remote(xfer);
-				jabber_iq_send(jingle_session_to_packet(session,
-						JINGLE_SESSION_TERMINATE));
-				g_object_unref(transport);
-				g_object_unref(session);
-				g_object_unref(session);
-				return;
-			}
+			JINGLE_FT(content)->priv->ibb_buffer = 
+				purple_circ_buffer_new(jingle_ibb_get_block_size(ibb));
 
 			/* setup callbacks */
 			jingle_ibb_set_data_received_callback(ibb, 
@@ -588,8 +573,11 @@ jingle_file_transfer_xfer_init(PurpleXfer *xfer)
 			jingle_ibb_set_error_callback(ibb,
 				jingle_file_transfer_ibb_error_callback);
 	
+			/* setup read function */
+			purple_xfer_set_read_fnc(xfer, jingle_file_transfer_ibb_read);
+			
 			/* start the transfer */
-			purple_xfer_start(xfer, 0, NULL, 0);
+			purple_xfer_start(xfer, -1, NULL, 0);
 		} else if (JINGLE_IS_S5B(transport)) {
 			jingle_s5b_set_connect_callback(JINGLE_S5B(transport),
 				jingle_file_transfer_s5b_connect_callback, content);
@@ -713,22 +701,13 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 			/* do stuff here, start the transfer, etc... */
 			if (JINGLE_IS_IBB(transport)) {
 				JingleFT *ft = JINGLE_FT(content);
-				/* open the file for reading */
-				JINGLE_FT_GET_PRIVATE(ft)->ibb_fp = 
-					g_fopen(purple_xfer_get_local_filename(xfer), "rb");
-				
-				if (JINGLE_FT_GET_PRIVATE(ft)->ibb_fp) {
-					/* send first data */
-					purple_xfer_start(xfer, 0, NULL, 0);
-					purple_xfer_set_bytes_sent(xfer, 0);
-					purple_xfer_update_progress(xfer);
-					jingle_file_transfer_ibb_send_data(content);
-				} else {
-					purple_debug_error("jingle-ft", 
-						"failed to open file for reading\n");
-					jingle_file_transfer_cancel_local(content);
-					break;
-				}
+
+				/* send first data */
+				purple_xfer_set_bytes_sent(xfer, 0);
+				purple_xfer_update_progress(xfer);
+				purple_xfer_set_write_fnc(xfer, jingle_file_transfer_ibb_write);
+				purple_xfer_start(xfer, -1, NULL, 0);
+				purple_xfer_prpl_ready(xfer);
 			} else if (JINGLE_IS_S5B(transport)) {
 				/* add the receiver's streamhost candidates (this must be done 
 					here since parse is not called on the existing transport */
@@ -786,6 +765,11 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					const gchar *filename = 
 						purple_xfer_get_local_filename(xfer);
 					jingle_ibb_create_session(ibb, content, sid, who);
+					JINGLE_FT(content)->priv->ibb_buffer =
+						purple_circ_buffer_new(jingle_ibb_get_block_size(ibb));
+					purple_xfer_set_read_fnc(xfer, 
+						jingle_file_transfer_ibb_read);
+					purple_xfer_prpl_ready(xfer);
 				} else if (JINGLE_IS_S5B(transport)) {
 					/* set S5B callbacks */
 					jingle_s5b_set_connect_callback(JINGLE_S5B(transport),
@@ -863,20 +847,17 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				/* Note: the new tranport are automatically accepted from
 				 pending before this is called */
 				/* open the file, etc... */
-				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp = 
-					g_fopen(purple_xfer_get_local_filename(xfer), "rb");
+				JINGLE_FT(content)->priv->ibb_buffer =
+					purple_circ_buffer_new(jingle_ibb_get_block_size(
+						JINGLE_IBB(transport)));
 				
-				if (JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp) {
-					/* send first data */
-					purple_xfer_start(xfer, 0, NULL, 0);
-					purple_xfer_set_bytes_sent(xfer, 0);
-					purple_xfer_update_progress(xfer);
-					jingle_file_transfer_ibb_send_data(content);
-				} else {
-					purple_debug_error("jingle-ft", 
-						"failed to open file for reading\n");
-					jingle_file_transfer_cancel_local(content);
-				}
+				purple_xfer_set_write_fnc(xfer, jingle_file_transfer_ibb_write);
+				
+				/* send first data */
+				purple_xfer_start(xfer, -1, NULL, 0);
+				purple_xfer_set_bytes_sent(xfer, 0);
+				purple_xfer_update_progress(xfer);
+				purple_xfer_prpl_ready(xfer);
 			}
 	
 			g_object_unref(session);
@@ -903,22 +884,8 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 				/* immediatly accept the new transport */
 				jingle_content_accept_transport(content);
 
-				/* open the file and setup the callbacks */
-				JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp = 
-					g_fopen(filename, "wb");
-				if (JINGLE_FT_GET_PRIVATE(JINGLE_FT(content))->ibb_fp == NULL) {
-					purple_debug_error("jabber", 
-						"failed to open file %s for writing: %s\n", filename, 
-						g_strerror(errno));
-					purple_xfer_cancel_remote(xfer);
-					jabber_iq_send(jingle_session_to_packet(session,
-						JINGLE_SESSION_TERMINATE));
-					g_object_unref(new_transport);
-					g_object_unref(session);
-					g_object_unref(session);
-					g_free(who);
-					return;
-				}
+				JINGLE_FT(content)->priv->ibb_buffer =
+					purple_circ_buffer_new(jingle_ibb_get_block_size(ibb));
 
 				/* setup callbacks */
 				jingle_ibb_set_data_received_callback(ibb, 
@@ -927,8 +894,11 @@ jingle_file_transfer_handle_action_internal(JingleContent *content,
 					jingle_file_transfer_ibb_error_callback);
 
 				/* start the transfer */
-				purple_xfer_start(xfer, 0, NULL, 0);
+				purple_xfer_start(xfer, -1, NULL, 0);
 
+				/* set read function */
+				purple_xfer_set_read_fnc(xfer, jingle_file_transfer_ibb_read);
+				
 				/* send transport-accept */
 				jabber_iq_send(jingle_session_to_packet(session,
 					JINGLE_TRANSPORT_ACCEPT));
