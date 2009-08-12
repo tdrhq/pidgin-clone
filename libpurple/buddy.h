@@ -57,6 +57,8 @@ struct _PurpleBuddyClass {
 	PurpleBlistNodeClass parent;
 };
 
+xmlnode *buddy_to_xmlnode(PurpleBlistNode *bnode);
+void parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode);
 /**
  * Creates a new buddy.
  *

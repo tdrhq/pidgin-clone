@@ -21,7 +21,6 @@
  *
  */
 #define _PURPLE_BLIST_NODE_C_
-#define _BLIST_HELPERS_
 
 #include "internal.h"
 #include "blist-node.h"

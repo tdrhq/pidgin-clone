@@ -21,7 +21,6 @@
  *
  */
 #define _PURPLE_GROUP_C_
-#define _BLIST_HELPERS_
 
 #include "internal.h"
 #include "group.h"

@@ -21,7 +21,6 @@
  *
  */
 #define _PURPLE_CHAT_C_
-#define _BLIST_HELPERS_
 
 #include "internal.h"
 #include "contact.h"

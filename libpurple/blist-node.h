@@ -371,5 +371,8 @@ GList *purple_blist_node_get_extended_menu(PurpleBlistNode *n);
  */
 GType purple_blist_node_get_gtype(void);
 
+void purple_blist_node_destroy(PurpleBlistNode* node);
+void purple_blist_node_initialize_settings(PurpleBlistNode *node);
+PurpleBlistNode *purple_blist_get_last_sibling(PurpleBlistNode *node);
 PurpleBlistNode *purple_blist_get_last_child(PurpleBlistNode *node);
 #endif

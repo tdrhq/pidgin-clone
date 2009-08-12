@@ -21,7 +21,6 @@
  *
  */
 #define _PURPLE_BUDDY_C_
-#define _BLIST_HELPERS_
 
 #include "internal.h"
 #include "dbus-maybe.h"

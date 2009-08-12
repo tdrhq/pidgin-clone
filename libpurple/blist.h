@@ -121,17 +121,6 @@ void parse_setting(PurpleBlistNode *node, xmlnode *setting);
 void value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data);
 gboolean purple_strings_are_different(const char *one, const char *two);
 
-#ifdef _BLIST_HELPERS_
-
-xmlnode *contact_to_xmlnode(PurpleBlistNode *cnode);
-xmlnode *buddy_to_xmlnode(PurpleBlistNode *bnode);
-xmlnode *group_to_xmlnode(PurpleBlistNode *bnode);
-PurpleBlistNode *purple_blist_get_last_sibling(PurpleBlistNode *node);
-void parse_contact(PurpleGroup *group, xmlnode *cnode);
-void parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode);
-void parse_group(xmlnode *groupnode);
-void purple_contact_compute_priority_buddy(PurpleContact *contact);
-
 /* The global static members */
 struct _list_account_buddies {
 	GSList *list;
@@ -144,10 +133,6 @@ struct _purple_hbuddy {
 	PurpleBlistNode *group;
 };
 
-void purple_blist_node_initialize_settings(PurpleBlistNode *node);
-void purple_blist_node_destroy(PurpleBlistNode* node);
-
-#endif
 
 #ifdef __cplusplus
 extern "C" {

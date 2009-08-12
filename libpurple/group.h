@@ -58,6 +58,8 @@ struct _PurpleGroupClass {
 	PurpleBlistNodeClass parent;
 };
 
+xmlnode *group_to_xmlnode(PurpleBlistNode *bnode);
+void parse_group(xmlnode *groupnode);
 /**
  * Creates a new group
  *

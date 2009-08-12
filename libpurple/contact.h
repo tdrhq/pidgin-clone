@@ -92,6 +92,9 @@ const char *purple_buddy_get_alias(PurpleBuddy *buddy);
  */
 void purple_contact_destroy(PurpleContact *contact);
 
+xmlnode *contact_to_xmlnode(PurpleBlistNode *cnode);
+void parse_contact(PurpleGroup *group, xmlnode *cnode);
+void purple_contact_compute_priority_buddy(PurpleContact *contact);
 /**
  * Returns the highest priority buddy for a given contact.
  *
