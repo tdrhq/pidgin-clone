@@ -355,3 +355,16 @@ void VultureLoadAndFormatFilterString(USHORT unStringID, LPTSTR szFilter, UINT c
 	}
 	while(*(++szInFilter));
 }
+
+
+/**
+ * Our g_print handler. Only used when debugging is enabled.
+ *
+ * @param	sz	String to print.
+ */
+void VultureGPrintHandler(const gchar *sz)
+{
+	LPTSTR szT = VultureUTF8ToTCHAR(sz);
+	OutputDebugString(szT);
+	g_free(szT);
+}

@@ -73,6 +73,10 @@
 #define IDM_CONV			1003
 #define IDM_CONV_CONV_CLOSE		40401
 
+#define IDM_BUDDYICON_CONTEXT           1004
+#define IDM_BUDDYICON_CONTEXT_SET       40601
+#define IDM_BUDDYICON_CONTEXT_REMOVE    40602
+
 /* For dynamic menu items not sent as WM_COMMAND notifications. */
 #define IDM_DYNAMIC_FIRST		50000
 

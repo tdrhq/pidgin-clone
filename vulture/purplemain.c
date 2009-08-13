@@ -50,15 +50,14 @@
 #include "purpleconv.h"
 #include "purplestatus.h"
 #include "purpleacct.h"
-
-
-#define VULTURE_PREFS_ROOT "/vulture"
+#include "purplebicon.h"
 
 
 static UINT CALLBACK PurpleThread(void *lpvData);
 static int InitLibpurple(void);
 static void InitUI(void);
 static void Quitting(void);
+static void InitPrefs(void);
 static void LoadFlags(void);
 static void SaveFlags(void);
 
@@ -152,6 +151,8 @@ static int InitLibpurple(void)
 
 	gchar *szCustomUserDir;
 
+	VultureSetDebugFromCmdLine();
+
 	if((szCustomUserDir = VultureGetCustomUserDir()))
 		purple_util_set_user_dir(szCustomUserDir);
 
@@ -210,6 +211,7 @@ static void InitUI(void)
 		NULL,				/* reserved		*/
 	};
 
+	InitPrefs();
 	LoadFlags();
 
 	purple_blist_set_ui_ops(&s_blistuiops);
@@ -220,6 +222,8 @@ static void InitUI(void)
 	purple_signal_connect(purple_blist_get_handle(), "buddy-status-changed", GINT_TO_POINTER(VSH_BLIST), PURPLE_CALLBACK(PurpleBuddyStatusChanged), NULL);
 	purple_signal_connect(purple_blist_get_handle(), "buddy-icon-changed", GINT_TO_POINTER(VSH_BLIST), PURPLE_CALLBACK(PurpleBuddyIconChanged), NULL);
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", GINT_TO_POINTER(VSH_BLIST), PURPLE_CALLBACK(PurpleAccountSignedOn), NULL);
+
+	purple_prefs_connect_callback(GINT_TO_POINTER(VSH_BICON), VULTURE_PREFS_ROOT "/accounts/buddyicon", PurpleGlobalBuddyIconPrefChanged, NULL);
 
 	/* Create and load libpurple's buddy-list. */
 	purple_set_blist(purple_blist_new());
@@ -325,14 +329,22 @@ void PurpleInsertDynamicMenu(HMENU hmenu, int iIndex, UINT *lpuiNextID, GList *l
 }
 
 
-/** Loads flags from libpurple's preference store. */
-static void LoadFlags(void)
+/** Preference initialisation. Call before any other preference functions. */
+static void InitPrefs(void)
 {
 	purple_prefs_add_none(VULTURE_PREFS_ROOT);
 	purple_prefs_add_none(VULTURE_PREFS_ROOT "/blist");
 	purple_prefs_add_bool(VULTURE_PREFS_ROOT "/blist/show_offline_buddies", FALSE);
 	purple_prefs_add_bool(VULTURE_PREFS_ROOT "/blist/show_empty_groups", TRUE);
 
+	purple_prefs_add_none(VULTURE_PREFS_ROOT "/accounts");
+	purple_prefs_add_path(VULTURE_PREFS_ROOT "/accounts/buddyicon", "");
+}
+
+
+/** Loads flags from libpurple's preference store. */
+static void LoadFlags(void)
+{
 	g_vflags.bShowOffline = purple_prefs_get_bool(VULTURE_PREFS_ROOT "/blist/show_offline_buddies");
 	g_vflags.bShowEmptyGroups = purple_prefs_get_bool(VULTURE_PREFS_ROOT "/blist/show_empty_groups");
 }

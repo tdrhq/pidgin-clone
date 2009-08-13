@@ -140,6 +140,17 @@ IDM_BLIST_CONTEXT MENUEX
 }
 
 
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+IDM_BUDDYICON_CONTEXT MENUEX
+{
+	POPUP "Dummy Label"
+	{
+		MENUITEM "&Set buddy icon...", IDM_BUDDYICON_CONTEXT_SET, MFT_STRING, MFS_DEFAULT
+		MENUITEM "&Remove buddy icon", IDM_BUDDYICON_CONTEXT_REMOVE, MFT_STRING
+	}
+}
+
+
 
 //
 // Dialog resources
@@ -309,7 +320,7 @@ IDD_STATUS DIALOG 0, 0, 161, 41
 STYLE DS_3DLOOK | DS_CENTER | DS_CONTROL | DS_SHELLFONT | WS_VISIBLE | WS_CHILDWINDOW
 FONT 8, "Ms Shell Dlg"
 {
-	CONTROL		"", IDC_BUDDY_ICON, "Static", WS_TABSTOP | SS_BLACKFRAME | SS_NOTIFY | SS_SUNKEN, 5, 5, 30, 30
+	CONTROL		"", IDC_BUDDY_ICON, "Static", WS_TABSTOP | SS_BITMAP | SS_CENTERIMAGE | SS_SUNKEN | SS_NOTIFY, 5, 5, 30, 30
 	CONTROL		"1", IDC_CBEX_STATUS, "ComboBoxEx32", 0x50000003, 40, 5, 115, 90
 	EDITTEXT	IDC_EDIT_STATUSMSG, 40, 20, 115, 15, ES_AUTOHSCROLL
 }
@@ -331,7 +342,7 @@ STRINGTABLE
 	IDS_QUERY_DELGROUP		"Deleting this group will also delete everything contained in it. Do you wish to continue?"
 	IDS_QUERY_DELCONTACT		"Deleting this contact will also delete all buddies associated with it. Do you wish to continue?"
 	IDS_BUDDYICON_FILTER		"Image Files\t*.bmp;*.png;*.gif;*.jpg\tAll Files (*.*)\t*.*\t"
-	IDS_BUDDYICON_TITLE		"Choose Custom Icon"
+	IDS_BUDDYICON_TITLE		"Choose Icon"
 	IDS_OFFLINE			"Offline"
 }
 

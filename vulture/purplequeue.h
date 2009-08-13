@@ -129,6 +129,9 @@ enum PURPLE_CALL_ID
 
 	/* (LPTSTR) Group name. */
 	PC_ADDGROUP,
+
+	/* (LPTSTR) Icon filename. */
+	PC_SETGLOBALBICON,
 };
 
 

@@ -23,14 +23,19 @@
 
 #include <windows.h>
 #include <glib.h>
+#include <glib/gstdio.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
+#include <string.h>
 
 #include "vulture.h"
 #include "purple.h"
 #include "purplebicon.h"
+#include "purplemain.h"
 
 
 static HBITMAP GetBuddyIcon(gconstpointer lpvBuddyIconData, size_t cbBuddyIconData, int cxMax, int cyMax);
+static gpointer ConvertAndScaleBuddyIcon(const gchar *szFilename, PurplePlugin *lpplugin, gsize *lpcbImage);
+static void SetGlobalBuddyIcon(const gchar *szFilename);
 
 
 
@@ -274,4 +279,214 @@ HBITMAP PurpleGetBlistNodeIcon(PurpleBlistNode *lpblistnode, int cxMax, int cyMa
 	purple_buddy_icon_unref(lpbuddyicon);
 
 	return hbitmap;
+}
+
+
+/**
+ * Retrieves contents of an image file, scaled and converted into a format
+ * suitable for a buddy icon. Based very closely on Pidgin's
+ * pidgin_convert_buddy_icon.
+ *
+ * @param	szFilename	Filename of buddy icon.
+ * @param	lpplugin	Prpl.
+ * @param[out]	lpcbImage	Returns the length of the data. May be
+ *				clobbered even on error.
+ *
+ * @return Image data, or NULL on error.
+ */
+static gpointer ConvertAndScaleBuddyIcon(const gchar *szFilename, PurplePlugin *lpplugin, gsize *lpcbImage)
+{
+	gchar *szTempFile = NULL;
+	PurplePluginProtocolInfo *lpprplinfo;
+	int cx, cy;
+	int i, j;
+	gchar **rgszPixbufFormats, **rgszPrplFormats;
+	BOOL bFormatSupported, bNeedScale;
+	GdkPixbufFormat *lppixbufformat;
+	gchar *lpcImage;
+
+	lpprplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(lpplugin);
+	if(!lpprplinfo->icon_spec.format)
+		return NULL;
+
+	lppixbufformat = gdk_pixbuf_get_file_info(szFilename, &cx, &cy);
+	if(!lppixbufformat)
+		return NULL;
+
+	/* Which formats does the prpl support? */
+	rgszPrplFormats = g_strsplit(lpprplinfo->icon_spec.format, ",", 0);
+
+	/* Attempt to match supported formats against the format of the file we
+	 * were given.
+	 */
+
+	rgszPixbufFormats = gdk_pixbuf_format_get_extensions(lppixbufformat);
+
+	bFormatSupported = FALSE;
+	for(i = 0; rgszPixbufFormats[i] && !bFormatSupported; i++)
+		for(j = 0; rgszPrplFormats[j] && !bFormatSupported; j++)
+			if(!g_ascii_strcasecmp(rgszPixbufFormats[i], rgszPrplFormats[j]))
+				bFormatSupported = TRUE;
+
+	/* We need to scale iff the prpl requires it and we're out of range. */
+	bNeedScale = (lpprplinfo->icon_spec.scale_rules & PURPLE_ICON_SCALE_SEND) &&
+		  (cx < lpprplinfo->icon_spec.min_width ||
+		   cx > lpprplinfo->icon_spec.max_width ||
+		   cy < lpprplinfo->icon_spec.min_height ||
+		   cy > lpprplinfo->icon_spec.max_height);
+
+	/* Mangle the image, unless it's already very nice. */
+	if(!bFormatSupported || bNeedScale)
+	{
+		GdkPixbuf *lppixbuf, *lppixbufScaled;
+		GError *lpgerror = NULL;
+
+		lppixbuf = gdk_pixbuf_new_from_file(szFilename, &lpgerror);
+
+		if(lppixbuf)
+		{
+			int cxScaled = cx, cyScaled = cy;
+			BOOL bHaveCompression = gdk_pixbuf_major_version > 2 || (gdk_pixbuf_major_version == 2 && gdk_pixbuf_minor_version >= 8);
+
+			/* Get aspect-correct scaled size. */
+			purple_buddy_icon_get_scale_size(&lpprplinfo->icon_spec, &cxScaled, &cyScaled);
+
+			lppixbufScaled = gdk_pixbuf_scale_simple(lppixbuf, cxScaled, cyScaled, GDK_INTERP_HYPER);
+			g_object_unref(lppixbuf);
+
+			szFilename = NULL;
+
+			/* Attempt each of the supported formats. */
+			for(i = 0; rgszPrplFormats[i]; i++)
+			{
+				FILE *lpfile;
+
+				/* libpurple's routine is less fiddly than
+				 * GetTempFileName here.
+				 */
+				if(!(lpfile = purple_mkstemp(&szTempFile, TRUE)))
+					break;
+				fclose(lpfile);
+
+				if(bHaveCompression && strcmp(rgszPrplFormats[i], "png") == 0)
+				{
+					if (gdk_pixbuf_save(lppixbufScaled, szTempFile, rgszPrplFormats[i], &lpgerror, "compression", "9", NULL))
+						break;
+				}
+				else if(gdk_pixbuf_save(lppixbufScaled, szTempFile, rgszPrplFormats[i], &lpgerror, NULL))
+					break;
+
+				/* If we get here, we failed. */
+				if(lpgerror)
+				{
+					g_error_free(lpgerror);
+					lpgerror = NULL;
+				}
+
+				g_unlink(szTempFile);
+				g_free(szTempFile);
+				szTempFile = NULL;
+			}
+		}
+		else
+		{
+			g_error_free(lpgerror);
+			szFilename = NULL;
+		}
+	}
+
+	g_strfreev(rgszPixbufFormats);
+	g_strfreev(rgszPrplFormats);
+
+	if(szFilename || (szFilename = szTempFile))
+		g_file_get_contents(szFilename, &lpcImage, lpcbImage, NULL);
+
+	if(szTempFile)
+	{
+		g_unlink(szTempFile);
+		g_free(szTempFile);
+	}
+
+	/* Make sure we're not too big. */
+	if((lpprplinfo->icon_spec.max_filesize != 0) && (*lpcbImage > lpprplinfo->icon_spec.max_filesize))
+	{
+		g_free(lpcImage);
+		return NULL;
+	}
+
+	return lpcImage;
+}
+
+
+/**
+ * Sets the buddy icons for accounts using the global icon, and instructs the
+ * UI to show the new icon. Called by the preference hook.
+ *
+ * @param	szFilename	Filename of buddy icon.
+ */
+static void SetGlobalBuddyIcon(const gchar *szFilename)
+{
+	GList *lpglistAccounts;
+	PurpleStoredImage *lpstoredimg;
+
+	for(lpglistAccounts = purple_accounts_get_all(); lpglistAccounts; lpglistAccounts = lpglistAccounts->next)
+	{
+		PurpleAccount *lpaccount = lpglistAccounts->data;
+		PurplePlugin *lpplugin = purple_find_prpl(purple_account_get_protocol_id(lpaccount));
+
+		if(lpplugin)
+		{
+			PurplePluginProtocolInfo *lpprplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(lpplugin);
+
+			/* Set icon for accounts that don't override the global
+			 * setting.
+			 */
+			if(lpprplinfo && purple_account_get_bool(lpaccount, "use-global-buddyicon", TRUE) && lpprplinfo->icon_spec.format)
+			{
+				if(szFilename)
+				{
+					gsize cbImage;
+					gpointer lpvImage = ConvertAndScaleBuddyIcon(szFilename, lpplugin, &cbImage);
+
+					purple_buddy_icons_set_account_icon(lpaccount, lpvImage, cbImage);
+				}
+				else
+					purple_buddy_icons_set_account_icon(lpaccount, NULL, 0);
+
+				purple_account_set_buddy_icon_path(lpaccount, szFilename);
+			}
+		}
+	}
+
+	if(szFilename)
+	{
+		/* Make an HBITMAP and send it back to the UI for display in
+		 * the main window.
+		 */
+		if((lpstoredimg = purple_imgstore_new_from_file(szFilename)))
+		{
+			HBITMAP hbmIcon = GetBuddyIcon(purple_imgstore_get_data(lpstoredimg), purple_imgstore_get_size(lpstoredimg), 0, 0);
+			VulturePostUIMessage(VUIMSG_NEWGLOBALBICON, hbmIcon);
+			purple_imgstore_unref(lpstoredimg);
+		}
+	}
+	else
+		VulturePostUIMessage(VUIMSG_NEWGLOBALBICON, NULL);
+}
+
+
+/**
+ * Called when the global buddy-icon preference is set.
+ *
+ * @param	szName		Unused.
+ * @param	preftype	Unused.
+ * @param	lpvValue	Filename of buddy icon.
+ * @param	lpvData		Unused.
+ */
+void PurpleGlobalBuddyIconPrefChanged(const char *szName, PurplePrefType preftype, gconstpointer lpvValue, gpointer lpvData)
+{
+	UNREFERENCED_PARAMETER(szName);
+	UNREFERENCED_PARAMETER(preftype);
+	UNREFERENCED_PARAMETER(lpvData);
+	SetGlobalBuddyIcon(lpvValue);
 }

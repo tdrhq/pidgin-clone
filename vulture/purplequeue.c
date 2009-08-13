@@ -441,6 +441,18 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		PurpleAddGroup(lppurplecall->lpvParam);
 		break;
 
+	case PC_SETGLOBALBICON:
+		if(lppurplecall->lpvParam)
+		{
+			gchar *szFilename = VultureTCHARToUTF8(lppurplecall->lpvParam);
+			purple_prefs_set_path(VULTURE_PREFS_ROOT "/accounts/buddyicon", szFilename);
+			g_free(szFilename);
+		}
+		else
+			purple_prefs_set_path(VULTURE_PREFS_ROOT "/accounts/buddyicon", NULL);
+
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);

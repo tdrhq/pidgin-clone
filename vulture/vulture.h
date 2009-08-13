@@ -77,6 +77,7 @@ gint VultureCompareTCHARStrings(gconstpointer lpvStr1, gconstpointer lpvStr2, gp
 int VultureGetMenuPosFromID(HMENU hmenu, UINT uiID);
 int VultureCommDlgOpen(HWND hwnd, LPTSTR szFileNameReturn, UINT cchFileNameReturn, LPCTSTR szTitle, LPCTSTR szFilter, LPCTSTR szDefExt, LPCTSTR szInitFilename, int iFlags);
 void VultureLoadAndFormatFilterString(USHORT unStringID, LPTSTR szFilter, UINT cchFilter);
+void VultureGPrintHandler(const gchar *sz);
 
 
 

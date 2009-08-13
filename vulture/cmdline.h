@@ -28,5 +28,6 @@
 void VultureParseCommandLine(void);
 void VultureCommandLineCleanup(void);
 gchar* VultureGetCustomUserDir(void);
+void VultureSetDebugFromCmdLine(void);
 
 #endif

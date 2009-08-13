@@ -45,6 +45,7 @@
 typedef struct _STATUSDLGDATA
 {
 	WNDPROC	wndprocStatusMsgOrig;
+	WNDPROC wndprocBuddyIconOrig;
 } STATUSDLGDATA;
 
 /* MinGW doesn't have NMTVKEYDOWN. */
@@ -76,6 +77,9 @@ static void InvalidateBListNodeIconCache(VULTURE_BLIST_NODE *lpvblistnode);
 static void RequestAddChat(HWND hwndParent, LPTSTR szAlias, LPTSTR szInitGroup);
 static void RequestAddBuddy(HWND hwndParent, LPTSTR szUsername, LPTSTR szAlias, LPTSTR szInitGroup);
 static void RequestAddGroup(HWND hwndParent);
+static LRESULT CALLBACK BuddyIconSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam);
+static void ChooseBuddyIcon(void);
+static void ClearBuddyIcon(void);
 
 
 #define BLIST_MARGIN		6
@@ -258,6 +262,14 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 		case IDM_BLIST_ACCOUNTS_MANAGE:
 			ManageAccounts(hwnd);
 			return 0;
+
+		case IDM_BUDDYICON_CONTEXT_SET:
+			ChooseBuddyIcon();
+			return 0;
+
+		case IDM_BUDDYICON_CONTEXT_REMOVE:
+			ClearBuddyIcon();
+			return 0;
 		}
 
 		break;
@@ -395,6 +407,78 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 
 				break;
 
+			case VUIMSG_NEWGLOBALBICON:
+				{
+					HBITMAP hbmScaled = NULL;
+					HBITMAP hbmOld;
+
+					if(lParam)
+					{
+						RECT rcIconCtrl;
+						HDC hdcSrc, hdcDest;
+						HBITMAP hbmSrcOrig, hbmDestOrig;
+						int cxScaled, cyScaled, cxIconCtrl, cyIconCtrl;
+						BITMAP bitmap;
+
+						GetClientRect(GetDlgItem(g_hwndStatusDlg, IDC_BUDDY_ICON), &rcIconCtrl);
+
+						hdcSrc = CreateCompatibleDC(NULL);
+						hdcDest = CreateCompatibleDC(NULL);
+
+						GetObject((HBITMAP)lParam, sizeof(bitmap), &bitmap);
+
+						cxIconCtrl = rcIconCtrl.right - rcIconCtrl.left;
+						cyIconCtrl = rcIconCtrl.bottom - rcIconCtrl.top;
+
+						/* Scale if necessary. */
+						if(bitmap.bmWidth > cxIconCtrl || bitmap.bmHeight > cyIconCtrl)
+						{
+							if(bitmap.bmWidth * cyIconCtrl > bitmap.bmHeight * cxIconCtrl)
+							{
+								/* Scale to fit width. */
+								cxScaled = cxIconCtrl;
+								cyScaled = MulDiv(bitmap.bmHeight, cxIconCtrl, bitmap.bmWidth);
+							}
+							else
+							{
+								/* Scaled to fit height. */
+								cxScaled = MulDiv(bitmap.bmWidth, cyIconCtrl, bitmap.bmHeight);
+								cyScaled = cyIconCtrl;
+							}
+						}
+						else
+						{
+							cxScaled = bitmap.bmWidth;
+							cyScaled = bitmap.bmHeight;
+						}
+
+						/* CreateCompatibleBitmap must be called after the first SelectObject
+						 * so that we don't end up with a monochrome bitmap.
+						 */
+						hbmSrcOrig = SelectObject(hdcSrc, (HBITMAP)lParam);
+						hbmScaled = CreateCompatibleBitmap(hdcSrc, cxScaled, cyScaled);
+						hbmDestOrig = SelectObject(hdcDest, hbmScaled);
+
+						SetStretchBltMode(hdcDest, COLORONCOLOR);
+
+						StretchBlt(hdcDest, 0, 0, cxScaled, cyScaled, hdcSrc, 0, 0, bitmap.bmWidth, bitmap.bmHeight, SRCCOPY);
+
+						SelectObject(hdcDest, hbmDestOrig);
+						SelectObject(hdcSrc, hbmSrcOrig);
+
+						DeleteDC(hdcDest);
+						DeleteDC(hdcSrc);
+
+						DeleteObject((HBITMAP)lParam);
+					}
+
+					hbmOld = (HBITMAP)SendDlgItemMessage(g_hwndStatusDlg, IDC_BUDDY_ICON, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hbmScaled);
+					if(hbmOld)
+						DeleteObject(hbmOld);
+				}
+
+				break;
+
 			case VUIMSG_QUIT:
 				DestroyWindow(hwnd);
 				break;
@@ -467,6 +551,7 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 			RECT rcIcon;
 			POINT ptIcon;
 			HWND hwndStatusMsg = GetDlgItem(hwndDlg, IDC_EDIT_STATUSMSG);
+			HWND hwndBuddyIcon = GetDlgItem(hwndDlg, IDC_BUDDY_ICON);
 			STATUSDLGDATA *lpsdd;
 
 			GetWindowRect(GetDlgItem(hwndDlg, IDC_BUDDY_ICON), &rcIcon);
@@ -479,11 +564,13 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 			 */
 			SetWindowPos(GetDlgItem(hwndDlg, IDC_BUDDY_ICON), NULL, BLIST_MARGIN, ptIcon.y, rcIcon.bottom - rcIcon.top, rcIcon.bottom - rcIcon.top, SWP_NOACTIVATE | SWP_NOZORDER);
 
-			/* Subclass status message box. */
+			/* Subclass controls. */
 			lpsdd = ProcHeapAlloc(sizeof(STATUSDLGDATA));
 			lpsdd->wndprocStatusMsgOrig = (WNDPROC)GetWindowLongPtr(hwndStatusMsg, GWLP_WNDPROC);
+			lpsdd->wndprocBuddyIconOrig = (WNDPROC)GetWindowLongPtr(hwndBuddyIcon, GWLP_WNDPROC);
 			SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (LONG)lpsdd);
 			SetWindowLongPtr(hwndStatusMsg, GWLP_WNDPROC, (LONG)StatusMsgBoxSubclassProc);
+			SetWindowLongPtr(hwndBuddyIcon, GWLP_WNDPROC, (LONG)BuddyIconSubclassProc);
 
 			/* Set the combo's image-lists, and tell it to
 			 * recalculate its size.
@@ -556,6 +643,15 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 				return TRUE;
 			}
 
+			break;
+
+		case IDC_BUDDY_ICON:
+			if(HIWORD(wParam) == STN_CLICKED)
+			{
+				ChooseBuddyIcon();
+				return TRUE;
+			}
+			
 			break;
 		}
 
@@ -1664,4 +1760,71 @@ static void RequestAddGroup(HWND hwndParent)
 
 		ProcHeapFree(szGroup);
 	}
+}
+
+
+/**
+ * Subclassing window procedure for buddy-icon control in status dialogue.
+ *
+ * @param	hwnd		Input box window handle.
+ * @param	uiMsg		Message ID.
+ * @param	wParam		Message-specific.
+ * @param	lParam		Message-specific.
+ *
+ * @return Message-specific.
+ */
+static LRESULT CALLBACK BuddyIconSubclassProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM lParam)
+{
+	STATUSDLGDATA *lpsdd;
+	HWND hwndParent = GetParent(hwnd);
+
+	switch(uiMsg)
+	{
+	/* Need >= Win98/2000 for IDC_HAND. */
+#if WINVER >= 0x0410
+	case WM_SETCURSOR:
+		SetCursor(LoadCursor(NULL, IDC_HAND));
+		return TRUE;
+#endif
+	case WM_RBUTTONUP:
+		{
+			HMENU hmenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDM_BUDDYICON_CONTEXT));
+			HMENU hmenuSubmenu = GetSubMenu(hmenu, 0);
+			
+			POINT ptMouse = {(short)LOWORD(lParam), (short)HIWORD(lParam)};
+			ClientToScreen(hwnd, &ptMouse);
+
+			EnableMenuItem(hmenuSubmenu, IDM_BUDDYICON_CONTEXT_REMOVE, SendMessage(hwnd, STM_GETIMAGE, 0, 0) ? MF_ENABLED : MF_DISABLED);
+
+			TrackPopupMenu(hmenuSubmenu, TPM_RIGHTBUTTON, ptMouse.x, ptMouse.y, 0, g_hwndMain, NULL);
+			DestroyMenu(hmenu);
+		}
+
+		return 0;
+	}
+
+	lpsdd = (STATUSDLGDATA*)GetWindowLongPtr(hwndParent, GWLP_USERDATA);
+	return CallWindowProc(lpsdd->wndprocBuddyIconOrig, hwnd, uiMsg, wParam, lParam);
+}
+
+
+/** Prompts the user to set the global buddy icon. */
+static void ChooseBuddyIcon(void)
+{
+	TCHAR szFilename[MAX_PATH];
+	TCHAR szFilter[256];
+	TCHAR szTitle[256];
+
+	VultureLoadAndFormatFilterString(IDS_BUDDYICON_FILTER, szFilter, NUM_ELEMENTS(szFilter));
+	LoadString(g_hInstance, IDS_BUDDYICON_TITLE, szTitle, NUM_ELEMENTS(szTitle));
+
+	if(VultureCommDlgOpen(g_hwndMain, szFilename, NUM_ELEMENTS(szFilename), szTitle, szFilter, TEXT("png"), NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY))
+		VultureSingleSyncPurpleCall(PC_SETGLOBALBICON, szFilename);
+}
+
+
+/** Clears the global buddy icon. */
+static void ClearBuddyIcon(void)
+{
+	VultureSingleSyncPurpleCall(PC_SETGLOBALBICON, NULL);
 }

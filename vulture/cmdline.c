@@ -25,15 +25,18 @@
 
 #include "vulture.h"
 #include "cmdline.h"
+#include "purple.h"
 
 
 /** Command-line options set by VultureParseCommandLine. */
 static gchar *g_szCustomUserDir = NULL;
+static gboolean g_bDebug = FALSE;
 
 static GOptionContext *g_lpgopcontext;
 static GOptionEntry g_rggopentry[] =
 {
 	{ "config", 'c', 0, G_OPTION_ARG_STRING, &g_szCustomUserDir, "use DIR for config files", "DIR" },
+	{ "debug", 'd', 0, G_OPTION_ARG_NONE, &g_bDebug, "enable debug messages", NULL },
 	{ NULL, 0, 0, 0, NULL, NULL, NULL }
 };
 
@@ -76,10 +79,20 @@ void VultureCommandLineCleanup(void)
 
 
 /**
- * Retrieves the user directory specified on the command-line, or NULL if none
+ * Retrieves the user directory specified on the command line, or NULL if none
  * set.
  */
 gchar* VultureGetCustomUserDir(void)
 {
 	return g_szCustomUserDir;
+}
+
+
+/** Enables debug mode if specified on the command line. */
+void VultureSetDebugFromCmdLine(void)
+{
+	purple_debug_set_enabled(g_bDebug);
+
+	if(g_bDebug)
+		g_set_print_handler(VultureGPrintHandler);
 }

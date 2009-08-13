@@ -49,6 +49,10 @@ typedef struct _VULTURE_MAKE_CONTEXT_MENU
 } VULTURE_MAKE_CONTEXT_MENU;
 
 
+
+#define VULTURE_PREFS_ROOT "/vulture"
+
+
 /* The significance of lpvParam is given for each message. */
 enum ENUM_VULTURE_UI_MESSAGES
 {
@@ -91,6 +95,9 @@ enum ENUM_VULTURE_UI_MESSAGES
 
 	/* (VULTURE_BLIST_NODE*) Node whose cache should be invalidated. */
 	VUIMSG_INVALIDATEICONCACHE,
+
+	/* (HBITMAP) */
+	VUIMSG_NEWGLOBALBICON,
 };
 
 /* HandlEs for reigistering signal handlERs. */
@@ -98,7 +105,8 @@ enum ENUM_VULTURE_SIGNAL_HANDLES
 {
 	VSH_STATUS = 1,
 	VSH_CONV,
-	VSH_BLIST
+	VSH_BLIST,
+	VSH_BICON
 };
 
 void VultureInitLibpurple(HANDLE *lphthread);
