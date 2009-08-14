@@ -21,6 +21,7 @@ namespace Scripts
             Console.WriteLine("Writing base classes and visual studio project file...");
             wrapperGen.WriteVisualStudioProjectFile();
             wrapperGen.WriteBaseClasses();
+            wrapperGen.WriteDefFile();
 
             /*
             Console.WriteLine();

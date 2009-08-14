@@ -407,6 +407,32 @@ namespace Scripts
             writer.Close();
         }
 
+        public void WriteDefFile()
+        {
+            StreamWriter writer = new StreamWriter(path + "../win32/libpurple.def");
+
+            writer.WriteLine("EXPORTS");
+
+            foreach (CFile file in CFile.FileCollection)
+            {
+                foreach (CFunction function in file.Functions)
+                {
+                    if (function.Name.StartsWith("purple_desktop") ||
+                        function.Name == "purple_init" ||
+                        function.Name == "purple_oscar_convert" ||
+                        function.Name == "purple_upnp_get_control_info" ||
+                        function.Name == "static_proto_init")
+                    {
+                        /* skip */
+                    }
+                    else
+                        writer.WriteLine(" " + function.Name);
+                }
+            }
+
+            writer.Close();
+        }
+
 
         private String GetCommentHeader()
         {

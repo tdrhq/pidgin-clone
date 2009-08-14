@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(IntDir)\..\..\include\glib-2.0&quot;;&quot;$(IntDir)\..\..\lib\glib-2.0\include&quot;;&quot;$(ProjectDir)..\..&quot;;&quot;$(ProjectDir)..\..\win32&quot;;&quot;$(SolutionDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(IntDir)\..\..\include\glib-2.0&quot;;&quot;$(IntDir)\..\..\lib\glib-2.0\include&quot;;&quot;$(ProjectDir)..\..&quot;;&quot;$(ProjectDir)..\..\win32&quot;;&quot;$(SolutionDir)libxml2\include&quot;;&quot;$(SolutionDir)libiconv\include&quot;"
 				PreprocessorDefinitions="HAVE_CONFIG_H"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -59,9 +59,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib"
+				AdditionalDependencies="Ws2_32.lib $(SolutionDir)libxml2\lib\libxml2.lib $(SolutionDir)libiconv\lib\libiconv.lib"
 				OutputFile="$(OutDir)\bin\$(ProjectName).dll"
-				ModuleDefinitionFile=""
+				ModuleDefinitionFile="$(SolutionDir)..\libpurple\win32\libpurple.def"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>
