@@ -82,6 +82,18 @@ typedef struct _VULTURE_BLIST_NODE_STRING_PAIR
 	LPTSTR			sz;
 } VULTURE_BLIST_NODE_STRING_PAIR;
 
+typedef struct _VULTURE_CHAT_PROPERTIES
+{
+	VULTURE_BLIST_NODE	*lpvblistnode;
+	GHashTable		*lphashComponents;
+} VULTURE_CHAT_PROPERTIES;
+
+typedef struct _VULTURE_BLIST_NODE_GET_ACCOUNT
+{
+	VULTURE_BLIST_NODE	*lpvblistnode;
+	PurpleAccount		*lpaccount;
+} VULTURE_BLIST_NODE_GET_ACCOUNT;
+
 
 
 enum VULTURE_STATUS_ICONS

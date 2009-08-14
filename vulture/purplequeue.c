@@ -63,6 +63,7 @@ static QUEUE_SOURCE* CreateQueueSource(GQueue *lpgq, LPCRITICAL_SECTION lpcs, HA
 static gboolean QueuePrepare(GSource *lpgsource, int *lpiTimeout);
 static gboolean QueueCheck(GSource *lpgsource);
 static gboolean QueueDispatch(GSource *lpgsource, GSourceFunc gsfCallback, gpointer lpvData);
+static void AddChatComponentCallback(gpointer lpvKey, gpointer lpvValue, gpointer lpvHashTable);
 
 
 #define EFFECTIVE_BUDDY(lpblistnode) \
@@ -457,6 +458,45 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 		PurpleRefreshBuddyIcon(purple_prefs_get_path(VULTURE_PREFS_ROOT "/accounts/buddyicon"));
 		break;
 
+	case PC_GETCHATPROPERTIES:
+		{
+			VULTURE_CHAT_PROPERTIES *lpvcp = lppurplecall->lpvParam;
+
+			if(lpvcp->lpvblistnode->lpblistnode)
+			{
+				GHashTable *lphashChat = purple_chat_get_components((PurpleChat*)lpvcp->lpvblistnode->lpblistnode);
+
+				lpvcp->lphashComponents = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+				g_hash_table_foreach(lphashChat, AddChatComponentCallback, lpvcp->lphashComponents);
+			}
+			else
+				lpvcp->lphashComponents = NULL;
+		}
+
+		break;
+
+	case PC_SETCHATPROPERTIES:
+		{
+			VULTURE_CHAT_PROPERTIES *lpvcp = lppurplecall->lpvParam;
+
+			if(lpvcp->lpvblistnode->lpblistnode)
+				g_hash_table_foreach(lpvcp->lphashComponents, AddChatComponentCallback, purple_chat_get_components((PurpleChat*)lpvcp->lpvblistnode->lpblistnode));
+		}
+
+		break;
+
+	case PC_GETBLISTCHATNODEACCOUNT:
+		{
+			VULTURE_BLIST_NODE_GET_ACCOUNT *lpvblngetacct = lppurplecall->lpvParam;
+
+			if(lpvblngetacct->lpvblistnode->lpblistnode && PURPLE_BLIST_NODE_IS_CHAT(lpvblngetacct->lpvblistnode->lpblistnode))
+				lpvblngetacct->lpaccount = purple_chat_get_account((PurpleChat*)lpvblngetacct->lpvblistnode->lpblistnode);
+			else
+				lpvblngetacct->lpaccount = NULL;
+		}
+
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);
@@ -663,4 +703,18 @@ void VultureSingleSyncPurpleCall(int iCallID, void *lpvParam)
 	VultureEnqueueSyncPurpleCall(iCallID, lpvParam, hevent);
 	WaitForSingleObject(hevent, INFINITE);
 	CloseHandle(hevent);
+}
+
+
+/**
+ * Callback function for g_hash_table_foreach that adds a key/value pair to
+ * another hash table.
+ *
+ * @param	lpvKey		Key to add.
+ * @param	lpvValue	Value to add.
+ * @param	lpvHashTable	Hash table to add to.
+ */
+static void AddChatComponentCallback(gpointer lpvKey, gpointer lpvValue, gpointer lpvHashTable)
+{
+	g_hash_table_insert(lpvHashTable, g_strdup(lpvKey), g_strdup(lpvValue));
 }

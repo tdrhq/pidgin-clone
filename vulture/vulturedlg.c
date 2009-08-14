@@ -119,6 +119,7 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			VULTURE_GET_ACCOUNTS vgetaccounts;
 			RECT rcGroup, rcDlg, rcButton;
 			VULTURE_JOIN_CHAT_DATA *lpvjcd = (VULTURE_JOIN_CHAT_DATA*)lParam;
+			int iCount;
 
 			/* Get online accounts. */
 			vgetaccounts.bOnlineOnly = TRUE;
@@ -147,14 +148,55 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 			 */
 			s_iMaxShowFields = 3 + (lpvjcd->bJoinFieldsOnly ? 0 : ADD_CHAT_FIXED_FIELDS);
 
-			/* Populate combo and select first item. */
+			/* Populate combo and select item if appropriate. */
 			PopulateAccountsCombo(GetDlgItem(hwndDlg, IDC_CBEX_ACCOUNTS), s_lpglistAccounts);
-			if(SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCOUNT, 0, 0) > 0)
+			iCount = SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_GETCOUNT, 0, 0);
+			if(iCount > 0)
 			{
 				SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_SETCURSEL, 0, 0);
 
+				/* Maybe override this with given account. */
+				if(lpvjcd->lppac)
+				{
+					COMBOBOXEXITEM cbexitem;
+					cbexitem.mask = CBEIF_LPARAM;
+					
+					for(cbexitem.iItem = 0; cbexitem.iItem < iCount; cbexitem.iItem++)
+					{
+						SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CBEM_GETITEM, 0, (LPARAM)&cbexitem);
+
+						if(cbexitem.lParam && ((VULTURE_ACCOUNT*)cbexitem.lParam)->lppac == lpvjcd->lppac)
+						{
+							SendDlgItemMessage(hwndDlg, IDC_CBEX_ACCOUNTS, CB_SETCURSEL, cbexitem.iItem, 0);
+							break;
+						}
+					}
+
+					EnableWindow(GetDlgItem(hwndDlg, IDC_CBEX_ACCOUNTS), FALSE);
+				}
+
 				/* Show fields. */
 				UpdateJoinChatFields(hwndDlg, &s_lpglistFields, &s_iMaxShowFields);
+
+				/* Initialise fields if appropriate. */
+				if(lpvjcd->lphashParameters && s_lpglistFields)
+				{
+					GList *lpglistRover;
+
+					for(lpglistRover = s_lpglistFields; lpglistRover; lpglistRover = lpglistRover->next)
+					{
+						JOIN_DLG_FIELD *lpjdf = lpglistRover->data;
+						const gchar *szValueUTF8;
+						LPTSTR szValue;
+
+						if((szValueUTF8 = g_hash_table_lookup(lpvjcd->lphashParameters, lpjdf->szID)))
+						{
+							szValue = VultureUTF8ToTCHAR(szValueUTF8);
+							SetWindowText(lpjdf->hwndEdit, szValue);
+							g_free(szValue);
+						}
+					}
+				}
 			}
 
 			if(!lpvjcd->bJoinFieldsOnly)
@@ -170,7 +212,7 @@ static INT_PTR CALLBACK JoinChatDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam,
 
 				if(SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_GETCOUNT, 0, 0) > 0)
 				{
-					/* Maybe override this with given group. */
+					/* If we're given a group, select it. */
 					if(lpvjcd->szInitGroup)
 					{
 						LRESULT lIndex = SendDlgItemMessage(hwndDlg, IDC_CBEX_GROUP, CB_FINDSTRINGEXACT, -1, (LPARAM)lpvjcd->szInitGroup);
@@ -876,4 +918,21 @@ static INT_PTR CALLBACK GetStringDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam
 	}
 
 	return FALSE;
+}
+
+
+/**
+ * Displays the "Chat Properties" dialogue.
+ *
+ * @param		hwndParent	Parent window handle.
+ * @param[in,out]	lpvjcd		Details of chat to join are returned
+ *					here. bJoinFieldsOnly is set to TRUE
+ *					before the dialogue is shown.
+ *
+ * @return TRUE iff OKed.
+ */
+BOOL VultureChatPropertiesDlg(HWND hwndParent, VULTURE_JOIN_CHAT_DATA *lpvjcd)
+{
+	lpvjcd->bJoinFieldsOnly = TRUE;
+	return (BOOL)DialogBoxParam(g_hInstance, MAKEINTRESOURCE(IDD_CHATPROPERTIES), hwndParent, JoinChatDlgProc, (LPARAM)lpvjcd);
 }

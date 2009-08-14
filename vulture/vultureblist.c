@@ -226,6 +226,8 @@ static LRESULT CALLBACK MainWndProc(HWND hwnd, UINT uiMsg, WPARAM wParam, LPARAM
 				VULTURE_JOIN_CHAT_DATA vjcd;
 
 				vjcd.bJoinFieldsOnly = TRUE;
+				vjcd.lphashParameters = NULL;
+				vjcd.lppac = NULL;
 
 				if(VultureJoinChatDlg(hwnd, &vjcd))
 					VultureSingleSyncPurpleCall(PC_JOINCHAT, &vjcd);
@@ -1402,6 +1404,42 @@ static void RunChatMenuCmd(HWND hwndBuddies, VULTURE_BLIST_NODE *lpvblistnode, H
 	case IDM_BLIST_CONTEXT_AUTOJOIN:
 		VultureEnqueueAsyncPurpleCall(PC_TOGGLEAUTOJOIN, lpvblistnode);
 		break;
+
+	case IDM_BLIST_CONTEXT_PROPERTIES:
+		{
+			VULTURE_CHAT_PROPERTIES vcp;
+			VULTURE_JOIN_CHAT_DATA vjcd;
+			VULTURE_BLIST_NODE_GET_ACCOUNT vblngetacct;
+
+			vcp.lpvblistnode = lpvblistnode;
+			VultureSingleSyncPurpleCall(PC_GETCHATPROPERTIES, &vcp);
+
+			vblngetacct.lpvblistnode = lpvblistnode;
+			VultureSingleSyncPurpleCall(PC_GETBLISTCHATNODEACCOUNT, &vblngetacct);
+
+			vjcd.bJoinFieldsOnly = TRUE;
+			vjcd.lphashParameters = vcp.lphashComponents;
+			vjcd.lppac = vblngetacct.lpaccount;
+
+			if(VultureChatPropertiesDlg(g_hwndMain, &vjcd))
+			{
+				VULTURE_CHAT_PROPERTIES vcpSet;
+
+				vcpSet.lpvblistnode = lpvblistnode;
+				vcpSet.lphashComponents = vjcd.lphashParameters;
+				VultureSingleSyncPurpleCall(PC_SETCHATPROPERTIES, &vcpSet);
+
+				g_hash_table_destroy(vjcd.lphashParameters);
+
+				/* Update tree node. */
+				UpdateBListNode(hwndBuddies, lpvblistnode);				
+			}
+
+			if(vcp.lphashComponents)
+				g_hash_table_destroy(vcp.lphashComponents);
+		}
+
+		break;
 	}
 }
 
@@ -1704,6 +1742,8 @@ static void RequestAddChat(HWND hwndParent, LPTSTR szAlias, LPTSTR szInitGroup)
 	vjcd.bJoinFieldsOnly = FALSE;
 	vjcd.szAlias = szAlias;
 	vjcd.szInitGroup = szInitGroup;
+	vjcd.lphashParameters = NULL;
+	vjcd.lppac = NULL;
 
 	if(VultureJoinChatDlg(hwndParent, &vjcd))
 	{
