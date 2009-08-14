@@ -427,7 +427,6 @@ static gpointer ConvertAndScaleBuddyIcon(const gchar *szFilename, PurplePlugin *
 static void SetGlobalBuddyIcon(const gchar *szFilename)
 {
 	GList *lpglistAccounts;
-	PurpleStoredImage *lpstoredimg;
 
 	for(lpglistAccounts = purple_accounts_get_all(); lpglistAccounts; lpglistAccounts = lpglistAccounts->next)
 	{
@@ -458,20 +457,7 @@ static void SetGlobalBuddyIcon(const gchar *szFilename)
 		}
 	}
 
-	if(szFilename)
-	{
-		/* Make an HBITMAP and send it back to the UI for display in
-		 * the main window.
-		 */
-		if((lpstoredimg = purple_imgstore_new_from_file(szFilename)))
-		{
-			HBITMAP hbmIcon = GetBuddyIcon(purple_imgstore_get_data(lpstoredimg), purple_imgstore_get_size(lpstoredimg), 0, 0);
-			VulturePostUIMessage(VUIMSG_NEWGLOBALBICON, hbmIcon);
-			purple_imgstore_unref(lpstoredimg);
-		}
-	}
-	else
-		VulturePostUIMessage(VUIMSG_NEWGLOBALBICON, NULL);
+	PurpleRefreshBuddyIcon(szFilename);
 }
 
 
@@ -489,4 +475,27 @@ void PurpleGlobalBuddyIconPrefChanged(const char *szName, PurplePrefType preftyp
 	UNREFERENCED_PARAMETER(preftype);
 	UNREFERENCED_PARAMETER(lpvData);
 	SetGlobalBuddyIcon(lpvValue);
+}
+
+
+/**
+ * Posts a new HBITMAP to the UI to display as the buddy icon.
+ *
+ * @param	szFilename	Filename of buddy icon. May be NULL.
+ */
+void PurpleRefreshBuddyIcon(const gchar *szFilename)
+{
+	PurpleStoredImage *lpstoredimg;
+
+	if(szFilename && (lpstoredimg = purple_imgstore_new_from_file(szFilename)))
+	{
+		/* Make an HBITMAP and send it back to the UI for display in
+		 * the main window.
+		 */
+		HBITMAP hbmIcon = GetBuddyIcon(purple_imgstore_get_data(lpstoredimg), purple_imgstore_get_size(lpstoredimg), 0, 0);
+		VulturePostUIMessage(VUIMSG_NEWGLOBALBICON, hbmIcon);
+		purple_imgstore_unref(lpstoredimg);
+	}
+	else
+		VulturePostUIMessage(VUIMSG_NEWGLOBALBICON, NULL);
 }

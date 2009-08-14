@@ -77,8 +77,6 @@ GMainLoop *g_lpgmainloop = NULL;
  */
 void VultureInitLibpurple(HANDLE *lphthread)
 {
-	VulturePurpleInitQueue();
-
 	*lphthread = (HANDLE)_beginthreadex(NULL, 0, PurpleThread, NULL, 0, NULL);
 }
 

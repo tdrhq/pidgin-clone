@@ -132,6 +132,8 @@ enum PURPLE_CALL_ID
 
 	/* (LPTSTR) Icon filename. */
 	PC_SETGLOBALBICON,
+
+	PC_REFRESHGLOBALBICON,
 };
 
 

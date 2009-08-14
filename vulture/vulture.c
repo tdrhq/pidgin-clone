@@ -82,6 +82,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE hinstPrev, LPSTR szCmdLine, int iC
 
 	g_thread_init(NULL);
 
+	VulturePurpleInitQueue();
+
 	VultureParseCommandLine();
 
 	if(VultureRegisterConvContainerWindowClass() != 0)

@@ -32,6 +32,7 @@
 HBITMAP PurpleGetIMBuddyIcon(PurpleConversation *lpconv, int cxMax, int cyMax);
 HBITMAP PurpleGetBlistNodeIcon(PurpleBlistNode *lpblistnode, int cxMax, int cyMax);
 void PurpleGlobalBuddyIconPrefChanged(const char *szName, PurplePrefType preftype, gconstpointer lpvValue, gpointer lpvData);
+void PurpleRefreshBuddyIcon(const gchar *szFilename);
 
 
 #endif

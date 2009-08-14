@@ -577,6 +577,10 @@ static INT_PTR CALLBACK StatusDlgProc(HWND hwndDlg, UINT uiMsg, WPARAM wParam, L
 			 */
 			SendDlgItemMessage(hwndDlg, IDC_CBEX_STATUS, CBEM_SETIMAGELIST, 0, (LPARAM)g_himlStatusIcons);
 			SetWindowPos(GetDlgItem(hwndDlg, IDC_CBEX_STATUS), NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+			/* Let the core send us the buddy icon in its own time.
+			 */
+			VultureEnqueueAsyncPurpleCall(PC_REFRESHGLOBALBICON, NULL);
 		}
 
 		/* Let the system set the focus. */

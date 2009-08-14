@@ -453,6 +453,10 @@ static void DispatchPurpleCall(PURPLE_CALL *lppurplecall)
 
 		break;
 
+	case PC_REFRESHGLOBALBICON:
+		PurpleRefreshBuddyIcon(purple_prefs_get_path(VULTURE_PREFS_ROOT "/accounts/buddyicon"));
+		break;
+
 	case PC_QUIT:
 		purple_core_quit();
 		g_main_loop_quit(g_lpgmainloop);
