@@ -144,8 +144,7 @@ struct _PurpleBuddy {
 	PurpleBuddyIcon *icon;                    /**< The buddy icon. */
 	PurpleAccount *account;					/**< the account this buddy belongs to */
 	PurplePresence *presence;
-	gboolean privacy_receive_message;		/**< Are messages from this contact allowed >**/
-	gboolean privacy_send_presence;		/**< Do we send presence to this contact >**/
+	PurplePrivacyContext privacy_block_context;	/**< What do we block from this buddy >**/
 	gboolean local_only;			/**< Specifies if this contact is on any of server's lists >**/
 };
 

@@ -113,7 +113,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if (!who)
 		return;
 
-	if (!purple_privacy_check(purple_connection_get_account(gc), who)) {
+	if (purple_privacy_check(purple_connection_get_account(gc), who, PURPLE_PRIVACY_BLOCK_ALL)) {
 		purple_debug_info("yahoo", "Picture packet from %s dropped.\n", who);
 		return;
 	}

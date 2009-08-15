@@ -187,13 +187,9 @@ buddy_to_xmlnode(PurpleBlistNode *bnode)
 	xmlnode_insert_data(child, buddy->name, -1);
 
 	child = xmlnode_new_child(node, "privacy");
-	grandchild = xmlnode_new_child(child, "receive_message");
-	xmlnode_set_attrib(grandchild, "type", "bool");
-	buf = g_strdup_printf("%d", buddy->privacy_receive_message);
-	xmlnode_insert_data(grandchild, buf, -1);
-	grandchild = xmlnode_new_child(child, "send_presence");
-	xmlnode_set_attrib(grandchild, "type", "bool");
-	buf = g_strdup_printf("%d", buddy->privacy_send_presence);
+	grandchild = xmlnode_new_child(child, "context");
+	xmlnode_set_attrib(grandchild, "type", "int");
+	buf = g_strdup_printf("%d", buddy->privacy_block_context);
 	xmlnode_insert_data(grandchild, buf, -1);
 	grandchild = xmlnode_new_child(child, "local_only");
 	xmlnode_set_attrib(grandchild, "type", "bool");
@@ -318,7 +314,7 @@ accountprivacy_to_xmlnode(PurpleAccount *account)
 	node = xmlnode_new("account");
 	xmlnode_set_attrib(node, "proto", purple_account_get_protocol_id(account));
 	xmlnode_set_attrib(node, "name", purple_account_get_username(account));
-	g_snprintf(buf, sizeof(buf), "%d", account->perm_deny);
+	g_snprintf(buf, sizeof(buf), "%d", account->account_privacy_state);
 	xmlnode_set_attrib(node, "mode", buf);
 
 	return node;
@@ -330,6 +326,7 @@ blist_to_xmlnode(void)
 	xmlnode *node, *child, *grandchild;
 	PurpleBlistNode *gnode;
 	GList *cur;
+	char *buf;
 
 	node = xmlnode_new("purple");
 	xmlnode_set_attrib(node, "version", "1.0");
@@ -349,12 +346,20 @@ blist_to_xmlnode(void)
 
 	/* Write privacy settings */
 	child = xmlnode_new_child(node, "privacy");
+
+	grandchild = xmlnode_new_child(child, "global");
+	buf = g_strdup_printf("%d", purple_privacy_obtain_global_state());
+	xmlnode_set_attrib(grandchild, "state", buf);
+
+	grandchild = xmlnode_new_child(child, "per-account");
+	child = grandchild;
 	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
 	{
 		grandchild = accountprivacy_to_xmlnode(cur->data);
 		xmlnode_insert_child(child, grandchild);
 	}
 
+	g_free(buf);
 	return node;
 }
 
@@ -456,16 +461,10 @@ parse_buddy(PurpleGroup *group, PurpleContact *contact, xmlnode *bnode)
 
 	if ((x = xmlnode_get_child(bnode, "privacy")))
 	{
-		if ((y = xmlnode_get_child(x, "receive_message")))
+		if ((y = xmlnode_get_child(x, "context")))
 		{
 			temp = xmlnode_get_data(y);
-			buddy->privacy_receive_message = atoi(temp);
-			g_free(temp);
-		}
-		if ((y = xmlnode_get_child(x, "send_presence")))
-		{
-			temp = xmlnode_get_data(y);
-			buddy->privacy_send_presence = atoi(temp);
+			buddy->privacy_block_context = atoi(temp);
 			g_free(temp);
 		}
 		if ((y = xmlnode_get_child(x, "local_only")))
@@ -590,7 +589,7 @@ parse_group(xmlnode *groupnode)
 void
 purple_blist_load()
 {
-	xmlnode *purple, *blist, *privacy;
+	xmlnode *purple, *blist, *privacy, *privacy_global, *privacy_acc;
 
 	blist_loaded = TRUE;
 
@@ -610,27 +609,42 @@ purple_blist_load()
 
 	privacy = xmlnode_get_child(purple, "privacy");
 	if (privacy) {
-		xmlnode *anode;
-		for (anode = privacy->child; anode; anode = anode->next) {
-			PurpleAccount *account;
-			int imode;
-			const char *acct_name, *proto, *mode, *protocol;
+		privacy_global = xmlnode_get_child(privacy, "global");
+		if(privacy_global)
+		{
+			const char *global_setting;
+			int i_global_setting;
 
-			acct_name = xmlnode_get_attrib(anode, "name");
-			protocol = xmlnode_get_attrib(anode, "protocol");
-			proto = xmlnode_get_attrib(anode, "proto");
-			mode = xmlnode_get_attrib(anode, "mode");
+			global_setting = xmlnode_get_attrib(privacy_global, "state");
+			i_global_setting = ( atoi(global_setting) != 0 ? atoi(global_setting) : PURPLE_PRIVACY_ALLOW_BUDDYLIST ) ;
+			purple_privacy_set_global_state(i_global_setting);
+		}
 
-			if (!acct_name || (!proto && !protocol) || !mode)
-				continue;
+		privacy_acc = xmlnode_get_child(privacy, "per-account");
+		if(privacy_acc)
+		{
+			xmlnode *anode;
+			for (anode = privacy_acc->child; anode; anode = anode->next) {
+				PurpleAccount *account;
+				int imode;
+				const char *acct_name, *proto, *mode, *protocol;
 
-			account = purple_accounts_find(acct_name, proto ? proto : protocol);
+				acct_name = xmlnode_get_attrib(anode, "name");
+				protocol = xmlnode_get_attrib(anode, "protocol");
+				proto = xmlnode_get_attrib(anode, "proto");
+				mode = xmlnode_get_attrib(anode, "mode");
 
-			if (!account)
-				continue;
+				if (!acct_name || (!proto && !protocol) || !mode)
+					continue;
 
-			imode = atoi(mode);
-			account->perm_deny = (imode != 0 ? imode : PURPLE_PRIVACY_ALLOW_ALL);
+				account = purple_accounts_find(acct_name, proto ? proto : protocol);
+
+				if (!account)
+					continue;
+
+				imode = atoi(mode);
+				account->account_privacy_state = (imode != 0 ? imode : PURPLE_PRIVACY_ALLOW_ALL);
+			}
 		}
 	}
 
@@ -1333,10 +1347,8 @@ PurpleBuddy *purple_buddy_new(PurpleAccount *account, const char *name, const ch
 
 	purple_blist_node_initialize_settings((PurpleBlistNode *)buddy);
 
-	/* set new buddy's privacy settings, later: check if buddy exists in some privacy list, set settings accordingly, also 
-		check what local/server settings needed */
-	buddy->privacy_receive_message = TRUE;
-	buddy->privacy_send_presence = TRUE;
+	/* Privacy Laters: Obtain new buddy's privacy context, and local settings */
+	buddy->privacy_block_context = 0;
 	buddy->local_only = FALSE;
 
 	if (ops && ops->new_node)

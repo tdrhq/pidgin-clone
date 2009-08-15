@@ -6402,7 +6402,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_show(win->menu.get_info);
 		gtk_widget_hide(win->menu.invite);
 		gtk_widget_show(win->menu.alias);
- 		if (purple_privacy_check(account, purple_conversation_get_name(conv))) {
+ 		if (!purple_privacy_check(account, purple_conversation_get_name(conv), PURPLE_PRIVACY_BLOCK_ALL)) {
  			gtk_widget_hide(win->menu.unblock);
  			gtk_widget_show(win->menu.block);
  		} else {

@@ -93,7 +93,7 @@ void serv_set_info(PurpleConnection *, const char *);
 
 void serv_privacy_list_add(PurpleConnection *, PurplePrivacyListType list_type, const char *name);
 void serv_privacy_list_remove(PurpleConnection *, PurplePrivacyListType list_type, const char *name);
-void serv_set_permit_deny(PurpleConnection *);
+void serv_privacy_set_state(PurpleConnection *);
 void serv_chat_invite(PurpleConnection *, int, const char *, const char *);
 void serv_chat_leave(PurpleConnection *, int);
 void serv_chat_whisper(PurpleConnection *, int, const char *, const char *);

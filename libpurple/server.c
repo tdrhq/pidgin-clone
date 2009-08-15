@@ -216,7 +216,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 	PurpleConnection *gc = NULL;
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
-
+purple_debug_info("yahoo","in serv_alias_buddy\n");
 	if(b)
 		account = purple_buddy_get_account(b);
 
@@ -230,6 +230,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if(b && prpl_info && prpl_info->alias_buddy) {
+purple_debug_info("yahoo","in serv_alias_buddy: calling yahoo's prpl fucntion\n");
 		prpl_info->alias_buddy(gc, purple_buddy_get_name(b), purple_buddy_get_local_buddy_alias(b));
 	}
 }
@@ -336,7 +337,10 @@ serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 void
 serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
 {
-	purple_prpl_got_attention(gc, who, type_code);
+	if(purple_privacy_check(purple_connection_get_account(gc), who, PURPLE_PRIVACY_BLOCK_MESSAGE))
+		purple_debug_info("server","Privacy: Dropped attention from %s\n", who);
+	else
+		purple_prpl_got_attention(gc, who, type_code);
 }
 
 
@@ -406,7 +410,7 @@ void serv_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_t
 		prpl_info->privacy_list_remove(gc, list_type, name);
 }
 
-void serv_set_permit_deny(PurpleConnection *gc)
+void serv_privacy_set_state(PurpleConnection *gc)
 {
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
@@ -417,14 +421,8 @@ void serv_set_permit_deny(PurpleConnection *gc)
 	if(prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	/*
-	 * this is called when either you import a buddy list, and make lots
-	 * of changes that way, or when the user toggles the permit/deny mode
-	 * in the prefs. In either case you should probably be resetting and
-	 * resending the permit/deny info when you get this.
-	 */
-	if(prpl_info && prpl_info->set_permit_deny)
-		prpl_info->set_permit_deny(gc);
+	if(prpl_info && prpl_info->privacy_set_state)
+		prpl_info->privacy_set_state(gc);
 }
 
 void serv_join_chat(PurpleConnection *gc, GHashTable *data)
@@ -562,13 +560,10 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	 */
 	flags |= PURPLE_MESSAGE_RECV;
 
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
-		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who)) {
-			purple_signal_emit(purple_conversations_get_handle(), "blocked-im-msg",
-					account, who, msg, flags, (unsigned int)mtime);
-			return;
-		}
+	if(purple_privacy_check(purple_connection_get_account(gc), who, PURPLE_PRIVACY_BLOCK_MESSAGE))
+	{
+		purple_debug_info("server","Privacy: Dropped message from %s\n", who);
+		return ;
 	}
 
 	/*
@@ -693,6 +688,12 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 	PurpleConversation *conv;
 	PurpleConvIm *im = NULL;
 
+	if(purple_privacy_check(purple_connection_get_account(gc), name, PURPLE_PRIVACY_BLOCK_MESSAGE))
+	{
+		purple_debug_info("server","Privacy: Dropped typing.. from %s\n", name);
+		return ;
+	}
+
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
 	if (conv != NULL) {
 		im = PURPLE_CONV_IM(conv);
@@ -724,6 +725,9 @@ void serv_got_typing_stopped(PurpleConnection *gc, const char *name) {
 
 	PurpleConversation *conv;
 	PurpleConvIm *im;
+
+	if(purple_privacy_check(purple_connection_get_account(gc), name, PURPLE_PRIVACY_BLOCK_MESSAGE))
+		return ;
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
 	if (conv != NULL)
@@ -780,13 +784,11 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 	int plugin_return;
 
 	account = purple_connection_get_account(gc);
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
-		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who)) {
-			purple_signal_emit(purple_conversations_get_handle(), "chat-invite-blocked",
-					account, who, name, message, data);
-			return;
-		}
+
+	if(purple_privacy_check(purple_connection_get_account(gc), who, PURPLE_PRIVACY_BLOCK_CONF))
+	{
+		purple_debug_info("server","Privacy: Dropped chat invite to room %s from %s\n", name, who);
+		return ;
 	}
 
 	cid = g_new0(struct chat_invite_data, 1);

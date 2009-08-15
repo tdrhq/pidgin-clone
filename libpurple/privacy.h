@@ -33,24 +33,50 @@
 /**
  * Privacy data types.
  */
-typedef enum _PurplePrivacyType
+typedef enum _PurplePrivacySetting
 {
 	PURPLE_PRIVACY_ALLOW_ALL = 1,
-	PURPLE_PRIVACY_DENY_ALL,
-	PURPLE_PRIVACY_ALLOW_USERS,
-	PURPLE_PRIVACY_DENY_USERS,
-	PURPLE_PRIVACY_ALLOW_BUDDYLIST
-} PurplePrivacyType;
+	PURPLE_PRIVACY_BLOCK_MSG_NONBUDDY,
+	PURPLE_PRIVACY_ALLOW_BUDDYLIST,
+	PURPLE_PRIVACY_CUSTOM
+} PurplePrivacySetting;
+
+typedef enum _NativePrivacySetting
+{
+	PURPLE_PRIVACY_NATIVE_ALLOW_ALL = 0x0004,
+	PURPLE_PRIVACY_NATIVE_DENY_ALL = 0x0008,	/* Both messages and presence blocked, add extra states if for a protocol only messages blocked */
+	PURPLE_PRIVACY_NATIVE_ALLOW_USERS = 0x0010,
+	PURPLE_PRIVACY_NATIVE_DENY_USERS = 0x0020,	/* Both messages and presence blocked, add extra states if for a protocol only messages blocked */
+	PURPLE_PRIVACY_NATIVE_ALLOW_BUDDYLIST = 0x0040
+} NativePrivacySetting;
 
 typedef enum _PurplePrivacyListType
 {
-	PURPLE_PRIVACY_ALLOW_LIST = 1,
-	PURPLE_PRIVACY_BLOCK_MESSAGE_LIST,
-	PURPLE_PRIVACY_BLOCK_BOTH_LIST,
-	PURPLE_PRIVACY_VISIBLE_LIST,
-	PURPLE_PRIVACY_INVISIBLE_LIST,
-	PURPLE_PRIVACY_BUDDY_LIST
+	PURPLE_PRIVACY_ALLOW_LIST = 0x0004,
+	PURPLE_PRIVACY_BLOCK_MESSAGE_LIST = 0x0008,
+	PURPLE_PRIVACY_BLOCK_BOTH_LIST = 0x0010,
+	PURPLE_PRIVACY_VISIBLE_LIST = 0x0020,
+	PURPLE_PRIVACY_INVISIBLE_LIST = 0x0040,
+	PURPLE_PRIVACY_BUDDY_LIST = 0x0080
 } PurplePrivacyListType;
+
+typedef struct _PurpleAccountPrivacySpec
+{
+	NativePrivacySetting supported_privacy_states;	/* Stores the privacy states natively supported */
+	PurplePrivacyListType supported_privacy_lists;	/* Stores the privacy lists types natively supported */
+	gboolean visible_list_transient;	/* True for Yahoo visible lists, as these are lost across sessions/status changes */
+	gboolean invisible_to_all_supported;	/* whether invisible to all status is supported */
+	gboolean can_deny_buddy;		/* can a buddy be added to the deny list - FALSE for yahoo! */
+} PurplePrivacySpec;
+
+typedef enum _PurplePrivacyContext
+{
+	PURPLE_PRIVACY_BLOCK_ALL = 0x0004,
+	PURPLE_PRIVACY_BLOCK_MESSAGE = 0x0008,
+	PURPLE_PRIVACY_BLOCK_PRESENCE = 0x0010,
+	PURPLE_PRIVACY_BLOCK_FT = 0x0020,
+	PURPLE_PRIVACY_BLOCK_CONF = 0x0040
+} PurplePrivacyContext;
 
 #ifdef __cplusplus
 extern "C" {
@@ -72,113 +98,6 @@ typedef struct
 	void (*_purple_reserved4)(void);
 } PurplePrivacyUiOps;
 
-/**
- * Adds a user to the account's permit list.
- *
- * @param account    The account.
- * @param name       The name of the user to add to the list.
- * @param local_only If TRUE, only the local list is updated, and not
- *                   the server.
- *
- * @return TRUE if the user was added successfully, or @c FALSE otherwise.
- */
-gboolean purple_privacy_permit_add(PurpleAccount *account, const char *name,
-								 gboolean local_only);
-
-/**
- * Removes a user from the account's permit list.
- *
- * @param account    The account.
- * @param name       The name of the user to add to the list.
- * @param local_only If TRUE, only the local list is updated, and not
- *                   the server.
- *
- * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
- */
-gboolean purple_privacy_permit_remove(PurpleAccount *account, const char *name,
-									gboolean local_only);
-
-/**
- * Adds a user to the account's deny list.
- *
- * @param account    The account.
- * @param name       The name of the user to add to the list.
- * @param local_only If TRUE, only the local list is updated, and not
- *                   the server.
- *
- * @return TRUE if the user was added successfully, or @c FALSE otherwise.
- */
-gboolean purple_privacy_deny_add(PurpleAccount *account, const char *name,
-							   gboolean local_only);
-
-/**
- * Removes a user from the account's deny list.
- *
- * @param account    The account.
- * @param name       The name of the user to add to the list.
- * @param local_only If TRUE, only the local list is updated, and not
- *                   the server.
- *
- * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
- */
-gboolean purple_privacy_deny_remove(PurpleAccount *account, const char *name,
-								  gboolean local_only);
-
-/**
- * Allow a user to send messages. If current privacy setting for the account is:
- *		PURPLE_PRIVACY_ALLOW_USERS:	The user is added to the allow-list.
- *		PURPLE_PRIVACY_DENY_USERS	:	The user is removed from the deny-list.
- *		PURPLE_PRIVACY_ALLOW_ALL	:	No changes made.
- *		PURPLE_PRIVACY_DENY_ALL	:	The privacy setting is changed to
- *									PURPLE_PRIVACY_ALLOW_USERS and the user
- *									is added to the allow-list.
- *		PURPLE_PRIVACY_ALLOW_BUDDYLIST: No changes made if the user is already in
- *									the buddy-list. Otherwise the setting is
- *									changed to PURPLE_PRIVACY_ALLOW_USERS, all the
- *									buddies are added to the allow-list, and the
- *									user is also added to the allow-list.
- *
- * @param account	The account.
- * @param who		The name of the user.
- * @param local		Whether the change is local-only.
- * @param restore	Should the previous allow/deny list be restored if the
- *					privacy setting is changed.
- */
-void purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
-						gboolean restore);
-
-/**
- * Block messages from a user. If current privacy setting for the account is:
- *		PURPLE_PRIVACY_ALLOW_USERS:	The user is removed from the allow-list.
- *		PURPLE_PRIVACY_DENY_USERS	:	The user is added to the deny-list.
- *		PURPLE_PRIVACY_DENY_ALL	:	No changes made.
- *		PURPLE_PRIVACY_ALLOW_ALL	:	The privacy setting is changed to
- *									PURPLE_PRIVACY_DENY_USERS and the user is
- *									added to the deny-list.
- *		PURPLE_PRIVACY_ALLOW_BUDDYLIST: If the user is not in the buddy-list,
- *									then no changes made. Otherwise, the setting
- *									is changed to PURPLE_PRIVACY_ALLOW_USERS, all
- *									the buddies are added to the allow-list, and
- *									this user is removed from the list.
- *
- * @param account	The account.
- * @param who		The name of the user.
- * @param local		Whether the change is local-only.
- * @param restore	Should the previous allow/deny list be restored if the
- *					privacy setting is changed.
- */
-void purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
-						gboolean restore);
-
-/**
- * Check the privacy-setting for a user.
- *
- * @param account	The account.
- * @param who		The name of the user.
- *
- * @return @c FALSE if the specified account's privacy settings block the user or @c TRUE otherwise. The meaning of "block" relates to sending of messages.
- */
-gboolean purple_privacy_check(PurpleAccount *account, const char *who);
 
 /**
  * Sets the UI operations structure for the privacy subsystem.
@@ -199,27 +118,52 @@ PurplePrivacyUiOps *purple_privacy_get_ui_ops(void);
  */
 void purple_privacy_init(void);
 
-/* privacy laters: detailed description laters */
-/* Sets the privacy settings for a contact */
-gboolean purple_privacy_update_contact(PurpleAccount *account, const char *who, gboolean local_only, gboolean receive_message, gboolean send_presence);
-
 /* Returns account specific privacy lists */
 GSList *purple_privacy_list_get_members_by_account(PurpleAccount *account, PurplePrivacyListType type);
-
-/* Sets privacy setting for receiving messages, leaves presence setting untouched */
-gboolean purple_privacy_update_message_setting(PurpleAccount *account, const char *who, gboolean receive_message);
-
-/* Sets privacy setting for sending presence, leaves message setting untouched */
-gboolean purple_privacy_update_presence_setting(PurpleAccount *account, const char *who, gboolean send_presence);
 
 /* called by prpls with all the privacy lists + buddy list. Synchronizes the local master list (blist) */
 gboolean purple_privacy_sync_lists(PurpleAccount *account, GSList *buddy_l, GSList *allow_l, GSList *block_msg_l, GSList *block_both_l, GSList *visible_l, GSList *invisible_l);
 
-/* returns if sending presence information is allowed to the contact "who" */
-gboolean purple_privacy_check_presence(PurpleAccount *account, const char *who);
+/* returns TRUE if account supports "Invisible" status, otherwise FALSE */ 
+gboolean purple_privacy_account_supports_invisible_status (PurpleAccount *account);
 
-/* returns if receiving messages from the contact "who" is allowed */
-gboolean purple_privacy_check_message(PurpleAccount *account, const char *who);
+/* returns TRUE if account's current status is "Invisible", otherwise FALSE */ 
+gboolean purple_privacy_account_status_invisible(PurpleAccount *account);
+
+/* Sets account's status to "Invisible", returns TRUE if successful, "FALSE" if not */ 
+gboolean purple_privacy_set_account_status_invisible(PurpleAccount *account);
+
+/* Sets account's status visible , returns TRUE if successful, "FALSE" if not */
+/* Following order is used to test for a suitable visible status:
+	* Current active saved status
+	* Default saved status
+	* Available status
+*/
+gboolean purple_privacy_set_account_status_visible(PurpleAccount *account);
+
+/* Returns the gloabl privacy state */
+PurplePrivacySetting purple_privacy_obtain_global_state(void);
+PurplePrivacySetting purple_privacy_obtain_account_state(PurpleAccount *account);
+NativePrivacySetting purple_privacy_obtain_native_state(PurpleAccount *account);
+void purple_privacy_set_account_state(PurpleAccount *account, PurplePrivacySetting state);
+void purple_privacy_set_global_state(PurplePrivacySetting state);
+void *purple_privacy_get_handle(void);
+void purple_privacy_uninit(void);
+
+gboolean purple_privacy_set_blocking_context(PurpleAccount *account, const char *who, gboolean local_only, PurplePrivacyContext context);
+PurplePrivacyContext purple_privacy_get_blocking_context(PurpleAccount *account, const char *who);
+gboolean purple_privacy_set_block_all(PurpleAccount *account, const char *who, gboolean local, gboolean server);
+gboolean purple_privacy_set_block_presence(PurpleAccount *account, const char *who, gboolean local, gboolean server);
+gboolean purple_privacy_set_block_message(PurpleAccount *account, const char *who);
+gboolean purple_privacy_set_block_ft(PurpleAccount *account, const char *who);
+gboolean purple_privacy_set_block_conf(PurpleAccount *account, const char *who);
+gboolean purple_privacy_unset_block_message(PurpleAccount *account, const char *who);
+gboolean purple_privacy_unset_block_conf(PurpleAccount *account, const char *who);
+gboolean purple_privacy_unset_block_ft(PurpleAccount *account, const char *who);
+gboolean purple_privacy_unset_block_all(PurpleAccount *account, const char *who, gboolean local, gboolean server);
+gboolean purple_privacy_unset_block_presence(PurpleAccount *account, const char *who, gboolean local, gboolean server);
+gboolean purple_privacy_check(PurpleAccount *account, const char *who, PurplePrivacyContext context);
+gboolean purple_privacy_check_list_support(PurpleAccount *account, PurplePrivacyListType type);
 
 #ifdef __cplusplus
 }

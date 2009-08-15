@@ -380,7 +380,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 
 		purple_signal_emit(purple_connections_get_handle(), "signed-on", gc);
 
-		serv_set_permit_deny(gc);
+		serv_privacy_set_state(gc);
 
 		update_keepalive(gc, TRUE);
 	}

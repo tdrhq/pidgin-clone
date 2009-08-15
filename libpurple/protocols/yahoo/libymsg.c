@@ -585,6 +585,15 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 	g_hash_table_foreach(ht, yahoo_do_group_cleanup, NULL);
 
+	/* Provide the privacy subsystem with the lists on the server*/ 
+	purple_privacy_sync_lists(account, buddy_list, NULL, NULL, block_both_list, NULL, invisible_list);
+	purple_debug_info("yahoo","Privacy Lists synchronized\n");
+	/* Set native privacy state */
+	if(block_both_list != NULL)
+		account->native_privacy_state = PURPLE_PRIVACY_NATIVE_DENY_USERS;
+	else
+		account->native_privacy_state = PURPLE_PRIVACY_NATIVE_ALLOW_ALL;
+
 	/* Now that we have processed the buddy list, we can say yahoo has connected */
 	purple_connection_set_display_name(gc, purple_normalize(account, purple_account_get_username(account)));
 	purple_connection_set_state(gc, PURPLE_CONNECTED);
@@ -595,10 +604,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	}
 	yahoo_set_status(account, purple_account_get_active_status(account));
 	purple_debug_info("yahoo","Authentication: Connection established\n");
-
-	/* Provide the privacy subsystem with the lists on the server*/ 
-	purple_privacy_sync_lists(account, buddy_list, NULL, NULL, block_both_list, NULL, invisible_list);
-	purple_debug_info("yahoo","Privacy Lists synchronized\n");
 
 	g_slist_free(buddy_list);
 	g_slist_free(block_both_list);
@@ -717,7 +722,7 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 		for (bud = buddies; bud && *bud; bud++) {
 			/* The server is already ignoring the user */
 			got_serv_list = TRUE;
-			purple_privacy_deny_add(account, *bud, 1);
+			purple_privacy_set_block_all(account, *bud, TRUE, FALSE);
 		}
 		g_strfreev(buddies);
 
@@ -725,15 +730,6 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 		yd->tmp_serv_ilist = NULL;
 	}
 
-	if (got_serv_list &&
-		((account->perm_deny != PURPLE_PRIVACY_ALLOW_BUDDYLIST) &&
-		(account->perm_deny != PURPLE_PRIVACY_DENY_ALL) &&
-		(account->perm_deny != PURPLE_PRIVACY_ALLOW_USERS)))
-	{
-		account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
-		purple_debug_info("yahoo", "%s privacy defaulting to PURPLE_PRIVACY_DENY_USERS.\n",
-				account->username);
-	}
 
 	if (yd->tmp_serv_plist) {
 		buddies = g_strsplit(yd->tmp_serv_plist->str, ",", -1);
@@ -799,8 +795,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 		return;
 	}
 
-	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))
-		&& (purple_privacy_check(account, from)))
+	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING")))
 	{
 		if(msn) {
 			char *msn_from = g_strconcat("msn/", from, NULL);
@@ -997,7 +992,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		{
 			PurpleWhiteboard *wb;
 
-			if (!purple_privacy_check(account, im->from)) {
+			if (purple_privacy_check(account, im->from, PURPLE_PRIVACY_BLOCK_ALL)) {
 				purple_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
 				return;
 			}
@@ -1031,11 +1026,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		if (!im->from || !im->msg) {
 			g_free(im);
 			continue;
-		}
-
-		if (!purple_privacy_check(account, im->from)) {
-			purple_debug_info("yahoo", "Message from %s dropped.\n", im->from);
-			return;
 		}
 
 		/*
@@ -1336,7 +1326,7 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 		if (add_req->id && add_req->who) {
 			char *alias = NULL, *dec_msg = NULL;
 
-			if (!purple_privacy_check(account, add_req->who))
+			if (purple_privacy_check(account, add_req->who, PURPLE_PRIVACY_BLOCK_ALL))
 			{
 				purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 						  add_req->who);
@@ -1409,7 +1399,7 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if (add_req->id && add_req->who) {
 		char *dec_msg = NULL;
 
-		if (!purple_privacy_check(account, add_req->who)) {
+		if (purple_privacy_check(account, add_req->who, PURPLE_PRIVACY_BLOCK_ALL)) {
 			purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 					  add_req->who);
 			yahoo_buddy_add_deny_cb(add_req, NULL);
@@ -1970,8 +1960,7 @@ static void ignore_buddy(PurpleBuddy *buddy) {
 
 static void keep_buddy(PurpleBuddy *b)
 {
-	purple_privacy_deny_remove(purple_buddy_get_account(b),
-			purple_buddy_get_name(b), 1);
+	purple_privacy_unset_block_all(purple_buddy_get_account(b), purple_buddy_get_name(b), TRUE, FALSE);
 }
 
 static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt) {
@@ -2771,7 +2760,7 @@ static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt
 		purple_debug_misc("yahoo", "Warning, nonutf8 audible, ignoring!\n");
 		return;
 	}
-	if (!purple_privacy_check(account, who)) {
+	if (purple_privacy_check(account, who, PURPLE_PRIVACY_BLOCK_ALL)) {
 		purple_debug_misc("yahoo", "Audible message from %s for %s dropped!\n",
 				purple_account_get_username(account), who);
 		return;
@@ -4626,7 +4615,7 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 		return;
 
 	bname = purple_buddy_get_name(buddy);
-	if (!purple_privacy_check(purple_connection_get_account(gc), bname))
+	if (purple_privacy_check(purple_connection_get_account(gc), bname, PURPLE_PRIVACY_BLOCK_ALL))
 		return;
 
 	f = yahoo_friend_find(gc, bname);
@@ -4756,6 +4745,46 @@ static void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
+/* set = TRUE for setting perm invisible, FALSE to unset perm invisible */
+static void set_perm_invisible(PurpleConnection *gc, const char *who, gboolean set)
+{	
+	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_packet *pkt = NULL;
+	gboolean msn;
+	const char *temp = NULL;
+	int val_31;
+
+	if (!yd->logged_in)
+		return;
+
+	msn = !g_strncasecmp(who, "msn/", 4);
+
+	if(msn)
+		temp = who+4;
+	else
+		temp = who;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_SESSION, YAHOO_STATUS_AVAILABLE, yd->session_id);
+
+	val_31 = (set ? 1 : 2);
+
+	if(msn)
+		yahoo_packet_hash(pkt, "sissssiss",
+					1, purple_connection_get_display_name(gc),
+					31, val_31, 13, "1",
+					302, "319", 300, "319",
+					7, temp, 241, 2,
+					301, "319", 303, "319");
+	else
+		yahoo_packet_hash(pkt, "sissssss",
+					1, purple_connection_get_display_name(gc),
+					31, val_31, 13, "1",
+					302, "319", 300, "319",
+					7, temp, 301, "319", 303, "319");
+
+	yahoo_packet_send_and_free(pkt, yd);
+}
+
 void yahoo_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
@@ -4781,8 +4810,7 @@ void yahoo_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_typ
 			yahoo_friend_update_presence(gc, who, YAHOO_PRESENCE_ONLINE);
 			break;
 		case PURPLE_PRIVACY_INVISIBLE_LIST:
-			/* Privacy laters: check */
-			yahoo_friend_update_presence(gc, who, YAHOO_PRESENCE_PERM_OFFLINE);
+			set_perm_invisible(gc, who, TRUE);
 			break;
 	}
 	return;
@@ -4813,37 +4841,10 @@ void yahoo_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_
 			yahoo_friend_update_presence(gc, who, YAHOO_PRESENCE_PERM_OFFLINE);
 			break;
 		case PURPLE_PRIVACY_INVISIBLE_LIST:
-			/* Privacy laters */
-			yahoo_friend_update_presence(gc, who, YAHOO_PRESENCE_ONLINE);
+			set_perm_invisible(gc, who, FALSE);
 			break;
 	}
 	return;
-}
-
-void yahoo_set_permit_deny(PurpleConnection *gc)
-{
-	PurpleAccount *account;
-	GSList *deny = NULL, *l = NULL;
-
-	account = purple_connection_get_account(gc);
-	deny = purple_privacy_list_get_members_by_account(account, PURPLE_PRIVACY_BLOCK_BOTH_LIST);
-
-	switch (account->perm_deny)
-	{
-		case PURPLE_PRIVACY_ALLOW_ALL:
-			for (l = deny; l; l = l->next)
-				yahoo_rem_deny(gc, l->data);
-			break;
-
-		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
-		case PURPLE_PRIVACY_ALLOW_USERS:
-		case PURPLE_PRIVACY_DENY_USERS:
-		case PURPLE_PRIVACY_DENY_ALL:
-			for (l = deny; l; l = l->next)
-				yahoo_add_deny(gc, l->data);
-			break;
-	}
-	g_slist_free(deny);
 }
 
 void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,

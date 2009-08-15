@@ -131,7 +131,10 @@ struct _PurpleAccount
 	PurpleProxyInfo *proxy_info;  /**< Proxy information.  This will be set   */
 								/*   to NULL when the account inherits      */
 								/*   proxy settings from global prefs.      */
-	PurplePrivacyType perm_deny;  /**< The permit/deny setting.               */
+	PurplePrivacySpec *privacy_spec;
+	NativePrivacySetting native_privacy_state;		/* Current native privacy state of protocol */
+	PurplePrivacySetting account_privacy_state;	/* Current privacy state of account */
+	gboolean privacy_list_active;			/* Marks local privacy list active or inactive */
 
 	GList *status_types;        /**< Status types.                          */
 

@@ -985,8 +985,6 @@ purple_account_new(const char *username, const char *protocol_id)
 	account->ui_settings = g_hash_table_new_full(g_str_hash, g_str_equal,
 				g_free, (GDestroyNotify)g_hash_table_destroy);
 	account->system_log = NULL;
-	/* 0 is not a valid privacy setting */
-	account->perm_deny = PURPLE_PRIVACY_ALLOW_ALL;
 
 	purple_signal_emit(purple_accounts_get_handle(), "account-created", account);
 
@@ -998,6 +996,11 @@ purple_account_new(const char *username, const char *protocol_id)
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info != NULL && prpl_info->status_types != NULL)
 		purple_account_set_status_types(account, prpl_info->status_types(account));
+
+	if (prpl_info != NULL)	{
+		account->privacy_spec = g_new0(PurplePrivacySpec, 1);
+		account->privacy_spec = &prpl_info->privacy_spec;
+	}
 
 	account->presence = purple_presence_new_for_account(account);
 

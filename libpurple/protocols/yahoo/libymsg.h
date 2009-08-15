@@ -313,7 +313,6 @@ void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g);
 void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void yahoo_privacy_list_add(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who);
 void yahoo_privacy_list_remove(PurpleConnection *gc, PurplePrivacyListType list_type, const char *who);
-void yahoo_set_permit_deny(PurpleConnection *gc);
 void yahoo_keepalive(PurpleConnection *gc);
 void yahoo_change_buddys_group(PurpleConnection *gc, const char *who, const char *old_group, const char *new_group);
 void yahoo_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup *group, GList *moved_buddies);

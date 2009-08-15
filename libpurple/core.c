@@ -162,10 +162,10 @@ purple_core_init(const char *ui)
 	purple_notify_init();
 	purple_certificate_init();
 	purple_conversations_init();
+	purple_privacy_init();
 	purple_blist_init();
 	purple_log_init();
 	purple_network_init();
-	purple_privacy_init();
 	purple_pounces_init();
 	purple_proxy_init();
 	purple_dnsquery_init();
@@ -224,6 +224,7 @@ purple_core_quit(void)
 	purple_smileys_uninit();
 	purple_idle_uninit();
 	purple_pounces_uninit();
+	purple_privacy_uninit();
 	purple_blist_uninit();
 	purple_ciphers_uninit();
 	purple_notify_uninit();

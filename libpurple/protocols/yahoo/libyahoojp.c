@@ -94,6 +94,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* user_splits */
 	NULL, /* protocol_options */
 	{"png,gif,jpeg", 96, 96, 96, 96, 0, PURPLE_ICON_SCALE_SEND},
+	{
+		PURPLE_PRIVACY_NATIVE_ALLOW_ALL | PURPLE_PRIVACY_NATIVE_DENY_USERS,
+		PURPLE_PRIVACY_BLOCK_BOTH_LIST | PURPLE_PRIVACY_VISIBLE_LIST | PURPLE_PRIVACY_INVISIBLE_LIST | PURPLE_PRIVACY_BUDDY_LIST,
+		TRUE, TRUE, FALSE
+	},
 	yahoo_list_icon,
 	yahoo_list_emblem,
 	yahoo_status_text,
@@ -117,7 +122,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* remove_buddies */
 	yahoo_privacy_list_add, /* add to privacy lists */
 	yahoo_privacy_list_remove, /* remove from privacy lists */
-	yahoo_set_permit_deny,
+	NULL,		/* Yahoo only allows "Block the following" state, so no change of state possible */
 	yahoo_c_join,
 	NULL, /* reject chat invite */
 	yahoo_get_chat_name,

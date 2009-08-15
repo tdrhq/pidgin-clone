@@ -1416,14 +1416,14 @@ toggle_privacy(GtkWidget *widget, PurpleBlistNode *node)
 	account = purple_buddy_get_account(buddy);
 	name = purple_buddy_get_name(buddy);
 
-	permitted = purple_privacy_check(account, name);
+	permitted = !purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_ALL);
 
 	/* XXX: Perhaps ask whether to restore the previous lists where appropirate? */
 
 	if (permitted)
-		purple_privacy_deny(account, name, FALSE, FALSE);
+		purple_privacy_set_block_all(account, name, TRUE, TRUE);
 	else
-		purple_privacy_allow(account, name, FALSE, FALSE);
+		purple_privacy_unset_block_all(account, name, TRUE, TRUE);
 
 	pidgin_blist_update(purple_get_blist(), node);
 }
@@ -1435,7 +1435,7 @@ void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, PurpleBlistNode *nod
 	gboolean permitted;
 
 	account = purple_buddy_get_account(buddy);
-	permitted = purple_privacy_check(account, purple_buddy_get_name(buddy));
+	permitted = !purple_privacy_check(account, purple_buddy_get_name(buddy), PURPLE_PRIVACY_BLOCK_ALL);
 
 	pidgin_new_item_from_stock(menu, permitted ? _("_Block") : _("Un_block"),
 						permitted ? PIDGIN_STOCK_TOOLBAR_BLOCK : PIDGIN_STOCK_TOOLBAR_UNBLOCK, G_CALLBACK(toggle_privacy),
@@ -3826,7 +3826,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
-	if (!purple_privacy_check(buddy->account, purple_buddy_get_name(buddy))) {
+	if (purple_privacy_check(buddy->account, purple_buddy_get_name(buddy), PURPLE_PRIVACY_BLOCK_ALL)) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "blocked.png", NULL);
 		return _pidgin_blist_get_cached_emblem(path);
 	}

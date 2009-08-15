@@ -162,17 +162,6 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 		return;
 	}
 
-	if (!purple_privacy_check(account, who) ||
-			(purple_account_get_bool(account, "ignore_invites", FALSE)))
-	{
-		purple_debug_info("yahoo",
-		    "Invite to conference %s from %s has been dropped.\n", room, who);
-		g_free(room);
-		g_free(msg);
-		g_string_free(members, TRUE);
-		return;
-	}
-
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	g_hash_table_replace(components, g_strdup("room"), room);
 	if (msg)
@@ -206,12 +195,6 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			msg = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		}
-	}
-	if (!purple_privacy_check(purple_connection_get_account(gc), who))
-	{
-		g_free(room);
-		g_free(msg);
-		return;
 	}
 
 	if (who && room) {
@@ -707,8 +690,7 @@ void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt
 	if (room && who) {
 		GHashTable *components;
 
-		if (!purple_privacy_check(account, who) ||
-				(purple_account_get_bool(account, "ignore_invites", FALSE)))
+		if (purple_account_get_bool(account, "ignore_invites", FALSE))
 		{
 			purple_debug_info("yahoo", "Invite to room %s from %s has been dropped.\n", room, who);
 			g_free(room);

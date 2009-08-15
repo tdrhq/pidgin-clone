@@ -212,6 +212,7 @@ struct _PurplePluginProtocolInfo
 	GList *protocol_options; /**< A GList of PurpleAccountOption    */
 
 	PurpleBuddyIconSpec icon_spec; /**< The icon spec. */
+	PurplePrivacySpec privacy_spec;
 
 	/**
 	 * Returns the base icon name for the given buddy and account.
@@ -312,7 +313,7 @@ struct _PurplePluginProtocolInfo
 	void (*remove_buddies)(PurpleConnection *, GList *buddies, GList *groups);
 	void (*privacy_list_add)(PurpleConnection *, PurplePrivacyListType list_type, const char *name);
 	void (*privacy_list_remove)(PurpleConnection *, PurplePrivacyListType list_type, const char *name);
-	void (*set_permit_deny)(PurpleConnection *);
+	void (*privacy_set_state)(PurpleConnection *);
 	void (*join_chat)(PurpleConnection *, GHashTable *components);
 	void (*reject_chat)(PurpleConnection *, GHashTable *components);
 	char *(*get_chat_name)(GHashTable *components);

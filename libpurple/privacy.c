@@ -24,362 +24,18 @@
 #include "account.h"
 #include "debug.h"
 #include "privacy.h"
+#include "savedstatuses.h"
 #include "server.h"
 #include "util.h"
 
+static int privacy_handle;
+
+static PurplePrivacySetting purple_privacy_state;
+
 static PurplePrivacyUiOps *privacy_ops = NULL;
 GSList *get_account_members(PurpleAccount *account, PurplePrivacyListType type);
-
-gboolean
-purple_privacy_permit_add(PurpleAccount *account, const char *who,
-						gboolean local_only)
-{
-	PurpleBuddy *buddy = NULL;
-	char *name = NULL;
-
-	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(who     != NULL, FALSE);
-
-	purple_debug_info("Privacy","In purple_privacy_permit_add\n"); /* remove me laters */
-
-	name = g_strdup(purple_normalize(account, who));
-
-	purple_privacy_update_contact(account, name, local_only, TRUE, TRUE);
-
-	if (!local_only && purple_account_is_connected(account))
-		serv_privacy_list_add(purple_account_get_connection(account), PURPLE_PRIVACY_ALLOW_LIST, name);
-
-	if (privacy_ops != NULL && privacy_ops->permit_added != NULL)
-		privacy_ops->permit_added(account, name);
-
-	/* privacy laters: Change signals later */
-	/* This lets the UI know a buddy has had its privacy setting changed */
-	buddy = purple_find_buddy(account, name);
-	if (buddy != NULL) {
-		purple_signal_emit(purple_blist_get_handle(),
-                "buddy-privacy-changed", buddy);
-	}
-	g_free(name);
-	return TRUE;
-}
-
-gboolean
-purple_privacy_permit_remove(PurpleAccount *account, const char *who,
-						   gboolean local_only)
-{
-	/* privacy laters: privacy settings after removing from the allow list would depend upon the account type and its privacy state.
-	For now, lets assume that if you are not in buddy list and have been removed from the allow list, you are "everyone else".
-	so there needs to be no information stored about you. If you are in buddy list then it depends on account type and state */
-
-	PurpleBuddy *b = NULL;
-	char *name = NULL;
- 
-	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(who     != NULL, FALSE);
-
-	purple_debug_info("Privacy","In purple_privacy_permit_remove\n"); /* remove me laters */
-
-	name = g_strdup(purple_normalize(account, who));
-
-	if(!(b = purple_find_buddy(account, name)))
-	{
-		if(!(b = purple_find_privacy_contact(account, name)))
-		{
-			g_free(name);
-			return FALSE;
-		}
-		else
-			purple_blist_remove_buddy(b);	/* when in allow list,  you are in no other privacy list */
-	}
-	else
-	{
-		/* privacy laters: This now depends upon the account type and state, for now set TRUE, TRUE */
-		purple_privacy_update_contact(account, name, local_only, TRUE, TRUE);
-	}
-
-	/* privacy laters: we have freed the buddy, check if some function in following statements don't require any data that we freed */
-
-	if (!local_only && purple_account_is_connected(account))
-		serv_privacy_list_remove(purple_account_get_connection(account), PURPLE_PRIVACY_ALLOW_LIST, name);
-
-	if (privacy_ops != NULL && privacy_ops->permit_removed != NULL)
-		privacy_ops->permit_removed(account, name);
-
-	b = purple_find_buddy(account, name);
-	if (b != NULL) {
-		purple_signal_emit(purple_blist_get_handle(),
-                "buddy-privacy-changed", b);
-	}
-	g_free(name);
-	return TRUE;
-}
-
-gboolean
-purple_privacy_deny_add(PurpleAccount *account, const char *who,
-					  gboolean local_only)
-{
-	PurpleBuddy *buddy = NULL;
-	char *name = NULL;
-
-	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(who     != NULL, FALSE);
-
-	purple_debug_info("Privacy","In purple_privacy_deny_add\n"); /* remove me laters */
-
-	name = g_strdup(purple_normalize(account, who));
-	purple_privacy_update_contact(account, name, local_only, TRUE, TRUE);
-
-	if (!local_only && purple_account_is_connected(account))
-		serv_privacy_list_add(purple_account_get_connection(account), PURPLE_PRIVACY_BLOCK_BOTH_LIST, name);
-
-	if (privacy_ops != NULL && privacy_ops->deny_added != NULL)
-		privacy_ops->deny_added(account, name);
-
-	/* privacy laters: Change signals later */
-	/* This lets the UI know a buddy has had its privacy setting changed */
-	buddy = purple_find_buddy(account, name);
-	if (buddy != NULL) {
-		purple_signal_emit(purple_blist_get_handle(),
-                "buddy-privacy-changed", buddy);
-	}
-	g_free(name);
-	return TRUE;
-}
-
-gboolean
-purple_privacy_deny_remove(PurpleAccount *account, const char *who,
-						 gboolean local_only)
-{
-	/* privacy laters: privacy settings according to account type and state */
-	PurpleBuddy *b = NULL;
-	char *name = NULL;
-
-	g_return_val_if_fail(account != NULL, FALSE);
-	g_return_val_if_fail(who     != NULL, FALSE);
-
-	purple_debug_info("Privacy","In purple_privacy_deny_remove\n"); /* remove me laters */
-
-	name = g_strdup(purple_normalize(account, who));
-
-	if(!(b = purple_find_buddy(account, name)))
-	{
-		if(!(b = purple_find_privacy_contact(account, name)))
-		{
-			g_free(name);
-			return FALSE;
-		}
-		else
-		{
-			/* privacy laters: you can be (in)visible list along with block list, will figure out how laters, for now remove 
-			this contact from list */
-			purple_blist_remove_buddy(b);
-		}
-	}
-	else
-	{
-		/* privacy laters: This now depends upon the account type and state, for now set TRUE, TRUE */
-		purple_privacy_update_contact(account, name, local_only, TRUE, TRUE);
-	}
-
-	/* privacy laters: we have freed the buddy, check if some function in following statements don't require any data that we freed */
-
-	if (!local_only && purple_account_is_connected(account))
-		serv_privacy_list_remove(purple_account_get_connection(account), PURPLE_PRIVACY_BLOCK_BOTH_LIST, name);
-
-	if (privacy_ops != NULL && privacy_ops->deny_removed != NULL)
-		privacy_ops->deny_removed(account, name);
-
-	b = purple_find_buddy(account, name);
-	if (b != NULL) {
-		purple_signal_emit(purple_blist_get_handle(),
-                "buddy-privacy-changed", b);
-	}
-	g_free(name);
-	return TRUE;
-}
-
-/**
- * This makes sure your permit list contains all buddies from your
- * buddy list and ONLY buddies from your buddy list.
- */
-static gboolean 
-add_all_buddies_to_permit_list(PurpleAccount *account, gboolean local)
-{
-	GSList *p_list = NULL, *l_tmp = NULL;
-	PurpleBuddy *b = NULL;
-
-	g_return_val_if_fail(account != NULL, FALSE);
-
-	p_list = purple_find_privacy_contacts(account, NULL);
-	for(l_tmp = p_list; l_tmp; l_tmp = l_tmp->next)
-	{
-		b = l_tmp->data;
-		if(purple_find_buddy(account, b->name))
-			purple_privacy_permit_add(account, b->name, local);
-		else
-			purple_privacy_permit_remove(account, b->name, local);
-	}
-
-	g_slist_free(p_list);
-	return TRUE; 
-}
-
-/*
- * TODO: All callers of this function pass in FALSE for local and
- *       restore and I don't understand when you would ever want to
- *       use TRUE for either of them.  I think both parameters could
- *       safely be removed in the next major version bump.
- */
-void
-purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
-						gboolean restore)
-{
-	GSList *list = NULL, *l_tmp = NULL;
-	PurplePrivacyType type = account->perm_deny;
-	PurpleBuddy *b = NULL;
-
-	switch (account->perm_deny) {
-		case PURPLE_PRIVACY_ALLOW_ALL:
-			return;
-		case PURPLE_PRIVACY_ALLOW_USERS:
-			purple_privacy_permit_add(account, who, local);
-			break;
-		case PURPLE_PRIVACY_DENY_USERS:
-			purple_privacy_deny_remove(account, who, local);
-			break;
-		case PURPLE_PRIVACY_DENY_ALL:
-			if (!restore) {
-				/* Empty the allow-list. */
-				list = purple_find_privacy_contacts(account, NULL);
-				for(l_tmp = list; l_tmp; l_tmp=l_tmp->next)
-				{
-					b = l_tmp->data;
-					purple_privacy_permit_remove(account, b->name, local);
-				}
-			}
-			purple_privacy_permit_add(account, who, local);
-			account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
-			break;
-		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
-			if (!purple_find_buddy(account, who)) {
-				add_all_buddies_to_permit_list(account, local);
-				purple_privacy_permit_add(account, who, local);
-				account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
-			}
-			break;
-		default:
-			g_return_if_reached();
-	}
-
-	g_slist_free(list);
-	/* Notify the server if the privacy setting was changed */
-	if (type != account->perm_deny && purple_account_is_connected(account))
-		serv_set_permit_deny(purple_account_get_connection(account));
-}
-
-/*
- * TODO: All callers of this function pass in FALSE for local and
- *       restore and I don't understand when you would ever want to
- *       use TRUE for either of them.  I think both parameters could
- *       safely be removed in the next major version bump.
- */
-void
-purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
-					gboolean restore)
-{
-	GSList *list = NULL, *l_tmp = NULL;
-	PurpleBuddy *b = NULL;
-	PurplePrivacyType type = account->perm_deny;
-
-	switch (account->perm_deny) {
-		case PURPLE_PRIVACY_ALLOW_ALL:
-			if (!restore) {
-				/* Empty the deny-list. */
-				list = purple_find_privacy_contacts(account, NULL);
-				for(l_tmp = list; l_tmp; l_tmp=l_tmp->next)
-				{
-					b = l_tmp->data;
-					purple_privacy_deny_remove(account, b->name, local);
-				}
-			}
-			purple_privacy_deny_add(account, who, local);
-			account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
-			break;
-		case PURPLE_PRIVACY_ALLOW_USERS:
-			purple_privacy_permit_remove(account, who, local);
-			break;
-		case PURPLE_PRIVACY_DENY_USERS:
-			purple_privacy_deny_add(account, who, local);
-			break;
-		case PURPLE_PRIVACY_DENY_ALL:
-			break;
-		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
-			if (purple_find_buddy(account, who)) {
-				add_all_buddies_to_permit_list(account, local);
-				purple_privacy_permit_remove(account, who, local);
-				account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
-			}
-			break;
-		default:
-			g_return_if_reached();
-	}
-
-	g_slist_free(list);
-	/* Notify the server if the privacy setting was changed */
-	if (type != account->perm_deny && purple_account_is_connected(account))
-		serv_set_permit_deny(purple_account_get_connection(account));
-}
-
-gboolean
-purple_privacy_check_message(PurpleAccount *account, const char *who)
-{
-	/* Privacy later: When functions that set privacy will work based on account types/states, then this function will work perfectly */
-	PurpleBuddy *b = NULL;
-	char *name = NULL;
-	gboolean receive_message;
-
-	b = purple_find_privacy_contact(account, who);
-	name = 	g_strdup(purple_normalize(account, who));
-
-	if(b)
-		receive_message = b->privacy_receive_message;
-	else
-	{
-		/* privacy later: depends upon account type/state, for now return false */
-		receive_message = FALSE;
-	}
-	g_free(name);
-	return receive_message;
-}
-
-gboolean
-purple_privacy_check_presence(PurpleAccount *account, const char *who)
-{
-	/* Privacy later: When functions that set privacy will work based on account types/states, then this function will work perfectly */
-	PurpleBuddy *b = NULL;
-	char *name = NULL;
-	gboolean send_presence;
-
-	b = purple_find_privacy_contact(account, who);
-	name = 	g_strdup(purple_normalize(account, who));
-
-	if(b)
-		send_presence = b->privacy_send_presence;
-	else
-	{
-		/* privacy later: depends upon account type/state, for now return false */
-		send_presence = FALSE;
-	}
-	g_free(name);
-	return send_presence;
-}
-
-gboolean
-purple_privacy_check(PurpleAccount *account, const char *who)
-{
-	return purple_privacy_check_message(account,who);
-}
-
+static void acc_signed_on_cb(PurpleConnection *gc, void *data);
+static void acc_signed_off_cb(PurpleConnection *gc, void *data);
 
 void
 purple_privacy_set_ui_ops(PurplePrivacyUiOps *ops)
@@ -396,9 +52,24 @@ purple_privacy_get_ui_ops(void)
 void
 purple_privacy_init(void)
 {
+	/* Set default purple privacy state to PURPLE_PRIVACY_ALLOW_BUDDYLIST */
+	purple_privacy_state = PURPLE_PRIVACY_ALLOW_BUDDYLIST;
+
+	/* Register the purple event callbacks. */
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+						purple_privacy_get_handle(), PURPLE_CALLBACK(acc_signed_on_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+						purple_privacy_get_handle(), PURPLE_CALLBACK(acc_signed_off_cb), NULL);
 }
 
-gboolean purple_privacy_update_contact(PurpleAccount *account, const char *who, gboolean local_only, gboolean receive_message, gboolean send_presence)
+void
+purple_privacy_uninit(void)
+{
+	purple_signals_disconnect_by_handle(purple_privacy_get_handle());
+	purple_signals_unregister_by_instance(purple_privacy_get_handle());
+}
+
+gboolean purple_privacy_set_blocking_context(PurpleAccount *account, const char *who, gboolean local_only, PurplePrivacyContext context)
 {
 	PurpleBuddy *b;
 	PurpleGroup *g;
@@ -407,12 +78,14 @@ gboolean purple_privacy_update_contact(PurpleAccount *account, const char *who, 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = g_strdup(purple_normalize(account, who));
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
 
 	if((b = purple_find_privacy_contact(account, name)))
 	{
-		b->privacy_receive_message = receive_message;
-		b->privacy_send_presence = send_presence;
+		b->privacy_block_context = context;
 		b->local_only = local_only;
 	}
 	else
@@ -424,125 +97,379 @@ gboolean purple_privacy_update_contact(PurpleAccount *account, const char *who, 
 		}
 
 		b = purple_buddy_new(account, name, NULL);
-		b->privacy_receive_message = receive_message;
-		b->privacy_send_presence = send_presence;
+		b->privacy_block_context = context;
 		b->local_only = local_only;
 		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
 
 	g_free(name);
 	return TRUE;
-
-	/* put the name in list on the server 
-	if (!local_only && purple_account_is_connected(account))
-		serv_add_deny(purple_account_get_connection(account), name); */
-
-	/* notify UI that a user was denied
-	if (privacy_ops != NULL && privacy_ops->deny_added != NULL)
-		privacy_ops->deny_added(account, name); */
-
-	/* emit signal
-	buddy = purple_find_buddy(account, name);
-	if (buddy != NULL) {
-		purple_signal_emit(purple_blist_get_handle(),
-                "buddy-privacy-changed", buddy);
-	}
-	return TRUE; */
 }
 
-gboolean purple_privacy_update_presence_setting(PurpleAccount *account, const char *who, gboolean send_presence)
+PurplePrivacyContext purple_privacy_get_blocking_context(PurpleAccount *account, const char *who)
 {
-	PurpleBuddy *b = NULL;
+	PurpleBuddy *b;
 	char *name = NULL;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = g_strdup(purple_normalize(account, who));
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
 
 	if((b = purple_find_privacy_contact(account, name)))
-	{
-		b->privacy_send_presence = send_presence;
-		g_free(name);
-		return TRUE;
-	}
+		return b->privacy_block_context;
 	else
 	{
-		g_free(name);
-		return FALSE;
+		if((b = purple_find_privacy_contact(account, "all-others")))
+			return b->privacy_block_context;
+		else
+			return 0;
 	}
-
-	/* notify UI that a user was denied
-	if (privacy_ops != NULL && privacy_ops->deny_added != NULL)
-		privacy_ops->deny_added(account, name); */
-
-	/* emit signal
-	buddy = purple_find_buddy(account, name);
-	if (buddy != NULL) {
-		purple_signal_emit(purple_blist_get_handle(),
-                "buddy-privacy-changed", buddy);
-	}*/
-
 }
 
-gboolean purple_privacy_update_message_setting(PurpleAccount *account, const char *who, gboolean receive_message)
+gboolean purple_privacy_set_block_all(PurpleAccount *account, const char *who, gboolean local, gboolean server)
 {
-	PurpleBuddy *b = NULL;
-	char *name = NULL;
+	char *name;
+	PurplePrivacyContext context;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(who     != NULL, FALSE);
 
-	name = g_strdup(purple_normalize(account, who));
+	context = PURPLE_PRIVACY_BLOCK_ALL | PURPLE_PRIVACY_BLOCK_MESSAGE | PURPLE_PRIVACY_BLOCK_PRESENCE |
+			PURPLE_PRIVACY_BLOCK_FT | PURPLE_PRIVACY_BLOCK_CONF;
 
-	if((b = purple_find_privacy_contact(account, name)))
-	{
-		b->privacy_receive_message = receive_message;
-		g_free(name);
-		return TRUE;
-	}
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
 	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(local)
+		purple_privacy_set_blocking_context(account, name, !server, context);
+
+	if(server && purple_account_is_connected(account) && 
+				purple_privacy_check_list_support(account, PURPLE_PRIVACY_BLOCK_BOTH_LIST) &&
+				(!purple_strequal(name, "all-others")) )
+		serv_privacy_list_add(purple_account_get_connection(account), PURPLE_PRIVACY_BLOCK_BOTH_LIST, name);
+
+	g_free(name);
+	return TRUE;
+}
+
+gboolean purple_privacy_set_block_presence(PurpleAccount *account, const char *who, gboolean local, gboolean server)
+{
+	char *name;
+	PurplePrivacyContext context;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(!purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_PRESENCE))
 	{
-		g_free(name);
-		return FALSE;
+		if(local)
+		{
+			context = ( purple_privacy_get_blocking_context(account, name) | PURPLE_PRIVACY_BLOCK_PRESENCE );
+			purple_privacy_set_blocking_context(account, name, !server, context);
+		}
+
+		if(server && purple_account_is_connected(account) && purple_privacy_check_list_support(account, PURPLE_PRIVACY_INVISIBLE_LIST) )
+			serv_privacy_list_add(purple_account_get_connection(account), PURPLE_PRIVACY_INVISIBLE_LIST, name);
 	}
 
-	/* notify UI that a user was denied
-	if (privacy_ops != NULL && privacy_ops->deny_added != NULL)
-		privacy_ops->deny_added(account, name); */
-
-	/* emit signal
-	buddy = purple_find_buddy(account, name);
-	if (buddy != NULL) {
-		purple_signal_emit(purple_blist_get_handle(),
-                "buddy-privacy-changed", buddy);
-	}*/
-
+	g_free(name);
+	return TRUE;
 }
-		
+
+gboolean purple_privacy_set_block_message(PurpleAccount *account, const char *who)
+{
+	char *name;
+	PurplePrivacyContext context;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(!purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_MESSAGE))
+	{
+		context = ( purple_privacy_get_blocking_context(account, name) | PURPLE_PRIVACY_BLOCK_MESSAGE );
+		purple_privacy_set_blocking_context(account, name, TRUE, context);
+	}
+
+	g_free(name);
+	return TRUE;
+}
+
+gboolean purple_privacy_set_block_ft(PurpleAccount *account, const char *who)
+{
+	char *name;
+	PurplePrivacyContext context;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(!purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_FT))
+	{
+		context = ( purple_privacy_get_blocking_context(account, name) | PURPLE_PRIVACY_BLOCK_FT );
+		purple_privacy_set_blocking_context(account, name, TRUE, context);
+	}
+
+	g_free(name);
+	return TRUE;
+}
+
+gboolean purple_privacy_set_block_conf(PurpleAccount *account, const char *who)
+{
+	char *name;
+	PurplePrivacyContext context;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(!purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_CONF))
+	{
+		context = ( purple_privacy_get_blocking_context(account, name) | PURPLE_PRIVACY_BLOCK_CONF );
+		purple_privacy_set_blocking_context(account, name, TRUE, context);
+	}
+
+	g_free(name);
+	return TRUE;
+}
+
+gboolean purple_privacy_unset_block_message(PurpleAccount *account, const char *who)
+{
+	char *name;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_MESSAGE))
+	{
+		if(purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_ALL))
+		{
+			purple_privacy_unset_block_all(account, name, TRUE, TRUE);
+			purple_privacy_set_block_presence(account, name, TRUE, TRUE);
+			purple_privacy_set_block_ft(account, name);
+			purple_privacy_set_block_conf(account, name);
+		}
+		else
+		{
+			PurplePrivacyContext context;
+			context = purple_privacy_get_blocking_context(account, name) & (~PURPLE_PRIVACY_BLOCK_MESSAGE);
+			purple_privacy_set_blocking_context(account, name, TRUE, context);
+		}
+	}
+
+	g_free(name);
+	return TRUE;
+}
+
+gboolean purple_privacy_unset_block_conf(PurpleAccount *account, const char *who)
+{
+	char *name;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_CONF))
+	{
+		if(purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_ALL))
+		{
+			purple_privacy_unset_block_all(account, name, TRUE, TRUE);
+			purple_privacy_set_block_presence(account, name, TRUE, TRUE);
+			purple_privacy_set_block_ft(account, name);
+			purple_privacy_set_block_message(account, name);
+		}
+		else
+		{
+			PurplePrivacyContext context;
+			context = purple_privacy_get_blocking_context(account, name) & (~PURPLE_PRIVACY_BLOCK_CONF);
+			purple_privacy_set_blocking_context(account, name, TRUE, context);
+		}
+	}
+
+	g_free(name);
+	return TRUE;
+}
+
+gboolean purple_privacy_unset_block_ft(PurpleAccount *account, const char *who)
+{
+	char *name;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_FT))
+	{
+		if(purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_ALL))
+		{
+			purple_privacy_unset_block_all(account, name, TRUE, TRUE);
+			purple_privacy_set_block_presence(account, name, TRUE, TRUE);
+			purple_privacy_set_block_conf(account, name);
+			purple_privacy_set_block_message(account, name);
+		}
+		else
+		{
+			PurplePrivacyContext context;
+			context = purple_privacy_get_blocking_context(account, name) & (~PURPLE_PRIVACY_BLOCK_FT);
+			purple_privacy_set_blocking_context(account, name, TRUE, context);
+		}
+	}
+
+	g_free(name);
+	return TRUE;
+}
+
+gboolean purple_privacy_unset_block_all(PurpleAccount *account, const char *who, gboolean local, gboolean server)
+{
+	char *name;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_ALL))
+	{
+		if(local)
+			purple_privacy_set_blocking_context(account, name, !server, 0);
+
+		if(server && purple_account_is_connected(account) && 
+				purple_privacy_check_list_support(account, PURPLE_PRIVACY_BLOCK_BOTH_LIST) &&
+					(!purple_strequal(who, "all-others")) )
+			serv_privacy_list_remove(purple_account_get_connection(account), PURPLE_PRIVACY_BLOCK_BOTH_LIST, name);
+	}
+
+	g_free(name);
+	return TRUE;
+}
+
+gboolean purple_privacy_unset_block_presence(PurpleAccount *account, const char *who, gboolean local, gboolean server)
+{
+	char *name;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if(purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_PRESENCE))
+	{
+		if(local)
+		{
+			if(purple_privacy_check(account, name, PURPLE_PRIVACY_BLOCK_ALL))
+			{
+				purple_privacy_unset_block_all(account, name, TRUE, TRUE);
+				purple_privacy_set_block_conf(account, name);
+				purple_privacy_set_block_message(account, name);
+				purple_privacy_set_block_ft(account, name);
+			}
+			else
+			{
+				PurplePrivacyContext context;
+				
+				context = ( purple_privacy_get_blocking_context(account, who) & (~PURPLE_PRIVACY_BLOCK_PRESENCE) );
+				purple_privacy_set_blocking_context(account, name, !server, context);
+			}
+		}
+
+		if(server && purple_account_is_connected(account) && 
+				purple_privacy_check_list_support(account, PURPLE_PRIVACY_INVISIBLE_LIST) &&
+					(!purple_strequal(who, "all-others")) )
+			serv_privacy_list_remove(purple_account_get_connection(account), PURPLE_PRIVACY_INVISIBLE_LIST, name);
+	}
+
+	g_free(name);
+	return TRUE;
+}
+
+gboolean purple_privacy_check(PurpleAccount *account, const char *who, PurplePrivacyContext context)
+{
+	char *name;
+	gboolean value;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(who     != NULL, FALSE);
+
+	if(purple_strequal(who, "all-others"))
+		name = g_strdup(who);
+	else
+		name = g_strdup(purple_normalize(account, who));
+
+	if((purple_privacy_get_blocking_context(account, name) & context) == context)
+		value = TRUE;
+	else
+		value = FALSE;
+
+	g_free(name);
+	return value;
+}
+	
+gboolean purple_privacy_check_list_support(PurpleAccount *account, PurplePrivacyListType type)
+{
+	return ( (account->privacy_spec->supported_privacy_lists & type) == type ? TRUE : FALSE );
+}
+
 GSList *get_account_members(PurpleAccount *account, PurplePrivacyListType type)
 {
 	GSList *account_buddies = NULL, *list = NULL, *l_tmp = NULL;
 	PurpleBuddy *b = NULL;
-	gboolean receive_message = FALSE, send_presence = FALSE;
+	PurplePrivacyContext context = 0;
 
 	switch(type)
 	{
 		case PURPLE_PRIVACY_ALLOW_LIST:
-			receive_message = TRUE;
-			send_presence = TRUE;
+			context = 0;
 			break;
 		case PURPLE_PRIVACY_BLOCK_MESSAGE_LIST:
-			receive_message = FALSE;
-			send_presence = TRUE;
+			context = PURPLE_PRIVACY_BLOCK_MESSAGE;
 			break;
 		case PURPLE_PRIVACY_BLOCK_BOTH_LIST:
-			receive_message = FALSE;
-			send_presence = FALSE;
+			context = PURPLE_PRIVACY_BLOCK_ALL;
 			break;
 		case PURPLE_PRIVACY_INVISIBLE_LIST:
-			receive_message = TRUE;
-			send_presence = FALSE;
+			context = PURPLE_PRIVACY_BLOCK_PRESENCE;
 			break;
 		case PURPLE_PRIVACY_BUDDY_LIST:
 		case PURPLE_PRIVACY_VISIBLE_LIST:
@@ -554,7 +481,7 @@ GSList *get_account_members(PurpleAccount *account, PurplePrivacyListType type)
 	for(l_tmp = account_buddies; l_tmp ; l_tmp=l_tmp->next)
 	{
 		b = l_tmp->data;
-		if((b->privacy_receive_message == receive_message) && (b->privacy_send_presence == send_presence))
+		if( ((b->privacy_block_context & context) == context ) && (purple_strequal(b->name, "all-others") == FALSE) )
 			list = g_slist_prepend(list, b->name);
 	}
 
@@ -606,8 +533,7 @@ gboolean purple_privacy_sync_lists(PurpleAccount *account, GSList *buddy_l, GSLi
 					purple_blist_remove_buddy(b);
 	}
 
-	/* What if there was a non-buddy contact in some privacy list(s), but now you have added it in your buddy list */
-	/* remove contact from privacy group, if now its in the buddy list */
+	/* remove contact from privacy group, if now it is in the buddy list */
 	for(l_tmp = buddy_l; l_tmp != NULL; l_tmp = l_tmp->next)
 		if((b = purple_find_buddy_in_group(account, (const char *)l_tmp->data, purple_find_group(PURPLE_PRIVACY_GROUP))))
 			purple_blist_remove_buddy(b);
@@ -617,30 +543,309 @@ gboolean purple_privacy_sync_lists(PurpleAccount *account, GSList *buddy_l, GSLi
 	and send presence from buddies in case they don't exist on any other list */
 
 	for(l_tmp = buddy_l ; l_tmp != NULL; l_tmp = l_tmp->next)
-		purple_privacy_update_contact(account, l_tmp->data, FALSE, TRUE, TRUE);
+		purple_privacy_unset_block_all(account, l_tmp->data, TRUE, FALSE);
 
 	for(l_tmp = allow_l ; l_tmp != NULL; l_tmp = l_tmp->next)
-		purple_privacy_update_contact(account, l_tmp->data, FALSE, TRUE, TRUE);
+		purple_privacy_unset_block_all(account, l_tmp->data, TRUE, FALSE);
 
+	/* Privacy laters: this is not correct */
 	for(l_tmp = block_msg_l ; l_tmp != NULL; l_tmp = l_tmp->next)
-		purple_privacy_update_contact(account, l_tmp->data, FALSE, FALSE, TRUE);
+		purple_privacy_set_block_message(account, l_tmp->data);
 
 	for(l_tmp = block_both_l ; l_tmp != NULL; l_tmp = l_tmp->next)
-		purple_privacy_update_contact(account, l_tmp->data, FALSE, FALSE, FALSE);
+		purple_privacy_set_block_all(account, l_tmp->data, TRUE, FALSE);
 
-	/* Can't determine contact's message privacy setting by its presence on visible/invisible list alone. So we process these cases in the last, 		assuming message privacy setting has already been done or assumed to be willing to receive messages */
-	/* Create contact with TRUE, TRUE state first, before updating its presence according to visible/invisible list */
 	for(l_tmp = visible_l ; l_tmp != NULL; l_tmp = l_tmp->next)
-	{		
-		purple_privacy_update_contact(account, l_tmp->data, FALSE, TRUE, TRUE);
-		purple_privacy_update_presence_setting(account, l_tmp->data, TRUE);
-	}
+		purple_privacy_unset_block_presence(account, l_tmp->data, TRUE, FALSE);
+
 	for(l_tmp = invisible_l ; l_tmp != NULL; l_tmp = l_tmp->next)
-	{		
-		purple_privacy_update_contact(account, l_tmp->data, FALSE, TRUE, TRUE);
-		purple_privacy_update_presence_setting(account, l_tmp->data, FALSE);
-	}
+		purple_privacy_set_block_presence(account, l_tmp->data, TRUE, FALSE);
+
 	g_slist_free(p_contacts);
 
 	return TRUE;	
 }
+
+gboolean purple_privacy_account_supports_invisible_status(PurpleAccount *account)
+{
+	g_return_val_if_fail(account != NULL, FALSE);
+
+	if (purple_account_get_status_type_with_primitive(account, PURPLE_STATUS_INVISIBLE))
+		return TRUE;
+	else
+		return FALSE;
+}
+
+gboolean purple_privacy_account_status_invisible(PurpleAccount *account)
+{
+	PurpleStatus *status;
+	PurpleStatusType *status_type;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+
+	status = purple_account_get_active_status(account);
+	status_type = purple_status_get_type(status);
+	
+	if(purple_status_type_get_primitive(status_type) == PURPLE_STATUS_INVISIBLE)
+		return TRUE;
+	else
+		return FALSE;
+}
+
+gboolean purple_privacy_set_account_status_invisible(PurpleAccount *account)
+{
+	PurpleStatusType *status_type;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+
+	/* Check whether this account supports invisible status */
+	if ( !(status_type = purple_account_get_status_type_with_primitive(account, PURPLE_STATUS_INVISIBLE)) )
+		return FALSE;
+
+	/* Enable the status type with primitive "PURPLE_STATUS_INVISIBLE" */
+	purple_account_set_status(account, purple_status_type_get_id(status_type), TRUE, NULL);
+	
+	return TRUE;
+}
+
+static gboolean test_status(PurpleSavedStatus *saved_status)
+{
+	gboolean ret = FALSE;
+	PurpleStatusPrimitive prim;
+
+	g_return_val_if_fail(saved_status != NULL, FALSE);
+
+	prim = purple_savedstatus_get_type(saved_status);
+
+	switch(prim)
+	{
+		case PURPLE_STATUS_INVISIBLE:
+		case PURPLE_STATUS_OFFLINE:
+		case PURPLE_STATUS_UNSET:
+		case PURPLE_STATUS_NUM_PRIMITIVES: /* shouldn't have this value */
+			ret = FALSE;
+			break;
+		default:
+			ret = TRUE;
+			break;
+	}
+
+	return ret;
+}
+
+/* Privacy Laters: this next function isn't perfect just yet.
+Doesn't change status window status when current status is invisible and we change it to 
+visible from the privacy UI */
+gboolean purple_privacy_set_account_status_visible(PurpleAccount *account)
+{
+	PurpleSavedStatus *saved_status;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+
+	saved_status = purple_savedstatus_get_current();
+	if( test_status(saved_status) ) {
+		purple_savedstatus_activate_for_account(saved_status, account);
+		return TRUE;
+	}
+	else	{
+		/* Our current saved status is Invisible or not Online, check default status */
+		saved_status = purple_savedstatus_get_default();
+		if( test_status(saved_status) ) {
+			purple_savedstatus_activate_for_account(saved_status, account);
+			return TRUE;
+		}
+		else	{
+			/* Both current and default saved status are Invisible or not online, we choose "available" */
+			if( (saved_status = purple_savedstatus_find_transient_by_type_and_message(PURPLE_STATUS_AVAILABLE, NULL)) )
+				purple_savedstatus_activate_for_account(saved_status, account);
+			else
+				purple_account_set_status(account, "available", TRUE, NULL);
+
+			return TRUE;
+		}
+	}
+	/* Couldn't find any suitable status */
+	return FALSE;
+}
+
+PurplePrivacySetting purple_privacy_obtain_global_state(void)
+{
+	return purple_privacy_state;
+}
+
+PurplePrivacySetting purple_privacy_obtain_account_state(PurpleAccount *account)
+{
+	g_return_val_if_fail(account != NULL, FALSE);
+
+	return account->account_privacy_state;
+}
+
+NativePrivacySetting purple_privacy_obtain_native_state(PurpleAccount *account)
+{
+	g_return_val_if_fail(account != NULL, FALSE);
+
+	return account->native_privacy_state;
+}
+
+void *purple_privacy_get_handle(void)
+{
+	return &privacy_handle;
+}
+
+/* Checks for the existence of "all-others" meta contact, adds it to blist if not found */
+static void set_all_others_meta_contact(PurpleAccount *account)
+{
+	PurplePrivacyContext context;
+	PurplePrivacySetting state;
+
+	if(account == NULL)
+		return;
+
+	state = purple_privacy_obtain_account_state(account);
+
+	switch (state)
+	{
+		case PURPLE_PRIVACY_ALLOW_ALL:
+			context = 0;
+			break;
+		case PURPLE_PRIVACY_BLOCK_MSG_NONBUDDY:
+			context = PURPLE_PRIVACY_BLOCK_MESSAGE;
+			break;
+		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
+		case PURPLE_PRIVACY_CUSTOM:
+			context = PURPLE_PRIVACY_BLOCK_ALL | PURPLE_PRIVACY_BLOCK_MESSAGE | PURPLE_PRIVACY_BLOCK_PRESENCE |
+						PURPLE_PRIVACY_BLOCK_FT | PURPLE_PRIVACY_BLOCK_CONF;
+			break;
+	}
+
+	purple_privacy_set_blocking_context(account, "all-others", TRUE, context);
+}
+
+static void
+acc_signed_on_cb(PurpleConnection *gc, void *data)
+{
+	PurplePrivacySetting state;
+	PurpleAccount *account = purple_connection_get_account(gc);
+
+	state = account->account_privacy_state;
+
+	if( (account->native_privacy_state == PURPLE_PRIVACY_NATIVE_DENY_USERS) &&
+			(account->account_privacy_state == PURPLE_PRIVACY_ALLOW_ALL) )
+	{
+			if(purple_privacy_state != PURPLE_PRIVACY_ALLOW_ALL)
+				state = purple_privacy_state;
+			else
+				state = PURPLE_PRIVACY_CUSTOM;
+	}
+
+	purple_privacy_set_account_state(account, state);
+}
+
+static void autoset_global_state(void)
+{
+	GList *list = NULL, *l = NULL;
+	PurpleAccount *account;
+	PurplePrivacySetting state;
+
+	state = PURPLE_PRIVACY_ALLOW_BUDDYLIST;
+	list = purple_accounts_get_all_active();
+	if(list)
+	{
+		account = list->data;
+		state = purple_privacy_obtain_account_state(account);
+	}
+	for( l = list; l != NULL; l = l->next )
+	{
+		account = l->data;
+		if( state != purple_privacy_obtain_account_state(account) ) {
+			purple_privacy_state = PURPLE_PRIVACY_CUSTOM;
+			return;
+		}
+	}
+
+	purple_privacy_state = state;
+}
+
+static void acc_signed_off_cb(PurpleConnection *gc, void *data)
+{
+	autoset_global_state();
+}
+
+static void set_list_local(PurpleAccount *account, GSList *l, gboolean local)
+{
+	PurpleBuddy *b;
+
+	while( l != NULL)
+	{
+		b = purple_find_privacy_contact(account, (char *)l->data);
+		if(b)
+			b->local_only = local;
+
+		l = l->next;
+	}
+}
+
+void purple_privacy_set_account_state(PurpleAccount *account, PurplePrivacySetting state)
+{
+	GSList *list = NULL, *l = NULL;
+
+	if(state == account->account_privacy_state)
+		return;
+
+	account->account_privacy_state = state;
+	autoset_global_state();
+
+	if(state == PURPLE_PRIVACY_ALLOW_ALL)
+	{
+		if ( (list = purple_privacy_list_get_members_by_account(account, PURPLE_PRIVACY_BLOCK_BOTH_LIST)) )
+		{
+			/* We empty deny list on the server, set local list inactive so we have the list to retrieve laters */
+			for(l = list; l != NULL; l = l->next)
+				serv_privacy_list_remove(purple_account_get_connection(account), PURPLE_PRIVACY_BLOCK_BOTH_LIST, (char *)l->data);
+
+			set_list_local(account, list, TRUE);
+			account->privacy_list_active = FALSE;
+		}
+		g_slist_free(list);
+		account->native_privacy_state = PURPLE_PRIVACY_NATIVE_ALLOW_ALL;
+	}
+	else
+	{
+		/* Retrieve local deny list and sync with the server : in case privacy list is inactive */
+		if( !(account->privacy_list_active) )
+		{
+			if ( (list = purple_privacy_list_get_members_by_account(account, PURPLE_PRIVACY_BLOCK_BOTH_LIST)) )
+			{
+				for(l = list; l != NULL; l = l->next)
+					serv_privacy_list_add(purple_account_get_connection(account), PURPLE_PRIVACY_BLOCK_BOTH_LIST, (char *)l->data);
+
+				account->native_privacy_state = PURPLE_PRIVACY_NATIVE_DENY_USERS;
+			}
+			else
+				account->native_privacy_state = PURPLE_PRIVACY_NATIVE_ALLOW_ALL;
+				
+			g_slist_free(list);
+			set_list_local(account, list, FALSE);		
+			account->privacy_list_active = TRUE;
+		}
+	}
+	set_all_others_meta_contact(account);
+}
+
+void purple_privacy_set_global_state(PurplePrivacySetting state)
+{
+	GList *l = NULL, *list = NULL;
+	PurpleAccount *account;
+
+	list = purple_accounts_get_all_active();
+	
+	if(state != PURPLE_PRIVACY_CUSTOM)	{
+		for( l = list; l != NULL; l = l->next )	{
+			account = l->data;
+			purple_privacy_set_account_state(account, state);
+		}
+	}
+
+	g_list_free(list);
+}
+
